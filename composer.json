@@ -1,0 +1,11 @@
+{
+    "name": "processmaker/processmaker",
+    "description": "BPM PHP Software",
+    "keywords": ["php bpm processmaker"],
+    "homepage": "http://processmaker.com",
+    "license": "GNU Affero General Public License version 3",
+    
+    "require": {
+        "luracast/restler" : "3.0.0"
+    }
+}

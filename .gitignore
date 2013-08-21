@@ -5,7 +5,6 @@ workflow/engine/content/languages/translations.environments
 *~
 workflow/engine/js/labels/
 workflow/public_html/files/
-.nfs*
 .buildpath
 .project
 .settings
@@ -20,3 +19,6 @@ workflow/engine/gulliver
 workflow/public_html/index.html
 .DS_Store
 .idea
+composer.phar
+composer.lock
+vendor/
