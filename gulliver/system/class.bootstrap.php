@@ -1070,6 +1070,7 @@ class Bootstrap
     public function dispatchApiService($uri, $config, $apiClassesPath = '')
     {
         $rest = new Luracast\Restler\Restler();
+        $rest->setAPIVersion('1.0');
 
         $dataUri = explode('/', $uri);
         array_shift($dataUri);
@@ -1078,19 +1079,18 @@ class Bootstrap
         $apiDir = $servicesDir . 'api' . PATH_SEP;
         $namespace = 'Services_Api_';
         $classFile = $apiDir . $namespace . $reqClass . '.php';
-        
-        if (! file_exists($classFile)) {
-            //throw new Luracast\Restler\RestException(404, "Invalid Service Request");
-            $rest->handleError(404);
-            die;
-        }
-
-        require_once $classFile;
-
-        $_SERVER['REQUEST_URI'] = $uri;
 
         $rest->setSupportedFormats('JsonFormat', 'XmlFormat');
-        $rest->addAPIClass($namespace . $reqClass);
+
+        if (file_exists($classFile)) {
+            require_once $classFile;
+
+            $_SERVER['REQUEST_URI'] = $uri;
+            $rest->addAPIClass($namespace . $reqClass);
+        } else {
+            $rest->handleError(500);
+        }
+
         $rest->handle();
         die;
 
