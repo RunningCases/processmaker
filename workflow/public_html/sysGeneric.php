@@ -236,6 +236,8 @@ set_include_path( PATH_CORE . PATH_SEPARATOR .
                   get_include_path()
 );
 
+Bootstrap::initVendors();
+
 /**
  * Global definitions, before it was the defines.php file
  */
@@ -351,7 +353,7 @@ $virtualURITable['/html2ps_pdf/(*)'] = PATH_THIRDPARTY . 'html2ps_pdf/';
 //$virtualURITable['/images/'] = 'errorFile';
 //$virtualURITable['/skins/'] = 'errorFile';
 //$virtualURITable['/files/'] = 'errorFile';
-$virtualURITable['/rest/(*)'] = 'rest-service';
+$virtualURITable['/(*)api/(*)'] = 'api-service';
 $virtualURITable["/update/(*)"] = ($skinPathUpdate != "")? $skinPathUpdate : PATH_GULLIVER_HOME . "methods" . PATH_SEP . "update" . PATH_SEP;
 //$virtualURITable['/(*)'] = PATH_HTML;
 $virtualURITable['/css/(*)'] = PATH_HTML . 'css/'; //ugly
@@ -438,7 +440,7 @@ if (Bootstrap::virtualURI( $_SERVER['REQUEST_URI'], $virtualURITable, $realPath 
             break;
         default:
             //Process files loaded with tag head in HTML
-            if (substr( $realPath, 0, 12 ) == 'rest-service') {
+            if (substr( $realPath, 0, 11 ) == 'api-service') {
                 $isRestRequest = true;
             } else {
                 $realPath = explode( '?', $realPath );
@@ -635,7 +637,7 @@ Bootstrap::LoadClass( 'memcached' );
 $memcache = & PMmemcached::getSingleton( SYS_SYS );
 
 // verify configuration for rest service
-if ($isRestRequest) {
+/*if ($isRestRequest) {
     // disable until confirm that rest is enabled & configured on rest-config.ini file
     $isRestRequest = false;
     $confFile = '';
@@ -655,7 +657,7 @@ if ($isRestRequest) {
             }
         }
     }
-}
+}*/
 
 // load Plugins base class
 Bootstrap::LoadClass( 'plugin' );
@@ -1002,9 +1004,10 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
 
         $controller->call($controllerAction);
     } elseif ($isRestRequest) {
+        $restConfig = array();
         //NewRelic Snippet - By JHL
-        transactionLog($restConfig.$restApiClassPath.SYS_TARGET);
-        Bootstrap::dispatchRestService( SYS_TARGET, $restConfig, $restApiClassPath );
+        //transactionLog($restConfig.PATH_DATA_SITE.SYS_TARGET); // ====> ??? this concat is very rare
+        Bootstrap::dispatchApiService(SYS_TARGET, $restConfig, PATH_DATA_SITE);
     } else {
         //NewRelic Snippet - By JHL
         transactionLog($phpFile);

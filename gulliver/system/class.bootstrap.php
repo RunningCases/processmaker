@@ -1059,17 +1059,57 @@ class Bootstrap
         }
         return $res;
     }
-
+    //use Luracast\Restler\Format\XmlFormat as XmlFormat;
     /**
-     * This method allow dispatch rest services using 'Restler' thirdparty library
+     * This method dispatch rest/api services 
+     * it implement "Restler" library
      *
+     * @param $url string Contains the url request 
      * @author Erik Amaru Ortiz <aortiz.erik@gmail.com>
      */
-    public function dispatchRestService($uri, $config, $apiClassesPath = '')
+    public function dispatchApiService($uri, $config, $apiClassesPath = '')
     {
-        require_once 'restler/restler.php';
+        $rest = new Luracast\Restler\Restler();
 
-        $rest = new Restler();
+        $dataUri = explode('/', $uri);
+        array_shift($dataUri);
+        $reqClass = ucfirst(array_shift($dataUri));
+        $servicesDir = PATH_CORE . 'services' . PATH_SEP;
+        $apiDir = $servicesDir . 'api' . PATH_SEP;
+        $namespace = 'Services_Api_';
+        $classFile = $apiDir . $namespace . $reqClass . '.php';
+        
+        if (! file_exists($classFile)) {
+            //throw new Luracast\Restler\RestException(404, "Invalid Service Request");
+            $rest->handleError(404);
+            die;
+        }
+
+        require_once $classFile;
+
+        $_SERVER['REQUEST_URI'] = $uri;
+
+        $rest->setSupportedFormats('JsonFormat', 'XmlFormat');
+        $rest->addAPIClass($namespace . $reqClass);
+        $rest->handle();
+        die;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // OLD CODE FROM HERE
+
         $rest->setSupportedFormats('JsonFormat', 'XmlFormat');
         // getting all services class
         $restClasses = array();
@@ -2275,18 +2315,36 @@ class Bootstrap
     }
 
     /**
+     * This function parse a particular api/rest request
      *
-     * @param unknown_type $requestUri
+     * Example url:
+     * GET /api/workflowdemo/user/rol?id=0000000000000000001
+     * POST /api/workflowdemo/cases
+     *
+     * - These urls are equivalents
+     *    GET /api/<workspaceName>/cases/start
+     *    GET /<workspaceName>-api/cases/start
+     *
+     * @param $url
+     * @return array return url parsed data
      */
-    public function parseRestUri($requestUri)
+    public function parseRestUri($url)
     {
+        array_shift($url);
+        $sysTemp = array_shift($url);
+
+        if ($sysTemp == 'api') {
+            $sysTemp = array_shift($url);
+        } elseif (strpos($sysTemp, '-') !== false) {
+            list($sysTemp,) = explode('-', $sysTemp);
+        }
+
         $args = array();
-        //$args['SYS_TEMP'] = $requestUri[1];
-        define('SYS_TEMP', $requestUri[2]);
+        define('SYS_TEMP', $sysTemp);
         $restUri = '';
 
-        for ($i = 3; $i < count($requestUri); $i++) {
-            $restUri .= '/' . $requestUri[$i];
+        foreach ($url as $urlPart) {
+            $restUri .= '/' . $urlPart;
         }
 
         $args['SYS_LANG'] = 'en'; // TODO, this can be set from http header
@@ -3015,6 +3073,28 @@ class Bootstrap
     public function isLinuxOs()
     {
         return strtoupper(PHP_OS) == "LINUX";
+    }
+
+    public static function initVendors()
+    {
+        if (! is_dir(PATH_TRUNK . 'vendor')) {
+            if (file_exists(PATH_TRUNK . 'composer.phar')) {
+                throw new Exception(
+                    "ERROR: Verdors are missing!\n" .
+                        "Please execute the following command to install vendors for the environment:\n" .
+                        "$>php composer.phar install"
+                );
+            } else {
+                throw new Exception(
+                    "ERROR: Verdors are missing!\n" .
+                        "Please execute the following commands to prepare/install vendors for the environment:\n" .
+                        "$>curl -sS https://getcomposer.org/installer | php\n" .
+                        "$>php composer.phar install"
+                );
+            }
+        }
+
+        require_once PATH_TRUNK . 'vendor' . PATH_SEP . "autoload.php";
     }
 }
 
