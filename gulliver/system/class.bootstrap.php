@@ -421,43 +421,20 @@ class Bootstrap
      * @param $data associative
      *        	array containig the template data
      */
-    public function renderTemplate($template, $data = array())
+    public static function renderTemplate($template, $data = array())
     {
         if (!defined('PATH_THIRDPARTY')) {
             throw new Exception('System constant (PATH_THIRDPARTY) is not defined!');
         }
 
         require_once PATH_THIRDPARTY . 'smarty/libs/Smarty.class.php';
-        $fInfo = pathinfo($template);
-
-        $tplExists = true;
-
+        
         // file has absolute path
         if (substr($template, 0, 1) != PATH_SEP) {
             $template = PATH_TEMPLATE . $template;
         }
-
-        // fix for template that have dot in its name but is not a valid
-        // extension
-        if (isset($fInfo ['extension']) && ($fInfo ['extension'] != 'tpl' || $fInfo ['extension'] != 'html')) {
-            unset($fInfo ['extension']);
-        }
-
-        if (!isset($fInfo ['extension'])) {
-            if (file_exists($template . '.tpl')) {
-                $template .= '.tpl';
-            } elseif (file_exists($template . '.html')) {
-                $template .= '.html';
-            } else {
-                $tplExists = false;
-            }
-        } else {
-            if (!file_exists($template)) {
-                $tplExists = false;
-            }
-        }
-
-        if (!$tplExists) {
+        
+        if (! file_exists($template)) {
             throw new Exception("Template: $template, doesn't exist!");
         }
 
@@ -495,7 +472,7 @@ class Bootstrap
      *
      * @author <erik@colosa.com>
      */
-    public function sys_get_temp_dir()
+    public static function sys_get_temp_dir()
     {
         if (!function_exists('sys_get_temp_dir')) {
             // Based on http://www.phpit.net/
