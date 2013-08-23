@@ -3057,15 +3057,15 @@ class Bootstrap
         if (! is_dir(PATH_TRUNK . 'vendor')) {
             if (file_exists(PATH_TRUNK . 'composer.phar')) {
                 throw new Exception(
-                    "ERROR: Verdors are missing!\n" .
-                        "Please execute the following command to install vendors for the environment:\n" .
+                    "ERROR: Verdors are missing!" . PHP_EOL .
+                        "Please execute the following command to install vendors:" .PHP_EOL.PHP_EOL.
                         "$>php composer.phar install"
                 );
             } else {
                 throw new Exception(
-                    "ERROR: Verdors are missing!\n" .
-                        "Please execute the following commands to prepare/install vendors for the environment:\n" .
-                        "$>curl -sS https://getcomposer.org/installer | php\n" .
+                    "ERROR: Verdors are missing!" . PHP_EOL .
+                        "Please execute the following commands to prepare/install vendors:" .PHP_EOL.PHP_EOL.
+                        "$>curl -sS https://getcomposer.org/installer | php" . PHP_EOL . 
                         "$>php composer.phar install"
                 );
             }

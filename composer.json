@@ -6,6 +6,6 @@
     "license": "GNU Affero General Public License version 3",
     
     "require": {
-        "luracast/restler" : "dev-master"
+        "luracast/restler" : "v3.0.0"
     }
 }

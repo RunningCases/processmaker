@@ -1026,5 +1026,9 @@ try {
         }
     }
 } catch (Exception $e) {
-    Bootstrap::renderTemplate('error.tpl', 'SYSTEM EXCEPTION', $e->getMessage(), array());
+    Bootstrap::renderTemplate('error.tpl', array(
+        'title' => 'ProcessMaker Bootstrap Exception', 
+        'message' => nl2br($e->getMessage()),
+        'exceptionClass' => get_class($e)
+    ));
 }
