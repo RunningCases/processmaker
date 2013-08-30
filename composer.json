@@ -6,6 +6,8 @@
     "license": "GNU Affero General Public License version 3",
     
     "require": {
-        "luracast/restler" : "v3.0.0"
+        "luracast/restler" : "dev-master",
+        "bshaffer/oauth2-server-php": "v1.0",
+        "twig/twig": "v1.13.2"
     }
 }

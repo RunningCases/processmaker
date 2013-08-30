@@ -1038,54 +1038,62 @@ class Bootstrap
     }
     //use Luracast\Restler\Format\XmlFormat as XmlFormat;
     /**
-     * This method dispatch rest/api services 
-     * it implement "Restler" library
+     * This method dispatch rest/api service
      *
-     * @param $url string Contains the url request 
-     * @author Erik Amaru Ortiz <aortiz.erik@gmail.com>
+     * @author Erik Amaru Ortiz <erik@colosa.com>
+     * @param $uri
+     * @param $config
+     * @param string $apiClassesPath
+     * @internal param string $url Contains the url request
      */
     public function dispatchApiService($uri, $config, $apiClassesPath = '')
     {
-        $rest = new Luracast\Restler\Restler();
-        $rest->setAPIVersion('1.0');
-
         $dataUri = explode('/', $uri);
         array_shift($dataUri);
         $reqClass = ucfirst(array_shift($dataUri));
+
         $servicesDir = PATH_CORE . 'services' . PATH_SEP;
         $apiDir = $servicesDir . 'api' . PATH_SEP;
-        $namespace = 'Services_Api_';
-        $classFile = $apiDir . $namespace . $reqClass . '.php';
+        $classDir = $apiDir . 'processmaker' . PATH_SEP;
 
-        $rest->setSupportedFormats('JsonFormat', 'XmlFormat');
+        $rest = new Luracast\Restler\Restler();
+        $rest->setAPIVersion('1.0');
+        $rest->setSupportedFormats('JsonFormat', 'XmlFormat');//, 'HtmlFormat');
+        //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
+
+        $_SERVER['REQUEST_URI'] = $uri;
+
+        $classFile = $classDir . 'Services_Api_ProcessMaker_' . $reqClass . '.php';
+        $classFile2 = $classDir . DIRECTORY_SEPARATOR . $reqClass . '.php';
 
         if (file_exists($classFile)) {
             require_once $classFile;
 
-            $_SERVER['REQUEST_URI'] = $uri;
-            $rest->addAPIClass($namespace . $reqClass);
+            $rest->addAPIClass('Services_Api_ProcessMaker_' . $reqClass);
+        } elseif (file_exists($classFile2)) {
+            require_once $classFile2;
+
+            $rest->addAPIClass("\\Services\\Api\\Processmaker\\" . $reqClass);
         } else {
             $rest->handleError(500);
         }
 
+        //Luracast\Restler\Format\HtmlFormat::$viewPath = $apiDir . 'oauth2/views';
+        //require_once $apiDir . 'oauth2/Server.php';
+
+        //$rest->addAuthenticationClass('Api\\OAuth2\\Server', '');
+
         $rest->handle();
+
         die;
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-        // OLD CODE FROM HERE
+        ///
+        // OLD CODE FROM HERE, we can get some interisting things there on the future
+        //
 
         $rest->setSupportedFormats('JsonFormat', 'XmlFormat');
         // getting all services class

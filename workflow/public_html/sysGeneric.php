@@ -1026,9 +1026,11 @@ try {
         }
     }
 } catch (Exception $e) {
+    //g::pr($e->getTrace()); die;
     Bootstrap::renderTemplate('error.tpl', array(
         'title' => 'ProcessMaker Bootstrap Exception', 
         'message' => nl2br($e->getMessage()),
-        'exceptionClass' => get_class($e)
+        'exceptionClass' => get_class($e),
+        'trace' => $e->getTrace()
     ));
 }

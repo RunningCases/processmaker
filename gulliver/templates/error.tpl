@@ -65,13 +65,21 @@
     </head>
     <body>
         <div id="content" class="exceptionreset">
-            <h1>ProcessMaker, looks like something went wrong.</h1>
-            <div class="block_exception clear_fix"><h2>
-                <abbr title="RuntimeException">{$exceptionClass}</abbr>: {$title}</h2>
+            <h1>{$title}</h1>
+            <div class="block_exception clear_fix">
+                <h2>
+                    <abbr title="RuntimeException">{$exceptionClass}</abbr>: {$message}
+                </h2>
             </div>
             <div class="block">
                 <ol class="traces list_exception">
-                    {$message}
+                {foreach from=$trace item=line}
+                    {if $line.class}
+                    <li>At <b>{$line.class}{$line.type}</b><i>{$line.function}()</i><br/>in {$line.file} line {$line.line}</li>
+                    {else}
+                    <li>At {$line.function}() in {$line.file} line {$line.line}</li>
+                    {/if}
+                {/foreach}
                 </ol>
             </div>
         </div>

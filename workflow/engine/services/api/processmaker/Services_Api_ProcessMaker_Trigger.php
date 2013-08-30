@@ -7,15 +7,20 @@
  * To change this template use File | Settings | File Templates.
  */
 
-class Services_Api_Say
+class Services_Api_ProcessMaker_Trigger
 {
     public function hello($to='world') 
     {
         return array('success'=>true, "message"=>"Hello $to!");
     }
     
-    public function hi($to, $name) 
+    public function hi($name)
     {
-        return  "Hi $to -> $name";
+        return  "Hi $name";
+    }
+
+    protected function secret()
+    {
+        return 'S E C R E T';
     }
 }
