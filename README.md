@@ -5,7 +5,7 @@
 README
 ======
 
-ProcessMaker "Michael Angelo"
+ProcessMaker "Michelangelo"
 ----------------
 
 ***(It is under development yet, please wait for the final release, that is comming soon)***
