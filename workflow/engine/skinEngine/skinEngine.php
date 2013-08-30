@@ -603,7 +603,17 @@ class SkinEngine
     $smarty->display($tpl);
   }
 
-  private function _default()
+  /**
+   * this Method prints the same _default() environment except javascript
+   */
+  private function _minimal()
+  {
+      $enableJavascript = false;
+
+      $this->_default($enableJavascript);
+  }
+
+  private function _default($enableJsScript=true)
   {
     require_once PATH_THIRDPARTY . 'smarty/libs/Smarty.class.php'; // put full path to Smarty.class.php
     global $G_ENABLE_BLANK_SKIN;
@@ -665,7 +675,7 @@ class SkinEngine
         if (defined('SYS_SYS')) {
             $oHeadPublisher->title = isset($_SESSION['USR_USERNAME']) ? '(' . $_SESSION['USR_USERNAME'] . ' ' . G::LoadTranslation('ID_IN') . ' ' . SYS_SYS . ')' : '';
         }
-        $header = $oHeadPublisher->printHeader();
+        $header = $enableJsScript ? $oHeadPublisher->printHeader() : '';
         $header .= $oHeadPublisher->getExtJsStylesheets($this->cssFileName);
       }
 
