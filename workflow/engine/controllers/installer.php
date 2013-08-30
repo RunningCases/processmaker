@@ -35,6 +35,14 @@ class Installer extends Controller
 
     public function index ($httpData)
     {
+        $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
+        if ($partnerFlag){
+            $this->includeExtJS( 'installer/stopInstall');
+            $this->setView( 'installer/mainStopInstall' );
+            G::RenderPage( 'publish', 'extJs' );
+            return;
+        }
+
         $licenseContent = file_get_contents( PATH_TRUNK . 'LICENSE.txt' );
 
         $this->includeExtJS( 'installer/CardLayout', false );
@@ -1164,7 +1172,7 @@ class Installer extends Controller
         $db_password = $_REQUEST['db_password'];
         $fp = @fsockopen( $db_hostname, $db_port, $errno, $errstr, 30 );
         if (! $fp) {
-            $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR', SYS_LANG, Array($errstr ($errno)));
+            $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR', SYS_LANG, Array("$errstr ($errno)"));
             return $info;
         }
 
@@ -1204,7 +1212,7 @@ class Installer extends Controller
 
         $fp = @fsockopen( $db_hostname, $db_port, $errno, $errstr, 30 );
         if (! $fp) {
-            $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR', SYS_LANG, Array($errstr ($errno)));
+            $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR', SYS_LANG, Array("$errstr ($errno)"));
             return $info;
         }
 
