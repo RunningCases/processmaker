@@ -1,6 +1,6 @@
 ![ProcessMaker logo](http://www.processmaker.com/themes/processmaker/images/logo.jpg "ProcessMaker")
 
-[![Build Status](https://secure.travis-ci.org/phpalchemy/phpalchemy.png?branch=master)](http://travis-ci.org/phpalchemy/phpalchemy)
+[![Build Status](https://travis-ci.org/colosa/processmaker.png?branch=michelangelo)](http://travis-ci.org/colosa/processmaker)
 
 README
 ======
