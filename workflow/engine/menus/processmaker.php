@@ -51,6 +51,9 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1 || $RBAC->userCanAccess('PM_USERS') ==
   $G_TMP_MENU->AddIdRawOption('SETUP', 'setup/main', G::LoadTranslation('ID_SETUP'), '', '', '', 'x-pm-setup');
 }
 
+$G_TMP_MENU->AddIdRawOption('TEST', 'test/main', 'Test', '', '', '', 'x-pm-setup');
+$G_TMP_MENU->AddIdRawOption('TEST2', 'test2/main', 'Test2', '', '', '', 'x-pm-setup');
+
 // PLUGINS MENUS
 if( file_exists(PATH_CORE . 'menus/plugin.php') ) {
   require_once(PATH_CORE . 'menus/plugin.php');

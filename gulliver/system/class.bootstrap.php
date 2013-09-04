@@ -1056,6 +1056,10 @@ class Bootstrap
         $apiDir = $servicesDir . 'api' . PATH_SEP;
         $classDir = $apiDir . 'processmaker' . PATH_SEP;
 
+        require_once PATH_CORE . "classes" . PATH_SEP . "class.api.php";
+
+        \ProcessMaker\Api::setWorkspace(SYS_SYS);
+
         $rest = new Luracast\Restler\Restler();
         $rest->setAPIVersion('1.0');
         $rest->setSupportedFormats('JsonFormat', 'XmlFormat');//, 'HtmlFormat');

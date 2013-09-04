@@ -1,15 +1,15 @@
 <?php
-
 namespace Services\Api\ProcessMaker;
 
-class Application
+class Application extends \ProcessMaker\Api
 {
     public function get($id)
     {
         $data = array(
             "APP_UID" => $id,
             "PRO_UID" => "13885168416038181883131343548151",
-            "DUMMY" => "sample data"
+            "DUMMY" => "sample data",
+            "WS" => $this->getWorkspace()
         );
 
         return $data;
