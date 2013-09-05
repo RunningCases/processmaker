@@ -7,7 +7,7 @@ class Api
 
     public function __costruct()
     {
-        $this->workspace = null;
+        self::$workspace = null;
     }
 
     public static function setWorkspace($workspace)
