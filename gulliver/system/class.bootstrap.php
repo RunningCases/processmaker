@@ -1036,7 +1036,7 @@ class Bootstrap
         }
         return $res;
     }
-    //use Luracast\Restler\Format\XmlFormat as XmlFormat;
+    
     /**
      * This method dispatch rest/api service
      *
@@ -1059,11 +1059,19 @@ class Bootstrap
         require_once PATH_CORE . "classes" . PATH_SEP . "class.api.php";
 
         \ProcessMaker\Api::setWorkspace(SYS_SYS);
+        //var_dump($apiDir . 'oauth2/views'); die;
+        Luracast\Restler\Format\HtmlFormat::$viewPath = $servicesDir . 'oauth2/views';
+
+        require_once $servicesDir . 'oauth2/Server.php';
 
         $rest = new Luracast\Restler\Restler();
         $rest->setAPIVersion('1.0');
-        $rest->setSupportedFormats('JsonFormat', 'XmlFormat');//, 'HtmlFormat');
+        
+        $rest->addAuthenticationClass('Api\\OAuth2\\Server', '');
+
+        $rest->setSupportedFormats('JsonFormat', 'XmlFormat'); //, 'HtmlFormat');
         //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
+        $rest->setOverridingFormats('HtmlFormat');
 
         $_SERVER['REQUEST_URI'] = $uri;
 
@@ -1082,10 +1090,6 @@ class Bootstrap
             $rest->handleError(500);
         }
 
-        //Luracast\Restler\Format\HtmlFormat::$viewPath = $apiDir . 'oauth2/views';
-        //require_once $apiDir . 'oauth2/Server.php';
-
-        //$rest->addAuthenticationClass('Api\\OAuth2\\Server', '');
 
         $rest->handle();
 
