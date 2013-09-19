@@ -1007,7 +1007,8 @@ try {
             $restConfig = array();
             //NewRelic Snippet - By JHL
             //transactionLog($restConfig.PATH_DATA_SITE.SYS_TARGET); // ====> ??? this concat is very rare
-            Bootstrap::dispatchApiService(SYS_TARGET, $restConfig, PATH_DATA_SITE);
+            
+            Bootstrap::dispatchApiService(SYS_TARGET, API_VERSION);
         } else {
             //NewRelic Snippet - By JHL
             transactionLog($phpFile);

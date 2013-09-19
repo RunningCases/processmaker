@@ -677,10 +677,16 @@ class Bootstrap
             $args = self::parseNormalUri($aRequestUri);
         }
 
-        define("SYS_LANG", $args ['SYS_LANG']);
-        define('SYS_SKIN', $args ['SYS_SKIN']);
-        define('SYS_COLLECTION', $args ['SYS_COLLECTION']);
-        define('SYS_TARGET', $args ['SYS_TARGET']);
+        if (! empty($args)) {
+            define("SYS_LANG", $args ['SYS_LANG']);
+            define('SYS_SKIN', $args ['SYS_SKIN']);
+            define('SYS_COLLECTION', $args ['SYS_COLLECTION']);
+            define('SYS_TARGET', $args ['SYS_TARGET']);
+
+            if (array_key_exists('API_VERSION', $args)) {
+                define('API_VERSION', $args['API_VERSION']);
+            }
+        }
 
         if ($args ['SYS_COLLECTION'] == 'js2') {
             print "ERROR";
@@ -1046,8 +1052,9 @@ class Bootstrap
      * @param string $apiClassesPath
      * @internal param string $url Contains the url request
      */
-    public function dispatchApiService($uri, $config, $apiClassesPath = '')
+    public function dispatchApiService($uri, $version = '1.0')
     {
+
         $dataUri = explode('/', $uri);
         array_shift($dataUri);
         $reqClass = ucfirst(array_shift($dataUri));
@@ -1065,7 +1072,7 @@ class Bootstrap
         require_once $servicesDir . 'oauth2/Server.php';
 
         $rest = new Luracast\Restler\Restler();
-        $rest->setAPIVersion('1.0');
+        $rest->setAPIVersion($version);
         
         $rest->addAuthenticationClass('Api\\OAuth2\\Server', '');
 
@@ -2326,13 +2333,13 @@ class Bootstrap
         array_shift($url);
         $sysTemp = array_shift($url);
 
-        if ($sysTemp == 'api') {
-            $sysTemp = array_shift($url);
-        } elseif (strpos($sysTemp, '-') !== false) {
-            list($sysTemp,) = explode('-', $sysTemp);
+        if ($sysTemp != 'api') {
+            return array();
         }
 
-        $args = array();
+        $apiVersion = array_shift($url);
+        $sysTemp = array_shift($url);
+
         define('SYS_TEMP', $sysTemp);
         $restUri = '';
 
@@ -2340,10 +2347,12 @@ class Bootstrap
             $restUri .= '/' . $urlPart;
         }
 
+        $args = array();
         $args['SYS_LANG'] = 'en'; // TODO, this can be set from http header
         $args['SYS_SKIN'] = '';
         $args['SYS_COLLECTION'] = '';
         $args['SYS_TARGET'] = $restUri;
+        $args['API_VERSION'] = $apiVersion;
 
         return $args;
     }
