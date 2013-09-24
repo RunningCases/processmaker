@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Class PmSessionHandler
+ *
+ * This class is a Database based PHP Session Handler
+ *
+ * Singleton Class
+ *
+ * @version   1.0
+ * @author    Erik Amaru Ortiz <aortiz.erik@gmail.com>
+ */
 class PmSessionHandler implements SessionHandlerInterface
 {
     private $savePath;
@@ -14,10 +24,8 @@ class PmSessionHandler implements SessionHandlerInterface
      * @var string
      */
     private $dsn = '';
-
     private $user = '';
     private $password = '';
-
     private $dbtable = 'SESSION_STORAGE';
 
     /**
@@ -27,6 +35,13 @@ class PmSessionHandler implements SessionHandlerInterface
      */
     private $httponly = true;
 
+    /**
+     * The Construct 
+     * Initialize object and set database credentials passed as arguments
+     * @param string $user     Db User name
+     * @param string $password Db User password
+     * @param string $dsn      Data source string with PDO fotmat
+     */
     public function __construct($user, $password, $dsn)
     {
         $this->dbUser = $user;
@@ -37,8 +52,6 @@ class PmSessionHandler implements SessionHandlerInterface
  
         // This line prevents unexpected effects when using objects as save handlers.
         register_shutdown_function('session_write_close');
-
-        error_log(" * Session: a new instance was created!!");
     }
 
     function start_session($sessionName, $secure)
@@ -76,10 +89,14 @@ class PmSessionHandler implements SessionHandlerInterface
         // This line regenerates the session and delete the old one. 
         // It also generates a new encryption key in the database. 
         session_regenerate_id(true);
-
-        error_log(" * Session: start_session was executed!!");
     }
 
+    /**
+     * Open method, it is called when a session starts
+     * @param  string $savePath    save path, it is passed from PHP Core
+     * @param  string $sessionName session name, it is passed from PHP Core
+     * @return bool                it always returns true
+     */
     public function open($savePath, $sessionName)
     {
         $this->db = new PDO(
@@ -100,12 +117,13 @@ class PmSessionHandler implements SessionHandlerInterface
             )
         );
 
-        error_log(" * Session: open was executed!!");
-
         return true;
     }
 
-
+    /**
+     * Close method, it is called when the script finish its execution
+     * @return bool true always returns true
+     */
     public function close()
     {
         // Upon successful connection to the database, an instance of the PDO class is returned 
@@ -116,11 +134,15 @@ class PmSessionHandler implements SessionHandlerInterface
         // close the connection when your script ends.
         $this->db = null;
 
-        error_log(" * Session: close was executed!!");
-
         return true;
     }
 
+    /**
+     * Write method, it writes data when a session ariable was created or modified from scripts
+     * @param  string $id  the session id
+     * @param  mixed $data the DATA stored on session record
+     * @return bool        always returns true
+     */
     public function write($id, $data)
     {
         $time = time();
@@ -136,11 +158,15 @@ class PmSessionHandler implements SessionHandlerInterface
         //$this->wstmt->bind_param('siss', $id, $time, $data, $key);
         $this->wstmt->execute(array($id, $time, $data, $key));
 
-        error_log(" * Session: write was executed!!");
-
         return true;
     }
 
+    /**
+     * Read method, it is called when a session variable is requested from scripts
+     * 
+     * @param  string $id the session id
+     * @return mixed returns the DATA stored on session record
+     */
     public function read($id)
     {
         if(! isset($this->rstmt)) {
@@ -151,11 +177,14 @@ class PmSessionHandler implements SessionHandlerInterface
         $data = $this->rstmt->fetch();
         $data = unserialize(base64_decode($data['DATA']));
 
-        error_log(" * Session: read was executed!!");
-
         return $data;
     }
 
+    /**
+     * Destroy method, it is called when a session has expired
+     * @param  string $id the session id
+     * @return bool always returns true
+     */
     public function destroy($id)
     {
         if(! isset($this->dstmt)) {
@@ -164,11 +193,15 @@ class PmSessionHandler implements SessionHandlerInterface
 
         $this->dstmt->execute(array($id));
 
-        error_log(" * Session: destroy was executed!!");
-
         return true;
     }
 
+    /**
+     * Garbase Collection method 
+     * 
+     * @param  int $maxlifetime max time that especify if the session is active or not
+     * @return bool always returns true
+     */
     public function gc($maxlifetime)
     {
         $time = time() - $maxlifetime;
@@ -178,8 +211,6 @@ class PmSessionHandler implements SessionHandlerInterface
         }
 
         $thi->gcstmt->execute(array($time));
-
-        error_log(" * Session: gc was executed!!");
 
         return true;
     }
