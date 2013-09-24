@@ -568,7 +568,7 @@ CREATE TABLE `TASK`
 	`TAS_PRIORITY_VARIABLE` VARCHAR(100) default '' NOT NULL,
 	`TAS_ASSIGN_TYPE` VARCHAR(30) default 'BALANCED' NOT NULL,
 	`TAS_ASSIGN_VARIABLE` VARCHAR(100) default '@@SYS_NEXT_USER_TO_BE_ASSIGNED' NOT NULL,
-	`TAS_GROUP_VARIABLE` VARCHAR(100) default '',
+	`TAS_GROUP_VARIABLE` VARCHAR(100),
 	`TAS_MI_INSTANCE_VARIABLE` VARCHAR(100) default '@@SYS_VAR_TOTAL_INSTANCE' NOT NULL,
 	`TAS_MI_COMPLETE_VARIABLE` VARCHAR(100) default '@@SYS_VAR_TOTAL_INSTANCES_COMPLETE' NOT NULL,
 	`TAS_ASSIGN_LOCATION` VARCHAR(20) default 'FALSE' NOT NULL,
@@ -1455,5 +1455,22 @@ CREATE TABLE `SEQUENCES`
 	`SEQ_VALUE` INTEGER default 0 NOT NULL,
 	PRIMARY KEY (`SEQ_NAME`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Sequences, Controls the numerical sequence of a table';
+#-----------------------------------------------------------------------------
+#-- SESSION_STORAGE
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `SESSION_STORAGE`;
+
+
+CREATE TABLE `SESSION_STORAGE`
+(
+	`ID` VARCHAR(128)  NOT NULL,
+	`SET_TIME` VARCHAR(10)  NOT NULL,
+	`DATA` MEDIUMTEXT  NOT NULL,
+	`SESSION_KEY` VARCHAR(128)  NOT NULL,
+	`CLIENT_ADDRESS` VARCHAR(32) default '0.0.0.0',
+	PRIMARY KEY (`ID`),
+	KEY `indexSessionStorage`(`ID`)
+)ENGINE=InnoDB ;
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

@@ -285,7 +285,7 @@ try {
     }
     ini_set('session.gc_maxlifetime', $timelife);
     ini_set('session.cookie_lifetime', $timelife);
-    session_start();
+    //session_start();
 
     $e_all = defined( 'E_DEPRECATED' ) ? E_ALL & ~ E_DEPRECATED : E_ALL;
     $e_all = defined( 'E_STRICT' ) ? $e_all & ~ E_STRICT : $e_all;
@@ -677,6 +677,14 @@ try {
     //changed to autoloader
     //require_once ("propel/Propel.php");
     //require_once ("creole/Creole.php");
+
+    //var_dump(include(PATH_CORE . "config/databases.php")); die;
+    include_once PATH_GULLIVER_HOME . 'core/Session/PmSessionHandler.php';
+
+    //$dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
+    $handler = new PmSessionHandler(DB_USER, DB_PASS, DB_ADAPTER.':host='.DB_HOST.';dbname='.DB_NAME);
+
+    session_start();
 
     if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
         define( 'PM_PID', mt_rand( 1, 999999 ) );

@@ -2997,4 +2997,16 @@
     <column name="SEQ_NAME" type="VARCHAR" size="50" required="true" primaryKey="true" default=""/>
     <column name="SEQ_VALUE" type="INTEGER" required="true" default="0"/>
   </table>
+
+  <table name="SESSION_STORAGE">
+    <column name="ID" type="VARCHAR" size="128" required="true" primaryKey="true" />
+    <column name="SET_TIME" type="VARCHAR"  size="10" required="true" />
+    <column name="DATA" type="LONGVARCHAR" required="true" />
+    <column name="SESSION_KEY" type="VARCHAR" size="128" required="true" />
+    <column name="CLIENT_ADDRESS" type="VARCHAR" size="32" required="false" default="0.0.0.0" />
+
+    <index name="indexSessionStorage">
+      <index-column name="ID"/>
+    </index>
+  </table>
 </database>

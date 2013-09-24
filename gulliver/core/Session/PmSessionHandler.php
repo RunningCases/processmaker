@@ -18,6 +18,8 @@ class PmSessionHandler implements SessionHandlerInterface
     private $user = '';
     private $password = '';
 
+    private $dbtable = 'SESSION_STORAGE';
+
     /**
      * $httponly Session accessibility boolean key
      * By default the session cookie is not accessable via javascript. 
@@ -27,16 +29,6 @@ class PmSessionHandler implements SessionHandlerInterface
 
     public function __construct($user, $password, $dsn)
     {
-        // set our custom session functions.
-        /*session_set_save_handler(
-            array($this, 'open'), 
-            array($this, 'close'), 
-            array($this, 'read'), 
-            array($this, 'write'), 
-            array($this, 'destroy'), 
-            array($this, 'gc')
-        );*/
-        
         $this->dbUser = $user;
         $this->dbPassword = $password;
         $this->dsn = $dsn;
@@ -45,6 +37,8 @@ class PmSessionHandler implements SessionHandlerInterface
  
         // This line prevents unexpected effects when using objects as save handlers.
         register_shutdown_function('session_write_close');
+
+        error_log(" * Session: a new instance was created!!");
     }
 
     function start_session($sessionName, $secure)
@@ -83,7 +77,7 @@ class PmSessionHandler implements SessionHandlerInterface
         // It also generates a new encryption key in the database. 
         session_regenerate_id(true);
 
-        error_log(" *** start_session was executed!!");
+        error_log(" * Session: start_session was executed!!");
     }
 
     public function open($savePath, $sessionName)
@@ -106,7 +100,7 @@ class PmSessionHandler implements SessionHandlerInterface
             )
         );
 
-        error_log(" *** open was executed!!");
+        error_log(" * Session: open was executed!!");
 
         return true;
     }
@@ -122,7 +116,7 @@ class PmSessionHandler implements SessionHandlerInterface
         // close the connection when your script ends.
         $this->db = null;
 
-        error_log(" *** close was executed!!");
+        error_log(" * Session: close was executed!!");
 
         return true;
     }
@@ -132,17 +126,17 @@ class PmSessionHandler implements SessionHandlerInterface
         $time = time();
         
         if(! isset($this->wstmt)) {
-            $sql = "REPLACE INTO sessions(ID, SET_TIME, DATA, SESSION_KEY) VALUES (?, ?, ?, ?)";
+            $sql = "REPLACE INTO {$this->dbtable} (ID, SET_TIME, DATA, SESSION_KEY) VALUES (?, ?, ?, ?)";
             $this->wstmt = $this->db->prepare($sql);
         }
 
-        $key = 'sample key #' . rand();
+        $key = 'K' . rand();
         $data = base64_encode(serialize($data));
 
         //$this->wstmt->bind_param('siss', $id, $time, $data, $key);
         $this->wstmt->execute(array($id, $time, $data, $key));
 
-        error_log(" *** write was executed!!");
+        error_log(" * Session: write was executed!!");
 
         return true;
     }
@@ -150,14 +144,14 @@ class PmSessionHandler implements SessionHandlerInterface
     public function read($id)
     {
         if(! isset($this->rstmt)) {
-            $this->rstmt = $this->db->prepare("SELECT DATA FROM sessions WHERE ID = ? LIMIT 1");
+            $this->rstmt = $this->db->prepare("SELECT DATA FROM {$this->dbtable} WHERE ID = ? LIMIT 1");
         }
 
         $this->rstmt->execute(array($id));
         $data = $this->rstmt->fetch();
         $data = unserialize(base64_decode($data['DATA']));
 
-        error_log(" *** read was executed!!");
+        error_log(" * Session: read was executed!!");
 
         return $data;
     }
@@ -165,12 +159,12 @@ class PmSessionHandler implements SessionHandlerInterface
     public function destroy($id)
     {
         if(! isset($this->dstmt)) {
-            $this->dstmt = $this->db->prepare("DELETE FROM sessions WHERE ID = ?");
+            $this->dstmt = $this->db->prepare("DELETE FROM {$this->dbtable} WHERE ID = ?");
         }
 
         $this->dstmt->execute(array($id));
 
-        error_log(" *** destroy was executed!!");
+        error_log(" * Session: destroy was executed!!");
 
         return true;
     }
@@ -180,12 +174,12 @@ class PmSessionHandler implements SessionHandlerInterface
         $time = time() - $maxlifetime;
 
         if(! isset($this->gcstmt)) {
-            $thi->gcstmt = $this->db->prepare("DELETE FROM sessions WHERE SET_TIME < ?");
+            $thi->gcstmt = $this->db->prepare("DELETE FROM {$this->dbtable} WHERE SET_TIME < ?");
         }
 
         $thi->gcstmt->execute(array($time));
 
-        error_log(" *** gc was executed!!");
+        error_log(" * Session: gc was executed!!");
 
         return true;
     }
