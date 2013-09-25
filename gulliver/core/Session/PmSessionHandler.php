@@ -10,7 +10,7 @@
  * @version   1.0
  * @author    Erik Amaru Ortiz <aortiz.erik@gmail.com>
  */
-class PmSessionHandler implements SessionHandlerInterface
+class PmSessionHandler //implements SessionHandlerInterface
 {
     private $savePath;
     private $db;
@@ -48,7 +48,15 @@ class PmSessionHandler implements SessionHandlerInterface
         $this->dbPassword = $password;
         $this->dsn = $dsn;
 
-        session_set_save_handler($this, true);
+        //session_set_save_handler($this, true);
+        session_set_save_handler(
+            array($this, 'open'), 
+            array($this, 'close'), 
+            array($this, 'read'), 
+            array($this, 'write'), 
+            array($this, 'destroy'), 
+            array($this, 'gc')
+        );
  
         // This line prevents unexpected effects when using objects as save handlers.
         register_shutdown_function('session_write_close');
