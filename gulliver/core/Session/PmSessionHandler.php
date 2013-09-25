@@ -140,7 +140,7 @@ class PmSessionHandler //implements SessionHandlerInterface
         // remaining references to it are deleted--you do this by assigning NULL to the variable 
         // that holds the object. If you don't do this explicitly, PHP will automatically 
         // close the connection when your script ends.
-        $this->db = null;
+        //$this->db = null;
 
         return true;
     }
