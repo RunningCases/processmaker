@@ -60,6 +60,7 @@ class PmSessionHandler //implements SessionHandlerInterface
  
         // This line prevents unexpected effects when using objects as save handlers.
         register_shutdown_function('session_write_close');
+        error_log(" PmSession:: a new session was created");
     }
 
     function start_session($sessionName, $secure)
@@ -125,6 +126,8 @@ class PmSessionHandler //implements SessionHandlerInterface
             )
         );
 
+        error_log(" PmSession:: open() called");
+
         return true;
     }
 
@@ -166,6 +169,8 @@ class PmSessionHandler //implements SessionHandlerInterface
         //$this->wstmt->bind_param('siss', $id, $time, $data, $key);
         $this->wstmt->execute(array($id, $time, $data, $key));
 
+        error_log(" PmSession:: write($id, ...) called");
+
         return true;
     }
 
@@ -185,6 +190,8 @@ class PmSessionHandler //implements SessionHandlerInterface
         $data = $this->rstmt->fetch();
         $data = unserialize(base64_decode($data['DATA']));
 
+        error_log(" PmSession:: read($id) called");
+
         return $data;
     }
 
@@ -200,7 +207,7 @@ class PmSessionHandler //implements SessionHandlerInterface
         }
 
         $this->dstmt->execute(array($id));
-
+        error_log(" PmSession:: destroy($id) called");
         return true;
     }
 
@@ -219,6 +226,7 @@ class PmSessionHandler //implements SessionHandlerInterface
         }
 
         $thi->gcstmt->execute(array($time));
+        error_log(" PmSession:: gc($maxlifetime) called");
 
         return true;
     }
