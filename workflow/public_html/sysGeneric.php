@@ -682,7 +682,9 @@ try {
     include_once PATH_GULLIVER_HOME . 'core/Session/PmSessionHandler.php';
 
     //$dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
-    $handler = new PmSessionHandler(DB_USER, DB_PASS, DB_ADAPTER.':host='.DB_HOST.';dbname='.DB_NAME);
+    list($host, $port) = explode(':', DB_HOST);
+    $port = empty($port) ? '3306' : $port; 
+    $handler = new PmSessionHandler(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.";port=$port");
 
     session_start();
 

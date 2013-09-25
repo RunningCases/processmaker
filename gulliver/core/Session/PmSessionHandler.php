@@ -57,10 +57,28 @@ class PmSessionHandler //implements SessionHandlerInterface
             array($this, 'destroy'), 
             array($this, 'gc')
         );
+
+        // moved from open() for php 5.3.x compatibility
+        $this->db = new PDO(
+            $this->dsn, // 
+            $this->dbUser, 
+            $this->dbPassword,
+            array(
+                /*
+                 * The web applications will benefit from making persistent connections to database servers. 
+                 * Persistent connections are not closed at the end of the script, but are cached and re-used 
+                 * when another script requests a connection using the same credentials. 
+                 * The persistent connection cache allows you to avoid the overhead of establishing a new connection 
+                 * every time a script needs to talk to a database, resulting in a faster web application.    
+                 */
+                PDO::ATTR_PERSISTENT => true,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_EMULATE_PREPARES => false
+            )
+        );
  
         // This line prevents unexpected effects when using objects as save handlers.
         register_shutdown_function('session_write_close');
-        error_log(" PmSession:: a new session was created");
     }
 
     function start_session($sessionName, $secure)
@@ -108,26 +126,7 @@ class PmSessionHandler //implements SessionHandlerInterface
      */
     public function open($savePath, $sessionName)
     {
-        $this->db = new PDO(
-            $this->dsn, // 
-            $this->dbUser, 
-            $this->dbPassword,
-            array(
-                /*
-                 * The web applications will benefit from making persistent connections to database servers. 
-                 * Persistent connections are not closed at the end of the script, but are cached and re-used 
-                 * when another script requests a connection using the same credentials. 
-                 * The persistent connection cache allows you to avoid the overhead of establishing a new connection 
-                 * every time a script needs to talk to a database, resulting in a faster web application.    
-                 */
-                PDO::ATTR_PERSISTENT => true,
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_EMULATE_PREPARES => false
-            )
-        );
-
-        error_log(" PmSession:: open() called");
-
+        // routines moved to __construct() for php 5.3.x compatibility
         return true;
     }
 
@@ -143,6 +142,8 @@ class PmSessionHandler //implements SessionHandlerInterface
         // remaining references to it are deleted--you do this by assigning NULL to the variable 
         // that holds the object. If you don't do this explicitly, PHP will automatically 
         // close the connection when your script ends.
+        
+        // this was commented to take advantage of PDO persistence connections
         //$this->db = null;
 
         return true;
@@ -169,8 +170,6 @@ class PmSessionHandler //implements SessionHandlerInterface
         //$this->wstmt->bind_param('siss', $id, $time, $data, $key);
         $this->wstmt->execute(array($id, $time, $data, $key));
 
-        error_log(" PmSession:: write($id, ...) called");
-
         return true;
     }
 
@@ -190,8 +189,6 @@ class PmSessionHandler //implements SessionHandlerInterface
         $data = $this->rstmt->fetch();
         $data = unserialize(base64_decode($data['DATA']));
 
-        error_log(" PmSession:: read($id) called");
-
         return $data;
     }
 
@@ -207,7 +204,7 @@ class PmSessionHandler //implements SessionHandlerInterface
         }
 
         $this->dstmt->execute(array($id));
-        error_log(" PmSession:: destroy($id) called");
+        
         return true;
     }
 
@@ -226,8 +223,7 @@ class PmSessionHandler //implements SessionHandlerInterface
         }
 
         $thi->gcstmt->execute(array($time));
-        error_log(" PmSession:: gc($maxlifetime) called");
-
+        
         return true;
     }
 }
