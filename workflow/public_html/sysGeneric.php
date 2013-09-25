@@ -502,6 +502,7 @@ try {
     Bootstrap::registerClass('HttpProxyController', PATH_GULLIVER . "class.httpProxyController.php");
     Bootstrap::registerClass('templatePower',            PATH_GULLIVER . "class.templatePower.php");
     Bootstrap::registerClass('XmlForm_Field_SimpleText', PATH_GULLIVER . "class.xmlformExtension.php");
+    Bootstrap::registerClass('PmSessionHandler',   PATH_GULLIVER_HOME . 'core/Session/PmSessionHandler.php');
     Bootstrap::registerClass('Groups',       PATH_HOME . "engine/classes/class.groups.php");
     Bootstrap::registerClass('Tasks',        PATH_HOME . "engine/classes/class.tasks.php");
     Bootstrap::registerClass('Calendar',     PATH_HOME . "engine/classes/class.calendar.php");
@@ -678,10 +679,6 @@ try {
     //require_once ("propel/Propel.php");
     //require_once ("creole/Creole.php");
 
-    //var_dump(include(PATH_CORE . "config/databases.php")); die;
-    include_once PATH_GULLIVER_HOME . 'core/Session/PmSessionHandler.php';
-
-    //$dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
     list($host, $port) = explode(':', DB_HOST);
     $port = empty($port) ? '3306' : $port; 
     $handler = new PmSessionHandler(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.";port=$port");
