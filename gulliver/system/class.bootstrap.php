@@ -1078,7 +1078,7 @@ class Bootstrap
 
         $rest->setSupportedFormats('JsonFormat', 'XmlFormat'); //, 'HtmlFormat');
         //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
-        $rest->setOverridingFormats('HtmlFormat');
+        $rest->setOverridingFormats('HtmlFormat', 'JsonFormat', 'UploadFormat');
 
         $_SERVER['REQUEST_URI'] = $uri;
 
