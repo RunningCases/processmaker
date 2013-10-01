@@ -44,7 +44,8 @@ if (isset($_SESSION["G_MESSAGE_TYPE"])) {
 }
 
 //Initialize session
-session_destroy();
+
+@session_destroy();
 session_start();
 session_regenerate_id();
 

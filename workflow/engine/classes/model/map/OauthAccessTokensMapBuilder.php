@@ -69,7 +69,7 @@ class OauthAccessTokensMapBuilder
 
         $tMap->addColumn('CLIENT_ID', 'ClientId', 'string', CreoleTypes::VARCHAR, true, 80);
 
-        $tMap->addColumn('USER_ID', 'UserId', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('USER_ID', 'UserId', 'string', CreoleTypes::VARCHAR, false, 32);
 
         $tMap->addColumn('EXPIRES', 'Expires', 'int', CreoleTypes::TIMESTAMP, true, null);
 

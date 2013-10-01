@@ -22,3 +22,4 @@ workflow/public_html/index.html
 composer.phar
 composer.lock
 vendor/
+workflow/engine/config/schema-transformed.xml

@@ -679,9 +679,9 @@ try {
     //require_once ("propel/Propel.php");
     //require_once ("creole/Creole.php");
 
-    list($host, $port) = explode(':', DB_HOST);
-    $port = empty($port) ? '3306' : $port; 
-    $handler = new PmSessionHandler(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.";port=$port");
+    list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
+    $port = empty($port) ? '' : ";port=$port";
+    $handler = new PmSessionHandler(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
 
     session_start();
 

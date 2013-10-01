@@ -31,8 +31,8 @@ abstract class BaseOauthRefreshTokensPeer
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
-    /** the column name for the REFRESH_TOKES field */
-    const REFRESH_TOKES = 'OAUTH_REFRESH_TOKENS.REFRESH_TOKES';
+    /** the column name for the REFRESH_TOKEN field */
+    const REFRESH_TOKEN = 'OAUTH_REFRESH_TOKENS.REFRESH_TOKEN';
 
     /** the column name for the CLIENT_ID field */
     const CLIENT_ID = 'OAUTH_REFRESH_TOKENS.CLIENT_ID';
@@ -57,9 +57,9 @@ abstract class BaseOauthRefreshTokensPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('RefreshTokes', 'ClientId', 'UserId', 'Expires', 'Scope', ),
-        BasePeer::TYPE_COLNAME => array (OauthRefreshTokensPeer::REFRESH_TOKES, OauthRefreshTokensPeer::CLIENT_ID, OauthRefreshTokensPeer::USER_ID, OauthRefreshTokensPeer::EXPIRES, OauthRefreshTokensPeer::SCOPE, ),
-        BasePeer::TYPE_FIELDNAME => array ('REFRESH_TOKES', 'CLIENT_ID', 'USER_ID', 'EXPIRES', 'SCOPE', ),
+        BasePeer::TYPE_PHPNAME => array ('RefreshToken', 'ClientId', 'UserId', 'Expires', 'Scope', ),
+        BasePeer::TYPE_COLNAME => array (OauthRefreshTokensPeer::REFRESH_TOKEN, OauthRefreshTokensPeer::CLIENT_ID, OauthRefreshTokensPeer::USER_ID, OauthRefreshTokensPeer::EXPIRES, OauthRefreshTokensPeer::SCOPE, ),
+        BasePeer::TYPE_FIELDNAME => array ('REFRESH_TOKEN', 'CLIENT_ID', 'USER_ID', 'EXPIRES', 'SCOPE', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
@@ -70,9 +70,9 @@ abstract class BaseOauthRefreshTokensPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('RefreshTokes' => 0, 'ClientId' => 1, 'UserId' => 2, 'Expires' => 3, 'Scope' => 4, ),
-        BasePeer::TYPE_COLNAME => array (OauthRefreshTokensPeer::REFRESH_TOKES => 0, OauthRefreshTokensPeer::CLIENT_ID => 1, OauthRefreshTokensPeer::USER_ID => 2, OauthRefreshTokensPeer::EXPIRES => 3, OauthRefreshTokensPeer::SCOPE => 4, ),
-        BasePeer::TYPE_FIELDNAME => array ('REFRESH_TOKES' => 0, 'CLIENT_ID' => 1, 'USER_ID' => 2, 'EXPIRES' => 3, 'SCOPE' => 4, ),
+        BasePeer::TYPE_PHPNAME => array ('RefreshToken' => 0, 'ClientId' => 1, 'UserId' => 2, 'Expires' => 3, 'Scope' => 4, ),
+        BasePeer::TYPE_COLNAME => array (OauthRefreshTokensPeer::REFRESH_TOKEN => 0, OauthRefreshTokensPeer::CLIENT_ID => 1, OauthRefreshTokensPeer::USER_ID => 2, OauthRefreshTokensPeer::EXPIRES => 3, OauthRefreshTokensPeer::SCOPE => 4, ),
+        BasePeer::TYPE_FIELDNAME => array ('REFRESH_TOKEN' => 0, 'CLIENT_ID' => 1, 'USER_ID' => 2, 'EXPIRES' => 3, 'SCOPE' => 4, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
@@ -174,7 +174,7 @@ abstract class BaseOauthRefreshTokensPeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
-        $criteria->addSelectColumn(OauthRefreshTokensPeer::REFRESH_TOKES);
+        $criteria->addSelectColumn(OauthRefreshTokensPeer::REFRESH_TOKEN);
 
         $criteria->addSelectColumn(OauthRefreshTokensPeer::CLIENT_ID);
 
@@ -186,8 +186,8 @@ abstract class BaseOauthRefreshTokensPeer
 
     }
 
-    const COUNT = 'COUNT(OAUTH_REFRESH_TOKENS.REFRESH_TOKES)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT OAUTH_REFRESH_TOKENS.REFRESH_TOKES)';
+    const COUNT = 'COUNT(OAUTH_REFRESH_TOKENS.REFRESH_TOKEN)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT OAUTH_REFRESH_TOKENS.REFRESH_TOKEN)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -396,8 +396,8 @@ abstract class BaseOauthRefreshTokensPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(OauthRefreshTokensPeer::REFRESH_TOKES);
-            $selectCriteria->add(OauthRefreshTokensPeer::REFRESH_TOKES, $criteria->remove(OauthRefreshTokensPeer::REFRESH_TOKES), $comparison);
+            $comparison = $criteria->getComparison(OauthRefreshTokensPeer::REFRESH_TOKEN);
+            $selectCriteria->add(OauthRefreshTokensPeer::REFRESH_TOKEN, $criteria->remove(OauthRefreshTokensPeer::REFRESH_TOKEN), $comparison);
 
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
@@ -460,7 +460,7 @@ abstract class BaseOauthRefreshTokensPeer
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(OauthRefreshTokensPeer::REFRESH_TOKES, (array) $values, Criteria::IN);
+            $criteria->add(OauthRefreshTokensPeer::REFRESH_TOKEN, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -534,7 +534,7 @@ abstract class BaseOauthRefreshTokensPeer
 
         $criteria = new Criteria(OauthRefreshTokensPeer::DATABASE_NAME);
 
-        $criteria->add(OauthRefreshTokensPeer::REFRESH_TOKES, $pk);
+        $criteria->add(OauthRefreshTokensPeer::REFRESH_TOKEN, $pk);
 
 
         $v = OauthRefreshTokensPeer::doSelect($criteria, $con);
@@ -561,7 +561,7 @@ abstract class BaseOauthRefreshTokensPeer
             $objs = array();
         } else {
             $criteria = new Criteria();
-            $criteria->add(OauthRefreshTokensPeer::REFRESH_TOKES, $pks, Criteria::IN);
+            $criteria->add(OauthRefreshTokensPeer::REFRESH_TOKEN, $pks, Criteria::IN);
             $objs = OauthRefreshTokensPeer::doSelect($criteria, $con);
         }
         return $objs;

@@ -1472,5 +1472,81 @@ CREATE TABLE `SESSION_STORAGE`
 	PRIMARY KEY (`ID`),
 	KEY `indexSessionStorage`(`ID`)
 )ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- OAUTH_ACCESS_TOKENS
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `OAUTH_ACCESS_TOKENS`;
+
+
+CREATE TABLE `OAUTH_ACCESS_TOKENS`
+(
+	`ACCESS_TOKEN` VARCHAR(40)  NOT NULL,
+	`CLIENT_ID` VARCHAR(80)  NOT NULL,
+	`USER_ID` VARCHAR(32),
+	`EXPIRES` DATETIME  NOT NULL,
+	`SCOPE` VARCHAR(2000),
+	PRIMARY KEY (`ACCESS_TOKEN`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- OAUTH_AUTHORIZATION_CODES
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `OAUTH_AUTHORIZATION_CODES`;
+
+
+CREATE TABLE `OAUTH_AUTHORIZATION_CODES`
+(
+	`AUTHORIZATION_CODE` VARCHAR(40)  NOT NULL,
+	`CLIENT_ID` VARCHAR(80)  NOT NULL,
+	`USER_ID` VARCHAR(32),
+	`REDIRECT_URI` VARCHAR(2000),
+	`EXPIRES` DATETIME  NOT NULL,
+	`SCOPE` VARCHAR(2000),
+	PRIMARY KEY (`AUTHORIZATION_CODE`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- OAUTH_CLIENTS
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `OAUTH_CLIENTS`;
+
+
+CREATE TABLE `OAUTH_CLIENTS`
+(
+	`CLIENT_ID` VARCHAR(80)  NOT NULL,
+	`CLIENT_SECRET` VARCHAR(80)  NOT NULL,
+	`REDIRECT_URI` VARCHAR(2000)  NOT NULL,
+	PRIMARY KEY (`CLIENT_ID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- OAUTH_REFRESH_TOKENS
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `OAUTH_REFRESH_TOKENS`;
+
+
+CREATE TABLE `OAUTH_REFRESH_TOKENS`
+(
+	`REFRESH_TOKEN` VARCHAR(40)  NOT NULL,
+	`CLIENT_ID` VARCHAR(80)  NOT NULL,
+	`USER_ID` VARCHAR(32),
+	`EXPIRES` DATETIME  NOT NULL,
+	`SCOPE` VARCHAR(2000),
+	PRIMARY KEY (`REFRESH_TOKEN`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- OAUTH_SCOPES
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `OAUTH_SCOPES`;
+
+
+CREATE TABLE `OAUTH_SCOPES`
+(
+	`TYPE` VARCHAR(40)  NOT NULL,
+	`SCOPE` VARCHAR(2000),
+	`CLIENT_ID` VARCHAR(80)
+)ENGINE=InnoDB ;
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

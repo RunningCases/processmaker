@@ -65,7 +65,7 @@ class OauthRefreshTokensMapBuilder
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addPrimaryKey('REFRESH_TOKES', 'RefreshTokes', 'string', CreoleTypes::VARCHAR, true, 40);
+        $tMap->addPrimaryKey('REFRESH_TOKEN', 'RefreshToken', 'string', CreoleTypes::VARCHAR, true, 40);
 
         $tMap->addColumn('CLIENT_ID', 'ClientId', 'string', CreoleTypes::VARCHAR, true, 80);
 

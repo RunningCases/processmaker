@@ -28,10 +28,10 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
     protected static $peer;
 
     /**
-     * The value for the refresh_tokes field.
+     * The value for the refresh_token field.
      * @var        string
      */
-    protected $refresh_tokes;
+    protected $refresh_token;
 
     /**
      * The value for the client_id field.
@@ -72,14 +72,14 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
     protected $alreadyInValidation = false;
 
     /**
-     * Get the [refresh_tokes] column value.
+     * Get the [refresh_token] column value.
      * 
      * @return     string
      */
-    public function getRefreshTokes()
+    public function getRefreshToken()
     {
 
-        return $this->refresh_tokes;
+        return $this->refresh_token;
     }
 
     /**
@@ -148,12 +148,12 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
     }
 
     /**
-     * Set the value of [refresh_tokes] column.
+     * Set the value of [refresh_token] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setRefreshTokes($v)
+    public function setRefreshToken($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -162,12 +162,12 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->refresh_tokes !== $v) {
-            $this->refresh_tokes = $v;
-            $this->modifiedColumns[] = OauthRefreshTokensPeer::REFRESH_TOKES;
+        if ($this->refresh_token !== $v) {
+            $this->refresh_token = $v;
+            $this->modifiedColumns[] = OauthRefreshTokensPeer::REFRESH_TOKEN;
         }
 
-    } // setRefreshTokes()
+    } // setRefreshToken()
 
     /**
      * Set the value of [client_id] column.
@@ -277,7 +277,7 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
     {
         try {
 
-            $this->refresh_tokes = $rs->getString($startcol + 0);
+            $this->refresh_token = $rs->getString($startcol + 0);
 
             $this->client_id = $rs->getString($startcol + 1);
 
@@ -497,7 +497,7 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                return $this->getRefreshTokes();
+                return $this->getRefreshToken();
                 break;
             case 1:
                 return $this->getClientId();
@@ -531,7 +531,7 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
     {
         $keys = OauthRefreshTokensPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getRefreshTokes(),
+            $keys[0] => $this->getRefreshToken(),
             $keys[1] => $this->getClientId(),
             $keys[2] => $this->getUserId(),
             $keys[3] => $this->getExpires(),
@@ -568,7 +568,7 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                $this->setRefreshTokes($value);
+                $this->setRefreshToken($value);
                 break;
             case 1:
                 $this->setClientId($value);
@@ -606,7 +606,7 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
         $keys = OauthRefreshTokensPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setRefreshTokes($arr[$keys[0]]);
+            $this->setRefreshToken($arr[$keys[0]]);
         }
 
         if (array_key_exists($keys[1], $arr)) {
@@ -636,8 +636,8 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
     {
         $criteria = new Criteria(OauthRefreshTokensPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(OauthRefreshTokensPeer::REFRESH_TOKES)) {
-            $criteria->add(OauthRefreshTokensPeer::REFRESH_TOKES, $this->refresh_tokes);
+        if ($this->isColumnModified(OauthRefreshTokensPeer::REFRESH_TOKEN)) {
+            $criteria->add(OauthRefreshTokensPeer::REFRESH_TOKEN, $this->refresh_token);
         }
 
         if ($this->isColumnModified(OauthRefreshTokensPeer::CLIENT_ID)) {
@@ -672,7 +672,7 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
     {
         $criteria = new Criteria(OauthRefreshTokensPeer::DATABASE_NAME);
 
-        $criteria->add(OauthRefreshTokensPeer::REFRESH_TOKES, $this->refresh_tokes);
+        $criteria->add(OauthRefreshTokensPeer::REFRESH_TOKEN, $this->refresh_token);
 
         return $criteria;
     }
@@ -683,18 +683,18 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getRefreshTokes();
+        return $this->getRefreshToken();
     }
 
     /**
-     * Generic method to set the primary key (refresh_tokes column).
+     * Generic method to set the primary key (refresh_token column).
      *
      * @param      string $key Primary key.
      * @return     void
      */
     public function setPrimaryKey($key)
     {
-        $this->setRefreshTokes($key);
+        $this->setRefreshToken($key);
     }
 
     /**
@@ -721,7 +721,7 @@ abstract class BaseOauthRefreshTokens extends BaseObject implements Persistent
 
         $copyObj->setNew(true);
 
-        $copyObj->setRefreshTokes(NULL); // this is a pkey column, so set to default value
+        $copyObj->setRefreshToken(NULL); // this is a pkey column, so set to default value
 
     }
 

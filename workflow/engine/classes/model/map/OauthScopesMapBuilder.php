@@ -69,7 +69,7 @@ class OauthScopesMapBuilder
 
         $tMap->addColumn('SCOPE', 'Scope', 'string', CreoleTypes::VARCHAR, false, 2000);
 
-        $tMap->addColumn('CLIENT_ID', 'ClientId', 'string', CreoleTypes::VARCHAR, true, 80);
+        $tMap->addColumn('CLIENT_ID', 'ClientId', 'string', CreoleTypes::VARCHAR, false, 80);
 
     } // doBuild()
 
