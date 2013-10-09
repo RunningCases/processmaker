@@ -1076,6 +1076,12 @@ class Bootstrap
         
         $rest->addAuthenticationClass('Api\\OAuth2\\Server', '');
 
+        list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
+        $port = empty($port) ? '' : ";port=$port";
+
+        \Api\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
+        \Api\OAuth2\Server::setPmClientId('x-pm-local-client');
+
         $rest->setSupportedFormats('JsonFormat', 'XmlFormat'); //, 'HtmlFormat');
         //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
         $rest->setOverridingFormats('HtmlFormat', 'JsonFormat', 'UploadFormat');

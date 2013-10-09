@@ -3028,6 +3028,9 @@
     <table name="OAUTH_CLIENTS">
         <column name="CLIENT_ID" type="VARCHAR" size="80" required="true" primaryKey="true" />
         <column name="CLIENT_SECRET" type="VARCHAR"  size="80" required="true" />
+        <column name="CLIENT_NAME" type="VARCHAR" size="256" required="true" />
+        <column name="CLIENT_DESCRIPTION" type="VARCHAR" size="1024" required="true" />
+        <column name="CLIENT_WEBSITE" type="VARCHAR" size="1024" required="true" />
         <column name="REDIRECT_URI" type="VARCHAR" size="2000" required="true" />
     </table>
     <table name="OAUTH_REFRESH_TOKENS">
@@ -3041,5 +3044,12 @@
         <column name="TYPE" type="VARCHAR" size="40" required="true" />
         <column name="SCOPE" type="VARCHAR" size="2000" required="false" />
         <column name="CLIENT_ID" type="VARCHAR"  size="80" required="false" />
+    </table>
+
+    <table name="PMOAUTH_USER_ACCESS_TOKENS">
+        <column name="ACCESS_TOKEN" type="VARCHAR" size="40" required="true" primaryKey="true" />
+        <column name="REFRESH_TOKEN" type="VARCHAR" size="40" required="true" />
+        <column name="USER_ID" type="VARCHAR"  size="32" required="false" />
+        <column name="SESSION_ID" type="VARCHAR" size="40" required="true" />
     </table>
 </database>

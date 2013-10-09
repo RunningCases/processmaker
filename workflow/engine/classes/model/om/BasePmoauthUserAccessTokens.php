@@ -7,61 +7,49 @@ require_once 'propel/om/Persistent.php';
 
 include_once 'propel/util/Criteria.php';
 
-include_once 'classes/model/OauthClientsPeer.php';
+include_once 'classes/model/PmoauthUserAccessTokensPeer.php';
 
 /**
- * Base class that represents a row from the 'OAUTH_CLIENTS' table.
+ * Base class that represents a row from the 'PMOAUTH_USER_ACCESS_TOKENS' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseOauthClients extends BaseObject implements Persistent
+abstract class BasePmoauthUserAccessTokens extends BaseObject implements Persistent
 {
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        OauthClientsPeer
+     * @var        PmoauthUserAccessTokensPeer
     */
     protected static $peer;
 
     /**
-     * The value for the client_id field.
+     * The value for the access_token field.
      * @var        string
      */
-    protected $client_id;
+    protected $access_token;
 
     /**
-     * The value for the client_secret field.
+     * The value for the refresh_token field.
      * @var        string
      */
-    protected $client_secret;
+    protected $refresh_token;
 
     /**
-     * The value for the client_name field.
+     * The value for the user_id field.
      * @var        string
      */
-    protected $client_name;
+    protected $user_id;
 
     /**
-     * The value for the client_description field.
+     * The value for the session_id field.
      * @var        string
      */
-    protected $client_description;
-
-    /**
-     * The value for the client_website field.
-     * @var        string
-     */
-    protected $client_website;
-
-    /**
-     * The value for the redirect_uri field.
-     * @var        string
-     */
-    protected $redirect_uri;
+    protected $session_id;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -78,78 +66,56 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
     protected $alreadyInValidation = false;
 
     /**
-     * Get the [client_id] column value.
+     * Get the [access_token] column value.
      * 
      * @return     string
      */
-    public function getClientId()
+    public function getAccessToken()
     {
 
-        return $this->client_id;
+        return $this->access_token;
     }
 
     /**
-     * Get the [client_secret] column value.
+     * Get the [refresh_token] column value.
      * 
      * @return     string
      */
-    public function getClientSecret()
+    public function getRefreshToken()
     {
 
-        return $this->client_secret;
+        return $this->refresh_token;
     }
 
     /**
-     * Get the [client_name] column value.
+     * Get the [user_id] column value.
      * 
      * @return     string
      */
-    public function getClientName()
+    public function getUserId()
     {
 
-        return $this->client_name;
+        return $this->user_id;
     }
 
     /**
-     * Get the [client_description] column value.
+     * Get the [session_id] column value.
      * 
      * @return     string
      */
-    public function getClientDescription()
+    public function getSessionId()
     {
 
-        return $this->client_description;
+        return $this->session_id;
     }
 
     /**
-     * Get the [client_website] column value.
-     * 
-     * @return     string
-     */
-    public function getClientWebsite()
-    {
-
-        return $this->client_website;
-    }
-
-    /**
-     * Get the [redirect_uri] column value.
-     * 
-     * @return     string
-     */
-    public function getRedirectUri()
-    {
-
-        return $this->redirect_uri;
-    }
-
-    /**
-     * Set the value of [client_id] column.
+     * Set the value of [access_token] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setClientId($v)
+    public function setAccessToken($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -158,20 +124,20 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->client_id !== $v) {
-            $this->client_id = $v;
-            $this->modifiedColumns[] = OauthClientsPeer::CLIENT_ID;
+        if ($this->access_token !== $v) {
+            $this->access_token = $v;
+            $this->modifiedColumns[] = PmoauthUserAccessTokensPeer::ACCESS_TOKEN;
         }
 
-    } // setClientId()
+    } // setAccessToken()
 
     /**
-     * Set the value of [client_secret] column.
+     * Set the value of [refresh_token] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setClientSecret($v)
+    public function setRefreshToken($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -180,20 +146,20 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->client_secret !== $v) {
-            $this->client_secret = $v;
-            $this->modifiedColumns[] = OauthClientsPeer::CLIENT_SECRET;
+        if ($this->refresh_token !== $v) {
+            $this->refresh_token = $v;
+            $this->modifiedColumns[] = PmoauthUserAccessTokensPeer::REFRESH_TOKEN;
         }
 
-    } // setClientSecret()
+    } // setRefreshToken()
 
     /**
-     * Set the value of [client_name] column.
+     * Set the value of [user_id] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setClientName($v)
+    public function setUserId($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -202,20 +168,20 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->client_name !== $v) {
-            $this->client_name = $v;
-            $this->modifiedColumns[] = OauthClientsPeer::CLIENT_NAME;
+        if ($this->user_id !== $v) {
+            $this->user_id = $v;
+            $this->modifiedColumns[] = PmoauthUserAccessTokensPeer::USER_ID;
         }
 
-    } // setClientName()
+    } // setUserId()
 
     /**
-     * Set the value of [client_description] column.
+     * Set the value of [session_id] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setClientDescription($v)
+    public function setSessionId($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -224,56 +190,12 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->client_description !== $v) {
-            $this->client_description = $v;
-            $this->modifiedColumns[] = OauthClientsPeer::CLIENT_DESCRIPTION;
+        if ($this->session_id !== $v) {
+            $this->session_id = $v;
+            $this->modifiedColumns[] = PmoauthUserAccessTokensPeer::SESSION_ID;
         }
 
-    } // setClientDescription()
-
-    /**
-     * Set the value of [client_website] column.
-     * 
-     * @param      string $v new value
-     * @return     void
-     */
-    public function setClientWebsite($v)
-    {
-
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->client_website !== $v) {
-            $this->client_website = $v;
-            $this->modifiedColumns[] = OauthClientsPeer::CLIENT_WEBSITE;
-        }
-
-    } // setClientWebsite()
-
-    /**
-     * Set the value of [redirect_uri] column.
-     * 
-     * @param      string $v new value
-     * @return     void
-     */
-    public function setRedirectUri($v)
-    {
-
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->redirect_uri !== $v) {
-            $this->redirect_uri = $v;
-            $this->modifiedColumns[] = OauthClientsPeer::REDIRECT_URI;
-        }
-
-    } // setRedirectUri()
+    } // setSessionId()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -292,27 +214,23 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
     {
         try {
 
-            $this->client_id = $rs->getString($startcol + 0);
+            $this->access_token = $rs->getString($startcol + 0);
 
-            $this->client_secret = $rs->getString($startcol + 1);
+            $this->refresh_token = $rs->getString($startcol + 1);
 
-            $this->client_name = $rs->getString($startcol + 2);
+            $this->user_id = $rs->getString($startcol + 2);
 
-            $this->client_description = $rs->getString($startcol + 3);
-
-            $this->client_website = $rs->getString($startcol + 4);
-
-            $this->redirect_uri = $rs->getString($startcol + 5);
+            $this->session_id = $rs->getString($startcol + 3);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 6; // 6 = OauthClientsPeer::NUM_COLUMNS - OauthClientsPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 4; // 4 = PmoauthUserAccessTokensPeer::NUM_COLUMNS - PmoauthUserAccessTokensPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating OauthClients object", $e);
+            throw new PropelException("Error populating PmoauthUserAccessTokens object", $e);
         }
     }
 
@@ -332,12 +250,12 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(OauthClientsPeer::DATABASE_NAME);
+            $con = Propel::getConnection(PmoauthUserAccessTokensPeer::DATABASE_NAME);
         }
 
         try {
             $con->begin();
-            OauthClientsPeer::doDelete($this, $con);
+            PmoauthUserAccessTokensPeer::doDelete($this, $con);
             $this->setDeleted(true);
             $con->commit();
         } catch (PropelException $e) {
@@ -363,7 +281,7 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(OauthClientsPeer::DATABASE_NAME);
+            $con = Propel::getConnection(PmoauthUserAccessTokensPeer::DATABASE_NAME);
         }
 
         try {
@@ -398,14 +316,14 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
             // If this object has been modified, then save it to the database.
             if ($this->isModified()) {
                 if ($this->isNew()) {
-                    $pk = OauthClientsPeer::doInsert($this, $con);
+                    $pk = PmoauthUserAccessTokensPeer::doInsert($this, $con);
                     $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
                                          // should always be true here (even though technically
                                          // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
-                    $affectedRows += OauthClientsPeer::doUpdate($this, $con);
+                    $affectedRows += PmoauthUserAccessTokensPeer::doUpdate($this, $con);
                 }
                 $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
             }
@@ -476,7 +394,7 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = OauthClientsPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = PmoauthUserAccessTokensPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -499,7 +417,7 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = OauthClientsPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = PmoauthUserAccessTokensPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->getByPosition($pos);
     }
 
@@ -514,22 +432,16 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                return $this->getClientId();
+                return $this->getAccessToken();
                 break;
             case 1:
-                return $this->getClientSecret();
+                return $this->getRefreshToken();
                 break;
             case 2:
-                return $this->getClientName();
+                return $this->getUserId();
                 break;
             case 3:
-                return $this->getClientDescription();
-                break;
-            case 4:
-                return $this->getClientWebsite();
-                break;
-            case 5:
-                return $this->getRedirectUri();
+                return $this->getSessionId();
                 break;
             default:
                 return null;
@@ -549,14 +461,12 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = OauthClientsPeer::getFieldNames($keyType);
+        $keys = PmoauthUserAccessTokensPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getClientId(),
-            $keys[1] => $this->getClientSecret(),
-            $keys[2] => $this->getClientName(),
-            $keys[3] => $this->getClientDescription(),
-            $keys[4] => $this->getClientWebsite(),
-            $keys[5] => $this->getRedirectUri(),
+            $keys[0] => $this->getAccessToken(),
+            $keys[1] => $this->getRefreshToken(),
+            $keys[2] => $this->getUserId(),
+            $keys[3] => $this->getSessionId(),
         );
         return $result;
     }
@@ -573,7 +483,7 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = OauthClientsPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = PmoauthUserAccessTokensPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->setByPosition($pos, $value);
     }
 
@@ -589,22 +499,16 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                $this->setClientId($value);
+                $this->setAccessToken($value);
                 break;
             case 1:
-                $this->setClientSecret($value);
+                $this->setRefreshToken($value);
                 break;
             case 2:
-                $this->setClientName($value);
+                $this->setUserId($value);
                 break;
             case 3:
-                $this->setClientDescription($value);
-                break;
-            case 4:
-                $this->setClientWebsite($value);
-                break;
-            case 5:
-                $this->setRedirectUri($value);
+                $this->setSessionId($value);
                 break;
         } // switch()
     }
@@ -627,30 +531,22 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = OauthClientsPeer::getFieldNames($keyType);
+        $keys = PmoauthUserAccessTokensPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setClientId($arr[$keys[0]]);
+            $this->setAccessToken($arr[$keys[0]]);
         }
 
         if (array_key_exists($keys[1], $arr)) {
-            $this->setClientSecret($arr[$keys[1]]);
+            $this->setRefreshToken($arr[$keys[1]]);
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setClientName($arr[$keys[2]]);
+            $this->setUserId($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
-            $this->setClientDescription($arr[$keys[3]]);
-        }
-
-        if (array_key_exists($keys[4], $arr)) {
-            $this->setClientWebsite($arr[$keys[4]]);
-        }
-
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setRedirectUri($arr[$keys[5]]);
+            $this->setSessionId($arr[$keys[3]]);
         }
 
     }
@@ -662,30 +558,22 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(OauthClientsPeer::DATABASE_NAME);
+        $criteria = new Criteria(PmoauthUserAccessTokensPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(OauthClientsPeer::CLIENT_ID)) {
-            $criteria->add(OauthClientsPeer::CLIENT_ID, $this->client_id);
+        if ($this->isColumnModified(PmoauthUserAccessTokensPeer::ACCESS_TOKEN)) {
+            $criteria->add(PmoauthUserAccessTokensPeer::ACCESS_TOKEN, $this->access_token);
         }
 
-        if ($this->isColumnModified(OauthClientsPeer::CLIENT_SECRET)) {
-            $criteria->add(OauthClientsPeer::CLIENT_SECRET, $this->client_secret);
+        if ($this->isColumnModified(PmoauthUserAccessTokensPeer::REFRESH_TOKEN)) {
+            $criteria->add(PmoauthUserAccessTokensPeer::REFRESH_TOKEN, $this->refresh_token);
         }
 
-        if ($this->isColumnModified(OauthClientsPeer::CLIENT_NAME)) {
-            $criteria->add(OauthClientsPeer::CLIENT_NAME, $this->client_name);
+        if ($this->isColumnModified(PmoauthUserAccessTokensPeer::USER_ID)) {
+            $criteria->add(PmoauthUserAccessTokensPeer::USER_ID, $this->user_id);
         }
 
-        if ($this->isColumnModified(OauthClientsPeer::CLIENT_DESCRIPTION)) {
-            $criteria->add(OauthClientsPeer::CLIENT_DESCRIPTION, $this->client_description);
-        }
-
-        if ($this->isColumnModified(OauthClientsPeer::CLIENT_WEBSITE)) {
-            $criteria->add(OauthClientsPeer::CLIENT_WEBSITE, $this->client_website);
-        }
-
-        if ($this->isColumnModified(OauthClientsPeer::REDIRECT_URI)) {
-            $criteria->add(OauthClientsPeer::REDIRECT_URI, $this->redirect_uri);
+        if ($this->isColumnModified(PmoauthUserAccessTokensPeer::SESSION_ID)) {
+            $criteria->add(PmoauthUserAccessTokensPeer::SESSION_ID, $this->session_id);
         }
 
 
@@ -702,9 +590,9 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(OauthClientsPeer::DATABASE_NAME);
+        $criteria = new Criteria(PmoauthUserAccessTokensPeer::DATABASE_NAME);
 
-        $criteria->add(OauthClientsPeer::CLIENT_ID, $this->client_id);
+        $criteria->add(PmoauthUserAccessTokensPeer::ACCESS_TOKEN, $this->access_token);
 
         return $criteria;
     }
@@ -715,18 +603,18 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getClientId();
+        return $this->getAccessToken();
     }
 
     /**
-     * Generic method to set the primary key (client_id column).
+     * Generic method to set the primary key (access_token column).
      *
      * @param      string $key Primary key.
      * @return     void
      */
     public function setPrimaryKey($key)
     {
-        $this->setClientId($key);
+        $this->setAccessToken($key);
     }
 
     /**
@@ -735,27 +623,23 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of OauthClients (or compatible) type.
+     * @param      object $copyObj An object of PmoauthUserAccessTokens (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @throws     PropelException
      */
     public function copyInto($copyObj, $deepCopy = false)
     {
 
-        $copyObj->setClientSecret($this->client_secret);
+        $copyObj->setRefreshToken($this->refresh_token);
 
-        $copyObj->setClientName($this->client_name);
+        $copyObj->setUserId($this->user_id);
 
-        $copyObj->setClientDescription($this->client_description);
-
-        $copyObj->setClientWebsite($this->client_website);
-
-        $copyObj->setRedirectUri($this->redirect_uri);
+        $copyObj->setSessionId($this->session_id);
 
 
         $copyObj->setNew(true);
 
-        $copyObj->setClientId(NULL); // this is a pkey column, so set to default value
+        $copyObj->setAccessToken(NULL); // this is a pkey column, so set to default value
 
     }
 
@@ -768,7 +652,7 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return     OauthClients Clone of current object.
+     * @return     PmoauthUserAccessTokens Clone of current object.
      * @throws     PropelException
      */
     public function copy($deepCopy = false)
@@ -787,12 +671,12 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return     OauthClientsPeer
+     * @return     PmoauthUserAccessTokensPeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new OauthClientsPeer();
+            self::$peer = new PmoauthUserAccessTokensPeer();
         }
         return self::$peer;
     }

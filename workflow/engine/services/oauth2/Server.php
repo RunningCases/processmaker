@@ -20,61 +20,58 @@ class Server implements iAuthenticate
     /**
      * @var OAuth2_Server
      */
-    //protected static $server;
     protected $server;
-    protected $storage;
-
     /**
      * @var OAuth2_Storage_Pdo
      */
-    //protected static $storage;
-    /**
-     * @var OAuth2_Request
-     */
-    protected static $request;
+    protected $storage;
+    
+    protected $scope = array();
+
+    protected static $pmClientId;
+    protected static $userId;
+
+    protected static $dbUser;
+    protected static $dbPassword;
+    protected static $dsn;
+
     public function __construct()
     {
-        /*$dir = __DIR__ . '/db/';
-        $file = 'oauth.sqlite';
-        if (!file_exists($dir . $file)) {
-            include_once $dir . 'rebuild_db.php';
-        }
-        static::$storage = new \OAuth2\Storage\Pdo(
-            array('dsn' => 'sqlite:' . $dir . $file)
-        );
-        static::$request = \OAuth2\Request::createFromGlobals();
-        static::$server = new \OAuth2\Server(static::$storage);
-        static::$server->addGrantType(
-            new \OAuth2\GrantType\AuthorizationCode(static::$storage)
-        );*/
-
-        static::$request = \OAuth2\Request::createFromGlobals();
-
         require_once 'PmPdo.php';
 
-        $dsn      = 'mysql:dbname=wf_workflow;host=localhost';
-        $username = 'root';
-        $password = 'sample';
-
-        // error reporting (this is a demo, after all!)
-        //ini_set('display_errors',1);error_reporting(E_ALL);
-
-        // Autoloading (composer is preferred, but for this example let's just do this)
-        //require_once('oauth2-server-php/src/OAuth2/Autoloader.php');
-        //\OAuth2\Autoloader::register();
+        $this->scope = array(
+            'view_processes' => 'View Processes',
+            'edit_processes' => 'Edit Processes'
+        );
 
         // $dsn is the Data Source Name for your database, for exmaple "mysql:dbname=my_oauth2_db;host=localhost"
-        $storage = new PmPdo(array('dsn' => $dsn, 'username' => $username, 'password' => $password));
+        $config = array('dsn' => self::$dsn, 'username' => self::$dbUser, 'password' => self::$dbPassword);
+        //var_dump($config); die;
+        $this->storage = new PmPdo($config);
 
         // Pass a storage object or array of storage objects to the OAuth2 server class
-        $this->server = new \OAuth2\Server($storage);
-
-        // Add the "Client Credentials" grant type (it is the simplest of the grant types)
-        $this->server->addGrantType(new \OAuth2\GrantType\ClientCredentials($storage));
+        $this->server = new \OAuth2\Server($this->storage);
 
         // Add the "Authorization Code" grant type (this is where the oauth magic happens)
-        $this->server->addGrantType(new \OAuth2\GrantType\AuthorizationCode($storage));
+        $this->server->addGrantType(new \OAuth2\GrantType\AuthorizationCode($this->storage));
 
+        // Add the "Client Credentials" grant type (it is the simplest of the grant types)
+        $this->server->addGrantType(new \OAuth2\GrantType\ClientCredentials($this->storage));
+
+        // Add the "Refresh token" grant type
+        $this->server->addGrantType(new \OAuth2\GrantType\RefreshToken($this->storage));
+
+        $scope = new \OAuth2\Scope(array(
+            'supported_scopes' => array_keys($this->scope)
+        ));
+        $this->server->setScopeUtil($scope);
+    }
+
+    public static function setDatabaseSource($user, $password, $dsn)
+    {
+        self::$dbUser = $user;
+        self::$dbPassword = $password;
+        self::$dsn = $dsn;
     }
 
     /**
@@ -83,7 +80,7 @@ class Server implements iAuthenticate
      */
     public function register()
     {
-        static::$server->getResponse(static::$request);
+        static::$server->getResponse(\OAuth2\Request::createFromGlobals());
         return array('queryString' => $_SERVER['QUERY_STRING']);
     }
 
@@ -97,10 +94,22 @@ class Server implements iAuthenticate
      */
     public function authorize()
     {
-        $this->server->getResponse(static::$request);
+        $clientId = \OAuth2\Request::createFromGlobals()->query('client_id', '');
+        $requestedScope = \OAuth2\Request::createFromGlobals()->query('scope', '');
+        $requestedScope = empty($requestedScope) ? array() : explode(' ', $requestedScope);
 
-        return array('queryString' => $_SERVER['QUERY_STRING']);
+        if (! empty($clientId)) {
+            $clientDetails = $this->storage->getClientDetails(\OAuth2\Request::createFromGlobals()->query('client_id'));
+        }
+
+        return array(
+            'client_details' => $clientDetails,
+            'query_string'   => $_SERVER['QUERY_STRING'],
+            'supportedScope' => $this->scope,
+            'requestedScope' => $requestedScope
+        );
     }
+
     /**
      * Stage 2: User response is captured here
      *
@@ -114,7 +123,7 @@ class Server implements iAuthenticate
      *
      * @format JsonFormat,UploadFormat
      */
-    public function postAuthorize($authorize = false)
+    public function postAuthorize($authorize = false, $userId = null, $returnResponse = false)
     {
         $request = \OAuth2\Request::createFromGlobals();
         $response = new \OAuth2\Response();
@@ -122,13 +131,12 @@ class Server implements iAuthenticate
         $response = $this->server->handleAuthorizeRequest(
             $request,
             $response,
-            (bool)$authorize
+            (bool)$authorize,
+            $userId
         );
 
-        if ($authorize) {
-            // this is only here so that you get to see your code in the cURL request. Otherwise, we'd redirect back to the client
-            $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=')+5, 40);
-            //exit("SUCCESS! Authorization Code: $code");
+        if ($returnResponse) {
+            return $response;
         }
 
         die($response->send());
@@ -142,26 +150,35 @@ class Server implements iAuthenticate
      *
      * @format JsonFormat,UploadFormat
      */
-    public function postGrant()
+    public function postToken()
     {
-        $response = static::$server->handleGrantRequest(
-            static::$request
-        );
-        die($response->send());
+        // Handle a request for an OAuth2.0 Access Token and send the response to the client
+        $request = \OAuth2\Request::createFromGlobals();
+        $response = $this->server->handleTokenRequest($request);
+
+        /* DEPREACATED
+        $token = $response->getParameters();
+        if (array_key_exists('access_token', $token)) {
+            $data = $this->storage->getAccessToken($token['access_token']);
+
+            // verify if the client is our local PM Designer client
+            if ($data['client_id'] == self::getPmClientId()) {
+                error_log('do stuff - is a request from local pm client');
+                require_once "classes/model/PmoauthUserAccessTokens.php";
+
+                $userToken = new \PmoauthUserAccessTokens();
+                $userToken->setAccessToken($token['access_token']);
+                $userToken->setRefreshToken($token['refresh_token']);
+                $userToken->setUserId($data['user_id']);
+                $userToken->setSessionId(session_id());
+
+                $userToken->save();
+            }
+        }*/
+
+        $response->send();
     }
-    /**
-     * Sample api protected with OAuth2
-     *
-     * For testing the oAuth token
-     *
-     * @access protected
-     */
-    public function postAccess()
-    {
-        return array(
-            'friends' => array('john', 'matt', 'jane')
-        );
-    }
+
     /**
      * Access verification method.
      *
@@ -171,21 +188,41 @@ class Server implements iAuthenticate
      */
     public function __isAllowed()
     {
-        return $this->server->verifyResourceRequest(\OAuth2\Request::createFromGlobals());
+        $request = \OAuth2\Request::createFromGlobals();
+        $allowed = $this->server->verifyResourceRequest($request);
+        $token = $this->server->getAccessTokenData($request);
+
+        self::$userId = $token['user_id'];
+
+        // verify if the client is our local PM Designer client
+        if ($token['client_id'] != self::getPmClientId()) {
+            return $allowed;
+        }
+
+        if (! isset($_SESSION) || ! array_key_exists('USER_LOGGED', $_SESSION)) {
+            return false;
+        }
+
+        return true;
     }
 
-
-
-    /****************************************/
-
-    /**
-     * Stage 3: Client directly calls this api to exchange access token
-     *
-     * It can then use this access token to make calls to protected api
-     */
-    public function postToken()
+    public static function setPmClientId($clientId)
     {
-        // Handle a request for an OAuth2.0 Access Token and send the response to the client
-        return $this->server->handleTokenRequest(\OAuth2\Request::createFromGlobals())->send();
+        self::$pmClientId = $clientId;
+    }
+
+    public static function getPmClientId()
+    {
+        return self::$pmClientId;
+    }
+
+    public function getServer()
+    {
+        return $this->server;
+    }
+
+    public function getUserId()
+    {
+        return self::$userId;
     }
 }

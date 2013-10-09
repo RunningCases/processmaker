@@ -24,8 +24,8 @@ class PmSessionHandler //implements SessionHandlerInterface
      * @var string
      */
     private $dsn = '';
-    private $user = '';
-    private $password = '';
+    private $dbUser = '';
+    private $dbPassword = '';
     private $dbtable = 'SESSION_STORAGE';
 
     /**
@@ -127,6 +127,10 @@ class PmSessionHandler //implements SessionHandlerInterface
     public function open($savePath, $sessionName)
     {
         // routines moved to __construct() for php 5.3.x compatibility
+
+
+        error_log("PmSession :: open($savePath, $sessionName) was called");
+
         return true;
     }
 
@@ -145,6 +149,8 @@ class PmSessionHandler //implements SessionHandlerInterface
         
         // this was commented to take advantage of PDO persistence connections
         //$this->db = null;
+
+        error_log("PmSession :: close() was called");
 
         return true;
     }
@@ -170,6 +176,8 @@ class PmSessionHandler //implements SessionHandlerInterface
         //$this->wstmt->bind_param('siss', $id, $time, $data, $key);
         $this->wstmt->execute(array($id, $time, $data, $key));
 
+        error_log("PmSession :: write($id, array()) was called");
+
         return true;
     }
 
@@ -189,6 +197,8 @@ class PmSessionHandler //implements SessionHandlerInterface
         $data = $this->rstmt->fetch();
         $data = unserialize(base64_decode($data['DATA']));
 
+        error_log("PmSession :: read($id) was called");
+
         return $data;
     }
 
@@ -202,6 +212,8 @@ class PmSessionHandler //implements SessionHandlerInterface
         if(! isset($this->dstmt)) {
             $this->dstmt = $this->db->prepare("DELETE FROM {$this->dbtable} WHERE ID = ?");
         }
+
+        error_log("PmSession :: destroy($id) was called");
 
         $this->dstmt->execute(array($id));
         
@@ -219,10 +231,12 @@ class PmSessionHandler //implements SessionHandlerInterface
         $time = time() - $maxlifetime;
 
         if(! isset($this->gcstmt)) {
-            $thi->gcstmt = $this->db->prepare("DELETE FROM {$this->dbtable} WHERE SET_TIME < ?");
+            $this->gcstmt = $this->db->prepare("DELETE FROM {$this->dbtable} WHERE SET_TIME < ?");
         }
 
-        $thi->gcstmt->execute(array($time));
+        $this->gcstmt->execute(array($time));
+
+        error_log("PmSession :: gc($maxlifetime) was called");
         
         return true;
     }

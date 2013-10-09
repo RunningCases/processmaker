@@ -2,52 +2,46 @@
 
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by OauthClientsPeer::getOMClass()
-include_once 'classes/model/OauthClients.php';
+// actual class may be a subclass -- as returned by PmoauthUserAccessTokensPeer::getOMClass()
+include_once 'classes/model/PmoauthUserAccessTokens.php';
 
 /**
- * Base static class for performing query and update operations on the 'OAUTH_CLIENTS' table.
+ * Base static class for performing query and update operations on the 'PMOAUTH_USER_ACCESS_TOKENS' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseOauthClientsPeer
+abstract class BasePmoauthUserAccessTokensPeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'workflow';
 
     /** the table name for this class */
-    const TABLE_NAME = 'OAUTH_CLIENTS';
+    const TABLE_NAME = 'PMOAUTH_USER_ACCESS_TOKENS';
 
     /** A class that can be returned by this peer. */
-    const CLASS_DEFAULT = 'classes.model.OauthClients';
+    const CLASS_DEFAULT = 'classes.model.PmoauthUserAccessTokens';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 4;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
-    /** the column name for the CLIENT_ID field */
-    const CLIENT_ID = 'OAUTH_CLIENTS.CLIENT_ID';
+    /** the column name for the ACCESS_TOKEN field */
+    const ACCESS_TOKEN = 'PMOAUTH_USER_ACCESS_TOKENS.ACCESS_TOKEN';
 
-    /** the column name for the CLIENT_SECRET field */
-    const CLIENT_SECRET = 'OAUTH_CLIENTS.CLIENT_SECRET';
+    /** the column name for the REFRESH_TOKEN field */
+    const REFRESH_TOKEN = 'PMOAUTH_USER_ACCESS_TOKENS.REFRESH_TOKEN';
 
-    /** the column name for the CLIENT_NAME field */
-    const CLIENT_NAME = 'OAUTH_CLIENTS.CLIENT_NAME';
+    /** the column name for the USER_ID field */
+    const USER_ID = 'PMOAUTH_USER_ACCESS_TOKENS.USER_ID';
 
-    /** the column name for the CLIENT_DESCRIPTION field */
-    const CLIENT_DESCRIPTION = 'OAUTH_CLIENTS.CLIENT_DESCRIPTION';
-
-    /** the column name for the CLIENT_WEBSITE field */
-    const CLIENT_WEBSITE = 'OAUTH_CLIENTS.CLIENT_WEBSITE';
-
-    /** the column name for the REDIRECT_URI field */
-    const REDIRECT_URI = 'OAUTH_CLIENTS.REDIRECT_URI';
+    /** the column name for the SESSION_ID field */
+    const SESSION_ID = 'PMOAUTH_USER_ACCESS_TOKENS.SESSION_ID';
 
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
@@ -60,10 +54,10 @@ abstract class BaseOauthClientsPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('ClientId', 'ClientSecret', 'ClientName', 'ClientDescription', 'ClientWebsite', 'RedirectUri', ),
-        BasePeer::TYPE_COLNAME => array (OauthClientsPeer::CLIENT_ID, OauthClientsPeer::CLIENT_SECRET, OauthClientsPeer::CLIENT_NAME, OauthClientsPeer::CLIENT_DESCRIPTION, OauthClientsPeer::CLIENT_WEBSITE, OauthClientsPeer::REDIRECT_URI, ),
-        BasePeer::TYPE_FIELDNAME => array ('CLIENT_ID', 'CLIENT_SECRET', 'CLIENT_NAME', 'CLIENT_DESCRIPTION', 'CLIENT_WEBSITE', 'REDIRECT_URI', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('AccessToken', 'RefreshToken', 'UserId', 'SessionId', ),
+        BasePeer::TYPE_COLNAME => array (PmoauthUserAccessTokensPeer::ACCESS_TOKEN, PmoauthUserAccessTokensPeer::REFRESH_TOKEN, PmoauthUserAccessTokensPeer::USER_ID, PmoauthUserAccessTokensPeer::SESSION_ID, ),
+        BasePeer::TYPE_FIELDNAME => array ('ACCESS_TOKEN', 'REFRESH_TOKEN', 'USER_ID', 'SESSION_ID', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
@@ -73,10 +67,10 @@ abstract class BaseOauthClientsPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('ClientId' => 0, 'ClientSecret' => 1, 'ClientName' => 2, 'ClientDescription' => 3, 'ClientWebsite' => 4, 'RedirectUri' => 5, ),
-        BasePeer::TYPE_COLNAME => array (OauthClientsPeer::CLIENT_ID => 0, OauthClientsPeer::CLIENT_SECRET => 1, OauthClientsPeer::CLIENT_NAME => 2, OauthClientsPeer::CLIENT_DESCRIPTION => 3, OauthClientsPeer::CLIENT_WEBSITE => 4, OauthClientsPeer::REDIRECT_URI => 5, ),
-        BasePeer::TYPE_FIELDNAME => array ('CLIENT_ID' => 0, 'CLIENT_SECRET' => 1, 'CLIENT_NAME' => 2, 'CLIENT_DESCRIPTION' => 3, 'CLIENT_WEBSITE' => 4, 'REDIRECT_URI' => 5, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('AccessToken' => 0, 'RefreshToken' => 1, 'UserId' => 2, 'SessionId' => 3, ),
+        BasePeer::TYPE_COLNAME => array (PmoauthUserAccessTokensPeer::ACCESS_TOKEN => 0, PmoauthUserAccessTokensPeer::REFRESH_TOKEN => 1, PmoauthUserAccessTokensPeer::USER_ID => 2, PmoauthUserAccessTokensPeer::SESSION_ID => 3, ),
+        BasePeer::TYPE_FIELDNAME => array ('ACCESS_TOKEN' => 0, 'REFRESH_TOKEN' => 1, 'USER_ID' => 2, 'SESSION_ID' => 3, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
@@ -86,8 +80,8 @@ abstract class BaseOauthClientsPeer
      */
     public static function getMapBuilder()
     {
-        include_once 'classes/model/map/OauthClientsMapBuilder.php';
-        return BasePeer::getMapBuilder('classes.model.map.OauthClientsMapBuilder');
+        include_once 'classes/model/map/PmoauthUserAccessTokensMapBuilder.php';
+        return BasePeer::getMapBuilder('classes.model.map.PmoauthUserAccessTokensMapBuilder');
     }
     /**
      * Gets a map (hash) of PHP names to DB column names.
@@ -100,7 +94,7 @@ abstract class BaseOauthClientsPeer
     public static function getPhpNameMap()
     {
         if (self::$phpNameMap === null) {
-            $map = OauthClientsPeer::getTableMap();
+            $map = PmoauthUserAccessTokensPeer::getTableMap();
             $columns = $map->getColumns();
             $nameMap = array();
             foreach ($columns as $column) {
@@ -155,12 +149,12 @@ abstract class BaseOauthClientsPeer
      *      $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. OauthClientsPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. PmoauthUserAccessTokensPeer::COLUMN_NAME).
      * @return     string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(OauthClientsPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(PmoauthUserAccessTokensPeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -177,22 +171,18 @@ abstract class BaseOauthClientsPeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
-        $criteria->addSelectColumn(OauthClientsPeer::CLIENT_ID);
+        $criteria->addSelectColumn(PmoauthUserAccessTokensPeer::ACCESS_TOKEN);
 
-        $criteria->addSelectColumn(OauthClientsPeer::CLIENT_SECRET);
+        $criteria->addSelectColumn(PmoauthUserAccessTokensPeer::REFRESH_TOKEN);
 
-        $criteria->addSelectColumn(OauthClientsPeer::CLIENT_NAME);
+        $criteria->addSelectColumn(PmoauthUserAccessTokensPeer::USER_ID);
 
-        $criteria->addSelectColumn(OauthClientsPeer::CLIENT_DESCRIPTION);
-
-        $criteria->addSelectColumn(OauthClientsPeer::CLIENT_WEBSITE);
-
-        $criteria->addSelectColumn(OauthClientsPeer::REDIRECT_URI);
+        $criteria->addSelectColumn(PmoauthUserAccessTokensPeer::SESSION_ID);
 
     }
 
-    const COUNT = 'COUNT(OAUTH_CLIENTS.CLIENT_ID)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT OAUTH_CLIENTS.CLIENT_ID)';
+    const COUNT = 'COUNT(PMOAUTH_USER_ACCESS_TOKENS.ACCESS_TOKEN)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT PMOAUTH_USER_ACCESS_TOKENS.ACCESS_TOKEN)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -210,9 +200,9 @@ abstract class BaseOauthClientsPeer
         // clear out anything that might confuse the ORDER BY clause
         $criteria->clearSelectColumns()->clearOrderByColumns();
         if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->addSelectColumn(OauthClientsPeer::COUNT_DISTINCT);
+            $criteria->addSelectColumn(PmoauthUserAccessTokensPeer::COUNT_DISTINCT);
         } else {
-            $criteria->addSelectColumn(OauthClientsPeer::COUNT);
+            $criteria->addSelectColumn(PmoauthUserAccessTokensPeer::COUNT);
         }
 
         // just in case we're grouping: add those columns to the select statement
@@ -220,7 +210,7 @@ abstract class BaseOauthClientsPeer
             $criteria->addSelectColumn($column);
         }
 
-        $rs = OauthClientsPeer::doSelectRS($criteria, $con);
+        $rs = PmoauthUserAccessTokensPeer::doSelectRS($criteria, $con);
         if ($rs->next()) {
             return $rs->getInt(1);
         } else {
@@ -233,7 +223,7 @@ abstract class BaseOauthClientsPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      Connection $con
-     * @return     OauthClients
+     * @return     PmoauthUserAccessTokens
      * @throws     PropelException Any exceptions caught during processing will be
      *       rethrown wrapped into a PropelException.
      */
@@ -241,7 +231,7 @@ abstract class BaseOauthClientsPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = OauthClientsPeer::doSelect($critcopy, $con);
+        $objects = PmoauthUserAccessTokensPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -258,7 +248,7 @@ abstract class BaseOauthClientsPeer
      */
     public static function doSelect(Criteria $criteria, $con = null)
     {
-        return OauthClientsPeer::populateObjects(OauthClientsPeer::doSelectRS($criteria, $con));
+        return PmoauthUserAccessTokensPeer::populateObjects(PmoauthUserAccessTokensPeer::doSelectRS($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect()
@@ -282,7 +272,7 @@ abstract class BaseOauthClientsPeer
 
         if (!$criteria->getSelectColumns()) {
             $criteria = clone $criteria;
-            OauthClientsPeer::addSelectColumns($criteria);
+            PmoauthUserAccessTokensPeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
@@ -304,7 +294,7 @@ abstract class BaseOauthClientsPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = OauthClientsPeer::getOMClass();
+        $cls = PmoauthUserAccessTokensPeer::getOMClass();
         $cls = Propel::import($cls);
         // populate the object(s)
         while ($rs->next()) {
@@ -339,13 +329,13 @@ abstract class BaseOauthClientsPeer
      */
     public static function getOMClass()
     {
-        return OauthClientsPeer::CLASS_DEFAULT;
+        return PmoauthUserAccessTokensPeer::CLASS_DEFAULT;
     }
 
     /**
-     * Method perform an INSERT on the database, given a OauthClients or Criteria object.
+     * Method perform an INSERT on the database, given a PmoauthUserAccessTokens or Criteria object.
      *
-     * @param      mixed $values Criteria or OauthClients object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or PmoauthUserAccessTokens object containing data that is used to create the INSERT statement.
      * @param      Connection $con the connection to use
      * @return     mixed The new primary key.
      * @throws     PropelException Any exceptions caught during processing will be
@@ -360,7 +350,7 @@ abstract class BaseOauthClientsPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from OauthClients object
+            $criteria = $values->buildCriteria(); // build Criteria from PmoauthUserAccessTokens object
         }
 
 
@@ -382,9 +372,9 @@ abstract class BaseOauthClientsPeer
     }
 
     /**
-     * Method perform an UPDATE on the database, given a OauthClients or Criteria object.
+     * Method perform an UPDATE on the database, given a PmoauthUserAccessTokens or Criteria object.
      *
-     * @param      mixed $values Criteria or OauthClients object containing data create the UPDATE statement.
+     * @param      mixed $values Criteria or PmoauthUserAccessTokens object containing data create the UPDATE statement.
      * @param      Connection $con The connection to use (specify Connection exert more control over transactions).
      * @return     int The number of affected rows (if supported by underlying database driver).
      * @throws     PropelException Any exceptions caught during processing will be
@@ -401,8 +391,8 @@ abstract class BaseOauthClientsPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(OauthClientsPeer::CLIENT_ID);
-            $selectCriteria->add(OauthClientsPeer::CLIENT_ID, $criteria->remove(OauthClientsPeer::CLIENT_ID), $comparison);
+            $comparison = $criteria->getComparison(PmoauthUserAccessTokensPeer::ACCESS_TOKEN);
+            $selectCriteria->add(PmoauthUserAccessTokensPeer::ACCESS_TOKEN, $criteria->remove(PmoauthUserAccessTokensPeer::ACCESS_TOKEN), $comparison);
 
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
@@ -416,7 +406,7 @@ abstract class BaseOauthClientsPeer
     }
 
     /**
-     * Method to DELETE all rows from the OAUTH_CLIENTS table.
+     * Method to DELETE all rows from the PMOAUTH_USER_ACCESS_TOKENS table.
      *
      * @return     int The number of affected rows (if supported by underlying database driver).
      */
@@ -430,7 +420,7 @@ abstract class BaseOauthClientsPeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
-            $affectedRows += BasePeer::doDeleteAll(OauthClientsPeer::TABLE_NAME, $con);
+            $affectedRows += BasePeer::doDeleteAll(PmoauthUserAccessTokensPeer::TABLE_NAME, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -440,9 +430,9 @@ abstract class BaseOauthClientsPeer
     }
 
     /**
-     * Method perform a DELETE on the database, given a OauthClients or Criteria object OR a primary key value.
+     * Method perform a DELETE on the database, given a PmoauthUserAccessTokens or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or OauthClients object or primary key or array of primary keys
+     * @param      mixed $values Criteria or PmoauthUserAccessTokens object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      Connection $con the connection to use
      * @return     int  The number of affected rows (if supported by underlying database driver).
@@ -454,18 +444,18 @@ abstract class BaseOauthClientsPeer
     public static function doDelete($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(OauthClientsPeer::DATABASE_NAME);
+            $con = Propel::getConnection(PmoauthUserAccessTokensPeer::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
-        } elseif ($values instanceof OauthClients) {
+        } elseif ($values instanceof PmoauthUserAccessTokens) {
 
             $criteria = $values->buildPkeyCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(OauthClientsPeer::CLIENT_ID, (array) $values, Criteria::IN);
+            $criteria->add(PmoauthUserAccessTokensPeer::ACCESS_TOKEN, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -488,24 +478,24 @@ abstract class BaseOauthClientsPeer
     }
 
     /**
-     * Validates all modified columns of given OauthClients object.
+     * Validates all modified columns of given PmoauthUserAccessTokens object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      OauthClients $obj The object to validate.
+     * @param      PmoauthUserAccessTokens $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
      */
-    public static function doValidate(OauthClients $obj, $cols = null)
+    public static function doValidate(PmoauthUserAccessTokens $obj, $cols = null)
     {
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(OauthClientsPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(OauthClientsPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(PmoauthUserAccessTokensPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(PmoauthUserAccessTokensPeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -521,7 +511,7 @@ abstract class BaseOauthClientsPeer
 
         }
 
-        return BasePeer::doValidate(OauthClientsPeer::DATABASE_NAME, OauthClientsPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(PmoauthUserAccessTokensPeer::DATABASE_NAME, PmoauthUserAccessTokensPeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -529,7 +519,7 @@ abstract class BaseOauthClientsPeer
      *
      * @param      mixed $pk the primary key.
      * @param      Connection $con the connection to use
-     * @return     OauthClients
+     * @return     PmoauthUserAccessTokens
      */
     public static function retrieveByPK($pk, $con = null)
     {
@@ -537,12 +527,12 @@ abstract class BaseOauthClientsPeer
             $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
-        $criteria = new Criteria(OauthClientsPeer::DATABASE_NAME);
+        $criteria = new Criteria(PmoauthUserAccessTokensPeer::DATABASE_NAME);
 
-        $criteria->add(OauthClientsPeer::CLIENT_ID, $pk);
+        $criteria->add(PmoauthUserAccessTokensPeer::ACCESS_TOKEN, $pk);
 
 
-        $v = OauthClientsPeer::doSelect($criteria, $con);
+        $v = PmoauthUserAccessTokensPeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -566,8 +556,8 @@ abstract class BaseOauthClientsPeer
             $objs = array();
         } else {
             $criteria = new Criteria();
-            $criteria->add(OauthClientsPeer::CLIENT_ID, $pks, Criteria::IN);
-            $objs = OauthClientsPeer::doSelect($criteria, $con);
+            $criteria->add(PmoauthUserAccessTokensPeer::ACCESS_TOKEN, $pks, Criteria::IN);
+            $objs = PmoauthUserAccessTokensPeer::doSelect($criteria, $con);
         }
         return $objs;
     }
@@ -579,14 +569,14 @@ if (Propel::isInit()) {
     // the MapBuilder classes register themselves with Propel during initialization
     // so we need to load them here.
     try {
-        BaseOauthClientsPeer::getMapBuilder();
+        BasePmoauthUserAccessTokensPeer::getMapBuilder();
     } catch (Exception $e) {
         Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
     }
 } else {
     // even if Propel is not yet initialized, the map builder class can be registered
     // now and then it will be loaded when Propel initializes.
-    require_once 'classes/model/map/OauthClientsMapBuilder.php';
-    Propel::registerMapBuilder('classes.model.map.OauthClientsMapBuilder');
+    require_once 'classes/model/map/PmoauthUserAccessTokensMapBuilder.php';
+    Propel::registerMapBuilder('classes.model.map.PmoauthUserAccessTokensMapBuilder');
 }
 

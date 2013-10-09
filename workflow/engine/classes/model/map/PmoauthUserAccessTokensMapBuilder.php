@@ -5,7 +5,7 @@ include_once 'creole/CreoleTypes.php';
 
 
 /**
- * This class adds structure of 'OAUTH_CLIENTS' table to 'workflow' DatabaseMap object.
+ * This class adds structure of 'PMOAUTH_USER_ACCESS_TOKENS' table to 'workflow' DatabaseMap object.
  *
  *
  *
@@ -16,13 +16,13 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
-class OauthClientsMapBuilder
+class PmoauthUserAccessTokensMapBuilder
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'classes.model.map.OauthClientsMapBuilder';
+    const CLASS_NAME = 'classes.model.map.PmoauthUserAccessTokensMapBuilder';
 
     /**
      * The database map.
@@ -60,23 +60,19 @@ class OauthClientsMapBuilder
     {
         $this->dbMap = Propel::getDatabaseMap('workflow');
 
-        $tMap = $this->dbMap->addTable('OAUTH_CLIENTS');
-        $tMap->setPhpName('OauthClients');
+        $tMap = $this->dbMap->addTable('PMOAUTH_USER_ACCESS_TOKENS');
+        $tMap->setPhpName('PmoauthUserAccessTokens');
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addPrimaryKey('CLIENT_ID', 'ClientId', 'string', CreoleTypes::VARCHAR, true, 80);
+        $tMap->addPrimaryKey('ACCESS_TOKEN', 'AccessToken', 'string', CreoleTypes::VARCHAR, true, 40);
 
-        $tMap->addColumn('CLIENT_SECRET', 'ClientSecret', 'string', CreoleTypes::VARCHAR, true, 80);
+        $tMap->addColumn('REFRESH_TOKEN', 'RefreshToken', 'string', CreoleTypes::VARCHAR, true, 40);
 
-        $tMap->addColumn('CLIENT_NAME', 'ClientName', 'string', CreoleTypes::VARCHAR, true, 256);
+        $tMap->addColumn('USER_ID', 'UserId', 'string', CreoleTypes::VARCHAR, false, 32);
 
-        $tMap->addColumn('CLIENT_DESCRIPTION', 'ClientDescription', 'string', CreoleTypes::VARCHAR, true, 1024);
-
-        $tMap->addColumn('CLIENT_WEBSITE', 'ClientWebsite', 'string', CreoleTypes::VARCHAR, true, 1024);
-
-        $tMap->addColumn('REDIRECT_URI', 'RedirectUri', 'string', CreoleTypes::VARCHAR, true, 2000);
+        $tMap->addColumn('SESSION_ID', 'SessionId', 'string', CreoleTypes::VARCHAR, true, 40);
 
     } // doBuild()
 
-} // OauthClientsMapBuilder
+} // PmoauthUserAccessTokensMapBuilder

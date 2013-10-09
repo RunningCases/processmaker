@@ -4,6 +4,7 @@ namespace ProcessMaker;
 class Api
 {
     private static $workspace;
+    private static $userId;
 
     public function __costruct()
     {
@@ -18,6 +19,18 @@ class Api
     public function getWorkspace()
     {
         return self::$workspace;
+    }
+
+    public static function setUserId($userId)
+    {
+        self::$userId = $userId;
+    }
+
+    public function getUserId()
+    {
+        //return self::$userId;
+
+        return \Api\OAuth2\Server::getUserId();
     }
 }
 
