@@ -35,6 +35,8 @@ class PmSessionHandler //implements SessionHandlerInterface
      */
     private $httponly = true;
 
+    private $debug = false;
+
     /**
      * The Construct 
      * Initialize object and set database credentials passed as arguments
@@ -129,7 +131,7 @@ class PmSessionHandler //implements SessionHandlerInterface
         // routines moved to __construct() for php 5.3.x compatibility
 
 
-        error_log("PmSession :: open($savePath, $sessionName) was called");
+        $this->log("open($savePath, $sessionName) was called");
 
         return true;
     }
@@ -150,7 +152,7 @@ class PmSessionHandler //implements SessionHandlerInterface
         // this was commented to take advantage of PDO persistence connections
         //$this->db = null;
 
-        error_log("PmSession :: close() was called");
+        $this->log("close() was called");
 
         return true;
     }
@@ -176,7 +178,7 @@ class PmSessionHandler //implements SessionHandlerInterface
         //$this->wstmt->bind_param('siss', $id, $time, $data, $key);
         $this->wstmt->execute(array($id, $time, $data, $key));
 
-        error_log("PmSession :: write($id, array()) was called");
+        $this->log("write($id, array()) was called");
 
         return true;
     }
@@ -197,7 +199,7 @@ class PmSessionHandler //implements SessionHandlerInterface
         $data = $this->rstmt->fetch();
         $data = unserialize(base64_decode($data['DATA']));
 
-        error_log("PmSession :: read($id) was called");
+        $this->log("read($id) was called");
 
         return $data;
     }
@@ -213,7 +215,7 @@ class PmSessionHandler //implements SessionHandlerInterface
             $this->dstmt = $this->db->prepare("DELETE FROM {$this->dbtable} WHERE ID = ?");
         }
 
-        error_log("PmSession :: destroy($id) was called");
+        $this->log("destroy($id) was called");
 
         $this->dstmt->execute(array($id));
         
@@ -236,8 +238,17 @@ class PmSessionHandler //implements SessionHandlerInterface
 
         $this->gcstmt->execute(array($time));
 
-        error_log("PmSession :: gc($maxlifetime) was called");
+        $this->log("gc($maxlifetime) was called");
         
         return true;
+    }
+
+    public function log($data)
+    {
+        if (! $this->debug) {
+            return false;
+        }
+
+        error_log('PM Session Handler :: ' . print_r($data, true));
     }
 }

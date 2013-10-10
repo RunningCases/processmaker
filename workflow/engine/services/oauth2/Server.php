@@ -3,16 +3,12 @@ namespace Api\OAuth2;
 
 use Luracast\Restler\iAuthenticate;
 
-use OAuth2_Request;
-use OAuth2_Response;
-use OAuth2_GrantType_AuthorizationCode;
-use OAuth2_Storage_Pdo;
-use OAuth2_Server;
 
 /**
  * Class Server
  *
  * @package OAuth2
+ * @author Erik Amaru Ortiz <aortiz.erik at gmail dot com>
  *
  */
 class Server implements iAuthenticate
@@ -25,12 +21,10 @@ class Server implements iAuthenticate
      * @var OAuth2_Storage_Pdo
      */
     protected $storage;
-    
     protected $scope = array();
 
     protected static $pmClientId;
     protected static $userId;
-
     protected static $dbUser;
     protected static $dbPassword;
     protected static $dsn;
@@ -120,7 +114,9 @@ class Server implements iAuthenticate
      *
      *
      * @param bool $authorize
-     *
+     * @param string $userId optional user id
+     * @param bool $returnResponse optional flag to specify if the function should return the Response object
+     * @return \OAuth2\ResponseInterface
      * @format JsonFormat,UploadFormat
      */
     public function postAuthorize($authorize = false, $userId = null, $returnResponse = false)
@@ -194,11 +190,12 @@ class Server implements iAuthenticate
 
         self::$userId = $token['user_id'];
 
-        // verify if the client is our local PM Designer client
+        // verify if the client is not our local PM Designer client
         if ($token['client_id'] != self::getPmClientId()) {
             return $allowed;
         }
 
+        // making a partcular session verification for PM Web Designer Client
         if (! isset($_SESSION) || ! array_key_exists('USER_LOGGED', $_SESSION)) {
             return false;
         }

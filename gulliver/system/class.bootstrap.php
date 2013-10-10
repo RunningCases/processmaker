@@ -18,16 +18,26 @@ class Bootstrap
 
     public static function autoloadClass($class)
     {
-        //error_log( "$class ");
         $className = strtolower($class);
+
         if (array_key_exists($className, BootStrap::$includeClassPaths)) {
             require_once BootStrap::$includeClassPaths[$className];
+
             return true;
         } else {
-            //print "$class "; //die;
-            //print_r ( debug_backtrace(false));
+            // try resolve a Model class file
+            $classFile = PATH_CORE . 'classes' . PATH_SEP . 'model' . PATH_SEP .  $class . '.php';
+
+            if (file_exists($classFile)) {
+                require_once $classFile;
+
+                return true;
+            } else {
+                //error_log(' ==> CLass not found: ' . $class);
+            }
         }
-        return;
+
+        return false;
     }
 
     public function registerClass($classname, $includeFile)
