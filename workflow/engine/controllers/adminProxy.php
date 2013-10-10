@@ -1255,5 +1255,61 @@ class adminProxy extends HttpProxyController
         die;
         exit();
     }
+
+    public function getMaintenanceInfo()
+    {
+        $data = array('info' => array());
+        //$oauthClients = new OauthClients();
+        //$oauthClients->
+        $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
+
+        $statuses['pm_rest_client'] = (!empty($pmRestClient));
+
+        //$data = $pmRestClient->toArray(BasePeer::TYPE_COLNAME);
+
+        $data['info'] = array(
+            array(
+                'name' => 'PM Web Designer (REST Client)',
+                'value' => ($statuses['pm_rest_client']? 'Registered' : 'Not Registered'),
+                'value_ok' => $statuses['pm_rest_client'],
+                'option' => array(
+                    'label' => ($statuses['pm_rest_client']? 'Restore' : 'Register'),
+                    'action' => 'doRegisterPMDesignerClient'
+                )
+            )
+        );
+
+        return $data;
+    }
+
+    public function registerPMDesignerClient()
+    {
+        $result = array();
+
+        try {
+
+            $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
+            if (! empty($pmRestClient)) {
+                $pmRestClient->delete();
+            }
+
+            $oauthClients = new OauthClients();
+            $oauthClients->setClientId('x-pm-local-client');
+            $oauthClients->setClientSecret('179ad45c6ce2cb97cf1029e212046e81');
+            $oauthClients->setClientName('PM Web Designer');
+            $oauthClients->setClientDescription('ProcessMaker Web Designer App');
+            $oauthClients->setClientWebsite('www.processmaker.com');
+            $oauthClients->setRedirectUri('http://pmos/sysworkflow/en/neoclassic/services/oauth2_grant');
+            $oauthClients->save();
+
+            $result['success'] = true;
+            $result['message'] = '';
+        } catch (Exception $e) {
+            $result['success'] = false;
+            $result['message'] = $e->getMessage();
+        }
+
+        return $result;
+    }
 }
 
