@@ -33,20 +33,17 @@ $response = array(
 
 ?>
 
-
 <table width="100%" cellspacing="0" cellpadding="0" border="0">
-    <tbody><tr>
-        <td width="100%" style="height:25px">
-        </td>
+    <tbody>
+    <tr>
+        <td width="100%" style="height:25px"></td>
     </tr>
     <tr>
         <td width="100%" align="center">
-
             <table width="100%" cellspacing="0" cellpadding="0" border="0" style="padding-top: 3px">
                 <tbody><tr>
                     <td align="center">
                         <div align="center" style="; margin:0px;" id="publisherContent[0]">
-
                             <form  style="margin:0px;" enctype="multipart/form-data" method="post" class="formDefault" action="authorize?<?php echo $response['query_string']?>" name="authorizeForm" id="authorizeForm">
                                 <div style="width:400px; padding-left:0; padding-right:0; border-width:1;" class="borderForm">
                                     <div class="boxTop"><div class="a"></div><div class="b"></div><div class="c"></div></div>
@@ -54,7 +51,6 @@ $response = array(
                                         <table width="99%">
                                             <tbody><tr>
                                                 <td valign="top">
-
                                                     <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                         <tbody>
                                                         <tr>
@@ -64,56 +60,37 @@ $response = array(
                                                                 </span>
                                                             </td>
                                                         </tr>
-
-
                                                         <tr>
                                                             <td align="" colspan="2" class="FormSubTitle">
                                                                 <span name="form[TITLE]" id="form[TITLE]">
+                                                                    <ul>
+                                                                        <?php foreach($response['requestedScope'] as $scope) {?>
+                                                                        <li><?php echo $response['supportedScope'][$scope] ?></li>
+                                                                        <?php } ?>
+                                                                    </ul>
+                                                                    <p>It will use this data to:</p>
+                                                                    <ul>
+                                                                        <li>integrate with ProcessMaker</li>
+                                                                        <li>miscellaneous purposes</li>
+                                                                    </ul>
 
-                                                        <ul>
-                                                            <?php foreach($response['requestedScope'] as $scope) {?>
-                                                                <li><?php echo $response['supportedScope'][$scope] ?></li>
-                                                            <?php } ?>
-                                                        </ul>
-                                                        <p>It will use this data to:</p>
-                                                        <ul>
-                                                            <li>integrate with ProcessMaker</li>
-                                                            <li>make your life better</li>
-                                                            <li>miscellaneous nefarious purposes</li>
-                                                        </ul>
-
-                                                            <div align="center">
-
-                                                                <input type="submit" value="Yes, I Authorize This Request" name="authorize" class="module_app_button___gray " value="1">
-                                                                <input type="button" value="Reject this Request" name="reject_btn" id="reject_btn" class="module_app_button___gray " onclick="doSubmit()">
-                                                                <input type="hidden" name="authorize" id="authorize" value="1">
-
-                                                            </div>
-
-
+                                                                    <div align="center">
+                                                                        <input type="submit" value="Yes, I Authorize This Request" name="authorize" class="module_app_button___gray " value="1">
+                                                                        <input type="button" value="Reject this Request" name="reject_btn" id="reject_btn" class="module_app_button___gray " onclick="doSubmit()">
+                                                                        <input type="hidden" name="authorize" id="authorize" value="1">
+                                                                    </div>
                                                                 </span>
                                                             </td>
                                                         </tr>
-
-
-
-
-
-
-
                                                         </tbody>
                                                     </table>
                                                 </td>
                                             </tr>
-                                            </tbody></table>
+                                            </tbody>
+                                        </table>
                                     </div>
                                     <div class="boxBottom"><div class="a"></div><div class="b"></div><div class="c"></div></div>
                                 </div>
-
-
-
-
-
                             </form>
                         </div>
                     </td>
@@ -122,7 +99,8 @@ $response = array(
             </table>
         </td>
     </tr>
-    </tbody></table>
+    </tbody>
+</table>
 
 
 <script>

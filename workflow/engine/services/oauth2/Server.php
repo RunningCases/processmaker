@@ -195,7 +195,7 @@ class Server implements iAuthenticate
             return $allowed;
         }
 
-        // making a partcular session verification for PM Web Designer Client
+        // making a local session verification for PM Web Designer Client
         if (! isset($_SESSION) || ! array_key_exists('USER_LOGGED', $_SESSION)) {
             return false;
         }

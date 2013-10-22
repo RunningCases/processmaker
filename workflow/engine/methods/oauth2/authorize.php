@@ -4,6 +4,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $G_PUBLISH = new Publisher();
 
         $G_PUBLISH->AddContent( 'view', 'oauth2/authorize' );
+        $erik = 'neyek';
 
         G::RenderPage('publish', 'minimal');
     break;
@@ -24,11 +25,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
         $response = $oauthServer->postAuthorize($authorize, $userid, true);
 
-        $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=')+5, 40);
+        //$code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=')+5, 40);
 
-        echo 'session_id ' . session_id() . '<br>';
-        exit("SUCCESS! ==>  Authorization Code: $code");
+        //echo 'session_id ' . session_id() . '<br>';
+        //exit("SUCCESS! ==>  Authorization Code: $code");
 
-        //die($response->send());
+        die($response->send());
     break;
 }
