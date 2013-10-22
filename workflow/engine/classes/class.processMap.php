@@ -1235,15 +1235,17 @@ class processMap
             $result = $groups->getAllGroup($start, $limit, $filter);
             $c = 0;
             foreach ($result['rows'] as $results) {
-                $c++;
-                $oCriteria = new Criteria('workflow');
-                $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
-                $oCriteria->add(GroupUserPeer::GRP_UID, $results['GRP_UID']);
-                $oDataset2 = GroupUserPeer::doSelectRS($oCriteria);
-                $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                $oDataset2->next();
-                $aRow2 = $oDataset2->getRow();
-                $aUsers[] = array('LABEL' => $results['GRP_TITLE'] . ' <a href="#" onclick="usersGroup(\'' . $results['GRP_UID'] . '\', \'' . $c . '\');return false;"><font color="green"><strong>(' . $aRow2['MEMBERS_NUMBER'] . ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? G::LoadTranslation('ID_USER') : G::LoadTranslation('ID_USERS')) . ')</strong></font></a> <br /><div id="users' . $c . '" style="display: none"></div>', 'TAS_UID' => $sTaskUID, 'USR_UID' => $results['GRP_UID'], 'TU_TYPE' => $iType, 'TU_RELATION' => 2 );
+                if (!in_array($results['GRP_UID'], $aUIDS1)) {
+                    $c++;
+                    $oCriteria = new Criteria('workflow');
+                    $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
+                    $oCriteria->add(GroupUserPeer::GRP_UID, $results['GRP_UID']);
+                    $oDataset2 = GroupUserPeer::doSelectRS($oCriteria);
+                    $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $oDataset2->next();
+                    $aRow2 = $oDataset2->getRow();
+                    $aUsers[] = array('LABEL' => $results['GRP_TITLE'] . ' <a href="#" onclick="usersGroup(\'' . $results['GRP_UID'] . '\', \'' . $c . '\');return false;"><font color="green"><strong>(' . $aRow2['MEMBERS_NUMBER'] . ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? G::LoadTranslation('ID_USER') : G::LoadTranslation('ID_USERS')) . ')</strong></font></a> <br /><div id="users' . $c . '" style="display: none"></div>', 'TAS_UID' => $sTaskUID, 'USR_UID' => $results['GRP_UID'], 'TU_TYPE' => $iType, 'TU_RELATION' => 2 );
+                }
             }
             $sDelimiter = DBAdapter::getStringDelimiter();
             $oCriteria = new Criteria('workflow');
@@ -4380,8 +4382,8 @@ class processMap
 
         $aDirectories = array();
         $aDirectories[] = array('DIRECTORY' => 'char');
-        $aDirectories[] = array('DIRECTORY' => '<a href="#" onclick="goToDirectory(\'' . $sProcessUID . '\', \'mailTemplates\', \'\');" class="pagedTableHeader">' . G::loadTranslation('ID_TEMPLATES') . '</a>' );
-        $aDirectories[] = array('DIRECTORY' => '<a href="#" onclick="goToDirectory(\'' . $sProcessUID . '\', \'public\', \'\');" class="pagedTableHeader">' . G::loadTranslation('ID_PUBLIC') . '</a>' );
+        $aDirectories[] = array('DIRECTORY' => '<a href="#" onclick="goToDirectory(\'' . $sProcessUID . '\', \'mailTemplates\', \'\');return false;" class="pagedTableHeader">' . G::loadTranslation('ID_TEMPLATES') . '</a>' );
+        $aDirectories[] = array('DIRECTORY' => '<a href="#" onclick="goToDirectory(\'' . $sProcessUID . '\', \'public\', \'\');return false;" class="pagedTableHeader">' . G::loadTranslation('ID_PUBLIC') . '</a>' );
 
         $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
         $_DBArray['directories'] = $aDirectories;
@@ -4435,17 +4437,17 @@ class processMap
         }
         $oDirectory->close();
         if ($sCurrentDirectory == '') {
-            $aTheFiles[] = array('PATH' => '<a href="#" onclick="goToHome(\'' . $sProcessUID . '\');" class="pagedTableHeader">..</a>', 'EDIT' => '', 'DOWNLOAD_TEXT' => '', 'DOWNLOAD_JS' => '', 'DELETE_TEXT' => '', 'DELETE_JS' => '' );
+            $aTheFiles[] = array('PATH' => '<a href="#" onclick="goToHome(\'' . $sProcessUID . '\');return false;" class="pagedTableHeader">..</a>', 'EDIT' => '', 'DOWNLOAD_TEXT' => '', 'DOWNLOAD_JS' => '', 'DELETE_TEXT' => '', 'DELETE_JS' => '' );
         } else {
             $aAux = explode(PATH_SEP, $sCurrentDirectory);
             array_pop($aAux);
-            $aTheFiles[] = array('PATH' => '<a href="#" onclick="goToDirectory(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . implode(PATH_SEP, $aAux) . '\');" class="pagedTableHeader">..</a>', 'EDIT' => '', 'DOWNLOAD_TEXT' => '', 'DOWNLOAD_JS' => '', 'DELETE_TEXT' => '', 'DELETE_JS' => '' );
+            $aTheFiles[] = array('PATH' => '<a href="#" onclick="goToDirectory(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . implode(PATH_SEP, $aAux) . '\');return false;" class="pagedTableHeader">..</a>', 'EDIT' => '', 'DOWNLOAD_TEXT' => '', 'DOWNLOAD_JS' => '', 'DELETE_TEXT' => '', 'DELETE_JS' => '' );
         }
         foreach ($aDirectories as $aDirectories) {
-            $aTheFiles[] = array('PATH' => '<a href="#" onclick="goToDirectory(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . $aDirectories['PATH'] . '\');" class="pagedTableHeader">' . $aDirectories['DIRECTORY'] . '</a>', 'EDIT' => '', 'DOWNLOAD_TEXT' => '', 'DOWNLOAD_JS' => '', 'DELETE_TEXT' => G::LoadTranslation('ID_DELETE'), 'DELETE_JS' => 'deleteDirectory(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . $sCurrentDirectory . '\', \'' . $aDirectories['DIRECTORY'] . '\');' );
+            $aTheFiles[] = array('PATH' => '<a href="#" onclick="goToDirectory(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . $aDirectories['PATH'] . '\');return false;" class="pagedTableHeader">' . $aDirectories['DIRECTORY'] . '</a>', 'EDIT' => '', 'DOWNLOAD_TEXT' => '', 'DOWNLOAD_JS' => '', 'DELETE_TEXT' => G::LoadTranslation('ID_DELETE'), 'DELETE_JS' => 'deleteDirectory(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . $sCurrentDirectory . '\', \'' . $aDirectories['DIRECTORY'] . '\');return false;' );
         }
         foreach ($aFiles as $aFile) {
-            $aTheFiles[] = array('PATH' => $aFile['FILE'], 'EDIT' => ($sMainDirectory == 'mailTemplates' ? 'Edit' : ''), 'EDIT_JS' => "editFile('{$sProcessUID}', @@PATH)", 'DOWNLOAD_TEXT' => G::LoadTranslation('ID_DOWNLOAD'), 'DOWNLOAD_JS' => 'downloadFile(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . $sCurrentDirectory . '\', \'' . $aFile['FILE'] . '\');', 'DELETE_TEXT' => G::LoadTranslation('ID_DELETE'), 'DELETE_JS' => 'deleteFile(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . $sCurrentDirectory . '\', \'' . $aFile['FILE'] . '\');' );
+            $aTheFiles[] = array('PATH' => $aFile['FILE'], 'EDIT' => ($sMainDirectory == 'mailTemplates' ? 'Edit' : ''), 'EDIT_JS' => "editFile('{$sProcessUID}', @@PATH);return false;", 'DOWNLOAD_TEXT' => G::LoadTranslation('ID_DOWNLOAD'), 'DOWNLOAD_JS' => 'downloadFile(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . $sCurrentDirectory . '\', \'' . $aFile['FILE'] . '\');return false;', 'DELETE_TEXT' => G::LoadTranslation('ID_DELETE'), 'DELETE_JS' => 'deleteFile(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . $sCurrentDirectory . '\', \'' . $aFile['FILE'] . '\');return false;' );
         }
         global $_DBArray;
         $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');

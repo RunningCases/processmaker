@@ -7,7 +7,8 @@ switch ($_POST['action']) {
         require_once ("classes/model/IsoCountry.php");
         $c = new Criteria();
         $c->add(IsoCountryPeer::IC_UID, null, Criteria::ISNOTNULL);
-
+        $c->addAscendingOrderByColumn(IsoCountryPeer::IC_NAME);
+        
         $countries = IsoCountryPeer::doSelect($c);
         foreach ($countries as $rowid => $row) {
             $oData[] = Array('IC_UID' => $row->getICUid(), 'IC_NAME' => $row->getICName());
@@ -19,6 +20,7 @@ switch ($_POST['action']) {
         $c = new Criteria();
         $country = $_POST['IC_UID'];
         $c->add(IsoSubdivisionPeer::IC_UID, $country, Criteria::EQUAL);
+        $c->addAscendingOrderByColumn(IsoSubdivisionPeer::IS_NAME);
         $locations = IsoSubdivisionPeer::doSelect($c);
 
         $oData = Array();
@@ -36,6 +38,7 @@ switch ($_POST['action']) {
         $state = $_POST['IS_UID'];
         $c->add(IsoLocationPeer::IC_UID, $country, Criteria::EQUAL);
         $c->add(IsoLocationPeer::IS_UID, $state, Criteria::EQUAL);
+        $c->addAscendingOrderByColumn(IsoLocationPeer::IL_NAME);
         $locations = IsoLocationPeer::doSelect($c);
 
         $oData = Array();
@@ -55,6 +58,7 @@ switch ($_POST['action']) {
         $oCriteria->addSelectColumn(UsersPeer::USR_LASTNAME);
         $oCriteria->addSelectColumn(UsersPeer::USR_EMAIL);
         $oCriteria->add(UsersPeer::USR_STATUS, array('ACTIVE', 'VACATION'), Criteria::IN);
+        $oCriteria->addAscendingOrderByColumn(UsersPeer::USR_USERNAME);
         if (isset($_POST['USR_UID'])) {
             $oCriteria->add(UsersPeer::USR_UID, $_POST['USR_UID'], Criteria::NOT_EQUAL);
         }
