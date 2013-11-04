@@ -10,6 +10,7 @@ class Bootstrap
 {
 
     public static $includeClassPaths = array();
+    public static $includePaths = array();
     protected $relativeIncludePaths = array();
 
     //below here only approved methods
@@ -24,18 +25,37 @@ class Bootstrap
             require_once BootStrap::$includeClassPaths[$className];
 
             return true;
-        } else {
-            // try resolve a Model class file
-            $classFile = PATH_CORE . 'classes' . PATH_SEP . 'model' . PATH_SEP .  $class . '.php';
+        }
+
+        // try resolve a Model class file
+        $classFile = PATH_CORE . 'classes' . PATH_SEP . 'model' . PATH_SEP .  $class . '.php';
+
+        if (file_exists($classFile)) {
+            require_once $classFile;
+
+            return true;
+        }
+
+        $classHasNamespaceSeparator = strpos($class, '\\') !== false ? true : false;
+
+        foreach (BootStrap::$includePaths as $path) {
+            if ($classHasNamespaceSeparator) {
+                $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+            } else {
+                $class = str_replace('_', DIRECTORY_SEPARATOR, $class);
+            }
+
+            $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $classFile = $path . $class;
 
             if (file_exists($classFile)) {
                 require_once $classFile;
 
                 return true;
-            } else {
-                //error_log(' ==> CLass not found: ' . $class);
             }
         }
+
+        //error_log(' ==> CLass not found: ' . $class);
 
         return false;
     }
@@ -44,6 +64,11 @@ class Bootstrap
     {
         BootStrap::$includeClassPaths[strtolower($classname)] = $includeFile;
         return;
+    }
+
+    public function registerDir($name, $dir)
+    {
+        BootStrap::$includePaths[$name] = $dir;
     }
 
     /*

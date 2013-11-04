@@ -1,9 +1,13 @@
 <?php
 require_once PATH_CORE . 'services/oauth2/PmPdo.php';
 
-$dsn      = 'mysql:dbname=wf_workflow;host=localhost';
-$username = 'root';
-$password = 'sample';
+
+list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
+$port = empty($port) ? '' : ";port=$port";
+
+$dsn      = DB_ADAPTER.':host='.$host.';dbname='.DB_NAME.$port;
+$username = DB_USER;
+$password = DB_PASS;
 
 $this->scope = array(
     'view_processes' => 'View Processes',

@@ -510,6 +510,8 @@ try {
 
     Bootstrap::registerSystemClasses();
 
+    Bootstrap::registerDir('BusinessModel', PATH_HOME . 'engine/BusinessModel/');
+
     require_once  PATH_THIRDPARTY . '/pear/PEAR.php';
 
     //Bootstrap::LoadSystem( 'pmException' );

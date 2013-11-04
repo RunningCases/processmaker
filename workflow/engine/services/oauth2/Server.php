@@ -46,6 +46,8 @@ class Server implements iAuthenticate
         // Pass a storage object or array of storage objects to the OAuth2 server class
         $this->server = new \OAuth2\Server($this->storage);
 
+        $this->server->setConfig('enforce_state', false);
+
         // Add the "Authorization Code" grant type (this is where the oauth magic happens)
         $this->server->addGrantType(new \OAuth2\GrantType\AuthorizationCode($this->storage));
 
