@@ -40,13 +40,13 @@ class Bootstrap
 
         foreach (BootStrap::$includePaths as $path) {
             if ($classHasNamespaceSeparator) {
-                $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+                $classPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
             } else {
-                $class = str_replace('_', DIRECTORY_SEPARATOR, $class);
+                $classPath = str_replace('_', DIRECTORY_SEPARATOR, $class);
             }
 
             $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-            $classFile = $path . $class;
+            $classFile = $path . $classPath . '.php';
 
             if (file_exists($classFile)) {
                 require_once $classFile;

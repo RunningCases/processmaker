@@ -510,7 +510,7 @@ try {
 
     Bootstrap::registerSystemClasses();
 
-    Bootstrap::registerDir('BusinessModel', PATH_HOME . 'engine/BusinessModel/');
+    Bootstrap::registerDir('src', PATH_HOME . 'engine/src/');
 
     require_once  PATH_THIRDPARTY . '/pear/PEAR.php';
 
