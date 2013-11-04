@@ -504,6 +504,7 @@ class Process
         $processMap = new processMap();
 
         return $processMap->deleteProcess($processUid);
+
     }
 }
 
