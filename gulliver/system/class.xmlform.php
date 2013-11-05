@@ -1749,9 +1749,10 @@ class XmlForm_Field_Print extends XmlForm_Field_SimpleText //by neyek
         $value = G::replaceDataField( $this->value, $owner->values );
         $label = G::replaceDataField( $this->label, $owner->values );
 
-        $html = '<a href="#" onclick="popUp(\'' . $this->htmlentities( $link, ENT_QUOTES, 'utf-8' ) . '\', ' . $this->width . ', ' . $this->height . ', ' . $this->left . ', ' . $this->top . ', ' . $this->resizable . '); return false;" >
-            <image title="' . $this->htmlentities( $label, ENT_QUOTES, 'utf-8' ) . '" src="/images/printer.png" width="15" height="15" border="0"/>
-       </a>';
+        $html = '<a href="javascript:;" onclick="dynaFormPrint(\'' . $owner->parentFormId . '\', \'' . $this->htmlentities( $link, ENT_QUOTES, 'utf-8' ) . '\', ' . $this->width . ', ' . $this->height . ', ' . $this->left . ', ' . $this->top . ', ' . $this->resizable . '); return false;">
+                  <image title="' . $this->htmlentities( $label, ENT_QUOTES, 'utf-8' ) . '" src="/images/printer.png" width="15" height="15" border="0"/>
+                  </a>';
+
         return $html;
     }
 }
@@ -2893,7 +2894,7 @@ class XmlForm_Field_File extends XmlForm_Field
             $styleDisplay = "display: none;";
         }
 
-        $html = $html1 . "<input type=\"file\" id=\"form" . $rowId . "[" . $this->name . "]\" name=\"form" . $rowId . "[" . $this->name . "]\" value=\"" . $value . "\" class=\"module_app_input___gray_file\" style=\"" . $styleDisplay . "\"" . $mode . " />" . $html2;
+        $html = $html1 . "<input type=\"file\" id=\"form" . $rowId . "[" . $this->name . "]\" name=\"form" . $rowId . "[" . $this->name . "]\" value=\"" . $value . "\" class=\"module_app_input___gray_file\" style=\"" . $styleDisplay . "\"" . $mode . " " . $this->NSRequiredValue() . " />" . $html2;
 
         if (isset( $this->input ) && $this->input != null) {
             require_once ("classes/model/InputDocument.php");
