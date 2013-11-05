@@ -20,7 +20,7 @@ class Process
     {
         //Copy of processmaker/workflow/engine/methods/processes/processes_Ajax.php //case 'saveNewPattern':
 
-        $processMap = new processMap();
+        $processMap = new \processMap();
 
         if ($type != "SEQUENTIAL" && $type != "SEC-JOIN" && $type != "DISCRIMINATOR") {
             if ($processMap->getNumberOfRoutes($processUid, $taskUid, $nextTaskUid, $type) > 0) {
@@ -34,7 +34,7 @@ class Process
         if ($delete || $type == "SEQUENTIAL" || $type == "SEC-JOIN" || $type == "DISCRIMINATOR") {
             //G::LoadClass("tasks");
 
-            $tasks = new Tasks();
+            $tasks = new \Tasks();
 
             $tasks->deleteAllRoutesOfTask($processUid, $taskUid);
             $tasks->deleteAllGatewayOfTask($processUid, $taskUid);
@@ -60,7 +60,7 @@ class Process
         }
 
         //Process
-        $process = new Process();
+        $process = new \Process();
 
         $arrayProcessData = $arrayDefineProcessData["process"];
 
@@ -129,7 +129,7 @@ class Process
 
         //Process - Save Calendar ID for this process
         if (isset($arrayProcessData["PRO_CALENDAR"]) && $arrayProcessData["PRO_CALENDAR"] != "") {
-            $calendar = new Calendar();
+            $calendar = new \Calendar();
             $calendar->assignCalendarTo($processUid, $arrayProcessData["PRO_CALENDAR"], "PROCESS");
         }
 
@@ -164,7 +164,7 @@ class Process
                             "TAS_START" => $arrayData["TAS_START"]
                         );
 
-                        $task = new Task();
+                        $task = new \Task();
 
                         $taskUid = $task->create($arrayDataAux);
 
@@ -173,7 +173,7 @@ class Process
                         $arrayDefineProcessData["process"]["tasks"][$index]["TAS_UID_OLD"] = $uidAux;
 
                         //Update task properties
-                        $task2 = new Task();
+                        $task2 = new \BusinessModel\Task();
 
                         $arrayResult = $task2->updateProperties($taskUid, $processUid, $arrayData);
 
@@ -184,17 +184,17 @@ class Process
                         break;
                     case "UPDATE":
                         //Update task
-                        $task = new Task();
+                        $task = new \Task();
 
                         $result = $task->update($arrayData);
 
                         //Update task properties
-                        $task2 = new Task();
+                        $task2 = new \BusinessModel\Task();
 
                         $arrayResult = $task2->updateProperties($arrayData["TAS_UID"], $processUid, $arrayData);
                         break;
                     case "DELETE":
-                        $tasks = new Tasks();
+                        $tasks = new \Tasks();
 
                         $tasks->deleteTask($arrayData["TAS_UID"]);
                         break;
@@ -286,9 +286,9 @@ class Process
     {
         //Copy of processmaker/workflow/engine/methods/processes/processesList.php
 
-        $process = new Process();
+        $process = new \Process();
 
-        $memcache = &PMmemcached::getSingleton(SYS_SYS);
+        $memcache = &\PMmemcached::getSingleton(SYS_SYS);
 
         $memkey = "no memcache";
         $memcacheUsed = "not used";
@@ -307,7 +307,7 @@ class Process
 
                 if (($proData = $memcache->get($memkey)) === false) {
                     $proData = $process->getAllProcesses($start, $limit, null, $arrayFilterData["processName"]);
-                    $memcache->set($memkey, $proData, PMmemcached::ONE_HOUR);
+                    $memcache->set($memkey, $proData, \PMmemcached::ONE_HOUR);
                     $memcacheUsed = "no";
                 }
             } else {
@@ -318,8 +318,8 @@ class Process
                 if (($proData = $memcache->get($memkey)) === false || ($totalCount = $memcache->get($memkeyTotal)) === false) {
                     $proData = $process->getAllProcesses($start, $limit);
                     $totalCount = $process->getAllProcessesCount();
-                    $memcache->set($memkey, $proData, PMmemcached::ONE_HOUR);
-                    $memcache->set($memkeyTotal, $totalCount, PMmemcached::ONE_HOUR);
+                    $memcache->set($memkey, $proData, \PMmemcached::ONE_HOUR);
+                    $memcache->set($memkeyTotal, $totalCount, \PMmemcached::ONE_HOUR);
                     $memcacheUsed = "no";
                 }
             }
@@ -349,7 +349,7 @@ class Process
         $arrayDefineProcessData = array();
 
         //Process
-        $process = new Process();
+        $process = new \Process();
 
         $arrayProcessData = $process->load($processUid);
 
@@ -361,9 +361,9 @@ class Process
         );
 
         //Load data
-        $processMap = new processMap();
+        $processMap = new \processMap();
 
-        $arrayData = (array)(Bootstrap::json_decode($processMap->load($processUid)));
+        $arrayData = (array)(\Bootstrap::json_decode($processMap->load($processUid)));
 
         //Tasks & Routes
         $arrayDefineProcessData["process"]["tasks"]  = array();
@@ -376,7 +376,7 @@ class Process
                 $taskUid = $t["uid"];
 
                 //Load task data
-                $task = new Task();
+                $task = new \Task();
 
                 $arrayTaskData = $task->load($taskUid);
 
@@ -424,15 +424,15 @@ class Process
                         $r = (array)($valuer);
 
                         //Criteria
-                        $criteria = new Criteria("workflow");
+                        $criteria = new \Criteria("workflow");
 
-                        $criteria->addSelectColumn(RoutePeer::ROU_UID);
-                        $criteria->add(RoutePeer::PRO_UID, $processUid, Criteria::EQUAL);
-                        $criteria->add(RoutePeer::TAS_UID, $taskUid, Criteria::EQUAL);
-                        $criteria->add(RoutePeer::ROU_NEXT_TASK, $r["task"], Criteria::EQUAL);
+                        $criteria->addSelectColumn(\RoutePeer::ROU_UID);
+                        $criteria->add(\RoutePeer::PRO_UID, $processUid, \Criteria::EQUAL);
+                        $criteria->add(\RoutePeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+                        $criteria->add(\RoutePeer::ROU_NEXT_TASK, $r["task"], \Criteria::EQUAL);
 
-                        $rsCriteria = RoutePeer::doSelectRS($criteria);
-                        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                        $rsCriteria = \RoutePeer::doSelectRS($criteria);
+                        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
                         $rsCriteria->next();
 
@@ -487,13 +487,16 @@ class Process
     public function deleteProcess($processUid, $checkCases = true)
     {
         if ($checkCases) {
-            $process = new Process();
+            $process = new \Process();
 
             $arrayCases = $process->getCasesCountInAllProcesses($processUid);
+
             $sum = 0;
 
-            foreach ($arrayCases[$processUid] as $value) {
-                $sum = $sum + $value;
+            if (isset($arrayCases[$processUid]) && count($arrayCases[$processUid]) > 0) {
+                foreach ($arrayCases[$processUid] as $value) {
+                    $sum = $sum + $value;
+                }
             }
 
             if ($sum > 0) {
@@ -501,7 +504,7 @@ class Process
             }
         }
 
-        $processMap = new processMap();
+        $processMap = new \processMap();
 
         return $processMap->deleteProcess($processUid);
 

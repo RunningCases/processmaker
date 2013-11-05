@@ -16,9 +16,10 @@ class Task
     public function getProperties($taskUid, $keyCaseToLower = false)
     {
         try {
-            G::LoadClass("configuration");
+            //G::LoadClass("configuration");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.configuration.php");
 
-            $task = new Task();
+            $task = new \Task();
 
             $arrayDataAux = $task->load($taskUid);
 
@@ -35,7 +36,7 @@ class Task
 
             //Timing control
             //Load Calendar Information
-            $calendar = new Calendar();
+            $calendar = new \Calendar();
 
             $calendarInfo = $calendar->getCalendarFor("", "", $taskUid);
 
@@ -43,7 +44,7 @@ class Task
             $arrayDataAux["TAS_CALENDAR"] = ($calendarInfo["CALENDAR_APPLIED"] != "DEFAULT")? $calendarInfo["CALENDAR_UID"] : "";
 
             //Notifications
-            $conf = new Configurations();
+            $conf = new \Configurations();
             $conf->loadConfig($x, "TAS_EXTRA_PROPERTIES", $taskUid, "", "");
 
             if (isset($conf->aConfig["TAS_DEF_MESSAGE_TYPE"]) && isset($conf->aConfig["TAS_DEF_MESSAGE_TYPE"])) {
@@ -146,7 +147,7 @@ class Task
             $arrayProperty["TAS_UID"] = $taskUid;
             $arrayProperty["PRO_UID"] = $processUid;
 
-            $task = new Task();
+            $task = new \Task();
             $aTaskInfo = $task->load($arrayProperty["TAS_UID"]);
 
             $arrayResult = array();
@@ -170,9 +171,10 @@ class Task
 
             //Additional configuration
             if (isset($arrayProperty["TAS_DEF_MESSAGE_TYPE"]) && isset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"])) {
-                G::LoadClass("configuration");
+                //G::LoadClass("configuration");
+                require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.configuration.php");
 
-                $oConf = new Configurations();
+                $oConf = new \Configurations();
                 $oConf->aConfig = array("TAS_DEF_MESSAGE_TYPE" => $arrayProperty["TAS_DEF_MESSAGE_TYPE"], "TAS_DEF_MESSAGE_TEMPLATE" => $arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"]);
 
                 $oConf->saveConfig("TAS_EXTRA_PROPERTIES", $arrayProperty["TAS_UID"], "", "");
@@ -233,23 +235,24 @@ class Task
     public function getStepsList($taskUid, $processUid, $keyCaseToLower = false, $start = 0, $limit = 25)
     {
         try {
-            G::LoadClass("BasePeer");
+            //G::LoadClass("BasePeer");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.BasePeer.php");
 
             $arrayData = array();
             $keyCase = ($keyCaseToLower)? CASE_LOWER : CASE_UPPER;
 
             //Criteria
-            $processMap = new ProcessMap();
+            $processMap = new \ProcessMap();
 
             $criteria = $processMap->getAvailableBBCriteria($processUid, $taskUid);
 
             if ($criteria->getDbName() == "dbarray") {
-                $rsCriteria = ArrayBasePeer::doSelectRS($criteria);
+                $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
             } else {
-                $rsCriteria = GulliverBasePeer::doSelectRS($criteria);
+                $rsCriteria = \GulliverBasePeer::doSelectRS($criteria);
             }
 
-            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
@@ -279,23 +282,24 @@ class Task
     public function getSteps($taskUid, $keyCaseToLower = false)
     {
         try {
-            G::LoadClass("BasePeer");
+            //G::LoadClass("BasePeer");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.BasePeer.php");
 
             $arrayData = array();
             $keyCase = ($keyCaseToLower)? CASE_LOWER : CASE_UPPER;
 
             //Criteria
-            $processMap = new ProcessMap();
+            $processMap = new \ProcessMap();
 
             $criteria = $processMap->getStepsCriteria($taskUid);
 
             if ($criteria->getDbName() == "dbarray") {
-                $rsCriteria = ArrayBasePeer::doSelectRS($criteria);
+                $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
             } else {
-                $rsCriteria = GulliverBasePeer::doSelectRS($criteria);
+                $rsCriteria = \GulliverBasePeer::doSelectRS($criteria);
             }
 
-            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
@@ -322,7 +326,8 @@ class Task
     public function getTriggers($taskUid, $keyCaseToLower = false)
     {
         try {
-            G::LoadClass("BasePeer");
+            //G::LoadClass("BasePeer");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.BasePeer.php");
 
             $arrayData = array();
             $keyCase = ($keyCaseToLower)? CASE_LOWER : CASE_UPPER;
@@ -337,15 +342,16 @@ class Task
                 "AFTER_ROUTING"     => "AFTER"
             );
 
-            $processMap = new ProcessMap();
-            $stepTgr = new StepTrigger();
+            $processMap = new \ProcessMap();
+            $stepTgr = new \StepTrigger();
 
             $arraySteps = $this->getSteps($taskUid);
             $n = count($arraySteps) + 1;
 
             $arraySteps[] = array(
                 "STEP_UID"   => "",
-                "STEP_TITLE" => G::LoadTranslation("ID_ASSIGN_TASK"),
+                //"STEP_TITLE" => G::LoadTranslation("ID_ASSIGN_TASK"),
+                "STEP_TITLE" => "Assign Task",
                 "STEP_TYPE_OBJ" => "",
                 "STEP_MODE"     => "",
                 "STEP_CONDITION" => "",
@@ -388,12 +394,12 @@ class Task
                     $criteria = $processMap->getStepTriggersCriteria($stepUid, $taskUid, $type);
 
                     if ($criteria->getDbName() == "dbarray") {
-                        $rsCriteria = ArrayBasePeer::doSelectRS($criteria);
+                        $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
                     } else {
-                        $rsCriteria = GulliverBasePeer::doSelectRS($criteria);
+                        $rsCriteria = \GulliverBasePeer::doSelectRS($criteria);
                     }
 
-                    $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
                     while ($rsCriteria->next()) {
                         $row = $rsCriteria->getRow();
@@ -427,23 +433,24 @@ class Task
     public function getUsers($taskUid, $taskUserType, $keyCaseToLower = false)
     {
         try {
-            G::LoadClass("BasePeer");
+            //G::LoadClass("BasePeer");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.BasePeer.php");
 
             $arrayData = array();
             $keyCase = ($keyCaseToLower)? CASE_LOWER : CASE_UPPER;
 
             //Criteria
-            $processMap = new ProcessMap();
+            $processMap = new \ProcessMap();
 
             $criteria = $processMap->getTaskUsersCriteria($taskUid, $taskUserType);
 
             if ($criteria->getDbName() == "dbarray") {
-                $rsCriteria = ArrayBasePeer::doSelectRS($criteria);
+                $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
             } else {
-                $rsCriteria = GulliverBasePeer::doSelectRS($criteria);
+                $rsCriteria = \GulliverBasePeer::doSelectRS($criteria);
             }
 
-            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
