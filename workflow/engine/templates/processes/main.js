@@ -226,12 +226,12 @@ Ext.onReady(function(){
         iconCls: 'button_menu_ext ss_sprite  ss_pencil',
         //icon: '/images/edit.gif',
         handler: editProcess
-      },/*{
-        text:TRANSLATIONS.ID_EDIT_BPMN,
+      },{
+        text: 'Edit (New Editor)',
         iconCls: 'button_menu_ext',
         icon: '/images/pencil_beta.png',
         handler: editNewProcess
-      },*/{
+      },{
         text: _('ID_STATUS'),
         id:'activator',
         icon: '',
@@ -374,11 +374,11 @@ Ext.onReady(function(){
         text: _('ID_EDIT'),
         iconCls: 'button_menu_ext ss_sprite  ss_pencil',
         handler: editProcess
-      },/*{
-        text: _('ID_EDIT_BPMN'),
+      },{
+        text: 'Edit (New Editor)',
         icon: '/images/pencil_beta.png',
         handler: editNewProcess
-      },*/ {
+      }, {
         id: 'activator2',
         text: '',
         icon: '',
@@ -543,7 +543,7 @@ editProcess = function(){
 editNewProcess = function(){
   var rowSelected = processesGrid.getSelectionModel().getSelected();
   if( rowSelected ) {
-    location.href = '../bpmnDesigner?id='+rowSelected.data.PRO_UID
+    location.href = '../designer?pro_uid='+rowSelected.data.PRO_UID
   } else {
      Ext.Msg.show({
       title:'',

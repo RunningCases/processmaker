@@ -18,8 +18,6 @@ switch ($_SERVER['REQUEST_METHOD']) {
         \Api\OAuth2\Server::setPmClientId('x-pm-local-client');
 
         $oauthServer = new \Api\OAuth2\Server();
-        $oauthServer->setConfig('enforce_state', false);
-
         $userid = $_SESSION['USER_LOGGED'];
         $authorize = isset($_POST['authorize']) ? (bool) $_POST['authorize'] : false;
 

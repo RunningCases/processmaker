@@ -25,7 +25,7 @@ abstract class BaseOauthClientsPeer
     const CLASS_DEFAULT = 'classes.model.OauthClients';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 7;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -49,6 +49,9 @@ abstract class BaseOauthClientsPeer
     /** the column name for the REDIRECT_URI field */
     const REDIRECT_URI = 'OAUTH_CLIENTS.REDIRECT_URI';
 
+    /** the column name for the USR_UID field */
+    const USR_UID = 'OAUTH_CLIENTS.USR_UID';
+
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
 
@@ -60,10 +63,10 @@ abstract class BaseOauthClientsPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('ClientId', 'ClientSecret', 'ClientName', 'ClientDescription', 'ClientWebsite', 'RedirectUri', ),
-        BasePeer::TYPE_COLNAME => array (OauthClientsPeer::CLIENT_ID, OauthClientsPeer::CLIENT_SECRET, OauthClientsPeer::CLIENT_NAME, OauthClientsPeer::CLIENT_DESCRIPTION, OauthClientsPeer::CLIENT_WEBSITE, OauthClientsPeer::REDIRECT_URI, ),
-        BasePeer::TYPE_FIELDNAME => array ('CLIENT_ID', 'CLIENT_SECRET', 'CLIENT_NAME', 'CLIENT_DESCRIPTION', 'CLIENT_WEBSITE', 'REDIRECT_URI', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('ClientId', 'ClientSecret', 'ClientName', 'ClientDescription', 'ClientWebsite', 'RedirectUri', 'UsrUid', ),
+        BasePeer::TYPE_COLNAME => array (OauthClientsPeer::CLIENT_ID, OauthClientsPeer::CLIENT_SECRET, OauthClientsPeer::CLIENT_NAME, OauthClientsPeer::CLIENT_DESCRIPTION, OauthClientsPeer::CLIENT_WEBSITE, OauthClientsPeer::REDIRECT_URI, OauthClientsPeer::USR_UID, ),
+        BasePeer::TYPE_FIELDNAME => array ('CLIENT_ID', 'CLIENT_SECRET', 'CLIENT_NAME', 'CLIENT_DESCRIPTION', 'CLIENT_WEBSITE', 'REDIRECT_URI', 'USR_UID', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -73,10 +76,10 @@ abstract class BaseOauthClientsPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('ClientId' => 0, 'ClientSecret' => 1, 'ClientName' => 2, 'ClientDescription' => 3, 'ClientWebsite' => 4, 'RedirectUri' => 5, ),
-        BasePeer::TYPE_COLNAME => array (OauthClientsPeer::CLIENT_ID => 0, OauthClientsPeer::CLIENT_SECRET => 1, OauthClientsPeer::CLIENT_NAME => 2, OauthClientsPeer::CLIENT_DESCRIPTION => 3, OauthClientsPeer::CLIENT_WEBSITE => 4, OauthClientsPeer::REDIRECT_URI => 5, ),
-        BasePeer::TYPE_FIELDNAME => array ('CLIENT_ID' => 0, 'CLIENT_SECRET' => 1, 'CLIENT_NAME' => 2, 'CLIENT_DESCRIPTION' => 3, 'CLIENT_WEBSITE' => 4, 'REDIRECT_URI' => 5, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('ClientId' => 0, 'ClientSecret' => 1, 'ClientName' => 2, 'ClientDescription' => 3, 'ClientWebsite' => 4, 'RedirectUri' => 5, 'UsrUid' => 6, ),
+        BasePeer::TYPE_COLNAME => array (OauthClientsPeer::CLIENT_ID => 0, OauthClientsPeer::CLIENT_SECRET => 1, OauthClientsPeer::CLIENT_NAME => 2, OauthClientsPeer::CLIENT_DESCRIPTION => 3, OauthClientsPeer::CLIENT_WEBSITE => 4, OauthClientsPeer::REDIRECT_URI => 5, OauthClientsPeer::USR_UID => 6, ),
+        BasePeer::TYPE_FIELDNAME => array ('CLIENT_ID' => 0, 'CLIENT_SECRET' => 1, 'CLIENT_NAME' => 2, 'CLIENT_DESCRIPTION' => 3, 'CLIENT_WEBSITE' => 4, 'REDIRECT_URI' => 5, 'USR_UID' => 6, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -188,6 +191,8 @@ abstract class BaseOauthClientsPeer
         $criteria->addSelectColumn(OauthClientsPeer::CLIENT_WEBSITE);
 
         $criteria->addSelectColumn(OauthClientsPeer::REDIRECT_URI);
+
+        $criteria->addSelectColumn(OauthClientsPeer::USR_UID);
 
     }
 

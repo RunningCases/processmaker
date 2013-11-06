@@ -77,6 +77,8 @@ class OauthClientsMapBuilder
 
         $tMap->addColumn('REDIRECT_URI', 'RedirectUri', 'string', CreoleTypes::VARCHAR, true, 2000);
 
+        $tMap->addColumn('USR_UID', 'UsrUid', 'string', CreoleTypes::VARCHAR, true, 32);
+
     } // doBuild()
 
 } // OauthClientsMapBuilder

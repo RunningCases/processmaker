@@ -20,6 +20,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $client->setClientDescription($data['description']);
         $client->setClientWebsite($data['web_site']);
         $client->setRedirectUri($data['callback_url']);
+        $client->setUsrUid($_SESSION['USER_LOGGED']);
 
         $client->save();
 
