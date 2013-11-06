@@ -64,6 +64,12 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
     protected $redirect_uri;
 
     /**
+     * The value for the usr_uid field.
+     * @var        string
+     */
+    protected $usr_uid;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -141,6 +147,17 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
     {
 
         return $this->redirect_uri;
+    }
+
+    /**
+     * Get the [usr_uid] column value.
+     * 
+     * @return     string
+     */
+    public function getUsrUid()
+    {
+
+        return $this->usr_uid;
     }
 
     /**
@@ -276,6 +293,28 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
     } // setRedirectUri()
 
     /**
+     * Set the value of [usr_uid] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setUsrUid($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->usr_uid !== $v) {
+            $this->usr_uid = $v;
+            $this->modifiedColumns[] = OauthClientsPeer::USR_UID;
+        }
+
+    } // setUsrUid()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -304,12 +343,14 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
 
             $this->redirect_uri = $rs->getString($startcol + 5);
 
+            $this->usr_uid = $rs->getString($startcol + 6);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 6; // 6 = OauthClientsPeer::NUM_COLUMNS - OauthClientsPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 7; // 7 = OauthClientsPeer::NUM_COLUMNS - OauthClientsPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating OauthClients object", $e);
@@ -531,6 +572,9 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
             case 5:
                 return $this->getRedirectUri();
                 break;
+            case 6:
+                return $this->getUsrUid();
+                break;
             default:
                 return null;
                 break;
@@ -557,6 +601,7 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
             $keys[3] => $this->getClientDescription(),
             $keys[4] => $this->getClientWebsite(),
             $keys[5] => $this->getRedirectUri(),
+            $keys[6] => $this->getUsrUid(),
         );
         return $result;
     }
@@ -606,6 +651,9 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
             case 5:
                 $this->setRedirectUri($value);
                 break;
+            case 6:
+                $this->setUsrUid($value);
+                break;
         } // switch()
     }
 
@@ -653,6 +701,10 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
             $this->setRedirectUri($arr[$keys[5]]);
         }
 
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setUsrUid($arr[$keys[6]]);
+        }
+
     }
 
     /**
@@ -686,6 +738,10 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
 
         if ($this->isColumnModified(OauthClientsPeer::REDIRECT_URI)) {
             $criteria->add(OauthClientsPeer::REDIRECT_URI, $this->redirect_uri);
+        }
+
+        if ($this->isColumnModified(OauthClientsPeer::USR_UID)) {
+            $criteria->add(OauthClientsPeer::USR_UID, $this->usr_uid);
         }
 
 
@@ -751,6 +807,8 @@ abstract class BaseOauthClients extends BaseObject implements Persistent
         $copyObj->setClientWebsite($this->client_website);
 
         $copyObj->setRedirectUri($this->redirect_uri);
+
+        $copyObj->setUsrUid($this->usr_uid);
 
 
         $copyObj->setNew(true);

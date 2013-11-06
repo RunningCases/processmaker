@@ -3032,6 +3032,7 @@
         <column name="CLIENT_DESCRIPTION" type="VARCHAR" size="1024" required="true" />
         <column name="CLIENT_WEBSITE" type="VARCHAR" size="1024" required="true" />
         <column name="REDIRECT_URI" type="VARCHAR" size="2000" required="true" />
+        <column name="USR_UID" type="VARCHAR" size="32" required="true" />
     </table>
     <table name="OAUTH_REFRESH_TOKENS">
         <column name="REFRESH_TOKEN" type="VARCHAR" size="40" required="true" primaryKey="true" />
