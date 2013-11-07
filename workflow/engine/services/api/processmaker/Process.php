@@ -1,12 +1,18 @@
 <?php
 namespace Services\Api\ProcessMaker;
 
-class Process extends \ProcessMaker\Api
+use \ProcessMaker\Api;
+use \Luracast\Restler\RestException;
+
+/**
+ * Process Api Controller
+ *
+ * @protected
+ */
+class Process extends Api
 {
     public function index($proTitle = "", $proCategory = "", $start = 0, $limit = 25)
     {
-        $response = array();
-
         try {
             $arrayFilterData = array();
 
@@ -19,46 +25,19 @@ class Process extends \ProcessMaker\Api
             }
 
             $process = new \BusinessModel\Process();
-
             $data = $process->loadAllProcess($arrayFilterData, $start, $limit);
 
-            //Response
-            $response["success"] = true;
-            $response["message"] = "Processes loaded successfully";
-            $response["data"] = $data;
-        } catch (Exception $e) {
-            //Response
-            $response["success"] = false;
-            $response["message"] = $e->getMessage();
+            // Composing Response
+            $response = array(
+                'processes' => $data['data'],
+                'totalCount' => $data['totalCount']
+            );
+
+            return $response;
+
+        } catch (\Exception $e) {
+            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
         }
-
-        return $response;
-    }
-
-    public function post($request_data = null)
-    {
-        define("SYS_LANG", $request_data["lang"]);
-
-        $response = array();
-
-        try {
-            $userUid = "00000000000000000000000000000001"; //$this->getUserId()
-
-            $process = new \BusinessModel\Process();
-
-            $data = $process->createProcess($userUid, $request_data);
-
-            //Response
-            $response["success"] = true;
-            $response["message"] = "Process saved successfully";
-            $response["data"] = $data;
-        } catch (Exception $e) {
-            //Response
-            $response["success"] = false;
-            $response["message"] = $e->getMessage();
-        }
-
-        return $response;
     }
 
     public function get($processUid)
@@ -74,13 +53,26 @@ class Process extends \ProcessMaker\Api
             $response["success"] = true;
             $response["message"] = "Process load successfully";
             $response["data"] = $data;
-        } catch (Exception $e) {
-            //Response
-            $response["success"] = false;
-            $response["message"] = $e->getMessage();
+        } catch (\Exception $e) {
+            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
         }
 
         return $response;
+    }
+
+    public function post($request_data = null)
+    {
+        defined('SYS_LANG') || define("SYS_LANG", $request_data["lang"]);
+
+        try {
+            $process = new \BusinessModel\Process();
+            $userUid = $this->getUserId();
+
+            return $process->createProcess($userUid, $request_data);
+
+        } catch (\Exception $e) {
+            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+        }
     }
 
     public function put($processUid, $request_data = null)
@@ -88,9 +80,8 @@ class Process extends \ProcessMaker\Api
         $response = array();
 
         try {
-            $userUid = "00000000000000000000000000000001";
-
             $process = new \BusinessModel\Process();
+            $userUid = $this->getUserId();
 
             $data = $process->updateProcess($processUid, $userUid, $request_data);
 
@@ -98,10 +89,8 @@ class Process extends \ProcessMaker\Api
             $response["success"] = true;
             $response["message"] = "Process updated successfully";
             $response["data"] = $data;
-        } catch (Exception $e) {
-            //Response
-            $response["success"] = false;
-            $response["message"] = $e->getMessage();
+        } catch (\Exception $e) {
+            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
         }
 
         return $response;
@@ -119,17 +108,12 @@ class Process extends \ProcessMaker\Api
             //Response
             $response["success"] = true;
             $response["message"] = "Process was deleted successfully";
-        } catch (Exception $e) {
-            //Response
-            $response["success"] = false;
-            $response["message"] = $e->getMessage();
+        } catch (\Exception $e) {
+            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
         }
 
         return $response;
     }
-
-
-
 
 
     /**
@@ -168,7 +152,7 @@ class Process extends \ProcessMaker\Api
             $response["success"] = true;
             $response["message"] = "Properties loaded successfully";
             $response["data"]    = array("activity" => $arrayData);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //Response
             $response["success"] = false;
             $response["message"] = $e->getMessage();
@@ -202,7 +186,7 @@ class Process extends \ProcessMaker\Api
             $response["success"] = true;
             $response["message"] = "Properties loaded successfully";
             $response["data"]    = array("activity" => $arrayData);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //Response
             $response["success"] = false;
             $response["message"] = $e->getMessage();
@@ -238,7 +222,7 @@ class Process extends \ProcessMaker\Api
             $response["success"] = true;
             $response["message"] = "Extended loaded successfully";
             $response["data"]    = array("activity" => $arrayData);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //Response
             $response["success"] = false;
             $response["message"] = $e->getMessage();
@@ -263,7 +247,7 @@ class Process extends \ProcessMaker\Api
             $response["success"] = true;
             $response["message"] = "Steps loaded successfully";
             $response["data"]    = $data;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //Response
             $response["success"] = false;
             $response["message"] = $e->getMessage();
