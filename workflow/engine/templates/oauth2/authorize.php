@@ -79,8 +79,8 @@ $response = array(
                                                                     </ul>
 
                                                                     <div align="center">
-                                                                        <input type="submit" value="Yes, I Authorize This Request" name="authorize" class="module_app_button___gray " value="1">
-                                                                        <input type="button" value="Reject this Request" name="reject_btn" id="reject_btn" class="module_app_button___gray " onclick="doSubmit()">
+                                                                        <input type="submit" value="Yes, I authorize this request" name="authorize" class="module_app_button___gray " value="1">
+                                                                        <input type="button" value="Reject this request" name="reject_btn" id="reject_btn" class="module_app_button___gray " onclick="doSubmit()">
                                                                         <input type="hidden" name="authorize" id="authorize" value="1">
                                                                     </div>
                                                                 </span>
