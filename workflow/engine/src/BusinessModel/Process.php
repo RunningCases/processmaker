@@ -25,14 +25,14 @@ class Process
         if ($type != "SEQUENTIAL" && $type != "SEC-JOIN" && $type != "DISCRIMINATOR") {
             if ($processMap->getNumberOfRoutes($processUid, $taskUid, $nextTaskUid, $type) > 0) {
                 //die();
-                throw (new Exception());
+                throw (new \Exception());
             }
 
             //unset($aRow);
         }
 
         if ($delete || $type == "SEQUENTIAL" || $type == "SEC-JOIN" || $type == "DISCRIMINATOR") {
-            //G::LoadClass("tasks");
+            //\G::LoadClass("tasks");
 
             $tasks = new \Tasks();
 
@@ -56,7 +56,7 @@ class Process
     public function defineProcess($option, $arrayDefineProcessData)
     {
         if (!isset($arrayDefineProcessData["process"]) || count($arrayDefineProcessData["process"]) == 0) {
-            throw (new Exception("Process data do not exist"));
+            throw (new \Exception("Process data do not exist"));
         }
 
         //Process
@@ -70,19 +70,19 @@ class Process
         switch ($option) {
             case "CREATE":
                 if (!isset($arrayProcessData["USR_UID"]) || trim($arrayProcessData["USR_UID"]) == "") {
-                    throw (new Exception("User data do not exist"));
+                    throw (new \Exception("User data do not exist"));
                 }
 
                 if (!isset($arrayProcessData["PRO_TITLE"]) || trim($arrayProcessData["PRO_TITLE"]) == "") {
-                    throw (new Exception("Process title data do not exist"));
+                    throw (new \Exception("Process title data do not exist"));
                 }
 
                 if (!isset($arrayProcessData["PRO_DESCRIPTION"])) {
-                    throw (new Exception("Process description data do not exist"));
+                    throw (new \Exception("Process description data do not exist"));
                 }
 
                 if (!isset($arrayProcessData["PRO_CATEGORY"])) {
-                    throw (new Exception("Process category data do not exist"));
+                    throw (new \Exception("Process category data do not exist"));
                 }
                 break;
             case "UPDATE":
@@ -98,7 +98,7 @@ class Process
         }
 
         if (isset($arrayProcessData["PRO_TITLE"]) && $process->existsByProTitle($arrayProcessData["PRO_TITLE"])) {
-            throw (new Exception(G::LoadTranslation("ID_PROCESSTITLE_ALREADY_EXISTS", SYS_LANG, array("PRO_TITLE" => $arrayProcessData["PRO_TITLE"]))));
+            throw (new \Exception(\G::LoadTranslation("ID_PROCESSTITLE_ALREADY_EXISTS", SYS_LANG, array("PRO_TITLE" => $arrayProcessData["PRO_TITLE"]))));
         }
 
         $arrayProcessData["PRO_DYNAFORMS"] = array ();
@@ -500,7 +500,7 @@ class Process
             }
 
             if ($sum > 0) {
-                throw (new Exception("You can't delete the process, because it has $sum cases"));
+                throw (new \Exception("You can't delete the process, because it has $sum cases"));
             }
         }
 

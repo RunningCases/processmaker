@@ -1108,6 +1108,7 @@ class Bootstrap
 
         $rest = new Luracast\Restler\Restler();
         $rest->setAPIVersion($version);
+
         
         $rest->addAuthenticationClass('Api\\OAuth2\\Server', '');
 
