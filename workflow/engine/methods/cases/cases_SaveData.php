@@ -25,12 +25,12 @@
 if (!isset($_SESSION['USER_LOGGED'])) {
     G::SendTemporalMessage( 'ID_LOGIN_AGAIN', 'warning', 'labels' );
     die( '<script type="text/javascript">
-                    try 
+                    try
                       {
                         prnt = parent.parent;
                         top.location = top.location;
                       }
-                    catch (err) 
+                    catch (err)
                       {
                         parent.location = parent.location;
                       }
@@ -165,9 +165,12 @@ try {
     // saving the data ina pm table in case that is a new record
     if (! empty( $newValues )) {
         $id = key( $newValues );
-        if (! $oAdditionalTables->updateDataInTable( $oForm->fields[$oForm->fields[$id]->pmconnection]->pmtable, $newValues )) {
+       	$newValues[$id] = $aData['APP_DATA'][$id];
+       	$idPmtable = $oForm->fields[$id]->pmconnection->pmtable != '' ? $oForm->fields[$id]->pmconnection->pmtable : $oForm->fields[$id]->owner->tree->children[0]->attributes['pmtable'];
+
+        if (!($oAdditionalTables->updateDataInTable($idPmtable, $newValues ))) {
             //<--This is to know if it is a new registry on the PM Table
-            $oAdditionalTables->saveDataInTable( $oForm->fields[$oForm->fields[$id]->pmconnection]->pmtable, $newValues );
+            $oAdditionalTables->saveDataInTable($idPmtable, $newValues );
         }
     }
 
@@ -311,6 +314,7 @@ try {
         $_POST['next_step'] = $aNextStep;
         $_POST['previous_step'] = $oCase->getPreviousStep( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['STEP_POSITION'] );
         $_POST['req_val'] = $missing_req_values;
+        global $G_PUBLISH;
         $G_PUBLISH = new Publisher();
         $G_PUBLISH->AddContent( 'view', 'cases/missRequiredFields' );
         G::RenderPage( 'publish', 'blank' );
