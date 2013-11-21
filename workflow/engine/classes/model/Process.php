@@ -755,7 +755,6 @@ class Process extends BaseProcess
         } else {
             usort( $aProcesses, array($this, "ordProcessDesc") );
         }
-        $aProcesses = array_splice($aProcesses, $start, $limit);
 
         return $aProcesses;
     }
@@ -879,6 +878,9 @@ class Process extends BaseProcess
 
     public function ordProcessAsc ($a, $b)
     {
+    	if (($this->sort) == '')  {
+    		$this->sort = 'PRO_TITLE'; 
+    	}
         if ($a[$this->sort] > $b[$this->sort]) {
             return 1;
         } elseif ($a[$this->sort] < $b[$this->sort]) {
@@ -890,6 +892,9 @@ class Process extends BaseProcess
 
     public function ordProcessDesc ($a, $b)
     {
+    	if (($this->sort) == '')  {
+    		$this->sort = 'PRO_TITLE';
+    	}
 		if ($a[$this->sort] > $b[$this->sort]) {
 			return - 1;
 		} elseif ($a[$this->sort] < $b[$this->sort]) {
