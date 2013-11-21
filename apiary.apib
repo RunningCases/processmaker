@@ -1,6 +1,5 @@
-HOST: http://www.google.com/
-
---- ProcessMaker "Michael Angelo" API v1 ---
+HOST: http://www.processmaker.com/api/1.0/{workspace}/
+--- ProcessMaker "Michelangelo" API v1 ---
 ---
  Welcome to ProcessMaker API documentation.
  All comments can be written in (support [Markdown](http://daringfireball.net/projects/markdown/syntax) syntax)
@@ -9,36 +8,1629 @@ HOST: http://www.google.com/
 ---
 
 --
-Designer API
-The following is a section of resources related to ProcessMaker Designer
+Processmaker OAuth2
+---
+
+#1. Registering an Application
+First Login  on ProcessMaker and go to the following url:
+
+    Link: http://<your-pm-server>/sys<your-workspace>/en/neoclassic/oauth2/register
+Register your application and get your Client ID and Client Secret credentials.
+
+#2. Request Authorization for an application
+
+Authorize your app, with following url:
+
+    Link: http://<your-pm-server>/sys<your-workspace>/en/neoclassic/oauth2/authorize?response_type=code&client_id=[your-client-d]&scope=view_processes%20edit_processes
+After request the url above, it will redirect to the User Login and after that a authorization screen will be displayed to authorize the application.
+
+Currently there are just two scopes available: "processes_view" and "processes_edit"
+
+After user authorize the application, ProcessMaker will redirect to "URL Redirect" especified on App registration
+
+#3. Getting **Access Token**
 --
-Sample first resource
-GET /designer/editor
-< 200
-< Content-Type: application/json
-{ "items": [
-{ "url": "/designer/teditopr", "product":"2ZY48XPZ", "quantity": 1, "name": "New socks", "price": 1.25 }
-] }
 
+Getting Access Token using the **Authorization Code**
 
-Save new products in your shopping cart
-POST /sample-resource
+Required Parameters |
+------------------- | ----------------
+Joan  | saag paneer 
+Sally  | vindaloo   
+Erin   | lamb madras
+
+POST /token
+> Authorization: Basic eC1wbS1sb2NhbC1jbGllbnQ6MTc5YWQ0NWM2Y2UyY2I5N2NmMTAyOWUyMTIwNDZlODE=
 > Content-Type: application/json
-{ "product":"1AB23ORM", "quantity": 2 }
+{
+    "grant_type": "authorization_code",
+    "code": "b4b1b216ab95ef3437f9c68e6c2bf8f7224fd284"
+}
 < 201
 < Content-Type: application/json
-{ "status": "created", "url": "/sample-resource/2" }
+{
+    "access_token": "265a378d39998ecfe723dbf04e621c4944950f96",
+    "expires_in": 3600,
+    "token_type": "bearer",
+    "scope": "view_processes edit_processes",
+    "refresh_token": "9ed17b93a0731e218a3a85b52974afaf23838337"
+}
 
+Getting Access Token using the **Refresh Token**
+POST /token
+> Authorization: Basic eC1wbS1sb2NhbC1jbGllbnQ6MTc5YWQ0NWM2Y2UyY2I5N2NmMTAyOWUyMTIwNDZlODE=
+> Content-Type: application/json
+{
+    "grant_type": "authorization_code",
+    "code": "b4b1b216ab95ef3437f9c68e6c2bf8f7224fd284"
+}
+< 201
+< Content-Type: application/json
+{
+    "access_token": "265a378d39998ecfe723dbf04e621c4944950f96",
+    "expires_in": 3600,
+    "token_type": "bearer",
+    "scope": "view_processes edit_processes",
+    "refresh_token": "9ed17b93a0731e218a3a85b52974afaf23838337"
+}
 
--- Payment Resources --
-This resource allows you to submit payment information to process your *shopping cart* items
-POST /payment
-{ "cc": "12345678900", "cvc": "123", "expiry": "0112" }
+--
+Error Response
+This is the class/response returned when there is a error 
+--
+
+Error 
+GET /project/{invalid-uid}
 < 200
-{ "receipt": "/payment/receipt/1" }
+< Content-Type: application/json
+{  
+    "error": {
+        "code": 43438,
+        "message": "project id invalid",
+        "errors" : [
+            {
+                "code": 43438,
+                "message": "project id invalid",
+                "dev-message": "The uid is invalid because the database does not have a record with that index",
+                "more-info" : "http://processmaker.com/errors-code/43438"
+            },
+        ]
+    }
+}
+
+--
+Process Resources
+The following is a section of resources related to ProcessMaker Process Definition
+--
+
+Resource to get a process information a its design definition
+GET /process
+< 200
+< Content-Type: application/json
+{
+    "totalCount": "2",
+    "processes": [
+        {
+            "PRO_UID": "95053096751af47fbeee6a3088674612",
+            "PRO_PARENT": "44313230351ae0168e63669021546957",
+            "PRO_STATUS": "ACTIVE",
+            "PRO_CATEGORY": "31826415551af47d55e71f9071744090",
+            "PRO_CREATE_DATE": "2013-06-04 11:02:00",
+            "PRO_DEBUG": "1",
+            "USR_UID": "00000000000000000000000000000001",
+            "USR_USERNAME": "admin",
+            "USR_FIRSTNAME": "Administrator",
+            "USR_LASTNAME": " ",
+            "CATEGORY_UID": "31826415551af47d55e71f9071744090",
+            "CATEGORY_NAME": "sample cat",
+            "PRO_CATEGORY_LABEL": "sample cat",
+            "PRO_TITLE": "sample",
+            "PRO_DESCRIPTION": "test",
+            "PRO_DEBUG_LABEL": "On",
+            "PRO_STATUS_LABEL": "Active",
+            "PRO_CREATE_USER_LABEL": "Administrator  ",
+            "CASES_COUNT_TO_DO": "1",
+            "CASES_COUNT_COMPLETED": "1",
+            "CASES_COUNT_DRAFT": "2",
+            "CASES_COUNT_CANCELLED": 0,
+            "CASES_COUNT": 4
+        },
+        {
+            "PRO_UID": "44313230351ae0168e63669021546957",
+            "PRO_PARENT": "44313230351ae0168e63669021546957",
+            "PRO_STATUS": "ACTIVE",
+            "PRO_CATEGORY": "",
+            "PRO_CREATE_DATE": "2013-06-04 11:02:00",
+            "PRO_DEBUG": "0",
+            "USR_UID": "00000000000000000000000000000001",
+            "USR_USERNAME": "admin",
+            "USR_FIRSTNAME": "Administrator",
+            "USR_LASTNAME": " ",
+            "CATEGORY_UID": null,
+            "CATEGORY_NAME": null,
+            "PRO_CATEGORY_LABEL": "No Category",
+            "PRO_TITLE": "test",
+            "PRO_DESCRIPTION": "test",
+            "PRO_DEBUG_LABEL": "Off",
+            "PRO_STATUS_LABEL": "Active",
+            "PRO_CREATE_USER_LABEL": "Administrator  ",
+            "CASES_COUNT_TO_DO": "3",
+            "CASES_COUNT_COMPLETED": "1",
+            "CASES_COUNT_DRAFT": 0,
+            "CASES_COUNT_CANCELLED": 0,
+            "CASES_COUNT": 4
+        }
+    ]
+}
+
+Resource to get a process information a its design definition
+GET /project/{uid}
+< 200
+< Content-Type: application/json
+{
+    "prj_uid" : "8061532405176da5242da84006421863",
+    "prj_name" : "sample",
+    "prj_description" : "sample desc",
+    "diagrams":
+    [
+        {
+            "pro_uid": "8061532405176da5242da84006421863",
+            "laneset": [],
+            "lanes": [],
+            "activities":
+            [
+                {
+                    "act_uid": "278251934525d8ebbfb8565093239226",
+                    "act_name": "Task",
+                    "act_type": "EMPTY",
+                    "bou_x": 235,
+                    "bou_y": 280,
+                    "bou_width": 120,
+                    "bou_height": 60,
+                    "bou_container": "bpmnDiagram",
+                    "bou_element_id": "pm_canvas"
+                },
+                {
+                    "act_uid": "326395445525d8ec1fb8768023935580",
+                    "act_name": "Task",
+                    "act_type": "EMPTY",
+                    "bou_x":611,
+                    "bou_y":170,
+                    "bou_width":120,
+                    "bou_height":60,
+                    "bou_container": "bpmnDiagram",
+                    "bou_element_id": "pm_canvas"
+                },
+                {
+                    "act_uid": "588707952525d8ec4fb88c2038077596",
+                    "act_name": "Task",
+                    "act_type": "EMPTY",
+                    "bou_x":630,
+                    "bou_y":404,
+                    "bou_width":120,
+                    "bou_height":60,
+                    "bou_container": "bpmnDiagram",
+                    "bou_element_id": "pm_canvas"
+                }
+            ],
+            "events":
+            [
+                {
+                    "evn_uid": "960500897525d8eb8fb84b4013700338",
+                    "evn_name":null,
+                    "evn_type":null,
+                    "evn_marker":null,
+                    "evn_is_interrupting":true,
+                    "evn_attached_to":null,
+                    "evn_cancel_activity":false,
+                    "evn_activity_ref":null,
+                    "evn_wait_for_completion":false,
+                    "evn_error_name":null,
+                    "evn_error_code":null,
+                    "evn_escalation_name":null,
+                    "evn_escalation_code":null,
+                    "evn_condition":null,
+                    "evn_message":null,
+                    "evn_operation_name":null,
+                    "evn_operation_implementation_ref":null,
+                    "evn_time_date":null,
+                    "evn_time_cycle":null,
+                    "evn_time_duration":null,
+                    "evn_behavior":null,
+                    "bou_x":87,
+                    "bou_y":261,
+                    "bou_width":33,
+                    "bou_height":33,
+                    "bou_container": "bpmnDiagram",
+                    "bou_element_id": "pm_canvas"
+                },
+                {
+                    "evn_uid": "941908090525d8ec7fb8a07093841901",
+                    "evn_name":null,
+                    "evn_type":null,
+                    "evn_marker":null,
+                    "evn_is_interrupting":true,
+                    "evn_attached_to":null,
+                    "evn_cancel_activity":false,
+                    "evn_activity_ref":null,
+                    "evn_wait_for_completion":false,
+                    "evn_error_name":null,
+                    "evn_error_code":null,
+                    "evn_escalation_name":null,
+                    "evn_escalation_code":null,
+                    "evn_condition":null,
+                    "evn_message":null,
+                    "evn_operation_name":null,
+                    "evn_operation_implementation_ref":null,
+                    "evn_time_date":null,
+                    "evn_time_cycle":null,
+                    "evn_time_duration":null,
+                    "evn_behavior":null,
+                    "bou_x":903,
+                    "bou_y":303,
+                    "bou_width":33,
+                    "bou_height":33,
+                    "bou_container": "bpmnDiagram",
+                    "bou_element_id": "pm_canvas"
+                }
+            ],
+            "gateways":
+            [
+                {
+                    "gat_uid": "403208160525d8ebefb86a0059076243",
+                    "gat_name":null,
+                    "bou_x":481,
+                    "bou_y":306,
+                    "bou_width":45,
+                    "bou_height":45,
+                    "bou_container": "bpmnDiagram",
+                    "bou_element_id": "pm_canvas"
+                }
+            ],
+            "flows":
+            [
+                {
+                    "flo_uid": "724155752525d8ec9fb8de2003171877",
+                    "flo_type": "SEQUENCE",
+                    "flo_name":null,
+                    "flo_element_origin": "960500897525d8eb8fb84b4013700338",
+                    "flo_element_origin_type": "bpmnEvent",
+                    "flo_element_dest": "278251934525d8ebbfb8565093239226",
+                    "flo_element_dest_type": "bpmnActivity",
+                    "flo_is_inmediate":true,
+                    "flo_condition":null,
+                    "flo_state":
+                    [
+                        {"x":104,"y":261},
+                        {"x":104,"y":241},
+                        {"x":168,"y":241},
+                        {"x":168,"y":309},
+                        {"x":233,"y":309}
+                    ]
+                },
+                {
+                    "flo_uid": "891030650525d8eccfb92c9033321037",
+                    "flo_type": "SEQUENCE",
+                    "flo_name":null,
+                    "flo_element_origin": "278251934525d8ebbfb8565093239226",
+                    "flo_element_origin_type": "bpmnActivity",
+                    "flo_element_dest": "403208160525d8ebefb86a0059076243",
+                    "flo_element_dest_type": "bpmnGateway",
+                    "flo_is_inmediate":true,
+                    "flo_condition":null,
+                    "flo_state":
+                    [
+                        {"x":294,"y":278},
+                        {"x":294,"y":258},
+                        {"x":387,"y":258},
+                        {"x":387,"y":329},
+                        {"x":481,"y":329}
+                    ]
+                },
+                {
+                    "flo_uid": "785603906525d8ecffb9879037717215",
+                    "flo_type": "SEQUENCE",
+                    "flo_name":null,
+                    "flo_element_origin": "403208160525d8ebefb86a0059076243",
+                    "flo_element_origin_type": "bpmnGateway",
+                    "flo_element_dest": "326395445525d8ec1fb8768023935580",
+                    "flo_element_dest_type": "bpmnActivity",
+                    "flo_is_inmediate":true,
+                    "flo_condition":null,
+                    "flo_state":
+                    [
+                        {"x":504,"y":306},
+                        {"x":504,"y":199},
+                        {"x":609,"y":199}
+                    ]
+                },
+                {
+                    "flo_uid": "531073186525d8ed2fb9d51058983227",
+                    "flo_type": "SEQUENCE",
+                    "flo_name":null,
+                    "flo_element_dest": "588707952525d8ec4fb88c2038077596",
+                    "flo_element_origin": "403208160525d8ebefb86a0059076243",
+                    "flo_element_origin_type": "bpmnGateway",
+                    "flo_element_dest_type": "bpmnActivity",
+                    "flo_is_inmediate":true,
+                    "flo_condition":null,
+                    "flo_state":
+                    [
+                        {"x":481,"y":329},
+                        {"x":461,"y":329},
+                        {"x":461,"y":433},
+                        {"x":628,"y":433}
+                    ]
+                }
+            ],
+            "artifacts": []
+        }
+    ]
+}
+
+Resource to save a new process with its design definition
+
+POST /process
+> Content-Type: application/json
+{
+    "pro_uid": "8061532405176da5242da84006421863",
+    "activities":
+    [
+        {
+            "act_uid": "278251934525d8ebbfb8565093239226",
+            "act_name": "Task",
+            "act_type": "EMPTY",
+            "bou_x": 235,
+            "bou_y": 280,
+            "bou_width": 120,
+            "bou_height": 60,
+            "bou_container": "bpmnDiagram",
+            "bou_element_id": "pm_canvas",
+            "_extended":
+            {
+                "properties":
+                {
+                    "definition":
+                    {
+                        "tas_priority_variable": "@@SYS_SYS",
+                        "tas_derivation_screen_tpl": "MyTemplate.html"
+                    },
+                    "assignment_rules":
+                    {
+                        "tas_assign_type": "SELF_SERVICE_EVALUATE",
+                        "tas_assign_variable": "@@SYS_NEXT_USER_TO_BE_ASSIGNED",
+                        "tas_group_variable": "@@SYS_GROUP_TO_BE_ASSIGNED",
+                        "tas_selfservice_timeout": 0,
+                        "tas_selfservice_time": "1",
+                        "tas_selfservice_time_unit": "HOURS",
+                        "tas_selfservice_trigger_uid": "00000000000000000000000000000001"
+                    },
+                    "timing_control":
+                    {
+                        "tas_transfer_fly": "FALSE",
+                        "tas_duration": "1",
+                        "tas_timeunit": "HOURS",
+                        "tas_type_day": "2",
+                        "tas_calendar": ""
+                    },
+                    "permissions":
+                    {
+                        "tas_type": "ADHOC"
+                    },
+                    "case_labels":
+                    {
+                        "tas_def_title": "----- bla bla bla bla bla",
+                        "tas_def_description": "----- bla bla bla bla bla"
+                    },
+                    "notifications":
+                    {
+                        "send_email": "TRUE",
+                        "tas_def_subject_message": "----- bla bla bla bla bla",
+                        "tas_def_message_type": "text",
+                        "tas_def_message": "----- bla bla bla bla bla",
+                        "tas_def_message_template": "MyTemplate.html"
+                    }
+                },
+                "steps":
+                {
+                    "steps":
+                    [
+                        {
+                            "step_uid": "800335382526013ee5406d6046561388",
+                            "step_type_obj": "DYNAFORM",
+                            "step_uid_obj": "480515388526013e03f5323091406324",
+                            "step_position": 1,
+                            "step_mode": "EDIT"
+                        },
+                        {
+                            "step_uid": "88095604352602cb5509565073250365",
+                            "step_type_obj": "OUTPUT_DOCUMENT",
+                            "step_uid_obj": "86369594352602caa32c5c3004407686",
+                            "step_position": 2,
+                            "step_mode": ""
+                        }
+                    ],
+                    "conditions":
+                    [
+                        {
+                            "step_uid": "800335382526013ee5406d6046561388",
+                            "step_type_obj": "DYNAFORM",
+                            "step_uid_obj": "480515388526013e03f5323091406324",
+                            "step_condition": "1 == 1",
+                            "step_position": 1
+                        },
+                        {
+                            "step_uid": "88095604352602cb5509565073250365",
+                            "step_type_obj": "OUTPUT_DOCUMENT",
+                            "step_uid_obj": "86369594352602caa32c5c3004407686",
+                            "step_condition": "",
+                            "step_position": 2
+                        }
+                    ],
+                    "triggers":
+                    [
+                        {
+                            "step_uid": "800335382526013ee5406d6046561388",
+                            "step_type_obj": "DYNAFORM",
+                            "step_uid_obj": "480515388526013e03f5323091406324",
+                            "step_position": 1,
+                            "before":
+                            [
+                                {
+                                    "tri_uid": "287964159526013c6c64bb1071946215",
+                                    "st_condition": "'a' == 'a'",
+                                    "st_position": 1
+                                },
+                                {
+                                    "tri_uid": "502389187526013d4304108061369115",
+                                    "st_condition": "",
+                                    "st_position": 2
+                                }
+                            ],
+                            "after": []
+                        },
+                        {
+                            "step_uid": "88095604352602cb5509565073250365",
+                            "step_type_obj": "OUTPUT_DOCUMENT",
+                            "step_uid_obj": "86369594352602caa32c5c3004407686",
+                            "step_position": 2,
+                            "before": [],
+                            "after": []
+                        },
+                        {
+                            "step_uid": "",
+                            "step_type_obj": "",
+                            "step_uid_obj": "",
+                            "step_position": 3,
+                            "before_assignment":
+                            [
+                                {
+                                    "tri_uid": "287964159526013c6c64bb1071946215",
+                                    "st_condition": "",
+                                    "st_position": 1
+                                }
+                            ],
+                            "before_routing":
+                            [
+                                {
+                                    "tri_uid": "287964159526013c6c64bb1071946215",
+                                    "st_condition": "",
+                                    "st_position": 1
+                                }
+                            ],
+                            "after_routing":
+                            [
+                                {
+                                    "tri_uid": "287964159526013c6c64bb1071946215",
+                                    "st_condition": "",
+                                    "st_position": 1
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "users":
+                [
+                    {
+                        "usr_uid": "00000000000000000000000000000001",
+                        "tu_type": 1,
+                        "tu_relation": 1
+                    },
+                    {
+                        "usr_uid": "232161377508595bd707c70063037530",
+                        "tu_type": 1,
+                        "tu_relation": 1
+                    },
+                    {
+                        "usr_uid": "4494108395125254d622141027311419",
+                        "tu_type": 1,
+                        "tu_relation": 2
+                    }
+                ],
+                "users_adhoc":
+                [
+                    {
+                        "usr_uid": "00000000000000000000000000000001",
+                        "tu_type": 2,
+                        "tu_relation": 1
+                    },
+                    {
+                        "usr_uid": "4494108395125254d622141027311419",
+                        "tu_type": 2,
+                        "tu_relation": 2
+                    }
+                ]
+            },
+            "_action": "CREATE"
+        },
+        {
+            "act_uid": "326395445525d8ec1fb8768023935580",
+            "act_name": "Task",
+            "act_type": "EMPTY",
+            "bou_x":611,
+            "bou_y":170,
+            "bou_width":120,
+            "bou_height":60,
+            "bou_container": "bpmnDiagram",
+            "bou_element_id": "pm_canvas",
+            "_extended":
+            {
+                "properties":
+                {
+                    "definition":
+                    {
+                        "tas_priority_variable": "@@SYS_SYS",
+                        "tas_derivation_screen_tpl": "MyTemplate.html"
+                    },
+                    "assignment_rules":
+                    {
+                        "tas_assign_type": "SELF_SERVICE_EVALUATE",
+                        "tas_assign_variable": "@@SYS_NEXT_USER_TO_BE_ASSIGNED",
+                        "tas_group_variable": "@@SYS_GROUP_TO_BE_ASSIGNED",
+                        "tas_selfservice_timeout": 0,
+                        "tas_selfservice_time": "1",
+                        "tas_selfservice_time_unit": "HOURS",
+                        "tas_selfservice_trigger_uid": "00000000000000000000000000000001"
+                    },
+                    "timing_control":
+                    {
+                        "tas_transfer_fly": "FALSE",
+                        "tas_duration": "1",
+                        "tas_timeunit": "HOURS",
+                        "tas_type_day": "2",
+                        "tas_calendar": ""
+                    },
+                    "permissions":
+                    {
+                        "tas_type": "ADHOC"
+                    },
+                    "case_labels":
+                    {
+                        "tas_def_title": "----- bla bla bla bla bla",
+                        "tas_def_description": "----- bla bla bla bla bla"
+                    },
+                    "notifications":
+                    {
+                        "send_email": "TRUE",
+                        "tas_def_subject_message": "----- bla bla bla bla bla",
+                        "tas_def_message_type": "text",
+                        "tas_def_message": "----- bla bla bla bla bla",
+                        "tas_def_message_template": "MyTemplate.html"
+                    }
+                },
+                "steps":
+                {
+                    "steps": [],
+                    "conditions": [],
+                    "triggers": []
+                },
+                "users": [],
+                "users_adhoc": []
+            },
+            "_action": "CREATE"
+        },
+        {
+            "act_uid": "588707952525d8ec4fb88c2038077596",
+            "act_name": "Task",
+            "act_type": "EMPTY",
+            "bou_x":630,
+            "bou_y":404,
+            "bou_width":120,
+            "bou_height":60,
+            "bou_container": "bpmnDiagram",
+            "bou_element_id": "pm_canvas",
+            "_extended":
+            {
+                "properties":
+                {
+                    "definition":
+                    {
+                        "tas_priority_variable": "@@SYS_SYS",
+                        "tas_derivation_screen_tpl": "MyTemplate.html"
+                    },
+                    "assignment_rules":
+                    {
+                        "tas_assign_type": "SELF_SERVICE_EVALUATE",
+                        "tas_assign_variable": "@@SYS_NEXT_USER_TO_BE_ASSIGNED",
+                        "tas_group_variable": "@@SYS_GROUP_TO_BE_ASSIGNED",
+                        "tas_selfservice_timeout": 0,
+                        "tas_selfservice_time": "1",
+                        "tas_selfservice_time_unit": "HOURS",
+                        "tas_selfservice_trigger_uid": "00000000000000000000000000000001"
+                    },
+                    "timing_control":
+                    {
+                        "tas_transfer_fly": "FALSE",
+                        "tas_duration": "1",
+                        "tas_timeunit": "HOURS",
+                        "tas_type_day": "2",
+                        "tas_calendar": ""
+                    },
+                    "permissions":
+                    {
+                        "tas_type": "ADHOC"
+                    },
+                    "case_labels":
+                    {
+                        "tas_def_title": "----- bla bla bla bla bla",
+                        "tas_def_description": "----- bla bla bla bla bla"
+                    },
+                    "notifications":
+                    {
+                        "send_email": "TRUE",
+                        "tas_def_subject_message": "----- bla bla bla bla bla",
+                        "tas_def_message_type": "text",
+                        "tas_def_message": "----- bla bla bla bla bla",
+                        "tas_def_message_template": "MyTemplate.html"
+                    }
+                },
+                "steps":
+                {
+                    "steps": [],
+                    "conditions": [],
+                    "triggers": []
+                },
+                "users": [],
+                "users_adhoc": []
+            },
+            "_action": "CREATE"
+        }
+    ],
+    "events":
+    [
+        {
+            "evn_uid": "960500897525d8eb8fb84b4013700338",
+            "evn_name":null,
+            "evn_type":null,
+            "evn_marker":null,
+            "evn_is_interrupting":true,
+            "evn_attached_to":null,
+            "evn_cancel_activity":false,
+            "evn_activity_ref":null,
+            "evn_wait_for_completion":false,
+            "evn_error_name":null,
+            "evn_error_code":null,
+            "evn_escalation_name":null,
+            "evn_escalation_code":null,
+            "evn_condition":null,
+            "evn_message":null,
+            "evn_operation_name":null,
+            "evn_operation_implementation_ref":null,
+            "evn_time_date":null,
+            "evn_time_cycle":null,
+            "evn_time_duration":null,
+            "evn_behavior":null,
+            "bou_x":87,
+            "bou_y":261,
+            "bou_width":33,
+            "bou_height":33,
+            "bou_container": "bpmnDiagram",
+            "bou_element_id": "pm_canvas",
+            "_extended":{},
+            "_action": "CREATE"
+        },
+        {
+            "evn_uid": "941908090525d8ec7fb8a07093841901",
+            "evn_name":null,
+            "evn_type":null,
+            "evn_marker":null,
+            "evn_is_interrupting":true,
+            "evn_attached_to":null,
+            "evn_cancel_activity":false,
+            "evn_activity_ref":null,
+            "evn_wait_for_completion":false,
+            "evn_error_name":null,
+            "evn_error_code":null,
+            "evn_escalation_name":null,
+            "evn_escalation_code":null,
+            "evn_condition":null,
+            "evn_message":null,
+            "evn_operation_name":null,
+            "evn_operation_implementation_ref":null,
+            "evn_time_date":null,
+            "evn_time_cycle":null,
+            "evn_time_duration":null,
+            "evn_behavior":null,
+            "bou_x":903,
+            "bou_y":303,
+            "bou_width":33,
+            "bou_height":33,
+            "bou_container": "bpmnDiagram",
+            "bou_element_id": "pm_canvas",
+            "_extended":{}
+            ,"_action": "CREATE"
+        }
+    ],
+    "gateways":
+    [
+        {
+            "gat_uid": "403208160525d8ebefb86a0059076243",
+            "gat_name":null,
+            "bou_x":481,
+            "bou_y":306,
+            "bou_width":45,
+            "bou_height":45,
+            "bou_container": "bpmnDiagram",
+            "bou_element_id": "pm_canvas",
+            "_extended":{},
+            "_action": "CREATE"
+        }
+    ],
+    "flows":
+    [
+        {
+            "flo_uid": "724155752525d8ec9fb8de2003171877",
+            "flo_type": "SEQUENCE",
+            "flo_name":null,
+            "flo_element_origin": "960500897525d8eb8fb84b4013700338",
+            "flo_element_origin_type": "bpmnEvent",
+            "flo_element_dest": "278251934525d8ebbfb8565093239226",
+            "flo_element_dest_type": "bpmnActivity",
+            "flo_is_inmediate":true,
+            "flo_condition":null,
+            "flo_state":
+            [
+                {"x":104,"y":261},
+                {"x":104,"y":241},
+                {"x":168,"y":241},
+                {"x":168,"y":309},
+                {"x":233,"y":309}
+            ],
+            "_action": "CREATE"
+        },
+        {
+            "flo_uid": "891030650525d8eccfb92c9033321037",
+            "flo_type": "SEQUENCE",
+            "flo_name":null,
+            "flo_element_origin": "278251934525d8ebbfb8565093239226",
+            "flo_element_origin_type": "bpmnActivity",
+            "flo_element_dest": "403208160525d8ebefb86a0059076243",
+            "flo_element_dest_type": "bpmnGateway",
+            "flo_is_inmediate":true,
+            "flo_condition":null,
+            "flo_state":
+            [
+                {"x":294,"y":278},
+                {"x":294,"y":258},
+                {"x":387,"y":258},
+                {"x":387,"y":329},
+                {"x":481,"y":329}
+            ],
+            "_action": "CREATE"
+        },
+        {
+            "flo_uid": "785603906525d8ecffb9879037717215",
+            "flo_type": "SEQUENCE",
+            "flo_name":null,
+            "flo_element_origin": "403208160525d8ebefb86a0059076243",
+            "flo_element_origin_type": "bpmnGateway",
+            "flo_element_dest": "326395445525d8ec1fb8768023935580",
+            "flo_element_dest_type": "bpmnActivity",
+            "flo_is_inmediate":true,
+            "flo_condition":null,
+            "flo_state":
+            [
+                {"x":504,"y":306},
+                {"x":504,"y":199},
+                {"x":609,"y":199}
+            ],
+            "_action": "CREATE"
+        },
+        {
+            "flo_uid": "531073186525d8ed2fb9d51058983227",
+            "flo_type": "SEQUENCE",
+            "flo_name":null,
+            "flo_element_origin": "403208160525d8ebefb86a0059076243",
+            "flo_element_origin_type": "bpmnGateway",
+            "flo_element_dest": "588707952525d8ec4fb88c2038077596",
+            "flo_element_dest_type": "bpmnActivity",
+            "flo_is_inmediate":true,
+            "flo_condition":null,
+            "flo_state":
+            [
+                {"x":481,"y":329},
+                {"x":461,"y":329},
+                {"x":461,"y":433},
+                {"x":628,"y":433}
+            ],
+            "_action": "CREATE"
+        }
+    ],
+    "artifacts": []
+}javascript:UserVoice.showPopupWidget();
+< 201
+< Content-Type: application/json
+{ "success": true, "url": "Saved Successfully" }
+
+This resource allows you to update process information and design
+
+*NOTE.- There are three fields that are automatically filled by the system:
+PRO_UPDATE_DATE, PRO_CREATE_DATE and PRO_CREATE_USER*
+PUT /process/{id}
+{javascript:UserVoice.showPopupWidget();
+    "process": {
+        "PRO_UID": "28814925552289251e5a8d5026402706",
+        "PRO_TITLE": "Sample 1",
+        "PRO_DESCRIPTION" : "Process Sample #1 Description",
+        "PRO_PARENT": "28814925552289251e5a8d5026402706",
+        "PRO_TIME": 1,
+        "PRO_TIMEUNIT": "DAYS",
+        "PRO_STATUS": "ACTIVE",
+        "PRO_TYPE_DAY": "",
+        "PRO_TYPE": "NORMAL",
+        "PRO_ASSIGNMENT": "FALSE",
+        "PRO_SHOW_MAP": 0,
+        "PRO_SHOW_MESSAGE": 0,
+        "PRO_SUBPROCESS": 0,
+        "PRO_TRI_DELETED": "",
+        "PRO_TRI_CANCELED": "",
+        "PRO_TRI_PAUSED": "",
+        "PRO_TRI_REASSIGNED": "",
+        "PRO_SHOW_DELEGATE": 0,
+        "PRO_SHOW_DYNAFORM": 0,
+        "PRO_CATEGORY": "",
+        "PRO_SUB_CATEGORY": "",
+        "PRO_INDUSTRY": 0,
+        "PRO_HEIGHT": 5000,
+        "PRO_WIDTH": 10000,
+        "PRO_TITLE_X": 0,
+        "PRO_TITLE_Y": 0,
+        "PRO_DEBUG": 0,
+        "PRO_DYNAFORMS": "",
+        "PRO_DERIVATION_SCREEN_TPL": "",
+        "TASKS": [
+            {
+                "TAS_UID": "6200372215228a3ff688846084339195",
+                "TAS_TITLE": "Task 3",
+                "TAS_DECSRIPTION": "",
+                "PRO_UID": "28814925552289251e5a8d5026402706",
+                "TAS_TYPE": "NORMAL",
+                "TAS_DURATION": 1,
+                "TAS_DELAY_TYPE": "",
+                "TAS_TEMPORIZER": 0,
+                "TAS_TYPE_DAY": "",
+                "TAS_TIMEUNIT": "DAYS",
+                "TAS_ALERT": "FALSE",
+                "TAS_PRIORITY_VARIABLE": "",
+                "TAS_ASSIGN_TYPE": "BALANCED",
+                "TAS_ASSIGN_VARIABLE": "@@SYS_NEXT_USER_TO_BE_ASSIGNED",
+                "TAS_GROUP_VARIABLE": "",
+                "TAS_MI_INSTANCE_VARIABLE": "@@SYS_VAR_TOTAL_INSTANCE",
+                "TAS_MI_COMPLETE_VARIABLE": "@@SYS_VAR_TOTAL_INSTANCES_COMPLETE",
+                "TAS_ASSIGN_LOCATION": "FALSE",
+                "TAS_ASSIGN_LOCATION_ADHOC": "FALSE",
+                "TAS_TRANSFER_FLY": "FALSE",
+                "TAS_LAST_ASSIGNED": 0,
+                "TAS_USER": "",
+                "TAS_CAN_UPLOAD": "FALSE",
+                "TAS_VIEW_UPLOAD": "FALSE",
+                "TAS_VIEW_ADDITIONAL_DOCUMENTATION": "FALSE",
+                "TAS_CAN_CANCEL": "FALSE",
+                "TAS_OWNER_APP": "FALSE",
+                "STG_UID": "",
+                "TAS_CAN_PAUSE": "FALSE",
+                "TAS_CAN_SEND_MESSAGE": "TRUE",
+                "TAS_CAN_DELETE_DOCS": "FALSE",
+                "TAS_SELF_SERVICE":  "FALSE",
+                "TAS_START":  "FALSE",
+                "TAS_TO_LAST_USER":  "FALSE",
+                "TAS_SEND_LAST_EMAIL":  "FALSE",
+                "TAS_DERIVATION": "NORMAL",
+                "TAS_POSX": 678,
+                "TAS_POSY": 413,
+                "TAS_WIDTH": 165,
+                "TAS_HEIGHT": 40,
+                "TAS_COLOR": "",
+                "TAS_EVN_UID": "",
+                "TAS_BOUNDARY": "",
+                "TAS_DERIVATION_SCREEN_TPL": "",
+                "TAS_SELFSERVICE_TIMEOUT": 0,
+                "TAS_SELFSERVICE_TIME": "",
+                "TAS_SELFSERVICE_TIME_UNIT": "",
+                "TAS_SELFSERVICE_TRIGGER_UID": ""
+            },
+            {
+                "TAS_UID": "782789913522892553babf1063070108",
+                "TAS_TITLE": "Task 1",
+                "TAS_DECSRIPTION": "",
+                "PRO_UID": "28814925552289251e5a8d5026402706",
+                "TAS_TYPE": "NORMAL",
+                "TAS_DURATION": 1,
+                "TAS_DELAY_TYPE": "",
+                "TAS_TEMPORIZER": 0,
+                "TAS_TYPE_DAY": "",
+                "TAS_TIMEUNIT": "DAYS",
+                "TAS_ALERT": "FALSE",
+                "TAS_PRIORITY_VARIABLE": "",
+                "TAS_ASSIGN_TYPE": "BALANCED",
+                "TAS_ASSIGN_VARIABLE": "@@SYS_NEXT_USER_TO_BE_ASSIGNED",
+                "TAS_GROUP_VARIABLE": "",
+                "TAS_MI_INSTANCE_VARIABLE": "@@SYS_VAR_TOTAL_INSTANCE",
+                "TAS_MI_COMPLETE_VARIABLE": "@@SYS_VAR_TOTAL_INSTANCES_COMPLETE",
+                "TAS_ASSIGN_LOCATION": "FALSE",
+                "TAS_ASSIGN_LOCATION_ADHOC": "FALSE",
+                "TAS_TRANSFER_FLY": "FALSE",
+                "TAS_LAST_ASSIGNED": 0,
+                "TAS_USER": "",
+                "TAS_CAN_UPLOAD": "FALSE",
+                "TAS_VIEW_UPLOAD": "FALSE",
+                "TAS_VIEW_ADDITIONAL_DOCUMENTATION": "FALSE",
+                "TAS_CAN_CANCEL": "FALSE",
+                "TAS_OWNER_APP": "FALSE",
+                "STG_UID": "",
+                "TAS_CAN_PAUSE": "FALSE",
+                "TAS_CAN_SEND_MESSAGE": "TRUE",
+                "TAS_CAN_DELETE_DOCS": "FALSE",
+                "TAS_SELF_SERVICE":  "FALSE",
+                "TAS_START":  "TRUE",
+                "TAS_TO_LAST_USER":  "FALSE",
+                "TAS_SEND_LAST_EMAIL":  "FALSE",
+                "TAS_DERIVATION": "NORMAL",
+                "TAS_POSX": 678,
+                "TAS_POSY": 413,
+                "TAS_WIDTH": 165,
+                "TAS_HEIGHT": 40,
+                "TAS_COLOR": "",
+                "TAS_EVN_UID": "",
+                "TAS_BOUNDARY": "",
+                "TAS_DERIVATION_SCREEN_TPL": "",
+                "TAS_SELFSERVICE_TIMEOUT": 0,
+                "TAS_SELFSERVICE_TIME": "",
+                "TAS_SELFSERVICE_TIME_UNIT": "",
+                "TAS_SELFSERVICE_TRIGGER_UID": ""
+            },
+            {
+                "TAS_UID": "97903733452289256a53683051807347",
+                "TAS_TITLE": "Task 2",
+                "TAS_DECSRIPTION": "",
+                "PRO_UID": "28814925552289251e5a8d5026402706",
+                "TAS_TYPE": "NORMAL",
+                "TAS_DURATION": 1,
+                "TAS_DELAY_TYPE": "",
+                "TAS_TEMPORIZER": 0,
+                "TAS_TYPE_DAY": "",
+                "TAS_TIMEUNIT": "DAYS",
+                "TAS_ALERT": "FALSE",
+                "TAS_PRIORITY_VARIABLE": "",
+                "TAS_ASSIGN_TYPE": "BALANCED",
+                "TAS_ASSIGN_VARIABLE": "@@SYS_NEXT_USER_TO_BE_ASSIGNED",
+                "TAS_GROUP_VARIABLE": "",
+                "TAS_MI_INSTANCE_VARIABLE": "@@SYS_VAR_TOTAL_INSTANCE",
+                "TAS_MI_COMPLETE_VARIABLE": "@@SYS_VAR_TOTAL_INSTANCES_COMPLETE",
+                "TAS_ASSIGN_LOCATION": "FALSE",
+                "TAS_ASSIGN_LOCATION_ADHOC": "FALSE",
+                "TAS_TRANSFER_FLY": "FALSE",
+                "TAS_LAST_ASSIGNED": 0,
+                "TAS_USER": "",
+                "TAS_CAN_UPLOAD": "FALSE",
+                "TAS_VIEW_UPLOAD": "FALSE",
+                "TAS_VIEW_ADDITIONAL_DOCUMENTATION": "FALSE",
+                "TAS_CAN_CANCEL": "FALSE",
+                "TAS_OWNER_APP": "FALSE",
+                "STG_UID": "",
+                "TAS_CAN_PAUSE": "FALSE",
+                "TAS_CAN_SEND_MESSAGE": "TRUE",
+                "TAS_CAN_DELETE_DOCS": "FALSE",
+                "TAS_SELF_SERVICE":  "FALSE",
+                "TAS_START":  "FALSE",
+                "TAS_TO_LAST_USER":  "FALSE",
+                "TAS_SEND_LAST_EMAIL":  "FALSE",
+                "TAS_DERIVATION": "NORMAL",
+                "TAS_POSX": 678,
+                "TAS_POSY": 413,
+                "TAS_WIDTH": 165,
+                "TAS_HEIGHT": 40,
+                "TAS_COLOR": "",
+                "TAS_EVN_UID": "",
+                "TAS_BOUNDARY": "",
+                "TAS_DERIVATION_SCREEN_TPL": "",
+                "TAS_SELFSERVICE_TIMEOUT": 0,
+                "TAS_SELFSERVICE_TIME": "",
+                "TAS_SELFSERVICE_TIME_UNIT": "",
+                "TAS_SELFSERVICE_TRIGGER_UID": ""
+            }
+        ],
+        "ROUTES": [
+            {
+                "ROU_UID": "2186436575228a407513588098480328",
+                "ROU_PARENT": 0,
+                "PRO_UID": "28814925552289251e5a8d5026402706",
+                "TAS_UID": "6200372215228a3ff688846084339195",
+                "ROU_NEXT_TASK": "-1",
+                "ROU_CASE": 1,
+                "ROU_TYPE": "SEQUENTIAL",
+                "ROU_CONDITION": "",
+                "ROU_TO_LAST_USER": "FALSE",
+                "ROU_OPTIONAL": "FALSE",
+                "ROU_SEND_EMAIL": "TRUE",
+                "ROU_SOURCEANCHOR": 1,
+                "ROU_TARGETANCHOR": 0,
+                "ROU_TO_PORT": 1,
+                "ROU_FROM_PORT": 2,
+                "ROU_EVN_UID": "",
+                "GAT_UID": ""
+            },
+            {
+                "ROU_UID": "2274341525228a5d5748c35053460377",
+                "ROU_PARENT": 0,
+                "PRO_UID": "28814925552289251e5a8d5026402706",
+                "TAS_UID": "97903733452289256a53683051807347",
+                "ROU_NEXT_TASK": "6200372215228a3ff688846084339195",
+                "ROU_CASE": 1,
+                "ROU_TYPE": "SEQUENTIAL",
+                "ROU_CONDITION": "",
+                "ROU_TO_LAST_USER": "FALSE",
+                "ROU_OPTIONAL": "FALSE",
+                "ROU_SEND_EMAIL": "TRUE",
+                "ROU_SOURCEANCHOR": 1,
+                "ROU_TARGETANCHOR": 0,
+                "ROU_TO_PORT": 1,
+                "ROU_FROM_PORT": 2,
+                "ROU_EVN_UID": "",
+                "GAT_UID": ""
+            },
+            {
+                "ROU_UID": "57219386452289268043000062887695",
+                "ROU_PARENT": 0,
+                "PRO_UID": "28814925552289251e5a8d5026402706",
+                "TAS_UID": "782789913522892553babf1063070108",
+                "ROU_NEXT_TASK": "97903733452289256a53683051807347",
+                "ROU_CASE": 1,
+                "ROU_TYPE": "SEQUENTIAL",
+                "ROU_CONDITION": "",
+                "ROU_TO_LAST_USER": "FALSE",
+                "ROU_OPTIONAL": "FALSE",
+                "ROU_SEND_EMAIL": "TRUE",
+                "ROU_SOURCEANCHOR": 1,
+                "ROU_TARGETANCHOR": 0,
+                "ROU_TO_PORT": 1,
+                "ROU_FROM_PORT": 2,
+                "ROU_EVN_UID": "",
+                "GAT_UID": ""
+            }
+        ]
+    }
+}
+< 200
+{ "success": true, "message": "Updated successfully" }
+
+This resource allows you to delete a process
+
+*NOTE.- The process can't be deleted if it has a case with any status*
+DELETE /process/{id}
+< 200
+{ "success": true, "message": "Deleted successfully" }
+
+--
+Process Properties
+
+The following is a section of resources related to ProcessMaker Components endpoints
+--
+
+Getting Activity properties and extends (all)
+
+GET /process/{id}/activity/{id}
+< 200
+< Content-Type: application/json
+{
+    "activity":
+    {
+        "act_name": "Task",
+        "act_type": "EMPTY",
+        "bou_x": 235,
+        "bou_y": 280,
+        "bou_width": 120,
+        "bou_height": 60,
+        "bou_container": "bpmnDiagram",
+        "bou_element_id": "pm_canvas",
+        "_extended":
+        {
+            "properties":
+            {
+                "definition":
+                {
+                    "tas_priority_variable": "@@SYS_SYS",
+                    "tas_derivation_screen_tpl": "MyTemplate.html"
+                },
+                "assignment_rules":
+                {
+                    "tas_assign_type": "SELF_SERVICE_EVALUATE",
+                    "tas_assign_variable": "@@SYS_NEXT_USER_TO_BE_ASSIGNED",
+                    "tas_group_variable": "@@SYS_GROUP_TO_BE_ASSIGNED",
+                    "tas_selfservice_timeout": 0,
+                    "tas_selfservice_time": "1",
+                    "tas_selfservice_time_unit": "HOURS",
+                    "tas_selfservice_trigger_uid": "00000000000000000000000000000001"
+                },
+                "timing_control":
+                {
+                    "tas_transfer_fly": "FALSE",
+                    "tas_duration": "1",
+                    "tas_timeunit": "HOURS",
+                    "tas_type_day": "2",
+                    "tas_calendar": ""
+                },
+                "permissions":
+                {
+                    "tas_type": "ADHOC"
+                },
+                "case_labels":
+                {
+                    "tas_def_title": "----- bla bla bla bla bla",
+                    "tas_def_description": "----- bla bla bla bla bla"
+                },
+                "notifications":
+                {
+                    "send_email": "TRUE",
+                    "tas_def_subject_message": "----- bla bla bla bla bla",
+                    "tas_def_message_type": "text",
+                    "tas_def_message": "----- bla bla bla bla bla",
+                    "tas_def_message_template": "MyTemplate.html"
+                }
+            },
+            "steps":
+            {
+                "steps":
+                [
+                    {
+                        "step_uid": "800335382526013ee5406d6046561388",
+                        "step_type_obj": "DYNAFORM",
+                        "step_uid_obj": "480515388526013e03f5323091406324",
+                        "step_position": 1,
+                        "step_mode": "EDIT"
+                    },
+                    {
+                        "step_uid": "88095604352602cb5509565073250365",
+                        "step_type_obj": "OUTPUT_DOCUMENT",
+                        "step_uid_obj": "86369594352602caa32c5c3004407686",
+                        "step_position": 2,
+                        "step_mode": ""
+                    }
+                ],
+                "conditions":
+                [
+                    {
+                        "step_uid": "800335382526013ee5406d6046561388",
+                        "step_type_obj": "DYNAFORM",
+                        "step_uid_obj": "480515388526013e03f5323091406324",
+                        "step_condition": "1 == 1",
+                        "step_position": 1
+                    },
+                    {
+                        "step_uid": "88095604352602cb5509565073250365",
+                        "step_type_obj": "OUTPUT_DOCUMENT",
+                        "step_uid_obj": "86369594352602caa32c5c3004407686",
+                        "step_condition": "",
+                        "step_position": 2
+                    }
+                ],
+                "triggers":
+                [
+                    {
+                        "step_uid": "800335382526013ee5406d6046561388",
+                        "step_type_obj": "DYNAFORM",
+                        "step_uid_obj": "480515388526013e03f5323091406324",
+                        "step_position": 1,
+                        "before":
+                        [
+                            {
+                                "tri_uid": "287964159526013c6c64bb1071946215",
+                                "st_condition": "'a' == 'a'",
+                                "st_position": 1
+                            },
+                            {
+                                "tri_uid": "502389187526013d4304108061369115",
+                                "st_condition": "",
+                                "st_position": 2
+                            }
+                        ],
+                        "after": []
+                    },
+                    {
+                        "step_uid": "88095604352602cb5509565073250365",
+                        "step_type_obj": "OUTPUT_DOCUMENT",
+                        "step_uid_obj": "86369594352602caa32c5c3004407686",
+                        "step_position": 2,
+                        "before": [],
+                        "after": []
+                    },
+                    {
+                        "step_uid": "",
+                        "step_type_obj": "",
+                        "step_uid_obj": "",
+                        "step_position": 3,
+                        "before_assignment":
+                        [
+                            {
+                                "tri_uid": "287964159526013c6c64bb1071946215",
+                                "st_condition": "",
+                                "st_position": 1
+                            }
+                        ],
+                        "before_routing":
+                        [
+                            {
+                                "tri_uid": "287964159526013c6c64bb1071946215",
+                                "st_condition": "",
+                                "st_position": 1
+                            }
+                        ],
+                        "after_routing":
+                        [
+                            {
+                                "tri_uid": "287964159526013c6c64bb1071946215",
+                                "st_condition": "",
+                                "st_position": 1
+                            }
+                        ]
+                    }
+                ]
+            },
+            "users":
+            [
+                {
+                    "usr_uid": "00000000000000000000000000000001",
+                    "tu_type": 1,
+                    "tu_relation": 1
+                },
+                {
+                    "usr_uid": "232161377508595bd707c70063037530",
+                    "tu_type": 1,
+                    "tu_relation": 1
+                },
+                {
+                    "usr_uid": "4494108395125254d622141027311419",
+                    "tu_type": 1,
+                    "tu_relation": 2
+                }
+            ],
+            "users_adhoc":
+            [
+                {
+                    "usr_uid": "00000000000000000000000000000001",
+                    "tu_type": 2,
+                    "tu_relation": 1
+                },
+                {
+                    "usr_uid": "4494108395125254d622141027311419",
+                    "tu_type": 2,
+                    "tu_relation": 2
+                }
+            ]
+        }
+    }
+}
 
 
+Getting Activity properties
+
+GET /process/{id}/activity/{id}/properties
+< 200
+< Content-Type: application/json
+{
+    "activity":
+    {
+        "act_name": "Task",
+        "act_type": "EMPTY",
+        "bou_x": 235,
+        "bou_y": 280,
+        "bou_width": 120,
+        "bou_height": 60,
+        "bou_container": "bpmnDiagram",
+        "bou_element_id": "pm_canvas"
+    }
+}
+
+Getting Activity extended
+
+GET /process/{id}/activity/{id}/extended
+< 200
+< Content-Type: application/json
+{
+    "activity":
+    {
+        "_extended":
+        {
+            "properties":
+            {
+                "definition":
+                {
+                    "tas_priority_variable": "@@SYS_SYS",
+                    "tas_derivation_screen_tpl": "MyTemplate.html"
+                },
+                "assignment_rules":
+                {
+                    "tas_assign_type": "SELF_SERVICE_EVALUATE",
+                    "tas_assign_variable": "@@SYS_NEXT_USER_TO_BE_ASSIGNED",
+                    "tas_group_variable": "@@SYS_GROUP_TO_BE_ASSIGNED",
+                    "tas_selfservice_timeout": 0,
+                    "tas_selfservice_time": "1",
+                    "tas_selfservice_time_unit": "HOURS",
+                    "tas_selfservice_trigger_uid": "00000000000000000000000000000001"
+                },
+                "timing_control":
+                {
+                    "tas_transfer_fly": "FALSE",
+                    "tas_duration": "1",
+                    "tas_timeunit": "HOURS",
+                    "tas_type_day": "2",
+                    "tas_calendar": ""
+                },
+                "permissions":
+                {
+                    "tas_type": "ADHOC"
+                },
+                "case_labels":
+                {
+                    "tas_def_title": "----- bla bla bla bla bla",
+                    "tas_def_description": "----- bla bla bla bla bla"
+                },
+                "notifications":
+                {
+                    "send_email": "TRUE",
+                    "tas_def_subject_message": "----- bla bla bla bla bla",
+                    "tas_def_message_type": "text",
+                    "tas_def_message": "----- bla bla bla bla bla",
+                    "tas_def_message_template": "MyTemplate.html"
+                }
+            },
+            "steps":
+            {
+                "steps":
+                [
+                    {
+                        "step_uid": "800335382526013ee5406d6046561388",
+                        "step_type_obj": "DYNAFORM",
+                        "step_uid_obj": "480515388526013e03f5323091406324",
+                        "step_position": 1,
+                        "step_mode": "EDIT"
+                    },
+                    {
+                        "step_uid": "88095604352602cb5509565073250365",
+                        "step_type_obj": "OUTPUT_DOCUMENT",
+                        "step_uid_obj": "86369594352602caa32c5c3004407686",
+                        "step_position": 2,
+                        "step_mode": ""
+                    }
+                ],
+                "conditions":
+                [
+                    {
+                        "step_uid": "800335382526013ee5406d6046561388",
+                        "step_type_obj": "DYNAFORM",
+                        "step_uid_obj": "480515388526013e03f5323091406324",
+                        "step_condition": "1 == 1",
+                        "step_position": 1
+                    },
+                    {
+                        "step_uid": "88095604352602cb5509565073250365",
+                        "step_type_obj": "OUTPUT_DOCUMENT",
+                        "step_uid_obj": "86369594352602caa32c5c3004407686",
+                        "step_condition": "",
+                        "step_position": 2
+                    }
+                ],
+                "triggers":
+                [
+                    {
+                        "step_uid": "800335382526013ee5406d6046561388",
+                        "step_type_obj": "DYNAFORM",
+                        "step_uid_obj": "480515388526013e03f5323091406324",
+                        "step_position": 1,
+                        "before":
+                        [
+                            {
+                                "tri_uid": "287964159526013c6c64bb1071946215",
+                                "st_condition": "'a' == 'a'",
+                                "st_position": 1
+                            },
+                            {
+                                "tri_uid": "502389187526013d4304108061369115",
+                                "st_condition": "",
+                                "st_position": 2
+                            }
+                        ],
+                        "after": []
+                    },
+                    {
+                        "step_uid": "88095604352602cb5509565073250365",
+                        "step_type_obj": "OUTPUT_DOCUMENT",
+                        "step_uid_obj": "86369594352602caa32c5c3004407686",
+                        "step_position": 2,
+                        "before": [],
+                        "after": []
+                    },
+                    {
+                        "step_uid": "",
+                        "step_type_obj": "",
+                        "step_uid_obj": "",
+                        "step_position": 3,
+                        "before_assignment":
+                        [
+                            {
+                                "tri_uid": "287964159526013c6c64bb1071946215",
+                                "st_condition": "",
+                                "st_position": 1
+                            }
+                        ],
+                        "before_routing":
+                        [
+                            {
+                                "tri_uid": "287964159526013c6c64bb1071946215",
+                                "st_condition": "",
+                                "st_position": 1
+                            }
+                        ],
+                        "after_routing":
+                        [
+                            {
+                                "tri_uid": "287964159526013c6c64bb1071946215",
+                                "st_condition": "",
+                                "st_position": 1
+                            }
+                        ]
+                    }
+                ]
+            },
+            "users":
+            [
+                {
+                    "usr_uid": "00000000000000000000000000000001",
+                    "tu_type": 1,
+                    "tu_relation": 1
+                },
+                {
+                    "usr_uid": "232161377508595bd707c70063037530",
+                    "tu_type": 1,
+                    "tu_relation": 1
+                },
+                {
+                    "usr_uid": "4494108395125254d622141027311419",
+                    "tu_type": 1,
+                    "tu_relation": 2
+                }
+            ],
+            "users_adhoc":
+            [
+                {
+                    "usr_uid": "00000000000000000000000000000001",
+                    "tu_type": 2,
+                    "tu_relation": 1
+                },
+                {
+                    "usr_uid": "4494108395125254d622141027311419",
+                    "tu_type": 2,
+                    "tu_relation": 2
+                }
+            ]
+        }
+    }
+}
 
 
+Getting available Steps of an Activity
+
+GET /process/{id}/activity/available-steps
+< 200
+< Content-Type: application/json
+{
+    "success": true,
+    "message": "Steps loaded successfully",
+    "data": {
+        "num_records": 3,
+        "data": [
+            {
+                "step_uid": "2074240775261579834c597006169172",
+                "step_title": "frm9",
+                "step_type_obj": "DYNAFORM",
+                "step_mode": "<select id=\"STEP_MODE_2074240775261579834c597006169172\">\n<option value=\"EDIT\">Edit</option>\n<option value=\"VIEW\">View</option>\n</select>"
+            },
+            {
+                "step_uid": "14575240352617b977533a0093486441",
+                "step_title": "grd1",
+                "step_type_obj": "DYNAFORM",
+                "step_mode": "<select id=\"STEP_MODE_14575240352617b977533a0093486441\">\n<option value=\"EDIT\">Edit</option>\n<option value=\"VIEW\">View</option>\n</select>"
+            },
+            {
+                "step_uid": "3505311805284f9155dc1f5020945175",
+                "step_title": "outputDoc2",
+                "step_type_obj": "OUTPUT_DOCUMENT",
+                "step_mode": "<input type=\"hidden\" id=\"STEP_MODE_3505311805284f9155dc1f5020945175\">"
+            }
+        ]
+    }
+}
 
 
+Getting available Users & User Groups of an Activity
+
+GET /process/{id}/activity/available-users?type=1
+< 200
+< Content-Type: application/json
+{
+    "success": true,
+    "message": "Users loaded successfully",
+    "data": {
+        "num_records": 3,
+        "data": [
+            {
+                "label": "GROUP2 <a href=\"#\" onclick=\"usersGroup('57658616251252558b908e2087058134', '1');return false;\"><font color=\"green\"><strong>(3 Users)</strong></font></a> <br /><div id=\"users1\" style=\"display: none\"></div>",
+                "tas_uid": "3600770975176da52433621023964959",
+                "usr_uid": "57658616251252558b908e2087058134",
+                "tu_type": "1",
+                "tu_relation": 2
+            },
+            {
+                "label": "GROUP3 <a href=\"#\" onclick=\"usersGroup('18613931951263f3d33c080090189128', '2');return false;\"><font color=\"green\"><strong>(0 Users)</strong></font></a> <br /><div id=\"users2\" style=\"display: none\"></div>",
+                "tas_uid": "3600770975176da52433621023964959",
+                "usr_uid": "18613931951263f3d33c080090189128",
+                "tu_type": "1",
+                "tu_relation": 2
+            },
+            {
+                "label": "user6 user6",
+                "tas_uid": "3600770975176da52433621023964959",
+                "usr_uid": "632490311509131bcbd4fe6082480294",
+                "tu_type": "1",
+                "tu_relation": 1
+            }
+        ]
+    }
+}
+
+
+Getting available Users & User Groups (Ad hoc) of an Activity
+
+GET /process/{id}/activity/available-users?type=2
+< 200
+< Content-Type: application/json
+{
+        "success": true,
+    "message": "Users loaded successfully",
+    "data": {
+        "num_records": 3,
+        "data": [
+            {
+                "label": "GROUP2 <a href=\"#\" onclick=\"usersGroup('57658616251252558b908e2087058134', '1');return false;\"><font color=\"green\"><strong>(3 Users)</strong></font></a> <br /><div id=\"users1\" style=\"display: none\"></div>",
+                "tas_uid": "3600770975176da52433621023964959",
+                "usr_uid": "57658616251252558b908e2087058134",
+                "tu_type": "2",
+                "tu_relation": 2
+            },
+            {
+                "label": "GROUP3 <a href=\"#\" onclick=\"usersGroup('18613931951263f3d33c080090189128', '2');return false;\"><font color=\"green\"><strong>(0 Users)</strong></font></a> <br /><div id=\"users2\" style=\"display: none\"></div>",
+                "tas_uid": "3600770975176da52433621023964959",
+                "usr_uid": "18613931951263f3d33c080090189128",
+                "tu_type": "2",
+                "tu_relation": 2
+            },
+            {
+                "label": "user6 user6",
+                "tas_uid": "3600770975176da52433621023964959",
+                "usr_uid": "632490311509131bcbd4fe6082480294",
+                "tu_type": "2",
+                "tu_relation": 1
+            }
+        ]
+    }
+}
