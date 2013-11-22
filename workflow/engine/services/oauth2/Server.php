@@ -52,7 +52,7 @@ class Server implements iAuthenticate
         $this->server->addGrantType(new \OAuth2\GrantType\AuthorizationCode($this->storage));
 
         // Add the "Client Credentials" grant type (it is the simplest of the grant types)
-        $this->server->addGrantType(new \OAuth2\GrantType\ClientCredentials($this->storage));
+        //$this->server->addGrantType(new \OAuth2\GrantType\ClientCredentials($this->storage));
 
         // Add the "Refresh token" grant type
         $this->server->addGrantType(new \OAuth2\GrantType\RefreshToken($this->storage));
