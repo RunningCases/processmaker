@@ -4,9 +4,88 @@
     "keywords": ["php bpm processmaker"],
     "homepage": "http://processmaker.com",
     "license": "GNU Affero General Public License version 3",
+
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "jquery/jquery",
+                "version": "1.10.2",
+                "dist": {
+                    "url": "http://code.jquery.com/jquery-1.10.2.min.js",
+                    "type": "file"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "underscore/underscore",
+                "version": "1.5.2",
+                "dist": {
+                    "url": "http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js",
+                    "type": "file"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "colosa/pmui",
+                "version": "dev-master",
+                "source": {
+                    "url": "git@bitbucket.org:colosa/pmui.git",
+                    "type": "git",
+                    "reference": "origin/master"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "colosa/michelangelofe",
+                "version": "dev-master",
+                "source": {
+                    "url": "git@bitbucket.org:colosa/michelangelofe.git",
+                    "type": "git",
+                    "reference": "origin/master"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "colosa/michelangelo-fe-libs",
+                "version": "dev-master",
+                "source": {
+                    "url": "git@bitbucket.org:colosa/michelangelo-fe-libs.git",
+                    "type": "git",
+                    "reference": "origin/master"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "colosa/restclient",
+                "version": "dev-master",
+                "source": {
+                    "url": "git@github.com:colosa/restclient.git",
+                    "type": "git",
+                    "reference": "origin/master"
+                }
+            }
+        }
+    ],
     
     "require": {
         "luracast/restler" : "dev-master",
-        "bshaffer/oauth2-server-php": "v1.0"
+        "bshaffer/oauth2-server-php": "v1.0",
+        "jquery/jquery": "1.10.2",
+        "colosa/pmui": "dev-master",
+        "colosa/michelangelofe": "dev-master",
+        "colosa/michelangelo-fe-libs": "dev-master",
+        "colosa/restclient": "dev-master",
+        "underscore/underscore": "1.5.2"
     }
 }

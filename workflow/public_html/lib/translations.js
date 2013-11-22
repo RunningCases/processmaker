@@ -1,1 +1,0 @@
-/var/www/michelangelofe/translations.js

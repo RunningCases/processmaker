@@ -1,1 +1,303 @@
-/var/www/michelangelofe/build/css/mafe.css
+.pm-toolbarpanel-btn {
+	text-decoration: none;
+	list-style: none;
+  text-align: center;
+}
+.pm-toolbarpanel-btn-span{
+  font-size: 10px;
+}
+.pm-toolbarpanel-btn-img{
+	width: 30px;
+	height: 30px;
+}
+.pm-toolbarpanel-tooltip {
+  font-size: 10px;
+  z-index: 9999;
+  max-width: 300px;
+  -webkit-box-shadow: 0 0 5px #aaa;
+  box-shadow: 0 0 5px #aaa;
+  background-color: #6D87B7;
+  color: white;
+}
+.pmui-pmcanvas {
+  background-image: url(../img/grid_10.png);
+}
+.pmui-bpmn-sprite {
+  background-image: url(../img/bpmn_sprite_with_zoom.png);
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.pm-event-start {
+	background-color: #DCF7B8;
+  border: 2px solid #A3CB26;
+  -webkit-border-radius: 100px;
+  -moz-border-radius: 100px;
+  -ms-border-radius: 100px;
+  -o-border-radius: 100px;
+  border-radius: 100px;
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+/*.pm_event {
+	background: url('../../img/event_shape.png') no-repeat;
+}*/
+
+.pmui-event-end {
+	background-color: #D74816;
+  border: 2px solid #e58d70;
+  -webkit-border-radius: 100px;
+  -moz-border-radius: 100px;
+  -ms-border-radius: 100px;
+  -o-border-radius: 100px;
+  border-radius: 100px;
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);	
+}
+/*.pm_event_end {
+	background: url('../../img/event_end.png') no-repeat;
+}*/
+
+.pm-gateway {
+	background: url(../img/gateway_shape.png) no-repeat;
+}
+.pm-email {
+	background: url(../img/email.png) no-repeat;	
+}
+/*
+* For buttons that are on the north from the Layout
+*/
+.ui-layout-north a{
+	margin-left: 2px;
+}
+
+.pm-activity-task {
+  background-color: #d9edf7;
+  border: 2px solid #0055cc;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  -ms-border-radius: 7px;
+  -o-border-radius: 7px;
+  border-radius: 7px;
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+.pm-activity-subprocess {
+  background-color: #dcceff;
+  border: 2px solid #756899;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  -ms-border-radius: 7px;
+  -o-border-radius: 7px;
+  border-radius: 7px;
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+/*
+* Processmaker Toolbar
+*/
+.pmui-button {
+   border:1px solid #7d99ca; 
+   -webkit-border-radius: 3px; 
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   text-align:center;
+   margin-top: auto;
+   margin-bottom: auto;
+   font-size:10px;
+   font-family:arial, helvetica, sans-serif; 
+   /*padding: 4px 4px 4px 4px; */
+   text-decoration:none; 
+   display:inline-block;
+   font-weight:bold; 
+   color: #FFFFFF;
+   background-color: #6681B0;
+   background-image: -webkit-gradient(linear, left top, left bottom, from(#A5B8DA), to(#7089B3));
+   background-image: -webkit-linear-gradient(top, #A5B8DA, #7089B3);
+   padding-left: 5px;
+   padding-right: 5px;
+}
+.pmui-toolbar-sprite {
+  background-image: url(../img/spriteOld.png) !important;
+  background-repeat: no-repeat;
+  display: inline;
+  overflow: hidden;
+  padding: 2px 5px 2px 22px;
+  /*padding-left: 22px;*/
+}
+.pmui-dynaform {
+  background-position: 0 -181px;
+}
+.pmui-input {
+  background-position: 0 -11757px;
+}
+.pmui-output {
+  background-position: 0 -12045px;
+}
+.pmui-trigger {
+  background-position: 0 -4233px;
+}
+.pmui-report {
+  background-position: 0 -15429px;
+}
+.pmui-database {
+  background-position: 0 -5619px;
+}
+.pmui-scheduler {
+  background-position: 0 -2991px;
+}
+
+.pm-toolbar-sprite {
+  background-image: url(../img/bpmn_sprite_with_zoom.png);
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+}
+
+.pm-toolbar-task {
+  background-position: -2px -852px;
+}
+.pm-toolbar-task:hover {
+  background-position: -2px -852px;
+  background-color: #8A8484;
+}
+.pm-toolbar-subprocess {
+  background-position: -55px -852px;
+}
+.pm-toolbar-subprocess:hover {
+  background-position: -55px -852px;
+  background-color: #8A8484;
+}
+.pm-toolbar-startcase {
+  background-position: -19px -852px;
+}
+.pm-toolbar-startcase:hover {
+  background-position: -19px -852px;
+  background-color: #8A8484;
+}
+.pm-toolbar-endprocess {
+  background-position: -73px -852px;
+}
+.pm-toolbar-endprocess:hover {
+  background-position: -73px -852px;
+  background-color: #8A8484;
+}
+.pm-toolbar-selection {
+  background-position: -92px -852px;
+}
+.pm-toolbar-selection:hover {
+  background-position: -92px -852px;
+  background-color: #8A8484;
+}
+.pm-toolbar-evaluation {
+  background-position: -92px -852px;
+}
+.pm-toolbar-evaluation:hover {
+  background-position: -92px -852px;
+  background-color: #8A8484;
+}
+.pm-toolbar-parallel {
+  background-position: -92px -852px;
+}
+.pm-toolbar-parallel:hover {
+  background-position: -92px -852px;
+  background-color: #8A8484;
+}
+.pm-toolbar-parallel-evaluation {
+  background-position: -92px -852px;
+}
+.pm-toolbar-parallel-evaluation:hover {
+  background-position: -92px -852px;
+  background-color: #8A8484;
+}
+
+.pm-toolbar-parallel-join {
+  background-position: -92px -852px;
+}
+.pm-toolbar-parallel-join:hover {
+  background-position: -92px -852px;
+  background-color: #8A8484;
+}
+
+/**
+* Canvas Menu
+*/
+.pmui-menu-edit-process {
+  background: url(../img/edit.gif) no-repeat;
+}
+.pmui-menu-export-process {
+  background: url(../img/edit.gif) no-repeat;
+}
+.pmui-menu-add-task {
+  background: url(../img/add.png) no-repeat;
+}
+.pmui-menu-sub-process {
+  background: url(../img/subProcess.png) no-repeat;
+}
+.pmui-menu-add-text {
+  background: url(../img/addtext.png) no-repeat;
+}
+.pmui-menu-horiz-line {
+  background: url(../img/linhori.png) no-repeat;
+}
+.pmui-menu-vertical-line {
+  background: url(../img/linver.png) no-repeat;
+}
+.pmui-menu-all-lines {
+  background: url(../img/delete.png) no-repeat;
+}
+.pmui-menu-process-permissions {
+  background: url(../img/object_permission.gif) no-repeat;
+}
+.pmui-menu-process-supervisor {
+  background: url(../img/users.png) no-repeat;
+}
+.pmui-menu-web-entry {
+  background: url(../img/dynaforms.gif) no-repeat;
+}
+.pmui-menu-case-tracker {
+  background: url(../img/tracker.gif) no-repeat;
+}
+.pmui-menu-files-manager {
+  background: url(../img/folder.gif) no-repeat;
+}
+.pmui-menu-events {
+  background: url(../img/events.gif) no-repeat;
+}
+/**
+* PMTask Menu
+*/
+.pmui-menu-task-steps {
+  background: url(../img/folder.gif) no-repeat;  
+}
+.pmui-menu-task-users {
+  background: url(../img/folder.gif) no-repeat;
+}
+.pmui-menu-task-users-adhoc {
+  background: url(../img/folder.gif) no-repeat;
+}
+.pmui-menu-task-rules {
+  background: url(../img/folder.gif) no-repeat;
+}
+.pmui-menu-task-delete-rules {
+  background: url(../img/folder.gif) no-repeat;
+}
+.pmui-menu-task-delete {
+  background: url(../img/folder.gif) no-repeat;
+}
+.pmui-menu-task-properties {
+  background: url(../img/folder.gif) no-repeat;
+}
+
+/**
+*Hard core
+*/
+fieldset {
+    display: inline;
+    color: black !important;
+}
