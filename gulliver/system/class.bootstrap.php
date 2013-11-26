@@ -1165,14 +1165,9 @@ class Bootstrap
         if (array_key_exists('alias', $apiIniConf)) {
             foreach ($apiIniConf['alias'] as $alias => $namespace) {
                 $namespace = '\\' . ltrim($namespace, '\\');
-                var_dump("$namespace, $alias");
                 $rest->addAPIClass($namespace, $alias);
             }
         }
-        //var_dump($apiIniConf);die;
-
-        //$rest->addAPIClass('\Services\Api\ProcessMaker\Test');
-        //$rest->addAPIClass('\Services\Api\ProcessMaker\Test2','test');
 
         $rest->handle();
     }

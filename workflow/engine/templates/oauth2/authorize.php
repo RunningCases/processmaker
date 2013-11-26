@@ -1,5 +1,5 @@
 <?php
-require_once PATH_CORE . 'services/oauth2/PmPdo.php';
+require_once PATH_CORE . 'src/Services/Api/OAuth2/PmPdo.php';
 
 
 list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
@@ -15,7 +15,7 @@ $this->scope = array(
 );
 
 // $dsn is the Data Source Name for your database, for exmaple "mysql:dbname=my_oauth2_db;host=localhost"
-$storage = new Api\OAuth2\PmPdo(array('dsn' => $dsn, 'username' => $username, 'password' => $password));
+$storage = new Services\Api\OAuth2\PmPdo(array('dsn' => $dsn, 'username' => $username, 'password' => $password));
 
 
 
