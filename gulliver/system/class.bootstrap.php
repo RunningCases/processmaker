@@ -1077,173 +1077,103 @@ class Bootstrap
         }
         return $res;
     }
-    
+
     /**
      * This method dispatch rest/api service
      *
      * @author Erik Amaru Ortiz <erik@colosa.com>
      * @param $uri
-     * @param $config
-     * @param string $apiClassesPath
-     * @internal param string $url Contains the url request
+     * @param string $version
      */
     public function dispatchApiService($uri, $version = '1.0')
     {
+        /*
+         * $servicesDir contains directory where Services Classes are allocated
+         */
+        $servicesDir = PATH_CORE . 'src' . PATH_SEP . 'Services' . PATH_SEP;
+        /*
+         * $apiDir - contains directory to scan classes and add them to Restler
+         */
+        $apiDir = $servicesDir . 'Api' . PATH_SEP;
+        /*
+         * $apiIniFile - contains file name of api ini configuration
+         */
+        $apiIniFile = $servicesDir . PATH_SEP . 'api.ini';
+        /*
+         * $authenticationClass - contains the class name that validate the authentication for Restler
+         */
+        $authenticationClass = 'Services\\Api\\OAuth2\\Server';
+        /*
+         * $pmOauthClientId - contains PM Local OAuth Id (Web Designer)
+         */
+        $pmOauthClientId = 'x-pm-local-client';
 
-        $dataUri = explode('/', $uri);
-        array_shift($dataUri);
-        $reqClass = ucfirst(array_shift($dataUri));
+        // load Api class
+        G::loadClass('api');
 
-        $servicesDir = PATH_CORE . 'services' . PATH_SEP;
-        $apiDir = $servicesDir . 'api' . PATH_SEP;
-        $classDir = $apiDir . 'processmaker' . PATH_SEP;
+        // Load Api ini file for Rest Service
 
-        require_once PATH_CORE . "classes" . PATH_SEP . "class.api.php";
+        $apiIniConf = array();
 
+        if (file_exists($apiIniFile)) {
+            $apiIniConf = parse_ini_file($apiIniFile, true);
+        }
+
+        // Setting current workspace to Api class
         \ProcessMaker\Api::setWorkspace(SYS_SYS);
-        //var_dump($apiDir . 'oauth2/views'); die;
+        // TODO remove this setting on the future, it is not needed, but if it is not present is throwing a warning
         Luracast\Restler\Format\HtmlFormat::$viewPath = $servicesDir . 'oauth2/views';
 
-        require_once $servicesDir . 'oauth2/Server.php';
-
+        // create a new Restler instance
         $rest = new Luracast\Restler\Restler();
+        // setting api version to Restler
         $rest->setAPIVersion($version);
+        // adding $authenticationClass to Restler
+        $rest->addAuthenticationClass($authenticationClass, '');
 
-        
-        $rest->addAuthenticationClass('Api\\OAuth2\\Server', '');
-
+        // Setting database connection source
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
         $port = empty($port) ? '' : ";port=$port";
+        \Services\Api\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
 
-        \Api\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
-        \Api\OAuth2\Server::setPmClientId('x-pm-local-client');
+        // Setting default OAuth Client id, for local PM Web Designer
+        \Services\Api\OAuth2\Server::setPmClientId($pmOauthClientId);
 
-        $rest->setSupportedFormats('JsonFormat', 'XmlFormat'); //, 'HtmlFormat');
+        $rest->setSupportedFormats('JsonFormat', 'XmlFormat');
         //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
         $rest->setOverridingFormats('HtmlFormat', 'JsonFormat', 'UploadFormat');
 
+        // Override $_SERVER['REQUEST_URI'] to Restler handles the current url correctly
         $_SERVER['REQUEST_URI'] = $uri;
 
-        $classFile = $classDir . 'Services_Api_ProcessMaker_' . $reqClass . '.php';
-        $classFile2 = $classDir . DIRECTORY_SEPARATOR . $reqClass . '.php';
+        // scan all api directory to find api classes
+        $classesList = Bootstrap::rglob('*', 0, $apiDir);
 
-        if (file_exists($classFile)) {
-            require_once $classFile;
-
-            $rest->addAPIClass('Services_Api_ProcessMaker_' . $reqClass);
-        } elseif (file_exists($classFile2)) {
-            require_once $classFile2;
-
-            $rest->addAPIClass("\\Services\\Api\\Processmaker\\" . $reqClass);
-        } else {
-            $rest->handleError(500);
-        }
-
-
-        $rest->handle();
-
-        die;
-
-
-
-
-
-        ///
-        // OLD CODE FROM HERE, we can get some interisting things there on the future
-        //
-
-        $rest->setSupportedFormats('JsonFormat', 'XmlFormat');
-        // getting all services class
-        $restClasses = array();
-        $restClassesList = Bootstrap::rglob('*', 0, PATH_CORE . 'services/');
-        foreach ($restClassesList as $classFile) {
-            if (substr($classFile, - 4) === '.php') {
-                $restClasses[str_replace('.php', '', basename($classFile))] = $classFile;
+        foreach ($classesList as $classFile) {
+            if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
+                $namespace = '\\Services\\' . str_replace(
+                    DIRECTORY_SEPARATOR,
+                    '\\',
+                    str_replace('.php', '', str_replace($servicesDir, '', $classFile))
+                );
+                //var_dump($namespace);
+                $rest->addAPIClass($namespace);
             }
         }
-        if (!empty($apiClassesPath)) {
-            $pluginRestClasses = array();
-            $restClassesList = Bootstrap::rglob('*', 0, $apiClassesPath . 'services/');
-            foreach ($restClassesList as $classFile) {
-                if (substr($classFile, - 4) === '.php') {
-                    $pluginRestClasses[str_replace('.php', '', basename($classFile))] = $classFile;
-                }
-            }
-            $restClasses = array_merge($restClasses, $pluginRestClasses);
-        }
-        // hook to get rest api classes from plugins
-        if (class_exists('PMPluginRegistry')) {
-            $pluginRegistry = & PMPluginRegistry::getSingleton();
-            $pluginClasses = $pluginRegistry->getRegisteredRestClassFiles();
-            $restClasses = array_merge($restClasses, $pluginClasses);
-        }
-        foreach ($restClasses as $key => $classFile) {
-            if (!file_exists($classFile)) {
-                unset($restClasses[$key]);
-                continue;
-            }
-            //load the file, and check if exist the class inside it.
-            require_once $classFile;
-            $namespace = 'Services_Rest_';
-            $className = str_replace('.php', '', basename($classFile));
 
-            // if the core class does not exists try resolve the for a plugin
-            if (!class_exists($namespace . $className)) {
-                $namespace = 'Plugin_Services_Rest_';
-                // Couldn't resolve the class name, just skipp it
-                if (!class_exists($namespace . $className)) {
-                    unset($restClasses[$key]);
-                    continue;
-                }
-            }
-            // verify if there is an auth class implementing 'iAuthenticate'
-            $classNameAuth = $namespace . $className;
-            $reflClass = new ReflectionClass($classNameAuth);
-            // that wasn't from plugin
-            if ($reflClass->implementsInterface('iAuthenticate') && $namespace != 'Plugin_Services_Rest_') {
-                // auth class found, set as restler authentication class handler
-                $rest->addAuthenticationClass($classNameAuth);
-            } else {
-                // add api class
-                $rest->addAPIClass($classNameAuth);
+        // adding aliases for Restler
+        if (array_key_exists('alias', $apiIniConf)) {
+            foreach ($apiIniConf['alias'] as $alias => $namespace) {
+                $namespace = '\\' . ltrim($namespace, '\\');
+                var_dump("$namespace, $alias");
+                $rest->addAPIClass($namespace, $alias);
             }
         }
-        //end foreach rest class
-        // resolving the class for current request
-        $uriPart = explode('/', $uri);
-        $requestedClass = '';
-        if (isset($uriPart[1])) {
-            $requestedClass = ucfirst($uriPart[1]);
-        }
-        if (class_exists('Services_Rest_' . $requestedClass)) {
-            $namespace = 'Services_Rest_';
-        } elseif (class_exists('Plugin_Services_Rest_' . $requestedClass)) {
-            $namespace = 'Plugin_Services_Rest_';
-        } else {
-            $namespace = '';
-        }
-        // end resolv.
-        // Send additional headers (if exists) configured on rest-config.ini
-        if (array_key_exists('HEADERS', $config)) {
-            foreach ($config['HEADERS'] as $name => $value) {
-                header("$name: $value");
-            }
-        }
-        // to handle a request with "OPTIONS" method
-        if (!empty($namespace) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-            $reflClass = new ReflectionClass($namespace . $requestedClass);
-            // if the rest class has not a "options" method
-            if (!$reflClass->hasMethod('options')) {
-                header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, HEADERS');
-                header('Access-Control-Allow-Headers: authorization, content-type');
-                header("Access-Control-Allow-Credentials", "false");
-                header('Access-Control-Max-Age: 60');
-                exit();
-            }
-        }
-        // override global REQUEST_URI to pass to Restler library
-        $_SERVER['REQUEST_URI'] = '/' . strtolower($namespace) . ltrim($uri, '/');
-        // handle the rest request
+        //var_dump($apiIniConf);die;
+
+        //$rest->addAPIClass('\Services\Api\ProcessMaker\Test');
+        //$rest->addAPIClass('\Services\Api\ProcessMaker\Test2','test');
+
         $rest->handle();
     }
 

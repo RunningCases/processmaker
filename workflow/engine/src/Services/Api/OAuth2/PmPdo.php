@@ -1,6 +1,6 @@
 <?php
 
-namespace Api\OAuth2;
+namespace Services\Api\OAuth2;
 
 /**
  * Simple PmPDO storage for all storage types

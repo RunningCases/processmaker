@@ -1,5 +1,5 @@
 <?php
-namespace Api\OAuth2;
+namespace Services\Api\OAuth2;
 
 use Luracast\Restler\iAuthenticate;
 
