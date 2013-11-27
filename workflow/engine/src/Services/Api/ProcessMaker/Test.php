@@ -66,13 +66,13 @@ class Test extends Api
     {
         if (array_key_exists($id, $this->data)) {
             if (array_key_exists('name', $request_data)) {
-                $this->data[$id] = $request_data['name'];
+                $this->data[$id]['name'] = $request_data['name'];
             }
             if (array_key_exists('lastname', $request_data)) {
-                $this->data[$id] = $request_data['lastname'];
+                $this->data[$id]['lastname'] = $request_data['lastname'];
             }
             if (array_key_exists('age', $request_data)) {
-                $this->data[$id] = $request_data['age'];
+                $this->data[$id]['age'] = $request_data['age'];
             }
             $this->saveData();
 
@@ -93,14 +93,6 @@ class Test extends Api
         } else {
             throw new RestException(400, "Record not found. Record with id: $id does not exist!");
         }
-    }
-
-    /**
-     * @url GET /testing/sample/:param
-     */
-    function doOverride($param)
-    {
-        return $param;
     }
 
     /* Private methods */
