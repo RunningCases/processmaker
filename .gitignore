@@ -24,3 +24,4 @@ composer.lock
 vendor/
 workflow/engine/config/schema-transformed.xml
 workflow/engine/config/_databases_.php
+workflow/public_html/lib/
