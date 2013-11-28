@@ -1,6 +1,8 @@
 <?php
 namespace BusinessModel;
 
+use \G;
+
 class Task
 {
     /**
@@ -13,7 +15,7 @@ class Task
      *
      * @access public
      */
-    public function getProperties($taskUid, $keyCaseToLower = false)
+    public function getProperties($taskUid, $keyCaseToLower = false, $groupData = true)
     {
         try {
             //G::LoadClass("configuration");
@@ -54,7 +56,12 @@ class Task
 
             //Set data
             $arrayData = array();
-            $keyCase = ($keyCaseToLower)? CASE_LOWER : CASE_UPPER;
+            $keyCase = ($keyCaseToLower) ? CASE_LOWER : CASE_UPPER;
+
+            if (!$groupData) {
+                $arrayData = array_change_key_case($arrayDataAux, $keyCase);
+                return $arrayData;
+            }
 
             //Definition
             $arrayData["DEFINITION"] = array_change_key_case(
@@ -142,8 +149,10 @@ class Task
     public function updateProperties($taskUid, $processUid, $arrayProperty)
     {
         //Copy of processmaker/workflow/engine/methods/tasks/tasks_Ajax.php //case "saveTaskData":
-
         try {
+            if (isset($arrayProperty['properties'])) {
+                $arrayProperty = array_change_key_case($arrayProperty['properties'], CASE_UPPER);    
+            }
             $arrayProperty["TAS_UID"] = $taskUid;
             $arrayProperty["PRO_UID"] = $processUid;
 
@@ -212,8 +221,27 @@ class Task
             if ($result == 3) {
                 $arrayResult["status"] = "CRONCL";
             }
-
             return $arrayResult;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Delete a Task
+     *
+     * @param string $taskUid
+     *
+     * return void
+     *
+     * @access public
+     */
+    public function deleteTask($taskUid)
+    {
+        try {
+            G::LoadClass('tasks');
+            $tasks = new \Tasks();
+            $tasks->deleteTask($taskUid);
         } catch (Exception $e) {
             throw $e;
         }
