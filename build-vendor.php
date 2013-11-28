@@ -27,8 +27,7 @@ if (! is_dir($vendorDir )) {
 
 $projects = array(
     'colosa/michelangelofe',
-    'colosa/pmui',
-    'colosa/restclient'
+    'colosa/pmui'
 );
 
 echo PHP_EOL;
@@ -59,6 +58,12 @@ if (! is_dir($destinationDir)) {
 if (! is_dir($destinationDir.'/js')) {
     mkdir($destinationDir.'/js', 0777);
 }
+if (! is_dir($destinationDir.'/css')) {
+    mkdir($destinationDir.'/css', 0777);
+}
+if (! is_dir($destinationDir.'/img')) {
+    mkdir($destinationDir.'/img', 0777);
+}
 if (! is_dir($destinationDir.'/mafe')) {
     mkdir($destinationDir.'/mafe', 0777);
 }
@@ -71,17 +76,27 @@ $filesCollection = array(
     "jquery/jquery/jquery-1.10.2.min.js" => "js/jquery-1.10.2.min.js",
     "underscore/underscore/underscore-min.js" => "js/underscore-min.js",
     //libs
-    "colosa/michelangelo-fe-libs/jQueryLayout/jquery.layout.min.js" => "js/jquery.layout.min.js",
+    /*"colosa/michelangelo-fe-libs/jQueryLayout/jquery.layout.min.js" => "js/jquery.layout.min.js",
     "colosa/michelangelo-fe-libs/jQueryUI/jquery-ui-1.10.3.custom.min.js" => "js/jquery-ui-1.10.3.custom.min.js",
     "colosa/michelangelo-fe-libs/jQueryUI/jquery-ui-1.10.3.custom.min.css" => "js/jquery-ui-1.10.3.custom.min.css",
-    "colosa/michelangelo-fe-libs/wz_jsgraphics/wz_jsgraphics.js" => "js/wz_jsgraphics.js",
-    "colosa/restclient/restclient-min.js" => "js/restclient-min.js",
-    "colosa/michelangelofe/app.js" => "js/app.js",
+    "colosa/michelangelo-fe-libs/wz_jsgraphics/wz_jsgraphics.js" => "js/wz_jsgraphics.js",*/    
+
+    "colosa/pmui/libraries/restclient/restclient-min.js" => "js/restclient-min.js",
+    
     // michelangelofe
+    "colosa/michelangelofe/lib/wz_jsgraphics/wz_jsgraphics.js" => "js/wz_jsgraphics.js",
+    "colosa/michelangelofe/build/js/designer.js" => "mafe/designer.js",
     "colosa/michelangelofe/build/js/mafe.min.js" => "mafe/mafe.min.js",
     "colosa/michelangelofe/build/css/mafe.css" => "mafe/mafe.css",
     "colosa/michelangelofe/build/img/*" => "img/",
     // pmui
+    "colosa/pmui/libraries/jquery.layout/LayoutPanel.css" => "css/jquery.layout.css",
+    "colosa/pmui/libraries/jquery-ui/css/css-customized/jquery-ui-1.10.3.custom.css" => "css/jquery-ui-1.10.3.custom.min.css",
+    "colosa/pmui/libraries/dataTables/css/jquery.dataTables.css" => "css/jquery.dataTables.css",
+    "colosa/pmui/libraries/jquery.layout/jquery.layout.min.js" => "js/jquery.layout.min.js",
+    "colosa/pmui/libraries/jquery-ui/js/jquery-ui-1.10.3.custom.min.js" => "js/jquery-ui-1.10.3.custom.min.js",
+    "colosa/pmui/libraries/dataTables/js/jquery.dataTables.min.js" => "js/jquery.dataTables.min.js",
+
     "colosa/pmui/build/js/min/pmui-1.0.0.min.js" => "pmUI/pmui-1.0.0.js",
     "colosa/pmui/build/css/pmui-1.0.0.css" => "pmUI/pmui-1.0.0.css",
     "colosa/pmui/build/img/*" => "img/",

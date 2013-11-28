@@ -51,30 +51,6 @@
                     "reference": "origin/master"
                 }
             }
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "colosa/michelangelo-fe-libs",
-                "version": "dev-master",
-                "source": {
-                    "url": "git@bitbucket.org:colosa/michelangelo-fe-libs.git",
-                    "type": "git",
-                    "reference": "origin/master"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "colosa/restclient",
-                "version": "dev-master",
-                "source": {
-                    "url": "git@github.com:colosa/restclient.git",
-                    "type": "git",
-                    "reference": "origin/master"
-                }
-            }
         }
     ],
     
@@ -84,8 +60,6 @@
         "jquery/jquery": "1.10.2",
         "colosa/pmui": "dev-master",
         "colosa/michelangelofe": "dev-master",
-        "colosa/michelangelo-fe-libs": "dev-master",
-        "colosa/restclient": "dev-master",
         "underscore/underscore": "1.5.2"
     }
 }
