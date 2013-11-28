@@ -56,7 +56,7 @@ class FieldValidator
      */
     public static function isUrl($url)
     {
-        return (preg_match("/(((^https?)|(^ftp)):\/\/([\-\w]+\.)+\w{2,3}(\/[%\-\w]+(\.\w{2,})?)*(([\w\-\.\?\\\/+@&#;`~=%!]*)(\.\w{2,})?)*\/?)/i", $url))? true : false;
+        return (preg_match("/(((^https?)|(^ftp)):\/\/([\-\w]+\.)+\w{2,3}(\/[%\-\w]+(\.\w{2,})?)*(([\w\-\.\?\/+\\@&#;`~=%!]*)(\.\w{2,})?)*\/?)/i", $url))? true : false;
     }
 
     /**
