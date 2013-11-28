@@ -1,10 +1,6 @@
 <?php
 require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.fieldValidator.php");
 
-
-
-
-
 /**
  * Unit test for class FieldValidator
  */
