@@ -62,6 +62,9 @@ if (! is_dir($destinationDir.'/js')) {
 if (! is_dir($destinationDir.'/css')) {
     mkdir($destinationDir.'/css', 0777);
 }
+if (! is_dir($destinationDir.'/img')) {
+    mkdir($destinationDir.'/img', 0777);
+}
 if (! is_dir($destinationDir.'/mafe')) {
     mkdir($destinationDir.'/mafe', 0777);
 }
