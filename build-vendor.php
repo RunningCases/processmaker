@@ -27,8 +27,7 @@ if (! is_dir($vendorDir )) {
 
 $projects = array(
     'colosa/michelangelofe',
-    'colosa/pmui',
-    'colosa/restclient'
+    'colosa/pmui'
 );
 
 echo PHP_EOL;
@@ -82,7 +81,7 @@ $filesCollection = array(
     "colosa/michelangelo-fe-libs/jQueryUI/jquery-ui-1.10.3.custom.min.css" => "js/jquery-ui-1.10.3.custom.min.css",
     "colosa/michelangelo-fe-libs/wz_jsgraphics/wz_jsgraphics.js" => "js/wz_jsgraphics.js",*/    
 
-    "colosa/restclient/restclient-min.js" => "js/restclient-min.js",
+    "colosa/pmui/libraries/restclient/restclient-min.js" => "js/restclient-min.js",
     
     // michelangelofe
     "colosa/michelangelofe/lib/wz_jsgraphics/wz_jsgraphics.js" => "js/wz_jsgraphics.js",
