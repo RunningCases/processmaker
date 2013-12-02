@@ -1116,7 +1116,7 @@ class Bootstrap
         $apiIniConf = array();
 
         if (file_exists($apiIniFile)) {
-            $apiIniConf = parse_ini_file($apiIniFile, true);
+            $apiIniConf = self::parseIniFile($apiIniFile);
         }
 
         // Setting current workspace to Api class
@@ -1162,10 +1162,17 @@ class Bootstrap
         }
 
         // adding aliases for Restler
+        
         if (array_key_exists('alias', $apiIniConf)) {
-            foreach ($apiIniConf['alias'] as $alias => $namespace) {
-                $namespace = '\\' . ltrim($namespace, '\\');
-                $rest->addAPIClass($namespace, $alias);
+            //print_r($apiIniConf['alias']); die;
+            foreach ($apiIniConf['alias'] as $alias => $aliasData) {
+                if (is_array($aliasData)) {
+                    foreach ($aliasData as $label => $namespace) {
+                        $namespace = '\\' . ltrim($namespace, '\\');
+                        //var_dump($namespace, $alias);
+                        $rest->addAPIClass($namespace, $alias);   
+                    }
+                }
             }
         }
 
@@ -3064,6 +3071,27 @@ class Bootstrap
         }
 
         require_once PATH_TRUNK . 'vendor' . PATH_SEP . "autoload.php";
+    }
+
+    public static function parseIniFile($filename)
+    {
+        $data = @parse_ini_file($filename, true);
+        $result = array();
+
+        if ($data === false) {
+            throw new Exception("Error parsing ini file: $filename");
+        }
+
+        foreach ($data as $key => $value) {
+            if (strpos($key, ':') !== false) {
+                list($key, $subSection) = explode(':', $key);
+                $result[trim($key)][trim($subSection)] = $value;
+            } else {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
     }
 }
 

@@ -1569,6 +1569,52 @@ CREATE TABLE `PMOAUTH_USER_ACCESS_TOKENS`
 	PRIMARY KEY (`ACCESS_TOKEN`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
+#-- BPMN_PROJECT
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `BPMN_PROJECT`;
+
+
+CREATE TABLE `BPMN_PROJECT`
+(
+	`PRJ_UID` VARCHAR(32) default '' NOT NULL,
+	`PRJ_NAME` VARCHAR(255) default '' NOT NULL,
+	`PRJ_TARGET_NAMESPACE` MEDIUMTEXT  NOT NULL,
+	`PRJ_EXPRESION_LANGUAGE` MEDIUMTEXT,
+	`PRJ_TYPE_LANGUAGE` MEDIUMTEXT,
+	`PRJ_EXPORTER` MEDIUMTEXT,
+	`PRJ_EXPORTER_VERSION` MEDIUMTEXT,
+	`PRJ_CREATE_DATE` DATETIME  NOT NULL,
+	`PRJ_UPDATE_DATE` DATETIME,
+	`PRJ_AUTHOR` MEDIUMTEXT,
+	`PRJ_AUTHOR_VERSION` MEDIUMTEXT,
+	`PRJ_ORIGINAL_SOURCE` MEDIUMTEXT,
+	KEY `BPMN_PROJECT_I_1`(`PRJ_UID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- BPMN_PROCESS
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `BPMN_PROCESS`;
+
+
+CREATE TABLE `BPMN_PROCESS`
+(
+	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`DIA_UID` VARCHAR(32),
+	`PRO_NAME` VARCHAR(255)  NOT NULL,
+	`PRO_TYPE` VARCHAR(10) default 'NONE' NOT NULL,
+	`PRO_IS_EXECUTABLE` TINYINT default 0 NOT NULL,
+	`PRO_IS_CLOSED` TINYINT default 0 NOT NULL,
+	`PRO_IS_SUBPROCESS` TINYINT default 0 NOT NULL,
+	KEY `BPMN_PROCESS_I_1`(`PRO_UID`),
+	KEY `BPMN_PROCESS_I_2`(`PRJ_UID`),
+	CONSTRAINT `fk_bpmn_process_project`
+		FOREIGN KEY (`PRJ_UID`)
+		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
 #-- BPMN_ACTIVITY
 #-----------------------------------------------------------------------------
 
@@ -1643,6 +1689,25 @@ CREATE TABLE `BPMN_ARTIFACT`
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
+#-- BPMN_DIAGRAM
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `BPMN_DIAGRAM`;
+
+
+CREATE TABLE `BPMN_DIAGRAM`
+(
+	`DIA_UID` VARCHAR(32) default '' NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`DIA_NAME` VARCHAR(255),
+	`DIA_IS_CLOSABLE` TINYINT default 0,
+	KEY `BPMN_DIAGRAM_I_1`(`DIA_UID`),
+	KEY `BPMN_DIAGRAM_I_2`(`PRJ_UID`),
+	CONSTRAINT `fk_bpmn_diagram_project`
+		FOREIGN KEY (`PRJ_UID`)
+		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
 #-- BPMN_BOUND
 #-----------------------------------------------------------------------------
 
@@ -1706,45 +1771,6 @@ CREATE TABLE `BPMN_DATA`
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
-#-- BPMN_DIAGRAM
-#-----------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `BPMN_DIAGRAM`;
-
-
-CREATE TABLE `BPMN_DIAGRAM`
-(
-	`DIA_UID` VARCHAR(32) default '' NOT NULL,
-	`PRJ_UID` VARCHAR(32)  NOT NULL,
-	`DIA_NAME` VARCHAR(255),
-	`DIA_IS_CLOSABLE` TINYINT default 0,
-	KEY `BPMN_DIAGRAM_I_1`(`DIA_UID`),
-	KEY `BPMN_DIAGRAM_I_2`(`PRJ_UID`),
-	CONSTRAINT `fk_bpmn_diagram_project`
-		FOREIGN KEY (`PRJ_UID`)
-		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB ;
-#-----------------------------------------------------------------------------
-#-- BPMN_DOCUMENTATION
-#-----------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `BPMN_DOCUMENTATION`;
-
-
-CREATE TABLE `BPMN_DOCUMENTATION`
-(
-	`DOC_UID` VARCHAR(32)  NOT NULL,
-	`PRJ_UID` VARCHAR(32)  NOT NULL,
-	`DOC_ELEMENT` VARCHAR(32)  NOT NULL,
-	`DOC_ELEMENT_TYPE` VARCHAR(45)  NOT NULL,
-	`DOC_DOCUMENTATION` MEDIUMTEXT,
-	KEY `BPMN_DOCUMENTATION_I_1`(`DOC_UID`),
-	KEY `BPMN_DOCUMENTATION_I_2`(`PRJ_UID`),
-	CONSTRAINT `fk_bpmn_documentation_project`
-		FOREIGN KEY (`PRJ_UID`)
-		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB ;
-#-----------------------------------------------------------------------------
 #-- BPMN_EVENT
 #-----------------------------------------------------------------------------
 
@@ -1785,26 +1811,6 @@ CREATE TABLE `BPMN_EVENT`
 	CONSTRAINT `fk_bpmn_event_process`
 		FOREIGN KEY (`PRO_UID`)
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
-)ENGINE=InnoDB ;
-#-----------------------------------------------------------------------------
-#-- BPMN_EXTENSION
-#-----------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `BPMN_EXTENSION`;
-
-
-CREATE TABLE `BPMN_EXTENSION`
-(
-	`EXT_UID` VARCHAR(32)  NOT NULL,
-	`PRJ_UID` VARCHAR(32)  NOT NULL,
-	`EXT_ELEMENT` VARCHAR(32)  NOT NULL,
-	`EXT_ELEMENT_TYPE` VARCHAR(45)  NOT NULL,
-	`EXT_EXTENSION` MEDIUMTEXT,
-	KEY `BPMN_EXTENSION_I_1`(`EXT_UID`),
-	KEY `BPMN_EXTENSION_I_2`(`PRJ_UID`),
-	CONSTRAINT `fk_bpmn_extension_project`
-		FOREIGN KEY (`PRJ_UID`)
-		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
 #-- BPMN_FLOW
@@ -1874,31 +1880,6 @@ CREATE TABLE `BPMN_GATEWAY`
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
-#-- BPMN_LANE
-#-----------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `BPMN_LANE`;
-
-
-CREATE TABLE `BPMN_LANE`
-(
-	`LAN_UID` VARCHAR(32) default '' NOT NULL,
-	`PRJ_UID` VARCHAR(32)  NOT NULL,
-	`LNS_UID` VARCHAR(32)  NOT NULL,
-	`LAN_NAME` VARCHAR(255),
-	`LAN_CHILD_LANESET` VARCHAR(32),
-	`LAN_IS_HORIZONTAL` TINYINT default 1,
-	KEY `BPMN_LANE_I_1`(`LAN_UID`),
-	KEY `BPMN_LANE_I_2`(`PRJ_UID`),
-	KEY `BPMN_LANE_I_3`(`LNS_UID`),
-	CONSTRAINT `fk_bpmn_lane_project`
-		FOREIGN KEY (`PRJ_UID`)
-		REFERENCES `BPMN_PROJECT` (`PRJ_UID`),
-	CONSTRAINT `fk_bpmn_lane_laneset`
-		FOREIGN KEY (`LNS_UID`)
-		REFERENCES `BPMN_LANESET` (`LNS_UID`)
-)ENGINE=InnoDB ;
-#-----------------------------------------------------------------------------
 #-- BPMN_LANESET
 #-----------------------------------------------------------------------------
 
@@ -1925,6 +1906,31 @@ CREATE TABLE `BPMN_LANESET`
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
+#-- BPMN_LANE
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `BPMN_LANE`;
+
+
+CREATE TABLE `BPMN_LANE`
+(
+	`LAN_UID` VARCHAR(32) default '' NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`LNS_UID` VARCHAR(32)  NOT NULL,
+	`LAN_NAME` VARCHAR(255),
+	`LAN_CHILD_LANESET` VARCHAR(32),
+	`LAN_IS_HORIZONTAL` TINYINT default 1,
+	KEY `BPMN_LANE_I_1`(`LAN_UID`),
+	KEY `BPMN_LANE_I_2`(`PRJ_UID`),
+	KEY `BPMN_LANE_I_3`(`LNS_UID`),
+	CONSTRAINT `fk_bpmn_lane_project`
+		FOREIGN KEY (`PRJ_UID`)
+		REFERENCES `BPMN_PROJECT` (`PRJ_UID`),
+	CONSTRAINT `fk_bpmn_lane_laneset`
+		FOREIGN KEY (`LNS_UID`)
+		REFERENCES `BPMN_LANESET` (`LNS_UID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
 #-- BPMN_PARTICIPANT
 #-----------------------------------------------------------------------------
 
@@ -1949,50 +1955,44 @@ CREATE TABLE `BPMN_PARTICIPANT`
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
-#-- BPMN_PROCESS
+#-- BPMN_EXTENSION
 #-----------------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `BPMN_PROCESS`;
+DROP TABLE IF EXISTS `BPMN_EXTENSION`;
 
 
-CREATE TABLE `BPMN_PROCESS`
+CREATE TABLE `BPMN_EXTENSION`
 (
-	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`EXT_UID` VARCHAR(32)  NOT NULL,
 	`PRJ_UID` VARCHAR(32)  NOT NULL,
-	`DIA_UID` VARCHAR(32),
-	`PRO_NAME` VARCHAR(255)  NOT NULL,
-	`PRO_TYPE` VARCHAR(10) default 'NONE' NOT NULL,
-	`PRO_IS_EXECUTABLE` TINYINT default 0 NOT NULL,
-	`PRO_IS_CLOSED` TINYINT default 0 NOT NULL,
-	`PRO_IS_SUBPROCESS` TINYINT default 0 NOT NULL,
-	KEY `BPMN_PROCESS_I_1`(`PRO_UID`),
-	KEY `BPMN_PROCESS_I_2`(`PRJ_UID`),
-	CONSTRAINT `fk_bpmn_process_project`
+	`EXT_ELEMENT` VARCHAR(32)  NOT NULL,
+	`EXT_ELEMENT_TYPE` VARCHAR(45)  NOT NULL,
+	`EXT_EXTENSION` MEDIUMTEXT,
+	KEY `BPMN_EXTENSION_I_1`(`EXT_UID`),
+	KEY `BPMN_EXTENSION_I_2`(`PRJ_UID`),
+	CONSTRAINT `fk_bpmn_extension_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
-#-- BPMN_PROJECT
+#-- BPMN_DOCUMENTATION
 #-----------------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `BPMN_PROJECT`;
+DROP TABLE IF EXISTS `BPMN_DOCUMENTATION`;
 
 
-CREATE TABLE `BPMN_PROJECT`
+CREATE TABLE `BPMN_DOCUMENTATION`
 (
-	`PRJ_UID` VARCHAR(32) default '' NOT NULL,
-	`PRJ_NAME` VARCHAR(255) default '' NOT NULL,
-	`PRJ_TARGET_NAMESPACE` MEDIUMTEXT  NOT NULL,
-	`PRJ_EXPRESION_LANGUAGE` MEDIUMTEXT,
-	`PRJ_TYPE_LANGUAGE` MEDIUMTEXT,
-	`PRJ_EXPORTER` MEDIUMTEXT,
-	`PRJ_EXPORTER_VERSION` MEDIUMTEXT,
-	`PRJ_CREATE_DATE` DATETIME  NOT NULL,
-	`PRJ_UPDATE_DATE` DATETIME,
-	`PRJ_AUTHOR` MEDIUMTEXT,
-	`PRJ_AUTHOR_VERSION` MEDIUMTEXT,
-	`PRJ_ORIGINAL_SOURCE` MEDIUMTEXT,
-	KEY `BPMN_PROJECT_I_1`(`PRJ_UID`)
+	`DOC_UID` VARCHAR(32)  NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`DOC_ELEMENT` VARCHAR(32)  NOT NULL,
+	`DOC_ELEMENT_TYPE` VARCHAR(45)  NOT NULL,
+	`DOC_DOCUMENTATION` MEDIUMTEXT,
+	KEY `BPMN_DOCUMENTATION_I_1`(`DOC_UID`),
+	KEY `BPMN_DOCUMENTATION_I_2`(`PRJ_UID`),
+	CONSTRAINT `fk_bpmn_documentation_project`
+		FOREIGN KEY (`PRJ_UID`)
+		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
 )ENGINE=InnoDB ;
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

@@ -34,7 +34,7 @@ class Test extends Api
             return $this->data[$id];
         }
 
-        throw new RestException(400, "Record not found. Record with id: $id does not exist!");
+        throw new RestException(400, "GET: Record not found. Record with id: $id does not exist!");
     }
 
     function post($request_data = NULL)
@@ -78,7 +78,7 @@ class Test extends Api
 
             return $this->data[$id];
         } else {
-            throw new RestException(400, "Record not found. Record with id: $id does not exist!");
+            throw new RestException(400, "PUT: Record not found. Record with id: $id does not exist!");
         }
     }
 
@@ -91,7 +91,7 @@ class Test extends Api
 
             return $row;
         } else {
-            throw new RestException(400, "Record not found. Record with id: $id does not exist!");
+            throw new RestException(400, "DELETE: Record not found. Record with id: $id does not exist!");
         }
     }
 
