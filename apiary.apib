@@ -1329,6 +1329,123 @@ DELETE /project/{prj_uid}/activity/{act_uid}/assignee/{aas_uid}
 
 
 --
+Project Properties - Ad hoc Assignee Resources
+--
+
+List Ad hoc assignees of an `activity`
+
+###Optional Parameters
+name          | type    | Description 
+:------------ | :------ | :-----------
+start         | integer | To specify a start index.
+limit         | integer | To delimit the numbers of records to return.
+filter        | string  | To specify a search term to filter the list, the search term will be matched with all assignee fields.
+
+GET /project/{prj_uid}/activity/{act_uid}/adhoc-assignee?filter=john&start=0&limit=50
+< 200 
+< Content-Type: application/json
+[
+    {
+        "ada_uid": "4e2745a3fdbd977d1339862ae390ad13",
+        "ada_name": "Mark",
+        "ada_lastname": "Smith",
+        "ada_username": "mark",
+        "ada_type": "user"
+    },
+    {
+        "ada_uid": "60108982451ae53bc5786b3013937849",
+        "ada_name": "John",
+        "ada_lastname": "Doe",
+        "ada_username": "jdoe",
+        "ada_type": "user"
+    },
+    {
+        "ada_uid": "157493645523b4c00067b67020029802",
+        "ada_name": "Administrators",
+        "ada_lastname": "",
+        "ada_username": "",
+        "ada_type": "group"
+    }
+]
+
+Get a list of available Ad hoc users and groups to be assigned to an `activity`
+ 
+###Optional Parameters
+name          | type    | Description 
+:------------ | :------ | :-----------
+start         | integer | To specify a start index.
+limit         | integer | To delimit the numbers of records to return.
+filter        | string  | To specify a search term to filter the list, the search term will be matched with all assignee fields.
+GET /project/{prj_uid}/activity/{act_uid}/adhoc-available-assignee?filter=john&start=0&limit=50
+< 200 
+< Content-Type: application/json
+[
+    {
+        "ada_uid": "8f30daa78a440ab308727ca33381a545",
+        "ada_name": "James",
+        "ada_lastname": "Johnson",
+        "ada_username": "james",
+        "ada_type": "user"
+    },
+    {
+        "ada_uid": "ae1e2034be750da53e48582cddc2ebc7",
+        "ada_name": "Robert",
+        "ada_lastname": "Williams",
+        "ada_username": "robert",
+        "ada_type": "user"
+    },
+    {
+        "ada_uid": "184131195492c7a04cba5f9056989964",
+        "ada_name": "Mary",
+        "ada_lastname": "Rose",
+        "ada_username": "mary",
+        "ada_type": "user"
+    },
+    {
+        "ada_uid": "1846526764c8905435c74e2028286704",
+        "ada_name": "Employees",
+        "ada_lastname": "",
+        "ada_username": "",
+        "ada_type": "group"
+    }
+    {
+        "ada_uid": "1846526764c8905435c74e2028286704",
+        "ada_name": "Plant Managers",
+        "ada_lastname": "",
+        "ada_username": "",
+        "ada_type": "group"
+    }
+]
+
+Get a single Ad hoc user or group of an `activity`
+GET /project/{prj_uid}/activity/{act_uid}/assignee/{ada_uid}
+< 200
+< Content-Type: application/json
+{
+    "ada_uid": "4e2745a3fdbd977d1339862ae390ad13",
+    "ada_name": "Mark",
+    "ada_lastname": "Smith",
+    "ada_username": "mark",
+    "ada_type": "user"
+}
+
+Asign a Ad hoc user or group to an `activity`
+POST /project/{prj_uid}/activity/{act_uid}/adhoc-assignee
+> Content-Type: application/json
+{
+    "ada_uid": "977d1339862ae390ad134e2745a3fdbd",
+    "ada_type": "user"
+}
+< 201
+
+
+Remove a Ad hoc assignee of an `activity`
+DELETE /project/{prj_uid}/activity/{act_uid}/adhoc-assignee/{ada_uid}
+> Content-Type: application/json
+< 200
+
+
+--
 Project Properties - Step Resources
 --
 
