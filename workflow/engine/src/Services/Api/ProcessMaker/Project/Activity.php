@@ -24,6 +24,7 @@ class Activity extends Api
             if ($filter == '' || $filter == 'definition') {
                 // DEFINITION
                 $definition = array();
+                $response['definition'] = $definition;
             }
 
             if ($filter == '' || $filter == 'properties') {
@@ -35,12 +36,8 @@ class Activity extends Api
                         unset($properties[$key]);
                     }
                 }
+                $response['properties'] = $properties;
             }
-
-            $response = array(
-                'definition' => $definition,
-                'properties' => $properties
-            );
 
             return $response;
         } catch (\Exception $e) {
