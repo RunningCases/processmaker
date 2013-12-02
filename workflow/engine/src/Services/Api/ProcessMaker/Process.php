@@ -4,7 +4,10 @@ namespace Services\Api\ProcessMaker;
 use \ProcessMaker\Api;
 use \Luracast\Restler\RestException;
 
+//TODO we need Refactor this class
+
 /**
+ * 
  * Process Api Controller
  *
  * @protected
@@ -36,7 +39,7 @@ class Process extends Api
             return $response;
 
         } catch (\Exception $e) {
-            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
@@ -54,7 +57,7 @@ class Process extends Api
             $response["message"] = "Process load successfully";
             $response["data"] = $data;
         } catch (\Exception $e) {
-            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
 
         return $response;
@@ -71,7 +74,7 @@ class Process extends Api
             return $process->createProcess($userUid, $request_data);
 
         } catch (\Exception $e) {
-            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
@@ -90,7 +93,7 @@ class Process extends Api
             $response["message"] = "Process updated successfully";
             $response["data"] = $data;
         } catch (\Exception $e) {
-            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
 
         return $response;
@@ -109,7 +112,7 @@ class Process extends Api
             $response["success"] = true;
             $response["message"] = "Process was deleted successfully";
         } catch (\Exception $e) {
-            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
 
         return $response;

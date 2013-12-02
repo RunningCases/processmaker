@@ -1,15 +1,15 @@
 <?php
-namespace Services\Api\ProcessMaker;
+namespace Services\Api\ProcessMaker\Project;
 
 use \ProcessMaker\Api;
 use \Luracast\Restler\RestException;
 
 /**
- * ProjectActivity Api Controller
+ * Project\Activity Api Controller
  *
  * @protected
  */
-class ProjectActivity extends Api
+class Activity extends Api
 {
     /**    
      * @url GET /:projectUid/activity/:activityUid
@@ -44,7 +44,7 @@ class ProjectActivity extends Api
 
             return $response;
         } catch (\Exception $e) {
-            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ class ProjectActivity extends Api
             $task = new \BusinessModel\Task();
             $properties = $task->updateProperties($activityUid, $projectUid, $request_data);
         } catch (\Exception $e) {
-            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
@@ -74,7 +74,7 @@ class ProjectActivity extends Api
             $task = new \BusinessModel\Task();
             $task->deleteTask($activityUid);
         } catch (\Exception $e) {
-            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 }

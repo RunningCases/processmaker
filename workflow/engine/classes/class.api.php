@@ -6,7 +6,8 @@ class Api
     private static $workspace;
     private static $userId;
 
-    const SYSTEM_EXCEPTION_STATUS = 500;
+    const STAT_CREATED = 201;
+    const STAT_APP_EXCEPTION = 400;
 
     public function __costruct()
     {
