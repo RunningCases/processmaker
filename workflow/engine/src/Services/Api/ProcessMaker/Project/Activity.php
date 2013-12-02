@@ -11,7 +11,7 @@ use \Luracast\Restler\RestException;
  */
 class Activity extends Api
 {
-    /**    
+    /**
      * @url GET /:projectUid/activity/:activityUid
      */
     public function doGetProjectActivity($projectUid, $activityUid, $filter = '')
@@ -54,7 +54,7 @@ class Activity extends Api
 
 
 
-    /**    
+    /**
      * @url PUT /:projectUid/activity/:activityUid
      */
     public function doPutProjectActivity($projectUid, $activityUid, $request_data = array())
@@ -69,7 +69,7 @@ class Activity extends Api
 
 
 
-    /**    
+    /**
      * @url DELETE /:projectUid/activity/:activityUid
      */
     public function doDeleteProjectActivity($projectUid, $activityUid)
@@ -79,6 +79,38 @@ class Activity extends Api
             $task->deleteTask($activityUid);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * @url GET /:projectUid/activity/:activityUid/steps
+     */
+    public function doGetActivitySteps($activityUid, $projectUid)
+    {
+        try {
+            $task = new \BusinessModel\Task();
+
+            $response = $task->getSteps($activityUid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:projectUid/activity/:activityUid/available-steps
+     */
+    public function doGetActivityAvailableSteps($activityUid, $projectUid)
+    {
+        try {
+            $task = new \BusinessModel\Task();
+
+            $response = $task->getAvailableSteps($activityUid, $projectUid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 }

@@ -151,7 +151,7 @@ class Task
         //Copy of processmaker/workflow/engine/methods/tasks/tasks_Ajax.php //case "saveTaskData":
         try {
             if (isset($arrayProperty['properties'])) {
-                $arrayProperty = array_change_key_case($arrayProperty['properties'], CASE_UPPER);    
+                $arrayProperty = array_change_key_case($arrayProperty['properties'], CASE_UPPER);
             }
             $arrayProperty["TAS_UID"] = $taskUid;
             $arrayProperty["PRO_UID"] = $processUid;
@@ -208,7 +208,7 @@ class Task
                 $arrayProperty["TAS_ASSIGN_TYPE"] = "SELF_SERVICE";
 
                 if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
-                   $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
+                    $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
                 }
             } else {
                 $arrayProperty["TAS_GROUP_VARIABLE"] = "";
@@ -252,197 +252,248 @@ class Task
      *
      * @param string $taskUid
      * @param string $processUid
-     * @param bool   $keyCaseToLower
-     * @param int    $start
-     * @param int    $limit
      *
      * return array
-     *
-     * @access public
      */
-    public function getStepsList($taskUid, $processUid, $keyCaseToLower = false, $start = 0, $limit = 25)
+    public function getAvailableSteps($taskUid, $processUid)
     {
         try {
-            //G::LoadClass("BasePeer");
-            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.BasePeer.php");
+            $arrayAvailableStep = array();
 
-            $arrayData = array();
-            $keyCase = ($keyCaseToLower)? CASE_LOWER : CASE_UPPER;
+            //Get Uids
+            $arrayUid = array();
 
-            //Criteria
-            $processMap = new \ProcessMap();
+            $tasks = new \Tasks();
+            $arrayStep = $tasks->getStepsOfTask($taskUid);
 
-            $criteria = $processMap->getAvailableBBCriteria($processUid, $taskUid);
-
-            if ($criteria->getDbName() == "dbarray") {
-                $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
-            } else {
-                $rsCriteria = \GulliverBasePeer::doSelectRS($criteria);
+            foreach ($arrayStep as $step) {
+                $arrayUid[] = $step["STEP_UID_OBJ"];
             }
 
+            //Array DB
+            $arraydbStep = array();
+
+            $arraydbStep[] = array(
+                "obj_uid" => "char",
+                "obj_title" => "char",
+                "obj_description" => "char",
+                "obj_type" => "char"
+            );
+
+            $delimiter = \DBAdapter::getStringDelimiter();
+
+            //DynaForms
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\DynaformPeer::DYN_UID);
+            $criteria->addAsColumn("DYN_TITLE", "CT.CON_VALUE");
+            $criteria->addAsColumn("DYN_DESCRIPTION", "CD.CON_VALUE");
+
+            $criteria->addAlias("CT", "CONTENT");
+            $criteria->addAlias("CD", "CONTENT");
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\DynaformPeer::DYN_UID, "CT.CON_ID", \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "DYN_TITLE" . $delimiter, \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\DynaformPeer::DYN_UID, "CD.CON_ID", \Criteria::EQUAL);
+            $arrayCondition[] = array("CD.CON_CATEGORY", $delimiter . "DYN_DESCRIPTION" . $delimiter, \Criteria::EQUAL);
+            $arrayCondition[] = array("CD.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $criteria->add(\DynaformPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->add(\DynaformPeer::DYN_UID, $arrayUid, \Criteria::NOT_IN);
+            $criteria->add(\DynaformPeer::DYN_TYPE, "xmlform", \Criteria::EQUAL);
+
+            $rsCriteria = \DynaformPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
-                $arrayData[] = array_change_key_case($row, $keyCase);
-            }
-
-            return array_change_key_case(
-                array("NUM_RECORDS" => count($arrayData), "DATA" => array_slice($arrayData, $start, $limit)),
-                $keyCase
-            );
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Get all steps of the Task
-     *
-     * @param string $taskUid
-     * @param bool   $keyCaseToLower
-     *
-     * return array
-     *
-     * @access public
-     */
-    public function getSteps($taskUid, $keyCaseToLower = false)
-    {
-        try {
-            //G::LoadClass("BasePeer");
-            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.BasePeer.php");
-
-            $arrayData = array();
-            $keyCase = ($keyCaseToLower)? CASE_LOWER : CASE_UPPER;
-
-            //Criteria
-            $processMap = new \ProcessMap();
-
-            $criteria = $processMap->getStepsCriteria($taskUid);
-
-            if ($criteria->getDbName() == "dbarray") {
-                $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
-            } else {
-                $rsCriteria = \GulliverBasePeer::doSelectRS($criteria);
-            }
-
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            while ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-
-                $arrayData[] = array_change_key_case($row, $keyCase);
-            }
-
-            return $arrayData;
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Get all triggers of the Task
-     *
-     * @param string $taskUid
-     * @param bool   $keyCaseToLower
-     *
-     * return array
-     *
-     * @access public
-     */
-    public function getTriggers($taskUid, $keyCaseToLower = false)
-    {
-        try {
-            //G::LoadClass("BasePeer");
-            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.BasePeer.php");
-
-            $arrayData = array();
-            $keyCase = ($keyCaseToLower)? CASE_LOWER : CASE_UPPER;
-
-            $arrayTriggerType1 = array(
-                "BEFORE" => "BEFORE",
-                "AFTER"  => "AFTER"
-            );
-            $arrayTriggerType2 = array(
-                "BEFORE_ASSIGNMENT" => "BEFORE",
-                "BEFORE_ROUTING"    => "BEFORE",
-                "AFTER_ROUTING"     => "AFTER"
-            );
-
-            $processMap = new \ProcessMap();
-            $stepTgr = new \StepTrigger();
-
-            $arraySteps = $this->getSteps($taskUid);
-            $n = count($arraySteps) + 1;
-
-            $arraySteps[] = array(
-                "STEP_UID"   => "",
-                //"STEP_TITLE" => G::LoadTranslation("ID_ASSIGN_TASK"),
-                "STEP_TITLE" => "Assign Task",
-                "STEP_TYPE_OBJ" => "",
-                "STEP_MODE"     => "",
-                "STEP_CONDITION" => "",
-                "STEP_POSITION"  => $n
-            );
-
-            foreach ($arraySteps as $index1 => $value1) {
-                $step = $value1;
-
-                $stepUid = $step["STEP_UID"];
-
-                //Set data
-                $arrayDataAux1 = array();
-
-                $arrayDataAux1["STEP_UID"] = $stepUid;
-
-                $arrayTriggerType = ($stepUid != "")? $arrayTriggerType1 : $arrayTriggerType2;
-
-                foreach ($arrayTriggerType as $index2 => $value2) {
-                    $triggerType = $index2;
-                    $type = $value2;
-
-                    switch ($triggerType) {
-                        case "BEFORE_ASSIGNMENT":
-                            $stepUid = "-1";
-                            break;
-                        case "BEFORE_ROUTING":
-                            $stepUid = "-2";
-                            break;
-                        case "AFTER_ROUTING":
-                            $stepUid = "-2";
-                            break;
-                    }
-
-                    $stepTgr->orderPosition($stepUid, $taskUid, $type);
-
-                    $arrayDataAux2 = array();
-
-                    //Criteria
-                    $criteria = $processMap->getStepTriggersCriteria($stepUid, $taskUid, $type);
-
-                    if ($criteria->getDbName() == "dbarray") {
-                        $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
-                    } else {
-                        $rsCriteria = \GulliverBasePeer::doSelectRS($criteria);
-                    }
-
-                    $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-                    while ($rsCriteria->next()) {
-                        $row = $rsCriteria->getRow();
-
-                        $arrayDataAux2[] = array_change_key_case($row, $keyCase);
-                    }
-
-                    $arrayDataAux1[$triggerType] = $arrayDataAux2;
+                if ($row["DYN_TITLE"] . "" == "") {
+                    //There is no transaltion for this Document name, try to get/regenerate the label
+                    $row["DYN_TITLE"] = \Content::Load("DYN_TITLE", "", $row["DYN_UID"], SYS_LANG);
                 }
 
-                $arrayData[] = array_change_key_case($arrayDataAux1, $keyCase);
+                $arraydbStep[] = array(
+                    "obj_uid" => $row["DYN_UID"],
+                    "obj_title" => $row["DYN_TITLE"],
+                    "obj_description" => $row["DYN_DESCRIPTION"],
+                    "obj_type" => "DYNAFORM"
+                );
             }
 
-            return $arrayData;
-        } catch (Exception $e) {
+            //InputDocuments
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\InputDocumentPeer::INP_DOC_UID);
+            $criteria->addAsColumn("INP_DOC_TITLE", "CT.CON_VALUE");
+            $criteria->addAsColumn("INP_DOC_DESCRIPTION", "CD.CON_VALUE");
+
+            $criteria->addAlias("CT", "CONTENT");
+            $criteria->addAlias("CD", "CONTENT");
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\InputDocumentPeer::INP_DOC_UID, "CT.CON_ID", \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "INP_DOC_TITLE" . $delimiter, \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\InputDocumentPeer::INP_DOC_UID, "CD.CON_ID", \Criteria::EQUAL);
+            $arrayCondition[] = array("CD.CON_CATEGORY", $delimiter . "INP_DOC_DESCRIPTION" . $delimiter, \Criteria::EQUAL);
+            $arrayCondition[] = array("CD.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $criteria->add(\InputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->add(\InputDocumentPeer::INP_DOC_UID, $arrayUid, \Criteria::NOT_IN);
+
+            $rsCriteria = \InputDocumentPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                if ($row["INP_DOC_TITLE"] . "" == "") {
+                    //There is no transaltion for this Document name, try to get/regenerate the label
+                    $row["INP_DOC_TITLE"] = \Content::Load("INP_DOC_TITLE", "", $row["INP_DOC_UID"], SYS_LANG);
+                }
+
+                $arraydbStep[] = array(
+                    "obj_uid" => $row["INP_DOC_UID"],
+                    "obj_title" => $row["INP_DOC_TITLE"],
+                    "obj_description" => $row["INP_DOC_DESCRIPTION"],
+                    "obj_type" => "INPUT_DOCUMENT"
+                );
+            }
+
+            //OutputDocuments
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_UID);
+            $criteria->addAsColumn("OUT_DOC_TITLE", "CT.CON_VALUE");
+            $criteria->addAsColumn("OUT_DOC_DESCRIPTION", "CD.CON_VALUE");
+
+            $criteria->addAlias("CT", "CONTENT");
+            $criteria->addAlias("CD", "CONTENT");
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\OutputDocumentPeer::OUT_DOC_UID, "CT.CON_ID", \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "OUT_DOC_TITLE" . $delimiter, \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\OutputDocumentPeer::OUT_DOC_UID, "CD.CON_ID", \Criteria::EQUAL);
+            $arrayCondition[] = array("CD.CON_CATEGORY", $delimiter . "OUT_DOC_DESCRIPTION" . $delimiter, \Criteria::EQUAL);
+            $arrayCondition[] = array("CD.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $criteria->add(\OutputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->add(\OutputDocumentPeer::OUT_DOC_UID, $arrayUid, \Criteria::NOT_IN);
+
+            $rsCriteria = \OutputDocumentPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                if ($row["OUT_DOC_TITLE"] . "" == "") {
+                    //There is no transaltion for this Document name, try to get/regenerate the label
+                    $row["OUT_DOC_TITLE"] = \Content::Load("OUT_DOC_TITLE", "", $row["OUT_DOC_UID"], SYS_LANG);
+                }
+
+                $arraydbStep[] = array(
+                    "obj_uid" => $row["OUT_DOC_UID"],
+                    "obj_title" => $row["OUT_DOC_TITLE"],
+                    "obj_description" => $row["OUT_DOC_DESCRIPTION"],
+                    "obj_type" => "OUTPUT_DOCUMENT"
+                );
+            }
+
+            //Call plugin
+            $pluginRegistry = &\PMPluginRegistry::getSingleton();
+            $externalSteps = $pluginRegistry->getSteps();
+
+            if (is_array($externalSteps) && count($externalSteps) > 0) {
+                foreach ($externalSteps as $key => $value) {
+                    $arraydbStep[] = array(
+                        "obj_uid" => $value->sStepId,
+                        "obj_title" => $value->sStepTitle,
+                        "obj_description" => "",
+                        "obj_type" => "EXTERNAL"
+                    );
+                }
+            }
+
+            \G::LoadClass("ArrayPeer");
+
+            global $_DBArray;
+
+            $_DBArray = (isset($_SESSION["_DBArray"]))? $_SESSION["_DBArray"] : "";
+            $_DBArray["STEP"] = $arraydbStep;
+
+            $_SESSION["_DBArray"] = $_DBArray;
+
+            $criteria = new \Criteria("dbarray");
+
+            $criteria->setDBArrayTable("STEP");
+            $criteria->addAscendingOrderByColumn("obj_type");
+            $criteria->addAscendingOrderByColumn("obj_title");
+
+            $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayAvailableStep[] = $row;
+            }
+
+            return $arrayAvailableStep;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get all steps of an Task
+     *
+     * @param string $taskUid Unique id of the Task
+     *
+     * return array
+     */
+    public function getSteps($taskUid)
+    {
+        try {
+            $arrayStep = array();
+
+            $step = new \BusinessModel\Step();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->add(\StepPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+            $criteria->addAscendingOrderByColumn(\StepPeer::STEP_POSITION);
+
+            $rsCriteria = \StepPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayData = $step->getStep($row["STEP_UID"]);
+
+                if (count($arrayData) > 0) {
+                    $arrayStep[] = $arrayData;
+                }
+            }
+
+            return $arrayStep;
+        } catch (\Exception $e) {
             throw $e;
         }
     }
