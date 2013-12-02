@@ -162,6 +162,31 @@ class Type
     {
         return $array;
     }
+
+    /**
+     * @param string $gender {@from body}{@choice male,female}
+     */
+    function postChoise($gender)
+    {
+        return $gender;
+    }
+
+    /**
+     * @param string $name $name 3 to 10 characters in length {@from body}{@min 3}{@max 10}
+     */
+    function postMinmax($name)
+    {
+        return $name;
+    }
+
+    /**
+     * @param string $name $name 3 to 10 characters in length {@from body}{@min 3}{@max 10}{@fix true}
+     */
+    function postMinmaxfix($name)
+    {
+        return $name;
+    }
+
 }
 
 class Author
