@@ -38,7 +38,7 @@ class Activity extends Api
 
             return $response;
         } catch (\Exception $e) {
-            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
@@ -53,7 +53,7 @@ class Activity extends Api
             $task = new \BusinessModel\Task();
             $properties = $task->updateProperties($activityUid, $projectUid, $request_data);
         } catch (\Exception $e) {
-            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
@@ -68,7 +68,7 @@ class Activity extends Api
             $task = new \BusinessModel\Task();
             $task->deleteTask($activityUid);
         } catch (\Exception $e) {
-            throw new RestException(Api::SYSTEM_EXCEPTION_STATUS, $e->getMessage());
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 }
