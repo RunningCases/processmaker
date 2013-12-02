@@ -3063,6 +3063,44 @@
   <!--
     BPMN TABLES DEFINITION
   -->
+  <table name="BPMN_PROJECT">
+    <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="PRJ_NAME" type="VARCHAR" size="255" required="true" default=""/>
+    <column name="PRJ_TARGET_NAMESPACE" type="LONGVARCHAR" required="true"/>
+    <column name="PRJ_EXPRESION_LANGUAGE" type="LONGVARCHAR" required="false"/>
+    <column name="PRJ_TYPE_LANGUAGE" type="LONGVARCHAR" required="false"/>
+    <column name="PRJ_EXPORTER" type="LONGVARCHAR" required="false"/>
+    <column name="PRJ_EXPORTER_VERSION" type="LONGVARCHAR" required="false"/>
+    <column name="PRJ_CREATE_DATE" type="TIMESTAMP" required="true"/>
+    <column name="PRJ_UPDATE_DATE" type="TIMESTAMP" required="false"/>
+    <column name="PRJ_AUTHOR" type="LONGVARCHAR" required="false"/>
+    <column name="PRJ_AUTHOR_VERSION" type="LONGVARCHAR" required="false"/>
+    <column name="PRJ_ORIGINAL_SOURCE" type="LONGVARCHAR" required="false"/>
+    <index>
+      <index-column name="PRJ_UID"/>
+    </index>
+  </table>
+
+  <table name="BPMN_PROCESS">
+    <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
+    <column name="DIA_UID" type="VARCHAR" size="32" required="false"/>
+    <column name="PRO_NAME" type="VARCHAR" size="255" required="true"/>
+    <column name="PRO_TYPE" type="VARCHAR" size="10" required="true" default="NONE"/>
+    <column name="PRO_IS_EXECUTABLE" type="TINYINT" required="true" default="0"/>
+    <column name="PRO_IS_CLOSED" type="TINYINT" required="true" default="0"/>
+    <column name="PRO_IS_SUBPROCESS" type="TINYINT" required="true" default="0"/>
+    <foreign-key name="fk_bpmn_process_project" foreignTable="BPMN_PROJECT">
+      <reference local="PRJ_UID" foreign="PRJ_UID"/>
+    </foreign-key>
+    <index>
+      <index-column name="PRO_UID"/>
+    </index>
+    <index>
+      <index-column name="PRJ_UID"/>
+    </index>
+  </table>
+
   <table name="BPMN_ACTIVITY">
     <column name="ACT_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
@@ -3110,6 +3148,7 @@
       <index-column name="PRO_UID"/>
     </index>
   </table>
+
   <table name="BPMN_ARTIFACT">
     <column name="ART_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
@@ -3133,6 +3172,23 @@
       <index-column name="PRO_UID"/>
     </index>
   </table>
+
+  <table name="BPMN_DIAGRAM">
+    <column name="DIA_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
+    <column name="DIA_NAME" type="VARCHAR" size="255" required="false"/>
+    <column name="DIA_IS_CLOSABLE" type="TINYINT" required="false" default="0"/>
+    <foreign-key name="fk_bpmn_diagram_project" foreignTable="BPMN_PROJECT">
+      <reference local="PRJ_UID" foreign="PRJ_UID"/>
+    </foreign-key>
+    <index>
+      <index-column name="DIA_UID"/>
+    </index>
+    <index>
+      <index-column name="PRJ_UID"/>
+    </index>
+  </table>
+
   <table name="BPMN_BOUND">
     <column name="BOU_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
@@ -3163,6 +3219,7 @@
       <index-column name="DIA_UID"/>
     </index>
   </table>
+
   <table name="BPMN_DATA">
     <column name="DAT_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
@@ -3192,37 +3249,7 @@
       <index-column name="PRO_UID"/>
     </index>
   </table>
-  <table name="BPMN_DIAGRAM">
-    <column name="DIA_UID" type="VARCHAR" size="32" required="true" default=""/>
-    <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
-    <column name="DIA_NAME" type="VARCHAR" size="255" required="false"/>
-    <column name="DIA_IS_CLOSABLE" type="TINYINT" required="false" default="0"/>
-    <foreign-key name="fk_bpmn_diagram_project" foreignTable="BPMN_PROJECT">
-      <reference local="PRJ_UID" foreign="PRJ_UID"/>
-    </foreign-key>
-    <index>
-      <index-column name="DIA_UID"/>
-    </index>
-    <index>
-      <index-column name="PRJ_UID"/>
-    </index>
-  </table>
-  <table name="BPMN_DOCUMENTATION">
-    <column name="DOC_UID" type="VARCHAR" size="32" required="true"/>
-    <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
-    <column name="DOC_ELEMENT" type="VARCHAR" size="32" required="true"/>
-    <column name="DOC_ELEMENT_TYPE" type="VARCHAR" size="45" required="true"/>
-    <column name="DOC_DOCUMENTATION" type="LONGVARCHAR" required="false"/>
-    <foreign-key name="fk_bpmn_documentation_project" foreignTable="BPMN_PROJECT">
-      <reference local="PRJ_UID" foreign="PRJ_UID"/>
-    </foreign-key>
-    <index>
-      <index-column name="DOC_UID"/>
-    </index>
-    <index>
-      <index-column name="PRJ_UID"/>
-    </index>
-  </table>
+
   <table name="BPMN_EVENT">
     <column name="EVN_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
@@ -3263,22 +3290,7 @@
       <index-column name="PRO_UID"/>
     </index>
   </table>
-  <table name="BPMN_EXTENSION">
-    <column name="EXT_UID" type="VARCHAR" size="32" required="true"/>
-    <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
-    <column name="EXT_ELEMENT" type="VARCHAR" size="32" required="true"/>
-    <column name="EXT_ELEMENT_TYPE" type="VARCHAR" size="45" required="true"/>
-    <column name="EXT_EXTENSION" type="LONGVARCHAR" required="false"/>
-    <foreign-key name="fk_bpmn_extension_project" foreignTable="BPMN_PROJECT">
-      <reference local="PRJ_UID" foreign="PRJ_UID"/>
-    </foreign-key>
-    <index>
-      <index-column name="EXT_UID"/>
-    </index>
-    <index>
-      <index-column name="PRJ_UID"/>
-    </index>
-  </table>
+
   <table name="BPMN_FLOW">
     <column name="FLO_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
@@ -3314,6 +3326,7 @@
       <index-column name="DIA_UID"/>
     </index>
   </table>
+
   <table name="BPMN_GATEWAY">
     <column name="GAT_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
@@ -3342,29 +3355,7 @@
       <index-column name="PRO_UID"/>
     </index>
   </table>
-  <table name="BPMN_LANE">
-    <column name="LAN_UID" type="VARCHAR" size="32" required="true" default=""/>
-    <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
-    <column name="LNS_UID" type="VARCHAR" size="32" required="true"/>
-    <column name="LAN_NAME" type="VARCHAR" size="255" required="false"/>
-    <column name="LAN_CHILD_LANESET" type="VARCHAR" size="32" required="false"/>
-    <column name="LAN_IS_HORIZONTAL" type="TINYINT" required="false" default="1"/>
-    <foreign-key name="fk_bpmn_lane_project" foreignTable="BPMN_PROJECT">
-      <reference local="PRJ_UID" foreign="PRJ_UID"/>
-    </foreign-key>
-    <foreign-key name="fk_bpmn_lane_laneset" foreignTable="BPMN_LANESET">
-      <reference local="LNS_UID" foreign="LNS_UID"/>
-    </foreign-key>
-    <index>
-      <index-column name="LAN_UID"/>
-    </index>
-    <index>
-      <index-column name="PRJ_UID"/>
-    </index>
-    <index>
-      <index-column name="LNS_UID"/>
-    </index>
-  </table>
+
   <table name="BPMN_LANESET">
     <column name="LNS_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
@@ -3389,6 +3380,31 @@
       <index-column name="PRO_UID"/>
     </index>
   </table>
+
+  <table name="BPMN_LANE">
+    <column name="LAN_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
+    <column name="LNS_UID" type="VARCHAR" size="32" required="true"/>
+    <column name="LAN_NAME" type="VARCHAR" size="255" required="false"/>
+    <column name="LAN_CHILD_LANESET" type="VARCHAR" size="32" required="false"/>
+    <column name="LAN_IS_HORIZONTAL" type="TINYINT" required="false" default="1"/>
+    <foreign-key name="fk_bpmn_lane_project" foreignTable="BPMN_PROJECT">
+      <reference local="PRJ_UID" foreign="PRJ_UID"/>
+    </foreign-key>
+    <foreign-key name="fk_bpmn_lane_laneset" foreignTable="BPMN_LANESET">
+      <reference local="LNS_UID" foreign="LNS_UID"/>
+    </foreign-key>
+    <index>
+      <index-column name="LAN_UID"/>
+    </index>
+    <index>
+      <index-column name="PRJ_UID"/>
+    </index>
+    <index>
+      <index-column name="LNS_UID"/>
+    </index>
+  </table>
+
   <table name="BPMN_PARTICIPANT">
     <column name="PAR_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
@@ -3409,40 +3425,39 @@
       <index-column name="PRJ_UID"/>
     </index>
   </table>
-  <table name="BPMN_PROCESS">
-    <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
+
+  <table name="BPMN_EXTENSION">
+    <column name="EXT_UID" type="VARCHAR" size="32" required="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
-    <column name="DIA_UID" type="VARCHAR" size="32" required="false"/>
-    <column name="PRO_NAME" type="VARCHAR" size="255" required="true"/>
-    <column name="PRO_TYPE" type="VARCHAR" size="10" required="true" default="NONE"/>
-    <column name="PRO_IS_EXECUTABLE" type="TINYINT" required="true" default="0"/>
-    <column name="PRO_IS_CLOSED" type="TINYINT" required="true" default="0"/>
-    <column name="PRO_IS_SUBPROCESS" type="TINYINT" required="true" default="0"/>
-    <foreign-key name="fk_bpmn_process_project" foreignTable="BPMN_PROJECT">
+    <column name="EXT_ELEMENT" type="VARCHAR" size="32" required="true"/>
+    <column name="EXT_ELEMENT_TYPE" type="VARCHAR" size="45" required="true"/>
+    <column name="EXT_EXTENSION" type="LONGVARCHAR" required="false"/>
+    <foreign-key name="fk_bpmn_extension_project" foreignTable="BPMN_PROJECT">
       <reference local="PRJ_UID" foreign="PRJ_UID"/>
     </foreign-key>
     <index>
-      <index-column name="PRO_UID"/>
+      <index-column name="EXT_UID"/>
     </index>
     <index>
       <index-column name="PRJ_UID"/>
     </index>
   </table>
-  <table name="BPMN_PROJECT">
-    <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
-    <column name="PRJ_NAME" type="VARCHAR" size="255" required="true" default=""/>
-    <column name="PRJ_TARGET_NAMESPACE" type="LONGVARCHAR" required="true"/>
-    <column name="PRJ_EXPRESION_LANGUAGE" type="LONGVARCHAR" required="false"/>
-    <column name="PRJ_TYPE_LANGUAGE" type="LONGVARCHAR" required="false"/>
-    <column name="PRJ_EXPORTER" type="LONGVARCHAR" required="false"/>
-    <column name="PRJ_EXPORTER_VERSION" type="LONGVARCHAR" required="false"/>
-    <column name="PRJ_CREATE_DATE" type="TIMESTAMP" required="true"/>
-    <column name="PRJ_UPDATE_DATE" type="TIMESTAMP" required="false"/>
-    <column name="PRJ_AUTHOR" type="LONGVARCHAR" required="false"/>
-    <column name="PRJ_AUTHOR_VERSION" type="LONGVARCHAR" required="false"/>
-    <column name="PRJ_ORIGINAL_SOURCE" type="LONGVARCHAR" required="false"/>
+
+  <table name="BPMN_DOCUMENTATION">
+    <column name="DOC_UID" type="VARCHAR" size="32" required="true"/>
+    <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
+    <column name="DOC_ELEMENT" type="VARCHAR" size="32" required="true"/>
+    <column name="DOC_ELEMENT_TYPE" type="VARCHAR" size="45" required="true"/>
+    <column name="DOC_DOCUMENTATION" type="LONGVARCHAR" required="false"/>
+    <foreign-key name="fk_bpmn_documentation_project" foreignTable="BPMN_PROJECT">
+      <reference local="PRJ_UID" foreign="PRJ_UID"/>
+    </foreign-key>
+    <index>
+      <index-column name="DOC_UID"/>
+    </index>
     <index>
       <index-column name="PRJ_UID"/>
     </index>
   </table>
+
 </database>

@@ -7,9 +7,9 @@ use \Luracast\Restler\RestException;
 class Test2 extends Api
 {
 
-    function hello()
+    function hello2()
     {
-        return 'GEEET ALL';
+        return 'Hello #2';
     }
 
     /**
