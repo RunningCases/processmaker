@@ -11,4 +11,12 @@ class Test3 extends Api
     {
         return 'Hello #3';
     }
+
+    /**
+     * @status 201
+     */
+    function post()
+    {
+        return array('success' => true);
+    }
 }
