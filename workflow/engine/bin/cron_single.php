@@ -116,6 +116,7 @@ Bootstrap::registerClass('Holiday',            PATH_HOME . "engine/classes/model
 Bootstrap::registerClass('Task',               PATH_HOME . "engine/classes/model/Task.php");
 Bootstrap::registerClass('TaskPeer',           PATH_HOME . "engine/classes/model/TaskPeer.php");
 Bootstrap::registerClass('dates',              PATH_HOME . "engine/classes/class.dates.php");
+Bootstrap::registerClass('calendar',           PATH_HOME . "engine/classes/class.calendar.php");
 Bootstrap::registerClass('AppDelegation',      PATH_HOME . "engine/classes/model/AppDelegation.php");
 Bootstrap::registerClass('BaseAppDelegationPeer',PATH_HOME . "engine/classes/model/om/BaseAppDelegationPeer.php");
 Bootstrap::registerClass('AppDelegationPeer',  PATH_HOME . "engine/classes/model/AppDelegationPeer.php");
@@ -554,38 +555,70 @@ function executePlugins()
 {
     global $sFilter;
 
-    if ($sFilter!='' && strpos($sFilter, 'plugins') === false) {
+    if ($sFilter != '' && strpos($sFilter, 'plugins') === false) {
         return false;
     }
 
-    $pathCronPlugins = PATH_CORE.'bin'.PATH_SEP.'plugins'.PATH_SEP;
+    $pathCronPlugins = PATH_CORE . 'bin' . PATH_SEP . 'plugins' . PATH_SEP;
 
-    //erik: verify if the plugin dir exists
+    // Executing cron files in bin/plugins directory
     if (!is_dir($pathCronPlugins)) {
         return false;
     }
 
     if ($handle = opendir($pathCronPlugins)) {
+        setExecutionMessage('Executing cron files in bin/plugins directory in Workspace: ' . SYS_SYS);
         while (false !== ($file = readdir($handle))) {
             if (strpos($file, '.php',1) && is_file($pathCronPlugins . $file)) {
                 $filename  = str_replace('.php' , '', $file);
                 $className = $filename . 'ClassCron';
 
-                include_once ( $pathCronPlugins . $file );  //$filename. ".php"
-
-                $oPlugin = new $className();
-
-                if (method_exists($oPlugin, 'executeCron')) {
-                    $arrayCron = unserialize(trim(@file_get_contents(PATH_DATA . "cron")));
-                    $arrayCron["processcTimeProcess"] = 60; //Minutes
-                    $arrayCron["processcTimeStart"]   = time();
-                    @file_put_contents(PATH_DATA . "cron", serialize($arrayCron));
-
-                    $oPlugin->executeCron();
-                    setExecutionMessage("Executing Plugins");
-                    setExecutionResultMessage('DONE');
-                }
+                // Execute custom cron function
+                executeCustomCronFunction($pathCronPlugins . $file, $className);
             }
+        }
+    }
+
+    // Executing registered cron files
+
+    // -> Get registered cron files
+    Bootstrap::LoadClass( 'plugin' );
+    $oPluginRegistry =& PMPluginRegistry::getSingleton();
+    if (file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
+        $oPluginRegistry->unSerializeInstance(file_get_contents(PATH_DATA_SITE . 'plugin.singleton'));
+    }
+    $cronFiles = $oPluginRegistry->getCronFiles();
+
+    // -> Execute functions
+    if (!empty($cronFiles)) {
+        setExecutionMessage('Executing registered cron files for Workspace: ' . SYS_SYS);
+        foreach($cronFiles as $cronFile) {
+            executeCustomCronFunction(PATH_PLUGINS . $cronFile->namespace . PATH_SEP . 'bin' . PATH_SEP . $cronFile->cronFile . '.php', $cronFile->cronFile);
+        }
+    }
+
+}
+function executeCustomCronFunction($pathFile, $className)
+{
+    include_once $pathFile;
+
+    $oPlugin = new $className();
+
+    if (method_exists($oPlugin, 'executeCron')) {
+        $arrayCron = unserialize(trim(@file_get_contents(PATH_DATA . "cron")));
+        $arrayCron["processcTimeProcess"] = 60; //Minutes
+        $arrayCron["processcTimeStart"]   = time();
+        @file_put_contents(PATH_DATA . "cron", serialize($arrayCron));
+
+        //Try to execute Plugin Cron. If there is an error then continue with the next file
+        setExecutionMessage("\n--- Executing cron file: $pathFile");
+        try {
+            $oPlugin->executeCron();
+            setExecutionResultMessage('DONE');
+        } catch (Exception $e) {
+            setExecutionResultMessage('FAILED', 'error');
+            eprintln("  '-".$e->getMessage(), 'red');
+            saveLog('executePlugins', 'error', 'Error executing cron file: ' . $pathFile . ' - ' . $e->getMessage());
         }
     }
 }
@@ -775,7 +808,7 @@ function executeCaseSelfService()
         setExecutionMessage("Unassigned case");
         saveLog("unassignedCase", "action", "Unassigned case", "c");
 
-        $date = new dates();
+        $calendar = new calendar();
 
         while ($rsCriteria->next()) {
             $row = $rsCriteria->getRow();
@@ -790,11 +823,16 @@ function executeCaseSelfService()
             $taskSelfServiceTimeUnit = $row["TAS_SELFSERVICE_TIME_UNIT"];
             $taskSelfServiceTriggerUid = $row["TAS_SELFSERVICE_TRIGGER_UID"];
 
-            $dueDate = $date->calculateDate(
+            if ($calendar->pmCalendarUid == '') {
+            	$calendar->getCalendar(null, $appcacheProUid, $taskUid);
+            	$calendar->getCalendarData();
+            }
+            
+            $dueDate = $calendar->calculateDate(
                 $appcacheDelDelegateDate,
                 $taskSelfServiceTime,
-                $taskSelfServiceTimeUnit, //HOURS|DAYS
-                1
+                $taskSelfServiceTimeUnit //HOURS|DAYS
+                //1
             );
 
             if (time() > $dueDate["DUE_DATE_SECONDS"]) {
@@ -877,12 +915,7 @@ function saveLog($sSource, $sType, $sDescription)
         }
 
         G::verifyPath(PATH_DATA . "log" . PATH_SEP, true);
-
-        //setExecutionMessage( PATH_DATA."log".PATH_SEP);
-
-        $oFile = @fopen(PATH_DATA . "log" . PATH_SEP . "cron.log", "a+");
-        @fwrite($oFile, date("Y-m-d H:i:s") . " | $sObject | " . $sSource . " | $sType | " . $sDescription . "\n");
-        @fclose($oFile);
+        G::log(date("Y-m-d H:i:s") . " | $sObject | " . $sSource . " | $sType | " . $sDescription . "\n", PATH_DATA);
     } catch (Exception $e) {
         //CONTINUE
     }

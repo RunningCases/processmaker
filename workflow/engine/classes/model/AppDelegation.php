@@ -135,7 +135,6 @@ class AppDelegation extends BaseAppDelegation
 
         $this->setDelTaskDueDate( $delTaskDueDate['DUE_DATE'] ); // Due date formatted
 
-
         if ((defined( "DEBUG_CALENDAR_LOG" )) && (DEBUG_CALENDAR_LOG)) {
             $this->setDelData( $delTaskDueDate['DUE_DATE_LOG'] ); // Log of actions made by Calendar Engine
         } else {
@@ -292,10 +291,15 @@ class AppDelegation extends BaseAppDelegation
         }
 
         //use the dates class to calculate dates
-        $dates = new dates();
-        $iDueDate = $dates->calculateDate( $this->getDelDelegateDate(), $aData['TAS_DURATION'], $aData['TAS_TIMEUNIT'],         //hours or days, ( we only accept this two types or maybe weeks
-        $aData['TAS_TYPE_DAY'],         //working or calendar days
-        $this->getUsrUid(), $task->getProUid(), $aData['TAS_UID'], $aCalendarUID );
+        $calendar = new calendar();
+
+        if ($calendar->pmCalendarUid == '') {
+        	$calendar->getCalendar(null, $task->getProUid(), $aData['TAS_UID']);
+        	$calendar->getCalendarData();
+        }
+
+        $iDueDate = $calendar->calculateDate( $this->getDelDelegateDate(), $aData['TAS_DURATION'], $aData['TAS_TIMEUNIT']         //hours or days, ( we only accept this two types or maybe weeks
+        );
 
         return $iDueDate;
     }
@@ -309,6 +313,12 @@ class AppDelegation extends BaseAppDelegation
     public function calculateDuration ($cron = 0)
     {
         try {
+            if ($cron == 1) {
+                $arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
+                $arrayCron["processcTimeStart"] = time();
+                @file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
+            }
+
             //patch  rows with initdate = null and finish_date
             $c = new Criteria();
             $c->clearSelectColumns();
@@ -327,12 +337,6 @@ class AppDelegation extends BaseAppDelegation
             $row = $rs->getRow();
 
             while (is_array( $row )) {
-                if ($cron == 1) {
-                    $arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
-                    $arrayCron["processcTimeStart"] = time();
-                    @file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
-                }
-
                 $oAppDel = AppDelegationPeer::retrieveByPk( $row['APP_UID'], $row['DEL_INDEX'] );
                 if (isset( $row['DEL_FINISH_DATE'] )) {
                     $oAppDel->setDelInitDate( $row['DEL_FINISH_DATE'] );
@@ -387,12 +391,6 @@ class AppDelegation extends BaseAppDelegation
 
             $now = strtotime( 'now' );
             while (is_array( $row )) {
-                if ($cron == 1) {
-                    $arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
-                    $arrayCron["processcTimeStart"] = time();
-                    @file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
-                }
-
                 $fTaskDuration = $row['TAS_DURATION'];
                 $iDelegateDate = strtotime( $row['DEL_DELEGATE_DATE'] );
                 $iInitDate = strtotime( $row['DEL_INIT_DATE'] );
@@ -475,6 +473,12 @@ class AppDelegation extends BaseAppDelegation
                 $RES = $oAppDel->save();
                 $rs->next();
                 $row = $rs->getRow();
+            }
+
+            if ($cron == 1) {
+                $arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
+                $arrayCron["processcTimeStart"] = time();
+                @file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
             }
         } catch (Exception $oError) {
             error_log( $oError->getMessage() );
