@@ -1,41 +1,8 @@
 <?php
 namespace Services\Api\ProcessMaker\Project\Activity;
 
-use \ProcessMaker\Api;
+use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
-
-class StepStructure
-{
-    /**
-     * @var string {@from body}{@min 32}{@max 32}
-     */
-    public $step_uid;
-
-    /**
-     * @var string {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}
-     */
-    public $step_type_obj;
-
-    /**
-     * @var string {@from body}{@min 32}{@max 32}
-     */
-    public $step_uid_obj;
-
-    /**
-     * @var string
-     */
-    public $step_condition;
-
-    /**
-     * @var int {@from body}{@min 1}
-     */
-    public $step_position;
-
-    /**
-     * @var string {@from body}{@choice EDIT,VIEW}
-     */
-    public $step_mode;
-}
 
 /**
  * Project\Activity\Step Api Controller
@@ -122,3 +89,35 @@ class Step extends Api
     }
 }
 
+class StepStructure
+{
+    /**
+     * @var string {@from body}{@min 32}{@max 32}
+     */
+    public $step_uid;
+
+    /**
+     * @var string {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}
+     */
+    public $step_type_obj;
+
+    /**
+     * @var string {@from body}{@min 32}{@max 32}
+     */
+    public $step_uid_obj;
+
+    /**
+     * @var string
+     */
+    public $step_condition;
+
+    /**
+     * @var int {@from body}{@min 1}
+     */
+    public $step_position;
+
+    /**
+     * @var string {@from body}{@choice EDIT,VIEW}
+     */
+    public $step_mode;
+}

@@ -66,7 +66,7 @@ class Bootstrap
         return;
     }
 
-    public function registerDir($name, $dir)
+    public static function registerDir($name, $dir)
     {
         BootStrap::$includePaths[$name] = $dir;
     }
@@ -1108,19 +1108,16 @@ class Bootstrap
          */
         $pmOauthClientId = 'x-pm-local-client';
 
-        // load Api class
-        G::loadClass('api');
-
-        // Load Api ini file for Rest Service
-
+        /*
+         * Load Api ini file for Rest Service
+         */
         $apiIniConf = array();
-
         if (file_exists($apiIniFile)) {
             $apiIniConf = self::parseIniFile($apiIniFile);
         }
 
         // Setting current workspace to Api class
-        \ProcessMaker\Api::setWorkspace(SYS_SYS);
+        \ProcessMaker\Services\Api::setWorkspace(SYS_SYS);
         // TODO remove this setting on the future, it is not needed, but if it is not present is throwing a warning
         Luracast\Restler\Format\HtmlFormat::$viewPath = $servicesDir . 'oauth2/views';
 
@@ -1144,33 +1141,56 @@ class Bootstrap
         $rest->setOverridingFormats('HtmlFormat', 'JsonFormat', 'UploadFormat');
 
         // Override $_SERVER['REQUEST_URI'] to Restler handles the current url correctly
-        $_SERVER['REQUEST_URI'] = $uri;
 
-        // scan all api directory to find api classes
-        $classesList = Bootstrap::rglob('*', 0, $apiDir);
+        $isPluginRequest = strpos($uri, '/plugin-') !== false ? true : false;
 
-        foreach ($classesList as $classFile) {
-            if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
-                $namespace = '\\Services\\' . str_replace(
-                    DIRECTORY_SEPARATOR,
-                    '\\',
-                    str_replace('.php', '', str_replace($servicesDir, '', $classFile))
-                );
-                //var_dump($namespace);
-                $rest->addAPIClass($namespace);
-            }
+        if ($isPluginRequest) {
+            $tmp = explode('/', $uri);
+            array_shift($tmp);
+            $tmp = array_shift($tmp);
+            $tmp = explode('-', $tmp);
+            $pluginName = $tmp[1];
+            $uri = str_replace('/plugin-'.$pluginName, '', $uri);
         }
 
-        // adding aliases for Restler
-        
-        if (array_key_exists('alias', $apiIniConf)) {
-            //print_r($apiIniConf['alias']); die;
-            foreach ($apiIniConf['alias'] as $alias => $aliasData) {
-                if (is_array($aliasData)) {
-                    foreach ($aliasData as $label => $namespace) {
-                        $namespace = '\\' . ltrim($namespace, '\\');
-                        //var_dump($namespace, $alias);
-                        $rest->addAPIClass($namespace, $alias);   
+        $_SERVER['REQUEST_URI'] = $uri;
+
+        if (! $isPluginRequest) { // if it is not a request for a plugin endpoint
+            // scan all api directory to find api classes
+            $classesList = Bootstrap::rglob('*', 0, $apiDir);
+
+            foreach ($classesList as $classFile) {
+                if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
+                    $namespace = '\\Services\\' . str_replace(
+                        DIRECTORY_SEPARATOR,
+                        '\\',
+                        str_replace('.php', '', str_replace($servicesDir, '', $classFile))
+                    );
+                    //var_dump($namespace);
+                    $rest->addAPIClass($namespace);
+                }
+            }
+
+            // adding aliases for Restler
+            if (array_key_exists('alias', $apiIniConf)) {
+                foreach ($apiIniConf['alias'] as $alias => $aliasData) {
+                    if (is_array($aliasData)) {
+                        foreach ($aliasData as $label => $namespace) {
+                            $namespace = '\\' . ltrim($namespace, '\\');
+                            $rest->addAPIClass($namespace, $alias);
+                        }
+                    }
+                }
+            }
+        } else {
+            // hook to get rest api classes from plugins
+            if (class_exists('PMPluginRegistry')) {
+                $pluginRegistry = & PMPluginRegistry::getSingleton();
+                $plugins = $pluginRegistry->getRegisteredRestServices();
+
+                if (is_array($plugins) && array_key_exists($pluginName, $plugins)) {
+                    foreach ($plugins[$pluginName] as $class) {
+                        $rest->addAPIClass($class['namespace']);
                     }
                 }
             }

@@ -1,5 +1,5 @@
 <?php
-namespace ProcessMaker;
+namespace ProcessMaker\Services;
 
 class Api
 {
@@ -31,9 +31,6 @@ class Api
 
     public function getUserId()
     {
-        //return self::$userId;
-
-        return \Api\OAuth2\Server::getUserId();
+        return \Services\Api\OAuth2\Server::getUserId();
     }
 }
-

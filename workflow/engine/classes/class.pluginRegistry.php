@@ -108,6 +108,8 @@ class PMPluginRegistry
      */
     private $_restServices = array ();
 
+    private $_restServiceEnabled = array();
+
     private static $instance = null;
 
     /**
@@ -240,6 +242,27 @@ class PMPluginRegistry
                 if (method_exists( $oPlugin, 'enable' )) {
                     $oPlugin->enable();
                 }
+
+                /*
+                 * 1. register <plugin-dir>/src directory for autoloading
+                 * 2. verify if rest service is enabled
+                 * 3. register rest service directory
+                 */
+                $pluginSrcDir = PATH_PLUGINS . $detail->sNamespace . PATH_SEP . 'src';
+
+                if (is_dir($pluginSrcDir)) {
+                    Bootstrap::registerDir($detail->sNamespace.'/src', $pluginSrcDir);
+                }
+
+                if (array_key_exists($detail->sNamespace, $this->_restServiceEnabled)
+                    && $this->_restServiceEnabled[$detail->sNamespace] == true
+                ) {
+                    $oPlugin->registerRestService();
+                    ProcessMaker\Util\Logger::log("plugin ".$detail->sNamespace." -> rest enabled");
+                } else {
+                    ProcessMaker\Util\Logger::log("plugin ".$detail->sNamespace." -> rest not enabled");
+                }
+
                 return true;
             }
         }
@@ -1339,26 +1362,38 @@ class PMPluginRegistry
      * @param string $path (optional) the class file path, if it is not set the system will try resolve the
      * file path from its classname.
      */
-    public function registerRestService ($sNamespace, $classname, $path = '')
+    public function registerRestService($sNamespace)
     {
-        $restService = new StdClass();
-        $restService->sNamespace = $sNamespace;
-        $restService->classname = $classname;
+        $baseSrcPluginPath = PATH_PLUGINS . $sNamespace . PATH_SEP . "src";
+        $apiPath = PATH_SEP . "Services" . PATH_SEP . "Api" . PATH_SEP . ucfirst($sNamespace);
+        $classesList = Bootstrap::rglob('*', 0, $baseSrcPluginPath . $apiPath);
 
-        if (empty( $path )) {
-            $path = PATH_PLUGINS . $restService->sNamespace . "/services/rest/$classname.php";
+        foreach ($classesList as $classFile) {
+            if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
 
-            if (! file_exists( $path )) {
-                $path = PATH_PLUGINS . $restService->sNamespace . "/services/rest/crud/$classname.php";
+                $ns = str_replace(
+                    DIRECTORY_SEPARATOR,
+                    '\\',
+                    str_replace('.php', '', str_replace($baseSrcPluginPath, '', $classFile))
+                );
+
+                ProcessMaker\Util\Logger::log("Namespace found: " . $ns);
+
+                // Ensure that is registering only existent classes.
+                if (class_exists($ns)) {
+                    $this->_restServices[strtolower($sNamespace)][] = array(
+                        "filepath" => $classFile,
+                        "namespace" => $ns
+                    );
+                    ProcessMaker\Util\Logger::log("class exists: YES");
+                } else {
+                    ProcessMaker\Util\Logger::log("class exists: NO");
+                }
+
+
+                ProcessMaker\Util\Logger::log($this->_restServices);
             }
         }
-
-        if (! file_exists( $path )) {
-            return false;
-        }
-
-        $restService->path = $path;
-        $this->_restServices[] = $restService;
 
         return true;
     }
@@ -1370,29 +1405,12 @@ class PMPluginRegistry
      */
     public function unregisterRestService ($sNamespace)
     {
-        foreach ($this->_restServices as $i => $service) {
-            if ($sNamespace == $service->sNamespace) {
-                unset( $this->_restServices[$i] );
-            }
-        }
-        // Re-index when all js were unregistered
-        $this->_restServices = array_values( $this->_restServices );
+        unset($this->_restServices[$sNamespace]);
     }
 
-    public function getRegisteredRestServices ()
+    public function getRegisteredRestServices()
     {
         return $this->_restServices;
-    }
-
-    public function getRegisteredRestClassFiles ()
-    {
-        $restClassFiles = array ();
-
-        foreach ($this->_restServices as $restService) {
-            $restClassFiles[] = $restService->path;
-        }
-
-        return $restClassFiles;
     }
 
     /**
@@ -1435,6 +1453,16 @@ class PMPluginRegistry
             }
             $language->updateLanguagePlugin($namePlugin, SYS_LANG);
         }
-    } 
+    }
+
+    /**
+     * Function to enable rest service for plugins
+     * @param string $sNamespace
+     * @param bool $enable
+     */
+    function enableRestService($sNamespace, $enable)
+    {
+        $this->_restServiceEnabled[$sNamespace] = $enable;
+    }
 }
 

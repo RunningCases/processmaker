@@ -341,10 +341,10 @@ class PMPlugin
      * @param array/string $pluginJsFile
      * @return void
      */
-    function registerRestService($classname, $path = '')
+    function registerRestService()
     {
         $oPluginRegistry =& PMPluginRegistry::getSingleton();
-        $oPluginRegistry->registerRestService($this->sNamespace, $classname, $path);
+        $oPluginRegistry->registerRestService($this->sNamespace);
     }
 
     /**
@@ -359,6 +359,12 @@ class PMPlugin
     {
         $oPluginRegistry =& PMPluginRegistry::getSingleton();
         $oPluginRegistry->unregisterRestService($this->sNamespace, $classname, $path);
+    }
+
+    function enableRestService($enable)
+    {
+        $oPluginRegistry =& PMPluginRegistry::getSingleton();
+        $oPluginRegistry->enableRestService($this->sNamespace, $enable);
     }
 }
 

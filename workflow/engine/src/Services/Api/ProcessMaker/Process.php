@@ -1,7 +1,7 @@
 <?php
 namespace Services\Api\ProcessMaker;
 
-use \ProcessMaker\Api;
+use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
 
 //TODO we need Refactor this class
