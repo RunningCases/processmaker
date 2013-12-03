@@ -258,9 +258,6 @@ class PMPluginRegistry
                     && $this->_restServiceEnabled[$detail->sNamespace] == true
                 ) {
                     $oPlugin->registerRestService();
-                    ProcessMaker\Util\Logger::log("plugin ".$detail->sNamespace." -> rest enabled");
-                } else {
-                    ProcessMaker\Util\Logger::log("plugin ".$detail->sNamespace." -> rest not enabled");
                 }
 
                 return true;
@@ -1377,21 +1374,13 @@ class PMPluginRegistry
                     str_replace('.php', '', str_replace($baseSrcPluginPath, '', $classFile))
                 );
 
-                ProcessMaker\Util\Logger::log("Namespace found: " . $ns);
-
                 // Ensure that is registering only existent classes.
                 if (class_exists($ns)) {
                     $this->_restServices[strtolower($sNamespace)][] = array(
                         "filepath" => $classFile,
                         "namespace" => $ns
                     );
-                    ProcessMaker\Util\Logger::log("class exists: YES");
-                } else {
-                    ProcessMaker\Util\Logger::log("class exists: NO");
                 }
-
-
-                ProcessMaker\Util\Logger::log($this->_restServices);
             }
         }
 
