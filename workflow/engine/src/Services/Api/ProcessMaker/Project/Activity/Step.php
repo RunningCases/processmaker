@@ -4,6 +4,39 @@ namespace Services\Api\ProcessMaker\Project\Activity;
 use \ProcessMaker\Api;
 use \Luracast\Restler\RestException;
 
+class StepStructure
+{
+    /**
+     * @var string {@from body}{@min 32}{@max 32}
+     */
+    public $step_uid;
+
+    /**
+     * @var string {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}
+     */
+    public $step_type_obj;
+
+    /**
+     * @var string {@from body}{@min 32}{@max 32}
+     */
+    public $step_uid_obj;
+
+    /**
+     * @var string
+     */
+    public $step_condition;
+
+    /**
+     * @var int {@from body}{@min 1}
+     */
+    public $step_position;
+
+    /**
+     * @var string {@from body}{@choice EDIT,VIEW}
+     */
+    public $step_mode;
+}
+
 /**
  * Project\Activity\Step Api Controller
  *
@@ -29,10 +62,18 @@ class Step extends Api
 
     /**
      * @url POST /:projectUid/activity/:activityUid/step
+     *
+     * @param string        $activityUid
+     * @param string        $projectUid
+     * @param StepStructure $request_data
+     *
+     * @status 201
      */
-    public function doPostActivityStep($activityUid, $projectUid, $request_data = array())
+    public function doPostActivityStep($activityUid, $projectUid, StepStructure $request_data = null)
     {
         try {
+            $request_data = (array)($request_data);
+
             $step = new \BusinessModel\Step();
 
             $stepUid = $step->create($activityUid, $projectUid, $request_data);
@@ -47,10 +88,17 @@ class Step extends Api
 
     /**
      * @url PUT /:projectUid/activity/:activityUid/step/:stepUid
+     *
+     * @param string        $stepUid
+     * @param string        $activityUid
+     * @param string        $projectUid
+     * @param StepStructure $request_data
      */
-    public function doPutActivityStep($stepUid, $activityUid, $projectUid, $request_data = array())
+    public function doPutActivityStep($stepUid, $activityUid, $projectUid, StepStructure $request_data = null)
     {
         try {
+            $request_data = (array)($request_data);
+
             $step = new \BusinessModel\Step();
 
             $step->update($stepUid, $request_data);
