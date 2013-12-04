@@ -541,9 +541,7 @@ class Task
         } catch (Exception $e) {
             throw $e;
         }
-
     }
-
 
     /**
      * Return a assignee list of an activity
@@ -625,7 +623,7 @@ class Task
                 $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
                                   'aas_name' => $aRow['USR_FIRSTNAME'],
                                   'aas_lastname' => $aRow['USR_LASTNAME'],
-                                  'aas_username' => $aRow['USR_USERNAME'],                                  
+                                  'aas_username' => $aRow['USR_USERNAME'],
                                   'aas_type' => "user" );
                 $oDataset->next();
             }
@@ -684,7 +682,7 @@ class Task
                                       'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                            ' (' . $aRow2['MEMBERS_NUMBER'] .
                                            ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
-                                           ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),                                       
+                                           ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                       'aas_lastname' => "",
                                       'aas_username' => "",
                                       'aas_type' => "group" );
@@ -773,7 +771,7 @@ class Task
                                 'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $aRow['GRP_TITLE'] .
                                 ' (' . $aRow2['MEMBERS_NUMBER'] .
                                 ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
-                                ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),                                       
+                                ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                 'aas_lastname' => "",
                                 'aas_username' => "",
                                 'aas_type' => "group" );
@@ -810,7 +808,6 @@ class Task
         }
     }
 
-
     /**
      * Assign a user or group to an activity
      *     
@@ -829,14 +826,14 @@ class Task
             $iType = 1;
             $oTaskUser = new \TaskUser();
             if ($sRelation == 1) {
-                $oTaskUser->create(array('TAS_UID' => $sTaskUID, 
+                $oTaskUser->create(array('TAS_UID' => $sTaskUID,
                                    'USR_UID' => $sAssigneeUID, 
                                    'TU_TYPE' => $iType, 
                                    'TU_RELATION' => $sRelation));
                 return array('aas_uid' => $sAssigneeUID, 
                              'aas_type' => "user");
             } else {
-                $oTaskUser->create(array('TAS_UID' => $sTaskUID, 
+                $oTaskUser->create(array('TAS_UID' => $sTaskUID,
                                    'USR_UID' => $sAssigneeUID, 
                                    'TU_TYPE' => $iType, 
                                    'TU_RELATION' => $sRelation));
@@ -863,18 +860,16 @@ class Task
         try {
             $iType = 1;
             $oTaskUser = new \TaskUser();
-            
+
             if ($sRelation == 1) {
                 $oTaskUser->remove($sTaskUID, $sAssigneeUID, $iType, $sRelation);       
             } else {
                 $oTaskUser->remove($sTaskUID, $sAssigneeUID, $iType, $sRelation);
             }
 
-            
         } catch (Exception $e) {
             throw $e;
         }
-
     }
 
     /**
@@ -957,7 +952,7 @@ class Task
                 $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
                                   'aas_name' => $aRow['USR_FIRSTNAME'],
                                   'aas_lastname' => $aRow['USR_LASTNAME'],
-                                  'aas_username' => $aRow['USR_USERNAME'],                                  
+                                  'aas_username' => $aRow['USR_USERNAME'],
                                   'aas_type' => "user" );
                 $oDataset->next();
             }
@@ -1016,7 +1011,7 @@ class Task
                                       'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                            ' (' . $aRow2['MEMBERS_NUMBER'] .
                                            ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
-                                           ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),                                       
+                                           ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                       'aas_lastname' => "",
                                       'aas_username' => "",
                                       'aas_type' => "group" );
@@ -1050,7 +1045,7 @@ class Task
 
     /**
      * Return a single Adhoc user or group assigned to an activity
-     *     
+     *
      * @param string $sProcessUID
      * @param string $sTaskUID
      * @param string $sAssigneeUID
@@ -1105,7 +1100,7 @@ class Task
                                 'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $aRow['GRP_TITLE'] .
                                 ' (' . $aRow2['MEMBERS_NUMBER'] .
                                 ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
-                                ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),                                       
+                                ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                 'aas_lastname' => "",
                                 'aas_username' => "",
                                 'aas_type' => "group" );
@@ -1161,16 +1156,16 @@ class Task
             $iType = 2;
             $oTaskUser = new \TaskUser();
             if ($sRelation == 1) {
-                $oTaskUser->create(array('TAS_UID' => $sTaskUID, 
-                                   'USR_UID' => $sAssigneeUID, 
-                                   'TU_TYPE' => $iType, 
+                $oTaskUser->create(array('TAS_UID' => $sTaskUID,
+                                   'USR_UID' => $sAssigneeUID,
+                                   'TU_TYPE' => $iType,
                                    'TU_RELATION' => $sRelation));
                 return array('aas_uid' => $sAssigneeUID, 
                              'aas_type' => "user");
             } else {
-                $oTaskUser->create(array('TAS_UID' => $sTaskUID, 
-                                   'USR_UID' => $sAssigneeUID, 
-                                   'TU_TYPE' => $iType, 
+                $oTaskUser->create(array('TAS_UID' => $sTaskUID,
+                                   'USR_UID' => $sAssigneeUID,
+                                   'TU_TYPE' => $iType,
                                    'TU_RELATION' => $sRelation));
                 return array('aas_uid' => $sAssigneeUID, 
                              'aas_type' => "group");
