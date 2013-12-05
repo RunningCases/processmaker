@@ -87,6 +87,43 @@ class Step extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+    /**
+     * @url GET /:projectUid/activity/:activityUid/step/:stepUid/triggers
+     */
+    public function doGetActivityStepTriggers($stepUid, $activityUid, $projectUid)
+    {
+        try {
+            $step = new \BusinessModel\Step();
+
+            $response = $step->getTriggers($stepUid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:projectUid/activity/:activityUid/step/:stepUid/available-triggers/:type
+     *
+     * @param string $stepUid
+     * @param string $activityUid
+     * @param string $projectUid
+     * @param string $type {@from body}{@choice before,after}
+     */
+    public function doGetActivityStepAvailableTriggers($stepUid, $activityUid, $projectUid, $type)
+    {
+        try {
+            $step = new \BusinessModel\Step();
+
+            $response = $step->getAvailableTriggers($stepUid, strtoupper($type));
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
 
 class StepStructure
@@ -121,3 +158,4 @@ class StepStructure
      */
     public $step_mode;
 }
+

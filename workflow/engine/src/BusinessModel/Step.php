@@ -186,13 +186,192 @@ class Step
                 "step_type_obj"   => $row["STEP_TYPE_OBJ"],
                 "step_uid_obj"    => $row["STEP_UID_OBJ"],
                 "step_condition"  => $row["STEP_CONDITION"],
-                "step_position"   => $row["STEP_POSITION"],
+                "step_position"   => (int)($row["STEP_POSITION"]),
                 "step_mode"       => $row["STEP_MODE"],
                 "obj_title"       => $titleObj,
                 "obj_description" => $descriptionObj
             );
 
             return $arrayStep;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get data of unique ids of an Step (Unique id of Task and Process)
+     *
+     * @param string $stepUid Unique id of the Step
+     *
+     * return array
+     */
+    public function getDataUids($stepUid)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\StepPeer::PRO_UID);
+            $criteria->addSelectColumn(\StepPeer::TAS_UID);
+            $criteria->add(\StepPeer::STEP_UID, $stepUid, \Criteria::EQUAL);
+
+            $rsCriteria = \StepPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $rsCriteria->next();
+
+            return $rsCriteria->getRow();
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get available triggers for an Step
+     *
+     * @param string $stepUid Unique id of the Step
+     * @param string $type    Type (BEFORE, AFTER)
+     *
+     * return array
+     */
+    public function getAvailableTriggers($stepUid, $type)
+    {
+        try {
+            $arrayAvailableTrigger = array();
+
+            $trigger = new \BusinessModel\Trigger();
+
+            $arrayDataUid = $this->getDataUids($stepUid);
+
+            $processUid = $arrayDataUid["PRO_UID"];
+
+            //Get Uids
+            $arrayUid = array();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\StepTriggerPeer::TRI_UID);
+            $criteria->add(\StepTriggerPeer::STEP_UID, $stepUid, \Criteria::EQUAL);
+            $criteria->add(\StepTriggerPeer::ST_TYPE, $type, \Criteria::EQUAL);
+
+            $rsCriteria = \StepTriggerPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayUid[] = $row["TRI_UID"];
+            }
+
+            //Criteria
+            $criteria = $trigger->getTriggerCriteria();
+
+            $criteria->add(\TriggersPeer::TRI_UID, $arrayUid, \Criteria::NOT_IN);
+            $criteria->add(\TriggersPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->addAscendingOrderByColumn("TRI_TITLE");
+
+            $rsCriteria = \TriggersPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayAvailableTrigger[] = array(
+                    "tri_uid"   => $row["TRI_UID"],
+                    "tri_title" => $row["TRI_TITLE"],
+                    "tri_description" => $row["TRI_DESCRIPTION"],
+                    "tri_type"   => $row["TRI_TYPE"],
+                    "tri_webbot" => $row["TRI_WEBBOT"],
+                    "tri_param"  => $row["TRI_PARAM"]
+                );
+            }
+
+            return $arrayAvailableTrigger;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get all triggers of an Step
+     *
+     * @param string $stepUid Unique id of the Step
+     *
+     * return array
+     */
+    public function getTriggers($stepUid)
+    {
+        try {
+            $arrayTrigger = array();
+
+            $trigger = new \BusinessModel\Trigger();
+
+            $arrayDataUid = $this->getDataUids($stepUid);
+
+            $taskUid = $arrayDataUid["TAS_UID"];
+
+            $processMap = new \ProcessMap();
+            $stepTrigger = new \StepTrigger();
+
+            $arrayTriggerType1 = array(
+                "BEFORE" => "BEFORE",
+                "AFTER"  => "AFTER"
+            );
+
+            $arrayTriggerType2 = array(
+                "BEFORE_ASSIGNMENT" => "BEFORE",
+                "BEFORE_ROUTING"    => "BEFORE",
+                "AFTER_ROUTING"     => "AFTER"
+            );
+
+            $arrayTriggerType = ($stepUid != "")? $arrayTriggerType1 : $arrayTriggerType2;
+
+            foreach ($arrayTriggerType as $index => $value) {
+                $triggerType = $index;
+                $type = $value;
+
+                switch ($triggerType) {
+                    case "BEFORE_ASSIGNMENT":
+                        $stepUid = "-1";
+                        break;
+                    case "BEFORE_ROUTING":
+                        $stepUid = "-2";
+                        break;
+                    case "AFTER_ROUTING":
+                        $stepUid = "-2";
+                        break;
+                }
+
+                $stepTrigger->orderPosition($stepUid, $taskUid, $type);
+
+                //Criteria
+                $criteria = $trigger->getTriggerCriteria();
+
+                $criteria->addSelectColumn(\StepTriggerPeer::ST_CONDITION);
+                $criteria->addSelectColumn(\StepTriggerPeer::ST_POSITION);
+                $criteria->addJoin(\StepTriggerPeer::TRI_UID, \TriggersPeer::TRI_UID, \Criteria::LEFT_JOIN);
+                $criteria->add(\StepTriggerPeer::STEP_UID, $stepUid, \Criteria::EQUAL);
+                $criteria->add(\StepTriggerPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+                $criteria->add(\StepTriggerPeer::ST_TYPE, $type, \Criteria::EQUAL);
+                $criteria->addAscendingOrderByColumn(\StepTriggerPeer::ST_POSITION);
+
+                $rsCriteria = \StepTriggerPeer::doSelectRS($criteria);
+                $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                while ($rsCriteria->next()) {
+                    $row = $rsCriteria->getRow();
+
+                    $arrayTrigger[] = array(
+                        "tri_uid"   => $row["TRI_UID"],
+                        "tri_title" => $row["TRI_TITLE"],
+                        "tri_description" => $row["TRI_DESCRIPTION"],
+                        "st_type"      => $triggerType,
+                        "st_condition" => $row["ST_CONDITION"],
+                        "st_position"  => (int)($row["ST_POSITION"])
+                    );
+                }
+            }
+
+            return $arrayTrigger;
         } catch (\Exception $e) {
             throw $e;
         }
