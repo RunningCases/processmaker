@@ -58,11 +58,11 @@ abstract class BaseBpmnEventPeer
     /** the column name for the EVN_CANCEL_ACTIVITY field */
     const EVN_CANCEL_ACTIVITY = 'BPMN_EVENT.EVN_CANCEL_ACTIVITY';
 
-    /** the column name for the EVN_ACTIVITY REF field */
-    const EVN_ACTIVITY REF = 'BPMN_EVENT.EVN_ACTIVITY REF';
+    /** the column name for the EVN_ACTIVITY_REF field */
+    const EVN_ACTIVITY_REF = 'BPMN_EVENT.EVN_ACTIVITY_REF';
 
-    /** the column name for the EVN_WAIT_FOR COMPLETION field */
-    const EVN_WAIT_FOR COMPLETION = 'BPMN_EVENT.EVN_WAIT_FOR COMPLETION';
+    /** the column name for the EVN_WAIT_FOR_COMPLETION field */
+    const EVN_WAIT_FOR_COMPLETION = 'BPMN_EVENT.EVN_WAIT_FOR_COMPLETION';
 
     /** the column name for the EVN_ERROR_NAME field */
     const EVN_ERROR_NAME = 'BPMN_EVENT.EVN_ERROR_NAME';
@@ -111,9 +111,9 @@ abstract class BaseBpmnEventPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('EvnUid', 'PrjUid', 'ProUid', 'EvnName', 'EvnType', 'EvnMarker', 'EvnIsInterrupting', 'EvnAttachedTo', 'EvnCancelActivity', 'EvnActivity ref', 'EvnWaitFor completion', 'EvnErrorName', 'EvnErrorCode', 'EvnEscalationName', 'EvnEscalationCode', 'EvnCondition', 'EvnMessage', 'EvnOprerationName', 'EvnOperationImplementationRef', 'EvnTimeDate', 'EvnTimeCycle', 'EvnTimeDuration', 'EvnBehavior', ),
-        BasePeer::TYPE_COLNAME => array (BpmnEventPeer::EVN_UID, BpmnEventPeer::PRJ_UID, BpmnEventPeer::PRO_UID, BpmnEventPeer::EVN_NAME, BpmnEventPeer::EVN_TYPE, BpmnEventPeer::EVN_MARKER, BpmnEventPeer::EVN_IS_INTERRUPTING, BpmnEventPeer::EVN_ATTACHED_TO, BpmnEventPeer::EVN_CANCEL_ACTIVITY, BpmnEventPeer::EVN_ACTIVITY REF, BpmnEventPeer::EVN_WAIT_FOR COMPLETION, BpmnEventPeer::EVN_ERROR_NAME, BpmnEventPeer::EVN_ERROR_CODE, BpmnEventPeer::EVN_ESCALATION_NAME, BpmnEventPeer::EVN_ESCALATION_CODE, BpmnEventPeer::EVN_CONDITION, BpmnEventPeer::EVN_MESSAGE, BpmnEventPeer::EVN_OPRERATION_NAME, BpmnEventPeer::EVN_OPERATION_IMPLEMENTATION_REF, BpmnEventPeer::EVN_TIME_DATE, BpmnEventPeer::EVN_TIME_CYCLE, BpmnEventPeer::EVN_TIME_DURATION, BpmnEventPeer::EVN_BEHAVIOR, ),
-        BasePeer::TYPE_FIELDNAME => array ('EVN_UID', 'PRJ_UID', 'PRO_UID', 'EVN_NAME', 'EVN_TYPE', 'EVN_MARKER', 'EVN_IS_INTERRUPTING', 'EVN_ATTACHED_TO', 'EVN_CANCEL_ACTIVITY', 'EVN_ACTIVITY REF', 'EVN_WAIT_FOR COMPLETION', 'EVN_ERROR_NAME', 'EVN_ERROR_CODE', 'EVN_ESCALATION_NAME', 'EVN_ESCALATION_CODE', 'EVN_CONDITION', 'EVN_MESSAGE', 'EVN_OPRERATION_NAME', 'EVN_OPERATION_IMPLEMENTATION_REF', 'EVN_TIME_DATE', 'EVN_TIME_CYCLE', 'EVN_TIME_DURATION', 'EVN_BEHAVIOR', ),
+        BasePeer::TYPE_PHPNAME => array ('EvnUid', 'PrjUid', 'ProUid', 'EvnName', 'EvnType', 'EvnMarker', 'EvnIsInterrupting', 'EvnAttachedTo', 'EvnCancelActivity', 'EvnActivityRef', 'EvnWaitForCompletion', 'EvnErrorName', 'EvnErrorCode', 'EvnEscalationName', 'EvnEscalationCode', 'EvnCondition', 'EvnMessage', 'EvnOprerationName', 'EvnOperationImplementationRef', 'EvnTimeDate', 'EvnTimeCycle', 'EvnTimeDuration', 'EvnBehavior', ),
+        BasePeer::TYPE_COLNAME => array (BpmnEventPeer::EVN_UID, BpmnEventPeer::PRJ_UID, BpmnEventPeer::PRO_UID, BpmnEventPeer::EVN_NAME, BpmnEventPeer::EVN_TYPE, BpmnEventPeer::EVN_MARKER, BpmnEventPeer::EVN_IS_INTERRUPTING, BpmnEventPeer::EVN_ATTACHED_TO, BpmnEventPeer::EVN_CANCEL_ACTIVITY, BpmnEventPeer::EVN_ACTIVITY_REF, BpmnEventPeer::EVN_WAIT_FOR_COMPLETION, BpmnEventPeer::EVN_ERROR_NAME, BpmnEventPeer::EVN_ERROR_CODE, BpmnEventPeer::EVN_ESCALATION_NAME, BpmnEventPeer::EVN_ESCALATION_CODE, BpmnEventPeer::EVN_CONDITION, BpmnEventPeer::EVN_MESSAGE, BpmnEventPeer::EVN_OPRERATION_NAME, BpmnEventPeer::EVN_OPERATION_IMPLEMENTATION_REF, BpmnEventPeer::EVN_TIME_DATE, BpmnEventPeer::EVN_TIME_CYCLE, BpmnEventPeer::EVN_TIME_DURATION, BpmnEventPeer::EVN_BEHAVIOR, ),
+        BasePeer::TYPE_FIELDNAME => array ('EVN_UID', 'PRJ_UID', 'PRO_UID', 'EVN_NAME', 'EVN_TYPE', 'EVN_MARKER', 'EVN_IS_INTERRUPTING', 'EVN_ATTACHED_TO', 'EVN_CANCEL_ACTIVITY', 'EVN_ACTIVITY_REF', 'EVN_WAIT_FOR_COMPLETION', 'EVN_ERROR_NAME', 'EVN_ERROR_CODE', 'EVN_ESCALATION_NAME', 'EVN_ESCALATION_CODE', 'EVN_CONDITION', 'EVN_MESSAGE', 'EVN_OPRERATION_NAME', 'EVN_OPERATION_IMPLEMENTATION_REF', 'EVN_TIME_DATE', 'EVN_TIME_CYCLE', 'EVN_TIME_DURATION', 'EVN_BEHAVIOR', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, )
     );
 
@@ -124,9 +124,9 @@ abstract class BaseBpmnEventPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('EvnUid' => 0, 'PrjUid' => 1, 'ProUid' => 2, 'EvnName' => 3, 'EvnType' => 4, 'EvnMarker' => 5, 'EvnIsInterrupting' => 6, 'EvnAttachedTo' => 7, 'EvnCancelActivity' => 8, 'EvnActivity ref' => 9, 'EvnWaitFor completion' => 10, 'EvnErrorName' => 11, 'EvnErrorCode' => 12, 'EvnEscalationName' => 13, 'EvnEscalationCode' => 14, 'EvnCondition' => 15, 'EvnMessage' => 16, 'EvnOprerationName' => 17, 'EvnOperationImplementationRef' => 18, 'EvnTimeDate' => 19, 'EvnTimeCycle' => 20, 'EvnTimeDuration' => 21, 'EvnBehavior' => 22, ),
-        BasePeer::TYPE_COLNAME => array (BpmnEventPeer::EVN_UID => 0, BpmnEventPeer::PRJ_UID => 1, BpmnEventPeer::PRO_UID => 2, BpmnEventPeer::EVN_NAME => 3, BpmnEventPeer::EVN_TYPE => 4, BpmnEventPeer::EVN_MARKER => 5, BpmnEventPeer::EVN_IS_INTERRUPTING => 6, BpmnEventPeer::EVN_ATTACHED_TO => 7, BpmnEventPeer::EVN_CANCEL_ACTIVITY => 8, BpmnEventPeer::EVN_ACTIVITY REF => 9, BpmnEventPeer::EVN_WAIT_FOR COMPLETION => 10, BpmnEventPeer::EVN_ERROR_NAME => 11, BpmnEventPeer::EVN_ERROR_CODE => 12, BpmnEventPeer::EVN_ESCALATION_NAME => 13, BpmnEventPeer::EVN_ESCALATION_CODE => 14, BpmnEventPeer::EVN_CONDITION => 15, BpmnEventPeer::EVN_MESSAGE => 16, BpmnEventPeer::EVN_OPRERATION_NAME => 17, BpmnEventPeer::EVN_OPERATION_IMPLEMENTATION_REF => 18, BpmnEventPeer::EVN_TIME_DATE => 19, BpmnEventPeer::EVN_TIME_CYCLE => 20, BpmnEventPeer::EVN_TIME_DURATION => 21, BpmnEventPeer::EVN_BEHAVIOR => 22, ),
-        BasePeer::TYPE_FIELDNAME => array ('EVN_UID' => 0, 'PRJ_UID' => 1, 'PRO_UID' => 2, 'EVN_NAME' => 3, 'EVN_TYPE' => 4, 'EVN_MARKER' => 5, 'EVN_IS_INTERRUPTING' => 6, 'EVN_ATTACHED_TO' => 7, 'EVN_CANCEL_ACTIVITY' => 8, 'EVN_ACTIVITY REF' => 9, 'EVN_WAIT_FOR COMPLETION' => 10, 'EVN_ERROR_NAME' => 11, 'EVN_ERROR_CODE' => 12, 'EVN_ESCALATION_NAME' => 13, 'EVN_ESCALATION_CODE' => 14, 'EVN_CONDITION' => 15, 'EVN_MESSAGE' => 16, 'EVN_OPRERATION_NAME' => 17, 'EVN_OPERATION_IMPLEMENTATION_REF' => 18, 'EVN_TIME_DATE' => 19, 'EVN_TIME_CYCLE' => 20, 'EVN_TIME_DURATION' => 21, 'EVN_BEHAVIOR' => 22, ),
+        BasePeer::TYPE_PHPNAME => array ('EvnUid' => 0, 'PrjUid' => 1, 'ProUid' => 2, 'EvnName' => 3, 'EvnType' => 4, 'EvnMarker' => 5, 'EvnIsInterrupting' => 6, 'EvnAttachedTo' => 7, 'EvnCancelActivity' => 8, 'EvnActivityRef' => 9, 'EvnWaitForCompletion' => 10, 'EvnErrorName' => 11, 'EvnErrorCode' => 12, 'EvnEscalationName' => 13, 'EvnEscalationCode' => 14, 'EvnCondition' => 15, 'EvnMessage' => 16, 'EvnOprerationName' => 17, 'EvnOperationImplementationRef' => 18, 'EvnTimeDate' => 19, 'EvnTimeCycle' => 20, 'EvnTimeDuration' => 21, 'EvnBehavior' => 22, ),
+        BasePeer::TYPE_COLNAME => array (BpmnEventPeer::EVN_UID => 0, BpmnEventPeer::PRJ_UID => 1, BpmnEventPeer::PRO_UID => 2, BpmnEventPeer::EVN_NAME => 3, BpmnEventPeer::EVN_TYPE => 4, BpmnEventPeer::EVN_MARKER => 5, BpmnEventPeer::EVN_IS_INTERRUPTING => 6, BpmnEventPeer::EVN_ATTACHED_TO => 7, BpmnEventPeer::EVN_CANCEL_ACTIVITY => 8, BpmnEventPeer::EVN_ACTIVITY_REF => 9, BpmnEventPeer::EVN_WAIT_FOR_COMPLETION => 10, BpmnEventPeer::EVN_ERROR_NAME => 11, BpmnEventPeer::EVN_ERROR_CODE => 12, BpmnEventPeer::EVN_ESCALATION_NAME => 13, BpmnEventPeer::EVN_ESCALATION_CODE => 14, BpmnEventPeer::EVN_CONDITION => 15, BpmnEventPeer::EVN_MESSAGE => 16, BpmnEventPeer::EVN_OPRERATION_NAME => 17, BpmnEventPeer::EVN_OPERATION_IMPLEMENTATION_REF => 18, BpmnEventPeer::EVN_TIME_DATE => 19, BpmnEventPeer::EVN_TIME_CYCLE => 20, BpmnEventPeer::EVN_TIME_DURATION => 21, BpmnEventPeer::EVN_BEHAVIOR => 22, ),
+        BasePeer::TYPE_FIELDNAME => array ('EVN_UID' => 0, 'PRJ_UID' => 1, 'PRO_UID' => 2, 'EVN_NAME' => 3, 'EVN_TYPE' => 4, 'EVN_MARKER' => 5, 'EVN_IS_INTERRUPTING' => 6, 'EVN_ATTACHED_TO' => 7, 'EVN_CANCEL_ACTIVITY' => 8, 'EVN_ACTIVITY_REF' => 9, 'EVN_WAIT_FOR_COMPLETION' => 10, 'EVN_ERROR_NAME' => 11, 'EVN_ERROR_CODE' => 12, 'EVN_ESCALATION_NAME' => 13, 'EVN_ESCALATION_CODE' => 14, 'EVN_CONDITION' => 15, 'EVN_MESSAGE' => 16, 'EVN_OPRERATION_NAME' => 17, 'EVN_OPERATION_IMPLEMENTATION_REF' => 18, 'EVN_TIME_DATE' => 19, 'EVN_TIME_CYCLE' => 20, 'EVN_TIME_DURATION' => 21, 'EVN_BEHAVIOR' => 22, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, )
     );
 
@@ -246,9 +246,9 @@ abstract class BaseBpmnEventPeer
 
         $criteria->addSelectColumn(BpmnEventPeer::EVN_CANCEL_ACTIVITY);
 
-        $criteria->addSelectColumn(BpmnEventPeer::EVN_ACTIVITY REF);
+        $criteria->addSelectColumn(BpmnEventPeer::EVN_ACTIVITY_REF);
 
-        $criteria->addSelectColumn(BpmnEventPeer::EVN_WAIT_FOR COMPLETION);
+        $criteria->addSelectColumn(BpmnEventPeer::EVN_WAIT_FOR_COMPLETION);
 
         $criteria->addSelectColumn(BpmnEventPeer::EVN_ERROR_NAME);
 

@@ -3260,8 +3260,8 @@
     <column name="EVN_IS_INTERRUPTING" type="TINYINT" required="false" default="1"/>
     <column name="EVN_ATTACHED_TO" type="VARCHAR" size="32" required="false" default=""/>
     <column name="EVN_CANCEL_ACTIVITY" type="TINYINT" required="false" default="0"/>
-    <column name="EVN_ACTIVITY REF" type="VARCHAR" size="32" required="false" default=""/>
-    <column name="EVN_WAIT_FOR COMPLETION" type="TINYINT" required="false" default="1"/>
+    <column name="EVN_ACTIVITY_REF" type="VARCHAR" size="32" required="false" default=""/>
+    <column name="EVN_WAIT_FOR_COMPLETION" type="TINYINT" required="false" default="1"/>
     <column name="EVN_ERROR_NAME" type="VARCHAR" size="255" required="false"/>
     <column name="EVN_ERROR_CODE" type="VARCHAR" size="255" required="false"/>
     <column name="EVN_ESCALATION_NAME" type="VARCHAR" size="255" required="false"/>
