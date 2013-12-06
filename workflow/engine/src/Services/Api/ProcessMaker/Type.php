@@ -188,6 +188,14 @@ class Type
         return $name;
     }
 
+    /**
+     * @param integer $age {@type 1,2,,}
+     */
+    function postInt($age='')
+    {
+        return '->'.$age;
+    }
+
 }
 
 class Author
