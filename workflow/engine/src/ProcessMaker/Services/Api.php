@@ -1,7 +1,15 @@
 <?php
 namespace ProcessMaker\Services;
 
-class Api
+/**
+ * Abstract Class Api
+ *
+ * Api class be be extended by Restler Classes
+ *
+ * @package ProcessMaker\Services
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
+ */
+abstract class Api
 {
     private static $workspace;
     private static $userId;
