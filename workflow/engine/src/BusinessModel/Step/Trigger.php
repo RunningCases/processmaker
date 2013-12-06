@@ -1,7 +1,7 @@
 <?php
-namespace BusinessModel;
+namespace BusinessModel\Step;
 
-class StepTrigger
+class Trigger
 {
     /**
      * Assign Trigger to an Step

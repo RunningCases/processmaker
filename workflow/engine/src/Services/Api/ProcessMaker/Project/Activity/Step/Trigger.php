@@ -42,7 +42,7 @@ class Trigger extends Api
         try {
             $request_data = (array)($request_data);
 
-            $stepTrigger = new \BusinessModel\StepTrigger();
+            $stepTrigger = new \BusinessModel\Step\Trigger();
 
             $stepTrigger->create($stepUid, $request_data["tri_uid"], $request_data["st_type"], $request_data);
         } catch (\Exception $e) {
@@ -64,7 +64,7 @@ class Trigger extends Api
         try {
             $request_data = (array)($request_data);
 
-            $stepTrigger = new \BusinessModel\StepTrigger();
+            $stepTrigger = new \BusinessModel\Step\Trigger();
 
             $stepTrigger->update($stepUid, $triggerUid, $request_data["st_type"], $request_data);
         } catch (\Exception $e) {
@@ -84,7 +84,7 @@ class Trigger extends Api
     public function doDeleteActivityStepTrigger($triggerUid, $stepUid, $activityUid, $projectUid, $type)
     {
         try {
-            $stepTrigger = new \BusinessModel\StepTrigger();
+            $stepTrigger = new \BusinessModel\Step\Trigger();
 
             $stepTrigger->delete($stepUid, $triggerUid, strtoupper($type));
         } catch (\Exception $e) {
