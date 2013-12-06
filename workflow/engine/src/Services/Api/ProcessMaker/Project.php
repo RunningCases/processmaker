@@ -15,6 +15,16 @@ use ProcessMaker\Adapter\Bpmn\Model as BpmnModel;
  */
 class Project extends Api
 {
+    function index()
+    {
+        try {
+            $projects = BpmnModel::loadProjects();
+
+            return $projects;
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
 
     function post($request_data)
     {

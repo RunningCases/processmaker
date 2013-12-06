@@ -45,7 +45,6 @@ class Model
 
         unset($data['PRJ_UID']);
 
-
         /*
          * 1. Create a project record
          * 2. Create a default diagram record
@@ -61,7 +60,7 @@ class Model
         $prjName = $project->getPrjName();
         $uids[] = array('old_uid' => $oldPrjUid, 'new_uid' => $prjUid, 'object' => 'project');
 
-        // By now, is thought create a only one diagram for a project/process (1:1)
+        // By now, is thought create only one diagram for each project (1:1)
         $diagramData = (array) $diagrams[0];
         $oldDiaUid = $diagramData['dia_uid'];
 
@@ -72,7 +71,6 @@ class Model
         $diagram->save();
         $diaUid = $diagram->getDiaUid();
         $uids[] = array('old_uid' => $oldDiaUid, 'new_uid' => $diaUid, 'object' => 'diagram');
-
 
         $process = new Process();
         $process->setProUid(Hash::generateUID());
@@ -92,8 +90,8 @@ class Model
         $uids = array();
 
         /*
-         * 1. ensure that all related object data is defined, if not define it as empty
-         * 2. create all related object
+         * 1. ensure that all related data of objects are defined, if not we define them as empty
+         * 2. create all related objects
          */
 
         $lanesets = array_key_exists('laneset', $diagramData) ? $diagramData['laneset'] : array();
@@ -103,7 +101,6 @@ class Model
         $gateways = array_key_exists('gateways', $diagramData) ? $diagramData['gateways'] : array();
         $flows = array_key_exists('flows', $diagramData) ? $diagramData['flows'] : array();
         $artifacts = array_key_exists('artifacts', $diagramData) ? $diagramData['artifacts'] : array();
-
 
         foreach($lanesets as $lanesetData) {
             $lanesetData = array_change_key_case((array) $lanesetData, CASE_UPPER);
@@ -134,13 +131,15 @@ class Model
             $uids[] = array('old_uid' => $oldLanUid, 'new_uid' => $lanUid, 'object' => 'lane');
         }
 
+        /*
+         * 1. crate project related object
+         * 2. crate bound record for each object created previously
+         */
+
         foreach($activities as $activityData) {
             $activityData = array_change_key_case((array) $activityData, CASE_UPPER);
 
-            /*
-             * 1. crate activity record
-             * 2. crate bound record for activity created in previous step
-             */
+
             $activity = new Activity();
             $activity->fromArray($activityData, BasePeer::TYPE_FIELDNAME);
             $activity->setActUid(Hash::generateUID());
@@ -168,12 +167,7 @@ class Model
         foreach($events as $eventData) {
             $eventData = array_change_key_case((array) $eventData, CASE_UPPER);
 
-            /*
-             * 1. crate activity record
-             * 2. crate bound record for activity created in previous step
-             */
             $event = new Event();
-
             $event->fromArray($eventData, BasePeer::TYPE_FIELDNAME);
             $event->setEvnUid(Hash::generateUID());
             $event->setPrjUid($prjUid);
@@ -199,10 +193,6 @@ class Model
         foreach($gateways as $gatewayData) {
             $gatewayData = array_change_key_case((array) $gatewayData, CASE_UPPER);
 
-            /*
-             * 1. crate activity record
-             * 2. crate bound record for activity created in previous step
-             */
             $gateway = new Gateway();
             $gateway->fromArray($gatewayData, BasePeer::TYPE_FIELDNAME);
             $gateway->setGatUid(Hash::generateUID());
@@ -301,6 +291,39 @@ class Model
         $project['diagrams'][0]['artifacts'] = $artifacts;
 
         return $project;
+    }
+
+    public static function loadProjects()
+    {
+        $projectsList = self::getAllBpmnCollectionFrom('Project', true);
+        $projects = array();
+
+        foreach ($projectsList as $project) {
+            $projects[] = self::loadProject($project['prj_uid']);
+        }
+
+        return $projects;
+    }
+
+    /*** Private Functions ***/
+
+    private static function getAllBpmnCollectionFrom($class, $changeCase = false)
+    {
+        $data = array();
+
+        $c = new \Criteria('workflow');
+        //$c->add($field, $value);
+
+        $classPeer = 'Bpmn' . $class . 'Peer';
+        $rs = $classPeer::doSelectRS($c);
+
+        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        while ($rs->next()) {
+            $data[] = $changeCase ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
+        }
+
+        return $data;
     }
 
     private static function getBpmnCollectionBy($class, $field, $value, $changeCase = false)
