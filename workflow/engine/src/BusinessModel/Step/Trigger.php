@@ -4,10 +4,10 @@ namespace BusinessModel\Step;
 class Trigger
 {
     /**
-     * Assign Trigger to an Step
+     * Assign Trigger to a Step
      *
-     * @param string $stepUid    Unique id of the Step
-     * @param string $triggerUid Unique id of the Trigger
+     * @param string $stepUid    Unique id of Step
+     * @param string $triggerUid Unique id of Trigger
      * @param string $type       Type (BEFORE, AFTER)
      * @param array  $arrayData  Data
      *
@@ -38,10 +38,10 @@ class Trigger
     }
 
     /**
-     * Update Trigger of an Step
+     * Update Trigger of a Step
      *
-     * @param string $stepUid    Unique id of the Step
-     * @param string $triggerUid Unique id of the Trigger
+     * @param string $stepUid    Unique id of Step
+     * @param string $triggerUid Unique id of Trigger
      * @param string $type       Type (BEFORE, AFTER)
      * @param array  $arrayData  Data
      *
@@ -81,10 +81,10 @@ class Trigger
     }
 
     /**
-     * Delete Trigger of an Step
+     * Delete Trigger of a Step
      *
-     * @param string $stepUid    Unique id of the Step
-     * @param string $triggerUid Unique id of the Trigger
+     * @param string $stepUid    Unique id of Step
+     * @param string $triggerUid Unique id of Trigger
      * @param string $type       Type (BEFORE, AFTER)
      *
      * return void
