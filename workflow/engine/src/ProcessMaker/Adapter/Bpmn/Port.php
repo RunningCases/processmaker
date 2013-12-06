@@ -33,9 +33,16 @@ class Port
                 'TAS_DESCRIPTION' => $activity['act_name'],
                 'TAS_POSX' => $activity['bou_x'],
                 'TAS_POSY' => $activity['bou_y'],
-                'TAS_START' => $activity['act_uid']
+                'TAS_START' => ''
             );
         }
+
+        $process['routes'][] = array(
+            'ROU_UID' => '',
+            'TAS_UID' => '',
+            'ROU_NEXT_TASK' => '',
+            'ROU_TYPE' => ''
+        );
 
     }
 }
