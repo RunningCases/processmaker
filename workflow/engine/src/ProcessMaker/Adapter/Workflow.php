@@ -4,14 +4,14 @@ namespace ProcessMaker\Adapter\Bpmn;
 use \Process;
 
 /**
- * Class Port
+ * Class Workflow
  *
- * @package ProcessMaker\Adapter\Bpmn
+ * @package ProcessMaker\Adapter
  * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
  */
-class Port
+class Workflow
 {
-    public function convertBpmnProjectToPmWorkflow($bpmnProject)
+    public function loadFromBpmnProject($bpmnProject)
     {
         $proUid = $bpmnProject['prj_uid'];
 
@@ -33,7 +33,7 @@ class Port
                 'TAS_DESCRIPTION' => $activity['act_name'],
                 'TAS_POSX' => $activity['bou_x'],
                 'TAS_POSY' => $activity['bou_y'],
-                'TAS_START' => ''
+                'TAS_START' => self::activityIsStartTask($activity['act_uid'])
             );
         }
 
@@ -43,6 +43,11 @@ class Port
             'ROU_NEXT_TASK' => '',
             'ROU_TYPE' => ''
         );
+
+    }
+
+    private static function activityIsStartTask($actUid)
+    {
 
     }
 }

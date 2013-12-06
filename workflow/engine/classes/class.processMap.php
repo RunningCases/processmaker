@@ -88,7 +88,8 @@ class processMap
             $oProcess = new Process();
 
             $aRow = $oProcess->load($sProcessUID);
-            $oPM->title = new stdclass();
+            $oPM = new StdClass();
+            $oPM->title = new StdClass();
             $oPM->title->label = htmlentities($aRow['PRO_TITLE'], ENT_QUOTES, 'UTF-8');
             $oPM->title->position = new stdclass();
             $oPM->title->position->x = $aRow['PRO_TITLE_X'];
@@ -114,7 +115,7 @@ class processMap
             $oDataset->next();
 
             while ($aRow1 = $oDataset->getRow()) {
-                $oTask = null;
+                $oTask = new StdClass();
                 $oTask->uid = $aRow1['TAS_UID'];
                 $oTask->task_type = $aRow1['TAS_TYPE'];
                 if ($aRow1['TAS_TYPE'] == 'NORMAL') {
@@ -152,9 +153,10 @@ class processMap
                     }
                 }
                 $oTask->taskINI = (strtolower($aRow1['TAS_START']) == 'true' ? true : false);
+                $oTask->position = new StdClass();
                 $oTask->position->x = (int) $aRow1['TAS_POSX'];
                 $oTask->position->y = (int) $aRow1['TAS_POSY'];
-                $oTask->derivation = null;
+                $oTask->derivation = new StdClass();
                 $oTask->derivation->to = array();
                 $oCriteria = new Criteria('workflow');
                 $oCriteria->add(RoutePeer::PRO_UID, $sProcessUID);
@@ -186,7 +188,7 @@ class processMap
                             $aRow2['ROU_TYPE'] = 8;
                             break;
                     }
-                    $oTo = null;
+                    $oTo = new StdClass();
                     $oTo->task = $aRow2['ROU_NEXT_TASK'];
                     $oTo->condition = $aRow2['ROU_CONDITION'];
                     $oTo->executant = $aRow2['ROU_TO_LAST_USER'];

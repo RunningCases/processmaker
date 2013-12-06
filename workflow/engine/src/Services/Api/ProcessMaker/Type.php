@@ -106,7 +106,8 @@ class Type
     /**
      * Custom class parameter
      *
-     * @param Author $author
+     * @param array $definition
+     * @param StructProperties $properties
      *
      * @return Author
      */
