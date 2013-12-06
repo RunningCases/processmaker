@@ -546,15 +546,18 @@ class Task
 
     /**
      * Return a assignee list of an activity
-     *     
+     *
      * @param string $sProcessUID
      * @param string $sTaskUID
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
      *
      * return array
      *
      * @access public
      */
-    public function getTaskAssignees($sProcessUID, $sTaskUID)
+    public function getTaskAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
             $aUsers = array();
@@ -566,7 +569,6 @@ class Task
             $oCriteria->addSelectColumn(\TaskUserPeer::TU_TYPE);
             $oCriteria->addSelectColumn(\TaskUserPeer::TU_RELATION);
             $oCriteria->addAlias('C', 'CONTENT');
-
             $aConditions = array();
             $aConditions[] = array(\TaskUserPeer::USR_UID, 'C.CON_ID' );
             $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'GRP_TITLE' . $sDelimiter );
@@ -596,8 +598,8 @@ class Task
                 }
                 $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
                                   'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $aRow['GRP_TITLE'] .
-                                  ' (' . $aRow2['MEMBERS_NUMBER'] .
-                                  ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
+                                  ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                  ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
                                   ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                   'aas_lastname' => "",
                                   'aas_username' => "",
@@ -639,13 +641,15 @@ class Task
      *
      * @param string $sProcessUID
      * @param string $sTaskUID
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
      *
      * return array
      *
      * @access public
      */
-
-    public function getTaskAvailableAssignee($sProcessUID, $sTaskUID)
+    public function getTaskAvailableAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
             $iType = 1;
@@ -681,9 +685,9 @@ class Task
                     $aRow2 = $oDataset2->getRow();
                     $aUsers[] = array('aas_uid' => $results['GRP_UID'],
                                       'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] .
-                                           ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
-                                           ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
+                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                       'aas_lastname' => "",
                                       'aas_username' => "",
                                       'aas_type' => "group" );
@@ -717,7 +721,7 @@ class Task
 
     /**
      * Return a single user or group assigned to an activity
-     *     
+     *
      * @param string $sProcessUID
      * @param string $sTaskUID
      * @param string $sAssigneeUID
@@ -739,7 +743,6 @@ class Task
             $oCriteria->addSelectColumn(\TaskUserPeer::TU_TYPE);
             $oCriteria->addSelectColumn(\TaskUserPeer::TU_RELATION);
             $oCriteria->addAlias('C', 'CONTENT');
-
             $aConditions = array();
             $aConditions[] = array(\TaskUserPeer::USR_UID, 'C.CON_ID' );
             $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'GRP_TITLE' . $sDelimiter );
@@ -770,8 +773,8 @@ class Task
                 }
                 $aUsers = array('aas_uid' => $aRow['USR_UID'],
                                 'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $aRow['GRP_TITLE'] .
-                                ' (' . $aRow2['MEMBERS_NUMBER'] .
-                                ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
+                                ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
                                 ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                 'aas_lastname' => "",
                                 'aas_username' => "",
@@ -811,35 +814,35 @@ class Task
 
     /**
      * Assign a user or group to an activity
-     *     
+     *
      * @param string $sProcessUID
      * @param string $sTaskUID
      * @param string $sAssigneeUID
-     * @param int $sRelation
+     * @param string $assType {@choice user,group}
      *
      * return array
      *
      * @access public
      */
-    public function postTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID, $sRelation)
+    public function addTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID, $assType)
     {
         try {
             $iType = 1;
             $oTaskUser = new \TaskUser();
-            if ($sRelation == 1) {
+            if ($assType == "user") {
                 $oTaskUser->create(array('TAS_UID' => $sTaskUID,
-                                   'USR_UID' => $sAssigneeUID, 
-                                   'TU_TYPE' => $iType, 
-                                   'TU_RELATION' => $sRelation));
+                                   'USR_UID' => $sAssigneeUID,
+                                   'TU_TYPE' => $iType,
+                                   'TU_RELATION' => 1));
                 return array('aas_uid' => $sAssigneeUID, 
-                             'aas_type' => "user");
+                             'aas_type' => $assType);
             } else {
                 $oTaskUser->create(array('TAS_UID' => $sTaskUID,
-                                   'USR_UID' => $sAssigneeUID, 
-                                   'TU_TYPE' => $iType, 
-                                   'TU_RELATION' => $sRelation));
-                return array('aas_uid' => $sAssigneeUID, 
-                             'aas_type' => "group");
+                                   'USR_UID' => $sAssigneeUID,
+                                   'TU_TYPE' => $iType,
+                                   'TU_RELATION' => 2));
+                return array('aas_uid' => $sAssigneeUID,
+                             'aas_type' => $assType);
             }
         } catch (Exception $e) {
             throw $e;
@@ -848,26 +851,34 @@ class Task
 
     /**
      * Remove a assignee of an activity
-     *     
+     *
      * @param string $sProcessUID
      * @param string $sTaskUID
      * @param string $sAssigneeUID
-     * @param int $sRelation
      *
      * @access public
      */
-    public function deleteTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID, $sRelation)
-    {
+    public function removeTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
+    {   
         try {
             $iType = 1;
-            $oTaskUser = new \TaskUser();
-
-            if ($sRelation == 1) {
-                $oTaskUser->remove($sTaskUID, $sAssigneeUID, $iType, $sRelation);       
-            } else {
-                $oTaskUser->remove($sTaskUID, $sAssigneeUID, $iType, $sRelation);
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
+            $oCriteria->add(\TaskUserPeer::USR_UID, $sAssigneeUID);
+            $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID);
+            $oCriteria->add(\TaskUserPeer::TU_TYPE, $iType);
+            $oTaskUser = \TaskUserPeer::doSelectRS($oCriteria);
+            $oTaskUser->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            while ($oTaskUser->next()) {
+                $aRow = $oTaskUser->getRow();
+                $iRelation = $aRow['TU_RELATION'];
             }
-
+            $oTaskUser = \TaskUserPeer::retrieveByPK($sTaskUID, $sAssigneeUID, $iType, $iRelation);
+            if (! is_null( $oTaskUser )) {
+                \TaskUserPeer::doDelete($oCriteria);
+            } else {
+                throw (new \Exception( 'This row does not exist!' ));
+            }
         } catch (Exception $e) {
             throw $e;
         }
@@ -875,7 +886,7 @@ class Task
 
     /**
      * Return a adhoc assignee list of an activity
-     *     
+     *
      * @param string $sProcessUID
      * @param string $sTaskUID
      *
@@ -895,7 +906,6 @@ class Task
             $oCriteria->addSelectColumn(\TaskUserPeer::TU_TYPE);
             $oCriteria->addSelectColumn(\TaskUserPeer::TU_RELATION);
             $oCriteria->addAlias('C', 'CONTENT');
-
             $aConditions = array();
             $aConditions[] = array(\TaskUserPeer::USR_UID, 'C.CON_ID' );
             $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'GRP_TITLE' . $sDelimiter );
@@ -925,8 +935,8 @@ class Task
                 }
                 $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
                                   'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $aRow['GRP_TITLE'] .
-                                  ' (' . $aRow2['MEMBERS_NUMBER'] .
-                                  ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
+                                  ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                  ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
                                   ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                   'aas_lastname' => "",
                                   'aas_username' => "",
@@ -973,7 +983,6 @@ class Task
      *
      * @access public
      */
-
     public function getTaskAvailableAdhocAssignee($sProcessUID, $sTaskUID)
     {
         try {
@@ -1010,9 +1019,9 @@ class Task
                     $aRow2 = $oDataset2->getRow();
                     $aUsers[] = array('aas_uid' => $results['GRP_UID'],
                                       'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] .
-                                           ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
-                                           ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                      ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
+                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                       'aas_lastname' => "",
                                       'aas_username' => "",
                                       'aas_type' => "group" );
@@ -1068,7 +1077,6 @@ class Task
             $oCriteria->addSelectColumn(\TaskUserPeer::TU_TYPE);
             $oCriteria->addSelectColumn(\TaskUserPeer::TU_RELATION);
             $oCriteria->addAlias('C', 'CONTENT');
-
             $aConditions = array();
             $aConditions[] = array(\TaskUserPeer::USR_UID, 'C.CON_ID' );
             $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'GRP_TITLE' . $sDelimiter );
@@ -1099,8 +1107,8 @@ class Task
                 }
                 $aUsers = array('aas_uid' => $aRow['USR_UID'],
                                 'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $aRow['GRP_TITLE'] .
-                                ' (' . $aRow2['MEMBERS_NUMBER'] .
-                                ' ' . ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
+                                ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
                                 ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                 'aas_lastname' => "",
                                 'aas_username' => "",
@@ -1138,38 +1146,37 @@ class Task
         }
     }
 
-
     /**
      * Assign a Adhoc user or group to an activity
-     *     
+     *
      * @param string $sProcessUID
      * @param string $sTaskUID
      * @param string $sAssigneeUID
-     * @param int $sRelation
+     * @param string $assType
      *
      * return array
      *
      * @access public
      */
-    public function postTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID, $sRelation)
+    public function addTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID, $assType)
     {
         try {
             $iType = 2;
             $oTaskUser = new \TaskUser();
-            if ($sRelation == 1) {
+            if ($assType == "user") {
                 $oTaskUser->create(array('TAS_UID' => $sTaskUID,
                                    'USR_UID' => $sAssigneeUID,
                                    'TU_TYPE' => $iType,
-                                   'TU_RELATION' => $sRelation));
-                return array('aas_uid' => $sAssigneeUID, 
-                             'aas_type' => "user");
+                                   'TU_RELATION' => 1));
+                return array('aas_uid' => $sAssigneeUID,
+                             'aas_type' => $assType);
             } else {
                 $oTaskUser->create(array('TAS_UID' => $sTaskUID,
                                    'USR_UID' => $sAssigneeUID,
                                    'TU_TYPE' => $iType,
-                                   'TU_RELATION' => $sRelation));
-                return array('aas_uid' => $sAssigneeUID, 
-                             'aas_type' => "group");
+                                   'TU_RELATION' => 2));
+                return array('aas_uid' => $sAssigneeUID,
+                             'aas_type' => $assType);
             }
         } catch (Exception $e) {
             throw $e;
@@ -1178,30 +1185,36 @@ class Task
 
     /**
      * Remove a Adhoc assignee of an activity
-     *     
+     *
      * @param string $sProcessUID
      * @param string $sTaskUID
      * @param string $sAssigneeUID
-     * @param int $sRelation
      *
      * @access public
      */
-    public function deleteTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID, $sRelation)
+    public function removeTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
     {
         try {
             $iType = 2;
-            $oTaskUser = new \TaskUser();
-
-            if ($sRelation == 1) {
-                $oTaskUser->remove($sTaskUID, $sAssigneeUID, $iType, $sRelation);
-            } else {
-                $oTaskUser->remove($sTaskUID, $sAssigneeUID, $iType, $sRelation);
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
+            $oCriteria->add(\TaskUserPeer::USR_UID, $sAssigneeUID);
+            $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID);
+            $oCriteria->add(\TaskUserPeer::TU_TYPE, $iType);
+            $oTaskUser = \TaskUserPeer::doSelectRS($oCriteria);
+            $oTaskUser->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            while ($oTaskUser->next()) {
+                $aRow = $oTaskUser->getRow();
+                $iRelation = $aRow['TU_RELATION'];
             }
-
+            $oTaskUser = \TaskUserPeer::retrieveByPK($sTaskUID, $sAssigneeUID, $iType, $iRelation);
+            if (! is_null( $oTaskUser )) {
+                \TaskUserPeer::doDelete($oCriteria);
+            } else {
+                throw (new \Exception( 'This row does not exist!' ));
+            }
         } catch (Exception $e) {
             throw $e;
         }
-    }
-
+   }
 }
-
