@@ -82,16 +82,16 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
     protected $evn_cancel_activity = 0;
 
     /**
-     * The value for the evn_activity ref field.
+     * The value for the evn_activity_ref field.
      * @var        string
      */
-    protected $evn_activity ref = '';
+    protected $evn_activity_ref = '';
 
     /**
-     * The value for the evn_wait_for completion field.
+     * The value for the evn_wait_for_completion field.
      * @var        int
      */
-    protected $evn_wait_for completion = 1;
+    protected $evn_wait_for_completion = 1;
 
     /**
      * The value for the evn_error_name field.
@@ -289,25 +289,25 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [evn_activity ref] column value.
+     * Get the [evn_activity_ref] column value.
      * 
      * @return     string
      */
-    public function getEvnActivity ref()
+    public function getEvnActivityRef()
     {
 
-        return $this->evn_activity ref;
+        return $this->evn_activity_ref;
     }
 
     /**
-     * Get the [evn_wait_for completion] column value.
+     * Get the [evn_wait_for_completion] column value.
      * 
      * @return     int
      */
-    public function getEvnWaitFor completion()
+    public function getEvnWaitForCompletion()
     {
 
-        return $this->evn_wait_for completion;
+        return $this->evn_wait_for_completion;
     }
 
     /**
@@ -649,12 +649,12 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
     } // setEvnCancelActivity()
 
     /**
-     * Set the value of [evn_activity ref] column.
+     * Set the value of [evn_activity_ref] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setEvnActivity ref($v)
+    public function setEvnActivityRef($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -663,20 +663,20 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->evn_activity ref !== $v || $v === '') {
-            $this->evn_activity ref = $v;
-            $this->modifiedColumns[] = BpmnEventPeer::EVN_ACTIVITY REF;
+        if ($this->evn_activity_ref !== $v || $v === '') {
+            $this->evn_activity_ref = $v;
+            $this->modifiedColumns[] = BpmnEventPeer::EVN_ACTIVITY_REF;
         }
 
-    } // setEvnActivity ref()
+    } // setEvnActivityRef()
 
     /**
-     * Set the value of [evn_wait_for completion] column.
+     * Set the value of [evn_wait_for_completion] column.
      * 
      * @param      int $v new value
      * @return     void
      */
-    public function setEvnWaitFor completion($v)
+    public function setEvnWaitForCompletion($v)
     {
 
         // Since the native PHP type for this column is integer,
@@ -685,12 +685,12 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
             $v = (int) $v;
         }
 
-        if ($this->evn_wait_for completion !== $v || $v === 1) {
-            $this->evn_wait_for completion = $v;
-            $this->modifiedColumns[] = BpmnEventPeer::EVN_WAIT_FOR COMPLETION;
+        if ($this->evn_wait_for_completion !== $v || $v === 1) {
+            $this->evn_wait_for_completion = $v;
+            $this->modifiedColumns[] = BpmnEventPeer::EVN_WAIT_FOR_COMPLETION;
         }
 
-    } // setEvnWaitFor completion()
+    } // setEvnWaitForCompletion()
 
     /**
      * Set the value of [evn_error_name] column.
@@ -991,9 +991,9 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
 
             $this->evn_cancel_activity = $rs->getInt($startcol + 8);
 
-            $this->evn_activity ref = $rs->getString($startcol + 9);
+            $this->evn_activity_ref = $rs->getString($startcol + 9);
 
-            $this->evn_wait_for completion = $rs->getInt($startcol + 10);
+            $this->evn_wait_for_completion = $rs->getInt($startcol + 10);
 
             $this->evn_error_name = $rs->getString($startcol + 11);
 
@@ -1294,10 +1294,10 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
                 return $this->getEvnCancelActivity();
                 break;
             case 9:
-                return $this->getEvnActivity ref();
+                return $this->getEvnActivityRef();
                 break;
             case 10:
-                return $this->getEvnWaitFor completion();
+                return $this->getEvnWaitForCompletion();
                 break;
             case 11:
                 return $this->getEvnErrorName();
@@ -1364,8 +1364,8 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
             $keys[6] => $this->getEvnIsInterrupting(),
             $keys[7] => $this->getEvnAttachedTo(),
             $keys[8] => $this->getEvnCancelActivity(),
-            $keys[9] => $this->getEvnActivity ref(),
-            $keys[10] => $this->getEvnWaitFor completion(),
+            $keys[9] => $this->getEvnActivityRef(),
+            $keys[10] => $this->getEvnWaitForCompletion(),
             $keys[11] => $this->getEvnErrorName(),
             $keys[12] => $this->getEvnErrorCode(),
             $keys[13] => $this->getEvnEscalationName(),
@@ -1437,10 +1437,10 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
                 $this->setEvnCancelActivity($value);
                 break;
             case 9:
-                $this->setEvnActivity ref($value);
+                $this->setEvnActivityRef($value);
                 break;
             case 10:
-                $this->setEvnWaitFor completion($value);
+                $this->setEvnWaitForCompletion($value);
                 break;
             case 11:
                 $this->setEvnErrorName($value);
@@ -1538,11 +1538,11 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[9], $arr)) {
-            $this->setEvnActivity ref($arr[$keys[9]]);
+            $this->setEvnActivityRef($arr[$keys[9]]);
         }
 
         if (array_key_exists($keys[10], $arr)) {
-            $this->setEvnWaitFor completion($arr[$keys[10]]);
+            $this->setEvnWaitForCompletion($arr[$keys[10]]);
         }
 
         if (array_key_exists($keys[11], $arr)) {
@@ -1640,12 +1640,12 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
             $criteria->add(BpmnEventPeer::EVN_CANCEL_ACTIVITY, $this->evn_cancel_activity);
         }
 
-        if ($this->isColumnModified(BpmnEventPeer::EVN_ACTIVITY REF)) {
-            $criteria->add(BpmnEventPeer::EVN_ACTIVITY REF, $this->evn_activity ref);
+        if ($this->isColumnModified(BpmnEventPeer::EVN_ACTIVITY_REF)) {
+            $criteria->add(BpmnEventPeer::EVN_ACTIVITY_REF, $this->evn_activity_ref);
         }
 
-        if ($this->isColumnModified(BpmnEventPeer::EVN_WAIT_FOR COMPLETION)) {
-            $criteria->add(BpmnEventPeer::EVN_WAIT_FOR COMPLETION, $this->evn_wait_for completion);
+        if ($this->isColumnModified(BpmnEventPeer::EVN_WAIT_FOR_COMPLETION)) {
+            $criteria->add(BpmnEventPeer::EVN_WAIT_FOR_COMPLETION, $this->evn_wait_for_completion);
         }
 
         if ($this->isColumnModified(BpmnEventPeer::EVN_ERROR_NAME)) {
@@ -1771,9 +1771,9 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
 
         $copyObj->setEvnCancelActivity($this->evn_cancel_activity);
 
-        $copyObj->setEvnActivity ref($this->evn_activity ref);
+        $copyObj->setEvnActivityRef($this->evn_activity_ref);
 
-        $copyObj->setEvnWaitFor completion($this->evn_wait_for completion);
+        $copyObj->setEvnWaitForCompletion($this->evn_wait_for_completion);
 
         $copyObj->setEvnErrorName($this->evn_error_name);
 
