@@ -169,6 +169,9 @@ class ActivityPropertiesStructure
      */
     public $tas_group_variable;
 
+    /**
+     * @var string {@from body}
+     */
     public $tas_selfservice_time;
 
     /**
@@ -201,6 +204,9 @@ class ActivityPropertiesStructure
      */
     public $tas_timeunit;
 
+    /**
+     * @var string {@from body} {@choice 1,,2}
+     */
     public $tas_type_day;
 
     /**
