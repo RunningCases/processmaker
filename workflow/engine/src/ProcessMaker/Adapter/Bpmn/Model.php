@@ -280,6 +280,30 @@ class Model
         $flows = self::getBpmnCollectionBy('Flow', FlowPeer::PRJ_UID, $prjUid, true);
         $artifacts = self::getBpmnCollectionBy('Artifact', ArtifactPeer::PRJ_UID, $prjUid, true);
 
+        // getting activity bound data
+        foreach ($activities as $i => $activity) {
+            $activities[$i] = array_merge(
+                $activities[$i],
+                self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $activity['act_uid'], true)
+            );
+        }
+
+        // getting event bound data
+        foreach ($events as $i => $event) {
+            $events[$i] = array_merge(
+                $events[$i],
+                self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $event['evn_uid'], true)
+            );
+        }
+
+        // getting gateway bound data
+        foreach ($gateways as $i => $gateway) {
+            $gateways[$i] = array_merge(
+                $gateways[$i],
+                self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $gateway['gat_uid'], true)
+            );
+        }
+
         $project = array_change_key_case($project);
         $project['diagrams'] = array($diagram);
         $project['diagrams'][0]['lanesets'] = $lanesets;
