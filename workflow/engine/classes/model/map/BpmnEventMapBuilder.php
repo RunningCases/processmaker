@@ -83,9 +83,9 @@ class BpmnEventMapBuilder
 
         $tMap->addColumn('EVN_CANCEL_ACTIVITY', 'EvnCancelActivity', 'int', CreoleTypes::TINYINT, false, null);
 
-        $tMap->addColumn('EVN_ACTIVITY REF', 'EvnActivity ref', 'string', CreoleTypes::VARCHAR, false, 32);
+        $tMap->addColumn('EVN_ACTIVITY_REF', 'EvnActivityRef', 'string', CreoleTypes::VARCHAR, false, 32);
 
-        $tMap->addColumn('EVN_WAIT_FOR COMPLETION', 'EvnWaitFor completion', 'int', CreoleTypes::TINYINT, false, null);
+        $tMap->addColumn('EVN_WAIT_FOR_COMPLETION', 'EvnWaitForCompletion', 'int', CreoleTypes::TINYINT, false, null);
 
         $tMap->addColumn('EVN_ERROR_NAME', 'EvnErrorName', 'string', CreoleTypes::VARCHAR, false, 255);
 
