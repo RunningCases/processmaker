@@ -4,7 +4,7 @@ namespace BusinessModel;
 class Step
 {
     /**
-     * Create Step of an Task
+     * Create Step for a Task
      *
      * @param string $taskUid
      * @param string $processUid
@@ -32,7 +32,7 @@ class Step
     }
 
     /**
-     * Update Step of an Task
+     * Update Step of a Task
      *
      * @param string $stepUid
      * @param array  $arrayData
@@ -75,7 +75,7 @@ class Step
     }
 
     /**
-     * Delete Step of an Task
+     * Delete Step of a Task
      *
      * @param string $stepUid
      *
@@ -109,9 +109,9 @@ class Step
     }
 
     /**
-     * Get data of an Step
+     * Get data of a Step
      *
-     * @param string $stepUid Unique id of the Step
+     * @param string $stepUid Unique id of Step
      *
      * return array
      */
@@ -199,9 +199,9 @@ class Step
     }
 
     /**
-     * Get data of unique ids of an Step (Unique id of Task and Process)
+     * Get data of unique ids of a Step (Unique id of Task and Process)
      *
-     * @param string $stepUid Unique id of the Step
+     * @param string $stepUid Unique id of Step
      *
      * return array
      */
@@ -226,9 +226,9 @@ class Step
     }
 
     /**
-     * Get available triggers for an Step
+     * Get available triggers of a Step
      *
-     * @param string $stepUid Unique id of the Step
+     * @param string $stepUid Unique id of Step
      * @param string $type    Type (BEFORE, AFTER)
      *
      * return array
@@ -292,9 +292,9 @@ class Step
     }
 
     /**
-     * Get all triggers of an Step
+     * Get all triggers of a Step
      *
-     * @param string $stepUid Unique id of the Step
+     * @param string $stepUid Unique id of Step
      *
      * return array
      */

@@ -248,9 +248,9 @@ class Task
     }
 
     /**
-     * Get data of unique ids of an Task (Unique id of Process)
+     * Get data of unique ids of a Task (Unique id of Process)
      *
-     * @param string $taskUid Unique id of the Task
+     * @param string $taskUid Unique id of Task
      *
      * return array
      */
@@ -274,9 +274,9 @@ class Task
     }
 
     /**
-     * Get available steps of an Task
+     * Get available steps of a Task
      *
-     * @param string $taskUid
+     * @param string $taskUid Unique id of Task
      *
      * return array
      */
@@ -490,9 +490,9 @@ class Task
     }
 
     /**
-     * Get all steps of an Task
+     * Get all steps of a Task
      *
-     * @param string $taskUid Unique id of the Task
+     * @param string $taskUid Unique id of Task
      *
      * return array
      */

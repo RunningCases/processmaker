@@ -44,9 +44,9 @@ class Trigger
     }
 
     /**
-     * Get data of an Trigger
+     * Get data of a Trigger
      *
-     * @param string $triggerUid Unique id of the Trigger
+     * @param string $triggerUid Unique id of Trigger
      *
      * return array
      */
