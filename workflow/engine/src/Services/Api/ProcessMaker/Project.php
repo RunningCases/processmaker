@@ -29,8 +29,12 @@ class Project extends Api
 
     function get($prjUid)
     {
-        $project = BpmnModel::loadProject($prjUid);
+        try {
+            $project = BpmnModel::loadProject($prjUid);
 
-        return $project;
+            return $project;
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
     }
 }
