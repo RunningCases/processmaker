@@ -63,11 +63,17 @@ class Server implements iAuthenticate
         $this->server->setScopeUtil($scope);
     }
 
-    public static function setDatabaseSource($user, $password, $dsn)
+    public static function setDatabaseSource($user, $password = '', $dsn = '')
     {
-        self::$dbUser = $user;
-        self::$dbPassword = $password;
-        self::$dsn = $dsn;
+        if (is_array($user)) {
+            self::$dbUser = $user['username'];
+            self::$dbPassword = $user['password'];
+            self::$dsn = $user['dsn'];
+        } else {
+            self::$dbUser = $user;
+            self::$dbPassword = $password;
+            self::$dsn = $dsn;
+        }
     }
 
     /**
@@ -223,5 +229,10 @@ class Server implements iAuthenticate
     public function getUserId()
     {
         return self::$userId;
+    }
+
+    public function getScope()
+    {
+        return array_keys($this->scope);
     }
 }

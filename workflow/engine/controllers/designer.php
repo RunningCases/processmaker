@@ -9,6 +9,8 @@
 
 class Designer extends Controller
 {
+    protected $clientId = 'x-pm-local-client';
+
     public function __construct ()
     {
 
@@ -22,11 +24,50 @@ class Designer extends Controller
     public function index($httpData)
     {
         $proUid = isset($httpData->pro_uid) ? $httpData->pro_uid : '';
+        $client = $this->getClientCredentials();
+        $authCode = $this->getAuthorizationCode($client);
 
-        $this->setVar('pro_uid', $proUid);
+        $this->setVar('prj_uid', $proUid);
+        $this->setVar('client_id', $client['CLIENT_ID']);
+        $this->setVar('secret', $client['CLIENT_SECRET']);
+        $this->setVar('authorization_code', $authCode);
         $this->setView('designer/index');
-
         $this->render();
+    }
+
+    protected function getClientCredentials()
+    {
+        $oauthQuery = new Services\Api\OAuth2\PmPdo($this->getDsn());
+        return $oauthQuery->getClientDetails($this->clientId);
+    }
+
+    protected function getAuthorizationCode($client)
+    {
+        \Services\Api\OAuth2\Server::setDatabaseSource($this->getDsn());
+        \Services\Api\OAuth2\Server::setPmClientId($client['CLIENT_ID']);
+
+        $oauthServer = new \Services\Api\OAuth2\Server();
+        $userId = $_SESSION['USER_LOGGED'];
+        $authorize = true;
+        $_GET = array_merge($_GET, array(
+            'response_type' => 'code',
+            'client_id' => $client['CLIENT_ID'],
+            'scope' => implode(' ', $oauthServer->getScope())
+        ));
+
+        $response = $oauthServer->postAuthorize($authorize, $userId, true);
+        $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=')+5, 40);
+
+        return $code;
+    }
+
+    private function getDsn()
+    {
+        list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
+        $port = empty($port) ? '' : ";port=$port";
+        $dsn = DB_ADAPTER.':host='.$host.';dbname='.DB_NAME.$port;
+
+        return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
     }
 }
 
