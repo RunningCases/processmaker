@@ -12,6 +12,9 @@ use \Luracast\Restler\RestException;
 class Activity extends Api
 {
     /**
+     * @param string $projectUid
+     * @param string $activityUid
+     * @param string $filter {@choice definition,,properties}
      * @url GET /:projectUid/activity/:activityUid
      */
     public function doGetProjectActivity($projectUid, $activityUid, $filter = '')
