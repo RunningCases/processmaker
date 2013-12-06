@@ -109,7 +109,7 @@ class Activity extends Api
         try {
             $task = new \BusinessModel\Task();
 
-            $response = $task->getAvailableSteps($activityUid, $projectUid);
+            $response = $task->getAvailableSteps($activityUid);
 
             return $response;
         } catch (\Exception $e) {

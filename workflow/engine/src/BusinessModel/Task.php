@@ -248,17 +248,46 @@ class Task
     }
 
     /**
-     * Get available steps of an Task
+     * Get data of unique ids of an Task (Unique id of Process)
      *
-     * @param string $taskUid
-     * @param string $processUid
+     * @param string $taskUid Unique id of the Task
      *
      * return array
      */
-    public function getAvailableSteps($taskUid, $processUid)
+    public function getDataUids($taskUid)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\TaskPeer::PRO_UID);
+            $criteria->add(\TaskPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+
+            $rsCriteria = \TaskPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $rsCriteria->next();
+
+            return $rsCriteria->getRow();
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get available steps of an Task
+     *
+     * @param string $taskUid
+     *
+     * return array
+     */
+    public function getAvailableSteps($taskUid)
     {
         try {
             $arrayAvailableStep = array();
+
+            $arrayDataUid = $this->getDataUids($taskUid);
+
+            $processUid = $arrayDataUid["PRO_UID"];
 
             //Get Uids
             $arrayUid = array();
