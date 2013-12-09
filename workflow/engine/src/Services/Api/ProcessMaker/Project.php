@@ -30,8 +30,14 @@ class Project extends Api
     {
         try {
             $bpmnModel = new BpmnModel();
+            $uids = $bpmnModel->createProject($request_data);
+            $wfProcess = \ProcessMaker\Adapter\Workflow::loadFromBpmnProject($request_data);
+            $process = new \BusinessModel\Process();
+            $userUid = $this->getUserId();
+            $data = array('process' => $wfProcess);
+            $process->createProcess($userUid, $data);
 
-            return $bpmnModel->createProject($request_data);
+            return $uids;
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
