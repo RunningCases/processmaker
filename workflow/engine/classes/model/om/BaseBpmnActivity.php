@@ -2104,33 +2104,30 @@ abstract class BaseBpmnActivity extends BaseObject implements Persistent
     {
         $criteria = new Criteria(BpmnActivityPeer::DATABASE_NAME);
 
+        $criteria->add(BpmnActivityPeer::ACT_UID, $this->act_uid);
 
         return $criteria;
     }
 
     /**
-     * Returns NULL since this table doesn't have a primary key.
-     * This method exists only for BC and is deprecated!
-     * @return     null
+     * Returns the primary key for this object (row).
+     * @return     string
      */
     public function getPrimaryKey()
     {
-        return null;
+        return $this->getActUid();
     }
 
     /**
-     * Dummy primary key setter.
+     * Generic method to set the primary key (act_uid column).
      *
-     * This function only exists to preserve backwards compatibility.  It is no longer
-     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
-     * release of Propel.
-     *
-     * @deprecated
+     * @param      string $key Primary key.
+     * @return     void
      */
-     public function setPrimaryKey($pk)
-     {
-         // do nothing, because this object doesn't have any primary keys
-     }
+    public function setPrimaryKey($key)
+    {
+        $this->setActUid($key);
+    }
 
     /**
      * Sets contents of passed object to values from current object.
@@ -2144,8 +2141,6 @@ abstract class BaseBpmnActivity extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false)
     {
-
-        $copyObj->setActUid($this->act_uid);
 
         $copyObj->setPrjUid($this->prj_uid);
 
@@ -2207,6 +2202,8 @@ abstract class BaseBpmnActivity extends BaseObject implements Persistent
 
 
         $copyObj->setNew(true);
+
+        $copyObj->setActUid(''); // this is a pkey column, so set to default value
 
     }
 

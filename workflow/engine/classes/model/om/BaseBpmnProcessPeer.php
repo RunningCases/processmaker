@@ -201,8 +201,8 @@ abstract class BaseBpmnProcessPeer
 
     }
 
-    const COUNT = 'COUNT(*)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT *)';
+    const COUNT = 'COUNT(BPMN_PROCESS.PRO_UID)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT BPMN_PROCESS.PRO_UID)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -614,6 +614,9 @@ abstract class BaseBpmnProcessPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
+            $comparison = $criteria->getComparison(BpmnProcessPeer::PRO_UID);
+            $selectCriteria->add(BpmnProcessPeer::PRO_UID, $criteria->remove(BpmnProcessPeer::PRO_UID), $comparison);
+
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
@@ -671,22 +674,11 @@ abstract class BaseBpmnProcessPeer
             $criteria = clone $values; // rename for clarity
         } elseif ($values instanceof BpmnProcess) {
 
-            $criteria = $values->buildCriteria();
+            $criteria = $values->buildPkeyCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            // primary key is composite; we therefore, expect
-            // the primary key passed to be an array of pkey
-            // values
-            if (count($values) == count($values, COUNT_RECURSIVE)) {
-                // array is not multi-dimensional
-                $values = array($values);
-            }
-            $vals = array();
-            foreach ($values as $value) {
-
-            }
-
+            $criteria->add(BpmnProcessPeer::PRO_UID, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -743,6 +735,54 @@ abstract class BaseBpmnProcessPeer
         }
 
         return BasePeer::doValidate(BpmnProcessPeer::DATABASE_NAME, BpmnProcessPeer::TABLE_NAME, $columns);
+    }
+
+    /**
+     * Retrieve a single object by pkey.
+     *
+     * @param      mixed $pk the primary key.
+     * @param      Connection $con the connection to use
+     * @return     BpmnProcess
+     */
+    public static function retrieveByPK($pk, $con = null)
+    {
+        if ($con === null) {
+            $con = Propel::getConnection(self::DATABASE_NAME);
+        }
+
+        $criteria = new Criteria(BpmnProcessPeer::DATABASE_NAME);
+
+        $criteria->add(BpmnProcessPeer::PRO_UID, $pk);
+
+
+        $v = BpmnProcessPeer::doSelect($criteria, $con);
+
+        return !empty($v) > 0 ? $v[0] : null;
+    }
+
+    /**
+     * Retrieve multiple objects by pkey.
+     *
+     * @param      array $pks List of primary keys
+     * @param      Connection $con the connection to use
+     * @throws     PropelException Any exceptions caught during processing will be
+     *       rethrown wrapped into a PropelException.
+     */
+    public static function retrieveByPKs($pks, $con = null)
+    {
+        if ($con === null) {
+            $con = Propel::getConnection(self::DATABASE_NAME);
+        }
+
+        $objs = null;
+        if (empty($pks)) {
+            $objs = array();
+        } else {
+            $criteria = new Criteria();
+            $criteria->add(BpmnProcessPeer::PRO_UID, $pks, Criteria::IN);
+            $objs = BpmnProcessPeer::doSelect($criteria, $con);
+        }
+        return $objs;
     }
 }
 

@@ -28,9 +28,13 @@ class Designer extends Controller
         $authCode = $this->getAuthorizationCode($client);
 
         $this->setVar('prj_uid', $proUid);
-        $this->setVar('client_id', $client['CLIENT_ID']);
-        $this->setVar('secret', $client['CLIENT_SECRET']);
-        $this->setVar('authorization_code', $authCode);
+
+        $credentials = array();
+        $credentials['client_id'] = $client['CLIENT_ID'];
+        $credentials['secret'] = $client['CLIENT_SECRET'];
+        $credentials['authorization_code'] = $authCode;
+
+        $this->setVar('credentials', base64_encode(json_encode($credentials)));
         $this->setView('designer/index');
         $this->render();
     }

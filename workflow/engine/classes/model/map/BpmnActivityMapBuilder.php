@@ -65,7 +65,7 @@ class BpmnActivityMapBuilder
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addColumn('ACT_UID', 'ActUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('ACT_UID', 'ActUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addForeignKey('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, 'BPMN_PROJECT', 'PRJ_UID', true, 32);
 

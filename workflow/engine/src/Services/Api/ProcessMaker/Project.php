@@ -42,6 +42,8 @@ class Project extends Api
         try {
             $project = BpmnModel::loadProject($prjUid);
 
+            //$WorkflowProces = \ProcessMaker\Adapter\Workflow::loadFromBpmnProject($project);
+
             return $project;
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());

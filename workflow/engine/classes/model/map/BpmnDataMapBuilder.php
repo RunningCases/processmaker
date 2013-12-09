@@ -65,7 +65,7 @@ class BpmnDataMapBuilder
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addColumn('DAT_UID', 'DatUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('DAT_UID', 'DatUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addForeignKey('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, 'BPMN_PROJECT', 'PRJ_UID', true, 32);
 

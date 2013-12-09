@@ -65,7 +65,7 @@ class BpmnParticipantMapBuilder
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addColumn('PAR_UID', 'ParUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('PAR_UID', 'ParUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addForeignKey('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, 'BPMN_PROJECT', 'PRJ_UID', true, 32);
 

@@ -42,6 +42,7 @@ class Model
         $uids = array();
         $oldPrjUid = $data['PRJ_UID'];
         $diagrams = $data['DIAGRAMS'];
+        $mapId = array();
 
         unset($data['PRJ_UID']);
 
@@ -59,6 +60,7 @@ class Model
         $prjUid  = $project->getPrjUid();
         $prjName = $project->getPrjName();
         $uids[] = array('old_uid' => $oldPrjUid, 'new_uid' => $prjUid, 'object' => 'project');
+        $mapId['project'][$oldPrjUid] = $prjUid;
 
         // By now, is thought create only one diagram for each project (1:1)
         $diagramData = (array) $diagrams[0];
@@ -71,6 +73,7 @@ class Model
         $diagram->save();
         $diaUid = $diagram->getDiaUid();
         $uids[] = array('old_uid' => $oldDiaUid, 'new_uid' => $diaUid, 'object' => 'diagram');
+        $mapId['diagram'][$oldDiaUid] = $diaUid;
 
         $process = new Process();
         $process->setProUid(Hash::generateUID());
@@ -88,6 +91,7 @@ class Model
     private function createDiagram($prjUid, $proUid, $diaUid, $diagramData)
     {
         $uids = array();
+        $mapId = array();
 
         /*
          * 1. ensure that all related data of objects are defined, if not we define them as empty
@@ -115,20 +119,23 @@ class Model
             $oldLnsUid = $lanesetData['LNS_UID'];
 
             $uids[] = array('old_uid' => $oldLnsUid, 'new_uid' => $lnsUid, 'object' => 'laneset');
+            $mapId['laneset'][$oldLnsUid] = $lnsUid;
         }
 
         foreach($lanes as $laneData) {
             $laneData = array_change_key_case((array) $laneData, CASE_UPPER);
+            $oldLanUid = $laneData['LNS_UID'];
 
             $lane = new Lane();
             $lane->fromArray($laneData, BasePeer::TYPE_FIELDNAME);
             $lane->setLanUid(Hash::generateUID());
             $lane->setPrjUid($prjUid);
+            $lane->setLnsUid($mapId['laneset'][$oldLanUid]);
             $lane->save();
             $lanUid = $lane->getLanUid();
-            $oldLanUid = $laneData['LNS_UID'];
 
             $uids[] = array('old_uid' => $oldLanUid, 'new_uid' => $lanUid, 'object' => 'lane');
+            $mapId['lane'][$oldLanUid] = $lanUid;
         }
 
         /*
@@ -138,7 +145,6 @@ class Model
 
         foreach($activities as $activityData) {
             $activityData = array_change_key_case((array) $activityData, CASE_UPPER);
-
 
             $activity = new Activity();
             $activity->fromArray($activityData, BasePeer::TYPE_FIELDNAME);
@@ -150,7 +156,7 @@ class Model
             $actUid = $activity->getActUid();
             $oldActUid = $activityData['ACT_UID'];
             $uids[] = array('old_uid' => $oldActUid, 'new_uid' => $actUid, 'object' => 'activity');
-
+            $mapId['activity'][$oldActUid] = $actUid;
 
             $bound = new Bound();
             $bound->fromArray($activityData, BasePeer::TYPE_FIELDNAME);
@@ -158,7 +164,7 @@ class Model
             $bound->setPrjUid($prjUid);
             $bound->setDiaUid($diaUid);
             $bound->setElementUid($activity->getActUid());
-            $bound->setBouElementType(get_class($activity));
+            $bound->setBouElementType(str_replace('Bpmn', 'bpmn', get_class($activity)));
             $bound->setBouElement('pm_canvas');
             $bound->setBouContainer('bpmnDiagram');
             $bound->save();
@@ -177,6 +183,7 @@ class Model
             $evnUid = $event->getEvnUid();
             $oldEvnUid = $eventData['EVN_UID'];
             $uids[] = array('old_uid' => $oldEvnUid, 'new_uid' => $evnUid, 'object' => 'event');
+            $mapId['event'][$oldEvnUid] = $evnUid;
 
             $bound = new Bound();
             $bound->fromArray($eventData, BasePeer::TYPE_FIELDNAME);
@@ -184,7 +191,7 @@ class Model
             $bound->setPrjUid($prjUid);
             $bound->setDiaUid($diaUid);
             $bound->setElementUid($event->getEvnUid());
-            $bound->setBouElementType(get_class($event));
+            $bound->setBouElementType(str_replace('Bpmn', 'bpmn', get_class($activity)));
             $bound->setBouElement('pm_canvas');
             $bound->setBouContainer('bpmnDiagram');
             $bound->save();
@@ -203,6 +210,7 @@ class Model
             $gatUid = $gateway->getGatUid();
             $oldGatUid = $gatewayData['GAT_UID'];
             $uids[] = array('old_uid' => $oldGatUid, 'new_uid' => $gatUid, 'object' => 'gateway');
+            $mapId['gateway'][$oldGatUid] = $gatUid;
 
             $bound = new Bound();
             $bound->fromArray($gatewayData, BasePeer::TYPE_FIELDNAME);
@@ -210,7 +218,7 @@ class Model
             $bound->setPrjUid($prjUid);
             $bound->setDiaUid($diaUid);
             $bound->setElementUid($gateway->getGatUid());
-            $bound->setBouElementType(get_class($gateway));
+            $bound->setBouElementType(str_replace('Bpmn', 'bpmn', get_class($activity)));
             $bound->setBouElement('pm_canvas');
             $bound->setBouContainer('bpmnDiagram');
             $bound->save();
@@ -228,6 +236,31 @@ class Model
             $flow->setPrjUid($prjUid);
             $flow->setDiaUid($diaUid);
             $flow->setFloState($floState);
+
+            switch ($flow->getFloElementOriginType()) {
+                case 'bpmnEvent':
+                    $flow->setFloElementOrigin($mapId['event'][$flowData['FLO_ELEMENT_ORIGIN']]);
+                    break;
+                case 'bpmnGateway':
+                    $flow->setFloElementOrigin($mapId['gateway'][$flowData['FLO_ELEMENT_ORIGIN']]);
+                    break;
+                case 'bpmnActivity':
+                    $flow->setFloElementOrigin($mapId['activity'][$flowData['FLO_ELEMENT_ORIGIN']]);
+                    break;
+            }
+
+            switch ($flow->getFloElementDestType()) {
+                case 'bpmnEvent':
+                    $flow->setFloElementDest($mapId['event'][$flowData['FLO_ELEMENT_DEST']]);
+                    break;
+                case 'bpmnGateway':
+                    $flow->setFloElementDest($mapId['gateway'][$flowData['FLO_ELEMENT_DEST']]);
+                    break;
+                case 'bpmnActivity':
+                    $flow->setFloElementDest($mapId['activity'][$flowData['FLO_ELEMENT_DEST']]);
+                    break;
+            }
+
             $flow->save();
 
             $floUid = $flow->getFloUid();
@@ -329,9 +362,20 @@ class Model
         return $projects;
     }
 
+    public static function getRelatedFlows($actUid)
+    {
+        $flows = array(
+            'origin' => self::getBpmnCollectionBy('Flow', FlowPeer::FLO_ELEMENT_ORIGIN, $actUid, true),
+            'dest' => self::getBpmnCollectionBy('Flow', FlowPeer::FLO_ELEMENT_DEST, $actUid, true)
+        );
+
+        return $flows;
+    }
+
+
     /*** Private Functions ***/
 
-    private static function getAllBpmnCollectionFrom($class, $changeCase = false)
+    public static function getAllBpmnCollectionFrom($class, $changeCase = false)
     {
         $data = array();
 
@@ -350,7 +394,40 @@ class Model
         return $data;
     }
 
-    private static function getBpmnCollectionBy($class, $field, $value, $changeCase = false)
+    public static function select($select, $from, $where = '', $changeCase = false)
+    {
+        $data = array();
+
+        $c = new \Criteria('workflow');
+        if ($select != '*') {
+            if (is_array($select)) {
+                foreach ($select as $column) {
+                    $c->addSelectColumn($column);
+                }
+            } else {
+                $c->addSelectColumn($field);
+            }
+        }
+
+        if (! empty($where)) {
+            foreach ($where as $column => $value) {
+                $c->add($column, $value);
+            }
+        }
+
+        $classPeer = 'Bpmn' . $from . 'Peer';
+        $rs = $classPeer::doSelectRS($c);
+
+        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        while ($rs->next()) {
+            $data[] = $changeCase ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
+        }
+
+        return $data;
+    }
+
+    public static function getBpmnCollectionBy($class, $field, $value, $changeCase = false)
     {
         $data = array();
 
@@ -369,7 +446,7 @@ class Model
         return $data;
     }
 
-    private static function getBpmnObjectBy($class, $field, $value, $changeCase = false)
+    public static function getBpmnObjectBy($class, $field, $value, $changeCase = false)
     {
         $record = self::getBpmnCollectionBy($class, $field, $value, $changeCase);
 

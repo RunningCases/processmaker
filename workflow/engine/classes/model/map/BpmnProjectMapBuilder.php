@@ -65,7 +65,7 @@ class BpmnProjectMapBuilder
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addColumn('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addColumn('PRJ_NAME', 'PrjName', 'string', CreoleTypes::VARCHAR, true, 255);
 

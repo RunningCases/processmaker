@@ -65,7 +65,7 @@ class BpmnLanesetMapBuilder
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addColumn('LNS_UID', 'LnsUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('LNS_UID', 'LnsUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addForeignKey('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, 'BPMN_PROJECT', 'PRJ_UID', true, 32);
 
