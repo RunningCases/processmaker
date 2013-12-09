@@ -52,35 +52,31 @@ class Workflow
                 'TAS_DESCRIPTION' => $activity['act_name'],
                 'TAS_POSX' => $activity['bou_x'],
                 'TAS_POSY' => $activity['bou_y'],
-                'TAS_START' => (self::activityIsStartTask($activity['act_uid']) ? 'TRUE' : 'FALSE')
+                'TAS_START' => (self::activityIsStartTask($activity['act_uid']) ? 'TRUE' : 'FALSE'),
+                '_action' => 'CREATE'
             );
         }
 
-        foreach ($diagram['flows'] as $flow) {
+        $process['routes'] = array();
+
+        /*foreach ($diagram['flows'] as $flow) {
             $process['routes'][] = array(
                 'ROU_UID' => '',
                 'TAS_UID' => self::getTask($activity['act_uid']),
                 'ROU_NEXT_TASK' => self::getNextTask($activity['act_uid']),
                 'ROU_TYPE' => ''
             );
-        }
-
-
+        }*/
 
         return $process;
     }
 
-    private static getTask($activity['act_uid'])
+    private static function getTask($actUid)
     {
-
     }
 
-    private static getNextTask($activity['act_uid'])
+    private static function getNextTask($actUid)
     {
-
-
-
-
     }
 
     private static function activityIsStartTask($actUid)
