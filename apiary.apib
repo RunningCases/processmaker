@@ -150,629 +150,627 @@ POST /token
     "refresh_token": "9ed17b93a0731e218a3a85b52974afaf23838337"
 }
 
+
 --
 Project Resources
---
-
-Edit project attributes
-GET /project/{prj_uid}/
-< 200
-< Content-Type: application/json
-{
-    "prj_uid": "154619055527bbbbea27110004783861",
-    "prj_title": "Project #1",
-    "prj_description": "Project #1 Description",
-    "prj_calendar": "",
-    "prj_category": "",
-    "prj_summary_dynaform": "",
-    "prj_derivation_screen": "",
-    "prj_debug": "",
-    "prj_show_message": "",
-    "prj_subprocess": "",
-    "prj_tri_deleted": "",
-    "prj_tri_cancelled": "",
-    "prj_tri_paused": "",
-    "prj_tri_reasingned": ""
-}
-
---
-Project Diagram Resources
 The following is a section of resources related to ProcessMaker Process Definition
 --
 
-List project `diagrams`
-GET /project/{prj_uid}/diagrams
+Get a list of `projects`
+GET /projects
 < 200
 < Content-Type: application/json
 [
     {
-        "diag_uid": "a5242da840064218638061532405176",
-        "pro_uid": "8061532405176da5242da84006421863",
-        "laneset": [],
-        "lanes": [],
-        "activities":
+    "prj_uid" : "8061532405176da5242da84006421863",
+    "prj_name" : "Sample Project",
+    "prj_description" : "sample desc",
+    "diagrams":
         [
             {
-                "act_uid": "278251934525d8ebbfb8565093239226",
-                "act_name": "Task",
-                "act_type": "EMPTY",
-                "bou_x": 235,
-                "bou_y": 280,
-                "bou_width": 120,
-                "bou_height": 60,
-                "bou_container": "bpmnDiagram",
-                "bou_element_id": "pm_canvas"
-            },
-            {
-                "act_uid": "326395445525d8ec1fb8768023935580",
-                "act_name": "Task",
-                "act_type": "EMPTY",
-                "bou_x":611,
-                "bou_y":170,
-                "bou_width":120,
-                "bou_height":60,
-                "bou_container": "bpmnDiagram",
-                "bou_element_id": "pm_canvas"
-            },
-            {
-                "act_uid": "588707952525d8ec4fb88c2038077596",
-                "act_name": "Task",
-                "act_type": "EMPTY",
-                "bou_x":630,
-                "bou_y":404,
-                "bou_width":120,
-                "bou_height":60,
-                "bou_container": "bpmnDiagram",
-                "bou_element_id": "pm_canvas"
+                "diag_uid": "a5242da840064218638061532405176",
+                "laneset": [],
+                "lanes": [],
+                "activities":
+                    [
+                        {
+                            "act_uid": "278251934525d8ebbfb8565093239226",
+                            "act_name": "Task",
+                            "act_type": "EMPTY",
+                            "bou_x": 235,
+                            "bou_y": 280,
+                            "bou_width": 120,
+                            "bou_height": 60,
+                            "bou_container": "bpmnDiagram",
+                            "bou_element_id": "pm_canvas"
+                        },
+                        {
+                            "act_uid": "326395445525d8ec1fb8768023935580",
+                            "act_name": "Task",
+                            "act_type": "EMPTY",
+                            "bou_x":611,
+                            "bou_y":170,
+                            "bou_width":120,
+                            "bou_height":60,
+                            "bou_container": "bpmnDiagram",
+                            "bou_element_id": "pm_canvas"
+                        },
+                        {
+                            "act_uid": "588707952525d8ec4fb88c2038077596",
+                            "act_name": "Task",
+                            "act_type": "EMPTY",
+                            "bou_x":630,
+                            "bou_y":404,
+                            "bou_width":120,
+                            "bou_height":60,
+                            "bou_container": "bpmnDiagram",
+                            "bou_element_id": "pm_canvas"
+                        }
+                    ],
+                "events":
+                    [
+                        {
+                            "evn_uid": "960500897525d8eb8fb84b4013700338",
+                            "evn_name":null,
+                            "evn_type":"",
+                            "evn_marker":"",
+                            "evn_is_interrupting":true,
+                            "evn_attached_to":null,
+                            "evn_cancel_activity":false,
+                            "evn_activity_ref":null,
+                            "evn_wait_for_completion":false,
+                            "evn_error_name":null,
+                            "evn_error_code":null,
+                            "evn_escalation_name":null,
+                            "evn_escalation_code":null,
+                            "evn_condition":null,
+                            "evn_message":null,
+                            "evn_operation_name":null,
+                            "evn_operation_implementation_ref":null,
+                            "evn_time_date":null,
+                            "evn_time_cycle":null,
+                            "evn_time_duration":null,
+                            "evn_behavior":"",
+                            "bou_x":87,
+                            "bou_y":261,
+                            "bou_width":33,
+                            "bou_height":33,
+                            "bou_container": "bpmnDiagram",
+                            "bou_element_id": "pm_canvas"
+                        },
+                        {
+                            "evn_uid": "941908090525d8ec7fb8a07093841901",
+                            "evn_name":null,
+                            "evn_type":"",
+                            "evn_marker":"",
+                            "evn_is_interrupting":true,
+                            "evn_attached_to":null,
+                            "evn_cancel_activity":false,
+                            "evn_activity_ref":null,
+                            "evn_wait_for_completion":false,
+                            "evn_error_name":null,
+                            "evn_error_code":null,
+                            "evn_escalation_name":null,
+                            "evn_escalation_code":null,
+                            "evn_condition":null,
+                            "evn_message":null,
+                            "evn_operation_name":null,
+                            "evn_operation_implementation_ref":null,
+                            "evn_time_date":null,
+                            "evn_time_cycle":null,
+                            "evn_time_duration":null,
+                            "evn_behavior":"",
+                            "bou_x":903,
+                            "bou_y":303,
+                            "bou_width":33,
+                            "bou_height":33,
+                            "bou_container": "bpmnDiagram",
+                            "bou_element_id": "pm_canvas"
+                        }
+                    ],
+                "gateways":
+                    [
+                        {
+                            "gat_uid": "403208160525d8ebefb86a0059076243",
+                            "gat_name":null,
+                            "bou_x":481,
+                            "bou_y":306,
+                            "bou_width":45,
+                            "bou_height":45,
+                            "bou_container": "bpmnDiagram",
+                            "bou_element_id": "pm_canvas"
+                        }
+                    ],
+                "flows":
+                    [
+                        {
+                            "flo_uid": "724155752525d8ec9fb8de2003171877",
+                            "flo_type": "SEQUENCE",
+                            "flo_name":null,
+                            "flo_element_origin": "960500897525d8eb8fb84b4013700338",
+                            "flo_element_origin_type": "bpmnEvent",
+                            "flo_element_dest": "278251934525d8ebbfb8565093239226",
+                            "flo_element_dest_type": "bpmnActivity",
+                            "flo_is_inmediate":true,
+                            "flo_condition":null,
+                            "flo_state":
+                                [
+                                    {"x":104,"y":261},
+                                    {"x":104,"y":241},
+                                    {"x":168,"y":241},
+                                    {"x":168,"y":309},
+                                    {"x":233,"y":309}
+                                ]
+                        },
+                        {
+                            "flo_uid": "891030650525d8eccfb92c9033321037",
+                            "flo_type": "SEQUENCE",
+                            "flo_name":null,
+                            "flo_element_origin": "278251934525d8ebbfb8565093239226",
+                            "flo_element_origin_type": "bpmnActivity",
+                            "flo_element_dest": "403208160525d8ebefb86a0059076243",
+                            "flo_element_dest_type": "bpmnGateway",
+                            "flo_is_inmediate":true,
+                            "flo_condition":null,
+                            "flo_state":
+                                [
+                                    {"x":294,"y":278},
+                                    {"x":294,"y":258},
+                                    {"x":387,"y":258},
+                                    {"x":387,"y":329},
+                                    {"x":481,"y":329}
+                                ]
+                        },
+                        {
+                            "flo_uid": "785603906525d8ecffb9879037717215",
+                            "flo_type": "SEQUENCE",
+                            "flo_name":null,
+                            "flo_element_origin": "403208160525d8ebefb86a0059076243",
+                            "flo_element_origin_type": "bpmnGateway",
+                            "flo_element_dest": "326395445525d8ec1fb8768023935580",
+                            "flo_element_dest_type": "bpmnActivity",
+                            "flo_is_inmediate":true,
+                            "flo_condition":null,
+                            "flo_state":
+                                [
+                                    {"x":504,"y":306},
+                                    {"x":504,"y":199},
+                                    {"x":609,"y":199}
+                                ]
+                        },
+                        {
+                            "flo_uid": "531073186525d8ed2fb9d51058983227",
+                            "flo_type": "SEQUENCE",
+                            "flo_name":null,
+                            "flo_element_dest": "588707952525d8ec4fb88c2038077596",
+                            "flo_element_origin": "403208160525d8ebefb86a0059076243",
+                            "flo_element_origin_type": "bpmnGateway",
+                            "flo_element_dest_type": "bpmnActivity",
+                            "flo_is_inmediate":true,
+                            "flo_condition":null,
+                            "flo_state":
+                                [
+                                    {"x":481,"y":329},
+                                    {"x":461,"y":329},
+                                    {"x":461,"y":433},
+                                    {"x":628,"y":433}
+                                ]
+                        }
+                    ],
+                "artifacts": []
             }
-        ],
-        "events":
-        [
-            {
-                "evn_uid": "960500897525d8eb8fb84b4013700338",
-                "evn_name":null,
-                "evn_type":null,
-                "evn_marker":null,
-                "evn_is_interrupting":true,
-                "evn_attached_to":null,
-                "evn_cancel_activity":false,
-                "evn_activity_ref":null,
-                "evn_wait_for_completion":false,
-                "evn_error_name":null,
-                "evn_error_code":null,
-                "evn_escalation_name":null,
-                "evn_escalation_code":null,
-                "evn_condition":null,
-                "evn_message":null,
-                "evn_operation_name":null,
-                "evn_operation_implementation_ref":null,
-                "evn_time_date":null,
-                "evn_time_cycle":null,
-                "evn_time_duration":null,
-                "evn_behavior":null,
-                "bou_x":87,
-                "bou_y":261,
-                "bou_width":33,
-                "bou_height":33,
-                "bou_container": "bpmnDiagram",
-                "bou_element_id": "pm_canvas"
-            },
-            {
-                "evn_uid": "941908090525d8ec7fb8a07093841901",
-                "evn_name":null,
-                "evn_type":null,
-                "evn_marker":null,
-                "evn_is_interrupting":true,
-                "evn_attached_to":null,
-                "evn_cancel_activity":false,
-                "evn_activity_ref":null,
-                "evn_wait_for_completion":false,
-                "evn_error_name":null,
-                "evn_error_code":null,
-                "evn_escalation_name":null,
-                "evn_escalation_code":null,
-                "evn_condition":null,
-                "evn_message":null,
-                "evn_operation_name":null,
-                "evn_operation_implementation_ref":null,
-                "evn_time_date":null,
-                "evn_time_cycle":null,
-                "evn_time_duration":null,
-                "evn_behavior":null,
-                "bou_x":903,
-                "bou_y":303,
-                "bou_width":33,
-                "bou_height":33,
-                "bou_container": "bpmnDiagram",
-                "bou_element_id": "pm_canvas"
-            }
-        ],
-        "gateways":
-        [
-            {
-                "gat_uid": "403208160525d8ebefb86a0059076243",
-                "gat_name":null,
-                "bou_x":481,
-                "bou_y":306,
-                "bou_width":45,
-                "bou_height":45,
-                "bou_container": "bpmnDiagram",
-                "bou_element_id": "pm_canvas"
-            }
-        ],
-        "flows":
-        [
-            {
-                "flo_uid": "724155752525d8ec9fb8de2003171877",
-                "flo_type": "SEQUENCE",
-                "flo_name":null,
-                "flo_element_origin": "960500897525d8eb8fb84b4013700338",
-                "flo_element_origin_type": "bpmnEvent",
-                "flo_element_dest": "278251934525d8ebbfb8565093239226",
-                "flo_element_dest_type": "bpmnActivity",
-                "flo_is_inmediate":true,
-                "flo_condition":null,
-                "flo_state":
-                [
-                    {"x":104,"y":261},
-                    {"x":104,"y":241},
-                    {"x":168,"y":241},
-                    {"x":168,"y":309},
-                    {"x":233,"y":309}
-                ]
-            },
-            {
-                "flo_uid": "891030650525d8eccfb92c9033321037",
-                "flo_type": "SEQUENCE",
-                "flo_name":null,
-                "flo_element_origin": "278251934525d8ebbfb8565093239226",
-                "flo_element_origin_type": "bpmnActivity",
-                "flo_element_dest": "403208160525d8ebefb86a0059076243",
-                "flo_element_dest_type": "bpmnGateway",
-                "flo_is_inmediate":true,
-                "flo_condition":null,
-                "flo_state":
-                [
-                    {"x":294,"y":278},
-                    {"x":294,"y":258},
-                    {"x":387,"y":258},
-                    {"x":387,"y":329},
-                    {"x":481,"y":329}
-                ]
-            },
-            {
-                "flo_uid": "785603906525d8ecffb9879037717215",
-                "flo_type": "SEQUENCE",
-                "flo_name":null,
-                "flo_element_origin": "403208160525d8ebefb86a0059076243",
-                "flo_element_origin_type": "bpmnGateway",
-                "flo_element_dest": "326395445525d8ec1fb8768023935580",
-                "flo_element_dest_type": "bpmnActivity",
-                "flo_is_inmediate":true,
-                "flo_condition":null,
-                "flo_state":
-                [
-                    {"x":504,"y":306},
-                    {"x":504,"y":199},
-                    {"x":609,"y":199}
-                ]
-            },
-            {
-                "flo_uid": "531073186525d8ed2fb9d51058983227",
-                "flo_type": "SEQUENCE",
-                "flo_name":null,
-                "flo_element_dest": "588707952525d8ec4fb88c2038077596",
-                "flo_element_origin": "403208160525d8ebefb86a0059076243",
-                "flo_element_origin_type": "bpmnGateway",
-                "flo_element_dest_type": "bpmnActivity",
-                "flo_is_inmediate":true,
-                "flo_condition":null,
-                "flo_state":
-                [
-                    {"x":481,"y":329},
-                    {"x":461,"y":329},
-                    {"x":461,"y":433},
-                    {"x":628,"y":433}
-                ]
-            }
-        ],
-        "artifacts": []
+        ]
     }
 ]
 
-Get a single project `diagram`
-GET /project/{prj_uid}/diagram/{dia_uid}
+Get a single `project`
+GET /project/{prj_uid}
 < 200
 < Content-Type: application/json
 {
-    "diag_uid": "a5242da840064218638061532405176",
-    "pro_uid": "8061532405176da5242da84006421863",
-    "laneset": [],
-    "lanes": [],
-    "activities":
+    "prj_uid" : "8061532405176da5242da84006421863",
+    "prj_name" : "Sample Project",
+    "prj_description" : "sample desc",
+    "diagrams":
     [
         {
-            "act_uid": "278251934525d8ebbfb8565093239226",
-            "act_name": "Task",
-            "act_type": "EMPTY",
-            "bou_x": 235,
-            "bou_y": 280,
-            "bou_width": 120,
-            "bou_height": 60,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        },
-        {
-            "act_uid": "326395445525d8ec1fb8768023935580",
-            "act_name": "Task",
-            "act_type": "EMPTY",
-            "bou_x":611,
-            "bou_y":170,
-            "bou_width":120,
-            "bou_height":60,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        },
-        {
-            "act_uid": "588707952525d8ec4fb88c2038077596",
-            "act_name": "Task",
-            "act_type": "EMPTY",
-            "bou_x":630,
-            "bou_y":404,
-            "bou_width":120,
-            "bou_height":60,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
+            "diag_uid": "a5242da840064218638061532405176",
+            "laneset": [],
+            "lanes": [],
+            "activities":
+                [
+                    {
+                        "act_uid": "278251934525d8ebbfb8565093239226",
+                        "act_name": "Task",
+                        "act_type": "EMPTY",
+                        "bou_x": 235,
+                        "bou_y": 280,
+                        "bou_width": 120,
+                        "bou_height": 60,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    },
+                    {
+                        "act_uid": "326395445525d8ec1fb8768023935580",
+                        "act_name": "Task",
+                        "act_type": "EMPTY",
+                        "bou_x":611,
+                        "bou_y":170,
+                        "bou_width":120,
+                        "bou_height":60,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    },
+                    {
+                        "act_uid": "588707952525d8ec4fb88c2038077596",
+                        "act_name": "Task",
+                        "act_type": "EMPTY",
+                        "bou_x":630,
+                        "bou_y":404,
+                        "bou_width":120,
+                        "bou_height":60,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    }
+                ],
+            "events":
+                [
+                    {
+                        "evn_uid": "960500897525d8eb8fb84b4013700338",
+                        "evn_name":null,
+                        "evn_type":"",
+                        "evn_marker":"",
+                        "evn_is_interrupting":true,
+                        "evn_attached_to":null,
+                        "evn_cancel_activity":false,
+                        "evn_activity_ref":null,
+                        "evn_wait_for_completion":false,
+                        "evn_error_name":null,
+                        "evn_error_code":null,
+                        "evn_escalation_name":null,
+                        "evn_escalation_code":null,
+                        "evn_condition":null,
+                        "evn_message":null,
+                        "evn_operation_name":null,
+                        "evn_operation_implementation_ref":null,
+                        "evn_time_date":null,
+                        "evn_time_cycle":null,
+                        "evn_time_duration":null,
+                        "evn_behavior":"",
+                        "bou_x":87,
+                        "bou_y":261,
+                        "bou_width":33,
+                        "bou_height":33,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    },
+                    {
+                        "evn_uid": "941908090525d8ec7fb8a07093841901",
+                        "evn_name":null,
+                        "evn_type":"",
+                        "evn_marker":"",
+                        "evn_is_interrupting":true,
+                        "evn_attached_to":null,
+                        "evn_cancel_activity":false,
+                        "evn_activity_ref":null,
+                        "evn_wait_for_completion":false,
+                        "evn_error_name":null,
+                        "evn_error_code":null,
+                        "evn_escalation_name":null,
+                        "evn_escalation_code":null,
+                        "evn_condition":null,
+                        "evn_message":null,
+                        "evn_operation_name":null,
+                        "evn_operation_implementation_ref":null,
+                        "evn_time_date":null,
+                        "evn_time_cycle":null,
+                        "evn_time_duration":null,
+                        "evn_behavior":"",
+                        "bou_x":903,
+                        "bou_y":303,
+                        "bou_width":33,
+                        "bou_height":33,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    }
+                ],
+            "gateways":
+                [
+                    {
+                        "gat_uid": "403208160525d8ebefb86a0059076243",
+                        "gat_name":null,
+                        "bou_x":481,
+                        "bou_y":306,
+                        "bou_width":45,
+                        "bou_height":45,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    }
+                ],
+            "flows":
+                [
+                    {
+                        "flo_uid": "724155752525d8ec9fb8de2003171877",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_origin": "960500897525d8eb8fb84b4013700338",
+                        "flo_element_origin_type": "bpmnEvent",
+                        "flo_element_dest": "278251934525d8ebbfb8565093239226",
+                        "flo_element_dest_type": "bpmnActivity",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":104,"y":261},
+                                {"x":104,"y":241},
+                                {"x":168,"y":241},
+                                {"x":168,"y":309},
+                                {"x":233,"y":309}
+                            ]
+                    },
+                    {
+                        "flo_uid": "891030650525d8eccfb92c9033321037",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_origin": "278251934525d8ebbfb8565093239226",
+                        "flo_element_origin_type": "bpmnActivity",
+                        "flo_element_dest": "403208160525d8ebefb86a0059076243",
+                        "flo_element_dest_type": "bpmnGateway",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":294,"y":278},
+                                {"x":294,"y":258},
+                                {"x":387,"y":258},
+                                {"x":387,"y":329},
+                                {"x":481,"y":329}
+                            ]
+                    },
+                    {
+                        "flo_uid": "785603906525d8ecffb9879037717215",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_origin": "403208160525d8ebefb86a0059076243",
+                        "flo_element_origin_type": "bpmnGateway",
+                        "flo_element_dest": "326395445525d8ec1fb8768023935580",
+                        "flo_element_dest_type": "bpmnActivity",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":504,"y":306},
+                                {"x":504,"y":199},
+                                {"x":609,"y":199}
+                            ]
+                    },
+                    {
+                        "flo_uid": "531073186525d8ed2fb9d51058983227",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_dest": "588707952525d8ec4fb88c2038077596",
+                        "flo_element_origin": "403208160525d8ebefb86a0059076243",
+                        "flo_element_origin_type": "bpmnGateway",
+                        "flo_element_dest_type": "bpmnActivity",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":481,"y":329},
+                                {"x":461,"y":329},
+                                {"x":461,"y":433},
+                                {"x":628,"y":433}
+                            ]
+                    }
+                ],
+            "artifacts": []
         }
-    ],
-    "events":
-    [
-        {
-            "evn_uid": "960500897525d8eb8fb84b4013700338",
-            "evn_name":null,
-            "evn_type":null,
-            "evn_marker":null,
-            "evn_is_interrupting":true,
-            "evn_attached_to":null,
-            "evn_cancel_activity":false,
-            "evn_activity_ref":null,
-            "evn_wait_for_completion":false,
-            "evn_error_name":null,
-            "evn_error_code":null,
-            "evn_escalation_name":null,
-            "evn_escalation_code":null,
-            "evn_condition":null,
-            "evn_message":null,
-            "evn_operation_name":null,
-            "evn_operation_implementation_ref":null,
-            "evn_time_date":null,
-            "evn_time_cycle":null,
-            "evn_time_duration":null,
-            "evn_behavior":null,
-            "bou_x":87,
-            "bou_y":261,
-            "bou_width":33,
-            "bou_height":33,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        },
-        {
-            "evn_uid": "941908090525d8ec7fb8a07093841901",
-            "evn_name":null,
-            "evn_type":null,
-            "evn_marker":null,
-            "evn_is_interrupting":true,
-            "evn_attached_to":null,
-            "evn_cancel_activity":false,
-            "evn_activity_ref":null,
-            "evn_wait_for_completion":false,
-            "evn_error_name":null,
-            "evn_error_code":null,
-            "evn_escalation_name":null,
-            "evn_escalation_code":null,
-            "evn_condition":null,
-            "evn_message":null,
-            "evn_operation_name":null,
-            "evn_operation_implementation_ref":null,
-            "evn_time_date":null,
-            "evn_time_cycle":null,
-            "evn_time_duration":null,
-            "evn_behavior":null,
-            "bou_x":903,
-            "bou_y":303,
-            "bou_width":33,
-            "bou_height":33,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        }
-    ],
-    "gateways":
-    [
-        {
-            "gat_uid": "403208160525d8ebefb86a0059076243",
-            "gat_name":null,
-            "bou_x":481,
-            "bou_y":306,
-            "bou_width":45,
-            "bou_height":45,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        }
-    ],
-    "flows":
-    [
-        {
-            "flo_uid": "724155752525d8ec9fb8de2003171877",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_origin": "960500897525d8eb8fb84b4013700338",
-            "flo_element_origin_type": "bpmnEvent",
-            "flo_element_dest": "278251934525d8ebbfb8565093239226",
-            "flo_element_dest_type": "bpmnActivity",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":104,"y":261},
-                {"x":104,"y":241},
-                {"x":168,"y":241},
-                {"x":168,"y":309},
-                {"x":233,"y":309}
-            ]
-        },
-        {
-            "flo_uid": "891030650525d8eccfb92c9033321037",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_origin": "278251934525d8ebbfb8565093239226",
-            "flo_element_origin_type": "bpmnActivity",
-            "flo_element_dest": "403208160525d8ebefb86a0059076243",
-            "flo_element_dest_type": "bpmnGateway",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":294,"y":278},
-                {"x":294,"y":258},
-                {"x":387,"y":258},
-                {"x":387,"y":329},
-                {"x":481,"y":329}
-            ]
-        },
-        {
-            "flo_uid": "785603906525d8ecffb9879037717215",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_origin": "403208160525d8ebefb86a0059076243",
-            "flo_element_origin_type": "bpmnGateway",
-            "flo_element_dest": "326395445525d8ec1fb8768023935580",
-            "flo_element_dest_type": "bpmnActivity",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":504,"y":306},
-                {"x":504,"y":199},
-                {"x":609,"y":199}
-            ]
-        },
-        {
-            "flo_uid": "531073186525d8ed2fb9d51058983227",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_dest": "588707952525d8ec4fb88c2038077596",
-            "flo_element_origin": "403208160525d8ebefb86a0059076243",
-            "flo_element_origin_type": "bpmnGateway",
-            "flo_element_dest_type": "bpmnActivity",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":481,"y":329},
-                {"x":461,"y":329},
-                {"x":461,"y":433},
-                {"x":628,"y":433}
-            ]
-        }
-    ],
-    "artifacts": []
+    ]
 }
 
-Create a new project `diagram`
-POST /project/{prj_uid}/diagram/{dia_uid}
+
+Create a new `project`
+POST /project
 > Content-Type: application/json
 {
-    "dia_uid": "a5242da840064218638061532405176",
-    "pro_uid": "8061532405176da5242da84006421863",
-    "laneset": [],
-    "lanes": [],
-    "activities":
+    "prj_uid" : "8061532405176da5242da84006421863",
+    "prj_name" : "Sample Project",
+    "prj_description" : "sample desc",
+    "diagrams":
     [
         {
-            "act_uid": "278251934525d8ebbfb8565093239226",
-            "act_name": "Task",
-            "act_type": "EMPTY",
-            "bou_x": 235,
-            "bou_y": 280,
-            "bou_width": 120,
-            "bou_height": 60,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        },
-        {
-            "act_uid": "326395445525d8ec1fb8768023935580",
-            "act_name": "Task",
-            "act_type": "EMPTY",
-            "bou_x":611,
-            "bou_y":170,
-            "bou_width":120,
-            "bou_height":60,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        },
-        {
-            "act_uid": "588707952525d8ec4fb88c2038077596",
-            "act_name": "Task",
-            "act_type": "EMPTY",
-            "bou_x":630,
-            "bou_y":404,
-            "bou_width":120,
-            "bou_height":60,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
+            "diag_uid": "a5242da840064218638061532405176",
+            "laneset": [],
+            "lanes": [],
+            "activities":
+                [
+                    {
+                        "act_uid": "278251934525d8ebbfb8565093239226",
+                        "act_name": "Task",
+                        "act_type": "EMPTY",
+                        "bou_x": 235,
+                        "bou_y": 280,
+                        "bou_width": 120,
+                        "bou_height": 60,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    },
+                    {
+                        "act_uid": "326395445525d8ec1fb8768023935580",
+                        "act_name": "Task",
+                        "act_type": "EMPTY",
+                        "bou_x":611,
+                        "bou_y":170,
+                        "bou_width":120,
+                        "bou_height":60,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    },
+                    {
+                        "act_uid": "588707952525d8ec4fb88c2038077596",
+                        "act_name": "Task",
+                        "act_type": "EMPTY",
+                        "bou_x":630,
+                        "bou_y":404,
+                        "bou_width":120,
+                        "bou_height":60,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    }
+                ],
+            "events":
+                [
+                    {
+                        "evn_uid": "960500897525d8eb8fb84b4013700338",
+                        "evn_name":null,
+                        "evn_type":"",
+                        "evn_marker":"",
+                        "evn_is_interrupting":true,
+                        "evn_attached_to":null,
+                        "evn_cancel_activity":false,
+                        "evn_activity_ref":null,
+                        "evn_wait_for_completion":false,
+                        "evn_error_name":null,
+                        "evn_error_code":null,
+                        "evn_escalation_name":null,
+                        "evn_escalation_code":null,
+                        "evn_condition":null,
+                        "evn_message":null,
+                        "evn_operation_name":null,
+                        "evn_operation_implementation_ref":null,
+                        "evn_time_date":null,
+                        "evn_time_cycle":null,
+                        "evn_time_duration":null,
+                        "evn_behavior":"",
+                        "bou_x":87,
+                        "bou_y":261,
+                        "bou_width":33,
+                        "bou_height":33,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    },
+                    {
+                        "evn_uid": "941908090525d8ec7fb8a07093841901",
+                        "evn_name":null,
+                        "evn_type":"",
+                        "evn_marker":"",
+                        "evn_is_interrupting":true,
+                        "evn_attached_to":null,
+                        "evn_cancel_activity":false,
+                        "evn_activity_ref":null,
+                        "evn_wait_for_completion":false,
+                        "evn_error_name":null,
+                        "evn_error_code":null,
+                        "evn_escalation_name":null,
+                        "evn_escalation_code":null,
+                        "evn_condition":null,
+                        "evn_message":null,
+                        "evn_operation_name":null,
+                        "evn_operation_implementation_ref":null,
+                        "evn_time_date":null,
+                        "evn_time_cycle":null,
+                        "evn_time_duration":null,
+                        "evn_behavior":"",
+                        "bou_x":903,
+                        "bou_y":303,
+                        "bou_width":33,
+                        "bou_height":33,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    }
+                ],
+            "gateways":
+                [
+                    {
+                        "gat_uid": "403208160525d8ebefb86a0059076243",
+                        "gat_name":null,
+                        "bou_x":481,
+                        "bou_y":306,
+                        "bou_width":45,
+                        "bou_height":45,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    }
+                ],
+            "flows":
+                [
+                    {
+                        "flo_uid": "724155752525d8ec9fb8de2003171877",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_origin": "960500897525d8eb8fb84b4013700338",
+                        "flo_element_origin_type": "bpmnEvent",
+                        "flo_element_dest": "278251934525d8ebbfb8565093239226",
+                        "flo_element_dest_type": "bpmnActivity",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":104,"y":261},
+                                {"x":104,"y":241},
+                                {"x":168,"y":241},
+                                {"x":168,"y":309},
+                                {"x":233,"y":309}
+                            ]
+                    },
+                    {
+                        "flo_uid": "891030650525d8eccfb92c9033321037",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_origin": "278251934525d8ebbfb8565093239226",
+                        "flo_element_origin_type": "bpmnActivity",
+                        "flo_element_dest": "403208160525d8ebefb86a0059076243",
+                        "flo_element_dest_type": "bpmnGateway",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":294,"y":278},
+                                {"x":294,"y":258},
+                                {"x":387,"y":258},
+                                {"x":387,"y":329},
+                                {"x":481,"y":329}
+                            ]
+                    },
+                    {
+                        "flo_uid": "785603906525d8ecffb9879037717215",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_origin": "403208160525d8ebefb86a0059076243",
+                        "flo_element_origin_type": "bpmnGateway",
+                        "flo_element_dest": "326395445525d8ec1fb8768023935580",
+                        "flo_element_dest_type": "bpmnActivity",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":504,"y":306},
+                                {"x":504,"y":199},
+                                {"x":609,"y":199}
+                            ]
+                    },
+                    {
+                        "flo_uid": "531073186525d8ed2fb9d51058983227",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_dest": "588707952525d8ec4fb88c2038077596",
+                        "flo_element_origin": "403208160525d8ebefb86a0059076243",
+                        "flo_element_origin_type": "bpmnGateway",
+                        "flo_element_dest_type": "bpmnActivity",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":481,"y":329},
+                                {"x":461,"y":329},
+                                {"x":461,"y":433},
+                                {"x":628,"y":433}
+                            ]
+                    }
+                ],
+            "artifacts": []
         }
-    ],
-    "events":
-    [
-        {
-            "evn_uid": "960500897525d8eb8fb84b4013700338",
-            "evn_name":null,
-            "evn_type":null,
-            "evn_marker":null,
-            "evn_is_interrupting":true,
-            "evn_attached_to":null,
-            "evn_cancel_activity":false,
-            "evn_activity_ref":null,
-            "evn_wait_for_completion":false,
-            "evn_error_name":null,
-            "evn_error_code":null,
-            "evn_escalation_name":null,
-            "evn_escalation_code":null,
-            "evn_condition":null,
-            "evn_message":null,
-            "evn_operation_name":null,
-            "evn_operation_implementation_ref":null,
-            "evn_time_date":null,
-            "evn_time_cycle":null,
-            "evn_time_duration":null,
-            "evn_behavior":null,
-            "bou_x":87,
-            "bou_y":261,
-            "bou_width":33,
-            "bou_height":33,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        },
-        {
-            "evn_uid": "941908090525d8ec7fb8a07093841901",
-            "evn_name":null,
-            "evn_type":null,
-            "evn_marker":null,
-            "evn_is_interrupting":true,
-            "evn_attached_to":null,
-            "evn_cancel_activity":false,
-            "evn_activity_ref":null,
-            "evn_wait_for_completion":false,
-            "evn_error_name":null,
-            "evn_error_code":null,
-            "evn_escalation_name":null,
-            "evn_escalation_code":null,
-            "evn_condition":null,
-            "evn_message":null,
-            "evn_operation_name":null,
-            "evn_operation_implementation_ref":null,
-            "evn_time_date":null,
-            "evn_time_cycle":null,
-            "evn_time_duration":null,
-            "evn_behavior":null,
-            "bou_x":903,
-            "bou_y":303,
-            "bou_width":33,
-            "bou_height":33,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        }
-    ],
-    "gateways":
-    [
-        {
-            "gat_uid": "403208160525d8ebefb86a0059076243",
-            "gat_name":null,
-            "bou_x":481,
-            "bou_y":306,
-            "bou_width":45,
-            "bou_height":45,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        }
-    ],
-    "flows":
-    [
-        {
-            "flo_uid": "724155752525d8ec9fb8de2003171877",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_origin": "960500897525d8eb8fb84b4013700338",
-            "flo_element_origin_type": "bpmnEvent",
-            "flo_element_dest": "278251934525d8ebbfb8565093239226",
-            "flo_element_dest_type": "bpmnActivity",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":104,"y":261},
-                {"x":104,"y":241},
-                {"x":168,"y":241},
-                {"x":168,"y":309},
-                {"x":233,"y":309}
-            ]
-        },
-        {
-            "flo_uid": "891030650525d8eccfb92c9033321037",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_origin": "278251934525d8ebbfb8565093239226",
-            "flo_element_origin_type": "bpmnActivity",
-            "flo_element_dest": "403208160525d8ebefb86a0059076243",
-            "flo_element_dest_type": "bpmnGateway",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":294,"y":278},
-                {"x":294,"y":258},
-                {"x":387,"y":258},
-                {"x":387,"y":329},
-                {"x":481,"y":329}
-            ]
-        },
-        {
-            "flo_uid": "785603906525d8ecffb9879037717215",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_origin": "403208160525d8ebefb86a0059076243",
-            "flo_element_origin_type": "bpmnGateway",
-            "flo_element_dest": "326395445525d8ec1fb8768023935580",
-            "flo_element_dest_type": "bpmnActivity",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":504,"y":306},
-                {"x":504,"y":199},
-                {"x":609,"y":199}
-            ]
-        },
-        {
-            "flo_uid": "531073186525d8ed2fb9d51058983227",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_dest": "588707952525d8ec4fb88c2038077596",
-            "flo_element_origin": "403208160525d8ebefb86a0059076243",
-            "flo_element_origin_type": "bpmnGateway",
-            "flo_element_dest_type": "bpmnActivity",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":481,"y":329},
-                {"x":461,"y":329},
-                {"x":461,"y":433},
-                {"x":628,"y":433}
-            ]
-        }
-    ],
-    "artifacts": []
+    ]
 }
 < 201
 < Content-Type: application/json
@@ -835,200 +833,208 @@ POST /project/{prj_uid}/diagram/{dia_uid}
 ]
 
 
-Update a project `diagram`
-PUT /project/{prj_uid}/diagram/{dia_uid}
+Update a `project`
+PUT /project/{prj_uid}
 > Content-Type: application/json
 {
-    "pro_uid": "8061532405176da5242da84006421863",
-    "laneset": [],
-    "lanes": [],
-    "activities":
+    "prj_uid" : "8061532405176da5242da84006421863",
+    "prj_name" : "Sample Project",
+    "prj_description" : "sample desc",
+    "diagrams":
     [
         {
-            "act_uid": "278251934525d8ebbfb8565093239226",
-            "act_name": "Task",
-            "act_type": "EMPTY",
-            "bou_x": 235,
-            "bou_y": 280,
-            "bou_width": 120,
-            "bou_height": 60,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        },
-        {
-            "act_uid": "326395445525d8ec1fb8768023935580",
-            "act_name": "Task",
-            "act_type": "EMPTY",
-            "bou_x":611,
-            "bou_y":170,
-            "bou_width":120,
-            "bou_height":60,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        },
-        {
-            "act_uid": "588707952525d8ec4fb88c2038077596",
-            "act_name": "Task",
-            "act_type": "EMPTY",
-            "bou_x":630,
-            "bou_y":404,
-            "bou_width":120,
-            "bou_height":60,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
+            "diag_uid": "a5242da840064218638061532405176",
+            "laneset": [],
+            "lanes": [],
+            "activities":
+                [
+                    {
+                        "act_uid": "278251934525d8ebbfb8565093239226",
+                        "act_name": "Task",
+                        "act_type": "EMPTY",
+                        "bou_x": 235,
+                        "bou_y": 280,
+                        "bou_width": 120,
+                        "bou_height": 60,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    },
+                    {
+                        "act_uid": "326395445525d8ec1fb8768023935580",
+                        "act_name": "Task",
+                        "act_type": "EMPTY",
+                        "bou_x":611,
+                        "bou_y":170,
+                        "bou_width":120,
+                        "bou_height":60,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    },
+                    {
+                        "act_uid": "588707952525d8ec4fb88c2038077596",
+                        "act_name": "Task",
+                        "act_type": "EMPTY",
+                        "bou_x":630,
+                        "bou_y":404,
+                        "bou_width":120,
+                        "bou_height":60,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    }
+                ],
+            "events":
+                [
+                    {
+                        "evn_uid": "960500897525d8eb8fb84b4013700338",
+                        "evn_name":null,
+                        "evn_type":"",
+                        "evn_marker":"",
+                        "evn_is_interrupting":true,
+                        "evn_attached_to":null,
+                        "evn_cancel_activity":false,
+                        "evn_activity_ref":null,
+                        "evn_wait_for_completion":false,
+                        "evn_error_name":null,
+                        "evn_error_code":null,
+                        "evn_escalation_name":null,
+                        "evn_escalation_code":null,
+                        "evn_condition":null,
+                        "evn_message":null,
+                        "evn_operation_name":null,
+                        "evn_operation_implementation_ref":null,
+                        "evn_time_date":null,
+                        "evn_time_cycle":null,
+                        "evn_time_duration":null,
+                        "evn_behavior":"",
+                        "bou_x":87,
+                        "bou_y":261,
+                        "bou_width":33,
+                        "bou_height":33,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    },
+                    {
+                        "evn_uid": "941908090525d8ec7fb8a07093841901",
+                        "evn_name":null,
+                        "evn_type":"",
+                        "evn_marker":"",
+                        "evn_is_interrupting":true,
+                        "evn_attached_to":null,
+                        "evn_cancel_activity":false,
+                        "evn_activity_ref":null,
+                        "evn_wait_for_completion":false,
+                        "evn_error_name":null,
+                        "evn_error_code":null,
+                        "evn_escalation_name":null,
+                        "evn_escalation_code":null,
+                        "evn_condition":null,
+                        "evn_message":null,
+                        "evn_operation_name":null,
+                        "evn_operation_implementation_ref":null,
+                        "evn_time_date":null,
+                        "evn_time_cycle":null,
+                        "evn_time_duration":null,
+                        "evn_behavior":"",
+                        "bou_x":903,
+                        "bou_y":303,
+                        "bou_width":33,
+                        "bou_height":33,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    }
+                ],
+            "gateways":
+                [
+                    {
+                        "gat_uid": "403208160525d8ebefb86a0059076243",
+                        "gat_name":null,
+                        "bou_x":481,
+                        "bou_y":306,
+                        "bou_width":45,
+                        "bou_height":45,
+                        "bou_container": "bpmnDiagram",
+                        "bou_element_id": "pm_canvas"
+                    }
+                ],
+            "flows":
+                [
+                    {
+                        "flo_uid": "724155752525d8ec9fb8de2003171877",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_origin": "960500897525d8eb8fb84b4013700338",
+                        "flo_element_origin_type": "bpmnEvent",
+                        "flo_element_dest": "278251934525d8ebbfb8565093239226",
+                        "flo_element_dest_type": "bpmnActivity",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":104,"y":261},
+                                {"x":104,"y":241},
+                                {"x":168,"y":241},
+                                {"x":168,"y":309},
+                                {"x":233,"y":309}
+                            ]
+                    },
+                    {
+                        "flo_uid": "891030650525d8eccfb92c9033321037",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_origin": "278251934525d8ebbfb8565093239226",
+                        "flo_element_origin_type": "bpmnActivity",
+                        "flo_element_dest": "403208160525d8ebefb86a0059076243",
+                        "flo_element_dest_type": "bpmnGateway",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":294,"y":278},
+                                {"x":294,"y":258},
+                                {"x":387,"y":258},
+                                {"x":387,"y":329},
+                                {"x":481,"y":329}
+                            ]
+                    },
+                    {
+                        "flo_uid": "785603906525d8ecffb9879037717215",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_origin": "403208160525d8ebefb86a0059076243",
+                        "flo_element_origin_type": "bpmnGateway",
+                        "flo_element_dest": "326395445525d8ec1fb8768023935580",
+                        "flo_element_dest_type": "bpmnActivity",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":504,"y":306},
+                                {"x":504,"y":199},
+                                {"x":609,"y":199}
+                            ]
+                    },
+                    {
+                        "flo_uid": "531073186525d8ed2fb9d51058983227",
+                        "flo_type": "SEQUENCE",
+                        "flo_name":null,
+                        "flo_element_dest": "588707952525d8ec4fb88c2038077596",
+                        "flo_element_origin": "403208160525d8ebefb86a0059076243",
+                        "flo_element_origin_type": "bpmnGateway",
+                        "flo_element_dest_type": "bpmnActivity",
+                        "flo_is_inmediate":true,
+                        "flo_condition":null,
+                        "flo_state":
+                            [
+                                {"x":481,"y":329},
+                                {"x":461,"y":329},
+                                {"x":461,"y":433},
+                                {"x":628,"y":433}
+                            ]
+                    }
+                ],
+            "artifacts": []
         }
-    ],
-    "events":
-    [
-        {
-            "evn_uid": "960500897525d8eb8fb84b4013700338",
-            "evn_name":null,
-            "evn_type":null,
-            "evn_marker":null,
-            "evn_is_interrupting":true,
-            "evn_attached_to":null,
-            "evn_cancel_activity":false,
-            "evn_activity_ref":null,
-            "evn_wait_for_completion":false,
-            "evn_error_name":null,
-            "evn_error_code":null,
-            "evn_escalation_name":null,
-            "evn_escalation_code":null,
-            "evn_condition":null,
-            "evn_message":null,
-            "evn_operation_name":null,
-            "evn_operation_implementation_ref":null,
-            "evn_time_date":null,
-            "evn_time_cycle":null,
-            "evn_time_duration":null,
-            "evn_behavior":null,
-            "bou_x":87,
-            "bou_y":261,
-            "bou_width":33,
-            "bou_height":33,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        },
-        {
-            "evn_uid": "941908090525d8ec7fb8a07093841901",
-            "evn_name":null,
-            "evn_type":null,
-            "evn_marker":null,
-            "evn_is_interrupting":true,
-            "evn_attached_to":null,
-            "evn_cancel_activity":false,
-            "evn_activity_ref":null,
-            "evn_wait_for_completion":false,
-            "evn_error_name":null,
-            "evn_error_code":null,
-            "evn_escalation_name":null,
-            "evn_escalation_code":null,
-            "evn_condition":null,
-            "evn_message":null,
-            "evn_operation_name":null,
-            "evn_operation_implementation_ref":null,
-            "evn_time_date":null,
-            "evn_time_cycle":null,
-            "evn_time_duration":null,
-            "evn_behavior":null,
-            "bou_x":903,
-            "bou_y":303,
-            "bou_width":33,
-            "bou_height":33,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        }
-    ],
-    "gateways":
-    [
-        {
-            "gat_uid": "403208160525d8ebefb86a0059076243",
-            "gat_name":null,
-            "bou_x":481,
-            "bou_y":306,
-            "bou_width":45,
-            "bou_height":45,
-            "bou_container": "bpmnDiagram",
-            "bou_element_id": "pm_canvas"
-        }
-    ],
-    "flows":
-    [
-        {
-            "flo_uid": "724155752525d8ec9fb8de2003171877",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_origin": "960500897525d8eb8fb84b4013700338",
-            "flo_element_origin_type": "bpmnEvent",
-            "flo_element_dest": "278251934525d8ebbfb8565093239226",
-            "flo_element_dest_type": "bpmnActivity",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":104,"y":261},
-                {"x":104,"y":241},
-                {"x":168,"y":241},
-                {"x":168,"y":309},
-                {"x":233,"y":309}
-            ]
-        },
-        {
-            "flo_uid": "891030650525d8eccfb92c9033321037",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_origin": "278251934525d8ebbfb8565093239226",
-            "flo_element_origin_type": "bpmnActivity",
-            "flo_element_dest": "403208160525d8ebefb86a0059076243",
-            "flo_element_dest_type": "bpmnGateway",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":294,"y":278},
-                {"x":294,"y":258},
-                {"x":387,"y":258},
-                {"x":387,"y":329},
-                {"x":481,"y":329}
-            ]
-        },
-        {
-            "flo_uid": "785603906525d8ecffb9879037717215",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_origin": "403208160525d8ebefb86a0059076243",
-            "flo_element_origin_type": "bpmnGateway",
-            "flo_element_dest": "326395445525d8ec1fb8768023935580",
-            "flo_element_dest_type": "bpmnActivity",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":504,"y":306},
-                {"x":504,"y":199},
-                {"x":609,"y":199}
-            ]
-        },
-        {
-            "flo_uid": "531073186525d8ed2fb9d51058983227",
-            "flo_type": "SEQUENCE",
-            "flo_name":null,
-            "flo_element_dest": "588707952525d8ec4fb88c2038077596",
-            "flo_element_origin": "403208160525d8ebefb86a0059076243",
-            "flo_element_origin_type": "bpmnGateway",
-            "flo_element_dest_type": "bpmnActivity",
-            "flo_is_inmediate":true,
-            "flo_condition":null,
-            "flo_state":
-            [
-                {"x":481,"y":329},
-                {"x":461,"y":329},
-                {"x":461,"y":433},
-                {"x":628,"y":433}
-            ]
-        }
-    ],
-    "artifacts": []
+    ]
 }
 < 201
 < Content-Type: application/json
@@ -1091,8 +1097,8 @@ PUT /project/{prj_uid}/diagram/{dia_uid}
 ]
 
 
-Delete a project `diagram`
-DELETE /project/{prj_uid}/diagram/{dia_uid}
+Delete a `project`
+DELETE /project/{prj_uid}
 < 200
 
 
@@ -1326,7 +1332,6 @@ Remove a assignee of an `activity`
 DELETE /project/{prj_uid}/activity/{act_uid}/assignee/{aas_uid}
 > Content-Type: application/json
 < 200
-
 
 --
 Project Properties - Ad hoc Assignee Resources
@@ -1644,6 +1649,4 @@ PUT /project/{prj_uid}/activity/{act_uid}/step/{step_uid}/trigger/{tri_uid}
 Remove a `trigger` assignation of a Step
 DELETE /project/{prj_uid}/activity/{act_uid}/step/{step_uid}/trigger/{tri_uid}
 < 200 
-
-
 
