@@ -89,16 +89,16 @@ class Assignee extends Api
      *
      * @param string $prjUid
      * @param string $actUid
-     * @param string $assUid
-     * @param string $assType {@choice user,group}
+     * @param string $ass_uid
+     * @param string $ass_type {@choice user,group}
      *
      * @status 201
      */
-    public function doPostActivityAssignee($prjUid, $actUid, $assUid, $assType)
+    public function doPostActivityAssignee($prjUid, $actUid, $ass_uid, $ass_type)
     {
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->addTaskAssignee($prjUid, $actUid, $assUid, $assType);
+            $arrayData = $task->addTaskAssignee($prjUid, $actUid, $ass_uid, $ass_type);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -206,16 +206,16 @@ class Assignee extends Api
      *
      * @param string $prjUid
      * @param string $actUid
-     * @param string $assUid
-     * @param string $assType {@choice user,group}
+     * @param string $ass_uid
+     * @param string $ass_type {@choice user,group}
      *
      * @status 201
      */
-    public function doPostActivityAdhocAssignee($prjUid, $actUid, $assUid, $assType)
+    public function doPostActivityAdhocAssignee($prjUid, $actUid, $ass_uid, $ass_type)
     {
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->addTaskAdhocAssignee($prjUid, $actUid, $assUid, $assType);
+            $arrayData = $task->addTaskAdhocAssignee($prjUid, $actUid, $ass_uid, $ass_type);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
