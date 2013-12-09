@@ -30,13 +30,13 @@ class Step extends Api
     /**
      * @url POST /:projectUid/activity/:activityUid/step
      *
-     * @param string        $activityUid
-     * @param string        $projectUid
-     * @param StepStructure $request_data
+     * @param string $activityUid
+     * @param string $projectUid
+     * @param StepPostStructure $request_data
      *
      * @status 201
      */
-    public function doPostActivityStep($activityUid, $projectUid, StepStructure $request_data = null)
+    public function doPostActivityStep($activityUid, $projectUid, StepPostStructure $request_data = null)
     {
         try {
             $request_data = (array)($request_data);
@@ -56,12 +56,12 @@ class Step extends Api
     /**
      * @url PUT /:projectUid/activity/:activityUid/step/:stepUid
      *
-     * @param string        $stepUid
-     * @param string        $activityUid
-     * @param string        $projectUid
-     * @param StepStructure $request_data
+     * @param string $stepUid
+     * @param string $activityUid
+     * @param string $projectUid
+     * @param StepPutStructure $request_data
      */
-    public function doPutActivityStep($stepUid, $activityUid, $projectUid, StepStructure $request_data = null)
+    public function doPutActivityStep($stepUid, $activityUid, $projectUid, StepPutStructure $request_data = null)
     {
         try {
             $request_data = (array)($request_data);
@@ -126,13 +126,41 @@ class Step extends Api
     }
 }
 
-class StepStructure
+class StepPostStructure
 {
     /**
      * @var string {@from body}{@min 32}{@max 32}
      */
     public $step_uid;
 
+    /**
+     * @var string {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}{@required true}
+     */
+    public $step_type_obj;
+
+    /**
+     * @var string {@from body}{@min 32}{@max 32}{@required true}
+     */
+    public $step_uid_obj;
+
+    /**
+     * @var string
+     */
+    public $step_condition;
+
+    /**
+     * @var int {@from body}{@min 1}
+     */
+    public $step_position;
+
+    /**
+     * @var string {@from body}{@choice EDIT,VIEW}{@required true}
+     */
+    public $step_mode;
+}
+
+class StepPutStructure
+{
     /**
      * @var string {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}
      */
