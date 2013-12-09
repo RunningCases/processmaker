@@ -3064,7 +3064,7 @@
     BPMN TABLES DEFINITION
   -->
   <table name="BPMN_PROJECT">
-    <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_NAME" type="VARCHAR" size="255" required="true" default=""/>
     <column name="PRJ_TARGET_NAMESPACE" type="LONGVARCHAR" required="true"/>
     <column name="PRJ_EXPRESION_LANGUAGE" type="LONGVARCHAR" required="false"/>
@@ -3082,7 +3082,7 @@
   </table>
 
   <table name="BPMN_PROCESS">
-    <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="PRO_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="DIA_UID" type="VARCHAR" size="32" required="false"/>
     <column name="PRO_NAME" type="VARCHAR" size="255" required="true"/>
@@ -3102,7 +3102,7 @@
   </table>
 
   <table name="BPMN_ACTIVITY">
-    <column name="ACT_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="ACT_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
     <column name="ACT_NAME" type="VARCHAR" size="255" required="true"/>
@@ -3150,7 +3150,7 @@
   </table>
 
   <table name="BPMN_ARTIFACT">
-    <column name="ART_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="ART_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
     <column name="ART_TYPE" type="VARCHAR" size="15" required="true"/>
@@ -3174,7 +3174,7 @@
   </table>
 
   <table name="BPMN_DIAGRAM">
-    <column name="DIA_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="DIA_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="DIA_NAME" type="VARCHAR" size="255" required="false"/>
     <column name="DIA_IS_CLOSABLE" type="TINYINT" required="false" default="0"/>
@@ -3190,7 +3190,7 @@
   </table>
 
   <table name="BPMN_BOUND">
-    <column name="BOU_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="BOU_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="DIA_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="ELEMENT_UID" type="VARCHAR" size="32" required="false" default=""/>
@@ -3221,7 +3221,7 @@
   </table>
 
   <table name="BPMN_DATA">
-    <column name="DAT_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="DAT_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
     <column name="DAT_NAME" type="VARCHAR" size="255" required="false"/>
@@ -3251,7 +3251,7 @@
   </table>
 
   <table name="BPMN_EVENT">
-    <column name="EVN_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="EVN_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
     <column name="EVN_NAME" type="VARCHAR" size="255" required="false"/>
@@ -3292,7 +3292,7 @@
   </table>
 
   <table name="BPMN_FLOW">
-    <column name="FLO_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="FLO_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="DIA_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="FLO_TYPE" type="VARCHAR" size="20" required="true" default=""/>
@@ -3328,7 +3328,7 @@
   </table>
 
   <table name="BPMN_GATEWAY">
-    <column name="GAT_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="GAT_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
     <column name="GAT_NAME" type="VARCHAR" size="255" required="false"/>
@@ -3357,7 +3357,7 @@
   </table>
 
   <table name="BPMN_LANESET">
-    <column name="LNS_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="LNS_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false"/>
     <column name="LNS_NAME" type="VARCHAR" size="255" required="false"/>
@@ -3382,7 +3382,7 @@
   </table>
 
   <table name="BPMN_LANE">
-    <column name="LAN_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="LAN_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="LNS_UID" type="VARCHAR" size="32" required="true"/>
     <column name="LAN_NAME" type="VARCHAR" size="255" required="false"/>
@@ -3406,7 +3406,7 @@
   </table>
 
   <table name="BPMN_PARTICIPANT">
-    <column name="PAR_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="PAR_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
     <column name="LNS_UID" type="VARCHAR" size="32" required="false" default=""/>
@@ -3427,7 +3427,7 @@
   </table>
 
   <table name="BPMN_EXTENSION">
-    <column name="EXT_UID" type="VARCHAR" size="32" required="true"/>
+    <column name="EXT_UID" type="VARCHAR" size="32" required="true" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="EXT_ELEMENT" type="VARCHAR" size="32" required="true"/>
     <column name="EXT_ELEMENT_TYPE" type="VARCHAR" size="45" required="true"/>
@@ -3444,7 +3444,7 @@
   </table>
 
   <table name="BPMN_DOCUMENTATION">
-    <column name="DOC_UID" type="VARCHAR" size="32" required="true"/>
+    <column name="DOC_UID" type="VARCHAR" size="32" required="true" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="DOC_ELEMENT" type="VARCHAR" size="32" required="true"/>
     <column name="DOC_ELEMENT_TYPE" type="VARCHAR" size="45" required="true"/>

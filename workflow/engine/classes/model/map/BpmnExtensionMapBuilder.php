@@ -65,7 +65,7 @@ class BpmnExtensionMapBuilder
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addColumn('EXT_UID', 'ExtUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('EXT_UID', 'ExtUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addForeignKey('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, 'BPMN_PROJECT', 'PRJ_UID', true, 32);
 

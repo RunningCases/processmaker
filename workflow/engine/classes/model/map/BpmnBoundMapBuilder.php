@@ -65,7 +65,7 @@ class BpmnBoundMapBuilder
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addColumn('BOU_UID', 'BouUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('BOU_UID', 'BouUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addForeignKey('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, 'BPMN_PROJECT', 'PRJ_UID', true, 32);
 

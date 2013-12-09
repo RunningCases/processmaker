@@ -206,8 +206,8 @@ abstract class BaseBpmnParticipantPeer
 
     }
 
-    const COUNT = 'COUNT(*)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT *)';
+    const COUNT = 'COUNT(BPMN_PARTICIPANT.PAR_UID)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT BPMN_PARTICIPANT.PAR_UID)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -619,6 +619,9 @@ abstract class BaseBpmnParticipantPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
+            $comparison = $criteria->getComparison(BpmnParticipantPeer::PAR_UID);
+            $selectCriteria->add(BpmnParticipantPeer::PAR_UID, $criteria->remove(BpmnParticipantPeer::PAR_UID), $comparison);
+
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
@@ -676,22 +679,11 @@ abstract class BaseBpmnParticipantPeer
             $criteria = clone $values; // rename for clarity
         } elseif ($values instanceof BpmnParticipant) {
 
-            $criteria = $values->buildCriteria();
+            $criteria = $values->buildPkeyCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            // primary key is composite; we therefore, expect
-            // the primary key passed to be an array of pkey
-            // values
-            if (count($values) == count($values, COUNT_RECURSIVE)) {
-                // array is not multi-dimensional
-                $values = array($values);
-            }
-            $vals = array();
-            foreach ($values as $value) {
-
-            }
-
+            $criteria->add(BpmnParticipantPeer::PAR_UID, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -748,6 +740,54 @@ abstract class BaseBpmnParticipantPeer
         }
 
         return BasePeer::doValidate(BpmnParticipantPeer::DATABASE_NAME, BpmnParticipantPeer::TABLE_NAME, $columns);
+    }
+
+    /**
+     * Retrieve a single object by pkey.
+     *
+     * @param      mixed $pk the primary key.
+     * @param      Connection $con the connection to use
+     * @return     BpmnParticipant
+     */
+    public static function retrieveByPK($pk, $con = null)
+    {
+        if ($con === null) {
+            $con = Propel::getConnection(self::DATABASE_NAME);
+        }
+
+        $criteria = new Criteria(BpmnParticipantPeer::DATABASE_NAME);
+
+        $criteria->add(BpmnParticipantPeer::PAR_UID, $pk);
+
+
+        $v = BpmnParticipantPeer::doSelect($criteria, $con);
+
+        return !empty($v) > 0 ? $v[0] : null;
+    }
+
+    /**
+     * Retrieve multiple objects by pkey.
+     *
+     * @param      array $pks List of primary keys
+     * @param      Connection $con the connection to use
+     * @throws     PropelException Any exceptions caught during processing will be
+     *       rethrown wrapped into a PropelException.
+     */
+    public static function retrieveByPKs($pks, $con = null)
+    {
+        if ($con === null) {
+            $con = Propel::getConnection(self::DATABASE_NAME);
+        }
+
+        $objs = null;
+        if (empty($pks)) {
+            $objs = array();
+        } else {
+            $criteria = new Criteria();
+            $criteria->add(BpmnParticipantPeer::PAR_UID, $pks, Criteria::IN);
+            $objs = BpmnParticipantPeer::doSelect($criteria, $con);
+        }
+        return $objs;
     }
 }
 
