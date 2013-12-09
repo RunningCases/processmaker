@@ -835,7 +835,11 @@ class Task
                                 'aas_type' => "user" );
                 $oDataset->next();
             }
-            return $aUsers;
+            if (empty($aUsers)) {
+                throw (new \Exception( 'Record not found for id: '. $sAssigneeUID));
+            } else {
+                return $aUsers;
+            }
         } catch (Exception $e) {
             throw $e;
         }
@@ -1169,7 +1173,11 @@ class Task
                                 'aas_type' => "user" );
                 $oDataset->next();
             }
-            return $aUsers;
+            if (empty($aUsers)) {
+                throw (new \Exception( 'Record not found for id: '. $sAssigneeUID));
+            } else {
+                return $aUsers;
+            }
         } catch (Exception $e) {
             throw $e;
         }
