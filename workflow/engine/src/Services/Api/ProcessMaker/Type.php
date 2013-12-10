@@ -189,7 +189,7 @@ class Type
     }
 
     /**
-     * @param integer $age {@type 1,2,,}
+     * @param integer $age {@choise 1,2}
      */
     function postInt($age='')
     {
