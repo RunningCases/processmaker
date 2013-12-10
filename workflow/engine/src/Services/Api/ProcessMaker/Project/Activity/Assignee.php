@@ -99,8 +99,6 @@ class Assignee extends Api
         try {
             $task = new \BusinessModel\Task();
             $arrayData = $task->addTaskAssignee($prjUid, $actUid, $ass_uid, $ass_type);
-            //Response
-            $response = $arrayData;
         } catch (\Exception $e) {
             //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -138,7 +136,7 @@ class Assignee extends Api
      * @param int    $limit
      *
      */
-    public function doGetActivityAdhocAssignees($prjUid, $actUid, $filter = '', $start = '1', $limit = '50')
+    public function doGetActivityAdhocAssignees($prjUid, $actUid, $filter = '', $start = '0', $limit = '50')
     {
         $response = array();
         try {
@@ -163,7 +161,7 @@ class Assignee extends Api
      * @param int    $limit
      *
      */
-    public function doGetActivityAvailableAdhocAssignee($prjUid, $actUid, $filter = '', $start = '1', $limit = '50')
+    public function doGetActivityAvailableAdhocAssignee($prjUid, $actUid, $filter = '', $start = '0', $limit = '50')
     {
         $response = array();
         try {
@@ -216,8 +214,6 @@ class Assignee extends Api
         try {
             $task = new \BusinessModel\Task();
             $arrayData = $task->addTaskAdhocAssignee($prjUid, $actUid, $ass_uid, $ass_type);
-            //Response
-            $response = $arrayData;
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());

@@ -861,23 +861,52 @@ class Task
     {
         try {
             $iType = 1;
-            $oTaskUser = new \TaskUser();
-            if ($assType == "user") {
-                $oTaskUser->create(array('TAS_UID' => $sTaskUID,
-                                   'USR_UID' => $sAssigneeUID,
-                                   'TU_TYPE' => $iType,
-                                   'TU_RELATION' => 1));
-                return array('aas_uid' => $sAssigneeUID, 
-                             'aas_type' => $assType);
-            } else {
-                $oTaskUser->create(array('TAS_UID' => $sTaskUID,
-                                   'USR_UID' => $sAssigneeUID,
-                                   'TU_TYPE' => $iType,
-                                   'TU_RELATION' => 2));
-                return array('aas_uid' => $sAssigneeUID,
-                             'aas_type' => $assType);
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
+            $oCriteria->add(\TaskUserPeer::USR_UID, $sAssigneeUID );
+            $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID );
+            $oCriteria->add(\TaskUserPeer::TU_TYPE, $iType );
+            $oTaskUser = \TaskUserPeer::doSelectRS( $oCriteria );
+            $oTaskUser->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            while ($oTaskUser->next()) {
+                $aRow = $oTaskUser->getRow();
+                $iRelation = $aRow['TU_RELATION'];
             }
-        } catch (Exception $e) {
+            $oTaskUser = \TaskUserPeer::retrieveByPK( $sTaskUID, $sAssigneeUID, $iType, $iRelation );
+            if (! is_null( $oTaskUser )) {
+                throw (new \Exception( 'This id: '. $sAssigneeUID .' is already assigned to task: ' . $sTaskUID ));
+            } else {
+                $oTypeAssigneeG = \GroupwfPeer::retrieveByPK( $sAssigneeUID );
+                $oTypeAssigneeU = \UsersPeer::retrieveByPK( $sAssigneeUID );
+                if (is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
+                    throw (new \Exception( 'This id: '. $sAssigneeUID .' do not correspond to a registered ' .$assType ));
+                }
+                if (is_null( $oTypeAssigneeG ) && ! is_null( $oTypeAssigneeU) ) {
+                    $type = "user";
+                    if ( $type != $assType ) {
+                        throw (new \Exception( 'This id: '. $sAssigneeUID .' do not correspond to a registered ' .$assType ));
+                    }
+                } 
+                if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
+                    $type = "group";
+                    if ( $type != $assType ) {
+                        throw (new \Exception( 'This id: '. $sAssigneeUID .' do not correspond to a registered ' .$assType ));
+                    }
+                }
+                $oTaskUser = new \TaskUser();
+                if ( $assType == "user" ) {
+                    $oTaskUser->create(array('TAS_UID' => $sTaskUID,
+                                             'USR_UID' => $sAssigneeUID,
+                                             'TU_TYPE' => $iType,
+                                             'TU_RELATION' => 1));
+                } else {
+                    $oTaskUser->create(array('TAS_UID' => $sTaskUID,
+                                             'USR_UID' => $sAssigneeUID,
+                                             'TU_TYPE' => $iType,
+                                             'TU_RELATION' => 2));
+                }
+            }
+        } catch ( Exception $e ) {
             throw $e;
         }
     }
@@ -1199,23 +1228,52 @@ class Task
     {
         try {
             $iType = 2;
-            $oTaskUser = new \TaskUser();
-            if ($assType == "user") {
-                $oTaskUser->create(array('TAS_UID' => $sTaskUID,
-                                   'USR_UID' => $sAssigneeUID,
-                                   'TU_TYPE' => $iType,
-                                   'TU_RELATION' => 1));
-                return array('aas_uid' => $sAssigneeUID,
-                             'aas_type' => $assType);
-            } else {
-                $oTaskUser->create(array('TAS_UID' => $sTaskUID,
-                                   'USR_UID' => $sAssigneeUID,
-                                   'TU_TYPE' => $iType,
-                                   'TU_RELATION' => 2));
-                return array('aas_uid' => $sAssigneeUID,
-                             'aas_type' => $assType);
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
+            $oCriteria->add(\TaskUserPeer::USR_UID, $sAssigneeUID );
+            $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID );
+            $oCriteria->add(\TaskUserPeer::TU_TYPE, $iType );
+            $oTaskUser = \TaskUserPeer::doSelectRS( $oCriteria );
+            $oTaskUser->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            while ($oTaskUser->next()) {
+                $aRow = $oTaskUser->getRow();
+                $iRelation = $aRow['TU_RELATION'];
             }
-        } catch (Exception $e) {
+            $oTaskUser = \TaskUserPeer::retrieveByPK( $sTaskUID, $sAssigneeUID, $iType, $iRelation );
+            if (! is_null( $oTaskUser )) {
+                throw (new \Exception( 'This id: '. $sAssigneeUID .' is already assigned to task: ' . $sTaskUID ));
+            } else {
+                $oTypeAssigneeG = \GroupwfPeer::retrieveByPK( $sAssigneeUID );
+                $oTypeAssigneeU = \UsersPeer::retrieveByPK( $sAssigneeUID );
+                if (is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
+                    throw (new \Exception( 'This id: '. $sAssigneeUID .' do not correspond to a registered ' .$assType ));
+                }
+                if (is_null( $oTypeAssigneeG ) && ! is_null( $oTypeAssigneeU) ) {
+                    $type = "user";
+                    if ( $type != $assType ) {
+                        throw (new \Exception( 'This id: '. $sAssigneeUID .' do not correspond to a registered ' .$assType ));
+                    }
+                } 
+                if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
+                    $type = "group";
+                    if ( $type != $assType ) {
+                        throw (new \Exception( 'This id: '. $sAssigneeUID .' do not correspond to a registered ' .$assType ));
+                    }
+                }
+                $oTaskUser = new \TaskUser();
+                if ( $assType == "user" ) {
+                    $oTaskUser->create(array('TAS_UID' => $sTaskUID,
+                                             'USR_UID' => $sAssigneeUID,
+                                             'TU_TYPE' => $iType,
+                                             'TU_RELATION' => 1));
+                } else {
+                    $oTaskUser->create(array('TAS_UID' => $sTaskUID,
+                                             'USR_UID' => $sAssigneeUID,
+                                             'TU_TYPE' => $iType,
+                                             'TU_RELATION' => 2));
+                }
+            }
+        } catch ( Exception $e ) {
             throw $e;
         }
     }
@@ -1230,7 +1288,7 @@ class Task
      * @access public
      */
     public function removeTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
-    {
+    {   
         try {
             $iType = 2;
             $oCriteria = new \Criteria('workflow');
@@ -1253,5 +1311,5 @@ class Task
         } catch (Exception $e) {
             throw $e;
         }
-   }
+    }
 }
