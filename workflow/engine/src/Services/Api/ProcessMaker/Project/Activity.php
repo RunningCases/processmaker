@@ -21,7 +21,7 @@ class Activity extends Api
     public function doGetProjectActivity($projectUid, $activityUid, $filter = '')
     {
         try {
-            $hiddenFields = array('pro_uid', 'tas_uid', 'tas_delay_type', 'tas_temporizer', 'tas_alert',
+            $hiddenFields = array('tas_start', 'pro_uid', 'tas_uid', 'tas_delay_type', 'tas_temporizer', 'tas_alert',
                 'tas_mi_instance_variable', 'tas_mi_complete_variable', 'tas_assign_location',
                 'tas_assign_location_adhoc', 'tas_last_assigned', 'tas_user', 'tas_can_upload', 'tas_view_upload',
                 'tas_view_additional_documentation', 'tas_can_cancel', 'tas_owner_app', 'tas_can_pause',
@@ -68,6 +68,9 @@ class Activity extends Api
     public function doPutProjectActivity($projectUid, $activityUid, ActivityPropertiesStructure $properties, $request_data =  array())
     {
         try {
+            if (isset($request_data['properties']['tas_start'])) {
+                unset($request_data['properties']['tas_start']);
+            }
             $task = new \BusinessModel\Task();
             $properties = $task->updateProperties($activityUid, $projectUid, $request_data);
         } catch (\Exception $e) {
