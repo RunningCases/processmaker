@@ -43,9 +43,9 @@ class Step extends Api
 
             $step = new \BusinessModel\Step();
 
-            $stepUid = $step->create($activityUid, $projectUid, $request_data);
+            $arrayData = $step->create($activityUid, $projectUid, $request_data);
 
-            $response = array("old_uid" => $request_data["step_uid"], "new_uid" => $stepUid);
+            $response = $arrayData;
 
             return $response;
         } catch (\Exception $e) {
@@ -68,7 +68,7 @@ class Step extends Api
 
             $step = new \BusinessModel\Step();
 
-            $step->update($stepUid, $request_data);
+            $arrayData = $step->update($stepUid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -128,11 +128,6 @@ class Step extends Api
 
 class StepPostStructure
 {
-    /**
-     * @var string {@from body}{@min 32}{@max 32}
-     */
-    public $step_uid;
-
     /**
      * @var string {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}{@required true}
      */
