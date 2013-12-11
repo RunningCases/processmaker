@@ -31,7 +31,9 @@ class Project extends Api
         try {
             $bpmnModel = new BpmnModel();
             $uids = $bpmnModel->createProject($request_data);
-            $wfProcess = \ProcessMaker\Adapter\Workflow::loadFromBpmnProject($request_data);
+
+            $wfProcess = \ProcessMaker\Adapter\Workflow::loadFromBpmnProject($uids[0]['new_uid']);
+
             $process = new \BusinessModel\Process();
             $userUid = $this->getUserId();
             $data = array('process' => $wfProcess);
@@ -48,7 +50,7 @@ class Project extends Api
         try {
             $project = BpmnModel::loadProject($prjUid);
 
-            //$WorkflowProces = \ProcessMaker\Adapter\Workflow::loadFromBpmnProject($project);
+            //$WorkflowProces = \ProcessMaker\Adapter\Workflow::loadFromBpmnProject($prjUid);
             //return $WorkflowProces;
             return $project;
         } catch (\Exception $e) {

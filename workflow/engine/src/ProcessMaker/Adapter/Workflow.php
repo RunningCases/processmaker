@@ -3,6 +3,7 @@ namespace ProcessMaker\Adapter;
 
 use \Process;
 use \ProcessMaker\Adapter\Bpmn\Model as BpmnModel;
+use \ProcessMaker\Util\Hash;
 
 /**
  * Class Workflow
@@ -21,9 +22,8 @@ class Workflow
         )
     );
 
-    public function loadFromBpmnProject($bpmnProject)
+    public function loadFromBpmnProject($prjUid)
     {
-        $proUid = $bpmnProject['prj_uid'];
         $bpmnTypesEquiv = array(
             'event' => array(
                 'start' => 'start' // to define task start
@@ -33,31 +33,34 @@ class Workflow
             )
         );
 
+        $project = BpmnModel::getBpmnObjectBy('Project', \BpmnProjectPeer::PRJ_UID, $prjUid);
 
         $process = array();
-        $process['PRO_UID'] = $proUid;
-        $process['PRO_TITLE'] = $bpmnProject['prj_name'];
+        $process['PRO_UID'] = $prjUid;
+        $process['PRO_TITLE'] = $project['PRJ_NAME'];
         $process['PRO_DESCRIPTION'] = '';
         $process['PRO_CATEGORY'] = '';
-        $process['PRO_UID'] = $proUid;
-        $process['PRO_UID'] = $proUid;
+
         $process['tasks'] = array();
+        $process['routes'] = array();
 
-        $diagram = $bpmnProject['diagrams'][0];
+        $projectActivities = BpmnModel::getBpmnCollectionBy('Activity', \BpmnActivityPeer::PRJ_UID, $prjUid);
 
-        foreach ($diagram['activities'] as $activity) {
+        foreach ($projectActivities as $activity) {
+            $activityBound = BpmnModel::getBpmnObjectBy('Bound', \BpmnBoundPeer::ELEMENT_UID, $activity['ACT_UID']);
+
             $process['tasks'][] = array(
-                'TAS_UID' => $activity['act_uid'],
-                'TAS_TITLE' => $activity['act_name'],
-                'TAS_DESCRIPTION' => $activity['act_name'],
-                'TAS_POSX' => $activity['bou_x'],
-                'TAS_POSY' => $activity['bou_y'],
-                'TAS_START' => (self::activityIsStartTask($activity['act_uid']) ? 'TRUE' : 'FALSE'),
+                'TAS_UID' => $activity['ACT_UID'],
+                'TAS_TITLE' => $activity['ACT_NAME'],
+                'TAS_DESCRIPTION' => $activity['ACT_NAME'],
+                'TAS_POSX' => $activityBound['BOU_X'],
+                'TAS_POSY' => $activityBound['BOU_Y'],
+                'TAS_START' => (self::activityIsStartTask($activity['ACT_UID']) ? 'TRUE' : 'FALSE'),
                 '_action' => 'CREATE'
             );
-        }
 
-        $process['routes'] = array();
+            $process['routes'] = array_merge($process['routes'], self::getRoutesFromBpmnFlows($prjUid, $activity['ACT_UID']));
+        }
 
         /*foreach ($diagram['flows'] as $flow) {
             $process['routes'][] = array(
@@ -70,6 +73,95 @@ class Workflow
 
         return $process;
     }
+
+    private static function getRoutesFromBpmnFlows($prjUid, $actUid)
+    {
+        $flows = BpmnModel::select('*', 'Flow', array(
+            \BpmnFlowPeer::FLO_ELEMENT_ORIGIN => $actUid,
+            \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => 'bpmnActivity'
+        ));
+        $routes = array();
+
+        foreach ($flows as $flow) {
+            $fromUid = $flow['FLO_ELEMENT_ORIGIN'];
+            $type = $flow['FLO_TYPE'];
+
+            switch ($type) {
+                case 'SEQUENCE':
+                    $type = 'SEQUENTIAL';
+                    break;
+            }
+
+            //$elFlow = BpmnModel::getBpmnObjectBy('Flow', \BpmnFlowPeer::FLO_ELEMENT_DEST, $elementUid);
+
+            switch ($flow['FLO_ELEMENT_DEST_TYPE']) {
+                case 'bpmnActivity':
+                    // the most easy case, when the flow is connecting a activity with another activity
+                    $routes[] = array(
+                        'ROU_UID' => Hash::generateUID(),
+                        'PRO_UID' => $prjUid,
+                        'TAS_UID' => $fromUid,
+                        'ROU_NEXT_TASK' => $flow['FLO_ELEMENT_DEST'],
+                        'ROU_TYPE' => $type,
+                        '_action' => 'CREATE'
+                    );
+                    break;
+
+                case 'bpmnGateway':
+                    // if it is a gateway it can fork one or more routes
+                    $gatUid = $flow['FLO_ELEMENT_DEST'];
+                    $gatFlows = BpmnModel::getBpmnCollectionBy('Flow', \BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid);
+
+                    foreach ($gatFlows as $gatFlow) {
+                        switch ($gatFlow['FLO_ELEMENT_DEST_TYPE']) {
+                            case 'bpmnActivity':
+                                // getting gateway properties
+                                $gateway = BpmnModel::getBpmnObjectBy('Gateway', \BpmnFlowPeer::GAT_UID, $gatUid);
+
+                                switch ($gateway['GAT_TYPE']) {
+                                    //TODO we need to know gateways types to match with routes types of processmaker
+                                    case '':
+                                        $routeType = '';
+                                        break;
+                                }
+
+                                $routes[] = array(
+                                    'ROU_UID' => Hash::generateUID(),
+                                    'PRO_UID' => $prjUid,
+                                    'TAS_UID' => $fromUid,
+                                    'ROU_NEXT_TASK' => $gatFlow['FLO_ELEMENT_DEST'],
+                                    'ROU_TYPE' => $routeType,
+                                    '_action' => 'CREATE'
+                                );
+                                break;
+                            default:
+                                // for processmaker is only allowed flows between "gateway -> activity"
+                                // any another flow is considered invalid
+                                throw new \LogicException("For ProcessMaker is only allowed flows between \"gateway -> activity\"");
+                        }
+                    }
+                    break;
+            }
+        }
+
+
+        return $routes;
+    }
+    private static function getRoutesFromBpmnFlows2($flows)
+    {
+        // get bpmnActivities on flo_element_origin
+        $flowsOriginActivities = array();
+
+        foreach ($flows as $i => $flow) {
+            if ($flow['flo_element_origin_type'] == 'bpmnActivity') {
+                $flowsOriginActivities[] = $flow;
+                unset($flows[$i]);
+            }
+        }
+
+
+    }
+
 
     private static function getTask($actUid)
     {
