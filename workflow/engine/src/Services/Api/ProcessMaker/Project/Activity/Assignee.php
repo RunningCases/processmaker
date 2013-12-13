@@ -231,7 +231,6 @@ class Assignee extends Api
      */
     public function doDeleteActivityAdhocAssignee($prjUid, $actUid, $assUid)
     {
-        $response = array();
         try {
             $task = new \BusinessModel\Task();
             $arrayData = $task->removeTaskAdhocAssignee($prjUid, $actUid, $assUid);

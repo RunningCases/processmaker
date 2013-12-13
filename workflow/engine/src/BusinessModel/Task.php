@@ -1304,7 +1304,7 @@ class Task
             }
             $oTaskUser = \TaskUserPeer::retrieveByPK($sTaskUID, $sAssigneeUID, $iType, $iRelation);
             if (! is_null( $oTaskUser )) {
-                \TaskUserPeer::doDelete($oCriteria);
+                OutputDocumentsTaskUserPeer::doDelete($oCriteria);
             } else {
                 throw (new \Exception( 'This row does not exist!' ));
             }
@@ -1312,4 +1312,5 @@ class Task
             throw $e;
         }
     }
+
 }
