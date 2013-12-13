@@ -79,5 +79,148 @@ class Trigger
             throw $e;
         }
     }
+
+    /**
+     * List of Triggers in process
+     *
+     * return array
+     */
+    public function getTriggersCriteria($sProcessUID = '')
+    {
+        $criteria = $this->getTriggerCriteria();
+
+        $criteria->add(\TriggersPeer::PRO_UID, $sProcessUID);
+        $criteria->addAscendingOrderByColumn('TRI_TITLE');
+
+        $oDataset = \TriggersPeer::doSelectRS($criteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        $oDataset->next();
+        $triggersArray = "";
+        //$triggersArray[] = array('TRI_UID' => 'char', 'PRO_UID' => 'char', 'TRI_TITLE' => 'char', 'TRI_DESCRIPTION' => 'char');
+        while ($aRow = $oDataset->getRow()) {
+            if (($aRow['TRI_TITLE'] == null) || ($aRow['TRI_TITLE'] == "")) {
+                // There is no transaltion for this Trigger name, try to get/regenerate the label
+                $triggerObj = $this->getDataTrigger($aRow['TRI_UID']);
+                $aRow['TRI_TITLE'] = $triggerObj['tri_title'];
+                $aRow['TRI_DESCRIPTION'] = $triggerObj['tri_description'];
+            }
+            $triggersArray[] = array_change_key_case($aRow, CASE_LOWER);
+            $oDataset->next();
+        }
+
+        return $triggersArray;
+    }
+
+    /**
+     * Get data for TriggerUid
+     *
+     * return array
+     */
+    public function getDataTrigger($sTriggerUID = '')
+    {
+        $triggerO = new \Triggers();
+        $triggerArray = $triggerO->load($sTriggerUID);
+        if (isset($triggerArray['PRO_UID'])) {
+            unset($triggerArray['PRO_UID']);
+        }
+        $triggerArray = array_change_key_case($triggerArray, CASE_LOWER);
+        return $triggerArray;
+    }
+
+
+    /**
+     * Delete Trigger
+     *
+     */
+    public function deleteTrigger($sTriggerUID = '')
+    {
+        $oTrigger = new \Triggers();
+        $triggerObj = $oTrigger->load( $sTriggerUID );
+
+        $oTrigger->remove( $sTriggerUID );
+        $oStepTrigger = new \StepTrigger();
+        $oStepTrigger->removeTrigger( $sTriggerUID );
+    }
+
+    /**
+     * Save Data for Trigger
+     *
+     */
+    public function saveTrigger($sProcessUID = '', $dataTrigger = array(), $create = false, $sTriggerUid = '')
+    {
+        if ( ($sProcessUID == '') || (count($dataTrigger) == 0) ) {
+            return false;
+        }
+        $dataTrigger = array_change_key_case($dataTrigger, CASE_UPPER);
+
+        if ( $create && (isset($dataTrigger['TRI_UID'])) ) {
+            unset($dataTrigger['TRI_UID']);
+        }
+
+        $dataTrigger= (array)$dataTrigger;
+        if (isset($dataTrigger['TRI_TYPE']) && $dataTrigger['TRI_TYPE'] == '') {
+            $dataTrigger['TRI_TYPE'] = 'SCRIPT';
+        }
+
+        if (isset($dataTrigger['TRI_TITLE'])) {
+            if (!$this->verifyNameTrigger($sProcessUID, $dataTrigger['TRI_TITLE'], $sTriggerUid)) {
+                throw new \Exception('There is a triggers with the same name in this process');
+            }
+        }
+
+        $dataTrigger['PRO_UID'] = $sProcessUID;
+        $oTrigger = new \Triggers();
+        if ($create) {
+            $oTrigger->create( $dataTrigger );
+            $dataTrigger['TRI_UID'] = $oTrigger->getTriUid();
+        }
+
+        $oTrigger->update( $dataTrigger );
+        if ($create) {
+            $dataResp = $oTrigger->load( $dataTrigger['TRI_UID'] );
+            $dataResp = array_change_key_case($dataResp, CASE_LOWER);
+            if (isset($dataResp['pro_uid'])) {
+                unset($dataResp['pro_uid']);
+            }
+            return $dataResp;
+        }
+    }
+
+    /**
+     * Verify name for trigger in process
+     *
+     * return boolean
+     */
+    public function verifyNameTrigger($sProcessUID, $sTriggerName, $sTriggerUid = '')
+    {
+        $oCriteria = new \Criteria("workflow");
+        $oCriteria->addSelectColumn( \TriggersPeer::TRI_UID );
+        $oCriteria->add( \TriggersPeer::PRO_UID, $sProcessUID );
+        if ($sTriggerUid != '') {
+            $oCriteria->add( \TriggersPeer::TRI_UID, $sTriggerUid, \Criteria::NOT_EQUAL);
+        }
+        $oDataset = \TriggersPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        while ($oDataset->next()) {
+            $aRow = $oDataset->getRow();
+
+            $oCriteria1 = new \Criteria( 'workflow' );
+            $oCriteria1->addSelectColumn( 'COUNT(*) AS TRIGGERS' );
+            $oCriteria1->add( \ContentPeer::CON_CATEGORY, 'TRI_TITLE' );
+            $oCriteria1->add( \ContentPeer::CON_ID, $aRow['TRI_UID'] );
+            $oCriteria1->add( \ContentPeer::CON_VALUE, $sTriggerName );
+            $oCriteria1->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $oDataset1 = \ContentPeer::doSelectRS( $oCriteria1 );
+            $oDataset1->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+            $oDataset1->next();
+            $aRow1 = $oDataset1->getRow();
+
+            if ($aRow1['TRIGGERS']) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 

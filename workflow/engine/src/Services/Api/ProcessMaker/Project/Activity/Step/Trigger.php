@@ -44,7 +44,7 @@ class Trigger extends Api
 
             $stepTrigger = new \BusinessModel\Step\Trigger();
 
-            $stepTrigger->create($stepUid, $request_data["tri_uid"], $request_data["st_type"], $request_data);
+            $arrayData = $stepTrigger->create($stepUid, $request_data["st_type"], $request_data["tri_uid"], $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -66,7 +66,7 @@ class Trigger extends Api
 
             $stepTrigger = new \BusinessModel\Step\Trigger();
 
-            $stepTrigger->update($stepUid, $triggerUid, $request_data["st_type"], $request_data);
+            $arrayData = $stepTrigger->update($stepUid, $request_data["st_type"], $triggerUid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -86,7 +86,7 @@ class Trigger extends Api
         try {
             $stepTrigger = new \BusinessModel\Step\Trigger();
 
-            $stepTrigger->delete($stepUid, $triggerUid, strtoupper($type));
+            $stepTrigger->delete($stepUid, strtoupper($type), $triggerUid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -96,14 +96,14 @@ class Trigger extends Api
 class StepTriggerPostStructure
 {
     /**
-     * @var string {@from body}{@min 32}{@max 32}{@required true}
-     */
-    public $tri_uid;
-
-    /**
      * @var string {@from body}{@choice BEFORE,AFTER}{@required true}
      */
     public $st_type;
+
+    /**
+     * @var string {@from body}{@min 32}{@max 32}{@required true}
+     */
+    public $tri_uid;
 
     /**
      * @var string
@@ -119,7 +119,7 @@ class StepTriggerPostStructure
 class StepTriggerPutStructure
 {
     /**
-     * @var string {@from body}{@choice BEFORE,AFTER}
+     * @var string {@from body}{@choice BEFORE,AFTER}{@required true}
      */
     public $st_type;
 
