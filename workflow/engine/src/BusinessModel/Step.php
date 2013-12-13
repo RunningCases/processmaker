@@ -4,17 +4,141 @@ namespace BusinessModel;
 class Step
 {
     /**
+     * Checks if exists the record in table STEP
+     *
+     * @param string $taskUid        Unique id of Task
+     * @param string $type           Type of Step (DYNAFORM, INPUT_DOCUMENT, OUTPUT_DOCUMENT)
+     * @param string $objectUid      Unique id of Object
+     * @param int    $position       Position
+     * @param string $stepUidExclude Unique id of Step to exclude
+     *
+     * return bool Return true if exists the record in table STEP, false otherwise
+     */
+    public function existsRecord($taskUid, $type, $objectUid, $position = 0, $stepUidExclude = "")
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\StepPeer::STEP_UID);
+            $criteria->add(\StepPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+
+            if ($stepUidExclude != "") {
+                $criteria->add(\StepPeer::STEP_UID, $stepUidExclude, \Criteria::NOT_EQUAL);
+            }
+
+            if ($type != "") {
+                $criteria->add(\StepPeer::STEP_TYPE_OBJ, $type, \Criteria::EQUAL);
+            }
+
+            if ($objectUid != "") {
+                $criteria->add(\StepPeer::STEP_UID_OBJ, $objectUid, \Criteria::EQUAL);
+            }
+
+            if ($position > 0) {
+                $criteria->add(\StepPeer::STEP_POSITION, $position, \Criteria::EQUAL);
+            }
+
+            $rsCriteria = \StepPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Checks if exists the "Object UID" in the corresponding table
+     *
+     * @param string $type      Type of Step (DYNAFORM, INPUT_DOCUMENT, OUTPUT_DOCUMENT)
+     * @param string $objectUid Unique id of Object
+     *
+     * return strin Return empty string if $objectUid exists in the corresponding table, return string with data if $objectUid doesn't exist
+     */
+    public function existsObjectUid($type, $objectUid)
+    {
+        try {
+            $msg = "";
+
+            switch ($type) {
+                case "DYNAFORM":
+                    $dynaform = new \Dynaform();
+
+                    if (!$dynaform->dynaformExists($objectUid)) {
+                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}");
+                    }
+                    break;
+                case "INPUT_DOCUMENT":
+                    $inputdoc = new \InputDocument();
+
+                    if (!$inputdoc->InputExists($objectUid)) {
+                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "INPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}");
+                    }
+                    break;
+                case "OUTPUT_DOCUMENT":
+                    $outputdoc = new \OutputDocument();
+
+                    if (!$outputdoc->OutputExists($objectUid)) {
+                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "OUTPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}");
+                    }
+                    break;
+                default:
+                    $msg = str_replace(array("{0}", "{1}"), array($objectUid, $type), "The UID \"{0}\" doesn't exist in table {1}");
+                    break;
+            }
+
+            return $msg;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Create Step for a Task
      *
      * @param string $taskUid
      * @param string $processUid
      * @param array  $arrayData
      *
-     * return string Unique id of the new Step
+     * return array Data of the Step created
      */
     public function create($taskUid, $processUid, $arrayData)
     {
         try {
+            //Verify data
+            $process = new \Process();
+
+            if (!$process->exists($processUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
+            $task = new \Task();
+
+            if (!$task->taskExists($taskUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
+            if (isset($arrayData["step_type_obj"]) && isset($arrayData["step_uid_obj"])) {
+                $msg = $this->existsObjectUid($arrayData["step_type_obj"], $arrayData["step_uid_obj"]);
+
+                if ($msg != "") {
+                    throw (new \Exception($msg));
+                }
+
+                if ($this->existsRecord($taskUid, $arrayData["step_type_obj"], $arrayData["step_uid_obj"])) {
+                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid . ", " . $arrayData["step_type_obj"] . ", " . $arrayData["step_uid_obj"], "STEP"), "The record \"{0}\", exists in table {1}")));
+                }
+            }
+
+            if (isset($arrayData["step_position"]) && $this->existsRecord($taskUid, "", "", $arrayData["step_position"])) {
+                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["step_position"], $taskUid . ", " . $arrayData["step_position"], "STEP"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
+            }
+
+            //Create
             $step = new \Step();
 
             $stepUid = $step->create(array("PRO_UID" => $processUid, "TAS_UID" => $taskUid));
@@ -23,9 +147,11 @@ class Step
                 $arrayData["step_position"] = $step->getNextPosition($taskUid) - 1;
             }
 
-            $this->update($stepUid, $arrayData);
+            $arrayData = $this->update($stepUid, $arrayData);
 
-            return $stepUid;
+            $arrayData["step_uid"] = $stepUid;
+
+            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -37,11 +163,39 @@ class Step
      * @param string $stepUid
      * @param array  $arrayData
      *
-     * return void
+     * return array Data of the Step updated
      */
     public function update($stepUid, $arrayData)
     {
         try {
+            $arrayDataUid = $this->getDataUids($stepUid);
+
+            $taskUid = $arrayDataUid["TAS_UID"];
+
+            //Verify data
+            $step = new \Step();
+
+            if (!$step->StepExists($stepUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
+            if (isset($arrayData["step_type_obj"]) && isset($arrayData["step_uid_obj"])) {
+                $msg = $this->existsObjectUid($arrayData["step_type_obj"], $arrayData["step_uid_obj"]);
+
+                if ($msg != "") {
+                    throw (new \Exception($msg));
+                }
+
+                if ($this->existsRecord($taskUid, $arrayData["step_type_obj"], $arrayData["step_uid_obj"], 0, $stepUid)) {
+                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid . ", " . $arrayData["step_type_obj"] . ", " . $arrayData["step_uid_obj"], "STEP"), "The record \"{0}\", exists in table {1}")));
+                }
+            }
+
+            if (isset($arrayData["step_position"]) && $this->existsRecord($taskUid, "", "", $arrayData["step_position"], $stepUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["step_position"], $taskUid . ", " . $arrayData["step_position"], "STEP"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
+            }
+
+            //Update
             $step = new \Step();
 
             $arrayUpdateData = array();
@@ -69,6 +223,8 @@ class Step
             }
 
             $step->update($arrayUpdateData);
+
+            return array_change_key_case($arrayUpdateData, CASE_LOWER);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -84,6 +240,13 @@ class Step
     public function delete($stepUid)
     {
         try {
+            //Verify data
+            $step = new \Step();
+
+            if (!$step->StepExists($stepUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
             //Get position
             $criteria = new \Criteria("workflow");
 
