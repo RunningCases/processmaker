@@ -7,6 +7,9 @@ use \Luracast\Restler\RestException;
 /**
  * Project\Activity\Step\Trigger Api Controller
  *
+ * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+ * @copyright Colosa - Bolivia
+ *
  * @protected
  */
 class Trigger extends Api
@@ -14,13 +17,17 @@ class Trigger extends Api
     /**
      * @param string $projectUid {@min 1} {@max 32}
      *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     * @return array
+     *
      * @url GET /:projectUid/triggers
      */
     public function doGetTriggers($projectUid)
     {
         try {
             $trigger = new \BusinessModel\Trigger();
-            $response = $trigger->getTriggersCriteria($projectUid);
+            $response = $trigger->getTriggers($projectUid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -30,6 +37,9 @@ class Trigger extends Api
     /**
      * @param string $projectUid {@min 1} {@max 32}
      * @param string $triggerUid {@min 1} {@max 32}
+     * @return array
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
      *
      * @url GET /:projectUid/trigger/:triggerUid
      */
@@ -52,6 +62,10 @@ class Trigger extends Api
      * @param string $tri_type {@from body} {@choice SCRIPT}
      * @param string $tri_webbot {@from body}
      * @param string $tri_param {@from body}
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
      *
      * @url POST /:projectUid/trigger
      */
@@ -75,6 +89,10 @@ class Trigger extends Api
      * @param string $tri_type {@from body} {@choice SCRIPT}
      * @param string $tri_webbot {@from body}
      * @param string $tri_param {@from body}
+     * @return void
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
      *
      * @url PUT /:projectUid/trigger/:triggerUid
      */
@@ -92,7 +110,11 @@ class Trigger extends Api
     /**
      * @param string $projectUid {@min 1} {@max 32}
      * @param string $triggerUid {@min 1} {@max 32}
-     * 
+     * @return void
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
      * @url DELETE /:projectUid/trigger/:triggerUid
      */
     public function doDeleteTrigger($projectUid, $triggerUid)
@@ -100,7 +122,6 @@ class Trigger extends Api
         try {
             $trigger = new \BusinessModel\Trigger();
             $response = $trigger->deleteTrigger($triggerUid);
-            return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

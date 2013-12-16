@@ -82,10 +82,14 @@ class Trigger
 
     /**
      * List of Triggers in process
+     * @var string $sProcessUID. Uid for Process
      *
-     * return array
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
      */
-    public function getTriggersCriteria($sProcessUID = '')
+    public function getTriggers($sProcessUID = '')
     {
         $criteria = $this->getTriggerCriteria();
 
@@ -96,7 +100,7 @@ class Trigger
         $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
         $oDataset->next();
-        $triggersArray = "";
+        $triggersArray = array();
         //$triggersArray[] = array('TRI_UID' => 'char', 'PRO_UID' => 'char', 'TRI_TITLE' => 'char', 'TRI_DESCRIPTION' => 'char');
         while ($aRow = $oDataset->getRow()) {
             if (($aRow['TRI_TITLE'] == null) || ($aRow['TRI_TITLE'] == "")) {
@@ -114,8 +118,12 @@ class Trigger
 
     /**
      * Get data for TriggerUid
+     * @var string $sTriggerUID. Uid for Trigger
      *
-     * return array
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
      */
     public function getDataTrigger($sTriggerUID = '')
     {
@@ -131,7 +139,12 @@ class Trigger
 
     /**
      * Delete Trigger
+     * @var string $sTriggerUID. Uid for Trigger
      *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
      */
     public function deleteTrigger($sTriggerUID = '')
     {
@@ -145,7 +158,15 @@ class Trigger
 
     /**
      * Save Data for Trigger
+     * @var string $sProcessUID. Uid for Process
+     * @var string $dataTrigger. Data for Trigger
+     * @var string $create. Create o Update Trigger
+     * @var string $sTriggerUid. Uid for Trigger
      *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
      */
     public function saveTrigger($sProcessUID = '', $dataTrigger = array(), $create = false, $sTriggerUid = '')
     {
@@ -185,12 +206,19 @@ class Trigger
             }
             return $dataResp;
         }
+        return array();
     }
 
     /**
      * Verify name for trigger in process
+     * @var string $sProcessUID. Uid for Process
+     * @var string $sTriggerName. Name for Trigger
+     * @var string $sTriggerUid. Uid for Trigger
      *
-     * return boolean
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return boolean
      */
     public function verifyNameTrigger($sProcessUID, $sTriggerName, $sTriggerUid = '')
     {
