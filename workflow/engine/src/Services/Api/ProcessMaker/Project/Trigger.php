@@ -68,6 +68,7 @@ class Trigger extends Api
      * @copyright Colosa - Bolivia
      *
      * @url POST /:projectUid/trigger
+     * @status 201
      */
     public function doPostTrigger($projectUid, $request_data, $tri_title, $tri_description = '', $tri_type = 'SCRIPT', $tri_webbot = '', $tri_param = '')
     {
