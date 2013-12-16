@@ -1,0 +1,229 @@
+<?php
+namespace Services\Api\ProcessMaker\Project;
+
+use \ProcessMaker\Services\Api;
+use \Luracast\Restler\RestException;
+
+/**
+ * Project\OutputDocuments Api Controller
+ *
+ * @protected
+ */
+class OutputDocuments extends Api
+{
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     *
+     * @url GET /:prjUid/output-documents
+     */
+    public function doGetProjectOutputDocuments($prjUid)
+    {
+        try {
+            $outputDocument = new \BusinessModel\OutputDocument();
+            $arrayData = $outputDocument->getOutputDocuments($prjUid);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $outputDocumentUid {@min 32} {@max 32}
+     *
+     * @url GET /:prjUid/output-document/:outputDocumentUid
+     */
+    public function doGetProjectOutputDocument($prjUid, $outputDocumentUid)
+    {
+        try {
+            $outputDocument = new \BusinessModel\OutputDocument();
+            $arrayData = $outputDocument->getOutputDocument($prjUid, $outputDocumentUid);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @url POST /:prjUid/output-document
+     *
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param OutputDocumentStructure $request_data
+     *
+     * @status 201
+     */
+    public function doPostProjectOutputDocument($prjUid, OutputDocumentStructure $request_data =  null)
+    {
+        try {
+            $request_data = (array)($request_data);
+            $outputDocument = new \BusinessModel\OutputDocument();
+            $arrayData = $outputDocument->addOutputDocument($prjUid, $request_data);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @url PUT /:prjUid/output-document/:outputDocumentUid
+     *
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $outputDocumentUid {@min 32} {@max 32}
+     * @param OutputDocumentStructure $request_data     
+     *
+     */
+    public function doPutProjectOutputDocument($prjUid, $outputDocumentUid, OutputDocumentStructure $request_data)
+    {
+        try {
+            $request_data = (array)($request_data);
+            $outputDocument = new \BusinessModel\OutputDocument();
+            $arrayData = $outputDocument->updateOutputDocument($prjUid, $outputDocumentUid, $request_data);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @url DELETE /:prjUid/output-document/:outputDocumentUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $outputDocumentUid {@min 32} {@max 32}
+     *
+     */
+    public function doDeleteProjectOutputDocument($prjUid, $outputDocumentUid)
+    {
+        try {
+            $outputDocument = new \BusinessModel\OutputDocument();
+            $arrayData = $outputDocument->deleteOutputDocument($prjUid, $outputDocumentUid);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+
+}
+
+class OutputDocumentStructure
+{   /**
+     * @var string {@from body}
+     */
+    public $out_doc_title;
+
+    /**
+     * @var string {@from body}
+     */
+    public $out_doc_description;
+
+    /**
+     * @var string {@from body}
+     */
+    public $out_doc_filename;
+
+    /**
+     * @var string {@from body}
+     */
+    public $out_doc_template;
+
+    /**
+     * @var string {@from body} {@min 0} {@max 10}
+     */
+    public $out_doc_report_generator;
+
+    /**
+     * @var int {@from body}
+     */
+    public $out_doc_landscape;
+
+    /**
+     * @var string {@from body} {@min 0} {@max 10}
+     */
+    public $out_doc_media;
+
+    /**
+     * @var int {@from body}
+     */
+    public $out_doc_left_margin;
+
+    /**
+     * @var int {@from body}
+     */
+    public $out_doc_right_margin;
+
+    /**
+     * @var int {@from body}
+     */
+    public $out_doc_top_margin;
+
+    /**
+     * @var int {@from body}
+     */
+    public $out_doc_bottom_margin;
+
+    /**
+     * @var string {@from body} {@min 0} {@max 10}
+     */
+    public $out_doc_generate;
+
+    /**
+     * @var string {@from body} {@min 0} {@max 32}
+     */
+    public $out_doc_type;
+
+    /**
+     * @var int {@from body}
+     */
+    public $out_doc_current_revision;
+
+    /**
+     * @var string {@from body}
+     */
+    public $out_doc_field_mapping;
+
+    /**
+     * @var int {@from body}
+     */
+    public $out_doc_versioning;
+
+    /**
+     * @var string {@from body}
+     */
+    public $out_doc_destination_path;
+
+    /**
+     * @var string {@from body}
+     */
+    public $out_doc_tags;
+
+    /**
+     * @var int {@from body}
+     */
+    public $out_doc_pdf_security_enabled;
+
+    /**
+     * @var string {@from body}
+     */
+    public $out_doc_pdf_security_open_password;
+
+    /**
+     * @var string {@from body}
+     */
+    public $out_doc_pdf_security_owner_password;
+
+    /**
+     * @var string {@from body}
+     */
+    public $out_doc_pdf_security_permission;
+
+}
