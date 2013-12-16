@@ -1,0 +1,6 @@
+# behat.yml
+default:
+    context:
+        parameters:
+            base_url: http://192.168.11.181/api/1.0/workflow/
+            access_token: 041ac5efcd40a071cc75b71009fa430c8685c50d
