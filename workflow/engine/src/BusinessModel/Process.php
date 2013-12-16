@@ -530,7 +530,7 @@ class Process
             //Get data
             $arrayInputDocument = array();
 
-            $inputdoc = new \BusinessModel\Inputdocument();
+            $inputdoc = new \BusinessModel\InputDocument();
 
             $criteria = $inputdoc->getInputDocumentCriteria();
 
