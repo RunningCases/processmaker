@@ -185,6 +185,46 @@ class RestContext extends BehatContext
     }
 
     /**
+     * @Given /^that I want to delete a resource with the key "([^"]*)" stored in session array$/
+     */
+    public function thatIWantToDeleteAResourceWithTheKeyStoredInSessionArray($varName)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$varName) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$varName;
+        }
+
+        $this->_restDeleteQueryStringSuffix = "/" . $varValue;
+        $this->_restObjectMethod = 'delete';
+    }
+
+    /**
+     * @Given /^that I want to update a resource with the key "([^"]*)" stored in session array$/
+     */
+    public function thatIWantToUpdateAResourceWithTheKeyStoredInSessionArray($varName)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$varName) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$varName;
+        }
+
+        $this->_restUpdateQueryStringSuffix = "/" . $varValue;
+        $this->_restObjectMethod = 'put';
+    }
+
+    /**
      * @Given /^that "([^"]*)" header is set to "([^"]*)"$/
      * @Given /^that "([^"]*)" header is set to (\d+)$/
      */
@@ -307,6 +347,10 @@ class RestContext extends BehatContext
                 $this->_response = $this->_request->send();
                 break;
             case 'PUT' :
+                if (isset($this->_restUpdateQueryStringSuffix) &&
+                    $this->_restUpdateQueryStringSuffix != '') {
+                    $url .= $this->_restUpdateQueryStringSuffix;
+                }
                 $putFields = is_object($this->_restObject)
                     ? (array)$this->_restObject
                     : $this->_restObject;
@@ -327,6 +371,10 @@ class RestContext extends BehatContext
                 $this->_response = $this->_request->send();
                 break;
             case 'DELETE':
+                if (isset($this->_restDeleteQueryStringSuffix) &&
+                    $this->_restDeleteQueryStringSuffix != '') {
+                    $url .= $this->_restDeleteQueryStringSuffix;
+                }
                 $this->_request = $this->_client
                     ->delete($url, $this->_headers);
                 $this->_response = $this->_request->send();
@@ -490,6 +538,18 @@ class RestContext extends BehatContext
         }
     }
 
+    /**
+     * @Given /^the json data is an empty array$/
+     */
+    public function theJsonDataIsAnEmptyArray()
+    {
+        $data = $this->_data;
+        if (is_array($data) && count($data) == 0) {
+            return;
+        }
+        throw new Exception("Response is not an empty array\n\n" .
+            $this->echoLastResponse());
+    }
 
     /**
      * @Given /^the type is "([^"]*)"$/
@@ -882,6 +942,27 @@ class RestContext extends BehatContext
         }
     }
 
+    /**
+     * @Given /^POST this data:$/
+     */
+    public function postThisData(PyStringNode $string)
+    {
+        $this->_restObjectMethod = 'post';
+        $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
+        $this->_requestBody = $string;
+    }
+
+    /**
+     * @Given /^PUT this data:$/
+     */
+    public function putThisData(PyStringNode $string)
+    {
+        $this->_restObjectMethod = 'put';
+        $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
+        $this->_requestBody = $string;
+    }
+
+
    /**
      * @Given /^I want to Insert a new "([^"]*)" with:$/
      */
@@ -899,6 +980,26 @@ class RestContext extends BehatContext
     }
 
     /**
+     * @Given /^store "([^"]*)" in session array$/
+     */
+    public function storeIn($varName)
+    {
+        if (!isset($this->_data->$varName)) {
+            throw new \Exception("JSON Response does not have '$varName' property\n\n"
+                . $this->echoLastResponse());
+        }
+
+        $varValue = $this->_data->$varName;
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = new StdClass();
+        }
+        $sessionData->$varName = $varValue;
+        file_put_contents("session.data", json_encode($sessionData));
+    }
+
+    /**
      * @Then /^echo last response$/
      */
     public function echoLastResponse()
@@ -906,3 +1007,4 @@ class RestContext extends BehatContext
         $this->printDebug("$this->_request\n$this->_response");
     }
 }
+
