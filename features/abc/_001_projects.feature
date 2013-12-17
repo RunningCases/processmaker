@@ -30,12 +30,25 @@ Feature: Testing Oauth
     And the "flows" property in row 0 of property "diagrams" is "array"
     And the "artifacts" property in row 0 of property "diagrams" is "array"
 
-#  Scenario: Creating new Project with API
-#    Given that I want to make a new "Process"
+  Scenario: Creating new Project with API
+    Given that I want to make a new "Process" with:
+      | name          | followers |
+      | everzet       | 147       |
+      | avalanche123  | 142       |
+      | kriswallsmith | 274       |
+      | fabpot        | 962       |
+    And I want to Insert a new "Process" with:
+    """
+    { 
+        "id" : 123,
+        "name" : "john",
+        "age" : 12
+    }
+    """      
 #    And "prj_name" is "my test process"
 #    And "prj_description" is "test for gizzle"
 #    And the request is sent as JSON
 #    When I request "project"
-#    Then the response status code should be 201
+    Then the response status code should be 201
 #    And the response should be JSON
 #    And the response has a "prj_id" property

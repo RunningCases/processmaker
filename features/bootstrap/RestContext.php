@@ -1,7 +1,7 @@
 <?php
 use Behat\Behat\Context\BehatContext;
 use Behat\Gherkin\Node\PyStringNode;
-
+use Behat\Gherkin\Node\TableNode;
 /**
  * Rest context.
  *
@@ -851,6 +851,37 @@ class RestContext extends BehatContext
                 ' (actual: ' . $this->_response->getStatusCode() . ")\n\n"
                 . $this->echoLastResponse());
         }
+    }
+
+    /**
+     * @Given /^that I want to make a new "([^"]*)" with:$/
+     */
+    public function thatIWantToMakeANewWith($object, TableNode $table)
+    {
+        $rows = array();
+        foreach ($table->getHash() as $rowHash) {
+            printf ("%s %s \n", $rowHash['name'], $rowHash['followers'] );
+            //$user = new User();
+            //$user->setUsername($userHash['name']);
+            //$user->setFollowersCount($userHash['followers']);
+            //$users[] = $user;
+        }
+    }
+
+   /**
+     * @Given /^I want to Insert a new "([^"]*)" with:$/
+     */
+    public function iWantToInsertANewWith($url, PyStringNode $string)
+    {
+        //$this->_restObject = json_decode($string);
+        $this->_restObjectMethod = 'post';
+        $this->_headers['Content-Type'] = 'application/json; charset=utf-8';
+        $this->_requestBody = $string;
+        $this->iRequest($url);
+
+        //$row = json_decode($string);
+        //print_r($row);
+        //print "************$string ***********";
     }
 
     /**
