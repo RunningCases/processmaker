@@ -108,7 +108,7 @@ class Process
 
         switch ($option) {
             case "CREATE":
-                $processUid = $process->create($arrayProcessData);
+                $processUid = $process->create($arrayProcessData, false);
 
                 //Call plugins
                 //$arrayData = array(
@@ -155,7 +155,7 @@ class Process
                     case "CREATE":
                         //Create task
                         $arrayDataAux = array(
-                            //"TAS_UID"   => $arrayData["TAS_UID"],
+                            "TAS_UID"   => $arrayData["TAS_UID"],
                             "PRO_UID"   => $arrayData["PRO_UID"],
                             "TAS_TITLE" => $arrayData["TAS_TITLE"],
                             "TAS_DESCRIPTION" => $arrayData["TAS_DESCRIPTION"],
@@ -166,7 +166,7 @@ class Process
 
                         $task = new \Task();
 
-                        $taskUid = $task->create($arrayDataAux);
+                        $taskUid = $task->create($arrayDataAux, false);
 
                         $uidAux = $arrayDefineProcessData["process"]["tasks"][$index]["TAS_UID"];
                         $arrayDefineProcessData["process"]["tasks"][$index]["TAS_UID"] = $taskUid;
