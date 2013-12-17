@@ -200,6 +200,11 @@ class Model
         foreach($gateways as $gatewayData) {
             $gatewayData = array_change_key_case((array) $gatewayData, CASE_UPPER);
 
+            // fix data
+            if ($gatewayData['GAT_DIRECTION'] === null) {
+                unset($gatewayData['GAT_DIRECTION']);
+            }
+
             $gateway = new Gateway();
             $gateway->fromArray($gatewayData, BasePeer::TYPE_FIELDNAME);
             $gateway->setGatUid(Hash::generateUID());

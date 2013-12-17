@@ -137,12 +137,12 @@ class OutputDocumentStructure
     public $out_doc_template;
 
     /**
-     * @var string {@from body} {@min 0} {@max 10}
+     * @var string {@from body} {@choice TCPDF,HTML2PDF}
      */
     public $out_doc_report_generator;
 
     /**
-     * @var int {@from body}
+     * @var int {@from body} {@choice 0,1}
      */
     public $out_doc_landscape;
 
@@ -172,7 +172,7 @@ class OutputDocumentStructure
     public $out_doc_bottom_margin;
 
     /**
-     * @var string {@from body} {@min 0} {@max 10}
+     * @var string {@from body} {@choice PDF,DOC,BOTH}
      */
     public $out_doc_generate;
 
@@ -207,23 +207,22 @@ class OutputDocumentStructure
     public $out_doc_tags;
 
     /**
-     * @var int {@from body}
+     * @var int {@from body} {@choice 0,1}
      */
     public $out_doc_pdf_security_enabled;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@min 0} {@max 32}
      */
     public $out_doc_pdf_security_open_password;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@min 0} {@max 32}
      */
     public $out_doc_pdf_security_owner_password;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@min 0} {@max 150}
      */
-    public $out_doc_pdf_security_permission;
-
+    public $out_doc_pdf_security_permissions;
 }

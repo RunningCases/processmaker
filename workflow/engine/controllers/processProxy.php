@@ -84,6 +84,9 @@ class ProcessProxy extends HttpProxyController
         $this->success = true;
         $this->PRO_UID = $sProUid;
         $this->msg = G::LoadTranslation( 'ID_CREATE_PROCESS_SUCCESS' );
+
+        //TODO save bpmn project
+
     }
 
     /**
