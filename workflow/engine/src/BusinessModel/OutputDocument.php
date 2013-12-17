@@ -83,24 +83,24 @@ class OutputDocument
                                               'out_doc_description' => $aRow['OUT_DOC_DESCRIPTION'],
                                               'out_doc_filename' => $aRow['OUT_DOC_FILENAME'],
                                               'out_doc_template' => $aRow['OUT_DOC_TEMPLATE'],
-                                              'out_doc_report_generator ' => $aRow['OUT_DOC_REPORT_GENERATOR'],
-                                              'out_doc_landscape ' => $aRow['OUT_DOC_LANDSCAPE'],
-                                              'out_doc_media ' => $aRow['OUT_DOC_MEDIA'],
-                                              'out_doc_left_margin ' => $aRow['OUT_DOC_LEFT_MARGIN'],
-                                              'out_doc_right_margin ' => $aRow['OUT_DOC_RIGHT_MARGIN'],
-                                              'out_doc_top_margin ' => $aRow['OUT_DOC_TOP_MARGIN'],
-                                              'out_doc_bottom_margin ' => $aRow['OUT_DOC_BOTTOM_MARGIN'],
-                                              'out_doc_generate ' => $aRow['OUT_DOC_GENERATE'],
-                                              'out_doc_type ' => $aRow['OUT_DOC_TYPE'],
-                                              'out_doc_current_revision ' => $aRow['OUT_DOC_CURRENT_REVISION'],
-                                              'out_doc_field_mapping ' => $aRow['OUT_DOC_FIELD_MAPPING'],
-                                              'out_doc_versioning ' => $aRow['OUT_DOC_VERSIONING'],
-                                              'out_doc_destination_path ' => $aRow['OUT_DOC_DESTINATION_PATH'],
-                                              'out_doc_tags ' => $aRow['OUT_DOC_TAGS'],
-                                              'out_doc_pdf_security_enabled ' => $aRow['OUT_DOC_PDF_SECURITY_ENABLED'],
-                                              'out_doc_pdf_security_open_password ' => $aRow['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'],
-                                              'out_doc_pdf_security_owner_password ' => $aRow['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'],
-                                              'out_doc_pdf_security_permission ' => $aRow['OUT_DOC_PDF_SECURITY_PERMISSIONS']);
+                                              'out_doc_report_generator' => $aRow['OUT_DOC_REPORT_GENERATOR'],
+                                              'out_doc_landscape' => $aRow['OUT_DOC_LANDSCAPE'],
+                                              'out_doc_media' => $aRow['OUT_DOC_MEDIA'],
+                                              'out_doc_left_margin' => $aRow['OUT_DOC_LEFT_MARGIN'],
+                                              'out_doc_right_margin' => $aRow['OUT_DOC_RIGHT_MARGIN'],
+                                              'out_doc_top_margin' => $aRow['OUT_DOC_TOP_MARGIN'],
+                                              'out_doc_bottom_margin' => $aRow['OUT_DOC_BOTTOM_MARGIN'],
+                                              'out_doc_generate' => $aRow['OUT_DOC_GENERATE'],
+                                              'out_doc_type' => $aRow['OUT_DOC_TYPE'],
+                                              'out_doc_current_revision' => $aRow['OUT_DOC_CURRENT_REVISION'],
+                                              'out_doc_field_mapping' => $aRow['OUT_DOC_FIELD_MAPPING'],
+                                              'out_doc_versioning' => $aRow['OUT_DOC_VERSIONING'],
+                                              'out_doc_destination_path' => $aRow['OUT_DOC_DESTINATION_PATH'],
+                                              'out_doc_tags' => $aRow['OUT_DOC_TAGS'],
+                                              'out_doc_pdf_security_enabled' => $aRow['OUT_DOC_PDF_SECURITY_ENABLED'],
+                                              'out_doc_pdf_security_open_password' => $aRow['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'],
+                                              'out_doc_pdf_security_owner_password' => $aRow['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'],
+                                              'out_doc_pdf_security_permissions' => $aRow['OUT_DOC_PDF_SECURITY_PERMISSIONS']);
                 }
                 $oDataset->next();
             }
@@ -191,24 +191,24 @@ class OutputDocument
                                               'out_doc_description' => $aRow['OUT_DOC_DESCRIPTION'],
                                               'out_doc_filename' => $aRow['OUT_DOC_FILENAME'],
                                               'out_doc_template' => $aRow['OUT_DOC_TEMPLATE'],
-                                              'out_doc_report_generator ' => $aRow['OUT_DOC_REPORT_GENERATOR'],
-                                              'out_doc_landscape ' => $aRow['OUT_DOC_LANDSCAPE'],
-                                              'out_doc_media ' => $aRow['OUT_DOC_MEDIA'],
-                                              'out_doc_left_margin ' => $aRow['OUT_DOC_LEFT_MARGIN'],
-                                              'out_doc_right_margin ' => $aRow['OUT_DOC_RIGHT_MARGIN'],
-                                              'out_doc_top_margin ' => $aRow['OUT_DOC_TOP_MARGIN'],
-                                              'out_doc_bottom_margin ' => $aRow['OUT_DOC_BOTTOM_MARGIN'],
-                                              'out_doc_generate ' => $aRow['OUT_DOC_GENERATE'],
-                                              'out_doc_type ' => $aRow['OUT_DOC_TYPE'],
-                                              'out_doc_current_revision ' => $aRow['OUT_DOC_CURRENT_REVISION'],
-                                              'out_doc_field_mapping ' => $aRow['OUT_DOC_FIELD_MAPPING'],
-                                              'out_doc_versioning ' => $aRow['OUT_DOC_VERSIONING'],
-                                              'out_doc_destination_path ' => $aRow['OUT_DOC_DESTINATION_PATH'],
-                                              'out_doc_tags ' => $aRow['OUT_DOC_TAGS'],
-                                              'out_doc_pdf_security_enabled ' => $aRow['OUT_DOC_PDF_SECURITY_ENABLED'],
-                                              'out_doc_pdf_security_open_password ' => $aRow['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'],
-                                              'out_doc_pdf_security_owner_password ' => $aRow['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'],
-                                              'out_doc_pdf_security_permission ' => $aRow['OUT_DOC_PDF_SECURITY_PERMISSIONS']);
+                                              'out_doc_report_generator' => $aRow['OUT_DOC_REPORT_GENERATOR'],
+                                              'out_doc_landscape' => $aRow['OUT_DOC_LANDSCAPE'],
+                                              'out_doc_media' => $aRow['OUT_DOC_MEDIA'],
+                                              'out_doc_left_margin' => $aRow['OUT_DOC_LEFT_MARGIN'],
+                                              'out_doc_right_margin' => $aRow['OUT_DOC_RIGHT_MARGIN'],
+                                              'out_doc_top_margin' => $aRow['OUT_DOC_TOP_MARGIN'],
+                                              'out_doc_bottom_margin' => $aRow['OUT_DOC_BOTTOM_MARGIN'],
+                                              'out_doc_generate' => $aRow['OUT_DOC_GENERATE'],
+                                              'out_doc_type' => $aRow['OUT_DOC_TYPE'],
+                                              'out_doc_current_revision' => $aRow['OUT_DOC_CURRENT_REVISION'],
+                                              'out_doc_field_mapping' => $aRow['OUT_DOC_FIELD_MAPPING'],
+                                              'out_doc_versioning' => $aRow['OUT_DOC_VERSIONING'],
+                                              'out_doc_destination_path' => $aRow['OUT_DOC_DESTINATION_PATH'],
+                                              'out_doc_tags' => $aRow['OUT_DOC_TAGS'],
+                                              'out_doc_pdf_security_enabled' => $aRow['OUT_DOC_PDF_SECURITY_ENABLED'],
+                                              'out_doc_pdf_security_open_password' => $aRow['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'],
+                                              'out_doc_pdf_security_owner_password' => $aRow['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'],
+                                              'out_doc_pdf_security_permissions' => $aRow['OUT_DOC_PDF_SECURITY_PERMISSIONS']);
                 }
                 $oDataset->next();
             }
@@ -276,22 +276,23 @@ class OutputDocument
     public function updateOutputDocument($sProcessUID, $sOutputDocumentUID = '', $aData)
     {   $oConnection = \Propel::getConnection(\OutputDocumentPeer::DATABASE_NAME);
         try {
+            $aData = array_change_key_case($aData, CASE_UPPER);
             $oOutputDocument = \OutputDocumentPeer::retrieveByPK($sOutputDocumentUID);
             if (!is_null($oOutputDocument)) {
                 $oOutputDocument->fromArray($aData, \BasePeer::TYPE_FIELDNAME);
                 if ($oOutputDocument->validate()) {
                     $oConnection->begin();
-                    if (isset($aData['out_doc_title'])) {
-                        $oOutputDocument->setOutDocTitle($aData['out_doc_title']);
+                    if (isset($aData['OUT_DOC_TITLE'])) {
+                        $oOutputDocument->setOutDocTitle($aData['OUT_DOC_TITLE']);
                     }
-                    if (isset($aData['out_doc_description'])) {
-                        $oOutputDocument->setOutDocDescription($aData['out_doc_description']);
+                    if (isset($aData['OUT_DOC_DESCRIPTION'])) {
+                        $oOutputDocument->setOutDocDescription($aData['OUT_DOC_DESCRIPTION']);
                     }
-                    if (isset($aData['out_doc_filename'])) {
-                        $oOutputDocument->setOutDocFilename($aData['out_doc_filename']);
+                    if (isset($aData['OUT_DOC_FILENAME'])) {
+                        $oOutputDocument->setOutDocFilename($aData['OUT_DOC_FILENAME']);
                     }
-                    if (isset($aData['out_doc_template'])) {
-                        $oOutputDocument->setOutDocTemplate($aData['out_doc_template']);
+                    if (isset($aData['OUT_DOC_TEMPLATE'])) {
+                        $oOutputDocument->setOutDocTemplate($aData['OUT_DOC_TEMPLATE']);
                     }
                     $iResult = $oOutputDocument->save();
                     $oConnection->commit();

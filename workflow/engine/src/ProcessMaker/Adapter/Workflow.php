@@ -4,6 +4,7 @@ namespace ProcessMaker\Adapter;
 use \Process;
 use \ProcessMaker\Adapter\Bpmn\Model as BpmnModel;
 use \ProcessMaker\Util\Hash;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 
 /**
  * Class Workflow
@@ -13,26 +14,8 @@ use \ProcessMaker\Util\Hash;
  */
 class Workflow
 {
-    public static $bpmnTypesEquiv = array(
-        'event' => array(
-            'START' => 'START' // to define task start
-        ),
-        'flow' => array(
-            'SEQUENCE' => 'SEQUENTIAL' // to define task start
-        )
-    );
-
-    public function loadFromBpmnProject($prjUid)
+    public static function loadFromBpmnProject($prjUid)
     {
-        $bpmnTypesEquiv = array(
-            'event' => array(
-                'start' => 'start' // to define task start
-            ),
-            'flow' => array(
-                'SEQUENCE' => 'SEQUENTIAL' // to define task start
-            )
-        );
-
         $project = BpmnModel::getBpmnObjectBy('Project', \BpmnProjectPeer::PRJ_UID, $prjUid);
 
         $process = array();
@@ -62,15 +45,6 @@ class Workflow
             $process['routes'] = array_merge($process['routes'], self::getRoutesFromBpmnFlows($prjUid, $activity['ACT_UID']));
         }
 
-        /*foreach ($diagram['flows'] as $flow) {
-            $process['routes'][] = array(
-                'ROU_UID' => '',
-                'TAS_UID' => self::getTask($activity['act_uid']),
-                'ROU_NEXT_TASK' => self::getNextTask($activity['act_uid']),
-                'ROU_TYPE' => ''
-            );
-        }*/
-
         return $process;
     }
 
@@ -84,49 +58,69 @@ class Workflow
 
         foreach ($flows as $flow) {
             $fromUid = $flow['FLO_ELEMENT_ORIGIN'];
-            $type = $flow['FLO_TYPE'];
 
-            switch ($type) {
+            switch ($flow['FLO_TYPE']) {
                 case 'SEQUENCE':
-                    $type = 'SEQUENTIAL';
                     break;
-            }
 
-            //$elFlow = BpmnModel::getBpmnObjectBy('Flow', \BpmnFlowPeer::FLO_ELEMENT_DEST, $elementUid);
+                default:
+                    throw new \LogicException(sprintf(
+                        "Unsupported flow type: %s, ProcessMaker only support type '', Given: '%s'",
+                        'SEQUENCE', $flow['FLO_TYPE']
+                    ));
+            }
 
             switch ($flow['FLO_ELEMENT_DEST_TYPE']) {
                 case 'bpmnActivity':
                     // the most easy case, when the flow is connecting a activity with another activity
                     $routes[] = array(
-                        'ROU_UID' => Hash::generateUID(),
+                        'ROU_UID' => $flow['FLO_UID'], //Hash::generateUID(),
                         'PRO_UID' => $prjUid,
                         'TAS_UID' => $fromUid,
                         'ROU_NEXT_TASK' => $flow['FLO_ELEMENT_DEST'],
-                        'ROU_TYPE' => $type,
+                        'ROU_TYPE' => 'SEQUENTIAL',
                         '_action' => 'CREATE'
                     );
                     break;
 
                 case 'bpmnGateway':
-                    // if it is a gateway it can fork one or more routes
                     $gatUid = $flow['FLO_ELEMENT_DEST'];
+                    // if it is a gateway it can fork one or more routes
                     $gatFlows = BpmnModel::getBpmnCollectionBy('Flow', \BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid);
 
                     foreach ($gatFlows as $gatFlow) {
                         switch ($gatFlow['FLO_ELEMENT_DEST_TYPE']) {
                             case 'bpmnActivity':
                                 // getting gateway properties
-                                $gateway = BpmnModel::getBpmnObjectBy('Gateway', \BpmnFlowPeer::GAT_UID, $gatUid);
+                                $gateway = BpmnModel::getBpmnObjectBy('Gateway', \BpmnGatewayPeer::GAT_UID, $gatUid);
 
                                 switch ($gateway['GAT_TYPE']) {
-                                    //TODO we need to know gateways types to match with routes types of processmaker
-                                    case '':
-                                        $routeType = '';
+                                    case 'SELECTION':
+                                        $routeType = 'SELECT';
                                         break;
+
+                                    case 'EVALUATION':
+                                        $routeType = 'EVALUATE';
+                                        break;
+
+                                    case 'PARALLEL':
+                                        $routeType = 'PARALLEL';
+                                        break;
+
+                                    case 'PARALLEL_EVALUATION':
+                                        $routeType = 'PARALLEL-BY-EVALUATION';
+                                        break;
+
+                                    case 'PARALLEL_JOIN':
+                                        $routeType = 'SEC-JOIN';
+                                        break;
+
+                                    default:
+                                        throw new \LogicException(sprintf("Unsupported Gateway type: %s", $gateway['GAT_TYPE']));
                                 }
 
                                 $routes[] = array(
-                                    'ROU_UID' => Hash::generateUID(),
+                                    'ROU_UID' => $gatFlow['FLO_UID'], //Hash::generateUID(),
                                     'PRO_UID' => $prjUid,
                                     'TAS_UID' => $fromUid,
                                     'ROU_NEXT_TASK' => $gatFlow['FLO_ELEMENT_DEST'],
@@ -137,45 +131,47 @@ class Workflow
                             default:
                                 // for processmaker is only allowed flows between "gateway -> activity"
                                 // any another flow is considered invalid
-                                throw new \LogicException("For ProcessMaker is only allowed flows between \"gateway -> activity\"");
+                                throw new \LogicException(sprintf(
+                                    "For ProcessMaker is only allowed flows between \"gateway -> activity\" " . PHP_EOL .
+                                    "Given: bpmnGateway -> " . $gatFlow['FLO_ELEMENT_DEST_TYPE']
+                                ));
                         }
                     }
+                    break;
+
+                case 'bpmnEvent':
+                    $evnUid = $flow['FLO_ELEMENT_DEST'];
+                    $event = BpmnModel::getBpmnObjectBy('Event', \BpmnEventPeer::EVN_UID, $evnUid);
+
+                    switch ($event['EVN_TYPE']) {
+                        case 'END':
+                            $routeType = 'SEQUENTIAL';
+                            $routes[] = array(
+                                'ROU_UID' => $flow['FLO_UID'], //Hash::generateUID(),
+                                'PRO_UID' => $prjUid,
+                                'TAS_UID' => $fromUid,
+                                'ROU_NEXT_TASK' => '-1',
+                                'ROU_TYPE' => $routeType,
+                                '_action' => 'CREATE'
+                            );
+                            break;
+
+                        default:
+                            throw new \LogicException("Invalid connection to Event object type");
+                    }
+
                     break;
             }
         }
 
-
         return $routes;
-    }
-    private static function getRoutesFromBpmnFlows2($flows)
-    {
-        // get bpmnActivities on flo_element_origin
-        $flowsOriginActivities = array();
-
-        foreach ($flows as $i => $flow) {
-            if ($flow['flo_element_origin_type'] == 'bpmnActivity') {
-                $flowsOriginActivities[] = $flow;
-                unset($flows[$i]);
-            }
-        }
-
-
-    }
-
-
-    private static function getTask($actUid)
-    {
-    }
-
-    private static function getNextTask($actUid)
-    {
     }
 
     private static function activityIsStartTask($actUid)
     {
         /*
          * 1. find bpmn flows related to target activity
-         * 2. verify is the flow_element_origin_type is a BpmnEvent and it have a evn_type = start
+         * 2. verify is the flow_element_origin_type is a BpmnEvent and it have a evn_type=start
          */
         $selection = BpmnModel::select('*', 'Flow', array(
             \BpmnFlowPeer::FLO_ELEMENT_DEST => $actUid,
@@ -186,7 +182,7 @@ class Workflow
             if ($elementOrigin['FLO_ELEMENT_ORIGIN_TYPE'] == 'bpmnEvent') {
                 $event = BpmnModel::getBpmnObjectBy('Event', \BpmnEventPeer::EVN_UID, $elementOrigin['FLO_ELEMENT_ORIGIN']);
 
-                if ($event['EVN_TYPE'] == self::$bpmnTypesEquiv['event']['START']) {
+                if ($event['EVN_TYPE'] == 'START') {
                     return true;
                 }
             }

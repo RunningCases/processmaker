@@ -152,16 +152,20 @@ class Process extends BaseProcess
      * @return void
      */
 
-    public function create ($aData)
+    public function create ($aData, $generateUid = true)
     {
         if (! isset( $aData['USR_UID'] )) {
             throw (new PropelException( 'The process cannot be created. The USR_UID is empty.' ));
         }
         $con = Propel::getConnection( ProcessPeer::DATABASE_NAME );
         try {
-            do {
-                $sNewProUid = G::generateUniqueID();
-            } while ($this->processExists( $sNewProUid ));
+            if ($generateUid) {
+                do {
+                    $sNewProUid = G::generateUniqueID();
+                } while ($this->processExists( $sNewProUid ));
+            } else {
+                $sNewProUid = $aData['PRO_UID'];
+            }
 
             $this->setProUid( $sNewProUid );
             $this->setProParent( $sNewProUid );
