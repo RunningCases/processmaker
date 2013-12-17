@@ -61,5 +61,9 @@
         "colosa/pmui": "dev-master",
         "colosa/michelangelofe": "dev-master",
         "underscore/underscore": "1.5.2"
+    },
+    "require-dev":{
+        "guzzle/guzzle":"~3.1.1",
+        "behat/behat":"2.4.*@stable"
     }
 }
