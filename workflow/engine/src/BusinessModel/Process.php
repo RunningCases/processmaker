@@ -509,5 +509,47 @@ class Process
         return $processMap->deleteProcess($processUid);
 
     }
+
+    /**
+     * Get all InputDocuments of a Process
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return an array with all InputDocuments of a Process
+     */
+    public function getInputDocuments($processUid)
+    {
+        try {
+            //Verify data
+            $process = new \Process();
+
+            if (!$process->exists($processUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
+            //Get data
+            $arrayInputDocument = array();
+
+            $inputdoc = new \BusinessModel\InputDocument();
+
+            $criteria = $inputdoc->getInputDocumentCriteria();
+
+            $criteria->add(\InputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->addAscendingOrderByColumn("INP_DOC_TITLE");
+
+            $rsCriteria = \InputDocumentPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayInputDocument[] = $inputdoc->getInputDocumentDataFromRecord($row);
+            }
+
+            return $arrayInputDocument;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
 
