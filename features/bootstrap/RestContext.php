@@ -854,6 +854,20 @@ class RestContext extends BehatContext
     }
 
     /**
+     * @Then /^the response is equivalent to this json file "([^"]*)"$/
+     */
+    public function theResponseIsEquivalentToThisJsonFile($jsonFile)
+    {
+        //$this->_data;
+        $fileData = file_get_contents(__DIR__ . "/../json/" . $jsonFile);
+        $fileJson = json_decode($fileData);
+        if ($this->_data != $fileJson) {
+            throw new \Exception("JSON Response does not match json file: $jsonFile\n\n"
+                . $this->echoLastResponse());
+        }
+    }
+
+    /**
      * @Given /^that I want to make a new "([^"]*)" with:$/
      */
     public function thatIWantToMakeANewWith($object, TableNode $table)
