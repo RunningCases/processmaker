@@ -49,7 +49,7 @@ class InputDocument
 
             $criteria->addSelectColumn(\InputDocumentPeer::INP_DOC_UID);
 
-            $criteria->addAlias("CT", "CONTENT");
+            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
 
             $arrayCondition = array();
             $arrayCondition[] = array(\InputDocumentPeer::INP_DOC_UID, "CT.CON_ID", \Criteria::EQUAL);
@@ -266,8 +266,8 @@ class InputDocument
             $criteria->addSelectColumn(\InputDocumentPeer::INP_DOC_DESTINATION_PATH);
             $criteria->addSelectColumn(\InputDocumentPeer::INP_DOC_TAGS);
 
-            $criteria->addAlias("CT", "CONTENT");
-            $criteria->addAlias("CD", "CONTENT");
+            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
+            $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
 
             $arrayCondition = array();
             $arrayCondition[] = array(\InputDocumentPeer::INP_DOC_UID, "CT.CON_ID", \Criteria::EQUAL);
