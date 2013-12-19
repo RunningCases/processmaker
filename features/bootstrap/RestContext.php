@@ -131,8 +131,7 @@ class RestContext extends BehatContext
     {
         $data = json_encode($this->_data);
         if ($data !== $response)
-            throw new Exception("Response value does not match '$response'\n\n"
-            . $this->echoLastResponse());
+            throw new Exception("Response value does not match '$response'\n\n" );
     }
 
     /**
@@ -303,8 +302,7 @@ class RestContext extends BehatContext
         $access_token = $this->getParameter('access_token');
         if (strlen($access_token)<= 10) {
             throw new PendingException();
-            throw new Exception ('Access token is not valid, please review behat.yml'
-                    . "\n\n" . $this->echoLastResponse());
+            throw new Exception ("Access token is not valid, please review behat.yml\n\n" );
         }
         $this->access_token = $access_token;
     }
@@ -420,8 +418,7 @@ class RestContext extends BehatContext
                         $message = 'unknown error';
                         break;
                 }
-                throw new Exception ('Error parsing JSON, ' . $message
-                    . "\n\n" . $this->echoLastResponse());
+                throw new Exception ("Error parsing JSON, $message \n\n" );
                 break;
             case 'application/xml':
                 $this->_type = 'xml';
@@ -446,7 +443,7 @@ class RestContext extends BehatContext
     public function theResponseIsJson()
     {
         if ($this->_type != 'json') {
-            throw new Exception("Response was not JSON\n\n" . $this->echoLastResponse());
+            throw new Exception("Response was not JSON\n\n");
         }
     }
 
@@ -457,7 +454,7 @@ class RestContext extends BehatContext
     public function theResponseIsXml()
     {
         if ($this->_type != 'xml') {
-            throw new Exception("Response was not XML\n\n" . $this->echoLastResponse());
+            throw new Exception("Response was not XML\n\n" );
         }
     }
 
@@ -467,7 +464,7 @@ class RestContext extends BehatContext
     public function theResponseContentTypeIs($contentType)
     {
         if ($this->_contentType != $contentType) {
-            throw new Exception("Response Content Type was not $contentType\n\n" . $this->echoLastResponse());
+            throw new Exception("Response Content Type was not $contentType\n\n");
         }
     }
 
@@ -477,7 +474,7 @@ class RestContext extends BehatContext
     public function theResponseCharsetIs($charset)
     {
         if (strtoupper($this->_charset) != strtoupper($charset)) {
-            throw new Exception("Response charset was not $charset\n\n" . $this->echoLastResponse());
+            throw new Exception("Response charset was not $charset\n\n" );
         }
     }
 
@@ -487,8 +484,7 @@ class RestContext extends BehatContext
     public function theResponseLanguageIs($language)
     {
         if ($this->_language != $language) {
-            throw new Exception("Response Language was not $language\n\n"
-                . $this->echoLastResponse());
+            throw new Exception("Response Language was not $language\n\n" );
         }
     }
 
@@ -498,14 +494,13 @@ class RestContext extends BehatContext
     public function theResponseHeaderShouldBe($header, $value)
     {
         if (!$this->_response->hasHeader($header)) {
-            throw new Exception("Response header $header was not found\n\n"
-                . $this->echoLastResponse());
+            throw new Exception("Response header $header was not found\n\n" );
         }
         if ((string)$this->_response->getHeader($header) !== $value) {
             throw new Exception("Response header $header ("
                 . (string)$this->_response->getHeader($header)
-                . ") does not match `$value`\n\n"
-                . $this->echoLastResponse());
+                . ") does not match '$value'\n\n"
+            );
         }
     }
 
@@ -534,7 +529,7 @@ class RestContext extends BehatContext
         if ($diff < $milliSeconds) {
             throw new Exception("Response time $diff is "
                 . "quicker than $milliSeconds\n\n"
-                . $this->echoLastResponse());
+            );
         }
     }
 
@@ -547,8 +542,7 @@ class RestContext extends BehatContext
         if (is_array($data) && count($data) == 0) {
             return;
         }
-        throw new Exception("Response is not an empty array\n\n" .
-            $this->echoLastResponse());
+        throw new Exception("Response is not an empty array\n\n" );
     }
 
     /**
@@ -572,8 +566,7 @@ class RestContext extends BehatContext
                 if (is_null($data)) return;
         }
 
-        throw new Exception("Response is not of type '$type'\n\n" .
-            $this->echoLastResponse());
+        throw new Exception("Response is not of type '$type'\n\n" );
     }
 
     /**
@@ -583,8 +576,7 @@ class RestContext extends BehatContext
     {
         $data = $this->_data;
         if (isset($this->{$property}) ) {
-            throw new Exception("The property $property is not defined in the Response\n\n" .
-                $this->echoLastResponse());
+            throw new Exception("The property $property is not defined in the Response\n\n" );
         }
         $theProperty = $data->{$property};
         switch ($type) {
@@ -602,8 +594,7 @@ class RestContext extends BehatContext
                 if (is_null($theProperty)) return;
         }
 
-        throw new Exception("The property $property in Response is not of type '$type'\n\n" .
-            $this->echoLastResponse());
+        throw new Exception("The property $property in Response is not of type '$type'\n\n");
     }
 
     /**
@@ -613,8 +604,7 @@ class RestContext extends BehatContext
     {
         $data = $this->_data;
         if ($data !== $sample) {
-            throw new Exception("Response value does not match '$sample'\n\n"
-                . $this->echoLastResponse() );
+            throw new Exception("Response value does not match '$sample'\n\n" );
         }
     }
 
@@ -642,7 +632,7 @@ class RestContext extends BehatContext
     public function theResponseIsJsonWithType($type)
     {
         if ($this->_type != 'json') {
-            throw new Exception("Response was not JSON\n\n" . $this->echoLastResponse());
+            throw new Exception("Response was not JSON\n\n" );
         }
 
         $data = $this->_data;
@@ -662,8 +652,7 @@ class RestContext extends BehatContext
                 if (is_null($data)) return;
         }
 
-        throw new Exception("Response was JSON\n but not of type '$type'\n\n" .
-            $this->echoLastResponse());
+        throw new Exception("Response was JSON\n but not of type '$type'\n\n" );
     }
 
 
@@ -679,9 +668,7 @@ class RestContext extends BehatContext
 
         if (!empty($data)) {
             if (!isset($data->$propertyName)) {
-                throw new Exception("Property '"
-                    . $propertyName . "' is not set!\n\n"
-                    . $this->echoLastResponse());
+                throw new Exception("Property '$propertyName' is not set!\n\n");
             }
         }
     }
@@ -695,15 +682,13 @@ class RestContext extends BehatContext
 
         if (!empty($data)) {
             if (!isset($data->$propertyName)) {
-                throw new Exception("Property '"
-                    . $propertyName . "' is not set!\n\n"
-                    . $this->echoLastResponse());
+                throw new Exception("Property '$propertyName' is not set!\n\n" );
             }
             if ($data->$propertyName != $propertyValue) {
                 throw new \Exception('Property value mismatch! (given: '
                     . $propertyValue . ', match: '
                     . $data->$propertyName . ")\n\n"
-                    . $this->echoLastResponse());
+                );
             }
         } else {
             throw new Exception("Response was not JSON\n\n"
@@ -729,23 +714,21 @@ class RestContext extends BehatContext
         $data = $this->_data;
         if (!empty($data)) {
             if (!is_array($data)) {
-                throw new Exception("the Response data is not an array!\n\n"
-                    . $this->echoLastResponse());
+                throw new Exception("the Response data is not an array!\n\n" );
             }
             if (is_array($data) && !isset($data[$row])) {
-                throw new Exception("the Response data is an array, but the row '$row' does not exists!\n\n"
-                    . $this->echoLastResponse());
+                throw new Exception("the Response data is an array, but the row '$row' does not exists!\n\n" );
             }
             if (!isset($data[$row]->$propertyName)) {
                 throw new Exception("Property '"
                     . $propertyName . "' is not set!\n\n"
-                    . $this->echoLastResponse());
+                );
             }
             if ($data[$row]->$propertyName != $propertyValue) {
                 throw new \Exception('Property value mismatch! (given: '
                     . $propertyValue . ', match: '
                     . $data[$row]->$propertyName . ")\n\n"
-                    . $this->echoLastResponse());
+                );
             }
         } else {
             throw new Exception("Response was not JSON\n\n"
@@ -793,17 +776,15 @@ class RestContext extends BehatContext
 
         if (!empty($data)) {
             if (!is_array($data)) {
-                throw new Exception("the $propertyParent in Response data is not an array!\n\n"
-                    . $this->echoLastResponse());
+                throw new Exception("the $propertyParent in Response data is not an array!\n\n" );
             }
             if (is_array($data) && !isset($data[$row])) {
-                throw new Exception("the Response data is an array, but the row '$row' does not exists!\n\n"
-                    . $this->echoLastResponse());
+                throw new Exception("the Response data is an array, but the row '$row' does not exists!\n\n" );
             }
             if (!isset($data[$row]->$propertyName)) {
                 throw new Exception("Property '"
                     . $propertyName . "' is not set!\n\n"
-                    . $this->echoLastResponse());
+                );
             }
             if (is_array($data[$row]->$propertyName)) {
                 throw new Exception("$propertyName is an array and we expected a value\n\n"
@@ -813,7 +794,7 @@ class RestContext extends BehatContext
                 throw new \Exception('Property value mismatch! (given: '
                     . $propertyValue . ', match: '
                     . $data[$row]->$propertyName . ")\n\n"
-                    . $this->echoLastResponse());
+                );
             }
         } else {
             throw new Exception("Response was not JSON\n\n"
@@ -843,16 +824,13 @@ class RestContext extends BehatContext
 
         if (!empty($data)) {
             if (!is_array($data)) {
-                throw new Exception("the property $propertyParent in Response data is not an array!\n\n"
-                    . $this->echoLastResponse());
+                throw new Exception("the property $propertyParent in Response data is not an array!\n\n" );
             }
             if (is_array($data) && !isset($data[$row])) {
-                throw new Exception("the Response data is an array, but the row '$row' does not exists!\n\n"
-                    . $this->echoLastResponse());
+                throw new Exception("the Response data is an array, but the row '$row' does not exists!\n\n" );
             }
             if (!isset($data[$row]->$propertyName)) {
-                throw new Exception("Property '$propertyName' is not set in $propertyParent!\n\n"
-                    . $this->echoLastResponse());
+                throw new Exception("Property '$propertyName' is not set in $propertyParent!\n\n");
             }
             if ($propertyType == 'array' && is_array($data[$row]->$propertyName)) {
                 return true;
@@ -880,8 +858,7 @@ class RestContext extends BehatContext
         if (!empty($data)) {
             if (!isset($data->$propertyName)) {
                 throw new Exception("Property '"
-                    . $propertyName . "' is not set!\n\n"
-                    . $this->echoLastResponse());
+                    . $propertyName . "' is not set!\n\n");
             }
             // check our type
             switch (strtolower($typeString)) {
@@ -889,8 +866,7 @@ class RestContext extends BehatContext
                     if (!is_numeric($data->$propertyName)) {
                         throw new Exception("Property '"
                             . $propertyName . "' is not of the correct type: "
-                            . $typeString . "!\n\n"
-                            . $this->echoLastResponse());
+                            . $typeString . "!\n\n");
                     }
                     break;
             }
@@ -909,7 +885,7 @@ class RestContext extends BehatContext
         if ((string)$this->_response->getStatusCode() !== $httpStatus) {
             throw new \Exception('HTTP code does not match ' . $httpStatus .
                 ' (actual: ' . $this->_response->getStatusCode() . ")\n\n"
-                . $this->echoLastResponse());
+            );
         }
     }
 
@@ -922,8 +898,7 @@ class RestContext extends BehatContext
         $fileData = file_get_contents(__DIR__ . "/../json/" . $jsonFile);
         $fileJson = json_decode($fileData);
         if ($this->_data != $fileJson) {
-            throw new \Exception("JSON Response does not match json file: $jsonFile\n\n"
-                . $this->echoLastResponse());
+            throw new \Exception("JSON Response does not match json file: $jsonFile\n\n" );
         }
     }
 
@@ -985,8 +960,7 @@ class RestContext extends BehatContext
     public function storeIn($varName)
     {
         if (!isset($this->_data->$varName)) {
-            throw new \Exception("JSON Response does not have '$varName' property\n\n"
-                . $this->echoLastResponse());
+            throw new \Exception("JSON Response does not have '$varName' property\n\n" );
         }
 
         $varValue = $this->_data->$varName;
