@@ -46,10 +46,10 @@
  <target name="lint" description="Perform syntax check of sourcecode files">
   <apply executable="php" failonerror="true">
    <arg value="-l" />
+   <arg value="-R" />
 
    <fileset dir="${basedir}/workflow/engine/src">
     <include name="*.php" />
-    <modified />
    </fileset>
 
   </apply>
@@ -87,7 +87,7 @@
    <arg value="xml" />
    <arg value="codesize" /> <!--  ${basedir}/build/phpmd.xml" /> !-->
    <arg value="--reportfile" />
-   <arg value="${basedir}/build/logs/pmd.xml" />
+   <arg value="${basedir}/build/logs/phpmd.xml" />
   </exec>
  </target>
 
