@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="name-of-project" default="build-phpcs">
+<project name="ProcessMaker Michelangelo" default="build-phpcs">
     <target name="build"
-        depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
+        depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox, behat"/>
 
     <target name="build-simple"
         depends="prepare,phpunit,phpcs-ci,phploc,lint"/>
@@ -46,10 +46,10 @@
  <target name="lint" description="Perform syntax check of sourcecode files">
   <apply executable="php" failonerror="true">
    <arg value="-l" />
+   <arg value="-R" />
 
-   <fileset dir="${basedir}/workflow/methods/login">
+   <fileset dir="${basedir}/workflow/engine/src">
     <include name="*.php" />
-    <modified />
    </fileset>
 
   </apply>
@@ -59,7 +59,7 @@
   <exec executable="phploc">
    <arg value="--log-csv" />
    <arg value="${basedir}/build/logs/phploc.csv" />
-   <arg path="${basedir}/workflow/engine" />
+   <arg path="${basedir}/workflow/engine/src" />
   </exec>
  </target>
 
@@ -68,14 +68,14 @@
    <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
    <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
    <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
-   <arg path="${basedir}/workflow" />
+   <arg path="${basedir}/workflow/engine/src" />
   </exec>
  </target>
 
  <target name="phpmd"
          description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
   <exec executable="phpmd">
-   <arg path="${basedir}/workflow" />
+   <arg path="${basedir}/workflow/engine/src" />
    <arg value="text" />
    <arg value="codesize" /> <!--  ${basedir}/build/phpmd.xml" /> !-->
   </exec>
@@ -83,11 +83,11 @@
 
  <target name="phpmd-ci" description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
   <exec executable="phpmd">
-   <arg path="${basedir}/workflow" />
+   <arg path="${basedir}/workflow/engine/src" />
    <arg value="xml" />
-   <arg value="${basedir}/build/phpmd.xml" />
+   <arg value="codesize" /> <!--  ${basedir}/build/phpmd.xml" /> !-->
    <arg value="--reportfile" />
-   <arg value="${basedir}/build/logs/pmd.xml" />
+   <arg value="${basedir}/build/logs/phpmd.xml" />
   </exec>
  </target>
 
@@ -95,8 +95,8 @@
          description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
   <exec executable="phpcs">
    <arg value="--standard=PSR2" />
-   <arg path="${basedir}/workflow/engine/methods/login" />
-   <arg path="${basedir}/workflow/engine/methods/services" />
+   <arg path="${basedir}/workflow/engine/src" />
+   <arg path="${basedir}/workflow/engine/src" />
   </exec>
  </target>
 
@@ -105,21 +105,7 @@
    <arg value="--report=checkstyle" />
    <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
    <arg value="--standard=PSR2" />
-   <arg path="${basedir}/gulliver/system" />
-   <arg path="${basedir}/workflow/engine/methods" />
-   <arg path="${basedir}/workflow/engine/classes" />
-   <arg path="${basedir}/workflow/engine/controllers" />
-  </exec>
- </target>
-
- <target name="phpcs-ci-old" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
-  <exec executable="phpcs" output="/dev/null">
-   <arg value="--report=checkstyle" />
-   <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
-   <arg value="--standard=PSR2" />
-   <arg value="-l" />
-   <arg path="${basedir}/workflow/engine/methods/login" />
-   <arg path="${basedir}/workflow/engine/classes" />
+   <arg path="${basedir}/workflow/engine/src" />
   </exec>
  </target>
 
@@ -127,7 +113,7 @@
   <exec executable="phpcpd">
    <arg value="--log-pmd" />
    <arg value="${basedir}/build/logs/pmd-cpd.xml" />
-   <arg path="${basedir}/workflow" />
+   <arg path="${basedir}/workflow/engine/src" />
   </exec>
  </target>
 
@@ -144,10 +130,22 @@
    <arg value="--log" />
    <arg path="${basedir}/build/logs" />
    <arg value="--source" />
-   <arg path="${basedir}/workflow" />
+   <arg path="${basedir}/workflow/engine/src" />
    <arg value="--output" />
    <arg path="${basedir}/build/code-browser" />
   </exec>
  </target>
+
+ <target name="behat" description="Behaviour tests with Behat">
+  <exec executable="vendor/behat/behat/bin/behat">
+   <arg value="--format" />
+   <arg value="junit,html,progress" />
+   <arg value="--out" />
+   <arg value="build/logs/behat,build/docs/html/behat.html" />
+   <arg value="--no-snippets-paths" />
+   <arg value="--no-paths" />
+  </exec>
+ </target>
+
 </project>
 

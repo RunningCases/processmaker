@@ -26,6 +26,9 @@ class Project extends Api
         }
     }
 
+    /**
+     * @status 201
+     */
     function post($request_data)
     {
         try {
@@ -57,4 +60,21 @@ class Project extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+
+    /**
+     * @url GET /:projectUid/input-documents
+     */
+    public function doGetInputDocuments($projectUid)
+    {
+        try {
+            $process = new \BusinessModel\Process();
+
+            $response = $process->getInputDocuments($projectUid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
+

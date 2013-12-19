@@ -22,8 +22,8 @@ class Trigger
             $criteria->addSelectColumn(\TriggersPeer::TRI_WEBBOT);
             $criteria->addSelectColumn(\TriggersPeer::TRI_PARAM);
 
-            $criteria->addAlias("CT", "CONTENT");
-            $criteria->addAlias("CD", "CONTENT");
+            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
+            $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
 
             $arrayCondition = array();
             $arrayCondition[] = array(\TriggersPeer::TRI_UID, "CT.CON_ID", \Criteria::EQUAL);

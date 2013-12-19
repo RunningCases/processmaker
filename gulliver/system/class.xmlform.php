@@ -2735,7 +2735,12 @@ class XmlForm_Field_Link extends XmlForm_Field
                 break;
         }
 
-        $link = (!empty($value))? $value : G::replaceDataField($this->link, $v);
+        $link = "";
+        if ($this->link != "") {
+            $link = G::replaceDataField($this->link, $v);
+        } else {
+            $link = !empty($value) ? $value : "";
+        }
         $labelAux1 = (!empty($label))? $label : G::replaceDataField($this->label, $v);
         $labelAux2 = (!empty($label))? $label : G::replaceDataField($this->value, $v);
         $onclick = G::replaceDataField($this->onclick, $v);
@@ -3970,63 +3975,7 @@ class XmlForm_Field_Grid extends XmlForm_Field
 
     public function render ($values, $owner = null)
     {
-        $arrayKeys = array_keys( $this->fields );
-        $emptyRow = array ();
-        $fieldsSize = 0;
-        foreach ($arrayKeys as $key) {
-            if (isset( $this->fields[$key]->defaultValue )) {
-                $emptyValue = $this->fields[$key]->defaultValue;
-                /**
-                * if (isset($this->fields[$key]->dependentFields)){
-                * if ($this->fields[$key]->dependentFields != ''){
-                * $emptyValue = '';
-                * }
-                * }
-                */
-            } else {
-                $emptyValue = '';
-            }
-            if (isset( $this->fields[$key]->size )) {
-                $size = $this->fields[$key]->size;
-            }
-            if (! isset( $size )) {
-                $size = 15;
-            }
-            $fieldsSize += $size;
-            $emptyRow[$key] = array ($emptyValue
-            );
-        }
-
-        if (isset( $owner->adjustgridswidth ) && $owner->adjustgridswidth == '1') {
-            // 400w -> 34s to Firefox
-            // 400w -> 43s to Chrome
-            $baseWidth = 400;
-            $minusWidth = 30;
-            if (eregi( 'chrome', $_SERVER['HTTP_USER_AGENT'] )) {
-                $baseSize = 43;
-            } else {
-                if (strpos( $_SERVER['HTTP_USER_AGENT'], 'MSIE' ) !== false) {
-                    $minusWidth = 20;
-                }
-                $baseSize = 34;
-            }
-
-            $baseWidth = 400;
-            $formWidth = (int) $owner->width;
-            $maxSize = (($formWidth * $baseSize) / $baseWidth);
-
-            if ($fieldsSize > $maxSize) {
-                $this->scrollStyle = 'height:100%; overflow-x: scroll; width:';
-                $this->scrollStyle .= $formWidth - $minusWidth . ';';
-            }
-        } else {
-            if ($fieldsSize > 100) {
-                $owner->width = '100%';
-            }
-
-        }
-        //  else
-        //  $owner->width = $fieldsSize . 'em';
+        $emptyRow = $this->setScrollStyle( $owner );
         return $this->renderGrid( $emptyRow, $owner );
 
     }
@@ -4179,6 +4128,53 @@ class XmlForm_Field_Grid extends XmlForm_Field
         }
 
         return $flipped;
+    }
+
+    public function setScrollStyle($owner) {
+        $arrayKeys = array_keys( $this->fields );
+        $emptyRow = array ();
+        $fieldsSize = 0;
+        foreach ($arrayKeys as $key) {
+            if (isset( $this->fields[$key]->defaultValue )) {
+                $emptyValue = $this->fields[$key]->defaultValue;
+            } else {
+                $emptyValue = '';
+            }
+            if (isset( $this->fields[$key]->size )) {
+                $size = $this->fields[$key]->size;
+            }
+            if (! isset( $size )) {
+                $size = 15;
+            }
+            $fieldsSize += $size;
+            $emptyRow[$key] = array ($emptyValue);
+        }
+
+        if (isset( $owner->adjustgridswidth ) && $owner->adjustgridswidth == '1') {
+            // 400w -> 34s to Firefox
+            // 400w -> 43s to Chrome
+            $baseWidth = 400;
+            $minusWidth = 30;
+            if (eregi( 'chrome', $_SERVER['HTTP_USER_AGENT'] )) {
+                $baseSize = 43;
+            } else {
+                if (strpos( $_SERVER['HTTP_USER_AGENT'], 'MSIE' ) !== false) {
+                    $minusWidth = 20;
+                }
+                $baseSize = 34;
+            }
+
+            $baseWidth = 400;
+            $formWidth = (int) $owner->width;
+            $maxSize = (($formWidth * $baseSize) / $baseWidth);
+
+            if ($fieldsSize > $maxSize) {
+                $this->scrollStyle = 'height:100%; overflow-x: scroll; width:';
+                $this->scrollStyle .= $formWidth - $minusWidth . ';';
+            }
+        }
+
+        return $emptyRow;
     }
 }
 
@@ -5745,6 +5741,7 @@ class xmlformTemplate extends Smarty
                             }
                         }
                     }
+                    $form->fields[$k]->setScrollStyle( $form );
                     $result["form"][$k] = $form->fields[$k]->renderGrid( $value, $form, $therow );
                 } else {
                     switch ($field->type) {

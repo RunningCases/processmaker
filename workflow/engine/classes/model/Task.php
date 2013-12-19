@@ -356,12 +356,17 @@ class Task extends BaseTask
      * @param      array $aData with new values
      * @return     void
      */
-    public function create($aData)
+    public function create($aData, $generateUid = true)
     {
         $con = Propel::getConnection(TaskPeer::DATABASE_NAME);
 
         try {
-            $sTaskUID = G::generateUniqueID();
+            if ($generateUid) {
+                $sTaskUID = G::generateUniqueID();
+            } else {
+                $sTaskUID = $aData['TAS_UID'];
+            }
+
             $con->begin();
             $this->setProUid($aData['PRO_UID']);
             $this->setTasUid($sTaskUID);
