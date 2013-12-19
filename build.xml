@@ -2,7 +2,7 @@
 
 <project name="ProcessMaker Michelangelo" default="build-phpcs">
     <target name="build"
-        depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox"/>
+        depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox, behat"/>
 
     <target name="build-simple"
         depends="prepare,phpunit,phpcs-ci,phploc,lint"/>
@@ -135,5 +135,17 @@
    <arg path="${basedir}/build/code-browser" />
   </exec>
  </target>
+
+ <target name="behat" description="Behaviour tests with Behat">
+  <exec executable="vendor/behat/behat/bin/behat">
+   <arg value="--format" />
+   <arg value="junit,html,progress" />
+   <arg value="--out" />
+   <arg value="build/logs/behat,build/docs/html/behat.html" />
+   <arg value="--no-snippets-paths" />
+   <arg value="--no-paths" />
+  </exec>
+ </target>
+
 </project>
 
