@@ -1,5 +1,5 @@
 @ProcessMakerMichelangelo @RestAPI
-Feature: Testing Oauth
+Feature: Getting started with Behat tests
   Scenario: GET projects list
     Given that I have a valid access_token
     And I request "projects"
