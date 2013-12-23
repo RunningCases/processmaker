@@ -21,7 +21,7 @@ class Assignee extends Api
      * @param int    $limit
      *
      */
-    public function doGetActivityAssignees($prjUid, $actUid, $filter = '', $start = '1', $limit = '50')
+    public function doGetActivityAssignees($prjUid, $actUid, $filter = '', $start = null, $limit = null)
     {
         $response = array();
         try {
@@ -46,7 +46,7 @@ class Assignee extends Api
      * @param int    $limit
      *
      */
-    public function doGetActivityAvailableAssignee($prjUid, $actUid, $filter = '', $start = '1', $limit = '50')
+    public function doGetActivityAvailableAssignee($prjUid, $actUid, $filter = '', $start = null, $limit = null)
     {
         $response = array();
         try {
@@ -136,7 +136,7 @@ class Assignee extends Api
      * @param int    $limit
      *
      */
-    public function doGetActivityAdhocAssignees($prjUid, $actUid, $filter = '', $start = '0', $limit = '50')
+    public function doGetActivityAdhocAssignees($prjUid, $actUid, $filter = '', $start = null, $limit = null)
     {
         $response = array();
         try {
@@ -152,7 +152,7 @@ class Assignee extends Api
     }
 
     /**
-     * @url GET /:prjUid/activity/:actUid/available-adhoc-assignee
+     * @url GET /:prjUid/activity/:actUid/adhoc-available-assignee
      *
      * @param string $prjUid
      * @param string $actUid
@@ -161,7 +161,7 @@ class Assignee extends Api
      * @param int    $limit
      *
      */
-    public function doGetActivityAvailableAdhocAssignee($prjUid, $actUid, $filter = '', $start = '0', $limit = '50')
+    public function doGetActivityAvailableAdhocAssignee($prjUid, $actUid, $filter = '', $start = null, $limit = null)
     {
         $response = array();
         try {
