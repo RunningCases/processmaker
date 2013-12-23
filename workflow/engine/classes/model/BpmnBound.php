@@ -14,6 +14,18 @@ require_once 'classes/model/om/BaseBpmnBound.php';
  *
  * @package    classes.model
  */
-class BpmnBound extends BaseBpmnBound {
+class BpmnBound extends BaseBpmnBound
+{
+    public static function findOneBy($field, $value)
+    {
+        $c = new Criteria('workflow');
 
+        $c->add($field, $value, CRITERIA::EQUAL );
+
+        $rs = ContentPeer::doSelectRS($c);
+        //$rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $rs->next();
+
+        return $rs->getRow();
+    }
 } // BpmnBound
