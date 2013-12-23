@@ -1010,7 +1010,7 @@ class Task
             $oDataset->next();
             $c = 0;
             $oTasks = new \Tasks();
-            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 1);
+            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 2);
             $aUIDS1 = array();
             foreach ($aAux as $aGroup) {
                 $aUIDS1[] = $aGroup['GRP_UID'];
@@ -1108,7 +1108,7 @@ class Task
             $result = $groups->getAllGroup($start, $limit, $filter);
             $c = 0;
             $oTasks = new \Tasks();
-            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 1);
+            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 2);
             $aUIDS1 = array();
             foreach ($aAux as $aGroup) {
                 $aUIDS1[] = $aGroup['GRP_UID'];
@@ -1208,7 +1208,7 @@ class Task
             $oDataset->next();
             $c = 0;
             $oTasks = new \Tasks();
-            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 1);
+            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 2);
             $aUIDS1 = array();
             foreach ($aAux as $aGroup) {
                 $aUIDS1[] = $aGroup['GRP_UID'];
