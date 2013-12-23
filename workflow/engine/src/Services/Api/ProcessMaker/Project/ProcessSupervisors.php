@@ -71,5 +71,61 @@ class ProcessSupervisors extends Api
         return $response;
     }
 
+    /**
+     * @url DELETE /:prjUid/supervisor/:supUid
+     *
+     * @param string $prjUid
+     * @param string $supUid
+     *
+     */
+    public function doDeleteSupervisor($prjUid, $supUid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->removeProcessSupervisor($prjUid, $supUid);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @url DELETE /:prjUid/dynaform-supervisor/:dynUid
+     *
+     * @param string $prjUid
+     * @param string $dynUid
+     *
+     */
+    public function doDeleteDynaformSupervisor($prjUid, $dynUid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->removeDynaformSupervisor($prjUid, $dynUid);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @url DELETE /:prjUid/inputdocument-supervisor/:inputDocUid
+     *
+     * @param string $prjUid
+     * @param string $inputDocUid
+     *
+     */
+    public function doDeleteInputDocumentSupervisor($prjUid, $inputDocUid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->removeInputDocumentSupervisor($prjUid, $inputDocUid);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
 
 }

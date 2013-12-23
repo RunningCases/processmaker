@@ -188,7 +188,113 @@ class ProcessSupervisor
         }
     }
 
+    /**
+     * Remove a supervisor of an activity
+     *
+     * @param string $sProcessUID
+     * @param string $sUserUID
+     * @access public
+     */
+    public function removeProcessSupervisor($sProcessUID, $sUserUID)
+    {
+        $oConnection = \Propel::getConnection(\ProcessUserPeer::DATABASE_NAME);
+        try {
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->addSelectColumn( \ProcessUserPeer::PU_UID );
+            $oCriteria->add(\ProcessUserPeer::PRO_UID, $sProcessUID);
+            $oCriteria->add(\ProcessUserPeer::USR_UID, $sUserUID);
+            $oPuUid = \ProcessUserPeer::doSelectRS($oCriteria);
+            $oPuUid->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            while ($oPuUid->next()) {
+                $aRow = $oPuUid->getRow();
+                $iPuUid = $aRow['PU_UID'];
+            }
+            $oProcessUser = \ProcessUserPeer::retrieveByPK($iPuUid);
+            if (!is_null($oProcessUser)) {
+                $oConnection->begin();
+                $iResult = $oProcessUser->delete();
+                $oConnection->commit();
+                return $iResult;
+            } else {
+                throw (new \Exception('This row doesn\'t exist!'));
+            }
+        } catch (\Exception $e) {
+            $oConnection->rollback();
+            throw $e;
+        }
+    }
 
+    /**
+     * Remove a dynaform supervisor of an activity
+     *
+     * @param string $sProcessUID
+     * @param string $sDynaformUID
+     * @access public
+     */
+    public function removeDynaformSupervisor($sProcessUID, $sDynaform)
+    {
+        $oConnection = \Propel::getConnection(\StepSupervisorPeer::DATABASE_NAME);
+        try {
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->addSelectColumn( \StepSupervisorPeer::STEP_UID );
+            $oCriteria->add(\StepSupervisorPeer::PRO_UID, $sProcessUID);
+            $oCriteria->add(\StepSupervisorPeer::STEP_UID_OBJ, $sDynaform);
+            $oPuUid = \StepSupervisorPeer::doSelectRS($oCriteria);
+            $oPuUid->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            while ($oPuUid->next()) {
+                $aRow = $oPuUid->getRow();
+                $iStepUid = $aRow['STEP_UID'];
+            }
+            $oDynaformSupervidor = \StepSupervisorPeer::retrieveByPK($iStepUid);
+            if (!is_null($oDynaformSupervidor)) {
+                $oConnection->begin();
+                $iResult = $oDynaformSupervidor->delete();
+                $oConnection->commit();
+                return $iResult;
+            } else {
+                throw (new \Exception('This row doesn\'t exist!'));
+            }
+        } catch (Exception $oError) {
+            $oConnection->rollback();
+            throw ($oError);
+        }
+    }
+
+    /**
+     * Remove a dynaform supervisor of an activity
+     *
+     * @param string $sProcessUID
+     * @param string $sInputDocumentUID
+     * @access public
+     */
+    public function removeInputDocumentSupervisor($sProcessUID, $sInputDocumentUID)
+    {
+        $oConnection = \Propel::getConnection(\StepSupervisorPeer::DATABASE_NAME);
+        try {
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->addSelectColumn( \StepSupervisorPeer::STEP_UID );
+            $oCriteria->add(\StepSupervisorPeer::PRO_UID, $sProcessUID);
+            $oCriteria->add(\StepSupervisorPeer::STEP_UID_OBJ, $sInputDocumentUID);
+            $oPuUid = \StepSupervisorPeer::doSelectRS($oCriteria);
+            $oPuUid->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            while ($oPuUid->next()) {
+                $aRow = $oPuUid->getRow();
+                $iStepUid = $aRow['STEP_UID'];
+            }
+            $oInputDocumentSupervidor = \StepSupervisorPeer::retrieveByPK($iStepUid);
+            if (!is_null($oInputDocumentSupervidor)) {
+                $oConnection->begin();
+                $iResult = $oInputDocumentSupervidor->delete();
+                $oConnection->commit();
+                return $iResult;
+            } else {
+                throw (new \Exception('This row doesn\'t exist!'));
+            }
+        } catch (Exception $oError) {
+            $oConnection->rollback();
+            throw ($oError);
+        }
+    }
 
 }
 
