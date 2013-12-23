@@ -511,6 +511,48 @@ class Process
     }
 
     /**
+     * Get all DynaForms of a Process
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return an array with all DynaForms of a Process
+     */
+    public function getDynaForms($processUid)
+    {
+        try {
+            //Verify data
+            $process = new \Process();
+
+            if (!$process->exists($processUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
+            //Get data
+            $arrayDynaForm = array();
+
+            $dynaForm = new \BusinessModel\DynaForm();
+
+            $criteria = $dynaForm->getDynaFormCriteria();
+
+            $criteria->add(\DynaformPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->addAscendingOrderByColumn("DYN_TITLE");
+
+            $rsCriteria = \DynaformPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayDynaForm[] = $dynaForm->getDynaFormDataFromRecord($row);
+            }
+
+            return $arrayDynaForm;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get all InputDocuments of a Process
      *
      * @param string $processUid Unique id of Process

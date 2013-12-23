@@ -149,6 +149,22 @@ class Project extends Api
     }
 
     /**
+     * @url GET /:projectUid/dynaforms
+     */
+    public function doGetDynaForms($projectUid)
+    {
+        try {
+            $process = new \BusinessModel\Process();
+
+            $response = $process->getDynaForms($projectUid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
      * @url GET /:projectUid/input-documents
      */
     public function doGetInputDocuments($projectUid)

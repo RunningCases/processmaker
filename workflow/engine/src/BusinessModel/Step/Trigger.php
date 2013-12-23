@@ -4,7 +4,7 @@ namespace BusinessModel\Step;
 class Trigger
 {
     /**
-     * Checks if exists the record in table STEP_TRIGGER
+     * Verify if exists the record in table STEP_TRIGGER
      *
      * @param string $stepUid           Unique id of Step
      * @param string $type              Type (BEFORE, AFTER)
