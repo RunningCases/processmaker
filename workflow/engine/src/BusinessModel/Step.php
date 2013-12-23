@@ -4,7 +4,7 @@ namespace BusinessModel;
 class Step
 {
     /**
-     * Checks if exists the record in table STEP
+     * Verify if exists the record in table STEP
      *
      * @param string $taskUid        Unique id of Task
      * @param string $type           Type of Step (DYNAFORM, INPUT_DOCUMENT, OUTPUT_DOCUMENT)
@@ -52,7 +52,7 @@ class Step
     }
 
     /**
-     * Checks if exists the "Object UID" in the corresponding table
+     * Verify if exists the "Object UID" in the corresponding table
      *
      * @param string $type      Type of Step (DYNAFORM, INPUT_DOCUMENT, OUTPUT_DOCUMENT)
      * @param string $objectUid Unique id of Object
@@ -149,9 +149,10 @@ class Step
 
             $arrayData = $this->update($stepUid, $arrayData);
 
-            $arrayData["step_uid"] = $stepUid;
+            //Return
+            unset($arrayData["step_uid"]);
 
-            return $arrayData;
+            return array_merge(array("step_uid" => $stepUid), $arrayData);
         } catch (\Exception $e) {
             throw $e;
         }

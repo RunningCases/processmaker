@@ -5219,7 +5219,7 @@ class G
         return in_array(strtolower($functionName), $allFunctions['user']);
     }
 
-    /** 
+    /**
       * Constructor for inputFilter class. Only first parameter is required.
       * @access constructor
       * @data Mixed - input string/array-of-string to be 'cleaned'
@@ -5235,11 +5235,11 @@ class G
         $filtro = new InputFilter($tagsArray , $attrArray, $tagsMethod, $attrMethod, $xssAuto);
         return $filtro->process($data);
     }
-    
+
     /**
-     * Stores a message in the log file, if the file size exceeds 
+     * Stores a message in the log file, if the file size exceeds
      * specified log file is renamed and a new one is created.
-     * 
+     *
      * @param type $message
      * @param type $pathData
      * @param type $file
@@ -5248,11 +5248,32 @@ class G
     {
         $config = System::getSystemConfiguration();
         G::LoadSystem('logger');
-        
+
         $oLogger =& Logger::getSingleton($pathData, PATH_SEP, $file);
-        $oLogger->limitFile = $config['number_log_file']; 
+        $oLogger->limitFile = $config['number_log_file'];
         $oLogger->limitSize = $config['size_log_file'];
         $oLogger->write($message);
+    }
+
+    /**
+     * Changes all keys in an array and sub-arrays
+     *
+     * @param array $arrayData The array to work on
+     * @param int   $case      Either CASE_UPPER or CASE_LOWER (default)
+     *
+     * return array Returns an array with its keys lower or uppercased, or false if $arrayData is not an array
+     */
+    public static function array_change_key_case2($arrayData, $case = CASE_LOWER)
+    {
+        $arrayData = array_change_key_case($arrayData, $case);
+
+        foreach ($arrayData as $key => $value) {
+            if (is_array($value)) {
+                $arrayData[$key] = self::array_change_key_case2($value, $case);
+            }
+        }
+
+        return $arrayData;
     }
 }
 

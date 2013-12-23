@@ -32,7 +32,7 @@ class InputDocument
     }
 
     /**
-     * Checks if the title exists in the InputDocuments of Process
+     * Verify if the title exists in the InputDocuments of Process
      *
      * @param string $processUid Unique id of Process
      * @param string $title      Title
@@ -140,9 +140,9 @@ class InputDocument
 
             $arrayData = array_change_key_case($arrayData, CASE_LOWER);
 
-            $arrayData["inp_doc_uid"] = $inputDocumentUid;
+            unset($arrayData["inp_doc_uid"]);
 
-            return $arrayData;
+            return array_merge(array("inp_doc_uid" => $inputDocumentUid), $arrayData);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -297,6 +297,16 @@ class InputDocument
     public function getInputDocumentDataFromRecord($record)
     {
         try {
+            $inputdoc = new \InputDocument();
+
+            if ($record["INP_DOC_TITLE"] . "" == "") {
+                //There is no transaltion for this Document name, try to get/regenerate the label
+                $arrayInputdocData = $inputdoc->load($record["INP_DOC_UID"]);
+
+                $record["INP_DOC_TITLE"] = $arrayInputdocData["INP_DOC_TITLE"];
+                $record["INP_DOC_DESCRIPTION"] = $arrayInputdocData["INP_DOC_DESCRIPTION"];
+            }
+
             return array(
                 "inp_doc_uid"         => $record["INP_DOC_UID"],
                 "inp_doc_title"       => $record["INP_DOC_TITLE"],
@@ -341,14 +351,6 @@ class InputDocument
             $rsCriteria->next();
 
             $row = $rsCriteria->getRow();
-
-            if ($row["INP_DOC_TITLE"] . "" == "") {
-                //There is no transaltion for this Document name, try to get/regenerate the label
-                $arrayInputdocData = $inputdoc->load($inputDocumentUid);
-
-                $row["INP_DOC_TITLE"] = $arrayInputdocData["INP_DOC_TITLE"];
-                $row["INP_DOC_DESCRIPTION"] = $arrayInputdocData["INP_DOC_DESCRIPTION"];
-            }
 
             return $this->getInputDocumentDataFromRecord($row);
         } catch (\Exception $e) {
