@@ -1,9 +1,10 @@
 @ProcessMakerMichelangelo @RestAPI
-Feature: Testing Oauth
+Feature: Getting started with Behat tests
   Scenario: GET projects list
     Given that I have a valid access_token
     And I request "projects"
     Then the response status code should be 200
+    And the response time should at least be 100 milliseconds
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"

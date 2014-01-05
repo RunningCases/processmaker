@@ -610,36 +610,42 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $c = 0;
-            while ($aRow = $oDataset->getRow()) {
-                $c++;
-                $oGroup = new \Groupwf();
-                $aFields = $oGroup->load($aRow['USR_UID']);
-                if ($aFields['GRP_STATUS'] == 'ACTIVE') {
+            $oTasks = new \Tasks();
+            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 1);
+            $aUIDS1 = array();
+            foreach ($aAux as $aGroup) {
+                $aUIDS1[] = $aGroup['GRP_UID'];
+            }
+            $groups = new \Groupwf();
+            $result = $groups->getAllGroup($start, $limit, $filter);
+            foreach ($result['rows'] as $results) {
+                if (in_array($results['GRP_UID'], $aUIDS1)) {
+                    $c++;
                     $oCriteria = new \Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
-                    $oCriteria->add(\GroupUserPeer::GRP_UID, $aRow['USR_UID']);
+                    $oCriteria->add(\GroupUserPeer::GRP_UID, $results['GRP_UID']);
                     $oDataset2 = \GroupUserPeer::doSelectRS($oCriteria);
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                } else {
-                    $aRow2['GROUP_INACTIVE'] = '(' . \G::LoadTranslation('ID_GROUP_INACTIVE') . ')';
+                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
+                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                      'aas_lastname' => "",
+                                      'aas_username' => "",
+                                      'aas_type' => "group" );
                 }
-                $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
-                                  'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $aRow['GRP_TITLE'] .
-                                  ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                  ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
-                                  ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                  'aas_lastname' => "",
-                                  'aas_username' => "",
-                                  'aas_type' => "group");
-                $oDataset->next();
             }
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
+            if ($filter) {
+                $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
+            }
             $oCriteria->addSelectColumn(\TaskUserPeer::TAS_UID);
             $oCriteria->addSelectColumn(\TaskUserPeer::USR_UID);
             $oCriteria->addSelectColumn(\TaskUserPeer::TU_TYPE);
@@ -648,6 +654,12 @@ class Task
             $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
+            if ($start) {
+                $oCriteria->setOffset( $start );
+            }
+            if ($limit) {
+                $oCriteria->setLimit( $limit );
+            }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -697,13 +709,18 @@ class Task
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $groups = new \Groupwf();
-            $start = '';
-            $limit = '';
-            $filter = '';
             $result = $groups->getAllGroup($start, $limit, $filter);
             $c = 0;
+            $oTasks = new \Tasks();
+            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 1);
+            $aUIDS1 = array();
+            foreach ($aAux as $aGroup) {
+                $aUIDS1[] = $aGroup['GRP_UID'];
+            }
+            $groups = new \Groupwf();
+            $result = $groups->getAllGroup($start, $limit, $filter);
             foreach ($result['rows'] as $results) {
-                if (!in_array($results['GRP_UID'], $aUIDS1)) {
+                if (in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
                     $oCriteria = new \Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
@@ -715,7 +732,7 @@ class Task
                     $aUsers[] = array('aas_uid' => $results['GRP_UID'],
                                       'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                            ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
+                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                       ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                       'aas_lastname' => "",
                                       'aas_username' => "",
@@ -729,8 +746,17 @@ class Task
             $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
+            if ($filter) {
+                 $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
+            }
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS2, \Criteria::NOT_IN);
+            if ($start) {
+                $oCriteria->setOffset( $start );
+            }
+            if ($limit) {
+                $oCriteria->setLimit( $limit );
+            }
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -785,30 +811,33 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $c = 0;
-            while ($aRow = $oDataset->getRow()) {
-                $c++;
-                $oGroup = new \Groupwf();
-                $aFields = $oGroup->load($aRow['USR_UID']);
-                if ($aFields['GRP_STATUS'] == 'ACTIVE') {
+            $oTasks = new \Tasks();
+            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 1);
+            $aUIDS1 = array();
+            foreach ($aAux as $aGroup) {
+                $aUIDS1[] = $aGroup['GRP_UID'];
+            }
+            $groups = new \Groupwf();
+            $result = $groups->getAllGroup($start, $limit, $filter);
+            foreach ($result['rows'] as $results) {
+                if (in_array($results['GRP_UID'], $aUIDS1)) {
+                    $c++;
                     $oCriteria = new \Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
-                    $oCriteria->add(\GroupUserPeer::GRP_UID, $aRow['USR_UID']);
+                    $oCriteria->add(\GroupUserPeer::GRP_UID, $results['GRP_UID']);
                     $oDataset2 = \GroupUserPeer::doSelectRS($oCriteria);
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                } else {
-                    $aRow2['GROUP_INACTIVE'] = '(' . \G::LoadTranslation('ID_GROUP_INACTIVE') . ')';
+                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
+                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                      'aas_lastname' => "",
+                                      'aas_username' => "",
+                                      'aas_type' => "group" );
                 }
-                $aUsers = array('aas_uid' => $aRow['USR_UID'],
-                                'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $aRow['GRP_TITLE'] .
-                                ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
-                                ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                'aas_lastname' => "",
-                                'aas_username' => "",
-                                'aas_type' => "group" );
-                $oDataset->next();
             }
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
@@ -956,7 +985,7 @@ class Task
      *
      * @access public
      */
-    public function getTaskAdhocAssignees($sProcessUID, $sTaskUID)
+    public function getTaskAdhocAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
             $aUsers = array();
@@ -980,36 +1009,42 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $c = 0;
-            while ($aRow = $oDataset->getRow()) {
-                $c++;
-                $oGroup = new \Groupwf();
-                $aFields = $oGroup->load($aRow['USR_UID']);
-                if ($aFields['GRP_STATUS'] == 'ACTIVE') {
+            $oTasks = new \Tasks();
+            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 2);
+            $aUIDS1 = array();
+            foreach ($aAux as $aGroup) {
+                $aUIDS1[] = $aGroup['GRP_UID'];
+            }
+            $groups = new \Groupwf();
+            $result = $groups->getAllGroup($start, $limit, $filter);
+            foreach ($result['rows'] as $results) {
+                if (in_array($results['GRP_UID'], $aUIDS1)) {
+                    $c++;
                     $oCriteria = new \Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
-                    $oCriteria->add(\GroupUserPeer::GRP_UID, $aRow['USR_UID']);
+                    $oCriteria->add(\GroupUserPeer::GRP_UID, $results['GRP_UID']);
                     $oDataset2 = \GroupUserPeer::doSelectRS($oCriteria);
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                } else {
-                    $aRow2['GROUP_INACTIVE'] = '(' . \G::LoadTranslation('ID_GROUP_INACTIVE') . ')';
+                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
+                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                      'aas_lastname' => "",
+                                      'aas_username' => "",
+                                      'aas_type' => "group" );
                 }
-                $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
-                                  'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $aRow['GRP_TITLE'] .
-                                  ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                  ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
-                                  ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                  'aas_lastname' => "",
-                                  'aas_username' => "",
-                                  'aas_type' => "group");
-                $oDataset->next();
             }
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
+            if ($filter) {
+                 $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
+            }
             $oCriteria->addSelectColumn(\TaskUserPeer::TAS_UID);
             $oCriteria->addSelectColumn(\TaskUserPeer::USR_UID);
             $oCriteria->addSelectColumn(\TaskUserPeer::TU_TYPE);
@@ -1018,6 +1053,12 @@ class Task
             $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 2);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
+            if ($start) {
+                $oCriteria->setOffset( $start );
+            }
+            if ($limit) {
+                $oCriteria->setLimit( $limit );
+            }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -1045,7 +1086,7 @@ class Task
      *
      * @access public
      */
-    public function getTaskAvailableAdhocAssignee($sProcessUID, $sTaskUID)
+    public function getTaskAvailableAdhocAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
             $iType = 2;
@@ -1064,13 +1105,18 @@ class Task
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $groups = new \Groupwf();
-            $start = '';
-            $limit = '';
-            $filter = '';
             $result = $groups->getAllGroup($start, $limit, $filter);
             $c = 0;
+            $oTasks = new \Tasks();
+            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 2);
+            $aUIDS1 = array();
+            foreach ($aAux as $aGroup) {
+                $aUIDS1[] = $aGroup['GRP_UID'];
+            }
+            $groups = new \Groupwf();
+            $result = $groups->getAllGroup($start, $limit, $filter);
             foreach ($result['rows'] as $results) {
-                if (!in_array($results['GRP_UID'], $aUIDS1)) {
+                if (in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
                     $oCriteria = new \Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
@@ -1081,8 +1127,8 @@ class Task
                     $aRow2 = $oDataset2->getRow();
                     $aUsers[] = array('aas_uid' => $results['GRP_UID'],
                                       'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                      ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
+                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                       ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                       'aas_lastname' => "",
                                       'aas_username' => "",
@@ -1096,8 +1142,17 @@ class Task
             $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
+            if ($filter) {
+                 $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
+            }
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS2, \Criteria::NOT_IN);
+            if ($start) {
+                $oCriteria->setOffset( $start );
+            }
+            if ($limit) {
+                $oCriteria->setLimit( $limit );
+            }
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -1152,30 +1207,33 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $c = 0;
-            while ($aRow = $oDataset->getRow()) {
-                $c++;
-                $oGroup = new \Groupwf();
-                $aFields = $oGroup->load($aRow['USR_UID']);
-                if ($aFields['GRP_STATUS'] == 'ACTIVE') {
+            $oTasks = new \Tasks();
+            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 2);
+            $aUIDS1 = array();
+            foreach ($aAux as $aGroup) {
+                $aUIDS1[] = $aGroup['GRP_UID'];
+            }
+            $groups = new \Groupwf();
+            $result = $groups->getAllGroup($start, $limit, $filter);
+            foreach ($result['rows'] as $results) {
+                if (in_array($results['GRP_UID'], $aUIDS1)) {
+                    $c++;
                     $oCriteria = new \Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
-                    $oCriteria->add(\GroupUserPeer::GRP_UID, $aRow['USR_UID']);
+                    $oCriteria->add(\GroupUserPeer::GRP_UID, $results['GRP_UID']);
                     $oDataset2 = \GroupUserPeer::doSelectRS($oCriteria);
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                } else {
-                    $aRow2['GROUP_INACTIVE'] = '(' . \G::LoadTranslation('ID_GROUP_INACTIVE') . ')';
+                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
+                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                      'aas_lastname' => "",
+                                      'aas_username' => "",
+                                      'aas_type' => "group" );
                 }
-                $aUsers = array('aas_uid' => $aRow['USR_UID'],
-                                'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $aRow['GRP_TITLE'] .
-                                ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')) .
-                                ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                'aas_lastname' => "",
-                                'aas_username' => "",
-                                'aas_type' => "group" );
-                $oDataset->next();
             }
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);

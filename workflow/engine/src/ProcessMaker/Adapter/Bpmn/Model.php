@@ -28,6 +28,7 @@ use \BpmnArtifactPeer as ArtifactPeer;
 use \ProcessMaker\Util\Hash;
 use \BasePeer;
 
+
 /**
  * Class Model
  *
@@ -291,7 +292,7 @@ class Model
         return $uids;
     }
 
-    public function loadProject($prjUid)
+    public static function loadProject($prjUid)
     {
         /*
          * 1. load object of project
@@ -365,6 +366,127 @@ class Model
         }
 
         return $projects;
+    }
+
+    public static function updateProject($prjUid, $projectUpdated)
+    {
+        $project = ProjectPeer::retrieveByPK($prjUid);
+        $project->setPrjName($projectUpdated['prj_name']);
+        $project->setPrjUpdateDate(date("Y-m-d H:i:s"));
+        $project->save();
+
+        $diagramData = $projectUpdated['diagrams'][0];
+
+        $diagram = DiagramPeer::retrieveByPK($diagramData['dia_uid']);
+        $diagram->setDiaName($diagramData['dia_name']);
+
+        if (!empty($diagramData['dia_is_closable'])) {
+            $diagram->setDiaIsClosable($diagramData['dia_is_closable']);
+        }
+
+        $diagram->save();
+
+        $processData = self::getBpmnObjectBy('Process', ProcessPeer::PRJ_UID, $prjUid);
+
+        $process = ProcessPeer::retrieveByPK($processData['pro_uid']);
+        $process->setProName($process->getProName());
+        $process->save();
+
+        $savedProject = self::loadProject($prjUid);
+        $diff = self::getDiffFromProjects($savedProject, $projectUpdated);
+
+        self::updateDiagram($diff);
+    }
+
+    public static function updateDiagram($diff)
+    {
+        return false;
+
+        // Creating new objects
+        foreach ($diff['new'] as $element => $items) {
+            foreach ($items as $data) {
+                switch ($element) {
+                    case 'activities':
+                        $data = array_change_key_case((array) $data, CASE_UPPER);
+                        $activity = new Activity();
+                        $activity->create($data);
+                        break;
+                }
+            }
+        }
+
+        //$activity = ActivityPeer::retrieveByPK($item);
+    }
+
+    public static function getDiffFromProjects($savedProject, $updatedProject)
+    {
+        // preparing target project
+        $diagramElements = array(
+            'act_uid' => 'activities',
+            'evn_uid' => 'events',
+            'flo_uid' => 'flows',
+            'art_uid' => 'artifacts',
+            'lns_uid' => 'laneset',
+            'lan_uid' => 'lanes'
+        );
+
+        // Getting Differences
+        $newRecords = array();
+        $deletedRecords = array();
+        $updatedRecords = array();
+
+        // Get new records
+        foreach ($diagramElements as $key => $element) {
+            $arrayDiff = self::arrayDiff(
+                $savedProject['diagrams'][0][$element],
+                $updatedProject['diagrams'][0][$element],
+                $key
+            );
+
+            if (! empty($arrayDiff)) {
+                $newRecords[$element] = $arrayDiff;
+            }
+        }
+
+        // Get deleted records
+        foreach ($diagramElements as $key => $element) {
+            $arrayDiff = self::arrayDiff(
+                $updatedProject['diagrams'][0][$element],
+                $savedProject['diagrams'][0][$element],
+                $key
+            );
+
+            if (! empty($arrayDiff)) {
+                $deletedRecords[$element] = $arrayDiff;
+            }
+        }
+
+        // Get updated records
+        $checksum = array();
+        foreach ($diagramElements as $key => $element) {
+            $checksum[$element] = self::getArrayChecksum($savedProject['diagrams'][0][$element], $key);
+        }
+
+        foreach ($diagramElements as $key => $element) {
+            foreach ($updatedProject['diagrams'][0][$element] as $item) {
+                if (in_array($item[$key], $newRecords[$element]) || in_array($item[$key], $deletedRecords[$element])) {
+                    // skip new or deleted records
+                    continue;
+                }
+
+                if (self::getChecksum($item) !== $checksum[$element][$item[$key]]) {
+                    $updatedRecords[$element][] = $item;
+                }
+            }
+        }
+
+        $diff = array(
+            'new' => $newRecords,
+            'deleted' => $deletedRecords,
+            'updated' => $updatedRecords
+        );
+
+        return $diff;
     }
 
     public static function getRelatedFlows($actUid)
@@ -456,6 +578,50 @@ class Model
         $record = self::getBpmnCollectionBy($class, $field, $value, $changeCase);
 
         return empty($record) ? null : $record[0];
+    }
+
+    private static function arrayDiff($list, $targetList, $key)
+    {
+        $uid = array();
+        $diff = array();
+
+        foreach ($list as $item) {
+            if (array_key_exists($key, $item)) {
+                $uid[] = $item[$key];
+            }
+        }
+
+        foreach ($targetList as $item) {
+            if (! in_array($item[$key], $uid)) {
+                $diff[] = $item[$key];
+            }
+        }
+
+        return $diff;
+    }
+
+    private static function getArrayChecksum($list, $key = null)
+    {
+        $checksum = array();
+
+        foreach ($list as $k => $item) {
+            if (empty($key)) {
+                $checksum[$k] = self::getChecksum($item);
+            } else {
+                $checksum[$item[$key]] = self::getChecksum($item);
+            }
+        }
+
+        return $checksum;
+    }
+
+    private static function getChecksum($data)
+    {
+        if (! is_string($data)) {
+            $data = var_export($data, true);
+        }
+
+        return sha1($data);
     }
 }
 
