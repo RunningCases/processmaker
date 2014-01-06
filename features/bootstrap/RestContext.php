@@ -552,7 +552,6 @@ class RestContext extends BehatContext
     public function theTypeIs($type)
     {
         $data = $this->_data;
-        print_r($data);
         switch ($type) {
             case 'string':
                 if (is_string($data)) return;
@@ -964,7 +963,7 @@ class RestContext extends BehatContext
     public function storeIn($varName)
     {
         if (!isset($this->_data->$varName)) {
-            
+            throw new \Exception("JSON Response does not have '$varName' property\n\n" );
         }
 
         $varValue = $this->_data->$varName;
