@@ -96,32 +96,16 @@ class Event
 
         $dataEvent['PRO_UID'] = $sProcessUID;
         $oEvent = new \Event();
-        $uidNewEvent = $oEvent->create( $dataEvent );
+
+        if ($create) {
+            $uidNewEvent = $oEvent->create( $dataEvent );
+        } else {
+            $uidNewEvent = $oEvent->update( $dataEvent );
+        }
+
         $dataEvent = $this->getEvents($sProcessUID, '', $uidNewEvent);
         $dataEvent = array_change_key_case($dataEvent, CASE_LOWER);
         return $dataEvent;
-    }
-
-    /**
-     * Update Event Put
-     *
-     * @param string $eventUid
-     *
-     * @access public
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @return void
-     */
-    public function updateEvent($dataEvent)
-    {
-        $dataEvent = array_change_key_case($dataEvent, CASE_UPPER);
-        try {
-            $oEvent = new \Event();
-            $oEvent->update( $dataEvent );
-        } catch (Exception $e) {
-            throw $e;
-        }
     }
 
     /**
@@ -144,6 +128,5 @@ class Event
             throw $e;
         }
     }
-
 }
 
