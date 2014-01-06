@@ -296,7 +296,7 @@ class DynaForm
             $processUid = $arrayDataUid["PRO_UID"];
 
             //Verify data
-            if (!$this->dynaFormAssignedStep($dynaFormUid, $processUid)) {
+            if ($this->dynaFormAssignedStep($dynaFormUid, $processUid)) {
                 throw (new \Exception("You cannot delete this Dynaform while it is assigned to a step"));
             }
 

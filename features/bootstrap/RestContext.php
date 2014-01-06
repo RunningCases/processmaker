@@ -2,6 +2,7 @@
 use Behat\Behat\Context\BehatContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Behat\Exception\PendingException;
 /**
  * Rest context.
  *
@@ -936,6 +937,8 @@ class RestContext extends BehatContext
         $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
         $this->_requestBody = $string;
     }
+    
+    
 
 
    /**
@@ -972,6 +975,7 @@ class RestContext extends BehatContext
         $sessionData->$varName = $varValue;
         file_put_contents("session.data", json_encode($sessionData));
     }
+    
 
     /**
      * @Then /^echo last response$/
@@ -980,5 +984,55 @@ class RestContext extends BehatContext
     {
         $this->printDebug("$this->_request\n$this->_response");
     }
+    
+    
+    //*********** WEN
+    
+    /**
+    * @Given /^POST data from file "([^"]*)"$/
+    */
+    public function postDataFromFile($jsonFile)
+    {
+      $filePath = __DIR__ . "/../json/" . $jsonFile;
+      
+      if(file_exists($filePath))
+      {
+        $fileData = file_get_contents($filePath);
+        $this->postThisData(new PyStringNode($fileData));
+      }
+      else
+      {
+        throw new \Exception("JSON File: $filePath not found\n\n" );
+      }
+     // throw new PendingException();
+    }
+    
+    /**
+    * @Given /^PUT data from file "([^"]*)"$/
+    */
+    public function putDataFromFile($jsonFile)
+    {
+      $filePath = __DIR__ . "/../json/" . $jsonFile;
+      
+      if(file_exists($filePath))
+      {
+        $fileData = file_get_contents($filePath);
+        $this->putThisData(new PyStringNode($fileData));
+      }
+      else
+      {
+        throw new \Exception("JSON File: $filePath not found\n\n" );
+      }
+     // throw new PendingException();
+    }
+    /**
+    * @Given /^This scenario is not implemented yet$/
+    * @Given /^this scenario is not implemented yet$/
+    */
+    public function thisScenarioIsNotImplementedYet()
+    {
+      throw new PendingException();
+    }
+                                  
 }
 
