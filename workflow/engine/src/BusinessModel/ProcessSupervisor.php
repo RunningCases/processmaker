@@ -296,5 +296,44 @@ class ProcessSupervisor
         }
     }
 
+    /**
+     * Assign a supervisor of a process
+     *
+     * @param string $sProcessUID
+     * @param string $sUsrUID
+     * @param string $sTypeUID
+     * @access public
+     */
+    public function addSupervisor($sProcessUID, $sUsrUID, $sTypeUID)
+    {
+        $oProcessUser = new \ProcessUser ( );
+        $puType = 'SUPERVISOR';
+        if ($sTypeUID == 'Group') {
+            $puType = 'GROUP_SUPERVISOR';
+        }
+
+        $oTypeAssigneeG = \GroupwfPeer::retrieveByPK( $sUsrUID );
+        $oTypeAssigneeU = \UsersPeer::retrieveByPK( $sUsrUID );
+
+                if (is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
+                    throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
+                }
+                if (is_null( $oTypeAssigneeG ) && ! is_null( $oTypeAssigneeU) ) {
+                    $type = "user";
+                    if ( $type != $assType ) {
+                        throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
+                    }
+                }
+                if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
+                    $type = "group";
+                    if ( $type != $assType ) {
+                        throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
+                    }
+                }
+
+
+        $oProcessUser->create(array('PU_UID' => \G::generateUniqueID(), 'PRO_UID' => $sProcessUID, 'USR_UID' => $sUsrUID, 'PU_TYPE' => $puType));
+    }
+
 }
 

@@ -186,7 +186,7 @@ class OutputDocument
                     $aRow['OUT_DOC_TITLE'] = $outputDocumentObj['OUT_DOC_TITLE'];
                     $aRow['OUT_DOC_DESCRIPTION'] = $outputDocumentObj['OUT_DOC_DESCRIPTION'];
                 } else {
-                    $outputDocArray[] = array('out_doc_uid' => $aRow['OUT_DOC_UID'],
+                    $outputDocArray = array('out_doc_uid' => $aRow['OUT_DOC_UID'],
                                               'out_doc_title' => $aRow['OUT_DOC_TITLE'],
                                               'out_doc_description' => $aRow['OUT_DOC_DESCRIPTION'],
                                               'out_doc_filename' => $aRow['OUT_DOC_FILENAME'],
