@@ -19,7 +19,7 @@ class ProcessSupervisors extends Api
      *
      * @url GET /:prjUid/supervisors
      */
-    public function doGetProjectSupervisors($prjUid, $filter = '', $start = null, $limit = null)
+    public function doGetSupervisors($prjUid, $filter = '', $start = null, $limit = null)
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
@@ -38,7 +38,7 @@ class ProcessSupervisors extends Api
      *
      * @url GET /:prjUid/inputdocument-supervisor
      */
-    public function doGetProjectInputDocumentSupervisor($prjUid)
+    public function doGetInputDocumentSupervisor($prjUid)
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
@@ -57,7 +57,7 @@ class ProcessSupervisors extends Api
      *
      * @url GET /:prjUid/dynaform-supervisor
      */
-    public function doGetProjectDynaformSupervisor($prjUid)
+    public function doGetDynaformSupervisor($prjUid)
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
@@ -127,5 +127,29 @@ class ProcessSupervisors extends Api
         }
         return $response;
     }
+
+    /**
+     * @url POST /:prjUid/supervisor
+     *
+     * @param string $prjUid
+     * @param string $sup_uid
+     * @param string $sup_type {@choice user,group}
+     *
+     * @status 201
+     */
+    public function doPostSupervisors($prjUid, $sup_uid, $sup_type)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $sup_type=ucwords($sup_type);
+            $arrayData = $supervisor->addSupervisor($prjUid, $sup_uid, $sup_type);
+        } catch (\Exception $e) {
+            //Response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+
 
 }
