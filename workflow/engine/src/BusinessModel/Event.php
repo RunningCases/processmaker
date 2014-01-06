@@ -13,10 +13,11 @@ class Event
      * @var string $filter.
      * @var string $sEventUID. Uid for Process
      *
+     * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @return boolean
+     * @return array
      */
     public function getEvents($sProcessUID, $filter = '', $sEventUID = '')
     {
@@ -50,7 +51,6 @@ class Event
                 $oCriteria->add(\EventPeer::EVN_ACTION, "EXECUTE_TRIGGER");
                 break;
         }
-
         $eventsArray = array();
 
         $oDataset = \EventPeer::doSelectRS($oCriteria);
@@ -73,13 +73,67 @@ class Event
     }
 
     /**
+     * Save Event Post Put
+     *
+     * @param string $eventUid
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     */
+    public function saveEvents($sProcessUID, $dataEvent, $create = false)
+    {
+        if ( ($sProcessUID == '') || (count($dataEvent) == 0) ) {
+            return false;
+        }
+        $dataEvent = array_change_key_case($dataEvent, CASE_UPPER);
+
+        if ( $create && (isset($dataEvent['ENV_UID'])) ) {
+            unset($dataEvent['ENV_UID']);
+        }
+
+        $dataEvent['PRO_UID'] = $sProcessUID;
+        $oEvent = new \Event();
+        $uidNewEvent = $oEvent->create( $dataEvent );
+        $dataEvent = $this->getEvents($sProcessUID, '', $uidNewEvent);
+        $dataEvent = array_change_key_case($dataEvent, CASE_LOWER);
+        return $dataEvent;
+    }
+
+    /**
+     * Update Event Put
+     *
+     * @param string $eventUid
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function updateEvent($dataEvent)
+    {
+        $dataEvent = array_change_key_case($dataEvent, CASE_UPPER);
+        try {
+            $oEvent = new \Event();
+            $oEvent->update( $dataEvent );
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Delete Event
      *
      * @param string $eventUid
      *
-     * return void
-     *
      * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
      */
     public function deleteEvent($eventUid)
     {
@@ -90,9 +144,6 @@ class Event
             throw $e;
         }
     }
-
-    
-
 
 }
 
