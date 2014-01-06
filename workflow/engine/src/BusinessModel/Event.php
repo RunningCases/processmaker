@@ -44,7 +44,7 @@ class Event
                 $oCriteria->add(\EventPeer::EVN_ACTION, "SEND_MESSAGE");
                 break;
             case 'conditional':
-                $oCriteria->add(\EventPeer::EVN_ACTION, "SEND_MESSAGE");
+                $oCriteria->add(\EventPeer::EVN_ACTION, "EXECUTE_CONDITIONAL_TRIGGER");
                 break;
             case 'multiple':
                 $oCriteria->add(\EventPeer::EVN_ACTION, "EXECUTE_TRIGGER");
@@ -62,6 +62,12 @@ class Event
             $aRow = array_merge($aRow, $aFields);
             $eventsArray[] = array_change_key_case($aRow, CASE_LOWER);
             $oDataset->next();
+        }
+
+        if ($sEventUID != '' && empty($eventsArray)) {
+            throw (new \Exception( 'This row doesn\'t exist!' ));
+        } else if ($sEventUID != '' && !empty($eventsArray)) {
+            return current($eventsArray);
         }
         return $eventsArray;
     }
