@@ -35,6 +35,28 @@ class ProcessSupervisors extends Api
 
     /**
      * @param string $prjUid {@min 32} {@max 32}
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
+     *
+     * @url GET /:prjUid/available-supervisors
+     */
+    public function doGetAvailableSupervisors($prjUid, $filter = '', $start = null, $limit = null)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->getAvailableSupervisors($prjUid, $filter, $start, $limit);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
      *
      * @url GET /:prjUid/inputdocument-supervisor
      */
