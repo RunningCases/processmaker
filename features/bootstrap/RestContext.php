@@ -1075,4 +1075,6 @@ class RestContext extends BehatContext
     {
       throw new PendingException();
     }
+
 }
+
