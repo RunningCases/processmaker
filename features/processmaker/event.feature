@@ -53,7 +53,7 @@ Feature: Testing triggers
     @3: TEST FOR GET EVENT /-----------------------------------------------------------------------
     Scenario: Get a event
         Given that I have a valid access_token
-        And that I want to find a resource with the key "evn_uid" stored in session array
+        And that I want to get a resource with the key "evn_uid" stored in session array
         And I request "project/251815090529619a99a2bf4013294414/event"
         Then the response status code should be 200
         And the response charset is "UTF-8"
