@@ -225,6 +225,26 @@ class RestContext extends BehatContext
     }
 
     /**
+     * @Given /^that I want to get a resource with the key "([^"]*)" stored in session array$/
+     */
+    public function thatIWantToGetAResourceWithTheKeyStoredInSessionArray($varName)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$varName) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$varName;
+        }
+
+        $this->_restGetQueryStringSuffix = "/" . $varValue;
+        $this->_restObjectMethod = 'get';
+    }
+
+    /**
      * @Given /^that "([^"]*)" header is set to "([^"]*)"$/
      * @Given /^that "([^"]*)" header is set to (\d+)$/
      */
@@ -331,6 +351,10 @@ class RestContext extends BehatContext
                 $this->_response = $this->_request->send();
                 break;
             case 'GET':
+                if (isset($this->_restGetQueryStringSuffix) &&
+                    $this->_restGetQueryStringSuffix != '') {
+                    $url .= $this->_restGetQueryStringSuffix;
+                }
                 $this->_request = $this->_client
                     ->get($url, $this->_headers);
                 $this->_response = $this->_request->send();
@@ -937,8 +961,8 @@ class RestContext extends BehatContext
         $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
         $this->_requestBody = $string;
     }
-    
-    
+
+
 
 
    /**
@@ -975,7 +999,25 @@ class RestContext extends BehatContext
         $sessionData->$varName = $varValue;
         file_put_contents("session.data", json_encode($sessionData));
     }
-    
+
+    /**
+     * @Given /^store "([^"]*)" in session array as variable "([^"]*)"$/
+     */
+    public function storeInAsVariable($varName, $sessionVarName)
+    {
+        if (!isset($this->_data->$varName)) {
+            throw new \Exception("JSON Response does not have '$varName' property\n\n" );
+        }
+
+        $varValue = $this->_data->$varName;
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = new StdClass();
+        }
+        $sessionData->$sessionVarName = $varValue;
+        file_put_contents("session.data", json_encode($sessionData));
+    }
 
     /**
      * @Then /^echo last response$/
@@ -984,17 +1026,17 @@ class RestContext extends BehatContext
     {
         $this->printDebug("$this->_request\n$this->_response");
     }
-    
-    
+
+
     //*********** WEN
-    
+
     /**
     * @Given /^POST data from file "([^"]*)"$/
     */
     public function postDataFromFile($jsonFile)
     {
       $filePath = __DIR__ . "/../json/" . $jsonFile;
-      
+
       if(file_exists($filePath))
       {
         $fileData = file_get_contents($filePath);
@@ -1006,14 +1048,14 @@ class RestContext extends BehatContext
       }
      // throw new PendingException();
     }
-    
+
     /**
     * @Given /^PUT data from file "([^"]*)"$/
     */
     public function putDataFromFile($jsonFile)
     {
       $filePath = __DIR__ . "/../json/" . $jsonFile;
-      
+
       if(file_exists($filePath))
       {
         $fileData = file_get_contents($filePath);
@@ -1033,6 +1075,6 @@ class RestContext extends BehatContext
     {
       throw new PendingException();
     }
-                                  
+
 }
 

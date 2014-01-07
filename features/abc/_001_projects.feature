@@ -124,6 +124,7 @@ Feature: Getting started with Behat tests
     And the type is "object"
     And that "tri_param" is set to "PRIVATE"
     And store "tri_uid" in session array
+    And store "tri_uid" in session array as variable "trigger1"
 
   Scenario: re-post a new trigger, to get an error
     Given that I have a valid access_token
@@ -141,7 +142,7 @@ Feature: Getting started with Behat tests
     Then the response status code should be 400
     And the content type is "application/json"
     And the type is "object"
-    #message: "Bad Request: There is a triggers with the same name in this process"
+    #message: "Bad Request: There is a previously created trigger with the same name in this process"
 
   Scenario: modify a Trigger
     Given that I have a valid access_token
@@ -161,6 +162,35 @@ Feature: Getting started with Behat tests
     And the content type is "application/json"
     And the type is "object"
     And that "tri_title" is set to "Trigger #1-modified"
+    And that "tri_description" is set to "Trigger #1 - -modified"
+    And that "tri_type" is set to "script"
+    And that "tri_webbot" is set to "print 'hello modified world!!'; "
+    And that "tri_param" is set to "private"
+
+
+  Scenario: get a previously created trigger
+    Given that I have a valid access_token
+    And that I want to get a resource with the key "tri_uid" stored in session array
+    And I request "project/14414793652a5d718b65590036026581/trigger"
+    Then the response status code should be 200
+    And the content type is "application/json"
+    And that "tri_title" is set to "Trigger #1-modified"
+    And that "tri_description" is set to "Trigger #1 - -modified"
+    And that "tri_type" is set to "script"
+    And that "tri_webbot" is set to "print 'hello modified world!!'; "
+    And that "tri_param" is set to "private"
+
+  Scenario: get a previously created trigger using alternative variable
+    Given that I have a valid access_token
+    And that I want to get a resource with the key "trigger1" stored in session array
+    And I request "project/14414793652a5d718b65590036026581/trigger"
+    Then the response status code should be 200
+    And the content type is "application/json"
+    And that "tri_title" is set to "Trigger #1-modified"
+    And that "tri_description" is set to "Trigger #1 - -modified"
+    And that "tri_type" is set to "script"
+    And that "tri_webbot" is set to "print 'hello modified world!!'; "
+    And that "tri_param" is set to "private"
 
   Scenario: delete a previously created trigger
     Given that I have a valid access_token
