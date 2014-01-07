@@ -1077,4 +1077,3 @@ class RestContext extends BehatContext
     }
 
 }
-
