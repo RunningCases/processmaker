@@ -212,6 +212,44 @@ class ProcessSupervisors extends Api
         return $response;
     }
 
+    /**
+     * @url POST /:prjUid/dynaform-supervisor
+     *
+     * @param string $prjUid
+     * @param string $dyn_uid
+     *
+     * @status 201
+     */
+    public function doPostDynaformSupervisors($prjUid, $dyn_uid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->addDynaformSupervisor($prjUid, $dyn_uid);
+        } catch (\Exception $e) {
+            //Response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
 
+    /**
+     * @url POST /:prjUid/inputdocument-supervisor
+     *
+     * @param string $prjUid
+     * @param string $inp_doc_uid
+     *
+     * @status 201
+     */
+    public function doPostInputDocumentSupervisors($prjUid, $inp_doc_uid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->addInputDocumentSupervisor($prjUid, $inp_doc_uid);
+        } catch (\Exception $e) {
+            //Response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
 
 }

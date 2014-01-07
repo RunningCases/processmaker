@@ -382,7 +382,7 @@ class ProcessSupervisor
 
 
     /**
-     * Remove a supervisor of an activity
+     * Remove a supervisor
      *
      * @param string $sProcessUID
      * @param string $sUserUID
@@ -418,7 +418,7 @@ class ProcessSupervisor
     }
 
     /**
-     * Remove a dynaform supervisor of an activity
+     * Remove a dynaform supervisor
      *
      * @param string $sProcessUID
      * @param string $sDynaformUID
@@ -454,7 +454,7 @@ class ProcessSupervisor
     }
 
     /**
-     * Remove a dynaform supervisor of an activity
+     * Remove a input document supervisor
      *
      * @param string $sProcessUID
      * @param string $sInputDocumentUID
@@ -504,29 +504,56 @@ class ProcessSupervisor
         if ($sTypeUID == 'Group') {
             $puType = 'GROUP_SUPERVISOR';
         }
-
         $oTypeAssigneeG = \GroupwfPeer::retrieveByPK( $sUsrUID );
         $oTypeAssigneeU = \UsersPeer::retrieveByPK( $sUsrUID );
-
-                if (is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
-                    throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
-                }
-                if (is_null( $oTypeAssigneeG ) && ! is_null( $oTypeAssigneeU) ) {
-                    $type = "user";
-                    if ( $type != $assType ) {
-                        throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
-                    }
-                }
-                if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
-                    $type = "group";
-                    if ( $type != $assType ) {
-                        throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
-                    }
-                }
-
-
+        if (is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
+            throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
+        }
+        if (is_null( $oTypeAssigneeG ) && ! is_null( $oTypeAssigneeU) ) {
+            $type = "User";
+            if ( $type != $sTypeUID ) {
+                throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
+            }
+        }
+        if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
+            $type = "Group";
+            if ( $type != $sTypeUID ) {
+            throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
+            }
+        }
         $oProcessUser->create(array('PU_UID' => \G::generateUniqueID(), 'PRO_UID' => $sProcessUID, 'USR_UID' => $sUsrUID, 'PU_TYPE' => $puType));
     }
 
+    /**
+     * Assign a dynaform supervisor of a process
+     *
+     * @param string $sProcessUID
+     * @param string $sDynUID
+     * @access public
+     */
+    public function addDynaformSupervisor($sProcessUID, $sDynUID)
+    {
+        $oStepSupervisor = new \StepSupervisor();
+        $oStepSupervisor->create(array('PRO_UID' => $sProcessUID,
+                                       'STEP_TYPE_OBJ' => "DYNAFORM",
+                                       'STEP_UID_OBJ' => $sDynUID,
+                                       'STEP_POSITION' => $oStepSupervisor->getNextPosition($sProcessUID, "DYNAFORM")));
+    }
+
+    /**
+     * Assign a inputdocument supervisor of a process
+     *
+     * @param string $sProcessUID
+     * @param string $sInputDocumentUID
+     * @access public
+     */
+    public function addInputDocumentSupervisor($sProcessUID, $sInputDocumentUID)
+    {
+        $oStepSupervisor = new \StepSupervisor();
+        $oStepSupervisor->create(array('PRO_UID' => $sProcessUID,
+                                       'STEP_TYPE_OBJ' => "INPUT_DOCUMENT",
+                                       'STEP_UID_OBJ' => $sInputDocumentUID,
+                                       'STEP_POSITION' => $oStepSupervisor->getNextPosition($sProcessUID, "DYNAFORM")));
+    }
 }
 
