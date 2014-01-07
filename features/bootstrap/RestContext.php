@@ -174,6 +174,26 @@ class RestContext extends BehatContext
     }
 
     /**
+     * @Given /^that I want to find a resource with the key "([^"]*)" stored in session array$/
+     */
+    public function thatIWantToFindAResourceWithTheKeyStoredInSessionArray($varName)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$varName) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$varName;
+        }
+
+        $this->_restFindQueryStringSuffix = "/" . $varValue;
+        $this->_restObjectMethod = 'get';
+    }
+
+    /**
      * @Given /^that I want to delete a "([^"]*)"$/
      * @Given /^that I want to delete an "([^"]*)"$/
      * @Given /^that I want to delete "([^"]*)"$/
@@ -331,6 +351,10 @@ class RestContext extends BehatContext
                 $this->_response = $this->_request->send();
                 break;
             case 'GET':
+                if (isset($this->_restFindQueryStringSuffix) &&
+                    $this->_restFindQueryStringSuffix != '') {
+                    $url .= $this->_restFindQueryStringSuffix;
+                }
                 $this->_request = $this->_client
                     ->get($url, $this->_headers);
                 $this->_response = $this->_request->send();
