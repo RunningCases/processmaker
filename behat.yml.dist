@@ -3,4 +3,4 @@ default:
     context:
         parameters:
             base_url: http://192.168.11.181/api/1.0/michelangelo/
-            access_token: ff4bdec9e8e2e3b2fa3fb03bc3a7d287fd0dcf26
+            access_token: cd5cff9b2e3ebabf49e276e47e977fab5988c00e
