@@ -1,8 +1,8 @@
 {
   "prj_uid": "6e60d25b2a779b263104f141c215466b",
-  "prj_name": "Project #1 (parallel-by-ev)",
-  "prj_description": "",
-  "diagrams": [
+  "prj_name": "Project #1 , Creación de Proceso para derivaciones (parallel)-”ejemplo”; ‘comillas’. Título con caraccteres especiales”!@#$%^&*()_+{}[]”?><”,
+  "prj_description": "Creación de Proceso para derivaciones (parallel)-”ejemplo”; ‘comillas’. Título con caracteres especiales”!@#$%^&*()_+{}[]”?><”,
+    "diagrams": [
     {
       "dia_uid": "a5242da840064218638061532405176",
       "pro_uid": "68269130852b04ccbda0558053566350",
@@ -47,7 +47,7 @@
         },
         {
           "act_uid": "55963679852b04cfdda1ca7057330775",
-          "act_name": "Task # 2",
+          "act_name": "Tarea con Título Compleato y simbolos especiales ‘!@#$%^&*()_+=:”?>;’/.[]{}’" y texto largo,
           "act_type": "TASK",
           "act_task_type": "EMPTY",
           "act_is_for_compensation": false,
