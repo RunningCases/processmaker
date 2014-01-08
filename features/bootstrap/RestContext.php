@@ -699,12 +699,12 @@ class RestContext extends BehatContext
     }
 
     /**
-     * @Given /^the response not has a "([^"]*)" property$/
-     * @Given /^the response not has an "([^"]*)" property$/
-     * @Given /^the response not has a property called "([^"]*)"$/
-     * @Given /^the response not has an property called "([^"]*)"$/
+     * @Given /^the response has not a "([^"]*)" property$/
+     * @Given /^the response has not an "([^"]*)" property$/
+     * @Given /^the response has not a property called "([^"]*)"$/
+     * @Given /^the response has not an property called "([^"]*)"$/
      */
-    public function theResponseNotHasAProperty($propertyName)
+    public function theResponseHasNotAProperty($propertyName)
     {
         $data = $this->_data;
 
