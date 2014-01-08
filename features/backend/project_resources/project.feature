@@ -3,6 +3,14 @@ Feature: Project Resources
  
   Background:
     Given that I have a valid access_token
+    
+    Scenario: Get a list of projects
+    
+    Given I request "projects"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
 
   Scenario: Get a single project
     
@@ -10,7 +18,7 @@ Feature: Project Resources
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "array"
+    And the type is "object"
 
 
   Scenario: Create a new project
