@@ -44,8 +44,8 @@ Feature: DynaForms Resources
             "dyn_type": "xmlform",
             "copy_import":
             {
-                "prj_uid": "48207364252cc27894ca354020290166",
-                "dyn_uid": "68268455252cc27cb463d76013645722"
+                "prj_uid": "42445320652cd534acb3824056962285",
+                "dyn_uid": "70070685552cd53605650f7062918506"
             }
         }
         """
@@ -59,13 +59,13 @@ Feature: DynaForms Resources
     #POST /api/1.0/{workspace}/project/{prj_uid}/dynaform
     #     Create a new DynaForm for a Project
     #     Creation of a DynaForm based in a PMTable
-    Scenario: Create "My DynaForm3" for a Project (Creation of a DynaForm based in a PMTable)
+    Scenario: Create "PMT_DYNAFORM" for a Project (Creation of a DynaForm based in a PMTable)
         Given that I have a valid access_token
         And POST this data:
         """
         {
-            "dyn_title": "My DynaForm3",
-            "dyn_description": "My DynaForm3 DESCRIPTION",
+            "dyn_title": "PMT_DYNAFORM",
+            "dyn_description": "PMT_DYNAFORM DESCRIPTION",
             "dyn_type": "xmlform",
             "pmtable":
             {
@@ -129,8 +129,8 @@ Feature: DynaForms Resources
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
-        And that "dyn_title" is set to "My DynaForm3"
-        And that "dyn_description" is set to "My DynaForm3 DESCRIPTION"
+        And that "dyn_title" is set to "PMT_DYNAFORM"
+        And that "dyn_description" is set to "PMT_DYNAFORM DESCRIPTION"
         And that "dyn_type" is set to "xmlform"
 
     #DELETE /api/1.0/{workspace}/project/{prj_uid}/dynaform/{dyn_uid}

@@ -1,0 +1,27 @@
+{
+    "definition": [],
+    "properties": {
+        "tas_type": "NORMAL",
+        "tas_duration": 4,
+        "tas_type_day": "",
+        "tas_timeunit": "DAYS",
+        "tas_priority_variable": "",
+        "tas_assign_type": "BALANCED",
+        "tas_assign_variable": "@@SYS_NEXT_USER_TO_BE_ASSIGNED",
+        "tas_group_variable": "",
+        "tas_transfer_fly": "FALSE",
+        "tas_send_last_email": "FALSE",
+        "tas_derivation_screen_tpl": "",
+        "tas_selfservice_timeout": 0,
+        "tas_selfservice_time": "",
+        "tas_selfservice_time_unit": "",
+        "tas_selfservice_trigger_uid": "",
+        "tas_title": "Task Inicial endpoint - Modificado por Jenkins",
+        "tas_description": "Test de modificacion en la descripcion",
+        "tas_def_title": "Test",
+        "tas_def_description": "",
+        "tas_def_message": "",
+        "tas_def_subject_message": "",
+        "tas_calendar": ""
+    }
+}
