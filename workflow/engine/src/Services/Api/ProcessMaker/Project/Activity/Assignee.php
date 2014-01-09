@@ -204,16 +204,16 @@ class Assignee extends Api
      *
      * @param string $prjUid
      * @param string $actUid
-     * @param string $ass_uid
-     * @param string $ass_type {@choice user,group}
+     * @param string $ada_uid
+     * @param string $ada_type {@choice user,group}
      *
      * @status 201
      */
-    public function doPostActivityAdhocAssignee($prjUid, $actUid, $ass_uid, $ass_type)
+    public function doPostActivityAdhocAssignee($prjUid, $actUid, $ada_uid, $ada_type)
     {
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->addTaskAdhocAssignee($prjUid, $actUid, $ass_uid, $ass_type);
+            $arrayData = $task->addTaskAdhocAssignee($prjUid, $actUid, $ada_uid, $ada_type);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -222,18 +222,18 @@ class Assignee extends Api
     }
 
     /**
-     * @url DELETE /:prjUid/activity/:actUid/adhoc-assignee/:assUid
+     * @url DELETE /:prjUid/activity/:actUid/adhoc-assignee/:adaUid
      *
      * @param string $prjUid
      * @param string $actUid
-     * @param string $assUid
+     * @param string $adaUid
      *
      */
-    public function doDeleteActivityAdhocAssignee($prjUid, $actUid, $assUid)
+    public function doDeleteActivityAdhocAssignee($prjUid, $actUid, $adaUid)
     {
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->removeTaskAdhocAssignee($prjUid, $actUid, $assUid);
+            $arrayData = $task->removeTaskAdhocAssignee($prjUid, $actUid, $adaUid);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());

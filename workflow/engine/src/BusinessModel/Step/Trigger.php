@@ -206,5 +206,78 @@ class Trigger
             throw $e;
         }
     }
+
+    /**
+     * Get data of a Trigger from a record
+     *
+     * @param array $record Record
+     *
+     * return array Return an array with data of a Trigger
+     */
+    public function getTriggerDataFromRecord($record)
+    {
+        try {
+            return array(
+                "tri_uid"         => $record["TRI_UID"],
+                "tri_title"       => $record["TRI_TITLE"],
+                "tri_description" => $record["TRI_DESCRIPTION"],
+                "st_type"         => $record["ST_TYPE"],
+                "st_condition"    => $record["ST_CONDITION"],
+                "st_position"     => (int)($record["ST_POSITION"])
+            );
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get data of a Trigger
+     *
+     * @param string $stepUid    Unique id of Step
+     * @param string $type       Type (BEFORE, AFTER)
+     * @param string $triggerUid Unique id of Trigger
+     *
+     * return array Return an array with data of a Trigger
+     */
+    public function getTrigger($stepUid, $type, $triggerUid)
+    {
+        try {
+            $step = new \BusinessModel\Step();
+
+            $arrayDataUid = $step->getDataUids($stepUid);
+
+            $taskUid = $arrayDataUid["TAS_UID"];
+
+            //Verify data
+            if (!$this->existsRecord($stepUid, $type, $triggerUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid . ", " . $type . ", " . $triggerUid, "STEP_TRIGGER"), "The record \"{0}\", doesn't exist in table {1}")));
+            }
+
+            //Get data
+            $trigger = new \BusinessModel\Trigger();
+
+            $criteria = $trigger->getTriggerCriteria();
+
+            $criteria->addSelectColumn(\StepTriggerPeer::ST_TYPE);
+            $criteria->addSelectColumn(\StepTriggerPeer::ST_CONDITION);
+            $criteria->addSelectColumn(\StepTriggerPeer::ST_POSITION);
+            $criteria->addJoin(\StepTriggerPeer::TRI_UID, \TriggersPeer::TRI_UID, \Criteria::LEFT_JOIN);
+            $criteria->add(\TriggersPeer::TRI_UID, $triggerUid, \Criteria::EQUAL);
+            $criteria->add(\StepTriggerPeer::STEP_UID, $stepUid, \Criteria::EQUAL);
+            $criteria->add(\StepTriggerPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+            $criteria->add(\StepTriggerPeer::ST_TYPE, $type, \Criteria::EQUAL);
+
+            $rsCriteria = \StepTriggerPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $rsCriteria->next();
+
+            $row = $rsCriteria->getRow();
+
+            return $this->getTriggerDataFromRecord($row);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
 
