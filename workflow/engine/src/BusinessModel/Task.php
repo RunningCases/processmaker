@@ -720,7 +720,7 @@ class Task
             $groups = new \Groupwf();
             $result = $groups->getAllGroup($start, $limit, $filter);
             foreach ($result['rows'] as $results) {
-                if (in_array($results['GRP_UID'], $aUIDS1)) {
+                if (! in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
                     $oCriteria = new \Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
@@ -1116,7 +1116,7 @@ class Task
             $groups = new \Groupwf();
             $result = $groups->getAllGroup($start, $limit, $filter);
             foreach ($result['rows'] as $results) {
-                if (in_array($results['GRP_UID'], $aUIDS1)) {
+                if (! in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
                     $oCriteria = new \Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
