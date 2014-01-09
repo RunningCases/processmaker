@@ -466,7 +466,7 @@ class ProcessSupervisor
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aResp[] = array('pui_uid' => $aRow['STEP_UID'],
+                $aResp = array('pui_uid' => $aRow['STEP_UID'],
                                  'pui_position' => $aRow['STEP_POSITION'],
                                  'input_doc_uid' => $aRow['STEP_UID_OBJ'],
                                  'input_doc_title' => $aRow['INP_DOC_TITLE']);
