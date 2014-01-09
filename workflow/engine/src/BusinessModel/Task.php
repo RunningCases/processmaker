@@ -1027,14 +1027,14 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
-                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                    $aUsers[] = array('ada_uid' => $results['GRP_UID'],
+                                      'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                            ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                       ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                       ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'aas_lastname' => "",
-                                      'aas_username' => "",
-                                      'aas_type' => "group" );
+                                      'ada_lastname' => "",
+                                      'ada_username' => "",
+                                      'ada_type' => "group" );
                 }
             }
             $oCriteria = new \Criteria('workflow');
@@ -1063,11 +1063,11 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
-                                  'aas_name' => $aRow['USR_FIRSTNAME'],
-                                  'aas_lastname' => $aRow['USR_LASTNAME'],
-                                  'aas_username' => $aRow['USR_USERNAME'],
-                                  'aas_type' => "user" );
+                $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
+                                  'ada_name' => $aRow['USR_FIRSTNAME'],
+                                  'ada_lastname' => $aRow['USR_LASTNAME'],
+                                  'ada_username' => $aRow['USR_USERNAME'],
+                                  'ada_type' => "user" );
                 $oDataset->next();
             }
             return $aUsers;
@@ -1125,14 +1125,14 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
-                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                    $aUsers[] = array('ada_uid' => $results['GRP_UID'],
+                                      'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                            ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                       ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                       ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'aas_lastname' => "",
-                                      'aas_username' => "",
-                                      'aas_type' => "group" );
+                                      'ada_lastname' => "",
+                                      'ada_username' => "",
+                                      'ada_type' => "group" );
                 }
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -1157,11 +1157,11 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
-                                  'aas_name' => $aRow['USR_FIRSTNAME'],
-                                  'aas_lastname' => $aRow['USR_LASTNAME'],
-                                  'aas_username' => $aRow['USR_USERNAME'],
-                                  'aas_type' => "user" );
+                $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
+                                  'ada_name' => $aRow['USR_FIRSTNAME'],
+                                  'ada_lastname' => $aRow['USR_LASTNAME'],
+                                  'ada_username' => $aRow['USR_USERNAME'],
+                                  'ada_type' => "user" );
                 $oDataset->next();
             }
             return $aUsers;
@@ -1225,14 +1225,14 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
-                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                    $aUsers[] = array('ada_uid' => $results['GRP_UID'],
+                                      'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                            ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                       ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                       ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'aas_lastname' => "",
-                                      'aas_username' => "",
-                                      'aas_type' => "group" );
+                                      'ada_lastname' => "",
+                                      'ada_username' => "",
+                                      'ada_type' => "group" );
                 }
             }
             $oCriteria = new \Criteria('workflow');
@@ -1253,11 +1253,11 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aUsers = array('aas_uid' => $aRow['USR_UID'],
-                                'aas_name' => $aRow['USR_FIRSTNAME'],
-                                'aas_lastname' => $aRow['USR_LASTNAME'],
-                                'aas_username' => $aRow['USR_USERNAME'],
-                                'aas_type' => "user" );
+                $aUsers = array('ada_uid' => $aRow['USR_UID'],
+                                'ada_name' => $aRow['USR_FIRSTNAME'],
+                                'ada_lastname' => $aRow['USR_LASTNAME'],
+                                'ada_username' => $aRow['USR_USERNAME'],
+                                'ada_type' => "user" );
                 $oDataset->next();
             }
             if (empty($aUsers)) {
