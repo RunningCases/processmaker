@@ -12,14 +12,20 @@ use \Luracast\Restler\RestException;
 class Trigger extends Api
 {
     /**
-     * @url GET /:projectUid/activity/:activityUid/step/:stepUid/trigger/:triggerUid
+     * @url GET /:projectUid/activity/:activityUid/step/:stepUid/trigger/:triggerUid/:type
+     *
+     * @param string $triggerUid
+     * @param string $stepUid
+     * @param string $activityUid
+     * @param string $projectUid
+     * @param string $type {@from body}{@choice before,after}
      */
-    public function doGetActivityStepTrigger($triggerUid, $stepUid, $activityUid, $projectUid)
+    public function doGetActivityStepTrigger($triggerUid, $stepUid, $activityUid, $projectUid, $type)
     {
         try {
-            $trigger = new \BusinessModel\Trigger();
+            $stepTrigger = new \BusinessModel\Step\Trigger();
 
-            $response = $trigger->getTrigger($triggerUid);
+            $response = $stepTrigger->getTrigger($stepUid, strtoupper($type), $triggerUid);
 
             return $response;
         } catch (\Exception $e) {
