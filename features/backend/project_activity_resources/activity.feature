@@ -8,6 +8,7 @@ Feature: Testing activity
         And the response charset is "UTF-8"
         And the type is "object"
         And the "definition" property type is "array"
+        And the "properties" property type is "array"
         And that "tas_title" is set to "Task 1"
 
 
@@ -18,7 +19,7 @@ Feature: Testing activity
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
-        And the response not has a "definition" property
+        And the response has not a "definition" property
 
 
     @3: TEST FOR GET DEFINITION ACTIVITY /---------------------------------------------------------
@@ -28,7 +29,7 @@ Feature: Testing activity
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
-        And the response not has a "properties" property
+        And the response has not a "properties" property
 
 
     @4: TEST FOR PUT DEFINITION ACTIVITY /---------------------------------------------------------
