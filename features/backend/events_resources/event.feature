@@ -17,7 +17,7 @@ Feature: Testing events
                 "evn_time_unit": "DAYS",
                 "evn_when": 1,
                 "evn_when_occurs": "AFTER_TIME",
-                "tri_uid": "95325847552af0c07792c15098680510"
+                "tri_uid": "75916963152cc6ab085a704081670580"
             }
             """
         And I request "project/251815090529619a99a2bf4013294414/event"
@@ -41,7 +41,7 @@ Feature: Testing events
                 "evn_time_unit": "DAYS",
                 "evn_when": 1,
                 "evn_when_occurs": "AFTER_TIME",
-                "tri_uid": "95325847552af0c07792c15098680510"
+                "tri_uid": "75916963152cc6ab085a704081670580"
             }
             """
         And that I want to update a resource with the key "evn_uid" stored in session array

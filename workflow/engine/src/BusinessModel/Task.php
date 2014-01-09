@@ -576,8 +576,8 @@ class Task
     /**
      * Return a assignee list of an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
      * @param string $filter
      * @param int    $start
      * @param int    $limit
@@ -680,8 +680,8 @@ class Task
     /**
      * Return the available users and users groups to assigned to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
      * @param string $filter
      * @param int    $start
      * @param int    $limit
@@ -720,7 +720,7 @@ class Task
             $groups = new \Groupwf();
             $result = $groups->getAllGroup($start, $limit, $filter);
             foreach ($result['rows'] as $results) {
-                if (in_array($results['GRP_UID'], $aUIDS1)) {
+                if (! in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
                     $oCriteria = new \Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
@@ -777,9 +777,9 @@ class Task
     /**
      * Return a single user or group assigned to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
      *
      * return array
      *
@@ -877,9 +877,9 @@ class Task
     /**
      * Assign a user or group to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
      * @param string $assType {@choice user,group}
      *
      * return array
@@ -943,9 +943,9 @@ class Task
     /**
      * Remove a assignee of an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
      *
      * @access public
      */
@@ -978,8 +978,8 @@ class Task
     /**
      * Return a adhoc assignee list of an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
      *
      * return array
      *
@@ -1027,14 +1027,14 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
-                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                    $aUsers[] = array('ada_uid' => $results['GRP_UID'],
+                                      'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                            ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                       ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                       ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'aas_lastname' => "",
-                                      'aas_username' => "",
-                                      'aas_type' => "group" );
+                                      'ada_lastname' => "",
+                                      'ada_username' => "",
+                                      'ada_type' => "group" );
                 }
             }
             $oCriteria = new \Criteria('workflow');
@@ -1063,11 +1063,11 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
-                                  'aas_name' => $aRow['USR_FIRSTNAME'],
-                                  'aas_lastname' => $aRow['USR_LASTNAME'],
-                                  'aas_username' => $aRow['USR_USERNAME'],
-                                  'aas_type' => "user" );
+                $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
+                                  'ada_name' => $aRow['USR_FIRSTNAME'],
+                                  'ada_lastname' => $aRow['USR_LASTNAME'],
+                                  'ada_username' => $aRow['USR_USERNAME'],
+                                  'ada_type' => "user" );
                 $oDataset->next();
             }
             return $aUsers;
@@ -1079,8 +1079,8 @@ class Task
     /**
      * Return the available adhoc users and users groups to assigned to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
      *
      * return array
      *
@@ -1116,7 +1116,7 @@ class Task
             $groups = new \Groupwf();
             $result = $groups->getAllGroup($start, $limit, $filter);
             foreach ($result['rows'] as $results) {
-                if (in_array($results['GRP_UID'], $aUIDS1)) {
+                if (! in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
                     $oCriteria = new \Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
@@ -1125,14 +1125,14 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
-                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                    $aUsers[] = array('ada_uid' => $results['GRP_UID'],
+                                      'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                            ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                       ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                       ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'aas_lastname' => "",
-                                      'aas_username' => "",
-                                      'aas_type' => "group" );
+                                      'ada_lastname' => "",
+                                      'ada_username' => "",
+                                      'ada_type' => "group" );
                 }
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -1157,11 +1157,11 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
-                                  'aas_name' => $aRow['USR_FIRSTNAME'],
-                                  'aas_lastname' => $aRow['USR_LASTNAME'],
-                                  'aas_username' => $aRow['USR_USERNAME'],
-                                  'aas_type' => "user" );
+                $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
+                                  'ada_name' => $aRow['USR_FIRSTNAME'],
+                                  'ada_lastname' => $aRow['USR_LASTNAME'],
+                                  'ada_username' => $aRow['USR_USERNAME'],
+                                  'ada_type' => "user" );
                 $oDataset->next();
             }
             return $aUsers;
@@ -1173,9 +1173,9 @@ class Task
     /**
      * Return a single Adhoc user or group assigned to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
      *
      * return array
      *
@@ -1225,14 +1225,14 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
-                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                    $aUsers[] = array('ada_uid' => $results['GRP_UID'],
+                                      'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                            ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                       ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                       ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'aas_lastname' => "",
-                                      'aas_username' => "",
-                                      'aas_type' => "group" );
+                                      'ada_lastname' => "",
+                                      'ada_username' => "",
+                                      'ada_type' => "group" );
                 }
             }
             $oCriteria = new \Criteria('workflow');
@@ -1253,11 +1253,11 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aUsers = array('aas_uid' => $aRow['USR_UID'],
-                                'aas_name' => $aRow['USR_FIRSTNAME'],
-                                'aas_lastname' => $aRow['USR_LASTNAME'],
-                                'aas_username' => $aRow['USR_USERNAME'],
-                                'aas_type' => "user" );
+                $aUsers = array('ada_uid' => $aRow['USR_UID'],
+                                'ada_name' => $aRow['USR_FIRSTNAME'],
+                                'ada_lastname' => $aRow['USR_LASTNAME'],
+                                'ada_username' => $aRow['USR_USERNAME'],
+                                'ada_type' => "user" );
                 $oDataset->next();
             }
             if (empty($aUsers)) {
@@ -1273,10 +1273,10 @@ class Task
     /**
      * Assign a Adhoc user or group to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
-     * @param string $assType
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
+     * @param string $assType {@choice user,group}
      *
      * return array
      *
@@ -1339,9 +1339,9 @@ class Task
     /**
      * Remove a Adhoc assignee of an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
      *
      * @access public
      */
@@ -1362,7 +1362,7 @@ class Task
             }
             $oTaskUser = \TaskUserPeer::retrieveByPK($sTaskUID, $sAssigneeUID, $iType, $iRelation);
             if (! is_null( $oTaskUser )) {
-                OutputDocumentsTaskUserPeer::doDelete($oCriteria);
+                \TaskUserPeer::doDelete($oCriteria);
             } else {
                 throw (new \Exception( 'This row does not exist!' ));
             }
