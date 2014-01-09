@@ -13,17 +13,113 @@ class ProcessSupervisors extends Api
 {
     /**
      * @param string $prjUid {@min 32} {@max 32}
-     * @param string $filter
-     * @param int    $start
-     * @param int    $limit
      *
-     * @url GET /:prjUid/supervisors
+     * @url GET /:prjUid/process-supervisors
      */
-    public function doGetSupervisors($prjUid, $filter = '', $start = null, $limit = null)
+    public function doGetProcessSupervisors($prjUid)
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->getSupervisors($prjUid, $filter, $start, $limit);
+            $arrayData = $supervisor->getProcessSupervisors($prjUid);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $puUid {@min 32} {@max 32}
+     *
+     * @url GET /:prjUid/process-supervisor/:puUid
+     */
+    public function doGetProcessSupervisor($prjUid, $puUid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $objectData = $supervisor->getProcessSupervisor($prjUid, $puUid);
+            //Response
+            $response = $objectData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $obj_type {@choice user,group}
+     *
+     * @url GET /:prjUid/available-process-supervisors
+     */
+    public function doGetAvailableSupervisors($prjUid, $obj_type = '')
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->getAvailableProcessSupervisors($prjUid, $obj_type);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     *
+     * @url GET /:prjUid/process-supervisor/dynaforms
+     */
+    public function doGetProcessSupervisorDynaforms($prjUid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->getProcessSupervisorDynaforms($prjUid);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $pudUid {@min 32} {@max 32}
+     *
+     * @url GET /:prjUid/process-supervisor/dynaform/:pudUid
+     */
+    public function doGetProcessSupervisorDynaform($prjUid, $pudUid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $objectData = $supervisor->getProcessSupervisorDynaform($prjUid, $pudUid);
+            //Response
+            $response = $objectData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     *
+     * @url GET /:prjUid/process-supervisor/available-dynaforms
+     */
+    public function doGetAvailableProcessSupervisorDynaform($prjUid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->getAvailableProcessSupervisorDynaform($prjUid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -36,13 +132,13 @@ class ProcessSupervisors extends Api
     /**
      * @param string $prjUid {@min 32} {@max 32}
      *
-     * @url GET /:prjUid/inputdocument-supervisor
+     * @url GET /:prjUid/process-supervisor/input-documents
      */
-    public function doGetInputDocumentSupervisor($prjUid)
+    public function doGetProcessSupervisorInputDocuments($prjUid)
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->getInputDocumentSupervisor($prjUid);
+            $arrayData = $supervisor->getProcessSupervisorInputDocuments($prjUid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -54,38 +150,17 @@ class ProcessSupervisors extends Api
 
     /**
      * @param string $prjUid {@min 32} {@max 32}
+     * @param string $puiUid {@min 32} {@max 32}
      *
-     * @url GET /:prjUid/dynaform-supervisor
+     * @url GET /:prjUid/process-supervisor/input-document/:puiUid
      */
-    public function doGetDynaformSupervisor($prjUid)
+    public function doGetProcessSupervisorInputDocument($prjUid, $puiUid)
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->getDynaformSupervisor($prjUid);
+            $objectData = $supervisor->getProcessSupervisorInputDocument($prjUid, $puiUid);
             //Response
-            $response = $arrayData;
-        } catch (\Exception $e) {
-            //response
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-        return $response;
-    }
-
-    /**
-     * @param string $prjUid {@min 32} {@max 32}
-     * @param string $filter
-     * @param int    $start
-     * @param int    $limit
-     *
-     * @url GET /:prjUid/available-supervisors
-     */
-    public function doGetAvailableSupervisors($prjUid, $filter = '', $start = null, $limit = null)
-    {
-        try {
-            $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->getAvailableSupervisors($prjUid, $filter, $start, $limit);
-            //Response
-            $response = $arrayData;
+            $response = $objectData;
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -96,13 +171,14 @@ class ProcessSupervisors extends Api
     /**
      * @param string $prjUid {@min 32} {@max 32}
      *
-     * @url GET /:prjUid/available-dynaform-supervisor
+     * @url GET /:prjUid/process-supervisor/available-input-documents
      */
-    public function doGetAvailableDynaformSupervisor($prjUid)
+    public function doGetAvailableProcessSupervisorInputDocument($prjUid)
+
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->getAvailableDynaformSupervisors($prjUid);
+            $arrayData = $supervisor->getAvailableProcessSupervisorInputDocument($prjUid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -113,98 +189,21 @@ class ProcessSupervisors extends Api
     }
 
     /**
-     * @param string $prjUid {@min 32} {@max 32}
-     *
-     * @url GET /:prjUid/available-inputdocument-supervisor
-     */
-    public function doGetAvailableInputDocumentSupervisor($prjUid)
-
-    {
-        try {
-            $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->getAvailableInputDocumentSupervisor($prjUid);
-            //Response
-            $response = $arrayData;
-        } catch (\Exception $e) {
-            //response
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-        return $response;
-    }
-
-
-    /**
-     * @url DELETE /:prjUid/supervisor/:supUid
+     * @url POST /:prjUid/process-supervisor
      *
      * @param string $prjUid
-     * @param string $supUid
-     *
-     */
-    public function doDeleteSupervisor($prjUid, $supUid)
-    {
-        try {
-            $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->removeProcessSupervisor($prjUid, $supUid);
-        } catch (\Exception $e) {
-            //response
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-        return $response;
-    }
-
-    /**
-     * @url DELETE /:prjUid/dynaform-supervisor/:dynUid
-     *
-     * @param string $prjUid
-     * @param string $dynUid
-     *
-     */
-    public function doDeleteDynaformSupervisor($prjUid, $dynUid)
-    {
-        try {
-            $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->removeDynaformSupervisor($prjUid, $dynUid);
-        } catch (\Exception $e) {
-            //response
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-        return $response;
-    }
-
-    /**
-     * @url DELETE /:prjUid/inputdocument-supervisor/:inputDocUid
-     *
-     * @param string $prjUid
-     * @param string $inputDocUid
-     *
-     */
-    public function doDeleteInputDocumentSupervisor($prjUid, $inputDocUid)
-    {
-        try {
-            $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->removeInputDocumentSupervisor($prjUid, $inputDocUid);
-        } catch (\Exception $e) {
-            //response
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-        return $response;
-    }
-
-    /**
-     * @url POST /:prjUid/supervisor
-     *
-     * @param string $prjUid
-     * @param string $sup_uid
-     * @param string $sup_type {@choice user,group}
+     * @param string $usr_uid
+     * @param string $pu_type {@choice SUPERVISOR,GROUP_SUPERVISOR}
      *
      * @status 201
      */
-    public function doPostSupervisors($prjUid, $sup_uid, $sup_type)
+    public function doPostProcessSupervisor($prjUid, $usr_uid, $pu_type)
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $sup_type=ucwords($sup_type);
-            $arrayData = $supervisor->addSupervisor($prjUid, $sup_uid, $sup_type);
+            $objectData = $supervisor->addProcessSupervisor($prjUid, $usr_uid, $pu_type);
+            //Response
+            $response = $objectData;
         } catch (\Exception $e) {
             //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -213,18 +212,20 @@ class ProcessSupervisors extends Api
     }
 
     /**
-     * @url POST /:prjUid/dynaform-supervisor
+     * @url POST /:prjUid/process-supervisor/dynaform
      *
      * @param string $prjUid
      * @param string $dyn_uid
      *
      * @status 201
      */
-    public function doPostDynaformSupervisors($prjUid, $dyn_uid)
+    public function doPostProcessSupervisorDynaform($prjUid, $dyn_uid)
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->addDynaformSupervisor($prjUid, $dyn_uid);
+            $objectData = $supervisor->addProcessSupervisorDynaform($prjUid, $dyn_uid);
+            //Response
+            $response = $objectData;
         } catch (\Exception $e) {
             //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -233,23 +234,83 @@ class ProcessSupervisors extends Api
     }
 
     /**
-     * @url POST /:prjUid/inputdocument-supervisor
+     * @url POST /:prjUid/process-supervisor/input-document
      *
      * @param string $prjUid
      * @param string $inp_doc_uid
      *
      * @status 201
      */
-    public function doPostInputDocumentSupervisors($prjUid, $inp_doc_uid)
+    public function doPostProcessSupervisorInputDocument($prjUid, $inp_doc_uid)
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->addInputDocumentSupervisor($prjUid, $inp_doc_uid);
+            $arrayData = $supervisor->addProcessSupervisorInputDocument($prjUid, $inp_doc_uid);
         } catch (\Exception $e) {
             //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
     }
+
+    /**
+     * @url DELETE /:prjUid/process-supervisor/:puUid
+     *
+     * @param string $prjUid
+     * @param string $puUid
+     *
+     */
+    public function doDeleteSupervisor($prjUid, $puUid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->removeProcessSupervisor($prjUid, $puUid);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @url DELETE /:prjUid/process-supervisor/dynaform/:pudUid
+     *
+     * @param string $prjUid
+     * @param string $pudUid
+     *
+     */
+    public function doDeleteDynaformSupervisor($prjUid, $pudUid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->removeDynaformSupervisor($prjUid, $pudUid);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @url DELETE /:prjUid/process-supervisor/input-document/:puiUid
+     *
+     * @param string $prjUid
+     * @param string $puiUid
+     *
+     */
+    public function doDeleteInputDocumentSupervisor($prjUid, $puiUid)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $arrayData = $supervisor->removeInputDocumentSupervisor($prjUid, $puiUid);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+
+
 
 }
