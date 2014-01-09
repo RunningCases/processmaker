@@ -465,9 +465,11 @@ class Step
     public function getTriggers($stepUid)
     {
         try {
+            //Get data
             $arrayTrigger = array();
 
-            $trigger = new \BusinessModel\Trigger();
+            $bmTrigger = new \BusinessModel\Trigger();
+            $bmStepTrigger = new \BusinessModel\Step\Trigger();
 
             $arrayDataUid = $this->getDataUids($stepUid);
 
@@ -508,8 +510,9 @@ class Step
                 $stepTrigger->orderPosition($stepUid, $taskUid, $type);
 
                 //Criteria
-                $criteria = $trigger->getTriggerCriteria();
+                $criteria = $bmTrigger->getTriggerCriteria();
 
+                $criteria->addSelectColumn(\StepTriggerPeer::ST_TYPE);
                 $criteria->addSelectColumn(\StepTriggerPeer::ST_CONDITION);
                 $criteria->addSelectColumn(\StepTriggerPeer::ST_POSITION);
                 $criteria->addJoin(\StepTriggerPeer::TRI_UID, \TriggersPeer::TRI_UID, \Criteria::LEFT_JOIN);
@@ -524,14 +527,7 @@ class Step
                 while ($rsCriteria->next()) {
                     $row = $rsCriteria->getRow();
 
-                    $arrayTrigger[] = array(
-                        "tri_uid"   => $row["TRI_UID"],
-                        "tri_title" => $row["TRI_TITLE"],
-                        "tri_description" => $row["TRI_DESCRIPTION"],
-                        "st_type"      => $triggerType,
-                        "st_condition" => $row["ST_CONDITION"],
-                        "st_position"  => (int)($row["ST_POSITION"])
-                    );
+                    $arrayTrigger[] = $bmStepTrigger->getTriggerDataFromRecord($row);
                 }
             }
 

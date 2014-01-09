@@ -44,43 +44,6 @@ class Trigger
     }
 
     /**
-     * Get data of a Trigger
-     *
-     * @param string $triggerUid Unique id of Trigger
-     *
-     * return array
-     */
-    public function getTrigger($triggerUid)
-    {
-        try {
-            //Criteria
-            $criteria = $this->getTriggerCriteria();
-
-            $criteria->add(\TriggersPeer::TRI_UID, $triggerUid, \Criteria::EQUAL);
-
-            $rsCriteria = \TriggersPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            $rsCriteria->next();
-
-            $row = $rsCriteria->getRow();
-
-            $arrayTrigger = array(
-                "tri_uid"   => $row["TRI_UID"],
-                "tri_title" => $row["TRI_TITLE"],
-                "tri_description" => $row["TRI_DESCRIPTION"],
-                "tri_type"   => $row["TRI_TYPE"],
-                "tri_webbot" => $row["TRI_WEBBOT"],
-                "tri_param"  => $row["TRI_PARAM"]
-            );
-
-            return $arrayTrigger;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
      * List of Triggers in process
      * @var string $sProcessUID. Uid for Process
      *
