@@ -15,7 +15,7 @@ class Test3 extends Api
     /**
      * @status 201
      */
-    function post()
+    function post2()
     {
         return array('success' => true);
     }
