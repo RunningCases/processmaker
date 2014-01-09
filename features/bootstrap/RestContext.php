@@ -1075,6 +1075,21 @@ class RestContext extends BehatContext
     {
       throw new PendingException();
     }
+    
+    /**
+     * @Then /^the response has (\d+) records$/
+     * @Then /^the response has (\d+) record$/
+     */
+    public function theResponseHasRecords($quantityOfRecords)
+    {
+        $data = $this->_data;
+            if (!is_array($data)) {
+                throw new Exception("the Response data is not an array!\n\n" );
+            }
+            $currentRecordsCount=count($data);
+            if($currentRecordsCount!=$quantityOfRecords){
+            throw new Exception('Records quantity not match ' . $quantityOfRecords .               ' (actual: ' . $currentRecordsCount . ")\n\n");
+            }
+    }
 
 }
-
