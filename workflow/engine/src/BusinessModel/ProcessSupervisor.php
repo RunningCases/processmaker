@@ -573,7 +573,39 @@ class ProcessSupervisor
                                        'STEP_TYPE_OBJ' => "DYNAFORM",
                                        'STEP_UID_OBJ' => $sDynUID,
                                        'STEP_POSITION' => $oStepSupervisor->getNextPosition($sProcessUID, "DYNAFORM")));
-        return $oStepSupervisor;
+        $sDelimiter = \DBAdapter::getStringDelimiter();
+        $oCriteria = new \Criteria('workflow');
+        $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
+        $oCriteria->addSelectColumn(\StepSupervisorPeer::PRO_UID);
+        $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_TYPE_OBJ);
+        $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID_OBJ);
+        $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_POSITION);
+        $oCriteria->addAsColumn('DYN_TITLE', 'C.CON_VALUE');
+        $oCriteria->addAlias('C', 'CONTENT');
+        $aConditions = array();
+        $aConditions[] = array(\StepSupervisorPeer::STEP_UID_OBJ, \DynaformPeer::DYN_UID );
+        $aConditions[] = array(\StepSupervisorPeer::STEP_TYPE_OBJ, $sDelimiter . 'DYNAFORM' . $sDelimiter );
+        $oCriteria->addJoinMC($aConditions, \Criteria::LEFT_JOIN);
+        $aConditions = array();
+        $aConditions[] = array(\DynaformPeer::DYN_UID, 'C.CON_ID' );
+        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter );
+        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
+        $oCriteria->addJoinMC($aConditions, \Criteria::LEFT_JOIN);
+        $oCriteria->add(\StepSupervisorPeer::PRO_UID, $sProcessUID);
+        $oCriteria->add(\StepSupervisorPeer::STEP_UID_OBJ, $sDynUID);
+        $oCriteria->add(\StepSupervisorPeer::STEP_TYPE_OBJ, 'DYNAFORM');
+        $oCriteria->addAscendingOrderByColumn(\StepSupervisorPeer::STEP_POSITION);
+        $oDataset = \StepSupervisorPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $oDataset->next();
+        while ($aRow = $oDataset->getRow()) {
+            $aResp = array('pud_uid' => $aRow['STEP_UID'],
+                             'pud_position' => $aRow['STEP_POSITION'],
+                             'dyn_uid' => $aRow['STEP_UID_OBJ'],
+                             'dyn_title' => $aRow['DYN_TITLE']);
+            $oDataset->next();
+        }
+        return $aResp;
     }
 
     /**
@@ -590,6 +622,39 @@ class ProcessSupervisor
                                        'STEP_TYPE_OBJ' => "INPUT_DOCUMENT",
                                        'STEP_UID_OBJ' => $sInputDocumentUID,
                                        'STEP_POSITION' => $oStepSupervisor->getNextPosition($sProcessUID, "DYNAFORM")));
+        $sDelimiter = \DBAdapter::getStringDelimiter();
+        $oCriteria = new \Criteria('workflow');
+        $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
+        $oCriteria->addSelectColumn(\StepSupervisorPeer::PRO_UID);
+        $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_TYPE_OBJ);
+        $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID_OBJ);
+        $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_POSITION);
+        $oCriteria->addAsColumn('INP_DOC_TITLE', 'C.CON_VALUE');
+        $oCriteria->addAlias('C', 'CONTENT');
+        $aConditions = array();
+        $aConditions[] = array(\StepSupervisorPeer::STEP_UID_OBJ, \InputDocumentPeer::INP_DOC_UID);
+        $aConditions[] = array(\StepSupervisorPeer::STEP_TYPE_OBJ, $sDelimiter . 'INPUT_DOCUMENT' . $sDelimiter);
+        $oCriteria->addJoinMC($aConditions, \Criteria::LEFT_JOIN);
+        $aConditions = array();
+        $aConditions[] = array(\InputDocumentPeer::INP_DOC_UID, 'C.CON_ID');
+        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'INP_DOC_TITLE' . $sDelimiter);
+        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
+        $oCriteria->addJoinMC($aConditions, \Criteria::LEFT_JOIN);
+        $oCriteria->add(\StepSupervisorPeer::PRO_UID, $sProcessUID);
+        $oCriteria->add(\StepSupervisorPeer::STEP_UID_OBJ, $sInputDocumentUID);
+        $oCriteria->add(\StepSupervisorPeer::STEP_TYPE_OBJ, 'INPUT_DOCUMENT');
+        $oCriteria->addAscendingOrderByColumn(\StepSupervisorPeer::STEP_POSITION);
+        $oDataset = \StepSupervisorPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $oDataset->next();
+        while ($aRow = $oDataset->getRow()) {
+            $aResp = array('pui_uid' => $aRow['STEP_UID'],
+                           'pui_position' => $aRow['STEP_POSITION'],
+                           'input_doc_uid' => $aRow['STEP_UID_OBJ'],
+                           'input_doc_title' => $aRow['INP_DOC_TITLE']);
+            $oDataset->next();
+        }
+        return $aResp;
     }
 
     /**

@@ -245,7 +245,9 @@ class ProcessSupervisors extends Api
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->addProcessSupervisorInputDocument($prjUid, $inp_doc_uid);
+            $objectData = $supervisor->addProcessSupervisorInputDocument($prjUid, $inp_doc_uid);
+            //Response
+            $response = $objectData;
         } catch (\Exception $e) {
             //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
