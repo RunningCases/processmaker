@@ -576,8 +576,8 @@ class Task
     /**
      * Return a assignee list of an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
      * @param string $filter
      * @param int    $start
      * @param int    $limit
@@ -680,8 +680,8 @@ class Task
     /**
      * Return the available users and users groups to assigned to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
      * @param string $filter
      * @param int    $start
      * @param int    $limit
@@ -777,9 +777,9 @@ class Task
     /**
      * Return a single user or group assigned to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
      *
      * return array
      *
@@ -877,9 +877,9 @@ class Task
     /**
      * Assign a user or group to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
      * @param string $assType {@choice user,group}
      *
      * return array
@@ -943,9 +943,9 @@ class Task
     /**
      * Remove a assignee of an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
      *
      * @access public
      */
@@ -978,8 +978,8 @@ class Task
     /**
      * Return a adhoc assignee list of an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
      *
      * return array
      *
@@ -1079,8 +1079,8 @@ class Task
     /**
      * Return the available adhoc users and users groups to assigned to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
      *
      * return array
      *
@@ -1173,9 +1173,9 @@ class Task
     /**
      * Return a single Adhoc user or group assigned to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
      *
      * return array
      *
@@ -1273,10 +1273,10 @@ class Task
     /**
      * Assign a Adhoc user or group to an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
-     * @param string $assType
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
+     * @param string $assType {@choice user,group}
      *
      * return array
      *
@@ -1339,9 +1339,9 @@ class Task
     /**
      * Remove a Adhoc assignee of an activity
      *
-     * @param string $sProcessUID
-     * @param string $sTaskUID
-     * @param string $sAssigneeUID
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $sAssigneeUID {@min 32} {@max 32}
      *
      * @access public
      */
@@ -1362,7 +1362,7 @@ class Task
             }
             $oTaskUser = \TaskUserPeer::retrieveByPK($sTaskUID, $sAssigneeUID, $iType, $iRelation);
             if (! is_null( $oTaskUser )) {
-                OutputDocumentsTaskUserPeer::doDelete($oCriteria);
+                \TaskUserPeer::doDelete($oCriteria);
             } else {
                 throw (new \Exception( 'This row does not exist!' ));
             }

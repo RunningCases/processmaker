@@ -191,8 +191,8 @@ class ProcessSupervisors extends Api
     /**
      * @url POST /:prjUid/process-supervisor
      *
-     * @param string $prjUid
-     * @param string $usr_uid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $usr_uid {@min 32} {@max 32}
      * @param string $pu_type {@choice SUPERVISOR,GROUP_SUPERVISOR}
      *
      * @status 201
@@ -214,8 +214,8 @@ class ProcessSupervisors extends Api
     /**
      * @url POST /:prjUid/process-supervisor/dynaform
      *
-     * @param string $prjUid
-     * @param string $dyn_uid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $dyn_uid {@min 32} {@max 32}
      *
      * @status 201
      */
@@ -236,8 +236,8 @@ class ProcessSupervisors extends Api
     /**
      * @url POST /:prjUid/process-supervisor/input-document
      *
-     * @param string $prjUid
-     * @param string $inp_doc_uid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $inp_doc_uid {@min 32} {@max 32}
      *
      * @status 201
      */
@@ -258,8 +258,8 @@ class ProcessSupervisors extends Api
     /**
      * @url DELETE /:prjUid/process-supervisor/:puUid
      *
-     * @param string $prjUid
-     * @param string $puUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $puUid {@min 32} {@max 32}
      *
      */
     public function doDeleteSupervisor($prjUid, $puUid)
@@ -277,8 +277,8 @@ class ProcessSupervisors extends Api
     /**
      * @url DELETE /:prjUid/process-supervisor/dynaform/:pudUid
      *
-     * @param string $prjUid
-     * @param string $pudUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $pudUid {@min 32} {@max 32}
      *
      */
     public function doDeleteDynaformSupervisor($prjUid, $pudUid)
@@ -296,8 +296,8 @@ class ProcessSupervisors extends Api
     /**
      * @url DELETE /:prjUid/process-supervisor/input-document/:puiUid
      *
-     * @param string $prjUid
-     * @param string $puiUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $puiUid {@min 32} {@max 32}
      *
      */
     public function doDeleteInputDocumentSupervisor($prjUid, $puiUid)

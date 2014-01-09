@@ -222,18 +222,18 @@ class Assignee extends Api
     }
 
     /**
-     * @url DELETE /:prjUid/activity/:actUid/adhoc-assignee/:assUid
+     * @url DELETE /:prjUid/activity/:actUid/adhoc-assignee/:adaUid
      *
      * @param string $prjUid
      * @param string $actUid
-     * @param string $assUid
+     * @param string $adaUid
      *
      */
-    public function doDeleteActivityAdhocAssignee($prjUid, $actUid, $assUid)
+    public function doDeleteActivityAdhocAssignee($prjUid, $actUid, $adaUid)
     {
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->removeTaskAdhocAssignee($prjUid, $actUid, $assUid);
+            $arrayData = $task->removeTaskAdhocAssignee($prjUid, $actUid, $adaUid);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
