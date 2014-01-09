@@ -52,7 +52,7 @@ class ProcessSupervisors extends Api
 
     /**
      * @param string $prjUid {@min 32} {@max 32}
-     * @param string $obj_type {@choice user,group}
+     * @param string $obj_type
      *
      * @url GET /:prjUid/available-process-supervisors
      */
