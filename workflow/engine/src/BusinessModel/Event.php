@@ -21,6 +21,11 @@ class Event
      */
     public function getEvents($sProcessUID, $filter = '', $sEventUID = '')
     {
+        $oProcess = new \Process();
+        if (!($oProcess->processExists($sProcessUID))) {
+            throw (new \Exception( 'This process doesn\'t exist!' ));
+        }
+
         $sDelimiter = \DBAdapter::getStringDelimiter();
         $oCriteria  = new \Criteria('workflow');
         $oCriteria->addSelectColumn(\EventPeer::EVN_UID);
@@ -88,6 +93,12 @@ class Event
         if ( ($sProcessUID == '') || (count($dataEvent) == 0) ) {
             return false;
         }
+
+        $oProcess = new \Process();
+        if (!($oProcess->processExists($sProcessUID))) {
+            throw (new \Exception( 'This process doesn\'t exist!' ));
+        }
+
         $dataEvent = array_change_key_case($dataEvent, CASE_UPPER);
 
         if ( $create && (isset($dataEvent['ENV_UID'])) ) {

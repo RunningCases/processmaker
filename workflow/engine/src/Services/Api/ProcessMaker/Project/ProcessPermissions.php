@@ -35,5 +35,28 @@ class ProcessPermissions extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+    /**
+     * @param string $projectUid {@min 1} {@max 32}
+     * @param string $objectPermissionUid {@min 1} {@max 32}
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     *
+     * @url GET /:projectUid/process-permission/:objectPermissionUid
+     */
+    public function doGetProcessPermission($projectUid, $objectPermissionUid)
+    {
+        try {
+            $processPermissions = new \BusinessModel\ProcessPermissions();
+            $response = $processPermissions->getProcessPermissions($projectUid, $objectPermissionUid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
 
