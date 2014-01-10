@@ -1,5 +1,6 @@
 @ProcessMakerMichelangelo @RestAPI
-Feature: Testing activity
+Feature: Activity Resources
+
     @1: TEST FOR GET ACTIVITY /-----------------------------------------------------------------------
     Scenario: Get a activity
         Given that I have a valid access_token
