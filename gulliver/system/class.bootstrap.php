@@ -3088,6 +3088,14 @@ class Bootstrap
                         "$>php composer.phar install"
                 );
             }
+        } 
+
+        if (! file_exists(PATH_TRUNK . 'vendor' . PATH_SEP . "autoload.php")) {
+            throw new Exception(
+                "ERROR: Problems with Verdors!" . PHP_EOL .
+                    "Please execute the following command to repare vendors:" .PHP_EOL.PHP_EOL.
+                    "$>php composer.phar update"
+            );
         }
 
         require_once PATH_TRUNK . 'vendor' . PATH_SEP . "autoload.php";
