@@ -15,8 +15,6 @@ class ProcessPermissions
     /**
      * Get list for ProcessPermissions
      * @var string $sProcessUID. Uid for Process
-     * @var string $filter.
-     * @var string $sEventUID. Uid for Process
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -24,14 +22,16 @@ class ProcessPermissions
      *
      * @return array
      */
-    public function getProcessPermissions($sProcessUID)
+    public function getProcessPermissions($sProcessUID, $sPermissionUid = '')
     {
         G::LoadClass('case');
         Cases::verifyTable();
         $aObjectsPermissions = array();
-        //$aObjectsPermissions[] = array('OP_UID' => 'char', 'TASK_TARGET' => 'char', 'GROUP_USER' => 'char', 'TASK_SOURCE' => 'char', 'OBJECT_TYPE' => 'char', 'OBJECT' => 'char', 'PARTICIPATED' => 'char', 'ACTION' => 'char', 'OP_CASE_STATUS' => 'char');
         $oCriteria = new \Criteria('workflow');
         $oCriteria->add(ObjectPermissionPeer::PRO_UID, $sProcessUID);
+        if ($sPermissionUid != '') {
+            $oCriteria->add(ObjectPermissionPeer::OP_UID, $sPermissionUid);
+        }
         $oDataset = ObjectPermissionPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
@@ -154,6 +154,12 @@ class ProcessPermissions
             //Add to array
             $aObjectsPermissions[] = array_merge($aRow, array('OP_UID' => $aRow['OP_UID'], 'TASK_TARGET' => $sTaskTarget, 'GROUP_USER' => $sUserGroup, 'TASK_SOURCE' => $sTaskSource, 'OBJECT_TYPE' => $sObjectType, 'OBJECT' => $sObject, 'PARTICIPATED' => $sParticipated, 'ACTION' => $sAction, 'OP_CASE_STATUS' => $aRow['OP_CASE_STATUS']));
             $oDataset->next();
+        }
+
+        if ($sPermissionUid != '' && empty($aObjectsPermissions)) {
+            throw (new \Exception( 'This row doesn\'t exist!' ));
+        } else if ($sPermissionUid != '' && !empty($aObjectsPermissions)) {
+            return current($aObjectsPermissions);
         }
         return $aObjectsPermissions;
     }
