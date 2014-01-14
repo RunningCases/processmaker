@@ -301,3 +301,150 @@ Feature: Project Properties - Step Resources
         And the type is "array"
         And the json data is an empty array
 
+    #TRIGGERS OF STEP "ASSIGN TASK"
+
+    #GET /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/triggers
+    #    List assigned Triggers to a Step
+    Scenario: List Triggers assigned to Step "Assign Task" of "Task2"
+        Given that I have a valid access_token
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/triggers"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "array"
+        And the json data is an empty array
+
+    #POST /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/trigger
+    #     Assign a Trigger to a Step
+    Scenario: Assign "Trigger Demo1" to Step "Assign Task" of "Task2"
+        Given that I have a valid access_token
+        And POST this data:
+        """
+        {
+            "tri_uid": "81919273152cd636c665080083928728",
+            "st_type": "BEFORE_ASSIGNMENT",
+            "st_condition": "",
+            "st_position": 1
+        }
+        """
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger"
+        And the content type is "application/json"
+        Then the response status code should be 201
+        And the response charset is "UTF-8"
+
+    #POST /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/trigger
+    #     Assign a Trigger to a Step
+    Scenario: Assign "Trigger Demo2" to Step "Assign Task" of "Task2"
+        Given that I have a valid access_token
+        And POST this data:
+        """
+        {
+            "tri_uid": "56359776552cd6378b38e47080912028",
+            "st_type": "BEFORE_ASSIGNMENT",
+            "st_condition": "",
+            "st_position": 2
+        }
+        """
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger"
+        And the content type is "application/json"
+        Then the response status code should be 201
+        And the response charset is "UTF-8"
+
+    #PUT /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/trigger/{tri_uid}
+    #    Update a Trigger assignation of a Step
+    Scenario: Update "Trigger Demo1" assigned to Step "Assign Task" of "Task2"
+        Given that I have a valid access_token
+        And PUT this data:
+        """
+        {
+            "st_type": "BEFORE_ASSIGNMENT",
+            "st_condition": "@@FIELD2 == 2"
+        }
+        """
+        And that I want to update a resource with the key "tgr1" stored in session array
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger/81919273152cd636c665080083928728"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "object"
+        And that "st_condition" is set to "@@FIELD2 == 2"
+
+    #GET /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/triggers
+    #    List assigned Triggers to a Step
+    Scenario: List Triggers assigned to Step "Assign Task" of "Task2"
+        Given that I have a valid access_token
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/triggers"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "array"
+        And the "tri_uid" property in row 1 equals "56359776552cd6378b38e47080912028"
+        And the "tri_title" property in row 1 equals "Trigger Demo2"
+        And the "tri_description" property in row 1 equals "Description"
+        And the "st_type" property in row 1 equals "BEFORE_ASSIGNMENT"
+        And the "st_condition" property in row 1 equals ""
+        And the "st_position" property in row 1 equals "2"
+
+    #GET /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/available-triggers/{type}
+    #    List available Triggers to assign to a Step
+    Scenario: List available Triggers to assign to Step "Assign Task" of "Task2"
+        Given that I have a valid access_token
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/available-triggers/before-assignment"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "array"
+        And the "tri_uid" property in row 0 equals "57401970252cd6393531551040242546"
+        And the "tri_title" property in row 0 equals "Trigger Demo3"
+        And the "tri_description" property in row 0 equals "Description"
+        And the "tri_type" property in row 0 equals "SCRIPT"
+        And the "tri_webbot" property in row 0 equals ""
+        And the "tri_param" property in row 0 equals ""
+
+    #GET /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/trigger/{tri_uid}/{type}
+    #    Get a single Trigger assigned to a Step
+    Scenario: Get a single Trigger "Trigger Demo1" assigned to Step "Assign Task" of "Task2"
+        Given that I have a valid access_token
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger/81919273152cd636c665080083928728/before-assignment"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "object"
+        And that "tri_uid" is set to "81919273152cd636c665080083928728"
+        And that "tri_title" is set to "Trigger Demo1"
+        And that "tri_description" is set to "Description"
+        And that "st_type" is set to "BEFORE_ASSIGNMENT"
+        And that "st_condition" is set to "@@FIELD2 == 2"
+        And that "st_position" is set to "1"
+
+    #DELETE /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/trigger/{tri_uid}/{type}
+    #       Remove a Trigger assignation of a Step
+    Scenario: Remove "Trigger Demo1" assigned to Step "Assign Task" of "Task2"
+        Given that I have a valid access_token
+        And that I want to delete a resource with the key "tgr1" stored in session array
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger/81919273152cd636c665080083928728/before-assignment"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+
+    #DELETE /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/trigger/{tri_uid}/{type}
+    #       Remove a Trigger assignation of a Step
+    Scenario: Remove "Trigger Demo2" assigned to Step "Assign Task" of "Task2"
+        Given that I have a valid access_token
+        And that I want to delete a resource with the key "tgr2" stored in session array
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger/56359776552cd6378b38e47080912028/before-assignment"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+
+    #GET /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/triggers
+    #    List assigned Triggers to a Step
+    Scenario: List Triggers assigned to Step "Assign Task" of "Task2"
+        Given that I have a valid access_token
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/triggers"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "array"
+        And the json data is an empty array
+

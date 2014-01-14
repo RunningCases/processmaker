@@ -381,9 +381,11 @@ class Step
             $rsCriteria = \StepPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-            $rsCriteria->next();
-
-            return $rsCriteria->getRow();
+            if ($rsCriteria->next()) {
+                return $rsCriteria->getRow();
+            } else {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
         } catch (\Exception $e) {
             throw $e;
         }
@@ -393,20 +395,60 @@ class Step
      * Get available triggers of a Step
      *
      * @param string $stepUid Unique id of Step
-     * @param string $type    Type (BEFORE, AFTER)
+     * @param string $type    Type (BEFORE, AFTER, BEFORE_ASSIGNMENT, BEFORE_ROUTING, AFTER_ROUTING)
+     * @param string $taskUid Unique id of Task
      *
      * return array
      */
-    public function getAvailableTriggers($stepUid, $type)
+    public function getAvailableTriggers($stepUid, $type, $taskUid = "")
     {
         try {
+            //Verify data
+            $step = new \Step();
+
+            if ($stepUid != "" && !$step->StepExists($stepUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
+            $task = new \Task();
+
+            if ($stepUid == "" && !$task->taskExists($taskUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
+            //Get data
             $arrayAvailableTrigger = array();
 
             $trigger = new \BusinessModel\Trigger();
 
-            $arrayDataUid = $this->getDataUids($stepUid);
+            $flagStepAssignTask = 0;
 
-            $processUid = $arrayDataUid["PRO_UID"];
+            if ($stepUid != "") {
+                $arrayDataUid = $this->getDataUids($stepUid);
+
+                $processUid = $arrayDataUid["PRO_UID"];
+            } else {
+                $arrayData = $task->load($taskUid);
+
+                $processUid = $arrayData["PRO_UID"];
+
+                $flagStepAssignTask = 1;
+
+                switch ($type) {
+                    case "BEFORE_ASSIGNMENT":
+                        $stepUid = "-1";
+                        $type = "BEFORE";
+                        break;
+                    case "BEFORE_ROUTING":
+                        $stepUid = "-2";
+                        $type = "BEFORE";
+                        break;
+                    case "AFTER_ROUTING":
+                        $stepUid = "-2";
+                        $type = "AFTER";
+                        break;
+                }
+            }
 
             //Get Uids
             $arrayUid = array();
@@ -415,6 +457,11 @@ class Step
 
             $criteria->addSelectColumn(\StepTriggerPeer::TRI_UID);
             $criteria->add(\StepTriggerPeer::STEP_UID, $stepUid, \Criteria::EQUAL);
+
+            if ($flagStepAssignTask == 1) {
+                $criteria->add(\StepTriggerPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+            }
+
             $criteria->add(\StepTriggerPeer::ST_TYPE, $type, \Criteria::EQUAL);
 
             $rsCriteria = \StepTriggerPeer::doSelectRS($criteria);
@@ -459,21 +506,37 @@ class Step
      * Get all triggers of a Step
      *
      * @param string $stepUid Unique id of Step
+     * @param string $taskUid Unique id of Task
      *
      * return array
      */
-    public function getTriggers($stepUid)
+    public function getTriggers($stepUid, $taskUid = "")
     {
         try {
+            //Verify data
+            $step = new \Step();
+
+            if ($stepUid != "" && !$step->StepExists($stepUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
+            $task = new \Task();
+
+            if ($stepUid == "" && !$task->taskExists($taskUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
             //Get data
             $arrayTrigger = array();
 
             $bmTrigger = new \BusinessModel\Trigger();
             $bmStepTrigger = new \BusinessModel\Step\Trigger();
 
-            $arrayDataUid = $this->getDataUids($stepUid);
+            if ($stepUid != "") {
+                $arrayDataUid = $this->getDataUids($stepUid);
 
-            $taskUid = $arrayDataUid["TAS_UID"];
+                $taskUid = $arrayDataUid["TAS_UID"];
+            }
 
             $processMap = new \ProcessMap();
             $stepTrigger = new \StepTrigger();
@@ -495,15 +558,20 @@ class Step
                 $triggerType = $index;
                 $type = $value;
 
+                $flagStepAssignTask = 0;
+
                 switch ($triggerType) {
                     case "BEFORE_ASSIGNMENT":
                         $stepUid = "-1";
+                        $flagStepAssignTask = 1;
                         break;
                     case "BEFORE_ROUTING":
                         $stepUid = "-2";
+                        $flagStepAssignTask = 1;
                         break;
                     case "AFTER_ROUTING":
                         $stepUid = "-2";
+                        $flagStepAssignTask = 1;
                         break;
                 }
 
@@ -526,6 +594,10 @@ class Step
 
                 while ($rsCriteria->next()) {
                     $row = $rsCriteria->getRow();
+
+                    if ($flagStepAssignTask == 1) {
+                        $row["ST_TYPE"] = $triggerType;
+                    }
 
                     $arrayTrigger[] = $bmStepTrigger->getTriggerDataFromRecord($row);
                 }
