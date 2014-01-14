@@ -124,6 +124,44 @@ class Step extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+    //Step "Assign Task"
+
+    /**
+     * @url GET /:projectUid/activity/:activityUid/step/triggers
+     */
+    public function doGetActivityStepAssignTaskTriggers($activityUid, $projectUid)
+    {
+        try {
+            $step = new \BusinessModel\Step();
+
+            $response = $step->getTriggers("", $activityUid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:projectUid/activity/:activityUid/step/available-triggers/:type
+     *
+     * @param string $activityUid
+     * @param string $projectUid
+     * @param string $type {@from body}{@choice before-assignment,before-routing,after-routing}
+     */
+    public function doGetActivityStepAssignTaskAvailableTriggers($activityUid, $projectUid, $type)
+    {
+        try {
+            $step = new \BusinessModel\Step();
+
+            $response = $step->getAvailableTriggers("", strtoupper(str_replace("-", "_", $type)), $activityUid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
 
 class StepPostStructure
