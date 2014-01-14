@@ -1109,4 +1109,66 @@ class RestContext extends BehatContext
             }
     }
 
+    /**
+     * @Given /^that I want to update a resource with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
+     */
+    public function thatIWantToUpdateAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$sessionVarName) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$sessionVarName;
+        }
+
+        $this->_restUpdateQueryStringSuffix = "/" . $varValue;
+        $this->_restObjectMethod = 'put';
+    }
+
+     /**
+     * @Given /^that I want to get a resource with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
+     */
+    public function thatIWantToGetAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName)
+    {
+         if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$sessionVarName) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$sessionVarName;
+        }
+
+        $this->_restGetQueryStringSuffix = "/" . $varValue;
+        $this->_restObjectMethod = 'get';
+    }
+
+    /**
+     * @Given /^that I want to delete a resource with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
+     */
+    public function thatIWantToDeleteAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$varName) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$sessionVarName;
+        }
+
+        $this->_restDeleteQueryStringSuffix = "/" . $varValue;
+        $this->_restObjectMethod = 'delete';
+    }
+
+
+
 }
