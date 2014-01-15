@@ -13,6 +13,9 @@ class CaseTrackerObject extends Api
 {
     /**
      * @url GET /:projectUid/case-tracker/object/:caseTrackerObjectUid
+     *
+     * @param string $caseTrackerObjectUid {@min 32}{@max 32}
+     * @param string $projectUid           {@min 32}{@max 32}
      */
     public function doGetCaseTrackerObject($caseTrackerObjectUid, $projectUid)
     {
@@ -30,19 +33,27 @@ class CaseTrackerObject extends Api
     /**
      * @url POST /:projectUid/case-tracker/object
      *
-     * @param string $projectUid
-     * @param CaseTrackerObjectPostStructure $request_data
+     * @param string $projectUid    {@min 32}{@max 32}
+     * @param array  $request_data
+     * @param string $cto_type_obj  {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}{@required true}
+     * @param string $cto_uid_obj   {@from body}{@min 32}{@max 32}{@required true}
+     * @param string $cto_condition
+     * @param int    $cto_position  {@from body}{@min 1}
      *
      * @status 201
      */
-    public function doPostCaseTrackerObject($projectUid, CaseTrackerObjectPostStructure $request_data = null)
-    {
+    public function doPostCaseTrackerObject(
+        $projectUid,
+        $request_data,
+        $cto_type_obj = "DYNAFORM",
+        $cto_uid_obj = "00000000000000000000000000000000",
+        $cto_condition = "",
+        $cto_position = 1
+    ) {
         try {
             $caseTrackerObject = new \BusinessModel\CaseTrackerObject();
 
-            $arrayData = $caseTrackerObject->getArrayDataFromRequestData($request_data);
-
-            $arrayData = $caseTrackerObject->create($projectUid, $arrayData);
+            $arrayData = $caseTrackerObject->create($projectUid, $request_data);
 
             $response = $arrayData;
 
@@ -55,18 +66,27 @@ class CaseTrackerObject extends Api
     /**
      * @url PUT /:projectUid/case-tracker/object/:caseTrackerObjectUid
      *
-     * @param string $caseTrackerObjectUid
-     * @param string $projectUid
-     * @param CaseTrackerObjectPutStructure $request_data
+     * @param string $caseTrackerObjectUid {@min 32}{@max 32}
+     * @param string $projectUid           {@min 32}{@max 32}
+     * @param array  $request_data
+     * @param string $cto_type_obj  {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}
+     * @param string $cto_uid_obj   {@from body}{@min 32}{@max 32}
+     * @param string $cto_condition
+     * @param int    $cto_position  {@from body}{@min 1}
      */
-    public function doPutCaseTrackerObject($caseTrackerObjectUid, $projectUid, CaseTrackerObjectPutStructure $request_data = null)
-    {
+    public function doPutCaseTrackerObject(
+        $caseTrackerObjectUid,
+        $projectUid,
+        $request_data,
+        $cto_type_obj = "DYNAFORM",
+        $cto_uid_obj = "00000000000000000000000000000000",
+        $cto_condition = "",
+        $cto_position = 1
+    ) {
         try {
             $caseTrackerObject = new \BusinessModel\CaseTrackerObject();
 
-            $arrayData = $caseTrackerObject->getArrayDataFromRequestData($request_data);
-
-            $arrayData = $caseTrackerObject->update($caseTrackerObjectUid, $arrayData);
+            $arrayData = $caseTrackerObject->update($caseTrackerObjectUid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -74,6 +94,9 @@ class CaseTrackerObject extends Api
 
     /**
      * @url DELETE /:projectUid/case-tracker/object/:caseTrackerObjectUid
+     *
+     * @param string $caseTrackerObjectUid {@min 32}{@max 32}
+     * @param string $projectUid           {@min 32}{@max 32}
      */
     public function doDeleteCaseTrackerObject($caseTrackerObjectUid, $projectUid)
     {
@@ -85,51 +108,5 @@ class CaseTrackerObject extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
-}
-
-class CaseTrackerObjectPostStructure
-{
-    /**
-     * @var string {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}{@required true}
-     */
-    public $cto_type_obj;
-
-    /**
-     * @var string {@from body}{@min 32}{@max 32}{@required true}
-     */
-    public $cto_uid_obj;
-
-    /**
-     * @var string
-     */
-    public $cto_condition;
-
-    /**
-     * @var int {@from body}{@min 1}
-     */
-    public $cto_position;
-}
-
-class CaseTrackerObjectPutStructure
-{
-    /**
-     * @var string {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}
-     */
-    public $cto_type_obj;
-
-    /**
-     * @var string {@from body}{@min 32}{@max 32}
-     */
-    public $cto_uid_obj;
-
-    /**
-     * @var string
-     */
-    public $cto_condition;
-
-    /**
-     * @var int {@from body}{@min 1}
-     */
-    public $cto_position;
 }
 

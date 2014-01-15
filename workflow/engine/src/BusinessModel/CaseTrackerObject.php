@@ -3,58 +3,6 @@ namespace BusinessModel;
 
 class CaseTrackerObject
 {
-    ///**
-    // * Get data of unique ids of a DynaForm (Unique id of Process)
-    // *
-    // * @param string $caseTrackerObjectUid Unique id of Case Tracker Object
-    // *
-    // * return array
-    // */
-    //public function getDataUids($caseTrackerObjectUid)
-    //{
-    //    try {
-    //        $criteria = new \Criteria("workflow");
-    //
-    //        $criteria->addSelectColumn(\DynaformPeer::PRO_UID);
-    //        $criteria->add(\DynaformPeer::DYN_UID, $caseTrackerObjectUid, \Criteria::EQUAL);
-    //
-    //        $rsCriteria = \DynaformPeer::doSelectRS($criteria);
-    //        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-    //
-    //        if ($rsCriteria->next()) {
-    //            return $rsCriteria->getRow();
-    //        } else {
-    //            throw (new \Exception(str_replace(array("{0}", "{1}"), array($caseTrackerObjectUid, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}")));
-    //        }
-    //    } catch (\Exception $e) {
-    //        throw $e;
-    //    }
-    //}
-
-    /**
-     * Get data from a request data
-     *
-     * @param object $requestData Request data
-     *
-     * return array Return an array with data of request data
-     */
-    public function getArrayDataFromRequestData($requestData)
-    {
-        try {
-            $arrayData = array();
-
-            $requestData = (array)($requestData);
-
-            foreach ($requestData as $key => $value) {
-                $arrayData[$key] = $value;
-            }
-
-            return $arrayData;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
     /**
      * Verify if exists the record in table CASE_TRACKER_OBJECT
      *
@@ -177,87 +125,123 @@ class CaseTrackerObject
         }
     }
 
-    ///**
-    // * Update DynaForm
-    // *
-    // * @param string $caseTrackerObjectUid Unique id of Case Tracker Object
-    // * @param array  $arrayData   Data
-    // *
-    // * return array Return data of the DynaForm updated
-    // */
-    //public function update($caseTrackerObjectUid, $arrayData)
-    //{
-    //    try {
-    //        $arrayData = array_change_key_case($arrayData, CASE_UPPER);
-    //
-    //        //Verify data
-    //        $dynaForm = new \Dynaform();
-    //
-    //        if (!$dynaForm->dynaformExists($caseTrackerObjectUid)) {
-    //            throw (new \Exception(str_replace(array("{0}", "{1}"), array($caseTrackerObjectUid, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}")));
-    //        }
-    //
-    //        //Uids
-    //        $arrayDataUid = $this->getDataUids($caseTrackerObjectUid);
-    //
-    //        $processUid = $arrayDataUid["PRO_UID"];
-    //
-    //        //Verify data
-    //        if (isset($arrayData["DYN_TITLE"]) && $this->titleExists($processUid, $arrayData["DYN_TITLE"], $caseTrackerObjectUid)) {
-    //            throw (new \Exception(\G::LoadTranslation("ID_EXIST_DYNAFORM")));
-    //        }
-    //
-    //        //Update
-    //        $arrayData["DYN_UID"] = $caseTrackerObjectUid;
-    //
-    //        $result = $dynaForm->update($arrayData);
-    //
-    //        //Return
-    //        unset($arrayData["DYN_UID"]);
-    //
-    //        return array_change_key_case($arrayData, CASE_LOWER);
-    //    } catch (\Exception $e) {
-    //        throw $e;
-    //    }
-    //}
-    //
-    ///**
-    // * Delete DynaForm
-    // *
-    // * @param string $caseTrackerObjectUid Unique id of Case Tracker Object
-    // *
-    // * return void
-    // */
-    //public function delete($caseTrackerObjectUid)
-    //{
-    //    try {
-    //        //Verify data
-    //        $dynaForm = new \Dynaform();
-    //
-    //        if (!$dynaForm->dynaformExists($caseTrackerObjectUid)) {
-    //            throw (new \Exception(str_replace(array("{0}", "{1}"), array($caseTrackerObjectUid, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}")));
-    //        }
-    //
-    //        //Uids
-    //        $arrayDataUid = $this->getDataUids($caseTrackerObjectUid);
-    //
-    //        $processUid = $arrayDataUid["PRO_UID"];
-    //
-    //        //Verify data
-    //        if ($this->dynaFormAssignedStep($caseTrackerObjectUid, $processUid)) {
-    //            throw (new \Exception("You cannot delete this Dynaform while it is assigned to a step"));
-    //        }
-    //
-    //        //Delete
+    /**
+     * Update Case Tracker Object
+     *
+     * @param string $caseTrackerObjectUid Unique id of Case Tracker Object
+     * @param array  $arrayData Data
+     *
+     * return array Return data of the Case Tracker Object updated
+     */
+    public function update($caseTrackerObjectUid, $arrayData)
+    {
+        try {
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
-    //
-    //        //In table CASE_TRACKER_OBJECT
-    //        $caseTrackerObject = new \CaseTrackerObject();
-    //        $caseTrackerObject->removeByObject("DYNAFORM", $caseTrackerObjectUid);
-    //    } catch (\Exception $e) {
-    //        throw $e;
-    //    }
-    //}
+            $caseTrackerObject = new \CaseTrackerObject();
+
+            $arrayCaseTrackerObjectData = $caseTrackerObject->load($caseTrackerObjectUid);
+
+            //Uids
+            $processUid = $arrayCaseTrackerObjectData["PRO_UID"];
+
+            //Verify data
+            if (!$caseTrackerObject->caseTrackerObjectExists($caseTrackerObjectUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($caseTrackerObjectUid, "CASE_TRACKER_OBJECT"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
+            if (isset($arrayData["CTO_TYPE_OBJ"]) && !isset($arrayData["CTO_UID_OBJ"])) {
+                throw (new \Exception(str_replace(array("{0}"), array("CTO_UID_OBJ"), "The \"{0}\" attribute is not defined")));
+            }
+
+            if (!isset($arrayData["CTO_TYPE_OBJ"]) && isset($arrayData["CTO_UID_OBJ"])) {
+                throw (new \Exception(str_replace(array("{0}"), array("CTO_TYPE_OBJ"), "The \"{0}\" attribute is not defined")));
+            }
+
+            if (isset($arrayData["CTO_TYPE_OBJ"]) && isset($arrayData["CTO_UID_OBJ"])) {
+                $step = new \BusinessModel\Step();
+
+                $msg = $step->existsObjectUid($arrayData["CTO_TYPE_OBJ"], $arrayData["CTO_UID_OBJ"]);
+
+                if ($msg != "") {
+                    throw (new \Exception($msg));
+                }
+
+                if ($this->existsRecord($processUid, $arrayData["CTO_TYPE_OBJ"], $arrayData["CTO_UID_OBJ"], 0, $caseTrackerObjectUid)) {
+                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid . ", " . $arrayData["CTO_TYPE_OBJ"] . ", " . $arrayData["CTO_UID_OBJ"], "CASE_TRACKER_OBJECT"), "The record \"{0}\", exists in table {1}")));
+                }
+            }
+
+            if (isset($arrayData["CTO_POSITION"]) && $this->existsRecord($processUid, "", "", $arrayData["CTO_POSITION"], $caseTrackerObjectUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["CTO_POSITION"], $processUid . ", " . $arrayData["CTO_POSITION"], "CASE_TRACKER_OBJECT"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
+            }
+
+            //Flags
+            $flagDataOject     = (isset($arrayData["CTO_TYPE_OBJ"]) && isset($arrayData["CTO_UID_OBJ"]))? 1 : 0;
+            $flagDataCondition = (isset($arrayData["CTO_CONDITION"]))? 1 : 0;
+            $flagDataPosition  = (isset($arrayData["CTO_POSITION"]))? 1 : 0;
+
+            //Update
+            $arrayData["CTO_UID"] = $caseTrackerObjectUid;
+
+            $arrayData = array_merge($arrayCaseTrackerObjectData, $arrayData);
+
+            $result = $caseTrackerObject->update($arrayData);
+
+            //Return
+            unset($arrayData["CTO_UID"]);
+
+            if ($flagDataOject == 0) {
+                unset($arrayData["CTO_TYPE_OBJ"]);
+                unset($arrayData["CTO_UID_OBJ"]);
+            }
+
+            if ($flagDataCondition == 0) {
+                unset($arrayData["CTO_CONDITION"]);
+            }
+
+            if ($flagDataPosition == 0) {
+                unset($arrayData["CTO_POSITION"]);
+            }
+
+            unset($arrayData["PRO_UID"]);
+
+            return array_change_key_case($arrayData, CASE_LOWER);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Delete Case Tracker Object
+     *
+     * @param string $caseTrackerObjectUid Unique id of Case Tracker Object
+     *
+     * return void
+     */
+    public function delete($caseTrackerObjectUid)
+    {
+        try {
+            $caseTrackerObject = new \CaseTrackerObject();
+
+            $arrayCaseTrackerObjectData = $caseTrackerObject->load($caseTrackerObjectUid);
+
+            //Uids
+            $processUid = $arrayCaseTrackerObjectData["PRO_UID"];
+
+            //Verify data
+            if (!$caseTrackerObject->caseTrackerObjectExists($caseTrackerObjectUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($caseTrackerObjectUid, "CASE_TRACKER_OBJECT"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
+            //Delete
+            $result = $caseTrackerObject->remove($caseTrackerObjectUid);
+
+            $caseTrackerObject->reorderPositions($processUid, $arrayCaseTrackerObjectData["CTO_POSITION"]);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 
     /**
      * Get data of a Case Tracker Object

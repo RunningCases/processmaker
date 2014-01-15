@@ -4,30 +4,6 @@ namespace BusinessModel;
 class CaseTracker
 {
     /**
-     * Get data from a request data
-     *
-     * @param object $requestData Request data
-     *
-     * return array Return an array with data of request data
-     */
-    public function getArrayDataFromRequestData($requestData)
-    {
-        try {
-            $arrayData = array();
-
-            $requestData = (array)($requestData);
-
-            foreach ($requestData as $key => $value) {
-                $arrayData[$key] = $value;
-            }
-
-            return $arrayData;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
      * Update Case Tracker data of a Process
      *
      * @param string $processUid Unique id of Process
