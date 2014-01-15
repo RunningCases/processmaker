@@ -113,7 +113,7 @@ class OutputDocument
     /**
      * Return a single output document of a project
      * @param string $sProcessUID
-     * @param string $sOutputDocumentUID     
+     * @param string $sOutputDocumentUID
      * @return array
      *
      * @access public
@@ -228,6 +228,15 @@ class OutputDocument
      */
     public function addOutputDocument($sProcessUID, $aData)
     {   
+        $pemission = $aData['out_doc_pdf_security_permissions'];
+        $pemission = explode("|", $pemission);
+        foreach ($pemission as $row) {
+            if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms") {
+                $aData['out_doc_pdf_security_permissions'] = $aData['out_doc_pdf_security_permissions'];
+            } else {
+                throw (new \Exception( 'invalid value specified for `out_doc_pdf_security_permissions`'));
+            }
+        }
         try {
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "OutputDocument.php");
             $aData = array_change_key_case($aData, CASE_UPPER);
@@ -274,7 +283,17 @@ class OutputDocument
      * @access public
      */
     public function updateOutputDocument($sProcessUID, $sOutputDocumentUID = '', $aData)
-    {   $oConnection = \Propel::getConnection(\OutputDocumentPeer::DATABASE_NAME);
+    {
+        $oConnection = \Propel::getConnection(\OutputDocumentPeer::DATABASE_NAME);
+        $pemission = $aData['out_doc_pdf_security_permissions'];
+        $pemission = explode("|", $pemission);
+        foreach ($pemission as $row) {
+            if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms") {
+                $aData['out_doc_pdf_security_permissions'] = $aData['out_doc_pdf_security_permissions'];
+            } else {
+                throw (new \Exception( 'invalid value specified for `out_doc_pdf_security_permissions`'));
+            }
+        }
         try {
             $aData = array_change_key_case($aData, CASE_UPPER);
             $oOutputDocument = \OutputDocumentPeer::retrieveByPK($sOutputDocumentUID);
