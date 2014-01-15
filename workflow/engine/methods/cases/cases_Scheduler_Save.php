@@ -158,12 +158,13 @@ try {
             $sValue = $nStartDay;
             break;
     }
-    echo "<br>sOption: " . $sOption;
+    //echo "<br>sOption: " . $sOption;
     if (($sOption != '1') && ($sOption != '4') && ($sOption != '5')) {
         if ($sStartDay == '') {
             $sStartDay = date( 'Y-m-d' );
         }
-        //                echo $sOption."*". $sValue."*". $nActualTime."*". $sDaysPerformTask."*". $sWeeks."*". $sStartDay ."*". $sMonths."<br>";
+        echo "1*".$sOption." 2*". $sValue." 3*". $nActualTime." 4*". $sDaysPerformTask." 5*". $sWeeks." 6*". $sStartDay ." 7*". $sMonths."<br>";
+        die();
         $dCurrentDay = date( "d" );
         $dCurrentMonth = date( "m" );
         $aStartDay = explode( "|", $aData['SCH_START_DAY'] );
