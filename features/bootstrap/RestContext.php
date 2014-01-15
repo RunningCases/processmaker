@@ -1159,7 +1159,7 @@ class RestContext extends BehatContext
         } else {
             $sessionData = array();
         }
-        if (!isset($sessionData->$varName) ) {
+        if (!isset($sessionData->$sessionVarName) ) {
             $varValue = '';
         } else {
             $varValue = $sessionData->$sessionVarName;
