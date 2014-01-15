@@ -167,7 +167,8 @@ class CaseScheduler
                             $aData['SCH_WEEK_DAYS'] = '1|2|3|4|5|'; //check
                             break;
                         case '3': // Every [n] Days
-                            $sDaysPerformTask = $aData['SCH_DAYS_PERFORM_TASK'];
+                            $sDaysPerformTask = $aData['SCH_DAYS_PERFORM_TASK_OPT_3'];
+                            $aData['SCH_DAYS_PERFORM_TASK'] = $aData['SCH_DAYS_PERFORM_TASK'] . '|' . $aData['SCH_DAYS_PERFORM_TASK_OPT_3'];
                             break;
                     }
                     break;
@@ -181,10 +182,18 @@ class CaseScheduler
                     $sWeeks = '';
                     if (! empty( $aData['SCH_WEEK_DAYS'] )) {
                         $aWeekDays = $aData['SCH_WEEK_DAYS'];
-                        $sWeeks = $aData['SCH_WEEK_DAYS'];
+                        foreach ($aWeekDays as $value) {
+                            $sWeeks = $sWeeks . $value . '|';
+                        }
+                    }
+                    if (! empty( $aData['SCH_WEEK_DAYS_2'] )) {
+                        $aWeekDays2 = $aData['SCH_WEEK_DAYS_2'];
+                        foreach ($aWeekDays2 as $value) {
+                            $sWeeks = $sWeeks . $value . '|';
+                        }
                     }
                     $sStartTime = $aData['SCH_START_TIME'];
-                    $aData['SCH_WEEK_DAYS'] = $sWeeks;                    
+                    $aData['SCH_WEEK_DAYS'] = $sWeeks;
                     break;
                 case '3':
                     $nStartDay = $aData['SCH_START_DAY'];
@@ -218,8 +227,6 @@ class CaseScheduler
                     $sValue = $nStartDay;
                     break;
             }
-            //echo $aData['SCH_END_DATE']; die();
-            //echo $aData['SCH_TIME_NEXT_RUN']; die();
             if (($sOption != '1') && ($sOption != '4') && ($sOption != '5')) {
                 if ($sStartDay == '') {
                     $sStartDay = date( 'Y-m-d' );
@@ -239,12 +246,14 @@ class CaseScheduler
                         }
                     }
                 } else {
-
-echo "1*".$sOption." 2*". $sValue." 3*". $nActualTime." 4*". $sDaysPerformTask." 5*". $sWeeks." 6*". $sStartDay ." 7*". $sMonths."<br>"; die();
-//                    echo $aData['SCH_END_DATE']; die();
-                    //echo $aData['SCH_TIME_NEXT_RUN']; die();
+/*                    echo $sOption; echo " - ";
+                    echo $sValue; echo " - "; echo $nActualTime; echo " - "; echo $sDaysPerformTask; echo " - "; echo $sWeeks; 
+                    echo " - "; echo $sStartDay; echo " - "; echo $sMonths; echo " - "; echo $sDateTmp; die();
+                    
+                    */
+               echo $sOption."*". $sValue."*". $nActualTime."*". $sDaysPerformTask."*". $sWeeks."*". $sStartDay ."*". $sMonths."<br>";
                     $aData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
-
+                echo $aData['SCH_TIME_NEXT_RUN']; die ();
                 }
                 
             } else {
@@ -265,11 +274,9 @@ echo "1*".$sOption." 2*". $sValue." 3*". $nActualTime." 4*". $sDaysPerformTask."
                     $aData['SCH_TIME_NEXT_RUN'] = $date;
                 }
             }
-            
             if (trim( $aData['SCH_END_DATE'] ) != '') {
                 $aData['SCH_END_DATE'] = $aData['SCH_END_DATE'];
             }
-
             if (! empty( $aData['SCH_REPEAT_TASK_CHK'] )) {
                 $nOptEvery = $aData['SCH_REPEAT_EVERY_OPT'];
                 if ($nOptEvery == 2) {
@@ -281,7 +288,6 @@ echo "1*".$sOption." 2*". $sValue." 3*". $nActualTime." 4*". $sDaysPerformTask."
             if ((isset( $aData['CASE_SH_PLUGIN_UID'] )) && ($aData['CASE_SH_PLUGIN_UID'] != "")) {
                 $aData['CASE_SH_PLUGIN_UID'] = $aData['CASE_SH_PLUGIN_UID'];
             }
-           // echo $aData['SCH_END_DATE']; die();
             $oCaseScheduler->create( $aData );
             $oCriteria = $this->getCaseScheduler($sProcessUID, $aData['SCH_UID']);
             return $oCriteria;
@@ -321,8 +327,8 @@ echo "1*".$sOption." 2*". $sValue." 3*". $nActualTime." 4*". $sDaysPerformTask."
             $sTimeTmp = $aData['SCH_START_TIME'];
 //            $aData['SCH_START_TIME'] = date( 'Y-m-d', strtotime( $sDateTmp ) ) . ' ' . date( 'H:i:s', strtotime( $sTimeTmp ) );
 //            $aData['SCH_START_DATE'] = date( 'Y-m-d', strtotime( $sDateTmp ) ) . ' ' . date( 'H:i:s', strtotime( $sTimeTmp ) );
-//            $previousStartTime = date( 'Y-m-d', strtotime( $aData['PREV_SCH_START_DATE'] ) ) . ' ' . date( 'H:i:s', strtotime( $aData['PREV_SCH_START_TIME'] ) );
-//            $previousStartDate = date( 'Y-m-d', strtotime( $aData['PREV_SCH_START_DATE'] ) ) . ' ' . date( 'H:i:s', strtotime( $aData['PREV_SCH_START_TIME'] ) );
+            $previousStartTime = date( 'Y-m-d', strtotime( $aData['PREV_SCH_START_DATE'] ) ) . ' ' . date( 'H:i:s', strtotime( $aData['PREV_SCH_START_TIME'] ) );
+            $previousStartDate = date( 'Y-m-d', strtotime( $aData['PREV_SCH_START_DATE'] ) ) . ' ' . date( 'H:i:s', strtotime( $aData['PREV_SCH_START_TIME'] ) );
             $sValue = '';
             $sDaysPerformTask = '';
             $sWeeks = '';
@@ -344,8 +350,8 @@ echo "1*".$sOption." 2*". $sValue." 3*". $nActualTime." 4*". $sDaysPerformTask."
                             $aData['SCH_WEEK_DAYS'] = '1|2|3|4|5|';
                             break;
                         case '3': // Every [n] Days
-                            $sDaysPerformTask = $aData['SCH_DAYS_PERFORM_TASK'];
-                            $aData['SCH_DAYS_PERFORM_TASK'] = $aData['SCH_DAYS_PERFORM_TASK'];
+                            $sDaysPerformTask = $aData['SCH_DAYS_PERFORM_TASK_OPT_3'];
+                            $aData['SCH_DAYS_PERFORM_TASK'] = $aData['SCH_DAYS_PERFORM_TASK'] . '|' . $aData['SCH_DAYS_PERFORM_TASK_OPT_3'];
                             break;
                     }
                     break;
@@ -360,7 +366,15 @@ echo "1*".$sOption." 2*". $sValue." 3*". $nActualTime." 4*". $sDaysPerformTask."
                     $sWeeks = '';
                     if (! empty( $aData['SCH_WEEK_DAYS'] )) {
                         $aWeekDays = $aData['SCH_WEEK_DAYS'];
-                        $sWeeks = $aData['SCH_WEEK_DAYS'];
+                        foreach ($aWeekDays as $value) {
+                            $sWeeks = $sWeeks . $value . '|';
+                        }
+                    }
+                    if (! empty( $aData['SCH_WEEK_DAYS_2'] )) {
+                        $aWeekDays2 = $aData['SCH_WEEK_DAYS_2'];
+                        foreach ($aWeekDays2 as $value) {
+                            $sWeeks = $sWeeks . $value . '|';
+                        }
                     }
                     $sStartTime = $aData['SCH_START_TIME'];
                     $aData['SCH_WEEK_DAYS'] = $sWeeks;
@@ -398,7 +412,6 @@ echo "1*".$sOption." 2*". $sValue." 3*". $nActualTime." 4*". $sDaysPerformTask."
                     break;
 
             }
-            echo $aData['SCH_END_DATE']; die();
             if (trim( $aData['SCH_END_DATE'] ) != '') {
                 $aData['SCH_END_DATE'] = $aData['SCH_END_DATE'];
             }
@@ -441,7 +454,6 @@ echo "1*".$sOption." 2*". $sValue." 3*". $nActualTime." 4*". $sDaysPerformTask."
                             }
                         }
                     }
-echo $sOption."*". $sValue."*". $nActualTime."*". $sDaysPerformTask."*". $sWeeks."*". $sStartDay ."*". $sMonths."<br>"; die();                
                 } else {
                     if ($recalculateDate) {
                         $aData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );

@@ -41,7 +41,7 @@ class CaseScheduler extends BaseCaseScheduler
     }
 
     public function create ($aData)
-    {var_dump($aData); die('daniel');
+    {
         $con = Propel::getConnection( CaseSchedulerPeer::DATABASE_NAME );
         try {
             $this->fromArray( $aData, BasePeer::TYPE_FIELDNAME );
