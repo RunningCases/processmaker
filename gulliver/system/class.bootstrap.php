@@ -60,7 +60,7 @@ class Bootstrap
         return false;
     }
 
-    public function registerClass($classname, $includeFile)
+    public static function registerClass($classname, $includeFile)
     {
         BootStrap::$includeClassPaths[strtolower($classname)] = $includeFile;
         return;
