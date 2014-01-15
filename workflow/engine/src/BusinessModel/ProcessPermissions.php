@@ -167,6 +167,70 @@ class ProcessPermissions
     }
 
     /**
+     * Save Process Permission
+     *
+     * @var array $data. Data for Process Permission
+     * @var string $sPermissionUid. Uid for Process Permission
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function saveProcessPermission($data, $sPermissionUid = '')
+    {
+        try {
+            $data = array_change_key_case($data, CASE_UPPER);
+
+            list ($iRelation, $sUserGroup) = explode( '|', $data['GROUP_USER'] );
+            $sObjectUID = '';
+            switch ($data['OP_OBJ_TYPE']) {
+                case 'ANY':
+                //case 'ANY_DYNAFORM':CASES_NOTES
+                //case 'ANY_INPUT':
+                //case 'ANY_OUTPUT':
+                    $sObjectUID = '';
+                    break;
+                case 'DYNAFORM':
+                    $sObjectUID = $data['DYNAFORMS'];
+                    break;
+                case 'INPUT':
+                    $sObjectUID = $data['INPUTS'];
+                    break;
+                case 'OUTPUT':
+                    $sObjectUID = $data['OUTPUTS'];
+                    break;
+            }
+            $oOP = new \ObjectPermission();
+            $permissionUid = ($sPermissionUid != '') ? $sPermissionUid : G::generateUniqueID();
+            $aData = array (
+                'OP_UID'  => $permissionUid,
+                'PRO_UID' => $data['PRO_UID'],
+                'TAS_UID' => $data['TAS_UID'],
+                'USR_UID' => (string) $sUserGroup,
+                'OP_USER_RELATION'  => $iRelation,
+                'OP_TASK_SOURCE'    => $data['OP_TASK_SOURCE'],
+                'OP_PARTICIPATE'    => $data['OP_PARTICIPATE'],
+                'OP_OBJ_TYPE'       => $data['OP_OBJ_TYPE'],
+                'OP_OBJ_UID'        => $sObjectUID,
+                'OP_ACTION'         => $data['OP_ACTION'],
+                'OP_CASE_STATUS'    => $data['OP_CASE_STATUS']
+            );
+            $oOP->fromArray( $aData, \BasePeer::TYPE_FIELDNAME );
+            if ($sPermissionUid == '') {
+                $oOP->save();
+                $daraRes = $oOP->load($newUid);
+                return $daraRes;
+            } else {
+                $oOP->update($aData);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Delete Process Permission
      *
      * @var string $sPermissionUid. Uid for Process Permission
