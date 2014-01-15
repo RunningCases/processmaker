@@ -13,8 +13,10 @@ use \ObjectPermissionPeer;
 class ProcessPermissions
 {
     /**
-     * Get list for ProcessPermissions
+     * Get list for Process Permissions
+     *
      * @var string $sProcessUID. Uid for Process
+     * @var string $sPermissionUid. Uid for Process Permission
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -162,6 +164,29 @@ class ProcessPermissions
             return current($aObjectsPermissions);
         }
         return $aObjectsPermissions;
+    }
+
+    /**
+     * Delete Process Permission
+     *
+     * @var string $sPermissionUid. Uid for Process Permission
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function deleteProcessPermission($sPermissionUid)
+    {
+        try {
+            require_once 'classes/model/ObjectPermission.php';
+            $oOP = new \ObjectPermission();
+            $oOP = ObjectPermissionPeer::retrieveByPK( $sPermissionUid );
+            $oOP->delete();
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }
 

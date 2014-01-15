@@ -58,5 +58,29 @@ class ProcessPermissions extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+
+    /**
+     * @param string $projectUid {@min 1} {@max 32}
+     * @param string $objectPermissionUid {@min 1} {@max 32}
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     *
+     * @url DELETE /:projectUid/process-permission/:objectPermissionUid
+     */
+    public function doDeleteProcessPermission($projectUid, $objectPermissionUid)
+    {
+        try {
+            $processPermissions = new \BusinessModel\ProcessPermissions();
+            $response = $processPermissions->deleteProcessPermission($objectPermissionUid, $projectUid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
 
