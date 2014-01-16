@@ -231,7 +231,7 @@ class OutputDocument
         $pemission = $aData['out_doc_pdf_security_permissions'];
         $pemission = explode("|", $pemission);
         foreach ($pemission as $row) {
-            if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms") {
+            if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms" || $row == "") {
                 $aData['out_doc_pdf_security_permissions'] = $aData['out_doc_pdf_security_permissions'];
             } else {
                 throw (new \Exception( 'invalid value specified for `out_doc_pdf_security_permissions`'));
@@ -288,7 +288,7 @@ class OutputDocument
         $pemission = $aData['out_doc_pdf_security_permissions'];
         $pemission = explode("|", $pemission);
         foreach ($pemission as $row) {
-            if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms") {
+            if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms" || $row == "") {
                 $aData['out_doc_pdf_security_permissions'] = $aData['out_doc_pdf_security_permissions'];
             } else {
                 throw (new \Exception( 'invalid value specified for `out_doc_pdf_security_permissions`'));
