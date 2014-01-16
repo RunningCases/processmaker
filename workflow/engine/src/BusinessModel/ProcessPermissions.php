@@ -184,7 +184,7 @@ class ProcessPermissions
             $data = array_change_key_case($data, CASE_UPPER);
 
             $sObjectUID = '';
-            switch ($data['op_obj_type']) {
+            switch ($data['OP_OBJ_TYPE']) {
                 case 'ANY':
                 //case 'ANY_DYNAFORM':CASES_NOTES
                 //case 'ANY_INPUT':
@@ -192,13 +192,13 @@ class ProcessPermissions
                     $sObjectUID = '';
                     break;
                 case 'DYNAFORM':
-                    $sObjectUID = $data['dynaforms'];
+                    $sObjectUID = $data['DYNAFORMS'];
                     break;
                 case 'INPUT':
-                    $sObjectUID = $data['inputs'];
+                    $sObjectUID = $data['INPUTS'];
                     break;
                 case 'OUTPUT':
-                    $sObjectUID = $data['outputs'];
+                    $sObjectUID = $data['OUTPUTS'];
                     break;
             }
             $oOP = new \ObjectPermission();
