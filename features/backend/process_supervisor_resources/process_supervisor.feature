@@ -147,7 +147,7 @@ Feature: Process supervisor Resources
     
     #POST /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/dynaform
     @13: TEST FOR POST DYNAFORM PROCESS SUPERVISOR /--------------------------------------------------------------------
-    Scenario: Assign a dynaform process supervisor of a project
+    Scenario Outline: Assign a dynaform process supervisor of a project
         Given that I POST this data:
         """
        {
@@ -170,7 +170,7 @@ Feature: Process supervisor Resources
     
     #POST /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/input-document
     @14: TEST FOR POST INPUT DOCUMENT - PROCESS SUPERVISOR /--------------------------------------------------------------------
-    Scenario: Assign a dynaform process supervisor of a project
+    Scenario Outline: Assign a dynaform process supervisor of a project
         Given that I POST this data:
         """
        {
@@ -193,7 +193,7 @@ Feature: Process supervisor Resources
     
     #DELETE /api/1.0/{workspace}/project/{prj_uid}/process-supervisor
     @15: TEST FOR DELETE PROCESS SUPERVISOR /--------------------------------------------------------------------
-    Scenario: Delete a user process supervisor of a project
+    Scenario Outline: Delete a user process supervisor of a project
         Given that I want to delete a resource with the key "pug_uid" stored in session array
         And I request "project/85794888452ceeef3675164057928956/process-supervisor"
         And the content type is "application/json"
