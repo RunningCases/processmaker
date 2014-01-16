@@ -144,8 +144,9 @@ class CaseScheduler
                 $sDateTmp = date( 'Y-m-d' );
             }
             $sTimeTmp = $aData['SCH_START_TIME'];
-         //   $aData['SCH_START_TIME'] = date( 'Y-m-d', strtotime( $sDateTmp ) ) . ' ' . date( 'H:i:s', strtotime( $sTimeTmp ) );
-         //   $aData['SCH_START_DATE'] = date( 'Y-m-d', strtotime( $sDateTmp ) ) . ' ' . date( 'H:i:s', strtotime( $sTimeTmp ) );
+            //echo $sDateTmp ." ------- " .$sTimeTmp; die();
+       //     $aData['SCH_START_TIME'] = date( 'Y-m-d', strtotime( $sDateTmp ) ) . ' ' . date( 'H:i:s', strtotime( $sTimeTmp ) );
+       //     $aData['SCH_START_DATE'] = date( 'Y-m-d', strtotime( $sDateTmp ) ) . ' ' . date( 'H:i:s', strtotime( $sTimeTmp ) );
             $nActualTime = $aData['SCH_START_TIME']; // time();
             $sValue = '';
             $sDaysPerformTask = '';
@@ -167,8 +168,8 @@ class CaseScheduler
                             $aData['SCH_WEEK_DAYS'] = '1|2|3|4|5|'; //check
                             break;
                         case '3': // Every [n] Days
-                            $sDaysPerformTask = $aData['SCH_DAYS_PERFORM_TASK_OPT_3'];
-                            $aData['SCH_DAYS_PERFORM_TASK'] = $aData['SCH_DAYS_PERFORM_TASK'] . '|' . $aData['SCH_DAYS_PERFORM_TASK_OPT_3'];
+                            $sDaysPerformTask = $aData['SCH_DAYS_PERFORM_TASK'];
+                            $aData['SCH_DAYS_PERFORM_TASK'] = $aData['SCH_DAYS_PERFORM_TASK'];
                             break;
                     }
                     break;
@@ -182,47 +183,22 @@ class CaseScheduler
                     $sWeeks = '';
                     if (! empty( $aData['SCH_WEEK_DAYS'] )) {
                         $aWeekDays = $aData['SCH_WEEK_DAYS'];
-                        foreach ($aWeekDays as $value) {
-                            $sWeeks = $sWeeks . $value . '|';
-                        }
-                    }
-                    if (! empty( $aData['SCH_WEEK_DAYS_2'] )) {
-                        $aWeekDays2 = $aData['SCH_WEEK_DAYS_2'];
-                        foreach ($aWeekDays2 as $value) {
-                            $sWeeks = $sWeeks . $value . '|';
-                        }
-                    }
+                    }                    
                     $sStartTime = $aData['SCH_START_TIME'];
-                    $aData['SCH_WEEK_DAYS'] = $sWeeks;
+                    $sWeeks = $aData['SCH_WEEK_DAYS'];
                     break;
                 case '3':
                     $nStartDay = $aData['SCH_START_DAY'];
                     if ($nStartDay == 1) {
                         $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_1'];
                     } else {
-                        $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_2_WEEKS'] . '|' . $aData['SCH_START_DAY_OPT_2_DAYS_WEEK'];
+                        $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_2'];
                     }
-
                     $sMonths = '';
                     if (! empty( $aData['SCH_MONTHS'] )) {
                         $aMonths = $aData['SCH_MONTHS'];
-                        foreach ($aMonths as $value) {
-                            $sMonths = $sMonths . $value . '|';
-                        }
                     }
-                    if (! empty( $aData['SCH_MONTHS_2'] )) {
-                        $aMonths2 = $aData['SCH_MONTHS_2'];
-                        foreach ($aMonths2 as $value) {
-                            $sMonths = $sMonths . $value . '|';
-                        }
-                    }
-                    if (! empty( $aData['SCH_MONTHS_3'] )) {
-                        $aMonths3 = $aData['SCH_MONTHS_3'];
-                        foreach ($aMonths3 as $value) {
-                            $sMonths = $sMonths . $value . '|';
-                        }
-                    }
-                    $aData['SCH_MONTHS'] = $sMonths;
+                    $sMonths = $aData['SCH_MONTHS'];
                     $sStartDay = $aData['SCH_START_DAY'];
                     $sValue = $nStartDay;
                     break;
@@ -246,16 +222,11 @@ class CaseScheduler
                         }
                     }
                 } else {
-/*                    echo $sOption; echo " - ";
-                    echo $sValue; echo " - "; echo $nActualTime; echo " - "; echo $sDaysPerformTask; echo " - "; echo $sWeeks; 
-                    echo " - "; echo $sStartDay; echo " - "; echo $sMonths; echo " - "; echo $sDateTmp; die();
-                    
-                    */
-               echo $sOption."*". $sValue."*". $nActualTime."*". $sDaysPerformTask."*". $sWeeks."*". $sStartDay ."*". $sMonths."<br>";
+
+echo "1*".$sOption." 2*". $sValue." 3*". $nActualTime." 4*". $sDaysPerformTask." 5*". $sWeeks." 6*". $sStartDay ." 7*". $sMonths."<br>";
                     $aData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
-                echo $aData['SCH_TIME_NEXT_RUN']; die ();
-                }
-                
+echo "<br> SCH_TIME_NEXT_RUN ".$aData['SCH_TIME_NEXT_RUN'];
+                }            
             } else {
                 if ($sOption == '4') {
                     $aData['SCH_END_DATE'] = $aData['SCH_START_TIME'];
@@ -350,8 +321,8 @@ class CaseScheduler
                             $aData['SCH_WEEK_DAYS'] = '1|2|3|4|5|';
                             break;
                         case '3': // Every [n] Days
-                            $sDaysPerformTask = $aData['SCH_DAYS_PERFORM_TASK_OPT_3'];
-                            $aData['SCH_DAYS_PERFORM_TASK'] = $aData['SCH_DAYS_PERFORM_TASK'] . '|' . $aData['SCH_DAYS_PERFORM_TASK_OPT_3'];
+                            $sDaysPerformTask = $aData['SCH_DAYS_PERFORM_TASK'];
+                            $aData['SCH_DAYS_PERFORM_TASK'] = $aData['SCH_DAYS_PERFORM_TASK'];
                             break;
                     }
                     break;
@@ -366,51 +337,25 @@ class CaseScheduler
                     $sWeeks = '';
                     if (! empty( $aData['SCH_WEEK_DAYS'] )) {
                         $aWeekDays = $aData['SCH_WEEK_DAYS'];
-                        foreach ($aWeekDays as $value) {
-                            $sWeeks = $sWeeks . $value . '|';
-                        }
-                    }
-                    if (! empty( $aData['SCH_WEEK_DAYS_2'] )) {
-                        $aWeekDays2 = $aData['SCH_WEEK_DAYS_2'];
-                        foreach ($aWeekDays2 as $value) {
-                            $sWeeks = $sWeeks . $value . '|';
-                        }
-                    }
+                    }                    
                     $sStartTime = $aData['SCH_START_TIME'];
-                    $aData['SCH_WEEK_DAYS'] = $sWeeks;
+                    $sWeeks = $aData['SCH_WEEK_DAYS'];
                     break;
                 case '3':
                     $nStartDay = $aData['SCH_START_DAY'];
-                    if ($nStartDay == 1) {
-                        $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_1'];
+/*                    if ($nStartDay == 1) {
+                        $aData['SCH_START_DAY'] = $nStartDay;
                     } else {
                         $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_2_WEEKS'] . '|' . $aData['SCH_START_DAY_OPT_2_DAYS_WEEK'];
-                    }
-
+                    }*/
                     $sMonths = '';
                     if (! empty( $aData['SCH_MONTHS'] )) {
                         $aMonths = $aData['SCH_MONTHS'];
-                        foreach ($aMonths as $value) {
-                            $sMonths = $sMonths . $value . '|';
-                        }
-                    }
-                    if (! empty( $aData['SCH_MONTHS_2'] )) {
-                        $aMonths2 = $aData['SCH_MONTHS_2'];
-                        foreach ($aMonths2 as $value) {
-                            $sMonths = $sMonths . $value . '|';
-                        }
-                    }
-                    if (! empty( $aData['SCH_MONTHS_3'] )) {
-                        $aMonths3 = $aData['SCH_MONTHS_3'];
-                        foreach ($aMonths3 as $value) {
-                            $sMonths = $sMonths . $value . '|';
-                        }
                     }
                     $aData['SCH_MONTHS'] = $sMonths;
                     $sStartDay = $aData['SCH_START_DAY'];
                     $sValue = $nStartDay;
                     break;
-
             }
             if (trim( $aData['SCH_END_DATE'] ) != '') {
                 $aData['SCH_END_DATE'] = $aData['SCH_END_DATE'];
