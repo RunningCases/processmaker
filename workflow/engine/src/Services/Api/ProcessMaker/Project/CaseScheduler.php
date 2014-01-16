@@ -205,10 +205,19 @@ class CaseSchedulerStructure
     public $sch_week_days;
 
     /**
-     * @var string {@from body} {@min 0} {@max 6}
+     * @var string {@from body} {@choice 1,2}
      */
     public $sch_start_day;
 
+    /**
+     * @var string {@from body}
+     */
+    public $sch_start_day_opt_1;
+
+    /**
+     * @var string {@from body}
+     */
+    public $sch_start_day_opt_2;
     /**
      * @var string {@from body} {@min 0} {@max 24}
      */
