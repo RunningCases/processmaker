@@ -117,7 +117,7 @@ if (file_exists($requestFile)) {
     $size = strlen($request);
     if($pos < $size) {
         //if this file got an extension then assign the content
-    	$ext_file = substr($request, $pos, $size);
+        $ext_file = substr($request, $pos, $size);
         if ($ext_file == "gif" || $ext_file == "png") {
             $ext_file = 'image/'.$ext_file ;
         } elseif ($ext_file == "jpg" || $ext_file == "jpeg") {
@@ -132,36 +132,36 @@ if (file_exists($requestFile)) {
             $ext_file = "application/octet-stream";
         } elseif ($ext_file == "tar") {
             $ext_file = "application/x-tar";
-	    } elseif ($ext_file=="css") {
-	        //may this line be innecesary, all the .css are been generated at run time
-	        $ext_file = 'css/'.$ext_file;
-	    } else {
-	        $ext_file = "application/octet-stream";
-	    }
-	    header ('Content-Type: ' . $ext_file);
+        } elseif ($ext_file=="css") {
+            //may this line be innecesary, all the .css are been generated at run time
+            $ext_file = 'css/'.$ext_file;
+        } else {
+            $ext_file = "application/octet-stream";
+        }
+        header ('Content-Type: ' . $ext_file);
     }
     header ( 'Pragma: cache' );
     $mtime = filemtime ( $requestFile );
-	$gmt_mtime = gmdate ( "D, d M Y H:i:s", $mtime ) . " GMT";
-	header ( 'ETag: "' . md5 ( $mtime . $requestFile ) . '"' );
-	header ( "Last-Modified: " . $gmt_mtime );
-	header ( 'Cache-Control: public' );
+    $gmt_mtime = gmdate ( "D, d M Y H:i:s", $mtime ) . " GMT";
+    header ( 'ETag: "' . md5 ( $mtime . $requestFile ) . '"' );
+    header ( "Last-Modified: " . $gmt_mtime );
+    header ( 'Cache-Control: public' );
     $userAgent = strtolower ( $_SERVER ['HTTP_USER_AGENT'] );
-	if (preg_match ( "/msie/i", $userAgent )) {
-		header ( "Expires: " . gmdate ( "D, d M Y H:i:s", time () + 60 * 10 ) . " GMT" );
-	} else {
-	    header ( "Expires: " . gmdate ( "D, d M Y H:i:s", time () + 90 * 60 * 60 * 24 ) . " GMT" );
-	    if (isset ( $_SERVER ['HTTP_IF_MODIFIED_SINCE'] )) {
-	        if ($_SERVER ['HTTP_IF_MODIFIED_SINCE'] == $gmt_mtime) {
-	            header ( 'HTTP/1.1 304 Not Modified' );
-	        }
-	    }
-	    if (isset ( $_SERVER ['HTTP_IF_NONE_MATCH'] )) {
-	        if (str_replace ( '"', '', stripslashes ( $_SERVER ['HTTP_IF_NONE_MATCH'] ) ) == md5 ( $mtime . $requestFile )) {
-	            header ( "HTTP/1.1 304 Not Modified" );
+    if (preg_match ( "/msie/i", $userAgent )) {
+        header ( "Expires: " . gmdate ( "D, d M Y H:i:s", time () + 60 * 10 ) . " GMT" );
+    } else {
+        header ( "Expires: " . gmdate ( "D, d M Y H:i:s", time () + 90 * 60 * 60 * 24 ) . " GMT" );
+        if (isset ( $_SERVER ['HTTP_IF_MODIFIED_SINCE'] )) {
+            if ($_SERVER ['HTTP_IF_MODIFIED_SINCE'] == $gmt_mtime) {
+                header ( 'HTTP/1.1 304 Not Modified' );
             }
-	    }
-	}
+        }
+        if (isset ( $_SERVER ['HTTP_IF_NONE_MATCH'] )) {
+            if (str_replace ( '"', '', stripslashes ( $_SERVER ['HTTP_IF_NONE_MATCH'] ) ) == md5 ( $mtime . $requestFile )) {
+                header ( "HTTP/1.1 304 Not Modified" );
+            }
+        }
+    }
     readfile($requestFile);
     die;
 }
@@ -284,7 +284,9 @@ try {
         $timelife = 1440;
     }
     ini_set('session.gc_maxlifetime', $timelife);
-    ini_set('session.cookie_lifetime', $timelife);
+    if (preg_match("/msie/i", $_SERVER ['HTTP_USER_AGENT']) != 1 || $config['ie_cookie_lifetime'] == 1) {
+        ini_set('session.cookie_lifetime', $timelife);
+    }
     //session_start();
 
     $e_all = defined( 'E_DEPRECATED' ) ? E_ALL & ~ E_DEPRECATED : E_ALL;
@@ -892,10 +894,12 @@ try {
         define( 'SYS_LANG_DIRECTION', $oServerConf->getLanDirection() );
 
         if ((isset( $_SESSION['USER_LOGGED'] )) && (! (isset( $_GET['sid'] )))) {
-            if (PHP_VERSION < 5.2) {
-                setcookie(session_name(), session_id(), time() + $timelife, '/', '; HttpOnly');
-            } else {
-                setcookie(session_name(), session_id(), time() + $timelife, '/', null, false, true);
+            if (preg_match("/msie/i", $_SERVER ['HTTP_USER_AGENT']) != 1 || $config['ie_cookie_lifetime'] == 1) {
+                if (PHP_VERSION < 5.2) {
+                    setcookie(session_name(), session_id(), time() + $timelife, '/', '; HttpOnly');
+                } else {
+                    setcookie(session_name(), session_id(), time() + $timelife, '/', null, false, true);
+                }
             }
             $RBAC->initRBAC();
             //using optimization with memcache, the user data will be in memcache 8 hours, or until session id goes invalid
@@ -959,10 +963,12 @@ try {
                         $_SESSION['USER_LOGGED'] = $aUser['USR_UID'];
                         $_SESSION['USR_USERNAME'] = $aUser['USR_USERNAME'];
                         $bRedirect = false;
-                        if (PHP_VERSION < 5.2) {
-                            setcookie(session_name(), session_id(), time() + $timelife, '/', '; HttpOnly');
-                        } else {
-                            setcookie(session_name(), session_id(), time() + $timelife, '/', null, false, true);
+                        if (preg_match("/msie/i", $_SERVER ['HTTP_USER_AGENT']) != 1 || $config['ie_cookie_lifetime'] == 1) {
+                            if (PHP_VERSION < 5.2) {
+                                setcookie(session_name(), session_id(), time() + $timelife, '/', '; HttpOnly');
+                            } else {
+                                setcookie(session_name(), session_id(), time() + $timelife, '/', null, false, true);
+                            }
                         }
                         $RBAC->initRBAC();
                         $RBAC->loadUserRolePermission( $RBAC->sSystem, $_SESSION['USER_LOGGED'] );

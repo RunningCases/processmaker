@@ -89,16 +89,16 @@ class Assignee extends Api
      *
      * @param string $prjUid
      * @param string $actUid
-     * @param string $ass_uid
-     * @param string $ass_type {@choice user,group}
+     * @param string $aas_uid
+     * @param string $aas_type {@choice user,group}
      *
      * @status 201
      */
-    public function doPostActivityAssignee($prjUid, $actUid, $ass_uid, $ass_type)
+    public function doPostActivityAssignee($prjUid, $actUid, $aas_uid, $aas_type)
     {
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->addTaskAssignee($prjUid, $actUid, $ass_uid, $ass_type);
+            $arrayData = $task->addTaskAssignee($prjUid, $actUid, $aas_uid, $aas_type);
         } catch (\Exception $e) {
             //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -107,18 +107,18 @@ class Assignee extends Api
     }
 
     /**
-     * @url DELETE /:prjUid/activity/:actUid/assignee/:assUid
+     * @url DELETE /:prjUid/activity/:actUid/assignee/:aasUid
      *
      * @param string $prjUid
      * @param string $actUid
-     * @param string $assUid
+     * @param string $aasUid
      *
      */
-    public function doDeleteActivityAssignee($prjUid, $actUid, $assUid)
+    public function doDeleteActivityAssignee($prjUid, $actUid, $aasUid)
     {
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->removeTaskAssignee($prjUid, $actUid, $assUid);
+            $arrayData = $task->removeTaskAssignee($prjUid, $actUid, $aasUid);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());

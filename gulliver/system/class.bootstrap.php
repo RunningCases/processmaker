@@ -60,7 +60,7 @@ class Bootstrap
         return false;
     }
 
-    public function registerClass($classname, $includeFile)
+    public static function registerClass($classname, $includeFile)
     {
         BootStrap::$includeClassPaths[strtolower($classname)] = $includeFile;
         return;
@@ -120,7 +120,7 @@ class Bootstrap
         }
 
         // default configuration
-        $config = array('debug' => 0, 'debug_sql' => 0, 'debug_time' => 0, 'debug_calendar' => 0, 'wsdl_cache' => 1, 'memory_limit' => "256M", 'time_zone' => 'America/New_York', 'memcached' => 0, 'memcached_server' => '', 'default_skin' => 'neoclassic', 'default_lang' => 'en', 'proxy_host' => '', 'proxy_port' => '', 'proxy_user' => '', 'proxy_pass' => '' , 'size_log_file' => 5000000 , 'number_log_file' => 5);
+        $config = array('debug' => 0, 'debug_sql' => 0, 'debug_time' => 0, 'debug_calendar' => 0, 'wsdl_cache' => 1, 'memory_limit' => "256M", 'time_zone' => 'America/New_York', 'memcached' => 0, 'memcached_server' => '', 'default_skin' => 'neoclassic', 'default_lang' => 'en', 'proxy_host' => '', 'proxy_port' => '', 'proxy_user' => '', 'proxy_pass' => '' , 'size_log_file' => 5000000 , 'number_log_file' => 5, 'ie_cookie_lifetime' => 1);
 
         // read the global env.ini configuration file
         if ($readGlobalIniFile && ($globalConf = @parse_ini_file($globalIniFile)) !== false) {
@@ -3088,6 +3088,14 @@ class Bootstrap
                         "$>php composer.phar install"
                 );
             }
+        } 
+
+        if (! file_exists(PATH_TRUNK . 'vendor' . PATH_SEP . "autoload.php")) {
+            throw new Exception(
+                "ERROR: Problems with Verdors!" . PHP_EOL .
+                    "Please execute the following command to repare vendors:" .PHP_EOL.PHP_EOL.
+                    "$>php composer.phar update"
+            );
         }
 
         require_once PATH_TRUNK . 'vendor' . PATH_SEP . "autoload.php";

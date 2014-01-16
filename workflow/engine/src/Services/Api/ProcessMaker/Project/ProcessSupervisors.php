@@ -311,8 +311,4 @@ class ProcessSupervisors extends Api
         }
         return $response;
     }
-
-
-
-
 }

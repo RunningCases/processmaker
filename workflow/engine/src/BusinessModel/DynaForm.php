@@ -242,6 +242,11 @@ class DynaForm
         try {
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
+            //Uids
+            $arrayDataUid = $this->getDataUids($dynaFormUid);
+
+            $processUid = $arrayDataUid["PRO_UID"];
+
             //Verify data
             $dynaForm = new \Dynaform();
 
@@ -249,12 +254,6 @@ class DynaForm
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($dynaFormUid, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}")));
             }
 
-            //Uids
-            $arrayDataUid = $this->getDataUids($dynaFormUid);
-
-            $processUid = $arrayDataUid["PRO_UID"];
-
-            //Verify data
             if (isset($arrayData["DYN_TITLE"]) && $this->titleExists($processUid, $arrayData["DYN_TITLE"], $dynaFormUid)) {
                 throw (new \Exception(\G::LoadTranslation("ID_EXIST_DYNAFORM")));
             }
@@ -283,6 +282,11 @@ class DynaForm
     public function delete($dynaFormUid)
     {
         try {
+            //Uids
+            $arrayDataUid = $this->getDataUids($dynaFormUid);
+
+            $processUid = $arrayDataUid["PRO_UID"];
+
             //Verify data
             $dynaForm = new \Dynaform();
 
@@ -290,12 +294,6 @@ class DynaForm
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($dynaFormUid, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}")));
             }
 
-            //Uids
-            $arrayDataUid = $this->getDataUids($dynaFormUid);
-
-            $processUid = $arrayDataUid["PRO_UID"];
-
-            //Verify data
             if ($this->dynaFormAssignedStep($dynaFormUid, $processUid)) {
                 throw (new \Exception("You cannot delete this Dynaform while it is assigned to a step"));
             }
