@@ -62,16 +62,18 @@ class ProcessPermissions extends Api
     /**
      * @param string $projectUid {@min 1} {@max 32}
      * @param array $request_data
-     * @param string $op_obj_type {@from body} {@choice ANY,DYNAFORM,INPUT,OUTPUT,CASES_NOTES,MSGS_HISTORY}
-     * @param string $op_participate {@from body} {@choice 0,1}
-     * @param string $op_action {@from body} {@choice VIEW,BLOCK,DELETE}
+     *
+     * @param string $usr_uid {@from body} {@min 1} {@max 32}
+     * @param string $op_user_relation {@from body} {@choice 1,2}
      * @param string $op_case_status {@from body} {@choice ALL,DRAFT,TO_DO,PAUSED,COMPLETED}
+     * @param string $op_participate {@from body} {@choice 0,1}
+     * @param string $op_obj_type {@from body} {@choice ANY,DYNAFORM,INPUT,OUTPUT,CASES_NOTES,MSGS_HISTORY}
+     * @param string $op_action {@from body} {@choice VIEW,BLOCK,DELETE}
      * @param string $tas_uid {@from body}
-     * @param string $group_user {@from body}
+     * @param string $op_task_source {@from body}
      * @param string $dynaforms {@from body}
      * @param string $inputs {@from body}
      * @param string $outputs {@from body}
-     * @param string $op_task_source {@from body}
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -81,13 +83,22 @@ class ProcessPermissions extends Api
      *
      * @url POST /:projectUid/process-permission/
      */
-    public function doPostProcessPermission($projectUid, $request_data, $op_obj_type, $op_participate, $op_action,
-        $op_case_status, $tas_uid = '', $group_user = '', $dynaforms = '', $inputs = '', $outputs = '', $op_task_source = '')
+    public function doPostProcessPermission($projectUid, $request_data, $usr_uid, $op_user_relation, $op_case_status,
+        $op_participate, $op_obj_type, $op_action, $tas_uid = '', $op_task_source = '', $dynaforms = '', $inputs = '',
+        $outputs = '')
     {
         try {
+            $hiddenFields = array('task_target', 'group_user', 'task_source',
+                'object_type', 'object', 'participated', 'action'
+            );
             $request_data['pro_uid'] = $projectUid;
             $processPermissions = new \BusinessModel\ProcessPermissions();
             $response = $processPermissions->saveProcessPermission($request_data);
+            foreach ($response as $key => $eventData) {
+                if (in_array($key, $hiddenFields)) {
+                    unset($response[$key]);
+                }
+            }
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -98,16 +109,18 @@ class ProcessPermissions extends Api
      * @param string $projectUid {@min 1} {@max 32}
      * @param string $objectPermissionUid {@min 1} {@max 32}
      * @param array $request_data
-     * @param string $op_obj_type {@from body} {@choice ANY,DYNAFORM,INPUT,OUTPUT,CASES_NOTES,MSGS_HISTORY}
-     * @param string $op_participate {@from body} {@choice 0,1}
-     * @param string $op_action {@from body} {@choice VIEW,BLOCK,DELETE}
+     *
+     * @param string $usr_uid {@from body} {@min 1} {@max 32}
+     * @param string $op_user_relation {@from body} {@choice 1,2}
      * @param string $op_case_status {@from body} {@choice ALL,DRAFT,TO_DO,PAUSED,COMPLETED}
+     * @param string $op_participate {@from body} {@choice 0,1}
+     * @param string $op_obj_type {@from body} {@choice ANY,DYNAFORM,INPUT,OUTPUT,CASES_NOTES,MSGS_HISTORY}
+     * @param string $op_action {@from body} {@choice VIEW,BLOCK,DELETE}
      * @param string $tas_uid {@from body}
-     * @param string $group_user {@from body}
+     * @param string $op_task_source {@from body}
      * @param string $dynaforms {@from body}
      * @param string $inputs {@from body}
      * @param string $outputs {@from body}
-     * @param string $op_task_source {@from body}
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -117,9 +130,9 @@ class ProcessPermissions extends Api
      *
      * @url PUT /:projectUid/process-permission/:objectPermissionUid
      */
-    public function doPutProcessPermission($projectUid, $objectPermissionUid, $request_data, $op_obj_type,
-        $op_participate, $op_action, $op_case_status, $tas_uid = '', $group_user = '', $dynaforms = '', $inputs = '',
-        $outputs = '', $op_task_source = '')
+    public function doPutProcessPermission($projectUid, $objectPermissionUid, $request_data, $usr_uid,
+        $op_user_relation, $op_case_status, $op_participate, $op_obj_type, $op_action, $tas_uid = '',
+        $op_task_source = '', $dynaforms = '', $inputs = '', $outputs = '')
     {
         try {
             $request_data['pro_uid'] = $projectUid;

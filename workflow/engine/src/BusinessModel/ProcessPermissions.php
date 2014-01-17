@@ -183,7 +183,6 @@ class ProcessPermissions
         try {
             $data = array_change_key_case($data, CASE_UPPER);
 
-            list ($iRelation, $sUserGroup) = explode( '|', $data['GROUP_USER'] );
             $sObjectUID = '';
             switch ($data['OP_OBJ_TYPE']) {
                 case 'ANY':
@@ -204,26 +203,24 @@ class ProcessPermissions
             }
             $oOP = new \ObjectPermission();
             $permissionUid = ($sPermissionUid != '') ? $sPermissionUid : G::generateUniqueID();
-            $aData = array (
-                'OP_UID'  => $permissionUid,
-                'PRO_UID' => $data['PRO_UID'],
-                'TAS_UID' => $data['TAS_UID'],
-                'USR_UID' => (string) $sUserGroup,
-                'OP_USER_RELATION'  => $iRelation,
-                'OP_TASK_SOURCE'    => $data['OP_TASK_SOURCE'],
-                'OP_PARTICIPATE'    => $data['OP_PARTICIPATE'],
-                'OP_OBJ_TYPE'       => $data['OP_OBJ_TYPE'],
-                'OP_OBJ_UID'        => $sObjectUID,
-                'OP_ACTION'         => $data['OP_ACTION'],
-                'OP_CASE_STATUS'    => $data['OP_CASE_STATUS']
-            );
-            $oOP->fromArray( $aData, \BasePeer::TYPE_FIELDNAME );
+            $data['OP_UID'] = $permissionUid;
+            $data['OP_OBJ_UID'] = $sObjectUID;
+
             if ($sPermissionUid == '') {
+                $oOP->fromArray( $data, \BasePeer::TYPE_FIELDNAME );
                 $oOP->save();
-                $daraRes = $oOP->load($newUid);
+                $daraRes = $oOP->load($permissionUid);
+                $daraRes = array_change_key_case($daraRes, CASE_LOWER);
                 return $daraRes;
             } else {
-                $oOP->update($aData);
+                $data['TAS_UID'] = $data['TAS_UID'] != '' ? $data['TAS_UID'] : '0';
+                $data['OP_TASK_SOURCE'] = $data['OP_TASK_SOURCE'] != '' ? $data['OP_TASK_SOURCE'] : '0';
+                $data['OP_PARTICIPATE'] = $data['OP_PARTICIPATE'] != '' ? $data['OP_PARTICIPATE'] : 0;
+                $data['OP_OBJ_TYPE'] = $data['OP_OBJ_TYPE'] != '' ? $data['OP_OBJ_TYPE'] : '0';
+                $data['OP_OBJ_UID'] = $data['OP_OBJ_UID'] != '' ? $data['OP_OBJ_UID'] : '0';
+                $data['OP_ACTION'] = $data['OP_ACTION'] != '' ? $data['OP_ACTION'] : '0';
+                $data['OP_CASE_STATUS'] = $data['OP_CASE_STATUS'] != '' ? $data['OP_CASE_STATUS'] : '0';
+                $oOP->update($data);
             }
         } catch (Exception $e) {
             throw $e;
