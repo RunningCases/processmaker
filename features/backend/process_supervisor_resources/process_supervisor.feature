@@ -165,7 +165,7 @@ Feature: Process supervisor Resources
        Examples:
        | project                          | dps_number       | dyn_uid                          |  
        | 85794888452ceeef3675164057928956 | 1                | 78212661352ceef2dc4e987081647602 |
-       | 85794888452ceeef3675164057928956 | 1                | 3
+       | 85794888452ceeef3675164057928956 | 1                |                                  |
 
     
     #POST /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/input-document
