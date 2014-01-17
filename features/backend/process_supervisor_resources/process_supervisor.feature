@@ -4,10 +4,10 @@ Feature: Process supervisor Resources
     Background:
     Given that I have a valid access_token
 
-    @1: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #GET /api/1.0/{workspace}/project/{prj_uid}/process-supervisors
-    Scenario: Get a List of process supervisor of a project
-        Given that I request "project/85794888452ceeef3675164057928956/process-supervisors"
+    @1: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
+        Scenario: Get a List of process supervisor of a project
+        Given I request "project/85794888452ceeef3675164057928956/process-supervisors"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
@@ -15,146 +15,140 @@ Feature: Process supervisor Resources
         And the response has 1 records
 
 
+   #GET /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/{pu_uid}
     @2: TEST FOR GET A SPECIFIC PROCESS SUPERVISOR /--------------------------------------------------------------------
-    #GET /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/{pu_uid}
-    Scenario: Get a specific process supervisor of a project
-        Given that I request "project/85794888452ceeef3675164057928956/process-supervisor/70662784652cef0878516f7085532841"
+        Scenario: Get a specific process supervisor of a project
+        Given I request "project/85794888452ceeef3675164057928956/process-supervisor/70662784652cef0878516f7085532841"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
 
 
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #GET /api/1.0/{workspace}/project/{prj_uid}/available-process-supervisors
-    Scenario: Get a List of available process supervisor of a project
-        Given that I request "project/85794888452ceeef3675164057928956/available-process-supervisors"
+    @3: TEST FOR GET USERS AND GROUP SUPERVISOR /--------------------------------------------------------------------
+        Scenario: Get a List of available process supervisor of a project
+        Given I request "project/85794888452ceeef3675164057928956/available-process-supervisors"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "array"
+        And the response has 86 records
 
-    
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------    
+
     #GET /api/1.0/{workspace}/project/{prj_uid}/available-process-supervisors
-    Scenario: Get a List of available groups process supervisor of a project
-        Given that I request "project/85794888452ceeef3675164057928956/available-process-supervisors?obj_type=group"
+    @4: TEST FOR GET GROUP SUPERVISOR /--------------------------------------------------------------------    
+        Scenario: Get a List of available groups process supervisor of a project
+        Given I request "project/85794888452ceeef3675164057928956/available-process-supervisors?obj_type=group"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "array"
+        And the response has 23 records
 
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #GET /api/1.0/{workspace}/project/{prj_uid}/available-process-supervisors
-    Scenario: Get a List of available users process supervisor of a project
-        Given that I request "project/85794888452ceeef3675164057928956/available-process-supervisors?obj_type=user"
+    @5: TEST FOR GET USERS SUPERVISOR /--------------------------------------------------------------------
+        Scenario: Get a List of available users process supervisor of a project
+        Given I request "project/85794888452ceeef3675164057928956/available-process-supervisors?obj_type=user"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "array"
+        And the response has 63 records
 
-    
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------    
+   
     #GET /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/dynaforms
-    Scenario: Get a List of dynaforms process supervisor of a project
-        Given that I request "project/85794888452ceeef3675164057928956/process-supervisor/dynaforms"
+    @6: TEST FOR DYNAFORM PROCESS SUPERVISOR /--------------------------------------------------------------------    
+       Scenario: Get a List of dynaforms process supervisor of a project
+        Given I request "project/85794888452ceeef3675164057928956/process-supervisor/dynaforms"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "array"
+        And the response has 3 records
 
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
-    #GET /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/dynaform/{pu_uid}
-    Scenario: Get a specific process supervisor of a project
-        Given that I request "project/85794888452ceeef3675164057928956/process-supervisor/dynaform/78069721352ceef1fd61878075214306"
+    @7: TEST FOR GET A SPECIFIC PROCESS SUPERVISOR /--------------------------------------------------------------------
+     Scenario: Get a specific process supervisor of a project
+        Given I request "project/85794888452ceeef3675164057928956/process-supervisor/dynaform/78069721352ceef1fd61878075214306"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
 
     
-     @3: TEST FOR GET PROCESS SUPERVISOR /-------------------------------------------------------------------- 
     #GET /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/available-dynaforms
-    Scenario: Get a List of available dynaforms process supervisor of a project
-        Given that I request "project/85794888452ceeef3675164057928956/process-supervisor/available-dynaforms"
+    @8: TEST FOR GET AVAILABLE DYNAFORM PROCESS SUPERVISOR /-------------------------------------------------------------------- 
+     Scenario: Get a List of available dynaforms process supervisor of a project
+        Given I request "project/85794888452ceeef3675164057928956/process-supervisor/available-dynaforms"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "array"
+        And the response has 2 records
 
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #GET /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/input-documents
+    @9: TEST FOR GET INPUT DOCUMENT PROCESS SUPERVISOR /--------------------------------------------------------------------
     Scenario: Get a List of input-documents process supervisor of a project
-        Given that I request "project/85794888452ceeef3675164057928956/process-supervisor/input-documents"
+        Given I request "project/85794888452ceeef3675164057928956/process-supervisor/input-documents"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "array"
+        And the response has 1 records
 
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #GET /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/available-input-documents
+    @10: TEST FOR GET LIST INPUT DOCUMENTS - PROCESS SUPERVISOR /--------------------------------------------------------------------
     Scenario: Get a List of input-documents process supervisor of a project
-        Given that I request "project/85794888452ceeef3675164057928956/process-supervisor/available-input-documents"
+        Given I request "project/85794888452ceeef3675164057928956/process-supervisor/available-input-documents"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "array"
+        And the response has 2 records
 
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #GET /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/input-document/{pu_uid}
+    @11: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     Scenario: Get a specific process supervisor of a project
-        Given that I request "project/85794888452ceeef3675164057928956/process-supervisor/input-document/37709187452ceef4f601dd3045365506"
+        Given I request "project/85794888452ceeef3675164057928956/process-supervisor/input-document/37709187452ceef4f601dd3045365506"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
 
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #POST /api/1.0/{workspace}/project/{prj_uid}/process-supervisor
-    Scenario: Assign a group process supervisor of a project
-        Given that I POST this data:
+    @12: TEST FOR POST PROCESS SUPERVISOR /--------------------------------------------------------------------
+    Scenario Outline: Assign a user and group process supervisor of a project
+        Given POST this data:
         """
        {
-           "pu_type": "GROUP_SUPERVISOR",
-           "usr_uid": "46138556052cda43a051110007756836"
+           "pu_type": "pu_type",
+           "usr_uid": "usr_uid"
        }
        """
-       And I request "project/85794888452ceeef3675164057928956/process-supervisor"
+       And I request "project/<project>/process-supervisor"
        Then the response status code should be 201
        And the response charset is "UTF-8"
        And the content type is "application/json"
        And the type is "object"
-       And store "pu_uid" in session array as variable "pug_uid"
+       And store "pu_uid" in session array as variable "pug_uid_<ps_number>"
 
+       Examples:
+       | project                          | ps_number        | pu_type                         | usr_uid                          |   
+       | 85794888452ceeef3675164057928956 | 1                | GROUP_SUPERVISOR                | 46138556052cda43a051110007756836 |
+       | 85794888452ceeef3675164057928956 | 2                | SUPERVISOR                      | 00000000000000000000000000000001 |
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
-    #POST /api/1.0/{workspace}/project/{prj_uid}/process-supervisor
-    Scenario: Assign a user process supervisor of a project
-        Given that I POST this data:
-        """
-       {
-           "pu_type": "SUPERVISOR",
-           "usr_uid": "00000000000000000000000000000001"
-       }
-       """
-       And I request "project/85794888452ceeef3675164057928956/process-supervisor"
-       Then the response status code should be 201
-       And the response charset is "UTF-8"
-       And the content type is "application/json"
-       And the type is "object"
-       And store "pu_uid" in session array as variable "puu_uid"
-
+        
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #POST /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/dynaform
-    Scenario: Assign a dynaform process supervisor of a project
-        Given that I POST this data:
+    @13: TEST FOR POST DYNAFORM PROCESS SUPERVISOR /--------------------------------------------------------------------
+    Scenario Outline: Assign a dynaform process supervisor of a project
+        Given POST this data:
         """
        {
             "dyn_uid": "78212661352ceef2dc4e987081647602"
@@ -165,16 +159,22 @@ Feature: Process supervisor Resources
        And the response charset is "UTF-8"
        And the content type is "application/json"
        And the type is "object"
-       And store "pud_uid" in session array as variable "pud_uid"
+       And store "pud_uid" in session array as variable "pud_uid_<dps_number>"
+
+
+       Examples:
+       | project                          | dps_number       | dyn_uid                          |  
+       | 85794888452ceeef3675164057928956 | 1                | 78212661352ceef2dc4e987081647602 |
+       | 85794888452ceeef3675164057928956 | 1                |                                  |
 
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #POST /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/input-document
-    Scenario: Assign a dynaform process supervisor of a project
-        Given that I POST this data:
+    @14: TEST FOR POST INPUT DOCUMENT - PROCESS SUPERVISOR /--------------------------------------------------------------------
+    Scenario Outline: Assign a dynaform process supervisor of a project
+        Given POST this data:
         """
        {
-            "inp_doc_uid": "25205290452ceef570741c3067266323"
+            "inp_doc_uid": "<inp_doc_uid>"
        }
        """
        And I request "project/85794888452ceeef3675164057928956/process-supervisor/input-document"
@@ -182,21 +182,33 @@ Feature: Process supervisor Resources
        And the response charset is "UTF-8"
        And the content type is "application/json"
        And the type is "object"
-       And store "pui_uid" in session array as variable "pui_uid"
+       And store "pui_uid" in session array as variable "pui_inpdoc_uid_<>"
+
+      
+      Examples:
+       | project                          | dps_number       | inp_doc_uid                      | 
+       | 85794888452ceeef3675164057928956 | 1                | 25205290452ceef570741c3067266323 |  
+
 
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #DELETE /api/1.0/{workspace}/project/{prj_uid}/process-supervisor
-    Scenario: Delete a user process supervisor of a project
+    @15: TEST FOR DELETE PROCESS SUPERVISOR /--------------------------------------------------------------------
+    Scenario Outline: Delete a user process supervisor of a project
         Given that I want to delete a resource with the key "pug_uid" stored in session array
         And I request "project/85794888452ceeef3675164057928956/process-supervisor"
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"
 
+        Examples:
+        | project                          | ps_number |
+        | 85794888452ceeef3675164057928956 | 1         |
+        | 85794888452ceeef3675164057928956 | 2         |
+
+
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #DELETE /api/1.0/{workspace}/project/{prj_uid}/process-supervisor
+    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     Scenario: Delete a user process supervisor of a project
         Given that I want to delete a resource with the key "puu_uid" stored in session array
         And I request "project/85794888452ceeef3675164057928956/process-supervisor"
@@ -205,8 +217,8 @@ Feature: Process supervisor Resources
         And the response charset is "UTF-8"
 
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #DELETE /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/dynaform
+    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     Scenario: Delete a dynaform process supervisor of a project
         Given that I want to delete a resource with the key "pud_uid" stored in session array
         And I request "project/85794888452ceeef3675164057928956/process-supervisor/dynaform"
@@ -215,10 +227,10 @@ Feature: Process supervisor Resources
         And the response charset is "UTF-8"
     
     
-    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     #DELETE /api/1.0/{workspace}/project/{prj_uid}/process-supervisor/input-document
+    @3: TEST FOR GET PROCESS SUPERVISOR /--------------------------------------------------------------------
     Scenario: Delete a input-document process supervisor of a project
-        Given that want to delete a resource with the key "pui_uid" stored in session array
+        Given that I want to delete a resource with the key "pui_uid" stored in session array
         And I request "project/85794888452ceeef3675164057928956/process-supervisor/input-document"
         And the content type is "application/json"
         Then the response status code should be 200
