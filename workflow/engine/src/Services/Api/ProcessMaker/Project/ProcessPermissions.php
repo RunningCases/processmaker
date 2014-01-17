@@ -82,6 +82,7 @@ class ProcessPermissions extends Api
      * @return array
      *
      * @url POST /:projectUid/process-permission/
+     * @status 201
      */
     public function doPostProcessPermission($projectUid, $request_data, $usr_uid, $op_user_relation, $op_case_status,
         $op_participate, $op_obj_type, $op_action, $tas_uid = '', $op_task_source = '', $dynaforms = '', $inputs = '',
