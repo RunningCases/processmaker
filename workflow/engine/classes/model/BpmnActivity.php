@@ -16,6 +16,17 @@ require_once 'classes/model/om/BaseBpmnActivity.php';
  */
 class BpmnActivity extends BaseBpmnActivity
 {
+    private $bound;
+
+    public function __construct($generateUid = true)
+    {
+        $this->bound = new BpmnBound();
+        $this->bound->setBouElementType(lcfirst(str_replace(__NAMESPACE__, '', __CLASS__)));
+        $this->bound->setBouElement('pm_canvas');
+        $this->bound->setBouContainer('bpmnDiagram');
+    }
+
+    /* DEPRECATED, IT WILL BE REMOVED SOON
     public function create($data, $generateUid = true)
     {
         // validate foreign keys, they must be present into data array
@@ -48,16 +59,46 @@ class BpmnActivity extends BaseBpmnActivity
         $bound->setBouElement('pm_canvas');
         $bound->setBouContainer('bpmnDiagram');
         $bound->save();
-    }
+    }*/
 
-    public function update($data)
+
+    // OVERRIDES
+
+	public function fromArray($data)
     {
-        $this->fromArray($data, BasePeer::TYPE_FIELDNAME);
-        $this->save();
+        parent::fromArray($data, BasePeer::TYPE_FIELDNAME);
 
-        // update related bound
-        $bound = BpmnBound::findOneBy(BpmnBoundPeer::ELEMENT_UID, $this->getActUid());
-        $bound->fromArray($data, BasePeer::TYPE_FIELDNAME);
-        $bound->save();
+        // try resolve the related bound
+        if (array_key_exists('BOU_UID', $data)) {
+            //$bound = BpmnBound::findByElement('Activity', $this->getActUid());
+            $bound = BpmnBoundPeer::retrieveByPK($data['BOU_UID']);
+
+            if (is_object($bound)) {
+                $this->bound = $bound;
+            }
+        }
+
+        $this->bound->fromArray($data, BasePeer::TYPE_FIELDNAME);
     }
+
+    public function save($con = null)
+    {
+        parent::save($con);
+
+        if (is_object($this->bound) && get_class($this->bound) == 'BpmnBound') {
+            $this->bound->save($con);
+        }
+    }
+
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+    {
+        $data = parent::toArray($keyType);
+
+        if (is_object($this->bound) && get_class($this->bound) == 'BpmnBound') {
+            $data = array_merge($data, $this->bound->toArray($keyType));
+        }
+
+        return $data;
+    }
+
 } // BpmnActivity

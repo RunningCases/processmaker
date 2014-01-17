@@ -63,6 +63,7 @@ class Project extends Api
     function put($prjUid, $request_data)
     {
         try {
+
             $project = BpmnModel::updateProject($prjUid, $request_data);
 
             return $project;

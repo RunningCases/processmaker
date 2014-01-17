@@ -28,4 +28,15 @@ class BpmnBound extends BaseBpmnBound
 
         return $rs->getRow();
     }
+	
+    public static function findByElement($type, $uid)
+    {
+		$bouElementType = 'bpmn' . ucfirst(strtolower($type));
+
+        $c = new Criteria('workflow');
+        $c->add(BpmnBoundPeer::ELEMENT_UID, $uid, CRITERIA::EQUAL);
+		$c->add(BpmnBoundPeer::BOU_ELEMENT_TYPE, $bouElementType, CRITERIA::EQUAL);
+
+        return BpmnBoundPeer::doSelectOne($c);
+    }
 } // BpmnBound

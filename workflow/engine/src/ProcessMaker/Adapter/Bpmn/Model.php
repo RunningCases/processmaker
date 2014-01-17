@@ -100,7 +100,7 @@ class Model
          */
 
         $lanesets = array_key_exists('laneset', $diagramData) ? $diagramData['laneset'] : array();
-        $lanes = array_key_exists('lane', $diagramData) ? $diagramData['lanes'] : array();
+        $lanes = array_key_exists('lanes', $diagramData) ? $diagramData['lanes'] : array();
         $activities = array_key_exists('activities', $diagramData) ? $diagramData['activities'] : array();
         $events = array_key_exists('events', $diagramData) ? $diagramData['events'] : array();
         $gateways = array_key_exists('gateways', $diagramData) ? $diagramData['gateways'] : array();
@@ -345,7 +345,7 @@ class Model
 
         $project = array_change_key_case($project);
         $project['diagrams'] = array($diagram);
-        $project['diagrams'][0]['lanesets'] = $lanesets;
+        $project['diagrams'][0]['laneset'] = $lanesets;
         $project['diagrams'][0]['lanes'] = $lanes;
         $project['diagrams'][0]['activities'] = $activities;
         $project['diagrams'][0]['events'] = $events;
@@ -370,12 +370,18 @@ class Model
 
     public static function updateProject($prjUid, $projectUpdated)
     {
+        echo 'PRJ_UID ->: ' . $prjUid . PHP_EOL;
+
         $project = ProjectPeer::retrieveByPK($prjUid);
         $project->setPrjName($projectUpdated['prj_name']);
         $project->setPrjUpdateDate(date("Y-m-d H:i:s"));
         $project->save();
 
+        //print_r($project->toArray());
+
         $diagramData = $projectUpdated['diagrams'][0];
+
+        //print_r($diagramData); die;
 
         $diagram = DiagramPeer::retrieveByPK($diagramData['dia_uid']);
         $diagram->setDiaName($diagramData['dia_name']);
@@ -386,9 +392,14 @@ class Model
 
         $diagram->save();
 
-        $processData = self::getBpmnObjectBy('Process', ProcessPeer::PRJ_UID, $prjUid);
+        $processData = self::getBpmnObjectBy('Process', ProcessPeer::PRJ_UID, $prjUid, true);
+
+        //print_r($processData); die;
 
         $process = ProcessPeer::retrieveByPK($processData['pro_uid']);
+
+        //print_r($process); die;
+
         $process->setProName($process->getProName());
         $process->save();
 
@@ -400,16 +411,77 @@ class Model
 
     public static function updateDiagram($diff)
     {
-        return false;
+        echo 'DIFF'.PHP_EOL; print_r($diff);
+
+        //return false;
+        $mapId = array();
+
+        // updating objects
+        foreach ($diff['updated'] as $element => $items) {
+            foreach ($items as $data) {
+				$data = array_change_key_case((array) $data, CASE_UPPER);
+                //print_r($data); die;
+
+                // the calls in switch sentence are setting and saving the related BpmnBound objects too,
+                // because methods: save(), fromArray(), toArray() are beautifully extended
+                // of Activity, Event and Gateway classes ;) atte. @erik
+
+                switch ($element) {
+                    case 'laneset':
+                        break;
+
+                    case 'lanes':
+                        break;
+
+                    case 'activities':
+                        $activity = ActivityPeer::retrieveByPk($data['ACT_UID']);
+                        $activity->fromArray($data);
+                        $activity->save();
+                        break;
+
+                    case 'events':
+                        $event = EventPeer::retrieveByPk($data['EVN_UID']);
+                        $event->fromArray($data);
+                        $event->save();
+                        break;
+
+                    case 'gateways':
+                        $gateway = GatewayPeer::retrieveByPk($data['GAT_UID']);
+                        $gateway->fromArray($data);
+                        $gateway->save();
+                        break;
+
+                    case 'flows':
+                        break;
+
+                    case 'artifacts':
+                        break;
+                }
+            }
+        }
+
+        die;
 
         // Creating new objects
         foreach ($diff['new'] as $element => $items) {
             foreach ($items as $data) {
+                print_r($data); die;
                 switch ($element) {
-                    case 'activities':
-                        $data = array_change_key_case((array) $data, CASE_UPPER);
-                        $activity = new Activity();
-                        $activity->create($data);
+                    case 'laneset':
+                        $lanesetData = array_change_key_case((array) $data, CASE_UPPER);
+
+                        $laneset = new Laneset();
+                        $laneset->fromArray($lanesetData, BasePeer::TYPE_FIELDNAME);
+                        $laneset->setLnsUid(Hash::generateUID());
+                        $laneset->setPrjUid($prjUid);
+                        $laneset->setProUid($proUid);
+                        $laneset->save();
+                        $lnsUid = $laneset->getLnsUid();
+                        $oldLnsUid = $lanesetData['LNS_UID'];
+
+                        $uids[] = array('old_uid' => $oldLnsUid, 'new_uid' => $lnsUid, 'object' => 'laneset');
+                        $mapId['laneset'][$oldLnsUid] = $lnsUid;
+
                         break;
                 }
             }
@@ -467,9 +539,10 @@ class Model
             $checksum[$element] = self::getArrayChecksum($savedProject['diagrams'][0][$element], $key);
         }
 
+
         foreach ($diagramElements as $key => $element) {
             foreach ($updatedProject['diagrams'][0][$element] as $item) {
-                if (in_array($item[$key], $newRecords[$element]) || in_array($item[$key], $deletedRecords[$element])) {
+                if (array_key_exists($element, $newRecords) && (in_array($item[$key], $newRecords[$element]) || in_array($item[$key], $deletedRecords[$element]))) {
                     // skip new or deleted records
                     continue;
                 }
