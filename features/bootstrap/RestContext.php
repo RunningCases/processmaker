@@ -458,6 +458,8 @@ class RestContext extends BehatContext
                     throw new Exception ('Error parsing XML, ' . $message);
                 }
                 break;
+            default:
+                $this->_data = $this->_response->getBody(true);
         }
     }
 
@@ -468,7 +470,7 @@ class RestContext extends BehatContext
     public function theResponseIsJson()
     {
         if ($this->_type != 'json') {
-            throw new Exception("Response was not JSON\n\n");
+            throw new Exception("Response was not JSON\n" . $this->_response->getBody(true) );
         }
     }
 
@@ -657,7 +659,7 @@ class RestContext extends BehatContext
     public function theResponseIsJsonWithType($type)
     {
         if ($this->_type != 'json') {
-            throw new Exception("Response was not JSON\n\n" );
+            throw new Exception("Response was not JSON\n" . $this->_response->getBody(true) );
         }
 
         $data = $this->_data;
@@ -932,7 +934,7 @@ class RestContext extends BehatContext
                 }
 
             }
-            
+
             throw new \Exception('HTTP code does not match ' . $httpStatus .
                 ' (actual: ' . $this->_response->getStatusCode() . ") - $message\n\n"
             );
@@ -1100,7 +1102,7 @@ class RestContext extends BehatContext
     {
       throw new PendingException();
     }
-    
+
     /**
      * @Then /^the response has (\d+) records$/
      * @Then /^the response has (\d+) record$/
