@@ -4,34 +4,6 @@ namespace BusinessModel;
 class InputDocument
 {
     /**
-     * Get data of unique ids of an InputDocument (Unique id of Process)
-     *
-     * @param string $inputDocumentUid Unique id of InputDocument
-     *
-     * return array
-     */
-    public function getDataUids($inputDocumentUid)
-    {
-        try {
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\InputDocumentPeer::PRO_UID);
-            $criteria->add(\InputDocumentPeer::INP_DOC_UID, $inputDocumentUid, \Criteria::EQUAL);
-
-            $rsCriteria = \InputDocumentPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            if ($rsCriteria->next()) {
-                return $rsCriteria->getRow();
-            } else {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($inputDocumentUid, "INPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
      * Verify if the title exists in the InputDocuments of Process
      *
      * @param string $processUid Unique id of Process
@@ -79,30 +51,6 @@ class InputDocument
     }
 
     /**
-     * Get data from a request data
-     *
-     * @param object $requestData Request data
-     *
-     * return array Return an array with data of request data
-     */
-    public function getArrayDataFromRequestData($requestData)
-    {
-        try {
-            $arrayData = array();
-
-            $requestData = (array)($requestData);
-
-            foreach ($requestData as $key => $value) {
-                $arrayData[$key] = $value;
-            }
-
-            return $arrayData;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
      * Create InputDocument for a Process
      *
      * @param string $processUid Unique id of Process
@@ -124,19 +72,42 @@ class InputDocument
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
             }
 
+            if (!isset($arrayData["INP_DOC_TITLE"])) {
+                throw (new \Exception(str_replace(array("{0}"), array("INP_DOC_TITLE"), "The \"{0}\" attribute is not defined")));
+            }
+
+            if (isset($arrayData["INP_DOC_TITLE"]) && trim($arrayData["INP_DOC_TITLE"]) == "") {
+                throw (new \Exception(str_replace(array("{0}"), array("INP_DOC_TITLE"), "The \"{0}\" attribute is empty")));
+            }
+
             if (isset($arrayData["INP_DOC_TITLE"]) && $this->titleExists($processUid, $arrayData["INP_DOC_TITLE"])) {
                 throw (new \Exception(\G::LoadTranslation("ID_INPUT_NOT_SAVE")));
             }
 
+            //Flags
+            $flagDataDestinationPath = (isset($arrayData["INP_DOC_DESTINATION_PATH"]))? 1 : 0;
+            $flagDataTags = (isset($arrayData["INP_DOC_TAGS"]))? 1 : 0;
+
             //Create
-            $inputdoc = new \InputDocument();
+            $inputDocument = new \InputDocument();
 
             $arrayData["PRO_UID"] = $processUid;
 
-            $inputDocumentUid = $inputdoc->create($arrayData);
+            $arrayData["INP_DOC_DESTINATION_PATH"] = ($flagDataDestinationPath == 1)? $arrayData["INP_DOC_DESTINATION_PATH"] : "";
+            $arrayData["INP_DOC_TAGS"] = ($flagDataTags == 1)? $arrayData["INP_DOC_TAGS"] : "";
+
+            $inputDocumentUid = $inputDocument->create($arrayData);
 
             //Return
             unset($arrayData["PRO_UID"]);
+
+            if ($flagDataDestinationPath == 0) {
+                unset($arrayData["INP_DOC_DESTINATION_PATH"]);
+            }
+
+            if ($flagDataTags == 0) {
+                unset($arrayData["INP_DOC_TAGS"]);
+            }
 
             $arrayData = array_change_key_case($arrayData, CASE_LOWER);
 
@@ -161,19 +132,22 @@ class InputDocument
         try {
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
-            //Verify data
-            $inputdoc = new \InputDocument();
+            $inputDocument = new \InputDocument();
 
-            if (!$inputdoc->InputExists($inputDocumentUid)) {
+            $arrayInputDocumentData = $inputDocument->load($inputDocumentUid);
+
+            //Uids
+            $processUid = $arrayInputDocumentData["PRO_UID"];
+
+            //Verify data
+            if (!$inputDocument->InputExists($inputDocumentUid)) {
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($inputDocumentUid, "INPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}")));
             }
 
-            //Uids
-            $arrayDataUid = $this->getDataUids($inputDocumentUid);
+            if (isset($arrayData["INP_DOC_TITLE"]) && trim($arrayData["INP_DOC_TITLE"]) == "") {
+                throw (new \Exception(str_replace(array("{0}"), array("INP_DOC_TITLE"), "The \"{0}\" attribute is empty")));
+            }
 
-            $processUid = $arrayDataUid["PRO_UID"];
-
-            //Verify data
             if (isset($arrayData["INP_DOC_TITLE"]) && $this->titleExists($processUid, $arrayData["INP_DOC_TITLE"], $inputDocumentUid)) {
                 throw (new \Exception(\G::LoadTranslation("ID_INPUT_NOT_SAVE")));
             }
@@ -181,7 +155,7 @@ class InputDocument
             //Update
             $arrayData["INP_DOC_UID"] = $inputDocumentUid;
 
-            $result = $inputdoc->update($arrayData);
+            $result = $inputDocument->update($arrayData);
 
             //Return
             unset($arrayData["INP_DOC_UID"]);
@@ -203,9 +177,9 @@ class InputDocument
     {
         try {
             //Verify data
-            $inputdoc = new \InputDocument();
+            $inputDocument = new \InputDocument();
 
-            if (!$inputdoc->InputExists($inputDocumentUid)) {
+            if (!$inputDocument->InputExists($inputDocumentUid)) {
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($inputDocumentUid, "INPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}")));
             }
 
@@ -226,9 +200,9 @@ class InputDocument
             }
 
             //InputDocument
-            $inputdoc = new \InputDocument();
+            $inputDocument = new \InputDocument();
 
-            $result = $inputdoc->remove($inputDocumentUid);
+            $result = $inputDocument->remove($inputDocumentUid);
 
             //Step
             $step = new \Step();
@@ -297,11 +271,11 @@ class InputDocument
     public function getInputDocumentDataFromRecord($record)
     {
         try {
-            $inputdoc = new \InputDocument();
-
             if ($record["INP_DOC_TITLE"] . "" == "") {
+                $inputDocument = new \InputDocument();
+
                 //There is no transaltion for this Document name, try to get/regenerate the label
-                $arrayInputdocData = $inputdoc->load($record["INP_DOC_UID"]);
+                $arrayInputdocData = $inputDocument->load($record["INP_DOC_UID"]);
 
                 $record["INP_DOC_TITLE"] = $arrayInputdocData["INP_DOC_TITLE"];
                 $record["INP_DOC_DESCRIPTION"] = $arrayInputdocData["INP_DOC_DESCRIPTION"];
@@ -334,9 +308,9 @@ class InputDocument
     {
         try {
             //Verify data
-            $inputdoc = new \InputDocument();
+            $inputDocument = new \InputDocument();
 
-            if (!$inputdoc->InputExists($inputDocumentUid)) {
+            if (!$inputDocument->InputExists($inputDocumentUid)) {
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($inputDocumentUid, "INPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}")));
             }
 

@@ -167,6 +167,8 @@ class Project extends Api
 
     /**
      * @url GET /:projectUid/input-documents
+     *
+     * @param string $projectUid {@min 32}{@max 32}
      */
     public function doGetInputDocuments($projectUid)
     {
