@@ -40,16 +40,20 @@ Feature: Input Documents Resources
 
         Examples:
 
-        | project                          | inp_doc_number    | inp_doc_title         |  inp_doc_description                | inp_doc_form_needed  | inp_doc_original    | inp_doc_published    | inp_doc_versioning   | inp_doc_destination_path  | inp_doc_tags": "INPUT   |  
-        | 14414793652a5d718b65590036026581 | 1                 | My InputDocument1     | My InputDocument1 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
-        | 14414793652a5d718b65590036026581 | 2                 | My InputDocument2     | My InputDocument2 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
-        | 14414793652a5d718b65590036026581 | 3                 | My InputDocument3     | My InputDocument3 DESCRIPTION       | REAL                 | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
-        | 14414793652a5d718b65590036026581 | 4                 | My InputDocument4     | My InputDocument4 DESCRIPTION       | VREAL                | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
-        | 14414793652a5d718b65590036026581 | 5                 | My InputDocument5     | My InputDocument5 DESCRIPTION       | VIRTUAL              | COPY                | PRIVATE              | 1                    |                           | INPUT                   |
-        | 14414793652a5d718b65590036026581 | 6                 | My InputDocument6     | My InputDocument6 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 0                    |                           | INPUT                   |
-        | 14414793652a5d718b65590036026581 | 7                 | My InputDocument7     | My InputDocument7 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    | /my/path                  | INPUT                   |
-        | 14414793652a5d718b65590036026581 | 8                 | My InputDocument8     | My InputDocument8 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
-        | 14414793652a5d718b65590036026581 | 9                 | My InputDocument9     | My InputDocument9 DESCRIPTION       | REAL                 | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
+        | project                          | inp_doc_number    | inp_doc_title                         |  inp_doc_description                 | inp_doc_form_needed  | inp_doc_original    | inp_doc_published    | inp_doc_versioning   | inp_doc_destination_path  | inp_doc_tags            |  
+        | 14414793652a5d718b65590036026581 | 1                 | My InputDocument1                     | My InputDocument1 DESCRIPTION        | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 2                 | My InputDocument2                     | My InputDocument2 DESCRIPTION        | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 3                 | My InputDocument3                     | My InputDocument3 DESCRIPTION        | REAL                 | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 4                 | My InputDocument4                     | My InputDocument4 DESCRIPTION        | VREAL                | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 5                 | My InputDocument5                     | My InputDocument5 DESCRIPTION        | VIRTUAL              | COPY                | PRIVATE              | 1                    |                           | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 6                 | My InputDocument6                     | My InputDocument6 DESCRIPTION        | VIRTUAL              | ORIGINAL            | PRIVATE              | 0                    |                           | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 7                 | My InputDocument7                     | My InputDocument7 DESCRIPTION        | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    | /my/path                  | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 8                 | My InputDocument8                     | My InputDocument8 DESCRIPTION        | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 9                 | My InputDocument9                     | My InputDocument9 DESCRIPTION        | REAL                 | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 10                | My InputDocument10 !@#$%^&*€¤½¼‘¾¡²¤³ | My InputDocument10 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 11                | My InputDocument11                    | My InputDocument11 !@#$%^&*€¤½¼‘¾¡²¤³| REAL                 | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 12                | My InputDocument12                    | My InputDocument12 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    | /my#@$#%/path324@$@@      | INPUT                   |
+        | 14414793652a5d718b65590036026581 | 13                | My InputDocument13                    | My InputDocument13 DESCRIPTION       | REAL                 | ORIGINAL            | PRIVATE              | 1                    |                           | INPU455 @##$$³¤¤        |
 
  
 
@@ -62,7 +66,7 @@ Feature: Input Documents Resources
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "array"
-        And the response has 9 records
+        And the response has 13 records
 
 
 
@@ -154,7 +158,11 @@ Feature: Input Documents Resources
         | 14414793652a5d718b65590036026581 | 6                 |
         | 14414793652a5d718b65590036026581 | 7                 |
         | 14414793652a5d718b65590036026581 | 8                 |
-        | 14414793652a5d718b65590036026581 | 9                 | 
+        | 14414793652a5d718b65590036026581 | 9                 |
+        | 14414793652a5d718b65590036026581 | 10                |
+        | 14414793652a5d718b65590036026581 | 11                |
+        | 14414793652a5d718b65590036026581 | 12                |
+        | 14414793652a5d718b65590036026581 | 13                | 
 
 
 
@@ -194,15 +202,11 @@ Feature: Input Documents Resources
         Examples:
 
         | project                          | inp_doc_title                        |  inp_doc_description                | inp_doc_form_needed  | inp_doc_original    | inp_doc_published    | inp_doc_versioning   | inp_doc_destination_path  | inp_doc_tags            |  
-        | 14414793652a5d718b65590036       | My InputDocument1                    | My InputDocument1 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
-        | 14414793652a5d718b65590036026581 | My InputDocument2 !@#$%^&*€¤½¼‘¾¡²¤³ | My InputDocument2 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
-        | 14414793652a5d718b65590036026581 | My InputDocument3                    | My InputDocument3 !@#$%^&*€¤½¼‘¾¡²¤³| REAL                 | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
+        | 14414793652a5d718b65590036       | My InputDocument1                    | My InputDocument1 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |  
         | 14414793652a5d718b65590036026581 | My InputDocument4                    | My InputDocument4 DESCRIPTION       | VRESAMPLE12334$%#@   | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
         | 14414793652a5d718b65590036026581 | My InputDocument5                    | My InputDocument5 DESCRIPTION       | VIRTUAL              | COORIGI 123@#$%$%   | PRIVATE              | 1                    |                           | INPUT                   |
         | 14414793652a5d718b65590036026581 | My InputDocument6                    | My InputDocument6 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIV123234@##$$%%    | 0                    |                           | INPUT                   |
         | 14414793652a5d718b65590036026581 | My InputDocument7                    | My InputDocument7 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 87                   |                           | INPUT                   |
-        | 14414793652a5d718b65590036026581 | My InputDocument8                    | My InputDocument8 DESCRIPTION       | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    | /my#@$#%/path324@$@@      | INPUT                   |
-        | 14414793652a5d718b65590036026581 | My InputDocument9                    | My InputDocument9 DESCRIPTION       | REAL                 | ORIGINAL            | PRIVATE              | 1                    |                           | INPU455 @##$$³¤¤        | 
         |                                  | My InputDocument10                   | My InputDocument10 DESCRIPTION      | VIRTUAL              | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
         | 14414793652a5d718b65590036026581 | My InputDocument11                   | My InputDocument11 DESCRIPTION      |                      | ORIGINAL            | PRIVATE              | 1                    |                           | INPUT                   |
         | 14414793652a5d718b65590036026581 | My InputDocument12                   | My InputDocument12 DESCRIPTION      | REAL                 |                     | PRIVATE              | 1                    |                           | INPUT                   |
