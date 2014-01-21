@@ -161,8 +161,10 @@ class ProcessPermissions
         if ($sPermissionUid != '' && empty($aObjectsPermissions)) {
             throw (new \Exception( 'This row doesn\'t exist!' ));
         } else if ($sPermissionUid != '' && !empty($aObjectsPermissions)) {
+            $aObjectsPermissions = array_change_key_case($aObjectsPermissions, CASE_LOWER);
             return current($aObjectsPermissions);
         }
+        $aObjectsPermissions = array_change_key_case($aObjectsPermissions, CASE_LOWER);
         return $aObjectsPermissions;
     }
 
