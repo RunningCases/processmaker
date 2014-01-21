@@ -13,6 +13,9 @@ class InputDocument extends Api
 {
     /**
      * @url GET /:projectUid/input-document/:inputDocumentUid
+     *
+     * @param string $inputDocumentUid {@min 32}{@max 32}
+     * @param string $projectUid       {@min 32}{@max 32}
      */
     public function doGetInputDocument($inputDocumentUid, $projectUid)
     {
@@ -30,19 +33,35 @@ class InputDocument extends Api
     /**
      * @url POST /:projectUid/input-document
      *
-     * @param string $projectUid
-     * @param InputDocumentPostStructure $request_data
+     * @param string $projectUid          {@min 32}{@max 32}
+     * @param array  $request_data
+     * @param string $inp_doc_title       {@from body}
+     * @param string $inp_doc_description {@from body}
+     * @param string $inp_doc_form_needed {@from body}{@choice VIRTUAL,REAL,VREAL}
+     * @param string $inp_doc_original    {@from body}{@choice ORIGINAL,COPY}
+     * @param string $inp_doc_published   {@from body}{@choice PRIVATE}
+     * @param int    $inp_doc_versioning  {@from body}{@choice 0,1}
+     * @param string $inp_doc_destination_path {@from body}
+     * @param string $inp_doc_tags             {@from body}
      *
      * @status 201
      */
-    public function doPostInputDocument($projectUid, InputDocumentPostStructure $request_data = null)
-    {
+    public function doPostInputDocument(
+        $projectUid,
+        $request_data,
+        $inp_doc_title = "",
+        $inp_doc_description = "",
+        $inp_doc_form_needed = "VIRTUAL",
+        $inp_doc_original = "ORIGINAL",
+        $inp_doc_published = "PRIVATE",
+        $inp_doc_versioning = 0,
+        $inp_doc_destination_path = "",
+        $inp_doc_tags = ""
+    ) {
         try {
             $inputdoc = new \BusinessModel\InputDocument();
 
-            $arrayData = $inputdoc->getArrayDataFromRequestData($request_data);
-
-            $arrayData = $inputdoc->create($projectUid, $arrayData);
+            $arrayData = $inputdoc->create($projectUid, $request_data);
 
             $response = $arrayData;
 
@@ -55,18 +74,35 @@ class InputDocument extends Api
     /**
      * @url PUT /:projectUid/input-document/:inputDocumentUid
      *
-     * @param string $inputDocumentUid
-     * @param string $projectUid
-     * @param InputDocumentPutStructure $request_data
+     * @param string $inputDocumentUid    {@min 32}{@max 32}
+     * @param string $projectUid          {@min 32}{@max 32}
+     * @param array  $request_data
+     * @param string $inp_doc_title       {@from body}
+     * @param string $inp_doc_description {@from body}
+     * @param string $inp_doc_form_needed {@from body}{@choice VIRTUAL,REAL,VREAL}
+     * @param string $inp_doc_original    {@from body}{@choice ORIGINAL,COPY}
+     * @param string $inp_doc_published   {@from body}{@choice PRIVATE}
+     * @param int    $inp_doc_versioning  {@from body}{@choice 0,1}
+     * @param string $inp_doc_destination_path {@from body}
+     * @param string $inp_doc_tags             {@from body}
      */
-    public function doPutInputDocument($inputDocumentUid, $projectUid, InputDocumentPutStructure $request_data = null)
-    {
+    public function doPutInputDocument(
+        $inputDocumentUid,
+        $projectUid,
+        $request_data,
+        $inp_doc_title = "",
+        $inp_doc_description = "",
+        $inp_doc_form_needed = "VIRTUAL",
+        $inp_doc_original = "ORIGINAL",
+        $inp_doc_published = "PRIVATE",
+        $inp_doc_versioning = 0,
+        $inp_doc_destination_path = "",
+        $inp_doc_tags = ""
+    ) {
         try {
             $inputdoc = new \BusinessModel\InputDocument();
 
-            $arrayData = $inputdoc->getArrayDataFromRequestData($request_data);
-
-            $arrayData = $inputdoc->update($inputDocumentUid, $arrayData);
+            $arrayData = $inputdoc->update($inputDocumentUid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -74,6 +110,9 @@ class InputDocument extends Api
 
     /**
      * @url DELETE /:projectUid/input-document/:inputDocumentUid
+     *
+     * @param string $inputDocumentUid {@min 32}{@max 32}
+     * @param string $projectUid       {@min 32}{@max 32}
      */
     public function doDeleteInputDocument($inputDocumentUid, $projectUid)
     {
@@ -85,91 +124,5 @@ class InputDocument extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
-}
-
-class InputDocumentPostStructure
-{
-    /**
-     * @var string {@from body}{@required true}
-     */
-    public $inp_doc_title;
-
-    /**
-     * @var string {@from body}
-     */
-    public $inp_doc_description;
-
-    /**
-     * @var string {@from body}{@choice VIRTUAL,REAL,VREAL}
-     */
-    public $inp_doc_form_needed;
-
-    /**
-     * @var string {@from body}{@choice ORIGINAL,COPY}
-     */
-    public $inp_doc_original;
-
-    /**
-     * @var string {@from body}{@choice PRIVATE}
-     */
-    public $inp_doc_published;
-
-    /**
-     * @var int {@from body}{@choice 0,1}
-     */
-    public $inp_doc_versioning;
-
-    /**
-     * @var string {@from body}
-     */
-    public $inp_doc_destination_path;
-
-    /**
-     * @var string {@from body}
-     */
-    public $inp_doc_tags;
-}
-
-class InputDocumentPutStructure
-{
-    /**
-     * @var string {@from body}
-     */
-    public $inp_doc_title;
-
-    /**
-     * @var string {@from body}
-     */
-    public $inp_doc_description;
-
-    /**
-     * @var string {@from body}{@choice VIRTUAL,REAL,VREAL}
-     */
-    public $inp_doc_form_needed;
-
-    /**
-     * @var string {@from body}{@choice ORIGINAL,COPY}
-     */
-    public $inp_doc_original;
-
-    /**
-     * @var string {@from body}{@choice PRIVATE}
-     */
-    public $inp_doc_published;
-
-    /**
-     * @var int {@from body}{@choice 0,1}
-     */
-    public $inp_doc_versioning;
-
-    /**
-     * @var string {@from body}
-     */
-    public $inp_doc_destination_path;
-
-    /**
-     * @var string {@from body}
-     */
-    public $inp_doc_tags;
 }
 
