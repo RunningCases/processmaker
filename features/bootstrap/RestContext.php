@@ -1179,6 +1179,35 @@ class RestContext extends BehatContext
         $this->_restObjectMethod = 'delete';
     }
 
+     /**
+     * @Given /^the response status message should have the following text "([^"]*)"$/
+     */
+    public function theResponseStatusMessageShouldHaveTheFollowingText($arg1)
+    {
+        
+            $message="";
+            if($bodyResponse=json_decode($this->_response->getBody(true))){
+                if(isset($bodyResponse->error->message)){
+                    $message = $bodyResponse->error->message;
+                    if (strpos($message,$arg1) === false) {
+                        throw new \Exception("Error message text does not have: '" . $arg1 ."'' (actual: '$message')\n\n");
+                    }
+
+
+                }else{
+                    throw new \Exception('This is not a valid error response');
+
+                }
+
+            }else{
+                throw new \Exception('This is not a valid response');
+
+            }
+
+            
+        
+    }
+
 
 
 }
