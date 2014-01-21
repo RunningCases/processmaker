@@ -187,20 +187,44 @@ class CaseScheduler
      *
      * @param string $userName  Name
      * @param string $userPass  Password
+     * @param string $sProcessUID  Process
      *
      * return bool Return true if the user exists, false otherwise
      */
-    public function getUser($userName, $userPass)
+    public function getUser($userName, $userPass, $sProcessUID)
     {
         try {
-            $criteria = new \Criteria("workflow");
-            $criteria->addSelectColumn(\UsersPeer::USR_UID);
-            $criteria->add(\UsersPeer::USR_USERNAME, $userName, \Criteria::EQUAL);
-            $criteria->add(\UsersPeer::USR_PASSWORD, $userPass, \Criteria::EQUAL);
-            $rsCriteria = \UsersPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $rsCriteria->next();
-            return $rsCriteria->getRow();
+            if (\G::is_https()) {
+                $http = 'https://';
+            } else {
+                $http = 'http://';
+            }
+            $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
+            @$client = new \SoapClient( $endpoint );
+            $user = $userName;
+            $pass = $userPass;
+            $params = array ('userid' => $user,'password' => $pass);
+            $result = $client->__SoapCall( 'login', array ($params) );
+            if ($result->status_code == 0) {
+                if (! class_exists( 'Users' )) {
+                    require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes". PATH_SEP . "model" . PATH_SEP . "UsersPeer.php");
+                }
+                $oCriteria = new \Criteria( 'workflow' );
+                $oCriteria->addSelectColumn( 'USR_UID' );
+                $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
+                $resultSet = \UsersPeer::doSelectRS( $oCriteria );
+                $resultSet->next();
+                $user_id = $resultSet->getRow();
+                $result->message = $user_id[0];
+                \G::LoadClass( 'case' );
+                $caseInstance = new \Cases();
+                if (! $caseInstance->canStartCase( $result->message, $sProcessUID )) {
+                    $result->status_code = - 1000;
+                    $result->message = \G::LoadTranslation( 'ID_USER_CASES_NOT_START' );
+                }
+            }
+            $message = $result->message;
+            return $message;
           } catch (\Exception $e) {
             throw $e;
         }
@@ -233,11 +257,11 @@ class CaseScheduler
             if ($this->existsName($sProcessUID, $aData['SCH_NAME'])) {
                 throw (new \Exception( 'duplicate Case Scheduler name'));
             }
-            $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
-            $arrayUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS']);
-            if (empty($arrayUser)) {
-                throw (new \Exception( 'invalid user or password'));
+            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS'], $sProcessUID);
+            if (!empty($mUser)) {
+                throw (new \Exception($mUser));
             }
+            $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
                 if(!preg_match($pattern, $aData['SCH_START_TIME'])) {
@@ -479,11 +503,11 @@ class CaseScheduler
             if ($this->existsNameUpdate($sSchUID, $aData['SCH_NAME'])) {
                 throw (new \Exception( 'duplicate Case Scheduler name'));
             }
-            $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
-            $arrayUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS']);
-            if (empty($arrayUser)) {
-                throw (new \Exception( 'invalid user or password'));
+            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS'], $sProcessUID);
+            if (!empty($mUser)) {
+                throw (new \Exception($mUser));
             }
+            $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
                 if(!preg_match($pattern, $aData['SCH_START_TIME'])) {
