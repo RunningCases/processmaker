@@ -622,7 +622,7 @@ class ProcessSupervisor
     {
         $oTypeDynaform = \DynaformPeer::retrieveByPK($sDynUID);
         if (is_null( $oTypeDynaform )) {
-            throw (new \Exception( 'This id: '. $sDynUID .' do not correspond to a registered Dynaform'));
+            throw (new \Exception( 'This id for `dyn_uid`: '. $sDynUID .' do not correspond to a registered Dynaform'));
         }
         $sDelimiter = \DBAdapter::getStringDelimiter();
         $oCriteria = new \Criteria('workflow');
@@ -703,7 +703,7 @@ class ProcessSupervisor
     {
         $oTypeInputDocument= \InputDocumentPeer::retrieveByPK($sInputDocumentUID);
         if (is_null( $oTypeInputDocument )) {
-            throw (new \Exception( 'This id: '. $sInputDocumentUID .' do not correspond to a registered InputDocument'));
+            throw (new \Exception( 'This id for `inp_doc_uid`: '. $sInputDocumentUID .' do not correspond to a registered InputDocument'));
         }
         $sDelimiter = \DBAdapter::getStringDelimiter();
         $oCriteria = new \Criteria('workflow');
