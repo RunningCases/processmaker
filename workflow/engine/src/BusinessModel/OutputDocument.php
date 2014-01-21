@@ -362,13 +362,13 @@ class OutputDocument
     }
 
      /**
-     * Checks if the title exists in the InputDocuments of Process
+     * Checks if the title exists in the OutputDocuments of Process
      *
      * @param string $processUid Unique id of Process
      * @param string $title      Title
-     * @param string $inputDocumentUidExclude Unique id of InputDocument to exclude
+     * @param string $outputDocumentUidExclude Unique id of InputDocument to exclude
      *
-     * return bool Return true if the title exists in the InputDocuments of Process, false otherwise
+     * return bool Return true if the title exists in the OutputDocuments of Process, false otherwise
      */
     public function existsTitle($processUid, $title)
     {
