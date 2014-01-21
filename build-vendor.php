@@ -1,6 +1,15 @@
+#!/usr/bin/env php
 <?php
 
+/*
+ * Script o build vendors that requires make some builds and copy some files to a determined path
+ *
+ * @license Colosa Inc.
+ * @author Erik Amaru Ortiz
+ */
+
 define('DS', DIRECTORY_SEPARATOR);
+
 // --no-ansi wins over --ansi
 if (in_array('--no-ansi', $argv)) {
     define('USE_ANSI', false);
@@ -31,24 +40,23 @@ $projects = array(
 );
 
 echo PHP_EOL;
-out(" *** Building js projects ***", 'info', true);
+out("Building JS Projects ", 'info');
+out("--------------------", 'info');
 
 foreach ($projects as $project) {
     echo PHP_EOL;
-    for($i=0; $i<40; $i++) echo '-';
-    echo PHP_EOL;
-    out(" Building: $project ", 'success', true);
-    for($i=0; $i<40; $i++) echo '-';
-    echo PHP_EOL.PHP_EOL;
-
+    out("=> Building project: ", 'info', false);
+    echo $project.' '.PHP_EOL;
     chdir($vendorDir.DS.$project);
-    echo `rake`;    
+    echo `rake`;
+    out("Completed!", 'success');
 }
 
 echo PHP_EOL;
 
 
-out(" *** Compying project files to its destination ***", 'info', true);
+out("Copying project files to its destination", 'info', true);
+out("----------------------------------------", 'info', true);
 
 $destinationDir = dirname(__FILE__) . DS . 'workflow/public_html/lib';
 
@@ -97,18 +105,79 @@ $filesCollection = array(
     "colosa/pmui/libraries/jquery-ui/js/jquery-ui-1.10.3.custom.min.js" => "js/jquery-ui-1.10.3.custom.min.js",
     "colosa/pmui/libraries/dataTables/js/jquery.dataTables.min.js" => "js/jquery.dataTables.min.js",
 
-    "colosa/pmui/build/js/min/pmui-1.0.0.min.js" => "pmUI/pmui-1.0.0.js",
+    array(
+        "try_files" => array("colosa/pmui/build/js/min/pmui-1.0.0.min.js", "colosa/pmui/build/js/pmui-1.0.0.js"),
+        "to_file" => "pmUI/pmui-1.0.0.js"
+    ),
     "colosa/pmui/build/css/pmui-1.0.0.css" => "pmUI/pmui-1.0.0.css",
     "colosa/pmui/build/img/*" => "img/",
 
 );
 
-echo "Destination dir: $destinationDir" . PHP_EOL.PHP_EOL;
+out("* Destination dir: ", 'info', false);
+echo $destinationDir . PHP_EOL.PHP_EOL;
+
+$successCount = 0;
 
 foreach ($filesCollection as $source => $target) {
-    out("Copy: ", 'info', false);
-    echo "$source $target" . PHP_EOL;
-    echo `cp -Rf $vendorDir/$source $destinationDir/$target`;
+    if (! is_array($target)) {
+        if (strpos($source, '*') !== false) {
+            out("Create dir: ", 'info', false);
+            echo $target;
+            out(" from source: ", 'info', false);
+            echo $source;
+            out(" [DONE]", "success", true) . PHP_EOL;
+            echo `cp -Rf $vendorDir/$source $destinationDir/$target`;
+            $successCount++;
+        } else {
+            out("Create file: ", 'info', false);
+            echo $target;
+            out(" from source: ", 'info', false);
+            echo $source;
+
+            if (file_exists("$vendorDir/$source")) {
+                out(" [DONE]", "success", true) . PHP_EOL;
+                echo `cp -Rf $vendorDir/$source $destinationDir/$target`;
+                $successCount++;
+            } else {
+                out(" [FAILED]", "error", true) . PHP_EOL;
+            }
+        }
+    } else {
+        out("Create file: ", 'info', false);
+        echo $target['to_file'];
+        out(" from source: ", 'info', false);
+
+        $sw = true;
+        $files = $target['try_files'];
+        $target = $target['to_file'];
+
+        foreach ($files as $file) {
+            if (file_exists("$vendorDir/$file")) {
+                echo $file;
+                out(" [DONE]", "success", true) . PHP_EOL;
+                echo `cp -Rf $vendorDir/$file $destinationDir/$target`;
+                $successCount++;
+                $sw = false;
+                break;
+            }
+        }
+
+        if ($sw) {
+            echo '('.implode(', ', $target['try_files']).')';
+            out(" [FAILED]", "error", true) . PHP_EOL;
+        }
+    }
+}
+
+$n = count($filesCollection);
+echo PHP_EOL;
+echo sprintf("- Finished, Copied [%s/%s] files.", $successCount, $n).PHP_EOL;
+
+if ($successCount == count($filesCollection)) {
+    out(sprintf("- All files copied successfully!", $successCount, $n), "success", true);
+} else {
+    out("- Finished but with errors while copying!", "error", true);
 }
 
 echo PHP_EOL;
@@ -116,24 +185,8 @@ echo PHP_EOL;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /////////////////////
+
 
 /**
  * colorize output
@@ -141,14 +194,14 @@ echo PHP_EOL;
 function out($text, $color = null, $newLine = true)
 {
     $styles = array(
-        'success' => "\033[0;32m%s\033[0m",
-        'error' => "\033[31;31m%s\033[0m",
-        'info' => "\033[33;33m%s\033[0m"
+        'success' => "\033[0;35;32m%s\033[0m",
+        'error' => "\033[0;35;31m%s\033[0m",
+        'info' => "\033[1;33;34m%s\033[0m"
     );
 
     $format = '%s';
 
-    if (isset($styles[$color]) && USE_ANSI) {
+    if (isset($styles[$color])) {
         $format = $styles[$color];
     }
 
