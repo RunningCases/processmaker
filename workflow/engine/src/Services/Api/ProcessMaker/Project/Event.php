@@ -49,7 +49,7 @@ class Event extends Api
 
     /**
      * @param string $projectUid {@min 1} {@max 32}
-     * @param string $EventUid {@min 1} {@max 32}
+     * @param string $eventUid {@min 1} {@max 32}
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -57,9 +57,9 @@ class Event extends Api
      *
      * @return array
      *
-     * @url GET /:projectUid/event/:EventUid
+     * @url GET /:projectUid/event/:eventUid
      */
-    public function doGetEvent($projectUid, $EventUid)
+    public function doGetEvent($projectUid, $eventUid)
     {
         try {
             $hiddenFields = array('pro_uid', 'evn_action_parameters',

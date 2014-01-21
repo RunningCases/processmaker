@@ -175,7 +175,7 @@ class CaseSchedulerStructure
     public $usr_uid;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@choice 1,2,3,4,5}
      */
     public $sch_option;
 
@@ -205,7 +205,7 @@ class CaseSchedulerStructure
     public $sch_week_days;
 
     /**
-     * @var string {@from body} {@choice 1,2}
+     * @var string {@from body} {@choice 1,2,}
      */
     public $sch_start_day;
 
@@ -233,19 +233,5 @@ class CaseSchedulerStructure
      */
     public $sch_repeat_every;
 
-    /**
-     * @var string {@from body} {@min 0} {@max 15}
-     */
-    public $sch_repeat_until; 
-
-    /**
-     * @var string {@from body} {@min 0} {@max 4}
-     */
-    public $sch_repeat_stop_if_running;
-
-    /**
-     * @var string {@from body} {@min 0} {@max 100}
-     */
-    public $case_sh_plugin_uid;
 }
     
