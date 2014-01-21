@@ -63,6 +63,9 @@ class ProcessSupervisor
                                  'usr_email' => $aRow['USR_EMAIL'] );
                 $oDataset->next();
             }
+            if ($aResp == null){
+                $aResp = array();
+            }
             return $aResp;
         } catch (Exception $e) {
             throw $e;
@@ -215,6 +218,7 @@ class ProcessSupervisor
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS, \Criteria::IN);
             $oCriteria->addAscendingOrderByColumn(\UsersPeer::USR_FIRSTNAME);
+            $oCriteria->add(\UsersPeer::USR_ROLE, 'PROCESSMAKER_ADMIN', \Criteria::EQUAL);
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -295,6 +299,10 @@ class ProcessSupervisor
     public function getProcessSupervisorDynaform($sProcessUID = '', $sPudUID = '')
     {
         try {
+            $oDynaformSupervisor = \StepSupervisorPeer::retrieveByPK( $sPudUID );
+            if (is_null( $oDynaformSupervisor ) ) {
+                throw (new \Exception( 'This id: '. $sPudUID .' do not correspond to a registered process supervisor '));
+            }
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
@@ -440,6 +448,10 @@ class ProcessSupervisor
     public function getProcessSupervisorInputDocument($sProcessUID = '', $sPuiUID = '')
     {
         try {
+            $oInputDocumentSupervisor = \StepSupervisorPeer::retrieveByPK( $sPuiUID );
+            if (is_null( $oInputDocumentSupervisor ) ) {
+                throw (new \Exception( 'This id: '. $sPuiUID .' do not correspond to a registered process supervisor '));
+            }
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
