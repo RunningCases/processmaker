@@ -73,11 +73,11 @@ class InputDocument
             }
 
             if (!isset($arrayData["INP_DOC_TITLE"])) {
-                throw (new \Exception(str_replace(array("{0}"), array("INP_DOC_TITLE"), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array(strtolower("INP_DOC_TITLE")), "The \"{0}\" attribute is not defined")));
             }
 
             if (isset($arrayData["INP_DOC_TITLE"]) && trim($arrayData["INP_DOC_TITLE"]) == "") {
-                throw (new \Exception(str_replace(array("{0}"), array("INP_DOC_TITLE"), "The \"{0}\" attribute is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array(strtolower("INP_DOC_TITLE")), "The \"{0}\" attribute is empty")));
             }
 
             if (isset($arrayData["INP_DOC_TITLE"]) && $this->titleExists($processUid, $arrayData["INP_DOC_TITLE"])) {
@@ -145,7 +145,7 @@ class InputDocument
             }
 
             if (isset($arrayData["INP_DOC_TITLE"]) && trim($arrayData["INP_DOC_TITLE"]) == "") {
-                throw (new \Exception(str_replace(array("{0}"), array("INP_DOC_TITLE"), "The \"{0}\" attribute is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array(strtolower("INP_DOC_TITLE")), "The \"{0}\" attribute is empty")));
             }
 
             if (isset($arrayData["INP_DOC_TITLE"]) && $this->titleExists($processUid, $arrayData["INP_DOC_TITLE"], $inputDocumentUid)) {
