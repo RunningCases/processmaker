@@ -7,7 +7,7 @@ Documentation for Michelangelo Backend API
 ProcessMaker is an open source, workflow management software suite, which includes tools to automate your workflow, design forms, create documents, assign roles and users, create routing rules, and map an individual process quickly and easily. It's relatively lightweight and doesn't require any kind of installation on the client computer
 
 The project is written in `Php`_ and is open-sourced under the `AGPL
-license`_. Packages can be downloaded from the project `http://www.processmaker.com`_. The `source
+license`_. Packages can be downloaded from the project `ProcessMaker Site`_. The `source
 code`_ can be obtained from GitHub. The `documentation`_ can be read on
 ReadTheDocs.
 
@@ -19,12 +19,8 @@ Table of Contents
    :maxdepth: 1
    :numbered:
 
-   install
-   quickstart
-   usage
-   admin
-   commandline
-   configuration
+   project_activity
+   project_activity.rst
    faq
    license
 
