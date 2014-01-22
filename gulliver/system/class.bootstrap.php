@@ -2341,9 +2341,10 @@ class Bootstrap
             $restUri .= '/' . $urlPart;
         }
 
-        $args = array();
+        $env = self::getSystemConfiguration();
+
         $args['SYS_LANG'] = 'en'; // TODO, this can be set from http header
-        $args['SYS_SKIN'] = '';
+        $args['SYS_SKIN'] = $env['default_skin'];
         $args['SYS_COLLECTION'] = '';
         $args['SYS_TARGET'] = $restUri;
         $args['API_VERSION'] = $apiVersion;
