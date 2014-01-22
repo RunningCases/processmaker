@@ -94,7 +94,7 @@ class ProjectUser
                         $tasksLastIndex = count( $taskValue ) - 1;
                         $taskValue = explode( ')', $taskValue[$tasksLastIndex] );
                         //echo "<option value=\"" . $task['uid'] . "\">" . $taskValue[0] . "</option>";
-                        echo $task['uid'] ."     ------    ".$aUsers["tas_uid"]." fin ";
+                        echo  $task['uid'] ."     ------    ".$aUsers." fin ";
                         //var_dump($aUsers);
                         if (in_array($task['uid'], $aUsers)) {
                              echo "Es mac";
