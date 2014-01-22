@@ -1,6 +1,9 @@
+==========================
 PROJECT ACTIVITY RESOURCES
+==========================
 
 1 SOLICITUDES
+-------------
 
 1.1 GET: Get properties & definition of a project activity.
 
@@ -14,67 +17,39 @@ Solicitud: No es necesario enviar datos en la solicitud.
 
 Retorno: Ejecutado el llamado, el JSON de respuesta es el siguiente:
 
+>>>
 {
-
  "definition": {},
-
  "properties": 
-
  {
-
  "tas_title": "Tarea Inicial",
-
  "tas_description": "La descripcion de esta tarea",
-
  "tas_priority_variable": "@@VAR_PRIORITY",
-
  "tas_derivation_screen_tpl": "template.html",
-
  "tas_start": "TRUE",
-
  "tas_assign_type" : "SELF_SERVICE_EVALUATE",
-
  "tas_assign_variable": "@@USER_LOGGED",
-
  "tas_group_variable": "@@GROUP_UID",
-
  "tas_selfservice_timeout": 1,
-
  "tas_selfservice_time": "2",
-
  "tas_selfservice_time_unit" : "DAYS",
-
  "tas_selfservice_trigger_uid" : "3229227245298e1c5191f95009451434",
-
  "tas_transfer_fly": "FALSE",
-
  "tas_duration" : "2",
-
  "tas_timeunit" : "DAYS",
-
  "tas_type_day": "2",
-
  "tas_calendar": "00000000000000000000000000000001",
-
  "tas_type": "ADHOC",
-
  "tas_def_title": "Case Title",
-
  "tas_def_description": "Case Descripction",
-
  "tas_send_last_email": "FALSE",
-
  "tas_def_subject_message": "Titulo de notifiacion",
-
  "tas_def_message_type": "template",
-
  "tas_def_message": "Esta es una notificacion",
-
  "tas_def_message_template": "template.html"
-
  }
-
 }
+
 
 Para conocer detalles de los campos json devueltos, ver CAMPOS PARA GET 
 
@@ -332,9 +307,19 @@ RETORNO Esta función no retorna ningún parámetro.
 
 3 CAMPOS PARA GET Y PUT EN ACTIVITY
 
-NOMBRE DESCRIPCIÓN REQUERIDO TIPO VALOR
 
-tas_title Nombre de la tarea NO String
++------------+------------+-----------+ 
+| NOMBRE   | DESCRIPCIÓN   | REQUERIDO  | TIPO | VALOR |
++============+============+===========+ 
+| tas_title | Nombre de la tarea   | NO  | String | |
++------------+------------+-----------+ 
+| body row 2 | Cells may span columns.| 
++------------+------------+-----------+ 
+| body row 3 | Cells may  | - Cells   | 
++------------+ span rows. | - contain | 
+| body row 4 |            | - blocks. | 
++------------+------------+-----------+
+   
 
 tas_description Descripción de la 
 

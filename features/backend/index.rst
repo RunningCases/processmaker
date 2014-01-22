@@ -17,8 +17,7 @@ Table of Contents
 
 .. toctree::
    :maxdepth: 1
-   :numbered:
-
+   
    project_activity
    project_activity.rst
    faq
