@@ -593,5 +593,42 @@ class Process
             throw $e;
         }
     }
+
+    /**
+     * Get all Web Entries of a Process
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return an array with all Web Entries of a Process
+     */
+    public function getWebEntries($processUid)
+    {
+        try {
+            $arrayWebEntry = array();
+
+            //Verify data
+            $process = new \Process();
+
+            if (!$process->exists($processUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
+            }
+
+            //Get data
+            $webEntry = new \BusinessModel\WebEntry();
+
+            $arrayWebEntryData = $webEntry->getData($processUid);
+
+            foreach ($arrayWebEntryData as $index => $value) {
+                $row = $value;
+
+                $arrayWebEntry[] = $webEntry->getWebEntryDataFromRecord($row);
+            }
+
+            //Return
+            return $arrayWebEntry;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
 
