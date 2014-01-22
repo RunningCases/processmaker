@@ -1,17 +1,13 @@
 .. _root:
 
-============================
-Documentation for picroscopy
-============================
+==========================================
+Documentation for Michelangelo Backend API
+==========================================
 
-Picroscopy is a small Python web-application which is intended for usage with a
-`Raspberry Pi`_ as a microscopy solution. With the `Raspberry Pi Camera`_
-mounted on a microscope, the Raspberry Pi provides a live video feed to its
-monitor via HDMI, while another machine can be used to control the setup via a
-web-based interface.
+ProcessMaker is an open source, workflow management software suite, which includes tools to automate your workflow, design forms, create documents, assign roles and users, create routing rules, and map an individual process quickly and easily. It's relatively lightweight and doesn't require any kind of installation on the client computer
 
-The project is written in `Python`_ 3 and is open-sourced under the `GPL
-license`_. Packages can be downloaded from the project `homepage`_. The `source
+The project is written in `Php`_ and is open-sourced under the `AGPL
+license`_. Packages can be downloaded from the project `http://www.processmaker.com`_. The `source
 code`_ can be obtained from GitHub. The `documentation`_ can be read on
 ReadTheDocs.
 
@@ -43,10 +39,8 @@ Indices and tables
 
 
 
-.. _Raspberry Pi: http://www.raspberrypi.org/
-.. _Raspberry Pi Camera: http://www.raspberrypi.org/camera
-.. _homepage: https://www.waveform.org.uk/picroscopy/
-.. _documentation: http://picroscopy.readthedocs.org/
-.. _source code: https://github.com/waveform80/picroscopy.git
-.. _Python: http://python.org/
-.. _GPL license: http://www.gnu.org/licenses/gpl-3.0.html
+.. _ProcessMaker Site: http://www.processmaker.com/
+.. _ProcessMaker Wiki: http://wiki.processmaker.com
+.. _source code: https://github.com/colosa/processmaker.git
+.. _Php: http://php.net/
+.. _AGPL license: http://www.gnu.org/licenses/agpl-3.0.html
