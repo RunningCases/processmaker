@@ -14,8 +14,8 @@ class Assignee extends Api
     /**
      * @url GET /:prjUid/activity/:actUid/assignee
      *
-     * @param string $prjUid
-     * @param string $actUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
      * @param string $filter
      * @param int    $start
      * @param int    $limit
@@ -39,8 +39,8 @@ class Assignee extends Api
     /**
      * @url GET /:prjUid/activity/:actUid/available-assignee
      *
-     * @param string $prjUid
-     * @param string $actUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
      * @param string $filter
      * @param int    $start
      * @param int    $limit
@@ -64,9 +64,9 @@ class Assignee extends Api
     /**
      * @url GET /:prjUid/activity/:actUid/assignee/:aasUid
      *
-     * @param string $prjUid
-     * @param string $actUid
-     * @param string $aasUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
+     * @param string $aasUid {@min 32} {@max 32}
      *
      */
     public function doGetActivityAssignee($prjUid, $actUid, $aasUid)
@@ -87,9 +87,9 @@ class Assignee extends Api
     /**
      * @url POST /:prjUid/activity/:actUid/assignee
      *
-     * @param string $prjUid
-     * @param string $actUid
-     * @param string $aas_uid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
+     * @param string $aas_uid {@min 32} {@max 32}
      * @param string $aas_type {@choice user,group}
      *
      * @status 201
@@ -109,9 +109,9 @@ class Assignee extends Api
     /**
      * @url DELETE /:prjUid/activity/:actUid/assignee/:aasUid
      *
-     * @param string $prjUid
-     * @param string $actUid
-     * @param string $aasUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
+     * @param string $aasUid {@min 32} {@max 32}
      *
      */
     public function doDeleteActivityAssignee($prjUid, $actUid, $aasUid)
@@ -129,8 +129,8 @@ class Assignee extends Api
     /**
      * @url GET /:prjUid/activity/:actUid/adhoc-assignee
      *
-     * @param string $prjUid
-     * @param string $actUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
      * @param string $filter
      * @param int    $start
      * @param int    $limit
@@ -154,8 +154,8 @@ class Assignee extends Api
     /**
      * @url GET /:prjUid/activity/:actUid/adhoc-available-assignee
      *
-     * @param string $prjUid
-     * @param string $actUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
      * @param string $filter
      * @param int    $start
      * @param int    $limit
@@ -179,9 +179,9 @@ class Assignee extends Api
     /**
      * @url GET /:prjUid/activity/:actUid/adhoc-assignee/:aasUid
      *
-     * @param string $prjUid
-     * @param string $actUid
-     * @param string $assUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
+     * @param string $assUid {@min 32} {@max 32}
      *
      */
     public function doGetActivityAdhocAssignee($prjUid, $actUid, $aasUid)
@@ -202,9 +202,9 @@ class Assignee extends Api
     /**
      * @url POST /:prjUid/activity/:actUid/adhoc-assignee
      *
-     * @param string $prjUid
-     * @param string $actUid
-     * @param string $ada_uid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
+     * @param string $ada_uid {@min 32} {@max 32}
      * @param string $ada_type {@choice user,group}
      *
      * @status 201
@@ -224,9 +224,9 @@ class Assignee extends Api
     /**
      * @url DELETE /:prjUid/activity/:actUid/adhoc-assignee/:adaUid
      *
-     * @param string $prjUid
-     * @param string $actUid
-     * @param string $adaUid
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
+     * @param string $adaUid {@min 32} {@max 32}
      *
      */
     public function doDeleteActivityAdhocAssignee($prjUid, $actUid, $adaUid)

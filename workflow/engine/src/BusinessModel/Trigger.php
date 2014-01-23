@@ -143,9 +143,7 @@ class Trigger
         }
 
         $dataTrigger= (array)$dataTrigger;
-        if (isset($dataTrigger['TRI_TYPE']) && $dataTrigger['TRI_TYPE'] == '') {
-            $dataTrigger['TRI_TYPE'] = 'SCRIPT';
-        }
+        $dataTrigger['TRI_TYPE'] = 'SCRIPT';
 
         if (isset($dataTrigger['TRI_TITLE'])) {
             if (!$this->verifyNameTrigger($sProcessUID, $dataTrigger['TRI_TITLE'], $sTriggerUid)) {

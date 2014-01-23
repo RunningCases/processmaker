@@ -1,8 +1,7 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Output Documents Main Tests
   Requirements:
-    a workspace with the process 4224292655297723eb98691001100052 already loaded
-    the process name is "Test Users-Step-Properties End Point"
+    a workspace with the process 4224292655297723eb98691001100052 ("Test Users-Step-Properties End Point") already loaded
     there are two output documents in the process
 
 

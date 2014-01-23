@@ -5,7 +5,7 @@ use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
 
 /**
- * Project\Activity\Step\Trigger Api Controller
+ * Project\Trigger Api Controller
  *
  * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
  * @copyright Colosa - Bolivia
@@ -59,7 +59,7 @@ class Trigger extends Api
      * @param array $request_data
      * @param string $tri_title {@from body} {@min 1}
      * @param string $tri_description {@from body}
-     * @param string $tri_type {@from body} {@choice SCRIPT}
+     * @param string $tri_type {@from body}
      * @param string $tri_webbot {@from body}
      * @param string $tri_param {@from body}
      * @return array
@@ -87,7 +87,7 @@ class Trigger extends Api
      * @param array $request_data
      * @param string $tri_title {@from body}
      * @param string $tri_description {@from body}
-     * @param string $tri_type {@from body} {@choice SCRIPT}
+     * @param string $tri_type {@from body}
      * @param string $tri_webbot {@from body}
      * @param string $tri_param {@from body}
      * @return void
