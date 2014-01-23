@@ -1111,7 +1111,12 @@ class RestContext extends BehatContext
     {
         $data = $this->_data;
         if (!is_array($data)) {
-            throw new Exception("the Response data is not an array!\n\n" );
+            if ($quantityOfRecords == 0) {
+                //if we expect 0 records and the response in fact is not an array, just return as a valid test
+                return;
+            } else {
+                throw new Exception("the Response data is not an array!\n\n" );
+            }
         }
         $currentRecordsCount=count($data);
         if($currentRecordsCount!=$quantityOfRecords){
@@ -1184,7 +1189,7 @@ class RestContext extends BehatContext
      */
     public function theResponseStatusMessageShouldHaveTheFollowingText($arg1)
     {
-        
+
             $message="";
             if($bodyResponse=json_decode($this->_response->getBody(true))){
                 if(isset($bodyResponse->error->message)){
@@ -1204,8 +1209,8 @@ class RestContext extends BehatContext
 
             }
 
-            
-        
+
+
     }
 
 
