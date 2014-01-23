@@ -69,7 +69,42 @@ class ProjectUsers extends Api
         return $response;
     }
 
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param wsUserCanStartTaskStructure $request_data
+     *
+     * @url POST /:prjUid/ws/user/can-start-task
+     */
+    public function doGetProjectWsUserCanStartTask($prjUid, wsUserCanStartTaskStructure $request_data =  null)
+    {
+        try {
+            $request_data = (array)($request_data);
+            $user = new \BusinessModel\ProjectUser();
+            $objectData = $user->postProjectWsUserCanStartTask($prjUid, $request_data);
+            //Response
+            $response = $objectData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
 
+}
 
+class wsUserCanStartTaskStructure
+{   /**
+     * @var string {@from body} {@min 32} {@max 32}
+     */
+    public $act_uid;
 
+    /**
+     * @var string {@from body}
+     */
+    public $username;
+
+    /**
+     * @var string {@from body}
+     */
+    public $password;
 }

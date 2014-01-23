@@ -189,7 +189,7 @@ class CaseScheduler
      * @param string $userPass  Password
      * @param string $sProcessUID  Process
      *
-     * return bool Return true if the user exists, false otherwise
+     * return message if the authentication fail
      */
     public function getUser($userName, $userPass, $sProcessUID)
     {
