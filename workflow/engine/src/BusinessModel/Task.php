@@ -589,6 +589,14 @@ class Task
     public function getTaskAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
+            }
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
@@ -693,6 +701,14 @@ class Task
     public function getTaskAvailableAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
+            }
             $iType = 1;
             $aUsers = array();
             $oTasks = new \Tasks();
@@ -788,6 +804,14 @@ class Task
     public function getTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
+            }
             $iType = 1;
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -889,6 +913,14 @@ class Task
     public function addTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID, $assType)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
+            }
             $iType = 1;
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
@@ -952,6 +984,14 @@ class Task
     public function removeTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
     {   
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
+            }
             $iType = 1;
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
@@ -988,6 +1028,14 @@ class Task
     public function getTaskAdhocAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
+            }
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
@@ -1089,6 +1137,14 @@ class Task
     public function getTaskAvailableAdhocAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
+            }
             $iType = 2;
             $aUsers = array();
             $oTasks = new \Tasks();
@@ -1184,6 +1240,14 @@ class Task
     public function getTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
+            }
             $iType = 2;
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -1285,6 +1349,14 @@ class Task
     public function addTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID, $assType)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
+            }
             $iType = 2;
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
@@ -1348,6 +1420,14 @@ class Task
     public function removeTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
     {   
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
+            }
             $iType = 2;
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
