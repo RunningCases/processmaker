@@ -5,7 +5,7 @@ use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
 
 /**
- * Project\Activity\Step\Trigger Api Controller
+ * Project\Trigger Api Controller
  *
  * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
  * @copyright Colosa - Bolivia
