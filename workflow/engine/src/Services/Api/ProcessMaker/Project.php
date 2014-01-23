@@ -182,5 +182,23 @@ class Project extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+    /**
+     * @url GET /:projectUid/web-entries
+     *
+     * @param string $projectUid {@min 32}{@max 32}
+     */
+    public function doGetWebEntries($projectUid)
+    {
+        try {
+            $process = new \BusinessModel\Process();
+
+            $response = $process->getWebEntries($projectUid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
 
