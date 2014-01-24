@@ -141,7 +141,7 @@
    <arg value="--format" />
    <arg value="junit,progress" />
    <arg value="--out" />
-   <arg value="build/logs/behat" />
+   <arg value="build/logs/behat," />
    <arg value="--no-snippets-paths" />
    <arg value="--no-paths" />
   </exec>
