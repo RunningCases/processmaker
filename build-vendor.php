@@ -19,9 +19,9 @@ if (in_array('--no-ansi', $argv)) {
     // On Windows, default to no ANSI, except in ANSICON and ConEmu.
     // Everywhere else, default to ANSI if stdout is a terminal.
     define('USE_ANSI',
-        (DIRECTORY_SEPARATOR == '\\')
-            ? (false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI'))
-            : (function_exists('posix_isatty') && posix_isatty(1))
+    (DIRECTORY_SEPARATOR == '\\')
+        ? (false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI'))
+        : (function_exists('posix_isatty') && posix_isatty(1))
     );
 }
 
@@ -35,8 +35,8 @@ if (! is_dir($vendorDir )) {
 }
 
 $projects = array(
-    'colosa/michelangelofe',
-    'colosa/pmui'
+    'colosa/MichelangeloFE',
+    'colosa/pmUI'
 );
 
 echo PHP_EOL;
@@ -81,36 +81,31 @@ if (! is_dir($destinationDir.'/pmUI')) {
 
 
 $filesCollection = array(
+    // Libs
     "jquery/jquery/jquery-1.10.2.min.js" => "js/jquery-1.10.2.min.js",
     "underscore/underscore/underscore-min.js" => "js/underscore-min.js",
-    //libs
-    /*"colosa/michelangelo-fe-libs/jQueryLayout/jquery.layout.min.js" => "js/jquery.layout.min.js",
-    "colosa/michelangelo-fe-libs/jQueryUI/jquery-ui-1.10.3.custom.min.js" => "js/jquery-ui-1.10.3.custom.min.js",
-    "colosa/michelangelo-fe-libs/jQueryUI/jquery-ui-1.10.3.custom.min.css" => "js/jquery-ui-1.10.3.custom.min.css",
-    "colosa/michelangelo-fe-libs/wz_jsgraphics/wz_jsgraphics.js" => "js/wz_jsgraphics.js",*/    
+    "colosa/pmUI/libraries/restclient/restclient-min.js" => "js/restclient-min.js",
 
-    "colosa/pmui/libraries/restclient/restclient-min.js" => "js/restclient-min.js",
-    
-    // michelangelofe
-    "colosa/michelangelofe/lib/wz_jsgraphics/wz_jsgraphics.js" => "js/wz_jsgraphics.js",
-    "colosa/michelangelofe/build/js/designer.js" => "mafe/designer.js",
-    "colosa/michelangelofe/build/js/mafe.min.js" => "mafe/mafe.min.js",
-    "colosa/michelangelofe/build/css/mafe.css" => "mafe/mafe.css",
-    "colosa/michelangelofe/build/img/*" => "img/",
-    // pmui
-    "colosa/pmui/libraries/jquery.layout/LayoutPanel.css" => "css/jquery.layout.css",
-    "colosa/pmui/libraries/jquery-ui/css/css-customized/jquery-ui-1.10.3.custom.css" => "css/jquery-ui-1.10.3.custom.min.css",
-    "colosa/pmui/libraries/dataTables/css/jquery.dataTables.css" => "css/jquery.dataTables.css",
-    "colosa/pmui/libraries/jquery.layout/jquery.layout.min.js" => "js/jquery.layout.min.js",
-    "colosa/pmui/libraries/jquery-ui/js/jquery-ui-1.10.3.custom.min.js" => "js/jquery-ui-1.10.3.custom.min.js",
-    "colosa/pmui/libraries/dataTables/js/jquery.dataTables.min.js" => "js/jquery.dataTables.min.js",
+    // MichelangeloFE
+    "colosa/MichelangeloFE/lib/wz_jsgraphics/wz_jsgraphics.js" => "js/wz_jsgraphics.js",
+    "colosa/MichelangeloFE/build/js/designer.js" => "mafe/designer.js",
+    "colosa/MichelangeloFE/build/js/mafe.min.js" => "mafe/mafe.min.js",
+    "colosa/MichelangeloFE/build/css/mafe.css" => "mafe/mafe.css",
+    "colosa/MichelangeloFE/build/img/*" => "img/",
+    // pmUI
+    "colosa/pmUI/libraries/jquery.layout/LayoutPanel.css" => "css/jquery.layout.css",
+    "colosa/pmUI/libraries/jquery-ui/css/css-customized/jquery-ui-1.10.3.custom.css" => "css/jquery-ui-1.10.3.custom.min.css",
+    "colosa/pmUI/libraries/dataTables/css/jquery.dataTables.css" => "css/jquery.dataTables.css",
+    "colosa/pmUI/libraries/jquery.layout/jquery.layout.min.js" => "js/jquery.layout.min.js",
+    "colosa/pmUI/libraries/jquery-ui/js/jquery-ui-1.10.3.custom.min.js" => "js/jquery-ui-1.10.3.custom.min.js",
+    "colosa/pmUI/libraries/dataTables/js/jquery.dataTables.min.js" => "js/jquery.dataTables.min.js",
 
     array(
-        "try_files" => array("colosa/pmui/build/js/min/pmui-1.0.0.min.js", "colosa/pmui/build/js/pmui-1.0.0.js"),
+        "try_files" => array("colosa/pmUI/build/js/min/pmui-1.0.0.min.js", "colosa/pmUI/build/js/pmui-1.0.0.js"),
         "to_file" => "pmUI/pmui-1.0.0.js"
     ),
-    "colosa/pmui/build/css/pmui-1.0.0.css" => "pmUI/pmui-1.0.0.css",
-    "colosa/pmui/build/img/*" => "img/",
+    "colosa/pmUI/build/css/pmui-1.0.0.css" => "pmUI/pmui-1.0.0.css",
+    "colosa/pmUI/build/img/*" => "img/",
 
 );
 
@@ -164,7 +159,7 @@ foreach ($filesCollection as $source => $target) {
         }
 
         if ($sw) {
-            echo '('.implode(', ', $target['try_files']).')';
+            echo '('.implode(', ', $files).')';
             out(" [FAILED]", "error", true) . PHP_EOL;
         }
     }

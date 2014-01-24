@@ -153,7 +153,7 @@ class CaseScheduler
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
             return $rsCriteria->getRow();
-          } catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -177,7 +177,7 @@ class CaseScheduler
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
             return $rsCriteria->getRow();
-          } catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -189,7 +189,7 @@ class CaseScheduler
      * @param string $userPass  Password
      * @param string $sProcessUID  Process
      *
-     * return bool Return true if the user exists, false otherwise
+     * return message if the authentication fail
      */
     public function getUser($userName, $userPass, $sProcessUID)
     {
@@ -225,7 +225,7 @@ class CaseScheduler
             }
             $message = $result->message;
             return $message;
-          } catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -264,23 +264,23 @@ class CaseScheduler
             $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
-                if(!preg_match($pattern, $aData['SCH_START_TIME'])) {
+                if (!preg_match($pattern, $aData['SCH_START_TIME'])) {
                     throw (new \Exception( 'invalid value specified for `sch_start_time`. Expecting time in HH:MM format (The time can not be increased to 23:59)'));
                 }
             }
             $patternDate="/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/";
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
-                if(!preg_match($patternDate, $aData['SCH_START_DATE'])) {
+                if (!preg_match($patternDate, $aData['SCH_START_DATE'])) {
                     throw (new \Exception( 'invalid value specified for `sch_start_date`. Expecting date in `YYYY-MM-DD` format, such as `2014-01-01`'));
                 }
             }
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
-                if(!preg_match($patternDate, $aData['SCH_END_DATE'])) {
+                if (!preg_match($patternDate, $aData['SCH_END_DATE'])) {
                     throw (new \Exception( 'invalid value specified for `sch_end_date`. Expecting date in `YYYY-MM-DD` format, such as `2014-01-01`'));
                 }
             }
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
-                if($aData['SCH_START_DATE'] == "") {
+                if ($aData['SCH_START_DATE'] == "") {
                     throw (new \Exception( '`sch_start_date` can`t be null'));
                 }
             }
@@ -323,7 +323,7 @@ class CaseScheduler
                     }
                     break;
                 case '2': // If the option is zero, set by default 1
-                    if($aData['SCH_WEEK_DAYS'] == "") {
+                    if ($aData['SCH_WEEK_DAYS'] == "") {
                         throw (new \Exception( '`sch_week_days` can`t be null'));
                     } else {
                         $weeks = $aData['SCH_WEEK_DAYS'];
@@ -346,7 +346,7 @@ class CaseScheduler
                     $sWeeks = '';
                     if (! empty( $aData['SCH_WEEK_DAYS'] )) {
                         $aWeekDays = $aData['SCH_WEEK_DAYS'];
-                    }                    
+                    }
                     $sStartTime = $aData['SCH_START_TIME'];
                     $sWeeks = $aData['SCH_WEEK_DAYS'] . '|';
                     break;
@@ -361,7 +361,7 @@ class CaseScheduler
                         }
                         $temp = $aData['SCH_START_DAY_OPT_1'];
                         $temp = (int)$temp;
-                        if($temp >= 1 && $temp <= 31) {
+                        if ($temp >= 1 && $temp <= 31) {
                             $aData['SCH_START_DAY_OPT_1'] = $aData['SCH_START_DAY_OPT_1'];
                         } else {
                             throw (new \Exception( 'invalid value specified for `sch_start_day_opt_1`. Must be between 1 and 31'));
@@ -431,7 +431,7 @@ class CaseScheduler
                         throw (new \Exception( '`sch_repeat_every` can`t be null'));
                     }
                     $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
-                    if(!preg_match($patternHour, $aData['SCH_REPEAT_EVERY'])) {
+                    if (!preg_match($patternHour, $aData['SCH_REPEAT_EVERY'])) {
                         throw (new \Exception( 'invalid value specified for `sch_repeat_every`. Expecting time in HH.MM format (The time can not be increased to 23.59)'));
                     }
                     $nextRun = $aData['SCH_REPEAT_EVERY'] * 60 * 60;
@@ -510,23 +510,23 @@ class CaseScheduler
             $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
-                if(!preg_match($pattern, $aData['SCH_START_TIME'])) {
+                if (!preg_match($pattern, $aData['SCH_START_TIME'])) {
                     throw (new \Exception( 'invalid value specified for `sch_start_time`. Expecting time in HH:MM format (The time can not be increased to 23:59)'));
                 }
             }
             $patternDate="/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/";
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
-                if(!preg_match($patternDate, $aData['SCH_START_DATE'])) {
+                if (!preg_match($patternDate, $aData['SCH_START_DATE'])) {
                     throw (new \Exception( 'invalid value specified for `sch_start_date`. Expecting date in `YYYY-MM-DD` format, such as `2014-01-01`'));
                 }
             }
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
-                if(!preg_match($patternDate, $aData['SCH_END_DATE'])) {
+                if (!preg_match($patternDate, $aData['SCH_END_DATE'])) {
                     throw (new \Exception( 'invalid value specified for `sch_end_date`. Expecting date in `YYYY-MM-DD` format, such as `2014-01-01`'));
                 }
             }
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
-                if($aData['SCH_START_DATE'] == "") {
+                if ($aData['SCH_START_DATE'] == "") {
                     throw (new \Exception( '`sch_start_date` can`t be null'));
                 }
             }
@@ -569,7 +569,7 @@ class CaseScheduler
                     }
                     break;
                 case '2': // If the option is zero, set by default 1
-                    if($aData['SCH_WEEK_DAYS'] == "") {
+                    if ($aData['SCH_WEEK_DAYS'] == "") {
                         throw (new \Exception( '`sch_week_days` can`t be null'));
                     } else {
                         $weeks = $aData['SCH_WEEK_DAYS'];
@@ -607,7 +607,7 @@ class CaseScheduler
                         }
                         $temp = $aData['SCH_START_DAY_OPT_1'];
                         $temp = (int)$temp;
-                        if($temp >= 1 && $temp <= 31) {
+                        if ($temp >= 1 && $temp <= 31) {
                             $aData['SCH_START_DAY_OPT_1'] = $aData['SCH_START_DAY_OPT_1'];
                         } else {
                             throw (new \Exception( 'invalid value specified for `sch_start_day_opt_1`. Must be between 1 and 31'));
@@ -670,14 +670,14 @@ class CaseScheduler
                         $sDateTmp = date( 'Y-m-d' );
                         $aData['SCH_START_DATE'] = $sDateTmp;
                     }
-                    $aData['SCH_END_DATE'] = date( 'Y-m-d', strtotime( $sDateTmp ) ) . ' ' . date( 'H:i:s', strtotime( $sTimeTmp ) );
+                    $aData['SCH_END_DATE'] = date('Y-m-d', strtotime($sDateTmp)) . ' ' . date('H:i:s', strtotime($sTimeTmp));
                     $aData['SCH_START_TIME'] = time();
                     $aData['SCH_START_DATE'] = $aData['SCH_START_TIME'];
                     if ($aData['SCH_REPEAT_EVERY'] == "") {
                         throw (new \Exception( '`sch_repeat_every` can`t be null'));
                     }
                     $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
-                    if(!preg_match($patternHour, $aData['SCH_REPEAT_EVERY'])) {
+                    if (!preg_match($patternHour, $aData['SCH_REPEAT_EVERY'])) {
                         throw (new \Exception( 'invalid value specified for `sch_repeat_every`. Expecting time in HH.MM format (The time can not be increased to 23.59)'));
                     }
                     $nextRun = $aData['SCH_REPEAT_EVERY'] * 60 * 60;
@@ -711,7 +711,7 @@ class CaseScheduler
             $oCriteria = $this->getCaseScheduler($sProcessUID, $sSchUID);
             return $oCriteria;
         } catch (\Exception $e) {
-                throw $e;
+            throw $e;
         }
     }
 
@@ -724,16 +724,16 @@ class CaseScheduler
      * @access public
      */
     public function deleteCaseScheduler($sProcessUID, $sSchUID)
-    {   
+    {
         try {
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes". PATH_SEP . "model" . PATH_SEP . "CaseScheduler.php");
             $oCaseScheduler = new \CaseScheduler();
-            if ( !isset($sSchUID ) ) {
+            if (!isset($sSchUID)) {
                 return;
             }
             $oCaseScheduler->remove($sSchUID);
         } catch (\Exception $e) {
-                throw $e;
+            throw $e;
         }
     }
 }

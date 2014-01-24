@@ -29,38 +29,22 @@
             }
         },
         {
-            "type": "package",
-            "package": {
-                "name": "colosa/pmui",
-                "version": "dev-master",
-                "source": {
-                    "url": "git@bitbucket.org:colosa/pmui.git",
-                    "type": "git",
-                    "reference": "origin/master"
-                }
-            }
+            "type": "vcs",
+            "url":  "git@bitbucket.org:colosa/pmUI.git"
         },
         {
-            "type": "package",
-            "package": {
-                "name": "colosa/michelangelofe",
-                "version": "dev-master",
-                "source": {
-                    "url": "git@bitbucket.org:colosa/michelangelofe.git",
-                    "type": "git",
-                    "reference": "origin/master"
-                }
-            }
+            "type": "vcs",
+            "url":  "git@bitbucket.org:colosa/MichelangeloFE.git"
         }
     ],
     
     "require": {
-        "luracast/restler" : "dev-master",
+        "luracast/restler" : "v3.0.0",
         "bshaffer/oauth2-server-php": "v1.0",
         "jquery/jquery": "1.10.2",
-        "colosa/pmui": "dev-master",
-        "colosa/michelangelofe": "dev-master",
-        "underscore/underscore": "1.5.2"
+        "underscore/underscore": "1.5.2",
+        "colosa/pmUI": "dev-master",
+        "colosa/MichelangeloFE": "dev-master"
     },
     "require-dev":{
         "guzzle/guzzle":"~3.1.1",

@@ -60,7 +60,8 @@ Ext.onReady(function(){
         {name : 'CASES_COUNT_DRAFT', type:'float'},
         {name : 'CASES_COUNT_TO_DO', type:'float'},
         {name : 'CASES_COUNT_COMPLETED', type:'float'},
-        {name : 'CASES_COUNT_CANCELLED', type:'float'}
+        {name : 'CASES_COUNT_CANCELLED', type:'float'},
+        {name : 'PROJECT_TYPE', type:'string'}
       ]
     }),
 
@@ -197,7 +198,13 @@ Ext.onReady(function(){
         {id:'PRO_UID', dataIndex: 'PRO_UID', hidden:true, hideable:false},
         {header: "", dataIndex: 'PRO_STATUS', width: 50, hidden:true, hideable:false},
         {header: _('ID_PRO_DESCRIPTION'), dataIndex: 'PRO_DESCRIPTION',hidden:true, hideable:false},
-        {header: _('ID_PRO_TITLE'), dataIndex: 'PRO_TITLE', width: 300},
+        {header: _('ID_PRO_TITLE'), dataIndex: 'PRO_TITLE', width: 300, renderer:function(v,p,r){
+            // TODO Labels for var 'type' are hardcoded, they must be replaced on the future
+            var color = r.get('PROJECT_TYPE') == 'bpmn'? 'green': 'blue';
+            var type = r.get('PROJECT_TYPE') == 'bpmn'? ' (BPMN Project)': '';
+            return v + ' ' + String.format("<font color='{0}'>{1}</font>", color, type);
+        }},
+        {header: _('ID_TYPE'), dataIndex: 'PROJECT_TYPE', width: 60, hidden:false},
         {header: _('ID_CATEGORY'), dataIndex: 'PRO_CATEGORY_LABEL', width: 100, hidden:false},
         {header: _('ID_STATUS'), dataIndex: 'PRO_STATUS_LABEL', width: 50, renderer:function(v,p,r){
           color = r.get('PRO_STATUS') == 'ACTIVE'? 'green': 'red';
@@ -216,23 +223,51 @@ Ext.onReady(function(){
     store: store,
     tbar:[
       {
+        xtype: 'tbsplit',
+        text: _('ID_NEW'),
+        iconCls: 'button_menu_ext ss_sprite ss_add',
+        menu: [
+            {
+                text: "New Project",
+                iconCls: 'silk-add',
+                icon: '',
+                handler: function () {
+                    newProcess({type:"classicProject"});
+                }
+            },
+            {
+                text: "New BPMN Project",
+                iconCls: 'silk-add',
+                icon: '',
+                handler: function () {
+                    newProcess({type:"bpmnProject"});
+                }
+            }
+        ],
+        listeners: {
+            "click": function (obj, e) {
+                obj.showMenu();
+            }
+        }
+      },/*
+      {
         text: _('ID_NEW'),
         iconCls: 'button_menu_ext ss_sprite ss_add',
         //icon: '/images/addc.png',
         handler: newProcess
-      },
+      },*/
     	'-'
       ,{
         text: _('ID_EDIT'),
         iconCls: 'button_menu_ext ss_sprite  ss_pencil',
         //icon: '/images/edit.gif',
         handler: editProcess
-      },{
+      },/*{
         text: 'Edit (New Editor)',
         iconCls: 'button_menu_ext',
         icon: '/images/pencil_beta.png',
         handler: editNewProcess
-      },{
+      },*/{
         text: _('ID_STATUS'),
         id:'activator',
         icon: '',
@@ -412,8 +447,14 @@ Ext.onReady(function(){
 });
 
 
-function newProcess(){
-  //  window.location = 'processes_New';
+function newProcess(params)
+{
+  params = typeof params == 'undefined' ? {type:'classicProject'} : params;
+
+  // TODO this variable have hardcoded labels, it must be changed on the future
+  var formTitle = params.type == "classicProject" ? "New Project" : "New BPMN Project"
+
+    //  window.location = 'processes_New';
   var ProcessCategories = new Ext.form.ComboBox({
     fieldLabel : _('ID_CATEGORY'),
     hiddenName : 'PRO_CATEGORY',
@@ -444,7 +485,6 @@ function newProcess(){
   ProcessCategories.store.on('load',function(store) {
     ProcessCategories.setValue(store.getAt(0).get('CATEGORY_UID'));
   });
-
 
   var frm = new Ext.FormPanel( {
     id: 'newProcessForm',
@@ -487,27 +527,35 @@ function newProcess(){
   });
 
   var win = new Ext.Window({
-    title: _('ID_CREATE_PROCESS'),
+    id: 'newProjectWin',
+    title: formTitle, //_('ID_CREATE_PROCESS'),
     width: 470,
     height: 220,
     layout:'fit',
     autoScroll:true,
     modal: true,
     maximizable: false,
-    items: [frm]
+    items: [frm],
+    _projectType: params.type
   });
   win.show();
 }
 
 function saveProcess()
 {
+  var projectType = Ext.getCmp('newProjectWin')._projectType;
+
   Ext.getCmp('newProcessForm').getForm().submit( {
-    url : '../processProxy/saveProcess',
+    url : '../processProxy/saveProcess?type=' + projectType,
     waitMsg : _('ID_SAVING_PROCESS'),
     waitTitle : "&nbsp;",
     timeout : 36000,
     success : function(obj, resp) {
-      location.href = 'processes_Map?PRO_UID='+resp.result.PRO_UID;
+      if (projectType == 'classicProject') {
+        location.href = 'processes_Map?PRO_UID='+resp.result.PRO_UID;
+      } else {
+        location.href = '../designer?pro_uid='+resp.result.PRO_UID;
+      }
     },
     failure: function(obj, resp) {
       PMExt.error( _('ID_ERROR'), resp.result.msg);
@@ -527,7 +575,8 @@ function doSearch(){
 editProcess = function(){
   var rowSelected = processesGrid.getSelectionModel().getSelected();
   if( rowSelected ) {
-    location.href = 'processes_Map?PRO_UID='+rowSelected.data.PRO_UID+'&rand='+Math.random()
+    //location.href = 'processes_Map?PRO_UID='+rowSelected.data.PRO_UID+'&rand='+Math.random()
+    location.href = 'openDesigner?pro_uid='+rowSelected.data.PRO_UID+'&rand='+Math.random()
   } else {
      Ext.Msg.show({
       title:'',

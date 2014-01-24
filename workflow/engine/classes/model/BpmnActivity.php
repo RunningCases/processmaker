@@ -26,59 +26,32 @@ class BpmnActivity extends BaseBpmnActivity
         $this->bound->setBouContainer('bpmnDiagram');
     }
 
-    /* DEPRECATED, IT WILL BE REMOVED SOON
-    public function create($data, $generateUid = true)
+    public function getBound()
     {
-        // validate foreign keys, they must be present into data array
-
-        if (! array_key_exists('PRJ_UID', $data)) {
-            throw new PropelException("Error, required param 'PRJ_UID' is missing!");
-        }
-
-        if (! array_key_exists('PRO_UID', $data)) {
-            throw new PropelException("Error, required param 'PRO_UID' is missing!");
-        }
-
-        $this->fromArray($data, BasePeer::TYPE_FIELDNAME);
-
-        if ($generateUid) {
-            $this->setActUid(\ProcessMaker\Util\Hash::generateUID());
-        }
-
-        $this->save();
-        $process = BpmnProcessPeer::retrieveByPK($data['PRO_UID']);
-
-        // create related bound
-        $bound = new Bound();
-        $bound->fromArray($data, BasePeer::TYPE_FIELDNAME);
-        $bound->setBouUid(\ProcessMaker\Util\Hash::generateUID());
-        $bound->setPrjUid($this->getPrjUid());
-        $bound->setDiaUid($process->getDiaUid());
-        $bound->setElementUid($this->getActUid());
-        $bound->setBouElementType('bpmnActivity');
-        $bound->setBouElement('pm_canvas');
-        $bound->setBouContainer('bpmnDiagram');
-        $bound->save();
-    }*/
+        return $this->bound;
+    }
 
 
     // OVERRIDES
 
-	public function fromArray($data)
+    public function setActUid($actUid)
     {
-        parent::fromArray($data, BasePeer::TYPE_FIELDNAME);
+        parent::setActUid($actUid);
+        $this->bound->setElementUid($this->getActUid());
+    }
 
-        // try resolve the related bound
-        if (array_key_exists('BOU_UID', $data)) {
-            //$bound = BpmnBound::findByElement('Activity', $this->getActUid());
-            $bound = BpmnBoundPeer::retrieveByPK($data['BOU_UID']);
+    public function setPrjUid($prjUid)
+    {
+        parent::setPrjUid($prjUid);
+        $this->bound->setPrjUid($this->getPrjUid());
+    }
 
-            if (is_object($bound)) {
-                $this->bound = $bound;
-            }
-        }
+    public function setProUid($proUid)
+    {
+        parent::setProUid($proUid);
 
-        $this->bound->fromArray($data, BasePeer::TYPE_FIELDNAME);
+        $process = BpmnProcessPeer::retrieveByPK($this->getProUid());
+        $this->bound->setDiaUid($process->getDiaUid());
     }
 
     public function save($con = null)
@@ -88,6 +61,32 @@ class BpmnActivity extends BaseBpmnActivity
         if (is_object($this->bound) && get_class($this->bound) == 'BpmnBound') {
             $this->bound->save($con);
         }
+    }
+
+    public function delete($con = null)
+    {
+        // first, delete the related bound object
+        if (is_object($this->bound) && get_class($this->bound) == 'BpmnBound') {
+            $this->bound->delete($con);
+        }
+
+        parent::delete($con);
+    }
+
+	public function fromArray($data)
+    {
+        parent::fromArray($data, BasePeer::TYPE_FIELDNAME);
+
+        // try resolve the related bound
+        $bound = BpmnBound::findByElement('Activity', $this->getActUid());
+
+        //if (array_key_exists('BOU_UID', $data)) {
+        if (is_object($bound)) {
+            //$bound = BpmnBoundPeer::retrieveByPK($data['BOU_UID']);
+            $this->bound = $bound;
+        }
+
+        $this->bound->fromArray($data, BasePeer::TYPE_FIELDNAME);
     }
 
     public function toArray($keyType = BasePeer::TYPE_PHPNAME)
