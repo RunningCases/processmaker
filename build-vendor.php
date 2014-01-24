@@ -19,9 +19,9 @@ if (in_array('--no-ansi', $argv)) {
     // On Windows, default to no ANSI, except in ANSICON and ConEmu.
     // Everywhere else, default to ANSI if stdout is a terminal.
     define('USE_ANSI',
-        (DIRECTORY_SEPARATOR == '\\')
-            ? (false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI'))
-            : (function_exists('posix_isatty') && posix_isatty(1))
+    (DIRECTORY_SEPARATOR == '\\')
+        ? (false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI'))
+        : (function_exists('posix_isatty') && posix_isatty(1))
     );
 }
 
@@ -85,7 +85,7 @@ $filesCollection = array(
     "jquery/jquery/jquery-1.10.2.min.js" => "js/jquery-1.10.2.min.js",
     "underscore/underscore/underscore-min.js" => "js/underscore-min.js",
     "colosa/pmUI/libraries/restclient/restclient-min.js" => "js/restclient-min.js",
-    
+
     // MichelangeloFE
     "colosa/MichelangeloFE/lib/wz_jsgraphics/wz_jsgraphics.js" => "js/wz_jsgraphics.js",
     "colosa/MichelangeloFE/build/js/designer.js" => "mafe/designer.js",
@@ -101,10 +101,10 @@ $filesCollection = array(
     "colosa/pmUI/libraries/dataTables/js/jquery.dataTables.min.js" => "js/jquery.dataTables.min.js",
 
     array(
-        "try_files" => array("colosa/pmUI/build/js/min/pmUI-1.0.0.min.js", "colosa/pmUI/build/js/pmUI-1.0.0.js"),
-        "to_file" => "pmUI/pmUI-1.0.0.js"
+        "try_files" => array("colosa/pmUI/build/js/min/pmui-1.0.0.min.js", "colosa/pmUI/build/js/pmui-1.0.0.js"),
+        "to_file" => "pmUI/pmui-1.0.0.js"
     ),
-    "colosa/pmUI/build/css/pmUI-1.0.0.css" => "pmUI/pmUI-1.0.0.css",
+    "colosa/pmUI/build/css/pmui-1.0.0.css" => "pmUI/pmui-1.0.0.css",
     "colosa/pmUI/build/img/*" => "img/",
 
 );
@@ -159,7 +159,7 @@ foreach ($filesCollection as $source => $target) {
         }
 
         if ($sw) {
-            echo '('.implode(', ', $target['try_files']).')';
+            echo '('.implode(', ', $files).')';
             out(" [FAILED]", "error", true) . PHP_EOL;
         }
     }
