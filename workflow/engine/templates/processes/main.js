@@ -230,17 +230,17 @@ Ext.onReady(function(){
             {
                 text: "New Project",
                 iconCls: 'silk-add',
-                icon: '/images/delete-16x16.gif',
+                icon: '',
                 handler: function () {
-                    newProcess({type:"bpmnProject"});
+                    newProcess({type:"classicProject"});
                 }
             },
             {
-                text: "New Project (Old Version)",
+                text: "New BPMN Project",
                 iconCls: 'silk-add',
-                icon: '/images/delete-16x16.gif',
+                icon: '',
                 handler: function () {
-                    newProcess({type:"classicProject"});
+                    newProcess({type:"bpmnProject"});
                 }
             }
         ],
@@ -452,7 +452,7 @@ function newProcess(params)
   params = typeof params == 'undefined' ? {type:'classicProject'} : params;
 
   // TODO this variable have hardcoded labels, it must be changed on the future
-  var formTitle = params.type == "classicProject" ? "New Project (Old Version)" : "New Project"
+  var formTitle = params.type == "classicProject" ? "New Project" : "New BPMN Project"
 
     //  window.location = 'processes_New';
   var ProcessCategories = new Ext.form.ComboBox({
