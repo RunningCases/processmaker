@@ -651,7 +651,7 @@ class Task
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
-            if ($filter) {
+            if ($filter || $filter=='0') {
                 $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
             }
             $oCriteria->addSelectColumn(\TaskUserPeer::TAS_UID);
@@ -663,10 +663,18 @@ class Task
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
             if ($start) {
-                $oCriteria->setOffset( $start );
+                if ($start < 0) {
+                    throw (new \Exception( 'invalid value specified for `start`.'));
+                } else {
+                    $oCriteria->setOffset( $start );
+                }
             }
             if ($limit) {
-                $oCriteria->setLimit( $limit );
+                if ($limit < 0) {
+                    throw (new \Exception( 'invalid value specified for `limit`.'));
+                } else {
+                    $oCriteria->setLimit( $limit );
+                }
             }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -762,16 +770,24 @@ class Task
             $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
-            if ($filter) {
+            if ($filter || $filter=='0') {
                  $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
             }
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS2, \Criteria::NOT_IN);
             if ($start) {
-                $oCriteria->setOffset( $start );
+                if ($start < 0) {
+                    throw (new \Exception( 'invalid value specified for `start`.'));
+                } else {
+                    $oCriteria->setOffset( $start );
+                }
             }
             if ($limit) {
-                $oCriteria->setLimit( $limit );
+                if ($limit < 0) {
+                    throw (new \Exception( 'invalid value specified for `limit`.'));
+                } else {
+                    $oCriteria->setLimit( $limit );
+                }
             }
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -1090,7 +1106,7 @@ class Task
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
-            if ($filter) {
+            if ($filter || $filter=='0') {
                  $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
             }
             $oCriteria->addSelectColumn(\TaskUserPeer::TAS_UID);
@@ -1102,10 +1118,18 @@ class Task
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 2);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
             if ($start) {
-                $oCriteria->setOffset( $start );
+                if ($start < 0) {
+                    throw (new \Exception( 'invalid value specified for `start`.'));
+                } else {
+                    $oCriteria->setOffset( $start );
+                }
             }
             if ($limit) {
-                $oCriteria->setLimit( $limit );
+                if ($limit < 0) {
+                    throw (new \Exception( 'invalid value specified for `limit`.'));
+                } else {
+                    $oCriteria->setLimit( $limit );
+                }
             }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -1198,16 +1222,24 @@ class Task
             $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
-            if ($filter) {
+            if ($filter || $filter=='0') {
                  $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
             }
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS2, \Criteria::NOT_IN);
             if ($start) {
-                $oCriteria->setOffset( $start );
+                if ($start < 0) {
+                    throw (new \Exception( 'invalid value specified for `start`.'));
+                } else {
+                    $oCriteria->setOffset( $start );
+                }
             }
             if ($limit) {
-                $oCriteria->setLimit( $limit );
+                if ($limit < 0) {
+                    throw (new \Exception( 'invalid value specified for `limit`.'));
+                } else {
+                    $oCriteria->setLimit( $limit );
+                }
             }
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
