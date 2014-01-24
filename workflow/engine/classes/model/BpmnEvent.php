@@ -53,6 +53,20 @@ class BpmnEvent extends BaseBpmnEvent
         }
     }
 
+    public function delete($con = null)
+    {
+        // first, delete the related bound object
+        if (! is_object($this->bound)) {
+            $this->bound = BpmnBound::findByElement('Event', $this->getActUid());
+        }
+
+        if (is_object($this->bound)) {
+            $this->bound->delete($con);
+        }
+
+        parent::delete($con);
+    }
+
     public function toArray($keyType = BasePeer::TYPE_PHPNAME)
     {
         $data = parent::toArray($keyType);

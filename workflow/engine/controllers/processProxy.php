@@ -104,6 +104,7 @@ class ProcessProxy extends HttpProxyController
         } catch (Exception $e) {
             $this->success = false;
             $this->msg = $e->getMessage();
+            $this->trace = $e->getTraceAsString();
         }
     }
 

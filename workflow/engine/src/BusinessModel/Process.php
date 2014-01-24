@@ -483,7 +483,8 @@ class Process
      * return bool   Return true, if is succesfully
      *
      * @access public
-     */
+
+    DEPRECATED
     public function deleteProcess($processUid, $checkCases = true)
     {
         if ($checkCases) {
@@ -508,6 +509,216 @@ class Process
 
         return $processMap->deleteProcess($processUid);
 
+    }*/
+
+    public function deleteProcess($sProcessUID)
+    {
+        try {
+            G::LoadClass('case');
+            G::LoadClass('reportTables');
+            //Instance all classes necesaries
+            $oProcess = new Process();
+            $oDynaform = new Dynaform();
+            $oInputDocument = new InputDocument();
+            $oOutputDocument = new OutputDocument();
+            $oTrigger = new Triggers();
+            $oRoute = new Route();
+            $oGateway = new Gateway();
+            $oEvent = new Event();
+            $oSwimlaneElement = new SwimlanesElements();
+            $oConfiguration = new Configuration();
+            $oDbSource = new DbSource();
+            $oReportTable = new ReportTables();
+            $oCaseTracker = new CaseTracker();
+            $oCaseTrackerObject = new CaseTrackerObject();
+            //Delete the applications of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ApplicationPeer::PRO_UID, $sProcessUID);
+            $oDataset = ApplicationPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            $oCase = new Cases();
+            while ($aRow = $oDataset->getRow()) {
+                $oCase->removeCase($aRow['APP_UID']);
+                $oDataset->next();
+            }
+            //Delete the tasks of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(TaskPeer::PRO_UID, $sProcessUID);
+            $oDataset = TaskPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $this->deleteTask($aRow['TAS_UID']);
+                $oDataset->next();
+            }
+            //Delete the dynaforms of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
+            $oDataset = DynaformPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $oDynaform->remove($aRow['DYN_UID']);
+                $oDataset->next();
+            }
+            //Delete the input documents of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(InputDocumentPeer::PRO_UID, $sProcessUID);
+            $oDataset = InputDocumentPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $oInputDocument->remove($aRow['INP_DOC_UID']);
+                $oDataset->next();
+            }
+            //Delete the output documents of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(OutputDocumentPeer::PRO_UID, $sProcessUID);
+            $oDataset = OutputDocumentPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $oOutputDocument->remove($aRow['OUT_DOC_UID']);
+                $oDataset->next();
+            }
+
+            //Delete the triggers of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(TriggersPeer::PRO_UID, $sProcessUID);
+            $oDataset = TriggersPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $oTrigger->remove($aRow['TRI_UID']);
+                $oDataset->next();
+            }
+
+            //Delete the routes of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(RoutePeer::PRO_UID, $sProcessUID);
+            $oDataset = RoutePeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $oRoute->remove($aRow['ROU_UID']);
+                $oDataset->next();
+            }
+
+            //Delete the gateways of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(GatewayPeer::PRO_UID, $sProcessUID);
+            $oDataset = GatewayPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $oGateway->remove($aRow['GAT_UID']);
+                $oDataset->next();
+            }
+
+            //Delete the Event of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(EventPeer::PRO_UID, $sProcessUID);
+            $oDataset = EventPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $oEvent->remove($aRow['EVN_UID']);
+                $oDataset->next();
+            }
+
+            //Delete the swimlanes elements of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(SwimlanesElementsPeer::PRO_UID, $sProcessUID);
+            $oDataset = SwimlanesElementsPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $oSwimlaneElement->remove($aRow['SWI_UID']);
+                $oDataset->next();
+            }
+            //Delete the configurations of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ConfigurationPeer::PRO_UID, $sProcessUID);
+            $oDataset = ConfigurationPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $oConfiguration->remove($aRow['CFG_UID'], $aRow['OBJ_UID'], $aRow['PRO_UID'], $aRow['USR_UID'], $aRow['APP_UID']);
+                $oDataset->next();
+            }
+            //Delete the DB sources of process
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(DbSourcePeer::PRO_UID, $sProcessUID);
+            $oDataset = DbSourcePeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+
+                /**
+                 * note added by gustavo cruz gustavo-at-colosa-dot-com 27-01-2010
+                 * in order to solve the bug 0004389, we use the validation function Exists
+                 * inside the remove function in order to verify if the DbSource record
+                 * exists in the Database, however there is a strange behavior within the
+                 * propel engine, when the first record is erased somehow the "_deleted"
+                 * attribute of the next row is set to true, so when propel tries to erase
+                 * it, obviously it can't and trows an error. With the "Exist" function
+                 * we ensure that if there is the record in the database, the _delete attribute must be false.
+                 *
+                 * note added by gustavo cruz gustavo-at-colosa-dot-com 28-01-2010
+                 * I have just identified the source of the issue, when is created a $oDbSource DbSource object
+                 * it's used whenever a record is erased or removed in the db, however the problem
+                 * it's that the same object is used every time, and the delete method invoked
+                 * sets the _deleted attribute to true when its called, of course as we use
+                 * the same object, the first time works fine but trowns an error with the
+                 * next record, cos it's the same object and the delete method checks if the _deleted
+                 * attribute it's true or false, the attrib _deleted is setted to true the
+                 * first time and later is never changed, the issue seems to be part of
+                 * every remove function in the model classes, not only DbSource
+                 * i recommend that a more general solution must be achieved to resolve
+                 * this issue in every model class, to prevent future problems.
+                 */
+                $oDbSource->remove($aRow['DBS_UID'], $sProcessUID);
+                $oDataset->next();
+            }
+            //Delete the supervisors
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ProcessUserPeer::PRO_UID, $sProcessUID);
+            ProcessUserPeer::doDelete($oCriteria);
+            //Delete the object permissions
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ObjectPermissionPeer::PRO_UID, $sProcessUID);
+            ObjectPermissionPeer::doDelete($oCriteria);
+            //Delete the step supervisors
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(StepSupervisorPeer::PRO_UID, $sProcessUID);
+            StepSupervisorPeer::doDelete($oCriteria);
+            //Delete the report tables
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ReportTablePeer::PRO_UID, $sProcessUID);
+            $oDataset = ReportTablePeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $oReportTable->deleteReportTable($aRow['REP_TAB_UID']);
+                $oDataset->next();
+            }
+            //Delete case tracker configuration
+            $oCaseTracker->remove($sProcessUID);
+            //Delete case tracker objects
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(CaseTrackerObjectPeer::PRO_UID, $sProcessUID);
+            ProcessUserPeer::doDelete($oCriteria);
+            //Delete the process
+            try {
+                $oProcess->remove($sProcessUID);
+            } catch (Exception $oError) {
+                throw ($oError);
+            }
+            return true;
+        } catch (Exception $oError) {
+            throw ($oError);
+        }
     }
 
     /**

@@ -38,6 +38,15 @@ use Symfony\Component\Yaml\Exception\RuntimeException;
  */
 class Model
 {
+    private static $diagramElements = array(
+        'act_uid' => 'activities',
+        'evn_uid' => 'events',
+        'flo_uid' => 'flows',
+        'art_uid' => 'artifacts',
+        'lns_uid' => 'laneset',
+        'lan_uid' => 'lanes'
+    );
+
     public function createProject($data, $replaceUids = false)
     {
         $data = array_change_key_case($data, CASE_UPPER);
@@ -71,16 +80,15 @@ class Model
 
         if ($replaceUids) {
             $uids[] = array('old_uid' => $oldPrjUid, 'new_uid' => $prjUid, 'object' => 'project');
-            $mapId['project'][$oldPrjUid] = $prjUid;
         }
 
-        if (! isset($diagrams)) {
+        /*if (! isset($diagrams)) {
             if ($replaceUids) {
                 return $uids;
             } else {
                 return self::loadProject($prjUid);
             }
-        }
+        }*/
 
         $diagram = new Diagram();
 
@@ -101,8 +109,7 @@ class Model
         $diaUid = $diagram->getDiaUid();
 
         if ($replaceUids) {
-            $uids[] = array('old_uid' => $oldDiaUid, 'new_uid' => $diaUid, 'object' => 'diagram');
-            $mapId['diagram'][$oldDiaUid] = $diaUid;
+            $uids[] = array('old_uid' => (isset($oldDiaUid) ? $oldDiaUid : ''), 'new_uid' => $diaUid, 'object' => 'diagram');
         }
 
         $process = new Process();
@@ -125,8 +132,7 @@ class Model
         $proUid = $process->getProUid();
 
         if ($replaceUids) {
-            $uids[] = array('old_uid' => $oldProUid, 'new_uid' => $proUid, 'object' => 'project');
-            $mapId['process'][$oldProUid] = $proUid;
+            $uids[] = array('old_uid' => (isset($oldProUid) ? $oldProUid : ''), 'new_uid' => $proUid, 'object' => 'project');
         }
 
 
@@ -369,12 +375,17 @@ class Model
          */
 
         $project = self::getBpmnObjectBy('Project', ProjectPeer::PRJ_UID, $prjUid, true);
+
+        if(empty($project)) {
+            throw new \RuntimeException("Project with id: $prjUid, does not exists. ");
+        }
+
         $process = self::getBpmnObjectBy('Process', ProcessPeer::PRJ_UID, $prjUid, true);
         $diagram = self::getBpmnObjectBy('Diagram', DiagramPeer::DIA_UID, $process['dia_uid'], true);
 
         $project = array_change_key_case($project);
 
-        if (! empty($diagram)) {
+        //if (! empty($diagram)) {
             $lanesets = self::getBpmnCollectionBy('Laneset', LanesetPeer::PRJ_UID, $prjUid, true);
             $lanes = self::getBpmnCollectionBy('Lane', LanePeer::PRJ_UID, $prjUid, true);
             $activities = self::getBpmnCollectionBy('Activity', ActivityPeer::PRJ_UID, $prjUid, true);
@@ -412,6 +423,7 @@ class Model
 
 
             $project['diagrams'] = array($diagram);
+            $project['diagrams'][0]['pro_uid'] = $process['pro_uid'];
             $project['diagrams'][0]['laneset'] = $lanesets;
             $project['diagrams'][0]['lanes'] = $lanes;
             $project['diagrams'][0]['activities'] = $activities;
@@ -419,7 +431,7 @@ class Model
             $project['diagrams'][0]['gateways'] = $gateways;
             $project['diagrams'][0]['flows'] = $flows;
             $project['diagrams'][0]['artifacts'] = $artifacts;
-        }
+        //}
 
         return $project;
     }
@@ -615,6 +627,60 @@ class Model
         }
 
     }
+    public function deleteProject($prjUid)
+    {
+        $project = self::loadProject($prjUid);
+
+        // TODO first at all, make validation, the project can only deleted if there are not any started case for it
+
+        // Delete related objects
+        $diagramData = $project['diagrams'][0];
+
+        foreach ($diagramData['flows'] as $data) {
+            $flow = FlowPeer::retrieveByPK($data['flo_uid']);
+            $flow->delete();
+        }
+        foreach ($diagramData['artifacts'] as $data) {
+            $artifact = ArtifactPeer::retrieveByPK($data['art_uid']);
+            $artifact->delete();
+        }
+        foreach ($diagramData['lanes'] as $data) {
+            $lane = LanePeer::retrieveByPK($data['lan_uid']);
+            $lane->delete();
+        }
+        foreach ($diagramData['laneset'] as $data) {
+            $laneset = LanesetPeer::retrieveByPK($data['lns_uid']);
+            $laneset->delete();
+        }
+        foreach ($diagramData['laneset'] as $data) {
+            $laneset = LanesetPeer::retrieveByPK($data['lns_uid']);
+            $laneset->delete();
+        }
+        foreach ($diagramData['activities'] as $data) {
+            $activity = ActivityPeer::retrieveByPK($data['act_uid']);
+            $activity->delete();
+        }
+        foreach ($diagramData['events'] as $data) {
+            $event = EventPeer::retrieveByPK($data['evn_uid']);
+            $event->delete();
+        }
+        foreach ($diagramData['gateways'] as $data) {
+            $gateway = GatewayPeer::retrieveByPK($data['gat_uid']);
+            $gateway->delete();
+        }
+
+        $process = ProcessPeer::retrieveByPK($diagramData['pro_uid']);
+        $process->delete();
+
+        $project = ProjectPeer::retrieveByPK($prjUid);
+        $project->delete();
+
+    }
+
+
+    /*
+     * Others functions
+     */
 
     public static function getDiffFromProjects($savedProject, $updatedProject)
     {

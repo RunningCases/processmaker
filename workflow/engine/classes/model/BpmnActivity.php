@@ -66,7 +66,11 @@ class BpmnActivity extends BaseBpmnActivity
     public function delete($con = null)
     {
         // first, delete the related bound object
-        if (is_object($this->bound) && get_class($this->bound) == 'BpmnBound') {
+        if (! is_object($this->bound)) {
+            $this->bound = BpmnBound::findByElement('Activity', $this->getActUid());
+        }
+
+        if (is_object($this->bound)) {
             $this->bound->delete($con);
         }
 

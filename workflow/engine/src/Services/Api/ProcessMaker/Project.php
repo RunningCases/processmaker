@@ -162,6 +162,18 @@ class Project extends Api
         }
     }
 
+    public function delete($prjUid)
+    {
+        try {
+            $process = new \BusinessModel\Process();
+            $process->deleteProcess($prjUid);
+
+            BpmnModel::deleteProject($prjUid);
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
     /**
      * @url GET /:projectUid/dynaforms
      */
