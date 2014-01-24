@@ -223,7 +223,7 @@ class ProjectUser
                     $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
                     $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
                     if (! ($userIsAssigned >= 1)) {
-                        $messageCode = "The User `" . $sWS_USER . "` doesn't have the activity `" . $sTASKS . "` assigned";
+                        throw (new \Exception( "The User `" . $sWS_USER . "` doesn't have the activity `" . $sTASKS . "` assigned"));
                     }
                 }
                 $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
@@ -237,7 +237,7 @@ class ProjectUser
                     $oDataset->next();
                 }
             } else {
-                $messageCode = $result->message;
+                throw (new \Exception( $result->message));
             }
             return $messageCode;
         } catch (Exception $e) {
