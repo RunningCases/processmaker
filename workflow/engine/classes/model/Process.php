@@ -645,13 +645,27 @@ class Process extends BaseProcess
             $casesCnt = $this->getCasesCountInAllProcesses();
         }
 
+        // getting bpmn projects
+        $c = new Criteria('workflow');
+        $c->addSelectColumn(BpmnProjectPeer::PRJ_UID);
+        $ds = ProcessPeer::doSelectRS($c);
+        $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $bpmnProjects = array();
+
+        while ($ds->next()) {
+            $row = $ds->getRow();
+            $bpmnProjects[] = $row['PRJ_UID'];
+        }
+
         //execute the query
         $oDataset = ProcessPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $processes = Array ();
         $uids = array ();
         while ($oDataset->next()) {
-            $processes[] = $oDataset->getRow();
+            $row = $oDataset->getRow();
+            $row['PROJECT_TYPE'] = in_array($row['PRO_UID'], $bpmnProjects) ? 'bpmn' : 'classic';
+            $processes[] = $row;
             $uids[] = $processes[sizeof( $processes ) - 1]['PRO_UID'];
         }
 
@@ -725,7 +739,7 @@ class Process extends BaseProcess
                 $process['PRO_CREATE_DATE'] = date( $creationDateMask, mktime( $h, $i, $s, $m, $d, $y ) );
             }
 
-            $process['PRO_CATEGORY_LABEL'] = trim( $process['PRO_CATEGORY'] ) != '' ? $process['CATEGORY_NAME'] : G::LoadTranslation( 'ID_PROCESS_NO_CATEGORY' );
+            $process['PRO_CATEGORY_LABEL'] = trim( $process['PRO_CATEGORY'] ) != '' ? $process['CATEGORY_NAME'] : '- ' . G::LoadTranslation( 'ID_PROCESS_NO_CATEGORY' ) . ' -';
             $process['PRO_TITLE'] = $proTitle;
             $process['PRO_DESCRIPTION'] = $proDescription;
             $process['PRO_DEBUG'] = $process['PRO_DEBUG'];
@@ -885,9 +899,9 @@ class Process extends BaseProcess
     	if (($this->sort) == '')  {
     		$this->sort = 'PRO_TITLE'; 
     	}
-        if ($a[$this->sort] > $b[$this->sort]) {
+        if (strtolower($a[$this->sort]) > strtolower($b[$this->sort])) {
             return 1;
-        } elseif ($a[$this->sort] < $b[$this->sort]) {
+        } elseif (strtolower($a[$this->sort]) < strtolower($b[$this->sort])) {
             return - 1;
         } else {
             return 0;
@@ -899,9 +913,9 @@ class Process extends BaseProcess
     	if (($this->sort) == '')  {
     		$this->sort = 'PRO_TITLE';
     	}
-		if ($a[$this->sort] > $b[$this->sort]) {
+		if (strtolower($a[$this->sort]) > strtolower($b[$this->sort])) {
 			return - 1;
-		} elseif ($a[$this->sort] < $b[$this->sort]) {
+		} elseif (strtolower($a[$this->sort]) < strtolower($b[$this->sort])) {
 			return 1;
 		} else {
 			return 0;

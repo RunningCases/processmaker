@@ -5,7 +5,7 @@ use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
 
 /**
- * Project\Activity\Step\Event Api Controller
+ * Project\Event Api Controller
  *
  * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
  * @copyright Colosa - Bolivia
@@ -104,10 +104,23 @@ class Event extends Api
      * @url POST /:projectUid/event
      * @status 201
      */
-    public function doPostEvent($projectUid, $request_data, $evn_description, $evn_status, $evn_action,
-        $evn_related_to, $tas_uid, $evn_tas_uid_from, $evn_tas_estimated_duration,
-        $evn_time_unit, $evn_when, $evn_when_occurs, $tri_uid, $evn_tas_uid_to = '', $evn_conditions = '')
-    {
+    public function doPostEvent(
+        $projectUid,
+        $request_data,
+        $evn_description,
+        $evn_status,
+        $evn_action,
+        $evn_related_to,
+        $tas_uid,
+        $evn_tas_uid_from,
+        $evn_tas_estimated_duration,
+        $evn_time_unit,
+        $evn_when,
+        $evn_when_occurs,
+        $tri_uid,
+        $evn_tas_uid_to = '',
+        $evn_conditions = ''
+    ) {
         try {
             $hiddenFields = array('pro_uid', 'evn_action_parameters',
                 'evn_posx', 'evn_posy', 'evn_type', 'tas_evn_uid', 'evn_max_attempts'
@@ -151,13 +164,33 @@ class Event extends Api
      *
      * @url PUT /:projectUid/event/:eventUid
      */
-    public function doPutEvent ($projectUid, $eventUid, $request_data, $evn_description, $evn_status, $evn_action,
-        $evn_related_to, $tas_uid, $evn_tas_uid_from, $evn_tas_estimated_duration,
-        $evn_time_unit, $evn_when, $evn_when_occurs, $tri_uid, $evn_tas_uid_to = '', $evn_conditions = '')
-    {
+    public function doPutEvent (
+        $projectUid,
+        $eventUid,
+        $request_data,
+        $evn_description,
+        $evn_status,
+        $evn_action,
+        $evn_related_to,
+        $tas_uid,
+        $evn_tas_uid_from,
+        $evn_tas_estimated_duration,
+        $evn_time_unit,
+        $evn_when,
+        $evn_when_occurs,
+        $tri_uid,
+        $evn_tas_uid_to = '',
+        $evn_conditions = ''
+    ) {
         try {
-            $hiddenFields = array('pro_uid', 'evn_action_parameters',
-                'evn_posx', 'evn_posy', 'evn_type', 'tas_evn_uid', 'evn_max_attempts'
+            $hiddenFields = array(
+                'pro_uid',
+                'evn_action_parameters',
+                'evn_posx',
+                'evn_posy',
+                'evn_type',
+                'tas_evn_uid',
+                'evn_max_attempts'
             );
             $request_data['evn_uid'] = $eventUid;
             $event = new \BusinessModel\Event();
