@@ -75,7 +75,7 @@ class ProjectUsers extends Api
      *
      * @url POST /:prjUid/ws/user/can-start-task
      */
-    public function doGetProjectWsUserCanStartTask($prjUid, wsUserCanStartTaskStructure $request_data =  null)
+    public function doPostProjectWsUserCanStartTask($prjUid, wsUserCanStartTaskStructure $request_data =  null)
     {
         try {
             $request_data = (array)($request_data);

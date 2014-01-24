@@ -57,15 +57,15 @@ Scenario Outline: Assign a user or group to an activity (Field validation)
     | high number for start | a      | 1000  | 1       | 0       |  200      | array |
     | high number for start | a      | 1000  | 0       | 0       |  200      | array |
     | empty result          | xyz    |   0   | 0       | 0       |  200      | array |
-    | empty string          |        |   0   | 10000   | 0       |  200      | array |
-    | empty string          |        |   1   | 2       | 0       |  200      | array |
+    | empty string          |        |   0   | 10000   | 3       |  200      | array |
+    | empty string          |        |   1   | 2       | 2       |  200      | array |
     | invalid start         | a      |   b   | c       | 0       |  400      | string|
     | invalid limit         | a      |   0   | c       | 0       |  400      | string|
     | search 0              | 0      |   0   | 0       | 0       |  200      | array |
     | search 0              | 0      |   0   | 100     | 0       |  200      | array |
-    | negative numbers      | a      |  -10  | -20     | 0       |  200      | array |
-    | real numbers          | a      |  0.0  | 1.0     | 0       |  400      | string|
-    | real numbers          | a      |  0.0  | 0.0     | 0       |  400      | string|
+    | negative numbers      | a      |  -10  | -20     | 0       |  400      | string|
+    | real numbers          | a      |  0.0  | 1.0     | 1       |  200      | string|
+    | real numbers          | a      |  0.0  | 0.0     | 3       |  200      | string|
     | real numbers          | a      |  0.1  | 1.4599  | 0       |  400      | string|
     | real numbers          | a      |  1.5  | 1.4599  | 0       |  400      | string|
 
