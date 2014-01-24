@@ -1727,7 +1727,7 @@ class G
     * @param type Array $aFields
     * @return type String
     */
-    public function replaceDataGridField($sContent, $aFields)
+    public function replaceDataGridField($sContent, $aFields, $nl2brRecursive = true)
     {
         $nrt     = array("\n",    "\r",    "\t");
         $nrthtml = array("(n /)", "(r /)", "(t /)");
@@ -1760,6 +1760,13 @@ class G
 
                         if (isset($aFields[$grdName]) && is_array($aFields[$grdName])) {
                             foreach ($aFields[$grdName] as $aRow) {
+                                if ($nl2brRecursive) {
+                                    foreach ($aRow as $sKey => $vValue) {
+                                        if (!is_array($vValue)) {
+                                            $aRow[$sKey] = nl2br($aRow[$sKey]);
+                                        }
+                                    }
+                                }
                                 $strData = $strData . G::replaceDataField($arrayMatch2[2], $aRow);
                             }
                         }
@@ -1777,6 +1784,14 @@ class G
         $strContentAux = str_replace($nrthtml, $nrt, $strContentAux);
 
         $sContent = $strContentAux;
+
+        if ($nl2brRecursive) {
+            foreach ($aFields as $sKey => $vValue) {
+                if (!is_array($vValue)) {
+                    $aFields[$sKey] = nl2br($aFields[$sKey]);
+                }
+            }
+        }
 
         $sContent = G::replaceDataField($sContent, $aFields);
 
