@@ -2340,7 +2340,7 @@ class G
      * @param string $parameter
      * @return string
      */
-    public function header ($parameter)
+    public static function header ($parameter)
     {
         if (defined( 'ENABLE_ENCRYPT' ) && (ENABLE_ENCRYPT == 'yes') && (substr( $parameter, 0, 9 ) == 'location:')) {
             $url = G::encryptUrl( substr( $parameter, 10 ), URL_KEY );

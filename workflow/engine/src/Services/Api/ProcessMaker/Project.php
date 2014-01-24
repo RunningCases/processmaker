@@ -33,18 +33,31 @@ class Project extends Api
     function post($request_data)
     {
         try {
-            $bpmnModel = new BpmnModel();
-            $uids = $bpmnModel->createProject($request_data);
+            $config = array();
+            $config['project'] = array('replace_uids' => true);
 
-            $wfProcess = Workflow::loadFromBpmnProject($uids[0]['new_uid']);
+            $bpmnModel = new BpmnModel();
+            $result = $bpmnModel->createProject($request_data, $config['project']['replace_uids']);
+
+            if (array_key_exists('prj_uid', $result)) {
+                $prjUid = $result['prj_uid'];
+            } else {
+                $prjUid = $result[0]['new_uid'];
+            }
+
+            $wfProcess = Workflow::loadFromBpmnProject($prjUid);
 
             $process = new \BusinessModel\Process();
             $userUid = $this->getUserId();
             $data = array('process' => $wfProcess);
+
             $process->createProcess($userUid, $data);
 
-            return $uids;
+            return $result;
         } catch (\Exception $e) {
+            // TODO in case that $process->createProcess($userUid, $data); fails maybe the BPMN project was created successfully
+            //      so, we need remove it or change the creation order.
+
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }

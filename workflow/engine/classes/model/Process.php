@@ -645,13 +645,27 @@ class Process extends BaseProcess
             $casesCnt = $this->getCasesCountInAllProcesses();
         }
 
+        // getting bpmn projects
+        $c = new Criteria('workflow');
+        $c->addSelectColumn(BpmnProjectPeer::PRJ_UID);
+        $ds = ProcessPeer::doSelectRS($c);
+        $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $bpmnProjects = array();
+
+        while ($ds->next()) {
+            $row = $ds->getRow();
+            $bpmnProjects[] = $row['PRJ_UID'];
+        }
+
         //execute the query
         $oDataset = ProcessPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $processes = Array ();
         $uids = array ();
         while ($oDataset->next()) {
-            $processes[] = $oDataset->getRow();
+            $row = $oDataset->getRow();
+            $row['PROJECT_TYPE'] = in_array($row['PRO_UID'], $bpmnProjects) ? 'bpmn' : 'classic';
+            $processes[] = $row;
             $uids[] = $processes[sizeof( $processes ) - 1]['PRO_UID'];
         }
 

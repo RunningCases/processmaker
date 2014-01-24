@@ -27,6 +27,7 @@ use \BpmnArtifactPeer as ArtifactPeer;
 
 use \ProcessMaker\Util\Hash;
 use \BasePeer;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 
 /**
@@ -37,15 +38,13 @@ use \BasePeer;
  */
 class Model
 {
-    public function createProject($data)
+    public function createProject($data, $replaceUids = false)
     {
         $data = array_change_key_case($data, CASE_UPPER);
         $uids = array();
-        $oldPrjUid = $data['PRJ_UID'];
-        $diagrams = $data['DIAGRAMS'];
+        $diagrams = array_key_exists('DIAGRAMS', $data) && is_array($data['DIAGRAMS'])
+            && count($data['DIAGRAMS']) > 0 ? $data['DIAGRAMS'] : null;
         $mapId = array();
-
-        unset($data['PRJ_UID']);
 
         /*
          * 1. Create a project record
@@ -55,38 +54,99 @@ class Model
 
         $project = new Project();
         $project->fromArray($data, BasePeer::TYPE_FIELDNAME);
-        $project->setPrjUid(Hash::generateUID());
+
+        if (array_key_exists('PRJ_UID', $data)) {
+            if ($replaceUids) {
+                $oldPrjUid = $data['PRJ_UID'];
+                $project->setPrjUid(Hash::generateUID());
+            }
+        } else {
+            $project->setPrjUid(Hash::generateUID());
+        }
+
         $project->setPrjCreateDate(date("Y-m-d H:i:s"));
         $project->save();
         $prjUid  = $project->getPrjUid();
         $prjName = $project->getPrjName();
-        $uids[] = array('old_uid' => $oldPrjUid, 'new_uid' => $prjUid, 'object' => 'project');
-        $mapId['project'][$oldPrjUid] = $prjUid;
 
-        // By now, is thought create only one diagram for each project (1:1)
-        $diagramData = (array) $diagrams[0];
-        $oldDiaUid = $diagramData['dia_uid'];
+        if ($replaceUids) {
+            $uids[] = array('old_uid' => $oldPrjUid, 'new_uid' => $prjUid, 'object' => 'project');
+            $mapId['project'][$oldPrjUid] = $prjUid;
+        }
+
+        if (! isset($diagrams)) {
+            if ($replaceUids) {
+                return $uids;
+            } else {
+                return self::loadProject($prjUid);
+            }
+        }
 
         $diagram = new Diagram();
-        $diagram->setDiaUid(Hash::generateUID());
+
+        if (isset($diagrams) && array_key_exists('dia_uid', $diagrams[0])) {
+            if ($replaceUids) {
+                $oldDiaUid = $diagrams[0]['dia_uid'];
+                $diagram->setDiaUid(Hash::generateUID());
+            } else {
+                $diagram->setDiaUid($diagrams[0]['dia_uid']);
+            }
+        } else {
+            $diagram->setDiaUid(Hash::generateUID());
+        }
+
         $diagram->setPrjUid($prjUid);
         $diagram->setDiaName($prjName);
         $diagram->save();
         $diaUid = $diagram->getDiaUid();
-        $uids[] = array('old_uid' => $oldDiaUid, 'new_uid' => $diaUid, 'object' => 'diagram');
-        $mapId['diagram'][$oldDiaUid] = $diaUid;
+
+        if ($replaceUids) {
+            $uids[] = array('old_uid' => $oldDiaUid, 'new_uid' => $diaUid, 'object' => 'diagram');
+            $mapId['diagram'][$oldDiaUid] = $diaUid;
+        }
 
         $process = new Process();
-        $process->setProUid(Hash::generateUID());
+
+        if (isset($diagrams) && array_key_exists('pro_uid', $diagrams[0])) {
+            if ($replaceUids) {
+                $oldProUid = $data['pro_uid'];
+                $process->setProUid(Hash::generateUID());
+            } else {
+                $process->setProUid($diagrams[0]['pro_uid']);
+            }
+        } else {
+            $process->setProUid(Hash::generateUID());
+        }
+
         $process->setPrjUid($prjUid);
         $process->setDiaUid($diaUid);
         $process->setProName($prjName);
         $process->save();
         $proUid = $process->getProUid();
 
-        $uids = array_merge($uids, $this->createDiagram($prjUid, $proUid, $diaUid, $diagramData));
+        if ($replaceUids) {
+            $uids[] = array('old_uid' => $oldProUid, 'new_uid' => $proUid, 'object' => 'project');
+            $mapId['process'][$oldProUid] = $proUid;
+        }
 
-        return $uids;
+
+        if (isset($diagrams)) {
+            // By now, is thought create only one diagram for each project (1:1)
+            $diagramData = (array) $diagrams[0];
+
+            // there is not a defined diagram to save
+            $diagramUids = $this->createDiagram($prjUid, $proUid, $diaUid, $diagramData, $replaceUids);
+
+            if ($replaceUids) {
+                $uids = array_merge($uids, $diagramUids);
+            }
+        }
+
+        if ($replaceUids) {
+            return $uids;
+        } else {
+            return self::loadProject($prjUid);
+        }
     }
 
     private function createDiagram($prjUid, $proUid, $diaUid, $diagramData)
@@ -311,47 +371,55 @@ class Model
         $project = self::getBpmnObjectBy('Project', ProjectPeer::PRJ_UID, $prjUid, true);
         $process = self::getBpmnObjectBy('Process', ProcessPeer::PRJ_UID, $prjUid, true);
         $diagram = self::getBpmnObjectBy('Diagram', DiagramPeer::DIA_UID, $process['dia_uid'], true);
-        $lanesets = self::getBpmnCollectionBy('Laneset', LanesetPeer::PRJ_UID, $prjUid, true);
-        $lanes = self::getBpmnCollectionBy('Lane', LanePeer::PRJ_UID, $prjUid, true);
-        $activities = self::getBpmnCollectionBy('Activity', ActivityPeer::PRJ_UID, $prjUid, true);
-        $events = self::getBpmnCollectionBy('Event', EventPeer::PRJ_UID, $prjUid, true);
-        $gateways = self::getBpmnCollectionBy('Gateway', GatewayPeer::PRJ_UID, $prjUid, true);
-        $flows = self::getBpmnCollectionBy('Flow', FlowPeer::PRJ_UID, $prjUid, true);
-        $artifacts = self::getBpmnCollectionBy('Artifact', ArtifactPeer::PRJ_UID, $prjUid, true);
-
-        // getting activity bound data
-        foreach ($activities as $i => $activity) {
-            $activities[$i] = array_merge(
-                $activities[$i],
-                self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $activity['act_uid'], true)
-            );
-        }
-
-        // getting event bound data
-        foreach ($events as $i => $event) {
-            $events[$i] = array_merge(
-                $events[$i],
-                self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $event['evn_uid'], true)
-            );
-        }
-
-        // getting gateway bound data
-        foreach ($gateways as $i => $gateway) {
-            $gateways[$i] = array_merge(
-                $gateways[$i],
-                self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $gateway['gat_uid'], true)
-            );
-        }
 
         $project = array_change_key_case($project);
-        $project['diagrams'] = array($diagram);
-        $project['diagrams'][0]['laneset'] = $lanesets;
-        $project['diagrams'][0]['lanes'] = $lanes;
-        $project['diagrams'][0]['activities'] = $activities;
-        $project['diagrams'][0]['events'] = $events;
-        $project['diagrams'][0]['gateways'] = $gateways;
-        $project['diagrams'][0]['flows'] = $flows;
-        $project['diagrams'][0]['artifacts'] = $artifacts;
+
+        if (! empty($diagram)) {
+            $lanesets = self::getBpmnCollectionBy('Laneset', LanesetPeer::PRJ_UID, $prjUid, true);
+            $lanes = self::getBpmnCollectionBy('Lane', LanePeer::PRJ_UID, $prjUid, true);
+            $activities = self::getBpmnCollectionBy('Activity', ActivityPeer::PRJ_UID, $prjUid, true);
+            $events = self::getBpmnCollectionBy('Event', EventPeer::PRJ_UID, $prjUid, true);
+            $gateways = self::getBpmnCollectionBy('Gateway', GatewayPeer::PRJ_UID, $prjUid, true);
+            $flows = self::getBpmnCollectionBy('Flow', FlowPeer::PRJ_UID, $prjUid, true);
+            $artifacts = self::getBpmnCollectionBy('Artifact', ArtifactPeer::PRJ_UID, $prjUid, true);
+
+            // getting activity bound data
+            foreach ($activities as $i => $activity) {
+                $bound = self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $activity['act_uid'], true);
+
+                if (is_object($bound)) {
+                    $activities[$i] = array_merge($activities[$i], $bound);
+                }
+            }
+
+            // getting event bound data
+            foreach ($events as $i => $event) {
+                $bound = self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $event['evn_uid'], true);
+
+                if (is_object($bound)) {
+                    $events[$i] = array_merge($events[$i], $bound);
+                }
+            }
+
+            // getting gateway bound data
+            foreach ($gateways as $i => $gateway) {
+                $bound = self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $gateway['gat_uid'], true);
+
+                if (is_object($bound)) {
+                    $gateways[$i] = array_merge($gateways[$i], $bound);
+                }
+            }
+
+
+            $project['diagrams'] = array($diagram);
+            $project['diagrams'][0]['laneset'] = $lanesets;
+            $project['diagrams'][0]['lanes'] = $lanes;
+            $project['diagrams'][0]['activities'] = $activities;
+            $project['diagrams'][0]['events'] = $events;
+            $project['diagrams'][0]['gateways'] = $gateways;
+            $project['diagrams'][0]['flows'] = $flows;
+            $project['diagrams'][0]['artifacts'] = $artifacts;
+        }
 
         return $project;
     }
@@ -384,6 +452,11 @@ class Model
         //print_r($diagramData); die;
 
         $diagram = DiagramPeer::retrieveByPK($diagramData['dia_uid']);
+
+        if (! is_object($diagram)) {
+            throw new \RuntimeException("Related Diagram with id: {$diagramData['dia_uid']}, does not exist!");
+        }
+
         $diagram->setDiaName($diagramData['dia_name']);
 
         if (!empty($diagramData['dia_is_closable'])) {
@@ -406,17 +479,17 @@ class Model
         $savedProject = self::loadProject($prjUid);
         $diff = self::getDiffFromProjects($savedProject, $projectUpdated);
 
-        self::updateDiagram($diff);
+        self::updateDiagram($prjUid, $process->getProUid(), $diff);
     }
 
-    public static function updateDiagram($diff)
+    public static function updateDiagram($prjUid, $proUid, $diff)
     {
         echo 'DIFF'.PHP_EOL; print_r($diff);
 
         //return false;
         $mapId = array();
 
-        // updating objects
+        // Updating objects
         foreach ($diff['updated'] as $element => $items) {
             foreach ($items as $data) {
 				$data = array_change_key_case((array) $data, CASE_UPPER);
@@ -460,34 +533,87 @@ class Model
             }
         }
 
-        die;
-
-        // Creating new objects
+        // Creating new records
         foreach ($diff['new'] as $element => $items) {
             foreach ($items as $data) {
-                print_r($data); die;
+                $data = array_change_key_case((array) $data, CASE_UPPER);
+
                 switch ($element) {
                     case 'laneset':
-                        $lanesetData = array_change_key_case((array) $data, CASE_UPPER);
+                        break;
 
-                        $laneset = new Laneset();
-                        $laneset->fromArray($lanesetData, BasePeer::TYPE_FIELDNAME);
-                        $laneset->setLnsUid(Hash::generateUID());
-                        $laneset->setPrjUid($prjUid);
-                        $laneset->setProUid($proUid);
-                        $laneset->save();
-                        $lnsUid = $laneset->getLnsUid();
-                        $oldLnsUid = $lanesetData['LNS_UID'];
+                    case 'lanes':
+                        break;
 
-                        $uids[] = array('old_uid' => $oldLnsUid, 'new_uid' => $lnsUid, 'object' => 'laneset');
-                        $mapId['laneset'][$oldLnsUid] = $lnsUid;
+                    case 'activities':
+                        $uidData = array('old_uid' => $data['ACT_UID'], 'object' => 'Activity');
 
+                        $activity = new Activity();
+                        $activity->fromArray($data, BasePeer::TYPE_FIELDNAME);
+                        $activity->setActUid(Hash::generateUID());
+                        $activity->setPrjUid($prjUid);
+                        $activity->setProUid($proUid);
+                        $activity->getBound()->setBouUid(Hash::generateUID());
+                        $activity->save();
+
+                        $uidData['new_uid'] = $activity->getActUid();
+                        $uids[] = $uidData;
+                        break;
+
+                    case 'events':
+
+                        break;
+
+                    case 'gateways':
+
+                        break;
+
+                    case 'flows':
+                        break;
+
+                    case 'artifacts':
                         break;
                 }
             }
         }
 
-        //$activity = ActivityPeer::retrieveByPK($item);
+        // Creating new records
+        foreach ($diff['deleted'] as $element => $items) {
+            foreach ($items as $uid) {
+                $data = array_change_key_case((array) $data, CASE_UPPER);
+
+                switch ($element) {
+                    case 'laneset':
+                        break;
+
+                    case 'lanes':
+                        break;
+
+                    case 'activities':
+                        $activity = ActivityPeer::retrieveByPK($uid);
+                        $activity->delete();
+
+                        $uidData['new_uid'] = $activity->getActUid();
+                        $uids[] = $uidData;
+                        break;
+
+                    case 'events':
+
+                        break;
+
+                    case 'gateways':
+
+                        break;
+
+                    case 'flows':
+                        break;
+
+                    case 'artifacts':
+                        break;
+                }
+            }
+        }
+
     }
 
     public static function getDiffFromProjects($savedProject, $updatedProject)
@@ -504,11 +630,16 @@ class Model
 
         // Getting Differences
         $newRecords = array();
+        $newRecordsUids = array();
         $deletedRecords = array();
         $updatedRecords = array();
 
         // Get new records
         foreach ($diagramElements as $key => $element) {
+            if (! array_key_exists($element, $updatedProject['diagrams'][0])) {
+                continue;
+            }
+
             $arrayDiff = self::arrayDiff(
                 $savedProject['diagrams'][0][$element],
                 $updatedProject['diagrams'][0][$element],
@@ -516,12 +647,22 @@ class Model
             );
 
             if (! empty($arrayDiff)) {
-                $newRecords[$element] = $arrayDiff;
+                $newRecordsUids[$element] = $arrayDiff;
+
+                foreach ($updatedProject['diagrams'][0][$element] as $item) {
+                    if (in_array($item[$key], $newRecordsUids[$element])) {
+                        $newRecords[$element][] = $item;
+                    }
+                }
             }
         }
 
         // Get deleted records
         foreach ($diagramElements as $key => $element) {
+            if (! array_key_exists($element, $updatedProject['diagrams'][0])) {
+                continue;
+            }
+
             $arrayDiff = self::arrayDiff(
                 $updatedProject['diagrams'][0][$element],
                 $savedProject['diagrams'][0][$element],
@@ -541,8 +682,14 @@ class Model
 
 
         foreach ($diagramElements as $key => $element) {
+            if (! array_key_exists($element, $updatedProject['diagrams'][0])) {
+                continue;
+            }
+
             foreach ($updatedProject['diagrams'][0][$element] as $item) {
-                if (array_key_exists($element, $newRecords) && (in_array($item[$key], $newRecords[$element]) || in_array($item[$key], $deletedRecords[$element]))) {
+                if ((array_key_exists($element, $newRecordsUids) && in_array($item[$key], $newRecordsUids[$element])) ||
+                    (array_key_exists($element, $deletedRecords) && in_array($item[$key], $deletedRecords[$element]))
+                ) {
                     // skip new or deleted records
                     continue;
                 }
