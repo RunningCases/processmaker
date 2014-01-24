@@ -31,7 +31,7 @@ class ProjectUser
             $oCriteria->addSelectColumn(\TaskUserPeer::TU_RELATION);
             $oCriteria->addJoin(\TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
             $oCriteria->addJoin(\TaskUserPeer::TAS_UID, \TaskPeer::TAS_UID,  \Criteria::LEFT_JOIN);
-            $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);         
+            $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
             $oCriteria->addGroupByColumn(USR_UID);
@@ -73,7 +73,7 @@ class ProjectUser
             $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
             $oCriteria->addJoin(\TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
             $oCriteria->addJoin(\TaskUserPeer::TAS_UID, \TaskPeer::TAS_UID,  \Criteria::LEFT_JOIN);
-            $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);         
+            $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
             $oCriteria->addGroupByColumn(USR_UID);
@@ -245,5 +245,76 @@ class ProjectUser
         }
     }
 
+    /**
+     * User Login
+     *
+     * @param string $username Username
+     * @param string $password Password
+     *
+     * return object Return object $response
+     *               $response->status_code, 0 when User has been authenticated, any number otherwise
+     *               $response->message, message
+     */
+    public function userLogin($username, $password)
+    {
+        try {
+            $http = (\G::is_https())? "https://" : "http://";
+
+            $client = new \SoapClient($http . $_SERVER["HTTP_HOST"] . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/services/wsdl2");
+
+            $params = array(
+                "userid"   => $username,
+                "password" => "md5:" . md5($password)
+            );
+
+            $response = $client->login($params);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if the User is assigned to Task
+     *
+     * @param string $userUid Unique id of User
+     * @param string $taskUid Unique id of Task
+     *
+     * return bool Return true if the User is assigned to Task, false otherwise
+     */
+    public function userIsAssignedToTask($userUid, $taskUid)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\TaskUserPeer::TAS_UID);
+            $criteria->add(\TaskUserPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+            $criteria->add(\TaskUserPeer::USR_UID, $userUid, \Criteria::EQUAL);
+
+            $rsCriteria = \TaskUserPeer::doSelectRS($criteria);
+
+            //If the User is not assigned directly, maybe a have the Task a Group with the User
+            if (!$rsCriteria->next()) {
+                $criteria = new \Criteria("workflow");
+
+                $criteria->addSelectColumn(\UsersPeer::USR_UID);
+                $criteria->addJoin(\UsersPeer::USR_UID, \GroupUserPeer::USR_UID, \Criteria::LEFT_JOIN);
+                $criteria->addJoin(\GroupUserPeer::GRP_UID, \TaskUserPeer::USR_UID, \Criteria::LEFT_JOIN);
+                $criteria->add(\TaskUserPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+                $criteria->add(\UsersPeer::USR_UID, $userUid, \Criteria::EQUAL);
+
+                $rsCriteria = \UsersPeer::doSelectRS($criteria);
+
+                if (!$rsCriteria->next()) {
+                    return false;
+                }
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
 
