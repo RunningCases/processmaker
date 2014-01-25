@@ -7,7 +7,7 @@ use \Luracast\Restler\RestException;
 class Test3 extends Api
 {
 
-    function hello3()
+    public function hello3()
     {
         return 'Hello #3';
     }
@@ -15,8 +15,9 @@ class Test3 extends Api
     /**
      * @status 201
      */
-    function post2()
+    public function post2()
     {
         return array('success' => true);
     }
 }
+

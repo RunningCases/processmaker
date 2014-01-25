@@ -1482,5 +1482,5 @@ class Task
             throw $e;
         }
     }
-
 }
+

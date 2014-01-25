@@ -45,7 +45,8 @@ class OutputDocument
             $oCriteria->addAlias('C1', 'CONTENT');
             $oCriteria->addAlias('C2', 'CONTENT');
             $oCriteria->addAlias('C3', 'CONTENT');
-            $oCriteria->addAlias('C4', 'CONTENT');            $aConditions = array();
+            $oCriteria->addAlias('C4', 'CONTENT');            
+            $aConditions = array();
             $aConditions[] = array(\OutputDocumentPeer::OUT_DOC_UID, 'C1.CON_ID' );
             $aConditions[] = array('C1.CON_CATEGORY', $sDelimiter . 'OUT_DOC_TITLE' . $sDelimiter );
             $aConditions[] = array('C1.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
@@ -398,6 +399,5 @@ class OutputDocument
             throw $e;
         }
     }
-
 }
 

@@ -7,7 +7,7 @@ use \Luracast\Restler\RestException;
 class Test2 extends Api
 {
 
-    function hello2()
+    public function hello2()
     {
         return 'Hello #2';
     }
@@ -15,7 +15,7 @@ class Test2 extends Api
     /**
      * @url GET /getHello
      */
-    function helloworld($param = '')
+    public function helloworld($param = '')
     {
         return 'Greetings, from a overridden url ' . $param;
     }
@@ -23,8 +23,9 @@ class Test2 extends Api
     /**
      * @url GET /sample/other/large/:name
      */
-    function sampleOther($name)
+    public function sampleOther($name)
     {
         return 'Name: ' . $name;
     }
 }
+

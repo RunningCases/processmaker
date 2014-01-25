@@ -8,7 +8,7 @@ class Type
      *
      * @param string $email {@from body}{@type email}
      */
-    function postEmail($email)
+    public function postEmail($email)
     {
         return $email;
     }
@@ -18,7 +18,7 @@ class Type
      *
      * @param string $date {@from body}{@type date}
      */
-    function postDate($date)
+    public function postDate($date)
     {
         return $date;
     }
@@ -28,7 +28,7 @@ class Type
      *
      * @param string $datetime {@from body}{@type datetime}
      */
-    function postDatetime($datetime)
+    public function postDatetime($datetime)
     {
         return $datetime;
     }
@@ -38,7 +38,7 @@ class Type
      *
      * @param string $time {@from body}{@type time}
      */
-    function postTime($time)
+    public function postTime($time)
     {
         return $time;
     }
@@ -48,7 +48,7 @@ class Type
      *
      * @param string $time {@from body}{@type time12}
      */
-    function postTime12($time12)
+    public function postTime12($time12)
     {
         return $time12;
     }
@@ -58,7 +58,7 @@ class Type
      *
      * @param string $timestamp {@from body}{@type timestamp}
      */
-    function postTimestamp($timestamp)
+    public function postTimestamp($timestamp)
     {
         return $timestamp;
     }
@@ -68,7 +68,7 @@ class Type
      *
      * @param array $integers {@type int}
      */
-    function postIntegers(array $integers)
+    public function postIntegers(array $integers)
     {
         return $integers;
     }
@@ -78,7 +78,7 @@ class Type
      *
      * @param array $numbers {@type float}
      */
-    function postNumbers(array $numbers)
+    public function postNumbers(array $numbers)
     {
         return $numbers;
     }
@@ -88,7 +88,7 @@ class Type
      *
      * @param array $timestamp {@from body}{@type time}
      */
-    function postTimes(array $timestamps)
+    public function postTimes(array $timestamps)
     {
         return $timestamps;
     }
@@ -98,7 +98,7 @@ class Type
      *
      * @param array $timestamp {@from body}{@type timestamp}
      */
-    function postTimestamps(array $timestamps)
+    public function postTimestamps(array $timestamps)
     {
         return $timestamps;
     }
@@ -111,7 +111,7 @@ class Type
      *
      * @return Author
      */
-    function postAuthor(Author $author)
+    public function postAuthor(Author $author)
     {
         return $author;
     }
@@ -123,7 +123,7 @@ class Type
      *
      * @return mixed
      */
-    function postAuthors(array $authors)
+    public function postAuthors(array $authors)
     {
         return $authors;
     }
@@ -135,7 +135,7 @@ class Type
      *
      * @return array
      */
-    function postObject(array $object)
+    public function postObject(array $object)
     {
         return $object;
     }
@@ -147,7 +147,7 @@ class Type
      *
      * @return array
      */
-    function postArray(array $array)
+    public function postArray(array $array)
     {
         return $array;
     }
@@ -159,7 +159,7 @@ class Type
      *
      * @return array
      */
-    function postArrayOrObject(array $array)
+    public function postArrayOrObject(array $array)
     {
         return $array;
     }
@@ -167,7 +167,7 @@ class Type
     /**
      * @param string $gender {@from body}{@choice male,female}
      */
-    function postChoise($gender)
+    public function postChoise($gender)
     {
         return $gender;
     }
@@ -175,7 +175,7 @@ class Type
     /**
      * @param string $name $name 3 to 10 characters in length {@from body}{@min 3}{@max 10}
      */
-    function postMinmax($name)
+    public function postMinmax($name)
     {
         return $name;
     }
@@ -183,7 +183,7 @@ class Type
     /**
      * @param string $name $name 3 to 10 characters in length {@from body}{@min 3}{@max 10}{@fix true}
      */
-    function postMinmaxfix($name)
+    public function postMinmaxfix($name)
     {
         return $name;
     }
@@ -191,11 +191,10 @@ class Type
     /**
      * @param integer $age {@choise 1,2}
      */
-    function postInt($age='')
+    public function postInt($age='')
     {
         return '->'.$age;
     }
-
 }
 
 class Author

@@ -111,12 +111,11 @@ class OutputDocuments extends Api
         }
         return $response;
     }
-
-
 }
 
 class OutputDocumentStructure
-{   /**
+{   
+    /**
      * @var string {@from body}
      */
     public $out_doc_title;
@@ -226,3 +225,4 @@ class OutputDocumentStructure
      */
     public $out_doc_pdf_security_permissions;
 }
+

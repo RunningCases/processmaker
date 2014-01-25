@@ -115,11 +115,11 @@ class CaseScheduler extends Api
         }
         return $response;
     }
-
 }
 
 class CaseSchedulerStructure
-{   /**
+{   
+    /**
      * @var string {@from body} {@min 0} {@max 100}
      */
     public $sch_name;
@@ -232,6 +232,6 @@ class CaseSchedulerStructure
      * @var string {@from body} {@min 0} {@max 15}
      */
     public $sch_repeat_every;
-
 }
+
     

@@ -63,7 +63,7 @@ class ProcessSupervisor
                                  'usr_email' => $aRow['USR_EMAIL'] );
                 $oDataset->next();
             }
-            if ($aResp == null){
+            if ($aResp == null)     {
                 $aResp = array();
             }
             return $aResp;
@@ -168,7 +168,7 @@ class ProcessSupervisor
                 } else {
                     $aGRUS [] = $aRow ['USR_UID'];
                 }
-            $oDataset->next();
+                $oDataset->next();
             }
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\GroupwfPeer::GRP_UID);
@@ -429,8 +429,8 @@ class ProcessSupervisor
                                  'input_doc_uid' => $aRow['STEP_UID_OBJ'],
                                  'input_doc_title' => $aRow['INP_DOC_TITLE']);
                 $oDataset->next();
-        }
-        return $aResp;
+            }
+            return $aResp;
         } catch (Exception $e) {
             throw $e;
         }
@@ -559,7 +559,7 @@ class ProcessSupervisor
         }
         if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
             if ( "GROUP_SUPERVISOR" != $sTypeUID ) {
-            throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
+                throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
             }
         }
         // validate Groups

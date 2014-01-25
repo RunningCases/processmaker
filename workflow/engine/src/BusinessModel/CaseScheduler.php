@@ -302,7 +302,8 @@ class CaseScheduler
             $nSW = 0;
             $aData['SCH_DAYS_PERFORM_TASK'] = '';
             switch ($sOption) {
-                case '1': // Option 1
+                case '1': 
+                    // Option 1
                     $aData['SCH_DAYS_PERFORM_TASK'] = '1';
                     $sValue = $aData['SCH_DAYS_PERFORM_TASK'];
                     switch ($sValue) {
@@ -330,7 +331,7 @@ class CaseScheduler
                         $weeks = explode("|", $weeks);
                         foreach ($weeks as $row) {
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7") {
-                               $aData['SCH_WEEK_DAYS'] = $aData['SCH_WEEK_DAYS'];
+                                $aData['SCH_WEEK_DAYS'] = $aData['SCH_WEEK_DAYS'];
                             } else {
                                 throw (new \Exception( 'invalid value specified for `sch_week_days`'));
                             }
@@ -548,7 +549,8 @@ class CaseScheduler
             $nSW = 0;
             $aData['SCH_DAYS_PERFORM_TASK'] = '';
             switch ($sOption) {
-                case '1': // Option 1
+                case '1': 
+                    // Option 1
                     $aData['SCH_DAYS_PERFORM_TASK'] = '1';
                     $sValue = $aData['SCH_DAYS_PERFORM_TASK'];
                     switch ($sValue) {
@@ -737,3 +739,4 @@ class CaseScheduler
         }
     }
 }
+

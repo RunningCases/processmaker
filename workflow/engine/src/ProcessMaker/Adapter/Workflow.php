@@ -62,7 +62,6 @@ class Workflow
             switch ($flow['FLO_TYPE']) {
                 case 'SEQUENCE':
                     break;
-
                 default:
                     throw new \LogicException(sprintf(
                         "Unsupported flow type: %s, ProcessMaker only support type '', Given: '%s'",
@@ -82,7 +81,6 @@ class Workflow
                         '_action' => 'CREATE'
                     );
                     break;
-
                 case 'bpmnGateway':
                     $gatUid = $flow['FLO_ELEMENT_DEST'];
                     // if it is a gateway it can fork one or more routes
@@ -98,23 +96,18 @@ class Workflow
                                     case 'SELECTION':
                                         $routeType = 'SELECT';
                                         break;
-
                                     case 'EVALUATION':
                                         $routeType = 'EVALUATE';
                                         break;
-
                                     case 'PARALLEL':
                                         $routeType = 'PARALLEL';
                                         break;
-
                                     case 'PARALLEL_EVALUATION':
                                         $routeType = 'PARALLEL-BY-EVALUATION';
                                         break;
-
                                     case 'PARALLEL_JOIN':
                                         $routeType = 'SEC-JOIN';
                                         break;
-
                                     default:
                                         throw new \LogicException(sprintf("Unsupported Gateway type: %s", $gateway['GAT_TYPE']));
                                 }
@@ -138,7 +131,6 @@ class Workflow
                         }
                     }
                     break;
-
                 case 'bpmnEvent':
                     $evnUid = $flow['FLO_ELEMENT_DEST'];
                     $event = BpmnModel::getBpmnObjectBy('Event', \BpmnEventPeer::EVN_UID, $evnUid);
@@ -191,3 +183,4 @@ class Workflow
         return false;
     }
 }
+

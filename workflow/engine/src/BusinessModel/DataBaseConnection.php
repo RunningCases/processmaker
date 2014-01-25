@@ -85,7 +85,7 @@ class DataBaseConnection
         if (isset($dataDBConnection['DBS_TYPE'])) {
             $typesExists = array();
             G::LoadClass( 'dbConnections' );
-            $dbs = new dbConnections($sProcessUid);;
+            $dbs = new dbConnections($sProcessUid);
             $dbServices = $dbs->getDbServicesAvailables();
             foreach ($dbServices as $value) {
                 $typesExists[] = $value['id'];
@@ -98,7 +98,7 @@ class DataBaseConnection
         if (isset($dataDBConnection['DBS_TYPE'])) {
             $typesExists = array();
             
-            $dbs = new dbConnections($sProcessUid);;
+            $dbs = new dbConnections($sProcessUid);
             $dbServices = $dbs->getDbServicesAvailables();
             foreach ($dbServices as $value) {
                 $typesExists[] = $value['id'];
@@ -181,7 +181,8 @@ class DataBaseConnection
     }
 
 
-    public function testConnection ($dataCon) {
+    public function testConnection($dataCon) 
+    {
         $resp = array();
         $resp['resp'] = false;
 
@@ -240,5 +241,4 @@ class DataBaseConnection
         return $resp;
     }
 }
-
 
