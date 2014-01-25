@@ -63,7 +63,7 @@ class ProcessSupervisor
                                  'usr_email' => $aRow['USR_EMAIL'] );
                 $oDataset->next();
             }
-            if ($aResp == null)     {
+            if ($aResp == null) {
                 $aResp = array();
             }
             return $aResp;
@@ -191,10 +191,10 @@ class ProcessSupervisor
             $aRow2 = $oDataset2->getRow();
             if ($obj_type == 'group' || $obj_type == '') {
                 while ($aRow = $oDataset->getRow()) {
-                      $aRespLi[] = array('grp_uid' => $aRow['GRP_UID'],
+                    $aRespLi[] = array('grp_uid' => $aRow['GRP_UID'],
                                          'grp_name' => $aRow['GRP_TITLE'],
                                          'obj_type' => "group");
-                      $oDataset->next();
+                    $oDataset->next();
                 }
             }
 
@@ -483,8 +483,8 @@ class ProcessSupervisor
                                  'input_doc_uid' => $aRow['STEP_UID_OBJ'],
                                  'input_doc_title' => $aRow['INP_DOC_TITLE']);
                 $oDataset->next();
-        }
-        return $aResp;
+            }
+            return $aResp;
         } catch (Exception $e) {
             throw $e;
         }
@@ -505,7 +505,7 @@ class ProcessSupervisor
             $aUIDS = array();
             foreach ($oCriteria as $oCriteria => $value) {
                 $aUIDS[] = $value["input_doc_uid"];
-            }      
+            }
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\InputDocumentPeer::INP_DOC_UID);
