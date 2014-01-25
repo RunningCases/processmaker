@@ -77,8 +77,8 @@ Feature: Process supervisor Resources
       And the response has <records> records
       
       Examples:
-      | test_description                  | project                          | records |
-      | List the 2 pre-assigned dynaforms | 85794888452ceeef3675164057928956 | 2       |
+      | test_description                          | project                          | records |
+      | List the 2 pre-assigned dynaforms #1 & #2 | 85794888452ceeef3675164057928956 | 2       |
 
     
      Scenario Outline: Get a specific dynaform detail assigned to a process supervisor
@@ -90,7 +90,7 @@ Feature: Process supervisor Resources
         
       Examples:
       | test_description                           | project                          | pud_uid                          |
-      | Get details of the first assigend dynaform | 85794888452ceeef3675164057928956 | 78069721352ceef1fd61878075214306 |
+      | Get details of the first assigend dynaform | 85794888452ceeef3675164057928956 | 56779160652cef174108c76074755720 |
         
 
     
@@ -130,7 +130,7 @@ Feature: Process supervisor Resources
         
         Examples:
       | test_description                                     | project                          | records |
-      | Get a list of 1 record of available input documents | 85794888452ceeef3675164057928956 | 1       |
+      | Get a list of 1 record of available input documents  | 85794888452ceeef3675164057928956 | 1       |
 
     
     Scenario Outline: Get a specific input document assigned to a process supervisor
@@ -142,7 +142,7 @@ Feature: Process supervisor Resources
         
         Examples:
       | test_description                       | project                          | pui_uid                          |
-      | Get details of assigend input document | 85794888452ceeef3675164057928956 | 37709187452ceef4f601dd3045365506 |
+      | Get details of assigend input document | 85794888452ceeef3675164057928956 | 64558052052d8a715de8936029381436 |
 
     
     Scenario Outline: Assign a user and a group as process supervisors
@@ -183,8 +183,8 @@ Feature: Process supervisor Resources
 
 
        Examples:
-       | test_description                 | project                          | pud_number       | dyn_uid                          |  
-       | Assign a dynaform for Supervisor | 85794888452ceeef3675164057928956 | 1                | 27801990352a715de093b64036715425 |
+       | test_description                     | project                          | pud_number       | dyn_uid                          |  
+       | Assign a dynaform # 3 for Supervisor | 85794888452ceeef3675164057928956 | 1                | 92562207752ceef36c7d874048012431 |
 
     
     Scenario Outline: Assign an input document to a process supervisor
@@ -233,3 +233,15 @@ Feature: Process supervisor Resources
         Examples:
        | test_description                        | project                          | dps_number       |
        | Assign an Input document for Supervisor | 85794888452ceeef3675164057928956 | 1                | 
+
+
+     Scenario Outline: Delete an dynaform to a process supervisor
+       Given that I want to delete a resource with the key "pui_uid" stored in session array as variable "pud_uid_<pud_number>"
+       And I request "project/<project>/process-supervisor/dynaform"
+       Then the response status code should be 200
+       And the response charset is "UTF-8"
+       
+
+       Examples:
+       | test_description                   | project                          | pud_number       |
+       | Delete dynaform # 3 for Supervisor | 85794888452ceeef3675164057928956 | 1                |

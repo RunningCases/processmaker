@@ -23,6 +23,5 @@ Feature: Triggers Negative Tests
         Examples:
 
         | test_description                     | project                          | tri_title                    | tri_description                                          |tri_type  | error_code | error_message   |
-        | Invalid tri type                     | 251815090529619a99a2bf4013294414 | Trigger 5                    | Trigger valores invalidos                                |Value12@#$| 400        | tri_type        |
         | Field required tri title             | 251815090529619a99a2bf4013294414 |                              | Trigger con nombre en blanco                             |SCRIPT    | 400        | tri_title       |
         
