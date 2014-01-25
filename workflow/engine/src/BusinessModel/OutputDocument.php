@@ -28,7 +28,7 @@ class OutputDocument
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_TOP_MARGIN);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_BOTTOM_MARGIN);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_GENERATE);
-            $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_TYPE); 
+            $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_TYPE);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_CURRENT_REVISION);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_FIELD_MAPPING);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_VERSIONING);
@@ -45,7 +45,7 @@ class OutputDocument
             $oCriteria->addAlias('C1', 'CONTENT');
             $oCriteria->addAlias('C2', 'CONTENT');
             $oCriteria->addAlias('C3', 'CONTENT');
-            $oCriteria->addAlias('C4', 'CONTENT');            
+            $oCriteria->addAlias('C4', 'CONTENT');
             $aConditions = array();
             $aConditions[] = array(\OutputDocumentPeer::OUT_DOC_UID, 'C1.CON_ID' );
             $aConditions[] = array('C1.CON_CATEGORY', $sDelimiter . 'OUT_DOC_TITLE' . $sDelimiter );
@@ -135,7 +135,7 @@ class OutputDocument
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_TOP_MARGIN);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_BOTTOM_MARGIN);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_GENERATE);
-            $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_TYPE); 
+            $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_TYPE);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_CURRENT_REVISION);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_FIELD_MAPPING);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_VERSIONING);
@@ -228,7 +228,7 @@ class OutputDocument
      * @access public
      */
     public function addOutputDocument($sProcessUID, $aData)
-    {   
+    {
         $pemission = $aData['out_doc_pdf_security_permissions'];
         $pemission = explode("|", $pemission);
         foreach ($pemission as $row) {
@@ -246,7 +246,7 @@ class OutputDocument
             $process = new \Process();
             if (!$process->exists($sProcessUID)) {
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($sProcessUID, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            } 
+            }
             if ($aData["OUT_DOC_TITLE"]=="") {
                 throw (new \Exception( 'invalid value specified for `out_doc_title`, can`t be null'));
             }
@@ -344,14 +344,14 @@ class OutputDocument
      * @access public
      */
     public function deleteOutputDocument($sProcessUID, $sOutputDocumentUID)
-    {   
+    {
         try {
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "OutputDocument.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ObjectPermission.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Step.php");
             \G::LoadClass( 'processMap' );
-            $oOutputDocument = new \OutputDocument();           
-            $fields = $oOutputDocument->load( $sOutputDocumentUID );            
+            $oOutputDocument = new \OutputDocument();
+            $fields = $oOutputDocument->load( $sOutputDocumentUID );
             $oOutputDocument->remove( $sOutputDocumentUID );
             $oStep = new \Step();
             $oStep->removeStep( 'OUTPUT_DOCUMENT', $sOutputDocumentUID );
@@ -388,7 +388,7 @@ class OutputDocument
             $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
             $criteria->add(\OutputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
             $criteria->add(\ContentPeer::CON_VALUE, $title, \Criteria::EQUAL);
-            $rsCriteria = \OutputDocumentPeer::doSelectRS($criteria); 
+            $rsCriteria = \OutputDocumentPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             if ($rsCriteria->next()) {
                 return true;
