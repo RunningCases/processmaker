@@ -78,7 +78,7 @@ class OutputDocuments extends Api
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $outputDocumentUid {@min 32} {@max 32}
-     * @param OutputDocumentStructure $request_data     
+     * @param OutputDocumentStructure $request_data
      *
      */
     public function doPutProjectOutputDocument($prjUid, $outputDocumentUid, OutputDocumentStructure $request_data)
@@ -114,7 +114,7 @@ class OutputDocuments extends Api
 }
 
 class OutputDocumentStructure
-{   
+{
     /**
      * @var string {@from body}
      */

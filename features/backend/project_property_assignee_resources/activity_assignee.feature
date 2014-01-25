@@ -22,7 +22,7 @@ Feature: Assignee Resources
     | check if the list of possible users and groups to be assigned is correct | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 82      | 54731929352d56741de9d42002704749 | group    |
 
 Scenario Outline: Get the list of available users and groups to be assigned to an activity using filter
-    Given I request "project/<project>/activity/<activity>/available-assignee?filter=<filter>&start=<start>&limit=<limit>"
+    Given I request "project/4224292655297723eb98691001100052/activity/65496814252977243d57684076211485/available-assignee?filter=<filter>&start=<start>&limit=<limit>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
@@ -32,11 +32,11 @@ Scenario Outline: Get the list of available users and groups to be assigned to a
     And the "aas_type" property in row 0 equals "<aas_type>"
 
     Examples:
-    | test_description                                               | project                          | activity                         | filter    | start | limit | records | aas_uid                          | aas_type|
-    | Using filter="fin" with no limits should return 2 groups       | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | fin       | 0     | 50    | 2       | 66623507552d56742865613066097298 | group   |
-    | Using filter="fin", start="1", limit="1" should return 1 group | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | fin       | 0     | 1     | 1       | 66623507552d56742865613066097298 | group   |
-    | Using filter="financial" should return 1 available group       | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | financial | 0     | 1     | 1       | 62528621852cda436afe755036997717 | group   |
-    | Using filter="finance"   should return 1 available group       | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | finance   | 0     | 1     | 1       | 17707415052cda432dd4774063621869 | group   |
+    | test_description                                               | filter    | start | limit | records | aas_uid                          | aas_type|
+    | Using filter="fin" with no limits should return 2 groups       | fin       | 0     | 50    | 2       | 66623507552d56742865613066097298 | group   |
+    | Using filter="fin", start="1", limit="1" should return 1 group | fin       | 0     | 1     | 1       | 66623507552d56742865613066097298 | group   |
+    | Using filter="financial" should return 1 available group       | financial | 0     | 1     | 1       | 99025456252d567468f0798036479112 | group   |
+    | Using filter="finance"   should return 1 available group       | finance   | 0     | 1     | 1       | 66623507552d56742865613066097298 | group   |
 
 
   Scenario Outline: Assign 2 users and 2 group to an activity

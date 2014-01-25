@@ -496,7 +496,7 @@ class Model
 
     public static function updateDiagram($prjUid, $proUid, $diff)
     {
-        echo 'DIFF'. PHP_EOL; 
+        echo 'DIFF'. PHP_EOL;
         print_r($diff);
 
         //return false;
@@ -606,7 +606,7 @@ class Model
         }
 
     }
-    
+
     public function deleteProject($prjUid)
     {
         $project = self::loadProject($prjUid);

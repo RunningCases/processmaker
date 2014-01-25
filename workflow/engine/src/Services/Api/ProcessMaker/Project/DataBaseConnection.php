@@ -75,15 +75,15 @@ class DataBaseConnection extends Api
      * @status 201
      */
     public function doPostDataBaseConnection(
-        $projectUid, 
-        $request_data, 
-        $dbs_type, 
+        $projectUid,
+        $request_data,
+        $dbs_type,
         $dbs_server,
-        $dbs_database_name, 
-        $dbs_username, 
-        $dbs_port, 
-        $dbs_encode, 
-        $dbs_password = '', 
+        $dbs_database_name,
+        $dbs_username,
+        $dbs_port,
+        $dbs_encode,
+        $dbs_password = '',
         $dbs_description = ''
     ) {
         try {
@@ -116,16 +116,16 @@ class DataBaseConnection extends Api
      * @url PUT /:projectUid/database-connection/:dbConnecionUid
      */
     public function doPutDataBaseConnection(
-        $projectUid, 
-        $dbConnecionUid, 
-        $request_data, 
-        $dbs_type, 
+        $projectUid,
+        $dbConnecionUid,
+        $request_data,
+        $dbs_type,
         $dbs_server,
-        $dbs_database_name, 
-        $dbs_username, 
-        $dbs_port, 
-        $dbs_encode, 
-        $dbs_password = '', 
+        $dbs_database_name,
+        $dbs_username,
+        $dbs_port,
+        $dbs_encode,
+        $dbs_password = '',
         $dbs_description = ''
     ) {
         try {
