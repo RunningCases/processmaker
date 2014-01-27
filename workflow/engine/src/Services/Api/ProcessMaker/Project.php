@@ -209,16 +209,16 @@ class Project extends Api
     }
 
     /**
-     * @url GET /:projectUid/web-entries
+     * @url GET /:prj_uid/web-entries
      *
-     * @param string $projectUid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetWebEntries($projectUid)
+    public function doGetWebEntries($prj_uid)
     {
         try {
             $process = new \BusinessModel\Process();
 
-            $response = $process->getWebEntries($projectUid);
+            $response = $process->getWebEntries($prj_uid);
 
             return $response;
         } catch (\Exception $e) {
