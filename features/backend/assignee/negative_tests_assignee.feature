@@ -57,7 +57,7 @@ Scenario Outline: Assign a user or group to an activity (Field validation)
     | high number for start | a      | 1000  | 1       | 0       |  200      | array |
     | high number for start | a      | 1000  | 0       | 0       |  200      | array |
     | empty result          | xyz    |   0   | 0       | 0       |  200      | array |
-    | empty string          |        |   0   | 10000   | 3       |  200      | array |
+    | empty string          |        |   0   | 10000   | 4       |  200      | array |
     | empty string          |        |   1   | 2       | 2       |  200      | array |
     | invalid start         | a      |   b   | c       | 0       |  400      | string|
     | invalid limit         | a      |   0   | c       | 0       |  400      | string|
