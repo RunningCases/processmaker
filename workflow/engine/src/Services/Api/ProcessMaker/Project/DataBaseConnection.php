@@ -7,7 +7,7 @@ use \Luracast\Restler\RestException;
 /**
  * Project\DataBaseConnection Api Controller
  *
- * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+ * @author Brayan Pereyra <brayan@colosa.com>
  * @copyright Colosa - Bolivia
  *
  * @protected
@@ -74,9 +74,18 @@ class DataBaseConnection extends Api
      * @url POST /:projectUid/database-connection
      * @status 201
      */
-    public function doPostDataBaseConnection($projectUid, $request_data, $dbs_type, $dbs_server,
-        $dbs_database_name, $dbs_username, $dbs_port, $dbs_encode, $dbs_password = '', $dbs_description = '')
-    {
+    public function doPostDataBaseConnection(
+        $projectUid,
+        $request_data,
+        $dbs_type,
+        $dbs_server,
+        $dbs_database_name,
+        $dbs_username,
+        $dbs_port,
+        $dbs_encode,
+        $dbs_password = '',
+        $dbs_description = ''
+    ) {
         try {
             $oDBConnection = new \BusinessModel\DataBaseConnection();
             $response = $oDBConnection->saveDataBaseConnection($projectUid, $request_data, true);
@@ -106,9 +115,19 @@ class DataBaseConnection extends Api
      *
      * @url PUT /:projectUid/database-connection/:dbConnecionUid
      */
-    public function doPutDataBaseConnection($projectUid, $dbConnecionUid, $request_data, $dbs_type, $dbs_server,
-        $dbs_database_name, $dbs_username, $dbs_port, $dbs_encode, $dbs_password = '', $dbs_description = '')
-    {
+    public function doPutDataBaseConnection(
+        $projectUid,
+        $dbConnecionUid,
+        $request_data,
+        $dbs_type,
+        $dbs_server,
+        $dbs_database_name,
+        $dbs_username,
+        $dbs_port,
+        $dbs_encode,
+        $dbs_password = '',
+        $dbs_description = ''
+    ) {
         try {
             $request_data['dbs_uid'] = $dbConnecionUid;
             $oDBConnection = new \BusinessModel\DataBaseConnection();
@@ -138,5 +157,3 @@ class DataBaseConnection extends Api
         }
     }
 }
-
-

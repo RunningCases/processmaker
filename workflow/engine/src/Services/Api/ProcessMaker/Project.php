@@ -16,7 +16,7 @@ use ProcessMaker\Adapter\Workflow;
  */
 class Project extends Api
 {
-    function index()
+    public function index()
     {
         try {
             $projects = BpmnModel::loadProjects();
@@ -30,7 +30,7 @@ class Project extends Api
     /**
      * @status 201
      */
-    function post($request_data)
+    public function post($request_data)
     {
         try {
             $config = array();
@@ -62,7 +62,7 @@ class Project extends Api
         }
     }
 
-    function get($prjUid)
+    public function get($prjUid)
     {
         try {
             $project = BpmnModel::loadProject($prjUid);
@@ -73,7 +73,7 @@ class Project extends Api
         }
     }
 
-    function put($prjUid, $request_data)
+    public function put($prjUid, $request_data)
     {
         try {
 
@@ -85,7 +85,7 @@ class Project extends Api
         }
     }
 
-    function put22($prjUid, $request_data)
+    public function put22($prjUid, $request_data)
     {
         try {
             $project = BpmnModel::loadProject($prjUid);

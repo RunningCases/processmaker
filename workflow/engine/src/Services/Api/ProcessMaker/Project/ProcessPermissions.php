@@ -84,10 +84,21 @@ class ProcessPermissions extends Api
      * @url POST /:projectUid/process-permission/
      * @status 201
      */
-    public function doPostProcessPermission($projectUid, $request_data, $usr_uid, $op_user_relation, $op_case_status,
-        $op_participate, $op_obj_type, $op_action, $tas_uid = '', $op_task_source = '', $dynaforms = '', $inputs = '',
-        $outputs = '')
-    {
+    public function doPostProcessPermission(
+        $projectUid,
+        $request_data,
+        $usr_uid,
+        $op_user_relation,
+        $op_case_status,
+        $op_participate,
+        $op_obj_type,
+        $op_action,
+        $tas_uid = '',
+        $op_task_source = '',
+        $dynaforms = '',
+        $inputs = '',
+        $outputs = ''
+    ) {
         try {
             $hiddenFields = array('task_target', 'group_user', 'task_source',
                 'object_type', 'object', 'participated', 'action'
@@ -131,10 +142,22 @@ class ProcessPermissions extends Api
      *
      * @url PUT /:projectUid/process-permission/:objectPermissionUid
      */
-    public function doPutProcessPermission($projectUid, $objectPermissionUid, $request_data, $usr_uid,
-        $op_user_relation, $op_case_status, $op_participate, $op_obj_type, $op_action, $tas_uid = '',
-        $op_task_source = '', $dynaforms = '', $inputs = '', $outputs = '')
-    {
+    public function doPutProcessPermission(
+        $projectUid,
+        $objectPermissionUid,
+        $request_data,
+        $usr_uid,
+        $op_user_relation,
+        $op_case_status,
+        $op_participate,
+        $op_obj_type,
+        $op_action,
+        $tas_uid = '',
+        $op_task_source = '',
+        $dynaforms = '',
+        $inputs = '',
+        $outputs = ''
+    ) {
         try {
             $request_data['pro_uid'] = $projectUid;
             $processPermissions = new \BusinessModel\ProcessPermissions();

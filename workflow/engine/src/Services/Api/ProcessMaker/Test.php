@@ -8,7 +8,7 @@ class Test extends Api
 {
     protected $data = array();
 
-    function __construct()
+    public function __construct()
     {
         if (! isset($_SESSION['__rest_tmp__'])) {
             $this->data[1] = array(
@@ -23,12 +23,12 @@ class Test extends Api
         }
     }
 
-    function index()
+    public function index()
     {
         return array_values($this->data);
     }
 
-    function get($id)
+    public function get($id)
     {
         if (array_key_exists($id, $this->data)) {
             return $this->data[$id];
@@ -37,7 +37,7 @@ class Test extends Api
         throw new RestException(400, "GET: Record not found. Record with id: $id does not exist!");
     }
 
-    function post($request_data = NULL)
+    public function post($request_data = NULL)
     {
         $id = count($this->data) + 1;
         $this->data[$id] = array(
@@ -62,7 +62,7 @@ class Test extends Api
         return $this->data[$id];
     }
 
-    function put($id, $request_data = NULL)
+    public function put($id, $request_data = NULL)
     {
         if (array_key_exists($id, $this->data)) {
             if (array_key_exists('name', $request_data)) {
@@ -82,7 +82,7 @@ class Test extends Api
         }
     }
 
-    function delete($id)
+    public function delete($id)
     {
         if (array_key_exists($id, $this->data)) {
             $row = $this->data[$id];
@@ -106,3 +106,4 @@ class Test extends Api
         $_SESSION['__rest_tmp__'] = $this->data;
     }
 }
+

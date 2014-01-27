@@ -173,7 +173,7 @@ class Model
         $flows = array_key_exists('flows', $diagramData) ? $diagramData['flows'] : array();
         $artifacts = array_key_exists('artifacts', $diagramData) ? $diagramData['artifacts'] : array();
 
-        foreach($lanesets as $lanesetData) {
+        foreach ($lanesets as $lanesetData) {
             $lanesetData = array_change_key_case((array) $lanesetData, CASE_UPPER);
 
             $laneset = new Laneset();
@@ -189,7 +189,7 @@ class Model
             $mapId['laneset'][$oldLnsUid] = $lnsUid;
         }
 
-        foreach($lanes as $laneData) {
+        foreach ($lanes as $laneData) {
             $laneData = array_change_key_case((array) $laneData, CASE_UPPER);
             $oldLanUid = $laneData['LNS_UID'];
 
@@ -210,7 +210,7 @@ class Model
          * 2. crate bound record for each object created previously
          */
 
-        foreach($activities as $activityData) {
+        foreach ($activities as $activityData) {
             $activityData = array_change_key_case((array) $activityData, CASE_UPPER);
 
             $activity = new Activity();
@@ -237,7 +237,7 @@ class Model
             $bound->save();
         }
 
-        foreach($events as $eventData) {
+        foreach ($events as $eventData) {
             $eventData = array_change_key_case((array) $eventData, CASE_UPPER);
 
             $event = new Event();
@@ -264,7 +264,7 @@ class Model
             $bound->save();
         }
 
-        foreach($gateways as $gatewayData) {
+        foreach ($gateways as $gatewayData) {
             $gatewayData = array_change_key_case((array) $gatewayData, CASE_UPPER);
 
             // fix data
@@ -296,7 +296,7 @@ class Model
             $bound->save();
         }
 
-        foreach($flows as $flowData) {
+        foreach ($flows as $flowData) {
             $flowData = array_change_key_case((array) $flowData, CASE_UPPER);
 
             $floState = json_encode($flowData['FLO_STATE']);
@@ -340,7 +340,7 @@ class Model
             $uids[] = array('old_uid' => $oldFloUid, 'new_uid' => $floUid, 'object' => 'flow');
         }
 
-        foreach($artifacts as $artifactData) {
+        foreach ($artifacts as $artifactData) {
             $artifactData = array_change_key_case((array) $artifactData, CASE_UPPER);
 
             $artifact = new Artifact();
@@ -376,7 +376,7 @@ class Model
 
         $project = self::getBpmnObjectBy('Project', ProjectPeer::PRJ_UID, $prjUid, true);
 
-        if(empty($project)) {
+        if (empty($project)) {
             throw new \RuntimeException("Project with id: $prjUid, does not exists. ");
         }
 
@@ -496,7 +496,8 @@ class Model
 
     public static function updateDiagram($prjUid, $proUid, $diff)
     {
-        echo 'DIFF'.PHP_EOL; print_r($diff);
+        echo 'DIFF'. PHP_EOL;
+        print_r($diff);
 
         //return false;
         $mapId = array();
@@ -504,7 +505,7 @@ class Model
         // Updating objects
         foreach ($diff['updated'] as $element => $items) {
             foreach ($items as $data) {
-				$data = array_change_key_case((array) $data, CASE_UPPER);
+                $data = array_change_key_case((array) $data, CASE_UPPER);
                 //print_r($data); die;
 
                 // the calls in switch sentence are setting and saving the related BpmnBound objects too,
@@ -514,31 +515,25 @@ class Model
                 switch ($element) {
                     case 'laneset':
                         break;
-
                     case 'lanes':
                         break;
-
                     case 'activities':
                         $activity = ActivityPeer::retrieveByPk($data['ACT_UID']);
                         $activity->fromArray($data);
                         $activity->save();
                         break;
-
                     case 'events':
                         $event = EventPeer::retrieveByPk($data['EVN_UID']);
                         $event->fromArray($data);
                         $event->save();
                         break;
-
                     case 'gateways':
                         $gateway = GatewayPeer::retrieveByPk($data['GAT_UID']);
                         $gateway->fromArray($data);
                         $gateway->save();
                         break;
-
                     case 'flows':
                         break;
-
                     case 'artifacts':
                         break;
                 }
@@ -553,10 +548,8 @@ class Model
                 switch ($element) {
                     case 'laneset':
                         break;
-
                     case 'lanes':
                         break;
-
                     case 'activities':
                         $uidData = array('old_uid' => $data['ACT_UID'], 'object' => 'Activity');
 
@@ -571,18 +564,12 @@ class Model
                         $uidData['new_uid'] = $activity->getActUid();
                         $uids[] = $uidData;
                         break;
-
                     case 'events':
-
                         break;
-
                     case 'gateways':
-
                         break;
-
                     case 'flows':
                         break;
-
                     case 'artifacts':
                         break;
                 }
@@ -597,10 +584,8 @@ class Model
                 switch ($element) {
                     case 'laneset':
                         break;
-
                     case 'lanes':
                         break;
-
                     case 'activities':
                         $activity = ActivityPeer::retrieveByPK($uid);
                         $activity->delete();
@@ -608,18 +593,12 @@ class Model
                         $uidData['new_uid'] = $activity->getActUid();
                         $uids[] = $uidData;
                         break;
-
                     case 'events':
-
                         break;
-
                     case 'gateways':
-
                         break;
-
                     case 'flows':
                         break;
-
                     case 'artifacts':
                         break;
                 }
@@ -627,6 +606,7 @@ class Model
         }
 
     }
+
     public function deleteProject($prjUid)
     {
         $project = self::loadProject($prjUid);
