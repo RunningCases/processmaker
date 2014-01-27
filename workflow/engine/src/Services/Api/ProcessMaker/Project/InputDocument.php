@@ -35,10 +35,10 @@ class InputDocument extends Api
      *
      * @param string $projectUid          {@min 32}{@max 32}
      * @param array  $request_data
-     * @param string $inp_doc_title       {@from body}
+     * @param string $inp_doc_title       {@from body}{@required true}
      * @param string $inp_doc_description {@from body}
      * @param string $inp_doc_form_needed {@from body}{@choice VIRTUAL,REAL,VREAL}
-     * @param string $inp_doc_original    {@from body}{@choice ORIGINAL,COPY}
+     * @param string $inp_doc_original    {@from body}{@choice ORIGINAL,COPY,COPYLEGAL}
      * @param string $inp_doc_published   {@from body}{@choice PRIVATE}
      * @param int    $inp_doc_versioning  {@from body}{@choice 0,1}
      * @param string $inp_doc_destination_path {@from body}
@@ -80,7 +80,7 @@ class InputDocument extends Api
      * @param string $inp_doc_title       {@from body}
      * @param string $inp_doc_description {@from body}
      * @param string $inp_doc_form_needed {@from body}{@choice VIRTUAL,REAL,VREAL}
-     * @param string $inp_doc_original    {@from body}{@choice ORIGINAL,COPY}
+     * @param string $inp_doc_original    {@from body}{@choice ORIGINAL,COPY,COPYLEGAL}
      * @param string $inp_doc_published   {@from body}{@choice PRIVATE}
      * @param int    $inp_doc_versioning  {@from body}{@choice 0,1}
      * @param string $inp_doc_destination_path {@from body}

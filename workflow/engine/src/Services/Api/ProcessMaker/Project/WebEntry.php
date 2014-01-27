@@ -12,18 +12,18 @@ use \Luracast\Restler\RestException;
 class WebEntry extends Api
 {
     /**
-     * @url GET /:projectUid/web-entry/:activityUid/:dynaFormUid
+     * @url GET /:prj_uid/web-entry/:tas_uid/:dyn_uid
      *
-     * @param string $dynaFormUid {@min 32}{@max 32}
-     * @param string $activityUid {@min 32}{@max 32}
-     * @param string $projectUid  {@min 32}{@max 32}
+     * @param string $dyn_uid {@min 32}{@max 32}
+     * @param string $tas_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetWebEntry($dynaFormUid, $activityUid, $projectUid)
+    public function doGetWebEntry($dyn_uid, $tas_uid, $prj_uid)
     {
         try {
             $webEntry = new \BusinessModel\WebEntry();
 
-            $response = $webEntry->getWebEntry($projectUid, $activityUid, $dynaFormUid);
+            $response = $webEntry->getWebEntry($prj_uid, $tas_uid, $dyn_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -32,9 +32,9 @@ class WebEntry extends Api
     }
 
     /**
-     * @url POST /:projectUid/web-entry
+     * @url POST /:prj_uid/web-entry
      *
-     * @param string $projectUid            {@min 32}{@max 32}
+     * @param string $prj_uid               {@min 32}{@max 32}
      * @param array  $request_data
      * @param string $tas_uid               {@from body}{@min 32}{@max 32}{@required true}
      * @param string $dyn_uid               {@from body}{@min 32}{@max 32}{@required true}
@@ -46,7 +46,7 @@ class WebEntry extends Api
      * @status 201
      */
     public function doPostWebEntry(
-        $projectUid,
+        $prj_uid,
         $request_data,
         $tas_uid = "00000000000000000000000000000000",
         $dyn_uid = "00000000000000000000000000000000",
@@ -58,7 +58,7 @@ class WebEntry extends Api
         try {
             $webEntry = new \BusinessModel\WebEntry();
 
-            $arrayData = $webEntry->create($projectUid, $request_data);
+            $arrayData = $webEntry->create($prj_uid, $request_data);
 
             $response = $arrayData;
 
@@ -69,18 +69,18 @@ class WebEntry extends Api
     }
 
     /**
-     * @url DELETE /:projectUid/web-entry/:activityUid/:dynaFormUid
+     * @url DELETE /:prj_uid/web-entry/:tas_uid/:dyn_uid
      *
-     * @param string $dynaFormUid {@min 32}{@max 32}
-     * @param string $activityUid {@min 32}{@max 32}
-     * @param string $projectUid  {@min 32}{@max 32}
+     * @param string $dyn_uid {@min 32}{@max 32}
+     * @param string $tas_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doDeleteWebEntry($dynaFormUid, $activityUid, $projectUid)
+    public function doDeleteWebEntry($dyn_uid, $tas_uid, $prj_uid)
     {
         try {
             $webEntry = new \BusinessModel\WebEntry();
 
-            $webEntry->delete($projectUid, $activityUid, $dynaFormUid);
+            $webEntry->delete($prj_uid, $tas_uid, $dyn_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
