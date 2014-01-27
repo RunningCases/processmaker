@@ -155,7 +155,17 @@ class ProcessPermissions
             $sAction = G::LoadTranslation('ID_' . $aRow['OP_ACTION']);
             //Add to array
             $arrayTemp = array();
-            $arrayTemp = array_merge($aRow, array('OP_UID' => $aRow['OP_UID'], 'TASK_TARGET' => $sTaskTarget, 'GROUP_USER' => $sUserGroup, 'TASK_SOURCE' => $sTaskSource, 'OBJECT_TYPE' => $sObjectType, 'OBJECT' => $sObject, 'PARTICIPATED' => $sParticipated, 'ACTION' => $sAction, 'OP_CASE_STATUS' => $aRow['OP_CASE_STATUS']));
+            $arrayTemp = array_merge($aRow, array(
+                'OP_UID'        => $aRow['OP_UID'],
+                'TASK_TARGET'   => $sTaskTarget,
+                'GROUP_USER'    => $sUserGroup,
+                'TASK_SOURCE'   => $sTaskSource,
+                'OBJECT_TYPE'   => $sObjectType,
+                'OBJECT'        => $sObject,
+                'PARTICIPATED'  => $sParticipated,
+                'ACTION'        => $sAction,
+                'OP_CASE_STATUS' => $aRow['OP_CASE_STATUS'])
+            );
             $aObjectsPermissions[] = array_change_key_case($arrayTemp, CASE_LOWER);
             $oDataset->next();
         }
