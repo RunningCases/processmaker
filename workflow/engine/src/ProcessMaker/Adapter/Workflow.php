@@ -147,7 +147,6 @@ class Workflow
                                 '_action' => 'CREATE'
                             );
                             break;
-
                         default:
                             throw new \LogicException("Invalid connection to Event object type");
                     }

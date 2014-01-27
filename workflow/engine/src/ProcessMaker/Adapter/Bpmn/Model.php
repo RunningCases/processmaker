@@ -386,56 +386,55 @@ class Model
         $project = array_change_key_case($project);
 
         //if (! empty($diagram)) {
-            $lanesets = self::getBpmnCollectionBy('Laneset', LanesetPeer::PRJ_UID, $prjUid, true);
-            $lanes = self::getBpmnCollectionBy('Lane', LanePeer::PRJ_UID, $prjUid, true);
+        $lanesets = self::getBpmnCollectionBy('Laneset', LanesetPeer::PRJ_UID, $prjUid, true);
+        $lanes = self::getBpmnCollectionBy('Lane', LanePeer::PRJ_UID, $prjUid, true);
 
-            //$activities = self::getBpmnCollectionBy('Activity', ActivityPeer::PRJ_UID, $prjUid, true);
-            //$activities = Activity::getAll(null, null, null, 'object', CASE_LOWER);
-            $activities = Activity::getAll(array('changeCaseTo' => CASE_LOWER));
-            //print_r($activities); die;
+        //$activities = self::getBpmnCollectionBy('Activity', ActivityPeer::PRJ_UID, $prjUid, true);
+        //$activities = Activity::getAll(null, null, null, 'object', CASE_LOWER);
+        $activities = Activity::getAll(array('changeCaseTo' => CASE_LOWER));
+        //print_r($activities); die;
 
-            $events = self::getBpmnCollectionBy('Event', EventPeer::PRJ_UID, $prjUid, true);
-            $gateways = self::getBpmnCollectionBy('Gateway', GatewayPeer::PRJ_UID, $prjUid, true);
-            $flows = self::getBpmnCollectionBy('Flow', FlowPeer::PRJ_UID, $prjUid, true);
-            $artifacts = self::getBpmnCollectionBy('Artifact', ArtifactPeer::PRJ_UID, $prjUid, true);
+        $events = self::getBpmnCollectionBy('Event', EventPeer::PRJ_UID, $prjUid, true);
+        $gateways = self::getBpmnCollectionBy('Gateway', GatewayPeer::PRJ_UID, $prjUid, true);
+        $flows = self::getBpmnCollectionBy('Flow', FlowPeer::PRJ_UID, $prjUid, true);
+        $artifacts = self::getBpmnCollectionBy('Artifact', ArtifactPeer::PRJ_UID, $prjUid, true);
 
-            // getting activity bound data
-            foreach ($activities as $i => $activity) {
-                $bound = self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $activity['act_uid'], true);
+        // getting activity bound data
+        foreach ($activities as $i => $activity) {
+            $bound = self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $activity['act_uid'], true);
 
-                if (is_object($bound)) {
-                    $activities[$i] = array_merge($activities[$i], $bound);
-                }
+            if (is_object($bound)) {
+                $activities[$i] = array_merge($activities[$i], $bound);
             }
+        }
 
-            // getting event bound data
-            foreach ($events as $i => $event) {
-                $bound = self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $event['evn_uid'], true);
+        // getting event bound data
+        foreach ($events as $i => $event) {
+            $bound = self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $event['evn_uid'], true);
 
-                if (is_object($bound)) {
-                    $events[$i] = array_merge($events[$i], $bound);
-                }
+            if (is_object($bound)) {
+                $events[$i] = array_merge($events[$i], $bound);
             }
+        }
 
-            // getting gateway bound data
-            foreach ($gateways as $i => $gateway) {
-                $bound = self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $gateway['gat_uid'], true);
+        // getting gateway bound data
+        foreach ($gateways as $i => $gateway) {
+            $bound = self::getBpmnObjectBy('Bound', BoundPeer::ELEMENT_UID, $gateway['gat_uid'], true);
 
-                if (is_object($bound)) {
-                    $gateways[$i] = array_merge($gateways[$i], $bound);
-                }
+            if (is_object($bound)) {
+                $gateways[$i] = array_merge($gateways[$i], $bound);
             }
+        }
 
-
-            $project['diagrams'] = array($diagram);
-            $project['diagrams'][0]['pro_uid'] = $process['pro_uid'];
-            $project['diagrams'][0]['laneset'] = $lanesets;
-            $project['diagrams'][0]['lanes'] = $lanes;
-            $project['diagrams'][0]['activities'] = $activities;
-            $project['diagrams'][0]['events'] = $events;
-            $project['diagrams'][0]['gateways'] = $gateways;
-            $project['diagrams'][0]['flows'] = $flows;
-            $project['diagrams'][0]['artifacts'] = $artifacts;
+        $project['diagrams'] = array($diagram);
+        $project['diagrams'][0]['pro_uid'] = $process['pro_uid'];
+        $project['diagrams'][0]['laneset'] = $lanesets;
+        $project['diagrams'][0]['lanes'] = $lanes;
+        $project['diagrams'][0]['activities'] = $activities;
+        $project['diagrams'][0]['events'] = $events;
+        $project['diagrams'][0]['gateways'] = $gateways;
+        $project['diagrams'][0]['flows'] = $flows;
+        $project['diagrams'][0]['artifacts'] = $artifacts;
         //}
 
         return $project;

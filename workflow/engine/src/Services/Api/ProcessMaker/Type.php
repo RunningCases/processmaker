@@ -191,9 +191,9 @@ class Type
     /**
      * @param integer $age {@choise 1,2}
      */
-    public function postInt($age='')
+    public function postInt($age = '')
     {
-        return '->'.$age;
+        return $age;
     }
 }
 
@@ -210,3 +210,4 @@ class Author
      */
     public $email = 'name@domain.com';
 }
+

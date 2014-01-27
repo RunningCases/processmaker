@@ -42,3 +42,4 @@ abstract class Api
         return \Services\Api\OAuth2\Server::getUserId();
     }
 }
+

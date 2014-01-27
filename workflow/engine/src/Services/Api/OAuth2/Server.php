@@ -200,12 +200,12 @@ class Server implements iAuthenticate
 
         // verify if the client is not our local PM Designer client
         if ($token['client_id'] != self::getPmClientId()) {
-        //    return $allowed;
+            //return $allowed;
         }
 
         // making a local session verification for PM Web Designer Client
         if (! isset($_SESSION) || ! array_key_exists('USER_LOGGED', $_SESSION)) {
-        //    return false;
+            //return false;
         }
 
         return $allowed;
@@ -236,3 +236,4 @@ class Server implements iAuthenticate
         return array_keys($this->scope);
     }
 }
+

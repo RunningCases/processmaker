@@ -37,7 +37,7 @@ class Test extends Api
         throw new RestException(400, "GET: Record not found. Record with id: $id does not exist!");
     }
 
-    public function post($request_data = NULL)
+    public function post($request_data = null)
     {
         $id = count($this->data) + 1;
         $this->data[$id] = array(
@@ -62,7 +62,7 @@ class Test extends Api
         return $this->data[$id];
     }
 
-    public function put($id, $request_data = NULL)
+    public function put($id, $request_data = null)
     {
         if (array_key_exists($id, $this->data)) {
             if (array_key_exists('name', $request_data)) {

@@ -44,3 +44,4 @@ class Logger
         $me->setLog($data);
     }
 }
+
