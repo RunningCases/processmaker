@@ -3,12 +3,12 @@ Feature: Project Properties - Step Resources Main Tests
   Requirements:
     a workspace with the process 16062437052cd6141881e06088349078 already loaded
     the process name is "Sample Project #3 (Project Properties - Step Resources)"
-    there are two steps in the process 
+    there are two steps in the process
 
   Background:
     Given that I have a valid access_token
 
-    
+
     Scenario: List assigned Steps to "Task1"
         Given I request "project/16062437052cd6141881e06088349078/activity/10163687452cd6234e0dd25086954968/steps"
         And the content type is "application/json"
@@ -36,7 +36,7 @@ Feature: Project Properties - Step Resources Main Tests
         And the response charset is "UTF-8"
         And the type is "object"
         And store "step_uid" in session array as variable "step_uid_<step_number>"
-     
+
         Examples:
 
         | test_description                                            | project                          | activity                         | step_type_obj   | step_uid_obj                     | step_condition | step_position | step_mode | step_number |
@@ -64,7 +64,7 @@ Feature: Project Properties - Step Resources Main Tests
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"
-        
+
 
         Examples:
 
@@ -111,8 +111,8 @@ Feature: Project Properties - Step Resources Main Tests
         | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 83199959452cd62589576c1018679557 | 2           |
         | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 32743823452cd63105006e1076595203 | 3           |
 
-        
-        
+
+
 
     Scenario: List assigned Steps to "Task1"
         Given I request "project/16062437052cd6141881e06088349078/activity/10163687452cd6234e0dd25086954968/steps"
@@ -121,11 +121,11 @@ Feature: Project Properties - Step Resources Main Tests
         And the response charset is "UTF-8"
         And the type is "array"
         And the json data is an empty array
-    
-     
+
+
     #STEP TRIGGERS
 
-    Scenario: List assigned Triggers to "Task2"
+    Scenario Outline: List assigned Triggers to "Task2"
         Given I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/63293140052cd61b29e21a9056770986/triggers"
         And the content type is "application/json"
         Then the response status code should be 200
@@ -170,10 +170,10 @@ Feature: Project Properties - Step Resources Main Tests
 
         | test_description                            | project                          | activity                         | step                             |tri_uid_number | tri_uid                          | st_type  | st_condition      | st_position |
         | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 1             | 81919273152cd636c665080083928728 | BEFORE   |                   | 1           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | AFTER    |                   | 1           |  
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | AFTER    |                   | 2           |  
-    
-    
+        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | AFTER    |                   | 1           |
+        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | AFTER    |                   | 2           |
+
+
     Scenario: List available Triggers to "Task2" when there are exactly zero triggers
       Given I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/65093024352cd9df93d9675058012924/available-triggers/before"
         And the content type is "application/json"
@@ -184,7 +184,7 @@ Feature: Project Properties - Step Resources Main Tests
 
 
 
-    Scenario Outline: Update a Trigger assignation of a Step if the values had changed 
+    Scenario Outline: Update a Trigger assignation of a Step if the values had changed
       Given PUT this data:
         """
         {
@@ -199,17 +199,17 @@ Feature: Project Properties - Step Resources Main Tests
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"
-        
+
 
         Examples:
 
         | test_description                             | project                          | activity                         | step                             |tri_uid_number | tri_uid                          | st_type  | st_condition      | st_position |
         | Update st_type, st_condition                 | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 1             | 81919273152cd636c665080083928728 | AFTER    | @@var1 == 1       | 1           |
-        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | BEFORE   | @@var1 == 2       | 2           |  
-        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | BEFORE   | @@var1 == 1       | 1           |  
+        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | BEFORE   | @@var1 == 2       | 2           |
+        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | BEFORE   | @@var1 == 1       | 1           |
 
 
-   
+
    Scenario Outline: Get a single Triggers and check some properties
       Given that I want to get a resource with the key "tri_uid" stored in session array as variable "tri_uid_<tri_uid_number>"
         And I request "project/<project>/activity/<activity>/step/<step>/trigger"
@@ -226,8 +226,8 @@ Feature: Project Properties - Step Resources Main Tests
 
         | test_description                             | project                          | activity                         | step                             |tri_uid_number | tri_uid                          | st_type  | st_condition      | st_position |
         | Update st_type, st_condition                 | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 1             | 81919273152cd636c665080083928728 | AFTER    | @@var1 == 1       | 1           |
-        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | BEFORE   | @@var1 == 2       | 2           |  
-        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | BEFORE   | @@var1 == 1       | 1           |  
+        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | BEFORE   | @@var1 == 2       | 2           |
+        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | BEFORE   | @@var1 == 1       | 1           |
 
 
      Scenario Outline: Delete all Triggers assignation of a Step
@@ -241,10 +241,10 @@ Feature: Project Properties - Step Resources Main Tests
 
         | project                          | activity                         | step                             |tri_uid_number | tri_uid                          |
         | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 1             | 81919273152cd636c665080083928728 |
-        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 |  
-        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 |              
+        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 |
+        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 |
 
- 
+
     #GET /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/{step_uid}/triggers
     #    List assigned Triggers to a Step
     Scenario: List Triggers assigned to first Step of "Task2"
@@ -256,7 +256,7 @@ Feature: Project Properties - Step Resources Main Tests
         And the type is "array"
         And the json data is an empty array
 
-    
+
 
     #TRIGGERS OF STEP "ASSIGN TASK"
 
@@ -290,10 +290,10 @@ Feature: Project Properties - Step Resources Main Tests
 
         | test_description                            | project                          | activity                         | step                             |tri_uid_number | tri_uid                          | st_type           | st_condition      | st_position |
         | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 1             | 81919273152cd636c665080083928728 | BEFORE_ASSIGNMENT |                   | 1           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | BEFORE_ROUTING    |                   | 1           |  
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | AFTER_ROUTING     |                   | 2           |  
+        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | BEFORE_ROUTING    |                   | 1           |
+        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | AFTER_ROUTING     |                   | 2           |
 
-  
+
 
     Scenario: List available Triggers to "Task2" when there are exactly zero triggers
       Given I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/65093024352cd9df93d9675058012924/available-triggers"
@@ -303,8 +303,8 @@ Feature: Project Properties - Step Resources Main Tests
         And the type is "array"
         And the response has 0 records
 
-    
-    Scenario Outline: Update a Trigger assignation of a Step if the values had changed 
+
+    Scenario Outline: Update a Trigger assignation of a Step if the values had changed
       Given PUT this data:
         """
         {
@@ -319,14 +319,14 @@ Feature: Project Properties - Step Resources Main Tests
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"
-        
+
 
         Examples:
 
         | test_description                             | project                          | activity                         | step                             |tri_uid_number | tri_uid                          | st_type           | st_condition      | st_position |
         | Update st_type, st_condition                 | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 1             | 81919273152cd636c665080083928728 | AFTER_ROUTING     | @@var1 == 1       | 1           |
-        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | BEFORE_ASSIGNMENT | @@var1 == 2       | 2           |  
-        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | BEFORE_ROUTING    | @@var1 == 1       | 1           |  
+        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | BEFORE_ASSIGNMENT | @@var1 == 2       | 2           |
+        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | BEFORE_ROUTING    | @@var1 == 1       | 1           |
 
 
     Scenario Outline: Get a single Triggers and check some properties
@@ -341,13 +341,13 @@ Feature: Project Properties - Step Resources Main Tests
         And that "st_condition" is set to "<st_condition>"
         And that "st_position" is set to "<st_position>"
 
-    
+
         Examples:
 
         | test_description                             | project                          | activity                         | step                             |tri_uid_number | tri_uid                          | st_type           | st_condition      | st_position |
         | Update st_type, st_condition                 | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 1             | 81919273152cd636c665080083928728 | AFTER_ROUTING     | @@var1 == 1       | 1           |
-        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | BEFORE_ASSIGNMENT | @@var1 == 2       | 2           |  
-        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | BEFORE_ROUTING    | @@var1 == 1       | 1           |  
+        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 | BEFORE_ASSIGNMENT | @@var1 == 2       | 2           |
+        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 | BEFORE_ROUTING    | @@var1 == 1       | 1           |
 
 
      Scenario Outline: Delete all Triggers assignation of a Step
@@ -361,10 +361,10 @@ Feature: Project Properties - Step Resources Main Tests
 
         | project                          | activity                         | step                             |tri_uid_number | tri_uid                          |
         | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 1             | 81919273152cd636c665080083928728 |
-        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 |  
-        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 |              
+        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 2             | 56359776552cd6378b38e47080912028 |
+        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 65093024352cd9df93d9675058012924 | 3             | 57401970252cd6393531551040242546 |
 
- 
+
     #GET /api/1.0/{workspace}/project/{prj_uid}/activity/{act_uid}/step/{step_uid}/triggers
     #    List assigned Triggers to a Step
     Scenario: List Triggers assigned to first Step of "Task2"
