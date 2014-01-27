@@ -377,7 +377,7 @@ class Model
         $project = self::getBpmnObjectBy('Project', ProjectPeer::PRJ_UID, $prjUid, true);
 
         if (empty($project)) {
-            throw new \RuntimeException("Project with id: $prjUid, does not exists. ");
+            throw new \RuntimeException("Project with id: $prjUid, doesn't exist. ");
         }
 
         $process = self::getBpmnObjectBy('Process', ProcessPeer::PRJ_UID, $prjUid, true);
@@ -388,7 +388,12 @@ class Model
         //if (! empty($diagram)) {
             $lanesets = self::getBpmnCollectionBy('Laneset', LanesetPeer::PRJ_UID, $prjUid, true);
             $lanes = self::getBpmnCollectionBy('Lane', LanePeer::PRJ_UID, $prjUid, true);
-            $activities = self::getBpmnCollectionBy('Activity', ActivityPeer::PRJ_UID, $prjUid, true);
+
+            //$activities = self::getBpmnCollectionBy('Activity', ActivityPeer::PRJ_UID, $prjUid, true);
+            //$activities = Activity::getAll(null, null, null, 'object', CASE_LOWER);
+            $activities = Activity::getAll(array('changeCaseTo' => CASE_LOWER));
+            //print_r($activities); die;
+
             $events = self::getBpmnCollectionBy('Event', EventPeer::PRJ_UID, $prjUid, true);
             $gateways = self::getBpmnCollectionBy('Gateway', GatewayPeer::PRJ_UID, $prjUid, true);
             $flows = self::getBpmnCollectionBy('Flow', FlowPeer::PRJ_UID, $prjUid, true);
@@ -450,8 +455,6 @@ class Model
 
     public static function updateProject($prjUid, $projectUpdated)
     {
-        echo 'PRJ_UID ->: ' . $prjUid . PHP_EOL;
-
         $project = ProjectPeer::retrieveByPK($prjUid);
         $project->setPrjName($projectUpdated['prj_name']);
         $project->setPrjUpdateDate(date("Y-m-d H:i:s"));
@@ -466,10 +469,12 @@ class Model
         $diagram = DiagramPeer::retrieveByPK($diagramData['dia_uid']);
 
         if (! is_object($diagram)) {
-            throw new \RuntimeException("Related Diagram with id: {$diagramData['dia_uid']}, does not exist!");
+            throw new \RuntimeException("Project's diagram with id: {$diagramData['dia_uid']}, doesn't exist.");
         }
 
-        $diagram->setDiaName($diagramData['dia_name']);
+        if (array_key_exists('dia_name', $diagramData)) {
+            $diagram->setDiaName($diagramData['dia_name']);
+        }
 
         if (!empty($diagramData['dia_is_closable'])) {
             $diagram->setDiaIsClosable($diagramData['dia_is_closable']);
@@ -519,6 +524,11 @@ class Model
                         break;
                     case 'activities':
                         $activity = ActivityPeer::retrieveByPk($data['ACT_UID']);
+
+                        // fixing data
+                        //$data['ELEMENT_UID'] = $data['BOU_ELEMENT_UID'];
+                        //unset($data['BOU_ELEMENT_UID']);
+
                         $activity->fromArray($data);
                         $activity->save();
                         break;
@@ -609,12 +619,12 @@ class Model
 
     public function deleteProject($prjUid)
     {
-        $project = self::loadProject($prjUid);
+        $projectData = self::loadProject($prjUid);
 
         // TODO first at all, make validation, the project can only deleted if there are not any started case for it
 
         // Delete related objects
-        $diagramData = $project['diagrams'][0];
+        $diagramData = $projectData['diagrams'][0];
 
         foreach ($diagramData['flows'] as $data) {
             $flow = FlowPeer::retrieveByPK($data['flo_uid']);
@@ -652,6 +662,9 @@ class Model
         $process = ProcessPeer::retrieveByPK($diagramData['pro_uid']);
         $process->delete();
 
+        $diagram = DiagramPeer::retrieveByPK($diagramData['dia_uid']);
+        $diagram->delete();
+
         $project = ProjectPeer::retrieveByPK($prjUid);
         $project->delete();
 
@@ -685,6 +698,10 @@ class Model
             if (! array_key_exists($element, $updatedProject['diagrams'][0])) {
                 continue;
             }
+
+            /*print_r($savedProject['diagrams'][0][$element]);
+            print_r($updatedProject['diagrams'][0][$element]);
+            var_dump($key);*/
 
             $arrayDiff = self::arrayDiff(
                 $savedProject['diagrams'][0][$element],

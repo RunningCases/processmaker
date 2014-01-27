@@ -21,9 +21,7 @@ class BpmnActivity extends BaseBpmnActivity
     public function __construct($generateUid = true)
     {
         $this->bound = new BpmnBound();
-        $this->bound->setBouElementType(lcfirst(str_replace(__NAMESPACE__, '', __CLASS__)));
-        $this->bound->setBouElement('pm_canvas');
-        $this->bound->setBouContainer('bpmnDiagram');
+        $this->setBoundDefaults();
     }
 
     public function getBound()
@@ -31,6 +29,21 @@ class BpmnActivity extends BaseBpmnActivity
         return $this->bound;
     }
 
+    private function setBoundDefaults()
+    {
+        $this->bound->setBouElementType(lcfirst(str_replace(__NAMESPACE__, '', __CLASS__)));
+        $this->bound->setBouElement('pm_canvas');
+        $this->bound->setBouContainer('bpmnDiagram');
+
+        $this->bound->setPrjUid($this->getPrjUid());
+        $this->bound->setElementUid($this->getActUid());
+
+        $process = BpmnProcessPeer::retrieveByPK($this->getProUid());
+
+        if (is_object($process)) {
+            $this->bound->setDiaUid($process->getDiaUid());
+        }
+    }
 
     // OVERRIDES
 
@@ -58,9 +71,8 @@ class BpmnActivity extends BaseBpmnActivity
     {
         parent::save($con);
 
-        if (is_object($this->bound) && get_class($this->bound) == 'BpmnBound') {
-            $this->bound->save($con);
-        }
+        $this->setBoundDefaults();
+        $this->bound->save($con);
     }
 
     public function delete($con = null)
@@ -77,17 +89,50 @@ class BpmnActivity extends BaseBpmnActivity
         parent::delete($con);
     }
 
+    public static function getAll($start = null, $limit = null, $filter = '', $returnType = null, $changeCaseTo=CASE_UPPER)
+    {
+        if (is_array($start)) {
+            // $start, is a array config
+            extract($start, EXTR_OVERWRITE);
+        }
+
+        $activities = array();
+        $c = new Criteria('workflow');
+        $c->addSelectColumn("BPMN_ACTIVITY.*");
+        $c->addSelectColumn("BPMN_BOUND.*");
+        $c->addJoin(BpmnActivityPeer::ACT_UID, BpmnBoundPeer::ELEMENT_UID, Criteria::LEFT_JOIN);
+
+        $returnType = ($returnType != 'array' && $returnType != 'object') ? 'array' : $returnType;
+
+        switch ($returnType) {
+            case 'object':
+                $activities = BpmnActivityPeer::doSelect($c);
+                break;
+
+            case 'array':
+                $rs = BpmnActivityPeer::doSelectRS($c);
+                $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                while ($rs->next()) {
+                    $activities[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
+                }
+
+                break;
+        }
+
+        return $activities;
+    }
+
 	public function fromArray($data)
     {
         parent::fromArray($data, BasePeer::TYPE_FIELDNAME);
 
-        // try resolve the related bound
         $bound = BpmnBound::findByElement('Activity', $this->getActUid());
 
-        //if (array_key_exists('BOU_UID', $data)) {
         if (is_object($bound)) {
-            //$bound = BpmnBoundPeer::retrieveByPK($data['BOU_UID']);
             $this->bound = $bound;
+        } else {
+            $this->bound = new BpmnBound();
+            $this->bound->setBouUid(ProcessMaker\Util\Hash::generateUID());
         }
 
         $this->bound->fromArray($data, BasePeer::TYPE_FIELDNAME);
