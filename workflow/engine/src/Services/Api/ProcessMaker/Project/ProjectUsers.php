@@ -19,8 +19,8 @@ class ProjectUsers extends Api
     public function doGetProjectUsers($prjUid)
     {
         try {
-            $supervisor = new \BusinessModel\ProjectUser();
-            $arrayData = $supervisor->getProjectUsers($prjUid);
+            $users = new \BusinessModel\ProjectUser();
+            $arrayData = $users->getProjectUsers($prjUid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -38,8 +38,8 @@ class ProjectUsers extends Api
     public function doGetProjectStartingTasks($prjUid)
     {
         try {
-            $supervisor = new \BusinessModel\ProjectUser();
-            $arrayData = $supervisor->getProjectStartingTasks($prjUid);
+            $startingTasks = new \BusinessModel\ProjectUser();
+            $arrayData = $startingTasks->getProjectStartingTasks($prjUid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -58,8 +58,8 @@ class ProjectUsers extends Api
     public function doGetProjectStartingTaskUsers($prjUid, $usrUid)
     {
         try {
-            $supervisor = new \BusinessModel\ProjectUser();
-            $arrayData = $supervisor->getProjectStartingTaskUsers($prjUid, $usrUid);
+            $startingTasks = new \BusinessModel\ProjectUser();
+            $arrayData = $startingTasks->getProjectStartingTaskUsers($prjUid, $usrUid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {

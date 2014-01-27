@@ -625,6 +625,11 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
+            if (isset($limit)) {
+                if ($limit == 0) {
+                    return $aUsers;
+                }
+            }
             $result = $groups->getAllGroup($start, $limit, $filter);
             foreach ($result['rows'] as $results) {
                 if (in_array($results['GRP_UID'], $aUIDS1)) {
@@ -651,7 +656,7 @@ class Task
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
-            if ($filter || $filter=='0') {
+            if ($filter != '') {
                 $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
             }
             $oCriteria->addSelectColumn(\TaskUserPeer::TAS_UID);
@@ -669,11 +674,15 @@ class Task
                     $oCriteria->setOffset( $start );
                 }
             }
-            if ($limit) {
+            if (isset($limit)) {
                 if ($limit < 0) {
                     throw (new \Exception( 'invalid value specified for `limit`.'));
                 } else {
-                    $oCriteria->setLimit( $limit );
+                    if ($limit == 0) {
+                        return $aUsers;
+                    } else {
+                        $oCriteria->setLimit( $limit );
+                    }
                 }
             }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
@@ -742,6 +751,11 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
+            if (isset($limit)) {
+                if ($limit == 0) {
+                    return $aUsers;
+                }
+            }
             $result = $groups->getAllGroup($start, $limit, $filter);
             foreach ($result['rows'] as $results) {
                 if (! in_array($results['GRP_UID'], $aUIDS1)) {
@@ -770,7 +784,7 @@ class Task
             $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
-            if ($filter || $filter=='0') {
+            if ($filter != '') {
                  $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
             }
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
@@ -782,11 +796,15 @@ class Task
                     $oCriteria->setOffset( $start );
                 }
             }
-            if ($limit) {
+            if (isset($limit)) {
                 if ($limit < 0) {
                     throw (new \Exception( 'invalid value specified for `limit`.'));
                 } else {
-                    $oCriteria->setLimit( $limit );
+                    if ($limit == 0) {
+                        return $aUsers;
+                    } else {
+                        $oCriteria->setLimit( $limit );
+                    }
                 }
             }
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
@@ -1080,6 +1098,11 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
+            if (isset($limit)) {
+                if ($limit == 0) {
+                    return $aUsers;
+                }
+            }
             $result = $groups->getAllGroup($start, $limit, $filter);
             foreach ($result['rows'] as $results) {
                 if (in_array($results['GRP_UID'], $aUIDS1)) {
@@ -1106,7 +1129,7 @@ class Task
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
-            if ($filter || $filter=='0') {
+            if ($filter != '') {
                  $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
             }
             $oCriteria->addSelectColumn(\TaskUserPeer::TAS_UID);
@@ -1124,11 +1147,15 @@ class Task
                     $oCriteria->setOffset( $start );
                 }
             }
-            if ($limit) {
+            if (isset($limit)) {
                 if ($limit < 0) {
                     throw (new \Exception( 'invalid value specified for `limit`.'));
                 } else {
-                    $oCriteria->setLimit( $limit );
+                    if ($limit == 0) {
+                        return $aUsers;
+                    } else {
+                        $oCriteria->setLimit( $limit );
+                    }
                 }
             }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
@@ -1194,6 +1221,11 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
+            if (isset($limit)) {
+                if ($limit == 0) {
+                    return $aUsers;
+                }
+            }
             $result = $groups->getAllGroup($start, $limit, $filter);
             foreach ($result['rows'] as $results) {
                 if (! in_array($results['GRP_UID'], $aUIDS1)) {
@@ -1222,7 +1254,7 @@ class Task
             $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
-            if ($filter || $filter=='0') {
+            if ($filter != '') {
                  $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
             }
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
@@ -1234,11 +1266,15 @@ class Task
                     $oCriteria->setOffset( $start );
                 }
             }
-            if ($limit) {
+            if (isset($limit)) {
                 if ($limit < 0) {
                     throw (new \Exception( 'invalid value specified for `limit`.'));
                 } else {
-                    $oCriteria->setLimit( $limit );
+                    if ($limit == 0) {
+                        return $aUsers;
+                    } else {
+                        $oCriteria->setLimit( $limit );
+                    }
                 }
             }
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
