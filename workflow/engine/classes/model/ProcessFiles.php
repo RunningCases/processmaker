@@ -1,10 +1,10 @@
 <?php
 
-require_once 'classes/model/om/BaseAppFiles.php';
+require_once 'classes/model/om/BaseProcessFiles.php';
 
 
 /**
- * Skeleton subclass for representing a row from the 'APP_FILES' table.
+ * Skeleton subclass for representing a row from the 'PROCESS_FILES' table.
  *
  * 
  *
@@ -14,6 +14,6 @@ require_once 'classes/model/om/BaseAppFiles.php';
  *
  * @package    classes.model
  */
-class AppFiles extends BaseAppFiles {
+class ProcessFiles extends BaseProcessFiles {
 
-} // AppFiles
+} // ProcessFiles

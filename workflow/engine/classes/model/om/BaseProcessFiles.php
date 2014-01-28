@@ -7,31 +7,31 @@ require_once 'propel/om/Persistent.php';
 
 include_once 'propel/util/Criteria.php';
 
-include_once 'classes/model/AppFilesPeer.php';
+include_once 'classes/model/ProcessFilesPeer.php';
 
 /**
- * Base class that represents a row from the 'APP_FILES' table.
+ * Base class that represents a row from the 'PROCESS_FILES' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseAppFiles extends BaseObject implements Persistent
+abstract class BaseProcessFiles extends BaseObject implements Persistent
 {
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        AppFilesPeer
+     * @var        ProcessFilesPeer
     */
     protected static $peer;
 
     /**
-     * The value for the apf_uid field.
+     * The value for the prf_uid field.
      * @var        string
      */
-    protected $apf_uid;
+    protected $prf_uid;
 
     /**
      * The value for the pro_uid field.
@@ -40,46 +40,46 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
     protected $pro_uid;
 
     /**
-     * The value for the create_usr_uid field.
+     * The value for the usr_uid field.
      * @var        string
      */
-    protected $create_usr_uid;
+    protected $usr_uid;
 
     /**
-     * The value for the last_update_usr_uid field.
+     * The value for the prf_update_usr_uid field.
      * @var        string
      */
-    protected $last_update_usr_uid;
+    protected $prf_update_usr_uid;
 
     /**
-     * The value for the apf_path field.
+     * The value for the prf_path field.
      * @var        string
      */
-    protected $apf_path = '';
+    protected $prf_path = '';
 
     /**
-     * The value for the apf_type field.
+     * The value for the prf_type field.
      * @var        string
      */
-    protected $apf_type = '';
+    protected $prf_type = '';
 
     /**
-     * The value for the apf_editable field.
+     * The value for the prf_editable field.
      * @var        int
      */
-    protected $apf_editable = 1;
+    protected $prf_editable = 1;
 
     /**
-     * The value for the apf_create_date field.
+     * The value for the prf_create_date field.
      * @var        int
      */
-    protected $apf_create_date;
+    protected $prf_create_date;
 
     /**
-     * The value for the apf_update_date field.
+     * The value for the prf_update_date field.
      * @var        int
      */
-    protected $apf_update_date;
+    protected $prf_update_date;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -96,14 +96,14 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
     protected $alreadyInValidation = false;
 
     /**
-     * Get the [apf_uid] column value.
+     * Get the [prf_uid] column value.
      * 
      * @return     string
      */
-    public function getApfUid()
+    public function getPrfUid()
     {
 
-        return $this->apf_uid;
+        return $this->prf_uid;
     }
 
     /**
@@ -118,82 +118,82 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [create_usr_uid] column value.
+     * Get the [usr_uid] column value.
      * 
      * @return     string
      */
-    public function getCreateUsrUid()
+    public function getUsrUid()
     {
 
-        return $this->create_usr_uid;
+        return $this->usr_uid;
     }
 
     /**
-     * Get the [last_update_usr_uid] column value.
+     * Get the [prf_update_usr_uid] column value.
      * 
      * @return     string
      */
-    public function getLastUpdateUsrUid()
+    public function getPrfUpdateUsrUid()
     {
 
-        return $this->last_update_usr_uid;
+        return $this->prf_update_usr_uid;
     }
 
     /**
-     * Get the [apf_path] column value.
+     * Get the [prf_path] column value.
      * 
      * @return     string
      */
-    public function getApfPath()
+    public function getPrfPath()
     {
 
-        return $this->apf_path;
+        return $this->prf_path;
     }
 
     /**
-     * Get the [apf_type] column value.
+     * Get the [prf_type] column value.
      * 
      * @return     string
      */
-    public function getApfType()
+    public function getPrfType()
     {
 
-        return $this->apf_type;
+        return $this->prf_type;
     }
 
     /**
-     * Get the [apf_editable] column value.
+     * Get the [prf_editable] column value.
      * 
      * @return     int
      */
-    public function getApfEditable()
+    public function getPrfEditable()
     {
 
-        return $this->apf_editable;
+        return $this->prf_editable;
     }
 
     /**
-     * Get the [optionally formatted] [apf_create_date] column value.
+     * Get the [optionally formatted] [prf_create_date] column value.
      * 
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
      *                          If format is NULL, then the integer unix timestamp will be returned.
      * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
      * @throws     PropelException - if unable to convert the date/time to timestamp.
      */
-    public function getApfCreateDate($format = 'Y-m-d H:i:s')
+    public function getPrfCreateDate($format = 'Y-m-d H:i:s')
     {
 
-        if ($this->apf_create_date === null || $this->apf_create_date === '') {
+        if ($this->prf_create_date === null || $this->prf_create_date === '') {
             return null;
-        } elseif (!is_int($this->apf_create_date)) {
+        } elseif (!is_int($this->prf_create_date)) {
             // a non-timestamp value was set externally, so we convert it
-            $ts = strtotime($this->apf_create_date);
+            $ts = strtotime($this->prf_create_date);
             if ($ts === -1 || $ts === false) {
-                throw new PropelException("Unable to parse value of [apf_create_date] as date/time value: " .
-                    var_export($this->apf_create_date, true));
+                throw new PropelException("Unable to parse value of [prf_create_date] as date/time value: " .
+                    var_export($this->prf_create_date, true));
             }
         } else {
-            $ts = $this->apf_create_date;
+            $ts = $this->prf_create_date;
         }
         if ($format === null) {
             return $ts;
@@ -205,27 +205,27 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [optionally formatted] [apf_update_date] column value.
+     * Get the [optionally formatted] [prf_update_date] column value.
      * 
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
      *                          If format is NULL, then the integer unix timestamp will be returned.
      * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
      * @throws     PropelException - if unable to convert the date/time to timestamp.
      */
-    public function getApfUpdateDate($format = 'Y-m-d H:i:s')
+    public function getPrfUpdateDate($format = 'Y-m-d H:i:s')
     {
 
-        if ($this->apf_update_date === null || $this->apf_update_date === '') {
+        if ($this->prf_update_date === null || $this->prf_update_date === '') {
             return null;
-        } elseif (!is_int($this->apf_update_date)) {
+        } elseif (!is_int($this->prf_update_date)) {
             // a non-timestamp value was set externally, so we convert it
-            $ts = strtotime($this->apf_update_date);
+            $ts = strtotime($this->prf_update_date);
             if ($ts === -1 || $ts === false) {
-                throw new PropelException("Unable to parse value of [apf_update_date] as date/time value: " .
-                    var_export($this->apf_update_date, true));
+                throw new PropelException("Unable to parse value of [prf_update_date] as date/time value: " .
+                    var_export($this->prf_update_date, true));
             }
         } else {
-            $ts = $this->apf_update_date;
+            $ts = $this->prf_update_date;
         }
         if ($format === null) {
             return $ts;
@@ -237,12 +237,12 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
     }
 
     /**
-     * Set the value of [apf_uid] column.
+     * Set the value of [prf_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setApfUid($v)
+    public function setPrfUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -251,12 +251,12 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->apf_uid !== $v) {
-            $this->apf_uid = $v;
-            $this->modifiedColumns[] = AppFilesPeer::APF_UID;
+        if ($this->prf_uid !== $v) {
+            $this->prf_uid = $v;
+            $this->modifiedColumns[] = ProcessFilesPeer::PRF_UID;
         }
 
-    } // setApfUid()
+    } // setPrfUid()
 
     /**
      * Set the value of [pro_uid] column.
@@ -275,18 +275,18 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
 
         if ($this->pro_uid !== $v) {
             $this->pro_uid = $v;
-            $this->modifiedColumns[] = AppFilesPeer::PRO_UID;
+            $this->modifiedColumns[] = ProcessFilesPeer::PRO_UID;
         }
 
     } // setProUid()
 
     /**
-     * Set the value of [create_usr_uid] column.
+     * Set the value of [usr_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setCreateUsrUid($v)
+    public function setUsrUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -295,20 +295,20 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->create_usr_uid !== $v) {
-            $this->create_usr_uid = $v;
-            $this->modifiedColumns[] = AppFilesPeer::CREATE_USR_UID;
+        if ($this->usr_uid !== $v) {
+            $this->usr_uid = $v;
+            $this->modifiedColumns[] = ProcessFilesPeer::USR_UID;
         }
 
-    } // setCreateUsrUid()
+    } // setUsrUid()
 
     /**
-     * Set the value of [last_update_usr_uid] column.
+     * Set the value of [prf_update_usr_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setLastUpdateUsrUid($v)
+    public function setPrfUpdateUsrUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -317,20 +317,20 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->last_update_usr_uid !== $v) {
-            $this->last_update_usr_uid = $v;
-            $this->modifiedColumns[] = AppFilesPeer::LAST_UPDATE_USR_UID;
+        if ($this->prf_update_usr_uid !== $v) {
+            $this->prf_update_usr_uid = $v;
+            $this->modifiedColumns[] = ProcessFilesPeer::PRF_UPDATE_USR_UID;
         }
 
-    } // setLastUpdateUsrUid()
+    } // setPrfUpdateUsrUid()
 
     /**
-     * Set the value of [apf_path] column.
+     * Set the value of [prf_path] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setApfPath($v)
+    public function setPrfPath($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -339,20 +339,20 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->apf_path !== $v || $v === '') {
-            $this->apf_path = $v;
-            $this->modifiedColumns[] = AppFilesPeer::APF_PATH;
+        if ($this->prf_path !== $v || $v === '') {
+            $this->prf_path = $v;
+            $this->modifiedColumns[] = ProcessFilesPeer::PRF_PATH;
         }
 
-    } // setApfPath()
+    } // setPrfPath()
 
     /**
-     * Set the value of [apf_type] column.
+     * Set the value of [prf_type] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setApfType($v)
+    public function setPrfType($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -361,20 +361,20 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->apf_type !== $v || $v === '') {
-            $this->apf_type = $v;
-            $this->modifiedColumns[] = AppFilesPeer::APF_TYPE;
+        if ($this->prf_type !== $v || $v === '') {
+            $this->prf_type = $v;
+            $this->modifiedColumns[] = ProcessFilesPeer::PRF_TYPE;
         }
 
-    } // setApfType()
+    } // setPrfType()
 
     /**
-     * Set the value of [apf_editable] column.
+     * Set the value of [prf_editable] column.
      * 
      * @param      int $v new value
      * @return     void
      */
-    public function setApfEditable($v)
+    public function setPrfEditable($v)
     {
 
         // Since the native PHP type for this column is integer,
@@ -383,62 +383,62 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
             $v = (int) $v;
         }
 
-        if ($this->apf_editable !== $v || $v === 1) {
-            $this->apf_editable = $v;
-            $this->modifiedColumns[] = AppFilesPeer::APF_EDITABLE;
+        if ($this->prf_editable !== $v || $v === 1) {
+            $this->prf_editable = $v;
+            $this->modifiedColumns[] = ProcessFilesPeer::PRF_EDITABLE;
         }
 
-    } // setApfEditable()
+    } // setPrfEditable()
 
     /**
-     * Set the value of [apf_create_date] column.
+     * Set the value of [prf_create_date] column.
      * 
      * @param      int $v new value
      * @return     void
      */
-    public function setApfCreateDate($v)
+    public function setPrfCreateDate($v)
     {
 
         if ($v !== null && !is_int($v)) {
             $ts = strtotime($v);
             if ($ts === -1 || $ts === false) {
-                throw new PropelException("Unable to parse date/time value for [apf_create_date] from input: " .
+                throw new PropelException("Unable to parse date/time value for [prf_create_date] from input: " .
                     var_export($v, true));
             }
         } else {
             $ts = $v;
         }
-        if ($this->apf_create_date !== $ts) {
-            $this->apf_create_date = $ts;
-            $this->modifiedColumns[] = AppFilesPeer::APF_CREATE_DATE;
+        if ($this->prf_create_date !== $ts) {
+            $this->prf_create_date = $ts;
+            $this->modifiedColumns[] = ProcessFilesPeer::PRF_CREATE_DATE;
         }
 
-    } // setApfCreateDate()
+    } // setPrfCreateDate()
 
     /**
-     * Set the value of [apf_update_date] column.
+     * Set the value of [prf_update_date] column.
      * 
      * @param      int $v new value
      * @return     void
      */
-    public function setApfUpdateDate($v)
+    public function setPrfUpdateDate($v)
     {
 
         if ($v !== null && !is_int($v)) {
             $ts = strtotime($v);
             if ($ts === -1 || $ts === false) {
-                throw new PropelException("Unable to parse date/time value for [apf_update_date] from input: " .
+                throw new PropelException("Unable to parse date/time value for [prf_update_date] from input: " .
                     var_export($v, true));
             }
         } else {
             $ts = $v;
         }
-        if ($this->apf_update_date !== $ts) {
-            $this->apf_update_date = $ts;
-            $this->modifiedColumns[] = AppFilesPeer::APF_UPDATE_DATE;
+        if ($this->prf_update_date !== $ts) {
+            $this->prf_update_date = $ts;
+            $this->modifiedColumns[] = ProcessFilesPeer::PRF_UPDATE_DATE;
         }
 
-    } // setApfUpdateDate()
+    } // setPrfUpdateDate()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -457,33 +457,33 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
     {
         try {
 
-            $this->apf_uid = $rs->getString($startcol + 0);
+            $this->prf_uid = $rs->getString($startcol + 0);
 
             $this->pro_uid = $rs->getString($startcol + 1);
 
-            $this->create_usr_uid = $rs->getString($startcol + 2);
+            $this->usr_uid = $rs->getString($startcol + 2);
 
-            $this->last_update_usr_uid = $rs->getString($startcol + 3);
+            $this->prf_update_usr_uid = $rs->getString($startcol + 3);
 
-            $this->apf_path = $rs->getString($startcol + 4);
+            $this->prf_path = $rs->getString($startcol + 4);
 
-            $this->apf_type = $rs->getString($startcol + 5);
+            $this->prf_type = $rs->getString($startcol + 5);
 
-            $this->apf_editable = $rs->getInt($startcol + 6);
+            $this->prf_editable = $rs->getInt($startcol + 6);
 
-            $this->apf_create_date = $rs->getTimestamp($startcol + 7, null);
+            $this->prf_create_date = $rs->getTimestamp($startcol + 7, null);
 
-            $this->apf_update_date = $rs->getTimestamp($startcol + 8, null);
+            $this->prf_update_date = $rs->getTimestamp($startcol + 8, null);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 9; // 9 = AppFilesPeer::NUM_COLUMNS - AppFilesPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 9; // 9 = ProcessFilesPeer::NUM_COLUMNS - ProcessFilesPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating AppFiles object", $e);
+            throw new PropelException("Error populating ProcessFiles object", $e);
         }
     }
 
@@ -503,12 +503,12 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(AppFilesPeer::DATABASE_NAME);
+            $con = Propel::getConnection(ProcessFilesPeer::DATABASE_NAME);
         }
 
         try {
             $con->begin();
-            AppFilesPeer::doDelete($this, $con);
+            ProcessFilesPeer::doDelete($this, $con);
             $this->setDeleted(true);
             $con->commit();
         } catch (PropelException $e) {
@@ -534,7 +534,7 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(AppFilesPeer::DATABASE_NAME);
+            $con = Propel::getConnection(ProcessFilesPeer::DATABASE_NAME);
         }
 
         try {
@@ -569,14 +569,14 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
             // If this object has been modified, then save it to the database.
             if ($this->isModified()) {
                 if ($this->isNew()) {
-                    $pk = AppFilesPeer::doInsert($this, $con);
+                    $pk = ProcessFilesPeer::doInsert($this, $con);
                     $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
                                          // should always be true here (even though technically
                                          // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
-                    $affectedRows += AppFilesPeer::doUpdate($this, $con);
+                    $affectedRows += ProcessFilesPeer::doUpdate($this, $con);
                 }
                 $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
             }
@@ -647,7 +647,7 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = AppFilesPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = ProcessFilesPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -670,7 +670,7 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = AppFilesPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = ProcessFilesPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->getByPosition($pos);
     }
 
@@ -685,31 +685,31 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                return $this->getApfUid();
+                return $this->getPrfUid();
                 break;
             case 1:
                 return $this->getProUid();
                 break;
             case 2:
-                return $this->getCreateUsrUid();
+                return $this->getUsrUid();
                 break;
             case 3:
-                return $this->getLastUpdateUsrUid();
+                return $this->getPrfUpdateUsrUid();
                 break;
             case 4:
-                return $this->getApfPath();
+                return $this->getPrfPath();
                 break;
             case 5:
-                return $this->getApfType();
+                return $this->getPrfType();
                 break;
             case 6:
-                return $this->getApfEditable();
+                return $this->getPrfEditable();
                 break;
             case 7:
-                return $this->getApfCreateDate();
+                return $this->getPrfCreateDate();
                 break;
             case 8:
-                return $this->getApfUpdateDate();
+                return $this->getPrfUpdateDate();
                 break;
             default:
                 return null;
@@ -729,17 +729,17 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = AppFilesPeer::getFieldNames($keyType);
+        $keys = ProcessFilesPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getApfUid(),
+            $keys[0] => $this->getPrfUid(),
             $keys[1] => $this->getProUid(),
-            $keys[2] => $this->getCreateUsrUid(),
-            $keys[3] => $this->getLastUpdateUsrUid(),
-            $keys[4] => $this->getApfPath(),
-            $keys[5] => $this->getApfType(),
-            $keys[6] => $this->getApfEditable(),
-            $keys[7] => $this->getApfCreateDate(),
-            $keys[8] => $this->getApfUpdateDate(),
+            $keys[2] => $this->getUsrUid(),
+            $keys[3] => $this->getPrfUpdateUsrUid(),
+            $keys[4] => $this->getPrfPath(),
+            $keys[5] => $this->getPrfType(),
+            $keys[6] => $this->getPrfEditable(),
+            $keys[7] => $this->getPrfCreateDate(),
+            $keys[8] => $this->getPrfUpdateDate(),
         );
         return $result;
     }
@@ -756,7 +756,7 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = AppFilesPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = ProcessFilesPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->setByPosition($pos, $value);
     }
 
@@ -772,31 +772,31 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                $this->setApfUid($value);
+                $this->setPrfUid($value);
                 break;
             case 1:
                 $this->setProUid($value);
                 break;
             case 2:
-                $this->setCreateUsrUid($value);
+                $this->setUsrUid($value);
                 break;
             case 3:
-                $this->setLastUpdateUsrUid($value);
+                $this->setPrfUpdateUsrUid($value);
                 break;
             case 4:
-                $this->setApfPath($value);
+                $this->setPrfPath($value);
                 break;
             case 5:
-                $this->setApfType($value);
+                $this->setPrfType($value);
                 break;
             case 6:
-                $this->setApfEditable($value);
+                $this->setPrfEditable($value);
                 break;
             case 7:
-                $this->setApfCreateDate($value);
+                $this->setPrfCreateDate($value);
                 break;
             case 8:
-                $this->setApfUpdateDate($value);
+                $this->setPrfUpdateDate($value);
                 break;
         } // switch()
     }
@@ -819,10 +819,10 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = AppFilesPeer::getFieldNames($keyType);
+        $keys = ProcessFilesPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setApfUid($arr[$keys[0]]);
+            $this->setPrfUid($arr[$keys[0]]);
         }
 
         if (array_key_exists($keys[1], $arr)) {
@@ -830,31 +830,31 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setCreateUsrUid($arr[$keys[2]]);
+            $this->setUsrUid($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
-            $this->setLastUpdateUsrUid($arr[$keys[3]]);
+            $this->setPrfUpdateUsrUid($arr[$keys[3]]);
         }
 
         if (array_key_exists($keys[4], $arr)) {
-            $this->setApfPath($arr[$keys[4]]);
+            $this->setPrfPath($arr[$keys[4]]);
         }
 
         if (array_key_exists($keys[5], $arr)) {
-            $this->setApfType($arr[$keys[5]]);
+            $this->setPrfType($arr[$keys[5]]);
         }
 
         if (array_key_exists($keys[6], $arr)) {
-            $this->setApfEditable($arr[$keys[6]]);
+            $this->setPrfEditable($arr[$keys[6]]);
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setApfCreateDate($arr[$keys[7]]);
+            $this->setPrfCreateDate($arr[$keys[7]]);
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setApfUpdateDate($arr[$keys[8]]);
+            $this->setPrfUpdateDate($arr[$keys[8]]);
         }
 
     }
@@ -866,42 +866,42 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(AppFilesPeer::DATABASE_NAME);
+        $criteria = new Criteria(ProcessFilesPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(AppFilesPeer::APF_UID)) {
-            $criteria->add(AppFilesPeer::APF_UID, $this->apf_uid);
+        if ($this->isColumnModified(ProcessFilesPeer::PRF_UID)) {
+            $criteria->add(ProcessFilesPeer::PRF_UID, $this->prf_uid);
         }
 
-        if ($this->isColumnModified(AppFilesPeer::PRO_UID)) {
-            $criteria->add(AppFilesPeer::PRO_UID, $this->pro_uid);
+        if ($this->isColumnModified(ProcessFilesPeer::PRO_UID)) {
+            $criteria->add(ProcessFilesPeer::PRO_UID, $this->pro_uid);
         }
 
-        if ($this->isColumnModified(AppFilesPeer::CREATE_USR_UID)) {
-            $criteria->add(AppFilesPeer::CREATE_USR_UID, $this->create_usr_uid);
+        if ($this->isColumnModified(ProcessFilesPeer::USR_UID)) {
+            $criteria->add(ProcessFilesPeer::USR_UID, $this->usr_uid);
         }
 
-        if ($this->isColumnModified(AppFilesPeer::LAST_UPDATE_USR_UID)) {
-            $criteria->add(AppFilesPeer::LAST_UPDATE_USR_UID, $this->last_update_usr_uid);
+        if ($this->isColumnModified(ProcessFilesPeer::PRF_UPDATE_USR_UID)) {
+            $criteria->add(ProcessFilesPeer::PRF_UPDATE_USR_UID, $this->prf_update_usr_uid);
         }
 
-        if ($this->isColumnModified(AppFilesPeer::APF_PATH)) {
-            $criteria->add(AppFilesPeer::APF_PATH, $this->apf_path);
+        if ($this->isColumnModified(ProcessFilesPeer::PRF_PATH)) {
+            $criteria->add(ProcessFilesPeer::PRF_PATH, $this->prf_path);
         }
 
-        if ($this->isColumnModified(AppFilesPeer::APF_TYPE)) {
-            $criteria->add(AppFilesPeer::APF_TYPE, $this->apf_type);
+        if ($this->isColumnModified(ProcessFilesPeer::PRF_TYPE)) {
+            $criteria->add(ProcessFilesPeer::PRF_TYPE, $this->prf_type);
         }
 
-        if ($this->isColumnModified(AppFilesPeer::APF_EDITABLE)) {
-            $criteria->add(AppFilesPeer::APF_EDITABLE, $this->apf_editable);
+        if ($this->isColumnModified(ProcessFilesPeer::PRF_EDITABLE)) {
+            $criteria->add(ProcessFilesPeer::PRF_EDITABLE, $this->prf_editable);
         }
 
-        if ($this->isColumnModified(AppFilesPeer::APF_CREATE_DATE)) {
-            $criteria->add(AppFilesPeer::APF_CREATE_DATE, $this->apf_create_date);
+        if ($this->isColumnModified(ProcessFilesPeer::PRF_CREATE_DATE)) {
+            $criteria->add(ProcessFilesPeer::PRF_CREATE_DATE, $this->prf_create_date);
         }
 
-        if ($this->isColumnModified(AppFilesPeer::APF_UPDATE_DATE)) {
-            $criteria->add(AppFilesPeer::APF_UPDATE_DATE, $this->apf_update_date);
+        if ($this->isColumnModified(ProcessFilesPeer::PRF_UPDATE_DATE)) {
+            $criteria->add(ProcessFilesPeer::PRF_UPDATE_DATE, $this->prf_update_date);
         }
 
 
@@ -918,9 +918,9 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(AppFilesPeer::DATABASE_NAME);
+        $criteria = new Criteria(ProcessFilesPeer::DATABASE_NAME);
 
-        $criteria->add(AppFilesPeer::APF_UID, $this->apf_uid);
+        $criteria->add(ProcessFilesPeer::PRF_UID, $this->prf_uid);
 
         return $criteria;
     }
@@ -931,18 +931,18 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getApfUid();
+        return $this->getPrfUid();
     }
 
     /**
-     * Generic method to set the primary key (apf_uid column).
+     * Generic method to set the primary key (prf_uid column).
      *
      * @param      string $key Primary key.
      * @return     void
      */
     public function setPrimaryKey($key)
     {
-        $this->setApfUid($key);
+        $this->setPrfUid($key);
     }
 
     /**
@@ -951,7 +951,7 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of AppFiles (or compatible) type.
+     * @param      object $copyObj An object of ProcessFiles (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @throws     PropelException
      */
@@ -960,24 +960,24 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
 
         $copyObj->setProUid($this->pro_uid);
 
-        $copyObj->setCreateUsrUid($this->create_usr_uid);
+        $copyObj->setUsrUid($this->usr_uid);
 
-        $copyObj->setLastUpdateUsrUid($this->last_update_usr_uid);
+        $copyObj->setPrfUpdateUsrUid($this->prf_update_usr_uid);
 
-        $copyObj->setApfPath($this->apf_path);
+        $copyObj->setPrfPath($this->prf_path);
 
-        $copyObj->setApfType($this->apf_type);
+        $copyObj->setPrfType($this->prf_type);
 
-        $copyObj->setApfEditable($this->apf_editable);
+        $copyObj->setPrfEditable($this->prf_editable);
 
-        $copyObj->setApfCreateDate($this->apf_create_date);
+        $copyObj->setPrfCreateDate($this->prf_create_date);
 
-        $copyObj->setApfUpdateDate($this->apf_update_date);
+        $copyObj->setPrfUpdateDate($this->prf_update_date);
 
 
         $copyObj->setNew(true);
 
-        $copyObj->setApfUid(NULL); // this is a pkey column, so set to default value
+        $copyObj->setPrfUid(NULL); // this is a pkey column, so set to default value
 
     }
 
@@ -990,7 +990,7 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return     AppFiles Clone of current object.
+     * @return     ProcessFiles Clone of current object.
      * @throws     PropelException
      */
     public function copy($deepCopy = false)
@@ -1009,12 +1009,12 @@ abstract class BaseAppFiles extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return     AppFilesPeer
+     * @return     ProcessFilesPeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new AppFilesPeer();
+            self::$peer = new ProcessFilesPeer();
         }
         return self::$peer;
     }

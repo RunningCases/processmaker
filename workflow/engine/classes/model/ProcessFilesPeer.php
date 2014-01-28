@@ -1,14 +1,14 @@
 <?php
 
   // include base peer class
-  require_once 'classes/model/om/BaseAppFilesPeer.php';
+  require_once 'classes/model/om/BaseProcessFilesPeer.php';
 
   // include object class
-  include_once 'classes/model/AppFiles.php';
+  include_once 'classes/model/ProcessFiles.php';
 
 
 /**
- * Skeleton subclass for performing query and update operations on the 'APP_FILES' table.
+ * Skeleton subclass for performing query and update operations on the 'PROCESS_FILES' table.
  *
  * 
  *
@@ -18,6 +18,6 @@
  *
  * @package    classes.model
  */
-class AppFilesPeer extends BaseAppFilesPeer {
+class ProcessFilesPeer extends BaseProcessFilesPeer {
 
-} // AppFilesPeer
+} // ProcessFilesPeer

@@ -5,7 +5,7 @@ include_once 'creole/CreoleTypes.php';
 
 
 /**
- * This class adds structure of 'APP_FILES' table to 'workflow' DatabaseMap object.
+ * This class adds structure of 'PROCESS_FILES' table to 'workflow' DatabaseMap object.
  *
  *
  *
@@ -16,13 +16,13 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
-class AppFilesMapBuilder
+class ProcessFilesMapBuilder
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'classes.model.map.AppFilesMapBuilder';
+    const CLASS_NAME = 'classes.model.map.ProcessFilesMapBuilder';
 
     /**
      * The database map.
@@ -60,29 +60,29 @@ class AppFilesMapBuilder
     {
         $this->dbMap = Propel::getDatabaseMap('workflow');
 
-        $tMap = $this->dbMap->addTable('APP_FILES');
-        $tMap->setPhpName('AppFiles');
+        $tMap = $this->dbMap->addTable('PROCESS_FILES');
+        $tMap->setPhpName('ProcessFiles');
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addPrimaryKey('APF_UID', 'ApfUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('PRF_UID', 'PrfUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addColumn('PRO_UID', 'ProUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('CREATE_USR_UID', 'CreateUsrUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('USR_UID', 'UsrUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('LAST_UPDATE_USR_UID', 'LastUpdateUsrUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('PRF_UPDATE_USR_UID', 'PrfUpdateUsrUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('APF_PATH', 'ApfPath', 'string', CreoleTypes::VARCHAR, true, 256);
+        $tMap->addColumn('PRF_PATH', 'PrfPath', 'string', CreoleTypes::VARCHAR, true, 256);
 
-        $tMap->addColumn('APF_TYPE', 'ApfType', 'string', CreoleTypes::VARCHAR, false, 32);
+        $tMap->addColumn('PRF_TYPE', 'PrfType', 'string', CreoleTypes::VARCHAR, false, 32);
 
-        $tMap->addColumn('APF_EDITABLE', 'ApfEditable', 'int', CreoleTypes::TINYINT, false, null);
+        $tMap->addColumn('PRF_EDITABLE', 'PrfEditable', 'int', CreoleTypes::TINYINT, false, null);
 
-        $tMap->addColumn('APF_CREATE_DATE', 'ApfCreateDate', 'int', CreoleTypes::TIMESTAMP, true, null);
+        $tMap->addColumn('PRF_CREATE_DATE', 'PrfCreateDate', 'int', CreoleTypes::TIMESTAMP, true, null);
 
-        $tMap->addColumn('APF_UPDATE_DATE', 'ApfUpdateDate', 'int', CreoleTypes::TIMESTAMP, false, null);
+        $tMap->addColumn('PRF_UPDATE_DATE', 'PrfUpdateDate', 'int', CreoleTypes::TIMESTAMP, false, null);
 
     } // doBuild()
 
-} // AppFilesMapBuilder
+} // ProcessFilesMapBuilder

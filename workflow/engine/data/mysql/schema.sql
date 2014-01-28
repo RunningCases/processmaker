@@ -1475,24 +1475,24 @@ CREATE TABLE `SESSION_STORAGE`
 	KEY `indexSessionStorage`(`ID`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
-#-- APP_FILES
+#-- PROCESS_FILES
 #-----------------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `APP_FILES`;
+DROP TABLE IF EXISTS `PROCESS_FILES`;
 
 
-CREATE TABLE `APP_FILES`
+CREATE TABLE `PROCESS_FILES`
 (
-	`APF_UID` VARCHAR(32)  NOT NULL,
+	`PRF_UID` VARCHAR(32)  NOT NULL,
 	`PRO_UID` VARCHAR(32)  NOT NULL,
-	`CREATE_USR_UID` VARCHAR(32)  NOT NULL,
-	`LAST_UPDATE_USR_UID` VARCHAR(32)  NOT NULL,
-	`APF_PATH` VARCHAR(256) default '' NOT NULL,
-	`APF_TYPE` VARCHAR(32) default '',
-	`APF_EDITABLE` TINYINT default 1,
-	`APF_CREATE_DATE` DATETIME  NOT NULL,
-	`APF_UPDATE_DATE` DATETIME,
-	PRIMARY KEY (`APF_UID`)
+	`USR_UID` VARCHAR(32)  NOT NULL,
+	`PRF_UPDATE_USR_UID` VARCHAR(32)  NOT NULL,
+	`PRF_PATH` VARCHAR(256) default '' NOT NULL,
+	`PRF_TYPE` VARCHAR(32) default '',
+	`PRF_EDITABLE` TINYINT default 1,
+	`PRF_CREATE_DATE` DATETIME  NOT NULL,
+	`PRF_UPDATE_DATE` DATETIME,
+	PRIMARY KEY (`PRF_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Application files metadata';
 #-----------------------------------------------------------------------------
 #-- OAUTH_ACCESS_TOKENS
