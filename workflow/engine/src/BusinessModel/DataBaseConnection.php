@@ -20,7 +20,7 @@ class DataBaseConnection
     {
         $oDBSource = new DbSource();
         $oCriteria = $oDBSource->getCriteriaDBSList($sProcessUid);
-        
+
         $rs = \DbSourcePeer::doSelectRS($oCriteria);
         $rs->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
         $rs->next();
@@ -97,7 +97,7 @@ class DataBaseConnection
 
         if (isset($dataDBConnection['DBS_TYPE'])) {
             $typesExists = array();
-            
+
             $dbs = new dbConnections($sProcessUid);
             $dbServices = $dbs->getDbServicesAvailables();
             foreach ($dbServices as $value) {
@@ -181,7 +181,7 @@ class DataBaseConnection
     }
 
 
-    public function testConnection($dataCon) 
+    public function testConnection($dataCon)
     {
         $resp = array();
         $resp['resp'] = false;
@@ -215,7 +215,7 @@ class DataBaseConnection
             $resp['message'] = "Error Testting Connection: Trying to connect to host FAILED : " . $Server->error;
             return $resp;
         }
-                
+
         // STEP 4 : Trying to open database
         $Server->loginDbServer($dataCon['DBS_USERNAME'], $dataCon['DBS_PASSWORD']);
         $Server->setDataBase($dataCon['DBS_DATABASE_NAME'], $dataCon['DBS_PORT']);
