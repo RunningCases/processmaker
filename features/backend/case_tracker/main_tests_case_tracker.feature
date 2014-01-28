@@ -34,15 +34,15 @@ Feature: Case Tracker Main Tests
         Examples:
 
         | test_description                                            | map_type   | routing_history | message_history |
-        | Update map_type = STAGE, Routing=true, message=true         | STAGE      | true            | true            |
-        | Update map_type = STAGE, Routing=false, message=false       | STAGE      | false           | false           |
-        | Update map_type = STAGE, Routing=true, message=false        | STAGE      | true            | false           |
-        | Update map_type = STAGE, Routing=false, message=true        | STAGE      | false           | true            |
-        | Update map_type = NONE, Routing=yes, message=true           | STAGE      | true            | true            |
-        | Update map_type = PROCESS MAP, Routing=false, message=true  | PROCESSMAP | false           | true            |
-        | Update map_type = PROCESS MAP, Routing=false, message=false | PROCESSMAP | false           | false           |
-        | Update map_type = PROCESS MAP, Routing=true, message=false  | PROCESSMAP | true            | false           |
-        | Update map_type = PROCESS MAP, Routing=true, message=true   | PROCESSMAP | true            | true            |
+        | Update map_type = STAGE, Routing=true, message=true         | STAGES     | 1               | 1               |
+        | Update map_type = STAGE, Routing=false, message=false       | STAGES     | 0               | 0               |
+        | Update map_type = STAGE, Routing=true, message=false        | STAGES     | 1               | 0               |
+        | Update map_type = STAGE, Routing=false, message=true        | STAGES     | 0               | 1               |
+        | Update map_type = NONE, Routing=yes, message=true           | STAGES     | 1               | 1               |
+        | Update map_type = PROCESS MAP, Routing=false, message=true  | PROCESSMAP | 0               | 1               |
+        | Update map_type = PROCESS MAP, Routing=false, message=false | PROCESSMAP | 0               | 0               |
+        | Update map_type = PROCESS MAP, Routing=true, message=false  | PROCESSMAP | 1               | 0               |
+        | Update map_type = PROCESS MAP, Routing=true, message=true   | PROCESSMAP | 1               | 1               |
 
 
     Scenario: Get Case Tracker data of a Project
