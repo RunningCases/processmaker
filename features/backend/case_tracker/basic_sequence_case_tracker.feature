@@ -21,8 +21,8 @@ Feature: Case Tracker
         """
         {
             "map_type": "NONE",
-            "routing_history": true,
-            "message_history": false
+            "routing_history": 1,
+            "message_history": 0
         }
         """
         And I request "project/50259961452d82bf57f4f62051572528/case-tracker/property"
@@ -40,8 +40,8 @@ Feature: Case Tracker
         And the response charset is "UTF-8"
         And the type is "object"
         And that "map_type" is set to "NONE"
-        And that "routing_history" is set to "true"
-        And that "message_history" is set to "false"
+        And that "routing_history" is set to "1"
+        And that "message_history" is set to "0"
 
     #CASE TRACKER OBJECT
 
