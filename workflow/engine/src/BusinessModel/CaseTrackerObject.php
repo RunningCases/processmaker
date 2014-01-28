@@ -74,11 +74,11 @@ class CaseTrackerObject
             }
 
             if (!isset($arrayData["CTO_TYPE_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array("CTO_TYPE_OBJ"), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array(strtolower("CTO_TYPE_OBJ")), "The \"{0}\" attribute is not defined")));
             }
 
             if (!isset($arrayData["CTO_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array("CTO_UID_OBJ"), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array(strtolower("CTO_UID_OBJ")), "The \"{0}\" attribute is not defined")));
             }
 
             $step = new \BusinessModel\Step();
@@ -151,11 +151,11 @@ class CaseTrackerObject
             }
 
             if (isset($arrayData["CTO_TYPE_OBJ"]) && !isset($arrayData["CTO_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array("CTO_UID_OBJ"), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array(strtolower("CTO_UID_OBJ")), "The \"{0}\" attribute is not defined")));
             }
 
             if (!isset($arrayData["CTO_TYPE_OBJ"]) && isset($arrayData["CTO_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array("CTO_TYPE_OBJ"), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array(strtolower("CTO_TYPE_OBJ")), "The \"{0}\" attribute is not defined")));
             }
 
             if (isset($arrayData["CTO_TYPE_OBJ"]) && isset($arrayData["CTO_UID_OBJ"])) {

@@ -12,16 +12,16 @@ use \Luracast\Restler\RestException;
 class CaseTracker extends Api
 {
     /**
-     * @url GET /:projectUid/case-tracker/property
+     * @url GET /:prj_uid/case-tracker/property
      *
-     * @param string $projectUid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetCaseTrackerProperty($projectUid)
+    public function doGetCaseTrackerProperty($prj_uid)
     {
         try {
             $caseTracker = new \BusinessModel\CaseTracker();
 
-            $response = $caseTracker->getCaseTracker($projectUid);
+            $response = $caseTracker->getCaseTracker($prj_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -30,41 +30,41 @@ class CaseTracker extends Api
     }
 
     /**
-     * @url PUT /:projectUid/case-tracker/property
+     * @url PUT /:prj_uid/case-tracker/property
      *
-     * @param string $projectUid      {@min 32}{@max 32}
+     * @param string $prj_uid         {@min 32}{@max 32}
      * @param array  $request_data
      * @param string $map_type        {@from body}{@choice NONE,PROCESSMAP,STAGES}
-     * @param bool   $routing_history {@from body}
-     * @param bool   $message_history {@from body}
+     * @param int    $routing_history {@from body}{@choice 0,1}
+     * @param int    $message_history {@from body}{@choice 0,1}
      */
     public function doPutCaseTracker(
-        $projectUid,
+        $prj_uid,
         $request_data,
         $map_type = "NONE",
-        $routing_history = false,
-        $message_history = false
+        $routing_history = 0,
+        $message_history = 0
     ) {
         try {
             $caseTracker = new \BusinessModel\CaseTracker();
 
-            $arrayData = $caseTracker->update($projectUid, $request_data);
+            $arrayData = $caseTracker->update($prj_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url GET /:projectUid/case-tracker/objects
+     * @url GET /:prj_uid/case-tracker/objects
      *
-     * @param string $projectUid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetCaseTrackerObjects($projectUid)
+    public function doGetCaseTrackerObjects($prj_uid)
     {
         try {
             $caseTracker = new \BusinessModel\CaseTracker();
 
-            $response = $caseTracker->getCaseTrackerObjects($projectUid);
+            $response = $caseTracker->getCaseTrackerObjects($prj_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -73,16 +73,16 @@ class CaseTracker extends Api
     }
 
     /**
-     * @url GET /:projectUid/case-tracker/available-objects
+     * @url GET /:prj_uid/case-tracker/available-objects
      *
-     * @param string $projectUid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetCaseTrackerAvailableObjects($projectUid)
+    public function doGetCaseTrackerAvailableObjects($prj_uid)
     {
         try {
             $caseTracker = new \BusinessModel\CaseTracker();
 
-            $response = $caseTracker->getAvailableCaseTrackerObjects($projectUid);
+            $response = $caseTracker->getAvailableCaseTrackerObjects($prj_uid);
 
             return $response;
         } catch (\Exception $e) {

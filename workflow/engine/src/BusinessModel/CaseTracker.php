@@ -33,11 +33,11 @@ class CaseTracker
             }
 
             if (isset($arrayDataIni["routing_history"])) {
-                $arrayData["CT_DERIVATION_HISTORY"] = ($arrayDataIni["routing_history"])? 1 : 0;
+                $arrayData["CT_DERIVATION_HISTORY"] = (int)($arrayDataIni["routing_history"]);
             }
 
             if (isset($arrayDataIni["message_history"])) {
-                $arrayData["CT_MESSAGE_HISTORY"] = ($arrayDataIni["message_history"])? 1 : 0;
+                $arrayData["CT_MESSAGE_HISTORY"] = (int)($arrayDataIni["message_history"]);
             }
 
             $result = $caseTracker->update($arrayData);
@@ -97,8 +97,8 @@ class CaseTracker
 
             return array(
                 "map_type" => $arrayCaseTracker["CT_MAP_TYPE"],
-                "routing_history" => ($arrayCaseTracker["CT_DERIVATION_HISTORY"] == 1)? true : false,
-                "message_history" => ($arrayCaseTracker["CT_MESSAGE_HISTORY"] == 1)?    true : false
+                "routing_history" => (int)($arrayCaseTracker["CT_DERIVATION_HISTORY"]),
+                "message_history" => (int)($arrayCaseTracker["CT_MESSAGE_HISTORY"])
             );
         } catch (\Exception $e) {
             throw $e;
