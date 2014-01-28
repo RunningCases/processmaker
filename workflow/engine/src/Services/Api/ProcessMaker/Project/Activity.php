@@ -257,3 +257,4 @@ class ActivityPropertiesStructure
      */
     public $tas_def_message_template;
 }
+

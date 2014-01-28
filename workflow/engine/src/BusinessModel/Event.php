@@ -71,7 +71,7 @@ class Event
 
         if ($sEventUID != '' && empty($eventsArray)) {
             throw (new \Exception( 'This row doesn\'t exist!' ));
-        } else if ($sEventUID != '' && !empty($eventsArray)) {
+        } elseif ($sEventUID != '' && !empty($eventsArray)) {
             return current($eventsArray);
         }
         return $eventsArray;

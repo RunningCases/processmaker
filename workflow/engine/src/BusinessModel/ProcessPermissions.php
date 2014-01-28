@@ -172,7 +172,7 @@ class ProcessPermissions
 
         if ($sPermissionUid != '' && empty($aObjectsPermissions)) {
             throw (new \Exception( 'This row doesn\'t exist!' ));
-        } else if ($sPermissionUid != '' && !empty($aObjectsPermissions)) {
+        } elseif ($sPermissionUid != '' && !empty($aObjectsPermissions)) {
             $aObjectsPermissions = array_change_key_case($aObjectsPermissions, CASE_LOWER);
             return current($aObjectsPermissions);
         }
@@ -200,9 +200,9 @@ class ProcessPermissions
             $sObjectUID = '';
             switch ($data['OP_OBJ_TYPE']) {
                 case 'ANY':
-                //case 'ANY_DYNAFORM':CASES_NOTES
-                //case 'ANY_INPUT':
-                //case 'ANY_OUTPUT':
+                    //case 'ANY_DYNAFORM':CASES_NOTES
+                    //case 'ANY_INPUT':
+                    //case 'ANY_OUTPUT':
                     $sObjectUID = '';
                     break;
                 case 'DYNAFORM':
