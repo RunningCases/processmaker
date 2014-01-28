@@ -16,7 +16,7 @@ class Logger
 
     protected function __construct()
     {
-        $this->logFile = sys_get_temp_dir() . '/processmaker.log';
+        $this->logFile = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'processmaker.log';
         $this->fp = fopen($this->logFile, "a+");
     }
 
@@ -29,19 +29,25 @@ class Logger
         return self::$instance;
     }
 
-    public function setLog($data)
+    public function setLog()
     {
-        if (! is_string($data)) {
-            $data = print_r($data, true);
-        }
+        $args = func_get_args();
 
-        fwrite($this->fp, "PM LOG: ".date('Y-m-d H:i:s') . " " . $data . PHP_EOL);
+        foreach ($args as $arg) {
+            if (! is_string($arg)) {
+                $arg = print_r($arg, true);
+            }
+
+            $stat = fwrite($this->fp, "- " . date('Y-m-d H:i:s') . " " . $arg . PHP_EOL);
+        }
     }
 
-    public static function log($data)
+    public static function log()
     {
         $me = Logger::getInstance();
-        $me->setLog($data);
+        $args = func_get_args();
+
+        call_user_func_array(array($me, 'setLog'), $args);
     }
 }
 

@@ -46,6 +46,28 @@ class System
     public $sRevision;
     public $sPath;
     public $newSystemClass;
+    private static $config = null;
+    private static $debug = null;
+    private static $instance;
+    private static $defaultConfig = array(
+        'debug' => 0,
+        'debug_sql' => 0,
+        'debug_time' => 0,
+        'debug_calendar' => 0,
+        'wsdl_cache' => 1,
+        'memory_limit' => "256M",
+        'time_zone' => 'America/New_York',
+        'memcached' => 0,
+        'memcached_server' => '',
+        'default_skin' => 'neoclassic',
+        'default_lang' => 'en',
+        'proxy_host' => '',
+        'proxy_port' => '',
+        'proxy_user' => '',
+        'proxy_pass' => '',
+        'size_log_file' => 5000000,
+        'number_log_file' => 5
+    );
 
     /**
      * List currently installed plugins
@@ -1041,79 +1063,51 @@ class System
 
     public static function getSystemConfiguration ($globalIniFile = '', $wsIniFile = '', $wsName = '')
     {
-        $readGlobalIniFile = false;
-        $readWsIniFile = false;
+        if (! is_null(self::$config)) {
+            return self::$config;
+        }
 
-        if (empty( $globalIniFile )) {
+        if (empty($globalIniFile)) {
             $globalIniFile = PATH_CORE . 'config' . PATH_SEP . 'env.ini';
         }
 
-        if (empty( $wsIniFile )) {
-            if (defined( 'PATH_DB' )) {
+        if (empty($wsIniFile)) {
+            if (defined('PATH_DB')) {
                 // if we're on a valid workspace env.
-                if (empty( $wsName )) {
-                    $uriParts = explode( '/', getenv( "REQUEST_URI" ) );
-                    if (isset( $uriParts[1] )) {
-                        if (substr( $uriParts[1], 0, 3 ) == 'sys') {
-                            $wsName = substr( $uriParts[1], 3 );
+                if (empty($wsName)) {
+                    $uriParts = explode('/', getenv("REQUEST_URI"));
+
+                    if (isset($uriParts[1])) {
+                        if (substr($uriParts[1], 0, 3) == 'sys') {
+                            $wsName = substr($uriParts[1], 3);
                         }
                     }
                 }
+
                 $wsIniFile = PATH_DB . $wsName . PATH_SEP . 'env.ini';
             }
         }
 
-        $readGlobalIniFile = file_exists( $globalIniFile ) ? true : false;
-        $readWsIniFile = file_exists( $wsIniFile ) ? true : false;
-
-        if (isset( $_SESSION['PROCESSMAKER_ENV'] )) {
-            $md5 = array ();
-
-            if ($readGlobalIniFile) {
-                $md5[] = md5_file( $globalIniFile );
-            }
-            if ($readWsIniFile) {
-                $md5[] = md5_file( $wsIniFile );
-            }
-            $hash = implode( '-', $md5 );
-
-            if ($_SESSION['PROCESSMAKER_ENV_HASH'] === $hash) {
-                $_SESSION['PROCESSMAKER_ENV']['from_cache'] = 1;
-                return $_SESSION['PROCESSMAKER_ENV'];
-            }
-        }
-
         // default configuration
-        $config = array('debug' => 0, 'debug_sql' => 0, 'debug_time' => 0, 'debug_calendar' => 0, 'wsdl_cache' => 1, 'memory_limit' => "256M", 'time_zone' => 'America/New_York', 'memcached' => 0, 'memcached_server' => '', 'default_skin' => 'neoclassic', 'default_lang' => 'en', 'proxy_host' => '', 'proxy_port' => '', 'proxy_user' => '', 'proxy_pass' => '', 'size_log_file' => 5000000, 'number_log_file' => 5);
+        $config = self::$defaultConfig;
 
         // read the global env.ini configuration file
-        if ($readGlobalIniFile && ($globalConf = @parse_ini_file( $globalIniFile )) !== false) {
-            $config = array_merge( $config, $globalConf );
+        if (($globalConf = @parse_ini_file($globalIniFile)) !== false) {
+            $config = array_merge($config, $globalConf);
         }
 
         // Workspace environment configuration
-        if ($readWsIniFile && ($wsConf = @parse_ini_file( $wsIniFile )) !== false) {
-            $config = array_merge( $config, $wsConf );
+        if (($wsConf = @parse_ini_file($wsIniFile)) !== false) {
+            $config = array_merge($config, $wsConf);
         }
 
         // validation debug config, only binary value is valid; debug = 1, to enable
         $config['debug'] = $config['debug'] == 1 ? 1 : 0;
+        self::$debug = $config['debug'];
 
         if ($config['proxy_pass'] != '') {
-            $config['proxy_pass'] = G::decrypt( $config['proxy_pass'], 'proxy_pass' );
+            $config['proxy_pass'] = G::decrypt($config['proxy_pass'], 'proxy_pass');
         }
-
-        $md5 = array ();
-        if ($readGlobalIniFile) {
-            $md5[] = @md5_file( $globalIniFile );
-        }
-        if ($readWsIniFile) {
-            $md5[] = @md5_file( $wsIniFile );
-        }
-        $hash = implode( '-', $md5 );
-
-        $_SESSION['PROCESSMAKER_ENV'] = $config;
-        $_SESSION['PROCESSMAKER_ENV_HASH'] = $hash;
 
         return $config;
     }
@@ -1165,6 +1159,24 @@ class System
         }
 
         return false;
+    }
+
+    public static function getInstance()
+    {
+        if (is_null(self::$instance)) {
+            self::$instance = new System();
+        }
+
+        return self::$instance;
+    }
+
+    public static function isDebugMode()
+    {
+        if (is_null(self::$debug)) {
+            self::getSystemConfiguration();
+        }
+
+        return self::$debug;
     }
 }
 // end System class

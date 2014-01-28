@@ -27,7 +27,9 @@ use \BpmnArtifactPeer as ArtifactPeer;
 
 use \ProcessMaker\Util\Hash;
 use \BasePeer;
-use Symfony\Component\Yaml\Exception\RuntimeException;
+
+use \ProcessMaker\Util\Logger;
+use System;
 
 
 /**
@@ -390,8 +392,8 @@ class Model
         $lanes = self::getBpmnCollectionBy('Lane', LanePeer::PRJ_UID, $prjUid, true);
 
         //$activities = self::getBpmnCollectionBy('Activity', ActivityPeer::PRJ_UID, $prjUid, true);
-        //$activities = Activity::getAll(null, null, null, 'object', CASE_LOWER);
-        $activities = Activity::getAll(array('changeCaseTo' => CASE_LOWER));
+        //$activities = Activity::getAll($prjUid, null, null, null, 'object', CASE_LOWER);
+        $activities = Activity::getAll(array('prjUid' => $prjUid, 'changeCaseTo' => CASE_LOWER));
         //print_r($activities); die;
 
         $events = self::getBpmnCollectionBy('Event', EventPeer::PRJ_UID, $prjUid, true);
@@ -495,26 +497,25 @@ class Model
         $savedProject = self::loadProject($prjUid);
         $diff = self::getDiffFromProjects($savedProject, $projectUpdated);
 
-        self::updateDiagram($prjUid, $process->getProUid(), $diff);
+        $result = self::updateDiagram($prjUid, $process->getProUid(), $diff);
+
+        return $result;
     }
 
     public static function updateDiagram($prjUid, $proUid, $diff)
     {
-        echo 'DIFF'. PHP_EOL;
-        print_r($diff);
+        self::log('executing: updateDiagram() with params -> ', $prjUid, $proUid, $diff);
 
         //return false;
-        $mapId = array();
+        $uids = array();
 
         // Updating objects
         foreach ($diff['updated'] as $element => $items) {
             foreach ($items as $data) {
                 $data = array_change_key_case((array) $data, CASE_UPPER);
-                //print_r($data); die;
 
                 // the calls in switch sentence are setting and saving the related BpmnBound objects too,
                 // because methods: save(), fromArray(), toArray() are beautifully extended
-                // of Activity, Event and Gateway classes ;) atte. @erik
 
                 switch ($element) {
                     case 'laneset':
@@ -614,6 +615,7 @@ class Model
             }
         }
 
+        return $uids;
     }
 
     public function deleteProject($prjUid)
@@ -904,6 +906,18 @@ class Model
         }
 
         return sha1($data);
+    }
+
+    protected static function log()
+    {
+        if (System::isDebugMode()) {
+
+            $me = Logger::getInstance();
+            $args = func_get_args();
+            array_unshift($args, 'Class '.__CLASS__.': ');
+
+            call_user_func_array(array($me, 'setLog'), $args);
+        }
     }
 }
 

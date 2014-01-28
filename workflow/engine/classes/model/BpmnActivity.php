@@ -89,11 +89,11 @@ class BpmnActivity extends BaseBpmnActivity
         parent::delete($con);
     }
 
-    public static function getAll($start = null, $limit = null, $filter = '', $returnType = null, $changeCaseTo=CASE_UPPER)
+    public static function getAll($prjUid = null, $start = null, $limit = null, $filter = '', $returnType = null, $changeCaseTo=CASE_UPPER)
     {
-        if (is_array($start)) {
+        if (is_array($prjUid)) {
             // $start, is a array config
-            extract($start, EXTR_OVERWRITE);
+            extract($prjUid, EXTR_OVERWRITE);
         }
 
         $activities = array();
@@ -101,6 +101,10 @@ class BpmnActivity extends BaseBpmnActivity
         $c->addSelectColumn("BPMN_ACTIVITY.*");
         $c->addSelectColumn("BPMN_BOUND.*");
         $c->addJoin(BpmnActivityPeer::ACT_UID, BpmnBoundPeer::ELEMENT_UID, Criteria::LEFT_JOIN);
+
+        if (! is_null($prjUid)) {
+            $c->add(BpmnActivityPeer::PRJ_UID, $prjUid, Criteria::EQUAL);
+        }
 
         $returnType = ($returnType != 'array' && $returnType != 'object') ? 'array' : $returnType;
 
