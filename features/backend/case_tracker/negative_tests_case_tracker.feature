@@ -10,11 +10,11 @@ Feature: Case Tracker Negative Tests
       """
         {
             "map_type": "<map_type>",
-            "routing_history": "<routing_history>",
-            "message_history": "<message_history>"
+            "routing_history": <routing_history>,
+            "message_history": <message_history>
         }
         """
-        And I request "project/50259961452d82bf57f4f62051572528/case-tracker/property"
+        And I request "project/<project>/case-tracker/property"
         And the content type is "application/json"
         Then the response status code should be <error_code>
         And the response status message should have the following text "<error_message>"
@@ -22,10 +22,10 @@ Feature: Case Tracker Negative Tests
         Examples:
 
         | test_description                                            | project                          | map_type   | routing_history | message_history | error_code | error_message          |
-        | Invalid map type                                            | 50259961452d82bf57f4f62051572528 | STAGGEES   | true            | true            | 400        | map_type               |
-        | Invalid Routing History                                     | 50259961452d82bf57f4f62051572528 | STAGE      | trufalse        | false           | 400        | routing_history        |
-        | Invalid Message History                                     | 50259961452d82bf57f4f62051572528 | STAGE      | true            | faltrue         | 400        | message_history        |
-        | Field requered project                                      |                                  | STAGE      | false           | true            | 400        | project                |
+        | Invalid map type                                            | 50259961452d82bf57f4f62051572528 | STAGGEES   | 1               | 1               | 400        | map_type               |
+        | Invalid Routing History                                     | 50259961452d82bf57f4f62051572528 | STAGES     | 20              | 0               | 400        | routing_history        |
+        | Invalid Message History                                     | 50259961452d82bf57f4f62051572528 | STAGES     | 1               | 20              | 400        | message_history        |
+        | Field requered project                                      |                                  | STAGES     | 0               | 1               | 400        | prj_uid                |
        
 
    Scenario Outline: Assigning objects to process case tracker with bad parameters (negative tests)
@@ -49,5 +49,5 @@ Feature: Case Tracker Negative Tests
         | Invalid cto_type_obj   | 50259961452d82bf57f4f62051572528 | DYNAFORM        | 00001752652d82c592fc100000000051 |               | 1            | 400        | DYNAFORM               |
         | Invalid cto_uid_obj    | 50259961452d82bf57f4f62051572528 | INPUT_DOCUMENT  | 8700000000000006d8c67d1001895377 |               | 2            | 400        | INPUT_DOCUMENT         |
         | Invalid cto_position   | 50259961452d82bf57f4f62051572528 | OUTPUT_DOCUMENT | 76247354052d82ca9d04509043789234 |               | 3,9999.87    | 400        | cto_position           | 
-        | Field requered project |                                  | DYNAFORM        | 14761752652d82c592fc180020076851 |               | 1            | 400        | project                |
+        | Field requered project |                                  | DYNAFORM        | 14761752652d82c592fc180020076851 |               | 1            | 400        | prj_uid                |
        
