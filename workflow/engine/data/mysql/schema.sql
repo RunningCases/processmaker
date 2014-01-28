@@ -321,8 +321,8 @@ DROP TABLE IF EXISTS `LANGUAGE`;
 CREATE TABLE `LANGUAGE`
 (
 	`LAN_ID` VARCHAR(4) default '' NOT NULL,
-	`LAN_NAME` VARCHAR(30) default '' NOT NULL,
 	`LAN_LOCATION` VARCHAR(4) default '' NOT NULL,
+	`LAN_NAME` VARCHAR(30) default '' NOT NULL,
 	`LAN_NATIVE_NAME` VARCHAR(30) default '' NOT NULL,
 	`LAN_DIRECTION` CHAR(1) default 'L' NOT NULL,
 	`LAN_WEIGHT` INTEGER default 0 NOT NULL,
@@ -1474,6 +1474,26 @@ CREATE TABLE `SESSION_STORAGE`
 	PRIMARY KEY (`ID`),
 	KEY `indexSessionStorage`(`ID`)
 )ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- APP_FILES
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `APP_FILES`;
+
+
+CREATE TABLE `APP_FILES`
+(
+	`APF_UID` VARCHAR(32)  NOT NULL,
+	`PRO_UID` VARCHAR(32)  NOT NULL,
+	`CREATE_USR_UID` VARCHAR(32)  NOT NULL,
+	`LAST_UPDATE_USR_UID` VARCHAR(32)  NOT NULL,
+	`APF_PATH` VARCHAR(256) default '' NOT NULL,
+	`APF_TYPE` VARCHAR(32) default '',
+	`APF_EDITABLE` TINYINT default 1,
+	`APF_CREATE_DATE` DATETIME  NOT NULL,
+	`APF_UPDATE_DATE` DATETIME,
+	PRIMARY KEY (`APF_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Application files metadata';
 #-----------------------------------------------------------------------------
 #-- OAUTH_ACCESS_TOKENS
 #-----------------------------------------------------------------------------

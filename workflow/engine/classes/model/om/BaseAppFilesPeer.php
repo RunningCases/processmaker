@@ -2,58 +2,61 @@
 
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by LanguagePeer::getOMClass()
-include_once 'classes/model/Language.php';
+// actual class may be a subclass -- as returned by AppFilesPeer::getOMClass()
+include_once 'classes/model/AppFiles.php';
 
 /**
- * Base static class for performing query and update operations on the 'LANGUAGE' table.
+ * Base static class for performing query and update operations on the 'APP_FILES' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseLanguagePeer
+abstract class BaseAppFilesPeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'workflow';
 
     /** the table name for this class */
-    const TABLE_NAME = 'LANGUAGE';
+    const TABLE_NAME = 'APP_FILES';
 
     /** A class that can be returned by this peer. */
-    const CLASS_DEFAULT = 'classes.model.Language';
+    const CLASS_DEFAULT = 'classes.model.AppFiles';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 9;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
-    /** the column name for the LAN_ID field */
-    const LAN_ID = 'LANGUAGE.LAN_ID';
+    /** the column name for the APF_UID field */
+    const APF_UID = 'APP_FILES.APF_UID';
 
-    /** the column name for the LAN_LOCATION field */
-    const LAN_LOCATION = 'LANGUAGE.LAN_LOCATION';
+    /** the column name for the PRO_UID field */
+    const PRO_UID = 'APP_FILES.PRO_UID';
 
-    /** the column name for the LAN_NAME field */
-    const LAN_NAME = 'LANGUAGE.LAN_NAME';
+    /** the column name for the CREATE_USR_UID field */
+    const CREATE_USR_UID = 'APP_FILES.CREATE_USR_UID';
 
-    /** the column name for the LAN_NATIVE_NAME field */
-    const LAN_NATIVE_NAME = 'LANGUAGE.LAN_NATIVE_NAME';
+    /** the column name for the LAST_UPDATE_USR_UID field */
+    const LAST_UPDATE_USR_UID = 'APP_FILES.LAST_UPDATE_USR_UID';
 
-    /** the column name for the LAN_DIRECTION field */
-    const LAN_DIRECTION = 'LANGUAGE.LAN_DIRECTION';
+    /** the column name for the APF_PATH field */
+    const APF_PATH = 'APP_FILES.APF_PATH';
 
-    /** the column name for the LAN_WEIGHT field */
-    const LAN_WEIGHT = 'LANGUAGE.LAN_WEIGHT';
+    /** the column name for the APF_TYPE field */
+    const APF_TYPE = 'APP_FILES.APF_TYPE';
 
-    /** the column name for the LAN_ENABLED field */
-    const LAN_ENABLED = 'LANGUAGE.LAN_ENABLED';
+    /** the column name for the APF_EDITABLE field */
+    const APF_EDITABLE = 'APP_FILES.APF_EDITABLE';
 
-    /** the column name for the LAN_CALENDAR field */
-    const LAN_CALENDAR = 'LANGUAGE.LAN_CALENDAR';
+    /** the column name for the APF_CREATE_DATE field */
+    const APF_CREATE_DATE = 'APP_FILES.APF_CREATE_DATE';
+
+    /** the column name for the APF_UPDATE_DATE field */
+    const APF_UPDATE_DATE = 'APP_FILES.APF_UPDATE_DATE';
 
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
@@ -66,10 +69,10 @@ abstract class BaseLanguagePeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('LanId', 'LanLocation', 'LanName', 'LanNativeName', 'LanDirection', 'LanWeight', 'LanEnabled', 'LanCalendar', ),
-        BasePeer::TYPE_COLNAME => array (LanguagePeer::LAN_ID, LanguagePeer::LAN_LOCATION, LanguagePeer::LAN_NAME, LanguagePeer::LAN_NATIVE_NAME, LanguagePeer::LAN_DIRECTION, LanguagePeer::LAN_WEIGHT, LanguagePeer::LAN_ENABLED, LanguagePeer::LAN_CALENDAR, ),
-        BasePeer::TYPE_FIELDNAME => array ('LAN_ID', 'LAN_LOCATION', 'LAN_NAME', 'LAN_NATIVE_NAME', 'LAN_DIRECTION', 'LAN_WEIGHT', 'LAN_ENABLED', 'LAN_CALENDAR', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+        BasePeer::TYPE_PHPNAME => array ('ApfUid', 'ProUid', 'CreateUsrUid', 'LastUpdateUsrUid', 'ApfPath', 'ApfType', 'ApfEditable', 'ApfCreateDate', 'ApfUpdateDate', ),
+        BasePeer::TYPE_COLNAME => array (AppFilesPeer::APF_UID, AppFilesPeer::PRO_UID, AppFilesPeer::CREATE_USR_UID, AppFilesPeer::LAST_UPDATE_USR_UID, AppFilesPeer::APF_PATH, AppFilesPeer::APF_TYPE, AppFilesPeer::APF_EDITABLE, AppFilesPeer::APF_CREATE_DATE, AppFilesPeer::APF_UPDATE_DATE, ),
+        BasePeer::TYPE_FIELDNAME => array ('APF_UID', 'PRO_UID', 'CREATE_USR_UID', 'LAST_UPDATE_USR_UID', 'APF_PATH', 'APF_TYPE', 'APF_EDITABLE', 'APF_CREATE_DATE', 'APF_UPDATE_DATE', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -79,10 +82,10 @@ abstract class BaseLanguagePeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('LanId' => 0, 'LanLocation' => 1, 'LanName' => 2, 'LanNativeName' => 3, 'LanDirection' => 4, 'LanWeight' => 5, 'LanEnabled' => 6, 'LanCalendar' => 7, ),
-        BasePeer::TYPE_COLNAME => array (LanguagePeer::LAN_ID => 0, LanguagePeer::LAN_LOCATION => 1, LanguagePeer::LAN_NAME => 2, LanguagePeer::LAN_NATIVE_NAME => 3, LanguagePeer::LAN_DIRECTION => 4, LanguagePeer::LAN_WEIGHT => 5, LanguagePeer::LAN_ENABLED => 6, LanguagePeer::LAN_CALENDAR => 7, ),
-        BasePeer::TYPE_FIELDNAME => array ('LAN_ID' => 0, 'LAN_LOCATION' => 1, 'LAN_NAME' => 2, 'LAN_NATIVE_NAME' => 3, 'LAN_DIRECTION' => 4, 'LAN_WEIGHT' => 5, 'LAN_ENABLED' => 6, 'LAN_CALENDAR' => 7, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+        BasePeer::TYPE_PHPNAME => array ('ApfUid' => 0, 'ProUid' => 1, 'CreateUsrUid' => 2, 'LastUpdateUsrUid' => 3, 'ApfPath' => 4, 'ApfType' => 5, 'ApfEditable' => 6, 'ApfCreateDate' => 7, 'ApfUpdateDate' => 8, ),
+        BasePeer::TYPE_COLNAME => array (AppFilesPeer::APF_UID => 0, AppFilesPeer::PRO_UID => 1, AppFilesPeer::CREATE_USR_UID => 2, AppFilesPeer::LAST_UPDATE_USR_UID => 3, AppFilesPeer::APF_PATH => 4, AppFilesPeer::APF_TYPE => 5, AppFilesPeer::APF_EDITABLE => 6, AppFilesPeer::APF_CREATE_DATE => 7, AppFilesPeer::APF_UPDATE_DATE => 8, ),
+        BasePeer::TYPE_FIELDNAME => array ('APF_UID' => 0, 'PRO_UID' => 1, 'CREATE_USR_UID' => 2, 'LAST_UPDATE_USR_UID' => 3, 'APF_PATH' => 4, 'APF_TYPE' => 5, 'APF_EDITABLE' => 6, 'APF_CREATE_DATE' => 7, 'APF_UPDATE_DATE' => 8, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -92,8 +95,8 @@ abstract class BaseLanguagePeer
      */
     public static function getMapBuilder()
     {
-        include_once 'classes/model/map/LanguageMapBuilder.php';
-        return BasePeer::getMapBuilder('classes.model.map.LanguageMapBuilder');
+        include_once 'classes/model/map/AppFilesMapBuilder.php';
+        return BasePeer::getMapBuilder('classes.model.map.AppFilesMapBuilder');
     }
     /**
      * Gets a map (hash) of PHP names to DB column names.
@@ -106,7 +109,7 @@ abstract class BaseLanguagePeer
     public static function getPhpNameMap()
     {
         if (self::$phpNameMap === null) {
-            $map = LanguagePeer::getTableMap();
+            $map = AppFilesPeer::getTableMap();
             $columns = $map->getColumns();
             $nameMap = array();
             foreach ($columns as $column) {
@@ -161,12 +164,12 @@ abstract class BaseLanguagePeer
      *      $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. LanguagePeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. AppFilesPeer::COLUMN_NAME).
      * @return     string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(LanguagePeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(AppFilesPeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -183,26 +186,28 @@ abstract class BaseLanguagePeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
-        $criteria->addSelectColumn(LanguagePeer::LAN_ID);
+        $criteria->addSelectColumn(AppFilesPeer::APF_UID);
 
-        $criteria->addSelectColumn(LanguagePeer::LAN_LOCATION);
+        $criteria->addSelectColumn(AppFilesPeer::PRO_UID);
 
-        $criteria->addSelectColumn(LanguagePeer::LAN_NAME);
+        $criteria->addSelectColumn(AppFilesPeer::CREATE_USR_UID);
 
-        $criteria->addSelectColumn(LanguagePeer::LAN_NATIVE_NAME);
+        $criteria->addSelectColumn(AppFilesPeer::LAST_UPDATE_USR_UID);
 
-        $criteria->addSelectColumn(LanguagePeer::LAN_DIRECTION);
+        $criteria->addSelectColumn(AppFilesPeer::APF_PATH);
 
-        $criteria->addSelectColumn(LanguagePeer::LAN_WEIGHT);
+        $criteria->addSelectColumn(AppFilesPeer::APF_TYPE);
 
-        $criteria->addSelectColumn(LanguagePeer::LAN_ENABLED);
+        $criteria->addSelectColumn(AppFilesPeer::APF_EDITABLE);
 
-        $criteria->addSelectColumn(LanguagePeer::LAN_CALENDAR);
+        $criteria->addSelectColumn(AppFilesPeer::APF_CREATE_DATE);
+
+        $criteria->addSelectColumn(AppFilesPeer::APF_UPDATE_DATE);
 
     }
 
-    const COUNT = 'COUNT(LANGUAGE.LAN_ID)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT LANGUAGE.LAN_ID)';
+    const COUNT = 'COUNT(APP_FILES.APF_UID)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT APP_FILES.APF_UID)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -220,9 +225,9 @@ abstract class BaseLanguagePeer
         // clear out anything that might confuse the ORDER BY clause
         $criteria->clearSelectColumns()->clearOrderByColumns();
         if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->addSelectColumn(LanguagePeer::COUNT_DISTINCT);
+            $criteria->addSelectColumn(AppFilesPeer::COUNT_DISTINCT);
         } else {
-            $criteria->addSelectColumn(LanguagePeer::COUNT);
+            $criteria->addSelectColumn(AppFilesPeer::COUNT);
         }
 
         // just in case we're grouping: add those columns to the select statement
@@ -230,7 +235,7 @@ abstract class BaseLanguagePeer
             $criteria->addSelectColumn($column);
         }
 
-        $rs = LanguagePeer::doSelectRS($criteria, $con);
+        $rs = AppFilesPeer::doSelectRS($criteria, $con);
         if ($rs->next()) {
             return $rs->getInt(1);
         } else {
@@ -243,7 +248,7 @@ abstract class BaseLanguagePeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      Connection $con
-     * @return     Language
+     * @return     AppFiles
      * @throws     PropelException Any exceptions caught during processing will be
      *       rethrown wrapped into a PropelException.
      */
@@ -251,7 +256,7 @@ abstract class BaseLanguagePeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = LanguagePeer::doSelect($critcopy, $con);
+        $objects = AppFilesPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -268,7 +273,7 @@ abstract class BaseLanguagePeer
      */
     public static function doSelect(Criteria $criteria, $con = null)
     {
-        return LanguagePeer::populateObjects(LanguagePeer::doSelectRS($criteria, $con));
+        return AppFilesPeer::populateObjects(AppFilesPeer::doSelectRS($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect()
@@ -292,7 +297,7 @@ abstract class BaseLanguagePeer
 
         if (!$criteria->getSelectColumns()) {
             $criteria = clone $criteria;
-            LanguagePeer::addSelectColumns($criteria);
+            AppFilesPeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
@@ -314,7 +319,7 @@ abstract class BaseLanguagePeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = LanguagePeer::getOMClass();
+        $cls = AppFilesPeer::getOMClass();
         $cls = Propel::import($cls);
         // populate the object(s)
         while ($rs->next()) {
@@ -349,13 +354,13 @@ abstract class BaseLanguagePeer
      */
     public static function getOMClass()
     {
-        return LanguagePeer::CLASS_DEFAULT;
+        return AppFilesPeer::CLASS_DEFAULT;
     }
 
     /**
-     * Method perform an INSERT on the database, given a Language or Criteria object.
+     * Method perform an INSERT on the database, given a AppFiles or Criteria object.
      *
-     * @param      mixed $values Criteria or Language object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or AppFiles object containing data that is used to create the INSERT statement.
      * @param      Connection $con the connection to use
      * @return     mixed The new primary key.
      * @throws     PropelException Any exceptions caught during processing will be
@@ -370,7 +375,7 @@ abstract class BaseLanguagePeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from Language object
+            $criteria = $values->buildCriteria(); // build Criteria from AppFiles object
         }
 
 
@@ -392,9 +397,9 @@ abstract class BaseLanguagePeer
     }
 
     /**
-     * Method perform an UPDATE on the database, given a Language or Criteria object.
+     * Method perform an UPDATE on the database, given a AppFiles or Criteria object.
      *
-     * @param      mixed $values Criteria or Language object containing data create the UPDATE statement.
+     * @param      mixed $values Criteria or AppFiles object containing data create the UPDATE statement.
      * @param      Connection $con The connection to use (specify Connection exert more control over transactions).
      * @return     int The number of affected rows (if supported by underlying database driver).
      * @throws     PropelException Any exceptions caught during processing will be
@@ -411,8 +416,8 @@ abstract class BaseLanguagePeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(LanguagePeer::LAN_ID);
-            $selectCriteria->add(LanguagePeer::LAN_ID, $criteria->remove(LanguagePeer::LAN_ID), $comparison);
+            $comparison = $criteria->getComparison(AppFilesPeer::APF_UID);
+            $selectCriteria->add(AppFilesPeer::APF_UID, $criteria->remove(AppFilesPeer::APF_UID), $comparison);
 
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
@@ -426,7 +431,7 @@ abstract class BaseLanguagePeer
     }
 
     /**
-     * Method to DELETE all rows from the LANGUAGE table.
+     * Method to DELETE all rows from the APP_FILES table.
      *
      * @return     int The number of affected rows (if supported by underlying database driver).
      */
@@ -440,7 +445,7 @@ abstract class BaseLanguagePeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
-            $affectedRows += BasePeer::doDeleteAll(LanguagePeer::TABLE_NAME, $con);
+            $affectedRows += BasePeer::doDeleteAll(AppFilesPeer::TABLE_NAME, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -450,9 +455,9 @@ abstract class BaseLanguagePeer
     }
 
     /**
-     * Method perform a DELETE on the database, given a Language or Criteria object OR a primary key value.
+     * Method perform a DELETE on the database, given a AppFiles or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or Language object or primary key or array of primary keys
+     * @param      mixed $values Criteria or AppFiles object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      Connection $con the connection to use
      * @return     int  The number of affected rows (if supported by underlying database driver).
@@ -464,18 +469,18 @@ abstract class BaseLanguagePeer
     public static function doDelete($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(LanguagePeer::DATABASE_NAME);
+            $con = Propel::getConnection(AppFilesPeer::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
-        } elseif ($values instanceof Language) {
+        } elseif ($values instanceof AppFiles) {
 
             $criteria = $values->buildPkeyCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(LanguagePeer::LAN_ID, (array) $values, Criteria::IN);
+            $criteria->add(AppFilesPeer::APF_UID, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -498,24 +503,24 @@ abstract class BaseLanguagePeer
     }
 
     /**
-     * Validates all modified columns of given Language object.
+     * Validates all modified columns of given AppFiles object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      Language $obj The object to validate.
+     * @param      AppFiles $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
      */
-    public static function doValidate(Language $obj, $cols = null)
+    public static function doValidate(AppFiles $obj, $cols = null)
     {
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(LanguagePeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(LanguagePeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(AppFilesPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(AppFilesPeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -529,15 +534,9 @@ abstract class BaseLanguagePeer
             }
         } else {
 
-        if ($obj->isNew() || $obj->isColumnModified(LanguagePeer::LAN_DIRECTION))
-            $columns[LanguagePeer::LAN_DIRECTION] = $obj->getLanDirection();
-
-        if ($obj->isNew() || $obj->isColumnModified(LanguagePeer::LAN_ENABLED))
-            $columns[LanguagePeer::LAN_ENABLED] = $obj->getLanEnabled();
-
         }
 
-        return BasePeer::doValidate(LanguagePeer::DATABASE_NAME, LanguagePeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(AppFilesPeer::DATABASE_NAME, AppFilesPeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -545,7 +544,7 @@ abstract class BaseLanguagePeer
      *
      * @param      mixed $pk the primary key.
      * @param      Connection $con the connection to use
-     * @return     Language
+     * @return     AppFiles
      */
     public static function retrieveByPK($pk, $con = null)
     {
@@ -553,12 +552,12 @@ abstract class BaseLanguagePeer
             $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
-        $criteria = new Criteria(LanguagePeer::DATABASE_NAME);
+        $criteria = new Criteria(AppFilesPeer::DATABASE_NAME);
 
-        $criteria->add(LanguagePeer::LAN_ID, $pk);
+        $criteria->add(AppFilesPeer::APF_UID, $pk);
 
 
-        $v = LanguagePeer::doSelect($criteria, $con);
+        $v = AppFilesPeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -582,8 +581,8 @@ abstract class BaseLanguagePeer
             $objs = array();
         } else {
             $criteria = new Criteria();
-            $criteria->add(LanguagePeer::LAN_ID, $pks, Criteria::IN);
-            $objs = LanguagePeer::doSelect($criteria, $con);
+            $criteria->add(AppFilesPeer::APF_UID, $pks, Criteria::IN);
+            $objs = AppFilesPeer::doSelect($criteria, $con);
         }
         return $objs;
     }
@@ -595,14 +594,14 @@ if (Propel::isInit()) {
     // the MapBuilder classes register themselves with Propel during initialization
     // so we need to load them here.
     try {
-        BaseLanguagePeer::getMapBuilder();
+        BaseAppFilesPeer::getMapBuilder();
     } catch (Exception $e) {
         Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
     }
 } else {
     // even if Propel is not yet initialized, the map builder class can be registered
     // now and then it will be loaded when Propel initializes.
-    require_once 'classes/model/map/LanguageMapBuilder.php';
-    Propel::registerMapBuilder('classes.model.map.LanguageMapBuilder');
+    require_once 'classes/model/map/AppFilesMapBuilder.php';
+    Propel::registerMapBuilder('classes.model.map.AppFilesMapBuilder');
 }
 

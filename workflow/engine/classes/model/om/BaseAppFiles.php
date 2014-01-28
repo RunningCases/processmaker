@@ -7,73 +7,79 @@ require_once 'propel/om/Persistent.php';
 
 include_once 'propel/util/Criteria.php';
 
-include_once 'classes/model/LanguagePeer.php';
+include_once 'classes/model/AppFilesPeer.php';
 
 /**
- * Base class that represents a row from the 'LANGUAGE' table.
+ * Base class that represents a row from the 'APP_FILES' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseLanguage extends BaseObject implements Persistent
+abstract class BaseAppFiles extends BaseObject implements Persistent
 {
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        LanguagePeer
+     * @var        AppFilesPeer
     */
     protected static $peer;
 
     /**
-     * The value for the lan_id field.
+     * The value for the apf_uid field.
      * @var        string
      */
-    protected $lan_id = '';
+    protected $apf_uid;
 
     /**
-     * The value for the lan_location field.
+     * The value for the pro_uid field.
      * @var        string
      */
-    protected $lan_location = '';
+    protected $pro_uid;
 
     /**
-     * The value for the lan_name field.
+     * The value for the create_usr_uid field.
      * @var        string
      */
-    protected $lan_name = '';
+    protected $create_usr_uid;
 
     /**
-     * The value for the lan_native_name field.
+     * The value for the last_update_usr_uid field.
      * @var        string
      */
-    protected $lan_native_name = '';
+    protected $last_update_usr_uid;
 
     /**
-     * The value for the lan_direction field.
+     * The value for the apf_path field.
      * @var        string
      */
-    protected $lan_direction = 'L';
+    protected $apf_path = '';
 
     /**
-     * The value for the lan_weight field.
+     * The value for the apf_type field.
+     * @var        string
+     */
+    protected $apf_type = '';
+
+    /**
+     * The value for the apf_editable field.
      * @var        int
      */
-    protected $lan_weight = 0;
+    protected $apf_editable = 1;
 
     /**
-     * The value for the lan_enabled field.
-     * @var        string
+     * The value for the apf_create_date field.
+     * @var        int
      */
-    protected $lan_enabled = '1';
+    protected $apf_create_date;
 
     /**
-     * The value for the lan_calendar field.
-     * @var        string
+     * The value for the apf_update_date field.
+     * @var        int
      */
-    protected $lan_calendar = 'GREGORIAN';
+    protected $apf_update_date;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -90,100 +96,153 @@ abstract class BaseLanguage extends BaseObject implements Persistent
     protected $alreadyInValidation = false;
 
     /**
-     * Get the [lan_id] column value.
+     * Get the [apf_uid] column value.
      * 
      * @return     string
      */
-    public function getLanId()
+    public function getApfUid()
     {
 
-        return $this->lan_id;
+        return $this->apf_uid;
     }
 
     /**
-     * Get the [lan_location] column value.
+     * Get the [pro_uid] column value.
      * 
      * @return     string
      */
-    public function getLanLocation()
+    public function getProUid()
     {
 
-        return $this->lan_location;
+        return $this->pro_uid;
     }
 
     /**
-     * Get the [lan_name] column value.
+     * Get the [create_usr_uid] column value.
      * 
      * @return     string
      */
-    public function getLanName()
+    public function getCreateUsrUid()
     {
 
-        return $this->lan_name;
+        return $this->create_usr_uid;
     }
 
     /**
-     * Get the [lan_native_name] column value.
+     * Get the [last_update_usr_uid] column value.
      * 
      * @return     string
      */
-    public function getLanNativeName()
+    public function getLastUpdateUsrUid()
     {
 
-        return $this->lan_native_name;
+        return $this->last_update_usr_uid;
     }
 
     /**
-     * Get the [lan_direction] column value.
+     * Get the [apf_path] column value.
      * 
      * @return     string
      */
-    public function getLanDirection()
+    public function getApfPath()
     {
 
-        return $this->lan_direction;
+        return $this->apf_path;
     }
 
     /**
-     * Get the [lan_weight] column value.
+     * Get the [apf_type] column value.
+     * 
+     * @return     string
+     */
+    public function getApfType()
+    {
+
+        return $this->apf_type;
+    }
+
+    /**
+     * Get the [apf_editable] column value.
      * 
      * @return     int
      */
-    public function getLanWeight()
+    public function getApfEditable()
     {
 
-        return $this->lan_weight;
+        return $this->apf_editable;
     }
 
     /**
-     * Get the [lan_enabled] column value.
+     * Get the [optionally formatted] [apf_create_date] column value.
      * 
-     * @return     string
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                          If format is NULL, then the integer unix timestamp will be returned.
+     * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+     * @throws     PropelException - if unable to convert the date/time to timestamp.
      */
-    public function getLanEnabled()
+    public function getApfCreateDate($format = 'Y-m-d H:i:s')
     {
 
-        return $this->lan_enabled;
+        if ($this->apf_create_date === null || $this->apf_create_date === '') {
+            return null;
+        } elseif (!is_int($this->apf_create_date)) {
+            // a non-timestamp value was set externally, so we convert it
+            $ts = strtotime($this->apf_create_date);
+            if ($ts === -1 || $ts === false) {
+                throw new PropelException("Unable to parse value of [apf_create_date] as date/time value: " .
+                    var_export($this->apf_create_date, true));
+            }
+        } else {
+            $ts = $this->apf_create_date;
+        }
+        if ($format === null) {
+            return $ts;
+        } elseif (strpos($format, '%') !== false) {
+            return strftime($format, $ts);
+        } else {
+            return date($format, $ts);
+        }
     }
 
     /**
-     * Get the [lan_calendar] column value.
+     * Get the [optionally formatted] [apf_update_date] column value.
      * 
-     * @return     string
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                          If format is NULL, then the integer unix timestamp will be returned.
+     * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+     * @throws     PropelException - if unable to convert the date/time to timestamp.
      */
-    public function getLanCalendar()
+    public function getApfUpdateDate($format = 'Y-m-d H:i:s')
     {
 
-        return $this->lan_calendar;
+        if ($this->apf_update_date === null || $this->apf_update_date === '') {
+            return null;
+        } elseif (!is_int($this->apf_update_date)) {
+            // a non-timestamp value was set externally, so we convert it
+            $ts = strtotime($this->apf_update_date);
+            if ($ts === -1 || $ts === false) {
+                throw new PropelException("Unable to parse value of [apf_update_date] as date/time value: " .
+                    var_export($this->apf_update_date, true));
+            }
+        } else {
+            $ts = $this->apf_update_date;
+        }
+        if ($format === null) {
+            return $ts;
+        } elseif (strpos($format, '%') !== false) {
+            return strftime($format, $ts);
+        } else {
+            return date($format, $ts);
+        }
     }
 
     /**
-     * Set the value of [lan_id] column.
+     * Set the value of [apf_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setLanId($v)
+    public function setApfUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -192,20 +251,20 @@ abstract class BaseLanguage extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->lan_id !== $v || $v === '') {
-            $this->lan_id = $v;
-            $this->modifiedColumns[] = LanguagePeer::LAN_ID;
+        if ($this->apf_uid !== $v) {
+            $this->apf_uid = $v;
+            $this->modifiedColumns[] = AppFilesPeer::APF_UID;
         }
 
-    } // setLanId()
+    } // setApfUid()
 
     /**
-     * Set the value of [lan_location] column.
+     * Set the value of [pro_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setLanLocation($v)
+    public function setProUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -214,20 +273,20 @@ abstract class BaseLanguage extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->lan_location !== $v || $v === '') {
-            $this->lan_location = $v;
-            $this->modifiedColumns[] = LanguagePeer::LAN_LOCATION;
+        if ($this->pro_uid !== $v) {
+            $this->pro_uid = $v;
+            $this->modifiedColumns[] = AppFilesPeer::PRO_UID;
         }
 
-    } // setLanLocation()
+    } // setProUid()
 
     /**
-     * Set the value of [lan_name] column.
+     * Set the value of [create_usr_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setLanName($v)
+    public function setCreateUsrUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -236,20 +295,20 @@ abstract class BaseLanguage extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->lan_name !== $v || $v === '') {
-            $this->lan_name = $v;
-            $this->modifiedColumns[] = LanguagePeer::LAN_NAME;
+        if ($this->create_usr_uid !== $v) {
+            $this->create_usr_uid = $v;
+            $this->modifiedColumns[] = AppFilesPeer::CREATE_USR_UID;
         }
 
-    } // setLanName()
+    } // setCreateUsrUid()
 
     /**
-     * Set the value of [lan_native_name] column.
+     * Set the value of [last_update_usr_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setLanNativeName($v)
+    public function setLastUpdateUsrUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -258,20 +317,20 @@ abstract class BaseLanguage extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->lan_native_name !== $v || $v === '') {
-            $this->lan_native_name = $v;
-            $this->modifiedColumns[] = LanguagePeer::LAN_NATIVE_NAME;
+        if ($this->last_update_usr_uid !== $v) {
+            $this->last_update_usr_uid = $v;
+            $this->modifiedColumns[] = AppFilesPeer::LAST_UPDATE_USR_UID;
         }
 
-    } // setLanNativeName()
+    } // setLastUpdateUsrUid()
 
     /**
-     * Set the value of [lan_direction] column.
+     * Set the value of [apf_path] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setLanDirection($v)
+    public function setApfPath($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -280,20 +339,42 @@ abstract class BaseLanguage extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->lan_direction !== $v || $v === 'L') {
-            $this->lan_direction = $v;
-            $this->modifiedColumns[] = LanguagePeer::LAN_DIRECTION;
+        if ($this->apf_path !== $v || $v === '') {
+            $this->apf_path = $v;
+            $this->modifiedColumns[] = AppFilesPeer::APF_PATH;
         }
 
-    } // setLanDirection()
+    } // setApfPath()
 
     /**
-     * Set the value of [lan_weight] column.
+     * Set the value of [apf_type] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setApfType($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->apf_type !== $v || $v === '') {
+            $this->apf_type = $v;
+            $this->modifiedColumns[] = AppFilesPeer::APF_TYPE;
+        }
+
+    } // setApfType()
+
+    /**
+     * Set the value of [apf_editable] column.
      * 
      * @param      int $v new value
      * @return     void
      */
-    public function setLanWeight($v)
+    public function setApfEditable($v)
     {
 
         // Since the native PHP type for this column is integer,
@@ -302,56 +383,62 @@ abstract class BaseLanguage extends BaseObject implements Persistent
             $v = (int) $v;
         }
 
-        if ($this->lan_weight !== $v || $v === 0) {
-            $this->lan_weight = $v;
-            $this->modifiedColumns[] = LanguagePeer::LAN_WEIGHT;
+        if ($this->apf_editable !== $v || $v === 1) {
+            $this->apf_editable = $v;
+            $this->modifiedColumns[] = AppFilesPeer::APF_EDITABLE;
         }
 
-    } // setLanWeight()
+    } // setApfEditable()
 
     /**
-     * Set the value of [lan_enabled] column.
+     * Set the value of [apf_create_date] column.
      * 
-     * @param      string $v new value
+     * @param      int $v new value
      * @return     void
      */
-    public function setLanEnabled($v)
+    public function setApfCreateDate($v)
     {
 
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
+        if ($v !== null && !is_int($v)) {
+            $ts = strtotime($v);
+            if ($ts === -1 || $ts === false) {
+                throw new PropelException("Unable to parse date/time value for [apf_create_date] from input: " .
+                    var_export($v, true));
+            }
+        } else {
+            $ts = $v;
+        }
+        if ($this->apf_create_date !== $ts) {
+            $this->apf_create_date = $ts;
+            $this->modifiedColumns[] = AppFilesPeer::APF_CREATE_DATE;
         }
 
-        if ($this->lan_enabled !== $v || $v === '1') {
-            $this->lan_enabled = $v;
-            $this->modifiedColumns[] = LanguagePeer::LAN_ENABLED;
-        }
-
-    } // setLanEnabled()
+    } // setApfCreateDate()
 
     /**
-     * Set the value of [lan_calendar] column.
+     * Set the value of [apf_update_date] column.
      * 
-     * @param      string $v new value
+     * @param      int $v new value
      * @return     void
      */
-    public function setLanCalendar($v)
+    public function setApfUpdateDate($v)
     {
 
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
+        if ($v !== null && !is_int($v)) {
+            $ts = strtotime($v);
+            if ($ts === -1 || $ts === false) {
+                throw new PropelException("Unable to parse date/time value for [apf_update_date] from input: " .
+                    var_export($v, true));
+            }
+        } else {
+            $ts = $v;
+        }
+        if ($this->apf_update_date !== $ts) {
+            $this->apf_update_date = $ts;
+            $this->modifiedColumns[] = AppFilesPeer::APF_UPDATE_DATE;
         }
 
-        if ($this->lan_calendar !== $v || $v === 'GREGORIAN') {
-            $this->lan_calendar = $v;
-            $this->modifiedColumns[] = LanguagePeer::LAN_CALENDAR;
-        }
-
-    } // setLanCalendar()
+    } // setApfUpdateDate()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -370,31 +457,33 @@ abstract class BaseLanguage extends BaseObject implements Persistent
     {
         try {
 
-            $this->lan_id = $rs->getString($startcol + 0);
+            $this->apf_uid = $rs->getString($startcol + 0);
 
-            $this->lan_location = $rs->getString($startcol + 1);
+            $this->pro_uid = $rs->getString($startcol + 1);
 
-            $this->lan_name = $rs->getString($startcol + 2);
+            $this->create_usr_uid = $rs->getString($startcol + 2);
 
-            $this->lan_native_name = $rs->getString($startcol + 3);
+            $this->last_update_usr_uid = $rs->getString($startcol + 3);
 
-            $this->lan_direction = $rs->getString($startcol + 4);
+            $this->apf_path = $rs->getString($startcol + 4);
 
-            $this->lan_weight = $rs->getInt($startcol + 5);
+            $this->apf_type = $rs->getString($startcol + 5);
 
-            $this->lan_enabled = $rs->getString($startcol + 6);
+            $this->apf_editable = $rs->getInt($startcol + 6);
 
-            $this->lan_calendar = $rs->getString($startcol + 7);
+            $this->apf_create_date = $rs->getTimestamp($startcol + 7, null);
+
+            $this->apf_update_date = $rs->getTimestamp($startcol + 8, null);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 8; // 8 = LanguagePeer::NUM_COLUMNS - LanguagePeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 9; // 9 = AppFilesPeer::NUM_COLUMNS - AppFilesPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating Language object", $e);
+            throw new PropelException("Error populating AppFiles object", $e);
         }
     }
 
@@ -414,12 +503,12 @@ abstract class BaseLanguage extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(LanguagePeer::DATABASE_NAME);
+            $con = Propel::getConnection(AppFilesPeer::DATABASE_NAME);
         }
 
         try {
             $con->begin();
-            LanguagePeer::doDelete($this, $con);
+            AppFilesPeer::doDelete($this, $con);
             $this->setDeleted(true);
             $con->commit();
         } catch (PropelException $e) {
@@ -445,7 +534,7 @@ abstract class BaseLanguage extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(LanguagePeer::DATABASE_NAME);
+            $con = Propel::getConnection(AppFilesPeer::DATABASE_NAME);
         }
 
         try {
@@ -480,14 +569,14 @@ abstract class BaseLanguage extends BaseObject implements Persistent
             // If this object has been modified, then save it to the database.
             if ($this->isModified()) {
                 if ($this->isNew()) {
-                    $pk = LanguagePeer::doInsert($this, $con);
+                    $pk = AppFilesPeer::doInsert($this, $con);
                     $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
                                          // should always be true here (even though technically
                                          // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
-                    $affectedRows += LanguagePeer::doUpdate($this, $con);
+                    $affectedRows += AppFilesPeer::doUpdate($this, $con);
                 }
                 $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
             }
@@ -558,7 +647,7 @@ abstract class BaseLanguage extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = LanguagePeer::doValidate($this, $columns)) !== true) {
+            if (($retval = AppFilesPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -581,7 +670,7 @@ abstract class BaseLanguage extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = LanguagePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = AppFilesPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->getByPosition($pos);
     }
 
@@ -596,28 +685,31 @@ abstract class BaseLanguage extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                return $this->getLanId();
+                return $this->getApfUid();
                 break;
             case 1:
-                return $this->getLanLocation();
+                return $this->getProUid();
                 break;
             case 2:
-                return $this->getLanName();
+                return $this->getCreateUsrUid();
                 break;
             case 3:
-                return $this->getLanNativeName();
+                return $this->getLastUpdateUsrUid();
                 break;
             case 4:
-                return $this->getLanDirection();
+                return $this->getApfPath();
                 break;
             case 5:
-                return $this->getLanWeight();
+                return $this->getApfType();
                 break;
             case 6:
-                return $this->getLanEnabled();
+                return $this->getApfEditable();
                 break;
             case 7:
-                return $this->getLanCalendar();
+                return $this->getApfCreateDate();
+                break;
+            case 8:
+                return $this->getApfUpdateDate();
                 break;
             default:
                 return null;
@@ -637,16 +729,17 @@ abstract class BaseLanguage extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = LanguagePeer::getFieldNames($keyType);
+        $keys = AppFilesPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getLanId(),
-            $keys[1] => $this->getLanLocation(),
-            $keys[2] => $this->getLanName(),
-            $keys[3] => $this->getLanNativeName(),
-            $keys[4] => $this->getLanDirection(),
-            $keys[5] => $this->getLanWeight(),
-            $keys[6] => $this->getLanEnabled(),
-            $keys[7] => $this->getLanCalendar(),
+            $keys[0] => $this->getApfUid(),
+            $keys[1] => $this->getProUid(),
+            $keys[2] => $this->getCreateUsrUid(),
+            $keys[3] => $this->getLastUpdateUsrUid(),
+            $keys[4] => $this->getApfPath(),
+            $keys[5] => $this->getApfType(),
+            $keys[6] => $this->getApfEditable(),
+            $keys[7] => $this->getApfCreateDate(),
+            $keys[8] => $this->getApfUpdateDate(),
         );
         return $result;
     }
@@ -663,7 +756,7 @@ abstract class BaseLanguage extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = LanguagePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = AppFilesPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->setByPosition($pos, $value);
     }
 
@@ -679,28 +772,31 @@ abstract class BaseLanguage extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                $this->setLanId($value);
+                $this->setApfUid($value);
                 break;
             case 1:
-                $this->setLanLocation($value);
+                $this->setProUid($value);
                 break;
             case 2:
-                $this->setLanName($value);
+                $this->setCreateUsrUid($value);
                 break;
             case 3:
-                $this->setLanNativeName($value);
+                $this->setLastUpdateUsrUid($value);
                 break;
             case 4:
-                $this->setLanDirection($value);
+                $this->setApfPath($value);
                 break;
             case 5:
-                $this->setLanWeight($value);
+                $this->setApfType($value);
                 break;
             case 6:
-                $this->setLanEnabled($value);
+                $this->setApfEditable($value);
                 break;
             case 7:
-                $this->setLanCalendar($value);
+                $this->setApfCreateDate($value);
+                break;
+            case 8:
+                $this->setApfUpdateDate($value);
                 break;
         } // switch()
     }
@@ -723,38 +819,42 @@ abstract class BaseLanguage extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = LanguagePeer::getFieldNames($keyType);
+        $keys = AppFilesPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setLanId($arr[$keys[0]]);
+            $this->setApfUid($arr[$keys[0]]);
         }
 
         if (array_key_exists($keys[1], $arr)) {
-            $this->setLanLocation($arr[$keys[1]]);
+            $this->setProUid($arr[$keys[1]]);
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setLanName($arr[$keys[2]]);
+            $this->setCreateUsrUid($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
-            $this->setLanNativeName($arr[$keys[3]]);
+            $this->setLastUpdateUsrUid($arr[$keys[3]]);
         }
 
         if (array_key_exists($keys[4], $arr)) {
-            $this->setLanDirection($arr[$keys[4]]);
+            $this->setApfPath($arr[$keys[4]]);
         }
 
         if (array_key_exists($keys[5], $arr)) {
-            $this->setLanWeight($arr[$keys[5]]);
+            $this->setApfType($arr[$keys[5]]);
         }
 
         if (array_key_exists($keys[6], $arr)) {
-            $this->setLanEnabled($arr[$keys[6]]);
+            $this->setApfEditable($arr[$keys[6]]);
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setLanCalendar($arr[$keys[7]]);
+            $this->setApfCreateDate($arr[$keys[7]]);
+        }
+
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setApfUpdateDate($arr[$keys[8]]);
         }
 
     }
@@ -766,38 +866,42 @@ abstract class BaseLanguage extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(LanguagePeer::DATABASE_NAME);
+        $criteria = new Criteria(AppFilesPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(LanguagePeer::LAN_ID)) {
-            $criteria->add(LanguagePeer::LAN_ID, $this->lan_id);
+        if ($this->isColumnModified(AppFilesPeer::APF_UID)) {
+            $criteria->add(AppFilesPeer::APF_UID, $this->apf_uid);
         }
 
-        if ($this->isColumnModified(LanguagePeer::LAN_LOCATION)) {
-            $criteria->add(LanguagePeer::LAN_LOCATION, $this->lan_location);
+        if ($this->isColumnModified(AppFilesPeer::PRO_UID)) {
+            $criteria->add(AppFilesPeer::PRO_UID, $this->pro_uid);
         }
 
-        if ($this->isColumnModified(LanguagePeer::LAN_NAME)) {
-            $criteria->add(LanguagePeer::LAN_NAME, $this->lan_name);
+        if ($this->isColumnModified(AppFilesPeer::CREATE_USR_UID)) {
+            $criteria->add(AppFilesPeer::CREATE_USR_UID, $this->create_usr_uid);
         }
 
-        if ($this->isColumnModified(LanguagePeer::LAN_NATIVE_NAME)) {
-            $criteria->add(LanguagePeer::LAN_NATIVE_NAME, $this->lan_native_name);
+        if ($this->isColumnModified(AppFilesPeer::LAST_UPDATE_USR_UID)) {
+            $criteria->add(AppFilesPeer::LAST_UPDATE_USR_UID, $this->last_update_usr_uid);
         }
 
-        if ($this->isColumnModified(LanguagePeer::LAN_DIRECTION)) {
-            $criteria->add(LanguagePeer::LAN_DIRECTION, $this->lan_direction);
+        if ($this->isColumnModified(AppFilesPeer::APF_PATH)) {
+            $criteria->add(AppFilesPeer::APF_PATH, $this->apf_path);
         }
 
-        if ($this->isColumnModified(LanguagePeer::LAN_WEIGHT)) {
-            $criteria->add(LanguagePeer::LAN_WEIGHT, $this->lan_weight);
+        if ($this->isColumnModified(AppFilesPeer::APF_TYPE)) {
+            $criteria->add(AppFilesPeer::APF_TYPE, $this->apf_type);
         }
 
-        if ($this->isColumnModified(LanguagePeer::LAN_ENABLED)) {
-            $criteria->add(LanguagePeer::LAN_ENABLED, $this->lan_enabled);
+        if ($this->isColumnModified(AppFilesPeer::APF_EDITABLE)) {
+            $criteria->add(AppFilesPeer::APF_EDITABLE, $this->apf_editable);
         }
 
-        if ($this->isColumnModified(LanguagePeer::LAN_CALENDAR)) {
-            $criteria->add(LanguagePeer::LAN_CALENDAR, $this->lan_calendar);
+        if ($this->isColumnModified(AppFilesPeer::APF_CREATE_DATE)) {
+            $criteria->add(AppFilesPeer::APF_CREATE_DATE, $this->apf_create_date);
+        }
+
+        if ($this->isColumnModified(AppFilesPeer::APF_UPDATE_DATE)) {
+            $criteria->add(AppFilesPeer::APF_UPDATE_DATE, $this->apf_update_date);
         }
 
 
@@ -814,9 +918,9 @@ abstract class BaseLanguage extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(LanguagePeer::DATABASE_NAME);
+        $criteria = new Criteria(AppFilesPeer::DATABASE_NAME);
 
-        $criteria->add(LanguagePeer::LAN_ID, $this->lan_id);
+        $criteria->add(AppFilesPeer::APF_UID, $this->apf_uid);
 
         return $criteria;
     }
@@ -827,18 +931,18 @@ abstract class BaseLanguage extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getLanId();
+        return $this->getApfUid();
     }
 
     /**
-     * Generic method to set the primary key (lan_id column).
+     * Generic method to set the primary key (apf_uid column).
      *
      * @param      string $key Primary key.
      * @return     void
      */
     public function setPrimaryKey($key)
     {
-        $this->setLanId($key);
+        $this->setApfUid($key);
     }
 
     /**
@@ -847,31 +951,33 @@ abstract class BaseLanguage extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of Language (or compatible) type.
+     * @param      object $copyObj An object of AppFiles (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @throws     PropelException
      */
     public function copyInto($copyObj, $deepCopy = false)
     {
 
-        $copyObj->setLanLocation($this->lan_location);
+        $copyObj->setProUid($this->pro_uid);
 
-        $copyObj->setLanName($this->lan_name);
+        $copyObj->setCreateUsrUid($this->create_usr_uid);
 
-        $copyObj->setLanNativeName($this->lan_native_name);
+        $copyObj->setLastUpdateUsrUid($this->last_update_usr_uid);
 
-        $copyObj->setLanDirection($this->lan_direction);
+        $copyObj->setApfPath($this->apf_path);
 
-        $copyObj->setLanWeight($this->lan_weight);
+        $copyObj->setApfType($this->apf_type);
 
-        $copyObj->setLanEnabled($this->lan_enabled);
+        $copyObj->setApfEditable($this->apf_editable);
 
-        $copyObj->setLanCalendar($this->lan_calendar);
+        $copyObj->setApfCreateDate($this->apf_create_date);
+
+        $copyObj->setApfUpdateDate($this->apf_update_date);
 
 
         $copyObj->setNew(true);
 
-        $copyObj->setLanId(''); // this is a pkey column, so set to default value
+        $copyObj->setApfUid(NULL); // this is a pkey column, so set to default value
 
     }
 
@@ -884,7 +990,7 @@ abstract class BaseLanguage extends BaseObject implements Persistent
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return     Language Clone of current object.
+     * @return     AppFiles Clone of current object.
      * @throws     PropelException
      */
     public function copy($deepCopy = false)
@@ -903,12 +1009,12 @@ abstract class BaseLanguage extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return     LanguagePeer
+     * @return     AppFilesPeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new LanguagePeer();
+            self::$peer = new AppFilesPeer();
         }
         return self::$peer;
     }

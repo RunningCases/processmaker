@@ -3014,6 +3014,38 @@
     </index>
   </table>
 
+  <table name="APP_FILES">
+    <vendor type="mysql">
+        <parameter name="Name" value="APP_FILES"/>
+        <parameter name="Engine" value="InnoDB"/>
+        <parameter name="Version" value="10"/>
+        <parameter name="Row_format" value="Dynamic"/>
+        <parameter name="Rows" value="129"/>
+        <parameter name="Avg_row_length" value="115"/>
+        <parameter name="Data_length" value="14860"/>
+        <parameter name="Max_data_length" value="281474976710655"/>
+        <parameter name="Index_length" value="5120"/>
+        <parameter name="Data_free" value="0"/>
+        <parameter name="Auto_increment" value=""/>
+        <parameter name="Create_time" value="2011-10-28 09:55:00"/>
+        <parameter name="Update_time" value="2011-10-28 09:55:00"/>
+        <parameter name="Check_time" value=""/>
+        <parameter name="Collation" value="utf8_general_ci"/>
+        <parameter name="Checksum" value=""/>
+        <parameter name="Create_options" value=""/>
+        <parameter name="Comment" value="Application files metadata"/>
+    </vendor>
+    <column name="APF_UID" type="VARCHAR" size="32" required="true" primaryKey="true" />
+    <column name="PRO_UID" type="VARCHAR" size="32" required="true" />
+    <column name="CREATE_USR_UID" type="VARCHAR" size="32" required="true" />
+    <column name="LAST_UPDATE_USR_UID" type="VARCHAR" size="32" required="true" />
+    <column name="APF_PATH" type="VARCHAR" size="256" required="true" default="" />
+    <column name="APF_TYPE" type="VARCHAR" size="32" required="false" default="" />
+    <column name="APF_EDITABLE" type="TINYINT" required="false" default="1" />
+    <column name="APF_CREATE_DATE" type="TIMESTAMP" required="true" />
+    <column name="APF_UPDATE_DATE" type="TIMESTAMP" required="false" />
+  </table>
+
   <!--
     OAUTH TABLES DEFINITION
   -->
