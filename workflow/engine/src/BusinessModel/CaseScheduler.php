@@ -189,42 +189,72 @@ class CaseScheduler
      * @param string $userPass  Password
      * @param string $sProcessUID  Process
      *
-     * return message if the authentication fail
+     * return message
      */
-    public function getUser($userName, $userPass, $sProcessUID)
+    public function getUser($userName, $userPass, $sProcessUID, $sTaskUID)
     {
         try {
-            if (\G::is_https()) {
+            $sPRO_UID = $sProcessUID;
+            $sTASKS = $sTaskUID;
+            $sWS_USER = trim( $userName );
+            $sWS_PASS = trim( $userPass );
+            if (\G::is_https())
                 $http = 'https://';
-            } else {
+            else
                 $http = 'http://';
-            }
             $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
             @$client = new \SoapClient( $endpoint );
-            $user = $userName;
-            $pass = $userPass;
+            $user = $sWS_USER;
+            $pass = $sWS_PASS;
             $params = array ('userid' => $user,'password' => $pass);
-            $result = $client->__SoapCall( 'login', array ($params) );
-            if ($result->status_code == 0) {
-                if (! class_exists( 'Users' )) {
-                    require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes". PATH_SEP . "model" . PATH_SEP . "UsersPeer.php");
-                }
-                $oCriteria = new \Criteria( 'workflow' );
-                $oCriteria->addSelectColumn( 'USR_UID' );
-                $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
-                $resultSet = \UsersPeer::doSelectRS( $oCriteria );
-                $resultSet->next();
-                $user_id = $resultSet->getRow();
-                $result->message = $user_id[0];
-                \G::LoadClass( 'case' );
-                $caseInstance = new \Cases();
-                if (! $caseInstance->canStartCase( $result->message, $sProcessUID )) {
-                    $result->status_code = - 1000;
-                    $result->message = \G::LoadTranslation( 'ID_USER_CASES_NOT_START' );
-                }
+            $result = $client->__SoapCall('login', array ($params));
+            $fields['status_code'] = $result->status_code;
+            $fields['message'] = 'ProcessMaker WebService version: ' . $result->version . "\n" . $result->message;
+            $fields['version'] = $result->version;
+            $fields['time_stamp'] = $result->timestamp;
+            $messageCode = 1;
+            \G::LoadClass( 'Task' );
+            \G::LoadClass( 'User' );
+            \G::LoadClass( 'TaskUser' );
+            \G::LoadClass( 'Groupwf' );
+            if (! class_exists( 'GroupUser' )) {
+                \G::LoadClass( 'GroupUser' );
             }
-            $message = $result->message;
-            return $message;
+            if ($result->status_code == 0) {
+                $oCriteria = new \Criteria( 'workflow' );
+                $oCriteria->addSelectColumn( \UsersPeer::USR_UID );
+                $oCriteria->addSelectColumn( \TaskUserPeer::USR_UID );
+                $oCriteria->addSelectColumn( \TaskUserPeer::TAS_UID );
+                $oCriteria->addSelectColumn( \UsersPeer::USR_USERNAME );
+                $oCriteria->addSelectColumn( \UsersPeer::USR_FIRSTNAME );
+                $oCriteria->addSelectColumn( \UsersPeer::USR_LASTNAME );
+                $oCriteria->addJoin( \TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN );
+                $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
+                $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
+                $userIsAssigned = \TaskUserPeer::doCount( $oCriteria );
+                if ($userIsAssigned < 1) {
+                    $oCriteria = new \Criteria( 'workflow' );
+                    $oCriteria->addSelectColumn( \UsersPeer::USR_UID );
+                    $oCriteria->addJoin( \UsersPeer::USR_UID, \GroupUserPeer::USR_UID, \Criteria::LEFT_JOIN );
+                    $oCriteria->addJoin( \GroupUserPeer::GRP_UID, \TaskUserPeer::USR_UID, \Criteria::LEFT_JOIN );
+                    $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
+                    $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
+                    $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
+                    if (! ($userIsAssigned >= 1)) {
+                        throw (new \Exception( "The User `" . $sWS_USER . "` doesn't have the activity `" . $sTASKS . "` assigned"));
+                    }
+                }
+                $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
+                $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                $oDataset->next();
+                while ($aRow = $oDataset->getRow()) {
+                    $messageCode = $aRow['USR_UID'];
+                    $oDataset->next();
+                }
+            } else {
+                throw (new \Exception( $result->message));
+            }
+            return $messageCode;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -254,11 +284,15 @@ class CaseScheduler
             if (empty($arrayTaskUid)) {
                 throw (new \Exception( 'task not found for id: '. $aData['TAS_UID']));
             }
+            if ($aData['SCH_NAME']=='') {
+                throw (new \Exception( 'the Case Scheduler name can`t be empty'));
+            }
             if ($this->existsName($sProcessUID, $aData['SCH_NAME'])) {
                 throw (new \Exception( 'duplicate Case Scheduler name'));
             }
-            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS'], $sProcessUID);
-            if (!empty($mUser)) {
+            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS'], $sProcessUID, $aData['TAS_UID']);
+            $oUser = \UsersPeer::retrieveByPK( $mUser );
+            if (is_null($oUser)) {
                 throw (new \Exception($mUser));
             }
             $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
@@ -283,6 +317,11 @@ class CaseScheduler
                 if ($aData['SCH_START_DATE'] == "") {
                     throw (new \Exception( '`sch_start_date` can`t be null'));
                 }
+            }
+            if ($sOption == '2') {
+                $aData['SCH_EVERY_DAYS'] = 1;
+            } else {
+                $aData['SCH_EVERY_DAYS'] = 0;
             }
             $oCaseScheduler = new \CaseScheduler();
             $aData['SCH_UID'] = \G::generateUniqueID();
@@ -373,6 +412,24 @@ class CaseScheduler
                             throw (new \Exception( '`sch_start_day_opt_2` can`t be null'));
                         }
                         $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_2'];
+                        $optionTwo = $aData['SCH_START_DAY_OPT_2']{0};
+                        if ($optionTwo == "1" || $optionTwo == "2" || $optionTwo == "3" || $optionTwo == "4" || $optionTwo == "5") {
+                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                        } else {
+                            throw (new \Exception( 'invalid value specified for `sch_start_day_opt_2`'));
+                        }
+                        $pipelineTwo = $aData['SCH_START_DAY_OPT_2']{1};
+                        if ($pipelineTwo == "|") {
+                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                        } else {
+                            throw (new \Exception( 'invalid value specified for `sch_start_day_opt_2`'));
+                        }
+                        $dayTwo = $aData['SCH_START_DAY_OPT_2']{2};
+                        if ($dayTwo == "1" || $dayTwo == "2" || $dayTwo == "3" || $dayTwo == "4" || $dayTwo == "5" || $dayTwo == "6" || $dayTwo == "7") {
+                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                        } else {
+                            throw (new \Exception( 'invalid value specified for `sch_start_day_opt_2`'));
+                        }
                     }
                     if ($nStartDay == "") {
                         throw (new \Exception( '`sch_start_day` can`t be null'));
@@ -383,6 +440,14 @@ class CaseScheduler
                     }
                     if (! empty( $aData['SCH_MONTHS'] )) {
                         $aMonths = $aData['SCH_MONTHS'];
+                        $aMonths = explode("|", $aMonths);
+                        foreach ($aMonths as $row) {
+                            if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7"|| $row == "8" || $row == "9" || $row == "10"|| $row == "11" || $row == "12") {
+                                $aData['SCH_MONTHS'] = $aData['SCH_MONTHS'];
+                            } else {
+                                throw (new \Exception( 'invalid value specified for `sch_months`'));
+                            }
+                        }
                     }
                     $sMonths = $aData['SCH_MONTHS'];
                     $sStartDay = $aData['SCH_START_DAY'];
@@ -501,11 +566,15 @@ class CaseScheduler
             if (empty($arrayTaskUid)) {
                 throw (new \Exception( 'task not found for id: '. $aData['TAS_UID']));
             }
+            if ($aData['SCH_NAME']=='') {
+                throw (new \Exception( 'the Case Scheduler name can`t be empty'));
+            }
             if ($this->existsNameUpdate($sSchUID, $aData['SCH_NAME'])) {
                 throw (new \Exception( 'duplicate Case Scheduler name'));
             }
-            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS'], $sProcessUID);
-            if (!empty($mUser)) {
+            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS'], $sProcessUID, $aData['TAS_UID']);
+            $oUser = \UsersPeer::retrieveByPK( $mUser );
+            if (is_null($oUser)) {
                 throw (new \Exception($mUser));
             }
             $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
@@ -530,6 +599,11 @@ class CaseScheduler
                 if ($aData['SCH_START_DATE'] == "") {
                     throw (new \Exception( '`sch_start_date` can`t be null'));
                 }
+            }
+            if ($sOption == '2') {
+                $aData['SCH_EVERY_DAYS'] = 1;
+            } else {
+                $aData['SCH_EVERY_DAYS'] = 0;
             }
             $oCaseScheduler = new \CaseScheduler();
             $aData['SCH_UID'] = $sSchUID;
@@ -620,6 +694,24 @@ class CaseScheduler
                             throw (new \Exception( '`sch_start_day_opt_2` can`t be null'));
                         }
                         $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_2'];
+                        $optionTwo = $aData['SCH_START_DAY_OPT_2']{0};
+                        if ($optionTwo == "1" || $optionTwo == "2" || $optionTwo == "3" || $optionTwo == "4" || $optionTwo == "5") {
+                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                        } else {
+                            throw (new \Exception( 'invalid value specified for `sch_start_day_opt_2`'));
+                        }
+                        $pipelineTwo = $aData['SCH_START_DAY_OPT_2']{1};
+                        if ($pipelineTwo == "|") {
+                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                        } else {
+                            throw (new \Exception( 'invalid value specified for `sch_start_day_opt_2`'));
+                        }
+                        $dayTwo = $aData['SCH_START_DAY_OPT_2']{2};
+                        if ($dayTwo == "1" || $dayTwo == "2" || $dayTwo == "3" || $dayTwo == "4" || $dayTwo == "5" || $dayTwo == "6" || $dayTwo == "7") {
+                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                        } else {
+                            throw (new \Exception( 'invalid value specified for `sch_start_day_opt_2`'));
+                        }
                     }
                     if ($nStartDay == "") {
                         throw (new \Exception( '`sch_start_day` can`t be null'));
@@ -630,6 +722,14 @@ class CaseScheduler
                     }
                     if (! empty( $aData['SCH_MONTHS'] )) {
                         $aMonths = $aData['SCH_MONTHS'];
+                        $aMonths = explode("|", $aMonths);
+                        foreach ($aMonths as $row) {
+                            if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7"|| $row == "8" || $row == "9" || $row == "10"|| $row == "11" || $row == "12") {
+                                $aData['SCH_MONTHS'] = $aData['SCH_MONTHS'];
+                            } else {
+                                throw (new \Exception( 'invalid value specified for `sch_months`'));
+                            }
+                        }
                     }
                     $sMonths = $aData['SCH_MONTHS'];
                     $sStartDay = $aData['SCH_START_DAY'];
