@@ -281,12 +281,12 @@ class OutputDocument
     /**
      * Update a output document for a project
      * @param string $sProcessUID
-     * @param string $sOutputDocumentUID
      * @param array  $aData
+     * @param string $sOutputDocumentUID
      *
      * @access public
      */
-    public function updateOutputDocument($sProcessUID, $sOutputDocumentUID = '', $aData)
+    public function updateOutputDocument($sProcessUID, $aData, $sOutputDocumentUID = '')
     {
         $oConnection = \Propel::getConnection(\OutputDocumentPeer::DATABASE_NAME);
         $pemission = $aData['out_doc_pdf_security_permissions'];

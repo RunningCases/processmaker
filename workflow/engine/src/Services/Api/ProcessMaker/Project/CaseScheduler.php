@@ -215,11 +215,11 @@ class CaseSchedulerStructure
     public $sch_start_day_opt_1;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@max 3}
      */
     public $sch_start_day_opt_2;
     /**
-     * @var string {@from body} {@min 0} {@max 24}
+     * @var string {@from body} {@min 0} {@max 32}
      */
     public $sch_months;
 
