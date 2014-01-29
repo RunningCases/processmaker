@@ -192,10 +192,24 @@ class ProcessPermissions
      *
      * @return void
      */
+
     public function saveProcessPermission($data, $sPermissionUid = '')
     {
         try {
             $data = array_change_key_case($data, CASE_UPPER);
+
+            $this->validateProcess($data['PRO_UID']);
+            $this->validateUser($data['USR_UID']);
+            if (isset($data['TAS_UID']) && ($data['TAS_UID'] != '')) {
+                $this->validateTask($data['TAS_UID']);
+            } else {
+                $data['TAS_UID'] = '';
+            }
+            if (isset($data['OP_TASK_SOURCE']) && ($data['OP_TASK_SOURCE'] != '')) {
+                $this->validateTask($data['OP_TASK_SOURCE']);
+            } else {
+                $data['OP_TASK_SOURCE'] = '';
+            }
 
             $sObjectUID = '';
             switch ($data['OP_OBJ_TYPE']) {
@@ -206,12 +220,15 @@ class ProcessPermissions
                     $sObjectUID = '';
                     break;
                 case 'DYNAFORM':
+                    $this->validateDynaform($data['DYNAFORMS']);
                     $sObjectUID = $data['DYNAFORMS'];
                     break;
                 case 'INPUT':
+                    $this->validateInput($data['INPUTS']);
                     $sObjectUID = $data['INPUTS'];
                     break;
                 case 'OUTPUT':
+                    $this->validateOutput($data['OUTPUTS']);
                     $sObjectUID = $data['OUTPUTS'];
                     break;
             }
@@ -262,6 +279,90 @@ class ProcessPermissions
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    public function validateProcess($proUid) {
+        $proUid = trim($proUid);
+        if ($proUid == '') {
+            throw (new \Exception('This process doesn\'t exist!'));
+        }
+
+        $oProcess = new \Process();
+        if (!($oProcess->processExists($proUid))) {
+            throw (new \Exception('This process doesn\'t exist!'));
+        }
+
+        return $proUid;
+    }
+
+    public function validateUser($userUid) {
+        $userUid = trim($userUid);
+        if ($userUid == '') {
+            throw (new \Exception('This user doesn\'t exist!'));
+        }
+
+        $oUsers = new \Users();
+        if (!($oUsers->userExists($userUid))) {
+            throw (new \Exception('This user doesn\'t exist!'));
+        }
+
+        return $userUid;
+    }
+
+    public function validateTask($taskUid) {
+        $taskUid = trim($taskUid);
+        if ($taskUid == '') {
+            throw (new \Exception('This task doesn\'t exist!'));
+        }
+
+        $oTask = new \Task();
+        if (!($oTask->taskExists($taskUid))) {
+            throw (new \Exception('This task doesn\'t exist!'));
+        }
+
+        return $taskUid;
+    }
+
+    public function validateDynaform($dynUid) {
+        $dynUid = trim($dynUid);
+        if ($dynUid == '') {
+            throw (new \Exception('This dynaform doesn\'t exist!'));
+        }
+
+        $oDynaform = new \Dynaform();
+        if (!($oDynaform->dynaformExists($dynUid))) {
+            throw (new \Exception('This dynaform doesn\'t exist!'));
+        }
+
+        return $dynUid;
+    }
+
+    public function validateInput($inputUid) {
+        $inputUid = trim($inputUid);
+        if ($inputUid == '') {
+            throw (new \Exception('This inputDocument doesn\'t exist!'));
+        }
+
+        $oInputDocument = new \InputDocument();
+        if (!($oInputDocument->InputExists($inputUid))) {
+            throw (new \Exception('This inputDocument doesn\'t exist!'));
+        }
+
+        return $inputUid;
+    }
+
+    public function validateOutput($outputUid) {
+        $outputUid = trim($outputUid);
+        if ($outputUid == '') {
+            throw (new \Exception('This task doesn\'t exist!'));
+        }
+
+        $oOutputDocument = new \OutputDocument();
+        if (!($oOutputDocument->OutputExists($outputUid))) {
+            throw (new \Exception('This task doesn\'t exist!'));
+        }
+
+        return $outputUid;
     }
 }
 
