@@ -65,7 +65,7 @@ Scenario Outline: Assign a user or group to an activity (Field validation)
     | search 0              | 0      |   0   | 100     | 0       |  200      | array |
     | negative numbers      | a      |  -10  | -20     | 0       |  400      | string|
     | real numbers          | a      |  0.0  | 1.0     | 1       |  200      | string|
-    | real numbers          | a      |  0.0  | 0.0     | 3       |  200      | string|
+    | real numbers          | a      |  0.0  | 0.0     | 0       |  200      | string|
     | real numbers          | a      |  0.1  | 1.4599  | 0       |  400      | string|
     | real numbers          | a      |  1.5  | 1.4599  | 0       |  400      | string|
 

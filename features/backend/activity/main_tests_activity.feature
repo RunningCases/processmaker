@@ -10,6 +10,7 @@ Feature: Activity Resources Main Tests
         Given that I have a valid access_token
 
     
+   
     Scenario Outline: Get the Properties and Definition of 3 Activities
       Given I request "project/<project>/activity/<activity>"
         Then the response status code should be 200
@@ -18,6 +19,7 @@ Feature: Activity Resources Main Tests
         And the "definition" property type is "array"
         And the "properties" property type is "object"
         And that "tas_title" is set to "<tas_title>"
+
 
         Examples:
 

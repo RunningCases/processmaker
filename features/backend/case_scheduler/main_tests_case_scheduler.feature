@@ -1,0 +1,162 @@
+@ProcessMakerMichelangelo @RestAPI
+Feature: Case Scheduler Main Tests
+  Requirements:
+    a workspace with the process 1265557095225ff5c688f46031700471 ("Test Michelangelo") already loaded
+    there are zero case scheduler in the process and there four tasks in the process
+
+  Background:
+    Given that I have a valid access_token
+ 
+  Scenario: Get the case schedulers list when there are exactly zero case schedulers 
+      Given I request "project/1265557095225ff5c688f46031700471/case-schedulers"
+      Then the response status code should be 200
+      And the response charset is "UTF-8"
+      And the content type is "application/json"
+      And the type is "array"
+      And the response has 0 record
+
+
+  Scenario Outline: Create a 13 case scheduler for a project
+      Given POST this data:
+      """
+      {
+          "sch_del_user_name": "<sch_del_user_name>",
+          "sch_del_user_pass": "<sch_del_user_pass>",
+          "tas_uid": "<tas_uid>",
+          "sch_name": "<sch_name>",
+          "sch_option": "<sch_option>",
+          "sch_start_date": "<sch_start_date>",
+          "sch_end_date": "<sch_end_date>",
+          "sch_start_time": "<sch_start_time>",
+          "sch_week_days": "<sch_week_days>",
+          "sch_start_day": "<sch_start_day>",
+          "sch_start_day_opt_1": "<sch_start_day_opt_1>",
+          "sch_months": "<sch_months>",          
+          "sch_start_day_opt_2": "<sch_start_day_opt_2>",          
+          "sch_repeat_every": "<sch_repeat_every>"          
+      }
+      """
+      And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
+      Then the response status code should be 201
+      And the response charset is "UTF-8"
+      And the content type is "application/json"
+      And the type is "object"
+      And store "sch_uid" in session array as variable "sch_uid_<sch_uid_number>"
+
+
+      Examples:
+ 
+      | test_description                                                                          | sch_uid_number | sch_del_user_name | sch_del_user_pass | tas_uid                          | sch_name                              | sch_option | sch_start_date |  sch_end_date | sch_start_time | sch_week_days    | sch_start_day | sch_start_day_opt_1 | sch_months                      | sch_start_day_opt_2 | sch_repeat_every |
+      | Create with Daily                                                                         | 1              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Daily 123@#$           | 1          | 2014-01-30     | 2014-02-20    | 12:00          |                  |               |                     |                                 |                     |                  | 
+      | Create with Weekly, sch_week_days=monday                                                  | 2              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Weekly monday 345%$#   | 2          | 2014-02-20     | 2014-03-20    | 08:00          | 1                |               |                     |                                 |                     |                  |
+      | Create with Weekly, sch_week_days=tuesday, wednesday, thursday, friday, saturday, sunday  | 3              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Weekly 345%$#          | 2          | 2014-02-20     | 2014-03-20    | 08:00          | 2\|3\|4\|5\|6\|7 |               |                     |                                 |                     |                  |
+      | Create with Monthly and day of month, day of month=1, of the month(s)=3,4                 | 4              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 1       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 1             | 15                  | 3\|4                            |                     |                  | 
+      | Create with Monthly and day of month, day of month=1, of the month=1,2,5,6,7,8,9,10,11,12 | 5              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 2       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 1             | 15                  | 1\|2\|5\|6\|7\|8\|9\|10\|11\|12 |                     |                  | 
+      | Create with Monthly and the day=first and Monday                                          | 6              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 3       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 1\|7                |                  |
+      | Create with Monthly and the day=second and Saturday                                       | 7              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 4       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 2\|6                |                  |
+      | Create with Monthly and the day=Third and Friday                                          | 8              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 5       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 3\|5                |                  |
+      | Create with Monthly and the day=second and Thursday                                       | 9              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 6       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 2\|4                |                  |
+      | Create with Monthly and the day=last and Wednesday                                        | 10             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 7       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 5\|3                |                  |
+      | Create with Monthly and the day=last and Wednesday, of the month=1,2,6,7,8,9,10,11,12     | 11             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 8       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 1\|2\|6\|7\|8\|9\|10\|11\|12    | 5\|3                |                  |
+      | Create with One time only                                                                 | 12             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-One Time only 678%$@   | 4          |                |               | 20:00          |                  |               |                     |                                 |                     |                  |      
+      | Craate with Every                                                                         | 13             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Every 987&%@           | 5          |                |               |                |                  |               |                     |                                 |                     | 12.30            |
+
+  
+  Scenario: Get the case schedulers list when there are exactly 13 case schedulers 
+      Given I request "project/1265557095225ff5c688f46031700471/case-schedulers"
+      Then the response status code should be 200
+      And the response charset is "UTF-8"
+      And the content type is "application/json"
+      And the type is "array"
+      And the response has 13 record
+  
+
+  Scenario Outline: Update the case schedulers for a project and then check if the values had changed
+    Given PUT this data:
+      """
+      {
+          "sch_del_user_name": "<sch_del_user_name>",
+          "sch_del_user_pass": "<sch_del_user_pass>",
+          "tas_uid": "<tas_uid>",
+          "sch_name": "<sch_name>",
+          "sch_option": "<sch_option>",
+          "sch_start_date": "<sch_start_date>",
+          "sch_end_date": "<sch_end_date>",
+          "sch_start_time": "<sch_start_time>",
+          "sch_week_days": "<sch_week_days>",
+          "sch_start_day": "<sch_start_day>",
+          "sch_start_day_opt_1": "<sch_start_day_opt_1>",
+          "sch_months": "<sch_months>",          
+          "sch_start_day_opt_2": "<sch_start_day_opt_2>",          
+          "sch_repeat_every": "<sch_repeat_every>"
+      } 
+      """
+      And that I want to update a resource with the key "sch_uid" stored in session array as variable "sch_uid_<sch_uid_number>"
+      And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
+      And the content type is "application/json"
+      Then the response status code should be 200
+      And the response charset is "UTF-8"
+
+      Examples:
+
+      | test_description                                                                     | sch_uid_number | sch_del_user_name | sch_del_user_pass | tas_uid                          | sch_name                                     | sch_option | sch_start_date |  sch_end_date | sch_start_time | sch_week_days | sch_start_day | sch_start_day_opt_1 | sch_months             | sch_start_day_opt_2 | sch_repeat_every |
+      | Update Daily                                                                         | 1              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Daily 123@#$           | 1          | 2014-02-30     | 2014-03-20    | 12:30          |               |               |                     |                        |                     |                  | 
+      | Update Weekly, sch_week_days=monday                                                  | 2              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Weekly monday 345%$#   | 2          | 2014-03-20     | 2014-04-20    | 08:30          | 2             |               |                     |                        |                     |                  |
+      | Update Monthly and day of month, day of month=1, of the month(s)=3,4                 | 4              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Monthly 567&^% 1       | 3          | 2014-04-21     | 2014-05-18    | 18:30          |               | 1             | 18                  | 3\|4\|5                |                     |                  | 
+      | Update One time only                                                                 | 12             | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-One Time only 678%$@   | 4          |                |               | 20:30          |               |               |                     |                        |                     |                  |      
+      | Update Every                                                                         | 13             | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Every 987&%@           | 5          |                |               |                |               |               |                     |                        |                     | 18.30            |
+
+
+   Scenario Outline: Get a single case scheduler of a project and check some properties
+      Given that I want to get a resource with the key "sch_uid" stored in session array as variable "sch_uid_<sch_uid_number>"
+      And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
+      Then the response status code should be 200
+      And the content type is "application/json"
+      And the type is "object"
+      And the response charset is "UTF-8"
+      And that "tas_uid" is set to "<tas_uid>"
+      And that "sch_name" is set to "<sch_name>"
+      And that "sch_start_date" is set to "<sch_start_date>"
+      And that "sch_end_date" is set to "<sch_end_date>"
+      And that "sch_start_time" is set to "<sch_start_time>"
+      And that "sch_week_days" is set to "<sch_week_days>"
+      And that "sch_start_day" is set to "<sch_start_day>"
+      And that "sch_start_day_opt_1" is set to "<sch_start_day_opt_1>"
+      And that "sch_months" is set to "<sch_months>"
+      And that "sch_repeat_every" is set to "<sch_repeat_every>"
+
+      Examples:
+
+      | sch_uid_number | sch_del_user_name | sch_del_user_pass | tas_uid                          | sch_name                                     | sch_option | sch_start_date |  sch_end_date | sch_start_time | sch_week_days | sch_start_day | sch_start_day_opt_1 | sch_months             | sch_start_day_opt_2 | sch_repeat_every |
+      | 1              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Daily 123@#$           | 1          | 2014-02-30     | 2014-03-20    | 12:30          |               |               |                     |                        |                     |                  | 
+      | 2              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Weekly monday 345%$#   | 2          | 2014-03-20     | 2014-04-20    | 08:30          | 2             |               |                     |                        |                     |                  |
+      | 4              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Monthly 567&^% 1       | 3          | 2014-04-21     | 2014-05-18    | 18:30          |               | 2             | 18                  | 3\|4\|5                |                     |                  | 
+      | 12             | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-One Time only 678%$@   | 4          |                |               | 20:30          |               |               |                     |                        |                     |                  |      
+      | 13             | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Every 987&%@           | 5          |                |               |                |               |               |                     |                        |                     | 18:30            |
+
+
+
+  Scenario Outline: Delete all case scheduler of a project created previously in this script
+    Given that I want to delete a resource with the key "sch_uid" stored in session array as variable "sch_uid_<sch_uid_number>"
+      And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
+      Then the response status code should be 200
+      And the response charset is "UTF-8"
+      And the type is "object"
+
+
+    Examples:
+ 
+    | sch_uid_number |
+    | 1              | 
+    | 2              |
+    | 3              |
+    | 4              | 
+    | 5              | 
+    | 6              |
+    | 7              |
+    | 8              |
+    | 9              |
+    | 10             |
+    | 11             |
+    | 12             |      
+    | 13             |
