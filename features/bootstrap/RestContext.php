@@ -356,7 +356,7 @@ class RestContext extends BehatContext
                     $url .= $this->_restGetQueryStringSuffix;
                 }
                 $this->_request = $this->_client
-                    ->get($url, $this->_headers);
+                    ->get($url, $this->_headers);              
                 $this->_response = $this->_request->send();
                 break;
             case 'POST':
@@ -1208,6 +1208,35 @@ class RestContext extends BehatContext
                 throw new \Exception('This is not a valid response');
 
             }
+
+
+
+    }
+
+     /**
+     * @Given /^I request "([^"]*)"  with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
+     */
+    public function iRequestWithTheKeyStoredInSessionArrayAsVariable($pageUrl, $varName, $sessionVarName)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$sessionVarName) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$sessionVarName;
+        }
+
+       
+        $pageUrl = str_replace($varName, $varValue, $pageUrl);
+
+
+        $this->printDebug("URL: $pageUrl\n$varName = $varValue\n");
+
+
+        $this->iRequest($pageUrl);
 
 
 
