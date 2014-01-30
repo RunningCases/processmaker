@@ -105,6 +105,27 @@ class FilesManager extends Api
 
     /**
      * @param string $prjUid {@min 32} {@max 32}
+     * @param ProcessFilesManagerStructure $request_data
+     *
+     * @url PUT /:prjUid/process-file-manager-upload
+     */
+    public function doPutProcessFilesManagerUpload($prjUid, ProcessFilesManagerStructure $request_data)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $request_data = (array)($request_data);
+            $filesManager = new \BusinessModel\FilesManager();
+            $arrayData = $filesManager->updateProcessFilesManager($prjUid, $userUid, $request_data);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
      *
      * @url DELETE /:prjUid/process-file-manager-delete
      */

@@ -33,19 +33,54 @@ class ProjectUser
             $oCriteria->addJoin(\TaskUserPeer::TAS_UID, \TaskPeer::TAS_UID,  \Criteria::LEFT_JOIN);
             $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
-            $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
             $oCriteria->addGroupByColumn(USR_UID);
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('usr_uid' => $aRow['USR_UID'],
-                                  'usr_username' => $aRow['USR_USERNAME'],
-                                  'usr_firstname' => $aRow['USR_FIRSTNAME'],
-                                  'usr_lastname' => $aRow['USR_LASTNAME']);
+                if ($aRow['TU_RELATION'] == 1) {
+                    $aUsers[] = array('usr_uid' => $aRow['USR_UID'],
+                                      'usr_username' => $aRow['USR_USERNAME'],
+                                      'usr_firstname' => $aRow['USR_FIRSTNAME'],
+                                      'usr_lastname' => $aRow['USR_LASTNAME']);
+                } else {
+                    $criteria = new \Criteria("workflow");
+                    $criteria->addSelectColumn(\UsersPeer::USR_UID);
+                    $criteria->addJoin(\GroupUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::INNER_JOIN);
+                    $criteria->add(\GroupUserPeer::GRP_UID, $aRow['USR_UID'], \Criteria::EQUAL);
+                    $criteria->add(\UsersPeer::USR_STATUS, "CLOSED", \Criteria::NOT_EQUAL);
+                    $rsCriteria = \GroupUserPeer::doSelectRS($criteria);
+                    $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                    while ($rsCriteria->next()) {
+                        $row = $rsCriteria->getRow();
+                        $oCriteriaU = new \Criteria('workflow');
+                        $oCriteriaU->setDistinct();
+                        $oCriteriaU->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
+                        $oCriteriaU->addSelectColumn(\UsersPeer::USR_LASTNAME);
+                        $oCriteriaU->addSelectColumn(\UsersPeer::USR_USERNAME);
+                        $oCriteriaU->addSelectColumn(\UsersPeer::USR_EMAIL);
+                        $oCriteriaU->add(\UsersPeer::USR_UID, $row['USR_UID']);
+                        $oDatasetU = \UsersPeer::doSelectRS($oCriteriaU);
+                        $oDatasetU->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                        while ($oDatasetU->next()) {
+                            $aRowU = $oDatasetU->getRow();
+                            $aUsers[] = array('usr_uid' => $row['USR_UID'],
+                                              'usr_username' => $aRowU['USR_USERNAME'],
+                                              'usr_firstname' => $aRowU['USR_FIRSTNAME'],
+                                              'usr_lastname' => $aRowU['USR_LASTNAME']);
+                        }
+                    }
+                }
                 $oDataset->next();
             }
-            return $aUsers;
+            $aUsersGroups = array();
+            $exclude = array("");
+            for ($i = 0; $i<=count($aUsers)-1; $i++) {
+                if (!in_array(trim($aUsers[$i]["usr_uid"]) ,$exclude)) {
+                    $aUsersGroups[] = $aUsers[$i]; $exclude[] = trim($aUsers[$i]["usr_uid"]);
+                }
+            }
+        return $aUsersGroups;
         } catch (Exception $e) {
             throw $e;
         }

@@ -198,6 +198,25 @@ class FilesManager
      * Return the Process Files Manager
      *
      * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $userUid {@min 32} {@max 32}
+     * @param array  $aData
+     *
+     * return array
+     *
+     * @access public
+     */
+    public function updateProcessFilesManager($sProcessUID, $userUid, $aData)
+    {
+        try {
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Return the Process Files Manager
+     *
+     * @param string $sProcessUID {@min 32} {@max 32}
      *
      * return array
      *
