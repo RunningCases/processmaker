@@ -87,15 +87,15 @@ Feature: Project Properties - Step Resources Main Tests
         And the type is "array"
         And the response has <records> records
         And the "step_uid_obj" property in row 0 equals "<step_uid_obj>"
-        And the "aas_type" property in row 0 equals "<step_type_obj>"
+        And the "step_type_obj" property in row 0 equals "<step_type_obj>"
 
 
 
         Examples:
 
         | test_description                                                        | project                          | activity                         | records | step_type_obj   | step_uid_obj                     |
-        | 3 steps in task 1 - verify that the first record is the first position  | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3       | OUTPUT_DOCUMENT | 32743823452cd63105006e1076595203 |
-        | 2 steps in task 2 - verify that the first record is the first position  | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 2       | DYNAFORM        | 50332332752cd9b9a7cc989003652905 |
+        | 3 steps in task 1 - verify that the first record is the first position  | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3       | DYNAFORM        | 50332332752cd9b9a7cc989003652905 |
+        | 2 steps in task 2 - verify that the first record is the first position  | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 2       | DYNAFORM        | 63293140052cd61b29e21a9056770986 |
 
 
     #STEP TRIGGERS
