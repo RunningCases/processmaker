@@ -87,7 +87,7 @@ class ProjectUser
     }
 
     /**
-     * Return the users and users groups to assigned to a process
+     * Return starting task
      *
      * @param string $sProcessUID {@min 32} {@max 32}
      *
@@ -145,7 +145,7 @@ class ProjectUser
     }
 
     /**
-     * Return the users and users groups to assigned to a process
+     * Return starting task by users
      *
      * @param string $sProcessUID {@min 32} {@max 32}
      * @param string $sUserUID {@min 32} {@max 32}
@@ -177,7 +177,7 @@ class ProjectUser
     }
 
     /**
-     * Return the users and users groups to assigned to a process
+     * Return the user that can start a task
      *
      * @param string $sProcessUID {@min 32} {@max 32}
      * @param array  $oData
@@ -247,12 +247,14 @@ class ProjectUser
                 $oCriteria->addJoin( \TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN );
                 $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
                 $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
-                //$oCriteria->add(TaskUserPeer::TU_RELATION,1);
                 $userIsAssigned = \TaskUserPeer::doCount( $oCriteria );
                 // if the user is not assigned directly, maybe a have the task a group with the user
                 if ($userIsAssigned < 1) {
                     $oCriteria = new \Criteria( 'workflow' );
                     $oCriteria->addSelectColumn( \UsersPeer::USR_UID );
+                    $oCriteria->addSelectColumn( \UsersPeer::USR_USERNAME );
+                    $oCriteria->addSelectColumn( \UsersPeer::USR_FIRSTNAME );
+                    $oCriteria->addSelectColumn( \UsersPeer::USR_LASTNAME );
                     $oCriteria->addJoin( \UsersPeer::USR_UID, \GroupUserPeer::USR_UID, \Criteria::LEFT_JOIN );
                     $oCriteria->addJoin( \GroupUserPeer::GRP_UID, \TaskUserPeer::USR_UID, \Criteria::LEFT_JOIN );
                     $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
