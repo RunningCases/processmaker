@@ -35,6 +35,7 @@ class Designer extends Controller
         $credentials['authorization_code'] = $authCode;
 
         $this->setVar('credentials', base64_encode(json_encode($credentials)));
+        $this->setVar('isDebugMode', System::isDebugMode());
         $this->setView('designer/index');
         $this->render();
     }

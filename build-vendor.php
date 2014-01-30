@@ -8,6 +8,10 @@
  * @author Erik Amaru Ortiz
  */
 
+$config = @parse_ini_file("workflow/engine/config/env.ini");
+
+$debug = !empty($config) && isset($config['debug']) ? $config['debug'] : 0;
+
 define('DS', DIRECTORY_SEPARATOR);
 
 // --no-ansi wins over --ansi
@@ -39,140 +43,16 @@ $projects = array(
     'colosa/pmUI'
 );
 
-echo PHP_EOL;
-out("Building JS Projects ", 'info');
-out("--------------------", 'info');
-
 foreach ($projects as $project) {
     echo PHP_EOL;
     out("=> Building project: ", 'info', false);
     echo $project.' '.PHP_EOL;
     chdir($vendorDir.DS.$project);
-    echo `rake`;
+    if ($debug)
+        echo `rake pmBuildDebug`;
+    else
+        echo `rake pmBuild`;
     out("Completed!", 'success');
-}
-
-echo PHP_EOL;
-
-
-out("Copying project files to its destination", 'info', true);
-out("----------------------------------------", 'info', true);
-
-$destinationDir = dirname(__FILE__) . DS . 'workflow/public_html/lib';
-
-if (! is_dir($destinationDir)) {
-    mkdir($destinationDir, 0777);
-}
-if (! is_dir($destinationDir.'/js')) {
-    mkdir($destinationDir.'/js', 0777);
-}
-if (! is_dir($destinationDir.'/css')) {
-    mkdir($destinationDir.'/css', 0777);
-}
-if (! is_dir($destinationDir.'/img')) {
-    mkdir($destinationDir.'/img', 0777);
-}
-if (! is_dir($destinationDir.'/mafe')) {
-    mkdir($destinationDir.'/mafe', 0777);
-}
-if (! is_dir($destinationDir.'/pmUI')) {
-    mkdir($destinationDir.'/pmUI', 0777);
-}
-
-
-$filesCollection = array(
-    // Libs
-    "jquery/jquery/jquery-1.10.2.min.js" => "js/jquery-1.10.2.min.js",
-    "underscore/underscore/underscore-min.js" => "js/underscore-min.js",
-    "colosa/pmUI/libraries/restclient/restclient-min.js" => "js/restclient-min.js",
-
-    // MichelangeloFE
-    "colosa/MichelangeloFE/lib/wz_jsgraphics/wz_jsgraphics.js" => "js/wz_jsgraphics.js",
-    "colosa/MichelangeloFE/build/js/designer.js" => "mafe/designer.js",
-    "colosa/MichelangeloFE/build/js/mafe.min.js" => "mafe/mafe.min.js",
-    "colosa/MichelangeloFE/build/css/mafe.css" => "mafe/mafe.css",
-    "colosa/MichelangeloFE/build/img/*" => "img/",
-    // pmUI
-    "colosa/pmUI/libraries/jquery.layout/LayoutPanel.css" => "css/jquery.layout.css",
-    "colosa/pmUI/libraries/jquery-ui/css/css-customized/jquery-ui-1.10.3.custom.css" => "css/jquery-ui-1.10.3.custom.min.css",
-    "colosa/pmUI/libraries/dataTables/css/jquery.dataTables.css" => "css/jquery.dataTables.css",
-    "colosa/pmUI/libraries/jquery.layout/jquery.layout.min.js" => "js/jquery.layout.min.js",
-    "colosa/pmUI/libraries/jquery-ui/js/jquery-ui-1.10.3.custom.min.js" => "js/jquery-ui-1.10.3.custom.min.js",
-    "colosa/pmUI/libraries/dataTables/js/jquery.dataTables.min.js" => "js/jquery.dataTables.min.js",
-
-    array(
-        "try_files" => array("colosa/pmUI/build/js/min/pmui-1.0.0.min.js", "colosa/pmUI/build/js/pmui-1.0.0.js"),
-        "to_file" => "pmUI/pmui-1.0.0.js"
-    ),
-    "colosa/pmUI/build/css/pmui-1.0.0.css" => "pmUI/pmui-1.0.0.css",
-    "colosa/pmUI/build/img/*" => "img/",
-
-);
-
-out("* Destination dir: ", 'info', false);
-echo $destinationDir . PHP_EOL.PHP_EOL;
-
-$successCount = 0;
-
-foreach ($filesCollection as $source => $target) {
-    if (! is_array($target)) {
-        if (strpos($source, '*') !== false) {
-            out("Create dir: ", 'info', false);
-            echo $target;
-            out(" from source: ", 'info', false);
-            echo $source;
-            out(" [DONE]", "success", true) . PHP_EOL;
-            echo `cp -Rf $vendorDir/$source $destinationDir/$target`;
-            $successCount++;
-        } else {
-            out("Create file: ", 'info', false);
-            echo $target;
-            out(" from source: ", 'info', false);
-            echo $source;
-
-            if (file_exists("$vendorDir/$source")) {
-                out(" [DONE]", "success", true) . PHP_EOL;
-                echo `cp -Rf $vendorDir/$source $destinationDir/$target`;
-                $successCount++;
-            } else {
-                out(" [FAILED]", "error", true) . PHP_EOL;
-            }
-        }
-    } else {
-        out("Create file: ", 'info', false);
-        echo $target['to_file'];
-        out(" from source: ", 'info', false);
-
-        $sw = true;
-        $files = $target['try_files'];
-        $target = $target['to_file'];
-
-        foreach ($files as $file) {
-            if (file_exists("$vendorDir/$file")) {
-                echo $file;
-                out(" [DONE]", "success", true) . PHP_EOL;
-                echo `cp -Rf $vendorDir/$file $destinationDir/$target`;
-                $successCount++;
-                $sw = false;
-                break;
-            }
-        }
-
-        if ($sw) {
-            echo '('.implode(', ', $files).')';
-            out(" [FAILED]", "error", true) . PHP_EOL;
-        }
-    }
-}
-
-$n = count($filesCollection);
-echo PHP_EOL;
-echo sprintf("- Finished, Copied [%s/%s] files.", $successCount, $n).PHP_EOL;
-
-if ($successCount == count($filesCollection)) {
-    out(sprintf("- All files copied successfully!", $successCount, $n), "success", true);
-} else {
-    out("- Finished but with errors while copying!", "error", true);
 }
 
 echo PHP_EOL;
