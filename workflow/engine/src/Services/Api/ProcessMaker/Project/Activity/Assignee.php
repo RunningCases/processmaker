@@ -240,5 +240,5 @@ class Assignee extends Api
         }
         return $response;
     }
-
 }
+

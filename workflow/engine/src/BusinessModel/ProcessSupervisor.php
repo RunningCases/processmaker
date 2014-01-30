@@ -141,14 +141,14 @@ class ProcessSupervisor
 
     /**
      * Return available supervisors
-     * @param string $sProcessUID
      * @param string $obj_type
+     * @param string $sProcessUID
      *
      * @return array
      *
      * @access public
      */
-    public function getAvailableProcessSupervisors($sProcessUID = '', $obj_type)
+    public function getAvailableProcessSupervisors($obj_type, $sProcessUID = '')
     {
         try {
             // Groups

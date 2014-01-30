@@ -21,7 +21,7 @@ class FilesManager extends Api
     {
         try {
             $filesManager = new \BusinessModel\FilesManager();
-            if ($path != '') { 
+            if ($path != '') {
                 if ($path == 'templates') {
                     $path = 'mailTemplates';
                 } else {
@@ -30,7 +30,7 @@ class FilesManager extends Api
                 $arrayData = $filesManager->getProcessFilesManagerPath($prjUid, $path);
             } else {
                 $arrayData = $filesManager->getProcessFilesManager($prjUid);
-            }            
+            }
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -40,4 +40,103 @@ class FilesManager extends Api
         return $response;
     }
 
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $path {@choice templates,folder,}
+     *
+     * @url GET /:prjUid/process-file-manager-download
+     */
+    public function doGetProcessFilesManagerDownload($prjUid, $path = '')
+    {
+        try {
+            $filesManager = new \BusinessModel\FilesManager();
+            $arrayData = $filesManager->getProcessFilesManagerDownload($prjUid);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param ProcessFilesManagerStructure $request_data
+     *
+     * @url POST /:prjUid/process-file-manager
+     */
+    public function doPostProcessFilesManager($prjUid, ProcessFilesManagerStructure $request_data)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $request_data = (array)($request_data);
+
+            $filesManager = new \BusinessModel\FilesManager();
+            $arrayData = $filesManager->addProcessFilesManager($prjUid, $userUid, $request_data);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     *
+     * @url POST /:prjUid/process-file-manager-upload
+     */
+    public function doPostProcessFilesManagerUpload($prjUid)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $filesManager = new \BusinessModel\FilesManager();
+            $arrayData = $filesManager->uploadProcessFilesManager($prjUid, $userUid);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     *
+     * @url DELETE /:prjUid/process-file-manager-delete
+     */
+    public function doDeleteProcessFilesManager($prjUid)
+    {
+        try {
+            $filesManager = new \BusinessModel\FilesManager();
+            $arrayData = $filesManager->deleteProcessFilesManager($prjUid);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+}
+
+class ProcessFilesManagerStructure
+{
+    /**
+     * @var string {@from body}
+     */
+    public $file_name;
+
+    /**
+     * @var string {@from body}
+     */
+    public $path;
+
+    /**
+     * @var string {@from body}
+     */
+    public $content;
 }

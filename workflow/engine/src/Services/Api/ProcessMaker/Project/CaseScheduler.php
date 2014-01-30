@@ -88,7 +88,7 @@ class CaseScheduler extends Api
             $userUid = $this->getUserId();
             $request_data = (array)($request_data);
             $caseScheduler = new \BusinessModel\CaseScheduler();
-            $objectData = $caseScheduler->updateCaseScheduler($prjUid, $schUid, $request_data, $userUid);
+            $objectData = $caseScheduler->updateCaseScheduler($prjUid, $request_data, $userUid, $schUid);
             //Response
             $response = $objectData;
         } catch (\Exception $e) {
@@ -118,7 +118,7 @@ class CaseScheduler extends Api
 }
 
 class CaseSchedulerStructure
-{   
+{
     /**
      * @var string {@from body} {@min 0} {@max 100}
      */
@@ -234,4 +234,3 @@ class CaseSchedulerStructure
     public $sch_repeat_every;
 }
 
-    

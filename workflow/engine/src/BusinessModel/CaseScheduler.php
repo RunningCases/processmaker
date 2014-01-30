@@ -198,10 +198,11 @@ class CaseScheduler
             $sTASKS = $sTaskUID;
             $sWS_USER = trim( $userName );
             $sWS_PASS = trim( $userPass );
-            if (\G::is_https())
+            if (\G::is_https()) {
                 $http = 'https://';
-            else
+            } else {
                 $http = 'http://';
+            }
             $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
             @$client = new \SoapClient( $endpoint );
             $user = $sWS_USER;
@@ -285,7 +286,7 @@ class CaseScheduler
                 throw (new \Exception( 'task not found for id: '. $aData['TAS_UID']));
             }
             if ($aData['SCH_NAME']=='') {
-                throw (new \Exception( 'the Case Scheduler name can`t be empty'));
+                throw (new \Exception( '`sch_name` can`t be empty'));
             }
             if ($this->existsName($sProcessUID, $aData['SCH_NAME'])) {
                 throw (new \Exception( 'duplicate Case Scheduler name'));
@@ -342,7 +343,6 @@ class CaseScheduler
             $aData['SCH_DAYS_PERFORM_TASK'] = '';
             switch ($sOption) {
                 case '1':
-                    // Option 1
                     $aData['SCH_DAYS_PERFORM_TASK'] = '1';
                     $sValue = $aData['SCH_DAYS_PERFORM_TASK'];
                     switch ($sValue) {
@@ -538,13 +538,13 @@ class CaseScheduler
     /**
      * Update case scheduler for a project
      * @param string $sProcessUID
-     * @param string $sSchUID
      * @param array  $aData
      * @param string $userUID
+     * @param string $sSchUID
      *
      * @access public
      */
-    public function updateCaseScheduler($sProcessUID, $sSchUID = '', $aData, $userUID)
+    public function updateCaseScheduler($sProcessUID, $aData, $userUID, $sSchUID = '')
     {
         try {
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes". PATH_SEP . "model" . PATH_SEP . "CaseScheduler.php");
@@ -567,7 +567,7 @@ class CaseScheduler
                 throw (new \Exception( 'task not found for id: '. $aData['TAS_UID']));
             }
             if ($aData['SCH_NAME']=='') {
-                throw (new \Exception( 'the Case Scheduler name can`t be empty'));
+                throw (new \Exception( '`sch_name` can`t be empty'));
             }
             if ($this->existsNameUpdate($sSchUID, $aData['SCH_NAME'])) {
                 throw (new \Exception( 'duplicate Case Scheduler name'));
@@ -624,7 +624,6 @@ class CaseScheduler
             $aData['SCH_DAYS_PERFORM_TASK'] = '';
             switch ($sOption) {
                 case '1':
-                    // Option 1
                     $aData['SCH_DAYS_PERFORM_TASK'] = '1';
                     $sValue = $aData['SCH_DAYS_PERFORM_TASK'];
                     switch ($sValue) {
@@ -652,7 +651,7 @@ class CaseScheduler
                         $weeks = explode("|", $weeks);
                         foreach ($weeks as $row) {
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7") {
-                               $aData['SCH_WEEK_DAYS'] = $aData['SCH_WEEK_DAYS'];
+                                $aData['SCH_WEEK_DAYS'] = $aData['SCH_WEEK_DAYS'];
                             } else {
                                 throw (new \Exception( 'invalid value specified for `sch_week_days`'));
                             }
@@ -694,7 +693,7 @@ class CaseScheduler
                             throw (new \Exception( '`sch_start_day_opt_2` can`t be null'));
                         }
                         $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_2'];
-                        $optionTwo = $aData['SCH_START_DAY_OPT_2']{0};
+                            $optionTwo = $aData['SCH_START_DAY_OPT_2']{0};
                         if ($optionTwo == "1" || $optionTwo == "2" || $optionTwo == "3" || $optionTwo == "4" || $optionTwo == "5") {
                             $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
                         } else {
