@@ -1,6 +1,23 @@
 
 {if $isDebugMode}
+    <!-- files that are built into pmui.css-->
     <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/pmui.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/TooltipMessage.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/Window.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/Button.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/Tree.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/Field.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/FormPanel.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/Form.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/TextAreaField.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/TabPanel.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/DateTimeControl.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/Menu.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/GridPanel.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/AccordionPanel.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/OptionsSelector.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/MessageWindow.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/treeNode.css">
     <!-- files that are built into mafe.css-->
     <link rel="stylesheet" type="text/css" href="/lib-dev/mafe/toolbarpanel.css">
     <link rel="stylesheet" type="text/css" href="/lib-dev/mafe/bpmn.css">
@@ -20,7 +37,156 @@
     <script type="text/javascript" src="/lib-dev/js/jquery.layout.min.js"></script>
     <script type="text/javascript" src="/lib-dev/js/restclient.min.js"></script>
     <!--<script type="text/javascript" src="/lib/js/jquery.dataTables.min.js"></script>-->
+    <!-- files that are built into pmui.js-->
     <script type="text/javascript" src="/lib-dev/pmUI/pmui.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ArrayList.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Style.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Factory.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Color.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Point.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Graphics.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Geometry.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Action.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Base.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Element.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Container.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Item.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Panel.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/MenuItemElement.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Control.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/HTMLControl.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/TextControl.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DropDownListControl.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/TextAreaControl.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/SelectableControl.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/HiddenControl.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DateTimeControl.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Window.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/MessageWindow.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ErrorMessageWindow.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/WarningMessageWindow.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/SuccessMessageWindow.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/InfoMessageWindow.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Button.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/TooltipMessage.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Field.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/TextField.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/TextAreaField.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DropDownListField.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CheckBoxGroupField.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/RadioButtonGroupField.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DateTimeField.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/FormItemFactory.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/FormPanel.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Form.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Validator.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/TextLengthValidator.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/RegExpValidator.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ValidatorFactory.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/LayoutPanel.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Layout.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/HBox.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/VBox.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Box.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/LayoutFactory.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/TreePanel.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/TabPanel.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/AccordionPanel.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/GridPanel.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/GridPanelColumn.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/GridPanelRow.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/GridPanelCell.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainableItem.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/TabItem.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/MenuItem.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CheckboxItem.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/SeparatorItem.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/AccordionItem.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/TreeNode.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Proxy.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/RestProxy.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Event.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/EventFactory.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/MouseEvent.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/KeyboardEvent.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/FormEvent.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Core.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/BehavioralElement.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/BehaviorFactory.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DragBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CustomShapeDrag.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/RegularDrag.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ConnectionDrag.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/NoDrag.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DropBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ConnectionDrop.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerDrop.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ConnectionContainerDrop.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/NoDrop.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/RegularContainer.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/NoContainer.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ResizeBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/NoResize.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/RegularResize.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DataControlDropBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DataControlNoDropBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DataControlDragBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DataControlNoDragBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerItemBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerItemNoBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerItemDragBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerItemDropBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerItemSortBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerItemDragDropBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerItemDragSortBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerItemDropSortBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerItemDragDropSortBehavior.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ContainerItemBehaviorFactory.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Command.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CommandConnect.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CommandCreate.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CommandDelete.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CommandEditLabel.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CommandMove.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CommandPaste.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CommandReconnect.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CommandResize.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CommandSegmentMove.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CommandStack.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CommandSwitchContainer.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Canvas.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Shape.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Label.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/CustomShape.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/RegularShape.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Arc.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Oval.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Polygon.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Intersection.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Rectangle.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/MultipleSelectionContainer.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Snapper.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Router.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ManhattanConnectionRouter.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Connection.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ConnectionDecorator.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Layer.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Handler.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ResizeHandler.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/SegmentMoveHandler.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Port.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Segment.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/ReadOnlyLayer.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DataItem.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DataField.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/DataSet.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/GridPanelCell.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/GridPanelColumn.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/Menu.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/OptionsSelectorItemControl.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/OptionsSelectorControl.js"></script>
+    <script type="text/javascript" src="/lib-dev/pmUI/OptionsSelectorField.js"></script>
     <!-- files that are built into mafe.js-->
     <script type="text/javascript" src="/lib-dev/mafe/commandreconnect.js"></script>
     <script type="text/javascript" src="/lib-dev/mafe/connectiondrop.js"></script>
