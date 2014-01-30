@@ -4,7 +4,7 @@ Feature: Events Resources
     @1: TEST FOR GET EVENTS /----------------------------------------------------------------------
     Scenario: List all the events (result 0 events)
         Given that I have a valid access_token
-        And I request "project/251815090529619a99a2bf4013294414/events"
+        And I request "project/74621721252eab0a6383731089824705/events"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the response has 0 record
@@ -20,23 +20,22 @@ Feature: Events Resources
                 "evn_status": "ACTIVE",
                 "evn_action": "SEND_MESSAGE",
                 "evn_related_to": "SINGLE",
-                "tas_uid": "97192372152a5c78f04a794095806311",
-                "evn_tas_uid_from": "97192372152a5c78f04a794095806311",
+                "tas_uid": "46337349752eab0df6e7b61093784394",
                 "evn_tas_estimated_duration": 1,
                 "evn_time_unit": "DAYS",
                 "evn_when": 1,
                 "evn_when_occurs": "AFTER_TIME",
-                "tri_uid": "75916963152cc6ab085a704081670580"
+                "tri_uid": "95002116552eab0b786a743075022999"
             }
             """
-        And I request "project/251815090529619a99a2bf4013294414/event"
+        And I request "project/74621721252eab0a6383731089824705/event"
         Then the response status code should be 201
         And store "evn_uid" in session array
 
     @3: TEST FOR GET EVENTS /----------------------------------------------------------------------
     Scenario: List all the events (result 1 event)
         Given that I have a valid access_token
-        And I request "project/251815090529619a99a2bf4013294414/events"
+        And I request "project/74621721252eab0a6383731089824705/events"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the response has 1 record
@@ -50,18 +49,18 @@ Feature: Events Resources
                 "evn_description": "change description",
                 "evn_status": "ACTIVE",
                 "evn_action": "SEND_MESSAGE",
-                "evn_related_to": "SINGLE",
-                "tas_uid": "97192372152a5c78f04a794095806311",
-                "evn_tas_uid_from": "97192372152a5c78f04a794095806311",
+                "evn_related_to": "MULTIPLE",
+                "evn_tas_uid_from": "46337349752eab0df6e7b61093784394",
+                "evn_tas_uid_to": "86505074952eab0e1007790039372925",
                 "evn_tas_estimated_duration": 1,
                 "evn_time_unit": "DAYS",
                 "evn_when": 1,
                 "evn_when_occurs": "AFTER_TIME",
-                "tri_uid": "75916963152cc6ab085a704081670580"
+                "tri_uid": "95002116552eab0b786a743075022999"
             }
             """
         And that I want to update a resource with the key "evn_uid" stored in session array
-        And I request "project/251815090529619a99a2bf4013294414/event"
+        And I request "project/74621721252eab0a6383731089824705/event"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
@@ -71,7 +70,7 @@ Feature: Events Resources
     Scenario: Get a event (with change in "evn_description")
         Given that I have a valid access_token
         And that I want to get a resource with the key "evn_uid" stored in session array
-        And I request "project/251815090529619a99a2bf4013294414/event"
+        And I request "project/74621721252eab0a6383731089824705/event"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
@@ -82,7 +81,7 @@ Feature: Events Resources
     Scenario: Delete a event
         Given that I have a valid access_token
         And that I want to delete a resource with the key "evn_uid" stored in session array
-        And I request "project/251815090529619a99a2bf4013294414/event"
+        And I request "project/74621721252eab0a6383731089824705/event"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
@@ -90,7 +89,7 @@ Feature: Events Resources
     @7: TEST FOR GET EVENTS /----------------------------------------------------------------------
     Scenario: List all the events (result 0 events)
         Given that I have a valid access_token
-        And I request "project/251815090529619a99a2bf4013294414/events"
+        And I request "project/74621721252eab0a6383731089824705/events"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the response has 0 record

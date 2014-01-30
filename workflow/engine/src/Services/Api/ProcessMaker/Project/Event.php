@@ -85,13 +85,13 @@ class Event extends Api
      * @param string $evn_status {@from body} {@choice ACTIVE,INACTIVE}
      * @param string $evn_action {@from body} {@choice SEND_MESSAGE,EXECUTE_CONDITIONAL_TRIGGER,EXECUTE_TRIGGER}
      * @param string $evn_related_to {@from body} {@choice SINGLE,MULTIPLE}
-     * @param string $tas_uid {@from body} {@min 1}
-     * @param string $evn_tas_uid_from {@from body} {@min 1}
      * @param string $evn_tas_estimated_duration {@from body} {@min 1}
      * @param string $evn_time_unit {@from body} {@choice DAYS,HOURS}
      * @param string $evn_when {@from body} {@type float}
      * @param string $evn_when_occurs {@from body} {@choice AFTER_TIME,TASK_STARTED}
      * @param string $tri_uid {@from body} {@min 1}
+     * @param string $tas_uid {@from body}
+     * @param string $evn_tas_uid_from {@from body}
      * @param string $evn_tas_uid_to {@from body}
      * @param string $evn_conditions {@from body}
      *
@@ -111,13 +111,13 @@ class Event extends Api
         $evn_status,
         $evn_action,
         $evn_related_to,
-        $tas_uid,
-        $evn_tas_uid_from,
         $evn_tas_estimated_duration,
         $evn_time_unit,
         $evn_when,
         $evn_when_occurs,
         $tri_uid,
+        $tas_uid = '',
+        $evn_tas_uid_from = '',
         $evn_tas_uid_to = '',
         $evn_conditions = ''
     ) {
@@ -146,13 +146,13 @@ class Event extends Api
      * @param string $evn_status {@from body} {@choice ACTIVE,INACTIVE}
      * @param string $evn_action {@from body} {@choice SEND_MESSAGE,EXECUTE_CONDITIONAL_TRIGGER,EXECUTE_TRIGGER}
      * @param string $evn_related_to {@from body} {@choice SINGLE,MULTIPLE}
-     * @param string $tas_uid {@from body} {@min 1}
-     * @param string $evn_tas_uid_from {@from body} {@min 1}
      * @param string $evn_tas_estimated_duration {@from body} {@min 1}
      * @param string $evn_time_unit {@from body} {@choice DAYS,HOURS}
      * @param string $evn_when {@from body} {@type float}
      * @param string $evn_when_occurs {@from body} {@choice AFTER_TIME,TASK_STARTED}
      * @param string $tri_uid {@from body} {@min 1}
+     * @param string $tas_uid {@from body}
+     * @param string $evn_tas_uid_from {@from body}
      * @param string $evn_tas_uid_to {@from body}
      * @param string $evn_conditions {@from body}
      *
@@ -172,13 +172,13 @@ class Event extends Api
         $evn_status,
         $evn_action,
         $evn_related_to,
-        $tas_uid,
-        $evn_tas_uid_from,
         $evn_tas_estimated_duration,
         $evn_time_unit,
         $evn_when,
         $evn_when_occurs,
         $tri_uid,
+        $tas_uid = '',
+        $evn_tas_uid_from = '',
         $evn_tas_uid_to = '',
         $evn_conditions = ''
     ) {
