@@ -168,10 +168,11 @@ class ProjectUser
             $sWS_PASS = trim( $oData['password'] );
             $sWS_ROUNDROBIN = $oData->WS_ROUNDROBIN;
             $sWE_USR = $oData->WE_USR;
-            if (\G::is_https())
+            if (\G::is_https()) {
                 $http = 'https://';
-            else
+            } else {
                 $http = 'http://';
+            }
             $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
             @$client = new \SoapClient( $endpoint );
             $user = $sWS_USER;

@@ -981,7 +981,7 @@ class Task
                     if ( $type != $assType ) {
                         throw (new \Exception( 'This id: '. $sAssigneeUID .' do not correspond to a registered ' .$assType ));
                     }
-                } 
+                }
                 if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
                     $type = "group";
                     if ( $type != $assType ) {
@@ -1016,7 +1016,7 @@ class Task
      * @access public
      */
     public function removeTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
-    {   
+    {
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
@@ -1451,7 +1451,7 @@ class Task
                     if ( $type != $assType ) {
                         throw (new \Exception( 'This id: '. $sAssigneeUID .' do not correspond to a registered ' .$assType ));
                     }
-                } 
+                }
                 if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
                     $type = "group";
                     if ( $type != $assType ) {
@@ -1486,7 +1486,7 @@ class Task
      * @access public
      */
     public function removeTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
-    {   
+    {
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {

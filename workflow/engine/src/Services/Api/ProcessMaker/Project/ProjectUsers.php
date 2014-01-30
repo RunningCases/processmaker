@@ -89,22 +89,21 @@ class ProjectUsers extends Api
         }
         return $response;
     }
-
 }
 
 class wsUserCanStartTaskStructure
-{   /**
+{
+    /**
      * @var string {@from body} {@min 32} {@max 32}
      */
     public $act_uid;
-
     /**
      * @var string {@from body}
      */
     public $username;
-
     /**
      * @var string {@from body}
      */
     public $password;
 }
+

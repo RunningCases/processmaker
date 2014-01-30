@@ -60,7 +60,7 @@ class ProcessSupervisors extends Api
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->getAvailableProcessSupervisors($prjUid, $obj_type);
+            $arrayData = $supervisor->getAvailableProcessSupervisors($obj_type, $prjUid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -174,7 +174,6 @@ class ProcessSupervisors extends Api
      * @url GET /:prjUid/process-supervisor/available-input-documents
      */
     public function doGetAvailableProcessSupervisorInputDocument($prjUid)
-
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
@@ -312,3 +311,4 @@ class ProcessSupervisors extends Api
         return $response;
     }
 }
+
