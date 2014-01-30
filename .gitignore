@@ -25,5 +25,6 @@ vendor/
 workflow/engine/config/schema-transformed.xml
 workflow/engine/config/_databases_.php
 workflow/public_html/lib/
+workflow/public_html/lib-dev/
 session.data
 behat.yml

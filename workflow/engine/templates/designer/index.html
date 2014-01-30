@@ -1,21 +1,74 @@
 
-<link rel="stylesheet" type="text/css" href="/lib/pmUI/pmui-1.0.0.css">
-<link rel="stylesheet" type="text/css" href="/lib/mafe/mafe.css">
-<link rel="stylesheet" type="text/css" href="/lib/css/jquery.layout.css">
-<link rel="stylesheet" type="text/css" href="/lib/css/jquery-ui-1.10.3.custom.min.css">
-<link rel="stylesheet" type="text/css" href="/lib/css/jquery.dataTables.css">
+{if $isDebugMode}
+    <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/pmui.css">
+    <!-- files that are built into mafe.css-->
+    <link rel="stylesheet" type="text/css" href="/lib-dev/mafe/toolbarpanel.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/mafe/bpmn.css">
 
-<script type="text/javascript">
-    var prj_uid = "{$prj_uid}";
-    var credentials = "{$credentials}";
-</script>
-<script type="text/javascript" src="/lib/js/wz_jsgraphics.js"></script>
-<script type="text/javascript" src="/lib/js/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="/lib/js/underscore-min.js"></script>
-<script type="text/javascript" src="/lib/js/jquery-ui-1.10.3.custom.min.js"></script>
-<script type="text/javascript" src="/lib/js/jquery.layout.min.js"></script>
-<script type="text/javascript" src="/lib/js/restclient-min.js"></script>
-<script type="text/javascript" src="/lib/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="/lib/pmUI/pmui-1.0.0.js"></script>
-<script type="text/javascript" src="/lib/mafe/mafe.min.js"></script>
-<script type="text/javascript" src="/lib/mafe/designer.js"></script>
+    <link rel="stylesheet" type="text/css" href="/lib-dev/css/jquery.layout.css">
+    <link rel="stylesheet" type="text/css" href="/lib-dev/css/jquery-ui-1.10.3.custom.min.css">
+    <!--<link rel="stylesheet" type="text/css" href="/lib/css/jquery.dataTables.css">-->
+
+    <script type="text/javascript">
+        var prj_uid = "{$prj_uid}";
+        var credentials = "{$credentials}";
+    </script>
+    <script type="text/javascript" src="/lib-dev/js/wz_jsgraphics.js"></script>
+    <script type="text/javascript" src="/lib-dev/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/lib-dev/js/underscore-min.js"></script>
+    <script type="text/javascript" src="/lib-dev/js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript" src="/lib-dev/js/jquery.layout.min.js"></script>
+    <script type="text/javascript" src="/lib-dev/js/restclient.min.js"></script>
+    <!--<script type="text/javascript" src="/lib/js/jquery.dataTables.min.js"></script>-->
+    <script type="text/javascript" src="/lib-dev/pmUI/pmui.js"></script>
+    <!-- files that are built into mafe.js-->
+    <script type="text/javascript" src="/lib-dev/mafe/commandreconnect.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/connectiondrop.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/toolbarpanel.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/process.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/canvas.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/shape.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/flow.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/event.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/activity.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/gateway.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/utils.js"></script>
+    <!-- files that are built into designer.js-->
+    <script type="text/javascript" src="/lib-dev/mafe/designer/designer.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/contextMenu.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/treePanel.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/shapeFactory.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/toolbarPanel.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/dynaformsModule.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/inputDocumentsModule.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/caseSchedulerModule.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/databaseConnectionModule.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/outputDocumentsModule.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/reportTablesModule.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/triggersModule.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/menuProcessmaker.js"></script>
+    <script type="text/javascript" src="/lib-dev/mafe/designer/propertiesTask.js"></script>
+
+{else}
+
+    <link rel="stylesheet" type="text/css" href="/lib/pmUI/pmui.css">
+    <link rel="stylesheet" type="text/css" href="/lib/mafe/mafe.css">
+    <link rel="stylesheet" type="text/css" href="/lib/css/jquery.layout.css">
+    <link rel="stylesheet" type="text/css" href="/lib/css/jquery-ui-1.10.3.custom.min.css">
+    <!--<link rel="stylesheet" type="text/css" href="/lib/css/jquery.dataTables.css">-->
+
+    <script type="text/javascript">
+        var prj_uid = "{$prj_uid}";
+        var credentials = "{$credentials}";
+    </script>
+    <script type="text/javascript" src="/lib/js/wz_jsgraphics.js"></script>
+    <script type="text/javascript" src="/lib/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/lib/js/underscore-min.js"></script>
+    <script type="text/javascript" src="/lib/js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript" src="/lib/js/jquery.layout.min.js"></script>
+    <script type="text/javascript" src="/lib/js/restclient.min.js"></script>
+    <!--<script type="text/javascript" src="/lib/js/jquery.dataTables.min.js"></script>-->
+    <script type="text/javascript" src="/lib/pmUI/pmui.min.js"></script>
+    <script type="text/javascript" src="/lib/mafe/mafe.min.js"></script>
+    <script type="text/javascript" src="/lib/mafe/designer.min.js"></script>
+{/if}
