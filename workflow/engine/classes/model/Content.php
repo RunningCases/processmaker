@@ -183,7 +183,7 @@ class Content extends BaseContent
     * @param string $ConValue
     * @return variant
     */
-    public function addContent ($ConCategory, $ConParent, $ConId, $ConLang, $ConValue)
+    public static function addContent ($ConCategory, $ConParent, $ConId, $ConLang, $ConValue)
     {
         try {
             if ($ConLang != 'en') {

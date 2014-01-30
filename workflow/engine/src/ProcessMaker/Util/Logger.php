@@ -38,8 +38,10 @@ class Logger
                 $arg = print_r($arg, true);
             }
 
-            $stat = fwrite($this->fp, "- " . date('Y-m-d H:i:s') . " " . $arg . PHP_EOL);
+            fwrite($this->fp, "- " . date('Y-m-d H:i:s') . " " . $arg . PHP_EOL);
         }
+        if (count($args) > 1)
+            fwrite($this->fp, PHP_EOL);
     }
 
     public static function log()

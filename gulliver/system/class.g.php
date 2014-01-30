@@ -2078,7 +2078,7 @@ class G
      * @param eter array data // erik: associative array within data input to replace for formatted string i.e "any messsage {replaced_label} that contains a replace label"
      * @return string
      */
-    public function LoadTranslation ($msgID, $lang = SYS_LANG, $data = null)
+    public static function LoadTranslation ($msgID, $lang = SYS_LANG, $data = null)
     {
         global $translation;
 
@@ -2746,7 +2746,7 @@ class G
      * @access public
      * @return int
      */
-    public function generateUniqueID ()
+    public static function generateUniqueID ()
     {
         do {
             $sUID = str_replace( '.', '0', uniqid( rand( 0, 999999999 ), true ) );

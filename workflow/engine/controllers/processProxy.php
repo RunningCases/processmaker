@@ -63,7 +63,7 @@ class ProcessProxy extends HttpProxyController
 
                 $sProUid = $oProcessMap->createProcess( $processData );
 
-                //call plugins
+                //call pluginsx
                 $oData['PRO_UID'] = $sProUid;
                 $oData['PRO_TEMPLATE'] = isset( $httpData->PRO_TEMPLATE ) && $httpData->PRO_TEMPLATE != '' ? $httpData->PRO_TEMPLATE : '';
                 $oData['PROCESSMAP'] = $oProcessMap;

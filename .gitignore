@@ -28,3 +28,4 @@ workflow/public_html/lib/
 workflow/public_html/lib-dev/
 session.data
 behat.yml
+workflow/engine/src/Tests/config.ini

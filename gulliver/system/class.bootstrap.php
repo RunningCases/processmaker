@@ -794,7 +794,7 @@ class Bootstrap
      * @param string $strClass
      * @return void
      */
-    public function LoadClass($strClass)
+    public static function LoadClass($strClass)
     {
         $classfile = Bootstrap::ExpandPath("classes") . 'class.' . $strClass . '.php';
         if (!file_exists($classfile)) {
@@ -818,7 +818,7 @@ class Bootstrap
      * @param string $strClass
      * @return void
      */
-    public function LoadThirdParty($sPath, $sFile)
+    public static function LoadThirdParty($sPath, $sFile)
     {
         $classfile = PATH_THIRDPARTY . $sPath . '/' . $sFile . ((substr($sFile, 0, - 4) !== '.php') ? '.php' : '');
         return require_once ($classfile);
@@ -1068,7 +1068,7 @@ class Bootstrap
      * @param string $strPath
      * @return string
      */
-    public function expandPath($strPath = '')
+    public static function expandPath($strPath = '')
     {
         $res = "";
         $res = PATH_CORE;

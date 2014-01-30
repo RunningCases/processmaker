@@ -499,17 +499,21 @@ class Model
 
         $result = self::updateDiagram($prjUid, $process->getProUid(), $diff);
 
+        self::log("Method: ".__METHOD__, 'Returns: ', $result);
+
         return $result;
     }
 
     public static function updateDiagram($prjUid, $proUid, $diff)
     {
-        self::log('executing: updateDiagram() with params -> ', $prjUid, $proUid, $diff);
+        self::log("Method: ".__METHOD__, 'Params: ', "\$prjUid: $prjUid", "\$proUid: $proUid", "\$diff:", $diff);
 
         //return false;
         $uids = array();
 
-        // Updating objects
+        /*
+         * Updating Records
+         */
         foreach ($diff['updated'] as $element => $items) {
             foreach ($items as $data) {
                 $data = array_change_key_case((array) $data, CASE_UPPER);
@@ -550,7 +554,37 @@ class Model
             }
         }
 
-        // Creating new records
+        /*
+         * Deleting Records
+         */
+        foreach ($diff['deleted'] as $element => $items) {
+            foreach ($items as $uid) {
+                $data = array_change_key_case((array) $data, CASE_UPPER);
+
+                switch ($element) {
+                    case 'laneset':
+                        break;
+                    case 'lanes':
+                        break;
+                    case 'activities':
+                        $activity = ActivityPeer::retrieveByPK($uid);
+                        $activity->delete();
+                        break;
+                    case 'events':
+                        break;
+                    case 'gateways':
+                        break;
+                    case 'flows':
+                        break;
+                    case 'artifacts':
+                        break;
+                }
+            }
+        }
+
+        /*
+         * Creating new records
+         */
         foreach ($diff['new'] as $element => $items) {
             foreach ($items as $data) {
                 $data = array_change_key_case((array) $data, CASE_UPPER);
@@ -570,35 +604,6 @@ class Model
                         $activity->setProUid($proUid);
                         $activity->getBound()->setBouUid(Hash::generateUID());
                         $activity->save();
-
-                        $uidData['new_uid'] = $activity->getActUid();
-                        $uids[] = $uidData;
-                        break;
-                    case 'events':
-                        break;
-                    case 'gateways':
-                        break;
-                    case 'flows':
-                        break;
-                    case 'artifacts':
-                        break;
-                }
-            }
-        }
-
-        // Creating new records
-        foreach ($diff['deleted'] as $element => $items) {
-            foreach ($items as $uid) {
-                $data = array_change_key_case((array) $data, CASE_UPPER);
-
-                switch ($element) {
-                    case 'laneset':
-                        break;
-                    case 'lanes':
-                        break;
-                    case 'activities':
-                        $activity = ActivityPeer::retrieveByPK($uid);
-                        $activity->delete();
 
                         $uidData['new_uid'] = $activity->getActUid();
                         $uids[] = $uidData;
@@ -914,7 +919,7 @@ class Model
 
             $me = Logger::getInstance();
             $args = func_get_args();
-            array_unshift($args, 'Class '.__CLASS__.': ');
+            //array_unshift($args, 'Class '.__CLASS__.' ');
 
             call_user_func_array(array($me, 'setLog'), $args);
         }

@@ -869,7 +869,7 @@ class Process extends BaseProcess
         $limit = 25;
         $start = 0;
 
-        $memcache = &PMmemcached::getSingleton( SYS_SYS );
+        $memcache = PMmemcached::getSingleton( SYS_SYS );
 
         for ($start = 0; $start <= 50 - 1; $start ++) {
             $memkey = "processList-allProcesses-" . ($start * $limit) . "-" . $limit;
