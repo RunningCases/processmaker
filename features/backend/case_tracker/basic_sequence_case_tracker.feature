@@ -173,3 +173,13 @@ Feature: Case Tracker
         | 0 |
         | 1 |
 
+    #GET /api/1.0/{workspace}/project/{prj_uid}/case-tracker/objects
+    #    Get list Case Tracker Objects of a Project
+    Scenario: Get list Case Tracker Objects of a Project
+        And I request "project/50259961452d82bf57f4f62051572528/case-tracker/objects"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "array"
+        And the json data is an empty array
+

@@ -18,6 +18,7 @@ class Group extends Api
     {
         try {
             $group = new \BusinessModel\Group();
+            $group->setFormatFieldNameInUppercase(false);
 
             $response = $group->getGroups(array("filter" => $filter), null, null, $start, $limit);
 
@@ -36,7 +37,7 @@ class Group extends Api
     {
         try {
             $group = new \BusinessModel\Group();
-            $group->setArrayMsgExceptionParam(array("groupUid" => "grp_uid"));
+            $group->setFormatFieldNameInUppercase(false);
 
             $response = $group->getGroup($grp_uid);
 
@@ -62,7 +63,7 @@ class Group extends Api
     ) {
         try {
             $group = new \BusinessModel\Group();
-            $group->setArrayMsgExceptionParam(array("groupTitle" => "grp_title"));
+            $group->setFormatFieldNameInUppercase(false);
 
             $arrayData = $group->create($request_data);
 
@@ -90,7 +91,7 @@ class Group extends Api
     ) {
         try {
             $group = new \BusinessModel\Group();
-            $group->setArrayMsgExceptionParam(array("groupUid" => "grp_uid", "groupTitle" => "grp_title"));
+            $group->setFormatFieldNameInUppercase(false);
 
             $arrayData = $group->update($grp_uid, $request_data);
         } catch (\Exception $e) {
@@ -107,7 +108,7 @@ class Group extends Api
     {
         try {
             $group = new \BusinessModel\Group();
-            $group->setArrayMsgExceptionParam(array("groupUid" => "grp_uid"));
+            $group->setFormatFieldNameInUppercase(false);
 
             $group->delete($grp_uid);
         } catch (\Exception $e) {
