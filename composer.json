@@ -11,6 +11,10 @@
         },
         {
             "type": "composer",
+            "url": "http://composer-public.colosa.net/"
+        },
+        {
+            "type": "composer",
             "url": "http://composer.colosa.net/"
         }
     ],
@@ -20,12 +24,12 @@
         "jquery/jquery": "1.10.2",
         "luracast/restler" : "v3.0.0",
         "bshaffer/oauth2-server-php": "v1.0",
-        "colosa/restclient": "dev-master",
+        "colosa/restclient": "0.1.7",
         "colosa/pmUI": "dev-master",
-        "colosa/MichelangeloFE": "dev-master"
+        "colosa/MichelangeloFE": "dev-master",
+        "behat/behat":"2.4.6@stable"
     },
     "require-dev":{
-        "guzzle/guzzle":"~3.1.1",
-        "behat/behat":"2.4.*@stable"
+        "guzzle/guzzle":"~3.1.1"
     }
 }
