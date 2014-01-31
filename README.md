@@ -21,7 +21,7 @@ easily. It's relatively lightweight and doesn't require any kind of installation
 on the client computer. This file describes the requirements and installation 
 steps for the server.
 
-Licence
+License
 -------
 
 ProcessMaker - Automate your Workflow
