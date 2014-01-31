@@ -13,7 +13,7 @@ class FilesManager extends Api
 {
     /**
      * @param string $prjUid {@min 32} {@max 32}
-     * @param string $path {@choice templates,folder,}
+     * @param string $path
      *
      * @url GET /:prjUid/process-file-manager
      */
@@ -42,7 +42,7 @@ class FilesManager extends Api
 
     /**
      * @param string $prjUid {@min 32} {@max 32}
-     * @param string $path {@choice templates,folder,}
+     * @param string $path
      *
      * @url GET /:prjUid/process-file-manager-download
      */
@@ -105,17 +105,18 @@ class FilesManager extends Api
 
     /**
      * @param string $prjUid {@min 32} {@max 32}
-     * @param ProcessFilesManagerStructure $request_data
+     * @param string $path
+     * @param ProcessFilesManagerStructure1 $request_data
      *
-     * @url PUT /:prjUid/process-file-manager-upload
+     * @url PUT /:prjUid/process-file-manager1
      */
-    public function doPutProcessFilesManagerUpload($prjUid, ProcessFilesManagerStructure $request_data)
+    public function doPutProcessFilesManager($prjUid, ProcessFilesManagerStructure1 $request_data, $path)
     {
         try {
             $userUid = $this->getUserId();
             $request_data = (array)($request_data);
             $filesManager = new \BusinessModel\FilesManager();
-            $arrayData = $filesManager->updateProcessFilesManager($prjUid, $userUid, $request_data);
+            $arrayData = $filesManager->updateProcessFilesManager($prjUid, $userUid, $request_data, $path);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -126,14 +127,15 @@ class FilesManager extends Api
     }
     /**
      * @param string $prjUid {@min 32} {@max 32}
+     * @param string $path
      *
-     * @url DELETE /:prjUid/process-file-manager-delete
+     * @url DELETE /:prjUid/process-file-manager
      */
-    public function doDeleteProcessFilesManager($prjUid)
+    public function doDeleteProcessFilesManager($prjUid, $path)
     {
         try {
             $filesManager = new \BusinessModel\FilesManager();
-            $arrayData = $filesManager->deleteProcessFilesManager($prjUid);
+            $arrayData = $filesManager->deleteProcessFilesManager($prjUid, $path);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -155,6 +157,19 @@ class ProcessFilesManagerStructure
      * @var string {@from body}
      */
     public $path;
+
+    /**
+     * @var string {@from body}
+     */
+    public $content;
+}
+
+class ProcessFilesManagerStructure1
+{
+    /**
+     * @var string {@from body}
+     */
+    public $file_name;
 
     /**
      * @var string {@from body}

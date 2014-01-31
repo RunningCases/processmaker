@@ -12,15 +12,15 @@ use \Luracast\Restler\RestException;
 class ProjectUsers extends Api
 {
     /**
-     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
      *
-     * @url GET /:prjUid/users
+     * @url GET /:prj_uid/users
      */
-    public function doGetProjectUsers($prjUid)
+    public function doGetProjectUsers($prj_uid)
     {
         try {
             $users = new \BusinessModel\ProjectUser();
-            $arrayData = $users->getProjectUsers($prjUid);
+            $arrayData = $users->getProjectUsers($prj_uid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -51,15 +51,15 @@ class ProjectUsers extends Api
 
     /**
      * @param string $prjUid {@min 32} {@max 32}
-     * @param string $usrUid {@min 32} {@max 32}
+     * @param string $usr_uid {@min 32} {@max 32}
      *
-     * @url GET /:prjUid/user/:usrUid/starting-tasks
+     * @url GET /:prjUid/user/:usr_uid/starting-tasks
      */
-    public function doGetProjectStartingTaskUsers($prjUid, $usrUid)
+    public function doGetProjectStartingTaskUsers($prjUid, $usr_uid)
     {
         try {
             $startingTasks = new \BusinessModel\ProjectUser();
-            $arrayData = $startingTasks->getProjectStartingTaskUsers($prjUid, $usrUid);
+            $arrayData = $startingTasks->getProjectStartingTaskUsers($prjUid, $usr_uid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
