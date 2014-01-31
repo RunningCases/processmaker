@@ -392,6 +392,8 @@ class Bootstrap
         self::registerClass("UsersPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "UsersPeer.php");
 
         self::registerClass("Xml_Node", PATH_GULLIVER . "class.xmlDocument.php");
+
+        self::registerClass("Tasks",  PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.tasks.php");
     }
 
     //below this line, still not approved methods

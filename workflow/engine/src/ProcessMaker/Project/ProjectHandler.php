@@ -3,12 +3,11 @@ namespace ProcessMaker\Project;
 
 use ProcessMaker\Util\Logger;
 
-abstract class ProjectHandler implements ProjectHandlerInterface
+abstract class ProjectHandler //implements ProjectHandlerInterface
 {
-    public abstract function create($data);
-    public abstract function update($prjUid, $data);
-    public abstract function delete($prjUid);
-    public abstract function load($prjUid);
+    public abstract function save();
+    public abstract function update();
+    public abstract function delete();
 
     /**
      * Log in ProcessMaker Standard Output if debug mode is enabled.

@@ -406,7 +406,7 @@ class Task extends BaseTask
 
             if ($this->validate()) {
                 $this->setTasTitle((isset($aData['TAS_TITLE']) ? $aData['TAS_TITLE']: ''));
-                $this->setTasDescription("");
+                $this->setTasDescription((isset($aData['TAS_DESCRIPTION']) ? $aData['TAS_DESCRIPTION']: ''));
                 $this->setTasDefTitle("");
                 $this->setTasDefDescription("");
                 $this->setTasDefProcCode("");

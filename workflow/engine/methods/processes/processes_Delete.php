@@ -47,7 +47,7 @@ try {
 
     foreach ($UIDS as $UID) {
         $oProcessMap->deleteProcess($UID);
-        ProcessMaker\Adapter\Bpmn\Model::deleteProject($UID);
+        //ProcessMaker\Adapter\Bpmn\Model::deleteProject($UID);
     }
     $resp->status = 0;
     $resp->msg = 'All process was deleted successfully';
