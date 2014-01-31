@@ -4,7 +4,11 @@ namespace BusinessModel;
 class Group
 {
     private $formatFieldNameInUppercase = true;
-    private $arrayMsgExceptionParam = array();
+    private $arrayParamException = array(
+        "groupUid"    => "GRP_UID",
+        "groupTitle"  => "GRP_TITLE",
+        "groupStatus" => "GRP_STATUS"
+    );
 
     /**
      * Set the format of the fields name (uppercase, lowercase)
@@ -17,6 +21,8 @@ class Group
     {
         try {
             $this->formatFieldNameInUppercase = $flag;
+
+            $this->setArrayParamException($this->arrayParamException);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -29,10 +35,12 @@ class Group
      *
      * return void
      */
-    public function setArrayMsgExceptionParam($arrayData)
+    public function setArrayParamException($arrayData)
     {
         try {
-            $this->arrayMsgExceptionParam = $arrayData;
+            foreach ($arrayData as $key => $value) {
+                $this->arrayParamException[$key] = $this->getFieldNameByFormatFieldName($value);
+            }
         } catch (\Exception $e) {
             throw $e;
         }
@@ -108,7 +116,7 @@ class Group
     public function throwExceptionIfHaveInvalidValueInStatus($groupStatus)
     {
         if (!in_array($groupStatus, array("ACTIVE", "INACTIVE"))) {
-            $field = $this->getFieldNameByFormatFieldName("GRP_STATUS");
+            $field = $this->arrayParamException["groupStatus"];
 
             throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
         }
@@ -126,7 +134,7 @@ class Group
         $group = new \Groupwf();
 
         if (!$group->GroupwfExists($groupUid)) {
-            $field = $this->getFieldNameByFormatFieldName("GRP_UID");
+            $field = $this->arrayParamException["groupUid"];
 
             $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
             $msg = $msg . str_replace(array("{0}", "{1}"), array($groupUid, "GROUPWF"), "The UID \"{0}\" doesn't exist in table {1}");
@@ -146,7 +154,7 @@ class Group
     public function throwExceptionIfExistsTitle($groupTitle, $groupUidExclude = "")
     {
         if ($this->existsTitle($groupTitle, $groupUidExclude)) {
-            $field = $this->getFieldNameByFormatFieldName("GRP_TITLE");
+            $field = $this->arrayParamException["groupTitle"];
 
             $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
             $msg = $msg . \G::LoadTranslation("ID_MSG_GROUP_NAME_EXISTS");
@@ -171,23 +179,23 @@ class Group
 
             //Verify data
             if (!isset($arrayData["GRP_TITLE"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_TITLE")), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupTitle"]), "The \"{0}\" attribute is not defined")));
             }
 
             $arrayData["GRP_TITLE"] = trim($arrayData["GRP_TITLE"]);
 
             if ($arrayData["GRP_TITLE"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_TITLE")), "The \"{0}\" attribute is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupTitle"]), "The \"{0}\" attribute is empty")));
             }
 
             if (!isset($arrayData["GRP_STATUS"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_STATUS")), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupStatus"]), "The \"{0}\" attribute is not defined")));
             }
 
             $arrayData["GRP_STATUS"] = trim($arrayData["GRP_STATUS"]);
 
             if ($arrayData["GRP_STATUS"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_STATUS")), "The \"{0}\" attribute is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupStatus"]), "The \"{0}\" attribute is empty")));
             }
 
             $this->throwExceptionIfHaveInvalidValueInStatus($arrayData["GRP_STATUS"]);
@@ -232,7 +240,7 @@ class Group
                 $arrayData["GRP_TITLE"] = trim($arrayData["GRP_TITLE"]);
 
                 if ($arrayData["GRP_TITLE"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_TITLE")), "The \"{0}\" attribute is empty")));
+                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupTitle"]), "The \"{0}\" attribute is empty")));
                 }
             }
 
@@ -240,7 +248,7 @@ class Group
                 $arrayData["GRP_STATUS"] = trim($arrayData["GRP_STATUS"]);
 
                 if ($arrayData["GRP_STATUS"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_STATUS")), "The \"{0}\" attribute is empty")));
+                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupStatus"]), "The \"{0}\" attribute is empty")));
                 }
             }
 

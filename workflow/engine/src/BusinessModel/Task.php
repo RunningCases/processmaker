@@ -5,6 +5,84 @@ use \G;
 
 class Task
 {
+    private $formatFieldNameInUppercase = true;
+    private $arrayParamException = array(
+        "taskUid" => "TAS_UID"
+    );
+
+    /**
+     * Set the format of the fields name (uppercase, lowercase)
+     *
+     * @param bool $flag Value that set the format
+     *
+     * return void
+     */
+    public function setFormatFieldNameInUppercase($flag)
+    {
+        try {
+            $this->formatFieldNameInUppercase = $flag;
+
+            $this->setArrayParamException($this->arrayParamException);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Set exception messages for parameters
+     *
+     * @param array $arrayData Data with the params
+     *
+     * return void
+     */
+    public function setArrayParamException($arrayData)
+    {
+        try {
+            foreach ($arrayData as $key => $value) {
+                $this->arrayParamException[$key] = $this->getFieldNameByFormatFieldName($value);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get the name of the field according to the format
+     *
+     * @param string $fieldName Field name
+     *
+     * return string Return the field name according the format
+     */
+    public function getFieldNameByFormatFieldName($fieldName)
+    {
+        try {
+            return ($this->formatFieldNameInUppercase)? strtoupper($fieldName) : strtolower($fieldName);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the Task in table TASK
+     *
+     * @param string $taskUid Unique id of Task
+     *
+     * return void Throw exception if doesn't exist the Task in table TASK
+     */
+    public function throwExceptionIfNoExistsTask($taskUid)
+    {
+        $task = new \Task();
+
+        if (!$task->taskExists($taskUid)) {
+            $field = $this->arrayParamException["taskUid"];
+
+            $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
+            $msg = $msg . str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" doesn't exist in table {1}");
+
+            throw (new \Exception($msg));
+        }
+    }
+
     /**
      * Get all properties of an Task
      *
@@ -248,52 +326,33 @@ class Task
     }
 
     /**
-     * Get data of unique ids of a Task (Unique id of Process)
+     * Get available Steps of a Task
      *
      * @param string $taskUid Unique id of Task
      *
-     * return array
-     */
-    public function getDataUids($taskUid)
-    {
-        try {
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\TaskPeer::PRO_UID);
-            $criteria->add(\TaskPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
-
-            $rsCriteria = \TaskPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            $rsCriteria->next();
-
-            return $rsCriteria->getRow();
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Get available steps of a Task
-     *
-     * @param string $taskUid Unique id of Task
-     *
-     * return array
+     * return array Return an array with the Steps available of a Task
      */
     public function getAvailableSteps($taskUid)
     {
         try {
             $arrayAvailableStep = array();
 
-            $arrayDataUid = $this->getDataUids($taskUid);
+            //Verify data
+            $this->throwExceptionIfNoExistsTask($taskUid);
 
-            $processUid = $arrayDataUid["PRO_UID"];
+            //Load Task
+            $task = new \Task();
 
+            $arrayTaskData = $task->load($taskUid);
+
+            $processUid = $arrayTaskData["PRO_UID"];
+
+            //Get data
             //Get Uids
             $arrayUid = array();
 
-            $tasks = new \Tasks();
-            $arrayStep = $tasks->getStepsOfTask($taskUid);
+            $task = new \Tasks();
+            $arrayStep = $task->getStepsOfTask($taskUid);
 
             foreach ($arrayStep as $step) {
                 $arrayUid[] = $step["STEP_UID_OBJ"];
@@ -303,10 +362,10 @@ class Task
             $arraydbStep = array();
 
             $arraydbStep[] = array(
-                "obj_uid" => "char",
-                "obj_title" => "char",
-                "obj_description" => "char",
-                "obj_type" => "char"
+                $this->getFieldNameByFormatFieldName("OBJ_UID")         => "char",
+                $this->getFieldNameByFormatFieldName("OBJ_TITLE")       => "char",
+                $this->getFieldNameByFormatFieldName("OBJ_DESCRIPTION") => "char",
+                $this->getFieldNameByFormatFieldName("OBJ_TYPE")        => "char"
             );
 
             $delimiter = \DBAdapter::getStringDelimiter();
@@ -318,8 +377,8 @@ class Task
             $criteria->addAsColumn("DYN_TITLE", "CT.CON_VALUE");
             $criteria->addAsColumn("DYN_DESCRIPTION", "CD.CON_VALUE");
 
-            $criteria->addAlias("CT", "CONTENT");
-            $criteria->addAlias("CD", "CONTENT");
+            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
+            $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
 
             $arrayCondition = array();
             $arrayCondition[] = array(\DynaformPeer::DYN_UID, "CT.CON_ID", \Criteria::EQUAL);
@@ -349,10 +408,10 @@ class Task
                 }
 
                 $arraydbStep[] = array(
-                    "obj_uid" => $row["DYN_UID"],
-                    "obj_title" => $row["DYN_TITLE"],
-                    "obj_description" => $row["DYN_DESCRIPTION"],
-                    "obj_type" => "DYNAFORM"
+                    $this->getFieldNameByFormatFieldName("OBJ_UID")         => $row["DYN_UID"],
+                    $this->getFieldNameByFormatFieldName("OBJ_TITLE")       => $row["DYN_TITLE"],
+                    $this->getFieldNameByFormatFieldName("OBJ_DESCRIPTION") => $row["DYN_DESCRIPTION"],
+                    $this->getFieldNameByFormatFieldName("OBJ_TYPE")        => "DYNAFORM"
                 );
             }
 
@@ -363,8 +422,8 @@ class Task
             $criteria->addAsColumn("INP_DOC_TITLE", "CT.CON_VALUE");
             $criteria->addAsColumn("INP_DOC_DESCRIPTION", "CD.CON_VALUE");
 
-            $criteria->addAlias("CT", "CONTENT");
-            $criteria->addAlias("CD", "CONTENT");
+            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
+            $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
 
             $arrayCondition = array();
             $arrayCondition[] = array(\InputDocumentPeer::INP_DOC_UID, "CT.CON_ID", \Criteria::EQUAL);
@@ -393,10 +452,10 @@ class Task
                 }
 
                 $arraydbStep[] = array(
-                    "obj_uid" => $row["INP_DOC_UID"],
-                    "obj_title" => $row["INP_DOC_TITLE"],
-                    "obj_description" => $row["INP_DOC_DESCRIPTION"],
-                    "obj_type" => "INPUT_DOCUMENT"
+                    $this->getFieldNameByFormatFieldName("OBJ_UID")         => $row["INP_DOC_UID"],
+                    $this->getFieldNameByFormatFieldName("OBJ_TITLE")       => $row["INP_DOC_TITLE"],
+                    $this->getFieldNameByFormatFieldName("OBJ_DESCRIPTION") => $row["INP_DOC_DESCRIPTION"],
+                    $this->getFieldNameByFormatFieldName("OBJ_TYPE")        => "INPUT_DOCUMENT"
                 );
             }
 
@@ -407,8 +466,8 @@ class Task
             $criteria->addAsColumn("OUT_DOC_TITLE", "CT.CON_VALUE");
             $criteria->addAsColumn("OUT_DOC_DESCRIPTION", "CD.CON_VALUE");
 
-            $criteria->addAlias("CT", "CONTENT");
-            $criteria->addAlias("CD", "CONTENT");
+            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
+            $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
 
             $arrayCondition = array();
             $arrayCondition[] = array(\OutputDocumentPeer::OUT_DOC_UID, "CT.CON_ID", \Criteria::EQUAL);
@@ -437,10 +496,10 @@ class Task
                 }
 
                 $arraydbStep[] = array(
-                    "obj_uid" => $row["OUT_DOC_UID"],
-                    "obj_title" => $row["OUT_DOC_TITLE"],
-                    "obj_description" => $row["OUT_DOC_DESCRIPTION"],
-                    "obj_type" => "OUTPUT_DOCUMENT"
+                    $this->getFieldNameByFormatFieldName("OBJ_UID")         => $row["OUT_DOC_UID"],
+                    $this->getFieldNameByFormatFieldName("OBJ_TITLE")       => $row["OUT_DOC_TITLE"],
+                    $this->getFieldNameByFormatFieldName("OBJ_DESCRIPTION") => $row["OUT_DOC_DESCRIPTION"],
+                    $this->getFieldNameByFormatFieldName("OBJ_TYPE")        => "OUTPUT_DOCUMENT"
                 );
             }
 
@@ -451,10 +510,10 @@ class Task
             if (is_array($externalSteps) && count($externalSteps) > 0) {
                 foreach ($externalSteps as $key => $value) {
                     $arraydbStep[] = array(
-                        "obj_uid" => $value->sStepId,
-                        "obj_title" => $value->sStepTitle,
-                        "obj_description" => "",
-                        "obj_type" => "EXTERNAL"
+                        $this->getFieldNameByFormatFieldName("OBJ_UID")         => $value->sStepId,
+                        $this->getFieldNameByFormatFieldName("OBJ_TITLE")       => $value->sStepTitle,
+                        $this->getFieldNameByFormatFieldName("OBJ_DESCRIPTION") => "",
+                        $this->getFieldNameByFormatFieldName("OBJ_TYPE")        => "EXTERNAL"
                     );
                 }
             }
@@ -471,8 +530,8 @@ class Task
             $criteria = new \Criteria("dbarray");
 
             $criteria->setDBArrayTable("STEP");
-            $criteria->addAscendingOrderByColumn("obj_type");
-            $criteria->addAscendingOrderByColumn("obj_title");
+            $criteria->addAscendingOrderByColumn($this->getFieldNameByFormatFieldName("OBJ_TYPE"));
+            $criteria->addAscendingOrderByColumn($this->getFieldNameByFormatFieldName("OBJ_TITLE"));
 
             $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -483,6 +542,7 @@ class Task
                 $arrayAvailableStep[] = $row;
             }
 
+            //Return
             return $arrayAvailableStep;
         } catch (\Exception $e) {
             throw $e;
@@ -490,11 +550,11 @@ class Task
     }
 
     /**
-     * Get all steps of a Task
+     * Get all Steps of a Task
      *
      * @param string $taskUid Unique id of Task
      *
-     * return array
+     * return array Return an array with all Steps of a Task
      */
     public function getSteps($taskUid)
     {
@@ -502,7 +562,13 @@ class Task
             $arrayStep = array();
 
             $step = new \BusinessModel\Step();
+            $step->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+            $step->setArrayParamException($this->arrayParamException);
 
+            //Verify data
+            $this->throwExceptionIfNoExistsTask($taskUid);
+
+            //Get data
             $criteria = new \Criteria("workflow");
 
             $criteria->add(\StepPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
@@ -521,6 +587,7 @@ class Task
                 }
             }
 
+            //Return
             return $arrayStep;
         } catch (\Exception $e) {
             throw $e;
