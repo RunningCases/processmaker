@@ -107,6 +107,7 @@ class Event
                 throw (new \Exception('The field "evn_tas_uid_from" is required!'));
             }
             $this->validateTask($dataEvent['EVN_TAS_UID_FROM']);
+            $dataEvent['TAS_UID'] = $dataEvent['EVN_TAS_UID_FROM'];
 
             if (empty($dataEvent['EVN_TAS_UID_TO'])) {
                 throw (new \Exception('The field "evn_tas_uid_to" is required!'));

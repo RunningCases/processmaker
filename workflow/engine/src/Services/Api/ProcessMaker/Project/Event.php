@@ -66,7 +66,7 @@ class Event extends Api
                 'evn_posx', 'evn_posy', 'evn_type', 'tas_evn_uid', 'evn_max_attempts'
             );
             $event = new \BusinessModel\Event();
-            $response = $event->getEvents($projectUid, '', $EventUid);
+            $response = $event->getEvents($projectUid, '', $eventUid);
             foreach ($response as $key => $eventData) {
                 if (in_array($key, $hiddenFields)) {
                     unset($response[$key]);
