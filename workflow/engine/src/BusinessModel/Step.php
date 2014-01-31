@@ -3,6 +3,70 @@ namespace BusinessModel;
 
 class Step
 {
+    private $formatFieldNameInUppercase = true;
+    private $arrayParamException = array(
+        "stepUid"       => "STEP_UID",
+        "taskUid"       => "TAS_UID",
+        "processUid"    => "PRO_UID",
+        "stepTypeObj"   => "STEP_TYPE_OBJ",
+        "stepUidObj"    => "STEP_UID_OBJ",
+        "stepCondition" => "STEP_CONDITION",
+        "stepPosition"  => "STEP_POSITION",
+        "stepMode"      => "STEP_MODE"
+    );
+
+    /**
+     * Set the format of the fields name (uppercase, lowercase)
+     *
+     * @param bool $flag Value that set the format
+     *
+     * return void
+     */
+    public function setFormatFieldNameInUppercase($flag)
+    {
+        try {
+            $this->formatFieldNameInUppercase = $flag;
+
+            $this->setArrayParamException($this->arrayParamException);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Set exception messages for parameters
+     *
+     * @param array $arrayData Data with the params
+     *
+     * return void
+     */
+    public function setArrayParamException($arrayData)
+    {
+        try {
+            foreach ($arrayData as $key => $value) {
+                $this->arrayParamException[$key] = $this->getFieldNameByFormatFieldName($value);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get the name of the field according to the format
+     *
+     * @param string $fieldName Field name
+     *
+     * return string Return the field name according the format
+     */
+    public function getFieldNameByFormatFieldName($fieldName)
+    {
+        try {
+            return ($this->formatFieldNameInUppercase)? strtoupper($fieldName) : strtolower($fieldName);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     /**
      * Verify if exists the record in table STEP
      *
@@ -98,44 +162,167 @@ class Step
     }
 
     /**
+     * Verify if Type Object has invalid value
+     *
+     * @param string $stepTypeObj Type Object
+     *
+     * return void Throw exception if Type Object has invalid value
+     */
+    public function throwExceptionIfHaveInvalidValueInTypeObj($stepTypeObj)
+    {
+        if (!in_array($stepTypeObj, array("DYNAFORM", "INPUT_DOCUMENT", "OUTPUT_DOCUMENT"))) {
+            $field = $this->arrayParamException["stepTypeObj"];
+
+            throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
+        }
+    }
+
+    /**
+     * Verify if Mode has invalid value
+     *
+     * @param string $stepMode Mode
+     *
+     * return void Throw exception if Mode has invalid value
+     */
+    public function throwExceptionIfHaveInvalidValueInMode($stepMode)
+    {
+        if (!in_array($stepMode, array("EDIT", "VIEW"))) {
+            $field = $this->arrayParamException["stepMode"];
+
+            throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the Step in table STEP
+     *
+     * @param string $stepUid Unique id of Step
+     *
+     * return void Throw exception if doesn't exist the Step in table STEP
+     */
+    public function throwExceptionIfNoExistsStep($stepUid)
+    {
+        $step = new \Step();
+
+        if (!$step->StepExists($stepUid)) {
+            $field = $this->arrayParamException["stepUid"];
+
+            $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
+            $msg = $msg . str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}");
+
+            throw (new \Exception($msg));
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the Task in table TASK
+     *
+     * @param string $taskUid Unique id of Task
+     *
+     * return void Throw exception if doesn't exist the Task in table TASK
+     */
+    public function throwExceptionIfNoExistsTask($taskUid)
+    {
+        $task = new \Task();
+
+        if (!$task->taskExists($taskUid)) {
+            $field = $this->arrayParamException["taskUid"];
+
+            $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
+            $msg = $msg . str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" doesn't exist in table {1}");
+
+            throw (new \Exception($msg));
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the Process in table PROCESS
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return void Throw exception if doesn't exist the Process in table PROCESS
+     */
+    public function throwExceptionIfNoExistsProcess($processUid)
+    {
+        $process = new \Process();
+
+        if (!$process->exists($processUid)) {
+            $field = $this->arrayParamException["processUid"];
+
+            $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
+            $msg = $msg . str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}");
+
+            throw (new \Exception($msg));
+        }
+    }
+
+    /**
      * Create Step for a Task
      *
-     * @param string $taskUid
-     * @param string $processUid
-     * @param array  $arrayData
+     * @param string $taskUid    Unique id of Task
+     * @param string $processUid Unique id of Process
+     * @param array  $arrayData  Data
      *
-     * return array Data of the Step created
+     * return array Return data of the new Step created
      */
     public function create($taskUid, $processUid, $arrayData)
     {
         try {
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+
+            unset($arrayData["STEP_UID"]);
+
             //Verify data
-            $process = new \Process();
+            $this->throwExceptionIfNoExistsTask($taskUid);
 
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
+            $this->throwExceptionIfNoExistsProcess($processUid);
+
+            if (!isset($arrayData["STEP_TYPE_OBJ"])) {
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "The \"{0}\" attribute is not defined")));
             }
 
-            $task = new \Task();
+            $arrayData["STEP_TYPE_OBJ"] = trim($arrayData["STEP_TYPE_OBJ"]);
 
-            if (!$task->taskExists($taskUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" doesn't exist in table {1}")));
+            if ($arrayData["STEP_TYPE_OBJ"] == "") {
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "The \"{0}\" attribute is empty")));
             }
 
-            if (isset($arrayData["step_type_obj"]) && isset($arrayData["step_uid_obj"])) {
-                $msg = $this->existsObjectUid($arrayData["step_type_obj"], $arrayData["step_uid_obj"]);
-
-                if ($msg != "") {
-                    throw (new \Exception($msg));
-                }
-
-                if ($this->existsRecord($taskUid, $arrayData["step_type_obj"], $arrayData["step_uid_obj"])) {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid . ", " . $arrayData["step_type_obj"] . ", " . $arrayData["step_uid_obj"], "STEP"), "The record \"{0}\", exists in table {1}")));
-                }
+            if (!isset($arrayData["STEP_UID_OBJ"])) {
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "The \"{0}\" attribute is not defined")));
             }
 
-            if (isset($arrayData["step_position"]) && $this->existsRecord($taskUid, "", "", $arrayData["step_position"])) {
-                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["step_position"], $taskUid . ", " . $arrayData["step_position"], "STEP"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
+            $arrayData["STEP_UID_OBJ"] = trim($arrayData["STEP_UID_OBJ"]);
+
+            if ($arrayData["STEP_UID_OBJ"] == "") {
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "The \"{0}\" attribute is empty")));
+            }
+
+            if (!isset($arrayData["STEP_MODE"])) {
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "The \"{0}\" attribute is not defined")));
+            }
+
+            $arrayData["STEP_MODE"] = trim($arrayData["STEP_MODE"]);
+
+            if ($arrayData["STEP_MODE"] == "") {
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "The \"{0}\" attribute is empty")));
+            }
+
+            $this->throwExceptionIfHaveInvalidValueInTypeObj($arrayData["STEP_TYPE_OBJ"]);
+
+            $this->throwExceptionIfHaveInvalidValueInMode($arrayData["STEP_MODE"]);
+
+            $msg = $this->existsObjectUid($arrayData["STEP_TYPE_OBJ"], $arrayData["STEP_UID_OBJ"]);
+
+            if ($msg != "") {
+                throw (new \Exception($msg));
+            }
+
+            if ($this->existsRecord($taskUid, $arrayData["STEP_TYPE_OBJ"], $arrayData["STEP_UID_OBJ"])) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid . ", " . $arrayData["STEP_TYPE_OBJ"] . ", " . $arrayData["STEP_UID_OBJ"], "STEP"), "The record \"{0}\", exists in table {1}")));
+            }
+
+            if (isset($arrayData["STEP_POSITION"]) && $this->existsRecord($taskUid, "", "", $arrayData["STEP_POSITION"])) {
+                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["STEP_POSITION"], $taskUid . ", " . $arrayData["STEP_POSITION"], "STEP"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
             }
 
             //Create
@@ -143,16 +330,22 @@ class Step
 
             $stepUid = $step->create(array("PRO_UID" => $processUid, "TAS_UID" => $taskUid));
 
-            if (!isset($arrayData["step_position"]) || $arrayData["step_position"] == "") {
-                $arrayData["step_position"] = $step->getNextPosition($taskUid) - 1;
+            if (!isset($arrayData["STEP_POSITION"]) || $arrayData["STEP_POSITION"] == "") {
+                $arrayData["STEP_POSITION"] = $step->getNextPosition($taskUid) - 1;
             }
 
             $arrayData = $this->update($stepUid, $arrayData);
 
             //Return
-            unset($arrayData["step_uid"]);
+            unset($arrayData["STEP_UID"]);
 
-            return array_merge(array("step_uid" => $stepUid), $arrayData);
+            $arrayData = array_merge(array("STEP_UID" => $stepUid), $arrayData);
+
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
+
+            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -161,71 +354,98 @@ class Step
     /**
      * Update Step of a Task
      *
-     * @param string $stepUid
-     * @param array  $arrayData
+     * @param string $stepUid   Unique id of Step
+     * @param array  $arrayData Data
      *
-     * return array Data of the Step updated
+     * return array Return data of the Step updated
      */
     public function update($stepUid, $arrayData)
     {
         try {
-            $arrayDataUid = $this->getDataUids($stepUid);
-
-            $taskUid = $arrayDataUid["TAS_UID"];
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
             //Verify data
+            $this->throwExceptionIfNoExistsStep($stepUid);
+
+            //Load Step
             $step = new \Step();
 
-            if (!$step->StepExists($stepUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
+            $arrayStepData = $step->load($stepUid);
+
+            $taskUid = $arrayStepData["TAS_UID"];
+
+            //Verify data
+            if (isset($arrayData["STEP_TYPE_OBJ"]) && !isset($arrayData["STEP_UID_OBJ"])) {
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "The \"{0}\" attribute is not defined")));
             }
 
-            if (isset($arrayData["step_type_obj"]) && isset($arrayData["step_uid_obj"])) {
-                $msg = $this->existsObjectUid($arrayData["step_type_obj"], $arrayData["step_uid_obj"]);
+            if (!isset($arrayData["STEP_TYPE_OBJ"]) && isset($arrayData["STEP_UID_OBJ"])) {
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "The \"{0}\" attribute is not defined")));
+            }
+
+            if (isset($arrayData["STEP_TYPE_OBJ"])) {
+                $arrayData["STEP_TYPE_OBJ"] = trim($arrayData["STEP_TYPE_OBJ"]);
+
+                if ($arrayData["STEP_TYPE_OBJ"] == "") {
+                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "The \"{0}\" attribute is empty")));
+                }
+            }
+
+            if (isset($arrayData["STEP_UID_OBJ"])) {
+                $arrayData["STEP_UID_OBJ"] = trim($arrayData["STEP_UID_OBJ"]);
+
+                if ($arrayData["STEP_UID_OBJ"] == "") {
+                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "The \"{0}\" attribute is empty")));
+                }
+            }
+
+            if (isset($arrayData["STEP_MODE"])) {
+                $arrayData["STEP_MODE"] = trim($arrayData["STEP_MODE"]);
+
+                if ($arrayData["STEP_MODE"] == "") {
+                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "The \"{0}\" attribute is empty")));
+                }
+            }
+
+            if (isset($arrayData["STEP_TYPE_OBJ"])) {
+                $this->throwExceptionIfHaveInvalidValueInTypeObj($arrayData["STEP_TYPE_OBJ"]);
+            }
+
+            if (isset($arrayData["STEP_MODE"])) {
+                $this->throwExceptionIfHaveInvalidValueInMode($arrayData["STEP_MODE"]);
+            }
+
+            if (isset($arrayData["STEP_TYPE_OBJ"]) && isset($arrayData["STEP_UID_OBJ"])) {
+                $msg = $this->existsObjectUid($arrayData["STEP_TYPE_OBJ"], $arrayData["STEP_UID_OBJ"]);
 
                 if ($msg != "") {
                     throw (new \Exception($msg));
                 }
 
-                if ($this->existsRecord($taskUid, $arrayData["step_type_obj"], $arrayData["step_uid_obj"], 0, $stepUid)) {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid . ", " . $arrayData["step_type_obj"] . ", " . $arrayData["step_uid_obj"], "STEP"), "The record \"{0}\", exists in table {1}")));
+                if ($this->existsRecord($taskUid, $arrayData["STEP_TYPE_OBJ"], $arrayData["STEP_UID_OBJ"], 0, $stepUid)) {
+                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid . ", " . $arrayData["STEP_TYPE_OBJ"] . ", " . $arrayData["STEP_UID_OBJ"], "STEP"), "The record \"{0}\", exists in table {1}")));
                 }
             }
 
-            if (isset($arrayData["step_position"]) && $this->existsRecord($taskUid, "", "", $arrayData["step_position"], $stepUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["step_position"], $taskUid . ", " . $arrayData["step_position"], "STEP"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
+            if (isset($arrayData["STEP_POSITION"]) && $this->existsRecord($taskUid, "", "", $arrayData["STEP_POSITION"], $stepUid)) {
+                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["STEP_POSITION"], $taskUid . ", " . $arrayData["STEP_POSITION"], "STEP"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
             }
 
             //Update
             $step = new \Step();
 
-            $arrayUpdateData = array();
+            $arrayData["STEP_UID"] = $stepUid;
 
-            $arrayUpdateData["STEP_UID"] = $stepUid;
+            $result = $step->update($arrayData);
 
-            if (isset($arrayData["step_type_obj"]) && $arrayData["step_type_obj"] != "") {
-                $arrayUpdateData["STEP_TYPE_OBJ"] = $arrayData["step_type_obj"];
+            //Return
+            unset($arrayData["STEP_UID"]);
+
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
             }
 
-            if (isset($arrayData["step_uid_obj"]) && $arrayData["step_uid_obj"] != "") {
-                $arrayUpdateData["STEP_UID_OBJ"] = $arrayData["step_uid_obj"];
-            }
-
-            if (isset($arrayData["step_condition"])) {
-                $arrayUpdateData["STEP_CONDITION"] = $arrayData["step_condition"];
-            }
-
-            if (isset($arrayData["step_position"]) && $arrayData["step_position"] != "") {
-                $arrayUpdateData["STEP_POSITION"] = (int)($arrayData["step_position"]);
-            }
-
-            if (isset($arrayData["step_mode"]) && $arrayData["step_mode"] != "") {
-                $arrayUpdateData["STEP_MODE"] = $arrayData["step_mode"];
-            }
-
-            $step->update($arrayUpdateData);
-
-            return array_change_key_case($arrayUpdateData, CASE_LOWER);
+            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -234,7 +454,7 @@ class Step
     /**
      * Delete Step of a Task
      *
-     * @param string $stepUid
+     * @param string $stepUid Unique id of Step
      *
      * return void
      */
@@ -242,11 +462,7 @@ class Step
     {
         try {
             //Verify data
-            $step = new \Step();
-
-            if (!$step->StepExists($stepUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $this->throwExceptionIfNoExistsStep($stepUid);
 
             //Get position
             $criteria = new \Criteria("workflow");
@@ -277,13 +493,17 @@ class Step
      *
      * @param string $stepUid Unique id of Step
      *
-     * return array
+     * return array Return an array with data of a Step
      */
     public function getStep($stepUid)
     {
         try {
             $arrayStep = array();
 
+            //Verify data
+            $this->throwExceptionIfNoExistsStep($stepUid);
+
+            //Get data
             //Call plugin
             $pluginRegistry = &\PMPluginRegistry::getSingleton();
             $externalSteps = $pluginRegistry->getSteps();
@@ -345,15 +565,16 @@ class Step
                     break;
             }
 
+            //Return
             $arrayStep = array(
-                "step_uid"        => $stepUid,
-                "step_type_obj"   => $row["STEP_TYPE_OBJ"],
-                "step_uid_obj"    => $row["STEP_UID_OBJ"],
-                "step_condition"  => $row["STEP_CONDITION"],
-                "step_position"   => (int)($row["STEP_POSITION"]),
-                "step_mode"       => $row["STEP_MODE"],
-                "obj_title"       => $titleObj,
-                "obj_description" => $descriptionObj
+                $this->getFieldNameByFormatFieldName("STEP_UID")        => $stepUid,
+                $this->getFieldNameByFormatFieldName("STEP_TYPE_OBJ")   => $row["STEP_TYPE_OBJ"],
+                $this->getFieldNameByFormatFieldName("STEP_UID_OBJ")    => $row["STEP_UID_OBJ"],
+                $this->getFieldNameByFormatFieldName("STEP_CONDITION")  => $row["STEP_CONDITION"],
+                $this->getFieldNameByFormatFieldName("STEP_POSITION")   => (int)($row["STEP_POSITION"]),
+                $this->getFieldNameByFormatFieldName("STEP_MODE")       => $row["STEP_MODE"],
+                $this->getFieldNameByFormatFieldName("OBJ_TITLE")       => $titleObj,
+                $this->getFieldNameByFormatFieldName("OBJ_DESCRIPTION") => $descriptionObj
             );
 
             return $arrayStep;
@@ -363,75 +584,49 @@ class Step
     }
 
     /**
-     * Get data of unique ids of a Step (Unique id of Task and Process)
-     *
-     * @param string $stepUid Unique id of Step
-     *
-     * return array
-     */
-    public function getDataUids($stepUid)
-    {
-        try {
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\StepPeer::PRO_UID);
-            $criteria->addSelectColumn(\StepPeer::TAS_UID);
-            $criteria->add(\StepPeer::STEP_UID, $stepUid, \Criteria::EQUAL);
-
-            $rsCriteria = \StepPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            if ($rsCriteria->next()) {
-                return $rsCriteria->getRow();
-            } else {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Get available triggers of a Step
+     * Get available Triggers of a Step
      *
      * @param string $stepUid Unique id of Step
      * @param string $type    Type (BEFORE, AFTER, BEFORE_ASSIGNMENT, BEFORE_ROUTING, AFTER_ROUTING)
      * @param string $taskUid Unique id of Task
      *
-     * return array
+     * return array Return an array with the Triggers available of a Step
      */
     public function getAvailableTriggers($stepUid, $type, $taskUid = "")
     {
         try {
-            //Verify data
-            $step = new \Step();
+            $arrayAvailableTrigger = array();
 
-            if ($stepUid != "" && !$step->StepExists($stepUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
+            //Verify data
+            if ($stepUid != "") {
+                $this->throwExceptionIfNoExistsStep($stepUid);
             }
 
-            $task = new \Task();
-
-            if ($stepUid == "" && !$task->taskExists($taskUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" doesn't exist in table {1}")));
+            if ($stepUid == "") {
+                $this->throwExceptionIfNoExistsTask($taskUid);
             }
 
             //Get data
-            $arrayAvailableTrigger = array();
-
             $trigger = new \BusinessModel\Trigger();
 
             $flagStepAssignTask = 0;
 
             if ($stepUid != "") {
-                $arrayDataUid = $this->getDataUids($stepUid);
+                //Load Step
+                $step = new \Step();
 
-                $processUid = $arrayDataUid["PRO_UID"];
+                $arrayStepData = $step->load($stepUid);
+
+                $processUid = $arrayStepData["PRO_UID"];
             } else {
-                $arrayData = $task->load($taskUid);
+                //Load Task
+                $task = new \Task();
 
-                $processUid = $arrayData["PRO_UID"];
+                $arrayTaskData = $task->load($taskUid);
 
+                $processUid = $arrayTaskData["PRO_UID"];
+
+                //Set variables
                 $flagStepAssignTask = 1;
 
                 switch ($type) {
@@ -450,6 +645,7 @@ class Step
                 }
             }
 
+            //Get data
             //Get Uids
             $arrayUid = array();
 
@@ -487,15 +683,16 @@ class Step
                 $row = $rsCriteria->getRow();
 
                 $arrayAvailableTrigger[] = array(
-                    "tri_uid"   => $row["TRI_UID"],
-                    "tri_title" => $row["TRI_TITLE"],
-                    "tri_description" => $row["TRI_DESCRIPTION"],
-                    "tri_type"   => $row["TRI_TYPE"],
-                    "tri_webbot" => $row["TRI_WEBBOT"],
-                    "tri_param"  => $row["TRI_PARAM"]
+                    $this->getFieldNameByFormatFieldName("TRI_UID")         => $row["TRI_UID"],
+                    $this->getFieldNameByFormatFieldName("TRI_TITLE")       => $row["TRI_TITLE"],
+                    $this->getFieldNameByFormatFieldName("TRI_DESCRIPTION") => $row["TRI_DESCRIPTION"],
+                    $this->getFieldNameByFormatFieldName("TRI_TYPE")        => $row["TRI_TYPE"],
+                    $this->getFieldNameByFormatFieldName("TRI_WEBBOT")      => $row["TRI_WEBBOT"],
+                    $this->getFieldNameByFormatFieldName("TRI_PARAM")       => $row["TRI_PARAM"]
                 );
             }
 
+            //Return
             return $arrayAvailableTrigger;
         } catch (\Exception $e) {
             throw $e;
@@ -503,43 +700,41 @@ class Step
     }
 
     /**
-     * Get all triggers of a Step
+     * Get all Triggers of a Step
      *
      * @param string $stepUid Unique id of Step
      * @param string $taskUid Unique id of Task
      *
-     * return array
+     * return array Return an array with all Triggers of a Step
      */
     public function getTriggers($stepUid, $taskUid = "")
     {
         try {
-            //Verify data
-            $step = new \Step();
+            $arrayTrigger = array();
 
-            if ($stepUid != "" && !$step->StepExists($stepUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
+            //Verify data
+            if ($stepUid != "") {
+                $this->throwExceptionIfNoExistsStep($stepUid);
             }
 
-            $task = new \Task();
-
-            if ($stepUid == "" && !$task->taskExists($taskUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" doesn't exist in table {1}")));
+            if ($stepUid == "") {
+                $this->throwExceptionIfNoExistsTask($taskUid);
             }
 
             //Get data
-            $arrayTrigger = array();
-
             $bmTrigger = new \BusinessModel\Trigger();
             $bmStepTrigger = new \BusinessModel\Step\Trigger();
 
-            if ($stepUid != "") {
-                $arrayDataUid = $this->getDataUids($stepUid);
-
-                $taskUid = $arrayDataUid["TAS_UID"];
-            }
-
-            $processMap = new \ProcessMap();
             $stepTrigger = new \StepTrigger();
+
+            if ($stepUid != "") {
+                //Load Step
+                $step = new \Step();
+
+                $arrayStepData = $step->load($stepUid);
+
+                $taskUid = $arrayStepData["TAS_UID"];
+            }
 
             $arrayTriggerType1 = array(
                 "BEFORE" => "BEFORE",

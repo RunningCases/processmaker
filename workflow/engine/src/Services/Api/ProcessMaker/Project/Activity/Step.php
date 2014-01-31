@@ -12,14 +12,20 @@ use \Luracast\Restler\RestException;
 class Step extends Api
 {
     /**
-     * @url GET /:projectUid/activity/:activityUid/step/:stepUid
+     * @url GET /:prj_uid/activity/:act_uid/step/:step_uid
+     *
+     * @param string $step_uid {@min 32}{@max 32}
+     * @param string $act_uid  {@min 32}{@max 32}
+     * @param string $prj_uid  {@min 32}{@max 32}
      */
-    public function doGetActivityStep($stepUid, $activityUid, $projectUid)
+    public function doGetActivityStep($step_uid, $act_uid, $prj_uid)
     {
         try {
             $step = new \BusinessModel\Step();
+            $step->setFormatFieldNameInUppercase(false);
+            $step->setArrayParamException(array("stepUid" => "step_uid", "taskUid" => "act_uid", "processUid" => "prj_uid"));
 
-            $response = $step->getStep($stepUid);
+            $response = $step->getStep($step_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -28,22 +34,35 @@ class Step extends Api
     }
 
     /**
-     * @url POST /:projectUid/activity/:activityUid/step
+     * @url POST /:prj_uid/activity/:act_uid/step
      *
-     * @param string $activityUid
-     * @param string $projectUid
-     * @param StepPostStructure $request_data
+     * @param string $act_uid        {@min 32}{@max 32}
+     * @param string $prj_uid        {@min 32}{@max 32}
+     * @param array  $request_data
+     * @param string $step_type_obj  {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}{@required true}
+     * @param string $step_uid_obj   {@from body}{@min 32}{@max 32}{@required true}
+     * @param string $step_condition {@from body}
+     * @param int    $step_position  {@from body}{@min 1}
+     * @param string $step_mode      {@from body}{@choice EDIT,VIEW}{@required true}
      *
      * @status 201
      */
-    public function doPostActivityStep($activityUid, $projectUid, StepPostStructure $request_data = null)
-    {
+    public function doPostActivityStep(
+        $act_uid,
+        $prj_uid,
+        $request_data,
+        $step_type_obj = "DYNAFORM",
+        $step_uid_obj = "00000000000000000000000000000000",
+        $step_condition = "",
+        $step_position = 1,
+        $step_mode = "EDIT"
+    ) {
         try {
-            $request_data = (array)($request_data);
-
             $step = new \BusinessModel\Step();
+            $step->setFormatFieldNameInUppercase(false);
+            $step->setArrayParamException(array("stepUid" => "step_uid", "taskUid" => "act_uid", "processUid" => "prj_uid"));
 
-            $arrayData = $step->create($activityUid, $projectUid, $request_data);
+            $arrayData = $step->create($act_uid, $prj_uid, $request_data);
 
             $response = $arrayData;
 
@@ -54,49 +73,75 @@ class Step extends Api
     }
 
     /**
-     * @url PUT /:projectUid/activity/:activityUid/step/:stepUid
+     * @url PUT /:prj_uid/activity/:act_uid/step/:step_uid
      *
-     * @param string $stepUid
-     * @param string $activityUid
-     * @param string $projectUid
-     * @param StepPutStructure $request_data
+     * @param string $step_uid       {@min 32}{@max 32}
+     * @param string $act_uid        {@min 32}{@max 32}
+     * @param string $prj_uid        {@min 32}{@max 32}
+     * @param array  $request_data
+     * @param string $step_type_obj  {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}
+     * @param string $step_uid_obj   {@from body}{@min 32}{@max 32}
+     * @param string $step_condition {@from body}
+     * @param int    $step_position  {@from body}{@min 1}
+     * @param string $step_mode      {@from body}{@choice EDIT,VIEW}
      */
-    public function doPutActivityStep($stepUid, $activityUid, $projectUid, StepPutStructure $request_data = null)
-    {
+    public function doPutActivityStep(
+        $step_uid,
+        $act_uid,
+        $prj_uid,
+        $request_data,
+        $step_type_obj = "DYNAFORM",
+        $step_uid_obj = "00000000000000000000000000000000",
+        $step_condition = "",
+        $step_position = 1,
+        $step_mode = "EDIT"
+    ) {
         try {
-            $request_data = (array)($request_data);
-
             $step = new \BusinessModel\Step();
+            $step->setFormatFieldNameInUppercase(false);
+            $step->setArrayParamException(array("stepUid" => "step_uid", "taskUid" => "act_uid", "processUid" => "prj_uid"));
 
-            $arrayData = $step->update($stepUid, $request_data);
+            $arrayData = $step->update($step_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url DELETE /:projectUid/activity/:activityUid/step/:stepUid
+     * @url DELETE /:prj_uid/activity/:act_uid/step/:step_uid
+     *
+     * @param string $step_uid {@min 32}{@max 32}
+     * @param string $act_uid  {@min 32}{@max 32}
+     * @param string $prj_uid  {@min 32}{@max 32}
      */
-    public function doDeleteActivityStep($stepUid, $activityUid, $projectUid)
+    public function doDeleteActivityStep($step_uid, $act_uid, $prj_uid)
     {
         try {
             $step = new \BusinessModel\Step();
+            $step->setFormatFieldNameInUppercase(false);
+            $step->setArrayParamException(array("stepUid" => "step_uid", "taskUid" => "act_uid", "processUid" => "prj_uid"));
 
-            $step->delete($stepUid);
+            $step->delete($step_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url GET /:projectUid/activity/:activityUid/step/:stepUid/triggers
+     * @url GET /:prj_uid/activity/:act_uid/step/:step_uid/triggers
+     *
+     * @param string $step_uid {@min 32}{@max 32}
+     * @param string $act_uid  {@min 32}{@max 32}
+     * @param string $prj_uid  {@min 32}{@max 32}
      */
-    public function doGetActivityStepTriggers($stepUid, $activityUid, $projectUid)
+    public function doGetActivityStepTriggers($step_uid, $act_uid, $prj_uid)
     {
         try {
             $step = new \BusinessModel\Step();
+            $step->setFormatFieldNameInUppercase(false);
+            $step->setArrayParamException(array("stepUid" => "step_uid", "taskUid" => "act_uid", "processUid" => "prj_uid"));
 
-            $response = $step->getTriggers($stepUid);
+            $response = $step->getTriggers($step_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -105,19 +150,21 @@ class Step extends Api
     }
 
     /**
-     * @url GET /:projectUid/activity/:activityUid/step/:stepUid/available-triggers/:type
+     * @url GET /:prj_uid/activity/:act_uid/step/:step_uid/available-triggers/:type
      *
-     * @param string $stepUid
-     * @param string $activityUid
-     * @param string $projectUid
-     * @param string $type {@from body}{@choice before,after}
+     * @param string $step_uid {@min 32}{@max 32}
+     * @param string $act_uid  {@min 32}{@max 32}
+     * @param string $prj_uid  {@min 32}{@max 32}
+     * @param string $type     {@choice before,after}
      */
-    public function doGetActivityStepAvailableTriggers($stepUid, $activityUid, $projectUid, $type)
+    public function doGetActivityStepAvailableTriggers($step_uid, $act_uid, $prj_uid, $type)
     {
         try {
             $step = new \BusinessModel\Step();
+            $step->setFormatFieldNameInUppercase(false);
+            $step->setArrayParamException(array("stepUid" => "step_uid", "taskUid" => "act_uid", "processUid" => "prj_uid"));
 
-            $response = $step->getAvailableTriggers($stepUid, strtoupper($type));
+            $response = $step->getAvailableTriggers($step_uid, strtoupper($type));
 
             return $response;
         } catch (\Exception $e) {
@@ -128,95 +175,46 @@ class Step extends Api
     //Step "Assign Task"
 
     /**
-     * @url GET /:projectUid/activity/:activityUid/step/triggers
-     */
-    public function doGetActivityStepAssignTaskTriggers($activityUid, $projectUid)
-    {
-        try {
-            $step = new \BusinessModel\Step();
-
-            $response = $step->getTriggers("", $activityUid);
-
-            return $response;
-        } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
-        }
-    }
-
-    /**
-     * @url GET /:projectUid/activity/:activityUid/step/available-triggers/:type
+     * @url GET /:prj_uid/activity/:act_uid/step/triggers
      *
-     * @param string $activityUid
-     * @param string $projectUid
-     * @param string $type {@from body}{@choice before-assignment,before-routing,after-routing}
+     * @param string $act_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetActivityStepAssignTaskAvailableTriggers($activityUid, $projectUid, $type)
+    public function doGetActivityStepAssignTaskTriggers($act_uid, $prj_uid)
     {
         try {
             $step = new \BusinessModel\Step();
+            $step->setFormatFieldNameInUppercase(false);
+            $step->setArrayParamException(array("stepUid" => "step_uid", "taskUid" => "act_uid", "processUid" => "prj_uid"));
 
-            $response = $step->getAvailableTriggers("", strtoupper(str_replace("-", "_", $type)), $activityUid);
+            $response = $step->getTriggers("", $act_uid);
 
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
-}
-
-class StepPostStructure
-{
-    /**
-     * @var string {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}{@required true}
-     */
-    public $step_type_obj;
 
     /**
-     * @var string {@from body}{@min 32}{@max 32}{@required true}
+     * @url GET /:prj_uid/activity/:act_uid/step/available-triggers/:type
+     *
+     * @param string $act_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
+     * @param string $type    {@choice before-assignment,before-routing,after-routing}
      */
-    public $step_uid_obj;
+    public function doGetActivityStepAssignTaskAvailableTriggers($act_uid, $prj_uid, $type)
+    {
+        try {
+            $step = new \BusinessModel\Step();
+            $step->setFormatFieldNameInUppercase(false);
+            $step->setArrayParamException(array("stepUid" => "step_uid", "taskUid" => "act_uid", "processUid" => "prj_uid"));
 
-    /**
-     * @var string
-     */
-    public $step_condition;
+            $response = $step->getAvailableTriggers("", strtoupper(str_replace("-", "_", $type)), $act_uid);
 
-    /**
-     * @var int {@from body}{@min 1}
-     */
-    public $step_position;
-
-    /**
-     * @var string {@from body}{@choice EDIT,VIEW}{@required true}
-     */
-    public $step_mode;
-}
-
-class StepPutStructure
-{
-    /**
-     * @var string {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}
-     */
-    public $step_type_obj;
-
-    /**
-     * @var string {@from body}{@min 32}{@max 32}
-     */
-    public $step_uid_obj;
-
-    /**
-     * @var string
-     */
-    public $step_condition;
-
-    /**
-     * @var int {@from body}{@min 1}
-     */
-    public $step_position;
-
-    /**
-     * @var string {@from body}{@choice EDIT,VIEW}
-     */
-    public $step_mode;
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
 
