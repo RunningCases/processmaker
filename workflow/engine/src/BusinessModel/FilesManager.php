@@ -95,14 +95,14 @@ class FilesManager
      * Return the Process File Manager
      *
      * @param string $sProcessUID {@min 32} {@max 32}
-     * @param string $userUid {@min 32} {@max 32}
+     * @param string $userUID {@min 32} {@max 32}
      * @param array  $aData
      *
      * return array
      *
      * @access public
      */
-    public function addProcessFilesManager($sProcessUID, $userUid, $aData)
+    public function addProcessFilesManager($sProcessUID, $userUID, $aData)
     {
         try {
             if ($aData['path'] == 'templates/' || $aData['path'] == 'folder/') {
@@ -133,7 +133,7 @@ class FilesManager
             $sDate = date( 'Y-m-d H:i' );
             $oProcessFiles->setPrfUid( $sPkProcessFiles );
             $oProcessFiles->setProUid( $sProcessUID );
-            $oProcessFiles->setUsrUid( $userUid );
+            $oProcessFiles->setUsrUid( $userUID );
             $oProcessFiles->setPrfUpdateUsrUid( '' );
             $oProcessFiles->setPrfPath( $sDirectory );
             $oProcessFiles->setPrfType( 'file' );
@@ -176,7 +176,6 @@ class FilesManager
         }
     }
 
-
     /**
      * Return the Process Files Manager
      *
@@ -195,20 +194,23 @@ class FilesManager
     }
 
     /**
-     * Return the Process Files Manager
+     * Get data of unique ids of a file
      *
-     * @param string $sProcessUID {@min 32} {@max 32}
-     * @param string $userUid {@min 32} {@max 32}
-     * @param array  $aData
+     * @param string $path
      *
      * return array
-     *
-     * @access public
      */
-    public function updateProcessFilesManager($sProcessUID, $userUid, $aData)
+    public function getFileManagerUid($path)
     {
         try {
-        } catch (Exception $e) {
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UID);
+            $criteria->add(\ProcessFilesPeer::PRF_PATH, $path, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            return $rsCriteria->getRow();
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -217,18 +219,95 @@ class FilesManager
      * Return the Process Files Manager
      *
      * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $path
+     * @param string $userUID {@min 32} {@max 32}
+     * @param array  $aData
      *
      * return array
      *
      * @access public
      */
-    public function deleteProcessFilesManager($sProcessUID)
+    public function updateProcessFilesManager($sProcessUID, $userUID, $aData, $path)
     {
         try {
+            $arrayTaskUid = $this->getFileManagerUid($path);
+            if ($aData['path'] == 'templates/' || $aData['path'] == 'folder/') {
+                switch ($aData['path']) {
+                    case 'templates/':
+                        $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $aData['file_name'];
+                        $sEditable = false;
+                        break;
+                    case 'folder/':
+                        $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $aData['file_name'];
+                        break;
+                    default:
+                        $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $aData['file_name'];
+                        break;
+                    }
+            } else {
+                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `folder/`'));
+            }
+            $extention = end(explode(".", $aData['file_name']));
+            if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp' ||
+                $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
+                $sEditable = true;
+            } else {
+                $sEditable = false;
+            }
+            $sPkProcessFiles = \G::generateUniqueID();
+            $oProcessFiles = new \ProcessFiles();
+            $sDate = date( 'Y-m-d H:i' );
+            $oProcessFiles->setPrfUid( $sPkProcessFiles );
+            $oProcessFiles->setProUid( $sProcessUID );
+            $oProcessFiles->setUsrUid( $userUID );
+            $oProcessFiles->setPrfUpdateUsrUid( '' );
+            $oProcessFiles->setPrfPath( $sDirectory );
+            $oProcessFiles->setPrfType( 'file' );
+            $oProcessFiles->setPrfEditable( $sEditable );
+            $oProcessFiles->setPrfCreateDate( $sDate );
+            $oProcessFiles->save();
+            $fp = fopen($sDirectory, 'w');
+            $content = $aData['content'];
+            fwrite($fp, $content);
+            fclose($fp);
+            $oProcessFile = array('prf_uid' => $oProcessFiles->getPrfUid(),
+                                  'pro_uid' => $oProcessFiles->getProUid(),
+                                  'usr_uid' => $oProcessFiles->getUsrUid(),
+                                  'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
+                                  'prf_path' => $oProcessFiles->getPrfPath(),
+                                  'prf_type' => $oProcessFiles->getPrfType(),
+                                  'prf_editable' => $oProcessFiles->getPrfEditable(),
+                                  'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
+                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate());
+            return $oProcessFile;
         } catch (Exception $e) {
             throw $e;
         }
     }
 
+    /**
+     *
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $path
+     *
+     *
+     * @access public 
+     */
+    public function deleteProcessFilesManager($sProcessUID, $path)
+    {
+        try {
+            $sPath = explode("/", $path);
+            $sfile = end(explode("/",$path));
+            $main = implode(array_slice($sPath, -3, 1));
+            $carpeta = '';
+            $oProcessMap = new \processMap(new \DBConnection());
+            $oProcessMap->deleteFile($sProcessUID,
+                                     $main,
+                                     $carpeta,
+                                     $sfile);
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }
 

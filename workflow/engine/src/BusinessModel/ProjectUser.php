@@ -17,6 +17,10 @@ class ProjectUser
     public function getProjectUsers($sProcessUID)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
@@ -98,6 +102,10 @@ class ProjectUser
     public function getProjectStartingTasks($sProcessUID)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
@@ -157,6 +165,14 @@ class ProjectUser
     public function getProjectStartingTaskUsers($sProcessUID, $sUserUID)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
+            $oUser = \UsersPeer::retrieveByPK($sUserUID);
+            if (is_null($oUser)) {
+                throw (new \Exception( 'This id for `usr_uid`: '. $userUid .' do not correspond to a registered user'));
+            }
             $aUsers = array();
             \G::LoadClass( 'case' );
             $oCase = new \Cases();
@@ -189,6 +205,10 @@ class ProjectUser
     public function postProjectWsUserCanStartTask($sProcessUID, $oData)
     {
         try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+            }
             /**
              * process_webEntryValidate
              * validates if the username and password are valid data and if the user assigned
@@ -261,7 +281,7 @@ class ProjectUser
                     $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
                     $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
                     if (! ($userIsAssigned >= 1)) {
-                        throw (new \Exception( "The User `" . $sWS_USER . "` doesn't have the activity `" . $sTASKS . "` assigned"));
+                        throw (new \Exception( "The `usr_uid` `" . $sWS_USER . "` doesn't have the activity `tas_uid` `" . $sTASKS . "` assigned"));
                     }
                 }
                 $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
