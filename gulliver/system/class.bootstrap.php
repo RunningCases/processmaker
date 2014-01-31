@@ -401,7 +401,7 @@ class Bootstrap
      *
      * @return void
      */
-    public function mk_dir($strPath, $rights = 0777)
+    public static function mk_dir($strPath, $rights = 0777)
     {
         $folder_path = array($strPath);
         $oldumask = umask(0);

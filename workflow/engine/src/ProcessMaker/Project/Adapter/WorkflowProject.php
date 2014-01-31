@@ -8,6 +8,8 @@ use ProcessMaker\Project\ProjectHandler;
 
 class WorkflowProject extends ProjectHandler
 {
+    protected $proUid;
+
     public function create($data)
     {
         try {
@@ -17,13 +19,11 @@ class WorkflowProject extends ProjectHandler
 
             // Create project
             $process = new Process();
-            $proUid = $process->create($data, false);
+            $this->proUid = $process->create($data, false);
 
             // Create project's tasks
             foreach ($data['TASKS'] as $taskData) {
-                $taskData['PRO_UID'] = $proUid;
-                $task = new Task();
-                $task->create($taskData, false);
+                $this->addTask($taskData);
             }
 
             // Create project's routes
@@ -52,5 +52,37 @@ class WorkflowProject extends ProjectHandler
     public function load($prjUid)
     {
         // TODO: Implement load() method.
+    }
+
+    /*
+     * Projects elements handlers
+     */
+
+    public function addTask($taskData)
+    {
+        $taskData['PRO_UID'] = $this->proUid;
+
+        $task = new Task();
+        $task->create($taskData, false);
+    }
+
+    public function updateTask($taskData)
+    {
+        # code...
+    }
+
+    public function removeTask($taskData)
+    {
+        # code...
+    }
+
+    public function addRoute($value='')
+    {
+        # code...
+    }
+
+    public function removeRoute($value='')
+    {
+        # code...
     }
 }
