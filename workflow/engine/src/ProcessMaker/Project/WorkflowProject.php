@@ -1,5 +1,5 @@
 <?php
-namespace ProcessMaker\Project\Adapter;
+namespace ProcessMaker\Project;
 
 use \Criteria;
 use \ResultSet;

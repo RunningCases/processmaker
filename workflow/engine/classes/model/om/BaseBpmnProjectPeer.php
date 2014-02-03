@@ -25,7 +25,7 @@ abstract class BaseBpmnProjectPeer
     const CLASS_DEFAULT = 'classes.model.BpmnProject';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 12;
+    const NUM_COLUMNS = 13;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -36,6 +36,9 @@ abstract class BaseBpmnProjectPeer
 
     /** the column name for the PRJ_NAME field */
     const PRJ_NAME = 'BPMN_PROJECT.PRJ_NAME';
+
+    /** the column name for the PRJ_DESCRIPTION field */
+    const PRJ_DESCRIPTION = 'BPMN_PROJECT.PRJ_DESCRIPTION';
 
     /** the column name for the PRJ_TARGET_NAMESPACE field */
     const PRJ_TARGET_NAMESPACE = 'BPMN_PROJECT.PRJ_TARGET_NAMESPACE';
@@ -78,10 +81,10 @@ abstract class BaseBpmnProjectPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('PrjUid', 'PrjName', 'PrjTargetNamespace', 'PrjExpresionLanguage', 'PrjTypeLanguage', 'PrjExporter', 'PrjExporterVersion', 'PrjCreateDate', 'PrjUpdateDate', 'PrjAuthor', 'PrjAuthorVersion', 'PrjOriginalSource', ),
-        BasePeer::TYPE_COLNAME => array (BpmnProjectPeer::PRJ_UID, BpmnProjectPeer::PRJ_NAME, BpmnProjectPeer::PRJ_TARGET_NAMESPACE, BpmnProjectPeer::PRJ_EXPRESION_LANGUAGE, BpmnProjectPeer::PRJ_TYPE_LANGUAGE, BpmnProjectPeer::PRJ_EXPORTER, BpmnProjectPeer::PRJ_EXPORTER_VERSION, BpmnProjectPeer::PRJ_CREATE_DATE, BpmnProjectPeer::PRJ_UPDATE_DATE, BpmnProjectPeer::PRJ_AUTHOR, BpmnProjectPeer::PRJ_AUTHOR_VERSION, BpmnProjectPeer::PRJ_ORIGINAL_SOURCE, ),
-        BasePeer::TYPE_FIELDNAME => array ('PRJ_UID', 'PRJ_NAME', 'PRJ_TARGET_NAMESPACE', 'PRJ_EXPRESION_LANGUAGE', 'PRJ_TYPE_LANGUAGE', 'PRJ_EXPORTER', 'PRJ_EXPORTER_VERSION', 'PRJ_CREATE_DATE', 'PRJ_UPDATE_DATE', 'PRJ_AUTHOR', 'PRJ_AUTHOR_VERSION', 'PRJ_ORIGINAL_SOURCE', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+        BasePeer::TYPE_PHPNAME => array ('PrjUid', 'PrjName', 'PrjDescription', 'PrjTargetNamespace', 'PrjExpresionLanguage', 'PrjTypeLanguage', 'PrjExporter', 'PrjExporterVersion', 'PrjCreateDate', 'PrjUpdateDate', 'PrjAuthor', 'PrjAuthorVersion', 'PrjOriginalSource', ),
+        BasePeer::TYPE_COLNAME => array (BpmnProjectPeer::PRJ_UID, BpmnProjectPeer::PRJ_NAME, BpmnProjectPeer::PRJ_DESCRIPTION, BpmnProjectPeer::PRJ_TARGET_NAMESPACE, BpmnProjectPeer::PRJ_EXPRESION_LANGUAGE, BpmnProjectPeer::PRJ_TYPE_LANGUAGE, BpmnProjectPeer::PRJ_EXPORTER, BpmnProjectPeer::PRJ_EXPORTER_VERSION, BpmnProjectPeer::PRJ_CREATE_DATE, BpmnProjectPeer::PRJ_UPDATE_DATE, BpmnProjectPeer::PRJ_AUTHOR, BpmnProjectPeer::PRJ_AUTHOR_VERSION, BpmnProjectPeer::PRJ_ORIGINAL_SOURCE, ),
+        BasePeer::TYPE_FIELDNAME => array ('PRJ_UID', 'PRJ_NAME', 'PRJ_DESCRIPTION', 'PRJ_TARGET_NAMESPACE', 'PRJ_EXPRESION_LANGUAGE', 'PRJ_TYPE_LANGUAGE', 'PRJ_EXPORTER', 'PRJ_EXPORTER_VERSION', 'PRJ_CREATE_DATE', 'PRJ_UPDATE_DATE', 'PRJ_AUTHOR', 'PRJ_AUTHOR_VERSION', 'PRJ_ORIGINAL_SOURCE', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
     /**
@@ -91,10 +94,10 @@ abstract class BaseBpmnProjectPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('PrjUid' => 0, 'PrjName' => 1, 'PrjTargetNamespace' => 2, 'PrjExpresionLanguage' => 3, 'PrjTypeLanguage' => 4, 'PrjExporter' => 5, 'PrjExporterVersion' => 6, 'PrjCreateDate' => 7, 'PrjUpdateDate' => 8, 'PrjAuthor' => 9, 'PrjAuthorVersion' => 10, 'PrjOriginalSource' => 11, ),
-        BasePeer::TYPE_COLNAME => array (BpmnProjectPeer::PRJ_UID => 0, BpmnProjectPeer::PRJ_NAME => 1, BpmnProjectPeer::PRJ_TARGET_NAMESPACE => 2, BpmnProjectPeer::PRJ_EXPRESION_LANGUAGE => 3, BpmnProjectPeer::PRJ_TYPE_LANGUAGE => 4, BpmnProjectPeer::PRJ_EXPORTER => 5, BpmnProjectPeer::PRJ_EXPORTER_VERSION => 6, BpmnProjectPeer::PRJ_CREATE_DATE => 7, BpmnProjectPeer::PRJ_UPDATE_DATE => 8, BpmnProjectPeer::PRJ_AUTHOR => 9, BpmnProjectPeer::PRJ_AUTHOR_VERSION => 10, BpmnProjectPeer::PRJ_ORIGINAL_SOURCE => 11, ),
-        BasePeer::TYPE_FIELDNAME => array ('PRJ_UID' => 0, 'PRJ_NAME' => 1, 'PRJ_TARGET_NAMESPACE' => 2, 'PRJ_EXPRESION_LANGUAGE' => 3, 'PRJ_TYPE_LANGUAGE' => 4, 'PRJ_EXPORTER' => 5, 'PRJ_EXPORTER_VERSION' => 6, 'PRJ_CREATE_DATE' => 7, 'PRJ_UPDATE_DATE' => 8, 'PRJ_AUTHOR' => 9, 'PRJ_AUTHOR_VERSION' => 10, 'PRJ_ORIGINAL_SOURCE' => 11, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+        BasePeer::TYPE_PHPNAME => array ('PrjUid' => 0, 'PrjName' => 1, 'PrjDescription' => 2, 'PrjTargetNamespace' => 3, 'PrjExpresionLanguage' => 4, 'PrjTypeLanguage' => 5, 'PrjExporter' => 6, 'PrjExporterVersion' => 7, 'PrjCreateDate' => 8, 'PrjUpdateDate' => 9, 'PrjAuthor' => 10, 'PrjAuthorVersion' => 11, 'PrjOriginalSource' => 12, ),
+        BasePeer::TYPE_COLNAME => array (BpmnProjectPeer::PRJ_UID => 0, BpmnProjectPeer::PRJ_NAME => 1, BpmnProjectPeer::PRJ_DESCRIPTION => 2, BpmnProjectPeer::PRJ_TARGET_NAMESPACE => 3, BpmnProjectPeer::PRJ_EXPRESION_LANGUAGE => 4, BpmnProjectPeer::PRJ_TYPE_LANGUAGE => 5, BpmnProjectPeer::PRJ_EXPORTER => 6, BpmnProjectPeer::PRJ_EXPORTER_VERSION => 7, BpmnProjectPeer::PRJ_CREATE_DATE => 8, BpmnProjectPeer::PRJ_UPDATE_DATE => 9, BpmnProjectPeer::PRJ_AUTHOR => 10, BpmnProjectPeer::PRJ_AUTHOR_VERSION => 11, BpmnProjectPeer::PRJ_ORIGINAL_SOURCE => 12, ),
+        BasePeer::TYPE_FIELDNAME => array ('PRJ_UID' => 0, 'PRJ_NAME' => 1, 'PRJ_DESCRIPTION' => 2, 'PRJ_TARGET_NAMESPACE' => 3, 'PRJ_EXPRESION_LANGUAGE' => 4, 'PRJ_TYPE_LANGUAGE' => 5, 'PRJ_EXPORTER' => 6, 'PRJ_EXPORTER_VERSION' => 7, 'PRJ_CREATE_DATE' => 8, 'PRJ_UPDATE_DATE' => 9, 'PRJ_AUTHOR' => 10, 'PRJ_AUTHOR_VERSION' => 11, 'PRJ_ORIGINAL_SOURCE' => 12, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
     /**
@@ -198,6 +201,8 @@ abstract class BaseBpmnProjectPeer
         $criteria->addSelectColumn(BpmnProjectPeer::PRJ_UID);
 
         $criteria->addSelectColumn(BpmnProjectPeer::PRJ_NAME);
+
+        $criteria->addSelectColumn(BpmnProjectPeer::PRJ_DESCRIPTION);
 
         $criteria->addSelectColumn(BpmnProjectPeer::PRJ_TARGET_NAMESPACE);
 

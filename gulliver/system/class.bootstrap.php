@@ -159,6 +159,7 @@ class Bootstrap
         self::registerClass("Propel", PATH_THIRDPARTY . "propel" . PATH_SEP . "Propel.php");
         self::registerClass("Creole", PATH_THIRDPARTY . "creole" . PATH_SEP . "Creole.php");
         self::registerClass("Criteria", PATH_THIRDPARTY . "propel" . PATH_SEP . "util" . PATH_SEP . "Criteria.php");
+        self::registerClass("BasePeer", PATH_THIRDPARTY . "propel" . PATH_SEP . "util" . PATH_SEP . "BasePeer.php");
 
         //DATABASE propel classes used in "Cases" Options
         self::registerClass("Entity_Base", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "entities" . PATH_SEP . "Base.php");

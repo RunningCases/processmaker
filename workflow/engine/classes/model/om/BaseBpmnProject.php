@@ -40,6 +40,12 @@ abstract class BaseBpmnProject extends BaseObject implements Persistent
     protected $prj_name = '';
 
     /**
+     * The value for the prj_description field.
+     * @var        string
+     */
+    protected $prj_description;
+
+    /**
      * The value for the prj_target_namespace field.
      * @var        string
      */
@@ -304,6 +310,17 @@ abstract class BaseBpmnProject extends BaseObject implements Persistent
     }
 
     /**
+     * Get the [prj_description] column value.
+     * 
+     * @return     string
+     */
+    public function getPrjDescription()
+    {
+
+        return $this->prj_description;
+    }
+
+    /**
      * Get the [prj_target_namespace] column value.
      * 
      * @return     string
@@ -498,6 +515,28 @@ abstract class BaseBpmnProject extends BaseObject implements Persistent
         }
 
     } // setPrjName()
+
+    /**
+     * Set the value of [prj_description] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setPrjDescription($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->prj_description !== $v) {
+            $this->prj_description = $v;
+            $this->modifiedColumns[] = BpmnProjectPeer::PRJ_DESCRIPTION;
+        }
+
+    } // setPrjDescription()
 
     /**
      * Set the value of [prj_target_namespace] column.
@@ -746,32 +785,34 @@ abstract class BaseBpmnProject extends BaseObject implements Persistent
 
             $this->prj_name = $rs->getString($startcol + 1);
 
-            $this->prj_target_namespace = $rs->getString($startcol + 2);
+            $this->prj_description = $rs->getString($startcol + 2);
 
-            $this->prj_expresion_language = $rs->getString($startcol + 3);
+            $this->prj_target_namespace = $rs->getString($startcol + 3);
 
-            $this->prj_type_language = $rs->getString($startcol + 4);
+            $this->prj_expresion_language = $rs->getString($startcol + 4);
 
-            $this->prj_exporter = $rs->getString($startcol + 5);
+            $this->prj_type_language = $rs->getString($startcol + 5);
 
-            $this->prj_exporter_version = $rs->getString($startcol + 6);
+            $this->prj_exporter = $rs->getString($startcol + 6);
 
-            $this->prj_create_date = $rs->getTimestamp($startcol + 7, null);
+            $this->prj_exporter_version = $rs->getString($startcol + 7);
 
-            $this->prj_update_date = $rs->getTimestamp($startcol + 8, null);
+            $this->prj_create_date = $rs->getTimestamp($startcol + 8, null);
 
-            $this->prj_author = $rs->getString($startcol + 9);
+            $this->prj_update_date = $rs->getTimestamp($startcol + 9, null);
 
-            $this->prj_author_version = $rs->getString($startcol + 10);
+            $this->prj_author = $rs->getString($startcol + 10);
 
-            $this->prj_original_source = $rs->getString($startcol + 11);
+            $this->prj_author_version = $rs->getString($startcol + 11);
+
+            $this->prj_original_source = $rs->getString($startcol + 12);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 12; // 12 = BpmnProjectPeer::NUM_COLUMNS - BpmnProjectPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 13; // 13 = BpmnProjectPeer::NUM_COLUMNS - BpmnProjectPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating BpmnProject object", $e);
@@ -1206,33 +1247,36 @@ abstract class BaseBpmnProject extends BaseObject implements Persistent
                 return $this->getPrjName();
                 break;
             case 2:
-                return $this->getPrjTargetNamespace();
+                return $this->getPrjDescription();
                 break;
             case 3:
-                return $this->getPrjExpresionLanguage();
+                return $this->getPrjTargetNamespace();
                 break;
             case 4:
-                return $this->getPrjTypeLanguage();
+                return $this->getPrjExpresionLanguage();
                 break;
             case 5:
-                return $this->getPrjExporter();
+                return $this->getPrjTypeLanguage();
                 break;
             case 6:
-                return $this->getPrjExporterVersion();
+                return $this->getPrjExporter();
                 break;
             case 7:
-                return $this->getPrjCreateDate();
+                return $this->getPrjExporterVersion();
                 break;
             case 8:
-                return $this->getPrjUpdateDate();
+                return $this->getPrjCreateDate();
                 break;
             case 9:
-                return $this->getPrjAuthor();
+                return $this->getPrjUpdateDate();
                 break;
             case 10:
-                return $this->getPrjAuthorVersion();
+                return $this->getPrjAuthor();
                 break;
             case 11:
+                return $this->getPrjAuthorVersion();
+                break;
+            case 12:
                 return $this->getPrjOriginalSource();
                 break;
             default:
@@ -1257,16 +1301,17 @@ abstract class BaseBpmnProject extends BaseObject implements Persistent
         $result = array(
             $keys[0] => $this->getPrjUid(),
             $keys[1] => $this->getPrjName(),
-            $keys[2] => $this->getPrjTargetNamespace(),
-            $keys[3] => $this->getPrjExpresionLanguage(),
-            $keys[4] => $this->getPrjTypeLanguage(),
-            $keys[5] => $this->getPrjExporter(),
-            $keys[6] => $this->getPrjExporterVersion(),
-            $keys[7] => $this->getPrjCreateDate(),
-            $keys[8] => $this->getPrjUpdateDate(),
-            $keys[9] => $this->getPrjAuthor(),
-            $keys[10] => $this->getPrjAuthorVersion(),
-            $keys[11] => $this->getPrjOriginalSource(),
+            $keys[2] => $this->getPrjDescription(),
+            $keys[3] => $this->getPrjTargetNamespace(),
+            $keys[4] => $this->getPrjExpresionLanguage(),
+            $keys[5] => $this->getPrjTypeLanguage(),
+            $keys[6] => $this->getPrjExporter(),
+            $keys[7] => $this->getPrjExporterVersion(),
+            $keys[8] => $this->getPrjCreateDate(),
+            $keys[9] => $this->getPrjUpdateDate(),
+            $keys[10] => $this->getPrjAuthor(),
+            $keys[11] => $this->getPrjAuthorVersion(),
+            $keys[12] => $this->getPrjOriginalSource(),
         );
         return $result;
     }
@@ -1305,33 +1350,36 @@ abstract class BaseBpmnProject extends BaseObject implements Persistent
                 $this->setPrjName($value);
                 break;
             case 2:
-                $this->setPrjTargetNamespace($value);
+                $this->setPrjDescription($value);
                 break;
             case 3:
-                $this->setPrjExpresionLanguage($value);
+                $this->setPrjTargetNamespace($value);
                 break;
             case 4:
-                $this->setPrjTypeLanguage($value);
+                $this->setPrjExpresionLanguage($value);
                 break;
             case 5:
-                $this->setPrjExporter($value);
+                $this->setPrjTypeLanguage($value);
                 break;
             case 6:
-                $this->setPrjExporterVersion($value);
+                $this->setPrjExporter($value);
                 break;
             case 7:
-                $this->setPrjCreateDate($value);
+                $this->setPrjExporterVersion($value);
                 break;
             case 8:
-                $this->setPrjUpdateDate($value);
+                $this->setPrjCreateDate($value);
                 break;
             case 9:
-                $this->setPrjAuthor($value);
+                $this->setPrjUpdateDate($value);
                 break;
             case 10:
-                $this->setPrjAuthorVersion($value);
+                $this->setPrjAuthor($value);
                 break;
             case 11:
+                $this->setPrjAuthorVersion($value);
+                break;
+            case 12:
                 $this->setPrjOriginalSource($value);
                 break;
         } // switch()
@@ -1366,43 +1414,47 @@ abstract class BaseBpmnProject extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setPrjTargetNamespace($arr[$keys[2]]);
+            $this->setPrjDescription($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
-            $this->setPrjExpresionLanguage($arr[$keys[3]]);
+            $this->setPrjTargetNamespace($arr[$keys[3]]);
         }
 
         if (array_key_exists($keys[4], $arr)) {
-            $this->setPrjTypeLanguage($arr[$keys[4]]);
+            $this->setPrjExpresionLanguage($arr[$keys[4]]);
         }
 
         if (array_key_exists($keys[5], $arr)) {
-            $this->setPrjExporter($arr[$keys[5]]);
+            $this->setPrjTypeLanguage($arr[$keys[5]]);
         }
 
         if (array_key_exists($keys[6], $arr)) {
-            $this->setPrjExporterVersion($arr[$keys[6]]);
+            $this->setPrjExporter($arr[$keys[6]]);
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setPrjCreateDate($arr[$keys[7]]);
+            $this->setPrjExporterVersion($arr[$keys[7]]);
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setPrjUpdateDate($arr[$keys[8]]);
+            $this->setPrjCreateDate($arr[$keys[8]]);
         }
 
         if (array_key_exists($keys[9], $arr)) {
-            $this->setPrjAuthor($arr[$keys[9]]);
+            $this->setPrjUpdateDate($arr[$keys[9]]);
         }
 
         if (array_key_exists($keys[10], $arr)) {
-            $this->setPrjAuthorVersion($arr[$keys[10]]);
+            $this->setPrjAuthor($arr[$keys[10]]);
         }
 
         if (array_key_exists($keys[11], $arr)) {
-            $this->setPrjOriginalSource($arr[$keys[11]]);
+            $this->setPrjAuthorVersion($arr[$keys[11]]);
+        }
+
+        if (array_key_exists($keys[12], $arr)) {
+            $this->setPrjOriginalSource($arr[$keys[12]]);
         }
 
     }
@@ -1422,6 +1474,10 @@ abstract class BaseBpmnProject extends BaseObject implements Persistent
 
         if ($this->isColumnModified(BpmnProjectPeer::PRJ_NAME)) {
             $criteria->add(BpmnProjectPeer::PRJ_NAME, $this->prj_name);
+        }
+
+        if ($this->isColumnModified(BpmnProjectPeer::PRJ_DESCRIPTION)) {
+            $criteria->add(BpmnProjectPeer::PRJ_DESCRIPTION, $this->prj_description);
         }
 
         if ($this->isColumnModified(BpmnProjectPeer::PRJ_TARGET_NAMESPACE)) {
@@ -1519,6 +1575,8 @@ abstract class BaseBpmnProject extends BaseObject implements Persistent
     {
 
         $copyObj->setPrjName($this->prj_name);
+
+        $copyObj->setPrjDescription($this->prj_description);
 
         $copyObj->setPrjTargetNamespace($this->prj_target_namespace);
 

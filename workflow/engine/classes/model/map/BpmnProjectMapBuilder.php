@@ -69,6 +69,8 @@ class BpmnProjectMapBuilder
 
         $tMap->addColumn('PRJ_NAME', 'PrjName', 'string', CreoleTypes::VARCHAR, true, 255);
 
+        $tMap->addColumn('PRJ_DESCRIPTION', 'PrjDescription', 'string', CreoleTypes::VARCHAR, false, 512);
+
         $tMap->addColumn('PRJ_TARGET_NAMESPACE', 'PrjTargetNamespace', 'string', CreoleTypes::LONGVARCHAR, true, null);
 
         $tMap->addColumn('PRJ_EXPRESION_LANGUAGE', 'PrjExpresionLanguage', 'string', CreoleTypes::LONGVARCHAR, false, null);
