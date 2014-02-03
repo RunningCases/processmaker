@@ -101,6 +101,7 @@ class Task
 
             $task = new \Task();
 
+            $this->validateTask($taskUid);
             $arrayDataAux = $task->load($taskUid);
 
             //$arrayDataAux["INDEX"] = 0;
@@ -233,17 +234,18 @@ class Task
             }
             $arrayProperty["TAS_UID"] = $taskUid;
             $arrayProperty["PRO_UID"] = $processUid;
+            $this->validateProUid($arrayProperty["PRO_UID"]);
+            $this->validateTask($arrayProperty["TAS_UID"]);
 
             $task = new \Task();
             $aTaskInfo = $task->load($arrayProperty["TAS_UID"]);
 
             $arrayResult = array();
-
-            /**
-             * routine to replace @amp@ by &
-             * that why the char "&" can't be passed by XmlHttpRequest directly
-             * @autor erik <erik@colosa.com>
-             */
+            if ($arrayProperty["TAS_SELFSERVICE_TIMEOUT"] == "1") {
+                if (!is_numeric($arrayProperty["TAS_SELFSERVICE_TIME"]) || $arrayProperty["TAS_SELFSERVICE_TIME"]=='') {
+                    throw (new \Exception("Invalid value specified for 'tas_selfservice_time'"));
+                }
+            }
 
             foreach ($arrayProperty as $k => $v) {
                 $arrayProperty[$k] = str_replace("@amp@", "&", $v);
@@ -288,8 +290,6 @@ class Task
                 if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
                     $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
                 }
-            } else {
-                $arrayProperty["TAS_GROUP_VARIABLE"] = "";
             }
 
             $result = $task->update($arrayProperty);
@@ -1584,6 +1584,34 @@ class Task
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    public function validateProUid ($proUid) {
+        $proUid = trim($proUid);
+        if ($proUid == '') {
+            throw (new \Exception('This process doesn\'t exist!'));
+        }
+
+        $oProcess = new \Process();
+        if (!($oProcess->processExists($proUid))) {
+            throw (new \Exception('This process doesn\'t exist!'));
+        }
+
+        return $proUid;
+    }
+
+    public function validateTask($taskUid) {
+        $taskUid = trim($taskUid);
+        if ($taskUid == '') {
+            throw (new \Exception('This task doesn\'t exist!'));
+        }
+
+        $oTask = new \Task();
+        if (!($oTask->taskExists($taskUid))) {
+            throw (new \Exception('This task doesn\'t exist!'));
+        }
+
+        return $taskUid;
     }
 }
 

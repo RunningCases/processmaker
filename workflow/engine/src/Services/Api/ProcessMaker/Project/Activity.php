@@ -56,8 +56,6 @@ class Activity extends Api
         }
     }
 
-
-
     /**
      * @param string $projectUid {@min 32} {@max 32}
      * @param string $activityUid {@min 32} {@max 32}
