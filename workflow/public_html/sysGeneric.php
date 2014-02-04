@@ -1024,6 +1024,8 @@ try {
             $restConfig = array();
             //NewRelic Snippet - By JHL
             //transactionLog($restConfig.PATH_DATA_SITE.SYS_TARGET); // ====> ??? this concat is very rare
+
+            $RBAC->initRBAC();
             
             Bootstrap::dispatchApiService(SYS_TARGET, API_VERSION);
         } else {
