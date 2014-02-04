@@ -27,15 +27,6 @@ class Bootstrap
             return true;
         }
 
-        // try resolve a Model class file
-        $classFile = PATH_CORE . 'classes' . PATH_SEP . 'model' . PATH_SEP .  $class . '.php';
-
-        if (file_exists($classFile)) {
-            require_once $classFile;
-
-            return true;
-        }
-
         $classHasNamespaceSeparator = strpos($class, '\\') !== false ? true : false;
 
         foreach (BootStrap::$includePaths as $path) {
