@@ -14,6 +14,20 @@ require_once 'classes/model/om/BaseBpmnDiagram.php';
  *
  * @package    classes.model
  */
-class BpmnDiagram extends BaseBpmnDiagram {
+class BpmnDiagram extends BaseBpmnDiagram
+{
+    public static function findAllByProUid($prjUid)
+    {
+        $c = new Criteria("workflow");
+        $c->add(BpmnDiagramPeer::PRJ_UID, $prjUid);
 
+        return BpmnDiagramPeer::doSelect($c);
+    }
+
+    // Overrides
+
+    public function toArray($type = BasePeer::TYPE_FIELDNAME)
+    {
+        return parent::toArray($type);
+    }
 } // BpmnDiagram

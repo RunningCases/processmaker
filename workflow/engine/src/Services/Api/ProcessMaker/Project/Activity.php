@@ -56,8 +56,6 @@ class Activity extends Api
         }
     }
 
-
-
     /**
      * @param string $projectUid {@min 32} {@max 32}
      * @param string $activityUid {@min 32} {@max 32}
@@ -97,14 +95,19 @@ class Activity extends Api
     }
 
     /**
-     * @url GET /:projectUid/activity/:activityUid/steps
+     * @url GET /:prj_uid/activity/:act_uid/steps
+     *
+     * @param string $act_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetActivitySteps($activityUid, $projectUid)
+    public function doGetActivitySteps($act_uid, $prj_uid)
     {
         try {
             $task = new \BusinessModel\Task();
+            $task->setFormatFieldNameInUppercase(false);
+            $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
 
-            $response = $task->getSteps($activityUid);
+            $response = $task->getSteps($act_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -113,14 +116,19 @@ class Activity extends Api
     }
 
     /**
-     * @url GET /:projectUid/activity/:activityUid/available-steps
+     * @url GET /:prj_uid/activity/:act_uid/available-steps
+     *
+     * @param string $act_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetActivityAvailableSteps($activityUid, $projectUid)
+    public function doGetActivityAvailableSteps($act_uid, $prj_uid)
     {
         try {
             $task = new \BusinessModel\Task();
+            $task->setFormatFieldNameInUppercase(false);
+            $task->setArrayParamException(array("taskUid" => "act_uid"));
 
-            $response = $task->getAvailableSteps($activityUid);
+            $response = $task->getAvailableSteps($act_uid);
 
             return $response;
         } catch (\Exception $e) {

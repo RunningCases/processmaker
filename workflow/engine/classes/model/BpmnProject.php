@@ -14,6 +14,14 @@ require_once 'classes/model/om/BaseBpmnProject.php';
  *
  * @package    classes.model
  */
-class BpmnProject extends BaseBpmnProject {
+class BpmnProject extends BaseBpmnProject
+{
+
+    // Overrides
+
+    public function toArray($type = BasePeer::TYPE_FIELDNAME)
+    {
+        return parent::toArray($type);
+    }
 
 } // BpmnProject

@@ -3,8 +3,8 @@ namespace ProcessMaker\Project;
 
 interface ProjectHandlerInterface
 {
-    public function create($data);
-    public function update($prjUid, $data);
-    public function delete($prjUid);
-    public function load($prjUid);
+    public function save();
+    public function update();
+    public function delete();
+    public static function load();
 }

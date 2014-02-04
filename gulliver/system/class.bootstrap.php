@@ -27,15 +27,6 @@ class Bootstrap
             return true;
         }
 
-        // try resolve a Model class file
-        $classFile = PATH_CORE . 'classes' . PATH_SEP . 'model' . PATH_SEP .  $class . '.php';
-
-        if (file_exists($classFile)) {
-            require_once $classFile;
-
-            return true;
-        }
-
         $classHasNamespaceSeparator = strpos($class, '\\') !== false ? true : false;
 
         foreach (BootStrap::$includePaths as $path) {
@@ -159,6 +150,7 @@ class Bootstrap
         self::registerClass("Propel", PATH_THIRDPARTY . "propel" . PATH_SEP . "Propel.php");
         self::registerClass("Creole", PATH_THIRDPARTY . "creole" . PATH_SEP . "Creole.php");
         self::registerClass("Criteria", PATH_THIRDPARTY . "propel" . PATH_SEP . "util" . PATH_SEP . "Criteria.php");
+        self::registerClass("BasePeer", PATH_THIRDPARTY . "propel" . PATH_SEP . "util" . PATH_SEP . "BasePeer.php");
 
         //DATABASE propel classes used in "Cases" Options
         self::registerClass("Entity_Base", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "entities" . PATH_SEP . "Base.php");
@@ -392,6 +384,8 @@ class Bootstrap
         self::registerClass("UsersPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "UsersPeer.php");
 
         self::registerClass("Xml_Node", PATH_GULLIVER . "class.xmlDocument.php");
+
+        self::registerClass("Tasks",  PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.tasks.php");
     }
 
     //below this line, still not approved methods

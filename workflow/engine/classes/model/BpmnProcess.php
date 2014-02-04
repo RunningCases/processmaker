@@ -14,6 +14,21 @@ require_once 'classes/model/om/BaseBpmnProcess.php';
  *
  * @package    classes.model
  */
-class BpmnProcess extends BaseBpmnProcess {
+class BpmnProcess extends BaseBpmnProcess
+{
+    public static function findAllByProUid($prjUid)
+    {
+        $c = new Criteria("workflow");
+        $c->add(BpmnProcessPeer::PRJ_UID, $prjUid);
 
+        return BpmnProcessPeer::doSelect($c);
+    }
+
+
+    // Overrides
+
+    public function toArray($type = BasePeer::TYPE_FIELDNAME)
+    {
+        return parent::toArray($type);
+    }
 } // BpmnProcess

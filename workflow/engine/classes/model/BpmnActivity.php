@@ -91,12 +91,6 @@ class BpmnActivity extends BaseBpmnActivity
 
     public static function getAll($prjUid = null, $start = null, $limit = null, $filter = '', $returnType = null, $changeCaseTo=CASE_UPPER)
     {
-        if (is_array($prjUid)) {
-            // $start, is a array config
-            extract($prjUid, EXTR_OVERWRITE);
-        }
-
-        $activities = array();
         $c = new Criteria('workflow');
         $c->addSelectColumn("BPMN_ACTIVITY.*");
         $c->addSelectColumn("BPMN_BOUND.*");
@@ -107,6 +101,8 @@ class BpmnActivity extends BaseBpmnActivity
         }
 
         $returnType = ($returnType != 'array' && $returnType != 'object') ? 'array' : $returnType;
+        $activities = array();
+
 
         switch ($returnType) {
             case 'object':
@@ -122,13 +118,13 @@ class BpmnActivity extends BaseBpmnActivity
 
                 break;
         }
-
+        
         return $activities;
     }
 
-	public function fromArray($data)
+	public function fromArray($data, $type = BasePeer::TYPE_FIELDNAME)
     {
-        parent::fromArray($data, BasePeer::TYPE_FIELDNAME);
+        parent::fromArray($data, $type);
 
         $bound = BpmnBound::findByElement('Activity', $this->getActUid());
 
@@ -142,12 +138,18 @@ class BpmnActivity extends BaseBpmnActivity
         $this->bound->fromArray($data, BasePeer::TYPE_FIELDNAME);
     }
 
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+    public function toArray($type = BasePeer::TYPE_FIELDNAME)
     {
-        $data = parent::toArray($keyType);
+        $data = parent::toArray($type);
+        $bouUid = $this->bound->getBouUid();
 
-        if (is_object($this->bound) && get_class($this->bound) == 'BpmnBound') {
-            $data = array_merge($data, $this->bound->toArray($keyType));
+        if (empty($bouUid)) {
+            $bound = BpmnBound::findByElement('Activity', $this->getActUid());
+
+            if (is_object($bound)) {
+                $this->bound = $bound;
+                $data = array_merge($data, $this->bound->toArray($type));
+            }
         }
 
         return $data;

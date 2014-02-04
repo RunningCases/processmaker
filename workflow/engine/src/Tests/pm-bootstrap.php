@@ -3,7 +3,8 @@
 // pm-bootstrap.php
 //
 
-$config = parse_ini_file("config.ini");
+$config = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR . "config.ini");
+
 $workspace = $config['workspace'];
 $lang = $config['lang'];
 $processMakerHome = $config['pm_home_dir'];
@@ -132,7 +133,7 @@ if (is_file(PATH_DATA_SITE.PATH_SEP . '.server_info')) {
 
 // create memcached singleton
 Bootstrap::LoadClass( 'memcached' );
-$memcache = PMmemcached::getSingleton( SYS_SYS );
+//$memcache = PMmemcached::getSingleton( SYS_SYS );
 
 Propel::init(PATH_CONFIG . "databases.php");
 

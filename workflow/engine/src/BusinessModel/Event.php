@@ -126,7 +126,8 @@ class Event
         if ($create) {
             $uidNewEvent = $oEvent->create( $dataEvent );
         } else {
-            $uidNewEvent = $oEvent->update( $dataEvent );
+            $oEvent->update( $dataEvent );
+            $uidNewEvent = $dataEvent['ENV_UID'];
         }
 
         $dataEvent = $this->getEvents($sProcessUID, '', $uidNewEvent);

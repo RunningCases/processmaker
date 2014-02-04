@@ -513,6 +513,8 @@ try {
     Bootstrap::registerSystemClasses();
 
     Bootstrap::registerDir('src', PATH_HOME . 'engine/src/');
+    Bootstrap::registerDir('model', PATH_CORE . 'classes' . PATH_SEP . 'model');
+    Bootstrap::registerDir('rbac/model', PATH_RBAC_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model');
 
     require_once  PATH_THIRDPARTY . '/pear/PEAR.php';
 

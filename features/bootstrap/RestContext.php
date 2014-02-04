@@ -1242,6 +1242,29 @@ class RestContext extends BehatContext
 
     }
 
-
+     /**
+     * @Given /^the property "([^"]*)" of "([^"]*)" is set to "([^"]*)"$/
+     */
+    public function thePropertyOfIsSetTo($propertyName, $objName, $propertyValue)
+    {
+        $data = $this->_data;
+        if (!empty($data)) {
+            if (!isset($data->$objName)) {
+                throw new Exception("Object '$objName' is not set!\n\n" );
+            }
+            if (!isset($data->$objName->$propertyName)) {
+                throw new Exception("Property '$propertyName' is not set in object '$objName'!\n\n" );
+            }
+            if ($data->$objName->$propertyName != $propertyValue) {
+                throw new \Exception('Property value mismatch! (given: "'
+                    . $propertyValue . '", match: "'
+                    . $data->$objName->$propertyName . '")\n\n'
+                );
+            }
+        } else {
+            throw new Exception("Response was not JSON\n\n"
+                . $this->_response->getBody(true));
+        }
+    }
 
 }

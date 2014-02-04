@@ -3099,6 +3099,7 @@
   <table name="BPMN_PROJECT">
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_NAME" type="VARCHAR" size="255" required="true" default=""/>
+    <column name="PRJ_DESCRIPTION" type="VARCHAR" size="512" required="false"/>
     <column name="PRJ_TARGET_NAMESPACE" type="LONGVARCHAR" required="true"/>
     <column name="PRJ_EXPRESION_LANGUAGE" type="LONGVARCHAR" required="false"/>
     <column name="PRJ_TYPE_LANGUAGE" type="LONGVARCHAR" required="false"/>
