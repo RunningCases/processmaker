@@ -171,7 +171,7 @@ class ProjectUser
             }
             $oUser = \UsersPeer::retrieveByPK($sUserUID);
             if (is_null($oUser)) {
-                throw (new \Exception( 'This id for `usr_uid`: '. $userUid .' do not correspond to a registered user'));
+                throw (new \Exception( 'This id for `usr_uid`: '. $sUserUID .' do not correspond to a registered user'));
             }
             $aUsers = array();
             \G::LoadClass( 'case' );
@@ -281,7 +281,7 @@ class ProjectUser
                     $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
                     $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
                     if (! ($userIsAssigned >= 1)) {
-                        throw (new \Exception( "The `usr_uid` `" . $sWS_USER . "` doesn't have the activity `tas_uid` `" . $sTASKS . "` assigned"));
+                        throw (new \Exception( "The `usr_uid` `" . $sWS_USER . "` doesn't have the activity `act_uid` `" . $sTASKS . "` assigned"));
                     }
                 }
                 $oDataset = \TaskUserPeer::doSelectRS($oCriteria);

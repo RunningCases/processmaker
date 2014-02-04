@@ -44,25 +44,15 @@ class User extends Api
     /**
      * @url POST
      *
-     * @param array  $request_data
-     * @param string $grp_title    {@from body}{@required true}
-     * @param string $grp_status   {@from body}{@choice ACTIVE,INACTIVE}{@required true}
+     * @param array $request_data
      *
      * @status 201
      */
-    public function doPost(
-        $request_data,
-        $grp_title = "",
-        $grp_status = "ACTIVE"
-    ) {
+    public function doPost($request_data) {
         try {
-            $group = new \BusinessModel\Group();
-            $group->setFormatFieldNameInUppercase(false);
-
-            $arrayData = $group->create($request_data);
-
+            $user = new \BusinessModel\User();
+            $arrayData = $user->create($request_data);
             $response = $arrayData;
-
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -70,41 +60,30 @@ class User extends Api
     }
 
     /**
-     * @url PUT /:grp_uid
+     * @url PUT /:usr_uid
      *
-     * @param string $grp_uid      {@min 32}{@max 32}
+     * @param string $usr_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     * @param string $grp_title    {@from body}
-     * @param string $grp_status   {@from body}{@choice ACTIVE,INACTIVE}
      */
-    public function doPut(
-        $grp_uid,
-        $request_data,
-        $grp_title = "",
-        $grp_status = "ACTIVE"
-    ) {
+    public function doPut($usr_uid, $request_data) {
         try {
-            $group = new \BusinessModel\Group();
-            $group->setFormatFieldNameInUppercase(false);
-
-            $arrayData = $group->update($grp_uid, $request_data);
+            $user = new \BusinessModel\User();
+            $arrayData = $user->update($usr_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url DELETE /:grp_uid
+     * @url DELETE /:usr_uid
      *
-     * @param string $grp_uid {@min 32}{@max 32}
+     * @param string $usr_uid {@min 32}{@max 32}
      */
-    public function doDelete($grp_uid)
+    public function doDelete($usr_uid)
     {
         try {
-            $group = new \BusinessModel\Group();
-            $group->setFormatFieldNameInUppercase(false);
-
-            $group->delete($grp_uid);
+            $user = new \BusinessModel\User();
+            $user->delete($usr_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

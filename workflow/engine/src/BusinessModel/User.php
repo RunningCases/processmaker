@@ -1,173 +1,202 @@
 <?php
 namespace BusinessModel;
-
+use \G;
 class User
 {
     /**
-     * Set exception messages for parameters
-     *
-     * @param array $arrayData Data with the params
-     *
-     * return void
-     */
-    public function setArrayMsgExceptionParam($arrayData)
-    {
-        try {
-            $this->arrayMsgExceptionParam = $arrayData;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Get the name of the field according to the format
-     *
-     * @param string $fieldName Field name
-     *
-     * return string Return the field name according the format
-     */
-    public function getFieldNameByFormatFieldName($fieldName)
-    {
-        try {
-            return ($this->formatFieldNameInUppercase)? strtoupper($fieldName) : strtolower($fieldName);
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Verify if exists the title of a Group
-     *
-     * @param string $title           Title
-     * @param string $groupUidExclude Unique id of Group to exclude
-     *
-     * return bool Return true if exists the title of a Group, false otherwise
-     */
-    public function existsTitle($groupTitle, $groupUidExclude = "")
-    {
-        try {
-            $delimiter = \DBAdapter::getStringDelimiter();
-
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\GroupwfPeer::GRP_UID);
-
-            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(\GroupwfPeer::GRP_UID, "CT.CON_ID", \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "GRP_TITLE" . $delimiter, \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
-
-            if ($groupUidExclude != "") {
-                $criteria->add(\GroupwfPeer::GRP_UID, $groupUidExclude, \Criteria::NOT_EQUAL);
-            }
-
-            $criteria->add("CT.CON_VALUE", $groupTitle, \Criteria::EQUAL);
-
-            $rsCriteria = \GroupwfPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            if ($rsCriteria->next()) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Verify if status has invalid value
-     *
-     * @param string $groupStatus Status
-     *
-     * return void Throw exception if status has invalid value
-     */
-    public function throwExceptionIfHaveInvalidValueInStatus($groupStatus)
-    {
-        if (!in_array($groupStatus, array("ACTIVE", "INACTIVE"))) {
-            $field = $this->getFieldNameByFormatFieldName("GRP_STATUS");
-
-            throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
-        }
-    }
-
-
-    /**
-     * Verify if exists the title of a Group
-     *
-     * @param string $title           Title
-     * @param string $groupUidExclude Unique id of Group to exclude
-     *
-     * return void Throw exception if exists the title of a Group
-     */
-    public function throwExceptionIfExistsTitle($groupTitle, $groupUidExclude = "")
-    {
-        if ($this->existsTitle($groupTitle, $groupUidExclude)) {
-            $field = $this->getFieldNameByFormatFieldName("GRP_TITLE");
-
-            $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
-            $msg = $msg . \G::LoadTranslation("ID_MSG_GROUP_NAME_EXISTS");
-
-            throw (new \Exception($msg));
-        }
-    }
-
-    /**
-     * Create Group
+     * Create User Uid
      *
      * @param array $arrayData Data
      *
-     * return array Return data of the new Group created
+     * return id
+     */
+    public function createUser($aData)
+    { 
+        require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
+        $this->userObj = new \RbacUsers();
+        if (class_exists('PMPluginRegistry')) {
+            $pluginRegistry = & \PMPluginRegistry::getSingleton();
+            if ($pluginRegistry->existsTrigger(PM_BEFORE_CREATE_USER)) {
+                try {
+                    $pluginRegistry->executeTriggers(PM_BEFORE_CREATE_USER, null);
+                } catch(Exception $error) {
+                    throw new Exception($error->getMessage());
+                }
+            }
+        }
+        $oConnection = \Propel::getConnection(\RbacUsersPeer::DATABASE_NAME);
+        try {
+            $oRBACUsers = new \RbacUsers();
+            do {
+                $aData['USR_UID'] = \G::generateUniqueID();
+            } while ($oRBACUsers->load($aData['USR_UID']));
+            $oRBACUsers->fromArray($aData, \BasePeer::TYPE_FIELDNAME);
+            $iResult = $oRBACUsers->save();
+            return $aData['USR_UID'];
+        } catch (Exception $oError) {
+            $oConnection->rollback();
+            throw($oError);
+        }
+    }
+
+    /**
+     * to put role an user
+     *
+     * @access public
+     * @param string $sUserUID
+     * @param string $sRolCode
+     * @return void
+     */
+    public function assignRoleToUser ($sUserUID = '', $sRolCode = '')
+    {
+        require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
+        require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "UsersRoles.php");
+        $this->usersRolesObj = new \UsersRoles();
+        $this->rolesObj = new \Roles();
+        $aRol = $this->rolesObj->loadByCode( $sRolCode );
+        $this->usersRolesObj->create( $sUserUID, $aRol['ROL_UID'] );
+    }
+
+    /**
+     * change status of an user
+     *
+     * @access public
+     * @param array $sUserUID
+     * @return void
+     */
+    public function changeUserStatus ($sUserUID = '', $sStatus = 'ACTIVE')
+    {
+        require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
+        //require_once ("classes/model/RbacUsers.php");
+        $this->userObj = new \RbacUsers();
+        if ($sStatus === 'ACTIVE') {
+            $sStatus = 1;
+        }
+
+        $aFields = $this->userObj->load( $sUserUID );
+        $aFields['USR_STATUS'] = $sStatus;
+        $this->userObj->update( $aFields );
+    }
+
+    /**
+     * updated an user
+     *
+     * @access public
+     * @param array $aData
+     * @param string $sRolCode
+     * @return void
+     */
+    public function updateUser ($aData = array(), $sRolCode = '')
+    {
+        require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
+        //require_once ("classes/model/RbacUsers.php");
+        $this->userObj = new \RbacUsers();
+
+        if (isset( $aData['USR_STATUS'] )) {
+            if ($aData['USR_STATUS'] == 'ACTIVE') {
+                $aData['USR_STATUS'] = 1;
+            }
+        }
+        $this->userObj->update( $aData );
+        if ($sRolCode != '') {
+            echo 'entra rol';
+            $this->removeRolesFromUser( $aData['USR_UID'] );
+            $this->assignRoleToUser( $aData['USR_UID'], $sRolCode );
+        }
+    }
+
+    /**
+     * Create User
+     *
+     * @param array $arrayData Data
+     *
+     * return array Return data of the new User created
      */
     public function create($arrayData)
     {
         try {
+            global $RBAC;
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
-
-            unset($arrayData["GRP_UID"]);
-
-            //Verify data
-            if (!isset($arrayData["GRP_TITLE"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_TITLE")), "The \"{0}\" attribute is not defined")));
+            $form = $arrayData;
+            if (isset($arrayData['USR_UID'])) {
+                $form['USR_UID'] = $arrayData['USR_UID'];
+            } else {
+                $form['USR_UID'] = '';
             }
-
-            $arrayData["GRP_TITLE"] = trim($arrayData["GRP_TITLE"]);
-
-            if ($arrayData["GRP_TITLE"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_TITLE")), "The \"{0}\" attribute is empty")));
+            if (!isset($form['USR_NEW_PASS'])) {
+                $form['USR_NEW_PASS'] = '';
             }
-
-            if (!isset($arrayData["GRP_STATUS"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_STATUS")), "The \"{0}\" attribute is not defined")));
+            if ($form['USR_NEW_PASS'] != '') {
+                $form['USR_PASSWORD'] = md5($form['USR_NEW_PASS']);
             }
-
-            $arrayData["GRP_STATUS"] = trim($arrayData["GRP_STATUS"]);
-
-            if ($arrayData["GRP_STATUS"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_STATUS")), "The \"{0}\" attribute is empty")));
+            if (!isset($form['USR_CITY'])) {
+                $form['USR_CITY'] = '';
             }
-
-            $this->throwExceptionIfHaveInvalidValueInStatus($arrayData["GRP_STATUS"]);
-
-            $this->throwExceptionIfExistsTitle($arrayData["GRP_TITLE"]);
-
-            //Create
-            $group = new \Groupwf();
-
-            $groupUid = $group->create($arrayData);
-
-            //Return
-            $arrayData = array_merge(array("GRP_UID" => $groupUid), $arrayData);
-
-            if (!$this->formatFieldNameInUppercase) {
-                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            if (!isset($form['USR_LOCATION'])) {
+                $form['USR_LOCATION'] = '';
             }
-
-            return $arrayData;
+            if (!isset($form['USR_AUTH_USER_DN'])) {
+                $form['USR_AUTH_USER_DN'] = '';
+            }
+            if ($form['USR_UID'] == '') {
+                $criteria = new \Criteria();
+                $criteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+                $criteria->add(\UsersPeer::USR_USERNAME, utf8_encode($arrayData['USR_USERNAME']));
+                if (\UsersPeer::doCount($criteria) > 0) {
+                    throw new \Exception(\G::LoadTranslation('ID_USERNAME_ALREADY_EXISTS', array('USER_ID' => $arrayData['USR_USERNAME'])));
+                }
+                $aData['USR_USERNAME'] = $form['USR_USERNAME'];
+                $aData['USR_PASSWORD'] = md5($form['USR_PASSWORD']);
+                $aData['USR_FIRSTNAME'] = $form['USR_FIRSTNAME'];
+                $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
+                $aData['USR_EMAIL'] = $form['USR_EMAIL'];
+                $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+                $aData['USR_CREATE_DATE'] = date('Y-m-d H:i:s');
+                $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
+                $aData['USR_BIRTHDAY'] = date('Y-m-d');
+                $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
+                $statusWF = $form['USR_STATUS'];
+                $aData['USR_STATUS'] = $form['USR_STATUS'] ;
+                try {
+                    if ($aData['USR_STATUS'] == 'ACTIVE') {
+                        $aData['USR_STATUS'] = 1;
+                    }
+                    if ($aData['USR_STATUS'] == 'INACTIVE') {
+                        $aData['USR_STATUS'] = 0;
+                    }
+                    $sUserUID = $this->createUser($aData);
+                    if ($form['USR_ROLE'] != '') {
+                       $this->assignRoleToUser($sUserUID, $form['USR_ROLE']);
+                    }
+                } catch(Exception $oError) {
+                    throw new \Exception($oError->getMessage());
+                }
+                $aData['USR_STATUS'] = $statusWF;
+                $aData['USR_UID'] = $sUserUID;
+                $aData['USR_PASSWORD'] = md5($sUserUID);
+                $aData['USR_PASSWORD'] = $sUserUID;
+                $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
+                $aData['USR_CITY'] = $form['USR_CITY'];
+                $aData['USR_LOCATION'] = $form['USR_LOCATION'];
+                $aData['USR_ADDRESS'] = $form['USR_ADDRESS'];
+                $aData['USR_PHONE'] = $form['USR_PHONE'];
+                $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
+                $aData['USR_POSITION'] = $form['USR_POSITION'];
+                $aData['USR_ROLE'] = $form['USR_ROLE'];
+                $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+                require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
+                $oUser = new \Users();
+                $oUser -> create( $aData );
+                //Save Calendar assigment
+                if ((isset($form['USR_CALENDAR']))) {
+                    //Save Calendar ID for this user
+                    \G::LoadClass("calendar");
+                    $calendarObj = new \Calendar();
+                    $calendarObj->assignCalendarTo($sUserUID, $form['USR_CALENDAR'], 'USER');
+                }
+            }
+            $oCriteria = $this->getUser($sUserUID);
+            return $oCriteria;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -185,49 +214,169 @@ class User
     {
         try {
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+            $form = $arrayData;
+            $aData['USR_UID'] = $form['USR_UID'];
+            $aData['USR_USERNAME'] = $form['USR_USERNAME'];
+            if (isset($form['USR_PASSWORD'])) {
+                if ($form['USR_PASSWORD'] != '') {
+                    $aData['USR_PASSWORD'] = $form['USR_PASSWORD'];
+                    require_once 'classes/model/UsersProperties.php';
+                    $oUserProperty = new \UsersProperties();
+                    $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($form['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array(md5($form['USR_PASSWORD'])))));
 
-            //Verify data
-            $this->throwExceptionIfNoExistsGroup($groupUid);
+                    $memKey = 'rbacSession' . session_id();
+                    $memcache = & PMmemcached::getSingleton(defined('SYS_SYS') ? SYS_SYS : '' );
+                    if (($RBAC->aUserInfo = $memcache->get($memKey)) === false) {
+                        $RBAC->loadUserRolePermission($RBAC->sSystem, $_SESSION['USER_LOGGED']);
+                        $memcache->set($memKey, $RBAC->aUserInfo, \PMmemcached::EIGHT_HOURS);
+                    }
+                    if ($RBAC->aUserInfo['PROCESSMAKER']['ROLE']['ROL_CODE'] == 'PROCESSMAKER_ADMIN') {
+                        $aUserProperty['USR_LAST_UPDATE_DATE'] = date('Y-m-d H:i:s');
+                        $aUserProperty['USR_LOGGED_NEXT_TIME'] = 1;
+                        $oUserProperty->update($aUserProperty);
+                    }
 
-            if (isset($arrayData["GRP_TITLE"])) {
-                $arrayData["GRP_TITLE"] = trim($arrayData["GRP_TITLE"]);
+                    $aErrors = $oUserProperty->validatePassword($form['USR_NEW_PASS'], $aUserProperty['USR_LAST_UPDATE_DATE'], 0);
 
-                if ($arrayData["GRP_TITLE"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_TITLE")), "The \"{0}\" attribute is empty")));
+                    if (count($aErrors) > 0) {
+                        $sDescription = \G::LoadTranslation('ID_POLICY_ALERT') . ':,';
+                        foreach ($aErrors as $sError) {
+                            switch ($sError) {
+                                case 'ID_PPP_MINIMUN_LENGTH':
+                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ': ' . PPP_MINIMUN_LENGTH . ',';
+                                    break;
+                                case 'ID_PPP_MAXIMUN_LENGTH':
+                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ': ' . PPP_MAXIMUN_LENGTH . ',';
+                                    break;
+                                case 'ID_PPP_EXPIRATION_IN':
+                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ' ' . PPP_EXPIRATION_IN . ' ' . G::LoadTranslation('ID_DAYS') . ',';
+                                    break;
+                                default:
+                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ',';
+                                    break;
+                            }
+                        }
+                        $sDescription .= '' . \G::LoadTranslation('ID_PLEASE_CHANGE_PASSWORD_POLICY');
+                        $result->success = false;
+                        $result->msg = $sDescription;
+                        print (\G::json_encode($result));
+                        die();
+                    }
+                    $aHistory = unserialize($aUserProperty['USR_PASSWORD_HISTORY']);
+                    if (!is_array($aHistory)) {
+                        $aHistory = array();
+                    }
+                    if (!defined('PPP_PASSWORD_HISTORY')) {
+                        define('PPP_PASSWORD_HISTORY', 0);
+                    }
+                    if (PPP_PASSWORD_HISTORY > 0) {
+                        //it's looking a password igual into aHistory array that was send for post in md5 way
+                        $c = 0;
+                        $sw = 1;
+                        while (count($aHistory) >= 1 && count($aHistory) > $c && $sw) {
+                            if (strcmp(trim($aHistory[$c]), trim($form['USR_PASSWORD'])) == 0) {
+                                $sw = 0;
+                            }
+                            $c++;
+                        }
+                        if ($sw == 0) {
+                            $sDescription = \G::LoadTranslation('ID_POLICY_ALERT') . ':<br /><br />';
+                            $sDescription .= ' - ' . \G::LoadTranslation('PASSWORD_HISTORY') . ': ' . PPP_PASSWORD_HISTORY . '<br />';
+                            $sDescription .= '<br />' . \G::LoadTranslation('ID_PLEASE_CHANGE_PASSWORD_POLICY') . '';
+                            $result->success = false;
+                            $result->msg = $sDescription;
+                            print (G::json_encode($result));
+                            die();
+                        }
+
+                        if (count($aHistory) >= PPP_PASSWORD_HISTORY) {
+                            $sLastPassw = array_shift($aHistory);
+                        }
+                        $aHistory[] = $form['USR_PASSWORD'];
+                    }
+                    $aUserProperty['USR_LAST_UPDATE_DATE'] = date('Y-m-d H:i:s');
+                    $aUserProperty['USR_LOGGED_NEXT_TIME'] = 1;
+                    $aUserProperty['USR_PASSWORD_HISTORY'] = serialize($aHistory);
+                    $oUserProperty->update($aUserProperty);
                 }
             }
-
-            if (isset($arrayData["GRP_STATUS"])) {
-                $arrayData["GRP_STATUS"] = trim($arrayData["GRP_STATUS"]);
-
-                if ($arrayData["GRP_STATUS"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("GRP_STATUS")), "The \"{0}\" attribute is empty")));
+            $aData['USR_FIRSTNAME'] = $form['USR_FIRSTNAME'];
+            $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
+            $aData['USR_EMAIL'] = $form['USR_EMAIL'];
+            $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+            $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
+            if (isset($form['USR_STATUS'])) {
+                $aData['USR_STATUS'] = $form['USR_STATUS'];
+            }
+            if (isset($form['USR_ROLE'])) {
+                $RBAC->updateUser($aData, $form['USR_ROLE']);
+            } else {
+                $RBAC->updateUser($aData);
+            }
+            $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
+            $aData['USR_CITY'] = $form['USR_CITY'];
+            $aData['USR_LOCATION'] = $form['USR_LOCATION'];
+            $aData['USR_ADDRESS'] = $form['USR_ADDRESS'];
+            $aData['USR_PHONE'] = $form['USR_PHONE'];
+            $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
+            $aData['USR_POSITION'] = $form['USR_POSITION'];
+            /*
+              if ($form['USR_RESUME'] != '') {
+              $aData['USR_RESUME'] = $form['USR_RESUME'];
+              }
+             */
+            if (isset($form['USR_ROLE'])) {
+                $aData['USR_ROLE'] = $form['USR_ROLE'];
+            }
+            if (isset($form['USR_REPLACED_BY'])) {
+                $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+            }
+            if (isset($form['USR_AUTH_USER_DN'])) {
+                $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
+            }
+            require_once 'classes/model/Users.php';
+            $oUser = new \Users();
+            $oUser->update($aData);
+            if ($_FILES['USR_PHOTO']['error'] != 1) {
+                if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
+                    $aAux = explode('.', $_FILES['USR_PHOTO']['name']);
+                    \G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS, $aData['USR_UID'] . '.' . $aAux[1]);
+                    \G::resizeImage(PATH_IMAGES_ENVIRONMENT_USERS . $aData['USR_UID'] . '.' . $aAux[1], 96, 96, PATH_IMAGES_ENVIRONMENT_USERS . $aData['USR_UID'] . '.gif');
                 }
+            } else {
+                $result->success = false;
+                $result->fileError = true;
+                print (G::json_encode($result));
+                die();
             }
+            /* Saving preferences */
+            $def_lang = $form['PREF_DEFAULT_LANG'];
+            $def_menu = $form['PREF_DEFAULT_MENUSELECTED'];
+            $def_cases_menu = isset($form['PREF_DEFAULT_CASES_MENUSELECTED']) ? $form['PREF_DEFAULT_CASES_MENUSELECTED'] : '';
 
-            if (isset($arrayData["GRP_STATUS"])) {
-                $this->throwExceptionIfHaveInvalidValueInStatus($arrayData["GRP_STATUS"]);
+            \G::loadClass('configuration');
+
+            $oConf = new \Configurations();
+            $aConf = Array('DEFAULT_LANG' => $def_lang, 'DEFAULT_MENU' => $def_menu, 'DEFAULT_CASES_MENU' => $def_cases_menu);
+
+            /* UPDATING SESSION VARIABLES */
+            $aUser = $RBAC->userObj->load($_SESSION['USER_LOGGED']);
+            //$_SESSION['USR_FULLNAME'] = $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'];
+
+            $oConf->aConfig = $aConf;
+            $oConf->saveConfig('USER_PREFERENCES', '', '', $_SESSION['USER_LOGGED']);
+        
+
+            //Save Calendar assigment
+            if ((isset($form['USR_CALENDAR']))) {
+                //Save Calendar ID for this user
+                \G::LoadClass("calendar");
+                $calendarObj = new \Calendar();
+                $calendarObj->assignCalendarTo($aData['USR_UID'], $form['USR_CALENDAR'], 'USER');
             }
+            $result->success = true;
+            print (\G::json_encode($result));
 
-            if (isset($arrayData["GRP_TITLE"])) {
-                $this->throwExceptionIfExistsTitle($arrayData["GRP_TITLE"], $groupUid);
-            }
-
-            //Update
-            $group = new \Groupwf();
-
-            $arrayData["GRP_UID"] = $groupUid;
-
-            $result = $group->update($arrayData);
-
-            //Return
-            unset($arrayData["GRP_UID"]);
-
-            if (!$this->formatFieldNameInUppercase) {
-                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
-            }
-
-            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -236,183 +385,52 @@ class User
     /**
      * Delete Group
      *
-     * @param string $groupUid Unique id of Group
+     * @param string $usrUid Unique id of User
      *
      * return void
      */
-    public function delete($groupUid)
+    public function delete($usrUid)
     {
         try {
-            //Verify data
-            $this->throwExceptionIfNoExistsGroup($groupUid);
-
-            //Delete
-            $group = new \Groupwf();
-
-            $group->remove($groupUid);
-
-            //Delete assignments of tasks
-            $criteria = new \Criteria("workflow");
-
-            $criteria->add(\TaskUserPeer::USR_UID, $groupUid);
-
-            \TaskUserPeer::doDelete($criteria);
-
-            //Delete permissions
-            $criteria = new \Criteria("workflow");
-
-            $criteria->add(\ObjectPermissionPeer::USR_UID, $groupUid);
-
-            \ObjectPermissionPeer::doDelete($criteria);
-
-            //Delete assignments of supervisors
-            $criteria = new \Criteria("workflow");
-
-            $criteria->add(\ProcessUserPeer::USR_UID, $groupUid);
-            $criteria->add(\ProcessUserPeer::PU_TYPE, "GROUP_SUPERVISOR");
-
-            \ProcessUserPeer::doDelete($criteria);
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Get criteria for Group
-     *
-     * return object
-     */
-    public function getGroupCriteria()
-    {
-        try {
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\GroupwfPeer::GRP_UID);
-            $criteria->addSelectColumn(\GroupwfPeer::GRP_STATUS);
-            $criteria->addSelectColumn(\GroupwfPeer::GRP_LDAP_DN);
-            $criteria->addSelectColumn(\GroupwfPeer::GRP_UX);
-            $criteria->addAsColumn("GRP_TITLE", \ContentPeer::CON_VALUE);
-            $criteria->addJoin(\GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN);
-            $criteria->add(\ContentPeer::CON_CATEGORY, "GRP_TITLE", \Criteria::EQUAL);
-            $criteria->add(\ContentPeer::CON_LANG, SYS_LANG, \Criteria::EQUAL);
-
-            return $criteria;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Get data of total Users by Group
-     *
-     * @param string $groupUid Unique id of Group
-     *
-     * return array Return an array with data of total Users by Group
-     */
-    public function getTotalUsersByGroup($groupUid = "")
-    {
-        try {
-            $arrayData = array();
-
-            //Verif data
-            if ($groupUid != "") {
-                $this->throwExceptionIfNoExistsGroup($groupUid);
+            \G::LoadClass('case');
+            $oProcessMap = new \Cases();
+            $USR_UID = $usrUid;
+            $total = 0;
+            $history = 0;
+            $c = $oProcessMap->getCriteriaUsersCases('TO_DO', $USR_UID);
+            $total += \ApplicationPeer::doCount($c);
+            $c = $oProcessMap->getCriteriaUsersCases('DRAFT', $USR_UID);
+            $total += \ApplicationPeer::doCount($c);
+            $c = $oProcessMap->getCriteriaUsersCases('COMPLETED', $USR_UID);
+            $history += \ApplicationPeer::doCount($c);
+            $c = $oProcessMap->getCriteriaUsersCases('CANCELLED', $USR_UID);
+            $history += \ApplicationPeer::doCount($c);
+            if ($total > 0) {
+                throw (new \Exception( 'The user with usr_uid: '. $USR_UID .', cannot be deleted while has assigned cases.'));
+            } else {
+                $UID = $usrUid;
+                \G::LoadClass('tasks');
+                $oTasks = new \Tasks();
+                $oTasks->ofToAssignUserOfAllTasks($UID);
+                \G::LoadClass('groups');
+                $oGroups = new \Groups();
+                $oGroups->removeUserOfAllGroups($UID);
+                $this->changeUserStatus($UID, 'CLOSED');
+                $_GET['USR_USERNAME'] = '';
+                $this->updateUser(array('USR_UID' => $UID, 'USR_USERNAME' => $_GET['USR_USERNAME']), '');
+                require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
+                $oUser = new \Users();
+                $aFields = $oUser->load($UID);
+                $aFields['USR_STATUS'] = 'CLOSED';
+                $aFields['USR_USERNAME'] = '';
+                $oUser->update($aFields);
+                //Delete Dashboard
+                require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "DashletInstance.php");
+                $criteria = new \Criteria( 'workflow' );
+                $criteria->add( \DashletInstancePeer::DAS_INS_OWNER_UID, $UID );
+                $criteria->add( \DashletInstancePeer::DAS_INS_OWNER_TYPE , 'USER');
+                \DashletInstancePeer::doDelete( $criteria );
             }
-
-            //Get data
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\GroupUserPeer::GRP_UID);
-            $criteria->addSelectColumn("COUNT(" . \GroupUserPeer::GRP_UID . ") AS NUM_REC");
-            $criteria->addJoin(\GroupUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::INNER_JOIN);
-
-            if ($groupUid != "") {
-                $criteria->add(\GroupUserPeer::GRP_UID, $groupUid, \Criteria::EQUAL);
-            }
-
-            $criteria->add(\UsersPeer::USR_STATUS, "CLOSED", \Criteria::NOT_EQUAL);
-            $criteria->addGroupByColumn(\GroupUserPeer::GRP_UID);
-
-            $rsCriteria = \GroupUserPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            while ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-
-                $arrayData[$row["GRP_UID"]] = $row["NUM_REC"];
-            }
-
-            //Return
-            return $arrayData;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Get data of total Tasks by Group
-     *
-     * @param string $groupUid Unique id of Group
-     *
-     * return array Return an array with data of total Tasks by Group
-     */
-    public function getTotalTasksByGroup($groupUid = "")
-    {
-        try {
-            $arrayData = array();
-
-            //Verif data
-            if ($groupUid != "") {
-                $this->throwExceptionIfNoExistsGroup($groupUid);
-            }
-
-            //Get data
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addAsColumn("GRP_UID", \TaskUserPeer::USR_UID);
-            $criteria->addSelectColumn("COUNT(" . \TaskUserPeer::USR_UID . ") AS NUM_REC");
-
-            if ($groupUid != "") {
-                $criteria->add(\TaskUserPeer::USR_UID, $groupUid, \Criteria::EQUAL);
-            }
-
-            $criteria->add(\TaskUserPeer::TU_TYPE, 1, \Criteria::EQUAL);
-            $criteria->add(\TaskUserPeer::TU_RELATION, 2, \Criteria::EQUAL);
-            $criteria->addGroupByColumn(\TaskUserPeer::USR_UID);
-
-            $rsCriteria = \TaskUserPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC );
-
-            while ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-
-                $arrayData[$row["GRP_UID"]] = $row["NUM_REC"];
-            }
-
-            //Return
-            return $arrayData;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Get data of a Group from a record
-     *
-     * @param array $record Record
-     *
-     * return array Return an array with data Group
-     */
-    public function getGroupDataFromRecord($record)
-    {
-        try {
-            return array(
-                $this->getFieldNameByFormatFieldName("GRP_UID")    => $record["GRP_UID"],
-                $this->getFieldNameByFormatFieldName("GRP_TITLE")  => $record["GRP_TITLE"],
-                $this->getFieldNameByFormatFieldName("GRP_STATUS") => $record["GRP_STATUS"],
-                $this->getFieldNameByFormatFieldName("GRP_USERS")  => (int)($record["GRP_USERS"]),
-                $this->getFieldNameByFormatFieldName("GRP_TASKS")  => (int)($record["GRP_TASKS"])
-            );
         } catch (\Exception $e) {
             throw $e;
         }

@@ -31,15 +31,15 @@ class ProjectUsers extends Api
     }
 
     /**
-     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
      *
-     * @url GET /:prjUid/starting-tasks
+     * @url GET /:prj_uid/starting-tasks
      */
-    public function doGetProjectStartingTasks($prjUid)
+    public function doGetProjectStartingTasks($prj_uid)
     {
         try {
             $startingTasks = new \BusinessModel\ProjectUser();
-            $arrayData = $startingTasks->getProjectStartingTasks($prjUid);
+            $arrayData = $startingTasks->getProjectStartingTasks($prj_uid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -50,16 +50,16 @@ class ProjectUsers extends Api
     }
 
     /**
-     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
      * @param string $usr_uid {@min 32} {@max 32}
      *
-     * @url GET /:prjUid/user/:usr_uid/starting-tasks
+     * @url GET /:prj_uid/user/:usr_uid/starting-tasks
      */
-    public function doGetProjectStartingTaskUsers($prjUid, $usr_uid)
+    public function doGetProjectStartingTaskUsers($prj_uid, $usr_uid)
     {
         try {
             $startingTasks = new \BusinessModel\ProjectUser();
-            $arrayData = $startingTasks->getProjectStartingTaskUsers($prjUid, $usr_uid);
+            $arrayData = $startingTasks->getProjectStartingTaskUsers($prj_uid, $usr_uid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -70,17 +70,17 @@ class ProjectUsers extends Api
     }
 
     /**
-     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
      * @param wsUserCanStartTaskStructure $request_data
      *
-     * @url POST /:prjUid/ws/user/can-start-task
+     * @url POST /:prj_uid/ws/user/can-start-task
      */
-    public function doPostProjectWsUserCanStartTask($prjUid, wsUserCanStartTaskStructure $request_data =  null)
+    public function doPostProjectWsUserCanStartTask($prj_uid, wsUserCanStartTaskStructure $request_data =  null)
     {
         try {
             $request_data = (array)($request_data);
             $user = new \BusinessModel\ProjectUser();
-            $objectData = $user->postProjectWsUserCanStartTask($prjUid, $request_data);
+            $objectData = $user->postProjectWsUserCanStartTask($prj_uid, $request_data);
             //Response
             $response = $objectData;
         } catch (\Exception $e) {
