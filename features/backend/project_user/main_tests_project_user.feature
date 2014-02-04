@@ -18,13 +18,13 @@ Feature: Project User Resources Main Tests
     And the response has 52 records
 
 
-  Scenario: Get a list of starting task of a project when there are exactly 9 users
+  Scenario: Get a list of starting task of a project when there are exactly 3 tasks
   Given I request "project/1265557095225ff5c688f46031700471/starting-tasks"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 9 records
+    And the response has 3 records
 
   
   Scenario Outline: Get a list of start task of a specific user
