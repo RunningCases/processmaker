@@ -3,6 +3,596 @@ namespace BusinessModel;
 
 class Process
 {
+    private $arrayFieldDefinition = array(
+        "processUid"                 => array("fieldName" => "PRO_UID",                   "type" => "string",   "required" => false, "empty" => false, "defaultValues" => array()),
+
+        "processTitle"               => array("fieldName" => "PRO_TITLE",                 "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array()),
+        "processDescription"         => array("fieldName" => "PRO_DESCRIPTION",           "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processParent"              => array("fieldName" => "PRO_PARENT",                "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array()),
+        "processTime"                => array("fieldName" => "PRO_TIME",                  "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(1)),
+        "processTimeunit"            => array("fieldName" => "PRO_TIMEUNIT",              "type" => "string",   "required" => false, "empty" => false, "defaultValues" => array("DAYS")),
+        "processStatus"              => array("fieldName" => "PRO_STATUS",                "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array("ACTIVE", "INACTIVE")),
+        "processTypeDay"             => array("fieldName" => "PRO_TYPE_DAY",              "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processType"                => array("fieldName" => "PRO_TYPE",                  "type" => "string",   "required" => false, "empty" => false, "defaultValues" => array("NORMAL")),
+        "processAssignment"          => array("fieldName" => "PRO_ASSIGNMENT",            "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
+        "processShowMap"             => array("fieldName" => "PRO_SHOW_MAP",              "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
+        "processShowMessage"         => array("fieldName" => "PRO_SHOW_MESSAGE",          "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
+        "processSubprocess"          => array("fieldName" => "PRO_SUBPROCESS",            "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
+        "processTriDeleted"          => array("fieldName" => "PRO_TRI_DELETED",           "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processTriCanceled"         => array("fieldName" => "PRO_TRI_CANCELED",          "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processTriPaused"           => array("fieldName" => "PRO_TRI_PAUSED",            "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processTriReassigned"       => array("fieldName" => "PRO_TRI_REASSIGNED",        "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processShowDelegate"        => array("fieldName" => "PRO_SHOW_DELEGATE",         "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
+        "processShowDynaform"        => array("fieldName" => "PRO_SHOW_DYNAFORM",         "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
+        "processCategory"            => array("fieldName" => "PRO_CATEGORY",              "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processSubCategory"         => array("fieldName" => "PRO_SUB_CATEGORY",          "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processIndustry"            => array("fieldName" => "PRO_INDUSTRY",              "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0)),
+        "processUpdateDate"          => array("fieldName" => "PRO_UPDATE_DATE",           "type" => "datetime", "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processCreateDate"          => array("fieldName" => "PRO_CREATE_DATE",           "type" => "datetime", "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processCreateUser"          => array("fieldName" => "PRO_CREATE_USER",           "type" => "string",   "required" => true,  "empty" => true,  "defaultValues" => array()),
+        "processDebug"               => array("fieldName" => "PRO_DEBUG",                 "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
+        "processDerivationScreenTpl" => array("fieldName" => "PRO_DERIVATION_SCREEN_TPL", "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processSummaryDynaform"     => array("fieldName" => "PRO_SUMMARY_DYNAFORM",      "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
+        "processCalendar"            => array("fieldName" => "PRO_CALENDAR",              "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array())
+    );
+    private $formatFieldNameInUppercase = true;
+    private $arrayFieldNameForException = array();
+
+    /**
+     * Set the format of the fields name (uppercase, lowercase)
+     *
+     * @param bool $flag Value that set the format
+     *
+     * return void
+     */
+    public function setFormatFieldNameInUppercase($flag)
+    {
+        try {
+            $this->formatFieldNameInUppercase = $flag;
+
+            foreach ($this->arrayFieldDefinition as $key => $value) {
+                $this->arrayFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value["fieldName"]);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Set exception messages for fields
+     *
+     * @param array $arrayData Data with the fields
+     *
+     * return void
+     */
+    public function setArrayFieldNameForException($arrayData)
+    {
+        try {
+            foreach ($this->arrayFieldDefinition as $key => $value) {
+                $this->arrayFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value["fieldName"]);
+            }
+
+            foreach ($arrayData as $key => $value) {
+                $this->arrayFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get the name of the field according to the format
+     *
+     * @param string $fieldName Field name
+     *
+     * return string Return the field name according the format
+     */
+    public function getFieldNameByFormatFieldName($fieldName)
+    {
+        try {
+            return ($this->formatFieldNameInUppercase)? strtoupper($fieldName) : strtolower($fieldName);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if exists the title of a Process
+     *
+     * @param string $processTitle      Title
+     * @param string $processUidExclude Unique id of Process to exclude
+     *
+     * return bool Return true if exists the title of a Process, false otherwise
+     */
+    public function existsTitle($processTitle, $processUidExclude = "")
+    {
+        try {
+            $delimiter = \DBAdapter::getStringDelimiter();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ProcessPeer::PRO_UID);
+
+            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\ProcessPeer::PRO_UID, "CT.CON_ID", \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "PRO_TITLE" . $delimiter, \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            if ($processUidExclude != "") {
+                $criteria->add(\ProcessPeer::PRO_UID, $processUidExclude, \Criteria::NOT_EQUAL);
+            }
+
+            $criteria->add("CT.CON_VALUE", $processTitle, \Criteria::EQUAL);
+
+            $rsCriteria = \ProcessPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Validate data by field definition
+     *
+     * @param array $arrayData                  Data
+     * @param array $arrayFieldDefinition       Definition of fields
+     * @param array $arrayFieldNameForException Fields for exception messages
+     * @param bool  $flagValidateRequired       Validate required fields
+     *
+     * return void Throw exception if data has an invalid value
+     */
+    public function throwExceptionIfDataNotMetFieldDefinition($arrayData, $arrayFieldDefinition, $arrayFieldNameForException, $flagValidateRequired = true)
+    {
+        try {
+            if ($flagValidateRequired) {
+                foreach ($arrayFieldDefinition as $key => $value) {
+                    $fldAlias = $key;
+                    $arrayFldDefinition = $value;
+
+                    if ($arrayFldDefinition["required"]) {
+                        if (!isset($arrayData[$arrayFldDefinition["fieldName"]])) {
+                            $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
+
+                            throw (new \Exception(str_replace(array("{0}"), array($field), "The \"{0}\" attribute is not defined")));
+                        }
+                    }
+                }
+            }
+
+            foreach ($arrayData as $key1 => $value1) {
+                $fieldName = $key1;
+                $fieldValue = $value1;
+
+                foreach ($arrayFieldDefinition as $key2 => $value2) {
+                    $fldAlias = $key2;
+                    $arrayFldDefinition = $value2;
+
+                    if ($arrayFldDefinition["fieldName"] == $fieldName) {
+                        //empty
+                        if (!$arrayFldDefinition["empty"] && trim($fieldValue) . "" == "") {
+                            $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
+
+                            throw (new \Exception(str_replace(array("{0}"), array($field), "The \"{0}\" attribute is empty")));
+                        }
+
+                        //defaultValues
+                        if (count($arrayFldDefinition["defaultValues"]) > 0 && !in_array($fieldValue, $arrayFldDefinition["defaultValues"])) {
+                            $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
+
+                            throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
+                        }
+
+                        //type
+                        if ($arrayFldDefinition["empty"] && $fieldValue . "" == "") {
+                            //
+                        } else {
+                            $eregDate = "[1-9]\d{3}\-(?:0[1-9]|1[012])\-(?:[0][1-9]|[12][0-9]|3[01])";
+                            $eregHour = "(?:[0-1]\d|2[0-3])\:(?:[0-5]\d)\:(?:[0-5]\d)";
+                            $eregDatetime = $eregDate . "\s" . $eregHour;
+
+                            switch ($arrayFldDefinition["type"]) {
+                                case "date":
+                                    if (!preg_match("/^" . $eregDate . "$/", $fieldValue)) {
+                                        $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
+
+                                        throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
+                                    }
+                                    break;
+                                case "hour":
+                                    if (!preg_match("/^" . $eregHour . "$/", $fieldValue)) {
+                                        $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
+
+                                        throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
+                                    }
+                                    break;
+                                case "datetime":
+                                    if (!preg_match("/^" . $eregDatetime . "$/", $fieldValue)) {
+                                        $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
+
+                                        throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the Process in table PROCESS
+     *
+     * @param string $processUid            Unique id of Process
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exist the Process in table PROCESS
+     */
+    public function throwExceptionIfNoExistsProcess($processUid, $fieldNameForException)
+    {
+        try {
+            $process = new \Process();
+
+            if (!$process->processExists($processUid)) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $processUid), "The project with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the User in table USERS
+     *
+     * @param string $userUid               Unique id of User
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exist the User in table USERS
+     */
+    public function throwExceptionIfNoExistsUser($userUid, $fieldNameForException)
+    {
+        try {
+            $user = new \Users();
+
+            if (!$user->userExists($userUid)) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $userUid), "The user with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if exists the title of a Process
+     *
+     * @param string $processTitle          Title
+     * @param string $fieldNameForException Field name for the exception
+     * @param string $processUidExclude     Unique id of Process to exclude
+     *
+     * return void Throw exception if exists the title of a Process
+     */
+    public function throwExceptionIfExistsTitle($processTitle, $fieldNameForException, $processUidExclude = "")
+    {
+        try {
+            if ($this->existsTitle($processTitle, $processUidExclude)) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $processTitle), "The project title with {0}: \"{1}\", already exists");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the Calendar Definition in table CALENDAR_DEFINITION
+     *
+     * @param string $calendarDefinitionUid Unique id of Calendar Definition
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exist the Calendar Definition in table CALENDAR_DEFINITION
+     */
+    public function throwExceptionIfNotExistsCalendarDefinition($calendarDefinitionUid, $fieldNameForException)
+    {
+        try {
+            $obj = \CalendarDefinitionPeer::retrieveByPK($calendarDefinitionUid);
+
+            if (!(is_object($obj) && get_class($obj) == "CalendarDefinition")) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $calendarDefinitionUid), "The calendar definition with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the Process Category in table PROCESS_CATEGORY
+     *
+     * @param string $processCategoryUid    Unique id of Process Category
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exist the Process Category in table PROCESS_CATEGORY
+     */
+    public function throwExceptionIfNotExistsProcessCategory($processCategoryUid, $fieldNameForException)
+    {
+        try {
+            $obj = \ProcessCategoryPeer::retrieveByPK($processCategoryUid);
+
+            if (!(is_object($obj) && get_class($obj) == "ProcessCategory")) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $processCategoryUid), "The project category with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the DynaForm in table DYNAFORM
+     *
+     * @param string $processUid            Unique id of Process
+     * @param string $dynaFormUid           Unique id of DynaForm
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exist the DynaForm in table DYNAFORM
+     */
+    public function throwExceptionIfNotExistsDynaForm($processUid, $dynaFormUid, $fieldNameForException)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\DynaformPeer::DYN_UID);
+            $criteria->add(\DynaformPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->add(\DynaformPeer::DYN_UID, $dynaFormUid, \Criteria::EQUAL);
+
+            $rsCriteria = \DynaformPeer::doSelectRS($criteria);
+
+            if (!$rsCriteria->next()) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormUid), "The DynaForm with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the Template in Routing Screen Template
+     *
+     * @param string $processUid            Unique id of Process
+     * @param string $fileName              Name template
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exist the Template in Routing Screen Template
+     */
+    public function throwExceptionIfNotExistsRoutingScreenTemplate($processUid, $fileName, $fieldNameForException)
+    {
+        try {
+            \G::LoadClass("processes");
+
+            $arrayFile = \Processes::getProcessFiles($processUid, "mail");
+            $flag = 0;
+
+            foreach ($arrayFile as $f) {
+                if ($f["filename"] == $fileName) {
+                    $flag = 1;
+                    break;
+                }
+            }
+
+            if ($flag == 0) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $fileName), "The routing screen template with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the Trigger in table TRIGGERS
+     *
+     * @param string $processUid            Unique id of Process
+     * @param string $triggerUid            Unique id of Trigger
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exist the Trigger in table TRIGGERS
+     */
+    public function throwExceptionIfNotExistsTrigger($processUid, $triggerUid, $fieldNameForException)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\TriggersPeer::TRI_UID);
+            $criteria->add(\TriggersPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->add(\TriggersPeer::TRI_UID, $triggerUid, \Criteria::EQUAL);
+
+            $rsCriteria = \TriggersPeer::doSelectRS($criteria);
+
+            if (!$rsCriteria->next()) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $triggerUid), "The trigger with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Update Process
+     *
+     * @param string $processUid Unique id of Process
+     * @param array  $arrayData  Data
+     *
+     * return array Return data of the Process updated
+     */
+    public function update($processUid, $arrayData)
+    {
+        try {
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+
+            //Verify data
+            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+
+            $this->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
+
+            if (isset($arrayData["PRO_TITLE"])) {
+                $this->throwExceptionIfExistsTitle($arrayData["PRO_TITLE"], $this->arrayFieldNameForException["processTitle"], $processUid);
+            }
+
+            if (isset($arrayData["PRO_CALENDAR"]) && $arrayData["PRO_CALENDAR"] . "" != "") {
+                $this->throwExceptionIfNotExistsCalendarDefinition($arrayData["PRO_CALENDAR"], $this->arrayFieldNameForException["processCalendar"]);
+            }
+
+            if (isset($arrayData["PRO_CATEGORY"]) && $arrayData["PRO_CATEGORY"] . "" != "") {
+                $this->throwExceptionIfNotExistsProcessCategory($arrayData["PRO_CATEGORY"], $this->arrayFieldNameForException["processCategory"]);
+            }
+
+            if (isset($arrayData["PRO_SUMMARY_DYNAFORM"]) && $arrayData["PRO_SUMMARY_DYNAFORM"] . "" != "") {
+                $this->throwExceptionIfNotExistsDynaForm($processUid, $arrayData["PRO_SUMMARY_DYNAFORM"], $this->arrayFieldNameForException["processSummaryDynaform"]);
+            }
+
+            if (isset($arrayData["PRO_DERIVATION_SCREEN_TPL"]) && $arrayData["PRO_DERIVATION_SCREEN_TPL"] . "" != "") {
+                $this->throwExceptionIfNotExistsRoutingScreenTemplate($processUid, $arrayData["PRO_DERIVATION_SCREEN_TPL"], $this->arrayFieldNameForException["processDerivationScreenTpl"]);
+            }
+
+            if (isset($arrayData["PRO_TRI_DELETED"]) && $arrayData["PRO_TRI_DELETED"] . "" != "") {
+                $this->throwExceptionIfNotExistsTrigger($processUid, $arrayData["PRO_TRI_DELETED"], $this->arrayFieldNameForException["processTriDeleted"]);
+            }
+
+            if (isset($arrayData["PRO_TRI_CANCELED"]) && $arrayData["PRO_TRI_CANCELED"] . "" != "") {
+                $this->throwExceptionIfNotExistsTrigger($processUid, $arrayData["PRO_TRI_CANCELED"], $this->arrayFieldNameForException["processTriCanceled"]);
+            }
+
+            if (isset($arrayData["PRO_TRI_PAUSED"]) && $arrayData["PRO_TRI_PAUSED"] . "" != "") {
+                $this->throwExceptionIfNotExistsTrigger($processUid, $arrayData["PRO_TRI_PAUSED"], $this->arrayFieldNameForException["processTriPaused"]);
+            }
+
+            if (isset($arrayData["PRO_TRI_REASSIGNED"]) && $arrayData["PRO_TRI_REASSIGNED"] . "" != "") {
+                $this->throwExceptionIfNotExistsTrigger($processUid, $arrayData["PRO_TRI_REASSIGNED"], $this->arrayFieldNameForException["processTriReassigned"]);
+            }
+
+            if (isset($arrayData["PRO_PARENT"])) {
+                $this->throwExceptionIfNoExistsProcess($arrayData["PRO_PARENT"], $this->arrayFieldNameForException["processParent"]);
+            }
+
+            if (isset($arrayData["PRO_CREATE_USER"]) && $arrayData["PRO_CREATE_USER"] . "" != "") {
+                $this->throwExceptionIfNoExistsUser($arrayData["PRO_CREATE_USER"], $this->arrayFieldNameForException["processCreateUser"]);
+            }
+
+            //Update
+            $process = new \Process();
+
+            $arrayDataBackup = $arrayData;
+
+            $arrayData["PRO_UID"] = $processUid;
+
+            if (isset($arrayData["PRO_ASSIGNMENT"])) {
+                $arrayData["PRO_ASSIGNMENT"] = ($arrayData["PRO_ASSIGNMENT"] == 1)? "TRUE" : "FALSE";
+            }
+
+            $arrayData["PRO_DYNAFORMS"] = array();
+            $arrayData["PRO_DYNAFORMS"]["PROCESS"] = (isset($arrayData["PRO_SUMMARY_DYNAFORM"]))? $arrayData["PRO_SUMMARY_DYNAFORM"] : "";
+
+            unset($arrayData["PRO_SUMMARY_DYNAFORM"]);
+
+            $result = $process->update($arrayData);
+
+            if (isset($arrayData["PRO_CALENDAR"])) {
+                $calendar = new \Calendar();
+
+                $calendar->assignCalendarTo($processUid, $arrayData["PRO_CALENDAR"], "PROCESS"); //Save Calendar ID for this process
+            }
+
+            $arrayData = $arrayDataBackup;
+
+            //Return
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
+
+            return $arrayData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get data of a Process
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return an array with data of a Process
+     */
+    public function getProcess($processUid)
+    {
+        try {
+            //Verify data
+            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+
+            //Get data
+            //Load Process
+            $process = new \Process();
+            $calendar = new \Calendar();
+
+            $arrayProcessData = $process->load($processUid);
+            $arrayCalendarInfo = $calendar->getCalendarFor($processUid, $processUid, $processUid);
+
+            $arrayProcessData["PRO_ASSIGNMENT"] = ($arrayProcessData["PRO_ASSIGNMENT"] == "TRUE")? 1 : 0;
+            $arrayProcessData["PRO_SUMMARY_DYNAFORM"] = (isset($arrayProcessData["PRO_DYNAFORMS"]["PROCESS"])? $arrayProcessData["PRO_DYNAFORMS"]["PROCESS"] : "");
+
+            //If the function returns a DEFAULT calendar it means that this object doesn't have assigned any calendar
+            $arrayProcessData["PRO_CALENDAR"] = ($arrayCalendarInfo["CALENDAR_APPLIED"] != "DEFAULT")? $arrayCalendarInfo["CALENDAR_UID"] : "";
+
+            //Return
+            unset($arrayProcessData["PRO_DYNAFORMS"]);
+            unset($arrayProcessData["PRO_WIDTH"]);
+            unset($arrayProcessData["PRO_HEIGHT"]);
+            unset($arrayProcessData["PRO_TITLE_X"]);
+            unset($arrayProcessData["PRO_TITLE_Y"]);
+            unset($arrayProcessData["PRO_CATEGORY_LABEL"]);
+
+            $processTitle = $arrayProcessData["PRO_TITLE"];
+            $processDescription = $arrayProcessData["PRO_DESCRIPTION"];
+
+            unset($arrayProcessData["PRO_UID"]);
+            unset($arrayProcessData["PRO_TITLE"]);
+            unset($arrayProcessData["PRO_DESCRIPTION"]);
+
+            $arrayProcessData = array_merge(array("PRO_UID" => $processUid, "PRO_TITLE" => $processTitle, "PRO_DESCRIPTION" => $processDescription), $arrayProcessData);
+
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayProcessData = array_change_key_case($arrayProcessData, CASE_LOWER);
+            }
+
+            return $arrayProcessData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     /**
      * Create Route
      *
