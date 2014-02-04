@@ -65,7 +65,7 @@ class User extends Api
      * @param string $usr_uid      {@min 32}{@max 32}
      * @param array  $request_data
      */
-    public function doPut($usr_uid, $request_data, $grp_title = "", $grp_status = "ACTIVE") {
+    public function doPut($usr_uid, $request_data) {
         try {
             $user = new \BusinessModel\User();
             $arrayData = $user->update($usr_uid, $request_data);

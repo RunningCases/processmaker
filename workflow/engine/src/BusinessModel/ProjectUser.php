@@ -171,7 +171,7 @@ class ProjectUser
             }
             $oUser = \UsersPeer::retrieveByPK($sUserUID);
             if (is_null($oUser)) {
-                throw (new \Exception( 'This id for `usr_uid`: '. $userUid .' do not correspond to a registered user'));
+                throw (new \Exception( 'This id for `usr_uid`: '. $sUserUID .' do not correspond to a registered user'));
             }
             $aUsers = array();
             \G::LoadClass( 'case' );

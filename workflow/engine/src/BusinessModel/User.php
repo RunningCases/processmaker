@@ -187,6 +187,13 @@ class User
                 require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
                 $oUser = new \Users();
                 $oUser -> create( $aData );
+                //Save Calendar assigment
+                if ((isset($form['USR_CALENDAR']))) {
+                    //Save Calendar ID for this user
+                    \G::LoadClass("calendar");
+                    $calendarObj = new \Calendar();
+                    $calendarObj->assignCalendarTo($sUserUID, $form['USR_CALENDAR'], 'USER');
+                }
             }
             $oCriteria = $this->getUser($sUserUID);
             return $oCriteria;
@@ -206,6 +213,170 @@ class User
     public function update($groupUid, $arrayData)
     {
         try {
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+            $form = $arrayData;
+            $aData['USR_UID'] = $form['USR_UID'];
+            $aData['USR_USERNAME'] = $form['USR_USERNAME'];
+            if (isset($form['USR_PASSWORD'])) {
+                if ($form['USR_PASSWORD'] != '') {
+                    $aData['USR_PASSWORD'] = $form['USR_PASSWORD'];
+                    require_once 'classes/model/UsersProperties.php';
+                    $oUserProperty = new \UsersProperties();
+                    $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($form['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array(md5($form['USR_PASSWORD'])))));
+
+                    $memKey = 'rbacSession' . session_id();
+                    $memcache = & PMmemcached::getSingleton(defined('SYS_SYS') ? SYS_SYS : '' );
+                    if (($RBAC->aUserInfo = $memcache->get($memKey)) === false) {
+                        $RBAC->loadUserRolePermission($RBAC->sSystem, $_SESSION['USER_LOGGED']);
+                        $memcache->set($memKey, $RBAC->aUserInfo, \PMmemcached::EIGHT_HOURS);
+                    }
+                    if ($RBAC->aUserInfo['PROCESSMAKER']['ROLE']['ROL_CODE'] == 'PROCESSMAKER_ADMIN') {
+                        $aUserProperty['USR_LAST_UPDATE_DATE'] = date('Y-m-d H:i:s');
+                        $aUserProperty['USR_LOGGED_NEXT_TIME'] = 1;
+                        $oUserProperty->update($aUserProperty);
+                    }
+
+                    $aErrors = $oUserProperty->validatePassword($form['USR_NEW_PASS'], $aUserProperty['USR_LAST_UPDATE_DATE'], 0);
+
+                    if (count($aErrors) > 0) {
+                        $sDescription = \G::LoadTranslation('ID_POLICY_ALERT') . ':,';
+                        foreach ($aErrors as $sError) {
+                            switch ($sError) {
+                                case 'ID_PPP_MINIMUN_LENGTH':
+                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ': ' . PPP_MINIMUN_LENGTH . ',';
+                                    break;
+                                case 'ID_PPP_MAXIMUN_LENGTH':
+                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ': ' . PPP_MAXIMUN_LENGTH . ',';
+                                    break;
+                                case 'ID_PPP_EXPIRATION_IN':
+                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ' ' . PPP_EXPIRATION_IN . ' ' . G::LoadTranslation('ID_DAYS') . ',';
+                                    break;
+                                default:
+                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ',';
+                                    break;
+                            }
+                        }
+                        $sDescription .= '' . \G::LoadTranslation('ID_PLEASE_CHANGE_PASSWORD_POLICY');
+                        $result->success = false;
+                        $result->msg = $sDescription;
+                        print (\G::json_encode($result));
+                        die();
+                    }
+                    $aHistory = unserialize($aUserProperty['USR_PASSWORD_HISTORY']);
+                    if (!is_array($aHistory)) {
+                        $aHistory = array();
+                    }
+                    if (!defined('PPP_PASSWORD_HISTORY')) {
+                        define('PPP_PASSWORD_HISTORY', 0);
+                    }
+                    if (PPP_PASSWORD_HISTORY > 0) {
+                        //it's looking a password igual into aHistory array that was send for post in md5 way
+                        $c = 0;
+                        $sw = 1;
+                        while (count($aHistory) >= 1 && count($aHistory) > $c && $sw) {
+                            if (strcmp(trim($aHistory[$c]), trim($form['USR_PASSWORD'])) == 0) {
+                                $sw = 0;
+                            }
+                            $c++;
+                        }
+                        if ($sw == 0) {
+                            $sDescription = \G::LoadTranslation('ID_POLICY_ALERT') . ':<br /><br />';
+                            $sDescription .= ' - ' . \G::LoadTranslation('PASSWORD_HISTORY') . ': ' . PPP_PASSWORD_HISTORY . '<br />';
+                            $sDescription .= '<br />' . \G::LoadTranslation('ID_PLEASE_CHANGE_PASSWORD_POLICY') . '';
+                            $result->success = false;
+                            $result->msg = $sDescription;
+                            print (G::json_encode($result));
+                            die();
+                        }
+
+                        if (count($aHistory) >= PPP_PASSWORD_HISTORY) {
+                            $sLastPassw = array_shift($aHistory);
+                        }
+                        $aHistory[] = $form['USR_PASSWORD'];
+                    }
+                    $aUserProperty['USR_LAST_UPDATE_DATE'] = date('Y-m-d H:i:s');
+                    $aUserProperty['USR_LOGGED_NEXT_TIME'] = 1;
+                    $aUserProperty['USR_PASSWORD_HISTORY'] = serialize($aHistory);
+                    $oUserProperty->update($aUserProperty);
+                }
+            }
+            $aData['USR_FIRSTNAME'] = $form['USR_FIRSTNAME'];
+            $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
+            $aData['USR_EMAIL'] = $form['USR_EMAIL'];
+            $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+            $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
+            if (isset($form['USR_STATUS'])) {
+                $aData['USR_STATUS'] = $form['USR_STATUS'];
+            }
+            if (isset($form['USR_ROLE'])) {
+                $RBAC->updateUser($aData, $form['USR_ROLE']);
+            } else {
+                $RBAC->updateUser($aData);
+            }
+            $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
+            $aData['USR_CITY'] = $form['USR_CITY'];
+            $aData['USR_LOCATION'] = $form['USR_LOCATION'];
+            $aData['USR_ADDRESS'] = $form['USR_ADDRESS'];
+            $aData['USR_PHONE'] = $form['USR_PHONE'];
+            $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
+            $aData['USR_POSITION'] = $form['USR_POSITION'];
+            /*
+              if ($form['USR_RESUME'] != '') {
+              $aData['USR_RESUME'] = $form['USR_RESUME'];
+              }
+             */
+            if (isset($form['USR_ROLE'])) {
+                $aData['USR_ROLE'] = $form['USR_ROLE'];
+            }
+            if (isset($form['USR_REPLACED_BY'])) {
+                $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+            }
+            if (isset($form['USR_AUTH_USER_DN'])) {
+                $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
+            }
+            require_once 'classes/model/Users.php';
+            $oUser = new \Users();
+            $oUser->update($aData);
+            if ($_FILES['USR_PHOTO']['error'] != 1) {
+                if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
+                    $aAux = explode('.', $_FILES['USR_PHOTO']['name']);
+                    \G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS, $aData['USR_UID'] . '.' . $aAux[1]);
+                    \G::resizeImage(PATH_IMAGES_ENVIRONMENT_USERS . $aData['USR_UID'] . '.' . $aAux[1], 96, 96, PATH_IMAGES_ENVIRONMENT_USERS . $aData['USR_UID'] . '.gif');
+                }
+            } else {
+                $result->success = false;
+                $result->fileError = true;
+                print (G::json_encode($result));
+                die();
+            }
+            /* Saving preferences */
+            $def_lang = $form['PREF_DEFAULT_LANG'];
+            $def_menu = $form['PREF_DEFAULT_MENUSELECTED'];
+            $def_cases_menu = isset($form['PREF_DEFAULT_CASES_MENUSELECTED']) ? $form['PREF_DEFAULT_CASES_MENUSELECTED'] : '';
+
+            \G::loadClass('configuration');
+
+            $oConf = new \Configurations();
+            $aConf = Array('DEFAULT_LANG' => $def_lang, 'DEFAULT_MENU' => $def_menu, 'DEFAULT_CASES_MENU' => $def_cases_menu);
+
+            /* UPDATING SESSION VARIABLES */
+            $aUser = $RBAC->userObj->load($_SESSION['USER_LOGGED']);
+            //$_SESSION['USR_FULLNAME'] = $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'];
+
+            $oConf->aConfig = $aConf;
+            $oConf->saveConfig('USER_PREFERENCES', '', '', $_SESSION['USER_LOGGED']);
+        
+
+            //Save Calendar assigment
+            if ((isset($form['USR_CALENDAR']))) {
+                //Save Calendar ID for this user
+                \G::LoadClass("calendar");
+                $calendarObj = new \Calendar();
+                $calendarObj->assignCalendarTo($aData['USR_UID'], $form['USR_CALENDAR'], 'USER');
+            }
+            $result->success = true;
+            print (\G::json_encode($result));
+
         } catch (\Exception $e) {
             throw $e;
         }
