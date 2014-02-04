@@ -98,6 +98,45 @@ class Project extends Api
     }
 
     /**
+     * @url GET /:prj_uid/process
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetProcess($prj_uid)
+    {
+        try {
+            $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
+
+            $response = $process->getProcess($prj_uid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url PUT /:prj_uid/process
+     *
+     * @param string $prj_uid      {@min 32}{@max 32}
+     * @param array  $request_data
+     */
+    public function doPutProcess($prj_uid, $request_data)
+    {
+        try {
+            $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
+
+            $arrayData = $process->update($prj_uid, $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
      * @url GET /:projectUid/dynaforms
      */
     public function doGetDynaForms($projectUid)

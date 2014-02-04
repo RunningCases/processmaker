@@ -65,7 +65,7 @@ class Group
     /**
      * Verify if exists the title of a Group
      *
-     * @param string $title           Title
+     * @param string $groupTitle      Title
      * @param string $groupUidExclude Unique id of Group to exclude
      *
      * return bool Return true if exists the title of a Group, false otherwise
@@ -146,7 +146,7 @@ class Group
     /**
      * Verify if exists the title of a Group
      *
-     * @param string $title           Title
+     * @param string $groupTitle      Title
      * @param string $groupUidExclude Unique id of Group to exclude
      *
      * return void Throw exception if exists the title of a Group
