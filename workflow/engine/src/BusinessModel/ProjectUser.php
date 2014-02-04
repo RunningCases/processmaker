@@ -281,7 +281,7 @@ class ProjectUser
                     $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
                     $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
                     if (! ($userIsAssigned >= 1)) {
-                        throw (new \Exception( "The `usr_uid` `" . $sWS_USER . "` doesn't have the activity `tas_uid` `" . $sTASKS . "` assigned"));
+                        throw (new \Exception( "The `usr_uid` `" . $sWS_USER . "` doesn't have the activity `act_uid` `" . $sTASKS . "` assigned"));
                     }
                 }
                 $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
