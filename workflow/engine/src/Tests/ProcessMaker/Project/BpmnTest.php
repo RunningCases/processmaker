@@ -4,7 +4,7 @@ namespace Tests\ProcessMaker\Project;
 use \ProcessMaker\Project;
 
 if (! class_exists("Propel")) {
-    include_once __DIR__ . "/../bootstrap.php";
+    include_once __DIR__ . "/../../bootstrap.php";
 }
 
 
@@ -14,7 +14,7 @@ class BpmnTest extends \PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        return;
+        //return;
 
         //cleaning DB
         foreach (self::$prjUids as $prjUid) {

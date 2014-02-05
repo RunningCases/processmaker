@@ -22,7 +22,10 @@ class Project extends Api
             $limit = null;
             $filter = "";
 
-            return \ProcessMaker\Project\Bpmn::getList($start, $limit, $filter, CASE_LOWER);
+            $projects = \ProcessMaker\Project\Adapter\BpmnWorkflow::getList($start, $limit, $filter, CASE_LOWER);
+
+            return $projects;
+
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -31,7 +34,7 @@ class Project extends Api
     public function get($prjUid)
     {
         try {
-            $projects = \ProcessMaker\Project\Bpmn::getList();
+            $projects = new \StdClass(); //TODO
 
             return $projects;
         } catch (\Exception $e) {

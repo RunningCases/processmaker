@@ -88,6 +88,11 @@ class Bpmn extends Handler
         $this->prjUid = $this->project->getPrjUid();
     }
 
+    public function update()
+    {
+
+    }
+
     public function remove()
     {
         /*
@@ -100,20 +105,15 @@ class Bpmn extends Handler
         foreach ($activities as $activity) {
             $this->removeActivity($activity["ACT_UID"]);
         }
-
-        $process = ProcessPeer::retrieveByPK($this->getProcess("object")->getProUid());
-        $process->delete();
-
-        $diagram = DiagramPeer::retrieveByPK($this->getDiagram("object")->getDiaUid());
-        $diagram->delete();
-
-        $project = ProjectPeer::retrieveByPK($this->getUid());
-        $project->delete();
-    }
-
-    public function update()
-    {
-
+        if ($process = $this->getProcess("object")) {
+            $process->delete();
+        }
+        if ($diagram = $this->getDiagram("object")) {
+            $diagram->delete();
+        }
+        if ($project = $this->getProject("object")) {
+            $project->delete();
+        }
     }
 
     public static function getList($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)

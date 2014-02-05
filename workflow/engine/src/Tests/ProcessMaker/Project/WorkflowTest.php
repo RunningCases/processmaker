@@ -4,10 +4,10 @@ namespace Tests\ProcessMaker\Project;
 use \ProcessMaker\Project;
 
 if (! class_exists("Propel")) {
-    include_once __DIR__ . "/../bootstrap.php";
+    include_once __DIR__ . "/../../bootstrap.php";
 }
 
-class ProcessMakerProjectWorkflowTest extends \PHPUnit_Framework_TestCase
+class WorkflowTest extends \PHPUnit_Framework_TestCase
 {
     protected static $proUids = array();
 

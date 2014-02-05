@@ -73,9 +73,19 @@ class Workflow extends Handler
         $this->deleteProcess($this->proUid);
     }
 
+    public static function getList($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)
+    {
+        //return Project::getAll($start, $limit, $filter, $changeCaseTo);
+        $process = new Process();
+        $processes = $process->getAllProcesses( $start, $limit, "", "");
+        //$processes = $process->getAll();
+
+        return $processes;
+    }
+
     public function getUid()
     {
-        if (empty($this->project)) {
+        if (empty($this->proUid)) {
             throw new \RuntimeException("Error: There is not an initialized project.");
         }
 
