@@ -331,7 +331,7 @@ class RestContext extends BehatContext
     /**
      * @When /^I request "([^"]*)"$/
      */
-    public function iRequest($pageUrl)
+    public function iRequest($pageUrl, $urlType="")
     {
         $this->_startTime = microtime(true);
         $baseUrl = $this->getParameter('base_url');
@@ -339,7 +339,12 @@ class RestContext extends BehatContext
             $this->_headers['Authorization'] = 'Bearer ' . $this->access_token;
         }
 
-        $this->_requestUrl = $baseUrl . $pageUrl;
+        
+        if($urlType=="absolute"){
+            $this->_requestUrl = $pageUrl;
+        }else{
+            $this->_requestUrl = $baseUrl . $pageUrl;
+        }
         $url = false !== strpos($pageUrl, '{')
             ? array($this->_requestUrl, (array)$this->_restObject)
             : $this->_requestUrl;
@@ -1215,8 +1220,9 @@ class RestContext extends BehatContext
 
      /**
      * @Given /^I request "([^"]*)"  with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
+     * @Given /^I request "([^"]*)"  with the key "([^"]*)" stored in session array as variable "([^"]*)" and url is "([^"]*)"$/
      */
-    public function iRequestWithTheKeyStoredInSessionArrayAsVariable($pageUrl, $varName, $sessionVarName)
+    public function iRequestWithTheKeyStoredInSessionArrayAsVariable($pageUrl, $varName, $sessionVarName, $urlType="")
     {
         if (file_exists("session.data")) {
             $sessionData = json_decode(file_get_contents("session.data"));
@@ -1236,7 +1242,7 @@ class RestContext extends BehatContext
         $this->printDebug("URL: $pageUrl\n$varName = $varValue\n");
 
 
-        $this->iRequest($pageUrl);
+        $this->iRequest($pageUrl, $urlType);
 
 
 
