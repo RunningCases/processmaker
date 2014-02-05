@@ -29,25 +29,21 @@ class Workflow extends Handler
         }
     }
 
-    public function setProperties($properties)
+    public static function load($proUid)
     {
-        $this->properties = $properties;
-    }
+        $me = new self();
 
-    public function getProcess()
-    {
-        if (empty($this->proUid)) {
-            throw new \Exception("Error: There is not an initialized project.");
+        try {
+            $process = new Process();
+            $processData = $process->load($proUid);
+        } catch (\Exception $e) {
+            throw new Exception\ProjectNotFound($me, $proUid);
         }
 
-        $process = new Process();
+        $me->process = $processData;
+        $me->proUid = $processData["PRO_UID"];
 
-        return $process->load($this->proUid);
-    }
-
-    public function getUid()
-    {
-        return $this->proUid;
+        return $me;
     }
 
     public function create($data)
@@ -77,21 +73,24 @@ class Workflow extends Handler
         $this->deleteProcess($this->proUid);
     }
 
-    public static function load($proUid)
+    public function getUid()
     {
-        $me = new self();
-
-        try {
-            $process = new Process();
-            $processData = $process->load($proUid);
-        } catch (\Exception $e) {
-            throw new Exception\ProjectNotFound($me, $proUid);
+        if (empty($this->project)) {
+            throw new \RuntimeException("Error: There is not an initialized project.");
         }
 
-        $me->process = $processData;
-        $me->proUid = $processData["PRO_UID"];
+        return $this->proUid;
+    }
 
-        return $me;
+    public function getProcess()
+    {
+        if (empty($this->proUid)) {
+            throw new \Exception("Error: There is not an initialized project.");
+        }
+
+        $process = new Process();
+
+        return $process->load($this->proUid);
     }
 
     /*

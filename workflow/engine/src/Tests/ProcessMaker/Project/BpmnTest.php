@@ -14,6 +14,8 @@ class BpmnTest extends \PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
+        return;
+
         //cleaning DB
         foreach (self::$prjUids as $prjUid) {
             $bp = Project\Bpmn::load($prjUid);
@@ -160,13 +162,38 @@ class BpmnTest extends \PHPUnit_Framework_TestCase
         // Load from DB
         $activityData = $bp->getActivity($data["ACT_UID"]);
 
-        // in data is set the determinated UID for activity created in previous step
+        // in data is set a determined UID for activity created in previous step
         foreach ($data as $key => $value) {
             $this->assertEquals($value, $activityData[$key]);
         }
 
         // Testing with an invalid uid
         $this->assertNull($bp->getActivity("INVALID-UID"));
+    }
+
+    /**
+     * @depends testCreate
+     * @depends testAddActivityWithUid
+     * @param $bp \ProcessMaker\Project\Bpmn
+     * @param $data
+     */
+    public function testUpdateActivity($bp, $data)
+    {
+        $updateData = array(
+            "ACT_NAME" => "Activity #X (Updated)",
+            "BOU_X" => "251",
+            "BOU_Y" => "252"
+        );
+
+        // Save to DB
+        $bp->updateActivity($data["ACT_UID"], $updateData);
+
+        // Load from DB
+        $activityData = $bp->getActivity($data["ACT_UID"]);
+
+        foreach ($updateData as $key => $value) {
+            $this->assertEquals($value, $activityData[$key]);
+        }
     }
 
     /**

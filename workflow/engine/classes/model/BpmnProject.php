@@ -16,6 +16,20 @@ require_once 'classes/model/om/BaseBpmnProject.php';
  */
 class BpmnProject extends BaseBpmnProject
 {
+    public static function getAll($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)
+    {
+        $c = new Criteria("workflow");
+        $bpmnProjects = array();
+
+        $rs = BpmnProjectPeer::doSelectRS($c);
+        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        while ($rs->next()) {
+            $bpmnProjects[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
+        }
+
+        return $bpmnProjects;
+    }
 
     // Overrides
 
