@@ -9,83 +9,110 @@ class ReportTable
 {
     /**
      * List of ReportTables in process
-     * @var string $sProcessUid. Uid for Process
+     * @var string $pro_uid. Uid for Process
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @return array
      */
-    public function getReportTables($sProcessUid)
+    public function getReportTables($pro_uid)
     {
-        $oDBSource = new DbSource();
-        $oCriteria = $oDBSource->getCriteriaDBSList($sProcessUid);
-        
-        $rs = \DbSourcePeer::doSelectRS($oCriteria);
-        $rs->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
-        $rs->next();
-
-        $dbConnecions = array();
-        while ($row = $rs->getRow()) {
-            $row = array_change_key_case($row, CASE_LOWER);
-            $dataDb = $this->getReportTable($sProcessUid, $row['dbs_uid']);
-            $dbConnecions[] = array_change_key_case($dataDb, CASE_LOWER);
-            $rs->next();
+        $reportTables = array();
+        $oCriteria = new \Criteria('workflow');
+        $oCriteria->addSelectColumn(\AdditionalTablesPeer::ADD_TAB_UID);
+        $oCriteria->add(\AdditionalTablesPeer::PRO_UID, $pro_uid, \Criteria::EQUAL);
+        $oDataset = \AdditionalTablesPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        while ($oDataset->next()) {
+            $row = $oDataset->getRow();
+            $reportTables[] = $this->getReportTable($pro_uid, $row['ADD_TAB_UID'], false);
         }
-        return $dbConnecions;
+
+        return $reportTables;
     }
 
     /**
      * Get data for ReportTable
-     * @var string $sProcessUid. Uid for Process
-     * @var string $dbConnecionUid. Uid for Data Base Connection
-     *
-     * return object
-     */
-    public function getReportTable($sProcessUid, $dbConnecionUid)
-    {
-        try {
-            G::LoadClass( 'dbConnections' );
-            $dbs = new dbConnections($sProcessUid);
-            $oDBConnection = new DbSource();
-            $aFields = $oDBConnection->load($dbConnecionUid, $sProcessUid);
-            if ($aFields['DBS_PORT'] == '0') {
-                $aFields['DBS_PORT'] = '';
-            }
-            $aFields['DBS_PASSWORD'] = $dbs->getPassWithoutEncrypt($aFields);
-
-            $response = array_change_key_case($aFields, CASE_LOWER);
-            return $response;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Save Data for ReportTable
-     * @var string $processUid. Uid for Process
-     * @var string $dataReportTable. Data for ReportTable
-     * @var string $create. Create o Update ReportTable
-     * @var string $sReportTableUid. Uid for ReportTable
+     * @var string $pro_uid. Uid for Process
+     * @var string $rep_uid. Uid for Report Table
+     * @var string $validate. Flag for validate
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @return array
      */
-    public function createReportTable($processUid, $dataReportTable)
+    public function getReportTable($pro_uid, $rep_uid, $validate = true)
     {
+        $repData = array();
+        //VALIDATION
+
+        if ($validate) {
+            $pro_uid = $this->validateProUid($pro_uid);
+            $repData['PRO_UID'] = $pro_uid;
+        }
+
+        $additionalTables = new AdditionalTables();
+
+        // REPORT TABLE PROPERTIES
+        $table = $additionalTables->load( $rep_uid, true );
+        $table['DBS_UID'] = $table['DBS_UID'] == null || $table['DBS_UID'] == '' ? 'workflow' : $table['DBS_UID'];
+        $repData['REP_TAB_NAME']        = $table['ADD_TAB_NAME'];
+        $repData['REP_TAB_DESCRIPTION'] = $table['ADD_TAB_DESCRIPTION'];
+        $repData['REP_TAB_CLASS_NAME']  = $table['ADD_TAB_CLASS_NAME'];
+        $repData['REP_TAB_CONNECTION']  = $table['DBS_UID'];
+        $repData['REP_TAB_TYPE']        = $table['ADD_TAB_TYPE'];
+        $repData['REP_TAB_GRID']        = $table['ADD_TAB_GRID'];
+
+        // REPORT TABLE NUM ROWS DATA
+        $tableData = $additionalTables->getAllData( $rep_uid, 0, 2 );
+        $repData['REP_NUM_ROWS'] = $tableData['count'];
+
+        // REPORT TABLE FIELDS
+        foreach ($table['FIELDS'] as $valField) {
+            $fieldTemp = array();
+            $fieldTemp = array_change_key_case($valField, CASE_LOWER);
+            $repData['FIELDS'][] = $fieldTemp;
+        }
+
+        $repData = array_change_key_case($repData, CASE_LOWER);
+        return $repData;
+    }
+
+    /**
+     * Save Data for Report Table
+     * @var string $pro_uid. Uid for Process
+     * @var string $rep_data. Data for Report Table
+     * @var string $createRep. Flag for create Report Table
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     */
+    public function saveReportTable($pro_uid, $rep_data, $createRep = true)
+    {
+        // CHANGE CASE UPPER REPORT TABLE
         $dataValidate =  array();
+        $dataValidate = array_change_key_case($rep_data, CASE_UPPER);
+
+        // VALIDATION REPORT TABLE DATA
+        $pro_uid = $this->validateProUid($pro_uid);
+        $dataValidate['PRO_UID']            = $pro_uid;
+        $dataValidate['REP_TAB_NAME']       = $this->validateRepName($dataValidate['REP_TAB_NAME']);
+        $tempRepTabName                     = $dataValidate['REP_TAB_CONNECTION'];
+        $dataValidate['REP_TAB_CONNECTION'] = $this->validateRepConnection($tempRepTabName, $pro_uid);
+        if ($dataValidate['REP_TAB_TYPE'] == 'GRID') {
+            $dataValidate['REP_TAB_GRID']   = $this->validateRepGrid($dataValidate['REP_TAB_GRID'], $pro_uid);
+        }
+
+        // VERIFY COLUMNS REPORT TABLE
         $oAdditionalTables = new AdditionalTables();
         $oFields = new Fields();
 
-        $dataValidate = array_change_key_case($dataReportTable, CASE_UPPER);
-
-        $dataValidate['PRO_UID'] = trim($processUid);        
-        $this->validateProUid($dataValidate['PRO_UID']);
-
         $repTabClassName = $oAdditionalTables->getPHPName($dataValidate['REP_TAB_NAME']);
-        $columns = $dataValidate['COLUMNS'];
+        $columns = $dataValidate['FIELDS'];
 
 
         // Reserved Words Table, Field, Sql
@@ -115,26 +142,35 @@ class ReportTable
 
         //backward compatility
         $columnsStd = array();
+        $fieldsValidate = $this->getDynafields($pro_uid, $dataValidate['REP_TAB_TYPE'], $dataValidate['REP_TAB_GRID']);
         foreach ($columns as $i => $column) {
+            if (isset($columns[$i]['fld_dyn'])) {
+                $columns[$i]['field_dyn'] = $columns[$i]['fld_dyn'];
+                unset($columns[$i]['fld_dyn']);
+            }
+            if (isset($columns[$i]['fld_name'])) {
+                $columns[$i]['field_name'] = $columns[$i]['fld_name'];
+            }
+            if (isset($columns[$i]['fld_label'])) {
+                $columns[$i]['field_label'] = $columns[$i]['fld_label'];
+                unset($columns[$i]['fld_label']);
+            }
+            if (isset($columns[$i]['fld_type'])) {
+                $columns[$i]['field_type'] = $columns[$i]['fld_type'];
+                unset($columns[$i]['fld_type']);
+            }
+            if (isset($columns[$i]['fld_size'])) {
+                $columns[$i]['field_size'] = $columns[$i]['fld_size'];
+                unset($columns[$i]['fld_size']);
+            }
+
             if (in_array(strtoupper($columns[$i]['field_name']), $reservedWordsSql) || 
                 in_array( strtolower( $columns[$i]['field_name']), $reservedWordsPhp )) {
                 throw (new \Exception(G::LoadTranslation("ID_PMTABLE_INVALID_FIELD_NAME", array($columns[$i]['field_name']))));
             }
 
-            switch ($column['field_type']) {
-                case 'INT':
-                    $columns[$i]['field_type'] = 'INTEGER';
-                    break;
-                case 'TEXT':
-                    $columns[$i]['field_type'] = 'LONGVARCHAR';
-                    break;
-                // propel DATETIME equivalent is TIMESTAMP
-                case 'DATETIME':
-                    $columns[$i]['field_type'] = 'TIMESTAMP';
-                    break;
-            }
-
             // VALIDATIONS
+            $columns[$i]['field_type'] = $this->validateFldType($columns[$i]['field_type']);
             if ($columns[$i]['field_autoincrement']) {
                 $typeCol = $columns[$i]['field_type'];
                 if (! ($typeCol === 'INTEGER' || $typeCol === 'TINYINT' || $typeCol === 'SMALLINT' || $typeCol === 'BIGINT')) {
@@ -142,17 +178,33 @@ class ReportTable
                 }
             }
 
+            if (isset($columns[$i]['fld_name'])) {
+                if ($columns[$i]['field_dyn'] != '') {
+                    $res = array_search($columns[$i]['field_dyn'], $fieldsValidate['NAMES']);
+                    if ($res === false) {
+                        throw (new \Exception("The property 'fields' in key '$i' in property fld_dyn: '".$columns[$i]['field_dyn']."', is incorrect."));
+                    } else {
+                        $columns[$i]['_index']    = $fieldsValidate['INDEXS'][$res];
+                        $columns[$i]['field_uid'] = $fieldsValidate['UIDS'][$res];
+                    }
+                }
+                unset($columns[$i]['fld_name']);
+            }
 
             $temp = new \stdClass();
-            foreach ($column as $key => $valCol) {
-                eval('$temp->' . $key . " = '" . $valCol . "';");
+            foreach ($columns[$i] as $key => $valCol) {
+                eval('$temp->' . str_replace('fld', 'field', $key) . " = '" . $valCol . "';");
             }
             $temp->uid = (isset($temp->uid)) ? $temp->uid : '';
             $temp->_index = (isset($temp->_index)) ? $temp->_index : '';
             $temp->field_uid = (isset($temp->field_uid)) ? $temp->field_uid : '';
             $temp->field_dyn = (isset($temp->field_dyn)) ? $temp->field_dyn : '';
-            $temp->field_filter = (isset($temp->field_filter)) ? $temp->field_filter : '';
-            $temp->field_autoincrement = (isset($temp->field_autoincrement)) ? $temp->field_autoincrement : '';
+
+            $temp->field_key = (isset($temp->field_key)) ? $temp->field_key : 0;
+            $temp->field_null = (isset($temp->field_null)) ? $temp->field_null : 1;
+            $temp->field_dyn = (isset($temp->field_dyn)) ? $temp->field_dyn : '';
+            $temp->field_filter = (isset($temp->field_filter)) ? $temp->field_filter : 0;
+            $temp->field_autoincrement = (isset($temp->field_autoincrement)) ? $temp->field_autoincrement : 0;
             $columnsStd[$i] = $temp;
         }
 
@@ -177,12 +229,26 @@ class ReportTable
             'ADD_TAB_TYPE' => $dataValidate['REP_TAB_TYPE'],
             'ADD_TAB_GRID' => $dataValidate['REP_TAB_GRID']
         );
-        //new report table
-        //create record
-        $addTabUid = $oAdditionalTables->create( $addTabData );
+        if ($createRep) {
+            //new report table
+            //create record
+            $addTabUid = $oAdditionalTables->create( $addTabData );
+        } else {
+            //editing report table
+            //updating record
+            $addTabUid = $dataValidate['REP_TAB_UID'];
+            $oAdditionalTables->update( $addTabData );
 
+            //removing old data fields references
+            $oCriteria = new \Criteria( 'workflow' );
+            $oCriteria->add( \FieldsPeer::ADD_TAB_UID, $dataValidate['REP_TAB_UID'] );
+            \FieldsPeer::doDelete( $oCriteria );
+        }
+
+        $rep_uid   = $addTabUid;
         // Updating pmtable fields
         foreach ($columnsStd as $i => $column) {
+            $column = (array)$column;
             $field = array (
                 'FLD_UID' => $column['uid'],
                 'FLD_INDEX' => $i,
@@ -202,110 +268,222 @@ class ReportTable
             );
             $oFields->create( $field );
         }
-
-        try {
-            $oAdditionalTables->populateReportTable(
-                $data['REP_TAB_NAME'],
-                $pmTable->getDataSource(),
-                $data['REP_TAB_TYPE'],
-                $data['PRO_UID'],
-                $data['REP_TAB_GRID'],
-                $addTabUid
-            );
-        } catch (\Exception $e) {
-            $result->message = $result->msg = $e->getMessage();
+        $this->generateDataReport($pro_uid, $rep_uid);
+        if ($createRep) {
+            return $this->getReportTable($pro_uid, $rep_uid, false);
         }
-        die('funciona cochalo');
     }
 
     /**
-     * Delete ReportTable
-     * @var string $sReportTableUID. Uid for ReportTable
+     * Update Data for ReportTable
+     * @var string $pro_uid. Uid for Process
+     * @var string $rep_data. Data for ReportTable
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @return void
      */
-    public function deleteReportTable($sProcessUid, $reportTableUid)
+    public function updateReportTable($pro_uid, $rep_data)
+    {
+        $rep_uid      = trim($rep_data['rep_uid']);
+        $dataValidate =  array();
+
+        $oCriteria = new \Criteria('workflow');
+        $oCriteria->add(\AdditionalTablesPeer::ADD_TAB_UID, $rep_uid, \Criteria::EQUAL);
+        $oDataset = \AdditionalTablesPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        if ($oDataset->next()) {
+            $row = $oDataset->getRow();
+            $dataValidate['rep_tab_uid']  = $rep_uid;
+            $dataValidate['rep_tab_name'] = $row['ADD_TAB_NAME'];
+            $dataValidate['rep_tab_dsc']  = $rep_data['rep_tab_dsc'];
+            $dataValidate['rep_tab_connection'] = $row['DBS_UID'];
+            $dataValidate['rep_tab_type'] = $row['ADD_TAB_TYPE'];
+            $dataValidate['rep_tab_grid'] = $row['ADD_TAB_GRID'];
+            $dataValidate['fields']       = $rep_data['fields'];
+        } else {
+            throw (new \Exception("The property rep_uid: '$rep_uid', is incorrect."));
+        }
+        $this->saveReportTable($pro_uid, $dataValidate, false);
+    }
+
+    /**
+     * Delete ReportTable
+     * @var string $pro_uid. Uid for Process
+     * @var string $rep_uid. Uid for Report Table
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function deleteReportTable($pro_uid, $rep_uid)
     {
         $at = new AdditionalTables();
-        $table = $at->load( $reportTableUid );
+        $table = $at->load( $rep_uid );
 
         if (! isset( $table )) {
             require_once 'classes/model/ReportTable.php';
             $rtOld = new ReportTable();
-            $existReportTableOld = $rtOld->load( $reportTableUid );
+            $existReportTableOld = $rtOld->load($rep_uid);
             if (count($existReportTableOld) == 0) {
-                throw new Exception( G::LoadTranslation('ID_TABLE_NOT_EXIST_SKIPPED') );
+                throw new Exception(G::LoadTranslation('ID_TABLE_NOT_EXIST_SKIPPED'));
             }
         }
-        $at->deleteAll( $reportTableUid );
+        $at->deleteAll($rep_uid);
     }
 
+    /**
+     * Generate Data for Report Table
+     * @var string $pro_uid. Uid for Process
+     * @var string $rep_uid. Uid for Report Table
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function generateDataReport($pro_uid, $rep_uid) {
+        $additionalTables = new AdditionalTables();
+        $table = $additionalTables->load($rep_uid);
+        $additionalTables->populateReportTable(
+            $table['ADD_TAB_NAME'],
+            \pmTable::resolveDbSource( $table['DBS_UID'] ),
+            $table['ADD_TAB_TYPE'],
+            $table['PRO_UID'],
+            $table['ADD_TAB_GRID'],
+            $table['ADD_TAB_UID']
+        );
+    }
 
-    public function testConnection($dataCon) 
+    /**
+     * Get Fields of Dynaforms
+     * @var string $pro_uid. Uid for Process
+     * @var string $rep_tab_type. Type the Report Table
+     * @var string $rep_tab_grid. Uid for Grid
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     */
+    public function getDynafields ($pro_uid, $rep_tab_type, $rep_tab_grid = '')
     {
-        $resp = array();
-        $resp['resp'] = false;
+        G::LoadClass( 'reportTables' );
 
-        G::LoadClass( 'net' );
-        $Server = new \NET($dataCon['DBS_SERVER']);
+        $dynFields = array();
+        $aFields   = array();
+        $aFields['FIELDS']  = array();
+        $aFields['PRO_UID'] = $pro_uid;
 
-        // STEP 1 : Resolving Host Name
-        if ($Server->getErrno() != 0) {
-            $resp['message'] = "Error Testting Connection: Resolving Host Name FAILED : " . $Server->error;
-            return $resp;
-        }
-
-        // STEP 2 : Checking port
-        $Server->scannPort($dataCon['DBS_PORT']);
-        if ($Server->getErrno() != 0) {
-            $resp['message'] = "Error Testting Connection: Checking port FAILED : " . $Server->error;
-            return $resp;
-        }
-
-        // STEP 3 : Trying to connect to host
-        $Server->loginDbServer($dataCon['DBS_USERNAME'], $dataCon['DBS_PASSWORD']);
-        $Server->setDataBase($dataCon['DBS_DATABASE_NAME'], $dataCon['DBS_PORT']);
-        if ($Server->errno == 0) {
-            $response = $Server->tryConnectServer($dataCon['DBS_TYPE']);
-            if ($response->status != 'SUCCESS') {
-                $resp['message'] = "Error Testting Connection: Trying to connect to host FAILED : " . $Server->error;
-                return $resp;
-            }
+        if (isset( $rep_tab_type ) && $rep_tab_type == 'GRID') {
+            $this->dynUid = $rep_tab_grid;
+            $dynFields = $this->_getDynafields($pro_uid, 'grid', $rep_tab_grid);
         } else {
-            $resp['message'] = "Error Testting Connection: Trying to connect to host FAILED : " . $Server->error;
-            return $resp;
-        }
-                
-        // STEP 4 : Trying to open database
-        $Server->loginDbServer($dataCon['DBS_USERNAME'], $dataCon['DBS_PASSWORD']);
-        $Server->setDataBase($dataCon['DBS_DATABASE_NAME'], $dataCon['DBS_PORT']);
-        if ($Server->errno == 0) {
-            $response = $Server->tryConnectServer($dataCon['DBS_TYPE']);
-            if ($response->status == 'SUCCESS') {
-                $response = $Server->tryOpenDataBase($dataCon['DBS_TYPE']);
-                if ($response->status != 'SUCCESS') {
-                    $resp['message'] = "Error Testting Connection: Trying to open database FAILED : " . $Server->error;
-                    return $resp;
-                }
-            } else {
-                $resp['message'] = "Error Testting Connection: Trying to open database FAILED : " . $Server->error;
-                return $resp;
-            }
-        } else {
-            $resp['message'] = "Error Testting Connection: Trying to open database FAILED : " . $Server->error;
-            return $resp;
+            $dynFields = $this->_getDynafields($pro_uid, 'xmlform');
         }
 
-        // CORRECT CONNECTION
-        $resp['resp'] = true;
-        return $resp;
+        $fieldReturn = array();
+        foreach ($dynFields as $value) {
+            $fieldReturn['NAMES'][]  = $value['FIELD_NAME'];
+            $fieldReturn['UIDS'][]   = $value['FIELD_UID'];
+            $fieldReturn['INDEXS'][] = $value['_index'];
+        }
+        return $fieldReturn;
     }
 
+    /**
+     * Get Fields of Dynaforms in xmlform
+     * @var string $pro_uid. Uid for Process
+     * @var string $type. Type the form
+     * @var string $rep_tab_grid. Uid for Grid
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     */
+    public function _getDynafields ($pro_uid, $type = 'xmlform', $rep_tab_grid = '')
+    {
+        G::loadSystem( 'dynaformhandler' );
 
-    protected function getReportTableDefaultColumns ($type = 'NORMAL')
+        $oCriteria = new \Criteria( 'workflow' );
+        $oCriteria->addSelectColumn( \DynaformPeer::DYN_FILENAME );
+        $oCriteria->add( \DynaformPeer::PRO_UID, $pro_uid );
+        $oCriteria->add( \DynaformPeer::DYN_TYPE, $type );
+
+        if ($rep_tab_grid != '') {
+            $oCriteria->add( \DynaformPeer::DYN_UID, $this->dynUid );
+        }
+
+        $oDataset = \DynaformPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+
+        $fields      = array();
+        $fieldsNames = array();
+        $labelFieldsTypeList = array('dropdown','radiogroup');
+        $excludeFieldsList   = array(
+            'title',
+            'subtitle',
+            'link',
+            'file',
+            'button',
+            'reset',
+            'submit',
+            'listbox',
+            'checkgroup',
+            'grid',
+            'javascript',
+            ''
+        );
+
+        $index = 0;
+        while ($oDataset->next()) {
+            $aRow = $oDataset->getRow();
+            if (file_exists( PATH_DYNAFORM . PATH_SEP . $aRow['DYN_FILENAME'] . '.xml' )) {
+                $dynaformHandler = new \dynaformHandler( PATH_DYNAFORM . $aRow['DYN_FILENAME'] . '.xml' );
+                $nodeFieldsList = $dynaformHandler->getFields();
+
+                foreach ($nodeFieldsList as $node) {
+                    $arrayNode = $dynaformHandler->getArray( $node );
+                    $fieldName = $arrayNode['__nodeName__'];
+                    $fieldType = isset($arrayNode['type']) ? $arrayNode['type']: '';
+                    $fieldValidate = ( isset($arrayNode['validate'])) ? $arrayNode['validate'] : '';
+                    if (! in_array( $fieldType, $excludeFieldsList ) && ! in_array( $fieldName, $fieldsNames ) ) {
+                        $fields[] = array(
+                            'FIELD_UID' => $fieldName . '-' . $fieldType,
+                            'FIELD_NAME' => $fieldName,
+                            '_index' => $index++
+                        );
+                        $fieldsNames[] = $fieldName;
+                        if (in_array( $fieldType, $labelFieldsTypeList ) && ! in_array( $fieldName . '_label', $fieldsNames )) {
+                            $fields[] = array(
+                                'FIELD_UID' => $fieldName . '_label' . '-' . $fieldType,
+                                'FIELD_NAME' => $fieldName . '_label',
+                                '_index' => $index++
+                            );
+                            $fieldsNames[] = $fieldName;
+                        }
+                    }
+                }
+            }
+        }
+        sort($fields);
+        return $fields;
+    }
+
+    /**
+     * Get Default Columns of Report Table
+     * @var string $type. Type of Report Table
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     */
+    public function getReportTableDefaultColumns ($type = 'NORMAL')
     {
         $defaultColumns = array ();
         $application = array(
@@ -382,33 +560,166 @@ class ReportTable
         return $defaultColumns;
     }
 
-    public function validateProUid ($proUid) {
-        $proUid = trim($proUid);
-        if ($proUid == '') {
-            throw (new \Exception('This process doesn\'t exist!'));
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateProUid ($pro_uid) {
+        $pro_uid = trim($pro_uid);
+        if ($pro_uid == '') {
+            throw (new \Exception("The project with prj_uid: '', does not exist."));
         }
-
         $oProcess = new \Process();
-        if (!($oProcess->processExists($proUid))) {
-            throw (new \Exception('This process doesn\'t exist!'));
+        if (!($oProcess->processExists($pro_uid))) {
+            throw (new \Exception("The project with prj_uid: '$pro_uid', does not exist."));
         }
-
-        return $proUid;
+        return $pro_uid;
     }
 
-    public function arrayToObject($d) {
-        if (is_array($d)) {
-            /*
-            * Return array converted to object
-            * Using __FUNCTION__ (Magic constant)
-            * for recursive call
-            */
-            return (object) array_map(__FUNCTION__, $d);
+    /**
+     * Validate Report Table Name
+     * @var string $rep_tab_name. Name for report table
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateRepName ($rep_tab_name) {
+        $rep_tab_name = trim($rep_tab_name);
+        if ((strpos($rep_tab_name, ' ')) || (strlen($rep_tab_name) < 4)) {
+            throw (new \Exception("The property rep_tab_name: '$rep_tab_name', is incorrect."));
         }
-        else {
-            // Return object
-            return $d;
+        $rep_tab_name = G::toUpper($rep_tab_name);
+        if (substr($rep_tab_name, 0, 4) != 'PMT_') {
+            $rep_tab_name = 'PMT_' . $rep_tab_name;
         }
+        return $rep_tab_name;
+    }
+
+    /**
+     * Validate Report Table Connection
+     * @var string $rep_tab_connection. Connection for report table
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateRepConnection ($rep_tab_connection, $pro_uid) {
+        $rep_tab_connection = trim($rep_tab_connection);
+        if ($rep_tab_connection == '') {
+            throw (new \Exception("The property rep_tab_connection: '$rep_tab_connection', is incorrect."));
+        }
+
+        $connections = array('workflow', 'rp');
+        $oCriteria = new \Criteria('workflow');
+        $oCriteria->addSelectColumn(\DbSourcePeer::DBS_UID);
+        $oCriteria->add(\DbSourcePeer::PRO_UID, $pro_uid, \Criteria::EQUAL);
+        $oDataset = \AdditionalTablesPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        while ($oDataset->next()) {
+            $row = $oDataset->getRow();
+            $connections[] = $row['DBS_UID'];
+        }
+
+        if (!in_array($rep_tab_connection, $connections)) {
+            throw (new \Exception("The property rep_tab_connection: '$rep_tab_connection', is incorrect."));
+        }
+        return $rep_tab_connection;
+    }
+
+    /**
+     * Validate Report Table Grid
+     * @var string $rep_tab_grid. Grid for report table
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateRepGrid ($rep_tab_grid, $pro_uid) {
+        $rep_tab_grid = trim($rep_tab_grid);
+        if ($rep_tab_grid == '') {
+            throw (new \Exception("The property rep_tab_grid: '$rep_tab_grid', is incorrect."));
+        }
+
+        G::loadSystem('dynaformhandler');
+        $grids = array();
+        $aFieldsNames = array();
+
+        $oCriteria = new \Criteria( 'workflow' );
+        $oCriteria->addSelectColumn( \DynaformPeer::DYN_FILENAME );
+        $oCriteria->add( \DynaformPeer::PRO_UID, $pro_uid );
+        $oCriteria->add( \DynaformPeer::DYN_TYPE, 'xmlform' );
+        $oDataset = \DynaformPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+
+        while ($oDataset->next()) {
+            $aRow = $oDataset->getRow();
+            $dynaformHandler = new \dynaformHandler( PATH_DYNAFORM . $aRow['DYN_FILENAME'] . '.xml' );
+            $nodeFieldsList = $dynaformHandler->getFields();
+            foreach ($nodeFieldsList as $node) {
+                $arrayNode = $dynaformHandler->getArray( $node );
+                $fieldName = $arrayNode['__nodeName__'];
+                $fieldType = $arrayNode['type'];
+                if ($fieldType == 'grid') {
+                    if (! in_array( $fieldName, $aFieldsNames )) {
+                        $grids[] = str_replace( $pro_uid . '/', '', $arrayNode['xmlgrid']);
+                    }
+                }
+            }
+        }
+
+        if (!in_array($rep_tab_grid, $grids)) {
+            throw (new \Exception("The property rep_tab_grid: '$rep_tab_grid', is incorrect."));
+        }
+        return $rep_tab_grid;
+    }
+
+    /**
+     * Validate Field Type
+     * @var string $fld_type. Type for field
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateFldType ($fld_type) {
+
+        $fld_type = trim($fld_type);
+        if ($fld_type == '') {
+            throw (new \Exception("The property fld_type: '$fld_type', is incorrect."));
+        }
+
+        switch ($fld_type) {
+            case 'INT':
+                $fld_type = 'INTEGER';
+                break;
+            case 'TEXT':
+                $fld_type = 'LONGVARCHAR';
+                break;
+            case 'DATETIME':
+                $fld_type = 'TIMESTAMP';
+                break;
+        }
+
+        G::loadClass( 'pmTable' );
+
+        $columnsTypes = \PmTable::getPropelSupportedColumnTypes();
+        $res = array_search($fld_type, $columnsTypes);
+        if ($res === false) {
+            throw (new \Exception("The property fld_type: '$fld_type', is incorrect."));
+        }
+        return $fld_type;
     }
 }
 
