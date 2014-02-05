@@ -177,14 +177,18 @@ class ProjectUser
             \G::LoadClass( 'case' );
             $oCase = new \Cases();
             $startTasks = $oCase->getStartCases($sUserUID);
-            foreach ($startTasks as $task) {
-                if ((isset( $task['pro_uid'] )) && ($task['pro_uid'] == $sProcessUID)) {
-                    $taskValue = explode( '(', $task['value'] );
-                    $tasksLastIndex = count( $taskValue ) - 1;
-                    $taskValue = explode( ')', $taskValue[$tasksLastIndex] );
-                    $aUsers[] = array('act_uid' => $task['uid'],
-                                      'act_name' => $taskValue[0]);
+            if (sizeof($startTasks) > 1){
+                foreach ($startTasks as $task) {
+                    if ((isset( $task['pro_uid'] )) && ($task['pro_uid'] == $sProcessUID)) {
+                        $taskValue = explode( '(', $task['value'] );
+                        $tasksLastIndex = count( $taskValue ) - 1;
+                        $taskValue = explode( ')', $taskValue[$tasksLastIndex] );
+                        $aUsers[] = array('act_uid' => $task['uid'],
+                                          'act_name' => $taskValue[0]);
+                    }
                 }
+            } else {
+                throw (new \Exception( 'This user `usr_uid`: '. $sUserUID .' has no initial activities assigned in this project.'));
             }
             return $aUsers;
         } catch (Exception $e) {
