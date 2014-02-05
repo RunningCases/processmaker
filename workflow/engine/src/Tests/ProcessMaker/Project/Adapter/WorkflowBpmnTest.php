@@ -8,28 +8,28 @@ if (! class_exists("Propel")) {
 }
 
 
-class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
+class WorkflowBpmnTest extends \PHPUnit_Framework_TestCase
 {
     function testNew()
     {
         $data = array(
-            "PRJ_NAME" => "Test Bpmn/Workflow Project #1",
-            "PRJ_DESCRIPTION" => "Description for - Test BPMN Project #1",
-            "PRJ_AUTHOR" => "00000000000000000000000000000001"
+            "PRO_TITLE" => "Test Workflow/Bpmn Project #1",
+            "PRO_DESCRIPTION" => "Description for - Test Project #1",
+            "PRO_CREATE_USER" => "00000000000000000000000000000001"
         );
 
-        $bwap = new Project\Adapter\BpmnWorkflow($data);
+        $wbap = new Project\Adapter\WorkflowBpmn($data);
 
         try {
-            $bp = Project\Bpmn::load($bwap->getUid());
-        } catch (\Exception $e){}
+            $bp = Project\Bpmn::load($wbap->getUid());
+        } catch (\Exception $e){die($e->getMessage());}
 
         try {
-            $wp = Project\Workflow::load($bwap->getUid());
+            $wp = Project\Workflow::load($wbap->getUid());
         } catch (\Exception $e){}
 
-        $this->assertNotEmpty($bp);
-        $this->assertNotEmpty($wp);
+        $this->assertNotNull($bp);
+        $this->assertNotNull($wp);
         $this->assertEquals($bp->getUid(), $wp->getUid());
 
         $project = $bp->getProject();
@@ -43,20 +43,19 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
     function testCreate()
     {
         $data = array(
-            "PRJ_NAME" => "Test Bpmn/Workflow Project #2",
-            "PRJ_DESCRIPTION" => "Description for - Test BPMN Project #2",
-            "PRJ_AUTHOR" => "00000000000000000000000000000001"
+            "PRO_TITLE" => "Test Workflow/Bpmn Project #2",
+            "PRO_DESCRIPTION" => "Description for - Test Project #2",
+            "PRO_CREATE_USER" => "00000000000000000000000000000001"
         );
-
-        $bwap = new Project\Adapter\BpmnWorkflow();
-        $bwap->create($data);
+        $wbap = new Project\Adapter\WorkflowBpmn();
+        $wbap->create($data);
 
         try {
-            $bp = Project\Bpmn::load($bwap->getUid());
+            $bp = Project\Bpmn::load($wbap->getUid());
         } catch (\Exception $e){}
 
         try {
-            $wp = Project\Workflow::load($bwap->getUid());
+            $wp = Project\Workflow::load($wbap->getUid());
         } catch (\Exception $e){}
 
         $this->assertNotEmpty($bp);
