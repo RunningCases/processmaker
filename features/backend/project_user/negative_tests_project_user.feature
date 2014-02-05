@@ -30,7 +30,7 @@ Scenario Outline: Verify if a user can start a task with bad parameters (negativ
     
     | test_description       | project                          | act_uid                          | username | password | error_code | error_message |
     | Invalid act_uid        | 1265557095225ff5c688f46031700471 | 00000000009999f5fe54de2005407079 | admin    | admin    | 400        | act_uid       | 
-    | Invalid username       | 1265557095225ff5c688f46031700471 | 1546168275225ff617b6a34046164891 | ain      | admin    | 400        | username      |
+    | Invalid username       | 1265557095225ff5c688f46031700471 | 1546168275225ff617b6a34046164891 | ain      | admin    | 400        | User          |
     | Invalid password       | 1265557095225ff5c688f46031700471 | 1546168275225ff617b6a34046164891 | erick    | sle      | 400        | password      |
     | Field requered project |                                  | 46941969352af5be2ab3f39001216717 | admin    | admin    | 400        | prj_uid       | 
     | Field requered act_uid | 1265557095225ff5c688f46031700471 |                                  | admin    | admin    | 400        | act_uid       |
