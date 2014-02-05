@@ -68,6 +68,7 @@ Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
 Bootstrap::registerSystemClasses();
 
 Bootstrap::registerDir('src', PATH_HOME . 'engine/src/');
+Bootstrap::registerDir('model', PATH_CORE . 'classes' . PATH_SEP . 'model');
 
 $config = System::getSystemConfiguration();
 

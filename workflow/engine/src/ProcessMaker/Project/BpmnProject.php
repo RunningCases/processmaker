@@ -46,6 +46,8 @@ class BpmnProject //extends ProjectHandler
      */
     protected $project;
 
+    protected $prjUid;
+
     /**
      * @var \BpmnProcess
      */
@@ -55,36 +57,6 @@ class BpmnProject //extends ProjectHandler
      * @var \BpmnDiagram
      */
     protected $diagram;
-
-    /**
-     * @var array of \BpmnActivities objects
-     */
-    protected $activities = array();
-
-    /**
-     * @var array of \BpmnEvents objects
-     */
-    protected $events = array();
-
-    /**
-     * @var array on \BpmnFlow objects
-     */
-    protected $flows = array();
-
-    /**
-     * @var array of \BpmnArtifact objects
-     */
-    protected $artifacts = array();
-
-    /**
-     * @var array of \BpmnLaneset objects
-     */
-    protected $laneset = array();
-
-    /**
-     * @var array of \BpmnLanes objects
-     */
-    protected $lanes = array();
 
 
     public function __construct($data = null)
@@ -96,8 +68,15 @@ class BpmnProject //extends ProjectHandler
 
     public static function load($prjUid)
     {
+        $project = ProjectPeer::retrieveByPK($prjUid);
+
+        if (! is_object($project)) {
+            return null;
+        }
+
         $me = new BpmnProject();
-        $me->project = ProjectPeer::retrieveByPK($prjUid);
+        $me->project = $project;
+        $me->prjUid = $me->project->getPrjUid();
 
         return $me;
     }
@@ -114,6 +93,31 @@ class BpmnProject //extends ProjectHandler
         $this->project->fromArray($data, BasePeer::TYPE_FIELDNAME);
         $this->project->setPrjCreateDate(date("Y-m-d H:i:s"));
         $this->project->save();
+
+        $this->prjUid = $this->project->getPrjUid();
+    }
+
+    public function remove()
+    {
+        /*
+         * 1. Remove Diagram related objects
+         * 2. Remove Project related objects
+         */
+
+        $activities = $this->getActivities();
+
+        foreach ($activities as $activity) {
+            $this->removeActivity($activity["ACT_UID"]);
+        }
+
+        $process = ProcessPeer::retrieveByPK($this->getProcess("object")->getProUid());
+        $process->delete();
+
+        $diagram = DiagramPeer::retrieveByPK($this->getDiagram("object")->getDiaUid());
+        $diagram->delete();
+
+        $project = ProjectPeer::retrieveByPK($this->getUid());
+        $project->delete();
     }
 
     public function addDiagram($data = array())
@@ -164,37 +168,29 @@ class BpmnProject //extends ProjectHandler
         $activity->setProUid($this->getProcess("object")->getProUid());
         $activity->save();
 
-        $this->activities[$activity->getActUid()] = $activity;
+        return $activity->getActUid();
     }
 
-    public function getActivity($actUid)
+    public function getActivity($actUid, $retType = 'array')
     {
-        if (empty($this->activities) || ! array_key_exists($actUid, $this->activities)) {
-            $activity = ActivityPeer::retrieveByPK($actUid);
+        $activity = ActivityPeer::retrieveByPK($actUid);
 
-            if (! is_object($activity)) {
-                return null;
-            }
-
-            $this->activities[$actUid] = $activity;
+        if ($retType != "object" && ! empty($activity)) {
+            $activity = $activity->toArray();
         }
 
-        return $this->activities[$actUid];
+        return $activity;
     }
 
-    public function getActivities()
+    public function getActivities($retType = 'array')
     {
-        if (empty($this->activities)) {
-            $this->activities = Activity::getAll($this->project->getPrjUid(), null, null, '', 'object');
-        }
+        return Activity::getAll($this->getUid(), null, null, '', $retType);
+    }
 
-        $activitiesList = array();
-
-        foreach ($this->activities as $activity) {
-            $activitiesList[] = $activity->toArray();
-        }
-
-        return $activitiesList;
+    public function removeActivity($actUid)
+    {
+        $activity = ActivityPeer::retrieveByPK($actUid);
+        $activity->delete();
     }
 
     public function addEvent($data)
@@ -226,19 +222,9 @@ class BpmnProject //extends ProjectHandler
         return $this->events[$evnUid];
     }
 
-    public function getEvents()
+    public function getEvents($retType)
     {
-        if (empty($this->events)) {
-            $this->events = Activity::getAll($this->project->getPrjUid(), null, null, '', 'object');
-        }
-
-        $eventsList = array();
-
-        foreach ($this->events as $event) {
-            $eventsList[] = $event->toArray();
-        }
-
-        return $eventsList;
+        return Event::getAll($this->project->getPrjUid(), null, null, '', 'object');
     }
 
     public function addGateway($data)
@@ -270,19 +256,9 @@ class BpmnProject //extends ProjectHandler
         return $this->gateways[$gatUid];
     }
 
-    public function getGateways()
+    public function getGateways($retType = 'array')
     {
-        if (empty($this->gateways)) {
-            $this->gateways = Activity::getAll($this->project->getPrjUid(), null, null, '', 'object');
-        }
-
-        $gatewaysList = array();
-
-        foreach ($this->gateways as $gateway) {
-            $gatewaysList[] = $gateway->toArray();
-        }
-
-        return $gatewaysList;
+        return  Activity::getAll($this->project->getPrjUid(), null, null, '', $retType);
     }
 
     public function addFlow($data)
@@ -313,19 +289,9 @@ class BpmnProject //extends ProjectHandler
         return $this->flows[$floUid];
     }
 
-    public function getFlows()
+    public function getFlows($retType = 'array')
     {
-        if (empty($this->flows)) {
-            $this->flows = Activity::getAll($this->project->getPrjUid(), null, null, '', 'object');
-        }
-
-        $flowsList = array();
-
-        foreach ($this->flows as $flow) {
-            $flowsList[] = $flow->toArray();
-        }
-
-        return $flowsList;
+        return Activity::getAll($this->project->getPrjUid(), null, null, '', $retType);
     }
 
     public function addArtifact($data)
@@ -383,7 +349,7 @@ class BpmnProject //extends ProjectHandler
             throw new \Exception("Error: There is not an initialized project.");
         }
 
-        return $this->project->getPrjUid();
+        return $this->prjUid;
     }
 
     public function getProject($retType = "array")

@@ -45,48 +45,19 @@ class BpmnActivity extends BaseBpmnActivity
         }
     }
 
-    // OVERRIDES
-
-    public function setActUid($actUid)
+    public static function findOneBy($field, $value)
     {
-        parent::setActUid($actUid);
-        $this->bound->setElementUid($this->getActUid());
+        $rows = self::findAllBy($field, $value);
+
+        return empty($rows) ? null : $rows[0];
     }
 
-    public function setPrjUid($prjUid)
+    public static function findAllBy($field, $value)
     {
-        parent::setPrjUid($prjUid);
-        $this->bound->setPrjUid($this->getPrjUid());
-    }
+        $c = new Criteria('workflow');
+        $c->add($field, $value, Criteria::EQUAL);
 
-    public function setProUid($proUid)
-    {
-        parent::setProUid($proUid);
-
-        $process = BpmnProcessPeer::retrieveByPK($this->getProUid());
-        $this->bound->setDiaUid($process->getDiaUid());
-    }
-
-    public function save($con = null)
-    {
-        parent::save($con);
-
-        $this->setBoundDefaults();
-        $this->bound->save($con);
-    }
-
-    public function delete($con = null)
-    {
-        // first, delete the related bound object
-        if (! is_object($this->bound)) {
-            $this->bound = BpmnBound::findByElement('Activity', $this->getActUid());
-        }
-
-        if (is_object($this->bound)) {
-            $this->bound->delete($con);
-        }
-
-        parent::delete($con);
+        return BpmnActivityPeer::doSelect($c);
     }
 
     public static function getAll($prjUid = null, $start = null, $limit = null, $filter = '', $returnType = null, $changeCaseTo=CASE_UPPER)
@@ -118,8 +89,57 @@ class BpmnActivity extends BaseBpmnActivity
 
                 break;
         }
-        
+
         return $activities;
+    }
+
+    // OVERRIDES
+
+    public function setActUid($actUid)
+    {
+        parent::setActUid($actUid);
+        $this->bound->setElementUid($this->getActUid());
+    }
+
+    public function setPrjUid($prjUid)
+    {
+        parent::setPrjUid($prjUid);
+        $this->bound->setPrjUid($this->getPrjUid());
+    }
+
+    public function setProUid($proUid)
+    {
+        parent::setProUid($proUid);
+
+        $process = BpmnProcessPeer::retrieveByPK($this->getProUid());
+        $this->bound->setDiaUid($process->getDiaUid());
+    }
+
+    public function save($con = null)
+    {
+        parent::save($con);
+
+        $this->setBoundDefaults();
+
+        if ($this->bound->getBouUid() == "") {
+            $this->bound->setBouUid(\ProcessMaker\Util\Hash::generateUID());
+        }
+
+        $this->bound->save($con);
+    }
+
+    public function delete($con = null)
+    {
+        // first, delete the related bound object
+        if (! is_object($this->bound) || $this->bound->getBouUid() == "") {
+            $this->bound = BpmnBound::findByElement('Activity', $this->getActUid());
+        }
+
+        if (is_object($this->bound)) {
+            $this->bound->delete($con);
+        }
+
+        parent::delete($con);
     }
 
 	public function fromArray($data, $type = BasePeer::TYPE_FIELDNAME)
@@ -143,7 +163,7 @@ class BpmnActivity extends BaseBpmnActivity
         $data = parent::toArray($type);
         $bouUid = $this->bound->getBouUid();
 
-        if (empty($bouUid)) {
+        if (! empty($bouUid)) {
             $bound = BpmnBound::findByElement('Activity', $this->getActUid());
 
             if (is_object($bound)) {

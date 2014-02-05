@@ -18,15 +18,17 @@ class BpmnBound extends BaseBpmnBound
 {
     public static function findOneBy($field, $value)
     {
+        $rows = self::findAllBy($field, $value);
+
+        return empty($rows) ? null : $rows[0];
+    }
+
+    public static function findAllBy($field, $value)
+    {
         $c = new Criteria('workflow');
+        $c->add($field, $value, Criteria::EQUAL);
 
-        $c->add($field, $value, CRITERIA::EQUAL );
-
-        $rs = ContentPeer::doSelectRS($c);
-        //$rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $rs->next();
-
-        return $rs->getRow();
+        return BpmnBoundPeer::doSelect($c);
     }
 	
     public static function findByElement($type, $uid)
