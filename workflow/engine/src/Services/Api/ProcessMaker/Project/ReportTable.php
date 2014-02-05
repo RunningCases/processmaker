@@ -15,19 +15,19 @@ use \Luracast\Restler\RestException;
 class ReportTable extends Api
 {
     /**
-     * @param string $projectUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      * @return array
      *
-     * @url GET /:projectUid/report-tables
+     * @url GET /:prj_uid/report-tables
      */
-    public function doGetReportTables($projectUid)
+    public function doGetReportTables($prj_uid)
     {
         try {
             $oReportTable = new \BusinessModel\ReportTable();
-            $response = $oReportTable->getReportTables($projectUid);
+            $response = $oReportTable->getReportTables($prj_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -35,19 +35,19 @@ class ReportTable extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $rp_uid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $rep_uid {@min 1} {@max 32}
      * @return array
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url GET /:projectUid/report-table/:rp_uid
+     * @url GET /:prj_uid/report-table/:rep_uid
      */
-    public function doGetReportTable($projectUid, $rp_uid)
+    public function doGetReportTable($prj_uid, $rep_uid)
     {
         try {
             $oReportTable = new \BusinessModel\ReportTable();
-            $response = $oReportTable->getReportTable($projectUid, $rp_uid);
+            $response = $oReportTable->getReportTable($prj_uid, $rep_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -55,7 +55,7 @@ class ReportTable extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      *
      * @param string $rep_tab_name {@from body}
@@ -68,11 +68,11 @@ class ReportTable extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url POST /:projectUid/report-table
+     * @url POST /:prj_uid/report-table
      * @status 201
      */
     public function doPostReportTable(
-        $projectUid,
+        $prj_uid,
         $request_data,
         $rep_tab_name,
         $rep_tab_dsc,
@@ -82,7 +82,10 @@ class ReportTable extends Api
     ) {
         try {
             $oReportTable = new \BusinessModel\ReportTable();
-            $response = $oReportTable->createReportTable($projectUid, $request_data);
+            $response = $oReportTable->saveReportTable($prj_uid, $request_data);
+            if (isset($response['pro_uid'])) {
+                unset($response['pro_uid']);
+            }
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -90,62 +93,48 @@ class ReportTable extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $rp_uid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $rep_uid {@min 1} {@max 32}
      * @param array $request_data
      *
-     * @param string $dbs_type {@from body}
-     * @param string $dbs_server {@from body}
-     * @param string $dbs_database_name {@from body}
-     * @param string $dbs_username {@from body}
-     * @param string $dbs_port {@from body}
-     * @param string $dbs_encode {@from body}
-     * @param string $dbs_password {@from body}
-     * @param string $dbs_description {@from body}
+     * @param string $rep_tab_dsc {@from body}
      * @return void
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url PUT /:projectUid/report-table/:rp_uid
+     * @url PUT /:prj_uid/report-table/:rep_uid
      */
     public function doPutReportTable(
-        $projectUid,
-        $rp_uid,
+        $prj_uid,
+        $rep_uid,
         $request_data,
-        $dbs_type,
-        $dbs_server,
-        $dbs_database_name,
-        $dbs_username,
-        $dbs_port,
-        $dbs_encode,
-        $dbs_password = '',
-        $dbs_description = ''
+        $rep_tab_dsc = ''
     ) {
         try {
-            $request_data['dbs_uid'] = $rp_uid;
+            $request_data['rep_uid'] = $rep_uid;
             $oReportTable = new \BusinessModel\ReportTable();
-            $response = $oReportTable->saveReportTable($projectUid, $request_data);
+            $response = $oReportTable->updateReportTable($prj_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $rp_uid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $rep_uid {@min 1} {@max 32}
      * @return void
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url DELETE /:projectUid/report-table/:rp_uid
+     * @url DELETE /:prj_uid/report-table/:rep_uid
      */
-    public function doDeleteReportTable($projectUid, $rp_uid)
+    public function doDeleteReportTable($prj_uid, $rep_uid)
     {
         try {
             $oReportTable = new \BusinessModel\ReportTable();
-            $response = $oReportTable->deleteReportTable($projectUid, $rp_uid);
+            $response = $oReportTable->deleteReportTable($prj_uid, $rep_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
