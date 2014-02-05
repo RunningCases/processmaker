@@ -303,7 +303,7 @@ class G
     /**
      * ************* path functions ****************
      */
-    public function mk_dir ($strPath, $rights = 0770)
+    public static function mk_dir ($strPath, $rights = 0770)
     {
         $folder_path = array ($strPath);
         $oldumask = umask( 0 );
@@ -444,7 +444,7 @@ class G
      * @param string $strPath
      * @return string
      */
-    public function expandPath ($strPath = '')
+    public static function expandPath ($strPath = '')
     {
         $res = "";
         $res = PATH_CORE;
@@ -462,7 +462,7 @@ class G
      * @param string $strClass
      * @return void
      */
-    public function LoadSystem ($strClass)
+    public static function LoadSystem ($strClass)
     {
         require_once (PATH_GULLIVER . 'class.' . $strClass . '.php');
     }
@@ -689,7 +689,7 @@ class G
      * @param string $strClass
      * @return void
      */
-    public function LoadClass ($strClass)
+    public static function LoadClass ($strClass)
     {
         $classfile = G::ExpandPath( "classes" ) . 'class.' . $strClass . '.php';
         if (! file_exists( $classfile )) {

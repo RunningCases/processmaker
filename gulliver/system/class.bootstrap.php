@@ -382,6 +382,7 @@ class Bootstrap
         self::registerClass("IsoLocation", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "IsoLocation.php");
         self::registerClass("Users", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
         self::registerClass("UsersPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "UsersPeer.php");
+        self::registerClass("ReportTables", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.reportTables.php");
 
         self::registerClass("Xml_Node", PATH_GULLIVER . "class.xmlDocument.php");
 

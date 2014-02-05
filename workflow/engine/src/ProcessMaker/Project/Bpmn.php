@@ -27,20 +27,11 @@ use \BpmnArtifactPeer as ArtifactPeer;
 
 use \BasePeer;
 
-use ProcessMaker\Project\ProjectHandler;
 use ProcessMaker\Util\Hash;
+use ProcessMaker\Exception;
 
-class BpmnProject //extends ProjectHandler
+class Bpmn extends Handler
 {
-    protected static $diagramElements = array(
-        'activities' => 'act_uid',
-        'events'     => 'evn_uid',
-        'flows'      => 'flo_uid',
-        'artifacts'  => 'art_uid',
-        'laneset'    => 'lns_uid',
-        'lanes'      => 'lan_uid'
-    );
-
     /**
      * @var \BpmnProject
      */
@@ -68,13 +59,13 @@ class BpmnProject //extends ProjectHandler
 
     public static function load($prjUid)
     {
+        $me = new self();
         $project = ProjectPeer::retrieveByPK($prjUid);
 
         if (! is_object($project)) {
-            return null;
+            throw new Exception\ProjectNotFound($me, $prjUid);
         }
 
-        $me = new BpmnProject();
         $me->project = $project;
         $me->prjUid = $me->project->getPrjUid();
 
@@ -82,7 +73,7 @@ class BpmnProject //extends ProjectHandler
     }
 
     /**
-     * @param array|null $data optional array attributes to create and initialize a BpmnProject
+     * @param array| $data array attributes to create and initialize a BpmnProject
      */
     public function create($data)
     {
