@@ -67,8 +67,11 @@ class User extends Api
      */
     public function doPut($usr_uid, $request_data) {
         try {
+            $userLoggedUid = $this->getUserId();
             $user = new \BusinessModel\User();
-            $arrayData = $user->update($usr_uid, $request_data);
+            $arrayData = $user->update($usr_uid, $request_data, $userLoggedUid);
+            $response = $arrayData;
+            return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
