@@ -163,15 +163,16 @@ class BpmnActivity extends BaseBpmnActivity
         $data = parent::toArray($type);
         $bouUid = $this->bound->getBouUid();
 
-        if (! empty($bouUid)) {
+        if (empty($bouUid)) {
             $bound = BpmnBound::findByElement('Activity', $this->getActUid());
 
             if (is_object($bound)) {
                 $this->bound = $bound;
-                $data = array_merge($data, $this->bound->toArray($type));
             }
         }
 
+        $data = array_merge($data, $this->bound->toArray($type));
+        
         return $data;
     }
 

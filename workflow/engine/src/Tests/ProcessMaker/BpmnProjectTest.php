@@ -1,15 +1,21 @@
 <?php
-
 if (! class_exists("Propel")) {
     include_once __DIR__ . "/../bootstrap.php";
 }
 
-use \ProcessMaker\Project\BpmnProject;
-use \PHPUnit_Framework_TestCase;
+use ProcessMaker\Project\BpmnProject;
 
 
 class BpmnProjectTest extends PHPUnit_Framework_TestCase
 {
+    protected static $prjUid;
+
+    public static function tearDownAfterClass()
+    {
+        $bp = BpmnProject::load(self::$prjUid);
+        $bp->remove();
+    }
+
     public function testCreate()
     {
         $data = array(
@@ -21,6 +27,7 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
         // Create a new BpmnProject and save to DB
         $bp = new BpmnProject($data);
         $projectData = $bp->getProject();
+        self::$prjUid = $bp->getUid();
 
         foreach ($data as $key => $value) {
             $this->assertEquals($value, $projectData[$key]);
@@ -227,7 +234,6 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
     public function testRemove($bp)
     {
         $prjUid = $bp->getUid();
-
         $bp->remove();
 
         $this->assertNull(BpmnProject::load($prjUid));

@@ -225,6 +225,61 @@ class BpmnActivityTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testToArray()
+    {
+        $activity = BpmnActivityPeer::retrieveByPK(self::$data1["ACT_UID"]);
+
+        $expected = array(
+            "ACT_UID" => self::$data1["ACT_UID"],
+            "PRJ_UID" => self::$data1["PRJ_UID"],
+            "PRO_UID" => self::$data1["PRO_UID"],
+            "ACT_NAME" => self::$data1["ACT_NAME"],
+            "ACT_TYPE" => "TASK",
+            "ACT_IS_FOR_COMPENSATION" => "0",
+            "ACT_START_QUANTITY" => "1",
+            "ACT_COMPLETION_QUANTITY" => "1",
+            "ACT_TASK_TYPE" => "EMPTY",
+            "ACT_IMPLEMENTATION" => "",
+            "ACT_INSTANTIATE" => "0",
+            "ACT_SCRIPT_TYPE" => "",
+            "ACT_SCRIPT" => "",
+            "ACT_LOOP_TYPE" => "NONE",
+            "ACT_TEST_BEFORE" => "0",
+            "ACT_LOOP_MAXIMUM" => "0",
+            "ACT_LOOP_CONDITION" => "",
+            "ACT_LOOP_CARDINALITY" => "0",
+            "ACT_LOOP_BEHAVIOR" => "NONE",
+            "ACT_IS_ADHOC" => "0",
+            "ACT_IS_COLLAPSED" => "1",
+            "ACT_COMPLETION_CONDITION" => "",
+            "ACT_ORDERING" => "PARALLEL",
+            "ACT_CANCEL_REMAINING_INSTANCES" => "1",
+            "ACT_PROTOCOL" => "",
+            "ACT_METHOD" => "",
+            "ACT_IS_GLOBAL" => "0",
+            "ACT_REFERER" => "",
+            "ACT_DEFAULT_FLOW" => "",
+            "ACT_MASTER_DIAGRAM" => "",
+            "DIA_UID" => "18171550f1198ddc8642045664020352",
+            "ELEMENT_UID" => self::$data1["ACT_UID"],
+            "BOU_ELEMENT" => "pm_canvas",
+            "BOU_ELEMENT_TYPE" => "bpmnActivity",
+            "BOU_X" => self::$data1["BOU_X"],
+            "BOU_Y" => self::$data1["BOU_Y"],
+            "BOU_WIDTH" => "0",
+            "BOU_HEIGHT" => "0",
+            "BOU_REL_POSITION" => "0",
+            "BOU_SIZE_IDENTICAL" => "0",
+            "BOU_CONTAINER" => "bpmnDiagram"
+        );
+
+        $result = $activity->toArray();
+
+        unset($result["BOU_UID"]);
+
+        $this->assertEquals($expected, $result);
+    }
+
     /**
      * @depends testNew
      * @depends testNewUsingFromArray

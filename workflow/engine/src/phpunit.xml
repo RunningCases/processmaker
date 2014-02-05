@@ -1,0 +1,33 @@
+
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="true"
+         syntaxCheck="true"
+         bootstrap="tests/bootstrap.php"
+>
+    <testsuites>
+        <testsuite name="unit">
+            <directory>./Tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <!--<filter>
+        <whitelist>
+            <directory>./</directory>
+            <exclude>
+                <directory>./gulliver</directory>
+                <directory>./workflow</directory>
+                <directory>./rbac</directory>
+            </exclude>
+        </whitelist>
+    </filter> -->
+
+    <php>
+        <var name="SYS_SYS" value="workflow" />
+    </php>
+</phpunit>
