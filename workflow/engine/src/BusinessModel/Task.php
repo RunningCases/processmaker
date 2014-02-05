@@ -656,6 +656,9 @@ class Task
     public function getTaskAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
+            require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
                 throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
@@ -697,7 +700,42 @@ class Task
                     return $aUsers;
                 }
             }
-            $result = $groups->getAllGroup($start, $limit, $filter);
+            $totalCount = 0;
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            $totalRows = \GroupwfPeer::doCount( $criteria );
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UX );
+            $criteria->addAsColumn( 'GRP_TITLE', \ContentPeer::CON_VALUE );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            if ($start != '') {
+                $criteria->setOffset( $start );
+            }
+            if ($limit != '') {
+                $criteria->setLimit( $limit );
+            }
+            if ($filter != '') {
+                $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
+            }
+            $oDataset = \GroupwfPeer::doSelectRS( $criteria );
+            $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+            $processes = Array ();
+            $uids = array ();
+            $groups = array ();
+            $aGroups = array ();
+            while ($oDataset->next()) {
+                $groups[] = $oDataset->getRow();
+            }
+            $result = array ('rows' => $groups,'totalCount' => $totalRows);
             foreach ($result['rows'] as $results) {
                 if (in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
@@ -785,6 +823,9 @@ class Task
     public function getTaskAvailableAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
+            require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
                 throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
@@ -823,7 +864,42 @@ class Task
                     return $aUsers;
                 }
             }
-            $result = $groups->getAllGroup($start, $limit, $filter);
+            $totalCount = 0;
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            $totalRows = \GroupwfPeer::doCount( $criteria );
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UX );
+            $criteria->addAsColumn( 'GRP_TITLE', \ContentPeer::CON_VALUE );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            if ($start != '') {
+                $criteria->setOffset( $start );
+            }
+            if ($limit != '') {
+                $criteria->setLimit( $limit );
+            }
+            if ($filter != '') {
+                $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
+            }
+            $oDataset = \GroupwfPeer::doSelectRS( $criteria );
+            $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+            $processes = Array ();
+            $uids = array ();
+            $groups = array ();
+            $aGroups = array ();
+            while ($oDataset->next()) {
+                $groups[] = $oDataset->getRow();
+            }
+            $result = array ('rows' => $groups,'totalCount' => $totalRows);
             foreach ($result['rows'] as $results) {
                 if (! in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
@@ -1129,6 +1205,9 @@ class Task
     public function getTaskAdhocAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
+            require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
                 throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
@@ -1170,7 +1249,42 @@ class Task
                     return $aUsers;
                 }
             }
-            $result = $groups->getAllGroup($start, $limit, $filter);
+            $totalCount = 0;
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            $totalRows = \GroupwfPeer::doCount( $criteria );
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UX );
+            $criteria->addAsColumn( 'GRP_TITLE', \ContentPeer::CON_VALUE );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            if ($start != '') {
+                $criteria->setOffset( $start );
+            }
+            if ($limit != '') {
+                $criteria->setLimit( $limit );
+            }
+            if ($filter != '') {
+                $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
+            }
+            $oDataset = \GroupwfPeer::doSelectRS( $criteria );
+            $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+            $processes = Array ();
+            $uids = array ();
+            $groups = array ();
+            $aGroups = array ();
+            while ($oDataset->next()) {
+                $groups[] = $oDataset->getRow();
+            }
+            $result = array ('rows' => $groups,'totalCount' => $totalRows);
             foreach ($result['rows'] as $results) {
                 if (in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
@@ -1255,6 +1369,9 @@ class Task
     public function getTaskAvailableAdhocAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit)
     {
         try {
+            require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
                 throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
@@ -1293,7 +1410,42 @@ class Task
                     return $aUsers;
                 }
             }
-            $result = $groups->getAllGroup($start, $limit, $filter);
+            $totalCount = 0;
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            $totalRows = \GroupwfPeer::doCount( $criteria );
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UX );
+            $criteria->addAsColumn( 'GRP_TITLE', \ContentPeer::CON_VALUE );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            if ($start != '') {
+                $criteria->setOffset( $start );
+            }
+            if ($limit != '') {
+                $criteria->setLimit( $limit );
+            }
+            if ($filter != '') {
+                $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
+            }
+            $oDataset = \GroupwfPeer::doSelectRS( $criteria );
+            $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+            $processes = Array ();
+            $uids = array ();
+            $groups = array ();
+            $aGroups = array ();
+            while ($oDataset->next()) {
+                $groups[] = $oDataset->getRow();
+            }
+            $result = array ('rows' => $groups,'totalCount' => $totalRows);
             foreach ($result['rows'] as $results) {
                 if (! in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
