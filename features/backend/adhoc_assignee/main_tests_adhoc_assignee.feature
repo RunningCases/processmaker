@@ -66,7 +66,7 @@ Feature: Project Properties -Adhoc Assignee Resources
 
     Examples:
     | test_description                                           | project                          | activity                         | records | ada_uid                           | ada_type |
-    | Verify that the activity has expected quantity of asignees | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 5       | 54731929352d56741de9d42002704749  | group    |
+    | Verify that the activity has expected quantity of asignees | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 4       | 54731929352d56741de9d42002704749  | group    |
     | Verify that the activity has expected quantity of asignees | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | 1       | 36775342552d5674146d9c2078497230  | group    |
 
 
@@ -119,7 +119,7 @@ Feature: Project Properties -Adhoc Assignee Resources
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 2 records
+    And the response has 1 records
     
   
 
