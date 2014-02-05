@@ -1141,7 +1141,7 @@ class System
         return $result;
     }
 
-    public function solrEnv ($sysName = '')
+    public static function solrEnv ($sysName = '')
     {
         if (empty( $sysName )) {
             $conf = System::getSystemConfiguration();

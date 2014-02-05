@@ -1,19 +1,27 @@
 <?php
+namespace Tests\ProcessMaker\Project;
+
+use \ProcessMaker\Project;
+
 if (! class_exists("Propel")) {
-    include_once __DIR__ . "/../bootstrap.php";
+    include_once __DIR__ . "/../../bootstrap.php";
 }
 
-use ProcessMaker\Project\BpmnProject;
 
-
-class BpmnProjectTest extends PHPUnit_Framework_TestCase
+class BpmnTest extends \PHPUnit_Framework_TestCase
 {
-    protected static $prjUid;
+    protected static $prjUids = array();
 
     public static function tearDownAfterClass()
     {
-        $bp = BpmnProject::load(self::$prjUid);
-        $bp->remove();
+        //return;
+
+        //cleaning DB
+        foreach (self::$prjUids as $prjUid) {
+            $bp = Project\Bpmn::load($prjUid);
+            $bp->remove();
+        }
+        
     }
 
     public function testCreate()
@@ -24,10 +32,10 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
             "PRJ_AUTHOR" => "00000000000000000000000000000001"
         );
 
-        // Create a new BpmnProject and save to DB
-        $bp = new BpmnProject($data);
+        // Create a new Project\Bpmn and save to DB
+        $bp = new Project\Bpmn($data);
         $projectData = $bp->getProject();
-        self::$prjUid = $bp->getUid();
+        self::$prjUids[] = $bp->getUid();
 
         foreach ($data as $key => $value) {
             $this->assertEquals($value, $projectData[$key]);
@@ -38,7 +46,7 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends testCreate
-     * @var $bp \ProcessMaker\Project\BpmnProject
+     * @var $bp \ProcessMaker\Project\Bpmn
      */
     public function testAddDiagram($bp)
     {
@@ -58,7 +66,7 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends testCreate
-     * @var $bp \ProcessMaker\Project\BpmnProject
+     * @var $bp \ProcessMaker\Project\Bpmn
      */
     public function testAddProcess($bp)
     {
@@ -81,7 +89,7 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends testCreate
-     * @var $bp \ProcessMaker\Project\BpmnProject
+     * @var $bp \ProcessMaker\Project\Bpmn
      */
     public function testAddActivity($bp)
     {
@@ -112,7 +120,7 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends testCreate
-     * @param $bp \ProcessMaker\Project\BpmnProject
+     * @param $bp \ProcessMaker\Project\Bpmn
      * @return array
      */
     public function testAddActivityWithUid($bp)
@@ -146,7 +154,7 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
     /**
      * @depends testCreate
      * @depends testAddActivityWithUid
-     * @param $bp \ProcessMaker\Project\BpmnProject
+     * @param $bp \ProcessMaker\Project\Bpmn
      * @param $data
      */
     public function testGetActivity($bp, $data)
@@ -154,7 +162,7 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
         // Load from DB
         $activityData = $bp->getActivity($data["ACT_UID"]);
 
-        // in data is set the determinated UID for activity created in previous step
+        // in data is set a determined UID for activity created in previous step
         foreach ($data as $key => $value) {
             $this->assertEquals($value, $activityData[$key]);
         }
@@ -166,7 +174,32 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
     /**
      * @depends testCreate
      * @depends testAddActivityWithUid
-     * @param $bp \ProcessMaker\Project\BpmnProject
+     * @param $bp \ProcessMaker\Project\Bpmn
+     * @param $data
+     */
+    public function testUpdateActivity($bp, $data)
+    {
+        $updateData = array(
+            "ACT_NAME" => "Activity #X (Updated)",
+            "BOU_X" => "251",
+            "BOU_Y" => "252"
+        );
+
+        // Save to DB
+        $bp->updateActivity($data["ACT_UID"], $updateData);
+
+        // Load from DB
+        $activityData = $bp->getActivity($data["ACT_UID"]);
+
+        foreach ($updateData as $key => $value) {
+            $this->assertEquals($value, $activityData[$key]);
+        }
+    }
+
+    /**
+     * @depends testCreate
+     * @depends testAddActivityWithUid
+     * @param $bp \ProcessMaker\Project\Bpmn
      * @param $data
      */
     public function testRemoveActivity($bp, $data)
@@ -180,8 +213,8 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
 
     public function testGetActivities()
     {
-        // Create a new BpmnProject and save to DB
-        $bp = new BpmnProject(array(
+        // Create a new Project\Bpmn and save to DB
+        $bp = new Project\Bpmn(array(
             "PRJ_NAME" => "Test BPMN Project #2",
             "PRJ_DESCRIPTION" => "Description for - Test BPMN Project #1",
             "PRJ_AUTHOR" => "00000000000000000000000000000001"
@@ -211,13 +244,13 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends testGetActivities
-     * @param $bp \ProcessMaker\Project\BpmnProject
-     * @return null|\ProcessMaker\Project\BpmnProject
+     * @param $bp \ProcessMaker\Project\Bpmn
+     * @return null|\ProcessMaker\Project\Bpmn
      */
     public function testLoad($bp)
     {
         $prjUid = $bp->getUid();
-        $bp2 = BpmnProject::load($prjUid);
+        $bp2 = Project\Bpmn::load($prjUid);
 
         $this->assertNotNull($bp2);
         $this->assertEquals($bp->getActivities(), $bp2->getActivities());
@@ -229,14 +262,16 @@ class BpmnProjectTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends testLoad
-     * @param $bp \ProcessMaker\Project\BpmnProject
+     * @param $bp \ProcessMaker\Project\Bpmn
+     * @expectedException \ProcessMaker\Exception\ProjectNotFound
+     * @expectedExceptionCode 20
      */
     public function testRemove($bp)
     {
         $prjUid = $bp->getUid();
         $bp->remove();
 
-        $this->assertNull(BpmnProject::load($prjUid));
+        Project\Bpmn::load($prjUid);
     }
 }
 

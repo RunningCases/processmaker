@@ -27,20 +27,11 @@ use \BpmnArtifactPeer as ArtifactPeer;
 
 use \BasePeer;
 
-use ProcessMaker\Project\ProjectHandler;
 use ProcessMaker\Util\Hash;
+use ProcessMaker\Exception;
 
-class BpmnProject //extends ProjectHandler
+class Bpmn extends Handler
 {
-    protected static $diagramElements = array(
-        'activities' => 'act_uid',
-        'events'     => 'evn_uid',
-        'flows'      => 'flo_uid',
-        'artifacts'  => 'art_uid',
-        'laneset'    => 'lns_uid',
-        'lanes'      => 'lan_uid'
-    );
-
     /**
      * @var \BpmnProject
      */
@@ -68,13 +59,13 @@ class BpmnProject //extends ProjectHandler
 
     public static function load($prjUid)
     {
+        $me = new self();
         $project = ProjectPeer::retrieveByPK($prjUid);
 
         if (! is_object($project)) {
-            return null;
+            throw new Exception\ProjectNotFound($me, $prjUid);
         }
 
-        $me = new BpmnProject();
         $me->project = $project;
         $me->prjUid = $me->project->getPrjUid();
 
@@ -82,7 +73,7 @@ class BpmnProject //extends ProjectHandler
     }
 
     /**
-     * @param array|null $data optional array attributes to create and initialize a BpmnProject
+     * @param array| $data array attributes to create and initialize a BpmnProject
      */
     public function create($data)
     {
@@ -97,6 +88,11 @@ class BpmnProject //extends ProjectHandler
         $this->prjUid = $this->project->getPrjUid();
     }
 
+    public function update()
+    {
+
+    }
+
     public function remove()
     {
         /*
@@ -109,16 +105,43 @@ class BpmnProject //extends ProjectHandler
         foreach ($activities as $activity) {
             $this->removeActivity($activity["ACT_UID"]);
         }
-
-        $process = ProcessPeer::retrieveByPK($this->getProcess("object")->getProUid());
-        $process->delete();
-
-        $diagram = DiagramPeer::retrieveByPK($this->getDiagram("object")->getDiaUid());
-        $diagram->delete();
-
-        $project = ProjectPeer::retrieveByPK($this->getUid());
-        $project->delete();
+        if ($process = $this->getProcess("object")) {
+            $process->delete();
+        }
+        if ($diagram = $this->getDiagram("object")) {
+            $diagram->delete();
+        }
+        if ($project = $this->getProject("object")) {
+            $project->delete();
+        }
     }
+
+    public static function getList($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)
+    {
+        return Project::getAll($start, $limit, $filter, $changeCaseTo);
+    }
+
+    public function getUid()
+    {
+        if (empty($this->project)) {
+            throw new \RuntimeException("Error: There is not an initialized project.");
+        }
+
+        return $this->prjUid;
+    }
+
+    public function getProject($retType = "array")
+    {
+        if (empty($this->project)) {
+            throw new \RuntimeException("Error: There is not an initialized project.");
+        }
+
+        return $retType == "array" ? $this->project->toArray() : $this->project;
+    }
+
+    /*
+     * Projects elements handlers
+     */
 
     public function addDiagram($data = array())
     {
@@ -136,6 +159,20 @@ class BpmnProject //extends ProjectHandler
         $this->diagram->save();
     }
 
+    public function getDiagram($retType = "array")
+    {
+        if (empty($this->diagram)) {
+            $diagrams = Diagram::findAllByProUid($this->getUid());
+
+            if (! empty($diagrams)) {
+                //NOTICE for ProcessMaker we're just handling a "one to one" relationship between project and process
+                $this->diagram = $diagrams[0];
+            }
+        }
+
+        return $retType == "array" ? $this->diagram->toArray() : $this->diagram;
+    }
+
     public function addProcess($data = array())
     {
         if (empty($this->diagram)) {
@@ -151,6 +188,20 @@ class BpmnProject //extends ProjectHandler
         $this->process->setPrjUid($this->project->getPrjUid());
         $this->process->setDiaUid($this->getDiagram("object")->getDiaUid());
         $this->process->save();
+    }
+
+    public function getProcess($retType = "array")
+    {
+        if (empty($this->process)) {
+            $processes = Process::findAllByProUid($this->getUid());
+
+            if (! empty($processes)) {
+                //NOTICE for ProcessMaker we're just handling a "one to one" relationship between project and process
+                $this->process = $processes[0];
+            }
+        }
+
+        return $retType == "array" ? $this->process->toArray() : $this->process;
     }
 
     public function addActivity($data)
@@ -182,9 +233,21 @@ class BpmnProject //extends ProjectHandler
         return $activity;
     }
 
-    public function getActivities($retType = 'array')
+    public function getActivities()
     {
-        return Activity::getAll($this->getUid(), null, null, '', $retType);
+        return Activity::getAll($this->getUid());
+    }
+
+    public function updateActivity($actUid, $data)
+    {
+        $activity = ActivityPeer::retrieveByPk($actUid);
+
+        // fixing data
+        //$data['ELEMENT_UID'] = $data['BOU_ELEMENT_UID'];
+        //unset($data['BOU_ELEMENT_UID']);
+
+        $activity->fromArray($data);
+        $activity->save();
     }
 
     public function removeActivity($actUid)
@@ -337,51 +400,5 @@ class BpmnProject //extends ProjectHandler
     public function getLanesets()
     {
         // TODO: Implement update() method.
-    }
-
-
-
-    // getters
-
-    public function getUid()
-    {
-        if (empty($this->project)) {
-            throw new \Exception("Error: There is not an initialized project.");
-        }
-
-        return $this->prjUid;
-    }
-
-    public function getProject($retType = "array")
-    {
-        return $retType == "array" ? $this->project->toArray() : $this->project;
-    }
-
-    public function getDiagram($retType = "array")
-    {
-        if (empty($this->diagram)) {
-            $diagrams = Diagram::findAllByProUid($this->getUid());
-
-            if (! empty($diagrams)) {
-                //NOTICE for ProcessMaker we're just handling a "one to one" relationship between project and process
-                $this->diagram = $diagrams[0];
-            }
-        }
-
-        return $retType == "array" ? $this->diagram->toArray() : $this->diagram;
-    }
-
-    public function getProcess($retType = "array")
-    {
-        if (empty($this->process)) {
-            $processes = Process::findAllByProUid($this->getUid());
-
-            if (! empty($processes)) {
-                //NOTICE for ProcessMaker we're just handling a "one to one" relationship between project and process
-                $this->process = $processes[0];
-            }
-        }
-
-        return $retType == "array" ? $this->process->toArray() : $this->process;
     }
 }

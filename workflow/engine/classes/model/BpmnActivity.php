@@ -60,7 +60,7 @@ class BpmnActivity extends BaseBpmnActivity
         return BpmnActivityPeer::doSelect($c);
     }
 
-    public static function getAll($prjUid = null, $start = null, $limit = null, $filter = '', $returnType = null, $changeCaseTo=CASE_UPPER)
+    public static function getAll($prjUid = null, $start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
         $c = new Criteria('workflow');
         $c->addSelectColumn("BPMN_ACTIVITY.*");
@@ -71,23 +71,13 @@ class BpmnActivity extends BaseBpmnActivity
             $c->add(BpmnActivityPeer::PRJ_UID, $prjUid, Criteria::EQUAL);
         }
 
-        $returnType = ($returnType != 'array' && $returnType != 'object') ? 'array' : $returnType;
+        $rs = BpmnActivityPeer::doSelectRS($c);
+        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
         $activities = array();
 
-
-        switch ($returnType) {
-            case 'object':
-                $activities = BpmnActivityPeer::doSelect($c);
-                break;
-
-            case 'array':
-                $rs = BpmnActivityPeer::doSelectRS($c);
-                $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                while ($rs->next()) {
-                    $activities[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
-                }
-
-                break;
+        while ($rs->next()) {
+            $activities[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
         }
 
         return $activities;

@@ -4,7 +4,6 @@ namespace Services\Api\ProcessMaker;
 use Luracast\Restler\RestException;
 use ProcessMaker\Services\Api;
 use ProcessMaker\Adapter\Bpmn\Model as BpmnModel;
-use ProcessMaker\Adapter\Workflow;
 
 /**
  * Class Project
@@ -19,9 +18,14 @@ class Project extends Api
     public function index()
     {
         try {
-            $projects = BpmnModel::loadProjects();
+            $start = null;
+            $limit = null;
+            $filter = "";
+
+            $projects = \ProcessMaker\Project\Adapter\BpmnWorkflow::getList($start, $limit, $filter, CASE_LOWER);
 
             return $projects;
+
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -30,9 +34,9 @@ class Project extends Api
     public function get($prjUid)
     {
         try {
-            $project = BpmnModel::loadProject($prjUid);
+            $projects = new \StdClass(); //TODO
 
-            return $project;
+            return $projects;
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

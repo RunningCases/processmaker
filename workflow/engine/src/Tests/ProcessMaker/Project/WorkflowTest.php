@@ -1,19 +1,23 @@
 <?php
+namespace Tests\ProcessMaker\Project;
+
+use \ProcessMaker\Project;
 
 if (! class_exists("Propel")) {
-    include_once __DIR__ . "/../bootstrap.php";
+    include_once __DIR__ . "/../../bootstrap.php";
 }
 
-use \ProcessMaker\Project\WorkflowProject;
-
-
-class WorkflowProjectTest extends PHPUnit_Framework_TestCase
+class WorkflowTest extends \PHPUnit_Framework_TestCase
 {
-    protected $workflowProject;
+    protected static $proUids = array();
 
-    protected function setUp()
+    public static function tearDownAfterClass()
     {
-        $this->workflowProject = new WorkflowProject();
+        //cleaning DB
+        foreach (self::$proUids as $proUid) {
+            $wp = Project\Workflow::load($proUid);
+            $wp->remove();
+        }
     }
 
     public function testCreate()
@@ -25,9 +29,10 @@ class WorkflowProjectTest extends PHPUnit_Framework_TestCase
             "PRO_CREATE_USER" => "00000000000000000000000000000001"
         );
 
-        $wp = new WorkflowProject($data);
+        $wp = new Project\Workflow($data);
+        self::$proUids[] = $wp->getUid();
 
-        $processData = $wp->getProperties();
+        $processData = $wp->getProcess();
 
         foreach ($data as $key => $value) {
             $this->assertEquals($data[$key], $processData[$key]);
@@ -149,10 +154,12 @@ class WorkflowProjectTest extends PHPUnit_Framework_TestCase
      */
     public function testAddRoute()
     {
-        $wp = new WorkflowProject(array(
+        $wp = new Project\Workflow(array(
             "PRO_TITLE" => "Test Project #2 (Sequential)",
             "PRO_CREATE_USER" => "00000000000000000000000000000001"
         ));
+
+        self::$proUids[] = $wp->getUid();
 
         $tasUid1 = $wp->addTask(array(
             "TAS_TITLE" => "task #1",
@@ -176,10 +183,11 @@ class WorkflowProjectTest extends PHPUnit_Framework_TestCase
 
     public function testAddSelectRoute()
     {
-        $wp = new WorkflowProject(array(
+        $wp = new Project\Workflow(array(
             "PRO_TITLE" => "Test Project #3 (Select)",
             "PRO_CREATE_USER" => "00000000000000000000000000000001"
         ));
+        self::$proUids[] = $wp->getUid();
 
         $tasUid1 = $wp->addTask(array(
             "TAS_TITLE" => "task #1",
@@ -202,7 +210,7 @@ class WorkflowProjectTest extends PHPUnit_Framework_TestCase
 
     public function testCompleteWorkflowProject()
     {
-        $wp = new WorkflowProject(array(
+        $wp = new Project\Workflow(array(
             "PRO_TITLE" => "Test Complete Project #4",
             "PRO_CREATE_USER" => "00000000000000000000000000000001"
         ));
@@ -253,5 +261,21 @@ class WorkflowProjectTest extends PHPUnit_Framework_TestCase
 
         $wp->setEndTask($tasUid4);
         $wp->setEndTask($tasUid6);
+
+        return $wp;
+    }
+
+    /**
+     * @depends testCompleteWorkflowProject
+     * @param $wp \ProcessMaker\Project\WorkflowProject
+     * @expectedException \ProcessMaker\Exception\ProjectNotFound
+     * @expectedExceptionCode 20
+     */
+    public function testRemove($wp)
+    {
+        $proUid = $wp->getUid();
+        $wp->remove();
+
+        Project\Workflow::load($proUid);
     }
 }

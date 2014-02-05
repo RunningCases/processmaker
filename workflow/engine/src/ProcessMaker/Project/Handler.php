@@ -3,11 +3,17 @@ namespace ProcessMaker\Project;
 
 use ProcessMaker\Util\Logger;
 
-abstract class ProjectHandler //implements ProjectHandlerInterface
+abstract class Handler
 {
-    public abstract function save();
-    public abstract function update();
-    public abstract function delete();
+    public static function load($uid)
+    {   // This method must be implemented on children classes, this is not declared abstract since PHP 5.3.x
+        // don't allow any more static abstract methods.
+        return null;
+    }
+
+    public abstract function create($data);
+    //public abstract function update();
+    public abstract function remove();
 
     /**
      * Log in ProcessMaker Standard Output if debug mode is enabled.
