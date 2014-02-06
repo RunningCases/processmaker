@@ -210,14 +210,23 @@ class Bpmn extends Handler
             throw new \Exception(sprintf("Error: There is not an initialized diagram for Project with prj_uid: %s.", $this->getUid()));
         }
 
-        // setting defaults
-        $data['ACT_UID'] = array_key_exists('ACT_UID', $data) ? $data['ACT_UID'] : Hash::generateUID();;
+        try {
+            self::log("Add Activity with data: ", $data);
 
-        $activity = new Activity();
-        $activity->fromArray($data);
-        $activity->setPrjUid($this->getUid());
-        $activity->setProUid($process->getProUid());
-        $activity->save();
+            // setting defaults
+            $data['ACT_UID'] = array_key_exists('ACT_UID', $data) ? $data['ACT_UID'] : Hash::generateUID();;
+
+            $activity = new Activity();
+            $activity->fromArray($data);
+            $activity->setPrjUid($this->getUid());
+            $activity->setProUid($process->getProUid());
+            $activity->save();
+
+            self::log("Add Activity Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
 
         return $activity->getActUid();
     }
@@ -244,20 +253,38 @@ class Bpmn extends Handler
 
     public function updateActivity($actUid, $data)
     {
-        $activity = ActivityPeer::retrieveByPk($actUid);
+        try {
+            self::log("Update Activity: $actUid", "With data: ", $data);
 
-        // fixing data
-        //$data['ELEMENT_UID'] = $data['BOU_ELEMENT_UID'];
-        //unset($data['BOU_ELEMENT_UID']);
+            $activity = ActivityPeer::retrieveByPk($actUid);
 
-        $activity->fromArray($data);
-        $activity->save();
+            // fixing data
+            //$data['ELEMENT_UID'] = $data['BOU_ELEMENT_UID'];
+            //unset($data['BOU_ELEMENT_UID']);
+
+            $activity->fromArray($data);
+            $activity->save();
+
+            self::log("Update Activity Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function removeActivity($actUid)
     {
-        $activity = ActivityPeer::retrieveByPK($actUid);
-        $activity->delete();
+        try {
+            self::log("Remove Activity: $actUid");
+
+            $activity = ActivityPeer::retrieveByPK($actUid);
+            $activity->delete();
+
+            self::log("Remove Activity Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function addEvent($data)

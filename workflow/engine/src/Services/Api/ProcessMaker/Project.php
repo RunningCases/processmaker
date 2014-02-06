@@ -105,6 +105,16 @@ class Project extends Api
 
             $result = array();
 
+            $diagramElements = array(
+                 'activities' => 'act_uid',
+                 'events'     => 'evn_uid',
+                 'flows'      => 'flo_uid',
+                 'artifacts'  => 'art_uid',
+                 'laneset'    => 'lns_uid',
+                 'lanes'      => 'lan_uid'
+            );
+
+            $whiteList = array();
             foreach ($diagram["activities"] as $activityData) {
                 $activityData = array_change_key_case($activityData, CASE_UPPER);
 
@@ -112,6 +122,8 @@ class Project extends Api
                 if ($activity = $bwp->getActivity($activityData["ACT_UID"])) {
                     // then update activity
                     $bwp->updateActivity($activityData["ACT_UID"], $activityData);
+
+                    $whiteList[] = $activityData["ACT_UID"];
                 } else {
                     // if not exists then create it
                     $oldActUid = $activityData["ACT_UID"];
@@ -120,11 +132,19 @@ class Project extends Api
                     $bwp->addActivity($activityData);
 
                     $result[] = array("object" => "activity", "new_uid" => $actUid, "old_uid" => $oldActUid);
+                    $whiteList[] = $actUid;
                 }
             }
 
-            //$result = BpmnModel::updateProject($prjUid, $request_data);
+            $activities = $bwp->getActivities();
 
+            // looking for removed elements
+            foreach ($activities as $activityData) {
+                if (! in_array($activityData["ACT_UID"], $whiteList)) {
+                    // If it is not in the white list so, then remove them
+                    $bwp->removeActivity($activityData["ACT_UID"]);
+                }
+            }
 
             return $result;
         } catch (\Exception $e) {

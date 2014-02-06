@@ -48,7 +48,7 @@ abstract class Handler
      */
     public static function log()
     {
-        if (System::isDebugMode()) {
+        if (\System::isDebugMode()) {
 
             $me = Logger::getInstance();
             $args = func_get_args();
