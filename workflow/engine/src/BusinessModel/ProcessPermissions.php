@@ -15,8 +15,8 @@ class ProcessPermissions
     /**
      * Get list for Process Permissions
      *
-     * @var string $sProcessUID. Uid for Process
-     * @var string $sPermissionUid. Uid for Process Permission
+     * @var string $pro_uid. Uid for Process
+     * @var string $op_uid. Uid for Process Permission
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -24,15 +24,20 @@ class ProcessPermissions
      *
      * @return array
      */
-    public function getProcessPermissions($sProcessUID, $sPermissionUid = '')
+    public function getProcessPermissions($pro_uid, $op_uid = '')
     {
+        $pro_uid = $this->validateProUid($pro_uid);
+        if ($op_uid != '') {
+            $op_uid  = $this->validateOpUid($op_uid);
+        }
+
         G::LoadClass('case');
         Cases::verifyTable();
         $aObjectsPermissions = array();
         $oCriteria = new \Criteria('workflow');
-        $oCriteria->add(ObjectPermissionPeer::PRO_UID, $sProcessUID);
-        if ($sPermissionUid != '') {
-            $oCriteria->add(ObjectPermissionPeer::OP_UID, $sPermissionUid);
+        $oCriteria->add(ObjectPermissionPeer::PRO_UID, $pro_uid);
+        if ($op_uid != '') {
+            $oCriteria->add(ObjectPermissionPeer::OP_UID, $op_uid);
         }
         $oDataset = ObjectPermissionPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -170,9 +175,9 @@ class ProcessPermissions
             $oDataset->next();
         }
 
-        if ($sPermissionUid != '' && empty($aObjectsPermissions)) {
+        if ($op_uid != '' && empty($aObjectsPermissions)) {
             throw (new \Exception( 'This row doesn\'t exist!' ));
-        } elseif ($sPermissionUid != '' && !empty($aObjectsPermissions)) {
+        } elseif ($op_uid != '' && !empty($aObjectsPermissions)) {
             $aObjectsPermissions = array_change_key_case($aObjectsPermissions, CASE_LOWER);
             return current($aObjectsPermissions);
         }
@@ -184,7 +189,7 @@ class ProcessPermissions
      * Save Process Permission
      *
      * @var array $data. Data for Process Permission
-     * @var string $sPermissionUid. Uid for Process Permission
+     * @var string $op_uid. Uid for Process Permission
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -193,20 +198,27 @@ class ProcessPermissions
      * @return void
      */
 
-    public function saveProcessPermission($data, $sPermissionUid = '')
+    public function saveProcessPermission($data, $op_uid = '')
     {
         try {
             $data = array_change_key_case($data, CASE_UPPER);
 
-            $this->validateProcess($data['PRO_UID']);
-            $this->validateUser($data['USR_UID']);
+            $this->validateProUid($data['PRO_UID']);
+            if ($op_uid != '') {
+                $op_uid  = $this->validateOpUid($op_uid);
+            }
+            if ($data['OP_USER_RELATION'] == "1") {
+                $this->validateUsrUid($data['USR_UID']);
+            } else {
+                $this->validateGrpUid($data['USR_UID']);
+            }
             if (isset($data['TAS_UID']) && ($data['TAS_UID'] != '')) {
-                $this->validateTask($data['TAS_UID']);
+                $this->validateTasUid($data['TAS_UID']);
             } else {
                 $data['TAS_UID'] = '';
             }
             if (isset($data['OP_TASK_SOURCE']) && ($data['OP_TASK_SOURCE'] != '')) {
-                $this->validateTask($data['OP_TASK_SOURCE']);
+                $this->validateTasUid($data['OP_TASK_SOURCE']);
             } else {
                 $data['OP_TASK_SOURCE'] = '';
             }
@@ -220,24 +232,24 @@ class ProcessPermissions
                     $sObjectUID = '';
                     break;
                 case 'DYNAFORM':
-                    $this->validateDynaform($data['DYNAFORMS']);
+                    $this->validateDynUid($data['DYNAFORMS']);
                     $sObjectUID = $data['DYNAFORMS'];
                     break;
                 case 'INPUT':
-                    $this->validateInput($data['INPUTS']);
+                    $this->validateInpUid($data['INPUTS']);
                     $sObjectUID = $data['INPUTS'];
                     break;
                 case 'OUTPUT':
-                    $this->validateOutput($data['OUTPUTS']);
+                    $this->validateOutUid($data['OUTPUTS']);
                     $sObjectUID = $data['OUTPUTS'];
                     break;
             }
             $oOP = new \ObjectPermission();
-            $permissionUid = ($sPermissionUid != '') ? $sPermissionUid : G::generateUniqueID();
+            $permissionUid = ($op_uid != '') ? $op_uid : G::generateUniqueID();
             $data['OP_UID'] = $permissionUid;
             $data['OP_OBJ_UID'] = $sObjectUID;
 
-            if ($sPermissionUid == '') {
+            if ($op_uid == '') {
                 $oOP->fromArray( $data, \BasePeer::TYPE_FIELDNAME );
                 $oOP->save();
                 $daraRes = $oOP->load($permissionUid);
@@ -261,7 +273,7 @@ class ProcessPermissions
     /**
      * Delete Process Permission
      *
-     * @var string $sPermissionUid. Uid for Process Permission
+     * @var string $op_uid. Uid for Process Permission
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -269,100 +281,186 @@ class ProcessPermissions
      *
      * @return void
      */
-    public function deleteProcessPermission($sPermissionUid)
+    public function deleteProcessPermission($op_uid, $pro_uid)
     {
         try {
-            require_once 'classes/model/ObjectPermission.php';
+            $pro_uid = $this->validateProUid($pro_uid);
+            $op_uid  = $this->validateOpUid($op_uid);
+
             $oOP = new \ObjectPermission();
-            $oOP = ObjectPermissionPeer::retrieveByPK( $sPermissionUid );
+            $oOP = ObjectPermissionPeer::retrieveByPK( $op_uid );
             $oOP->delete();
         } catch (Exception $e) {
             throw $e;
         }
     }
 
-    public function validateProcess($proUid) {
-        $proUid = trim($proUid);
-        if ($proUid == '') {
-            throw (new \Exception('This process doesn\'t exist!'));
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateProUid ($pro_uid) {
+        $pro_uid = trim($pro_uid);
+        if ($pro_uid == '') {
+            throw (new \Exception("The project with prj_uid: '', does not exist."));
         }
-
         $oProcess = new \Process();
-        if (!($oProcess->processExists($proUid))) {
-            throw (new \Exception('This process doesn\'t exist!'));
+        if (!($oProcess->processExists($pro_uid))) {
+            throw (new \Exception("The project with prj_uid: '$pro_uid', does not exist."));
         }
-
-        return $proUid;
+        return $pro_uid;
     }
 
-    public function validateUser($userUid) {
-        $userUid = trim($userUid);
-        if ($userUid == '') {
-            throw (new \Exception('This user doesn\'t exist!'));
+    /**
+     * Validate Process Permission Uid
+     * @var string $op_uid. Uid for process permission
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateOpUid ($op_uid) {
+        $op_uid = trim($op_uid);
+        if ($op_uid == '') {
+            throw (new \Exception("The process permission with op_uid: '', does not exist."));
         }
+        $oObjectPermission = new \ObjectPermission();
+        if (!($oObjectPermission->Exists($op_uid))) {
+            throw (new \Exception("The process permission with op_uid: '$op_uid', does not exist."));
+        }
+        return $op_uid;
+    }
 
+    /**
+     * Validate User Uid
+     * @var string $usr_uid. Uid for user
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateUsrUid($usr_uid) {
+        $usr_uid = trim($usr_uid);
+        if ($usr_uid == '') {
+            throw (new \Exception("The user with usr_uid: '', does not exist."));
+        }
         $oUsers = new \Users();
-        if (!($oUsers->userExists($userUid))) {
-            throw (new \Exception('This user doesn\'t exist!'));
+        if (!($oUsers->userExists($usr_uid))) {
+            throw (new \Exception("The user with usr_uid: '$usr_uid', does not exist."));
         }
-
-        return $userUid;
+        return $usr_uid;
     }
 
-    public function validateTask($taskUid) {
-        $taskUid = trim($taskUid);
-        if ($taskUid == '') {
-            throw (new \Exception('This task doesn\'t exist!'));
+    /**
+     * Validate Group Uid
+     * @var string $grp_uid. Uid for group
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateGrpUid($grp_uid) {
+        $grp_uid = trim($grp_uid);
+        if ($grp_uid == '') {
+            throw (new \Exception("The group with usr_uid: '', does not exist."));
         }
+        $oGroup = new \Groupwf();
+        if (!($oGroup->GroupwfExists($grp_uid))) {
+            throw (new \Exception("The group with usr_uid: '$grp_uid', does not exist."));
+        }
+        return $grp_uid;
+    }
 
+    /**
+     * Validate Task Uid
+     * @var string $tas_uid. Uid for task
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateTasUid($tas_uid) {
+        $tas_uid = trim($tas_uid);
+        if ($tas_uid == '') {
+            throw (new \Exception("The task with tas_uid: '', does not exist."));
+        }
         $oTask = new \Task();
-        if (!($oTask->taskExists($taskUid))) {
-            throw (new \Exception('This task doesn\'t exist!'));
+        if (!($oTask->taskExists($tas_uid))) {
+            throw (new \Exception("The task with tas_uid: '$tas_uid', does not exist."));
         }
-
-        return $taskUid;
+        return $tas_uid;
     }
 
-    public function validateDynaform($dynUid) {
-        $dynUid = trim($dynUid);
-        if ($dynUid == '') {
-            throw (new \Exception('This dynaform doesn\'t exist!'));
+    /**
+     * Validate Dynaform Uid
+     * @var string $dyn_uid. Uid for dynaform
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateDynUid($dyn_uid) {
+        $dyn_uid = trim($dyn_uid);
+        if ($dyn_uid == '') {
+            throw (new \Exception("The dynaform with dynaforms: '', does not exist."));
         }
-
         $oDynaform = new \Dynaform();
-        if (!($oDynaform->dynaformExists($dynUid))) {
-            throw (new \Exception('This dynaform doesn\'t exist!'));
+        if (!($oDynaform->dynaformExists($dyn_uid))) {
+            throw (new \Exception("The dynaform with dynaforms: '$dyn_uid', does not exist."));
         }
-
-        return $dynUid;
+        return $dyn_uid;
     }
 
-    public function validateInput($inputUid) {
-        $inputUid = trim($inputUid);
-        if ($inputUid == '') {
-            throw (new \Exception('This inputDocument doesn\'t exist!'));
+    /**
+     * Validate Input Uid
+     * @var string $inp_uid. Uid for dynaform
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateInpUid($inp_uid) {
+        $inp_uid = trim($inp_uid);
+        if ($inp_uid == '') {
+            throw (new \Exception("The input with inputs: '', does not exist."));
         }
-
         $oInputDocument = new \InputDocument();
-        if (!($oInputDocument->InputExists($inputUid))) {
-            throw (new \Exception('This inputDocument doesn\'t exist!'));
+        if (!($oInputDocument->InputExists($inp_uid))) {
+            throw (new \Exception("The input with inputs: '$inp_uid', does not exist."));
         }
-
-        return $inputUid;
+        return $inp_uid;
     }
 
-    public function validateOutput($outputUid) {
-        $outputUid = trim($outputUid);
-        if ($outputUid == '') {
-            throw (new \Exception('This task doesn\'t exist!'));
+    /**
+     * Validate Output Uid
+     * @var string $out_uid. Uid for output
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateOutUid($out_uid) {
+        $out_uid = trim($out_uid);
+        if ($out_uid == '') {
+            throw (new \Exception("The output with outputs: '', does not exist."));
         }
-
         $oOutputDocument = new \OutputDocument();
-        if (!($oOutputDocument->OutputExists($outputUid))) {
-            throw (new \Exception('This task doesn\'t exist!'));
+        if (!($oOutputDocument->OutputExists($out_uid))) {
+            throw (new \Exception("The output with outputs: '$out_uid', does not exist."));
         }
-
-        return $outputUid;
+        return $out_uid;
     }
 }
 

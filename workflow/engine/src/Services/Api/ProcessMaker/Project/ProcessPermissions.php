@@ -15,7 +15,7 @@ use \Luracast\Restler\RestException;
 class ProcessPermissions extends Api
 {
     /**
-     * @param string $projectUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -25,11 +25,11 @@ class ProcessPermissions extends Api
      *
      * @url GET /:projectUid/process-permissions
      */
-    public function doGetProcessPermissions($projectUid)
+    public function doGetProcessPermissions($prj_uid)
     {
         try {
             $processPermissions = new \BusinessModel\ProcessPermissions();
-            $response = $processPermissions->getProcessPermissions($projectUid);
+            $response = $processPermissions->getProcessPermissions($prj_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -37,8 +37,8 @@ class ProcessPermissions extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $objectPermissionUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $ob_uid {@min 1} {@max 32}
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -46,13 +46,13 @@ class ProcessPermissions extends Api
      *
      * @return array
      *
-     * @url GET /:projectUid/process-permission/:objectPermissionUid
+     * @url GET /:prj_uid/process-permission/:ob_uid
      */
-    public function doGetProcessPermission($projectUid, $objectPermissionUid)
+    public function doGetProcessPermission($prj_uid, $ob_uid)
     {
         try {
             $processPermissions = new \BusinessModel\ProcessPermissions();
-            $response = $processPermissions->getProcessPermissions($projectUid, $objectPermissionUid);
+            $response = $processPermissions->getProcessPermissions($prj_uid, $ob_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -60,7 +60,7 @@ class ProcessPermissions extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      *
      * @param string $usr_uid {@from body} {@min 1} {@max 32}
@@ -81,11 +81,11 @@ class ProcessPermissions extends Api
      *
      * @return array
      *
-     * @url POST /:projectUid/process-permission/
+     * @url POST /:prj_uid/process-permission/
      * @status 201
      */
     public function doPostProcessPermission(
-        $projectUid,
+        $prj_uid,
         $request_data,
         $usr_uid,
         $op_user_relation,
@@ -103,7 +103,7 @@ class ProcessPermissions extends Api
             $hiddenFields = array('task_target', 'group_user', 'task_source',
                 'object_type', 'object', 'participated', 'action'
             );
-            $request_data['pro_uid'] = $projectUid;
+            $request_data['pro_uid'] = $prj_uid;
             $processPermissions = new \BusinessModel\ProcessPermissions();
             $response = $processPermissions->saveProcessPermission($request_data);
             foreach ($response as $key => $eventData) {
@@ -118,8 +118,8 @@ class ProcessPermissions extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $objectPermissionUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $ob_uid {@min 1} {@max 32}
      * @param array $request_data
      *
      * @param string $usr_uid {@from body} {@min 1} {@max 32}
@@ -140,11 +140,11 @@ class ProcessPermissions extends Api
      *
      * @return array
      *
-     * @url PUT /:projectUid/process-permission/:objectPermissionUid
+     * @url PUT /:prj_uid/process-permission/:ob_uid
      */
     public function doPutProcessPermission(
-        $projectUid,
-        $objectPermissionUid,
+        $prj_uid,
+        $ob_uid,
         $request_data,
         $usr_uid,
         $op_user_relation,
@@ -159,9 +159,9 @@ class ProcessPermissions extends Api
         $outputs = ''
     ) {
         try {
-            $request_data['pro_uid'] = $projectUid;
+            $request_data['pro_uid'] = $prj_uid;
             $processPermissions = new \BusinessModel\ProcessPermissions();
-            $response = $processPermissions->saveProcessPermission($request_data, $objectPermissionUid);
+            $response = $processPermissions->saveProcessPermission($request_data, $ob_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -169,8 +169,8 @@ class ProcessPermissions extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $objectPermissionUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $ob_uid {@min 1} {@max 32}
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -178,13 +178,13 @@ class ProcessPermissions extends Api
      *
      * @return void
      *
-     * @url DELETE /:projectUid/process-permission/:objectPermissionUid
+     * @url DELETE /:prj_uid/process-permission/:ob_uid
      */
-    public function doDeleteProcessPermission($projectUid, $objectPermissionUid)
+    public function doDeleteProcessPermission($prj_uid, $ob_uid)
     {
         try {
             $processPermissions = new \BusinessModel\ProcessPermissions();
-            $response = $processPermissions->deleteProcessPermission($objectPermissionUid, $projectUid);
+            $response = $processPermissions->deleteProcessPermission($ob_uid, $prj_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
