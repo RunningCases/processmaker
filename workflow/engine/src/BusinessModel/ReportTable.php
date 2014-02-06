@@ -58,6 +58,7 @@ class ReportTable
         // REPORT TABLE PROPERTIES
         $table = $additionalTables->load( $rep_uid, true );
         $table['DBS_UID'] = $table['DBS_UID'] == null || $table['DBS_UID'] == '' ? 'workflow' : $table['DBS_UID'];
+        $repData['REP_UID']             = $rep_uid;
         $repData['REP_TAB_NAME']        = $table['ADD_TAB_NAME'];
         $repData['REP_TAB_DESCRIPTION'] = $table['ADD_TAB_DESCRIPTION'];
         $repData['REP_TAB_CLASS_NAME']  = $table['ADD_TAB_CLASS_NAME'];
