@@ -95,14 +95,12 @@ class Task
     {
         try {
             $prj_uid = $this->validateProUid($prj_uid);
-            $act_uid = $this->validateActUid($prj_uid, $act_uid);
+            $taskUid = $this->validateActUid($act_uid);
 
             //G::LoadClass("configuration");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.configuration.php");
 
             $task = new \Task();
-
-            $this->validateActUid($taskUid);
             $arrayDataAux = $task->load($taskUid);
 
             //$arrayDataAux["INDEX"] = 0;
@@ -234,7 +232,7 @@ class Task
                 $arrayProperty = array_change_key_case($arrayProperty['properties'], CASE_UPPER);
             }
             $prj_uid = $this->validateProUid($prj_uid);
-            $act_uid = $this->validateActUid($prj_uid, $act_uid);
+            $act_uid = $this->validateActUid($act_uid);
             $arrayProperty["TAS_UID"] = $act_uid;
             $arrayProperty["PRO_UID"] = $prj_uid;
 
@@ -320,7 +318,7 @@ class Task
     {
         try {
             $prj_uid = $this->validateProUid($prj_uid);
-            $act_uid = $this->validateActUid($prj_uid, $act_uid);
+            $act_uid = $this->validateActUid($act_uid);
 
             G::LoadClass('tasks');
             $tasks = new \Tasks();
@@ -1776,11 +1774,11 @@ class Task
     public function validateActUid($act_uid) {
         $act_uid = trim($act_uid);
         if ($act_uid == '') {
-            throw (new \Exception("The project with act_uid: '', does not exist."));
+            throw (new \Exception("The activity with act_uid: '', does not exist."));
         }
         $oTask = new \Task();
         if (!($oTask->taskExists($act_uid))) {
-            throw (new \Exception("The project with act_uid: '$act_uid', does not exist."));
+            throw (new \Exception("The activity with act_uid: '$act_uid', does not exist."));
         }
         return $act_uid;
     }
