@@ -7,7 +7,7 @@ Feature: Assignee Resources
     Given that I have a valid access_token
 
  Scenario Outline: Get the list of available users and groups to be assigned to an activity
-    Check that there are exactly 82 available users for task "Task 1"
+    Check that there are exactly 79 available users for task "Task 1"
     Given I request "project/<project>/activity/<activity>/available-assignee"
     Then the response status code should be 200
     And the response charset is "UTF-8"
