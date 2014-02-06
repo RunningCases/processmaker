@@ -7,7 +7,7 @@ Feature: Assignee Resources
     Given that I have a valid access_token
 
  Scenario Outline: Get the list of available users and groups to be assigned to an activity
-    Check that there are exactly 82 available users for task "Task 1"
+    Check that there are exactly 79 available users for task "Task 1"
     Given I request "project/<project>/activity/<activity>/available-assignee"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -19,7 +19,7 @@ Feature: Assignee Resources
 
     Examples:
     | test_description                                                         | project                          | activity                         | records | aas_uid                          | aas_type |
-    | check if the list of possible users and groups to be assigned is correct | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 81      | 54731929352d56741de9d42002704749 | group    |
+    | check if the list of possible users and groups to be assigned is correct | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 79      | 54731929352d56741de9d42002704749 | group    |
 
 Scenario Outline: Get the list of available users and groups to be assigned to an activity using filter
     Given I request "project/4224292655297723eb98691001100052/activity/65496814252977243d57684076211485/available-assignee?filter=<filter>&start=<start>&limit=<limit>"

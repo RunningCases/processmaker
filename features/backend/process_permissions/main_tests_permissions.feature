@@ -89,9 +89,9 @@ Feature: Process Permissions Resources Tests
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
-        And the "USR_UID" property equals "<usr_uid>"
-        And the "OP_USER_RELATION" property equals "<op_user_relation>"
-        And the "OP_OBJ_TYPE" property equals "<op_obj_type>"
+        And the "usr_uid" property equals "<usr_uid>"
+        And the "op_user_relation" property equals "<op_user_relation>"
+        And the "op_obj_type" property equals "<op_obj_type>"
 
          Examples:
 
@@ -171,14 +171,14 @@ Feature: Process Permissions Resources Tests
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
-        And the "OP_CASE_STATUS" property equals "<op_case_status>"
-        And the "TAS_UID" property equals "<tas_uid>"
-        And the "OP_USER_RELATION" property equals "<op_user_relation>"
-        And the "USR_UID" property equals "<usr_uid>"
-        And the "OP_TASK_SOURCE" property equals "<op_task_source>"
-        And the "OP_PARTICIPATE" property equals "<op_participate>"
-        And the "OP_OBJ_TYPE" property equals "<op_obj_type>"
-        And the "OP_ACTION" property equals "<op_action>"
+        And the "op_case_status" property equals "<op_case_status>"
+        And the "tas_uid" property equals "<tas_uid>"
+        And the "op_user_relation" property equals "<op_user_relation>"
+        And the "usr_uid" property equals "<usr_uid>"
+        And the "op_task_source" property equals "<op_task_source>"
+        And the "op_participate" property equals "<op_participate>"
+        And the "op_obj_type" property equals "<op_obj_type>"
+        And the "op_action" property equals "<op_action>"
         
 
         Examples:
