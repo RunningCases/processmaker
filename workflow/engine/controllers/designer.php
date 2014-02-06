@@ -38,12 +38,18 @@ class Designer extends Controller
         $this->setVar('isDebugMode', System::isDebugMode());
 
         if (System::isDebugMode()) {
+            if (! file_exists(PATH_HTML . "lib-dev/pmUI/build.cache")) {
+                throw new Exception("Error: Development JS Files were are not generated!, please execute: \$rake pmBuildDebug in pmUI project");
+            }
             if (! file_exists(PATH_HTML . "lib-dev/mafe/build.cache")) {
                 throw new Exception("Error: Development JS Files were are not generated!, please execute: \$rake pmBuildDebug in MichelangeloFE project");
             }
 
-            $this->setVar('designerCacheFile', file(PATH_HTML . "lib-dev/mafe/applications.cache"));
-            $this->setVar('mafeCacheFile', file(PATH_HTML . "lib-dev/mafe/build.cache"));
+            $this->setVar('pmuiJsCacheFile', file(PATH_HTML . "lib-dev/pmUI/build.cache", FILE_IGNORE_NEW_LINES));
+            $this->setVar('pmuiCssCacheFile', file(PATH_HTML . "lib-dev/pmUI/css.cache", FILE_IGNORE_NEW_LINES));
+
+            $this->setVar('designerCacheFile', file(PATH_HTML . "lib-dev/mafe/applications.cache", FILE_IGNORE_NEW_LINES));
+            $this->setVar('mafeCacheFile', file(PATH_HTML . "lib-dev/mafe/build.cache", FILE_IGNORE_NEW_LINES));
         }
 
         $this->setView('designer/index');
