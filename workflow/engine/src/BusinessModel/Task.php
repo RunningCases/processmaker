@@ -85,23 +85,24 @@ class Task
 
     /**
      * Get all properties of an Task
+     * @var string $prj_uid. Uid for Process
+     * @var string $act_uid. Uid for Activity
+     * @var boolean $keyCaseToLower. Flag for case lower
      *
-     * @param string $taskUid
-     * @param bool   $keyCaseToLower
-     *
-     * return array  Return data array with all properties of an Task
-     *
-     * @access public
+     * return object
      */
-    public function getProperties($taskUid, $keyCaseToLower = false, $groupData = true)
+    public function getProperties($prj_uid, $act_uid, $keyCaseToLower = false, $groupData = true)
     {
         try {
+            $prj_uid = $this->validateProUid($prj_uid);
+            $act_uid = $this->validateActUid($prj_uid, $act_uid);
+
             //G::LoadClass("configuration");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.configuration.php");
 
             $task = new \Task();
 
-            $this->validateTask($taskUid);
+            $this->validateActUid($taskUid);
             $arrayDataAux = $task->load($taskUid);
 
             //$arrayDataAux["INDEX"] = 0;
@@ -216,26 +217,26 @@ class Task
 
     /**
      * Update properties of an Task
+     * @var string $prj_uid. Uid for Process
+     * @var string $act_uid. Uid for Activity
+     * @var array $arrayProperty. Data for properties of Activity
      *
-     * @param string $taskUid
-     * @param string $processUid
-     * @param array  $arrayProperty
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
      *
-     * return array
-     *
-     * @access public
+     * return object
      */
-    public function updateProperties($taskUid, $processUid, $arrayProperty)
+    public function updateProperties($prj_uid, $act_uid, $arrayProperty)
     {
         //Copy of processmaker/workflow/engine/methods/tasks/tasks_Ajax.php //case "saveTaskData":
         try {
             if (isset($arrayProperty['properties'])) {
                 $arrayProperty = array_change_key_case($arrayProperty['properties'], CASE_UPPER);
             }
-            $arrayProperty["TAS_UID"] = $taskUid;
-            $arrayProperty["PRO_UID"] = $processUid;
-            $this->validateProUid($arrayProperty["PRO_UID"]);
-            $this->validateTask($arrayProperty["TAS_UID"]);
+            $prj_uid = $this->validateProUid($prj_uid);
+            $act_uid = $this->validateActUid($prj_uid, $act_uid);
+            $arrayProperty["TAS_UID"] = $act_uid;
+            $arrayProperty["PRO_UID"] = $prj_uid;
 
             $task = new \Task();
             $aTaskInfo = $task->load($arrayProperty["TAS_UID"]);
@@ -306,20 +307,24 @@ class Task
     }
 
     /**
-     * Delete a Task
+     * Delete Activity
+     * @var string $prj_uid. Uid for Process
+     * @var string $act_uid. Uid for Activity
      *
-     * @param string $taskUid
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
      *
-     * return void
-     *
-     * @access public
+     * return object
      */
-    public function deleteTask($taskUid)
+    public function deleteTask($prj_uid, $act_uid)
     {
         try {
+            $prj_uid = $this->validateProUid($prj_uid);
+            $act_uid = $this->validateActUid($prj_uid, $act_uid);
+
             G::LoadClass('tasks');
             $tasks = new \Tasks();
-            $tasks->deleteTask($taskUid);
+            $tasks->deleteTask($act_uid);
         } catch (Exception $e) {
             throw $e;
         }
@@ -1738,32 +1743,46 @@ class Task
         }
     }
 
-    public function validateProUid ($proUid) {
-        $proUid = trim($proUid);
-        if ($proUid == '') {
-            throw (new \Exception('This process doesn\'t exist!'));
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateProUid ($pro_uid) {
+        $pro_uid = trim($pro_uid);
+        if ($pro_uid == '') {
+            throw (new \Exception("The project with prj_uid: '', does not exist."));
         }
-
         $oProcess = new \Process();
-        if (!($oProcess->processExists($proUid))) {
-            throw (new \Exception('This process doesn\'t exist!'));
+        if (!($oProcess->processExists($pro_uid))) {
+            throw (new \Exception("The project with prj_uid: '$pro_uid', does not exist."));
         }
-
-        return $proUid;
+        return $pro_uid;
     }
 
-    public function validateTask($taskUid) {
-        $taskUid = trim($taskUid);
-        if ($taskUid == '') {
-            throw (new \Exception('This task doesn\'t exist!'));
+    /**
+     * Validate Task Uid
+     * @var string $act_uid. Uid for task
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateActUid($act_uid) {
+        $act_uid = trim($act_uid);
+        if ($act_uid == '') {
+            throw (new \Exception("The project with act_uid: '', does not exist."));
         }
-
         $oTask = new \Task();
-        if (!($oTask->taskExists($taskUid))) {
-            throw (new \Exception('This task doesn\'t exist!'));
+        if (!($oTask->taskExists($act_uid))) {
+            throw (new \Exception("The project with act_uid: '$act_uid', does not exist."));
         }
-
-        return $taskUid;
+        return $act_uid;
     }
 }
 

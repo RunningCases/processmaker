@@ -9,17 +9,19 @@ class DataBaseConnection
 {
     /**
      * List of DataBaseConnections in process
-     * @var string $sProcessUid. Uid for Process
+     * @var string $pro_uid. Uid for Process
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @return array
      */
-    public function getDataBaseConnections($sProcessUid)
+    public function getDataBaseConnections($pro_uid)
     {
+        $pro_uid = $this->validateProUid($pro_uid);
+
         $oDBSource = new DbSource();
-        $oCriteria = $oDBSource->getCriteriaDBSList($sProcessUid);
+        $oCriteria = $oDBSource->getCriteriaDBSList($pro_uid);
 
         $rs = \DbSourcePeer::doSelectRS($oCriteria);
         $rs->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
@@ -28,7 +30,7 @@ class DataBaseConnection
         $dbConnecions = array();
         while ($row = $rs->getRow()) {
             $row = array_change_key_case($row, CASE_LOWER);
-            $dataDb = $this->getDataBaseConnection($sProcessUid, $row['dbs_uid']);
+            $dataDb = $this->getDataBaseConnection($pro_uid, $row['dbs_uid'], false);
             $dbConnecions[] = array_change_key_case($dataDb, CASE_LOWER);
             $rs->next();
         }
@@ -37,18 +39,26 @@ class DataBaseConnection
 
     /**
      * Get data for DataBaseConnection
-     * @var string $sProcessUid. Uid for Process
-     * @var string $dbConnecionUid. Uid for Data Base Connection
+     * @var string $pro_uid. Uid for Process
+     * @var string $dbs_uid. Uid for Data Base Connection
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
      *
      * return object
      */
-    public function getDataBaseConnection($sProcessUid, $dbConnecionUid)
+    public function getDataBaseConnection($pro_uid, $dbs_uid, $validate = true)
     {
         try {
+            if ($validate) {
+                $pro_uid = $this->validateProUid($pro_uid);
+                $dbs_uid = $this->validateDbsUid($dbs_uid, $pro_uid);
+            }
+
             G::LoadClass( 'dbConnections' );
-            $dbs = new dbConnections($sProcessUid);
+            $dbs = new dbConnections($pro_uid);
             $oDBConnection = new DbSource();
-            $aFields = $oDBConnection->load($dbConnecionUid, $sProcessUid);
+            $aFields = $oDBConnection->load($dbs_uid, $pro_uid);
             if ($aFields['DBS_PORT'] == '0') {
                 $aFields['DBS_PORT'] = '';
             }
@@ -63,7 +73,7 @@ class DataBaseConnection
 
     /**
      * Save Data for DataBaseConnection
-     * @var string $sProcessUid. Uid for Process
+     * @var string $pro_uid. Uid for Process
      * @var string $dataDataBaseConnection. Data for DataBaseConnection
      * @var string $create. Create o Update DataBaseConnection
      * @var string $sDataBaseConnectionUid. Uid for DataBaseConnection
@@ -73,19 +83,25 @@ class DataBaseConnection
      *
      * @return array
      */
-    public function saveDataBaseConnection($sProcessUid = '', $dataDBConnection = array(), $create = false)
+    public function saveDataBaseConnection($pro_uid = '', $dataDBConnection = array(), $create = false)
     {
+        $pro_uid = $this->validateProUid($pro_uid);
+        if (!$create) {
+            $dbs_uid = $dataDBConnection['dbs_uid'];
+            $dbs_uid = $this->validateDbsUid($dbs_uid, $pro_uid);
+        }
+
         G::LoadClass('dbConnections');
         $oDBSource = new DbSource();
         $oContent  = new \Content();
         $dataDBConnection = array_change_key_case($dataDBConnection, CASE_UPPER);
 
-        $dataDBConnection['PRO_UID'] = $sProcessUid;
+        $dataDBConnection['PRO_UID'] = $pro_uid;
 
         if (isset($dataDBConnection['DBS_TYPE'])) {
             $typesExists = array();
             G::LoadClass( 'dbConnections' );
-            $dbs = new dbConnections($sProcessUid);
+            $dbs = new dbConnections($pro_uid);
             $dbServices = $dbs->getDbServicesAvailables();
             foreach ($dbServices as $value) {
                 $typesExists[] = $value['id'];
@@ -98,7 +114,7 @@ class DataBaseConnection
         if (isset($dataDBConnection['DBS_TYPE'])) {
             $typesExists = array();
 
-            $dbs = new dbConnections($sProcessUid);
+            $dbs = new dbConnections($pro_uid);
             $dbServices = $dbs->getDbServicesAvailables();
             foreach ($dbServices as $value) {
                 $typesExists[] = $value['id'];
@@ -142,12 +158,12 @@ class DataBaseConnection
             $newDBConnectionUid = $oDBSource->create($dataDBConnection);
             $oContent->addContent('DBS_DESCRIPTION', '', $newDBConnectionUid,
                 SYS_LANG, $dataDBConnection['DBS_DESCRIPTION'] );
-            $newDataDBConnection = $this->getDataBaseConnection($sProcessUid, $newDBConnectionUid);
+            $newDataDBConnection = $this->getDataBaseConnection($pro_uid, $newDBConnectionUid);
             $newDataDBConnection = array_change_key_case($newDataDBConnection, CASE_LOWER);
             return $newDataDBConnection;
         } else {
             // TEST CONNECTION
-            $allData = $this->getDataBaseConnection($sProcessUid, $dataDBConnection['DBS_UID']);
+            $allData = $this->getDataBaseConnection($pro_uid, $dataDBConnection['DBS_UID']);
             $dataTest = array_merge($allData, $dataDBConnection);
             $resTest = $this->testConnection($dataTest);
             if (!$resTest['resp']) {
@@ -164,22 +180,36 @@ class DataBaseConnection
 
     /**
      * Delete DataBaseConnection
-     * @var string $sDataBaseConnectionUID. Uid for DataBaseConnection
+     * @var string $pro_uid. Uid for Process
+     * @var string $dbs_uid. Uid for DataBase Connection
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @return void
      */
-    public function deleteDataBaseConnection($sProcessUid, $dbConnecionUid)
+    public function deleteDataBaseConnection($pro_uid, $dbs_uid)
     {
+        $pro_uid = $this->validateProUid($pro_uid);
+        $dbs_uid = $this->validateDbsUid($dbs_uid, $pro_uid);
+
         $oDBSource = new DbSource();
         $oContent  = new \Content();
 
-        $oDBSource->remove($dbConnecionUid, $sProcessUid);
-        $oContent->removeContent( 'DBS_DESCRIPTION', "", $dbConnecionUid );
+        $oDBSource->remove($dbs_uid, $pro_uid);
+        $oContent->removeContent( 'DBS_DESCRIPTION', "", $dbs_uid );
     }
 
+    /**
+     * Test DataBase Connection
+     * @var string $dataCon. Data for DataBase Connection
+     * @var string $returnArray. Flag for url
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
     public function testConnection($dataCon, $returnArray = false)
     {
         $resp = array();
@@ -281,6 +311,49 @@ class DataBaseConnection
             $resp['resp'] = true;
             return $resp;
         }
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateProUid ($pro_uid) {
+        $pro_uid = trim($pro_uid);
+        if ($pro_uid == '') {
+            throw (new \Exception("The project with prj_uid: '', does not exist."));
+        }
+        $oProcess = new \Process();
+        if (!($oProcess->processExists($pro_uid))) {
+            throw (new \Exception("The project with prj_uid: '$pro_uid', does not exist."));
+        }
+        return $pro_uid;
+    }
+
+    /**
+     * Validate DataBase Connection Uid
+     * @var string $pro_uid. Uid for process
+     * @var string $dbs_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateDbsUid ($dbs_uid, $pro_uid) {
+        $dbs_uid = trim($dbs_uid);
+        if ($dbs_uid == '') {
+            throw (new \Exception("The database connection with dbs_uid: '', does not exist."));
+        }
+        $oDBSource = new DbSource();
+        if (!($oDBSource->Exists($dbs_uid, $pro_uid))) {
+            throw (new \Exception("The database connection with dbs_uid: '$dbs_uid', does not exist."));
+        }
+        return $dbs_uid;
     }
 }
 
