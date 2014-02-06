@@ -180,20 +180,21 @@ class User
     {
         //in previous versions  we provided a path data and session we will cache the session Info for this user
         //now this is deprecated, and all the aUserInfo is in the memcache
-        $this->sSystem = $sSystem;
         require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "UsersRoles.php");
-        $this->usersRolesObj = new \UsersRoles();
         require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Systems.php");
+        require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
+        $this->sSystem = $sSystem;
+        $this->usersRolesObj = new \UsersRoles();
         $this->systemObj = new \Systems();
         $fieldsSystem = $this->systemObj->loadByCode( $sSystem );
         $fieldsRoles = $this->usersRolesObj->getRolesBySystem( $fieldsSystem['SYS_UID'], $sUser );
         $fieldsPermissions = $this->usersRolesObj->getAllPermissions( $fieldsRoles['ROL_UID'], $sUser );
-        require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
         $this->userObj = new \RbacUsers();
         $this->aUserInfo['USER_INFO'] = $this->userObj->load( $sUser );
         $this->aUserInfo[$sSystem]['SYS_UID'] = $fieldsSystem['SYS_UID'];
         $this->aUserInfo[$sSystem]['ROLE'] = $fieldsRoles;
         $this->aUserInfo[$sSystem]['PERMISSIONS'] = $fieldsPermissions;
+        return $fieldsPermissions;
     }
  
     /**
@@ -222,7 +223,6 @@ class User
             if ($form['USR_NEW_PASS'] != $form['USR_CNF_PASS']) {
                 throw new \Exception('`usr_new_pass or usr_cnf_pass`. '.\G::LoadTranslation('ID_NEW_PASS_SAME_OLD_PASS'));
             }
-
             $form['USR_PASSWORD'] = md5($form['USR_NEW_PASS']);
             if (!isset($form['USR_CITY'])) {
                 $form['USR_CITY'] = '';
@@ -239,18 +239,57 @@ class User
             if (\UsersPeer::doCount($criteria) > 0) {
                 throw new \Exception('`usr_username`. '.\G::LoadTranslation('ID_USERNAME_ALREADY_EXISTS', array('USER_ID' => $arrayData['USR_USERNAME'])));
             }
-            $aData['USR_USERNAME'] = $form['USR_USERNAME'];
+            if ($form['USR_USERNAME'] == '') {
+                throw new \Exception('`usr_name`. '.\G::LoadTranslation('ID_MSG_ERROR_USR_USERNAME'));
+            } else {
+                $aData['USR_USERNAME'] = $form['USR_USERNAME'];
+            }
             $aData['USR_PASSWORD'] = $form['USR_PASSWORD'];
-            $aData['USR_FIRSTNAME'] = $form['USR_FIRSTNAME'];
-            $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
-            $aData['USR_EMAIL'] = $form['USR_EMAIL'];
-            $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+            if ($form['USR_FIRSTNAME'] == '') {
+                throw new \Exception('`usr_firstname`. '.\G::LoadTranslation('ID_MSG_ERROR_USR_FIRSTNAME'));
+            } else {
+                $aData['USR_FIRSTNAME'] = $form['USR_FIRSTNAME'];
+            }
+            if ($form['USR_LASTNAME'] == '') {
+                throw new \Exception('`usr_lastname`. '.\G::LoadTranslation('ID_MSG_ERROR_USR_LASTNAME'));
+            } else {
+                $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
+            }
+            if (!filter_var($form['USR_EMAIL'], FILTER_VALIDATE_EMAIL)) {
+                throw new \Exception('`usr_email`. '.\G::LoadTranslation('ID_INCORRECT_EMAIL'));
+            } else {
+                $aData['USR_EMAIL'] = $form['USR_EMAIL'];
+            }
+            if ($form['USR_DUE_DATE'] == '') {
+                throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
+            } else {
+                $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+            }
             $aData['USR_CREATE_DATE'] = date('Y-m-d H:i:s');
             $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
             $aData['USR_BIRTHDAY'] = date('Y-m-d');
             $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
             $statusWF = $form['USR_STATUS'];
-            $aData['USR_STATUS'] = $form['USR_STATUS'] ;
+            if ($form['USR_STATUS'] == '') {
+                throw new \Exception('`usr_status`. '.\G::LoadTranslation('ID_SOME_FIELDS_REQUIRED'));
+            } else {
+                if ($form['USR_STATUS'] == 'ACTIVE' || $form['USR_STATUS'] == 'INACTIVE' || $form['USR_STATUS'] == 'VACATION') {
+                    $aData['USR_STATUS'] = $form['USR_STATUS'];
+                } else {
+                    throw new \Exception('`usr_status`. Invalid value for field.');
+                }
+            }
+            $oCriteria = new \Criteria('rbac');
+            $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
+            $oDataset = \RolesPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            $aRow = $oDataset->getRow();
+            if ($oDataset->getRow()){
+                $aData['USR_ROLE'] = $form['USR_ROLE'];
+            } else {
+                throw new \Exception('`usr_role`. Invalid value for field.');
+            }
             try {
                 if ($aData['USR_STATUS'] == 'ACTIVE') {
                     $aData['USR_STATUS'] = 1;
@@ -274,7 +313,7 @@ class User
             $aData['USR_PHONE'] = $form['USR_PHONE'];
             $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
             $aData['USR_POSITION'] = $form['USR_POSITION'];
-            $aData['USR_ROLE'] = $form['USR_ROLE'];
+            //$aData['USR_ROLE'] = $form['USR_ROLE'];
             $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
             $oUser = new \Users();
             $oUser -> create( $aData );
@@ -316,18 +355,16 @@ class User
             global $RBAC;
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
             $form = $arrayData;
-            /*if ($form['USR_NEW_PASS'] != '') {
-                $sConfirm = $this->testPassword($form['USR_NEW_PASS']);
-                if ($sConfirm['STATUS'] != 1) {
-                    throw new \Exception('`usr_new_pass`. '.$sConfirm['DESCRIPTION']);
+            $countPermission = 0;
+            $permission = $this->loadUserRolePermission($RBAC->sSystem, $usrLoggedUid);
+            foreach($permission as $key => $value) {
+                if ($value["PER_CODE"] == 'PM_USERS') {
+                    $countPermission+=1;
                 }
-                if ($form['USR_NEW_PASS'] != $form['USR_CNF_PASS']) {
-                    throw new \Exception('`usr_new_pass or usr_cnf_pass`. '.\G::LoadTranslation('ID_NEW_PASS_SAME_OLD_PASS'));
-                }
-                if ($form['USR_NEW_PASS'] != $form['USR_CNF_PASS']) {
-                    throw new \Exception('`usr_new_pass or usr_cnf_pass`. '.\G::LoadTranslation('ID_NEW_PASS_SAME_OLD_PASS'));
-                }
-            }*/
+            }
+            if ($countPermission != 1) {
+                throw new \Exception('This user: '.$usrLoggedUid. ', can`t update the data.');    
+            }
             if (isset($usrUid)) {
                 $form['USR_UID'] = $usrUid;
             } else {
@@ -349,14 +386,16 @@ class User
                 $form['USR_AUTH_USER_DN'] = '';
             }
             $aData['USR_UID'] = $form['USR_UID'];
-            $aData['USR_USERNAME'] = $form['USR_USERNAME'];
+            if ($form['USR_USERNAME'] != '') {
+                $aData['USR_USERNAME'] = $form['USR_USERNAME'];
+            }
             if (isset($form['USR_PASSWORD'])) {
                 if ($form['USR_PASSWORD'] != '') {
                     if ($form['USR_NEW_PASS'] != $form['USR_CNF_PASS']) {
                         throw new \Exception('`usr_new_pass or usr_cnf_pass`. '.\G::LoadTranslation('ID_NEW_PASS_SAME_OLD_PASS'));
                     }
                     $aData['USR_PASSWORD'] = $form['USR_PASSWORD'];
-                    require_once 'classes/model/UsersProperties.php';
+                    require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "UsersProperties.php");
                     $oUserProperty = new \UsersProperties();
                     $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($form['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array(md5($form['USR_PASSWORD'])))));
                     $memKey = 'rbacSession' . session_id();
@@ -376,13 +415,13 @@ class User
                         foreach ($aErrors as $sError) {
                             switch ($sError) {
                                 case 'ID_PPP_MINIMUN_LENGTH':
-                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ': ' . PPP_MINIMUN_LENGTH . ',';
+                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ': ' . PPP_MINIMUN_LENGTH . '. ';
                                     break;
                                 case 'ID_PPP_MAXIMUN_LENGTH':
-                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ': ' . PPP_MAXIMUN_LENGTH . ',';
+                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ': ' . PPP_MAXIMUN_LENGTH . '. ';
                                     break;
                                 case 'ID_PPP_EXPIRATION_IN':
-                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ' ' . PPP_EXPIRATION_IN . ' ' . G::LoadTranslation('ID_DAYS') . ',';
+                                    $sDescription .= ' - ' . \G::LoadTranslation($sError) . ' ' . PPP_EXPIRATION_IN . ' ' . G::LoadTranslation('ID_DAYS') . '. ';
                                     break;
                                 default:
                                     $sDescription .= ' - ' . \G::LoadTranslation($sError) . ',';
@@ -415,7 +454,6 @@ class User
                             $sDescription .= '<br />' . \G::LoadTranslation('ID_PLEASE_CHANGE_PASSWORD_POLICY') . '';
                             throw new \Exception('`usr_new_pass or usr_cnf_pass`. '.$sDescription);
                         }
-
                         if (count($aHistory) >= PPP_PASSWORD_HISTORY) {
                             $sLastPassw = array_shift($aHistory);
                         }
@@ -427,15 +465,38 @@ class User
                     $oUserProperty->update($aUserProperty);
                 }
             }
-            $aData['USR_FIRSTNAME'] = $form['USR_FIRSTNAME'];
-            $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
-            $aData['USR_EMAIL'] = $form['USR_EMAIL'];
-            $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+            if ($form['USR_FIRSTNAME'] != '') {
+                $aData['USR_FIRSTNAME'] = $form['USR_FIRSTNAME'];
+            }
+            if ($form['USR_LASTNAME'] != '') {
+                $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
+            }
+            if ($form['USR_EMAIL'] != '') {
+                if (!filter_var($form['USR_EMAIL'], FILTER_VALIDATE_EMAIL)) {
+                    throw new \Exception('`usr_email`. '.\G::LoadTranslation('ID_INCORRECT_EMAIL'));
+                } else {
+                    $aData['USR_EMAIL'] = $form['USR_EMAIL'];
+                }
+            }
+            if ($form['USR_DUE_DATE'] != '') {
+                $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+            }
             $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
-            if (isset($form['USR_STATUS'])) {
+            if ($form['USR_STATUS'] != '') {
                 $aData['USR_STATUS'] = $form['USR_STATUS'];
             }
-            if (isset($form['USR_ROLE'])) {
+            $oCriteria = new \Criteria('rbac');
+            $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
+            $oDataset = \RolesPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            $aRow = $oDataset->getRow();
+            if ($oDataset->getRow()){
+                $aData['USR_ROLE'] = $form['USR_ROLE'];
+            } else {
+                throw new \Exception('`usr_role`. Invalid value for field.');
+            }
+            if ($form['USR_ROLE'] != '') {
                 $this->updateUser($aData, $form['USR_ROLE']);
             } else {
                 $this->updateUser($aData);
@@ -447,7 +508,7 @@ class User
             $aData['USR_PHONE'] = $form['USR_PHONE'];
             $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
             $aData['USR_POSITION'] = $form['USR_POSITION'];
-            if (isset($form['USR_ROLE'])) {
+            if ($form['USR_ROLE'] != '') {
                 $aData['USR_ROLE'] = $form['USR_ROLE'];
             }
             if (isset($form['USR_REPLACED_BY'])) {
