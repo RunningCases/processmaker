@@ -4,39 +4,57 @@ namespace BusinessModel;
 class Process
 {
     private $arrayFieldDefinition = array(
-        "processUid"                 => array("fieldName" => "PRO_UID",                   "type" => "string",   "required" => false, "empty" => false, "defaultValues" => array()),
+        "PRO_UID"                   => array("type" => "string",   "required" => false, "empty" => false, "defaultValues" => array(),  "fieldNameAux" => "processUid"),
 
-        "processTitle"               => array("fieldName" => "PRO_TITLE",                 "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array()),
-        "processDescription"         => array("fieldName" => "PRO_DESCRIPTION",           "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processParent"              => array("fieldName" => "PRO_PARENT",                "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array()),
-        "processTime"                => array("fieldName" => "PRO_TIME",                  "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(1)),
-        "processTimeunit"            => array("fieldName" => "PRO_TIMEUNIT",              "type" => "string",   "required" => false, "empty" => false, "defaultValues" => array("DAYS")),
-        "processStatus"              => array("fieldName" => "PRO_STATUS",                "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array("ACTIVE", "INACTIVE")),
-        "processTypeDay"             => array("fieldName" => "PRO_TYPE_DAY",              "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processType"                => array("fieldName" => "PRO_TYPE",                  "type" => "string",   "required" => false, "empty" => false, "defaultValues" => array("NORMAL")),
-        "processAssignment"          => array("fieldName" => "PRO_ASSIGNMENT",            "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
-        "processShowMap"             => array("fieldName" => "PRO_SHOW_MAP",              "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
-        "processShowMessage"         => array("fieldName" => "PRO_SHOW_MESSAGE",          "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
-        "processSubprocess"          => array("fieldName" => "PRO_SUBPROCESS",            "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
-        "processTriDeleted"          => array("fieldName" => "PRO_TRI_DELETED",           "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processTriCanceled"         => array("fieldName" => "PRO_TRI_CANCELED",          "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processTriPaused"           => array("fieldName" => "PRO_TRI_PAUSED",            "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processTriReassigned"       => array("fieldName" => "PRO_TRI_REASSIGNED",        "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processShowDelegate"        => array("fieldName" => "PRO_SHOW_DELEGATE",         "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
-        "processShowDynaform"        => array("fieldName" => "PRO_SHOW_DYNAFORM",         "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
-        "processCategory"            => array("fieldName" => "PRO_CATEGORY",              "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processSubCategory"         => array("fieldName" => "PRO_SUB_CATEGORY",          "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processIndustry"            => array("fieldName" => "PRO_INDUSTRY",              "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0)),
-        "processUpdateDate"          => array("fieldName" => "PRO_UPDATE_DATE",           "type" => "datetime", "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processCreateDate"          => array("fieldName" => "PRO_CREATE_DATE",           "type" => "datetime", "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processCreateUser"          => array("fieldName" => "PRO_CREATE_USER",           "type" => "string",   "required" => true,  "empty" => true,  "defaultValues" => array()),
-        "processDebug"               => array("fieldName" => "PRO_DEBUG",                 "type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1)),
-        "processDerivationScreenTpl" => array("fieldName" => "PRO_DERIVATION_SCREEN_TPL", "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processSummaryDynaform"     => array("fieldName" => "PRO_SUMMARY_DYNAFORM",      "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array()),
-        "processCalendar"            => array("fieldName" => "PRO_CALENDAR",              "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array())
+        "PRO_TITLE"                 => array("type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array(),  "fieldNameAux" => "processTitle"),
+        "PRO_DESCRIPTION"           => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),  "fieldNameAux" => "processDescription"),
+        "PRO_PARENT"                => array("type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array(),  "fieldNameAux" => "processParent"),
+        "PRO_TIME"                  => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(1), "fieldNameAux" => "processTime"),
+        "PRO_TIMEUNIT"              => array("type" => "string",   "required" => false, "empty" => false, "defaultValues" => array("DAYS"),               "fieldNameAux" => "processTimeunit"),
+        "PRO_STATUS"                => array("type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array("ACTIVE", "INACTIVE"), "fieldNameAux" => "processStatus"),
+        "PRO_TYPE_DAY"              => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),                     "fieldNameAux" => "processTypeDay"),
+        "PRO_TYPE"                  => array("type" => "string",   "required" => false, "empty" => false, "defaultValues" => array("NORMAL"),             "fieldNameAux" => "processType"),
+        "PRO_ASSIGNMENT"            => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processAssignment"),
+        "PRO_SHOW_MAP"              => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processShowMap"),
+        "PRO_SHOW_MESSAGE"          => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processShowMessage"),
+        "PRO_SUBPROCESS"            => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processSubprocess"),
+        "PRO_TRI_DELETED"           => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processTriDeleted"),
+        "PRO_TRI_CANCELED"          => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processTriCanceled"),
+        "PRO_TRI_PAUSED"            => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processTriPaused"),
+        "PRO_TRI_REASSIGNED"        => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processTriReassigned"),
+        "PRO_SHOW_DELEGATE"         => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processShowDelegate"),
+        "PRO_SHOW_DYNAFORM"         => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processShowDynaform"),
+        "PRO_CATEGORY"              => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processCategory"),
+        "PRO_SUB_CATEGORY"          => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processSubCategory"),
+        "PRO_INDUSTRY"              => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0),    "fieldNameAux" => "processIndustry"),
+        "PRO_UPDATE_DATE"           => array("type" => "datetime", "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processUpdateDate"),
+        "PRO_CREATE_DATE"           => array("type" => "datetime", "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processCreateDate"),
+        "PRO_CREATE_USER"           => array("type" => "string",   "required" => true,  "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processCreateUser"),
+        "PRO_DEBUG"                 => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processDebug"),
+        "PRO_DERIVATION_SCREEN_TPL" => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processDerivationScreenTpl"),
+        "PRO_SUMMARY_DYNAFORM"      => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processSummaryDynaform"),
+        "PRO_CALENDAR"              => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processCalendar")
     );
+
     private $formatFieldNameInUppercase = true;
+
     private $arrayFieldNameForException = array();
+
+    /**
+     * Constructor of the class
+     *
+     * return void
+     */
+    public function __construct()
+    {
+        try {
+            foreach ($this->arrayFieldDefinition as $key => $value) {
+                $this->arrayFieldNameForException[$value["fieldNameAux"]] = $key;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 
     /**
      * Set the format of the fields name (uppercase, lowercase)
@@ -50,9 +68,7 @@ class Process
         try {
             $this->formatFieldNameInUppercase = $flag;
 
-            foreach ($this->arrayFieldDefinition as $key => $value) {
-                $this->arrayFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value["fieldName"]);
-            }
+            $this->setArrayFieldNameForException($this->arrayFieldNameForException);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -68,10 +84,6 @@ class Process
     public function setArrayFieldNameForException($arrayData)
     {
         try {
-            foreach ($this->arrayFieldDefinition as $key => $value) {
-                $this->arrayFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value["fieldName"]);
-            }
-
             foreach ($arrayData as $key => $value) {
                 $this->arrayFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value);
             }
@@ -155,75 +167,58 @@ class Process
         try {
             if ($flagValidateRequired) {
                 foreach ($arrayFieldDefinition as $key => $value) {
-                    $fldAlias = $key;
-                    $arrayFldDefinition = $value;
+                    $fieldName = $key;
 
-                    if ($arrayFldDefinition["required"]) {
-                        if (!isset($arrayData[$arrayFldDefinition["fieldName"]])) {
-                            $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
+                    $fieldNameAux = (isset($arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]]))? $arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]] : "";
 
-                            throw (new \Exception(str_replace(array("{0}"), array($field), "The \"{0}\" attribute is not defined")));
-                        }
+                    if ($arrayFieldDefinition[$fieldName]["required"] && !isset($arrayData[$fieldName])) {
+                        throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is not defined")));
                     }
                 }
             }
 
-            foreach ($arrayData as $key1 => $value1) {
-                $fieldName = $key1;
-                $fieldValue = $value1;
+            foreach ($arrayData as $key => $value) {
+                $fieldName = $key;
+                $fieldValue = $value;
 
-                foreach ($arrayFieldDefinition as $key2 => $value2) {
-                    $fldAlias = $key2;
-                    $arrayFldDefinition = $value2;
+                if (isset($arrayFieldDefinition[$fieldName])) {
+                    $fieldNameAux = (isset($arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]]))? $arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]] : "";
 
-                    if ($arrayFldDefinition["fieldName"] == $fieldName) {
-                        //empty
-                        if (!$arrayFldDefinition["empty"] && trim($fieldValue) . "" == "") {
-                            $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
+                    //empty
+                    if (!$arrayFieldDefinition[$fieldName]["empty"] && trim($fieldValue) . "" == "") {
+                        throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is empty")));
+                    }
 
-                            throw (new \Exception(str_replace(array("{0}"), array($field), "The \"{0}\" attribute is empty")));
+                    //defaultValues
+                    if (count($arrayFieldDefinition[$fieldName]["defaultValues"]) > 0 && !in_array($fieldValue, $arrayFieldDefinition[$fieldName]["defaultValues"])) {
+                        throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                    }
+
+                    //type
+                    if ($arrayFieldDefinition[$fieldName]["empty"] && $fieldValue . "" == "") {
+                        //
+                    } else {
+                        $eregDate = "[1-9]\d{3}\-(?:0[1-9]|1[012])\-(?:[0][1-9]|[12][0-9]|3[01])";
+                        $eregHour = "(?:[0-1]\d|2[0-3])\:(?:[0-5]\d)\:(?:[0-5]\d)";
+                        $eregDatetime = $eregDate . "\s" . $eregHour;
+
+                        switch ($arrayFieldDefinition[$fieldName]["type"]) {
+                            case "date":
+                                if (!preg_match("/^" . $eregDate . "$/", $fieldValue)) {
+                                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                }
+                                break;
+                            case "hour":
+                                if (!preg_match("/^" . $eregHour . "$/", $fieldValue)) {
+                                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                }
+                                break;
+                            case "datetime":
+                                if (!preg_match("/^" . $eregDatetime . "$/", $fieldValue)) {
+                                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                }
+                                break;
                         }
-
-                        //defaultValues
-                        if (count($arrayFldDefinition["defaultValues"]) > 0 && !in_array($fieldValue, $arrayFldDefinition["defaultValues"])) {
-                            $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
-
-                            throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
-                        }
-
-                        //type
-                        if ($arrayFldDefinition["empty"] && $fieldValue . "" == "") {
-                            //
-                        } else {
-                            $eregDate = "[1-9]\d{3}\-(?:0[1-9]|1[012])\-(?:[0][1-9]|[12][0-9]|3[01])";
-                            $eregHour = "(?:[0-1]\d|2[0-3])\:(?:[0-5]\d)\:(?:[0-5]\d)";
-                            $eregDatetime = $eregDate . "\s" . $eregHour;
-
-                            switch ($arrayFldDefinition["type"]) {
-                                case "date":
-                                    if (!preg_match("/^" . $eregDate . "$/", $fieldValue)) {
-                                        $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
-
-                                        throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
-                                    }
-                                    break;
-                                case "hour":
-                                    if (!preg_match("/^" . $eregHour . "$/", $fieldValue)) {
-                                        $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
-
-                                        throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
-                                    }
-                                    break;
-                                case "datetime":
-                                    if (!preg_match("/^" . $eregDatetime . "$/", $fieldValue)) {
-                                        $field = (isset($arrayFieldNameForException[$fldAlias]))? $arrayFieldNameForException[$fldAlias] : "";
-
-                                        throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
-                                    }
-                                    break;
-                            }
-                        }
-                        break;
                     }
                 }
             }
@@ -347,6 +342,29 @@ class Process
     }
 
     /**
+     * Verify if doesn't exist the PM Table in table ADDITIONAL_TABLES
+     *
+     * @param string $additionalTableUid    Unique id of PM Table
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exist the PM Table in table ADDITIONAL_TABLES
+     */
+    public function throwExceptionIfNotExistsPmTable($additionalTableUid, $fieldNameForException)
+    {
+        try {
+            $obj = \AdditionalTablesPeer::retrieveByPK($additionalTableUid);
+
+            if (!(is_object($obj) && get_class($obj) == "AdditionalTables")) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $additionalTableUid), "The PM Table with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Verify if doesn't exist the DynaForm in table DYNAFORM
      *
      * @param string $processUid            Unique id of Process
@@ -361,7 +379,11 @@ class Process
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\DynaformPeer::DYN_UID);
-            $criteria->add(\DynaformPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+
+            if ($processUid != "") {
+                $criteria->add(\DynaformPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            }
+
             $criteria->add(\DynaformPeer::DYN_UID, $dynaFormUid, \Criteria::EQUAL);
 
             $rsCriteria = \DynaformPeer::doSelectRS($criteria);
@@ -425,7 +447,11 @@ class Process
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\TriggersPeer::TRI_UID);
-            $criteria->add(\TriggersPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+
+            if ($processUid != "") {
+                $criteria->add(\TriggersPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            }
+
             $criteria->add(\TriggersPeer::TRI_UID, $triggerUid, \Criteria::EQUAL);
 
             $rsCriteria = \TriggersPeer::doSelectRS($criteria);
@@ -1321,17 +1347,15 @@ class Process
     public function getDynaForms($processUid)
     {
         try {
-            //Verify data
-            $process = new \Process();
-
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
-
-            //Get data
             $arrayDynaForm = array();
 
+            //Verify data
+            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+
+            //Get data
             $dynaForm = new \BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+            $dynaForm->setArrayFieldNameForException($this->arrayFieldNameForException);
 
             $criteria = $dynaForm->getDynaFormCriteria();
 
@@ -1347,6 +1371,7 @@ class Process
                 $arrayDynaForm[] = $dynaForm->getDynaFormDataFromRecord($row);
             }
 
+            //Return
             return $arrayDynaForm;
         } catch (\Exception $e) {
             throw $e;
@@ -1427,6 +1452,42 @@ class Process
 
             //Return
             return $arrayWebEntry;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get field names which are primary key in a PM Table
+     *
+     * @param string $additionalTableUid    Unique id of PM Table
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return array Return data with the primary keys
+     */
+    public function getPmTablePrimaryKeyFields($additionalTableUid, $fieldNameForException)
+    {
+        try {
+            $arrayFieldPk = array();
+
+            //Verify data
+            $this->throwExceptionIfNotExistsPmTable($additionalTableUid, $fieldNameForException);
+
+            //Get data
+            //Load AdditionalTable
+            $additionalTable = new \AdditionalTables();
+
+            $arrayAdditionalTableData = $additionalTable->load($additionalTableUid, true);
+
+            foreach ($arrayAdditionalTableData["FIELDS"] as $key => $value) {
+                if ($value["FLD_KEY"] == 1) {
+                    //Primary Key
+                    $arrayFieldPk[] = $value["FLD_NAME"];
+                }
+            }
+
+            //Return
+            return $arrayFieldPk;
         } catch (\Exception $e) {
             throw $e;
         }

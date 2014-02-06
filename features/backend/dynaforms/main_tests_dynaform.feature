@@ -91,14 +91,6 @@ Feature: Dynaform Main Tests
                       {
                           "fld_name": "<fld_name_01>",
                           "pro_variable": "<pro_variable_01>"
-                      },
-                      {
-                          "fld_name": "<fld_name_02>",
-                          "pro_variable": "<pro_variable_02>"
-                      },
-                      {
-                          "fld_name": "<fld_name_03",
-                          "pro_variable": "<pro_variable_03>"
                       }
                  ]
             }
@@ -113,9 +105,9 @@ Feature: Dynaform Main Tests
 
         Examples:
 
-        | test_description          | project                          | dyn_title            | dyn_description   | dyn_type | dyn_uid_number | tab_uid                          | fld_name_01  | pro_variable_01 | fld_name_02  | pro_variable_02 | fld_name_03     | pro_variable_03 |
-        | create dynaform pmtable 1 | 14414793652a5d718b65590036026581 | Dynaform - pmtable 1 | dyn from pmtable1 | xmlform  | 7              | 65193158852cc1a93a5a535084878044 | DYN_UID      | @#APPLICATION   | DYN_TITLE    | @#TITLE         | DYN_DESCRIPTION | @#DESCRIPTION   |
-        | create dynaform pmtable 2 | 42445320652cd534acb3824056962285 | Dynaform - pmtable2  | dyn from pmtable2 | xmlform  | 8              | 65193158852cc1a93a5a535084878044 | DYN_UID      | @#APPLICATION   | DYN_TITLE    | @#TITLE         | DYN_DESCRIPTION | @#DESCRIPTION   |
+        | test_description          | project                          | dyn_title            | dyn_description   | dyn_type | dyn_uid_number | tab_uid                          | fld_name_01  | pro_variable_01 |
+        | create dynaform pmtable 1 | 14414793652a5d718b65590036026581 | Dynaform - pmtable 1 | dyn from pmtable1 | xmlform  | 7              | 65193158852cc1a93a5a535084878044 | DYN_UID      | @#APPLICATION   |
+        | create dynaform pmtable 2 | 42445320652cd534acb3824056962285 | Dynaform - pmtable2  | dyn from pmtable2 | xmlform  | 8              | 65193158852cc1a93a5a535084878044 | DYN_UID      | @#APPLICATION   |
 
 
     Scenario Outline: Get a List DynaForms of a Project list when there are 9 records, total in both projects

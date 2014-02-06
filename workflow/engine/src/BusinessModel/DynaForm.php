@@ -3,28 +3,30 @@ namespace BusinessModel;
 
 class DynaForm
 {
+    private $arrayFieldDefinition = array(
+        "DYN_UID"         => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),                  "fieldNameAux" => "dynaFormUid"),
+
+        "DYN_TITLE"       => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                  "fieldNameAux" => "dynaFormTitle"),
+        "DYN_DESCRIPTION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormDescription"),
+        "DYN_TYPE"        => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("xmlform", "grid"), "fieldNameAux" => "dynaFormType")
+    );
+
+    private $formatFieldNameInUppercase = true;
+
+    private $arrayFieldNameForException = array(
+        "processUid" => "PRO_UID"
+    );
+
     /**
-     * Get data of unique ids of a DynaForm (Unique id of Process)
+     * Constructor of the class
      *
-     * @param string $dynaFormUid Unique id of DynaForm
-     *
-     * return array
+     * return void
      */
-    public function getDataUids($dynaFormUid)
+    public function __construct()
     {
         try {
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\DynaformPeer::PRO_UID);
-            $criteria->add(\DynaformPeer::DYN_UID, $dynaFormUid, \Criteria::EQUAL);
-
-            $rsCriteria = \DynaformPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            if ($rsCriteria->next()) {
-                return $rsCriteria->getRow();
-            } else {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($dynaFormUid, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}")));
+            foreach ($this->arrayFieldDefinition as $key => $value) {
+                $this->arrayFieldNameForException[$value["fieldNameAux"]] = $key;
             }
         } catch (\Exception $e) {
             throw $e;
@@ -32,15 +34,67 @@ class DynaForm
     }
 
     /**
-     * Verify if the title exists in the DynaForms of Process
+     * Set the format of the fields name (uppercase, lowercase)
      *
-     * @param string $processUid Unique id of Process
-     * @param string $title      Title
+     * @param bool $flag Value that set the format
+     *
+     * return void
+     */
+    public function setFormatFieldNameInUppercase($flag)
+    {
+        try {
+            $this->formatFieldNameInUppercase = $flag;
+
+            $this->setArrayFieldNameForException($this->arrayFieldNameForException);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Set exception messages for fields
+     *
+     * @param array $arrayData Data with the fields
+     *
+     * return void
+     */
+    public function setArrayFieldNameForException($arrayData)
+    {
+        try {
+            foreach ($arrayData as $key => $value) {
+                $this->arrayFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get the name of the field according to the format
+     *
+     * @param string $fieldName Field name
+     *
+     * return string Return the field name according the format
+     */
+    public function getFieldNameByFormatFieldName($fieldName)
+    {
+        try {
+            return ($this->formatFieldNameInUppercase)? strtoupper($fieldName) : strtolower($fieldName);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if exists the title of a DynaForm
+     *
+     * @param string $processUid         Unique id of Process
+     * @param string $dynaFormTitle      Title
      * @param string $dynaFormUidExclude Unique id of DynaForm to exclude
      *
-     * return bool Return true if the title exists in the DynaForms of Process, false otherwise
+     * return bool Return true if exists the title of a DynaForm, false otherwise
      */
-    public function titleExists($processUid, $title, $dynaFormUidExclude = "")
+    public function existsTitle($processUid, $dynaFormTitle, $dynaFormUidExclude = "")
     {
         try {
             $delimiter = \DBAdapter::getStringDelimiter();
@@ -63,37 +117,7 @@ class DynaForm
                 $criteria->add(\DynaformPeer::DYN_UID, $dynaFormUidExclude, \Criteria::NOT_EQUAL);
             }
 
-            $criteria->add("CT.CON_VALUE", $title, \Criteria::EQUAL);
-
-            $rsCriteria = \DynaformPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            if ($rsCriteria->next()) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Verify if a DynaForm belongs to Process
-     *
-     * @param string $dynaFormUid Unique id of DynaForm
-     * @param string $processUid  Unique id of Process
-     *
-     * return bool Return true if a DynaForm belongs to Process, false otherwise
-     */
-    public function dynaFormBelongsProcess($dynaFormUid, $processUid)
-    {
-        try {
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\DynaformPeer::DYN_UID);
-            $criteria->add(\DynaformPeer::DYN_UID, $dynaFormUid, \Criteria::EQUAL);
-            $criteria->add(\DynaformPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->add("CT.CON_VALUE", $dynaFormTitle, \Criteria::EQUAL);
 
             $rsCriteria = \DynaformPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -158,24 +182,23 @@ class DynaForm
     }
 
     /**
-     * Get data from a request data
+     * Verify if exists the title of a DynaForm
      *
-     * @param object $requestData Request data
+     * @param string $processUid            Unique id of Process
+     * @param string $dynaFormTitle         Title
+     * @param string $fieldNameForException Field name for the exception
+     * @param string $dynaFormUidExclude    Unique id of DynaForm to exclude
      *
-     * return array Return an array with data of request data
+     * return void Throw exception if exists the title of a DynaForm
      */
-    public function getArrayDataFromRequestData($requestData)
+    public function throwExceptionIfExistsTitle($processUid, $dynaFormTitle, $fieldNameForException, $dynaFormUidExclude = "")
     {
         try {
-            $arrayData = array();
+            if ($this->existsTitle($processUid, $dynaFormTitle, $dynaFormUidExclude)) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormTitle), "The DynaForm title with {0}: \"{1}\", already exists");
 
-            $requestData = (array)($requestData);
-
-            foreach ($requestData as $key => $value) {
-                $arrayData[$key] = $value;
+                throw (new \Exception($msg));
             }
-
-            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -199,15 +222,13 @@ class DynaForm
             unset($arrayData["PMTABLE"]);
 
             //Verify data
-            $process = new \Process();
+            $process = new \BusinessModel\Process();
 
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
-            if (isset($arrayData["DYN_TITLE"]) && $this->titleExists($processUid, $arrayData["DYN_TITLE"])) {
-                throw (new \Exception(\G::LoadTranslation("ID_EXIST_DYNAFORM")));
-            }
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
+
+            $this->throwExceptionIfExistsTitle($processUid, $arrayData["DYN_TITLE"], $this->arrayFieldNameForException["dynaFormTitle"]);
 
             //Create
             $dynaForm = new \Dynaform();
@@ -219,11 +240,13 @@ class DynaForm
             //Return
             unset($arrayData["PRO_UID"]);
 
-            $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            $arrayData = array_merge(array("DYN_UID" => $dynaFormUid), $arrayData);
 
-            unset($arrayData["dyn_uid"]);
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
 
-            return array_merge(array("dyn_uid" => $dynaFormUid), $arrayData);
+            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -242,20 +265,23 @@ class DynaForm
         try {
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
-            //Uids
-            $arrayDataUid = $this->getDataUids($dynaFormUid);
-
-            $processUid = $arrayDataUid["PRO_UID"];
-
             //Verify data
+            $process = new \BusinessModel\Process();
+
+            $process->throwExceptionIfNotExistsDynaForm("", $dynaFormUid, $this->arrayFieldNameForException["dynaFormUid"]);
+
+            //Load DynaForm
             $dynaForm = new \Dynaform();
 
-            if (!$dynaForm->dynaformExists($dynaFormUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($dynaFormUid, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $arrayDynaFormData = $dynaForm->Load($dynaFormUid);
 
-            if (isset($arrayData["DYN_TITLE"]) && $this->titleExists($processUid, $arrayData["DYN_TITLE"], $dynaFormUid)) {
-                throw (new \Exception(\G::LoadTranslation("ID_EXIST_DYNAFORM")));
+            $processUid = $arrayDynaFormData["PRO_UID"];
+
+            //Verify data
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
+
+            if (isset($arrayData["DYN_TITLE"])) {
+                $this->throwExceptionIfExistsTitle($processUid, $arrayData["DYN_TITLE"], $this->arrayFieldNameForException["dynaFormTitle"], $dynaFormUid);
             }
 
             //Update
@@ -266,7 +292,11 @@ class DynaForm
             //Return
             unset($arrayData["DYN_UID"]);
 
-            return array_change_key_case($arrayData, CASE_LOWER);
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
+
+            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -282,18 +312,19 @@ class DynaForm
     public function delete($dynaFormUid)
     {
         try {
-            //Uids
-            $arrayDataUid = $this->getDataUids($dynaFormUid);
-
-            $processUid = $arrayDataUid["PRO_UID"];
-
             //Verify data
+            $process = new \BusinessModel\Process();
+
+            $process->throwExceptionIfNotExistsDynaForm("", $dynaFormUid, $this->arrayFieldNameForException["dynaFormUid"]);
+
+            //Load DynaForm
             $dynaForm = new \Dynaform();
 
-            if (!$dynaForm->dynaformExists($dynaFormUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($dynaFormUid, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $arrayDynaFormData = $dynaForm->Load($dynaFormUid);
 
+            $processUid = $arrayDynaFormData["PRO_UID"];
+
+            //Verify data
             if ($this->dynaFormAssignedStep($dynaFormUid, $processUid)) {
                 throw (new \Exception("You cannot delete this Dynaform while it is assigned to a step"));
             }
@@ -335,47 +366,56 @@ class DynaForm
         try {
             $arrayData = \G::array_change_key_case2($arrayData, CASE_UPPER);
 
+            unset($arrayData["DYN_UID"]);
+            unset($arrayData["PMTABLE"]);
+
             //Verify data
+            $process = new \BusinessModel\Process();
+
+            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
+
+            if (!isset($arrayData["COPY_IMPORT"])) {
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT")), "The \"{0}\" attribute is not defined")));
+            }
+
             if (!isset($arrayData["COPY_IMPORT"]["PRJ_UID"])) {
-                throw (new \Exception(str_replace(array("{0}"), array("PRJ_UID"), "For the creation the DynaForm, the attribute \"{0}\" doesn't exist")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID")), "The \"{0}\" attribute is not defined")));
+            }
+
+            $arrayData["COPY_IMPORT"]["PRJ_UID"] = trim($arrayData["COPY_IMPORT"]["PRJ_UID"]);
+
+            if ($arrayData["COPY_IMPORT"]["PRJ_UID"] == "") {
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID")), "The \"{0}\" attribute is empty")));
             }
 
             if (!isset($arrayData["COPY_IMPORT"]["DYN_UID"])) {
-                throw (new \Exception(str_replace(array("{0}"), array("DYN_UID"), "For the creation the DynaForm, the attribute \"{0}\" doesn't exist")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID")), "The \"{0}\" attribute is not defined")));
             }
+
+            $arrayData["COPY_IMPORT"]["DYN_UID"] = trim($arrayData["COPY_IMPORT"]["DYN_UID"]);
+
+            if ($arrayData["COPY_IMPORT"]["DYN_UID"] == "") {
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID")), "The \"{0}\" attribute is empty")));
+            }
+
+            $this->throwExceptionIfExistsTitle($processUid, $arrayData["DYN_TITLE"], $this->arrayFieldNameForException["dynaFormTitle"]);
 
             //Copy/Import Uids
             $processUidCopyImport  = $arrayData["COPY_IMPORT"]["PRJ_UID"];
             $dynaFormUidCopyImport = $arrayData["COPY_IMPORT"]["DYN_UID"];
 
-            unset($arrayData["COPY_IMPORT"]);
-
             //Verify data
-            $process = new \Process();
+            $process->throwExceptionIfNoExistsProcess($processUidCopyImport, $this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID"));
 
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
-
-            if (!$process->exists($processUidCopyImport)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUidCopyImport, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
-
-            $dynaForm = new \Dynaform();
-
-            if (!$dynaForm->dynaformExists($dynaFormUidCopyImport)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($dynaFormUidCopyImport, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
-
-            if (!$this->dynaFormBelongsProcess($dynaFormUidCopyImport, $processUidCopyImport)) {
-                throw (new \Exception("The DynaForm for Copy/Import doesn't belongs to the Process"));
-            }
+            $process->throwExceptionIfNotExistsDynaForm($processUidCopyImport, $dynaFormUidCopyImport, $this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID"));
 
             //Copy/Import
             //Create
             $arrayData = $this->create($processUid, $arrayData);
 
-            $dynaFormUid = $arrayData["dyn_uid"];
+            $dynaFormUid = $arrayData[$this->getFieldNameByFormatFieldName("DYN_UID")];
 
             //Copy files of the DynaForm
             $umaskOld = umask(0);
@@ -533,35 +573,100 @@ class DynaForm
             unset($arrayData["COPY_IMPORT"]);
 
             //Verify data
+            $process = new \BusinessModel\Process();
+
+            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
+
+            if ($arrayData["DYN_TYPE"] == "grid") {
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayFieldNameForException["dynaFormType"]), "Invalid value specified for \"{0}\"")));
+            }
+
+            if (!isset($arrayData["PMTABLE"])) {
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE")), "The \"{0}\" attribute is not defined")));
+            }
+
             if (!isset($arrayData["PMTABLE"]["TAB_UID"])) {
-                throw (new \Exception(str_replace(array("{0}"), array("TAB_UID"), "For the creation the DynaForm, the attribute \"{0}\" doesn't exist")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID")), "The \"{0}\" attribute is not defined")));
+            }
+
+            $arrayData["PMTABLE"]["TAB_UID"] = trim($arrayData["PMTABLE"]["TAB_UID"]);
+
+            if ($arrayData["PMTABLE"]["TAB_UID"] == "") {
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID")), "The \"{0}\" attribute is empty")));
             }
 
             if (!isset($arrayData["PMTABLE"]["FIELDS"])) {
-                throw (new \Exception(str_replace(array("{0}"), array("FIELDS"), "For the creation the DynaForm, the attribute \"{0}\" doesn't exist")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "The \"{0}\" attribute is not defined")));
             }
 
             if (count($arrayData["PMTABLE"]["FIELDS"]) == 0) {
-                throw (new \Exception(str_replace(array("{0}"), array("FIELDS"), "For the creation the DynaForm, the attribute \"{0}\" is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "The \"{0}\" attribute is empty")));
             }
 
-            //Verify data
-            $process = new \Process();
+            $this->throwExceptionIfExistsTitle($processUid, $arrayData["DYN_TITLE"], $this->arrayFieldNameForException["dynaFormTitle"]);
 
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
+            $process->throwExceptionIfNotExistsPmTable($arrayData["PMTABLE"]["TAB_UID"], $this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID"));
+
+            //Validate PMTABLE.FIELDS
+            //Valid Keys
+            $flagValidFieldKey = 1;
+
+            foreach ($arrayData["PMTABLE"]["FIELDS"] as $key => $value) {
+                if (!isset($value["FLD_NAME"]) || !isset($value["PRO_VARIABLE"])) {
+                    $flagValidFieldKey = 0;
+                    break;
+                }
             }
 
-            if (isset($arrayData["DYN_TITLE"]) && $this->titleExists($processUid, $arrayData["DYN_TITLE"])) {
-                throw (new \Exception(\G::LoadTranslation("ID_EXIST_DYNAFORM")));
+            if ($flagValidFieldKey == 0) {
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "The attribute {0}, has an element invalid (incorrect keys)")));
             }
 
-            if (isset($arrayData["DYN_TYPE"]) && $arrayData["DYN_TYPE"] == "grid") {
-                throw (new \Exception(str_replace(array("{0}"), array("DYN_TYPE"), "For the creation the DynaForm, the attribute \"{0}\" is invalid")));
+            //Is Primary Key
+            $arrayFieldPk = $process->getPmTablePrimaryKeyFields($arrayData["PMTABLE"]["TAB_UID"], $this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID"));
+            $flagValidFieldPk = 1;
+            $invalidFieldPk = "";
+
+            $arrayFieldPkAux = array();
+
+            foreach ($arrayData["PMTABLE"]["FIELDS"] as $key => $value) {
+                $arrayFieldPkAux[] = $value["FLD_NAME"];
+
+                if (!in_array($value["FLD_NAME"], $arrayFieldPk)) {
+                    $flagValidFieldPk = 0;
+                    $invalidFieldPk = $value["FLD_NAME"];
+                    break;
+                }
             }
 
-            if (is_null(\AdditionalTablesPeer::retrieveByPK($arrayData["PMTABLE"]["TAB_UID"]))) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayData["PMTABLE"]["TAB_UID"], "ADDITIONAL_TABLES"), "The UID \"{0}\" doesn't exist in table {1}")));
+            if ($flagValidFieldPk == 0) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS.FLD_NAME"), $invalidFieldPk), "The field {0}: {1}, is not an primary key field of the PM Table")));
+            }
+
+            //All Primary Keys
+            $flagAllFieldPk = 1;
+            $missingFieldPk = "";
+
+            foreach ($arrayFieldPk as $key => $value) {
+                if (!in_array($value, $arrayFieldPkAux)) {
+                    $flagAllFieldPk = 0;
+                    $missingFieldPk = $value;
+                    break;
+                }
+            }
+
+            if ($flagAllFieldPk == 0) {
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($missingFieldPk, $this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "The primary key field {0} of the PM Table, is missing in the attribute {1}")));
+            }
+
+            //Total of Primary Keys
+            $n1 = count($arrayFieldPk);
+            $n2 = count($arrayFieldPkAux);
+
+            if ($n1 != $n2) {
+                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($n1, $this->getFieldNameByFormatFieldName("PMTABLE.FIELDS"), $n2), "The total primary key fields of the PM Table is {0}, the attribute {1} has {2} primary keys")));
             }
 
             //Set data
@@ -585,11 +690,13 @@ class DynaForm
             unset($arrayData["PRO_UID"]);
             unset($arrayData["FIELDS"]);
 
-            $arrayData = \G::array_change_key_case2($arrayData, CASE_LOWER);
+            $arrayData = array_merge(array("DYN_UID" => $dynaFormUid), $arrayData);
 
-            unset($arrayData["dyn_uid"]);
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
 
-            return array_merge(array("dyn_uid" => $dynaFormUid), $arrayData);
+            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -606,22 +713,24 @@ class DynaForm
     public function defineCreate($processUid, $arrayData)
     {
         try {
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+
             $option = "NORMAL";
 
             //Validate data
             $count = 0;
             $msgMethod = "";
 
-            if (isset($arrayData["copy_import"])) {
+            if (isset($arrayData["COPY_IMPORT"])) {
                 $count = $count + 1;
-                $msgMethod = (($msgMethod != "")? ", " : "") . $msgMethod . "COPY_IMPORT";
+                $msgMethod = $msgMethod . (($msgMethod != "")? ", " : "") . "COPY_IMPORT";
 
                 $option = "COPY_IMPORT";
             }
 
-            if (isset($arrayData["pmtable"])) {
+            if (isset($arrayData["PMTABLE"])) {
                 $count = $count + 1;
-                $msgMethod = (($msgMethod != "")? ", " : "") . $msgMethod . "PMTABLE";
+                $msgMethod = $msgMethod . (($msgMethod != "")? ", " : "") . "PMTABLE";
 
                 $option = "PMTABLE";
             }
@@ -645,7 +754,7 @@ class DynaForm
                 //Return
                 return $arrayDataAux;
             } else {
-                throw (new \Exception(str_replace(array("{0}"), array($msgMethod), "It is trying to create a DynaForm by \"{0}\", please send only one attribute for creation")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($msgMethod)), "It is trying to create a DynaForm by \"{0}\", please send only one attribute for creation")));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -695,7 +804,7 @@ class DynaForm
      *
      * @param array $record Record
      *
-     * return array Return an array with data of a DynaForm
+     * return array Return an array with data DynaForm
      */
     public function getDynaFormDataFromRecord($record)
     {
@@ -711,10 +820,10 @@ class DynaForm
             }
 
             return array(
-                "dyn_uid"         => $record["DYN_UID"],
-                "dyn_title"       => $record["DYN_TITLE"],
-                "dyn_description" => $record["DYN_DESCRIPTION"] . "",
-                "dyn_type"        => $record["DYN_TYPE"] . ""
+                $this->getFieldNameByFormatFieldName("DYN_UID")         => $record["DYN_UID"],
+                $this->getFieldNameByFormatFieldName("DYN_TITLE")       => $record["DYN_TITLE"],
+                $this->getFieldNameByFormatFieldName("DYN_DESCRIPTION") => $record["DYN_DESCRIPTION"] . "",
+                $this->getFieldNameByFormatFieldName("DYN_TYPE")        => $record["DYN_TYPE"] . ""
             );
         } catch (\Exception $e) {
             throw $e;
@@ -732,11 +841,9 @@ class DynaForm
     {
         try {
             //Verify data
-            $dynaForm = new \Dynaform();
+            $process = new \BusinessModel\Process();
 
-            if (!$dynaForm->dynaformExists($dynaFormUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($dynaFormUid, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $process->throwExceptionIfNotExistsDynaForm("", $dynaFormUid, $this->arrayFieldNameForException["dynaFormUid"]);
 
             //Get data
             $criteria = $this->getDynaFormCriteria();
@@ -750,6 +857,7 @@ class DynaForm
 
             $row = $rsCriteria->getRow();
 
+            //Return
             return $this->getDynaFormDataFromRecord($row);
         } catch (\Exception $e) {
             throw $e;

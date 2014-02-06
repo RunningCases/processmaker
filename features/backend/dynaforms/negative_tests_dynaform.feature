@@ -48,8 +48,8 @@ Scenario Outline: Normal Dynaform creation for a project with bad parameters (ne
         Examples:
 
         | test_description       | project                          | dyn_title         | dyn_description | dyn_type | copy_prj_uid                     | copy_dyn_uid                     | error_code | error_message |
-        | invalid copy_prj_uid   | 14414793652a5d718b65590036026581 | Dynaform - Copy 1 | dyn copy        | xmlform  | 42445320652cd0000000000000000085 | 70070685552cd53605650f7062918505 | 400        | copy_prj_uid  |
-        | invalid copy_dyn_uid   | 42445320652cd534acb3824056962285 | Dynaform - Copy 2 | dyn copy        | xmlform  | 14414793652a5d718b65590036026581 | 70070685500000000000000000000000 | 400        | copy_dyn_uid  |
+        | invalid copy_prj_uid   | 14414793652a5d718b65590036026581 | Dynaform - Copy 1 | dyn copy        | xmlform  | 42445320652cd0000000000000000085 | 70070685552cd53605650f7062918505 | 400        | copy_import.prj_uid  |
+        | invalid copy_dyn_uid   | 42445320652cd534acb3824056962285 | Dynaform - Copy 2 | dyn copy        | xmlform  | 14414793652a5d718b65590036026581 | 70070685500000000000000000000000 | 400        | copy_import.dyn_uid  |
 
     
     Scenario Outline: Create dynaform based on a PMTable for a project with bad parameters (negative tests)
@@ -87,4 +87,4 @@ Scenario Outline: Normal Dynaform creation for a project with bad parameters (ne
 
         | test_description    | project                          | dyn_title            | dyn_description  | dyn_type | tab_uid                          | fld_name_01  | pro_variable_01 | fld_name_02  | pro_variable_02 | fld_name_03     | pro_variable_03 |  error_code | error_message |
         | invalid tab_uid     | 14414793652a5d718b65590036026581 | Dynaform - pmtable 1 | dyn from pmtable | xmlform  | 65193158852cc1a00000000000000000 | DYN_UID      | @#APPLICATION   | DYN_TITLE    | @#TITLE         | DYN_DESCRIPTION | @#DESCRIPTION   | 400         | tab_uid       | 
-        | invalid fld_name_01 | 42445320652cd534acb3824056962285 | Dynaform - pmtable 2 | dyn from pmtable | xmlform  | 65193158852cc1a93a5a535084878044 | DYN_INPUT    | @#APPLICATION   | DYN_TITLE    | @#TITLE         | DYN_DESCRIPTION | @#DESCRIPTION   | 400         | fld_name_01   |
+        | invalid fld_name_01 | 42445320652cd534acb3824056962285 | Dynaform - pmtable 2 | dyn from pmtable | xmlform  | 65193158852cc1a93a5a535084878044 | DYN_INPUT    | @#APPLICATION   | DYN_TITLE    | @#TITLE         | DYN_DESCRIPTION | @#DESCRIPTION   | 400         | fld_name   |

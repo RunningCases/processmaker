@@ -204,14 +204,18 @@ class Project extends Api
     }
 
     /**
-     * @url GET /:projectUid/dynaforms
+     * @url GET /:prj_uid/dynaforms
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetDynaForms($projectUid)
+    public function doGetDynaForms($prj_uid)
     {
         try {
             $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
-            $response = $process->getDynaForms($projectUid);
+            $response = $process->getDynaForms($prj_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -220,16 +224,16 @@ class Project extends Api
     }
 
     /**
-     * @url GET /:projectUid/input-documents
+     * @url GET /:prj_uid/input-documents
      *
-     * @param string $projectUid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetInputDocuments($projectUid)
+    public function doGetInputDocuments($prj_uid)
     {
         try {
             $process = new \BusinessModel\Process();
 
-            $response = $process->getInputDocuments($projectUid);
+            $response = $process->getInputDocuments($prj_uid);
 
             return $response;
         } catch (\Exception $e) {
