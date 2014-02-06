@@ -1,5 +1,9 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Process supervisor Resources
+Requirements:
+    a workspace with the process 85794888452ceeef3675164057928956 ("Test ( Triggers, Activity)") already loaded
+    there are zero supervisor, dynaform and input document in the Process Supervisor of process
+
 
     Background:
       Given that I have a valid access_token
@@ -39,7 +43,7 @@ Feature: Process supervisor Resources
       
       Examples:
       | test_description                                  | project                          | records |
-      | List users and groups available to be supervisors | 85794888452ceeef3675164057928956 | 23      |
+      | List users and groups available to be supervisors | 85794888452ceeef3675164057928956 | 21      |
 
 
     Scenario Outline: Get a List of available groups process supervisor of a project
@@ -52,7 +56,7 @@ Feature: Process supervisor Resources
       
       Examples:
       | test_description                               | project                          | records |
-      | List the 23 groups available to be supervisors | 85794888452ceeef3675164057928956 | 22      |
+      | List the 23 groups available to be supervisors | 85794888452ceeef3675164057928956 | 20      |
 
     
     Scenario Outline: Get a List of available users elegible as process supervisor

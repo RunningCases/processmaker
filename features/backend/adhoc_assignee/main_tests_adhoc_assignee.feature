@@ -1,5 +1,8 @@
 @ProcessMakerMichelangelo @RestAPI @assignee
 Feature: Project Properties -Adhoc Assignee Resources
+Requirements:
+    a workspace with the process 4224292655297723eb98691001100052 ("Test Users-Step-Properties End Point") already loaded
+    there are one group in the task 1 and there are zero users in the task two
 
   Background:
     Given that I have a valid access_token
@@ -16,7 +19,7 @@ Feature: Project Properties -Adhoc Assignee Resources
 
     Examples:
     | test_description                                                         | project                          | activity                         | records | ada_uid                          | ada_type |
-    | check if the list of possible users and groups to be assigned is correct | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 84      | 54731929352d56741de9d42002704749 | group    |
+    | check if the list of possible users and groups to be assigned is correct | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 82      | 54731929352d56741de9d42002704749 | group    |
 
  Scenario Outline: Get a list of available adhoc users and groups to be assigned to an activity with filter
     Given I request "project/<project>/activity/<activity>/adhoc-available-assignee?filter=<filter>&start=<start>&limit=<limit>"
@@ -29,9 +32,9 @@ Feature: Project Properties -Adhoc Assignee Resources
     And the "ada_type" property in row 0 equals "<ada_type>"
 
     Examples:
-    | test_description                                          | project                          | activity                          | filter  | start | limit | records | ada_uid                          | ada_type |
-    | Using filter get available users that match with "fin"   | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485  | fin | 0     | 50    | 2       | 66623507552d56742865613066097298 | group    |
-    | Using filter get 1 available user that match with "fin"  | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485  | fin | 0     | 1     | 1       | 66623507552d56742865613066097298 | group    |
+    | test_description                                         | project                          | activity                          | filter  | start | limit | records | ada_uid                          | ada_type |
+    | Using filter get available users that match with "fin"   | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485  | fin     | 0     | 50    | 2       | 66623507552d56742865613066097298 | group    |
+    | Using filter get 1 available user that match with "fin"  | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485  | fin     | 0     | 1     | 1       | 66623507552d56742865613066097298 | group    |
 
   Scenario Outline: Assign a adhoc user or group to an activity
     Given POST this data:
