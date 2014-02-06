@@ -117,6 +117,25 @@ class BpmnWorkflow extends Project\Bpmn
         $this->wp->addTask($taskData);
     }
 
+    public function updateActivity($actUid, $data)
+    {
+        parent::updateActivity($actUid, $data);
+
+        $taskData = array();
+
+        if (array_key_exists("ACT_NAME", $data)) {
+            $taskData["TAS_TITLE"] = $data["ACT_NAME"];
+        }
+        if (array_key_exists("ACT_NAME", $data)) {
+            $taskData["TAS_POSX"] = $data["BOU_X"];
+        }
+        if (array_key_exists("ACT_NAME", $data)) {
+            $taskData["TAS_POSY"] = $data["BOU_Y"];
+        }
+
+        $this->wp->updateTask($actUid, $taskData);
+    }
+
     public function removeActivity($actUid)
     {
         parent::removeActivity($actUid);
