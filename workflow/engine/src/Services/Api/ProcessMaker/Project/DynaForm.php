@@ -12,14 +12,18 @@ use \Luracast\Restler\RestException;
 class DynaForm extends Api
 {
     /**
-     * @url GET /:projectUid/dynaform/:dynaFormUid
+     * @url GET /:prj_uid/dynaform/:dyn_uid
+     *
+     * @param string $dyn_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetDynaForm($dynaFormUid, $projectUid)
+    public function doGetDynaForm($dyn_uid, $prj_uid)
     {
         try {
             $dynaForm = new \BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase(false);
 
-            $response = $dynaForm->getDynaForm($dynaFormUid);
+            $response = $dynaForm->getDynaForm($dyn_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -28,21 +32,21 @@ class DynaForm extends Api
     }
 
     /**
-     * @url POST /:projectUid/dynaform
+     * @url POST /:prj_uid/dynaform
      *
-     * @param string $projectUid
-     * @param DynaFormPostStructure $request_data
+     * @param string $prj_uid      {@min 32}{@max 32}
+     * @param array  $request_data
      *
      * @status 201
      */
-    public function doPostDynaForm($projectUid, DynaFormPostStructure $request_data = null)
+    public function doPostDynaForm($prj_uid, $request_data)
     {
         try {
             $dynaForm = new \BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase(false);
+            $dynaForm->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
-            $arrayData = $dynaForm->getArrayDataFromRequestData($request_data);
-
-            $arrayData = $dynaForm->defineCreate($projectUid, $arrayData);
+            $arrayData = $dynaForm->defineCreate($prj_uid, $request_data);
 
             $response = $arrayData;
 
@@ -53,83 +57,40 @@ class DynaForm extends Api
     }
 
     /**
-     * @url PUT /:projectUid/dynaform/:dynaFormUid
+     * @url PUT /:prj_uid/dynaform/:dyn_uid
      *
-     * @param string $dynaFormUid
-     * @param string $projectUid
-     * @param DynaFormPutStructure $request_data
+     * @param string $dyn_uid      {@min 32}{@max 32}
+     * @param string $prj_uid      {@min 32}{@max 32}
+     * @param array  $request_data
      */
-    public function doPutDynaForm($dynaFormUid, $projectUid, DynaFormPutStructure $request_data = null)
+    public function doPutDynaForm($dyn_uid, $prj_uid, $request_data)
     {
         try {
             $dynaForm = new \BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase(false);
 
-            $arrayData = $dynaForm->getArrayDataFromRequestData($request_data);
-
-            $arrayData = $dynaForm->update($dynaFormUid, $arrayData);
+            $arrayData = $dynaForm->update($dyn_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url DELETE /:projectUid/dynaform/:dynaFormUid
+     * @url DELETE /:prj_uid/dynaform/:dyn_uid
+     *
+     * @param string $dyn_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doDeleteDynaForm($dynaFormUid, $projectUid)
+    public function doDeleteDynaForm($dyn_uid, $prj_uid)
     {
         try {
             $dynaForm = new \BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase(false);
 
-            $dynaForm->delete($dynaFormUid);
+            $dynaForm->delete($dyn_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
-}
-
-class DynaFormPostStructure
-{
-    /**
-     * @var string {@from body}{@required true}
-     */
-    public $dyn_title;
-
-    /**
-     * @var string {@from body}
-     */
-    public $dyn_description;
-
-    /**
-     * @var string {@from body}{@choice xmlform,grid}{@required true}
-     */
-    public $dyn_type;
-
-    /**
-     * @var array {@from body}{@type associative}
-     */
-    public $copy_import;
-
-    /**
-     * @var array {@from body}{@type associative}
-     */
-    public $pmtable;
-}
-
-class DynaFormPutStructure
-{
-    /**
-     * @var string {@from body}
-     */
-    public $dyn_title;
-
-    /**
-     * @var string {@from body}
-     */
-    public $dyn_description;
-
-    /**
-     * @var string {@from body}{@choice xmlform,grid}{@required true}
-     */
-    public $dyn_type;
 }
 

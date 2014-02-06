@@ -374,7 +374,7 @@ class Step extends BaseStep
             while ($oDataset->next()) {
                 $aRow1 = $oDataset->getRow();
                 //print_r($aRow1);
-                $dynHandler = new dynaFormHandler( PATH_DYNAFORM . $_POST['PRO_UID'] . "/" . $aRow1['DYN_UID'] . ".xml" );
+                $dynHandler = new dynaFormHandler(PATH_DYNAFORM . $sproUid . PATH_SEP . $aRow1["DYN_UID"] . ".xml");
                 $dynFields = $dynHandler->getFields();
                 $sxmlgrid = '';
                 $sType = '';
