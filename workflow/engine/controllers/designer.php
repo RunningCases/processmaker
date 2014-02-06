@@ -36,6 +36,16 @@ class Designer extends Controller
 
         $this->setVar('credentials', base64_encode(json_encode($credentials)));
         $this->setVar('isDebugMode', System::isDebugMode());
+
+        if (System::isDebugMode()) {
+            if (! file_exists(PATH_HTML . "lib-dev/mafe/build.cache")) {
+                throw new Exception("Error: Development JS Files were are not generated!, please execute: \$rake pmBuildDebug in MichelangeloFE project");
+            }
+
+            $this->setVar('designerCacheFile', file(PATH_HTML . "lib-dev/mafe/applications.cache"));
+            $this->setVar('mafeCacheFile', file(PATH_HTML . "lib-dev/mafe/build.cache"));
+        }
+
         $this->setView('designer/index');
         $this->render();
     }
