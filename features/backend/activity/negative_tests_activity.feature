@@ -23,7 +23,7 @@ Feature: Activity Resources Main Tests
         | project                          | activity                         | tas_title | error_code | error_message |
         | 251815090529619a99a2bf4013294414 | 97192372152a5c78f04a794095845000 | Task 1    | 400        | task          |
         | 251815090529619a99a2bf4013294414 |                                  | Task 1    | 404        | Not Found     |
-        |                                  | 97192372152a5c78f04a794095806311 | Task 1    | 400        | project_uid   |
+        |                                  | 97192372152a5c78f04a794095806311 | Task 1    | 400        | prj_uid   |
   
 
 @7: TEST FOR GET PROPERTIES ACTIVITY /---------------------------------------------------------
@@ -36,7 +36,7 @@ Feature: Activity Resources Main Tests
 
         | project                          | activity                         | error_code | error_message |
         | 251815090529619a99a2bf4013294414 |                                  | 404        | Not Found     |
-        |                                  | 97192372152a5c78f04a794095806311 | 400        | project_uid   |
+        |                                  | 97192372152a5c78f04a794095806311 | 400        | prj_uid   |
 
 @8: TEST FOR GET DEFINITION ACTIVITY /---------------------------------------------------------
     Scenario Outline: Get definition of activity
@@ -49,7 +49,7 @@ Feature: Activity Resources Main Tests
         | project                          | activity                         | error_code | error_message |
         | 251815090529619a99a2bf4013294414 | 97192372152a5c78f04a794095200000 | 400        | task          |
         | 251815090529619a99a2bf4013294414 |                                  | 404        | Not Found     |
-        |                                  | 97192372152a5c78f04a794095806311 | 400        | project_uid   |
+        |                                  | 97192372152a5c78f04a794095806311 | 400        | prj_uid       |
 
 
 Scenario Outline: Update the Definition of a Activity and the check if the values had changed
