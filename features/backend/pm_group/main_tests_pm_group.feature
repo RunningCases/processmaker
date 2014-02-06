@@ -28,7 +28,7 @@ Feature: PM Group Main Tests
         | empty string          |        |   1   | 2       | 2       |  200      |
         | search 0              | 0      |   0   | 0       | 0       |  200      |
         | search 0              | 0      |   0   | 100     | 0       |  200      |
-        | Search letters 'c'    | c      |   0   | 5       | 8       |  200      |
+        | Search letters 'c'    | c      |   0   | 5       | 6       |  200      |
         | Search letters 'de    | de     |   0   | 5       | 2       |  200      |
        
 
