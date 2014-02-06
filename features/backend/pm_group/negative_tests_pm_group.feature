@@ -12,11 +12,13 @@ Feature: PM Group Negative Tests
     
             Examples:
     
-            | test_description      | filter | start | limit   | records | http_code |
-            | Invalid start         | a      |   b   | c       | 0       |  400      |
-            | Invalid limit         | a      |   0   | c       | 0       |  400      |
-            | real numbers          | a      |  0.1  | 1.4599  | 0       |  400      |
-            | real numbers          | a      |  1.5  | 1.4599  | 0       |  400      |
+            | test_description      | filter | start | limit   | records | error_code |
+            | Invalid start         | a      |   b   | c       | 0       |  400       |
+            | Invalid limit         | a      |   0   | c       | 0       |  400       |
+            | real numbers          | a      |  0.1  | 1.4599  | 0       |  400       |
+            | real numbers          | a      |  1.5  | 1.4599  | 0       |  400       |
+            | real numbers          | a      |  0.0  | 1.0     | 1       |  400       |
+            | real numbers          | a      |  0.0  | 0.0     | 0       |  400       |
     
     
     Scenario Outline: Create new Group with bad parameters (negative tests)
@@ -33,8 +35,8 @@ Feature: PM Group Negative Tests
     
             Examples:
     
-            | grp_title                  | grp_status | error_code | error_message |
-            | Field requered grp_title   | ACTIVE     |    400     | grp_title     |
-            | Field requered grp_status  | ACTIVE     |    400     | grp_status    |
+            | grp_title                  | grp_status | grp_title | error_code | error_message |
+            | Field requered grp_title   | ACTIVE     |           |    400     | grp_title     |
+            | Field requered grp_status  |            | test      |    400     | grp_status    |
           
            

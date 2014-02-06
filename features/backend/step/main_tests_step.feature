@@ -218,9 +218,9 @@ Feature: Project Properties - Step Resources Main Tests
         Examples:
 
         | test_description                             | project                          | activity                         | step                             |tri_uid_number | step_number | tri_uid                          | st_type  | st_condition      | st_position |
-        | Update st_type, st_condition                 | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 65093024352cd9df93d9675058012924 | 1             | 1           | 81919273152cd636c665080083928728 | BEFORE   | @@var1 == 1       | 1           |
-        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 65093024352cd9df93d9675058012924 | 2             | 1           | 56359776552cd6378b38e47080912028 | BEFORE   | @@var1 == 2       | 2           |
-        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 65093024352cd9df93d9675058012924 | 3             | 1           | 57401970252cd6393531551040242546 | BEFORE   | @@var1 == 1       | 3           |
+        | Update st_type, st_condition                 | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 63293140052cd61b29e21a9056770986 | 1             | 1           | 81919273152cd636c665080083928728 | BEFORE   | @@var1 == 1       | 1           |
+        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 63293140052cd61b29e21a9056770986 | 2             | 1           | 56359776552cd6378b38e47080912028 | BEFORE   | @@var1 == 2       | 2           |
+        | Update st_type, st_condition and st_position | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 63293140052cd61b29e21a9056770986 | 3             | 1           | 57401970252cd6393531551040242546 | BEFORE   | @@var1 == 1       | 3           |
 
 
 

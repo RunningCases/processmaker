@@ -1,87 +1,126 @@
 @ProcessMakerMichelangelo @RestAPI
-Feature: DataBase Connections
+Feature: DataBase Connections Main Tests
+  Requirements:
+    a workspace with the process 74737540052e1641ab88249082085472 ("Data Base Connenctions") already loaded
+    there are zero Database Connections in the process
 
-    Scenario: List all the database connections (result 0 database connections)
-        Given that I have a valid access_token
-        And I request "project/74737540052e1641ab88249082085472/database-connections"
+    Background:
+    Given that I have a valid access_token
+
+    Scenario: Get the DataBase Connections List when there are exactly zero DataBase Connections
+        Given I request "project/74737540052e1641ab88249082085472/database-connections"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the response has 0 record
 
 
-    Scenario: Create a new database connection
-        Given that I have a valid access_token
-        And POST this data:
+    Scenario Outline: Create a new database connection
+        Given POST this data:
             """
             {
-                "dbs_type": "mysql",
-                "dbs_server": "192.168.11.71",
-                "dbs_database_name": "rb_cochalo",
-                "dbs_username": "root",
-                "dbs_password": "atopml2005",
-                "dbs_port": 3306,
-                "dbs_encode": "utf8",
-                "dbs_description": "conection correcta"
+                "dbs_type": "<dbs_type>",
+                "dbs_server": "<dbs_server>",
+                "dbs_database_name": "<dbs_database_name>",
+                "dbs_username": "<dbs_username>",
+                "dbs_password": "<dbs_password>",
+                "dbs_port": <dbs_port>,
+                "dbs_encode": "<dbs_encode>",
+                "dbs_description": "<dbs_description>"
             }
             """
         And I request "project/74737540052e1641ab88249082085472/database-connection"
         Then the response status code should be 201
         And store "dbs_uid" in session array
+        And the response charset is "UTF-8"
+        And the content type is "application/json"
+        And the type is "object"
+        And store "dbs_uid" in session array as variable "dbs_uid_<dbs_uid_number>"
 
-    @3: TEST FOR GET DATABASE CONNECTIONS /----------------------------------------------------------------------
-    Scenario: List all the database connections (result 1 database connection)
-        Given that I have a valid access_token
-        And I request "project/74737540052e1641ab88249082085472/database-connections"
+
+        Examples:
+
+        | test_description                                     | dbs_uid_number | dbs_type           | dbs_server    | dbs_database_name | dbs_username | dbs_password | dbs_port | dbs_encode | dbs_description    |
+        |                                                      | 1              | mysql              | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
+        |                                                      | 2              | postgresql         | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
+        |                                                      | 3              | microsoftsqlserver | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
+
+
+    Scenario: Get the DataBase Connections List when there are exactly three DataBase Connections
+        Given I request "project/74737540052e1641ab88249082085472/database-connections"
         Then the response status code should be 200
         And the response charset is "UTF-8"
-        And the response has 1 record
+        And the response has 3 record
 
-    @4: TEST FOR PUT DATABASE CONNECTION /-----------------------------------------------------------------------
-    Scenario: Update a database connection
-        Given that I have a valid access_token
-        And PUT this data:
+    
+    Scenario Outline: Update a database connection
+        Given PUT this data:
             """
             {
-                "dbs_type": "mysql",
-                "dbs_server": "192.168.11.71",
-                "dbs_database_name": "wf_cochalo",
-                "dbs_username": "root",
-                "dbs_password": "atopml2005",
-                "dbs_port": 3306,
-                "dbs_encode": "utf8",
-                "dbs_description": "conection correcta a workflow"
+                "dbs_type": "<dbs_type>",
+                "dbs_server": "<dbs_server>",
+                "dbs_database_name": "<dbs_database_name>",
+                "dbs_username": "<dbs_username>",
+                "dbs_password": "<dbs_password>",
+                "dbs_port": <dbs_port>,
+                "dbs_encode": "<dbs_encode>",
+                "dbs_description": "<dbs_description>"
             }
             """
-        And that I want to update a resource with the key "dbs_uid" stored in session array
+        And that I want to update a resource with the key "dbs_uid" stored in session array as variable "dbs_uid_<dbs_uid_number>"
         And I request "project/74737540052e1641ab88249082085472/database-connection"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
 
 
-    Scenario: Get a database connection (with change in "dbs_description" and "dbs_database_name")
-        Given that I have a valid access_token
-        And that I want to get a resource with the key "dbs_uid" stored in session array
+        Examples:
+
+        | test_description                                     | dbs_uid_number | dbs_type           | dbs_server    | dbs_database_name | dbs_username | dbs_password | dbs_port | dbs_encode | dbs_description    |
+        |                                                      | 1              | mysql              | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
+        |                                                      | 2              | postgresql         | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
+        |                                                      | 3              | microsoftsqlserver | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
+
+
+    Scenario Outline: Get a single database connection and check some properties
+        Given that I want to get a resource with the key "dbs_uid" stored in session array as variable "dbs_uid_<dbs_uid_number>"
         And I request "project/74737540052e1641ab88249082085472/database-connection"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
-        And that "dbs_description" is set to "conection correcta a workflow"
-        And that "dbs_database_name" is set to "wf_cochalo"
+        And that "dbs_type" is set to "<dbs_type>"
+        And that "dbs_server" is set to "<dbs_server>"
+        And that "dbs_database_name" is set to "<dbs_database_name>"
+        And that "dbs_username" is set to "<dbs_username>"
+        And that "dbs_password" is set to "<dbs_password>"
+        And that "dbs_port" is set to "<dbs_port>"
+        And that "dbs_encode" is set to "<dbs_encode>"
+        And that "dbs_description" is set to "<dbs_description>"
+
+        Examples:
+
+        | test_description                                     | dbs_uid_number | dbs_type           | dbs_server    | dbs_database_name | dbs_username | dbs_password | dbs_port | dbs_encode | dbs_description    |
+        |                                                      | 1              | mysql              | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
+        |                                                      | 2              | postgresql         | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
+        |                                                      | 3              | microsoftsqlserver | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
 
 
-    Scenario: Delete a database connection
-        Given that I have a valid access_token
-        And that I want to delete a resource with the key "dbs_uid" stored in session array
+    Scenario Outline: Delete all Database Connection created previously in this script
+        Given that I want to delete a resource with the key "dbs_uid" stored in session array as variable "dbs_uid_<dbs_uid_number>"
         And I request "project/74737540052e1641ab88249082085472/database-connection"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
 
-    @7: TEST FOR GET DATABASE CONNECTIONS /----------------------------------------------------------------------
-    Scenario: List all the database connections (result 0 database connections)
-        Given that I have a valid access_token
-        And I request "project/74737540052e1641ab88249082085472/database-connections"
+        Examples:
+
+        | dbs_uid_number |
+        | 1              |
+        | 2              |
+        | 3              |
+
+
+    Scenario: Get the DataBase Connections List when there are exactly zero DataBase Connections
+        Given I request "project/74737540052e1641ab88249082085472/database-connections"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the response has 0 record

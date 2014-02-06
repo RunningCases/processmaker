@@ -28,10 +28,8 @@ Feature: PM Group Main Tests
         | empty string          |        |   1   | 2       | 2       |  200      |
         | search 0              | 0      |   0   | 0       | 0       |  200      |
         | search 0              | 0      |   0   | 100     | 0       |  200      |
-        | real numbers          | a      |  0.0  | 1.0     | 1       |  200      |
-        | real numbers          | a      |  0.0  | 0.0     | 0       |  200      |
         | Search letters 'c'    | c      |   0   | 5       | 8       |  200      |
-        | Search letters 'de    | de     |   0   | 5       | 4       |  200      |
+        | Search letters 'de    | de     |   0   | 5       | 2       |  200      |
        
 
  
@@ -134,3 +132,12 @@ Feature: PM Group Main Tests
         And the response charset is "UTF-8"
         And the type is "array"
         And the json data is an empty array
+
+
+    Scenario: Get list Groups of workspace
+        And I request "groups?filter=&start=0&limit=50"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "array"
+        And the response has 20 records
