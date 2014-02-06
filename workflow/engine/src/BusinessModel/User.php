@@ -223,7 +223,6 @@ class User
             if ($form['USR_NEW_PASS'] != $form['USR_CNF_PASS']) {
                 throw new \Exception('`usr_new_pass or usr_cnf_pass`. '.\G::LoadTranslation('ID_NEW_PASS_SAME_OLD_PASS'));
             }
-
             $form['USR_PASSWORD'] = md5($form['USR_NEW_PASS']);
             if (!isset($form['USR_CITY'])) {
                 $form['USR_CITY'] = '';
@@ -299,7 +298,7 @@ class User
                     $aData['USR_STATUS'] = 0;
                 }
                 $sUserUID = $this->createUser($aData);
-                if ($form['USR_ROLE'] != '') {                   
+                if ($form['USR_ROLE'] != '') {
                    $this->assignRoleToUser($sUserUID, $form['USR_ROLE']);
                 }
             } catch(Exception $oError) {
@@ -428,7 +427,7 @@ class User
                                     $sDescription .= ' - ' . \G::LoadTranslation($sError) . ',';
                                     break;
                             }
-                            }
+                        }
                         $sDescription .= '' . \G::LoadTranslation('ID_PLEASE_CHANGE_PASSWORD_POLICY');
                         throw new \Exception('`usr_new_pass or usr_cnf_pass`. '.$sDescription);
                     }
