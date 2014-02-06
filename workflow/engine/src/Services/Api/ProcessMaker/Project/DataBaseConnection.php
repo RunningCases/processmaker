@@ -15,19 +15,19 @@ use \Luracast\Restler\RestException;
 class DataBaseConnection extends Api
 {
     /**
-     * @param string $projectUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      * @return array
      *
-     * @url GET /:projectUid/database-connections
+     * @url GET /:prj_uid/database-connections
      */
-    public function doGetDataBaseConnections($projectUid)
+    public function doGetDataBaseConnections($prj_uid)
     {
         try {
             $oDBConnection = new \BusinessModel\DataBaseConnection();
-            $response = $oDBConnection->getDataBaseConnections($projectUid);
+            $response = $oDBConnection->getDataBaseConnections($prj_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -35,19 +35,19 @@ class DataBaseConnection extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $dbConnecionUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $dbs_uid {@min 1} {@max 32}
      * @return array
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url GET /:projectUid/database-connection/:dbConnecionUid
+     * @url GET /:prj_uid/database-connection/:dbs_uid
      */
-    public function doGetDataBaseConnection($projectUid, $dbConnecionUid)
+    public function doGetDataBaseConnection($prj_uid, $dbs_uid)
     {
         try {
             $oDBConnection = new \BusinessModel\DataBaseConnection();
-            $response = $oDBConnection->getDataBaseConnection($projectUid, $dbConnecionUid);
+            $response = $oDBConnection->getDataBaseConnection($prj_uid, $dbs_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -55,7 +55,7 @@ class DataBaseConnection extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      *
      * @param string $dbs_type {@from body}
@@ -71,10 +71,10 @@ class DataBaseConnection extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url POST /:projectUid/database-connection/test
+     * @url POST /:prj_uid/database-connection/test
      */
     public function doPostTestDataBaseConnection(
-        $projectUid,
+        $prj_uid,
         $request_data,
         $dbs_type,
         $dbs_server,
@@ -87,7 +87,7 @@ class DataBaseConnection extends Api
     ) {
         try {
             $oDBConnection = new \BusinessModel\DataBaseConnection();
-            $request_data['pro_uid'] = $projectUid;
+            $request_data['pro_uid'] = $prj_uid;
             $response = $oDBConnection->testConnection($request_data, true);
             return $response;
         } catch (\Exception $e) {
@@ -96,7 +96,7 @@ class DataBaseConnection extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      *
      * @param string $dbs_type {@from body}
@@ -112,11 +112,11 @@ class DataBaseConnection extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url POST /:projectUid/database-connection
+     * @url POST /:prj_uid/database-connection
      * @status 201
      */
     public function doPostDataBaseConnection(
-        $projectUid,
+        $prj_uid,
         $request_data,
         $dbs_type,
         $dbs_server,
@@ -129,7 +129,7 @@ class DataBaseConnection extends Api
     ) {
         try {
             $oDBConnection = new \BusinessModel\DataBaseConnection();
-            $response = $oDBConnection->saveDataBaseConnection($projectUid, $request_data, true);
+            $response = $oDBConnection->saveDataBaseConnection($prj_uid, $request_data, true);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -137,8 +137,8 @@ class DataBaseConnection extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $dbConnecionUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $dbs_uid {@min 1} {@max 32}
      * @param array $request_data
      *
      * @param string $dbs_type {@from body}
@@ -154,11 +154,11 @@ class DataBaseConnection extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url PUT /:projectUid/database-connection/:dbConnecionUid
+     * @url PUT /:prj_uid/database-connection/:dbs_uid
      */
     public function doPutDataBaseConnection(
-        $projectUid,
-        $dbConnecionUid,
+        $prj_uid,
+        $dbs_uid,
         $request_data,
         $dbs_type,
         $dbs_server,
@@ -170,29 +170,29 @@ class DataBaseConnection extends Api
         $dbs_description = ''
     ) {
         try {
-            $request_data['dbs_uid'] = $dbConnecionUid;
+            $request_data['dbs_uid'] = $dbs_uid;
             $oDBConnection = new \BusinessModel\DataBaseConnection();
-            $response = $oDBConnection->saveDataBaseConnection($projectUid, $request_data);
+            $response = $oDBConnection->saveDataBaseConnection($prj_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $dbConnecionUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $dbs_uid {@min 1} {@max 32}
      * @return void
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url DELETE /:projectUid/database-connection/:dbConnecionUid
+     * @url DELETE /:prj_uid/database-connection/:dbs_uid
      */
-    public function doDeleteDataBaseConnection($projectUid, $dbConnecionUid)
+    public function doDeleteDataBaseConnection($prj_uid, $dbs_uid)
     {
         try {
             $oDBConnection = new \BusinessModel\DataBaseConnection();
-            $response = $oDBConnection->deleteDataBaseConnection($projectUid, $dbConnecionUid);
+            $response = $oDBConnection->deleteDataBaseConnection($prj_uid, $dbs_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

@@ -12,13 +12,13 @@ use \Luracast\Restler\RestException;
 class Activity extends Api
 {
     /**
-     * @param string $projectUid {@min 32} {@max 32}
-     * @param string $activityUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
+     * @param string $act_uid {@min 32} {@max 32}
      * @param string $filter {@choice definition,,properties}
      *
-     * @url GET /:projectUid/activity/:activityUid
+     * @url GET /:prj_uid/activity/:act_uid
      */
-    public function doGetProjectActivity($projectUid, $activityUid, $filter = '')
+    public function doGetProjectActivity($prj_uid, $act_uid, $filter = '')
     {
         try {
             $hiddenFields = array('tas_start', 'pro_uid', 'tas_uid', 'tas_delay_type', 'tas_temporizer', 'tas_alert',
@@ -41,7 +41,7 @@ class Activity extends Api
             if ($filter == '' || $filter == 'properties') {
                 // PROPERTIES
                 $task = new \BusinessModel\Task();
-                $properties = $task->getProperties($activityUid, true, false);
+                $properties = $task->getProperties($prj_uid, $act_uid, true, false);
                 foreach ($properties as $key => $value) {
                     if (in_array($key, $hiddenFields)) {
                         unset($properties[$key]);
@@ -57,20 +57,20 @@ class Activity extends Api
     }
 
     /**
-     * @param string $projectUid {@min 32} {@max 32}
-     * @param string $activityUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
+     * @param string $act_uid {@min 32} {@max 32}
      * @param ActivityPropertiesStructure $properties {@from body}
      *
-     * @url PUT /:projectUid/activity/:activityUid
+     * @url PUT /:prj_uid/activity/:act_uid
      */
-    public function doPutProjectActivity($projectUid, $activityUid, ActivityPropertiesStructure $properties, $request_data =  array())
+    public function doPutProjectActivity($prj_uid, $act_uid, ActivityPropertiesStructure $properties, $request_data =  array())
     {
         try {
             if (isset($request_data['properties']['tas_start'])) {
                 unset($request_data['properties']['tas_start']);
             }
             $task = new \BusinessModel\Task();
-            $properties = $task->updateProperties($activityUid, $projectUid, $request_data);
+            $properties = $task->updateProperties($prj_uid, $act_uid, $request_data);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -79,16 +79,16 @@ class Activity extends Api
 
 
     /**
-     * @param string $projectUid {@min 32} {@max 32}
-     * @param string $activityUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
+     * @param string $act_uid {@min 32} {@max 32}
      *
-     * @url DELETE /:projectUid/activity/:activityUid
+     * @url DELETE /:prj_uid/activity/:act_uid
      */
-    public function doDeleteProjectActivity($projectUid, $activityUid)
+    public function doDeleteProjectActivity($prj_uid, $act_uid)
     {
         try {
             $task = new \BusinessModel\Task();
-            $task->deleteTask($activityUid);
+            $task->deleteTask($prj_uid, $act_uid);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
