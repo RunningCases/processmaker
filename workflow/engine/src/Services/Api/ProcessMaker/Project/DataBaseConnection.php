@@ -71,6 +71,47 @@ class DataBaseConnection extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
+     * @url POST /:projectUid/database-connection/test
+     */
+    public function doPostTestDataBaseConnection(
+        $projectUid,
+        $request_data,
+        $dbs_type,
+        $dbs_server,
+        $dbs_database_name,
+        $dbs_username,
+        $dbs_port,
+        $dbs_encode,
+        $dbs_password = '',
+        $dbs_description = ''
+    ) {
+        try {
+            $oDBConnection = new \BusinessModel\DataBaseConnection();
+            $request_data['pro_uid'] = $projectUid;
+            $response = $oDBConnection->testConnection($request_data, true);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $projectUid {@min 1} {@max 32}
+     * @param array $request_data
+     *
+     * @param string $dbs_type {@from body}
+     * @param string $dbs_server {@from body}
+     * @param string $dbs_database_name {@from body}
+     * @param string $dbs_username {@from body}
+     * @param string $dbs_port {@from body}
+     * @param string $dbs_encode {@from body}
+     * @param string $dbs_password {@from body}
+     * @param string $dbs_description {@from body}
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
      * @url POST /:projectUid/database-connection
      * @status 201
      */
