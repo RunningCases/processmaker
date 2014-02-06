@@ -135,23 +135,50 @@ class Workflow extends Handler
         $taskData['TAS_UID'] = array_key_exists('TAS_UID', $taskData) ? $taskData['TAS_UID'] : Hash::generateUID();
         $taskData['PRO_UID'] = $this->proUid;
 
-        $task = new Task();
+        try {
+            self::log("Add Task with data: ", $taskData);
+            $task = new Task();
+            $tasUid = $task->create($taskData, false);
+            self::log("Add Task Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
 
-        return $task->create($taskData, false);
+        return $tasUid;
     }
 
     public function updateTask($tasUid, $taskData)
     {
-        $task = new Task();
-        $taskData['TAS_UID'] = $tasUid;
+        try {
+            self::log("Update Task: $tasUid", "With data: ", $taskData);
 
-        return $task->update($taskData);
+            $task = new Task();
+            $taskData['TAS_UID'] = $tasUid;
+            $result = $task->update($taskData);
+
+            self::log("Update Task Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+
+        return $result;
     }
 
     public function removeTask($tasUid)
     {
-        $task = new Task();
-        $task->remove($tasUid);
+        try {
+            self::log("Remove Task: $tasUid");
+
+            $task = new Task();
+            $task->remove($tasUid);
+
+            self::log("Remove Task Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function getTask($tasUid)

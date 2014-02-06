@@ -11,8 +11,32 @@ use ProcessMaker\Util\Hash;
 class BpmnWorkflow extends Project\Bpmn
 {
     /**
+     * @var \ProcessMaker\Project\Workflow
+     */
+    protected $wp;
+
+    public function __construct()
+    {
+        $this->wp = new Project\Workflow();
+    }
+
+
+    /**
      * OVERRIDES
      */
+
+    public static function load($prjUid)
+    {
+        $parent = parent::load($prjUid);
+
+        $me = new self();
+
+        $me->project = $parent->project;
+        $me->prjUid = $parent->project->getPrjUid();
+        $me->wp = Project\Workflow::load($me->prjUid);
+
+        return $me;
+    }
 
     public function create($data)
     {
@@ -71,5 +95,31 @@ class BpmnWorkflow extends Project\Bpmn
         }
 
         return $list;
+    }
+
+    public function addActivity($data)
+    {
+        parent::addActivity($data);
+
+        $taskData = array();
+        $taskData["TAS_UID"] = $data["ACT_UID"];
+
+        if (array_key_exists("ACT_NAME", $data)) {
+            $taskData["TAS_TITLE"] = $data["ACT_NAME"];
+        }
+        if (array_key_exists("ACT_NAME", $data)) {
+            $taskData["TAS_POSX"] = $data["BOU_X"];
+        }
+        if (array_key_exists("ACT_NAME", $data)) {
+            $taskData["TAS_POSY"] = $data["BOU_Y"];
+        }
+
+        $this->wp->addTask($taskData);
+    }
+
+    public function removeActivity($actUid)
+    {
+        parent::removeActivity($actUid);
+        $this->wp->removeTask($actUid);
     }
 }
