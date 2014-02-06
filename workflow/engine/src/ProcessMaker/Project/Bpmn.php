@@ -170,7 +170,7 @@ class Bpmn extends Handler
             }
         }
 
-        return $retType == "array" ? $this->diagram->toArray() : $this->diagram;
+        return ($retType == "array" && is_object($this->diagram)) ? $this->diagram->toArray() : $this->diagram;
     }
 
     public function addProcess($data = array())
@@ -233,9 +233,13 @@ class Bpmn extends Handler
         return $activity;
     }
 
-    public function getActivities()
+    public function getActivities($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
-        return Activity::getAll($this->getUid());
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        return Activity::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo);
     }
 
     public function updateActivity($actUid, $data)
@@ -285,9 +289,10 @@ class Bpmn extends Handler
         return $this->events[$evnUid];
     }
 
-    public function getEvents($retType)
+    public function getEvents($retType = "array")
     {
-        return Event::getAll($this->project->getPrjUid(), null, null, '', 'object');
+        //return Event::getAll($this->project->getPrjUid(), null, null, '', 'object');
+        return array();
     }
 
     public function addGateway($data)
@@ -321,7 +326,8 @@ class Bpmn extends Handler
 
     public function getGateways($retType = 'array')
     {
-        return  Activity::getAll($this->project->getPrjUid(), null, null, '', $retType);
+        //return  Activity::getAll($this->project->getPrjUid(), null, null, '', $retType);
+        return array();
     }
 
     public function addFlow($data)
@@ -354,7 +360,8 @@ class Bpmn extends Handler
 
     public function getFlows($retType = 'array')
     {
-        return Activity::getAll($this->project->getPrjUid(), null, null, '', $retType);
+        //return Activity::getAll($this->project->getPrjUid(), null, null, '', $retType);
+        return array();
     }
 
     public function addArtifact($data)
@@ -370,6 +377,7 @@ class Bpmn extends Handler
     public function getArtifacts()
     {
         // TODO: Implement update() method.
+        return array();
     }
 
     public function addLane($data)
@@ -385,6 +393,7 @@ class Bpmn extends Handler
     public function getLanes()
     {
         // TODO: Implement update() method.
+        return array();
     }
 
     public function addLaneset($data)
@@ -400,5 +409,107 @@ class Bpmn extends Handler
     public function getLanesets()
     {
         // TODO: Implement update() method.
+        return array();
+    }
+
+    /*
+     * Others functions/methods
+     */
+
+    public static function getDiffFromProjects($updatedProject)
+    {
+        // preparing target project
+        $diagramElements = array(
+            'act_uid' => 'activities',
+            'evn_uid' => 'events',
+            'flo_uid' => 'flows',
+            'art_uid' => 'artifacts',
+            'lns_uid' => 'laneset',
+            'lan_uid' => 'lanes'
+        );
+
+        // Getting Differences
+        $newRecords = array();
+        $newRecordsUids = array();
+        $deletedRecords = array();
+        $updatedRecords = array();
+
+        // Get new records
+        foreach ($diagramElements as $key => $element) {
+            if (! array_key_exists($element, $updatedProject['diagrams'][0])) {
+                continue;
+            }
+
+            /*print_r($savedProject['diagrams'][0][$element]);
+            print_r($updatedProject['diagrams'][0][$element]);
+            var_dump($key);*/
+
+            $arrayDiff = self::arrayDiff(
+                $savedProject['diagrams'][0][$element],
+                $updatedProject['diagrams'][0][$element],
+                $key
+            );
+
+            if (! empty($arrayDiff)) {
+                $newRecordsUids[$element] = $arrayDiff;
+
+                foreach ($updatedProject['diagrams'][0][$element] as $item) {
+                    if (in_array($item[$key], $newRecordsUids[$element])) {
+                        $newRecords[$element][] = $item;
+                    }
+                }
+            }
+        }
+
+        // Get deleted records
+        foreach ($diagramElements as $key => $element) {
+            if (! array_key_exists($element, $updatedProject['diagrams'][0])) {
+                continue;
+            }
+
+            $arrayDiff = self::arrayDiff(
+                $updatedProject['diagrams'][0][$element],
+                $savedProject['diagrams'][0][$element],
+                $key
+            );
+
+            if (! empty($arrayDiff)) {
+                $deletedRecords[$element] = $arrayDiff;
+            }
+        }
+
+        // Get updated records
+        $checksum = array();
+        foreach ($diagramElements as $key => $element) {
+            $checksum[$element] = self::getArrayChecksum($savedProject['diagrams'][0][$element], $key);
+        }
+
+
+        foreach ($diagramElements as $key => $element) {
+            if (! array_key_exists($element, $updatedProject['diagrams'][0])) {
+                continue;
+            }
+
+            foreach ($updatedProject['diagrams'][0][$element] as $item) {
+                if ((array_key_exists($element, $newRecordsUids) && in_array($item[$key], $newRecordsUids[$element])) ||
+                    (array_key_exists($element, $deletedRecords) && in_array($item[$key], $deletedRecords[$element]))
+                ) {
+                    // skip new or deleted records
+                    continue;
+                }
+
+                if (self::getChecksum($item) !== $checksum[$element][$item[$key]]) {
+                    $updatedRecords[$element][] = $item;
+                }
+            }
+        }
+
+        $diff = array(
+            'new' => $newRecords,
+            'deleted' => $deletedRecords,
+            'updated' => $updatedRecords
+        );
+
+        return $diff;
     }
 }

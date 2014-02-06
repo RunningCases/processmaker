@@ -4,7 +4,10 @@ namespace ProcessMaker\Project\Adapter;
 use ProcessMaker\Project;
 use ProcessMaker\Util\Hash;
 
-
+/**
+ * Class BpmnWorkflow
+ * @package ProcessMaker\Project\Adapter
+ */
 class BpmnWorkflow extends Project\Bpmn
 {
     /**

@@ -15,6 +15,26 @@ abstract class Handler
     //public abstract function update();
     public abstract function remove();
 
+    protected static function diffArrayByKey($key, $list, $targetList)
+    {
+        $uid = array();
+        $diff = array();
+
+        foreach ($list as $item) {
+            if (array_key_exists($key, $item)) {
+                $uid[] = $item[$key];
+            }
+        }
+
+        foreach ($targetList as $item) {
+            if (! in_array($item[$key], $uid)) {
+                $diff[] = $item[$key];
+            }
+        }
+
+        return $diff;
+    }
+
     /**
      * Log in ProcessMaker Standard Output if debug mode is enabled.
      *

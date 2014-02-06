@@ -69,5 +69,21 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($project["PRJ_NAME"], $process["PRO_TITLE"]);
         $this->assertEquals($project["PRJ_DESCRIPTION"], $process["PRO_DESCRIPTION"]);
         $this->assertEquals($project["PRJ_AUTHOR"], $process["PRO_CREATE_USER"]);
+
+        $bwap->addDiagram();
+        $bwap->addProcess();
+
+        // Save to DB
+        $bwap->addActivity(array(
+            "ACT_NAME" => "Activity #1",
+            "BOU_X" => "50",
+            "BOU_Y" => "50"
+        ));
+
+        $bwap->addActivity(array(
+            "ACT_NAME" => "Activity #2",
+            "BOU_X" => "250",
+            "BOU_Y" => "250"
+        ));
     }
 }

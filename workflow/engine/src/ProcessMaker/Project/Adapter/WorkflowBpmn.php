@@ -35,8 +35,12 @@ class WorkflowBpmn extends Project\Workflow
                 $bpData["PRJ_AUTHOR"] = $data["USR_UID"];
             }
 
-            $wp = new Project\Bpmn();
-            $wp->create($bpData);
+            $bp = new Project\Bpmn();
+            $bp->create($bpData);
+
+            // At this time we will add a default diagram and process
+            $bp->addDiagram();
+            $bp->addProcess();
 
         } catch (\Exception $e) {
             $prjUid = $this->getUid();
