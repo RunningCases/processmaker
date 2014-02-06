@@ -267,7 +267,7 @@ class WorkflowTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @depends testCompleteWorkflowProject
-     * @param $wp \ProcessMaker\Project\WorkflowProject
+     * @param $wp \ProcessMaker\Project\Workflow
      * @expectedException \ProcessMaker\Exception\ProjectNotFound
      * @expectedExceptionCode 20
      */

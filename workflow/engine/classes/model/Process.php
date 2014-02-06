@@ -567,7 +567,7 @@ class Process extends BaseProcess
         return (is_object( $oPro ) && get_class( $oPro ) == 'Process');
     }
 
-    public function existsByProTitle ($PRO_TITLE)
+    public static function existsByProTitle ($PRO_TITLE)
     {
         $oCriteria = new Criteria( 'workflow' );
         $oCriteria->addSelectColumn( 'COUNT(*) AS PROCESS' );

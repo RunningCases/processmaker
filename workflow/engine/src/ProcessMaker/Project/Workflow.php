@@ -49,14 +49,36 @@ class Workflow extends Handler
     public function create($data)
     {
         try {
+
             // setting defaults
             $data['PRO_UID'] = array_key_exists('PRO_UID', $data) ? $data['PRO_UID'] : Hash::generateUID();
             $data['USR_UID'] = array_key_exists('PRO_CREATE_USER', $data) ? $data['PRO_CREATE_USER'] : null;
-            $data['PRO_CATEGORY'] = array_key_exists('PRO_CATEGORY', $data) ? $data['PRO_CATEGORY'] : '';
+            $data['PRO_TITLE'] = array_key_exists('PRO_TITLE', $data) ? trim($data['PRO_TITLE']) : "";
+            $data['PRO_CATEGORY'] = array_key_exists('PRO_CATEGORY', $data) ? $data['PRO_CATEGORY'] : "";
+
+            //validate if process with specified name already exists
+            if (Process::existsByProTitle($data["PRO_TITLE"])) {
+                throw new Exception\ProjectAlreadyExists($this, $data["PRO_TITLE"]);
+            }
 
             // Create project
             $process = new Process();
             $this->proUid = $process->create($data, false);
+
+            // Call Plugins
+            $pluginData['PRO_UID'] = $this->proUid;
+            $pluginData['PRO_TEMPLATE'] = empty($data["PRO_TEMPLATE"]) ? "" : $data["PRO_TEMPLATE"];
+            $pluginData['PROCESSMAP'] = null;
+
+            $pluginRegistry = \PMPluginRegistry::getSingleton();
+            $pluginRegistry->executeTriggers(PM_NEW_PROCESS_SAVE, $pluginData);
+
+            // Save Calendar ID for this process
+            if (! empty($data["PRO_CALENDAR"])) {
+                //G::LoadClass( "calendar" );
+                $calendar = new \Calendar();
+                $calendar->assignCalendarTo($this->proUid, $data["PRO_CALENDAR"], 'PROCESS');
+            }
 
         } catch (Exception $e) {
             throw new \RuntimeException($e);

@@ -30,6 +30,8 @@
  * @package workflow.engine.classes
  */
 
+require_once 'class.plugin.php';
+
 class pluginDetail
 {
     public $sNamespace;
@@ -129,7 +131,7 @@ class PMPluginRegistry
      *
      * @return object
      */
-    public function &getSingleton ()
+    public static function getSingleton ()
     {
         if (self::$instance == null) {
             self::$instance = new PMPluginRegistry();
