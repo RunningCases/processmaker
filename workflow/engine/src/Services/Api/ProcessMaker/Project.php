@@ -4,6 +4,7 @@ namespace Services\Api\ProcessMaker;
 use Luracast\Restler\RestException;
 use ProcessMaker\Services\Api;
 use ProcessMaker\Adapter\Bpmn\Model as BpmnModel;
+use ProcessMaker\Util\Hash;
 
 /**
  * Class Project
@@ -96,6 +97,31 @@ class Project extends Api
     public function put($prjUid, $request_data)
     {
         try {
+            $projectData = $request_data;
+            $prjUid = $projectData["prj_uid"];
+            $diagram = isset($request_data["diagrams"]) && isset($request_data["diagrams"][0]) ? $request_data["diagrams"][0] : array();
+
+            $bwp = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($prjUid);
+
+            $result = array();
+
+            foreach ($diagram["activities"] as $activityData) {
+                $activityData = array_change_key_case($activityData, CASE_UPPER);
+
+                // activity exists ?
+                if ($activity = $bwp->getActivity($activityData["ACT_UID"])) {
+                    // then update activity
+                    $bwp->updateActivity($activityData["ACT_UID"], $activityData);
+                } else {
+                    // if not exists then create it
+                    $oldActUid = $activityData["ACT_UID"];
+                    $actUid = Hash::generateUID();
+                    $activityData["ACT_UID"] = $actUid;
+                    $bwp->addActivity($activityData);
+
+                    $result[] = array("object" => "activity", "new_uid" => $actUid, "old_uid" => $oldActUid);
+                }
+            }
 
             //$result = BpmnModel::updateProject($prjUid, $request_data);
 

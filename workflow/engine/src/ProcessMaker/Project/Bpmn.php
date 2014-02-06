@@ -206,8 +206,8 @@ class Bpmn extends Handler
 
     public function addActivity($data)
     {
-        if (empty($this->diagram)) {
-            throw new \Exception("Error: There is not an initialized diagram.");
+        if (! ($process = $this->getProcess("object"))) {
+            throw new \Exception(sprintf("Error: There is not an initialized diagram for Project with prj_uid: %s.", $this->getUid()));
         }
 
         // setting defaults
@@ -215,8 +215,8 @@ class Bpmn extends Handler
 
         $activity = new Activity();
         $activity->fromArray($data);
-        $activity->setPrjUid($this->project->getPrjUid());
-        $activity->setProUid($this->getProcess("object")->getProUid());
+        $activity->setPrjUid($this->getUid());
+        $activity->setProUid($process->getProUid());
         $activity->save();
 
         return $activity->getActUid();
