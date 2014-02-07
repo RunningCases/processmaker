@@ -56,6 +56,46 @@ class ReportTable extends Api
 
     /**
      * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $rep_uid {@min 1} {@max 32}
+     * @return array
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /:prj_uid/report-table/:rep_uid/populate
+     */
+    public function doGetPopulateReportTable($prj_uid, $rep_uid)
+    {
+        try {
+            $oReportTable = new \BusinessModel\ReportTable();
+            $response = $oReportTable->generateDataReport($prj_uid, $rep_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $rep_uid {@min 1} {@max 32}
+     * @return array
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /:prj_uid/report-table/:rep_uid/data
+     */
+    public function doGetReportTableData($prj_uid, $rep_uid)
+    {
+        try {
+            $oReportTable = new \BusinessModel\ReportTable();
+            $response = $oReportTable->getDataReportTableData($prj_uid, $rep_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      *
      * @param string $rep_tab_name {@from body}

@@ -164,7 +164,7 @@ class DataBaseConnection
         } else {
             // TEST CONNECTION
             $allData = $this->getDataBaseConnection($pro_uid, $dataDBConnection['DBS_UID']);
-            $dataTest = array_merge($allData, $dataDBConnection);
+            $dataTest = array_merge($allData, $dataDBConnection, array('DBS_PASSWORD' => $passOrigin));
             $resTest = $this->testConnection($dataTest);
             if (!$resTest['resp']) {
                 throw (new \Exception($resTest['message']));
