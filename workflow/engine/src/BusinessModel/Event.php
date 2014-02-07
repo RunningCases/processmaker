@@ -9,9 +9,9 @@ class Event
 {
     /**
      * Get list for Events
-     * @var string $sProcessUID. Uid for Process
+     * @var string $pro_uid. Uid for Process
      * @var string $filter.
-     * @var string $sEventUID. Uid for Process
+     * @var string $evn_uid. Uid for Process
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -19,10 +19,15 @@ class Event
      *
      * @return array
      */
-    public function getEvents($sProcessUID, $filter = '', $sEventUID = '')
+    public function getEvents($pro_uid, $filter = '', $evn_uid = '')
     {
+        $pro_uid = $this->validateProUid($pro_uid);
+        if ($evn_uid != '') {
+            $evn_uid = $this->validateEvnUid($evn_uid);
+        }
+
         $oProcess = new \Process();
-        if (!($oProcess->processExists($sProcessUID))) {
+        if (!($oProcess->processExists($pro_uid))) {
             throw (new \Exception( 'This process doesn\'t exist!' ));
         }
 
@@ -40,9 +45,9 @@ class Event
         $aConditions[] = array(\ContentPeer::CON_CATEGORY, $sDelimiter . 'EVN_DESCRIPTION' . $sDelimiter );
         $aConditions[] = array(\ContentPeer::CON_LANG, $sDelimiter . SYS_LANG . $sDelimiter );
         $oCriteria->addJoinMC($aConditions, \Criteria::LEFT_JOIN);
-        $oCriteria->add(\EventPeer::PRO_UID, $sProcessUID);
-        if ($sEventUID != '') {
-            $oCriteria->add(\EventPeer::EVN_UID, $sEventUID);
+        $oCriteria->add(\EventPeer::PRO_UID, $pro_uid);
+        if ($evn_uid != '') {
+            $oCriteria->add(\EventPeer::EVN_UID, $evn_uid);
         }
 
         switch ($filter) {
@@ -69,9 +74,9 @@ class Event
             $oDataset->next();
         }
 
-        if ($sEventUID != '' && empty($eventsArray)) {
+        if ($evn_uid != '' && empty($eventsArray)) {
             throw (new \Exception( 'This row doesn\'t exist!' ));
-        } elseif ($sEventUID != '' && !empty($eventsArray)) {
+        } elseif ($evn_uid != '' && !empty($eventsArray)) {
             return current($eventsArray);
         }
         return $eventsArray;
@@ -80,7 +85,7 @@ class Event
     /**
      * Save Event Post Put
      *
-     * @param string $eventUid
+     * @param string $evn_uid
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -88,57 +93,58 @@ class Event
      *
      * @return array
      */
-    public function saveEvents($sProcessUID, $dataEvent, $create = false)
+    public function saveEvents($pro_uid, $dataEvent, $create = false)
     {
-        if ( ($sProcessUID == '') || (count($dataEvent) == 0) ) {
+        $pro_uid = $this->validateProUid($pro_uid);
+        if (!$create) {
+            $dataEvent['evn_uid'] = $this->validateEvnUid($dataEvent['evn_uid']);
+        }
+
+        if ( ($pro_uid == '') || (count($dataEvent) == 0) ) {
             return false;
         }
         $dataEvent = array_change_key_case($dataEvent, CASE_UPPER);
-
-        $this->validateProcess($sProcessUID);
-
         if ($dataEvent['EVN_RELATED_TO'] == 'SINGLE') {
             if (empty($dataEvent['TAS_UID'])) {
                 throw (new \Exception('The field "tas_uid" is required!'));
             }
-            $this->validateTask($dataEvent['TAS_UID']);
+            $this->validateTasUid($dataEvent['TAS_UID']);
         } else {
             if (empty($dataEvent['EVN_TAS_UID_FROM'])) {
                 throw (new \Exception('The field "evn_tas_uid_from" is required!'));
             }
-            $this->validateTask($dataEvent['EVN_TAS_UID_FROM']);
+            $this->validateTasUid($dataEvent['EVN_TAS_UID_FROM']);
             $dataEvent['TAS_UID'] = $dataEvent['EVN_TAS_UID_FROM'];
 
             if (empty($dataEvent['EVN_TAS_UID_TO'])) {
                 throw (new \Exception('The field "evn_tas_uid_to" is required!'));
             }
-            $this->validateTask($dataEvent['EVN_TAS_UID_TO']);
+            $this->validateTasUid($dataEvent['EVN_TAS_UID_TO']);
         }
 
-        $this->validateTrigger($dataEvent['TRI_UID']);
-        if ( $create && (isset($dataEvent['ENV_UID'])) ) {
-            unset($dataEvent['ENV_UID']);
+        $this->validateTriUid($dataEvent['TRI_UID']);
+        if ( $create && (isset($dataEvent['EVN_UID'])) ) {
+            unset($dataEvent['EVN_UID']);
         }
 
-        $dataEvent['PRO_UID'] = $sProcessUID;
+        $dataEvent['PRO_UID'] = $pro_uid;
         $oEvent = new \Event();
 
         if ($create) {
             $uidNewEvent = $oEvent->create( $dataEvent );
+            $dataEvent = $this->getEvents($pro_uid, '', $uidNewEvent);
+            $dataEvent = array_change_key_case($dataEvent, CASE_LOWER);
+            return $dataEvent;
         } else {
             $oEvent->update( $dataEvent );
-            $uidNewEvent = $dataEvent['ENV_UID'];
+            $uidNewEvent = $dataEvent['EVN_UID'];
         }
-
-        $dataEvent = $this->getEvents($sProcessUID, '', $uidNewEvent);
-        $dataEvent = array_change_key_case($dataEvent, CASE_LOWER);
-        return $dataEvent;
     }
 
     /**
      * Delete Event
      *
-     * @param string $eventUid
+     * @param string $evn_uid
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -146,56 +152,103 @@ class Event
      *
      * @return void
      */
-    public function deleteEvent($eventUid)
+    public function deleteEvent($pro_uid, $evn_uid)
     {
+        $pro_uid = $this->validateProUid($pro_uid);
+        $evn_uid = $this->validateEvnUid($evn_uid);
+
         try {
             $oEvent = new \Event();
-            $oEvent->remove( $eventUid );
+            $oEvent->remove( $evn_uid );
         } catch (Exception $e) {
             throw $e;
         }
     }
 
-    public function validateProcess($proUid) {
-        $proUid = trim($proUid);
-        if ($proUid == '') {
-            throw (new \Exception('This process doesn\'t exist!'));
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateProUid ($pro_uid) {
+        $pro_uid = trim($pro_uid);
+        if ($pro_uid == '') {
+            throw (new \Exception("The project with prj_uid: '', does not exist."));
         }
-
         $oProcess = new \Process();
-        if (!($oProcess->processExists($proUid))) {
-            throw (new \Exception('This process doesn\'t exist!'));
+        if (!($oProcess->processExists($pro_uid))) {
+            throw (new \Exception("The project with prj_uid: '$pro_uid', does not exist."));
         }
-
-        return $proUid;
+        return $pro_uid;
     }
 
-    public function validateTask($taskUid) {
-        $taskUid = trim($taskUid);
-        if ($taskUid == '') {
-            throw (new \Exception('This task doesn\'t exist!'));
+    /**
+     * Validate Event Uid
+     * @var string $evn_uid. Uid for event
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateEvnUid ($evn_uid) {
+        $evn_uid = trim($evn_uid);
+        if ($evn_uid == '') {
+            throw (new \Exception("The event with evn_uid: '', does not exist."));
         }
+        $oEvent = new \Event();
+        if (!($oEvent->Exists($evn_uid))) {
+            throw (new \Exception("The event with evn_uid: '$evn_uid', does not exist."));
+        }
+        return $evn_uid;
+    }
 
+    /**
+     * Validate Task Uid
+     * @var string $tas_uid. Uid for task
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateTasUid($tas_uid) {
+        $tas_uid = trim($tas_uid);
+        if ($tas_uid == '') {
+            throw (new \Exception("The task with tas_uid: '', does not exist."));
+        }
         $oTask = new \Task();
-        if (!($oTask->taskExists($taskUid))) {
-            throw (new \Exception('This task doesn\'t exist!'));
+        if (!($oTask->taskExists($tas_uid))) {
+            throw (new \Exception("The task with tas_uid: '$tas_uid', does not exist."));
         }
-
-        return $taskUid;
+        return $tas_uid;
     }
 
-    public function validateTrigger($triUid) {
-        $triUid = trim($triUid);
-        if ($triUid == '') {
-            throw (new \Exception('This trigger doesn\'t exist!'));
+    /**
+     * Validate Trigger Uid
+     * @var string $tri_uid. Uid for trigger
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateTriUid($tri_uid) {
+        $tri_uid = trim($tri_uid);
+        if ($tri_uid == '') {
+            throw (new \Exception("The trigger with tri_uid: '', does not exist."));
         }
 
         $oTriggers = new \Triggers();
-        if (!($oTriggers->TriggerExists($triUid))) {
-            throw (new \Exception('This trigger doesn\'t exist!'));
+        if (!($oTriggers->TriggerExists($tri_uid))) {
+            throw (new \Exception("The trigger with tri_uid: '', does not exist."));
         }
 
-        return $triUid;
+        return $tri_uid;
     }
 }
 
