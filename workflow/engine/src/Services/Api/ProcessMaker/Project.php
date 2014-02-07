@@ -35,15 +35,20 @@ class Project extends Api
     public function get($prjUid)
     {
         try {
+            //return \ProcessMaker\Adapter\Bpmn\Model::loadProject($prjUid);
+
             $bwp = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($prjUid);
 
             $project = array_change_key_case($bwp->getProject(), CASE_LOWER);
             $diagram = $bwp->getDiagram();
+            $process = $bwp->getProcess();
+            $diagram["pro_uid"] = $process["PRO_UID"];
 
             if (! is_null($diagram)) {
                 $diagram = array_change_key_case($diagram, CASE_LOWER);
                 $diagram["activities"] = $bwp->getActivities(array("changeCaseTo" => CASE_LOWER));
                 $diagram["events"] = $bwp->getEvents();
+                $diagram["gateways"] = $bwp->getGateways();
                 $diagram["flows"] = $bwp->getFlows();
                 $diagram["artifacts"] = $bwp->getArtifacts();
                 $diagram["laneset"] = $bwp->getLanesets();
