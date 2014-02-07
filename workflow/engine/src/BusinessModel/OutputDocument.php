@@ -265,9 +265,7 @@ class OutputDocument
                     $aData['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'] = \G::encrypt( $aData['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'], $aData['OUT_DOC_UID'] );
                 }
             }
-            if ($aData['OUT_DOC_UID'] == '') {
-                $outDocUid = $oOutputDocument->create($aData);
-            }
+            $outDocUid = $oOutputDocument->create($aData);
             //Return
             unset($aData["PRO_UID"]);
             $aData = array_change_key_case($aData, CASE_LOWER);
