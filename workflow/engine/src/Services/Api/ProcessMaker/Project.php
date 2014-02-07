@@ -49,8 +49,8 @@ class Project extends Api
                 $diagram = array_change_key_case($diagram, CASE_LOWER);
                 $diagram["activities"] = $bwp->getActivities(array("changeCaseTo" => CASE_LOWER));
                 $diagram["events"] = $bwp->getEvents();
-                $diagram["gateways"] = $bwp->getGateways();
-                $diagram["flows"] = $bwp->getFlows();
+                $diagram["gateways"] = $bwp->getGateways(array("changeCaseTo" => CASE_LOWER));
+                $diagram["flows"] = $bwp->getFlows(array("changeCaseTo" => CASE_LOWER));
                 $diagram["artifacts"] = $bwp->getArtifacts();
                 $diagram["laneset"] = $bwp->getLanesets();
                 $diagram["lanes"] = $bwp->getLanes();
@@ -152,7 +152,7 @@ class Project extends Api
              */
             $whiteList = array();
             foreach ($diagram["gateways"] as $i => $gatewayData) {
-                $diagram["activities"][$i] = $gatewayData = array_change_key_case($gatewayData, CASE_UPPER);
+                $diagram["gateways"][$i] = $gatewayData = array_change_key_case($gatewayData, CASE_UPPER);
 
                 // gateway exists ?
                 if ($gateway = $bwp->getGateway($gatewayData["GAT_UID"])) {
@@ -164,7 +164,8 @@ class Project extends Api
                     // if not exists then create it
                     $oldActUid = $gatewayData["GAT_UID"];
                     $gatewayData["GAT_UID"] = Hash::generateUID();
-                    $diagram["activities"][$i]["ACT_UID"] = $gatewayData["GAT_UID"];
+                    Logger::log(" ==> updating gateway UID {$gatewayData["GAT_UID"]}->$oldActUid");
+                    $diagram["gateways"][$i]["GAT_UID"] = $gatewayData["GAT_UID"];
 
                     $bwp->addGateway($gatewayData);
 
@@ -173,50 +174,58 @@ class Project extends Api
                 }
             }
 
-            $activities = $bwp->getActivities();
+            $gateways = $bwp->getGateways();
 
             // looking for removed elements
-            foreach ($activities as $activityData) {
-                if (! in_array($activityData["ACT_UID"], $whiteList)) {
+            foreach ($gateways as $gatewayData) {
+                if (! in_array($gatewayData["GAT_UID"], $whiteList)) {
                     // If it is not in the white list so, then remove them
-                    $bwp->removeActivity($activityData["ACT_UID"]);
+                    $bwp->removeGateway($gatewayData["GAT_UID"]);
                 }
             }
-
 
 
             /*
              * Diagram's Flows Handling
              */
-
-
             $whiteList = array();
+
             foreach ($diagram["flows"] as $i => $flowData) {
-                //TODO, for test, assuming that all flows are new
                 $diagram["flows"][$i] = $flowData = array_change_key_case($flowData, CASE_UPPER);
-                $oldFloUid = $diagram["flows"][$i]["FLO_UID"];
-                $diagram["flows"][$i]["FLO_UID"] = Hash::generateUID();
-                Logger::log($flowData["FLO_ELEMENT_ORIGIN"], $result);
-                $diagram["flows"][$i]["FLO_ELEMENT_ORIGIN"] = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result);
-                $diagram["flows"][$i]["FLO_ELEMENT_DEST"] = self::mapUid($flowData["FLO_ELEMENT_DEST"], $result);
 
-                $whiteList[] = $diagram["flows"][$i]["FLO_UID"];
-                $result[] = array("object" => "flow", "new_uid" => $diagram["flows"][$i]["FLO_UID"], "old_uid" => $oldFloUid);
+                // if it is a new flow record
+                if (! \BpmnFlow::exists($flowData["FLO_UID"])) {
+                    $oldFloUid = $flowData["FLO_UID"];
+                    $flowData["FLO_UID"] = Hash::generateUID();
+
+                    $flowData["FLO_ELEMENT_ORIGIN"] = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result);
+                    $flowData["FLO_ELEMENT_DEST"] = self::mapUid($flowData["FLO_ELEMENT_DEST"], $result);
+
+                    $result[] = array("object" => "flow", "new_uid" => $flowData["FLO_UID"], "old_uid" => $oldFloUid);
+                    $diagram["flows"][$i] = $flowData;
+                }
+
+                $whiteList[] = $flowData["FLO_UID"];
             }
+
             foreach ($diagram["flows"] as $flowData) {
-
                 // flow exists ?
-                if ($flow = $bwp->getFlow($flowData["FLO_UID"])) {
+                if (\BpmnFlow::exists($flowData["FLO_UID"])) {
                     // then update activity
-                    //$bwp->updateFlow($activityData["FLO_UID"], $flowData);
-
-                    //$whiteList[] = $activityData["FLO_UID"];
+                    $bwp->updateFlow($flowData["FLO_UID"], $flowData);
                 } else {
                     // if not exists then create it
-
-
-                    //$bwp->addFlow($flowData);
                     $bwp->addFlow($flowData, $diagram["flows"], $diagram["gateways"], $diagram["events"]);
+                }
+            }
+
+            $flows = $bwp->getFlows();
+
+            // looking for removed elements
+            foreach ($flows as $flowData) {
+                if (! in_array($flowData["FLO_UID"], $whiteList)) {
+                    // If it is not in the white list so, then remove them
+                    $bwp->removeFlow($flowData["FLO_UID"]);
                 }
             }
 
@@ -341,6 +350,8 @@ class Project extends Api
                 return $item["new_uid"];
             }
         }
+
+        throw new \Exception("oldUid: $oldUid not found in list:".print_r($list, true));
 
         return null;
     }
