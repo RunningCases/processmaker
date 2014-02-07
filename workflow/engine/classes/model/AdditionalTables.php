@@ -109,11 +109,11 @@ class AdditionalTables extends BaseAdditionalTables
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
         while ($oDataset->next()) {
-        	$auxField = $oDataset->getRow();
-        	if ($auxField['FLD_TYPE'] == 'TIMESTAMP') {
-        		$auxField['FLD_TYPE'] = 'DATETIME';
-        	}
-        	$this->fields[] = $auxField;
+            $auxField = $oDataset->getRow();
+            if ($auxField['FLD_TYPE'] == 'TIMESTAMP') {
+                $auxField['FLD_TYPE'] = 'DATETIME';
+            }
+            $this->fields[] = $auxField;
         }
 
         return $this->fields;
@@ -263,6 +263,27 @@ class AdditionalTables extends BaseAdditionalTables
         }
     }
 
+    /**
+     * verify if Additional Table row specified in [sUID] exists.
+     *
+     * @param      string $sUID   the uid of the additional table
+     */
+    public function exists ($sUID)
+    {
+        $con = Propel::getConnection(AdditionalTablesPeer::DATABASE_NAME);
+
+        try {
+            $oPro = AdditionalTablesPeer::retrieveByPk($sUID);
+            if (is_object($oPro) && get_class($oPro) == 'AdditionalTables') {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $oError) {
+            throw ($oError);
+        }
+    }
+
     public function deleteAll($id)
     {
         //deleting pm table
@@ -390,28 +411,28 @@ class AdditionalTables extends BaseAdditionalTables
             $cont = 0;
             $fieldAppUid = '';
             foreach ($fieldsTable as $value) {
-            	if ($value != 'APP_UID') {
-	                if (($cont+1) == $countField) {
-	                    if ($aData['FIELDS'][$cont]['FLD_TYPE'] == 'VARCHAR') {
-	                        $stringOr .= '$oCriteria->getNewCriterion(' . $sClassPeerName . '::' . strtoupper($value) . ', "%' . $filter . '%", Criteria::LIKE)';
-	                    } else {
-	                        $stringOr .= '$oCriteria->getNewCriterion(' . $sClassPeerName . '::' . strtoupper($value) . ', "' . $filter . '", Criteria::LIKE)';
-	                    }
-	                } else {
-	                    if ($aData['FIELDS'][$cont]['FLD_TYPE'] == 'VARCHAR') {
-	                        $stringOr .= '$oCriteria->getNewCriterion(' . $sClassPeerName . '::' . strtoupper($value) . ', "%' . $filter . '%", Criteria::LIKE)->addOr(';
-	                    } else {
-	                        $stringOr .= '$oCriteria->getNewCriterion(' . $sClassPeerName . '::' . strtoupper($value) . ', "' . $filter . '", Criteria::LIKE)->addOr(';
-	                    }
-	                }
+                if ($value != 'APP_UID') {
+                    if (($cont+1) == $countField) {
+                        if ($aData['FIELDS'][$cont]['FLD_TYPE'] == 'VARCHAR') {
+                            $stringOr .= '$oCriteria->getNewCriterion(' . $sClassPeerName . '::' . strtoupper($value) . ', "%' . $filter . '%", Criteria::LIKE)';
+                        } else {
+                            $stringOr .= '$oCriteria->getNewCriterion(' . $sClassPeerName . '::' . strtoupper($value) . ', "' . $filter . '", Criteria::LIKE)';
+                        }
+                    } else {
+                        if ($aData['FIELDS'][$cont]['FLD_TYPE'] == 'VARCHAR') {
+                            $stringOr .= '$oCriteria->getNewCriterion(' . $sClassPeerName . '::' . strtoupper($value) . ', "%' . $filter . '%", Criteria::LIKE)->addOr(';
+                        } else {
+                            $stringOr .= '$oCriteria->getNewCriterion(' . $sClassPeerName . '::' . strtoupper($value) . ', "' . $filter . '", Criteria::LIKE)->addOr(';
+                        }
+                    }
                 } else {
                     $fieldAppUid = $cont;
                 }
                 $cont++;
             }
-            for ($c = 0; $c < $countField-1; $c++) {            	
+            for ($c = 0; $c < $countField-1; $c++) {
                 if ($fieldAppUid !== $c) {
-                	$stringOr .= ')';
+                    $stringOr .= ')';
                 }
             }
             $stringOr .= ');';
