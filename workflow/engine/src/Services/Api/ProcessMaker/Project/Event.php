@@ -15,7 +15,7 @@ use \Luracast\Restler\RestException;
 class Event extends Api
 {
     /**
-     * @param string $projectUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
      * @param string $filter {@choice message,conditional,,multiple}
      *
      * @access public
@@ -24,16 +24,16 @@ class Event extends Api
      *
      * @return array
      *
-     * @url GET /:projectUid/events
+     * @url GET /:prj_uid/events
      */
-    public function doGetEvents($projectUid, $filter = '')
+    public function doGetEvents($prj_uid, $filter = '')
     {
         try {
             $hiddenFields = array('pro_uid', 'evn_action_parameters',
                 'evn_posx', 'evn_posy', 'evn_type', 'tas_evn_uid', 'evn_max_attempts'
             );
             $event = new \BusinessModel\Event();
-            $response = $event->getEvents($projectUid, $filter);
+            $response = $event->getEvents($prj_uid, $filter);
             foreach ($response as &$eventData) {
                 foreach ($eventData as $key => $value) {
                     if (in_array($key, $hiddenFields)) {
@@ -48,8 +48,8 @@ class Event extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $eventUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $evn_uid {@min 1} {@max 32}
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -57,16 +57,16 @@ class Event extends Api
      *
      * @return array
      *
-     * @url GET /:projectUid/event/:eventUid
+     * @url GET /:prj_uid/event/:evn_uid
      */
-    public function doGetEvent($projectUid, $eventUid)
+    public function doGetEvent($prj_uid, $evn_uid)
     {
         try {
             $hiddenFields = array('pro_uid', 'evn_action_parameters',
                 'evn_posx', 'evn_posy', 'evn_type', 'tas_evn_uid', 'evn_max_attempts'
             );
             $event = new \BusinessModel\Event();
-            $response = $event->getEvents($projectUid, '', $eventUid);
+            $response = $event->getEvents($prj_uid, '', $evn_uid);
             foreach ($response as $key => $eventData) {
                 if (in_array($key, $hiddenFields)) {
                     unset($response[$key]);
@@ -79,7 +79,7 @@ class Event extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      * @param string $evn_description {@from body} {@min 1}
      * @param string $evn_status {@from body} {@choice ACTIVE,INACTIVE}
@@ -101,11 +101,11 @@ class Event extends Api
      *
      * @return array
      *
-     * @url POST /:projectUid/event
+     * @url POST /:prj_uid/event
      * @status 201
      */
     public function doPostEvent(
-        $projectUid,
+        $prj_uid,
         $request_data,
         $evn_description,
         $evn_status,
@@ -126,7 +126,7 @@ class Event extends Api
                 'evn_posx', 'evn_posy', 'evn_type', 'tas_evn_uid', 'evn_max_attempts'
             );
             $event = new \BusinessModel\Event();
-            $response = $event->saveEvents($projectUid, $request_data, true);
+            $response = $event->saveEvents($prj_uid, $request_data, true);
             foreach ($response as $key => $eventData) {
                 if (in_array($key, $hiddenFields)) {
                     unset($response[$key]);
@@ -139,8 +139,8 @@ class Event extends Api
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $eventUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $evn_uid {@min 1} {@max 32}
      * @param array $request_data
      * @param string $evn_description {@from body} {@min 1}
      * @param string $evn_status {@from body} {@choice ACTIVE,INACTIVE}
@@ -162,11 +162,11 @@ class Event extends Api
      *
      * @return void
      *
-     * @url PUT /:projectUid/event/:eventUid
+     * @url PUT /:prj_uid/event/:evn_uid
      */
     public function doPutEvent (
-        $projectUid,
-        $eventUid,
+        $prj_uid,
+        $evn_uid,
         $request_data,
         $evn_description,
         $evn_status,
@@ -192,17 +192,17 @@ class Event extends Api
                 'tas_evn_uid',
                 'evn_max_attempts'
             );
-            $request_data['evn_uid'] = $eventUid;
+            $request_data['evn_uid'] = $evn_uid;
             $event = new \BusinessModel\Event();
-            $event->saveEvents($projectUid, $request_data);
+            $event->saveEvents($prj_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @param string $projectUid {@min 1} {@max 32}
-     * @param string $EventUid {@min 1} {@max 32}
+     * @param string $prj_uid {@min 1} {@max 32}
+     * @param string $evn_uid {@min 1} {@max 32}
      * @return void
      *
      * @access public
@@ -211,13 +211,13 @@ class Event extends Api
      *
      * @return void
      *
-     * @url DELETE /:projectUid/event/:eventUid
+     * @url DELETE /:prj_uid/event/:evn_uid
      */
-    public function doDeleteEvent($projectUid, $eventUid)
+    public function doDeleteEvent($prj_uid, $evn_uid)
     {
         try {
             $event = new \BusinessModel\Event();
-            $response = $event->deleteEvent($eventUid);
+            $response = $event->deleteEvent($prj_uid, $evn_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
