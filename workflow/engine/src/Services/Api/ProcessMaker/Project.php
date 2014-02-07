@@ -5,6 +5,7 @@ use Luracast\Restler\RestException;
 use ProcessMaker\Services\Api;
 use ProcessMaker\Adapter\Bpmn\Model as BpmnModel;
 use ProcessMaker\Util\Hash;
+use ProcessMaker\Util\Logger;
 
 /**
  * Class Project
@@ -110,21 +111,12 @@ class Project extends Api
 
             $result = array();
 
-            $diagramElements = array(
-                 'activities' => 'act_uid',
-                 'events'     => 'evn_uid',
-                 'flows'      => 'flo_uid',
-                 'artifacts'  => 'art_uid',
-                 'laneset'    => 'lns_uid',
-                 'lanes'      => 'lan_uid'
-            );
-
             /*
              * Diagram's Activities Handling
              */
             $whiteList = array();
-            foreach ($diagram["activities"] as $activityData) {
-                $activityData = array_change_key_case($activityData, CASE_UPPER);
+            foreach ($diagram["activities"] as $i => $activityData) {
+                $diagram["activities"][$i] = $activityData = array_change_key_case($activityData, CASE_UPPER);
 
                 // activity exists ?
                 if ($activity = $bwp->getActivity($activityData["ACT_UID"])) {
@@ -135,12 +127,13 @@ class Project extends Api
                 } else {
                     // if not exists then create it
                     $oldActUid = $activityData["ACT_UID"];
-                    $actUid = Hash::generateUID();
-                    $activityData["ACT_UID"] = $actUid;
+                    $activityData["ACT_UID"] = Hash::generateUID();
+                    $diagram["activities"][$i]["ACT_UID"] = $activityData["ACT_UID"];
+
                     $bwp->addActivity($activityData);
 
-                    $result[] = array("object" => "activity", "new_uid" => $actUid, "old_uid" => $oldActUid);
-                    $whiteList[] = $actUid;
+                    $result[] = array("object" => "activity", "new_uid" => $activityData["ACT_UID"], "old_uid" => $oldActUid);
+                    $whiteList[] = $activityData["ACT_UID"];
                 }
             }
 
@@ -155,26 +148,75 @@ class Project extends Api
             }
 
             /*
-             * Diagram's Flows Handling
+             * Diagram's Gateways Handling
              */
             $whiteList = array();
-            foreach ($diagram["flows"] as $flowData) {
-                $flowData = array_change_key_case($flowData, CASE_UPPER);
+            foreach ($diagram["gateways"] as $i => $gatewayData) {
+                $diagram["activities"][$i] = $gatewayData = array_change_key_case($gatewayData, CASE_UPPER);
 
-                // activity exists ?
-                if ($activity = $bwp->getFlow($flowData["FLO_UID"])) {
+                // gateway exists ?
+                if ($gateway = $bwp->getGateway($gatewayData["GAT_UID"])) {
+                    // then update activity
+                    $bwp->updateGateway($gatewayData["GAT_UID"], $gatewayData);
+
+                    $whiteList[] = $gatewayData["GAT_UID"];
+                } else {
+                    // if not exists then create it
+                    $oldActUid = $gatewayData["GAT_UID"];
+                    $gatewayData["GAT_UID"] = Hash::generateUID();
+                    $diagram["activities"][$i]["ACT_UID"] = $gatewayData["GAT_UID"];
+
+                    $bwp->addGateway($gatewayData);
+
+                    $result[] = array("object" => "gateway", "new_uid" => $gatewayData["GAT_UID"], "old_uid" => $oldActUid);
+                    $whiteList[] = $gatewayData["GAT_UID"];
+                }
+            }
+
+            $activities = $bwp->getActivities();
+
+            // looking for removed elements
+            foreach ($activities as $activityData) {
+                if (! in_array($activityData["ACT_UID"], $whiteList)) {
+                    // If it is not in the white list so, then remove them
+                    $bwp->removeActivity($activityData["ACT_UID"]);
+                }
+            }
+
+
+
+            /*
+             * Diagram's Flows Handling
+             */
+
+
+            $whiteList = array();
+            foreach ($diagram["flows"] as $i => $flowData) {
+                //TODO, for test, assuming that all flows are new
+                $diagram["flows"][$i] = $flowData = array_change_key_case($flowData, CASE_UPPER);
+                $oldFloUid = $diagram["flows"][$i]["FLO_UID"];
+                $diagram["flows"][$i]["FLO_UID"] = Hash::generateUID();
+                Logger::log($flowData["FLO_ELEMENT_ORIGIN"], $result);
+                $diagram["flows"][$i]["FLO_ELEMENT_ORIGIN"] = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result);
+                $diagram["flows"][$i]["FLO_ELEMENT_DEST"] = self::mapUid($flowData["FLO_ELEMENT_DEST"], $result);
+
+                $whiteList[] = $diagram["flows"][$i]["FLO_UID"];
+                $result[] = array("object" => "flow", "new_uid" => $diagram["flows"][$i]["FLO_UID"], "old_uid" => $oldFloUid);
+            }
+            foreach ($diagram["flows"] as $flowData) {
+
+                // flow exists ?
+                if ($flow = $bwp->getFlow($flowData["FLO_UID"])) {
                     // then update activity
                     //$bwp->updateFlow($activityData["FLO_UID"], $flowData);
 
                     //$whiteList[] = $activityData["FLO_UID"];
                 } else {
                     // if not exists then create it
-                    $oldFloUid = $flowData["FLO_UID"];
-                    $flowData["FLO_UID"] = Hash::generateUID();
-                    $bwp->addFlow($flowData);
 
-                    $result[] = array("object" => "flow", "new_uid" => $flowData["FLO_UID"], "old_uid" => $oldFloUid);
-                    $whiteList[] = $flowData["FLO_UID"];
+
+                    //$bwp->addFlow($flowData);
+                    $bwp->addFlow($flowData, $diagram["flows"], $diagram["gateways"], $diagram["events"]);
                 }
             }
 
@@ -290,6 +332,17 @@ class Project extends Api
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
+    }
+
+    protected static function mapUid($oldUid, $list)
+    {
+        foreach ($list as $item) {
+            if ($item["old_uid"] == $oldUid) {
+                return $item["new_uid"];
+            }
+        }
+
+        return null;
     }
 }
 

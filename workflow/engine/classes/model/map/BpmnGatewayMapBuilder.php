@@ -75,7 +75,7 @@ class BpmnGatewayMapBuilder
 
         $tMap->addColumn('GAT_TYPE', 'GatType', 'string', CreoleTypes::VARCHAR, true, 30);
 
-        $tMap->addColumn('GAT_DIRECTION', 'GatDirection', 'string', CreoleTypes::VARCHAR, true, 30);
+        $tMap->addColumn('GAT_DIRECTION', 'GatDirection', 'string', CreoleTypes::VARCHAR, false, 30);
 
         $tMap->addColumn('GAT_INSTANTIATE', 'GatInstantiate', 'int', CreoleTypes::TINYINT, false, null);
 

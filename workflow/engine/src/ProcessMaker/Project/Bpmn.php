@@ -210,11 +210,11 @@ class Bpmn extends Handler
             throw new \Exception(sprintf("Error: There is not an initialized diagram for Project with prj_uid: %s.", $this->getUid()));
         }
 
+        // setting defaults
+        $data['ACT_UID'] = array_key_exists('ACT_UID', $data) ? $data['ACT_UID'] : Hash::generateUID();;
+
         try {
             self::log("Add Activity with data: ", $data);
-
-            // setting defaults
-            $data['ACT_UID'] = array_key_exists('ACT_UID', $data) ? $data['ACT_UID'] : Hash::generateUID();;
 
             $activity = new Activity();
             $activity->fromArray($data);
@@ -327,34 +327,37 @@ class Bpmn extends Handler
         // setting defaults
         $data['GAT_UID'] = array_key_exists('GAT_UID', $data) ? $data['GAT_UID'] : Hash::generateUID();
 
-        $gateway = new Gateway();
-        $gateway->fromArray($data);
-        $gateway->setPrjUid($this->project->getPrjUid());
-        $gateway->setProUid($this->getProcess("object")->getProUid());
-        $gateway->save();
+        try {
+            self::log("Add Gateway with data: ", $data);
+            $gateway = new Gateway();
+            $gateway->fromArray($data);
+            $gateway->setPrjUid($this->getUid());
+            $gateway->setProUid($this->getProcess("object")->getProUid());
+            $gateway->save();
 
-        $this->gateways[$gateway->getGatUid()] = $gateway;
-    }
-
-    public function getGateway($gatUid)
-    {
-        if (empty($this->gateways) || ! array_key_exists($gatUid, $this->gateways)) {
-            $gateway = GatewayPeer::retrieveByPK($gatUid);
-
-            if (! is_object($gateway)) {
-                return null;
-            }
-
-            $this->gateways[$gatUid] = $gateway;
+            self::log("Add Gateway Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
         }
 
-        return $this->gateways[$gatUid];
+        return $gateway->getGatUid();
+    }
+
+    public function getGateway($gatUid, $retType = 'array')
+    {
+        $gateway = GatewayPeer::retrieveByPK($gatUid);
+
+        if ($retType != "object" && ! empty($gateway)) {
+            $gateway = $gateway->toArray();
+        }
+
+        return $gateway;
     }
 
     public function getGateways($retType = 'array')
     {
-        //return  Activity::getAll($this->project->getPrjUid(), null, null, '', $retType);
-        return array();
+        return  Gateway::getAll($this->getUid(), null, null, '', $retType);
     }
 
     public function addFlow($data)

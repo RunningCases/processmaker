@@ -21,42 +21,107 @@ class BpmnGateway extends BaseBpmnGateway
     public function __construct($generateUid = true)
     {
         $this->bound = new BpmnBound();
+        $this->setBoundDefaults();
+    }
+
+    public function getBound()
+    {
+        return $this->bound;
+    }
+
+    private function setBoundDefaults()
+    {
         $this->bound->setBouElementType(lcfirst(str_replace(__NAMESPACE__, '', __CLASS__)));
         $this->bound->setBouElement('pm_canvas');
         $this->bound->setBouContainer('bpmnDiagram');
+
+        $this->bound->setPrjUid($this->getPrjUid());
+        $this->bound->setElementUid($this->getGatUid());
+
+        $process = BpmnProcessPeer::retrieveByPK($this->getProUid());
+
+        if (is_object($process)) {
+            $this->bound->setDiaUid($process->getDiaUid());
+        }
+    }
+
+    public static function findOneBy($field, $value)
+    {
+        $rows = self::findAllBy($field, $value);
+
+        return empty($rows) ? null : $rows[0];
+    }
+
+    public static function findAllBy($field, $value)
+    {
+        $c = new Criteria('workflow');
+        $c->add($field, $value, Criteria::EQUAL);
+
+        return BpmnGatewayPeer::doSelect($c);
+    }
+
+    public static function getAll($prjUid = null, $start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        $c = new Criteria('workflow');
+        $c->addSelectColumn("BPMN_GATEWAY.*");
+        $c->addSelectColumn("BPMN_BOUND.*");
+        $c->addJoin(BpmnGatewayPeer::GAT_UID, BpmnBoundPeer::ELEMENT_UID, Criteria::LEFT_JOIN);
+
+        if (! is_null($prjUid)) {
+            $c->add(BpmnGatewayPeer::PRJ_UID, $prjUid, Criteria::EQUAL);
+        }
+
+        $rs = BpmnGatewayPeer::doSelectRS($c);
+        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        $activities = array();
+
+        while ($rs->next()) {
+            $activities[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
+        }
+
+        return $activities;
     }
 
     // OVERRIDES
 
-    public function fromArray($data)
+    public function setActUid($actUid)
     {
-        parent::fromArray($data, BasePeer::TYPE_FIELDNAME);
+        parent::setActUid($actUid);
+        $this->bound->setElementUid($this->getActUid());
+    }
 
-        // try resolve the related bound
-        if (array_key_exists('BOU_UID', $data)) {
-            $bound = BpmnBoundPeer::retrieveByPK($data['BOU_UID']);
+    public function setPrjUid($prjUid)
+    {
+        parent::setPrjUid($prjUid);
+        $this->bound->setPrjUid($this->getPrjUid());
+    }
 
-            if (is_object($bound)) {
-                $this->bound = $bound;
-            }
-        }
+    public function setProUid($proUid)
+    {
+        parent::setProUid($proUid);
 
-        $this->bound->fromArray($data, BasePeer::TYPE_FIELDNAME);
+        $process = BpmnProcessPeer::retrieveByPK($this->getProUid());
+        $this->bound->setDiaUid($process->getDiaUid());
     }
 
     public function save($con = null)
     {
         parent::save($con);
 
-        if (is_object($this->bound) && get_class($this->bound) == 'BpmnBound') {
-            $this->bound->save($con);
+        $this->setBoundDefaults();
+
+        if ($this->bound->getBouUid() == "") {
+            $this->bound->setBouUid(\ProcessMaker\Util\Hash::generateUID());
         }
+
+        $this->bound->save($con);
     }
 
     public function delete($con = null)
     {
         // first, delete the related bound object
-        if (! is_object($this->bound)) {
+        if (! is_object($this->bound) || $this->bound->getBouUid() == "") {
             $this->bound = BpmnBound::findByElement('Gateway', $this->getActUid());
         }
 
@@ -67,13 +132,36 @@ class BpmnGateway extends BaseBpmnGateway
         parent::delete($con);
     }
 
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+    public function fromArray($data, $type = BasePeer::TYPE_FIELDNAME)
     {
-        $data = parent::toArray($keyType);
+        parent::fromArray($data, $type);
 
-        if (is_object($this->bound) && get_class($this->bound) == 'BpmnBound') {
-            $data = array_merge($data, $this->bound->toArray($keyType));
+        $bound = BpmnBound::findByElement('Gateway', $this->getGatUid());
+
+        if (is_object($bound)) {
+            $this->bound = $bound;
+        } else {
+            $this->bound = new BpmnBound();
+            $this->bound->setBouUid(ProcessMaker\Util\Hash::generateUID());
         }
+
+        $this->bound->fromArray($data, BasePeer::TYPE_FIELDNAME);
+    }
+
+    public function toArray($type = BasePeer::TYPE_FIELDNAME)
+    {
+        $data = parent::toArray($type);
+        $bouUid = $this->bound->getBouUid();
+
+        if (empty($bouUid)) {
+            $bound = BpmnBound::findByElement('Gateway', $this->getGatUid());
+
+            if (is_object($bound)) {
+                $this->bound = $bound;
+            }
+        }
+
+        $data = array_merge($data, $this->bound->toArray($type));
 
         return $data;
     }

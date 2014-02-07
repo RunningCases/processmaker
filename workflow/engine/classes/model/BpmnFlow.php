@@ -16,6 +16,21 @@ require_once 'classes/model/om/BaseBpmnFlow.php';
  */
 class BpmnFlow extends BaseBpmnFlow
 {
+    public static function findOneBy($field, $value)
+    {
+        $rows = self::findAllBy($field, $value);
+
+        return empty($rows) ? null : $rows[0];
+    }
+
+    public static function findAllBy($field, $value)
+    {
+        $c = new Criteria('workflow');
+        $c->add($field, $value, Criteria::EQUAL);
+
+        return BpmnFlowPeer::doSelect($c);
+    }
+
     public static function getAll($prjUid = null, $start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
         //TODO implement $start, $limit and $filter
