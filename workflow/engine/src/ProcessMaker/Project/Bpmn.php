@@ -290,7 +290,7 @@ class Bpmn extends Handler
     public function addEvent($data)
     {
         // setting defaults
-        $data['EVN_UID'] = array_key_exists('EVN_UID', $data) ? $data['EVN_UID'] : Hash::generateUID();;
+        $data['EVN_UID'] = array_key_exists('EVN_UID', $data) ? $data['EVN_UID'] : Hash::generateUID();
 
         $event = new Event();
         $event->fromArray($data);
@@ -325,7 +325,7 @@ class Bpmn extends Handler
     public function addGateway($data)
     {
         // setting defaults
-        $data['GAT_UID'] = array_key_exists('GAT_UID', $data) ? $data['GAT_UID'] : Hash::generateUID();;
+        $data['GAT_UID'] = array_key_exists('GAT_UID', $data) ? $data['GAT_UID'] : Hash::generateUID();
 
         $gateway = new Gateway();
         $gateway->fromArray($data);
@@ -360,35 +360,39 @@ class Bpmn extends Handler
     public function addFlow($data)
     {
         // setting defaults
-        $data['GAT_UID'] = array_key_exists('GAT_UID', $data) ? $data['GAT_UID'] : Hash::generateUID();;
-        $data['FLO_STATE'] = json_encode($data['FLO_STATE']);
+        $data['FLO_UID'] = array_key_exists('FLO_UID', $data) ? $data['FLO_UID'] : Hash::generateUID();
+        $data['FLO_STATE'] = is_array($data['FLO_STATE']) ? json_encode($data['FLO_STATE']) : $data['FLO_STATE'];
 
-        $flow = new Flow();
-        $flow->fromArray($data, BasePeer::TYPE_FIELDNAME);
-        $flow->setPrjUid($this->project->getPrjUid());
-        $flow->setDiaUid($this->getDiagram("object")->getDiaUid());
-        $flow->save();
+        try {
+            self::log("Add Flow with data: ", $data);
+
+            $flow = new Flow();
+            $flow->fromArray($data, BasePeer::TYPE_FIELDNAME);
+            $flow->setPrjUid($this->getUid());
+            $flow->setDiaUid($this->getDiagram("object")->getDiaUid());
+            $flow->save();
+
+            self::log("Add Flow Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
-    public function getFlow($floUid)
+    public function getFlow($floUid, $retType = 'array')
     {
-        if (empty($this->flows) || ! array_key_exists($floUid, $this->flows)) {
-            $flow = GatewayPeer::retrieveByPK($floUid);
+        $flow = FlowPeer::retrieveByPK($floUid);
 
-            if (! is_object($flow)) {
-                return null;
-            }
-
-            $this->flows[$floUid] = $flow;
+        if ($retType != "object" && ! empty($activity)) {
+            $flow = $flow->toArray();
         }
 
-        return $this->flows[$floUid];
+        return $flow;
     }
 
     public function getFlows($retType = 'array')
     {
-        //return Activity::getAll($this->project->getPrjUid(), null, null, '', $retType);
-        return array();
+        return Flow::getAll($this->getUid(), null, null, '', $retType);
     }
 
     public function addArtifact($data)

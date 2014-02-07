@@ -114,6 +114,9 @@ class Project extends Api
                  'lanes'      => 'lan_uid'
             );
 
+            /*
+             * Diagram's Activities Handling
+             */
             $whiteList = array();
             foreach ($diagram["activities"] as $activityData) {
                 $activityData = array_change_key_case($activityData, CASE_UPPER);
@@ -145,6 +148,31 @@ class Project extends Api
                     $bwp->removeActivity($activityData["ACT_UID"]);
                 }
             }
+
+            /*
+             * Diagram's Flows Handling
+             */
+            $whiteList = array();
+            foreach ($diagram["flows"] as $flowData) {
+                $flowData = array_change_key_case($flowData, CASE_UPPER);
+
+                // activity exists ?
+                if ($activity = $bwp->getFlow($flowData["FLO_UID"])) {
+                    // then update activity
+                    //$bwp->updateFlow($activityData["FLO_UID"], $flowData);
+
+                    //$whiteList[] = $activityData["FLO_UID"];
+                } else {
+                    // if not exists then create it
+                    $oldFloUid = $flowData["FLO_UID"];
+                    $flowData["FLO_UID"] = Hash::generateUID();
+                    $bwp->addFlow($flowData);
+
+                    $result[] = array("object" => "flow", "new_uid" => $flowData["FLO_UID"], "old_uid" => $oldFloUid);
+                    $whiteList[] = $flowData["FLO_UID"];
+                }
+            }
+
 
             return $result;
         } catch (\Exception $e) {
