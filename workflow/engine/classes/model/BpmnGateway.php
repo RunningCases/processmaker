@@ -122,7 +122,7 @@ class BpmnGateway extends BaseBpmnGateway
     {
         // first, delete the related bound object
         if (! is_object($this->bound) || $this->bound->getBouUid() == "") {
-            $this->bound = BpmnBound::findByElement('Gateway', $this->getActUid());
+            $this->bound = BpmnBound::findByElement('Gateway', $this->getGatUid());
         }
 
         if (is_object($this->bound)) {
