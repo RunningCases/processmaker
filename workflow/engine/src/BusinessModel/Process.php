@@ -365,6 +365,40 @@ class Process
     }
 
     /**
+     * Verify if doesn't exist the Task in table TASK
+     *
+     * @param string $processUid            Unique id of Process
+     * @param string $taskUid               Unique id of Task
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exist the Task in table TASK
+     */
+    public function throwExceptionIfNotExistsTask($processUid, $taskUid, $fieldNameForException)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\TaskPeer::TAS_UID);
+
+            if ($processUid != "") {
+                $criteria->add(\TaskPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            }
+
+            $criteria->add(\TaskPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+
+            $rsCriteria = \TaskPeer::doSelectRS($criteria);
+
+            if (!$rsCriteria->next()) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $taskUid), "The activity with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Verify if doesn't exist the DynaForm in table DYNAFORM
      *
      * @param string $processUid            Unique id of Process
@@ -1433,14 +1467,10 @@ class Process
             $arrayWebEntry = array();
 
             //Verify data
-            $process = new \Process();
-
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
-
             //Get data
             $webEntry = new \BusinessModel\WebEntry();
+            $webEntry->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+            $webEntry->setArrayFieldNameForException($this->arrayFieldNameForException);
 
             $arrayWebEntryData = $webEntry->getData($processUid);
 
