@@ -334,6 +334,8 @@ class Project extends Api
     {
         try {
             $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
             $response = $process->getWebEntries($prj_uid);
 
