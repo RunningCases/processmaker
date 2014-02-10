@@ -95,11 +95,8 @@ class ReportTable
     public function getDataReportTableData($pro_uid, $rep_uid)
     {
         //VALIDATION
-        if ($validate) {
-            $pro_uid = $this->validateProUid($pro_uid);
-            $rep_uid = $this->validateRepUid($rep_uid);
-            $repData['PRO_UID'] = $pro_uid;
-        }
+        $pro_uid = $this->validateProUid($pro_uid);
+        $rep_uid = $this->validateRepUid($rep_uid);
 
         $additionalTables = new AdditionalTables();
         $table  = $additionalTables->load($rep_uid, true);
