@@ -90,8 +90,7 @@ class OutputDocuments extends Api
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-        return $response;
+        }        
     }
 
     /**
