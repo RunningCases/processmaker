@@ -984,9 +984,6 @@ class Task
     public function getTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
     {
         try {
-            $filter = '';
-            $start = null;
-            $limit = null;
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
                 throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
@@ -1561,9 +1558,6 @@ class Task
     public function getTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
     {
         try {
-            $filter = '';
-            $start = null;
-            $limit = null;
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
                 throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
