@@ -197,7 +197,7 @@ class CaseScheduler
      */
     public function getUser($userName, $userPass, $sProcessUID, $sTaskUID)
     {
-        try {            
+        try {
             $sPRO_UID = $sProcessUID;
             $sTASKS = $sTaskUID;
             $sWS_USER = trim( $userName );
