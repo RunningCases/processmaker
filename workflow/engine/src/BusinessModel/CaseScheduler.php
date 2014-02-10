@@ -69,6 +69,10 @@ class CaseScheduler
     public function getCaseScheduler($sProcessUID = '', $sCaseSchedulerUID = '')
     {
         try {
+            $oCaseSchedulerTest = \CaseSchedulerPeer::retrieveByPK( $sCaseSchedulerUID );
+            if (is_null($oCaseSchedulerTest)) {
+                throw (new \Exception( 'This id: '. $sCaseSchedulerUID .' do not correspond to a registered case scheduler'));
+            }
             $oCriteria = new \Criteria( 'workflow' );
             $oCriteria->clearSelectColumns();
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_UID );
@@ -193,7 +197,7 @@ class CaseScheduler
      */
     public function getUser($userName, $userPass, $sProcessUID, $sTaskUID)
     {
-        try {
+        try {            
             $sPRO_UID = $sProcessUID;
             $sTASKS = $sTaskUID;
             $sWS_USER = trim( $userName );
@@ -455,6 +459,7 @@ class CaseScheduler
                     break;
             }
             if (($sOption != '1') && ($sOption != '4') && ($sOption != '5')) {
+                $sDateTmp = '';
                 if ($sStartDay == '') {
                     $sStartDay = date( 'Y-m-d' );
                 }
