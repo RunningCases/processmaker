@@ -259,6 +259,7 @@ class ReportTable
         ob_end_clean();
 
         // Updating additional table struture information
+        $dataValidate['REP_TAB_UID'] = (isset($dataValidate['REP_TAB_UID'])) ? $dataValidate['REP_TAB_UID'] : '';
         $addTabData = array(
             'ADD_TAB_UID' => $dataValidate['REP_TAB_UID'],
             'ADD_TAB_NAME' => $dataValidate['REP_TAB_NAME'],
@@ -327,12 +328,11 @@ class ReportTable
      */
     public function updateReportTable($pro_uid, $rep_data)
     {
+        $rep_uid = $rep_data['rep_uid'];
         $pro_uid = $this->validateProUid($pro_uid);
         $rep_uid = $this->validateRepUid($rep_uid);
 
-        $rep_uid      = trim($rep_data['rep_uid']);
         $dataValidate =  array();
-
         $oCriteria = new \Criteria('workflow');
         $oCriteria->add(\AdditionalTablesPeer::ADD_TAB_UID, $rep_uid, \Criteria::EQUAL);
         $oDataset = \AdditionalTablesPeer::doSelectRS($oCriteria);
