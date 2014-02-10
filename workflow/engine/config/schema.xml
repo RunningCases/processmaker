@@ -3367,7 +3367,7 @@
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
     <column name="GAT_NAME" type="VARCHAR" size="255" required="false"/>
     <column name="GAT_TYPE" type="VARCHAR" size="30" required="true" default=""/>
-    <column name="GAT_DIRECTION" type="VARCHAR" size="30" required="true" default="UNSPECIFIED"/>
+    <column name="GAT_DIRECTION" type="VARCHAR" size="30" required="false" default="UNSPECIFIED"/>
     <column name="GAT_INSTANTIATE" type="TINYINT" required="false" default="0"/>
     <column name="GAT_EVENT_GATEWAT_TYPE" type="VARCHAR" size="20" required="false" default="NONE"/>
     <column name="GAT_ACTIVATION_COUNT" type="INTEGER" required="false" default="0"/>

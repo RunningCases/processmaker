@@ -45,14 +45,14 @@ class ReportTable
      */
     public function getReportTable($pro_uid, $rep_uid, $validate = true)
     {
-        $repData = array();
         //VALIDATION
-
         if ($validate) {
             $pro_uid = $this->validateProUid($pro_uid);
+            $rep_uid = $this->validateRepUid($rep_uid);
             $repData['PRO_UID'] = $pro_uid;
         }
 
+        $repData = array();
         $additionalTables = new AdditionalTables();
 
         // REPORT TABLE PROPERTIES
@@ -79,6 +79,46 @@ class ReportTable
 
         $repData = array_change_key_case($repData, CASE_LOWER);
         return $repData;
+    }
+
+    /**
+     * Get data for ReportTable
+     * @var string $pro_uid. Uid for Process
+     * @var string $rep_uid. Uid for Report Table
+     * @var string $validate. Flag for validate
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     */
+    public function getDataReportTableData($pro_uid, $rep_uid)
+    {
+        //VALIDATION
+        if ($validate) {
+            $pro_uid = $this->validateProUid($pro_uid);
+            $rep_uid = $this->validateRepUid($rep_uid);
+            $repData['PRO_UID'] = $pro_uid;
+        }
+
+        $additionalTables = new AdditionalTables();
+        $table  = $additionalTables->load($rep_uid, true);
+        $result = $additionalTables->getAllData($rep_uid);
+        $primaryKeys = $additionalTables->getPrimaryKeys();
+        if (is_array($result['rows'])) {
+            foreach ($result['rows'] as $i => $row) {
+                $result['rows'][$i] = array_change_key_case($result['rows'][$i], CASE_LOWER);
+                $primaryKeysValues = array ();
+                foreach ($primaryKeys as $key) {
+                    $primaryKeysValues[] = isset( $row[$key['FLD_NAME']] ) ? $row[$key['FLD_NAME']] : '';
+                }
+
+                $result['rows'][$i]['__index__'] = G::encrypt( implode( ',', $primaryKeysValues ), 'pmtable' );
+            }
+        } else {
+            $result['rows'] = array();
+        }
+        return $result;
     }
 
     /**
@@ -269,7 +309,7 @@ class ReportTable
             );
             $oFields->create( $field );
         }
-        $this->generateDataReport($pro_uid, $rep_uid);
+        $this->generateDataReport($pro_uid, $rep_uid, false);
         if ($createRep) {
             return $this->getReportTable($pro_uid, $rep_uid, false);
         }
@@ -287,6 +327,9 @@ class ReportTable
      */
     public function updateReportTable($pro_uid, $rep_data)
     {
+        $pro_uid = $this->validateProUid($pro_uid);
+        $rep_uid = $this->validateRepUid($rep_uid);
+
         $rep_uid      = trim($rep_data['rep_uid']);
         $dataValidate =  array();
 
@@ -322,6 +365,9 @@ class ReportTable
      */
     public function deleteReportTable($pro_uid, $rep_uid)
     {
+        $pro_uid = $this->validateProUid($pro_uid);
+        $rep_uid = $this->validateRepUid($rep_uid);
+
         $at = new AdditionalTables();
         $table = $at->load( $rep_uid );
 
@@ -346,7 +392,13 @@ class ReportTable
      *
      * @return void
      */
-    public function generateDataReport($pro_uid, $rep_uid) {
+    public function generateDataReport($pro_uid, $rep_uid, $validate = true) {
+        if ($validate) {
+            $pro_uid = $this->validateProUid($pro_uid);
+            $rep_uid = $this->validateRepUid($rep_uid);
+            G::loadClass('pmTable');
+        }
+
         $additionalTables = new AdditionalTables();
         $table = $additionalTables->load($rep_uid);
         $additionalTables->populateReportTable(
@@ -583,6 +635,27 @@ class ReportTable
     }
 
     /**
+     * Validate Report Table Uid
+     * @var string $rep_uid. Uid for report table
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function validateRepUid ($rep_uid) {
+        $rep_uid = trim($rep_uid);
+        if ($rep_uid == '') {
+            throw (new \Exception("The report table with rep_uid: '', does not exist."));
+        }
+        $oAdditionalTables = new \AdditionalTables();
+        if (!($oAdditionalTables->exists($rep_uid))) {
+            throw (new \Exception("The report table with rep_uid: '$rep_uid', does not exist."));
+        }
+        return $rep_uid;
+    }
+
+    /**
      * Validate Report Table Name
      * @var string $rep_tab_name. Name for report table
      *
@@ -713,7 +786,7 @@ class ReportTable
                 break;
         }
 
-        G::loadClass( 'pmTable' );
+        G::loadClass('pmTable');
 
         $columnsTypes = \PmTable::getPropelSupportedColumnTypes();
         $res = array_search($fld_type, $columnsTypes);

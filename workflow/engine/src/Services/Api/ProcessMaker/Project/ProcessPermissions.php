@@ -23,7 +23,7 @@ class ProcessPermissions extends Api
      *
      * @return array
      *
-     * @url GET /:projectUid/process-permissions
+     * @url GET /:prj_uid/process-permissions
      */
     public function doGetProcessPermissions($prj_uid)
     {

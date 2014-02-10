@@ -210,11 +210,11 @@ class Bpmn extends Handler
             throw new \Exception(sprintf("Error: There is not an initialized diagram for Project with prj_uid: %s.", $this->getUid()));
         }
 
+        // setting defaults
+        $data['ACT_UID'] = array_key_exists('ACT_UID', $data) ? $data['ACT_UID'] : Hash::generateUID();;
+
         try {
             self::log("Add Activity with data: ", $data);
-
-            // setting defaults
-            $data['ACT_UID'] = array_key_exists('ACT_UID', $data) ? $data['ACT_UID'] : Hash::generateUID();;
 
             $activity = new Activity();
             $activity->fromArray($data);
@@ -290,7 +290,7 @@ class Bpmn extends Handler
     public function addEvent($data)
     {
         // setting defaults
-        $data['EVN_UID'] = array_key_exists('EVN_UID', $data) ? $data['EVN_UID'] : Hash::generateUID();;
+        $data['EVN_UID'] = array_key_exists('EVN_UID', $data) ? $data['EVN_UID'] : Hash::generateUID();
 
         $event = new Event();
         $event->fromArray($data);
@@ -325,70 +325,154 @@ class Bpmn extends Handler
     public function addGateway($data)
     {
         // setting defaults
-        $data['GAT_UID'] = array_key_exists('GAT_UID', $data) ? $data['GAT_UID'] : Hash::generateUID();;
+        $data['GAT_UID'] = array_key_exists('GAT_UID', $data) ? $data['GAT_UID'] : Hash::generateUID();
 
-        $gateway = new Gateway();
-        $gateway->fromArray($data);
-        $gateway->setPrjUid($this->project->getPrjUid());
-        $gateway->setProUid($this->getProcess("object")->getProUid());
-        $gateway->save();
+        try {
+            self::log("Add Gateway with data: ", $data);
+            $gateway = new Gateway();
+            $gateway->fromArray($data);
+            $gateway->setPrjUid($this->getUid());
+            $gateway->setProUid($this->getProcess("object")->getProUid());
+            $gateway->save();
 
-        $this->gateways[$gateway->getGatUid()] = $gateway;
-    }
-
-    public function getGateway($gatUid)
-    {
-        if (empty($this->gateways) || ! array_key_exists($gatUid, $this->gateways)) {
-            $gateway = GatewayPeer::retrieveByPK($gatUid);
-
-            if (! is_object($gateway)) {
-                return null;
-            }
-
-            $this->gateways[$gatUid] = $gateway;
+            self::log("Add Gateway Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
         }
 
-        return $this->gateways[$gatUid];
+        return $gateway->getGatUid();
     }
 
-    public function getGateways($retType = 'array')
+    public function updateGateway($gatUid, $data)
     {
-        //return  Activity::getAll($this->project->getPrjUid(), null, null, '', $retType);
-        return array();
+        try {
+            self::log("Update Gateway: $gatUid", "With data: ", $data);
+
+            $gateway = GatewayPeer::retrieveByPk($gatUid);
+
+            $gateway->fromArray($data);
+            $gateway->save();
+
+            self::log("Update Gateway Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function getGateway($gatUid, $retType = 'array')
+    {
+        $gateway = GatewayPeer::retrieveByPK($gatUid);
+
+        if ($retType != "object" && ! empty($gateway)) {
+            $gateway = $gateway->toArray();
+        }
+
+        return $gateway;
+    }
+
+    public function getGateways($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        return  Gateway::getAll($this->getUid(), null, null, '', $changeCaseTo);
+    }
+
+    public function removeGateway($gatUid)
+    {
+        try {
+            self::log("Remove Gateway: $gatUid");
+
+            $gateway = GatewayPeer::retrieveByPK($gatUid);
+            $gateway->delete();
+
+            self::log("Remove Gateway Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function addFlow($data)
     {
+        self::log("Add Flow with data: ", $data);
+
         // setting defaults
-        $data['GAT_UID'] = array_key_exists('GAT_UID', $data) ? $data['GAT_UID'] : Hash::generateUID();;
-        $data['FLO_STATE'] = json_encode($data['FLO_STATE']);
-
-        $flow = new Flow();
-        $flow->fromArray($data, BasePeer::TYPE_FIELDNAME);
-        $flow->setPrjUid($this->project->getPrjUid());
-        $flow->setDiaUid($this->getDiagram("object")->getDiaUid());
-        $flow->save();
-    }
-
-    public function getFlow($floUid)
-    {
-        if (empty($this->flows) || ! array_key_exists($floUid, $this->flows)) {
-            $flow = GatewayPeer::retrieveByPK($floUid);
-
-            if (! is_object($flow)) {
-                return null;
-            }
-
-            $this->flows[$floUid] = $flow;
+        $data['FLO_UID'] = array_key_exists('FLO_UID', $data) ? $data['FLO_UID'] : Hash::generateUID();
+        if (array_key_exists('FLO_STATE', $data)) {
+            $data['FLO_STATE'] = is_array($data['FLO_STATE']) ? json_encode($data['FLO_STATE']) : $data['FLO_STATE'];
         }
 
-        return $this->flows[$floUid];
+        try {
+            $flow = new Flow();
+            $flow->fromArray($data, BasePeer::TYPE_FIELDNAME);
+            $flow->setPrjUid($this->getUid());
+            $flow->setDiaUid($this->getDiagram("object")->getDiaUid());
+            $flow->save();
+
+            self::log("Add Flow Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
-    public function getFlows($retType = 'array')
+    public function updateFlow($floUid, $data)
     {
-        //return Activity::getAll($this->project->getPrjUid(), null, null, '', $retType);
-        return array();
+        self::log("Update Flow: $floUid", "With data: ", $data);
+
+        // setting defaults
+        if (array_key_exists('FLO_STATE', $data)) {
+            $data['FLO_STATE'] = is_array($data['FLO_STATE']) ? json_encode($data['FLO_STATE']) : $data['FLO_STATE'];
+        }
+        try {
+            $flow = FlowPeer::retrieveByPk($floUid);
+            $flow->fromArray($data);
+            $flow->save();
+
+            self::log("Update Flow Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function getFlow($floUid, $retType = 'array')
+    {
+        $flow = FlowPeer::retrieveByPK($floUid);
+
+        if ($retType != "object" && ! empty($activity)) {
+            $flow = $flow->toArray();
+        }
+
+        return $flow;
+    }
+
+    public function getFlows($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        return Flow::getAll($this->getUid(), null, null, '', $changeCaseTo);
+    }
+
+    public function removeFlow($floUid)
+    {
+        try {
+            self::log("Remove Flow: $floUid");
+
+            $flow = FlowPeer::retrieveByPK($floUid);
+            $flow->delete();
+
+            self::log("Remove Flow Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function addArtifact($data)

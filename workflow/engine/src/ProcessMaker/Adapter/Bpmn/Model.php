@@ -392,8 +392,8 @@ class Model
         $lanes = self::getBpmnCollectionBy('Lane', LanePeer::PRJ_UID, $prjUid, true);
 
         //$activities = self::getBpmnCollectionBy('Activity', ActivityPeer::PRJ_UID, $prjUid, true);
-        //$activities = Activity::getAll($prjUid, null, null, null, 'object', CASE_LOWER);
-        $activities = Activity::getAll(array('prjUid' => $prjUid, 'changeCaseTo' => CASE_LOWER));
+        $activities = Activity::getAll($prjUid, null, null, null, 'object', CASE_LOWER);
+        //$activities = Activity::getAll(array('prjUid' => $prjUid, 'changeCaseTo' => CASE_LOWER));
         //print_r($activities); die;
 
         $events = self::getBpmnCollectionBy('Event', EventPeer::PRJ_UID, $prjUid, true);

@@ -225,56 +225,64 @@ class Workflow extends Handler
 
     public function addRoute($fromTasUid, $toTasUid, $type, $delete = null)
     {
+        try {
+            self::log("Add Route from task: $fromTasUid -> to task: $toTasUid ($type)");
+            /*switch ($type) {
+                    case 0:
+                        $sType = 'SEQUENTIAL';
+                        break;
+                    case 1:
+                        $sType = 'SELECT';
+                        break;
+                    case 2:
+                        $sType = 'EVALUATE';
+                        break;
+                    case 3:
+                        $sType = 'PARALLEL';
+                        break;
+                    case 4:
+                        $sType = 'PARALLEL-BY-EVALUATION';
+                        break;
+                    case 5:
+                        $sType = 'SEC-JOIN';
+                        break;
+                    case 8:
+                        $sType = 'DISCRIMINATOR';
+                        break;
+                    default:
+                        throw new \Exception("Invalid type code, given: $type, expected: integer [1...8]");
+                }
+            }*/
 
-        /*switch ($type) {
-                case 0:
-                    $sType = 'SEQUENTIAL';
-                    break;
-                case 1:
-                    $sType = 'SELECT';
-                    break;
-                case 2:
-                    $sType = 'EVALUATE';
-                    break;
-                case 3:
-                    $sType = 'PARALLEL';
-                    break;
-                case 4:
-                    $sType = 'PARALLEL-BY-EVALUATION';
-                    break;
-                case 5:
-                    $sType = 'SEC-JOIN';
-                    break;
-                case 8:
-                    $sType = 'DISCRIMINATOR';
-                    break;
-                default:
-                    throw new \Exception("Invalid type code, given: $type, expected: integer [1...8]");
+            $validTypes = array("SEQUENTIAL", "SELECT", "EVALUATE", "PARALLEL", "PARALLEL-BY-EVALUATION", "SEC-JOIN", "DISCRIMINATOR");
+
+            if (! in_array($type, $validTypes)) {
+                throw new \Exception("Invalid Route type, given: $type, expected: [".implode(",", $validTypes)."]");
             }
-        }*/
 
-        $validTypes = array("SEQUENTIAL", "SELECT", "EVALUATE", "PARALLEL", "PARALLEL-BY-EVALUATION", "SEC-JOIN", "DISCRIMINATOR");
-
-        if (! in_array($type, $validTypes)) {
-            throw new \Exception("Invalid Route type, given: $type, expected: [".implode(",", $validTypes)."]");
-        }
-
-        //if ($type != 0 && $type != 5 && $type != 8) {
-        if ($type != 'SEQUENTIAL' && $type != 'SEC-JOIN' && $type != 'DISCRIMINATOR') {
-            if ($this->getNumberOfRoutes($this->proUid, $fromTasUid, $toTasUid, $type) > 0) {
-                // die(); ????
-                throw new \RuntimeException("Unexpected behaviour");
+            //if ($type != 0 && $type != 5 && $type != 8) {
+            if ($type != 'SEQUENTIAL' && $type != 'SEC-JOIN' && $type != 'DISCRIMINATOR') {
+                if ($this->getNumberOfRoutes($this->proUid, $fromTasUid, $toTasUid, $type) > 0) {
+                    // die(); ????
+                    throw new \RuntimeException("Unexpected behaviour");
+                }
+                //unset($aRow);
             }
-            //unset($aRow);
-        }
-        //if ($delete || $type == 0 || $type == 5 || $type == 8) {
-        if ($delete || $type == 'SEQUENTIAL' || $type == 'SEC-JOIN' || $type == 'DISCRIMINATOR') {
-            $oTasks = new Tasks();
+            //if ($delete || $type == 0 || $type == 5 || $type == 8) {
+            if ($delete || $type == 'SEQUENTIAL' || $type == 'SEC-JOIN' || $type == 'DISCRIMINATOR') {
+                $oTasks = new Tasks();
 
-            $oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
-            //$oTasks->deleteAllGatewayOfTask($this->proUid, $fromTasUid);
+                $oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
+                //$oTasks->deleteAllGatewayOfTask($this->proUid, $fromTasUid);
+            }
+            self::log("Add Route Success!");
+
+            return $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $delete);
+
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
         }
-        return $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $delete);
     }
 
     public function updateRoute($rouUid, $routeData)
