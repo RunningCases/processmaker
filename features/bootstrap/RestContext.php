@@ -438,7 +438,7 @@ class RestContext extends BehatContext
                         $message = 'unexpected control character found';
                         break;
                     case JSON_ERROR_SYNTAX :
-                        $message = 'malformed JSON';
+                        $message = "malformed JSON \n\n ------\n".$this->_response->getBody(true)."\n ------";
                         break;
                     case JSON_ERROR_UTF8 :
                         $message = 'malformed UTF-8 characters, possibly ' .

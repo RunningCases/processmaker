@@ -1,104 +1,138 @@
 @ProcessMakerMichelangelo @RestAPI
-Feature: DataBase Connections
+Feature: Report Tables
 
-    Scenario: List all the database connections (result 0 database connections)
-        Given that I have a valid access_token
-        And I request "project/96189226752f3e5e23c1303036042196/report-tables"
+Background:
+    Given that I have a valid access_token
+
+
+
+Scenario: Verify that there are no report tables
+    Given I request "project/922677707524ac7417ce345089010125/report-tables"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the response has 0 record
+
+Scenario Outline: Create new report tables from dynaform and grid
+    Given POST this data:
+        """
+        {
+            "rep_tab_name" : "<rep_tab_name>",
+            "rep_tab_dsc" : "<rep_tab_dsc>",
+            "rep_tab_connection" : "<rep_tab_connection>",
+            "rep_tab_type" : "<rep_tab_type>",
+            "rep_tab_grid" : "<rep_tab_grid>",
+            "fields" : [
+                {
+                    "fld_dyn" : "<fld_dyn_1>",
+                    "fld_name" : "<fld_name_1>",
+                    "fld_label" : "<fld_label_1>",
+                    "fld_type" : "<fld_type_1>",
+                    "fld_size" : "<fld_size_1>"
+                },{
+                    "fld_dyn" : "<fld_dyn_2>",
+                    "fld_name" : "<fld_name_2>",
+                    "fld_label" : "<fld_label_2>",
+                    "fld_type" : "<fld_type_2>",
+                    "fld_size" : "<fld_size_2>"
+                },{
+                    "fld_dyn" : "<fld_dyn_3>",
+                    "fld_name" : "<fld_name_3>",
+                    "fld_label" : "<fld_label_3>",
+                    "fld_type" : "<fld_type_3>",
+                    "fld_size" : "<fld_size_3>"
+                }
+            ]
+        }
+        """
+    And I request "project/<project>/report-table"
+    Then the response status code should be 201
+    And store "rep_uid" in session array as variable "rep_uid_<rep_uid_number>"
+
+    Examples:
+
+    | test_description | project                          | rep_uid_number | rep_tab_name   | rep_tab_dsc         | rep_tab_connection | rep_tab_type | rep_tab_grid | fld_dyn_1 | fld_name_1 | fld_label_1 | fld_type_1 | fld_size_1 | fld_dyn_2 | fld_name_2 | fld_label_2 | fld_type_2 | fld_size_2 | fld_dyn_3 | fld_name_3     | fld_label_3    | fld_type_3 | fld_size_3 |
+    |                  | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc 1 | workflow           | NORMAL       |              | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 15         |          
+    |                  | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc 2 | workflow           | GRID         | grid         | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 15         |          
+
+Scenario: Verify that there are 2 report tables
+    Given I request "project/922677707524ac7417ce345089010125/report-tables"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the response has 2 record
+
+
+Scenario Outline: Update a created report tables
+    Given PUT this data:
+        """
+        {
+            "rep_tab_dsc" : "<rep_tab_dsc>",
+            "fields" : [
+                {
+                    "fld_dyn" : "<fld_dyn_1>",
+                    "fld_name" : "<fld_name_1>",
+                    "fld_label" : "<fld_label_1>",
+                    "fld_type" : "<fld_type_1>",
+                    "fld_size" : "<fld_size_1>"
+                },{
+                    "fld_dyn" : "<fld_dyn_2>",
+                    "fld_name" : "<fld_name_2>",
+                    "fld_label" : "<fld_label_2>",
+                    "fld_type" : "<fld_type_2>",
+                    "fld_size" : "<fld_size_2>"
+                },{
+                    "fld_dyn" : "<fld_dyn_3>",
+                    "fld_name" : "<fld_name_3>",
+                    "fld_label" : "<fld_label_3>",
+                    "fld_type" : "<fld_type_3>",
+                    "fld_size" : "<fld_size_3>"
+                }
+            ]
+        }
+        """
+
+    And that I want to update a resource with the key "rep_uid" stored in session array as variable "rep_uid_<rep_uid_number>"
+    And I request "project/<project>/report-table"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+
+    Examples:
+
+    | test_description | project                          | rep_uid_number | rep_tab_name   | rep_tab_dsc                 | rep_tab_connection | rep_tab_type | rep_tab_grid | fld_dyn_1 | fld_name_1 | fld_label_1 | fld_type_1 | fld_size_1 | fld_dyn_2 | fld_name_2 | fld_label_2 | fld_type_2 | fld_size_2 | fld_dyn_3 | fld_name_3     | fld_label_3    | fld_type_3 | fld_size_3  |
+    |                  | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc Updated 1 | workflow           | NORMAL       |              | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
+    |                  | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc Updated 2 | workflow           | GRID         | grid         | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
+
+
+Scenario Outline: Get a details of created report tables
+        Given that I want to get a resource with the key "rep_uid" stored in session array as variable "rep_uid_<rep_uid_number>"
+        And I request "project/<project>/report-table"
         Then the response status code should be 200
         And the response charset is "UTF-8"
-        And the response has 0 record
+        And the type is "object"
+        And that "rep_tab_name" is set to "<rep_tab_name>"
+        And that "rep_tab_dsc" is set to "<rep_tab_dsc>"
 
+    Examples:
 
-    Scenario: Create a new database connection
-        Given that I have a valid access_token
-        And POST this data:
-            """
-            {
-                "rep_tab_name" : "PMT_TEST",
-                "rep_tab_dsc" : "descripcion de la tabla",
-                "rep_tab_connection" : "workflow",
-                "rep_tab_type" : "NORMAL",
-                "rep_tab_grid" : "",
-                "fields" : [
-                    {
-                        "fld_dyn" : "COMBO_ACEPTACION",
-                        "fld_name" : "ACEPTACION",
-                        "fld_label" : "ACEPTACION",
-                        "fld_type" : "VARCHAR",
-                        "fld_size" : 5
-                    },{
-                        "fld_name" : "CAMPO_PROPIO",
-                        "fld_label" : "CAMPO_PROPIO",
-                        "fld_type" : "VARCHAR",
-                        "fld_size" : 200
-                    }
-                ]
-            }
-            """
-        And I request "project/96189226752f3e5e23c1303036042196/report-table"
-        Then the response status code should be 201
-        And store "rep_uid" in session array
+    | test_description | project                          | rep_uid_number | rep_tab_name   | rep_tab_dsc                 | rep_tab_connection | rep_tab_type | rep_tab_grid | fld_dyn_1 | fld_name_1 | fld_label_1 | fld_type_1 | fld_size_1 | fld_dyn_2 | fld_name_2 | fld_label_2 | fld_type_2 | fld_size_2 | fld_dyn_3 | fld_name_3     | fld_label_3    | fld_type_3 | fld_size_3  |
+    |                  | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc Updated 1 | workflow           | NORMAL       |              | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
+    |                  | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc Updated 2 | workflow           | GRID         | grid         | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
 
-    @3: TEST FOR GET DATABASE CONNECTIONS /----------------------------------------------------------------------
-    Scenario: List all the database connections (result 1 database connection)
-        Given that I have a valid access_token
-        And I request "project/96189226752f3e5e23c1303036042196/report-tables"
-        Then the response status code should be 200
-        And the response charset is "UTF-8"
-        And the response has 1 record
-
-    @4: TEST FOR PUT DATABASE CONNECTION /-----------------------------------------------------------------------
-    Scenario: Update a database connection
-        Given that I have a valid access_token
-        And PUT this data:
-            """
-            {
-                "rep_tab_dsc" : "nueva descripcion",
-                "fields" : [
-                    {
-                        "fld_dyn" : "CAMPO_TEXTO",
-                        "fld_name" : "TEXTO",
-                        "fld_label" : "TEXTO",
-                        "fld_type" : "VARCHAR",
-                        "fld_size" : 100
-                    },{
-                        "fld_name" : "CAMPO_PROPIO",
-                        "fld_label" : "CAMPO_PROPIO",
-                        "fld_type" : "VARCHAR",
-                        "fld_size" : 200
-                    }
-                ]
-            }
-            """
-        And that I want to update a resource with the key "dbs_uid" stored in session array
-        And I request "project/96189226752f3e5e23c1303036042196/report-table"
+Scenario Outline: Delete a created database connections
+        Given that I want to delete a resource with the key "rep_uid" stored in session array as variable "rep_uid_<rep_uid_number>"
+        And I request "project/<project>/report-table"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
 
+    Examples:
 
-    Scenario: Get a database connection (with change in "dbs_description" and "dbs_database_name")
-        Given that I have a valid access_token
-        And that I want to get a resource with the key "dbs_uid" stored in session array
-        And I request "project/96189226752f3e5e23c1303036042196/report-table"
-        Then the response status code should be 200
-        And the response charset is "UTF-8"
-        And the type is "object"
-        And that "rep_tab_dsc" is set to "nueva descripcion"
+    | test_description | project                          | rep_uid_number |
+    |                  | 922677707524ac7417ce345089010125 | 1              |
+    |                  | 922677707524ac7417ce345089010125 | 2              |
 
-
-    Scenario: Delete a database connection
-        Given that I have a valid access_token
-        And that I want to delete a resource with the key "dbs_uid" stored in session array
-        And I request "project/96189226752f3e5e23c1303036042196/report-table"
-        Then the response status code should be 200
-        And the response charset is "UTF-8"
-        And the type is "object"
-
-    @7: TEST FOR GET DATABASE CONNECTIONS /----------------------------------------------------------------------
-    Scenario: List all the database connections (result 0 database connections)
-        Given that I have a valid access_token
-        And I request "project/96189226752f3e5e23c1303036042196/report-tables"
-        Then the response status code should be 200
-        And the response charset is "UTF-8"
-        And the response has 0 record
+Scenario: Verify that the report tables were deleted correctly
+    Given I request "project/922677707524ac7417ce345089010125/report-tables"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the response has 0 record
