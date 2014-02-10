@@ -59,22 +59,6 @@ class User extends Api
         }
     }
 
-    /**
-     * @url POST /:usr_uid
-     *
-     * @param array $request_data
-     *
-     */
-    public function doPostAuthenticate($request_data) {
-        try {
-            $user = new \BusinessModel\User();
-            $arrayData = $user->authenticate($request_data);
-            $response = $arrayData;
-            return $response;
-        } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
-        }
-    }
 
     /**
      * @url PUT /:usr_uid
