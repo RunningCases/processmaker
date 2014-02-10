@@ -649,6 +649,7 @@ class User
     public function getUsers($filter, $start, $limit)
     {
         try {
+            $aUserInfo = array();
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $oCriteria = new \Criteria();
             if ($filter != '') {
@@ -696,6 +697,7 @@ class User
     public function getUser($userUid)
     {
         try {
+            $aUserInfo = array();
             $oUser = \UsersPeer::retrieveByPK($userUid);
             if (is_null($oUser)) {
                 throw (new \Exception( 'This id for `usr_uid`: '. $userUid .' do not correspond to a registered user'));
