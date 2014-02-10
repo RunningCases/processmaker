@@ -103,7 +103,6 @@ class Assignee extends Api
             //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
-        return $response;
     }
 
     /**
@@ -123,7 +122,6 @@ class Assignee extends Api
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
-        return $response;
     }
 
     /**
@@ -218,7 +216,6 @@ class Assignee extends Api
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
-        return $response;
     }
 
     /**
@@ -238,7 +235,6 @@ class Assignee extends Api
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
-        return $response;
     }
 }
 
