@@ -30,7 +30,7 @@ class Assignee extends Api
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
@@ -55,7 +55,7 @@ class Assignee extends Api
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
@@ -74,11 +74,11 @@ class Assignee extends Api
         $response = array();
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->getTaskAssignee($prjUid, $actUid, $aasUid);
+            $objectData = $task->getTaskAssignee($prjUid, $actUid, $aasUid);
             //Response
-            $response = $arrayData;
+            $response = $objectData;
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
@@ -98,7 +98,7 @@ class Assignee extends Api
     {
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->addTaskAssignee($prjUid, $actUid, $aas_uid, $aas_type);
+            $task->addTaskAssignee($prjUid, $actUid, $aas_uid, $aas_type);
         } catch (\Exception $e) {
             //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -117,9 +117,9 @@ class Assignee extends Api
     {
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->removeTaskAssignee($prjUid, $actUid, $aasUid);
+            $task->removeTaskAssignee($prjUid, $actUid, $aasUid);
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
@@ -143,7 +143,7 @@ class Assignee extends Api
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
@@ -168,7 +168,7 @@ class Assignee extends Api
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
@@ -187,11 +187,11 @@ class Assignee extends Api
         $response = array();
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->getTaskAdhocAssignee($prjUid, $actUid, $aasUid);
+            $objectData = $task->getTaskAdhocAssignee($prjUid, $actUid, $aasUid);
             //Response
-            $response = $arrayData;
+            $response = $objectData;
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
@@ -211,9 +211,9 @@ class Assignee extends Api
     {
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->addTaskAdhocAssignee($prjUid, $actUid, $ada_uid, $ada_type);
+            $task->addTaskAdhocAssignee($prjUid, $actUid, $ada_uid, $ada_type);
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
@@ -230,11 +230,11 @@ class Assignee extends Api
     {
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->removeTaskAdhocAssignee($prjUid, $actUid, $adaUid);
+            $task->removeTaskAdhocAssignee($prjUid, $actUid, $adaUid);
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
-    }
+        }
 }
 

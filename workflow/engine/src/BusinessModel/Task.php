@@ -1201,6 +1201,7 @@ class Task
                 throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
             }
             $iType = 1;
+            $iRelation = '';
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
             $oCriteria->add(\TaskUserPeer::USR_UID, $sAssigneeUID);
@@ -1775,6 +1776,7 @@ class Task
                 throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
             }
             $iType = 2;
+            $iRelation = '';
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
             $oCriteria->add(\TaskUserPeer::USR_UID, $sAssigneeUID);
