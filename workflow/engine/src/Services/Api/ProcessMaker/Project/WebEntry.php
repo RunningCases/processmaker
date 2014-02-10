@@ -22,6 +22,8 @@ class WebEntry extends Api
     {
         try {
             $webEntry = new \BusinessModel\WebEntry();
+            $webEntry->setFormatFieldNameInUppercase(false);
+            $webEntry->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
             $response = $webEntry->getWebEntry($prj_uid, $tas_uid, $dyn_uid);
 
@@ -34,29 +36,17 @@ class WebEntry extends Api
     /**
      * @url POST /:prj_uid/web-entry
      *
-     * @param string $prj_uid               {@min 32}{@max 32}
+     * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     * @param string $tas_uid               {@from body}{@min 32}{@max 32}{@required true}
-     * @param string $dyn_uid               {@from body}{@min 32}{@max 32}{@required true}
-     * @param string $method                {@from body}{@choice WS,HTML}{@required true}
-     * @param int    $input_document_access {@from body}{@choice 0,1}{@required true}
-     * @param string $usr_username          {@from body}
-     * @param string $usr_password          {@from body}
      *
      * @status 201
      */
-    public function doPostWebEntry(
-        $prj_uid,
-        $request_data,
-        $tas_uid = "00000000000000000000000000000000",
-        $dyn_uid = "00000000000000000000000000000000",
-        $method = "WS",
-        $input_document_access = 0,
-        $usr_username = "",
-        $usr_password = ""
-    ) {
+    public function doPostWebEntry($prj_uid, $request_data)
+    {
         try {
             $webEntry = new \BusinessModel\WebEntry();
+            $webEntry->setFormatFieldNameInUppercase(false);
+            $webEntry->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
             $arrayData = $webEntry->create($prj_uid, $request_data);
 
@@ -79,6 +69,8 @@ class WebEntry extends Api
     {
         try {
             $webEntry = new \BusinessModel\WebEntry();
+            $webEntry->setFormatFieldNameInUppercase(false);
+            $webEntry->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
             $webEntry->delete($prj_uid, $tas_uid, $dyn_uid);
         } catch (\Exception $e) {

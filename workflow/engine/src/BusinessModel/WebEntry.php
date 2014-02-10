@@ -3,6 +3,89 @@ namespace BusinessModel;
 
 class WebEntry
 {
+    private $arrayFieldDefinition = array(
+        "TAS_UID"               => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "taskUid"),
+        "DYN_UID"               => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "dynaFormUid"),
+        "METHOD"                => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("WS", "HTML"), "fieldNameAux" => "method"),
+        "INPUT_DOCUMENT_ACCESS" => array("type" => "int",    "required" => true,  "empty" => false, "defaultValues" => array(0, 1),         "fieldNameAux" => "inputDocumentAccess"),
+        "USR_USERNAME"          => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "userUsername"),
+        "USR_PASSWORD"          => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "userPassword")
+    );
+
+    private $formatFieldNameInUppercase = true;
+
+    private $arrayFieldNameForException = array(
+        "processUid"  => "PRO_UID"
+    );
+
+    /**
+     * Constructor of the class
+     *
+     * return void
+     */
+    public function __construct()
+    {
+        try {
+            foreach ($this->arrayFieldDefinition as $key => $value) {
+                $this->arrayFieldNameForException[$value["fieldNameAux"]] = $key;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Set the format of the fields name (uppercase, lowercase)
+     *
+     * @param bool $flag Value that set the format
+     *
+     * return void
+     */
+    public function setFormatFieldNameInUppercase($flag)
+    {
+        try {
+            $this->formatFieldNameInUppercase = $flag;
+
+            $this->setArrayFieldNameForException($this->arrayFieldNameForException);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Set exception messages for fields
+     *
+     * @param array $arrayData Data with the fields
+     *
+     * return void
+     */
+    public function setArrayFieldNameForException($arrayData)
+    {
+        try {
+            foreach ($arrayData as $key => $value) {
+                $this->arrayFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get the name of the field according to the format
+     *
+     * @param string $fieldName Field name
+     *
+     * return string Return the field name according the format
+     */
+    public function getFieldNameByFormatFieldName($fieldName)
+    {
+        try {
+            return ($this->formatFieldNameInUppercase)? strtoupper($fieldName) : strtolower($fieldName);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     /**
      * Sanitizes a filename
      *
@@ -58,6 +141,20 @@ class WebEntry
         try {
             $arrayData = array();
 
+            //Verify data
+            $process = new \BusinessModel\Process();
+
+            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+
+            if ($taskUid != "") {
+                $process->throwExceptionIfNotExistsTask($processUid, $taskUid, $this->arrayFieldNameForException["taskUid"]);
+            }
+
+            if ($dynaFormUid != "") {
+                $process->throwExceptionIfNotExistsDynaForm($processUid, $dynaFormUid, $this->arrayFieldNameForException["dynaFormUid"]);
+            }
+
+            //Get data
             $webEntryPath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP . $processUid;
 
             if (is_dir($webEntryPath)) {
@@ -150,6 +247,7 @@ class WebEntry
                 }
             }
 
+            //Return
             return $arrayData;
         } catch (\Exception $e) {
             throw $e;
@@ -170,37 +268,21 @@ class WebEntry
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
             //Verify data
-            $process = new \Process();
+            $process = new \BusinessModel\Process();
 
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
-            if (!isset($arrayData["TAS_UID"])) {
-                throw (new \Exception(str_replace(array("{0}"), array(strtolower("TAS_UID")), "The \"{0}\" attribute is not defined")));
-            }
-
-            if (!isset($arrayData["DYN_UID"])) {
-                throw (new \Exception(str_replace(array("{0}"), array(strtolower("DYN_UID")), "The \"{0}\" attribute is not defined")));
-            }
-
-            if (!isset($arrayData["METHOD"])) {
-                throw (new \Exception(str_replace(array("{0}"), array(strtolower("METHOD")), "The \"{0}\" attribute is not defined")));
-            }
-
-            if (!isset($arrayData["INPUT_DOCUMENT_ACCESS"])) {
-                throw (new \Exception(str_replace(array("{0}"), array(strtolower("INPUT_DOCUMENT_ACCESS")), "The \"{0}\" attribute is not defined")));
-            }
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
             $projectUser = new \BusinessModel\ProjectUser();
 
             if ($arrayData["METHOD"] == "WS") {
                 if (!isset($arrayData["USR_USERNAME"])) {
-                    throw (new \Exception(str_replace(array("{0}"), array(strtolower("USR_USERNAME")), "The \"{0}\" attribute is not defined")));
+                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayFieldNameForException["userUsername"]), "The \"{0}\" attribute is not defined")));
                 }
 
                 if (!isset($arrayData["USR_PASSWORD"])) {
-                    throw (new \Exception(str_replace(array("{0}"), array(strtolower("USR_PASSWORD")), "The \"{0}\" attribute is not defined")));
+                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayFieldNameForException["userPassword"]), "The \"{0}\" attribute is not defined")));
                 }
 
                 $loginData = $projectUser->userLogin($arrayData["USR_USERNAME"], $arrayData["USR_PASSWORD"]);
@@ -210,11 +292,10 @@ class WebEntry
                 }
             }
 
-            $task = new \Task();
+            $process->throwExceptionIfNotExistsTask($processUid, $arrayData["TAS_UID"], $this->arrayFieldNameForException["taskUid"]);
+            $process->throwExceptionIfNotExistsDynaForm($processUid, $arrayData["DYN_UID"], $this->arrayFieldNameForException["dynaFormUid"]);
 
-            if (!$task->taskExists($arrayData["TAS_UID"])) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayData["TAS_UID"], "TASK"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $task = new \Task();
 
             $arrayTaskData = $task->load($arrayData["TAS_UID"]);
 
@@ -226,17 +307,15 @@ class WebEntry
                 throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "Web Entry only works with tasks which have \"Cyclical Assignment\", the task \"{0}\" doesn't have a valid assignment type. Please change the Assignment Rules")));
             }
 
-            $task = new \Tasks();
+            if ($arrayData["METHOD"] == "WS") {
+                $task = new \Tasks();
 
-            if ($task->assignUsertoTask($arrayData["TAS_UID"]) == 0) {
-                throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "The task \"{0}\" doesn't have users")));
+                if ($task->assignUsertoTask($arrayData["TAS_UID"]) == 0) {
+                    throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "The task \"{0}\" doesn't have users")));
+                }
             }
 
             $dynaForm = new \Dynaform();
-
-            if (!$dynaForm->dynaformExists($arrayData["DYN_UID"])) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayData["DYN_UID"], "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
 
             $arrayDynaFormData = $dynaForm->Load($arrayData["DYN_UID"]);
 
@@ -387,7 +466,7 @@ class WebEntry
                     //Data
                     $url = $http . $_SERVER["HTTP_HOST"] . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $processUid . "/" . $dynTitle . ".php";
 
-                    $arrayDataAux = array("url" => $url);
+                    $arrayDataAux = array("URL" => $url);
                     break;
                 case "HTML":
                     global $G_FORM;
@@ -433,14 +512,18 @@ class WebEntry
                     //Data
                     $html = str_replace("</body>", "</form></body>", str_replace("</form>", "", $template->getOutputContent()));
 
-                    $arrayDataAux = array("html" => $html);
+                    $arrayDataAux = array("HTML" => $html);
                     break;
             }
 
             //Return
-            $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            $arrayData = array_merge($arrayData, $arrayDataAux);
 
-            return array_merge($arrayData, $arrayDataAux);
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
+
+            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -459,12 +542,7 @@ class WebEntry
     {
         try {
             //Verify data
-            $process = new \Process();
-
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
-
+            //Get data
             $arrayWebEntryData = $this->getData($processUid, "UID", $taskUid, $dynaFormUid);
 
             if (count($arrayWebEntryData) == 0) {
@@ -492,11 +570,11 @@ class WebEntry
     {
         try {
             return array(
-                "tas_uid"   => $record["taskUid"],
-                "tas_title" => $record["taskTitle"],
-                "dyn_uid"   => $record["dynaFormUid"],
-                "dyn_title" => $record["dynaFormTitle"],
-                "url"       => $record["url"]
+                $this->getFieldNameByFormatFieldName("TAS_UID")   => $record["taskUid"],
+                $this->getFieldNameByFormatFieldName("TAS_TITLE") => $record["taskTitle"],
+                $this->getFieldNameByFormatFieldName("DYN_UID")   => $record["dynaFormUid"],
+                $this->getFieldNameByFormatFieldName("DYN_TITLE") => $record["dynaFormTitle"],
+                $this->getFieldNameByFormatFieldName("URL")       => $record["url"]
             );
         } catch (\Exception $e) {
             throw $e;
@@ -516,19 +594,13 @@ class WebEntry
     {
         try {
             //Verify data
-            $process = new \Process();
-
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
-
+            //Get data
             $arrayWebEntryData = $this->getData($processUid, "UID", $taskUid, $dynaFormUid);
 
             if (count($arrayWebEntryData) == 0) {
                 throw (new \Exception("The Web Entry doesn't exist"));
             }
 
-            //Get data
             //Return
             return $this->getWebEntryDataFromRecord($arrayWebEntryData[$taskUid . "/" . $dynaFormUid]);
         } catch (\Exception $e) {
