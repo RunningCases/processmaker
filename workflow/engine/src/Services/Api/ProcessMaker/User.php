@@ -14,7 +14,7 @@ class User extends Api
     /**
      * @url GET
      */
-    public function index($filter = '', $start = null, $limit = null)
+    public function doGetUsers($filter = '', $start = null, $limit = null)
     {
         try {
             $user = new \BusinessModel\User();
@@ -30,7 +30,7 @@ class User extends Api
      *
      * @param string $usr_uid {@min 32}{@max 32}
      */
-    public function doGet($usr_uid)
+    public function doGetUser($usr_uid)
     {
         try {
             $user = new \BusinessModel\User();
@@ -48,10 +48,27 @@ class User extends Api
      *
      * @status 201
      */
-    public function doPost($request_data) {
+    public function doPostUser($request_data) {
         try {
             $user = new \BusinessModel\User();
             $arrayData = $user->create($request_data);
+            $response = $arrayData;
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url POST /:usr_uid
+     *
+     * @param array $request_data
+     *
+     */
+    public function doPostAuthenticate($request_data) {
+        try {
+            $user = new \BusinessModel\User();
+            $arrayData = $user->authenticate($request_data);
             $response = $arrayData;
             return $response;
         } catch (\Exception $e) {
@@ -65,7 +82,7 @@ class User extends Api
      * @param string $usr_uid      {@min 32}{@max 32}
      * @param array  $request_data
      */
-    public function doPut($usr_uid, $request_data) {
+    public function doPutUser($usr_uid, $request_data) {
         try {
             $userLoggedUid = $this->getUserId();
             $user = new \BusinessModel\User();
@@ -82,7 +99,7 @@ class User extends Api
      *
      * @param string $usr_uid {@min 32}{@max 32}
      */
-    public function doDelete($usr_uid)
+    public function doDeleteUser($usr_uid)
     {
         try {
             $user = new \BusinessModel\User();

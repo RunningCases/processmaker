@@ -263,7 +263,16 @@ class User
             if ($form['USR_DUE_DATE'] == '') {
                 throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
             } else {
-                $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+                $dueDate = explode("-", $form['USR_DUE_DATE']);
+                if (ctype_digit($dueDate[0])) {
+                    if (checkdate($dueDate[1], $dueDate[2], $dueDate[0]) == false) {
+                        throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
+                    } else {
+                        $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+                    }
+                } else {
+                    throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
+                }
             }
             $aData['USR_CREATE_DATE'] = date('Y-m-d H:i:s');
             $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
@@ -478,25 +487,36 @@ class User
                     $aData['USR_EMAIL'] = $form['USR_EMAIL'];
                 }
             }
-            if ($form['USR_DUE_DATE'] != '') {
-                $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+            if ($form['USR_DUE_DATE'] == '') {
+                throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
+            } else {
+                $dueDate = explode("-", $form['USR_DUE_DATE']);
+                if (ctype_digit($dueDate[0])) {
+                    if (checkdate($dueDate[1], $dueDate[2], $dueDate[0]) == false) {
+                        throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
+                    } else {
+                        $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+                    }
+                } else {
+                    throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
+                }
             }
             $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
             if ($form['USR_STATUS'] != '') {
                 $aData['USR_STATUS'] = $form['USR_STATUS'];
             }
-            $oCriteria = new \Criteria('rbac');
-            $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
-            $oDataset = \RolesPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            $aRow = $oDataset->getRow();
-            if ($oDataset->getRow()){
-                $aData['USR_ROLE'] = $form['USR_ROLE'];
-            } else {
-                throw new \Exception('`usr_role`. Invalid value for field.');
-            }
             if ($form['USR_ROLE'] != '') {
+                $oCriteria = new \Criteria('rbac');
+                $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
+                $oDataset = \RolesPeer::doSelectRS($oCriteria);
+                $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                $oDataset->next();
+                $aRow = $oDataset->getRow();
+                if ($oDataset->getRow()){
+                    $aData['USR_ROLE'] = $form['USR_ROLE'];
+                } else {
+                    throw new \Exception('`usr_role`. Invalid value for field.');
+                }
                 $this->updateUser($aData, $form['USR_ROLE']);
             } else {
                 $this->updateUser($aData);
@@ -548,7 +568,23 @@ class User
     }
 
     /**
-     * Delete Group
+     * Authenticate User
+     *
+     * @param array  $arrayData Data
+     *
+     * return array Return data of the User updated
+     */
+    public function authenticate($arrayData)
+    {
+        try {
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Delete User
      *
      * @param string $usrUid Unique id of User
      *
@@ -613,6 +649,7 @@ class User
     public function getUsers($filter, $start, $limit)
     {
         try {
+            $aUserInfo = array();
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $oCriteria = new \Criteria();
             if ($filter != '') {
@@ -653,13 +690,14 @@ class User
     /**
      * Get data of a User
      *
-     * @param string $userUid Unique id of Group
+     * @param string $userUid Unique id of User
      *
      * return array Return an array with data of a User
      */
     public function getUser($userUid)
     {
         try {
+            $aUserInfo = array();
             $oUser = \UsersPeer::retrieveByPK($userUid);
             if (is_null($oUser)) {
                 throw (new \Exception( 'This id for `usr_uid`: '. $userUid .' do not correspond to a registered user'));
