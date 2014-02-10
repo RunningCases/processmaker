@@ -17,12 +17,6 @@ class BpmnWorkflow extends Project\Bpmn
      */
     protected $wp;
 
-    public function __construct()
-    {
-        $this->wp = new Project\Workflow();
-    }
-
-
     /**
      * OVERRIDES
      */
@@ -62,8 +56,8 @@ class BpmnWorkflow extends Project\Bpmn
                 $wpData["PRO_CREATE_USER"] = $data["PRJ_AUTHOR"];
             }
 
-            $wp = new Project\Workflow();
-            $wp->create($wpData);
+            $this->wp = new Project\Workflow();
+            $this->wp->create($wpData);
 
         } catch (\Exception $e) {
             $prjUid = $this->getUid();
@@ -101,10 +95,9 @@ class BpmnWorkflow extends Project\Bpmn
 
     public function addActivity($data)
     {
-        parent::addActivity($data);
-
         $taskData = array();
-        $taskData["TAS_UID"] = $data["ACT_UID"];
+
+        $taskData["TAS_UID"] = parent::addActivity($data);
 
         if (array_key_exists("ACT_NAME", $data)) {
             $taskData["TAS_TITLE"] = $data["ACT_NAME"];
@@ -375,4 +368,9 @@ class BpmnWorkflow extends Project\Bpmn
         return null;
     }
 
+    public function remove()
+    {
+        parent::remove();
+        $this->wp->remove();
+    }
 }
