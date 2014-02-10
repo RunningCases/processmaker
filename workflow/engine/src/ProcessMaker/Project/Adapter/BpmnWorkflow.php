@@ -141,112 +141,95 @@ class BpmnWorkflow extends Project\Bpmn
     {
         parent::addFlow($data);
 
+        // to add a workflow route
+        // - activity -> activity ==> route
+        // - activity -> gateway -> activity  ==> selection, evaluation, parallel or parallel by evaluation route
         $routeData = self::mapBpmnFlowsToWorkflowRoute($data, $flows, $gateways, $events);
 
         if ($routeData !== null) {
             $this->wp->addRoute($routeData["from"], $routeData["to"], $routeData["type"]);
+
+            return true;
         }
 
-        return;
+        // to add start event->activity  as initial or end task
+        switch ($data["FLO_ELEMENT_ORIGIN_TYPE"]) {
+            case "bpmnEvent":
+                switch ($data["FLO_ELEMENT_DEST_TYPE"]) {
+                    case "bpmnActivity":
+                        $event = \BpmnEventPeer::retrieveByPK($data["FLO_ELEMENT_ORIGIN"]);
 
-        $fromUid = $data['FLO_ELEMENT_ORIGIN'];
+                        switch ($event && $event->getEvnType()) {
+                            case "START":
+                                self::log("Setting Task:" . $data["FLO_ELEMENT_DEST"] . " as STARTING TASK");
 
-        if ($data['FLO_TYPE'] != 'SEQUENCE') {
-            throw new \LogicException(sprintf(
-                "Unsupported flow type: %s, ProcessMaker only support type '', Given: '%s'",
-                'SEQUENCE', $data['FLO_TYPE']
-            ));
-        }
+                                // then set that activity/task as "Start Task"
+                                $this->wp->updateTask($data["FLO_ELEMENT_DEST"], array("TAS_START" => "TRUE"));
 
-        switch ($data['FLO_ELEMENT_DEST_TYPE']) {
-            case 'bpmnActivity':
-                // the most easy case, when the flow is connecting a activity with another activity
-                /*$data = array(
-                    'ROU_UID' => $data['FLO_UID'], //Hash::generateUID(),
-                    'PRO_UID' => $this->getUid(),
-                    'TAS_UID' => $fromUid,
-                    'ROU_NEXT_TASK' => $data['FLO_ELEMENT_DEST'],
-                    'ROU_TYPE' => 'SEQUENTIAL'
-                );*/
-                $this->wp->addRoute($fromUid, $data['FLO_ELEMENT_DEST'], 'SEQUENTIAL');
-                break;
-            case 'bpmnGateway':
-                $gatUid = $data['FLO_ELEMENT_DEST'];
-                // if it is a gateway it can fork one or more routes
-                //$gatFlows = BpmnModel::getBpmnCollectionBy('Flow', \BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid);
-                $gatFlow = \BpmnFlow::findOneBy(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid)->toArray();;
-                self::log("=================================>", $gatFlow);
-
-                //foreach ($gatFlows as $gatFlow) {
-                    switch ($gatFlow['FLO_ELEMENT_DEST_TYPE']) {
-                        case 'bpmnActivity':
-                            // getting gateway properties
-                            //$gateway = BpmnModel::getBpmnObjectBy('Gateway', \BpmnGatewayPeer::GAT_UID, $gatUid);
-                            $gateway = \BpmnGateway::findOneBy(\BpmnGatewayPeer::GAT_UID, $gatUid)->toArray();
-
-
-                            switch ($gateway['GAT_TYPE']) {
-                                case 'SELECTION':
-                                    $routeType = 'SELECT';
-                                    break;
-                                case 'EVALUATION':
-                                    $routeType = 'EVALUATE';
-                                    break;
-                                case 'PARALLEL':
-                                    $routeType = 'PARALLEL';
-                                    break;
-                                case 'PARALLEL_EVALUATION':
-                                    $routeType = 'PARALLEL-BY-EVALUATION';
-                                    break;
-                                case 'PARALLEL_JOIN':
-                                    $routeType = 'SEC-JOIN';
-                                    break;
-                                default:
-                                    throw new \LogicException(sprintf("Unsupported Gateway type: %s", $gateway['GAT_TYPE']));
-                            }
-
-                            /*$routes[] = array(
-                                'ROU_UID' => $gatFlow['FLO_UID'], //Hash::generateUID(),
-                                'PRO_UID' => $this->getUid(),
-                                'TAS_UID' => $fromUid,
-                                'ROU_NEXT_TASK' => $gatFlow['FLO_ELEMENT_DEST'],
-                                'ROU_TYPE' => $routeType
-                            );*/
-
-                            $this->wp->addRoute($fromUid, $gatFlow['FLO_ELEMENT_DEST'], $routeType);
-                            break;
-                        default:
-                            // for processmaker is only allowed flows between "gateway -> activity"
-                            // any another flow is considered invalid
-                            throw new \LogicException(sprintf(
-                                "For ProcessMaker is only allowed flows between \"gateway -> activity\" " . PHP_EOL .
-                                "Given: bpmnGateway -> " . $gatFlow['FLO_ELEMENT_DEST_TYPE']
-                            ));
-                    }
-                //}
-                break;
-            case 'bpmnEvent':
-                $evnUid = $data['FLO_ELEMENT_DEST'];
-                $event = BpmnModel::getBpmnObjectBy('Event', \BpmnEventPeer::EVN_UID, $evnUid);
-
-                switch ($event['EVN_TYPE']) {
-                    case 'END':
-                        $routeType = 'SEQUENTIAL';
-                        $routes[] = array(
-                            'ROU_UID' => $data['FLO_UID'], //Hash::generateUID(),
-                            'PRO_UID' => $this->getUid(),
-                            'TAS_UID' => $fromUid,
-                            'ROU_NEXT_TASK' => '-1',
-                            'ROU_TYPE' => $routeType,
-                            '_action' => 'CREATE'
-                        );
+                                self::log("Setting as \"Stating Task\" Success!");
+                                break;
+                        }
                         break;
-                    default:
-                        throw new \LogicException("Invalid connection to Event object type");
                 }
-
                 break;
         }
+    }
+
+
+    public function addEvent($data)
+    {
+        if (! array_key_exists("EVN_TYPE", $data)) {
+            throw new \RuntimeException("Required param \"EVN_TYPE\" is missing.");
+        }
+
+        parent::addEvent($data);
+    }
+
+    public function removeEvent($evnUid)
+    {
+        $flow = \BpmnFlowPeer::retrieveByPK($evnUid);
+
+        if (! is_null($flow)) {
+            $data = $flow->toArray();
+
+            // to add start event->activity  as initial or end task
+            switch ($data["FLO_ELEMENT_ORIGIN_TYPE"]) {
+                case "bpmnEvent":
+                    switch ($data["FLO_ELEMENT_DEST_TYPE"]) {
+                        case "bpmnActivity":
+                            $event = \BpmnEventPeer::retrieveByPK($data["FLO_ELEMENT_ORIGIN"]);
+
+                            switch ($event && $event->getEvnType()) {
+                                case "START":
+                                    self::log("Unset Task:" . $data["FLO_ELEMENT_DEST"] . " as NOT STARTING TASK");
+
+                                    // then set that activity/task as "Start Task"
+                                    $this->wp->updateTask($data["FLO_ELEMENT_DEST"], array("TAS_START" => "FALSE"));
+
+                                    self::log("Unset as \"Stating Task\" Success!");
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+
+
+
+//for  end event
+//        switch ($flow->getFloElementOriginType()) {
+//            case "bpmnActivity":
+//                switch ($flow->getFloElementDestType()) {
+//                    case "bpmnEvent":
+//
+//                        break;
+//                }
+//                break;
+//        }
+
+        parent::removeEvent($evnUid);
+
     }
 
     public static function mapBpmnFlowsToWorkflowRoute($flow, $flows, $gateways, $events)

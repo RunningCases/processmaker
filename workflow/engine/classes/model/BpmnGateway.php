@@ -74,13 +74,13 @@ class BpmnGateway extends BaseBpmnGateway
         $rs = BpmnGatewayPeer::doSelectRS($c);
         $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-        $activities = array();
+        $events = array();
 
         while ($rs->next()) {
-            $activities[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
+            $events[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
         }
 
-        return $activities;
+        return $events;
     }
 
     // OVERRIDES
