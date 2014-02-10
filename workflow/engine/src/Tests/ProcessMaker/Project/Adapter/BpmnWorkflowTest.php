@@ -7,9 +7,25 @@ if (! class_exists("Propel")) {
     include_once __DIR__ . "/../../../bootstrap.php";
 }
 
-
+/**
+ * Class BpmnWorkflowTest
+ *
+ * @package Tests\ProcessMaker\Project\Adapter
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
+ */
 class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
 {
+    protected static $uids = array();
+
+    public static function tearDownAfterClass()
+    {
+        //cleaning DB
+        foreach (self::$uids as $prjUid) {
+            $bwap = Project\Adapter\BpmnWorkflow::load($prjUid);
+            $bwap->remove();
+        }
+    }
+
     function testNew()
     {
         $data = array(
@@ -22,14 +38,20 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
 
         try {
             $bp = Project\Bpmn::load($bwap->getUid());
-        } catch (\Exception $e){}
+        } catch (\Exception $e){
+            $bp = null;
+        }
 
         try {
             $wp = Project\Workflow::load($bwap->getUid());
-        } catch (\Exception $e){}
+        } catch (\Exception $e){
+            $wp = null;
+        }
 
-        $this->assertNotEmpty($bp);
-        $this->assertNotEmpty($wp);
+        self::$uids[] = $bwap->getUid();
+
+        $this->assertNotNull($bp);
+        $this->assertNotNull($wp);
         $this->assertEquals($bp->getUid(), $wp->getUid());
 
         $project = $bp->getProject();
@@ -53,11 +75,17 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
 
         try {
             $bp = Project\Bpmn::load($bwap->getUid());
-        } catch (\Exception $e){}
+        } catch (\Exception $e){
+            $bp = null;
+        }
 
         try {
             $wp = Project\Workflow::load($bwap->getUid());
-        } catch (\Exception $e){}
+        } catch (\Exception $e){
+            $wp = null;
+        }
+
+        self::$uids[] = $bwap->getUid();
 
         $this->assertNotEmpty($bp);
         $this->assertNotEmpty($wp);

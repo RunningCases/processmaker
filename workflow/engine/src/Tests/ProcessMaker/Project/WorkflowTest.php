@@ -7,6 +7,12 @@ if (! class_exists("Propel")) {
     include_once __DIR__ . "/../../bootstrap.php";
 }
 
+/**
+ * Class WorkflowTest
+ *
+ * @package Tests\ProcessMaker\Project
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
+ */
 class WorkflowTest extends \PHPUnit_Framework_TestCase
 {
     protected static $proUids = array();

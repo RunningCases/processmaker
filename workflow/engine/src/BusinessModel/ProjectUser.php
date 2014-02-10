@@ -37,7 +37,7 @@ class ProjectUser
             $oCriteria->addJoin(\TaskUserPeer::TAS_UID, \TaskPeer::TAS_UID,  \Criteria::LEFT_JOIN);
             $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
-            $oCriteria->addGroupByColumn(USR_UID);
+            $oCriteria->addGroupByColumn(\TaskUserPeer::USR_UID);
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -119,7 +119,7 @@ class ProjectUser
             $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
-            $oCriteria->addGroupByColumn(USR_UID);
+            $oCriteria->addGroupByColumn(\TaskUserPeer::USR_UID);
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -187,7 +187,8 @@ class ProjectUser
                                           'act_name' => $taskValue[0]);
                     }
                 }
-            } else {
+            }
+            if (sizeof($aUsers) < 1) {
                 throw (new \Exception( 'This user `usr_uid`: '. $sUserUID .' has no initial activities assigned in this project.'));
             }
             return $aUsers;
@@ -220,13 +221,8 @@ class ProjectUser
              */
             $sPRO_UID = $sProcessUID;
             $sTASKS = $oData['act_uid'];
-            $sTASKS_SEL = $oData->TASKS_NAME;
-            $sDYNAFORM = $oData->DYNAFORM;
-            $sWE_TYPE = $oData->WE_TYPE;
             $sWS_USER = trim( $oData['username'] );
             $sWS_PASS = trim( $oData['password'] );
-            $sWS_ROUNDROBIN = $oData->WS_ROUNDROBIN;
-            $sWE_USR = $oData->WE_USR;
             if (\G::is_https()) {
                 $http = 'https://';
             } else {

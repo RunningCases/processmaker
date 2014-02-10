@@ -30,6 +30,12 @@ use \BasePeer;
 use ProcessMaker\Util\Hash;
 use ProcessMaker\Exception;
 
+/**
+ * Class Bpmn
+ *
+ * @package ProcessMaker\Project
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
+ */
 class Bpmn extends Handler
 {
     /**

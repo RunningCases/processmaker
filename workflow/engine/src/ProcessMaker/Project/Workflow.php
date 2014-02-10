@@ -13,6 +13,12 @@ use \RoutePeer;
 use ProcessMaker\Util\Hash;
 use ProcessMaker\Exception;
 
+/**
+ * Class Workflow
+ * 
+ * @package ProcessMaker\Project
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
+ */
 class Workflow extends Handler
 {
     protected $process;

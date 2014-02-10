@@ -3,6 +3,11 @@
 // pm-bootstrap.php
 //
 
+/*
+ * PmBootstrap for Test Unit Suite
+ *
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
+ */
 $config = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR . "config.ini");
 
 $workspace = $config['workspace'];

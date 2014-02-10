@@ -7,7 +7,12 @@ if (! class_exists("Propel")) {
     include_once __DIR__ . "/../../bootstrap.php";
 }
 
-
+/**
+ * Class BpmnTest
+ *
+ * @package Tests\ProcessMaker\Project
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
+ */
 class BpmnTest extends \PHPUnit_Framework_TestCase
 {
     protected static $prjUids = array();

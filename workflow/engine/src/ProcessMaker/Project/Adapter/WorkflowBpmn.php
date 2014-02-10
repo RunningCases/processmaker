@@ -4,12 +4,35 @@ namespace ProcessMaker\Project\Adapter;
 use ProcessMaker\Project;
 use ProcessMaker\Util\Hash;
 
-
+/**
+ * Class WorkflowBpmn
+ *
+ * @package ProcessMaker\Project\Adapter
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
+ */
 class WorkflowBpmn extends Project\Workflow
 {
     /**
+     * @var \ProcessMaker\Project\Bpmn
+     */
+    protected $bp;
+
+    /**
      * OVERRIDES
      */
+
+    public static function load($prjUid)
+    {
+        $parent = parent::load($prjUid);
+
+        $me = new self();
+
+        $me->process = $parent->process;
+        $me->proUid = $parent->proUid;
+        $me->bp = Project\Bpmn::load($prjUid);
+
+        return $me;
+    }
 
     public function create($data)
     {
@@ -51,5 +74,11 @@ class WorkflowBpmn extends Project\Workflow
                 , $prjUid
             ));
         }
+    }
+
+    public function remove()
+    {
+        parent::remove();
+        $this->bp->remove();
     }
 }
