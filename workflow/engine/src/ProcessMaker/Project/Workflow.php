@@ -275,6 +275,7 @@ class Workflow extends Handler
                 $oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
                 //$oTasks->deleteAllGatewayOfTask($this->proUid, $fromTasUid);
             }
+            self::log("Add Route Success!");
 
             return $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $delete);
 

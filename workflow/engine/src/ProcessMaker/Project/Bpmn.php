@@ -344,6 +344,23 @@ class Bpmn extends Handler
         return $gateway->getGatUid();
     }
 
+    public function updateGateway($gatUid, $data)
+    {
+        try {
+            self::log("Update Gateway: $gatUid", "With data: ", $data);
+
+            $gateway = GatewayPeer::retrieveByPk($gatUid);
+
+            $gateway->fromArray($data);
+            $gateway->save();
+
+            self::log("Update Gateway Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
     public function getGateway($gatUid, $retType = 'array')
     {
         $gateway = GatewayPeer::retrieveByPK($gatUid);
@@ -355,20 +372,41 @@ class Bpmn extends Handler
         return $gateway;
     }
 
-    public function getGateways($retType = 'array')
+    public function getGateways($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
-        return  Gateway::getAll($this->getUid(), null, null, '', $retType);
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        return  Gateway::getAll($this->getUid(), null, null, '', $changeCaseTo);
+    }
+
+    public function removeGateway($gatUid)
+    {
+        try {
+            self::log("Remove Gateway: $gatUid");
+
+            $gateway = GatewayPeer::retrieveByPK($gatUid);
+            $gateway->delete();
+
+            self::log("Remove Gateway Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function addFlow($data)
     {
+        self::log("Add Flow with data: ", $data);
+
         // setting defaults
         $data['FLO_UID'] = array_key_exists('FLO_UID', $data) ? $data['FLO_UID'] : Hash::generateUID();
-        $data['FLO_STATE'] = is_array($data['FLO_STATE']) ? json_encode($data['FLO_STATE']) : $data['FLO_STATE'];
+        if (array_key_exists('FLO_STATE', $data)) {
+            $data['FLO_STATE'] = is_array($data['FLO_STATE']) ? json_encode($data['FLO_STATE']) : $data['FLO_STATE'];
+        }
 
         try {
-            self::log("Add Flow with data: ", $data);
-
             $flow = new Flow();
             $flow->fromArray($data, BasePeer::TYPE_FIELDNAME);
             $flow->setPrjUid($this->getUid());
@@ -376,6 +414,26 @@ class Bpmn extends Handler
             $flow->save();
 
             self::log("Add Flow Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function updateFlow($floUid, $data)
+    {
+        self::log("Update Flow: $floUid", "With data: ", $data);
+
+        // setting defaults
+        if (array_key_exists('FLO_STATE', $data)) {
+            $data['FLO_STATE'] = is_array($data['FLO_STATE']) ? json_encode($data['FLO_STATE']) : $data['FLO_STATE'];
+        }
+        try {
+            $flow = FlowPeer::retrieveByPk($floUid);
+            $flow->fromArray($data);
+            $flow->save();
+
+            self::log("Update Flow Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
             throw $e;
@@ -393,9 +451,28 @@ class Bpmn extends Handler
         return $flow;
     }
 
-    public function getFlows($retType = 'array')
+    public function getFlows($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
-        return Flow::getAll($this->getUid(), null, null, '', $retType);
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        return Flow::getAll($this->getUid(), null, null, '', $changeCaseTo);
+    }
+
+    public function removeFlow($floUid)
+    {
+        try {
+            self::log("Remove Flow: $floUid");
+
+            $flow = FlowPeer::retrieveByPK($floUid);
+            $flow->delete();
+
+            self::log("Remove Flow Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function addArtifact($data)

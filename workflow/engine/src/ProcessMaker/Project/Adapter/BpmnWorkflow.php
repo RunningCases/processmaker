@@ -147,7 +147,10 @@ class BpmnWorkflow extends Project\Bpmn
         parent::addFlow($data);
 
         $routeData = self::mapBpmnFlowsToWorkflowRoute($data, $flows, $gateways, $events);
-        $this->wp->addRoute($routeData["from"], $routeData["to"], $routeData["type"]);
+
+        if ($routeData !== null) {
+            $this->wp->addRoute($routeData["from"], $routeData["to"], $routeData["type"]);
+        }
 
         return;
 
@@ -258,6 +261,12 @@ class BpmnWorkflow extends Project\Bpmn
     {
         $fromUid = $flow['FLO_ELEMENT_ORIGIN'];
 
+        if ($flow['FLO_ELEMENT_ORIGIN_TYPE'] != "bpmnActivity") {
+            // skip flows that comes from a element that is not an Activity
+            self::log("Skip map FlowsToWorkflowRoute for -> flow with FLO_UID: {$flow['FLO_UID']}, that have FLO_ELEMENT_ORIGIN: {$flow['FLO_ELEMENT_ORIGIN_TYPE']}:$fromUid");
+            return null;
+        }
+
         if ($flow['FLO_TYPE'] != 'SEQUENCE') {
             throw new \LogicException(sprintf(
                 "Unsupported flow type: %s, ProcessMaker only support type '', Given: '%s'",
@@ -275,8 +284,6 @@ class BpmnWorkflow extends Project\Bpmn
                 // if it is a gateway it can fork one or more routes
                 //$gatFlows = BpmnModel::getBpmnCollectionBy('Flow', \BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid);
                 $gatFlow = self::findInArray($gatUid, "FLO_ELEMENT_ORIGIN", $flows);
-                self::log($gatUid, "FLO_ELEMENT_ORIGIN", $flows);
-                self::log("==============111===================>", $gatFlow);
 
                 //foreach ($gatFlows as $gatFlow) {
                 switch ($gatFlow['FLO_ELEMENT_DEST_TYPE']) {
@@ -284,7 +291,6 @@ class BpmnWorkflow extends Project\Bpmn
                         // getting gateway properties
                         //$gateway = BpmnModel::getBpmnObjectBy('Gateway', \BpmnGatewayPeer::GAT_UID, $gatUid);
                         $gateway = self::findInArray($gatUid, "GAT_UID", $gateways);
-                        self::log("==============222===================>", $gateway);
 
                         switch ($gateway['GAT_TYPE']) {
                             case 'SELECTION':
