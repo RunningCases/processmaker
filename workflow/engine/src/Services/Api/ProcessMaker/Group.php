@@ -50,17 +50,12 @@ class Group extends Api
     /**
      * @url POST
      *
-     * @param array  $request_data
-     * @param string $grp_title    {@from body}{@required true}
-     * @param string $grp_status   {@from body}{@choice ACTIVE,INACTIVE}{@required true}
+     * @param array $request_data
      *
      * @status 201
      */
-    public function doPost(
-        $request_data,
-        $grp_title = "",
-        $grp_status = "ACTIVE"
-    ) {
+    public function doPost($request_data)
+    {
         try {
             $group = new \BusinessModel\Group();
             $group->setFormatFieldNameInUppercase(false);
@@ -80,15 +75,9 @@ class Group extends Api
      *
      * @param string $grp_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     * @param string $grp_title    {@from body}
-     * @param string $grp_status   {@from body}{@choice ACTIVE,INACTIVE}
      */
-    public function doPut(
-        $grp_uid,
-        $request_data,
-        $grp_title = "",
-        $grp_status = "ACTIVE"
-    ) {
+    public function doPut($grp_uid, $request_data)
+    {
         try {
             $group = new \BusinessModel\Group();
             $group->setFormatFieldNameInUppercase(false);
@@ -111,6 +100,44 @@ class Group extends Api
             $group->setFormatFieldNameInUppercase(false);
 
             $group->delete($grp_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:grp_uid/users
+     *
+     * @param string $grp_uid {@min 32}{@max 32}
+     */
+    public function doGetUsers($grp_uid, $filter = null, $start = null, $limit = null)
+    {
+        try {
+            $group = new \BusinessModel\Group();
+            $group->setFormatFieldNameInUppercase(false);
+
+            $response = $group->getUsers("USERS", $grp_uid, array("filter" => $filter), null, null, $start, $limit);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:grp_uid/available-users
+     *
+     * @param string $grp_uid {@min 32}{@max 32}
+     */
+    public function doGetAvailableUsers($grp_uid, $filter = null, $start = null, $limit = null)
+    {
+        try {
+            $group = new \BusinessModel\Group();
+            $group->setFormatFieldNameInUppercase(false);
+
+            $response = $group->getUsers("AVAILABLE-USERS", $grp_uid, array("filter" => $filter), null, null, $start, $limit);
+
+            return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

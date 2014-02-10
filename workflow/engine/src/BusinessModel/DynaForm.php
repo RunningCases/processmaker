@@ -120,7 +120,6 @@ class DynaForm
             $criteria->add("CT.CON_VALUE", $dynaFormTitle, \Criteria::EQUAL);
 
             $rsCriteria = \DynaformPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             if ($rsCriteria->next()) {
                 return true;
@@ -710,7 +709,7 @@ class DynaForm
      *
      * return array Return data of the new DynaForm created
      */
-    public function defineCreate($processUid, $arrayData)
+    public function executeCreate($processUid, $arrayData)
     {
         try {
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
