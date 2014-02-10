@@ -7,7 +7,12 @@ if (! class_exists("Propel")) {
     include_once __DIR__ . "/../../../bootstrap.php";
 }
 
-
+/**
+ * Class WorkflowBpmnTest
+ *
+ * @package Tests\ProcessMaker\Project\Adapter
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
+ */
 class WorkflowBpmnTest extends \PHPUnit_Framework_TestCase
 {
     function testNew()

@@ -6,7 +6,9 @@ use ProcessMaker\Util\Hash;
 
 /**
  * Class BpmnWorkflow
+ *
  * @package ProcessMaker\Project\Adapter
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
  */
 class BpmnWorkflow extends Project\Bpmn
 {
@@ -252,10 +254,7 @@ class BpmnWorkflow extends Project\Bpmn
 
                 break;
         }
-
-
     }
-
 
     public static function mapBpmnFlowsToWorkflowRoute($flow, $flows, $gateways, $events)
     {
