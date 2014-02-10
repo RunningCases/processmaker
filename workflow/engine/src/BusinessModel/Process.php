@@ -140,7 +140,6 @@ class Process
             $criteria->add("CT.CON_VALUE", $processTitle, \Criteria::EQUAL);
 
             $rsCriteria = \ProcessPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             if ($rsCriteria->next()) {
                 return true;
@@ -220,6 +219,29 @@ class Process
                                 break;
                         }
                     }
+                }
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Validate pager data
+     *
+     * @param array $arrayData                  Data
+     * @param array $arrayFieldNameForException Fields for exception messages
+     *
+     * return void Throw exception if pager data has an invalid value
+     */
+    public function throwExceptionIfDataNotMetPagerVarDefinition($arrayData, $arrayFieldNameForException)
+    {
+        try {
+            foreach ($arrayData as $key => $value) {
+                $nameForException = (isset($arrayFieldNameForException[$key]))? $arrayFieldNameForException[$key] : "";
+
+                if (!is_null($value) && ($value . "" == "" || !preg_match("/^(?:\+|\-)?(?:0|[1-9]\d*)$/", $value . "") || (int)($value) < 0)) {
+                    throw (new \Exception(str_replace(array("{0}"), array($nameForException), "Invalid value specified for \"{0}\". Expecting positive integer value")));
                 }
             }
         } catch (\Exception $e) {

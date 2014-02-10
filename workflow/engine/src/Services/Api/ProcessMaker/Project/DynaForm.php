@@ -46,7 +46,7 @@ class DynaForm extends Api
             $dynaForm->setFormatFieldNameInUppercase(false);
             $dynaForm->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
-            $arrayData = $dynaForm->defineCreate($prj_uid, $request_data);
+            $arrayData = $dynaForm->executeCreate($prj_uid, $request_data);
 
             $response = $arrayData;
 

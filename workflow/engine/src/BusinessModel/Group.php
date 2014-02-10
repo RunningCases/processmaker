@@ -3,12 +3,36 @@ namespace BusinessModel;
 
 class Group
 {
-    private $formatFieldNameInUppercase = true;
-    private $arrayParamException = array(
-        "groupUid"    => "GRP_UID",
-        "groupTitle"  => "GRP_TITLE",
-        "groupStatus" => "GRP_STATUS"
+    private $arrayFieldDefinition = array(
+        "GRP_UID"    => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),                     "fieldNameAux" => "groupUid"),
+
+        "GRP_TITLE"  => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                     "fieldNameAux" => "groupTitle"),
+        "GRP_STATUS" => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("ACTIVE", "INACTIVE"), "fieldNameAux" => "groupStatus")
     );
+
+    private $formatFieldNameInUppercase = true;
+
+    private $arrayFieldNameForException = array(
+        "filter" => "FILTER",
+        "start"  => "START",
+        "limit"  => "LIMIT"
+    );
+
+    /**
+     * Constructor of the class
+     *
+     * return void
+     */
+    public function __construct()
+    {
+        try {
+            foreach ($this->arrayFieldDefinition as $key => $value) {
+                $this->arrayFieldNameForException[$value["fieldNameAux"]] = $key;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 
     /**
      * Set the format of the fields name (uppercase, lowercase)
@@ -22,24 +46,24 @@ class Group
         try {
             $this->formatFieldNameInUppercase = $flag;
 
-            $this->setArrayParamException($this->arrayParamException);
+            $this->setArrayFieldNameForException($this->arrayFieldNameForException);
         } catch (\Exception $e) {
             throw $e;
         }
     }
 
     /**
-     * Set exception messages for parameters
+     * Set exception messages for fields
      *
-     * @param array $arrayData Data with the params
+     * @param array $arrayData Data with the fields
      *
      * return void
      */
-    public function setArrayParamException($arrayData)
+    public function setArrayFieldNameForException($arrayData)
     {
         try {
             foreach ($arrayData as $key => $value) {
-                $this->arrayParamException[$key] = $this->getFieldNameByFormatFieldName($value);
+                $this->arrayFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value);
             }
         } catch (\Exception $e) {
             throw $e;
@@ -94,7 +118,6 @@ class Group
             $criteria->add("CT.CON_VALUE", $groupTitle, \Criteria::EQUAL);
 
             $rsCriteria = \GroupwfPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             if ($rsCriteria->next()) {
                 return true;
@@ -107,59 +130,47 @@ class Group
     }
 
     /**
-     * Verify if status has invalid value
-     *
-     * @param string $groupStatus Status
-     *
-     * return void Throw exception if status has invalid value
-     */
-    public function throwExceptionIfHaveInvalidValueInStatus($groupStatus)
-    {
-        if (!in_array($groupStatus, array("ACTIVE", "INACTIVE"))) {
-            $field = $this->arrayParamException["groupStatus"];
-
-            throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
-        }
-    }
-
-    /**
      * Verify if doesn't exist the Group in table GROUP
      *
-     * @param string $groupUid Unique id of Group
+     * @param string $groupUid              Unique id of Group
+     * @param string $fieldNameForException Field name for the exception
      *
      * return void Throw exception if doesn't exist the Group in table GROUP
      */
-    public function throwExceptionIfNoExistsGroup($groupUid)
+    public function throwExceptionIfNoExistsGroup($groupUid, $fieldNameForException)
     {
-        $group = new \Groupwf();
+        try {
+            $group = new \Groupwf();
 
-        if (!$group->GroupwfExists($groupUid)) {
-            $field = $this->arrayParamException["groupUid"];
+            if (!$group->GroupwfExists($groupUid)) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $groupUid), "The group with {0}: {1}, does not exist");
 
-            $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
-            $msg = $msg . str_replace(array("{0}", "{1}"), array($groupUid, "GROUPWF"), "The UID \"{0}\" doesn't exist in table {1}");
-
-            throw (new \Exception($msg));
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
     /**
      * Verify if exists the title of a Group
      *
-     * @param string $groupTitle      Title
-     * @param string $groupUidExclude Unique id of Group to exclude
+     * @param string $groupTitle            Title
+     * @param string $fieldNameForException Field name for the exception
+     * @param string $groupUidExclude       Unique id of Group to exclude
      *
      * return void Throw exception if exists the title of a Group
      */
-    public function throwExceptionIfExistsTitle($groupTitle, $groupUidExclude = "")
+    public function throwExceptionIfExistsTitle($groupTitle, $fieldNameForException, $groupUidExclude = "")
     {
-        if ($this->existsTitle($groupTitle, $groupUidExclude)) {
-            $field = $this->arrayParamException["groupTitle"];
+        try {
+            if ($this->existsTitle($groupTitle, $groupUidExclude)) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $groupTitle), "The group title with {0}: \"{1}\", already exists");
 
-            $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
-            $msg = $msg . \G::LoadTranslation("ID_MSG_GROUP_NAME_EXISTS");
-
-            throw (new \Exception($msg));
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
@@ -178,29 +189,11 @@ class Group
             unset($arrayData["GRP_UID"]);
 
             //Verify data
-            if (!isset($arrayData["GRP_TITLE"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupTitle"]), "The \"{0}\" attribute is not defined")));
-            }
+            $process = new \BusinessModel\Process();
 
-            $arrayData["GRP_TITLE"] = trim($arrayData["GRP_TITLE"]);
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
-            if ($arrayData["GRP_TITLE"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupTitle"]), "The \"{0}\" attribute is empty")));
-            }
-
-            if (!isset($arrayData["GRP_STATUS"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupStatus"]), "The \"{0}\" attribute is not defined")));
-            }
-
-            $arrayData["GRP_STATUS"] = trim($arrayData["GRP_STATUS"]);
-
-            if ($arrayData["GRP_STATUS"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupStatus"]), "The \"{0}\" attribute is empty")));
-            }
-
-            $this->throwExceptionIfHaveInvalidValueInStatus($arrayData["GRP_STATUS"]);
-
-            $this->throwExceptionIfExistsTitle($arrayData["GRP_TITLE"]);
+            $this->throwExceptionIfExistsTitle($arrayData["GRP_TITLE"], $this->arrayFieldNameForException["groupTitle"]);
 
             //Create
             $group = new \Groupwf();
@@ -234,30 +227,14 @@ class Group
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
             //Verify data
-            $this->throwExceptionIfNoExistsGroup($groupUid);
+            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
+
+            $process = new \BusinessModel\Process();
+
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
 
             if (isset($arrayData["GRP_TITLE"])) {
-                $arrayData["GRP_TITLE"] = trim($arrayData["GRP_TITLE"]);
-
-                if ($arrayData["GRP_TITLE"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupTitle"]), "The \"{0}\" attribute is empty")));
-                }
-            }
-
-            if (isset($arrayData["GRP_STATUS"])) {
-                $arrayData["GRP_STATUS"] = trim($arrayData["GRP_STATUS"]);
-
-                if ($arrayData["GRP_STATUS"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["groupStatus"]), "The \"{0}\" attribute is empty")));
-                }
-            }
-
-            if (isset($arrayData["GRP_STATUS"])) {
-                $this->throwExceptionIfHaveInvalidValueInStatus($arrayData["GRP_STATUS"]);
-            }
-
-            if (isset($arrayData["GRP_TITLE"])) {
-                $this->throwExceptionIfExistsTitle($arrayData["GRP_TITLE"], $groupUid);
+                $this->throwExceptionIfExistsTitle($arrayData["GRP_TITLE"], $this->arrayFieldNameForException["groupTitle"], $groupUid);
             }
 
             //Update
@@ -291,12 +268,12 @@ class Group
     {
         try {
             //Verify data
-            $this->throwExceptionIfNoExistsGroup($groupUid);
+            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
 
             //Delete
             $group = new \Groupwf();
 
-            $group->remove($groupUid);
+            $result = $group->remove($groupUid);
 
             //Delete assignments of tasks
             $criteria = new \Criteria("workflow");
@@ -363,7 +340,7 @@ class Group
 
             //Verif data
             if ($groupUid != "") {
-                $this->throwExceptionIfNoExistsGroup($groupUid);
+                $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
             }
 
             //Get data
@@ -410,7 +387,7 @@ class Group
 
             //Verif data
             if ($groupUid != "") {
-                $this->throwExceptionIfNoExistsGroup($groupUid);
+                $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
             }
 
             //Get data
@@ -482,15 +459,9 @@ class Group
             $arrayGroup = array();
 
             //Verify data
-            $ereg = "/^(?:\+|\-)?(?:0|[1-9]\d*)$/";
+            $process = new \BusinessModel\Process();
 
-            if (!is_null($start) && ($start . "" == "" || !preg_match($ereg, $start . "") || (int)($start) < 0)) {
-                throw (new \Exception(str_replace(array("{0}"), array("start"), "Invalid value specified for \"{0}\". Expecting positive integer value")));
-            }
-
-            if (!is_null($limit) && ($limit . "" == "" || !preg_match($ereg, $limit . "") || (int)($limit) < 0)) {
-                throw (new \Exception(str_replace(array("{0}"), array("limit"), "Invalid value specified for \"{0}\". Expecting positive integer value")));
-            }
+            $process->throwExceptionIfDataNotMetPagerVarDefinition(array("start" => $start, "limit" => $limit), $this->arrayFieldNameForException);
 
             //Get data
             if (!is_null($limit) && $limit . "" == "0") {
@@ -584,7 +555,7 @@ class Group
     {
         try {
             //Verify data
-            $this->throwExceptionIfNoExistsGroup($groupUid);
+            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
 
             //Get data
             $arrayTotalUsersByGroup = $this->getTotalUsersByGroup($groupUid);
@@ -607,6 +578,198 @@ class Group
 
             //Return
             return $this->getGroupDataFromRecord($row);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get criteria for User
+     *
+     * @param string $groupUid            Unique id of Group
+     * @param array  $arrayFilterData     Data of the filters
+     * @param array  $arrayUserUidExclude Unique id of Users to exclude
+     *
+     * return object
+     */
+    public function getUserCriteria($groupUid, $arrayFilterData = null, $arrayUserUidExclude = null)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\UsersPeer::USR_UID);
+            $criteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+            $criteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
+            $criteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
+            $criteria->addSelectColumn(\UsersPeer::USR_EMAIL);
+            $criteria->addSelectColumn(\UsersPeer::USR_STATUS);
+
+            if ($groupUid != "") {
+                $criteria->addJoin(\GroupUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
+                $criteria->add(\GroupUserPeer::GRP_UID, $groupUid, \Criteria::EQUAL);
+            }
+
+            $criteria->add(\UsersPeer::USR_STATUS, "CLOSED", \Criteria::NOT_EQUAL);
+
+            if (!is_null($arrayUserUidExclude) && is_array($arrayUserUidExclude)) {
+                $criteria->add(\UsersPeer::USR_UID, $arrayUserUidExclude, \Criteria::NOT_IN);
+            }
+
+            if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]) && trim($arrayFilterData["filter"]) != "") {
+                $filter = trim($arrayFilterData["filter"]);
+
+                $criteria->add(
+                    $criteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%" . $filter . "%", \Criteria::LIKE)->addOr(
+                    $criteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, "%" . $filter . "%", \Criteria::LIKE)->addOr(
+                    $criteria->getNewCriterion(\UsersPeer::USR_LASTNAME, "%" . $filter . "%", \Criteria::LIKE)))
+                );
+            }
+
+            return $criteria;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get data of a User from a record
+     *
+     * @param array $record Record
+     *
+     * return array Return an array with data User
+     */
+    public function getUserDataFromRecord($record)
+    {
+        try {
+            return array(
+                $this->getFieldNameByFormatFieldName("USR_UID")       => $record["USR_UID"],
+                $this->getFieldNameByFormatFieldName("USR_USERNAME")  => $record["USR_USERNAME"],
+                $this->getFieldNameByFormatFieldName("USR_FIRSTNAME") => $record["USR_FIRSTNAME"] . "",
+                $this->getFieldNameByFormatFieldName("USR_LASTNAME")  => $record["USR_LASTNAME"] . "",
+                $this->getFieldNameByFormatFieldName("USR_EMAIL")     => $record["USR_EMAIL"] . "",
+                $this->getFieldNameByFormatFieldName("USR_STATUS")    => $record["USR_STATUS"]
+            );
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get all Users of a Group
+     *
+     * @param string $option          Option (USERS, AVAILABLE-USERS)
+     * @param string $groupUid        Unique id of Group
+     * @param array  $arrayFilterData Data of the filters
+     * @param string $sortField       Field name to sort
+     * @param string $sortDir         Direction of sorting (ASC, DESC)
+     * @param int    $start           Start
+     * @param int    $limit           Limit
+     *
+     * return array Return an array with all Users of a Group
+     */
+    public function getUsers($option, $groupUid, $arrayFilterData = null, $sortField = null, $sortDir = null, $start = null, $limit = null)
+    {
+        try {
+            $arrayUser = array();
+
+            //Verify data
+            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
+
+            $process = new \BusinessModel\Process();
+
+            $process->throwExceptionIfDataNotMetPagerVarDefinition(array("start" => $start, "limit" => $limit), $this->arrayFieldNameForException);
+
+            //Get data
+            if (!is_null($limit) && $limit . "" == "0") {
+                return $arrayUser;
+            }
+
+            //SQL
+            switch ($option) {
+                case "USERS":
+                    //Criteria
+                    $criteria = $this->getUserCriteria($groupUid, $arrayFilterData);
+                    break;
+                case "AVAILABLE-USERS":
+                    //Get Uids
+                    $arrayUid = array();
+
+                    $criteria = $this->getUserCriteria($groupUid);
+
+                    $rsCriteria = \UsersPeer::doSelectRS($criteria);
+                    $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                    while ($rsCriteria->next()) {
+                        $row = $rsCriteria->getRow();
+
+                        $arrayUid[] = $row["USR_UID"];
+                    }
+
+                    //Criteria
+                    $criteria = $this->getUserCriteria("", $arrayFilterData, $arrayUid);
+                    break;
+            }
+
+            //Number records total
+            $criteriaCount = clone $criteria;
+
+            $criteriaCount->clearSelectColumns();
+            $criteriaCount->addSelectColumn("COUNT(" . \UsersPeer::USR_UID . ") AS NUM_REC");
+
+            $rsCriteriaCount = \UsersPeer::doSelectRS($criteriaCount);
+            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $rsCriteriaCount->next();
+            $row = $rsCriteriaCount->getRow();
+
+            $numRecTotal = $row["NUM_REC"];
+
+            //SQL
+            if (!is_null($sortField) && trim($sortField) != "") {
+                $sortField = strtoupper($sortField);
+
+                switch ($sortField) {
+                    case "USR_UID":
+                    case "USR_USERNAME":
+                    case "USR_FIRSTNAME":
+                    case "USR_LASTNAME":
+                    case "USR_EMAIL":
+                    case "USR_STATUS":
+                        $sortField = \UsersPeer::TABLE_NAME . "." . $sortField;
+                        break;
+                    default:
+                        $sortField = \UsersPeer::USR_USERNAME;
+                        break;
+                }
+            } else {
+                $sortField = \UsersPeer::USR_USERNAME;
+            }
+
+            if (!is_null($sortDir) && trim($sortDir) != "" && strtoupper($sortDir) == "DESC") {
+                $criteria->addDescendingOrderByColumn($sortField);
+            } else {
+                $criteria->addAscendingOrderByColumn($sortField);
+            }
+
+            if (!is_null($start)) {
+                $criteria->setOffset((int)($start));
+            }
+
+            if (!is_null($limit)) {
+                $criteria->setLimit((int)($limit));
+            }
+
+            $rsCriteria = \UsersPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayUser[] = $this->getUserDataFromRecord($row);
+            }
+
+            //Return
+            return $arrayUser;
         } catch (\Exception $e) {
             throw $e;
         }
