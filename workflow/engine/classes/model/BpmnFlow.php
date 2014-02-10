@@ -57,6 +57,19 @@ class BpmnFlow extends BaseBpmnFlow
         return $flows;
     }
 
+    public static function exists($floUid)
+    {
+        $c = new Criteria('workflow');
+        $c->add(BpmnFlowPeer::FLO_UID, $floUid);
+
+        return BpmnFlowPeer::doCount($c) > 0 ? true : false;
+    }
+
+    public function fromArray($data, $type = BasePeer::TYPE_FIELDNAME)
+    {
+        parent::fromArray($data, $type);
+    }
+
     public function toArray($type = BasePeer::TYPE_FIELDNAME)
     {
         return parent::toArray($type);
