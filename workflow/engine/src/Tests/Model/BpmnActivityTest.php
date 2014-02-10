@@ -5,6 +5,11 @@ if (! class_exists("Propel")) {
 
 use \BpmnActivity;
 
+/**
+ * Class BpmnActivityTest
+ *
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
+ */
 class BpmnActivityTest extends PHPUnit_Framework_TestCase
 {
     protected static $prjUid = "00000000000000000000000000000001";
@@ -107,6 +112,7 @@ class BpmnActivityTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends testNew
+     * @param $activity \BpmnActivity
      */
     public function testToArrayFromTestNew($activity)
     {
@@ -141,7 +147,7 @@ class BpmnActivityTest extends PHPUnit_Framework_TestCase
             "ACT_REFERER" => "",
             "ACT_DEFAULT_FLOW" => "",
             "ACT_MASTER_DIAGRAM" => "",
-            "DIA_UID" => "18171550f1198ddc8642045664020352",
+            "DIA_UID" => self::$diaUid,
             "ELEMENT_UID" => self::$data1["ACT_UID"],
             "BOU_ELEMENT" => "pm_canvas",
             "BOU_ELEMENT_TYPE" => "bpmnActivity",
