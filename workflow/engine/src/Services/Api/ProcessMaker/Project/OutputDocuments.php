@@ -24,7 +24,7 @@ class OutputDocuments extends Api
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
@@ -40,11 +40,11 @@ class OutputDocuments extends Api
     {
         try {
             $outputDocument = new \BusinessModel\OutputDocument();
-            $arrayData = $outputDocument->getOutputDocument($prjUid, $outputDocumentUid);
+            $objectData = $outputDocument->getOutputDocument($prjUid, $outputDocumentUid);
             //Response
-            $response = $arrayData;
+            $response = $objectData;
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
@@ -67,7 +67,7 @@ class OutputDocuments extends Api
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
@@ -88,10 +88,9 @@ class OutputDocuments extends Api
             $outputDocument = new \BusinessModel\OutputDocument();
             $arrayData = $outputDocument->updateOutputDocument($prjUid, $request_data, $outputDocumentUid);
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-        return $response;
+        }        
     }
 
     /**
@@ -104,12 +103,11 @@ class OutputDocuments extends Api
     {
         try {
             $outputDocument = new \BusinessModel\OutputDocument();
-            $arrayData = $outputDocument->deleteOutputDocument($prjUid, $outputDocumentUid);
+            $outputDocument->deleteOutputDocument($prjUid, $outputDocumentUid);
         } catch (\Exception $e) {
-            //response
+            //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
-        return $response;
     }
 }
 

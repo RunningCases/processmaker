@@ -8,7 +8,7 @@
          processIsolation="false"
          stopOnFailure="true"
          syntaxCheck="true"
-         bootstrap="tests/bootstrap.php"
+         bootstrap="Tests/bootstrap.php"
 >
     <testsuites>
         <testsuite name="unit">

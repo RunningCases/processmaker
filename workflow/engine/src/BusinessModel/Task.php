@@ -1022,7 +1022,34 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
-            $result = $groups->getAllGroup($start, $limit, $filter);
+            $totalCount = 0;
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            $totalRows = \GroupwfPeer::doCount( $criteria );
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UX );
+            $criteria->addAsColumn( 'GRP_TITLE', \ContentPeer::CON_VALUE );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->add( \GroupwfPeer::GRP_UID, $sAssigneeUID);
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            $oDataset = \GroupwfPeer::doSelectRS( $criteria );
+            $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+            $processes = Array ();
+            $uids = array ();
+            $groups = array ();
+            $aGroups = array ();
+            while ($oDataset->next()) {
+                $groups[] = $oDataset->getRow();
+            }
+            $result = array ('rows' => $groups,'totalCount' => $totalRows);
             foreach ($result['rows'] as $results) {
                 if (in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
@@ -1102,6 +1129,7 @@ class Task
                 throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
             }
             $iType = 1;
+            $iRelation = '';
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
             $oCriteria->add(\TaskUserPeer::USR_UID, $sAssigneeUID );
@@ -1173,6 +1201,7 @@ class Task
                 throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
             }
             $iType = 1;
+            $iRelation = '';
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
             $oCriteria->add(\TaskUserPeer::USR_UID, $sAssigneeUID);
@@ -1568,7 +1597,34 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
-            $result = $groups->getAllGroup($start, $limit, $filter);
+            $totalCount = 0;
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            $totalRows = \GroupwfPeer::doCount( $criteria );
+            $criteria = new \Criteria( 'workflow' );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_UX );
+            $criteria->addAsColumn( 'GRP_TITLE', \ContentPeer::CON_VALUE );
+            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->add( \GroupwfPeer::GRP_UID, $sAssigneeUID);
+            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            $oDataset = \GroupwfPeer::doSelectRS( $criteria );
+            $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+            $processes = Array ();
+            $uids = array ();
+            $groups = array ();
+            $aGroups = array ();
+            while ($oDataset->next()) {
+                $groups[] = $oDataset->getRow();
+            }
+            $result = array ('rows' => $groups,'totalCount' => $totalRows);
             foreach ($result['rows'] as $results) {
                 if (in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
@@ -1648,6 +1704,7 @@ class Task
                 throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
             }
             $iType = 2;
+            $iRelation = '';
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
             $oCriteria->add(\TaskUserPeer::USR_UID, $sAssigneeUID );
@@ -1719,6 +1776,7 @@ class Task
                 throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
             }
             $iType = 2;
+            $iRelation = '';
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn( \TaskUserPeer::TU_RELATION );
             $oCriteria->add(\TaskUserPeer::USR_UID, $sAssigneeUID);

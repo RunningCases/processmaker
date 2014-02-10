@@ -17,7 +17,7 @@ Feature: Output Documents Main Tests
     And the type is "array"
     And the response has 2 records
     And the "out_doc_title" property in row 0 equals "Endpoint Old Version (base)"
-    And the "out_doc_title" property in row 1 equals "Endpoint New Version (base)"
+    And the "out_doc_title" property in row 1 equals "Endpoint New Version (base)
 
 
   Scenario: Get a single output document of a project

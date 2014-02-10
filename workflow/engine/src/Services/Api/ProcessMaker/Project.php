@@ -116,25 +116,24 @@ class Project extends Api
              */
             $whiteList = array();
             foreach ($diagram["activities"] as $i => $activityData) {
-                $diagram["activities"][$i] = $activityData = array_change_key_case($activityData, CASE_UPPER);
+                $activityData = array_change_key_case($activityData, CASE_UPPER);
 
                 // activity exists ?
                 if ($activity = $bwp->getActivity($activityData["ACT_UID"])) {
                     // then update activity
                     $bwp->updateActivity($activityData["ACT_UID"], $activityData);
-
-                    $whiteList[] = $activityData["ACT_UID"];
                 } else {
                     // if not exists then create it
                     $oldActUid = $activityData["ACT_UID"];
                     $activityData["ACT_UID"] = Hash::generateUID();
-                    $diagram["activities"][$i]["ACT_UID"] = $activityData["ACT_UID"];
 
                     $bwp->addActivity($activityData);
 
                     $result[] = array("object" => "activity", "new_uid" => $activityData["ACT_UID"], "old_uid" => $oldActUid);
-                    $whiteList[] = $activityData["ACT_UID"];
+                    $diagram["activities"][$i] = $activityData;
                 }
+
+                $whiteList[] = $activityData["ACT_UID"];
             }
 
             $activities = $bwp->getActivities();
@@ -147,31 +146,30 @@ class Project extends Api
                 }
             }
 
+
             /*
              * Diagram's Gateways Handling
              */
             $whiteList = array();
             foreach ($diagram["gateways"] as $i => $gatewayData) {
-                $diagram["gateways"][$i] = $gatewayData = array_change_key_case($gatewayData, CASE_UPPER);
+                $gatewayData = array_change_key_case($gatewayData, CASE_UPPER);
 
                 // gateway exists ?
                 if ($gateway = $bwp->getGateway($gatewayData["GAT_UID"])) {
                     // then update activity
                     $bwp->updateGateway($gatewayData["GAT_UID"], $gatewayData);
-
-                    $whiteList[] = $gatewayData["GAT_UID"];
                 } else {
                     // if not exists then create it
                     $oldActUid = $gatewayData["GAT_UID"];
                     $gatewayData["GAT_UID"] = Hash::generateUID();
-                    Logger::log(" ==> updating gateway UID {$gatewayData["GAT_UID"]}->$oldActUid");
-                    $diagram["gateways"][$i]["GAT_UID"] = $gatewayData["GAT_UID"];
 
                     $bwp->addGateway($gatewayData);
 
                     $result[] = array("object" => "gateway", "new_uid" => $gatewayData["GAT_UID"], "old_uid" => $oldActUid);
-                    $whiteList[] = $gatewayData["GAT_UID"];
+                    $diagram["gateways"][$i] = $gatewayData;
                 }
+
+                $whiteList[] = $gatewayData["GAT_UID"];
             }
 
             $gateways = $bwp->getGateways();
@@ -198,8 +196,15 @@ class Project extends Api
                     $oldFloUid = $flowData["FLO_UID"];
                     $flowData["FLO_UID"] = Hash::generateUID();
 
-                    $flowData["FLO_ELEMENT_ORIGIN"] = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result);
-                    $flowData["FLO_ELEMENT_DEST"] = self::mapUid($flowData["FLO_ELEMENT_DEST"], $result);
+                    $mappedUid = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result) ;
+                    if ($mappedUid !== false) {
+                        $flowData["FLO_ELEMENT_ORIGIN"] = $mappedUid;
+                    }
+                    
+                    $mappedUid = self::mapUid($flowData["FLO_ELEMENT_DEST"], $result);
+                    if ($mappedUid !== false) {
+                        $flowData["FLO_ELEMENT_DEST"] = $mappedUid;
+                    }
 
                     $result[] = array("object" => "flow", "new_uid" => $flowData["FLO_UID"], "old_uid" => $oldFloUid);
                     $diagram["flows"][$i] = $flowData;
@@ -334,6 +339,8 @@ class Project extends Api
     {
         try {
             $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
             $response = $process->getWebEntries($prj_uid);
 
@@ -351,9 +358,7 @@ class Project extends Api
             }
         }
 
-        throw new \Exception("oldUid: $oldUid not found in list:".print_r($list, true));
-
-        return null;
+        return false;
     }
 }
 

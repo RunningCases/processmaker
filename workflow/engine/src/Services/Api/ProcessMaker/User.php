@@ -14,7 +14,7 @@ class User extends Api
     /**
      * @url GET
      */
-    public function index($filter = '', $start = null, $limit = null)
+    public function doGetUsers($filter = '', $start = null, $limit = null)
     {
         try {
             $user = new \BusinessModel\User();
@@ -30,7 +30,7 @@ class User extends Api
      *
      * @param string $usr_uid {@min 32}{@max 32}
      */
-    public function doGet($usr_uid)
+    public function doGetUser($usr_uid)
     {
         try {
             $user = new \BusinessModel\User();
@@ -48,7 +48,7 @@ class User extends Api
      *
      * @status 201
      */
-    public function doPost($request_data) {
+    public function doPostUser($request_data) {
         try {
             $user = new \BusinessModel\User();
             $arrayData = $user->create($request_data);
@@ -59,13 +59,14 @@ class User extends Api
         }
     }
 
+
     /**
      * @url PUT /:usr_uid
      *
      * @param string $usr_uid      {@min 32}{@max 32}
      * @param array  $request_data
      */
-    public function doPut($usr_uid, $request_data) {
+    public function doPutUser($usr_uid, $request_data) {
         try {
             $userLoggedUid = $this->getUserId();
             $user = new \BusinessModel\User();
@@ -82,7 +83,7 @@ class User extends Api
      *
      * @param string $usr_uid {@min 32}{@max 32}
      */
-    public function doDelete($usr_uid)
+    public function doDeleteUser($usr_uid)
     {
         try {
             $user = new \BusinessModel\User();

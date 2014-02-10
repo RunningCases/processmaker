@@ -3,6 +3,12 @@ namespace ProcessMaker\Project;
 
 use ProcessMaker\Util\Logger;
 
+/**
+ * Class Handler
+ *
+ * @package ProcessMaker\Project
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
+ */
 abstract class Handler
 {
     public static function load($uid)
