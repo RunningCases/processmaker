@@ -16,6 +16,7 @@ class ProcessSupervisor
     public function getProcessSupervisors($sProcessUID = '')
     {
         try {
+            $aResp = array();
             // Groups
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\ProcessUserPeer::PU_UID);
@@ -84,6 +85,11 @@ class ProcessSupervisor
     public function getProcessSupervisor($sProcessUID = '', $sPuUID = '')
     {
         try {
+            $aResp = array();
+            $oProcess = \ProcessUserPeer::retrieveByPK( $sPuUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `pu_uid`: '. $sPuUID .' do not correspond to a valid relation'));
+            }
             // Groups
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\ProcessUserPeer::PU_UID);
@@ -151,6 +157,7 @@ class ProcessSupervisor
     public function getAvailableProcessSupervisors($obj_type, $sProcessUID = '')
     {
         try {
+            $aRespLi = array();
             // Groups
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\ProcessUserPeer::USR_UID);
@@ -182,22 +189,14 @@ class ProcessSupervisor
             $oDataset = \GroupwfPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
-            $oCriteria = new \Criteria('workflow');
-            $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
-            $oCriteria->add(\GroupUserPeer::GRP_UID, $results['GRP_UID']);
-            $oDataset2 = \GroupUserPeer::doSelectRS($oCriteria);
-            $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $oDataset2->next();
-            $aRow2 = $oDataset2->getRow();
             if ($obj_type == 'group' || $obj_type == '') {
                 while ($aRow = $oDataset->getRow()) {
                     $aRespLi[] = array('grp_uid' => $aRow['GRP_UID'],
-                                         'grp_name' => $aRow['GRP_TITLE'],
-                                         'obj_type' => "group");
+                                       'grp_name' => $aRow['GRP_TITLE'],
+                                       'obj_type' => "group");
                     $oDataset->next();
                 }
             }
-
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\UsersPeer::USR_UID);
@@ -250,6 +249,7 @@ class ProcessSupervisor
     public function getProcessSupervisorDynaforms($sProcessUID = '')
     {
         try {
+            $aResp = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
@@ -299,6 +299,7 @@ class ProcessSupervisor
     public function getProcessSupervisorDynaform($sProcessUID = '', $sPudUID = '')
     {
         try {
+            $aResp = array();
             $oDynaformSupervisor = \StepSupervisorPeer::retrieveByPK( $sPudUID );
             if (is_null( $oDynaformSupervisor ) ) {
                 throw (new \Exception( 'This id: '. $sPudUID .' do not correspond to a registered process supervisor '));
@@ -352,6 +353,7 @@ class ProcessSupervisor
     public function getAvailableProcessSupervisorDynaform($sProcessUID = '')
     {
         try {
+            $aResp = array();
             $oCriteria = $this->getProcessSupervisorDynaforms($sProcessUID);
             $aUIDS = array();
             foreach ($oCriteria as $oCriteria => $value) {
@@ -399,6 +401,7 @@ class ProcessSupervisor
     public function getProcessSupervisorInputDocuments($sProcessUID = '')
     {
         try {
+            $aResp = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
@@ -448,6 +451,7 @@ class ProcessSupervisor
     public function getProcessSupervisorInputDocument($sProcessUID = '', $sPuiUID = '')
     {
         try {
+            $aResp = array();
             $oInputDocumentSupervisor = \StepSupervisorPeer::retrieveByPK( $sPuiUID );
             if (is_null( $oInputDocumentSupervisor ) ) {
                 throw (new \Exception( 'This id: '. $sPuiUID .' do not correspond to a registered process supervisor '));
@@ -501,6 +505,7 @@ class ProcessSupervisor
     public function getAvailableProcessSupervisorInputDocument($sProcessUID = '')
     {
         try {
+            $aResp = array();
             $oCriteria = $this->getProcessSupervisorInputDocuments($sProcessUID);
             $aUIDS = array();
             foreach ($oCriteria as $oCriteria => $value) {
@@ -546,6 +551,7 @@ class ProcessSupervisor
      */
     public function addProcessSupervisor($sProcessUID, $sUsrUID, $sTypeUID)
     {
+        $sPuUIDT = array();
         $oProcessUser = new \ProcessUser ( );
         $oTypeAssigneeG = \GroupwfPeer::retrieveByPK( $sUsrUID );
         $oTypeAssigneeU = \UsersPeer::retrieveByPK( $sUsrUID );
@@ -598,7 +604,7 @@ class ProcessSupervisor
             $sPuUIDT = $aRow['PU_UID'];
             $oDataset->next();
         }
-        if (is_null($sPuUIDT)) {
+        if (sizeof($sPuUIDT) == 0) {
             $sPuUID = \G::generateUniqueID();
             $oProcessUser->create(array('PU_UID' => $sPuUID,
                                         'PRO_UID' => $sProcessUID,
@@ -624,6 +630,8 @@ class ProcessSupervisor
         if (is_null( $oTypeDynaform )) {
             throw (new \Exception( 'This id for `dyn_uid`: '. $sDynUID .' do not correspond to a registered Dynaform'));
         }
+        $aResp = array();
+        $sPuUIDT = array();
         $sDelimiter = \DBAdapter::getStringDelimiter();
         $oCriteria = new \Criteria('workflow');
         $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
@@ -649,7 +657,7 @@ class ProcessSupervisor
             $sPuUIDT = $aRow['STEP_UID'];
             $oDataset->next();
         }
-        if (is_null($sPuUIDT)) {
+        if (sizeof($sPuUIDT) == 0) {
             $oStepSupervisor = new \StepSupervisor();
             $oStepSupervisor->create(array('PRO_UID' => $sProcessUID,
                                            'STEP_TYPE_OBJ' => "DYNAFORM",
@@ -705,6 +713,8 @@ class ProcessSupervisor
         if (is_null( $oTypeInputDocument )) {
             throw (new \Exception( 'This id for `inp_doc_uid`: '. $sInputDocumentUID .' do not correspond to a registered InputDocument'));
         }
+        $aResp = array();
+        $sPuUIDT = array();
         $sDelimiter = \DBAdapter::getStringDelimiter();
         $oCriteria = new \Criteria('workflow');
         $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
@@ -730,7 +740,7 @@ class ProcessSupervisor
             $sPuUIDT = $aRow['STEP_UID'];
             $oDataset->next();
         }
-        if (is_null($sPuUIDT)) {
+        if (sizeof($sPuUIDT) == 0) {
             $oStepSupervisor = new \StepSupervisor();
             $oStepSupervisor->create(array('PRO_UID' => $sProcessUID,
                                            'STEP_TYPE_OBJ' => "INPUT_DOCUMENT",
