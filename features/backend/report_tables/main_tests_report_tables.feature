@@ -118,7 +118,7 @@ Scenario Outline: Get a details of created report tables
     |                  | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc Updated 1 | workflow           | NORMAL       |              | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
     |                  | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc Updated 2 | workflow           | GRID         | grid         | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
 
-Scenario Outline: Delete a created database connections
+Scenario Outline: Delete a created report tables
         Given that I want to delete a resource with the key "rep_uid" stored in session array as variable "rep_uid_<rep_uid_number>"
         And I request "project/<project>/report-table"
         Then the response status code should be 200
