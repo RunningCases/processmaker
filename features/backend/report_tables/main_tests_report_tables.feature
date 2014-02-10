@@ -1,7 +1,7 @@
 @ProcessMakerMichelangelo @RestAPI
-Feature: DataBase Connections
+Feature: Report Tables
 
-    Scenario: List all the database connections (result 0 database connections)
+    Scenario: List all the report tables (result 0 report tables)
         Given that I have a valid access_token
         And I request "project/96189226752f3e5e23c1303036042196/report-tables"
         Then the response status code should be 200
@@ -9,7 +9,7 @@ Feature: DataBase Connections
         And the response has 0 record
 
 
-    Scenario: Create a new database connection
+    Scenario: Create a new report table
         Given that I have a valid access_token
         And POST this data:
             """
@@ -39,16 +39,16 @@ Feature: DataBase Connections
         Then the response status code should be 201
         And store "rep_uid" in session array
 
-    @3: TEST FOR GET DATABASE CONNECTIONS /----------------------------------------------------------------------
-    Scenario: List all the database connections (result 1 database connection)
+    @3: TEST FOR GET report tableS /----------------------------------------------------------------------
+    Scenario: List all the report tables (result 1 report table)
         Given that I have a valid access_token
         And I request "project/96189226752f3e5e23c1303036042196/report-tables"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the response has 1 record
 
-    @4: TEST FOR PUT DATABASE CONNECTION /-----------------------------------------------------------------------
-    Scenario: Update a database connection
+    @4: TEST FOR PUT report table /-----------------------------------------------------------------------
+    Scenario: Update a report table
         Given that I have a valid access_token
         And PUT this data:
             """
@@ -70,16 +70,16 @@ Feature: DataBase Connections
                 ]
             }
             """
-        And that I want to update a resource with the key "dbs_uid" stored in session array
+        And that I want to update a resource with the key "rep_uid" stored in session array
         And I request "project/96189226752f3e5e23c1303036042196/report-table"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
 
 
-    Scenario: Get a database connection (with change in "dbs_description" and "dbs_database_name")
+    Scenario: Get a report table (with change in "rep_tab_dsc")
         Given that I have a valid access_token
-        And that I want to get a resource with the key "dbs_uid" stored in session array
+        And that I want to get a resource with the key "rep_uid" stored in session array
         And I request "project/96189226752f3e5e23c1303036042196/report-table"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -87,16 +87,16 @@ Feature: DataBase Connections
         And that "rep_tab_dsc" is set to "nueva descripcion"
 
 
-    Scenario: Delete a database connection
+    Scenario: Delete a report table
         Given that I have a valid access_token
-        And that I want to delete a resource with the key "dbs_uid" stored in session array
+        And that I want to delete a resource with the key "rep_uid" stored in session array
         And I request "project/96189226752f3e5e23c1303036042196/report-table"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
 
-    @7: TEST FOR GET DATABASE CONNECTIONS /----------------------------------------------------------------------
-    Scenario: List all the database connections (result 0 database connections)
+    @7: TEST FOR GET report tableS /----------------------------------------------------------------------
+    Scenario: List all the report tables (result 0 report tables)
         Given that I have a valid access_token
         And I request "project/96189226752f3e5e23c1303036042196/report-tables"
         Then the response status code should be 200
