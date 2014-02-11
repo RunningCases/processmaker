@@ -314,19 +314,15 @@ class Bpmn extends Handler
         }
     }
 
-    public function getEvent($evnUid)
+    public function getEvent($evnUid, $retType = 'array')
     {
-        if (empty($this->events) || ! array_key_exists($evnUid, $this->activities)) {
-            $event = EventPeer::retrieveByPK($evnUid);
+        $event = EventPeer::retrieveByPK($evnUid);
 
-            if (! is_object($event)) {
-                return null;
-            }
-
-            $this->events[$evnUid] = $event;
+        if ($retType != "object" && ! empty($activity)) {
+            $event = $event->toArray();
         }
 
-        return $this->events[$evnUid];
+        return $event;
     }
 
     public function getEvents($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
