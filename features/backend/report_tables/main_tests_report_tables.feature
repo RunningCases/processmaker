@@ -61,6 +61,8 @@ Scenario: Verify that there are 2 report tables
     And the response has 2 record
 
 
+
+
 Scenario Outline: Update a created report tables
     Given PUT this data:
         """
@@ -118,6 +120,20 @@ Scenario Outline: Get a details of created report tables
     |                  | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc Updated 1 | workflow           | NORMAL       |              | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
     |                  | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc Updated 2 | workflow           | GRID         | grid         | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
 
+
+Scenario Outline: Populate report tables
+        Given I request "project/<project>/report-table/rep_uid/populate"  with the key "rep_uid" stored in session array as variable "rep_uid_<rep_uid_number>"
+        Then the response status code should be 200
+        
+
+    Examples:
+
+    | test_description | project                          | rep_uid_number | rep_tab_name   | rep_tab_dsc                 | rep_tab_connection | rep_tab_type | rep_tab_grid | fld_dyn_1 | fld_name_1 | fld_label_1 | fld_type_1 | fld_size_1 | fld_dyn_2 | fld_name_2 | fld_label_2 | fld_type_2 | fld_size_2 | fld_dyn_3 | fld_name_3     | fld_label_3    | fld_type_3 | fld_size_3  |
+    |                  | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc Updated 1 | workflow           | NORMAL       |              | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
+    |                  | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc Updated 2 | workflow           | GRID         | grid         | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
+
+
+
 Scenario Outline: Delete a created report tables
         Given that I want to delete a resource with the key "rep_uid" stored in session array as variable "rep_uid_<rep_uid_number>"
         And I request "project/<project>/report-table"
@@ -128,8 +144,8 @@ Scenario Outline: Delete a created report tables
     Examples:
 
     | test_description | project                          | rep_uid_number |
-    |                  | 922677707524ac7417ce345089010125 | 1              |
-    |                  | 922677707524ac7417ce345089010125 | 2              |
+    |                  | 922677707524ac7417ce345089010125 | 100              |
+    |                  | 922677707524ac7417ce345089010125 | 200              |
 
 Scenario: Verify that the report tables were deleted correctly
     Given I request "project/922677707524ac7417ce345089010125/report-tables"
