@@ -1,5 +1,8 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Report Tables
+Requirements:
+    a workspace with the process 922677707524ac7417ce345089010125 ("Test Designer Report Tables") already loaded
+    there are zero Report Table in the process
 
 Background:
     Given that I have a valid access_token

@@ -1,7 +1,7 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Process supervisor Resources
 Requirements:
-    a workspace with the process 85794888452ceeef3675164057928956 ("Test ( Triggers, Activity)") already loaded
+    a workspace with the process 85794888452ceeef3675164057928956 ("Test Process Supervisor") already loaded
     there are zero supervisor, dynaform and input document in the Process Supervisor of process
 
 
@@ -18,19 +18,7 @@ Requirements:
       
       Examples:
       | test_description                       | project                          | records |
-      | List current unique process supervisor | 85794888452ceeef3675164057928956 | 0       |
-
-
-    Scenario Outline: Get a specific process supervisor details of a project
-      Given I request "project/<project>/process-supervisor/<pu_uid>"
-      Then the response status code should be 200
-      And the response charset is "UTF-8"
-      And the content type is "application/json"
-      And the type is "object"
-      
-    Examples:
-      | test_description           | project                          | pu_uid                           |
-      | Get the supervisor details | 85794888452ceeef3675164057928956 | 70662784652cef0878516f7085532841 |
+      | List current unique process supervisor | 85794888452ceeef3675164057928956 | 1       |
 
 
     Scenario Outline: Get a List of available process supervisor of a project
@@ -43,7 +31,7 @@ Requirements:
       
       Examples:
       | test_description                                  | project                          | records |
-      | List users and groups available to be supervisors | 85794888452ceeef3675164057928956 | 21      |
+      | List users and groups available to be supervisors | 85794888452ceeef3675164057928956 | 20      |
 
 
     Scenario Outline: Get a List of available groups process supervisor of a project
@@ -56,7 +44,7 @@ Requirements:
       
       Examples:
       | test_description                               | project                          | records |
-      | List the 23 groups available to be supervisors | 85794888452ceeef3675164057928956 | 20      |
+      | List the 23 groups available to be supervisors | 85794888452ceeef3675164057928956 | 19      |
 
     
     Scenario Outline: Get a List of available users elegible as process supervisor
@@ -71,7 +59,20 @@ Requirements:
       | test_description                                      | project                          | records |
       | List the unique admin user available to be supervisor | 85794888452ceeef3675164057928956 | 1       |
 
-   
+
+
+    Scenario Outline: Get a specific process supervisor details of a project
+      Given I request "project/<project>/process-supervisor/<pu_uid>"
+      Then the response status code should be 200
+      And the response charset is "UTF-8"
+      And the content type is "application/json"
+      And the type is "object"
+      
+    Examples:
+      | test_description           | project                          | pu_uid                           |
+      | Get the supervisor details | 85794888452ceeef3675164057928956 | 31336919452fa84404e3ac0086239686 |
+
+ 
     Scenario Outline: Get a List of dynaforms assigned to a process supervisor
       Given I request "project/<project>/process-supervisor/dynaforms"
       Then the response status code should be 200
@@ -169,7 +170,7 @@ Requirements:
        | Assign a group as Supervisor | 85794888452ceeef3675164057928956 | 1                | GROUP_SUPERVISOR                | 54731929352d56741de9d42002704749 |
        | Assign a user as Supervisor  | 85794888452ceeef3675164057928956 | 2                | SUPERVISOR                      | 00000000000000000000000000000001 |
     
-        
+
     
     Scenario Outline: Assign a dynaform to a process supervisor
         Given POST this data:
@@ -209,8 +210,7 @@ Requirements:
       
       Examples:
        | test_description                        | project                          | dps_number       | inp_doc_uid                      | 
-       | Assign an Input document for Supervisor | 85794888452ceeef3675164057928956 | 1                | 30053187052ddfa4e1fdca4001721051 |  
-
+       | Assign an Input document for Supervisor | 85794888452ceeef3675164057928956 | 1                | 54550354652ceef5e4e1c17096955890 |  
 
     
     Scenario Outline: Delete a process supervisor
