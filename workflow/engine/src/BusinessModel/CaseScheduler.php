@@ -747,6 +747,7 @@ class CaseScheduler
                 $dCurrentDay = date( "d" );
                 $dCurrentMonth = date( "m" );
                 $aStartDay = explode( "|", $aData['SCH_START_DAY'] );
+                $sDateTmp = '';
                 if ($sOption == '3' && $aStartDay[0] == '1') {
                     $monthsArray = explode( "|", $sMonths );
                     foreach ($monthsArray as $row) {
