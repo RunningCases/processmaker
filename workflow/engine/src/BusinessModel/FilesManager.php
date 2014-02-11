@@ -309,5 +309,28 @@ class FilesManager
             throw $e;
         }
     }
+
+    /**
+     *
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $path
+     *
+     *
+     * @access public
+     */
+    public function downloadProcessFilesManager($sProcessUID, $path)
+    {
+        try {
+            $arrayTaskUid = $this->getFileManagerUid($path);
+            $sPath = explode("/", $path);
+            $sfile = end(explode("/",$path));
+            $main = implode(array_slice($sPath, -3, 1));
+            if (file_exists(PATH_SEP.$path)) {
+                \G::streamFile($path, true);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }
 
