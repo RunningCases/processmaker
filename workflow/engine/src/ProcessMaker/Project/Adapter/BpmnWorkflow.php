@@ -215,21 +215,7 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
-
-
-//for  end event
-//        switch ($flow->getFloElementOriginType()) {
-//            case "bpmnActivity":
-//                switch ($flow->getFloElementDestType()) {
-//                    case "bpmnEvent":
-//
-//                        break;
-//                }
-//                break;
-//        }
-
         parent::removeEvent($evnUid);
-
     }
 
     public static function mapBpmnFlowsToWorkflowRoute($flow, $flows, $gateways, $events)
@@ -256,15 +242,14 @@ class BpmnWorkflow extends Project\Bpmn
                 break;
             case 'bpmnGateway':
                 $gatUid = $flow['FLO_ELEMENT_DEST'];
+
                 // if it is a gateway it can fork one or more routes
-                //$gatFlows = BpmnModel::getBpmnCollectionBy('Flow', \BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid);
                 $gatFlow = self::findInArray($gatUid, "FLO_ELEMENT_ORIGIN", $flows);
 
                 //foreach ($gatFlows as $gatFlow) {
                 switch ($gatFlow['FLO_ELEMENT_DEST_TYPE']) {
                     case 'bpmnActivity':
                         // getting gateway properties
-                        //$gateway = BpmnModel::getBpmnObjectBy('Gateway', \BpmnGatewayPeer::GAT_UID, $gatUid);
                         $gateway = self::findInArray($gatUid, "GAT_UID", $gateways);
 
                         switch ($gateway['GAT_TYPE']) {
@@ -287,15 +272,6 @@ class BpmnWorkflow extends Project\Bpmn
                                 throw new \LogicException(sprintf("Unsupported Gateway type: %s", $gateway['GAT_TYPE']));
                         }
 
-                        /*$routes[] = array(
-                            'ROU_UID' => $gatFlow['FLO_UID'], //Hash::generateUID(),
-                            'PRO_UID' => $this->getUid(),
-                            'TAS_UID' => $fromUid,
-                            'ROU_NEXT_TASK' => $gatFlow['FLO_ELEMENT_DEST'],
-                            'ROU_TYPE' => $routeType
-                        );*/
-
-                        //$this->wp->addRoute($fromUid, $gatFlow['FLO_ELEMENT_DEST'], $routeType);
                         $result = array("from" => $fromUid, "to" => $gatFlow['FLO_ELEMENT_DEST'], "type" => $routeType);
                         break;
                     default:
@@ -310,20 +286,11 @@ class BpmnWorkflow extends Project\Bpmn
                 break;
             case 'bpmnEvent':
                 $evnUid = $flow['FLO_ELEMENT_DEST'];
-                //$event = BpmnModel::getBpmnObjectBy('Event', \BpmnEventPeer::EVN_UID, $evnUid);
                 $event = self::findInArray($evnUid, "EVN_UID", $events);
 
                 switch ($event['EVN_TYPE']) {
                     case 'END':
                         $routeType = 'SEQUENTIAL';
-                        /*$routes[] = array(
-                            'ROU_UID' => $data['FLO_UID'], //Hash::generateUID(),
-                            'PRO_UID' => $this->getUid(),
-                            'TAS_UID' => $fromUid,
-                            'ROU_NEXT_TASK' => '-1',
-                            'ROU_TYPE' => $routeType,
-                            '_action' => 'CREATE'
-                        );*/
                         $result = array("from" => $fromUid, "to" => "-1", "type" => $routeType);
                         break;
                     default:
