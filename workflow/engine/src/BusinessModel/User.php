@@ -322,10 +322,11 @@ class User
             $aData['USR_PHONE'] = $form['USR_PHONE'];
             $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
             $aData['USR_POSITION'] = $form['USR_POSITION'];
-            //$aData['USR_ROLE'] = $form['USR_ROLE'];
             $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
             $oUser = new \Users();
             $oUser -> create( $aData );
+            // comment photos files
+            /*
             if ($_FILES['USR_PHOTO']['error'] != 1) {
                 //print (PATH_IMAGES_ENVIRONMENT_USERS);
                 if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
@@ -335,7 +336,7 @@ class User
                 $result->success = false;
                 $result->fileError = true;
                 throw new \Exception($oError->$result);
-            }
+            }*/
             if ((isset($form['USR_CALENDAR']))) {
                 //Save Calendar ID for this user
                 \G::LoadClass("calendar");
@@ -487,9 +488,8 @@ class User
                     $aData['USR_EMAIL'] = $form['USR_EMAIL'];
                 }
             }
-            if ($form['USR_DUE_DATE'] == '') {
-                throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
-            } else {
+            if ($form['USR_DUE_DATE'] != '') {
+//                throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
                 $dueDate = explode("-", $form['USR_DUE_DATE']);
                 if (ctype_digit($dueDate[0])) {
                     if (checkdate($dueDate[1], $dueDate[2], $dueDate[0]) == false) {
@@ -540,6 +540,8 @@ class User
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $oUser = new \Users();
             $oUser->update($aData);
+            // photo file comment
+            /*
             if ($_FILES['USR_PHOTO']['error'] != 1) {
                 if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
                     $aAux = explode('.', $_FILES['USR_PHOTO']['name']);
@@ -550,16 +552,16 @@ class User
                 $result->success = false;
                 $result->fileError = true;
                 throw new \Exception($result);
-            }
-            /* Saving preferences */
-            $def_lang = $form['PREF_DEFAULT_LANG'];
+            }*/
+            /* Saving preferences comment */
+            /*$def_lang = $form['PREF_DEFAULT_LANG'];
             $def_menu = $form['PREF_DEFAULT_MENUSELECTED'];
             $def_cases_menu = isset($form['PREF_DEFAULT_CASES_MENUSELECTED']) ? $form['PREF_DEFAULT_CASES_MENUSELECTED'] : '';
             \G::loadClass('configuration');
             $oConf = new \Configurations();
             $aConf = Array('DEFAULT_LANG' => $def_lang, 'DEFAULT_MENU' => $def_menu, 'DEFAULT_CASES_MENU' => $def_cases_menu);
             $oConf->aConfig = $aConf;
-            $oConf->saveConfig('USER_PREFERENCES', '', '', $usrLoggedUid);
+            $oConf->saveConfig('USER_PREFERENCES', '', '', $usrLoggedUid);*/
             $oCriteria = $this->getUser($usrUid);
             return $oCriteria;
         } catch (\Exception $e) {
@@ -697,6 +699,7 @@ class User
     public function getUser($userUid)
     {
         try {
+            $filter = '';
             $aUserInfo = array();
             $oUser = \UsersPeer::retrieveByPK($userUid);
             if (is_null($oUser)) {
