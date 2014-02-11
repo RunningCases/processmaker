@@ -45,15 +45,17 @@ class Project extends Api
             $process = $bwp->getProcess();
             $diagram["pro_uid"] = $process["PRO_UID"];
 
+            $configList = array("changeCaseTo" => CASE_LOWER);
+
             if (! is_null($diagram)) {
                 $diagram = array_change_key_case($diagram, CASE_LOWER);
-                $diagram["activities"] = $bwp->getActivities(array("changeCaseTo" => CASE_LOWER));
-                $diagram["events"] = $bwp->getEvents();
-                $diagram["gateways"] = $bwp->getGateways(array("changeCaseTo" => CASE_LOWER));
-                $diagram["flows"] = $bwp->getFlows(array("changeCaseTo" => CASE_LOWER));
-                $diagram["artifacts"] = $bwp->getArtifacts();
-                $diagram["laneset"] = $bwp->getLanesets();
-                $diagram["lanes"] = $bwp->getLanes();
+                $diagram["activities"] = $bwp->getActivities($configList);
+                $diagram["events"] = $bwp->getEvents($configList);
+                $diagram["gateways"] = $bwp->getGateways($configList);
+                $diagram["flows"] = $bwp->getFlows($configList);
+                $diagram["artifacts"] = $bwp->getArtifacts($configList);
+                $diagram["laneset"] = $bwp->getLanesets($configList);
+                $diagram["lanes"] = $bwp->getLanes($configList);
 
                 $project["diagrams"][] = $diagram;
             }
@@ -179,6 +181,41 @@ class Project extends Api
                 if (! in_array($gatewayData["GAT_UID"], $whiteList)) {
                     // If it is not in the white list so, then remove them
                     $bwp->removeGateway($gatewayData["GAT_UID"]);
+                }
+            }
+
+            /*
+             * Diagram's Events Handling
+             */
+            $whiteList = array();
+            foreach ($diagram["events"] as $i => $eventData) {
+                $eventData = array_change_key_case($eventData, CASE_UPPER);
+
+                // gateway exists ?
+                if ($event = $bwp->getEvent($eventData["EVN_UID"])) {
+                    // then update activity
+                    $bwp->updateEvent($eventData["EVN_UID"], $eventData);
+                } else {
+                    // if not exists then create it
+                    $oldActUid = $eventData["EVN_UID"];
+                    $eventData["EVN_UID"] = Hash::generateUID();
+
+                    $bwp->addEvent($eventData);
+
+                    $result[] = array("object" => "event", "new_uid" => $eventData["EVN_UID"], "old_uid" => $oldActUid);
+                    $diagram["events"][$i] = $eventData;
+                }
+
+                $whiteList[] = $eventData["EVN_UID"];
+            }
+
+            $events = $bwp->getEvents();
+
+            // looking for removed elements
+            foreach ($events as $eventData) {
+                if (! in_array($eventData["EVN_UID"], $whiteList)) {
+                    // If it is not in the white list so, then remove them
+                    $bwp->removeEvent($eventData["EVN_UID"]);
                 }
             }
 

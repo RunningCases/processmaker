@@ -298,13 +298,20 @@ class Bpmn extends Handler
         // setting defaults
         $data['EVN_UID'] = array_key_exists('EVN_UID', $data) ? $data['EVN_UID'] : Hash::generateUID();
 
-        $event = new Event();
-        $event->fromArray($data);
-        $event->setPrjUid($this->project->getPrjUid());
-        $event->setProUid($this->getProcess("object")->getProUid());
-        $event->save();
+        try {
+            self::log("Add Event with data: ", $data);
 
-        $this->events[$event->getEvnUid()] = $event;
+            $event = new Event();
+            $event->fromArray($data);
+            $event->setPrjUid($this->project->getPrjUid());
+            $event->setProUid($this->getProcess("object")->getProUid());
+            $event->save();
+
+            self::log("Add Event Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function getEvent($evnUid)
@@ -322,10 +329,44 @@ class Bpmn extends Handler
         return $this->events[$evnUid];
     }
 
-    public function getEvents($retType = "array")
+    public function getEvents($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
-        //return Event::getAll($this->project->getPrjUid(), null, null, '', 'object');
-        return array();
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        return Event::getAll($this->project->getPrjUid(), null, null, '', $changeCaseTo);
+    }
+
+    public function updateEvent($evnUid, $data)
+    {
+        try {
+            self::log("Update Event: $evnUid", "With data: ", $data);
+
+            $event = EventPeer::retrieveByPk($evnUid);
+            $event->fromArray($data);
+            $event->save();
+
+            self::log("Update Event Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function removeEvent($evnUid)
+    {
+        try {
+            self::log("Remove Event: $evnUid");
+
+            $event = EventPeer::retrieveByPK($evnUid);
+            $event->delete();
+
+            self::log("Remove Event Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function addGateway($data)
@@ -384,7 +425,7 @@ class Bpmn extends Handler
             extract($start);
         }
 
-        return  Gateway::getAll($this->getUid(), null, null, '', $changeCaseTo);
+        return  Gateway::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo);
     }
 
     public function removeGateway($gatUid)
