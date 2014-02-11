@@ -1195,6 +1195,7 @@ class RestContext extends BehatContext
     public function theResponseStatusMessageShouldHaveTheFollowingText($arg1)
     {
 
+        if( $arg1!=""){
             $message="";
             if($bodyResponse=json_decode($this->_response->getBody(true))){
                 if(isset($bodyResponse->error->message)){
@@ -1213,6 +1214,7 @@ class RestContext extends BehatContext
                 throw new \Exception('This is not a valid response');
 
             }
+        }
 
 
 
