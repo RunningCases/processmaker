@@ -125,6 +125,7 @@ class FilesManager extends Api
         }
         return $response;
     }
+
     /**
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $path
@@ -135,14 +136,29 @@ class FilesManager extends Api
     {
         try {
             $filesManager = new \BusinessModel\FilesManager();
-            $arrayData = $filesManager->deleteProcessFilesManager($prjUid, $path);
-            //Response
-            $response = $arrayData;
+            $filesManager->deleteProcessFilesManager($prjUid, $path);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
+    }
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $path
+     *
+     * @url GET /:prjUid/process-file-manager/download
+     */
+    public function doDownloadProcessFilesManager($prjUid, $path)
+    {
+        try {
+            $filesManager = new \BusinessModel\FilesManager();
+            $filesManager->downloadProcessFilesManager($prjUid, $path);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
     }
 }
 
