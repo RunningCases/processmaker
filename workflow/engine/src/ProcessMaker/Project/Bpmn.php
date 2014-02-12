@@ -86,12 +86,14 @@ class Bpmn extends Handler
         // setting defaults
         $data['PRJ_UID'] = array_key_exists('PRJ_UID', $data) ? $data['PRJ_UID'] : Hash::generateUID();
 
+        self::log("Create Project with data: ", $data);
         $this->project = new Project();
         $this->project->fromArray($data, BasePeer::TYPE_FIELDNAME);
         $this->project->setPrjCreateDate(date("Y-m-d H:i:s"));
         $this->project->save();
 
         $this->prjUid = $this->project->getPrjUid();
+        self::log("Create Project Success!");
     }
 
     public function update()
@@ -106,11 +108,20 @@ class Bpmn extends Handler
          * 2. Remove Project related objects
          */
 
-        $activities = $this->getActivities();
-
-        foreach ($activities as $activity) {
+        self::log("Remove Project With Uid: {$this->prjUid}");
+        foreach ($this->getActivities() as $activity) {
             $this->removeActivity($activity["ACT_UID"]);
         }
+        foreach ($this->getGateways() as $gateway) {
+            $this->removeGateway($gateway["GAT_UID"]);
+        }
+        foreach ($this->getEvents() as $event) {
+            $this->removeEvent($event["EVN_UID"]);
+        }
+        foreach ($this->getFlows() as $flow) {
+            $this->removeFlow($flow["FLO_UID"]);
+        }
+
         if ($process = $this->getProcess("object")) {
             $process->delete();
         }
@@ -119,6 +130,19 @@ class Bpmn extends Handler
         }
         if ($project = $this->getProject("object")) {
             $project->delete();
+        }
+        self::log("Remove Project Success!");
+    }
+
+    public static function removeIfExists($prjUid)
+    {
+        $project = ProjectPeer::retrieveByPK($prjUid);
+
+        if ($project) {
+            $me = new self();
+            $me->prjUid = $project->getPrjUid();
+            $me->project = $project;
+            $me->remove();
         }
     }
 

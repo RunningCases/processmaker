@@ -48,7 +48,6 @@
     },
     "require-dev":{
         "guzzle/guzzle":"~3.1.1",
-        "behat/behat":"2.4.*@stable",
-        "lisachenko/go-aop-php": "*"
+        "behat/behat":"2.4.*@stable"
     }
 }

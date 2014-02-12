@@ -213,5 +213,30 @@ class Route extends BaseRoute
         }
         return $value;
     }
+
+    /**
+     * @param $field
+     * @param null $value
+     * @return \Route|null
+     */
+    public static function findOneBy($field, $value = null)
+    {
+        $rows = self::findAllBy($field, $value);
+
+        return empty($rows) ? null : $rows[0];
+    }
+
+    public static function findAllBy($field, $value = null)
+    {
+        $field = is_array($field) ? $field : array($field => $value);
+
+        $c = new Criteria('workflow');
+
+        foreach ($field as $key => $value) {
+            $c->add($key, $value, Criteria::EQUAL);
+        }
+
+        return RoutePeer::doSelect($c);
+    }
 }
 
