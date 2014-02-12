@@ -181,6 +181,40 @@ class DynaForm
     }
 
     /**
+     * Verify if doesn't exist the DynaForm in table DYNAFORM
+     *
+     * @param string $dynaFormUid           Unique id of DynaForm
+     * @param string $processUid            Unique id of Process
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exist the DynaForm in table DYNAFORM
+     */
+    public function throwExceptionIfNotExistsDynaForm($dynaFormUid, $processUid, $fieldNameForException)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\DynaformPeer::DYN_UID);
+
+            if ($processUid != "") {
+                $criteria->add(\DynaformPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            }
+
+            $criteria->add(\DynaformPeer::DYN_UID, $dynaFormUid, \Criteria::EQUAL);
+
+            $rsCriteria = \DynaformPeer::doSelectRS($criteria);
+
+            if (!$rsCriteria->next()) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormUid), "The DynaForm with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Verify if exists the title of a DynaForm
      *
      * @param string $processUid            Unique id of Process
@@ -265,9 +299,7 @@ class DynaForm
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
             //Verify data
-            $process = new \BusinessModel\Process();
-
-            $process->throwExceptionIfNotExistsDynaForm("", $dynaFormUid, $this->arrayFieldNameForException["dynaFormUid"]);
+            $this->throwExceptionIfNotExistsDynaForm($dynaFormUid, "", $this->arrayFieldNameForException["dynaFormUid"]);
 
             //Load DynaForm
             $dynaForm = new \Dynaform();
@@ -277,6 +309,8 @@ class DynaForm
             $processUid = $arrayDynaFormData["PRO_UID"];
 
             //Verify data
+            $process = new \BusinessModel\Process();
+
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
 
             if (isset($arrayData["DYN_TITLE"])) {
@@ -312,9 +346,7 @@ class DynaForm
     {
         try {
             //Verify data
-            $process = new \BusinessModel\Process();
-
-            $process->throwExceptionIfNotExistsDynaForm("", $dynaFormUid, $this->arrayFieldNameForException["dynaFormUid"]);
+            $this->throwExceptionIfNotExistsDynaForm($dynaFormUid, "", $this->arrayFieldNameForException["dynaFormUid"]);
 
             //Load DynaForm
             $dynaForm = new \Dynaform();
@@ -408,7 +440,7 @@ class DynaForm
             //Verify data
             $process->throwExceptionIfNoExistsProcess($processUidCopyImport, $this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID"));
 
-            $process->throwExceptionIfNotExistsDynaForm($processUidCopyImport, $dynaFormUidCopyImport, $this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID"));
+            $this->throwExceptionIfNotExistsDynaForm($dynaFormUidCopyImport, $processUidCopyImport, $this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID"));
 
             //Copy/Import
             //Create
@@ -840,9 +872,7 @@ class DynaForm
     {
         try {
             //Verify data
-            $process = new \BusinessModel\Process();
-
-            $process->throwExceptionIfNotExistsDynaForm("", $dynaFormUid, $this->arrayFieldNameForException["dynaFormUid"]);
+            $this->throwExceptionIfNotExistsDynaForm($dynaFormUid, "", $this->arrayFieldNameForException["dynaFormUid"]);
 
             //Get data
             $criteria = $this->getDynaFormCriteria();
