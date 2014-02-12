@@ -63,6 +63,7 @@ class FilesManager
             while ($sObject = $oDirectory->read()) {
                 if (($sObject !== '.') && ($sObject !== '..')) {
                     $sPath = $sDirectory . $sObject;
+                    $sCurrentDirectory = end(explode("/",$sPath));
                     if (is_dir($sPath)) {
                         $aDirectories[] = array('PATH' => ($sCurrentDirectory != '' ? $sCurrentDirectory . PATH_SEP : '') . $sObject, 'DIRECTORY' => $sObject );
                     } else {
@@ -128,6 +129,9 @@ class FilesManager
             } else {
                 $sEditable = false;
             }
+            if (file_exists(PATH_SEP.$sDirectory)) {
+                throw (new \Exception( 'The file: '. $sDirectory . ' exists.'));
+            }
             $sPkProcessFiles = \G::generateUniqueID();
             $oProcessFiles = new \ProcessFiles();
             $sDate = date( 'Y-m-d H:i' );
@@ -154,23 +158,6 @@ class FilesManager
                                   'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
                                   'prf_update_date' => $oProcessFiles->getPrfUpdateDate());
             return $oProcessFile;
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Return the Process Files Manager
-     *
-     * @param string $sProcessUID {@min 32} {@max 32}
-     *
-     * return array
-     *
-     * @access public
-     */
-    public function getProcessFilesManagerDownload($sProcessUID)
-    {
-        try {
         } catch (Exception $e) {
             throw $e;
         }
@@ -321,12 +308,33 @@ class FilesManager
     public function downloadProcessFilesManager($sProcessUID, $path)
     {
         try {
-            $arrayTaskUid = $this->getFileManagerUid($path);
-            $sPath = explode("/", $path);
-            $sfile = end(explode("/",$path));
-            $main = implode(array_slice($sPath, -3, 1));
-            if (file_exists(PATH_SEP.$path)) {
+            $path = PATH_SEP.$path;
+            //$url = http:
+
+            if (file_exists($path)) {
+                $sfile = end(explode("/",$path));
                 \G::streamFile($path, true);
+                # open file to write
+                $fp = fopen ($path, 'w+');
+                # start curl
+                $ch = curl_init();
+                curl_setopt( $ch, CURLOPT_URL, $url );
+                # set return transfer to false
+                curl_setopt( $ch, CURLOPT_RETURNTRANSFER, false );
+                curl_setopt( $ch, CURLOPT_BINARYTRANSFER, true );
+                curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+                # increase timeout to download big file
+                curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 10 );
+                # write data to local file
+                curl_setopt( $ch, CURLOPT_FILE, $fp );
+                # execute curl
+                curl_exec( $ch );
+                # close curl
+                curl_close( $ch );
+                # close local file
+                fclose( $fp );
+
+                if (filesize($path) > 0) return true;
             }
         } catch (Exception $e) {
             throw $e;

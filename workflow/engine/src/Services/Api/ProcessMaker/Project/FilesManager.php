@@ -42,26 +42,6 @@ class FilesManager extends Api
 
     /**
      * @param string $prjUid {@min 32} {@max 32}
-     * @param string $path
-     *
-     * @url GET /:prjUid/process-file-manager-download
-     */
-    public function doGetProcessFilesManagerDownload($prjUid, $path = '')
-    {
-        try {
-            $filesManager = new \BusinessModel\FilesManager();
-            $arrayData = $filesManager->getProcessFilesManagerDownload($prjUid);
-            //Response
-            $response = $arrayData;
-        } catch (\Exception $e) {
-            //response
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-        return $response;
-    }
-
-    /**
-     * @param string $prjUid {@min 32} {@max 32}
      * @param ProcessFilesManagerStructure $request_data
      *
      * @url POST /:prjUid/process-file-manager
