@@ -260,12 +260,14 @@ class OutputDocument
                     $aData['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'] = "";
                     $aData['OUT_DOC_PDF_SECURITY_PERMISSIONS'] = "";
                 }
-                if (isset( $aData['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'] ) && $aData['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'] != "") {
-                    $aData['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'] = \G::encrypt( $aData['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'], $aData['OUT_DOC_UID'] );
-                    $aData['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'] = \G::encrypt( $aData['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'], $aData['OUT_DOC_UID'] );
-                }
             }
             $outDocUid = $oOutputDocument->create($aData);
+            $aData = array_change_key_case($aData, CASE_LOWER);
+            if (isset( $aData['out_doc_pdf_security_open_password'] ) && $aData['out_doc_pdf_security_open_password'] != "") {
+                $aData['out_doc_pdf_security_open_password'] = \G::encrypt( $aData['out_doc_pdf_security_open_password'], $outDocUid );
+                $aData['out_doc_pdf_security_owner_password'] = \G::encrypt( $aData['out_doc_pdf_security_owner_password'], $outDocUid );
+            }
+            $this->updateOutputDocument($sProcessUID, $aData, $outDocUid);
             //Return
             unset($aData["PRO_UID"]);
             $aData = array_change_key_case($aData, CASE_LOWER);

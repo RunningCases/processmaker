@@ -70,7 +70,7 @@ Requirements:
       
     Examples:
       | test_description           | project                          | pu_uid                           |
-      | Get the supervisor details | 85794888452ceeef3675164057928956 | 31336919452fa84404e3ac0086239686 |
+      | Get the supervisor details | 85794888452ceeef3675164057928956 | 45562646852fa827abb79a5097602637 |
 
  
     Scenario Outline: Get a List of dynaforms assigned to a process supervisor

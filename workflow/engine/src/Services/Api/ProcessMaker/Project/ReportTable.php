@@ -26,8 +26,8 @@ class ReportTable extends Api
     public function doGetReportTables($prj_uid)
     {
         try {
-            $oReportTable = new \BusinessModel\ReportTable();
-            $response = $oReportTable->getReportTables($prj_uid);
+            $oReportTable = new \BusinessModel\Table();
+            $response = $oReportTable->getTables($prj_uid, true);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -46,8 +46,8 @@ class ReportTable extends Api
     public function doGetReportTable($prj_uid, $rep_uid)
     {
         try {
-            $oReportTable = new \BusinessModel\ReportTable();
-            $response = $oReportTable->getReportTable($prj_uid, $rep_uid);
+            $oReportTable = new \BusinessModel\Table();
+            $response = $oReportTable->getTable($rep_uid, $prj_uid, true);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -66,7 +66,7 @@ class ReportTable extends Api
     public function doGetPopulateReportTable($prj_uid, $rep_uid)
     {
         try {
-            $oReportTable = new \BusinessModel\ReportTable();
+            $oReportTable = new \BusinessModel\Table();
             $response = $oReportTable->generateDataReport($prj_uid, $rep_uid);
             return $response;
         } catch (\Exception $e) {
@@ -86,8 +86,8 @@ class ReportTable extends Api
     public function doGetReportTableData($prj_uid, $rep_uid)
     {
         try {
-            $oReportTable = new \BusinessModel\ReportTable();
-            $response = $oReportTable->getDataReportTableData($prj_uid, $rep_uid);
+            $oReportTable = new \BusinessModel\Table();
+            $response = $oReportTable->getTableData($rep_uid, $prj_uid, true);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -121,8 +121,8 @@ class ReportTable extends Api
         $rep_tab_grid = ''
     ) {
         try {
-            $oReportTable = new \BusinessModel\ReportTable();
-            $response = $oReportTable->saveReportTable($prj_uid, $request_data);
+            $oReportTable = new \BusinessModel\Table();
+            $response = $oReportTable->saveTable($request_data, $prj_uid, true);
             if (isset($response['pro_uid'])) {
                 unset($response['pro_uid']);
             }
@@ -153,8 +153,8 @@ class ReportTable extends Api
     ) {
         try {
             $request_data['rep_uid'] = $rep_uid;
-            $oReportTable = new \BusinessModel\ReportTable();
-            $response = $oReportTable->updateReportTable($prj_uid, $request_data);
+            $oReportTable = new \BusinessModel\Table();
+            $response = $oReportTable->updateTable($request_data, $prj_uid, true);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -173,10 +173,11 @@ class ReportTable extends Api
     public function doDeleteReportTable($prj_uid, $rep_uid)
     {
         try {
-            $oReportTable = new \BusinessModel\ReportTable();
-            $response = $oReportTable->deleteReportTable($prj_uid, $rep_uid);
+            $oReportTable = new \BusinessModel\Table();
+            $response = $oReportTable->deleteTable($rep_uid, $prj_uid, true);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 }
+
