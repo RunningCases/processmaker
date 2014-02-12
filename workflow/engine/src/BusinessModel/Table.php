@@ -5,7 +5,7 @@ use \G;
 use \AdditionalTables;
 use \Fields;
 
-class ReportTable
+class Table
 {
     /**
      * List of ReportTables in process
@@ -16,8 +16,13 @@ class ReportTable
      *
      * @return array
      */
-    public function getReportTables($pro_uid)
+    public function getTables($pro_uid = '', $reportFlag = false)
     {
+        //VALIDATION
+        if ($reportFlag) {
+            $pro_uid = $this->validateProUid($pro_uid);
+        }
+
         $reportTables = array();
         $oCriteria = new \Criteria('workflow');
         $oCriteria->addSelectColumn(\AdditionalTablesPeer::ADD_TAB_UID);
@@ -26,7 +31,7 @@ class ReportTable
         $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
         while ($oDataset->next()) {
             $row = $oDataset->getRow();
-            $reportTables[] = $this->getReportTable($pro_uid, $row['ADD_TAB_UID'], false);
+            $reportTables[] = $this->getTable($row['ADD_TAB_UID'], $pro_uid, $reportFlag, false);
         }
 
         return $reportTables;
@@ -34,8 +39,8 @@ class ReportTable
 
     /**
      * Get data for ReportTable
+     * @var string $tab_uid. Uid for Table
      * @var string $pro_uid. Uid for Process
-     * @var string $rep_uid. Uid for Report Table
      * @var string $validate. Flag for validate
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -43,48 +48,89 @@ class ReportTable
      *
      * @return array
      */
-    public function getReportTable($pro_uid, $rep_uid, $validate = true)
+    public function getTable($tab_uid, $pro_uid = '', $reportFlag = false, $validate = true)
     {
         //VALIDATION
         if ($validate) {
-            $pro_uid = $this->validateProUid($pro_uid);
-            $rep_uid = $this->validateRepUid($rep_uid);
-            $repData['PRO_UID'] = $pro_uid;
+            if ($reportFlag) {
+                $pro_uid = $this->validateProUid($pro_uid);
+                $tabData['PRO_UID'] = $pro_uid;
+            }
+            $tab_uid = $this->validateTabUid($tab_uid);
         }
 
-        $repData = array();
+        $tabData = array();
         $additionalTables = new AdditionalTables();
 
-        // REPORT TABLE PROPERTIES
-        $table = $additionalTables->load( $rep_uid, true );
+        // TABLE PROPERTIES
+        $table = $additionalTables->load( $tab_uid, true );
         $table['DBS_UID'] = $table['DBS_UID'] == null || $table['DBS_UID'] == '' ? 'workflow' : $table['DBS_UID'];
-        $repData['REP_UID']             = $rep_uid;
-        $repData['REP_TAB_NAME']        = $table['ADD_TAB_NAME'];
-        $repData['REP_TAB_DESCRIPTION'] = $table['ADD_TAB_DESCRIPTION'];
-        $repData['REP_TAB_CLASS_NAME']  = $table['ADD_TAB_CLASS_NAME'];
-        $repData['REP_TAB_CONNECTION']  = $table['DBS_UID'];
-        $repData['REP_TAB_TYPE']        = $table['ADD_TAB_TYPE'];
-        $repData['REP_TAB_GRID']        = $table['ADD_TAB_GRID'];
 
-        // REPORT TABLE NUM ROWS DATA
-        $tableData = $additionalTables->getAllData( $rep_uid, 0, 2 );
-        $repData['REP_NUM_ROWS'] = $tableData['count'];
+        // TABLE NUM ROWS DATA
+        $tableData = $additionalTables->getAllData( $tab_uid, 0, 2 );
 
-        // REPORT TABLE FIELDS
+        if ($reportFlag) {
+            $tabData['REP_UID']             = $tab_uid;
+            $tabData['REP_TAB_NAME']        = $table['ADD_TAB_NAME'];
+            $tabData['REP_TAB_DESCRIPTION'] = $table['ADD_TAB_DESCRIPTION'];
+            $tabData['REP_TAB_CLASS_NAME']  = $table['ADD_TAB_CLASS_NAME'];
+            $tabData['REP_TAB_CONNECTION']  = $table['DBS_UID'];
+            $tabData['REP_TAB_TYPE']        = $table['ADD_TAB_TYPE'];
+            $tabData['REP_TAB_GRID']        = $table['ADD_TAB_GRID'];
+            $tabData['REP_NUM_ROWS']        = $tableData['count'];
+        } else {
+            $tabData['PMT_UID']             = $tab_uid;
+            $tabData['PMT_TAB_NAME']        = $table['ADD_TAB_NAME'];
+            $tabData['PMT_TAB_DESCRIPTION'] = $table['ADD_TAB_DESCRIPTION'];
+            $tabData['PMT_TAB_CLASS_NAME']  = $table['ADD_TAB_CLASS_NAME'];
+            $tabData['PMT_NUM_ROWS']        = $tableData['count'];
+        }
+
+        // TABLE FIELDS
         foreach ($table['FIELDS'] as $valField) {
             $fieldTemp = array();
             $fieldTemp = array_change_key_case($valField, CASE_LOWER);
-            $repData['FIELDS'][] = $fieldTemp;
+            $tabData['FIELDS'][] = $fieldTemp;
         }
 
-        $repData = array_change_key_case($repData, CASE_LOWER);
-        return $repData;
+        $tabData = array_change_key_case($tabData, CASE_LOWER);
+        return $tabData;
+    }
+
+    /**
+     * Generate Data for Report Table
+     * @var string $pro_uid. Uid for Process
+     * @var string $rep_uid. Uid for Report Table
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function generateDataReport($pro_uid, $rep_uid, $validate = true)
+    {
+        if ($validate) {
+            $pro_uid = $this->validateProUid($pro_uid);
+            $rep_uid = $this->validateTabUid($rep_uid);
+            G::loadClass('pmTable');
+        }
+
+        $additionalTables = new AdditionalTables();
+        $table = $additionalTables->load($rep_uid);
+        $additionalTables->populateReportTable(
+            $table['ADD_TAB_NAME'],
+            \pmTable::resolveDbSource( $table['DBS_UID'] ),
+            $table['ADD_TAB_TYPE'],
+            $table['PRO_UID'],
+            $table['ADD_TAB_GRID'],
+            $table['ADD_TAB_UID']
+        );
     }
 
     /**
      * Get data for ReportTable
-     * @var string $pro_uid. Uid for Process
-     * @var string $rep_uid. Uid for Report Table
+     * @var string $tab_uid. Uid for Report Table
+     * @var string $pro_uid. Uid for Process     
      * @var string $validate. Flag for validate
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -92,15 +138,17 @@ class ReportTable
      *
      * @return array
      */
-    public function getDataReportTableData($pro_uid, $rep_uid)
+    public function getTableData($tab_uid, $pro_uid = '', $reportFlag = false)
     {
         //VALIDATION
-        $pro_uid = $this->validateProUid($pro_uid);
-        $rep_uid = $this->validateRepUid($rep_uid);
+        if ($reportFlag) {
+            $pro_uid = $this->validateProUid($pro_uid);
+        }
+        $tab_uid = $this->validateTabUid($tab_uid);
 
         $additionalTables = new AdditionalTables();
-        $table  = $additionalTables->load($rep_uid, true);
-        $result = $additionalTables->getAllData($rep_uid);
+        $table  = $additionalTables->load($tab_uid, true);
+        $result = $additionalTables->getAllData($tab_uid);
         $primaryKeys = $additionalTables->getPrimaryKeys();
         if (is_array($result['rows'])) {
             foreach ($result['rows'] as $i => $row) {
@@ -119,39 +167,53 @@ class ReportTable
     }
 
     /**
-     * Save Data for Report Table
+     * Save Data for Table
+     * @var string $tab_data. Data for Table
      * @var string $pro_uid. Uid for Process
-     * @var string $rep_data. Data for Report Table
-     * @var string $createRep. Flag for create Report Table
+     * @var string $reportFlag. Flag for Report Table
+     * @var string $createRep. Flag for create Table
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @return array
      */
-    public function saveReportTable($pro_uid, $rep_data, $createRep = true)
+    public function saveTable($tab_data, $pro_uid = '', $reportFlag = false, $createRep = true)
     {
-        // CHANGE CASE UPPER REPORT TABLE
-        $dataValidate =  array();
-        $dataValidate = array_change_key_case($rep_data, CASE_UPPER);
+        // CHANGE CASE UPPER TABLE
+        $fieldsValidate = array();
+        $tableName      = '';
+        $tableCon       = 'workflow';
+        $dataValidate   = array_change_key_case($tab_data, CASE_UPPER);
+        $oAdditionalTables = new AdditionalTables();
 
-        // VALIDATION REPORT TABLE DATA
-        $pro_uid = $this->validateProUid($pro_uid);
-        $dataValidate['PRO_UID']            = $pro_uid;
-        $dataValidate['REP_TAB_NAME']       = $this->validateRepName($dataValidate['REP_TAB_NAME']);
-        $tempRepTabName                     = $dataValidate['REP_TAB_CONNECTION'];
-        $dataValidate['REP_TAB_CONNECTION'] = $this->validateRepConnection($tempRepTabName, $pro_uid);
-        if ($dataValidate['REP_TAB_TYPE'] == 'GRID') {
-            $dataValidate['REP_TAB_GRID']   = $this->validateRepGrid($dataValidate['REP_TAB_GRID'], $pro_uid);
+        // VALIDATION TABLE DATA
+        if ($reportFlag) {
+            $pro_uid = $this->validateProUid($pro_uid);
+            $dataValidate['TAB_UID']            = (isset($dataValidate['REP_UID'])) ? $dataValidate['REP_UID'] : '';
+            $dataValidate['PRO_UID']            = $pro_uid;
+            $dataValidate['REP_TAB_NAME']       = $this->validateTabName($dataValidate['REP_TAB_NAME']);
+            $tempRepTabName                     = $dataValidate['REP_TAB_CONNECTION'];
+            $dataValidate['REP_TAB_CONNECTION'] = $this->validateRepConnection($tempRepTabName, $pro_uid);
+            if ($dataValidate['REP_TAB_TYPE'] == 'GRID') {
+                $dataValidate['REP_TAB_GRID']   = $this->validateRepGrid($dataValidate['REP_TAB_GRID'], $pro_uid);
+            }
+            $fieldsValidate = $this->getDynafields($pro_uid, $dataValidate['REP_TAB_TYPE'], $dataValidate['REP_TAB_GRID']);
+            $repTabClassName = $oAdditionalTables->getPHPName($dataValidate['REP_TAB_NAME']);
+            $tableName = $dataValidate['REP_TAB_NAME'];
+            $tableCon  = $dataValidate['REP_TAB_CONNECTION'];
+        } else {
+            $dataValidate['TAB_UID']            = (isset($dataValidate['PMT_UID'])) ? $dataValidate['PMT_UID'] : '';
+            $dataValidate['PMT_TAB_NAME']       = $this->validateTabName($dataValidate['PMT_TAB_NAME']);
+            $dataValidate['PMT_TAB_CONNECTION'] = 'workflow';
+            $repTabClassName = $oAdditionalTables->getPHPName($dataValidate['PMT_TAB_NAME']);
+            $tableName = $dataValidate['PMT_TAB_NAME'];
+            $tableCon  = $dataValidate['PMT_TAB_CONNECTION'];
         }
 
-        // VERIFY COLUMNS REPORT TABLE
-        $oAdditionalTables = new AdditionalTables();
+        // VERIFY COLUMNS TABLE
         $oFields = new Fields();
-
-        $repTabClassName = $oAdditionalTables->getPHPName($dataValidate['REP_TAB_NAME']);
         $columns = $dataValidate['FIELDS'];
-
 
         // Reserved Words Table, Field, Sql
         $reservedWords = array ('ALTER','CLOSE','COMMIT','CREATE','DECLARE','DELETE',
@@ -164,28 +226,33 @@ class ReportTable
             'or','throw','protected','public','static','switch','xor','try','use','var','while');
         $reservedWordsSql = G::reservedWordsSql();
 
-        $defaultColumns = $this->getReportTableDefaultColumns($data['REP_TAB_TYPE']);
-        $columns = array_merge( $defaultColumns, $columns );
+        if ($reportFlag) {
+            $defaultColumns = $this->getReportTableDefaultColumns($data['REP_TAB_TYPE']);
+            $columns = array_merge( $defaultColumns, $columns );
+        }
 
         // validations
-        if (is_array( $oAdditionalTables->loadByName( $data['REP_TAB_NAME'] ) )) {
-            throw new \Exception(G::loadTranslation('ID_PMTABLE_ALREADY_EXISTS', array($data['REP_TAB_NAME'])));
+        if ($createRep) {
+            if (is_array( $oAdditionalTables->loadByName( $tableName ) )) {
+                throw new \Exception(G::loadTranslation('ID_PMTABLE_ALREADY_EXISTS', array($tableName)));
+            }
+            if (in_array( strtoupper( $tableName ), $reservedWords ) ||
+                in_array( strtoupper( $tableName ), $reservedWordsSql )) {
+                throw (new \Exception(G::LoadTranslation("ID_PMTABLE_INVALID_NAME", array($tableName))));
+            }
         }
-
-        if (in_array( strtoupper( $data["REP_TAB_NAME"] ), $reservedWords ) || 
-            in_array( strtoupper( $data["REP_TAB_NAME"] ), $reservedWordsSql )) {
-            throw (new \Exception(G::LoadTranslation("ID_PMTABLE_INVALID_NAME", array($data["REP_TAB_NAME"]))));
-        }
-
 
         //backward compatility
         $columnsStd = array();
-        $fieldsValidate = $this->getDynafields($pro_uid, $dataValidate['REP_TAB_TYPE'], $dataValidate['REP_TAB_GRID']);
         foreach ($columns as $i => $column) {
             if (isset($columns[$i]['fld_dyn'])) {
                 $columns[$i]['field_dyn'] = $columns[$i]['fld_dyn'];
                 unset($columns[$i]['fld_dyn']);
+            } else {
+                $columns[$i]['fld_dyn'] = '';
             }
+            $columns[$i]['fld_dyn'] = ($reportFlag) ? $columns[$i]['fld_dyn'] : '';
+
             if (isset($columns[$i]['fld_name'])) {
                 $columns[$i]['field_name'] = $columns[$i]['fld_name'];
             }
@@ -202,14 +269,14 @@ class ReportTable
                 unset($columns[$i]['fld_size']);
             }
 
-            if (in_array(strtoupper($columns[$i]['field_name']), $reservedWordsSql) || 
+            if (in_array(strtoupper($columns[$i]['field_name']), $reservedWordsSql) ||
                 in_array( strtolower( $columns[$i]['field_name']), $reservedWordsPhp )) {
                 throw (new \Exception(G::LoadTranslation("ID_PMTABLE_INVALID_FIELD_NAME", array($columns[$i]['field_name']))));
             }
 
             // VALIDATIONS
             $columns[$i]['field_type'] = $this->validateFldType($columns[$i]['field_type']);
-            if ($columns[$i]['field_autoincrement']) {
+            if (isset($columns[$i]['field_autoincrement']) && $columns[$i]['field_autoincrement']) {
                 $typeCol = $columns[$i]['field_type'];
                 if (! ($typeCol === 'INTEGER' || $typeCol === 'TINYINT' || $typeCol === 'SMALLINT' || $typeCol === 'BIGINT')) {
                     $columns[$i]['field_autoincrement'] = false;
@@ -217,7 +284,7 @@ class ReportTable
             }
 
             if (isset($columns[$i]['fld_name'])) {
-                if ($columns[$i]['field_dyn'] != '') {
+                if (isset($columns[$i]['field_dyn']) && $columns[$i]['field_dyn'] != '') {
                     $res = array_search($columns[$i]['field_dyn'], $fieldsValidate['NAMES']);
                     if ($res === false) {
                         throw (new \Exception("The property 'fields' in key '$i' in property fld_dyn: '".$columns[$i]['field_dyn']."', is incorrect."));
@@ -243,31 +310,51 @@ class ReportTable
             $temp->field_dyn = (isset($temp->field_dyn)) ? $temp->field_dyn : '';
             $temp->field_filter = (isset($temp->field_filter)) ? $temp->field_filter : 0;
             $temp->field_autoincrement = (isset($temp->field_autoincrement)) ? $temp->field_autoincrement : 0;
+
+            if (!$reportFlag) {
+                unset($temp->_index);
+                unset($temp->field_filter);
+            }
             $columnsStd[$i] = $temp;
         }
 
-        G::LoadClass("pmTable");
-        $pmTable = new \pmTable($dataValidate['REP_TAB_NAME']);
-        $pmTable->setDataSource($dataValidate['REP_TAB_CONNECTION']);
+        $pmTable = new \pmTable($tableName);
+        $pmTable->setDataSource($tableCon);
         $pmTable->setColumns($columnsStd);
         $pmTable->setAlterTable(true);
+        if (!$createRep) {
+            $pmTable->setKeepData(true);
+        }
         $pmTable->build();
         $buildResult = ob_get_contents();
         ob_end_clean();
 
         // Updating additional table struture information
-        $dataValidate['REP_TAB_UID'] = (isset($dataValidate['REP_TAB_UID'])) ? $dataValidate['REP_TAB_UID'] : '';
-        $addTabData = array(
-            'ADD_TAB_UID' => $dataValidate['REP_TAB_UID'],
-            'ADD_TAB_NAME' => $dataValidate['REP_TAB_NAME'],
-            'ADD_TAB_CLASS_NAME' => $repTabClassName,
-            'ADD_TAB_DESCRIPTION' => $dataValidate['REP_TAB_DSC'],
-            'ADD_TAB_PLG_UID' => '',
-            'DBS_UID' => ($dataValidate['REP_TAB_CONNECTION'] ? $dataValidate['REP_TAB_CONNECTION'] : 'workflow'),
-            'PRO_UID' => $dataValidate['PRO_UID'],
-            'ADD_TAB_TYPE' => $dataValidate['REP_TAB_TYPE'],
-            'ADD_TAB_GRID' => $dataValidate['REP_TAB_GRID']
-        );
+        if ($reportFlag) {
+            $addTabData = array(
+                'ADD_TAB_UID' => $dataValidate['TAB_UID'],
+                'ADD_TAB_NAME' => $dataValidate['REP_TAB_NAME'],
+                'ADD_TAB_CLASS_NAME' => $repTabClassName,
+                'ADD_TAB_DESCRIPTION' => $dataValidate['REP_TAB_DSC'],
+                'ADD_TAB_PLG_UID' => '',
+                'DBS_UID' => ($dataValidate['REP_TAB_CONNECTION'] ? $dataValidate['REP_TAB_CONNECTION'] : 'workflow'),
+                'PRO_UID' => $dataValidate['PRO_UID'],
+                'ADD_TAB_TYPE' => $dataValidate['REP_TAB_TYPE'],
+                'ADD_TAB_GRID' => $dataValidate['REP_TAB_GRID']
+            );
+        } else {
+            $addTabData = array(
+                'ADD_TAB_UID' => $dataValidate['TAB_UID'],
+                'ADD_TAB_NAME' => $dataValidate['PMT_TAB_NAME'],
+                'ADD_TAB_CLASS_NAME' => $repTabClassName,
+                'ADD_TAB_DESCRIPTION' => $dataValidate['PMT_TAB_DSC'],
+                'ADD_TAB_PLG_UID' => '',
+                'DBS_UID' => ($dataValidate['PMT_TAB_CONNECTION'] ? $dataValidate['PMT_TAB_CONNECTION'] : 'workflow'),
+                'PRO_UID' => '',
+                'ADD_TAB_TYPE' => '',
+                'ADD_TAB_GRID' => ''
+            );
+        }
         if ($createRep) {
             //new report table
             //create record
@@ -275,16 +362,15 @@ class ReportTable
         } else {
             //editing report table
             //updating record
-            $addTabUid = $dataValidate['REP_TAB_UID'];
+            $addTabUid = $dataValidate['TAB_UID'];
             $oAdditionalTables->update( $addTabData );
 
             //removing old data fields references
             $oCriteria = new \Criteria( 'workflow' );
-            $oCriteria->add( \FieldsPeer::ADD_TAB_UID, $dataValidate['REP_TAB_UID'] );
+            $oCriteria->add( \FieldsPeer::ADD_TAB_UID, $dataValidate['TAB_UID'] );
             \FieldsPeer::doDelete( $oCriteria );
         }
 
-        $rep_uid   = $addTabUid;
         // Updating pmtable fields
         foreach ($columnsStd as $i => $column) {
             $column = (array)$column;
@@ -307,105 +393,96 @@ class ReportTable
             );
             $oFields->create( $field );
         }
-        $this->generateDataReport($pro_uid, $rep_uid, false);
+        if ($reportFlag) {
+            $rep_uid   = $addTabUid;
+            $this->generateDataReport($pro_uid, $rep_uid, false);
+        }
         if ($createRep) {
-            return $this->getReportTable($pro_uid, $rep_uid, false);
+            $tab_uid   = $addTabUid;
+            return $this->getTable($tab_uid, $pro_uid, $reportFlag, false);
         }
     }
 
     /**
      * Update Data for ReportTable
+     * @var string $tab_data. Data for ReportTable
      * @var string $pro_uid. Uid for Process
-     * @var string $rep_data. Data for ReportTable
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @return void
      */
-    public function updateReportTable($pro_uid, $rep_data)
+    public function updateTable($tab_data, $pro_uid = '', $reportFlag = false)
     {
-        $rep_uid = $rep_data['rep_uid'];
-        $pro_uid = $this->validateProUid($pro_uid);
-        $rep_uid = $this->validateRepUid($rep_uid);
+        if ($reportFlag) {
+            $tab_uid = $tab_data['rep_uid'];
+            $pro_uid = $this->validateProUid($pro_uid);
+        } else {
+            $tab_uid = $tab_data['pmt_uid'];
+        }
+        $tab_uid = $this->validateTabUid($tab_uid);
 
         $dataValidate =  array();
         $oCriteria = new \Criteria('workflow');
-        $oCriteria->add(\AdditionalTablesPeer::ADD_TAB_UID, $rep_uid, \Criteria::EQUAL);
+        $oCriteria->add(\AdditionalTablesPeer::ADD_TAB_UID, $tab_uid, \Criteria::EQUAL);
         $oDataset = \AdditionalTablesPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
         if ($oDataset->next()) {
             $row = $oDataset->getRow();
-            $dataValidate['rep_tab_uid']  = $rep_uid;
-            $dataValidate['rep_tab_name'] = $row['ADD_TAB_NAME'];
-            $dataValidate['rep_tab_dsc']  = $rep_data['rep_tab_dsc'];
-            $dataValidate['rep_tab_connection'] = $row['DBS_UID'];
-            $dataValidate['rep_tab_type'] = $row['ADD_TAB_TYPE'];
-            $dataValidate['rep_tab_grid'] = $row['ADD_TAB_GRID'];
-            $dataValidate['fields']       = $rep_data['fields'];
+            if ($reportFlag) {
+                $dataValidate['rep_uid']  = $tab_uid;
+                $dataValidate['rep_tab_name'] = $row['ADD_TAB_NAME'];
+                $dataValidate['rep_tab_dsc']  = $tab_data['rep_tab_dsc'];
+                $dataValidate['rep_tab_connection'] = $row['DBS_UID'];
+                $dataValidate['rep_tab_type'] = $row['ADD_TAB_TYPE'];
+                $dataValidate['rep_tab_grid'] = $row['ADD_TAB_GRID'];
+            } else {
+                $dataValidate['pmt_uid']  = $tab_uid;
+                $dataValidate['pmt_tab_name'] = $row['ADD_TAB_NAME'];
+                $dataValidate['pmt_tab_dsc']  = $tab_data['pmt_tab_dsc'];
+            }
+            $dataValidate['fields']       = $tab_data['fields'];
         } else {
-            throw (new \Exception("The property rep_uid: '$rep_uid', is incorrect."));
+            if ($reportFlag) {
+                throw (new \Exception("The property rep_uid: '$tab_uid', is incorrect."));
+            } else {
+                throw (new \Exception("The property pmt_uid: '$tab_uid', is incorrect."));
+            }
         }
-        $this->saveReportTable($pro_uid, $dataValidate, false);
+        $this->saveTable($dataValidate, $pro_uid, $reportFlag, false);
     }
 
     /**
      * Delete ReportTable
      * @var string $pro_uid. Uid for Process
-     * @var string $rep_uid. Uid for Report Table
+     * @var string $tab_uid. Uid for Report Table
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @return void
      */
-    public function deleteReportTable($pro_uid, $rep_uid)
+    public function deleteTable($tab_uid, $pro_uid = '', $reportFlag = false)
     {
-        $pro_uid = $this->validateProUid($pro_uid);
-        $rep_uid = $this->validateRepUid($rep_uid);
+        if ($reportFlag) {
+            $pro_uid = $this->validateProUid($pro_uid);
+        }
+        $tab_uid = $this->validateTabUid($tab_uid);
 
         $at = new AdditionalTables();
-        $table = $at->load( $rep_uid );
+        $table = $at->load( $tab_uid );
 
         if (! isset( $table )) {
             require_once 'classes/model/ReportTable.php';
             $rtOld = new ReportTable();
-            $existReportTableOld = $rtOld->load($rep_uid);
+            $existReportTableOld = $rtOld->load($tab_uid);
             if (count($existReportTableOld) == 0) {
                 throw new Exception(G::LoadTranslation('ID_TABLE_NOT_EXIST_SKIPPED'));
             }
         }
-        $at->deleteAll($rep_uid);
-    }
-
-    /**
-     * Generate Data for Report Table
-     * @var string $pro_uid. Uid for Process
-     * @var string $rep_uid. Uid for Report Table
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @return void
-     */
-    public function generateDataReport($pro_uid, $rep_uid, $validate = true) {
-        if ($validate) {
-            $pro_uid = $this->validateProUid($pro_uid);
-            $rep_uid = $this->validateRepUid($rep_uid);
-            G::loadClass('pmTable');
-        }
-
-        $additionalTables = new AdditionalTables();
-        $table = $additionalTables->load($rep_uid);
-        $additionalTables->populateReportTable(
-            $table['ADD_TAB_NAME'],
-            \pmTable::resolveDbSource( $table['DBS_UID'] ),
-            $table['ADD_TAB_TYPE'],
-            $table['PRO_UID'],
-            $table['ADD_TAB_GRID'],
-            $table['ADD_TAB_UID']
-        );
+        $at->deleteAll($tab_uid);
     }
 
     /**
@@ -550,7 +627,7 @@ class ReportTable
             'field_filter' => false,
             'field_autoincrement' => false
         ); //APPLICATION KEY
-        
+
         array_push( $defaultColumns, $application );
 
         $application = array(
@@ -584,7 +661,7 @@ class ReportTable
             'field_filter' => false,
             'field_autoincrement' => false
         ); //APP_STATUS
-        
+
         array_push( $defaultColumns, $application );
 
         //if it is a grid report table
@@ -619,7 +696,8 @@ class ReportTable
      *
      * @return string
      */
-    public function validateProUid ($pro_uid) {
+    public function validateProUid ($pro_uid)
+    {
         $pro_uid = trim($pro_uid);
         if ($pro_uid == '') {
             throw (new \Exception("The project with prj_uid: '', does not exist."));
@@ -640,7 +718,8 @@ class ReportTable
      *
      * @return string
      */
-    public function validateRepUid ($rep_uid) {
+    public function validateTabUid ($rep_uid)
+    {
         $rep_uid = trim($rep_uid);
         if ($rep_uid == '') {
             throw (new \Exception("The report table with rep_uid: '', does not exist."));
@@ -661,7 +740,8 @@ class ReportTable
      *
      * @return string
      */
-    public function validateRepName ($rep_tab_name) {
+    public function validateTabName ($rep_tab_name)
+    {
         $rep_tab_name = trim($rep_tab_name);
         if ((strpos($rep_tab_name, ' ')) || (strlen($rep_tab_name) < 4)) {
             throw (new \Exception("The property rep_tab_name: '$rep_tab_name', is incorrect."));
@@ -683,7 +763,8 @@ class ReportTable
      *
      * @return string
      */
-    public function validateRepConnection ($rep_tab_connection, $pro_uid) {
+    public function validateRepConnection ($rep_tab_connection, $pro_uid)
+    {
         $rep_tab_connection = trim($rep_tab_connection);
         if ($rep_tab_connection == '') {
             throw (new \Exception("The property rep_tab_connection: '$rep_tab_connection', is incorrect."));
@@ -716,7 +797,8 @@ class ReportTable
      *
      * @return string
      */
-    public function validateRepGrid ($rep_tab_grid, $pro_uid) {
+    public function validateRepGrid ($rep_tab_grid, $pro_uid)
+    {
         $rep_tab_grid = trim($rep_tab_grid);
         if ($rep_tab_grid == '') {
             throw (new \Exception("The property rep_tab_grid: '$rep_tab_grid', is incorrect."));
@@ -764,8 +846,8 @@ class ReportTable
      *
      * @return string
      */
-    public function validateFldType ($fld_type) {
-
+    public function validateFldType ($fld_type)
+    {
         $fld_type = trim($fld_type);
         if ($fld_type == '') {
             throw (new \Exception("The property fld_type: '$fld_type', is incorrect."));
