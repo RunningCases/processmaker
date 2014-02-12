@@ -146,6 +146,33 @@ Feature: Web Entry
         | 44199549652e66ba533bb06088252754 | Task 1    | 60308801852e66b7181ae21045247174 |DynaForm Demo1 |
         | 56118778152e66babcc2103002009439 | Task 2    | 99869771852e66b7dc4b858088901665 |DynaForm Demo2 |
 
+    #POST /api/1.0/{workspace}/project/{prj_uid}/web-entry
+    #     Create a new Web Entry for a project
+    #     Create a new Web Entry using the method: PHP pages with Web Services
+    Scenario Outline: Create a new Web Entry using the method: PHP pages with Web Services
+        Given POST this data:
+        """
+        {
+            "tas_uid": "<tas_uid>",
+            "dyn_uid": "<dyn_uid>",
+            "method": "WS",
+            "input_document_access": 1,
+            "usr_username": "admin",
+            "usr_password": "admin"
+        }
+        """
+        And I request "project/28733629952e66a362c4f63066393844/web-entry"
+        And the content type is "application/json"
+        Then the response status code should be <status_code>
+        And the response charset is "UTF-8"
+        And the type is "object"
+        And the response status message should have the following text "<status_message>"
+
+        Examples:
+        | tas_uid                          | tas_title | dyn_uid                          | dyn_title     | status_code | status_message |
+        | 44199549652e66ba533bb06088252754 | Task 1    | 60308801852e66b7181ae21045247174 |DynaForm Demo1 | 400         | exist          |
+        | 56118778152e66babcc2103002009439 | Task 2    | 99869771852e66b7dc4b858088901665 |DynaForm Demo2 | 400         | exist          |
+
     #DELETE /api/1.0/{workspace}/project/{prj_uid}/web-entry/{tas_uid}/{dyn_uid}
     #       Delete a Web Entry of a Project
     Scenario Outline: Delete a Web Entry of a Project

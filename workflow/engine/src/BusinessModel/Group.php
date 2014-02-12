@@ -227,9 +227,9 @@ class Group
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
             //Verify data
-            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
-
             $process = new \BusinessModel\Process();
+
+            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
 
@@ -475,7 +475,7 @@ class Group
             $criteria = $this->getGroupCriteria();
 
             if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]) && trim($arrayFilterData["filter"]) != "") {
-                $criteria->add(\ContentPeer::CON_VALUE, "%" . trim($arrayFilterData["filter"]) . "%", \Criteria::LIKE);
+                $criteria->add(\ContentPeer::CON_VALUE, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE);
             }
 
             //Number records total
@@ -616,12 +616,10 @@ class Group
             }
 
             if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]) && trim($arrayFilterData["filter"]) != "") {
-                $filter = trim($arrayFilterData["filter"]);
-
                 $criteria->add(
-                    $criteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%" . $filter . "%", \Criteria::LIKE)->addOr(
-                    $criteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, "%" . $filter . "%", \Criteria::LIKE)->addOr(
-                    $criteria->getNewCriterion(\UsersPeer::USR_LASTNAME, "%" . $filter . "%", \Criteria::LIKE)))
+                    $criteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE)->addOr(
+                    $criteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE)->addOr(
+                    $criteria->getNewCriterion(\UsersPeer::USR_LASTNAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE)))
                 );
             }
 
@@ -673,9 +671,9 @@ class Group
             $arrayUser = array();
 
             //Verify data
-            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
-
             $process = new \BusinessModel\Process();
+
+            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
 
             $process->throwExceptionIfDataNotMetPagerVarDefinition(array("start" => $start, "limit" => $limit), $this->arrayFieldNameForException);
 

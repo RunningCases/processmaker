@@ -339,7 +339,7 @@ class RestContext extends BehatContext
             $this->_headers['Authorization'] = 'Bearer ' . $this->access_token;
         }
 
-        
+
         if($urlType=="absolute"){
             $this->_requestUrl = $pageUrl;
         }else{
@@ -361,7 +361,7 @@ class RestContext extends BehatContext
                     $url .= $this->_restGetQueryStringSuffix;
                 }
                 $this->_request = $this->_client
-                    ->get($url, $this->_headers);              
+                    ->get($url, $this->_headers);
                 $this->_response = $this->_request->send();
                 break;
             case 'POST':
@@ -1237,7 +1237,7 @@ class RestContext extends BehatContext
             $varValue = $sessionData->$sessionVarName;
         }
 
-       
+
         $pageUrl = str_replace($varName, $varValue, $pageUrl);
 
 
@@ -1275,4 +1275,28 @@ class RestContext extends BehatContext
         }
     }
 
+    /**
+     * @When /^I request "([^"]*)" with the keys? "([^"]*)" stored in session array$/
+     */
+    public function iRequestWithTheKeysStoredInSessionArray($url, $sessionVarName)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+
+        $arraySessionVarName = explode(",", $sessionVarName);
+
+        foreach ($arraySessionVarName as $value) {
+            $varName = trim($value);
+
+            $varValue = (isset($sessionData->$varName))? $sessionData->$varName : "";
+
+            $url = str_replace($varName, $varValue, $url);
+        }
+
+        $this->iRequest($url);
+    }
 }
+
