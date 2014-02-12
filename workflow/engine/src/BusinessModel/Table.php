@@ -8,8 +8,9 @@ use \Fields;
 class Table
 {
     /**
-     * List of ReportTables in process
-     * @var string $pro_uid. Uid for Process
+     * List of Tables in process
+     * @var string $pro_uid. Uid for process
+     * @var string $reportFlag. If is report table
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -38,9 +39,10 @@ class Table
     }
 
     /**
-     * Get data for ReportTable
-     * @var string $tab_uid. Uid for Table
-     * @var string $pro_uid. Uid for Process
+     * Get data for Table
+     * @var string $tab_uid. Uid for table
+     * @var string $pro_uid. Uid for process
+     * @var string $reportFlag. If is report table
      * @var string $validate. Flag for validate
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -56,7 +58,7 @@ class Table
                 $pro_uid = $this->validateProUid($pro_uid);
                 $tabData['PRO_UID'] = $pro_uid;
             }
-            $tab_uid = $this->validateTabUid($tab_uid);
+            $tab_uid = $this->validateTabUid($tab_uid, $reportFlag);
         }
 
         $tabData = array();
@@ -87,9 +89,18 @@ class Table
         }
 
         // TABLE FIELDS
+        $hiddenFields = array(
+            'fld_foreign_key', 'fld_foreign_key_table',
+            'fld_dyn_name', 'fld_dyn_uid', 'fld_filter'
+        );
         foreach ($table['FIELDS'] as $valField) {
             $fieldTemp = array();
             $fieldTemp = array_change_key_case($valField, CASE_LOWER);
+            foreach ($fieldTemp as $key => $value) {
+                if (in_array($key, $hiddenFields)) {
+                    unset($fieldTemp[$key]);
+                }
+            }
             $tabData['FIELDS'][] = $fieldTemp;
         }
 
@@ -99,8 +110,9 @@ class Table
 
     /**
      * Generate Data for Report Table
-     * @var string $pro_uid. Uid for Process
-     * @var string $rep_uid. Uid for Report Table
+     * @var string $pro_uid. Uid for process
+     * @var string $rep_uid. Uid for report table
+     * @var string $validate. Flag for validate
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -128,10 +140,10 @@ class Table
     }
 
     /**
-     * Get data for ReportTable
-     * @var string $tab_uid. Uid for Report Table
-     * @var string $pro_uid. Uid for Process     
-     * @var string $validate. Flag for validate
+     * Get data for Table
+     * @var string $tab_uid. Uid for table
+     * @var string $pro_uid. Uid for process
+     * @var string $reportFlag. If is report table
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -144,7 +156,7 @@ class Table
         if ($reportFlag) {
             $pro_uid = $this->validateProUid($pro_uid);
         }
-        $tab_uid = $this->validateTabUid($tab_uid);
+        $tab_uid = $this->validateTabUid($tab_uid, $reportFlag);
 
         $additionalTables = new AdditionalTables();
         $table  = $additionalTables->load($tab_uid, true);
@@ -168,10 +180,10 @@ class Table
 
     /**
      * Save Data for Table
-     * @var string $tab_data. Data for Table
-     * @var string $pro_uid. Uid for Process
-     * @var string $reportFlag. Flag for Report Table
-     * @var string $createRep. Flag for create Table
+     * @var string $tab_data. Data for table
+     * @var string $pro_uid. Uid for process
+     * @var string $reportFlag. If is report table
+     * @var string $createRep. Flag for create table
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -236,13 +248,14 @@ class Table
             if (is_array( $oAdditionalTables->loadByName( $tableName ) )) {
                 throw new \Exception(G::loadTranslation('ID_PMTABLE_ALREADY_EXISTS', array($tableName)));
             }
-            if (in_array( strtoupper( $tableName ), $reservedWords ) ||
-                in_array( strtoupper( $tableName ), $reservedWordsSql )) {
-                throw (new \Exception(G::LoadTranslation("ID_PMTABLE_INVALID_NAME", array($tableName))));
-            }
+        }
+        if (in_array( strtoupper( $tableName ), $reservedWords ) ||
+            in_array( strtoupper( $tableName ), $reservedWordsSql )) {
+            throw (new \Exception(G::LoadTranslation("ID_PMTABLE_INVALID_NAME", array($tableName))));
         }
 
         //backward compatility
+        $flagKey = false;
         $columnsStd = array();
         foreach ($columns as $i => $column) {
             if (isset($columns[$i]['fld_dyn'])) {
@@ -267,6 +280,18 @@ class Table
             if (isset($columns[$i]['fld_size'])) {
                 $columns[$i]['field_size'] = $columns[$i]['fld_size'];
                 unset($columns[$i]['fld_size']);
+            }
+            if (isset($columns[$i]['fld_key'])) {
+                $columns[$i]['field_key'] = $columns[$i]['fld_key'];
+                unset($columns[$i]['fld_key']);
+            }
+            if (isset($columns[$i]['fld_null'])) {
+                $columns[$i]['field_null'] = $columns[$i]['fld_null'];
+                unset($columns[$i]['fld_null']);
+            }
+            if (isset($columns[$i]['fld_autoincrement'])) {
+                $columns[$i]['field_autoincrement'] = $columns[$i]['fld_autoincrement'];
+                unset($columns[$i]['fld_autoincrement']);
             }
 
             if (in_array(strtoupper($columns[$i]['field_name']), $reservedWordsSql) ||
@@ -315,7 +340,13 @@ class Table
                 unset($temp->_index);
                 unset($temp->field_filter);
             }
+            if ($temp->field_key == 1 || $temp->field_key == true) {
+                $flagKey = true;
+            }
             $columnsStd[$i] = $temp;
+        }
+        if (!$flagKey) {
+            throw (new \Exception("The fields must have a key 'fld_key'"));
         }
 
         $pmTable = new \pmTable($tableName);
@@ -404,9 +435,10 @@ class Table
     }
 
     /**
-     * Update Data for ReportTable
-     * @var string $tab_data. Data for ReportTable
-     * @var string $pro_uid. Uid for Process
+     * Update Data for Table
+     * @var string $tab_data. Data for table
+     * @var string $pro_uid. Uid for process
+     * @var string $reportFlag. If is report table
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -421,7 +453,7 @@ class Table
         } else {
             $tab_uid = $tab_data['pmt_uid'];
         }
-        $tab_uid = $this->validateTabUid($tab_uid);
+        $tab_uid = $this->validateTabUid($tab_uid, $reportFlag);
 
         $dataValidate =  array();
         $oCriteria = new \Criteria('workflow');
@@ -455,9 +487,10 @@ class Table
     }
 
     /**
-     * Delete ReportTable
-     * @var string $pro_uid. Uid for Process
-     * @var string $tab_uid. Uid for Report Table
+     * Delete Table
+     * @var string $tab_uid. Uid for table
+     * @var string $pro_uid. Uid for process
+     * @var string $reportFlag. If is report table
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -469,7 +502,7 @@ class Table
         if ($reportFlag) {
             $pro_uid = $this->validateProUid($pro_uid);
         }
-        $tab_uid = $this->validateTabUid($tab_uid);
+        $tab_uid = $this->validateTabUid($tab_uid, $reportFlag);
 
         $at = new AdditionalTables();
         $table = $at->load( $tab_uid );
@@ -710,29 +743,34 @@ class Table
     }
 
     /**
-     * Validate Report Table Uid
-     * @var string $rep_uid. Uid for report table
+     * Validate Table Uid
+     * @var string $tab_uid. Uid for table
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @return string
      */
-    public function validateTabUid ($rep_uid)
+    public function validateTabUid ($tab_uid, $reportFlag = true)
     {
-        $rep_uid = trim($rep_uid);
-        if ($rep_uid == '') {
-            throw (new \Exception("The report table with rep_uid: '', does not exist."));
+        if ($reportFlag) {
+            $label = 'The report table with rep_uid:';
+        } else {
+            $label = 'The pm table with pmt_uid:';
+        }
+        $tab_uid = trim($tab_uid);
+        if ($tab_uid == '') {
+            throw (new \Exception($label . "'', does not exist."));
         }
         $oAdditionalTables = new \AdditionalTables();
-        if (!($oAdditionalTables->exists($rep_uid))) {
-            throw (new \Exception("The report table with rep_uid: '$rep_uid', does not exist."));
+        if (!($oAdditionalTables->exists($tab_uid))) {
+            throw (new \Exception($label . "'$tab_uid', does not exist."));
         }
-        return $rep_uid;
+        return $tab_uid;
     }
 
     /**
-     * Validate Report Table Name
+     * Validate Table Name
      * @var string $rep_tab_name. Name for report table
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
