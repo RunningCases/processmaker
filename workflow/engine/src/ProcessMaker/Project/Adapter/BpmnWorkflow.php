@@ -144,10 +144,12 @@ class BpmnWorkflow extends Project\Bpmn
         // to add a workflow route
         // - activity -> activity ==> route
         // - activity -> gateway -> activity  ==> selection, evaluation, parallel or parallel by evaluation route
-        $routeData = self::mapBpmnFlowsToWorkflowRoute($data, $flows, $gateways, $events);
+        $routes = self::mapBpmnFlowsToWorkflowRoute($data, $flows, $gateways, $events);
 
-        if ($routeData !== null) {
-            $this->wp->addRoute($routeData["from"], $routeData["to"], $routeData["type"]);
+        if ($routes !== null) {
+            foreach ($routes as $routeData) {
+                $this->wp->addRoute($routeData["from"], $routeData["to"], $routeData["type"]);
+            }
 
             return true;
         }
@@ -221,6 +223,7 @@ class BpmnWorkflow extends Project\Bpmn
     public static function mapBpmnFlowsToWorkflowRoute($flow, $flows, $gateways, $events)
     {
         $fromUid = $flow['FLO_ELEMENT_ORIGIN'];
+        $result = array();
 
         if ($flow['FLO_ELEMENT_ORIGIN_TYPE'] != "bpmnActivity") {
             // skip flows that comes from a element that is not an Activity
@@ -238,84 +241,89 @@ class BpmnWorkflow extends Project\Bpmn
         switch ($flow['FLO_ELEMENT_DEST_TYPE']) {
             case 'bpmnActivity':
                 // the most easy case, when the flow is connecting a activity with another activity
-                $result = array("from" => $fromUid, "to" => $flow['FLO_ELEMENT_DEST'], "type" => 'SEQUENTIAL');
+                $result[] = array("from" => $fromUid, "to" => $flow['FLO_ELEMENT_DEST'], "type" => 'SEQUENTIAL');
                 break;
             case 'bpmnGateway':
                 $gatUid = $flow['FLO_ELEMENT_DEST'];
 
                 // if it is a gateway it can fork one or more routes
-                $gatFlow = self::findInArray($gatUid, "FLO_ELEMENT_ORIGIN", $flows);
+                $gatFlows = self::findInArray($gatUid, "FLO_ELEMENT_ORIGIN", $flows);
 
-                //foreach ($gatFlows as $gatFlow) {
-                switch ($gatFlow['FLO_ELEMENT_DEST_TYPE']) {
-                    case 'bpmnActivity':
-                        // getting gateway properties
-                        $gateway = self::findInArray($gatUid, "GAT_UID", $gateways);
+                foreach ($gatFlows as $gatFlow) {
+                    switch ($gatFlow['FLO_ELEMENT_DEST_TYPE']) {
+                        case 'bpmnActivity':
+                            // getting gateway properties
+                            $gateways = self::findInArray($gatUid, "GAT_UID", $gateways);
 
-                        switch ($gateway['GAT_TYPE']) {
-                            case 'SELECTION':
-                                $routeType = 'SELECT';
-                                break;
-                            case 'EVALUATION':
-                                $routeType = 'EVALUATE';
-                                break;
-                            case 'PARALLEL':
-                                $routeType = 'PARALLEL';
-                                break;
-                            case 'PARALLEL_EVALUATION':
-                                $routeType = 'PARALLEL-BY-EVALUATION';
-                                break;
-                            case 'PARALLEL_JOIN':
-                                $routeType = 'SEC-JOIN';
-                                break;
-                            default:
-                                throw new \LogicException(sprintf("Unsupported Gateway type: %s", $gateway['GAT_TYPE']));
-                        }
+                            if (! empty($gateways)) {
+                                $gateway = $gateways[0];
 
-                        $result = array("from" => $fromUid, "to" => $gatFlow['FLO_ELEMENT_DEST'], "type" => $routeType);
-                        break;
-                    default:
-                        // for processmaker is only allowed flows between "gateway -> activity"
-                        // any another flow is considered invalid
-                        throw new \LogicException(sprintf(
-                            "For ProcessMaker is only allowed flows between \"gateway -> activity\" " . PHP_EOL .
-                            "Given: bpmnGateway -> " . $gatFlow['FLO_ELEMENT_DEST_TYPE']
-                        ));
+                                switch ($gateway['GAT_TYPE']) {
+                                    case 'SELECTION':
+                                        $routeType = 'SELECT';
+                                        break;
+                                    case 'EVALUATION':
+                                        $routeType = 'EVALUATE';
+                                        break;
+                                    case 'PARALLEL':
+                                        $routeType = 'PARALLEL';
+                                        break;
+                                    case 'PARALLEL_EVALUATION':
+                                        $routeType = 'PARALLEL-BY-EVALUATION';
+                                        break;
+                                    case 'PARALLEL_JOIN':
+                                        $routeType = 'SEC-JOIN';
+                                        break;
+                                    default:
+                                        throw new \LogicException(sprintf("Unsupported Gateway type: %s", $gateway['GAT_TYPE']));
+                                }
+
+                                $result[] = array("from" => $fromUid, "to" => $gatFlow['FLO_ELEMENT_DEST'], "type" => $routeType);
+                            }
+                            break;
+                        default:
+                            // for processmaker is only allowed flows between "gateway -> activity"
+                            // any another flow is considered invalid
+                            throw new \LogicException(sprintf(
+                                "For ProcessMaker is only allowed flows between \"gateway -> activity\" " . PHP_EOL .
+                                "Given: bpmnGateway -> " . $gatFlow['FLO_ELEMENT_DEST_TYPE']
+                            ));
+                    }
                 }
-                //}
                 break;
             case 'bpmnEvent':
                 $evnUid = $flow['FLO_ELEMENT_DEST'];
-                $event = self::findInArray($evnUid, "EVN_UID", $events);
+                $events = self::findInArray($evnUid, "EVN_UID", $events);
 
-                switch ($event['EVN_TYPE']) {
-                    case 'END':
-                        $routeType = 'SEQUENTIAL';
-                        $result = array("from" => $fromUid, "to" => "-1", "type" => $routeType);
-                        break;
-                    default:
-                        throw new \LogicException("Invalid connection to Event object type");
+                if (! empty($events)) {
+                    $event = $events[0];
+
+                    switch ($event['EVN_TYPE']) {
+                        case 'END':
+                            $routeType = 'SEQUENTIAL';
+                            $result[] = array("from" => $fromUid, "to" => "-1", "type" => $routeType);
+                            break;
+                        default:
+                            throw new \LogicException("Invalid connection to Event object type");
+                    }
                 }
-
                 break;
         }
 
-        return $result;
-
+        return empty($result) ? null : $result;
     }
 
     protected static function findInArray($value, $key, $list)
     {
+        $result = array();
+
         foreach ($list as $item) {
-            if (! array_key_exists($key, $item)) {
-                throw new \Exception("Error: key: $key does not exist in array: " . print_r($item, true));
-            }
-            if ($item[$key] == $value) {
-                return $item;
+            if (array_key_exists($key, $item) && $item[$key] == $value) {
+                $result[] = $item;
             }
         }
 
-        return null;
+        return $result;
     }
 
     public function remove()

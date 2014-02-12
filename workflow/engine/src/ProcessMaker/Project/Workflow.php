@@ -282,14 +282,14 @@ class Workflow extends Handler
             }
             //if ($delete || $type == 0 || $type == 5 || $type == 8) {
             if ($delete || $type == 'SEQUENTIAL' || $type == 'SEC-JOIN' || $type == 'DISCRIMINATOR') {
-                $oTasks = new Tasks();
+                //$oTasks = new Tasks();
 
-                $oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
+                //$oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
                 //$oTasks->deleteAllGatewayOfTask($this->proUid, $fromTasUid);
             }
 
             $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $delete);
-            self::log("Add Route Success!");
+            self::log("Add Route Success! -> ", $result);
 
             return $result;
         } catch (\Exception $e) {

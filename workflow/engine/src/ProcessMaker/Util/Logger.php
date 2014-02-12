@@ -17,6 +17,12 @@ class Logger
     protected function __construct()
     {
         $this->logFile = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'processmaker.log';
+
+        if (! file_exists($this->logFile)) {
+            file_put_contents($this->logFile, "");
+            chmod($this->logFile, 0777);
+        }
+
         $this->fp = fopen($this->logFile, "a+");
     }
 
@@ -40,8 +46,8 @@ class Logger
 
             fwrite($this->fp, "- " . date('Y-m-d H:i:s') . " " . $arg . PHP_EOL);
         }
-        if (count($args) > 1)
-            fwrite($this->fp, PHP_EOL);
+        //if (count($args) > 1)
+        //    fwrite($this->fp, PHP_EOL);
     }
 
     public static function log()

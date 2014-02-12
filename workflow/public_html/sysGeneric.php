@@ -884,6 +884,20 @@ try {
     $RBAC = &RBAC::getSingleton( PATH_DATA, session_id() );
     $RBAC->sSystem = 'PROCESSMAKER';
 
+
+//    if (\System::isDebugMode()) {
+//        $applicationAspectKernel = \Kernel\ApplicationAspectKernel::getInstance();
+//        $applicationAspectKernel->init(array(
+//            'debug' => true, // Use 'false' for production mode
+//            // Cache directory
+//            'cacheDir' => sys_get_temp_dir() . DIRECTORY_SEPARATOR, // Adjust this path if needed
+//            // Include paths restricts the directories where aspects should be applied, or empty for all source files
+//            'includePaths' => array(
+//                PATH_HOME . 'engine/src/'
+//            )
+//        ));
+//    }
+
     // define and send Headers for all pages
     if (! defined( 'EXECUTE_BY_CRON' )) {
         header( "Expires: " . gmdate( "D, d M Y H:i:s", mktime( 0, 0, 0, date( 'm' ), date( 'd' ) - 1, date( 'Y' ) ) ) . " GMT" );
