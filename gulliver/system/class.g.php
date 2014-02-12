@@ -3294,7 +3294,7 @@ class G
      *
      * @author Erik A.O. <erik@colosa.com>
      */
-    public function json_encode($Json)
+    public static function json_encode($Json)
     {
         if ( function_exists('json_encode') ) {
             return json_encode($Json);

@@ -163,12 +163,8 @@ class BpmnWorkflow extends Project\Bpmn
 
                         switch ($event && $event->getEvnType()) {
                             case "START":
-                                self::log("Setting Task:" . $data["FLO_ELEMENT_DEST"] . " as STARTING TASK");
-
                                 // then set that activity/task as "Start Task"
-                                $this->wp->updateTask($data["FLO_ELEMENT_DEST"], array("TAS_START" => "TRUE"));
-
-                                self::log("Setting as \"Stating Task\" Success!");
+                                $this->wp->setStartTask($data["FLO_ELEMENT_DEST"]);
                                 break;
                         }
                         break;
@@ -177,6 +173,10 @@ class BpmnWorkflow extends Project\Bpmn
         }
     }
 
+    public function removeFlow($floUid)
+    {
+        parent::removeFlow($floUid);
+    }
 
     public function addEvent($data)
     {
@@ -189,32 +189,27 @@ class BpmnWorkflow extends Project\Bpmn
 
     public function removeEvent($evnUid)
     {
-        $flow = \BpmnFlowPeer::retrieveByPK($evnUid);
+        $event = \BpmnEventPeer::retrieveByPK($evnUid);
 
-        if (! is_null($flow)) {
-            $data = $flow->toArray();
-
-            // to add start event->activity  as initial or end task
-            switch ($data["FLO_ELEMENT_ORIGIN_TYPE"]) {
-                case "bpmnEvent":
-                    switch ($data["FLO_ELEMENT_DEST_TYPE"]) {
-                        case "bpmnActivity":
-                            $event = \BpmnEventPeer::retrieveByPK($data["FLO_ELEMENT_ORIGIN"]);
-
-                            switch ($event && $event->getEvnType()) {
-                                case "START":
-                                    self::log("Unset Task:" . $data["FLO_ELEMENT_DEST"] . " as NOT STARTING TASK");
-
-                                    // then set that activity/task as "Start Task"
-                                    $this->wp->updateTask($data["FLO_ELEMENT_DEST"], array("TAS_START" => "FALSE"));
-
-                                    self::log("Unset as \"Stating Task\" Success!");
-                                    break;
-                            }
-                            break;
+        switch ($event->getEvnType()) {
+            case "START":
+                $flow = \BpmnFlow::findOneBy(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $event->getEvnUid());
+                if (! is_null($flow) && $flow->getFloElementDestType() == "bpmnActivity") {
+                    $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
+                    if (! is_null($activity)) {
+                        $this->wp->setStartTask($activity->getActUid(), false);
                     }
-                    break;
-            }
+                }
+                break;
+            case "END":
+                $flow = \BpmnFlow::findOneBy(\BpmnFlowPeer::FLO_ELEMENT_DEST, $event->getEvnUid());
+                if (! is_null($flow) && $flow->getFloElementOriginType() == "bpmnActivity") {
+                    $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementOrigin());
+                    if (! is_null($activity)) {
+                        $this->wp->setEndTask($activity->getActUid(), false);
+                    }
+                }
+                break;
         }
 
         parent::removeEvent($evnUid);

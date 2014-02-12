@@ -3095,7 +3095,10 @@ class Bootstrap
             );
         }
 
-        require_once PATH_TRUNK . 'vendor' . PATH_SEP . "autoload.php";
+        //require_once PATH_TRUNK . 'vendor' . PATH_SEP . "autoload.php";
+
+        $loader = require PATH_TRUNK . 'vendor' . PATH_SEP . "autoload.php";
+        $loader->add('', PATH_HOME . 'engine/src/');
     }
 
     public static function parseIniFile($filename)

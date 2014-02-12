@@ -237,7 +237,7 @@ class Project extends Api
                     if ($mappedUid !== false) {
                         $flowData["FLO_ELEMENT_ORIGIN"] = $mappedUid;
                     }
-                    
+
                     $mappedUid = self::mapUid($flowData["FLO_ELEMENT_DEST"], $result);
                     if ($mappedUid !== false) {
                         $flowData["FLO_ELEMENT_DEST"] = $mappedUid;
@@ -358,6 +358,8 @@ class Project extends Api
     {
         try {
             $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
             $response = $process->getInputDocuments($prj_uid);
 
