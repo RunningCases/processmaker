@@ -3,16 +3,103 @@ namespace BusinessModel;
 
 class InputDocument
 {
+    private $arrayFieldDefinition = array(
+        "INP_DOC_UID"              => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),                                "fieldNameAux" => "inputDocumentUid"),
+
+        "INP_DOC_TITLE"            => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                                "fieldNameAux" => "inputDocumentTitle"),
+        "INP_DOC_DESCRIPTION"      => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                "fieldNameAux" => "inputDocumentDescription"),
+        "INP_DOC_FORM_NEEDED"      => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("VIRTUAL", "REAL", "VREAL"),      "fieldNameAux" => "inputDocumentFormNeeded"),
+        "INP_DOC_ORIGINAL"         => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("ORIGINAL", "COPY", "COPYLEGAL"), "fieldNameAux" => "inputDocumentOriginal"),
+        "INP_DOC_PUBLISHED"        => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("PRIVATE"),                       "fieldNameAux" => "inputDocumentPublished"),
+        "INP_DOC_VERSIONING"       => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(0, 1),                            "fieldNameAux" => "inputDocumentVersioning"),
+        "INP_DOC_DESTINATION_PATH" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                "fieldNameAux" => "inputDocumentDestinationPath"),
+        "INP_DOC_TAGS"             => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                "fieldNameAux" => "inputDocumentTags")
+    );
+
+    private $formatFieldNameInUppercase = true;
+
+    private $arrayFieldNameForException = array(
+        "processUid" => "PRO_UID"
+    );
+
     /**
-     * Verify if the title exists in the InputDocuments of Process
+     * Constructor of the class
      *
-     * @param string $processUid Unique id of Process
-     * @param string $title      Title
+     * return void
+     */
+    public function __construct()
+    {
+        try {
+            foreach ($this->arrayFieldDefinition as $key => $value) {
+                $this->arrayFieldNameForException[$value["fieldNameAux"]] = $key;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Set the format of the fields name (uppercase, lowercase)
+     *
+     * @param bool $flag Value that set the format
+     *
+     * return void
+     */
+    public function setFormatFieldNameInUppercase($flag)
+    {
+        try {
+            $this->formatFieldNameInUppercase = $flag;
+
+            $this->setArrayFieldNameForException($this->arrayFieldNameForException);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Set exception messages for fields
+     *
+     * @param array $arrayData Data with the fields
+     *
+     * return void
+     */
+    public function setArrayFieldNameForException($arrayData)
+    {
+        try {
+            foreach ($arrayData as $key => $value) {
+                $this->arrayFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get the name of the field according to the format
+     *
+     * @param string $fieldName Field name
+     *
+     * return string Return the field name according the format
+     */
+    public function getFieldNameByFormatFieldName($fieldName)
+    {
+        try {
+            return ($this->formatFieldNameInUppercase)? strtoupper($fieldName) : strtolower($fieldName);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if exists the title of a InputDocument
+     *
+     * @param string $processUid              Unique id of Process
+     * @param string $inputDocumentTitle      Title
      * @param string $inputDocumentUidExclude Unique id of InputDocument to exclude
      *
-     * return bool Return true if the title exists in the InputDocuments of Process, false otherwise
+     * return bool Return true if exists the title of a InputDocument, false otherwise
      */
-    public function titleExists($processUid, $title, $inputDocumentUidExclude = "")
+    public function existsTitle($processUid, $inputDocumentTitle, $inputDocumentUidExclude = "")
     {
         try {
             $delimiter = \DBAdapter::getStringDelimiter();
@@ -35,15 +122,71 @@ class InputDocument
                 $criteria->add(\InputDocumentPeer::INP_DOC_UID, $inputDocumentUidExclude, \Criteria::NOT_EQUAL);
             }
 
-            $criteria->add("CT.CON_VALUE", $title, \Criteria::EQUAL);
+            $criteria->add("CT.CON_VALUE", $inputDocumentTitle, \Criteria::EQUAL);
 
             $rsCriteria = \InputDocumentPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             if ($rsCriteria->next()) {
                 return true;
             } else {
                 return false;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if doesn't exist the InputDocument in table INPUT_DOCUMENT
+     *
+     * @param string $inputDocumentUid      Unique id of InputDocument
+     * @param string $processUid            Unique id of Process
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exist the InputDocument in table INPUT_DOCUMENT
+     */
+    public function throwExceptionIfNotExistsInputDocument($inputDocumentUid, $processUid, $fieldNameForException)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\InputDocumentPeer::INP_DOC_UID);
+
+            if ($processUid != "") {
+                $criteria->add(\InputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            }
+
+            $criteria->add(\InputDocumentPeer::INP_DOC_UID, $inputDocumentUid, \Criteria::EQUAL);
+
+            $rsCriteria = \InputDocumentPeer::doSelectRS($criteria);
+
+            if (!$rsCriteria->next()) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $inputDocumentUid), "The InputDocument with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if exists the title of a InputDocument
+     *
+     * @param string $processUid              Unique id of Process
+     * @param string $inputDocumentTitle      Title
+     * @param string $fieldNameForException   Field name for the exception
+     * @param string $inputDocumentUidExclude Unique id of InputDocument to exclude
+     *
+     * return void Throw exception if exists the title of a InputDocument
+     */
+    public function throwExceptionIfExistsTitle($processUid, $inputDocumentTitle, $fieldNameForException, $inputDocumentUidExclude = "")
+    {
+        try {
+            if ($this->existsTitle($processUid, $inputDocumentTitle, $inputDocumentUidExclude)) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $inputDocumentTitle), "The InputDocument title with {0}: \"{1}\", already exists");
+
+                throw (new \Exception($msg));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -66,23 +209,13 @@ class InputDocument
             unset($arrayData["INP_DOC_UID"]);
 
             //Verify data
-            $process = new \Process();
+            $process = new \BusinessModel\Process();
 
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
-            if (!isset($arrayData["INP_DOC_TITLE"])) {
-                throw (new \Exception(str_replace(array("{0}"), array(strtolower("INP_DOC_TITLE")), "The \"{0}\" attribute is not defined")));
-            }
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
-            if (isset($arrayData["INP_DOC_TITLE"]) && trim($arrayData["INP_DOC_TITLE"]) == "") {
-                throw (new \Exception(str_replace(array("{0}"), array(strtolower("INP_DOC_TITLE")), "The \"{0}\" attribute is empty")));
-            }
-
-            if (isset($arrayData["INP_DOC_TITLE"]) && $this->titleExists($processUid, $arrayData["INP_DOC_TITLE"])) {
-                throw (new \Exception(\G::LoadTranslation("ID_INPUT_NOT_SAVE")));
-            }
+            $this->throwExceptionIfExistsTitle($processUid, $arrayData["INP_DOC_TITLE"], $this->arrayFieldNameForException["inputDocumentTitle"]);
 
             //Flags
             $flagDataDestinationPath = (isset($arrayData["INP_DOC_DESTINATION_PATH"]))? 1 : 0;
@@ -109,11 +242,13 @@ class InputDocument
                 unset($arrayData["INP_DOC_TAGS"]);
             }
 
-            $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            $arrayData = array_merge(array("INP_DOC_UID" => $inputDocumentUid), $arrayData);
 
-            unset($arrayData["inp_doc_uid"]);
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
 
-            return array_merge(array("inp_doc_uid" => $inputDocumentUid), $arrayData);
+            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -132,24 +267,23 @@ class InputDocument
         try {
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
+            //Verify data
+            $this->throwExceptionIfNotExistsInputDocument($inputDocumentUid, "", $this->arrayFieldNameForException["inputDocumentUid"]);
+
+            //Load InputDocument
             $inputDocument = new \InputDocument();
 
             $arrayInputDocumentData = $inputDocument->load($inputDocumentUid);
 
-            //Uids
             $processUid = $arrayInputDocumentData["PRO_UID"];
 
             //Verify data
-            if (!$inputDocument->InputExists($inputDocumentUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($inputDocumentUid, "INPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $process = new \BusinessModel\Process();
 
-            if (isset($arrayData["INP_DOC_TITLE"]) && trim($arrayData["INP_DOC_TITLE"]) == "") {
-                throw (new \Exception(str_replace(array("{0}"), array(strtolower("INP_DOC_TITLE")), "The \"{0}\" attribute is empty")));
-            }
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
 
-            if (isset($arrayData["INP_DOC_TITLE"]) && $this->titleExists($processUid, $arrayData["INP_DOC_TITLE"], $inputDocumentUid)) {
-                throw (new \Exception(\G::LoadTranslation("ID_INPUT_NOT_SAVE")));
+            if (isset($arrayData["INP_DOC_TITLE"])) {
+                $this->throwExceptionIfExistsTitle($processUid, $arrayData["INP_DOC_TITLE"], $this->arrayFieldNameForException["inputDocumentTitle"], $inputDocumentUid);
             }
 
             //Update
@@ -160,7 +294,11 @@ class InputDocument
             //Return
             unset($arrayData["INP_DOC_UID"]);
 
-            return array_change_key_case($arrayData, CASE_LOWER);
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
+
+            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -177,11 +315,7 @@ class InputDocument
     {
         try {
             //Verify data
-            $inputDocument = new \InputDocument();
-
-            if (!$inputDocument->InputExists($inputDocumentUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($inputDocumentUid, "INPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $this->throwExceptionIfNotExistsInputDocument($inputDocumentUid, "", $this->arrayFieldNameForException["inputDocumentUid"]);
 
             //Delete
             //StepSupervisor
@@ -266,31 +400,32 @@ class InputDocument
      *
      * @param array $record Record
      *
-     * return array Return an array with data of an InputDocument
+     * return array Return an array with data InputDocument
      */
     public function getInputDocumentDataFromRecord($record)
     {
         try {
             if ($record["INP_DOC_TITLE"] . "" == "") {
+                //Load InputDocument
                 $inputDocument = new \InputDocument();
 
-                //There is no transaltion for this Document name, try to get/regenerate the label
-                $arrayInputdocData = $inputDocument->load($record["INP_DOC_UID"]);
+                $arrayInputDocumentData = $inputDocument->load($record["INP_DOC_UID"]);
 
-                $record["INP_DOC_TITLE"] = $arrayInputdocData["INP_DOC_TITLE"];
-                $record["INP_DOC_DESCRIPTION"] = $arrayInputdocData["INP_DOC_DESCRIPTION"];
+                //There is no transaltion for this Document name, try to get/regenerate the label
+                $record["INP_DOC_TITLE"] = $arrayInputDocumentData["INP_DOC_TITLE"];
+                $record["INP_DOC_DESCRIPTION"] = $arrayInputDocumentData["INP_DOC_DESCRIPTION"];
             }
 
             return array(
-                "inp_doc_uid"         => $record["INP_DOC_UID"],
-                "inp_doc_title"       => $record["INP_DOC_TITLE"],
-                "inp_doc_description" => $record["INP_DOC_DESCRIPTION"] . "",
-                "inp_doc_form_needed" => $record["INP_DOC_FORM_NEEDED"],
-                "inp_doc_original"    => $record["INP_DOC_ORIGINAL"],
-                "inp_doc_published"   => $record["INP_DOC_PUBLISHED"],
-                "inp_doc_versioning"  => (int)($record["INP_DOC_VERSIONING"]),
-                "inp_doc_destination_path" => $record["INP_DOC_DESTINATION_PATH"] . "",
-                "inp_doc_tags"             => $record["INP_DOC_TAGS"] . ""
+                $this->getFieldNameByFormatFieldName("INP_DOC_UID")              => $record["INP_DOC_UID"],
+                $this->getFieldNameByFormatFieldName("INP_DOC_TITLE")            => $record["INP_DOC_TITLE"],
+                $this->getFieldNameByFormatFieldName("INP_DOC_DESCRIPTION")      => $record["INP_DOC_DESCRIPTION"] . "",
+                $this->getFieldNameByFormatFieldName("INP_DOC_FORM_NEEDED")      => $record["INP_DOC_FORM_NEEDED"] . "",
+                $this->getFieldNameByFormatFieldName("INP_DOC_ORIGINAL")         => $record["INP_DOC_ORIGINAL"] . "",
+                $this->getFieldNameByFormatFieldName("INP_DOC_PUBLISHED")        => $record["INP_DOC_PUBLISHED"] . "",
+                $this->getFieldNameByFormatFieldName("INP_DOC_VERSIONING")       => (int)($record["INP_DOC_VERSIONING"]),
+                $this->getFieldNameByFormatFieldName("INP_DOC_DESTINATION_PATH") => $record["INP_DOC_DESTINATION_PATH"] . "",
+                $this->getFieldNameByFormatFieldName("INP_DOC_TAGS")             => $record["INP_DOC_TAGS"] . ""
             );
         } catch (\Exception $e) {
             throw $e;
@@ -308,11 +443,7 @@ class InputDocument
     {
         try {
             //Verify data
-            $inputDocument = new \InputDocument();
-
-            if (!$inputDocument->InputExists($inputDocumentUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($inputDocumentUid, "INPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $this->throwExceptionIfNotExistsInputDocument($inputDocumentUid, "", $this->arrayFieldNameForException["inputDocumentUid"]);
 
             //Get data
             $criteria = $this->getInputDocumentCriteria();
