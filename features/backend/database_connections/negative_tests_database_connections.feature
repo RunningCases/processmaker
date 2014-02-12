@@ -25,15 +25,13 @@ Feature: DataBase Connections Negative Tests
 
         Examples:
 
-        | test_description                 | project                          | dbs_type | dbs_server    | dbs_database_name | dbs_username   | dbs_password     | dbs_port | dbs_encode | dbs_description    | error_code | error_message     |
-        | Field required dbs_type          | 74737540052e1641ab88249082085472 |          | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | mysql connection   | 400        | dbs_type          |         
-        | Field required dbs_server        | 74737540052e1641ab88249082085472 | mysql    |               | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | mysql connection   | 400        | dbs_server        |         
-        | Field required dbs_database_name | 74737540052e1641ab88249082085472 | mysql    | 192.168.11.71 |                   | root           | atopml2005       | 3306     | utf8       | mysql connection   | 400        | dbs_database_name |         
-        | Field required dbs_username      | 74737540052e1641ab88249082085472 | mysql    | 192.168.11.71 | rb_cochalo        |                | atopml2005       | 3306     | utf8       | mysql connection   | 400        | dbs_username      |         
-        | Field required dbs_port          | 74737540052e1641ab88249082085472 | mysql    | 192.168.11.71 | rb_cochalo        | root           | atopml2005       |          | utf8       | mysql connection   | 400        | dbs_port          |         
-        | Field required dbs_encode        | 74737540052e1641ab88249082085472 | mysql    | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     |            | mysql connection   | 400        | dbs_encode        |         
-        | Incorrect dbs_password           | 74737540052e1641ab88249082085472 | mysql    | 192.168.11.71 | rb_cochalo        | root           | atsample005      | 3306     | utf8       | mysql connection   | 400        | dbs_password      |         
-        | Field required project           |                                  | mysql    | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | mysql connection   | 400        | prj_uid           |     
+        | test_description                 | project                          | dbs_type | dbs_server    | dbs_database_name | dbs_username   | dbs_password     | dbs_port | dbs_encode | dbs_description    | error_code | error_message                    |
+        | Field required dbs_type          | 74737540052e1641ab88249082085472 |          | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | mysql connection   | 200        | Trying to connect to host FAILED |         
+        | Field required dbs_server        | 74737540052e1641ab88249082085472 | mysql    |               | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | mysql connection   | 200        | Error Testting Connection        |         
+        | Field required dbs_database_name | 74737540052e1641ab88249082085472 | mysql    | 192.168.11.71 |                   | root           | atopml2005       | 3306     | utf8       | mysql connection   | 200        | The data base does'n exist!      |         
+        | Field required dbs_username      | 74737540052e1641ab88249082085472 | mysql    | 192.168.11.71 | rb_cochalo        |                | atopml2005       | 3306     | utf8       | mysql connection   | 200        | MySql connection refused!        |         
+        | Field required dbs_encode        | 74737540052e1641ab88249082085472 | mysql    | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     |            | mysql connection   | 200        | dbs_encode                       |         
+        | Field required project           |                                  | mysql    | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | mysql connection   | 400        | prj_uid                          |     
 
   
 

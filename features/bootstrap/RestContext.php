@@ -1201,13 +1201,26 @@ class RestContext extends BehatContext
                 if(isset($bodyResponse->error->message)){
                     $message = $bodyResponse->error->message;
                     if (strpos($message,$arg1) === false) {
-                        throw new \Exception("Error message text does not have: '" . $arg1 ."'' (actual: '$message')\n\n");
+                        throw new \Exception("Error message text does not have: '" . $arg1 ."' (actual: '$message')\n\n");
                     }
-
-
+                }elseif(is_array($bodyResponse)){
+                    $error_found=false;
+                    $messages = array();
+                    foreach($bodyResponse as $resp){
+                        if(isset($resp->error)){ 
+                            $messages[]=$resp->error;
+                            if (strpos($resp->error,$arg1) !== false){
+                                $error_found=true;
+                            }
+                        }
+                        
+                    }
+                    if(!$error_found){
+                        $message=implode("\n- ",$messages);
+                        throw new \Exception("Error message text does not have: '" . $arg1 ."' \nCurrent messages: \n- $message\n\n");
+                    }
                 }else{
                     throw new \Exception('This is not a valid error response');
-
                 }
 
             }else{
