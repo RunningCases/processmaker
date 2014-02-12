@@ -35,20 +35,25 @@ class FilesManager
      * Return the Process Files Manager Path
      *
      * @param string $sProcessUID {@min 32} {@max 32}
-     * @param string $sMainDirectory
+     * @param string $path
      *
      * return array
      *
      * @access public
      */
-    public function getProcessFilesManagerPath($sProcessUID, $sMainDirectory)
+    public function getProcessFilesManagerPath($sProcessUID, $path)
     {
         try {
+            $sMainDirectory = current(explode("/", $path));
+            if ($path)
+            $sSubDirectory = substr($path, strpos($path, "/"));
             switch ($sMainDirectory) {
-                case 'mailTemplates':
+                case 'templates':
+                    //$sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory;
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP;
                     break;
-                case 'public':
+                case 'folder':
+                    //$sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory;
                     $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP;
                     break;
                 default:
@@ -59,13 +64,16 @@ class FilesManager
             $aTheFiles = array();
             $aDirectories = array();
             $aFiles = array();
+            $sCurrentDirectory = $sSubDirectory;
             $oDirectory = dir($sDirectory);
             while ($sObject = $oDirectory->read()) {
                 if (($sObject !== '.') && ($sObject !== '..')) {
                     $sPath = $sDirectory . $sObject;
-                    $sCurrentDirectory = end(explode("/",$sPath));
                     if (is_dir($sPath)) {
-                        $aDirectories[] = array('PATH' => ($sCurrentDirectory != '' ? $sCurrentDirectory . PATH_SEP : '') . $sObject, 'DIRECTORY' => $sObject );
+                        $aTheFiles[] = array('name' => $sObject,
+                                             'type' => "folder",
+                                             //'path' => $sDirectory);
+                                             'path' => ($sCurrentDirectory != '' ? $sCurrentDirectory . PATH_SEP : '') . $sObject);
                     } else {
                         $aAux = pathinfo($sPath);
                         $aAux['extension'] = (isset($aAux['extension'])?$aAux['extension']:'');
@@ -83,7 +91,7 @@ class FilesManager
                     }
                     $aTheFiles[] = array('name' => $aFile['FILE'],
                                          'type' => "file",
-                                         'path' => $sDirectory.$aFile['FILE'],
+                                         'path' => $sDirectory,
                                          'editable' => $sEditable);
         }
             return $aTheFiles;

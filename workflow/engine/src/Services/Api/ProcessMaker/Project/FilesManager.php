@@ -22,11 +22,6 @@ class FilesManager extends Api
         try {
             $filesManager = new \BusinessModel\FilesManager();
             if ($path != '') {
-                if ($path == 'templates') {
-                    $path = 'mailTemplates';
-                } else {
-                    $path = 'public';
-                }
                 $arrayData = $filesManager->getProcessFilesManagerPath($prjUid, $path);
             } else {
                 $arrayData = $filesManager->getProcessFilesManager($prjUid);
