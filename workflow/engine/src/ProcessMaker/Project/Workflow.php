@@ -55,6 +55,7 @@ class Workflow extends Handler
     public function create($data)
     {
         try {
+            self::log("===> Executing -> ".__METHOD__, "Create Process with data:", $data);
 
             // setting defaults
             $data['PRO_UID'] = array_key_exists('PRO_UID', $data) ? $data['PRO_UID'] : Hash::generateUID();
@@ -86,8 +87,10 @@ class Workflow extends Handler
                 $calendar->assignCalendarTo($this->proUid, $data["PRO_CALENDAR"], 'PROCESS');
             }
 
-        } catch (Exception $e) {
-            throw new \RuntimeException($e);
+            self::log("Create Process Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
         }
     }
 
@@ -98,7 +101,14 @@ class Workflow extends Handler
 
     public function remove()
     {
-        $this->deleteProcess($this->proUid);
+        try {
+            self::log("===> Executing -> ".__METHOD__, "Remove Process with uid: {$this->proUid}");
+            $this->deleteProcess($this->proUid);
+            self::log("Remove Process Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public static function getList($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)
@@ -142,7 +152,7 @@ class Workflow extends Handler
         $taskData['PRO_UID'] = $this->proUid;
 
         try {
-            self::log("Add Task with data: ", $taskData);
+            self::log("===> Executing -> ".__METHOD__, "Add Task with data: ", $taskData);
             $task = new Task();
             $tasUid = $task->create($taskData, false);
             self::log("Add Task Success!");
@@ -157,12 +167,10 @@ class Workflow extends Handler
     public function updateTask($tasUid, $taskData)
     {
         try {
-            self::log("Update Task: $tasUid", "With data: ", $taskData);
-
+            self::log("===> Executing -> ".__METHOD__, "Update Task: $tasUid", "With data: ", $taskData);
             $task = new Task();
             $taskData['TAS_UID'] = $tasUid;
             $result = $task->update($taskData);
-
             self::log("Update Task Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
@@ -175,11 +183,9 @@ class Workflow extends Handler
     public function removeTask($tasUid)
     {
         try {
-            self::log("Remove Task: $tasUid");
-
+            self::log("===> Executing -> ".__METHOD__, "Remove Task: $tasUid");
             $task = new Task();
             $task->remove($tasUid);
-
             self::log("Remove Task Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
@@ -276,15 +282,16 @@ class Workflow extends Handler
             }
             //if ($delete || $type == 0 || $type == 5 || $type == 8) {
             if ($delete || $type == 'SEQUENTIAL' || $type == 'SEC-JOIN' || $type == 'DISCRIMINATOR') {
-                $oTasks = new Tasks();
+                //$oTasks = new Tasks();
 
-                $oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
+                //$oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
                 //$oTasks->deleteAllGatewayOfTask($this->proUid, $fromTasUid);
             }
-            self::log("Add Route Success!");
 
-            return $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $delete);
+            $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $delete);
+            self::log("Add Route Success! -> ", $result);
 
+            return $result;
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
             throw $e;
@@ -293,16 +300,32 @@ class Workflow extends Handler
 
     public function updateRoute($rouUid, $routeData)
     {
-        $route = new Route();
         $routeData['ROU_UID'] = $rouUid;
-        $route->update($routeData);
+
+        try {
+            self::log("===> Executing -> ".__METHOD__, "Update Route: $rouUid with data:", $routeData);
+            $route = new Route();
+            $route->update($routeData);
+            self::log("Update Route Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function removeRoute($rouUid)
     {
-        $route = new Route();
+        try {
+            self::log("===> Executing -> ".__METHOD__, "Remove Route: $rouUid");
+            $route = new Route();
+            $result = $route->remove($rouUid);
+            self::log("Remove Route Success!");
 
-        return $route->remove($rouUid);
+            return $result;
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function getRoute($rouUid)

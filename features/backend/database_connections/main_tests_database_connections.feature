@@ -13,6 +13,31 @@ Feature: DataBase Connections Main Tests
         And the response charset is "UTF-8"
         And the response has 0 record
 
+    Scenario Outline: Test database connection to test
+        Given POST this data:
+            """
+            {
+                "dbs_type": "<dbs_type>",
+                "dbs_server": "<dbs_server>",
+                "dbs_database_name": "<dbs_database_name>",
+                "dbs_username": "<dbs_username>",
+                "dbs_password": "<dbs_password>",
+                "dbs_port": <dbs_port>,
+                "dbs_encode": "<dbs_encode>",
+                "dbs_description": "<dbs_description>"
+            }
+            """
+        And I request "project/74737540052e1641ab88249082085472/database-connection/test"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the content type is "application/json"
+        
+
+        Examples:
+
+        | test_description           | dbs_uid_number | dbs_type | dbs_server    | dbs_database_name | dbs_username   | dbs_password     | dbs_port | dbs_encode | dbs_description    |
+        | Test mysql db connection   | 1              | mysql    | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | mysql connection   |
+
 
     Scenario Outline: Create a new database connection
         Given POST this data:
@@ -30,7 +55,6 @@ Feature: DataBase Connections Main Tests
             """
         And I request "project/74737540052e1641ab88249082085472/database-connection"
         Then the response status code should be 201
-        And store "dbs_uid" in session array
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
@@ -39,17 +63,15 @@ Feature: DataBase Connections Main Tests
 
         Examples:
 
-        | test_description                                     | dbs_uid_number | dbs_type           | dbs_server    | dbs_database_name | dbs_username | dbs_password | dbs_port | dbs_encode | dbs_description    |
-        |                                                      | 1              | mysql              | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
-        |                                                      | 2              | postgresql         | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
-        |                                                      | 3              | microsoftsqlserver | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
+        | test_description           | dbs_uid_number | dbs_type | dbs_server    | dbs_database_name | dbs_username   | dbs_password     | dbs_port | dbs_encode | dbs_description    |
+        | Create mysql db connection | 1              | mysql    | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | mysql connection   |
 
 
     Scenario: Get the DataBase Connections List when there are exactly three DataBase Connections
         Given I request "project/74737540052e1641ab88249082085472/database-connections"
         Then the response status code should be 200
         And the response charset is "UTF-8"
-        And the response has 3 record
+        And the response has 1 record
 
     
     Scenario Outline: Update a database connection
@@ -75,10 +97,8 @@ Feature: DataBase Connections Main Tests
 
         Examples:
 
-        | test_description                                     | dbs_uid_number | dbs_type           | dbs_server    | dbs_database_name | dbs_username | dbs_password | dbs_port | dbs_encode | dbs_description    |
-        |                                                      | 1              | mysql              | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
-        |                                                      | 2              | postgresql         | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
-        |                                                      | 3              | microsoftsqlserver | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
+        | test_description           | dbs_uid_number | dbs_type | dbs_server    | dbs_database_name | dbs_username   | dbs_password     | dbs_port | dbs_encode | dbs_description           |
+        | Update mysql db connection | 1              | mysql    | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | update mysql connection   |
 
 
     Scenario Outline: Get a single database connection and check some properties
@@ -98,10 +118,8 @@ Feature: DataBase Connections Main Tests
 
         Examples:
 
-        | test_description                                     | dbs_uid_number | dbs_type           | dbs_server    | dbs_database_name | dbs_username | dbs_password | dbs_port | dbs_encode | dbs_description    |
-        |                                                      | 1              | mysql              | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
-        |                                                      | 2              | postgresql         | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
-        |                                                      | 3              | microsoftsqlserver | 192.168.11.71 | rb_cochalo        | root         | atopml2005   | 3306     | utf8       | conection correcta |
+        | test_description           | dbs_uid_number | dbs_type | dbs_server    | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description           |
+        | Update mysql db connection | 1              | mysql    | 192.168.11.71 | rb_cochalo    | rb_cochalo | atopml2005       | 3306     | utf8       | update mysql connection   |
 
 
     Scenario Outline: Delete all Database Connection created previously in this script
@@ -115,9 +133,7 @@ Feature: DataBase Connections Main Tests
 
         | dbs_uid_number |
         | 1              |
-        | 2              |
-        | 3              |
-
+       
 
     Scenario: Get the DataBase Connections List when there are exactly zero DataBase Connections
         Given I request "project/74737540052e1641ab88249082085472/database-connections"
