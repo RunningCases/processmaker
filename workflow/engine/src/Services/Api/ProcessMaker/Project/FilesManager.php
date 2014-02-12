@@ -80,12 +80,12 @@ class FilesManager extends Api
 
     /**
      * @param string $prjUid {@min 32} {@max 32}
+     * @param ProcessFilesManagerStructurePut $request_data
      * @param string $path
-     * @param ProcessFilesManagerStructure1 $request_data
      *
-     * @url PUT /:prjUid/process-file-manager1
+     * @url PUT /:prjUid/process-file-manager
      */
-    public function doPutProcessFilesManager($prjUid, ProcessFilesManagerStructure1 $request_data, $path)
+    public function doPutProcessFilesManager($prjUid, ProcessFilesManagerStructurePut $request_data, $path)
     {
         try {
             $userUid = $this->getUserId();
@@ -116,7 +116,6 @@ class FilesManager extends Api
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
-        return $response;
     }
 
     /**
@@ -155,7 +154,8 @@ class ProcessFilesManagerStructure
     public $content;
 }
 
-class ProcessFilesManagerStructure1
+
+class ProcessFilesManagerStructurePut
 {
     /**
      * @var string {@from body}
@@ -167,3 +167,4 @@ class ProcessFilesManagerStructure1
      */
     public $content;
 }
+
