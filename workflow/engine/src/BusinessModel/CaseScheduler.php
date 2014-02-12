@@ -463,11 +463,14 @@ class CaseScheduler
                 if ($sStartDay == '') {
                     $sStartDay = date('Y-m-d');
                 } else {
-                    $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
-                    $aaStartDay[0] = $aaStartDay[0];
-                    $aaStartDay[1] = $aaStartDay[1];
-                    $aaStartDay[2]= ($aaStartDay[2] == 7 ? 1 : $aaStartDay[2]);
-                    $sStartDay = $aaStartDay[0].'|'.$aaStartDay[1].'|'.$aaStartDay[2];
+                    $size = strlen($aData['SCH_START_DAY']);
+                        if ( $size > 4 ) {
+                        $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
+                        $aaStartDay[0] = $aaStartDay[0];
+                        $aaStartDay[1] = $aaStartDay[1];
+                        $aaStartDay[2]= ($aaStartDay[2] == 7 ? 1 : $aaStartDay[2]);
+                        $sStartDay = $aaStartDay[0].'|'.$aaStartDay[1].'|'.$aaStartDay[2];
+                    }
                 }
                 $dCurrentDay = date("d");
                 $dCurrentMonth = date("m");
@@ -750,11 +753,14 @@ class CaseScheduler
                 if ($sStartDay == '') {
                     $sStartDay = date('Y-m-d');
                 } else {
-                    $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
-                    $aaStartDay[0] = $aaStartDay[0];
-                    $aaStartDay[1] = $aaStartDay[1];
-                    $aaStartDay[2]= ($aaStartDay[2] == 7 ? 1 : $aaStartDay[2]);
-                    $sStartDay = $aaStartDay[0].'|'.$aaStartDay[1].'|'.$aaStartDay[2];
+                    $size = strlen($aData['SCH_START_DAY']);
+                        if ( $size > 4 ) {
+                        $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
+                        $aaStartDay[0] = $aaStartDay[0];
+                        $aaStartDay[1] = $aaStartDay[1];
+                        $aaStartDay[2]= ($aaStartDay[2] == 7 ? 1 : $aaStartDay[2]);
+                        $sStartDay = $aaStartDay[0].'|'.$aaStartDay[1].'|'.$aaStartDay[2];
+                    }
                 }
                 $dCurrentDay = date("d");
                 $dCurrentMonth = date("m");
