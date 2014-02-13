@@ -54,7 +54,7 @@ class FilesManager
                 case 'templates':
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory;
                     break;
-                case 'folder':
+                case 'public':
                     $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory;
                     break;
                 default:
@@ -115,8 +115,8 @@ class FilesManager
         try {
             $aData['path'] = rtrim($aData['path'], '/') . '/';
             $sMainDirectory = current(explode("/", $aData['path']));
-            if ($sMainDirectory != 'folder' && $sMainDirectory != 'templates') {
-                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `folder/`'));
+            if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
+                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
             }
             if(strstr($aData['path'],'/')){
                 $sSubDirectory = substr($aData['path'], strpos($aData['path'], "/")+1) ;
@@ -129,7 +129,7 @@ class FilesManager
                     $sCheckDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory;
                     $sEditable = false;
                     break;
-                case 'folder':
+                case 'public':
                     $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['file_name'];
                     $sCheckDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory;
                     break;
@@ -235,8 +235,8 @@ class FilesManager
         try {
             $path = rtrim($path, '/') . '/';
             $sMainDirectory = current(explode("/", $path));
-            if ($sMainDirectory != 'folder' && $sMainDirectory != 'templates') {
-                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `folder/`'));
+            if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
+                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
             }
             if(strstr($path,'/')){
                 $sSubDirectory = substr($path, strpos($path, "/")+1) ;
@@ -248,7 +248,7 @@ class FilesManager
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['file_name'];
                     $sEditable = false;
                     break;
-                case 'folder':
+                case 'public':
                     $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['file_name'];
                     break;
                 default:
@@ -309,12 +309,10 @@ class FilesManager
     {
         try {
             $sMainDirectory = current(explode("/", $path));
-            if ($sMainDirectory != 'folder' && $sMainDirectory != 'templates') {
-                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `folder/`'));
+            if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
+                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
             }
-            if ($sMainDirectory == 'folder') {
-                $sMainDirectory = 'public';
-            } else {
+            if ($sMainDirectory == 'templates') {
                 $sMainDirectory = 'mailTemplates';
             }
             $sfile = end(explode("/",$path));
@@ -367,12 +365,10 @@ class FilesManager
     {
         try {
             $sMainDirectory = current(explode("/", $path));
-            if ($sMainDirectory != 'folder' && $sMainDirectory != 'templates') {
-                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `folder/`'));
+            if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
+                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
             }
-            if ($sMainDirectory == 'folder') {
-                $sMainDirectory = 'public';
-            } else {
+            if ($sMainDirectory == 'templates') {
                 $sMainDirectory = 'mailTemplates';
             }
             $sfile = end(explode("/",$path));

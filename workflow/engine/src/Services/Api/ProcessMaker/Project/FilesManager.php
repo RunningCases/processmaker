@@ -61,7 +61,7 @@ class FilesManager extends Api
     /**
      * @param string $prjUid {@min 32} {@max 32}
      *
-     * @url POST /:prjUid/process-file-manager-upload
+     * @url POST /:prjUid/process-file-manager/upload
      */
     public function doPostProcessFilesManagerUpload($prjUid)
     {
@@ -124,7 +124,7 @@ class FilesManager extends Api
      *
      * @url GET /:prjUid/process-file-manager/download
      */
-    public function doDownloadProcessFilesManager($prjUid, $path)
+    public function doGetProcessFilesManagerDownload($prjUid, $path)
     {
         try {
             $filesManager = new \BusinessModel\FilesManager();
