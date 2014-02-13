@@ -12,17 +12,19 @@ use \Luracast\Restler\RestException;
 class InputDocument extends Api
 {
     /**
-     * @url GET /:projectUid/input-document/:inputDocumentUid
+     * @url GET /:prj_uid/input-document/:inp_doc_uid
      *
-     * @param string $inputDocumentUid {@min 32}{@max 32}
-     * @param string $projectUid       {@min 32}{@max 32}
+     * @param string $inp_doc_uid {@min 32}{@max 32}
+     * @param string $prj_uid     {@min 32}{@max 32}
      */
-    public function doGetInputDocument($inputDocumentUid, $projectUid)
+    public function doGetInputDocument($inp_doc_uid, $prj_uid)
     {
         try {
-            $inputdoc = new \BusinessModel\InputDocument();
+            $inputDocument = new \BusinessModel\InputDocument();
+            $inputDocument->setFormatFieldNameInUppercase(false);
+            $inputDocument->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
-            $response = $inputdoc->getInputDocument($inputDocumentUid);
+            $response = $inputDocument->getInputDocument($inp_doc_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -31,37 +33,21 @@ class InputDocument extends Api
     }
 
     /**
-     * @url POST /:projectUid/input-document
+     * @url POST /:prj_uid/input-document
      *
-     * @param string $projectUid          {@min 32}{@max 32}
+     * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     * @param string $inp_doc_title       {@from body}{@required true}
-     * @param string $inp_doc_description {@from body}
-     * @param string $inp_doc_form_needed {@from body}{@choice VIRTUAL,REAL,VREAL}
-     * @param string $inp_doc_original    {@from body}{@choice ORIGINAL,COPY,COPYLEGAL}
-     * @param string $inp_doc_published   {@from body}{@choice PRIVATE}
-     * @param int    $inp_doc_versioning  {@from body}{@choice 0,1}
-     * @param string $inp_doc_destination_path {@from body}
-     * @param string $inp_doc_tags             {@from body}
      *
      * @status 201
      */
-    public function doPostInputDocument(
-        $projectUid,
-        $request_data,
-        $inp_doc_title = "",
-        $inp_doc_description = "",
-        $inp_doc_form_needed = "VIRTUAL",
-        $inp_doc_original = "ORIGINAL",
-        $inp_doc_published = "PRIVATE",
-        $inp_doc_versioning = 0,
-        $inp_doc_destination_path = "",
-        $inp_doc_tags = ""
-    ) {
+    public function doPostInputDocument($prj_uid, $request_data)
+    {
         try {
-            $inputdoc = new \BusinessModel\InputDocument();
+            $inputDocument = new \BusinessModel\InputDocument();
+            $inputDocument->setFormatFieldNameInUppercase(false);
+            $inputDocument->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
-            $arrayData = $inputdoc->create($projectUid, $request_data);
+            $arrayData = $inputDocument->create($prj_uid, $request_data);
 
             $response = $arrayData;
 
@@ -72,54 +58,39 @@ class InputDocument extends Api
     }
 
     /**
-     * @url PUT /:projectUid/input-document/:inputDocumentUid
+     * @url PUT /:prj_uid/input-document/:inp_doc_uid
      *
-     * @param string $inputDocumentUid    {@min 32}{@max 32}
-     * @param string $projectUid          {@min 32}{@max 32}
+     * @param string $inp_doc_uid  {@min 32}{@max 32}
+     * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     * @param string $inp_doc_title       {@from body}
-     * @param string $inp_doc_description {@from body}
-     * @param string $inp_doc_form_needed {@from body}{@choice VIRTUAL,REAL,VREAL}
-     * @param string $inp_doc_original    {@from body}{@choice ORIGINAL,COPY,COPYLEGAL}
-     * @param string $inp_doc_published   {@from body}{@choice PRIVATE}
-     * @param int    $inp_doc_versioning  {@from body}{@choice 0,1}
-     * @param string $inp_doc_destination_path {@from body}
-     * @param string $inp_doc_tags             {@from body}
      */
-    public function doPutInputDocument(
-        $inputDocumentUid,
-        $projectUid,
-        $request_data,
-        $inp_doc_title = "",
-        $inp_doc_description = "",
-        $inp_doc_form_needed = "VIRTUAL",
-        $inp_doc_original = "ORIGINAL",
-        $inp_doc_published = "PRIVATE",
-        $inp_doc_versioning = 0,
-        $inp_doc_destination_path = "",
-        $inp_doc_tags = ""
-    ) {
+    public function doPutInputDocument($inp_doc_uid, $prj_uid, $request_data)
+    {
         try {
-            $inputdoc = new \BusinessModel\InputDocument();
+            $inputDocument = new \BusinessModel\InputDocument();
+            $inputDocument->setFormatFieldNameInUppercase(false);
+            $inputDocument->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
-            $arrayData = $inputdoc->update($inputDocumentUid, $request_data);
+            $arrayData = $inputDocument->update($inp_doc_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url DELETE /:projectUid/input-document/:inputDocumentUid
+     * @url DELETE /:prj_uid/input-document/:inp_doc_uid
      *
-     * @param string $inputDocumentUid {@min 32}{@max 32}
-     * @param string $projectUid       {@min 32}{@max 32}
+     * @param string $inp_doc_uid {@min 32}{@max 32}
+     * @param string $prj_uid     {@min 32}{@max 32}
      */
-    public function doDeleteInputDocument($inputDocumentUid, $projectUid)
+    public function doDeleteInputDocument($inp_doc_uid, $prj_uid)
     {
         try {
-            $inputdoc = new \BusinessModel\InputDocument();
+            $inputDocument = new \BusinessModel\InputDocument();
+            $inputDocument->setFormatFieldNameInUppercase(false);
+            $inputDocument->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
-            $inputdoc->delete($inputDocumentUid);
+            $inputDocument->delete($inp_doc_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

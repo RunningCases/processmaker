@@ -151,7 +151,9 @@ class WebEntry
             }
 
             if ($dynaFormUid != "") {
-                $process->throwExceptionIfNotExistsDynaForm($processUid, $dynaFormUid, $this->arrayFieldNameForException["dynaFormUid"]);
+                $dynaForm = new \BusinessModel\DynaForm();
+
+                $dynaForm->throwExceptionIfNotExistsDynaForm($dynaFormUid, $processUid, $this->arrayFieldNameForException["dynaFormUid"]);
             }
 
             //Get data
@@ -293,7 +295,10 @@ class WebEntry
             }
 
             $process->throwExceptionIfNotExistsTask($processUid, $arrayData["TAS_UID"], $this->arrayFieldNameForException["taskUid"]);
-            $process->throwExceptionIfNotExistsDynaForm($processUid, $arrayData["DYN_UID"], $this->arrayFieldNameForException["dynaFormUid"]);
+
+            $dynaForm = new \BusinessModel\DynaForm();
+
+            $dynaForm->throwExceptionIfNotExistsDynaForm($arrayData["DYN_UID"], $processUid, $this->arrayFieldNameForException["dynaFormUid"]);
 
             $task = new \Task();
 

@@ -16,6 +16,11 @@ require_once 'classes/model/om/BaseBpmnFlow.php';
  */
 class BpmnFlow extends BaseBpmnFlow
 {
+    /**
+     * @param $field string coming from \BpmnFlowPeer::<FIELD_NAME>
+     * @param $value string
+     * @return \BpmnFlow|null
+     */
     public static function findOneBy($field, $value)
     {
         $rows = self::findAllBy($field, $value);

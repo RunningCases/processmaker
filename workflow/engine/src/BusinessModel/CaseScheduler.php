@@ -461,17 +461,26 @@ class CaseScheduler
             if (($sOption != '1') && ($sOption != '4') && ($sOption != '5')) {
                 $sDateTmp = '';
                 if ($sStartDay == '') {
-                    $sStartDay = date( 'Y-m-d' );
+                    $sStartDay = date('Y-m-d');
+                } else {
+                    $size = strlen($aData['SCH_START_DAY']);
+                        if ( $size > 4 ) {
+                        $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
+                        $aaStartDay[0] = $aaStartDay[0];
+                        $aaStartDay[1] = $aaStartDay[1];
+                        $aaStartDay[2]= ($aaStartDay[2] == 7 ? 1 : $aaStartDay[2]);
+                        $sStartDay = $aaStartDay[0].'|'.$aaStartDay[1].'|'.$aaStartDay[2];
+                    }
                 }
-                $dCurrentDay = date( "d" );
-                $dCurrentMonth = date( "m" );
+                $dCurrentDay = date("d");
+                $dCurrentMonth = date("m");
                 $aStartDay = explode( "|", $aData['SCH_START_DAY'] );
                 if ($sOption == '3' && $aStartDay[0] == '1') {
                     $monthsArray = explode( "|", $sMonths );
                     foreach ($monthsArray as $row) {
                         if ($dCurrentMonth == $row && $dCurrentDay < $aStartDay[1]) {
                             $startTime = $aData['SCH_START_TIME'] . ":00";
-                            $aData['SCH_TIME_NEXT_RUN'] = date( 'Y' ) . '-' . $row . '-' . $aStartDay[1] . ' ' . $startTime;
+                            $aData['SCH_TIME_NEXT_RUN'] = date('Y') . '-' . $row . '-' . $aStartDay[1] . ' ' . $startTime;
                             break;
                         } else {
                             $aData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
@@ -482,8 +491,8 @@ class CaseScheduler
                 }
             } else {
                 if ($sOption == '4') {
-                    $sDateTmp = date( 'Y-m-d' );
-                    $aData['SCH_START_TIME'] = date( 'Y-m-d', strtotime( $sDateTmp ) ) . ' ' . date( 'H:i:s', strtotime( $sTimeTmp ) );
+                    $sDateTmp = date('Y-m-d');
+                    $aData['SCH_START_TIME'] = date('Y-m-d', strtotime( $sDateTmp )) . ' ' . date('H:i:s', strtotime( $sTimeTmp ));
                     $aData['SCH_START_DATE'] = $aData['SCH_START_TIME'];
                     $aData['SCH_END_DATE'] = $aData['SCH_START_TIME'];
                 }
@@ -492,10 +501,10 @@ class CaseScheduler
                     if ($aData['SCH_START_DATE'] != '') {
                         $sDateTmp = $aData['SCH_START_DATE'];
                     } else {
-                        $sDateTmp = date( 'Y-m-d' );
+                        $sDateTmp = date('Y-m-d');
                         $aData['SCH_START_DATE'] = $sDateTmp;
                     }
-                    $aData['SCH_END_DATE'] = date( 'Y-m-d', strtotime( $sDateTmp ) ) . ' ' . date( 'H:i:s', strtotime( $sTimeTmp ) );
+                    $aData['SCH_END_DATE'] = date('Y-m-d', strtotime( $sDateTmp )) . ' ' . date('H:i:s', strtotime( $sTimeTmp ));
                     $aData['SCH_START_TIME'] = time();
                     $aData['SCH_START_DATE'] = $aData['SCH_START_TIME'];
                     if ($aData['SCH_REPEAT_EVERY'] == "") {
@@ -509,7 +518,7 @@ class CaseScheduler
                     $aData['SCH_REPEAT_EVERY'] = $aData['SCH_REPEAT_EVERY'];
                     $date = $aData['SCH_START_TIME'];
                     $date += $nextRun;
-                    $date = date( "Y-m-d H:i", $date );
+                    $date = date("Y-m-d H:i", $date);
                     $aData['SCH_TIME_NEXT_RUN'] = $date;
                 }
             }
@@ -742,10 +751,19 @@ class CaseScheduler
             }
             if (($sOption != '1') && ($sOption != '4') && ($sOption != '5')) {
                 if ($sStartDay == '') {
-                    $sStartDay = date( 'Y-m-d' );
+                    $sStartDay = date('Y-m-d');
+                } else {
+                    $size = strlen($aData['SCH_START_DAY']);
+                        if ( $size > 4 ) {
+                        $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
+                        $aaStartDay[0] = $aaStartDay[0];
+                        $aaStartDay[1] = $aaStartDay[1];
+                        $aaStartDay[2]= ($aaStartDay[2] == 7 ? 1 : $aaStartDay[2]);
+                        $sStartDay = $aaStartDay[0].'|'.$aaStartDay[1].'|'.$aaStartDay[2];
+                    }
                 }
-                $dCurrentDay = date( "d" );
-                $dCurrentMonth = date( "m" );
+                $dCurrentDay = date("d");
+                $dCurrentMonth = date("m");
                 $aStartDay = explode( "|", $aData['SCH_START_DAY'] );
                 $sDateTmp = '';
                 if ($sOption == '3' && $aStartDay[0] == '1') {
@@ -753,7 +771,7 @@ class CaseScheduler
                     foreach ($monthsArray as $row) {
                         if ($dCurrentMonth == $row && $dCurrentDay < $aStartDay[1]) {
                             $startTime = $aData['SCH_START_TIME'] . ":00";
-                            $aData['SCH_TIME_NEXT_RUN'] = date( 'Y' ) . '-' . $row . '-' . $aStartDay[1] . ' ' . $startTime;
+                            $aData['SCH_TIME_NEXT_RUN'] = date('Y') . '-' . $row . '-' . $aStartDay[1] . ' ' . $startTime;
                             break;
                         } else {
                             $aData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
@@ -764,8 +782,8 @@ class CaseScheduler
                 }
             } else {
                 if ($sOption == '4') {
-                    $sDateTmp = date( 'Y-m-d' );
-                    $aData['SCH_START_TIME'] = date( 'Y-m-d', strtotime( $sDateTmp ) ) . ' ' . date( 'H:i:s', strtotime( $sTimeTmp ) );
+                    $sDateTmp = date('Y-m-d');
+                    $aData['SCH_START_TIME'] = date('Y-m-d', strtotime( $sDateTmp )) . ' ' . date('H:i:s', strtotime( $sTimeTmp ));
                     $aData['SCH_START_DATE'] = $aData['SCH_START_TIME'];
                     $aData['SCH_END_DATE'] = $aData['SCH_START_TIME'];
                 }
@@ -774,7 +792,7 @@ class CaseScheduler
                     if ($aData['SCH_START_DATE'] != '') {
                         $sDateTmp = $aData['SCH_START_DATE'];
                     } else {
-                        $sDateTmp = date( 'Y-m-d' );
+                        $sDateTmp = date('Y-m-d');
                         $aData['SCH_START_DATE'] = $sDateTmp;
                     }
                     $aData['SCH_END_DATE'] = date('Y-m-d', strtotime($sDateTmp)) . ' ' . date('H:i:s', strtotime($sTimeTmp));
@@ -791,7 +809,7 @@ class CaseScheduler
                     $aData['SCH_REPEAT_EVERY'] = $aData['SCH_REPEAT_EVERY'];
                     $date = $aData['SCH_START_TIME'];
                     $date += $nextRun;
-                    $date = date( "Y-m-d H:i", $date );
+                    $date = date("Y-m-d H:i", $date);
                     $aData['SCH_TIME_NEXT_RUN'] = $date;
                 }
             }

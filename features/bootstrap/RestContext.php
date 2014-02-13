@@ -339,7 +339,7 @@ class RestContext extends BehatContext
             $this->_headers['Authorization'] = 'Bearer ' . $this->access_token;
         }
 
-        
+
         if($urlType=="absolute"){
             $this->_requestUrl = $pageUrl;
         }else{
@@ -361,7 +361,7 @@ class RestContext extends BehatContext
                     $url .= $this->_restGetQueryStringSuffix;
                 }
                 $this->_request = $this->_client
-                    ->get($url, $this->_headers);              
+                    ->get($url, $this->_headers);
                 $this->_response = $this->_request->send();
                 break;
             case 'POST':
@@ -1201,13 +1201,26 @@ class RestContext extends BehatContext
                 if(isset($bodyResponse->error->message)){
                     $message = $bodyResponse->error->message;
                     if (strpos($message,$arg1) === false) {
-                        throw new \Exception("Error message text does not have: '" . $arg1 ."'' (actual: '$message')\n\n");
+                        throw new \Exception("Error message text does not have: '" . $arg1 ."' (actual: '$message')\n\n");
                     }
-
-
+                }elseif(is_array($bodyResponse)){
+                    $error_found=false;
+                    $messages = array();
+                    foreach($bodyResponse as $resp){
+                        if(isset($resp->error)){ 
+                            $messages[]=$resp->error;
+                            if (strpos($resp->error,$arg1) !== false){
+                                $error_found=true;
+                            }
+                        }
+                        
+                    }
+                    if(!$error_found){
+                        $message=implode("\n- ",$messages);
+                        throw new \Exception("Error message text does not have: '" . $arg1 ."' \nCurrent messages: \n- $message\n\n");
+                    }
                 }else{
                     throw new \Exception('This is not a valid error response');
-
                 }
 
             }else{
@@ -1237,7 +1250,7 @@ class RestContext extends BehatContext
             $varValue = $sessionData->$sessionVarName;
         }
 
-       
+
         $pageUrl = str_replace($varName, $varValue, $pageUrl);
 
 
@@ -1275,4 +1288,28 @@ class RestContext extends BehatContext
         }
     }
 
+    /**
+     * @When /^I request "([^"]*)" with the keys? "([^"]*)" stored in session array$/
+     */
+    public function iRequestWithTheKeysStoredInSessionArray($url, $sessionVarName)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+
+        $arraySessionVarName = explode(",", $sessionVarName);
+
+        foreach ($arraySessionVarName as $value) {
+            $varName = trim($value);
+
+            $varValue = (isset($sessionData->$varName))? $sessionData->$varName : "";
+
+            $url = str_replace($varName, $varValue, $url);
+        }
+
+        $this->iRequest($url);
+    }
 }
+

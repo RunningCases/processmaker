@@ -54,14 +54,14 @@ class Workflow extends Handler
 
     public function create($data)
     {
+        // setting defaults
+        $data['PRO_UID'] = array_key_exists('PRO_UID', $data) ? $data['PRO_UID'] : Hash::generateUID();
+        $data['USR_UID'] = array_key_exists('PRO_CREATE_USER', $data) ? $data['PRO_CREATE_USER'] : null;
+        $data['PRO_TITLE'] = array_key_exists('PRO_TITLE', $data) ? trim($data['PRO_TITLE']) : "";
+        $data['PRO_CATEGORY'] = array_key_exists('PRO_CATEGORY', $data) ? $data['PRO_CATEGORY'] : "";
+
         try {
             self::log("===> Executing -> ".__METHOD__, "Create Process with data:", $data);
-
-            // setting defaults
-            $data['PRO_UID'] = array_key_exists('PRO_UID', $data) ? $data['PRO_UID'] : Hash::generateUID();
-            $data['USR_UID'] = array_key_exists('PRO_CREATE_USER', $data) ? $data['PRO_CREATE_USER'] : null;
-            $data['PRO_TITLE'] = array_key_exists('PRO_TITLE', $data) ? trim($data['PRO_TITLE']) : "";
-            $data['PRO_CATEGORY'] = array_key_exists('PRO_CATEGORY', $data) ? $data['PRO_CATEGORY'] : "";
 
             //validate if process with specified name already exists
             if (Process::existsByProTitle($data["PRO_TITLE"])) {
@@ -108,6 +108,17 @@ class Workflow extends Handler
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
             throw $e;
+        }
+    }
+
+    public static function removeIfExists($proUid)
+    {
+        $process = \ProcessPeer::retrieveByPK($proUid);
+
+        if ($process) {
+            $me = new self();
+            $me->proUid = $process->getProUid();
+            $me->remove();
         }
     }
 
@@ -211,16 +222,33 @@ class Workflow extends Handler
         return $tasks->getAllTasks($this->proUid);
     }
 
-    public function setStartTask($tasUid)
+    public function setStartTask($tasUid, $value = true)
     {
+        $value = $value ? "TRUE" : "FALSE";
+
+        self::log("Setting Start Task with Uid: $tasUid: $value");
         $task = \TaskPeer::retrieveByPK($tasUid);
-        $task->setTasStart("TRUE");
+        $task->setTasStart($value);
         $task->save();
+        self::log("Setting Start Task -> $value, Success!");
     }
 
-    public function setEndTask($tasUid)
+    public function setEndTask($tasUid, $value = true)
     {
-        $this->addSequentialRoute($tasUid, "-1", "SEQUENTIAL", true);
+        self::log("Setting End Task with Uid: $tasUid: " . ($value ? "TRUE" : "FALSE"));
+        if ($value) {
+            $this->addSequentialRoute($tasUid, "-1");
+        } else {
+            $route = \Route::findOneBy(array(
+                \RoutePeer::TAS_UID => $tasUid,
+                \RoutePeer::ROU_NEXT_TASK => "-1"
+            ));
+
+            if (! is_null($route)) {
+                $this->removeRoute($route->getRouUid());
+            }
+        }
+        self::log("Setting End Task -> ".($value ? "TRUE" : "FALSE").", Success!");
     }
 
     public function addSequentialRoute($fromTasUid, $toTasUid, $delete = null)
@@ -239,32 +267,6 @@ class Workflow extends Handler
     {
         try {
             self::log("Add Route from task: $fromTasUid -> to task: $toTasUid ($type)");
-            /*switch ($type) {
-                    case 0:
-                        $sType = 'SEQUENTIAL';
-                        break;
-                    case 1:
-                        $sType = 'SELECT';
-                        break;
-                    case 2:
-                        $sType = 'EVALUATE';
-                        break;
-                    case 3:
-                        $sType = 'PARALLEL';
-                        break;
-                    case 4:
-                        $sType = 'PARALLEL-BY-EVALUATION';
-                        break;
-                    case 5:
-                        $sType = 'SEC-JOIN';
-                        break;
-                    case 8:
-                        $sType = 'DISCRIMINATOR';
-                        break;
-                    default:
-                        throw new \Exception("Invalid type code, given: $type, expected: integer [1...8]");
-                }
-            }*/
 
             $validTypes = array("SEQUENTIAL", "SELECT", "EVALUATE", "PARALLEL", "PARALLEL-BY-EVALUATION", "SEC-JOIN", "DISCRIMINATOR");
 
@@ -272,21 +274,16 @@ class Workflow extends Handler
                 throw new \Exception("Invalid Route type, given: $type, expected: [".implode(",", $validTypes)."]");
             }
 
-            //if ($type != 0 && $type != 5 && $type != 8) {
             if ($type != 'SEQUENTIAL' && $type != 'SEC-JOIN' && $type != 'DISCRIMINATOR') {
                 if ($this->getNumberOfRoutes($this->proUid, $fromTasUid, $toTasUid, $type) > 0) {
-                    // die(); ????
-                    throw new \RuntimeException("Unexpected behaviour");
+                    throw new \LogicException("Unexpected behaviour");
                 }
-                //unset($aRow);
             }
-            //if ($delete || $type == 0 || $type == 5 || $type == 8) {
-            if ($delete || $type == 'SEQUENTIAL' || $type == 'SEC-JOIN' || $type == 'DISCRIMINATOR') {
-                //$oTasks = new Tasks();
 
-                //$oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
-                //$oTasks->deleteAllGatewayOfTask($this->proUid, $fromTasUid);
-            }
+            //if ($delete || $type == 'SEQUENTIAL' || $type == 'SEC-JOIN' || $type == 'DISCRIMINATOR') {
+                $oTasks = new Tasks();
+                $oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
+            //}
 
             $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $delete);
             self::log("Add Route Success! -> ", $result);

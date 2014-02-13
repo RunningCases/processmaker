@@ -421,40 +421,6 @@ class Process
     }
 
     /**
-     * Verify if doesn't exist the DynaForm in table DYNAFORM
-     *
-     * @param string $processUid            Unique id of Process
-     * @param string $dynaFormUid           Unique id of DynaForm
-     * @param string $fieldNameForException Field name for the exception
-     *
-     * return void Throw exception if doesn't exist the DynaForm in table DYNAFORM
-     */
-    public function throwExceptionIfNotExistsDynaForm($processUid, $dynaFormUid, $fieldNameForException)
-    {
-        try {
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\DynaformPeer::DYN_UID);
-
-            if ($processUid != "") {
-                $criteria->add(\DynaformPeer::PRO_UID, $processUid, \Criteria::EQUAL);
-            }
-
-            $criteria->add(\DynaformPeer::DYN_UID, $dynaFormUid, \Criteria::EQUAL);
-
-            $rsCriteria = \DynaformPeer::doSelectRS($criteria);
-
-            if (!$rsCriteria->next()) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormUid), "The DynaForm with {0}: {1}, does not exist");
-
-                throw (new \Exception($msg));
-            }
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
      * Verify if doesn't exist the Template in Routing Screen Template
      *
      * @param string $processUid            Unique id of Process
@@ -553,7 +519,9 @@ class Process
             }
 
             if (isset($arrayData["PRO_SUMMARY_DYNAFORM"]) && $arrayData["PRO_SUMMARY_DYNAFORM"] . "" != "") {
-                $this->throwExceptionIfNotExistsDynaForm($processUid, $arrayData["PRO_SUMMARY_DYNAFORM"], $this->arrayFieldNameForException["processSummaryDynaform"]);
+                $dynaForm = new \BusinessModel\DynaForm();
+
+                $dynaForm->throwExceptionIfNotExistsDynaForm($arrayData["PRO_SUMMARY_DYNAFORM"], $processUid, $this->arrayFieldNameForException["processSummaryDynaform"]);
             }
 
             if (isset($arrayData["PRO_DERIVATION_SCREEN_TPL"]) && $arrayData["PRO_DERIVATION_SCREEN_TPL"] . "" != "") {
@@ -1444,19 +1412,17 @@ class Process
     public function getInputDocuments($processUid)
     {
         try {
-            //Verify data
-            $process = new \Process();
-
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
-
-            //Get data
             $arrayInputDocument = array();
 
-            $inputdoc = new \BusinessModel\InputDocument();
+            //Verify data
+            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
-            $criteria = $inputdoc->getInputDocumentCriteria();
+            //Get data
+            $inputDocument = new \BusinessModel\InputDocument();
+            $inputDocument->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+            $inputDocument->setArrayFieldNameForException($this->arrayFieldNameForException);
+
+            $criteria = $inputDocument->getInputDocumentCriteria();
 
             $criteria->add(\InputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
             $criteria->addAscendingOrderByColumn("INP_DOC_TITLE");
@@ -1467,9 +1433,10 @@ class Process
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
-                $arrayInputDocument[] = $inputdoc->getInputDocumentDataFromRecord($row);
+                $arrayInputDocument[] = $inputDocument->getInputDocumentDataFromRecord($row);
             }
 
+            //Return
             return $arrayInputDocument;
         } catch (\Exception $e) {
             throw $e;
