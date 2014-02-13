@@ -661,17 +661,17 @@ class User
                 if ($start < 0) {
                     throw (new \Exception( 'invalid value specified for `start`.'));
                 } else {
-                    $oCriteria->setOffset( $start );
+                    $oCriteria->setOffset($start);
                 }
             }
-            if (isset($limit)) {
+            if ($limit != '') {
                 if ($limit < 0) {
                     throw (new \Exception( 'invalid value specified for `limit`.'));
                 } else {
                     if ($limit == 0) {
-                        return $aUsers;
+                        return $aUserInfo;
                     } else {
-                        $oCriteria->setLimit( $limit );
+                        $oCriteria->setLimit($limit);
                     }
                 }
             }

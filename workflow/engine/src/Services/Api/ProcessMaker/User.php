@@ -18,7 +18,7 @@ class User extends Api
     {
         try {
             $user = new \BusinessModel\User();
-            $response = $user->getUsers($filter, null, null, $start, $limit);
+            $response = $user->getUsers($filter, $start, $limit);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
