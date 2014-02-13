@@ -435,6 +435,64 @@ class Table
     }
 
     /**
+     * Save Data for PmTable
+     * @var string $pmt_uid. Uid for PmTable
+     * @var string $pmt_data. Data for rows of PmTable
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     */
+    public function saveTableData ($pmt_uid, $pmt_data)
+    {
+        $pmt_uid = $this->validateTabUid($pmt_uid, false);
+        $rows = $pmt_data['pmt_rows'];
+
+        $additionalTables = new AdditionalTables();
+        $table = $additionalTables->load($pmt_uid, true);
+        $primaryKeys = $additionalTables->getPrimaryKeys();
+
+        $className = $table['ADD_TAB_CLASS_NAME'];
+        $classPeerName = $className . 'Peer';
+        $row = (array)$rows;
+
+        $row = array_merge( array_change_key_case( $row, CASE_LOWER ), array_change_key_case( $row, CASE_UPPER ) );
+        $toSave = false;
+
+        if (! file_exists( PATH_WORKSPACE . 'classes/' . $className . '.php' )) {
+            throw new Exception( 'Create::' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $className ) );
+        }
+
+        require_once PATH_WORKSPACE . 'classes/' . $className . '.php';
+        eval( '$obj = new ' . $className . '();' );
+        eval( '$con = Propel::getConnection(' . $classPeerName . '::DATABASE_NAME);' );
+        $obj->fromArray( $row, \BasePeer::TYPE_FIELDNAME );
+        if ($obj->validate()) {
+            $affectedRows = $obj->save();
+            if ($affectedRows == 0) {
+                throw (new \Exception("The value of key column is required"));
+            }
+            $toSave = true;
+            $primaryKeysValues = array ();
+            foreach ($primaryKeys as $primaryKey) {
+                $method = 'get' . AdditionalTables::getPHPName( $primaryKey['FLD_NAME'] );
+                $primaryKeysValues[] = $obj->$method();
+            }
+        } else {
+            $msg = '';
+            foreach ($obj->getValidationFailures() as $objValidationFailure) {
+                $msg .= $objValidationFailure->getMessage() . "\n";
+            }
+            throw new \Exception( G::LoadTranslation('ID_ERROR_TRYING_INSERT'). '"' . $table['ADD_TAB_NAME'] . "\"\n" . $msg );
+        }
+
+        $index = G::encrypt( implode( ',', $primaryKeysValues ), 'pmtable' );
+        $rep = $this->getTableData($pmt_uid);
+        return $rep;
+    }
+
+    /**
      * Update Data for Table
      * @var string $tab_data. Data for table
      * @var string $pro_uid. Uid for process
@@ -487,6 +545,67 @@ class Table
     }
 
     /**
+     * Update Data for PmTable
+     * @var string $pmt_uid. Uid for PmTable
+     * @var string $pmt_data. Data for rows of PmTable
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function updateTableData($pmt_uid, $pmt_data)
+    {
+        $pmt_uid = $this->validateTabUid($pmt_uid, false);
+        $rows = $pmt_data['pmt_rows'];
+        $rows = array_merge( array_change_key_case( $rows, CASE_LOWER ), array_change_key_case( $rows, CASE_UPPER ) );
+
+        $oAdditionalTables = new AdditionalTables();
+        $table = $oAdditionalTables->load( $pmt_uid, true );
+        $primaryKeys = $oAdditionalTables->getPrimaryKeys( 'keys' );
+
+        foreach ($primaryKeys as $value) {
+            if (!isset($rows[$value])) {
+                throw (new \Exception("The field for column '$value' is required"));
+            } else {
+                $params[] = is_numeric($rows[$value]) ? $rows[$value] : "'".$rows[$value]."'";
+            }
+        }
+        $className = $table['ADD_TAB_CLASS_NAME'];
+        $classPeerName = $className . 'Peer';
+        $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+        if (! file_exists( $sPath . $className . '.php' )) {
+            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $this->className ) );
+        }
+        require_once $sPath . $className . '.php';
+
+        $obj = null;
+        eval( '$obj = ' . $classPeerName . '::retrieveByPk(' . implode( ',', $params ) . ');' );
+        if (is_object( $obj )) {
+            foreach ($rows as $key => $value) {
+                // validation, don't modify primary keys
+                if (in_array(G::toUpper($key), $primaryKeys ) || in_array( G::toLower($key), $primaryKeys )) {
+                    unset($rows[$key]);
+                }
+                $action = 'set' . AdditionalTables::getPHPName( $key );
+                $obj->$action( $value );
+            }
+            if ($r = $obj->validate()) {
+                $obj->save();
+                $result = true;
+            } else {
+                $msg = '';
+                foreach ($obj->getValidationFailures() as $objValidationFailure) {
+                    $msg .= $objValidationFailure->getMessage() . "\n";
+                }
+                throw new \Exception( $msg );
+            }
+        } else {
+            throw (new \Exception("The key " . implode(',', $params) . " not exist"));
+        }
+    }
+
+    /**
      * Delete Table
      * @var string $tab_uid. Uid for table
      * @var string $pro_uid. Uid for process
@@ -516,6 +635,65 @@ class Table
             }
         }
         $at->deleteAll($tab_uid);
+    }
+
+    /**
+     * Delete Data for PmTable
+     * @var string $pmt_uid. Uid for PmTable
+     * @var string $rows. Data for rows of PmTable
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function deleteTableData($pmt_uid, $rows)
+    {
+        $pmt_uid = $this->validateTabUid($pmt_uid, false);
+        $rows = array_merge( array_change_key_case( $rows, CASE_LOWER ), array_change_key_case( $rows, CASE_UPPER ) );
+
+        $oAdditionalTables = new AdditionalTables();
+        $table = $oAdditionalTables->load( $pmt_uid, true );
+        $primaryKeys = $oAdditionalTables->getPrimaryKeys( 'keys' );
+
+        foreach ($primaryKeys as $value) {
+            if (!isset($rows[$value])) {
+                throw (new \Exception("The field for column '$value' is required"));
+            } else {
+                $params[] = is_numeric($rows[$value]) ? $rows[$value] : "'".$rows[$value]."'";
+            }
+        }
+        $className = $table['ADD_TAB_CLASS_NAME'];
+        $classPeerName = $className . 'Peer';
+        $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+        if (! file_exists( $sPath . $className . '.php' )) {
+            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $this->className ) );
+        }
+        require_once $sPath . $className . '.php';
+
+        $obj = null;
+        eval( '$obj = ' . $classPeerName . '::retrieveByPk(' . implode( ',', $params ) . ');' );
+        if (is_object( $obj )) {
+            foreach ($rows as $key => $value) {
+                // validation, don't modify primary keys
+                if (in_array(G::toUpper($key), $primaryKeys ) || in_array( G::toLower($key), $primaryKeys )) {
+                    unset($rows[$key]);
+                }
+                $action = 'set' . AdditionalTables::getPHPName( $key );
+                $obj->$action( $value );
+            }
+            if ($r = $obj->validate()) {
+                $obj->delete();
+            } else {
+                $msg = '';
+                foreach ($obj->getValidationFailures() as $objValidationFailure) {
+                    $msg .= $objValidationFailure->getMessage() . "\n";
+                }
+                throw new \Exception( $msg );
+            }
+        } else {
+            throw (new \Exception("The key " . implode(',', $params) . " not exist"));
+        }
     }
 
     /**
