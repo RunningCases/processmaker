@@ -23,9 +23,11 @@ class BpmnWorkflow extends Project\Bpmn
 
     public static function load($prjUid)
     {
-        $parent = parent::load($prjUid);
 
-        $me = new self();
+        $parent = parent::load($prjUid);
+        //return new BpmnWorkflow();
+
+        $me = new BpmnWorkflow();
 
         $me->project = $parent->project;
         $me->prjUid = $parent->project->getPrjUid();
@@ -175,7 +177,34 @@ class BpmnWorkflow extends Project\Bpmn
 
     public function removeFlow($floUid)
     {
+        $flow = \BpmnFlowPeer::retrieveByPK($floUid);
         parent::removeFlow($floUid);
+
+        // verify case: event(start) -> activity
+        // => find the corresponding task and unset it as start task
+        if ($flow->getFloElementOriginType() == "bpmnEvent" &&
+            $flow->getFloElementDestType() == "bpmnActivity"
+        ) {
+            $event = \BpmnEventPeer::retrieveByPK($flow->getFloElementOrigin());
+
+            if (! is_null($event) && $event->getEvnType() == "START") {
+                $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
+                $this->wp->setStartTask($activity->getActUid(), false);
+            }
+        } elseif ($flow->getFloElementOriginType() == "bpmnActivity" &&
+            $flow->getFloElementDestType() == "bpmnEvent") {
+            // verify case: activity -> event(end)
+            // => find the corresponding task and unset it as start task
+            $event = \BpmnEventPeer::retrieveByPK($flow->getFloElementDest());
+
+            if (! is_null($event) && $event->getEvnType() == "END") {
+                $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementOrigin());
+
+                if (! is_null($activity)) {
+                    $this->wp->setEndTask($activity->getActUid(), false);
+                }
+            }
+        }
     }
 
     public function addEvent($data)
@@ -189,28 +218,28 @@ class BpmnWorkflow extends Project\Bpmn
 
     public function removeEvent($evnUid)
     {
-        $event = \BpmnEventPeer::retrieveByPK($evnUid);
-
-        switch ($event->getEvnType()) {
-            case "START":
-                $flow = \BpmnFlow::findOneBy(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $event->getEvnUid());
-                if (! is_null($flow) && $flow->getFloElementDestType() == "bpmnActivity") {
-                    $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
-                    if (! is_null($activity)) {
-                        $this->wp->setStartTask($activity->getActUid(), false);
-                    }
-                }
-                break;
-            case "END":
-                $flow = \BpmnFlow::findOneBy(\BpmnFlowPeer::FLO_ELEMENT_DEST, $event->getEvnUid());
-                if (! is_null($flow) && $flow->getFloElementOriginType() == "bpmnActivity") {
-                    $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementOrigin());
-                    if (! is_null($activity)) {
-                        $this->wp->setEndTask($activity->getActUid(), false);
-                    }
-                }
-                break;
-        }
+//        $event = \BpmnEventPeer::retrieveByPK($evnUid);
+//
+//        switch ($event->getEvnType()) {
+//            case "START":
+//                $flow = \BpmnFlow::findOneBy(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $event->getEvnUid());
+//                if (! is_null($flow) && $flow->getFloElementDestType() == "bpmnActivity") {
+//                    $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
+//                    if (! is_null($activity)) {
+//                        $this->wp->setStartTask($activity->getActUid(), false);
+//                    }
+//                }
+//                break;
+//            case "END":
+//                $flow = \BpmnFlow::findOneBy(\BpmnFlowPeer::FLO_ELEMENT_DEST, $event->getEvnUid());
+//                if (! is_null($flow) && $flow->getFloElementOriginType() == "bpmnActivity") {
+//                    $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementOrigin());
+//                    if (! is_null($activity)) {
+//                        $this->wp->setEndTask($activity->getActUid(), false);
+//                    }
+//                }
+//                break;
+//        }
 
         parent::removeEvent($evnUid);
     }
@@ -288,7 +317,10 @@ class BpmnWorkflow extends Project\Bpmn
                 break;
             case 'bpmnEvent':
                 $evnUid = $flow['FLO_ELEMENT_DEST'];
+                self::log('=======++++++++=========>', $evnUid, "EVN_UID", $events);
+                
                 $events = self::findInArray($evnUid, "EVN_UID", $events);
+
 
                 if (! empty($events)) {
                     $event = $events[0];
@@ -321,9 +353,19 @@ class BpmnWorkflow extends Project\Bpmn
         return $result;
     }
 
+//    public function getActivities()
+//    {
+//        return parent::getActivities();
+//    }
+
     public function remove()
     {
         parent::remove();
         $this->wp->remove();
+    }
+
+    public function hello($s)
+    {
+        echo "--->".$s;
     }
 }
