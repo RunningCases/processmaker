@@ -239,7 +239,7 @@ class Table
         $reservedWordsSql = G::reservedWordsSql();
 
         if ($reportFlag) {
-            $defaultColumns = $this->getReportTableDefaultColumns($data['REP_TAB_TYPE']);
+            $defaultColumns = $this->getReportTableDefaultColumns($dataValidate['REP_TAB_TYPE']);
             $columns = array_merge( $defaultColumns, $columns );
         }
 
