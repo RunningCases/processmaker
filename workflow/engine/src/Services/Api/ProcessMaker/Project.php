@@ -132,9 +132,9 @@ class Project extends Api
                     $bwp->addActivity($activityData);
 
                     $result[] = array("object" => "activity", "new_uid" => $activityData["ACT_UID"], "old_uid" => $oldActUid);
-                    $diagram["activities"][$i] = $activityData;
                 }
 
+                $diagram["activities"][$i] = $activityData;
                 $whiteList[] = $activityData["ACT_UID"];
             }
 
@@ -168,9 +168,9 @@ class Project extends Api
                     $bwp->addGateway($gatewayData);
 
                     $result[] = array("object" => "gateway", "new_uid" => $gatewayData["GAT_UID"], "old_uid" => $oldActUid);
-                    $diagram["gateways"][$i] = $gatewayData;
                 }
 
+                $diagram["gateways"][$i] = $gatewayData;
                 $whiteList[] = $gatewayData["GAT_UID"];
             }
 
@@ -203,9 +203,9 @@ class Project extends Api
                     $bwp->addEvent($eventData);
 
                     $result[] = array("object" => "event", "new_uid" => $eventData["EVN_UID"], "old_uid" => $oldActUid);
-                    $diagram["events"][$i] = $eventData;
                 }
 
+                $diagram["events"][$i] = $eventData;
                 $whiteList[] = $eventData["EVN_UID"];
             }
 
@@ -226,7 +226,7 @@ class Project extends Api
             $whiteList = array();
 
             foreach ($diagram["flows"] as $i => $flowData) {
-                $diagram["flows"][$i] = $flowData = array_change_key_case($flowData, CASE_UPPER);
+                $flowData = array_change_key_case($flowData, CASE_UPPER);
 
                 // if it is a new flow record
                 if (! \BpmnFlow::exists($flowData["FLO_UID"])) {
@@ -244,9 +244,9 @@ class Project extends Api
                     }
 
                     $result[] = array("object" => "flow", "new_uid" => $flowData["FLO_UID"], "old_uid" => $oldFloUid);
-                    $diagram["flows"][$i] = $flowData;
                 }
 
+                $diagram["flows"][$i] = $flowData;
                 $whiteList[] = $flowData["FLO_UID"];
             }
 
