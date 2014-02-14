@@ -207,10 +207,16 @@ class User
     public function create($arrayData)
     {
         try {
-            global $RBAC;
+            global $RBAC;            
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
             $form = $arrayData;
+            if ($form['USR_REPLACED_BY'] != '') {
+                $oReplacedBy = \UsersPeer::retrieveByPK($form['USR_REPLACED_BY']);
+                if (is_null($oReplacedBy)) {
+                    throw new \Exception('`usr_replaced_by`:'.$form['USR_REPLACED_BY'].' '.\G::LoadTranslation('ID_AUTHENTICATION_SOURCE_INVALID'));
+                }
+            }
             if (isset($arrayData['USR_UID'])) {
                 $form['USR_UID'] = $arrayData['USR_UID'];
             } else {
@@ -255,10 +261,14 @@ class User
             } else {
                 $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
             }
-            if (!filter_var($form['USR_EMAIL'], FILTER_VALIDATE_EMAIL)) {
-                throw new \Exception('`usr_email`. '.\G::LoadTranslation('ID_INCORRECT_EMAIL'));
+            if ($form['USR_EMAIL'] == '') {
+                throw new \Exception('`usr_email`. E-mail is required');
             } else {
-                $aData['USR_EMAIL'] = $form['USR_EMAIL'];
+                if (!filter_var($form['USR_EMAIL'], FILTER_VALIDATE_EMAIL)) {
+                    throw new \Exception('`usr_email`. '.\G::LoadTranslation('ID_INCORRECT_EMAIL'));
+                } else {
+                    $aData['USR_EMAIL'] = $form['USR_EMAIL'];
+                }
             }
             if ($form['USR_DUE_DATE'] == '') {
                 throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
@@ -280,24 +290,28 @@ class User
             $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
             $statusWF = $form['USR_STATUS'];
             if ($form['USR_STATUS'] == '') {
-                throw new \Exception('`usr_status`. '.\G::LoadTranslation('ID_SOME_FIELDS_REQUIRED'));
+                throw new \Exception('`usr_status`. User status is required');
             } else {
                 if ($form['USR_STATUS'] == 'ACTIVE' || $form['USR_STATUS'] == 'INACTIVE' || $form['USR_STATUS'] == 'VACATION') {
                     $aData['USR_STATUS'] = $form['USR_STATUS'];
                 } else {
-                    throw new \Exception('`usr_status`. Invalid value for field.');
+                    throw new \Exception('`usr_status`. Invalid value for status field.');
                 }
             }
-            $oCriteria = new \Criteria('rbac');
-            $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
-            $oDataset = \RolesPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            $aRow = $oDataset->getRow();
-            if ($oDataset->getRow()) {
-                $aData['USR_ROLE'] = $form['USR_ROLE'];
+            if ($form['USR_ROLE'] == '') {
+                throw new \Exception('`usr_role`. User role is required');
             } else {
-                throw new \Exception('`usr_role`. Invalid value for field.');
+                $oCriteria = new \Criteria('rbac');
+                $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
+                $oDataset = \RolesPeer::doSelectRS($oCriteria);
+                $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                $oDataset->next();
+                $aRow = $oDataset->getRow();
+                if ($oDataset->getRow()) {
+                    $aData['USR_ROLE'] = $form['USR_ROLE'];
+                } else {
+                    throw new \Exception('`usr_role`. Invalid value for role field.');
+                }
             }
             try {
                 if ($aData['USR_STATUS'] == 'ACTIVE') {
@@ -322,7 +336,7 @@ class User
             $aData['USR_PHONE'] = $form['USR_PHONE'];
             $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
             $aData['USR_POSITION'] = $form['USR_POSITION'];
-            $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+            $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];           
             $oUser = new \Users();
             $oUser -> create( $aData );
             // comment photos files
@@ -530,8 +544,13 @@ class User
             if ($form['USR_ROLE'] != '') {
                 $aData['USR_ROLE'] = $form['USR_ROLE'];
             }
-            if (isset($form['USR_REPLACED_BY'])) {
-                $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+            if ($form['USR_REPLACED_BY'] != '') {
+                $oReplacedBy = \UsersPeer::retrieveByPK($form['USR_REPLACED_BY']);
+                if (is_null($oReplacedBy)) {
+                    throw new \Exception('`usr_replaced_by`:'.$form['USR_REPLACED_BY'].' '.\G::LoadTranslation('ID_AUTHENTICATION_SOURCE_INVALID'));
+                } else {
+                    $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+                }
             }
             if (isset($form['USR_AUTH_USER_DN'])) {
                 $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];

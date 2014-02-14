@@ -13,6 +13,9 @@ class User extends Api
 {
     /**
      * @url GET
+     * @param string $filter
+     * @param int $start
+     * @param int $limit
      */
     public function doGetUsers($filter = '', $start = null, $limit = null)
     {
