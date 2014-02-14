@@ -58,12 +58,12 @@ class DataBaseConnection extends Api
      * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      *
-     * @param string $dbs_type {@from body}
-     * @param string $dbs_server {@from body}
-     * @param string $dbs_database_name {@from body}
+     * @param string $dbs_type {@from body} {@min 1}
+     * @param string $dbs_server {@from body} {@min 1}
+     * @param string $dbs_database_name {@from body} {@min 1}
      * @param string $dbs_username {@from body}
-     * @param string $dbs_port {@from body}
-     * @param string $dbs_encode {@from body}
+     * @param string $dbs_port {@from body} {@type float}
+     * @param string $dbs_encode {@from body} {@min 1}
      * @param string $dbs_password {@from body}
      * @param string $dbs_description {@from body}
      * @return array
@@ -99,12 +99,12 @@ class DataBaseConnection extends Api
      * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      *
-     * @param string $dbs_type {@from body}
-     * @param string $dbs_server {@from body}
-     * @param string $dbs_database_name {@from body}
+     * @param string $dbs_type {@from body} {@min 1}
+     * @param string $dbs_server {@from body} {@min 1}
+     * @param string $dbs_database_name {@from body} {@min 1}
      * @param string $dbs_username {@from body}
-     * @param string $dbs_port {@from body}
-     * @param string $dbs_encode {@from body}
+     * @param string $dbs_port {@from body} {@type float}
+     * @param string $dbs_encode {@from body} {@min 1}
      * @param string $dbs_password {@from body}
      * @param string $dbs_description {@from body}
      * @return array

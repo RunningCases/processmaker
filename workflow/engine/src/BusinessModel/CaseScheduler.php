@@ -464,7 +464,7 @@ class CaseScheduler
                     $sStartDay = date('Y-m-d');
                 } else {
                     $size = strlen($aData['SCH_START_DAY']);
-                        if ( $size > 4 ) {
+                    if ($size > 4) {
                         $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
                         $aaStartDay[0] = $aaStartDay[0];
                         $aaStartDay[1] = $aaStartDay[1];
@@ -754,7 +754,7 @@ class CaseScheduler
                     $sStartDay = date('Y-m-d');
                 } else {
                     $size = strlen($aData['SCH_START_DAY']);
-                        if ( $size > 4 ) {
+                    if ($size > 4) {
                         $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
                         $aaStartDay[0] = $aaStartDay[0];
                         $aaStartDay[1] = $aaStartDay[1];

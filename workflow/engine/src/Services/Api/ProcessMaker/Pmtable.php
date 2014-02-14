@@ -103,6 +103,33 @@ class Pmtable extends Api
      * @param string $pmt_uid {@min 1} {@max 32}
      *
      * @param array $request_data
+     * @param array $pmt_rows {@from body} {@required true}
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url POST /:pmt_uid/data
+     * @status 201
+     */
+    public function doPostPmTableData(
+        $pmt_uid,
+        $request_data,
+        $pmt_rows = ''
+    ) {
+        try {
+            $oReportTable = new \BusinessModel\Table();
+            $response = $oReportTable->saveTableData($pmt_uid, $request_data);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $pmt_uid {@min 1} {@max 32}
+     *
+     * @param array $request_data
      * @param string $pmt_tab_dsc {@from body}
      * @return void
      *
@@ -128,6 +155,32 @@ class Pmtable extends Api
     /**
      * @param string $pmt_uid {@min 1} {@max 32}
      *
+     * @param array $request_data
+     * @param array $pmt_rows {@from body} {@required true}
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url PUT /:pmt_uid/data
+     */
+    public function doPutPmTableData(
+        $pmt_uid,
+        $request_data,
+        $pmt_rows = ''
+    ) {
+        try {
+            $oReportTable = new \BusinessModel\Table();
+            $response = $oReportTable->updateTableData($pmt_uid, $request_data);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $pmt_uid {@min 1} {@max 32}
+     *
      * @return void
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -140,6 +193,42 @@ class Pmtable extends Api
         try {
             $oReportTable = new \BusinessModel\Table();
             $response = $oReportTable->deleteTable($pmt_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $pmt_uid {@min 1} {@max 32}
+     * @param string $key1 {@min 1}
+     * @param string $value1 {@min 1}
+     * @param string $key2
+     * @param string $value2
+     * @param string $key3
+     * @param string $value3
+     *
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url DELETE /:pmt_uid/data/:key1/:value1
+     * @url DELETE /:pmt_uid/data/:key1/:value1/:key2/:value2
+     * @url DELETE /:pmt_uid/data/:key1/:value1/:key2/:value2/:key3/:value3
+     */
+    public function doDeletePmTableData($pmt_uid, $key1, $value1, $key2 = '', $value2 = '', $key3 = '', $value3 = '')
+    {
+        try {
+            $rows = array($key1 => $value1);
+            if ($key2 != '') {
+                $rows[$key2] = $value2;
+            }
+            if ($key3 != '') {
+                $rows[$key3] = $value3;
+            }
+            $oReportTable = new \BusinessModel\Table();
+            $response = $oReportTable->deleteTableData($pmt_uid, $rows);
+            return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

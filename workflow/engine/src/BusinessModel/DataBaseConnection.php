@@ -100,22 +100,7 @@ class DataBaseConnection
 
         if (isset($dataDBConnection['DBS_TYPE'])) {
             $typesExists = array();
-            G::LoadClass( 'dbConnections' );
-            $dbs = new dbConnections($pro_uid);
-            $dbServices = $dbs->getDbServicesAvailables();
-            foreach ($dbServices as $value) {
-                $typesExists[] = $value['id'];
-            }
-            if (!in_array($dataDBConnection['DBS_TYPE'], $typesExists)) {
-                throw (new \Exception("This 'dbs_type' is invalid"));
-            }
-        }
-
-        if (isset($dataDBConnection['DBS_TYPE'])) {
-            $typesExists = array();
-
-            $dbs = new dbConnections($pro_uid);
-            $dbServices = $dbs->getDbServicesAvailables();
+            $dbServices = $this->getDbEngines();
             foreach ($dbServices as $value) {
                 $typesExists[] = $value['id'];
             }
@@ -311,6 +296,23 @@ class DataBaseConnection
             $resp['resp'] = true;
             return $resp;
         }
+    }
+
+    /**
+     * Get Data Base Engines
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     */
+    public function getDbEngines () {
+        if (!class_exists('dbConnections')) {
+            G::LoadClass('dbConnections');
+        }
+        $dbs = new dbConnections();
+        $dbServices = $dbs->getDbServicesAvailables();
+        return $dbServices;
     }
 
     /**

@@ -1808,7 +1808,8 @@ class Task
      *
      * @return string
      */
-    public function validateProUid ($pro_uid) {
+    public function validateProUid ($pro_uid)
+    {
         $pro_uid = trim($pro_uid);
         if ($pro_uid == '') {
             throw (new \Exception("The project with prj_uid: '', does not exist."));
@@ -1829,7 +1830,8 @@ class Task
      *
      * @return string
      */
-    public function validateActUid($act_uid) {
+    public function validateActUid($act_uid)
+    {
         $act_uid = trim($act_uid);
         if ($act_uid == '') {
             throw (new \Exception("The activity with act_uid: '', does not exist."));

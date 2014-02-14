@@ -38,7 +38,9 @@ class Process
 
     private $formatFieldNameInUppercase = true;
 
-    private $arrayFieldNameForException = array();
+    private $arrayFieldNameForException = array(
+        "gridUid" => "GRID_UID"
+    );
 
     /**
      * Constructor of the class
@@ -1507,6 +1509,107 @@ class Process
 
             //Return
             return $arrayFieldPk;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get data of a Variable from a record
+     *
+     * @param array $record Record
+     *
+     * return array Return an array with data Variable
+     */
+    public function getVariableDataFromRecord($record)
+    {
+        try {
+            return array(
+                $this->getFieldNameByFormatFieldName("VAR_NAME")  => trim($record["name"]),
+                $this->getFieldNameByFormatFieldName("VAR_LABEL") => trim($record["label"]),
+                $this->getFieldNameByFormatFieldName("VAR_TYPE")  => trim($record["type"])
+            );
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get Variables of a Process/Grid
+     *
+     * @param string $option     Option (GRID, GRIDVARS, ALL)
+     * @param string $processUid Unique id of Process
+     * @param string $gridUid    Unique id of Grid (DynaForm)
+     *
+     * return array Return an array with Variables of a Process/Grid
+     */
+    public function getVariables($option, $processUid, $gridUid = "")
+    {
+        try {
+            $arrayVariable = array();
+
+            //Verify data
+            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+
+            //Get data
+            switch ($option) {
+                case "GRID":
+                    \G::LoadClass("xmlfield_InputPM");
+
+                    $arrayVar = getGridsVars($processUid);
+
+                    foreach ($arrayVar as $key => $value) {
+                        $arrayVariableAux = $this->getVariableDataFromRecord(array("name" => $value["sName"], "label" => "[ " . \G::LoadTranslation("ID_GRID") . " ]", "type" => "grid"));
+
+                        $arrayVariable[] = array_merge($arrayVariableAux, array($this->getFieldNameByFormatFieldName("GRID_UID") => $value["sXmlForm"]));
+                    }
+                    break;
+                case "GRIDVARS":
+                    //Verify data
+                    $dynaForm = new \BusinessModel\DynaForm();
+
+                    $dynaForm->throwExceptionIfNotExistsDynaForm($gridUid, $processUid, $this->arrayFieldNameForException["gridUid"]);
+
+                    //Get data
+                    $file = PATH_DYNAFORM . $processUid . PATH_SEP . $gridUid . ".xml";
+
+                    if (file_exists($file) && filesize($file) > 0) {
+                        //Load DynaForm
+                        $dynaForm = new \Dynaform();
+
+                        $arrayDynaFormData = $dynaForm->Load($gridUid);
+
+                        $dynaFormFilename = $arrayDynaFormData["DYN_FILENAME"];
+
+                        //Fields
+                        $form = new \Form($dynaFormFilename, PATH_DYNAFORM, SYS_LANG);
+
+                        $arrayFieldName = array();
+
+                        if ($form->type == "grid") {
+                            foreach ($form->fields as $key => $value) {
+                                if (!in_array($key, $arrayFieldName)) {
+                                    $arrayVariable[] = $this->getVariableDataFromRecord(array("name" => $key, "label" => $value->label, "type" => $value->type));
+                                    $arrayFieldName[] = $key;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    //ALL
+                    \G::LoadClass("xmlfield_InputPM");
+
+                    $arrayVar = getDynaformsVars($processUid);
+
+                    foreach ($arrayVar as $key => $value) {
+                        $arrayVariable[] = $this->getVariableDataFromRecord(array("name" => $value["sName"], "label" => $value["sLabel"], "type" => $value["sType"]));
+                    }
+                    break;
+            }
+
+            //Return
+            return $arrayVariable;
         } catch (\Exception $e) {
             throw $e;
         }

@@ -18,7 +18,7 @@ class User extends Api
     {
         try {
             $user = new \BusinessModel\User();
-            $response = $user->getUsers($filter, null, null, $start, $limit);
+            $response = $user->getUsers($filter, $start, $limit);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -48,7 +48,8 @@ class User extends Api
      *
      * @status 201
      */
-    public function doPostUser($request_data) {
+    public function doPostUser($request_data)
+    {
         try {
             $user = new \BusinessModel\User();
             $arrayData = $user->create($request_data);
@@ -66,7 +67,8 @@ class User extends Api
      * @param string $usr_uid      {@min 32}{@max 32}
      * @param array  $request_data
      */
-    public function doPutUser($usr_uid, $request_data) {
+    public function doPutUser($usr_uid, $request_data)
+    {
         try {
             $userLoggedUid = $this->getUserId();
             $user = new \BusinessModel\User();
