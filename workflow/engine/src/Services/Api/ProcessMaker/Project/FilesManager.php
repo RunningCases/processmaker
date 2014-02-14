@@ -61,11 +61,13 @@ class FilesManager extends Api
     /**
      * @param string $prjUid {@min 32} {@max 32}
      *
+     * @header Accept: application/octet-stream
      * @url POST /:prjUid/process-file-manager/upload
      */
     public function doPostProcessFilesManagerUpload($prjUid)
     {
         try {
+            //echo $request_data; die();
             $userUid = $this->getUserId();
             $filesManager = new \BusinessModel\FilesManager();
             $arrayData = $filesManager->uploadProcessFilesManager($prjUid, $userUid);
@@ -168,3 +170,11 @@ class ProcessFilesManagerStructurePut
     public $content;
 }
 
+class ProcessFilesManagerStructureUpload
+{
+    /**
+     * @var string {@from body}
+     */
+    public $url;
+
+}

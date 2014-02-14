@@ -12,7 +12,7 @@ class User
      * return id
      */
     public function createUser($aData)
-    { 
+    {
         require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
         $this->userObj = new \RbacUsers();
         if (class_exists('PMPluginRegistry')) {
@@ -196,7 +196,7 @@ class User
         $this->aUserInfo[$sSystem]['PERMISSIONS'] = $fieldsPermissions;
         return $fieldsPermissions;
     }
- 
+
     /**
      * Create User
      *
@@ -294,7 +294,7 @@ class User
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $aRow = $oDataset->getRow();
-            if ($oDataset->getRow()){
+            if ($oDataset->getRow()) {
                 $aData['USR_ROLE'] = $form['USR_ROLE'];
             } else {
                 throw new \Exception('`usr_role`. Invalid value for field.');
@@ -373,7 +373,7 @@ class User
                 }
             }
             if ($countPermission != 1) {
-                throw new \Exception('This user: '.$usrLoggedUid. ', can`t update the data.');    
+                throw new \Exception('This user: '.$usrLoggedUid. ', can`t update the data.');
             }
             if (isset($usrUid)) {
                 $form['USR_UID'] = $usrUid;
@@ -489,7 +489,6 @@ class User
                 }
             }
             if ($form['USR_DUE_DATE'] != '') {
-//                throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
                 $dueDate = explode("-", $form['USR_DUE_DATE']);
                 if (ctype_digit($dueDate[0])) {
                     if (checkdate($dueDate[1], $dueDate[2], $dueDate[0]) == false) {
@@ -512,7 +511,7 @@ class User
                 $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                 $oDataset->next();
                 $aRow = $oDataset->getRow();
-                if ($oDataset->getRow()){
+                if ($oDataset->getRow()) {
                     $aData['USR_ROLE'] = $form['USR_ROLE'];
                 } else {
                     throw new \Exception('`usr_role`. Invalid value for field.');
