@@ -207,7 +207,7 @@ class User
     public function create($arrayData)
     {
         try {
-            global $RBAC;            
+            global $RBAC;
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
             $form = $arrayData;
@@ -336,7 +336,7 @@ class User
             $aData['USR_PHONE'] = $form['USR_PHONE'];
             $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
             $aData['USR_POSITION'] = $form['USR_POSITION'];
-            $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];           
+            $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
             $oUser = new \Users();
             $oUser -> create( $aData );
             // comment photos files
