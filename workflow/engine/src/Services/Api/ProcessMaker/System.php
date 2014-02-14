@@ -17,7 +17,7 @@ class System extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url GET /dbEngines
+     * @url GET /db-engines
      */
     public function doGetDataBaseEngines()
     {
