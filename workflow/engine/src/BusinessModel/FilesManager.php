@@ -45,7 +45,7 @@ class FilesManager
     {
         try {
             $sMainDirectory = current(explode("/", $path));
-            if(strstr($path,'/')){
+            if (strstr($path,'/')) {
                 $sSubDirectory = substr($path, strpos($path, "/")+1). PATH_SEP ;
             } else {
                 $sSubDirectory = '';
@@ -82,8 +82,7 @@ class FilesManager
             }
             foreach ($aFiles as $aFile) {
                     $extention = end(explode(".", $aFile['FILE']));
-                    if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp' ||
-                        $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
+                    if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp' || $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
                         $sEditable = true;
                     } else {
                         $sEditable = false;
@@ -118,7 +117,7 @@ class FilesManager
             if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
                 throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
             }
-            if(strstr($aData['path'],'/')){
+            if (strstr($aData['path'],'/')) {
                 $sSubDirectory = substr($aData['path'], strpos($aData['path'], "/")+1) ;
             } else {
                 $sSubDirectory = '';
@@ -136,7 +135,7 @@ class FilesManager
                 default:
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['file_name'];
                     break;
-                }
+            }
             $extention = end(explode(".", $aData['file_name']));
             if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp' ||
                 $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
@@ -238,7 +237,7 @@ class FilesManager
             if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
                 throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
             }
-            if(strstr($path,'/')){
+            if (strstr($path,'/')) {
                 $sSubDirectory = substr($path, strpos($path, "/")+1) ;
             } else {
                 $sSubDirectory = '';
@@ -254,9 +253,9 @@ class FilesManager
                 default:
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $aData['file_name'];
                     break;
-                }
+            }
             $arrayTaskUid = $this->getFileManagerUid($sDirectory);
-            if (!$arrayTaskUid){
+            if (!$arrayTaskUid) {
                 throw (new \Exception( 'invalid value specified for `path`.'));
             }
             $extention = end(explode(".", $aData['file_name']));
@@ -317,7 +316,7 @@ class FilesManager
             }
             $sfile = end(explode("/",$path));
             $sSubDirectorytemp = substr($path, strpos($path, "/")+1);
-            if(strstr($sSubDirectorytemp,'/')){
+            if (strstr($sSubDirectorytemp,'/')) {
                 $sSubDirectory = str_replace('/'.$sfile,"",$sSubDirectorytemp);
                 $sSubDirectoryCheck = str_replace($sfile,"",$sSubDirectorytemp);
             } else {
@@ -335,7 +334,7 @@ class FilesManager
                 default:
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sfile;
                     break;
-                }
+            }
             $arrayTaskUid = $this->getFileManagerUid($sDirectory);
             if (!$arrayTaskUid){
                 throw (new \Exception( 'invalid value specified for `path`.'));
@@ -373,7 +372,7 @@ class FilesManager
             }
             $sfile = end(explode("/",$path));
             $sSubDirectorytemp = substr($path, strpos($path, "/")+1);
-            if(strstr($sSubDirectorytemp,'/')){
+            if (strstr($sSubDirectorytemp,'/')) {
                 $sSubDirectory = str_replace('/'.$sfile,"",$sSubDirectorytemp);
                 $sSubDirectoryCheck = str_replace($sfile,"",$sSubDirectorytemp);
             } else {
@@ -391,9 +390,9 @@ class FilesManager
                 default:
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sfile;
                     break;
-                }
+            }
             $arrayTaskUid = $this->getFileManagerUid($sDirectory);
-            if (!$arrayTaskUid){
+            if (!$arrayTaskUid) {
                 throw (new \Exception( 'invalid value specified for `path`.'));
             }
             /*
