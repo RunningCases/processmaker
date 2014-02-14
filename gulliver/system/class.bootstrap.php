@@ -1132,9 +1132,12 @@ class Bootstrap
         // Setting default OAuth Client id, for local PM Web Designer
         \Services\Api\OAuth2\Server::setPmClientId($pmOauthClientId);
 
-        $rest->setSupportedFormats('JsonFormat', 'XmlFormat');
+        require_once PATH_CORE . "src/Extension/Restler/UploadFormat.php";
+        //require_once PATH_CORE
+
+        //$rest->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');
         //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
-        $rest->setOverridingFormats('HtmlFormat', 'JsonFormat', 'UploadFormat');
+        $rest->setOverridingFormats('JsonFormat', 'UploadFormat');
 
         // Override $_SERVER['REQUEST_URI'] to Restler handles the current url correctly
 
