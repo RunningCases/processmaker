@@ -7,9 +7,12 @@ class WebEntry
         "TAS_UID"               => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "taskUid"),
         "DYN_UID"               => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "dynaFormUid"),
         "METHOD"                => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("WS", "HTML"), "fieldNameAux" => "method"),
-        "INPUT_DOCUMENT_ACCESS" => array("type" => "int",    "required" => true,  "empty" => false, "defaultValues" => array(0, 1),         "fieldNameAux" => "inputDocumentAccess"),
-        "USR_USERNAME"          => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "userUsername"),
-        "USR_PASSWORD"          => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "userPassword")
+        "INPUT_DOCUMENT_ACCESS" => array("type" => "int",    "required" => true,  "empty" => false, "defaultValues" => array(0, 1),         "fieldNameAux" => "inputDocumentAccess")
+    );
+
+    private $arrayUserFieldDefinition = array(
+        "USR_USERNAME" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "userUsername"),
+        "USR_PASSWORD" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "userPassword")
     );
 
     private $formatFieldNameInUppercase = true;
@@ -27,6 +30,10 @@ class WebEntry
     {
         try {
             foreach ($this->arrayFieldDefinition as $key => $value) {
+                $this->arrayFieldNameForException[$value["fieldNameAux"]] = $key;
+            }
+
+            foreach ($this->arrayUserFieldDefinition as $key => $value) {
                 $this->arrayFieldNameForException[$value["fieldNameAux"]] = $key;
             }
         } catch (\Exception $e) {
@@ -279,13 +286,7 @@ class WebEntry
             $projectUser = new \BusinessModel\ProjectUser();
 
             if ($arrayData["METHOD"] == "WS") {
-                if (!isset($arrayData["USR_USERNAME"])) {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayFieldNameForException["userUsername"]), "The \"{0}\" attribute is not defined")));
-                }
-
-                if (!isset($arrayData["USR_PASSWORD"])) {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayFieldNameForException["userPassword"]), "The \"{0}\" attribute is not defined")));
-                }
+                $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayUserFieldDefinition, $this->arrayFieldNameForException, true);
 
                 $loginData = $projectUser->userLogin($arrayData["USR_USERNAME"], $arrayData["USR_PASSWORD"]);
 
