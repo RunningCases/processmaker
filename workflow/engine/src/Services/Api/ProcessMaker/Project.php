@@ -425,9 +425,8 @@ class Project extends Api
      * @url GET /:prj_uid/grid/:grid_uid/variables
      *
      * @param string $prj_uid  {@min 32}{@max 32}
-     * @param string $grid_uid
      */
-    public function doGetGridVariablesByGridUid($prj_uid, $grid_uid = "")
+    public function doGetGridVariables($prj_uid, $grid_uid = "")
     {
         try {
             $process = new \BusinessModel\Process();
