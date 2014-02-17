@@ -399,5 +399,47 @@ class Project extends Api
 
         return false;
     }
+
+    /**
+     * @url GET /:prj_uid/variables
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetVariables($prj_uid)
+    {
+        try {
+            $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
+
+            $response = $process->getVariables("ALL", $prj_uid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:prj_uid/grid/variables
+     * @url GET /:prj_uid/grid/:grid_uid/variables
+     *
+     * @param string $prj_uid  {@min 32}{@max 32}
+     * @param string $grid_uid
+     */
+    public function doGetGridVariablesByGridUid($prj_uid, $grid_uid = "")
+    {
+        try {
+            $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
+
+            $response = ($grid_uid == "")? $process->getVariables("GRID", $prj_uid) : $process->getVariables("GRIDVARS", $prj_uid, $grid_uid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
 
