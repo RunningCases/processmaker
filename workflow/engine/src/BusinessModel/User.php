@@ -734,6 +734,7 @@ class User
                     }
                 }
             }
+            $oCriteria->add(\UsersPeer::USR_STATUS, 'CLOSED', \Criteria::ALT_NOT_EQUAL);
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             while ($oDataset->next()) {
@@ -770,6 +771,7 @@ class User
                 $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
             }
             $oCriteria->add(\UsersPeer::USR_UID, $userUid);
+            $oCriteria->add(\UsersPeer::USR_STATUS, 'CLOSED', \Criteria::ALT_NOT_EQUAL);
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             while ($oDataset->next()) {
