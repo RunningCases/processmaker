@@ -109,6 +109,19 @@ class DataBaseConnection
             }
         }
 
+        if (isset($dataDBConnection['DBS_SERVER']) && $dataDBConnection['DBS_SERVER'] == '') {
+            throw (new \Exception("This 'dbs_server' is invalid"));
+        }
+
+        if (isset($dataDBConnection['DBS_DATABASE_NAME']) && $dataDBConnection['DBS_DATABASE_NAME'] == '') {
+            throw (new \Exception("This 'dbs_database_name' is invalid"));
+        }
+
+        if (isset($dataDBConnection['DBS_PORT']) &&
+            ($dataDBConnection['DBS_PORT'] == ''|| $dataDBConnection['DBS_PORT'] == 0)) {
+            throw (new \Exception("This 'dbs_port' is invalid"));
+        }
+
         if (isset($dataDBConnection['DBS_ENCODE'])) {
             $encodesExists = array();
             $dbs = new dbConnections();
