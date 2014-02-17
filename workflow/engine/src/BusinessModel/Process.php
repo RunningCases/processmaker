@@ -1569,6 +1569,7 @@ class Process
                     $dynaForm = new \BusinessModel\DynaForm();
 
                     $dynaForm->throwExceptionIfNotExistsDynaForm($gridUid, $processUid, $this->arrayFieldNameForException["gridUid"]);
+                    $dynaForm->throwExceptionIfNotIsGridDynaForm($gridUid, $this->arrayFieldNameForException["gridUid"]);
 
                     //Get data
                     $file = PATH_DYNAFORM . $processUid . PATH_SEP . $gridUid . ".xml";

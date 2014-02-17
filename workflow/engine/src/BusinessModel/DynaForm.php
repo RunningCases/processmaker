@@ -238,6 +238,32 @@ class DynaForm
     }
 
     /**
+     * Verify if not is grid DynaForm
+     *
+     * @param string $dynaFormUid           Unique id of DynaForm
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if not is grid DynaForm
+     */
+    public function throwExceptionIfNotIsGridDynaForm($dynaFormUid, $fieldNameForException)
+    {
+        try {
+            //Load DynaForm
+            $dynaForm = new \Dynaform();
+
+            $arrayDynaFormData = $dynaForm->Load($dynaFormUid);
+
+            if ($arrayDynaFormData["DYN_TYPE"] != "grid") {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormUid), "The DynaForm with {0}: {1}, not is grid");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Create DynaForm for a Process
      *
      * @param string $processUid Unique id of Process
