@@ -526,8 +526,11 @@ class Table
                 $dataValidate['rep_tab_dsc']  = $tab_data['rep_tab_dsc'];
                 $dataValidate['rep_tab_connection'] = $row['DBS_UID'];
                 $dataValidate['rep_tab_type'] = $row['ADD_TAB_TYPE'];
-                list($gridName, $gridId) = explode( '-', $row['ADD_TAB_GRID'] );
-                $dataValidate['rep_tab_grid'] = $gridId;
+                $dataValidate['rep_tab_grid'] = '';
+                if (strpos($row['ADD_TAB_GRID'], '-')) {
+                    list($gridName, $gridId) = explode( '-', $row['ADD_TAB_GRID'] );
+                    $dataValidate['rep_tab_grid'] = $gridId;
+                }
             } else {
                 $dataValidate['pmt_uid']  = $tab_uid;
                 $dataValidate['pmt_tab_name'] = $row['ADD_TAB_NAME'];
