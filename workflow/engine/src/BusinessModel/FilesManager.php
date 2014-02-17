@@ -392,7 +392,7 @@ class FilesManager
                     break;
             }
             $url = $sDirectory;
-            $sPath = '/home/daniel/downloadTest/'.$sfile;//change the path to
+            $sPath = $sfile;//path to
             set_time_limit(0);
             ini_set('display_errors',true);//Just in case we get some errors, let us know
             $fp = fopen ($sPath, 'w');//This is the file where we save the information
