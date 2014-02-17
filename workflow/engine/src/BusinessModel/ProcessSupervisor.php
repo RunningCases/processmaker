@@ -50,6 +50,7 @@ class ProcessSupervisor
             $oCriteria->addJoin(\ProcessUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
             $oCriteria->add(\ProcessUserPeer::PU_TYPE, 'SUPERVISOR');
             $oCriteria->add(\ProcessUserPeer::PRO_UID, $sProcessUID);
+            $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oCriteria->addAscendingOrderByColumn(\UsersPeer::USR_FIRSTNAME);
             $oDataset = \ProcessUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -61,7 +62,7 @@ class ProcessSupervisor
                                  'usr_firstname' => $aRow['USR_FIRSTNAME'],
                                  'usr_lastname' => $aRow['USR_LASTNAME'],
                                  'usr_username' => $aRow['USR_USERNAME'],
-                                 'usr_email' => $aRow['USR_EMAIL'] );
+                                 'usr_email' => $aRow['USR_EMAIL']);
                 $oDataset->next();
             }
             if ($aResp == null) {
@@ -218,6 +219,7 @@ class ProcessSupervisor
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS, \Criteria::IN);
             $oCriteria->addAscendingOrderByColumn(\UsersPeer::USR_FIRSTNAME);
             $oCriteria->add(\UsersPeer::USR_ROLE, 'PROCESSMAKER_ADMIN', \Criteria::EQUAL);
+            $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();

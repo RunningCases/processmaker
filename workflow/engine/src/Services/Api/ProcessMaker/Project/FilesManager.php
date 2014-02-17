@@ -67,10 +67,8 @@ class FilesManager extends Api
     public function doPostProcessFilesManagerUpload($prjUid)
     {
         try {
-            //echo $request_data; die();
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "src" . PATH_SEP . "Extension" . PATH_SEP . "Restler" . PATH_SEP . "UploadFormat.php");
             $userUid = $this->getUserId();
-            $filesManager = new \BusinessModel\FilesManager();
-            $arrayData = $filesManager->uploadProcessFilesManager($prjUid, $userUid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
