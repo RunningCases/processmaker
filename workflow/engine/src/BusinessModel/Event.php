@@ -174,7 +174,8 @@ class Event
      *
      * @return string
      */
-    public function validateProUid ($pro_uid) {
+    public function validateProUid ($pro_uid)
+    {
         $pro_uid = trim($pro_uid);
         if ($pro_uid == '') {
             throw (new \Exception("The project with prj_uid: '', does not exist."));
@@ -195,7 +196,8 @@ class Event
      *
      * @return string
      */
-    public function validateEvnUid ($evn_uid) {
+    public function validateEvnUid ($evn_uid)
+    {
         $evn_uid = trim($evn_uid);
         if ($evn_uid == '') {
             throw (new \Exception("The event with evn_uid: '', does not exist."));
@@ -216,7 +218,8 @@ class Event
      *
      * @return string
      */
-    public function validateTasUid($tas_uid) {
+    public function validateTasUid($tas_uid)
+    {
         $tas_uid = trim($tas_uid);
         if ($tas_uid == '') {
             throw (new \Exception("The task with tas_uid: '', does not exist."));
@@ -237,7 +240,8 @@ class Event
      *
      * @return string
      */
-    public function validateTriUid($tri_uid) {
+    public function validateTriUid($tri_uid)
+    {
         $tri_uid = trim($tri_uid);
         if ($tri_uid == '') {
             throw (new \Exception("The trigger with tri_uid: '', does not exist."));

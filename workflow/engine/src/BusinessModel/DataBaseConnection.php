@@ -109,6 +109,19 @@ class DataBaseConnection
             }
         }
 
+        if (isset($dataDBConnection['DBS_SERVER']) && $dataDBConnection['DBS_SERVER'] == '') {
+            throw (new \Exception("This 'dbs_server' is invalid"));
+        }
+
+        if (isset($dataDBConnection['DBS_DATABASE_NAME']) && $dataDBConnection['DBS_DATABASE_NAME'] == '') {
+            throw (new \Exception("This 'dbs_database_name' is invalid"));
+        }
+
+        if (isset($dataDBConnection['DBS_PORT']) &&
+            ($dataDBConnection['DBS_PORT'] == ''|| $dataDBConnection['DBS_PORT'] == 0)) {
+            throw (new \Exception("This 'dbs_port' is invalid"));
+        }
+
         if (isset($dataDBConnection['DBS_ENCODE'])) {
             $encodesExists = array();
             $dbs = new dbConnections();
@@ -306,7 +319,8 @@ class DataBaseConnection
      *
      * @return array
      */
-    public function getDbEngines () {
+    public function getDbEngines ()
+    {
         if (!class_exists('dbConnections')) {
             G::LoadClass('dbConnections');
         }
@@ -324,7 +338,8 @@ class DataBaseConnection
      *
      * @return string
      */
-    public function validateProUid ($pro_uid) {
+    public function validateProUid ($pro_uid)
+    {
         $pro_uid = trim($pro_uid);
         if ($pro_uid == '') {
             throw (new \Exception("The project with prj_uid: '', does not exist."));
@@ -346,7 +361,8 @@ class DataBaseConnection
      *
      * @return string
      */
-    public function validateDbsUid ($dbs_uid, $pro_uid) {
+    public function validateDbsUid ($dbs_uid, $pro_uid)
+    {
         $dbs_uid = trim($dbs_uid);
         if ($dbs_uid == '') {
             throw (new \Exception("The database connection with dbs_uid: '', does not exist."));
