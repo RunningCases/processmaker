@@ -304,7 +304,8 @@ class ProcessPermissions
      *
      * @return string
      */
-    public function validateProUid ($pro_uid) {
+    public function validateProUid ($pro_uid)
+    {
         $pro_uid = trim($pro_uid);
         if ($pro_uid == '') {
             throw (new \Exception("The project with prj_uid: '', does not exist."));
@@ -325,7 +326,8 @@ class ProcessPermissions
      *
      * @return string
      */
-    public function validateOpUid ($op_uid) {
+    public function validateOpUid ($op_uid)
+    {
         $op_uid = trim($op_uid);
         if ($op_uid == '') {
             throw (new \Exception("The process permission with op_uid: '', does not exist."));
@@ -346,7 +348,8 @@ class ProcessPermissions
      *
      * @return string
      */
-    public function validateUsrUid($usr_uid) {
+    public function validateUsrUid($usr_uid)
+    {
         $usr_uid = trim($usr_uid);
         if ($usr_uid == '') {
             throw (new \Exception("The user with usr_uid: '', does not exist."));
@@ -367,7 +370,8 @@ class ProcessPermissions
      *
      * @return string
      */
-    public function validateGrpUid($grp_uid) {
+    public function validateGrpUid($grp_uid)
+    {
         $grp_uid = trim($grp_uid);
         if ($grp_uid == '') {
             throw (new \Exception("The group with usr_uid: '', does not exist."));
@@ -388,7 +392,8 @@ class ProcessPermissions
      *
      * @return string
      */
-    public function validateTasUid($tas_uid) {
+    public function validateTasUid($tas_uid)
+    {
         $tas_uid = trim($tas_uid);
         if ($tas_uid == '') {
             throw (new \Exception("The task with tas_uid: '', does not exist."));
@@ -409,7 +414,8 @@ class ProcessPermissions
      *
      * @return string
      */
-    public function validateDynUid($dyn_uid) {
+    public function validateDynUid($dyn_uid)
+    {
         $dyn_uid = trim($dyn_uid);
         if ($dyn_uid == '') {
             throw (new \Exception("The dynaform with dynaforms: '', does not exist."));
@@ -430,7 +436,8 @@ class ProcessPermissions
      *
      * @return string
      */
-    public function validateInpUid($inp_uid) {
+    public function validateInpUid($inp_uid)
+    {
         $inp_uid = trim($inp_uid);
         if ($inp_uid == '') {
             throw (new \Exception("The input with inputs: '', does not exist."));
@@ -451,7 +458,8 @@ class ProcessPermissions
      *
      * @return string
      */
-    public function validateOutUid($out_uid) {
+    public function validateOutUid($out_uid)
+    {
         $out_uid = trim($out_uid);
         if ($out_uid == '') {
             throw (new \Exception("The output with outputs: '', does not exist."));

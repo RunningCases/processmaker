@@ -306,7 +306,8 @@ class DataBaseConnection
      *
      * @return array
      */
-    public function getDbEngines () {
+    public function getDbEngines ()
+    {
         if (!class_exists('dbConnections')) {
             G::LoadClass('dbConnections');
         }
@@ -324,7 +325,8 @@ class DataBaseConnection
      *
      * @return string
      */
-    public function validateProUid ($pro_uid) {
+    public function validateProUid ($pro_uid)
+    {
         $pro_uid = trim($pro_uid);
         if ($pro_uid == '') {
             throw (new \Exception("The project with prj_uid: '', does not exist."));
@@ -346,7 +348,8 @@ class DataBaseConnection
      *
      * @return string
      */
-    public function validateDbsUid ($dbs_uid, $pro_uid) {
+    public function validateDbsUid ($dbs_uid, $pro_uid)
+    {
         $dbs_uid = trim($dbs_uid);
         if ($dbs_uid == '') {
             throw (new \Exception("The database connection with dbs_uid: '', does not exist."));
