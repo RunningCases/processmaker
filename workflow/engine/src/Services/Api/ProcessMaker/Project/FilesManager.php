@@ -67,10 +67,17 @@ class FilesManager extends Api
     public function doPostProcessFilesManagerUpload($prjUid)
     {
         try {
-            //echo $request_data; die();
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "src" . PATH_SEP . "Extension" . PATH_SEP . "Restler" . PATH_SEP . "UploadFormat.php");
+//            $objCurlFileUploader = new CurlFileUploader("D:\\Program Files\\Apache\\htdocs\\test.txt", "http://localhost/fileUploaderTest.php",'file1'); 
+//            $objCurlFileUploader->UploadFile();
+
             $userUid = $this->getUserId();
+//            $objCurlFileUploader = new CurlFileUploader("D:\\Program Files\\Apache\\htdocs\\test.txt", "http://localhost/fileUploaderTest.php",'file1'); 
+            $filesManager = new \Extension\Restler\UploadFormat("/home/daniel/info.txt", "http://daniel.pmos.colosa.net/api/1.0/daniel/project/1265557095225ff5c688f46031700471/process-file-manager/upload",'file1');
+            $filesManager->UploadFormat();
+/*
             $filesManager = new \BusinessModel\FilesManager();
-            $arrayData = $filesManager->uploadProcessFilesManager($prjUid, $userUid);
+            $arrayData = $filesManager->uploadProcessFilesManager($prjUid, $userUid);*/
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {

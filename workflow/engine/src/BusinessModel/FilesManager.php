@@ -391,18 +391,12 @@ class FilesManager
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sfile;
                     break;
             }
-            $arrayTaskUid = $this->getFileManagerUid($sDirectory);
-            if (!$arrayTaskUid) {
-                throw (new \Exception( 'invalid value specified for `path`.'));
-            }
-            /*
-            This is usefull when you are downloading big files, as it
-            will prevent time out of the script :
-            */
+            $url = $sDirectory;
+            $sPath = '/home/daniel/downloadTest/'.$sfile;//change the path to
             set_time_limit(0);
-            ini_set('display_errors',true);//Just in case we get some errors, let us know....
-            $fp = fopen ($sDirectory, 'w+');//This is the file where we save the information
-            $ch = curl_init($sDirectory);//Here is the file we are downloading
+            ini_set('display_errors',true);//Just in case we get some errors, let us know
+            $fp = fopen ($sPath, 'w');//This is the file where we save the information
+            $ch = curl_init(str_replace(" ","%20",$url));
             curl_setopt($ch, CURLOPT_TIMEOUT, 50);
             curl_setopt($ch, CURLOPT_FILE, $fp);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);

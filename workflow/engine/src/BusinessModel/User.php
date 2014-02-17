@@ -286,7 +286,7 @@ class User
                 $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
             }
             if ($form['USR_EMAIL'] == '') {
-                throw new \Exception('`usr_email`. E-mail is required');
+                throw new \Exception('invalid value specified for `usr_email`, can`t be null.');
             } else {
                 if (!filter_var($form['USR_EMAIL'], FILTER_VALIDATE_EMAIL)) {
                     throw new \Exception('`usr_email`. '.\G::LoadTranslation('ID_INCORRECT_EMAIL'));
@@ -313,8 +313,8 @@ class User
             $aData['USR_BIRTHDAY'] = date('Y-m-d');
             $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
             $statusWF = $form['USR_STATUS'];
-            if ($form['USR_STATUS'] == '') {
-                throw new \Exception('`usr_status`. User status is required');
+            if ($form['USR_STATUS'] == '') {                                
+                throw new \Exception('invalid value specified for `usr_status`, can`t be null');
             } else {
                 if ($form['USR_STATUS'] == 'ACTIVE' || $form['USR_STATUS'] == 'INACTIVE' || $form['USR_STATUS'] == 'VACATION') {
                     $aData['USR_STATUS'] = $form['USR_STATUS'];
@@ -322,8 +322,8 @@ class User
                     throw new \Exception('`usr_status`. Invalid value for status field.');
                 }
             }
-            if ($form['USR_ROLE'] == '') {
-                throw new \Exception('`usr_role`. User role is required');
+            if ($form['USR_ROLE'] == '') {                
+                throw new \Exception('invalid value specified for `usr_role`, can`t be null');
             } else {
                 $oCriteria = new \Criteria('rbac');
                 $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
