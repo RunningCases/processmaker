@@ -105,21 +105,21 @@ class DataBaseConnection
                 $typesExists[] = $value['id'];
             }
             if (!in_array($dataDBConnection['DBS_TYPE'], $typesExists)) {
-                throw (new \Exception("This 'dbs_type' is invalid"));
+                throw (new \Exception("The dababase connection with dbs_type: '" . $dataDBConnection['DBS_TYPE'] . " is invalid"));
             }
         }
 
         if (isset($dataDBConnection['DBS_SERVER']) && $dataDBConnection['DBS_SERVER'] == '') {
-            throw (new \Exception("This 'dbs_server' is invalid"));
+            throw (new \Exception("The dababase connection with dbs_server: '" . $dataDBConnection['DBS_SERVER'] . "', is invalid"));
         }
 
         if (isset($dataDBConnection['DBS_DATABASE_NAME']) && $dataDBConnection['DBS_DATABASE_NAME'] == '') {
-            throw (new \Exception("This 'dbs_database_name' is invalid"));
+            throw (new \Exception("The dababase connection with dbs_database_name: '" . $dataDBConnection['DBS_DATABASE_NAME'] . "', is invalid"));
         }
 
         if (isset($dataDBConnection['DBS_PORT']) &&
             ($dataDBConnection['DBS_PORT'] == ''|| $dataDBConnection['DBS_PORT'] == 0)) {
-            throw (new \Exception("This 'dbs_port' is invalid"));
+            throw (new \Exception("The dababase connection with dbs_port: '" . $dataDBConnection['DBS_PORT'] . "', is invalid"));
         }
 
         if (isset($dataDBConnection['DBS_ENCODE'])) {
@@ -130,7 +130,7 @@ class DataBaseConnection
                 $encodesExists[] = $value['0'];
             }
             if (!in_array($dataDBConnection['DBS_ENCODE'], $encodesExists)) {
-                throw (new \Exception( "This 'dbs_encode' is invalid for '" . $dataDBConnection['DBS_TYPE'] . "'" ));
+                throw (new \Exception( "The dababase connection with dbs_encode: '" . $dataDBConnection['DBS_ENCODE'] . "', is invalid" ));
             }
         }
 
