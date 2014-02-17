@@ -574,7 +574,7 @@ class Table
         $classPeerName = $className . 'Peer';
         $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
         if (! file_exists( $sPath . $className . '.php' )) {
-            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $this->className ) );
+            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $className ) );
         }
         require_once $sPath . $className . '.php';
 
@@ -666,7 +666,7 @@ class Table
         $classPeerName = $className . 'Peer';
         $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
         if (! file_exists( $sPath . $className . '.php' )) {
-            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $this->className ) );
+            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $className ) );
         }
         require_once $sPath . $className . '.php';
 
