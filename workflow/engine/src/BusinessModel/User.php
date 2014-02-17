@@ -217,6 +217,30 @@ class User
                     throw new \Exception('`usr_replaced_by`:'.$form['USR_REPLACED_BY'].' '.\G::LoadTranslation('ID_AUTHENTICATION_SOURCE_INVALID'));
                 }
             }
+            if ($form['USR_COUNTRY'] != '') {
+                $oCountry = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
+                if (is_null($oCountry)) {
+                        throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
+                    }
+            }
+            if ($form['USR_CITY'] != '') {
+                $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
+                if (is_null($oCity)) {
+                        throw new \Exception('invalid value for `usr_city`: '.$form['USR_CITY']);
+                    }
+            }
+            if ($form['USR_LOCATION'] != '') {
+                $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
+                if (is_null($oLocation)) {
+                        throw new \Exception('invalid value for `usr_location`: '.$form['USR_LOCATION']);
+                    }
+            }
+            if ($form['USR_COUNTRY'] != '') {
+                $oReplacedBy = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
+                if (is_null($oReplacedBy)) {
+                        throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
+                    }
+            }
             if (isset($arrayData['USR_UID'])) {
                 $form['USR_UID'] = $arrayData['USR_UID'];
             } else {
@@ -322,7 +346,7 @@ class User
                 }
                 $sUserUID = $this->createUser($aData);
                 if ($form['USR_ROLE'] != '') {
-                   $this->assignRoleToUser($sUserUID, $form['USR_ROLE']);
+                    $this->assignRoleToUser($sUserUID, $form['USR_ROLE']);
                 }
             } catch(Exception $oError) {
                 throw new \Exception($oError->getMessage());
@@ -381,7 +405,7 @@ class User
             $form = $arrayData;
             $countPermission = 0;
             $permission = $this->loadUserRolePermission($RBAC->sSystem, $usrLoggedUid);
-            foreach($permission as $key => $value) {
+            foreach ($permission as $key => $value) {
                 if ($value["PER_CODE"] == 'PM_USERS') {
                     $countPermission+=1;
                 }
@@ -399,12 +423,6 @@ class User
             }
             if ($form['USR_NEW_PASS'] != '') {
                 $form['USR_PASSWORD'] = md5($form['USR_NEW_PASS']);
-            }
-            if (!isset($form['USR_CITY'])) {
-                $form['USR_CITY'] = '';
-            }
-            if (!isset($form['USR_LOCATION'])) {
-                $form['USR_LOCATION'] = '';
             }
             if (!isset($form['USR_AUTH_USER_DN'])) {
                 $form['USR_AUTH_USER_DN'] = '';
@@ -534,9 +552,32 @@ class User
             } else {
                 $this->updateUser($aData);
             }
-            $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
-            $aData['USR_CITY'] = $form['USR_CITY'];
-            $aData['USR_LOCATION'] = $form['USR_LOCATION'];
+            if ($form['USR_COUNTRY'] != '') {
+                $oReplacedBy = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
+                if (is_null($oReplacedBy)) {
+                        throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
+                } else {
+                    $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
+                    $aData['USR_CITY'] = '';
+                    $aData['USR_LOCATION'] = '';
+                }
+            }
+            if ($form['USR_CITY'] != '') {
+                $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
+                if (is_null($oCity)) {
+                    throw new \Exception('invalid value for `usr_city`: '.$form['USR_CITY']);
+                } else {
+                    $aData['USR_CITY'] = $form['USR_CITY'];
+                }
+            }
+            if ($form['USR_LOCATION'] != '') {
+                $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
+                if (is_null($oLocation)) {
+                        throw new \Exception('invalid value for `usr_location`: '.$form['USR_LOCATION']);
+                } else {
+                    $aData['USR_LOCATION'] = $form['USR_LOCATION'];
+                }
+            }
             $aData['USR_ADDRESS'] = $form['USR_ADDRESS'];
             $aData['USR_PHONE'] = $form['USR_PHONE'];
             $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
