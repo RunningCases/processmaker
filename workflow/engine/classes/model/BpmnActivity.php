@@ -166,4 +166,12 @@ class BpmnActivity extends BaseBpmnActivity
         return $data;
     }
 
+    public static function exists($actUid)
+    {
+        $c = new Criteria("workflow");
+        $c->add(BpmnActivityPeer::ACT_UID, $actUid);
+
+        return BpmnActivityPeer::doCount($c) > 0 ? true : false;
+    }
+
 } // BpmnActivity

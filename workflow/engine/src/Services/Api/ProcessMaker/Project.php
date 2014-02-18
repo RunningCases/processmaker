@@ -119,9 +119,10 @@ class Project extends Api
             $whiteList = array();
             foreach ($diagram["activities"] as $i => $activityData) {
                 $activityData = array_change_key_case($activityData, CASE_UPPER);
+                unset($activityData["_EXTENDED"]);
 
                 // activity exists ?
-                if ($activity = $bwp->getActivity($activityData["ACT_UID"])) {
+                if ($bwp->activityExists($activityData["ACT_UID"])) {
                     // then update activity
                     $bwp->updateActivity($activityData["ACT_UID"], $activityData);
                 } else {
@@ -233,7 +234,7 @@ class Project extends Api
                     $oldFloUid = $flowData["FLO_UID"];
                     $flowData["FLO_UID"] = Hash::generateUID();
 
-                    $mappedUid = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result) ;
+                    $mappedUid = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result);
                     if ($mappedUid !== false) {
                         $flowData["FLO_ELEMENT_ORIGIN"] = $mappedUid;
                     }
@@ -252,7 +253,7 @@ class Project extends Api
 
             foreach ($diagram["flows"] as $flowData) {
                 // flow exists ?
-                if (\BpmnFlow::exists($flowData["FLO_UID"])) {
+                if ($bwp->flowExists($flowData["FLO_UID"])) {
                     // then update activity
                     $bwp->updateFlow($flowData["FLO_UID"], $flowData);
                 } else {
