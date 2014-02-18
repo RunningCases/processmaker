@@ -198,7 +198,6 @@ class Table
         $tableCon       = 'workflow';
         $dataValidate   = array_change_key_case($tab_data, CASE_UPPER);
         $oAdditionalTables = new AdditionalTables();
-
         // VALIDATION TABLE DATA
         if ($reportFlag) {
             $pro_uid = $this->validateProUid($pro_uid);
@@ -211,6 +210,11 @@ class Table
                 $dataValidate['REP_TAB_GRID']   = $this->validateRepGrid($dataValidate['REP_TAB_GRID'], $pro_uid);
             }
             $fieldsValidate = $this->getDynafields($pro_uid, $dataValidate['REP_TAB_TYPE'], $dataValidate['REP_TAB_GRID']);
+            if (empty($fieldsValidate)) {
+                $fieldsValidate['NAMES'] = array();
+                $fieldsValidate['INDEXS'] = array();
+                $fieldsValidate['UIDS'] = array();
+            }
             $repTabClassName = $oAdditionalTables->getPHPName($dataValidate['REP_TAB_NAME']);
             $tableName = $dataValidate['REP_TAB_NAME'];
             $tableCon  = $dataValidate['REP_TAB_CONNECTION'];
@@ -265,8 +269,10 @@ class Table
             } else {
                 $columns[$i]['fld_dyn'] = '';
             }
+
             if (isset($columns[$i]['fld_name'])) {
-                $columns[$i]['field_name'] = $columns[$i]['fld_name'];
+                $columns[$i]['field_name'] = G::toUpper($columns[$i]['fld_name']);
+                unset($columns[$i]['fld_name']);
             }
             if (isset($columns[$i]['fld_label'])) {
                 $columns[$i]['field_label'] = $columns[$i]['fld_label'];
@@ -293,12 +299,15 @@ class Table
                 unset($columns[$i]['fld_autoincrement']);
             }
 
-            if (in_array(strtoupper($columns[$i]['field_name']), $reservedWordsSql) ||
-                in_array( strtolower( $columns[$i]['field_name']), $reservedWordsPhp )) {
-                throw (new \Exception(G::LoadTranslation("ID_PMTABLE_INVALID_FIELD_NAME", array($columns[$i]['field_name']))));
-            }
-
             // VALIDATIONS
+            if (in_array(strtoupper($columns[$i]['field_name']), $reservedWordsSql) ||
+                in_array( strtolower( $columns[$i]['field_name']), $reservedWordsPhp ) ||
+                $columns[$i]['field_name'] == '') {
+                throw (new \Exception("The property fld_name: '". $columns[$i]['field_name'] . "', is incorrect value."));
+            }
+            if ($columns[$i]['field_label'] == '') {
+                throw (new \Exception("The property fld_label: '". $columns[$i]['field_label'] . "', is incorrect value."));
+            }
             $columns[$i]['field_type'] = $this->validateFldType($columns[$i]['field_type']);
             if (isset($columns[$i]['field_autoincrement']) && $columns[$i]['field_autoincrement']) {
                 $typeCol = $columns[$i]['field_type'];
@@ -306,18 +315,14 @@ class Table
                     $columns[$i]['field_autoincrement'] = false;
                 }
             }
-
-            if (isset($columns[$i]['fld_name'])) {
-                if (isset($columns[$i]['field_dyn']) && $columns[$i]['field_dyn'] != '') {
-                    $res = array_search($columns[$i]['field_dyn'], $fieldsValidate['NAMES']);
-                    if ($res === false) {
-                        throw (new \Exception("The property 'fields' in key '$i' in property fld_dyn: '".$columns[$i]['field_dyn']."', is incorrect."));
-                    } else {
-                        $columns[$i]['_index']    = $fieldsValidate['INDEXS'][$res];
-                        $columns[$i]['field_uid'] = $fieldsValidate['UIDS'][$res];
-                    }
+            if (isset($columns[$i]['field_dyn']) && $columns[$i]['field_dyn'] != '') {
+                $res = array_search($columns[$i]['field_dyn'], $fieldsValidate['NAMES']);
+                if ($res === false) {
+                    throw (new \Exception("The property fld_dyn: '".$columns[$i]['field_dyn']."', is incorrect."));
+                } else {
+                    $columns[$i]['_index']    = $fieldsValidate['INDEXS'][$res];
+                    $columns[$i]['field_uid'] = $fieldsValidate['UIDS'][$res];
                 }
-                unset($columns[$i]['fld_name']);
             }
 
             $temp = new \stdClass();
@@ -358,6 +363,7 @@ class Table
         $pmTable->build();
         $buildResult = ob_get_contents();
         ob_end_clean();
+        unset($buildResult);
 
         // Updating additional table struture information
         if ($reportFlag) {
@@ -400,7 +406,6 @@ class Table
             $oCriteria->add( \FieldsPeer::ADD_TAB_UID, $dataValidate['TAB_UID'] );
             \FieldsPeer::doDelete( $oCriteria );
         }
-
         // Updating pmtable fields
         foreach ($columnsStd as $i => $column) {
             $column = (array)$column;
