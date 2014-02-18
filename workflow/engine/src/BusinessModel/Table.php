@@ -259,13 +259,12 @@ class Table
         $columnsStd = array();
         foreach ($columns as $i => $column) {
             if (isset($columns[$i]['fld_dyn'])) {
+                $columns[$i]['fld_dyn'] = ($reportFlag) ? $columns[$i]['fld_dyn'] : '';
                 $columns[$i]['field_dyn'] = $columns[$i]['fld_dyn'];
                 unset($columns[$i]['fld_dyn']);
             } else {
                 $columns[$i]['fld_dyn'] = '';
             }
-            $columns[$i]['fld_dyn'] = ($reportFlag) ? $columns[$i]['fld_dyn'] : '';
-
             if (isset($columns[$i]['fld_name'])) {
                 $columns[$i]['field_name'] = $columns[$i]['fld_name'];
             }
@@ -527,7 +526,11 @@ class Table
                 $dataValidate['rep_tab_dsc']  = $tab_data['rep_tab_dsc'];
                 $dataValidate['rep_tab_connection'] = $row['DBS_UID'];
                 $dataValidate['rep_tab_type'] = $row['ADD_TAB_TYPE'];
-                $dataValidate['rep_tab_grid'] = $row['ADD_TAB_GRID'];
+                $dataValidate['rep_tab_grid'] = '';
+                if (strpos($row['ADD_TAB_GRID'], '-')) {
+                    list($gridName, $gridId) = explode( '-', $row['ADD_TAB_GRID'] );
+                    $dataValidate['rep_tab_grid'] = $gridId;
+                }
             } else {
                 $dataValidate['pmt_uid']  = $tab_uid;
                 $dataValidate['pmt_tab_name'] = $row['ADD_TAB_NAME'];
@@ -575,7 +578,7 @@ class Table
         $classPeerName = $className . 'Peer';
         $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
         if (! file_exists( $sPath . $className . '.php' )) {
-            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $this->className ) );
+            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $className ) );
         }
         require_once $sPath . $className . '.php';
 
@@ -667,7 +670,7 @@ class Table
         $classPeerName = $className . 'Peer';
         $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
         if (! file_exists( $sPath . $className . '.php' )) {
-            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $this->className ) );
+            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $className ) );
         }
         require_once $sPath . $className . '.php';
 
@@ -717,8 +720,8 @@ class Table
         $aFields['PRO_UID'] = $pro_uid;
 
         if (isset( $rep_tab_type ) && $rep_tab_type == 'GRID') {
-            $this->dynUid = $rep_tab_grid;
-            $dynFields = $this->_getDynafields($pro_uid, 'grid', $rep_tab_grid);
+            list ($gridName, $gridId) = explode( '-', $rep_tab_grid );
+            $dynFields = $this->_getDynafields($pro_uid, 'grid', $gridId);
         } else {
             $dynFields = $this->_getDynafields($pro_uid, 'xmlform');
         }
@@ -753,7 +756,7 @@ class Table
         $oCriteria->add( \DynaformPeer::DYN_TYPE, $type );
 
         if ($rep_tab_grid != '') {
-            $oCriteria->add( \DynaformPeer::DYN_UID, $this->dynUid );
+            $oCriteria->add( \DynaformPeer::DYN_UID, $rep_tab_grid );
         }
 
         $oDataset = \DynaformPeer::doSelectRS( $oCriteria );
@@ -1022,6 +1025,7 @@ class Table
 
         G::loadSystem('dynaformhandler');
         $grids = array();
+        $namesGrid = array();
         $aFieldsNames = array();
 
         $oCriteria = new \Criteria( 'workflow' );
@@ -1041,14 +1045,18 @@ class Table
                 $fieldType = $arrayNode['type'];
                 if ($fieldType == 'grid') {
                     if (! in_array( $fieldName, $aFieldsNames )) {
+                        $namesGrid[] = $fieldName;
                         $grids[] = str_replace( $pro_uid . '/', '', $arrayNode['xmlgrid']);
                     }
                 }
             }
         }
 
-        if (!in_array($rep_tab_grid, $grids)) {
+        $find = array_search($rep_tab_grid, $grids);
+        if ($find === false) {
             throw (new \Exception("The property rep_tab_grid: '$rep_tab_grid', is incorrect."));
+        } else {
+            $rep_tab_grid = $namesGrid[$find] . '-' . $rep_tab_grid;
         }
         return $rep_tab_grid;
     }
