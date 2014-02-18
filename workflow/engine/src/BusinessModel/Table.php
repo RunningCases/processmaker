@@ -284,6 +284,11 @@ class Table
             }
             if (isset($columns[$i]['fld_size'])) {
                 $columns[$i]['field_size'] = $columns[$i]['fld_size'];
+                if (!is_int($columns[$i]['field_size'])) {
+                    throw (new \Exception("The property fld_size: '". $columns[$i]['field_size'] . "', is incorrect numeric value."));
+                } else {
+                    $columns[$i]['field_size'] = (int)$columns[$i]['field_size'];
+                }
                 unset($columns[$i]['fld_size']);
             }
             if (isset($columns[$i]['fld_key'])) {
@@ -416,7 +421,7 @@ class Table
                 'FLD_NAME' => $column['field_name'],
                 'FLD_DESCRIPTION' => $column['field_label'],
                 'FLD_TYPE' => $column['field_type'],
-                'FLD_SIZE' => $column['field_size'] == '' ? null : $column['field_size'],
+                'FLD_SIZE' => (!isset($column['field_size']) || $column['field_size'] == '') ? null : $column['field_size'],
                 'FLD_NULL' => $column['field_null'] ? 1 : 0,
                 'FLD_AUTO_INCREMENT' => $column['field_autoincrement'] ? 1 : 0,
                 'FLD_KEY' => $column['field_key'] ? 1 : 0,
