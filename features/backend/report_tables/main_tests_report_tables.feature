@@ -81,17 +81,6 @@ Scenario: Create a new database connection with same name
         And the response status message should have the following text "already exits"
         
 
-
-
-
-
-
-
-
-
-
-
-
 Scenario: Verify that there are 2 report tables
     Given I request "project/922677707524ac7417ce345089010125/report-tables"
     Then the response status code should be 200
