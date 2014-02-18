@@ -15,10 +15,10 @@ Feature: DataBase Connections
             """
             {
                 "dbs_type": "mysql",
-                "dbs_server": "192.168.11.71",
-                "dbs_database_name": "rb_cochalo",
-                "dbs_username": "root",
-                "dbs_password": "atopml2005",
+                "dbs_server": "michelangelo-be.colosa.net",
+                "dbs_database_name": "test",
+                "dbs_username": "testuser",
+                "dbs_password": "sample",
                 "dbs_port": 3306,
                 "dbs_encode": "utf8",
                 "dbs_description": "conection correcta"
@@ -43,10 +43,10 @@ Feature: DataBase Connections
             """
             {
                 "dbs_type": "mysql",
-                "dbs_server": "192.168.11.71",
-                "dbs_database_name": "wf_cochalo",
-                "dbs_username": "root",
-                "dbs_password": "atopml2005",
+                "dbs_server": "michelangelo-be.colosa.net",
+                "dbs_database_name": "test",
+                "dbs_username": "testuser",
+                "dbs_password": "sample",
                 "dbs_port": 3306,
                 "dbs_encode": "utf8",
                 "dbs_description": "conection correcta a workflow"
