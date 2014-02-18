@@ -63,7 +63,6 @@ class User extends Api
         }
     }
 
-
     /**
      * @url PUT /:usr_uid
      *
@@ -97,5 +96,22 @@ class User extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+    /**
+     * @param string $usr_uid {@min 32} {@max 32}
+     *
+     * @url POST /image-upload
+     */
+    public function doPostUserImageUpload($usr_uid)
+    {
+        try {
+            $user = new \BusinessModel\User();
+            $user->uploadImage($usr_uid);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
 }
 
