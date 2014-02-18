@@ -19,14 +19,15 @@ class Assignee extends Api
      * @param string $filter
      * @param int    $start
      * @param int    $limit
+     * @param string $type
      *
      */
-    public function doGetActivityAssignees($prjUid, $actUid, $filter = '', $start = null, $limit = null)
+    public function doGetActivityAssignees($prjUid, $actUid, $filter = '', $start = null, $limit = null, $type = '')
     {
         $response = array();
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->getTaskAssignees($prjUid, $actUid, $filter, $start, $limit);
+            $arrayData = $task->getTaskAssignees($prjUid, $actUid, $filter, $start, $limit, $type);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -44,14 +45,15 @@ class Assignee extends Api
      * @param string $filter
      * @param int    $start
      * @param int    $limit
+     * @param string $type
      *
      */
-    public function doGetActivityAvailableAssignee($prjUid, $actUid, $filter = '', $start = null, $limit = null)
+    public function doGetActivityAvailableAssignee($prjUid, $actUid, $filter = '', $start = null, $limit = null, $type = '')
     {
         $response = array();
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->getTaskAvailableAssignee($prjUid, $actUid, $filter, $start, $limit);
+            $arrayData = $task->getTaskAvailableAssignee($prjUid, $actUid, $filter, $start, $limit, $type);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -132,14 +134,15 @@ class Assignee extends Api
      * @param string $filter
      * @param int    $start
      * @param int    $limit
+     * @param string $type
      *
      */
-    public function doGetActivityAdhocAssignees($prjUid, $actUid, $filter = '', $start = null, $limit = null)
+    public function doGetActivityAdhocAssignees($prjUid, $actUid, $filter = '', $start = null, $limit = null, $type = '')
     {
         $response = array();
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->getTaskAdhocAssignees($prjUid, $actUid, $filter, $start, $limit);
+            $arrayData = $task->getTaskAdhocAssignees($prjUid, $actUid, $filter, $start, $limit, $type);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -157,14 +160,15 @@ class Assignee extends Api
      * @param string $filter
      * @param int    $start
      * @param int    $limit
+     * @param string $type
      *
      */
-    public function doGetActivityAvailableAdhocAssignee($prjUid, $actUid, $filter = '', $start = null, $limit = null)
+    public function doGetActivityAvailableAdhocAssignee($prjUid, $actUid, $filter = '', $start = null, $limit = null, $type = '')
     {
         $response = array();
         try {
             $task = new \BusinessModel\Task();
-            $arrayData = $task->getTaskAvailableAdhocAssignee($prjUid, $actUid, $filter, $start, $limit);
+            $arrayData = $task->getTaskAvailableAdhocAssignee($prjUid, $actUid, $filter, $start, $limit, $type);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {

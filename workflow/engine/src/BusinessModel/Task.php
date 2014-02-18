@@ -651,12 +651,13 @@ class Task
      * @param string $filter
      * @param int    $start
      * @param int    $limit
+     * @param string $type
      *
      * return array
      *
      * @access public
      */
-    public function getTaskAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit)
+    public function getTaskAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
     {
         try {
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
@@ -749,14 +750,16 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
-                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'aas_lastname' => "",
-                                      'aas_username' => "",
-                                      'aas_type' => "group" );
+                    if ($type == '' || $type == 'group') {
+                        $aUsers[] = array('aas_uid' => $results['GRP_UID'],
+                                          'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          'aas_lastname' => "",
+                                          'aas_username' => "",
+                                          'aas_type' => "group" );
+                    }
                 }
             }
             $oCriteria = new \Criteria('workflow');
@@ -797,11 +800,13 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
-                                  'aas_name' => $aRow['USR_FIRSTNAME'],
-                                  'aas_lastname' => $aRow['USR_LASTNAME'],
-                                  'aas_username' => $aRow['USR_USERNAME'],
-                                  'aas_type' => "user" );
+                if ($type == '' || $type == 'user') {
+                    $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
+                                      'aas_name' => $aRow['USR_FIRSTNAME'],
+                                      'aas_lastname' => $aRow['USR_LASTNAME'],
+                                      'aas_username' => $aRow['USR_USERNAME'],
+                                      'aas_type' => "user" );
+                }
                 $oDataset->next();
             }
             return $aUsers;
@@ -818,12 +823,13 @@ class Task
      * @param string $filter
      * @param int    $start
      * @param int    $limit
+     * @param string $type
      *
      * return array
      *
      * @access public
      */
-    public function getTaskAvailableAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit)
+    public function getTaskAvailableAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
     {
         try {
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
@@ -913,14 +919,16 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
-                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'aas_lastname' => "",
-                                      'aas_username' => "",
-                                      'aas_type' => "group" );
+                    if ($type == '' || $type == 'group') {
+                        $aUsers[] = array('aas_uid' => $results['GRP_UID'],
+                                          'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          'aas_lastname' => "",
+                                          'aas_username' => "",
+                                          'aas_type' => "group" );
+                    }
                 }
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -957,12 +965,15 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
-                                  'aas_name' => $aRow['USR_FIRSTNAME'],
-                                  'aas_lastname' => $aRow['USR_LASTNAME'],
-                                  'aas_username' => $aRow['USR_USERNAME'],
-                                  'aas_type' => "user" );
+                if ($type == '' || $type == 'user') {
+                    $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
+                                      'aas_name' => $aRow['USR_FIRSTNAME'],
+                                      'aas_lastname' => $aRow['USR_LASTNAME'],
+                                      'aas_username' => $aRow['USR_USERNAME'],
+                                      'aas_type' => "user" );
+                }
                 $oDataset->next();
+                
             }
             return $aUsers;
         } catch (Exception $e) {
@@ -1229,12 +1240,16 @@ class Task
      *
      * @param string $sProcessUID {@min 32} {@max 32}
      * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
+     * @param string $type
      *
      * return array
      *
      * @access public
      */
-    public function getTaskAdhocAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit)
+    public function getTaskAdhocAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
     {
         try {
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
@@ -1327,14 +1342,16 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('ada_uid' => $results['GRP_UID'],
-                                      'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'ada_lastname' => "",
-                                      'ada_username' => "",
-                                      'ada_type' => "group" );
+                    if ($type == '' || $type == 'group') {
+                        $aUsers[] = array('ada_uid' => $results['GRP_UID'],
+                                          'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          'ada_lastname' => "",
+                                          'ada_username' => "",
+                                          'ada_type' => "group" );
+                    }
                 }
             }
             $oCriteria = new \Criteria('workflow');
@@ -1375,11 +1392,13 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
-                                  'ada_name' => $aRow['USR_FIRSTNAME'],
-                                  'ada_lastname' => $aRow['USR_LASTNAME'],
-                                  'ada_username' => $aRow['USR_USERNAME'],
-                                  'ada_type' => "user" );
+                if ($type == '' || $type == 'user') {
+                    $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
+                                      'ada_name' => $aRow['USR_FIRSTNAME'],
+                                      'ada_lastname' => $aRow['USR_LASTNAME'],
+                                      'ada_username' => $aRow['USR_USERNAME'],
+                                      'ada_type' => "user" );
+                }
                 $oDataset->next();
             }
             return $aUsers;
@@ -1393,12 +1412,16 @@ class Task
      *
      * @param string $sProcessUID {@min 32} {@max 32}
      * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
+     * @param string $type
      *
      * return array
      *
      * @access public
      */
-    public function getTaskAvailableAdhocAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit)
+    public function getTaskAvailableAdhocAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
     {
         try {
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
@@ -1488,14 +1511,16 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('ada_uid' => $results['GRP_UID'],
-                                      'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'ada_lastname' => "",
-                                      'ada_username' => "",
-                                      'ada_type' => "group" );
+                    if ($type == '' || $type == 'group') {
+                        $aUsers[] = array('ada_uid' => $results['GRP_UID'],
+                                          'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          'ada_lastname' => "",
+                                          'ada_username' => "",
+                                          'ada_type' => "group" );
+                    }
                 }
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -1532,11 +1557,13 @@ class Task
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
-                                  'ada_name' => $aRow['USR_FIRSTNAME'],
-                                  'ada_lastname' => $aRow['USR_LASTNAME'],
-                                  'ada_username' => $aRow['USR_USERNAME'],
-                                  'ada_type' => "user" );
+                if ($type == '' || $type == 'user') {
+                    $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
+                                      'ada_name' => $aRow['USR_FIRSTNAME'],
+                                      'ada_lastname' => $aRow['USR_LASTNAME'],
+                                      'ada_username' => $aRow['USR_USERNAME'],
+                                      'ada_type' => "user" );
+                }
                 $oDataset->next();
             }
             return $aUsers;

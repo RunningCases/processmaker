@@ -601,17 +601,7 @@ class User
             $oUser->update($aData);
             // photo file comment
             /*
-            if ($_FILES['USR_PHOTO']['error'] != 1) {
-                if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
-                    $aAux = explode('.', $_FILES['USR_PHOTO']['name']);
-                    \G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS, $aData['USR_UID'] . '.' . $aAux[1]);
-                    \G::resizeImage(PATH_IMAGES_ENVIRONMENT_USERS . $aData['USR_UID'] . '.' . $aAux[1], 96, 96, PATH_IMAGES_ENVIRONMENT_USERS . $aData['USR_UID'] . '.gif');
-                }
-            } else {
-                $result->success = false;
-                $result->fileError = true;
-                throw new \Exception($result);
-            }*/
+*/
             /* Saving preferences comment */
             /*$def_lang = $form['PREF_DEFAULT_LANG'];
             $def_menu = $form['PREF_DEFAULT_MENUSELECTED'];
@@ -781,6 +771,31 @@ class User
             }
             //Return
             return $aUserInfo;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Upload image User
+     *
+     * @param string $userUid Unique id of User
+     *
+     */
+    public function uploadImage($userUid)
+    {
+        try {
+            if ($_FILES['USR_PHOTO']['error'] != 1) {
+                if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
+                    $aAux = explode('.', $_FILES['USR_PHOTO']['name']);
+                    \G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS, $userUid . '.' . $aAux[1]);
+                    \G::resizeImage(PATH_IMAGES_ENVIRONMENT_USERS . $userUid . '.' . $aAux[1], 96, 96, PATH_IMAGES_ENVIRONMENT_USERS . $userUid . '.gif');
+                }
+            } else {
+                $result->success = false;
+                $result->fileError = true;
+                throw (new \Exception($result));
+            }
         } catch (\Exception $e) {
             throw $e;
         }
