@@ -130,10 +130,10 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
     protected $evn_message;
 
     /**
-     * The value for the evn_opreration_name field.
+     * The value for the evn_operation_name field.
      * @var        string
      */
-    protected $evn_opreration_name;
+    protected $evn_operation_name;
 
     /**
      * The value for the evn_operation_implementation_ref field.
@@ -377,14 +377,14 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [evn_opreration_name] column value.
+     * Get the [evn_operation_name] column value.
      * 
      * @return     string
      */
-    public function getEvnOprerationName()
+    public function getEvnOperationName()
     {
 
-        return $this->evn_opreration_name;
+        return $this->evn_operation_name;
     }
 
     /**
@@ -825,12 +825,12 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
     } // setEvnMessage()
 
     /**
-     * Set the value of [evn_opreration_name] column.
+     * Set the value of [evn_operation_name] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setEvnOprerationName($v)
+    public function setEvnOperationName($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -839,12 +839,12 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->evn_opreration_name !== $v) {
-            $this->evn_opreration_name = $v;
-            $this->modifiedColumns[] = BpmnEventPeer::EVN_OPRERATION_NAME;
+        if ($this->evn_operation_name !== $v) {
+            $this->evn_operation_name = $v;
+            $this->modifiedColumns[] = BpmnEventPeer::EVN_OPERATION_NAME;
         }
 
-    } // setEvnOprerationName()
+    } // setEvnOperationName()
 
     /**
      * Set the value of [evn_operation_implementation_ref] column.
@@ -1007,7 +1007,7 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
 
             $this->evn_message = $rs->getString($startcol + 16);
 
-            $this->evn_opreration_name = $rs->getString($startcol + 17);
+            $this->evn_operation_name = $rs->getString($startcol + 17);
 
             $this->evn_operation_implementation_ref = $rs->getString($startcol + 18);
 
@@ -1318,7 +1318,7 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
                 return $this->getEvnMessage();
                 break;
             case 17:
-                return $this->getEvnOprerationName();
+                return $this->getEvnOperationName();
                 break;
             case 18:
                 return $this->getEvnOperationImplementationRef();
@@ -1372,7 +1372,7 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
             $keys[14] => $this->getEvnEscalationCode(),
             $keys[15] => $this->getEvnCondition(),
             $keys[16] => $this->getEvnMessage(),
-            $keys[17] => $this->getEvnOprerationName(),
+            $keys[17] => $this->getEvnOperationName(),
             $keys[18] => $this->getEvnOperationImplementationRef(),
             $keys[19] => $this->getEvnTimeDate(),
             $keys[20] => $this->getEvnTimeCycle(),
@@ -1461,7 +1461,7 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
                 $this->setEvnMessage($value);
                 break;
             case 17:
-                $this->setEvnOprerationName($value);
+                $this->setEvnOperationName($value);
                 break;
             case 18:
                 $this->setEvnOperationImplementationRef($value);
@@ -1570,7 +1570,7 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[17], $arr)) {
-            $this->setEvnOprerationName($arr[$keys[17]]);
+            $this->setEvnOperationName($arr[$keys[17]]);
         }
 
         if (array_key_exists($keys[18], $arr)) {
@@ -1672,8 +1672,8 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
             $criteria->add(BpmnEventPeer::EVN_MESSAGE, $this->evn_message);
         }
 
-        if ($this->isColumnModified(BpmnEventPeer::EVN_OPRERATION_NAME)) {
-            $criteria->add(BpmnEventPeer::EVN_OPRERATION_NAME, $this->evn_opreration_name);
+        if ($this->isColumnModified(BpmnEventPeer::EVN_OPERATION_NAME)) {
+            $criteria->add(BpmnEventPeer::EVN_OPERATION_NAME, $this->evn_operation_name);
         }
 
         if ($this->isColumnModified(BpmnEventPeer::EVN_OPERATION_IMPLEMENTATION_REF)) {
@@ -1782,7 +1782,7 @@ abstract class BaseBpmnEvent extends BaseObject implements Persistent
 
         $copyObj->setEvnMessage($this->evn_message);
 
-        $copyObj->setEvnOprerationName($this->evn_opreration_name);
+        $copyObj->setEvnOperationName($this->evn_operation_name);
 
         $copyObj->setEvnOperationImplementationRef($this->evn_operation_implementation_ref);
 
