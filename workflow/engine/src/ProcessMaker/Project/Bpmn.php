@@ -60,6 +60,10 @@ class Bpmn extends Handler
             "PRJ_UID", "PRO_UID", "BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
             "BOU_SIZE_IDENTICAL", "DIA_UID", "BOU_UID", "ELEMENT_UID"
         ),
+        "event" => array(
+            "PRJ_UID", "PRO_UID", "BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
+            "BOU_SIZE_IDENTICAL", "DIA_UID", "BOU_UID", "ELEMENT_UID", "EVN_ATTACHED_TO", "EVN_CONDITION"
+        ),
         "flow" => array("PRJ_UID", "DIA_UID", "FLO_ELEMENT_DEST_PORT", "FLO_ELEMENT_ORIGIN_PORT")
     );
 
@@ -356,8 +360,9 @@ class Bpmn extends Handler
     {
         $event = EventPeer::retrieveByPK($evnUid);
 
-        if ($retType != "object" && ! empty($activity)) {
+        if ($retType != "object" && ! empty($event)) {
             $event = $event->toArray();
+            $event = self::filterArrayKeys($event, self::$excludeFields["event"]);
         }
 
         return $event;
@@ -369,11 +374,21 @@ class Bpmn extends Handler
             extract($start);
         }
 
-        return Event::getAll($this->project->getPrjUid(), null, null, '', $changeCaseTo);
+        //return Event::getAll($this->project->getPrjUid(), null, null, '', $changeCaseTo);
+
+        $filter = $changeCaseTo != CASE_UPPER ? array_map("strtolower", self::$excludeFields["event"]) : self::$excludeFields["event"];
+
+        return self::filterCollectionArrayKeys(
+            Event::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo),
+            $filter
+        );
     }
 
     public function updateEvent($evnUid, $data)
     {
+        $data["EVN_CANCEL_ACTIVITY"] = $data["EVN_CANCEL_ACTIVITY"] ? 1 : 0;
+        $data["EVN_WAIT_FOR_COMPLETION"] = $data["EVN_WAIT_FOR_COMPLETION"] ? 1 : 0;
+
         try {
             self::log("Update Event: $evnUid", "With data: ", $data);
 
@@ -626,7 +641,8 @@ class Bpmn extends Handler
             case "event":    $data = $this->getEvent($uid); break;
             case "flow":     $data = $this->getFlow($uid); break;
         }
-
+        //self::log("saved data: ", $data, "new data: ", $newData);
+        //self::log("checksum saved data: ", self::getChecksum($data), "checksum new data: ", self::getChecksum($newData));
         return (self::getChecksum($data) !== self::getChecksum($newData));
     }
 }

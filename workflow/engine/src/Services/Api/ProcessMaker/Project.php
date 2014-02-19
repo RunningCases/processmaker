@@ -191,6 +191,7 @@ class Project extends Api
             $whiteList = array();
             foreach ($diagram["events"] as $i => $eventData) {
                 $eventData = array_change_key_case($eventData, CASE_UPPER);
+                unset($eventData["_EXTENDED"]);
 
                 // gateway exists ?
                 if ($event = $bwp->getEvent($eventData["EVN_UID"])) {

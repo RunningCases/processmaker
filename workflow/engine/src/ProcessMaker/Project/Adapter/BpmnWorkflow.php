@@ -233,6 +233,19 @@ class BpmnWorkflow extends Project\Bpmn
         parent::addEvent($data);
     }
 
+    public function updateEvent($evnUid, $data)
+    {
+        $data["EVN_CANCEL_ACTIVITY"] = $data["EVN_CANCEL_ACTIVITY"] ? 1 : 0;
+        $data["EVN_WAIT_FOR_COMPLETION"] = $data["EVN_WAIT_FOR_COMPLETION"] ? 1 : 0;
+
+        if (! self::isModified("event", $evnUid, $data)) {
+            self::log("Update Event: $evnUid (No Changes)");
+            return false;
+        }
+
+        parent::updateEvent($evnUid, $data);
+    }
+
     public function removeEvent($evnUid)
     {
 //        $event = \BpmnEventPeer::retrieveByPK($evnUid);
