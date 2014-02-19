@@ -61,7 +61,7 @@ class Workflow extends Handler
         $data['PRO_CATEGORY'] = array_key_exists('PRO_CATEGORY', $data) ? $data['PRO_CATEGORY'] : "";
 
         try {
-            self::log("===> Executing -> ".__METHOD__, "Create Process with data:", $data);
+            self::log("Create Process with data:", $data);
 
             //validate if process with specified name already exists
             if (Process::existsByProTitle($data["PRO_TITLE"])) {
@@ -102,7 +102,7 @@ class Workflow extends Handler
     public function remove()
     {
         try {
-            self::log("===> Executing -> ".__METHOD__, "Remove Process with uid: {$this->proUid}");
+            self::log("Remove Process with uid: {$this->proUid}");
             $this->deleteProcess($this->proUid);
             self::log("Remove Process Success!");
         } catch (\Exception $e) {
@@ -163,7 +163,7 @@ class Workflow extends Handler
         $taskData['PRO_UID'] = $this->proUid;
 
         try {
-            self::log("===> Executing -> ".__METHOD__, "Add Task with data: ", $taskData);
+            self::log("Add Task with data: ", $taskData);
             $task = new Task();
             $tasUid = $task->create($taskData, false);
             self::log("Add Task Success!");
@@ -178,7 +178,7 @@ class Workflow extends Handler
     public function updateTask($tasUid, $taskData)
     {
         try {
-            self::log("===> Executing -> ".__METHOD__, "Update Task: $tasUid", "With data: ", $taskData);
+            self::log("Update Task: $tasUid", "With data: ", $taskData);
             $task = new Task();
             $taskData['TAS_UID'] = $tasUid;
             $result = $task->update($taskData);
@@ -194,7 +194,7 @@ class Workflow extends Handler
     public function removeTask($tasUid)
     {
         try {
-            self::log("===> Executing -> ".__METHOD__, "Remove Task: $tasUid");
+            self::log("Remove Task: $tasUid");
             $task = new Task();
             $task->remove($tasUid);
             self::log("Remove Task Success!");
@@ -300,7 +300,7 @@ class Workflow extends Handler
         $routeData['ROU_UID'] = $rouUid;
 
         try {
-            self::log("===> Executing -> ".__METHOD__, "Update Route: $rouUid with data:", $routeData);
+            self::log("Update Route: $rouUid with data:", $routeData);
             $route = new Route();
             $route->update($routeData);
             self::log("Update Route Success!");
@@ -313,7 +313,7 @@ class Workflow extends Handler
     public function removeRoute($rouUid)
     {
         try {
-            self::log("===> Executing -> ".__METHOD__, "Remove Route: $rouUid");
+            self::log("Remove Route: $rouUid");
             $route = new Route();
             $result = $route->remove($rouUid);
             self::log("Remove Route Success!");

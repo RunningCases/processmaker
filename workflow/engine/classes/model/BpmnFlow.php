@@ -52,7 +52,7 @@ class BpmnFlow extends BaseBpmnFlow
 
         while ($rs->next()) {
             $flow = $rs->getRow();
-            $flow["FLO_STATE"] = @json_decode($flow["FLO_STATE"]);
+            $flow["FLO_STATE"] = @json_decode($flow["FLO_STATE"], true);
             //$flow["FLO_IS_INMEDIATE"] = $flow["FLO_IS_INMEDIATE"] == 1 ? true : false;
             $flow = $changeCaseTo !== CASE_UPPER ? array_change_key_case($flow, CASE_LOWER) : $flow;
 
@@ -77,7 +77,10 @@ class BpmnFlow extends BaseBpmnFlow
 
     public function toArray($type = BasePeer::TYPE_FIELDNAME)
     {
-        return parent::toArray($type);
+        $flow = parent::toArray($type);
+        $flow["FLO_STATE"] = @json_decode($flow["FLO_STATE"], true);
+
+        return $flow;
     }
 
 } // BpmnFlow

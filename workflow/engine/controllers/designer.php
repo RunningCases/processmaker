@@ -45,11 +45,24 @@ class Designer extends Controller
                 throw new Exception("Error: Development JS Files were are not generated!, please execute: \$rake pmBuildDebug in MichelangeloFE project");
             }
 
+            $mafeFiles = file(PATH_HTML . "lib-dev/mafe/build.cache", FILE_IGNORE_NEW_LINES);
+            $mafeCssFiles = array();
+            $mafeJsFiles = array();
+
+            foreach ($mafeFiles as $file) {
+                if (substr($file, -3) == ".js") {
+                    $mafeJsFiles[] = $file;
+                } else {
+                    $mafeCssFiles[] = $file;
+                }
+            }
+
             $this->setVar('pmuiJsCacheFile', file(PATH_HTML . "lib-dev/pmUI/build.cache", FILE_IGNORE_NEW_LINES));
             $this->setVar('pmuiCssCacheFile', file(PATH_HTML . "lib-dev/pmUI/css.cache", FILE_IGNORE_NEW_LINES));
 
             $this->setVar('designerCacheFile', file(PATH_HTML . "lib-dev/mafe/applications.cache", FILE_IGNORE_NEW_LINES));
-            $this->setVar('mafeCacheFile', file(PATH_HTML . "lib-dev/mafe/build.cache", FILE_IGNORE_NEW_LINES));
+            $this->setVar('mafeJsFiles', $mafeJsFiles);
+            $this->setVar('mafeCssFiles', $mafeCssFiles);
         }
 
         $this->setView('designer/index');

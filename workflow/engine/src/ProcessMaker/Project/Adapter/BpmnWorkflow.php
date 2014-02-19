@@ -116,6 +116,13 @@ class BpmnWorkflow extends Project\Bpmn
 
     public function updateActivity($actUid, $data)
     {
+        unset($data["BOU_ELEMENT_ID"]);
+
+        if (! self::isModified("activity", $actUid, $data)) {
+            self::log("Update Activity: $actUid (No Changes)");
+            return false;
+        }
+
         parent::updateActivity($actUid, $data);
 
         $taskData = array();
@@ -173,6 +180,16 @@ class BpmnWorkflow extends Project\Bpmn
                 }
                 break;
         }
+    }
+
+    public function updateFlow($floUid, $data)
+    {
+        if (! self::isModified("flow", $floUid, $data)) {
+            self::log("Update Flow: $floUid (No Changes)");
+            return false;
+        }
+
+        parent::updateFlow($floUid, $data);
     }
 
     public function removeFlow($floUid)
@@ -364,8 +381,4 @@ class BpmnWorkflow extends Project\Bpmn
         $this->wp->remove();
     }
 
-    public function hello($s)
-    {
-        echo "--->".$s;
-    }
 }
