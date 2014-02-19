@@ -73,7 +73,7 @@ class PmSessionHandler //implements SessionHandlerInterface
                  * The persistent connection cache allows you to avoid the overhead of establishing a new connection 
                  * every time a script needs to talk to a database, resulting in a faster web application.    
                  */
-                PDO::ATTR_PERSISTENT => true,
+                PDO::ATTR_PERSISTENT => false,  // <- using "true", is causing open many mysql connections, disabled by now
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_EMULATE_PREPARES => false
             )
@@ -150,7 +150,7 @@ class PmSessionHandler //implements SessionHandlerInterface
         // close the connection when your script ends.
         
         // this was commented to take advantage of PDO persistence connections
-        //$this->db = null;
+        $this->db = null;
 
         $this->log("close() was called");
 
