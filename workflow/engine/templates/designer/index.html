@@ -5,8 +5,9 @@
     <link rel="stylesheet" type="text/css" href="/lib-dev/pmUI/{$file}" />
     {/foreach}
     <!-- files that are built into mafe.css-->
-    <link rel="stylesheet" type="text/css" href="/lib-dev/mafe/toolbarpanel.css" />
-    <link rel="stylesheet" type="text/css" href="/lib-dev/mafe/bpmn.css" />
+    {foreach from=$mafeCssFiles item=file}
+    <link rel="stylesheet" type="text/css" href="/lib-dev/mafe/{$file}" />
+    {/foreach}
 
     <link rel="stylesheet" type="text/css" href="/lib-dev/css/jquery.layout.css" />
     <link rel="stylesheet" type="text/css" href="/lib-dev/css/jquery-ui-1.10.3.custom.min.css" />
@@ -30,7 +31,7 @@
     {/foreach}
 
     <!-- files that are built into mafe.js-->
-    {foreach from=$mafeCacheFile item=file}
+    {foreach from=$mafeJsFiles item=file}
     <script type="text/javascript" src="/lib-dev/mafe/{$file}"></script>
     {/foreach}
     <!-- files that are built into designer.js-->

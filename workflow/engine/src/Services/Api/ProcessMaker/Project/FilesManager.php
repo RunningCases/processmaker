@@ -60,22 +60,19 @@ class FilesManager extends Api
 
     /**
      * @param string $prjUid {@min 32} {@max 32}
+     * @param array $request_data
      *
-     * @header Accept: application/octet-stream
      * @url POST /:prjUid/process-file-manager/upload
      */
-    public function doPostProcessFilesManagerUpload($prjUid)
+    public function doPostProcessFilesManagerUpload($prjUid, $request_data)
     {
         try {
-            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "src" . PATH_SEP . "Extension" . PATH_SEP . "Restler" . PATH_SEP . "UploadFormat.php");
-            $userUid = $this->getUserId();
-            //Response
-            $response = $arrayData;
+            $filesManager = new \BusinessModel\FilesManager();
+            $filesManager->uploadProcessFilesManager($request_data);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
-        return $response;
     }
 
     /**
@@ -168,11 +165,3 @@ class ProcessFilesManagerStructurePut
     public $content;
 }
 
-class ProcessFilesManagerStructureUpload
-{
-    /**
-     * @var string {@from body}
-     */
-    public $url;
-
-}

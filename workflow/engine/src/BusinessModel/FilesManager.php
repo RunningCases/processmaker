@@ -112,6 +112,7 @@ class FilesManager
     public function addProcessFilesManager($sProcessUID, $userUID, $aData)
     {
         try {
+
             $aData['path'] = rtrim($aData['path'], '/') . '/';
             $sMainDirectory = current(explode("/", $aData['path']));
             if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
@@ -145,7 +146,7 @@ class FilesManager
             }
             \G::verifyPath($sCheckDirectory, true);
             if (file_exists(PATH_SEP.$sDirectory)) {
-                throw (new \Exception( 'The file: '. $sDirectory . ' exists.'));
+                throw (new \Exception( 'The file: '. $sDirectory . ' already exists.'));
             }
             $sPkProcessFiles = \G::generateUniqueID();
             $oProcessFiles = new \ProcessFiles();
@@ -181,15 +182,23 @@ class FilesManager
     /**
      * Return the Process Files Manager
      *
-     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $aData {@min 32} {@max 32}
      *
-     * return array
      *
      * @access public
      */
-    public function uploadProcessFilesManager($sProcessUID)
+    public function uploadProcessFilesManager($aData)
     {
         try {
+            $prfUid = str_replace('"','',$aData['prf_uid']);
+//            $oProcessFiles = \ProcessFilesPeer::retrieveByPK($prfUid);
+//            if (is_null($oProcessFiles)) {
+                  if ($_FILES['my_file']['error'] != 1) {
+                        if ($_FILES['my_file']['tmp_name'] != '') {
+                            \G::uploadFile($_FILES['my_file']['tmp_name'], 'public/1265557095225ff5c688f46031700471', $_FILES['my_file']['name']);
+                        }
+                  }
+//            }
         } catch (Exception $e) {
             throw $e;
         }
@@ -392,7 +401,7 @@ class FilesManager
                     break;
             }
             $url = $sDirectory;
-            $sPath = $sfile;//path to
+            $sPath = PATH_DOCUMENT.$sfile;//path to
             set_time_limit(0);
             ini_set('display_errors',true);//Just in case we get some errors, let us know
             $fp = fopen ($sPath, 'w');//This is the file where we save the information

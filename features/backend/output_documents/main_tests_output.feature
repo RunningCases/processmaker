@@ -147,7 +147,7 @@ Feature: Output Documents Main Tests
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"
-        And the type is "array"
+        And the type is "object"
         And that "out_doc_title" is set to "<out_doc_title>"
         And that "out_doc_description" is set to "<out_doc_description>"
         And that "out_doc_filename" is set to "<out_doc_filename>"
