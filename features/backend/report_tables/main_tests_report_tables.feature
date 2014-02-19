@@ -28,19 +28,19 @@ Scenario Outline: Create new report tables from dynaform and grid
                     "fld_name" : "<fld_name_1>",
                     "fld_label" : "<fld_label_1>",
                     "fld_type" : "<fld_type_1>",
-                    "fld_size" : "<fld_size_1>"
+                    "fld_size" : <fld_size_1>
                 },{
                     "fld_dyn" : "<fld_dyn_2>",
                     "fld_name" : "<fld_name_2>",
                     "fld_label" : "<fld_label_2>",
                     "fld_type" : "<fld_type_2>",
-                    "fld_size" : "<fld_size_2>"
+                    "fld_size" : <fld_size_2>
                 },{
                     "fld_dyn" : "<fld_dyn_3>",
                     "fld_name" : "<fld_name_3>",
                     "fld_label" : "<fld_label_3>",
                     "fld_type" : "<fld_type_3>",
-                    "fld_size" : "<fld_size_3>"
+                    "fld_size" : <fld_size_3>
                 }
             ]
         }
@@ -52,8 +52,8 @@ Scenario Outline: Create new report tables from dynaform and grid
     Examples:
 
     | test_description               | project                          | rep_uid_number | rep_tab_name   | rep_tab_dsc         | rep_tab_connection | rep_tab_type | rep_tab_grid                     | fld_dyn_1 | fld_name_1 | fld_label_1 | fld_type_1 | fld_size_1 | fld_dyn_2 | fld_name_2 | fld_label_2 | fld_type_2 | fld_size_2 | fld_dyn_3 | fld_name_3     | fld_label_3    | fld_type_3 | fld_size_3 |
-    | Create a Report Table - Normal | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc 1 | workflow           | NORMAL       |                                  | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 15         |          
-    | Create a Report Table - Grid   | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc 2 | workflow           | GRID         | 267480685524ac9b3bd5e23004484669 | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 15         |
+    | Create a Report Table - Normal | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc 1 | workflow           | NORMAL       |                                  | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       | 0          |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 15         |          
+    | Create a Report Table - Grid   | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc 2 | workflow           | GRID         | 267480685524ac9b3bd5e23004484669 | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       | 0          |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 15         |
 
 
 Scenario: Create a new database connection with same name
@@ -99,19 +99,19 @@ Scenario Outline: Update a created report tables
                     "fld_name" : "<fld_name_1>",
                     "fld_label" : "<fld_label_1>",
                     "fld_type" : "<fld_type_1>",
-                    "fld_size" : "<fld_size_1>"
+                    "fld_size" : <fld_size_1>
                 },{
                     "fld_dyn" : "<fld_dyn_2>",
                     "fld_name" : "<fld_name_2>",
                     "fld_label" : "<fld_label_2>",
                     "fld_type" : "<fld_type_2>",
-                    "fld_size" : "<fld_size_2>"
+                    "fld_size" : <fld_size_2>
                 },{
                     "fld_dyn" : "<fld_dyn_3>",
                     "fld_name" : "<fld_name_3>",
                     "fld_label" : "<fld_label_3>",
                     "fld_type" : "<fld_type_3>",
-                    "fld_size" : "<fld_size_3>"
+                    "fld_size" : <fld_size_3>
                 }
             ]
         }
@@ -126,8 +126,8 @@ Scenario Outline: Update a created report tables
     Examples:
 
     | test_description               | project                          | rep_uid_number | rep_tab_name   | rep_tab_dsc                 | rep_tab_connection | rep_tab_type | rep_tab_grid                     | fld_dyn_1 | fld_name_1 | fld_label_1 | fld_type_1 | fld_size_1 | fld_dyn_2 | fld_name_2 | fld_label_2 | fld_type_2 | fld_size_2 | fld_dyn_3 | fld_name_3     | fld_label_3    | fld_type_3 | fld_size_3  |
-    | Update a Report Table - Normal | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc Updated 1 | workflow           | NORMAL       |                                  | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
-    | Update a Report Table - Grid   | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc Updated 2 | workflow           | GRID         | 267480685524ac9b3bd5e23004484669 | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
+    | Update a Report Table - Normal | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc Updated 1 | workflow           | NORMAL       |                                  | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       | 0          |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
+    | Update a Report Table - Grid   | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc Updated 2 | workflow           | GRID         | 267480685524ac9b3bd5e23004484669 | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       | 0          |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
 
 
 Scenario Outline: Get a details of created report tables
@@ -142,8 +142,8 @@ Scenario Outline: Get a details of created report tables
     Examples:
 
     | project                          | rep_uid_number | rep_tab_name   | rep_tab_dsc                 | rep_tab_connection | rep_tab_type | rep_tab_grid | fld_dyn_1 | fld_name_1 | fld_label_1 | fld_type_1 | fld_size_1 | fld_dyn_2 | fld_name_2 | fld_label_2 | fld_type_2 | fld_size_2 | fld_dyn_3 | fld_name_3     | fld_label_3    | fld_type_3 | fld_size_3  |
-    | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc Updated 1 | workflow           | NORMAL       |              | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
-    | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc Updated 2 | workflow           | GRID         | grid         | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
+    | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc Updated 1 | workflow           | NORMAL       |              | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       | 0          |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
+    | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc Updated 2 | workflow           | GRID         | grid         | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       | 0          |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
 
 
 Scenario Outline: Populate report tables
@@ -154,8 +154,8 @@ Scenario Outline: Populate report tables
     Examples:
 
     | test_description             | project                          | rep_uid_number | rep_tab_name   | rep_tab_dsc                 | rep_tab_connection | rep_tab_type | rep_tab_grid | fld_dyn_1 | fld_name_1 | fld_label_1 | fld_type_1 | fld_size_1 | fld_dyn_2 | fld_name_2 | fld_label_2 | fld_type_2 | fld_size_2 | fld_dyn_3 | fld_name_3     | fld_label_3    | fld_type_3 | fld_size_3  |
-    | Populate Report Table Normal | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc Updated 1 | workflow           | NORMAL       |              | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
-    | Populate Report Table Grid   | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc Updated 2 | workflow           | GRID         | grid         | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       |            |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
+    | Populate Report Table Normal | 922677707524ac7417ce345089010125 | 1              | REPORT_TABLE_1 | Report Table Desc Updated 1 | workflow           | NORMAL       |              | nameany   | NAME_ANY   | Name Any    | VARCHAR    | 64         | date1     | DATE_1     | Date        | DATE       | 0          |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
+    | Populate Report Table Grid   | 922677707524ac7417ce345089010125 | 2              | REPORT_TABLE_2 | Report Table Desc Updated 2 | workflow           | GRID         | grid         | text1     | TEXT_1     | Text 1      | VARCHAR    | 64         | fecha1    | DATE_1     | Date        | DATE       | 0          |           | CUSTOM_FIELD_1 | Custom Field 1 | VARCHAR    | 150         |          
 
 
 
