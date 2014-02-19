@@ -24,12 +24,13 @@
  */
 
 if (isset ($_POST['form']['USER_ENV'])) {
-    session_destroy();
+    @session_destroy();
     session_start();
-    $_SESSION ['sysLogin'] = $_POST ['form'];
-    G::header ('location: /sys' . $_POST ['form'] ['USER_ENV'] . '/' . SYS_LANG . '/' . SYS_SKIN .
-        '/login/sysLoginVerify');
-    die ();
+    $_SESSION['sysLogin'] = $_POST['form'];
+    $data = base64_encode(serialize($_POST));
+    $url = sprintf('/sys%s/%s/%s/login/sysLoginVerify?d=%s', $_POST['form']['USER_ENV'], SYS_LANG, SYS_SKIN, $data);
+    G::header("location: $url");
+    die();
 }
 
 //Save session variables
