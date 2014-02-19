@@ -116,13 +116,6 @@ class BpmnWorkflow extends Project\Bpmn
 
     public function updateActivity($actUid, $data)
     {
-        unset($data["BOU_ELEMENT_ID"]);
-
-        if (! self::isModified("activity", $actUid, $data)) {
-            self::log("Update Activity: $actUid (No Changes)");
-            return false;
-        }
-
         parent::updateActivity($actUid, $data);
 
         $taskData = array();
@@ -235,14 +228,6 @@ class BpmnWorkflow extends Project\Bpmn
 
     public function updateEvent($evnUid, $data)
     {
-        $data["EVN_CANCEL_ACTIVITY"] = $data["EVN_CANCEL_ACTIVITY"] ? 1 : 0;
-        $data["EVN_WAIT_FOR_COMPLETION"] = $data["EVN_WAIT_FOR_COMPLETION"] ? 1 : 0;
-
-        if (! self::isModified("event", $evnUid, $data)) {
-            self::log("Update Event: $evnUid (No Changes)");
-            return false;
-        }
-
         parent::updateEvent($evnUid, $data);
     }
 

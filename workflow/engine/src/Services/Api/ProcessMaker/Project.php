@@ -120,19 +120,18 @@ class Project extends Api
             foreach ($diagram["activities"] as $i => $activityData) {
                 $activityData = array_change_key_case($activityData, CASE_UPPER);
                 unset($activityData["_EXTENDED"]);
+                unset($activityData["BOU_ELEMENT_ID"]);
 
-                // activity exists ?
-                if ($bwp->activityExists($activityData["ACT_UID"])) {
-                    // then update activity
-                    $bwp->updateActivity($activityData["ACT_UID"], $activityData);
-                } else {
-                    // if not exists then create it
+                $activity = $bwp->getActivity($activityData["ACT_UID"]);
+                if (is_null($activity)) {
                     $oldActUid = $activityData["ACT_UID"];
                     $activityData["ACT_UID"] = Hash::generateUID();
-
                     $bwp->addActivity($activityData);
-
                     $result[] = array("object" => "activity", "new_uid" => $activityData["ACT_UID"], "old_uid" => $oldActUid);
+                } elseif (! $bwp->isEquals($activity, $activityData)) {
+                    $bwp->updateActivity($activityData["ACT_UID"], $activityData);
+                } else {
+                    Logger::log("Update Activity ({$activityData["ACT_UID"]}) Skipped - No changes required");
                 }
 
                 $diagram["activities"][$i] = $activityData;
@@ -194,17 +193,23 @@ class Project extends Api
                 unset($eventData["_EXTENDED"]);
 
                 // gateway exists ?
-                if ($event = $bwp->getEvent($eventData["EVN_UID"])) {
-                    // then update activity
-                    $bwp->updateEvent($eventData["EVN_UID"], $eventData);
-                } else {
-                    // if not exists then create it
+                $event = $bwp->getEvent($eventData["EVN_UID"]);
+                if (is_null($event)) {
                     $oldActUid = $eventData["EVN_UID"];
                     $eventData["EVN_UID"] = Hash::generateUID();
-
                     $bwp->addEvent($eventData);
-
                     $result[] = array("object" => "event", "new_uid" => $eventData["EVN_UID"], "old_uid" => $oldActUid);
+                } elseif (! $bwp->isEquals($event, $eventData)) {
+                    if (array_key_exists("EVN_CANCEL_ACTIVITY", $eventData)) {
+                        $eventData["EVN_CANCEL_ACTIVITY"] = $eventData["EVN_CANCEL_ACTIVITY"] ? 1 : 0;
+                    }
+                    if (array_key_exists("EVN_WAIT_FOR_COMPLETION", $eventData)) {
+                        $eventData["EVN_WAIT_FOR_COMPLETION"] = $eventData["EVN_WAIT_FOR_COMPLETION"] ? 1 : 0;
+                    }
+
+                    $bwp->updateEvent($eventData["EVN_UID"], $eventData);
+                } else {
+                    Logger::log("Update Event ({$eventData["EVN_UID"]}) Skipped - No changes required");
                 }
 
                 $diagram["events"][$i] = $eventData;
