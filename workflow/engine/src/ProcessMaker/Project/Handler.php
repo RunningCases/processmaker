@@ -92,11 +92,8 @@ abstract class Handler
 
     public static function isEquals($array, $arrayCompare)
     {
-        ksort($array);
-        ksort($arrayCompare);
         //self::log("ONE: ", $array, "TWO: ", $arrayCompare);
         //$ret = array_diff_assoc("ONE: ", $array, "TWO: ", $arrayCompare);
-
         return (self::getChecksum($array) === self::getChecksum($arrayCompare));
     }
 

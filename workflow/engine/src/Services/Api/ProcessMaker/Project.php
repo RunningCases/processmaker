@@ -148,16 +148,18 @@ class Project extends Api
             $whiteList = array();
             foreach ($diagram["gateways"] as $i => $gatewayData) {
                 $gatewayData = array_change_key_case($gatewayData, CASE_UPPER);
+                unset($gatewayData["_EXTENDED"]);
 
-                if ($gateway = $bwp->getGateway($gatewayData["GAT_UID"])) {
-                    $bwp->updateGateway($gatewayData["GAT_UID"], $gatewayData);
-                } else {
+                $gateway = $bwp->getGateway($gatewayData["GAT_UID"]);
+                if (is_null($gateway)) {
                     $oldActUid = $gatewayData["GAT_UID"];
                     $gatewayData["GAT_UID"] = Util\Hash::generateUID();
-
                     $bwp->addGateway($gatewayData);
-
                     $result[] = array("object" => "gateway", "new_uid" => $gatewayData["GAT_UID"], "old_uid" => $oldActUid);
+                } elseif (! $bwp->isEquals($gateway, $gatewayData)) {
+                    $bwp->updateGateway($gatewayData["GAT_UID"], $gatewayData);
+                } else {
+                    Util\Logger::log("Update Gateway ({$gatewayData["GAT_UID"]}) Skipped - No changes required");
                 }
 
                 $diagram["gateways"][$i] = $gatewayData;
