@@ -5,21 +5,21 @@ Feature: Files Manager Resources
     Given that I have a valid access_token
 
   Scenario: Get a list of main process files manager
-    Given I request "project/1265557095225ff5c688f46031700471/process-file-manager"
+    Given I request "project/1265557095225ff5c688f46031700471/file-manager"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
 
   Scenario: Get a list public folder of process files manager
-  Given I request "project/1265557095225ff5c688f46031700471/process-file-manager?path=public"
+  Given I request "project/1265557095225ff5c688f46031700471/file-manager?path=public"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
   
   Scenario: Get a list templates folder of process files manager
-  Given I request "project/1265557095225ff5c688f46031700471/process-file-manager?path=templates"
+  Given I request "project/1265557095225ff5c688f46031700471/file-manager?path=templates"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
@@ -34,7 +34,7 @@ Feature: Files Manager Resources
           "content": "<content>"
       }
       """
-      And I request "project/1265557095225ff5c688f46031700471/process-file-manager"
+      And I request "project/1265557095225ff5c688f46031700471/file-manager"
       Then the response status code should be 200
       And the response charset is "UTF-8"
       And the content type is "application/json"
@@ -58,7 +58,7 @@ Feature: Files Manager Resources
           "content": "<content>"
       }
       """
-      And I request "project/1265557095225ff5c688f46031700471/process-file-manager?path=<path>"
+      And I request "project/1265557095225ff5c688f46031700471/file-manager?path=<path>"
       Then the response status code should be 200
       And the response charset is "UTF-8"
       And the content type is "application/json"
@@ -73,7 +73,7 @@ Feature: Files Manager Resources
 
   Scenario Outline: Delete User
   Given that I want to delete a "<path>"
-        And I request "project/1265557095225ff5c688f46031700471/process-file-manager?path=<path>"
+        And I request "project/1265557095225ff5c688f46031700471/file-manager?path=<path>"
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"

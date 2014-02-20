@@ -15,7 +15,7 @@ class FilesManager extends Api
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $path
      *
-     * @url GET /:prjUid/process-file-manager
+     * @url GET /:prjUid/file-manager
      */
     public function doGetProcessFilesManager($prjUid, $path = '')
     {
@@ -39,7 +39,7 @@ class FilesManager extends Api
      * @param string $prjUid {@min 32} {@max 32}
      * @param ProcessFilesManagerStructure $request_data
      *
-     * @url POST /:prjUid/process-file-manager
+     * @url POST /:prjUid/file-manager
      */
     public function doPostProcessFilesManager($prjUid, ProcessFilesManagerStructure $request_data)
     {
@@ -62,13 +62,13 @@ class FilesManager extends Api
      * @param string $prjUid {@min 32} {@max 32}
      * @param array $request_data
      *
-     * @url POST /:prjUid/process-file-manager/upload
+     * @url POST /:prjUid/file-manager/upload
      */
     public function doPostProcessFilesManagerUpload($prjUid, $request_data)
     {
         try {
             $filesManager = new \BusinessModel\FilesManager();
-            $filesManager->uploadProcessFilesManager($request_data);
+            $filesManager->uploadProcessFilesManager($prjUid, $request_data);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -80,7 +80,7 @@ class FilesManager extends Api
      * @param ProcessFilesManagerStructurePut $request_data
      * @param string $path
      *
-     * @url PUT /:prjUid/process-file-manager
+     * @url PUT /:prjUid/file-manager
      */
     public function doPutProcessFilesManager($prjUid, ProcessFilesManagerStructurePut $request_data, $path)
     {
@@ -102,7 +102,7 @@ class FilesManager extends Api
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $path
      *
-     * @url DELETE /:prjUid/process-file-manager
+     * @url DELETE /:prjUid/file-manager
      */
     public function doDeleteProcessFilesManager($prjUid, $path)
     {
@@ -119,7 +119,7 @@ class FilesManager extends Api
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $path
      *
-     * @url GET /:prjUid/process-file-manager/download
+     * @url GET /:prjUid/file-manager/download
      */
     public function doGetProcessFilesManagerDownload($prjUid, $path)
     {
@@ -138,17 +138,17 @@ class ProcessFilesManagerStructure
     /**
      * @var string {@from body}
      */
-    public $file_name;
+    public $prf_filename;
 
     /**
      * @var string {@from body}
      */
-    public $path;
+    public $prf_path;
 
     /**
      * @var string {@from body}
      */
-    public $content;
+    public $prf_content;
 }
 
 
@@ -157,11 +157,11 @@ class ProcessFilesManagerStructurePut
     /**
      * @var string {@from body}
      */
-    public $file_name;
+    public $prf_filename;
 
     /**
      * @var string {@from body}
      */
-    public $content;
+    public $prf_content;
 }
 
