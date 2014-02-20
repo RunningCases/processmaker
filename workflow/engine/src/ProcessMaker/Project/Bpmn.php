@@ -386,13 +386,13 @@ class Bpmn extends Handler
 
     public function updateEvent($evnUid, $data)
     {
-        if (array_key_exists("EVN_CANCEL_ACTIVITY", $data)) {
+        /*if (array_key_exists("EVN_CANCEL_ACTIVITY", $data)) {
             $data["EVN_CANCEL_ACTIVITY"] = $data["EVN_CANCEL_ACTIVITY"] ? 1 : 0;
         }
 
         if (array_key_exists("EVN_WAIT_FOR_COMPLETION", $data)) {
             $data["EVN_WAIT_FOR_COMPLETION"] = $data["EVN_WAIT_FOR_COMPLETION"] ? 1 : 0;
-        }
+        }*/
 
         try {
             self::log("Update Event: $evnUid", "With data: ", $data);
