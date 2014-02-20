@@ -226,11 +226,6 @@ class BpmnWorkflow extends Project\Bpmn
         parent::addEvent($data);
     }
 
-    public function updateEvent($evnUid, $data)
-    {
-        parent::updateEvent($evnUid, $data);
-    }
-
     public function removeEvent($evnUid)
     {
 //        $event = \BpmnEventPeer::retrieveByPK($evnUid);

@@ -94,8 +94,8 @@ abstract class Handler
     {
         ksort($array);
         ksort($arrayCompare);
-        self::log($array, $arrayCompare);
-        //$ret = array_diff_assoc($array, $arrayCompare);
+        //self::log("ONE: ", $array, "TWO: ", $arrayCompare);
+        //$ret = array_diff_assoc("ONE: ", $array, "TWO: ", $arrayCompare);
 
         return (self::getChecksum($array) === self::getChecksum($arrayCompare));
     }
