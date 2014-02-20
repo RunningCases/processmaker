@@ -144,6 +144,7 @@ Feature: User Main Tests
         
 
     Scenario Outline: Get a single Users and check some properties
+    Given that I want to get a resource with the key "usr_uid" stored in session array as variable "usr_uid_<usr_number>"
         And I request "user"
         And the content type is "application/json"
         Then the response status code should be 200

@@ -99,7 +99,7 @@ class BpmnEventMapBuilder
 
         $tMap->addColumn('EVN_MESSAGE', 'EvnMessage', 'string', CreoleTypes::LONGVARCHAR, false, null);
 
-        $tMap->addColumn('EVN_OPRERATION_NAME', 'EvnOprerationName', 'string', CreoleTypes::VARCHAR, false, 255);
+        $tMap->addColumn('EVN_OPERATION_NAME', 'EvnOperationName', 'string', CreoleTypes::VARCHAR, false, 255);
 
         $tMap->addColumn('EVN_OPERATION_IMPLEMENTATION_REF', 'EvnOperationImplementationRef', 'string', CreoleTypes::VARCHAR, false, 255);
 
