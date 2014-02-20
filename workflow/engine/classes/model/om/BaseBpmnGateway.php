@@ -70,10 +70,10 @@ abstract class BaseBpmnGateway extends BaseObject implements Persistent
     protected $gat_instantiate = 0;
 
     /**
-     * The value for the gat_event_gatewat_type field.
+     * The value for the gat_event_gateway_type field.
      * @var        string
      */
-    protected $gat_event_gatewat_type = 'NONE';
+    protected $gat_event_gateway_type = 'NONE';
 
     /**
      * The value for the gat_activation_count field.
@@ -195,14 +195,14 @@ abstract class BaseBpmnGateway extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [gat_event_gatewat_type] column value.
+     * Get the [gat_event_gateway_type] column value.
      * 
      * @return     string
      */
-    public function getGatEventGatewatType()
+    public function getGatEventGatewayType()
     {
 
-        return $this->gat_event_gatewat_type;
+        return $this->gat_event_gateway_type;
     }
 
     /**
@@ -401,12 +401,12 @@ abstract class BaseBpmnGateway extends BaseObject implements Persistent
     } // setGatInstantiate()
 
     /**
-     * Set the value of [gat_event_gatewat_type] column.
+     * Set the value of [gat_event_gateway_type] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setGatEventGatewatType($v)
+    public function setGatEventGatewayType($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -415,12 +415,12 @@ abstract class BaseBpmnGateway extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->gat_event_gatewat_type !== $v || $v === 'NONE') {
-            $this->gat_event_gatewat_type = $v;
-            $this->modifiedColumns[] = BpmnGatewayPeer::GAT_EVENT_GATEWAT_TYPE;
+        if ($this->gat_event_gateway_type !== $v || $v === 'NONE') {
+            $this->gat_event_gateway_type = $v;
+            $this->modifiedColumns[] = BpmnGatewayPeer::GAT_EVENT_GATEWAY_TYPE;
         }
 
-    } // setGatEventGatewatType()
+    } // setGatEventGatewayType()
 
     /**
      * Set the value of [gat_activation_count] column.
@@ -519,7 +519,7 @@ abstract class BaseBpmnGateway extends BaseObject implements Persistent
 
             $this->gat_instantiate = $rs->getInt($startcol + 6);
 
-            $this->gat_event_gatewat_type = $rs->getString($startcol + 7);
+            $this->gat_event_gateway_type = $rs->getString($startcol + 7);
 
             $this->gat_activation_count = $rs->getInt($startcol + 8);
 
@@ -796,7 +796,7 @@ abstract class BaseBpmnGateway extends BaseObject implements Persistent
                 return $this->getGatInstantiate();
                 break;
             case 7:
-                return $this->getGatEventGatewatType();
+                return $this->getGatEventGatewayType();
                 break;
             case 8:
                 return $this->getGatActivationCount();
@@ -834,7 +834,7 @@ abstract class BaseBpmnGateway extends BaseObject implements Persistent
             $keys[4] => $this->getGatType(),
             $keys[5] => $this->getGatDirection(),
             $keys[6] => $this->getGatInstantiate(),
-            $keys[7] => $this->getGatEventGatewatType(),
+            $keys[7] => $this->getGatEventGatewayType(),
             $keys[8] => $this->getGatActivationCount(),
             $keys[9] => $this->getGatWaitingForStart(),
             $keys[10] => $this->getGatDefaultFlow(),
@@ -891,7 +891,7 @@ abstract class BaseBpmnGateway extends BaseObject implements Persistent
                 $this->setGatInstantiate($value);
                 break;
             case 7:
-                $this->setGatEventGatewatType($value);
+                $this->setGatEventGatewayType($value);
                 break;
             case 8:
                 $this->setGatActivationCount($value);
@@ -954,7 +954,7 @@ abstract class BaseBpmnGateway extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setGatEventGatewatType($arr[$keys[7]]);
+            $this->setGatEventGatewayType($arr[$keys[7]]);
         }
 
         if (array_key_exists($keys[8], $arr)) {
@@ -1008,8 +1008,8 @@ abstract class BaseBpmnGateway extends BaseObject implements Persistent
             $criteria->add(BpmnGatewayPeer::GAT_INSTANTIATE, $this->gat_instantiate);
         }
 
-        if ($this->isColumnModified(BpmnGatewayPeer::GAT_EVENT_GATEWAT_TYPE)) {
-            $criteria->add(BpmnGatewayPeer::GAT_EVENT_GATEWAT_TYPE, $this->gat_event_gatewat_type);
+        if ($this->isColumnModified(BpmnGatewayPeer::GAT_EVENT_GATEWAY_TYPE)) {
+            $criteria->add(BpmnGatewayPeer::GAT_EVENT_GATEWAY_TYPE, $this->gat_event_gateway_type);
         }
 
         if ($this->isColumnModified(BpmnGatewayPeer::GAT_ACTIVATION_COUNT)) {
@@ -1090,7 +1090,7 @@ abstract class BaseBpmnGateway extends BaseObject implements Persistent
 
         $copyObj->setGatInstantiate($this->gat_instantiate);
 
-        $copyObj->setGatEventGatewatType($this->gat_event_gatewat_type);
+        $copyObj->setGatEventGatewayType($this->gat_event_gateway_type);
 
         $copyObj->setGatActivationCount($this->gat_activation_count);
 

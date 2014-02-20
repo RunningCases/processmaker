@@ -3369,7 +3369,7 @@
     <column name="GAT_TYPE" type="VARCHAR" size="30" required="true" default=""/>
     <column name="GAT_DIRECTION" type="VARCHAR" size="30" required="false" default="UNSPECIFIED"/>
     <column name="GAT_INSTANTIATE" type="TINYINT" required="false" default="0"/>
-    <column name="GAT_EVENT_GATEWAT_TYPE" type="VARCHAR" size="20" required="false" default="NONE"/>
+    <column name="GAT_EVENT_GATEWAY_TYPE" type="VARCHAR" size="20" required="false" default="NONE"/>
     <column name="GAT_ACTIVATION_COUNT" type="INTEGER" required="false" default="0"/>
     <column name="GAT_WAITING_FOR_START" type="TINYINT" required="false" default="1"/>
     <column name="GAT_DEFAULT_FLOW" type="VARCHAR" size="32" required="false" default=""/>
