@@ -272,7 +272,6 @@ class Task
             }
 
             //Validating TAS_ASSIGN_VARIABLE value
-
             if (!isset($arrayProperty["TAS_ASSIGN_TYPE"])) {
                 $derivateType = $task->kgetassigType($arrayProperty["PRO_UID"], $arrayProperty["TAS_UID"]);
 
@@ -282,14 +281,80 @@ class Task
                     $arrayProperty["TAS_ASSIGN_TYPE"] = $derivateType["TAS_ASSIGN_TYPE"];
                 }
             }
-
-            if ($arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE_EVALUATE") {
+            if ($arrayProperty["TAS_ASSIGN_TYPE"] == "EVALUTE") {
+                if (empty($arrayProperty["TAS_ASSIGN_VARIABLE"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
+                }
+            }
+            if ($arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE_EVALUATE" ||
+                $arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE") {
+                if ($arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE_EVALUATE") {
+                    if (empty($arrayProperty["TAS_GROUP_VARIABLE"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_group_variable'"));
+                    }
+                }
                 $arrayProperty["TAS_ASSIGN_TYPE"] = "SELF_SERVICE";
-
+                if (empty($arrayProperty["TAS_SELFSERVICE_TIMEOUT"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_selfservice_timeout'"));
+                }
+                if (empty($arrayProperty["TAS_SELFSERVICE_TIME"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
+                }
+                if (empty($arrayProperty["TAS_SELFSERVICE_TRIGGER_UID"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_selfservice_trigger_uid'"));
+                }
                 if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
                     $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
                 }
             }
+            //Validating TAS_TRANSFER_FLY value
+            if ($arrayProperty["TAS_TRANSFER_FLY"] == "FALSE") {
+                if (!isset($arrayProperty["TAS_DURATION"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_duration'"));
+                }
+                $valuesTimeUnit = array('DAYS','HOURS');
+                if ((!isset($arrayProperty["TAS_TIMEUNIT"])) ||
+                    (!in_array($arrayProperty["TAS_TIMEUNIT"], $valuesTimeUnit))) {
+                    throw (new \Exception("Invalid value specified for 'tas_timeunit'"));
+                }
+                $valuesTypeDay = array('1','2','');
+                if ((!isset($arrayProperty["TAS_TYPE_DAY"])) ||
+                    (!in_array($arrayProperty["TAS_TYPE_DAY"], $valuesTypeDay))) {
+                    throw (new \Exception("Invalid value specified for 'tas_type_day'"));
+                }
+                if (!isset($arrayProperty["TAS_CALENDAR"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_calendar'"));
+                }
+            }
+            //Validating TAS_TRANSFER_FLY value
+            if ($arrayProperty["TAS_SEND_LAST_EMAIL"] == "TRUE") {
+                if (empty($arrayProperty["TAS_DEF_SUBJECT_MESSAGE"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_def_subject_message'"));
+                }
+                $valuesDefMessageType = array('template','text');
+                if ((!isset($arrayProperty["TAS_DEF_MESSAGE_TYPE"])) ||
+                    (!in_array($arrayProperty["TAS_DEF_MESSAGE_TYPE"], $valuesDefMessageType))) {
+                    throw (new \Exception("Invalid value specified for 'tas_def_message_type'"));
+                }
+                if ($arrayProperty["TAS_DEF_MESSAGE_TYPE"] == 'template') {
+                    if (empty($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_def_message_template'"));
+                    }
+                } else {
+                    if (empty($arrayProperty["TAS_DEF_MESSAGE"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_def_message'"));
+                    }
+                }
+                $valuesTypeDay = array('1','2','');
+                if ((!isset($arrayProperty["TAS_TYPE_DAY"])) ||
+                    (!in_array($arrayProperty["TAS_TYPE_DAY"], $valuesTypeDay))) {
+                    throw (new \Exception("Invalid value specified for 'tas_type_day'"));
+                }
+                if (!isset($arrayProperty["TAS_CALENDAR"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_calendar'"));
+                }
+            }
+
 
             $result = $task->update($arrayProperty);
 

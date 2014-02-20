@@ -3302,7 +3302,7 @@
     <column name="EVN_ESCALATION_CODE" type="VARCHAR" size="255" required="false"/>
     <column name="EVN_CONDITION" type="VARCHAR" size="255" required="false"/>
     <column name="EVN_MESSAGE" type="LONGVARCHAR" required="false"/>
-    <column name="EVN_OPRERATION_NAME" type="VARCHAR" size="255" required="false"/>
+    <column name="EVN_OPERATION_NAME" type="VARCHAR" size="255" required="false"/>
     <column name="EVN_OPERATION_IMPLEMENTATION_REF" type="VARCHAR" size="255" required="false"/>
     <column name="EVN_TIME_DATE" type="VARCHAR" size="255" required="false"/>
     <column name="EVN_TIME_CYCLE" type="VARCHAR" size="255" required="false"/>
