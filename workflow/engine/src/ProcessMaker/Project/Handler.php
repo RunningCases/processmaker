@@ -90,6 +90,16 @@ abstract class Handler
         return $result;
     }
 
+    public static function isEquals($array, $arrayCompare)
+    {
+        ksort($array);
+        ksort($arrayCompare);
+        self::log($array, $arrayCompare);
+        //$ret = array_diff_assoc($array, $arrayCompare);
+
+        return (self::getChecksum($array) === self::getChecksum($arrayCompare));
+    }
+
     /**
      * Log in ProcessMaker Standard Output if debug mode is enabled.
      *
