@@ -1893,6 +1893,78 @@ class Task
 
     /**
      * Validate Process Uid
+     * @var string $pro_uid. Uid for Process
+     * @var string $tas_uid. Uid for Task
+     * @var string $step_uid. Uid for Step
+     * @var string $step_uid_rel. Uid Step for relation
+     * @var string $type. Type relation
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function moveSteps($pro_uid, $tas_uid, $step_uid, $step_uid_rel, $type) {
+        $pro_uid = $this->validateProUid($pro_uid);
+        $tas_uid = $this->validateActUid($tas_uid);
+
+        $this->setFormatFieldNameInUppercase(false);
+        $this->setArrayParamException(array("taskUid" => "act_uid"));
+        $aSteps = $this->getSteps($tas_uid);
+
+        foreach ($aSteps as $dataStep) {
+            if ($dataStep['step_uid'] == $step_uid) {
+                $prStepPos = (int)$dataStep['step_position'];
+            } elseif ($dataStep['step_uid'] == $step_uid_rel) {
+                $seStepPos = (int)$dataStep['step_position'];
+            }
+        }
+
+        //Principal Step is up
+        if ($prStepPos < $seStepPos) {
+            $modPos = 'UP';
+            if ($type == 'DOWN') {
+                $newPos = $seStepPos;
+                $iniPos = $prStepPos+1;
+                $finPos = $seStepPos;
+            } else {
+                $newPos = $seStepPos-1;
+                $iniPos = $prStepPos+1;
+                $finPos = $seStepPos-1;
+            }
+        } else {
+            $modPos = 'DOWN';
+            if ($type == 'UP') {
+                $newPos = $seStepPos;
+                $iniPos = $seStepPos;
+                $finPos = $prStepPos-1;
+            } else {
+                $newPos = $seStepPos-1;
+                $iniPos = $seStepPos-1;
+                $finPos = $prStepPos-1;
+            }
+        }
+
+        $range = range($iniPos, $finPos);
+        foreach ($aSteps as $dataStep) {
+            if ((in_array($dataStep['step_position'], $range)) && ($dataStep['step_uid'] != $step_uid)) {
+                $stepChangeIds[] = $dataStep['step_uid'];
+            }
+        }
+
+        foreach ($stepChangeIds as $value) {
+             if ($modPos == 'UP') {
+                 G::pr("Cambiar el step $value por un pos mas bajo");
+             } else {
+                 G::pr("Cambiar el step $value por un pos mas alto");
+             }
+        }
+        G::pr("Cambiar el step $step_uid por un pos $newPos");
+        die;
+    }
+
+    /**
+     * Validate Process Uid
      * @var string $pro_uid. Uid for process
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
