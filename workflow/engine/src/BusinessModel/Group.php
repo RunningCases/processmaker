@@ -130,12 +130,12 @@ class Group
     }
 
     /**
-     * Verify if doesn't exist the Group in table GROUP
+     * Verify if doesn't exists the Group in table GROUP
      *
      * @param string $groupUid              Unique id of Group
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if doesn't exist the Group in table GROUP
+     * return void Throw exception if doesn't exists the Group in table GROUP
      */
     public function throwExceptionIfNoExistsGroup($groupUid, $fieldNameForException)
     {

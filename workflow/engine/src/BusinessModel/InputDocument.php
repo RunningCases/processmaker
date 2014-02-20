@@ -137,13 +137,13 @@ class InputDocument
     }
 
     /**
-     * Verify if doesn't exist the InputDocument in table INPUT_DOCUMENT
+     * Verify if doesn't exists the InputDocument in table INPUT_DOCUMENT
      *
      * @param string $inputDocumentUid      Unique id of InputDocument
      * @param string $processUid            Unique id of Process
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if doesn't exist the InputDocument in table INPUT_DOCUMENT
+     * return void Throw exception if doesn't exists the InputDocument in table INPUT_DOCUMENT
      */
     public function throwExceptionIfNotExistsInputDocument($inputDocumentUid, $processUid, $fieldNameForException)
     {
