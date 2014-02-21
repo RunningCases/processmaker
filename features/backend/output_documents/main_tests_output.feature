@@ -88,6 +88,39 @@ Feature: Output Documents Main Tests
         | Create with special characters in out doc pdf security open password  | 4224292655297723eb98691001100052 | 16             | Endpoint New Version PDF  19      | Output Document new version solo pdf     | Output 15        |                  | TCPDF                    | 0                 | Legal         | 25                  | 25                   | 25                 | 25                    | PDF              | HTML         | 0                        |                       | 1                  |                          |              | 1                            | sample432@$#@$¼€¼½                 | sample                              | print                            |
         | Create with special characters in out doc pdf security owner password | 4224292655297723eb98691001100052 | 17             | Endpoint New Version 20           | Output Document new version - EndPoint   | Output 16        |                  | TCPDF                    | 1                 | Letter        | 30                  | 30                   | 30                 | 30                    | BOTH             | HTML         | 0                        |                       | 0                  |                          |              | 0                            |                                    | sample432@$#@$¼€¼½                  |                                  |
 
+  
+  Scenario: Create Output Documents with same name
+      Given POST this data:
+      """
+      {
+        "out_doc_title":            "Endpoint Old Version",
+        "out_doc_description":      "Output Document old version - EndPoint",
+        "out_doc_filename":         "Output 1",
+        "out_doc_template":         "",
+        "out_doc_report_generator": "HTML2PDF",
+        "out_doc_landscape":        "1",
+        "out_doc_media":            "Letter",
+        "out_doc_left_margin":      "30",
+        "out_doc_right_margin":     "30",
+        "out_doc_top_margin":       "30",
+        "out_doc_bottom_margin":    "30",
+        "out_doc_generate":         "BOTH",
+        "out_doc_type":             "HTML",
+        "out_doc_current_revision": "0",
+        "out_doc_field_mapping":    "",
+        "out_doc_versioning":       "0",
+        "out_doc_destination_path": "",
+        "out_doc_tags":             "",
+        "out_doc_pdf_security_enabled":        "0",
+        "out_doc_pdf_security_open_password":  "",
+        "out_doc_pdf_security_owner_password": "",
+        "out_doc_pdf_security_permissions":    ""
+      }
+      """
+      And I request "project/4224292655297723eb98691001100052/output-document"
+      Then the response status code should be 400
+      And the response status message should have the following text "same name"
+
 
   Scenario: Get the Output Documents list when there are 19 records
     Given I request "project/4224292655297723eb98691001100052/output-documents"

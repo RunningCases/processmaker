@@ -56,6 +56,22 @@ Feature: Testing triggers Main Tests
         | Create trigger without tri param                        | 251815090529619a99a2bf4013294414 | 5          | otro trigger 5                    | descripcion del tercer trigger 5    |          |                                                           |              |
 
 
+    Scenario: Create a new triggers with same name
+      Given POST this data:
+        """
+        {
+         "tri_title": "nuevo trigger 1",
+         "tri_description": "descripcion del primer trigger  1",
+         "tri_type": "SCRIPT",
+         "tri_webbot": "@@user1 = @@USER_LOGGED; \n $x = rand();",
+         "tri_param": "PRIVATE"
+        }
+        """
+        And I request "project/251815090529619a99a2bf4013294414/trigger"
+        Then the response status code should be 400
+        And the response status message should have the following text "same name"
+
+
     Scenario: Get the Triggers List when there are 7 records
         Given I request "project/251815090529619a99a2bf4013294414/triggers"
         Then the response status code should be 200
