@@ -1368,32 +1368,5 @@ class RestContext extends BehatContext
         curl_close($ch);
         echo $postResult;
     }
-
-    /**
-     * @When /^I request download "([^"]*)"$/
-     */
-    public function iRequestDownload($pageUrl, $urlType="")
-    {
-        $this->_startTime = microtime(true);
-        $baseUrl = $this->getParameter('base_url');        
-        if ($this->access_token != null) {
-            $this->_headers['Authorization'] = 'Bearer ' . $this->access_token;
-        }
-        if($urlType=="absolute"){
-            $this->_requestUrl = $pageUrl;
-        }else{
-            $this->_requestUrl = $baseUrl . $pageUrl;
-        }
-        $url = false !== strpos($pageUrl, '{')
-            ? array($this->_requestUrl, (array)$this->_restObject)
-            : $this->_requestUrl;
-        if (isset($this->_restGetQueryStringSuffix) &&
-                  $this->_restGetQueryStringSuffix != '') {
-            $url .= $this->_restGetQueryStringSuffix;
-        }
-        $this->_request = $this->_client ->get($url, $this->_headers);
-        $this->_response = $this->_request->send();
-        echo $this->_response->getBody(true);
-    }
 }
 
