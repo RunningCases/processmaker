@@ -764,11 +764,6 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
-            if (isset($limit)) {
-                if ($limit == 0) {
-                    return $aUsers;
-                }
-            }
             $totalCount = 0;
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
@@ -786,12 +781,6 @@ class Task
             $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
             $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
             $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            if ($start != '') {
-                $criteria->setOffset( $start );
-            }
-            if ($limit != '') {
-                $criteria->setLimit( $limit );
-            }
             if ($filter != '') {
                 $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
             }
@@ -843,24 +832,6 @@ class Task
             $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
-            if ($start) {
-                if ($start < 0) {
-                    throw (new \Exception( 'invalid value specified for `start`.'));
-                } else {
-                    $oCriteria->setOffset( $start );
-                }
-            }
-            if (isset($limit)) {
-                if ($limit < 0) {
-                    throw (new \Exception( 'invalid value specified for `limit`.'));
-                } else {
-                    if ($limit == 0) {
-                        return $aUsers;
-                    } else {
-                        $oCriteria->setLimit( $limit );
-                    }
-                }
-            }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -874,6 +845,25 @@ class Task
                 }
                 $oDataset->next();
             }
+            if ($start) {
+                if ($start < 0) {
+                    throw (new \Exception( 'invalid value specified for `start`.'));
+                }
+            } else {
+                $start = 0;
+            }
+            if (isset($limit)) {
+                if ($limit < 0) {
+                    throw (new \Exception( 'invalid value specified for `limit`.'));
+                } else {
+                    if ($limit == 0) {
+                        return array();
+                    }
+                }
+            } else {
+                $limit = 1000;
+            }
+            $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
         } catch (Exception $e) {
             throw $e;
@@ -933,11 +923,6 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
-            if (isset($limit)) {
-                if ($limit == 0) {
-                    return $aUsers;
-                }
-            }
             $totalCount = 0;
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
@@ -955,12 +940,6 @@ class Task
             $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
             $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
             $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            if ($start != '') {
-                $criteria->setOffset( $start );
-            }
-            if ($limit != '') {
-                $criteria->setLimit( $limit );
-            }
             if ($filter != '') {
                 $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
             }
@@ -1008,24 +987,6 @@ class Task
             }
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS2, \Criteria::NOT_IN);
-            if ($start) {
-                if ($start < 0) {
-                    throw (new \Exception( 'invalid value specified for `start`.'));
-                } else {
-                    $oCriteria->setOffset( $start );
-                }
-            }
-            if (isset($limit)) {
-                if ($limit < 0) {
-                    throw (new \Exception( 'invalid value specified for `limit`.'));
-                } else {
-                    if ($limit == 0) {
-                        return $aUsers;
-                    } else {
-                        $oCriteria->setLimit( $limit );
-                    }
-                }
-            }
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -1040,6 +1001,25 @@ class Task
                 $oDataset->next();
                 
             }
+            if ($start) {
+                if ($start < 0) {
+                    throw (new \Exception( 'invalid value specified for `start`.'));
+                }
+            } else {
+                $start = 0;
+            }
+            if (isset($limit)) {
+                if ($limit < 0) {
+                    throw (new \Exception( 'invalid value specified for `limit`.'));
+                } else {
+                    if ($limit == 0) {
+                        return array();
+                    }
+                }
+            } else {
+                $limit = 1000;
+            }
+            $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
         } catch (Exception $e) {
             throw $e;
@@ -1356,11 +1336,6 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
-            if (isset($limit)) {
-                if ($limit == 0) {
-                    return $aUsers;
-                }
-            }
             $totalCount = 0;
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
@@ -1378,12 +1353,6 @@ class Task
             $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
             $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
             $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            if ($start != '') {
-                $criteria->setOffset( $start );
-            }
-            if ($limit != '') {
-                $criteria->setLimit( $limit );
-            }
             if ($filter != '') {
                 $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
             }
@@ -1435,24 +1404,6 @@ class Task
             $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 2);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
-            if ($start) {
-                if ($start < 0) {
-                    throw (new \Exception( 'invalid value specified for `start`.'));
-                } else {
-                    $oCriteria->setOffset( $start );
-                }
-            }
-            if (isset($limit)) {
-                if ($limit < 0) {
-                    throw (new \Exception( 'invalid value specified for `limit`.'));
-                } else {
-                    if ($limit == 0) {
-                        return $aUsers;
-                    } else {
-                        $oCriteria->setLimit( $limit );
-                    }
-                }
-            }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -1466,6 +1417,25 @@ class Task
                 }
                 $oDataset->next();
             }
+            if ($start) {
+                if ($start < 0) {
+                    throw (new \Exception( 'invalid value specified for `start`.'));
+                }
+            } else {
+                $start = 0;
+            }
+            if (isset($limit)) {
+                if ($limit < 0) {
+                    throw (new \Exception( 'invalid value specified for `limit`.'));
+                } else {
+                    if ($limit == 0) {
+                        return array();
+                    }
+                }
+            } else {
+                $limit = 1000;
+            }
+            $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
         } catch (Exception $e) {
             throw $e;
@@ -1492,6 +1462,7 @@ class Task
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
+            $aUsers = array();
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
                 throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
@@ -1500,8 +1471,8 @@ class Task
             if (is_null($oActivity)) {
                 throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
             }
+
             $iType = 2;
-            $aUsers = array();
             $oTasks = new \Tasks();
             $aAux = $oTasks->getGroupsOfTask($sTaskUID, $iType);
             $aUIDS1 = array();
@@ -1525,11 +1496,6 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
-            if (isset($limit)) {
-                if ($limit == 0) {
-                    return $aUsers;
-                }
-            }
             $totalCount = 0;
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
@@ -1547,12 +1513,6 @@ class Task
             $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
             $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
             $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            if ($start != '') {
-                $criteria->setOffset( $start );
-            }
-            if ($limit != '') {
-                $criteria->setLimit( $limit );
-            }
             if ($filter != '') {
                 $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
             }
@@ -1600,24 +1560,6 @@ class Task
             }
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS2, \Criteria::NOT_IN);
-            if ($start) {
-                if ($start < 0) {
-                    throw (new \Exception( 'invalid value specified for `start`.'));
-                } else {
-                    $oCriteria->setOffset( $start );
-                }
-            }
-            if (isset($limit)) {
-                if ($limit < 0) {
-                    throw (new \Exception( 'invalid value specified for `limit`.'));
-                } else {
-                    if ($limit == 0) {
-                        return $aUsers;
-                    } else {
-                        $oCriteria->setLimit( $limit );
-                    }
-                }
-            }
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -1631,11 +1573,32 @@ class Task
                 }
                 $oDataset->next();
             }
+            if ($start) {
+                if ($start < 0) {
+                    throw (new \Exception( 'invalid value specified for `start`.'));
+                }
+            } else {
+                $start = 0;
+            }
+            if (isset($limit)) {
+                if ($limit < 0) {
+                    throw (new \Exception( 'invalid value specified for `limit`.'));
+                } else {
+                    if ($limit == 0) {
+                        return array();
+                    }
+                }
+            } else {
+                $limit = 1000;
+            }
+            $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
         } catch (Exception $e) {
             throw $e;
         }
     }
+
+
 
     /**
      * Return a single Adhoc user or group assigned to an activity
@@ -1893,6 +1856,99 @@ class Task
 
     /**
      * Validate Process Uid
+     * @var string $pro_uid. Uid for Process
+     * @var string $tas_uid. Uid for Task
+     * @var string $step_uid. Uid for Step
+     * @var string $step_uid_rel. Uid Step for relation
+     * @var string $type. Type relation
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function moveSteps($pro_uid, $tas_uid, $step_uid, $step_uid_rel, $type) {
+        $pro_uid = $this->validateProUid($pro_uid);
+        $tas_uid = $this->validateActUid($tas_uid);
+
+        $this->setFormatFieldNameInUppercase(false);
+        $this->setArrayParamException(array("taskUid" => "act_uid"));
+        $aSteps = $this->getSteps($tas_uid);
+
+        foreach ($aSteps as $dataStep) {
+            if ($dataStep['step_uid'] == $step_uid) {
+                $prStepPos = (int)$dataStep['step_position'];
+            } elseif ($dataStep['step_uid'] == $step_uid_rel) {
+                $seStepPos = (int)$dataStep['step_position'];
+            }
+        }
+
+        //Principal Step is up
+        if ($prStepPos < $seStepPos) {
+            $modPos = 'UP';
+            if ($type == 'DOWN') {
+                $newPos = $seStepPos;
+                $iniPos = $prStepPos+1;
+                $finPos = $seStepPos;
+            } else {
+                $newPos = $seStepPos-1;
+                $iniPos = $prStepPos+1;
+                $finPos = $seStepPos-1;
+            }
+        } else {
+            $modPos = 'DOWN';
+            if ($type == 'UP') {
+                $newPos = $seStepPos;
+                $iniPos = $seStepPos;
+                $finPos = $prStepPos-1;
+            } else {
+                $newPos = $seStepPos-1;
+                $iniPos = $seStepPos-1;
+                $finPos = $prStepPos-1;
+            }
+        }
+
+        $range = range($iniPos, $finPos);
+        foreach ($aSteps as $dataStep) {
+            if ((in_array($dataStep['step_position'], $range)) && ($dataStep['step_uid'] != $step_uid)) {
+                $stepChangeIds[] = $dataStep['step_uid'];
+                $stepChangePos[] = $dataStep['step_position'];
+            }
+        }
+
+        foreach ($stepChangeIds as $key => $value) {
+             if ($modPos == 'UP') {
+                 $tempPos = ((int)$stepChangePos[$key])-1;
+                 $this->changePosStep($value, $tempPos);
+             } else {
+                 $tempPos = ((int)$stepChangePos[$key])+1;
+                 $this->changePosStep($value, $tempPos);
+             }
+        }
+        $this->changePosStep($step_uid, $newPos);
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function changePosStep ($step_uid, $pos)
+    {
+        $data = array(
+            'STEP_UID' => $step_uid,
+            'STEP_POSITION' => $pos
+        );
+        $oStep = new \Step();
+        $oStep->update($data);
+    }
+
+    /**
+     * Validate Process Uid
      * @var string $pro_uid. Uid for process
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -1933,6 +1989,22 @@ class Task
             throw (new \Exception("The activity with act_uid: '$act_uid', does not exist."));
         }
         return $act_uid;
+    }
+
+    /**
+     * @var array $display_array. array of groups and users
+     * @var int $page. start
+     * @var int $show_per_page. limit
+     *
+     * @return array
+     */
+    public function arrayPagination($display_array, $page, $show_per_page) {
+        $page = $page+1;
+        $show_per_page = $show_per_page -1;
+        $start = ($page - 1) * ($show_per_page + 1);
+        $offset = $show_per_page + 1;
+        $outArray = array_slice($display_array, $start, $offset);
+        return $outArray;
     }
 }
 

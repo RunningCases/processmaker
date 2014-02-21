@@ -181,13 +181,13 @@ class DynaForm
     }
 
     /**
-     * Verify if doesn't exist the DynaForm in table DYNAFORM
+     * Verify if doesn't exists the DynaForm in table DYNAFORM
      *
      * @param string $dynaFormUid           Unique id of DynaForm
      * @param string $processUid            Unique id of Process
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if doesn't exist the DynaForm in table DYNAFORM
+     * return void Throw exception if doesn't exists the DynaForm in table DYNAFORM
      */
     public function throwExceptionIfNotExistsDynaForm($dynaFormUid, $processUid, $fieldNameForException)
     {
