@@ -1,4 +1,4 @@
-<?php
+FA<?php
 use Behat\Behat\Context\BehatContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -1310,6 +1310,59 @@ class RestContext extends BehatContext
         }
 
         $this->iRequest($url);
+    }
+
+    //*********** POST - UPLOAD FILE MANAGER
+    /**
+    * @Given /^POST I want to upload the file "([^"]*)" to path "([^"]*)". Url to create prf_uid "([^"]*)" and updload "([^"]*)"$/
+    */
+    public function postIWantToUploadTheFileToPathPublicUrlToCreatePrfUidAndUpdload($prfFile, $prfPath, $postUrl, $url)
+    {
+        $accesstoken = $this->getParameter('access_token');
+        $headr = array();
+        $headr[] = 'Authorization: Bearer '.$accesstoken;
+        $path = rtrim($prfPath, '/') . '/';
+        $sfile = end(explode("/",$prfFile));
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$postUrl);
+        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array('prf_filename'=>$sfile, "prf_path" => $path, "prf_content" => ""));
+        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $postResult = curl_exec($ch);
+        curl_close($ch);
+        $aResult =  explode(",",$postResult);
+        $aFileUid =  explode(":",$aResult[0]);
+        $prfUid = trim(str_replace('"','',$aFileUid[1]));
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array('my_file'=>'@'.$prfFile, 'prf_uid' => $prfUid));
+        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $postResult = curl_exec($ch);
+        curl_close($ch);
+    }
+
+    //*********** POST - UPLOAD IMAGE
+    /**
+    * @Given /^POST I want to upload the image "([^"]*)" to user "([^"]*)". Url "([^"]*)"$/
+    */
+    public function postIWantToUploadTheImageToUser($imageFile, $usrUid, $url)
+    {
+        $url = $url.$usrUid."/image-upload";
+        $accesstoken = $this->getParameter('access_token');
+        $headr = array();
+        $headr[] = 'Authorization: Bearer '.$accesstoken;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array('USR_PHOTO'=>'@'.$imageFile));
+        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $postResult = curl_exec($ch);
+        curl_close($ch);
+        echo $postResult;
     }
 }
 
