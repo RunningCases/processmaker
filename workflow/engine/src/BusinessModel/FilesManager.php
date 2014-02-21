@@ -86,7 +86,6 @@ class FilesManager
                     if ($fileUid) {
                         $oProcessFiles = \ProcessFilesPeer::retrieveByPK($fileUid);
                         $aTheFiles[] = array( 'prf_filename' => $aFile['FILE'],
-                                              'prf_uid' => $oProcessFiles->getPrfUid(),
                                               'usr_uid' => $oProcessFiles->getUsrUid(),
                                               'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
                                               'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
@@ -97,7 +96,6 @@ class FilesManager
 
                     } else {
                         $aTheFiles[] = array('prf_filename' => $aFile['FILE'],
-                                             'prf_uid' => '',
                                              'usr_uid' => '',
                                              'prf_update_usr_uid' => '',
                                              'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
@@ -180,7 +178,6 @@ class FilesManager
             fwrite($fp, $content);
             fclose($fp);
             $oProcessFile = array('prf_uid' => $oProcessFiles->getPrfUid(),
-                                  'pro_uid' => $oProcessFiles->getProUid(),
                                   'usr_uid' => $oProcessFiles->getUsrUid(),
                                   'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
                                   'prf_path' => $sMainDirectory. PATH_SEP . $sSubDirectory,
@@ -317,7 +314,6 @@ class FilesManager
             fwrite($fp, $content);
             fclose($fp);
             $oProcessFile = array('prf_uid' => $oProcessFiles->getPrfUid(),
-                                  'pro_uid' => $oProcessFiles->getProUid(),
                                   'usr_uid' => $oProcessFiles->getUsrUid(),
                                   'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
                                   'prf_path' => $sMainDirectory. PATH_SEP . $sSubDirectory,
