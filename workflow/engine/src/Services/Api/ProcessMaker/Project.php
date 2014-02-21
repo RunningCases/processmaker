@@ -419,6 +419,7 @@ class Project extends Api
      * @url GET /:prj_uid/grid/:grid_uid/variables
      *
      * @param string $prj_uid  {@min 32}{@max 32}
+     * @param string $grid_uid
      */
     public function doGetGridVariables($prj_uid, $grid_uid = "")
     {
@@ -428,6 +429,26 @@ class Project extends Api
             $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
             $response = ($grid_uid == "")? $process->getVariables("GRID", $prj_uid) : $process->getVariables("GRIDVARS", $prj_uid, $grid_uid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:prj_uid/trigger-wizards
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetTriggerWizards($prj_uid)
+    {
+        try {
+            $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid", "libraryName" => "lib_name", "methodName" => "fn_name"));
+
+            $response = $process->getLibraries($prj_uid);
 
             return $response;
         } catch (\Exception $e) {
