@@ -363,18 +363,6 @@ class User
             $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
             $oUser = new \Users();
             $oUser -> create( $aData );
-            // comment photos files
-            /*
-            if ($_FILES['USR_PHOTO']['error'] != 1) {
-                //print (PATH_IMAGES_ENVIRONMENT_USERS);
-                if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
-                    \G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS, $sUserUID . '.gif');
-                }
-            } else {
-                $result->success = false;
-                $result->fileError = true;
-                throw new \Exception($oError->$result);
-            }*/
             if ((isset($form['USR_CALENDAR']))) {
                 //Save Calendar ID for this user
                 \G::LoadClass("calendar");
@@ -412,6 +400,12 @@ class User
             }
             if ($countPermission != 1) {
                 throw new \Exception('This user: '.$usrLoggedUid. ', can`t update the data.');
+            }
+            $criteria = new \Criteria();
+            $criteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+            $criteria->add(\UsersPeer::USR_USERNAME, utf8_encode($arrayData['USR_USERNAME']));
+            if (\UsersPeer::doCount($criteria) > 0) {
+                throw new \Exception('`usr_username`. '.\G::LoadTranslation('ID_USERNAME_ALREADY_EXISTS', array('USER_ID' => $arrayData['USR_USERNAME'])));
             }
             if (isset($usrUid)) {
                 $form['USR_UID'] = $usrUid;
@@ -599,18 +593,6 @@ class User
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $oUser = new \Users();
             $oUser->update($aData);
-            // photo file comment
-            /*
-*/
-            /* Saving preferences comment */
-            /*$def_lang = $form['PREF_DEFAULT_LANG'];
-            $def_menu = $form['PREF_DEFAULT_MENUSELECTED'];
-            $def_cases_menu = isset($form['PREF_DEFAULT_CASES_MENUSELECTED']) ? $form['PREF_DEFAULT_CASES_MENUSELECTED'] : '';
-            \G::loadClass('configuration');
-            $oConf = new \Configurations();
-            $aConf = Array('DEFAULT_LANG' => $def_lang, 'DEFAULT_MENU' => $def_menu, 'DEFAULT_CASES_MENU' => $def_cases_menu);
-            $oConf->aConfig = $aConf;
-            $oConf->saveConfig('USER_PREFERENCES', '', '', $usrLoggedUid);*/
             $oCriteria = $this->getUser($usrUid);
             return $oCriteria;
         } catch (\Exception $e) {

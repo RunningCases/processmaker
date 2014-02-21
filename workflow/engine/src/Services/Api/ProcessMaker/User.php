@@ -100,7 +100,7 @@ class User extends Api
     /**
      * @param string $usr_uid {@min 32} {@max 32}
      *
-     * @url POST /image-upload
+     * @url POST /:usr_uid/image-upload
      */
     public function doPostUserImageUpload($usr_uid)
     {
