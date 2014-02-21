@@ -31,6 +31,12 @@ Feature: User
         And the response charset is "UTF-8"
         And the type is "object"
 
+    #Para que funcione este test, debe existir el archivo que se quiere subir
+    #GET /api/1.0/{workspace}/user/{usr_uid}
+    #    Upload a image
+    Scenario: Upload a image
+        Given POST I want to upload the image "/home/daniel/pic2.jpg" to user "00000000000000000000000000000001". Url "http://daniel.pmos.colosa.net/api/1.0/daniel/user/"
+    
     #POST /api/1.0/{workspace}/user
     #     Create new User
     Scenario Outline: Create new User
