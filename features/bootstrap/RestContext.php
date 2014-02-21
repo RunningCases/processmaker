@@ -1318,6 +1318,9 @@ class RestContext extends BehatContext
     */
     public function postIWantToUploadTheFileToPathPublicUrlToCreatePrfUidAndUpdload($prfFile, $prfPath, $postUrl, $url)
     {
+        $baseUrl = $this->getParameter('base_url');
+        $postUrl = $baseUrl.$postUrl;
+        $url = $baseUrl.$url;
         $accesstoken = $this->getParameter('access_token');
         $headr = array();
         $headr[] = 'Authorization: Bearer '.$accesstoken;
@@ -1350,7 +1353,8 @@ class RestContext extends BehatContext
     */
     public function postIWantToUploadTheImageToUser($imageFile, $usrUid, $url)
     {
-        $url = $url.$usrUid."/image-upload";
+        $baseUrl = $this->getParameter('base_url');
+        $url = $baseUrl.$url.$usrUid."/image-upload";
         $accesstoken = $this->getParameter('access_token');
         $headr = array();
         $headr[] = 'Authorization: Bearer '.$accesstoken;
@@ -1363,6 +1367,33 @@ class RestContext extends BehatContext
         $postResult = curl_exec($ch);
         curl_close($ch);
         echo $postResult;
+    }
+
+    /**
+     * @When /^I request download "([^"]*)"$/
+     */
+    public function iRequestDownload($pageUrl, $urlType="")
+    {
+        $this->_startTime = microtime(true);
+        $baseUrl = $this->getParameter('base_url');        
+        if ($this->access_token != null) {
+            $this->_headers['Authorization'] = 'Bearer ' . $this->access_token;
+        }
+        if($urlType=="absolute"){
+            $this->_requestUrl = $pageUrl;
+        }else{
+            $this->_requestUrl = $baseUrl . $pageUrl;
+        }
+        $url = false !== strpos($pageUrl, '{')
+            ? array($this->_requestUrl, (array)$this->_restObject)
+            : $this->_requestUrl;
+        if (isset($this->_restGetQueryStringSuffix) &&
+                  $this->_restGetQueryStringSuffix != '') {
+            $url .= $this->_restGetQueryStringSuffix;
+        }
+        $this->_request = $this->_client ->get($url, $this->_headers);
+        $this->_response = $this->_request->send();
+        echo $this->_response->getBody(true);
     }
 }
 
