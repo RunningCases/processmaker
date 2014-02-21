@@ -1949,18 +1949,39 @@ class Task
         foreach ($aSteps as $dataStep) {
             if ((in_array($dataStep['step_position'], $range)) && ($dataStep['step_uid'] != $step_uid)) {
                 $stepChangeIds[] = $dataStep['step_uid'];
+                $stepChangePos[] = $dataStep['step_position'];
             }
         }
 
-        foreach ($stepChangeIds as $value) {
+        foreach ($stepChangeIds as $key => $value) {
              if ($modPos == 'UP') {
-                 G::pr("Cambiar el step $value por un pos mas bajo");
+                 $tempPos = ((int)$stepChangePos[$key])-1;
+                 $this->changePosStep($value, $tempPos);
              } else {
-                 G::pr("Cambiar el step $value por un pos mas alto");
+                 $tempPos = ((int)$stepChangePos[$key])+1;
+                 $this->changePosStep($value, $tempPos);
              }
         }
-        G::pr("Cambiar el step $step_uid por un pos $newPos");
-        die;
+        $this->changePosStep($step_uid, $newPos);
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function changePosStep ($step_uid, $pos)
+    {
+        $data = array(
+            'STEP_UID' => $step_uid,
+            'STEP_POSITION' => $pos
+        );
+        $oStep = new \Step();
+        $oStep->update($data);
     }
 
     /**

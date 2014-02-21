@@ -120,7 +120,6 @@ class Activity extends Api
             $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
 
             $response = $task->getSteps($act_uid);
-
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -161,7 +160,7 @@ class Activity extends Api
      *
      * @return void
      *
-     * @url GET /:prj_uid/activity/:act_uid/step-move/:step_uid/:step_uid_rel/:type_change
+     * @url PUT /:prj_uid/activity/:act_uid/step-move/:step_uid/:step_uid_rel/:type_change
      */
     public function doPutStepsMoves ($prj_uid, $act_uid, $step_uid, $step_uid_rel, $type_change)
     {
