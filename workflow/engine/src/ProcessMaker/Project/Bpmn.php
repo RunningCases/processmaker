@@ -64,6 +64,9 @@ class Bpmn extends Handler
             "PRJ_UID", "PRO_UID", "BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
             "BOU_SIZE_IDENTICAL", "DIA_UID", "BOU_UID", "ELEMENT_UID", "EVN_ATTACHED_TO", "EVN_CONDITION"
         ),
+        "gateway" => array("BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION", "BOU_SIZE_IDENTICAL", "BOU_UID",
+            "DIA_UID", "ELEMENT_UID", "PRJ_UID", "PRO_UID"
+        ),
         "flow" => array("PRJ_UID", "DIA_UID", "FLO_ELEMENT_DEST_PORT", "FLO_ELEMENT_ORIGIN_PORT")
     );
 
@@ -386,13 +389,13 @@ class Bpmn extends Handler
 
     public function updateEvent($evnUid, $data)
     {
-        if (array_key_exists("EVN_CANCEL_ACTIVITY", $data)) {
+        /*if (array_key_exists("EVN_CANCEL_ACTIVITY", $data)) {
             $data["EVN_CANCEL_ACTIVITY"] = $data["EVN_CANCEL_ACTIVITY"] ? 1 : 0;
         }
 
         if (array_key_exists("EVN_WAIT_FOR_COMPLETION", $data)) {
             $data["EVN_WAIT_FOR_COMPLETION"] = $data["EVN_WAIT_FOR_COMPLETION"] ? 1 : 0;
-        }
+        }*/
 
         try {
             self::log("Update Event: $evnUid", "With data: ", $data);
@@ -468,6 +471,7 @@ class Bpmn extends Handler
 
         if ($retType != "object" && ! empty($gateway)) {
             $gateway = $gateway->toArray();
+            $gateway = self::filterArrayKeys($gateway, self::$excludeFields["gateway"]);
         }
 
         return $gateway;
@@ -479,7 +483,13 @@ class Bpmn extends Handler
             extract($start);
         }
 
-        return  Gateway::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo);
+        //return  Gateway::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo);
+        $filter = $changeCaseTo != CASE_UPPER ? array_map("strtolower", self::$excludeFields["gateway"]) : self::$excludeFields["gateway"];
+
+        return self::filterCollectionArrayKeys(
+            Gateway::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo),
+            $filter
+        );
     }
 
     public function removeGateway($gatUid)

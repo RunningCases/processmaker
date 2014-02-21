@@ -226,11 +226,6 @@ class BpmnWorkflow extends Project\Bpmn
         parent::addEvent($data);
     }
 
-    public function updateEvent($evnUid, $data)
-    {
-        parent::updateEvent($evnUid, $data);
-    }
-
     public function removeEvent($evnUid)
     {
 //        $event = \BpmnEventPeer::retrieveByPK($evnUid);
@@ -332,8 +327,6 @@ class BpmnWorkflow extends Project\Bpmn
                 break;
             case 'bpmnEvent':
                 $evnUid = $flow['FLO_ELEMENT_DEST'];
-                self::log('=======++++++++=========>', $evnUid, "EVN_UID", $events);
-                
                 $events = self::findInArray($evnUid, "EVN_UID", $events);
 
 
