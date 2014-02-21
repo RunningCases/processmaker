@@ -1083,6 +1083,23 @@ class Bootstrap
      */
     public function dispatchApiService($uri, $version = '1.0')
     {
+        // to handle a request with "OPTIONS" method
+
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, HEADERS');
+            header('Access-Control-Allow-Headers: authorization, content-type');
+            header("Access-Control-Allow-Credentials", "false");
+            header('Access-Control-Max-Age: 60');
+            die();
+        }
+
+        /*
+         * Enable this header to allow "Cross Domain AJAX" requests;
+         * This works because processmaker is handling correctly requests with method 'OPTIONS'
+         * that automatically is sent by a client using XmlHttpRequest or similar.
+         */
+        header('Access-Control-Allow-Origin: *');
+
         /*
          * $servicesDir contains directory where Services Classes are allocated
          */
