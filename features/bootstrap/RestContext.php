@@ -1318,6 +1318,9 @@ class RestContext extends BehatContext
     */
     public function postIWantToUploadTheFileToPathPublicUrlToCreatePrfUidAndUpdload($prfFile, $prfPath, $postUrl, $url)
     {
+        $baseUrl = $this->getParameter('base_url');
+        $postUrl = $baseUrl.$postUrl;
+        $url = $baseUrl.$url;
         $accesstoken = $this->getParameter('access_token');
         $headr = array();
         $headr[] = 'Authorization: Bearer '.$accesstoken;
@@ -1350,7 +1353,8 @@ class RestContext extends BehatContext
     */
     public function postIWantToUploadTheImageToUser($imageFile, $usrUid, $url)
     {
-        $url = $url.$usrUid."/image-upload";
+        $baseUrl = $this->getParameter('base_url');
+        $url = $baseUrl.$url.$usrUid."/image-upload";
         $accesstoken = $this->getParameter('access_token');
         $headr = array();
         $headr[] = 'Authorization: Bearer '.$accesstoken;

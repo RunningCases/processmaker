@@ -421,8 +421,12 @@ class FilesManager
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sfile;
                     break;
             }
-            $oProcessMap = new \processMap(new \DBConnection());
-            $oProcessMap->downloadFile($sProcessUID,$sMainDirectory,$sSubDirectory,$sfile);
+            if (file_exists(PATH_SEP.$sDirectory)) {
+                $oProcessMap = new \processMap(new \DBConnection());
+                $oProcessMap->downloadFile($sProcessUID,$sMainDirectory,$sSubDirectory,$sfile);
+            } else {
+                throw (new \Exception( 'invalid value specified for `path`.'));
+            }
         } catch (Exception $e) {
             throw $e;
         }
