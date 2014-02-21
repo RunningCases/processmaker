@@ -132,9 +132,13 @@ if (file_exists($requestFile)) {
             $ext_file = "application/octet-stream";
         } elseif ($ext_file == "tar") {
             $ext_file = "application/x-tar";
+        } elseif ($ext_file == "woff") {
+            $ext_file = "application/font-woff";
+        } elseif ($ext_file == "js") {
+            $ext_file = "text/javascript";
         } elseif ($ext_file=="css") {
             //may this line be innecesary, all the .css are been generated at run time
-            $ext_file = 'css/'.$ext_file;
+            $ext_file = 'text/css';
         } else {
             $ext_file = "application/octet-stream";
         }
@@ -273,7 +277,7 @@ define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/downlo
 try {
     Bootstrap::initVendors();
     $config = Bootstrap::getSystemConfiguration();
-    
+
     // starting session
     if (isset($config['session.gc_maxlifetime'])) {
         $timelife = $config['session.gc_maxlifetime'];
@@ -1026,7 +1030,7 @@ try {
             //transactionLog($restConfig.PATH_DATA_SITE.SYS_TARGET); // ====> ??? this concat is very rare
 
             $RBAC->initRBAC();
-            
+
             Bootstrap::dispatchApiService(SYS_TARGET, API_VERSION);
         } else {
             //NewRelic Snippet - By JHL
@@ -1048,7 +1052,7 @@ try {
 } catch (Exception $e) {
     //g::pr($e->getTrace()); die;
     Bootstrap::renderTemplate('error.tpl', array(
-        'title' => 'ProcessMaker Bootstrap Exception', 
+        'title' => 'ProcessMaker Bootstrap Exception',
         'message' => nl2br($e->getMessage()),
         'exceptionClass' => get_class($e),
         'trace' => $e->getTrace()

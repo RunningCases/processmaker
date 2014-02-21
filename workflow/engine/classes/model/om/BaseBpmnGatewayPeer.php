@@ -52,8 +52,8 @@ abstract class BaseBpmnGatewayPeer
     /** the column name for the GAT_INSTANTIATE field */
     const GAT_INSTANTIATE = 'BPMN_GATEWAY.GAT_INSTANTIATE';
 
-    /** the column name for the GAT_EVENT_GATEWAT_TYPE field */
-    const GAT_EVENT_GATEWAT_TYPE = 'BPMN_GATEWAY.GAT_EVENT_GATEWAT_TYPE';
+    /** the column name for the GAT_EVENT_GATEWAY_TYPE field */
+    const GAT_EVENT_GATEWAY_TYPE = 'BPMN_GATEWAY.GAT_EVENT_GATEWAY_TYPE';
 
     /** the column name for the GAT_ACTIVATION_COUNT field */
     const GAT_ACTIVATION_COUNT = 'BPMN_GATEWAY.GAT_ACTIVATION_COUNT';
@@ -75,9 +75,9 @@ abstract class BaseBpmnGatewayPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('GatUid', 'PrjUid', 'ProUid', 'GatName', 'GatType', 'GatDirection', 'GatInstantiate', 'GatEventGatewatType', 'GatActivationCount', 'GatWaitingForStart', 'GatDefaultFlow', ),
-        BasePeer::TYPE_COLNAME => array (BpmnGatewayPeer::GAT_UID, BpmnGatewayPeer::PRJ_UID, BpmnGatewayPeer::PRO_UID, BpmnGatewayPeer::GAT_NAME, BpmnGatewayPeer::GAT_TYPE, BpmnGatewayPeer::GAT_DIRECTION, BpmnGatewayPeer::GAT_INSTANTIATE, BpmnGatewayPeer::GAT_EVENT_GATEWAT_TYPE, BpmnGatewayPeer::GAT_ACTIVATION_COUNT, BpmnGatewayPeer::GAT_WAITING_FOR_START, BpmnGatewayPeer::GAT_DEFAULT_FLOW, ),
-        BasePeer::TYPE_FIELDNAME => array ('GAT_UID', 'PRJ_UID', 'PRO_UID', 'GAT_NAME', 'GAT_TYPE', 'GAT_DIRECTION', 'GAT_INSTANTIATE', 'GAT_EVENT_GATEWAT_TYPE', 'GAT_ACTIVATION_COUNT', 'GAT_WAITING_FOR_START', 'GAT_DEFAULT_FLOW', ),
+        BasePeer::TYPE_PHPNAME => array ('GatUid', 'PrjUid', 'ProUid', 'GatName', 'GatType', 'GatDirection', 'GatInstantiate', 'GatEventGatewayType', 'GatActivationCount', 'GatWaitingForStart', 'GatDefaultFlow', ),
+        BasePeer::TYPE_COLNAME => array (BpmnGatewayPeer::GAT_UID, BpmnGatewayPeer::PRJ_UID, BpmnGatewayPeer::PRO_UID, BpmnGatewayPeer::GAT_NAME, BpmnGatewayPeer::GAT_TYPE, BpmnGatewayPeer::GAT_DIRECTION, BpmnGatewayPeer::GAT_INSTANTIATE, BpmnGatewayPeer::GAT_EVENT_GATEWAY_TYPE, BpmnGatewayPeer::GAT_ACTIVATION_COUNT, BpmnGatewayPeer::GAT_WAITING_FOR_START, BpmnGatewayPeer::GAT_DEFAULT_FLOW, ),
+        BasePeer::TYPE_FIELDNAME => array ('GAT_UID', 'PRJ_UID', 'PRO_UID', 'GAT_NAME', 'GAT_TYPE', 'GAT_DIRECTION', 'GAT_INSTANTIATE', 'GAT_EVENT_GATEWAY_TYPE', 'GAT_ACTIVATION_COUNT', 'GAT_WAITING_FOR_START', 'GAT_DEFAULT_FLOW', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
@@ -88,9 +88,9 @@ abstract class BaseBpmnGatewayPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('GatUid' => 0, 'PrjUid' => 1, 'ProUid' => 2, 'GatName' => 3, 'GatType' => 4, 'GatDirection' => 5, 'GatInstantiate' => 6, 'GatEventGatewatType' => 7, 'GatActivationCount' => 8, 'GatWaitingForStart' => 9, 'GatDefaultFlow' => 10, ),
-        BasePeer::TYPE_COLNAME => array (BpmnGatewayPeer::GAT_UID => 0, BpmnGatewayPeer::PRJ_UID => 1, BpmnGatewayPeer::PRO_UID => 2, BpmnGatewayPeer::GAT_NAME => 3, BpmnGatewayPeer::GAT_TYPE => 4, BpmnGatewayPeer::GAT_DIRECTION => 5, BpmnGatewayPeer::GAT_INSTANTIATE => 6, BpmnGatewayPeer::GAT_EVENT_GATEWAT_TYPE => 7, BpmnGatewayPeer::GAT_ACTIVATION_COUNT => 8, BpmnGatewayPeer::GAT_WAITING_FOR_START => 9, BpmnGatewayPeer::GAT_DEFAULT_FLOW => 10, ),
-        BasePeer::TYPE_FIELDNAME => array ('GAT_UID' => 0, 'PRJ_UID' => 1, 'PRO_UID' => 2, 'GAT_NAME' => 3, 'GAT_TYPE' => 4, 'GAT_DIRECTION' => 5, 'GAT_INSTANTIATE' => 6, 'GAT_EVENT_GATEWAT_TYPE' => 7, 'GAT_ACTIVATION_COUNT' => 8, 'GAT_WAITING_FOR_START' => 9, 'GAT_DEFAULT_FLOW' => 10, ),
+        BasePeer::TYPE_PHPNAME => array ('GatUid' => 0, 'PrjUid' => 1, 'ProUid' => 2, 'GatName' => 3, 'GatType' => 4, 'GatDirection' => 5, 'GatInstantiate' => 6, 'GatEventGatewayType' => 7, 'GatActivationCount' => 8, 'GatWaitingForStart' => 9, 'GatDefaultFlow' => 10, ),
+        BasePeer::TYPE_COLNAME => array (BpmnGatewayPeer::GAT_UID => 0, BpmnGatewayPeer::PRJ_UID => 1, BpmnGatewayPeer::PRO_UID => 2, BpmnGatewayPeer::GAT_NAME => 3, BpmnGatewayPeer::GAT_TYPE => 4, BpmnGatewayPeer::GAT_DIRECTION => 5, BpmnGatewayPeer::GAT_INSTANTIATE => 6, BpmnGatewayPeer::GAT_EVENT_GATEWAY_TYPE => 7, BpmnGatewayPeer::GAT_ACTIVATION_COUNT => 8, BpmnGatewayPeer::GAT_WAITING_FOR_START => 9, BpmnGatewayPeer::GAT_DEFAULT_FLOW => 10, ),
+        BasePeer::TYPE_FIELDNAME => array ('GAT_UID' => 0, 'PRJ_UID' => 1, 'PRO_UID' => 2, 'GAT_NAME' => 3, 'GAT_TYPE' => 4, 'GAT_DIRECTION' => 5, 'GAT_INSTANTIATE' => 6, 'GAT_EVENT_GATEWAY_TYPE' => 7, 'GAT_ACTIVATION_COUNT' => 8, 'GAT_WAITING_FOR_START' => 9, 'GAT_DEFAULT_FLOW' => 10, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
@@ -206,7 +206,7 @@ abstract class BaseBpmnGatewayPeer
 
         $criteria->addSelectColumn(BpmnGatewayPeer::GAT_INSTANTIATE);
 
-        $criteria->addSelectColumn(BpmnGatewayPeer::GAT_EVENT_GATEWAT_TYPE);
+        $criteria->addSelectColumn(BpmnGatewayPeer::GAT_EVENT_GATEWAY_TYPE);
 
         $criteria->addSelectColumn(BpmnGatewayPeer::GAT_ACTIVATION_COUNT);
 

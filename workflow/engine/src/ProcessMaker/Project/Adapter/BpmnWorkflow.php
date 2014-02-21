@@ -327,8 +327,6 @@ class BpmnWorkflow extends Project\Bpmn
                 break;
             case 'bpmnEvent':
                 $evnUid = $flow['FLO_ELEMENT_DEST'];
-                self::log('=======++++++++=========>', $evnUid, "EVN_UID", $events);
-                
                 $events = self::findInArray($evnUid, "EVN_UID", $events);
 
 
