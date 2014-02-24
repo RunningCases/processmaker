@@ -73,4 +73,41 @@ Scenario Outline: Update Process
         | Set initial values                | 79409754952f8f5110c4342001470580 | Test Process 2 |                 | 79409754952f8f5110c4342001470580 | 1        | DAYS         | ACTIVE     |              | NORMAL   | 0              | 0            | 0                | 0              |                                  |                                  |                                  |                                  | 0                 | 0                 |                                  |                  | 0            | 2014-02-11 10:58:15 | 2014-02-10 10:49:37  | 00000000000000000000000000000001 | 0         |                           |                             |                             | 200        |                      |
         | Set initial values                | 58773281752f50297d6bf00047802053 | Test Process 1 |                 | 58773281752f50297d6bf00047802053 | 1        | DAYS         | ACTIVE     |              | NORMAL   | 0              | 0            | 0                | 0              |                                  |                                  |                                  |                                  | 0                 | 0                 |                                  |                  | 0            | 2014-02-11 10:58:15 | 2014-02-07 10:58:15  | 00000000000000000000000000000001 | 0         |                           |                             |                             | 200        |                      |
 
-        
+
+Scenario: Update Process 
+        Given PUT this data:
+        """
+        {
+         "pro_title"                : "Test Process 2",
+         "pro_description"          : "",
+         "pro_parent"               : "74737540052e1641ab88249082085472",
+         "pro_time"                 : "1",
+         "pro_timeunit"             : "DAYS",
+         "pro_status"               : "ACTIVE",
+         "pro_type_day"             : "",
+         "pro_type"                 : "NORMAL",
+         "pro_assignment"           : "0",
+         "pro_show_map"             : "0",
+         "pro_show_message"         : "0",
+         "pro_subprocess"           : "0",
+         "pro_tri_deleted"          : "",
+         "pro_tri_canceled"         : "",
+         "pro_tri_paused"           : "",
+         "pro_tri_reassigned"       : "",
+         "pro_show_delegate"        : "0",
+         "pro_show_dynaform"        : "0",
+         "pro_category"             : "",
+         "pro_sub_category"         : "",
+         "pro_industry"             : "0",
+         "pro_update_date"          : "2014-02-10 10:58:15",
+         "pro_create_date"          : "2014-02-10 10:49:37",
+         "pro_create_user"          : "00000000000000000000000000000001",
+         "pro_debug"                : "0",
+         "pro_derivation_screen_tpl": "",
+         "pro_summary_dynaform"     : "",
+         "pro_calendar"             : ""
+        }
+        """
+        And I request "project/74737540052e1641ab88249082085472/process"
+        Then the response status code should be 400
+        And the response status message should have the following text "already exists"
