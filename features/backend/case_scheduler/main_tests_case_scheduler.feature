@@ -37,7 +37,7 @@ Feature: Case Scheduler Main Tests
       }
       """
       And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
-      Then the response status code should be 201
+      Then the response status code should be <error_code>
       And the response charset is "UTF-8"
       And the content type is "application/json"
       And the type is "object"
@@ -46,21 +46,46 @@ Feature: Case Scheduler Main Tests
 
       Examples:
  
-      | test_description                                                                          | sch_uid_number | sch_del_user_name | sch_del_user_pass | tas_uid                          | sch_name                              | sch_option | sch_start_date |  sch_end_date | sch_start_time | sch_week_days    | sch_start_day | sch_start_day_opt_1 | sch_months                      | sch_start_day_opt_2 | sch_repeat_every |
-      | Create with Daily                                                                         | 1              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Daily 123@#$           | 1          | 2014-01-30     | 2014-02-20    | 12:00          |                  |               |                     |                                 |                     |                  | 
-      | Create with Weekly, sch_week_days=monday                                                  | 2              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Weekly monday 345%$#   | 2          | 2014-02-20     | 2014-03-20    | 08:00          | 1                |               |                     |                                 |                     |                  |
-      | Create with Weekly, sch_week_days=tuesday, wednesday, thursday, friday, saturday, sunday  | 3              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Weekly 345%$#          | 2          | 2014-02-20     | 2014-03-20    | 08:00          | 2\|3\|4\|5\|6\|7 |               |                     |                                 |                     |                  |
-      | Create with Monthly and day of month, day of month=1, of the month(s)=3,4                 | 4              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 1       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 1             | 15                  | 3\|4                            |                     |                  | 
-      | Create with Monthly and day of month, day of month=1, of the month=1,2,5,6,7,8,9,10,11,12 | 5              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 2       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 1             | 15                  | 1\|2\|5\|6\|7\|8\|9\|10\|11\|12 |                     |                  | 
-      | Create with Monthly and the day=first and Monday                                          | 6              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 3       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 1\|7                |                  |
-      | Create with Monthly and the day=second and Saturday                                       | 7              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 4       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 2\|6                |                  |
-      | Create with Monthly and the day=Third and Friday                                          | 8              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 5       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 3\|5                |                  |
-      | Create with Monthly and the day=second and Thursday                                       | 9              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 6       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 2\|4                |                  |
-      | Create with Monthly and the day=last and Wednesday                                        | 10             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 7       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 5\|3                |                  |
-      | Create with Monthly and the day=last and Wednesday, of the month=1,2,6,7,8,9,10,11,12     | 11             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 8       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 1\|2\|6\|7\|8\|9\|10\|11\|12    | 5\|3                |                  |
-      | Create with One time only                                                                 | 12             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-One Time only 678%$@   | 4          |                |               | 20:00          |                  |               |                     |                                 |                     |                  |      
-      | Craate with Every                                                                         | 13             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Every 987&%@           | 5          |                |               |                |                  |               |                     |                                 |                     | 12.30            |
+      | test_description                                                                          | sch_uid_number | sch_del_user_name | sch_del_user_pass | tas_uid                          | sch_name                              | sch_option | sch_start_date |  sch_end_date | sch_start_time | sch_week_days    | sch_start_day | sch_start_day_opt_1 | sch_months                      | sch_start_day_opt_2 | sch_repeat_every | error_code |
+      | Create with Daily                                                                         | 1              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Daily 123@#$           | 1          | 2014-01-30     | 2014-02-20    | 12:00          |                  |               |                     |                                 |                     |                  | 201        |  
+      | Create with Weekly, sch_week_days=monday                                                  | 2              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Weekly monday 345%$#   | 2          | 2014-02-20     | 2014-03-20    | 08:00          | 1                |               |                     |                                 |                     |                  | 201        |
+      | Create with Weekly, sch_week_days=tuesday, wednesday, thursday, friday, saturday, sunday  | 3              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Weekly 345%$#          | 2          | 2014-02-20     | 2014-03-20    | 08:00          | 2\|3\|4\|5\|6\|7 |               |                     |                                 |                     |                  | 201        |
+      | Create with Monthly and day of month, day of month=1, of the month(s)=3,4                 | 4              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 1       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 1             | 15                  | 3\|4                            |                     |                  | 201        | 
+      | Create with Monthly and day of month, day of month=1, of the month=1,2,5,6,7,8,9,10,11,12 | 5              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 2       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 1             | 15                  | 1\|2\|5\|6\|7\|8\|9\|10\|11\|12 |                     |                  | 201        | 
+      | Create with Monthly and the day=first and Monday                                          | 6              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 3       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 1\|7                |                  | 201        |
+      | Create with Monthly and the day=second and Saturday                                       | 7              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 4       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 2\|6                |                  | 201        |
+      | Create with Monthly and the day=Third and Friday                                          | 8              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 5       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 3\|5                |                  | 201        |
+      | Create with Monthly and the day=second and Thursday                                       | 9              | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 6       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 2\|4                |                  | 201        |
+      | Create with Monthly and the day=last and Wednesday                                        | 10             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 7       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 5\|3                |                  | 201        |
+      | Create with Monthly and the day=last and Wednesday, of the month=1,2,6,7,8,9,10,11,12     | 11             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 8       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 1\|2\|6\|7\|8\|9\|10\|11\|12    | 5\|3                |                  | 201        |
+      | Create with One time only                                                                 | 12             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-One Time only 678%$@   | 4          |                |               | 20:00          |                  |               |                     |                                 |                     |                  | 201        |      
+      | Create with Every                                                                         | 13             | admin             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Every 987&%@           | 5          |                |               |                |                  |               |                     |                                 |                     | 12.30            | 201        |
+      
 
+  Scenario: Create a new case scheduler with same name
+      Given POST this data:
+      """
+      {
+          "sch_option": "5",
+          "sch_name": "Case Scheduler-Every 987&%@",
+          "sch_del_user_name": "admin",
+          "sch_del_user_pass": "admin",
+          "tas_uid": "46941969352af5be2ab3f39001216717",    
+          "sch_start_time": "",
+          "sch_start_date": "",
+          "sch_end_date": "",
+          "sch_week_days": "", 
+          "sch_start_day": "",
+          "sch_start_day_opt_1": "",
+          "sch_start_day_opt_2": "",
+          "sch_months": "",    
+          "sch_repeat_every": "12.30"
+      }
+      """
+      And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
+      Then the response status code should be 400
+      And the response status message should have the following text "duplicate"
+      
   
   Scenario: Get the case schedulers list when there are exactly 13 case schedulers 
       Given I request "project/1265557095225ff5c688f46031700471/case-schedulers"

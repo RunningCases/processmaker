@@ -49,24 +49,25 @@ Scenario Outline: Assign a user or group to an activity (Field validation)
     And the response has <records> records
 
     Examples:
-    | test_description      | filter | start | limit   | records | http_code | type  |
-    | lowercase             | admin  |   0   | 1       | 1       |  200      | array |
-    | uppercase             | ADMIN  |   0   | 1       | 1       |  200      | array |
-    | limit=3               | a      |   0   | 3       | 3       |  200      | array |
-    | limit and start       | a      |   1   | 2       | 2       |  200      | array |
-    | high number for start | a      | 1000  | 1       | 0       |  200      | array |
-    | high number for start | a      | 1000  | 0       | 0       |  200      | array |
-    | empty result          | xyz    |   0   | 0       | 0       |  200      | array |
-    | empty string          |        |   0   | 10000   | 4       |  200      | array |
-    | empty string          |        |   1   | 2       | 2       |  200      | array |
-    | invalid start         | a      |   b   | c       | 0       |  400      | string|
-    | invalid limit         | a      |   0   | c       | 0       |  400      | string|
-    | search 0              | 0      |   0   | 0       | 0       |  200      | array |
-    | search 0              | 0      |   0   | 100     | 0       |  200      | array |
-    | negative numbers      | a      |  -10  | -20     | 0       |  400      | string|
-    | real numbers          | a      |  0.0  | 1.0     | 1       |  200      | string|
-    | real numbers          | a      |  0.0  | 0.0     | 0       |  200      | string|
-    | real numbers          | a      |  0.1  | 1.4599  | 0       |  400      | string|
-    | real numbers          | a      |  1.5  | 1.4599  | 0       |  400      | string|
+    
+    | test_description      | filter | start | limit   | records | http_code | type   |
+    | lowercase             | admin  |   0   | 1       | 1       |  200      | array  |
+    | uppercase             | ADMIN  |   0   | 1       | 1       |  200      | array  |
+    | limit=3               | a      |   0   | 3       | 3       |  200      | array  |
+    | limit and start       | a      |   1   | 2       | 2       |  200      | array  |
+    | high number for start | a      | 1000  | 1       | 0       |  200      | array  |
+    | high number for start | a      | 1000  | 0       | 0       |  200      | array  |
+    | empty result          | xyz    |   0   | 0       | 0       |  200      | array  |
+    | empty string          |        |   0   | 10000   | 4       |  200      | array  |
+    | empty string          |        |   1   | 2       | 2       |  200      | array  |
+    | invalid start         | a      |   b   | c       | 0       |  400      | string |
+    | invalid limit         | a      |   0   | c       | 0       |  400      | string |
+    | search 0              | 0      |   0   | 0       | 0       |  200      | array  |
+    | search 0              | 0      |   0   | 100     | 0       |  200      | array  |
+    | negative numbers      | a      |  -10  | -20     | 0       |  400      | string |
+    | real numbers          | a      |  0.0  | 1.0     | 1       |  200      | string |
+    | real numbers          | a      |  0.0  | 0.0     | 0       |  200      | string |
+    | real numbers          | a      |  0.1  | 1.4599  | 0       |  400      | string |
+    | real numbers          | a      |  1.5  | 1.4599  | 0       |  400      | string |
 
 
