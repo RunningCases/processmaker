@@ -373,6 +373,7 @@ class Step
             $arrayStepData = $step->load($stepUid);
 
             $taskUid = $arrayStepData["TAS_UID"];
+            $proUid = $arrayStepData["PRO_UID"];
 
             //Verify data
             if (isset($arrayData["STEP_TYPE_OBJ"]) && !isset($arrayData["STEP_UID_OBJ"])) {
@@ -427,8 +428,8 @@ class Step
                 }
             }
 
-            if (isset($arrayData["STEP_POSITION"]) && $this->existsRecord($taskUid, "", "", $arrayData["STEP_POSITION"], $stepUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["STEP_POSITION"], $taskUid . ", " . $arrayData["STEP_POSITION"], "STEP"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
+            if (isset($arrayData["STEP_POSITION"]) && ($arrayData["STEP_POSITION"] != $arrayStepData["STEP_POSITION"])) {
+                $this->moveSteps($proUid, $taskUid, $stepUid, $arrayData["STEP_POSITION"]);
             }
 
             //Update
@@ -483,6 +484,51 @@ class Step
 
             $step->reOrder($stepUid, $position);
             $step->remove($stepUid);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get all Steps of a Task
+     *
+     * @param string $taskUid Unique id of Task
+     *
+     * return array Return an array with all Steps of a Task
+     */
+    public function getSteps($taskUid)
+    {
+        try {
+            $arrayStep = array();
+
+            $step = new \BusinessModel\Step();
+            $step->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+            $step->setArrayParamException($this->arrayParamException);
+
+            //Verify data
+            $this->throwExceptionIfNoExistsTask($taskUid);
+
+            //Get data
+            $criteria = new \Criteria("workflow");
+
+            $criteria->add(\StepPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+            $criteria->addAscendingOrderByColumn(\StepPeer::STEP_POSITION);
+
+            $rsCriteria = \StepPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayData = $step->getStep($row["STEP_UID"]);
+
+                if (count($arrayData) > 0) {
+                    $arrayStep[] = $arrayData;
+                }
+            }
+
+            //Return
+            return $arrayStep;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -802,6 +848,82 @@ class Step
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for Process
+     * @var string $tas_uid. Uid for Task
+     * @var string $step_uid. Uid for Step
+     * @var string $step_pos. Position for Step
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function moveSteps($pro_uid, $tas_uid, $step_uid, $step_pos) {
+        $this->setFormatFieldNameInUppercase(false);
+        $this->setArrayParamException(array("taskUid" => "act_uid"));
+        $aSteps = $this->getSteps($tas_uid);
+
+        foreach ($aSteps as $dataStep) {
+            if ($dataStep['step_uid'] == $step_uid) {
+                $prStepPos = (int)$dataStep['step_position'];
+            }
+        }
+        $seStepPos = $step_pos;
+
+        //Principal Step is up
+        if ($prStepPos < $seStepPos) {
+            $modPos = 'UP';
+            $newPos = $seStepPos;
+            $iniPos = $prStepPos+1;
+            $finPos = $seStepPos;
+        } else {
+            $modPos = 'DOWN';
+            $newPos = $seStepPos;
+            $iniPos = $seStepPos;
+            $finPos = $prStepPos-1;
+        }
+
+        $range = range($iniPos, $finPos);
+        foreach ($aSteps as $dataStep) {
+            if ((in_array($dataStep['step_position'], $range)) && ($dataStep['step_uid'] != $step_uid)) {
+                $stepChangeIds[] = $dataStep['step_uid'];
+                $stepChangePos[] = $dataStep['step_position'];
+            }
+        }
+
+        foreach ($stepChangeIds as $key => $value) {
+            if ($modPos == 'UP') {
+                $tempPos = ((int)$stepChangePos[$key])-1;
+                $this->changePosStep($value, $tempPos);
+            } else {
+                $tempPos = ((int)$stepChangePos[$key])+1;
+                $this->changePosStep($value, $tempPos);
+            }
+        }
+        $this->changePosStep($step_uid, $newPos);
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function changePosStep ($step_uid, $pos)
+    {
+        $data = array(
+            'STEP_UID' => $step_uid,
+            'STEP_POSITION' => $pos
+        );
+        $oStep = new \Step();
+        $oStep->update($data);
     }
 }
 
