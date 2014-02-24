@@ -151,8 +151,7 @@ class Activity extends Api
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $act_uid {@min 1} {@max 32}
      * @param string $step_uid {@min 1} {@max 32}
-     * @param string $step_uid_rel {@min 1} {@max 32}
-     * @param string $type_change {@choice UP,DOWN}
+     * @param string $step_pos
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -160,13 +159,13 @@ class Activity extends Api
      *
      * @return void
      *
-     * @url PUT /:prj_uid/activity/:act_uid/step-move/:step_uid/:step_uid_rel/:type_change
+     * @url PUT /:prj_uid/activity/:act_uid/step-move/:step_uid/:step_pos
      */
-    public function doPutStepsMoves ($prj_uid, $act_uid, $step_uid, $step_uid_rel, $type_change)
+    public function doPutStepsMoves ($prj_uid, $act_uid, $step_uid, $step_pos)
     {
         try {
             $task = new \BusinessModel\Task();
-            $task->moveSteps($prj_uid, $act_uid, $step_uid, $step_uid_rel, $type_change);
+            $task->moveSteps($prj_uid, $act_uid, $step_uid, $step_pos);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

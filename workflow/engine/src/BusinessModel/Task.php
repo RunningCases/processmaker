@@ -1859,15 +1859,14 @@ class Task
      * @var string $pro_uid. Uid for Process
      * @var string $tas_uid. Uid for Task
      * @var string $step_uid. Uid for Step
-     * @var string $step_uid_rel. Uid Step for relation
-     * @var string $type. Type relation
+     * @var string $step_pos. Position for Step
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @return void
      */
-    public function moveSteps($pro_uid, $tas_uid, $step_uid, $step_uid_rel, $type) {
+    public function moveSteps($pro_uid, $tas_uid, $step_uid, $step_pos) {
         $pro_uid = $this->validateProUid($pro_uid);
         $tas_uid = $this->validateActUid($tas_uid);
 
@@ -1878,34 +1877,21 @@ class Task
         foreach ($aSteps as $dataStep) {
             if ($dataStep['step_uid'] == $step_uid) {
                 $prStepPos = (int)$dataStep['step_position'];
-            } elseif ($dataStep['step_uid'] == $step_uid_rel) {
-                $seStepPos = (int)$dataStep['step_position'];
             }
         }
+        $seStepPos = $step_pos;
 
         //Principal Step is up
         if ($prStepPos < $seStepPos) {
             $modPos = 'UP';
-            if ($type == 'DOWN') {
-                $newPos = $seStepPos;
-                $iniPos = $prStepPos+1;
-                $finPos = $seStepPos;
-            } else {
-                $newPos = $seStepPos-1;
-                $iniPos = $prStepPos+1;
-                $finPos = $seStepPos-1;
-            }
+            $newPos = $seStepPos;
+            $iniPos = $prStepPos+1;
+            $finPos = $seStepPos;
         } else {
             $modPos = 'DOWN';
-            if ($type == 'UP') {
-                $newPos = $seStepPos;
-                $iniPos = $seStepPos;
-                $finPos = $prStepPos-1;
-            } else {
-                $newPos = $seStepPos-1;
-                $iniPos = $seStepPos-1;
-                $finPos = $prStepPos-1;
-            }
+            $newPos = $seStepPos;
+            $iniPos = $seStepPos;
+            $finPos = $prStepPos-1;
         }
 
         $range = range($iniPos, $finPos);
