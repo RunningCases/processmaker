@@ -238,5 +238,25 @@ class Route extends BaseRoute
 
         return RoutePeer::doSelect($c);
     }
+
+    public static function getAll($proUid = null, $start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        $c = new Criteria('workflow');
+        $c->addSelectColumn("ROUTE.*");
+
+        if (! is_null($proUid)) {
+            $c->add(RoutePeer::PRO_UID, $proUid, Criteria::EQUAL);
+        }
+
+        $rs = RoutePeer::doSelectRS($c);
+        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        $routes = array();
+        while ($rs->next()) {
+            $routes[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
+        }
+
+        return $routes;
+    }
 }
 

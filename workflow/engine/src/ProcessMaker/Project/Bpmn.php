@@ -325,6 +325,7 @@ class Bpmn extends Handler
 
             $activity = ActivityPeer::retrieveByPK($actUid);
             $activity->delete();
+            //TODO if the activity was removed, the related flows to that activity must be removed
 
             self::log("Remove Activity Success!");
         } catch (\Exception $e) {
@@ -438,7 +439,6 @@ class Bpmn extends Handler
             $gateway->setPrjUid($this->getUid());
             $gateway->setProUid($this->getProcess("object")->getProUid());
             $gateway->save();
-
             self::log("Add Gateway Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
@@ -518,13 +518,48 @@ class Bpmn extends Handler
         }
 
         try {
+            switch ($data["FLO_ELEMENT_ORIGIN_TYPE"]) {
+                case "bpmnActivity": $class = "BpmnActivity"; break;
+                case "bpmnGateway": $class = "BpmnGateway"; break;
+                case "bpmnEvent": $class = "BpmnEvent"; break;
+                default:
+                    throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s], given %s.",
+                        "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", $data["FLO_ELEMENT_ORIGIN_TYPE"]
+                    ));
+            }
+
+            // Validate origin object exists
+            if (! $class::exists($data["FLO_ELEMENT_ORIGIN"])) {
+                throw new \RuntimeException(sprintf("Reference not found, the %s with UID: %s, does not exist!",
+                    ucfirst($data["FLO_ELEMENT_ORIGIN_TYPE"]), $data["FLO_ELEMENT_ORIGIN"]
+                ));
+            }
+
+            switch ($data["FLO_ELEMENT_DEST_TYPE"]) {
+                case "bpmnActivity": $class = "BpmnActivity"; break;
+                case "bpmnGateway": $class = "BpmnGateway"; break;
+                case "bpmnEvent": $class = "BpmnEvent"; break;
+                default:
+                    throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s], given %s.",
+                        "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", $data["FLO_ELEMENT_DEST_TYPE"]
+                    ));
+            }
+
+            // Validate origin object exists
+            if (! $class::exists($data["FLO_ELEMENT_DEST"])) {
+                throw new \RuntimeException(sprintf("Reference not found, the %s with UID: %s, does not exist!",
+                    ucfirst($data["FLO_ELEMENT_DEST_TYPE"]), $data["FLO_ELEMENT_DEST"]
+                ));
+            }
+
             $flow = new Flow();
             $flow->fromArray($data, BasePeer::TYPE_FIELDNAME);
             $flow->setPrjUid($this->getUid());
             $flow->setDiaUid($this->getDiagram("object")->getDiaUid());
             $flow->save();
-
             self::log("Add Flow Success!");
+
+            return $flow->getFloUid();
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
             throw $e;

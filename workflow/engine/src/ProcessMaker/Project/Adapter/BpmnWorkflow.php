@@ -3,6 +3,7 @@ namespace ProcessMaker\Project\Adapter;
 
 use ProcessMaker\Project;
 use ProcessMaker\Util\Hash;
+use Symfony\Component\DependencyInjection\Exception\LogicException;
 
 /**
  * Class BpmnWorkflow
@@ -105,7 +106,8 @@ class BpmnWorkflow extends Project\Bpmn
     {
         $taskData = array();
 
-        $taskData["TAS_UID"] = parent::addActivity($data);
+        $actUid = parent::addActivity($data);
+        $taskData["TAS_UID"] = $actUid;
 
         if (array_key_exists("ACT_NAME", $data)) {
             $taskData["TAS_TITLE"] = $data["ACT_NAME"];
@@ -118,6 +120,8 @@ class BpmnWorkflow extends Project\Bpmn
         }
 
         $this->wp->addTask($taskData);
+
+        return $actUid;
     }
 
     public function updateActivity($actUid, $data)
@@ -145,55 +149,47 @@ class BpmnWorkflow extends Project\Bpmn
         $this->wp->removeTask($actUid);
     }
 
-    public function addFlow($data, $diagram)
-    {
-        $flows = $diagram["flows"];
-        $gateways = $diagram["gateways"];
-        $events = $diagram["events"];
-
-        parent::addFlow($data);
+//    public function addFlow($data)
+//    {
+//        parent::addFlow($data);
 
         // to add a workflow route
         // - activity -> activity ==> route
         // - activity -> gateway -> activity  ==> selection, evaluation, parallel or parallel by evaluation route
-        $routes = self::mapBpmnFlowsToWorkflowRoute($data, $flows, $gateways, $events);
+//        $routes = self::mapBpmnFlowsToWorkflowRoute($data, $flows);
+//
+//        if ($routes !== null) {
+//            foreach ($routes as $routeData) {
+//                $this->wp->addRoute($routeData["from"], $routeData["to"], $routeData["type"]);
+//            }
+//
+//            return true;
+//        }
+//
+//        // to add start event->activity  as initial or end task
+//        switch ($data["FLO_ELEMENT_ORIGIN_TYPE"]) {
+//            case "bpmnEvent":
+//                switch ($data["FLO_ELEMENT_DEST_TYPE"]) {
+//                    case "bpmnActivity":
+//                        $event = \BpmnEventPeer::retrieveByPK($data["FLO_ELEMENT_ORIGIN"]);
+//
+//                        switch ($event && $event->getEvnType()) {
+//                            case "START":
+//                                // then set that activity/task as "Start Task"
+//                                $this->wp->setStartTask($data["FLO_ELEMENT_DEST"]);
+//                                break;
+//                        }
+//                        break;
+//                }
+//                break;
+//        }
 
-        if ($routes !== null) {
-            foreach ($routes as $routeData) {
-                $this->wp->addRoute($routeData["from"], $routeData["to"], $routeData["type"]);
-            }
+//    }
 
-            return true;
-        }
-
-        // to add start event->activity  as initial or end task
-        switch ($data["FLO_ELEMENT_ORIGIN_TYPE"]) {
-            case "bpmnEvent":
-                switch ($data["FLO_ELEMENT_DEST_TYPE"]) {
-                    case "bpmnActivity":
-                        $event = \BpmnEventPeer::retrieveByPK($data["FLO_ELEMENT_ORIGIN"]);
-
-                        switch ($event && $event->getEvnType()) {
-                            case "START":
-                                // then set that activity/task as "Start Task"
-                                $this->wp->setStartTask($data["FLO_ELEMENT_DEST"]);
-                                break;
-                        }
-                        break;
-                }
-                break;
-        }
-    }
-
-    public function updateFlow($floUid, $data)
-    {
-        if (! self::isModified("flow", $floUid, $data)) {
-            self::log("Update Flow: $floUid (No Changes)");
-            return false;
-        }
-
-        parent::updateFlow($floUid, $data);
-    }
+//    public function updateFlow($floUid, $data, $flows)
+//    {
+//        parent::updateFlow($floUid, $data);
+//    }
 
     public function removeFlow($floUid)
     {
@@ -224,7 +220,20 @@ class BpmnWorkflow extends Project\Bpmn
                     $this->wp->setEndTask($activity->getActUid(), false);
                 }
             }
+        } else {
+            switch ($flow->getFloElementOriginType()) {
+                case "bpmnActivity":
+                    switch ($flow->getFloElementDestType()) {
+                        // activity->activity
+                        case "bpmnActivity":
+                            $this->wp->removeRouteFromTo($flow->getFloElementOrigin(), $flow->getFloElementDest());
+                            break;
+                    }
+                    break;
+            }
         }
+
+        // TODO Complete for other routes, activity->activity, activity->gateway and viceversa
     }
 
     public function addEvent($data)
@@ -236,35 +245,102 @@ class BpmnWorkflow extends Project\Bpmn
         parent::addEvent($data);
     }
 
-    public function removeEvent($evnUid)
+    public function mapBpmnFlowsToWorkflowRoutes()
     {
-//        $event = \BpmnEventPeer::retrieveByPK($evnUid);
-//
-//        switch ($event->getEvnType()) {
-//            case "START":
-//                $flow = \BpmnFlow::findOneBy(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $event->getEvnUid());
-//                if (! is_null($flow) && $flow->getFloElementDestType() == "bpmnActivity") {
-//                    $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
-//                    if (! is_null($activity)) {
-//                        $this->wp->setStartTask($activity->getActUid(), false);
-//                    }
-//                }
-//                break;
-//            case "END":
-//                $flow = \BpmnFlow::findOneBy(\BpmnFlowPeer::FLO_ELEMENT_DEST, $event->getEvnUid());
-//                if (! is_null($flow) && $flow->getFloElementOriginType() == "bpmnActivity") {
-//                    $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementOrigin());
-//                    if (! is_null($activity)) {
-//                        $this->wp->setEndTask($activity->getActUid(), false);
-//                    }
-//                }
-//                break;
-//        }
+        $activities = $this->getActivities();
 
-        parent::removeEvent($evnUid);
+        foreach ($activities as $activity) {
+
+            $flows = \BpmnFlow::findAllBy(array(
+                \BpmnFlowPeer::FLO_ELEMENT_ORIGIN => $activity["ACT_UID"],
+                \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnActivity"
+            ));
+
+            //
+            foreach ($flows as $flow) {
+                switch ($flow->getFloElementDestType()) {
+                    case "bpmnActivity":
+                        // (activity -> activity)
+                        $this->wp->addRoute($activity["ACT_UID"], $flow->getFloElementDest(), "SEQUENTIAL");
+                        break;
+
+                    case "bpmnGateway":
+                        // (activity -> gateway)
+                        // we must find the related flows: gateway -> <object>
+                        $gatUid = $flow->getFloElementDest();
+                        $gatewayFlows = \BpmnFlow::findAllBy(array(
+                            \BpmnFlowPeer::FLO_ELEMENT_ORIGIN => $gatUid,
+                            \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnGateway"
+                        ));
+
+                        foreach ($gatewayFlows as $gatewayFlow) {
+                            $gatewayFlow = $gatewayFlow->toArray();
+
+                            switch ($gatewayFlow['FLO_ELEMENT_DEST_TYPE']) {
+                                case 'bpmnActivity':
+                                    // (gateway -> activity)
+                                    $gateway = \BpmnGateway::findOneBy(\BpmnGatewayPeer::GAT_UID, $gatUid)->toArray();
+
+                                    switch ($gateway["GAT_TYPE"]) {
+                                        //case 'SELECTION':
+                                        case self::BPMN_GATEWAY_COMPLEX:
+                                            $routeType = "SELECT";
+                                            break;
+                                        //case 'EVALUATION':
+                                        case self::BPMN_GATEWAY_EXCLUSIVE:
+                                            $routeType = "EVALUATE";
+                                            break;
+                                        //case 'PARALLEL':
+                                        case self::BPMN_GATEWAY_PARALLEL:
+                                            if ($gateway["GAT_DIRECTION"] == "DIVERGING") {
+                                                $routeType = "PARALLEL";
+                                            } elseif ($gateway["GAT_DIRECTION"] == "CONVERGING") {
+                                                $routeType = "SEC-JOIN";
+                                            } else {
+                                                throw new \LogicException(sprintf(
+                                                    "Invalid Gateway direction, accepted values: [%s|%s], given: %s.",
+                                                    "DIVERGING", "CONVERGING", $gateway["GAT_DIRECTION"]
+                                                ));
+                                            }
+                                            break;
+                                        //case 'PARALLEL_EVALUATION':
+                                        case self::BPMN_GATEWAY_INCLUSIVE:
+                                            if ($gateway["GAT_DIRECTION"] == "DIVERGING") {
+                                                $routeType = "PARALLEL-BY-EVALUATION";
+                                            } elseif ($gateway["GAT_DIRECTION"] == "CONVERGING") {
+                                                $routeType = "SEC-JOIN";
+                                            } else {
+                                                throw new \LogicException(sprintf(
+                                                    "Invalid Gateway direction, accepted values: [%s|%s], given: %s.",
+                                                    "DIVERGING", "CONVERGING", $gateway["GAT_DIRECTION"]
+                                                ));
+                                            }
+                                            break;
+//                                        case 'PARALLEL_JOIN':
+//                                            $routeType = 'SEC-JOIN';
+//                                            break;
+                                        default:
+                                            throw new \LogicException(sprintf("Unsupported Gateway type: %s", $gateway['GAT_TYPE']));
+                                    }
+
+                                    $this->wp->addRoute($activity["ACT_UID"], $gatewayFlow['FLO_ELEMENT_DEST'], $routeType);
+                                    break;
+                                default:
+                                    // for processmaker is only allowed flows between "gateway -> activity"
+                                    // any another flow is considered invalid
+                                    throw new \LogicException(sprintf(
+                                        "For ProcessMaker is only allowed flows between \"gateway -> activity\" " . PHP_EOL .
+                                        "Given: bpmnGateway -> " . $gatewayFlow['FLO_ELEMENT_DEST_TYPE']
+                                    ));
+                            }
+                        }
+                        break;
+                }
+            }
+        }
     }
 
-    public static function mapBpmnFlowsToWorkflowRoute($flow, $flows, $gateways, $events)
+    public static function mapBpmnFlowsToWorkflowRoute2($flow, $flows, $gateways, $events)
     {
         $fromUid = $flow['FLO_ELEMENT_ORIGIN'];
         $result = array();
@@ -386,11 +462,6 @@ class BpmnWorkflow extends Project\Bpmn
 
         return $result;
     }
-
-//    public function getActivities()
-//    {
-//        return parent::getActivities();
-//    }
 
     public function remove()
     {

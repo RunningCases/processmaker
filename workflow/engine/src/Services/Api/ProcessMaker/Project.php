@@ -249,9 +249,9 @@ class Project extends Api
             foreach ($diagram["flows"] as $flowData) {
                 $flow = $bwp->getFlow($flowData["FLO_UID"]);
                 if (is_null($flow)) {
-                    $bwp->addFlow($flowData, $diagram);
+                    $bwp->addFlow($flowData, $diagram["flows"]);
                 } elseif (! $bwp->isEquals($flow, $flowData)) {
-                    $bwp->updateFlow($flowData["FLO_UID"], $flowData);
+                    $bwp->updateFlow($flowData["FLO_UID"], $flowData, $diagram["flows"]);
                 } else {
                     Util\Logger::log("Update Flow ({$flowData["FLO_UID"]}) Skipped - No changes required");
                 }
@@ -265,6 +265,8 @@ class Project extends Api
                     $bwp->removeFlow($flowData["FLO_UID"]);
                 }
             }
+
+            $bwp->mapBpmnFlowsToWorkflowRoutes();
 
             return $result;
         } catch (\Exception $e) {
