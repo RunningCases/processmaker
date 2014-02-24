@@ -16,6 +16,24 @@ require_once 'classes/model/om/BaseBpmnFlow.php';
  */
 class BpmnFlow extends BaseBpmnFlow
 {
+    public static function removeAllRelated($elementUid)
+    {
+        $c = new Criteria('workflow');
+
+        $c1 = $c->getNewCriterion(BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $elementUid);
+        $c2 = $c->getNewCriterion(BpmnFlowPeer::FLO_ELEMENT_DEST, $elementUid);
+
+        $c1->addOr($c2);
+        $c->add($c1);
+
+        $flows = BpmnFlowPeer::doSelect($c);
+
+        foreach ($flows as $flow) {
+            $flow->delete();
+        }
+    }
+
+
     /**
      * @param $field string coming from \BpmnFlowPeer::<FIELD_NAME>
      * @param $value string
