@@ -49,7 +49,23 @@ Feature: Project Properties - Step Resources Main Tests
         | Input Document assigned to Task 1 in mode edit              | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | INPUT_DOCUMENT  | 83199959452cd62589576c1018679557 |                | 2             | EDIT      | 2           |
         | Output Document assigned to Task 1 in mode edit             | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | OUTPUT_DOCUMENT | 32743823452cd63105006e1076595203 |                | 3             | EDIT      | 3           |
         | Dynaform assigned to Task 2 in mode view                    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | DYNAFORM        | 50332332752cd9b9a7cc989003652905 |                | 2             | VIEW      | 4           |
+        | External step to Task 2                                     | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | EXTERNAL        | 6869969705306aaae049a62048840877 |                | 3             | VIEW      | 5           |
 
+
+    Scenario: Dynaform assigned to the task when it was already assigned 
+       Given POST this data:
+        """
+        {
+            "step_type_obj": "DYNAFORM",
+            "step_uid_obj": "50332332752cd9b9a7cc989003652905",
+            "step_condition": "",
+            "step_position": "1",
+            "step_mode": "EDIT"
+        }
+        """
+        And I request "project/16062437052cd6141881e06088349078/activity/10163687452cd6234e0dd25086954968/step"
+        Then the response status code should be 400
+        And the response status message should have the following text "exists"
 
 
     Scenario Outline: Update the five steps and then check if the values had changed
@@ -77,6 +93,7 @@ Feature: Project Properties - Step Resources Main Tests
         | Update Input Document Task 1 (step_condition, step_position, step_mode)  | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | @@YEAR==2014   | 5             | VIEW      | INPUT_DOCUMENT  | 83199959452cd62589576c1018679557 | 2           |
         | Update Output Document Task 1 (step_condition, step_position, step_mode) | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 |                | 6             | VIEW      | OUTPUT_DOCUMENT | 32743823452cd63105006e1076595203 | 3           |
         | Update Dynaform Task 2 (step_condition, step_position, step_mode)        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | @@YEAR==2014   | 2             | EDIT      | DYNAFORM        | 50332332752cd9b9a7cc989003652905 | 4           |
+        | Update Dynaform Task 2 (step_condition, step_position, step_mode)        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | @@YEAR==2014   | 3             | EDIT      | EXTERNAL        | 6869969705306aaae049a62048840877 | 5           |
 
 
     Scenario Outline: List assigned Steps to "Task1" & "Task 2"
@@ -115,6 +132,7 @@ Feature: Project Properties - Step Resources Main Tests
         | List a triggers in Input Document of Task 1  | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           |
         | List a triggers in Output Document of Task 1 | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           |
         | List a triggers in Dynaform of task 2        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           |
+        | List a triggers in External Step of task 2   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           |
 
 
     Scenario Outline: List available Triggers for each assigned step
@@ -132,6 +150,7 @@ Feature: Project Properties - Step Resources Main Tests
         | List available a triggers in Input Document of Task 1  | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           |
         | List available a triggers in Output Document of Task 1 | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           |
         | List available a triggers in Dynaform of task 2        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           |
+        | List available a triggers in External Step of task 2   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           |
 
 
 
@@ -196,6 +215,7 @@ Feature: Project Properties - Step Resources Main Tests
         | List available a triggers in Input Document of Task 1  | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           |
         | List available a triggers in Output Document of Task 1 | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           |
         | List available a triggers in Dynaform of task 2        | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           |
+        | List available a triggers in External Step of task 2   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           |
 
 
 
@@ -305,6 +325,7 @@ Feature: Project Properties - Step Resources Main Tests
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 6       |
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 0       |
         | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 0       |
+        | Trigger assigned to External in type before | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           | 0       |
 
 
     Scenario Outline: Unassign all"DynaForm Demo1" from "Task1"

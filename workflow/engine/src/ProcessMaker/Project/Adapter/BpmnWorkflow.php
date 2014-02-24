@@ -17,6 +17,12 @@ class BpmnWorkflow extends Project\Bpmn
      */
     protected $wp;
 
+    const BPMN_GATEWAY_COMPLEX = "COMPLEX";
+    const BPMN_GATEWAY_PARALLEL = "PARALLEL";
+    const BPMN_GATEWAY_INCLUSIVE = "INCLUSIVE";
+    const BPMN_GATEWAY_EXCLUSIVE = "EXCLUSIVE";
+
+
     /**
      * OVERRIDES
      */
@@ -139,8 +145,12 @@ class BpmnWorkflow extends Project\Bpmn
         $this->wp->removeTask($actUid);
     }
 
-    public function addFlow($data, $flows, $gateways, $events)
+    public function addFlow($data, $diagram)
     {
+        $flows = $diagram["flows"];
+        $gateways = $diagram["gateways"];
+        $events = $diagram["events"];
+
         parent::addFlow($data);
 
         // to add a workflow route
@@ -291,22 +301,38 @@ class BpmnWorkflow extends Project\Bpmn
 
                             if (! empty($gateways)) {
                                 $gateway = $gateways[0];
+                                $routeType = "";
 
                                 switch ($gateway['GAT_TYPE']) {
-                                    case 'SELECTION':
+                                    case self::BPMN_GATEWAY_COMPLEX:
                                         $routeType = 'SELECT';
                                         break;
-                                    case 'EVALUATION':
+                                    case self::BPMN_GATEWAY_EXCLUSIVE:
                                         $routeType = 'EVALUATE';
                                         break;
-                                    case 'PARALLEL':
-                                        $routeType = 'PARALLEL';
+                                    case self::BPMN_GATEWAY_INCLUSIVE:
+                                        switch ($gateway['GAT_DIRECTION']) {
+                                            case "DIVERGING":
+                                                $routeType = 'PARALLEL-BY-EVALUATION';
+                                                break;
+                                            case "CONVERGING":
+                                                $routeType = 'SEC-JOIN';
+                                                break;
+                                            default:
+                                                throw new \LogicException(sprintf("Unsupported Gateway direction: %s", $gateway['GAT_DIRECTION']));
+                                        }
                                         break;
-                                    case 'PARALLEL_EVALUATION':
-                                        $routeType = 'PARALLEL-BY-EVALUATION';
-                                        break;
-                                    case 'PARALLEL_JOIN':
-                                        $routeType = 'SEC-JOIN';
+                                    case self::BPMN_GATEWAY_PARALLEL:
+                                        switch ($gateway['GAT_DIRECTION']) {
+                                            case "DIVERGING":
+                                                $routeType = 'PARALLEL';
+                                                break;
+                                            case "CONVERGING":
+                                                $routeType = 'SEC-JOIN';
+                                                break;
+                                            default:
+                                                throw new \LogicException(sprintf("Unsupported Gateway direction: %s", $gateway['GAT_DIRECTION']));
+                                        }
                                         break;
                                     default:
                                         throw new \LogicException(sprintf("Unsupported Gateway type: %s", $gateway['GAT_TYPE']));

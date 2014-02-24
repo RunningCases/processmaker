@@ -49,6 +49,20 @@ Feature: Dynaform Main Tests
         | create dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid   | dyn grid P2     | grid     | 4              |
 
 
+    Scenario: Create dynaform with same name
+        Given POST this data:
+        """
+        {
+            "dyn_title": "Dynaform - Normal",
+            "dyn_description": "dyn normal P1",
+            "dyn_type": "xmlform"
+        }
+        """
+        And I request "project/14414793652a5d718b65590036026581/dynaform"
+        Then the response status code should be 400
+        And the response status message should have the following text "already exists"
+        
+
     Scenario Outline: Create a Dynaform using the Copy/Import method
         Given POST this data:
         """
@@ -75,8 +89,28 @@ Feature: Dynaform Main Tests
         | test_description       | project                          | dyn_title         | dyn_description | dyn_type | dyn_uid_number | copy_prj_uid                     | copy_dyn_uid                     |
         | create dynaform copy 1 | 14414793652a5d718b65590036026581 | Dynaform - Copy 1 | dyn copy        | xmlform  | 5              | 42445320652cd534acb3824056962285 | 70070685552cd53605650f7062918506 |
         | create dynaform copy 2 | 42445320652cd534acb3824056962285 | Dynaform - Copy 2 | dyn copy        | xmlform  | 6              | 42445320652cd534acb3824056962285 | 70070685552cd53605650f7062918506 |
+ 
 
-    
+
+     Scenario: Create a Dynaform using the Copy/Import with same name
+        Given POST this data:
+        """
+        {
+            "dyn_title": "Dynaform - Copy 1",
+            "dyn_description": "dyn copy",
+            "dyn_type": "xmlform",
+            "copy_import":
+            {
+                "prj_uid": "42445320652cd534acb3824056962285",
+                "dyn_uid": "70070685552cd53605650f7062918506"
+            }
+        }
+        """
+        And I request "project/14414793652a5d718b65590036026581/dynaform"
+        Then the response status code should be 400
+        And the response status message should have the following text "already exists"
+
+
     Scenario Outline: Create dynaform based on a PMTable
         Given POST this data:
         """
@@ -108,6 +142,31 @@ Feature: Dynaform Main Tests
         | test_description          | project                          | dyn_title            | dyn_description   | dyn_type | dyn_uid_number | tab_uid                          | fld_name_01  | pro_variable_01 |
         | create dynaform pmtable 1 | 14414793652a5d718b65590036026581 | Dynaform - pmtable 1 | dyn from pmtable1 | xmlform  | 7              | 65193158852cc1a93a5a535084878044 | DYN_UID      | @#APPLICATION   |
         | create dynaform pmtable 2 | 42445320652cd534acb3824056962285 | Dynaform - pmtable2  | dyn from pmtable2 | xmlform  | 8              | 65193158852cc1a93a5a535084878044 | DYN_UID      | @#APPLICATION   |
+
+
+     Scenario: Create dynaform based on a PMTable with same name
+        Given POST this data:
+        """
+        {
+            "dyn_title": "Dynaform - pmtable 1",
+            "dyn_description": "dyn from pmtable1",
+            "dyn_type": "xmlform",
+            "pmtable":
+            {
+                "tab_uid": "65193158852cc1a93a5a535084878044",
+                "fields": [
+                      {
+                          "fld_name": "DYN_UID",
+                          "pro_variable": "@#APPLICATION "
+                      }
+                 ]
+            }
+        }
+        """
+        And I request "project/14414793652a5d718b65590036026581/dynaform"
+        And the content type is "application/json"
+        Then the response status code should be 400
+        And the response status message should have the following text "already exists"
 
 
     Scenario Outline: Get a List DynaForms of a Project list when there are 9 records, total in both projects

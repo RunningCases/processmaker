@@ -2609,7 +2609,7 @@ class G
      * @param integer $permission
      * @return void
      */
-    public function uploadFile ($file, $path, $nameToSave, $permission = 0660)
+    public static function uploadFile ($file, $path, $nameToSave, $permission = 0660)
     {
         try {
             if ($file == '') {

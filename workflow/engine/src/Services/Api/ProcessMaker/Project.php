@@ -249,7 +249,7 @@ class Project extends Api
             foreach ($diagram["flows"] as $flowData) {
                 $flow = $bwp->getFlow($flowData["FLO_UID"]);
                 if (is_null($flow)) {
-                    $bwp->addFlow($flowData, $diagram["flows"], $diagram["gateways"], $diagram["events"]);
+                    $bwp->addFlow($flowData, $diagram);
                 } elseif (! $bwp->isEquals($flow, $flowData)) {
                     $bwp->updateFlow($flowData["FLO_UID"], $flowData);
                 } else {
