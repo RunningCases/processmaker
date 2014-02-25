@@ -92,7 +92,8 @@ class FilesManager
                     } else {
                         $editable = 'false';
                     }
-                        $aTheFiles[] = array( 'prf_filename' => $aFile['FILE'],
+                        $aTheFiles[] = array( 'prf_uid' => $oProcessFiles->getPrfUid(),
+                                              'prf_filename' => $aFile['FILE'],
                                               'usr_uid' => $oProcessFiles->getUsrUid(),
                                               'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
                                               'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
@@ -103,7 +104,8 @@ class FilesManager
                                               'prf_content' => $fcontent);
 
                     } else {
-                        $aTheFiles[] = array('prf_filename' => $aFile['FILE'],
+                        $aTheFiles[] = array('prf_uid' => $oProcessFiles->getPrfUid(),
+                                             'prf_filename' => $aFile['FILE'],
                                              'usr_uid' => '',
                                              'prf_update_usr_uid' => '',
                                              'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
@@ -403,44 +405,41 @@ class FilesManager
     /**
      *
      * @param string $sProcessUID {@min 32} {@max 32}
-     * @param string $path
+     * @param string $prfUid {@min 32} {@max 32}
      *
      *
      * @access public
      */
-    public function downloadProcessFilesManager($sProcessUID, $path)
+    public function downloadProcessFilesManager($sProcessUID, $prfUid)
     {
         try {
-            $sMainDirectory = current(explode("/", $path));
-            if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
-                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
+            $path = '';
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
+            $criteria->add(\ProcessFilesPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $path = $aRow['PRF_PATH'];
+                $rsCriteria->next();
             }
-            if ($sMainDirectory == 'templates') {
-                $sMainDirectory = 'mailTemplates';
+            if ($path == ''){
+                throw new \Exception('invalid value specified for `prf_uid`.'));
             }
-            $sfile = end(explode("/",$path));
-            $sSubDirectorytemp = substr($path, strpos($path, "/")+1);
-            if (strstr($sSubDirectorytemp,'/')) {
-                $sSubDirectory = str_replace('/'.$sfile,"",$sSubDirectorytemp);
-                $sSubDirectoryCheck = str_replace($sfile,"",$sSubDirectorytemp);
+            $sFile = end(explode("/",$path));
+            $sPath = str_replace($sFile,'',$path);
+            $sSubDirectory = str_replace('/','',str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))));
+            $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
+            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES){
+                $sMainDirectory = 'mainTemplates';
             } else {
-                $sSubDirectory = '';
-                $sSubDirectoryCheck = '';
+                $sMainDirectory = 'public';
             }
-            switch ($sMainDirectory) {
-                case 'mailTemplates':
-                    $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectoryCheck . $sfile;
-                    break;
-                case 'public':
-                    $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectoryCheck . $sfile;
-                    break;
-                default:
-                    $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sfile;
-                    break;
-            }
-            if (file_exists(PATH_SEP.$sDirectory)) {
+            if (file_exists($path)) {
                 $oProcessMap = new \processMap(new \DBConnection());
-                $oProcessMap->downloadFile($sProcessUID,$sMainDirectory,$sSubDirectory,$sfile);
+                $oProcessMap->downloadFile($sProcessUID,$sMainDirectory,$sSubDirectory,$sFile);
+                die();
             } else {
                 throw (new \Exception( 'invalid value specified for `path`.'));
             }
