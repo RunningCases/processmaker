@@ -21,7 +21,7 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        return false;
+        //return false;
         //cleaning DB
         foreach (self::$uids as $prjUid) {
             $bwap = Project\Adapter\BpmnWorkflow::load($prjUid);
@@ -424,10 +424,17 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(4, $bwap->getActivities());
         $this->assertCount(1, $bwap->getGateways());
         $this->assertCount(4, $bwap->getFlows());
+        $this->assertCount(1, \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_DEST, $gatUid));
+        $this->assertCount(3, \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid));
 
         $wp = Project\Workflow::load($bwap->getUid());
 
+        $this->assertCount(4, $wp->getTasks());
         $this->assertCount(3, $wp->getRoutes());
+        $this->assertCount(3, \Route::findAllBy(\RoutePeer::TAS_UID, $actUid1));
+        $this->assertCount(1, \Route::findAllBy(\RoutePeer::ROU_NEXT_TASK, $actUid2));
+        $this->assertCount(1, \Route::findAllBy(\RoutePeer::ROU_NEXT_TASK, $actUid3));
+        $this->assertCount(1, \Route::findAllBy(\RoutePeer::ROU_NEXT_TASK, $actUid4));
 
         return array($actUid2, $actUid3, $actUid4);
     }
@@ -499,6 +506,23 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
         ));
 
         $bwap->mapBpmnFlowsToWorkflowRoutes();
+
+        $this->assertCount(8, $bwap->getFlows());
+        $this->assertCount(5, $bwap->getActivities());
+        $this->assertCount(2, $bwap->getGateways());
+        $this->assertCount(3, \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_DEST, $gatUid));
+        $this->assertCount(1, \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid));
+
+        $wp = Project\Workflow::load($bwap->getUid());
+
+        $this->assertCount(5, $wp->getTasks());
+        $this->assertCount(6, $wp->getRoutes());
+
+        $this->assertCount(1, \Route::findAllBy(\RoutePeer::TAS_UID, $activitiesUid[0]));
+        $this->assertCount(1, \Route::findAllBy(\RoutePeer::TAS_UID, $activitiesUid[1]));
+        $this->assertCount(1, \Route::findAllBy(\RoutePeer::TAS_UID, $activitiesUid[2]));
+        $this->assertCount(3, \Route::findAllBy(\RoutePeer::ROU_NEXT_TASK, $actUid5));
+
     }
 }
 
