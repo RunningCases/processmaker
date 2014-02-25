@@ -209,7 +209,7 @@ Requirements:
         Given POST this data:
         """
        {
-            "dyn_uid": "<92562207752ceef36c7d874048012431>"
+            "dyn_uid": "92562207752ceef36c7d874048012431"
        }
        """
        And I request "project/85794888452ceeef3675164057928956/process-supervisor/dynaform"
