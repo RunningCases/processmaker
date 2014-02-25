@@ -195,8 +195,8 @@ class Workflow extends Handler
     {
         try {
             self::log("Remove Task: $tasUid");
-            $task = new Task();
-            $task->remove($tasUid);
+            $task = new Tasks();
+            $task->deleteTask($tasUid);
             self::log("Remove Task Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
@@ -275,24 +275,30 @@ class Workflow extends Handler
             }
 
             if ($type != 'SEQUENTIAL' && $type != 'SEC-JOIN' && $type != 'DISCRIMINATOR') {
-                if ($this->getNumberOfRoutes($this->proUid, $fromTasUid, $toTasUid, $type) > 0) {
-                    throw new \LogicException("Unexpected behaviour");
-                }
+                //if ($this->getNumberOfRoutes($this->proUid, $fromTasUid, $toTasUid, $type) > 0) {
+                    //throw new \LogicException("Unexpected behaviour");
+                //}
             }
 
             //if ($delete || $type == 'SEQUENTIAL' || $type == 'SEC-JOIN' || $type == 'DISCRIMINATOR') {
-                $oTasks = new Tasks();
-                $oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
+                //$oTasks = new Tasks();
+                //$oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
             //}
 
             $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $delete);
-            self::log("Add Route Success! -> ", $result);
+            self::log("Add Route Success! - ROU_UID: ", $result);
 
             return $result;
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
             throw $e;
         }
+    }
+
+    public function resetTaskRoutes($actUid)
+    {
+        $oTasks = new Tasks();
+        $oTasks->deleteAllRoutesOfTask($this->proUid, $actUid);
     }
 
     public function updateRoute($rouUid, $routeData)
