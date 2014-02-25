@@ -1,6 +1,8 @@
 <?php
 namespace BusinessModel\Step;
 
+use \BusinessModel\Step;
+
 class Trigger
 {
     /**
@@ -184,10 +186,6 @@ class Trigger
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($triggerUid, "TRIGGERS"), "The UID \"{0}\" doesn't exist in table {1}")));
             }
 
-            if (isset($arrayData["st_position"]) && $this->existsRecord($stepUid, $type, $taskUid, "", $arrayData["st_position"], $triggerUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["st_position"], $stepUid . ", " . $type . ", " . $taskUid . ", " . $arrayData["st_position"], "STEP_TRIGGER"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
-            }
-
             //Update
             $stepTrigger = new \StepTrigger();
 
@@ -203,10 +201,13 @@ class Trigger
             }
 
             if (isset($arrayData["st_position"]) && $arrayData["st_position"] != "") {
-                $arrayUpdateData["ST_POSITION"] = (int)($arrayData["st_position"]);
+                $tempPos = (int)($arrayData["st_position"]);
             }
 
             $stepTrigger->update($arrayUpdateData);
+            if (isset($tempPos)) {
+                $this->moveStepTriggers($taskUid, $stepUid, $triggerUid, $type, $tempPos);
+            }
 
             return array_change_key_case($arrayUpdateData, CASE_LOWER);
         } catch (\Exception $e) {
@@ -359,6 +360,85 @@ class Trigger
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for Process
+     * @var string $tas_uid. Uid for Task
+     * @var string $step_uid. Uid for Step
+     * @var string $step_pos. Position for Step
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function moveStepTriggers($tasUid, $stepUid, $triUid, $type, $newPos) {
+        $stepTrigger = new \BusinessModel\Step();
+        $aStepTriggers = $stepTrigger->getTriggers($stepUid, $tasUid);
+        foreach ($aStepTriggers as $dataStep) {
+            if (($dataStep['st_type'] == $type) && ($dataStep['tri_uid'] == $triUid)) {
+                $prStepPos = (int)$dataStep['st_position'];
+            }
+        }
+        $seStepPos = $newPos;
+
+        //Principal Step is up
+        if ($prStepPos == $seStepPos) {
+            return true;
+        } elseif ($prStepPos < $seStepPos) {
+            $modPos = 'UP';
+            $newPos = $seStepPos;
+            $iniPos = $prStepPos+1;
+            $finPos = $seStepPos;
+        } else {
+            $modPos = 'DOWN';
+            $newPos = $seStepPos;
+            $iniPos = $seStepPos;
+            $finPos = $prStepPos-1;
+        }
+
+        $range = range($iniPos, $finPos);
+        foreach ($aStepTriggers as $dataStep) {
+            if (($dataStep['st_type'] == $type) && (in_array($dataStep['st_position'], $range)) && ($dataStep['tri_uid'] != $triUid)) {
+                $stepChangeIds[] = $dataStep['tri_uid'];
+                $stepChangePos[] = $dataStep['st_position'];
+            }
+        }
+
+        foreach ($stepChangeIds as $key => $value) {
+            if ($modPos == 'UP') {
+                $tempPos = ((int)$stepChangePos[$key])-1;
+                $this->changePosStep($stepUid, $tasUid, $value, $type, $tempPos);
+            } else {
+                $tempPos = ((int)$stepChangePos[$key])+1;
+                $this->changePosStep($stepUid, $tasUid, $value, $type, $tempPos);
+            }
+        }
+        $this->changePosStep($stepUid, $tasUid, $triUid, $type, $newPos);
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function changePosStep ($stepUid, $tasUid, $triUid, $type, $pos)
+    {
+        $data = array(
+            'STEP_UID' => $stepUid,
+            'TAS_UID'  => $tasUid,
+            'TRI_UID'  => $triUid,
+            'ST_TYPE'  => $type,
+            'ST_POSITION' => $pos
+        );
+        $StepTrigger = new \StepTrigger();
+        $StepTrigger->update($data);
     }
 }
 
