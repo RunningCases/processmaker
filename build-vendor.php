@@ -32,7 +32,6 @@ if (in_array('--no-ansi', $argv)) {
 
 $vendorDir = dirname(__FILE__) . DS . 'vendor';
 
-
 if (! is_dir($vendorDir )) {
     echo "Vendor directory is missing!" . PHP_EOL;
     exit();
@@ -43,16 +42,38 @@ $projects = array(
     'colosa/pmUI'
 );
 
+out("build-vendor.php", 'purple');
+
+out("generating files for ", 'purple', false);
+out( $debug ? 'debug' : 'production', 'success', false);
+out(" mode", 'purple');
+
 foreach ($projects as $project) {
     echo PHP_EOL;
     out("=> Building project: ", 'info', false);
     echo $project.' '.PHP_EOL;
     chdir($vendorDir.DS.$project);
-    if ($debug)
-        echo `rake pmBuildDebug`;
-    else
-        echo `rake pmBuild`;
-    out("Completed!", 'success');
+    if ($debug) {
+        exec ('rake pmBuildDebug', $output, $exitCode );
+    } else {
+        exec ('rake pmBuild', $output, $exitCode );
+    }
+
+    if ($exitCode) {
+        out("$project executed with errors!", 'error');
+        foreach ($output as $line) {
+            print "$line\n";
+        }
+        echo PHP_EOL;
+        die;
+    } else {
+        foreach ($output as $line) {
+            print "$line\n";
+        }
+        out("$project completed", 'success');
+        echo PHP_EOL;
+    }
+
 }
 
 echo PHP_EOL;
@@ -70,8 +91,9 @@ function out($text, $color = null, $newLine = true)
 {
     $styles = array(
         'success' => "\033[0;35;32m%s\033[0m",
-        'error' => "\033[0;35;31m%s\033[0m",
-        'info' => "\033[1;33;34m%s\033[0m"
+        'error'   => "\033[0;35;31m%s\033[0m",
+        'purple'  => "\033[0;35;35m%s\033[0m",
+        'info'    => "\033[1;33;34m%s\033[0m"
     );
 
     $format = '%s';
