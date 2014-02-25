@@ -325,11 +325,34 @@ class Workflow extends Handler
         }
     }
 
+    public function removeRouteFromTo($fromTasUid, $toTasUid)
+    {
+        try {
+            self::log("Remove Route from $fromTasUid -> to $toTasUid");
+
+            $route = Route::findOneBy(array(
+                RoutePeer::TAS_UID => $fromTasUid,
+                RoutePeer::ROU_NEXT_TASK => $toTasUid
+            ));
+
+            $route->delete();
+            self::log("Remove Route Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
     public function getRoute($rouUid)
     {
         $route = new Route();
 
         return $route->load($rouUid);
+    }
+
+    public function getRoutes()
+    {
+        return Route::getAll($proUid = null, $start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER);
     }
 
 

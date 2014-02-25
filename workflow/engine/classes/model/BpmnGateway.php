@@ -45,6 +45,11 @@ class BpmnGateway extends BaseBpmnGateway
         }
     }
 
+    /**
+     * @param $field
+     * @param $value
+     * @return \BpmnGateway|null
+     */
     public static function findOneBy($field, $value)
     {
         $rows = self::findAllBy($field, $value);
@@ -87,8 +92,8 @@ class BpmnGateway extends BaseBpmnGateway
 
     public function setActUid($actUid)
     {
-        parent::setActUid($actUid);
-        $this->bound->setElementUid($this->getActUid());
+        parent::setGatUid($actUid);
+        $this->bound->setElementUid($this->getGatUid());
     }
 
     public function setPrjUid($prjUid)
@@ -164,6 +169,14 @@ class BpmnGateway extends BaseBpmnGateway
         $data = array_merge($data, $this->bound->toArray($type));
 
         return $data;
+    }
+
+    public static function exists($gatUid)
+    {
+        $c = new Criteria("workflow");
+        $c->add(BpmnGatewayPeer::GAT_UID, $gatUid);
+
+        return BpmnGatewayPeer::doCount($c) > 0 ? true : false;
     }
 
 } // BpmnGateway

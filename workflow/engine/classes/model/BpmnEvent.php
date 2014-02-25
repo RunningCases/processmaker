@@ -85,9 +85,9 @@ class BpmnEvent extends BaseBpmnEvent
 
     // OVERRIDES
 
-    public function setActUid($actUid)
+    public function setActUid($evnUid)
     {
-        parent::setActUid($actUid);
+        parent::setEvnUid($evnUid);
         $this->bound->setElementUid($this->getEvnUid());
     }
 
@@ -164,5 +164,13 @@ class BpmnEvent extends BaseBpmnEvent
         $data = array_merge($data, $this->bound->toArray($type));
 
         return $data;
+    }
+
+    public static function exists($evnUid)
+    {
+        $c = new Criteria("workflow");
+        $c->add(BpmnEventPeer::EVN_UID, $evnUid);
+
+        return BpmnEventPeer::doCount($c) > 0 ? true : false;
     }
 } // BpmnEvent

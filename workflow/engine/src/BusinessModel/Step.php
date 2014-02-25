@@ -321,17 +321,17 @@ class Step
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid . ", " . $arrayData["STEP_TYPE_OBJ"] . ", " . $arrayData["STEP_UID_OBJ"], "STEP"), "The record \"{0}\", exists in table {1}")));
             }
 
-            if (isset($arrayData["STEP_POSITION"]) && $this->existsRecord($taskUid, "", "", $arrayData["STEP_POSITION"])) {
-                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["STEP_POSITION"], $taskUid . ", " . $arrayData["STEP_POSITION"], "STEP"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
-            }
-
             //Create
             $step = new \Step();
 
-            $stepUid = $step->create(array("PRO_UID" => $processUid, "TAS_UID" => $taskUid));
+            $stepUid = $step->create(array(
+                "PRO_UID" => $processUid,
+                "TAS_UID" => $taskUid,
+                "STEP_POSITION" => $step->getNextPosition($taskUid)
+            ));
 
             if (!isset($arrayData["STEP_POSITION"]) || $arrayData["STEP_POSITION"] == "") {
-                $arrayData["STEP_POSITION"] = $step->getNextPosition($taskUid) - 1;
+                unset($arrayData["STEP_POSITION"]);
             }
 
             $arrayData = $this->update($stepUid, $arrayData);
@@ -369,7 +369,6 @@ class Step
 
             //Load Step
             $step = new \Step();
-
             $arrayStepData = $step->load($stepUid);
 
             $taskUid = $arrayStepData["TAS_UID"];
@@ -428,19 +427,21 @@ class Step
                 }
             }
 
-            if (isset($arrayData["STEP_POSITION"]) && ($arrayData["STEP_POSITION"] != $arrayStepData["STEP_POSITION"])) {
-                $this->moveSteps($proUid, $taskUid, $stepUid, $arrayData["STEP_POSITION"]);
-            }
-
             //Update
             $step = new \Step();
 
             $arrayData["STEP_UID"] = $stepUid;
-
+            $tempPosition = (isset($arrayData["STEP_POSITION"])) ? $arrayData["STEP_POSITION"] : $arrayStepData["STEP_POSITION"];
+            $arrayData["STEP_POSITION"] = $arrayStepData["STEP_POSITION"];
             $result = $step->update($arrayData);
+
+            if (isset($tempPosition) && ($tempPosition != $arrayStepData["STEP_POSITION"])) {
+                $this->moveSteps($proUid, $taskUid, $stepUid, $tempPosition);
+            }
 
             //Return
             unset($arrayData["STEP_UID"]);
+            $arrayData["STEP_POSITION"] = $tempPosition;
 
             if (!$this->formatFieldNameInUppercase) {
                 $arrayData = array_change_key_case($arrayData, CASE_LOWER);
@@ -875,7 +876,9 @@ class Step
         $seStepPos = $step_pos;
 
         //Principal Step is up
-        if ($prStepPos < $seStepPos) {
+        if ($prStepPos == $seStepPos) {
+            return true;
+        } elseif ($prStepPos < $seStepPos) {
             $modPos = 'UP';
             $newPos = $seStepPos;
             $iniPos = $prStepPos+1;

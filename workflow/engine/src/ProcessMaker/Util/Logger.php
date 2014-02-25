@@ -4,7 +4,7 @@ namespace ProcessMaker\Util;
 /**
  * Singleton Class Logger
  *
- * This Utility is usefull to log local messages
+ * This Utility is useful to log local messages
  * @package ProcessMaker\Util
  * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
  */
@@ -43,7 +43,7 @@ class Logger
         $this->setLog(date('Y-m-d H:i:s') . " ");
 
         foreach ($args as $str) {
-            $this->setLog((is_string($str) ? $str : print_r($str, true)) . PHP_EOL);
+            $this->setLog((is_string($str) ? $str : var_export($str, true)) . PHP_EOL);
         }
     }
 
@@ -53,7 +53,7 @@ class Logger
         $this->setLog(date('Y-m-d H:i:s') . " ");
 
         foreach ($args as $str) {
-            $this->setLog((is_string($str) ? $str : print_r($str, true)) . " ");
+            $this->setLog((is_string($str) ? $str : var_export($str, true)) . " ");
         }
     }
 

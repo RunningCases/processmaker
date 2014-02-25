@@ -82,17 +82,25 @@ class FilesManager
             }
             foreach ($aFiles as $aFile) {
                     $arrayFileUid = $this->getFileManagerUid($sDirectory.$aFile['FILE']);
+                    $fcontent = file_get_contents($sDirectory.$aFile['FILE']);
                     $fileUid =  $arrayFileUid["PRF_UID"];
                     if ($fileUid) {
                         $oProcessFiles = \ProcessFilesPeer::retrieveByPK($fileUid);
+                    $editable = $oProcessFiles->getPrfEditable();
+                    if ($editable == 1){
+                        $editable = 'true';
+                    } else {
+                        $editable = 'false';
+                    }
                         $aTheFiles[] = array( 'prf_filename' => $aFile['FILE'],
                                               'usr_uid' => $oProcessFiles->getUsrUid(),
                                               'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
                                               'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
                                               'prf_type' => $oProcessFiles->getPrfType(),
-                                              'prf_editable' => $oProcessFiles->getPrfEditable(),
+                                              'prf_editable' => $editable,
                                               'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
-                                              'prf_update_date' => $oProcessFiles->getPrfUpdateDate());
+                                              'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
+                                              'prf_content' => $fcontent);
 
                     } else {
                         $aTheFiles[] = array('prf_filename' => $aFile['FILE'],
@@ -100,9 +108,10 @@ class FilesManager
                                              'prf_update_usr_uid' => '',
                                              'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
                                              'prf_type' => 'file',
-                                             'prf_editable' => '',
+                                             'prf_editable' => $editable,
                                              'prf_create_date' => '',
-                                             'prf_update_date' => '');
+                                             'prf_update_date' => '',
+                                             'prf_content' => $fcontent);
                     }
     
             }
@@ -127,6 +136,9 @@ class FilesManager
     {
         try {
             $aData['prf_path'] = rtrim($aData['prf_path'], '/') . '/';
+            if (!$aData['prf_filename']){
+                throw (new \Exception( 'invalid value specified for `prf_filename`.'));
+            }
             $sMainDirectory = current(explode("/", $aData['prf_path']));
             if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
                 throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
@@ -184,7 +196,8 @@ class FilesManager
                                   'prf_type' => $oProcessFiles->getPrfType(),
                                   'prf_editable' => $oProcessFiles->getPrfEditable(),
                                   'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
-                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate());
+                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
+                                  'prf_content' => $content);
             return $oProcessFile;
         } catch (Exception $e) {
             throw $e;
@@ -195,15 +208,14 @@ class FilesManager
      * Return the Process Files Manager
      *
      * @param string $prjUid {@min 32} {@max 32}
-     * @param array $aData
+     * @param string $prfUid {@min 32} {@max 32}
      *
      *
      * @access public
      */
-    public function uploadProcessFilesManager($prjUid, $aData)
+    public function uploadProcessFilesManager($prjUid, $prfUid)
     {
         try {
-            $prfUid = $aData['prf_uid'];
             $path = '';
             $criteria = new \Criteria("workflow");
             $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
@@ -220,10 +232,14 @@ class FilesManager
             }
             $file = end(explode("/",$path));
             $path = str_replace($file,'',$path);
-            if ($_FILES['my_file']['error'] != 1) {
-                if ($_FILES['my_file']['tmp_name'] != '') {
-                    \G::uploadFile($_FILES['my_file']['tmp_name'],$path , $_FILES['my_file']['name']);
-                }
+            if ($file == $_FILES['prf_file']['name']) {
+                if ($_FILES['prf_file']['error'] != 1) {
+                    if ($_FILES['prf_file']['tmp_name'] != '') {
+                        \G::uploadFile($_FILES['prf_file']['tmp_name'],$path , $_FILES['prf_file']['name']);
+                    }
+	            }
+            } else {
+                throw new \Exception(\G::LoadTranslation('ID_PMTABLE_UPLOADING_FILE_PROBLEM'));
             }
         } catch (Exception $e) {
             throw $e;
@@ -320,7 +336,8 @@ class FilesManager
                                   'prf_type' => $oProcessFiles->getPrfType(),
                                   'prf_editable' => $sEditable,
                                   'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
-                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate());
+                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
+                                  'prf_content' => $content);
             return $oProcessFile;
         } catch (Exception $e) {
             throw $e;
