@@ -21,7 +21,7 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        return false;
+        //return false;
         //cleaning DB
         foreach (self::$uids as $prjUid) {
             $bwap = Project\Adapter\BpmnWorkflow::load($prjUid);
@@ -328,10 +328,10 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
         // cleaning
         $bwap->removeActivity($actUid1);
         $bwap->removeActivity($actUid2);
-        $bwap->removeFlow($flowUid1);
-        $bwap->removeFlow($flowUid2);
+        $bwap->removeGateway($gatUid);
 
         $this->assertCount(0, $bwap->getActivities());
+        $this->assertCount(0, $bwap->getGateways());
         $this->assertCount(0, $bwap->getFlows());
 
         $wp = Project\Workflow::load($bwap->getUid());

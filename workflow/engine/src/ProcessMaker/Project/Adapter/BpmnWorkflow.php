@@ -3,7 +3,6 @@ namespace ProcessMaker\Project\Adapter;
 
 use ProcessMaker\Project;
 use ProcessMaker\Util\Hash;
-use Symfony\Component\DependencyInjection\Exception\LogicException;
 
 /**
  * Class BpmnWorkflow
@@ -147,6 +146,32 @@ class BpmnWorkflow extends Project\Bpmn
     {
         parent::removeActivity($actUid);
         $this->wp->removeTask($actUid);
+    }
+
+    public function removeGateway($gatUid)
+    {
+        $gatewayData = $this->getGateway($gatUid);
+        $flowsDest = \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_DEST, $gatUid);
+
+        foreach ($flowsDest as $flowDest) {
+            switch ($flowDest->getFloElementOriginType()) {
+                case "bpmnActivity":
+                    $actUid = $flowDest->getFloElementOrigin();
+                    $flowsOrigin = \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid);
+
+                    foreach ($flowsOrigin as $flowOrigin) {
+                        switch ($flowOrigin->getFloElementDestType()) {
+                            case "bpmnActivity":
+                                $toActUid = $flowOrigin->getFloElementDest();
+                                $this->wp->removeRouteFromTo($actUid, $toActUid);
+                                break;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        parent::removeGateway($gatUid);
     }
 
 //    public function addFlow($data)

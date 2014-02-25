@@ -86,7 +86,7 @@ Feature: Files Manager Resources
 
   #Para que funcione este test, debe existir el archivo que se quiere subir
   Scenario: Post files
-    Given POST I want to upload the file "/home/daniel/test.txt" to path "public". Url to create prf_uid "project/1265557095225ff5c688f46031700471/file-manager" and updload "project/1265557095225ff5c688f46031700471/file-manager/upload"
+    Given POST I want to upload the file "/home/daniel/test.txt" to path "public". Url to create prf_uid "project/1265557095225ff5c688f46031700471/file-manager" and updload "project/1265557095225ff5c688f46031700471/file-manager"
 
   Scenario: Delete file
   Given that I want to delete a "public/test.txt"

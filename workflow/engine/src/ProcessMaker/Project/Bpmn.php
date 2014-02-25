@@ -500,6 +500,9 @@ class Bpmn extends Handler
             $gateway = GatewayPeer::retrieveByPK($gatUid);
             $gateway->delete();
 
+            // remove related object (flows)
+            Flow::removeAllRelated($gatUid);
+
             self::log("Remove Gateway Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
