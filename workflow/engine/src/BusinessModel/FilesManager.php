@@ -425,7 +425,7 @@ class FilesManager
                 $rsCriteria->next();
             }
             if ($path == ''){
-                throw new \Exception('invalid value specified for `prf_uid`.'));
+                throw new \Exception('invalid value specified for `prf_uid`.');
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
