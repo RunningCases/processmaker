@@ -21,7 +21,7 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        //return false;
+        return false;
         //cleaning DB
         foreach (self::$uids as $prjUid) {
             $bwap = Project\Adapter\BpmnWorkflow::load($prjUid);
@@ -346,37 +346,46 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
      */
     function testActivityToInclusiveGatewayToActivityFlowsMultiple($bwap)
     {
-        /*$actUid1 = $bwap->addActivity(array(
+        $actUid1 = $bwap->addActivity(array(
             "ACT_NAME" => "Activity #1",
-            "BOU_X" => 198,
-            "BOU_Y" => 56
+            "BOU_X" => 311,
+            "BOU_Y" => 26
         ));
         $actUid2 = $bwap->addActivity(array(
             "ACT_NAME" => "Activity #2",
-            "BOU_X" => 198,
-            "BOU_Y" => 250
+            "BOU_X" => 99,
+            "BOU_Y" => 200
+        ));
+        $actUid3 = $bwap->addActivity(array(
+            "ACT_NAME" => "Activity #3",
+            "BOU_X" => 310,
+            "BOU_Y" => 200
+        ));
+        $actUid4 = $bwap->addActivity(array(
+            "ACT_NAME" => "Activity #4",
+            "BOU_X" => 542,
+            "BOU_Y" => 200
         ));
         $gatUid = $bwap->addGateway(array(
             "GAT_NAME" => "Gateway #1",
             "GAT_TYPE" => "INCLUSIVE",
             "GAT_DIRECTION" => "DIVERGING",
-            "BOU_X" => 256,
-            "BOU_Y" => 163
+            "BOU_X" => 369,
+            "BOU_Y" => 123
         ));
 
-        $flowUid1 = $bwap->addFlow(array(
+        $bwap->addFlow(array(
             'FLO_TYPE' => 'SEQUENCE',
             'FLO_ELEMENT_ORIGIN' => $actUid1,
             'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnActivity',
             'FLO_ELEMENT_DEST' => $gatUid,
             'FLO_ELEMENT_DEST_TYPE' => 'bpmnGateway',
-            'FLO_X1' => 273,
-            'FLO_Y1' => 273,
-            'FLO_X2' => 163,
-            'FLO_Y2' => 163,
+            'FLO_X1' => 386,
+            'FLO_Y1' => 174,
+            'FLO_X2' => 206,
+            'FLO_Y2' => 206,
         ));
-
-        $flowUid1 = $bwap->addFlow(array(
+        $bwap->addFlow(array(
             'FLO_TYPE' => 'SEQUENCE',
             'FLO_ELEMENT_ORIGIN' => $gatUid,
             'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnGateway',
@@ -387,8 +396,109 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
             'FLO_X2' => 249,
             'FLO_Y2' => 249,
         ));
+        $bwap->addFlow(array(
+            'FLO_TYPE' => 'SEQUENCE',
+            'FLO_ELEMENT_ORIGIN' => $gatUid,
+            'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnGateway',
+            'FLO_ELEMENT_DEST' => $actUid3,
+            'FLO_ELEMENT_DEST_TYPE' => 'bpmnActivity',
+            'FLO_X1' => 386,
+            'FLO_Y1' => 174,
+            'FLO_X2' => 206,
+            'FLO_Y2' => 206,
+        ));
+        $bwap->addFlow(array(
+            'FLO_TYPE' => 'SEQUENCE',
+            'FLO_ELEMENT_ORIGIN' => $gatUid,
+            'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnGateway',
+            'FLO_ELEMENT_DEST' => $actUid4,
+            'FLO_ELEMENT_DEST_TYPE' => 'bpmnActivity',
+            'FLO_X1' => 386,
+            'FLO_Y1' => 617,
+            'FLO_X2' => 207,
+            'FLO_Y2' => 207,
+        ));
 
-        $bwap->mapBpmnFlowsToWorkflowRoutes();*/
+        $bwap->mapBpmnFlowsToWorkflowRoutes();
+
+        $this->assertCount(4, $bwap->getActivities());
+        $this->assertCount(1, $bwap->getGateways());
+        $this->assertCount(4, $bwap->getFlows());
+
+        $wp = Project\Workflow::load($bwap->getUid());
+
+        $this->assertCount(3, $wp->getRoutes());
+
+        return array($actUid2, $actUid3, $actUid4);
+    }
+
+    /**
+     * @depends testNew
+     * @depends testActivityToInclusiveGatewayToActivityFlowsMultiple
+     * @param \ProcessMaker\Project\Adapter\BpmnWorkflow $bwap
+     * @param array $activitiesUid
+     */
+    function testActivityToInclusiveGatewayToActivityFlowsMultipleJoin($bwap, $activitiesUid)
+    {
+        $gatUid = $bwap->addGateway(array(
+            "GAT_NAME" => "Gateway #2",
+            "GAT_TYPE" => "INCLUSIVE",
+            "GAT_DIRECTION" => "CONVERGING",
+            "BOU_X" => 369,
+            "BOU_Y" => 338
+        ));
+        $actUid5 = $bwap->addActivity(array(
+            "ACT_NAME" => "Activity #5",
+            "BOU_X" => 312,
+            "BOU_Y" => 464
+        ));
+        $bwap->addFlow(array(
+            'FLO_TYPE' => 'SEQUENCE',
+            'FLO_ELEMENT_ORIGIN' => $activitiesUid[0],
+            'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnActivity',
+            'FLO_ELEMENT_DEST' => $gatUid,
+            'FLO_ELEMENT_DEST_TYPE' => 'bpmnGateway',
+            'FLO_X1' => 174,
+            'FLO_Y1' => 365,
+            'FLO_X2' => 355,
+            'FLO_Y2' => 355,
+        ));
+        $bwap->addFlow(array(
+            'FLO_TYPE' => 'SEQUENCE',
+            'FLO_ELEMENT_ORIGIN' => $activitiesUid[1],
+            'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnActivity',
+            'FLO_ELEMENT_DEST' => $gatUid,
+            'FLO_ELEMENT_DEST_TYPE' => 'bpmnGateway',
+            'FLO_X1' => 385,
+            'FLO_Y1' => 382,
+            'FLO_X2' => 338,
+            'FLO_Y2' => 338,
+        ));
+        $bwap->addFlow(array(
+            'FLO_TYPE' => 'SEQUENCE',
+            'FLO_ELEMENT_ORIGIN' => $activitiesUid[2],
+            'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnActivity',
+            'FLO_ELEMENT_DEST' => $gatUid,
+            'FLO_ELEMENT_DEST_TYPE' => 'bpmnGateway',
+            'FLO_X1' => 617,
+            'FLO_Y1' => 398,
+            'FLO_X2' => 355,
+            'FLO_Y2' => 355,
+        ));
+
+        $bwap->addFlow(array(
+            'FLO_TYPE' => 'SEQUENCE',
+            'FLO_ELEMENT_ORIGIN' => $gatUid,
+            'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnGateway',
+            'FLO_ELEMENT_DEST' => $actUid5,
+            'FLO_ELEMENT_DEST_TYPE' => 'bpmnActivity',
+            'FLO_X1' => 382,
+            'FLO_Y1' => 387,
+            'FLO_X2' => 463,
+            'FLO_Y2' => 463,
+        ));
+
+        $bwap->mapBpmnFlowsToWorkflowRoutes();
     }
 }
 
