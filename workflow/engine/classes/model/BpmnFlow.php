@@ -16,22 +16,50 @@ require_once 'classes/model/om/BaseBpmnFlow.php';
  */
 class BpmnFlow extends BaseBpmnFlow
 {
+    public static function removeAllRelated($elementUid)
+    {
+        $c = new Criteria('workflow');
+
+        $c1 = $c->getNewCriterion(BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $elementUid);
+        $c2 = $c->getNewCriterion(BpmnFlowPeer::FLO_ELEMENT_DEST, $elementUid);
+
+        $c1->addOr($c2);
+        $c->add($c1);
+
+        $flows = BpmnFlowPeer::doSelect($c);
+
+        foreach ($flows as $flow) {
+            $flow->delete();
+        }
+    }
+
+
     /**
      * @param $field string coming from \BpmnFlowPeer::<FIELD_NAME>
      * @param $value string
      * @return \BpmnFlow|null
      */
-    public static function findOneBy($field, $value)
+    public static function findOneBy($field, $value = null)
     {
         $rows = self::findAllBy($field, $value);
 
         return empty($rows) ? null : $rows[0];
     }
 
-    public static function findAllBy($field, $value)
+    /**
+     * @param $field
+     * @param null $value
+     * @return \BpmnFlow[]
+     */
+    public static function findAllBy($field, $value = null)
     {
+        $field = is_array($field) ? $field : array($field => $value);
+
         $c = new Criteria('workflow');
-        $c->add($field, $value, Criteria::EQUAL);
+
+        foreach ($field as $key => $value) {
+            $c->add($key, $value, Criteria::EQUAL);
+        }
 
         return BpmnFlowPeer::doSelect($c);
     }
@@ -82,5 +110,36 @@ class BpmnFlow extends BaseBpmnFlow
 
         return $flow;
     }
+
+    /*public static function select($select, $where = array())
+    {
+        $data = array();
+
+        $c = new Criteria('workflow');
+        if ($select !== '*') {
+            if (is_array($select)) {
+                foreach ($select as $column) {
+                    $c->addSelectColumn($column);
+                }
+            } else {
+                $c->addSelectColumn($select);
+            }
+        }
+
+        if (! empty($where)) {
+            foreach ($where as $column => $value) {
+                $c->add($column, $value);
+            }
+        }
+
+        $rs = BpmnFlowPeer::doSelectRS($c);
+        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        while ($rs->next()) {
+            $data[] = $rs->getRow();
+        }
+
+        return $data;
+    }*/
 
 } // BpmnFlow
