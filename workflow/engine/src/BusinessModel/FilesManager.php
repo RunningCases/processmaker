@@ -336,7 +336,8 @@ class FilesManager
                                   'prf_type' => $oProcessFiles->getPrfType(),
                                   'prf_editable' => $sEditable,
                                   'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
-                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate());
+                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
+                                  'prf_content' => $content);
             return $oProcessFile;
         } catch (Exception $e) {
             throw $e;
