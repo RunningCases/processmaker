@@ -150,26 +150,26 @@ class BpmnWorkflow extends Project\Bpmn
 
     public function removeGateway($gatUid)
     {
-        $gatewayData = $this->getGateway($gatUid);
-        $flowsDest = \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_DEST, $gatUid);
+//        $gatewayData = $this->getGateway($gatUid);
+//        $flowsDest = \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_DEST, $gatUid);
 
-        foreach ($flowsDest as $flowDest) {
-            switch ($flowDest->getFloElementOriginType()) {
-                case "bpmnActivity":
-                    $actUid = $flowDest->getFloElementOrigin();
-                    $flowsOrigin = \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid);
-
-                    foreach ($flowsOrigin as $flowOrigin) {
-                        switch ($flowOrigin->getFloElementDestType()) {
-                            case "bpmnActivity":
-                                $toActUid = $flowOrigin->getFloElementDest();
-                                $this->wp->removeRouteFromTo($actUid, $toActUid);
-                                break;
-                        }
-                    }
-                    break;
-            }
-        }
+//        foreach ($flowsDest as $flowDest) {
+//            switch ($flowDest->getFloElementOriginType()) {
+//                case "bpmnActivity":
+//                    $actUid = $flowDest->getFloElementOrigin();
+//                    $flowsOrigin = \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid);
+//
+//                    foreach ($flowsOrigin as $flowOrigin) {
+//                        switch ($flowOrigin->getFloElementDestType()) {
+//                            case "bpmnActivity":
+//                                $toActUid = $flowOrigin->getFloElementDest();
+//                                $this->wp->removeRouteFromTo($actUid, $toActUid);
+//                                break;
+//                        }
+//                    }
+//                    break;
+//            }
+//        }
 
         parent::removeGateway($gatUid);
     }
@@ -297,6 +297,10 @@ class BpmnWorkflow extends Project\Bpmn
                             \BpmnFlowPeer::FLO_ELEMENT_ORIGIN => $gatUid,
                             \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnGateway"
                         ));
+
+                        if ($gatewayFlows > 0) {
+                            $this->wp->resetTaskRoutes($activity["ACT_UID"]);
+                        }
 
                         foreach ($gatewayFlows as $gatewayFlow) {
                             $gatewayFlow = $gatewayFlow->toArray();
