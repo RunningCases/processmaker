@@ -38,43 +38,65 @@
     {foreach from=$designerCacheFile item=file}
     <script type="text/javascript" src="/lib-dev/mafe/{$file}"></script>
     {/foreach}
+
+    <!-- tinyMCE -->
+    <script type="text/javascript" src="/js/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+
+    <!-- CodeMirror -->
+    <script type="text/javascript" src="/js/codemirror/lib/codemirror.js"></script>
+    <link rel="stylesheet" type="text/css" href="/js/codemirror/lib/codemirror.css"/>
+    <script type="text/javascript" src="/js/codemirror/mode/javascript/javascript.js"></script>
+
+    <script type="text/javascript" src="/js/codemirror/addon/edit/matchbrackets.js"></script>
+    <script type="text/javascript" src="/js/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script type="text/javascript" src="/js/codemirror/mode/xml/xml.js"></script>
+    <script type="text/javascript" src="/js/codemirror/mode/css/css.js"></script>
+    <script type="text/javascript" src="/js/codemirror/mode/clike/clike.js"></script>
+    <script type="text/javascript" src="/js/codemirror/mode/php/php.js"></script>
+
 {else}
 
-    <link rel="stylesheet" type="text/css" href="/lib/pmUI/pmui.css" />
-    <link rel="stylesheet" type="text/css" href="/lib/mafe/mafe.css" />
+    <link rel="stylesheet" type="text/css" href="/lib/css/big.css" />
+    <!--
+    <link rel="stylesheet" type="text/css" href="/lib/pmUI/pmui.min.css" />
+    <link rel="stylesheet" type="text/css" href="/lib/mafe/mafe.min.css" />
     <link rel="stylesheet" type="text/css" href="/lib/css/jquery.layout.css" />
     <link rel="stylesheet" type="text/css" href="/lib/css/jquery-ui-1.10.3.custom.min.css" />
+    !-->
     <!--<link rel="stylesheet" type="text/css" href="/lib/css/jquery.dataTables.css">-->
 
     <script type="text/javascript">
         var prj_uid = "{$prj_uid}";
         var credentials = "{$credentials}";
     </script>
+    <script type="text/javascript" src="/lib/js/big.js"></script>
+    <!--
     <script type="text/javascript" src="/lib/js/wz_jsgraphics.js"></script>
     <script type="text/javascript" src="/lib/js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="/lib/js/underscore-min.js"></script>
     <script type="text/javascript" src="/lib/js/jquery-ui-1.10.3.custom.min.js"></script>
     <script type="text/javascript" src="/lib/js/jquery.layout.min.js"></script>
     <script type="text/javascript" src="/lib/js/restclient.min.js"></script>
-    <!--<script type="text/javascript" src="/lib/js/jquery.dataTables.min.js"></script>-->
     <script type="text/javascript" src="/lib/pmUI/pmui.min.js"></script>
     <script type="text/javascript" src="/lib/mafe/mafe.min.js"></script>
     <script type="text/javascript" src="/lib/mafe/designer.min.js"></script>
+
+    <script type="text/javascript" src="/lib/js/tiny_mce.js"></script>
+
+    <script type="text/javascript" src="/js/codemirror/lib/codemirror.js"></script>
+    <script type="text/javascript" src="/js/codemirror/mode/javascript/javascript.js"></script>
+
+    <script type="text/javascript" src="/js/codemirror/addon/edit/matchbrackets.js"></script>
+    <script type="text/javascript" src="/js/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script type="text/javascript" src="/js/codemirror/mode/xml/xml.js"></script>
+    <script type="text/javascript" src="/js/codemirror/mode/css/css.js"></script>
+    <script type="text/javascript" src="/js/codemirror/mode/clike/clike.js"></script>
+    <script type="text/javascript" src="/js/codemirror/mode/php/php.js"></script>
+    <link rel="stylesheet" type="text/css" href="/js/codemirror/lib/codemirror.css"/>
+
+    !-->
+
+
 {/if}
 
-    <!-- tinyMCE -->
-    <script type="text/javascript" src="/js/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
 
-    <!-- CodeMirror -->
-	<script type="text/javascript" src="/js/codemirror/lib/codemirror.js"></script>
-	<link rel="stylesheet" type="text/css" href="/js/codemirror/lib/codemirror.css"/>
-	<script type="text/javascript" src="/js/codemirror/mode/javascript/javascript.js"></script>
-	
-	<script type="text/javascript" src="/js/codemirror/addon/edit/matchbrackets.js"></script>
-	<script type="text/javascript" src="/js/codemirror/mode/htmlmixed/htmlmixed.js"></script>
-	<script type="text/javascript" src="/js/codemirror/mode/xml/xml.js"></script>
-	<script type="text/javascript" src="/js/codemirror/mode/css/css.js"></script>
-	<script type="text/javascript" src="/js/codemirror/mode/clike/clike.js"></script>
-	<script type="text/javascript" src="/js/codemirror/mode/php/php.js"></script>
-	<link rel="stylesheet" type="text/css" href="/js/codemirror/doc/docs.css"/>
-	
