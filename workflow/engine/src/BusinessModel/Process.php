@@ -38,7 +38,9 @@ class Process
 
     private $formatFieldNameInUppercase = true;
 
-    private $arrayFieldNameForException = array();
+    private $arrayFieldNameForException = array(
+        "gridUid" => "GRID_UID"
+    );
 
     /**
      * Constructor of the class
@@ -176,6 +178,9 @@ class Process
                 }
             }
 
+            $arrayType1 = array("int", "integer", "float", "real", "double", "bool", "boolean", "string", "date", "hour", "datetime");
+            $arrayType2 = array("array", "object");
+
             foreach ($arrayData as $key => $value) {
                 $fieldName = $key;
                 $fieldValue = $value;
@@ -183,41 +188,63 @@ class Process
                 if (isset($arrayFieldDefinition[$fieldName])) {
                     $fieldNameAux = (isset($arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]]))? $arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]] : "";
 
-                    //empty
-                    if (!$arrayFieldDefinition[$fieldName]["empty"] && trim($fieldValue) . "" == "") {
-                        throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is empty")));
-                    }
+                    $arrayFieldDefinition[$fieldName]["type"] = strtolower($arrayFieldDefinition[$fieldName]["type"]);
 
-                    //defaultValues
-                    if (count($arrayFieldDefinition[$fieldName]["defaultValues"]) > 0 && !in_array($fieldValue, $arrayFieldDefinition[$fieldName]["defaultValues"])) {
-                        throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
-                    }
+                    $optionType = 0;
+                    $optionType = ($optionType == 0 && in_array($arrayFieldDefinition[$fieldName]["type"], $arrayType1))? 1 : $optionType;
+                    $optionType = ($optionType == 0 && in_array($arrayFieldDefinition[$fieldName]["type"], $arrayType2))? 2 : $optionType;
 
-                    //type
-                    if ($arrayFieldDefinition[$fieldName]["empty"] && $fieldValue . "" == "") {
-                        //
-                    } else {
-                        $eregDate = "[1-9]\d{3}\-(?:0[1-9]|1[012])\-(?:[0][1-9]|[12][0-9]|3[01])";
-                        $eregHour = "(?:[0-1]\d|2[0-3])\:(?:[0-5]\d)\:(?:[0-5]\d)";
-                        $eregDatetime = $eregDate . "\s" . $eregHour;
+                    switch ($optionType) {
+                        case 1:
+                            //empty
+                            if (!$arrayFieldDefinition[$fieldName]["empty"] && trim($fieldValue) . "" == "") {
+                                throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is empty")));
+                            }
 
-                        switch ($arrayFieldDefinition[$fieldName]["type"]) {
-                            case "date":
-                                if (!preg_match("/^" . $eregDate . "$/", $fieldValue)) {
-                                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                            //defaultValues
+                            if (count($arrayFieldDefinition[$fieldName]["defaultValues"]) > 0 && !in_array($fieldValue, $arrayFieldDefinition[$fieldName]["defaultValues"])) {
+                                throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                            }
+
+                            //type
+                            if ($arrayFieldDefinition[$fieldName]["empty"] && $fieldValue . "" == "") {
+                                //
+                            } else {
+                                $eregDate = "[1-9]\d{3}\-(?:0[1-9]|1[012])\-(?:[0][1-9]|[12][0-9]|3[01])";
+                                $eregHour = "(?:[0-1]\d|2[0-3])\:(?:[0-5]\d)\:(?:[0-5]\d)";
+                                $eregDatetime = $eregDate . "\s" . $eregHour;
+
+                                switch ($arrayFieldDefinition[$fieldName]["type"]) {
+                                    case "date":
+                                        if (!preg_match("/^" . $eregDate . "$/", $fieldValue)) {
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                        }
+                                        break;
+                                    case "hour":
+                                        if (!preg_match("/^" . $eregHour . "$/", $fieldValue)) {
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                        }
+                                        break;
+                                    case "datetime":
+                                        if (!preg_match("/^" . $eregDatetime . "$/", $fieldValue)) {
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                        }
+                                        break;
                                 }
-                                break;
-                            case "hour":
-                                if (!preg_match("/^" . $eregHour . "$/", $fieldValue)) {
-                                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
-                                }
-                                break;
-                            case "datetime":
-                                if (!preg_match("/^" . $eregDatetime . "$/", $fieldValue)) {
-                                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
-                                }
-                                break;
-                        }
+                            }
+                            break;
+                        case 2:
+                            //type
+                            switch ($arrayFieldDefinition[$fieldName]["type"]) {
+                                case "array":
+                                    if (!is_array($fieldValue)) {
+                                        if (!preg_match("/^\s*array\s*\(.*\)\s*$/", $fieldValue)) {
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is not array")));
+                                        }
+                                    }
+                                    break;
+                            }
+                            break;
                     }
                 }
             }
@@ -250,12 +277,12 @@ class Process
     }
 
     /**
-     * Verify if doesn't exist the Process in table PROCESS
+     * Verify if doesn't exists the Process in table PROCESS
      *
      * @param string $processUid            Unique id of Process
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if doesn't exist the Process in table PROCESS
+     * return void Throw exception if doesn't exists the Process in table PROCESS
      */
     public function throwExceptionIfNoExistsProcess($processUid, $fieldNameForException)
     {
@@ -273,12 +300,12 @@ class Process
     }
 
     /**
-     * Verify if doesn't exist the User in table USERS
+     * Verify if doesn't exists the User in table USERS
      *
      * @param string $userUid               Unique id of User
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if doesn't exist the User in table USERS
+     * return void Throw exception if doesn't exists the User in table USERS
      */
     public function throwExceptionIfNoExistsUser($userUid, $fieldNameForException)
     {
@@ -318,12 +345,12 @@ class Process
     }
 
     /**
-     * Verify if doesn't exist the Calendar Definition in table CALENDAR_DEFINITION
+     * Verify if doesn't exists the Calendar Definition in table CALENDAR_DEFINITION
      *
      * @param string $calendarDefinitionUid Unique id of Calendar Definition
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if doesn't exist the Calendar Definition in table CALENDAR_DEFINITION
+     * return void Throw exception if doesn't exists the Calendar Definition in table CALENDAR_DEFINITION
      */
     public function throwExceptionIfNotExistsCalendarDefinition($calendarDefinitionUid, $fieldNameForException)
     {
@@ -341,12 +368,12 @@ class Process
     }
 
     /**
-     * Verify if doesn't exist the Process Category in table PROCESS_CATEGORY
+     * Verify if doesn't exists the Process Category in table PROCESS_CATEGORY
      *
      * @param string $processCategoryUid    Unique id of Process Category
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if doesn't exist the Process Category in table PROCESS_CATEGORY
+     * return void Throw exception if doesn't exists the Process Category in table PROCESS_CATEGORY
      */
     public function throwExceptionIfNotExistsProcessCategory($processCategoryUid, $fieldNameForException)
     {
@@ -364,12 +391,12 @@ class Process
     }
 
     /**
-     * Verify if doesn't exist the PM Table in table ADDITIONAL_TABLES
+     * Verify if doesn't exists the PM Table in table ADDITIONAL_TABLES
      *
      * @param string $additionalTableUid    Unique id of PM Table
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if doesn't exist the PM Table in table ADDITIONAL_TABLES
+     * return void Throw exception if doesn't exists the PM Table in table ADDITIONAL_TABLES
      */
     public function throwExceptionIfNotExistsPmTable($additionalTableUid, $fieldNameForException)
     {
@@ -387,13 +414,13 @@ class Process
     }
 
     /**
-     * Verify if doesn't exist the Task in table TASK
+     * Verify if doesn't exists the Task in table TASK
      *
      * @param string $processUid            Unique id of Process
      * @param string $taskUid               Unique id of Task
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if doesn't exist the Task in table TASK
+     * return void Throw exception if doesn't exists the Task in table TASK
      */
     public function throwExceptionIfNotExistsTask($processUid, $taskUid, $fieldNameForException)
     {
@@ -421,13 +448,13 @@ class Process
     }
 
     /**
-     * Verify if doesn't exist the Template in Routing Screen Template
+     * Verify if doesn't exists the Template in Routing Screen Template
      *
      * @param string $processUid            Unique id of Process
      * @param string $fileName              Name template
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if doesn't exist the Template in Routing Screen Template
+     * return void Throw exception if doesn't exists the Template in Routing Screen Template
      */
     public function throwExceptionIfNotExistsRoutingScreenTemplate($processUid, $fileName, $fieldNameForException)
     {
@@ -446,40 +473,6 @@ class Process
 
             if ($flag == 0) {
                 $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $fileName), "The routing screen template with {0}: {1}, does not exist");
-
-                throw (new \Exception($msg));
-            }
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Verify if doesn't exist the Trigger in table TRIGGERS
-     *
-     * @param string $processUid            Unique id of Process
-     * @param string $triggerUid            Unique id of Trigger
-     * @param string $fieldNameForException Field name for the exception
-     *
-     * return void Throw exception if doesn't exist the Trigger in table TRIGGERS
-     */
-    public function throwExceptionIfNotExistsTrigger($processUid, $triggerUid, $fieldNameForException)
-    {
-        try {
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\TriggersPeer::TRI_UID);
-
-            if ($processUid != "") {
-                $criteria->add(\TriggersPeer::PRO_UID, $processUid, \Criteria::EQUAL);
-            }
-
-            $criteria->add(\TriggersPeer::TRI_UID, $triggerUid, \Criteria::EQUAL);
-
-            $rsCriteria = \TriggersPeer::doSelectRS($criteria);
-
-            if (!$rsCriteria->next()) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $triggerUid), "The trigger with {0}: {1}, does not exist");
 
                 throw (new \Exception($msg));
             }
@@ -528,20 +521,22 @@ class Process
                 $this->throwExceptionIfNotExistsRoutingScreenTemplate($processUid, $arrayData["PRO_DERIVATION_SCREEN_TPL"], $this->arrayFieldNameForException["processDerivationScreenTpl"]);
             }
 
+            $trigger = new \BusinessModel\Trigger();
+
             if (isset($arrayData["PRO_TRI_DELETED"]) && $arrayData["PRO_TRI_DELETED"] . "" != "") {
-                $this->throwExceptionIfNotExistsTrigger($processUid, $arrayData["PRO_TRI_DELETED"], $this->arrayFieldNameForException["processTriDeleted"]);
+                $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_DELETED"], $processUid, $this->arrayFieldNameForException["processTriDeleted"]);
             }
 
             if (isset($arrayData["PRO_TRI_CANCELED"]) && $arrayData["PRO_TRI_CANCELED"] . "" != "") {
-                $this->throwExceptionIfNotExistsTrigger($processUid, $arrayData["PRO_TRI_CANCELED"], $this->arrayFieldNameForException["processTriCanceled"]);
+                $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_CANCELED"], $processUid, $this->arrayFieldNameForException["processTriCanceled"]);
             }
 
             if (isset($arrayData["PRO_TRI_PAUSED"]) && $arrayData["PRO_TRI_PAUSED"] . "" != "") {
-                $this->throwExceptionIfNotExistsTrigger($processUid, $arrayData["PRO_TRI_PAUSED"], $this->arrayFieldNameForException["processTriPaused"]);
+                $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_PAUSED"], $processUid, $this->arrayFieldNameForException["processTriPaused"]);
             }
 
             if (isset($arrayData["PRO_TRI_REASSIGNED"]) && $arrayData["PRO_TRI_REASSIGNED"] . "" != "") {
-                $this->throwExceptionIfNotExistsTrigger($processUid, $arrayData["PRO_TRI_REASSIGNED"], $this->arrayFieldNameForException["processTriReassigned"]);
+                $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_REASSIGNED"], $processUid, $this->arrayFieldNameForException["processTriReassigned"]);
             }
 
             if (isset($arrayData["PRO_PARENT"])) {
@@ -1507,6 +1502,146 @@ class Process
 
             //Return
             return $arrayFieldPk;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get data of a Variable from a record
+     *
+     * @param array $record Record
+     *
+     * return array Return an array with data Variable
+     */
+    public function getVariableDataFromRecord($record)
+    {
+        try {
+            return array(
+                $this->getFieldNameByFormatFieldName("VAR_NAME")  => trim($record["name"]),
+                $this->getFieldNameByFormatFieldName("VAR_LABEL") => trim($record["label"]),
+                $this->getFieldNameByFormatFieldName("VAR_TYPE")  => trim($record["type"])
+            );
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get Variables of a Process/Grid
+     *
+     * @param string $option     Option (GRID, GRIDVARS, ALL)
+     * @param string $processUid Unique id of Process
+     * @param string $gridUid    Unique id of Grid (DynaForm)
+     *
+     * return array Return an array with Variables of a Process/Grid
+     */
+    public function getVariables($option, $processUid, $gridUid = "")
+    {
+        try {
+            $arrayVariable = array();
+
+            //Verify data
+            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+
+            //Get data
+            switch ($option) {
+                case "GRID":
+                    \G::LoadClass("xmlfield_InputPM");
+
+                    $arrayVar = getGridsVars($processUid);
+
+                    foreach ($arrayVar as $key => $value) {
+                        $arrayVariableAux = $this->getVariableDataFromRecord(array("name" => $value["sName"], "label" => "[ " . \G::LoadTranslation("ID_GRID") . " ]", "type" => "grid"));
+
+                        $arrayVariable[] = array_merge($arrayVariableAux, array($this->getFieldNameByFormatFieldName("GRID_UID") => $value["sXmlForm"]));
+                    }
+                    break;
+                case "GRIDVARS":
+                    //Verify data
+                    $dynaForm = new \BusinessModel\DynaForm();
+
+                    $dynaForm->throwExceptionIfNotExistsDynaForm($gridUid, $processUid, $this->arrayFieldNameForException["gridUid"]);
+                    $dynaForm->throwExceptionIfNotIsGridDynaForm($gridUid, $this->arrayFieldNameForException["gridUid"]);
+
+                    //Get data
+                    $file = PATH_DYNAFORM . $processUid . PATH_SEP . $gridUid . ".xml";
+
+                    if (file_exists($file) && filesize($file) > 0) {
+                        //Load DynaForm
+                        $dynaForm = new \Dynaform();
+
+                        $arrayDynaFormData = $dynaForm->Load($gridUid);
+
+                        $dynaFormFilename = $arrayDynaFormData["DYN_FILENAME"];
+
+                        //Fields
+                        $form = new \Form($dynaFormFilename, PATH_DYNAFORM, SYS_LANG);
+
+                        $arrayFieldName = array();
+
+                        if ($form->type == "grid") {
+                            foreach ($form->fields as $key => $value) {
+                                if (!in_array($key, $arrayFieldName)) {
+                                    $arrayVariable[] = $this->getVariableDataFromRecord(array("name" => $key, "label" => $value->label, "type" => $value->type));
+                                    $arrayFieldName[] = $key;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    //ALL
+                    \G::LoadClass("xmlfield_InputPM");
+
+                    $arrayVar = getDynaformsVars($processUid);
+
+                    foreach ($arrayVar as $key => $value) {
+                        $arrayVariable[] = $this->getVariableDataFromRecord(array("name" => $value["sName"], "label" => $value["sLabel"], "type" => $value["sType"]));
+                    }
+                    break;
+            }
+
+            //Return
+            return $arrayVariable;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get all Libraries
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return an array with all Libraries
+     */
+    public function getLibraries($processUid)
+    {
+        try {
+            $arrayLibrary = array();
+
+            //Verify data
+            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+
+            //Get data
+            \G::LoadClass("triggerLibrary");
+
+            $triggerWizard = new \BusinessModel\TriggerWizard();
+            $triggerWizard->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+            $triggerWizard->setArrayFieldNameForException($this->arrayFieldNameForException);
+
+            $triggerLibrary = \triggerLibrary::getSingleton();
+            $library = $triggerLibrary->getRegisteredClasses();
+
+            foreach ($library as $key => $value) {
+                $libraryName = (preg_match("/^class\.?(.*)\.pmFunctions\.php$/", $key, $arrayMatch))? ((isset($arrayMatch[1]) && $arrayMatch[1] != "")? $arrayMatch[1] : "pmFunctions") : $key;
+
+                $arrayLibrary[] = $triggerWizard->getLibrary($libraryName);
+            }
+
+            //Return
+            return $arrayLibrary;
         } catch (\Exception $e) {
             throw $e;
         }

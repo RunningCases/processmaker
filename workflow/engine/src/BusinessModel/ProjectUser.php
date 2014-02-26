@@ -81,10 +81,11 @@ class ProjectUser
             $exclude = array("");
             for ($i = 0; $i<=count($aUsers)-1; $i++) {
                 if (!in_array(trim($aUsers[$i]["usr_uid"]) ,$exclude)) {
-                    $aUsersGroups[] = $aUsers[$i]; $exclude[] = trim($aUsers[$i]["usr_uid"]);
+                    $aUsersGroups[] = $aUsers[$i];
+                    $exclude[] = trim($aUsers[$i]["usr_uid"]);
                 }
             }
-        return $aUsersGroups;
+            return $aUsersGroups;
         } catch (Exception $e) {
             throw $e;
         }
@@ -177,7 +178,7 @@ class ProjectUser
             \G::LoadClass( 'case' );
             $oCase = new \Cases();
             $startTasks = $oCase->getStartCases($sUserUID);
-            if (sizeof($startTasks) > 1){
+            if (sizeof($startTasks) > 1) {
                 foreach ($startTasks as $task) {
                     if ((isset( $task['pro_uid'] )) && ($task['pro_uid'] == $sProcessUID)) {
                         $taskValue = explode( '(', $task['value'] );

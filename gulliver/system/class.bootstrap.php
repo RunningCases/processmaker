@@ -1083,6 +1083,23 @@ class Bootstrap
      */
     public function dispatchApiService($uri, $version = '1.0')
     {
+        // to handle a request with "OPTIONS" method
+
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, HEADERS');
+            header('Access-Control-Allow-Headers: authorization, content-type');
+            header("Access-Control-Allow-Credentials", "false");
+            header('Access-Control-Max-Age: 60');
+            die();
+        }
+
+        /*
+         * Enable this header to allow "Cross Domain AJAX" requests;
+         * This works because processmaker is handling correctly requests with method 'OPTIONS'
+         * that automatically is sent by a client using XmlHttpRequest or similar.
+         */
+        header('Access-Control-Allow-Origin: *');
+
         /*
          * $servicesDir contains directory where Services Classes are allocated
          */
@@ -1132,9 +1149,12 @@ class Bootstrap
         // Setting default OAuth Client id, for local PM Web Designer
         \Services\Api\OAuth2\Server::setPmClientId($pmOauthClientId);
 
-        $rest->setSupportedFormats('JsonFormat', 'XmlFormat');
+        require_once PATH_CORE . "src/Extension/Restler/UploadFormat.php";
+        //require_once PATH_CORE
+
+        //$rest->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');
         //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
-        $rest->setOverridingFormats('HtmlFormat', 'JsonFormat', 'UploadFormat');
+        $rest->setOverridingFormats('JsonFormat', 'UploadFormat');
 
         // Override $_SERVER['REQUEST_URI'] to Restler handles the current url correctly
 

@@ -907,7 +907,7 @@ class Model
     private static function getChecksum($data)
     {
         if (! is_string($data)) {
-            $data = var_export($data, true);
+            $data = ksort(var_export($data, true));
         }
 
         return sha1($data);

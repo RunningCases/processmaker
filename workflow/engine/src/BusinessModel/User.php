@@ -12,7 +12,7 @@ class User
      * return id
      */
     public function createUser($aData)
-    { 
+    {
         require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
         $this->userObj = new \RbacUsers();
         if (class_exists('PMPluginRegistry')) {
@@ -196,7 +196,7 @@ class User
         $this->aUserInfo[$sSystem]['PERMISSIONS'] = $fieldsPermissions;
         return $fieldsPermissions;
     }
- 
+
     /**
      * Create User
      *
@@ -211,6 +211,36 @@ class User
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
             $form = $arrayData;
+            if ($form['USR_REPLACED_BY'] != '') {
+                $oReplacedBy = \UsersPeer::retrieveByPK($form['USR_REPLACED_BY']);
+                if (is_null($oReplacedBy)) {
+                    throw new \Exception('`usr_replaced_by`:'.$form['USR_REPLACED_BY'].' '.\G::LoadTranslation('ID_AUTHENTICATION_SOURCE_INVALID'));
+                }
+            }
+            if ($form['USR_COUNTRY'] != '') {
+                $oCountry = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
+                if (is_null($oCountry)) {
+                    throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
+                }
+            }
+            if ($form['USR_CITY'] != '') {
+                $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
+                if (is_null($oCity)) {
+                    throw new \Exception('invalid value for `usr_city`: '.$form['USR_CITY']);
+                }
+            }
+            if ($form['USR_LOCATION'] != '') {
+                $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
+                if (is_null($oLocation)) {
+                    throw new \Exception('invalid value for `usr_location`: '.$form['USR_LOCATION']);
+                }
+            }
+            if ($form['USR_COUNTRY'] != '') {
+                $oReplacedBy = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
+                if (is_null($oReplacedBy)) {
+                    throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
+                }
+            }
             if (isset($arrayData['USR_UID'])) {
                 $form['USR_UID'] = $arrayData['USR_UID'];
             } else {
@@ -255,10 +285,14 @@ class User
             } else {
                 $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
             }
-            if (!filter_var($form['USR_EMAIL'], FILTER_VALIDATE_EMAIL)) {
-                throw new \Exception('`usr_email`. '.\G::LoadTranslation('ID_INCORRECT_EMAIL'));
+            if ($form['USR_EMAIL'] == '') {
+                throw new \Exception('invalid value specified for `usr_email`, can`t be null.');
             } else {
-                $aData['USR_EMAIL'] = $form['USR_EMAIL'];
+                if (!filter_var($form['USR_EMAIL'], FILTER_VALIDATE_EMAIL)) {
+                    throw new \Exception('`usr_email`. '.\G::LoadTranslation('ID_INCORRECT_EMAIL'));
+                } else {
+                    $aData['USR_EMAIL'] = $form['USR_EMAIL'];
+                }
             }
             if ($form['USR_DUE_DATE'] == '') {
                 throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
@@ -280,24 +314,28 @@ class User
             $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
             $statusWF = $form['USR_STATUS'];
             if ($form['USR_STATUS'] == '') {
-                throw new \Exception('`usr_status`. '.\G::LoadTranslation('ID_SOME_FIELDS_REQUIRED'));
+                throw new \Exception('invalid value specified for `usr_status`, can`t be null');
             } else {
                 if ($form['USR_STATUS'] == 'ACTIVE' || $form['USR_STATUS'] == 'INACTIVE' || $form['USR_STATUS'] == 'VACATION') {
                     $aData['USR_STATUS'] = $form['USR_STATUS'];
                 } else {
-                    throw new \Exception('`usr_status`. Invalid value for field.');
+                    throw new \Exception('`usr_status`. Invalid value for status field.');
                 }
             }
-            $oCriteria = new \Criteria('rbac');
-            $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
-            $oDataset = \RolesPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            $aRow = $oDataset->getRow();
-            if ($oDataset->getRow()){
-                $aData['USR_ROLE'] = $form['USR_ROLE'];
+            if ($form['USR_ROLE'] == '') {
+                throw new \Exception('invalid value specified for `usr_role`, can`t be null');
             } else {
-                throw new \Exception('`usr_role`. Invalid value for field.');
+                $oCriteria = new \Criteria('rbac');
+                $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
+                $oDataset = \RolesPeer::doSelectRS($oCriteria);
+                $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                $oDataset->next();
+                $aRow = $oDataset->getRow();
+                if ($oDataset->getRow()) {
+                    $aData['USR_ROLE'] = $form['USR_ROLE'];
+                } else {
+                    throw new \Exception('`usr_role`. Invalid value for role field.');
+                }
             }
             try {
                 if ($aData['USR_STATUS'] == 'ACTIVE') {
@@ -308,7 +346,7 @@ class User
                 }
                 $sUserUID = $this->createUser($aData);
                 if ($form['USR_ROLE'] != '') {
-                   $this->assignRoleToUser($sUserUID, $form['USR_ROLE']);
+                    $this->assignRoleToUser($sUserUID, $form['USR_ROLE']);
                 }
             } catch(Exception $oError) {
                 throw new \Exception($oError->getMessage());
@@ -325,18 +363,6 @@ class User
             $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
             $oUser = new \Users();
             $oUser -> create( $aData );
-            // comment photos files
-            /*
-            if ($_FILES['USR_PHOTO']['error'] != 1) {
-                //print (PATH_IMAGES_ENVIRONMENT_USERS);
-                if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
-                    \G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS, $sUserUID . '.gif');
-                }
-            } else {
-                $result->success = false;
-                $result->fileError = true;
-                throw new \Exception($oError->$result);
-            }*/
             if ((isset($form['USR_CALENDAR']))) {
                 //Save Calendar ID for this user
                 \G::LoadClass("calendar");
@@ -367,13 +393,19 @@ class User
             $form = $arrayData;
             $countPermission = 0;
             $permission = $this->loadUserRolePermission($RBAC->sSystem, $usrLoggedUid);
-            foreach($permission as $key => $value) {
+            foreach ($permission as $key => $value) {
                 if ($value["PER_CODE"] == 'PM_USERS') {
                     $countPermission+=1;
                 }
             }
             if ($countPermission != 1) {
-                throw new \Exception('This user: '.$usrLoggedUid. ', can`t update the data.');    
+                throw new \Exception('This user: '.$usrLoggedUid. ', can`t update the data.');
+            }
+            $criteria = new \Criteria();
+            $criteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+            $criteria->add(\UsersPeer::USR_USERNAME, utf8_encode($arrayData['USR_USERNAME']));
+            if (\UsersPeer::doCount($criteria) > 0) {
+                throw new \Exception('`usr_username`. '.\G::LoadTranslation('ID_USERNAME_ALREADY_EXISTS', array('USER_ID' => $arrayData['USR_USERNAME'])));
             }
             if (isset($usrUid)) {
                 $form['USR_UID'] = $usrUid;
@@ -385,12 +417,6 @@ class User
             }
             if ($form['USR_NEW_PASS'] != '') {
                 $form['USR_PASSWORD'] = md5($form['USR_NEW_PASS']);
-            }
-            if (!isset($form['USR_CITY'])) {
-                $form['USR_CITY'] = '';
-            }
-            if (!isset($form['USR_LOCATION'])) {
-                $form['USR_LOCATION'] = '';
             }
             if (!isset($form['USR_AUTH_USER_DN'])) {
                 $form['USR_AUTH_USER_DN'] = '';
@@ -489,7 +515,6 @@ class User
                 }
             }
             if ($form['USR_DUE_DATE'] != '') {
-//                throw new \Exception('`usr_due_date`. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
                 $dueDate = explode("-", $form['USR_DUE_DATE']);
                 if (ctype_digit($dueDate[0])) {
                     if (checkdate($dueDate[1], $dueDate[2], $dueDate[0]) == false) {
@@ -512,7 +537,7 @@ class User
                 $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                 $oDataset->next();
                 $aRow = $oDataset->getRow();
-                if ($oDataset->getRow()){
+                if ($oDataset->getRow()) {
                     $aData['USR_ROLE'] = $form['USR_ROLE'];
                 } else {
                     throw new \Exception('`usr_role`. Invalid value for field.');
@@ -521,9 +546,32 @@ class User
             } else {
                 $this->updateUser($aData);
             }
-            $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
-            $aData['USR_CITY'] = $form['USR_CITY'];
-            $aData['USR_LOCATION'] = $form['USR_LOCATION'];
+            if ($form['USR_COUNTRY'] != '') {
+                $oReplacedBy = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
+                if (is_null($oReplacedBy)) {
+                        throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
+                } else {
+                    $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
+                    $aData['USR_CITY'] = '';
+                    $aData['USR_LOCATION'] = '';
+                }
+            }
+            if ($form['USR_CITY'] != '') {
+                $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
+                if (is_null($oCity)) {
+                    throw new \Exception('invalid value for `usr_city`: '.$form['USR_CITY']);
+                } else {
+                    $aData['USR_CITY'] = $form['USR_CITY'];
+                }
+            }
+            if ($form['USR_LOCATION'] != '') {
+                $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
+                if (is_null($oLocation)) {
+                        throw new \Exception('invalid value for `usr_location`: '.$form['USR_LOCATION']);
+                } else {
+                    $aData['USR_LOCATION'] = $form['USR_LOCATION'];
+                }
+            }
             $aData['USR_ADDRESS'] = $form['USR_ADDRESS'];
             $aData['USR_PHONE'] = $form['USR_PHONE'];
             $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
@@ -531,8 +579,13 @@ class User
             if ($form['USR_ROLE'] != '') {
                 $aData['USR_ROLE'] = $form['USR_ROLE'];
             }
-            if (isset($form['USR_REPLACED_BY'])) {
-                $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+            if ($form['USR_REPLACED_BY'] != '') {
+                $oReplacedBy = \UsersPeer::retrieveByPK($form['USR_REPLACED_BY']);
+                if (is_null($oReplacedBy)) {
+                    throw new \Exception('`usr_replaced_by`:'.$form['USR_REPLACED_BY'].' '.\G::LoadTranslation('ID_AUTHENTICATION_SOURCE_INVALID'));
+                } else {
+                    $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+                }
             }
             if (isset($form['USR_AUTH_USER_DN'])) {
                 $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
@@ -540,28 +593,6 @@ class User
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $oUser = new \Users();
             $oUser->update($aData);
-            // photo file comment
-            /*
-            if ($_FILES['USR_PHOTO']['error'] != 1) {
-                if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
-                    $aAux = explode('.', $_FILES['USR_PHOTO']['name']);
-                    \G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS, $aData['USR_UID'] . '.' . $aAux[1]);
-                    \G::resizeImage(PATH_IMAGES_ENVIRONMENT_USERS . $aData['USR_UID'] . '.' . $aAux[1], 96, 96, PATH_IMAGES_ENVIRONMENT_USERS . $aData['USR_UID'] . '.gif');
-                }
-            } else {
-                $result->success = false;
-                $result->fileError = true;
-                throw new \Exception($result);
-            }*/
-            /* Saving preferences comment */
-            /*$def_lang = $form['PREF_DEFAULT_LANG'];
-            $def_menu = $form['PREF_DEFAULT_MENUSELECTED'];
-            $def_cases_menu = isset($form['PREF_DEFAULT_CASES_MENUSELECTED']) ? $form['PREF_DEFAULT_CASES_MENUSELECTED'] : '';
-            \G::loadClass('configuration');
-            $oConf = new \Configurations();
-            $aConf = Array('DEFAULT_LANG' => $def_lang, 'DEFAULT_MENU' => $def_menu, 'DEFAULT_CASES_MENU' => $def_cases_menu);
-            $oConf->aConfig = $aConf;
-            $oConf->saveConfig('USER_PREFERENCES', '', '', $usrLoggedUid);*/
             $oCriteria = $this->getUser($usrUid);
             return $oCriteria;
         } catch (\Exception $e) {
@@ -661,20 +692,21 @@ class User
                 if ($start < 0) {
                     throw (new \Exception( 'invalid value specified for `start`.'));
                 } else {
-                    $oCriteria->setOffset( $start );
+                    $oCriteria->setOffset($start);
                 }
             }
-            if (isset($limit)) {
+            if ($limit != '') {
                 if ($limit < 0) {
                     throw (new \Exception( 'invalid value specified for `limit`.'));
                 } else {
                     if ($limit == 0) {
-                        return $aUsers;
+                        return $aUserInfo;
                     } else {
-                        $oCriteria->setLimit( $limit );
+                        $oCriteria->setLimit($limit);
                     }
                 }
             }
+            $oCriteria->add(\UsersPeer::USR_STATUS, 'CLOSED', \Criteria::ALT_NOT_EQUAL);
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             while ($oDataset->next()) {
@@ -711,6 +743,7 @@ class User
                 $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
             }
             $oCriteria->add(\UsersPeer::USR_UID, $userUid);
+            $oCriteria->add(\UsersPeer::USR_STATUS, 'CLOSED', \Criteria::ALT_NOT_EQUAL);
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             while ($oDataset->next()) {
@@ -720,6 +753,31 @@ class User
             }
             //Return
             return $aUserInfo;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Upload image User
+     *
+     * @param string $userUid Unique id of User
+     *
+     */
+    public function uploadImage($userUid)
+    {
+        try {
+            if ($_FILES['USR_PHOTO']['error'] != 1) {
+                if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
+                    $aAux = explode('.', $_FILES['USR_PHOTO']['name']);
+                    \G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS, $userUid . '.' . $aAux[1]);
+                    \G::resizeImage(PATH_IMAGES_ENVIRONMENT_USERS . $userUid . '.' . $aAux[1], 96, 96, PATH_IMAGES_ENVIRONMENT_USERS . $userUid . '.gif');
+                }
+            } else {
+                $result->success = false;
+                $result->fileError = true;
+                throw (new \Exception($result));
+            }
         } catch (\Exception $e) {
             throw $e;
         }

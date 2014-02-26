@@ -132,9 +132,13 @@ if (file_exists($requestFile)) {
             $ext_file = "application/octet-stream";
         } elseif ($ext_file == "tar") {
             $ext_file = "application/x-tar";
+        } elseif ($ext_file == "woff") {
+            $ext_file = "application/font-woff";
+        } elseif ($ext_file == "js") {
+            $ext_file = "text/javascript";
         } elseif ($ext_file=="css") {
             //may this line be innecesary, all the .css are been generated at run time
-            $ext_file = 'css/'.$ext_file;
+            $ext_file = 'text/css';
         } else {
             $ext_file = "application/octet-stream";
         }
@@ -273,7 +277,7 @@ define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/downlo
 try {
     Bootstrap::initVendors();
     $config = Bootstrap::getSystemConfiguration();
-    
+
     // starting session
     if (isset($config['session.gc_maxlifetime'])) {
         $timelife = $config['session.gc_maxlifetime'];
@@ -884,20 +888,6 @@ try {
     $RBAC = &RBAC::getSingleton( PATH_DATA, session_id() );
     $RBAC->sSystem = 'PROCESSMAKER';
 
-
-//    if (\System::isDebugMode()) {
-//        $applicationAspectKernel = \Kernel\ApplicationAspectKernel::getInstance();
-//        $applicationAspectKernel->init(array(
-//            'debug' => true, // Use 'false' for production mode
-//            // Cache directory
-//            'cacheDir' => sys_get_temp_dir() . DIRECTORY_SEPARATOR, // Adjust this path if needed
-//            // Include paths restricts the directories where aspects should be applied, or empty for all source files
-//            'includePaths' => array(
-//                PATH_HOME . 'engine/src/'
-//            )
-//        ));
-//    }
-
     // define and send Headers for all pages
     if (! defined( 'EXECUTE_BY_CRON' )) {
         header( "Expires: " . gmdate( "D, d M Y H:i:s", mktime( 0, 0, 0, date( 'm' ), date( 'd' ) - 1, date( 'Y' ) ) ) . " GMT" );
@@ -1040,7 +1030,7 @@ try {
             //transactionLog($restConfig.PATH_DATA_SITE.SYS_TARGET); // ====> ??? this concat is very rare
 
             $RBAC->initRBAC();
-            
+
             Bootstrap::dispatchApiService(SYS_TARGET, API_VERSION);
         } else {
             //NewRelic Snippet - By JHL
@@ -1062,7 +1052,7 @@ try {
 } catch (Exception $e) {
     //g::pr($e->getTrace()); die;
     Bootstrap::renderTemplate('error.tpl', array(
-        'title' => 'ProcessMaker Bootstrap Exception', 
+        'title' => 'ProcessMaker Bootstrap Exception',
         'message' => nl2br($e->getMessage()),
         'exceptionClass' => get_class($e),
         'trace' => $e->getTrace()

@@ -257,22 +257,7 @@ class Task
                 $arrayProperty["TAS_SEND_LAST_EMAIL"] = (is_null($aTaskInfo["TAS_SEND_LAST_EMAIL"]))? "FALSE" : $aTaskInfo["TAS_SEND_LAST_EMAIL"];
             }
 
-            //Additional configuration
-            if (isset($arrayProperty["TAS_DEF_MESSAGE_TYPE"]) && isset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"])) {
-                //G::LoadClass("configuration");
-                require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.configuration.php");
-
-                $oConf = new \Configurations();
-                $oConf->aConfig = array("TAS_DEF_MESSAGE_TYPE" => $arrayProperty["TAS_DEF_MESSAGE_TYPE"], "TAS_DEF_MESSAGE_TEMPLATE" => $arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"]);
-
-                $oConf->saveConfig("TAS_EXTRA_PROPERTIES", $arrayProperty["TAS_UID"], "", "");
-
-                unset($arrayProperty["TAS_DEF_MESSAGE_TYPE"]);
-                unset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"]);
-            }
-
             //Validating TAS_ASSIGN_VARIABLE value
-
             if (!isset($arrayProperty["TAS_ASSIGN_TYPE"])) {
                 $derivateType = $task->kgetassigType($arrayProperty["PRO_UID"], $arrayProperty["TAS_UID"]);
 
@@ -283,13 +268,121 @@ class Task
                 }
             }
 
-            if ($arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE_EVALUATE") {
-                $arrayProperty["TAS_ASSIGN_TYPE"] = "SELF_SERVICE";
+            switch ($arrayProperty["TAS_ASSIGN_TYPE"]) {
+                case 'BALANCED':
+                case 'MANUAL':
+                case 'REPORT_TO':
+                    $this->unsetVar($arrayProperty, "TAS_ASSIGN_VARIABLE");
+                    $this->unsetVar($arrayProperty, "TAS_GROUP_VARIABLE");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIMEOUT");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME_UNIT");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TRIGGER_UID");
+                    break;
+                case 'EVALUATE':
+                    if (empty($arrayProperty["TAS_ASSIGN_VARIABLE"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
+                    }
+                    $this->unsetVar($arrayProperty, "TAS_GROUP_VARIABLE");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIMEOUT");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME_UNIT");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TRIGGER_UID");
+                    break;
+                case 'SELF_SERVICE':
+                case 'SELF_SERVICE_EVALUATE':
+                    if ($arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE_EVALUATE") {
+                        if (empty($arrayProperty["TAS_GROUP_VARIABLE"])) {
+                            throw (new \Exception("Invalid value specified for 'tas_group_variable'"));
+                        }
+                    } else {
+                        $this->unsetVar($arrayProperty, "TAS_GROUP_VARIABLE");
+                    }
+                    $arrayProperty["TAS_ASSIGN_TYPE"] = "SELF_SERVICE";
+                    if (empty($arrayProperty["TAS_SELFSERVICE_TIMEOUT"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_selfservice_timeout'"));
+                    }
+                    if (empty($arrayProperty["TAS_SELFSERVICE_TIME"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
+                    }
+                    if (empty($arrayProperty["TAS_SELFSERVICE_TRIGGER_UID"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_selfservice_trigger_uid'"));
+                    }
+                    if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
+                        $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
+                    }
 
-                if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
-                    $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
-                }
+                    if ($arrayProperty["TAS_SELFSERVICE_TIMEOUT"] != "1") {
+                        $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME");
+                        $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME_UNIT");
+                        $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TRIGGER_UID");
+                    }
+                    break;
             }
+
+            //Validating TAS_TRANSFER_FLY value
+            if ($arrayProperty["TAS_TRANSFER_FLY"] == "FALSE") {
+                if (!isset($arrayProperty["TAS_DURATION"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_duration'"));
+                }
+                $valuesTimeUnit = array('DAYS','HOURS');
+                if ((!isset($arrayProperty["TAS_TIMEUNIT"])) ||
+                    (!in_array($arrayProperty["TAS_TIMEUNIT"], $valuesTimeUnit))) {
+                    throw (new \Exception("Invalid value specified for 'tas_timeunit'"));
+                }
+                $valuesTypeDay = array('1','2','');
+                if ((!isset($arrayProperty["TAS_TYPE_DAY"])) ||
+                    (!in_array($arrayProperty["TAS_TYPE_DAY"], $valuesTypeDay))) {
+                    throw (new \Exception("Invalid value specified for 'tas_type_day'"));
+                }
+                if (!isset($arrayProperty["TAS_CALENDAR"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_calendar'"));
+                }
+            } else {
+                $this->unsetVar($arrayProperty, "TAS_DURATION");
+                $this->unsetVar($arrayProperty, "TAS_TIMEUNIT");
+                $this->unsetVar($arrayProperty, "TAS_TYPE_DAY");
+                $this->unsetVar($arrayProperty, "TAS_CALENDAR");
+            }
+
+            if ($arrayProperty["TAS_SEND_LAST_EMAIL"] == "TRUE") {
+                if (empty($arrayProperty["TAS_DEF_SUBJECT_MESSAGE"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_def_subject_message'"));
+                }
+                $valuesDefMessageType = array('template','text');
+                if ((!isset($arrayProperty["TAS_DEF_MESSAGE_TYPE"])) ||
+                    (!in_array($arrayProperty["TAS_DEF_MESSAGE_TYPE"], $valuesDefMessageType))) {
+                    throw (new \Exception("Invalid value specified for 'tas_def_message_type'"));
+                }
+                if ($arrayProperty["TAS_DEF_MESSAGE_TYPE"] == 'template') {
+                    if (empty($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_def_message_template'"));
+                    }
+                    $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE");
+                } else {
+                    if (empty($arrayProperty["TAS_DEF_MESSAGE"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_def_message'"));
+                    }
+                    $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE_TEMPLATE");
+                }
+                //Additional configuration
+                if (isset($arrayProperty["TAS_DEF_MESSAGE_TYPE"]) && isset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"])) {
+                    \G::LoadClass("configuration");
+                    $oConf = new \Configurations();
+                    $oConf->aConfig = array("TAS_DEF_MESSAGE_TYPE" => $arrayProperty["TAS_DEF_MESSAGE_TYPE"], "TAS_DEF_MESSAGE_TEMPLATE" => $arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"]);
+
+                    $oConf->saveConfig("TAS_EXTRA_PROPERTIES", $arrayProperty["TAS_UID"], "", "");
+
+                    unset($arrayProperty["TAS_DEF_MESSAGE_TYPE"]);
+                    unset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"]);
+                }
+            } else {
+                $this->unsetVar($arrayProperty, "TAS_DEF_SUBJECT_MESSAGE");
+                $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE_TYPE");
+                $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE");
+                $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE_TEMPLATE");
+            }
+
 
             $result = $task->update($arrayProperty);
 
@@ -651,12 +744,13 @@ class Task
      * @param string $filter
      * @param int    $start
      * @param int    $limit
+     * @param string $type
      *
      * return array
      *
      * @access public
      */
-    public function getTaskAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit)
+    public function getTaskAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
     {
         try {
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
@@ -698,11 +792,6 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
-            if (isset($limit)) {
-                if ($limit == 0) {
-                    return $aUsers;
-                }
-            }
             $totalCount = 0;
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
@@ -720,12 +809,6 @@ class Task
             $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
             $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
             $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            if ($start != '') {
-                $criteria->setOffset( $start );
-            }
-            if ($limit != '') {
-                $criteria->setLimit( $limit );
-            }
             if ($filter != '') {
                 $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
             }
@@ -749,14 +832,16 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
-                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'aas_lastname' => "",
-                                      'aas_username' => "",
-                                      'aas_type' => "group" );
+                    if ($type == '' || $type == 'group') {
+                        $aUsers[] = array('aas_uid' => $results['GRP_UID'],
+                                          'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          'aas_lastname' => "",
+                                          'aas_username' => "",
+                                          'aas_type' => "group" );
+                    }
                 }
             }
             $oCriteria = new \Criteria('workflow');
@@ -775,35 +860,38 @@ class Task
             $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
+            $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                if ($type == '' || $type == 'user') {
+                    $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
+                                      'aas_name' => $aRow['USR_FIRSTNAME'],
+                                      'aas_lastname' => $aRow['USR_LASTNAME'],
+                                      'aas_username' => $aRow['USR_USERNAME'],
+                                      'aas_type' => "user" );
+                }
+                $oDataset->next();
+            }
             if ($start) {
                 if ($start < 0) {
                     throw (new \Exception( 'invalid value specified for `start`.'));
-                } else {
-                    $oCriteria->setOffset( $start );
                 }
+            } else {
+                $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
                     throw (new \Exception( 'invalid value specified for `limit`.'));
                 } else {
                     if ($limit == 0) {
-                        return $aUsers;
-                    } else {
-                        $oCriteria->setLimit( $limit );
+                        return array();
                     }
                 }
+            } else {
+                $limit = 1000;
             }
-            $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
-                                  'aas_name' => $aRow['USR_FIRSTNAME'],
-                                  'aas_lastname' => $aRow['USR_LASTNAME'],
-                                  'aas_username' => $aRow['USR_USERNAME'],
-                                  'aas_type' => "user" );
-                $oDataset->next();
-            }
+            $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
         } catch (Exception $e) {
             throw $e;
@@ -818,12 +906,13 @@ class Task
      * @param string $filter
      * @param int    $start
      * @param int    $limit
+     * @param string $type
      *
      * return array
      *
      * @access public
      */
-    public function getTaskAvailableAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit)
+    public function getTaskAvailableAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
     {
         try {
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
@@ -862,11 +951,6 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
-            if (isset($limit)) {
-                if ($limit == 0) {
-                    return $aUsers;
-                }
-            }
             $totalCount = 0;
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
@@ -884,12 +968,6 @@ class Task
             $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
             $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
             $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            if ($start != '') {
-                $criteria->setOffset( $start );
-            }
-            if ($limit != '') {
-                $criteria->setLimit( $limit );
-            }
             if ($filter != '') {
                 $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
             }
@@ -913,14 +991,16 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
-                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'aas_lastname' => "",
-                                      'aas_username' => "",
-                                      'aas_type' => "group" );
+                    if ($type == '' || $type == 'group') {
+                        $aUsers[] = array('aas_uid' => $results['GRP_UID'],
+                                          'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          'aas_lastname' => "",
+                                          'aas_username' => "",
+                                          'aas_type' => "group" );
+                    }
                 }
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -935,35 +1015,38 @@ class Task
             }
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS2, \Criteria::NOT_IN);
+            $oDataset = \UsersPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                if ($type == '' || $type == 'user') {
+                    $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
+                                      'aas_name' => $aRow['USR_FIRSTNAME'],
+                                      'aas_lastname' => $aRow['USR_LASTNAME'],
+                                      'aas_username' => $aRow['USR_USERNAME'],
+                                      'aas_type' => "user" );
+                }
+                $oDataset->next();
+            }
             if ($start) {
                 if ($start < 0) {
                     throw (new \Exception( 'invalid value specified for `start`.'));
-                } else {
-                    $oCriteria->setOffset( $start );
                 }
+            } else {
+                $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
                     throw (new \Exception( 'invalid value specified for `limit`.'));
                 } else {
                     if ($limit == 0) {
-                        return $aUsers;
-                    } else {
-                        $oCriteria->setLimit( $limit );
+                        return array();
                     }
                 }
+            } else {
+                $limit = 1000;
             }
-            $oDataset = \UsersPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
-                                  'aas_name' => $aRow['USR_FIRSTNAME'],
-                                  'aas_lastname' => $aRow['USR_LASTNAME'],
-                                  'aas_username' => $aRow['USR_USERNAME'],
-                                  'aas_type' => "user" );
-                $oDataset->next();
-            }
+            $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
         } catch (Exception $e) {
             throw $e;
@@ -1229,12 +1312,16 @@ class Task
      *
      * @param string $sProcessUID {@min 32} {@max 32}
      * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
+     * @param string $type
      *
      * return array
      *
      * @access public
      */
-    public function getTaskAdhocAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit)
+    public function getTaskAdhocAssignees($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
     {
         try {
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
@@ -1276,11 +1363,6 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
-            if (isset($limit)) {
-                if ($limit == 0) {
-                    return $aUsers;
-                }
-            }
             $totalCount = 0;
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
@@ -1298,12 +1380,6 @@ class Task
             $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
             $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
             $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            if ($start != '') {
-                $criteria->setOffset( $start );
-            }
-            if ($limit != '') {
-                $criteria->setLimit( $limit );
-            }
             if ($filter != '') {
                 $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
             }
@@ -1327,14 +1403,16 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('ada_uid' => $results['GRP_UID'],
-                                      'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'ada_lastname' => "",
-                                      'ada_username' => "",
-                                      'ada_type' => "group" );
+                    if ($type == '' || $type == 'group') {
+                        $aUsers[] = array('ada_uid' => $results['GRP_UID'],
+                                          'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          'ada_lastname' => "",
+                                          'ada_username' => "",
+                                          'ada_type' => "group" );
+                    }
                 }
             }
             $oCriteria = new \Criteria('workflow');
@@ -1353,35 +1431,38 @@ class Task
             $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 2);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
+            $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                if ($type == '' || $type == 'user') {
+                    $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
+                                      'ada_name' => $aRow['USR_FIRSTNAME'],
+                                      'ada_lastname' => $aRow['USR_LASTNAME'],
+                                      'ada_username' => $aRow['USR_USERNAME'],
+                                      'ada_type' => "user" );
+                }
+                $oDataset->next();
+            }
             if ($start) {
                 if ($start < 0) {
                     throw (new \Exception( 'invalid value specified for `start`.'));
-                } else {
-                    $oCriteria->setOffset( $start );
                 }
+            } else {
+                $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
                     throw (new \Exception( 'invalid value specified for `limit`.'));
                 } else {
                     if ($limit == 0) {
-                        return $aUsers;
-                    } else {
-                        $oCriteria->setLimit( $limit );
+                        return array();
                     }
                 }
+            } else {
+                $limit = 1000;
             }
-            $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
-                                  'ada_name' => $aRow['USR_FIRSTNAME'],
-                                  'ada_lastname' => $aRow['USR_LASTNAME'],
-                                  'ada_username' => $aRow['USR_USERNAME'],
-                                  'ada_type' => "user" );
-                $oDataset->next();
-            }
+            $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
         } catch (Exception $e) {
             throw $e;
@@ -1393,17 +1474,22 @@ class Task
      *
      * @param string $sProcessUID {@min 32} {@max 32}
      * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
+     * @param string $type
      *
      * return array
      *
      * @access public
      */
-    public function getTaskAvailableAdhocAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit)
+    public function getTaskAvailableAdhocAssignee($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
     {
         try {
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
+            $aUsers = array();
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
                 throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
@@ -1412,8 +1498,8 @@ class Task
             if (is_null($oActivity)) {
                 throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' do not correspond to a registered activity'));
             }
+
             $iType = 2;
-            $aUsers = array();
             $oTasks = new \Tasks();
             $aAux = $oTasks->getGroupsOfTask($sTaskUID, $iType);
             $aUIDS1 = array();
@@ -1437,11 +1523,6 @@ class Task
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
             $groups = new \Groupwf();
-            if (isset($limit)) {
-                if ($limit == 0) {
-                    return $aUsers;
-                }
-            }
             $totalCount = 0;
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
@@ -1459,12 +1540,6 @@ class Task
             $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
             $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
             $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            if ($start != '') {
-                $criteria->setOffset( $start );
-            }
-            if ($limit != '') {
-                $criteria->setLimit( $limit );
-            }
             if ($filter != '') {
                 $criteria->add( \ContentPeer::CON_VALUE, '%' . $filter . '%', \Criteria::LIKE );
             }
@@ -1488,14 +1563,16 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('ada_uid' => $results['GRP_UID'],
-                                      'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'ada_lastname' => "",
-                                      'ada_username' => "",
-                                      'ada_type' => "group" );
+                    if ($type == '' || $type == 'group') {
+                        $aUsers[] = array('ada_uid' => $results['GRP_UID'],
+                                          'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          'ada_lastname' => "",
+                                          'ada_username' => "",
+                                          'ada_type' => "group" );
+                    }
                 }
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -1510,40 +1587,45 @@ class Task
             }
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS2, \Criteria::NOT_IN);
+            $oDataset = \UsersPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                if ($type == '' || $type == 'user') {
+                    $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
+                                      'ada_name' => $aRow['USR_FIRSTNAME'],
+                                      'ada_lastname' => $aRow['USR_LASTNAME'],
+                                      'ada_username' => $aRow['USR_USERNAME'],
+                                      'ada_type' => "user" );
+                }
+                $oDataset->next();
+            }
             if ($start) {
                 if ($start < 0) {
                     throw (new \Exception( 'invalid value specified for `start`.'));
-                } else {
-                    $oCriteria->setOffset( $start );
                 }
+            } else {
+                $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
                     throw (new \Exception( 'invalid value specified for `limit`.'));
                 } else {
                     if ($limit == 0) {
-                        return $aUsers;
-                    } else {
-                        $oCriteria->setLimit( $limit );
+                        return array();
                     }
                 }
+            } else {
+                $limit = 1000;
             }
-            $oDataset = \UsersPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $aUsers[] = array('ada_uid' => $aRow['USR_UID'],
-                                  'ada_name' => $aRow['USR_FIRSTNAME'],
-                                  'ada_lastname' => $aRow['USR_LASTNAME'],
-                                  'ada_username' => $aRow['USR_USERNAME'],
-                                  'ada_type' => "user" );
-                $oDataset->next();
-            }
+            $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
         } catch (Exception $e) {
             throw $e;
         }
     }
+
+
 
     /**
      * Return a single Adhoc user or group assigned to an activity
@@ -1808,7 +1890,8 @@ class Task
      *
      * @return string
      */
-    public function validateProUid ($pro_uid) {
+    public function validateProUid ($pro_uid)
+    {
         $pro_uid = trim($pro_uid);
         if ($pro_uid == '') {
             throw (new \Exception("The project with prj_uid: '', does not exist."));
@@ -1829,7 +1912,8 @@ class Task
      *
      * @return string
      */
-    public function validateActUid($act_uid) {
+    public function validateActUid($act_uid)
+    {
         $act_uid = trim($act_uid);
         if ($act_uid == '') {
             throw (new \Exception("The activity with act_uid: '', does not exist."));
@@ -1839,6 +1923,40 @@ class Task
             throw (new \Exception("The activity with act_uid: '$act_uid', does not exist."));
         }
         return $act_uid;
+    }
+
+    /**
+     * @var array $display_array. array of groups and users
+     * @var int $page. start
+     * @var int $show_per_page. limit
+     *
+     * @return array
+     */
+    public function arrayPagination($display_array, $page, $show_per_page)
+    {
+        $page = $page + 1;
+        $show_per_page = $show_per_page -1;
+        $start = ($page - 1) * ($show_per_page + 1);
+        $offset = $show_per_page + 1;
+        $outArray = array_slice($display_array, $start, $offset);
+        return $outArray;
+    }
+
+    /**
+     * Unset variable for array
+     * @var array $array. Array base
+     * @var string $variable. name for variable
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function unsetVar(&$array, $variable)
+    {
+        if (isset($array[$variable])) {
+            unset($array[$variable]);
+        }
     }
 }
 

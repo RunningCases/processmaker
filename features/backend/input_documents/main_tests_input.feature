@@ -58,6 +58,23 @@ Feature: Input Documents Main Tests
             | Create with special characters in inp doc tags                       | 14414793652a5d718b65590036026581 | 13                | My InputDocument13                    | My InputDocument13 DESCRIPTION       | REAL                 | ORIGINAL            | PRIVATE              | 1                    |                           | INPU455 @##$$³¤¤        |
 
  
+    Scenario: Create new Input Documents with same name
+        Given POST this data:
+        """
+        {
+            "inp_doc_title": "My InputDocument1",
+            "inp_doc_description": "My InputDocument2 DESCRIPTION",
+            "inp_doc_form_needed": "VIRTUAL",
+            "inp_doc_original": "ORIGINAL",
+            "inp_doc_published": "PRIVATE",
+            "inp_doc_versioning": "1",
+            "inp_doc_destination_path": "",
+            "inp_doc_tags": "INPUT"
+        }
+        """
+            And I request "project/14414793652a5d718b65590036026581/input-document"
+            Then the response status code should be 400
+            And the response status message should have the following text "already exists"
 
  
     Scenario: Get the Input Documents list when there are 13 records

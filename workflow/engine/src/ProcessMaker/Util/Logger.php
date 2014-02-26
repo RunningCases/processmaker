@@ -4,7 +4,7 @@ namespace ProcessMaker\Util;
 /**
  * Singleton Class Logger
  *
- * This Utility is usefull to log local messages
+ * This Utility is useful to log local messages
  * @package ProcessMaker\Util
  * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
  */
@@ -17,9 +17,10 @@ class Logger
     protected function __construct()
     {
         $this->logFile = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'processmaker.log';
-
         if (! file_exists($this->logFile)) {
-            file_put_contents($this->logFile, "");
+            if (! touch($this->logFile)) {
+                error_log("ProcessMaker Log file can't be created!");
+            }
             chmod($this->logFile, 0777);
         }
 
@@ -35,19 +36,30 @@ class Logger
         return self::$instance;
     }
 
-    public function setLog()
+    public function setLogLine()
     {
         $args = func_get_args();
 
-        foreach ($args as $arg) {
-            if (! is_string($arg)) {
-                $arg = print_r($arg, true);
-            }
+        $this->setLog(date('Y-m-d H:i:s') . " ");
 
-            fwrite($this->fp, "- " . date('Y-m-d H:i:s') . " " . $arg . PHP_EOL);
+        foreach ($args as $str) {
+            $this->setLog((is_string($str) ? $str : var_export($str, true)) . PHP_EOL);
         }
-        //if (count($args) > 1)
-        //    fwrite($this->fp, PHP_EOL);
+    }
+
+    public function setLogInline()
+    {
+        $args = func_get_args();
+        $this->setLog(date('Y-m-d H:i:s') . " ");
+
+        foreach ($args as $str) {
+            $this->setLog((is_string($str) ? $str : var_export($str, true)) . " ");
+        }
+    }
+
+    public function setLog($str)
+    {
+        fwrite($this->fp, $str);
     }
 
     public static function log()
@@ -55,7 +67,7 @@ class Logger
         $me = Logger::getInstance();
         $args = func_get_args();
 
-        call_user_func_array(array($me, 'setLog'), $args);
+        call_user_func_array(array($me, 'setLogLine'), $args);
     }
 }
 

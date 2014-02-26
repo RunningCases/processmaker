@@ -35,8 +35,8 @@ Feature: DataBase Connections Main Tests
 
         Examples:
 
-        | test_description           | dbs_uid_number | dbs_type | dbs_server    | dbs_database_name | dbs_username   | dbs_password     | dbs_port | dbs_encode | dbs_description    |
-        | Test mysql db connection   | 1              | mysql    | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | mysql connection   |
+        | test_description           | dbs_uid_number | dbs_type | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description    |
+        | Test mysql db connection   | 1              | mysql    | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | mysql connection   |
 
 
     Scenario Outline: Create a new database connection
@@ -63,8 +63,8 @@ Feature: DataBase Connections Main Tests
 
         Examples:
 
-        | test_description           | dbs_uid_number | dbs_type | dbs_server    | dbs_database_name | dbs_username   | dbs_password     | dbs_port | dbs_encode | dbs_description    |
-        | Create mysql db connection | 1              | mysql    | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | mysql connection   |
+        | test_description           | dbs_uid_number | dbs_type | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description    |
+        | Create mysql db connection | 1              | mysql    | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | mysql connection   |
 
 
     Scenario: Get the DataBase Connections List when there are exactly three DataBase Connections
@@ -97,8 +97,8 @@ Feature: DataBase Connections Main Tests
 
         Examples:
 
-        | test_description           | dbs_uid_number | dbs_type | dbs_server    | dbs_database_name | dbs_username   | dbs_password     | dbs_port | dbs_encode | dbs_description           |
-        | Update mysql db connection | 1              | mysql    | 192.168.11.71 | rb_cochalo        | root           | atopml2005       | 3306     | utf8       | update mysql connection   |
+        | test_description           | dbs_uid_number | dbs_type | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description           |
+        | Update mysql db connection | 1              | mysql    | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | update mysql connection   |
 
 
     Scenario Outline: Get a single database connection and check some properties
@@ -118,8 +118,8 @@ Feature: DataBase Connections Main Tests
 
         Examples:
 
-        | test_description           | dbs_uid_number | dbs_type | dbs_server    | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description           |
-        | Update mysql db connection | 1              | mysql    | 192.168.11.71 | rb_cochalo    | rb_cochalo | atopml2005       | 3306     | utf8       | update mysql connection   |
+        | test_description           | dbs_uid_number | dbs_type | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description           |
+        | Update mysql db connection | 1              | mysql    | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | update mysql connection   |
 
 
     Scenario Outline: Delete all Database Connection created previously in this script

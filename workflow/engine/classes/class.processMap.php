@@ -1409,6 +1409,7 @@ class processMap
             }
 
             $oTask = new Task();
+            $oNewTask = new StdClass();
             $oNewTask->label = G::LoadTranslation('ID_TASK') . ' ' . $iTaskNumber;
             $oNewTask->uid = $oTask->create(array('PRO_UID' => $sProcessUID, 'TAS_TITLE' => $oNewTask->label, 'TAS_POSX' => $iX, 'TAS_POSY' => $iY, 'TAS_WIDTH' => $iWidth, 'TAS_HEIGHT' => $iHeight ));
             $oNewTask->statusIcons = array();

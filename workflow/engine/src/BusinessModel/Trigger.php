@@ -71,11 +71,15 @@ class Trigger
                 $triggerObj = $this->getDataTrigger($aRow['TRI_UID']);
                 $aRow['TRI_TITLE'] = $triggerObj['tri_title'];
                 $aRow['TRI_DESCRIPTION'] = $triggerObj['tri_description'];
+            } else {
+                if ($aRow['TRI_PARAM'] != '') {
+                    $aRow['TRI_PARAM'] = unserialize($aRow['TRI_PARAM']);
+                    $aRow['TRI_PARAM'] = \G::json_encode($aRow['TRI_PARAM']);
+                }
             }
             $triggersArray[] = array_change_key_case($aRow, CASE_LOWER);
             $oDataset->next();
         }
-
         return $triggersArray;
     }
 
@@ -94,6 +98,10 @@ class Trigger
         $triggerArray = $triggerO->load($sTriggerUID);
         if (isset($triggerArray['PRO_UID'])) {
             unset($triggerArray['PRO_UID']);
+        }
+        if ($triggerArray['TRI_PARAM'] != '') {
+            $triggerArray['TRI_PARAM'] = unserialize($triggerArray['TRI_PARAM']);
+            $triggerArray['TRI_PARAM'] = \G::json_encode($triggerArray['TRI_PARAM']);
         }
         $triggerArray = array_change_key_case($triggerArray, CASE_LOWER);
         return $triggerArray;
@@ -210,6 +218,63 @@ class Trigger
             }
         }
         return true;
+    }
+
+    /**
+     * Verify if doesn't exists the Trigger in table TRIGGERS
+     *
+     * @param string $triggerUid            Unique id of Trigger
+     * @param string $processUid            Unique id of Process
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exists the Trigger in table TRIGGERS
+     */
+    public function throwExceptionIfNotExistsTrigger($triggerUid, $processUid, $fieldNameForException)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\TriggersPeer::TRI_UID);
+
+            if ($processUid != "") {
+                $criteria->add(\TriggersPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            }
+
+            $criteria->add(\TriggersPeer::TRI_UID, $triggerUid, \Criteria::EQUAL);
+
+            $rsCriteria = \TriggersPeer::doSelectRS($criteria);
+
+            if (!$rsCriteria->next()) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $triggerUid), "The trigger with {0}: {1}, does not exist");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if exists the title of a Trigger
+     *
+     * @param string $processUid            Unique id of Process
+     * @param string $triggerTitle          Title
+     * @param string $fieldNameForException Field name for the exception
+     * @param string $triggerUidExclude     Unique id of Trigger to exclude
+     *
+     * return void Throw exception if exists the title of a Trigger
+     */
+    public function throwExceptionIfExistsTitle($processUid, $triggerTitle, $fieldNameForException, $triggerUidExclude = "")
+    {
+        try {
+            if (!$this->verifyNameTrigger($processUid, $triggerTitle, $triggerUidExclude)) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $triggerTitle), "The trigger title with {0}: \"{1}\", already exists");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
 

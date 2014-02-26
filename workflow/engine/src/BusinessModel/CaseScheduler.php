@@ -346,7 +346,7 @@ class CaseScheduler
             $nSW = 0;
             $aData['SCH_DAYS_PERFORM_TASK'] = '';
             switch ($sOption) {
-                case '1':
+                case '1': // If the option is zero, set by default 1
                     $aData['SCH_DAYS_PERFORM_TASK'] = '1';
                     $sValue = $aData['SCH_DAYS_PERFORM_TASK'];
                     switch ($sValue) {
@@ -464,7 +464,7 @@ class CaseScheduler
                     $sStartDay = date('Y-m-d');
                 } else {
                     $size = strlen($aData['SCH_START_DAY']);
-                        if ( $size > 4 ) {
+                    if ($size > 4) {
                         $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
                         $aaStartDay[0] = $aaStartDay[0];
                         $aaStartDay[1] = $aaStartDay[1];
@@ -637,7 +637,7 @@ class CaseScheduler
             $nSW = 0;
             $aData['SCH_DAYS_PERFORM_TASK'] = '';
             switch ($sOption) {
-                case '1':
+                case '1': // If the option is zero, set by default 1
                     $aData['SCH_DAYS_PERFORM_TASK'] = '1';
                     $sValue = $aData['SCH_DAYS_PERFORM_TASK'];
                     switch ($sValue) {
@@ -754,7 +754,7 @@ class CaseScheduler
                     $sStartDay = date('Y-m-d');
                 } else {
                     $size = strlen($aData['SCH_START_DAY']);
-                        if ( $size > 4 ) {
+                    if ($size > 4) {
                         $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
                         $aaStartDay[0] = $aaStartDay[0];
                         $aaStartDay[1] = $aaStartDay[1];

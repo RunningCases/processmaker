@@ -41,6 +41,62 @@ abstract class Handler
         return $diff;
     }
 
+    protected static function getArrayChecksum($list, $key = null)
+    {
+        $checksum = array();
+
+        foreach ($list as $k => $item) {
+            if (empty($key)) {
+                $checksum[$k] = self::getChecksum($item);
+            } else {
+                $checksum[$item[$key]] = self::getChecksum($item);
+            }
+        }
+
+        return $checksum;
+    }
+
+    protected static function getChecksum($data)
+    {
+        if (! is_string($data)) {
+            ksort($data);
+            $data = print_r($data, true);
+        }
+
+        return sha1($data);
+    }
+
+    public static function filterCollectionArrayKeys($data, $filter = array())
+    {
+        $result = array();
+
+        foreach ($data as $row) {
+            $result[] = self::filterArrayKeys($row, $filter);
+        }
+
+        return $result;
+    }
+
+    public static function filterArrayKeys($data, $filter = array())
+    {
+        $result = array();
+
+        foreach ($data as $key => $value) {
+            if (! in_array($key, $filter)) {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    public static function isEquals($array, $arrayCompare)
+    {
+        //self::log("ONE: ", $array, "TWO: ", $arrayCompare);
+        //$ret = array_diff_assoc("ONE: ", $array, "TWO: ", $arrayCompare);
+        return (self::getChecksum($array) === self::getChecksum($arrayCompare));
+    }
+
     /**
      * Log in ProcessMaker Standard Output if debug mode is enabled.
      *
@@ -52,15 +108,25 @@ abstract class Handler
      * self::log("Method: ", __METHOD__, 'Returns: ', $result);
      *
      */
+    public static function logstr($str)
+    {
+        if (\System::isDebugMode()) {
+            Logger::getInstance()->setLog($str);
+        }
+    }
+
+    public static function logInline()
+    {
+        if (\System::isDebugMode()) {
+            call_user_func_array(array(Logger::getInstance(), 'setLogInline'), func_get_args());
+        }
+    }
+
     public static function log()
     {
         if (\System::isDebugMode()) {
-
-            $me = Logger::getInstance();
-            $args = func_get_args();
-            //array_unshift($args, 'Class '.__CLASS__.' ');
-
-            call_user_func_array(array($me, 'setLog'), $args);
+            $logger = Logger::getInstance();
+            call_user_func_array(array($logger, 'setLogLine'), func_get_args());
         }
     }
 }

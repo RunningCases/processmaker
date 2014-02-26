@@ -19,11 +19,11 @@ class FilesManager
         try {
             $aDirectories[] = array('name' => "templates",
                                     'type' => "folder",
-                                    'path' => PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP,
+                                    'path' => "/",
                                     'editable' => false);
             $aDirectories[] = array('name' => "public",
                                     'type' => "folder",
-                                    'path' => PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP,
+                                    'path' => "/",
                                     'editable' => false);
             return $aDirectories;
         } catch (Exception $e) {
@@ -44,17 +44,22 @@ class FilesManager
     public function getProcessFilesManagerPath($sProcessUID, $path)
     {
         try {
+            $checkPath = substr($path, -1);
+            if ($checkPath == '/') {
+                $path = substr($path, 0, -1);
+            }
             $sMainDirectory = current(explode("/", $path));
-            if ($path)
-            $sSubDirectory = substr($path, strpos($path, "/"));
+            if (strstr($path,'/')) {
+                $sSubDirectory = substr($path, strpos($path, "/")+1). PATH_SEP ;
+            } else {
+                $sSubDirectory = '';
+            }
             switch ($sMainDirectory) {
                 case 'templates':
-                    //$sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory;
-                    $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP;
+                    $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory;
                     break;
-                case 'folder':
-                    //$sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory;
-                    $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP;
+                case 'public':
+                    $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory;
                     break;
                 default:
                     die();
@@ -64,16 +69,14 @@ class FilesManager
             $aTheFiles = array();
             $aDirectories = array();
             $aFiles = array();
-            $sCurrentDirectory = $sSubDirectory;
             $oDirectory = dir($sDirectory);
             while ($sObject = $oDirectory->read()) {
                 if (($sObject !== '.') && ($sObject !== '..')) {
                     $sPath = $sDirectory . $sObject;
                     if (is_dir($sPath)) {
-                        $aTheFiles[] = array('name' => $sObject,
-                                             'type' => "folder",
-                                             //'path' => $sDirectory);
-                                             'path' => ($sCurrentDirectory != '' ? $sCurrentDirectory . PATH_SEP : '') . $sObject);
+                        $aTheFiles[] = array('prf_name' => $sObject,
+                                             'prf_type' => "folder",
+                                             'prf_path' => $sMainDirectory);
                     } else {
                         $aAux = pathinfo($sPath);
                         $aAux['extension'] = (isset($aAux['extension'])?$aAux['extension']:'');
@@ -82,18 +85,47 @@ class FilesManager
                 }
             }
             foreach ($aFiles as $aFile) {
-                    $extention = end(explode(".", $aFile['FILE']));
-                    if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp' ||
-                        $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
-                        $sEditable = true;
+                    $arrayFileUid = $this->getFileManagerUid($sDirectory.$aFile['FILE']);
+                    $fcontent = file_get_contents($sDirectory.$aFile['FILE']);
+                    $fileUid =  $arrayFileUid["PRF_UID"];
+                    if ($fileUid != null) {
+                        $oProcessFiles = \ProcessFilesPeer::retrieveByPK($fileUid);
+                        $editable = $oProcessFiles->getPrfEditable();
+                        if ($editable == '1') {
+                            $editable = 'true';
+                        } else {
+                            $editable = 'false';
+                        }
+                        $aTheFiles[] = array( 'prf_uid' => $oProcessFiles->getPrfUid(),
+                                              'prf_filename' => $aFile['FILE'],
+                                              'usr_uid' => $oProcessFiles->getUsrUid(),
+                                              'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
+                                              'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
+                                              'prf_type' => $oProcessFiles->getPrfType(),
+                                              'prf_editable' => $editable,
+                                              'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
+                                              'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
+                                              'prf_content' => $fcontent);
                     } else {
-                        $sEditable = false;
+                        $extention = end(explode(".", $aFile['FILE']));
+                        if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp'
+                            || $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
+                            $editable = 'true';
+                        } else {
+                            $editable = 'false';
+                        }
+                        $aTheFiles[] = array('prf_uid' => '',
+                                             'prf_filename' => $aFile['FILE'],
+                                             'usr_uid' => '',
+                                             'prf_update_usr_uid' => '',
+                                             'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
+                                             'prf_type' => 'file',
+                                             'prf_editable' => $editable,
+                                             'prf_create_date' => '',
+                                             'prf_update_date' => '',
+                                             'prf_content' => $fcontent);
                     }
-                    $aTheFiles[] = array('name' => $aFile['FILE'],
-                                         'type' => "file",
-                                         'path' => $sDirectory,
-                                         'editable' => $sEditable);
-        }
+            }
             return $aTheFiles;
         } catch (Exception $e) {
             throw $e;
@@ -114,57 +146,70 @@ class FilesManager
     public function addProcessFilesManager($sProcessUID, $userUID, $aData)
     {
         try {
-            if ($aData['path'] == 'templates/' || $aData['path'] == 'folder/') {
-                switch ($aData['path']) {
-                    case 'templates/':
-                        $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $aData['file_name'];
-                        $sEditable = false;
-                        break;
-                    case 'folder/':
-                        $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $aData['file_name'];
-                        break;
-                    default:
-                        $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $aData['file_name'];
-                        break;
-                    }
-            } else {
-                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `folder/`'));
+            $aData['prf_path'] = rtrim($aData['prf_path'], '/') . '/';
+            if (!$aData['prf_filename']) {
+                throw (new \Exception( 'invalid value specified for `prf_filename`.'));
             }
-            $extention = end(explode(".", $aData['file_name']));
+            $sMainDirectory = current(explode("/", $aData['prf_path']));
+            if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
+                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
+            }
+            if (strstr($aData['prf_path'],'/')) {
+                $sSubDirectory = substr($aData['prf_path'], strpos($aData['prf_path'], "/")+1) ;
+            } else {
+                $sSubDirectory = '';
+            }
+            switch ($sMainDirectory) {
+                case 'templates':
+                    $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
+                    $sCheckDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory;
+                    $sEditable = false;
+                    break;
+                case 'public':
+                    $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
+                    $sCheckDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory;
+                    break;
+                default:
+                    $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
+                    break;
+            }
+            $extention = end(explode(".", $aData['prf_filename']));
             if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp' ||
                 $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
                 $sEditable = true;
             } else {
                 $sEditable = false;
             }
+            \G::verifyPath($sCheckDirectory, true);
             if (file_exists(PATH_SEP.$sDirectory)) {
-                throw (new \Exception( 'The file: '. $sDirectory . ' exists.'));
+                throw (new \Exception( 'The file: '. $sDirectory . ' already exists.'));
             }
             $sPkProcessFiles = \G::generateUniqueID();
             $oProcessFiles = new \ProcessFiles();
-            $sDate = date( 'Y-m-d H:i' );
-            $oProcessFiles->setPrfUid( $sPkProcessFiles );
-            $oProcessFiles->setProUid( $sProcessUID );
-            $oProcessFiles->setUsrUid( $userUID );
-            $oProcessFiles->setPrfUpdateUsrUid( '' );
-            $oProcessFiles->setPrfPath( $sDirectory );
-            $oProcessFiles->setPrfType( 'file' );
-            $oProcessFiles->setPrfEditable( $sEditable );
-            $oProcessFiles->setPrfCreateDate( $sDate );
+            $sDate = date('Y-m-d H:i:s');
+            $oProcessFiles->setPrfUid($sPkProcessFiles);
+            $oProcessFiles->setProUid($sProcessUID);
+            $oProcessFiles->setUsrUid($userUID);
+            $oProcessFiles->setPrfUpdateUsrUid('');
+            $oProcessFiles->setPrfPath($sDirectory);
+            $oProcessFiles->setPrfType('file');
+            $oProcessFiles->setPrfEditable($sEditable);
+            $oProcessFiles->setPrfCreateDate($sDate);
             $oProcessFiles->save();
             $fp = fopen($sDirectory, 'w');
-            $content = $aData['content'];
+            $content = $aData['prf_content'];
             fwrite($fp, $content);
             fclose($fp);
             $oProcessFile = array('prf_uid' => $oProcessFiles->getPrfUid(),
-                                  'pro_uid' => $oProcessFiles->getProUid(),
+                                  'prf_filename' => $aData['prf_filename'],
                                   'usr_uid' => $oProcessFiles->getUsrUid(),
                                   'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
-                                  'prf_path' => $oProcessFiles->getPrfPath(),
+                                  'prf_path' => $sMainDirectory. PATH_SEP . $sSubDirectory,
                                   'prf_type' => $oProcessFiles->getPrfType(),
                                   'prf_editable' => $oProcessFiles->getPrfEditable(),
                                   'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
-                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate());
+                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
+                                  'prf_content' => $content);
             return $oProcessFile;
         } catch (Exception $e) {
             throw $e;
@@ -174,15 +219,43 @@ class FilesManager
     /**
      * Return the Process Files Manager
      *
-     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $prfUid {@min 32} {@max 32}
      *
-     * return array
      *
      * @access public
      */
-    public function uploadProcessFilesManager($sProcessUID)
+    public function uploadProcessFilesManager($prjUid, $prfUid)
     {
         try {
+            $path = '';
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
+            $criteria->add(\ProcessFilesPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $path = $aRow['PRF_PATH'];
+                $rsCriteria->next();
+            }
+            if ($path == '') {
+                throw new \Exception(\G::LoadTranslation('ID_PMTABLE_UPLOADING_FILE_PROBLEM'));
+            }
+            $file = end(explode("/",$path));
+            $path = str_replace($file,'',$path);
+            if ($file == $_FILES['prf_file']['name']) {
+                if ($_FILES['prf_file']['error'] != 1) {
+                    if ($_FILES['prf_file']['tmp_name'] != '') {
+                        \G::uploadFile($_FILES['prf_file']['tmp_name'], $path, $_FILES['prf_file']['name']);
+                    }
+                }
+            } else {
+                throw new \Exception(\G::LoadTranslation('ID_PMTABLE_UPLOADING_FILE_PROBLEM'));
+            }
+            $oProcessFile = array('prf_uid' => $prfUid);
+            var_dump($oProcessFile);
+            return $oProcessFile;
         } catch (Exception $e) {
             throw $e;
         }
@@ -214,66 +287,69 @@ class FilesManager
      * Return the Process Files Manager
      *
      * @param string $sProcessUID {@min 32} {@max 32}
-     * @param string $path
      * @param string $userUID {@min 32} {@max 32}
      * @param array  $aData
+     * @param string $prfUid {@min 32} {@max 32}
      *
      * return array
      *
      * @access public
      */
-    public function updateProcessFilesManager($sProcessUID, $userUID, $aData, $path)
+    public function updateProcessFilesManager($sProcessUID, $userUID, $aData, $prfUid)
     {
         try {
-            $arrayTaskUid = $this->getFileManagerUid($path);
-            if ($aData['path'] == 'templates/' || $aData['path'] == 'folder/') {
-                switch ($aData['path']) {
-                    case 'templates/':
-                        $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $aData['file_name'];
-                        $sEditable = false;
-                        break;
-                    case 'folder/':
-                        $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $aData['file_name'];
-                        break;
-                    default:
-                        $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $aData['file_name'];
-                        break;
-                    }
-            } else {
-                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `folder/`'));
+            $path = '';
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
+            $criteria->add(\ProcessFilesPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $path = $aRow['PRF_PATH'];
+                $rsCriteria->next();
             }
-            $extention = end(explode(".", $aData['file_name']));
+            if ($path == '') {
+                throw new \Exception('invalid value specified for `prf_uid`.');
+            }
+            $sFile = end(explode("/",$path));
+            $sPath = str_replace($sFile,'',$path);
+            $sSubDirectory = str_replace('/','',str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))));
+            $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
+            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES) {
+                $sMainDirectory = 'mailTemplates';
+            } else {
+                $sMainDirectory = 'public';
+            }
+            $extention = end(explode(".", $sFile));
             if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp' ||
                 $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
                 $sEditable = true;
             } else {
                 $sEditable = false;
             }
-            $sPkProcessFiles = \G::generateUniqueID();
-            $oProcessFiles = new \ProcessFiles();
-            $sDate = date( 'Y-m-d H:i' );
-            $oProcessFiles->setPrfUid( $sPkProcessFiles );
-            $oProcessFiles->setProUid( $sProcessUID );
-            $oProcessFiles->setUsrUid( $userUID );
-            $oProcessFiles->setPrfUpdateUsrUid( '' );
-            $oProcessFiles->setPrfPath( $sDirectory );
-            $oProcessFiles->setPrfType( 'file' );
-            $oProcessFiles->setPrfEditable( $sEditable );
-            $oProcessFiles->setPrfCreateDate( $sDate );
+            if ($sEditable == false) {
+                throw (new \Exception( 'Can`t edit. Make sure your file has an editable extension.'));
+            }
+            $oProcessFiles = \ProcessFilesPeer::retrieveByPK($prfUid);
+            $sDate = date('Y-m-d H:i:s');
+            $oProcessFiles->setPrfUpdateUsrUid($userUID);
+            $oProcessFiles->setPrfUpdateDate($sDate);
             $oProcessFiles->save();
-            $fp = fopen($sDirectory, 'w');
-            $content = $aData['content'];
+            $fp = fopen($path, 'w');
+            $content = $aData['prf_content'];
             fwrite($fp, $content);
             fclose($fp);
             $oProcessFile = array('prf_uid' => $oProcessFiles->getPrfUid(),
-                                  'pro_uid' => $oProcessFiles->getProUid(),
+                                  'prf_filename' => $sFile,
                                   'usr_uid' => $oProcessFiles->getUsrUid(),
                                   'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
-                                  'prf_path' => $oProcessFiles->getPrfPath(),
+                                  'prf_path' => $sMainDirectory.PATH_SEP.$sSubDirectory,
                                   'prf_type' => $oProcessFiles->getPrfType(),
-                                  'prf_editable' => $oProcessFiles->getPrfEditable(),
+                                  'prf_editable' => $sEditable,
                                   'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
-                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate());
+                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
+                                  'prf_content' => $content);
             return $oProcessFile;
         } catch (Exception $e) {
             throw $e;
@@ -283,23 +359,42 @@ class FilesManager
     /**
      *
      * @param string $sProcessUID {@min 32} {@max 32}
-     * @param string $path
+     * @param string $prfUid {@min 32} {@max 32}
      *
      *
      * @access public 
      */
-    public function deleteProcessFilesManager($sProcessUID, $path)
+    public function deleteProcessFilesManager($sProcessUID, $prfUid)
     {
         try {
-            $sPath = explode("/", $path);
-            $sfile = end(explode("/",$path));
-            $main = implode(array_slice($sPath, -3, 1));
-            $carpeta = '';
+            $path = '';
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
+            $criteria->add(\ProcessFilesPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $path = $aRow['PRF_PATH'];
+                $rsCriteria->next();
+            }
+            if ($path == '') {
+                throw new \Exception('invalid value specified for `prf_uid`.');
+            }
+            $sFile = end(explode("/",$path));
+            $sPath = str_replace($sFile,'',$path);
+            $sSubDirectory = str_replace('/','',str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))));
+            $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
+            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES) {
+                $sMainDirectory = 'mailTemplates';
+            } else {
+                $sMainDirectory = 'public';
+            }
             $oProcessMap = new \processMap(new \DBConnection());
-            $oProcessMap->deleteFile($sProcessUID,
-                                     $main,
-                                     $carpeta,
-                                     $sfile);
+            $oProcessMap->deleteFile($sProcessUID, $sMainDirectory, $sSubDirectory, $sFile);
+            $c = new \Criteria("workflow");
+            $c->add(\ProcessFilesPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
+            $rs = \ProcessFilesPeer::doDelete($c);
         } catch (Exception $e) {
             throw $e;
         }
@@ -308,41 +403,43 @@ class FilesManager
     /**
      *
      * @param string $sProcessUID {@min 32} {@max 32}
-     * @param string $path
+     * @param string $prfUid {@min 32} {@max 32}
      *
      *
      * @access public
      */
-    public function downloadProcessFilesManager($sProcessUID, $path)
+    public function downloadProcessFilesManager($sProcessUID, $prfUid)
     {
         try {
-            $path = PATH_SEP.$path;
-            //$url = http:
-
+            $path = '';
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
+            $criteria->add(\ProcessFilesPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $path = $aRow['PRF_PATH'];
+                $rsCriteria->next();
+            }
+            if ($path == '') {
+                throw new \Exception('invalid value specified for `prf_uid`.');
+            }
+            $sFile = end(explode("/",$path));
+            $sPath = str_replace($sFile,'',$path);
+            $sSubDirectory = str_replace('/','',str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))));
+            $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
+            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES) {
+                $sMainDirectory = 'mailTemplates';
+            } else {
+                $sMainDirectory = 'public';
+            }
             if (file_exists($path)) {
-                $sfile = end(explode("/",$path));
-                \G::streamFile($path, true);
-                # open file to write
-                $fp = fopen ($path, 'w+');
-                # start curl
-                $ch = curl_init();
-                curl_setopt( $ch, CURLOPT_URL, $url );
-                # set return transfer to false
-                curl_setopt( $ch, CURLOPT_RETURNTRANSFER, false );
-                curl_setopt( $ch, CURLOPT_BINARYTRANSFER, true );
-                curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-                # increase timeout to download big file
-                curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 10 );
-                # write data to local file
-                curl_setopt( $ch, CURLOPT_FILE, $fp );
-                # execute curl
-                curl_exec( $ch );
-                # close curl
-                curl_close( $ch );
-                # close local file
-                fclose( $fp );
-
-                if (filesize($path) > 0) return true;
+                $oProcessMap = new \processMap(new \DBConnection());
+                $oProcessMap->downloadFile($sProcessUID,$sMainDirectory,$sSubDirectory,$sFile);
+                die();
+            } else {
+                throw (new \Exception( 'invalid value specified for `path`.'));
             }
         } catch (Exception $e) {
             throw $e;

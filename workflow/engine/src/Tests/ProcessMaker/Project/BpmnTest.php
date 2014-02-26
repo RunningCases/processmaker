@@ -108,7 +108,6 @@ class BpmnTest extends \PHPUnit_Framework_TestCase
         $bp->addActivity($data);
 
         // Load from DB
-        $processData = $bp->getProcess();
         $activities = $bp->getActivities();
 
         $this->assertCount(1, $activities);
@@ -118,9 +117,6 @@ class BpmnTest extends \PHPUnit_Framework_TestCase
         foreach ($data as $key => $value) {
             $this->assertEquals($value, $activityData[$key]);
         }
-
-        $this->assertEquals($bp->getUid(), $activityData["PRJ_UID"]);
-        $this->assertEquals($processData["PRO_UID"], $activityData["PRO_UID"]);
     }
 
     /**

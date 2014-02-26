@@ -44,8 +44,8 @@ class BpmnGatewayTest extends PHPUnit_Framework_TestCase
             "PRO_UID" => self::$proUid,
             "GAT_NAME" => "Gateway #1",
             "GAT_TYPE" => "SELECTION",
-            "BOU_X" => "51",
-            "BOU_Y" => "52"
+            "BOU_X" => 51,
+            "BOU_Y" => 52
         );
 
         self::$data2 = array(
@@ -54,8 +54,8 @@ class BpmnGatewayTest extends PHPUnit_Framework_TestCase
             "PRO_UID" => self::$proUid,
             "GAT_NAME" => "Gateway #2",
             "GAT_TYPE" => "EVALUATION",
-            "BOU_X" => "53",
-            "BOU_Y" => "54"
+            "BOU_X" => 53,
+            "BOU_Y" => 54
         );
     }
 
@@ -127,7 +127,7 @@ class BpmnGatewayTest extends PHPUnit_Framework_TestCase
             "GAT_TYPE" => self::$data1["GAT_TYPE"],
             "GAT_DIRECTION" => "UNSPECIFIED",
             "GAT_INSTANTIATE" => 0,
-            "GAT_EVENT_GATEWAT_TYPE" => 'NONE',
+            "GAT_EVENT_GATEWAY_TYPE" => 'NONE',
             "GAT_ACTIVATION_COUNT" => 0,
             "GAT_WAITING_FOR_START" => 1,
             "GAT_DEFAULT_FLOW" => "",
@@ -169,7 +169,7 @@ class BpmnGatewayTest extends PHPUnit_Framework_TestCase
             "GAT_TYPE" => self::$data2["GAT_TYPE"],
             "GAT_DIRECTION" => "UNSPECIFIED",
             "GAT_INSTANTIATE" => 0,
-            "GAT_EVENT_GATEWAT_TYPE" => 'NONE',
+            "GAT_EVENT_GATEWAY_TYPE" => 'NONE',
             "GAT_ACTIVATION_COUNT" => 0,
             "GAT_WAITING_FOR_START" => 1,
             "GAT_DEFAULT_FLOW" => "",
@@ -209,7 +209,7 @@ class BpmnGatewayTest extends PHPUnit_Framework_TestCase
             "GAT_TYPE" => self::$data1["GAT_TYPE"],
             "GAT_DIRECTION" => "UNSPECIFIED",
             "GAT_INSTANTIATE" => 0,
-            "GAT_EVENT_GATEWAT_TYPE" => 'NONE',
+            "GAT_EVENT_GATEWAY_TYPE" => 'NONE',
             "GAT_ACTIVATION_COUNT" => 0,
             "GAT_WAITING_FOR_START" => 1,
             "GAT_DEFAULT_FLOW" => "",

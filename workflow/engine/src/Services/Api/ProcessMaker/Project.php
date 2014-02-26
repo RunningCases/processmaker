@@ -4,8 +4,8 @@ namespace Services\Api\ProcessMaker;
 use Luracast\Restler\RestException;
 use ProcessMaker\Services\Api;
 use ProcessMaker\Adapter\Bpmn\Model as BpmnModel;
-use ProcessMaker\Util\Hash;
-use ProcessMaker\Util\Logger;
+use \ProcessMaker\Project\Adapter;
+use \ProcessMaker\Util;
 
 /**
  * Class Project
@@ -24,10 +24,9 @@ class Project extends Api
             $limit = null;
             $filter = "";
 
-            $projects = \ProcessMaker\Project\Adapter\BpmnWorkflow::getList($start, $limit, $filter, CASE_LOWER);
+            $projects = Adapter\BpmnWorkflow::getList($start, $limit, $filter, CASE_LOWER);
 
             return $projects;
-
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -36,9 +35,7 @@ class Project extends Api
     public function get($prjUid)
     {
         try {
-            //return \ProcessMaker\Adapter\Bpmn\Model::loadProject($prjUid);
-
-            $bwp = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($prjUid);
+            $bwp = Adapter\BpmnWorkflow::load($prjUid);
 
             $project = array_change_key_case($bwp->getProject(), CASE_LOWER);
             $diagram = $bwp->getDiagram();
@@ -106,12 +103,9 @@ class Project extends Api
     {
         try {
             $projectData = $request_data;
-            $prjUid = $projectData["prj_uid"];
-            $diagram = isset($request_data["diagrams"]) && isset($request_data["diagrams"][0]) ? $request_data["diagrams"][0] : array();
-
-            $bwp = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($prjUid);
-
+            $diagram = isset($projectData["diagrams"]) && isset($projectData["diagrams"][0]) ? $projectData["diagrams"][0] : array();
             $result = array();
+            $bwp = Adapter\BpmnWorkflow::load($prjUid);
 
             /*
              * Diagram's Activities Handling
@@ -119,22 +113,22 @@ class Project extends Api
             $whiteList = array();
             foreach ($diagram["activities"] as $i => $activityData) {
                 $activityData = array_change_key_case($activityData, CASE_UPPER);
+                unset($activityData["_EXTENDED"], $activityData["BOU_ELEMENT_ID"]);
+                $activityData = Util\ArrayUtil::boolToIntValues($activityData);
 
-                // activity exists ?
-                if ($activity = $bwp->getActivity($activityData["ACT_UID"])) {
-                    // then update activity
+                $activity = $bwp->getActivity($activityData["ACT_UID"]);
+                if (is_null($activity)) {
+                    $oldActUid = $activityData["ACT_UID"];
+                    $activityData["ACT_UID"] = Util\Hash::generateUID();
+                    $bwp->addActivity($activityData);
+                    $result[] = array("object" => "activity", "new_uid" => $activityData["ACT_UID"], "old_uid" => $oldActUid);
+                } elseif (! $bwp->isEquals($activity, $activityData)) {
                     $bwp->updateActivity($activityData["ACT_UID"], $activityData);
                 } else {
-                    // if not exists then create it
-                    $oldActUid = $activityData["ACT_UID"];
-                    $activityData["ACT_UID"] = Hash::generateUID();
-
-                    $bwp->addActivity($activityData);
-
-                    $result[] = array("object" => "activity", "new_uid" => $activityData["ACT_UID"], "old_uid" => $oldActUid);
-                    $diagram["activities"][$i] = $activityData;
+                    Util\Logger::log("Update Activity ({$activityData["ACT_UID"]}) Skipped - No changes required");
                 }
 
+                $diagram["activities"][$i] = $activityData;
                 $whiteList[] = $activityData["ACT_UID"];
             }
 
@@ -143,7 +137,6 @@ class Project extends Api
             // looking for removed elements
             foreach ($activities as $activityData) {
                 if (! in_array($activityData["ACT_UID"], $whiteList)) {
-                    // If it is not in the white list so, then remove them
                     $bwp->removeActivity($activityData["ACT_UID"]);
                 }
             }
@@ -155,22 +148,21 @@ class Project extends Api
             $whiteList = array();
             foreach ($diagram["gateways"] as $i => $gatewayData) {
                 $gatewayData = array_change_key_case($gatewayData, CASE_UPPER);
+                unset($gatewayData["_EXTENDED"]);
 
-                // gateway exists ?
-                if ($gateway = $bwp->getGateway($gatewayData["GAT_UID"])) {
-                    // then update activity
+                $gateway = $bwp->getGateway($gatewayData["GAT_UID"]);
+                if (is_null($gateway)) {
+                    $oldActUid = $gatewayData["GAT_UID"];
+                    $gatewayData["GAT_UID"] = Util\Hash::generateUID();
+                    $bwp->addGateway($gatewayData);
+                    $result[] = array("object" => "gateway", "new_uid" => $gatewayData["GAT_UID"], "old_uid" => $oldActUid);
+                } elseif (! $bwp->isEquals($gateway, $gatewayData)) {
                     $bwp->updateGateway($gatewayData["GAT_UID"], $gatewayData);
                 } else {
-                    // if not exists then create it
-                    $oldActUid = $gatewayData["GAT_UID"];
-                    $gatewayData["GAT_UID"] = Hash::generateUID();
-
-                    $bwp->addGateway($gatewayData);
-
-                    $result[] = array("object" => "gateway", "new_uid" => $gatewayData["GAT_UID"], "old_uid" => $oldActUid);
-                    $diagram["gateways"][$i] = $gatewayData;
+                    Util\Logger::log("Update Gateway ({$gatewayData["GAT_UID"]}) Skipped - No changes required");
                 }
 
+                $diagram["gateways"][$i] = $gatewayData;
                 $whiteList[] = $gatewayData["GAT_UID"];
             }
 
@@ -179,7 +171,6 @@ class Project extends Api
             // looking for removed elements
             foreach ($gateways as $gatewayData) {
                 if (! in_array($gatewayData["GAT_UID"], $whiteList)) {
-                    // If it is not in the white list so, then remove them
                     $bwp->removeGateway($gatewayData["GAT_UID"]);
                 }
             }
@@ -190,22 +181,27 @@ class Project extends Api
             $whiteList = array();
             foreach ($diagram["events"] as $i => $eventData) {
                 $eventData = array_change_key_case($eventData, CASE_UPPER);
-
-                // gateway exists ?
-                if ($event = $bwp->getEvent($eventData["EVN_UID"])) {
-                    // then update activity
-                    $bwp->updateEvent($eventData["EVN_UID"], $eventData);
-                } else {
-                    // if not exists then create it
-                    $oldActUid = $eventData["EVN_UID"];
-                    $eventData["EVN_UID"] = Hash::generateUID();
-
-                    $bwp->addEvent($eventData);
-
-                    $result[] = array("object" => "event", "new_uid" => $eventData["EVN_UID"], "old_uid" => $oldActUid);
-                    $diagram["events"][$i] = $eventData;
+                unset($eventData["_EXTENDED"]);
+                if (array_key_exists("EVN_CANCEL_ACTIVITY", $eventData)) {
+                    $eventData["EVN_CANCEL_ACTIVITY"] = $eventData["EVN_CANCEL_ACTIVITY"] ? 1 : 0;
+                }
+                if (array_key_exists("EVN_WAIT_FOR_COMPLETION", $eventData)) {
+                    $eventData["EVN_WAIT_FOR_COMPLETION"] = $eventData["EVN_WAIT_FOR_COMPLETION"] ? 1 : 0;
                 }
 
+                $event = $bwp->getEvent($eventData["EVN_UID"]);
+                if (is_null($event)) {
+                    $oldActUid = $eventData["EVN_UID"];
+                    $eventData["EVN_UID"] = Util\Hash::generateUID();
+                    $bwp->addEvent($eventData);
+                    $result[] = array("object" => "event", "new_uid" => $eventData["EVN_UID"], "old_uid" => $oldActUid);
+                } elseif (! $bwp->isEquals($event, $eventData)) {
+                    $bwp->updateEvent($eventData["EVN_UID"], $eventData);
+                } else {
+                    Util\Logger::log("Update Event ({$eventData["EVN_UID"]}) Skipped - No changes required");
+                }
+
+                $diagram["events"][$i] = $eventData;
                 $whiteList[] = $eventData["EVN_UID"];
             }
 
@@ -226,14 +222,14 @@ class Project extends Api
             $whiteList = array();
 
             foreach ($diagram["flows"] as $i => $flowData) {
-                $diagram["flows"][$i] = $flowData = array_change_key_case($flowData, CASE_UPPER);
+                $flowData = array_change_key_case($flowData, CASE_UPPER);
 
                 // if it is a new flow record
                 if (! \BpmnFlow::exists($flowData["FLO_UID"])) {
                     $oldFloUid = $flowData["FLO_UID"];
-                    $flowData["FLO_UID"] = Hash::generateUID();
+                    $flowData["FLO_UID"] = Util\Hash::generateUID();
 
-                    $mappedUid = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result) ;
+                    $mappedUid = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result);
                     if ($mappedUid !== false) {
                         $flowData["FLO_ELEMENT_ORIGIN"] = $mappedUid;
                     }
@@ -244,20 +240,20 @@ class Project extends Api
                     }
 
                     $result[] = array("object" => "flow", "new_uid" => $flowData["FLO_UID"], "old_uid" => $oldFloUid);
-                    $diagram["flows"][$i] = $flowData;
                 }
 
+                $diagram["flows"][$i] = $flowData;
                 $whiteList[] = $flowData["FLO_UID"];
             }
 
             foreach ($diagram["flows"] as $flowData) {
-                // flow exists ?
-                if (\BpmnFlow::exists($flowData["FLO_UID"])) {
-                    // then update activity
-                    $bwp->updateFlow($flowData["FLO_UID"], $flowData);
+                $flow = $bwp->getFlow($flowData["FLO_UID"]);
+                if (is_null($flow)) {
+                    $bwp->addFlow($flowData, $diagram["flows"]);
+                } elseif (! $bwp->isEquals($flow, $flowData)) {
+                    $bwp->updateFlow($flowData["FLO_UID"], $flowData, $diagram["flows"]);
                 } else {
-                    // if not exists then create it
-                    $bwp->addFlow($flowData, $diagram["flows"], $diagram["gateways"], $diagram["events"]);
+                    Util\Logger::log("Update Flow ({$flowData["FLO_UID"]}) Skipped - No changes required");
                 }
             }
 
@@ -266,11 +262,11 @@ class Project extends Api
             // looking for removed elements
             foreach ($flows as $flowData) {
                 if (! in_array($flowData["FLO_UID"], $whiteList)) {
-                    // If it is not in the white list so, then remove them
                     $bwp->removeFlow($flowData["FLO_UID"]);
                 }
             }
 
+            $bwp->mapBpmnFlowsToWorkflowRoutes();
 
             return $result;
         } catch (\Exception $e) {
@@ -398,6 +394,68 @@ class Project extends Api
         }
 
         return false;
+    }
+
+    /**
+     * @url GET /:prj_uid/variables
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetVariables($prj_uid)
+    {
+        try {
+            $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
+
+            $response = $process->getVariables("ALL", $prj_uid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:prj_uid/grid/variables
+     * @url GET /:prj_uid/grid/:grid_uid/variables
+     *
+     * @param string $prj_uid  {@min 32}{@max 32}
+     * @param string $grid_uid
+     */
+    public function doGetGridVariables($prj_uid, $grid_uid = "")
+    {
+        try {
+            $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
+
+            $response = ($grid_uid == "")? $process->getVariables("GRID", $prj_uid) : $process->getVariables("GRIDVARS", $prj_uid, $grid_uid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:prj_uid/trigger-wizards
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetTriggerWizards($prj_uid)
+    {
+        try {
+            $process = new \BusinessModel\Process();
+            $process->setFormatFieldNameInUppercase(false);
+            $process->setArrayFieldNameForException(array("processUid" => "prj_uid", "libraryName" => "lib_name", "methodName" => "fn_name"));
+
+            $response = $process->getLibraries($prj_uid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
     }
 }
 

@@ -198,7 +198,6 @@ class Table
         $tableCon       = 'workflow';
         $dataValidate   = array_change_key_case($tab_data, CASE_UPPER);
         $oAdditionalTables = new AdditionalTables();
-
         // VALIDATION TABLE DATA
         if ($reportFlag) {
             $pro_uid = $this->validateProUid($pro_uid);
@@ -211,6 +210,11 @@ class Table
                 $dataValidate['REP_TAB_GRID']   = $this->validateRepGrid($dataValidate['REP_TAB_GRID'], $pro_uid);
             }
             $fieldsValidate = $this->getDynafields($pro_uid, $dataValidate['REP_TAB_TYPE'], $dataValidate['REP_TAB_GRID']);
+            if (empty($fieldsValidate)) {
+                $fieldsValidate['NAMES'] = array();
+                $fieldsValidate['INDEXS'] = array();
+                $fieldsValidate['UIDS'] = array();
+            }
             $repTabClassName = $oAdditionalTables->getPHPName($dataValidate['REP_TAB_NAME']);
             $tableName = $dataValidate['REP_TAB_NAME'];
             $tableCon  = $dataValidate['REP_TAB_CONNECTION'];
@@ -239,7 +243,7 @@ class Table
         $reservedWordsSql = G::reservedWordsSql();
 
         if ($reportFlag) {
-            $defaultColumns = $this->getReportTableDefaultColumns($data['REP_TAB_TYPE']);
+            $defaultColumns = $this->getReportTableDefaultColumns($dataValidate['REP_TAB_TYPE']);
             $columns = array_merge( $defaultColumns, $columns );
         }
 
@@ -259,15 +263,16 @@ class Table
         $columnsStd = array();
         foreach ($columns as $i => $column) {
             if (isset($columns[$i]['fld_dyn'])) {
+                $columns[$i]['fld_dyn'] = ($reportFlag) ? $columns[$i]['fld_dyn'] : '';
                 $columns[$i]['field_dyn'] = $columns[$i]['fld_dyn'];
                 unset($columns[$i]['fld_dyn']);
             } else {
                 $columns[$i]['fld_dyn'] = '';
             }
-            $columns[$i]['fld_dyn'] = ($reportFlag) ? $columns[$i]['fld_dyn'] : '';
 
             if (isset($columns[$i]['fld_name'])) {
-                $columns[$i]['field_name'] = $columns[$i]['fld_name'];
+                $columns[$i]['field_name'] = G::toUpper($columns[$i]['fld_name']);
+                unset($columns[$i]['fld_name']);
             }
             if (isset($columns[$i]['fld_label'])) {
                 $columns[$i]['field_label'] = $columns[$i]['fld_label'];
@@ -279,6 +284,11 @@ class Table
             }
             if (isset($columns[$i]['fld_size'])) {
                 $columns[$i]['field_size'] = $columns[$i]['fld_size'];
+                if (!is_int($columns[$i]['field_size'])) {
+                    throw (new \Exception("The property fld_size: '". $columns[$i]['field_size'] . "', is incorrect numeric value."));
+                } else {
+                    $columns[$i]['field_size'] = (int)$columns[$i]['field_size'];
+                }
                 unset($columns[$i]['fld_size']);
             }
             if (isset($columns[$i]['fld_key'])) {
@@ -294,12 +304,15 @@ class Table
                 unset($columns[$i]['fld_autoincrement']);
             }
 
-            if (in_array(strtoupper($columns[$i]['field_name']), $reservedWordsSql) ||
-                in_array( strtolower( $columns[$i]['field_name']), $reservedWordsPhp )) {
-                throw (new \Exception(G::LoadTranslation("ID_PMTABLE_INVALID_FIELD_NAME", array($columns[$i]['field_name']))));
-            }
-
             // VALIDATIONS
+            if (in_array(strtoupper($columns[$i]['field_name']), $reservedWordsSql) ||
+                in_array( strtolower( $columns[$i]['field_name']), $reservedWordsPhp ) ||
+                $columns[$i]['field_name'] == '') {
+                throw (new \Exception("The property fld_name: '". $columns[$i]['field_name'] . "', is incorrect value."));
+            }
+            if ($columns[$i]['field_label'] == '') {
+                throw (new \Exception("The property fld_label: '". $columns[$i]['field_label'] . "', is incorrect value."));
+            }
             $columns[$i]['field_type'] = $this->validateFldType($columns[$i]['field_type']);
             if (isset($columns[$i]['field_autoincrement']) && $columns[$i]['field_autoincrement']) {
                 $typeCol = $columns[$i]['field_type'];
@@ -307,18 +320,14 @@ class Table
                     $columns[$i]['field_autoincrement'] = false;
                 }
             }
-
-            if (isset($columns[$i]['fld_name'])) {
-                if (isset($columns[$i]['field_dyn']) && $columns[$i]['field_dyn'] != '') {
-                    $res = array_search($columns[$i]['field_dyn'], $fieldsValidate['NAMES']);
-                    if ($res === false) {
-                        throw (new \Exception("The property 'fields' in key '$i' in property fld_dyn: '".$columns[$i]['field_dyn']."', is incorrect."));
-                    } else {
-                        $columns[$i]['_index']    = $fieldsValidate['INDEXS'][$res];
-                        $columns[$i]['field_uid'] = $fieldsValidate['UIDS'][$res];
-                    }
+            if (isset($columns[$i]['field_dyn']) && $columns[$i]['field_dyn'] != '') {
+                $res = array_search($columns[$i]['field_dyn'], $fieldsValidate['NAMES']);
+                if ($res === false) {
+                    throw (new \Exception("The property fld_dyn: '".$columns[$i]['field_dyn']."', is incorrect."));
+                } else {
+                    $columns[$i]['_index']    = $fieldsValidate['INDEXS'][$res];
+                    $columns[$i]['field_uid'] = $fieldsValidate['UIDS'][$res];
                 }
-                unset($columns[$i]['fld_name']);
             }
 
             $temp = new \stdClass();
@@ -359,6 +368,7 @@ class Table
         $pmTable->build();
         $buildResult = ob_get_contents();
         ob_end_clean();
+        unset($buildResult);
 
         // Updating additional table struture information
         if ($reportFlag) {
@@ -401,7 +411,6 @@ class Table
             $oCriteria->add( \FieldsPeer::ADD_TAB_UID, $dataValidate['TAB_UID'] );
             \FieldsPeer::doDelete( $oCriteria );
         }
-
         // Updating pmtable fields
         foreach ($columnsStd as $i => $column) {
             $column = (array)$column;
@@ -412,7 +421,7 @@ class Table
                 'FLD_NAME' => $column['field_name'],
                 'FLD_DESCRIPTION' => $column['field_label'],
                 'FLD_TYPE' => $column['field_type'],
-                'FLD_SIZE' => $column['field_size'] == '' ? null : $column['field_size'],
+                'FLD_SIZE' => (!isset($column['field_size']) || $column['field_size'] == '') ? null : $column['field_size'],
                 'FLD_NULL' => $column['field_null'] ? 1 : 0,
                 'FLD_AUTO_INCREMENT' => $column['field_autoincrement'] ? 1 : 0,
                 'FLD_KEY' => $column['field_key'] ? 1 : 0,
@@ -432,6 +441,64 @@ class Table
             $tab_uid   = $addTabUid;
             return $this->getTable($tab_uid, $pro_uid, $reportFlag, false);
         }
+    }
+
+    /**
+     * Save Data for PmTable
+     * @var string $pmt_uid. Uid for PmTable
+     * @var string $pmt_data. Data for rows of PmTable
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     */
+    public function saveTableData ($pmt_uid, $pmt_data)
+    {
+        $pmt_uid = $this->validateTabUid($pmt_uid, false);
+        $rows = $pmt_data['pmt_rows'];
+
+        $additionalTables = new AdditionalTables();
+        $table = $additionalTables->load($pmt_uid, true);
+        $primaryKeys = $additionalTables->getPrimaryKeys();
+
+        $className = $table['ADD_TAB_CLASS_NAME'];
+        $classPeerName = $className . 'Peer';
+        $row = (array)$rows;
+
+        $row = array_merge( array_change_key_case( $row, CASE_LOWER ), array_change_key_case( $row, CASE_UPPER ) );
+        $toSave = false;
+
+        if (! file_exists( PATH_WORKSPACE . 'classes/' . $className . '.php' )) {
+            throw new Exception( 'Create::' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $className ) );
+        }
+
+        require_once PATH_WORKSPACE . 'classes/' . $className . '.php';
+        eval( '$obj = new ' . $className . '();' );
+        eval( '$con = Propel::getConnection(' . $classPeerName . '::DATABASE_NAME);' );
+        $obj->fromArray( $row, \BasePeer::TYPE_FIELDNAME );
+        if ($obj->validate()) {
+            $affectedRows = $obj->save();
+            if ($affectedRows == 0) {
+                throw (new \Exception("The value of key column is required"));
+            }
+            $toSave = true;
+            $primaryKeysValues = array ();
+            foreach ($primaryKeys as $primaryKey) {
+                $method = 'get' . AdditionalTables::getPHPName( $primaryKey['FLD_NAME'] );
+                $primaryKeysValues[] = $obj->$method();
+            }
+        } else {
+            $msg = '';
+            foreach ($obj->getValidationFailures() as $objValidationFailure) {
+                $msg .= $objValidationFailure->getMessage() . "\n";
+            }
+            throw new \Exception( G::LoadTranslation('ID_ERROR_TRYING_INSERT'). '"' . $table['ADD_TAB_NAME'] . "\"\n" . $msg );
+        }
+
+        $index = G::encrypt( implode( ',', $primaryKeysValues ), 'pmtable' );
+        $rep = $this->getTableData($pmt_uid);
+        return $rep;
     }
 
     /**
@@ -469,7 +536,11 @@ class Table
                 $dataValidate['rep_tab_dsc']  = $tab_data['rep_tab_dsc'];
                 $dataValidate['rep_tab_connection'] = $row['DBS_UID'];
                 $dataValidate['rep_tab_type'] = $row['ADD_TAB_TYPE'];
-                $dataValidate['rep_tab_grid'] = $row['ADD_TAB_GRID'];
+                $dataValidate['rep_tab_grid'] = '';
+                if (strpos($row['ADD_TAB_GRID'], '-')) {
+                    list($gridName, $gridId) = explode( '-', $row['ADD_TAB_GRID'] );
+                    $dataValidate['rep_tab_grid'] = $gridId;
+                }
             } else {
                 $dataValidate['pmt_uid']  = $tab_uid;
                 $dataValidate['pmt_tab_name'] = $row['ADD_TAB_NAME'];
@@ -484,6 +555,67 @@ class Table
             }
         }
         $this->saveTable($dataValidate, $pro_uid, $reportFlag, false);
+    }
+
+    /**
+     * Update Data for PmTable
+     * @var string $pmt_uid. Uid for PmTable
+     * @var string $pmt_data. Data for rows of PmTable
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function updateTableData($pmt_uid, $pmt_data)
+    {
+        $pmt_uid = $this->validateTabUid($pmt_uid, false);
+        $rows = $pmt_data['pmt_rows'];
+        $rows = array_merge( array_change_key_case( $rows, CASE_LOWER ), array_change_key_case( $rows, CASE_UPPER ) );
+
+        $oAdditionalTables = new AdditionalTables();
+        $table = $oAdditionalTables->load( $pmt_uid, true );
+        $primaryKeys = $oAdditionalTables->getPrimaryKeys( 'keys' );
+
+        foreach ($primaryKeys as $value) {
+            if (!isset($rows[$value])) {
+                throw (new \Exception("The field for column '$value' is required"));
+            } else {
+                $params[] = is_numeric($rows[$value]) ? $rows[$value] : "'".$rows[$value]."'";
+            }
+        }
+        $className = $table['ADD_TAB_CLASS_NAME'];
+        $classPeerName = $className . 'Peer';
+        $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+        if (! file_exists( $sPath . $className . '.php' )) {
+            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $className ) );
+        }
+        require_once $sPath . $className . '.php';
+
+        $obj = null;
+        eval( '$obj = ' . $classPeerName . '::retrieveByPk(' . implode( ',', $params ) . ');' );
+        if (is_object( $obj )) {
+            foreach ($rows as $key => $value) {
+                // validation, don't modify primary keys
+                if (in_array(G::toUpper($key), $primaryKeys ) || in_array( G::toLower($key), $primaryKeys )) {
+                    unset($rows[$key]);
+                }
+                $action = 'set' . AdditionalTables::getPHPName( $key );
+                $obj->$action( $value );
+            }
+            if ($r = $obj->validate()) {
+                $obj->save();
+                $result = true;
+            } else {
+                $msg = '';
+                foreach ($obj->getValidationFailures() as $objValidationFailure) {
+                    $msg .= $objValidationFailure->getMessage() . "\n";
+                }
+                throw new \Exception( $msg );
+            }
+        } else {
+            throw (new \Exception("The key " . implode(',', $params) . " not exist"));
+        }
     }
 
     /**
@@ -519,6 +651,65 @@ class Table
     }
 
     /**
+     * Delete Data for PmTable
+     * @var string $pmt_uid. Uid for PmTable
+     * @var string $rows. Data for rows of PmTable
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function deleteTableData($pmt_uid, $rows)
+    {
+        $pmt_uid = $this->validateTabUid($pmt_uid, false);
+        $rows = array_merge( array_change_key_case( $rows, CASE_LOWER ), array_change_key_case( $rows, CASE_UPPER ) );
+
+        $oAdditionalTables = new AdditionalTables();
+        $table = $oAdditionalTables->load( $pmt_uid, true );
+        $primaryKeys = $oAdditionalTables->getPrimaryKeys( 'keys' );
+
+        foreach ($primaryKeys as $value) {
+            if (!isset($rows[$value])) {
+                throw (new \Exception("The field for column '$value' is required"));
+            } else {
+                $params[] = is_numeric($rows[$value]) ? $rows[$value] : "'".$rows[$value]."'";
+            }
+        }
+        $className = $table['ADD_TAB_CLASS_NAME'];
+        $classPeerName = $className . 'Peer';
+        $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+        if (! file_exists( $sPath . $className . '.php' )) {
+            throw new \Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $className ) );
+        }
+        require_once $sPath . $className . '.php';
+
+        $obj = null;
+        eval( '$obj = ' . $classPeerName . '::retrieveByPk(' . implode( ',', $params ) . ');' );
+        if (is_object( $obj )) {
+            foreach ($rows as $key => $value) {
+                // validation, don't modify primary keys
+                if (in_array(G::toUpper($key), $primaryKeys ) || in_array( G::toLower($key), $primaryKeys )) {
+                    unset($rows[$key]);
+                }
+                $action = 'set' . AdditionalTables::getPHPName( $key );
+                $obj->$action( $value );
+            }
+            if ($r = $obj->validate()) {
+                $obj->delete();
+            } else {
+                $msg = '';
+                foreach ($obj->getValidationFailures() as $objValidationFailure) {
+                    $msg .= $objValidationFailure->getMessage() . "\n";
+                }
+                throw new \Exception( $msg );
+            }
+        } else {
+            throw (new \Exception("The key " . implode(',', $params) . " not exist"));
+        }
+    }
+
+    /**
      * Get Fields of Dynaforms
      * @var string $pro_uid. Uid for Process
      * @var string $rep_tab_type. Type the Report Table
@@ -539,8 +730,8 @@ class Table
         $aFields['PRO_UID'] = $pro_uid;
 
         if (isset( $rep_tab_type ) && $rep_tab_type == 'GRID') {
-            $this->dynUid = $rep_tab_grid;
-            $dynFields = $this->_getDynafields($pro_uid, 'grid', $rep_tab_grid);
+            list ($gridName, $gridId) = explode( '-', $rep_tab_grid );
+            $dynFields = $this->_getDynafields($pro_uid, 'grid', $gridId);
         } else {
             $dynFields = $this->_getDynafields($pro_uid, 'xmlform');
         }
@@ -575,7 +766,7 @@ class Table
         $oCriteria->add( \DynaformPeer::DYN_TYPE, $type );
 
         if ($rep_tab_grid != '') {
-            $oCriteria->add( \DynaformPeer::DYN_UID, $this->dynUid );
+            $oCriteria->add( \DynaformPeer::DYN_UID, $rep_tab_grid );
         }
 
         $oDataset = \DynaformPeer::doSelectRS( $oCriteria );
@@ -844,6 +1035,7 @@ class Table
 
         G::loadSystem('dynaformhandler');
         $grids = array();
+        $namesGrid = array();
         $aFieldsNames = array();
 
         $oCriteria = new \Criteria( 'workflow' );
@@ -863,14 +1055,18 @@ class Table
                 $fieldType = $arrayNode['type'];
                 if ($fieldType == 'grid') {
                     if (! in_array( $fieldName, $aFieldsNames )) {
+                        $namesGrid[] = $fieldName;
                         $grids[] = str_replace( $pro_uid . '/', '', $arrayNode['xmlgrid']);
                     }
                 }
             }
         }
 
-        if (!in_array($rep_tab_grid, $grids)) {
+        $find = array_search($rep_tab_grid, $grids);
+        if ($find === false) {
             throw (new \Exception("The property rep_tab_grid: '$rep_tab_grid', is incorrect."));
+        } else {
+            $rep_tab_grid = $namesGrid[$find] . '-' . $rep_tab_grid;
         }
         return $rep_tab_grid;
     }

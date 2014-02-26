@@ -76,6 +76,11 @@ class WorkflowBpmn extends Project\Workflow
         }
     }
 
+    public static function getList($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)
+    {
+        return parent::getList($start, $limit, $filter, $changeCaseTo);
+    }
+
     public function remove()
     {
         parent::remove();

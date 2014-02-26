@@ -171,6 +171,19 @@ Requirements:
        | Assign a user as Supervisor  | 85794888452ceeef3675164057928956 | 2                | SUPERVISOR                      | 00000000000000000000000000000001 |
     
 
+     Scenario: Assign a supervisor process when it was already assigned 
+        Given POST this data:
+        """
+       {
+           "pu_type": "SUPERVISOR",
+           "usr_uid": "00000000000000000000000000000001"
+       }
+       """
+       And I request "project/85794888452ceeef3675164057928956/process-supervisor"
+       Then the response status code should be 400
+       And the response status message should have the following text "already exist"
+
+
     
     Scenario Outline: Assign a dynaform to a process supervisor
         Given POST this data:
@@ -190,6 +203,19 @@ Requirements:
        Examples:
        | test_description                     | project                          | pud_number       | dyn_uid                          |  
        | Assign a dynaform # 3 for Supervisor | 85794888452ceeef3675164057928956 | 1                | 92562207752ceef36c7d874048012431 |
+
+
+    Scenario: Assign a dynaform to a process supervisor when it was already assigned
+        Given POST this data:
+        """
+       {
+            "dyn_uid": "92562207752ceef36c7d874048012431"
+       }
+       """
+       And I request "project/85794888452ceeef3675164057928956/process-supervisor/dynaform"
+       Then the response status code should be 400
+       And the response status message should have the following text "already exists"
+
 
     
     Scenario Outline: Assign an input document to a process supervisor

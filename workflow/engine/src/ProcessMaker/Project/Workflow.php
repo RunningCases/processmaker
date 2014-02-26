@@ -61,7 +61,7 @@ class Workflow extends Handler
         $data['PRO_CATEGORY'] = array_key_exists('PRO_CATEGORY', $data) ? $data['PRO_CATEGORY'] : "";
 
         try {
-            self::log("===> Executing -> ".__METHOD__, "Create Process with data:", $data);
+            self::log("Create Process with data:", $data);
 
             //validate if process with specified name already exists
             if (Process::existsByProTitle($data["PRO_TITLE"])) {
@@ -102,7 +102,7 @@ class Workflow extends Handler
     public function remove()
     {
         try {
-            self::log("===> Executing -> ".__METHOD__, "Remove Process with uid: {$this->proUid}");
+            self::log("Remove Process with uid: {$this->proUid}");
             $this->deleteProcess($this->proUid);
             self::log("Remove Process Success!");
         } catch (\Exception $e) {
@@ -128,6 +128,12 @@ class Workflow extends Handler
         $process = new Process();
         $processes = $process->getAllProcesses( $start, $limit, "", "");
         //$processes = $process->getAll();
+
+        if ($changeCaseTo != CASE_UPPER) {
+            foreach ($processes as $i => $processRow) {
+                $processes[$i] = array_change_key_case($processRow, $changeCaseTo);
+            }
+        }
 
         return $processes;
     }
@@ -163,7 +169,7 @@ class Workflow extends Handler
         $taskData['PRO_UID'] = $this->proUid;
 
         try {
-            self::log("===> Executing -> ".__METHOD__, "Add Task with data: ", $taskData);
+            self::log("Add Task with data: ", $taskData);
             $task = new Task();
             $tasUid = $task->create($taskData, false);
             self::log("Add Task Success!");
@@ -178,7 +184,7 @@ class Workflow extends Handler
     public function updateTask($tasUid, $taskData)
     {
         try {
-            self::log("===> Executing -> ".__METHOD__, "Update Task: $tasUid", "With data: ", $taskData);
+            self::log("Update Task: $tasUid", "With data: ", $taskData);
             $task = new Task();
             $taskData['TAS_UID'] = $tasUid;
             $result = $task->update($taskData);
@@ -194,9 +200,9 @@ class Workflow extends Handler
     public function removeTask($tasUid)
     {
         try {
-            self::log("===> Executing -> ".__METHOD__, "Remove Task: $tasUid");
-            $task = new Task();
-            $task->remove($tasUid);
+            self::log("Remove Task: $tasUid");
+            $task = new Tasks();
+            $task->deleteTask($tasUid);
             self::log("Remove Task Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
@@ -263,7 +269,7 @@ class Workflow extends Handler
         }
     }
 
-    public function addRoute($fromTasUid, $toTasUid, $type, $delete = null)
+    public function addRoute($fromTasUid, $toTasUid, $type, $condition = "")
     {
         try {
             self::log("Add Route from task: $fromTasUid -> to task: $toTasUid ($type)");
@@ -275,18 +281,18 @@ class Workflow extends Handler
             }
 
             if ($type != 'SEQUENTIAL' && $type != 'SEC-JOIN' && $type != 'DISCRIMINATOR') {
-                if ($this->getNumberOfRoutes($this->proUid, $fromTasUid, $toTasUid, $type) > 0) {
-                    throw new \LogicException("Unexpected behaviour");
-                }
+                //if ($this->getNumberOfRoutes($this->proUid, $fromTasUid, $toTasUid, $type) > 0) {
+                    //throw new \LogicException("Unexpected behaviour");
+                //}
             }
 
             //if ($delete || $type == 'SEQUENTIAL' || $type == 'SEC-JOIN' || $type == 'DISCRIMINATOR') {
-                $oTasks = new Tasks();
-                $oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
+                //$oTasks = new Tasks();
+                //$oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
             //}
 
-            $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $delete);
-            self::log("Add Route Success! -> ", $result);
+            $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $condition);
+            self::log("Add Route Success! - ROU_UID: ", $result);
 
             return $result;
         } catch (\Exception $e) {
@@ -295,12 +301,18 @@ class Workflow extends Handler
         }
     }
 
+    public function resetTaskRoutes($actUid)
+    {
+        $oTasks = new Tasks();
+        $oTasks->deleteAllRoutesOfTask($this->proUid, $actUid);
+    }
+
     public function updateRoute($rouUid, $routeData)
     {
         $routeData['ROU_UID'] = $rouUid;
 
         try {
-            self::log("===> Executing -> ".__METHOD__, "Update Route: $rouUid with data:", $routeData);
+            self::log("Update Route: $rouUid with data:", $routeData);
             $route = new Route();
             $route->update($routeData);
             self::log("Update Route Success!");
@@ -313,7 +325,7 @@ class Workflow extends Handler
     public function removeRoute($rouUid)
     {
         try {
-            self::log("===> Executing -> ".__METHOD__, "Remove Route: $rouUid");
+            self::log("Remove Route: $rouUid");
             $route = new Route();
             $result = $route->remove($rouUid);
             self::log("Remove Route Success!");
@@ -325,11 +337,34 @@ class Workflow extends Handler
         }
     }
 
+    public function removeRouteFromTo($fromTasUid, $toTasUid)
+    {
+        try {
+            self::log("Remove Route from $fromTasUid -> to $toTasUid");
+
+            $route = Route::findOneBy(array(
+                RoutePeer::TAS_UID => $fromTasUid,
+                RoutePeer::ROU_NEXT_TASK => $toTasUid
+            ));
+
+            $route->delete();
+            self::log("Remove Route Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
     public function getRoute($rouUid)
     {
         $route = new Route();
 
         return $route->load($rouUid);
+    }
+
+    public function getRoutes($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        return Route::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo);
     }
 
 
@@ -357,7 +392,7 @@ class Workflow extends Handler
         }
     }
 
-    private function saveNewPattern($sProcessUID = '', $sTaskUID = '', $sNextTask = '', $sType = '', $sDelete = '')
+    private function saveNewPattern($sProcessUID = '', $sTaskUID = '', $sNextTask = '', $sType = '', $condition = '')
     {
         try {
             $oCriteria = new Criteria('workflow');
@@ -377,6 +412,10 @@ class Workflow extends Handler
             $aFields['ROU_NEXT_TASK'] = $sNextTask;
             $aFields['ROU_TYPE'] = $sType;
             $aFields['ROU_CASE'] = (int) $aRow['ROUTE_NUMBER'] + 1;
+
+            if(! empty($condition)) {
+                $aFields['ROU_CONDITION'] = $condition;
+            }
 
             //$sGatewayUID = $aRow['GATEWAY_UID'];
 

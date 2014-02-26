@@ -35,8 +35,22 @@ Feature: PM Group Negative Tests
     
             Examples:
     
-            | grp_title                  | grp_status | grp_title | error_code | error_message |
-            | Field requered grp_title   | ACTIVE     |           |    400     | grp_title     |
-            | Field requered grp_status  |            | test      |    400     | grp_status    |
-          
-           
+            | grp_title                   | grp_uid_number | grp_status | grp_title | error_code | error_message |
+            | Field required grp_title    | 1              | ACTIVE     |           |    400     | grp_title     |
+            | Field required grp_status   | 2              |            | test      |    400     | grp_status    |
+            | Create group with same name | 4              | ACTIVE     | Employees |    400     | exists        |
+
+
+       
+
+    Scenario: Assign users to groups exist in workspace with bad parameters (negative tests)
+        Given POST this data:
+        """
+        {
+            "usr_uid": "0000000000000000444500000001"
+        }
+        """
+        And I request "group/66623507552d56742865613066097298/user"
+        And the content type is "application/json"
+        Then the response status code should be 400
+        And the response status message should have the following text "usr_uid"

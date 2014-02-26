@@ -120,7 +120,6 @@ class Activity extends Api
             $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
 
             $response = $task->getSteps($act_uid);
-
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -223,17 +222,17 @@ class ActivityPropertiesStructure
     public $tas_duration;
 
     /**
-     * @var string {@from body} {@choice DAYS,HOURS}
+     * @var string {@from body}
      */
     public $tas_timeunit;
 
     /**
-     * @var string {@from body} {@choice 1,,2}
+     * @var string {@from body}
      */
     public $tas_type_day;
 
     /**
-     * @var string {@from body} {@min 0} {@max 32}
+     * @var string {@from body}
      */
     public $tas_calendar;
 
@@ -263,7 +262,7 @@ class ActivityPropertiesStructure
     public $tas_def_subject_message;
 
     /**
-     * @var string {@from body} {@choice template,text}
+     * @var string {@from body}
      */
     public $tas_def_message_type;
 

@@ -70,7 +70,7 @@ Feature: DataBase Connections
                 ]
             }
             """
-        And that I want to update a resource with the key "dbs_uid" stored in session array
+        And that I want to update a resource with the key "rep_uid" stored in session array
         And I request "project/96189226752f3e5e23c1303036042196/report-table"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -79,7 +79,7 @@ Feature: DataBase Connections
 
     Scenario: Get a database connection (with change in "dbs_description" and "dbs_database_name")
         Given that I have a valid access_token
-        And that I want to get a resource with the key "dbs_uid" stored in session array
+        And that I want to get a resource with the key "rep_uid" stored in session array
         And I request "project/96189226752f3e5e23c1303036042196/report-table"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -89,7 +89,7 @@ Feature: DataBase Connections
 
     Scenario: Delete a database connection
         Given that I have a valid access_token
-        And that I want to delete a resource with the key "dbs_uid" stored in session array
+        And that I want to delete a resource with the key "rep_uid" stored in session array
         And I request "project/96189226752f3e5e23c1303036042196/report-table"
         Then the response status code should be 200
         And the response charset is "UTF-8"

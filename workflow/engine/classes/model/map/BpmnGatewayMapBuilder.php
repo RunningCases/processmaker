@@ -79,7 +79,7 @@ class BpmnGatewayMapBuilder
 
         $tMap->addColumn('GAT_INSTANTIATE', 'GatInstantiate', 'int', CreoleTypes::TINYINT, false, null);
 
-        $tMap->addColumn('GAT_EVENT_GATEWAT_TYPE', 'GatEventGatewatType', 'string', CreoleTypes::VARCHAR, false, 20);
+        $tMap->addColumn('GAT_EVENT_GATEWAY_TYPE', 'GatEventGatewayType', 'string', CreoleTypes::VARCHAR, false, 20);
 
         $tMap->addColumn('GAT_ACTIVATION_COUNT', 'GatActivationCount', 'int', CreoleTypes::INTEGER, false, null);
 

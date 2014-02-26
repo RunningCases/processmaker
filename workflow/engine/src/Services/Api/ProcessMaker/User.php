@@ -13,12 +13,15 @@ class User extends Api
 {
     /**
      * @url GET
+     * @param string $filter
+     * @param int $start
+     * @param int $limit
      */
     public function doGetUsers($filter = '', $start = null, $limit = null)
     {
         try {
             $user = new \BusinessModel\User();
-            $response = $user->getUsers($filter, null, null, $start, $limit);
+            $response = $user->getUsers($filter, $start, $limit);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -48,7 +51,8 @@ class User extends Api
      *
      * @status 201
      */
-    public function doPostUser($request_data) {
+    public function doPostUser($request_data)
+    {
         try {
             $user = new \BusinessModel\User();
             $arrayData = $user->create($request_data);
@@ -59,14 +63,14 @@ class User extends Api
         }
     }
 
-
     /**
      * @url PUT /:usr_uid
      *
      * @param string $usr_uid      {@min 32}{@max 32}
      * @param array  $request_data
      */
-    public function doPutUser($usr_uid, $request_data) {
+    public function doPutUser($usr_uid, $request_data)
+    {
         try {
             $userLoggedUid = $this->getUserId();
             $user = new \BusinessModel\User();
@@ -90,6 +94,22 @@ class User extends Api
             $user->delete($usr_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $usr_uid {@min 32} {@max 32}
+     *
+     * @url POST /:usr_uid/image-upload
+     */
+    public function doPostUserImageUpload($usr_uid)
+    {
+        try {
+            $user = new \BusinessModel\User();
+            $user->uploadImage($usr_uid);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 }
