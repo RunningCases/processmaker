@@ -112,8 +112,8 @@ Feature: User Main Tests
         | Create without replaced by, calendar | 1          | /home/wendy/photo/pic1.jpg |
         | Create without calendar              | 2          | /home/wendy/photo/pic2.jpg |
         | Create with all fields               | 3          | /home/wendy/photo/pic3.jpg |
-        | Create user Inactive                 | 4          | ~/userPhoto/abcd.jpg |
-        | Create user Vacation                 | 5          | ~/userPhoto/abcd.jpg |
+        | Create user Inactive                 | 4          |                            |
+        | Create user Vacation                 | 5          |                            |
 
 
     Scenario: Get the users List when there are exactly 63 users
