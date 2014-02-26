@@ -115,18 +115,17 @@ class Trigger
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid . ", " . $type . ", " . $taskUid . ", " . $triggerUid, "STEP_TRIGGER"), "The record \"{0}\", exists in table {1}")));
             }
 
-            if (isset($arrayData["st_position"]) && $this->existsRecord($stepUid, $type, $taskUid, "", $arrayData["st_position"])) {
-                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["st_position"], $stepUid . ", " . $type . ", " . $taskUid . ", " . $arrayData["st_position"], "STEP_TRIGGER"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
-            }
-
             //Create
             $stepTrigger = new \StepTrigger();
-
-            $stepTrigger->create(array("STEP_UID" => $stepUid, "TAS_UID" => $taskUid, "TRI_UID" => $triggerUid, "ST_TYPE" => $type));
-
-            if (!isset($arrayData["st_position"]) || $arrayData["st_position"] == "") {
-                $arrayData["st_position"] = $stepTrigger->getNextPosition($stepUid, $type, $taskUid) - 1;
-            }
+            $posIni = $stepTrigger->getNextPosition($stepUid, $type, $taskUid);
+            $stepTrigger->createRow(array(
+                "STEP_UID" => $stepUid,
+                "TAS_UID" => $taskUid,
+                "TRI_UID" => $triggerUid,
+                "ST_TYPE" => $type,
+                "ST_CONDITION" => (isset($arrayData['st_condition'])) ? $arrayData['st_condition'] : '',
+                "ST_POSITION" => $posIni
+            ));
 
             $arrayData = $this->update($stepUidIni, $typeIni, $taskUid, $triggerUid, $arrayData);
 

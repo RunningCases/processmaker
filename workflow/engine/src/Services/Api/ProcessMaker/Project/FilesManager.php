@@ -116,15 +116,15 @@ class FilesManager extends Api
 
     /**
      * @param string $prjUid {@min 32} {@max 32}
-     * @param string $path
+     * @param string $prfUid {@min 32} {@max 32}
      *
-     * @url GET /:prjUid/file-manager/download
+     * @url GET /:prjUid/file-manager/:prfUid/download
      */
-    public function doGetProcessFilesManagerDownload($prjUid, $path)
+    public function doGetProcessFilesManagerDownload($prjUid, $prfUid)
     {
         try {
             $filesManager = new \BusinessModel\FilesManager();
-            $filesManager->downloadProcessFilesManager($prjUid, $path);
+            $filesManager->downloadProcessFilesManager($prjUid, $prfUid);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
