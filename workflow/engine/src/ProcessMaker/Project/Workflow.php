@@ -129,6 +129,12 @@ class Workflow extends Handler
         $processes = $process->getAllProcesses( $start, $limit, "", "");
         //$processes = $process->getAll();
 
+        if ($changeCaseTo != CASE_UPPER) {
+            foreach ($processes as $i => $processRow) {
+                $processes[$i] = array_change_key_case($processRow, $changeCaseTo);
+            }
+        }
+
         return $processes;
     }
 

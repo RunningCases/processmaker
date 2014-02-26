@@ -80,22 +80,39 @@ class BpmnWorkflow extends Project\Bpmn
 
     public static function getList($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)
     {
-        $bpmnProjects = parent::getList($start, $limit, $filter, $changeCaseTo);
-        $workflowProjects = Project\Workflow::getList($start, $limit, "", "");
-
-        $workflowProjectsUids = array();
-
-        foreach ($workflowProjects as $workflowProject) {
-            $workflowProjectsUids[] = $workflowProject["PRO_UID"];
-        }
-
-        $prjUidKey = $changeCaseTo == CASE_UPPER ? "PRJ_UID" : "prj_uid";
+        $bpmnProjects = parent::getList($start, $limit, $filter);
+        $workflowProjects = Project\Workflow::getList($start, $limit, $filter);
+        $bpmnProjectsUid = array();
+        $bpmnProjectsList = array();
         $list = array();
 
         foreach ($bpmnProjects as $bpmnProject) {
-            if (in_array($bpmnProject[$prjUidKey], $workflowProjectsUids)) {
-                $list[] = $bpmnProject;
+            $bpmnProjectsList[$bpmnProject["PRJ_UID"]] = $bpmnProject;
+        }
+
+        $bpmnProjectsUid = array_keys($bpmnProjectsList);
+
+        foreach ($workflowProjects as $workflowProject) {
+            $data["PRJ_UID"] = $workflowProject["PRO_UID"];
+            $data["PRJ_NAME"] = $workflowProject["PRO_TITLE"];
+            $data["PRJ_DESCRIPTION"] = $workflowProject["PRO_DESCRIPTION"];
+            $data["PRJ_CATEGORY"] = $workflowProject["PRO_CATEGORY"];
+
+            if (in_array($workflowProject["PRO_UID"], $bpmnProjectsUid)) {
+                $data["PRJ_TYPE"] = "bpmn";
+                $data["PRJ_CREATE_DATE"] = $bpmnProjectsList[$workflowProject["PRO_UID"]]["PRJ_CREATE_DATE"];
+                $data["PRJ_UPDATE_DATE"] = $bpmnProjectsList[$workflowProject["PRO_UID"]]["PRJ_UPDATE_DATE"];
+            } else {
+                $data["PRJ_TYPE"] = "classic";
+                $data["PRJ_CREATE_DATE"] = $workflowProject["PRO_CREATE_DATE"];
+                $data["PRJ_UPDATE_DATE"] = $workflowProject["PRO_UPDATE_DATE"];
             }
+
+            if ($changeCaseTo != CASE_UPPER) {
+                $data = array_change_key_case($data, $changeCaseTo);
+            }
+
+            $list[] = $data;
         }
 
         return $list;

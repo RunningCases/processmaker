@@ -613,6 +613,7 @@ class Process extends BaseProcess
         $oCriteria->addSelectColumn( ProcessPeer::PRO_PARENT );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_STATUS );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_CATEGORY );
+        $oCriteria->addSelectColumn( ProcessPeer::PRO_UPDATE_DATE );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_CREATE_DATE );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_CREATE_USER );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_DEBUG );
