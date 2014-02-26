@@ -8,7 +8,7 @@ class TriggerWizard
 
         "TRI_TITLE"       => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),         "fieldNameAux" => "triggerTitle"),
         "TRI_DESCRIPTION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),         "fieldNameAux" => "triggerDescription"),
-        "TRI_TYPE"        => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("SCRIPT"), "fieldNameAux" => "triggerType"),
+        "TRI_TYPE"        => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("SCRIPT"), "fieldNameAux" => "triggerType"),
         "TRI_WEBBOT"      => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),         "fieldNameAux" => "triggerWebbot"),
         "TRI_PARAM"       => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),         "fieldNameAux" => "triggerParam")
     );
@@ -16,9 +16,10 @@ class TriggerWizard
     private $formatFieldNameInUppercase = true;
 
     private $arrayFieldNameForException = array(
-        "processUid"  => "PRO_UID",
-        "libraryName" => "LIB_NAME",
-        "methodName"  => "MTH_NAME"
+        "processUid"    => "PRO_UID",
+        "libraryName"   => "LIB_NAME",
+        "methodName"    => "MTH_NAME",
+        "triggerParams" => "TRI_PARAMS"
     );
 
     private $library;
@@ -137,7 +138,7 @@ class TriggerWizard
             $library = $this->library->getLibraryDefinition($this->libraryGetLibraryName($libraryName));
 
             if (!isset($library->methods[$methodName])) {
-                $msg = str_replace(array("{0}", "{1}"), array($methodFieldNameForException, $methodName), "The method with {0}: \"{1}\", does not exist in library");
+                $msg = str_replace(array("{0}", "{1}"), array($methodFieldNameForException, $methodName), "The function with {0}: \"{1}\", does not exist in library");
 
                 throw (new \Exception($msg));
             }
@@ -147,7 +148,16 @@ class TriggerWizard
     }
 
     /**
+     * Verify if wizard is invalid for the trigger
      *
+     * @param string $libraryName                     Library name
+     * @param string $methodName                      Method name
+     * @param string $triggerUid                      Unique id of Trigger
+     * @param string $libraryFieldNameForException    Field name for the exception
+     * @param string $methodFieldNameForException     Field name for the exception
+     * @param string $triggerUidFieldNameForException Field name for the exception
+     *
+     * return void Throw exception if wizard is invalid for the trigger
      */
     public function throwExceptionIfLibraryAndMethodIsInvalidForTrigger($libraryName, $methodName, $triggerUid, $libraryFieldNameForException, $methodFieldNameForException, $triggerUidFieldNameForException)
     {
@@ -180,11 +190,134 @@ class TriggerWizard
                 throw (new \Exception($msg));
             }
 
-            //PMFUNTION_NAME //createZimbraContacts
-            //LIBRARY_CLASS  //class.pmZimbra.pmFunctions.php
+            $triggerParamLibraryName = (preg_match("/^class\.?(.*)\.pmFunctions\.php$/", $arrayTriggerData["TRI_PARAM"]["params"]["LIBRARY_CLASS"], $arrayMatch))? ((isset($arrayMatch[1]) && $arrayMatch[1] != "")? $arrayMatch[1] : "pmFunctions") : $arrayTriggerData["TRI_PARAM"]["params"]["LIBRARY_CLASS"];
+            $triggerParamMethodName = $arrayTriggerData["TRI_PARAM"]["params"]["PMFUNTION_NAME"];
 
-            //VALIDATION - El wizard xxx con el metodo yyy, es invalido para el trigger ttttt
+            if ($libraryName != $triggerParamLibraryName || $methodName != $triggerParamMethodName) {
+                $msg = str_replace(array("{0}", "{1}", "{2}", "{3}"), array($libraryName, $methodName, $triggerUidFieldNameForException, $triggerUid), "The wizard with the library \"{0}\" and function \"{1}\", is invalid for the trigger with {2}: {3}");
 
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Validate TRI_PARAMS data
+     *
+     * @param string $libraryName                  Library name
+     * @param string $methodName                   Method name
+     * @param array  $arrayData                    Data
+     * @param string $libraryFieldNameForException Field name for the exception
+     * @param string $methodFieldNameForException  Field name for the exception
+     * @param string $fieldNameForException        Field name for the exception
+     *
+     * return array Return array. Throw exception otherwise, if TRI_PARAMS data has an invalid value
+     */
+    public function throwExceptionIfDataNotMetTriggerParamsDefinition($libraryName, $methodName, $arrayData, $libraryFieldNameForException, $methodFieldNameForException, $fieldNameForException)
+    {
+        try {
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+
+            $arrayParamData = array();
+
+            //Verify data
+            $this->throwExceptionIfNotExistsMethodInLibrary($libraryName, $methodName, $libraryFieldNameForException, $methodFieldNameForException);
+
+            //Set variables
+            $nInputParam  = count($this->methodGetInputParams($libraryName, $methodName));
+            $nOutputParam = count($this->methodGetOutputParams($libraryName, $methodName));
+
+            if ($nInputParam > 0 || $nOutputParam > 0) {
+                if (!isset($arrayData["TRI_PARAMS"])) {
+                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameForException), "The \"{0}\" attribute is not defined")));
+                }
+
+                if (!is_array($arrayData["TRI_PARAMS"])) {
+                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameForException), "The \"{0}\" attribute is not array")));
+                }
+
+                $arrayData["TRI_PARAMS"] = array_change_key_case($arrayData["TRI_PARAMS"], CASE_UPPER);
+
+                if ($nInputParam > 0) {
+                    if (!isset($arrayData["TRI_PARAMS"]["INPUT"])) {
+                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".INPUT")), "The \"{0}\" attribute is not defined")));
+                    }
+
+                    if (!is_array($arrayData["TRI_PARAMS"]["INPUT"])) {
+                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".INPUT")), "The \"{0}\" attribute is not array")));
+                    }
+
+                    $arrayParamData["input"] = $arrayData["TRI_PARAMS"]["INPUT"];
+                }
+
+                if ($nOutputParam > 0) {
+                    if (!isset($arrayData["TRI_PARAMS"]["OUTPUT"])) {
+                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".OUTPUT")), "The \"{0}\" attribute is not defined")));
+                    }
+
+                    if (!is_array($arrayData["TRI_PARAMS"]["OUTPUT"])) {
+                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".OUTPUT")), "The \"{0}\" attribute is not array")));
+                    }
+
+                    $arrayParamData["output"] = $arrayData["TRI_PARAMS"]["OUTPUT"];
+                }
+
+                $this->throwExceptionIfDataNotMetParamDefinition($libraryName, $methodName, $arrayParamData, $libraryFieldNameForException, $methodFieldNameForException);
+            }
+
+            return $arrayParamData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Validate data by parameter definition
+     *
+     * @param string $libraryName                  Library name
+     * @param string $methodName                   Method name
+     * @param array  $arrayParamData               Data
+     * @param string $libraryFieldNameForException Field name for the exception
+     * @param string $methodFieldNameForException  Field name for the exception
+     *
+     * return void Throw exception if data has an invalid value
+     */
+    public function throwExceptionIfDataNotMetParamDefinition($libraryName, $methodName, $arrayParamData, $libraryFieldNameForException, $methodFieldNameForException)
+    {
+        try {
+            //Verify data
+            $this->throwExceptionIfNotExistsMethodInLibrary($libraryName, $methodName, $libraryFieldNameForException, $methodFieldNameForException);
+
+            //Set variables
+            $arrayMethodInputParam = $this->methodGetInputParams($libraryName, $methodName);
+            $arrayMethodOutputParam = $this->methodGetOutputParams($libraryName, $methodName);
+
+            foreach ($arrayMethodOutputParam as $key => $value) {
+                $arrayMethodOutputParam[$key]["type"] = "string";
+            }
+
+            $arrayVerify = array(
+                array("paramDefinition" => $arrayMethodInputParam,  "paramData" => (isset($arrayParamData["input"]))? $arrayParamData["input"] : array()),
+                array("paramDefinition" => $arrayMethodOutputParam, "paramData" => (isset($arrayParamData["output"]))? $arrayParamData["output"] : array())
+            );
+
+            $process = new \BusinessModel\Process();
+
+            foreach ($arrayVerify as $key1 => $value1) {
+                if (count($value1["paramDefinition"]) > 0) {
+                    $arrayParamDefinition = array();
+                    $arrayParamNameForException = array();
+
+                    foreach ($value1["paramDefinition"] as $key2 => $value2) {
+                        $arrayParamDefinition[$value2["name"]] = array("type" => $value2["type"], "required" => $value2["required"], "empty" => !$value2["required"], "defaultValues" => array(), "fieldNameAux" => $value2["name"]);
+                        $arrayParamNameForException[$value2["name"]] = $value2["name"];
+                    }
+
+                    $process->throwExceptionIfDataNotMetFieldDefinition($value1["paramData"], $arrayParamDefinition, $arrayParamNameForException, true);
+                }
+            }
         } catch (\Exception $e) {
             throw $e;
         }
@@ -212,14 +345,14 @@ class TriggerWizard
     }
 
     /**
-     * Get all parameters of a method
+     * Get all input parameters of a method
      *
      * @param string $libraryName Library name
      * @param string $methodName  Method name
      *
-     * return array Return an array with all parameters of a method
+     * return array Return an array with all input parameters of a method
      */
-    public function methodGetParams($libraryName, $methodName)
+    public function methodGetInputParams($libraryName, $methodName)
     {
         try {
             $arrayParam = array();
@@ -291,14 +424,14 @@ class TriggerWizard
     }
 
     /**
-     * Get all parameters return of a method
+     * Get all output parameters of a method
      *
      * @param string $libraryName Library name
      * @param string $methodName  Method name
      *
-     * return array Return an array with all parameters return of a method
+     * return array Return an array with all output parameters of a method
      */
-    public function methodGetParamsReturn($libraryName, $methodName)
+    public function methodGetOutputParams($libraryName, $methodName)
     {
         try {
             $arrayParam = array();
@@ -342,29 +475,300 @@ class TriggerWizard
         }
     }
 
-    ///**
-    // *
-    // */
-    //public function create()
-    //{
-    //    try {
-    //        //
-    //    } catch (\Exception $e) {
-    //        throw $e;
-    //    }
-    //}
+    /**
+     * Set values in Trigger fields (TRI_WEBBOT, TRI_PARAM)
+     *
+     * @param string $libraryName    Library name
+     * @param string $methodName     Method name
+     * @param string $triggerUid     Unique id of Trigger
+     * @param array  $arrayParamData Data
+     *
+     * return void
+     */
+    public function setData($libraryName, $methodName, $triggerUid, $arrayParamData)
+    {
+        try {
+            //Verify data
+            $this->throwExceptionIfNotExistsMethodInLibrary($libraryName, $methodName, $this->arrayFieldNameForException["libraryName"], $this->arrayFieldNameForException["methodName"]);
 
-    ///**
-    // *
-    // */
-    //public function update()
-    //{
-    //    try {
-    //        //
-    //    } catch (\Exception $e) {
-    //        throw $e;
-    //    }
-    //}
+            $trigger = new \BusinessModel\Trigger();
+
+            $trigger->throwExceptionIfNotExistsTrigger($triggerUid, "", $this->arrayFieldNameForException["triggerUid"]);
+
+            //Set variables
+            $arrayMethodInputParam = $this->methodGetInputParams($libraryName, $methodName);
+            $arrayMethodOutputParam = $this->methodGetOutputParams($libraryName, $methodName);
+
+            $arrayTriggerParam = array();
+            $arrayScriptMethodParam = array();
+
+            $strParamsNamePhp = "";
+            $strParamsType = "";
+            $strParamsRequired = "";
+
+            //Set variables - Load Trigger
+            $trigger = new \Triggers();
+
+            $arrayTriggerData = $trigger->load($triggerUid);
+
+            $arrayTriggerParam["TRI_UID"] = $triggerUid;
+            $arrayTriggerParam["TRI_TITLE"] = $arrayTriggerData["TRI_TITLE"];
+            $arrayTriggerParam["TRI_DESCRIPTION"] = $arrayTriggerData["TRI_DESCRIPTION"];
+            $arrayTriggerParam["TRI_TYPE"] = $arrayTriggerData["TRI_TYPE"];
+            $arrayTriggerParam["PRO_UID"] = $arrayTriggerData["PRO_UID"];
+
+            //Set variables - Input
+            foreach ($arrayMethodInputParam as $key => $value) {
+                $paramName = $value["name"];
+                $paramType = $value["type"];
+                $paramRequired = $value["required"];
+                $paramDefaultValue = (isset($value["default_value"]))? $value["default_value"] : "";
+
+                //TRI_PARAM
+                $arrayTriggerParam[$paramName] = (isset($arrayParamData["input"][$paramName]))? $arrayParamData["input"][$paramName] : $paramDefaultValue;
+
+                //Variables
+                $strParamsNamePhp = $strParamsNamePhp . (($strParamsNamePhp != "")? "," : "") . "\$" . $paramName;
+                $strParamsType = $strParamsType . (($strParamsType != "")? "," : "") . $paramType;
+
+                if ($paramRequired) {
+                    $strParamsRequired = $strParamsRequired . (($strParamsRequired != "")? "," : "") . $paramName;
+                }
+
+                //Method parameters
+                $paramValue = "\"" . $paramDefaultValue . "\"";
+
+                if (isset($arrayParamData["input"][$paramName])) {
+                    if (preg_match("/^.*@@.*$/", $arrayParamData["input"][$paramName])) {
+                        $paramValue = trim($arrayParamData["input"][$paramName]);
+                    } else {
+                        switch ($paramType) {
+                            case "int":
+                            case "integer":
+                                $paramValue = intval($arrayParamData["input"][$paramName]);
+                                break;
+                            case "float":
+                            case "real":
+                            case "double":
+                                $paramValue = floatval($arrayParamData["input"][$paramName]);
+                                break;
+                            case "bool":
+                            case "boolean":
+                            case "array":
+                                $paramValue = trim($arrayParamData["input"][$paramName]);
+                                break;
+                            case "string":
+                                $paramValue = "\"" . str_replace("\"", "\\\"", $arrayParamData["input"][$paramName]) . "\"";
+                                break;
+                            default:
+                                if (is_numeric($arrayParamData["input"][$paramName]) ||
+                                    is_bool($arrayParamData["input"][$paramName]) ||
+                                    preg_match("/^\s*array\s*\(.*\)\s*$/", $arrayParamData["input"][$paramName])
+                                ) {
+                                    $paramValue = trim($arrayParamData["input"][$paramName]);
+                                } else {
+                                    $paramValue = "\"" . str_replace("\"", "\\\"", $arrayParamData["input"][$paramName]) . "\"";
+                                }
+                                break;
+                        }
+                    }
+                }
+
+                $arrayScriptMethodParam[] = $paramValue;
+            }
+
+            //Set variables - Output
+            $varReturn = "";
+
+            foreach ($arrayMethodOutputParam as $key => $value) {
+                $paramName = $value["name"];
+                $paramRequired = $value["required"];
+
+                if ($paramRequired && isset($arrayParamData["output"][$paramName]) && trim($arrayParamData["output"][$paramName]) != "") {
+                    $arrayTriggerParam[strtoupper($paramName)] = trim($arrayParamData["output"][$paramName]);
+
+                    $strParamsRequired = $strParamsRequired . (($strParamsRequired != "")? "," : "") . strtoupper($paramName);
+
+                    $varReturn = trim($arrayParamData["output"][$paramName]) . " = ";
+                    break;
+                }
+            }
+
+            //Set data
+            $library = $this->library->getLibraryDefinition($this->libraryGetLibraryName($libraryName));
+            $method = $library->methods[$methodName];
+
+            $strScript =                     "/*******************************************************";
+            $strScript = $strScript . "\n" . " *";
+            $strScript = $strScript . "\n" . " * Generated by ProcessMaker Trigger Wizard";
+            $strScript = $strScript . "\n" . " * Library: " . trim($library->info["name"]);
+            $strScript = $strScript . "\n" . " * Method: " . trim($method->info["label"]);
+            $strScript = $strScript . "\n" . " * Date: " . date("Y-m-d H:i:s");
+            $strScript = $strScript . "\n" . " *";
+            $strScript = $strScript . "\n" . " * ProcessMaker " . date("Y");
+            $strScript = $strScript . "\n" . " *";
+            $strScript = $strScript . "\n" . " *******************************************************/";
+            $strScript = $strScript . "\n";
+            $strScript = $strScript . "\n" . $varReturn . $methodName . "(" . implode(", ", $arrayScriptMethodParam) . ");";
+
+            $arrayTriggerParam["TRI_WEBBOT"] = $strScript;
+
+            $arrayTriggerParam["__notValidateThisFields__"] = "";
+            $arrayTriggerParam["DynaformRequiredFields"]    = "[]";
+            $arrayTriggerParam["PAGED_TABLE_ID"]            = "";
+
+            $arrayTriggerParam["LIBRARY_NAME"]  = trim($library->info["name"]);
+            $arrayTriggerParam["LIBRARY_CLASS"] = $this->libraryGetLibraryName($libraryName);
+
+            $arrayTriggerParam["PMFUNTION_NAME"]  = $methodName;
+            $arrayTriggerParam["PMFUNTION_LABEL"] = trim($method->info["label"]);
+
+            $arrayTriggerParam["ALLFUNCTION"]      = $strParamsNamePhp;
+            $arrayTriggerParam["ALLFUNCTION_TYPE"] = $strParamsType;
+            $arrayTriggerParam["FIELDS_REQUIRED"]  = $strParamsRequired;
+
+            //Update
+            $result = $trigger->update(array("TRI_UID" => $triggerUid, "TRI_WEBBOT" => $strScript, "TRI_PARAM" => serialize(array("hash" => md5($strScript), "params" => $arrayTriggerParam))));
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Create Trigger for a Process
+     *
+     * @param string $libraryName Library name
+     * @param string $methodName  Method name
+     * @param string $processUid  Unique id of Process
+     * @param array  $arrayData   Data
+     *
+     * return array Return data of the new Trigger created
+     */
+    public function create($libraryName, $methodName, $processUid, $arrayData)
+    {
+        try {
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+
+            //Verify data
+            $process = new \BusinessModel\Process();
+            $trigger = new \BusinessModel\Trigger();
+
+            $this->throwExceptionIfNotExistsMethodInLibrary($libraryName, $methodName, $this->arrayFieldNameForException["libraryName"], $this->arrayFieldNameForException["methodName"]);
+
+            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
+
+            $arrayParamData = $this->throwExceptionIfDataNotMetTriggerParamsDefinition($libraryName, $methodName, $arrayData, $this->arrayFieldNameForException["libraryName"], $this->arrayFieldNameForException["methodName"], $this->arrayFieldNameForException["triggerParams"]);
+
+            $trigger->throwExceptionIfExistsTitle($processUid, $arrayData["TRI_TITLE"], $this->arrayFieldNameForException["triggerTitle"]);
+
+            //TRI_PARAMS
+            if (isset($arrayData["TRI_PARAMS"])) {
+                $arrayData["TRI_PARAMS"] = array_change_key_case($arrayData["TRI_PARAMS"], CASE_UPPER);
+            }
+
+            //Create
+            $trigger = new \Triggers();
+
+            $arrayData["PRO_UID"] = $processUid;
+
+            $result = $trigger->create($arrayData);
+
+            $triggerUid = $trigger->getTriUid();
+
+            $this->setData($libraryName, $methodName, $triggerUid, $arrayParamData);
+
+            //Return
+            unset($arrayData["PRO_UID"]);
+
+            $arrayData = array_merge(array("TRI_UID" => $triggerUid), $arrayData);
+
+            if (!$this->formatFieldNameInUppercase) {
+                if (isset($arrayData["TRI_PARAMS"])) {
+                    $arrayData["TRI_PARAMS"] = array_change_key_case($arrayData["TRI_PARAMS"], CASE_LOWER);
+                }
+
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
+
+            return $arrayData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Update Trigger
+     *
+     * @param string $libraryName Library name
+     * @param string $methodName  Method name
+     * @param string $triggerUid  Unique id of Trigger
+     * @param array  $arrayData   Data
+     *
+     * return array Return data of the Trigger updated
+     */
+    public function update($libraryName, $methodName, $triggerUid, $arrayData)
+    {
+        try {
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+
+            //Verify data
+            $this->throwExceptionIfLibraryAndMethodIsInvalidForTrigger($libraryName, $methodName, $triggerUid, $this->arrayFieldNameForException["libraryName"], $this->arrayFieldNameForException["methodName"], $this->arrayFieldNameForException["triggerUid"]);
+
+            //Load Trigger
+            $trigger = new \Triggers();
+
+            $arrayTriggerData = $trigger->load($triggerUid);
+
+            $processUid = $arrayTriggerData["PRO_UID"];
+
+            //Verify data
+            $process = new \BusinessModel\Process();
+            $trigger = new \BusinessModel\Trigger();
+
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
+
+            if (isset($arrayData["TRI_PARAMS"])) {
+                $arrayParamData = $this->throwExceptionIfDataNotMetTriggerParamsDefinition($libraryName, $methodName, $arrayData, $this->arrayFieldNameForException["libraryName"], $this->arrayFieldNameForException["methodName"], $this->arrayFieldNameForException["triggerParams"]);
+            }
+
+            if (isset($arrayData["TRI_TITLE"])) {
+                $trigger->throwExceptionIfExistsTitle($processUid, $arrayData["TRI_TITLE"], $this->arrayFieldNameForException["triggerTitle"], $triggerUid);
+            }
+
+            //TRI_PARAMS
+            if (isset($arrayData["TRI_PARAMS"])) {
+                $arrayData["TRI_PARAMS"] = array_change_key_case($arrayData["TRI_PARAMS"], CASE_UPPER);
+            }
+
+            //Update
+            $trigger = new \Triggers();
+
+            $arrayData["TRI_UID"] = $triggerUid;
+
+            $result = $trigger->update($arrayData);
+
+            if (isset($arrayData["TRI_PARAMS"])) {
+                $this->setData($libraryName, $methodName, $triggerUid, $arrayParamData);
+            }
+
+            //Return
+            unset($arrayData["TRI_UID"]);
+
+            if (!$this->formatFieldNameInUppercase) {
+                if (isset($arrayData["TRI_PARAMS"])) {
+                    $arrayData["TRI_PARAMS"] = array_change_key_case($arrayData["TRI_PARAMS"], CASE_LOWER);
+                }
+
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
+
+            return $arrayData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 
     /**
      * Get Method of the Library
@@ -380,25 +784,30 @@ class TriggerWizard
             $arrayMethod = array();
 
             //Verify data
-            $arrayMethodParam = $this->methodGetParams($libraryName, $methodName);
-            $arrayMethodParamReturn = $this->methodGetParamsReturn($libraryName, $methodName);
+            $arrayMethodInputParam = $this->methodGetInputParams($libraryName, $methodName);
+            $arrayMethodOutputParam = $this->methodGetOutputParams($libraryName, $methodName);
 
             //Get data
             $library = $this->library->getLibraryDefinition($this->libraryGetLibraryName($libraryName));
             $method = $library->methods[$methodName];
 
-            $arrayMethod[$this->getFieldNameByFormatFieldName("FN_NAME")] = $method->info["name"];
+            $arrayMethod[$this->getFieldNameByFormatFieldName("FN_NAME")] = trim($method->info["name"]);
             $arrayMethod[$this->getFieldNameByFormatFieldName("FN_DESCRIPTION")] = trim(str_replace("*", "", implode("", $method->info["description"])));
-            $arrayMethod[$this->getFieldNameByFormatFieldName("FN_LABEL")] = $method->info["label"];
-            $arrayMethod[$this->getFieldNameByFormatFieldName("FN_LINK")] = (isset($method->info["link"]) && ($method->info["link"] != ""))? $method->info["link"] : "";
+            $arrayMethod[$this->getFieldNameByFormatFieldName("FN_LABEL")] = trim($method->info["label"]);
+            $arrayMethod[$this->getFieldNameByFormatFieldName("FN_LINK")] = (isset($method->info["link"]) && trim($method->info["link"]) != "")? trim($method->info["link"]) : "";
 
             if ($this->formatFieldNameInUppercase) {
-                $arrayMethodParam = \G::array_change_key_case2($arrayMethodParam, CASE_UPPER);
-                $arrayMethodParamReturn = \G::array_change_key_case2($arrayMethodParamReturn, CASE_UPPER);
+                $arrayMethodInputParam = \G::array_change_key_case2($arrayMethodInputParam, CASE_UPPER);
+                $arrayMethodOutputParam = \G::array_change_key_case2($arrayMethodOutputParam, CASE_UPPER);
             }
 
-            $arrayMethod[$this->getFieldNameByFormatFieldName("FN_PARAMS")][$this->getFieldNameByFormatFieldName("INPUT")] = $arrayMethodParam;
-            $arrayMethod[$this->getFieldNameByFormatFieldName("FN_PARAMS")][$this->getFieldNameByFormatFieldName("OUTPUT")] = $arrayMethodParamReturn;
+            if (count($arrayMethodInputParam) > 0) {
+                $arrayMethod[$this->getFieldNameByFormatFieldName("FN_PARAMS")][$this->getFieldNameByFormatFieldName("INPUT")] = $arrayMethodInputParam;
+            }
+
+            if (count($arrayMethodOutputParam) > 0) {
+                $arrayMethod[$this->getFieldNameByFormatFieldName("FN_PARAMS")][$this->getFieldNameByFormatFieldName("OUTPUT")] = $arrayMethodOutputParam;
+            }
 
             //Return
             return $arrayMethod;
@@ -474,15 +883,47 @@ class TriggerWizard
 
             $arrayTriggerData["TRI_PARAM"] = unserialize($arrayTriggerData["TRI_PARAM"]);
 
-            //PMFUNTION_NAME //createZimbraContacts
-            //LIBRARY_CLASS  //class.pmZimbra.pmFunctions.php
+            $arrayMethodInputParam = $this->methodGetInputParams($libraryName, $methodName);
+            $arrayMethodOutputParam = $this->methodGetOutputParams($libraryName, $methodName);
 
-            $arrayMethodParam = $this->methodGetParams($libraryName, $methodName);
-            $arrayMethodParamReturn = $this->methodGetParamsReturn($libraryName, $methodName);
+            //Params
+            $arrayMethodInputParamValue = array();
 
-            //////////////////
-            //create atributtes!!!!!!
-            //////////////////
+            foreach ($arrayMethodInputParam as $key => $value) {
+                $paramName = $value["name"];
+                $paramDefaultValue = (isset($value["default_value"]))? $value["default_value"] : "";
+
+                $arrayMethodInputParamValue[$paramName] = (isset($arrayTriggerData["TRI_PARAM"]["params"][$paramName]))? $arrayTriggerData["TRI_PARAM"]["params"][$paramName] : $paramDefaultValue;
+            }
+
+            $arrayMethodOutputParamValue = array();
+
+            foreach ($arrayMethodOutputParam as $key => $value) {
+                $paramName = $value["name"];
+                $paramRequired = $value["required"];
+
+                if ($paramRequired) {
+                    if (isset($arrayTriggerData["TRI_PARAM"]["params"][strtolower($paramName)])) {
+                        $paramValue = trim($arrayTriggerData["TRI_PARAM"]["params"][strtolower($paramName)]);
+                    } else {
+                        if (isset($arrayTriggerData["TRI_PARAM"]["params"][strtoupper($paramName)])) {
+                            $paramValue = trim($arrayTriggerData["TRI_PARAM"]["params"][strtoupper($paramName)]);
+                        } else {
+                            $paramValue = "";
+                        }
+                    }
+
+                    $arrayMethodOutputParamValue[$paramName] = $paramValue;
+                }
+            }
+
+            if (count($arrayMethodInputParamValue) > 0) {
+                $arrayTriggerData[$this->getFieldNameByFormatFieldName("TRI_PARAMS")][$this->getFieldNameByFormatFieldName("INPUT")] = $arrayMethodInputParamValue;
+            }
+
+            if (count($arrayMethodOutputParamValue) > 0) {
+                $arrayTriggerData[$this->getFieldNameByFormatFieldName("TRI_PARAMS")][$this->getFieldNameByFormatFieldName("OUTPUT")] = $arrayMethodOutputParamValue;
+            }
 
             //Return
             unset($arrayTriggerData["PRO_UID"]);

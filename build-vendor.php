@@ -97,7 +97,6 @@ $jsFiles = array (
     "workflow/public_html/lib/pmUI/pmui.min.js",
     "workflow/public_html/lib/mafe/mafe.min.js",
     "workflow/public_html/lib/mafe/designer.min.js",
-    "workflow/public_html/lib/js/tiny_mce.min.js",
     "gulliver/js/tinymce/jscripts/tiny_mce/tiny_mce.js",
 
     "gulliver/js/tinymce/jscripts/tiny_mce/plugins/pmGrids/editor_plugin.js",

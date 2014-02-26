@@ -259,7 +259,7 @@ class Trigger
     public function throwExceptionIfExistsTitle($processUid, $triggerTitle, $fieldNameForException, $triggerUidExclude = "")
     {
         try {
-            if ($this->verifyNameTrigger($processUid, $triggerTitle, $triggerUidExclude)) {
+            if (!$this->verifyNameTrigger($processUid, $triggerTitle, $triggerUidExclude)) {
                 $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $triggerTitle), "The trigger title with {0}: \"{1}\", already exists");
 
                 throw (new \Exception($msg));

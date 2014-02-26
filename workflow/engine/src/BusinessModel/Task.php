@@ -257,20 +257,6 @@ class Task
                 $arrayProperty["TAS_SEND_LAST_EMAIL"] = (is_null($aTaskInfo["TAS_SEND_LAST_EMAIL"]))? "FALSE" : $aTaskInfo["TAS_SEND_LAST_EMAIL"];
             }
 
-            //Additional configuration
-            if (isset($arrayProperty["TAS_DEF_MESSAGE_TYPE"]) && isset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"])) {
-                //G::LoadClass("configuration");
-                require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.configuration.php");
-
-                $oConf = new \Configurations();
-                $oConf->aConfig = array("TAS_DEF_MESSAGE_TYPE" => $arrayProperty["TAS_DEF_MESSAGE_TYPE"], "TAS_DEF_MESSAGE_TEMPLATE" => $arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"]);
-
-                $oConf->saveConfig("TAS_EXTRA_PROPERTIES", $arrayProperty["TAS_UID"], "", "");
-
-                unset($arrayProperty["TAS_DEF_MESSAGE_TYPE"]);
-                unset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"]);
-            }
-
             //Validating TAS_ASSIGN_VARIABLE value
             if (!isset($arrayProperty["TAS_ASSIGN_TYPE"])) {
                 $derivateType = $task->kgetassigType($arrayProperty["PRO_UID"], $arrayProperty["TAS_UID"]);
@@ -281,32 +267,59 @@ class Task
                     $arrayProperty["TAS_ASSIGN_TYPE"] = $derivateType["TAS_ASSIGN_TYPE"];
                 }
             }
-            if ($arrayProperty["TAS_ASSIGN_TYPE"] == "EVALUTE") {
-                if (empty($arrayProperty["TAS_ASSIGN_VARIABLE"])) {
-                    throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
-                }
-            }
-            if ($arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE_EVALUATE" ||
-                $arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE") {
-                if ($arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE_EVALUATE") {
-                    if (empty($arrayProperty["TAS_GROUP_VARIABLE"])) {
-                        throw (new \Exception("Invalid value specified for 'tas_group_variable'"));
+
+            switch ($arrayProperty["TAS_ASSIGN_TYPE"]) {
+                case 'BALANCED':
+                case 'MANUAL':
+                case 'REPORT_TO':
+                    $this->unsetVar($arrayProperty, "TAS_ASSIGN_VARIABLE");
+                    $this->unsetVar($arrayProperty, "TAS_GROUP_VARIABLE");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIMEOUT");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME_UNIT");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TRIGGER_UID");
+                    break;
+                case 'EVALUATE':
+                    if (empty($arrayProperty["TAS_ASSIGN_VARIABLE"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
                     }
-                }
-                $arrayProperty["TAS_ASSIGN_TYPE"] = "SELF_SERVICE";
-                if (empty($arrayProperty["TAS_SELFSERVICE_TIMEOUT"])) {
-                    throw (new \Exception("Invalid value specified for 'tas_selfservice_timeout'"));
-                }
-                if (empty($arrayProperty["TAS_SELFSERVICE_TIME"])) {
-                    throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
-                }
-                if (empty($arrayProperty["TAS_SELFSERVICE_TRIGGER_UID"])) {
-                    throw (new \Exception("Invalid value specified for 'tas_selfservice_trigger_uid'"));
-                }
-                if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
-                    $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
-                }
+                    $this->unsetVar($arrayProperty, "TAS_GROUP_VARIABLE");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIMEOUT");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME_UNIT");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TRIGGER_UID");
+                    break;
+                case 'SELF_SERVICE':
+                case 'SELF_SERVICE_EVALUATE':
+                    if ($arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE_EVALUATE") {
+                        if (empty($arrayProperty["TAS_GROUP_VARIABLE"])) {
+                            throw (new \Exception("Invalid value specified for 'tas_group_variable'"));
+                        }
+                    } else {
+                        $this->unsetVar($arrayProperty, "TAS_GROUP_VARIABLE");
+                    }
+                    $arrayProperty["TAS_ASSIGN_TYPE"] = "SELF_SERVICE";
+                    if (empty($arrayProperty["TAS_SELFSERVICE_TIMEOUT"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_selfservice_timeout'"));
+                    }
+                    if (empty($arrayProperty["TAS_SELFSERVICE_TIME"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
+                    }
+                    if (empty($arrayProperty["TAS_SELFSERVICE_TRIGGER_UID"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_selfservice_trigger_uid'"));
+                    }
+                    if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
+                        $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
+                    }
+
+                    if ($arrayProperty["TAS_SELFSERVICE_TIMEOUT"] != "1") {
+                        $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME");
+                        $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME_UNIT");
+                        $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TRIGGER_UID");
+                    }
+                    break;
             }
+
             //Validating TAS_TRANSFER_FLY value
             if ($arrayProperty["TAS_TRANSFER_FLY"] == "FALSE") {
                 if (!isset($arrayProperty["TAS_DURATION"])) {
@@ -325,8 +338,13 @@ class Task
                 if (!isset($arrayProperty["TAS_CALENDAR"])) {
                     throw (new \Exception("Invalid value specified for 'tas_calendar'"));
                 }
+            } else {
+                $this->unsetVar($arrayProperty, "TAS_DURATION");
+                $this->unsetVar($arrayProperty, "TAS_TIMEUNIT");
+                $this->unsetVar($arrayProperty, "TAS_TYPE_DAY");
+                $this->unsetVar($arrayProperty, "TAS_CALENDAR");
             }
-            //Validating TAS_TRANSFER_FLY value
+
             if ($arrayProperty["TAS_SEND_LAST_EMAIL"] == "TRUE") {
                 if (empty($arrayProperty["TAS_DEF_SUBJECT_MESSAGE"])) {
                     throw (new \Exception("Invalid value specified for 'tas_def_subject_message'"));
@@ -340,19 +358,29 @@ class Task
                     if (empty($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"])) {
                         throw (new \Exception("Invalid value specified for 'tas_def_message_template'"));
                     }
+                    $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE");
                 } else {
                     if (empty($arrayProperty["TAS_DEF_MESSAGE"])) {
                         throw (new \Exception("Invalid value specified for 'tas_def_message'"));
                     }
+                    $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE_TEMPLATE");
                 }
-                $valuesTypeDay = array('1','2','');
-                if ((!isset($arrayProperty["TAS_TYPE_DAY"])) ||
-                    (!in_array($arrayProperty["TAS_TYPE_DAY"], $valuesTypeDay))) {
-                    throw (new \Exception("Invalid value specified for 'tas_type_day'"));
+                //Additional configuration
+                if (isset($arrayProperty["TAS_DEF_MESSAGE_TYPE"]) && isset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"])) {
+                    \G::LoadClass("configuration");
+                    $oConf = new \Configurations();
+                    $oConf->aConfig = array("TAS_DEF_MESSAGE_TYPE" => $arrayProperty["TAS_DEF_MESSAGE_TYPE"], "TAS_DEF_MESSAGE_TEMPLATE" => $arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"]);
+
+                    $oConf->saveConfig("TAS_EXTRA_PROPERTIES", $arrayProperty["TAS_UID"], "", "");
+
+                    unset($arrayProperty["TAS_DEF_MESSAGE_TYPE"]);
+                    unset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"]);
                 }
-                if (!isset($arrayProperty["TAS_CALENDAR"])) {
-                    throw (new \Exception("Invalid value specified for 'tas_calendar'"));
-                }
+            } else {
+                $this->unsetVar($arrayProperty, "TAS_DEF_SUBJECT_MESSAGE");
+                $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE_TYPE");
+                $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE");
+                $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE_TEMPLATE");
             }
 
 
@@ -1912,6 +1940,23 @@ class Task
         $offset = $show_per_page + 1;
         $outArray = array_slice($display_array, $start, $offset);
         return $outArray;
+    }
+
+    /**
+     * Unset variable for array
+     * @var array $array. Array base
+     * @var string $variable. name for variable
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function unsetVar(&$array, $variable)
+    {
+        if (isset($array[$variable])) {
+            unset($array[$variable]);
+        }
     }
 }
 

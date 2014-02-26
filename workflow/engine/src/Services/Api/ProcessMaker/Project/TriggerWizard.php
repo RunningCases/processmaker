@@ -11,6 +11,14 @@ use \Luracast\Restler\RestException;
  */
 class TriggerWizard extends Api
 {
+    private $formatFieldNameInUppercase = false;
+
+    private $arrayFieldNameForException = array(
+        "processUid"  => "prj_uid",
+        "libraryName" => "lib_name",
+        "methodName"  => "fn_name"
+    );
+
     /**
      * @url GET /:prj_uid/trigger-wizard/:lib_name
      * @url GET /:prj_uid/trigger-wizard/:lib_name/:fn_name
@@ -23,8 +31,8 @@ class TriggerWizard extends Api
     {
         try {
             $triggerWizard = new \BusinessModel\TriggerWizard();
-            $triggerWizard->setFormatFieldNameInUppercase(false);
-            $triggerWizard->setArrayFieldNameForException(array("processUid" => "prj_uid", "libraryName" => "lib_name", "methodName" => "fn_name"));
+            $triggerWizard->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+            $triggerWizard->setArrayFieldNameForException($this->arrayFieldNameForException);
 
             $response = ($fn_name == "")? $triggerWizard->getLibrary($lib_name) : $triggerWizard->getMethod($lib_name, $fn_name);
 
@@ -46,8 +54,8 @@ class TriggerWizard extends Api
     {
         try {
             $triggerWizard = new \BusinessModel\TriggerWizard();
-            $triggerWizard->setFormatFieldNameInUppercase(false);
-            $triggerWizard->setArrayFieldNameForException(array("processUid" => "prj_uid", "libraryName" => "lib_name", "methodName" => "fn_name"));
+            $triggerWizard->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+            $triggerWizard->setArrayFieldNameForException($this->arrayFieldNameForException);
 
             $response = $triggerWizard->getTrigger($lib_name, $fn_name, $tri_uid);
 
@@ -57,37 +65,53 @@ class TriggerWizard extends Api
         }
     }
 
-    ///**
-    // * @url POST /:prj_uid/dynaform
-    // *
-    // * @param string $prj_uid      {@min 32}{@max 32}
-    // * @param array  $request_data
-    // *
-    // * @status 201
-    // */
-    //public function doPostDynaForm($prj_uid, $request_data)
-    //{
-    //    try {
-    //        return $response;
-    //    } catch (\Exception $e) {
-    //        throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
-    //    }
-    //}
-    //
-    ///**
-    // * @url PUT /:prj_uid/dynaform/:dyn_uid
-    // *
-    // * @param string $dyn_uid      {@min 32}{@max 32}
-    // * @param string $prj_uid      {@min 32}{@max 32}
-    // * @param array  $request_data
-    // */
-    //public function doPutDynaForm($dyn_uid, $prj_uid, $request_data)
-    //{
-    //    try {
-    //        //
-    //    } catch (\Exception $e) {
-    //        throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
-    //    }
-    //}
+    /**
+     * @url POST /:prj_uid/trigger-wizard/:lib_name/:fn_name
+     *
+     * @param string $prj_uid      {@min 32}{@max 32}
+     * @param string $lib_name
+     * @param string $fn_name
+     * @param array  $request_data
+     *
+     * @status 201
+     */
+    public function doPostTriggerWizard($prj_uid, $lib_name, $fn_name, $request_data)
+    {
+        try {
+            $triggerWizard = new \BusinessModel\TriggerWizard();
+            $triggerWizard->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+            $triggerWizard->setArrayFieldNameForException($this->arrayFieldNameForException);
+
+            $arrayData = $triggerWizard->create($lib_name, $fn_name, $prj_uid, $request_data);
+
+            $response = $arrayData;
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url PUT /:prj_uid/trigger-wizard/:lib_name/:fn_name/:tri_uid
+     *
+     * @param string $prj_uid      {@min 32}{@max 32}
+     * @param string $lib_name
+     * @param string $fn_name
+     * @param string $tri_uid      {@min 32}{@max 32}
+     * @param array  $request_data
+     */
+    public function doPutTriggerWizard($prj_uid, $lib_name, $fn_name, $tri_uid, $request_data)
+    {
+        try {
+            $triggerWizard = new \BusinessModel\TriggerWizard();
+            $triggerWizard->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+            $triggerWizard->setArrayFieldNameForException($this->arrayFieldNameForException);
+
+            $arrayData = $triggerWizard->update($lib_name, $fn_name, $tri_uid, $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
 

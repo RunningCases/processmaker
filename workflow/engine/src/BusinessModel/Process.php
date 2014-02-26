@@ -178,6 +178,9 @@ class Process
                 }
             }
 
+            $arrayType1 = array("int", "integer", "float", "real", "double", "bool", "boolean", "string", "date", "hour", "datetime");
+            $arrayType2 = array("array", "object");
+
             foreach ($arrayData as $key => $value) {
                 $fieldName = $key;
                 $fieldValue = $value;
@@ -185,41 +188,63 @@ class Process
                 if (isset($arrayFieldDefinition[$fieldName])) {
                     $fieldNameAux = (isset($arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]]))? $arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]] : "";
 
-                    //empty
-                    if (!$arrayFieldDefinition[$fieldName]["empty"] && trim($fieldValue) . "" == "") {
-                        throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is empty")));
-                    }
+                    $arrayFieldDefinition[$fieldName]["type"] = strtolower($arrayFieldDefinition[$fieldName]["type"]);
 
-                    //defaultValues
-                    if (count($arrayFieldDefinition[$fieldName]["defaultValues"]) > 0 && !in_array($fieldValue, $arrayFieldDefinition[$fieldName]["defaultValues"])) {
-                        throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
-                    }
+                    $optionType = 0;
+                    $optionType = ($optionType == 0 && in_array($arrayFieldDefinition[$fieldName]["type"], $arrayType1))? 1 : $optionType;
+                    $optionType = ($optionType == 0 && in_array($arrayFieldDefinition[$fieldName]["type"], $arrayType2))? 2 : $optionType;
 
-                    //type
-                    if ($arrayFieldDefinition[$fieldName]["empty"] && $fieldValue . "" == "") {
-                        //
-                    } else {
-                        $eregDate = "[1-9]\d{3}\-(?:0[1-9]|1[012])\-(?:[0][1-9]|[12][0-9]|3[01])";
-                        $eregHour = "(?:[0-1]\d|2[0-3])\:(?:[0-5]\d)\:(?:[0-5]\d)";
-                        $eregDatetime = $eregDate . "\s" . $eregHour;
+                    switch ($optionType) {
+                        case 1:
+                            //empty
+                            if (!$arrayFieldDefinition[$fieldName]["empty"] && trim($fieldValue) . "" == "") {
+                                throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is empty")));
+                            }
 
-                        switch ($arrayFieldDefinition[$fieldName]["type"]) {
-                            case "date":
-                                if (!preg_match("/^" . $eregDate . "$/", $fieldValue)) {
-                                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                            //defaultValues
+                            if (count($arrayFieldDefinition[$fieldName]["defaultValues"]) > 0 && !in_array($fieldValue, $arrayFieldDefinition[$fieldName]["defaultValues"])) {
+                                throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                            }
+
+                            //type
+                            if ($arrayFieldDefinition[$fieldName]["empty"] && $fieldValue . "" == "") {
+                                //
+                            } else {
+                                $eregDate = "[1-9]\d{3}\-(?:0[1-9]|1[012])\-(?:[0][1-9]|[12][0-9]|3[01])";
+                                $eregHour = "(?:[0-1]\d|2[0-3])\:(?:[0-5]\d)\:(?:[0-5]\d)";
+                                $eregDatetime = $eregDate . "\s" . $eregHour;
+
+                                switch ($arrayFieldDefinition[$fieldName]["type"]) {
+                                    case "date":
+                                        if (!preg_match("/^" . $eregDate . "$/", $fieldValue)) {
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                        }
+                                        break;
+                                    case "hour":
+                                        if (!preg_match("/^" . $eregHour . "$/", $fieldValue)) {
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                        }
+                                        break;
+                                    case "datetime":
+                                        if (!preg_match("/^" . $eregDatetime . "$/", $fieldValue)) {
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                        }
+                                        break;
                                 }
-                                break;
-                            case "hour":
-                                if (!preg_match("/^" . $eregHour . "$/", $fieldValue)) {
-                                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
-                                }
-                                break;
-                            case "datetime":
-                                if (!preg_match("/^" . $eregDatetime . "$/", $fieldValue)) {
-                                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
-                                }
-                                break;
-                        }
+                            }
+                            break;
+                        case 2:
+                            //type
+                            switch ($arrayFieldDefinition[$fieldName]["type"]) {
+                                case "array":
+                                    if (!is_array($fieldValue)) {
+                                        if (!preg_match("/^\s*array\s*\(.*\)\s*$/", $fieldValue)) {
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is not array")));
+                                        }
+                                    }
+                                    break;
+                            }
+                            break;
                     }
                 }
             }
