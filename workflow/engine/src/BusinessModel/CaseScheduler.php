@@ -346,7 +346,7 @@ class CaseScheduler
             $nSW = 0;
             $aData['SCH_DAYS_PERFORM_TASK'] = '';
             switch ($sOption) {
-                case '1':
+                case '1': // If the option is zero, set by default 1
                     $aData['SCH_DAYS_PERFORM_TASK'] = '1';
                     $sValue = $aData['SCH_DAYS_PERFORM_TASK'];
                     switch ($sValue) {
@@ -637,7 +637,7 @@ class CaseScheduler
             $nSW = 0;
             $aData['SCH_DAYS_PERFORM_TASK'] = '';
             switch ($sOption) {
-                case '1':
+                case '1': // If the option is zero, set by default 1
                     $aData['SCH_DAYS_PERFORM_TASK'] = '1';
                     $sValue = $aData['SCH_DAYS_PERFORM_TASK'];
                     switch ($sValue) {

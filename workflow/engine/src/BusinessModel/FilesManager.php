@@ -44,6 +44,10 @@ class FilesManager
     public function getProcessFilesManagerPath($sProcessUID, $path)
     {
         try {
+            $checkPath = substr($path, -1);
+            if ($checkPath == '/') {
+                $path = substr($path, 0, -1);
+            }
             $sMainDirectory = current(explode("/", $path));
             if (strstr($path,'/')) {
                 $sSubDirectory = substr($path, strpos($path, "/")+1). PATH_SEP ;
@@ -84,10 +88,10 @@ class FilesManager
                     $arrayFileUid = $this->getFileManagerUid($sDirectory.$aFile['FILE']);
                     $fcontent = file_get_contents($sDirectory.$aFile['FILE']);
                     $fileUid =  $arrayFileUid["PRF_UID"];
-                    if ($fileUid) {
+                    if ($fileUid != null) {
                         $oProcessFiles = \ProcessFilesPeer::retrieveByPK($fileUid);
                         $editable = $oProcessFiles->getPrfEditable();
-                        if ($editable == 1){
+                        if ($editable == '1') {
                             $editable = 'true';
                         } else {
                             $editable = 'false';
@@ -102,11 +106,10 @@ class FilesManager
                                               'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
                                               'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
                                               'prf_content' => $fcontent);
-
                     } else {
                         $extention = end(explode(".", $aFile['FILE']));
-                        if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp' ||
-                            $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
+                        if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp'
+                            || $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
                             $editable = 'true';
                         } else {
                             $editable = 'false';
@@ -122,7 +125,6 @@ class FilesManager
                                              'prf_update_date' => '',
                                              'prf_content' => $fcontent);
                     }
-    
             }
             return $aTheFiles;
         } catch (Exception $e) {
@@ -145,7 +147,7 @@ class FilesManager
     {
         try {
             $aData['prf_path'] = rtrim($aData['prf_path'], '/') . '/';
-            if (!$aData['prf_filename']){
+            if (!$aData['prf_filename']) {
                 throw (new \Exception( 'invalid value specified for `prf_filename`.'));
             }
             $sMainDirectory = current(explode("/", $aData['prf_path']));
@@ -199,6 +201,7 @@ class FilesManager
             fwrite($fp, $content);
             fclose($fp);
             $oProcessFile = array('prf_uid' => $oProcessFiles->getPrfUid(),
+                                  'prf_filename' => $aData['prf_filename'],
                                   'usr_uid' => $oProcessFiles->getUsrUid(),
                                   'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
                                   'prf_path' => $sMainDirectory. PATH_SEP . $sSubDirectory,
@@ -236,7 +239,7 @@ class FilesManager
                 $path = $aRow['PRF_PATH'];
                 $rsCriteria->next();
             }
-            if ($path == ''){
+            if ($path == '') {
                 throw new \Exception(\G::LoadTranslation('ID_PMTABLE_UPLOADING_FILE_PROBLEM'));
             }
             $file = end(explode("/",$path));
@@ -246,7 +249,7 @@ class FilesManager
                     if ($_FILES['prf_file']['tmp_name'] != '') {
                         \G::uploadFile($_FILES['prf_file']['tmp_name'], $path, $_FILES['prf_file']['name']);
                     }
-	            }
+                }
             } else {
                 throw new \Exception(\G::LoadTranslation('ID_PMTABLE_UPLOADING_FILE_PROBLEM'));
             }
@@ -306,14 +309,14 @@ class FilesManager
                 $path = $aRow['PRF_PATH'];
                 $rsCriteria->next();
             }
-            if ($path == ''){
+            if ($path == '') {
                 throw new \Exception('invalid value specified for `prf_uid`.');
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
             $sSubDirectory = str_replace('/','',str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))));
             $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
-            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES){
+            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES) {
                 $sMainDirectory = 'mailTemplates';
             } else {
                 $sMainDirectory = 'public';
@@ -375,14 +378,14 @@ class FilesManager
                 $path = $aRow['PRF_PATH'];
                 $rsCriteria->next();
             }
-            if ($path == ''){
+            if ($path == '') {
                 throw new \Exception('invalid value specified for `prf_uid`.');
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
             $sSubDirectory = str_replace('/','',str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))));
             $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
-            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES){
+            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES) {
                 $sMainDirectory = 'mailTemplates';
             } else {
                 $sMainDirectory = 'public';
@@ -419,14 +422,14 @@ class FilesManager
                 $path = $aRow['PRF_PATH'];
                 $rsCriteria->next();
             }
-            if ($path == ''){
+            if ($path == '') {
                 throw new \Exception('invalid value specified for `prf_uid`.');
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
             $sSubDirectory = str_replace('/','',str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))));
             $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
-            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES){
+            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES) {
                 $sMainDirectory = 'mailTemplates';
             } else {
                 $sMainDirectory = 'public';
