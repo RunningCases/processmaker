@@ -94,7 +94,28 @@ Feature: User Main Tests
         | Create user Inactive                 | 4          | daniela       | perez        | daniela      | daniela@gmail.com | grenn #544  | 555-6565     | US          | FL       | MIA          | 555-6655-555 | Gerencia       |                                  | 2016-02-15   |                                  | INACTIVE   | PROCESSMAKER_OPERATOR  | sample       | sample       |
         | Create user Vacation                 | 5          | micaela       | sanchez      | micaela      | micaela@gmail.com | sancjh #544 | 555-6652     | US          | FL       | MIA          | 555-6655-555 | Gerencia       |                                  | 2016-02-15   |                                  | VACATION   | PROCESSMAKER_OPERATOR  | sample       | sample       |
         
-     
+    
+    #Para que funcione este test, debe existir el archivo que se quiere subir
+    #GET /api/1.0/{workspace}/user/{usr_uid}
+    #    Upload a image
+    Scenario: Upload a image 
+        Given POST I want to upload the image "/home/daniel/pic3.jpg" to user "00000000000000000000000000000001". Url "user/"
+
+
+    #    Upload a image
+    Scenario Outline: Upload a image 
+        Given POST I want to upload the image "<usr_photo>" to user with the key "usr_uid" stored in session array as variable "usr_uid_<usr_number>". Url "user/" 
+
+        Examples:
+
+        | Test_description                     | usr_number | usr_photo            |
+        | Create without replaced by, calendar | 1          | /home/wendy/photo/pic1.jpg |
+        | Create without calendar              | 2          | /home/wendy/photo/pic2.jpg |
+        | Create with all fields               | 3          | /home/wendy/photo/pic3.jpg |
+        | Create user Inactive                 | 4          | ~/userPhoto/abcd.jpg |
+        | Create user Vacation                 | 5          | ~/userPhoto/abcd.jpg |
+
+
     Scenario: Get the users List when there are exactly 63 users
         And I request "users"
         And the content type is "application/json"
