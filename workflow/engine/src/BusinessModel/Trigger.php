@@ -71,10 +71,11 @@ class Trigger
                 $triggerObj = $this->getDataTrigger($aRow['TRI_UID']);
                 $aRow['TRI_TITLE'] = $triggerObj['tri_title'];
                 $aRow['TRI_DESCRIPTION'] = $triggerObj['tri_description'];
-            }
-            if ($aRow['TRI_PARAM'] != '') {
-                $aRow['TRI_PARAM'] = unserialize($aRow['TRI_PARAM']);
-                $aRow['TRI_PARAM'] = G::json_encode($aRow['TRI_PARAM']);
+            } else {
+                if ($aRow['TRI_PARAM'] != '') {
+                    $aRow['TRI_PARAM'] = unserialize($aRow['TRI_PARAM']);
+                    $aRow['TRI_PARAM'] = \G::json_encode($aRow['TRI_PARAM']);
+                }
             }
             $triggersArray[] = array_change_key_case($aRow, CASE_LOWER);
             $oDataset->next();
@@ -100,7 +101,7 @@ class Trigger
         }
         if ($triggerArray['TRI_PARAM'] != '') {
             $triggerArray['TRI_PARAM'] = unserialize($triggerArray['TRI_PARAM']);
-            $triggerArray['TRI_PARAM'] = G::json_encode($triggerArray['TRI_PARAM']);
+            $triggerArray['TRI_PARAM'] = \G::json_encode($triggerArray['TRI_PARAM']);
         }
         $triggerArray = array_change_key_case($triggerArray, CASE_LOWER);
         return $triggerArray;
