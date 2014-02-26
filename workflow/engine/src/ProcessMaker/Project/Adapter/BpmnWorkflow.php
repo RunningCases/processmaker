@@ -479,19 +479,6 @@ class BpmnWorkflow extends Project\Bpmn
         return empty($result) ? null : $result;
     }
 
-    protected static function findInArray($value, $key, $list)
-    {
-        $result = array();
-
-        foreach ($list as $item) {
-            if (array_key_exists($key, $item) && $item[$key] == $value) {
-                $result[] = $item;
-            }
-        }
-
-        return $result;
-    }
-
     public function remove()
     {
         parent::remove();

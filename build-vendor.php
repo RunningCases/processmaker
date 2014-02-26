@@ -8,6 +8,8 @@
  * @author Erik Amaru Ortiz
  */
 
+$rootPath = __DIR__;
+
 $config = @parse_ini_file("workflow/engine/config/env.ini");
 
 $debug = !empty($config) && isset($config['debug']) ? $config['debug'] : 0;
@@ -44,6 +46,7 @@ $projects = array(
 
 out("build-vendor.php", 'purple');
 
+
 out("generating files for ", 'purple', false);
 out( $debug ? 'debug' : 'production', 'success', false);
 out(" mode", 'purple');
@@ -75,6 +78,110 @@ foreach ($projects as $project) {
     }
 
 }
+
+//the script is completed if the option is Debug = 1
+if ($debug) {
+    echo PHP_EOL;
+    die;
+}
+
+out("=> compresing and combining js files", 'info');
+
+$jsFiles = array (
+    "workflow/public_html/lib/js/wz_jsgraphics.js",
+    "workflow/public_html/lib/js/jquery-1.10.2.min.js",
+    "workflow/public_html/lib/js/underscore-min.js",
+    "workflow/public_html/lib/js/jquery-ui-1.10.3.custom.min.js",
+    "workflow/public_html/lib/js/jquery.layout.min.js",
+    "workflow/public_html/lib/js/restclient.min.js",
+    "workflow/public_html/lib/pmUI/pmui.min.js",
+    "workflow/public_html/lib/mafe/mafe.min.js",
+    "workflow/public_html/lib/mafe/designer.min.js",
+    "workflow/public_html/lib/js/tiny_mce.min.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/tiny_mce.js",
+
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/pmGrids/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/pmSimpleUploader/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/pmVariablePicker/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/visualchars/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/xhtmlxtras/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/wordcount/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/visualblocks/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/table/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/template/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/visualblocks/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/preview/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/print/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/style/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/save/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/tabfocus/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/searchreplace/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/paste/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/media/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/lists/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/insertdatetime/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/example/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/pagebreak/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/example_dependency/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/noneditable/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/fullpage/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/layer/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/legacyoutput/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/fullscreen/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/iespell/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/inlinepopups/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/autoresize/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/contextmenu/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/advlist/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/autolink/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/directionality/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/emotions/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/editor_template.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/advhr/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/advlink/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/advimage/editor_plugin.js",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/nonbreaking/editor_plugin.js",
+
+    "gulliver/js/codemirror/lib/codemirror.js",
+    "gulliver/js/codemirror/mode/javascript/javascript.js",
+    "gulliver/js/codemirror/addon/edit/matchbrackets.js",
+    "gulliver/js/codemirror/mode/htmlmixed/htmlmixed.js",
+    "gulliver/js/codemirror/mode/xml/xml.js",
+    "gulliver/js/codemirror/mode/css/css.js",
+    "gulliver/js/codemirror/mode/clike/clike.js",
+    "gulliver/js/codemirror/mode/php/php.js",
+);
+$bigHandler = fopen ("{$rootPath}/workflow/public_html/lib/js/big.js", "w");
+foreach ($jsFiles as $jsFile) {
+    $fileContent = file_get_contents("{$rootPath}/$jsFile");
+    fprintf($bigHandler, "%s\n\n", $fileContent);
+    printf (" - File %s added to big.js\n", basename($jsFile));
+}
+fclose ($bigHandler);
+printf ( "big.js file has %d bytes\n", filesize("{$rootPath}/workflow/public_html/lib/js/big.js"));
+
+
+
+out("=> compresing and combining css files", 'info');
+
+$cssFiles = array (
+    "workflow/public_html/lib/pmUI/pmui.min.css",
+    "workflow/public_html/lib/mafe/mafe.min.css",
+    "gulliver/js/codemirror/lib/codemirror.css",
+
+    "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/o2k7/ui.css",
+    "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/o2k7/ui_silver.css",
+    "gulliver/js/tinymce/jscripts/tiny_mce/plugins/inlinepopups/skins/clearlooks2/window.css",
+    "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/o2k7/content.css"
+);
+$bigHandler = fopen ("{$rootPath}/workflow/public_html/lib/css/big.css", "w");
+foreach ($cssFiles as $cssFile) {
+    $fileContent = file_get_contents("{$rootPath}/$cssFile");
+    fprintf($bigHandler, "%s\n\n", $fileContent);
+    printf (" - File %s added to big.css\n", basename($cssFile));
+}
+fclose ($bigHandler);
+printf ( "big.css file has %d bytes\n", filesize("{$rootPath}/workflow/public_html/lib/css/big.css"));
 
 echo PHP_EOL;
 

@@ -1359,6 +1359,7 @@ class RestContext extends BehatContext
     {
         $baseUrl = $this->getParameter('base_url');
         $url = $baseUrl.$url.$usrUid."/image-upload";
+        
         $accesstoken = $this->getParameter('access_token');
         $headr = array();
         $headr[] = 'Authorization: Bearer '.$accesstoken;
@@ -1369,8 +1370,36 @@ class RestContext extends BehatContext
         curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $postResult = curl_exec($ch);
+  
+          if(  $postResult === false) 
+            { 
+                //trigger_error(curl_error($ch)); 
+                throw new Exception("Image upload failed ($imageFile):\n\n"
+                        . curl_error($ch));
+            } 
         curl_close($ch);
-        echo $postResult;
+        echo $postResult; 
     }
-}
 
+     /**
+     * @Given /^POST I want to upload the image "([^"]*)" to user with the key "([^"]*)" stored in session array as variable "([^"]*)"\. Url "([^"]*)"$/
+     */
+    public function postIWantToUploadTheImageToUserWithTheKeyStoredInSessionArrayAsVariableUsrUidUrl($imageFile, $varName, $sessionVarName, $url)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$sessionVarName) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$sessionVarName;
+        }
+
+        $usrUid = $varValue;
+
+        $this->postIWantToUploadTheImageToUser($imageFile, $usrUid, $url);
+    }
+
+}
