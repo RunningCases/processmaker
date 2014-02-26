@@ -127,7 +127,7 @@ class Trigger
                 "ST_POSITION" => $posIni
             ));
 
-            $arrayData = $this->update($stepUidIni, $typeIni, $taskUid, $triggerUid, $arrayData);
+            $arrayData = $this->update($stepUid, $typeIni, $taskUid, $triggerUid, $arrayData);
 
             return $arrayData;
         } catch (\Exception $e) {
@@ -151,7 +151,7 @@ class Trigger
         try {
             $flagStepAssignTask = 0;
 
-            if ($stepUid == "") {
+            if (($stepUid == "") || ($stepUid == "-1") || ($stepUid == "-2")) {
                 $flagStepAssignTask = 1;
 
                 switch ($type) {
@@ -207,7 +207,6 @@ class Trigger
             if (isset($tempPos)) {
                 $this->moveStepTriggers($taskUid, $stepUid, $triggerUid, $type, $tempPos);
             }
-
             return array_change_key_case($arrayUpdateData, CASE_LOWER);
         } catch (\Exception $e) {
             throw $e;
@@ -375,9 +374,21 @@ class Trigger
      */
     public function moveStepTriggers($tasUid, $stepUid, $triUid, $type, $newPos) {
         $stepTrigger = new \BusinessModel\Step();
-        $aStepTriggers = $stepTrigger->getTriggers($stepUid, $tasUid);
+        $tempStep = $stepUid;
+        $typeCompare = $type;
+        if ($tempStep == '-1' || $tempStep == '-2') {
+            $tempStep = '';
+            if (($stepUid == '-1') && ($type == 'BEFORE')) {
+                $typeCompare = "BEFORE_ASSIGNMENT";
+            } elseif (($stepUid == '-2') && ($type == 'BEFORE')) {
+                $typeCompare = "BEFORE_ROUTING";
+            } elseif (($stepUid == '-2') && ($type == 'AFTER')) {
+                $typeCompare = "AFTER_ROUTING";
+            }
+        }
+        $aStepTriggers = $stepTrigger->getTriggers($tempStep, $tasUid);
         foreach ($aStepTriggers as $dataStep) {
-            if (($dataStep['st_type'] == $type) && ($dataStep['tri_uid'] == $triUid)) {
+            if (($dataStep['st_type'] == $typeCompare) && ($dataStep['tri_uid'] == $triUid)) {
                 $prStepPos = (int)$dataStep['st_position'];
             }
         }
@@ -400,7 +411,7 @@ class Trigger
 
         $range = range($iniPos, $finPos);
         foreach ($aStepTriggers as $dataStep) {
-            if (($dataStep['st_type'] == $type) && (in_array($dataStep['st_position'], $range)) && ($dataStep['tri_uid'] != $triUid)) {
+            if (($dataStep['st_type'] == $typeCompare) && (in_array($dataStep['st_position'], $range)) && ($dataStep['tri_uid'] != $triUid)) {
                 $stepChangeIds[] = $dataStep['tri_uid'];
                 $stepChangePos[] = $dataStep['st_position'];
             }
