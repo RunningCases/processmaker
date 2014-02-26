@@ -45,7 +45,6 @@ class FilesManager
     {
         try {
             $sMainDirectory = current(explode("/", $path));
-            $path = str_replace('/', '', $path);
             if (strstr($path,'/')) {
                 $sSubDirectory = substr($path, strpos($path, "/")+1). PATH_SEP ;
             } else {
