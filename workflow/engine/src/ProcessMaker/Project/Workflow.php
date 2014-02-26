@@ -269,7 +269,7 @@ class Workflow extends Handler
         }
     }
 
-    public function addRoute($fromTasUid, $toTasUid, $type, $delete = null)
+    public function addRoute($fromTasUid, $toTasUid, $type, $condition = "")
     {
         try {
             self::log("Add Route from task: $fromTasUid -> to task: $toTasUid ($type)");
@@ -291,7 +291,7 @@ class Workflow extends Handler
                 //$oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
             //}
 
-            $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $delete);
+            $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $condition);
             self::log("Add Route Success! - ROU_UID: ", $result);
 
             return $result;
@@ -362,9 +362,9 @@ class Workflow extends Handler
         return $route->load($rouUid);
     }
 
-    public function getRoutes()
+    public function getRoutes($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
-        return Route::getAll($proUid = null, $start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER);
+        return Route::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo);
     }
 
 
@@ -392,7 +392,7 @@ class Workflow extends Handler
         }
     }
 
-    private function saveNewPattern($sProcessUID = '', $sTaskUID = '', $sNextTask = '', $sType = '', $sDelete = '')
+    private function saveNewPattern($sProcessUID = '', $sTaskUID = '', $sNextTask = '', $sType = '', $condition = '')
     {
         try {
             $oCriteria = new Criteria('workflow');
@@ -412,6 +412,10 @@ class Workflow extends Handler
             $aFields['ROU_NEXT_TASK'] = $sNextTask;
             $aFields['ROU_TYPE'] = $sType;
             $aFields['ROU_CASE'] = (int) $aRow['ROUTE_NUMBER'] + 1;
+
+            if(! empty($condition)) {
+                $aFields['ROU_CONDITION'] = $condition;
+            }
 
             //$sGatewayUID = $aRow['GATEWAY_UID'];
 
