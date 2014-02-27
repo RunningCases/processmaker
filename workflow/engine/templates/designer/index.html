@@ -1,4 +1,4 @@
-
+<head>
 {if $isDebugMode}
     <!-- files that are built into pmui.css-->
     {foreach from=$pmuiCssCacheFile item=file}
@@ -98,5 +98,58 @@
 
 
 {/if}
+</head>
+<body>
+<section class="navBar">
+    <h2>Michelangelo</h2>
+    <nav>
+        <ul>
+            <li><a href="#" class="mafe-button-save">Save</a></li>
+            <li><a href="#" class="mafe-button-export-process">Export process</a></li>
+            <li><a href="#" class="mafe-button-undo">Undo</a>
+                <a href="#" class="mafe-button-redo">Redo</a></li>
+            <li><a href="#" class="mafe-button-fullscreen">Full screen</a></li>
+        </ul>
+    </nav>
+
+</section>
+
+<section class="content">
+    <div class="bpmn_shapes">
+        <div class="head"><a href="#" class="bpmn_shapes-collapse"><img src="img/ico_hiden2.png"></a></div>
+    </div>
+
+    <div class="content_controls">
+        <div class="head"><a href="#" class="content_controls-collapse"><img src="img/ico_hiden3.png"></a></div>
+        <ul>
+            <li>
+                <a href="">Dynaforms</a>
+                <a href="#" class="btn_create"><span>Create</span></a>
+            </li>
+            <li>
+                <a href="#">Input documents</a>
+                <a href="#" class="btn_create"><span>Create</span></a>
+            </li>
+            <li>
+                <a href="#">Output documents</a>
+                <a href="#" class="btn_create"><span>Create</span></a>
+            </li>
+            <li>
+                <a href="#">Triggers</a>
+                <a href="#" class="btn_create"><span>Create</span></a>
+            </li>
+            <li>
+                <a href="#">Database connections</a>
+                <a href="#" class="btn_create"><span>Create</span></a>
+            </li>
+            <li>
+                <a href="#">Case scheduler</a>
+                <a href="#" class="btn_create"><span>Create</span></a>
+            </li>
+        </ul>
+
+    </div>
+</section>
+</body>
 
 
