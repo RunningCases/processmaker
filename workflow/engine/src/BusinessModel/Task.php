@@ -250,11 +250,14 @@ class Task
                 $arrayProperty[$k] = str_replace("@amp@", "&", $v);
             }
 
-            if (isset($arrayProperty["SEND_EMAIL"])) {
-                $arrayProperty["TAS_SEND_LAST_EMAIL"] = ($arrayProperty["SEND_EMAIL"] == "TRUE")? "TRUE" : "FALSE";
+            if (isset($arrayProperty["TAS_SEND_LAST_EMAIL"])) {
+                $arrayProperty["TAS_SEND_LAST_EMAIL"] = ($arrayProperty["TAS_SEND_LAST_EMAIL"] == "TRUE")? "TRUE" : "FALSE";
             } else {
-                //$aTaskInfo = $task->load($arrayProperty["TAS_UID"]);
-                $arrayProperty["TAS_SEND_LAST_EMAIL"] = (is_null($aTaskInfo["TAS_SEND_LAST_EMAIL"]))? "FALSE" : $aTaskInfo["TAS_SEND_LAST_EMAIL"];
+                if (isset($arrayProperty["SEND_EMAIL"])) {
+                    $arrayProperty["TAS_SEND_LAST_EMAIL"] = ($arrayProperty["SEND_EMAIL"] == "TRUE")? "TRUE" : "FALSE";
+                } else {
+                    $arrayProperty["TAS_SEND_LAST_EMAIL"] = (is_null($aTaskInfo["TAS_SEND_LAST_EMAIL"]))? "FALSE" : $aTaskInfo["TAS_SEND_LAST_EMAIL"];
+                }
             }
 
             //Validating TAS_ASSIGN_VARIABLE value
