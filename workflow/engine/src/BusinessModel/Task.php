@@ -837,7 +837,7 @@ class Task
                                           'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                                ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                           ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                           'aas_lastname' => "",
                                           'aas_username' => "",
                                           'aas_type' => "group" );
@@ -996,7 +996,7 @@ class Task
                                           'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                                ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                           ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                           'aas_lastname' => "",
                                           'aas_username' => "",
                                           'aas_type' => "group" );
@@ -1147,7 +1147,7 @@ class Task
                                       'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                            ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                       ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                      ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                       'aas_lastname' => "",
                                       'aas_username' => "",
                                       'aas_type' => "group" );
@@ -1408,7 +1408,7 @@ class Task
                                           'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                                ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                           ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                           'ada_lastname' => "",
                                           'ada_username' => "",
                                           'ada_type' => "group" );
@@ -1568,7 +1568,7 @@ class Task
                                           'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                                ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                           ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                          ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                          ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                           'ada_lastname' => "",
                                           'ada_username' => "",
                                           'ada_type' => "group" );
@@ -1721,7 +1721,7 @@ class Task
                                       'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
                                            ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                       ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                      ')' . '' : $aRow['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                      ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                       'ada_lastname' => "",
                                       'ada_username' => "",
                                       'ada_type' => "group" );
