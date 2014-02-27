@@ -1312,14 +1312,13 @@ class RestContext extends BehatContext
         $this->iRequest($url);
     }
 
-    //*********** POST - UPLOAD FILE MANAGER
+    //UPLOAD FILE MANAGER
     /**
-    * @Given /^POST I want to upload the file "([^"]*)" to path "([^"]*)". Url to create prf_uid "([^"]*)" and updload "([^"]*)"$/
+    * @Given /^POST I want to upload the file "([^"]*)" to path "([^"]*)". Url "([^"]*)"$/
     */
-    public function postIWantToUploadTheFileToPathPublicUrlToCreatePrfUidAndUpdload($prfFile, $prfPath, $postUrl, $url)
+    public function postIWantToUploadTheFileToPathPublicUrl($prfFile, $prfPath, $url)
     {
         $baseUrl = $this->getParameter('base_url');
-        $postUrl = $baseUrl.$postUrl;
         $url = $baseUrl.$url;
         $accesstoken = $this->getParameter('access_token');
         $headr = array();
@@ -1327,7 +1326,7 @@ class RestContext extends BehatContext
         $path = rtrim($prfPath, '/') . '/';
         $sfile = end(explode("/",$prfFile));
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,$postUrl);
+        curl_setopt($ch, CURLOPT_URL,$url);
         curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
         curl_setopt($ch, CURLOPT_POSTFIELDS, array('prf_filename'=>$sfile, "prf_path" => $path, "prf_content" => null));
         curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
@@ -1340,7 +1339,7 @@ class RestContext extends BehatContext
         } else {
             var_dump($postResult["error"]);
         }
-        $url = $url.$prfUid."/upload";
+        $url = $url.'/'.$prfUid."/upload";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL,$url);
         curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
@@ -1349,9 +1348,15 @@ class RestContext extends BehatContext
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $postResult = curl_exec($ch);
         curl_close($ch);
+
+       //se guarda el prf_uid en una variable
+        $varName = 'prf_uid';
+        $sessionData = new StdClass();
+        $sessionData->$varName = $prfUid;
+        file_put_contents("session.data", json_encode($sessionData));
     }
 
-    //*********** POST - UPLOAD IMAGE
+    //UPLOAD IMAGE
     /**
     * @Given /^POST I want to upload the image "([^"]*)" to user "([^"]*)". Url "([^"]*)"$/
     */
@@ -1378,7 +1383,7 @@ class RestContext extends BehatContext
                         . curl_error($ch));
             } 
         curl_close($ch);
-        echo $postResult; 
+        echo $postResult;
     }
 
      /**

@@ -1,6 +1,3 @@
-http://brayan.pmos.colosa.net/api/1.0/cochalo/project/444446641528a7318e16744023753627/activity/1077328655304fcfecdf879070119988
-/step/609531574530b7a20dcb7c1053135698/trigger/899405570530ba201363cf9010087072
-
 @ProcessMakerMichelangelo @RestAPI
 Feature: Step update position
   Scenario: List all the Sub Processs (result 0 Sub Processs)

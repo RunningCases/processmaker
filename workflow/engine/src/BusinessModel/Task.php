@@ -1027,7 +1027,6 @@ class Task
                                       'aas_type' => "user" );
                 }
                 $oDataset->next();
-                
             }
             if ($start) {
                 if ($start < 0) {
@@ -1933,8 +1932,9 @@ class Task
      *
      * @return array
      */
-    public function arrayPagination($display_array, $page, $show_per_page) {
-        $page = $page+1;
+    public function arrayPagination($display_array, $page, $show_per_page)
+    {
+        $page = $page + 1;
         $show_per_page = $show_per_page -1;
         $start = ($page - 1) * ($show_per_page + 1);
         $offset = $show_per_page + 1;

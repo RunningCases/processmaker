@@ -112,6 +112,5 @@ class User extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
-
 }
 

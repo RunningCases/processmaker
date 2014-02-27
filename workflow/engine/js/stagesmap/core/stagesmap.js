@@ -11,7 +11,7 @@ var stagesmap=function(){
 		render:{
 			base:function(xml) {
 				this.panels.editor.loader.hide();
-				this.data.db=xml.xmlhttp.responseText.parseJSON().concat({});
+				this.data.db=xml.xmlhttp.responseText.parseJSON().concatMaborak({});
 				if (this.options.rw===true) {
 				  this.menu = new this.parent.module.app.menuRight();
 				  this.menu.make({
@@ -430,7 +430,7 @@ stagesmap.prototype={
 			rw	:true,
 			mi  :true,
 			hideMenu:true
-		}.concat(this.options || {});
+		}.concatMaborak(this.options || {});
 		this.options.target = this.parent.dom.element(this.options.target);
 		if(!this.validate()){return false;}
 		this.observers = {

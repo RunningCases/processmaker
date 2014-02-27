@@ -44,6 +44,10 @@ class FilesManager
     public function getProcessFilesManagerPath($sProcessUID, $path)
     {
         try {
+            $checkPath = substr($path, -1);
+            if ($checkPath == '/') {
+                $path = substr($path, 0, -1);
+            }
             $sMainDirectory = current(explode("/", $path));
             if (strstr($path,'/')) {
                 $sSubDirectory = substr($path, strpos($path, "/")+1). PATH_SEP ;
@@ -84,14 +88,14 @@ class FilesManager
                     $arrayFileUid = $this->getFileManagerUid($sDirectory.$aFile['FILE']);
                     $fcontent = file_get_contents($sDirectory.$aFile['FILE']);
                     $fileUid =  $arrayFileUid["PRF_UID"];
-                    if ($fileUid) {
+                    if ($fileUid != null) {
                         $oProcessFiles = \ProcessFilesPeer::retrieveByPK($fileUid);
-                    $editable = $oProcessFiles->getPrfEditable();
-                    if ($editable == 1){
-                        $editable = 'true';
-                    } else {
-                        $editable = 'false';
-                    }
+                        $editable = $oProcessFiles->getPrfEditable();
+                        if ($editable == '1') {
+                            $editable = 'true';
+                        } else {
+                            $editable = 'false';
+                        }
                         $aTheFiles[] = array( 'prf_uid' => $oProcessFiles->getPrfUid(),
                                               'prf_filename' => $aFile['FILE'],
                                               'usr_uid' => $oProcessFiles->getUsrUid(),
@@ -102,9 +106,15 @@ class FilesManager
                                               'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
                                               'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
                                               'prf_content' => $fcontent);
-
                     } else {
-                        $aTheFiles[] = array('prf_uid' => $oProcessFiles->getPrfUid(),
+                        $extention = end(explode(".", $aFile['FILE']));
+                        if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp'
+                            || $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
+                            $editable = 'true';
+                        } else {
+                            $editable = 'false';
+                        }
+                        $aTheFiles[] = array('prf_uid' => '',
                                              'prf_filename' => $aFile['FILE'],
                                              'usr_uid' => '',
                                              'prf_update_usr_uid' => '',
@@ -115,7 +125,6 @@ class FilesManager
                                              'prf_update_date' => '',
                                              'prf_content' => $fcontent);
                     }
-    
             }
             return $aTheFiles;
         } catch (Exception $e) {
@@ -138,7 +147,7 @@ class FilesManager
     {
         try {
             $aData['prf_path'] = rtrim($aData['prf_path'], '/') . '/';
-            if (!$aData['prf_filename']){
+            if (!$aData['prf_filename']) {
                 throw (new \Exception( 'invalid value specified for `prf_filename`.'));
             }
             $sMainDirectory = current(explode("/", $aData['prf_path']));
@@ -192,6 +201,7 @@ class FilesManager
             fwrite($fp, $content);
             fclose($fp);
             $oProcessFile = array('prf_uid' => $oProcessFiles->getPrfUid(),
+                                  'prf_filename' => $aData['prf_filename'],
                                   'usr_uid' => $oProcessFiles->getUsrUid(),
                                   'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
                                   'prf_path' => $sMainDirectory. PATH_SEP . $sSubDirectory,
@@ -229,7 +239,7 @@ class FilesManager
                 $path = $aRow['PRF_PATH'];
                 $rsCriteria->next();
             }
-            if ($path == ''){
+            if ($path == '') {
                 throw new \Exception(\G::LoadTranslation('ID_PMTABLE_UPLOADING_FILE_PROBLEM'));
             }
             $file = end(explode("/",$path));
@@ -237,12 +247,15 @@ class FilesManager
             if ($file == $_FILES['prf_file']['name']) {
                 if ($_FILES['prf_file']['error'] != 1) {
                     if ($_FILES['prf_file']['tmp_name'] != '') {
-                        \G::uploadFile($_FILES['prf_file']['tmp_name'],$path , $_FILES['prf_file']['name']);
+                        \G::uploadFile($_FILES['prf_file']['tmp_name'], $path, $_FILES['prf_file']['name']);
                     }
-	            }
+                }
             } else {
                 throw new \Exception(\G::LoadTranslation('ID_PMTABLE_UPLOADING_FILE_PROBLEM'));
             }
+            $oProcessFile = array('prf_uid' => $prfUid);
+            var_dump($oProcessFile);
+            return $oProcessFile;
         } catch (Exception $e) {
             throw $e;
         }
@@ -274,44 +287,41 @@ class FilesManager
      * Return the Process Files Manager
      *
      * @param string $sProcessUID {@min 32} {@max 32}
-     * @param string $path
      * @param string $userUID {@min 32} {@max 32}
      * @param array  $aData
+     * @param string $prfUid {@min 32} {@max 32}
      *
      * return array
      *
      * @access public
      */
-    public function updateProcessFilesManager($sProcessUID, $userUID, $aData, $path)
+    public function updateProcessFilesManager($sProcessUID, $userUID, $aData, $prfUid)
     {
         try {
-            $path = rtrim($path, '/') . '/';
-            $sMainDirectory = current(explode("/", $path));
-            if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
-                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
+            $path = '';
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
+            $criteria->add(\ProcessFilesPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $path = $aRow['PRF_PATH'];
+                $rsCriteria->next();
             }
-            if (strstr($path,'/')) {
-                $sSubDirectory = substr($path, strpos($path, "/")+1) ;
+            if ($path == '') {
+                throw new \Exception('invalid value specified for `prf_uid`.');
+            }
+            $sFile = end(explode("/",$path));
+            $sPath = str_replace($sFile,'',$path);
+            $sSubDirectory = str_replace('/','',str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))));
+            $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
+            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES) {
+                $sMainDirectory = 'mailTemplates';
             } else {
-                $sSubDirectory = '';
+                $sMainDirectory = 'public';
             }
-            switch ($sMainDirectory) {
-                case 'templates':
-                    $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
-                    $sEditable = false;
-                    break;
-                case 'public':
-                    $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
-                    break;
-                default:
-                    $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $aData['prf_filename'];
-                    break;
-            }
-            $arrayFileUid = $this->getFileManagerUid($sDirectory);
-            if (!$arrayFileUid) {
-                throw (new \Exception( 'invalid value specified for `path`.'));
-            }
-            $extention = end(explode(".", $aData['prf_filename']));
+            $extention = end(explode(".", $sFile));
             if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp' ||
                 $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
                 $sEditable = true;
@@ -321,20 +331,20 @@ class FilesManager
             if ($sEditable == false) {
                 throw (new \Exception( 'Can`t edit. Make sure your file has an editable extension.'));
             }
-            $fileUid =  $arrayFileUid["PRF_UID"];
-            $oProcessFiles = \ProcessFilesPeer::retrieveByPK($fileUid);
+            $oProcessFiles = \ProcessFilesPeer::retrieveByPK($prfUid);
             $sDate = date('Y-m-d H:i:s');
             $oProcessFiles->setPrfUpdateUsrUid($userUID);
             $oProcessFiles->setPrfUpdateDate($sDate);
             $oProcessFiles->save();
-            $fp = fopen($sDirectory, 'w');
+            $fp = fopen($path, 'w');
             $content = $aData['prf_content'];
             fwrite($fp, $content);
             fclose($fp);
             $oProcessFile = array('prf_uid' => $oProcessFiles->getPrfUid(),
+                                  'prf_filename' => $sFile,
                                   'usr_uid' => $oProcessFiles->getUsrUid(),
                                   'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
-                                  'prf_path' => $sMainDirectory. PATH_SEP . $sSubDirectory,
+                                  'prf_path' => $sMainDirectory.PATH_SEP.$sSubDirectory,
                                   'prf_type' => $oProcessFiles->getPrfType(),
                                   'prf_editable' => $sEditable,
                                   'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
@@ -349,53 +359,41 @@ class FilesManager
     /**
      *
      * @param string $sProcessUID {@min 32} {@max 32}
-     * @param string $path
+     * @param string $prfUid {@min 32} {@max 32}
      *
      *
      * @access public 
      */
-    public function deleteProcessFilesManager($sProcessUID, $path)
+    public function deleteProcessFilesManager($sProcessUID, $prfUid)
     {
         try {
-            $sMainDirectory = current(explode("/", $path));
-            if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
-                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
+            $path = '';
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
+            $criteria->add(\ProcessFilesPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $path = $aRow['PRF_PATH'];
+                $rsCriteria->next();
             }
-            if ($sMainDirectory == 'templates') {
+            if ($path == '') {
+                throw new \Exception('invalid value specified for `prf_uid`.');
+            }
+            $sFile = end(explode("/",$path));
+            $sPath = str_replace($sFile,'',$path);
+            $sSubDirectory = str_replace('/','',str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))));
+            $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
+            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES) {
                 $sMainDirectory = 'mailTemplates';
-            }
-            $sfile = end(explode("/",$path));
-            $sSubDirectorytemp = substr($path, strpos($path, "/")+1);
-            if (strstr($sSubDirectorytemp,'/')) {
-                $sSubDirectory = str_replace('/'.$sfile,"",$sSubDirectorytemp);
-                $sSubDirectoryCheck = str_replace($sfile,"",$sSubDirectorytemp);
             } else {
-                $sSubDirectory = '';
-                $sSubDirectoryCheck = '';
-            }
-            switch ($sMainDirectory) {
-                case 'mailTemplates':
-                    $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectoryCheck . $sfile;
-                    $sEditable = false;
-                    break;
-                case 'public':
-                    $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectoryCheck . $sfile;
-                    break;
-                default:
-                    $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sfile;
-                    break;
-            }
-            $arrayTaskUid = $this->getFileManagerUid($sDirectory);
-            if (!$arrayTaskUid){
-                throw (new \Exception( 'invalid value specified for `path`.'));
+                $sMainDirectory = 'public';
             }
             $oProcessMap = new \processMap(new \DBConnection());
-            $oProcessMap->deleteFile($sProcessUID,
-                                     $sMainDirectory,
-                                     $sSubDirectory,
-                                     $sfile);
+            $oProcessMap->deleteFile($sProcessUID, $sMainDirectory, $sSubDirectory, $sFile);
             $c = new \Criteria("workflow");
-            $c->add(\ProcessFilesPeer::PRF_PATH, $sDirectory, \Criteria::EQUAL);
+            $c->add(\ProcessFilesPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
             $rs = \ProcessFilesPeer::doDelete($c);
         } catch (Exception $e) {
             throw $e;
@@ -424,15 +422,15 @@ class FilesManager
                 $path = $aRow['PRF_PATH'];
                 $rsCriteria->next();
             }
-            if ($path == ''){
+            if ($path == '') {
                 throw new \Exception('invalid value specified for `prf_uid`.');
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
             $sSubDirectory = str_replace('/','',str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))));
             $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
-            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES){
-                $sMainDirectory = 'mainTemplates';
+            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES) {
+                $sMainDirectory = 'mailTemplates';
             } else {
                 $sMainDirectory = 'public';
             }

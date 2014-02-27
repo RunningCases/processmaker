@@ -239,6 +239,6 @@ class Assignee extends Api
             //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
-        }
+    }
 }
 
