@@ -305,6 +305,8 @@ class WebEntry
 
             $arrayTaskData = $task->load($arrayData["TAS_UID"]);
 
+            $weEventUid = $task->getStartingEvent($arrayData["TAS_UID"]);
+
             if ($arrayTaskData["TAS_START"] == "FALSE") {
                 throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "The task \"{0}\" isn't initial task")));
             }
@@ -376,10 +378,6 @@ class WebEntry
                 case "WS":
                     $usrUsername = $arrayData["USR_USERNAME"];
                     $usrPassword = $arrayData["USR_PASSWORD"];
-
-                    $task = new \Task();
-
-                    $weEventUid = $task->getStartingEvent($taskUid);
 
                     //Creating sys.info;
                     $site_public_path = "";
@@ -458,16 +456,20 @@ class WebEntry
                     }
 
                     //Event
-                    $event = new \Event();
+                    try {
+                        $event = new \Event();
 
-                    $arrayEventData = array();
+                        $arrayEventData = array();
 
-                    $arrayEventData["EVN_UID"] = $weEventUid;
-                    $arrayEventData["EVN_RELATED_TO"] = "MULTIPLE";
-                    $arrayEventData["EVN_ACTION"] = $dynaFormUid;
-                    $arrayEventData["EVN_CONDITIONS"] = $usrUsername;
+                        $arrayEventData["EVN_UID"] = $weEventUid;
+                        $arrayEventData["EVN_RELATED_TO"] = "MULTIPLE";
+                        $arrayEventData["EVN_ACTION"] = $dynaFormUid;
+                        $arrayEventData["EVN_CONDITIONS"] = $usrUsername;
 
-                    $result = $event->update($arrayEventData);
+                        $result = $event->update($arrayEventData);
+                    } catch (\Exception $e2) {
+                        //
+                    }
 
                     //Data
                     $url = $http . $_SERVER["HTTP_HOST"] . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $processUid . "/" . $dynTitle . ".php";
