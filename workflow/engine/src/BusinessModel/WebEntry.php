@@ -456,7 +456,7 @@ class WebEntry
                     }
 
                     //Event
-                    try {
+                    if ($weEventUid != "") {
                         $event = new \Event();
 
                         $arrayEventData = array();
@@ -467,8 +467,6 @@ class WebEntry
                         $arrayEventData["EVN_CONDITIONS"] = $usrUsername;
 
                         $result = $event->update($arrayEventData);
-                    } catch (\Exception $e2) {
-                        //
                     }
 
                     //Data
