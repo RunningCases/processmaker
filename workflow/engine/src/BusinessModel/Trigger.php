@@ -72,7 +72,7 @@ class Trigger
                 $aRow['TRI_TITLE'] = $triggerObj['tri_title'];
                 $aRow['TRI_DESCRIPTION'] = $triggerObj['tri_description'];
             } else {
-                if ($aRow['TRI_PARAM'] != '') {
+                if ($aRow['TRI_PARAM'] != '' && $aRow['TRI_PARAM'] != 'PRIVATE') {
                     $aRow['TRI_PARAM'] = unserialize($aRow['TRI_PARAM']);
                     $aRow['TRI_PARAM'] = \G::json_encode($aRow['TRI_PARAM']);
                 }
@@ -99,7 +99,7 @@ class Trigger
         if (isset($triggerArray['PRO_UID'])) {
             unset($triggerArray['PRO_UID']);
         }
-        if ($triggerArray['TRI_PARAM'] != '') {
+        if ($triggerArray['TRI_PARAM'] != '' && $triggerArray['TRI_PARAM'] != 'PRIVATE') {
             $triggerArray['TRI_PARAM'] = unserialize($triggerArray['TRI_PARAM']);
             $triggerArray['TRI_PARAM'] = \G::json_encode($triggerArray['TRI_PARAM']);
         }
