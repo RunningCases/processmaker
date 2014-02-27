@@ -220,26 +220,26 @@ class User
             if ($form['USR_COUNTRY'] != '') {
                 $oCountry = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
                 if (is_null($oCountry)) {
-                        throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
-                    }
+                    throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
+                }
             }
             if ($form['USR_CITY'] != '') {
                 $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
                 if (is_null($oCity)) {
-                        throw new \Exception('invalid value for `usr_city`: '.$form['USR_CITY']);
-                    }
+                    throw new \Exception('invalid value for `usr_city`: '.$form['USR_CITY']);
+                }
             }
             if ($form['USR_LOCATION'] != '') {
                 $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
                 if (is_null($oLocation)) {
-                        throw new \Exception('invalid value for `usr_location`: '.$form['USR_LOCATION']);
-                    }
+                    throw new \Exception('invalid value for `usr_location`: '.$form['USR_LOCATION']);
+                }
             }
             if ($form['USR_COUNTRY'] != '') {
                 $oReplacedBy = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
                 if (is_null($oReplacedBy)) {
-                        throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
-                    }
+                    throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
+                }
             }
             if (isset($arrayData['USR_UID'])) {
                 $form['USR_UID'] = $arrayData['USR_UID'];
@@ -313,7 +313,7 @@ class User
             $aData['USR_BIRTHDAY'] = date('Y-m-d');
             $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
             $statusWF = $form['USR_STATUS'];
-            if ($form['USR_STATUS'] == '') {                                
+            if ($form['USR_STATUS'] == '') {
                 throw new \Exception('invalid value specified for `usr_status`, can`t be null');
             } else {
                 if ($form['USR_STATUS'] == 'ACTIVE' || $form['USR_STATUS'] == 'INACTIVE' || $form['USR_STATUS'] == 'VACATION') {
@@ -322,7 +322,7 @@ class User
                     throw new \Exception('`usr_status`. Invalid value for status field.');
                 }
             }
-            if ($form['USR_ROLE'] == '') {                
+            if ($form['USR_ROLE'] == '') {
                 throw new \Exception('invalid value specified for `usr_role`, can`t be null');
             } else {
                 $oCriteria = new \Criteria('rbac');

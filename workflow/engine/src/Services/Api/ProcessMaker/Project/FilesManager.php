@@ -145,7 +145,7 @@ class ProcessFilesManagerStructure
      * @var string {@from body}
      */
     public $prf_path;
-    
+
     /**
      * @var string {@from body}
      */
