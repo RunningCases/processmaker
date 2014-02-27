@@ -15,7 +15,7 @@ Feature: Files Manager Resources
   Given I request "project/1265557095225ff5c688f46031700471/file-manager?path=public"
     Then the response status code should be 200
     And the response charset is "UTF-8"
-    And the content type is "application/json"
+  /root/.jenkins/jobs/MichelangeloBE/workspace/shared/sites/michelangelo/mailTemplates/1265557095225ff5c688f46031  And the content type is "application/json"
     And the type is "array"
   
   Scenario: Get a list templates folder of process files manager
@@ -42,11 +42,11 @@ Feature: Files Manager Resources
       And store "prf_uid" in session array as variable "prf_uid<i>"
 
     Examples:
-    | test_description             | file_name      | path                  | content  | http_code | type   | i |
-    | into public folder           | testbehat.txt  | public/               | test     | 200       | object | 0 |
-    | into mailtemplates folder    | testbehat.txt  | templates/            | test     | 200       | object | 1 |
-    | into public subfolder        | testbehat.txt  | public/test_folder    | test     | 200       | object | 2 |
-    | into mailtemplates subfolder | testbehat.txt  | templates/test_folder | test     | 200       | object | 3 |
+    | test_description             | file_name       | path                  | content  | http_code | type   | i |
+    | into public folder           | testbehat1.txt  | public/               | test     | 200       | object | 0 |
+    | into mailtemplates folder    | testbehat1.txt  | templates/            | test     | 200       | object | 1 |
+    | into public subfolder        | testbehat1.txt  | public/test_folder    | test     | 200       | object | 2 |
+    | into mailtemplates subfolder | testbehat1.txt  | templates/test_folder | test     | 200       | object | 3 |
 
   Scenario Outline: Post files
   Given PUT this data:
