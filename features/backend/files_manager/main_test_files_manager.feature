@@ -1,9 +1,13 @@
 @ProcessMakerMichelangelo @RestAPI
-Feature: Files Manager Resources
+Feature: Files Manager Resources Main Tests
+  Requirements:
+    a workspace with the process 4224292655297723eb98691001100052 ("Test Users-Step-Properties End Point") already loaded
+    there are two output documents in the process
 
   Background:
     Given that I have a valid access_token
 
+ 
   Scenario: Get a list of main process files manager
     Given I request "project/1265557095225ff5c688f46031700471/file-manager"
     Then the response status code should be 200
@@ -42,55 +46,52 @@ Feature: Files Manager Resources
       And store "prf_uid" in session array as variable "prf_uid<i>"
 
     Examples:
-    | test_description          | file_name      | path                  | content  | http_code | type   |
-    | into public folder        | testbehat.txt  | public/               | test     | 200       | object |
-    | into maintemplates folder | testbehat.txt  | templates/            | test     | 200       | object |
-    | into public subfolder     | testbehat.txt  | public/test_folder    | test     | 200       | object |
-    | into public subfolder     | testbehat.txt  | templates/test_folder | test     | 200       | object |
+    | test_description             | file_name       | path                  | content  | http_code | type   | i |
+    | into public folder           | testbehat1.txt  | public/               | test     | 200       | object | 0 |
+    | into mailtemplates folder    | testbehat1.txt  | templates/            | test     | 200       | object | 1 |
+    | into public subfolder        | testbehat1.txt  | public/test_folder    | test     | 200       | object | 2 |
+    | into mailtemplates subfolder | testbehat1.txt  | templates/test_folder | test     | 200       | object | 3 |
 
   Scenario Outline: Post files
   Given PUT this data:
       """
       {
-          "prf_filename": "<file_name>",
           "prf_content": "<content>"
       }
       """
-      And I request "project/1265557095225ff5c688f46031700471/file-manager?path=<path>"
+      And that I want to update a resource with the key "prf_uid" stored in session array as variable "prf_uid<i>"
+      And I request "project/1265557095225ff5c688f46031700471/file-manager"
       Then the response status code should be <http_code>
       And the response charset is "UTF-8"
       And the content type is "application/json"
       And the type is "<type>"
 
     Examples:
-    | test_description              | file_name      | path                  | content  | http_code | type   |
-    | put into public folder        | testbehat.txt  | public/               | put test | 200       | object |
-    | put into maintemplates folder | testbehat.txt  | templates/            | put test | 200       | object |
-    | put into public subfolder     | testbehat.txt  | public/test_folder    | put test | 200       | object |
-    | put into public subfolder     | testbehat.txt  | templates/test_folder | put test | 200       | object |
-
+    | test_description                 | content  | http_code | type   | i |
+    | put into public folder           | put test | 200       | object | 0 |
+    | put into mailtemplates folder    | put test | 200       | object | 1 |
+    | put into public subfolder        | put test | 200       | object | 2 |
+    | put into mailtemplates subfolder | put test | 200       | object | 3 |
 
   Scenario Outline: Delete file
-  Given that I want to delete a "<path>"
-        And I request "project/1265557095225ff5c688f46031700471/file-manager?path=<path>"
-        And the content type is "application/json"
+  Given that I want to delete a resource with the key "prf_uid" stored in session array as variable "prf_uid<i>"
+        And I request "project/1265557095225ff5c688f46031700471/file-manager"
         Then the response status code should be 200
         And the response charset is "UTF-8"
 
     Examples:
-    | test_description                 | path                                |
-    | delete public folder             | public/testbehat.txt                |
-    | delete maintemplates folder      | templates/testbehat.txt             |
-    | delete public subfolder          | public/test_folder/testbehat.txt    |
-    | delete public subfolder          | templates/test_folder/testbehat.txt |
+    | test_description                 | i |
+    | delete public folder             | 0 |
+    | delete mailtemplates folder      | 1 |
+    | delete public subfolder          | 2 |
+    | delete mailtemplates subfolder   | 3 |
 
   #Para que funcione este test, debe existir el archivo que se quiere subir
   Scenario: Post files
-    Given POST I want to upload the file "/home/daniel/test.txt" to path "public". Url to create prf_uid "project/1265557095225ff5c688f46031700471/file-manager" and updload "project/1265557095225ff5c688f46031700471/file-manager/upload"
+    Given POST I want to upload the file "/home/daniel/test.txt" to path "templates". Url "project/1265557095225ff5c688f46031700471/file-manager"
 
   Scenario: Delete file
-  Given that I want to delete a "public/test.txt"
-        And I request "project/1265557095225ff5c688f46031700471/file-manager?path=public/test.txt"
-        And the content type is "application/json"
+  Given that I want to delete a resource with the key "prf_uid" stored in session array as variable "prf_uid"
+        And I request "project/1265557095225ff5c688f46031700471/file-manager"
         Then the response status code should be 200
         And the response charset is "UTF-8"
