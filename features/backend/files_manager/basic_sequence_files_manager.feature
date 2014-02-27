@@ -15,7 +15,7 @@ Feature: Files Manager Resources
   Given I request "project/1265557095225ff5c688f46031700471/file-manager?path=public"
     Then the response status code should be 200
     And the response charset is "UTF-8"
-  /root/.jenkins/jobs/MichelangeloBE/workspace/shared/sites/michelangelo/mailTemplates/1265557095225ff5c688f46031  And the content type is "application/json"
+    And the content type is "application/json"
     And the type is "array"
   
   Scenario: Get a list templates folder of process files manager
