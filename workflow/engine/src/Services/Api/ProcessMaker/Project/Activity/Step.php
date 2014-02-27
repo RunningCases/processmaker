@@ -39,7 +39,7 @@ class Step extends Api
      * @param string $act_uid        {@min 32}{@max 32}
      * @param string $prj_uid        {@min 32}{@max 32}
      * @param array  $request_data
-     * @param string $step_type_obj  {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}{@required true}
+     * @param string $step_type_obj  {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT,EXTERNAL}{@required true}
      * @param string $step_uid_obj   {@from body}{@min 32}{@max 32}{@required true}
      * @param string $step_condition {@from body}
      * @param int    $step_position  {@from body}{@min 1}
@@ -79,7 +79,7 @@ class Step extends Api
      * @param string $act_uid        {@min 32}{@max 32}
      * @param string $prj_uid        {@min 32}{@max 32}
      * @param array  $request_data
-     * @param string $step_type_obj  {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}
+     * @param string $step_type_obj  {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT,EXTERNAL}
      * @param string $step_uid_obj   {@from body}{@min 32}{@max 32}
      * @param string $step_condition {@from body}
      * @param int    $step_position  {@from body}{@min 1}
