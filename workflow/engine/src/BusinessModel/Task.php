@@ -127,6 +127,8 @@ class Task
             $conf = new \Configurations();
             $conf->loadConfig($x, "TAS_EXTRA_PROPERTIES", $taskUid, "", "");
 
+            $arrayDataAux["TAS_DEF_MESSAGE_TYPE"] = "text";
+            $arrayDataAux["TAS_DEF_MESSAGE_TEMPLATE"] = "alert_message.html";
             if (isset($conf->aConfig["TAS_DEF_MESSAGE_TYPE"]) && isset($conf->aConfig["TAS_DEF_MESSAGE_TYPE"])) {
                 $arrayDataAux["TAS_DEF_MESSAGE_TYPE"] = $conf->aConfig["TAS_DEF_MESSAGE_TYPE"];
                 $arrayDataAux["TAS_DEF_MESSAGE_TEMPLATE"] = $conf->aConfig["TAS_DEF_MESSAGE_TEMPLATE"];
