@@ -165,6 +165,10 @@ class PmSessionHandler //implements SessionHandlerInterface
      */
     public function write($id, $data)
     {
+        if (empty($this->db)) {
+            return null;
+        }
+
         $time = time();
         
         if(! isset($this->wstmt)) {
