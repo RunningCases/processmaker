@@ -191,42 +191,42 @@ class BpmnWorkflow extends Project\Bpmn
         parent::removeGateway($gatUid);
     }
 
-//    public function addFlow($data)
-//    {
-//        parent::addFlow($data);
+    public function addFlow($data)
+    {
+        $floUid = parent::addFlow($data);
 
-        // to add a workflow route
-        // - activity -> activity ==> route
-        // - activity -> gateway -> activity  ==> selection, evaluation, parallel or parallel by evaluation route
-//        $routes = self::mapBpmnFlowsToWorkflowRoute($data, $flows);
-//
-//        if ($routes !== null) {
-//            foreach ($routes as $routeData) {
-//                $this->wp->addRoute($routeData["from"], $routeData["to"], $routeData["type"]);
-//            }
-//
-//            return true;
-//        }
-//
-//        // to add start event->activity  as initial or end task
-//        switch ($data["FLO_ELEMENT_ORIGIN_TYPE"]) {
-//            case "bpmnEvent":
-//                switch ($data["FLO_ELEMENT_DEST_TYPE"]) {
-//                    case "bpmnActivity":
-//                        $event = \BpmnEventPeer::retrieveByPK($data["FLO_ELEMENT_ORIGIN"]);
-//
-//                        switch ($event && $event->getEvnType()) {
-//                            case "START":
-//                                // then set that activity/task as "Start Task"
-//                                $this->wp->setStartTask($data["FLO_ELEMENT_DEST"]);
-//                                break;
-//                        }
-//                        break;
-//                }
-//                break;
-//        }
+        // to add start event->activity  as initial or end task
+        switch ($data["FLO_ELEMENT_ORIGIN_TYPE"]) {
+            case "bpmnEvent":
+                switch ($data["FLO_ELEMENT_DEST_TYPE"]) {
+                    case "bpmnActivity":
+                        $event = \BpmnEventPeer::retrieveByPK($data["FLO_ELEMENT_ORIGIN"]);
 
-//    }
+                        // setting as start task
+                        if ($event && $event->getEvnType() == "START") {
+                            $this->wp->setStartTask($data["FLO_ELEMENT_DEST"]);
+                        }
+                        break;
+                }
+                break;
+            case "bpmnActivity":
+                switch ($data["FLO_ELEMENT_DEST_TYPE"]) {
+                    case "bpmnEvent":
+                        $actUid = $data["FLO_ELEMENT_ORIGIN"];
+                        $evnUid = $data["FLO_ELEMENT_DEST"];
+                        $event = \BpmnEventPeer::retrieveByPK($evnUid);
+
+                        // setting as end task
+                        if ($event && $event->getEvnType() == "END") {
+                            $this->wp->setEndTask($actUid);
+                        }
+                        break;
+                }
+                break;
+        }
+
+        return $floUid;
+    }
 
 //    public function updateFlow($floUid, $data, $flows)
 //    {
@@ -247,7 +247,9 @@ class BpmnWorkflow extends Project\Bpmn
 
             if (! is_null($event) && $event->getEvnType() == "START") {
                 $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
-                $this->wp->setStartTask($activity->getActUid(), false);
+                if (! is_null($activity)) {
+                    $this->wp->setStartTask($activity->getActUid(), false);
+                }
             }
         } elseif ($flow->getFloElementOriginType() == "bpmnActivity" &&
             $flow->getFloElementDestType() == "bpmnEvent") {
@@ -284,7 +286,7 @@ class BpmnWorkflow extends Project\Bpmn
             throw new \RuntimeException("Required param \"EVN_TYPE\" is missing.");
         }
 
-        parent::addEvent($data);
+        return parent::addEvent($data);
     }
 
     public function mapBpmnFlowsToWorkflowRoutes()
