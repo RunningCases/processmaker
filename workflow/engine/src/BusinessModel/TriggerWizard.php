@@ -525,7 +525,28 @@ class TriggerWizard
                 $paramDefaultValue = (isset($value["default_value"]))? $value["default_value"] : "";
 
                 //TRI_PARAM
-                $arrayTriggerParam[$paramName] = (isset($arrayParamData["input"][$paramName]))? $arrayParamData["input"][$paramName] : $paramDefaultValue;
+                if ($paramType != "array") {
+                    $arrayTriggerParam[$paramName] = (isset($arrayParamData["input"][$paramName]))? $arrayParamData["input"][$paramName] : $paramDefaultValue;
+                } else {
+                    if (isset($arrayParamData["input"][$paramName])) {
+                        if (is_array($arrayParamData["input"][$paramName])) {
+                            $strArrayElements = "";
+
+                            foreach ($arrayParamData["input"][$paramName] as $key2 => $value2) {
+                                $strKey = (is_string($key2))? "\"" . $key2 . "\"" : $key2;
+                                $strValue = (is_string($value2))? "\"" . str_replace("\"", "\\\"", $value2) . "\"" : $value2;
+
+                                $strArrayElements = $strArrayElements . (($strArrayElements != "")? ", " : "") . $strKey . " => " . $strValue;
+                            }
+
+                            $arrayParamData["input"][$paramName] = "array(" . $strArrayElements . ")";
+                        }
+
+                        $arrayTriggerParam[$paramName] = $arrayParamData["input"][$paramName];
+                    } else {
+                        $arrayTriggerParam[$paramName] = $paramDefaultValue;
+                    }
+                }
 
                 //Variables
                 $strParamsNamePhp = $strParamsNamePhp . (($strParamsNamePhp != "")? "," : "") . "\$" . $paramName;
