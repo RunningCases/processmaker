@@ -212,15 +212,24 @@ class Workflow extends Handler
 
     public function getTask($tasUid)
     {
-        $task = new Task();
-        return $task->load($tasUid);
+        try {
+            $task = new Task();
+            $taskData = $task->load($tasUid);
+        } catch (\Exception $e){
+            $taskData = null;
+        }
+
+        return $taskData;
     }
 
 
+    /**
+     * @return array()
+     */
     public function getTasks()
     {
         if (empty($this->proUid)) {
-            return null;
+            return array();
         }
 
         $tasks = new Tasks();
