@@ -32,8 +32,8 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
     function testNew()
     {
         $data = array(
-            "PRJ_NAME" => "Test Bpmn/Workflow Project #1",
-            "PRJ_DESCRIPTION" => "Description for - Test BPMN Project #1",
+            "PRJ_NAME" => "Test Bpmn/Workflow Project #1.". rand(1, 100),
+            "PRJ_DESCRIPTION" => "Description for - Test BPMN Project #1." . rand(1, 100),
             "PRJ_AUTHOR" => "00000000000000000000000000000001"
         );
 
@@ -299,7 +299,7 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
             "BOU_Y" => 163
         ));
 
-        $flowUid1 = $bwap->addFlow(array(
+        $bwap->addFlow(array(
             'FLO_TYPE' => 'SEQUENCE',
             'FLO_ELEMENT_ORIGIN' => $actUid1,
             'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnActivity',
@@ -311,7 +311,7 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
             'FLO_Y2' => 163,
         ));
 
-        $flowUid2 = $bwap->addFlow(array(
+        $bwap->addFlow(array(
             'FLO_TYPE' => 'SEQUENCE',
             'FLO_ELEMENT_ORIGIN' => $gatUid,
             'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnGateway',
@@ -325,19 +325,20 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
 
         $bwap->mapBpmnFlowsToWorkflowRoutes();
 
+        $this->assertCount(2, $bwap->getActivities());
+        $this->assertCount(1, $bwap->getGateways());
+        $this->assertCount(2, $bwap->getFlows());
+
+        $flows1 = \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_DEST, $gatUid);
+        $flows2 = \BpmnFlow::findAllBy(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $gatUid);
+
+        $this->assertCount(1, $flows1);
+        $this->assertCount(1, $flows2);
+        $this->assertEquals($flows1[0]->getFloElementOrigin(), $actUid1);
+        $this->assertEquals($flows2[0]->getFloElementDest(), $actUid2);
+
         // cleaning
-        $bwap->removeActivity($actUid1);
-        $bwap->removeActivity($actUid2);
-        $bwap->removeGateway($gatUid);
-
-        $this->assertCount(0, $bwap->getActivities());
-        $this->assertCount(0, $bwap->getGateways());
-        $this->assertCount(0, $bwap->getFlows());
-
-        $wp = Project\Workflow::load($bwap->getUid());
-
-        $this->assertCount(0, $wp->getTasks());
-        $this->assertCount(0, $wp->getRoutes());
+        $this->resetProject($bwap);
     }
 
     /**
@@ -523,6 +524,189 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, \Route::findAllBy(\RoutePeer::TAS_UID, $activitiesUid[2]));
         $this->assertCount(3, \Route::findAllBy(\RoutePeer::ROU_NEXT_TASK, $actUid5));
 
+        // cleaning
+        $this->resetProject($bwap);
+    }
+
+    /**
+     * @depends testNew
+     * @param \ProcessMaker\Project\Adapter\BpmnWorkflow $bwap
+     * @return string
+     */
+    function testSetStartEvent($bwap)
+    {
+        $actUid = $bwap->addActivity(array(
+            "ACT_NAME" => "Activity #1",
+            "BOU_X" => 312,
+            "BOU_Y" => 464
+        ));
+        $evnUid = $bwap->addEvent(array(
+            "EVN_NAME" => "Event #1",
+            "EVN_TYPE" => "START",
+            "BOU_X" => 369,
+            "BOU_Y" => 338,
+            "EVN_MARKER" => "MESSAGE",
+            "EVN_MESSAGE" => "LEAD"
+        ));
+        $floUid = $bwap->addFlow(array(
+            'FLO_TYPE' => 'SEQUENCE',
+            'FLO_ELEMENT_ORIGIN' => $evnUid,
+            'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnEvent',
+            'FLO_ELEMENT_DEST' => $actUid,
+            'FLO_ELEMENT_DEST_TYPE' => 'bpmnActivity',
+            'FLO_X1' => 174,
+            'FLO_Y1' => 365,
+            'FLO_X2' => 355,
+            'FLO_Y2' => 355,
+        ));
+
+        $this->assertCount(1, $bwap->getActivities());
+        $this->assertCount(1, $bwap->getEvents());
+        $this->assertCount(1, $bwap->getFlows());
+
+        $wp = Project\Workflow::load($bwap->getUid());
+        $task = $wp->getTask($actUid);
+
+        $this->assertCount(1, $wp->getTasks());
+        $this->assertCount(0, $wp->getRoutes());
+        $this->assertNotNull($task);
+
+        $this->assertEquals($task["TAS_START"], "TRUE");
+
+        return $floUid;
+    }
+
+    /**
+     * @depends testNew
+     * @depends testSetStartEvent
+     * @param \ProcessMaker\Project\Adapter\BpmnWorkflow $bwap
+     * @param string $floUid
+     */
+    function testUnsetStartEvent($bwap, $floUid)
+    {
+        $bwap->removeFlow($floUid);
+
+        $this->assertCount(1, $bwap->getActivities());
+        $this->assertCount(1, $bwap->getEvents());
+        $this->assertCount(0, $bwap->getFlows());
+
+        $wp = Project\Workflow::load($bwap->getUid());
+
+        $tasks = $wp->getTasks();
+        $this->assertCount(1, $tasks);
+        $this->assertCount(0, $wp->getRoutes());
+        $this->assertEquals($tasks[0]["TAS_START"], "FALSE");
+
+        // cleaning
+        $this->resetProject($bwap);
+    }
+
+    /**
+     * @depends testNew
+     * @param \ProcessMaker\Project\Adapter\BpmnWorkflow $bwap
+     */
+    function testSetEndEvent($bwap)
+    {
+        $actUid = $bwap->addActivity(array(
+            "ACT_NAME" => "Activity #1",
+            "BOU_X" => 312,
+            "BOU_Y" => 464
+        ));
+        $evnUid = $bwap->addEvent(array(
+            "EVN_NAME" => "Event #1",
+            "EVN_TYPE" => "END",
+            "BOU_X" => 369,
+            "BOU_Y" => 338,
+            "EVN_MARKER" => "MESSAGE",
+            "EVN_MESSAGE" => "LEAD"
+        ));
+        $floUid = $bwap->addFlow(array(
+            'FLO_TYPE' => 'SEQUENCE',
+            'FLO_ELEMENT_ORIGIN' => $actUid,
+            'FLO_ELEMENT_ORIGIN_TYPE' => 'bpmnActivity',
+            'FLO_ELEMENT_DEST' => $evnUid,
+            'FLO_ELEMENT_DEST_TYPE' => 'bpmnEvent',
+            'FLO_X1' => 174,
+            'FLO_Y1' => 365,
+            'FLO_X2' => 355,
+            'FLO_Y2' => 355,
+        ));
+
+        $this->assertCount(1, $bwap->getActivities());
+        $this->assertCount(1, $bwap->getEvents());
+        $this->assertCount(1, $bwap->getFlows());
+
+        $wp = Project\Workflow::load($bwap->getUid());
+        $task = $wp->getTask($actUid);
+
+        $this->assertCount(1, $wp->getTasks());
+        $this->assertCount(1, $wp->getRoutes());
+        $this->assertNotNull($task);
+
+        $routes = \Route::findAllBy(\RoutePeer::TAS_UID, $task["TAS_UID"]);
+
+        $this->assertCount(1, $routes);
+        $this->assertEquals($routes[0]->getRouNextTask(), "-1");
+
+        return $floUid;
+    }
+
+    /**
+     * @depends testNew
+     * @depends testSetEndEvent
+     * @param \ProcessMaker\Project\Adapter\BpmnWorkflow $bwap
+     * @param $floUid
+     */
+    function testUnsetEndEvent($bwap, $floUid)
+    {
+        $bwap->removeFlow($floUid);
+
+        $this->assertCount(1, $bwap->getActivities());
+        $this->assertCount(1, $bwap->getEvents());
+        $this->assertCount(0, $bwap->getFlows());
+
+        $wp = Project\Workflow::load($bwap->getUid());
+
+        $this->assertCount(1, $wp->getTasks());
+        $this->assertCount(0, $wp->getRoutes());
+
+        // cleaning
+        $this->resetProject($bwap);
+    }
+
+    /**
+     * @param \ProcessMaker\Project\Adapter\BpmnWorkflow $bwap
+     */
+    protected function resetProject(\ProcessMaker\Project\Adapter\BpmnWorkflow $bwap)
+    {
+        // cleaning
+        $activities = $bwap->getActivities();
+        foreach ($activities as $activity) {
+            $bwap->removeActivity($activity["ACT_UID"]);
+        }
+        $events = $bwap->getEvents();
+        foreach ($events as $event) {
+            $bwap->removeEvent($event["EVN_UID"]);
+        }
+        $gateways = $bwap->getGateways();
+        foreach ($gateways as $gateway) {
+            $bwap->removeGateway($gateway["GAT_UID"]);
+        }
+        $flows = $bwap->getFlows();
+        foreach ($flows as $flow) {
+            $bwap->removeFlow($flow["FLO_UID"]);
+        }
+
+        // verifying that project is cleaned
+        $this->assertCount(0, $bwap->getActivities());
+        $this->assertCount(0, $bwap->getEvents());
+        $this->assertCount(0, $bwap->getGateways());
+        $this->assertCount(0, $bwap->getFlows());
+
+        $wp = Project\Workflow::load($bwap->getUid());
+
+        $this->assertCount(0, $wp->getTasks());
+        $this->assertCount(0, $wp->getRoutes());
     }
 }
 

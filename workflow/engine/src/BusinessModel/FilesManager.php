@@ -85,46 +85,46 @@ class FilesManager
                 }
             }
             foreach ($aFiles as $aFile) {
-                    $arrayFileUid = $this->getFileManagerUid($sDirectory.$aFile['FILE']);
-                    $fcontent = file_get_contents($sDirectory.$aFile['FILE']);
-                    $fileUid =  $arrayFileUid["PRF_UID"];
-                    if ($fileUid != null) {
-                        $oProcessFiles = \ProcessFilesPeer::retrieveByPK($fileUid);
-                        $editable = $oProcessFiles->getPrfEditable();
-                        if ($editable == '1') {
-                            $editable = 'true';
-                        } else {
-                            $editable = 'false';
-                        }
-                        $aTheFiles[] = array( 'prf_uid' => $oProcessFiles->getPrfUid(),
-                                              'prf_filename' => $aFile['FILE'],
-                                              'usr_uid' => $oProcessFiles->getUsrUid(),
-                                              'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
-                                              'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
-                                              'prf_type' => $oProcessFiles->getPrfType(),
-                                              'prf_editable' => $editable,
-                                              'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
-                                              'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
-                                              'prf_content' => $fcontent);
+                $arrayFileUid = $this->getFileManagerUid($sDirectory.$aFile['FILE']);
+                $fcontent = file_get_contents($sDirectory.$aFile['FILE']);
+                $fileUid =  $arrayFileUid["PRF_UID"];
+                if ($fileUid != null) {
+                    $oProcessFiles = \ProcessFilesPeer::retrieveByPK($fileUid);
+                    $editable = $oProcessFiles->getPrfEditable();
+                    if ($editable == '1') {
+                        $editable = 'true';
                     } else {
-                        $extention = end(explode(".", $aFile['FILE']));
-                        if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp'
-                            || $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
-                            $editable = 'true';
-                        } else {
-                            $editable = 'false';
-                        }
-                        $aTheFiles[] = array('prf_uid' => '',
-                                             'prf_filename' => $aFile['FILE'],
-                                             'usr_uid' => '',
-                                             'prf_update_usr_uid' => '',
-                                             'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
-                                             'prf_type' => 'file',
-                                             'prf_editable' => $editable,
-                                             'prf_create_date' => '',
-                                             'prf_update_date' => '',
-                                             'prf_content' => $fcontent);
+                        $editable = 'false';
                     }
+                    $aTheFiles[] = array( 'prf_uid' => $oProcessFiles->getPrfUid(),
+                                          'prf_filename' => $aFile['FILE'],
+                                          'usr_uid' => $oProcessFiles->getUsrUid(),
+                                          'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
+                                          'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
+                                          'prf_type' => $oProcessFiles->getPrfType(),
+                                          'prf_editable' => $editable,
+                                          'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
+                                          'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
+                                          'prf_content' => $fcontent);
+                } else {
+                    $extention = end(explode(".", $aFile['FILE']));
+                    if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp'
+                        || $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
+                        $editable = 'true';
+                    } else {
+                        $editable = 'false';
+                    }
+                    $aTheFiles[] = array('prf_uid' => '',
+                                         'prf_filename' => $aFile['FILE'],
+                                         'usr_uid' => '',
+                                         'prf_update_usr_uid' => '',
+                                         'prf_path' => $sMainDirectory. PATH_SEP .$sSubDirectory,
+                                         'prf_type' => 'file',
+                                         'prf_editable' => $editable,
+                                         'prf_create_date' => '',
+                                         'prf_update_date' => '',
+                                         'prf_content' => $fcontent);
+                }
             }
             return $aTheFiles;
         } catch (Exception $e) {

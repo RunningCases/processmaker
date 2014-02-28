@@ -2,19 +2,19 @@
 echo "<h1>Michelangelo Update</h1><h2>Changelog Processmaker</h2><code>" > temp.txt
 
 git pull
-git log -n 20 --relative-date --graph --format=short >> temp.txt
+git log -n 30 --relative-date --graph --format=medium --no-merges >> temp.txt
 
 
 
 cd vendor/colosa/pmUI
 echo "</code><br><h2>Changelog pmUI</h2><br><code>" >> ../../../temp.txt
 git pull
-git log -n 20 --relative-date --graph --format=short >> ../../../temp.txt
+git log -n 30 --relative-date --graph --format=medium --no-merges >> ../../../temp.txt
 
 cd ../MichelangeloFE
 echo "</code><br><h2>Changelog MichelangeloFE</h2><br><code>" >> ../../../temp.txt
 git pull
-git log -n 20 --relative-date --graph --format=short >> ../../../temp.txt
+git log -n 30 --relative-date --graph --format=medium --no-merges >> ../../../temp.txt
 
 
 cd ../../../
@@ -22,5 +22,24 @@ echo "</code><br><h2>build-vendor.php</h2><br><code>" >> temp.txt
 php build-vendor.php  >>  temp.txt
 
 sed ':a;N;$!ba;s/\n/<br>/g'  temp.txt > workflow/public_html/build-log.html
+
+cp workflow/public_html/build-log.html temp.txt
+sed -re 's#\[0;35;35m#<span style="color:saddlebrown;">#g' temp.txt > workflow/public_html/build-log.html
+
+cp workflow/public_html/build-log.html temp.txt
+sed -re 's#\[1;33;34m#<span style="color:darkblue;">#g' temp.txt > workflow/public_html/build-log.html
+
+cp workflow/public_html/build-log.html temp.txt
+sed -re 's#\[0;35;32m#<span style="color:green;">#g' temp.txt > workflow/public_html/build-log.html
+
+
+cp workflow/public_html/build-log.html temp.txt
+sed -re 's#\[31m\[32m#</span style="color:brown;">#g' temp.txt > workflow/public_html/build-log.html
+
+cp workflow/public_html/build-log.html temp.txt
+sed -re 's#\[0m#</span>#g' temp.txt > workflow/public_html/build-log.html
+
+cp workflow/public_html/build-log.html temp.txt
+sed -re 's#Author:(.*)\n#<span>xxxx(1)</span>#g' temp.txt > workflow/public_html/build-log.html
 
 echo "update executed succesfully, check the log in http://<server>/build-log.html "
