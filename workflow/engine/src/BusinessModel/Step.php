@@ -170,9 +170,8 @@ class Step
      */
     public function throwExceptionIfHaveInvalidValueInTypeObj($stepTypeObj)
     {
-        if (!in_array($stepTypeObj, array("DYNAFORM", "INPUT_DOCUMENT", "OUTPUT_DOCUMENT"))) {
+        if (!in_array($stepTypeObj, array("DYNAFORM", "INPUT_DOCUMENT", "OUTPUT_DOCUMENT", "EXTERNAL"))) {
             $field = $this->arrayParamException["stepTypeObj"];
-
             throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
         }
     }
