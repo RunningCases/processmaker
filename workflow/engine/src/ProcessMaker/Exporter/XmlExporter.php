@@ -54,7 +54,6 @@ class XmlExporter extends Exporter
                     foreach ($recordData as $key => $value) {
                         $columnNode = $this->dom->createElement(strtoupper($key));
 
-                        if (is_array($value)) {print_r($value); die;}
                         if (preg_match('/^[\w\s]+$/', $value, $match) || empty($value)) {
                             $textNode = $this->dom->createTextNode($value);
                         } else {
