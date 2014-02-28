@@ -54,6 +54,7 @@ class XmlExporter extends Exporter
                     foreach ($recordData as $key => $value) {
                         $columnNode = $this->dom->createElement(strtoupper($key));
 
+                        if (is_array($value)) {print_r($value); die;}
                         if (preg_match('/^[\w\s]+$/', $value, $match) || empty($value)) {
                             $textNode = $this->dom->createTextNode($value);
                         } else {
@@ -77,8 +78,6 @@ class XmlExporter extends Exporter
 
         // workflow dynaforms files
         foreach ($data["WORKFLOW_FILES"] as $elementName => $elementData) {
-            //$wfFilesNode = $this->dom->createElement($elementName);
-
             foreach ($elementData as $fileData) {
                 $fileNode = $this->dom->createElement("FILE");
                 $fileNode->setAttribute("target", strtolower($elementName));
@@ -97,8 +96,6 @@ class XmlExporter extends Exporter
 
                 $workflowFilesNode->appendChild($fileNode);
             }
-
-            //$workflowFilesNode->appendChild($wfFilesNode);
         }
 
         $this->rootNode->appendChild($workflowFilesNode);

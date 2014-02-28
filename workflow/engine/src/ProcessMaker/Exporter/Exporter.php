@@ -28,20 +28,19 @@ abstract class Exporter
 
 
         $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($this->prjUid);
-        //$data["BPMN_STRUCTURE"]["BPMN_BOUND"] = $this->bwap->getBounds();
-//        $data["bpmn_data"] = $this->bwap->getProject();
-//        $data["bpmn_diagram"] = $this->bwap->getProject();
-//        $data["bpmn_documentation"] = $this->bwap->getProject();
+        $bpmnStruct["BOUND"] = \BpmnBound::getAll($this->prjUid);
+        $bpmnStruct["DATA"] = array();
+        $bpmnStruct["DIAGRAM"] = \BpmnDiagram::getAll($this->prjUid);
+        $bpmnStruct["DOCUMENTATION"] = array();
         $bpmnStruct["BPMN_EVENT"] = \BpmnEvent::getAll($this->prjUid);
-//        $data["bpmn_extension"] = $this->bwap->getProject();
-//        $data["bpmn_flow"] = $this->bwap->getProject();
+        $bpmnStruct["EXTENSION"] = array();
+        $bpmnStruct["FLOW"] = \BpmnFlow::getAll($this->prjUid, null, null, "", CASE_UPPER, false);
         $bpmnStruct["BPMN_GATEWAY"] = \BpmnGateway::getAll($this->prjUid);
-//        $data["bpmn_lane"] = $this->bwap->getProject();
-//        $data["bpmn_laneset"] = $this->bwap->getProject();
-//        $data["bpmn_participant"] = $this->bwap->getProject();
-//        $data["bpmn_process"] = $this->bwap->getProject();
-//        $data["bpmn_project"] = $this->bwap->getProject();
-
+        $bpmnStruct["LANE"] = array();
+        $bpmnStruct["LANESET"] = array();
+        $bpmnStruct["PARTICIPANT"] = array();
+        $bpmnStruct["PROCESS"] = \BpmnProcess::getAll($this->prjUid);
+        $bpmnStruct["PROJECT"] = array(\BpmnProjectPeer::retrieveByPK($this->prjUid)->toArray());
 
         \G::LoadClass( 'processes' );
         $oProcess = new \Processes();
@@ -68,7 +67,7 @@ abstract class Exporter
             $htmlFile = PATH_DYNAFORM . $dynaform['DYN_FILENAME'] . '.html';
 
             if (file_exists($htmlFile)) {
-                $dynaforms[] = array(
+                $data["WORKFLOW_FILES"]["DYNAFORMS"][] = array(
                     "filename" => $dynaform['DYN_FILENAME'] . '.html',
                     "filepath" => $dynaform['DYN_FILENAME'] . '.html',
                     "file_content" => file_get_contents($htmlFile)
@@ -77,33 +76,29 @@ abstract class Exporter
         }
 
         // getting templates files
-        $templates = array();
-        $workspaceDir = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP;
-        $templatesDir = $workspaceDir . 'mailTemplates' . PATH_SEP . $this->prjUid;
-        $templatesFiles = \G::rglob("*", 0, $templatesDir);
+        $workspaceTargetDirs = array("TEMPLATES" => "mailTemplates", "PUBLIC" => "public");
+        $workspaceDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP;
 
-        foreach ($templatesFiles as $templatesFile) {
-            if (is_dir($templatesFile)) continue;
+        foreach ($workspaceTargetDirs as $target => $workspaceTargetDir) {
+            $templatesDir = $workspaceDir . $workspaceTargetDir . PATH_SEP . $this->prjUid;
+            $templatesFiles = \G::rglob("*", 0, $templatesDir);
 
-            $templates[] = array(
-                "filename" => basename($templatesFile),
-                "filepath" => str_replace($templatesDir, "", $templatesFile),
-                "file_content" => file_get_contents($templatesFile)
-            );
+            foreach ($templatesFiles as $templatesFile) {
+                if (is_dir($templatesFile)) continue;
+
+                $data["WORKFLOW_FILES"][$target][] = array(
+                    "filename" => basename($templatesFile),
+                    "filepath" => str_replace($templatesDir, "", $templatesFile),
+                    "file_content" => file_get_contents($templatesFile)
+                );
+            }
         }
-
-        $data["WORKFLOW_FILES"]["DYNAFORMS"] = $dynaforms;
-        $data["WORKFLOW_FILES"]["TEMPLATES"] = $templates;
-        $data["WORKFLOW_FILES"]["PUBLIC"] = array();
 
         return $data;
     }
 
     public function getSystemInfo()
     {
-        //$sysInfo = \System::getSysInfo();
-        //print_r($sysInfo); die;
-
         return array(
             "vendor" => "ProcessMaker",
             "codename" => "Michelangelo",

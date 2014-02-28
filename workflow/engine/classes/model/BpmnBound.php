@@ -54,12 +54,12 @@ class BpmnBound extends BaseBpmnBound
         $rs = BpmnBoundPeer::doSelectRS($c);
         $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-        $activities = array();
+        $bounds = array();
 
         while ($rs->next()) {
-            $activities[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
+            $bounds[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
         }
 
-        return $activities;
+        return $bounds;
     }
 } // BpmnBound

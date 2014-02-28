@@ -64,7 +64,7 @@ class BpmnFlow extends BaseBpmnFlow
         return BpmnFlowPeer::doSelect($c);
     }
 
-    public static function getAll($prjUid = null, $start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    public static function getAll($prjUid = null, $start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER, $decodeState = true)
     {
         //TODO implement $start, $limit and $filter
         $c = new Criteria('workflow');
@@ -80,7 +80,9 @@ class BpmnFlow extends BaseBpmnFlow
 
         while ($rs->next()) {
             $flow = $rs->getRow();
-            $flow["FLO_STATE"] = @json_decode($flow["FLO_STATE"], true);
+            if ($decodeState) {
+                $flow["FLO_STATE"] = @json_decode($flow["FLO_STATE"], true);
+            }
             //$flow["FLO_IS_INMEDIATE"] = $flow["FLO_IS_INMEDIATE"] == 1 ? true : false;
             $flow = $changeCaseTo !== CASE_UPPER ? array_change_key_case($flow, CASE_LOWER) : $flow;
 
