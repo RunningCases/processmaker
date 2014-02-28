@@ -354,6 +354,8 @@ class Bpmn extends Handler
             $event->save();
 
             self::log("Add Event Success!");
+
+            return $event->getEvnUid();
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
             throw $e;

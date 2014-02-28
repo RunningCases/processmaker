@@ -44,6 +44,7 @@ $projects = array(
     'colosa/pmUI'
 );
 
+
 out("build-vendor.php", 'purple');
 
 
@@ -54,6 +55,7 @@ out(" mode", 'purple');
 foreach ($projects as $project) {
     echo PHP_EOL;
     out("=> Building project: ", 'info', false);
+    $output = array();
     echo $project.' '.PHP_EOL;
     chdir($vendorDir.DS.$project);
     if ($debug) {

@@ -226,6 +226,11 @@ class Route extends BaseRoute
         return empty($rows) ? null : $rows[0];
     }
 
+    /**
+     * @param $field
+     * @param null $value
+     * @return \Route[]
+     */
     public static function findAllBy($field, $value = null)
     {
         $field = is_array($field) ? $field : array($field => $value);

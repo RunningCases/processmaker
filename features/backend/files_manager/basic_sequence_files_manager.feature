@@ -42,11 +42,11 @@ Feature: Files Manager Resources
       And store "prf_uid" in session array as variable "prf_uid<i>"
 
     Examples:
-    | test_description             | file_name      | path                  | content  | http_code | type   | i |
-    | into public folder           | testbehat.txt  | public/               | test     | 200       | object | 0 |
-    | into mailtemplates folder    | testbehat.txt  | templates/            | test     | 200       | object | 1 |
-    | into public subfolder        | testbehat.txt  | public/test_folder    | test     | 200       | object | 2 |
-    | into mailtemplates subfolder | testbehat.txt  | templates/test_folder | test     | 200       | object | 3 |
+    | test_description             | file_name       | path                  | content  | http_code | type   | i |
+    | into public folder           | testbehat1.txt  | public/               | test     | 200       | object | 0 |
+    | into mailtemplates folder    | testbehat1.txt  | templates/            | test     | 200       | object | 1 |
+    | into public subfolder        | testbehat1.txt  | public/test_folder    | test     | 200       | object | 2 |
+    | into mailtemplates subfolder | testbehat1.txt  | templates/test_folder | test     | 200       | object | 3 |
 
   Scenario Outline: Post files
   Given PUT this data:
