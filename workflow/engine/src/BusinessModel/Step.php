@@ -150,9 +150,6 @@ class Step
                         $msg = str_replace(array("{0}", "{1}"), array($objectUid, "OUTPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}");
                     }
                     break;
-                default:
-                    $msg = str_replace(array("{0}", "{1}"), array($objectUid, $type), "The UID \"{0}\" doesn't exist in table {1}");
-                    break;
             }
 
             return $msg;
