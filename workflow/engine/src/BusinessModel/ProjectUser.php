@@ -19,7 +19,7 @@ class ProjectUser
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -105,7 +105,7 @@ class ProjectUser
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -168,11 +168,11 @@ class ProjectUser
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oUser = \UsersPeer::retrieveByPK($sUserUID);
             if (is_null($oUser)) {
-                throw (new \Exception( 'This id for `usr_uid`: '. $sUserUID .' do not correspond to a registered user'));
+                throw (new \Exception( 'This id for `usr_uid`: '. $sUserUID .' does not correspond to a registered user'));
             }
             $aUsers = array();
             \G::LoadClass( 'case' );
@@ -190,7 +190,7 @@ class ProjectUser
                 }
             }
             if (sizeof($aUsers) < 1) {
-                throw (new \Exception( 'This user `usr_uid`: '. $sUserUID .' has no initial activities assigned in this project.'));
+                throw (new \Exception( 'This user `usr_uid`: '. $sUserUID .' does not have initial activities assigned in this project.'));
             }
             return $aUsers;
         } catch (Exception $e) {
@@ -213,7 +213,7 @@ class ProjectUser
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' do not correspond to a registered process'));
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
             }
             /**
              * process_webEntryValidate
