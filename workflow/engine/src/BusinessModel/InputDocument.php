@@ -161,7 +161,7 @@ class InputDocument
             $rsCriteria = \InputDocumentPeer::doSelectRS($criteria);
 
             if (!$rsCriteria->next()) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $inputDocumentUid), "The InputDocument with {0}: {1}, does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $inputDocumentUid), "The Input Document with {0}: {1} does not exist");
 
                 throw (new \Exception($msg));
             }
@@ -184,7 +184,7 @@ class InputDocument
     {
         try {
             if ($this->existsTitle($processUid, $inputDocumentTitle, $inputDocumentUidExclude)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $inputDocumentTitle), "The InputDocument title with {0}: \"{1}\", already exists");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $inputDocumentTitle), "The Input Document title with {0}: \"{1}\" already exists");
 
                 throw (new \Exception($msg));
             }
