@@ -308,18 +308,18 @@ class WebEntry
             $weEventUid = $task->getStartingEvent($arrayData["TAS_UID"]);
 
             if ($arrayTaskData["TAS_START"] == "FALSE") {
-                throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "The task \"{0}\" isn't initial task")));
+                throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "The task \"{0}\" is not initial task")));
             }
 
             if ($arrayTaskData["TAS_ASSIGN_TYPE"] != "BALANCED") {
-                throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "Web Entry only works with tasks which have \"Cyclical Assignment\", the task \"{0}\" doesn't have a valid assignment type. Please change the Assignment Rules")));
+                throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "Web Entry only works with tasks which have \"Cyclical Assignment\", the task \"{0}\" does not have a valid assignment type. Please change the Assignment Rules")));
             }
 
             if ($arrayData["METHOD"] == "WS") {
                 $task = new \Tasks();
 
                 if ($task->assignUsertoTask($arrayData["TAS_UID"]) == 0) {
-                    throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "The task \"{0}\" doesn't have users")));
+                    throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "The task \"{0}\" does not have users")));
                 }
             }
 
@@ -355,7 +355,7 @@ class WebEntry
                 $row = $rsCriteria->getRow();
 
                 if (!$projectUser->userIsAssignedToTask($row["USR_UID"], $arrayData["TAS_UID"])) {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayData["USR_USERNAME"], $arrayTaskData["TAS_TITLE"]), "The user \"{0}\" doesn't have the task \"{1}\" assigned")));
+                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayData["USR_USERNAME"], $arrayTaskData["TAS_TITLE"]), "The user \"{0}\" does not have the task \"{1}\" assigned")));
                 }
             }
 
