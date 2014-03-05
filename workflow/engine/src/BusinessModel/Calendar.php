@@ -169,7 +169,7 @@ class Calendar
             }
 
             //Set variables
-            $calendar = new \calendar();
+            $calendar = new \CalendarDefinition();
 
             $arrayTotalUsersByCalendar = $calendar->getAllCounterByCalendar("USER");
             $arrayTotalProcessesByCalendar = $calendar->getAllCounterByCalendar("PROCESS");

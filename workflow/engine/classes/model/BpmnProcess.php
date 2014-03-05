@@ -24,6 +24,26 @@ class BpmnProcess extends BaseBpmnProcess
         return BpmnProcessPeer::doSelect($c);
     }
 
+    public static function getAll($prjUid = null, $start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        $c = new Criteria('workflow');
+        $c->addSelectColumn("BPMN_PROCESS.*");
+
+        if (! is_null($prjUid)) {
+            $c->add(BpmnProcessPeer::PRJ_UID, $prjUid, Criteria::EQUAL);
+        }
+
+        $rs = BpmnProcessPeer::doSelectRS($c);
+        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        $processes = array();
+        while ($rs->next()) {
+            $processes[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
+        }
+
+        return $processes;
+    }
+
 
     // Overrides
 
