@@ -89,7 +89,7 @@ class ProcessSupervisor
             $aResp = array();
             $oProcess = \ProcessUserPeer::retrieveByPK( $sPuUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `pu_uid`: '. $sPuUID .' do not correspond to a valid relation'));
+                throw (new \Exception( 'This id for `pu_uid`: '. $sPuUID .' does not correspond to a valid relation'));
             }
             // Groups
             $oCriteria = new \Criteria('workflow');
@@ -304,7 +304,7 @@ class ProcessSupervisor
             $aResp = array();
             $oDynaformSupervisor = \StepSupervisorPeer::retrieveByPK( $sPudUID );
             if (is_null( $oDynaformSupervisor ) ) {
-                throw (new \Exception( 'This id: '. $sPudUID .' do not correspond to a registered process supervisor '));
+                throw (new \Exception( 'This id: '. $sPudUID .' does not correspond to a registered process supervisor '));
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
@@ -456,7 +456,7 @@ class ProcessSupervisor
             $aResp = array();
             $oInputDocumentSupervisor = \StepSupervisorPeer::retrieveByPK( $sPuiUID );
             if (is_null( $oInputDocumentSupervisor ) ) {
-                throw (new \Exception( 'This id: '. $sPuiUID .' do not correspond to a registered process supervisor '));
+                throw (new \Exception( 'This id: '. $sPuiUID .' does not correspond to a registered process supervisor '));
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
@@ -558,16 +558,16 @@ class ProcessSupervisor
         $oTypeAssigneeG = \GroupwfPeer::retrieveByPK( $sUsrUID );
         $oTypeAssigneeU = \UsersPeer::retrieveByPK( $sUsrUID );
         if (is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
-            throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
+            throw (new \Exception( 'This id: '. $sUsrUID .' does not correspond to a registered ' .$sTypeUID ));
         }
         if (is_null( $oTypeAssigneeG ) && ! is_null( $oTypeAssigneeU) ) {
             if ( "SUPERVISOR"!= $sTypeUID ) {
-                throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
+                throw (new \Exception( 'This id: '. $sUsrUID .' does not correspond to a registered ' .$sTypeUID ));
             }
         }
         if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
             if ( "GROUP_SUPERVISOR" != $sTypeUID ) {
-                throw (new \Exception( 'This id: '. $sUsrUID .' do not correspond to a registered ' .$sTypeUID ));
+                throw (new \Exception( 'This id: '. $sUsrUID .' does not correspond to a registered ' .$sTypeUID ));
             }
         }
         // validate Groups
@@ -630,7 +630,7 @@ class ProcessSupervisor
     {
         $oTypeDynaform = \DynaformPeer::retrieveByPK($sDynUID);
         if (is_null( $oTypeDynaform )) {
-            throw (new \Exception( 'This id for `dyn_uid`: '. $sDynUID .' do not correspond to a registered Dynaform'));
+            throw (new \Exception( 'This id for `dyn_uid`: '. $sDynUID .' does not correspond to a registered Dynaform'));
         }
         $aResp = array();
         $sPuUIDT = array();
@@ -713,7 +713,7 @@ class ProcessSupervisor
     {
         $oTypeInputDocument= \InputDocumentPeer::retrieveByPK($sInputDocumentUID);
         if (is_null( $oTypeInputDocument )) {
-            throw (new \Exception( 'This id for `inp_doc_uid`: '. $sInputDocumentUID .' do not correspond to a registered InputDocument'));
+            throw (new \Exception( 'This id for `inp_doc_uid`: '. $sInputDocumentUID .' does not correspond to a registered InputDocument'));
         }
         $aResp = array();
         $sPuUIDT = array();
@@ -804,7 +804,7 @@ class ProcessSupervisor
                 $oConnection->commit();
                 return $iResult;
             } else {
-                throw (new \Exception('This row doesn\'t exist!'));
+                throw (new \Exception('This row does not exist!'));
             }
         } catch (\Exception $e) {
             $oConnection->rollback();
@@ -830,7 +830,7 @@ class ProcessSupervisor
                 $oConnection->commit();
                 return $iResult;
             } else {
-                throw (new \Exception('This row doesn\'t exist!'));
+                throw (new \Exception('This row does not exist!'));
             }
         } catch (Exception $oError) {
             $oConnection->rollback();
@@ -856,7 +856,7 @@ class ProcessSupervisor
                 $oConnection->commit();
                 return $iResult;
             } else {
-                throw (new \Exception('This row doesn\'t exist!'));
+                throw (new \Exception('This row does not exist!'));
             }
         } catch (Exception $oError) {
             $oConnection->rollback();
