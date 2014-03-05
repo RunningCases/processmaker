@@ -1423,4 +1423,12 @@ print_r($sessionData);
         $this->postIWantToUploadTheImageToUser($imageFile, $usrUid, $url);
     }
 
+    /**
+     * @Given /^that I want to delete the folder$/
+     */
+    public function thatIWantToDeleteTheFolder()
+    {
+        $this->_restObjectMethod = 'delete';
+    }
+
 }
