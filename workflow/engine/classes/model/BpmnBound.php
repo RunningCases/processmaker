@@ -41,4 +41,25 @@ class BpmnBound extends BaseBpmnBound
 
         return BpmnBoundPeer::doSelectOne($c);
     }
+
+    public static function getAll($prjUid = null, $start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        $c = new Criteria('workflow');
+        $c->addSelectColumn("BPMN_BOUND.*");
+
+        if (! is_null($prjUid)) {
+            $c->add(BpmnBoundPeer::PRJ_UID, $prjUid, Criteria::EQUAL);
+        }
+
+        $rs = BpmnBoundPeer::doSelectRS($c);
+        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        $bounds = array();
+
+        while ($rs->next()) {
+            $bounds[] = $changeCaseTo !== CASE_UPPER ? array_change_key_case($rs->getRow(), CASE_LOWER) : $rs->getRow();
+        }
+
+        return $bounds;
+    }
 } // BpmnBound

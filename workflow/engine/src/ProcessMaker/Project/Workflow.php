@@ -237,6 +237,10 @@ class Workflow extends Handler
         return $tasks->getAllTasks($this->proUid);
     }
 
+    /**
+     * @param string $tasUid
+     * @param bool $value
+     */
     public function setStartTask($tasUid, $value = true)
     {
         $value = $value ? "TRUE" : "FALSE";
@@ -248,6 +252,10 @@ class Workflow extends Handler
         self::log("Setting Start Task -> $value, Success!");
     }
 
+    /**
+     * @param string $tasUid
+     * @param bool $value
+     */
     public function setEndTask($tasUid, $value = true)
     {
         self::log("Setting End Task with Uid: $tasUid: " . ($value ? "TRUE" : "FALSE"));
