@@ -2609,7 +2609,7 @@ class G
      * @param integer $permission
      * @return void
      */
-    public static function uploadFile ($file, $path, $nameToSave, $permission = 0660)
+    public static function uploadFile ($file, $path, $nameToSave, $permission = 0755)
     {
         try {
             if ($file == '') {
@@ -3618,7 +3618,7 @@ class G
      * @param $pattern pattern to filter some especified files
      * @return <array> array containing the recursive glob results
      */
-    public function rglob($pattern = '*', $flags = 0, $path = '')
+    public static function rglob($pattern = '*', $flags = 0, $path = '')
     {
         $paths = glob($path.'*', GLOB_MARK|GLOB_ONLYDIR|GLOB_NOSORT);
         $files = glob($path.$pattern, $flags);

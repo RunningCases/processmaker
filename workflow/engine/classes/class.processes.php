@@ -2584,8 +2584,14 @@ class Processes
      * @return boolean
      */
     public function serializeProcess ($sProUid = '')
+    {
+        return serialize($this->getWorkflowData($sProUid));
+    }
+
+    public function getWorkflowData($sProUid = '')
     {   
         $oProcess = new Process();
+        $oData = new StdClass();
         $oData->process = $this->getProcessRow( $sProUid, false );
         $oData->tasks = $this->getTaskRows( $sProUid );
         $oData->routes = $this->getRouteRows( $sProUid );
@@ -2619,7 +2625,7 @@ class Processes
         //$oJSON = new Services_JSON();
         //krumo ( $oJSON->encode($oData) );
         //return $oJSON->encode($oData);
-        return serialize( $oData );
+        return $oData;
     }
 
     /**
