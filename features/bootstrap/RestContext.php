@@ -1186,6 +1186,7 @@ class RestContext extends BehatContext
         }
 
         $this->_restDeleteQueryStringSuffix = "/" . $varValue;
+        
         $this->_restObjectMethod = 'delete';
     }
 
@@ -1249,7 +1250,7 @@ class RestContext extends BehatContext
         } else {
             $varValue = $sessionData->$sessionVarName;
         }
-
+print_r($sessionData);
 
         $pageUrl = str_replace($varName, $varValue, $pageUrl);
 
@@ -1332,12 +1333,24 @@ class RestContext extends BehatContext
         curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $postResult = curl_exec($ch);
+        
         curl_close($ch);
+        
+        //Save result as usual
+        $this->_type = 'json';
+        $this->_data = json_decode($postResult);
+
         $postResult = (array)json_decode($postResult);
+
+        
+
+
+
         if (sizeof($postResult) > 2) {
             $prfUid = $postResult["prf_uid"];
         } else {
-            var_dump($postResult["error"]);
+            throw new Exception($postResult["error"]->message);
+            //var_dump($postResult["error"]);
         }
         $url = $url.'/'.$prfUid."/upload";
         $ch = curl_init();
@@ -1350,10 +1363,13 @@ class RestContext extends BehatContext
         curl_close($ch);
 
        //se guarda el prf_uid en una variable
-        $varName = 'prf_uid';
-        $sessionData = new StdClass();
-        $sessionData->$varName = $prfUid;
-        file_put_contents("session.data", json_encode($sessionData));
+        
+        //Wen: Esto borra todo el session data, por favor corregir o no guardar la variable desde aca
+        
+        //$varName = 'prf_uid';
+        //$sessionData = new StdClass(); 
+        //$sessionData->$varName = $prfUid;
+        //file_put_contents("session.data", json_encode($sessionData));
     }
 
     //UPLOAD IMAGE
