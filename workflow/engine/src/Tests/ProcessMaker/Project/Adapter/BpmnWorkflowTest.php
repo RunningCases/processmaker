@@ -21,7 +21,7 @@ class BpmnWorkflowTest extends \PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        return false;
+        //return false;
         //cleaning DB
         foreach (self::$uids as $prjUid) {
             $bwap = Project\Adapter\BpmnWorkflow::load($prjUid);

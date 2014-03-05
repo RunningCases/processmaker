@@ -39,10 +39,10 @@ class Designer extends Controller
 
         if (System::isDebugMode()) {
             if (! file_exists(PATH_HTML . "lib-dev/pmUI/build.cache")) {
-                throw new Exception("Error: Development JS Files were are not generated!, please execute: \$rake pmBuildDebug in pmUI project");
+                throw new RuntimeException("Development JS Files were are not generated!.\nPlease execute: \$>rake pmBuildDebug in pmUI project");
             }
             if (! file_exists(PATH_HTML . "lib-dev/mafe/build.cache")) {
-                throw new Exception("Error: Development JS Files were are not generated!, please execute: \$rake pmBuildDebug in MichelangeloFE project");
+                throw new RuntimeException("Development JS Files were are not generated!.\nPlease execute: \$>rake pmBuildDebug in MichelangeloFE project");
             }
 
             $mafeFiles = file(PATH_HTML . "lib-dev/mafe/build.cache", FILE_IGNORE_NEW_LINES);
