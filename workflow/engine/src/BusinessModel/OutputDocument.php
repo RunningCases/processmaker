@@ -235,7 +235,7 @@ class OutputDocument
             if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms" || $row == "") {
                 $aData['out_doc_pdf_security_permissions'] = $aData['out_doc_pdf_security_permissions'];
             } else {
-                throw (new \Exception( 'invalid value specified for `out_doc_pdf_security_permissions`'));
+                throw (new \Exception( 'Invalid value specified for `out_doc_pdf_security_permissions`'));
             }
         }
         try {
@@ -248,7 +248,7 @@ class OutputDocument
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($sProcessUID, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
             }
             if ($aData["OUT_DOC_TITLE"]=="") {
-                throw (new \Exception( 'invalid value specified for `out_doc_title`, can`t be null'));
+                throw (new \Exception( 'Invalid value specified for `out_doc_title`, can`t be null'));
             }
             if (isset($aData["OUT_DOC_TITLE"]) && $this->existsTitle($sProcessUID, $aData["OUT_DOC_TITLE"])) {
                 throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_SAVE")));
@@ -295,7 +295,7 @@ class OutputDocument
             if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms" || $row == "") {
                 $aData['out_doc_pdf_security_permissions'] = $aData['out_doc_pdf_security_permissions'];
             } else {
-                throw (new \Exception( 'invalid value specified for `out_doc_pdf_security_permissions`'));
+                throw (new \Exception( 'Invalid value specified for `out_doc_pdf_security_permissions`'));
             }
         }
         try {
@@ -328,7 +328,7 @@ class OutputDocument
                     throw (new \Exception('The registry cannot be updated!' . $sMessage));
                 }
             } else {
-                throw (new \Exception('This row doesn\'t exist!'));
+                throw (new \Exception('This row does not exist!'));
             }
         } catch (\Exception $e) {
                 throw $e;

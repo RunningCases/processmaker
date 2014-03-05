@@ -148,11 +148,11 @@ class FilesManager
         try {
             $aData['prf_path'] = rtrim($aData['prf_path'], '/') . '/';
             if (!$aData['prf_filename']) {
-                throw (new \Exception( 'invalid value specified for `prf_filename`.'));
+                throw (new \Exception( 'Invalid value specified for `prf_filename`.'));
             }
             $sMainDirectory = current(explode("/", $aData['prf_path']));
             if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
-                throw (new \Exception( 'invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
+                throw (new \Exception( 'Invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
             }
             if (strstr($aData['prf_path'],'/')) {
                 $sSubDirectory = substr($aData['prf_path'], strpos($aData['prf_path'], "/")+1) ;
@@ -310,7 +310,7 @@ class FilesManager
                 $rsCriteria->next();
             }
             if ($path == '') {
-                throw new \Exception('invalid value specified for `prf_uid`.');
+                throw new \Exception('Invalid value specified for `prf_uid`.');
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
@@ -329,7 +329,7 @@ class FilesManager
                 $sEditable = false;
             }
             if ($sEditable == false) {
-                throw (new \Exception( 'Can`t edit. Make sure your file has an editable extension.'));
+                throw (new \Exception( 'Unable to edit. Make sure your file has an editable extension.'));
             }
             $oProcessFiles = \ProcessFilesPeer::retrieveByPK($prfUid);
             $sDate = date('Y-m-d H:i:s');
@@ -379,7 +379,7 @@ class FilesManager
                 $rsCriteria->next();
             }
             if ($path == '') {
-                throw new \Exception('invalid value specified for `prf_uid`.');
+                throw new \Exception('Invalid value specified for `prf_uid`.');
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
@@ -423,7 +423,7 @@ class FilesManager
                 $rsCriteria->next();
             }
             if ($path == '') {
-                throw new \Exception('invalid value specified for `prf_uid`.');
+                throw new \Exception('Invalid value specified for `prf_uid`.');
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
@@ -439,7 +439,7 @@ class FilesManager
                 $oProcessMap->downloadFile($sProcessUID,$sMainDirectory,$sSubDirectory,$sFile);
                 die();
             } else {
-                throw (new \Exception( 'invalid value specified for `path`.'));
+                throw (new \Exception( 'Invalid value specified for `path`.'));
             }
         } catch (Exception $e) {
             throw $e;
