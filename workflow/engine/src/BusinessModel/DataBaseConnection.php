@@ -224,9 +224,9 @@ class DataBaseConnection
         $respTest['0']['test'] = 'Resolving Host Name ' . $dataCon['DBS_SERVER'];
         if ($Server->getErrno() != 0) {
             if ($returnArray) {
-                $respTest['0']['error'] = "Error Testting Connection: Resolving Host Name FAILED : " . $Server->error;
+                $respTest['0']['error'] = "Error Testing Connection: Resolving Host Name FAILED : " . $Server->error;
             } else {
-                $resp['message'] = "Error Testting Connection: Resolving Host Name FAILED : " . $Server->error;
+                $resp['message'] = "Error Testing Connection: Resolving Host Name FAILED : " . $Server->error;
                 return $resp;
             }
         }
@@ -237,9 +237,9 @@ class DataBaseConnection
         $Server->scannPort($dataCon['DBS_PORT']);
         if ($Server->getErrno() != 0) {
             if ($returnArray) {
-                $respTest['1']['error'] = "Error Testting Connection: Checking port FAILED : " . $Server->error;
+                $respTest['1']['error'] = "Error Testing Connection: Checking port FAILED : " . $Server->error;
             } else {
-                $resp['message'] = "Error Testting Connection: Checking port FAILED : " . $Server->error;
+                $resp['message'] = "Error Testing Connection: Checking port FAILED : " . $Server->error;
                 return $resp;
             }
         }
@@ -253,17 +253,17 @@ class DataBaseConnection
             $response = $Server->tryConnectServer($dataCon['DBS_TYPE']);
             if ($response->status != 'SUCCESS') {
                 if ($returnArray) {
-                    $respTest['2']['error'] = "Error Testting Connection: Trying to connect to host FAILED : " . $Server->error;
+                    $respTest['2']['error'] = "Error Testing Connection: Trying to connect to host FAILED : " . $Server->error;
                 } else {
-                    $resp['message'] = "Error Testting Connection: Trying to connect to host FAILED : " . $Server->error;
+                    $resp['message'] = "Error Testing Connection: Trying to connect to host FAILED : " . $Server->error;
                     return $resp;
                 }
             }
         } else {
             if ($returnArray) {
-                $respTest['2']['error'] = "Error Testting Connection: Trying to connect to host FAILED : " . $Server->error;
+                $respTest['2']['error'] = "Error Testing Connection: Trying to connect to host FAILED : " . $Server->error;
             } else {
-                $resp['message'] = "Error Testting Connection: Trying to connect to host FAILED : " . $Server->error;
+                $resp['message'] = "Error Testing Connection: Trying to connect to host FAILED : " . $Server->error;
                 return $resp;
             }
         }
@@ -279,25 +279,25 @@ class DataBaseConnection
                 $response = $Server->tryOpenDataBase($dataCon['DBS_TYPE']);
                 if ($response->status != 'SUCCESS') {
                     if ($returnArray) {
-                        $respTest['3']['error'] = "Error Testting Connection: Trying to open database FAILED : " . $Server->error;
+                        $respTest['3']['error'] = "Error Testing Connection: Trying to open database FAILED : " . $Server->error;
                     } else {
-                        $resp['message'] = "Error Testting Connection: Trying to open database FAILED : " . $Server->error;
+                        $resp['message'] = "Error Testing Connection: Trying to open database FAILED : " . $Server->error;
                         return $resp;
                     }
                 }
             } else {
                 if ($returnArray) {
-                    $respTest['3']['error'] = "Error Testting Connection: Trying to open database FAILED : " . $Server->error;
+                    $respTest['3']['error'] = "Error Testing Connection: Trying to open database FAILED : " . $Server->error;
                 } else {
-                    $resp['message'] = "Error Testting Connection: Trying to open database FAILED : " . $Server->error;
+                    $resp['message'] = "Error Testing Connection: Trying to open database FAILED : " . $Server->error;
                     return $resp;
                 }
             }
         } else {
             if ($returnArray) {
-                $respTest['3']['error'] = "Error Testting Connection: Trying to open database FAILED : " . $Server->error;
+                $respTest['3']['error'] = "Error Testing Connection: Trying to open database FAILED : " . $Server->error;
             } else {
-                $resp['message'] = "Error Testting Connection: Trying to open database FAILED : " . $Server->error;
+                $resp['message'] = "Error Testing Connection: Trying to open database FAILED : " . $Server->error;
                 return $resp;
             }
         }
