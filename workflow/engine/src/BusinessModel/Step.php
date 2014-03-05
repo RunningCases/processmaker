@@ -150,9 +150,6 @@ class Step
                         $msg = str_replace(array("{0}", "{1}"), array($objectUid, "OUTPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}");
                     }
                     break;
-                default:
-                    $msg = str_replace(array("{0}", "{1}"), array($objectUid, $type), "The UID \"{0}\" doesn't exist in table {1}");
-                    break;
             }
 
             return $msg;
@@ -170,9 +167,8 @@ class Step
      */
     public function throwExceptionIfHaveInvalidValueInTypeObj($stepTypeObj)
     {
-        if (!in_array($stepTypeObj, array("DYNAFORM", "INPUT_DOCUMENT", "OUTPUT_DOCUMENT"))) {
+        if (!in_array($stepTypeObj, array("DYNAFORM", "INPUT_DOCUMENT", "OUTPUT_DOCUMENT", "EXTERNAL"))) {
             $field = $this->arrayParamException["stepTypeObj"];
-
             throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
         }
     }
