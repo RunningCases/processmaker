@@ -82,7 +82,7 @@ Feature: Group
             "tri_description": "<tri_description>",
             "tri_type": "<tri_type>",
             "tri_params": {
-                "input": {
+                    "input": {
                     "arrayData": "<tri_params.input.arrayData>",
                     "index": "<tri_params.input.index>",
                     "value": "<tri_params.input.value>",
@@ -102,8 +102,9 @@ Feature: Group
         And store "tri_uid" in session array as variable "tri_uid<i>"
 
         Examples:
-        | i | lib_name    | fn_name                 | tri_title  | tri_description | tri_type | tri_params.input.arrayData | tri_params.input.index | tri_params.input.value | tri_params.input.suffix | tri_params.output.tri_answer |
-        | 0 | pmFunctions | PMFAddAttachmentToArray | My trigger |                 | SCRIPT   | array(1, 2)                | 1                      | 2                      | My Copy({i})            | $respuesta                   |
+        | i | lib_name    | fn_name                 | tri_title    | tri_description | tri_type | tri_params.input.arrayData | tri_params.input.index | tri_params.input.value | tri_params.input.suffix | tri_params.output.tri_answer |
+        | 0 | pmFunctions | PMFAddAttachmentToArray | My trigger   |                 | SCRIPT   | array(1, 2)                | 1                      | 2                      | My Copy({i})            | $respuesta                   |
+        | 1 | pmFunctions | PMFSendMessage          | My trigger 1 | Envio de email  | SCRIPT   | 
 
     
     Scenario Outline: Update Trigger

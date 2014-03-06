@@ -32,7 +32,7 @@ class Common
      *
      *   Common::rglob("/example/path/*.json");
      *
-     * it will returns:
+     * It will returns:
      *
      *   Array
      *   (
@@ -70,17 +70,32 @@ class Common
      *
      * @param string $pattern a valid pattern for glob(...) native function
      * @param int $flag php flags for glob(...) native function
-     * @return int
+     * @return int|string
+     *
+     * Example:
+     * - Given the following files inside a directory:
+     *       /example/path/myApplication-v1.tar
+     *       /example/path/myApplication-v2.tar
+     *       /example/path/myApplication-v3.tar
+     *       /example/path/myApplication-v5.tar
+     *       /example/path/myApplication-v7.tar
+     *
+     * $lastVer = ProcessMaker\Util\Common::getLastVersion("/example/path/myApplication-*.tar");
+     *
+     * It will returns: 7
      */
     public static function getLastVersion($pattern, $flag = 0)
     {
         $files = glob($pattern, $flag);
         $maxVersion = 0;
 
+        $pattern = str_replace("*", '([0-9\.]+)', basename($pattern));
+
         foreach ($files as $file) {
             $filename = basename($file);
 
-            if (preg_match("/-([0-9]+)/", $filename, $match)) {
+            if (preg_match('/'.$pattern.'/', $filename, $match)) {
+
                 if ($maxVersion < $match[1]) {
                     $maxVersion = $match[1];
                 }
