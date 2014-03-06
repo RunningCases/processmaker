@@ -9,10 +9,10 @@ use \DepartmentPeer;
  * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
  * @copyright Colosa - Bolivia
  */
-class Departament
+class Department
 {
     /**
-     * Get list for Departaments
+     * Get list for Departments
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -20,10 +20,10 @@ class Departament
      *
      * @return array
      */
-    public function getDepartaments()
+    public function getDepartments()
     {
-        $oDepartament = new \Department();
-        $aDepts = $oDepartament->getDepartments('');
+        $oDepartment = new \Department();
+        $aDepts = $oDepartment->getDepartments('');
         foreach ($aDepts as &$depData) {
             $depData['DEP_CHILDREN'] = $this->getChildren($depData);
             $depData = array_change_key_case($depData, CASE_LOWER);
@@ -32,8 +32,8 @@ class Departament
     }
 
     /**
-     * Get list for Departaments
-     * @var string $dep_uid. Uid for Departament
+     * Get list for Departments
+     * @var string $dep_uid. Uid for Department
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -41,7 +41,7 @@ class Departament
      *
      * @return array
      */
-    public function getDepartament($dep_uid)
+    public function getDepartment($dep_uid)
     {
         $dep_uid = Validator::depUid($dep_uid);
         $criteria = new \Criteria( 'workflow' );
@@ -86,7 +86,7 @@ class Departament
     }
 
     /**
-     * Save Departament
+     * Save Department
      * @var string $dep_data. Data for Process
      * @var string $create. Flag for create or update
      *
@@ -96,11 +96,11 @@ class Departament
      *
      * @return array
      */
-    public function saveDepartament($dep_data, $create = true)
+    public function saveDepartment($dep_data, $create = true)
     {
         $dep_data = array_change_key_case($dep_data, CASE_UPPER);
 
-        $oDepartament = new \Department();
+        $oDepartment = new \Department();
         if (isset($dep_data['DEP_UID']) && $dep_data['DEP_UID'] != '') {
             Validator::depUid($dep_data['DEP_UID']);
         }
@@ -119,17 +119,17 @@ class Departament
 
         if (!$create) {
             $dep_data['DEPO_TITLE'] = $dep_data['DEP_TITLE'];
-            $oDepartament->update($dep_data);
-            $oDepartament->updateDepartmentManager($dep_data['DEP_UID']);
+            $oDepartment->update($dep_data);
+            $oDepartment->updateDepartmentManager($dep_data['DEP_UID']);
         } else {
-            $dep_uid = $oDepartament->create($dep_data);
-            $response = $this->getDepartament($dep_uid);
+            $dep_uid = $oDepartment->create($dep_data);
+            $response = $this->getDepartment($dep_uid);
             return $response;
         }
     }
 
     /**
-     * Delete departament
+     * Delete department
      * @var string $dep_uid. Uid for department
      *
      * @access public
@@ -138,11 +138,11 @@ class Departament
      *
      * @return array
      */
-    public function deleteDepartament($dep_uid)
+    public function deleteDepartment($dep_uid)
     {
         $dep_uid = Validator::depUid($dep_uid);
-        $oDepartament = new \Department();
-        $oDepartament->remove($dep_uid);
+        $oDepartment = new \Department();
+        $oDepartment->remove($dep_uid);
     }
 
     /**
@@ -159,8 +159,8 @@ class Departament
     {
         $children = array();
         if ((int)$dataDep['HAS_CHILDREN'] > 0) {
-            $oDepartament = new \Department();
-            $aDepts = $oDepartament->getDepartments($dataDep['DEP_UID']);
+            $oDepartment = new \Department();
+            $aDepts = $oDepartment->getDepartments($dataDep['DEP_UID']);
             foreach ($aDepts as &$depData) {
                 $depData['DEP_CHILDREN'] = $this->getChildren($depData);
                 $depData = array_change_key_case($depData, CASE_LOWER);
