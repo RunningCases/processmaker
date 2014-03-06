@@ -133,21 +133,21 @@ class Step
                     $dynaform = new \Dynaform();
 
                     if (!$dynaform->dynaformExists($objectUid)) {
-                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "DYNAFORM"), "The UID \"{0}\" doesn't exist in table {1}");
+                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "DYNAFORM"), "The UID \"{0}\" does not exist in table {1}");
                     }
                     break;
                 case "INPUT_DOCUMENT":
                     $inputdoc = new \InputDocument();
 
                     if (!$inputdoc->InputExists($objectUid)) {
-                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "INPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}");
+                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "INPUT_DOCUMENT"), "The UID \"{0}\" does not exist in table {1}");
                     }
                     break;
                 case "OUTPUT_DOCUMENT":
                     $outputdoc = new \OutputDocument();
 
                     if (!$outputdoc->OutputExists($objectUid)) {
-                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "OUTPUT_DOCUMENT"), "The UID \"{0}\" doesn't exist in table {1}");
+                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "OUTPUT_DOCUMENT"), "The UID \"{0}\" does not exist in table {1}");
                     }
                     break;
             }
@@ -204,7 +204,7 @@ class Step
             $field = $this->arrayParamException["stepUid"];
 
             $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
-            $msg = $msg . str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}");
+            $msg = $msg . str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" does not exist in table {1}");
 
             throw (new \Exception($msg));
         }
@@ -225,7 +225,7 @@ class Step
             $field = $this->arrayParamException["taskUid"];
 
             $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
-            $msg = $msg . str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" doesn't exist in table {1}");
+            $msg = $msg . str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" does not exist in table {1}");
 
             throw (new \Exception($msg));
         }
@@ -246,7 +246,7 @@ class Step
             $field = $this->arrayParamException["processUid"];
 
             $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
-            $msg = $msg . str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}");
+            $msg = $msg . str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" does not exist in table {1}");
 
             throw (new \Exception($msg));
         }

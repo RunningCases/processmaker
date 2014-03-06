@@ -214,7 +214,7 @@ Requirements:
        """
        And I request "project/85794888452ceeef3675164057928956/process-supervisor/dynaform"
        Then the response status code should be 400
-       And the response status message should have the following text "already exists"
+       And the response status message should have the following text "already exist"
 
 
     
