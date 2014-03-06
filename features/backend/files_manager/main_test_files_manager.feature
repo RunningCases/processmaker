@@ -37,9 +37,9 @@ Feature: Files Manager Resources Main Tests
   Given POST this data:
       """
       {
-          "prf_filename": "<file_name>",
-          "prf_path": "<path>",
-          "prf_content": "<content>"
+          "prf_filename": "<prf_filename>",
+          "prf_path": "<prf_path>",
+          "prf_content": "<prf_content>"
       }
       """
       And I request "project/1265557095225ff5c688f46031700471/file-manager"
@@ -50,17 +50,46 @@ Feature: Files Manager Resources Main Tests
       And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
 
     Examples:
-    | test_description             | file_name         | path                  | content      | http_code | type   | prf_number |
-    | into public folder           | file_test_1.txt   | public/               | only text     | 200       | object | 0          |
-    | into mailtemplates folder    | file_test_2.html  | templates/            | <h1>Test</h1><p>html test</p>     | 200       | object | 1          |
-    | into public subfolder        | file_test_3.txt  | public/public_subfolder    | test     | 200       | object | 2          |
-    | into mailtemplates subfolder | file_test_4.html  | templates/templates_subfolder | test     | 200       | object | 3          |
+    | test_description             | prf_filename      | prf_path                      | prf_content                   | http_code | type   | prf_number |
+    | into public folder           | file_test_1.txt   | public/                       | only text                     | 200       | object | 0          |
+    | into mailtemplates folder    | file_test_2.html  | templates/                    | <h1>Test</h1><p>html test</p> | 200       | object | 1          |
+    | into public subfolder        | file_test_3       | public/public_subfolder       | test                          | 200       | object | 2          |
+    | into mailtemplates subfolder | file_test_4       | templates/templates_subfolder | test                          | 200       | object | 3          |
 
-  Scenario Outline: Post files
+
+  Scenario: Create files and subfolders with same name in path public
+  Given POST this data:
+      """
+      {
+          "prf_filename": "file_test_1.txt",
+          "prf_path": "public/",
+          "prf_content": "only text"
+      }
+      """
+      And I request "project/1265557095225ff5c688f46031700471/file-manager"
+      Then the response status code should be 400
+      And the response status message should have the following text "already exists"
+
+
+  Scenario: Create files and subfolders with same name in path templates
+  Given POST this data:
+      """
+      {
+          "prf_filename": "file_test_2.html",
+          "prf_path": "templates/",
+          "prf_content": "<h1>Test</h1><p>html test</p>"
+      }
+      """
+      And I request "project/1265557095225ff5c688f46031700471/file-manager"
+      Then the response status code should be 400
+      And the response status message should have the following text "already exists"
+
+ 
+  Scenario Outline: Update files by updating the content
   Given PUT this data:
       """
       {
-          "prf_content": "<content>"
+          "prf_content": "<prf_content>"
       }
       """
       And that I want to update a resource with the key "prf_uid" stored in session array as variable "prf_uid_<prf_number>"
@@ -71,24 +100,65 @@ Feature: Files Manager Resources Main Tests
       And the type is "<type>"
 
     Examples:
-    | test_description                 | content  | http_code | type   | prf_number |
-    | put into public folder           | only text - modified | 200       | object | 0          |
-    | put into mailtemplates folder    | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          |
-    | put into public subfolder        | put test | 200       | object | 2          |
-    | put into mailtemplates subfolder | put test | 200       | object | 3          |
+    | test_description                 | prf_filename             | prf_content                                  | http_code | type   | prf_number |
+    | put into public folder           | file_test_1.txt   | only text - modified                         | 200       | object | 0          |
+    | put into mailtemplates folder    | file_test_2.html  | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          |
+    | put into public subfolder        | file_test_3   | put test                                     | 200       | object | 2          |
+    | put into mailtemplates subfolder | file_test_4  | put test                                     | 200       | object | 3          |
 
-  #Para que funcione este test, debe existir el archivo que se quiere subir
+
+  Scenario Outline: Get a single Files Manager and check some properties
+  Given I request "project/1265557095225ff5c688f46031700471/file-manager?path=<prf_path>"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the "prf_filename" property in row <row> equals "<prf_filename>"
+    And the "prf_path" property in row <row> equals "<prf_path>"
+    And the "prf_content" property in row <row> equals "<prf_content>"
+  
+    
+    Examples:
+    | test_description                 | prf_filename      | prf_content                                  | http_code | type   | prf_number | row | prf_path |
+    | put into public folder           | file_test_1.txt   | only text - modified                         | 200       | object | 0          | 1   | public/          |
+    | put into mailtemplates folder    | file_test_2.html  | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          | 1   | templates/          |
+    | put into public subfolder        | file_test_3.txt   | put test                                     | 200       | object | 2          | 0   | public/public_subfolder |
+    | put into mailtemplates subfolder | file_test_4.html  | put test                                     | 200       | object | 3          | 0   | templates/templates_subfolder |
+
+  
   Scenario Outline: Upload files to same folders
-    Given POST I want to upload the file "<file>" to path "<path>". Url "project/1265557095225ff5c688f46031700471/file-manager"
+    Given POST I want to upload the file "<file>" to path "<prf_path>". Url "project/1265557095225ff5c688f46031700471/file-manager"
     And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
 
     Examples:
-    | file                   | path      | prf_number |
-    |/home/daniel/test1.html | templates | 4 |
-    |/home/daniel/test2.html | templates | 5 |
-    |/home/daniel/test.txt   | public    | 6 |
+    | file                              | prf_path  | prf_number |
+    |/home/wendy/uploadfiles/test1.html | templates | 4          | 
+    |/home/wendy/uploadfiles/test2.html | templates | 5          |
+    |/home/wendy/uploadfiles/test.txt   | public    | 6          |
 
 
+  Scenario: Upload files when the file already exists
+    Given POST I want to upload the file "/home/wendy/uploadfiles/alert_message.html" to path "templates". Url "project/1265557095225ff5c688f46031700471/file-manager"
+    Then the response status code should be 400
+    And the response status message should have the following text "already exists"
+
+   
+
+  Scenario Outline: Download files
+    Given I request "project/1265557095225ff5c688f46031700471/file-manager/prf_uid/download"  with the key "prf_uid" stored in session array as variable "prf_uid_<prf_number>"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    
+    Examples:
+    | test_description  | prf_number |
+    | Download file     | 0          |
+    | Download file     | 1          |
+    | Download file     | 2          |
+    | Download file     | 4          |
+
+    
   Scenario Outline: Delete file
   Given that I want to delete a resource with the key "prf_uid" stored in session array as variable "prf_uid_<prf_number>"
   And I request "project/1265557095225ff5c688f46031700471/file-manager"
@@ -106,6 +176,15 @@ Feature: Files Manager Resources Main Tests
     | delete mailtemplates subfolder   | 5          |
     | delete mailtemplates subfolder   | 6          |
 
-  
 
+  Scenario Outline: Delete folder
+  Given that I want to delete the folder
+  And I request "project/1265557095225ff5c688f46031700471/file-manager/folder?path=<prf_path>"
   
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+
+    Examples:
+    | test_description                 | prf_path |
+    | delete public sub folder             | templates/templates_subfolder          |
+    | delete templates sub folder      | public/public_subfolder          |
