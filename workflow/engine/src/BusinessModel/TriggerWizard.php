@@ -111,7 +111,7 @@ class TriggerWizard
             $arrayLibrary = $this->library->getRegisteredClasses();
 
             if (!isset($arrayLibrary[$this->libraryGetLibraryName($libraryName)])) {
-                $msg = str_replace(array("{0}", "{1}"), array($libraryFieldNameForException, $libraryName), "The library with {0}: \"{1}\", does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($libraryFieldNameForException, $libraryName), "The library with {0}: \"{1}\" does not exist");
 
                 throw (new \Exception($msg));
             }
@@ -138,7 +138,7 @@ class TriggerWizard
             $library = $this->library->getLibraryDefinition($this->libraryGetLibraryName($libraryName));
 
             if (!isset($library->methods[$methodName])) {
-                $msg = str_replace(array("{0}", "{1}"), array($methodFieldNameForException, $methodName), "The function with {0}: \"{1}\", does not exist in library");
+                $msg = str_replace(array("{0}", "{1}"), array($methodFieldNameForException, $methodName), "The function with {0}: \"{1}\" does not exist in the library");
 
                 throw (new \Exception($msg));
             }
@@ -177,7 +177,7 @@ class TriggerWizard
             $triggerParam = unserialize($arrayTriggerData["TRI_PARAM"]);
 
             if ($arrayTriggerData["TRI_PARAM"] == "" || !isset($triggerParam["hash"])) {
-                $msg = str_replace(array("{0}", "{1}"), array($triggerUidFieldNameForException, $triggerUid), "The trigger with {0}: {1}, does not been created with the wizard");
+                $msg = str_replace(array("{0}", "{1}"), array($triggerUidFieldNameForException, $triggerUid), "The trigger with {0}: {1}, has not been created with the wizard");
 
                 throw (new \Exception($msg));
             }
@@ -185,7 +185,7 @@ class TriggerWizard
             $arrayTriggerData["TRI_PARAM"] = $triggerParam;
 
             if (md5($arrayTriggerData["TRI_WEBBOT"]) != $arrayTriggerData["TRI_PARAM"]["hash"]) {
-                $msg = str_replace(array("{0}", "{1}"), array($triggerUidFieldNameForException, $triggerUid), "The trigger with {0}: {1}, has been modified manually, is invalid for the wizard");
+                $msg = str_replace(array("{0}", "{1}"), array($triggerUidFieldNameForException, $triggerUid), "The trigger with {0}: {1}, has been modified manually. It is invalid for the wizard");
 
                 throw (new \Exception($msg));
             }

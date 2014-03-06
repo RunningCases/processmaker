@@ -2,30 +2,73 @@
 namespace ProcessMaker\Exporter;
 
 use ProcessMaker\Project;
+use ProcessMaker\Util;
 
 abstract class Exporter
 {
+    /**
+     * @var string The Project UID
+     */
     protected $prjUid;
+
+    /**
+     * Exporter version
+     */
+    const VERSION = "2.0";
 
     /**
      * @var \ProcessMaker\Project\Adapter\BpmnWorkflow
      */
     protected $bpmnProject;
 
+    protected $projectData;
+
     public function __construct($prjUid)
     {
         $this->prjUid = $prjUid;
 
         $this->bpmnProject = Project\Bpmn::load($prjUid);
+        $this->projectData = $this->bpmnProject->getProject();
     }
 
-    public function buildData()
+    /**
+     * Builds Output content of exported project
+     *
+     * @return string xml output of exported project
+     */
+    public abstract function export();
+
+    /**
+     * Builds Output content of exported project and save it into a given file path
+     *
+     * @param string $outputFile path of output file
+     * @return mixed
+     */
+    public abstract function saveExport($outputFile);
+
+    /**
+     * Builds exported content of a Project
+     *
+     * @return mixed
+     */
+    public abstract function build();
+
+    public function getProjectName()
+    {
+        return $this->projectData["PRJ_NAME"];
+    }
+
+    /**
+     * Builds Project Data Structure
+     *
+     * @return array
+     */
+    protected function buildData()
     {
         $data = array();
-        $project = $this->bpmnProject->getProject();
-        $data["METADATA"] = $this->getSystemInfo();
-        $data["METADATA"]["project_name"] = $project["PRJ_NAME"];
 
+        $data["Metadata"] = $this->getMetadata();
+        $data["Metadata"]["project_name"] = $this->getProjectName();
 
         $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($this->prjUid);
         $bpmnStruct["BOUND"] = \BpmnBound::getAll($this->prjUid);
@@ -42,16 +85,15 @@ abstract class Exporter
         $bpmnStruct["PROCESS"] = \BpmnProcess::getAll($this->prjUid);
         $bpmnStruct["PROJECT"] = array(\BpmnProjectPeer::retrieveByPK($this->prjUid)->toArray());
 
-        \G::LoadClass( 'processes' );
         $oProcess = new \Processes();
         $workflowData = (array) $oProcess->getWorkflowData($this->prjUid);
         $workflowData["process"] = array($workflowData["process"]);
         $workflowData["processCategory"] = empty($workflowData["processCategory"]) ? array() : $workflowData["processCategory"];
 
 
-        $data["BPMN_DATA"] = $bpmnStruct;
-        $data["WORKFLOW_DATA"] = $workflowData;
-        $data["WORKFLOW_FILES"] = array();
+        $data["BPMN-Definition"] = $bpmnStruct;
+        $data["Workflow-Definition"] = $workflowData;
+        $data["Workflow-Files"] = array();
 
         // getting dynaforms
         $dynaforms = array();
@@ -67,7 +109,7 @@ abstract class Exporter
             $htmlFile = PATH_DYNAFORM . $dynaform['DYN_FILENAME'] . '.html';
 
             if (file_exists($htmlFile)) {
-                $data["WORKFLOW_FILES"]["DYNAFORMS"][] = array(
+                $data["Workflow-Files"]["DYNAFORMS"][] = array(
                     "filename" => $dynaform['DYN_FILENAME'] . '.html',
                     "filepath" => $dynaform['DYN_FILENAME'] . '.html',
                     "file_content" => file_get_contents($htmlFile)
@@ -81,12 +123,12 @@ abstract class Exporter
 
         foreach ($workspaceTargetDirs as $target => $workspaceTargetDir) {
             $templatesDir = $workspaceDir . $workspaceTargetDir . PATH_SEP . $this->prjUid;
-            $templatesFiles = \G::rglob("*", 0, $templatesDir);
+            $templatesFiles = Util\Common::rglob("$templatesDir/*", 0, true);
 
             foreach ($templatesFiles as $templatesFile) {
                 if (is_dir($templatesFile)) continue;
 
-                $data["WORKFLOW_FILES"][$target][] = array(
+                $data["Workflow-Files"][$target][] = array(
                     "filename" => basename($templatesFile),
                     "filepath" => str_replace($templatesDir, "", $templatesFile),
                     "file_content" => file_get_contents($templatesFile)
@@ -97,13 +139,42 @@ abstract class Exporter
         return $data;
     }
 
-    public function getSystemInfo()
+    /**
+     * Returns the container name of project data structure
+     *
+     * @return string
+     */
+    public function getContainerName()
+    {
+        return "ProcessMaker-Project";
+    }
+
+    /**
+     * Returns the exporter version
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return self::VERSION;
+    }
+
+    /**
+     * Returns all metadata to include on export content
+     *
+     * @return array
+     */
+    public function getMetadata()
     {
         return array(
-            "vendor" => "ProcessMaker",
-            "codename" => "Michelangelo",
-            "version" => \System::getVersion(),
-            "workspace" => defined("SYS_SYS") ? SYS_SYS : "Unknown",
+            "vendor_version" => \System::getVersion(),
+            "vendor_version_code" => "Michelangelo",
+            "export_timestamp" => date("U"),
+            "export_datetime" => date("F l j, Y - H:i:s (e, \G\M\TP)"),
+            "export_server_addr" => isset($_SERVER["SERVER_ADDR"]) ? $_SERVER["SERVER_ADDR"].":".$_SERVER["SERVER_PORT"] : "Unknown",
+            "export_server_os" => PHP_OS ,
+            "export_server_php_version" => PHP_VERSION_ID,
+            "project_workspace" => defined("SYS_SYS") ? SYS_SYS : "Unknown",
         );
     }
 }

@@ -28,7 +28,7 @@ class Event
 
         $oProcess = new \Process();
         if (!($oProcess->processExists($pro_uid))) {
-            throw (new \Exception( 'This process doesn\'t exist!' ));
+            throw (new \Exception( 'This process does not exist!' ));
         }
 
         $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -75,7 +75,7 @@ class Event
         }
 
         if ($evn_uid != '' && empty($eventsArray)) {
-            throw (new \Exception( 'This row doesn\'t exist!' ));
+            throw (new \Exception( 'This row does not exist!' ));
         } elseif ($evn_uid != '' && !empty($eventsArray)) {
             return current($eventsArray);
         }

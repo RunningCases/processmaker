@@ -143,7 +143,7 @@ class Group
             $group = new \Groupwf();
 
             if (!$group->GroupwfExists($groupUid)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $groupUid), "The group with {0}: {1}, does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $groupUid), "The group with {0}: {1} does not exist");
 
                 throw (new \Exception($msg));
             }
@@ -165,7 +165,7 @@ class Group
     {
         try {
             if ($this->existsTitle($groupTitle, $groupUidExclude)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $groupTitle), "The group title with {0}: \"{1}\", already exists");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $groupTitle), "The group title with {0}: \"{1}\" already exists");
 
                 throw (new \Exception($msg));
             }

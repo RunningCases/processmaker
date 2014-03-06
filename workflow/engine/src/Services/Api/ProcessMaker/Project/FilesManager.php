@@ -132,6 +132,23 @@ class FilesManager extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+
+    /**
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $path
+     *
+     * @url DELETE /:prjUid/file-manager/folder
+     */
+    public function doDeleteFolderProcessFilesManager($prjUid, $path)
+    {
+        try {
+            $filesManager = new \BusinessModel\FilesManager();
+            $filesManager->deleteFolderProcessFilesManager($prjUid, $path);
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
 }
 
 class ProcessFilesManagerStructure

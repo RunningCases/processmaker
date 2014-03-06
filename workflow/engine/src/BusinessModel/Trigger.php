@@ -155,7 +155,7 @@ class Trigger
 
         if (isset($dataTrigger['TRI_TITLE'])) {
             if (!$this->verifyNameTrigger($sProcessUID, $dataTrigger['TRI_TITLE'], $sTriggerUid)) {
-                throw new \Exception('There is a triggers with the same name in this process');
+                throw new \Exception('A trigger with the same name already exists in this process');
             }
         }
 
@@ -268,7 +268,7 @@ class Trigger
     {
         try {
             if (!$this->verifyNameTrigger($processUid, $triggerTitle, $triggerUidExclude)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $triggerTitle), "The trigger title with {0}: \"{1}\", already exists");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $triggerTitle), "The trigger title with {0}: \"{1}\" already exists");
 
                 throw (new \Exception($msg));
             }

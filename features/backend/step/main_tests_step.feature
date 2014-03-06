@@ -39,7 +39,7 @@ Feature: Project Properties - Step Resources Main Tests
         And the content type is "application/json"
         Then the response status code should be 201
         And the response charset is "UTF-8"
-        And the type is "object"
+        And the type is "object"git 
         And store "step_uid" in session array as variable "step_uid_<step_number>"
 
         Examples:

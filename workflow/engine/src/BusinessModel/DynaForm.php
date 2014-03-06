@@ -238,12 +238,12 @@ class DynaForm
     }
 
     /**
-     * Verify if not is grid DynaForm
+     * Verify if is not grid DynaForm
      *
      * @param string $dynaFormUid           Unique id of DynaForm
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if not is grid DynaForm
+     * return void Throw exception if is not grid DynaForm
      */
     public function throwExceptionIfNotIsGridDynaForm($dynaFormUid, $fieldNameForException)
     {
@@ -254,7 +254,7 @@ class DynaForm
             $arrayDynaFormData = $dynaForm->Load($dynaFormUid);
 
             if ($arrayDynaFormData["DYN_TYPE"] != "grid") {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormUid), "The DynaForm with {0}: {1}, not is grid");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormUid), "The DynaForm with {0}: {1}, is not grid");
 
                 throw (new \Exception($msg));
             }
@@ -699,7 +699,7 @@ class DynaForm
             }
 
             if ($flagValidFieldPk == 0) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS.FLD_NAME"), $invalidFieldPk), "The field {0}: {1}, is not an primary key field of the PM Table")));
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS.FLD_NAME"), $invalidFieldPk), "The field {0}: {1}, is not a primary key field of the PM Table")));
             }
 
             //All Primary Keys
@@ -715,7 +715,7 @@ class DynaForm
             }
 
             if ($flagAllFieldPk == 0) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($missingFieldPk, $this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "The primary key field {0} of the PM Table, is missing in the attribute {1}")));
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($missingFieldPk, $this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "The primary key field {0} of the PM Table is missing in the attribute {1}")));
             }
 
             //Total of Primary Keys

@@ -20,6 +20,6 @@ class XmlExporterTest extends \PHPUnit_Framework_TestCase
     {
         $exporter = new Exporter\XmlExporter("4857540205310b25f3d51a5020772457");
         $exporter->build();
-        $exporter->save("/home/erik/out.xml");
+        $exporter->saveExport("/home/erik/out.xml");
     }
 }
