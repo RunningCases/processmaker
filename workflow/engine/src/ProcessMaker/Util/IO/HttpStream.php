@@ -123,7 +123,7 @@ class HttpStream
         505 => 'HTTP Version Not Supported',
     );
 
-    public function __constructt($content = "", $status = 200, $headers = array())
+    public function __construct($content = "", $status = 200, $headers = array())
     {
         if (! empty($content)) {
             $this->loadFromString($content);
