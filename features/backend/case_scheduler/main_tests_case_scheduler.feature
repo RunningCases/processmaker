@@ -84,7 +84,7 @@ Feature: Case Scheduler Main Tests
       """
       And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
       Then the response status code should be 400
-      And the response status message should have the following text "duplicate"
+      And the response status message should have the following text "Duplicate Case Scheduler name"
       
   
   Scenario: Get the case schedulers list when there are exactly 13 case schedulers 
