@@ -695,6 +695,10 @@ function exportProcess() {
   var record = processesGrid.getSelectionModel().getSelections();
 
   if(record.length == 1) {
+    window.location = "../processes/processes_Export?pro_uid=" + record[0].get("PRO_UID");
+    return;
+
+
     var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _("ID_LOADING")});
     myMask.show();
 
