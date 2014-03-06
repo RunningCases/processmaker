@@ -1250,7 +1250,6 @@ class RestContext extends BehatContext
         } else {
             $varValue = $sessionData->$sessionVarName;
         }
-print_r($sessionData);
 
         $pageUrl = str_replace($varName, $varValue, $pageUrl);
 
