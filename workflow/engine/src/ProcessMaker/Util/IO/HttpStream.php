@@ -154,10 +154,14 @@ class HttpStream
      */
     public function loadFromFile($filename)
     {
-        $this->filename =$filename;
+        if (! file_exists($filename)) {
+            throw new \Exception("Unable to find file: $filename");
+        }
+
+        $this->filename = $filename;
         $this->content = file_get_contents($this->filename);
         $fileInfo = pathinfo($filename, PATHINFO_EXTENSION);
-        $this->setExtension($fileInfo["extension"]);
+        $this->setExtension($fileInfo);
         $this->setSourceName(basename($filename));
     }
 
