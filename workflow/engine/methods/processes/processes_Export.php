@@ -22,30 +22,33 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
-$httpStream = new \ProcessMaker\Util\IO\HttpStream();
+$response = new StdClass();
 $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
 
-if (\BpmnProject::exists($_GET["pro_uid"])) {
-    $exporter = new ProcessMaker\Exporter\XmlExporter($_GET["pro_uid"]);
+try {
+    if (\BpmnProject::exists($_GET["pro_uid"])) {
+        $exporter = new ProcessMaker\Exporter\XmlExporter($_GET["pro_uid"]);
 
-    $version = ProcessMaker\Util\Common::getLastVersion($outputDir . $exporter->getProjectName() ."-*.pmx") + 1;
-    $outputFilename = sprintf("%s-%s.%s", $exporter->getProjectName(), $version, "pmx");
-    $exporter->saveExport($outputDir . $outputFilename);
+        $version = ProcessMaker\Util\Common::getLastVersion($outputDir . $exporter->getProjectName() . "-*.pmx") + 1;
+        $outputFilename = sprintf("%s-%s.%s", $exporter->getProjectName(), $version, "pmx");
+        $exporter->saveExport($outputDir . $outputFilename);
+    } else {
+        $oProcess = new Processes();
+        $proFields = $oProcess->serializeProcess($_GET["pro_uid"]);
+        $result = $oProcess->saveSerializedProcess($proFields);
+        $outputFilename = $result["FILENAME"];
 
-    $httpStream->setHeader("Content-Type" , "application/pmx");
+        rename($outputDir . $outputFilename . "tpm", $outputDir . $outputFilename);
+    }
 
-} else {
-    $oProcess = new Processes();
-    $proFields = $oProcess->serializeProcess($_GET["pro_uid"]);
-    $result = $oProcess->saveSerializedProcess($proFields);
-    $outputFilename = $outputDir . $result["FILENAME"];
-
-    rename($outputFilename . "tpm", $outputFilename);
+    $response->file_hash = base64_encode($outputFilename);
+    $response->success = true;
+} catch (Exception $e) {
+    $response->message = $e->getMessage();
+    $response->success = false;
 }
 
-$httpStream->loadFromFile($outputFilename);
-$httpStream->send();
-
+echo json_encode($response);
 
 
 //  ************* DEPRECATED (it will be removed soon) *********************************
