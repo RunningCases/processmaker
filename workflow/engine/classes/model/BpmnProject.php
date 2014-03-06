@@ -31,6 +31,14 @@ class BpmnProject extends BaseBpmnProject
         return $bpmnProjects;
     }
 
+    public static function exists($prjUid)
+    {
+        $c = new Criteria("workflow");
+        $c->add(BpmnProjectPeer::PRJ_UID, $prjUid);
+
+        return BpmnProjectPeer::doCount($c) > 0;
+    }
+
     // Overrides
 
     public function toArray($type = BasePeer::TYPE_FIELDNAME)
