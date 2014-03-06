@@ -151,6 +151,7 @@ class HttpStream
 
     /**
      * @param string $filename file to stream
+     * @throws \Exception
      */
     public function loadFromFile($filename)
     {
