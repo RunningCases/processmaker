@@ -285,7 +285,7 @@ class Table
             if (isset($columns[$i]['fld_size'])) {
                 $columns[$i]['field_size'] = $columns[$i]['fld_size'];
                 if (!is_int($columns[$i]['field_size'])) {
-                    throw (new \Exception("The property fld_size: '". $columns[$i]['field_size'] . "', is incorrect numeric value."));
+                    throw (new \Exception("The property fld_size: '". $columns[$i]['field_size'] . "' is incorrect numeric value."));
                 } else {
                     $columns[$i]['field_size'] = (int)$columns[$i]['field_size'];
                 }
@@ -308,10 +308,10 @@ class Table
             if (in_array(strtoupper($columns[$i]['field_name']), $reservedWordsSql) ||
                 in_array( strtolower( $columns[$i]['field_name']), $reservedWordsPhp ) ||
                 $columns[$i]['field_name'] == '') {
-                throw (new \Exception("The property fld_name: '". $columns[$i]['field_name'] . "', is incorrect value."));
+                throw (new \Exception("The property fld_name: '". $columns[$i]['field_name'] . "' is incorrect value."));
             }
             if ($columns[$i]['field_label'] == '') {
-                throw (new \Exception("The property fld_label: '". $columns[$i]['field_label'] . "', is incorrect value."));
+                throw (new \Exception("The property fld_label: '". $columns[$i]['field_label'] . "' is incorrect value."));
             }
             $columns[$i]['field_type'] = $this->validateFldType($columns[$i]['field_type']);
             if (isset($columns[$i]['field_autoincrement']) && $columns[$i]['field_autoincrement']) {
@@ -323,7 +323,7 @@ class Table
             if (isset($columns[$i]['field_dyn']) && $columns[$i]['field_dyn'] != '') {
                 $res = array_search($columns[$i]['field_dyn'], $fieldsValidate['NAMES']);
                 if ($res === false) {
-                    throw (new \Exception("The property fld_dyn: '".$columns[$i]['field_dyn']."', is incorrect."));
+                    throw (new \Exception("The property fld_dyn: '".$columns[$i]['field_dyn']."' is incorrect."));
                 } else {
                     $columns[$i]['_index']    = $fieldsValidate['INDEXS'][$res];
                     $columns[$i]['field_uid'] = $fieldsValidate['UIDS'][$res];
@@ -549,9 +549,9 @@ class Table
             $dataValidate['fields']       = $tab_data['fields'];
         } else {
             if ($reportFlag) {
-                throw (new \Exception("The property rep_uid: '$tab_uid', is incorrect."));
+                throw (new \Exception("The property rep_uid: '$tab_uid' is incorrect."));
             } else {
-                throw (new \Exception("The property pmt_uid: '$tab_uid', is incorrect."));
+                throw (new \Exception("The property pmt_uid: '$tab_uid' is incorrect."));
             }
         }
         $this->saveTable($dataValidate, $pro_uid, $reportFlag, false);
@@ -924,11 +924,11 @@ class Table
     {
         $pro_uid = trim($pro_uid);
         if ($pro_uid == '') {
-            throw (new \Exception("The project with prj_uid: '', does not exist."));
+            throw (new \Exception("The project with prj_uid: '' does not exist."));
         }
         $oProcess = new \Process();
         if (!($oProcess->processExists($pro_uid))) {
-            throw (new \Exception("The project with prj_uid: '$pro_uid', does not exist."));
+            throw (new \Exception("The project with prj_uid: '$pro_uid' does not exist."));
         }
         return $pro_uid;
     }
@@ -951,11 +951,11 @@ class Table
         }
         $tab_uid = trim($tab_uid);
         if ($tab_uid == '') {
-            throw (new \Exception($label . "'', does not exist."));
+            throw (new \Exception($label . "'' does not exist."));
         }
         $oAdditionalTables = new \AdditionalTables();
         if (!($oAdditionalTables->exists($tab_uid))) {
-            throw (new \Exception($label . "'$tab_uid', does not exist."));
+            throw (new \Exception($label . "'$tab_uid' does not exist."));
         }
         return $tab_uid;
     }
@@ -973,7 +973,7 @@ class Table
     {
         $rep_tab_name = trim($rep_tab_name);
         if ((strpos($rep_tab_name, ' ')) || (strlen($rep_tab_name) < 4)) {
-            throw (new \Exception("The property rep_tab_name: '$rep_tab_name', is incorrect."));
+            throw (new \Exception("The property rep_tab_name: '$rep_tab_name' is incorrect."));
         }
         $rep_tab_name = G::toUpper($rep_tab_name);
         if (substr($rep_tab_name, 0, 4) != 'PMT_') {
@@ -996,7 +996,7 @@ class Table
     {
         $rep_tab_connection = trim($rep_tab_connection);
         if ($rep_tab_connection == '') {
-            throw (new \Exception("The property rep_tab_connection: '$rep_tab_connection', is incorrect."));
+            throw (new \Exception("The property rep_tab_connection: '$rep_tab_connection' is incorrect."));
         }
 
         $connections = array('workflow', 'rp');
@@ -1011,7 +1011,7 @@ class Table
         }
 
         if (!in_array($rep_tab_connection, $connections)) {
-            throw (new \Exception("The property rep_tab_connection: '$rep_tab_connection', is incorrect."));
+            throw (new \Exception("The property rep_tab_connection: '$rep_tab_connection' is incorrect."));
         }
         return $rep_tab_connection;
     }
@@ -1030,7 +1030,7 @@ class Table
     {
         $rep_tab_grid = trim($rep_tab_grid);
         if ($rep_tab_grid == '') {
-            throw (new \Exception("The property rep_tab_grid: '$rep_tab_grid', is incorrect."));
+            throw (new \Exception("The property rep_tab_grid: '$rep_tab_grid' is incorrect."));
         }
 
         G::loadSystem('dynaformhandler');
@@ -1064,7 +1064,7 @@ class Table
 
         $find = array_search($rep_tab_grid, $grids);
         if ($find === false) {
-            throw (new \Exception("The property rep_tab_grid: '$rep_tab_grid', is incorrect."));
+            throw (new \Exception("The property rep_tab_grid: '$rep_tab_grid' is incorrect."));
         } else {
             $rep_tab_grid = $namesGrid[$find] . '-' . $rep_tab_grid;
         }
@@ -1084,7 +1084,7 @@ class Table
     {
         $fld_type = trim($fld_type);
         if ($fld_type == '') {
-            throw (new \Exception("The property fld_type: '$fld_type', is incorrect."));
+            throw (new \Exception("The property fld_type: '$fld_type' is incorrect."));
         }
 
         switch ($fld_type) {
@@ -1104,7 +1104,7 @@ class Table
         $columnsTypes = \PmTable::getPropelSupportedColumnTypes();
         $res = array_search($fld_type, $columnsTypes);
         if ($res === false) {
-            throw (new \Exception("The property fld_type: '$fld_type', is incorrect."));
+            throw (new \Exception("The property fld_type: '$fld_type' is incorrect."));
         }
         return $fld_type;
     }

@@ -290,7 +290,7 @@ class Process
             $process = new \Process();
 
             if (!$process->processExists($processUid)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $processUid), "The project with {0}: {1}, does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $processUid), "The project with {0}: {1} does not exist");
 
                 throw (new \Exception($msg));
             }
@@ -404,7 +404,7 @@ class Process
             $obj = \AdditionalTablesPeer::retrieveByPK($additionalTableUid);
 
             if (!(is_object($obj) && get_class($obj) == "AdditionalTables")) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $additionalTableUid), "The PM Table with {0}: {1}, does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $additionalTableUid), "The PM Table with {0}: {1} does not exist");
 
                 throw (new \Exception($msg));
             }
@@ -438,7 +438,7 @@ class Process
             $rsCriteria = \TaskPeer::doSelectRS($criteria);
 
             if (!$rsCriteria->next()) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $taskUid), "The activity with {0}: {1}, does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $taskUid), "The activity with {0}: {1} does not exist");
 
                 throw (new \Exception($msg));
             }
@@ -472,7 +472,7 @@ class Process
             }
 
             if ($flag == 0) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $fileName), "The routing screen template with {0}: {1}, does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $fileName), "The routing screen template with {0}: {1} does not exist");
 
                 throw (new \Exception($msg));
             }

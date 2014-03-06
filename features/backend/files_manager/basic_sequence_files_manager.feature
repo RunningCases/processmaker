@@ -69,11 +69,21 @@ Feature: Files Manager Resources
     | put into public subfolder        | put test | 200       | object | 2 |
     | put into mailtemplates subfolder | put test | 200       | object | 3 |
 
+  #Para que funcione este test, debe existir el archivo que se quiere subir
+  Scenario Outline: Upload files to same folders
+    Given POST I want to upload the file "<file>" to path "<path>". Url "project/1265557095225ff5c688f46031700471/file-manager"
+    And store "prf_uid" in session array as variable "prf_uid<i>"
+
+    Examples:
+    | file                   | path      | i |
+    |/home/daniel/test1.html | templates | 4 |
+
+
   Scenario Outline: Delete file
-  Given that I want to delete a resource with the key "prf_uid" stored in session array as variable "prf_uid<i>"
-        And I request "project/1265557095225ff5c688f46031700471/file-manager"
-        Then the response status code should be 200
-        And the response charset is "UTF-8"
+    Given that I want to delete a resource with the key "prf_uid" stored in session array as variable "prf_uid<i>"
+    And I request "project/1265557095225ff5c688f46031700471/file-manager"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
 
     Examples:
     | test_description                 | i |
@@ -81,13 +91,14 @@ Feature: Files Manager Resources
     | delete mailtemplates folder      | 1 |
     | delete public subfolder          | 2 |
     | delete mailtemplates subfolder   | 3 |
+    | delete upload                    | 4 |
 
-  #Para que funcione este test, debe existir el archivo que se quiere subir
-  Scenario: Post files
-    Given POST I want to upload the file "/home/daniel/test.txt" to path "templates". Url "project/1265557095225ff5c688f46031700471/file-manager"
+  Scenario: Delete folder public
+    Given that I want to delete the folder
+    And I request "project/1265557095225ff5c688f46031700471/file-manager/folder?path=public/test_folder"
+    Then the response status code should be 200
 
-  Scenario: Delete file
-  Given that I want to delete a resource with the key "prf_uid" stored in session array as variable "prf_uid"
-        And I request "project/1265557095225ff5c688f46031700471/file-manager"
-        Then the response status code should be 200
-        And the response charset is "UTF-8"
+  Scenario: Delete folder templates
+    Given that I want to delete the folder
+    And I request "project/1265557095225ff5c688f46031700471/file-manager/folder?path=templates/test_folder"
+    Then the response status code should be 200

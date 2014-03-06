@@ -388,6 +388,8 @@ class Bootstrap
         self::registerClass("Xml_Node", PATH_GULLIVER . "class.xmlDocument.php");
 
         self::registerClass("Tasks",  PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.tasks.php");
+        self::registerClass("Processes",  PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.processes.php");
+
     }
 
     //below this line, still not approved methods
@@ -1702,7 +1704,7 @@ class Bootstrap
      *
      * @author Erik A.O. <erik@gmail.com, aortiz.erik@gmail.com>
      */
-    public function json_decode($Json)
+    public static function json_decode($Json)
     {
         if (function_exists('json_decode')) {
             return json_decode($Json);
