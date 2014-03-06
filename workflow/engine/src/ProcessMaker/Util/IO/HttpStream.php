@@ -301,10 +301,6 @@ class HttpStream
         header(sprintf('HTTP/%s %s %s', $this->version, $this->statusCode, $this->statusText));
 
         // headers
-
-
-        //print_r($this->headers); die;
-
         foreach ($this->headers as $name => $value) {
             if (is_array($value)) {
                 foreach ($value as $v) {
