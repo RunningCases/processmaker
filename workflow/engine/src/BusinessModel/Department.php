@@ -48,8 +48,8 @@ class Department
         $criteria->add( DepartmentPeer::DEP_UID, $dep_uid, \Criteria::EQUAL );
         $con = \Propel::getConnection( DepartmentPeer::DATABASE_NAME );
         $objects = DepartmentPeer::doSelect( $criteria, $con );
+        $oUsers = new \Users();
 
-        global $RBAC;
         $node = array ();
         foreach ($objects as $oDepartment) {
             $node['DEP_UID'] = $oDepartment->getDepUid();
@@ -62,7 +62,7 @@ class Department
 
             $manager = $oDepartment->getDepManager();
             if ($manager != '') {
-                $UserUID = $RBAC->load( $manager );
+                $UserUID = $oUsers->load($manager);
                 $node['DEP_MANAGER_USERNAME'] = isset( $UserUID['USR_USERNAME'] ) ? $UserUID['USR_USERNAME'] : '';
                 $node['DEP_MANAGER_FIRSTNAME'] = isset( $UserUID['USR_FIRSTNAME'] ) ? $UserUID['USR_FIRSTNAME'] : '';
                 $node['DEP_MANAGER_LASTNAME'] = isset( $UserUID['USR_LASTNAME'] ) ? $UserUID['USR_LASTNAME'] : '';
@@ -110,7 +110,7 @@ class Department
         if (isset($dep_data['DEP_PARENT']) && $dep_data['DEP_PARENT'] != '') {
             Validator::depUid($dep_data['DEP_PARENT'], 'dep_parent');
         }
-        if (isset($dep_data['DEP_MANAGER']) && $dep_data['DEP_PARENT'] != '') {
+        if (isset($dep_data['DEP_MANAGER']) && $dep_data['DEP_MANAGER'] != '') {
             Validator::usrUid($dep_data['DEP_MANAGER'], 'dep_manager');
         }
         if (isset($dep_data['DEP_STATUS'])) {
