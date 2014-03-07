@@ -1068,7 +1068,7 @@ class G
      * @param string $downloadFileName
      * @return string
      */
-    public function streamFile ($file, $download = false, $downloadFileName = '')
+    public static function streamFile ($file, $download = false, $downloadFileName = '')
     {
         require_once (PATH_THIRDPARTY . 'jsmin/jsmin.php');
         $folderarray = explode( '/', $file );

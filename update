@@ -10,11 +10,13 @@ cd vendor/colosa/pmUI
 echo "</code><br><h2>Changelog pmUI</h2><br><code>" >> ../../../temp.txt
 git pull
 git log -n 30 --relative-date --graph --format=medium --no-merges >> ../../../temp.txt
+rake css
 
 cd ../MichelangeloFE
 echo "</code><br><h2>Changelog MichelangeloFE</h2><br><code>" >> ../../../temp.txt
 git pull
 git log -n 30 --relative-date --graph --format=medium --no-merges >> ../../../temp.txt
+rake compass
 
 
 cd ../../../

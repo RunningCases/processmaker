@@ -220,25 +220,25 @@ class User
             if ($form['USR_COUNTRY'] != '') {
                 $oCountry = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
                 if (is_null($oCountry)) {
-                    throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
+                    throw new \Exception('Invalid value for `usr_country`: '.$form['USR_COUNTRY']);
                 }
             }
             if ($form['USR_CITY'] != '') {
                 $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
                 if (is_null($oCity)) {
-                    throw new \Exception('invalid value for `usr_city`: '.$form['USR_CITY']);
+                    throw new \Exception('Invalid value for `usr_city`: '.$form['USR_CITY']);
                 }
             }
             if ($form['USR_LOCATION'] != '') {
                 $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
                 if (is_null($oLocation)) {
-                    throw new \Exception('invalid value for `usr_location`: '.$form['USR_LOCATION']);
+                    throw new \Exception('Invalid value for `usr_location`: '.$form['USR_LOCATION']);
                 }
             }
             if ($form['USR_COUNTRY'] != '') {
                 $oReplacedBy = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
                 if (is_null($oReplacedBy)) {
-                    throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
+                    throw new \Exception('Invalid value for `usr_country`: '.$form['USR_COUNTRY']);
                 }
             }
             if (isset($arrayData['USR_UID'])) {
@@ -286,7 +286,7 @@ class User
                 $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
             }
             if ($form['USR_EMAIL'] == '') {
-                throw new \Exception('invalid value specified for `usr_email`, can`t be null.');
+                throw new \Exception('Invalid value specified for `usr_email`, can`t be null.');
             } else {
                 if (!filter_var($form['USR_EMAIL'], FILTER_VALIDATE_EMAIL)) {
                     throw new \Exception('`usr_email`. '.\G::LoadTranslation('ID_INCORRECT_EMAIL'));
@@ -314,7 +314,7 @@ class User
             $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
             $statusWF = $form['USR_STATUS'];
             if ($form['USR_STATUS'] == '') {
-                throw new \Exception('invalid value specified for `usr_status`, can`t be null');
+                throw new \Exception('Invalid value specified for `usr_status`, can`t be null');
             } else {
                 if ($form['USR_STATUS'] == 'ACTIVE' || $form['USR_STATUS'] == 'INACTIVE' || $form['USR_STATUS'] == 'VACATION') {
                     $aData['USR_STATUS'] = $form['USR_STATUS'];
@@ -323,7 +323,7 @@ class User
                 }
             }
             if ($form['USR_ROLE'] == '') {
-                throw new \Exception('invalid value specified for `usr_role`, can`t be null');
+                throw new \Exception('Invalid value specified for `usr_role`, can`t be null');
             } else {
                 $oCriteria = new \Criteria('rbac');
                 $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
@@ -549,7 +549,7 @@ class User
             if ($form['USR_COUNTRY'] != '') {
                 $oReplacedBy = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
                 if (is_null($oReplacedBy)) {
-                        throw new \Exception('invalid value for `usr_country`: '.$form['USR_COUNTRY']);
+                        throw new \Exception('Invalid value for `usr_country`: '.$form['USR_COUNTRY']);
                 } else {
                     $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
                     $aData['USR_CITY'] = '';
@@ -559,7 +559,7 @@ class User
             if ($form['USR_CITY'] != '') {
                 $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
                 if (is_null($oCity)) {
-                    throw new \Exception('invalid value for `usr_city`: '.$form['USR_CITY']);
+                    throw new \Exception('Invalid value for `usr_city`: '.$form['USR_CITY']);
                 } else {
                     $aData['USR_CITY'] = $form['USR_CITY'];
                 }
@@ -567,7 +567,7 @@ class User
             if ($form['USR_LOCATION'] != '') {
                 $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
                 if (is_null($oLocation)) {
-                        throw new \Exception('invalid value for `usr_location`: '.$form['USR_LOCATION']);
+                        throw new \Exception('Invalid value for `usr_location`: '.$form['USR_LOCATION']);
                 } else {
                     $aData['USR_LOCATION'] = $form['USR_LOCATION'];
                 }
@@ -640,7 +640,7 @@ class User
             $c = $oProcessMap->getCriteriaUsersCases('CANCELLED', $USR_UID);
             $history += \ApplicationPeer::doCount($c);
             if ($total > 0) {
-                throw (new \Exception( 'The user with usr_uid: '. $USR_UID .', cannot be deleted while has assigned cases.'));
+                throw (new \Exception( 'The user with usr_uid: '. $USR_UID .', cannot be deleted while it has cases assigned.'));
             } else {
                 $UID = $usrUid;
                 \G::LoadClass('tasks');
@@ -690,14 +690,14 @@ class User
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'invalid value specified for `start`.'));
+                    throw (new \Exception( 'Invalid value specified for `start`.'));
                 } else {
                     $oCriteria->setOffset($start);
                 }
             }
             if ($limit != '') {
                 if ($limit < 0) {
-                    throw (new \Exception( 'invalid value specified for `limit`.'));
+                    throw (new \Exception( 'Invalid value specified for `limit`.'));
                 } else {
                     if ($limit == 0) {
                         return $aUserInfo;
@@ -735,7 +735,7 @@ class User
             $aUserInfo = array();
             $oUser = \UsersPeer::retrieveByPK($userUid);
             if (is_null($oUser)) {
-                throw (new \Exception( 'This id for `usr_uid`: '. $userUid .' do not correspond to a registered user'));
+                throw (new \Exception( 'This id for `usr_uid`: '. $userUid .' does not correspond to a registered user'));
             }
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $oCriteria = new \Criteria();

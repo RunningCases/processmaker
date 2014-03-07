@@ -121,7 +121,6 @@ Feature: Activity Resources Main Tests
         And the property "tas_assign_type" of "properties" is set to "<tas_assign_type>"
         And the property "tas_assign_variable" of "properties" is set to "<tas_assign_variable>"
         And the property "tas_group_variable" of "properties" is set to "<tas_group_variable>"
-        And the property "tas_selfservice_timeout" of "properties" is set to "<tas_selfservice_timeout>"
         And the property "tas_selfservice_time" of "properties" is set to "<tas_selfservice_time>"
         And the property "tas_selfservice_time_unit" of "properties" is set to "<tas_selfservice_time_unit>"
         And the property "tas_transfer_fly" of "properties" is set to "<tas_transfer_fly>"

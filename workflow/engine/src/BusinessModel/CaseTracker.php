@@ -20,7 +20,7 @@ class CaseTracker
             $process = new \Process();
 
             if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" does not exist in table {1}")));
             }
 
             //Update
@@ -67,7 +67,7 @@ class CaseTracker
             $process = new \Process();
 
             if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" does not exist in table {1}")));
             }
 
             //Get data
@@ -121,7 +121,7 @@ class CaseTracker
             $process = new \Process();
 
             if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" does not exist in table {1}")));
             }
 
             //Get Uids
@@ -344,7 +344,7 @@ class CaseTracker
             $process = new \Process();
 
             if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" does not exist in table {1}")));
             }
 
             $dynaform = new \Dynaform();

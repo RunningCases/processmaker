@@ -68,11 +68,11 @@ if ($action == "uploadFileNewProcess") {
 
         $isCorrectTypeFile = 1;
 
-        if (isset( $_FILES['form']['type']['PROCESS_FILENAME'] )) {
+        if (isset( $_FILES['PROCESS_FILENAME']['type'] )) {
             $allowedExtensions = array ($processFileType
             );
             $allowedExtensions = array ('pm');
-            if (! in_array( end( explode( ".", $_FILES['form']['name']['PROCESS_FILENAME'] ) ), $allowedExtensions )) {
+            if (! in_array( end( explode( ".", $_FILES['PROCESS_FILENAME']['name'] ) ), $allowedExtensions )) {
                 throw new Exception( G::LoadTranslation( "ID_FILE_UPLOAD_INCORRECT_EXTENSION" ) );
             }
         }
@@ -99,10 +99,10 @@ if ($action == "uploadFileNewProcess") {
             $filename = $_REQUEST["PRO_FILENAME"];
             $path = PATH_DOCUMENT . 'input' . PATH_SEP;
         } else {
-            if ($_FILES['form']['error']['PROCESS_FILENAME'] == 0) {
-                $filename = $_FILES['form']['name']['PROCESS_FILENAME'];
+            if ($_FILES['PROCESS_FILENAME']['error'] == 0) {
+                $filename = $_FILES['PROCESS_FILENAME']['name'];
                 $path = PATH_DOCUMENT . 'input' . PATH_SEP;
-                $tempName = $_FILES['form']['tmp_name']['PROCESS_FILENAME'];
+                $tempName = $_FILES['PROCESS_FILENAME']['tmp_name'];
                 //$action = "none";
                 G::uploadFile( $tempName, $path, $filename );
 
