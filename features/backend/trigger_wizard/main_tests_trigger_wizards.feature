@@ -20,16 +20,14 @@ Feature: Group
         And the "lib_class_name" property in row <i> equals "<lib_class_name>"
 
         Examples:
-        | i | lib_name    | lib_title              | lib_class_name                 |
-        | 0 | pmFunctions | ProcessMaker Functions | class.pmFunctions.php          |
-        | 1 | pmTrSharepoint    | Sharepoint DWS Triggers v. 0.1 | class.pmTrSharepoint.pmFunctions.php |        
-        | 2 | pmTrAlfresco    | Alfresco DM Triggers v. 0.1 | class.pmTrAlfresco.pmFunctions.php |
-        | 3 | pmZimbra    | Zimbra Triggers v. 0.1 | class.pmZimbra.pmFunctions.php |
-        | 4 | pmSugar     | Sugar CRM Triggers     | class.pmSugar.pmFunctions.php  |
-        | 5 | pmTalend    | Talend ETL Integration | class.pmTalend.pmFunctions.php |
+        | i | lib_name       | lib_title                      | lib_class_name                       |
+        | 0 | pmFunctions    | ProcessMaker Functions         | class.pmFunctions.php                |
+        | 1 | pmTrSharepoint | Sharepoint DWS Triggers v. 0.1 | class.pmTrSharepoint.pmFunctions.php |        
+        | 2 | pmTrAlfresco   | Alfresco DM Triggers v. 0.1    | class.pmTrAlfresco.pmFunctions.php   |
+        | 3 | pmZimbra       | Zimbra Triggers v. 0.1         | class.pmZimbra.pmFunctions.php       |
+        | 4 | pmSugar        | Sugar CRM Triggers             | class.pmSugar.pmFunctions.php        |
+        | 5 | pmTalend       | Talend ETL Integration         | class.pmTalend.pmFunctions.php       |
         
-
-
 
     Scenario Outline: Get a single Library
         And I request "project/14414793652a5d718b65590036026581/trigger-wizard/<lib_name>"
@@ -227,6 +225,7 @@ Scenario Outline: Create new Trigger: createDWS
         And that "tri_type" is set to "<tri_type>"
 
         Examples:
+       
         | i | lib_name       | fn_name                             | tri_title     | tri_description | tri_type |
         | 0 | pmFunctions    | PMFAddAttachmentToArray             | My trigger... | ...             | SCRIPT   |
         | 1 | pmTrSharepoint | createDWS                           | Test DWS      |                 | SCRIPT   |
