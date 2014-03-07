@@ -12,19 +12,19 @@ use \Luracast\Restler\RestException;
 class FilesManager extends Api
 {
     /**
-     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
      * @param string $path
      *
-     * @url GET /:prjUid/file-manager
+     * @url GET /:prj_uid/file-manager
      */
-    public function doGetProcessFilesManager($prjUid, $path = '')
+    public function doGetProcessFilesManager($prj_uid, $path = '')
     {
         try {
             $filesManager = new \BusinessModel\FilesManager();
             if ($path != '') {
-                $arrayData = $filesManager->getProcessFilesManagerPath($prjUid, $path);
+                $arrayData = $filesManager->getProcessFilesManagerPath($prj_uid, $path);
             } else {
-                $arrayData = $filesManager->getProcessFilesManager($prjUid);
+                $arrayData = $filesManager->getProcessFilesManager($prj_uid);
             }
             //Response
             $response = $arrayData;
@@ -36,18 +36,18 @@ class FilesManager extends Api
     }
 
     /**
-     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
      * @param ProcessFilesManagerStructure $request_data
      *
-     * @url POST /:prjUid/file-manager
+     * @url POST /:prj_uid/file-manager
      */
-    public function doPostProcessFilesManager($prjUid, ProcessFilesManagerStructure $request_data)
+    public function doPostProcessFilesManager($prj_uid, ProcessFilesManagerStructure $request_data)
     {
         try {
             $userUid = $this->getUserId();
             $request_data = (array)($request_data);
             $filesManager = new \BusinessModel\FilesManager();
-            $arrayData = $filesManager->addProcessFilesManager($prjUid, $userUid, $request_data);
+            $arrayData = $filesManager->addProcessFilesManager($prj_uid, $userUid, $request_data);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -58,16 +58,16 @@ class FilesManager extends Api
     }
 
     /**
-     * @param string $prjUid {@min 32} {@max 32}
-     * @param string $prfUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
+     * @param string $prf_uid {@min 32} {@max 32}
      *
-     * @url POST /:prjUid/file-manager/:prfUid/upload
+     * @url POST /:prj_uid/file-manager/:prf_uid/upload
      */
-    public function doPostProcessFilesManagerUpload($prjUid, $prfUid)
+    public function doPostProcessFilesManagerUpload($prj_uid, $prf_uid)
     {
         try {
             $filesManager = new \BusinessModel\FilesManager();
-            $sData = $filesManager->uploadProcessFilesManager($prjUid, $prfUid);
+            $sData = $filesManager->uploadProcessFilesManager($prj_uid, $prf_uid);
             //Response
             $response = $sData;
         } catch (\Exception $e) {
@@ -77,19 +77,19 @@ class FilesManager extends Api
     }
 
     /**
-     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
      * @param ProcessFilesManagerStructure $request_data
-     * @param string $prfUid {@min 32} {@max 32}
+     * @param string $prf_uid {@min 32} {@max 32}
      *
-     * @url PUT /:prjUid/file-manager/:prfUid
+     * @url PUT /:prj_uid/file-manager/:prf_uid
      */
-    public function doPutProcessFilesManager($prjUid, ProcessFilesManagerStructure $request_data, $prfUid)
+    public function doPutProcessFilesManager($prj_uid, ProcessFilesManagerStructure $request_data, $prf_uid)
     {
         try {
             $userUid = $this->getUserId();
             $request_data = (array)($request_data);
             $filesManager = new \BusinessModel\FilesManager();
-            $arrayData = $filesManager->updateProcessFilesManager($prjUid, $userUid, $request_data, $prfUid);
+            $arrayData = $filesManager->updateProcessFilesManager($prj_uid, $userUid, $request_data, $prf_uid);
             //Response
             $response = $arrayData;
         } catch (\Exception $e) {
@@ -100,16 +100,16 @@ class FilesManager extends Api
     }
 
     /**
-     * @param string $prjUid {@min 32} {@max 32}
-     * @param string $prfUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
+     * @param string $prf_uid {@min 32} {@max 32}
      *
-     * @url DELETE /:prjUid/file-manager/:prfUid
+     * @url DELETE /:prj_uid/file-manager/:prf_uid
      */
-    public function doDeleteProcessFilesManager($prjUid, $prfUid)
+    public function doDeleteProcessFilesManager($prj_uid, $prf_uid)
     {
         try {
             $filesManager = new \BusinessModel\FilesManager();
-            $filesManager->deleteProcessFilesManager($prjUid, $prfUid);
+            $filesManager->deleteProcessFilesManager($prj_uid, $prf_uid);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -117,16 +117,16 @@ class FilesManager extends Api
     }
 
     /**
-     * @param string $prjUid {@min 32} {@max 32}
-     * @param string $prfUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
+     * @param string $prf_uid {@min 32} {@max 32}
      *
-     * @url GET /:prjUid/file-manager/:prfUid/download
+     * @url GET /:prj_uid/file-manager/:prf_uid/download
      */
-    public function doGetProcessFilesManagerDownload($prjUid, $prfUid)
+    public function doGetProcessFilesManagerDownload($prj_uid, $prf_uid)
     {
         try {
             $filesManager = new \BusinessModel\FilesManager();
-            $filesManager->downloadProcessFilesManager($prjUid, $prfUid);
+            $filesManager->downloadProcessFilesManager($prj_uid, $prf_uid);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -134,16 +134,16 @@ class FilesManager extends Api
     }
 
     /**
-     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $prj_uid {@min 32} {@max 32}
      * @param string $path
      *
-     * @url DELETE /:prjUid/file-manager/folder
+     * @url DELETE /:prj_uid/file-manager/folder
      */
-    public function doDeleteFolderProcessFilesManager($prjUid, $path)
+    public function doDeleteFolderProcessFilesManager($prj_uid, $path)
     {
         try {
             $filesManager = new \BusinessModel\FilesManager();
-            $filesManager->deleteFolderProcessFilesManager($prjUid, $path);
+            $filesManager->deleteFolderProcessFilesManager($prj_uid, $path);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());

@@ -393,6 +393,13 @@ Ext.onReady(function(){
       debug.setIconClass('icon-debug');
       debug.setText(_('ID_ENABLE_DEBUG'));
     }
+
+    if (rowSelected.data.PROJECT_TYPE == "bpmn"){
+      Ext.getCmp('edit_with_classic_editor').setDisabled(false);
+    } else {
+      Ext.getCmp('edit_with_classic_editor').setDisabled(true);
+    }
+
   }, this);
   processesGrid.on('contextmenu', function (evt) {
       evt.preventDefault();
@@ -411,9 +418,12 @@ Ext.onReady(function(){
         iconCls: 'button_menu_ext ss_sprite  ss_pencil',
         handler: editProcess
       },{
-        text: 'Edit (New Editor)',
-        icon: '/images/pencil_beta.png',
-        handler: editNewProcess
+        id: 'edit_with_classic_editor',
+        text: 'Edit with classic editor',
+        iconCls: 'button_menu_ext ss_sprite  ss_pencil',
+        handler: function() {
+            editProcess("classic");
+        }
       }, {
         id: 'activator2',
         text: '',
@@ -572,22 +582,23 @@ function doSearch(){
   store.load({params:{processName: filter, start: 0 , limit: 25}});
 }
 
-editProcess = function(){
+editProcess = function(typeParam)
+{
   var rowSelected = processesGrid.getSelectionModel().getSelected();
-  if( rowSelected ) {
-    //location.href = 'processes_Map?PRO_UID='+rowSelected.data.PRO_UID+'&rand='+Math.random()
-    location.href = 'openDesigner?pro_uid='+rowSelected.data.PRO_UID+'&rand='+Math.random()
-  } else {
-     Ext.Msg.show({
-      title:'',
-      msg: _('ID_NO_SELECTION_WARNING'),
-      buttons: Ext.Msg.INFO,
-      fn: function(){},
-      animEl: 'elId',
-      icon: Ext.MessageBox.INFO,
-      buttons: Ext.MessageBox.OK
-    });
+  var url, pro_uid = rowSelected.data.PRO_UID;
+  var type = rowSelected.data.PROJECT_TYPE;
+
+  if (typeParam == "bpmn" || typeParam == "classic") {
+      type = typeParam;
   }
+
+  if (type == "bpmn") {
+      url = '../designer?prj_uid=' + pro_uid;
+  } else {
+      url = 'processes_Map?PRO_UID=' + pro_uid;
+  }
+
+  location.href = url;
 }
 
 editNewProcess = function(){
@@ -1051,7 +1062,7 @@ importProcess = function()
               id         : 'form-file',
               emptyText  : _('ID_SELECT_PROCESS_FILE'),
               fieldLabel : _('ID_LAN_FILE'),
-              name       : 'form[PROCESS_FILENAME]',
+              name       : 'PROCESS_FILENAME',
               buttonText : '',
               buttonCfg : {
                 iconCls : 'upload-icon'

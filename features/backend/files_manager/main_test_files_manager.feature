@@ -31,7 +31,7 @@ Feature: Files Manager Resources Main Tests
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
+    And the response has 2 records
 
   Scenario Outline: Create files and subfolders 
   Given POST this data:
@@ -99,12 +99,12 @@ Feature: Files Manager Resources Main Tests
       And the content type is "application/json"
       And the type is "<type>"
 
-    Examples:
-    | test_description                 | prf_filename             | prf_content                                  | http_code | type   | prf_number |
-    | put into public folder           | file_test_1.txt   | only text - modified                         | 200       | object | 0          |
-    | put into mailtemplates folder    | file_test_2.html  | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          |
-    | put into public subfolder        | file_test_3   | put test                                     | 200       | object | 2          |
-    | put into mailtemplates subfolder | file_test_4  | put test                                     | 200       | object | 3          |
+      Examples:
+      | test_description                 | prf_filename             | prf_content                                  | http_code | type   | prf_number |
+      | put into public folder           | file_test_1.txt          | only text - modified                         | 200       | object | 0          |
+      | put into mailtemplates folder    | file_test_2.html         | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          |
+      | put into public subfolder        | file_test_3              | put test                                     | 200       | object | 2          |
+      | put into mailtemplates subfolder | file_test_4              | put test                                     | 200       | object | 3          |
 
 
   Scenario Outline: Get a single Files Manager and check some properties
@@ -117,46 +117,67 @@ Feature: Files Manager Resources Main Tests
     And the "prf_path" property in row <row> equals "<prf_path>"
     And the "prf_content" property in row <row> equals "<prf_content>"
   
-    
-    Examples:
-    | test_description                 | prf_filename      | prf_content                                  | http_code | type   | prf_number | row | prf_path |
-    | put into public folder           | file_test_1.txt   | only text - modified                         | 200       | object | 0          | 1   | public/          |
-    | put into mailtemplates folder    | file_test_2.html  | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          | 1   | templates/          |
-    | put into public subfolder        | file_test_3.txt   | put test                                     | 200       | object | 2          | 0   | public/public_subfolder |
-    | put into mailtemplates subfolder | file_test_4.html  | put test                                     | 200       | object | 3          | 0   | templates/templates_subfolder |
+      Examples:
+      | test_description                 | prf_filename      | prf_content                                  | http_code | type   | prf_number | row | prf_path                      |
+      | put into public folder           | file_test_1.txt   | only text - modified                         | 200       | object | 0          | 1   | public/                       |
+      | put into mailtemplates folder    | file_test_2.html  | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          | 1   | templates/                    |
+      | put into public subfolder        | file_test_3.txt   | put test                                     | 200       | object | 2          | 0   | public/public_subfolder       |
+      | put into mailtemplates subfolder | file_test_4.html  | put test                                     | 200       | object | 3          | 0   | templates/templates_subfolder |
 
   
   Scenario Outline: Upload files to same folders
     Given POST I want to upload the file "<file>" to path "<prf_path>". Url "project/1265557095225ff5c688f46031700471/file-manager"
     And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
 
-    Examples:
-    | file                              | prf_path  | prf_number |
-    |/home/wendy/uploadfiles/test1.html | templates | 4          | 
-    |/home/wendy/uploadfiles/test2.html | templates | 5          |
-    |/home/wendy/uploadfiles/test.txt   | public    | 6          |
+      Examples:
+      | file                              | prf_path  | prf_number |
+      |/home/wendy/uploadfiles/test1.html | templates | 4          | 
+      |/home/wendy/uploadfiles/test2.html | templates | 5          |
+      |/home/wendy/uploadfiles/test.txt   | public    | 6          |
 
 
-  Scenario: Upload files when the file already exists
-    Given POST I want to upload the file "/home/wendy/uploadfiles/alert_message.html" to path "templates". Url "project/1265557095225ff5c688f46031700471/file-manager"
-    Then the response status code should be 400
-    And the response status message should have the following text "already exists"
-
+  Scenario: Upload files when the file already exists in the folder but with different content. must overwrite
+    Given POST I want to upload the file "/home/wendy/uploadfiles/TestQA.html" to path "templates". Url "project/1265557095225ff5c688f46031700471/file-manager"
+    Then the response status code should be 200
+    
+  
+  Scenario: Get a single Files Manager and check some properties the overwritten file
+  Given I request "project/1265557095225ff5c688f46031700471/file-manager?path=templates"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the "prf_filename" property in row 4 equals "TestQA.html"
+    And the "prf_content" property in row 4 equals "Test QA -  cuando se realiza la sobreescritura desde upload"
    
+
+  Scenario: Update the overwritten file to return to their original values
+  Given PUT this data:
+      """
+      {
+          "prf_content": "Test QA"
+      }
+      """
+      And that I want to update a resource with the key "prf_uid" stored in session array
+      And I request "project/1265557095225ff5c688f46031700471/file-manager"
+      Then the response status code should be 200
+      And the response charset is "UTF-8"
+      And the content type is "application/json"
+      And that "prf_filename" is set to "TestQA.html"
+      And that "prf_content" is set to "Test QA"
+
+    
 
   Scenario Outline: Download files
     Given I request "project/1265557095225ff5c688f46031700471/file-manager/prf_uid/download"  with the key "prf_uid" stored in session array as variable "prf_uid_<prf_number>"
     Then the response status code should be 200
-    And the response charset is "UTF-8"
-    And the content type is "application/json"
-    And the type is "object"
-    
-    Examples:
-    | test_description  | prf_number |
-    | Download file     | 0          |
-    | Download file     | 1          |
-    | Download file     | 2          |
-    | Download file     | 4          |
+        
+      Examples:
+      | test_description  | prf_number |
+      | Download file     | 0          |
+      | Download file     | 1          |
+      | Download file     | 2          |
+      | Download file     | 4          |
 
     
   Scenario Outline: Delete file
@@ -166,25 +187,24 @@ Feature: Files Manager Resources Main Tests
         Then the response status code should be 200
         And the response charset is "UTF-8"
 
-    Examples:
-    | test_description                 | prf_number |
-    | delete public folder             | 0          |
-    | delete mailtemplates folder      | 1          |
-    | delete public subfolder          | 2          |
-    | delete mailtemplates subfolder   | 3          |
-    | delete mailtemplates subfolder   | 4          |
-    | delete mailtemplates subfolder   | 5          |
-    | delete mailtemplates subfolder   | 6          |
+      Examples:
+      | test_description                 | prf_number |
+      | delete public folder             | 0          |
+      | delete mailtemplates folder      | 1          |
+      | delete public subfolder          | 2          |
+      | delete mailtemplates subfolder   | 3          |
+      | delete mailtemplates subfolder   | 4          |
+      | delete mailtemplates subfolder   | 5          |
+      | delete mailtemplates subfolder   | 6          |
 
 
   Scenario Outline: Delete folder
   Given that I want to delete the folder
   And I request "project/1265557095225ff5c688f46031700471/file-manager/folder?path=<prf_path>"
-  
-        Then the response status code should be 200
-        And the response charset is "UTF-8"
+  Then the response status code should be 200
+  And the response charset is "UTF-8"
 
-    Examples:
-    | test_description                 | prf_path |
-    | delete public sub folder             | templates/templates_subfolder          |
-    | delete templates sub folder      | public/public_subfolder          |
+      Examples:
+      | test_description            | prf_path                      |
+      | delete public sub folder    | templates/templates_subfolder |
+      | delete templates sub folder | public/public_subfolder       |
