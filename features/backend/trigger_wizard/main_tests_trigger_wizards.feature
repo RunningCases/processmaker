@@ -8,7 +8,7 @@ Feature: Group
         Given that I have a valid access_token
 
    
-   Scenario Outline: Get the Trigger Wizards List when there are exactly 6 library 
+   Scenario Outline: Get the Trigger Wizard List when there are exactly 6 library 
         And I request "project/14414793652a5d718b65590036026581/trigger-wizards"
         And the content type is "application/json"
         Then the response status code should be 200
@@ -22,8 +22,13 @@ Feature: Group
         Examples:
         | i | lib_name    | lib_title              | lib_class_name                 |
         | 0 | pmFunctions | ProcessMaker Functions | class.pmFunctions.php          |
-        | 1 | pmTalend    | Talend ETL Integration | class.pmTalend.pmFunctions.php |
-        | 2 | pmSugar     | Sugar CRM Triggers     | class.pmSugar.pmFunctions.php  |
+        | 1 | pmTrSharepoint    | Sharepoint DWS Triggers v. 0.1 | class.pmTrSharepoint.pmFunctions.php |        
+        | 2 | pmTrAlfresco    | Alfresco DM Triggers v. 0.1 | class.pmTrAlfresco.pmFunctions.php |
+        | 3 | pmZimbra    | Zimbra Triggers v. 0.1 | class.pmZimbra.pmFunctions.php |
+        | 4 | pmSugar     | Sugar CRM Triggers     | class.pmSugar.pmFunctions.php  |
+        | 5 | pmTalend    | Talend ETL Integration | class.pmTalend.pmFunctions.php |
+        
+
 
 
     Scenario Outline: Get a single Library
@@ -65,6 +70,7 @@ Feature: Group
         | pmSugar        | CreateSugarAccount      | Creates SugarCRM entries from the Account module |
 
 
+
     Scenario: Get a List of triggers of a project
         And I request "project/14414793652a5d718b65590036026581/triggers"
         And the content type is "application/json"
@@ -74,7 +80,7 @@ Feature: Group
         And the json data is an empty array
 
 
-    Scenario Outline: Create new Trigger
+    Scenario Outline: Create new Trigger: PMFAddAttachmentToArray
         Given POST this data:
         """
         {
@@ -104,8 +110,42 @@ Feature: Group
         Examples:
         | i | lib_name    | fn_name                 | tri_title    | tri_description | tri_type | tri_params.input.arrayData | tri_params.input.index | tri_params.input.value | tri_params.input.suffix | tri_params.output.tri_answer |
         | 0 | pmFunctions | PMFAddAttachmentToArray | My trigger   |                 | SCRIPT   | array(1, 2)                | 1                      | 2                      | My Copy({i})            | $respuesta                   |
-        | 1 | pmFunctions | PMFSendMessage          | My trigger 1 | Envio de email  | SCRIPT   |                            |                        |                        |                         |                              |
 
+
+Scenario Outline: Create new Trigger: createDWS
+        Given POST this data:
+        """
+        {
+            "tri_title": "<tri_title>",
+            "tri_description": "<tri_description>",
+            "tri_type": "<tri_type>",
+            "tri_params": {
+                    "input": {
+                    
+                    "sharepointServer": "<tri_params.input.sharepointServer>",
+                    "auth": "<tri_params.input.auth>",
+                    "name": "<tri_params.input.name>",
+                    "users": "<tri_params.input.users>",
+                    "title": "<tri_params.input.title>",
+                    "documents": "<tri_params.input.documents>"
+                    
+                },
+                "output": {
+                    "tri_answer": "<tri_params.output.tri_answer>"
+                }
+            }
+        }
+        """
+        And I request "project/14414793652a5d718b65590036026581/trigger-wizard/<lib_name>/<fn_name>"
+        And the content type is "application/json"
+        Then the response status code should be 201
+        And the response charset is "UTF-8"
+        And the type is "object"
+        And store "tri_uid" in session array as variable "tri_uid<i>"
+
+        Examples:
+        | i | lib_name       | fn_name   | tri_title      | tri_description | tri_type | tri_params.input.sharepointServer | tri_params.input.auth | tri_params.input.name | tri_params.input.users | tri_params.input.title | tri_params.input.documents | tri_params.output.tri_answer |
+        | 1 | pmTrSharepoint | createDWS | Sharepoint 1   |                 | SCRIPT   | @@SERVER                          | username:password     | Test DWS              | @@users                | Test DWS               | /files/test.doc            | $respuesta                   |
     
     Scenario Outline: Update Trigger
         Given PUT this data:
@@ -138,6 +178,42 @@ Feature: Group
         | i | lib_name    | fn_name                 | tri_title     | tri_description | tri_type | tri_params.input.arrayData | tri_params.input.index | tri_params.input.value | tri_params.input.suffix | tri_params.output.tri_answer |
         | 0 | pmFunctions | PMFAddAttachmentToArray | My trigger... | ...             | SCRIPT   | array(1, 2, 3, 4)          | 1                      | 2                      | My Copy2({i})           | $r                           |
 
+
+Scenario Outline: Create new Trigger: createDWS
+        Given PUT this data:
+        """
+        {
+            "tri_title": "<tri_title>",
+            "tri_description": "<tri_description>",
+            "tri_type": "<tri_type>",
+            "tri_params": {
+                    "input": {
+                    
+                    "sharepointServer": "<tri_params.input.sharepointServer>",
+                    "auth": "<tri_params.input.auth>",
+                    "name": "<tri_params.input.name>",
+                    "users": "<tri_params.input.users>",
+                    "title": "<tri_params.input.title>",
+                    "documents": "<tri_params.input.documents>"
+                    
+                },
+                "output": {
+                    "tri_answer": "<tri_params.output.tri_answer>"
+                }
+            }
+        }
+        """
+        And that I want to update a resource with the key "tri_uid" stored in session array as variable "tri_uid<i>"
+        And I request "project/14414793652a5d718b65590036026581/trigger-wizard/<lib_name>/<fn_name>"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "object"
+        
+        Examples:
+        | i | lib_name       | fn_name   | tri_title                 | tri_description | tri_type | tri_params.input.sharepointServer | tri_params.input.auth | tri_params.input.name | tri_params.input.users | tri_params.input.title | tri_params.input.documents | tri_params.output.tri_answer |
+        | 1 | pmTrSharepoint | createDWS | Sharepoint 1 - Modified   |                 | SCRIPT   | @@SERVER_URL                      | username:password     | Test DWS              | @@users                | Test DWS               | /files/test.doc            | $respuesta                   |
+
     
     Scenario Outline: Get a Trigger that was created with the wizard
         Given that I want to get a resource with the key "tri_uid" stored in session array as variable "tri_uid<i>"
@@ -151,8 +227,9 @@ Feature: Group
         And that "tri_type" is set to "<tri_type>"
 
         Examples:
-        | i | lib_name    | fn_name                 | tri_title     | tri_description | tri_type |
-        | 0 | pmFunctions | PMFAddAttachmentToArray | My trigger... | ...             | SCRIPT   |
+        | i | lib_name       | fn_name                             | tri_title     | tri_description | tri_type |
+        | 0 | pmFunctions    | PMFAddAttachmentToArray             | My trigger... | ...             | SCRIPT   |
+        | 1 | pmTrSharepoint | createDWS                           | Test DWS      |                 | SCRIPT   |
 
     
     Scenario Outline: Delete a trigger of a project
@@ -166,6 +243,7 @@ Feature: Group
         Examples:
         | i |
         | 0 |
+        | 1 |
 
     
     Scenario: Get a List of triggers of a project
