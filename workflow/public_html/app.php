@@ -1,0 +1,2 @@
+<?php
+include "sysGeneric.php";
