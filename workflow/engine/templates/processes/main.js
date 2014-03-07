@@ -1062,7 +1062,7 @@ importProcess = function()
               id         : 'form-file',
               emptyText  : _('ID_SELECT_PROCESS_FILE'),
               fieldLabel : _('ID_LAN_FILE'),
-              name       : 'form[PROCESS_FILENAME]',
+              name       : 'PROCESS_FILENAME',
               buttonText : '',
               buttonCfg : {
                 iconCls : 'upload-icon'
