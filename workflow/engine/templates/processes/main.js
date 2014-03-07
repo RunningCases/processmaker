@@ -393,6 +393,13 @@ Ext.onReady(function(){
       debug.setIconClass('icon-debug');
       debug.setText(_('ID_ENABLE_DEBUG'));
     }
+
+    if (rowSelected.data.PROJECT_TYPE == "bpmn"){
+      Ext.getCmp('edit_with_classic_editor').setDisabled(false);
+    } else {
+      Ext.getCmp('edit_with_classic_editor').setDisabled(true);
+    }
+
   }, this);
   processesGrid.on('contextmenu', function (evt) {
       evt.preventDefault();
@@ -411,9 +418,12 @@ Ext.onReady(function(){
         iconCls: 'button_menu_ext ss_sprite  ss_pencil',
         handler: editProcess
       },{
-        text: 'Edit (New Editor)',
-        icon: '/images/pencil_beta.png',
-        handler: editNewProcess
+        id: 'edit_with_classic_editor',
+        text: 'Edit with classic editor',
+        iconCls: 'button_menu_ext ss_sprite  ss_pencil',
+        handler: function() {
+            editProcess("classic");
+        }
       }, {
         id: 'activator2',
         text: '',
@@ -572,22 +582,23 @@ function doSearch(){
   store.load({params:{processName: filter, start: 0 , limit: 25}});
 }
 
-editProcess = function(){
+editProcess = function(typeParam)
+{
   var rowSelected = processesGrid.getSelectionModel().getSelected();
-  if( rowSelected ) {
-    //location.href = 'processes_Map?PRO_UID='+rowSelected.data.PRO_UID+'&rand='+Math.random()
-    location.href = 'openDesigner?pro_uid='+rowSelected.data.PRO_UID+'&rand='+Math.random()
-  } else {
-     Ext.Msg.show({
-      title:'',
-      msg: _('ID_NO_SELECTION_WARNING'),
-      buttons: Ext.Msg.INFO,
-      fn: function(){},
-      animEl: 'elId',
-      icon: Ext.MessageBox.INFO,
-      buttons: Ext.MessageBox.OK
-    });
+  var url, pro_uid = rowSelected.data.PRO_UID;
+  var type = rowSelected.data.PROJECT_TYPE;
+
+  if (typeParam == "bpmn" || typeParam == "classic") {
+      type = typeParam;
   }
+
+  if (type == "bpmn") {
+      url = '../designer?prj_uid=' + pro_uid;
+  } else {
+      url = 'processes_Map?PRO_UID=' + pro_uid;
+  }
+
+  location.href = url;
 }
 
 editNewProcess = function(){
@@ -695,37 +706,24 @@ function exportProcess() {
   var record = processesGrid.getSelectionModel().getSelections();
 
   if(record.length == 1) {
-    window.location = "../processes/processes_Export?pro_uid=" + record[0].get("PRO_UID");
-    return;
-
-
     var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _("ID_LOADING")});
+    var proUid   = record[0].get("PRO_UID");
+
     myMask.show();
 
-    ///////
-    var proUid   = record[0].get("PRO_UID");
-    var proTitle = record[0].get("PRO_TITLE");
-    var titleLength = 60;
-
-    title = (titleLength - proTitle.length >= 0)? proTitle : proTitle.substring(0, (titleLength - 1) + 1) + "...";
-
-    ///////
     Ext.Ajax.request({
-      url: "../processes/processes_Ajax",
-      method: "POST",
-      params: {
-        "action": "process_Export",
-        "data": "{\"pro_uid\": \"" + proUid + "\"}",
-        "processMap": 0
-      },
-
-      success: function (response, opts) {
+      url: "../processes/processes_Export",
+      method: "GET",
+      params: {"pro_uid": proUid},
+      success: function (response) {
+        var result = JSON.parse(response.responseText);
         myMask.hide();
 
-        var dataResponse = eval("(" + response.responseText + ")"); //json
-        var url = window.location.href;
-
-        window.location = url.substring(0, url.lastIndexOf("/") + 1) + dataResponse.FILENAME_LINK;
+        if (result.success) {
+          window.location = "../processes/processes_DownloadFile?file_hash=" + result.file_hash;
+        } else {
+          Ext.Msg.show({title: "", msg: result.message, icon: Ext.MessageBox.ERROR, buttons: Ext.MessageBox.OK});
+        }
       },
 
       failure: function (response, opts) {

@@ -25,10 +25,17 @@ class XmlExporterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(5, $lastVer);
     }
 
+    function testGetLastVersionThr()
+    {
+        $lastVer = Util\Common::getLastVersion(__DIR__."/../../fixtures/files_struct/third/sample-*.txt");
+
+        $this->assertEquals("3.1.9", $lastVer);
+    }
+
     /**
      * Negative test, no matched files found
      */
-    function testGetLastVersionThr()
+    function testGetLastVersionOther()
     {
         $lastVer = Util\Common::getLastVersion(sys_get_temp_dir()."/sample-*.txt");
 

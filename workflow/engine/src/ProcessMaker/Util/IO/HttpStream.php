@@ -151,13 +151,18 @@ class HttpStream
 
     /**
      * @param string $filename file to stream
+     * @throws \Exception
      */
     public function loadFromFile($filename)
     {
-        $this->filename =$filename;
+        if (! file_exists($filename)) {
+            throw new \Exception("Unable to find file: $filename");
+        }
+
+        $this->filename = $filename;
         $this->content = file_get_contents($this->filename);
         $fileInfo = pathinfo($filename, PATHINFO_EXTENSION);
-        $this->setExtension($fileInfo["extension"]);
+        $this->setExtension($fileInfo);
         $this->setSourceName(basename($filename));
     }
 
@@ -301,10 +306,6 @@ class HttpStream
         header(sprintf('HTTP/%s %s %s', $this->version, $this->statusCode, $this->statusText));
 
         // headers
-
-
-        //print_r($this->headers); die;
-
         foreach ($this->headers as $name => $value) {
             if (is_array($value)) {
                 foreach ($value as $v) {

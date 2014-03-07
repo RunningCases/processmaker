@@ -6,14 +6,14 @@ use \Luracast\Restler\RestException;
 
 
 /**
- * Departament Api Controller
+ * Department Api Controller
  *
  * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
  * @copyright Colosa - Bolivia
  *
  * @protected
  */
-class Departament extends Api
+class Department extends Api
 {
     /**
      * @access public
@@ -24,11 +24,11 @@ class Departament extends Api
      *
      * @url GET
      */
-    public function doGetDepartaments()
+    public function doGetDepartments()
     {
         try {
-            $oDepartament = new \BusinessModel\Departament();
-            $response = $oDepartament->getDepartaments();
+            $oDepartment = new \BusinessModel\Department();
+            $response = $oDepartment->getDepartments();
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -46,11 +46,11 @@ class Departament extends Api
      *
      * @url GET /:dep_uid
      */
-    public function doGetDepartament($dep_uid)
+    public function doGetDepartment($dep_uid)
     {
         try {
-            $oDepartament = new \BusinessModel\Departament();
-            $response = $oDepartament->getDepartament($dep_uid);
+            $oDepartment = new \BusinessModel\Department();
+            $response = $oDepartment->getDepartment($dep_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -73,8 +73,8 @@ class Departament extends Api
     public function doPost($request_data, $dep_title)
     {
         try {
-            $oDepartament = new \BusinessModel\Departament();
-            $response = $oDepartament->saveDepartament($request_data);
+            $oDepartment = new \BusinessModel\Department();
+            $response = $oDepartment->saveDepartment($request_data);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -98,8 +98,8 @@ class Departament extends Api
     {
         try {
             $request_data['dep_uid'] = $dep_uid;
-            $oDepartament = new \BusinessModel\Departament();
-            $response = $oDepartament->saveDepartament($request_data, false);
+            $oDepartment = new \BusinessModel\Department();
+            $response = $oDepartment->saveDepartment($request_data, false);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -120,8 +120,8 @@ class Departament extends Api
     public function doDelete($dep_uid)
     {
         try {
-            $oDepartament = new \BusinessModel\Departament();
-            $oDepartament->deleteDepartament($dep_uid);
+            $oDepartment = new \BusinessModel\Department();
+            $oDepartment->deleteDepartment($dep_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

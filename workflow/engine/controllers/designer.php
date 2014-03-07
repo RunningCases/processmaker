@@ -23,7 +23,7 @@ class Designer extends Controller
      */
     public function index($httpData)
     {
-        $proUid = isset($httpData->pro_uid) ? $httpData->pro_uid : '';
+        $proUid = isset($httpData->prj_uid) ? $httpData->prj_uid : '';
         $client = $this->getClientCredentials();
         $authCode = $this->getAuthorizationCode($client);
 
