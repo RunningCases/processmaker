@@ -1259,7 +1259,7 @@ class RestContext extends BehatContext
         $pageUrl = str_replace($varName, $varValue, $pageUrl);
 
 
-        $this->printDebug("URL: $pageUrl\n$varName = $varValue\n");
+        //$this->printDebug("URL: $pageUrl\n$varName = $varValue\n");
 
 
         $this->iRequest($pageUrl, $urlType);
