@@ -1,0 +1,358 @@
+<?php
+namespace ProcessMaker;
+
+use ProcessMaker\Util;
+
+class WebApplication
+{
+    protected $rootDir = "";
+    protected $workflowDir = "";
+    protected $requestUri = "";
+
+    const RUNNING_WORKFLOW = "workflow.running";
+    const RUNNING_API = "api.running";
+    const SERVICE_API = "service.api";
+
+
+    public function __construct()
+    {
+        defined("DS") || define("DS", DIRECTORY_SEPARATOR);
+    }
+
+    /**
+     * @param string $rootDir
+     */
+    public function setRootDir($rootDir)
+    {
+        $this->rootDir = $rootDir;
+        $this->workflowDir = $rootDir . DS . "workflow" . DS;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRootDir()
+    {
+        return $this->rootDir;
+    }
+
+    /**
+     * @param string $requestUri
+     */
+    public function setRequestUri($requestUri)
+    {
+        $this->requestUri = $requestUri;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestUri()
+    {
+        return $this->requestUri;
+    }
+
+    public function route()
+    {
+        if (substr($this->requestUri, 1, 3) == "api") {
+            return self::RUNNING_API;
+        } else {
+            return self::RUNNING_WORKFLOW;
+        }
+    }
+
+    public function run($type = "")
+    {
+        switch ($type) {
+            case self::SERVICE_API:
+                $request = $this->parseApiRequestUri();
+                $this->loadEnvironment($request["workspace"]);
+                Util\Logger::log("API::Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
+                $this->dispatchApiRequest($request["uri"], $request["version"]);
+                Util\Logger::log("API::End Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
+                break;
+        }
+    }
+
+    /**
+     * This method dispatch rest/api service
+     *
+     * @author Erik Amaru Ortiz <erik@colosa.com>
+     */
+    public function dispatchApiRequest($uri, $version = "1.0")
+    {
+        // to handle a request with "OPTIONS" method
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, HEADERS');
+            header('Access-Control-Allow-Headers: authorization, content-type');
+            header("Access-Control-Allow-Credentials", "false");
+            header('Access-Control-Max-Age: 60');
+            die();
+        }
+
+        /*
+         * Enable this header to allow "Cross Domain AJAX" requests;
+         * This works because processmaker is handling correctly requests with method 'OPTIONS'
+         * that automatically is sent by a client using XmlHttpRequest or similar.
+         */
+        header('Access-Control-Allow-Origin: *');
+
+        // $servicesDir contains directory where Services Classes are allocated
+        $servicesDir = $this->workflowDir . 'engine' . DS . 'src' . DS . 'Services' . DS;
+        // $apiDir - contains directory to scan classes and add them to Restler
+        $apiDir = $servicesDir . 'Api' . DS;
+        // $apiIniFile - contains file name of api ini configuration
+        $apiIniFile = $servicesDir . DS . 'api.ini';
+        // $authenticationClass - contains the class name that validate the authentication for Restler
+        $authenticationClass = 'Services\\Api\\OAuth2\\Server';
+        // $pmOauthClientId - contains PM Local OAuth Id (Web Designer)
+        $pmOauthClientId = 'x-pm-local-client';
+
+        /*
+         * Load Api ini file for Rest Service
+         */
+        $apiIniConf = array();
+        if (file_exists($apiIniFile)) {
+            $apiIniConf = Util\Common::parseIniFile($apiIniFile);
+        }
+
+        // Setting current workspace to Api class
+        \ProcessMaker\Services\Api::setWorkspace(SYS_SYS);
+        // TODO remove this setting on the future, it is not needed, but if it is not present is throwing a warning
+        \Luracast\Restler\Format\HtmlFormat::$viewPath = $servicesDir . 'oauth2/views';
+
+        // create a new Restler instance
+        $rest = new \Luracast\Restler\Restler();
+        // setting api version to Restler
+        $rest->setAPIVersion($version);
+        // adding $authenticationClass to Restler
+        $rest->addAuthenticationClass($authenticationClass, '');
+
+        // Setting database connection source
+        list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
+        $port = empty($port) ? '' : ";port=$port";
+        \Services\Api\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
+
+        // Setting default OAuth Client id, for local PM Web Designer
+        \Services\Api\OAuth2\Server::setPmClientId($pmOauthClientId);
+
+        require_once $this->workflowDir . "engine/src/Extension/Restler/UploadFormat.php";
+        //require_once PATH_CORE
+
+        //$rest->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');
+        //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
+        $rest->setOverridingFormats('JsonFormat', 'UploadFormat');
+
+        // Override $_SERVER['REQUEST_URI'] to Restler handles the current url correctly
+
+        $isPluginRequest = strpos($uri, '/plugin-') !== false ? true : false;
+
+        if ($isPluginRequest) {
+            $tmp = explode('/', $uri);
+            array_shift($tmp);
+            $tmp = array_shift($tmp);
+            $tmp = explode('-', $tmp);
+            $pluginName = $tmp[1];
+            $uri = str_replace('/plugin-'.$pluginName, '', $uri);
+        }
+
+        $_SERVER['REQUEST_URI'] = $uri;
+
+        if (! $isPluginRequest) { // if it is not a request for a plugin endpoint
+            // scan all api directory to find api classes
+            $classesList = \Bootstrap::rglob('*', 0, $apiDir);
+
+            foreach ($classesList as $classFile) {
+                if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
+                    $namespace = '\\Services\\' . str_replace(
+                            DIRECTORY_SEPARATOR,
+                            '\\',
+                            str_replace('.php', '', str_replace($servicesDir, '', $classFile))
+                        );
+                    //var_dump($namespace);
+                    $rest->addAPIClass($namespace);
+                }
+            }
+
+            // adding aliases for Restler
+            if (array_key_exists('alias', $apiIniConf)) {
+                foreach ($apiIniConf['alias'] as $alias => $aliasData) {
+                    if (is_array($aliasData)) {
+                        foreach ($aliasData as $label => $namespace) {
+                            $namespace = '\\' . ltrim($namespace, '\\');
+                            $rest->addAPIClass($namespace, $alias);
+                        }
+                    }
+                }
+            }
+        } else {
+            // hook to get rest api classes from plugins
+//            if (class_exists('PMPluginRegistry')) {
+//                $pluginRegistry = & PMPluginRegistry::getSingleton();
+//                $plugins = $pluginRegistry->getRegisteredRestServices();
+//
+//                if (is_array($plugins) && array_key_exists($pluginName, $plugins)) {
+//                    foreach ($plugins[$pluginName] as $class) {
+//                        $rest->addAPIClass($class['namespace']);
+//                    }
+//                }
+//            }
+        }
+
+        $rest->handle();
+    }
+
+    public function parseApiRequestUri()
+    {
+        $url = explode("/", $this->requestUri);
+        array_shift($url);
+        array_shift($url);
+        $version = array_shift($url);
+        $workspace = array_shift($url);
+        $restUri = "";
+
+        foreach ($url as $urlPart) {
+            $restUri .= "/" . $urlPart;
+        }
+
+        return array(
+            "uri" => $restUri,
+            "version" => $version,
+            "workspace" => $workspace
+        );
+    }
+
+    public function loadEnvironment($workspace)
+    {
+        $lang = "en";
+
+        define('SYS_LANG', $lang);
+        define('PATH_SEP', DIRECTORY_SEPARATOR);
+
+        define('PATH_TRUNK',    $this->rootDir . PATH_SEP);
+        define('PATH_OUTTRUNK', realpath($this->rootDir . '/../') . PATH_SEP);
+        define('PATH_HOME',     $this->rootDir . PATH_SEP . 'workflow' . PATH_SEP);
+
+        define('PATH_HTML', PATH_HOME . 'public_html' . PATH_SEP);
+        define('PATH_RBAC_HOME', PATH_TRUNK . 'rbac' . PATH_SEP);
+        define('PATH_GULLIVER_HOME', PATH_TRUNK . 'gulliver' . PATH_SEP);
+        define('PATH_GULLIVER', PATH_GULLIVER_HOME . 'system' . PATH_SEP); //gulliver system classes
+        define('PATH_GULLIVER_BIN', PATH_GULLIVER_HOME . 'bin' . PATH_SEP); //gulliver bin classes
+        define('PATH_TEMPLATE', PATH_GULLIVER_HOME . 'templates' . PATH_SEP);
+        define('PATH_THIRDPARTY', PATH_GULLIVER_HOME . 'thirdparty' . PATH_SEP);
+        define('PATH_RBAC', PATH_RBAC_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP); //to enable rbac version 2
+        define('PATH_RBAC_CORE', PATH_RBAC_HOME . 'engine' . PATH_SEP);
+        define('PATH_CORE', PATH_HOME . 'engine' . PATH_SEP);
+        define('PATH_SKINS', PATH_CORE . 'skins' . PATH_SEP);
+        define('PATH_SKIN_ENGINE', PATH_CORE . 'skinEngine' . PATH_SEP);
+        define('PATH_METHODS', PATH_CORE . 'methods' . PATH_SEP);
+        define('PATH_XMLFORM', PATH_CORE . 'xmlform' . PATH_SEP);
+        define('PATH_CONFIG', PATH_CORE . 'config' . PATH_SEP);
+        define('PATH_PLUGINS', PATH_CORE . 'plugins' . PATH_SEP);
+        define('PATH_HTMLMAIL', PATH_CORE . 'html_templates' . PATH_SEP);
+        define('PATH_TPL', PATH_CORE . 'templates' . PATH_SEP);
+        define('PATH_TEST', PATH_CORE . 'test' . PATH_SEP);
+        define('PATH_FIXTURES', PATH_TEST . 'fixtures' . PATH_SEP);
+        define('PATH_RTFDOCS', PATH_CORE . 'rtf_templates' . PATH_SEP);
+        define('PATH_DYNACONT', PATH_CORE . 'content' . PATH_SEP . 'dynaform' . PATH_SEP);
+        define('SYS_UPLOAD_PATH', PATH_HOME . "public_html/files/" );
+        define('PATH_UPLOAD', PATH_HTML . 'files' . PATH_SEP);
+        define('PATH_WORKFLOW_MYSQL_DATA', PATH_CORE . 'data' . PATH_SEP . 'mysql' . PATH_SEP);
+        define('PATH_RBAC_MYSQL_DATA', PATH_RBAC_CORE . 'data' . PATH_SEP . 'mysql' . PATH_SEP);
+        define('FILE_PATHS_INSTALLED', PATH_CORE . 'config' . PATH_SEP . 'paths_installed.php' );
+        define('PATH_WORKFLOW_MSSQL_DATA', PATH_CORE . 'data' . PATH_SEP . 'mssql' . PATH_SEP);
+        define('PATH_RBAC_MSSQL_DATA', PATH_RBAC_CORE . 'data' . PATH_SEP . 'mssql' . PATH_SEP);
+        define('PATH_CONTROLLERS', PATH_CORE . 'controllers' . PATH_SEP);
+        define('PATH_SERVICES_REST', PATH_CORE . 'services' . PATH_SEP . 'rest' . PATH_SEP);
+
+        require_once PATH_GULLIVER . PATH_SEP . 'class.bootstrap.php';
+
+        spl_autoload_register(array("Bootstrap", "autoloadClass"));
+
+        \Bootstrap::registerClass("G", PATH_GULLIVER . "class.g.php");
+        \Bootstrap::registerClass("System", PATH_HOME . "engine/classes/class.system.php");
+
+        // define autoloading for others
+        \Bootstrap::registerClass("wsBase", PATH_HOME . "engine/classes/class.wsBase.php");
+        \Bootstrap::registerClass('Xml_Node', PATH_GULLIVER . "class.xmlDocument.php");
+        \Bootstrap::registerClass('XmlForm_Field_TextPM', PATH_HOME . "engine/classes/class.XmlForm_Field_TextPM.php");
+        \Bootstrap::registerClass('XmlForm_Field_SimpleText', PATH_GULLIVER . "class.xmlformExtension.php");
+        \Bootstrap::registerClass('XmlForm_Field', PATH_GULLIVER . "class.xmlform.php");
+
+        \Bootstrap::registerDir('model', PATH_CORE . 'classes' . PATH_SEP . 'model');
+        \Bootstrap::registerDir('rbac/model', PATH_RBAC_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model');
+
+        \Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
+
+        \Bootstrap::registerSystemClasses();
+
+
+        $config = \System::getSystemConfiguration();
+
+        define('DEBUG_SQL_LOG', $config['debug_sql']);
+        define('DEBUG_TIME_LOG', $config['debug_time']);
+        define('DEBUG_CALENDAR_LOG', $config['debug_calendar']);
+        define('MEMCACHED_ENABLED',  $config['memcached']);
+        define('MEMCACHED_SERVER',   $config['memcached_server']);
+        define('TIME_ZONE', $config['time_zone']);
+
+
+        // set include path
+        set_include_path(
+            PATH_CORE . PATH_SEPARATOR .
+            PATH_THIRDPARTY . PATH_SEPARATOR .
+            PATH_THIRDPARTY . 'pear' . PATH_SEPARATOR .
+            PATH_RBAC_CORE . PATH_SEPARATOR .
+            get_include_path()
+        );
+
+
+        /*
+         * Setting Up Workspace
+         */
+
+        // include the server installed configuration
+        require_once FILE_PATHS_INSTALLED;
+
+        define('SYS_SYS', $workspace);
+
+        // defining system constant when a valid server environment exists
+        define( 'PATH_LANGUAGECONT', PATH_DATA . "META-INF" . PATH_SEP );
+        define( 'PATH_CUSTOM_SKINS', PATH_DATA . 'skins' . PATH_SEP );
+        define( 'PATH_TEMPORAL', PATH_C . 'dynEditor/' );
+        define( 'PATH_DB', PATH_DATA . 'sites' . PATH_SEP );
+
+        $workspaceDir = PATH_DB . $workspace;
+
+        // smarty constants
+        define( 'PATH_SMARTY_C', PATH_C . 'smarty' . PATH_SEP . 'c' );
+        define( 'PATH_SMARTY_CACHE', PATH_C . 'smarty' . PATH_SEP . 'cache' );
+
+
+        //***************** PM Paths DATA **************************
+        define('PATH_DATA_SITE',                PATH_DATA      . 'sites/' . SYS_SYS . '/');
+        define('PATH_DOCUMENT',                 PATH_DATA_SITE . 'files/');
+        define('PATH_DATA_MAILTEMPLATES',       PATH_DATA_SITE . 'mailTemplates/');
+        define('PATH_DATA_PUBLIC',              PATH_DATA_SITE . 'public/');
+        define('PATH_DATA_REPORTS',             PATH_DATA_SITE . 'reports/');
+        define('PATH_DYNAFORM',                 PATH_DATA_SITE . 'xmlForms/');
+        define('PATH_IMAGES_ENVIRONMENT_FILES', PATH_DATA_SITE . 'usersFiles' . PATH_SEP);
+        define('PATH_IMAGES_ENVIRONMENT_USERS', PATH_DATA_SITE . 'usersPhotographies' . PATH_SEP);
+
+        if (is_file(PATH_DATA_SITE.PATH_SEP . '.server_info')) {
+            $SERVER_INFO = file_get_contents(PATH_DATA_SITE.PATH_SEP.'.server_info');
+            $SERVER_INFO = unserialize($SERVER_INFO);
+
+            define('SERVER_NAME', $SERVER_INFO ['SERVER_NAME']);
+            define('SERVER_PORT', $SERVER_INFO ['SERVER_PORT']);
+        } else {
+            echo "WARNING! No server info found!";
+        }
+
+        // create memcached singleton
+        \Bootstrap::LoadClass('memcached');
+        //$memcache = PMmemcached::getSingleton( SYS_SYS );
+
+        \Propel::init(PATH_CONFIG . "databases.php");
+    }
+}

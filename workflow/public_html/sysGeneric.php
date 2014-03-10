@@ -275,7 +275,7 @@ define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/downlo
 
 
 try {
-    Bootstrap::initVendors();
+    //Bootstrap::initVendors();
     $config = Bootstrap::getSystemConfiguration();
 
     // starting session

@@ -104,4 +104,25 @@ class Common
 
         return $maxVersion;
     }
+
+    public static function parseIniFile($filename)
+    {
+        $data = @parse_ini_file($filename, true);
+        $result = array();
+
+        if ($data === false) {
+            throw new \Exception("Error parsing ini file: $filename");
+        }
+
+        foreach ($data as $key => $value) {
+            if (strpos($key, ':') !== false) {
+                list($key, $subSection) = explode(':', $key);
+                $result[trim($key)][trim($subSection)] = $value;
+            } else {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
+    }
 }
