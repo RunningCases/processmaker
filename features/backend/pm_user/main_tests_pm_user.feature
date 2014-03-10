@@ -141,7 +141,7 @@ Feature: User Main Tests
                 "usr_phone": "<usr_phone>",
                 "usr_position": "<usr_position>",
                 "usr_replaced_by": "<usr_replaced_by>",
-                "usr_due_date": "<usr_dgit addue_date>",
+                "usr_due_date": "<usr_due_date>",
                 "usr_calendar": "<usr_calendar>",
                 "usr_status": "<usr_status>",
                 "usr_role": "<usr_role>",

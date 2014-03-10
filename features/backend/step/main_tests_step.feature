@@ -328,7 +328,7 @@ Feature: Project Properties - Step Resources Main Tests
         | Trigger assigned to External in type before | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           | 0       |
 
 
-    Scenario Outline: Unassign all"DynaForm Demo1" from "Task1"
+    Scenario Outline: Unassign all "DynaForm Demo1" from "Task1" and "Task 2"
         Given that I have a valid access_token
         And that I want to delete a resource with the key "step1" stored in session array
         Given that I want to delete a resource with the key "step_uid" stored in session array as variable "step_uid_<step_number>"
@@ -344,6 +344,8 @@ Feature: Project Properties - Step Resources Main Tests
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           |
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           |
         | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           |
+        | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           |
+
 
     
     Scenario Outline: List assigned Steps to "Task1" & "Task2" (empty)  (verify if everithing was deleted)
