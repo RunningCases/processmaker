@@ -183,6 +183,12 @@ class FilesManager
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     break;
             }
+            $content = $aData['prf_content'];
+            if (is_string($content)) {
+                if (file_exists(PATH_SEP.$sDirectory)) {
+                    throw (new \Exception( 'The file: '. $sDirectory . ' already exists.'));
+                }
+            }
             if (!file_exists($sCheckDirectory)) {
                 $sPkProcessFiles = \G::generateUniqueID();
                 $oProcessFiles = new \ProcessFiles();
