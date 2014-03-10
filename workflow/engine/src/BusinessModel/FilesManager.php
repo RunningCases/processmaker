@@ -67,7 +67,6 @@ class FilesManager
             }
             \G::verifyPath($sDirectory, true);
             $aTheFiles = array();
-            $aDirectories = array();
             $aFiles = array();
             $oDirectory = dir($sDirectory);
             while ($sObject = $oDirectory->read()) {
@@ -127,7 +126,7 @@ class FilesManager
                 }
             }
             return $aTheFiles;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }

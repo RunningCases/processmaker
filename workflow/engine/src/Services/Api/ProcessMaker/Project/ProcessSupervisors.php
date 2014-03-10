@@ -215,14 +215,15 @@ class ProcessSupervisors extends Api
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $dyn_uid {@min 32} {@max 32}
+     * @param int $pud_position
      *
      * @status 201
      */
-    public function doPostProcessSupervisorDynaform($prjUid, $dyn_uid)
+    public function doPostProcessSupervisorDynaform($prjUid, $dyn_uid, $pud_position=null)
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $objectData = $supervisor->addProcessSupervisorDynaform($prjUid, $dyn_uid);
+            $objectData = $supervisor->addProcessSupervisorDynaform($prjUid, $dyn_uid, $pud_position);
             //Response
             $response = $objectData;
         } catch (\Exception $e) {
@@ -237,14 +238,15 @@ class ProcessSupervisors extends Api
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $inp_doc_uid {@min 32} {@max 32}
+     * @param int $pui_position
      *
      * @status 201
      */
-    public function doPostProcessSupervisorInputDocument($prjUid, $inp_doc_uid)
+    public function doPostProcessSupervisorInputDocument($prjUid, $inp_doc_uid, $pui_position=null)
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $objectData = $supervisor->addProcessSupervisorInputDocument($prjUid, $inp_doc_uid);
+            $objectData = $supervisor->addProcessSupervisorInputDocument($prjUid, $inp_doc_uid, $pui_position);
             //Response
             $response = $objectData;
         } catch (\Exception $e) {
@@ -265,7 +267,7 @@ class ProcessSupervisors extends Api
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->removeProcessSupervisor($prjUid, $puUid);
+            $supervisor->removeProcessSupervisor($prjUid, $puUid);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -283,7 +285,7 @@ class ProcessSupervisors extends Api
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->removeDynaformSupervisor($prjUid, $pudUid);
+            $supervisor->removeDynaformSupervisor($prjUid, $pudUid);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -301,11 +303,57 @@ class ProcessSupervisors extends Api
     {
         try {
             $supervisor = new \BusinessModel\ProcessSupervisor();
-            $arrayData = $supervisor->removeInputDocumentSupervisor($prjUid, $puiUid);
+            $supervisor->removeInputDocumentSupervisor($prjUid, $puiUid);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
+    }
+
+    /**
+     * @url PUT /:prjUid/process-supervisor/dynaform/:pud_uid
+     *
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $pud_uid {@min 32} {@max 32}
+     * @param int $pud_position
+     *
+     * @status 201
+     */
+    public function doPutProcessSupervisorDynaform($prjUid, $pud_uid, $pud_position = null)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $objectData = $supervisor->updateProcessSupervisorDynaform($prjUid, $pud_uid, $pud_position);
+            //Response
+            $response = $objectData;
+        } catch (\Exception $e) {
+            //Response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @url PUT /:prjUid/process-supervisor/input-document/:pui_uid
+     *
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $pui_uid {@min 32} {@max 32}
+     * @param int $pui_position
+     *
+     * @status 201
+     */
+    public function doPutProcessSupervisorInputDocument($prjUid, $pui_uid, $pui_position = null)
+    {
+        try {
+            $supervisor = new \BusinessModel\ProcessSupervisor();
+            $objectData = $supervisor->updateProcessSupervisorInputDocument($prjUid, $pui_uid, $pui_position);
+            //Response
+            $response = $objectData;
+        } catch (\Exception $e) {
+            //Response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
     }
 }
 
