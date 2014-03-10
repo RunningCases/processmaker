@@ -412,7 +412,7 @@ class Department extends BaseDepartment
             $criteria->add( DepartmentPeer::DEP_PARENT, $DepParent, Criteria::EQUAL );
             $con = Propel::getConnection( DepartmentPeer::DATABASE_NAME );
             $objects = DepartmentPeer::doSelect( $criteria, $con );
-            global $RBAC;
+            $oUsers = new Users();
 
             foreach ($objects as $oDepartment) {
                 $node = array ();
@@ -426,7 +426,7 @@ class Department extends BaseDepartment
 
                 $manager = $oDepartment->getDepManager();
                 if ($manager != '') {
-                    $UserUID = $RBAC->load( $manager );
+                    $UserUID = $oUsers->load($manager);
                     $node['DEP_MANAGER_USERNAME'] = isset( $UserUID['USR_USERNAME'] ) ? $UserUID['USR_USERNAME'] : '';
                     $node['DEP_MANAGER_FIRSTNAME'] = isset( $UserUID['USR_FIRSTNAME'] ) ? $UserUID['USR_FIRSTNAME'] : '';
                     $node['DEP_MANAGER_LASTNAME'] = isset( $UserUID['USR_LASTNAME'] ) ? $UserUID['USR_LASTNAME'] : '';
