@@ -931,6 +931,11 @@ class RestContext extends BehatContext
      */
     public function theResponseStatusCodeShouldBe($httpStatus)
     {
+        if(!(isset($this->_response))){
+        throw new \Exception('HTTP code does not match ' . $httpStatus .
+                ' (actual: No response defined)'
+            );
+        }
         if ((string)$this->_response->getStatusCode() !== $httpStatus) {
             $message="";
             if($bodyResponse=json_decode($this->_response->getBody(true))){
@@ -1254,7 +1259,7 @@ class RestContext extends BehatContext
         $pageUrl = str_replace($varName, $varValue, $pageUrl);
 
 
-        $this->printDebug("URL: $pageUrl\n$varName = $varValue\n");
+        //$this->printDebug("URL: $pageUrl\n$varName = $varValue\n");
 
 
         $this->iRequest($pageUrl, $urlType);
