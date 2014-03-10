@@ -100,7 +100,7 @@ Feature: Project Properties - Step Resources
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "array"
-        And the "obj_uid" property in row 1 equals "32743823452cd63105006e1076595203"
+        And the "obj_uid" property in row 1 equals "6869969705306aaae049a62048840877"
         And the "obj_title" property in row 1 equals "OutputDocument Demo"
         And the "obj_description" property in row 1 equals "Description"
         And the "obj_type" property in row 1 equals "OUTPUT_DOCUMENT"
