@@ -35,7 +35,7 @@ Feature: User
     #GET /api/1.0/{workspace}/user/{usr_uid}
     #    Upload a image
     Scenario: Upload a image
-        Given POST I want to upload the image "/home/daniel/pic3.jpg" to user "00000000000000000000000000000001". Url "user/"
+        Given POST I want to upload the image "/home/wendy/pic3.jpg" to user "00000000000000000000000000000001". Url "user/"
     
     #POST /api/1.0/{workspace}/user
     #     Create new User
