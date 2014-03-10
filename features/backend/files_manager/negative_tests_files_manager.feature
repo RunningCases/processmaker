@@ -37,12 +37,3 @@ Feature: File Manager Negative Tests
     | Field Required prf_filename in public   | 1265557095225ff5c688f46031700471 |                   | public/                       | only text                     | 400        | prf_filename  |
     | Field Required prf_filename in template | 1265557095225ff5c688f46031700471 |                   | templates/                    | <h1>Test</h1><p>html test</p> | 400        | prf_filename  |
     | Field Required project                  |                                  | file_test_1.txt   | public/                       | only text                     | 400        | prj_uid       |
-    
-
-
-    
-
-# how to get content if a file - revisar si hay el endpoint para poner el contenido del html
-# how to delete sub folders 
-# upload big files - 
-# actualizar el conteniudo subiendo un archivo nuevo con el mismo nombre...
