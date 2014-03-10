@@ -186,7 +186,7 @@ class FilesManager
             $content = $aData['prf_content'];
             if (is_string($content)) {
                 if (file_exists(PATH_SEP.$sDirectory)) {
-                    throw (new \Exception( 'The file: '. $sDirectory . ' already exists.'));
+                    throw (new \Exception( 'The file: '.$sMainDirectory. PATH_SEP . $sSubDirectory . $aData['prf_filename'] . ' already exists.'));
                 }
             }
             if (!file_exists($sCheckDirectory)) {
