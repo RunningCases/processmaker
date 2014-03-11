@@ -417,9 +417,6 @@ class ProcessPermissions
     public function validateDynUid($dyn_uid)
     {
         $dyn_uid = trim($dyn_uid);
-        if ($dyn_uid == '') {
-            throw (new \Exception("The dynaform with dynaforms: '' does not exist."));
-        }
         $oDynaform = new \Dynaform();
         if (!($oDynaform->dynaformExists($dyn_uid))) {
             throw (new \Exception("The dynaform with dynaforms: '$dyn_uid' does not exist."));
@@ -439,9 +436,6 @@ class ProcessPermissions
     public function validateInpUid($inp_uid)
     {
         $inp_uid = trim($inp_uid);
-        if ($inp_uid == '') {
-            throw (new \Exception("The input with inputs: '' does not exist."));
-        }
         $oInputDocument = new \InputDocument();
         if (!($oInputDocument->InputExists($inp_uid))) {
             throw (new \Exception("The input with inputs: '$inp_uid' does not exist."));
@@ -461,9 +455,6 @@ class ProcessPermissions
     public function validateOutUid($out_uid)
     {
         $out_uid = trim($out_uid);
-        if ($out_uid == '') {
-            throw (new \Exception("The output with outputs: '' does not exist."));
-        }
         $oOutputDocument = new \OutputDocument();
         if (!($oOutputDocument->OutputExists($out_uid))) {
             throw (new \Exception("The output with outputs: '$out_uid' does not exist."));
