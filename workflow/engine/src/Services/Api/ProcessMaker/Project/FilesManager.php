@@ -37,15 +37,17 @@ class FilesManager extends Api
 
     /**
      * @param string $prj_uid {@min 32} {@max 32}
-     * @param ProcessFilesManagerStructure $request_data
+     * @param ProcessFilesManagerStructurePost $request_data
+     * @param string $prf_content
      *
      * @url POST /:prj_uid/file-manager
      */
-    public function doPostProcessFilesManager($prj_uid, ProcessFilesManagerStructure $request_data)
+    public function doPostProcessFilesManager($prj_uid, ProcessFilesManagerStructurePost $request_data, $prf_content=null)
     {
         try {
             $userUid = $this->getUserId();
             $request_data = (array)($request_data);
+            $request_data = array_merge(array('prf_content' => $prf_content ), $request_data);
             $filesManager = new \BusinessModel\FilesManager();
             $arrayData = $filesManager->addProcessFilesManager($prj_uid, $userUid, $request_data);
             //Response
@@ -149,6 +151,18 @@ class FilesManager extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+}
+
+class ProcessFilesManagerStructurePost
+{   /**
+     * @var string {@from body}
+     */
+    public $prf_filename;
+
+    /**
+     * @var string {@from body}
+     */
+    public $prf_path;
 }
 
 class ProcessFilesManagerStructure

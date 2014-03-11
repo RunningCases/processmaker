@@ -624,9 +624,10 @@ class ProcessSupervisor
      *
      * @param string $sProcessUID
      * @param string $sDynUID
+     * @param int $sPudPosition
      * @access public
      */
-    public function addProcessSupervisorDynaform($sProcessUID, $sDynUID)
+    public function addProcessSupervisorDynaform($sProcessUID, $sDynUID, $sPudPosition)
     {
         $oTypeDynaform = \DynaformPeer::retrieveByPK($sDynUID);
         if (is_null( $oTypeDynaform )) {
@@ -692,9 +693,10 @@ class ProcessSupervisor
             while ($aRow = $oDataset->getRow()) {
                 $aResp = array('pud_uid' => $aRow['STEP_UID'],
                                'pud_position' => $aRow['STEP_POSITION'],
-                               'dyn_uid' => $aRow['STEP_UID_OBJ'],
-                               'dyn_title' => $aRow['DYN_TITLE']);
+                               'dyn_uid' => $aRow['STEP_UID_OBJ']);
                 $oDataset->next();
+                $aRespPosition = $this->updateProcessSupervisorDynaform($sProcessUID ,$aRow['STEP_UID'], $sPudPosition);
+                $aResp = array_merge(array('dyn_title' => $aRow['DYN_TITLE']), $aRespPosition);
             }
             return $aResp;
         } else {
@@ -707,9 +709,11 @@ class ProcessSupervisor
      *
      * @param string $sProcessUID
      * @param string $sInputDocumentUID
+     * @param int $sPuiPosition
      * @access public
      */
-    public function addProcessSupervisorInputDocument($sProcessUID, $sInputDocumentUID)
+
+    public function addProcessSupervisorInputDocument($sProcessUID, $sInputDocumentUID, $sPuiPosition)
     {
         $oTypeInputDocument= \InputDocumentPeer::retrieveByPK($sInputDocumentUID);
         if (is_null( $oTypeInputDocument )) {
@@ -747,7 +751,7 @@ class ProcessSupervisor
             $oStepSupervisor->create(array('PRO_UID' => $sProcessUID,
                                            'STEP_TYPE_OBJ' => "INPUT_DOCUMENT",
                                            'STEP_UID_OBJ' => $sInputDocumentUID,
-                                           'STEP_POSITION' => $oStepSupervisor->getNextPosition($sProcessUID, "DYNAFORM")));
+                                           'STEP_POSITION' => $oStepSupervisor->getNextPosition($sProcessUID, "INPUT_DOCUMENT")));
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
@@ -776,9 +780,10 @@ class ProcessSupervisor
             while ($aRow = $oDataset->getRow()) {
                 $aResp = array('pui_uid' => $aRow['STEP_UID'],
                                'pui_position' => $aRow['STEP_POSITION'],
-                               'input_doc_uid' => $aRow['STEP_UID_OBJ'],
-                               'input_doc_title' => $aRow['INP_DOC_TITLE']);
+                               'input_doc_uid' => $aRow['STEP_UID_OBJ']);
                 $oDataset->next();
+                $aRespPosition = $this->updateProcessSupervisorInputDocument($sProcessUID ,$aRow['STEP_UID'], $sPuiPosition);
+                $aResp = array_merge(array('input_doc_title' => $aRow['INP_DOC_TITLE']), $aRespPosition);
             }
             return $aResp;
         } else {
@@ -821,19 +826,15 @@ class ProcessSupervisor
      */
     public function removeDynaformSupervisor($sProcessUID, $sPudUID)
     {
-        $oConnection = \Propel::getConnection(\StepSupervisorPeer::DATABASE_NAME);
         try {
             $oDynaformSupervidor = \StepSupervisorPeer::retrieveByPK($sPudUID);
             if (!is_null($oDynaformSupervidor)) {
-                $oConnection->begin();
-                $iResult = $oDynaformSupervidor->delete();
-                $oConnection->commit();
-                return $iResult;
+                $oProcessMap = new \processMap(new \DBConnection());
+                $oProcessMap->removeSupervisorStep( $oDynaformSupervidor->getStepUid(), $sProcessUID, 'DYNAFORM', $oDynaformSupervidor->getStepUidObj(), $oDynaformSupervidor->getStepPosition() );
             } else {
                 throw (new \Exception('This row does not exist!'));
             }
         } catch (Exception $oError) {
-            $oConnection->rollback();
             throw ($oError);
         }
     }
@@ -851,10 +852,8 @@ class ProcessSupervisor
         try {
             $oInputDocumentSupervidor = \StepSupervisorPeer::retrieveByPK($sPuiUID);
             if (!is_null($oInputDocumentSupervidor)) {
-                $oConnection->begin();
-                $iResult = $oInputDocumentSupervidor->delete();
-                $oConnection->commit();
-                return $iResult;
+                $oProcessMap = new \processMap(new \DBConnection());
+                $oProcessMap->removeSupervisorStep( $oInputDocumentSupervidor->getStepUid(), $sProcessUID, 'INPUT_DOCUMENT', $oInputDocumentSupervidor->getStepUidObj(), $oInputDocumentSupervidor->getStepPosition() );
             } else {
                 throw (new \Exception('This row does not exist!'));
             }
@@ -863,5 +862,174 @@ class ProcessSupervisor
             throw ($oError);
         }
     }
-}
 
+    /**
+     * Assign a dynaform supervisor of a process
+     *
+     * @param string $sProcessUID
+     * @param string $sPudUID
+     * @param string $sPudPosition
+     * @access public
+     */
+    public function updateProcessSupervisorDynaform($sProcessUID, $sPudUID, $sPudPosition)
+    {
+        $oCriteria=\StepSupervisorPeer::retrieveByPK($sPudUID);
+        $actualPosition = $oCriteria->getStepPosition();
+        $tempPosition = (isset($sPudPosition)) ? $sPudPosition : $actualPosition;
+        if (isset($tempPosition) && ($tempPosition != $actualPosition)) {
+            $this->moveDynaforms($sProcessUID, $sPudUID, $tempPosition);
+        }
+        //Return
+        unset($sPudPosition);
+        $sPudPosition = $tempPosition;
+        $oCriteria->setStepPosition($sPudPosition);
+        $oCriteria->save();
+        $oCriteria=array('pud_uid' => $oCriteria->getStepUid(),
+                         'pud_position' => $oCriteria->getStepPosition(),
+                         'dyn_uid' => $oCriteria->getStepUidObj());
+        return $oCriteria;
+    }
+
+    /**
+     * Assign a InputDocument supervisor of a process
+     *
+     * @param string $sProcessUID
+     * @param string $sPuiUID
+     * @param string $sPuiPosition
+     * @access public
+     */
+    public function updateProcessSupervisorInputDocument($sProcessUID, $sPuiUID, $sPuiPosition)
+    {
+        $oCriteria=\StepSupervisorPeer::retrieveByPK($sPuiUID);
+        $actualPosition = $oCriteria->getStepPosition();
+        $tempPosition = (isset($sPuiPosition)) ? $sPuiPosition : $actualPosition;
+        if (isset($tempPosition) && ($tempPosition != $actualPosition)) {
+            $this->moveInputDocuments($sProcessUID, $sPuiUID, $tempPosition);
+        }
+        //Return
+        unset($sPuiPosition);
+        $sPuiPosition = $tempPosition;
+        $oCriteria->setStepPosition($sPuiPosition);
+        $oCriteria->save();
+        $oCriteria=array('pui_uid' => $oCriteria->getStepUid(),
+                         'pui_position' => $oCriteria->getStepPosition(),
+                         'inp_doc_uid' => $oCriteria->getStepUidObj());
+        return $oCriteria;
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for Process
+     * @var string $pu_uid. Uid for Step
+     * @var string $pu_pos. Position for Step
+     *
+     * @return void
+     */
+    public function moveDynaforms($pro_uid, $pu_uid, $pu_pos)
+    {
+        $aSteps = $this->getProcessSupervisorDynaforms($pro_uid);
+        $step_pos = $pu_pos;
+        $step_uid = $pu_uid;
+        foreach ($aSteps as $dataStep) {
+            if ($dataStep['pud_uid'] == $step_uid) {
+                $prStepPos = (int)$dataStep['pud_position'];
+            }
+        }
+        $seStepPos = $step_pos;
+        //Principal Step is up
+        if ($prStepPos == $seStepPos) {
+            return true;
+        } elseif ($prStepPos < $seStepPos) {
+            $modPos = 'UP';
+            $newPos = $seStepPos;
+            $iniPos = $prStepPos+1;
+            $finPos = $seStepPos;
+        } else {
+            $modPos = 'DOWN';
+            $newPos = $seStepPos;
+            $iniPos = $seStepPos;
+            $finPos = $prStepPos-1;
+        }
+        $range = range($iniPos, $finPos);
+        foreach ($aSteps as $dataStep) {
+            if ((in_array($dataStep['pud_position'], $range)) && ($dataStep['pud_uid'] != $step_uid)) {
+                $stepChangeIds[] = $dataStep['pud_uid'];
+                $stepChangePos[] = $dataStep['pud_position'];
+            }
+        }
+        foreach ($stepChangeIds as $key => $value) {
+            if ($modPos == 'UP') {
+                $tempPos = ((int)$stepChangePos[$key])-1;
+                $this ->changePosStep($value, $tempPos);
+            } else {
+                $tempPos = ((int)$stepChangePos[$key])+1;
+                $this ->changePosStep($value, $tempPos);
+            }
+        }
+        $this ->changePosStep($value, $tempPos);
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for Process
+     * @var string $pu_uid. Uid for Step
+     * @var string $pu_pos. Position for Step
+     *
+     * @return void
+     */
+    public function moveInputDocuments($pro_uid, $pu_uid, $pu_pos)
+    {
+        $aSteps = $this->getProcessSupervisorInputDocuments($pro_uid);
+        $step_pos = $pu_pos;
+        $step_uid = $pu_uid;
+        foreach ($aSteps as $dataStep) {
+            if ($dataStep['pui_uid'] == $step_uid) {
+                $prStepPos = (int)$dataStep['pui_position'];
+            }
+        }
+        $seStepPos = $step_pos;
+        //Principal Step is up
+        if ($prStepPos == $seStepPos) {
+            return true;
+        } elseif ($prStepPos < $seStepPos) {
+            $modPos = 'UP';
+            $newPos = $seStepPos;
+            $iniPos = $prStepPos+1;
+            $finPos = $seStepPos;
+        } else {
+            $modPos = 'DOWN';
+            $newPos = $seStepPos;
+            $iniPos = $seStepPos;
+            $finPos = $prStepPos-1;
+        }
+        $range = range($iniPos, $finPos);
+        foreach ($aSteps as $dataStep) {
+            if ((in_array($dataStep['pui_position'], $range)) && ($dataStep['pui_uid'] != $step_uid)) {
+                $stepChangeIds[] = $dataStep['pui_uid'];
+                $stepChangePos[] = $dataStep['pui_position'];
+            }
+        }
+        foreach ($stepChangeIds as $key => $value) {
+            if ($modPos == 'UP') {
+                $tempPos = ((int)$stepChangePos[$key])-1;
+                $this ->changePosStep($value, $tempPos);
+            } else {
+                $tempPos = ((int)$stepChangePos[$key])+1;
+                $this ->changePosStep($value, $tempPos);
+            }
+        }
+        $this ->changePosStep($value, $tempPos);
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for process
+     *
+     */
+    public function changePosStep ($step_uid, $pos)
+    {
+        $oCriteria=\StepSupervisorPeer::retrieveByPK($step_uid);
+        $oCriteria->setStepPosition($pos);
+        $oCriteria->save();
+    }
+}
