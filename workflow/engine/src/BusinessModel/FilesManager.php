@@ -67,7 +67,6 @@ class FilesManager
             }
             \G::verifyPath($sDirectory, true);
             $aTheFiles = array();
-            $aDirectories = array();
             $aFiles = array();
             $oDirectory = dir($sDirectory);
             while ($sObject = $oDirectory->read()) {
@@ -127,7 +126,7 @@ class FilesManager
                 }
             }
             return $aTheFiles;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -183,6 +182,12 @@ class FilesManager
                 default:
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     break;
+            }
+            $content = $aData['prf_content'];
+            if (is_string($content)) {
+                if (file_exists(PATH_SEP.$sDirectory)) {
+                    throw (new \Exception( 'The file: '.$sMainDirectory. PATH_SEP . $sSubDirectory . $aData['prf_filename'] . ' already exists.'));
+                }
             }
             if (!file_exists($sCheckDirectory)) {
                 $sPkProcessFiles = \G::generateUniqueID();

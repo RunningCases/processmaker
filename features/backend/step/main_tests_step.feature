@@ -39,7 +39,7 @@ Feature: Project Properties - Step Resources Main Tests
         And the content type is "application/json"
         Then the response status code should be 201
         And the response charset is "UTF-8"
-        And the type is "object"git 
+        And the type is "object"
         And store "step_uid" in session array as variable "step_uid_<step_number>"
 
         Examples:
@@ -112,7 +112,7 @@ Feature: Project Properties - Step Resources Main Tests
 
         | test_description                                                        | project                          | activity                         | records | step_type_obj   | step_uid_obj                     |
         | 3 steps in task 1 - verify that the first record is the first position  | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3       | DYNAFORM        | 50332332752cd9b9a7cc989003652905 |
-        | 2 steps in task 2 - verify that the first record is the first position  | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 2       | DYNAFORM        | 63293140052cd61b29e21a9056770986 |
+        | 2 steps in task 2 - verify that the first record is the first position  | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 3       | DYNAFORM        | 63293140052cd61b29e21a9056770986 |
 
 
     #STEP TRIGGERS
@@ -174,24 +174,24 @@ Feature: Project Properties - Step Resources Main Tests
         Examples:
 
         | test_description                            | project                          | activity                         | step_number | tri_uid_number | tri_uid                          | st_type  | st_condition      | st_position |
-        | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 1              | 81919273152cd636c665080083928728 | BEFORE   |                   | 1           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 2              | 56359776552cd6378b38e47080912028 | BEFORE   |                   | 2           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 3              | 57401970252cd6393531551040242546 | BEFORE   |                   | 3           |
-        | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 4              | 81919273152cd636c665080083928728 | AFTER    |                   | 1           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 5              | 56359776552cd6378b38e47080912028 | AFTER    |                   | 2           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 6              | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
-        | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 7              | 81919273152cd636c665080083928728 | BEFORE   |                   | 1           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 8              | 56359776552cd6378b38e47080912028 | BEFORE   |                   | 2           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 9              | 57401970252cd6393531551040242546 | BEFORE   |                   | 3           |
-        | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 10             | 81919273152cd636c665080083928728 | AFTER    |                   | 1           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 11             | 56359776552cd6378b38e47080912028 | AFTER    |                   | 2           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 12             | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
-        | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 13             | 81919273152cd636c665080083928728 | BEFORE   |                   | 1           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 14             | 56359776552cd6378b38e47080912028 | BEFORE   |                   | 2           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 15             | 57401970252cd6393531551040242546 | BEFORE   |                   | 3           |
-        | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 16             | 81919273152cd636c665080083928728 | AFTER    |                   | 1           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 17             | 56359776552cd6378b38e47080912028 | AFTER    |                   | 2           |
-        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 18             | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
+        | Trigger assigned to Task 1 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 1              | 81919273152cd636c665080083928728 | BEFORE   |                   | 1           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 2              | 56359776552cd6378b38e47080912028 | BEFORE   |                   | 2           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 3              | 57401970252cd6393531551040242546 | BEFORE   |                   | 3           |
+        | Trigger assigned to Task 1 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 4              | 81919273152cd636c665080083928728 | AFTER    |                   | 1           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 5              | 56359776552cd6378b38e47080912028 | AFTER    |                   | 2           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 1           | 6              | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
+        | Trigger assigned to Task 1 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 7              | 81919273152cd636c665080083928728 | BEFORE   |                   | 1           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 8              | 56359776552cd6378b38e47080912028 | BEFORE   |                   | 2           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 9              | 57401970252cd6393531551040242546 | BEFORE   |                   | 3           |
+        | Trigger assigned to Task 1 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 10             | 81919273152cd636c665080083928728 | AFTER    |                   | 1           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 11             | 56359776552cd6378b38e47080912028 | AFTER    |                   | 2           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 12             | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
+        | Trigger assigned to Task 1 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 13             | 81919273152cd636c665080083928728 | BEFORE   |                   | 1           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 14             | 56359776552cd6378b38e47080912028 | BEFORE   |                   | 2           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 15             | 57401970252cd6393531551040242546 | BEFORE   |                   | 3           |
+        | Trigger assigned to Task 1 in type before   | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 16             | 81919273152cd636c665080083928728 | AFTER    |                   | 1           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 17             | 56359776552cd6378b38e47080912028 | AFTER    |                   | 2           |
+        | Trigger assigned to Task 1 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 18             | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
         | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 19             | 81919273152cd636c665080083928728 | BEFORE   |                   | 1           |
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 20             | 56359776552cd6378b38e47080912028 | BEFORE   |                   | 2           |
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 21             | 57401970252cd6393531551040242546 | BEFORE   |                   | 3           |
@@ -199,6 +199,21 @@ Feature: Project Properties - Step Resources Main Tests
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 23             | 56359776552cd6378b38e47080912028 | AFTER    |                   | 2           |
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 24             | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
 
+
+
+Scenario Outline: Delete all Triggers created previously in this script
+      Given that I want to delete a "trigger"
+        And I request "project/<project>/trigger/<tri_uid>"
+        Then the response status code should be 400
+        And the response charset is "UTF-8"
+        And the type is "object"
+
+        Examples:
+
+        | project                          | tri_uid  |
+        | 16062437052cd6141881e06088349078 | 81919273152cd636c665080083928728           |
+        | 16062437052cd6141881e06088349078 | 57401970252cd6393531551040242546           |
+    
 
     Scenario Outline: List available Triggers for each assigned step
       Given I request "project/<project>/activity/<activity>/step/step_uid/available-triggers/before"  with the key "step_uid" stored in session array as variable "step_uid_<step_number>"
@@ -328,7 +343,7 @@ Feature: Project Properties - Step Resources Main Tests
         | Trigger assigned to External in type before | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           | 0       |
 
 
-    Scenario Outline: Unassign all"DynaForm Demo1" from "Task1"
+    Scenario Outline: Unassign all "DynaForm Demo1" from "Task1" and "Task 2"
         Given that I have a valid access_token
         And that I want to delete a resource with the key "step1" stored in session array
         Given that I want to delete a resource with the key "step_uid" stored in session array as variable "step_uid_<step_number>"
@@ -344,6 +359,8 @@ Feature: Project Properties - Step Resources Main Tests
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           |
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           |
         | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           |
+        | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           |
+
 
     
     Scenario Outline: List assigned Steps to "Task1" & "Task2" (empty)  (verify if everithing was deleted)
