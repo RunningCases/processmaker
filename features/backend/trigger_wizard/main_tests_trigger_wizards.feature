@@ -22,13 +22,13 @@ Feature: Group
         Examples:
         | i | lib_name       | lib_title                      | lib_class_name                       |
         | 0 | pmFunctions    | ProcessMaker Functions         | class.pmFunctions.php                |
-        | 1 | pmTrSharepoint | Sharepoint DWS Triggers v. 0.1 | class.pmTrSharepoint.pmFunctions.php | 
-        | 2 | pmSugar        | Sugar CRM Triggers             | class.pmSugar.pmFunctions.php        |
-        | 3 | pmTalend       | Talend ETL Integration         | class.pmTalend.pmFunctions.php       |
-        | 4 | pmZimbra       | Zimbra Triggers v. 0.1         | class.pmZimbra.pmFunctions.php       |
-        | 5 | pmTrAlfresco   | Alfresco DM Triggers v. 0.1    | class.pmTrAlfresco.pmFunctions.php   |
+        | 1 | pmTrSharepoint | Sharepoint DWS Triggers v. 0.1 | class.pmTrSharepoint.pmFunctions.php |        
+        | 2 | pmTrAlfresco   | Alfresco DM Triggers v. 0.1    | class.pmTrAlfresco.pmFunctions.php   |
+        | 3 | pmZimbra       | Zimbra Triggers v. 0.1         | class.pmZimbra.pmFunctions.php       |
+        | 4 | pmSugar        | Sugar CRM Triggers             | class.pmSugar.pmFunctions.php        |
+        | 5 | pmTalend       | Talend ETL Integration         | class.pmTalend.pmFunctions.php       |
         
-    
+
     Scenario Outline: Get a single Library
         And I request "project/14414793652a5d718b65590036026581/trigger-wizard/<lib_name>"
         And the content type is "application/json"
@@ -144,6 +144,43 @@ Scenario Outline: Create new Trigger: createDWS
         Examples:
         | i | lib_name       | fn_name   | tri_title      | tri_description | tri_type | tri_params.input.sharepointServer | tri_params.input.auth | tri_params.input.name | tri_params.input.users | tri_params.input.title | tri_params.input.documents | tri_params.output.tri_answer |
         | 1 | pmTrSharepoint | createDWS | Sharepoint 1   |                 | SCRIPT   | @@SERVER                          | username:password     | Test DWS              | @@users                | Test DWS               | /files/test.doc            | $respuesta                   |
+
+
+Scenario Outline: Create new Trigger: createDWS (no enviar campos no requeridos)
+        Given POST this data:
+        """
+        {
+            "tri_title": "<tri_title>",
+            "tri_description": "<tri_description>",
+            "tri_type": "<tri_type>",
+            "tri_params": {
+                    "input": {
+                    
+                    "sharepointServer": "<tri_params.input.sharepointServer>",
+                    "auth": "<tri_params.input.auth>",
+                    "name": "<tri_params.input.name>",
+                    "users": "<tri_params.input.users>",
+                    "title": "<tri_params.input.title>",
+                    "documents": "<tri_params.input.documents>"
+                    
+                },
+                "output": {
+                    "tri_answer": "<tri_params.output.tri_answer>"
+                }
+            }
+        }
+        """
+        And I request "project/14414793652a5d718b65590036026581/trigger-wizard/<lib_name>/<fn_name>"
+        And the content type is "application/json"
+        Then the response status code should be 201
+        And the response charset is "UTF-8"
+        And the type is "object"
+        And store "tri_uid" in session array as variable "tri_uid<i>"
+
+        Examples:
+        | i | lib_name       | fn_name   | tri_title      | tri_description | tri_type | tri_params.input.sharepointServer | tri_params.input.auth | tri_params.input.name | tri_params.input.users | tri_params.input.title | tri_params.input.documents | tri_params.output.tri_answer |
+        | 2 | pmTrSharepoint | createDWS | Sharepoint 1   |                 | SCRIPT   | @@SERVER                          | username:password     | Test DWS              | @@users                | Test DWS               | /files/test.doc            | $respuesta                   |
+
     
     Scenario Outline: Update Trigger
         Given PUT this data:
