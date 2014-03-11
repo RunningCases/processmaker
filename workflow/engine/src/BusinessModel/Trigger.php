@@ -120,7 +120,27 @@ class Trigger
     public function deleteTrigger($sTriggerUID = '')
     {
         $oTrigger = new \Triggers();
-        $triggerObj = $oTrigger->load( $sTriggerUID );
+        $oTrigger->load( $sTriggerUID );
+        $res = $oTrigger->verifyDependecies($sTriggerUID);
+        $messageEnd = '';
+        if ($res->code != 0) {
+            foreach ($res->dependencies as $Object => $aDeps) {
+                $nDeps = count( $aDeps );
+                $message = str_replace( '{N}', $nDeps, \G::LoadTranslation( 'ID_TRIGGERS_VALIDATION_ERR2' ) );
+                $message = str_replace( '{Object}', $Object, $message );
+                $messageEnd .= $message . "\n";
+                foreach ($aDeps as $dep) {
+                    if (substr( $Object, - 1 ) == 's') {
+                        $Object = substr( $Object, 0, strlen( $Object ) - 1 );
+                    }
+                    $message = str_replace( '{Object}', $Object, \G::LoadTranslation( 'ID_TRIGGERS_VALIDATION_ERR3' ) );
+                    $message = str_replace( '{Description}', '"' . $dep['DESCRIPTION'] . '"', $message );
+                    $messageEnd .= $message . "\n";
+                }
+                $messageEnd .= "\n";
+            }
+            throw new \Exception($messageEnd);
+        }
 
         $oTrigger->remove( $sTriggerUID );
         $oStepTrigger = new \StepTrigger();
