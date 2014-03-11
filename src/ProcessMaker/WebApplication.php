@@ -67,6 +67,7 @@ class WebApplication
             case self::SERVICE_API:
                 $request = $this->parseApiRequestUri();
                 $this->loadEnvironment($request["workspace"]);
+
                 Util\Logger::log("API::Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
                 $this->dispatchApiRequest($request["uri"], $request["version"]);
                 Util\Logger::log("API::End Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
@@ -279,10 +280,10 @@ class WebApplication
         \Bootstrap::registerClass('XmlForm_Field_SimpleText', PATH_GULLIVER . "class.xmlformExtension.php");
         \Bootstrap::registerClass('XmlForm_Field', PATH_GULLIVER . "class.xmlform.php");
 
-        \Bootstrap::registerDir('model', PATH_CORE . 'classes' . PATH_SEP . 'model');
-        \Bootstrap::registerDir('rbac/model', PATH_RBAC_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model');
+        //\Bootstrap::registerDir('model', PATH_CORE . 'classes' . PATH_SEP . 'model');
+        //\Bootstrap::registerDir('rbac/model', PATH_RBAC_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model');
 
-        \Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
+        //\Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
 
         \Bootstrap::registerSystemClasses();
 

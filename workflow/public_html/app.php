@@ -32,16 +32,17 @@ try {
 
     /** @var Composer\Autoload\ClassLoader $loader */
     $loader = include $rootDir . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
-    $loader->add('', $rootDir . 'src/');
-    $loader->add('', $rootDir . 'workflow/engine/src/');
-
-    \ProcessMaker\Util\Logger::log("---/Starts at: " . date("H:i:s:u"));
+    $loader->add("", $rootDir . 'src/');
+    $loader->add("", $rootDir . 'workflow/engine/src/');
+    $loader->add("", $rootDir . 'workflow/engine/classes/model/');
 
     $app = new ProcessMaker\WebApplication();
+
     $app->setRootDir($rootDir);
     $app->setRequestUri($_SERVER['REQUEST_URI']);
+    $stat = $app->route();
 
-    switch ($app->route())
+    switch ($stat)
     {
         case ProcessMaker\WebApplication::RUNNING_WORKFLOW:
             include "sysGeneric.php";
@@ -51,7 +52,6 @@ try {
             break;
     }
 
-    \ProcessMaker\Util\Logger::log("--//End at: " . date("H:i:s:u"));
 } catch (Exception $e) {
     die($e->getMessage());
 }
