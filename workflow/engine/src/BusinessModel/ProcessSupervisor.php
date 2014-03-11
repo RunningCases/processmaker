@@ -848,7 +848,6 @@ class ProcessSupervisor
      */
     public function removeInputDocumentSupervisor($sProcessUID, $sPuiUID)
     {
-        $oConnection = \Propel::getConnection(\StepSupervisorPeer::DATABASE_NAME);
         try {
             $oInputDocumentSupervidor = \StepSupervisorPeer::retrieveByPK($sPuiUID);
             if (!is_null($oInputDocumentSupervidor)) {
@@ -858,7 +857,6 @@ class ProcessSupervisor
                 throw (new \Exception('This row does not exist!'));
             }
         } catch (Exception $oError) {
-            $oConnection->rollback();
             throw ($oError);
         }
     }
