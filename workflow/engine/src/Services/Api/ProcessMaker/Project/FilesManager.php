@@ -151,6 +151,26 @@ class FilesManager extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+
+    /**
+     * @param string $prj_uid {@min 32} {@max 32}
+     * @param string $prf_uid {@min 32} {@max 32}
+     *
+     * @url GET /:prj_uid/file-manager/:prf_uid
+     *
+     */
+    public function doGetProcessFileManager($prj_uid, $prf_uid)
+    {
+        try {
+            $filesManager = new \BusinessModel\FilesManager();
+            $response = $filesManager->getProcessFileManager($prj_uid, $prf_uid);
+            //response
+            return $response;
+        } catch (\Exception $e) {
+            //response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
 }
 
 class ProcessFilesManagerStructurePost
