@@ -75,7 +75,7 @@ Feature: Project Properties - Step Resources Main Tests
         Then the response status code should be 400
         
 
-    Scenario Outline: Try delete a Output document when it is assigned to a step
+    Scenario: Try delete a Output document when it is assigned to a step
         Given that I want to delete a resource with the key "83199959452cd62589576c1018679557" stored in session array
         And I request "project/<project>/output-document"
         And the content type is "application/json"
