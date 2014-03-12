@@ -46,7 +46,7 @@ function loadEditor()
     }
     else if(dynEditorType == 'processMap3')
     {
-      window.location.href="@G::encryptLink(@#processMap3)?pro_uid=@%PRO_UID";
+      window.location.href="@G::encryptLink(@#processMap3)?prj_uid=@%PRO_UID";
       return true;
     }
     else if(dynEditorType == 'bpmn')
