@@ -108,21 +108,22 @@ Feature: Files Manager Resources Main Tests
 
 
   Scenario Outline: Get a single Files Manager and check some properties
-  Given I request "project/1265557095225ff5c688f46031700471/file-manager?path=<prf_path>"
+  Given that I want to get a resource with the key "prf_uid" stored in session array as variable "prf_uid_<prf_number>"
+  Given I request "project/1265557095225ff5c688f46031700471/file-manager"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "array"
-    And the "prf_filename" property in row <row> equals "<prf_filename>"
-    And the "prf_path" property in row <row> equals "<prf_path>"
-    And the "prf_content" property in row <row> equals "<prf_content>"
+    And the type is "object"
+    And that "prf_filename" is set to "<prf_filename>"
+    And that "prf_path" is set to "<prf_path>"
+    And that "prf_content" is set to "<prf_content>"
   
       Examples:
       | test_description                 | prf_filename      | prf_content                                  | http_code | type   | prf_number | row | prf_path                      |
       | put into public folder           | file_test_1.txt   | only text - modified                         | 200       | object | 0          | 1   | public/                       |
       | put into mailtemplates folder    | file_test_2.html  | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          | 1   | templates/                    |
-      | put into public subfolder        | file_test_3.txt   | put test                                     | 200       | object | 2          | 0   | public/public_subfolder       |
-      | put into mailtemplates subfolder | file_test_4.html  | put test                                     | 200       | object | 3          | 0   | templates/templates_subfolder |
+      | put into public subfolder        | file_test_3       | put test                                     | 200       | object | 2          | 0   | public/public_subfolder       |
+      | put into mailtemplates subfolder | file_test_4       | put test                                     | 200       | object | 3          | 0   | templates/templates_subfolder |
 
   
   Scenario Outline: Upload files to same folders
@@ -134,21 +135,25 @@ Feature: Files Manager Resources Main Tests
       |/home/wendy/uploadfiles/test1.html | templates | 4          | 
       |/home/wendy/uploadfiles/test2.html | templates | 5          |
       |/home/wendy/uploadfiles/test.txt   | public    | 6          |
+      |/home/wendy/uploadfiles/TestQA.html| templates | 7          |
 
 
-  Scenario: Upload files when the file already exists in the folder but with different content. must overwrite
-    Given POST I want to upload the file "/home/wendy/uploadfiles/TestQA.html" to path "templates". Url "project/1265557095225ff5c688f46031700471/file-manager"
-    Then the response status code should be 200
     
-  
-  Scenario: Get a single Files Manager and check some properties the overwritten file
-  Given I request "project/1265557095225ff5c688f46031700471/file-manager?path=templates"
+
+  Scenario Outline: Verify if TestQA was overwrited 
+  Given that I want to get a resource with the key "prf_uid" stored in session array as variable "prf_uid_<prf_number>"
+  Given I request "project/1265557095225ff5c688f46031700471/file-manager"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "array"
-    And the "prf_filename" property in row 4 equals "TestQA.html"
-    And the "prf_content" property in row 4 equals "Test QA -  cuando se realiza la sobreescritura desde upload"
+    And the type is "object"
+    And that "prf_filename" is set to "<prf_filename>"
+    And that "prf_content" is set to "<prf_content>"
+
+  Examples:
+      | prf_ filename | prf_content                                                 | prf_number |
+      | TestQA.html   | Test QA -  cuando se realiza la sobreescritura desde upload | 7          | 
+
    
 
   Scenario: Update the overwritten file to return to their original values
