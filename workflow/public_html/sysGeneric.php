@@ -277,7 +277,6 @@ define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/downlo
 try {
     Bootstrap::initVendors();
     $config = Bootstrap::getSystemConfiguration();
-    //var_dump($config); die;
 
     // starting session
     if (isset($config['session.gc_maxlifetime'])) {
