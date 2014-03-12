@@ -277,6 +277,7 @@ define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/downlo
 try {
     Bootstrap::initVendors();
     $config = Bootstrap::getSystemConfiguration();
+    //var_dump($config); die;
 
     // starting session
     if (isset($config['session.gc_maxlifetime'])) {
@@ -293,13 +294,14 @@ try {
     }
     //session_start();
 
-    $e_all = defined( 'E_DEPRECATED' ) ? E_ALL & ~ E_DEPRECATED : E_ALL;
-    $e_all = defined( 'E_STRICT' ) ? $e_all & ~ E_STRICT : $e_all;
-    $e_all = $config['debug'] ? $e_all : $e_all & ~ E_NOTICE;
+    //$e_all = defined( 'E_DEPRECATED' ) ? E_ALL & ~ E_DEPRECATED : E_ALL;
+    //$e_all = defined( 'E_STRICT' ) ? $e_all & ~ E_STRICT : $e_all;
+    //$e_all = $config['debug'] ? $e_all : $e_all & ~ E_NOTICE;
+    //$e_all = E_ALL & ~ E_DEPRECATED & ~ E_STRICT & ~ E_NOTICE  & ~E_WARNING; 
 
     // Do not change any of these settings directly, use env.ini instead
-    ini_set( 'display_errors', $config['debug'] );
-    ini_set( 'error_reporting', $e_all );
+    ini_set( 'display_errors', $config['display_errors']);
+    ini_set( 'error_reporting', $config['error_reporting']);
     ini_set( 'short_open_tag', 'On' );
     ini_set( 'default_charset', "UTF-8" );
     ini_set( 'memory_limit', $config['memory_limit'] );
