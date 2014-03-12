@@ -21,12 +21,12 @@ class Bootstrap
     {
         $className = strtolower($class);
 
-        if (array_key_exists($className, BootStrap::$includeClassPaths)) {
+        if (isset(BootStrap::$includeClassPaths[$className])) {
             require_once BootStrap::$includeClassPaths[$className];
 
             return true;
         }
-
+        return false;
         $classHasNamespaceSeparator = strpos($class, '\\') !== false ? true : false;
 
         foreach (BootStrap::$includePaths as $path) {
