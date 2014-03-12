@@ -30,13 +30,19 @@ try {
         );
     }
 
-    /** @var Composer\Autoload\ClassLoader $loader */
-    $loader = include $rootDir . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
-    $loader->add("", $rootDir . 'src/');
-    $loader->add("", $rootDir . 'workflow/engine/src/');
-    $loader->add("", $rootDir . 'workflow/engine/classes/model/');
+    require $rootDir . "framework/src/Maveriks/Util/ClassLoader.php";
 
-    $app = new ProcessMaker\WebApplication();
+    $loader = Maveriks\Util\ClassLoader::getInstance();
+    $loader->add($rootDir . 'framework/src/', "Maveriks");
+    $loader->add($rootDir . 'workflow/engine/src/', "ProcessMaker");
+    $loader->add($rootDir . 'workflow/engine/src/');
+    $loader->add($rootDir . 'workflow/engine/classes/model/');
+
+    // and vendors to autoloader
+    $loader->add($rootDir . 'vendor/luracast/restler/vendor', "Luracast");
+    $loader->add($rootDir . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
+
+    $app = new Maveriks\WebApplication();
 
     $app->setRootDir($rootDir);
     $app->setRequestUri($_SERVER['REQUEST_URI']);
@@ -44,14 +50,20 @@ try {
 
     switch ($stat)
     {
-        case ProcessMaker\WebApplication::RUNNING_WORKFLOW:
+        case Maveriks\WebApplication::RUNNING_WORKFLOW:
             include "sysGeneric.php";
             break;
-        case ProcessMaker\WebApplication::RUNNING_API:
-            $app->run(ProcessMaker\WebApplication::SERVICE_API);
+
+        case Maveriks\WebApplication::RUNNING_API:
+            $app->run(Maveriks\WebApplication::SERVICE_API);
             break;
     }
 
 } catch (Exception $e) {
-    die($e->getMessage());
+    $view = new Maveriks\Pattern\Mvc\PhtmlView($rootDir . "framework/src/templates/Exception.phtml");
+    $view->set("message", $e->getMessage());
+    $view->set("exception", $e);
+
+    $response = new Maveriks\Http\Response($view->getOutput(), 503);
+    $response->send();
 }
