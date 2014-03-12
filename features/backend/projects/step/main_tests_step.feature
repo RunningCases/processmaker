@@ -215,7 +215,7 @@ Feature: Project Properties - Step Resources Main Tests
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 24             | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
 
 
-Scenario Outline: Trigger assigned to the step when it was already assigned
+Scenario: Trigger assigned to the step when it was already assigned
        Given POST this data:
         """
         {
