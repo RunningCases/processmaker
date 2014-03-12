@@ -98,14 +98,14 @@ class Department
      */
     public function saveDepartment($dep_data, $create = true)
     {
-        $dep_data = array_change_key_case($dep_data, CASE_UPPER);
+        Validator::isArray($dep_data, '$dep_data');
+        Validator::isNotEmpty($dep_data, '$dep_data');
+        Validator::isBoolean($create, '$create');
 
+        $dep_data = array_change_key_case($dep_data, CASE_UPPER);
         $oDepartment = new \Department();
         if (isset($dep_data['DEP_UID']) && $dep_data['DEP_UID'] != '') {
             Validator::depUid($dep_data['DEP_UID']);
-        }
-        if (isset($dep_data['DEP_TITLE'])) {
-            Validator::depTitle($dep_data['DEP_TITLE']);
         }
         if (isset($dep_data['DEP_PARENT']) && $dep_data['DEP_PARENT'] != '') {
             Validator::depUid($dep_data['DEP_PARENT'], 'dep_parent');
@@ -119,9 +119,17 @@ class Department
 
         if (!$create) {
             $dep_data['DEPO_TITLE'] = $dep_data['DEP_TITLE'];
+            if (isset($dep_data['DEP_TITLE'])) {
+                Validator::depTitle($dep_data['DEP_TITLE'], $dep_data['DEP_UID']);
+            }
             $oDepartment->update($dep_data);
             $oDepartment->updateDepartmentManager($dep_data['DEP_UID']);
         } else {
+            if (isset($dep_data['DEP_TITLE'])) {
+                Validator::depTitle($dep_data['DEP_TITLE']);
+            } else {
+                throw (new \Exception("The field dep_title is required."));
+            }
             $dep_uid = $oDepartment->create($dep_data);
             $response = $this->getDepartment($dep_uid);
             return $response;
@@ -141,6 +149,10 @@ class Department
     public function deleteDepartment($dep_uid)
     {
         $dep_uid = Validator::depUid($dep_uid);
+        $dep_data = $this->getDepartment($dep_uid);
+        if ($dep_data['has_children'] != 0) {
+            throw (new \Exception("Can not delete the department. The department has children"));
+        }
         $oDepartment = new \Department();
         $oDepartment->remove($dep_uid);
     }
