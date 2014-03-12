@@ -9,8 +9,7 @@ namespace BusinessModel;
  *
  * @protected
  */
-class Validator
-{
+class Validator{
     /**
      * Validate dep_uid
      * @var string $dep_uid. Uid for Departament
@@ -119,6 +118,57 @@ class Validator
             throw (new \Exception("The user with $nameField: '$usr_uid' does not exist."));
         }
         return $usr_uid;
+    }
+
+    /**
+     * Validate is array
+     * @var array $field. Field type array
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    static public function isArray($field, $nameField)
+    {
+        if (!is_array($field)) {
+            throw (new \Exception("The field '$nameField' is not an array."));
+        }
+    }
+
+    /**
+     * Validate is boolean
+     * @var boolean $field. Field type boolean
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    static public function isBoolean($field, $nameField)
+    {
+        if (!is_bool($field)) {
+            throw (new \Exception("The field '$nameField' is not a boolean."));
+        }
+    }
+
+    /**
+     * Validate is boolean
+     * @var boolean $field. Field type boolean
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    static public function isNotEmpty($field, $nameField)
+    {
+        if (empty($field)) {
+            throw (new \Exception("The field '$nameField' is empty."));
+        }
     }
 }
 
