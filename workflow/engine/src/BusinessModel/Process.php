@@ -238,7 +238,7 @@ class Process
                             switch ($arrayFieldDefinition[$fieldName]["type"]) {
                                 case "array":
                                     if (!is_array($fieldValue)) {
-                                        if (!preg_match("/^\s*array\s*\(.*\)\s*$/", $fieldValue)) {
+                                        if ((!preg_match("/^\s*array\s*\(.*\)\s*$/", $fieldValue)) && $fieldValue != '') {
                                             throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is not array")));
                                         }
                                     }

@@ -37,7 +37,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      *
      * @covers \BusinessModel\Department::saveDepartment
      * @expectedException        Exception
-     * @expectedExceptionMessage The field '$dep_data' is not an array.
+     * @expectedExceptionMessage Invalid value for '$dep_data' it must be an array.
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -52,7 +52,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      *
      * @covers \BusinessModel\Department::saveDepartment
      * @expectedException        Exception
-     * @expectedExceptionMessage The field '$create' is not a boolean.
+     * @expectedExceptionMessage Invalid value for '$create' it must be a boolean.
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -171,7 +171,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      * @param array $dep_data, Data for parent department
      * @covers \BusinessModel\Department::saveDepartment
      * @expectedException        Exception
-     * @expectedExceptionMessage The departament with dep_title: 'Departamento Padre' exist.
+     * @expectedExceptionMessage The departament with dep_title: 'Departamento Padre' already exists.
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -237,7 +237,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      * @param array $child_data, Data for child department
      * @covers \BusinessModel\Department::saveDepartment
      * @expectedException        Exception
-     * @expectedExceptionMessage The departament with dep_title: 'Departamento Padre' exist.
+     * @expectedExceptionMessage The departament with dep_title: 'Departamento Padre' already exists.
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -321,7 +321,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      * @param array $child_data, Data for child department
      * @covers \BusinessModel\Department::deleteDepartment
      * @expectedException        Exception
-     * @expectedExceptionMessage Can not delete the department. The department has children
+     * @expectedExceptionMessage Can not delete the department, it has a children department.
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
