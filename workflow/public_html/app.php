@@ -57,6 +57,15 @@ try {
         case Maveriks\WebApplication::RUNNING_API:
             $app->run(Maveriks\WebApplication::SERVICE_API);
             break;
+
+        case Maveriks\WebApplication::RUNNING_INDEX:
+            $response = new Maveriks\Http\Response(file_get_contents("index.html"), 302);
+            $response->send();
+            break;
+
+        case Maveriks\WebApplication::RUNNING_DEFAULT:
+            $app->run(Maveriks\WebApplication::REDIRECT_DEFAULT);
+            break;
     }
 
 } catch (Exception $e) {

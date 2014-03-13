@@ -9,10 +9,13 @@ class WebApplication
     protected $workflowDir = "";
     protected $requestUri = "";
 
+    const RUNNING_DEFAULT = "default.running";
+    const RUNNING_INDEX = "index.running";
     const RUNNING_WORKFLOW = "workflow.running";
     const RUNNING_API = "api.running";
-    const SERVICE_API = "service.api";
 
+    const SERVICE_API = "service.api";
+    const REDIRECT_DEFAULT = "redirect.default";
 
     public function __construct()
     {
@@ -54,7 +57,13 @@ class WebApplication
 
     public function route()
     {
-        if (substr($this->requestUri, 1, 3) == "api") {
+        if ($this->requestUri === "/") {
+            if (file_exists("index.html")) {
+                return self::RUNNING_INDEX;
+            } else {
+                return self::RUNNING_DEFAULT;
+            }
+        } elseif (substr($this->requestUri, 1, 3) === "api") {
             return self::RUNNING_API;
         } else {
             return self::RUNNING_WORKFLOW;
@@ -64,6 +73,10 @@ class WebApplication
     public function run($type = "")
     {
         switch ($type) {
+            case self::REDIRECT_DEFAULT:
+                //TODO we can set a configurable redirect url
+                header("location: /sys/en/neoclassic/login/login");
+                break;
             case self::SERVICE_API:
                 $request = $this->parseApiRequestUri();
                 $this->loadEnvironment($request["workspace"]);
@@ -289,6 +302,15 @@ class WebApplication
 
 
         $config = \System::getSystemConfiguration();
+
+        // Do not change any of these settings directly, use env.ini instead
+        ini_set( 'display_errors', $config['display_errors']);
+        ini_set( 'error_reporting', $config['error_reporting']);
+        ini_set( 'short_open_tag', 'On' ); // ??
+        ini_set( 'default_charset', "UTF-8" ); // ??
+        ini_set( 'memory_limit', $config['memory_limit'] );
+        ini_set( 'soap.wsdl_cache_enabled', $config['wsdl_cache'] );
+        ini_set( 'date.timezone', $config['time_zone'] );
 
         define('DEBUG_SQL_LOG', $config['debug_sql']);
         define('DEBUG_TIME_LOG', $config['debug_time']);
