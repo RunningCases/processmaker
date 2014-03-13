@@ -66,7 +66,10 @@ class System
         'proxy_user' => '',
         'proxy_pass' => '',
         'size_log_file' => 5000000,
-        'number_log_file' => 5
+        'number_log_file' => 5,
+        'ie_cookie_lifetime' => 1,
+        'error_reporting' => "",
+        'display_errors' => 'On'
     );
 
     /**
@@ -1088,7 +1091,13 @@ class System
             }
         }
 
-        // default configuration
+        // default configuration for "error_reporting" conf
+        if (empty(self::$defaultConfig["error_reporting"])) {
+            $errorReportingDefault = defined('E_DEPRECATED') ? E_ALL  & ~E_DEPRECATED : E_ALL;
+            $errorReportingDefault = defined('E_STRICT') ? $errorReportingDefault  & ~E_STRICT : $errorReportingDefault;
+            self::$defaultConfig["error_reporting"] = $errorReportingDefault;
+        }
+
         $config = self::$defaultConfig;
 
         // read the global env.ini configuration file
