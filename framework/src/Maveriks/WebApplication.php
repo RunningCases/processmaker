@@ -303,6 +303,15 @@ class WebApplication
 
         $config = \System::getSystemConfiguration();
 
+        // Do not change any of these settings directly, use env.ini instead
+        ini_set( 'display_errors', $config['display_errors']);
+        ini_set( 'error_reporting', $config['error_reporting']);
+        ini_set( 'short_open_tag', 'On' ); // ??
+        ini_set( 'default_charset', "UTF-8" ); // ??
+        ini_set( 'memory_limit', $config['memory_limit'] );
+        ini_set( 'soap.wsdl_cache_enabled', $config['wsdl_cache'] );
+        ini_set( 'date.timezone', $config['time_zone'] );
+
         define('DEBUG_SQL_LOG', $config['debug_sql']);
         define('DEBUG_TIME_LOG', $config['debug_time']);
         define('DEBUG_CALENDAR_LOG', $config['debug_calendar']);
