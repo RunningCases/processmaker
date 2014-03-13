@@ -75,7 +75,7 @@ Feature: Project Properties - Step Resources Main Tests
         Then the response status code should be 400
         
 
-    Scenario Outline: Try delete a Output document when it is assigned to a step
+    Scenario: Try delete a Output document when it is assigned to a step
         Given that I want to delete a resource with the key "83199959452cd62589576c1018679557" stored in session array
         And I request "project/<project>/output-document"
         And the content type is "application/json"
@@ -215,7 +215,7 @@ Feature: Project Properties - Step Resources Main Tests
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 24             | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
 
 
-Scenario Outline: Trigger assigned to the step when it was already assigned
+Scenario: Trigger assigned to the step when it was already assigned
        Given POST this data:
         """
         {
