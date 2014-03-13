@@ -9,10 +9,13 @@ class WebApplication
     protected $workflowDir = "";
     protected $requestUri = "";
 
+    const RUNNING_DEFAULT = "default.running";
+    const RUNNING_INDEX = "index.running";
     const RUNNING_WORKFLOW = "workflow.running";
     const RUNNING_API = "api.running";
-    const SERVICE_API = "service.api";
 
+    const SERVICE_API = "service.api";
+    const REDIRECT_DEFAULT = "redirect.default";
 
     public function __construct()
     {
@@ -54,7 +57,13 @@ class WebApplication
 
     public function route()
     {
-        if (substr($this->requestUri, 1, 3) == "api") {
+        if ($this->requestUri === "/") {
+            if (file_exists("index.html")) {
+                return self::RUNNING_INDEX;
+            } else {
+                return self::RUNNING_DEFAULT;
+            }
+        } elseif (substr($this->requestUri, 1, 3) === "api") {
             return self::RUNNING_API;
         } else {
             return self::RUNNING_WORKFLOW;
@@ -64,6 +73,10 @@ class WebApplication
     public function run($type = "")
     {
         switch ($type) {
+            case self::REDIRECT_DEFAULT:
+                //TODO we can set a configurable redirect url
+                header("location: /sys/en/neoclassic/login/login");
+                break;
             case self::SERVICE_API:
                 $request = $this->parseApiRequestUri();
                 $this->loadEnvironment($request["workspace"]);
