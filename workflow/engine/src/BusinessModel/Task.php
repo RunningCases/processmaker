@@ -2,6 +2,7 @@
 namespace BusinessModel;
 
 use \G;
+use \ProcessMaker\Util;
 
 class Task
 {
@@ -461,14 +462,6 @@ class Task
 
             //Array DB
             $arraydbStep = array();
-
-            $arraydbStep[] = array(
-                $this->getFieldNameByFormatFieldName("OBJ_UID")         => "char",
-                $this->getFieldNameByFormatFieldName("OBJ_TITLE")       => "char",
-                $this->getFieldNameByFormatFieldName("OBJ_DESCRIPTION") => "char",
-                $this->getFieldNameByFormatFieldName("OBJ_TYPE")        => "char"
-            );
-
             $delimiter = \DBAdapter::getStringDelimiter();
 
             //DynaForms
@@ -619,32 +612,15 @@ class Task
                 }
             }
 
-            \G::LoadClass("ArrayPeer");
-
-            global $_DBArray;
-
-            $_DBArray = (isset($_SESSION["_DBArray"]))? $_SESSION["_DBArray"] : "";
-            $_DBArray["STEP"] = $arraydbStep;
-
-            $_SESSION["_DBArray"] = $_DBArray;
-
-            $criteria = new \Criteria("dbarray");
-
-            $criteria->setDBArrayTable("STEP");
-            $criteria->addAscendingOrderByColumn($this->getFieldNameByFormatFieldName("OBJ_TYPE"));
-            $criteria->addAscendingOrderByColumn($this->getFieldNameByFormatFieldName("OBJ_TITLE"));
-
-            $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            while ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-
-                $arrayAvailableStep[] = $row;
+            if (! empty($arraydbStep)) {
+                $arraydbStep = Util\ArrayUtil::sort(
+                    $arraydbStep,
+                    array($this->getFieldNameByFormatFieldName("OBJ_TYPE"), $this->getFieldNameByFormatFieldName("OBJ_TITLE")),
+                    SORT_ASC
+                );
             }
 
-            //Return
-            return $arrayAvailableStep;
+            return $arraydbStep;
         } catch (\Exception $e) {
             throw $e;
         }
