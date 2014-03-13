@@ -151,7 +151,7 @@ class Department
         $dep_uid = Validator::depUid($dep_uid);
         $dep_data = $this->getDepartment($dep_uid);
         if ($dep_data['has_children'] != 0) {
-            throw (new \Exception("Can not delete the department. The department has children"));
+            throw (new \Exception("Can not delete the department, it has a children department."));
         }
         $oDepartment = new \Department();
         $oDepartment->remove($dep_uid);
