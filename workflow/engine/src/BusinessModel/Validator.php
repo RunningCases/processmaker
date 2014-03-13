@@ -70,7 +70,7 @@ class Validator{
         $oDataset = \DepartmentPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
         if ($oDataset->next()) {
-            throw (new \Exception("The departament with dep_title: '$dep_title' exist."));
+            throw (new \Exception("The departament with dep_title: '$dep_title' already exists."));
         }
         return $dep_title;
     }
@@ -133,7 +133,7 @@ class Validator{
     static public function isArray($field, $nameField)
     {
         if (!is_array($field)) {
-            throw (new \Exception("The field '$nameField' is not an array."));
+            throw (new \Exception("Invalid value for '$nameField' it must be an array."));
         }
     }
 
@@ -150,7 +150,7 @@ class Validator{
     static public function isBoolean($field, $nameField)
     {
         if (!is_bool($field)) {
-            throw (new \Exception("The field '$nameField' is not a boolean."));
+            throw (new \Exception("Invalid value for '$nameField' it must be a boolean."));
         }
     }
 

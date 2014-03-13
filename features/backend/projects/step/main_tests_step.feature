@@ -67,6 +67,21 @@ Feature: Project Properties - Step Resources Main Tests
         Then the response status code should be 400
         And the response status message should have the following text "exists"
 
+    
+    Scenario: Try delete a Input Document when it is assigned to a step
+        And that I want to delete a resource with the key "32743823452cd63105006e1076595203" stored in session array
+        And I request "project/14414793652a5d718b65590036026581/input-document"
+        And the content type is "application/json"
+        Then the response status code should be 400
+        
+
+    Scenario: Try delete a Output document when it is assigned to a step
+        Given that I want to delete a resource with the key "83199959452cd62589576c1018679557" stored in session array
+        And I request "project/<project>/output-document"
+        And the content type is "application/json"
+        Then the response status code should be 400
+          
+
 
     Scenario Outline: Update the five steps and then check if the values had changed
       Given PUT this data:
@@ -200,8 +215,22 @@ Feature: Project Properties - Step Resources Main Tests
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 24             | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
 
 
+Scenario: Trigger assigned to the step when it was already assigned
+       Given POST this data:
+        """
+        {
+            "tri_uid": "81919273152cd636c665080083928728",
+            "st_type": "BEFORE",
+            "st_condition": "",
+            "st_position": "1"
+        }
+        """
+        And I request "project/16062437052cd6141881e06088349078/activity/10163687452cd6234e0dd25086954968/step/50332332752cd9b9a7cc989003652905/trigger" with the key "step_uid" stored in session array
+        Then the response status code should be 400
+        And the response status message should have the following text "exists"
 
-Scenario Outline: Delete all Triggers created previously in this script
+
+    Scenario Outline: Try delete a trigger when it is assigned to a step
       Given that I want to delete a "trigger"
         And I request "project/<project>/trigger/<tri_uid>"
         Then the response status code should be 400
@@ -210,9 +239,9 @@ Scenario Outline: Delete all Triggers created previously in this script
 
         Examples:
 
-        | project                          | tri_uid  |
-        | 16062437052cd6141881e06088349078 | 81919273152cd636c665080083928728           |
-        | 16062437052cd6141881e06088349078 | 57401970252cd6393531551040242546           |
+        | project                          | tri_uid                          |
+        | 16062437052cd6141881e06088349078 | 81919273152cd636c665080083928728 |
+        | 16062437052cd6141881e06088349078 | 57401970252cd6393531551040242546 |
     
 
     Scenario Outline: List available Triggers for each assigned step

@@ -52,12 +52,16 @@ out("generating files for ", 'purple', false);
 out( $debug ? 'debug' : 'production', 'success', false);
 out(" mode", 'purple');
 
+$hashVendors = '';
+$hashes = array();
 foreach ($projects as $project) {
     echo PHP_EOL;
     out("=> Building project: ", 'info', false);
     $output = array();
     echo $project.' '.PHP_EOL;
     chdir($vendorDir.DS.$project);
+    exec ('git rev-parse --short HEAD', $hashes);
+
     if ($debug) {
         exec ('rake pmBuildDebug', $output, $exitCode );
     } else {
@@ -80,6 +84,8 @@ foreach ($projects as $project) {
     }
 
 }
+//get the hash for all vendor projects
+$hashVendors = implode ('-', $hashes );
 
 //the script is completed if the option is Debug = 1
 if ($debug) {
@@ -152,14 +158,16 @@ $jsFiles = array (
     "gulliver/js/codemirror/mode/clike/clike.js",
     "gulliver/js/codemirror/mode/php/php.js",
 );
-$bigHandler = fopen ("{$rootPath}/workflow/public_html/lib/js/big.js", "w");
+
+
+$bigHandler = fopen ("{$rootPath}/workflow/public_html/lib/js/mafe-{$hashVendors}.js", "w");
 foreach ($jsFiles as $jsFile) {
     $fileContent = file_get_contents("{$rootPath}/$jsFile");
     fprintf($bigHandler, "%s\n\n", $fileContent);
     printf (" - File %s added to big.js\n", basename($jsFile));
 }
 fclose ($bigHandler);
-printf ( "big.js file has %d bytes\n", filesize("{$rootPath}/workflow/public_html/lib/js/big.js"));
+printf ( "mafe-{$hashVendors}.js file has %d bytes\n", filesize("{$rootPath}/workflow/public_html/lib/js/mafe-{$hashVendors}.js"));
 
 
 
@@ -175,15 +183,16 @@ $cssFiles = array (
     "gulliver/js/tinymce/jscripts/tiny_mce/plugins/inlinepopups/skins/clearlooks2/window.css",
     "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/o2k7/content.css"
 );
-$bigHandler = fopen ("{$rootPath}/workflow/public_html/lib/css/big.css", "w");
+$bigHandler = fopen ("{$rootPath}/workflow/public_html/lib/css/mafe-{$hashVendors}.css", "w");
 foreach ($cssFiles as $cssFile) {
     $fileContent = file_get_contents("{$rootPath}/$cssFile");
     fprintf($bigHandler, "%s\n\n", $fileContent);
     printf (" - File %s added to big.css\n", basename($cssFile));
 }
 fclose ($bigHandler);
-printf ( "big.css file has %d bytes\n", filesize("{$rootPath}/workflow/public_html/lib/css/big.css"));
+printf ( "mafe-{$hashVendors}.css file has %d bytes\n", filesize("{$rootPath}/workflow/public_html/lib/css/mafe-{$hashVendors}.css"));
 
+file_put_contents("{$rootPath}/workflow/public_html/lib/buildhash", $hashVendors);
 echo PHP_EOL;
 
 
