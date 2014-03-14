@@ -5,6 +5,8 @@ class ClassLoader
 {
     private static $includePath = array();
     private static $includePathNs = array();
+    private static $includeModelPath = array();
+    private static $includeClassPath = array();
     protected static $instance;
 
     /**
@@ -60,6 +62,22 @@ class ClassLoader
         }
     }
 
+    public function addModelClassPath($classPath)
+    {
+        self::$includeModelPath[] = $classPath;
+    }
+
+    public function addClass($class, $path)
+    {
+        self::$includeClassPath[$class] = $path;
+    }
+
+    /**
+     * Loads the given class or interface.
+     *
+     * @param string $className The name of the class to load.
+     * @return void
+     */
     function loadClass($className)
     {
         $classPath  = str_replace(NS, DS, $className);
@@ -78,9 +96,25 @@ class ClassLoader
             }
         }
 
+        if (isset(self::$includeClassPath[$className]) && file_exists(self::$includeClassPath[$className])) {
+            require self::$includeClassPath[$className];
+        }
+
+        foreach (self::$includeModelPath as $path) {
+            if (file_exists($path.$className.".php")) {
+                require $path.$className.".php";
+                return true;
+            } elseif (file_exists($path."om".DS.$className.".php")) {
+                require $path."om".DS.$className.".php";
+                return true;
+            } elseif (file_exists($path."map".DS.$className.".php")) {
+                require $path."map".DS.$className.".php";
+                return true;
+            }
+        }
+
         foreach (self::$includePath as $path) {
             $filename = $path . $classPath . ".php";
-            //var_dump($filename);
 
             if (file_exists($filename)) {
                 require $filename;
@@ -91,27 +125,6 @@ class ClassLoader
         return false;
     }
 
-    /**
-     * Loads the given class or interface.
-     *
-     * @param string $className The name of the class to load.
-     * @return void
-     */
-    public function loadClass2($className)
-    {
-        if (null === $this->_namespace || $this->_namespace.$this->_namespaceSeparator === substr($className, 0, strlen($this->_namespace.$this->_namespaceSeparator))) {
-            $fileName = '';
-            $namespace = '';
 
-            if (false !== ($lastNsPos = strripos($className, $this->_namespaceSeparator))) {
-                $namespace = substr($className, 0, $lastNsPos);
-                $className = substr($className, $lastNsPos + 1);
-                $fileName = str_replace($this->_namespaceSeparator, DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
-            }
 
-            $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . $this->_fileExtension;
-
-            require ($this->_includePath !== null ? $this->_includePath . DIRECTORY_SEPARATOR : '') . $fileName;
-        }
-    }
 }
