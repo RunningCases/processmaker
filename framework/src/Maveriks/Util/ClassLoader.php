@@ -69,7 +69,7 @@ class ClassLoader
 
     public function addClass($class, $path)
     {
-        self::$includeClassPath[$class] = $path;
+        self::$includeClassPath[strtolower($class)] = $path;
     }
 
     /**
@@ -96,8 +96,8 @@ class ClassLoader
             }
         }
 
-        if (isset(self::$includeClassPath[$className]) && file_exists(self::$includeClassPath[$className])) {
-            require self::$includeClassPath[$className];
+        if (isset(self::$includeClassPath[strtolower($className)]) && file_exists(self::$includeClassPath[strtolower($className)])) {
+            require self::$includeClassPath[strtolower($className)];
         }
 
         foreach (self::$includeModelPath as $path) {
