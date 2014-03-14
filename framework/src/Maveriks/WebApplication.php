@@ -280,23 +280,6 @@ class WebApplication
         define('PATH_CONTROLLERS', PATH_CORE . 'controllers' . PATH_SEP);
         define('PATH_SERVICES_REST', PATH_CORE . 'services' . PATH_SEP . 'rest' . PATH_SEP);
 
-        require_once PATH_GULLIVER . PATH_SEP . 'class.bootstrap.php';
-
-        spl_autoload_register(array("Bootstrap", "autoloadClass"));
-
-//        \Bootstrap::registerClass("G", PATH_GULLIVER . "class.g.php");
-//        \Bootstrap::registerClass("System", PATH_HOME . "engine/classes/class.system.php");
-
-        // define autoloading for others
-//        \Bootstrap::registerClass("wsBase", PATH_HOME . "engine/classes/class.wsBase.php");
-//        \Bootstrap::registerClass('Xml_Node', PATH_GULLIVER . "class.xmlDocument.php");
-//        \Bootstrap::registerClass('XmlForm_Field_TextPM', PATH_HOME . "engine/classes/class.XmlForm_Field_TextPM.php");
-//        \Bootstrap::registerClass('XmlForm_Field_SimpleText', PATH_GULLIVER . "class.xmlformExtension.php");
-//        \Bootstrap::registerClass('XmlForm_Field', PATH_GULLIVER . "class.xmlform.php");
-
-
-
-        //\Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
 
         \Bootstrap::registerSystemClasses();
 
@@ -333,22 +316,35 @@ class WebApplication
          * Setting Up Workspace
          */
 
+        if (! file_exists( FILE_PATHS_INSTALLED )) {
+            throw new \Exception("Can't locate system file: " . FILE_PATHS_INSTALLED);
+        }
+
         // include the server installed configuration
-        require_once PATH_CORE . 'config' . PATH_SEP . 'paths_installed.php';
+        require_once FILE_PATHS_INSTALLED;
+
+        // defining system constant when a valid server environment exists
+        define('PATH_LANGUAGECONT', PATH_DATA . "META-INF" . PATH_SEP );
+        define('PATH_CUSTOM_SKINS', PATH_DATA . 'skins' . PATH_SEP );
+        define('PATH_TEMPORAL', PATH_C . 'dynEditor/');
+        define('PATH_DB', PATH_DATA . 'sites' . PATH_SEP);
 
         define('SYS_SYS', $workspace);
 
-        // defining system constant when a valid server environment exists
-        define( 'PATH_LANGUAGECONT', PATH_DATA . "META-INF" . PATH_SEP );
-        define( 'PATH_CUSTOM_SKINS', PATH_DATA . 'skins' . PATH_SEP );
-        define( 'PATH_TEMPORAL', PATH_C . 'dynEditor/' );
-        define( 'PATH_DB', PATH_DATA . 'sites' . PATH_SEP );
+        if (! file_exists( PATH_DB . SYS_SYS . '/db.php' )) {
+            throw new \Exception(\G::loadTranslation('ID_NOT_WORKSPACE'));
+        }
+        require_once (PATH_DB . SYS_SYS . '/db.php');
 
-        $workspaceDir = PATH_DB . $workspace;
+        // defining constant for workspace shared directory
+        define('PATH_WORKSPACE', PATH_DB . SYS_SYS . PATH_SEP);
+        // including workspace shared classes -> particularlly for pmTables
+
+        set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);
 
         // smarty constants
-        define( 'PATH_SMARTY_C', PATH_C . 'smarty' . PATH_SEP . 'c' );
-        define( 'PATH_SMARTY_CACHE', PATH_C . 'smarty' . PATH_SEP . 'cache' );
+//        define( 'PATH_SMARTY_C', PATH_C . 'smarty' . PATH_SEP . 'c' );
+//        define( 'PATH_SMARTY_CACHE', PATH_C . 'smarty' . PATH_SEP . 'cache' );
 
 
         //***************** PM Paths DATA **************************
