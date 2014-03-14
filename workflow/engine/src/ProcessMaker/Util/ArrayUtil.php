@@ -73,13 +73,18 @@ class ArrayUtil
 
         if (is_array($direction)) {
             if (count($direction) !== count($columns)) {
-                throw new \Exception("Error, \$columns length and \$direction length must be equals.");
+                echo "PHP Warning:  ProcessMaker\\Util\\ArrayUtil::sort(): Argument (array)#2 and Argument (array)#3 lengths must be equals.";
+                return false;
             }
         }
 
         foreach ($data as $row) {
             $j = 0;
             foreach ($columns as $i => $col) {
+                if (! isset($row[$col])) {
+                    echo "PHP Warning:  ProcessMaker\\Util\\ArrayUtil::sort(): Undefined key: $col, is set on Argument (array)#2, it must be set on Argument (array)#1";
+                    return false;
+                }
                 $composedData[$j++][] = $row[$col];
                 $composedData[$j++] = is_array($direction) ? $direction[$i] : $direction;
             }
@@ -87,7 +92,22 @@ class ArrayUtil
 
         $composedData[] = & $data;
 
-        call_user_func_array("array_multisort", $composedData);
+        if (PHP_VERSION_ID < 54000) {
+            switch (count($columns)) {
+                case 1: array_multisort($composedData[0], $composedData[1], $composedData[2]); break;
+                case 2: array_multisort($composedData[0], $composedData[1], $composedData[2], $composedData[3], $composedData[4]); break;
+                case 3: array_multisort($composedData[0], $composedData[1], $composedData[2], $composedData[3], $composedData[4],
+                    $composedData[5], $composedData[6]); break;
+                case 4: array_multisort($composedData[0], $composedData[1], $composedData[2], $composedData[3], $composedData[4],
+                    $composedData[5],$composedData[6], $composedData[7], $composedData[8]); break;
+                case 5: array_multisort($composedData[0], $composedData[1], $composedData[2], $composedData[3], $composedData[4],
+                    $composedData[5],$composedData[6], $composedData[7], $composedData[8], $composedData[9], $composedData[10]); break;
+                default:
+                    return false;
+            }
+        } else {
+            call_user_func_array("array_multisort", $composedData);
+        }
 
         return $data;
     }
