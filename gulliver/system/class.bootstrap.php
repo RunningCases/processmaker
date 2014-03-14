@@ -27,34 +27,12 @@ class Bootstrap
             return true;
         }
         return false;
-        $classHasNamespaceSeparator = strpos($class, '\\') !== false ? true : false;
-
-        foreach (BootStrap::$includePaths as $path) {
-            if ($classHasNamespaceSeparator) {
-                $classPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
-            } else {
-                $classPath = str_replace('_', DIRECTORY_SEPARATOR, $class);
-            }
-
-            $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-            $classFile = $path . $classPath . '.php';
-
-            if (file_exists($classFile)) {
-                require_once $classFile;
-
-                return true;
-            }
-        }
-
-        //error_log(' ==> CLass not found: ' . $class);
-
-        return false;
     }
 
-    public static function registerClass($classname, $includeFile)
+    public static function registerClass($className, $includePath)
     {
-        BootStrap::$includeClassPaths[strtolower($classname)] = $includeFile;
-        return;
+        $loader = Maveriks\Util\ClassLoader::getInstance();
+        $loader->addClass($className, $includePath);
     }
 
     public static function registerDir($name, $dir)
@@ -78,249 +56,213 @@ class Bootstrap
 
     public static function registerSystemClasses()
     {
+        // Propel
         self::registerClass("Propel", PATH_THIRDPARTY . "propel" . PATH_SEP . "Propel.php");
         self::registerClass("Creole", PATH_THIRDPARTY . "creole" . PATH_SEP . "Creole.php");
         self::registerClass("Criteria", PATH_THIRDPARTY . "propel" . PATH_SEP . "util" . PATH_SEP . "Criteria.php");
         self::registerClass("BasePeer", PATH_THIRDPARTY . "propel" . PATH_SEP . "util" . PATH_SEP . "BasePeer.php");
 
-        //DATABASE propel classes used in "Cases" Options
-        self::registerClass("Entity_Base", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "entities" . PATH_SEP . "Base.php");
+        // Gulliver
+        self::registerClass("PmSessionHandler", PATH_GULLIVER_HOME . "core/Session/PmSessionHandler.php");
 
-        self::registerClass("BaseContent", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseContent.php");
-        self::registerClass("Content", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Content.php");
-        self::registerClass("BaseContentPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseContentPeer.php");
-        self::registerClass("ContentPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ContentPeer.php");
-        self::registerClass("BaseApplication", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseApplication.php");
-        self::registerClass("ApplicationPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ApplicationPeer.php");
-        self::registerClass("Application", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Application.php");
-
-        self::registerClass("BaseAppDelegation", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppDelegation.php");
-        self::registerClass("BaseHoliday", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseHoliday.php");
-        self::registerClass("BaseHolidayPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseHolidayPeer.php");
-        self::registerClass("BaseTask", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseTask.php");
-        self::registerClass("BaseTaskPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseTaskPeer.php");
-        self::registerClass("HolidayPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "HolidayPeer.php");
-        self::registerClass("Holiday", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Holiday.php");
-        self::registerClass("Task", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Task.php");
-        self::registerClass("TaskPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskPeer.php");
-        self::registerClass("dates", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.dates.php");
-        self::registerClass("AppDelegation", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppDelegation.php");
-        self::registerClass("BaseAppDelegationPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppDelegationPeer.php");
-        self::registerClass("AppDelegationPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppDelegationPeer.php");
-        self::registerClass("BaseAppDelay", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppDelay.php");
-        self::registerClass("AppDelayPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppDelayPeer.php");
-        self::registerClass("AppDelay", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppDelay.php");
-        self::registerClass("BaseAdditionalTables", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAdditionalTables.php");
-        self::registerClass("AdditionalTables", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AdditionalTables.php");
-        self::registerClass("AdditionalTablesPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AdditionalTablesPeer.php");
-        self::registerClass("BaseAppCacheView", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppCacheView.php");
-        self::registerClass("AppCacheView", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppCacheView.php");
-        self::registerClass("BaseAppCacheViewPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppCacheViewPeer.php");
-        self::registerClass("AppCacheViewPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppCacheViewPeer.php");
-
-        self::registerClass("BaseInputDocument", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseInputDocument.php");
-        self::registerClass("InputDocument", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "InputDocument.php");
-        self::registerClass("BaseAppDocument", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppDocument.php");
-        self::registerClass("AppDocument", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppDocument.php");
-        self::registerClass("AppDocumentPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppDocumentPeer.php");
-
-        self::registerClass("BaseAppEvent", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppEvent.php");
-        self::registerClass("AppEvent", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppEvent.php");
-        self::registerClass("AppEventPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppEventPeer.php");
-
-        self::registerClass("BaseAppHistory", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppHistory.php");
-        self::registerClass("AppHistory", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppHistory.php");
-        self::registerClass("AppHistoryPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppHistoryPeer.php");
-
-        self::registerClass("BaseAppFolder", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppFolder.php");
-        self::registerClass("AppFolder", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppFolder.php");
-        self::registerClass("AppFolderPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppFolderPeer.php");
-
-        self::registerClass("BaseAppMessage", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppMessage.php");
-        self::registerClass("AppMessage", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppMessage.php");
-
-        self::registerClass("BaseAppMessagePeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppMessagePeer.php");
-        self::registerClass("AppMessagePeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppMessagePeer.php");
-
-        self::registerClass("BaseAppNotesPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppNotesPeer.php");
-        self::registerClass("AppNotesPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppNotesPeer.php");
-
-        self::registerClass("BaseAppNotes", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppNotes.php");
-        self::registerClass("AppNotes", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppNotes.php");
-
-        self::registerClass("BaseAppOwner", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppOwner.php");
-        self::registerClass("AppOwner", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppOwner.php");
-        self::registerClass("AppOwnerPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppOwnerPeer.php");
-
-        self::registerClass("BaseAppSolrQueue", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppSolrQueue.php");
-        self::registerClass("Entity_SolrRequestData", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "entities" . PATH_SEP . "SolrRequestData.php");
-        self::registerClass("Entity_SolrUpdateDocument", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "entities" . PATH_SEP . "SolrUpdateDocument.php");
-        self::registerClass("Entity_AppSolrQueue", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "entities" . PATH_SEP . "AppSolrQueue.php");
-        self::registerClass("AppSolrQueue", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppSolrQueue.php");
-        self::registerClass("AppSolrQueuePeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppSolrQueuePeer.php");
-
-        self::registerClass("BaseAppThread", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseAppThread.php");
-        self::registerClass("AppThread", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppThread.php");
-        self::registerClass("AppThreadPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AppThreadPeer.php");
-
-        self::registerClass("BaseCaseScheduler", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseCaseScheduler.php");
-        self::registerClass("CaseScheduler", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "CaseScheduler.php");
-
-        self::registerClass("BaseCaseSchedulerPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseCaseSchedulerPeer.php");
-        self::registerClass("CaseSchedulerPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "CaseSchedulerPeer.php");
-
-        self::registerClass("BaseCaseTracker", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseCaseTracker.php");
-        self::registerClass("CaseTracker", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "CaseTracker.php");
-
-        self::registerClass("BaseCaseTrackerPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseCaseTrackerPeer.php");
-        self::registerClass("CaseTrackerPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "CaseTrackerPeer.php");
-
-        self::registerClass("BaseCaseTrackerObject", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseCaseTrackerObject.php");
-        self::registerClass("CaseTrackerObject", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "CaseTrackerObject.php");
-
-        self::registerClass("BaseCaseTrackerObjectPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseCaseTrackerObjectPeer.php");
-        self::registerClass("CaseTrackerObjectPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "CaseTrackerObjectPeer.php");
-
-        self::registerClass("BaseConfiguration", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseConfiguration.php");
-        self::registerClass("Configuration", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Configuration.php");
-
-        self::registerClass("BaseDbSource", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseDbSource.php");
-        self::registerClass("DbSource", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "DbSource.php");
-
-        self::registerClass("XMLDB", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.xmlDb.php");
+        self::registerClass("Bootstrap", PATH_GULLIVER . "class.bootstrap.php");
+        self::registerClass("Controller", PATH_GULLIVER . "class.controller.php");
+        self::registerClass("database_base", PATH_GULLIVER . "class.database_base.php");
+        self::registerClass("database", PATH_GULLIVER . "class.database_mssql.php");
+        self::registerClass("database", PATH_GULLIVER . "class.database_mysql.php");
+        self::registerClass("DataBaseMaintenance", PATH_GULLIVER . "class.dbMaintenance.php");
+        self::registerClass("DBConnection", PATH_GULLIVER . "class.dbconnection.php");
+        self::registerClass("DBRecordSet", PATH_GULLIVER . "class.dbrecordset.php");
+        self::registerClass("DBSession", PATH_GULLIVER . "class.dbsession.php");
+        self::registerClass("DBTable", PATH_GULLIVER . "class.dbtable.php");
+        self::registerClass("XmlForm_Field_HTML", PATH_GULLIVER . "class.dvEditor.php");
         self::registerClass("dynaFormHandler", PATH_GULLIVER . "class.dynaformhandler.php");
-        self::registerClass("DynaFormField", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.dynaFormField.php");
-        self::registerClass("BaseDynaform", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseDynaform.php");
-        self::registerClass("Dynaform", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Dynaform.php");
-        self::registerClass("DynaformPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "DynaformPeer.php");
-
-        self::registerClass("BaseEvent", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseEvent.php");
-        self::registerClass("Event", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Event.php");
-
-        self::registerClass("BaseEventPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseEventPeer.php");
-        self::registerClass("EventPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "EventPeer.php");
-
-        self::registerClass("BaseFields", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseFields.php");
-        self::registerClass("Fields", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Fields.php");
-
-        self::registerClass("BaseGateway", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseGateway.php");
-        self::registerClass("Gateway", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Gateway.php");
-
-        self::registerClass("BaseGroupUser", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseGroupUser.php");
-        self::registerClass("Groupwf", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Groupwf.php");
-        self::registerClass("GroupUser", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
-
-        self::registerClass("BaseGroupUserPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseGroupUserPeer.php");
-        self::registerClass("GroupUserPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUserPeer.php");
-
-        self::registerClass("BaseGroupwfPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseGroupwfPeer.php");
-        self::registerClass("GroupwfPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupwfPeer.php");
-
-        self::registerClass("BaseInputDocumentPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseInputDocumentPeer.php");
-        self::registerClass("InputDocumentPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "InputDocumentPeer.php");
-
-        self::registerClass("BaseIsoCountry", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseIsoCountry.php");
-        self::registerClass("IsoCountry", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "IsoCountry.php");
-        self::registerClass("BaseTranslation", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseTranslation.php");
-        self::registerClass("Translation", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Translation.php");
-        self::registerClass("BaseLanguage", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseLanguage.php");
-        self::registerClass("Language", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Language.php");
-
-        self::registerClass("BaseLogCasesScheduler", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseLogCasesScheduler.php");
-        self::registerClass("LogCasesScheduler", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "LogCasesScheduler.php");
-
-        self::registerClass("BaseObjectPermission", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseObjectPermission.php");
-        self::registerClass("ObjectPermission", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ObjectPermission.php");
-        self::registerClass("ObjectPermissionPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ObjectPermissionPeer.php");
-
-        self::registerClass("BaseOutputDocument", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseOutputDocument.php");
-        self::registerClass("OutputDocument", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "OutputDocument.php");
-        self::registerClass("OutputDocumentPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "OutputDocumentPeer.php");
-
-        self::registerClass("BaseProcess", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseProcess.php");
-        self::registerClass("BaseProcessCategory", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseProcessCategory.php");
-        self::registerClass("ProcessCategory", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ProcessCategory.php");
-        self::registerClass("ProcessCategoryPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ProcessCategoryPeer.php");
-        self::registerClass("ProcessPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ProcessPeer.php");
-        self::registerClass("Process", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Process.php");
-
-        self::registerClass("BaseProcessUser", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseProcessUser.php");
-        self::registerClass("ProcessUser", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ProcessUser.php");
-
-        self::registerClass("BaseProcessUserPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseProcessUserPeer.php");
-        self::registerClass("ProcessUserPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ProcessUserPeer.php");
-
-        self::registerClass("BaseReportTable", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseReportTable.php");
-        self::registerClass("ReportTable", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ReportTable.php");
-        self::registerClass("ReportTablePeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ReportTablePeer.php");
-
-        self::registerClass("BaseReportVar", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseReportVar.php");
-        self::registerClass("ReportVar", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ReportVar.php");
-
-        self::registerClass("BaseReportVarPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseReportVarPeer.php");
-        self::registerClass("ReportVarPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ReportVarPeer.php");
-
-        self::registerClass("BaseRoute", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseRoute.php");
-        self::registerClass("Route", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Route.php");
-        self::registerClass("RoutePeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RoutePeer.php");
-
-        self::registerClass("BaseStep", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseStep.php");
-        self::registerClass("Step", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Step.php");
-        self::registerClass("StepPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "StepPeer.php");
-
-        self::registerClass("BaseStepSupervisor", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseStepSupervisor.php");
-        self::registerClass("StepSupervisor", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "StepSupervisor.php");
-
-        self::registerClass("BaseStepSupervisorPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseStepSupervisorPeer.php");
-        self::registerClass("StepSupervisorPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "StepSupervisorPeer.php");
-
-        self::registerClass("BaseStepTrigger", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseStepTrigger.php");
-        self::registerClass("StepTrigger", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "StepTrigger.php");
-        self::registerClass("StepTriggerPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "StepTriggerPeer.php");
-
-        self::registerClass("BaseSwimlanesElements", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseSwimlanesElements.php");
-        self::registerClass("SwimlanesElements", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "SwimlanesElements.php");
-        self::registerClass("BaseSwimlanesElementsPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseSwimlanesElementsPeer.php");
-        self::registerClass("SwimlanesElementsPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "SwimlanesElementsPeer.php");
-
-        self::registerClass("BaseSubApplication", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseSubApplication.php");
-        self::registerClass("SubApplication", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "SubApplication.php");
-        self::registerClass("SubApplicationPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "SubApplicationPeer.php");
-
-        self::registerClass("BaseSubProcess", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseSubProcess.php");
-        self::registerClass("SubProcess", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "SubProcess.php");
-
-        self::registerClass("BaseSubProcessPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseSubProcessPeer.php");
-        self::registerClass("SubProcessPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "SubProcessPeer.php");
-
-        self::registerClass("BaseTask", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseTask.php");
-        self::registerClass("Task", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Task.php");
-
-        self::registerClass("BaseTaskUser", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseTaskUser.php");
-        self::registerClass("TaskUserPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUserPeer.php");
-        self::registerClass("TaskUser", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
-
-        self::registerClass("BaseTriggers", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseTriggers.php");
-        self::registerClass("Triggers", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Triggers.php");
-        self::registerClass("BaseTriggersPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseTriggersPeer.php");
-        self::registerClass("TriggersPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TriggersPeer.php");
-
-        self::registerClass("BaseUsers", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseUsers.php");
-        self::registerClass("IsoCountry", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "IsoCountry.php");
-        self::registerClass("BaseIsoSubdivision", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseIsoSubdivision.php");
-        self::registerClass("IsoSubdivision", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "IsoSubdivision.php");
-        self::registerClass("BaseIsoLocation", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseIsoLocation.php");
-        self::registerClass("IsoLocation", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "IsoLocation.php");
-        self::registerClass("Users", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
-        self::registerClass("UsersPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "UsersPeer.php");
-        self::registerClass("ReportTables", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.reportTables.php");
-        self::registerClass("PMPluginRegistry", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.pluginRegistry.php");
-
+        self::registerClass("G_Error", PATH_GULLIVER . "class.error.php");
+        self::registerClass("filterForm", PATH_GULLIVER . "class.filterForm.php");
+        self::registerClass("Form", PATH_GULLIVER . "class.form.php");
+        self::registerClass("functionTest", PATH_GULLIVER . "class.functionTest.php");
+        self::registerClass("G", PATH_GULLIVER . "class.g.php");
+        self::registerClass("headPublisher", PATH_GULLIVER . "class.headPublisher.php");
+        self::registerClass("Helper", PATH_GULLIVER . "class.helper.php");
+        self::registerClass("XmlForm_Field_HTML", PATH_GULLIVER . "class.htmlArea.php");
+        self::registerClass("HttpProxyController", PATH_GULLIVER . "class.httpProxyController.php");
+        self::registerClass("i18n_PO", PATH_GULLIVER . "class.i18n_po.php");
+        self::registerClass("InputFilter", PATH_GULLIVER . "class.inputfilter.php");
+        self::registerClass("Logger", PATH_GULLIVER . "class.logger.php");
+        self::registerClass("mailer", PATH_GULLIVER . "class.mailer.php");
+        self::registerClass("Menu", PATH_GULLIVER . "class.menu.php");
+        self::registerClass("objectTemplate", PATH_GULLIVER . "class.objectTemplate.php");
+        self::registerClass("pagedTable", PATH_GULLIVER . "class.pagedTable.php");
+        self::registerClass("PHPSQLParser", PATH_GULLIVER . "class.phpSqlParser.php");
+        self::registerClass("PMException", PATH_GULLIVER . "class.pmException.php");
+        self::registerClass("Publisher", PATH_GULLIVER . "class.publisher.php");
+        self::registerClass("RBAC", PATH_GULLIVER . "class.rbac.php");
+        self::registerClass("RestClient", PATH_GULLIVER . "class.restClient.php");
+        self::registerClass("soapNtlm", PATH_GULLIVER . "class.soapNtlm.php");
+        self::registerClass("NTLMSoapClient", PATH_GULLIVER . "class.soapNtlm.php");
+        self::registerClass("PMServiceNTLMSoapClient", PATH_GULLIVER . "class.soapNtlm.php");
+        self::registerClass("PMServiceProviderNTLMStream", PATH_GULLIVER . "class.soapNtlm.php");
+        self::registerClass("Table", PATH_GULLIVER . "class.table.php");
+        self::registerClass("TemplatePowerParser", PATH_GULLIVER . "class.templatePower.php");
+        self::registerClass("TemplatePower", PATH_GULLIVER . "class.templatePower.php");
+        self::registerClass("testTools", PATH_GULLIVER . "class.testTools.php");
+        self::registerClass("Tree", PATH_GULLIVER . "class.tree.php");
+        self::registerClass("unitTest", PATH_GULLIVER . "class.unitTest.php");
+        self::registerClass("WebResource", PATH_GULLIVER . "class.webResource.php");
+        self::registerClass("XmlForm_Field_WYSIWYG_EDITOR", PATH_GULLIVER . "class.wysiwygEditor.php");
         self::registerClass("Xml_Node", PATH_GULLIVER . "class.xmlDocument.php");
+        self::registerClass("Xml_document", PATH_GULLIVER . "class.xmlDocument.php");
+        self::registerClass("xmlMenu", PATH_GULLIVER . "class.xmlMenu.php");
+        self::registerClass("XmlForm_Field_XmlMenu", PATH_GULLIVER . "class.xmlMenu.php");
+        self::registerClass("XmlForm_Field", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Title", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Subtitle", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_SimpleText", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Text", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Suggest", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Print", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Caption", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Password", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Textarea", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Currency", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_CaptionCurrency", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Percentage", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_CaptionPercentage", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Date2", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_DateView", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_YesNo", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Link", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_File", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Dropdownpt", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Checkboxpt", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Checkbox", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Checkbox2", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Button", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Reset", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Submit", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Hidden", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Dropdown", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Listbox", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_RadioGroup", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_RadioGroupView", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_CheckGroup", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_CheckGroupView", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Grid", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_JavaScript", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Date", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Date5", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Xmlform", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("xmlformTemplate", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Image", PATH_GULLIVER . "class.xmlform.php");
+        self::registerClass("XmlForm_Field_Label", PATH_GULLIVER . "class.xmlformExtension.php");
+        self::registerClass("XmlForm_Field_cellMark", PATH_GULLIVER . "class.xmlformExtension.php");
+        self::registerClass("XmlForm_Field_DVEditor", PATH_GULLIVER . "class.xmlformExtension.php");
+        self::registerClass("XmlForm_Field_FastSearch", PATH_GULLIVER . "class.xmlformExtension.php");
+        self::registerClass("ymlDomain", PATH_GULLIVER . "class.ymlDomain.php");
+        self::registerClass("ymlTestCases", PATH_GULLIVER . "class.ymlTestCases.php");
 
-        self::registerClass("Tasks",  PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.tasks.php");
-        self::registerClass("Processes",  PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.processes.php");
-
+        // ProcessMaker classes
+        self::registerClass("InvalidIndexSearchTextException", PATH_CLASSES . "class.AppSolr.php");
+        self::registerClass("ApplicationWithoutDelegationRecordsException", PATH_CLASSES . "class.AppSolr.php");
+        self::registerClass("ApplicationWithCorruptDynaformException", PATH_CLASSES . "class.AppSolr.php");
+        self::registerClass("ApplicationAPP_DATAUnserializeException", PATH_CLASSES . "class.AppSolr.php");
+        self::registerClass("AppSolr", PATH_CLASSES . "class.AppSolr.php");
+        self::registerClass("ArrayBasePeer", PATH_CLASSES . "class.ArrayPeer.php");
+        self::registerClass("GulliverBasePeer", PATH_CLASSES . "class.BasePeer.php");
+        self::registerClass("Installer", PATH_CLASSES . "class.Installer.php");
+        self::registerClass("Applications", PATH_CLASSES . "class.applications.php");
+        self::registerClass("archive", PATH_CLASSES . "class.archive.php");
+        self::registerClass("tar_file", PATH_CLASSES . "class.archive.php");
+        self::registerClass("gzip_file", PATH_CLASSES . "class.archive.php");
+        self::registerClass("bzip_file", PATH_CLASSES . "class.archive.php");
+        self::registerClass("zip_file", PATH_CLASSES . "class.archive.php");
+        self::registerClass("calendar", PATH_CLASSES . "class.calendar.php");
+        self::registerClass("Cases", PATH_CLASSES . "class.case.php");
+        self::registerClass("CLI", PATH_CLASSES . "class.cli.php");
+        self::registerClass("Configurations", PATH_CLASSES . "class.configuration.php");
+        self::registerClass("dashletOpenVSCompleted", PATH_CLASSES . "class.dashletOpenVSCompleted.php");
+        self::registerClass("dashletProcessMakerCommunity", PATH_CLASSES . "class.dashletProcessMakerCommunity.php");
+        self::registerClass("dashletProcessMakerEnterprise", PATH_CLASSES . "class.dashletProcessMakerEnterprise.php");
+        self::registerClass("dashletRssReader", PATH_CLASSES . "class.dashletRssReader.php");
+        self::registerClass("dates", PATH_CLASSES . "class.dates.php");
+        self::registerClass("dbConnections", PATH_CLASSES . "class.dbConnections.php");
+        self::registerClass("Derivation", PATH_CLASSES . "class.derivation.php");
+        self::registerClass("DynaFormField", PATH_CLASSES . "class.dynaFormField.php");
+        self::registerClass("dynaformEditor", PATH_CLASSES . "class.dynaformEditor.php");
+        self::registerClass("dynaformEditorAjax", PATH_CLASSES . "class.dynaformEditor.php");
+        self::registerClass("FieldValidator", PATH_CLASSES . "class.fieldValidator.php");
+        self::registerClass("FileCache", PATH_CLASSES . "class.fileCache.php");
+        self::registerClass("GroupUser", PATH_CLASSES . "class.groupUser.php");
+        self::registerClass("Groups", PATH_CLASSES . "class.groups.php");
+        self::registerClass("JavaBridgePM", PATH_CLASSES . "class.javaBridgePM.php");
+        self::registerClass("Jrml", PATH_CLASSES . "class.jrml.php");
+        self::registerClass("PMmemcached", PATH_CLASSES . "class.memcached.php");
+        self::registerClass("multipleFilesBackup", PATH_CLASSES . "class.multipleFilesBackup.php");
+        self::registerClass("NET", PATH_CLASSES . "class.net.php");
+        self::registerClass("Stat", PATH_CLASSES . "class.net.php");
+        self::registerClass("patch", PATH_CLASSES . "class.patch.php");
+        self::registerClass("p11835", PATH_CLASSES . "class.patch.php");
+        self::registerClass("PMPlugin", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("menuDetail", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("toolbarDetail", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("cssFile", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("triggerDetail", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("folderDetail", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("stepDetail", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("redirectDetail", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("folderData", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("uploadDocumentData", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("loginInfo", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("caseSchedulerPlugin", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("taskExtendedProperty", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("dashboardPage", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("cronFile", PATH_CLASSES . "class.plugin.php");
+        self::registerClass("pluginDetail", PATH_CLASSES . "class.pluginRegistry.php");
+        self::registerClass("PMPluginRegistry", PATH_CLASSES . "class.pluginRegistry.php");
+        self::registerClass("PMDashlet", PATH_CLASSES . "class.pmDashlet.php");
+        self::registerClass("pmGauge", PATH_CLASSES . "class.pmGauge.php");
+        self::registerClass("pmPhing", PATH_CLASSES . "class.pmPhing.php");
+        self::registerClass("PMScript", PATH_CLASSES . "class.pmScript.php");
+        self::registerClass("PmTable", PATH_CLASSES . "class.pmTable.php");
+        self::registerClass("popupMenu", PATH_CLASSES . "class.popupMenu.php");
+        self::registerClass("XmlForm_Field_popupOption", PATH_CLASSES . "class.popupMenu.php");
+        self::registerClass("processMap", PATH_CLASSES . "class.processMap.php");
+        self::registerClass("Processes", PATH_CLASSES . "class.processes.php");
+        self::registerClass("ObjectDocument", PATH_CLASSES . "class.processes.php");
+        self::registerClass("ObjectCellection", PATH_CLASSES . "class.processes.php");
+        self::registerClass("propelTable", PATH_CLASSES . "class.propelTable.php");
+        self::registerClass("replacementLogo", PATH_CLASSES . "class.replacementLogo.php");
+        self::registerClass("Report", PATH_CLASSES . "class.report.php");
+        self::registerClass("ReportTables", PATH_CLASSES . "class.reportTables.php");
+        self::registerClass("BpmnEngine_Services_SearchIndex", PATH_CLASSES . "class.searchIndex.php");
+        self::registerClass("serverConf", PATH_CLASSES . "class.serverConfiguration.php");
+        self::registerClass("Sessions", PATH_CLASSES . "class.sessions.php");
+        self::registerClass("BpmnEngine_SearchIndexAccess_Solr", PATH_CLASSES . "class.solr.php");
+        self::registerClass("spoolRun", PATH_CLASSES . "class.spool.php");
+        self::registerClass("System", PATH_CLASSES . "class.system.php");
+        self::registerClass("Tasks", PATH_CLASSES . "class.tasks.php");
+        self::registerClass("ToolBar", PATH_CLASSES . "class.toolBar.php");
+        self::registerClass("XmlForm_Field_ToolBar", PATH_CLASSES . "class.toolBar.php");
+        self::registerClass("XmlForm_Field_toolButton", PATH_CLASSES . "class.toolBar.php");
+        self::registerClass("triggerLibrary", PATH_CLASSES . "class.triggerLibrary.php");
+        self::registerClass("ProcessMakerWebDav", PATH_CLASSES . "class.webdav.php");
+        self::registerClass("wsBase", PATH_CLASSES . "class.wsBase.php");
+        self::registerClass("wsResponse", PATH_CLASSES . "class.wsResponse.php");
+        self::registerClass("wsCreateUserResponse", PATH_CLASSES . "class.wsResponse.php");
+        self::registerClass("wsCreateGroupResponse", PATH_CLASSES . "class.wsResponse.php");
+        self::registerClass("wsCreateDepartmentResponse", PATH_CLASSES . "class.wsResponse.php");
+        self::registerClass("wsGetVariableResponse", PATH_CLASSES . "class.wsResponse.php");
+        self::registerClass("wsGetCaseNotesResponse", PATH_CLASSES . "class.wsResponse.php");
+        self::registerClass("workspaceTools", PATH_CLASSES . "class.wsTools.php");
+        self::registerClass("XMLDB", PATH_CLASSES . "class.xmlDb.php");
+        self::registerClass("XMLConnection", PATH_CLASSES . "class.xmlDb.php");
+        self::registerClass("XMLResult", PATH_CLASSES . "class.xmlDb.php");
+        self::registerClass("XmlForm_Field_Image", PATH_CLASSES . "class.xmlfield_Image.php");
+        self::registerClass("XmlForm_Field_TextPM", PATH_CLASSES . "class.xmlfield_InputPM.php");
+        self::registerClass("XmlForm_Field_TextareaPM", PATH_CLASSES . "class.xmlfield_InputPM.php");
+        self::registerClass("XmlForm_Field_hours", PATH_CLASSES . "class.xmlfield_InputPM.php");
+        self::registerClass("XmlForm_Field_CheckBoxTable", PATH_CLASSES . "class.xmlfield_InputPM.php");
     }
 
     //below this line, still not approved methods
@@ -626,7 +568,7 @@ class Bootstrap
      * @param string $urlLink
      * @return string
      */
-    static public function parseURI($uri, $isRestRequest = false)
+    static public function parseURI($uri)
     {
         // *** process the $_POST with magic_quotes enabled
         // The magic_quotes_gpc feature has been DEPRECATED as of PHP 5.3.0.
@@ -635,11 +577,7 @@ class Bootstrap
         }
 
         $aRequestUri = explode('/', $uri);
-        if ($isRestRequest) {
-            $args = self::parseRestUri($aRequestUri);
-        } else {
-            $args = self::parseNormalUri($aRequestUri);
-        }
+        $args = self::parseNormalUri($aRequestUri);
 
         if (! empty($args)) {
             define("SYS_LANG", $args ['SYS_LANG']);
@@ -1005,147 +943,6 @@ class Bootstrap
             $res .= $strPath . "/";
         }
         return $res;
-    }
-
-    /**
-     * This method dispatch rest/api service
-     *
-     * @author Erik Amaru Ortiz <erik@colosa.com>
-     * @param $uri
-     * @param string $version
-     */
-    public function dispatchApiService($uri, $version = '1.0')
-    {
-        // to handle a request with "OPTIONS" method
-
-        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-            header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, HEADERS');
-            header('Access-Control-Allow-Headers: authorization, content-type');
-            header("Access-Control-Allow-Credentials", "false");
-            header('Access-Control-Max-Age: 60');
-            die();
-        }
-
-        /*
-         * Enable this header to allow "Cross Domain AJAX" requests;
-         * This works because processmaker is handling correctly requests with method 'OPTIONS'
-         * that automatically is sent by a client using XmlHttpRequest or similar.
-         */
-        header('Access-Control-Allow-Origin: *');
-
-        /*
-         * $servicesDir contains directory where Services Classes are allocated
-         */
-        $servicesDir = PATH_CORE . 'src' . PATH_SEP . 'Services' . PATH_SEP;
-        /*
-         * $apiDir - contains directory to scan classes and add them to Restler
-         */
-        $apiDir = $servicesDir . 'Api' . PATH_SEP;
-        /*
-         * $apiIniFile - contains file name of api ini configuration
-         */
-        $apiIniFile = $servicesDir . PATH_SEP . 'api.ini';
-        /*
-         * $authenticationClass - contains the class name that validate the authentication for Restler
-         */
-        $authenticationClass = 'Services\\Api\\OAuth2\\Server';
-        /*
-         * $pmOauthClientId - contains PM Local OAuth Id (Web Designer)
-         */
-        $pmOauthClientId = 'x-pm-local-client';
-
-        /*
-         * Load Api ini file for Rest Service
-         */
-        $apiIniConf = array();
-        if (file_exists($apiIniFile)) {
-            $apiIniConf = self::parseIniFile($apiIniFile);
-        }
-
-        // Setting current workspace to Api class
-        \ProcessMaker\Services\Api::setWorkspace(SYS_SYS);
-        // TODO remove this setting on the future, it is not needed, but if it is not present is throwing a warning
-        Luracast\Restler\Format\HtmlFormat::$viewPath = $servicesDir . 'oauth2/views';
-
-        // create a new Restler instance
-        $rest = new Luracast\Restler\Restler();
-        // setting api version to Restler
-        $rest->setAPIVersion($version);
-        // adding $authenticationClass to Restler
-        $rest->addAuthenticationClass($authenticationClass, '');
-
-        // Setting database connection source
-        list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
-        $port = empty($port) ? '' : ";port=$port";
-        \Services\Api\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
-
-        // Setting default OAuth Client id, for local PM Web Designer
-        \Services\Api\OAuth2\Server::setPmClientId($pmOauthClientId);
-
-        require_once PATH_CORE . "src/Extension/Restler/UploadFormat.php";
-        //require_once PATH_CORE
-
-        //$rest->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');
-        //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
-        $rest->setOverridingFormats('JsonFormat', 'UploadFormat');
-
-        // Override $_SERVER['REQUEST_URI'] to Restler handles the current url correctly
-
-        $isPluginRequest = strpos($uri, '/plugin-') !== false ? true : false;
-
-        if ($isPluginRequest) {
-            $tmp = explode('/', $uri);
-            array_shift($tmp);
-            $tmp = array_shift($tmp);
-            $tmp = explode('-', $tmp);
-            $pluginName = $tmp[1];
-            $uri = str_replace('/plugin-'.$pluginName, '', $uri);
-        }
-
-        $_SERVER['REQUEST_URI'] = $uri;
-
-        if (! $isPluginRequest) { // if it is not a request for a plugin endpoint
-            // scan all api directory to find api classes
-            $classesList = Bootstrap::rglob('*', 0, $apiDir);
-
-            foreach ($classesList as $classFile) {
-                if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
-                    $namespace = '\\Services\\' . str_replace(
-                        DIRECTORY_SEPARATOR,
-                        '\\',
-                        str_replace('.php', '', str_replace($servicesDir, '', $classFile))
-                    );
-                    //var_dump($namespace);
-                    $rest->addAPIClass($namespace);
-                }
-            }
-
-            // adding aliases for Restler
-            if (array_key_exists('alias', $apiIniConf)) {
-                foreach ($apiIniConf['alias'] as $alias => $aliasData) {
-                    if (is_array($aliasData)) {
-                        foreach ($aliasData as $label => $namespace) {
-                            $namespace = '\\' . ltrim($namespace, '\\');
-                            $rest->addAPIClass($namespace, $alias);
-                        }
-                    }
-                }
-            }
-        } else {
-            // hook to get rest api classes from plugins
-            if (class_exists('PMPluginRegistry')) {
-                $pluginRegistry = & PMPluginRegistry::getSingleton();
-                $plugins = $pluginRegistry->getRegisteredRestServices();
-
-                if (is_array($plugins) && array_key_exists($pluginName, $plugins)) {
-                    foreach ($plugins[$pluginName] as $class) {
-                        $rest->addAPIClass($class['namespace']);
-                    }
-                }
-            }
-        }
-
-        $rest->handle();
     }
 
     /**
@@ -2255,50 +2052,6 @@ class Bootstrap
 
         $a_mobile_data = array($mobile_device, $mobile_browser, $mobile_browser_number, $mobile_os, $mobile_os_number, $mobile_server, $mobile_server_number, $mobile_device_number);
         return $a_mobile_data;
-    }
-
-    /**
-     * This function parse a particular api/rest request
-     *
-     * Example url:
-     * GET /api/workflowdemo/user/rol?id=0000000000000000001
-     * POST /api/workflowdemo/cases
-     *
-     * - These urls are equivalents
-     *    GET /api/<workspaceName>/cases/start
-     *    GET /<workspaceName>-api/cases/start
-     *
-     * @param $url
-     * @return array return url parsed data
-     */
-    public function parseRestUri($url)
-    {
-        array_shift($url);
-        $sysTemp = array_shift($url);
-
-        if ($sysTemp != 'api') {
-            return array();
-        }
-
-        $apiVersion = array_shift($url);
-        $sysTemp = array_shift($url);
-
-        define('SYS_TEMP', $sysTemp);
-        $restUri = '';
-
-        foreach ($url as $urlPart) {
-            $restUri .= '/' . $urlPart;
-        }
-
-        $env = self::getSystemConfiguration();
-
-        $args['SYS_LANG'] = 'en'; // TODO, this can be set from http header
-        $args['SYS_SKIN'] = $env['default_skin'];
-        $args['SYS_COLLECTION'] = '';
-        $args['SYS_TARGET'] = $restUri;
-        $args['API_VERSION'] = $apiVersion;
-
-        return $args;
     }
 
     /**
