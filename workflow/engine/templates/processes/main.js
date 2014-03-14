@@ -564,7 +564,7 @@ function saveProcess()
       if (projectType == 'classicProject') {
         location.href = 'processes_Map?PRO_UID='+resp.result.PRO_UID;
       } else {
-        location.href = '../designer?pro_uid='+resp.result.PRO_UID;
+        location.href = '../designer?prj_uid='+resp.result.PRO_UID;
       }
     },
     failure: function(obj, resp) {
