@@ -568,7 +568,7 @@ class Bootstrap
      * @param string $urlLink
      * @return string
      */
-    static public function parseURI($uri, $isRestRequest = false)
+    static public function parseURI($uri)
     {
         // *** process the $_POST with magic_quotes enabled
         // The magic_quotes_gpc feature has been DEPRECATED as of PHP 5.3.0.
@@ -577,11 +577,7 @@ class Bootstrap
         }
 
         $aRequestUri = explode('/', $uri);
-        if ($isRestRequest) {
-            $args = self::parseRestUri($aRequestUri);
-        } else {
-            $args = self::parseNormalUri($aRequestUri);
-        }
+        $args = self::parseNormalUri($aRequestUri);
 
         if (! empty($args)) {
             define("SYS_LANG", $args ['SYS_LANG']);
@@ -947,147 +943,6 @@ class Bootstrap
             $res .= $strPath . "/";
         }
         return $res;
-    }
-
-    /**
-     * This method dispatch rest/api service
-     *
-     * @author Erik Amaru Ortiz <erik@colosa.com>
-     * @param $uri
-     * @param string $version
-     */
-    public function dispatchApiService($uri, $version = '1.0')
-    {
-        // to handle a request with "OPTIONS" method
-
-        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-            header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, HEADERS');
-            header('Access-Control-Allow-Headers: authorization, content-type');
-            header("Access-Control-Allow-Credentials", "false");
-            header('Access-Control-Max-Age: 60');
-            die();
-        }
-
-        /*
-         * Enable this header to allow "Cross Domain AJAX" requests;
-         * This works because processmaker is handling correctly requests with method 'OPTIONS'
-         * that automatically is sent by a client using XmlHttpRequest or similar.
-         */
-        header('Access-Control-Allow-Origin: *');
-
-        /*
-         * $servicesDir contains directory where Services Classes are allocated
-         */
-        $servicesDir = PATH_CORE . 'src' . PATH_SEP . 'Services' . PATH_SEP;
-        /*
-         * $apiDir - contains directory to scan classes and add them to Restler
-         */
-        $apiDir = $servicesDir . 'Api' . PATH_SEP;
-        /*
-         * $apiIniFile - contains file name of api ini configuration
-         */
-        $apiIniFile = $servicesDir . PATH_SEP . 'api.ini';
-        /*
-         * $authenticationClass - contains the class name that validate the authentication for Restler
-         */
-        $authenticationClass = 'Services\\Api\\OAuth2\\Server';
-        /*
-         * $pmOauthClientId - contains PM Local OAuth Id (Web Designer)
-         */
-        $pmOauthClientId = 'x-pm-local-client';
-
-        /*
-         * Load Api ini file for Rest Service
-         */
-        $apiIniConf = array();
-        if (file_exists($apiIniFile)) {
-            $apiIniConf = self::parseIniFile($apiIniFile);
-        }
-
-        // Setting current workspace to Api class
-        \ProcessMaker\Services\Api::setWorkspace(SYS_SYS);
-        // TODO remove this setting on the future, it is not needed, but if it is not present is throwing a warning
-        Luracast\Restler\Format\HtmlFormat::$viewPath = $servicesDir . 'oauth2/views';
-
-        // create a new Restler instance
-        $rest = new Luracast\Restler\Restler();
-        // setting api version to Restler
-        $rest->setAPIVersion($version);
-        // adding $authenticationClass to Restler
-        $rest->addAuthenticationClass($authenticationClass, '');
-
-        // Setting database connection source
-        list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
-        $port = empty($port) ? '' : ";port=$port";
-        \Services\Api\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
-
-        // Setting default OAuth Client id, for local PM Web Designer
-        \Services\Api\OAuth2\Server::setPmClientId($pmOauthClientId);
-
-        require_once PATH_CORE . "src/Extension/Restler/UploadFormat.php";
-        //require_once PATH_CORE
-
-        //$rest->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');
-        //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
-        $rest->setOverridingFormats('JsonFormat', 'UploadFormat');
-
-        // Override $_SERVER['REQUEST_URI'] to Restler handles the current url correctly
-
-        $isPluginRequest = strpos($uri, '/plugin-') !== false ? true : false;
-
-        if ($isPluginRequest) {
-            $tmp = explode('/', $uri);
-            array_shift($tmp);
-            $tmp = array_shift($tmp);
-            $tmp = explode('-', $tmp);
-            $pluginName = $tmp[1];
-            $uri = str_replace('/plugin-'.$pluginName, '', $uri);
-        }
-
-        $_SERVER['REQUEST_URI'] = $uri;
-
-        if (! $isPluginRequest) { // if it is not a request for a plugin endpoint
-            // scan all api directory to find api classes
-            $classesList = Bootstrap::rglob('*', 0, $apiDir);
-
-            foreach ($classesList as $classFile) {
-                if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
-                    $namespace = '\\Services\\' . str_replace(
-                        DIRECTORY_SEPARATOR,
-                        '\\',
-                        str_replace('.php', '', str_replace($servicesDir, '', $classFile))
-                    );
-                    //var_dump($namespace);
-                    $rest->addAPIClass($namespace);
-                }
-            }
-
-            // adding aliases for Restler
-            if (array_key_exists('alias', $apiIniConf)) {
-                foreach ($apiIniConf['alias'] as $alias => $aliasData) {
-                    if (is_array($aliasData)) {
-                        foreach ($aliasData as $label => $namespace) {
-                            $namespace = '\\' . ltrim($namespace, '\\');
-                            $rest->addAPIClass($namespace, $alias);
-                        }
-                    }
-                }
-            }
-        } else {
-            // hook to get rest api classes from plugins
-            if (class_exists('PMPluginRegistry')) {
-                $pluginRegistry = & PMPluginRegistry::getSingleton();
-                $plugins = $pluginRegistry->getRegisteredRestServices();
-
-                if (is_array($plugins) && array_key_exists($pluginName, $plugins)) {
-                    foreach ($plugins[$pluginName] as $class) {
-                        $rest->addAPIClass($class['namespace']);
-                    }
-                }
-            }
-        }
-
-        $rest->handle();
     }
 
     /**
@@ -2197,50 +2052,6 @@ class Bootstrap
 
         $a_mobile_data = array($mobile_device, $mobile_browser, $mobile_browser_number, $mobile_os, $mobile_os_number, $mobile_server, $mobile_server_number, $mobile_device_number);
         return $a_mobile_data;
-    }
-
-    /**
-     * This function parse a particular api/rest request
-     *
-     * Example url:
-     * GET /api/workflowdemo/user/rol?id=0000000000000000001
-     * POST /api/workflowdemo/cases
-     *
-     * - These urls are equivalents
-     *    GET /api/<workspaceName>/cases/start
-     *    GET /<workspaceName>-api/cases/start
-     *
-     * @param $url
-     * @return array return url parsed data
-     */
-    public function parseRestUri($url)
-    {
-        array_shift($url);
-        $sysTemp = array_shift($url);
-
-        if ($sysTemp != 'api') {
-            return array();
-        }
-
-        $apiVersion = array_shift($url);
-        $sysTemp = array_shift($url);
-
-        define('SYS_TEMP', $sysTemp);
-        $restUri = '';
-
-        foreach ($url as $urlPart) {
-            $restUri .= '/' . $urlPart;
-        }
-
-        $env = self::getSystemConfiguration();
-
-        $args['SYS_LANG'] = 'en'; // TODO, this can be set from http header
-        $args['SYS_SKIN'] = $env['default_skin'];
-        $args['SYS_COLLECTION'] = '';
-        $args['SYS_TARGET'] = $restUri;
-        $args['API_VERSION'] = $apiVersion;
-
-        return $args;
     }
 
     /**

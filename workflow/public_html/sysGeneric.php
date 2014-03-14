@@ -208,7 +208,6 @@ define( 'FILE_PATHS_INSTALLED', PATH_CORE . 'config' . PATH_SEP . 'paths_install
 define( 'PATH_WORKFLOW_MSSQL_DATA', PATH_CORE . 'data' . PATH_SEP . 'mssql' . PATH_SEP );
 define( 'PATH_RBAC_MSSQL_DATA', PATH_RBAC_CORE . 'data' . PATH_SEP . 'mssql' . PATH_SEP );
 define( 'PATH_CONTROLLERS', PATH_CORE . 'controllers' . PATH_SEP );
-define( 'PATH_SERVICES_REST', PATH_CORE . 'services' . PATH_SEP . 'rest' . PATH_SEP );
 
 // include Gulliver Class
 require_once (PATH_GULLIVER . "class.bootstrap.php");
@@ -356,7 +355,6 @@ $virtualURITable['/html2ps_pdf/(*)'] = PATH_THIRDPARTY . 'html2ps_pdf/';
 //$virtualURITable['/images/'] = 'errorFile';
 //$virtualURITable['/skins/'] = 'errorFile';
 //$virtualURITable['/files/'] = 'errorFile';
-$virtualURITable['/(*)api/(*)'] = 'api-service';
 $virtualURITable["/update/(*)"] = ($skinPathUpdate != "")? $skinPathUpdate : PATH_GULLIVER_HOME . "methods" . PATH_SEP . "update" . PATH_SEP;
 //$virtualURITable['/(*)'] = PATH_HTML;
 $virtualURITable['/css/(*)'] = PATH_HTML . 'css/'; //ugly
@@ -365,7 +363,6 @@ $virtualURITable['/skins/(*)'] = PATH_HTML . 'skins/'; //ugly
 $virtualURITable['/images/(*)'] = PATH_HTML . 'images/'; //ugly
 $virtualURITable['/[a-zA-Z][a-zA-Z0-9]{0,}/'] = 'errorFile';
 
-$isRestRequest = false;
 // Verify if we need to redirect or stream the file, if G:VirtualURI returns true means we are going to redirect the page
 if (Bootstrap::virtualURI( $_SERVER['REQUEST_URI'], $virtualURITable, $realPath )) {
     // review if the file requested belongs to public_html plugin
@@ -443,22 +440,18 @@ if (Bootstrap::virtualURI( $_SERVER['REQUEST_URI'], $virtualURITable, $realPath 
             break;
         default:
             //Process files loaded with tag head in HTML
-            if (substr( $realPath, 0, 11 ) == 'api-service') {
-                $isRestRequest = true;
-            } else {
-                $realPath = explode( '?', $realPath );
-                $realPath[0] .= strpos( basename( $realPath[0] ), '.' ) === false ? '.php' : '';
-                //NewRelic Snippet - By JHL
-                transactionLog($realPath[0]);
+            $realPath = explode( '?', $realPath );
+            $realPath[0] .= strpos( basename( $realPath[0] ), '.' ) === false ? '.php' : '';
+            //NewRelic Snippet - By JHL
+            transactionLog($realPath[0]);
 
-                Bootstrap::streamFile( $realPath[0] );
-                die();
-            }
+            Bootstrap::streamFile( $realPath[0] );
+            die();
     }
 } //virtual URI parser
 
 // the request correspond to valid php page, now parse the URI
-Bootstrap::parseURI( getenv( "REQUEST_URI" ), $isRestRequest );
+Bootstrap::parseURI( getenv( "REQUEST_URI" ) );
 
 // Bootstrap::mylog("sys_temp: ".SYS_TEMP);
 if (Bootstrap::isPMUnderUpdating()) {
@@ -609,29 +602,6 @@ define( 'SERVER_PORT', $_SERVER['SERVER_PORT'] );
 // create memcached singleton
 Bootstrap::LoadClass( 'memcached' );
 $memcache = & PMmemcached::getSingleton( SYS_SYS );
-
-// verify configuration for rest service
-/*if ($isRestRequest) {
-    // disable until confirm that rest is enabled & configured on rest-config.ini file
-    $isRestRequest = false;
-    $confFile = '';
-    $restApiClassPath = '';
-
-    // try load and getting rest configuration
-    if (file_exists( PATH_DATA_SITE . 'rest-config.ini' )) {
-        $confFile = PATH_DATA_SITE . 'rest-config.ini';
-        $restApiClassPath = PATH_DATA_SITE;
-    } elseif (file_exists( PATH_CONFIG . 'rest-config.ini' )) {
-        $confFile = PATH_CONFIG . 'rest-config.ini';
-    }
-    if (! empty( $confFile ) && $restConfig = @parse_ini_file( $confFile, true )) {
-        if (array_key_exists( 'enable_service', $restConfig )) {
-            if ($restConfig['enable_service'] == 'true' || $restConfig['enable_service'] == '1') {
-                $isRestRequest = true; // rest service enabled
-            }
-        }
-    }
-}*/
 
 // load Plugins base class
 Bootstrap::LoadClass( 'plugin' );
@@ -828,7 +798,7 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
         }
     }
 
-    if (! $isControllerCall && ! file_exists( $phpFile ) && ! $isRestRequest) {
+    if (! $isControllerCall && ! file_exists( $phpFile )) {
         $_SESSION['phpFileNotFound'] = $_SERVER['REQUEST_URI'];
         header( "location: /errors/error404.php?url=" . urlencode( $_SERVER['REQUEST_URI'] ) );
         die();
@@ -920,7 +890,7 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
         $noLoginFolders[] = 'installer';
 
         // This sentence is used when you lost the Session
-        if (! in_array( SYS_TARGET, $noLoginFiles ) && ! in_array( SYS_COLLECTION, $noLoginFolders ) && $bWE != true && $collectionPlugin != 'services' && ! $isRestRequest) {
+        if (! in_array( SYS_TARGET, $noLoginFiles ) && ! in_array( SYS_COLLECTION, $noLoginFolders ) && $bWE != true && $collectionPlugin != 'services') {
             $bRedirect = true;
             if (isset( $_GET['sid'] )) {
                 Bootstrap::LoadClass( 'sessions' );
