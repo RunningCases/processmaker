@@ -185,6 +185,7 @@ define( 'PATH_RBAC_CORE', PATH_RBAC_HOME . 'engine' . PATH_SEP );
 
 // Defining PMCore Path constants
 define( 'PATH_CORE', PATH_HOME . 'engine' . PATH_SEP );
+define( 'PATH_CLASSES', PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP );
 define( 'PATH_SKINS', PATH_CORE . 'skins' . PATH_SEP );
 define( 'PATH_SKIN_ENGINE', PATH_CORE . 'skinEngine' . PATH_SEP );
 define( 'PATH_METHODS', PATH_CORE . 'methods' . PATH_SEP );
@@ -328,10 +329,7 @@ define( 'PATH_LANGUAGECONT', PATH_HOME . 'engine/content/languages/' );
 Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
 
 //Loading the autoloader libraries feature
-spl_autoload_register(array("Bootstrap", "autoloadClass"));
-
-Bootstrap::registerClass("G",      PATH_GULLIVER . "class.g.php");
-Bootstrap::registerClass("System", PATH_HOME . "engine/classes/class.system.php");
+Bootstrap::registerSystemClasses();
 
 $skinPathErrors = G::skinGetPathToSrcByVirtualUri("errors", $config);
 $skinPathUpdate = G::skinGetPathToSrcByVirtualUri("update", $config);
@@ -484,40 +482,6 @@ if (defined( 'PATH_DATA' ) && file_exists( PATH_DATA )) {
     Bootstrap::LoadClass( 'serverConfiguration' );
     $oServerConf = & serverConf::getSingleton();
 }
-
-// Call more Classes
-Bootstrap::registerClass('headPublisher', PATH_GULLIVER . "class.headPublisher.php");
-Bootstrap::registerClass('publisher', PATH_GULLIVER . "class.publisher.php");
-Bootstrap::registerClass('xmlform', PATH_GULLIVER . "class.xmlform.php");
-Bootstrap::registerClass('XmlForm_Field', PATH_GULLIVER . "class.xmlform.php");
-Bootstrap::registerClass('xmlformExtension', PATH_GULLIVER . "class.xmlformExtension.php");
-Bootstrap::registerClass('form',         PATH_GULLIVER . "class.form.php");
-Bootstrap::registerClass('menu',         PATH_GULLIVER . "class.menu.php");
-Bootstrap::registerClass('Xml_Document', PATH_GULLIVER . "class.xmlDocument.php");
-Bootstrap::registerClass('DBSession',    PATH_GULLIVER . "class.dbsession.php");
-Bootstrap::registerClass('DBConnection', PATH_GULLIVER . "class.dbconnection.php");
-Bootstrap::registerClass('DBRecordset',  PATH_GULLIVER . "class.dbrecordset.php");
-Bootstrap::registerClass('DBTable',      PATH_GULLIVER . "class.dbtable.php");
-Bootstrap::registerClass('xmlMenu',      PATH_GULLIVER . "class.xmlMenu.php");
-Bootstrap::registerClass('XmlForm_Field_FastSearch', PATH_GULLIVER . "class.xmlformExtension.php");
-Bootstrap::registerClass('XmlForm_Field_XmlMenu', PATH_GULLIVER . "class.xmlMenu.php");
-Bootstrap::registerClass('XmlForm_Field_HTML',  PATH_GULLIVER . "class.dvEditor.php");
-Bootstrap::registerClass('XmlForm_Field_WYSIWYG_EDITOR',  PATH_GULLIVER . "class.wysiwygEditor.php");
-Bootstrap::registerClass('Controller',          PATH_GULLIVER . "class.controller.php");
-Bootstrap::registerClass('HttpProxyController', PATH_GULLIVER . "class.httpProxyController.php");
-Bootstrap::registerClass('templatePower',            PATH_GULLIVER . "class.templatePower.php");
-Bootstrap::registerClass('XmlForm_Field_SimpleText', PATH_GULLIVER . "class.xmlformExtension.php");
-Bootstrap::registerClass('PmSessionHandler',   PATH_GULLIVER_HOME . 'core/Session/PmSessionHandler.php');
-Bootstrap::registerClass('Groups',       PATH_HOME . "engine/classes/class.groups.php");
-Bootstrap::registerClass('Tasks',        PATH_HOME . "engine/classes/class.tasks.php");
-Bootstrap::registerClass('Calendar',     PATH_HOME . "engine/classes/class.calendar.php");
-Bootstrap::registerClass('processMap',   PATH_HOME . "engine/classes/class.processMap.php");
-
-Bootstrap::registerSystemClasses();
-
-Bootstrap::registerDir('src', PATH_HOME . 'engine/src/');
-Bootstrap::registerDir('model', PATH_CORE . 'classes' . PATH_SEP . 'model');
-Bootstrap::registerDir('rbac/model', PATH_RBAC_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model');
 
 require_once  PATH_THIRDPARTY . '/pear/PEAR.php';
 

@@ -35,12 +35,14 @@ try {
     $loader = Maveriks\Util\ClassLoader::getInstance();
     $loader->add($rootDir . 'framework/src/', "Maveriks");
     $loader->add($rootDir . 'workflow/engine/src/', "ProcessMaker");
+    //$loader->add($rootDir . "workflow/engine/classes/model/");
     $loader->add($rootDir . 'workflow/engine/src/');
-    $loader->add($rootDir . 'workflow/engine/classes/model/');
 
     // and vendors to autoloader
     $loader->add($rootDir . 'vendor/luracast/restler/vendor', "Luracast");
     $loader->add($rootDir . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
+
+    $loader->addModelClassPath($rootDir . "workflow/engine/classes/model/");
 
     $app = new Maveriks\WebApplication();
 
