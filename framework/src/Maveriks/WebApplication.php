@@ -257,6 +257,7 @@ class WebApplication
         define('PATH_RBAC', PATH_RBAC_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP); //to enable rbac version 2
         define('PATH_RBAC_CORE', PATH_RBAC_HOME . 'engine' . PATH_SEP);
         define('PATH_CORE', PATH_HOME . 'engine' . PATH_SEP);
+        define('PATH_CLASSES', PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP);
         define('PATH_SKINS', PATH_CORE . 'skins' . PATH_SEP);
         define('PATH_SKIN_ENGINE', PATH_CORE . 'skinEngine' . PATH_SEP);
         define('PATH_METHODS', PATH_CORE . 'methods' . PATH_SEP);
@@ -283,18 +284,17 @@ class WebApplication
 
         spl_autoload_register(array("Bootstrap", "autoloadClass"));
 
-        \Bootstrap::registerClass("G", PATH_GULLIVER . "class.g.php");
-        \Bootstrap::registerClass("System", PATH_HOME . "engine/classes/class.system.php");
+//        \Bootstrap::registerClass("G", PATH_GULLIVER . "class.g.php");
+//        \Bootstrap::registerClass("System", PATH_HOME . "engine/classes/class.system.php");
 
         // define autoloading for others
-        \Bootstrap::registerClass("wsBase", PATH_HOME . "engine/classes/class.wsBase.php");
-        \Bootstrap::registerClass('Xml_Node', PATH_GULLIVER . "class.xmlDocument.php");
-        \Bootstrap::registerClass('XmlForm_Field_TextPM', PATH_HOME . "engine/classes/class.XmlForm_Field_TextPM.php");
-        \Bootstrap::registerClass('XmlForm_Field_SimpleText', PATH_GULLIVER . "class.xmlformExtension.php");
-        \Bootstrap::registerClass('XmlForm_Field', PATH_GULLIVER . "class.xmlform.php");
+//        \Bootstrap::registerClass("wsBase", PATH_HOME . "engine/classes/class.wsBase.php");
+//        \Bootstrap::registerClass('Xml_Node', PATH_GULLIVER . "class.xmlDocument.php");
+//        \Bootstrap::registerClass('XmlForm_Field_TextPM', PATH_HOME . "engine/classes/class.XmlForm_Field_TextPM.php");
+//        \Bootstrap::registerClass('XmlForm_Field_SimpleText', PATH_GULLIVER . "class.xmlformExtension.php");
+//        \Bootstrap::registerClass('XmlForm_Field', PATH_GULLIVER . "class.xmlform.php");
 
-        //\Bootstrap::registerDir('model', PATH_CORE . 'classes' . PATH_SEP . 'model');
-        //\Bootstrap::registerDir('rbac/model', PATH_RBAC_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model');
+
 
         //\Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
 
@@ -319,7 +319,6 @@ class WebApplication
         define('MEMCACHED_SERVER',   $config['memcached_server']);
         define('TIME_ZONE', $config['time_zone']);
 
-
         // set include path
         set_include_path(
             PATH_CORE . PATH_SEPARATOR .
@@ -335,7 +334,7 @@ class WebApplication
          */
 
         // include the server installed configuration
-        require_once FILE_PATHS_INSTALLED;
+        require_once PATH_CORE . 'config' . PATH_SEP . 'paths_installed.php';
 
         define('SYS_SYS', $workspace);
 
@@ -373,7 +372,7 @@ class WebApplication
         }
 
         // create memcached singleton
-        \Bootstrap::LoadClass('memcached');
+        //\Bootstrap::LoadClass('memcached');
         //$memcache = PMmemcached::getSingleton( SYS_SYS );
 
         \Propel::init(PATH_CONFIG . "databases.php");
