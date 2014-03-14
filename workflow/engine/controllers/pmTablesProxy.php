@@ -196,6 +196,7 @@ class pmTablesProxy extends HttpProxyController
     {
         //require_once 'classes/model/AdditionalTables.php';
         //require_once 'classes/model/Fields.php';
+        $result = new StdClass();
 
         try {
             ob_start();
@@ -355,6 +356,7 @@ class pmTablesProxy extends HttpProxyController
         $rows = G::json_decode( stripslashes( $httpData->rows ) );
         $errors = '';
         $count = 0;
+        $result = new StdClass();
 
         foreach ($rows as $row) {
             try {
