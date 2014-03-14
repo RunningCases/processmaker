@@ -75,7 +75,7 @@ class Cases extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url GET /draft
+     * @url GET /participated
      */
     public function doGetCasesListParticipated($request_data = array())
     {
@@ -100,7 +100,7 @@ class Cases extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url GET /draft
+     * @url GET /unassigned
      */
     public function doGetCasesListUnassigned($request_data = array())
     {
@@ -125,7 +125,7 @@ class Cases extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url GET /draft
+     * @url GET /paused
      */
     public function doGetCasesListPaused($request_data = array())
     {
@@ -150,7 +150,7 @@ class Cases extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url GET /draft
+     * @url GET /advanced-search
      */
     public function doGetCasesListAdvancedSearch($request_data = array())
     {
