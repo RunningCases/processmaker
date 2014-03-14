@@ -1,6 +1,9 @@
 <?php
 namespace BusinessModel;
 
+use G;
+use Criteria;
+
 class Process
 {
     private $arrayFieldDefinition = array(
@@ -1547,9 +1550,7 @@ class Process
             //Get data
             switch ($option) {
                 case "GRID":
-                    \G::LoadClass("xmlfield_InputPM");
-
-                    $arrayVar = getGridsVars($processUid);
+                    $arrayVar = self::getGridsVars($processUid);
 
                     foreach ($arrayVar as $key => $value) {
                         $arrayVariableAux = $this->getVariableDataFromRecord(array("name" => $value["sName"], "label" => "[ " . \G::LoadTranslation("ID_GRID") . " ]", "type" => "grid"));
@@ -1565,36 +1566,15 @@ class Process
                     $dynaForm->throwExceptionIfNotIsGridDynaForm($gridUid, $this->arrayFieldNameForException["gridUid"]);
 
                     //Get data
-                    $file = PATH_DYNAFORM . $processUid . PATH_SEP . $gridUid . ".xml";
-
-                    if (file_exists($file) && filesize($file) > 0) {
-                        //Load DynaForm
-                        $dynaForm = new \Dynaform();
-
-                        $arrayDynaFormData = $dynaForm->Load($gridUid);
-
-                        $dynaFormFilename = $arrayDynaFormData["DYN_FILENAME"];
-
-                        //Fields
-                        $form = new \Form($dynaFormFilename, PATH_DYNAFORM, SYS_LANG);
-
-                        $arrayFieldName = array();
-
-                        if ($form->type == "grid") {
-                            foreach ($form->fields as $key => $value) {
-                                if (!in_array($key, $arrayFieldName)) {
-                                    $arrayVariable[] = $this->getVariableDataFromRecord(array("name" => $key, "label" => $value->label, "type" => $value->type));
-                                    $arrayFieldName[] = $key;
-                                }
-                            }
-                        }
+                    $fields = self::getVarsGrid($processUid, $gridUid);
+                    foreach ($fields as $field) {
+                        $arrayVariable[] = $this->getVariableDataFromRecord(array("name" => $field["sName"], "label" => $field["sLabel"], "type" => $field["sType"]));
                     }
+
                     break;
                 default:
                     //ALL
-                    \G::LoadClass("xmlfield_InputPM");
-
-                    $arrayVar = getDynaformsVars($processUid);
+                    $arrayVar = self::getDynaformsVars($processUid);
 
                     foreach ($arrayVar as $key => $value) {
                         $arrayVariable[] = $this->getVariableDataFromRecord(array("name" => $value["sName"], "label" => $value["sLabel"], "type" => $value["sType"]));
@@ -1645,6 +1625,164 @@ class Process
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Function getDynaformsVars
+     *
+     * @access public
+     * @param eter string $sProcessUID
+     * @param eter boolean $bSystemVars
+     * @return array
+     */
+    public static function getDynaformsVars ($sProcessUID, $bSystemVars = true, $bIncMulSelFields = 0)
+    {
+        $aFields = array ();
+        $aFieldsNames = array ();
+        if ($bSystemVars) {
+            $aAux = G::getSystemConstants();
+            foreach ($aAux as $sName => $sValue) {
+                $aFields[] = array ('sName' => $sName,'sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLES'));
+            }
+            //we're adding the ping variable to the system list
+            $aFields[] = array ('sName' => 'PIN','sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLES'));
+        }
+
+        $aInvalidTypes = array("title", "subtitle", "file", "button", "reset", "submit", "javascript");
+        $aMultipleSelectionFields = array("listbox", "checkgroup", "grid");
+
+        if ($bIncMulSelFields != 0) {
+            $aInvalidTypes = array_merge( $aInvalidTypes, $aMultipleSelectionFields );
+        }
+
+        $oCriteria = new Criteria( 'workflow' );
+        $oCriteria->addSelectColumn( \DynaformPeer::DYN_FILENAME );
+        $oCriteria->add( \DynaformPeer::PRO_UID, $sProcessUID );
+        $oCriteria->add( \DynaformPeer::DYN_TYPE, 'xmlform' );
+        $oDataset = \DynaformPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        $oDataset->next();
+
+        while ($aRow = $oDataset->getRow()) {
+            if (is_file(PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml")) {
+                $dyn = new \dynaFormHandler(PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml");
+
+                if ($dyn->getHeaderAttribute("type") !== "xmlform" && $dyn->getHeaderAttribute("type") !== "") { // skip it, if that is not a xmlform
+                    $oDataset->next();
+                    continue;
+                }
+
+                $fields = $dyn->getFields();
+
+                foreach ($fields as $field) {
+                    $label = "";
+                    if ($field->hasChildNodes()) {
+                        $child = $field->getElementsByTagName(SYS_LANG)->length ? $field->getElementsByTagName(SYS_LANG): $field->getElementsByTagName("en");
+                        $label = $child->item(0) ? $child->item(0)->textContent : "";
+                    }
+
+                    if (! in_array($field->getAttribute("type"), $aInvalidTypes) && ! in_array($field->tagName, $aFieldsNames)) {
+                        $aFieldsNames[] = $field->tagName;
+                        $aFields[] = array (
+                            'sName' => $field->tagName,
+                            'sType' => $field->getAttribute("type"),
+                            'sLabel' => ($field->getAttribute("type") != 'grid' ? $label : '[ ' . G::LoadTranslation('ID_GRID') . ' ]')
+                        );
+                    }
+                }
+            }
+
+            $oDataset->next();
+        }
+        return $aFields;
+    }
+
+    /**
+     * Function getGridsVars
+     *
+     * @access public
+     * @param eter string $sProcessUID
+     * @return array
+     */
+    public static function getGridsVars ($sProcessUID)
+    {
+        $aFields = array ();
+        $aFieldsNames = array ();
+
+        $oCriteria = new Criteria( 'workflow' );
+        $oCriteria->addSelectColumn( \DynaformPeer::DYN_FILENAME );
+        $oCriteria->add( \DynaformPeer::PRO_UID, $sProcessUID );
+        $oDataset = \DynaformPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        $oDataset->next();
+        while ($aRow = $oDataset->getRow()) {
+            if (is_file(PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml")) {
+                $dyn = new \dynaFormHandler(PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml");
+
+                if ($dyn->getHeaderAttribute("type") === "xmlform") { // skip it, if that is not a xmlform
+                    $oDataset->next();
+                    continue;
+                }
+
+                $fields = $dyn->getFields();
+
+                foreach ($fields as $field) {
+                    if ($field->getAttribute("type") !== "grid") {
+                        continue;
+                    }
+                    if (! in_array($field->tagName, $aFieldsNames)) {
+                        $aFieldsNames[] = $field->tagName;
+                        $aFields[] = array (
+                            'sName' => $field->tagName,
+                            'sXmlForm' => $aRow['DYN_FILENAME']
+                        );
+                    }
+                }
+            }
+
+            $oDataset->next();
+        }
+        return $aFields;
+    }
+
+    /**
+     * Function getVarsGrid returns all variables of Grid
+     *
+     * @access public
+     * @param string proUid process ID
+     * @param string dynUid dynaform ID
+     * @return array
+     */
+    public static function getVarsGrid ($proUid, $dynUid)
+    {
+        $dynaformFields = array ();
+        $aFieldsNames = array();
+        $aFields = array();
+        $aInvalidTypes = array("title", "subtitle", "file", "button", "reset", "submit", "javascript");
+        $aMultipleSelectionFields = array("listbox", "checkgroup", "grid");
+
+        if (is_file( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/'. $proUid .'/'.$dynUid. '.xml' ) && filesize( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/'. $proUid .'/'. $dynUid .'.xml' ) > 0) {
+            $dyn = new \dynaFormHandler( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/' .$proUid. '/' . $dynUid .'.xml' );
+            $dynaformFields[] = $dyn->getFields();
+
+            $fields = $dyn->getFields();
+
+            foreach ($fields as $field) {
+                if ($field->getAttribute("type") !== "grid") {
+                    continue;
+                }
+                if (! in_array($field->getAttribute("type"), $aInvalidTypes) && ! in_array($field->tagName, $aFieldsNames)) {
+                    $aFieldsNames[] = $field->tagName;
+                    $aFields[] = array (
+                        'sName' => $field->tagName,
+                        'sType' => $field->getAttribute("type"),
+                        'sLabel' => ($field->getAttribute("type") != 'grid' ? $label : '[ ' . G::LoadTranslation('ID_GRID') . ' ]')
+                    );
+                }
+            }
+        }
+
+        return $aFields;
     }
 }
 

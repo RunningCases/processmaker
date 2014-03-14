@@ -139,20 +139,99 @@ class DynaForm
      *
      * return bool Return true if a DynaForm is assigned some Steps, false otherwise
      */
-    public function dynaFormAssignedStep($dynaFormUid, $processUid)
+    public function dynaFormDepends($dynUid, $proUid)
     {
-        try {
-            $step = new \Step();
+        $oCriteria = new \Criteria();
+        $oCriteria->addSelectColumn( \DynaformPeer::DYN_TYPE );
+        $oCriteria->add( \DynaformPeer::DYN_UID, $dynUid );
+        $oCriteria->add( \DynaformPeer::PRO_UID, $proUid );
+        $oDataset = \DynaformPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        $oDataset->next();
+        $dataDyna = $oDataset->getRow();
 
-            $arrayData = $step->loadInfoAssigDynaform($processUid, $dynaFormUid);
+        if ($dataDyna['DYN_TYPE'] == 'grid') {
+            $formsDepend = array();
+            \G::LoadSystem( 'dynaformhandler' );
 
-            if (is_array($arrayData)) {
-                return true;
-            } else {
-                return false;
+            $oCriteria = new \Criteria( 'workflow' );
+            $oCriteria->addSelectColumn( \DynaformPeer::DYN_UID );
+            $oCriteria->addSelectColumn( \ContentPeer::CON_VALUE );
+            $oCriteria->add( \DynaformPeer::PRO_UID, $proUid );
+            $oCriteria->add( \DynaformPeer::DYN_TYPE, "xmlform" );
+            $oCriteria->add( \ContentPeer::CON_CATEGORY, 'DYN_TITLE');
+            $oCriteria->add( \ContentPeer::CON_LANG, SYS_LANG);
+            $oCriteria->addJoin( \DynaformPeer::DYN_UID, \ContentPeer::CON_ID, \Criteria::INNER_JOIN);
+            $oDataset = \DynaformPeer::doSelectRS( $oCriteria );
+            $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+
+            while ($oDataset->next()) {
+                $dataForms = $oDataset->getRow();
+                $dynHandler = new \dynaFormHandler(PATH_DYNAFORM . $proUid . PATH_SEP . $dataForms["DYN_UID"] . ".xml");
+                $dynFields = $dynHandler->getFields();
+                foreach ($dynFields as $field) {
+                    $sType = \Step::getAttribute( $field, 'type' );
+                    if ($sType == 'grid') {
+                        $sxmlgrid = \Step::getAttribute( $field, 'xmlgrid' );
+                        $aGridInfo = explode( "/", $sxmlgrid );
+                        if ($aGridInfo[0] == $proUid && $aGridInfo[1] == $dynUid) {
+                            $formsDepend[] = $dataForms["CON_VALUE"];
+                        }
+                    }
+                }
             }
-        } catch (\Exception $e) {
-            throw $e;
+            if (!empty($formsDepend)) {
+                $message = "You can not delete the grid '$dynUid', because it is in the ";
+                $message .= (count($formsDepend) == 1) ? 'form' : 'forms';
+                $message .= ': ' . implode(', ', $formsDepend);
+                return $message;
+            }
+        } else {
+            $flagDepend = false;
+            $stepsDepends = \Step::verifyDynaformAssigStep($dynUid, $proUid);
+
+            $messageSteps = '(0) Depends in steps';
+            if (!empty($stepsDepends)) {
+                $flagDepend = true;
+                $countSteps = count($stepsDepends);
+                $messTemp = '';
+                foreach ($stepsDepends as $value) {
+                    $messTemp .= ", the task '" . $value['CON_VALUE'] . "' position " . $value['STEP_POSITION'];
+                }
+                $messageSteps = "($countSteps) Depends in steps in" . $messTemp;
+            }
+
+            $stepSupervisorsDepends = \StepSupervisor::verifyDynaformAssigStepSupervisor($dynUid, $proUid);
+            $messageStepsSupervisors = '(0) Depends in steps supervisor';
+            if (!empty($stepSupervisorsDepends)) {
+                $flagDepend = true;
+                $countSteps = count($stepSupervisorsDepends);
+                $messageStepsSupervisors = "($countSteps) Depends in steps supervisor";
+            }
+
+            $objectPermissionDepends = \ObjectPermission::verifyDynaformAssigObjectPermission($dynUid, $proUid);
+            $messageObjectPermission = '(0) Depends in permissions';
+            if (!empty($objectPermissionDepends)) {
+                $flagDepend = true;
+                $countSteps = count($objectPermissionDepends);
+                $messageObjectPermission = "($countSteps) Depends in permissions";
+            }
+
+            $caseTrackerDepends = \CaseTrackerObject::verifyDynaformAssigCaseTracker($dynUid, $proUid);
+            $messageCaseTracker = '(0) Depends in case traker';
+            if (!empty($caseTrackerDepends)) {
+                $flagDepend = true;
+                $countSteps = count($caseTrackerDepends);
+                $messageCaseTracker = "($countSteps) Depends in case traker";
+            }
+
+            if ($flagDepend) {
+                $message = "You can not delete the dynaform '$dynUid', because it has the following dependencies: \n\n";
+                $message .= $messageSteps . ".\n" . $messageStepsSupervisors . ".\n";
+                $message .= $messageObjectPermission . ".\n" . $messageCaseTracker;
+                return $message;
+            }
+            return '';
         }
     }
 
@@ -167,9 +246,7 @@ class DynaForm
     {
         try {
             $stepSupervisor = new \StepSupervisor();
-
             $arrayData = $stepSupervisor->loadInfo($dynaFormUid);
-
             if (is_array($arrayData)) {
                 return true;
             } else {
@@ -381,9 +458,10 @@ class DynaForm
 
             $processUid = $arrayDynaFormData["PRO_UID"];
 
-            //Verify data
-            if ($this->dynaFormAssignedStep($dynaFormUid, $processUid)) {
-                throw (new \Exception("You cannot delete this Dynaform while it is assigned to a step"));
+            //Verify dependencies dynaforms
+            $resultDependeds = $this->dynaFormDepends($dynaFormUid, $processUid);
+            if ($resultDependeds != '') {
+                throw (new \Exception($resultDependeds));
             }
 
             //Delete
