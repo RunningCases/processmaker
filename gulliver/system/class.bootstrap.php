@@ -193,7 +193,7 @@ class Bootstrap
         self::registerClass("dynaformEditorAjax", PATH_CLASSES . "class.dynaformEditor.php");
         self::registerClass("FieldValidator", PATH_CLASSES . "class.fieldValidator.php");
         self::registerClass("FileCache", PATH_CLASSES . "class.fileCache.php");
-        self::registerClass("GroupUser", PATH_CLASSES . "class.groupUser.php");
+        //self::registerClass("GroupUser", PATH_CLASSES . "class.groupUser.php");  -> this have conflicts with model/GroupUser.php
         self::registerClass("Groups", PATH_CLASSES . "class.groups.php");
         self::registerClass("JavaBridgePM", PATH_CLASSES . "class.javaBridgePM.php");
         self::registerClass("Jrml", PATH_CLASSES . "class.jrml.php");
