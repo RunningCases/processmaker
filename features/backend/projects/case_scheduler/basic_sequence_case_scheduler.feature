@@ -66,7 +66,8 @@ Feature: Case Scheduler Resources
           "sch_start_day_opt_2": "",
           "sch_months": "1|6|12",
           "sch_repeat_every": "",
-          "sch_repeat_until": ""
+          "sch_repeat_until": "",
+          "sch_state": "ACTIVE"
       } 
       """
       And that I want to update a resource with the key "sch_uid" stored in session array

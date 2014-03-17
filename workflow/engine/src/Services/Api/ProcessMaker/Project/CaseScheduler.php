@@ -159,7 +159,7 @@ class CaseSchedulerStructure
     public $sch_last_run_time;
 
     /**
-     * @var string {@from body} {@min 0} {@max 15}
+     * @var string {@from body} {@choice ACTIVE,INACTIVE}
      */
     public $sch_state;
 

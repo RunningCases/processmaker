@@ -73,10 +73,6 @@ class WebApplication
     public function run($type = "")
     {
         switch ($type) {
-            case self::REDIRECT_DEFAULT:
-                //TODO we can set a configurable redirect url
-                header("location: /sys/en/neoclassic/login/login");
-                break;
             case self::SERVICE_API:
                 $request = $this->parseApiRequestUri();
                 $this->loadEnvironment($request["workspace"]);
@@ -236,7 +232,7 @@ class WebApplication
         );
     }
 
-    public function loadEnvironment($workspace)
+    public function loadEnvironment($workspace = "")
     {
         $lang = "en";
 
@@ -330,6 +326,10 @@ class WebApplication
         define("PATH_TEMPORAL", PATH_C . "dynEditor/");
         define("PATH_DB", PATH_DATA . "sites" . PATH_SEP);
 
+        if (empty($workspace)) {
+            return true;
+        }
+
         define("SYS_SYS", $workspace);
 
         if (! file_exists( PATH_DB . SYS_SYS . "/db.php" )) {
@@ -371,5 +371,7 @@ class WebApplication
         //$memcache = PMmemcached::getSingleton( SYS_SYS );
 
         \Propel::init(PATH_CONFIG . "databases.php");
+
+        return true;
     }
 }
