@@ -9,6 +9,13 @@
  * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
  */
 
+$config = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR . "config.ini");
+
+$workspace = $config['workspace'];
+$lang = $config['lang'];
+$processMakerHome = $config['pm_home_dir'];
+$rootDir = realpath($processMakerHome) . DIRECTORY_SEPARATOR;
+
 require $rootDir . "framework/src/Maveriks/Util/ClassLoader.php";
 
 $loader = Maveriks\Util\ClassLoader::getInstance();
@@ -21,13 +28,6 @@ $loader->add($rootDir . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
 $loader->addClass("Bootstrap", $rootDir . 'gulliver/system/class.bootstrap.php');
 
 $loader->addModelClassPath($rootDir . "workflow/engine/classes/model/");
-
-$config = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR . "config.ini");
-
-$workspace = $config['workspace'];
-$lang = $config['lang'];
-$processMakerHome = $config['pm_home_dir'];
-$rootDir = realpath($processMakerHome) . DIRECTORY_SEPARATOR;
 
 define('SYS_LANG', $lang);
 define('PATH_SEP', DIRECTORY_SEPARATOR);
