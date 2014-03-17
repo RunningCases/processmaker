@@ -622,8 +622,15 @@ class CaseScheduler
             $oCaseScheduler = new \CaseScheduler();
             $aData['SCH_UID'] = $sSchUID;
             $aData['PRO_UID'] = $sProcessUID;
-            $aData['SCH_STATE'] = 'ACTIVE';
-            $aData['SCH_LAST_STATE'] = 'CREATED'; // 'ACTIVE';
+            if ($aData['SCH_STATE'] == "" || $aData['SCH_STATE'] == null) {
+                throw (new \Exception( '`sch_state` can`t be null'));
+            } else {
+                if ($aData['SCH_STATE']  == 'ACTIVE') {
+                    $aData['SCH_LAST_STATE']  = 'CREATED';
+                } else {
+                    $aData['SCH_LAST_STATE'] = 'ACTIVE';
+                }
+            }
             $aData['USR_UID'] = $userUID;
             $aData['SCH_DEL_USER_UID'] = $aData['USR_UID'];
             $sTimeTmp = $aData['SCH_START_TIME'];
