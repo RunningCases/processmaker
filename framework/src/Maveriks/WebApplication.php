@@ -73,10 +73,6 @@ class WebApplication
     public function run($type = "")
     {
         switch ($type) {
-            case self::REDIRECT_DEFAULT:
-                //TODO we can set a configurable redirect url
-                header("location: /sys/en/neoclassic/login/login");
-                break;
             case self::SERVICE_API:
                 $request = $this->parseApiRequestUri();
                 $this->loadEnvironment($request["workspace"]);
