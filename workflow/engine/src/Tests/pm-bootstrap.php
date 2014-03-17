@@ -8,6 +8,20 @@
  *
  * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
  */
+
+require $rootDir . "framework/src/Maveriks/Util/ClassLoader.php";
+
+$loader = Maveriks\Util\ClassLoader::getInstance();
+$loader->add($rootDir . 'framework/src/', "Maveriks");
+$loader->add($rootDir . 'workflow/engine/src/', "ProcessMaker");
+$loader->add($rootDir . 'workflow/engine/src/');
+
+// add vendors to autoloader
+$loader->add($rootDir . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
+$loader->addClass("Bootstrap", $rootDir . 'gulliver/system/class.bootstrap.php');
+
+$loader->addModelClassPath($rootDir . "workflow/engine/classes/model/");
+
 $config = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR . "config.ini");
 
 $workspace = $config['workspace'];
@@ -54,26 +68,7 @@ define('PATH_RBAC_MSSQL_DATA', PATH_RBAC_CORE . 'data' . PATH_SEP . 'mssql' . PA
 define('PATH_CONTROLLERS', PATH_CORE . 'controllers' . PATH_SEP);
 define('PATH_SERVICES_REST', PATH_CORE . 'services' . PATH_SEP . 'rest' . PATH_SEP);
 
-require_once PATH_GULLIVER . PATH_SEP . 'class.bootstrap.php';
-
-spl_autoload_register(array("Bootstrap", "autoloadClass"));
-
-Bootstrap::registerClass("G", PATH_GULLIVER . "class.g.php");
-Bootstrap::registerClass("System", PATH_HOME . "engine/classes/class.system.php");
-
-// define autoloading for others
-Bootstrap::registerClass("wsBase", PATH_HOME . "engine/classes/class.wsBase.php");
-Bootstrap::registerClass('Xml_Node', PATH_GULLIVER . "class.xmlDocument.php");
-Bootstrap::registerClass('XmlForm_Field_TextPM', PATH_HOME . "engine/classes/class.XmlForm_Field_TextPM.php");
-Bootstrap::registerClass('XmlForm_Field_SimpleText', PATH_GULLIVER . "class.xmlformExtension.php");
-Bootstrap::registerClass('XmlForm_Field', PATH_GULLIVER . "class.xmlform.php");
-
-Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
-
 Bootstrap::registerSystemClasses();
-
-Bootstrap::registerDir('src', PATH_HOME . 'engine/src/');
-Bootstrap::registerDir('model', PATH_CORE . 'classes' . PATH_SEP . 'model');
 
 $config = System::getSystemConfiguration();
 
