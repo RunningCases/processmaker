@@ -164,5 +164,121 @@ class Cases extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+    /**
+     * @url GET /:cas_uid
+     *
+     * @param string $cas_uid {@min 32}{@max 32}
+     */
+    public function doGetCaseInfo($cas_uid)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $cases = new \BusinessModel\Cases();
+            $arrayData = $cases->getCaseInfo($cas_uid, $userUid);
+            $response = $arrayData;
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:cas_uid/current-task
+     *
+     * @param string $cas_uid {@min 32}{@max 32}
+     */
+    public function doGetTaskCase($cas_uid)
+    {
+        try {
+            $cases = new \BusinessModel\Cases();
+            $arrayData = $cases->getTaskCase($cas_uid);
+            $response = $arrayData;
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url POST
+     *
+     * @param string $prj_uid {@from body} {@min 32}{@max 32}
+     * @param string $act_uid {@from body} {@min 32}{@max 32}
+     * @param array $variables {@from body}
+     *
+     */
+    public function doPostCase($prj_uid, $act_uid, $variables=null)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $cases = new \BusinessModel\Cases();
+            $arrayData = $cases->addCase($prj_uid, $act_uid, $userUid, $variables);
+            $response = $arrayData;
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url POST /impersonate
+     *
+     * @param string $prj_uid {@from body} {@min 32}{@max 32}
+     * @param string $usr_uid {@from body} {@min 32}{@max 32}
+     * @param string $act_uid {@from body} {@min 32}{@max 32}
+     * @param array $variables {@from body}
+     */
+    public function doPostCaseImpersonate($prj_uid, $usr_uid, $act_uid, $variables)
+    {
+        try {
+            $cases = new \BusinessModel\Cases();
+            $arrayData = $cases->addCaseImpersonate($prj_uid, $usr_uid, $act_uid, $variables);
+            $response = $arrayData;
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url PUT /:cas_uid/reassign-case
+     *
+     * @param string $del_index {@from body}
+     * @param string $usr_uid_source {@from body} {@min 32}{@max 32}
+     * @param string $usr_uid_target {@from body} {@min 32}{@max 32}
+     */
+    public function doPutReassignCase($cas_uid, $del_index, $usr_uid_source, $usr_uid_target)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $cases = new \BusinessModel\Cases();
+            $arrayData = $cases->updateReassignCase($cas_uid, $userUid, $del_index, $usr_uid_source, $usr_uid_target);
+            $response = $arrayData;
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url PUT /:cas_uid/route-case
+     *
+     * @param string $del_index {@from body}
+     * @param string $usr_uid_source {@from body} {@min 32}{@max 32}
+     * @param string $usr_uid_target {@from body} {@min 32}{@max 32}
+     */
+    public function doPutRouteCase($cas_uid, $del_index, $usr_uid_source, $usr_uid_target)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $cases = new \BusinessModel\Cases();
+            $arrayData = $cases->updateRouteCase($cas_uid, $userUid, $del_index, $usr_uid_source, $usr_uid_target);
+            $response = $arrayData;
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
 
