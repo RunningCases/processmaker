@@ -31,7 +31,7 @@
 //G::LoadThirdParty( 'pear/json', 'class.json' );
 //G::LoadClass( 'groups' );
 //G::LoadClass( 'tasks' );
-G::LoadClass('xmlfield_InputPM');
+//G::LoadClass('xmlfield_InputPM');
 //G::LoadClass( 'calendar' );
 //require_once 'classes/model/AppDelegation.php';
 //require_once 'classes/model/CaseTracker.php';
