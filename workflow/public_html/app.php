@@ -38,7 +38,7 @@ try {
     //$loader->add($rootDir . "workflow/engine/classes/model/");
     $loader->add($rootDir . 'workflow/engine/src/');
 
-    // and vendors to autoloader
+    // add vendors to autoloader
     $loader->add($rootDir . 'vendor/luracast/restler/vendor', "Luracast");
     $loader->add($rootDir . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
     $loader->addClass("Bootstrap", $rootDir . 'gulliver/system/class.bootstrap.php');
@@ -67,7 +67,10 @@ try {
             break;
 
         case Maveriks\WebApplication::RUNNING_DEFAULT:
-            $app->run(Maveriks\WebApplication::REDIRECT_DEFAULT);
+            $response = new Maveriks\Http\Response("", 302);
+            //TODO compose this def url with configuration data from env.ini
+            $response->setHeader("location", "/sys/en/neoclassic/login/login");
+            $response->send();
             break;
     }
 
