@@ -115,6 +115,11 @@ class Cases
                 $category
             );
         }
+        if (!empty($result['data'])) {
+            foreach ($result['data'] as &$value) {
+                $value = array_change_key_case($value, CASE_LOWER);
+            }
+        }
         return $result;
     }
 }
