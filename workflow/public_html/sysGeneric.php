@@ -278,16 +278,16 @@ $config = Bootstrap::getSystemConfiguration();
 
 // starting session
 if (isset($config['session.gc_maxlifetime'])) {
-$timelife = $config['session.gc_maxlifetime'];
+    $timelife = $config['session.gc_maxlifetime'];
 } else {
-$timelife = ini_get('session.gc_maxlifetime');
+    $timelife = ini_get('session.gc_maxlifetime');
 }
 if (is_null($timelife)) {
-$timelife = 1440;
+    $timelife = 1440;
 }
 ini_set('session.gc_maxlifetime', $timelife);
-if (preg_match("/msie/i", $_SERVER ['HTTP_USER_AGENT']) != 1 || $config['ie_cookie_lifetime'] == 1) {
-ini_set('session.cookie_lifetime', $timelife);
+if ((isset($_SERVER ['HTTP_USER_AGENT']) && preg_match("/msie/i", $_SERVER ['HTTP_USER_AGENT']) != 1) || $config['ie_cookie_lifetime'] == 1) {
+    ini_set('session.cookie_lifetime', $timelife);
 }
 //session_start();
 
