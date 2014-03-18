@@ -403,10 +403,12 @@ class Cases
      *
      * return array Return an array with Task Case
      */
-
     public function updateReassignCase($caseUid, $userUid, $delIndex, $userUidSource, $userUidTarget)
     {
         try {
+            if (!$delIndex) {
+                $delIndex = \AppDelegation::getCurrentIndex($caseUid);
+            }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
             $fields = $ws->reassignCase($userUid, $caseUid, $delIndex, $userUidSource, $userUidTarget);
@@ -533,7 +535,7 @@ class Cases
     }
 
     /**
-     * Reassign Case
+     * Route Case
      *
      * @param string $caseUid Unique id of Case
      * @param string $userUid Unique id of User
@@ -542,10 +544,12 @@ class Cases
      *
      * return array Return an array with Task Case
      */
-
     public function updateRouteCase($caseUid, $userUid, $delIndex)
     {
         try {
+            if (!$delIndex) {
+                $delIndex = \AppDelegation::getCurrentIndex($caseUid);
+            }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
             $fields = $ws->derivateCase($userUid, $caseUid, $delIndex, $bExecuteTriggersBeforeAssignment = false);
@@ -555,6 +559,7 @@ class Cases
             throw $e;
         }
     }
+
 
     /**
      * get all upload document that they have send it
