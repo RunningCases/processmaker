@@ -2585,6 +2585,7 @@ class wsBase
             $oCriteria = new Criteria( 'workflow' );
             $oCriteria->addSelectColumn( AppDelayPeer::APP_UID );
             $oCriteria->addSelectColumn( AppDelayPeer::APP_DEL_INDEX );
+            $oCriteria->addSelectColumn( AppDelayPeer::APP_DISABLE_ACTION_USER );
             $oCriteria->add( AppDelayPeer::APP_TYPE, '' );
             $oCriteria->add( $oCriteria->getNewCriterion( AppDelayPeer::APP_TYPE, 'PAUSE' )->addOr( $oCriteria->getNewCriterion( AppDelayPeer::APP_TYPE, 'CANCEL' ) ) );
             $oCriteria->addAscendingOrderByColumn( AppDelayPeer::APP_ENABLE_ACTION_DATE );

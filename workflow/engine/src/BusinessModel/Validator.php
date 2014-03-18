@@ -98,8 +98,9 @@ class Validator{
 
     /**
      * Validate usr_uid
-     * @var string $dep_uid. Uid for Departament
-     * @var string $nameField. Name of field for message
+     *
+     * @param string $usr_uid, Uid for user
+     * @param string $nameField . Name of field for message
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -118,6 +119,81 @@ class Validator{
             throw (new \Exception("The user with $nameField: '$usr_uid' does not exist."));
         }
         return $usr_uid;
+    }
+
+    /**
+     * Validate app_uid
+     *
+     * @param string $app_uid, Uid for application
+     * @param string $nameField . Name of field for message
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    static public function appUid($app_uid, $nameField = 'app_uid')
+    {
+        $app_uid = trim($app_uid);
+        if ($app_uid == '') {
+            throw (new \Exception("The application with $nameField: '' does not exist."));
+        }
+        $oApplication = new \Application();
+        if (!($oApplication->exists($app_uid))) {
+            throw (new \Exception("The application with $nameField: '$app_uid' does not exist."));
+        }
+        return $app_uid;
+    }
+
+    /**
+     * Validate app_uid
+     *
+     * @param string $tri_uid, Uid for trigger
+     * @param string $nameField . Name of field for message
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    static public function triUid($tri_uid, $nameField = 'tri_uid')
+    {
+        $tri_uid = trim($tri_uid);
+        if ($tri_uid == '') {
+            throw (new \Exception("The trigger with $nameField: '' does not exist."));
+        }
+        $oTriggers = new \Triggers();
+        if (!($oTriggers->TriggerExists($tri_uid))) {
+            throw (new \Exception("The trigger with $nameField: '$tri_uid' does not exist."));
+        }
+        return $tri_uid;
+    }
+
+    /**
+     * Validate date
+     *
+     * @param string $date, Date for validate
+     * @param string $nameField . Name of field for message
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    static public function isDate($date, $format = 'Y-m-d H:i:s', $nameField = 'app_uid')
+    {
+        $date = trim($date);
+        if ($date == '') {
+            throw (new \Exception("The value '' is not valid fot the format '$format'."));
+        }
+        $d = \DateTime::createFromFormat($format, $date);
+        if (!($d && $d->format($format) == $date)) {
+            throw (new \Exception("The value '$date' is not valid fot the format '$format'."));
+        }
+        return $date;
     }
 
     /**
