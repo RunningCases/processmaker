@@ -23,8 +23,14 @@ class Cases
      */
     public function getList($dataList = array())
     {
-        G::LoadClass("applications");
+        Validator::isArray($dataList, '$dataList');
+        if (!isset($dataList["userId"])) {
+            throw (new \Exception("The user with userId: '' does not exist."));
+        } else {
+            Validator::usrUid($dataList["userId"], "userId");
+        }
 
+        G::LoadClass("applications");
         $solrEnabled = false;
         $userUid = $dataList["userId"];
         $callback = isset( $dataList["callback"] ) ? $dataList["callback"] : "stcCallback1001";
@@ -43,6 +49,11 @@ class Cases
         $dateFrom = isset( $dataList["dateFrom"] ) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
         $dateTo = isset( $dataList["dateTo"] ) ? substr( $dataList["dateTo"], 0, 10 ) : "";
         $first = isset( $dataList["first"] ) ? true :false;
+
+        $valuesCorrect = array('todo', 'draft', 'paused', 'sent', 'selfservice', 'unassigned', 'search');
+        if (!in_array($action, $valuesCorrect)) {
+            throw (new \Exception('The value for $action is incorrect.'));
+        }
 
         if ($action == 'search' || $action == 'to_reassign') {
             $userUid = ($user == "CURRENT_USER") ? $userUid : $user;
@@ -114,6 +125,11 @@ class Cases
                 (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
                 $category
             );
+        }
+        if (!empty($result['data'])) {
+            foreach ($result['data'] as &$value) {
+                $value = array_change_key_case($value, CASE_LOWER);
+            }
         }
         return $result;
     }
@@ -403,4 +419,3 @@ class Cases
     }
 
 }
-
