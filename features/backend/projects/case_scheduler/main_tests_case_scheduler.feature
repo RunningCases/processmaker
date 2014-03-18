@@ -113,7 +113,8 @@ Feature: Case Scheduler Main Tests
           "sch_start_day_opt_1": "<sch_start_day_opt_1>",
           "sch_months": "<sch_months>",          
           "sch_start_day_opt_2": "<sch_start_day_opt_2>",          
-          "sch_repeat_every": "<sch_repeat_every>"
+          "sch_repeat_every": "<sch_repeat_every>",
+          "sch_state": "<sch_state>"
       } 
       """
       And that I want to update a resource with the key "sch_uid" stored in session array as variable "sch_uid_<sch_uid_number>"
@@ -124,12 +125,12 @@ Feature: Case Scheduler Main Tests
 
       Examples:
 
-      | test_description                                                                     | sch_uid_number | sch_del_user_name | sch_del_user_pass | tas_uid                          | sch_name                                     | sch_option | sch_start_date |  sch_end_date | sch_start_time | sch_week_days | sch_start_day | sch_start_day_opt_1 | sch_months             | sch_start_day_opt_2 | sch_repeat_every |
-      | Update Daily                                                                         | 1              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Daily 123@#$           | 1          | 2014-02-30     | 2014-03-20    | 12:30          |               |               |                     |                        |                     |                  | 
-      | Update Weekly, sch_week_days=monday                                                  | 2              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Weekly monday 345%$#   | 2          | 2014-03-20     | 2014-04-20    | 08:30          | 2             |               |                     |                        |                     |                  |
-      | Update Monthly and day of month, day of month=1, of the month(s)=3,4                 | 4              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Monthly 567&^% 1       | 3          | 2014-04-21     | 2014-05-18    | 18:30          |               | 1             | 18                  | 3\|4\|5                |                     |                  | 
-      | Update One time only                                                                 | 12             | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-One Time only 678%$@   | 4          |                |               | 20:30          |               |               |                     |                        |                     |                  |      
-      | Update Every                                                                         | 13             | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Every 987&%@           | 5          |                |               |                |               |               |                     |                        |                     | 18.30            |
+      | test_description                                                                     | sch_uid_number | sch_del_user_name | sch_del_user_pass | tas_uid                          | sch_name                                     | sch_option | sch_start_date |  sch_end_date | sch_start_time | sch_week_days | sch_start_day | sch_start_day_opt_1 | sch_months             | sch_start_day_opt_2 | sch_repeat_every |sch_state |
+      | Update Daily                                                                         | 1              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Daily 123@#$           | 1          | 2014-02-30     | 2014-03-20    | 12:30          |               |               |                     |                        |                     |                  |ACTIVE    |
+      | Update Weekly, sch_week_days=monday                                                  | 2              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Weekly monday 345%$#   | 2          | 2014-03-20     | 2014-04-20    | 08:30          | 2             |               |                     |                        |                     |                  |ACTIVE    |
+      | Update Monthly and day of month, day of month=1, of the month(s)=3,4                 | 4              | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Monthly 567&^% 1       | 3          | 2014-04-21     | 2014-05-18    | 18:30          |               | 1             | 18                  | 3\|4\|5                |                     |                  |ACTIVE    |
+      | Update One time only                                                                 | 12             | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-One Time only 678%$@   | 4          |                |               | 20:30          |               |               |                     |                        |                     |                  |ACTIVE    |
+      | Update Every                                                                         | 13             | admin             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Every 987&%@           | 5          |                |               |                |               |               |                     |                        |                     | 18.30            |ACTIVE    |
 
 
    Scenario Outline: Get a single case scheduler of a project and check some properties
