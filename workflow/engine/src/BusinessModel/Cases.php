@@ -328,8 +328,8 @@ class Cases
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
                 $result = array ('guid'     => $aRow['TAS_UID'],
-                                 'name'     => $aRow['TAS_TITLE'],
-                                 'delegate' => $aRow['DEL_INDEX']
+                    'name'     => $aRow['TAS_TITLE'],
+                    'delegate' => $aRow['DEL_INDEX']
                 );
                 $oDataset->next();
             }
@@ -415,6 +415,121 @@ class Cases
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Put cancel case
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @param string $usr_uid, Uid for user
+     * @param string $del_index, Index for case
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function putCancelCase($app_uid, $usr_uid, $del_index = false) {
+        Validator::appUid($app_uid, '$cas_uid');
+        Validator::usrUid($usr_uid, '$usr_uid');
+
+        if ($del_index === false) {
+            $del_index = \AppDelegation::getCurrentIndex($app_uid);
+        }
+
+        $case = new \Cases();
+        $case->cancelCase( $app_uid, $del_index, $usr_uid );
+    }
+
+    /**
+     * Put pause case
+     *
+     * @access public
+     * @param string $app_uid , Uid for case
+     * @param string $usr_uid , Uid for user
+     * @param bool|string $del_index , Index for case
+     * @param null|string $unpaused_date, Date for unpaused
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function putPauseCase($app_uid, $usr_uid, $del_index = false, $unpaused_date = null) {
+        Validator::appUid($app_uid, '$cas_uid');
+        Validator::usrUid($usr_uid, '$usr_uid');
+        if ($unpaused_date != null) {
+            Validator::isDate($unpaused_date, 'Y-m-d', '$unpaused_date');
+        }
+
+        if ($del_index === false) {
+            $del_index = \AppDelegation::getCurrentIndex($app_uid);
+        }
+
+        $case = new \Cases();
+        $case->pauseCase( $app_uid, $del_index, $usr_uid, $unpaused_date );
+    }
+
+    /**
+     * Put unpause case
+     *
+     * @access public
+     * @param string $app_uid , Uid for case
+     * @param string $usr_uid , Uid for user
+     * @param bool|string $del_index , Index for case
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function putUnpauseCase($app_uid, $usr_uid, $del_index = false) {
+        Validator::appUid($app_uid, '$cas_uid');
+        Validator::usrUid($usr_uid, '$usr_uid');
+
+        if ($del_index === false) {
+            $del_index = \AppDelegation::getCurrentIndex($app_uid);
+        }
+
+        $case = new \Cases();
+        $case->unpauseCase( $app_uid, $del_index, $usr_uid );
+    }
+
+    /**
+     * Put execute trigger case
+     *
+     * @access public
+     * @param string $app_uid , Uid for case
+     * @param string $usr_uid , Uid for user
+     * @param bool|string $del_index , Index for case
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function putExecuteTriggerCase($app_uid, $tri_uid, $usr_uid, $del_index = false) {
+        Validator::appUid($app_uid, '$cas_uid');
+        Validator::triUid($tri_uid, '$tri_uid');
+        Validator::usrUid($usr_uid, '$usr_uid');
+
+        if ($del_index === false) {
+            $del_index = \AppDelegation::getCurrentIndex($app_uid);
+        }
+
+        $case = new \wsBase();
+        $case->executeTrigger( $usr_uid, $app_uid, $tri_uid, $del_index );
+    }
+
+    /**
+     * Delete case
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function deleteCase($app_uid) {
+        Validator::appUid($app_uid, '$cas_uid');
+        $case = new \Cases();
+        $case->removeCase( $app_uid );
     }
 
     /**

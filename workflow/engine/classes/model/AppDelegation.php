@@ -509,5 +509,18 @@ class AppDelegation extends BaseAppDelegation
         $rs->next();
         return $rs->getRow();
     }
+
+    public function getCurrentIndex ($appUid)
+    {
+        $oCriteria = new Criteria();
+        $oCriteria->addSelectColumn( AppDelegationPeer::DEL_INDEX );
+        $oCriteria->add( AppDelegationPeer::APP_UID, $appUid );
+        $oCriteria->addDescendingOrderByColumn( AppDelegationPeer::DEL_INDEX );
+        $oRuleSet = AppDelegationPeer::doSelectRS( $oCriteria );
+        $oRuleSet->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        $oRuleSet->next();
+        $data = $oRuleSet->getRow();
+        return (int)$data['DEL_INDEX'];
+    }
 }
 
