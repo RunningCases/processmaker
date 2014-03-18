@@ -23,8 +23,14 @@ class Cases
      */
     public function getList($dataList = array())
     {
-        G::LoadClass("applications");
+        Validator::isArray($dataList, '$dataList');
+        if (!isset($dataList["userId"])) {
+            throw (new \Exception("The user with userId: '' does not exist."));
+        } else {
+            Validator::usrUid($dataList["userId"], "userId");
+        }
 
+        G::LoadClass("applications");
         $solrEnabled = false;
         $userUid = $dataList["userId"];
         $callback = isset( $dataList["callback"] ) ? $dataList["callback"] : "stcCallback1001";
@@ -43,6 +49,11 @@ class Cases
         $dateFrom = isset( $dataList["dateFrom"] ) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
         $dateTo = isset( $dataList["dateTo"] ) ? substr( $dataList["dateTo"], 0, 10 ) : "";
         $first = isset( $dataList["first"] ) ? true :false;
+
+        $valuesCorrect = array('todo', 'draft', 'paused', 'sent', 'selfservice', 'unassigned', 'search');
+        if (!in_array($action, $valuesCorrect)) {
+            throw (new \Exception('The value for $action is incorrect.'));
+        }
 
         if ($action == 'search' || $action == 'to_reassign') {
             $userUid = ($user == "CURRENT_USER") ? $userUid : $user;
@@ -114,6 +125,11 @@ class Cases
                 (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
                 $category
             );
+        }
+        if (!empty($result['data'])) {
+            foreach ($result['data'] as &$value) {
+                $value = array_change_key_case($value, CASE_LOWER);
+            }
         }
         return $result;
     }
@@ -221,17 +237,11 @@ class Cases
                             {
                                 continue;
                             }
-                            $aRow["APP_NUMBER"] = $row["APP_NUMBER"];
-                            $aRow["APP_STATUS"] = $row["APP_STATUS"];
-                            $aRow["PRO_UID"]    = $row["PRO_UID"];
-                            $aRow["DEL_INDEX"]  = $row["DEL_INDEX"];
-                            $arrayData[] = array(
-                                "guid" => $aRow["APP_UID"],
-                                "name" => $aRow["APP_NUMBER"],
-                                "status" => $aRow["APP_STATUS"],
-                                "delIndex" => $aRow["DEL_INDEX"],
-                                "processId" => $aRow["PRO_UID"]
-                            );
+                            \G::LoadClass('wsBase');
+                            $ws = new \wsBase();
+                            $fields = $ws->getCaseInfo($caseUid, $row["DEL_INDEX"]);
+                            //Return
+                            return $fields;
                         }
                     }
                     $case = array();
@@ -253,13 +263,8 @@ class Cases
                     return $arrayData;
                 }
             } else {
-                $arrayData = array();
                 $criteria = new \Criteria("workflow");
-                $criteria->addSelectColumn(\AppCacheViewPeer::APP_UID);
                 $criteria->addSelectColumn(\AppCacheViewPeer::DEL_INDEX);
-                $criteria->addSelectColumn(\AppCacheViewPeer::APP_NUMBER);
-                $criteria->addSelectColumn(\AppCacheViewPeer::APP_STATUS);
-                $criteria->addSelectColumn(\AppCacheViewPeer::PRO_UID);
                 $criteria->add(\AppCacheViewPeer::USR_UID, $userUid);
                 $criteria->add(\AppCacheViewPeer::APP_UID, $caseUid);
                 $criteria->add(
@@ -279,16 +284,14 @@ class Cases
                 $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                 while ($rsCriteria->next()) {
                     $row = $rsCriteria->getRow();
-                    $arrayData[] = array(
-                        "guid" => $row["APP_UID"],
-                        "name" => $row["APP_NUMBER"],
-                        "status" => $row["APP_STATUS"],
-                        "delIndex" => $row["DEL_INDEX"],
-                        "processId" => $row["PRO_UID"]
-                    );
                 }
-                return $arrayData;
+                \G::LoadClass('wsBase');
+                $ws = new \wsBase();
+                $fields = $ws->getCaseInfo($caseUid, $row["DEL_INDEX"]);
+                //Return
+                return $fields;
             }
+
         } catch (\Exception $e) {
             throw $e;
         }
@@ -304,11 +307,34 @@ class Cases
     public function getTaskCase($caseUid)
     {
         try {
+            $result = array ();
             \G::LoadClass('wsBase');
-            $ws = new \wsBase();
-            $fields = $ws->taskCase($caseUid);
+            $oCriteria = new \Criteria( 'workflow' );
+            $del       = \DBAdapter::getStringDelimiter();
+            $oCriteria->addSelectColumn( \AppDelegationPeer::DEL_INDEX );
+            $oCriteria->addSelectColumn( \AppDelegationPeer::TAS_UID );
+            $oCriteria->addAsColumn( 'TAS_TITLE', 'C1.CON_VALUE' );
+            $oCriteria->addAlias( "C1", 'CONTENT' );
+            $tasTitleConds   = array ();
+            $tasTitleConds[] = array (\AppDelegationPeer::TAS_UID,'C1.CON_ID');
+            $tasTitleConds[] = array ('C1.CON_CATEGORY',$del . 'TAS_TITLE' . $del);
+            $tasTitleConds[] = array ('C1.CON_LANG',$del . SYS_LANG . $del);
+            $oCriteria->addJoinMC( $tasTitleConds, \Criteria::LEFT_JOIN );
+            $oCriteria->add( \AppDelegationPeer::APP_UID, $caseUid );
+            $oCriteria->add( \AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN' );
+            $oCriteria->add( \AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL );
+            $oDataset = \AppDelegationPeer::doSelectRS( $oCriteria );
+            $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $result = array ('guid'     => $aRow['TAS_UID'],
+                                 'name'     => $aRow['TAS_TITLE'],
+                                 'delegate' => $aRow['DEL_INDEX']
+                );
+                $oDataset->next();
+            }
             //Return
-            return $fields;
+            return $result;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -345,17 +371,20 @@ class Cases
      *
      * @param string $prjUid Unique id of Project
      * @param string $usrUid Unique id of User
-     * @param string $caseUid Unique id of Case
+     * @param string $actUid Unique id of Case
      * @param array $variables
      *
      * return array Return an array with Task Case
      */
-    public function addCaseImpersonate($prjUid, $usrUid, $caseUid, $variables)
+    public function addCaseImpersonate($prjUid, $usrUid, $actUid, $variables)
     {
         try {
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
-            $fields = $ws->newCaseImpersonate($prjUid, $usrUid, $variables, '1352844695225ff5fe54de2005407079');
+            if ($variables) {
+                $variables = array_shift($variables);
+            }
+            $fields = $ws->newCaseImpersonate($prjUid, $usrUid, $variables, $actUid);
             //Return
             return $fields;
         } catch (\Exception $e) {
@@ -388,5 +417,319 @@ class Cases
         }
     }
 
-}
+    /**
+     * Reassign Case
+     *
+     * @param string $caseUid Unique id of Case
+     * @param string $userUid Unique id of User
+     * @param string $delIndex
+     * @param string $bExecuteTriggersBeforeAssignment
+     *
+     * return array Return an array with Task Case
+     */
 
+    public function updateRouteCase($caseUid, $userUid, $delIndex)
+    {
+        try {
+            \G::LoadClass('wsBase');
+            $ws = new \wsBase();
+            $fields = $ws->derivateCase($userUid, $caseUid, $delIndex, $bExecuteTriggersBeforeAssignment = false);
+            //Return
+            return $fields;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * get all upload document that they have send it
+     *
+     * @param string $sProcessUID Unique id of Process
+     * @param string $sApplicationUID Unique id of Case
+     * @param string $sTasKUID Unique id of Activity
+     * @param string $sUserUID Unique id of User
+     * @return object
+     */
+    public function getAllUploadedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
+    {
+        \G::LoadClass("configuration");
+        $conf = new \Configurations();
+        $confEnvSetting = $conf->getFormats();
+        //verifica si existe la tabla OBJECT_PERMISSION
+        $cases = new \cases();
+        $cases->verifyTable();
+        $listing = false;
+        $oPluginRegistry = & \PMPluginRegistry::getSingleton();
+        if ($oPluginRegistry->existsTrigger(PM_CASE_DOCUMENT_LIST)) {
+            $folderData = new \folderData(null, null, $sApplicationUID, null, $sUserUID);
+            $folderData->PMType = "INPUT";
+            $folderData->returnList = true;
+            //$oPluginRegistry      = & PMPluginRegistry::getSingleton();
+            $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
+        }
+        $aObjectPermissions = $cases->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
+        if (!is_array($aObjectPermissions)) {
+            $aObjectPermissions = array(
+                'DYNAFORMS' => array(-1),
+                'INPUT_DOCUMENTS' => array(-1),
+                'OUTPUT_DOCUMENTS' => array(-1)
+            );
+        }
+        if (!isset($aObjectPermissions['DYNAFORMS'])) {
+            $aObjectPermissions['DYNAFORMS'] = array(-1);
+        } else {
+            if (!is_array($aObjectPermissions['DYNAFORMS'])) {
+                $aObjectPermissions['DYNAFORMS'] = array(-1);
+            }
+        }
+        if (!isset($aObjectPermissions['INPUT_DOCUMENTS'])) {
+            $aObjectPermissions['INPUT_DOCUMENTS'] = array(-1);
+        } else {
+            if (!is_array($aObjectPermissions['INPUT_DOCUMENTS'])) {
+                $aObjectPermissions['INPUT_DOCUMENTS'] = array(-1);
+            }
+        }
+        if (!isset($aObjectPermissions['OUTPUT_DOCUMENTS'])) {
+            $aObjectPermissions['OUTPUT_DOCUMENTS'] = array(-1);
+        } else {
+            if (!is_array($aObjectPermissions['OUTPUT_DOCUMENTS'])) {
+                $aObjectPermissions['OUTPUT_DOCUMENTS'] = array(-1);
+            }
+        }
+        $aDelete = $cases->getAllObjectsFrom($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, 'DELETE');
+        $oAppDocument = new \AppDocument();
+        $oCriteria = new \Criteria('workflow');
+        $oCriteria->add(\AppDocumentPeer::APP_UID, $sApplicationUID);
+        $oCriteria->add(\AppDocumentPeer::APP_DOC_TYPE, array('INPUT'), \Criteria::IN);
+        $oCriteria->add(\AppDocumentPeer::APP_DOC_STATUS, array('ACTIVE'), \Criteria::IN);
+        //$oCriteria->add(AppDocumentPeer::APP_DOC_UID, $aObjectPermissions['INPUT_DOCUMENTS'], Criteria::IN);
+        $oCriteria->add(
+            $oCriteria->getNewCriterion(
+                \AppDocumentPeer::APP_DOC_UID, $aObjectPermissions['INPUT_DOCUMENTS'], \Criteria::IN)->
+                addOr($oCriteria->getNewCriterion(\AppDocumentPeer::USR_UID, array($sUserUID, '-1'), \Criteria::IN))
+        );
+        $aConditions = array();
+        $aConditions[] = array(\AppDocumentPeer::APP_UID, \AppDelegationPeer::APP_UID);
+        $aConditions[] = array(\AppDocumentPeer::DEL_INDEX, \AppDelegationPeer::DEL_INDEX);
+        $oCriteria->addJoinMC($aConditions, \Criteria::LEFT_JOIN);
+        $oCriteria->add(\AppDelegationPeer::PRO_UID, $sProcessUID);
+        $oCriteria->addAscendingOrderByColumn(\AppDocumentPeer::APP_DOC_INDEX);
+        $oDataset = \AppDocumentPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $oDataset->next();
+        $aInputDocuments = array();
+        $aInputDocuments[] = array(
+            'APP_DOC_UID' => 'char',
+            'DOC_UID' => 'char',
+            'APP_DOC_COMMENT' => 'char',
+            'APP_DOC_FILENAME' => 'char', 'APP_DOC_INDEX' => 'integer'
+        );
+        $oUser = new \Users();
+        while ($aRow = $oDataset->getRow()) {
+            $oCriteria2 = new \Criteria('workflow');
+            $oCriteria2->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
+            $oCriteria2->add(\AppDelegationPeer::DEL_INDEX, $aRow['DEL_INDEX']);
+            $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria2);
+            $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset2->next();
+            $aRow2 = $oDataset2->getRow();
+            $oTask = new \Task();
+            if ($oTask->taskExists($aRow2['TAS_UID'])) {
+                $aTask = $oTask->load($aRow2['TAS_UID']);
+            } else {
+                $aTask = array('TAS_TITLE' => '(TASK DELETED)');
+            }
+            $aAux = $oAppDocument->load($aRow['APP_DOC_UID'], $aRow['DOC_VERSION']);
+            $lastVersion = $oAppDocument->getLastAppDocVersion($aRow['APP_DOC_UID'], $sApplicationUID);
+
+            try {
+                $aAux1 = $oUser->load($aAux['USR_UID']);
+
+                $sUser = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $aAux1["USR_USERNAME"], $aAux1["USR_FIRSTNAME"], $aAux1["USR_LASTNAME"]);
+            } catch (Exception $oException) {
+                //$sUser = '(USER DELETED)';
+                $sUser = '***';
+            }
+            $aFields = array(
+                'APP_DOC_UID' => $aAux['APP_DOC_UID'],
+                'DOC_UID' => $aAux['DOC_UID'],
+                'APP_DOC_COMMENT' => $aAux['APP_DOC_COMMENT'],
+                'APP_DOC_FILENAME' => $aAux['APP_DOC_FILENAME'],
+                'APP_DOC_INDEX' => $aAux['APP_DOC_INDEX'],
+                'TYPE' => $aAux['APP_DOC_TYPE'],
+                'ORIGIN' => $aTask['TAS_TITLE'],
+                'CREATE_DATE' => $aAux['APP_DOC_CREATE_DATE'],
+                'CREATED_BY' => $sUser
+            );
+            if ($aFields['APP_DOC_FILENAME'] != '') {
+                $aFields['TITLE'] = $aFields['APP_DOC_FILENAME'];
+            } else {
+                $aFields['TITLE'] = $aFields['APP_DOC_COMMENT'];
+            }
+            //$aFields['POSITION'] = $_SESSION['STEP_POSITION'];
+            $aFields['CONFIRM'] = \G::LoadTranslation('ID_CONFIRM_DELETE_ELEMENT');
+            if (in_array($aRow['APP_DOC_UID'], $aDelete['INPUT_DOCUMENTS'])) {
+                $aFields['ID_DELETE'] = \G::LoadTranslation('ID_DELETE');
+            }
+            $aFields['DOWNLOAD_LABEL'] = \G::LoadTranslation('ID_DOWNLOAD');
+            $aFields['DOWNLOAD_LINK'] = "cases_ShowDocument?a=" . $aRow['APP_DOC_UID'] . "&v=" . $aRow['DOC_VERSION'];
+            $aFields['DOC_VERSION'] = $aRow['DOC_VERSION'];
+            if (is_array($listing)) {
+                foreach ($listing as $folderitem) {
+                    if ($folderitem->filename == $aRow['APP_DOC_UID']) {
+                        $aFields['DOWNLOAD_LABEL'] = \G::LoadTranslation('ID_GET_EXTERNAL_FILE');
+                        $aFields['DOWNLOAD_LINK'] = $folderitem->downloadScript;
+                        continue;
+                    }
+                }
+            }
+            if ($lastVersion == $aRow['DOC_VERSION']) {
+                //Show only last version
+                $aInputDocuments[] = $aFields;
+            }
+            $oDataset->next();
+        }
+        $oAppDocument = new \AppDocument();
+        $oCriteria = new \Criteria('workflow');
+        $oCriteria->add(\AppDocumentPeer::APP_UID, $sApplicationUID);
+        $oCriteria->add(\AppDocumentPeer::APP_DOC_TYPE, array('ATTACHED'), \Criteria::IN);
+        $oCriteria->add(\AppDocumentPeer::APP_DOC_STATUS, array('ACTIVE'), \Criteria::IN);
+        $oCriteria->add(
+            $oCriteria->getNewCriterion(
+                \AppDocumentPeer::APP_DOC_UID, $aObjectPermissions['INPUT_DOCUMENTS'], \Criteria::IN
+            )->
+                addOr($oCriteria->getNewCriterion(\AppDocumentPeer::USR_UID, array($sUserUID, '-1'), \Criteria::IN)));
+        $aConditions = array();
+        $aConditions[] = array(\AppDocumentPeer::APP_UID, \AppDelegationPeer::APP_UID);
+        $aConditions[] = array(\AppDocumentPeer::DEL_INDEX, \AppDelegationPeer::DEL_INDEX);
+        $oCriteria->addJoinMC($aConditions, \Criteria::LEFT_JOIN);
+        $oCriteria->add(\AppDelegationPeer::PRO_UID, $sProcessUID);
+        $oCriteria->addAscendingOrderByColumn(\AppDocumentPeer::APP_DOC_INDEX);
+        $oDataset = \AppDocumentPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $oDataset->next();
+        while ($aRow = $oDataset->getRow()) {
+            $oCriteria2 = new \Criteria('workflow');
+            $oCriteria2->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
+            $oCriteria2->add(\AppDelegationPeer::DEL_INDEX, $aRow['DEL_INDEX']);
+            $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria2);
+            $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset2->next();
+            $aRow2 = $oDataset2->getRow();
+            $oTask = new \Task();
+            if ($oTask->taskExists($aRow2['TAS_UID'])) {
+                $aTask = $oTask->load($aRow2['TAS_UID']);
+            } else {
+                $aTask = array('TAS_TITLE' => '(TASK DELETED)');
+            }
+            $aAux = $oAppDocument->load($aRow['APP_DOC_UID'], $aRow['DOC_VERSION']);
+            $lastVersion = $oAppDocument->getLastAppDocVersion($aRow['APP_DOC_UID'], $sApplicationUID);
+            try {
+                $aAux1 = $oUser->load($aAux['USR_UID']);
+
+                $sUser = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $aAux1["USR_USERNAME"], $aAux1["USR_FIRSTNAME"], $aAux1["USR_LASTNAME"]);
+            } catch (Exception $oException) {
+                $sUser = '***';
+            }
+            $aFields = array(
+                'APP_DOC_UID' => $aAux['APP_DOC_UID'],
+                'DOC_UID' => $aAux['DOC_UID'],
+                'APP_DOC_COMMENT' => $aAux['APP_DOC_COMMENT'],
+                'APP_DOC_FILENAME' => $aAux['APP_DOC_FILENAME'],
+                'APP_DOC_INDEX' => $aAux['APP_DOC_INDEX'],
+                'TYPE' => $aAux['APP_DOC_TYPE'],
+                'ORIGIN' => $aTask['TAS_TITLE'],
+                'CREATE_DATE' => $aAux['APP_DOC_CREATE_DATE'],
+                'CREATED_BY' => $sUser
+            );
+            if ($aFields['APP_DOC_FILENAME'] != '') {
+                $aFields['TITLE'] = $aFields['APP_DOC_FILENAME'];
+            } else {
+                $aFields['TITLE'] = $aFields['APP_DOC_COMMENT'];
+            }
+            //$aFields['POSITION'] = $_SESSION['STEP_POSITION'];
+            $aFields['CONFIRM'] = G::LoadTranslation('ID_CONFIRM_DELETE_ELEMENT');
+            if (in_array($aRow['APP_DOC_UID'], $aDelete['INPUT_DOCUMENTS'])) {
+                $aFields['ID_DELETE'] = G::LoadTranslation('ID_DELETE');
+            }
+            $aFields['DOWNLOAD_LABEL'] = G::LoadTranslation('ID_DOWNLOAD');
+            $aFields['DOWNLOAD_LINK'] = "cases_ShowDocument?a=" . $aRow['APP_DOC_UID'];
+            if ($lastVersion == $aRow['DOC_VERSION']) {
+                //Show only last version
+                $aInputDocuments[] = $aFields;
+            }
+            $oDataset->next();
+        }
+        // Get input documents added/modified by a supervisor - Begin
+        $oAppDocument = new \AppDocument();
+        $oCriteria = new \Criteria('workflow');
+        $oCriteria->add(\AppDocumentPeer::APP_UID, $sApplicationUID);
+        $oCriteria->add(\AppDocumentPeer::APP_DOC_TYPE, array('INPUT'), \Criteria::IN);
+        $oCriteria->add(\AppDocumentPeer::APP_DOC_STATUS, array('ACTIVE'), \Criteria::IN);
+        $oCriteria->add(\AppDocumentPeer::DEL_INDEX, 100000);
+        $oCriteria->addJoin(\AppDocumentPeer::APP_UID, \ApplicationPeer::APP_UID, \Criteria::LEFT_JOIN);
+        $oCriteria->add(\ApplicationPeer::PRO_UID, $sProcessUID);
+        $oCriteria->addAscendingOrderByColumn(\AppDocumentPeer::APP_DOC_INDEX);
+        $oDataset = \AppDocumentPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $oDataset->next();
+        $oUser = new \Users();
+        while ($aRow = $oDataset->getRow()) {
+            $aTask = array('TAS_TITLE' => '[ ' . G::LoadTranslation('ID_SUPERVISOR') . ' ]');
+            $aAux = $oAppDocument->load($aRow['APP_DOC_UID'], $aRow['DOC_VERSION']);
+            $lastVersion = $oAppDocument->getLastAppDocVersion($aRow['APP_DOC_UID'], $sApplicationUID);
+            try {
+                $aAux1 = $oUser->load($aAux['USR_UID']);
+                $sUser = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $aAux1["USR_USERNAME"], $aAux1["USR_FIRSTNAME"], $aAux1["USR_LASTNAME"]);
+            } catch (Exception $oException) {
+                $sUser = '***';
+            }
+            $aFields = array(
+                'APP_DOC_UID' => $aAux['APP_DOC_UID'],
+                'DOC_UID' => $aAux['DOC_UID'],
+                'APP_DOC_COMMENT' => $aAux['APP_DOC_COMMENT'],
+                'APP_DOC_FILENAME' => $aAux['APP_DOC_FILENAME'],
+                'APP_DOC_INDEX' => $aAux['APP_DOC_INDEX'],
+                'TYPE' => $aAux['APP_DOC_TYPE'],
+                'ORIGIN' => $aTask['TAS_TITLE'],
+                'CREATE_DATE' => $aAux['APP_DOC_CREATE_DATE'],
+                'CREATED_BY' => $sUser
+            );
+            if ($aFields['APP_DOC_FILENAME'] != '') {
+                $aFields['TITLE'] = $aFields['APP_DOC_FILENAME'];
+            } else {
+                $aFields['TITLE'] = $aFields['APP_DOC_COMMENT'];
+            }
+            //$aFields['POSITION'] = $_SESSION['STEP_POSITION'];
+            $aFields['CONFIRM'] = \G::LoadTranslation('ID_CONFIRM_DELETE_ELEMENT');
+            if (in_array($aRow['APP_DOC_UID'], $aDelete['INPUT_DOCUMENTS'])) {
+                $aFields['ID_DELETE'] = \G::LoadTranslation('ID_DELETE');
+            }
+            $aFields['DOWNLOAD_LABEL'] = \G::LoadTranslation('ID_DOWNLOAD');
+            $aFields['DOWNLOAD_LINK'] = "cases_ShowDocument?a=" . $aRow['APP_DOC_UID'] . "&v=" . $aRow['DOC_VERSION'];
+            $aFields['DOC_VERSION'] = $aRow['DOC_VERSION'];
+            if (is_array($listing)) {
+                foreach ($listing as $folderitem) {
+                    if ($folderitem->filename == $aRow['APP_DOC_UID']) {
+                        $aFields['DOWNLOAD_LABEL'] = \G::LoadTranslation('ID_GET_EXTERNAL_FILE');
+                        $aFields['DOWNLOAD_LINK'] = $folderitem->downloadScript;
+                        continue;
+                    }
+                }
+            }
+            if ($lastVersion == $aRow['DOC_VERSION']) {
+                //Show only last version
+                $aInputDocuments[] = $aFields;
+            }
+            $oDataset->next();
+        }
+        // Get input documents added/modified by a supervisor - End
+        global $_DBArray;
+        $_DBArray['inputDocuments'] = $aInputDocuments;
+        \G::LoadClass('ArrayPeer');
+        $oCriteria = new \Criteria('dbarray');
+        $oCriteria->setDBArrayTable('inputDocuments');
+        $oCriteria->addDescendingOrderByColumn('CREATE_DATE');
+        return $oCriteria;
+    }
+}

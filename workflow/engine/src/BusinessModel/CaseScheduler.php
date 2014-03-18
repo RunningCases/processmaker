@@ -20,7 +20,6 @@ class CaseScheduler
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_NAME );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_NAME );
-            $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_PASS );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::PRO_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::TAS_UID );
@@ -78,7 +77,6 @@ class CaseScheduler
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_NAME );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_NAME );
-            $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_PASS );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::PRO_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::TAS_UID );
@@ -190,74 +188,44 @@ class CaseScheduler
      * Checks if the user exists
      *
      * @param string $userName  Name
-     * @param string $userPass  Password
-     * @param string $sProcessUID  Process
+     * @param string $sTaskUID  Task
      *
      * return message
      */
-    public function getUser($userName, $userPass, $sProcessUID, $sTaskUID)
+    public function getUser($userName, $sTaskUID)
     {
         try {
-            $sPRO_UID = $sProcessUID;
             $sTASKS = $sTaskUID;
             $sWS_USER = trim( $userName );
-            $sWS_PASS = trim( $userPass );
-            if (\G::is_https()) {
-                $http = 'https://';
-            } else {
-                $http = 'http://';
-            }
-            $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
-            @$client = new \SoapClient( $endpoint );
-            $user = $sWS_USER;
-            $pass = $sWS_PASS;
-            $params = array ('userid' => $user,'password' => $pass);
-            $result = $client->__SoapCall('login', array ($params));
-            $fields['status_code'] = $result->status_code;
-            $fields['message'] = 'ProcessMaker WebService version: ' . $result->version . "\n" . $result->message;
-            $fields['version'] = $result->version;
-            $fields['time_stamp'] = $result->timestamp;
-            $messageCode = 1;
-            \G::LoadClass( 'Task' );
-            \G::LoadClass( 'User' );
-            \G::LoadClass( 'TaskUser' );
-            \G::LoadClass( 'Groupwf' );
-            if (! class_exists( 'GroupUser' )) {
-                \G::LoadClass( 'GroupUser' );
-            }
-            if ($result->status_code == 0) {
+            $oCriteria = new \Criteria( 'workflow' );
+            $oCriteria->addSelectColumn( \UsersPeer::USR_UID );
+            $oCriteria->addSelectColumn( \TaskUserPeer::USR_UID );
+            $oCriteria->addSelectColumn( \TaskUserPeer::TAS_UID );
+            $oCriteria->addSelectColumn( \UsersPeer::USR_USERNAME );
+            $oCriteria->addSelectColumn( \UsersPeer::USR_FIRSTNAME );
+            $oCriteria->addSelectColumn( \UsersPeer::USR_LASTNAME );
+            $oCriteria->addJoin( \TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN );
+            $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
+            $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
+            $userIsAssigned = \TaskUserPeer::doCount( $oCriteria );
+            if ($userIsAssigned < 1) {
                 $oCriteria = new \Criteria( 'workflow' );
                 $oCriteria->addSelectColumn( \UsersPeer::USR_UID );
-                $oCriteria->addSelectColumn( \TaskUserPeer::USR_UID );
-                $oCriteria->addSelectColumn( \TaskUserPeer::TAS_UID );
-                $oCriteria->addSelectColumn( \UsersPeer::USR_USERNAME );
-                $oCriteria->addSelectColumn( \UsersPeer::USR_FIRSTNAME );
-                $oCriteria->addSelectColumn( \UsersPeer::USR_LASTNAME );
-                $oCriteria->addJoin( \TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN );
+                $oCriteria->addJoin( \UsersPeer::USR_UID, \GroupUserPeer::USR_UID, \Criteria::LEFT_JOIN );
+                $oCriteria->addJoin( \GroupUserPeer::GRP_UID, \TaskUserPeer::USR_UID, \Criteria::LEFT_JOIN );
                 $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
                 $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
-                $userIsAssigned = \TaskUserPeer::doCount( $oCriteria );
-                if ($userIsAssigned < 1) {
-                    $oCriteria = new \Criteria( 'workflow' );
-                    $oCriteria->addSelectColumn( \UsersPeer::USR_UID );
-                    $oCriteria->addJoin( \UsersPeer::USR_UID, \GroupUserPeer::USR_UID, \Criteria::LEFT_JOIN );
-                    $oCriteria->addJoin( \GroupUserPeer::GRP_UID, \TaskUserPeer::USR_UID, \Criteria::LEFT_JOIN );
-                    $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
-                    $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
-                    $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
-                    if (! ($userIsAssigned >= 1)) {
-                        throw (new \Exception( "The User \'" . $sWS_USER . "\' doesn't have the activity \'" . $sTASKS . "\' assigned"));
-                    }
+                $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
+                if (! ($userIsAssigned >= 1)) {
+                    throw (new \Exception( "The User \'" . $sWS_USER . "\' doesn't have the activity \'" . $sTASKS . "\' assigned"));
                 }
-                $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
-                $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            }
+            $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $messageCode = $aRow['USR_UID'];
                 $oDataset->next();
-                while ($aRow = $oDataset->getRow()) {
-                    $messageCode = $aRow['USR_UID'];
-                    $oDataset->next();
-                }
-            } else {
-                throw (new \Exception( $result->message));
             }
             return $messageCode;
         } catch (\Exception $e) {
@@ -295,12 +263,13 @@ class CaseScheduler
             if ($this->existsName($sProcessUID, $aData['SCH_NAME'])) {
                 throw (new \Exception( 'Duplicate Case Scheduler name'));
             }
-            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS'], $sProcessUID, $aData['TAS_UID']);
+            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['TAS_UID']);
             $oUser = \UsersPeer::retrieveByPK( $mUser );
             if (is_null($oUser)) {
                 throw (new \Exception($mUser));
             }
-            $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
+            $oUserPass = $oUser->getUsrPassword();
+            $aData['SCH_DEL_USER_PASS'] = $oUserPass;
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
                 if (!preg_match($pattern, $aData['SCH_START_TIME'])) {
@@ -586,12 +555,13 @@ class CaseScheduler
             if ($this->existsNameUpdate($sSchUID, $aData['SCH_NAME'])) {
                 throw (new \Exception( 'Duplicate Case Scheduler name'));
             }
-            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS'], $sProcessUID, $aData['TAS_UID']);
+            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['TAS_UID']);
             $oUser = \UsersPeer::retrieveByPK( $mUser );
             if (is_null($oUser)) {
                 throw (new \Exception($mUser));
             }
-            $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
+            $oUserPass = $oUser->getUsrPassword();
+            $aData['SCH_DEL_USER_PASS'] = $oUserPass;
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
                 if (!preg_match($pattern, $aData['SCH_START_TIME'])) {
@@ -850,12 +820,11 @@ class CaseScheduler
     /**
      * Delete a case scheduler of a project
      *
-     * @param string $sProcessUID
      * @param string $sSchUID
      *
      * @access public
      */
-    public function deleteCaseScheduler($sProcessUID, $sSchUID)
+    public function deleteCaseScheduler($sSchUID)
     {
         try {
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes". PATH_SEP . "model" . PATH_SEP . "CaseScheduler.php");
