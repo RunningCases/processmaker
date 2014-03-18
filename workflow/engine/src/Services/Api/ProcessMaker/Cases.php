@@ -175,8 +175,8 @@ class Cases extends Api
         try {
             $userUid = $this->getUserId();
             $cases = new \BusinessModel\Cases();
-            $arrayData = $cases->getCaseInfo($cas_uid, $userUid);
-            return $arrayData;
+            $oData = $cases->getCaseInfo($cas_uid, $userUid);
+            return $oData;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -191,8 +191,8 @@ class Cases extends Api
     {
         try {
             $cases = new \BusinessModel\Cases();
-            $arrayData = $cases->getTaskCase($cas_uid);
-            return $arrayData;
+            $oData = $cases->getTaskCase($cas_uid);
+            return $oData;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
