@@ -372,6 +372,8 @@ class WebApplication
 
         \Propel::init(PATH_CONFIG . "databases.php");
 
+        \Bootstrap::LoadTranslationObject(defined( 'SYS_LANG' ) ? SYS_LANG : "en");
+
         return true;
     }
 }

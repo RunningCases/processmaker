@@ -11,7 +11,6 @@ Feature: Case Scheduler Resources
           "sch_option": "3",
           "sch_name": "Test scheduler #1",
           "sch_del_user_name": "admin",
-          "sch_del_user_pass": "admin",
           "tas_uid": "46941969352af5be2ab3f39001216717",    
           "sch_start_time": "18:00",
           "sch_start_date": "2014-01-20",
@@ -54,7 +53,6 @@ Feature: Case Scheduler Resources
       {
           "sch_name": "Test scheduler #1 modify",
           "sch_del_user_name": "admin",
-          "sch_del_user_pass": "admin",
           "tas_uid": "46941969352af5be2ab3f39001216717",
           "sch_start_time": "20:00",
           "sch_start_date": "2014-02-01",

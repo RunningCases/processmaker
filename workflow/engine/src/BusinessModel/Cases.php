@@ -221,17 +221,11 @@ class Cases
                             {
                                 continue;
                             }
-                            $aRow["APP_NUMBER"] = $row["APP_NUMBER"];
-                            $aRow["APP_STATUS"] = $row["APP_STATUS"];
-                            $aRow["PRO_UID"]    = $row["PRO_UID"];
-                            $aRow["DEL_INDEX"]  = $row["DEL_INDEX"];
-                            $arrayData[] = array(
-                                "guid" => $aRow["APP_UID"],
-                                "name" => $aRow["APP_NUMBER"],
-                                "status" => $aRow["APP_STATUS"],
-                                "delIndex" => $aRow["DEL_INDEX"],
-                                "processId" => $aRow["PRO_UID"]
-                            );
+                            \G::LoadClass('wsBase');
+                            $ws = new \wsBase();
+                            $fields = $ws->getCaseInfo($caseUid, $row["DEL_INDEX"]);
+                            //Return
+                            return $fields;
                         }
                     }
                     $case = array();
@@ -253,13 +247,8 @@ class Cases
                     return $arrayData;
                 }
             } else {
-                $arrayData = array();
                 $criteria = new \Criteria("workflow");
-                $criteria->addSelectColumn(\AppCacheViewPeer::APP_UID);
                 $criteria->addSelectColumn(\AppCacheViewPeer::DEL_INDEX);
-                $criteria->addSelectColumn(\AppCacheViewPeer::APP_NUMBER);
-                $criteria->addSelectColumn(\AppCacheViewPeer::APP_STATUS);
-                $criteria->addSelectColumn(\AppCacheViewPeer::PRO_UID);
                 $criteria->add(\AppCacheViewPeer::USR_UID, $userUid);
                 $criteria->add(\AppCacheViewPeer::APP_UID, $caseUid);
                 $criteria->add(
@@ -279,16 +268,14 @@ class Cases
                 $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                 while ($rsCriteria->next()) {
                     $row = $rsCriteria->getRow();
-                    $arrayData[] = array(
-                        "guid" => $row["APP_UID"],
-                        "name" => $row["APP_NUMBER"],
-                        "status" => $row["APP_STATUS"],
-                        "delIndex" => $row["DEL_INDEX"],
-                        "processId" => $row["PRO_UID"]
-                    );
                 }
-                return $arrayData;
+                \G::LoadClass('wsBase');
+                $ws = new \wsBase();
+                $fields = $ws->getCaseInfo($caseUid, $row["DEL_INDEX"]);
+                //Return
+                return $fields;
             }
+
         } catch (\Exception $e) {
             throw $e;
         }
@@ -345,17 +332,20 @@ class Cases
      *
      * @param string $prjUid Unique id of Project
      * @param string $usrUid Unique id of User
-     * @param string $caseUid Unique id of Case
+     * @param string $actUid Unique id of Case
      * @param array $variables
      *
      * return array Return an array with Task Case
      */
-    public function addCaseImpersonate($prjUid, $usrUid, $caseUid, $variables)
+    public function addCaseImpersonate($prjUid, $usrUid, $actUid, $variables)
     {
         try {
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
-            $fields = $ws->newCaseImpersonate($prjUid, $usrUid, $variables, '1352844695225ff5fe54de2005407079');
+            if ($variables) {
+                $variables = array_shift($variables);
+            }
+            $fields = $ws->newCaseImpersonate($prjUid, $usrUid, $variables, $actUid);
             //Return
             return $fields;
         } catch (\Exception $e) {
@@ -381,6 +371,30 @@ class Cases
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
             $fields = $ws->reassignCase($userUid, $caseUid, $delIndex, $userUidSource, $userUidTarget);
+            //Return
+            return $fields;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Reassign Case
+     *
+     * @param string $caseUid Unique id of Case
+     * @param string $userUid Unique id of User
+     * @param string $delIndex
+     * @param string $bExecuteTriggersBeforeAssignment
+     *
+     * return array Return an array with Task Case
+     */
+
+    public function updateRouteCase($caseUid, $userUid, $delIndex)
+    {
+        try {
+            \G::LoadClass('wsBase');
+            $ws = new \wsBase();
+            $fields = $ws->derivateCase($userUid, $caseUid, $delIndex, $bExecuteTriggersBeforeAssignment = false);
             //Return
             return $fields;
         } catch (\Exception $e) {
