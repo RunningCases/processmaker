@@ -1,6 +1,7 @@
 <?php
 
 global $RBAC;
+$result = new StdClass();
 
 switch ($_POST['action']) {
     case 'countryList':

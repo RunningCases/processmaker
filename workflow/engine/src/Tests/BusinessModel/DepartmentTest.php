@@ -16,94 +16,339 @@ if (!class_exists("Propel")) {
  */
 class DepartmentTest extends \PHPUnit_Framework_TestCase
 {
-    public function testSaveDepartment()
+    protected $oDepartment;
+
+    /**
+     * Set class for test
+     *
+     * @coversNothing
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function setUp()
     {
-        $oDepartment = new \BusinessModel\Department();
-
-        ////////// Create department parent
-        $dep1 = array (
-            'dep_title' => 'departamento padre'
-        );
-        $arrayDepartments = $oDepartment->saveDepartment($dep1);
-        $this->assertTrue(isset($arrayDepartments['dep_uid']));
-        $this->assertEquals($arrayDepartments['dep_parent'], '');
-        $this->assertEquals($arrayDepartments['dep_title'], 'departamento padre');
-        $this->assertEquals($arrayDepartments['dep_status'], 'ACTIVE');
-        $this->assertEquals($arrayDepartments['dep_manager'], '');
-        $this->assertEquals($arrayDepartments['has_children'], 0);
-
-        ////////// Create department child
-        $dep1Uid = $arrayDepartments['dep_uid'];
-        $dep2    = array (
-            'dep_parent' => $dep1Uid,
-            'dep_manager' => '00000000000000000000000000000001',
-            'dep_title' => 'departamento hijo1',
-            'dep_status' => 'INACTIVE'
-        );
-        $arrayDepartments2 = $oDepartment->saveDepartment($dep2);
-        $this->assertTrue(isset($arrayDepartments2['dep_uid']));
-        $this->assertEquals($arrayDepartments2['dep_parent'], $dep1Uid);
-        $this->assertEquals($arrayDepartments2['dep_title'], 'departamento hijo1');
-        $this->assertEquals($arrayDepartments2['dep_status'], 'INACTIVE');
-        $this->assertEquals($arrayDepartments2['dep_manager'], '00000000000000000000000000000001');
-        $this->assertEquals($arrayDepartments2['has_children'], 0);
-
-        ////////// Update department parent
-        $depUp1 = array (
-            'dep_uid' => $dep1Uid,
-            'dep_title' => 'DepPadre',
-            'dep_manager' => '00000000000000000000000000000001'
-        );
-        $oDepartment->saveDepartment($depUp1, false);
-
-        $dep2Uid = $arrayDepartments2['dep_uid'];
-        $depUp2 = array (
-            'dep_uid' => $dep2Uid,
-            'dep_title' => 'DepHijo',
-            'dep_manager' => '',
-        );
-        $oDepartment->saveDepartment($depUp2, false);
+        $this->oDepartment = new \BusinessModel\Department();
+        return true;
     }
 
-    public function testGetDepartments()
+    /**
+     * Test error for type in first field the function
+     *
+     * @covers \BusinessModel\Department::saveDepartment
+     * @expectedException        Exception
+     * @expectedExceptionMessage Invalid value for '$dep_data' it must be an array.
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testCreateDepartmentErrorArray()
     {
-        $oDepartment = new \BusinessModel\Department();
-        $arrayDepartments = $oDepartment->getDepartments();
+        $this->oDepartment->saveDepartment(true);
+    }
+
+    /**
+     * Test error for type in second field the function
+     *
+     * @covers \BusinessModel\Department::saveDepartment
+     * @expectedException        Exception
+     * @expectedExceptionMessage Invalid value for '$create' it must be a boolean.
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testCreateDepartmentErrorBoolean()
+    {
+        $this->oDepartment->saveDepartment(array('1'),array());
+    }
+
+    /**
+     * Test error for empty array in first field the function
+     *
+     * @covers \BusinessModel\Department::saveDepartment
+     * @expectedException        Exception
+     * @expectedExceptionMessage The field '$dep_data' is empty.
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testCreateDepartmentErrorArrayEmpty()
+    {
+        $this->oDepartment->saveDepartment(array());
+    }
+
+    /**
+     * Test error for create department with nonexistent dep_parent
+     *
+     * @covers \BusinessModel\Department::saveDepartment
+     * @expectedException        Exception
+     * @expectedExceptionMessage The departament with dep_parent: 'testUidDepartment' does not exist.
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testCreateDepartmentErrorArrayDepParentExist()
+    {
+        $data = array('dep_parent' => 'testUidDepartment');
+        $this->oDepartment->saveDepartment($data);
+    }
+
+    /**
+     * Test error for create department with nonexistent dep_manager
+     *
+     * @covers \BusinessModel\Department::saveDepartment
+     * @expectedException        Exception
+     * @expectedExceptionMessage The user with dep_manager: 'testUidUser' does not exist.
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testCreateDepartmentErrorArrayDepManagerExist()
+    {
+        $data = array('dep_manager' => 'testUidUser');
+        $this->oDepartment->saveDepartment($data);
+    }
+
+    /**
+     * Test error for create department with incorrect dep_status
+     *
+     * @covers \BusinessModel\Department::saveDepartment
+     * @expectedException        Exception
+     * @expectedExceptionMessage The departament with dep_status: 'SUPER ACTIVO' is incorrect.
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testCreateDepartmentErrorArrayDepStatus()
+    {
+        $data = array('dep_status' => 'SUPER ACTIVO');
+        $this->oDepartment->saveDepartment($data);
+    }
+
+    /**
+     * Test error for create department untitled
+     *
+     * @covers \BusinessModel\Department::saveDepartment
+     * @expectedException        Exception
+     * @expectedExceptionMessage The field dep_title is required.
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testCreateDepartmentErrorArrayDepTitleEmpty()
+    {
+        $data = array('dep_status' => 'ACTIVE');
+        $this->oDepartment->saveDepartment($data);
+    }
+
+    /**
+     * Save department parent
+     *
+     * @covers \BusinessModel\Department::saveDepartment
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testCreateDepartmentParent()
+    {
+        $data = array('dep_title' => 'Departamento Padre');
+        $dep_data = $this->oDepartment->saveDepartment($data);
+        $this->assertTrue(is_array($dep_data));
+        $this->assertTrue(isset($dep_data['dep_uid']));
+        $this->assertEquals($dep_data['dep_parent'], '');
+        $this->assertEquals($dep_data['dep_title'], 'Departamento Padre');
+        $this->assertEquals($dep_data['dep_status'], 'ACTIVE');
+        $this->assertEquals($dep_data['dep_manager'], '');
+        $this->assertEquals($dep_data['has_children'], 0);
+        return $dep_data;
+    }
+
+    /**
+     * Test error for create department with title exist
+     *
+     * @depends testCreateDepartmentParent
+     * @param array $dep_data, Data for parent department
+     * @covers \BusinessModel\Department::saveDepartment
+     * @expectedException        Exception
+     * @expectedExceptionMessage The departament with dep_title: 'Departamento Padre' already exists.
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testCreateDepartmentErrorArrayDepTitleRepeated(array $dep_data)
+    {
+        $data = array('dep_title' => 'Departamento Padre');
+        $this->oDepartment->saveDepartment($data);
+    }
+
+    /**
+     * Test error for create department untitled
+     *
+     * @covers \BusinessModel\Department::saveDepartment
+     * @expectedException        Exception
+     * @expectedExceptionMessage The departament with dep_uid: 'testUidDepartment' does not exist.
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testUpdateDepartmentErrorArrayDepUidExist()
+    {
+        $data = array('dep_uid' => 'testUidDepartment');
+        $this->oDepartment->saveDepartment($data);
+    }
+
+    /**
+     * Save department child
+     *
+     * @depends testCreateDepartmentParent
+     * @param array $dep_data, Data for parent department
+     * @covers \BusinessModel\Department::saveDepartment
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testCreateDepartmentChild(array $dep_data)
+    {
+        $data = array(
+            'dep_title' => 'Departamento Child',
+            'dep_parent' => $dep_data['dep_uid'],
+            'dep_status' => 'INACTIVE',
+            'dep_manager' => '00000000000000000000000000000001'
+        );
+        $child_data = $this->oDepartment->saveDepartment($data);
+        $this->assertTrue(is_array($child_data));
+        $this->assertTrue(isset($child_data['dep_uid']));
+        $this->assertEquals($child_data['dep_parent'], $dep_data['dep_uid']);
+        $this->assertEquals($child_data['dep_title'], 'Departamento Child');
+        $this->assertEquals($child_data['dep_status'], 'INACTIVE');
+        $this->assertEquals($child_data['dep_manager'], '00000000000000000000000000000001');
+        $this->assertEquals($child_data['has_children'], 0);
+        return $child_data;
+    }
+
+    /**
+     * Test error for update department with title exist
+     *
+     * @depends testCreateDepartmentParent
+     * @depends testCreateDepartmentChild
+     * @param array $dep_data, Data for parent department
+     * @param array $child_data, Data for child department
+     * @covers \BusinessModel\Department::saveDepartment
+     * @expectedException        Exception
+     * @expectedExceptionMessage The departament with dep_title: 'Departamento Padre' already exists.
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testUpdateDepartmentErrorArrayDepTitleRepeated(array $dep_data, array $child_data)
+    {
+        $dataUpdate = array (
+            'dep_uid' => $child_data['dep_uid'],
+            'dep_title' => 'Departamento Padre'
+        );
+        $this->oDepartment->saveDepartment($dataUpdate, false);
+    }
+
+    /**
+     * Test get departments array
+     *
+     * @depends testCreateDepartmentParent
+     * @depends testCreateDepartmentChild
+     * @param array $dep_data, Data for parent department
+     * @param array $child_data, Data for child department
+     * @covers \BusinessModel\Department::getDepartments
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetDepartments(array $dep_data, array $child_data)
+    {
+        $arrayDepartments = $this->oDepartment->getDepartments();
         $this->assertTrue(is_array($arrayDepartments));
         $this->assertEquals(count($arrayDepartments), 1);
         $this->assertTrue(is_array($arrayDepartments[0]['dep_children']));
         $this->assertEquals(count($arrayDepartments[0]['dep_children']), 1);
+
+        $dataParent = $arrayDepartments[0];
+        $this->assertEquals($dep_data['dep_parent'], $dataParent['dep_parent']);
+        $this->assertEquals($dep_data['dep_title'], $dataParent['dep_title']);
+        $this->assertEquals($dep_data['dep_status'], $dataParent['dep_status']);
+        $this->assertEquals($dep_data['dep_manager'], $dataParent['dep_manager']);
+
+        $dataChild = $arrayDepartments[0]['dep_children'][0];
+        $this->assertEquals($child_data['dep_parent'], $dataChild['dep_parent']);
+        $this->assertEquals($child_data['dep_title'], $dataChild['dep_title']);
+        $this->assertEquals($child_data['dep_status'], $dataChild['dep_status']);
+        $this->assertEquals($child_data['dep_manager'], $dataChild['dep_manager']);
     }
 
-    public function testGetDepartment()
+    /**
+     * Test get department array
+     *
+     * @depends testCreateDepartmentParent
+     * @param array $dep_data, Data for parent department
+     * @covers \BusinessModel\Department::getDepartment
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetDepartment(array $dep_data)
     {
-        $oDepartment = new \BusinessModel\Department();
-        $arrayDepartments = $oDepartment->getDepartments();
-        $depIdPadre = $arrayDepartments[0]['dep_uid'];
-        $depIdChild = $arrayDepartments[0]['dep_children'][0]['dep_uid'];
-        $oDepartment = new \BusinessModel\Department();
-        $dataPadre = $oDepartment->getDepartment($depIdPadre);
-        $dataChild = $oDepartment->getDepartment($depIdChild);
+        $dataParent = $this->oDepartment->getDepartment($dep_data['dep_uid']);
+        $this->assertTrue(is_array($dataParent));
 
-        $this->assertTrue(is_array($dataPadre));
-        $this->assertEquals($dataPadre['dep_title'], 'DepPadre');
-        $this->assertEquals($dataPadre['dep_manager'], '00000000000000000000000000000001');
-        $this->assertTrue(is_array($dataChild));
-        $this->assertEquals($dataChild['dep_title'], 'DepHijo');
-        $this->assertEquals($dataChild['dep_manager'], '');
+        $this->assertEquals($dep_data['dep_parent'], $dataParent['dep_parent']);
+        $this->assertEquals($dep_data['dep_title'], $dataParent['dep_title']);
+        $this->assertEquals($dep_data['dep_status'], $dataParent['dep_status']);
+        $this->assertEquals($dep_data['dep_manager'], $dataParent['dep_manager']);
     }
 
-    public function testDeleteDepartment()
+    // TODO: Assigned Users to department
+    public function testDeleteDepartmentErrorUsersSelections()
     {
-        $oDepartment = new \BusinessModel\Department();
-        $arrayDepartments = $oDepartment->getDepartments();
-        $dataDepChild = $arrayDepartments[0]['dep_children'];
 
-        $oDepartment->deleteDepartment($dataDepChild[0]['dep_uid']);
-        $oDepartment->deleteDepartment($arrayDepartments[0]['dep_uid']);
+    }
 
-        $arrayDepartments = $oDepartment->getDepartments();
-        $this->assertEquals(count($arrayDepartments), 0);
+    /**
+     * Test error for delete department with children
+     *
+     * @depends testCreateDepartmentParent
+     * @depends testCreateDepartmentChild
+     * @param array $dep_data, Data for parent department
+     * @param array $child_data, Data for child department
+     * @covers \BusinessModel\Department::deleteDepartment
+     * @expectedException        Exception
+     * @expectedExceptionMessage Can not delete the department, it has a children department.
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testDeleteDepartmentErrorDepartmentParent(array $dep_data, array $child_data)
+    {
+        $this->oDepartment->deleteDepartment($dep_data['dep_uid']);
+    }
+
+    /**
+     * Test get departments array
+     *
+     * @depends testCreateDepartmentParent
+     * @depends testCreateDepartmentChild
+     * @param array $dep_data, Data for parent department
+     * @param array $child_data, Data for child department
+     * @covers \BusinessModel\Department::deleteDepartment
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function testDeleteDepartments(array $dep_data, array $child_data)
+    {
+        $this->oDepartment->deleteDepartment($child_data['dep_uid']);
+        $this->oDepartment->deleteDepartment($dep_data['dep_uid']);
+        $dataParent = $this->oDepartment->getDepartments();
+        $this->assertTrue(empty($dataParent));
     }
 }
 

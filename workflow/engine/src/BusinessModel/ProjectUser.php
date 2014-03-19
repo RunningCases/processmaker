@@ -202,13 +202,14 @@ class ProjectUser
      * Return the user that can start a task
      *
      * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sActivityUID {@min 32} {@max 32}
      * @param array  $oData
      *
      * return array
      *
      * @access public
      */
-    public function postProjectWsUserCanStartTask($sProcessUID, $oData)
+    public function postProjectWsUserCanStartTask($sProcessUID, $sActivityUID, $oData)
     {
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
@@ -220,8 +221,7 @@ class ProjectUser
              * validates if the username and password are valid data and if the user assigned
              * to the webentry has the rights and persmissions required
              */
-            $sPRO_UID = $sProcessUID;
-            $sTASKS = $oData['act_uid'];
+            $sTASKS = $sActivityUID;
             $sWS_USER = trim( $oData['username'] );
             $sWS_PASS = trim( $oData['password'] );
             if (\G::is_https()) {
@@ -265,9 +265,14 @@ class ProjectUser
                 $oCriteria->addSelectColumn( \UsersPeer::USR_USERNAME );
                 $oCriteria->addSelectColumn( \UsersPeer::USR_FIRSTNAME );
                 $oCriteria->addSelectColumn( \UsersPeer::USR_LASTNAME );
+                $oCriteria->addSelectColumn( \TaskPeer::PRO_UID );
                 $oCriteria->addJoin( \TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN );
-                $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
+                $oCriteria->addJoin( \TaskUserPeer::TAS_UID, \TaskPeer::TAS_UID, \Criteria::LEFT_JOIN );
+                if ($sTASKS) {
+                    $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
+                }
                 $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
+                $oCriteria->add( \TaskPeer::PRO_UID, $sProcessUID );
                 $userIsAssigned = \TaskUserPeer::doCount( $oCriteria );
                 // if the user is not assigned directly, maybe a have the task a group with the user
                 if ($userIsAssigned < 1) {
@@ -278,11 +283,19 @@ class ProjectUser
                     $oCriteria->addSelectColumn( \UsersPeer::USR_LASTNAME );
                     $oCriteria->addJoin( \UsersPeer::USR_UID, \GroupUserPeer::USR_UID, \Criteria::LEFT_JOIN );
                     $oCriteria->addJoin( \GroupUserPeer::GRP_UID, \TaskUserPeer::USR_UID, \Criteria::LEFT_JOIN );
-                    $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
+                    $oCriteria->addJoin( \TaskUserPeer::TAS_UID, \TaskPeer::TAS_UID, \Criteria::LEFT_JOIN );
+                    if ($sTASKS) {
+                        $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
+                    }
                     $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
+                    $oCriteria->add( \TaskPeer::PRO_UID, $sProcessUID );
                     $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
                     if (! ($userIsAssigned >= 1)) {
-                        throw (new \Exception( "The `usr_uid` `" . $sWS_USER . "` doesn't have the activity `act_uid` `" . $sTASKS . "` assigned"));
+                        if ($sTASKS) {
+                            throw (new \Exception( "The `usr_uid` `" . $sWS_USER . "` doesn't have the activity `act_uid` `" . $sTASKS . "` assigned"));
+                        } else {
+                            throw (new \Exception( "The `usr_uid` `" . $sWS_USER . "` doesn't have an activity assigned"));
+                        }
                     }
                 }
                 $oDataset = \TaskUserPeer::doSelectRS($oCriteria);

@@ -67,7 +67,6 @@ class FilesManager
             }
             \G::verifyPath($sDirectory, true);
             $aTheFiles = array();
-            $aDirectories = array();
             $aFiles = array();
             $oDirectory = dir($sDirectory);
             while ($sObject = $oDirectory->read()) {
@@ -127,7 +126,7 @@ class FilesManager
                 }
             }
             return $aTheFiles;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -183,6 +182,12 @@ class FilesManager
                 default:
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     break;
+            }
+            $content = $aData['prf_content'];
+            if (is_string($content)) {
+                if (file_exists(PATH_SEP.$sDirectory)) {
+                    throw (new \Exception( 'The file: '.$sMainDirectory. PATH_SEP . $sSubDirectory . $aData['prf_filename'] . ' already exists.'));
+                }
             }
             if (!file_exists($sCheckDirectory)) {
                 $sPkProcessFiles = \G::generateUniqueID();
@@ -475,11 +480,9 @@ class FilesManager
             $sSubDirectory = substr(str_replace($sMainDirectory,'',$sSubDirectory),1);
             switch ($sMainDirectory) {
                 case 'templates':
-                    $sMainDirectory = 'mailTemplates';
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . ($sSubDirectory != '' ? $sSubDirectory . PATH_SEP : '');
                     break;
                 case 'public':
-                    $sMainDirectory = 'public';
                     $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . ($sSubDirectory != '' ? $sSubDirectory . PATH_SEP : '');
                     break;
                 default:
@@ -496,6 +499,45 @@ class FilesManager
             $criteria->add( \ProcessFilesPeer::PRF_PATH, '%' . $sDirectory.$sDirToDelete. PATH_SEP . '%', \Criteria::LIKE );
             $rs = \ProcessFilesPeer::doDelete($criteria);
             return $sDirectory.$sDirToDelete;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     *
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $prfUid {@min 32} {@max 32}
+     *
+     *
+     * @access public
+     */
+    public function getProcessFileManager($sProcessUID, $prfUid)
+    {
+        try {
+            $oProcessFiles = \ProcessFilesPeer::retrieveByPK($prfUid);
+            $fcontent = file_get_contents($oProcessFiles->getPrfPath());
+            $sFile = end(explode("/",$oProcessFiles->getPrfPath()));
+            $path = $oProcessFiles->getPrfPath();
+            $sPath = str_replace($sFile,'',$path);
+            $sSubDirectory = substr(str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))),0,-1);
+            $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
+            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES) {
+                $sMainDirectory = 'templates';
+            } else {
+                $sMainDirectory = 'public';
+            }
+            $oProcessFile = array('prf_uid' => $oProcessFiles->getPrfUid(),
+                                  'prf_filename' => $sFile,
+                                  'usr_uid' => $oProcessFiles->getUsrUid(),
+                                  'prf_update_usr_uid' => $oProcessFiles->getPrfUpdateUsrUid(),
+                                  'prf_path' => $sMainDirectory.$sSubDirectory,
+                                  'prf_type' => $oProcessFiles->getPrfType(),
+                                  'prf_editable' => $oProcessFiles->getPrfEditable(),
+                                  'prf_create_date' => $oProcessFiles->getPrfCreateDate(),
+                                  'prf_update_date' => $oProcessFiles->getPrfUpdateDate(),
+                                  'prf_content' => $fcontent);
+            return $oProcessFile;
         } catch (Exception $e) {
             throw $e;
         }

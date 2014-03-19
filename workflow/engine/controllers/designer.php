@@ -63,6 +63,13 @@ class Designer extends Controller
             $this->setVar('designerCacheFile', file(PATH_HTML . "lib-dev/mafe/applications.cache", FILE_IGNORE_NEW_LINES));
             $this->setVar('mafeJsFiles', $mafeJsFiles);
             $this->setVar('mafeCssFiles', $mafeCssFiles);
+        } else {
+            $buildhashFile = PATH_HTML . "lib/buildhash";
+            if (! file_exists($buildhashFile)) {
+                throw new RuntimeException("CSS and JS Files were are not generated!.\nPlease review install process");
+            }
+            $buildhash = file_get_contents($buildhashFile);
+            $this->setVar('buildhash', $buildhash);
         }
 
         $this->setView('designer/index');
