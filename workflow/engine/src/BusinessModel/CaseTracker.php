@@ -297,30 +297,11 @@ class CaseTracker
                 );
             }
 
-            //Set data
-            \G::LoadClass("ArrayPeer");
-
-            global $_DBArray;
-
-            $_DBArray = (isset($_SESSION["_DBArray"]))? $_SESSION["_DBArray"] : "";
-            $_DBArray["CASE_TRACKER_OBJECT"] = $arrayCaseTrackerObject;
-
-            $_SESSION["_DBArray"] = $_DBArray;
-
-            $criteria = new \Criteria("dbarray");
-
-            $criteria->setDBArrayTable("CASE_TRACKER_OBJECT");
-            $criteria->addAscendingOrderByColumn("obj_type");
-            $criteria->addAscendingOrderByColumn("obj_title");
-
-            $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            while ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-
-                $arrayAvailableCaseTrackerObject[] = $row;
-            }
+            $arrayAvailableCaseTrackerObject = \ProcessMaker\Util\ArrayUtil::sort(
+                $arrayAvailableCaseTrackerObject,
+                array("obj_type", "obj_title"),
+                SORT_ASC
+            );
 
             return $arrayAvailableCaseTrackerObject;
         } catch (\Exception $e) {
@@ -411,27 +392,7 @@ class CaseTracker
 
             //Set data
             \G::LoadClass("ArrayPeer");
-
-            global $_DBArray;
-
-            $_DBArray = (isset($_SESSION["_DBArray"]))? $_SESSION["_DBArray"] : "";
-            $_DBArray["CASE_TRACKER_OBJECT"] = $arraydbCaseTrackerObject;
-
-            $_SESSION["_DBArray"] = $_DBArray;
-
-            $criteria = new \Criteria("dbarray");
-
-            $criteria->setDBArrayTable("CASE_TRACKER_OBJECT");
-            $criteria->addAscendingOrderByColumn("cto_position");
-
-            $rsCriteria = \ArrayBasePeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            while ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-
-                $arrayCaseTrackerObject[] = $row;
-            }
+            $arraydbCaseTrackerObject = \ProcessMaker\Util\ArrayUtil::sort($arraydbCaseTrackerObject, array("cto_position"), SORT_ASC);
 
             return $arrayCaseTrackerObject;
         } catch (\Exception $e) {
