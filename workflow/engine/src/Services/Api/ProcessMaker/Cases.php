@@ -18,7 +18,6 @@ class Cases extends Api
     /**
      * Get list Cases To Do
      *
-     * @access public
      * @param array $request_data , Data for list
      * @return array
      *
@@ -43,7 +42,6 @@ class Cases extends Api
     /**
      * Get list Cases Draft
      *
-     * @access public
      * @param array $request_data , Data for list
      * @return array
      *
@@ -68,7 +66,6 @@ class Cases extends Api
     /**
      * Get list Cases Participated
      *
-     * @access public
      * @param array $request_data , Data for list
      * @return array
      *
@@ -93,7 +90,6 @@ class Cases extends Api
     /**
      * Get list Cases Unassigned
      *
-     * @access public
      * @param array $request_data , Data for list
      * @return array
      *
@@ -118,7 +114,6 @@ class Cases extends Api
     /**
      * Get list Cases Paused
      *
-     * @access public
      * @param array $request_data , Data for list
      * @return array
      *
@@ -143,7 +138,6 @@ class Cases extends Api
     /**
      * Get list Cases Advanced Search
      *
-     * @access public
      * @param array $request_data , Data for list
      * @return array
      *
