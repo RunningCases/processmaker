@@ -20,7 +20,6 @@ class CaseScheduler
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_NAME );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_NAME );
-            $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_PASS );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::PRO_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::TAS_UID );
@@ -78,7 +77,6 @@ class CaseScheduler
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_NAME );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_NAME );
-            $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_PASS );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::SCH_DEL_USER_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::PRO_UID );
             $oCriteria->addSelectColumn( \CaseSchedulerPeer::TAS_UID );
@@ -190,74 +188,44 @@ class CaseScheduler
      * Checks if the user exists
      *
      * @param string $userName  Name
-     * @param string $userPass  Password
-     * @param string $sProcessUID  Process
+     * @param string $sTaskUID  Task
      *
      * return message
      */
-    public function getUser($userName, $userPass, $sProcessUID, $sTaskUID)
+    public function getUser($userName, $sTaskUID)
     {
         try {
-            $sPRO_UID = $sProcessUID;
             $sTASKS = $sTaskUID;
             $sWS_USER = trim( $userName );
-            $sWS_PASS = trim( $userPass );
-            if (\G::is_https()) {
-                $http = 'https://';
-            } else {
-                $http = 'http://';
-            }
-            $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
-            @$client = new \SoapClient( $endpoint );
-            $user = $sWS_USER;
-            $pass = $sWS_PASS;
-            $params = array ('userid' => $user,'password' => $pass);
-            $result = $client->__SoapCall('login', array ($params));
-            $fields['status_code'] = $result->status_code;
-            $fields['message'] = 'ProcessMaker WebService version: ' . $result->version . "\n" . $result->message;
-            $fields['version'] = $result->version;
-            $fields['time_stamp'] = $result->timestamp;
-            $messageCode = 1;
-            \G::LoadClass( 'Task' );
-            \G::LoadClass( 'User' );
-            \G::LoadClass( 'TaskUser' );
-            \G::LoadClass( 'Groupwf' );
-            if (! class_exists( 'GroupUser' )) {
-                \G::LoadClass( 'GroupUser' );
-            }
-            if ($result->status_code == 0) {
+            $oCriteria = new \Criteria( 'workflow' );
+            $oCriteria->addSelectColumn( \UsersPeer::USR_UID );
+            $oCriteria->addSelectColumn( \TaskUserPeer::USR_UID );
+            $oCriteria->addSelectColumn( \TaskUserPeer::TAS_UID );
+            $oCriteria->addSelectColumn( \UsersPeer::USR_USERNAME );
+            $oCriteria->addSelectColumn( \UsersPeer::USR_FIRSTNAME );
+            $oCriteria->addSelectColumn( \UsersPeer::USR_LASTNAME );
+            $oCriteria->addJoin( \TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN );
+            $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
+            $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
+            $userIsAssigned = \TaskUserPeer::doCount( $oCriteria );
+            if ($userIsAssigned < 1) {
                 $oCriteria = new \Criteria( 'workflow' );
                 $oCriteria->addSelectColumn( \UsersPeer::USR_UID );
-                $oCriteria->addSelectColumn( \TaskUserPeer::USR_UID );
-                $oCriteria->addSelectColumn( \TaskUserPeer::TAS_UID );
-                $oCriteria->addSelectColumn( \UsersPeer::USR_USERNAME );
-                $oCriteria->addSelectColumn( \UsersPeer::USR_FIRSTNAME );
-                $oCriteria->addSelectColumn( \UsersPeer::USR_LASTNAME );
-                $oCriteria->addJoin( \TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN );
+                $oCriteria->addJoin( \UsersPeer::USR_UID, \GroupUserPeer::USR_UID, \Criteria::LEFT_JOIN );
+                $oCriteria->addJoin( \GroupUserPeer::GRP_UID, \TaskUserPeer::USR_UID, \Criteria::LEFT_JOIN );
                 $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
                 $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
-                $userIsAssigned = \TaskUserPeer::doCount( $oCriteria );
-                if ($userIsAssigned < 1) {
-                    $oCriteria = new \Criteria( 'workflow' );
-                    $oCriteria->addSelectColumn( \UsersPeer::USR_UID );
-                    $oCriteria->addJoin( \UsersPeer::USR_UID, \GroupUserPeer::USR_UID, \Criteria::LEFT_JOIN );
-                    $oCriteria->addJoin( \GroupUserPeer::GRP_UID, \TaskUserPeer::USR_UID, \Criteria::LEFT_JOIN );
-                    $oCriteria->add( \TaskUserPeer::TAS_UID, $sTASKS );
-                    $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
-                    $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
-                    if (! ($userIsAssigned >= 1)) {
-                        throw (new \Exception( "The User `" . $sWS_USER . "` doesn't have the activity `" . $sTASKS . "` assigned"));
-                    }
+                $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
+                if (! ($userIsAssigned >= 1)) {
+                    throw (new \Exception( "The User \'" . $sWS_USER . "\' doesn't have the activity \'" . $sTASKS . "\' assigned"));
                 }
-                $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
-                $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            }
+            $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $messageCode = $aRow['USR_UID'];
                 $oDataset->next();
-                while ($aRow = $oDataset->getRow()) {
-                    $messageCode = $aRow['USR_UID'];
-                    $oDataset->next();
-                }
-            } else {
-                throw (new \Exception( $result->message));
             }
             return $messageCode;
         } catch (\Exception $e) {
@@ -290,37 +258,38 @@ class CaseScheduler
                 throw (new \Exception( 'Task not found for id: '. $aData['TAS_UID']));
             }
             if ($aData['SCH_NAME']=='') {
-                throw (new \Exception( '`sch_name` can`t be empty'));
+                throw (new \Exception( '\'sch_name\' can\'t be empty'));
             }
             if ($this->existsName($sProcessUID, $aData['SCH_NAME'])) {
                 throw (new \Exception( 'Duplicate Case Scheduler name'));
             }
-            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS'], $sProcessUID, $aData['TAS_UID']);
+            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['TAS_UID']);
             $oUser = \UsersPeer::retrieveByPK( $mUser );
             if (is_null($oUser)) {
                 throw (new \Exception($mUser));
             }
-            $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
+            $oUserPass = $oUser->getUsrPassword();
+            $aData['SCH_DEL_USER_PASS'] = $oUserPass;
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
                 if (!preg_match($pattern, $aData['SCH_START_TIME'])) {
-                    throw (new \Exception( 'Invalid value specified for `sch_start_time`. Expecting time in HH:MM format (The time can not be increased to 23:59)'));
+                    throw (new \Exception( 'Invalid value specified for \'sch_start_time\'. Expecting time in HH:MM format (The time can not be increased to 23:59)'));
                 }
             }
             $patternDate="/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/";
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
                 if (!preg_match($patternDate, $aData['SCH_START_DATE'])) {
-                    throw (new \Exception( 'Invalid value specified for `sch_start_date`. Expecting date in `YYYY-MM-DD` format, such as `2014-01-01`'));
+                    throw (new \Exception( 'Invalid value specified for \'sch_start_date\'. Expecting date in \'YYYY-MM-DD\' format, such as \'2014-01-01\''));
                 }
             }
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
                 if (!preg_match($patternDate, $aData['SCH_END_DATE'])) {
-                    throw (new \Exception( 'Invalid value specified for `sch_end_date`. Expecting date in `YYYY-MM-DD` format, such as `2014-01-01`'));
+                    throw (new \Exception( 'Invalid value specified for \'sch_end_date\'. Expecting date in \'YYYY-MM-DD\' format, such as \'2014-01-01\''));
                 }
             }
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
                 if ($aData['SCH_START_DATE'] == "") {
-                    throw (new \Exception( '`sch_start_date` can`t be null'));
+                    throw (new \Exception( '\'sch_start_date\' can\'t be null'));
                 }
             }
             if ($sOption == '2') {
@@ -368,7 +337,7 @@ class CaseScheduler
                     break;
                 case '2': // If the option is zero, set by default 1
                     if ($aData['SCH_WEEK_DAYS'] == "") {
-                        throw (new \Exception( '`sch_week_days` can`t be null'));
+                        throw (new \Exception( '\'sch_week_days\' can\'t be null'));
                     } else {
                         $weeks = $aData['SCH_WEEK_DAYS'];
                         $weeks = explode("|", $weeks);
@@ -376,7 +345,7 @@ class CaseScheduler
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7") {
                                 $aData['SCH_WEEK_DAYS'] = $aData['SCH_WEEK_DAYS'];
                             } else {
-                                throw (new \Exception( 'Invalid value specified for `sch_week_days`'));
+                                throw (new \Exception( 'Invalid value specified for \'sch_week_days\''));
                             }
                         }
                     }
@@ -397,50 +366,50 @@ class CaseScheduler
                 case '3':
                     $nStartDay = $aData['SCH_START_DAY'];
                     if ($nStartDay == "") {
-                        throw (new \Exception( '`sch_start_day` can`t be null'));
+                        throw (new \Exception( '\'sch_start_day\' can\'t be null'));
                     }
                     if ($nStartDay == 1) {
                         if ($aData['SCH_START_DAY_OPT_1'] == "") {
-                            throw (new \Exception( '`sch_start_day_opt_1` can`t be null'));
+                            throw (new \Exception( '\'sch_start_day_opt_1\' can\'t be null'));
                         }
                         $temp = $aData['SCH_START_DAY_OPT_1'];
                         $temp = (int)$temp;
                         if ($temp >= 1 && $temp <= 31) {
                             $aData['SCH_START_DAY_OPT_1'] = $aData['SCH_START_DAY_OPT_1'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for `sch_start_day_opt_1`. Must be between 1 and 31'));
+                            throw (new \Exception( 'Invalid value specified for \'sch_start_day_opt_1\'. Must be between 1 and 31'));
                         }
                         $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_1'];
                     } else {
                         if ($aData['SCH_START_DAY_OPT_2'] == "") {
-                            throw (new \Exception( '`sch_start_day_opt_2` can`t be null'));
+                            throw (new \Exception( '\'sch_start_day_opt_2\' can\'t be null'));
                         }
                         $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_2'];
                         $optionTwo = $aData['SCH_START_DAY_OPT_2']{0};
                         if ($optionTwo == "1" || $optionTwo == "2" || $optionTwo == "3" || $optionTwo == "4" || $optionTwo == "5") {
                             $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for `sch_start_day_opt_2`'));
+                            throw (new \Exception( 'Invalid value specified for \'sch_start_day_opt_2\''));
                         }
                         $pipelineTwo = $aData['SCH_START_DAY_OPT_2']{1};
                         if ($pipelineTwo == "|") {
                             $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for `sch_start_day_opt_2`'));
+                            throw (new \Exception( 'Invalid value specified for \'sch_start_day_opt_2\''));
                         }
                         $dayTwo = $aData['SCH_START_DAY_OPT_2']{2};
                         if ($dayTwo == "1" || $dayTwo == "2" || $dayTwo == "3" || $dayTwo == "4" || $dayTwo == "5" || $dayTwo == "6" || $dayTwo == "7") {
                             $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for `sch_start_day_opt_2`'));
+                            throw (new \Exception( 'Invalid value specified for \'sch_start_day_opt_2\''));
                         }
                     }
                     if ($nStartDay == "") {
-                        throw (new \Exception( '`sch_start_day` can`t be null'));
+                        throw (new \Exception( '\'sch_start_day\' can\'t be null'));
                     }
                     $sMonths = '';
                     if ($aData['SCH_MONTHS'] == "") {
-                         throw (new \Exception( '`sch_months` can`t be null'));
+                         throw (new \Exception( '\'sch_months\' can\'t be null'));
                     }
                     if (! empty( $aData['SCH_MONTHS'] )) {
                         $aMonths = $aData['SCH_MONTHS'];
@@ -449,7 +418,7 @@ class CaseScheduler
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7"|| $row == "8" || $row == "9" || $row == "10"|| $row == "11" || $row == "12") {
                                 $aData['SCH_MONTHS'] = $aData['SCH_MONTHS'];
                             } else {
-                                throw (new \Exception( 'Invalid value specified for `sch_months`'));
+                                throw (new \Exception( 'Invalid value specified for \'sch_months\''));
                             }
                         }
                     }
@@ -508,11 +477,11 @@ class CaseScheduler
                     $aData['SCH_START_TIME'] = time();
                     $aData['SCH_START_DATE'] = $aData['SCH_START_TIME'];
                     if ($aData['SCH_REPEAT_EVERY'] == "") {
-                        throw (new \Exception( '`sch_repeat_every` can`t be null'));
+                        throw (new \Exception( '\'sch_repeat_every\' can\'t be null'));
                     }
                     $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
                     if (!preg_match($patternHour, $aData['SCH_REPEAT_EVERY'])) {
-                        throw (new \Exception( 'Invalid value specified for `sch_repeat_every`. Expecting time in HH.MM format'));
+                        throw (new \Exception( 'Invalid value specified for \'sch_repeat_every\'. Expecting time in HH.MM format'));
                     }
                     $nextRun = $aData['SCH_REPEAT_EVERY'] * 60 * 60;
                     $aData['SCH_REPEAT_EVERY'] = $aData['SCH_REPEAT_EVERY'];
@@ -581,37 +550,38 @@ class CaseScheduler
                 throw (new \Exception( 'Task not found for id: '. $aData['TAS_UID']));
             }
             if ($aData['SCH_NAME']=='') {
-                throw (new \Exception( '`sch_name` can`t be empty'));
+                throw (new \Exception( '\'sch_name\' can\'t be empty'));
             }
             if ($this->existsNameUpdate($sSchUID, $aData['SCH_NAME'])) {
                 throw (new \Exception( 'Duplicate Case Scheduler name'));
             }
-            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['SCH_DEL_USER_PASS'], $sProcessUID, $aData['TAS_UID']);
+            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['TAS_UID']);
             $oUser = \UsersPeer::retrieveByPK( $mUser );
             if (is_null($oUser)) {
                 throw (new \Exception($mUser));
             }
-            $aData['SCH_DEL_USER_PASS'] = md5( $aData['SCH_DEL_USER_PASS']);
+            $oUserPass = $oUser->getUsrPassword();
+            $aData['SCH_DEL_USER_PASS'] = $oUserPass;
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
                 if (!preg_match($pattern, $aData['SCH_START_TIME'])) {
-                    throw (new \Exception( 'Invalid value specified for `sch_start_time`. Expecting time in HH:MM format (The time can not be increased to 23:59)'));
+                    throw (new \Exception( 'Invalid value specified for \'sch_start_time\'. Expecting time in HH:MM format (The time can not be increased to 23:59)'));
                 }
             }
             $patternDate="/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/";
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
                 if (!preg_match($patternDate, $aData['SCH_START_DATE'])) {
-                    throw (new \Exception( 'Invalid value specified for `sch_start_date`. Expecting date in `YYYY-MM-DD` format, such as `2014-01-01`'));
+                    throw (new \Exception( 'Invalid value specified for \'sch_start_date\'. Expecting date in \'YYYY-MM-DD\' format, such as \'2014-01-01\''));
                 }
             }
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
                 if (!preg_match($patternDate, $aData['SCH_END_DATE'])) {
-                    throw (new \Exception( 'Invalid value specified for `sch_end_date`. Expecting date in `YYYY-MM-DD` format, such as `2014-01-01`'));
+                    throw (new \Exception( 'Invalid value specified for \'sch_end_date\'. Expecting date in \'YYYY-MM-DD\' format, such as \'2014-01-01\''));
                 }
             }
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
                 if ($aData['SCH_START_DATE'] == "") {
-                    throw (new \Exception( '`sch_start_date` can`t be null'));
+                    throw (new \Exception( '\'sch_start_date\' can\'t be null'));
                 }
             }
             if ($sOption == '2') {
@@ -622,8 +592,15 @@ class CaseScheduler
             $oCaseScheduler = new \CaseScheduler();
             $aData['SCH_UID'] = $sSchUID;
             $aData['PRO_UID'] = $sProcessUID;
-            $aData['SCH_STATE'] = 'ACTIVE';
-            $aData['SCH_LAST_STATE'] = 'CREATED'; // 'ACTIVE';
+            if ($aData['SCH_STATE'] == "" || $aData['SCH_STATE'] == null) {
+                throw (new \Exception( '\'sch_state\' can\'t be null'));
+            } else {
+                if ($aData['SCH_STATE']  == 'ACTIVE') {
+                    $aData['SCH_LAST_STATE']  = 'CREATED';
+                } else {
+                    $aData['SCH_LAST_STATE'] = 'ACTIVE';
+                }
+            }
             $aData['USR_UID'] = $userUID;
             $aData['SCH_DEL_USER_UID'] = $aData['USR_UID'];
             $sTimeTmp = $aData['SCH_START_TIME'];
@@ -659,7 +636,7 @@ class CaseScheduler
                     break;
                 case '2': // If the option is zero, set by default 1
                     if ($aData['SCH_WEEK_DAYS'] == "") {
-                        throw (new \Exception( '`sch_week_days` can`t be null'));
+                        throw (new \Exception( '\'sch_week_days\' can\'t be null'));
                     } else {
                         $weeks = $aData['SCH_WEEK_DAYS'];
                         $weeks = explode("|", $weeks);
@@ -667,7 +644,7 @@ class CaseScheduler
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7") {
                                 $aData['SCH_WEEK_DAYS'] = $aData['SCH_WEEK_DAYS'];
                             } else {
-                                throw (new \Exception( 'Invalid value specified for `sch_week_days`'));
+                                throw (new \Exception( 'Invalid value specified for \'sch_week_days\''));
                             }
                         }
                     }
@@ -688,50 +665,50 @@ class CaseScheduler
                 case '3':
                     $nStartDay = $aData['SCH_START_DAY'];
                     if ($nStartDay == "") {
-                        throw (new \Exception( '`sch_start_day` can`t be null'));
+                        throw (new \Exception( '\'sch_start_day\' can\'t be null'));
                     }
                     if ($nStartDay == 1) {
                         if ($aData['SCH_START_DAY_OPT_1'] == "") {
-                            throw (new \Exception( '`sch_start_day_opt_1` can`t be null'));
+                            throw (new \Exception( '\'sch_start_day_opt_1\' can\'t be null'));
                         }
                         $temp = $aData['SCH_START_DAY_OPT_1'];
                         $temp = (int)$temp;
                         if ($temp >= 1 && $temp <= 31) {
                             $aData['SCH_START_DAY_OPT_1'] = $aData['SCH_START_DAY_OPT_1'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for `sch_start_day_opt_1`. Must be between 1 and 31'));
+                            throw (new \Exception( 'Invalid value specified for \'sch_start_day_opt_1\'. Must be between 1 and 31'));
                         }
                         $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_1'];
                     } else {
                         if ($aData['SCH_START_DAY_OPT_2'] == "") {
-                            throw (new \Exception( '`sch_start_day_opt_2` can`t be null'));
+                            throw (new \Exception( '\'sch_start_day_opt_2\' can\'t be null'));
                         }
                         $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_2'];
                             $optionTwo = $aData['SCH_START_DAY_OPT_2']{0};
                         if ($optionTwo == "1" || $optionTwo == "2" || $optionTwo == "3" || $optionTwo == "4" || $optionTwo == "5") {
                             $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for `sch_start_day_opt_2`'));
+                            throw (new \Exception( 'Invalid value specified for \'sch_start_day_opt_2\''));
                         }
                         $pipelineTwo = $aData['SCH_START_DAY_OPT_2']{1};
                         if ($pipelineTwo == "|") {
                             $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for `sch_start_day_opt_2`'));
+                            throw (new \Exception( 'Invalid value specified for \'sch_start_day_opt_2\''));
                         }
                         $dayTwo = $aData['SCH_START_DAY_OPT_2']{2};
                         if ($dayTwo == "1" || $dayTwo == "2" || $dayTwo == "3" || $dayTwo == "4" || $dayTwo == "5" || $dayTwo == "6" || $dayTwo == "7") {
                             $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for `sch_start_day_opt_2`'));
+                            throw (new \Exception( 'Invalid value specified for \'sch_start_day_opt_2\''));
                         }
                     }
                     if ($nStartDay == "") {
-                        throw (new \Exception( '`sch_start_day` can`t be null'));
+                        throw (new \Exception( '\'sch_start_day\' can\'t be null'));
                     }
                     $sMonths = '';
                     if ($aData['SCH_MONTHS'] == "") {
-                         throw (new \Exception( '`sch_months` can`t be null'));
+                         throw (new \Exception( '\'sch_months\' can\'t be null'));
                     }
                     if (! empty( $aData['SCH_MONTHS'] )) {
                         $aMonths = $aData['SCH_MONTHS'];
@@ -740,7 +717,7 @@ class CaseScheduler
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7"|| $row == "8" || $row == "9" || $row == "10"|| $row == "11" || $row == "12") {
                                 $aData['SCH_MONTHS'] = $aData['SCH_MONTHS'];
                             } else {
-                                throw (new \Exception( 'Invalid value specified for `sch_months`'));
+                                throw (new \Exception( 'Invalid value specified for \'sch_months\''));
                             }
                         }
                     }
@@ -799,11 +776,11 @@ class CaseScheduler
                     $aData['SCH_START_TIME'] = time();
                     $aData['SCH_START_DATE'] = $aData['SCH_START_TIME'];
                     if ($aData['SCH_REPEAT_EVERY'] == "") {
-                        throw (new \Exception( '`sch_repeat_every` can`t be null'));
+                        throw (new \Exception( '\'sch_repeat_every\' can\'t be null'));
                     }
                     $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
                     if (!preg_match($patternHour, $aData['SCH_REPEAT_EVERY'])) {
-                        throw (new \Exception( 'Invalid value specified for `sch_repeat_every`. Expecting time in HH.MM format'));
+                        throw (new \Exception( 'Invalid value specified for \'sch_repeat_every\'. Expecting time in HH.MM format'));
                     }
                     $nextRun = $aData['SCH_REPEAT_EVERY'] * 60 * 60;
                     $aData['SCH_REPEAT_EVERY'] = $aData['SCH_REPEAT_EVERY'];
@@ -843,12 +820,11 @@ class CaseScheduler
     /**
      * Delete a case scheduler of a project
      *
-     * @param string $sProcessUID
      * @param string $sSchUID
      *
      * @access public
      */
-    public function deleteCaseScheduler($sProcessUID, $sSchUID)
+    public function deleteCaseScheduler($sSchUID)
     {
         try {
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes". PATH_SEP . "model" . PATH_SEP . "CaseScheduler.php");

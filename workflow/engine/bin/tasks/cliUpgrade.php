@@ -37,7 +37,7 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskOpt("buildACV", "If the option is enabled, performs the Build Cache View.", "ACV", "buildACV");
-CLI::taskRun(run_upgrade);
+CLI::taskRun("run_upgrade");
 
 
 /**

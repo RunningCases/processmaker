@@ -25,43 +25,43 @@
  */
 
 //It works with the table CONFIGURATION in a WF dataBase
-require_once ("classes/model/Application.php");
-require_once ("classes/model/AppCacheView.php");
-require_once ("classes/model/AppDelegation.php");
-require_once ("classes/model/AppDocument.php");
-require_once ("classes/model/AppDelay.php");
-require_once ("classes/model/AppNotes.php");
-require_once ("classes/model/AppThread.php");
-require_once ("classes/model/Department.php");
-require_once ("classes/model/Dynaform.php");
-require_once ("classes/model/Groupwf.php");
-require_once ("classes/model/InputDocument.php");
-require_once ("classes/model/Language.php");
-require_once ("classes/model/OutputDocument.php");
-require_once ("classes/model/Process.php");
-require_once ("classes/model/ReportTable.php");
-require_once ("classes/model/ReportVar.php");
-require_once ("classes/model/Route.php");
-require_once ("classes/model/Step.php");
-require_once ("classes/model/StepTrigger.php");
-require_once ("classes/model/Task.php");
-require_once ("classes/model/TaskUser.php");
-require_once ("classes/model/Triggers.php");
-require_once ("classes/model/Users.php");
-require_once ("classes/model/Session.php");
-require_once ("classes/model/Content.php");
-G::LoadClass( "ArrayPeer" );
-G::LoadClass( "BasePeer" );
+//require_once ("classes/model/Application.php");
+//require_once ("classes/model/AppCacheView.php");
+//require_once ("classes/model/AppDelegation.php");
+//require_once ("classes/model/AppDocument.php");
+//require_once ("classes/model/AppDelay.php");
+//require_once ("classes/model/AppNotes.php");
+//require_once ("classes/model/AppThread.php");
+//require_once ("classes/model/Department.php");
+//require_once ("classes/model/Dynaform.php");
+//require_once ("classes/model/Groupwf.php");
+//require_once ("classes/model/InputDocument.php");
+//require_once ("classes/model/Language.php");
+//require_once ("classes/model/OutputDocument.php");
+//require_once ("classes/model/Process.php");
+//require_once ("classes/model/ReportTable.php");
+//require_once ("classes/model/ReportVar.php");
+//require_once ("classes/model/Route.php");
+//require_once ("classes/model/Step.php");
+//require_once ("classes/model/StepTrigger.php");
+//require_once ("classes/model/Task.php");
+//require_once ("classes/model/TaskUser.php");
+//require_once ("classes/model/Triggers.php");
+//require_once ("classes/model/Users.php");
+//require_once ("classes/model/Session.php");
+//require_once ("classes/model/Content.php");
+//G::LoadClass( "ArrayPeer" );
+//G::LoadClass( "BasePeer" );
 G::LoadClass( 'case' );
-G::LoadClass( 'derivation' );
-G::LoadClass( 'groups' );
-G::LoadClass( 'sessions' );
-G::LoadClass( 'processes' );
-G::LoadClass( 'processMap' );
-G::LoadClass( 'pmScript' );
-G::LoadClass( 'spool' );
-G::LoadClass( 'tasks' );
-G::LoadClass( 'wsResponse' );
+//G::LoadClass( 'derivation' );
+//G::LoadClass( 'groups' );
+//G::LoadClass( 'sessions' );
+//G::LoadClass( 'processes' );
+//G::LoadClass( 'processMap' );
+//G::LoadClass( 'pmScript' );
+//G::LoadClass( 'spool' );
+//G::LoadClass( 'tasks' );
+//G::LoadClass( 'wsResponse' );
 
 /**
  * Copyright (C) 2009 COLOSA
@@ -2585,6 +2585,7 @@ class wsBase
             $oCriteria = new Criteria( 'workflow' );
             $oCriteria->addSelectColumn( AppDelayPeer::APP_UID );
             $oCriteria->addSelectColumn( AppDelayPeer::APP_DEL_INDEX );
+            $oCriteria->addSelectColumn( AppDelayPeer::APP_DISABLE_ACTION_USER );
             $oCriteria->add( AppDelayPeer::APP_TYPE, '' );
             $oCriteria->add( $oCriteria->getNewCriterion( AppDelayPeer::APP_TYPE, 'PAUSE' )->addOr( $oCriteria->getNewCriterion( AppDelayPeer::APP_TYPE, 'CANCEL' ) ) );
             $oCriteria->addAscendingOrderByColumn( AppDelayPeer::APP_ENABLE_ACTION_DATE );

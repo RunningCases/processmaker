@@ -33,7 +33,7 @@ Print information about the current system and any specified workspaces.
 EOT
 );
 CLI::taskArg('workspace-name', true, true);
-CLI::taskRun(run_info);
+CLI::taskRun("run_info");
 
 CLI::taskName('workspace-backup');
 CLI::taskDescription(<<<EOT
@@ -53,7 +53,7 @@ EOT
 CLI::taskArg('workspace', false);
 CLI::taskArg('backup-file', true);
 CLI::taskOpt("filesize", "Set the max size of the compressed splitted files, by default the max is 1000 Mb.", "s:","filesize=");
-CLI::taskRun(run_workspace_backup);
+CLI::taskRun("run_workspace_backup");
 
 CLI::taskName('workspace-restore');
 CLI::taskDescription(<<<EOT
@@ -75,7 +75,7 @@ CLI::taskOpt("multiple", "Restore from multiple compresed enumerated files.", "m
 CLI::taskOpt("workspace", "Select which workspace to restore if multiple workspaces are present in the archive.",
              "w:", "workspace=");
 CLI::taskOpt("lang", "You must specify language on which rebuild of the case cache list builder will be done; if you don't specify this, it will use 'en' by default", "l:","lang=");
-CLI::taskRun(run_workspace_restore);
+CLI::taskRun("run_workspace_restore");
 
 CLI::taskName('cacheview-repair');
 CLI::taskDescription(<<<EOT
@@ -93,7 +93,7 @@ EOT
 );
 CLI::taskArg('workspace', true, true);
 CLI::taskOpt("lang", "You must specify language on which rebuild of the case cache list builder will be done; if you don't specify this, it will use 'en' by default", "l:","lang=");
-CLI::taskRun(run_cacheview_upgrade);
+CLI::taskRun("run_cacheview_upgrade");
 
 CLI::taskName('database-upgrade');
 CLI::taskDescription(<<<EOT
@@ -110,7 +110,7 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskArg('workspace', true, true);
-CLI::taskRun(run_database_upgrade);
+CLI::taskRun("run_database_upgrade");
 
 CLI::taskName('plugins-database-upgrade');
 CLI::taskDescription(<<<EOT
@@ -125,7 +125,7 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskArg('workspace', true, true);
-CLI::taskRun(run_plugins_database_upgrade);
+CLI::taskRun("run_plugins_database_upgrade");
 
 CLI::taskName('workspace-upgrade');
 CLI::taskDescription(<<<EOT
@@ -143,7 +143,7 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskArg('workspace-name', true, true);
-CLI::taskRun(run_workspace_upgrade);
+CLI::taskRun("run_workspace_upgrade");
 
 CLI::taskName('translation-repair');
 CLI::taskDescription(<<<EOT
@@ -158,7 +158,7 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskArg('workspace-name', true, true);
-CLI::taskRun(run_translation_upgrade);
+CLI::taskRun("run_translation_upgrade");
 
 CLI::taskName('migrate-cases-folders');
 CLI::taskDescription(<<<EOT
@@ -170,7 +170,7 @@ EOT
 //CLI::taskArg('workspace', true);
 CLI::taskOpt("workspace", "Select which workspace to migrate the cases folders, if multiple workspaces are present in the server.",
              "w:", "workspace=");
-CLI::taskRun(runStructureDirectories);
+CLI::taskRun("runStructureDirectories");
 
   /**
    * Function run_info
