@@ -240,11 +240,12 @@ class Cases extends Api
     /**
      * @url PUT /:cas_uid/reassign-case
      *
-     * @param string $del_index {@from body}
+     * @param string $cas_uid {@from body} {@min 32}{@max 32}
      * @param string $usr_uid_source {@from body} {@min 32}{@max 32}
      * @param string $usr_uid_target {@from body} {@min 32}{@max 32}
+     * @param string $del_index {@from body}
      */
-    public function doPutReassignCase($cas_uid, $del_index, $usr_uid_source, $usr_uid_target)
+    public function doPutReassignCase($cas_uid, $usr_uid_source, $usr_uid_target, $del_index = null)
     {
         try {
             $userUid = $this->getUserId();
@@ -259,12 +260,10 @@ class Cases extends Api
     /**
      * @url PUT /:cas_uid/route-case
      *
+     * @param string $cas_uid {@from body} {@min 32}{@max 32}
      * @param string $del_index {@from body}
-     * @param string $usr_uid_source {@from body} {@min 32}{@max 32}
-     * @param string $usr_uid_target {@from body} {@min 32}{@max 32}
      */
-
-    public function doPutRouteCase($cas_uid, $del_index)
+    public function doPutRouteCase($cas_uid, $del_index = null)
     {
         try {
             $userUid = $this->getUserId();
