@@ -305,20 +305,21 @@ class Task
                         $this->unsetVar($arrayProperty, "TAS_GROUP_VARIABLE");
                     }
                     $arrayProperty["TAS_ASSIGN_TYPE"] = "SELF_SERVICE";
-                    if (empty($arrayProperty["TAS_SELFSERVICE_TIMEOUT"])) {
+                    if (!($arrayProperty["TAS_SELFSERVICE_TIMEOUT"] == 0 || $arrayProperty["TAS_SELFSERVICE_TIMEOUT"] == 1)) {
                         throw (new \Exception("Invalid value specified for 'tas_selfservice_timeout'"));
                     }
-                    if (empty($arrayProperty["TAS_SELFSERVICE_TIME"])) {
-                        throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
-                    }
-                    if (empty($arrayProperty["TAS_SELFSERVICE_TRIGGER_UID"])) {
-                        throw (new \Exception("Invalid value specified for 'tas_selfservice_trigger_uid'"));
-                    }
-                    if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
-                        $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
-                    }
 
-                    if ($arrayProperty["TAS_SELFSERVICE_TIMEOUT"] != "1") {
+                    if ($arrayProperty["TAS_SELFSERVICE_TIMEOUT"] == "1") {
+                        if (empty($arrayProperty["TAS_SELFSERVICE_TIME"])) {
+                            throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
+                        }
+                        if (empty($arrayProperty["TAS_SELFSERVICE_TRIGGER_UID"])) {
+                            throw (new \Exception("Invalid value specified for 'tas_selfservice_trigger_uid'"));
+                        }
+                        if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
+                            $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
+                        }
+                    } else {
                         $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME");
                         $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME_UNIT");
                         $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TRIGGER_UID");
