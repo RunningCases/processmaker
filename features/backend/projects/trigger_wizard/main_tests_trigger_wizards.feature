@@ -142,46 +142,12 @@ Scenario Outline: Create new Trigger: createDWS
         And store "tri_uid" in session array as variable "tri_uid<i>"
 
         Examples:
-        | i | lib_name       | fn_name   | tri_title      | tri_description | tri_type | tri_params.input.sharepointServer | tri_params.input.auth | tri_params.input.name | tri_params.input.users | tri_params.input.title | tri_params.input.documents | tri_params.output.tri_answer |
-        | 1 | pmTrSharepoint | createDWS | Sharepoint 1   |                 | SCRIPT   | @@SERVER                          | username:password     | Test DWS              | @@users                | Test DWS               | /files/test.doc            | $respuesta                   |
+        | i | Description                                          | lib_name       | fn_name   | tri_title      | tri_description | tri_type | tri_params.input.sharepointServer | tri_params.input.auth | tri_params.input.name | tri_params.input.users | tri_params.input.title | tri_params.input.documents | tri_params.output.tri_answer |
+        | 1 | Create pmTrSharpoint                                 | pmTrSharepoint | createDWS | Sharepoint 1   |                 | SCRIPT   | @@SERVER                          | username:password     | Test DWS              | @@users                | Test DWS               | /files/test.doc            | $respuesta                   |
+        | 2 | Create a trigger without sending fields not required | pmTrSharepoint | createDWS | Sharepoint 2   |                 | SCRIPT   | @@SERVER                          | username:password     | Test DWS 1            | @@users                | Test DWS               | /files/test.doc            |                              |
 
 
-Scenario Outline: Create new Trigger: createDWS (no enviar campos no requeridos)
-        Given POST this data:
-        """
-        {
-            "tri_title": "<tri_title>",
-            "tri_description": "<tri_description>",
-            "tri_type": "<tri_type>",
-            "tri_params": {
-                    "input": {
-                    
-                    "sharepointServer": "<tri_params.input.sharepointServer>",
-                    "auth": "<tri_params.input.auth>",
-                    "name": "<tri_params.input.name>",
-                    "users": "<tri_params.input.users>",
-                    "title": "<tri_params.input.title>",
-                    "documents": "<tri_params.input.documents>"
-                    
-                },
-                "output": {
-                    "tri_answer": "<tri_params.output.tri_answer>"
-                }
-            }
-        }
-        """
-        And I request "project/14414793652a5d718b65590036026581/trigger-wizard/<lib_name>/<fn_name>"
-        And the content type is "application/json"
-        Then the response status code should be 201
-        And the response charset is "UTF-8"
-        And the type is "object"
-        And store "tri_uid" in session array as variable "tri_uid<i>"
 
-        Examples:
-        | i | lib_name       | fn_name   | tri_title      | tri_description | tri_type | tri_params.input.sharepointServer | tri_params.input.auth | tri_params.input.name | tri_params.input.users | tri_params.input.title | tri_params.input.documents | tri_params.output.tri_answer |
-        | 2 | pmTrSharepoint | createDWS | Sharepoint 1   |                 | SCRIPT   | @@SERVER                          | username:password     | Test DWS              | @@users                | Test DWS               | /files/test.doc            | $respuesta                   |
-
-    
     Scenario Outline: Update Trigger
         Given PUT this data:
         """
@@ -280,6 +246,7 @@ Scenario Outline: Create new Trigger: createDWS
         | i |
         | 0 |
         | 1 |
+        | 2 |
 
     
     Scenario: Get a List of triggers of a project

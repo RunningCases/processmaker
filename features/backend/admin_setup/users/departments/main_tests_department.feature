@@ -20,14 +20,16 @@ Background:
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
+        And the "dep_uid" property equals "12921473252d567506e6e63079240767"
         And the "dep_parent" property equals ""
         And the "dep_title" property equals "Sales Division"
         And the "dep_status" property equals "ACTIVE"
-        And the "dep_manager" property equals ""
+        And the "dep_manager" property equals "38102442252d5671a629009013495090"
         And the "dep_ldap_dn" property equals ""
         And the "dep_last" property equals "0"
-        And the "dep_manager_username" property equals ""
-        And the "dep_manager_lastname" property equals ""
+        And the "dep_manager_username" property equals "dylan"
+        And the "dep_manager_firstname" property equals "Dylan"
+        And the "dep_manager_lastname" property equals "Burns"
         And the "has_children" property equals "0"
         
   
