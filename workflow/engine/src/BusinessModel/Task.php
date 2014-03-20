@@ -317,7 +317,7 @@ class Task
                             throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
                         }
                         if (empty($arrayProperty["TAS_SELFSERVICE_TIME_UNIT"])) {
-                            throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
+                            throw (new \Exception("Invalid value specified for 'tas_selfservice_time_unit'"));
                         }
                         if (empty($arrayProperty["TAS_SELFSERVICE_TRIGGER_UID"])) {
                             throw (new \Exception("Invalid value specified for 'tas_selfservice_trigger_uid'"));
