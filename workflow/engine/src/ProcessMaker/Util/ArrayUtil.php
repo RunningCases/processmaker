@@ -69,6 +69,10 @@ class ArrayUtil
      */
     public static function sort($data, $columns, $direction = SORT_ASC)
     {
+        if (empty($data)) {
+            return $data;
+        }
+
         $composedData = array();
 
         if (is_array($direction)) {
@@ -92,7 +96,7 @@ class ArrayUtil
 
         $composedData[] = & $data;
 
-        if (PHP_VERSION_ID < 54000) {
+        if (PHP_VERSION_ID < 50400) {
             switch (count($columns)) {
                 case 1: array_multisort($composedData[0], $composedData[1], $composedData[2]); break;
                 case 2: array_multisort($composedData[0], $composedData[1], $composedData[2], $composedData[3], $composedData[4]); break;
