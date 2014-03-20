@@ -108,7 +108,7 @@ class CaseScheduler extends Api
     {
         try {
             $caseScheduler = new \BusinessModel\CaseScheduler();
-            $caseScheduler->deleteCaseScheduler($prjUid, $schUid);
+            $caseScheduler->deleteCaseScheduler($schUid);
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -127,11 +127,6 @@ class CaseSchedulerStructure
      * @var string {@from body} {@min 0} {@max 100}
      */
     public $sch_del_user_name;
-
-    /**
-     * @var string {@from body} {@min 0} {@max 100}
-     */
-    public $sch_del_user_pass;
 
     /**
      * @var string {@from body} {@min 0} {@max 100}
@@ -159,7 +154,7 @@ class CaseSchedulerStructure
     public $sch_last_run_time;
 
     /**
-     * @var string {@from body} {@min 0} {@max 15}
+     * @var string {@from body} {@choice ACTIVE,INACTIVE}
      */
     public $sch_state;
 

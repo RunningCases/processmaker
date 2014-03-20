@@ -831,6 +831,9 @@ class AdditionalTables extends BaseAdditionalTables
                 //switching by report table type
                 case 'NORMAL':
                     // parsing empty values to null
+                    if (!is_array($caseData)) {
+                        $caseData = unserialize($caseData);
+                    }
                     foreach ($caseData as $i => $v) {
                         foreach ($fieldTypes as $key => $fieldType) {
                             foreach ($fieldType as $name => $type) {
