@@ -26,8 +26,7 @@
  * bootstrap - ProcessMaker Bootstrap
  * this file is used initialize main variables, redirect and dispatch all requests
  */
-//session_cache_limiter('none');
-//die('neyek');
+
 function transactionLog($transactionName){
     if (extension_loaded('newrelic')) {
         $baseName="ProcessMaker";
