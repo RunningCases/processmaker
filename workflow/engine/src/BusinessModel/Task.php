@@ -297,6 +297,9 @@ class Task
                     break;
                 case 'SELF_SERVICE':
                 case 'SELF_SERVICE_EVALUATE':
+                    if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
+                        $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
+                    }
                     if ($arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE_EVALUATE") {
                         if (empty($arrayProperty["TAS_GROUP_VARIABLE"])) {
                             throw (new \Exception("Invalid value specified for 'tas_group_variable'"));
@@ -313,11 +316,11 @@ class Task
                         if (empty($arrayProperty["TAS_SELFSERVICE_TIME"])) {
                             throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
                         }
+                        if (empty($arrayProperty["TAS_SELFSERVICE_TIME_UNIT"])) {
+                            throw (new \Exception("Invalid value specified for 'tas_assign_variable'"));
+                        }
                         if (empty($arrayProperty["TAS_SELFSERVICE_TRIGGER_UID"])) {
                             throw (new \Exception("Invalid value specified for 'tas_selfservice_trigger_uid'"));
-                        }
-                        if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
-                            $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
                         }
                     } else {
                         $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME");
