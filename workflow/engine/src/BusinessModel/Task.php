@@ -109,6 +109,10 @@ class Task
             //$arrayDataAux["LANG"] = SYS_LANG;
 
             //Assignment rules
+            if ($arrayDataAux["TAS_ASSIGN_TYPE"] == "SELF_SERVICE") {
+                $arrayDataAux["TAS_ASSIGN_TYPE"] = (!empty($arrayDataAux["TAS_GROUP_VARIABLE"])) ? "SELF_SERVICE_EVALUATE" : $arrayDataAux["TAS_ASSIGN_TYPE"];
+            }
+
             //Timing control
             //Load Calendar Information
             $calendar = new \Calendar();
@@ -291,15 +295,12 @@ class Task
                     break;
                 case 'SELF_SERVICE':
                 case 'SELF_SERVICE_EVALUATE':
-                    if (trim($arrayProperty["TAS_GROUP_VARIABLE"]) == "") {
-                        $arrayProperty["TAS_GROUP_VARIABLE"] = "@@SYS_GROUP_TO_BE_ASSIGNED";
-                    }
                     if ($arrayProperty["TAS_ASSIGN_TYPE"] == "SELF_SERVICE_EVALUATE") {
                         if (empty($arrayProperty["TAS_GROUP_VARIABLE"])) {
                             throw (new \Exception("Invalid value specified for 'tas_group_variable'"));
                         }
                     } else {
-                        $this->unsetVar($arrayProperty, "TAS_GROUP_VARIABLE");
+                        $arrayProperty["TAS_GROUP_VARIABLE"] = '';
                     }
                     $arrayProperty["TAS_ASSIGN_TYPE"] = "SELF_SERVICE";
                     if (!($arrayProperty["TAS_SELFSERVICE_TIMEOUT"] == 0 || $arrayProperty["TAS_SELFSERVICE_TIMEOUT"] == 1)) {
