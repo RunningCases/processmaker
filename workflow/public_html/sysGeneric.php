@@ -27,7 +27,6 @@
  * this file is used initialize main variables, redirect and dispatch all requests
  */
 
-
 function transactionLog($transactionName){
     if (extension_loaded('newrelic')) {
         $baseName="ProcessMaker";
@@ -609,12 +608,13 @@ Bootstrap::LoadClass( 'plugin' );
 //here we are loading all plugins registered
 //the singleton has a list of enabled plugins
 $sSerializedFile = PATH_DATA_SITE . 'plugin.singleton';
-$oPluginRegistry = & PMPluginRegistry::getSingleton();
 
 if (file_exists( $sSerializedFile )) {
-    $oPluginRegistry->unSerializeInstance( file_get_contents( $sSerializedFile ) );
+    $oPluginRegistry = PMPluginRegistry::loadSingleton($sSerializedFile);
     $attributes = $oPluginRegistry->getAttributes();
     Bootstrap::LoadTranslationPlugins( defined( 'SYS_LANG' ) ? SYS_LANG : "en" , $attributes);
+} else{
+    $oPluginRegistry = PMPluginRegistry::getSingleton();
 }
 
 // setup propel definitions and logging
