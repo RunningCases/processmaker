@@ -174,14 +174,16 @@ printf ( "mafe-{$hashVendors}.js file has %d bytes\n", filesize("{$rootPath}/wor
 out("=> compresing and combining css files", 'info');
 
 $cssFiles = array (
-    "workflow/public_html/lib/pmUI/pmui.min.css",
-    "workflow/public_html/lib/mafe/mafe.min.css",
     "gulliver/js/codemirror/lib/codemirror.css",
 
     "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/o2k7/ui.css",
     "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/o2k7/ui_silver.css",
     "gulliver/js/tinymce/jscripts/tiny_mce/plugins/inlinepopups/skins/clearlooks2/window.css",
     "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/o2k7/content.css"
+
+    "workflow/public_html/lib/pmUI/pmui.min.css",
+    "workflow/public_html/lib/mafe/mafe.min.css",
+
 );
 $bigHandler = fopen ("{$rootPath}/workflow/public_html/lib/css/mafe-{$hashVendors}.css", "w");
 foreach ($cssFiles as $cssFile) {
