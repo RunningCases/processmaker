@@ -92,7 +92,7 @@ Scenario Outline: Create a new case in workspace with process "Derivation rules 
 
 
 
-Scenario: Create a new case Impersonate in workspace with process "Derivation rules - sequential"
+Scenario Outline: Create a new case Impersonate in workspace with process "Derivation rules - sequential"
         Given POST this data:
             """
             {
@@ -107,7 +107,13 @@ Scenario: Create a new case Impersonate in workspace with process "Derivation ru
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
-        And store "caseId" in session array as variable "case1"
+        And store "caseId" in session array as variable "caseId_<case_number>"
+        And store "caseNumber" in session array as variable "caseNumber_<case_number>"
+        
+        Examples:
+        | case_number |
+        | 1           |
+
 
 
 Scenario: Reassigns a case to a different user
@@ -125,6 +131,8 @@ Scenario: Reassigns a case to a different user
         And the content type is "application/json"
         And the response charset is "UTF-8"
         And the type is "object"
+
+
 
 
 Scenario: Autoderivate a case to the next task in the process
