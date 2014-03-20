@@ -477,6 +477,11 @@ class WebEntry
                 case "HTML":
                     global $G_FORM;
 
+                    if (! class_exists("Smarty")) {
+                        $loader = \Maveriks\Util\ClassLoader::getInstance();
+                        $loader->addClass("Smarty", PATH_THIRDPARTY . "smarty".PATH_SEP."libs".PATH_SEP."Smarty.class.php");
+                    }
+
                     $G_FORM = new \Form($processUid . "/" . $dynaFormUid, PATH_DYNAFORM, SYS_LANG, false);
                     $G_FORM->action = $http . $_SERVER["HTTP_HOST"] . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/services/cases_StartExternal.php";
 

@@ -344,8 +344,8 @@ class WebApplication
         set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);
 
         // smarty constants
-//        define( "PATH_SMARTY_C", PATH_C . "smarty" . PATH_SEP . "c" );
-//        define( "PATH_SMARTY_CACHE", PATH_C . "smarty" . PATH_SEP . "cache" );
+        define( "PATH_SMARTY_C", PATH_C . "smarty" . PATH_SEP . "c" );
+        define( "PATH_SMARTY_CACHE", PATH_C . "smarty" . PATH_SEP . "cache" );
 
         define("PATH_DATA_SITE",                PATH_DATA      . "sites/" . SYS_SYS . "/");
         define("PATH_DOCUMENT",                 PATH_DATA_SITE . "files/");
@@ -365,6 +365,33 @@ class WebApplication
         } else {
             echo "WARNING! No server info found!";
         }
+
+        /**
+         * Global definitions, before it was the defines.php file
+         */
+
+        // URL Key
+        define( "URL_KEY", 'c0l0s40pt1mu59r1m3' );
+
+        // Other definitions
+        define( 'TIMEOUT_RESPONSE', 100 ); //web service timeout
+        define( 'APPLICATION_CODE', 'ProcessMaker' ); //to login like workflow system
+        define( 'MAIN_POFILE', 'processmaker' );
+        define( 'PO_SYSTEM_VERSION', 'PM 4.0.1' );
+
+        // Environment definitions
+        define( 'G_PRO_ENV', 'PRODUCTION' );
+        define( 'G_DEV_ENV', 'DEVELOPMENT' );
+        define( 'G_TEST_ENV', 'TEST' );
+
+        // Number of files per folder at PATH_UPLOAD (cases documents)
+        define( 'APPLICATION_DOCUMENTS_PER_FOLDER', 1000 );
+
+        // Server of ProcessMaker Library
+        define( 'PML_SERVER', 'http://library.processmaker.com' );
+        define( 'PML_WSDL_URL', PML_SERVER . '/syspmLibrary/en/green/services/wsdl' );
+        define( 'PML_UPLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess' );
+        define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download' );
 
         // create memcached singleton
         //\Bootstrap::LoadClass("memcached");

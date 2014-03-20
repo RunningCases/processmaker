@@ -155,13 +155,6 @@ class CaseTracker
             //Array DB
             $arrayCaseTrackerObject = array();
 
-            $arrayCaseTrackerObject[] = array(
-                "obj_uid"         => "char",
-                "obj_title"       => "char",
-                "obj_description" => "char",
-                "obj_type"        => "char"
-            );
-
             $delimiter = \DBAdapter::getStringDelimiter();
 
             //DynaForms
@@ -297,13 +290,13 @@ class CaseTracker
                 );
             }
 
-            $arrayAvailableCaseTrackerObject = \ProcessMaker\Util\ArrayUtil::sort(
-                $arrayAvailableCaseTrackerObject,
+            $arrayCaseTrackerObject = \ProcessMaker\Util\ArrayUtil::sort(
+                $arrayCaseTrackerObject,
                 array("obj_type", "obj_title"),
                 SORT_ASC
             );
 
-            return $arrayAvailableCaseTrackerObject;
+            return $arrayCaseTrackerObject;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -390,8 +383,6 @@ class CaseTracker
                 );
             }
 
-            //Set data
-            \G::LoadClass("ArrayPeer");
             $arraydbCaseTrackerObject = \ProcessMaker\Util\ArrayUtil::sort($arraydbCaseTrackerObject, array("cto_position"), SORT_ASC);
 
             return $arrayCaseTrackerObject;
