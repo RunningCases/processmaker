@@ -109,12 +109,6 @@ class Task
             //$arrayDataAux["LANG"] = SYS_LANG;
 
             //Assignment rules
-            switch ($arrayDataAux["TAS_ASSIGN_TYPE"]) {
-                case "SELF_SERVICE":
-                    $arrayDataAux["TAS_ASSIGN_TYPE"] = (!empty($arrayDataAux["TAS_GROUP_VARIABLE"])) ? "SELF_SERVICE_EVALUATE" : $arrayDataAux["TAS_ASSIGN_TYPE"];
-                    break;
-            }
-
             //Timing control
             //Load Calendar Information
             $calendar = new \Calendar();
@@ -392,7 +386,6 @@ class Task
                 $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE");
                 $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE_TEMPLATE");
             }
-
 
             $result = $task->update($arrayProperty);
 
