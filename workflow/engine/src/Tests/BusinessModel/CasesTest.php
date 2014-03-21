@@ -171,5 +171,109 @@ class CasesTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_numeric($response['totalCount']));
         $this->assertTrue(is_array($response['data']));
     }
+
+    /**
+     * Test add Case
+     *
+     * @covers \BusinessModel\Cases::addCase
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testAddCase()
+    {
+        $response = $this->oCases->addCase('1265557095225ff5c688f46031700471', '46941969352af5be2ab3f39001216717', '00000000000000000000000000000001', array('name' => 'John', 'lastname' => 'Petersson'));
+        $this->assertTrue(is_object($response));
+        $aResponse = json_decode(json_encode($response), true);
+        return $aResponse;
+    }
+
+    /**
+     * Test get Task Case
+     *
+     * @covers \BusinessModel\Cases::getTaskCase
+     * @depends testAddCase
+     * @param array $aResponse, Data for parent department
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetTaskCase(array $aResponse)
+    {
+        $response = $this->oCases->getTaskCase($aResponse['app_uid'], '00000000000000000000000000000001');
+        $this->assertTrue(is_array($response));
+    }
+
+    /**
+     * Test get Case Info
+     *
+     * @covers \BusinessModel\Cases::getCaseInfo
+     * @depends testAddCase
+     * @param array $aResponse
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetCaseInfo(array $aResponse)
+    {
+        $response = $this->oCases->getCaseInfo($aResponse['app_uid'], '00000000000000000000000000000001');
+        $this->assertTrue(is_object($response));
+    }
+
+    /**
+     * Test put reassign case
+     *
+     * @covers \BusinessModel\Cases::getCaseInfo
+     * @depends testAddCase
+     * @param array $aResponse
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testUpdateReassignCase(array $aResponse)
+    {
+        $response = $this->oCases->updateReassignCase($aResponse['app_uid'], '00000000000000000000000000000001', null, '00000000000000000000000000000001', '23063198853206b666e2bd0085065170');
+        $this->assertTrue(empty($response));
+    }
+
+    /**
+     * Test add Case to test route case
+     *
+     * @covers \BusinessModel\Cases::addCase
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testAddCaseRouteCase()
+    {
+        $response = $this->oCases->addCase('1265557095225ff5c688f46031700471', '46941969352af5be2ab3f39001216717', '00000000000000000000000000000001', array('name' => 'John', 'lastname' => 'Petersson'));
+        $this->assertTrue(is_object($response));
+        $aResponseRouteCase = json_decode(json_encode($response), true);
+        return $aResponseRouteCase;
+    }
+
+    /**
+     * Test put route case
+     *
+     * @covers \BusinessModel\Cases::updateRouteCase
+     * @depends testAddCaseRouteCase
+     * @param array $aResponseRouteCase
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testUpdateRouteCase(array $aResponseRouteCase)
+    {
+        $response = $this->oCases->updateRouteCase($aResponseRouteCase['app_uid'], '00000000000000000000000000000001', null);
+        $this->assertTrue(empty($response));
+    }
+
+    /**
+     * Test add Case impersonate to test route case
+     *
+     * @covers \BusinessModel\Cases::addCaseImpersonate
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testAddCaseImpersonate()
+    {
+        $response = $this->oCases->addCaseImpersonate('1265557095225ff5c688f46031700471', '23063198853206b666e2bd0085065170', '46941969352af5be2ab3f39001216717', array('name' => 'John', 'lastname' => 'Petersson'));
+        $this->assertTrue(is_object($response));
+    }
+
 }
 
