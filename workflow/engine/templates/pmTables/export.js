@@ -104,6 +104,7 @@ Export.configure = function()
    * WINDOW CONFIG
    */
   this.windowConfig = {
+    id: 'windowConfigExport',
     title: '',
     layout: 'fit',
     width: 570,
@@ -117,9 +118,11 @@ Export.configure = function()
   }
 
   this.windowConfig.buttons = [{
+    id: 'windowConfigExportButtonExport',
     text: _('ID_EXPORT'),
     handler: Export.submit
   },{
+    id: 'windowConfigExportButtonCancel',
     text: _('ID_CANCEL'),
     handler: function(){
       Export.window.hide();
