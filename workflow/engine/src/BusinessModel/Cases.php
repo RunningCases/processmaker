@@ -258,7 +258,7 @@ class Cases
                                 for ($i = 0; $i<=count($array['current_task'])-1; $i++) {
                                     $current_task = $array['current_task'][$i];
                                     $current_task['usr_uid'] = $current_task['userId'];
-                                    $current_task['usr_name'] = $current_task['userName'];
+                                    $current_task['usr_name'] = trim($current_task['userName']);
                                     $current_task['tas_uid'] = $current_task['taskId'];
                                     $current_task['tas_title'] = $current_task['taskName'];
                                     $current_task['del_index'] = $current_task['delIndex'];
