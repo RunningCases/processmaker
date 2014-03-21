@@ -325,21 +325,9 @@ class CaseTracker
             $inputDocument = new \InputDocument();
             $outputDocument = new \OutputDocument();
 
-            //Array DB
-            $arraydbCaseTrackerObject = array();
-
-            $arraydbCaseTrackerObject[] = array(
-                "cto_uid"         => "char",
-                "cto_type_obj"    => "char",
-                "cto_uid_obj"     => "char",
-                "cto_condition"   => "char",
-                "cto_position"    => "integer",
-                "obj_title"       => "char",
-                "obj_description" => "char"
-            );
+            $arrayCaseTrackerObject = array();
 
             $criteria = new \Criteria("workflow");
-
             $criteria->add(\CaseTrackerObjectPeer::PRO_UID, $processUid, \Criteria::EQUAL);
 
             $rsCriteria = \CaseTrackerObjectPeer::doSelectRS($criteria);
@@ -372,7 +360,7 @@ class CaseTracker
                         break;
                 }
 
-                $arraydbCaseTrackerObject[] = array(
+                $arrayCaseTrackerObject[] = array(
                     "cto_uid"         => $row["CTO_UID"],
                     "cto_type_obj"    => $row["CTO_TYPE_OBJ"],
                     "cto_uid_obj"     => $row["CTO_UID_OBJ"],
@@ -383,7 +371,7 @@ class CaseTracker
                 );
             }
 
-            $arraydbCaseTrackerObject = \ProcessMaker\Util\ArrayUtil::sort($arraydbCaseTrackerObject, array("cto_position"), SORT_ASC);
+            $arrayCaseTrackerObject = \ProcessMaker\Util\ArrayUtil::sort($arrayCaseTrackerObject, array("cto_position"), SORT_ASC);
 
             return $arrayCaseTrackerObject;
         } catch (\Exception $e) {

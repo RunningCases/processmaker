@@ -160,16 +160,16 @@ class Cases extends Api
     }
 
     /**
-     * @url GET /:cas_uid
+     * @url GET /:app_uid
      *
-     * @param string $cas_uid {@min 32}{@max 32}
+     * @param string $app_uid {@min 32}{@max 32}
      */
-    public function doGetCaseInfo($cas_uid)
+    public function doGetCaseInfo($app_uid)
     {
         try {
             $userUid = $this->getUserId();
             $cases = new \BusinessModel\Cases();
-            $oData = $cases->getCaseInfo($cas_uid, $userUid);
+            $oData = $cases->getCaseInfo($app_uid, $userUid);
             return $oData;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -177,15 +177,16 @@ class Cases extends Api
     }
 
     /**
-     * @url GET /:cas_uid/current-task
+     * @url GET /:app_uid/current-task
      *
-     * @param string $cas_uid {@min 32}{@max 32}
+     * @param string $app_uid {@min 32}{@max 32}
      */
-        public function doGetTaskCase($cas_uid)
+        public function doGetTaskCase($app_uid)
     {
         try {
+            $userUid = $this->getUserId();
             $cases = new \BusinessModel\Cases();
-            $oData = $cases->getTaskCase($cas_uid);
+            $oData = $cases->getTaskCase($app_uid, $userUid);
             return $oData;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -195,18 +196,18 @@ class Cases extends Api
     /**
      * @url POST
      *
-     * @param string $prj_uid {@from body} {@min 32}{@max 32}
-     * @param string $act_uid {@from body} {@min 32}{@max 32}
+     * @param string $pro_uid {@from body} {@min 32}{@max 32}
+     * @param string $tas_uid {@from body} {@min 32}{@max 32}
      * @param array $variables {@from body}
      *
      */
-    public function doPostCase($prj_uid, $act_uid, $variables=null)
+    public function doPostCase($pro_uid, $tas_uid, $variables=null)
     {
         try {
             $userUid = $this->getUserId();
             $cases = new \BusinessModel\Cases();
-            $arrayData = $cases->addCase($prj_uid, $act_uid, $userUid, $variables);
-            return $arrayData;
+            $oData = $cases->addCase($pro_uid, $tas_uid, $userUid, $variables);
+            return $oData;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -215,55 +216,53 @@ class Cases extends Api
     /**
      * @url POST /impersonate
      *
-     * @param string $prj_uid {@from body} {@min 32}{@max 32}
+     * @param string $pro_uid {@from body} {@min 32}{@max 32}
      * @param string $usr_uid {@from body} {@min 32}{@max 32}
-     * @param string $act_uid {@from body} {@min 32}{@max 32}
+     * @param string $tas_uid {@from body} {@min 32}{@max 32}
      * @param array $variables {@from body}
      */
-    public function doPostCaseImpersonate($prj_uid, $usr_uid, $act_uid, $variables=null)
+    public function doPostCaseImpersonate($pro_uid, $usr_uid, $tas_uid, $variables=null)
     {
         try {
             $cases = new \BusinessModel\Cases();
-            $arrayData = $cases->addCaseImpersonate($prj_uid, $usr_uid, $act_uid, $variables);
-            return $arrayData;
+            $oData = $cases->addCaseImpersonate($pro_uid, $usr_uid, $tas_uid, $variables);
+            return $oData;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url PUT /:cas_uid/reassign-case
+     * @url PUT /:app_uid/reassign-case
      *
-     * @param string $cas_uid {@from body} {@min 32}{@max 32}
+     * @param string $app_uid {@min 32}{@max 32}
      * @param string $usr_uid_source {@from body} {@min 32}{@max 32}
      * @param string $usr_uid_target {@from body} {@min 32}{@max 32}
      * @param string $del_index {@from body}
      */
-    public function doPutReassignCase($cas_uid, $usr_uid_source, $usr_uid_target, $del_index = null)
+    public function doPutReassignCase($app_uid, $usr_uid_source, $usr_uid_target, $del_index = null)
     {
         try {
             $userUid = $this->getUserId();
             $cases = new \BusinessModel\Cases();
-            $arrayData = $cases->updateReassignCase($cas_uid, $userUid, $del_index, $usr_uid_source, $usr_uid_target);
-            return $arrayData;
+            $cases->updateReassignCase($app_uid, $userUid, $del_index, $usr_uid_source, $usr_uid_target);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url PUT /:cas_uid/route-case
+     * @url PUT /:app_uid/route-case
      *
-     * @param string $cas_uid {@from body} {@min 32}{@max 32}
+     * @param string $app_uid {@from body} {@min 32}{@max 32}
      * @param string $del_index {@from body}
      */
-    public function doPutRouteCase($cas_uid, $del_index = null)
+    public function doPutRouteCase($app_uid, $del_index = null)
     {
         try {
             $userUid = $this->getUserId();
             $cases = new \BusinessModel\Cases();
-            $arrayData = $cases->updateRouteCase($cas_uid, $userUid, $del_index);
-            return $arrayData;
+            $cases->updateRouteCase($app_uid, $userUid, $del_index);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
