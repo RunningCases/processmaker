@@ -45,6 +45,7 @@ class Cases
         $user = isset( $dataList["user"] ) ? $dataList["user"] : "";
         $search = isset( $dataList["search"] ) ? $dataList["search"] : "";
         $action = isset( $dataList["action"] ) ? $dataList["action"] : "todo";
+        $paged = isset( $dataList["paged"] ) ? $dataList["paged"] : true;
         $type = "extjs";
         $dateFrom = isset( $dataList["dateFrom"] ) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
         $dateTo = isset( $dataList["dateTo"] ) ? substr( $dataList["dateTo"], 0, 10 ) : "";
@@ -123,13 +124,28 @@ class Cases
                 $callback,
                 $dir,
                 (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
-                $category
+                $category,
+                true,
+                $paged
             );
         }
         if (!empty($result['data'])) {
             foreach ($result['data'] as &$value) {
                 $value = array_change_key_case($value, CASE_LOWER);
             }
+        }
+        if ($paged == false) {
+            $result = $result['data'];
+        } else {
+            $result['total'] = $result['totalCount'];
+            unset($result['totalCount']);
+
+            $result['start'] = $start;
+            $result['limit'] = $limit;
+            $result['sort']  = $sort;
+            $result['category'] = $category;
+            $result['process']  = $process;
+            $result['search']   = $search;
         }
         return $result;
     }
@@ -258,7 +274,7 @@ class Cases
                                 for ($i = 0; $i<=count($array['current_task'])-1; $i++) {
                                     $current_task = $array['current_task'][$i];
                                     $current_task['usr_uid'] = $current_task['userId'];
-                                    $current_task['usr_name'] = $current_task['userName'];
+                                    $current_task['usr_name'] = trim($current_task['userName']);
                                     $current_task['tas_uid'] = $current_task['taskId'];
                                     $current_task['tas_title'] = $current_task['taskName'];
                                     $current_task['del_index'] = $current_task['delIndex'];
@@ -349,7 +365,7 @@ class Cases
                     for ($i = 0; $i<=count($array['current_task'])-1; $i++) {
                         $current_task = $array['current_task'][$i];
                         $current_task['usr_uid'] = $current_task['userId'];
-                        $current_task['usr_name'] = $current_task['userName'];
+                        $current_task['usr_name'] = trim($current_task['userName']);
                         $current_task['tas_uid'] = $current_task['taskId'];
                         $current_task['tas_title'] = $current_task['taskName'];
                         $current_task['del_index'] = $current_task['delIndex'];
@@ -432,7 +448,6 @@ class Cases
             if(empty($result)) {
                 throw (new \Exception('Incorrect or unavailable information about this case: ' .$applicationUid));
             } else {
-                $result = json_decode(json_encode($result), false);
                 return $result;
             }
         } catch (\Exception $e) {
