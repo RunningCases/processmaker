@@ -1501,8 +1501,8 @@ class Processes
         try {
             $aInput = array ();
             $oCriteria = new Criteria( 'workflow' );
-            $oCriteria->add( InputdocumentPeer::PRO_UID, $sProUid );
-            $oDataset = InputdocumentPeer::doSelectRS( $oCriteria );
+            $oCriteria->add( InputDocumentPeer::PRO_UID, $sProUid );
+            $oDataset = InputDocumentPeer::doSelectRS( $oCriteria );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
@@ -1597,8 +1597,8 @@ class Processes
         try {
             $aOutput = array ();
             $oCriteria = new Criteria( 'workflow' );
-            $oCriteria->add( OutputdocumentPeer::PRO_UID, $sProUid );
-            $oDataset = OutputdocumentPeer::doSelectRS( $oCriteria );
+            $oCriteria->add( OutputDocumentPeer::PRO_UID, $sProUid );
+            $oDataset = OutputDocumentPeer::doSelectRS( $oCriteria );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
