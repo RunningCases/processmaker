@@ -495,6 +495,8 @@ class Cases
             $ws = new \wsBase();
             if ($variables) {
                 $variables = array_shift($variables);
+            } elseif ($variables == null) {
+                $variables = array(array());
             }
             $fields = $ws->newCaseImpersonate($processUid, $userUid, $variables, $taskUid);
             $array = json_decode(json_encode($fields), true);
