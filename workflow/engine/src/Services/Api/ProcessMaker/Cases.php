@@ -22,8 +22,8 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -37,8 +37,8 @@ class Cases extends Api
         $limit = 25,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
+        $cat_uid = '',
+        $pro_uid = '',
         $search = ''
     )
     {
@@ -51,8 +51,8 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -69,8 +69,8 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -84,8 +84,8 @@ class Cases extends Api
         $limit = 25,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
+        $cat_uid = '',
+        $pro_uid = '',
         $search = ''
     )
     {
@@ -98,8 +98,8 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -116,8 +116,8 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -131,8 +131,8 @@ class Cases extends Api
         $limit = 25,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
+        $cat_uid = '',
+        $pro_uid = '',
         $search = ''
     )
     {
@@ -145,8 +145,8 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -163,8 +163,8 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -178,8 +178,8 @@ class Cases extends Api
         $limit = 25,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
+        $cat_uid = '',
+        $pro_uid = '',
         $search = ''
     )
     {
@@ -192,8 +192,8 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -210,8 +210,8 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -225,8 +225,8 @@ class Cases extends Api
         $limit = 25,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
+        $cat_uid = '',
+        $pro_uid = '',
         $search = ''
     )
     {
@@ -239,8 +239,8 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -257,8 +257,8 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -272,8 +272,8 @@ class Cases extends Api
         $limit = 25,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
+        $cat_uid = '',
+        $pro_uid = '',
         $search = ''
     )
     {
@@ -286,8 +286,8 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -304,8 +304,8 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -319,8 +319,8 @@ class Cases extends Api
         $limit = 25,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
+        $cat_uid = '',
+        $pro_uid = '',
         $search = ''
     )
     {
@@ -333,8 +333,8 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -351,8 +351,8 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -366,8 +366,8 @@ class Cases extends Api
         $limit = 25,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
+        $cat_uid = '',
+        $pro_uid = '',
         $search = ''
     )
     {
@@ -380,8 +380,8 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -398,8 +398,8 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -413,8 +413,8 @@ class Cases extends Api
         $limit = 25,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
+        $cat_uid = '',
+        $pro_uid = '',
         $search = ''
     )
     {
@@ -427,8 +427,8 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -445,8 +445,8 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -460,8 +460,8 @@ class Cases extends Api
         $limit = 25,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
+        $cat_uid = '',
+        $pro_uid = '',
         $search = ''
     )
     {
@@ -474,8 +474,8 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -492,9 +492,9 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
-     * @param string $status {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
+     * @param string $app_status {@from path}
      * @param string $user {@from path}
      * @param string $dateFrom {@from path}
      * @param string $dateTo {@from path}
@@ -511,9 +511,9 @@ class Cases extends Api
         $limit = 25,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
-        $status = '',
+        $cat_uid = '',
+        $pro_uid = '',
+        $app_status = '',
         $user = '',
         $dateFrom = '',
         $dateTo = '',
@@ -529,9 +529,9 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
-            $dataList['status'] = $status;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
+            $dataList['status'] = $app_status;
             $dataList['user'] = $user;
             $dataList['dateFrom'] = $dateFrom;
             $dataList['dateTo'] = $dateTo;
@@ -551,10 +551,10 @@ class Cases extends Api
      * @param string $start {@from path}
      * @param string $limit {@from path}
      * @param string $dir {@from path}
-     * @param string $category {@from path}
-     * @param string $process {@from path}
-     * @param string $status {@from path}
-     * @param string $user {@from path}
+     * @param string $cat_uid {@from path}
+     * @param string $pro_uid {@from path}
+     * @param string $app_status {@from path}
+     * @param string $usr_uid {@from path}
      * @param string $dateFrom {@from path}
      * @param string $dateTo {@from path}
      * @param string $search {@from path}
@@ -567,15 +567,15 @@ class Cases extends Api
      */
     public function doGetCasesListAdvancedSearchPaged(
         $start = 0,
-        $limit = 25,
+        $limit = 'config',
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
-        $category = '',
-        $process = '',
-        $status = '',
-        $user = '',
-        $dateFrom = '',
-        $dateTo = '',
+        $cat_uid = '',
+        $pro_uid = '',
+        $app_status = '',
+        $usr_uid = '',
+        $date_from = '',
+        $date_to = '',
         $search = ''
     )
     {
@@ -588,12 +588,12 @@ class Cases extends Api
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
             $dataList['dir'] = $dir;
-            $dataList['category'] = $category;
-            $dataList['process'] = $process;
-            $dataList['status'] = $status;
-            $dataList['user'] = $user;
-            $dataList['dateFrom'] = $dateFrom;
-            $dataList['dateTo'] = $dateTo;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
+            $dataList['status'] = $app_status;
+            $dataList['user'] = $usr_uid;
+            $dataList['dateFrom'] = $date_from;
+            $dataList['dateTo'] = $date_to;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -664,6 +664,7 @@ class Cases extends Api
      * @param string $usr_uid {@from body} {@min 32}{@max 32}
      * @param string $tas_uid {@from body} {@min 32}{@max 32}
      * @param array $variables {@from body}
+     *
      */
     public function doPostCaseImpersonate($pro_uid, $usr_uid, $tas_uid, $variables=null)
     {
