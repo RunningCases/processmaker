@@ -18,7 +18,13 @@ class Cases extends Api
     /**
      * Get list Cases To Do
      *
-     * @param array $request_data , Data for list
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $search {@from path}
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -26,13 +32,77 @@ class Cases extends Api
      *
      * @url GET
      */
-    public function doGetCasesListToDo($request_data = array())
+    public function doGetCasesListToDo(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $search = ''
+    )
     {
         try {
-            $request_data['action'] = 'todo';
-            $request_data['userId'] = $this->getUserId();
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'todo';
+            $dataList['paged']  = false;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
-            $response = $oCases->getList($request_data);
+            $response = $oCases->getList($dataList);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Get list Cases To Do with paged
+     *
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $search {@from path}
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /paged
+     */
+    public function doGetCasesListToDoPaged(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $search = ''
+    )
+    {
+        try {
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'todo';
+            $dataList['paged']  = true;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['search'] = $search;
+            $oCases = new \BusinessModel\Cases();
+            $response = $oCases->getList($dataList);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -42,7 +112,13 @@ class Cases extends Api
     /**
      * Get list Cases Draft
      *
-     * @param array $request_data , Data for list
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $search {@from path}
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -50,13 +126,77 @@ class Cases extends Api
      *
      * @url GET /draft
      */
-    public function doGetCasesListDraft($request_data = array())
+    public function doGetCasesListDraft(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $search = ''
+    )
     {
         try {
-            $request_data['action'] = 'draft';
-            $request_data['userId'] = $this->getUserId();
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'draft';
+            $dataList['paged']  = false;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
-            $response = $oCases->getList($request_data);
+            $response = $oCases->getList($dataList);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Get list Cases Draft with paged
+     *
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $search {@from path}
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /draft/paged
+     */
+    public function doGetCasesListDraftPaged(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $search = ''
+    )
+    {
+        try {
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'draft';
+            $dataList['paged']  = true;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['search'] = $search;
+            $oCases = new \BusinessModel\Cases();
+            $response = $oCases->getList($dataList);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -66,7 +206,13 @@ class Cases extends Api
     /**
      * Get list Cases Participated
      *
-     * @param array $request_data , Data for list
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $search {@from path}
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -74,13 +220,77 @@ class Cases extends Api
      *
      * @url GET /participated
      */
-    public function doGetCasesListParticipated($request_data = array())
+    public function doGetCasesListParticipated(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $search = ''
+    )
     {
         try {
-            $request_data['action'] = 'sent';
-            $request_data['userId'] = $this->getUserId();
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'sent';
+            $dataList['paged']  = false;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
-            $response = $oCases->getList($request_data);
+            $response = $oCases->getList($dataList);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Get list Cases Participated with paged
+     *
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $search {@from path}
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /participated/paged
+     */
+    public function doGetCasesListParticipatedPaged(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $search = ''
+    )
+    {
+        try {
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'sent';
+            $dataList['paged']  = true;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['search'] = $search;
+            $oCases = new \BusinessModel\Cases();
+            $response = $oCases->getList($dataList);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -90,7 +300,13 @@ class Cases extends Api
     /**
      * Get list Cases Unassigned
      *
-     * @param array $request_data , Data for list
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $search {@from path}
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -98,13 +314,77 @@ class Cases extends Api
      *
      * @url GET /unassigned
      */
-    public function doGetCasesListUnassigned($request_data = array())
+    public function doGetCasesListUnassigned(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $search = ''
+    )
     {
         try {
-            $request_data['action'] = 'unassigned';
-            $request_data['userId'] = $this->getUserId();
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'unassigned';
+            $dataList['paged']  = false;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
-            $response = $oCases->getList($request_data);
+            $response = $oCases->getList($dataList);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Get list Cases Unassigned with paged
+     *
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $search {@from path}
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /unassigned/paged
+     */
+    public function doGetCasesListUnassignedPaged(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $search = ''
+    )
+    {
+        try {
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'unassigned';
+            $dataList['paged']  = true;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['search'] = $search;
+            $oCases = new \BusinessModel\Cases();
+            $response = $oCases->getList($dataList);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -114,7 +394,13 @@ class Cases extends Api
     /**
      * Get list Cases Paused
      *
-     * @param array $request_data , Data for list
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $search {@from path}
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -122,13 +408,77 @@ class Cases extends Api
      *
      * @url GET /paused
      */
-    public function doGetCasesListPaused($request_data = array())
+    public function doGetCasesListPaused(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $search = ''
+    )
     {
         try {
-            $request_data['action'] = 'paused';
-            $request_data['userId'] = $this->getUserId();
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'paused';
+            $dataList['paged']  = false;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
-            $response = $oCases->getList($request_data);
+            $response = $oCases->getList($dataList);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Get list Cases Paused with paged
+     *
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $search {@from path}
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /paused/paged
+     */
+    public function doGetCasesListPausedPaged(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $search = ''
+    )
+    {
+        try {
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'paused';
+            $dataList['paged']  = false;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['search'] = $search;
+            $oCases = new \BusinessModel\Cases();
+            $response = $oCases->getList($dataList);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -138,7 +488,17 @@ class Cases extends Api
     /**
      * Get list Cases Advanced Search
      *
-     * @param array $request_data , Data for list
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $status {@from path}
+     * @param string $user {@from path}
+     * @param string $dateFrom {@from path}
+     * @param string $dateTo {@from path}
+     * @param string $search {@from path}
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -146,13 +506,97 @@ class Cases extends Api
      *
      * @url GET /advanced-search
      */
-    public function doGetCasesListAdvancedSearch($request_data = array())
+    public function doGetCasesListAdvancedSearch(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $status = '',
+        $user = '',
+        $dateFrom = '',
+        $dateTo = '',
+        $search = ''
+    )
     {
         try {
-            $request_data['action'] = 'search';
-            $request_data['userId'] = $this->getUserId();
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'search';
+            $dataList['paged']  = false;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['status'] = $status;
+            $dataList['user'] = $user;
+            $dataList['dateFrom'] = $dateFrom;
+            $dataList['dateTo'] = $dateTo;
+            $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
-            $response = $oCases->getList($request_data);
+            $response = $oCases->getList($dataList);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Get list Cases Advanced Search with Paged
+     *
+     * @param string $paged {@from path}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $dir {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
+     * @param string $status {@from path}
+     * @param string $user {@from path}
+     * @param string $dateFrom {@from path}
+     * @param string $dateTo {@from path}
+     * @param string $search {@from path}
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /advanced-search/paged
+     */
+    public function doGetCasesListAdvancedSearchPaged(
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $category = '',
+        $process = '',
+        $status = '',
+        $user = '',
+        $dateFrom = '',
+        $dateTo = '',
+        $search = ''
+    )
+    {
+        try {
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'search';
+            $dataList['paged']  = true;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $category;
+            $dataList['process'] = $process;
+            $dataList['status'] = $status;
+            $dataList['user'] = $user;
+            $dataList['dateFrom'] = $dateFrom;
+            $dataList['dateTo'] = $dateTo;
+            $dataList['search'] = $search;
+            $oCases = new \BusinessModel\Cases();
+            $response = $oCases->getList($dataList);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));

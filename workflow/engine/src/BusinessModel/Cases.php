@@ -45,6 +45,7 @@ class Cases
         $user = isset( $dataList["user"] ) ? $dataList["user"] : "";
         $search = isset( $dataList["search"] ) ? $dataList["search"] : "";
         $action = isset( $dataList["action"] ) ? $dataList["action"] : "todo";
+        $paged = isset( $dataList["paged"] ) ? $dataList["paged"] : true;
         $type = "extjs";
         $dateFrom = isset( $dataList["dateFrom"] ) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
         $dateTo = isset( $dataList["dateTo"] ) ? substr( $dataList["dateTo"], 0, 10 ) : "";
@@ -123,13 +124,28 @@ class Cases
                 $callback,
                 $dir,
                 (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
-                $category
+                $category,
+                true,
+                $paged
             );
         }
         if (!empty($result['data'])) {
             foreach ($result['data'] as &$value) {
                 $value = array_change_key_case($value, CASE_LOWER);
             }
+        }
+        if ($paged == false) {
+            $result = $result['data'];
+        } else {
+            $result['total'] = $result['totalCount'];
+            unset($result['totalCount']);
+
+            $result['start'] = $start;
+            $result['limit'] = $limit;
+            $result['sort']  = $sort;
+            $result['category'] = $category;
+            $result['process']  = $process;
+            $result['search']   = $search;
         }
         return $result;
     }
