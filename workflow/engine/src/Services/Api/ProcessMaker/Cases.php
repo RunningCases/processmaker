@@ -664,6 +664,7 @@ class Cases extends Api
      * @param string $usr_uid {@from body} {@min 32}{@max 32}
      * @param string $tas_uid {@from body} {@min 32}{@max 32}
      * @param array $variables {@from body}
+     *
      */
     public function doPostCaseImpersonate($pro_uid, $usr_uid, $tas_uid, $variables=null)
     {

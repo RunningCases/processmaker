@@ -228,7 +228,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      */
     public function testUpdateReassignCase(array $aResponse)
     {
-        $response = $this->oCases->updateReassignCase($aResponse['app_uid'], '00000000000000000000000000000001', null, '00000000000000000000000000000001', '23063198853206b666e2bd0085065170');
+        $response = $this->oCases->updateReassignCase($aResponse['app_uid'], '00000000000000000000000000000001', null, '00000000000000000000000000000001', '73005191052d56727901138030694610');
         $this->assertTrue(empty($response));
     }
 
@@ -263,7 +263,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test add Case impersonate to test route case
+     * Test add Case impersonate
      *
      * @covers \BusinessModel\Cases::addCaseImpersonate
      *
@@ -271,9 +271,8 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddCaseImpersonate()
     {
-        $response = $this->oCases->addCaseImpersonate('1265557095225ff5c688f46031700471', '23063198853206b666e2bd0085065170', '46941969352af5be2ab3f39001216717', array('name' => 'John', 'lastname' => 'Petersson'));
+        $response = $this->oCases->addCaseImpersonate('1265557095225ff5c688f46031700471', '73005191052d56727901138030694610', '46941969352af5be2ab3f39001216717', array(array('name' => 'John', 'lastname' => 'Petersson')));
         $this->assertTrue(is_object($response));
     }
-
 }
 
