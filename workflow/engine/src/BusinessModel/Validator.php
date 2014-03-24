@@ -172,6 +172,56 @@ class Validator{
     }
 
     /**
+     * Validate pro_uid
+     *
+     * @param string $pro_uid, Uid for process
+     * @param string $nameField . Name of field for message
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    static public function proUid($pro_uid, $nameField = 'pro_uid')
+    {
+        $pro_uid = trim($pro_uid);
+        if ($pro_uid == '') {
+            throw (new \Exception("The process with $nameField: '' does not exist."));
+        }
+        $oProcess = new \Process();
+        if (!($oProcess->exists($pro_uid))) {
+            throw (new \Exception("The process with $nameField: '$pro_uid' does not exist."));
+        }
+        return $pro_uid;
+    }
+
+    /**
+     * Validate cat_uid
+     *
+     * @param string $cat_uid, Uid for category
+     * @param string $nameField . Name of field for message
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    static public function catUid($cat_uid, $nameField = 'cat_uid')
+    {
+        $cat_uid = trim($cat_uid);
+        if ($cat_uid == '') {
+            throw (new \Exception("The category with $nameField: '' does not exist."));
+        }
+        $oCategory = new \ProcessCategory();
+        if (!($oCategory->exists($cat_uid))) {
+            throw (new \Exception("The category with $nameField: '$cat_uid' does not exist."));
+        }
+        return $cat_uid;
+    }
+
+    /**
      * Validate date
      *
      * @param string $date, Date for validate
