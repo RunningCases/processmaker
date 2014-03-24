@@ -62,12 +62,14 @@ Ext.onReady(function(){
     }
 
     newButton = new Ext.Action({
+      id: 'newButton',
       text: _('ID_NEW'),
       icon: '/images/add-table.png',
       menu: newMenuOptions
     });
 
     editButton = new Ext.Action({
+      id: 'editButton',
       text: _('ID_EDIT'),
       icon: '/images/edit-table.png',
       handler: EditPMTable,
@@ -75,6 +77,7 @@ Ext.onReady(function(){
     });
 
     deleteButton = new Ext.Action({
+      id: 'deleteButton',
       text: _('ID_DELETE'),
       icon: '/images/delete-table.png',
       handler: DeletePMTable,
@@ -82,6 +85,7 @@ Ext.onReady(function(){
     });
 
     importButton = new Ext.Action({
+      id: 'importButton',
       text: _('ID_IMPORT'),
       iconCls: 'silk-add',
       icon: '/images/import.gif',
@@ -89,6 +93,7 @@ Ext.onReady(function(){
     });
 
     exportButton = new Ext.Action({
+      id: 'exportButton',
       text: _('ID_EXPORT'),
       iconCls: 'silk-add',
       icon: '/images/export.png',
@@ -97,6 +102,7 @@ Ext.onReady(function(){
     });
 
     dataButton = new Ext.Action({
+      id: 'dataButton',
       text: '&nbsp;' + _('ID_DATA'),
       iconCls: 'silk-add',
       icon: '/images/database-start.png',
@@ -105,6 +111,7 @@ Ext.onReady(function(){
     });
 
     searchButton = new Ext.Action({
+      id: 'searchButton',
       text: _('ID_SEARCH'),
       handler: DoSearch
     });
@@ -162,6 +169,7 @@ Ext.onReady(function(){
     });
 
     clearTextButton = new Ext.Action({
+      id: 'clearTextButton',
       text: 'X',
       ctCls:'pm_search_x_button',
       handler: GridByDefault
@@ -174,6 +182,7 @@ Ext.onReady(function(){
     });
 
     comboPageSize = new Ext.form.ComboBox({
+      id: 'comboPageSize',
       typeAhead     : false,
       mode          : 'local',
       triggerAction : 'all',
@@ -306,6 +315,7 @@ Ext.onReady(function(){
     });
 
     bbarpaging = new Ext.PagingToolbar({
+        id: 'bbarpaging',
         pageSize: pageSize,
         store: store,
         displayInfo: true,
@@ -531,12 +541,14 @@ ImportPMTable = function(){
                 iconCls: 'upload-icon'
             }
         }, {
+          id: 'importPMTableOverwrite',
           xtype: 'checkbox',
           fieldLabel: '',
           boxLabel: _('ID_OVERWRITE_EXIST'), // 'Overwrite if exists?',
           name: 'form[OVERWRITE]'
         }],
         buttons: [{
+            id: 'importPMTableButtonUpload',
             text: _('ID_UPLOAD'),
             handler: function(){
               var uploader = Ext.getCmp('uploader');
@@ -598,6 +610,7 @@ ImportPMTable = function(){
               uploader.getForm().reset();
             }
         }*/,{
+            id: 'importPMTableButtonCancel',
             text: TRANSLATIONS.ID_CANCEL,
             handler: function(){
               w.close();

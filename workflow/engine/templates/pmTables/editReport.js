@@ -132,6 +132,7 @@ Ext.onReady(function(){
   comboPageSize.setValue(pageSize);
 
   bbarpaging = new Ext.PagingToolbar({
+      id: 'editReportBbarpaging',
       pageSize: pageSize,
       store: storeA,
       displayInfo: true,
@@ -181,6 +182,7 @@ Ext.onReady(function(){
           }
       },
       {
+        id: 'availableGridButtonClear',
         text: 'X',
         ctCls:'pm_search_x_button',
         handler: function(){
@@ -188,6 +190,7 @@ Ext.onReady(function(){
           filterAvFields();
         }
       }, {
+        id: 'availableGridButtonSearch',
         text: _('ID_FILTER'),
         handler: function(){
           filterAvFields();
@@ -553,6 +556,7 @@ Ext.onReady(function(){
     loadMask: {message: _('ID_LOADING_GRID')},
     tbar           : [
       {
+        id: 'assignedGridAddField',
         icon: '/images/add-row-after.png',
         text: _("ID_ADD_FIELD"),
         handler: addColumn
@@ -606,6 +610,7 @@ Ext.onReady(function(){
 
   // (vertical) selection buttons
   buttonsPanel = new Ext.Panel({
+    id: 'buttonsPanelVertical',
     width      : 40,
     layout       : {
       type:'vbox',
@@ -985,9 +990,11 @@ Ext.onReady(function(){
   southPanel = new Ext.FormPanel({
     region: 'south',
     buttons:[ {
+        id: 'southPanelCreateUpdate',
         text: TABLE === false ? _("ID_CREATE") : _("ID_UPDATE"),
         handler: createReportTable
       }, {
+        id: 'southPanelCancel',
         text:_("ID_CANCEL"),
         handler: function() {
             proParam = (typeof('flagProcessmap') != 'undefined' && flagProcessmap == 1) ? (PRO_UID !== false ? '?flagProcessmap=1&PRO_UID='+PRO_UID : '') : '';
