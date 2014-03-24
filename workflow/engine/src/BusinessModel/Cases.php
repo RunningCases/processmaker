@@ -37,7 +37,7 @@ class Cases
         $dir = isset( $dataList["dir"] ) ? $dataList["dir"] : "DESC";
         $sort = isset( $dataList["sort"] ) ? $dataList["sort"] : "APP_CACHE_VIEW.APP_NUMBER";
         $start = isset( $dataList["start"] ) ? $dataList["start"] : "0";
-        $limit = isset( $dataList["limit"] ) ? $dataList["limit"] : "25";
+        $limit = isset( $dataList["limit"] ) ? $dataList["limit"] : "config";
         $filter = isset( $dataList["filter"] ) ? $dataList["filter"] : "";
         $process = isset( $dataList["process"] ) ? $dataList["process"] : "";
         $category = isset( $dataList["category"] ) ? $dataList["category"] : "";
@@ -47,13 +47,62 @@ class Cases
         $action = isset( $dataList["action"] ) ? $dataList["action"] : "todo";
         $paged = isset( $dataList["paged"] ) ? $dataList["paged"] : true;
         $type = "extjs";
-        $dateFrom = isset( $dataList["dateFrom"] ) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
-        $dateTo = isset( $dataList["dateTo"] ) ? substr( $dataList["dateTo"], 0, 10 ) : "";
+        $dateFrom = (!empty( $dataList["dateFrom"] )) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
+        $dateTo = (!empty( $dataList["dateTo"] )) ? substr( $dataList["dateTo"], 0, 10 ) : "";
         $first = isset( $dataList["first"] ) ? true :false;
 
         $valuesCorrect = array('todo', 'draft', 'paused', 'sent', 'selfservice', 'unassigned', 'search');
         if (!in_array($action, $valuesCorrect)) {
             throw (new \Exception('The value for $action is incorrect.'));
+        }
+
+        $start = (int)$start;
+        $start = abs($start);
+        if ($start != 0) {
+            $start--;
+        }
+        if ($limit == 'config') {
+            G::LoadClass("configuration");
+            $conf = new \Configurations();
+            $generalConfCasesList = $conf->getConfiguration('ENVIRONMENT_SETTINGS', '');
+            if (isset($generalConfCasesList['casesListRowNumber'])) {
+                $limit = (int)$generalConfCasesList['casesListRowNumber'];
+            } else {
+                $limit = 25;
+            }
+        } else {
+            $limit = (int)$limit;
+        }
+        if ($sort != 'APP_CACHE_VIEW.APP_NUMBER') {
+            $sort = G::toUpper($sort);
+            $columnsAppCacheView = \AppCacheViewPeer::getFieldNames(\BasePeer::TYPE_FIELDNAME);
+            if (!(in_array($sort, $columnsAppCacheView))) {
+                $sort = 'APP_CACHE_VIEW.APP_NUMBER';
+            }
+        }
+        $dir = G::toUpper($dir);
+        if (!($dir == 'DESC' || $dir == 'ASC')) {
+            $dir = 'DESC';
+        }
+        if ($process != '') {
+            Validator::proUid($process, '$pro_uid');
+        }
+        if ($category != '') {
+            Validator::catUid($category, '$cat_uid');
+        }
+        $status = G::toUpper($status);
+        $listStatus = array('TODO', 'DRAFT', 'COMPLETED', 'CANCEL', 'OPEN', 'CLOSE');
+        if (!(in_array($status, $listStatus))) {
+            $status = '';
+        }
+        if ($user != '') {
+            Validator::usrUid($user, '$usr_uid');
+        }
+        if ($dateFrom != '') {
+            Validator::isDate($dateFrom, 'Y-m-d', '$date_from');
+        }
+        if ($dateTo != '') {
+            Validator::isDate($dateTo, 'Y-m-d', '$date_to');
         }
 
         if ($action == 'search' || $action == 'to_reassign') {
@@ -139,13 +188,19 @@ class Cases
         } else {
             $result['total'] = $result['totalCount'];
             unset($result['totalCount']);
-
-            $result['start'] = $start;
+            $result['start'] = $start+1;
             $result['limit'] = $limit;
-            $result['sort']  = $sort;
-            $result['category'] = $category;
-            $result['process']  = $process;
+            $result['sort']  = G::toLower($sort);
+            $result['dir']   = G::toLower($dir);
+            $result['cat_uid']  = $category;
+            $result['pro_uid']  = $process;
             $result['search']   = $search;
+            if ($action == 'search') {
+                $result['app_status'] = G::toLower($status);
+                $result['usr_uid'] = $user;
+                $result['date_from'] = $dateFrom;
+                $result['date_to'] = $dateTo;
+            }
         }
         return $result;
     }
