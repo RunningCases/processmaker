@@ -770,7 +770,6 @@ class Cases
         }
     }
 
-
     /**
      * get all upload document that they have send it
      *
@@ -1059,6 +1058,234 @@ class Cases
         \G::LoadClass('ArrayPeer');
         $oCriteria = new \Criteria('dbarray');
         $oCriteria->setDBArrayTable('inputDocuments');
+        $oCriteria->addDescendingOrderByColumn('CREATE_DATE');
+        return $oCriteria;
+    }
+
+    /*
+     * get all generate document
+     *
+     * @name getAllGeneratedDocumentsCriteria
+     * @param string $sProcessUID
+     * @param string $sApplicationUID
+     * @param string $sTasKUID
+     * @param string $sUserUID
+     * @return object
+     */
+    public function getAllGeneratedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
+    {
+        \G::LoadClass("configuration");
+        $conf = new \Configurations();
+        $confEnvSetting = $conf->getFormats();
+        //verifica si la tabla OBJECT_PERMISSION
+        $cases = new \cases();
+        $cases->verifyTable();
+        $listing = false;
+        $oPluginRegistry = & \PMPluginRegistry::getSingleton();
+        if ($oPluginRegistry->existsTrigger(PM_CASE_DOCUMENT_LIST)) {
+            $folderData = new \folderData(null, null, $sApplicationUID, null, $sUserUID);
+            $folderData->PMType = "OUTPUT";
+            $folderData->returnList = true;
+            //$oPluginRegistry = & PMPluginRegistry::getSingleton();
+            $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
+        }
+        $aObjectPermissions = $cases->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
+        if (!is_array($aObjectPermissions)) {
+            $aObjectPermissions = array('DYNAFORMS' => array(-1),'INPUT_DOCUMENTS' => array(-1),'OUTPUT_DOCUMENTS' => array(-1));
+        }
+        if (!isset($aObjectPermissions['DYNAFORMS'])) {
+            $aObjectPermissions['DYNAFORMS'] = array(-1);
+        } else {
+            if (!is_array($aObjectPermissions['DYNAFORMS'])) {
+                $aObjectPermissions['DYNAFORMS'] = array(-1);
+            }
+        }
+        if (!isset($aObjectPermissions['INPUT_DOCUMENTS'])) {
+            $aObjectPermissions['INPUT_DOCUMENTS'] = array(-1);
+        } else {
+            if (!is_array($aObjectPermissions['INPUT_DOCUMENTS'])) {
+                $aObjectPermissions['INPUT_DOCUMENTS'] = array(-1);
+            }
+        }
+        if (!isset($aObjectPermissions['OUTPUT_DOCUMENTS'])) {
+            $aObjectPermissions['OUTPUT_DOCUMENTS'] = array(-1);
+        } else {
+            if (!is_array($aObjectPermissions['OUTPUT_DOCUMENTS'])) {
+                $aObjectPermissions['OUTPUT_DOCUMENTS'] = array(-1);
+            }
+        }
+        $aDelete = $cases->getAllObjectsFrom($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, 'DELETE');
+        $oAppDocument = new \AppDocument();
+        $oCriteria = new \Criteria('workflow');
+        $oCriteria->add(\AppDocumentPeer::APP_UID, $sApplicationUID);
+        $oCriteria->add(\AppDocumentPeer::APP_DOC_TYPE, 'OUTPUT');
+        $oCriteria->add(\AppDocumentPeer::APP_DOC_STATUS, array('ACTIVE'), \Criteria::IN);
+        //$oCriteria->add(AppDocumentPeer::APP_DOC_UID, $aObjectPermissions['OUTPUT_DOCUMENTS'], Criteria::IN);
+        $oCriteria->add(
+            $oCriteria->getNewCriterion(
+                \AppDocumentPeer::APP_DOC_UID, $aObjectPermissions['OUTPUT_DOCUMENTS'], \Criteria::IN)->addOr($oCriteria->getNewCriterion(\AppDocumentPeer::USR_UID, $sUserUID, \Criteria::EQUAL))
+        );
+        $aConditions = array();
+        $aConditions[] = array(\AppDocumentPeer::APP_UID, \AppDelegationPeer::APP_UID);
+        $aConditions[] = array(\AppDocumentPeer::DEL_INDEX, \AppDelegationPeer::DEL_INDEX);
+        $oCriteria->addJoinMC($aConditions, \Criteria::LEFT_JOIN);
+        $oCriteria->add(\AppDelegationPeer::PRO_UID, $sProcessUID);
+        $oCriteria->addAscendingOrderByColumn(\AppDocumentPeer::APP_DOC_INDEX);
+        $oDataset = \AppDocumentPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $oDataset->next();
+        $aOutputDocuments = array();
+        $aOutputDocuments[] = array(
+            'APP_DOC_UID' => 'char',
+            'DOC_UID' => 'char',
+            'APP_DOC_COMMENT' => 'char',
+            'APP_DOC_FILENAME' => 'char',
+            'APP_DOC_INDEX' => 'integer'
+        );
+        $oUser = new \Users();
+        while ($aRow = $oDataset->getRow()) {
+            $oCriteria2 = new \Criteria('workflow');
+            $oCriteria2->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
+            $oCriteria2->add(\AppDelegationPeer::DEL_INDEX, $aRow['DEL_INDEX']);
+            $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria2);
+            $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset2->next();
+            $aRow2 = $oDataset2->getRow();
+            $oTask = new \Task();
+            if ($oTask->taskExists($aRow2['TAS_UID'])) {
+                $aTask = $oTask->load($aRow2['TAS_UID']);
+            } else {
+                $aTask = array('TAS_TITLE' => '(TASK DELETED)');
+            }
+            $lastVersion = $oAppDocument->getLastDocVersion($aRow['DOC_UID'], $sApplicationUID);
+            if ($lastVersion == $aRow['DOC_VERSION']) {
+                //Only show last document Version
+                $aAux = $oAppDocument->load($aRow['APP_DOC_UID'], $aRow['DOC_VERSION']);
+                //Get output Document information
+                $oOutputDocument = new \OutputDocument();
+                $aGields = $oOutputDocument->load($aRow['DOC_UID']);
+                //OUTPUTDOCUMENT
+                $outDocTitle = $aGields['OUT_DOC_TITLE'];
+                switch ($aGields['OUT_DOC_GENERATE']) {
+                    //G::LoadTranslation(ID_DOWNLOAD)
+                    case "PDF":
+                        $fileDoc = 'javascript:alert("NO DOC")';
+                        $fileDocLabel = " ";
+                        $filePdf = 'cases_ShowOutputDocument?a=' .
+                            $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=pdf&random=' . rand();
+                        $filePdfLabel = ".pdf";
+                        if (is_array($listing)) {
+                            foreach ($listing as $folderitem) {
+                                if (($folderitem->filename == $aRow['APP_DOC_UID']) && ($folderitem->type == "PDF")) {
+                                    $filePdfLabel = \G::LoadTranslation('ID_GET_EXTERNAL_FILE') . " .pdf";
+                                    $filePdf = $folderitem->downloadScript;
+                                    continue;
+                                }
+                            }
+                        }
+                        break;
+                    case "DOC":
+                        $fileDoc = 'cases_ShowOutputDocument?a=' .
+                            $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=doc&random=' . rand();
+                        $fileDocLabel = ".doc";
+                        $filePdf = 'javascript:alert("NO PDF")';
+                        $filePdfLabel = " ";
+                        if (is_array($listing)) {
+                            foreach ($listing as $folderitem) {
+                                if (($folderitem->filename == $aRow['APP_DOC_UID']) && ($folderitem->type == "DOC")) {
+                                    $fileDocLabel = \G::LoadTranslation('ID_GET_EXTERNAL_FILE') . " .doc";
+                                    $fileDoc = $folderitem->downloadScript;
+                                    continue;
+                                }
+                            }
+                        }
+                        break;
+                    case "BOTH":
+                        $fileDoc = 'cases_ShowOutputDocument?a=' .
+                            $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=doc&random=' . rand();
+                        $fileDocLabel = ".doc";
+                        if (is_array($listing)) {
+                            foreach ($listing as $folderitem) {
+                                if (($folderitem->filename == $aRow['APP_DOC_UID']) && ($folderitem->type == "DOC")) {
+                                    $fileDocLabel = G::LoadTranslation('ID_GET_EXTERNAL_FILE') . " .doc";
+                                    $fileDoc = $folderitem->downloadScript;
+                                    continue;
+                                }
+                            }
+                        }
+                        $filePdf = 'cases_ShowOutputDocument?a=' .
+                            $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=pdf&random=' . rand();
+                        $filePdfLabel = ".pdf";
+
+                        if (is_array($listing)) {
+                            foreach ($listing as $folderitem) {
+                                if (($folderitem->filename == $aRow['APP_DOC_UID']) && ($folderitem->type == "PDF")) {
+                                    $filePdfLabel = \G::LoadTranslation('ID_GET_EXTERNAL_FILE') . " .pdf";
+                                    $filePdf = $folderitem->downloadScript;
+                                    continue;
+                                }
+                            }
+                        }
+                        break;
+                }
+                try {
+                    $aAux1 = $oUser->load($aAux['USR_UID']);
+                    $sUser = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $aAux1["USR_USERNAME"], $aAux1["USR_FIRSTNAME"], $aAux1["USR_LASTNAME"]);
+                } catch (\Exception $oException) {
+                    $sUser = '(USER DELETED)';
+                }
+                //if both documents were generated, we choose the pdf one, only if doc was
+                //generate then choose the doc file.
+                $firstDocLink = $filePdf;
+                $firstDocLabel = $filePdfLabel;
+                if ($aGields['OUT_DOC_GENERATE'] == 'DOC') {
+                    $firstDocLink = $fileDoc;
+                    $firstDocLabel = $fileDocLabel;
+                }
+                $aFields = array(
+                    'APP_DOC_UID' => $aAux['APP_DOC_UID'],
+                    'DOC_UID' => $aAux['DOC_UID'],
+                    'APP_DOC_COMMENT' => $aAux['APP_DOC_COMMENT'],
+                    'APP_DOC_FILENAME' => $aAux['APP_DOC_FILENAME'],
+                    'APP_DOC_INDEX' => $aAux['APP_DOC_INDEX'],
+                    'ORIGIN' => $aTask['TAS_TITLE'],
+                    'CREATE_DATE' => $aAux['APP_DOC_CREATE_DATE'],
+                    'CREATED_BY' => $sUser,
+                    'FILEDOC' => $fileDoc,
+                    'FILEPDF' => $filePdf,
+                    'OUTDOCTITLE' => $outDocTitle,
+                    'DOC_VERSION' => $aAux['DOC_VERSION'],
+                    'TYPE' => $aAux['APP_DOC_TYPE'] . ' ' . $aGields['OUT_DOC_GENERATE'],
+                    'DOWNLOAD_LINK' => $firstDocLink,
+                    'DOWNLOAD_FILE' => $aAux['APP_DOC_FILENAME'] . $firstDocLabel
+                );
+                if (trim($fileDocLabel) != '') {
+                    $aFields['FILEDOCLABEL'] = $fileDocLabel;
+                }
+                if (trim($filePdfLabel) != '') {
+                    $aFields['FILEPDFLABEL'] = $filePdfLabel;
+                }
+                if ($aFields['APP_DOC_FILENAME'] != '') {
+                    $aFields['TITLE'] = $aFields['APP_DOC_FILENAME'];
+                } else {
+                    $aFields['TITLE'] = $aFields['APP_DOC_COMMENT'];
+                }
+                //$aFields['POSITION'] = $_SESSION['STEP_POSITION'];
+                $aFields['CONFIRM'] = \G::LoadTranslation('ID_CONFIRM_DELETE_ELEMENT');
+                if (in_array($aRow['APP_DOC_UID'], $aObjectPermissions['OUTPUT_DOCUMENTS'])) {
+                    if (in_array($aRow['APP_DOC_UID'], $aDelete['OUTPUT_DOCUMENTS'])) {
+                        $aFields['ID_DELETE'] = \G::LoadTranslation('ID_DELETE');
+                    }
+                }
+                $aOutputDocuments[] = $aFields;
+            }
+            $oDataset->next();
+        }
+        global $_DBArray;
+        $_DBArray['outputDocuments'] = $aOutputDocuments;
+        \G::LoadClass('ArrayPeer');
+        $oCriteria = new \Criteria('dbarray');
+        $oCriteria->setDBArrayTable('outputDocuments');
         $oCriteria->addDescendingOrderByColumn('CREATE_DATE');
         return $oCriteria;
     }
