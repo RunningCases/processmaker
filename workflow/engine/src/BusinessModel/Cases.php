@@ -37,7 +37,7 @@ class Cases
         $dir = isset( $dataList["dir"] ) ? $dataList["dir"] : "DESC";
         $sort = isset( $dataList["sort"] ) ? $dataList["sort"] : "APP_CACHE_VIEW.APP_NUMBER";
         $start = isset( $dataList["start"] ) ? $dataList["start"] : "0";
-        $limit = isset( $dataList["limit"] ) ? $dataList["limit"] : "25";
+        $limit = isset( $dataList["limit"] ) ? $dataList["limit"] : "config";
         $filter = isset( $dataList["filter"] ) ? $dataList["filter"] : "";
         $process = isset( $dataList["process"] ) ? $dataList["process"] : "";
         $category = isset( $dataList["category"] ) ? $dataList["category"] : "";
@@ -45,14 +45,64 @@ class Cases
         $user = isset( $dataList["user"] ) ? $dataList["user"] : "";
         $search = isset( $dataList["search"] ) ? $dataList["search"] : "";
         $action = isset( $dataList["action"] ) ? $dataList["action"] : "todo";
+        $paged = isset( $dataList["paged"] ) ? $dataList["paged"] : true;
         $type = "extjs";
-        $dateFrom = isset( $dataList["dateFrom"] ) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
-        $dateTo = isset( $dataList["dateTo"] ) ? substr( $dataList["dateTo"], 0, 10 ) : "";
+        $dateFrom = (!empty( $dataList["dateFrom"] )) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
+        $dateTo = (!empty( $dataList["dateTo"] )) ? substr( $dataList["dateTo"], 0, 10 ) : "";
         $first = isset( $dataList["first"] ) ? true :false;
 
         $valuesCorrect = array('todo', 'draft', 'paused', 'sent', 'selfservice', 'unassigned', 'search');
         if (!in_array($action, $valuesCorrect)) {
             throw (new \Exception('The value for $action is incorrect.'));
+        }
+
+        $start = (int)$start;
+        $start = abs($start);
+        if ($start != 0) {
+            $start--;
+        }
+        if ($limit == 'config') {
+            G::LoadClass("configuration");
+            $conf = new \Configurations();
+            $generalConfCasesList = $conf->getConfiguration('ENVIRONMENT_SETTINGS', '');
+            if (isset($generalConfCasesList['casesListRowNumber'])) {
+                $limit = (int)$generalConfCasesList['casesListRowNumber'];
+            } else {
+                $limit = 25;
+            }
+        } else {
+            $limit = (int)$limit;
+        }
+        if ($sort != 'APP_CACHE_VIEW.APP_NUMBER') {
+            $sort = G::toUpper($sort);
+            $columnsAppCacheView = \AppCacheViewPeer::getFieldNames(\BasePeer::TYPE_FIELDNAME);
+            if (!(in_array($sort, $columnsAppCacheView))) {
+                $sort = 'APP_CACHE_VIEW.APP_NUMBER';
+            }
+        }
+        $dir = G::toUpper($dir);
+        if (!($dir == 'DESC' || $dir == 'ASC')) {
+            $dir = 'DESC';
+        }
+        if ($process != '') {
+            Validator::proUid($process, '$pro_uid');
+        }
+        if ($category != '') {
+            Validator::catUid($category, '$cat_uid');
+        }
+        $status = G::toUpper($status);
+        $listStatus = array('TODO', 'DRAFT', 'COMPLETED', 'CANCEL', 'OPEN', 'CLOSE');
+        if (!(in_array($status, $listStatus))) {
+            $status = '';
+        }
+        if ($user != '') {
+            Validator::usrUid($user, '$usr_uid');
+        }
+        if ($dateFrom != '') {
+            Validator::isDate($dateFrom, 'Y-m-d', '$date_from');
+        }
+        if ($dateTo != '') {
+            Validator::isDate($dateTo, 'Y-m-d', '$date_to');
         }
 
         if ($action == 'search' || $action == 'to_reassign') {
@@ -123,12 +173,33 @@ class Cases
                 $callback,
                 $dir,
                 (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
-                $category
+                $category,
+                true,
+                $paged
             );
         }
         if (!empty($result['data'])) {
             foreach ($result['data'] as &$value) {
                 $value = array_change_key_case($value, CASE_LOWER);
+            }
+        }
+        if ($paged == false) {
+            $result = $result['data'];
+        } else {
+            $result['total'] = $result['totalCount'];
+            unset($result['totalCount']);
+            $result['start'] = $start+1;
+            $result['limit'] = $limit;
+            $result['sort']  = G::toLower($sort);
+            $result['dir']   = G::toLower($dir);
+            $result['cat_uid']  = $category;
+            $result['pro_uid']  = $process;
+            $result['search']   = $search;
+            if ($action == 'search') {
+                $result['app_status'] = G::toLower($status);
+                $result['usr_uid'] = $user;
+                $result['date_from'] = $dateFrom;
+                $result['date_to'] = $dateTo;
             }
         }
         return $result;
@@ -137,12 +208,12 @@ class Cases
     /**
      * Get data of a Case
      *
-     * @param string $caseUid Unique id of Case
+     * @param string $applicationUid Unique id of Case
      * @param string $userUid Unique id of User
      *
      * return array Return an array with data of Case Info
      */
-    public function getCaseInfo($caseUid, $userUid)
+    public function getCaseInfo($applicationUid, $userUid)
     {
         try {
             $solrEnabled = 0;
@@ -239,34 +310,76 @@ class Cases
                             }
                             \G::LoadClass('wsBase');
                             $ws = new \wsBase();
-                            $fields = $ws->getCaseInfo($caseUid, $row["DEL_INDEX"]);
+                            $fields = $ws->getCaseInfo($applicationUid, $row["DEL_INDEX"]);
+                            $array = json_decode(json_encode($fields), true);
+                            if ($array ["status_code"] != 0) {
+                                throw (new \Exception($array ["message"]));
+                            } else {
+                                $array['app_uid'] = $array['caseId'];
+                                $array['app_number'] = $array['caseNumber'];
+                                $array['app_name'] = $array['caseName'];
+                                $array['app_status'] = $array['caseStatus'];
+                                $array['app_init_usr_uid'] = $array['caseCreatorUser'];
+                                $array['app_init_usr_username'] = $array['caseCreatorUserName'];
+                                $array['pro_uid'] = $array['processId'];
+                                $array['pro_name'] = $array['processName'];
+                                $array['app_create_date'] = $array['createDate'];
+                                $array['app_update_date'] = $array['updateDate'];
+                                $array['current_task'] = $array['currentUsers'];
+                                for ($i = 0; $i<=count($array['current_task'])-1; $i++) {
+                                    $current_task = $array['current_task'][$i];
+                                    $current_task['usr_uid'] = $current_task['userId'];
+                                    $current_task['usr_name'] = trim($current_task['userName']);
+                                    $current_task['tas_uid'] = $current_task['taskId'];
+                                    $current_task['tas_title'] = $current_task['taskName'];
+                                    $current_task['del_index'] = $current_task['delIndex'];
+                                    $current_task['del_thread'] = $current_task['delThread'];
+                                    $current_task['del_thread_status'] = $current_task['delThreadStatus'];
+                                    unset($current_task['userId']);
+                                    unset($current_task['userName']);
+                                    unset($current_task['taskId']);
+                                    unset($current_task['taskName']);
+                                    unset($current_task['delIndex']);
+                                    unset($current_task['delThread']);
+                                    unset($current_task['delThreadStatus']);
+                                    $aCurrent_task[] = $current_task;
+                                }
+                                unset($array['status_code']);
+                                unset($array['message']);
+                                unset($array['timestamp']);
+                                unset($array['caseParalell']);
+                                unset($array['caseId']);
+                                unset($array['caseNumber']);
+                                unset($array['caseName']);
+                                unset($array['caseStatus']);
+                                unset($array['caseCreatorUser']);
+                                unset($array['caseCreatorUserName']);
+                                unset($array['processId']);
+                                unset($array['processName']);
+                                unset($array['createDate']);
+                                unset($array['updateDate']);
+                                unset($array['currentUsers']);
+                                $current_task = json_decode(json_encode($aCurrent_task), false);
+                                $oResponse = json_decode(json_encode($array), false);
+                                $oResponse->current_task = $current_task;
+                            }
                             //Return
-                            return $fields;
+                            return $oResponse;
                         }
                     }
-                    $case = array();
-                    for ($i = 0; $i<=count($arrayData)-1; $i++) {
-                        if ($arrayData[$i]["guid"] == $caseUid) {
-                            $case = $arrayData[$i];
-                        }
-                    }
-                    return $case;
                 } catch (\InvalidIndexSearchTextException $e) {
                     $arrayData = array();
-                    $arrayData[] = array (
-                        "guid" => $e->getMessage(),
-                        "name" => $e->getMessage(),
-                        "status" => $e->getMessage(),
-                        "delIndex" => $e->getMessage(),
-                        "processId" => $e->getMessage()
-                    );
-                    return $arrayData;
+                    $arrayData[] = array ("app_uid" => $e->getMessage(),
+                                          "app_name" => $e->getMessage(),
+                                          "del_index" => $e->getMessage(),
+                                          "pro_uid" => $e->getMessage());
+                    throw (new \Exception($arrayData));
                 }
             } else {
                 $criteria = new \Criteria("workflow");
                 $criteria->addSelectColumn(\AppCacheViewPeer::DEL_INDEX);
                 $criteria->add(\AppCacheViewPeer::USR_UID, $userUid);
-                $criteria->add(\AppCacheViewPeer::APP_UID, $caseUid);
+                $criteria->add(\AppCacheViewPeer::APP_UID, $applicationUid);
                 $criteria->add(
                 //ToDo - getToDo()
                     $criteria->getNewCriterion(\AppCacheViewPeer::APP_STATUS, "TO_DO", \CRITERIA::EQUAL)->addAnd(
@@ -282,16 +395,68 @@ class Cases
                 $criteria->addDescendingOrderByColumn(\AppCacheViewPeer::APP_NUMBER);
                 $rsCriteria = \AppCacheViewPeer::doSelectRS($criteria);
                 $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                $row["DEL_INDEX"] = '';
                 while ($rsCriteria->next()) {
                     $row = $rsCriteria->getRow();
                 }
                 \G::LoadClass('wsBase');
                 $ws = new \wsBase();
-                $fields = $ws->getCaseInfo($caseUid, $row["DEL_INDEX"]);
+                $fields = $ws->getCaseInfo($applicationUid, $row["DEL_INDEX"]);
+                $array = json_decode(json_encode($fields), true);
+                if ($array ["status_code"] != 0) {
+                    throw (new \Exception($array ["message"]));
+                } else {
+                    $array['app_uid'] = $array['caseId'];
+                    $array['app_number'] = $array['caseNumber'];
+                    $array['app_name'] = $array['caseName'];
+                    $array['app_status'] = $array['caseStatus'];
+                    $array['app_init_usr_uid'] = $array['caseCreatorUser'];
+                    $array['app_init_usr_username'] = $array['caseCreatorUserName'];
+                    $array['pro_uid'] = $array['processId'];
+                    $array['pro_name'] = $array['processName'];
+                    $array['app_create_date'] = $array['createDate'];
+                    $array['app_update_date'] = $array['updateDate'];
+                    $array['current_task'] = $array['currentUsers'];
+                    for ($i = 0; $i<=count($array['current_task'])-1; $i++) {
+                        $current_task = $array['current_task'][$i];
+                        $current_task['usr_uid'] = $current_task['userId'];
+                        $current_task['usr_name'] = trim($current_task['userName']);
+                        $current_task['tas_uid'] = $current_task['taskId'];
+                        $current_task['tas_title'] = $current_task['taskName'];
+                        $current_task['del_index'] = $current_task['delIndex'];
+                        $current_task['del_thread'] = $current_task['delThread'];
+                        $current_task['del_thread_status'] = $current_task['delThreadStatus'];
+                        unset($current_task['userId']);
+                        unset($current_task['userName']);
+                        unset($current_task['taskId']);
+                        unset($current_task['taskName']);
+                        unset($current_task['delIndex']);
+                        unset($current_task['delThread']);
+                        unset($current_task['delThreadStatus']);
+                        $aCurrent_task[] = $current_task;
+                    }
+                    unset($array['status_code']);
+                    unset($array['message']);
+                    unset($array['timestamp']);
+                    unset($array['caseParalell']);
+                    unset($array['caseId']);
+                    unset($array['caseNumber']);
+                    unset($array['caseName']);
+                    unset($array['caseStatus']);
+                    unset($array['caseCreatorUser']);
+                    unset($array['caseCreatorUserName']);
+                    unset($array['processId']);
+                    unset($array['processName']);
+                    unset($array['createDate']);
+                    unset($array['updateDate']);
+                    unset($array['currentUsers']);
+                }
+                $current_task = json_decode(json_encode($aCurrent_task), false);
+                $oResponse = json_decode(json_encode($array), false);
+                $oResponse->current_task = $current_task;
                 //Return
-                return $fields;
+                return $oResponse;
             }
-
         } catch (\Exception $e) {
             throw $e;
         }
@@ -300,11 +465,12 @@ class Cases
     /**
      * Get data Task Case
      *
-     * @param string $caseUid Unique id of Case
+     * @param string $applicationUid Unique id of Case
+     * @param string $userUid Unique id of User
      *
      * return array Return an array with Task Case
      */
-    public function getTaskCase($caseUid)
+    public function getTaskCase($applicationUid, $userUid)
     {
         try {
             $result = array ();
@@ -320,21 +486,25 @@ class Cases
             $tasTitleConds[] = array ('C1.CON_CATEGORY',$del . 'TAS_TITLE' . $del);
             $tasTitleConds[] = array ('C1.CON_LANG',$del . SYS_LANG . $del);
             $oCriteria->addJoinMC( $tasTitleConds, \Criteria::LEFT_JOIN );
-            $oCriteria->add( \AppDelegationPeer::APP_UID, $caseUid );
+            $oCriteria->add( \AppDelegationPeer::APP_UID, $applicationUid );
+            $oCriteria->add( \AppDelegationPeer::USR_UID, $userUid );
             $oCriteria->add( \AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN' );
             $oCriteria->add( \AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL );
             $oDataset = \AppDelegationPeer::doSelectRS( $oCriteria );
             $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $result = array ('guid'     => $aRow['TAS_UID'],
-                    'name'     => $aRow['TAS_TITLE'],
-                    'delegate' => $aRow['DEL_INDEX']
-                );
+                $result = array ('tas_uid'   => $aRow['TAS_UID'],
+                                 'tas_title'  => $aRow['TAS_TITLE'],
+                                 'del_index' => $aRow['DEL_INDEX']);
                 $oDataset->next();
             }
             //Return
-            return $result;
+            if(empty($result)) {
+                throw (new \Exception('Incorrect or unavailable information about this case: ' .$applicationUid));
+            } else {
+                return $result;
+            }
         } catch (\Exception $e) {
             throw $e;
         }
@@ -343,14 +513,14 @@ class Cases
     /**
      * Add New Case
      *
-     * @param string $prjUid Unique id of Project
-     * @param string $actUid Unique id of Activity
-     * @param string $caseUid Unique id of Case
+     * @param string $processUid Unique id of Project
+     * @param string $taskUid Unique id of Activity (task)
+     * @param string $userUid Unique id of Case
      * @param array $variables
      *
      * return array Return an array with Task Case
      */
-    public function addCase($prjUid, $actUid, $userUid, $variables)
+    public function addCase($processUid, $taskUid, $userUid, $variables)
     {
         try {
             \G::LoadClass('wsBase');
@@ -358,9 +528,22 @@ class Cases
             if ($variables) {
                 $variables = array_shift($variables);
             }
-            $fields = $ws->newCase($prjUid, $userUid, $actUid, $variables);
+            $fields = $ws->newCase($processUid, $userUid, $taskUid, $variables);
+            $array = json_decode(json_encode($fields), true);
+            if ($array ["status_code"] != 0) {
+                throw (new \Exception($array ["message"]));
+            } else {
+                $array['app_uid'] = $array['caseId'];
+                $array['app_number'] = $array['caseNumber'];
+                unset($array['status_code']);
+                unset($array['message']);
+                unset($array['timestamp']);
+                unset($array['caseId']);
+                unset($array['caseNumber']);
+            }
+            $oResponse = json_decode(json_encode($array), false);
             //Return
-            return $fields;
+            return $oResponse;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -369,24 +552,39 @@ class Cases
     /**
      * Add New Case Impersonate
      *
-     * @param string $prjUid Unique id of Project
-     * @param string $usrUid Unique id of User
-     * @param string $actUid Unique id of Case
+     * @param string $processUid Unique id of Project
+     * @param string $userUid Unique id of User
+     * @param string $taskUid Unique id of Case
      * @param array $variables
      *
      * return array Return an array with Task Case
      */
-    public function addCaseImpersonate($prjUid, $usrUid, $actUid, $variables)
+    public function addCaseImpersonate($processUid, $userUid, $taskUid, $variables)
     {
         try {
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
             if ($variables) {
                 $variables = array_shift($variables);
+            } elseif ($variables == null) {
+                $variables = array(array());
             }
-            $fields = $ws->newCaseImpersonate($prjUid, $usrUid, $variables, $actUid);
+            $fields = $ws->newCaseImpersonate($processUid, $userUid, $variables, $taskUid);
+            $array = json_decode(json_encode($fields), true);
+            if ($array ["status_code"] != 0) {
+                throw (new \Exception($array ["message"]));
+            } else {
+                $array['app_uid'] = $array['caseId'];
+                $array['app_number'] = $array['caseNumber'];
+                unset($array['status_code']);
+                unset($array['message']);
+                unset($array['timestamp']);
+                unset($array['caseId']);
+                unset($array['caseNumber']);
+            }
+            $oResponse = json_decode(json_encode($array), false);
             //Return
-            return $fields;
+            return $oResponse;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -395,7 +593,7 @@ class Cases
     /**
      * Reassign Case
      *
-     * @param string $caseUid Unique id of Case
+     * @param string $applicationUid Unique id of Case
      * @param string $userUid Unique id of User
      * @param string $delIndex
      * @param string $userUidSource Unique id of User Source
@@ -403,17 +601,23 @@ class Cases
      *
      * return array Return an array with Task Case
      */
-    public function updateReassignCase($caseUid, $userUid, $delIndex, $userUidSource, $userUidTarget)
+    public function updateReassignCase($applicationUid, $userUid, $delIndex, $userUidSource, $userUidTarget)
     {
         try {
             if (!$delIndex) {
-                $delIndex = \AppDelegation::getCurrentIndex($caseUid);
+                $delIndex = \AppDelegation::getCurrentIndex($applicationUid);
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
-            $fields = $ws->reassignCase($userUid, $caseUid, $delIndex, $userUidSource, $userUidTarget);
-            //Return
-            return $fields;
+            $fields = $ws->reassignCase($userUid, $applicationUid, $delIndex, $userUidSource, $userUidTarget);
+            $array = json_decode(json_encode($fields), true);
+            if ($array ["status_code"] != 0) {
+                throw (new \Exception($array ["message"]));
+            } else {
+                unset($array['status_code']);
+                unset($array['message']);
+                unset($array['timestamp']);
+            }
         } catch (\Exception $e) {
             throw $e;
         }
@@ -537,24 +741,30 @@ class Cases
     /**
      * Route Case
      *
-     * @param string $caseUid Unique id of Case
+     * @param string $applicationUid Unique id of Case
      * @param string $userUid Unique id of User
      * @param string $delIndex
      * @param string $bExecuteTriggersBeforeAssignment
      *
      * return array Return an array with Task Case
      */
-    public function updateRouteCase($caseUid, $userUid, $delIndex)
+    public function updateRouteCase($applicationUid, $userUid, $delIndex)
     {
         try {
             if (!$delIndex) {
-                $delIndex = \AppDelegation::getCurrentIndex($caseUid);
+                $delIndex = \AppDelegation::getCurrentIndex($applicationUid);
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
-            $fields = $ws->derivateCase($userUid, $caseUid, $delIndex, $bExecuteTriggersBeforeAssignment = false);
-            //Return
-            return $fields;
+            $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false);
+            $array = json_decode(json_encode($fields), true);
+            if ($array ["status_code"] != 0) {
+                throw (new \Exception($array ["message"]));
+            } else {
+                unset($array['status_code']);
+                unset($array['message']);
+                unset($array['timestamp']);
+            }
         } catch (\Exception $e) {
             throw $e;
         }

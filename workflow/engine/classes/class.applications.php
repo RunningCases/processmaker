@@ -17,7 +17,8 @@ class Applications
         $dir = null,
         $sort = "APP_CACHE_VIEW.APP_NUMBER",
         $category = null,
-        $configuration = true
+        $configuration = true,
+        $paged = false
     ) {
         $callback = isset($callback)? $callback : "stcCallback1001";
         $dir = isset($dir)? $dir : "DESC";
@@ -363,7 +364,7 @@ class Applications
 
         //here we count how many records exists for this criteria.
         //BUT there are some special cases, and if we dont optimize them the server will crash.
-        $doCountAlreadyExecuted = false;
+        $doCountAlreadyExecuted = $paged;
         //case 1. when the SEARCH action is selected and none filter, search criteria is defined,
         //we need to count using the table APPLICATION, because APP_CACHE_VIEW takes 3 seconds
 
@@ -378,8 +379,8 @@ class Applications
         }
         */
         $tableNameAux = '';
-
-        if ($doCountAlreadyExecuted == false) {
+        $totalCount = 0;
+        if ($doCountAlreadyExecuted == true) {
             // in the case of reassign the distinct attribute shows a diferent count result comparing to the
             // original list
             //Check also $distinct in the method getListCounters(), this in AppCacheView.php
