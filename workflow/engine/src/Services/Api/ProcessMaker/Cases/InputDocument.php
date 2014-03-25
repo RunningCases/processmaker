@@ -12,16 +12,16 @@ use \Luracast\Restler\RestException;
 class InputDocument extends Api
 {
     /**
-     * @url GET /:cas_uid/input-documents
+     * @url GET /:app_uid/input-documents
      *
-     * @param string $cas_uid     {@min 32}{@max 32}
+     * @param string $app_uid     {@min 32}{@max 32}
      */
-    public function doGetInputDocuments($cas_uid)
+    public function doGetInputDocuments($app_uid)
     {
         try {
             $userUid = $this->getUserId();
             $inputDocument = new \BusinessModel\Cases\InputDocument();
-            $response = $inputDocument->getCasesInputDocuments($cas_uid, $userUid);
+            $response = $inputDocument->getCasesInputDocuments($app_uid, $userUid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -29,17 +29,17 @@ class InputDocument extends Api
     }
 
     /**
-     * @url GET /:cas_uid/input-document/:inp_doc_uid
+     * @url GET /:app_uid/input-document/:inp_doc_uid
      *
-     * @param string $cas_uid     {@min 32}{@max 32}
+     * @param string $app_uid     {@min 32}{@max 32}
      * @param string $inp_doc_uid     {@min 32}{@max 32}
      */
-    public function doGetInputDocument($cas_uid, $inp_doc_uid)
+    public function doGetInputDocument($app_uid, $inp_doc_uid)
     {
         try {
             $userUid = $this->getUserId();
             $inputDocument = new \BusinessModel\Cases\InputDocument();
-            $response = $inputDocument->getCasesInputDocument($cas_uid, $userUid, $inp_doc_uid);
+            $response = $inputDocument->getCasesInputDocument($app_uid, $userUid, $inp_doc_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -47,12 +47,12 @@ class InputDocument extends Api
     }
 
     /**
-     * @url DELETE /:cas_uid/input-document/:inp_doc_uid
+     * @url DELETE /:app_uid/input-document/:inp_doc_uid
      *
-     * @param string $cas_uid     {@min 32}{@max 32}
+     * @param string $app_uid     {@min 32}{@max 32}
      * @param string $inp_doc_uid     {@min 32}{@max 32}
      */
-    public function doDeleteInputDocument($cas_uid, $inp_doc_uid)
+    public function doDeleteInputDocument($app_uid, $inp_doc_uid)
     {
         try {
             $inputDocument = new \BusinessModel\Cases\InputDocument();
@@ -62,22 +62,21 @@ class InputDocument extends Api
         }
     }
     /**
-     * @url POST /:cas_uid/input-document
+     * @url POST /:app_uid/input-document
      *
-     * @param string $cas_uid         {@min 32}{@max 32}
+     * @param string $app_uid         { @min 32}{@max 32}
+     * @param string $tas_uid         {@min 32}{@max 32}
      * @param string $inp_doc_uid     {@min 32}{@max 32}
      */
-    public function doPostInputDocument($cas_uid, $inp_doc_uid)
+    public function doPostInputDocument($app_uid, $tas_uid, $inp_doc_uid)
     {
         try {
             $userUid = $this->getUserId();
             $inputDocument = new \BusinessModel\Cases\InputDocument();
-            $response = $inputDocument->addCasesInputDocument($cas_uid, $inp_doc_uid, $userUid);
+            $response = $inputDocument->addCasesInputDocument($app_uid, $tas_uid, $inp_doc_uid, $userUid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 }
-
-
