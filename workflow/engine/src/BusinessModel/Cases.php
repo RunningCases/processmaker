@@ -37,7 +37,7 @@ class Cases
         $dir = isset( $dataList["dir"] ) ? $dataList["dir"] : "DESC";
         $sort = isset( $dataList["sort"] ) ? $dataList["sort"] : "APP_CACHE_VIEW.APP_NUMBER";
         $start = isset( $dataList["start"] ) ? $dataList["start"] : "0";
-        $limit = isset( $dataList["limit"] ) ? $dataList["limit"] : "25";
+        $limit = isset( $dataList["limit"] ) ? $dataList["limit"] : "config";
         $filter = isset( $dataList["filter"] ) ? $dataList["filter"] : "";
         $process = isset( $dataList["process"] ) ? $dataList["process"] : "";
         $category = isset( $dataList["category"] ) ? $dataList["category"] : "";
@@ -45,14 +45,64 @@ class Cases
         $user = isset( $dataList["user"] ) ? $dataList["user"] : "";
         $search = isset( $dataList["search"] ) ? $dataList["search"] : "";
         $action = isset( $dataList["action"] ) ? $dataList["action"] : "todo";
+        $paged = isset( $dataList["paged"] ) ? $dataList["paged"] : true;
         $type = "extjs";
-        $dateFrom = isset( $dataList["dateFrom"] ) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
-        $dateTo = isset( $dataList["dateTo"] ) ? substr( $dataList["dateTo"], 0, 10 ) : "";
+        $dateFrom = (!empty( $dataList["dateFrom"] )) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
+        $dateTo = (!empty( $dataList["dateTo"] )) ? substr( $dataList["dateTo"], 0, 10 ) : "";
         $first = isset( $dataList["first"] ) ? true :false;
 
         $valuesCorrect = array('todo', 'draft', 'paused', 'sent', 'selfservice', 'unassigned', 'search');
         if (!in_array($action, $valuesCorrect)) {
             throw (new \Exception('The value for $action is incorrect.'));
+        }
+
+        $start = (int)$start;
+        $start = abs($start);
+        if ($start != 0) {
+            $start--;
+        }
+        if ($limit == 'config') {
+            G::LoadClass("configuration");
+            $conf = new \Configurations();
+            $generalConfCasesList = $conf->getConfiguration('ENVIRONMENT_SETTINGS', '');
+            if (isset($generalConfCasesList['casesListRowNumber'])) {
+                $limit = (int)$generalConfCasesList['casesListRowNumber'];
+            } else {
+                $limit = 25;
+            }
+        } else {
+            $limit = (int)$limit;
+        }
+        if ($sort != 'APP_CACHE_VIEW.APP_NUMBER') {
+            $sort = G::toUpper($sort);
+            $columnsAppCacheView = \AppCacheViewPeer::getFieldNames(\BasePeer::TYPE_FIELDNAME);
+            if (!(in_array($sort, $columnsAppCacheView))) {
+                $sort = 'APP_CACHE_VIEW.APP_NUMBER';
+            }
+        }
+        $dir = G::toUpper($dir);
+        if (!($dir == 'DESC' || $dir == 'ASC')) {
+            $dir = 'DESC';
+        }
+        if ($process != '') {
+            Validator::proUid($process, '$pro_uid');
+        }
+        if ($category != '') {
+            Validator::catUid($category, '$cat_uid');
+        }
+        $status = G::toUpper($status);
+        $listStatus = array('TODO', 'DRAFT', 'COMPLETED', 'CANCEL', 'OPEN', 'CLOSE');
+        if (!(in_array($status, $listStatus))) {
+            $status = '';
+        }
+        if ($user != '') {
+            Validator::usrUid($user, '$usr_uid');
+        }
+        if ($dateFrom != '') {
+            Validator::isDate($dateFrom, 'Y-m-d', '$date_from');
+        }
+        if ($dateTo != '') {
+            Validator::isDate($dateTo, 'Y-m-d', '$date_to');
         }
 
         if ($action == 'search' || $action == 'to_reassign') {
@@ -123,12 +173,33 @@ class Cases
                 $callback,
                 $dir,
                 (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
-                $category
+                $category,
+                true,
+                $paged
             );
         }
         if (!empty($result['data'])) {
             foreach ($result['data'] as &$value) {
                 $value = array_change_key_case($value, CASE_LOWER);
+            }
+        }
+        if ($paged == false) {
+            $result = $result['data'];
+        } else {
+            $result['total'] = $result['totalCount'];
+            unset($result['totalCount']);
+            $result['start'] = $start+1;
+            $result['limit'] = $limit;
+            $result['sort']  = G::toLower($sort);
+            $result['dir']   = G::toLower($dir);
+            $result['cat_uid']  = $category;
+            $result['pro_uid']  = $process;
+            $result['search']   = $search;
+            if ($action == 'search') {
+                $result['app_status'] = G::toLower($status);
+                $result['usr_uid'] = $user;
+                $result['date_from'] = $dateFrom;
+                $result['date_to'] = $dateTo;
             }
         }
         return $result;
@@ -258,7 +329,7 @@ class Cases
                                 for ($i = 0; $i<=count($array['current_task'])-1; $i++) {
                                     $current_task = $array['current_task'][$i];
                                     $current_task['usr_uid'] = $current_task['userId'];
-                                    $current_task['usr_name'] = $current_task['userName'];
+                                    $current_task['usr_name'] = trim($current_task['userName']);
                                     $current_task['tas_uid'] = $current_task['taskId'];
                                     $current_task['tas_title'] = $current_task['taskName'];
                                     $current_task['del_index'] = $current_task['delIndex'];
@@ -349,7 +420,7 @@ class Cases
                     for ($i = 0; $i<=count($array['current_task'])-1; $i++) {
                         $current_task = $array['current_task'][$i];
                         $current_task['usr_uid'] = $current_task['userId'];
-                        $current_task['usr_name'] = $current_task['userName'];
+                        $current_task['usr_name'] = trim($current_task['userName']);
                         $current_task['tas_uid'] = $current_task['taskId'];
                         $current_task['tas_title'] = $current_task['taskName'];
                         $current_task['del_index'] = $current_task['delIndex'];
@@ -432,7 +503,6 @@ class Cases
             if(empty($result)) {
                 throw (new \Exception('Incorrect or unavailable information about this case: ' .$applicationUid));
             } else {
-                $result = json_decode(json_encode($result), false);
                 return $result;
             }
         } catch (\Exception $e) {
@@ -496,6 +566,8 @@ class Cases
             $ws = new \wsBase();
             if ($variables) {
                 $variables = array_shift($variables);
+            } elseif ($variables == null) {
+                $variables = array(array());
             }
             $fields = $ws->newCaseImpersonate($processUid, $userUid, $variables, $taskUid);
             $array = json_decode(json_encode($fields), true);
@@ -697,7 +769,6 @@ class Cases
             throw $e;
         }
     }
-
 
     /**
      * get all upload document that they have send it
@@ -987,6 +1058,234 @@ class Cases
         \G::LoadClass('ArrayPeer');
         $oCriteria = new \Criteria('dbarray');
         $oCriteria->setDBArrayTable('inputDocuments');
+        $oCriteria->addDescendingOrderByColumn('CREATE_DATE');
+        return $oCriteria;
+    }
+
+    /*
+     * get all generate document
+     *
+     * @name getAllGeneratedDocumentsCriteria
+     * @param string $sProcessUID
+     * @param string $sApplicationUID
+     * @param string $sTasKUID
+     * @param string $sUserUID
+     * @return object
+     */
+    public function getAllGeneratedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
+    {
+        \G::LoadClass("configuration");
+        $conf = new \Configurations();
+        $confEnvSetting = $conf->getFormats();
+        //verifica si la tabla OBJECT_PERMISSION
+        $cases = new \cases();
+        $cases->verifyTable();
+        $listing = false;
+        $oPluginRegistry = & \PMPluginRegistry::getSingleton();
+        if ($oPluginRegistry->existsTrigger(PM_CASE_DOCUMENT_LIST)) {
+            $folderData = new \folderData(null, null, $sApplicationUID, null, $sUserUID);
+            $folderData->PMType = "OUTPUT";
+            $folderData->returnList = true;
+            //$oPluginRegistry = & PMPluginRegistry::getSingleton();
+            $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
+        }
+        $aObjectPermissions = $cases->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
+        if (!is_array($aObjectPermissions)) {
+            $aObjectPermissions = array('DYNAFORMS' => array(-1),'INPUT_DOCUMENTS' => array(-1),'OUTPUT_DOCUMENTS' => array(-1));
+        }
+        if (!isset($aObjectPermissions['DYNAFORMS'])) {
+            $aObjectPermissions['DYNAFORMS'] = array(-1);
+        } else {
+            if (!is_array($aObjectPermissions['DYNAFORMS'])) {
+                $aObjectPermissions['DYNAFORMS'] = array(-1);
+            }
+        }
+        if (!isset($aObjectPermissions['INPUT_DOCUMENTS'])) {
+            $aObjectPermissions['INPUT_DOCUMENTS'] = array(-1);
+        } else {
+            if (!is_array($aObjectPermissions['INPUT_DOCUMENTS'])) {
+                $aObjectPermissions['INPUT_DOCUMENTS'] = array(-1);
+            }
+        }
+        if (!isset($aObjectPermissions['OUTPUT_DOCUMENTS'])) {
+            $aObjectPermissions['OUTPUT_DOCUMENTS'] = array(-1);
+        } else {
+            if (!is_array($aObjectPermissions['OUTPUT_DOCUMENTS'])) {
+                $aObjectPermissions['OUTPUT_DOCUMENTS'] = array(-1);
+            }
+        }
+        $aDelete = $cases->getAllObjectsFrom($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, 'DELETE');
+        $oAppDocument = new \AppDocument();
+        $oCriteria = new \Criteria('workflow');
+        $oCriteria->add(\AppDocumentPeer::APP_UID, $sApplicationUID);
+        $oCriteria->add(\AppDocumentPeer::APP_DOC_TYPE, 'OUTPUT');
+        $oCriteria->add(\AppDocumentPeer::APP_DOC_STATUS, array('ACTIVE'), \Criteria::IN);
+        //$oCriteria->add(AppDocumentPeer::APP_DOC_UID, $aObjectPermissions['OUTPUT_DOCUMENTS'], Criteria::IN);
+        $oCriteria->add(
+            $oCriteria->getNewCriterion(
+                \AppDocumentPeer::APP_DOC_UID, $aObjectPermissions['OUTPUT_DOCUMENTS'], \Criteria::IN)->addOr($oCriteria->getNewCriterion(\AppDocumentPeer::USR_UID, $sUserUID, \Criteria::EQUAL))
+        );
+        $aConditions = array();
+        $aConditions[] = array(\AppDocumentPeer::APP_UID, \AppDelegationPeer::APP_UID);
+        $aConditions[] = array(\AppDocumentPeer::DEL_INDEX, \AppDelegationPeer::DEL_INDEX);
+        $oCriteria->addJoinMC($aConditions, \Criteria::LEFT_JOIN);
+        $oCriteria->add(\AppDelegationPeer::PRO_UID, $sProcessUID);
+        $oCriteria->addAscendingOrderByColumn(\AppDocumentPeer::APP_DOC_INDEX);
+        $oDataset = \AppDocumentPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $oDataset->next();
+        $aOutputDocuments = array();
+        $aOutputDocuments[] = array(
+            'APP_DOC_UID' => 'char',
+            'DOC_UID' => 'char',
+            'APP_DOC_COMMENT' => 'char',
+            'APP_DOC_FILENAME' => 'char',
+            'APP_DOC_INDEX' => 'integer'
+        );
+        $oUser = new \Users();
+        while ($aRow = $oDataset->getRow()) {
+            $oCriteria2 = new \Criteria('workflow');
+            $oCriteria2->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
+            $oCriteria2->add(\AppDelegationPeer::DEL_INDEX, $aRow['DEL_INDEX']);
+            $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria2);
+            $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset2->next();
+            $aRow2 = $oDataset2->getRow();
+            $oTask = new \Task();
+            if ($oTask->taskExists($aRow2['TAS_UID'])) {
+                $aTask = $oTask->load($aRow2['TAS_UID']);
+            } else {
+                $aTask = array('TAS_TITLE' => '(TASK DELETED)');
+            }
+            $lastVersion = $oAppDocument->getLastDocVersion($aRow['DOC_UID'], $sApplicationUID);
+            if ($lastVersion == $aRow['DOC_VERSION']) {
+                //Only show last document Version
+                $aAux = $oAppDocument->load($aRow['APP_DOC_UID'], $aRow['DOC_VERSION']);
+                //Get output Document information
+                $oOutputDocument = new \OutputDocument();
+                $aGields = $oOutputDocument->load($aRow['DOC_UID']);
+                //OUTPUTDOCUMENT
+                $outDocTitle = $aGields['OUT_DOC_TITLE'];
+                switch ($aGields['OUT_DOC_GENERATE']) {
+                    //G::LoadTranslation(ID_DOWNLOAD)
+                    case "PDF":
+                        $fileDoc = 'javascript:alert("NO DOC")';
+                        $fileDocLabel = " ";
+                        $filePdf = 'cases_ShowOutputDocument?a=' .
+                            $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=pdf&random=' . rand();
+                        $filePdfLabel = ".pdf";
+                        if (is_array($listing)) {
+                            foreach ($listing as $folderitem) {
+                                if (($folderitem->filename == $aRow['APP_DOC_UID']) && ($folderitem->type == "PDF")) {
+                                    $filePdfLabel = \G::LoadTranslation('ID_GET_EXTERNAL_FILE') . " .pdf";
+                                    $filePdf = $folderitem->downloadScript;
+                                    continue;
+                                }
+                            }
+                        }
+                        break;
+                    case "DOC":
+                        $fileDoc = 'cases_ShowOutputDocument?a=' .
+                            $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=doc&random=' . rand();
+                        $fileDocLabel = ".doc";
+                        $filePdf = 'javascript:alert("NO PDF")';
+                        $filePdfLabel = " ";
+                        if (is_array($listing)) {
+                            foreach ($listing as $folderitem) {
+                                if (($folderitem->filename == $aRow['APP_DOC_UID']) && ($folderitem->type == "DOC")) {
+                                    $fileDocLabel = \G::LoadTranslation('ID_GET_EXTERNAL_FILE') . " .doc";
+                                    $fileDoc = $folderitem->downloadScript;
+                                    continue;
+                                }
+                            }
+                        }
+                        break;
+                    case "BOTH":
+                        $fileDoc = 'cases_ShowOutputDocument?a=' .
+                            $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=doc&random=' . rand();
+                        $fileDocLabel = ".doc";
+                        if (is_array($listing)) {
+                            foreach ($listing as $folderitem) {
+                                if (($folderitem->filename == $aRow['APP_DOC_UID']) && ($folderitem->type == "DOC")) {
+                                    $fileDocLabel = G::LoadTranslation('ID_GET_EXTERNAL_FILE') . " .doc";
+                                    $fileDoc = $folderitem->downloadScript;
+                                    continue;
+                                }
+                            }
+                        }
+                        $filePdf = 'cases_ShowOutputDocument?a=' .
+                            $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=pdf&random=' . rand();
+                        $filePdfLabel = ".pdf";
+
+                        if (is_array($listing)) {
+                            foreach ($listing as $folderitem) {
+                                if (($folderitem->filename == $aRow['APP_DOC_UID']) && ($folderitem->type == "PDF")) {
+                                    $filePdfLabel = \G::LoadTranslation('ID_GET_EXTERNAL_FILE') . " .pdf";
+                                    $filePdf = $folderitem->downloadScript;
+                                    continue;
+                                }
+                            }
+                        }
+                        break;
+                }
+                try {
+                    $aAux1 = $oUser->load($aAux['USR_UID']);
+                    $sUser = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $aAux1["USR_USERNAME"], $aAux1["USR_FIRSTNAME"], $aAux1["USR_LASTNAME"]);
+                } catch (\Exception $oException) {
+                    $sUser = '(USER DELETED)';
+                }
+                //if both documents were generated, we choose the pdf one, only if doc was
+                //generate then choose the doc file.
+                $firstDocLink = $filePdf;
+                $firstDocLabel = $filePdfLabel;
+                if ($aGields['OUT_DOC_GENERATE'] == 'DOC') {
+                    $firstDocLink = $fileDoc;
+                    $firstDocLabel = $fileDocLabel;
+                }
+                $aFields = array(
+                    'APP_DOC_UID' => $aAux['APP_DOC_UID'],
+                    'DOC_UID' => $aAux['DOC_UID'],
+                    'APP_DOC_COMMENT' => $aAux['APP_DOC_COMMENT'],
+                    'APP_DOC_FILENAME' => $aAux['APP_DOC_FILENAME'],
+                    'APP_DOC_INDEX' => $aAux['APP_DOC_INDEX'],
+                    'ORIGIN' => $aTask['TAS_TITLE'],
+                    'CREATE_DATE' => $aAux['APP_DOC_CREATE_DATE'],
+                    'CREATED_BY' => $sUser,
+                    'FILEDOC' => $fileDoc,
+                    'FILEPDF' => $filePdf,
+                    'OUTDOCTITLE' => $outDocTitle,
+                    'DOC_VERSION' => $aAux['DOC_VERSION'],
+                    'TYPE' => $aAux['APP_DOC_TYPE'] . ' ' . $aGields['OUT_DOC_GENERATE'],
+                    'DOWNLOAD_LINK' => $firstDocLink,
+                    'DOWNLOAD_FILE' => $aAux['APP_DOC_FILENAME'] . $firstDocLabel
+                );
+                if (trim($fileDocLabel) != '') {
+                    $aFields['FILEDOCLABEL'] = $fileDocLabel;
+                }
+                if (trim($filePdfLabel) != '') {
+                    $aFields['FILEPDFLABEL'] = $filePdfLabel;
+                }
+                if ($aFields['APP_DOC_FILENAME'] != '') {
+                    $aFields['TITLE'] = $aFields['APP_DOC_FILENAME'];
+                } else {
+                    $aFields['TITLE'] = $aFields['APP_DOC_COMMENT'];
+                }
+                //$aFields['POSITION'] = $_SESSION['STEP_POSITION'];
+                $aFields['CONFIRM'] = \G::LoadTranslation('ID_CONFIRM_DELETE_ELEMENT');
+                if (in_array($aRow['APP_DOC_UID'], $aObjectPermissions['OUTPUT_DOCUMENTS'])) {
+                    if (in_array($aRow['APP_DOC_UID'], $aDelete['OUTPUT_DOCUMENTS'])) {
+                        $aFields['ID_DELETE'] = \G::LoadTranslation('ID_DELETE');
+                    }
+                }
+                $aOutputDocuments[] = $aFields;
+            }
+            $oDataset->next();
+        }
+        global $_DBArray;
+        $_DBArray['outputDocuments'] = $aOutputDocuments;
+        \G::LoadClass('ArrayPeer');
+        $oCriteria = new \Criteria('dbarray');
+        $oCriteria->setDBArrayTable('outputDocuments');
         $oCriteria->addDescendingOrderByColumn('CREATE_DATE');
         return $oCriteria;
     }
