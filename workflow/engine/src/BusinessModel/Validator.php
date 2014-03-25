@@ -237,11 +237,11 @@ class Validator{
     {
         $date = trim($date);
         if ($date == '') {
-            throw (new \Exception("The value '' is not valid fot the format '$format'."));
+            throw (new \Exception("The value '' is not a valid date for the format '$format'."));
         }
         $d = \DateTime::createFromFormat($format, $date);
         if (!($d && $d->format($format) == $date)) {
-            throw (new \Exception("The value '$date' is not valid fot the format '$format'."));
+            throw (new \Exception("The value '$date' is not a valid date for the format '$format'."));
         }
         return $date;
     }
