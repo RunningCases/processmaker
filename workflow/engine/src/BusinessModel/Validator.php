@@ -264,6 +264,40 @@ class Validator{
     }
 
     /**
+     * Validate is string
+     * @var array $field. Field type string
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    static public function isString($field, $nameField)
+    {
+        if (!is_string($field)) {
+            throw (new \Exception("Invalid value for '$nameField' it must be a string."));
+        }
+    }
+
+    /**
+     * Validate is integer
+     * @var array $field. Field type integer
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    static public function isInteger($field, $nameField)
+    {
+        if (!is_integer($field)) {
+            throw (new \Exception("Invalid value for '$nameField' it must be a integer."));
+        }
+    }
+
+    /**
      * Validate is boolean
      * @var boolean $field. Field type boolean
      *
