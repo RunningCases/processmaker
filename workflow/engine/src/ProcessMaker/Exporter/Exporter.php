@@ -87,6 +87,10 @@ abstract class Exporter
 
         $oProcess = new \Processes();
         $workflowData = (array) $oProcess->getWorkflowData($this->prjUid);
+
+        $workflowData["process"]['PRO_DYNAFORMS'] = empty($workflowData["process"]['PRO_DYNAFORMS'])
+            ? "" : serialize($workflowData["process"]['PRO_DYNAFORMS']);
+
         $workflowData["process"] = array($workflowData["process"]);
         $workflowData["processCategory"] = empty($workflowData["processCategory"]) ? array() : $workflowData["processCategory"];
 
