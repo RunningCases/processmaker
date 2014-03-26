@@ -721,7 +721,7 @@ class Cases extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url PUT /:cas_uid/cancel-case
+     * @url PUT /:cas_uid/cancel
      */
     public function doPutCancelCase($cas_uid)
     {
@@ -743,7 +743,7 @@ class Cases extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url PUT /:cas_uid/pause-case
+     * @url PUT /:cas_uid/pause
      */
     public function doPutPauseCase($cas_uid, $unpaused_date = null)
     {
@@ -768,7 +768,7 @@ class Cases extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url PUT /:cas_uid/unpause-case
+     * @url PUT /:cas_uid/unpause
      */
     public function doPutUnpauseCase($cas_uid)
     {
@@ -818,6 +818,48 @@ class Cases extends Api
         try {
             $cases = new \BusinessModel\Cases();
             $cases->deleteCase($cas_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Get Case Variables
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /:app_uid/variables
+     */
+    public function doGetCaseVariables($app_uid)
+    {
+        try {
+            $cases = new \BusinessModel\Cases();
+            $response = $cases->getCaseVariables($app_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Put Case Variables
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     * @param array $request_data
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url PUT /:app_uid/variables
+     */
+    public function doPutCaseVariables($app_uid, $request_data)
+    {
+        try {
+            $cases = new \BusinessModel\Cases();
+            $cases->putCaseVariables($app_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

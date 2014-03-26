@@ -1308,4 +1308,44 @@ class Cases
         $oCriteria->addDescendingOrderByColumn('CREATE_DATE');
         return $oCriteria;
     }
+
+    /**
+     * Get Case Variables
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function getCaseVariables($app_uid) {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+
+        $case = new \Cases();
+        $fields = $case->loadCase($app_uid);
+        return $fields['APP_DATA'];
+    }
+
+    /**
+     * Put Set Case Variables
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @param array $app_data, Data for case variables
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function putCaseVariables($app_uid, $app_data) {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+        Validator::isArray($app_data, '$app_data');
+
+        $case = new \Cases();
+        $fields = $case->loadCase($app_uid);
+        $data = array_merge($fields['APP_DATA'], array('APP_DATA' => $app_data));
+        $case->updateCase($app_uid, $data);
+    }
 }
