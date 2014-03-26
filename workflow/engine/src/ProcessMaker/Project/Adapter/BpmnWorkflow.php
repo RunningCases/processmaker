@@ -2,7 +2,7 @@
 namespace ProcessMaker\Project\Adapter;
 
 use ProcessMaker\Project;
-use ProcessMaker\Util\Hash;
+use ProcessMaker\Util\Common;
 
 /**
  * Class BpmnWorkflow
@@ -134,6 +134,13 @@ class BpmnWorkflow extends Project\Bpmn
         if (array_key_exists("ACT_NAME", $data)) {
             $taskData["TAS_POSY"] = $data["BOU_Y"];
         }
+        if (array_key_exists("ACT_TYPE", $data)) {
+            if ($data["ACT_TYPE"] == "SUB_PROCESS") {
+                $taskData["TAS_TYPE"] = "SUBPROCESS";
+            } else {
+                $taskData["TAS_TYPE"] = "NORMAL";
+            }
+        }
 
         $this->wp->addTask($taskData);
 
@@ -163,6 +170,7 @@ class BpmnWorkflow extends Project\Bpmn
     {
         parent::removeActivity($actUid);
         $this->wp->removeTask($actUid);
+
     }
 
     public function removeGateway($gatUid)

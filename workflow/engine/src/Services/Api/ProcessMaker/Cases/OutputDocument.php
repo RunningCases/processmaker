@@ -29,17 +29,17 @@ class OutputDocument extends Api
     }
 
     /**
-     * @url GET /:app_uid/output-document/:out_doc_uid
+     * @url GET /:app_uid/output-document/:app_doc_uid
      *
      * @param string $app_uid     {@min 32}{@max 32}
-     * @param string $out_doc_uid     {@min 32}{@max 32}
+     * @param string $app_doc_uid     {@min 32}{@max 32}
      */
-    public function doGetOutputDocument($app_uid, $out_doc_uid)
+    public function doGetOutputDocument($app_uid, $app_doc_uid)
     {
         try {
             $userUid = $this->getUserId();
             $outputDocument = new \BusinessModel\Cases\OutputDocument();
-            $response = $outputDocument->getCasesOutputDocument($app_uid, $userUid, $out_doc_uid);
+            $response = $outputDocument->getCasesOutputDocument($app_uid, $userUid, $app_doc_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -47,16 +47,16 @@ class OutputDocument extends Api
     }
 
     /**
-     * @url DELETE /:app_uid/output-document/:out_doc_uid
+     * @url DELETE /:app_uid/output-document/:app_doc_uid
      *
      * @param string $app_uid     {@min 32}{@max 32}
-     * @param string $out_doc_uid     {@min 32}{@max 32}
+     * @param string $app_doc_uid     {@min 32}{@max 32}
      */
-    public function doDeleteOutputDocument($app_uid, $out_doc_uid)
+    public function doDeleteOutputDocument($app_uid, $app_doc_uid)
     {
         try {
             $outputDocument = new \BusinessModel\Cases\OutputDocument();
-            $outputDocument->removeOutputDocument($out_doc_uid);
+            $outputDocument->removeOutputDocument($app_doc_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
