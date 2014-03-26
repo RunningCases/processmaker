@@ -237,11 +237,11 @@ class Validator{
     {
         $date = trim($date);
         if ($date == '') {
-            throw (new \Exception("The value '' is not valid fot the format '$format'."));
+            throw (new \Exception("The value '' is not a valid date for the format '$format'."));
         }
         $d = \DateTime::createFromFormat($format, $date);
         if (!($d && $d->format($format) == $date)) {
-            throw (new \Exception("The value '$date' is not valid fot the format '$format'."));
+            throw (new \Exception("The value '$date' is not a valid date for the format '$format'."));
         }
         return $date;
     }
@@ -260,6 +260,40 @@ class Validator{
     {
         if (!is_array($field)) {
             throw (new \Exception("Invalid value for '$nameField' it must be an array."));
+        }
+    }
+
+    /**
+     * Validate is string
+     * @var array $field. Field type string
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    static public function isString($field, $nameField)
+    {
+        if (!is_string($field)) {
+            throw (new \Exception("Invalid value for '$nameField' it must be a string."));
+        }
+    }
+
+    /**
+     * Validate is integer
+     * @var array $field. Field type integer
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    static public function isInteger($field, $nameField)
+    {
+        if (!is_integer($field)) {
+            throw (new \Exception("Invalid value for '$nameField' it must be a integer."));
         }
     }
 
