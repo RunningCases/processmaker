@@ -23,6 +23,16 @@
  */
 ini_set( 'max_execution_time', '0' );
 
+
+$ext = pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION);
+
+if ($ext == "pmx") {
+    $importer = new \ProcessMaker\Importer\XmlImporter();
+    $importer->setSourceFromGlobals("PROCESS_FILENAME");
+    $importer->import();
+    exit(0);
+}
+
 function reservedWordsSqlValidate ($data)
 {
     $arrayAux = array ();

@@ -636,12 +636,16 @@ class Cases
      * @copyright Colosa - Bolivia
      */
     public function putCancelCase($app_uid, $usr_uid, $del_index = false) {
-        Validator::appUid($app_uid, '$cas_uid');
+        Validator::isString($app_uid, '$app_uid');
+        Validator::isString($usr_uid, '$usr_uid');
+
+        Validator::appUid($app_uid, '$app_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
 
         if ($del_index === false) {
             $del_index = \AppDelegation::getCurrentIndex($app_uid);
         }
+        Validator::isInteger($del_index, '$del_index');
 
         $case = new \Cases();
         $case->cancelCase( $app_uid, $del_index, $usr_uid );
@@ -661,14 +665,19 @@ class Cases
      * @copyright Colosa - Bolivia
      */
     public function putPauseCase($app_uid, $usr_uid, $del_index = false, $unpaused_date = null) {
-        Validator::appUid($app_uid, '$cas_uid');
+        Validator::isString($app_uid, '$app_uid');
+        Validator::isString($usr_uid, '$usr_uid');
+
+        Validator::appUid($app_uid, '$app_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
-        if ($unpaused_date != null) {
-            Validator::isDate($unpaused_date, 'Y-m-d', '$unpaused_date');
-        }
 
         if ($del_index === false) {
             $del_index = \AppDelegation::getCurrentIndex($app_uid);
+        }
+        Validator::isInteger($del_index, '$del_index');
+
+        if ($unpaused_date != null) {
+            Validator::isDate($unpaused_date, 'Y-m-d', '$unpaused_date');
         }
 
         $case = new \Cases();
@@ -687,12 +696,16 @@ class Cases
      * @copyright Colosa - Bolivia
      */
     public function putUnpauseCase($app_uid, $usr_uid, $del_index = false) {
-        Validator::appUid($app_uid, '$cas_uid');
+        Validator::isString($app_uid, '$app_uid');
+        Validator::isString($usr_uid, '$usr_uid');
+
+        Validator::appUid($app_uid, '$app_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
 
         if ($del_index === false) {
             $del_index = \AppDelegation::getCurrentIndex($app_uid);
         }
+        Validator::isInteger($del_index, '$del_index');
 
         $case = new \Cases();
         $case->unpauseCase( $app_uid, $del_index, $usr_uid );
@@ -710,13 +723,18 @@ class Cases
      * @copyright Colosa - Bolivia
      */
     public function putExecuteTriggerCase($app_uid, $tri_uid, $usr_uid, $del_index = false) {
-        Validator::appUid($app_uid, '$cas_uid');
+        Validator::isString($app_uid, '$app_uid');
+        Validator::isString($tri_uid, '$tri_uid');
+        Validator::isString($usr_uid, '$usr_uid');
+
+        Validator::appUid($app_uid, '$app_uid');
         Validator::triUid($tri_uid, '$tri_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
 
         if ($del_index === false) {
             $del_index = \AppDelegation::getCurrentIndex($app_uid);
         }
+        Validator::isInteger($del_index, '$del_index');
 
         $case = new \wsBase();
         $case->executeTrigger( $usr_uid, $app_uid, $tri_uid, $del_index );
@@ -733,7 +751,8 @@ class Cases
      * @copyright Colosa - Bolivia
      */
     public function deleteCase($app_uid) {
-        Validator::appUid($app_uid, '$cas_uid');
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
         $case = new \Cases();
         $case->removeCase( $app_uid );
     }

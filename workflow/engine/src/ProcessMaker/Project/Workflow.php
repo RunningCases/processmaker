@@ -286,11 +286,19 @@ class Workflow extends Handler
         }
     }
 
+    /**
+     * This method add a new or update a Route record
+     *
+     * @param $fromTasUid
+     * @param $toTasUid
+     * @param $type
+     * @param string $condition
+     * @return string
+     * @throws \Exception
+     */
     public function addRoute($fromTasUid, $toTasUid, $type, $condition = "")
     {
         try {
-            self::log("Add Route from task: $fromTasUid -> to task: $toTasUid ($type)");
-
             $validTypes = array("SEQUENTIAL", "SELECT", "EVALUATE", "PARALLEL", "PARALLEL-BY-EVALUATION", "SEC-JOIN", "DISCRIMINATOR");
 
             if (! in_array($type, $validTypes)) {
@@ -303,13 +311,26 @@ class Workflow extends Handler
                 //}
             }
 
-            //if ($delete || $type == 'SEQUENTIAL' || $type == 'SEC-JOIN' || $type == 'DISCRIMINATOR') {
+            //if ($type == 'SEQUENTIAL' || $type == 'SEC-JOIN' || $type == 'DISCRIMINATOR') {
                 //$oTasks = new Tasks();
                 //$oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
             //}
 
-            $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $condition);
-            self::log("Add Route Success! - ROU_UID: ", $result);
+            $route = \Route::findOneBy(array(
+                \RoutePeer::TAS_UID => $fromTasUid,
+                \RoutePeer::ROU_NEXT_TASK => $toTasUid
+            ));
+
+            if (is_null($route)) {
+                $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $condition);
+            } else {
+                $result = $this->updateRoute($route->getRouUid(), array(
+                    "TAS_UID" => $fromTasUid,
+                    "ROU_NEXT_TASK" => $toTasUid,
+                    "ROU_TYPE" => $type,
+                    "ROU_CONDITION" => $condition
+                ));
+            }
 
             return $result;
         } catch (\Exception $e) {
@@ -331,8 +352,10 @@ class Workflow extends Handler
         try {
             self::log("Update Route: $rouUid with data:", $routeData);
             $route = new Route();
-            $route->update($routeData);
+            $result = $route->update($routeData);
             self::log("Update Route Success!");
+
+            return $result;
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
             throw $e;
@@ -412,6 +435,8 @@ class Workflow extends Handler
     private function saveNewPattern($sProcessUID = '', $sTaskUID = '', $sNextTask = '', $sType = '', $condition = '')
     {
         try {
+            self::log("Add Route from task: $sTaskUID -> to task: $sNextTask ($sType)");
+
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn('COUNT(*) AS ROUTE_NUMBER');
             //$oCriteria->addSelectColumn('GAT_UID AS GATEWAY_UID');
@@ -452,8 +477,10 @@ class Workflow extends Handler
             //$aFields['GAT_UID'] = (isset($sGatewayUID)) ? $sGatewayUID : '';
 
             $oRoute = new Route();
+            $result = $oRoute->create($aFields);
+            self::log("Add Route Success! - ROU_UID: ", $result);
 
-            return $oRoute->create($aFields);
+            return $result;
         } catch (Exception $oError) {
             throw ($oError);
         }

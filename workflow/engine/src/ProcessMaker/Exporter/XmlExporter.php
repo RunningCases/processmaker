@@ -38,21 +38,20 @@ class XmlExporter extends Exporter
      */
     public function build()
     {
-        $this->rootNode = $this->dom->createElement($this->getContainerName());
+        $this->rootNode = $this->dom->createElement(self::getContainerName());
         $this->rootNode->setAttribute("version", self::getVersion());
         $this->dom->appendChild($this->rootNode);
 
         $data = $this->buildData();
 
         // metadata set up
-        $metadata = $data["Metadata"];
-        $metadataNode = $this->dom->createElement("Metadata");
+        $metadata = $data["metadata"];
+        $metadataNode = $this->dom->createElement("metadata");
 
         foreach ($metadata as $key => $value) {
-            $metaNode = $this->dom->createElement("meta:$key");
-            //$metaNode->setAttribute("key", $key);
-            //$metaNode->setAttribute("value", $value);
-            $metaNode->appendChild($this->dom->createTextNode($value));
+            $metaNode = $this->dom->createElement("meta");
+            $metaNode->setAttribute("key", $key);
+            $metaNode->appendChild($this->getTextNode($value));
             $metadataNode->appendChild($metaNode);
         }
 
@@ -60,10 +59,10 @@ class XmlExporter extends Exporter
         // end setting metadata
 
         // bpmn struct data set up
-        $dbData = array("BPMN" => $data["BPMN-Definition"], "Workflow" => $data["Workflow-Definition"]);
-        //file_put_contents("/home/erik/out.log", print_r($dbData, true)); die;
+        $dbData = array("BPMN" => $data["bpmn-definition"], "workflow" => $data["workflow-definition"]);
+
         foreach ($dbData as $sectionName => $sectionData) {
-            $dataNode = $this->dom->createElement("Definition");
+            $dataNode = $this->dom->createElement("definition");
             $dataNode->setAttribute("class", $sectionName);
 
             foreach ($sectionData as $elementName => $elementData) {
@@ -73,19 +72,10 @@ class XmlExporter extends Exporter
                 foreach ($elementData as $recordData) {
                     $recordNode = $this->dom->createElement("record");
                     $recordData = array_change_key_case($recordData, CASE_LOWER);
-                    //var_dump($recordData); die;
-
 
                     foreach ($recordData as $key => $value) {
                         $columnNode = $this->dom->createElement($key);
-
-                        if (preg_match('/^[\w\s\.]+$/', $value, $match) || empty($value)) {
-                            $textNode = $this->dom->createTextNode($value);
-                        } else {
-                            $textNode = $this->dom->createCDATASection($value);
-                        }
-
-                        $columnNode->appendChild($textNode);
+                        $columnNode->appendChild($this->getTextNode($value));
                         $recordNode->appendChild($columnNode);
                     }
 
@@ -98,20 +88,16 @@ class XmlExporter extends Exporter
             $this->rootNode->appendChild($dataNode);
         }
 
-        $workflowFilesNode = $this->dom->createElement("Workflow-Files");
+        $workflowFilesNode = $this->dom->createElement("workflow-files");
 
         // workflow dynaforms files
-        foreach ($data["Workflow-Files"] as $elementName => $elementData) {
+        foreach ($data["workflow-files"] as $elementName => $elementData) {
             foreach ($elementData as $fileData) {
                 $fileNode = $this->dom->createElement("file");
                 $fileNode->setAttribute("target", strtolower($elementName));
 
                 $filenameNode = $this->dom->createElement("file_name");
-                if (preg_match('/^[\w\s\.\-]+$/', $fileData["filename"], $match)) {
-                    $filenameNode->appendChild($this->dom->createTextNode($fileData["filename"]));
-                } else {
-                    $filenameNode->appendChild($this->dom->createCDATASection($fileData["filename"]));
-                }
+                $filenameNode->appendChild($this->getTextNode($fileData["filename"]));
                 $fileNode->appendChild($filenameNode);
 
                 $filepathNode = $this->dom->createElement("file_path");
@@ -145,5 +131,14 @@ class XmlExporter extends Exporter
     {
         $this->build();
         return $this->dom->saveXml();
+    }
+
+    private function getTextNode($value)
+    {
+        if (preg_match('/^[\w\s\.\-]+$/', $value, $match)) {
+            return $this->dom->createTextNode($value);
+        } else {
+            return $this->dom->createCDATASection($value);
+        }
     }
 }
