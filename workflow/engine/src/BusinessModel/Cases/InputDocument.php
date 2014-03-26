@@ -119,12 +119,13 @@ class InputDocument
      *
      * @param string $applicationUid
      * @param string $taskUid
+     * @param string $appDocComment
      * @param string $inputDocumentUid
      * @param string $userUid
      *
      * return array Return an array with data of an InputDocument
      */
-    public function addCasesInputDocument($applicationUid, $taskUid, $inputDocumentUid, $userUid)
+    public function addCasesInputDocument($applicationUid, $taskUid, $appDocComment, $inputDocumentUid, $userUid)
     {
         try {
             if ((isset( $_FILES['form'] )) && ($_FILES['form']['error'] != 0)) {
@@ -164,7 +165,6 @@ class InputDocument
             $appDocUid = \G::generateUniqueID();
             $docVersion = '';
             $appDocType = 'INPUT';
-            $appDocComment = (isset($_POST["form"]))? $_POST["form"] : "";
             $case = new \Cases();
             $delIndex = \AppDelegation::getCurrentIndex($applicationUid);
             $case->thisIsTheCurrentUser($applicationUid, $delIndex, $userUid, "REDIRECT", "casesListExtJs");

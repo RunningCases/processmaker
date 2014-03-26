@@ -66,14 +66,15 @@ class InputDocument extends Api
      *
      * @param string $app_uid         { @min 32}{@max 32}
      * @param string $tas_uid         {@min 32}{@max 32}
+     * @param string $app_doc_comment
      * @param string $inp_doc_uid     {@min 32}{@max 32}
      */
-    public function doPostInputDocument($app_uid, $tas_uid, $inp_doc_uid)
+    public function doPostInputDocument($app_uid, $tas_uid, $app_doc_comment, $inp_doc_uid)
     {
         try {
             $userUid = $this->getUserId();
             $inputDocument = new \BusinessModel\Cases\InputDocument();
-            $response = $inputDocument->addCasesInputDocument($app_uid, $tas_uid, $inp_doc_uid, $userUid);
+            $response = $inputDocument->addCasesInputDocument($app_uid, $tas_uid, $app_doc_comment, $inp_doc_uid, $userUid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
