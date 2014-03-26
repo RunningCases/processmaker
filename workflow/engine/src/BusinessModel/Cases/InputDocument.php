@@ -104,7 +104,7 @@ class InputDocument
         try {
             $oAppDocument = \AppDocumentPeer::retrieveByPK( $inputDocumentUid, 1 );
             if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
-                throw (new \Exception('This row doesn\'t exist!'));
+                throw (new \Exception('This input document with id: '.$inputDocumentUid.' doesn\'t exist!'));
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();

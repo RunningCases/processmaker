@@ -102,7 +102,7 @@ class OutputDocument
         try {
             $oAppDocument = \AppDocumentPeer::retrieveByPK( $applicationDocumentUid, 1 );
             if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
-                throw (new \Exception('This row doesn\'t exist!'));
+                throw (new \Exception('This output document with id: '.$applicationDocumentUid.' doesn\'t exist!'));
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
