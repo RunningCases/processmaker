@@ -119,7 +119,7 @@ class Project extends Api
                 $activity = $bwp->getActivity($activityData["ACT_UID"]);
                 if (is_null($activity)) {
                     $oldActUid = $activityData["ACT_UID"];
-                    $activityData["ACT_UID"] = Util\Hash::generateUID();
+                    $activityData["ACT_UID"] = Util\Common::generateUID();
                     $bwp->addActivity($activityData);
                     $result[] = array("object" => "activity", "new_uid" => $activityData["ACT_UID"], "old_uid" => $oldActUid);
                 } elseif (! $bwp->isEquals($activity, $activityData)) {
@@ -153,7 +153,7 @@ class Project extends Api
                 $gateway = $bwp->getGateway($gatewayData["GAT_UID"]);
                 if (is_null($gateway)) {
                     $oldActUid = $gatewayData["GAT_UID"];
-                    $gatewayData["GAT_UID"] = Util\Hash::generateUID();
+                    $gatewayData["GAT_UID"] = Util\Common::generateUID();
                     $bwp->addGateway($gatewayData);
                     $result[] = array("object" => "gateway", "new_uid" => $gatewayData["GAT_UID"], "old_uid" => $oldActUid);
                 } elseif (! $bwp->isEquals($gateway, $gatewayData)) {
@@ -192,7 +192,7 @@ class Project extends Api
                 $event = $bwp->getEvent($eventData["EVN_UID"]);
                 if (is_null($event)) {
                     $oldActUid = $eventData["EVN_UID"];
-                    $eventData["EVN_UID"] = Util\Hash::generateUID();
+                    $eventData["EVN_UID"] = Util\Common::generateUID();
                     $bwp->addEvent($eventData);
                     $result[] = array("object" => "event", "new_uid" => $eventData["EVN_UID"], "old_uid" => $oldActUid);
                 } elseif (! $bwp->isEquals($event, $eventData)) {
@@ -227,7 +227,7 @@ class Project extends Api
                 // if it is a new flow record
                 if (! \BpmnFlow::exists($flowData["FLO_UID"])) {
                     $oldFloUid = $flowData["FLO_UID"];
-                    $flowData["FLO_UID"] = Util\Hash::generateUID();
+                    $flowData["FLO_UID"] = Util\Common::generateUID();
 
                     $mappedUid = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result);
                     if ($mappedUid !== false) {
