@@ -859,7 +859,53 @@ class Cases extends Api
     {
         try {
             $cases = new \BusinessModel\Cases();
-            $cases->putCaseVariables($app_uid, $request_data);
+            $cases->setCaseVariables($app_uid, $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Get Case Notes
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /:app_uid/notes
+     */
+    public function doGetCaseNotes($app_uid)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $cases = new \BusinessModel\Cases();
+            $response = $cases->getCaseNotes($app_uid, $usr_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Put Case Variables
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     * @param string $note_content {@min 1}{@max 500}
+     * @param int $send_mail {@choice 1,0}
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url POST /:app_uid/note
+     */
+    public function doPostCaseNote($app_uid, $note_content, $send_mail = 0)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $cases = new \BusinessModel\Cases();
+            $send_mail = ($send_mail == 0) ? false : true;
+            $cases->saveCaseNote($app_uid, $usr_uid, $note_content, $send_mail);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
