@@ -1338,7 +1338,7 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function putCaseVariables($app_uid, $app_data) {
+    public function setCaseVariables($app_uid, $app_data) {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
         Validator::isArray($app_data, '$app_data');
@@ -1347,5 +1347,84 @@ class Cases
         $fields = $case->loadCase($app_uid);
         $data = array_merge($fields['APP_DATA'], array('APP_DATA' => $app_data));
         $case->updateCase($app_uid, $data);
+    }
+
+    /**
+     * Get Case Notes
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function getCaseNotes($app_uid, $usr_uid) {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+
+        $case = new \Cases();
+        $caseLoad = $case->loadCase($app_uid);
+        $pro_uid  = $caseLoad['PRO_UID'];
+        $tas_uid  = \AppDelegation::getCurrentTask($app_uid);
+        $respView  = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'VIEW' );
+        $respBlock = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'BLOCK' );
+        if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
+            throw (new \Exception("You do not have permission to cases notes."));
+        }
+
+        $appNote = new \AppNotes();
+        $note_data = $appNote->getNotesList($app_uid);
+        $response = array();
+        $response['total'] = $note_data['array']['totalCount'];
+        $response['notes'] = array();
+        $con = 0;
+        foreach ($note_data['array']['notes'] as $value) {
+            $response['notes'][$con]['app_uid'] = $value['APP_UID'];
+            $response['notes'][$con]['usr_uid'] = $value['USR_UID'];
+            $response['notes'][$con]['note_date'] = $value['NOTE_DATE'];
+            $response['notes'][$con]['note_content'] = $value['NOTE_CONTENT'];
+            $con++;
+        }
+        return $response;
+    }
+
+    /**
+     * Save new case note
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @param array $app_data, Data for case variables
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function saveCaseNote($app_uid, $usr_uid, $note_content, $send_mail = false) {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+
+        Validator::isString($usr_uid, '$usr_uid');
+        Validator::usrUid($usr_uid, '$usr_uid');
+
+        Validator::isString($note_content, '$note_content');
+        if (strlen($note_content) > 500) {
+            throw (new \Exception("Invalid value for '$note_content', the permitted maximum length of 500 characters."));
+        }
+
+        Validator::isBoolean($send_mail, '$send_mail');
+
+        $case = new \Cases();
+        $caseLoad = $case->loadCase($app_uid);
+        $pro_uid  = $caseLoad['PRO_UID'];
+        $tas_uid  = \AppDelegation::getCurrentTask($app_uid);
+        $respView  = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'VIEW' );
+        $respBlock = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'BLOCK' );
+        if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
+            throw (new \Exception("You do not have permission to cases notes."));
+        }
+
+        $note_content = addslashes($note_content);
+        $appNote = new \AppNotes();
+        $appNote->addCaseNote($app_uid, $usr_uid, $note_content, intval($send_mail));
     }
 }
