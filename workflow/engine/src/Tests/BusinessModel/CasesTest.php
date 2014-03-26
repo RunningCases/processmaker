@@ -440,7 +440,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      *
      * @covers \BusinessModel\Cases::getTaskCase
      * @depends testAddCase
-     * @param array $aResponse, Data for parent department
+     * @param array $aResponse
      *
      * @copyright Colosa - Bolivia
      */
