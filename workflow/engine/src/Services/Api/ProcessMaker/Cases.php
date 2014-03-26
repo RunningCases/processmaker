@@ -853,7 +853,7 @@ class Cases extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
-     * @url PUT /:app_uid/variables
+     * @url PUT /:app_uid/variable
      */
     public function doPutCaseVariables($app_uid, $request_data)
     {
