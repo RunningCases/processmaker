@@ -44,7 +44,7 @@ class Subprocess
             $response['spr_name'] = $aRow['con_value'];
             $response['spr_synchronous'] = $aRow['sp_synchronous'];
             $response['spr_variables_out'] = unserialize($aRow['sp_variables_out']);
-            if ($response['spr_synchronous'] === 1) {
+            if ((int)$response['spr_synchronous'] === 1) {
                 $response['spr_variables_in'] = unserialize($aRow['sp_variables_in']);
             }
             return $response;
@@ -91,7 +91,7 @@ class Subprocess
             'PRO_PARENT' => $pro_uid,
             'TAS_PARENT' => $tas_uid,
             'SP_TYPE' => 'SIMPLE',
-            'SP_SYNCHRONOUS' => $spr_data['spr_synchronous'],
+            'SP_SYNCHRONOUS' => (int)$spr_data['spr_synchronous'],
             'SP_SYNCHRONOUS_TYPE' => 'ALL',
             'SP_SYNCHRONOUS_WAIT' => 0,
             'SP_VARIABLES_OUT' => serialize( $spr_data['spr_variables_out'] ),
