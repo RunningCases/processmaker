@@ -117,7 +117,7 @@ class BpmnGateway extends BaseBpmnGateway
         $this->setBoundDefaults();
 
         if ($this->bound->getBouUid() == "") {
-            $this->bound->setBouUid(\ProcessMaker\Util\Hash::generateUID());
+            $this->bound->setBouUid(\ProcessMaker\Util\Common::generateUID());
         }
 
         $this->bound->save($con);
@@ -147,7 +147,7 @@ class BpmnGateway extends BaseBpmnGateway
             $this->bound = $bound;
         } else {
             $this->bound = new BpmnBound();
-            $this->bound->setBouUid(ProcessMaker\Util\Hash::generateUID());
+            $this->bound->setBouUid(ProcessMaker\Util\Common::generateUID());
         }
 
         $this->bound->fromArray($data, BasePeer::TYPE_FIELDNAME);

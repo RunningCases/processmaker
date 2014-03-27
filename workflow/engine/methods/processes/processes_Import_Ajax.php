@@ -23,6 +23,27 @@
  */
 ini_set( 'max_execution_time', '0' );
 
+
+$ext = pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION);
+
+if ($ext == "pmx") {
+    $importer = new \ProcessMaker\Importer\XmlImporter();
+    $importer->setSourceFromGlobals("PROCESS_FILENAME");
+    $data = array("usr_uid" => $_SESSION['USER_LOGGED']);
+    $res = $importer->import($data);
+    $result = array(
+        "success" => true,
+        "catchMessage" => "",
+        "ExistProcessInDatabase" => 0,
+        "ExistGroupsInDatabase" => 0,
+        "sNewProUid" => $res[0]["new_uid"],
+        "project_type" => "bpmn"
+    );
+
+    echo json_encode($result);
+    exit(0);
+}
+
 function reservedWordsSqlValidate ($data)
 {
     $arrayAux = array ();

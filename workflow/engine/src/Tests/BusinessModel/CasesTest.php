@@ -67,14 +67,14 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      *
      * @covers \BusinessModel\Cases::getList
      * @expectedException        Exception
-     * @expectedExceptionMessage The user with userId: 'UidInexistente' does not exist.
+     * @expectedExceptionMessage The user with userId: 'IdDoesNotExists' does not exist.
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
     public function testGetListCasesErrorNotExistsUserIdArray()
     {
-        $this->oCases->getList(array('userId' => 'UidInexistente'));
+        $this->oCases->getList(array('userId' => 'IdDoesNotExists'));
     }
 
     /**
@@ -97,7 +97,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      *
      * @covers \BusinessModel\Cases::getList
      * @expectedException        Exception
-     * @expectedExceptionMessage The process with $pro_uid: 'UidInexistente' does not exist.
+     * @expectedExceptionMessage The process with $pro_uid: 'IdDoesNotExists' does not exist.
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -106,7 +106,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     {
         $this->oCases->getList(array(
             'userId' => '00000000000000000000000000000001',
-            'process' => 'UidInexistente'
+            'process' => 'IdDoesNotExists'
         ));
     }
 
@@ -115,7 +115,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      *
      * @covers \BusinessModel\Cases::getList
      * @expectedException        Exception
-     * @expectedExceptionMessage The category with $cat_uid: 'UidInexistente' does not exist.
+     * @expectedExceptionMessage The category with $cat_uid: 'IdDoesNotExists' does not exist.
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -124,7 +124,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     {
         $this->oCases->getList(array(
             'userId' => '00000000000000000000000000000001',
-            'category' => 'UidInexistente'
+            'category' => 'IdDoesNotExists'
         ));
     }
 
@@ -133,7 +133,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      *
      * @covers \BusinessModel\Cases::getList
      * @expectedException        Exception
-     * @expectedExceptionMessage The user with $usr_uid: 'UidInexistente' does not exist.
+     * @expectedExceptionMessage The user with $usr_uid: 'IdDoesNotExists' does not exist.
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -142,7 +142,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     {
         $this->oCases->getList(array(
             'userId' => '00000000000000000000000000000001',
-            'user' => 'UidInexistente'
+            'user' => 'IdDoesNotExists'
         ));
     }
 
@@ -151,7 +151,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      *
      * @covers \BusinessModel\Cases::getList
      * @expectedException        Exception
-     * @expectedExceptionMessage The value '2014-44-44' is not valid fot the format 'Y-m-d'.
+     * @expectedExceptionMessage The value '2014-44-44' is not a valid date for the format 'Y-m-d'.
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -169,7 +169,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      *
      * @covers \BusinessModel\Cases::getList
      * @expectedException        Exception
-     * @expectedExceptionMessage The value '2014-44-44' is not valid fot the format 'Y-m-d'.
+     * @expectedExceptionMessage The value '2014-44-44' is not a valid date for the format 'Y-m-d'.
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -440,7 +440,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      *
      * @covers \BusinessModel\Cases::getTaskCase
      * @depends testAddCase
-     * @param array $aResponse, Data for parent department
+     * @param array $aResponse
      *
      * @copyright Colosa - Bolivia
      */

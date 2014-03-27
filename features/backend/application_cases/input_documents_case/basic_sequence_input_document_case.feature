@@ -1,37 +1,41 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Input Documents cases
 Requirements:
-    a workspace with three cases of the process "Test Users-Step-Properties End Point"
+    a workspace with one case of the process "Test Input Document Case" 
+    and there are three Input Document in the process
 
 Background:
     Given that I have a valid access_token
 
 
 Scenario: Returns a list of the uploaded documents for a given case
-    Given I request "case{uid}/input-documents"
+    Given I request "cases/3980158475331a1a0288fd3009853776/input-documents"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    
+    And the response has 5 records
+
 
 Scenario: Returns an uploaded documents for a given case
-    Given I request "case/{uid}/input-document/{uid}"
+    Given I request "cases/3980158475331a1a0288fd3009853776/input-document/6075490825331a1c5eebff9015468244"
     Then the response status code should be 200
     And the response charset is "UTF-8"
-    And the type is "array"
+    And the type is "object"
     
 
 Scenario: Post metadata and then upload documents for a given case
-        Given POST this data:
+        Given POST upload an input document "/home/wendy/uploadfiles/test1.html" to "cases/3980158475331a1a0288fd3009853776/input-document"
             """
             {
 
-                
+                "inp_doc_uid": "inp_doc_uid",
+                "tas_uid": "tas_uid",
+                "app_doc_comment": "app_doc_comment"
+             
 
             }
             """
-        And I request "case/{uid}/input-document"
-        Then the response status code should be 201
+         Then the response status code should be 201
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
@@ -40,7 +44,7 @@ Scenario: Post metadata and then upload documents for a given case
 
 Scenario: Delete an uploaded or generated document from a case.
         Given that I want to delete a resource with the key "" stored in session array
-        And I request "case/{uid}/input-document/{uid}"
+        And I request "cases/3980158475331a1a0288fd3009853776/input-document/{app_doc_uid}"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"

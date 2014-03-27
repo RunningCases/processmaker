@@ -6,15 +6,15 @@ class InputDocument
     /**
      * Get data of Cases InputDocument
      *
-     * @param string $caseUid
+     * @param string $applicationUid
      * @param string $userUid
      *
      * return array Return an array with data of an InputDocument
      */
-    public function getCasesInputDocuments($caseUid, $userUid)
+    public function getCasesInputDocuments($applicationUid, $userUid)
     {
         try {
-            $sApplicationUID = $caseUid;
+            $sApplicationUID = $applicationUid;
             $sUserUID = $userUid;
             \G::LoadClass('case');
             $oCase = new \Cases();
@@ -49,16 +49,16 @@ class InputDocument
     /**
      * Get data of Cases InputDocument
      *
-     * @param string $caseUid
+     * @param string $applicationUid
      * @param string $userUid
      * @param string $inputDocumentUid
      *
      * return array Return an array with data of an InputDocument
      */
-    public function getCasesInputDocument($caseUid, $userUid, $inputDocumentUid)
+    public function getCasesInputDocument($applicationUid, $userUid, $inputDocumentUid)
     {
         try {
-            $sApplicationUID = $caseUid;
+            $sApplicationUID = $applicationUid;
             $sUserUID = $userUid;
             \G::LoadClass('case');
             $oCase = new \Cases();
@@ -104,7 +104,7 @@ class InputDocument
         try {
             $oAppDocument = \AppDocumentPeer::retrieveByPK( $inputDocumentUid, 1 );
             if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
-                throw (new \Exception('This row doesn\'t exist!'));
+                throw (new \Exception('This input document with id: '.$inputDocumentUid.' doesn\'t exist!'));
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
@@ -117,17 +117,19 @@ class InputDocument
     /**
      * Get data of Cases InputDocument
      *
-     * @param string $caseUid
+     * @param string $applicationUid
+     * @param string $taskUid
+     * @param string $appDocComment
      * @param string $inputDocumentUid
      * @param string $userUid
      *
      * return array Return an array with data of an InputDocument
      */
-    public function addCasesInputDocument($caseUid, $inputDocumentUid, $userUid)
+    public function addCasesInputDocument($applicationUid, $taskUid, $appDocComment, $inputDocumentUid, $userUid)
     {
         try {
-            if ((isset( $_FILES['form'] )) && ($_FILES['form']['error']['APP_DOC_FILENAME'] != 0)) {
-                $code = $_FILES['form']['error']['APP_DOC_FILENAME'];
+            if ((isset( $_FILES['form'] )) && ($_FILES['form']['error'] != 0)) {
+                $code = $_FILES['form']['error'];
                 switch ($code) {
                     case UPLOAD_ERR_INI_SIZE:
                         $message = \G::LoadTranslation( 'ID_UPLOAD_ERR_INI_SIZE' );
@@ -159,31 +161,22 @@ class InputDocument
                 \G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
                 die();
             }
-
             \G::LoadClass("case");
-
-            //$inputDocumentUid = $_GET["UID"]; //$_POST["form"]["DOC_UID"]
-            $appDocUid = '';
-            //$appDocUid = $_POST["form"]["APP_DOC_UID"];
+            $appDocUid = \G::generateUniqueID();
             $docVersion = '';
-            //$docVersion = intval($_POST["form"]["docVersion"]);
             $appDocType = 'INPUT';
-            //$appDocType = $_POST["form"]["APP_DOC_TYPE"];
-            $appDocComment = (isset($_POST["form"]["APP_DOC_COMMENT"]))? $_POST["form"]["APP_DOC_COMMENT"] : "";
-            $actionType = $_POST["form"]["actionType"];
-
             $case = new \Cases();
-            $case->thisIsTheCurrentUser($_SESSION["APPLICATION"], $_SESSION["INDEX"], $_SESSION["USER_LOGGED"], "REDIRECT", "casesListExtJs");
-
+            $delIndex = \AppDelegation::getCurrentIndex($applicationUid);
+            $case->thisIsTheCurrentUser($applicationUid, $delIndex, $userUid, "REDIRECT", "casesListExtJs");
             //Load the fields
-            $arrayField = $case->loadCase($_SESSION["APPLICATION"]);
+            $arrayField = $case->loadCase($applicationUid);
             $arrayField["APP_DATA"] = array_merge($arrayField["APP_DATA"], \G::getSystemConstants());
-
             //Triggers
-            $arrayTrigger = $case->loadTriggers($_SESSION["TASK"], "INPUT_DOCUMENT", $inputDocumentUid, "AFTER");
-
-
+            $arrayTrigger = $case->loadTriggers($taskUid, "INPUT_DOCUMENT", $inputDocumentUid, "AFTER");
             //Add Input Document
+            if (!$_FILES["form"]["error"]) {
+                $_FILES["form"]["error"] = 0;
+            }
             if (isset($_FILES) && isset($_FILES["form"]) && count($_FILES["form"]) > 0) {
                 $appDocUid = $case->addInputDocument(
                     $inputDocumentUid,
@@ -191,44 +184,39 @@ class InputDocument
                     $docVersion,
                     $appDocType,
                     $appDocComment,
-                    $actionType,
-                    $_SESSION["APPLICATION"],
-                    $_SESSION["INDEX"],
-                    $_SESSION["TASK"],
-                    $_SESSION["USER_LOGGED"],
+                    '',
+                    $applicationUid,
+                    $delIndex,
+                    $taskUid,
+                    $userUid,
                     "xmlform",
-                    $_FILES["form"]["name"]["APP_DOC_FILENAME"],
-                    $_FILES["form"]["error"]["APP_DOC_FILENAME"],
-                    $_FILES["form"]["tmp_name"]["APP_DOC_FILENAME"]
+                    $_FILES["form"]["name"],
+                    $_FILES["form"]["error"],
+                    $_FILES["form"]["tmp_name"]
                 );
-            }
-
-            if ($_SESSION["TRIGGER_DEBUG"]["NUM_TRIGGERS"] > 0) {
+           }
+           if ($_SESSION["TRIGGER_DEBUG"]["NUM_TRIGGERS"] > 0) {
                 //Trigger - Execute after - Start
                 $arrayField["APP_DATA"] = $case->executeTriggers(
-                    $_SESSION["TASK"],
+                    $taskUid,
                     "INPUT_DOCUMENT",
                     $inputDocumentUid,
                     "AFTER",
                     $arrayField["APP_DATA"]
                 );
                 //Trigger - Execute after - End
-            }
-
+           }
             //Save data
             $arrayData = array();
             $arrayData["APP_NUMBER"] = $arrayField["APP_NUMBER"];
             //$arrayData["APP_PROC_STATUS"] = $arrayField["APP_PROC_STATUS"];
             $arrayData["APP_DATA"]  = $arrayField["APP_DATA"];
-            $arrayData["DEL_INDEX"] = $_SESSION["INDEX"];
-            $arrayData["TAS_UID"]   = $_SESSION["TASK"];
-
-            $case->updateCase($_SESSION["APPLICATION"], $arrayData);
-
+            $arrayData["DEL_INDEX"] = $delIndex;
+            $arrayData["TAS_UID"]   = $taskUid;
+            $case->updateCase($applicationUid, $arrayData);
         } catch (\Exception $e) {
             throw $e;
         }
     }
-
 }
 

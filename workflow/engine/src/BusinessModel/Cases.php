@@ -91,7 +91,7 @@ class Cases
             Validator::catUid($category, '$cat_uid');
         }
         $status = G::toUpper($status);
-        $listStatus = array('TODO', 'DRAFT', 'COMPLETED', 'CANCEL', 'OPEN', 'CLOSE');
+        $listStatus = array('TO_DO', 'DRAFT', 'COMPLETED', 'CANCEL', 'OPEN', 'CLOSE');
         if (!(in_array($status, $listStatus))) {
             $status = '';
         }
@@ -135,7 +135,6 @@ class Cases
                 $solrEnabled = true;
             }
         }
-
 
         if ($solrEnabled) {
             $result = $ApplicationSolrIndex->getAppGridData(
@@ -184,25 +183,25 @@ class Cases
             }
         }
         if ($paged == false) {
-            $result = $result['data'];
+            $response = $result['data'];
         } else {
-            $result['total'] = $result['totalCount'];
-            unset($result['totalCount']);
-            $result['start'] = $start+1;
-            $result['limit'] = $limit;
-            $result['sort']  = G::toLower($sort);
-            $result['dir']   = G::toLower($dir);
-            $result['cat_uid']  = $category;
-            $result['pro_uid']  = $process;
-            $result['search']   = $search;
+            $response['total'] = $result['totalCount'];
+            $response['start'] = $start+1;
+            $response['limit'] = $limit;
+            $response['sort']  = G::toLower($sort);
+            $response['dir']   = G::toLower($dir);
+            $response['cat_uid']  = $category;
+            $response['pro_uid']  = $process;
+            $response['search']   = $search;
             if ($action == 'search') {
-                $result['app_status'] = G::toLower($status);
-                $result['usr_uid'] = $user;
-                $result['date_from'] = $dateFrom;
-                $result['date_to'] = $dateTo;
+                $response['app_status'] = G::toLower($status);
+                $response['usr_uid'] = $user;
+                $response['date_from'] = $dateFrom;
+                $response['date_to'] = $dateTo;
             }
+            $response['data'] = $result['data'];
         }
-        return $result;
+        return $response;
     }
 
     /**
@@ -636,14 +635,22 @@ class Cases
      * @copyright Colosa - Bolivia
      */
     public function putCancelCase($app_uid, $usr_uid, $del_index = false) {
-        Validator::appUid($app_uid, '$cas_uid');
+        Validator::isString($app_uid, '$app_uid');
+        Validator::isString($usr_uid, '$usr_uid');
+
+        Validator::appUid($app_uid, '$app_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
 
         if ($del_index === false) {
             $del_index = \AppDelegation::getCurrentIndex($app_uid);
         }
+        Validator::isInteger($del_index, '$del_index');
 
         $case = new \Cases();
+        $fields = $case->loadCase($app_uid);
+        if ($fields['APP_STATUS'] == 'CANCELLED') {
+            throw (new \Exception("The case '$app_uid' is canceled"));
+        }
         $case->cancelCase( $app_uid, $del_index, $usr_uid );
     }
 
@@ -661,14 +668,19 @@ class Cases
      * @copyright Colosa - Bolivia
      */
     public function putPauseCase($app_uid, $usr_uid, $del_index = false, $unpaused_date = null) {
-        Validator::appUid($app_uid, '$cas_uid');
+        Validator::isString($app_uid, '$app_uid');
+        Validator::isString($usr_uid, '$usr_uid');
+
+        Validator::appUid($app_uid, '$app_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
-        if ($unpaused_date != null) {
-            Validator::isDate($unpaused_date, 'Y-m-d', '$unpaused_date');
-        }
 
         if ($del_index === false) {
             $del_index = \AppDelegation::getCurrentIndex($app_uid);
+        }
+        Validator::isInteger($del_index, '$del_index');
+
+        if ($unpaused_date != null) {
+            Validator::isDate($unpaused_date, 'Y-m-d', '$unpaused_date');
         }
 
         $case = new \Cases();
@@ -687,12 +699,16 @@ class Cases
      * @copyright Colosa - Bolivia
      */
     public function putUnpauseCase($app_uid, $usr_uid, $del_index = false) {
-        Validator::appUid($app_uid, '$cas_uid');
+        Validator::isString($app_uid, '$app_uid');
+        Validator::isString($usr_uid, '$usr_uid');
+
+        Validator::appUid($app_uid, '$app_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
 
         if ($del_index === false) {
             $del_index = \AppDelegation::getCurrentIndex($app_uid);
         }
+        Validator::isInteger($del_index, '$del_index');
 
         $case = new \Cases();
         $case->unpauseCase( $app_uid, $del_index, $usr_uid );
@@ -710,13 +726,18 @@ class Cases
      * @copyright Colosa - Bolivia
      */
     public function putExecuteTriggerCase($app_uid, $tri_uid, $usr_uid, $del_index = false) {
-        Validator::appUid($app_uid, '$cas_uid');
+        Validator::isString($app_uid, '$app_uid');
+        Validator::isString($tri_uid, '$tri_uid');
+        Validator::isString($usr_uid, '$usr_uid');
+
+        Validator::appUid($app_uid, '$app_uid');
         Validator::triUid($tri_uid, '$tri_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
 
         if ($del_index === false) {
             $del_index = \AppDelegation::getCurrentIndex($app_uid);
         }
+        Validator::isInteger($del_index, '$del_index');
 
         $case = new \wsBase();
         $case->executeTrigger( $usr_uid, $app_uid, $tri_uid, $del_index );
@@ -733,7 +754,8 @@ class Cases
      * @copyright Colosa - Bolivia
      */
     public function deleteCase($app_uid) {
-        Validator::appUid($app_uid, '$cas_uid');
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
         $case = new \Cases();
         $case->removeCase( $app_uid );
     }
@@ -1288,5 +1310,124 @@ class Cases
         $oCriteria->setDBArrayTable('outputDocuments');
         $oCriteria->addDescendingOrderByColumn('CREATE_DATE');
         return $oCriteria;
+    }
+
+    /**
+     * Get Case Variables
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function getCaseVariables($app_uid) {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+
+        $case = new \Cases();
+        $fields = $case->loadCase($app_uid);
+        return $fields['APP_DATA'];
+    }
+
+    /**
+     * Put Set Case Variables
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @param array $app_data, Data for case variables
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function setCaseVariables($app_uid, $app_data) {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+        Validator::isArray($app_data, '$app_data');
+
+        $case = new \Cases();
+        $fields = $case->loadCase($app_uid);
+        $data = array_merge($fields['APP_DATA'], array('APP_DATA' => $app_data));
+        $case->updateCase($app_uid, $data);
+    }
+
+    /**
+     * Get Case Notes
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function getCaseNotes($app_uid, $usr_uid) {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+
+        $case = new \Cases();
+        $caseLoad = $case->loadCase($app_uid);
+        $pro_uid  = $caseLoad['PRO_UID'];
+        $tas_uid  = \AppDelegation::getCurrentTask($app_uid);
+        $respView  = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'VIEW' );
+        $respBlock = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'BLOCK' );
+        if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
+            throw (new \Exception("You do not have permission to cases notes."));
+        }
+
+        $appNote = new \AppNotes();
+        $note_data = $appNote->getNotesList($app_uid);
+        $response = array();
+        $response['total'] = $note_data['array']['totalCount'];
+        $response['notes'] = array();
+        $con = 0;
+        foreach ($note_data['array']['notes'] as $value) {
+            $response['notes'][$con]['app_uid'] = $value['APP_UID'];
+            $response['notes'][$con]['usr_uid'] = $value['USR_UID'];
+            $response['notes'][$con]['note_date'] = $value['NOTE_DATE'];
+            $response['notes'][$con]['note_content'] = $value['NOTE_CONTENT'];
+            $con++;
+        }
+        return $response;
+    }
+
+    /**
+     * Save new case note
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @param array $app_data, Data for case variables
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function saveCaseNote($app_uid, $usr_uid, $note_content, $send_mail = false) {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+
+        Validator::isString($usr_uid, '$usr_uid');
+        Validator::usrUid($usr_uid, '$usr_uid');
+
+        Validator::isString($note_content, '$note_content');
+        if (strlen($note_content) > 500) {
+            throw (new \Exception("Invalid value for '$note_content', the permitted maximum length of 500 characters."));
+        }
+
+        Validator::isBoolean($send_mail, '$send_mail');
+
+        $case = new \Cases();
+        $caseLoad = $case->loadCase($app_uid);
+        $pro_uid  = $caseLoad['PRO_UID'];
+        $tas_uid  = \AppDelegation::getCurrentTask($app_uid);
+        $respView  = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'VIEW' );
+        $respBlock = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'BLOCK' );
+        if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
+            throw (new \Exception("You do not have permission to cases notes."));
+        }
+
+        $note_content = addslashes($note_content);
+        $appNote = new \AppNotes();
+        $appNote->addCaseNote($app_uid, $usr_uid, $note_content, intval($send_mail));
     }
 }

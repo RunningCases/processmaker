@@ -24,16 +24,66 @@ abstract class Importer
     const IMPORT_STAT_INVALID_SOURCE_FILE = 102;
 
 
-    public abstract function import();
-    public abstract function validateSource();
-    public abstract function targetExists();
+    public function import($option = self::IMPORT_OPTION_CREATE_NEW)
+    {
+        switch ($option) {
+            case self::IMPORT_OPTION_CREATE_NEW:
+                $this->prepare();
+                $this->createNewProject();
+                break;
+            case self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW:
+                break;
+            case self::IMPORT_OPTION_OVERWRITE:
+                break;
+        }
+    }
 
+    /**
+     * Validates the source file
+     * @return mixed
+     */
+    public function validateSource()
+    {
+        return true;
+    }
 
+    /**
+     * Verify if the project already exists
+     * @return mixed
+     */
+    public function targetExists()
+    {
+        return false;
+    }
+
+    public function createNewProject()
+    {
+
+    }
+
+    public function updateProject()
+    {
+
+    }
+
+    public function disableCurrentProject()
+    {
+
+    }
+
+    /**
+     * Sets the temporal file save directory
+     * @param $dirName
+     */
     public function setSaveDir($dirName)
     {
         $this->saveDir = rtrim($dirName, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
+    /**
+     * Gets the temporal file save directory
+     * @return string
+     */
     public function getSaveDir()
     {
         if (empty($this->saveDir)) {
@@ -43,11 +93,20 @@ abstract class Importer
         return $this->saveDir;
     }
 
+    /**
+     * Sets the temporal source file
+     * @param $filename
+     */
     public function setSourceFile($filename)
     {
         $this->filename = $filename;
     }
 
+    /**
+     * Set source from Global Http Request resource
+     * @param $varName
+     * @throws \Exception
+     */
     public function setSourceFromGlobals($varName)
     {
         /*[PROCESS_FILENAME] => Array
@@ -77,6 +136,11 @@ abstract class Importer
         umask($oldUmask);
     }
 
+    /**
+     * Prepare for import, it makes all validations needed
+     * @return int
+     * @throws \Exception
+     */
     public function prepare()
     {
         if ($this->validateSource() === false) {
