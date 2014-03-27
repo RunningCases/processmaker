@@ -1086,7 +1086,11 @@ importProcess = function()
                         if (resp_.ExistProcessInDatabase == "0") {
                           if (resp_.ExistGroupsInDatabase == "0") {
                             var sNewProUid       = resp_.sNewProUid;
-                            window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                            if (resp_.project_type && resp_.project_type == "bpmn") {
+                                window.location.href = "../designer?prj_uid=" + sNewProUid;
+                            } else {
+                                window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                            }
                           }
                           else {
                             importProcessGlobal.sNewProUid        = resp_.sNewProUid;

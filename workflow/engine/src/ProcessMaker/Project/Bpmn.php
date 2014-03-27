@@ -175,6 +175,11 @@ class Bpmn extends Handler
         return $this->prjUid;
     }
 
+    /**
+     * @param string $retType
+     * @return array|Project
+     * @throws \RuntimeException
+     */
     public function getProject($retType = "array")
     {
         if (empty($this->project)) {

@@ -29,7 +29,18 @@ $ext = pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION);
 if ($ext == "pmx") {
     $importer = new \ProcessMaker\Importer\XmlImporter();
     $importer->setSourceFromGlobals("PROCESS_FILENAME");
-    $importer->import();
+    $data = array("usr_uid" => $_SESSION['USER_LOGGED']);
+    $res = $importer->import($data);
+    $result = array(
+        "success" => true,
+        "catchMessage" => "",
+        "ExistProcessInDatabase" => 0,
+        "ExistGroupsInDatabase" => 0,
+        "sNewProUid" => $res[0]["new_uid"],
+        "project_type" => "bpmn"
+    );
+
+    echo json_encode($result);
     exit(0);
 }
 

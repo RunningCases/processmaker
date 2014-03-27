@@ -1,6 +1,8 @@
 <?php
 namespace ProcessMaker\Importer;
 
+use  ProcessMaker\Project\Adapter;
+
 class XmlImporter extends Importer
 {
     /**
@@ -63,7 +65,7 @@ class XmlImporter extends Importer
             $tablesNodeList = $definition->getElementsByTagName("table");
 
             foreach ($tablesNodeList as $tableNode) {
-                $tableName = strtoupper($tableNode->getAttribute("name"));
+                $tableName = $tableNode->getAttribute("name"); //strtoupper($tableNode->getAttribute("name"));
                 $tables[$defClass][$tableName] = array();
                 /** @var \DOMElement[] $recordsNodeList */
                 $recordsNodeList = $tableNode->getElementsByTagName("record");
@@ -77,7 +79,8 @@ class XmlImporter extends Importer
 
                     foreach ($recordsNode->childNodes as $columnNode) {
                         if ($columnNode->nodeName == "#text") continue;
-                        $columns[strtoupper($columnNode->nodeName)] = self::getNodeText($columnNode);;
+                        //$columns[strtoupper($columnNode->nodeName)] = self::getNodeText($columnNode);;
+                        $columns[$columnNode->nodeName] = self::getNodeText($columnNode);;
                     }
 
                     $tables[$defClass][$tableName][] = $columns;
@@ -109,17 +112,31 @@ class XmlImporter extends Importer
             }
         }
 
-        print_r($tables);
-        print_r($wfFiles);
-
-
-        // load workflow definition
-        // load workflow files
+        //print_r($tables);
+        //print_r($wfFiles);
+        return $tables;
     }
 
-    public function import()
+    public function import($data = array())
     {
-        $this->load();
+        $tables = $this->load();
+
+        // Build BPMN project struct
+        $project = $tables["BPMN"]["PROJECT"][0];
+        $diagram = $tables["BPMN"]["DIAGRAM"][0];
+        $diagram["activities"] = $tables["BPMN"]["ACTIVITY"];
+        $diagram["artifacts"] = array();
+        $diagram["events"] = $tables["BPMN"]["EVENT"];
+        $diagram["flows"] = $tables["BPMN"]["FLOW"];
+        $diagram["gateways"] = $tables["BPMN"]["GATEWAY"];
+        $diagram["lanes"] = array();
+        $diagram["laneset"] = array();
+        $project["diagrams"] = array($diagram);
+        $project["prj_author"] = isset($data["usr_uid"])? $data["usr_uid"]: "00000000000000000000000000000001";
+        $project["process"] = $tables["BPMN"]["PROCESS"][0];
+        $result = Adapter\BpmnWorkflow::createFromStruct($project);
+
+        return $result;
     }
 
     private static function getNodeText($node)
