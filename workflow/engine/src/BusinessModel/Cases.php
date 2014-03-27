@@ -647,6 +647,10 @@ class Cases
         Validator::isInteger($del_index, '$del_index');
 
         $case = new \Cases();
+        $fields = $case->loadCase($app_uid);
+        if ($fields['APP_STATUS'] == 'CANCELLED') {
+            throw (new \Exception("The case '$app_uid' is canceled"));
+        }
         $case->cancelCase( $app_uid, $del_index, $usr_uid );
     }
 
