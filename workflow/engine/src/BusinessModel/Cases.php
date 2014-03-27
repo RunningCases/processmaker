@@ -91,7 +91,7 @@ class Cases
             Validator::catUid($category, '$cat_uid');
         }
         $status = G::toUpper($status);
-        $listStatus = array('TODO', 'DRAFT', 'COMPLETED', 'CANCEL', 'OPEN', 'CLOSE');
+        $listStatus = array('TO_DO', 'DRAFT', 'COMPLETED', 'CANCEL', 'OPEN', 'CLOSE');
         if (!(in_array($status, $listStatus))) {
             $status = '';
         }
@@ -135,7 +135,6 @@ class Cases
                 $solrEnabled = true;
             }
         }
-
 
         if ($solrEnabled) {
             $result = $ApplicationSolrIndex->getAppGridData(
@@ -184,25 +183,25 @@ class Cases
             }
         }
         if ($paged == false) {
-            $result = $result['data'];
+            $response = $result['data'];
         } else {
-            $result['total'] = $result['totalCount'];
-            unset($result['totalCount']);
-            $result['start'] = $start+1;
-            $result['limit'] = $limit;
-            $result['sort']  = G::toLower($sort);
-            $result['dir']   = G::toLower($dir);
-            $result['cat_uid']  = $category;
-            $result['pro_uid']  = $process;
-            $result['search']   = $search;
+            $response['total'] = $result['totalCount'];
+            $response['start'] = $start+1;
+            $response['limit'] = $limit;
+            $response['sort']  = G::toLower($sort);
+            $response['dir']   = G::toLower($dir);
+            $response['cat_uid']  = $category;
+            $response['pro_uid']  = $process;
+            $response['search']   = $search;
             if ($action == 'search') {
-                $result['app_status'] = G::toLower($status);
-                $result['usr_uid'] = $user;
-                $result['date_from'] = $dateFrom;
-                $result['date_to'] = $dateTo;
+                $response['app_status'] = G::toLower($status);
+                $response['usr_uid'] = $user;
+                $response['date_from'] = $dateFrom;
+                $response['date_to'] = $dateTo;
             }
+            $response['data'] = $result['data'];
         }
-        return $result;
+        return $response;
     }
 
     /**
