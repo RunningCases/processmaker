@@ -135,7 +135,7 @@ class XmlExporter extends Exporter
 
     private function getTextNode($value)
     {
-        if (preg_match('/^[\w\s\.\-]+$/', $value, $match)) {
+        if (empty($value) || preg_match('/^[\w\s\.\-]+$/', $value, $match)) {
             return $this->dom->createTextNode($value);
         } else {
             return $this->dom->createCDATASection($value);

@@ -111,9 +111,21 @@ class Bpmn extends Handler
         self::log("Create Project Success!");
     }
 
-    public function update()
+    public function update($data)
     {
+        if (array_key_exists("PRJ_CREATE_DATE", $data) && empty($data["PRJ_CREATE_DATE"])) {
+            unset($data["PRJ_UPDATE_DATE"]);
+        }
 
+        if (array_key_exists("PRJ_UPDATE_DATE", $data)) {
+            unset($data["PRJ_UPDATE_DATE"]);
+        }
+
+        $this->project->fromArray($data, BasePeer::TYPE_FIELDNAME);
+        $this->project->setPrjUpdateDate(date("Y-m-d H:i:s"));
+        $this->project->save();
+
+        $this->updateDiagram(array("DIA_NAME" => $data["PRJ_NAME"]));
     }
 
     public function remove()
@@ -206,6 +218,19 @@ class Bpmn extends Handler
         $this->diagram = new Diagram();
         $this->diagram->fromArray($data, BasePeer::TYPE_FIELDNAME);
         $this->diagram->setPrjUid($this->project->getPrjUid());
+        $this->diagram->save();
+    }
+
+    public function updateDiagram($data)
+    {
+        if (empty($this->project)) {
+            throw new \Exception("Error: There is not an initialized project.");
+        }
+        if (! is_object($this->diagram)) {
+            $this->getDiagram();
+        }
+
+        $this->diagram->fromArray($data, BasePeer::TYPE_FIELDNAME);
         $this->diagram->save();
     }
 

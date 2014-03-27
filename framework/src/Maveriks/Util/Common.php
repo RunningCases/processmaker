@@ -125,4 +125,25 @@ class Common
 
         return $result;
     }
+
+    public static function mk_dir($strPath, $rights = 0777)
+    {
+        $folder_path = array($strPath);
+        $oldumask = umask(0);
+        while (!@is_dir(dirname(end($folder_path)))
+            && dirname(end($folder_path)) != '/'
+            && dirname(end($folder_path)) != '.'
+            && dirname(end($folder_path)) != ''
+        ) {
+            array_push($folder_path, dirname(end($folder_path)));
+        }
+
+        while ($parent_folder_path = array_pop($folder_path)) {
+            if (! @is_dir($parent_folder_path)) {
+                if (! @mkdir($parent_folder_path, $rights)) {
+                    umask($oldumask);
+                }
+            }
+        }
+    }
 }

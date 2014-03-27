@@ -80,6 +80,16 @@ class BpmnWorkflow extends Project\Bpmn
         }
     }
 
+    public function update($data)
+    {
+        parent::update($data);
+        $this->wp->update(array(
+            "PRO_UID" => $data["PRJ_UID"],
+            "PRO_TITLE" => $data["PRJ_NAME"],
+            "PRO_DESCRIPTION" => $data["PRJ_DESCRIPTION"],
+        ));
+    }
+
     public static function getList($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)
     {
         $bpmnProjects = parent::getList($start, $limit, $filter);
@@ -403,7 +413,7 @@ class BpmnWorkflow extends Project\Bpmn
         $this->wp->remove();
     }
 
-    public static function createFromStruct($projectData)
+    public static function createFromStruct(array $projectData)
     {
         $bwp = new self;
         $result = array();
@@ -423,8 +433,18 @@ class BpmnWorkflow extends Project\Bpmn
             "PRJ_UID" => $projectData["prj_uid"],
             "PRJ_AUTHOR" => $projectData["prj_author"]
         ));
-        $bwp->addDiagram(array_change_key_case($projectData["diagrams"][0], CASE_UPPER));
-        $bwp->addProcess(array_change_key_case($projectData["process"], CASE_UPPER));
+
+        $diagramData = $processData = array();
+
+        if (array_key_exists("diagrams", $projectData) && is_array($projectData["diagrams"]) && count($projectData["diagrams"]) > 0) {
+            $diagramData = array_change_key_case($projectData["diagrams"][0], CASE_UPPER);
+        }
+        if (array_key_exists("process", $projectData) && is_array($projectData["process"])) {
+            $processData = array_change_key_case($projectData["process"], CASE_UPPER);
+        }
+
+        $bwp->addDiagram($diagramData);
+        $bwp->addProcess($processData);
 
         $result = array_merge($result, self::updateFromStruct($bwp->prjUid, $projectData));
 
@@ -530,7 +550,8 @@ class BpmnWorkflow extends Project\Bpmn
         $diagram = isset($projectData["diagrams"]) && isset($projectData["diagrams"][0]) ? $projectData["diagrams"][0] : array();
         $result = array();
         $bwp = BpmnWorkflow::load($prjUid);
-        //var_dump($bwp->getUid()); die;
+        $projectRecord = array_change_key_case($projectData, CASE_UPPER);
+        $bwp->update($projectRecord);
 
         /*
          * Diagram's Activities Handling
@@ -636,7 +657,7 @@ class BpmnWorkflow extends Project\Bpmn
         // looking for removed elements
         foreach ($events as $eventData) {
             if (! in_array($eventData["EVN_UID"], $whiteList)) {
-                // If it is not in the white list so, then remove them
+                // If it is not in the white list, then remove them
                 $bwp->removeEvent($eventData["EVN_UID"]);
             }
         }

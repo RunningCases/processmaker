@@ -1,7 +1,8 @@
 <?php
 namespace ProcessMaker\Importer;
 
-use  ProcessMaker\Project\Adapter;
+use ProcessMaker\Project\Adapter;
+use ProcessMaker\Util;
 
 class XmlImporter extends Importer
 {
@@ -79,8 +80,9 @@ class XmlImporter extends Importer
 
                     foreach ($recordsNode->childNodes as $columnNode) {
                         if ($columnNode->nodeName == "#text") continue;
-                        //$columns[strtoupper($columnNode->nodeName)] = self::getNodeText($columnNode);;
-                        $columns[$columnNode->nodeName] = self::getNodeText($columnNode);;
+                        //$columns[strtoupper($columnNode->nodeName)] = self::createTextNode($columnNode);;
+                        $columnName = $defClass == "WORKFLOW" ? strtoupper($columnNode->nodeName) : $columnNode->nodeName;
+                        $columns[$columnName] = self::createTextNode($columnNode);
                     }
 
                     $tables[$defClass][$tableName][] = $columns;
@@ -101,12 +103,12 @@ class XmlImporter extends Importer
                     $wfFiles[$target] = array();
                 }
 
-                $fileContent = self::getNodeText($fileNode->getElementsByTagName("file_content")->item(0));
+                $fileContent = self::createTextNode($fileNode->getElementsByTagName("file_content")->item(0));
                 $fileContent = base64_decode($fileContent);
 
                 $wfFiles[$target][] = array(
-                    "file_name" => self::getNodeText($fileNode->getElementsByTagName("file_name")->item(0)),
-                    "file_path" => self::getNodeText($fileNode->getElementsByTagName("file_path")->item(0)),
+                    "file_name" => self::createTextNode($fileNode->getElementsByTagName("file_name")->item(0)),
+                    "file_path" => self::createTextNode($fileNode->getElementsByTagName("file_path")->item(0)),
                     "file_content" => $fileContent
                 );
             }
@@ -114,12 +116,12 @@ class XmlImporter extends Importer
 
         //print_r($tables);
         //print_r($wfFiles);
-        return $tables;
+        return array($tables, $wfFiles);
     }
 
     public function import($data = array())
     {
-        $tables = $this->load();
+        list($tables, $files) = $this->load();
 
         // Build BPMN project struct
         $project = $tables["BPMN"]["PROJECT"][0];
@@ -136,15 +138,56 @@ class XmlImporter extends Importer
         $project["process"] = $tables["BPMN"]["PROCESS"][0];
         $result = Adapter\BpmnWorkflow::createFromStruct($project);
 
+        $this->importWfTables($tables["WORKFLOW"]);
+        $this->importWfFiles($files);
+
         return $result;
     }
 
-    private static function getNodeText($node)
+    private static function createTextNode($node)
     {
         if ($node->nodeType == XML_ELEMENT_NODE) {
             return $node->textContent;
         } else if ($node->nodeType == XML_TEXT_NODE || $node->nodeType == XML_CDATA_SECTION_NODE) {
             return (string) simplexml_import_dom($node->parentNode);
         }
+    }
+    
+    private static function importWfFiles(array $workflowFiles)
+    {
+        foreach ($workflowFiles as $target => $files) {
+            switch ($target) {
+                case "dynaforms": $basePath = PATH_DYNAFORM; break;
+                case "public":
+                    $basePath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP;
+                    break;
+                case "templates":
+                    $basePath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "mailTemplates" . PATH_SEP;
+                    break;
+                default: $basePath = "";
+            }
+
+            if (empty($basePath)) continue;
+
+            foreach ($files as $file) {
+                $filename = $basePath . $file["file_path"];
+                $path = dirname($filename);
+
+                if (! is_dir($path)) {
+                    Util\Common::mk_dir($path, 0775);
+                }
+
+                file_put_contents($filename, $file["file_content"]);
+                chmod($filename, 0775);
+            }
+        }
+    }
+
+    public function importWfTables($tables)
+    {
+        $tables = (object) $tables;
+
+        $processes = new \Processes();
+        $processes->createProcessPropertiesFromData($tables);
     }
 }
