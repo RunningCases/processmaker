@@ -306,6 +306,9 @@ class OutputDocument
                 if ($oOutputDocument->validate()) {
                     $oConnection->begin();
                     if (isset($aData['OUT_DOC_TITLE'])) {
+                        if ($this->existsTitle($sProcessUID, $aData["OUT_DOC_TITLE"])) {
+                            throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_SAVE")));
+                        }
                         $oOutputDocument->setOutDocTitle($aData['OUT_DOC_TITLE']);
                     }
                     if (isset($aData['OUT_DOC_DESCRIPTION'])) {
