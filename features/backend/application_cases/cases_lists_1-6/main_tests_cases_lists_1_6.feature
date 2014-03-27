@@ -7,49 +7,120 @@ Background:
     Given that I have a valid access_token
 
 
+#Obtener la cantidad de casos ACTUALES por cada listado
+
 Scenario: Returns a list of the cases for the logged in user (Inbox)
     Given I request "cases"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And store response count in session variable as "count_inbox"
 
 
+Scenario: Returns a list of the cases for the logged in user (Draft)
+    Given I request "cases/draft"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And store response count in session variable as "count_draft"
+
+
+Scenario: Returns a list of the cases for the logged in user (Participated)
+    Given I request "cases/participated"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And store response count in session variable as "count_participated"
+
+
+Scenario: Returns a list of the cases for the logged in user (Unassigned)
+    Given I request "cases/unassigned"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And store response count in session variable as "count_unassigned"
+
+
+Scenario: Returns a list of the cases for the logged in user (Paused)
+    Given I request "cases/paused"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And store response count in session variable as "count_paused"
+
+
+Scenario: Returns a list of the cases for the logged in user (Advanced-Search)
+    Given I request "cases/paused"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And store response count in session variable as "count_advanced-search"
+
+
+Scenario Outline: Create a new case in workspace with process "Derivation rules - sequential", "Derivation rules - evaluation", "Derivation rules - Parallel", "Derivation rules - parallel evaluation", "Derivation rules - selection"
+    Given POST this data:
+        """
+        {
+            "pro_uid": "<pro_uid>",
+            "tas_uid": "<tas_uid>",
+            "variables": [{"name": "admin", "lastname":"admin"}]
+        }
+        """
+    And I request "cases"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And store "app_uid" in session array as variable "app_uid_<app_uid_number>"
+    And store "app_number" in session array as variable "app_number_<app_uid_number>"
+    
+    Examples:
+    | Description                                                           | app_uid_number | pro_uid                          | tas_uid                          | variables |
+    | Create new case with process "Derivation rules - sequential"          | 1              | 99209594750ec27ea338927000421575 | 68707275350ec281ada1c95068712556 |           |
+    | Create new case with process "Derivation rules - evaluation"          | 2              | 46279907250ec73b9b25a78031279680 | 99371337850ec73c0a38eb6024620271 |           |
+    | Create new case with process "Derivation rules - Parallel"            | 3              | 35894775350ec7daa099378048029617 | 52838134750ec7dd0989fc0015625952 |           |
+    | Create new case with process "Derivation rules - parallel evaluation" | 4              | 34579467750ec8d55e8b115057818502 | 89648437550ec8d593c2159010276089 |           |
+    | Create new case with process "Derivation rules - selection"           | 5              | 82458496050ec668981ecc7039804404 | 56900024450ec668e4a9243080698854 |           |
+
+
+
+#Scenarios para filtros y paginacion de las listas
 Scenario Outline: Get paging of list inbox
     Given I request "cases/paged?Start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "<type>"
-    And the response has <records> records
+    And the response has <records> records more than "<count_inbox>"
+
 
      Examples:
     
     | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | lowercase in Start         |   a   | 1       | 0       |  400      | string |
+    | uppercase in Start         |   A   | 1       | 0       |  400      | string |
+    | lowercase in Limit         |   1   | a       | 0       |  400      | string |
+    | uppercase in Limit         |   1   | A       | 0       |  400      | string |
+    | limit=3                    |   1   | 3       | 3       |  200      | array  |
+    | start=3                    |   3   | 5       | 3       |  200      | array  |
+    | limit and start =3         |   3   | 3       | 1       |  200      | array  |
+    | high number for start      | 1000  | 1       | 0       |  200      | array  |
+    | high number for start      | 1000  | 0       | 0       |  200      | array  |
+    | empty result               |   1   | 0       | 1       |  200      | array  |
+    | empty string               |   1   | 10000   | 1       |  200      | array  |
+    | invalid start              |   b   | 25      | 0       |  400      | string |
+    | invalid limit              |   1   | c       | 0       |  400      | string |
+    | start equals zero          |   0   | 20      | 20      |  200      | array  |
+    | search 0                   |   0   | 0       | 0       |  200      | array  |
+    | search 0                   |   0   | 100     | 100     |  200      | array  |
+    | negative numbers in start  |  -10  | 25      | 25      |  200      | array  |
+    | negative numbers in limit  |   1   | -25     | 25      |  200      | array  |
+    | real numbers               |  0.0  | 1.0     | 0       |  400      | string |
+    | real numbers in start      |  0.0  | 25      | 0       |  400      | string |
+    | real numbers in limit      |  1    | 1.4599  | 0       |  400      | string |
+    | only start                 |  1    |         | 1       |  200      | array  |
+    | only limit                 |       | 25      | 1       |  200      | array  |
+    | without start and limit    |       |         | 1       |  200      | array  |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -58,13 +129,13 @@ Scenario Outline: Get order type of Descending and Acending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_inbox>"
 
 Examples:
     
     | test_description           | dir  | records |
-    | Order for Acending         | asc  |         |
-    | Order for Descending       | desc |         |
+    | Order for Acending         | asc  | 1       |
+    | Order for Descending       | desc | 1       |
 
 
 Scenario Outline: Get order type of Process Category
@@ -73,12 +144,12 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_inbox>"
 
 Examples:
     
-    | test_description                           | cat_uid                          | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  |         |
+    | test_description                           | cat_uid                           | records |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 1       |
     | Filter all categories                      |                                   |         |
 
 
@@ -88,7 +159,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_inbox>"
 
 Examples:
     
@@ -103,7 +174,7 @@ Scenario Outline: Get order type of Search of number the process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_inbox>"
 
 Examples:
     
@@ -117,7 +188,7 @@ Scenario: Returns a list of the cases for the logged in user (Draft)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has <records> records more than "<count_draft>"
 
 
 Scenario Outline: Get paging of list Draft
@@ -126,35 +197,35 @@ Scenario Outline: Get paging of list Draft
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "<type>"
-    And the response has <records> records
+    And the response has <records> records more than "<count_draft>"
 
      Examples:
     
     | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | lowercase in Start         |   a   | 1       | 0       |  400      | string |
+    | uppercase in Start         |   A   | 1       | 0       |  400      | string |
+    | lowercase in Limit         |   1   | a       | 0       |  400      | string |
+    | uppercase in Limit         |   1   | A       | 0       |  400      | string |
+    | limit=3                    |   1   | 3       | 3       |  200      | array  |
+    | start=3                    |   3   | 25      | 22      |  200      | array  |
+    | limit and start =3         |   3   | 3       | 1       |  200      | array  |
+    | high number for start      | 1000  | 1       | 0       |  200      | array  |
+    | high number for start      | 1000  | 0       | 0       |  200      | array  |
+    | empty result               |   1   | 0       | 1       |  200      | array  |
+    | empty string               |   1   | 10000   | 1       |  200      | array  |
+    | invalid start              |   b   | 25      | 0       |  400      | string |
+    | invalid limit              |   1   | c       | 0       |  400      | string |
+    | start equals zero          |   0   | 20      | 20      |  200      | array  |
+    | search 0                   |   0   | 0       | 0       |  200      | array  |
+    | search 0                   |   0   | 100     | 100     |  200      | array  |
+    | negative numbers in start  |  -10  | 25      | 25      |  200      | array  |
+    | negative numbers in limit  |   1   | -25     | 25      |  200      | array  |
+    | real numbers               |  0.0  | 1.0     | 0       |  400      | string |
+    | real numbers in start      |  0.0  | 25      | 0       |  400      | string |
+    | real numbers in limit      |  1    | 1.4599  | 0       |  400      | string |
+    | only start                 |  1    |         | 1       |  200      | array  |
+    | only limit                 |       | 25      | 1       |  200      | array  |
+    | without start and limit    |       |         | 1       |  200      | array  |
 
 
 Scenario Outline: Get order type of Descending and Ascending
@@ -163,7 +234,7 @@ Scenario Outline: Get order type of Descending and Ascending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_draft>"
 
 Examples:
     
@@ -179,7 +250,7 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_draft>"
 
 Examples:
     
@@ -194,7 +265,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_draft>"
 
 Examples:
     
@@ -209,7 +280,7 @@ Scenario Outline: Get order type of Search of the process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_draft>"
 
 Examples:
     
@@ -223,7 +294,7 @@ Scenario: Returns a list of the cases for the logged in user (Participated)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 6 records
+    And the response has <records> records more than "<count_participated>"
 
 
 Scenario Outline: Get paging of list Participated
@@ -232,35 +303,35 @@ Scenario Outline: Get paging of list Participated
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "<type>"
-    And the response has <records> records
+    And the response has <records> records more than "<count_participated>"
 
      Examples:
     
     | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | lowercase in Start         |   a   | 1       | 0       |  400      | string |
+    | uppercase in Start         |   A   | 1       | 0       |  400      | string |
+    | lowercase in Limit         |   1   | a       | 0       |  400      | string |
+    | uppercase in Limit         |   1   | A       | 0       |  400      | string |
+    | limit=3                    |   1   | 3       | 3       |  200      | array  |
+    | start=3                    |   3   | 25      | 22      |  200      | array  |
+    | limit and start =3         |   3   | 3       | 1       |  200      | array  |
+    | high number for start      | 1000  | 1       | 0       |  200      | array  |
+    | high number for start      | 1000  | 0       | 0       |  200      | array  |
+    | empty result               |   1   | 0       | 1       |  200      | array  |
+    | empty string               |   1   | 10000   | 1       |  200      | array  |
+    | invalid start              |   b   | 25      | 0       |  400      | string |
+    | invalid limit              |   1   | c       | 0       |  400      | string |
+    | start equals zero          |   0   | 20      | 20      |  200      | array  |
+    | search 0                   |   0   | 0       | 0       |  200      | array  |
+    | search 0                   |   0   | 100     | 100     |  200      | array  |
+    | negative numbers in start  |  -10  | 25      | 25      |  200      | array  |
+    | negative numbers in limit  |   1   | -25     | 25      |  200      | array  |
+    | real numbers               |  0.0  | 1.0     | 0       |  400      | string |
+    | real numbers in start      |  0.0  | 25      | 0       |  400      | string |
+    | real numbers in limit      |  1    | 1.4599  | 0       |  400      | string |
+    | only start                 |  1    |         | 1       |  200      | array  |
+    | only limit                 |       | 25      | 1       |  200      | array  |
+    | without start and limit    |       |         | 1       |  200      | array  |
 
 
 Scenario Outline: Get order type of Descending an Descending
@@ -269,7 +340,7 @@ Scenario Outline: Get order type of Descending an Descending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_participated>"
 
 Examples:
     
@@ -285,7 +356,7 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_participated>"
 
 Examples:
     
@@ -300,7 +371,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_participated>"
 
 Examples:
     
@@ -316,7 +387,7 @@ Scenario Outline: Get order type of Search
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_participated>"
 
 Examples:
     
@@ -330,7 +401,7 @@ Scenario: Returns a list of the cases for the logged in user (Unassigned)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has <records> records more than "<count_unassigned>"
 
 
 Scenario Outline: Get paging of list Unassigned
@@ -339,35 +410,35 @@ Scenario Outline: Get paging of list Unassigned
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "<type>"
-    And the response has <records> records
+    And the response has <records> records more than "<count_unassigned>"
 
      Examples:
     
     | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | lowercase in Start         |   a   | 1       | 0       |  400      | string |
+    | uppercase in Start         |   A   | 1       | 0       |  400      | string |
+    | lowercase in Limit         |   1   | a       | 0       |  400      | string |
+    | uppercase in Limit         |   1   | A       | 0       |  400      | string |
+    | limit=3                    |   1   | 3       | 3       |  200      | array  |
+    | start=3                    |   3   | 25      | 22      |  200      | array  |
+    | limit and start =3         |   3   | 3       | 1       |  200      | array  |
+    | high number for start      | 1000  | 1       | 0       |  200      | array  |
+    | high number for start      | 1000  | 0       | 0       |  200      | array  |
+    | empty result               |   1   | 0       | 1       |  200      | array  |
+    | empty string               |   1   | 10000   | 1       |  200      | array  |
+    | invalid start              |   b   | 25      | 0       |  400      | string |
+    | invalid limit              |   1   | c       | 0       |  400      | string |
+    | start equals zero          |   0   | 20      | 20      |  200      | array  |
+    | search 0                   |   0   | 0       | 0       |  200      | array  |
+    | search 0                   |   0   | 100     | 100     |  200      | array  |
+    | negative numbers in start  |  -10  | 25      | 25      |  200      | array  |
+    | negative numbers in limit  |   1   | -25     | 25      |  200      | array  |
+    | real numbers               |  0.0  | 1.0     | 0       |  400      | string |
+    | real numbers in start      |  0.0  | 25      | 0       |  400      | string |
+    | real numbers in limit      |  1    | 1.4599  | 0       |  400      | string |
+    | only start                 |  1    |         | 1       |  200      | array  |
+    | only limit                 |       | 25      | 1       |  200      | array  |
+    | without start and limit    |       |         | 1       |  200      | array  |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -376,7 +447,7 @@ Scenario Outline: Get order type of Descending and Acending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_unassigned>"
 
 Examples:
     
@@ -391,7 +462,7 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_unassigned>"
 
 Examples:
     
@@ -406,7 +477,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_unassigned>"
 
 Examples:
     
@@ -421,7 +492,7 @@ Scenario Outline: Get order type of Search
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_unassigned>"
 
 Examples:
     
@@ -436,7 +507,7 @@ Scenario: Returns a list of the cases for the logged in user (Paused)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has <records> records more than "<count_paused>"
 
 
 Scenario Outline: Get paging of list Paused
@@ -445,35 +516,35 @@ Scenario Outline: Get paging of list Paused
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "<type>"
-    And the response has <records> records
+    And the response has <records> records more than "<count_paused>"
 
      Examples:
     
     | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | lowercase in Start         |   a   | 1       | 0       |  400      | string |
+    | uppercase in Start         |   A   | 1       | 0       |  400      | string |
+    | lowercase in Limit         |   1   | a       | 0       |  400      | string |
+    | uppercase in Limit         |   1   | A       | 0       |  400      | string |
+    | limit=3                    |   1   | 3       | 3       |  200      | array  |
+    | start=3                    |   3   | 25      | 22      |  200      | array  |
+    | limit and start =3         |   3   | 3       | 1       |  200      | array  |
+    | high number for start      | 1000  | 1       | 0       |  200      | array  |
+    | high number for start      | 1000  | 0       | 0       |  200      | array  |
+    | empty result               |   1   | 0       | 1       |  200      | array  |
+    | empty string               |   1   | 10000   | 1       |  200      | array  |
+    | invalid start              |   b   | 25      | 0       |  400      | string |
+    | invalid limit              |   1   | c       | 0       |  400      | string |
+    | start equals zero          |   0   | 20      | 20      |  200      | array  |
+    | search 0                   |   0   | 0       | 0       |  200      | array  |
+    | search 0                   |   0   | 100     | 100     |  200      | array  |
+    | negative numbers in start  |  -10  | 25      | 25      |  200      | array  |
+    | negative numbers in limit  |   1   | -25     | 25      |  200      | array  |
+    | real numbers               |  0.0  | 1.0     | 0       |  400      | string |
+    | real numbers in start      |  0.0  | 25      | 0       |  400      | string |
+    | real numbers in limit      |  1    | 1.4599  | 0       |  400      | string |
+    | only start                 |  1    |         | 1       |  200      | array  |
+    | only limit                 |       | 25      | 1       |  200      | array  |
+    | without start and limit    |       |         | 1       |  200      | array  |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -482,7 +553,7 @@ Scenario Outline: Get order type of Descending and Acending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_paused>"
 
 Examples:
     
@@ -497,7 +568,7 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_paused>"
 
 Examples:
     
@@ -512,7 +583,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_paused>"
 
 Examples:
     
@@ -527,7 +598,7 @@ Scenario Outline: Get order type of Search
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_paused>"
 
 Examples:
     
@@ -541,7 +612,7 @@ Scenario: Returns a list of the cases for the logged in user (Advanced Search)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has <records> records more than "<count_advanced-search>"
 
 
 Scenario Outline: Get paging of list Advanced Search
@@ -550,35 +621,35 @@ Scenario Outline: Get paging of list Advanced Search
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "<type>"
-    And the response has <records> records
+    And the response has <records> records more than "<count_advanced-search>"
 
      Examples:
     
     | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | lowercase in Start         |   a   | 1       | 0       |  400      | string |
+    | uppercase in Start         |   A   | 1       | 0       |  400      | string |
+    | lowercase in Limit         |   1   | a       | 0       |  400      | string |
+    | uppercase in Limit         |   1   | A       | 0       |  400      | string |
+    | limit=3                    |   1   | 3       | 3       |  200      | array  |
+    | start=3                    |   3   | 25      | 22      |  200      | array  |
+    | limit and start =3         |   3   | 3       | 1       |  200      | array  |
+    | high number for start      | 1000  | 1       | 0       |  200      | array  |
+    | high number for start      | 1000  | 0       | 0       |  200      | array  |
+    | empty result               |   1   | 0       | 1       |  200      | array  |
+    | empty string               |   1   | 10000   | 1       |  200      | array  |
+    | invalid start              |   b   | 25      | 0       |  400      | string |
+    | invalid limit              |   1   | c       | 0       |  400      | string |
+    | start equals zero          |   0   | 20      | 20      |  200      | array  |
+    | search 0                   |   0   | 0       | 0       |  200      | array  |
+    | search 0                   |   0   | 100     | 100     |  200      | array  |
+    | negative numbers in start  |  -10  | 25      | 25      |  200      | array  |
+    | negative numbers in limit  |   1   | -25     | 25      |  200      | array  |
+    | real numbers               |  0.0  | 1.0     | 0       |  400      | string |
+    | real numbers in start      |  0.0  | 25      | 0       |  400      | string |
+    | real numbers in limit      |  1    | 1.4599  | 0       |  400      | string |
+    | only start                 |  1    |         | 1       |  200      | array  |
+    | only limit                 |       | 25      | 1       |  200      | array  |
+    | without start and limit    |       |         | 1       |  200      | array  |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -587,7 +658,7 @@ Scenario Outline: Get order type of Descending and Acending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_advanced-search>"
 
     Examples:
     
@@ -602,7 +673,7 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_advanced-search>"
 
     Examples:
     
@@ -618,7 +689,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_advanced-search>"
 
     Examples:
     
@@ -634,7 +705,7 @@ Scenario Outline: Get order type of Search
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_advanced-search>"
 
     Examples:
     
@@ -649,7 +720,7 @@ Scenario Outline: Get order for Status
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_advanced-search>"
 
     Examples:
     
@@ -666,7 +737,7 @@ Scenario Outline: Get order for User
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_advanced-search>"
 
     Examples:
     
@@ -683,7 +754,7 @@ Scenario Outline: Get order for date
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records more than "<count_advanced-search>"
 
     Examples:
     

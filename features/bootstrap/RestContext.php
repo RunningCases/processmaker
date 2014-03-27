@@ -1191,6 +1191,8 @@ class RestContext extends BehatContext
         }
 
         $this->_restDeleteQueryStringSuffix = "/" . $varValue;
+
+        $this->printDebug("$varName = $varValue\nsessionVarName = $sessionVarName\n");
         
         $this->_restObjectMethod = 'delete';
     }
@@ -1259,7 +1261,7 @@ class RestContext extends BehatContext
         $pageUrl = str_replace($varName, $varValue, $pageUrl);
 
 
-        //$this->printDebug("URL: $pageUrl\n$varName = $varValue\n");
+        $this->printDebug("URL: $pageUrl\n$varName = $varValue\nsessionVarName = $sessionVarName\n");
 
 
         $this->iRequest($pageUrl, $urlType);
@@ -1434,5 +1436,88 @@ class RestContext extends BehatContext
     {
         $this->_restObjectMethod = 'delete';
     }
+
+     /**
+     * @Given /^store response count in session variable as "([^"]*)"$/
+     */
+    public function storeResponseCountInSessionVariableAs($varName)
+    {
+        $data = $this->_data;
+        $currentRecordsCount=count($data);
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = new StdClass();
+        }
+        $sessionData->$varName = $currentRecordsCount;
+        file_put_contents("session.data", json_encode($sessionData));
+    }
+
+   
+    /**
+     * @Given /^the response has (\d+) records more than "([^"]*)"$/
+     */
+    public function theResponseHasRecordsMoreThan($records, $base)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$base) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$base;
+        }
+
+        $totalRecords=$varValue + $records;
+
+        $this->theResponseHasRecords($totalRecords);
+    }
+
+
+     /**
+     * @Given /^POST upload an input document "([^"]*)" to "([^"]*)"$/
+     */
+    public function postUploadAnInputDocumentTo($file, $url, PyStringNode $string)
+    {
+        $baseUrl = $this->getParameter('base_url');
+        $url = $baseUrl.$url;
+        $accesstoken = $this->getParameter('access_token');
+        $headr = array();
+        $headr[] = 'Authorization: Bearer '.$accesstoken;
+
+        $postFields = json_decode($string);
+        $postFields->form ='@'.$file;
+        //print_r($postFields);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $postResult = curl_exec($ch);
+        print_r($postResult);
+        curl_close($ch);
+        
+        //Save result as usual
+        $this->_type = 'json';
+        //$this->_response = json_decode($postResult);
+        $this->_data = json_decode($postResult);
+
+        
+
+       // $postResult = (array)json_decode($postResult);
+
+
+
+
+
+    }
+
+
+
+
 
 }
