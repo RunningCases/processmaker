@@ -527,7 +527,7 @@ class Applications
 
             // replacing the status data with their respective translation
             if (isset( $aRow['APP_STATUS'] )) {
-                $aRow['APP_STATUS'] = G::LoadTranslation( "ID_{$aRow['APP_STATUS']}" );
+                $aRow['APP_STATUS_LABEL'] = G::LoadTranslation( "ID_{$aRow['APP_STATUS']}" );
             }
 
             // replacing the priority data with their respective translation
