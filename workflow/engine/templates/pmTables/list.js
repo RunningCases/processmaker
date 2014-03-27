@@ -511,6 +511,7 @@ DeletePMTable = function() {
 ImportPMTable = function(){
 
   var w = new Ext.Window({
+    id: 'windowPmTableUploaderImport',
     title: '',
     width: 420,
     height: 160,
@@ -570,6 +571,7 @@ ImportPMTable = function(){
                     }
                     else {
                       win = new Ext.Window({
+                        id: 'windowImportingError',
                         applyTo:'hello-win',
                         layout:'fit',
                         width:500,
@@ -659,6 +661,7 @@ PMTableData = function()
   }
 
   win = new Ext.Window({
+    id: 'windowPmtablesReportTable',
     layout: 'fit',
     width: 700,
     height: 400,

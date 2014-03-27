@@ -75,10 +75,10 @@ abstract class Exporter
         $bpmnStruct["DATA"] = array();
         $bpmnStruct["DIAGRAM"] = \BpmnDiagram::getAll($this->prjUid);
         $bpmnStruct["DOCUMENTATION"] = array();
-        $bpmnStruct["BPMN_EVENT"] = \BpmnEvent::getAll($this->prjUid);
+        $bpmnStruct["EVENT"] = \BpmnEvent::getAll($this->prjUid);
         $bpmnStruct["EXTENSION"] = array();
         $bpmnStruct["FLOW"] = \BpmnFlow::getAll($this->prjUid, null, null, "", CASE_UPPER, false);
-        $bpmnStruct["BPMN_GATEWAY"] = \BpmnGateway::getAll($this->prjUid);
+        $bpmnStruct["GATEWAY"] = \BpmnGateway::getAll($this->prjUid);
         $bpmnStruct["LANE"] = array();
         $bpmnStruct["LANESET"] = array();
         $bpmnStruct["PARTICIPANT"] = array();

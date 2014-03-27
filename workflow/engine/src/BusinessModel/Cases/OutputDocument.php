@@ -51,7 +51,7 @@ class OutputDocument
      * @param string $userUid
      * @param string $applicationDocumentUid
      *
-     * return array Return an array with data of an OutputDocument
+     * return object Return an object with data of an OutputDocument
      */
     public function getCasesOutputDocument($applicationUid, $userUid, $applicationDocumentUid)
     {
@@ -84,7 +84,8 @@ class OutputDocument
                     }
                 }
             }
-            return $result;
+            $oResponse = json_decode(json_encode($result), false);
+            return $oResponse;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -95,14 +96,13 @@ class OutputDocument
      *
      * @param string $applicationDocumentUid
      *
-     * return array Return an array with data of an OutputDocument
      */
     public function removeOutputDocument($applicationDocumentUid)
     {
         try {
             $oAppDocument = \AppDocumentPeer::retrieveByPK( $applicationDocumentUid, 1 );
             if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
-                throw (new \Exception('This row doesn\'t exist!'));
+                throw (new \Exception('This output document with id: '.$applicationDocumentUid.' doesn\'t exist!'));
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
@@ -119,7 +119,7 @@ class OutputDocument
      * @param string $outputDocumentUid
      * @param string $userUid
      *
-     * return array Return an array with data of an OutputDocument
+     * return object Return an object with data of an OutputDocument
      */
     public function addCasesOutputDocument($applicationUid, $outputDocumentUid, $userUid)
     {
@@ -278,7 +278,6 @@ class OutputDocument
      * @param string $sPath
      * @return variant
      */
-
     public function generate($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape = false, $sTypeDocToGener = 'BOTH', $aProperties = array(), $sApplication)
     {
         if (($sUID != '') && is_array($aFields) && ($sPath != '')) {
@@ -429,6 +428,14 @@ class OutputDocument
         }
     }
 
+    /*
+     * Generate Html2ps_pdf
+     * @param string $sUID
+     * @param array $aFields
+     * @param string $sPath
+     * @param string $sApplication
+     * @return variant
+     */
     public function generateHtml2ps_pdf($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape = false, $aProperties = array(), $sApplication)
     {
         define("MAX_FREE_FRACTION", 1);
