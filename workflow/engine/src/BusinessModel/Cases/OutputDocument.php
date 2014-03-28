@@ -408,7 +408,13 @@ class OutputDocument
                     switch ($aProperties['report_generator']) {
                         case 'TCPDF':
                             $o = new \OutputDocument();
-                            $o->generateTcpdf($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape, $aProperties);
+                            if (strlen($sContent) == 0) {
+                                libxml_use_internal_errors(true);
+                                $o->generateTcpdf($sUID, $aFields, $sPath, $sFilename, ' ', $sLandscape, $aProperties);
+                                libxml_use_internal_errors(false);
+                            } else {
+                                $o->generateTcpdf($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape, $aProperties);
+                            }
                             break;
                         case 'HTML2PDF':
                         default:

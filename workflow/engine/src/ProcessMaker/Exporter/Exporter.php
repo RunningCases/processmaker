@@ -87,7 +87,6 @@ abstract class Exporter
 
         $oProcess = new \Processes();
         $workflowData = (array) $oProcess->getWorkflowData($this->prjUid);
-
         $workflowData["process"]['PRO_DYNAFORMS'] = empty($workflowData["process"]['PRO_DYNAFORMS'])
             ? "" : serialize($workflowData["process"]['PRO_DYNAFORMS']);
 
@@ -100,11 +99,9 @@ abstract class Exporter
         $data["workflow-files"] = array();
 
         // getting dynaforms
-        $dynaforms = array();
-
         foreach ($workflowData["dynaforms"] as $dynaform) {
             $dynFile = PATH_DYNAFORM . $dynaform['DYN_FILENAME'] . '.xml';
-            $dynaforms[] = array(
+            $data["workflow-files"]["DYNAFORMS"][] = array(
                 "filename" => $dynaform['DYN_TITLE'],
                 "filepath" => $dynaform['DYN_FILENAME'] . '.xml',
                 "file_content" => file_get_contents($dynFile)
@@ -131,10 +128,10 @@ abstract class Exporter
 
             foreach ($templatesFiles as $templatesFile) {
                 if (is_dir($templatesFile)) continue;
-
+                $filename = basename($templatesFile);
                 $data["workflow-files"][$target][] = array(
-                    "filename" => basename($templatesFile),
-                    "filepath" => str_replace($templatesDir, "", $templatesFile),
+                    "filename" => $filename,
+                    "filepath" => $this->prjUid . PATH_SEP . $filename,
                     "file_content" => file_get_contents($templatesFile)
                 );
             }
