@@ -649,7 +649,7 @@ class Cases
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
         if ($fields['APP_STATUS'] == 'CANCELLED') {
-            throw (new \Exception("The case '$app_uid' is canceled"));
+            throw (new \Exception("The case '$app_uid' is already canceled"));
         }
         $case->cancelCase( $app_uid, $del_index, $usr_uid );
     }
@@ -1348,7 +1348,7 @@ class Cases
 
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
-        $data = array_merge($fields['APP_DATA'], array('APP_DATA' => $app_data));
+        $data['APP_DATA'] = array_merge($fields['APP_DATA'], $app_data);
         $case->updateCase($app_uid, $data);
     }
 
@@ -1362,9 +1362,23 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function getCaseNotes($app_uid, $usr_uid) {
+    public function getCaseNotes($app_uid, $usr_uid, $data_get) {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
+        Validator::isString($usr_uid, '$usr_uid');
+        Validator::usrUid($usr_uid, '$usr_uid');
+        Validator::isArray($data_get, '$data_get');
+
+        Validator::isArray($data_get, '$data_get');
+        $start = isset( $data_get["start"] ) ? $data_get["start"] : "0";
+        $limit = isset( $data_get["limit"] ) ? $data_get["limit"] : "";
+        $sort = isset( $data_get["sort"] ) ? $data_get["sort"] : "APP_NOTES.NOTE_DATE";
+        $dir = isset( $data_get["dir"] ) ? $data_get["dir"] : "DESC";
+        $user = isset( $data_get["user"] ) ? $data_get["user"] : "";
+        $dateFrom = (!empty( $data_get["dateFrom"] )) ? substr( $data_get["dateFrom"], 0, 10 ) : "";
+        $dateTo = (!empty( $data_get["dateTo"] )) ? substr( $data_get["dateTo"], 0, 10 ) : "";
+        $search = isset( $data_get["search"] ) ? $data_get["search"] : "";
+        $paged = isset( $data_get["paged"] ) ? $data_get["paged"] : true;
 
         $case = new \Cases();
         $caseLoad = $case->loadCase($app_uid);
@@ -1376,18 +1390,63 @@ class Cases
             throw (new \Exception("You do not have permission to cases notes."));
         }
 
+        if ($sort != 'APP_NOTE.NOTE_DATE') {
+            $sort = G::toUpper($sort);
+            $columnsAppCacheView = \AppNotesPeer::getFieldNames(\BasePeer::TYPE_FIELDNAME);
+            if (!(in_array($sort, $columnsAppCacheView))) {
+                $sort = 'APP_NOTES.NOTE_DATE';
+            } else {
+                $sort = 'APP_NOTES.'.$sort;
+            }
+        }
+        if ((int)$start == 1 || (int)$start == 0) {
+            $start = 0;
+        }
+        $dir = G::toUpper($dir);
+        if (!($dir == 'DESC' || $dir == 'ASC')) {
+            $dir = 'DESC';
+        }
+        if ($user != '') {
+            Validator::usrUid($user, '$usr_uid');
+        }
+        if ($dateFrom != '') {
+            Validator::isDate($dateFrom, 'Y-m-d', '$date_from');
+        }
+        if ($dateTo != '') {
+            Validator::isDate($dateTo, 'Y-m-d', '$date_to');
+        }
+
         $appNote = new \AppNotes();
-        $note_data = $appNote->getNotesList($app_uid);
+        $note_data = $appNote->getNotesList($app_uid, $user, $start, $limit, $sort, $dir, $dateFrom, $dateTo, $search);
         $response = array();
-        $response['total'] = $note_data['array']['totalCount'];
-        $response['notes'] = array();
-        $con = 0;
-        foreach ($note_data['array']['notes'] as $value) {
-            $response['notes'][$con]['app_uid'] = $value['APP_UID'];
-            $response['notes'][$con]['usr_uid'] = $value['USR_UID'];
-            $response['notes'][$con]['note_date'] = $value['NOTE_DATE'];
-            $response['notes'][$con]['note_content'] = $value['NOTE_CONTENT'];
-            $con++;
+        if ($paged === true) {
+            $response['total'] = $note_data['array']['totalCount'];
+            $response['start'] = $start;
+            $response['limit'] = $limit;
+            $response['sort'] = $sort;
+            $response['dir'] = $dir;
+            $response['usr_uid'] = $user;
+            $response['date_to'] = $dateTo;
+            $response['date_from'] = $dateFrom;
+            $response['search'] = $search;
+            $response['data'] = array();
+            $con = 0;
+            foreach ($note_data['array']['notes'] as $value) {
+                $response['data'][$con]['app_uid'] = $value['APP_UID'];
+                $response['data'][$con]['usr_uid'] = $value['USR_UID'];
+                $response['data'][$con]['note_date'] = $value['NOTE_DATE'];
+                $response['data'][$con]['note_content'] = $value['NOTE_CONTENT'];
+                $con++;
+            }
+        } else {
+            $con = 0;
+            foreach ($note_data['array']['notes'] as $value) {
+                $response[$con]['app_uid'] = $value['APP_UID'];
+                $response[$con]['usr_uid'] = $value['USR_UID'];
+                $response[$con]['note_date'] = $value['NOTE_DATE'];
+                $response[$con]['note_content'] = $value['NOTE_CONTENT'];
+                $con++;
+            }
         }
         return $response;
     }
