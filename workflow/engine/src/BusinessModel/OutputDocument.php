@@ -267,7 +267,7 @@ class OutputDocument
                 $aData['out_doc_pdf_security_open_password'] = \G::encrypt( $aData['out_doc_pdf_security_open_password'], $outDocUid );
                 $aData['out_doc_pdf_security_owner_password'] = \G::encrypt( $aData['out_doc_pdf_security_owner_password'], $outDocUid );
             }
-            $this->updateOutputDocument($sProcessUID, $aData, $outDocUid);
+            $this->updateOutputDocument($sProcessUID, $aData, $outDocUid, 1);
             //Return
             unset($aData["PRO_UID"]);
             $aData = array_change_key_case($aData, CASE_LOWER);
@@ -283,10 +283,11 @@ class OutputDocument
      * @param string $sProcessUID
      * @param array  $aData
      * @param string $sOutputDocumentUID
+     * @param int $sFlag
      *
      * @access public
      */
-    public function updateOutputDocument($sProcessUID, $aData, $sOutputDocumentUID = '')
+    public function updateOutputDocument($sProcessUID, $aData, $sOutputDocumentUID = '', $sFlag)
     {
         $oConnection = \Propel::getConnection(\OutputDocumentPeer::DATABASE_NAME);
         $pemission = $aData['out_doc_pdf_security_permissions'];
@@ -306,6 +307,9 @@ class OutputDocument
                 if ($oOutputDocument->validate()) {
                     $oConnection->begin();
                     if (isset($aData['OUT_DOC_TITLE'])) {
+                        if ($this->existsTitle($sProcessUID, $aData["OUT_DOC_TITLE"]) && $sFlag == 0) {
+                            throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_SAVE")));
+                        }
                         $oOutputDocument->setOutDocTitle($aData['OUT_DOC_TITLE']);
                     }
                     if (isset($aData['OUT_DOC_DESCRIPTION'])) {
