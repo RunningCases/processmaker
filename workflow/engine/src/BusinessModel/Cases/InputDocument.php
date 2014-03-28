@@ -86,7 +86,8 @@ class InputDocument
                     }
                 }
             }
-            return $result;
+            $oResponse = json_decode(json_encode($result), false);
+            return $oResponse;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -195,17 +196,16 @@ class InputDocument
                     $_FILES["form"]["tmp_name"]
                 );
            }
-           if ($_SESSION["TRIGGER_DEBUG"]["NUM_TRIGGERS"] > 0) {
-                //Trigger - Execute after - Start
-                $arrayField["APP_DATA"] = $case->executeTriggers(
-                    $taskUid,
-                    "INPUT_DOCUMENT",
-                    $inputDocumentUid,
-                    "AFTER",
-                    $arrayField["APP_DATA"]
-                );
-                //Trigger - Execute after - End
-           }
+           //Trigger - Execute after - Start
+           $arrayField["APP_DATA"] = $case->executeTriggers(
+               $taskUid,
+               "INPUT_DOCUMENT",
+               $inputDocumentUid,
+               "AFTER",
+               $arrayField["APP_DATA"]
+           );
+           //Trigger - Execute after - End
+
             //Save data
             $arrayData = array();
             $arrayData["APP_NUMBER"] = $arrayField["APP_NUMBER"];
