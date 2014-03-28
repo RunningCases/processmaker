@@ -86,7 +86,7 @@ class OutputDocuments extends Api
         try {
             $request_data = (array)($request_data);
             $outputDocument = new \BusinessModel\OutputDocument();
-            $arrayData = $outputDocument->updateOutputDocument($prjUid, $request_data, $outputDocumentUid);
+            $arrayData = $outputDocument->updateOutputDocument($prjUid, $request_data, $outputDocumentUid, 0);
         } catch (\Exception $e) {
             //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
