@@ -18,9 +18,9 @@ class Cases extends Api
     /**
      * Get list Cases To Do
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
@@ -65,9 +65,9 @@ class Cases extends Api
     /**
      * Get list Cases To Do with paged
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
@@ -112,9 +112,9 @@ class Cases extends Api
     /**
      * Get list Cases Draft
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
@@ -159,9 +159,9 @@ class Cases extends Api
     /**
      * Get list Cases Draft with paged
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
@@ -206,9 +206,9 @@ class Cases extends Api
     /**
      * Get list Cases Participated
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
@@ -253,9 +253,9 @@ class Cases extends Api
     /**
      * Get list Cases Participated with paged
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
@@ -300,9 +300,9 @@ class Cases extends Api
     /**
      * Get list Cases Unassigned
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
@@ -347,9 +347,9 @@ class Cases extends Api
     /**
      * Get list Cases Unassigned with paged
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
@@ -394,9 +394,9 @@ class Cases extends Api
     /**
      * Get list Cases Paused
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
@@ -441,9 +441,9 @@ class Cases extends Api
     /**
      * Get list Cases Paused with paged
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
@@ -488,16 +488,16 @@ class Cases extends Api
     /**
      * Get list Cases Advanced Search
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
      * @param string $app_status {@from path}
      * @param string $user {@from path}
-     * @param string $dateFrom {@from path}
-     * @param string $dateTo {@from path}
+     * @param string $date_from {@from path}
+     * @param string $date_to {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -515,8 +515,8 @@ class Cases extends Api
         $pro_uid = '',
         $app_status = '',
         $user = '',
-        $dateFrom = '',
-        $dateTo = '',
+        $date_from = '',
+        $date_to = '',
         $search = ''
     )
     {
@@ -533,8 +533,8 @@ class Cases extends Api
             $dataList['process'] = $pro_uid;
             $dataList['status'] = $app_status;
             $dataList['user'] = $user;
-            $dataList['dateFrom'] = $dateFrom;
-            $dataList['dateTo'] = $dateTo;
+            $dataList['dateFrom'] = $date_from;
+            $dataList['dateTo'] = $date_to;
             $dataList['search'] = $search;
             $oCases = new \BusinessModel\Cases();
             $response = $oCases->getList($dataList);
@@ -547,16 +547,16 @@ class Cases extends Api
     /**
      * Get list Cases Advanced Search with Paged
      *
-     * @param string $paged {@from path}
      * @param string $start {@from path}
      * @param string $limit {@from path}
+     * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
      * @param string $pro_uid {@from path}
      * @param string $app_status {@from path}
      * @param string $usr_uid {@from path}
-     * @param string $dateFrom {@from path}
-     * @param string $dateTo {@from path}
+     * @param string $date_from {@from path}
+     * @param string $date_to {@from path}
      * @param string $search {@from path}
      * @return array
      *
@@ -868,19 +868,97 @@ class Cases extends Api
     /**
      * Get Case Notes
      *
-     * @param string $app_uid {@min 1}{@max 32}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $sort {@from path}
+     * @param string $dir {@from path}
+     * @param string $usr_uid {@from path}
+     * @param string $date_from {@from path}
+     * @param string $date_to {@from path}
+     * @param string $search {@from path}
+     * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @url GET /:app_uid/notes
      */
-    public function doGetCaseNotes($app_uid)
+    public function doGetCaseNotes(
+        $app_uid,
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $usr_uid = '',
+        $date_from = '',
+        $date_to = '',
+        $search = ''
+    )
     {
         try {
+            $dataList['paged']  = false;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['user'] = $usr_uid;
+            $dataList['dateFrom'] = $date_from;
+            $dataList['dateTo'] = $date_to;
+            $dataList['search'] = $search;
+
             $usr_uid = $this->getUserId();
             $cases = new \BusinessModel\Cases();
-            $response = $cases->getCaseNotes($app_uid, $usr_uid);
+            $response = $cases->getCaseNotes($app_uid, $usr_uid, $dataList);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Get Case Notes with Paged
+     *
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $sort {@from path}
+     * @param string $dir {@from path}
+     * @param string $usr_uid {@from path}
+     * @param string $date_from {@from path}
+     * @param string $date_to {@from path}
+     * @param string $search {@from path}
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /:app_uid/notes/paged
+     */
+    public function doGetCaseNotesPaged(
+        $app_uid,
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $usr_uid = '',
+        $date_from = '',
+        $date_to = '',
+        $search = ''
+    )
+    {
+        try {
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['user'] = $usr_uid;
+            $dataList['dateFrom'] = $date_from;
+            $dataList['dateTo'] = $date_to;
+            $dataList['search'] = $search;
+
+            $usr_uid = $this->getUserId();
+            $cases = new \BusinessModel\Cases();
+            $response = $cases->getCaseNotes($app_uid, $usr_uid, $dataList);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
