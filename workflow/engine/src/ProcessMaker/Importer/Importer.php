@@ -1,8 +1,13 @@
 <?php
 namespace ProcessMaker\Importer;
 
+use ProcessMaker\Util;
+use ProcessMaker\Project\Adapter;
+
 abstract class Importer
 {
+    protected $data = array();
+    protected $importData = array();
     protected $filename = "";
     protected $saveDir = "";
 
@@ -23,19 +28,55 @@ abstract class Importer
      */
     const IMPORT_STAT_INVALID_SOURCE_FILE = 102;
 
+    public abstract function load();
 
     public function import($option = self::IMPORT_OPTION_CREATE_NEW)
     {
+        $this->prepare();
+
         switch ($option) {
             case self::IMPORT_OPTION_CREATE_NEW:
-                $this->prepare();
-                $this->createNewProject();
+                $result = $this->doImport();
                 break;
             case self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW:
                 break;
             case self::IMPORT_OPTION_OVERWRITE:
                 break;
         }
+
+        return $result;
+    }
+
+    /**
+     * Prepare for import, it makes all validations needed
+     * @return int
+     * @throws \Exception
+     */
+    public function prepare()
+    {
+        if ($this->validateSource() === false) {
+            throw new \Exception(
+                "Error, Invalid file type or the file have corrupt data",
+                self::IMPORT_STAT_INVALID_SOURCE_FILE
+            );
+        }
+
+        $this->importData = $this->load();
+
+        $this->validateImportData();
+
+        if ($this->targetExists()) {
+            throw new \Exception(sprintf(
+                "Project already exists, you need set an action to continue. " .
+                "Avaliable actions: [%s|%s|%s].", self::IMPORT_OPTION_CREATE_NEW,
+                self::IMPORT_OPTION_OVERWRITE, self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW
+            ), self::IMPORT_STAT_TARGET_ALREADY_EXISTS);
+        }
+    }
+
+    public function setData($key, $value)
+    {
+        $this->data[$key] = $value;
     }
 
     /**
@@ -47,18 +88,29 @@ abstract class Importer
         return true;
     }
 
+    public function validateImportData()
+    {
+        if (! isset($this->importData["tables"]["bpmn"])) {
+            throw new \Exception("BPMN Definition is missing.");
+        }
+        if (! isset($this->importData["tables"]["bpmn"]["project"]) || count($this->importData["tables"]["bpmn"]["project"]) !== 1) {
+            throw new \Exception("BPMN table: \"Project\", definition is missing or has multiple definition.");
+        }
+
+        return true;
+    }
+
     /**
      * Verify if the project already exists
      * @return mixed
      */
     public function targetExists()
     {
-        return false;
-    }
+        $prjUid = $this->importData["tables"]["bpmn"]["project"][0]["prj_uid"];
 
-    public function createNewProject()
-    {
+        $bpmnProject = \BpmnProjectPeer::retrieveByPK($prjUid);
 
+        return is_object($bpmnProject);
     }
 
     public function updateProject()
@@ -109,15 +161,6 @@ abstract class Importer
      */
     public function setSourceFromGlobals($varName)
     {
-        /*[PROCESS_FILENAME] => Array
-        (
-            [name] => sample29.pm
-            [type] => application/pm
-            [tmp_name] => /tmp/phpvHpCVO
-            [error] => 0
-            [size] => 1260881
-        )*/
-
         if (! array_key_exists($varName, $_FILES)) {
             throw new \Exception("Couldn't find specified source \"$varName\" in PHP Globals");
         }
@@ -136,28 +179,75 @@ abstract class Importer
         umask($oldUmask);
     }
 
-    /**
-     * Prepare for import, it makes all validations needed
-     * @return int
-     * @throws \Exception
-     */
-    public function prepare()
+    protected function importBpmnTables(array $tables)
     {
-        if ($this->validateSource() === false) {
-            throw new \Exception(
-                "Error, Invalid file type or the file have corrupt data",
-                self::IMPORT_STAT_INVALID_SOURCE_FILE
-            );
-        }
+        // Build BPMN project struct
+        $project = $tables["project"][0];
+        $diagram = $tables["diagram"][0];
+        $diagram["activities"] = $tables["activity"];
+        $diagram["artifacts"] = array();
+        $diagram["events"] = $tables["event"];
+        $diagram["flows"] = $tables["flow"];
+        $diagram["gateways"] = $tables["gateway"];
+        $diagram["lanes"] = array();
+        $diagram["laneset"] = array();
+        $project["diagrams"] = array($diagram);
+        $project["prj_author"] = isset($this->data["usr_uid"])? $this->data["usr_uid"]: "00000000000000000000000000000001";
+        $project["process"] = $tables["process"][0];
 
-        if ($this->targetExists()) {
-            throw new \Exception(sprintf(
-                "Project already exists, you need set an action to continue. " .
-                "Avaliable actions: [%s|%s|%s].", self::IMPORT_OPTION_CREATE_NEW,
-                self::IMPORT_OPTION_OVERWRITE, self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW
-            ), self::IMPORT_STAT_TARGET_ALREADY_EXISTS);
-        }
+        return Adapter\BpmnWorkflow::createFromStruct($project);
+    }
 
-        return self::IMPORT_STAT_SUCCESS;
+    protected function importWfTables(array $tables)
+    {
+        $tables = (object) $tables;
+
+        $processes = new \Processes();
+        $processes->createProcessPropertiesFromData($tables);
+    }
+
+    protected function importWfFiles(array $workflowFiles)
+    {
+        foreach ($workflowFiles as $target => $files) {
+            switch ($target) {
+                case "dynaforms":
+                    $basePath = PATH_DYNAFORM;
+                    break;
+                case "public":
+                    $basePath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP;
+                    break;
+                case "templates":
+                    $basePath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "mailTemplates" . PATH_SEP;
+                    break;
+                default:
+                    $basePath = "";
+            }
+
+            if (empty($basePath)) continue;
+
+            foreach ($files as $file) {
+                $filename = $basePath . $file["file_path"];
+                $path = dirname($filename);
+
+                if (! is_dir($path)) {
+                    Util\Common::mk_dir($path, 0775);
+                }
+
+                file_put_contents($filename, $file["file_content"]);
+                chmod($filename, 0775);
+            }
+        }
+    }
+
+    public function doImport()
+    {
+        $tables = $this->importData["tables"];
+        $files = $this->importData["files"];
+
+        $result = $this->importBpmnTables($tables["bpmn"]);
+        $this->importWfTables($tables["workflow"]);
+        $this->importWfFiles($files["workflow"]);
+
+        return $result;
     }
 }

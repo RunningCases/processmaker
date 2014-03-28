@@ -74,6 +74,29 @@ class Project extends Api
     }
 
     /**
+     * @url GET /:prj_uid/export
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function export($prj_uid)
+    {
+        $exporter = new \ProcessMaker\Exporter\XmlExporter($prj_uid);
+
+        $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
+        $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $exporter->getProjectName() . "-*.pmx") + 1;
+        $outputFilename = $outputDir . sprintf("%s-%s.%s", $exporter->getProjectName(), $version, "pmx");
+
+        $exporter->saveExport($outputFilename);
+
+        $httpStream = new \ProcessMaker\Util\IO\HttpStream();
+        $fileExtension = pathinfo($outputFilename, PATHINFO_EXTENSION);
+
+        $httpStream->loadFromFile($outputFilename);
+        $httpStream->setHeader("Content-Type", "application/$fileExtension");
+        $httpStream->send();
+    }
+
+    /**
      * @url GET /:prj_uid/process
      *
      * @param string $prj_uid {@min 32}{@max 32}
