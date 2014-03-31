@@ -1,9 +1,6 @@
 <?php
 namespace ProcessMaker\Importer;
 
-use ProcessMaker\Project\Adapter;
-use ProcessMaker\Util;
-
 class XmlImporter extends Importer
 {
     /**
@@ -12,17 +9,22 @@ class XmlImporter extends Importer
     protected $dom;
     protected $root;
     protected $version = "";
+    protected $metadata;
 
     public function __construct()
     {
         $this->dom = new \DOMDocument();
     }
 
-    public function setSourceFile($filename)
-    {
-        $this->filename = $filename;
-    }
-
+    /**
+     * @return array
+     * Example:
+     * array(
+     *   "tables" => array("bpmn" => array(), "workflow" => array())
+     *   "files" => array("bpmn" => array(), "workflow" => array())
+     * )
+     * @throws \Exception
+     */
     public function load()
     {
         $this->dom->load($this->filename);
@@ -36,13 +38,13 @@ class XmlImporter extends Importer
         }
 
         // read metadata section
-        $metadata = $this->root->getElementsByTagName("metadata");
+        $metadataNode = $this->root->getElementsByTagName("metadata");
 
-        if ($metadata->length != 1) {
+        if ($metadataNode->length != 1) {
             throw new \Exception("Invalid Document format, metadata section is missing or has multiple definition.");
         }
 
-        $metadata = $metadata->item(0);
+        $this->metadata = $metadataNode->item(0);
 
         // load project definition
         /** @var \DOMElement[]|\DomNodeList $definitions */
@@ -57,7 +59,7 @@ class XmlImporter extends Importer
         $tables = array();
 
         foreach ($definitions as $definition) {
-            $defClass = strtoupper($definition->getAttribute("class"));
+            $defClass = strtolower($definition->getAttribute("class"));
             $tables[$defClass] = array();
 
             // getting tables def
@@ -66,7 +68,7 @@ class XmlImporter extends Importer
             $tablesNodeList = $definition->getElementsByTagName("table");
 
             foreach ($tablesNodeList as $tableNode) {
-                $tableName = $tableNode->getAttribute("name"); //strtoupper($tableNode->getAttribute("name"));
+                $tableName = strtolower($tableNode->getAttribute("name"));
                 $tables[$defClass][$tableName] = array();
                 /** @var \DOMElement[] $recordsNodeList */
                 $recordsNodeList = $tableNode->getElementsByTagName("record");
@@ -80,9 +82,9 @@ class XmlImporter extends Importer
 
                     foreach ($recordsNode->childNodes as $columnNode) {
                         if ($columnNode->nodeName == "#text") continue;
-                        //$columns[strtoupper($columnNode->nodeName)] = self::createTextNode($columnNode);;
-                        $columnName = $defClass == "WORKFLOW" ? strtoupper($columnNode->nodeName) : $columnNode->nodeName;
-                        $columns[$columnName] = self::createTextNode($columnNode);
+                        //$columns[strtoupper($columnNode->nodeName)] = self::getTextNode($columnNode);;
+                        $columnName = $defClass == "workflow" ? strtoupper($columnNode->nodeName) : $columnNode->nodeName;
+                        $columns[$columnName] = self::getTextNode($columnNode);
                     }
 
                     $tables[$defClass][$tableName][] = $columns;
@@ -97,97 +99,33 @@ class XmlImporter extends Importer
             $filesNodeList = $wfFilesNodeList->item(0)->getElementsByTagName("file");
 
             foreach ($filesNodeList as $fileNode) {
-                $target = $fileNode->getAttribute("target");
+                $target = strtolower($fileNode->getAttribute("target"));
 
                 if (! isset($wfFiles[$target])) {
                     $wfFiles[$target] = array();
                 }
 
-                $fileContent = self::createTextNode($fileNode->getElementsByTagName("file_content")->item(0));
-                $fileContent = base64_decode($fileContent);
-
+                $fileContent = self::getTextNode($fileNode->getElementsByTagName("file_content")->item(0));
                 $wfFiles[$target][] = array(
-                    "file_name" => self::createTextNode($fileNode->getElementsByTagName("file_name")->item(0)),
-                    "file_path" => self::createTextNode($fileNode->getElementsByTagName("file_path")->item(0)),
-                    "file_content" => $fileContent
+                    "file_name" => self::getTextNode($fileNode->getElementsByTagName("file_name")->item(0)),
+                    "file_path" => self::getTextNode($fileNode->getElementsByTagName("file_path")->item(0)),
+                    "file_content" => base64_decode($fileContent)
                 );
             }
         }
 
-        //print_r($tables);
-        //print_r($wfFiles);
-        return array($tables, $wfFiles);
+        return array(
+            "tables" => $tables,
+            "files" => array("workflow" => $wfFiles, "bpmn" => array())
+        );
     }
 
-    public function import($data = array())
-    {
-        list($tables, $files) = $this->load();
-
-        // Build BPMN project struct
-        $project = $tables["BPMN"]["PROJECT"][0];
-        $diagram = $tables["BPMN"]["DIAGRAM"][0];
-        $diagram["activities"] = $tables["BPMN"]["ACTIVITY"];
-        $diagram["artifacts"] = array();
-        $diagram["events"] = $tables["BPMN"]["EVENT"];
-        $diagram["flows"] = $tables["BPMN"]["FLOW"];
-        $diagram["gateways"] = $tables["BPMN"]["GATEWAY"];
-        $diagram["lanes"] = array();
-        $diagram["laneset"] = array();
-        $project["diagrams"] = array($diagram);
-        $project["prj_author"] = isset($data["usr_uid"])? $data["usr_uid"]: "00000000000000000000000000000001";
-        $project["process"] = $tables["BPMN"]["PROCESS"][0];
-        $result = Adapter\BpmnWorkflow::createFromStruct($project);
-
-        $this->importWfTables($tables["WORKFLOW"]);
-        $this->importWfFiles($files);
-
-        return $result;
-    }
-
-    private static function createTextNode($node)
+    private static function getTextNode($node)
     {
         if ($node->nodeType == XML_ELEMENT_NODE) {
             return $node->textContent;
         } else if ($node->nodeType == XML_TEXT_NODE || $node->nodeType == XML_CDATA_SECTION_NODE) {
             return (string) simplexml_import_dom($node->parentNode);
         }
-    }
-    
-    private static function importWfFiles(array $workflowFiles)
-    {
-        foreach ($workflowFiles as $target => $files) {
-            switch ($target) {
-                case "dynaforms": $basePath = PATH_DYNAFORM; break;
-                case "public":
-                    $basePath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP;
-                    break;
-                case "templates":
-                    $basePath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "mailTemplates" . PATH_SEP;
-                    break;
-                default: $basePath = "";
-            }
-
-            if (empty($basePath)) continue;
-
-            foreach ($files as $file) {
-                $filename = $basePath . $file["file_path"];
-                $path = dirname($filename);
-
-                if (! is_dir($path)) {
-                    Util\Common::mk_dir($path, 0775);
-                }
-
-                file_put_contents($filename, $file["file_content"]);
-                chmod($filename, 0775);
-            }
-        }
-    }
-
-    public function importWfTables($tables)
-    {
-        $tables = (object) $tables;
-
-        $processes = new \Processes();
-        $processes->createProcessPropertiesFromData($tables);
     }
 }
