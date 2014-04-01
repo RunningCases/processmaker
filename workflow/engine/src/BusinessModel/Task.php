@@ -70,7 +70,7 @@ class Task
      *
      * return void Throw exception if doesn't exist the Task in table TASK
      */
-    public function throwExceptionIfNoExistsTask($taskUid)
+    public function throwExceptionIfNotExistsTask($taskUid)
     {
         $task = new \Task();
 
@@ -438,7 +438,7 @@ class Task
             $arrayAvailableStep = array();
 
             //Verify data
-            $this->throwExceptionIfNoExistsTask($taskUid);
+            $this->throwExceptionIfNotExistsTask($taskUid);
 
             //Load Task
             $task = new \Task();
@@ -641,7 +641,7 @@ class Task
             $step->setArrayParamException($this->arrayParamException);
 
             //Verify data
-            $this->throwExceptionIfNoExistsTask($taskUid);
+            $this->throwExceptionIfNotExistsTask($taskUid);
 
             //Get data
             $criteria = new \Criteria("workflow");

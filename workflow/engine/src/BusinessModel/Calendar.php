@@ -4,14 +4,29 @@ namespace BusinessModel;
 class Calendar
 {
     private $arrayFieldDefinition = array(
-        "CAL_UID"         => array("fieldName" => "CALENDAR_UID",         "type" => "string",   "required" => false, "empty" => false, "defaultValues" => array(),                     "fieldNameAux" => "calendarUid"),
+        "CAL_UID"         => array("fieldName" => "CALENDAR_UID",         "type" => "string",   "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "calendarUid"),
 
-        "CAL_NAME"        => array("fieldName" => "CALENDAR_NAME",        "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array(),                     "fieldNameAux" => "calendarName"),
-        "CAL_DESCRIPTION" => array("fieldName" => "CALENDAR_DESCRIPTION", "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),                     "fieldNameAux" => "calendarDescription"),
-        "CAL_CREATE_DATE" => array("fieldName" => "CALENDAR_CREATE_DATE", "type" => "datetime", "required" => false, "empty" => false, "defaultValues" => array(),                     "fieldNameAux" => "calendarCreateDate"),
-        "CAL_UPDATE_DATE" => array("fieldName" => "CALENDAR_UPDATE_DATE", "type" => "datetime", "required" => false, "empty" => false, "defaultValues" => array(),                     "fieldNameAux" => "calendarUpdateDate"),
-        "CAL_WORK_DAYS"   => array("fieldName" => "CALENDAR_WORK_DAYS",   "type" => "string",   "required" => false, "empty" => false, "defaultValues" => array(),                     "fieldNameAux" => "calendarWorkDays"),
-        "CAL_STATUS"      => array("fieldName" => "CALENDAR_STATUS",      "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array("ACTIVE", "INACTIVE"), "fieldNameAux" => "calendarStatus")
+        "CAL_NAME"        => array("fieldName" => "CALENDAR_NAME",        "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array(), "fieldNameAux" => "calendarName"),
+        "CAL_DESCRIPTION" => array("fieldName" => "CALENDAR_DESCRIPTION", "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "calendarDescription"),
+        "CAL_WORK_DAYS"   => array("fieldName" => "CALENDAR_WORK_DAYS",   "type" => "array",    "required" => true,  "empty" => false, "defaultValues" => array("SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"), "fieldNameAux" => "calendarWorkDays"),
+        "CAL_STATUS"      => array("fieldName" => "CALENDAR_STATUS",      "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array("ACTIVE", "INACTIVE"), "fieldNameAux" => "calendarStatus"),
+        "CAL_WORK_HOUR"   => array("fieldName" => "CALENDAR_WORK_HOUR",   "type" => "array",    "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "calendarWorkHour"),
+        "CAL_HOLIDAY"     => array("fieldName" => "CALENDAR_HOLIDAY",     "type" => "array",    "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "calendarHoliday"),
+
+        "CAL_CREATE_DATE" => array("fieldName" => "CALENDAR_CREATE_DATE", "type" => "datetime", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "calendarCreateDate"),
+        "CAL_UPDATE_DATE" => array("fieldName" => "CALENDAR_UPDATE_DATE", "type" => "datetime", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "calendarUpdateDate")
+    );
+
+    private $arrayWorkHourFieldDefinition = array(
+        "DAY"        => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array("SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT", "ALL"), "fieldNameAux" => "day"),
+        "HOUR_START" => array("type" => "hour",   "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "hourStart"),
+        "HOUR_END"   => array("type" => "hour",   "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "hourEnd")
+    );
+
+    private $arrayHolidayFieldDefinition = array(
+        "NAME"       => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "name"),
+        "DATE_START" => array("type" => "date",   "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "dateStart"),
+        "DATE_END"   => array("type" => "date",   "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "dateEnd")
     );
 
     private $formatFieldNameInUppercase = true;
@@ -21,6 +36,8 @@ class Calendar
         "start"  => "START",
         "limit"  => "LIMIT"
     );
+    private $arrayWorkHourFieldNameForException = array();
+    private $arrayHolidayFieldNameForException = array();
 
     /**
      * Constructor of the class
@@ -32,6 +49,14 @@ class Calendar
         try {
             foreach ($this->arrayFieldDefinition as $key => $value) {
                 $this->arrayFieldNameForException[$value["fieldNameAux"]] = $key;
+            }
+
+            foreach ($this->arrayWorkHourFieldDefinition as $key => $value) {
+                $this->arrayWorkHourFieldNameForException[$value["fieldNameAux"]] = $key;
+            }
+
+            foreach ($this->arrayHolidayFieldDefinition as $key => $value) {
+                $this->arrayHolidayFieldNameForException[$value["fieldNameAux"]] = $key;
             }
         } catch (\Exception $e) {
             throw $e;
@@ -51,6 +76,8 @@ class Calendar
             $this->formatFieldNameInUppercase = $flag;
 
             $this->setArrayFieldNameForException($this->arrayFieldNameForException);
+            $this->setArrayWorkHourFieldNameForException($this->arrayWorkHourFieldNameForException);
+            $this->setArrayHolidayFieldNameForException($this->arrayHolidayFieldNameForException);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -75,6 +102,42 @@ class Calendar
     }
 
     /**
+     * Set exception messages for fields
+     *
+     * @param array $arrayData Data with the fields
+     *
+     * return void
+     */
+    public function setArrayWorkHourFieldNameForException($arrayData)
+    {
+        try {
+            foreach ($arrayData as $key => $value) {
+                $this->arrayWorkHourFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Set exception messages for fields
+     *
+     * @param array $arrayData Data with the fields
+     *
+     * return void
+     */
+    public function setArrayHolidayFieldNameForException($arrayData)
+    {
+        try {
+            foreach ($arrayData as $key => $value) {
+                $this->arrayHolidayFieldNameForException[$key] = $this->getFieldNameByFormatFieldName($value);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get the name of the field according to the format
      *
      * @param string $fieldName Field name
@@ -85,6 +148,199 @@ class Calendar
     {
         try {
             return ($this->formatFieldNameInUppercase)? strtoupper($fieldName) : strtolower($fieldName);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if exists the name of a Calendar
+     *
+     * @param string $calendarName       Name
+     * @param string $calendarUidExclude Unique id of Calendar to exclude
+     *
+     * return bool Return true if exists the name of a Calendar, false otherwise
+     */
+    public function existsName($calendarName, $calendarUidExclude = "")
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\CalendarDefinitionPeer::CALENDAR_UID);
+            $criteria->add(\CalendarDefinitionPeer::CALENDAR_STATUS, "DELETED", \Criteria::NOT_EQUAL);
+
+            if ($calendarUidExclude != "") {
+                $criteria->add(\CalendarDefinitionPeer::CALENDAR_UID, $calendarUidExclude, \Criteria::NOT_EQUAL);
+            }
+
+            $criteria->add(\CalendarDefinitionPeer::CALENDAR_NAME, $calendarName, \Criteria::EQUAL);
+
+            $rsCriteria = \CalendarDefinitionPeer::doSelectRS($criteria);
+
+            if ($rsCriteria->next()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Replace and Get Work Days
+     *
+     * @param string $workDays Work days
+     * @param bool   $toNumber If is true replace to numbers, replace to string otherwise
+     *
+     * return string Return Work days
+     */
+    public function workDaysReplaceData($workDays, $toNumber = true)
+    {
+        try {
+            $arrayDayString = array("SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT", "ALL");
+            $arrayDayNumber = array(0, 1, 2, 3, 4, 5, 6, 7);
+
+            return ($toNumber)? str_replace($arrayDayString, $arrayDayNumber, $workDays) : str_replace($arrayDayNumber, $arrayDayString, $workDays);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if doesn't exists the Calendar in table CALENDAR_DEFINITION
+     *
+     * @param string $calendarUid           Unique id of Calendar
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if doesn't exists the Calendar in table CALENDAR_DEFINITION
+     */
+    public function throwExceptionIfNotExistsCalendar($calendarUid, $fieldNameForException)
+    {
+        try {
+            $obj = \CalendarDefinitionPeer::retrieveByPK($calendarUid);
+
+            if (!(is_object($obj) && get_class($obj) == "CalendarDefinition")) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $calendarUid), "The calendar with {0}: {1} does not exists");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if exists the name of a Calendar
+     *
+     * @param string $calendarName          Name
+     * @param string $fieldNameForException Field name for the exception
+     * @param string $calendarUidExclude    Unique id of Calendar to exclude
+     *
+     * return void Throw exception if exists the name of a Calendar
+     */
+    public function throwExceptionIfExistsName($calendarName, $fieldNameForException, $calendarUidExclude = "")
+    {
+        try {
+            if ($this->existsName($calendarName, $calendarUidExclude)) {
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $calendarName), "The calendar name with {0}: \"{1}\" already exists");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Create Group
+     *
+     * @param array $arrayData Data
+     *
+     * return array Return data of the new Group created
+     */
+    public function create($arrayData)
+    {
+        try {
+            $arrayData = \G::array_change_key_case2($arrayData, CASE_UPPER);
+
+            unset($arrayData["CAL_UID"]);
+
+            //Verify data
+            $process = new \BusinessModel\Process();
+
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
+
+            $this->throwExceptionIfExistsName($arrayData["CAL_NAME"], $this->arrayFieldNameForException["calendarName"]);
+
+            if (!(count($arrayData["CAL_WORK_DAYS"]) >= 3)) {
+                throw (new \Exception(\G::LoadTranslation("ID_MOST_AT_LEAST_3_DAY")));
+            }
+
+            if (isset($arrayData["CAL_WORK_HOUR"])) {
+                foreach ($arrayData["CAL_WORK_HOUR"] as $value) {
+                    $process->throwExceptionIfDataNotMetFieldDefinition($value, $this->arrayWorkHourFieldDefinition, $this->arrayWorkHourFieldNameForException, true);
+                }
+            }
+
+            if (isset($arrayData["CAL_HOLIDAY"])) {
+                foreach ($arrayData["CAL_HOLIDAY"] as $value) {
+                    $process->throwExceptionIfDataNotMetFieldDefinition($value, $this->arrayHolidayFieldDefinition, $this->arrayHolidayFieldNameForException, true);
+                }
+            }
+
+            //Set variables
+            $arrayCalendarWorkHour = array();
+
+            if (isset($arrayData["CAL_WORK_HOUR"])) {
+                foreach ($arrayData["CAL_WORK_HOUR"] as $value) {
+                    $arrayCalendarWorkHour[] = array(
+                        "CALENDAR_BUSINESS_DAY"   => $this->workDaysReplaceData($value["DAY"]),
+                        "CALENDAR_BUSINESS_START" => $value["HOUR_START"],
+                        "CALENDAR_BUSINESS_END"   => $value["HOUR_END"]
+                    );
+                }
+            }
+
+            $arrayCalendarHoliday = array();
+
+            if (isset($arrayData["CAL_HOLIDAY"])) {
+                foreach ($arrayData["CAL_HOLIDAY"] as $value) {
+                    $arrayCalendarHoliday[] = array(
+                        "CALENDAR_HOLIDAY_NAME"  => $value["NAME"],
+                        "CALENDAR_HOLIDAY_START" => $value["DATE_START"],
+                        "CALENDAR_HOLIDAY_END"   => $value["DATE_END"]
+                    );
+                }
+            }
+
+            $arrayDataAux = array();
+            $arrayDataAux["CALENDAR_UID"] = \G::generateUniqueID();
+            $arrayDataAux["CALENDAR_NAME"] = $arrayData["CAL_NAME"];
+
+            if (isset($arrayData["CAL_DESCRIPTION"])) {
+                $arrayDataAux["CALENDAR_DESCRIPTION"] = $arrayData["CAL_DESCRIPTION"];
+            }
+
+            $arrayDataAux["CALENDAR_WORK_DAYS"] = explode("|", $this->workDaysReplaceData(implode("|", $arrayData["CAL_WORK_DAYS"])));
+            $arrayDataAux["CALENDAR_STATUS"] = $arrayData["CAL_STATUS"];
+
+            $arrayDataAux["BUSINESS_DAY"] = $arrayCalendarWorkHour;
+            $arrayDataAux["HOLIDAY"] = $arrayCalendarHoliday;
+
+            //Create
+            $calendarDefinition = new \CalendarDefinition();
+
+            $calendarDefinition->saveCalendarInfo($arrayDataAux);
+
+            //Return
+            $arrayData = array_merge(array("CAL_UID" => $arrayDataAux["CALENDAR_UID"]), $arrayData);
+
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = \G::array_change_key_case2($arrayData, CASE_LOWER);
+            }
+
+            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -103,10 +359,10 @@ class Calendar
             $criteria->addSelectColumn(\CalendarDefinitionPeer::CALENDAR_UID);
             $criteria->addSelectColumn(\CalendarDefinitionPeer::CALENDAR_NAME);
             $criteria->addSelectColumn(\CalendarDefinitionPeer::CALENDAR_DESCRIPTION);
-            $criteria->addSelectColumn(\CalendarDefinitionPeer::CALENDAR_CREATE_DATE);
-            $criteria->addSelectColumn(\CalendarDefinitionPeer::CALENDAR_UPDATE_DATE);
             $criteria->addSelectColumn(\CalendarDefinitionPeer::CALENDAR_WORK_DAYS);
             $criteria->addSelectColumn(\CalendarDefinitionPeer::CALENDAR_STATUS);
+            $criteria->addSelectColumn(\CalendarDefinitionPeer::CALENDAR_CREATE_DATE);
+            $criteria->addSelectColumn(\CalendarDefinitionPeer::CALENDAR_UPDATE_DATE);
             $criteria->add(\CalendarDefinitionPeer::CALENDAR_STATUS, "DELETED", \Criteria::NOT_EQUAL);
 
             return $criteria;
@@ -125,14 +381,41 @@ class Calendar
     public function getCalendarDataFromRecord($record)
     {
         try {
+            $calendarBusinessHours = new \CalendarBusinessHours();
+            $calendarHolidays = new \CalendarHolidays();
+
+            $arrayCalendarWorkHour = array();
+            $arrayData = $calendarBusinessHours->getCalendarBusinessHours($record["CALENDAR_UID"]);
+
+            foreach ($arrayData as $value) {
+                $arrayCalendarWorkHour[] = array(
+                    $this->getFieldNameByFormatFieldName("DAY")        => $this->workDaysReplaceData($value["CALENDAR_BUSINESS_DAY"] . "", false),
+                    $this->getFieldNameByFormatFieldName("HOUR_START") => $value["CALENDAR_BUSINESS_START"] . "",
+                    $this->getFieldNameByFormatFieldName("HOUR_END")   => $value["CALENDAR_BUSINESS_END"] . "",
+                );
+            }
+
+            $arrayCalendarHoliday = array();
+            $arrayData = $calendarHolidays->getCalendarHolidays($record["CALENDAR_UID"]);
+
+            foreach ($arrayData as $value) {
+                $arrayCalendarHoliday[] = array(
+                    $this->getFieldNameByFormatFieldName("NAME")       => $value["CALENDAR_HOLIDAY_NAME"] . "",
+                    $this->getFieldNameByFormatFieldName("DATE_START") => $value["CALENDAR_HOLIDAY_START"] . "",
+                    $this->getFieldNameByFormatFieldName("DATE_END")   => $value["CALENDAR_HOLIDAY_END"] . "",
+                );
+            }
+
             return array(
                 $this->getFieldNameByFormatFieldName("CAL_UID")             => $record["CALENDAR_UID"],
                 $this->getFieldNameByFormatFieldName("CAL_NAME")            => $record["CALENDAR_NAME"],
                 $this->getFieldNameByFormatFieldName("CAL_DESCRIPTION")     => $record["CALENDAR_DESCRIPTION"] . "",
+                $this->getFieldNameByFormatFieldName("CAL_WORK_DAYS")       => explode("|", $this->workDaysReplaceData($record["CALENDAR_WORK_DAYS"] . "", false)),
+                $this->getFieldNameByFormatFieldName("CAL_STATUS")          => $record["CALENDAR_STATUS"],
+                $this->getFieldNameByFormatFieldName("CAL_WORK_HOUR")       => $arrayCalendarWorkHour,
+                $this->getFieldNameByFormatFieldName("CAL_HOLIDAY")         => $arrayCalendarHoliday,
                 $this->getFieldNameByFormatFieldName("CAL_CREATE_DATE")     => $record["CALENDAR_CREATE_DATE"] . "",
                 $this->getFieldNameByFormatFieldName("CAL_UPDATE_DATE")     => $record["CALENDAR_UPDATE_DATE"] . "",
-                $this->getFieldNameByFormatFieldName("CAL_WORK_DAYS")       => $record["CALENDAR_WORK_DAYS"] . "",
-                $this->getFieldNameByFormatFieldName("CAL_STATUS")          => $record["CALENDAR_STATUS"],
                 $this->getFieldNameByFormatFieldName("CAL_TOTAL_USERS")     => (int)($record["CALENDAR_TOTAL_USERS"]),
                 $this->getFieldNameByFormatFieldName("CAL_TOTAL_PROCESSES") => (int)($record["CALENDAR_TOTAL_PROCESSES"]),
                 $this->getFieldNameByFormatFieldName("CAL_TOTAL_TASKS")     => (int)($record["CALENDAR_TOTAL_TASKS"])
@@ -205,10 +488,10 @@ class Calendar
                     case "CALENDAR_UID":
                     case "CALENDAR_NAME":
                     case "CALENDAR_DESCRIPTION":
-                    case "CALENDAR_CREATE_DATE":
-                    case "CALENDAR_UPDATE_DATE":
                     case "CALENDAR_WORK_DAYS":
                     case "CALENDAR_STATUS":
+                    case "CALENDAR_CREATE_DATE":
+                    case "CALENDAR_UPDATE_DATE":
                         $sortField = \CalendarDefinitionPeer::TABLE_NAME . "." . $sortField;
                         break;
                     default:
@@ -248,6 +531,50 @@ class Calendar
 
             //Return
             return $arrayCalendar;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get data of a Calendar
+     *
+     * @param string $calendarUid Unique id of Calendar
+     *
+     * return array Return an array with data of a Calendar
+     */
+    public function getCalendar($calendarUid)
+    {
+        try {
+            //Verify data
+            $this->throwExceptionIfNotExistsCalendar($calendarUid, $this->arrayFieldNameForException["calendarUid"]);
+
+            //Get data
+            //Set variables
+            $calendar = new \CalendarDefinition();
+
+            $arrayTotalUsersByCalendar = $calendar->getAllCounterByCalendar("USER");
+            $arrayTotalProcessesByCalendar = $calendar->getAllCounterByCalendar("PROCESS");
+            $arrayTotalTasksByCalendar = $calendar->getAllCounterByCalendar("TASK");
+
+            //SQL
+            $criteria = $this->getCalendarCriteria();
+
+            $criteria->add(\CalendarDefinitionPeer::CALENDAR_UID, $calendarUid, \Criteria::EQUAL);
+
+            $rsCriteria = \CalendarDefinitionPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $rsCriteria->next();
+
+            $row = $rsCriteria->getRow();
+
+            $row["CALENDAR_TOTAL_USERS"] = (isset($arrayTotalUsersByCalendar[$calendarUid]))? $arrayTotalUsersByCalendar[$calendarUid] : 0;
+            $row["CALENDAR_TOTAL_PROCESSES"] = (isset($arrayTotalProcessesByCalendar[$calendarUid]))? $arrayTotalProcessesByCalendar[$calendarUid] : 0;
+            $row["CALENDAR_TOTAL_TASKS"] = (isset($arrayTotalTasksByCalendar[$calendarUid]))? $arrayTotalTasksByCalendar[$calendarUid] : 0;
+
+            //Return
+            return $this->getCalendarDataFromRecord($row);
         } catch (\Exception $e) {
             throw $e;
         }

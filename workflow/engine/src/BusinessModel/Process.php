@@ -214,7 +214,7 @@ class Process
                                 //
                             } else {
                                 $eregDate = "[1-9]\d{3}\-(?:0[1-9]|1[012])\-(?:[0][1-9]|[12][0-9]|3[01])";
-                                $eregHour = "(?:[0-1]\d|2[0-3])\:(?:[0-5]\d)\:(?:[0-5]\d)";
+                                $eregHour = "(?:[0-1]\d|2[0-3])\:(?:[0-5]\d)(?:\:[0-5]\d)?";
                                 $eregDatetime = $eregDate . "\s" . $eregHour;
 
                                 switch ($arrayFieldDefinition[$fieldName]["type"]) {
@@ -237,12 +237,48 @@ class Process
                             }
                             break;
                         case 2:
-                            //type
                             switch ($arrayFieldDefinition[$fieldName]["type"]) {
                                 case "array":
+                                    //type
                                     if (!is_array($fieldValue)) {
-                                        if ((!preg_match("/^\s*array\s*\(.*\)\s*$/", $fieldValue)) && $fieldValue != '') {
+                                        if ($fieldValue != "" && !preg_match("/^\s*array\s*\(.*\)\s*$/", $fieldValue)) {
                                             throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is not array")));
+                                        }
+                                    }
+
+                                    //empty
+                                    if (!$arrayFieldDefinition[$fieldName]["empty"]) {
+                                        $arrayAux = array();
+
+                                        if (is_array($fieldValue)) {
+                                            $arrayAux = $fieldValue;
+                                        }
+
+                                        if (is_string($fieldValue) && trim($fieldValue) . "" != "") {
+                                            eval("\$arrayAux = $fieldValue;");
+                                        }
+
+                                        if (count($arrayAux) == 0) {
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is empty")));
+                                        }
+                                    }
+
+                                    //defaultValues
+                                    if (count($arrayFieldDefinition[$fieldName]["defaultValues"]) > 0) {
+                                        $arrayAux = array();
+
+                                        if (is_array($fieldValue)) {
+                                            $arrayAux = $fieldValue;
+                                        }
+
+                                        if (is_string($fieldValue) && trim($fieldValue) . "" != "") {
+                                            eval("\$arrayAux = $fieldValue;");
+                                        }
+
+                                        foreach ($arrayAux as $value) {
+                                            if (!in_array($value, $arrayFieldDefinition[$fieldName]["defaultValues"])) {
+                                                throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                            }
                                         }
                                     }
                                     break;
@@ -287,7 +323,7 @@ class Process
      *
      * return void Throw exception if doesn't exists the Process in table PROCESS
      */
-    public function throwExceptionIfNoExistsProcess($processUid, $fieldNameForException)
+    public function throwExceptionIfNotExistsProcess($processUid, $fieldNameForException)
     {
         try {
             $process = new \Process();
@@ -310,7 +346,7 @@ class Process
      *
      * return void Throw exception if doesn't exists the User in table USERS
      */
-    public function throwExceptionIfNoExistsUser($userUid, $fieldNameForException)
+    public function throwExceptionIfNotExistsUser($userUid, $fieldNameForException)
     {
         try {
             $user = new \Users();
@@ -339,29 +375,6 @@ class Process
         try {
             if ($this->existsTitle($processTitle, $processUidExclude)) {
                 $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $processTitle), "The project title with {0}: \"{1}\", already exists");
-
-                throw (new \Exception($msg));
-            }
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Verify if doesn't exists the Calendar Definition in table CALENDAR_DEFINITION
-     *
-     * @param string $calendarDefinitionUid Unique id of Calendar Definition
-     * @param string $fieldNameForException Field name for the exception
-     *
-     * return void Throw exception if doesn't exists the Calendar Definition in table CALENDAR_DEFINITION
-     */
-    public function throwExceptionIfNotExistsCalendarDefinition($calendarDefinitionUid, $fieldNameForException)
-    {
-        try {
-            $obj = \CalendarDefinitionPeer::retrieveByPK($calendarDefinitionUid);
-
-            if (!(is_object($obj) && get_class($obj) == "CalendarDefinition")) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $calendarDefinitionUid), "The calendar definition with {0}: {1}, does not exist");
 
                 throw (new \Exception($msg));
             }
@@ -498,7 +511,7 @@ class Process
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
             //Verify data
-            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $this->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             $this->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
 
@@ -507,7 +520,9 @@ class Process
             }
 
             if (isset($arrayData["PRO_CALENDAR"]) && $arrayData["PRO_CALENDAR"] . "" != "") {
-                $this->throwExceptionIfNotExistsCalendarDefinition($arrayData["PRO_CALENDAR"], $this->arrayFieldNameForException["processCalendar"]);
+                $calendar = new \BusinessModel\Calendar();
+
+                $calendar->throwExceptionIfNotExistsCalendar($arrayData["PRO_CALENDAR"], $this->arrayFieldNameForException["processCalendar"]);
             }
 
             if (isset($arrayData["PRO_CATEGORY"]) && $arrayData["PRO_CATEGORY"] . "" != "") {
@@ -543,11 +558,11 @@ class Process
             }
 
             if (isset($arrayData["PRO_PARENT"])) {
-                $this->throwExceptionIfNoExistsProcess($arrayData["PRO_PARENT"], $this->arrayFieldNameForException["processParent"]);
+                $this->throwExceptionIfNotExistsProcess($arrayData["PRO_PARENT"], $this->arrayFieldNameForException["processParent"]);
             }
 
             if (isset($arrayData["PRO_CREATE_USER"]) && $arrayData["PRO_CREATE_USER"] . "" != "") {
-                $this->throwExceptionIfNoExistsUser($arrayData["PRO_CREATE_USER"], $this->arrayFieldNameForException["processCreateUser"]);
+                $this->throwExceptionIfNotExistsUser($arrayData["PRO_CREATE_USER"], $this->arrayFieldNameForException["processCreateUser"]);
             }
 
             //Update
@@ -598,7 +613,7 @@ class Process
     {
         try {
             //Verify data
-            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $this->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             //Get data
             //Load Process
@@ -1372,7 +1387,7 @@ class Process
             $arrayDynaForm = array();
 
             //Verify data
-            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $this->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             //Get data
             $dynaForm = new \BusinessModel\DynaForm();
@@ -1413,7 +1428,7 @@ class Process
             $arrayInputDocument = array();
 
             //Verify data
-            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $this->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             //Get data
             $inputDocument = new \BusinessModel\InputDocument();
@@ -1545,7 +1560,7 @@ class Process
             $arrayVariable = array();
 
             //Verify data
-            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $this->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             //Get data
             switch ($option) {
@@ -1602,7 +1617,7 @@ class Process
             $arrayLibrary = array();
 
             //Verify data
-            $this->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $this->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             //Get data
             \G::LoadClass("triggerLibrary");

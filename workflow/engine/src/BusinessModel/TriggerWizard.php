@@ -676,7 +676,7 @@ class TriggerWizard
 
             $this->throwExceptionIfNotExistsMethodInLibrary($libraryName, $methodName, $this->arrayFieldNameForException["libraryName"], $this->arrayFieldNameForException["methodName"]);
 
-            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
