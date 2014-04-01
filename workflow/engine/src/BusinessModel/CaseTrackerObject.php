@@ -93,24 +93,21 @@ class CaseTrackerObject
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid . ", " . $arrayData["CTO_TYPE_OBJ"] . ", " . $arrayData["CTO_UID_OBJ"], "CASE_TRACKER_OBJECT"), "The record \"{0}\", exists in table {1}")));
             }
 
-            if (isset($arrayData["CTO_POSITION"]) && $this->existsRecord($processUid, "", "", $arrayData["CTO_POSITION"])) {
-                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["CTO_POSITION"], $processUid . ", " . $arrayData["CTO_POSITION"], "CASE_TRACKER_OBJECT"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
-            }
+            $ctoPosition = $arrayData["CTO_POSITION"];
+            $criteria = new \Criteria("workflow");
+            $criteria->add(\CaseTrackerObjectPeer::PRO_UID, $processUid);
+            $arrayData["CTO_POSITION"] = \CaseTrackerObjectPeer::doCount($criteria) + 1;
 
             //Create
             $caseTrackerObject = new \CaseTrackerObject();
 
             $arrayData["PRO_UID"] = $processUid;
-
-            if (!isset($arrayData["CTO_POSITION"])) {
-                $criteria = new \Criteria("workflow");
-
-                $criteria->add(\CaseTrackerObjectPeer::PRO_UID, $processUid);
-
-                $arrayData["CTO_POSITION"] = \CaseTrackerObjectPeer::doCount($criteria) + 1;
-            }
-
             $caseTrackerObjectUid = $caseTrackerObject->create($arrayData);
+
+            $arrayData["CTO_POSITION"] = $ctoPosition;
+            $arrayData["CTO_UID"] = $caseTrackerObjectUid;
+            $arrayDataUpdate = array_change_key_case($arrayData, CASE_LOWER);
+            $this->update($caseTrackerObjectUid, $arrayDataUpdate);
 
             //Return
             unset($arrayData["PRO_UID"]);
@@ -172,21 +169,23 @@ class CaseTrackerObject
                 }
             }
 
-            if (isset($arrayData["CTO_POSITION"]) && $this->existsRecord($processUid, "", "", $arrayData["CTO_POSITION"], $caseTrackerObjectUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($arrayData["CTO_POSITION"], $processUid . ", " . $arrayData["CTO_POSITION"], "CASE_TRACKER_OBJECT"), "The \"{0}\" position for the record \"{1}\", exists in table {2}")));
-            }
-
             //Flags
             $flagDataOject     = (isset($arrayData["CTO_TYPE_OBJ"]) && isset($arrayData["CTO_UID_OBJ"]))? 1 : 0;
             $flagDataCondition = (isset($arrayData["CTO_CONDITION"]))? 1 : 0;
             $flagDataPosition  = (isset($arrayData["CTO_POSITION"]))? 1 : 0;
 
             //Update
+            $tempPosition = (isset($arrayData["CTO_POSITION"])) ? $arrayData["CTO_POSITION"] : $arrayCaseTrackerObjectData["CTO_POSITION"];
+            $arrayData["CTO_POSITION"] = $arrayCaseTrackerObjectData["CTO_POSITION"];
             $arrayData["CTO_UID"] = $caseTrackerObjectUid;
-
             $arrayData = array_merge($arrayCaseTrackerObjectData, $arrayData);
+            $caseTrackerObject->update($arrayData);
 
-            $result = $caseTrackerObject->update($arrayData);
+            if ($tempPosition != $arrayCaseTrackerObjectData["CTO_POSITION"]) {
+                $this->moveCaseTrackerObject($caseTrackerObjectUid, $arrayData['PRO_UID'], $tempPosition);
+            }
+
+
 
             //Return
             unset($arrayData["CTO_UID"]);
@@ -312,6 +311,81 @@ class CaseTrackerObject
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $cto_uid. Uid for Process
+     * @var string $pro_uid. Uid for Task
+     * @var string $cto_pos. Position for Step
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function moveCaseTrackerObject($cto_uid, $pro_uid, $cto_pos) {
+        $aCaseTrackerObject = CaseTracker::getCaseTrackerObjects($pro_uid);
+
+        foreach ($aCaseTrackerObject as $dataCaseTracker) {
+            if ($dataCaseTracker['cto_uid'] == $cto_uid) {
+                $prStepPos = (int)$dataCaseTracker['cto_position'];
+            }
+        }
+        $seStepPos = $cto_pos;
+
+        //Principal Step is up
+        if ($prStepPos == $seStepPos) {
+            return true;
+        } elseif ($prStepPos < $seStepPos) {
+            $modPos = 'UP';
+            $newPos = $seStepPos;
+            $iniPos = $prStepPos+1;
+            $finPos = $seStepPos;
+        } else {
+            $modPos = 'DOWN';
+            $newPos = $seStepPos;
+            $iniPos = $seStepPos;
+            $finPos = $prStepPos-1;
+        }
+
+        $range = range($iniPos, $finPos);
+        foreach ($aCaseTrackerObject as $dataCaseTracker) {
+            if ((in_array($dataCaseTracker['cto_position'], $range)) && ($dataCaseTracker['cto_uid'] != $cto_uid)) {
+                $caseTrackerObjectIds[] = $dataCaseTracker['cto_uid'];
+                $caseTrackerObjectPos[] = $dataCaseTracker['cto_position'];
+            }
+        }
+
+        foreach ($caseTrackerObjectIds as $key => $value) {
+            if ($modPos == 'UP') {
+                $tempPos = ((int)$caseTrackerObjectPos[$key])-1;
+                $this->changePosCaseTrackerObject($value, $tempPos);
+            } else {
+                $tempPos = ((int)$caseTrackerObjectPos[$key])+1;
+                $this->changePosCaseTrackerObject($value, $tempPos);
+            }
+        }
+        $this->changePosCaseTrackerObject($cto_uid, $newPos);
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for process
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return string
+     */
+    public function changePosCaseTrackerObject ($cto_uid, $pos)
+    {
+        $data = array(
+            'CTO_UID' => $cto_uid,
+            'CTO_POSITION' => $pos
+        );
+        $oCaseTrackerObject = new \CaseTrackerObject();
+        $oCaseTrackerObject->update($data);
     }
 }
 
