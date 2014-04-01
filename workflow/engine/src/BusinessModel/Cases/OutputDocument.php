@@ -265,7 +265,8 @@ class OutputDocument
                 }
             }
             $g->sessionVarRestore();
-            return $this->getCasesOutputDocument($applicationUid, $userUid, $sDocUID);
+            $response = $this->getCasesOutputDocument($applicationUid, $userUid, $sDocUID);
+            return $response;
         } catch (\Exception $e) {
             throw $e;
         }
