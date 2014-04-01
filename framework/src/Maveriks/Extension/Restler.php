@@ -1,6 +1,8 @@
 <?php
 namespace Maveriks\Extension;
 
+use Luracast\Restler\Defaults;
+
 /**
  * Class Restler
  * Extension Restler class to implement in ProcessMaker
