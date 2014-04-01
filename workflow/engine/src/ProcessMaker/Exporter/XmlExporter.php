@@ -1,6 +1,8 @@
 <?php
 namespace ProcessMaker\Exporter;
 
+use ProcessMaker\Util;
+
 /**
  * Class XmlExporter
  *
@@ -120,6 +122,12 @@ class XmlExporter extends Exporter
      */
     public function saveExport($outputFile)
     {
+        $parentDir = dirname($outputFile);
+
+        if (! is_dir($parentDir)) {
+            Util\Common::mk_dir($parentDir, 0775);
+        }
+
         file_put_contents($outputFile, $this->export());
         chmod($outputFile, 0755);
     }
