@@ -1,4 +1,4 @@
-FA<?php
+<?php
 use Behat\Behat\Context\BehatContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -339,6 +339,8 @@ class RestContext extends BehatContext
             $this->_headers['Authorization'] = 'Bearer ' . $this->access_token;
         }
 
+        
+
 
         if($urlType=="absolute"){
             $this->_requestUrl = $pageUrl;
@@ -367,7 +369,7 @@ class RestContext extends BehatContext
             case 'POST':
                 $postFields = is_object($this->_restObject)
                     ? (array)$this->_restObject
-                    : $this->_restObject;
+                    : $this->_restObject;               
                 $this->_request = $this->_client
                     ->post($url, $this->_headers,
                     (empty($this->_requestBody) ? $postFields :
@@ -1481,43 +1483,15 @@ class RestContext extends BehatContext
      */
     public function postUploadAnInputDocumentTo($file, $url, PyStringNode $string)
     {
-        $baseUrl = $this->getParameter('base_url');
-        $url = $baseUrl.$url;
-        $accesstoken = $this->getParameter('access_token');
-        $headr = array();
-        $headr[] = 'Authorization: Bearer '.$accesstoken;
-
         $postFields = json_decode($string);
         $postFields->form ='@'.$file;
-        //print_r($postFields);
+       
+        $this->_restObjectMethod = 'post';
+        $this->_restObject = $postFields;
+        $this->iRequest($url);
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,$url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
-        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $postResult = curl_exec($ch);
-        print_r($postResult);
-        curl_close($ch);
-        
-        //Save result as usual
-        $this->_type = 'json';
-        //$this->_response = json_decode($postResult);
-        $this->_data = json_decode($postResult);
-
-        
-
-       // $postResult = (array)json_decode($postResult);
-
-
-
-
-
+       
     }
-
-
-
 
 
 }
