@@ -132,7 +132,8 @@ class WebApplication
         //\Luracast\Restler\Format\HtmlFormat::$viewPath = $servicesDir . 'oauth2/views';
 
         // create a new Restler instance
-        $rest = new \Luracast\Restler\Restler();
+        //$rest = new \Luracast\Restler\Restler();
+        $rest = new \Maveriks\Extension\Restler();
         // setting api version to Restler
         $rest->setAPIVersion($version);
         // adding $authenticationClass to Restler
