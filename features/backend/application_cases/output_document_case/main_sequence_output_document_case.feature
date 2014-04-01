@@ -15,7 +15,7 @@ Scenario Outline: Generate or regenerates an output documents for a given case
                 "out_doc_uid": "<out_doc_uid>"         
             }
             """
-        And I request "cases/551390121533343ee886813057396196/output-document"
+        And I request "cases/33125846153383cecdf64f1079330191/output-document"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
@@ -33,7 +33,7 @@ Scenario Outline: Generate or regenerates an output documents for a given case
 
 
 Scenario: Returns a list of the generated documents for a given cases
-    Given I request "cases/551390121533343ee886813057396196/output-documents"
+    Given I request "cases/33125846153383cecdf64f1079330191/output-documents"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
@@ -47,7 +47,7 @@ Scenario: Returns a list of the generated documents for a given cases
     
 
 Scenario Outline: Returns an generated document for a given case
-    Given I request "cases/551390121533343ee886813057396196/output-document/app_doc_uid"  with the key "app_doc_uid" stored in session array as variable "app_doc_uid_<app_doc_uid_number>"
+    Given I request "cases/33125846153383cecdf64f1079330191/output-document/app_doc_uid"  with the key "app_doc_uid" stored in session array as variable "app_doc_uid_<app_doc_uid_number>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "Object"
@@ -76,7 +76,7 @@ Scenario Outline: Returns an generated document for a given case
 
 Scenario Outline: Delete an uploaded or generated document from a case.
     Given that I want to delete a resource with the key "app_doc_uid" stored in session array as variable "app_doc_uid_<app_doc_uid_number>"
-    And I request "cases/551390121533343ee886813057396196/output-document"
+    And I request "cases/33125846153383cecdf64f1079330191/output-document"
     And the response status code should be 200
     And the content type is "application/json"
     And the response charset is "UTF-8"
