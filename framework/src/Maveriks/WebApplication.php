@@ -79,7 +79,7 @@ class WebApplication
                 $this->loadEnvironment($request["workspace"]);
 
                 Util\Logger::log("API::Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
-                if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && \G::toUpper($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'MULTYPART') {
+                if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtoupper($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'MULTYPART') {
                     $this->multipart($request["uri"], $request["version"]);
                 } else {
                     $this->dispatchApiRequest($request["uri"], $request["version"]);
@@ -112,10 +112,10 @@ class WebApplication
         foreach($input->calls as $value) {
             $_SERVER["REQUEST_METHOD"] = (empty($value->method)) ? 'GET' : $value->method;
             $uriTemp = trim($baseUrl) . trim($value->url);
-            $inputExecute = (empty($value->data)) ? '' : \G::json_encode($value->data);
+            $inputExecute = (empty($value->data)) ? '' : json_encode($value->data);
             $this->responseMultipart[] = $this->dispatchApiRequest($uriTemp, $version, true, $inputExecute);
         }
-        echo \G::json_encode($this->responseMultipart);
+        echo json_encode($this->responseMultipart);
     }
 
     /**
