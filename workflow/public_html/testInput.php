@@ -12,8 +12,12 @@ $a = array('form'=>'@'.$file, 'inp_doc_uid'=>$inp_doc_uid, 'tas_uid' =>$tas_uid,
 curl_setopt($ch, CURLOPT_URL,$url);
 curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $a);
+print "<h3>post</h3>";
+print_r($a);
 curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 $postResult = curl_exec($ch);
 curl_close($ch);
-print_r($postResult);
+print "<h3>response var_dump</h3>";
+var_dump($postResult);
+print "<textarea cols='50' rows='10'>".$postResult."</textarea>";
