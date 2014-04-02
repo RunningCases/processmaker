@@ -79,7 +79,7 @@ class WebApplication
                 $this->loadEnvironment($request["workspace"]);
 
                 Util\Logger::log("API::Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
-                if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtoupper($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'MULTYPART') {
+                if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtoupper($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'MULTIPART') {
                     $this->multipart($request["uri"], $request["version"]);
                 } else {
                     $this->dispatchApiRequest($request["uri"], $request["version"]);
