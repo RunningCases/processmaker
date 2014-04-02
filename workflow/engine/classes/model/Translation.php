@@ -573,5 +573,19 @@ class Translation extends BaseTranslation
         }
         return false;
     }
+    
+    public function generateTransaltionMafe ($lang='en')
+    {
+        if (!file_exists(PATH_TRUNK .'vendor/colosa/MichelangeloFE/' . 'labels.php')) {
+            throw new Exception( PATH_TRUNK .'vendor/colosa/MichelangeloFE/' . 'labels.php');
+            throw new Exception( 'labels.php not exist in MAFE ');
+        }
+
+        include PATH_TRUNK .'vendor/colosa/MichelangeloFE/' . 'labels.php';
+
+        foreach ($labels as $key => $row) {
+            $this->addTranslation ('LABEL', 'ID_MAFE_'.MD5($row), $lang, $row);
+        }
+    }
 }
 
