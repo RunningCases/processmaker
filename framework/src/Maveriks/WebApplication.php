@@ -142,13 +142,13 @@ class WebApplication
         header('Access-Control-Allow-Origin: *');
 
         // $servicesDir contains directory where Services Classes are allocated
-        $servicesDir = $this->workflowDir . 'engine' . DS . 'src' . DS . 'Services' . DS;
+        $servicesDir = $this->workflowDir . 'engine' . DS . 'src' . DS . 'ProcessMaker' . DS . 'Services' . DS;
         // $apiDir - contains directory to scan classes and add them to Restler
         $apiDir = $servicesDir . 'Api' . DS;
         // $apiIniFile - contains file name of api ini configuration
         $apiIniFile = $servicesDir . DS . 'api.ini';
         // $authenticationClass - contains the class name that validate the authentication for Restler
-        $authenticationClass = 'Services\\Api\\OAuth2\\Server';
+        $authenticationClass = 'ProcessMaker\\Services\\OAuth2\\Server';
         // $pmOauthClientId - contains PM Local OAuth Id (Web Designer)
         $pmOauthClientId = 'x-pm-local-client';
 
@@ -179,10 +179,10 @@ class WebApplication
         // Setting database connection source
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
         $port = empty($port) ? '' : ";port=$port";
-        \Services\Api\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
+        \ProcessMaker\Services\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
 
         // Setting default OAuth Client id, for local PM Web Designer
-        \Services\Api\OAuth2\Server::setPmClientId($pmOauthClientId);
+        \ProcessMaker\Services\OAuth2\Server::setPmClientId($pmOauthClientId);
 
         require_once $this->workflowDir . "engine/src/Extension/Restler/UploadFormat.php";
         //require_once PATH_CORE
@@ -212,17 +212,18 @@ class WebApplication
 
             foreach ($classesList as $classFile) {
                 if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
-                    $namespace = '\\Services\\' . str_replace(
+                    $namespace = '\\ProcessMaker\\Services\\' . str_replace(
                             DIRECTORY_SEPARATOR,
                             '\\',
                             str_replace('.php', '', str_replace($servicesDir, '', $classFile))
                         );
-                    //var_dump($namespace);
+                    //var_dump($namespace); die;
                     $rest->addAPIClass($namespace);
                 }
             }
 
             // adding aliases for Restler
+            //print_r($apiIniConf);
             if (array_key_exists('alias', $apiIniConf)) {
                 foreach ($apiIniConf['alias'] as $alias => $aliasData) {
                     if (is_array($aliasData)) {

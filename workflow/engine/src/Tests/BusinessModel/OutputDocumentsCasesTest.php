@@ -27,13 +27,13 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->oOutputDocument = new \BusinessModel\Cases\OutputDocument();
+        $this->oOutputDocument = new \ProcessMaker\BusinessModel\Cases\OutputDocument();
     }
 
     /**
      * Test add OutputDocument
      *
-     * @covers \BusinessModel\Cases\OutputDocument::addCasesOutputDocument
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::addCasesOutputDocument
      *
      * @copyright Colosa - Bolivia
      */
@@ -56,7 +56,7 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get OutputDocuments
      *
-     * @covers \BusinessModel\Cases\OutputDocument::getCasesOutputDocuments
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::getCasesOutputDocuments
      * @depends testAddCasesOutputDocument
      * @param array $aResponse
      *
@@ -71,7 +71,7 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get OutputDocument
      *
-     * @covers \BusinessModel\Cases\OutputDocument::getCasesOutputDocument
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::getCasesOutputDocument
      * @depends testAddCasesOutputDocument
      * @param array $aResponse
      *
@@ -86,7 +86,7 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test remove OutputDocument
      *
-     * @covers \BusinessModel\Cases\OutputDocument::removeOutputDocument
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::removeOutputDocument
      * @depends testAddCasesOutputDocument
      * @param array $aResponse
      *
