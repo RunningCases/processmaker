@@ -71,5 +71,40 @@ class Calendar extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+    /**
+     * @url PUT /:cal_uid
+     *
+     * @param string $cal_uid      {@min 32}{@max 32}
+     * @param array  $request_data
+     */
+    public function doPut($cal_uid, $request_data)
+    {
+        try {
+            $calendar = new \BusinessModel\Calendar();
+            $calendar->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+
+            $arrayData = $calendar->update($cal_uid, $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url DELETE /:cal_uid
+     *
+     * @param string $cal_uid {@min 32}{@max 32}
+     */
+    public function doDelete($cal_uid)
+    {
+        try {
+            $calendar = new \BusinessModel\Calendar();
+            $calendar->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
+
+            $calendar->delete($cal_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
 
