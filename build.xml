@@ -136,7 +136,14 @@
   </exec>
  </target>
 
- <target name="behat" description="Behaviour tests with Behat">
+ <target name="prepare-behat" description="Prepare Behat Env.">
+   <exec executable="${basedir}/../prepare_behat_env">
+     <arg value="--source-dir" />
+     <arg value="${basedir}/../" />
+   </exec>
+ </target>
+
+ <target name="behat" description="Behaviour tests with Behat" depends="prepare-behat">
   <exec executable="vendor/behat/behat/bin/behat">
    <arg value="--format" />
    <arg value="junit,progress" />

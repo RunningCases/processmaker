@@ -37,7 +37,7 @@ class Cases
         $dir = isset( $dataList["dir"] ) ? $dataList["dir"] : "DESC";
         $sort = isset( $dataList["sort"] ) ? $dataList["sort"] : "APP_CACHE_VIEW.APP_NUMBER";
         $start = isset( $dataList["start"] ) ? $dataList["start"] : "0";
-        $limit = isset( $dataList["limit"] ) ? $dataList["limit"] : "config";
+        $limit = isset( $dataList["limit"] ) ? $dataList["limit"] : "";
         $filter = isset( $dataList["filter"] ) ? $dataList["filter"] : "";
         $process = isset( $dataList["process"] ) ? $dataList["process"] : "";
         $category = isset( $dataList["category"] ) ? $dataList["category"] : "";
@@ -61,7 +61,7 @@ class Cases
         if ($start != 0) {
             $start--;
         }
-        if ($limit == 'config') {
+        if ($limit == 'config' || (abs((int)$limit)) == 0) {
             G::LoadClass("configuration");
             $conf = new \Configurations();
             $generalConfCasesList = $conf->getConfiguration('ENVIRONMENT_SETTINGS', '');

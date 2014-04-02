@@ -14,7 +14,7 @@ Scenario: List of case notes for this case
     And the type is "array"
     
  
-Scenario Outline: Create a new case note for specified case
+Scenario: Create a new case note for specified case
         Given POST this data:
             """
             {

@@ -8,6 +8,7 @@ class WebApplication
     protected $rootDir = "";
     protected $workflowDir = "";
     protected $requestUri = "";
+    protected $responseMultipart = array();
 
     const RUNNING_DEFAULT = "default.running";
     const RUNNING_INDEX = "index.running";
@@ -78,10 +79,43 @@ class WebApplication
                 $this->loadEnvironment($request["workspace"]);
 
                 Util\Logger::log("API::Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
-                $this->dispatchApiRequest($request["uri"], $request["version"]);
+                if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtoupper($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'MULTYPART') {
+                    $this->multipart($request["uri"], $request["version"]);
+                } else {
+                    $this->dispatchApiRequest($request["uri"], $request["version"]);
+                }
                 Util\Logger::log("API::End Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
                 break;
         }
+    }
+
+    /**
+     * This method performs the functionality of multipart
+     *
+     * @param string $version. Version Api
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function multipart($uri, $version = "1.0")
+    {
+        $stringInput = file_get_contents('php://input');
+        if (is_null($stringInput)) {
+            return array(); //no body
+        }
+        $input = json_decode($stringInput);
+
+        $baseUrl = (empty($input->base_url)) ? $uri : $input->base_url;
+        foreach($input->calls as $value) {
+            $_SERVER["REQUEST_METHOD"] = (empty($value->method)) ? 'GET' : $value->method;
+            $uriTemp = trim($baseUrl) . trim($value->url);
+            $inputExecute = (empty($value->data)) ? '' : json_encode($value->data);
+            $this->responseMultipart[] = $this->dispatchApiRequest($uriTemp, $version, true, $inputExecute);
+        }
+        echo json_encode($this->responseMultipart);
     }
 
     /**
@@ -89,7 +123,7 @@ class WebApplication
      *
      * @author Erik Amaru Ortiz <erik@colosa.com>
      */
-    public function dispatchApiRequest($uri, $version = "1.0")
+    public function dispatchApiRequest($uri, $version = "1.0", $multipart = false, $inputExecute = '')
     {
         // to handle a request with "OPTIONS" method
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -134,6 +168,9 @@ class WebApplication
         // create a new Restler instance
         //$rest = new \Luracast\Restler\Restler();
         $rest = new \Maveriks\Extension\Restler();
+        // setting flag for multipart to Restler
+        $rest->setFlagMultipart($multipart);
+        $rest->inputExecute = $inputExecute;
         // setting api version to Restler
         $rest->setAPIVersion($version);
         // adding $authenticationClass to Restler
@@ -211,6 +248,9 @@ class WebApplication
         }
 
         $rest->handle();
+        if ($rest->flagMultipart === true) {
+            return $rest->responseMultipart;
+        }
     }
 
     public function parseApiRequestUri()
