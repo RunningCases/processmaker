@@ -273,7 +273,7 @@ class Calendar
 
             $this->throwExceptionIfExistsName($arrayData["CAL_NAME"], $this->arrayFieldNameForException["calendarName"]);
 
-            if (!(count($arrayData["CAL_WORK_DAYS"]) >= 3)) {
+            if (isset($arrayData["CAL_WORK_DAYS"]) && count($arrayData["CAL_WORK_DAYS"]) < 3) {
                 throw (new \Exception(\G::LoadTranslation("ID_MOST_AT_LEAST_3_DAY")));
             }
 
@@ -294,6 +294,10 @@ class Calendar
 
             if (isset($arrayData["CAL_WORK_HOUR"])) {
                 foreach ($arrayData["CAL_WORK_HOUR"] as $value) {
+                    if ($value["DAY"] != "ALL" && !in_array($value["DAY"], $arrayData["CAL_WORK_DAYS"])) {
+                        throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"]), "Value specified for \"{0}\" does not exists in \"{1}\"")));
+                    }
+
                     $arrayCalendarWorkHour[] = array(
                         "CALENDAR_BUSINESS_DAY"   => $this->workDaysReplaceData($value["DAY"]),
                         "CALENDAR_BUSINESS_START" => $value["HOUR_START"],
@@ -341,6 +345,136 @@ class Calendar
             }
 
             return $arrayData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Update Calendar
+     *
+     * @param string $calendarUid Unique id of Calendar
+     * @param array  $arrayData   Data
+     *
+     * return array Return data of the Calendar updated
+     */
+    public function update($calendarUid, $arrayData)
+    {
+        try {
+            $arrayData = \G::array_change_key_case2($arrayData, CASE_UPPER);
+
+            //Verify data
+            $process = new \BusinessModel\Process();
+
+            $this->throwExceptionIfNotExistsCalendar($calendarUid, $this->arrayFieldNameForException["calendarUid"]);
+
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
+
+            if (isset($arrayData["CAL_NAME"])) {
+                $this->throwExceptionIfExistsName($arrayData["CAL_NAME"], $this->arrayFieldNameForException["calendarName"], $calendarUid);
+            }
+
+            if (isset($arrayData["CAL_WORK_DAYS"]) && count($arrayData["CAL_WORK_DAYS"]) < 3) {
+                throw (new \Exception(\G::LoadTranslation("ID_MOST_AT_LEAST_3_DAY")));
+            }
+
+            if (isset($arrayData["CAL_WORK_HOUR"])) {
+                foreach ($arrayData["CAL_WORK_HOUR"] as $value) {
+                    $process->throwExceptionIfDataNotMetFieldDefinition($value, $this->arrayWorkHourFieldDefinition, $this->arrayWorkHourFieldNameForException, true);
+                }
+            }
+
+            if (isset($arrayData["CAL_HOLIDAY"])) {
+                foreach ($arrayData["CAL_HOLIDAY"] as $value) {
+                    $process->throwExceptionIfDataNotMetFieldDefinition($value, $this->arrayHolidayFieldDefinition, $this->arrayHolidayFieldNameForException, true);
+                }
+            }
+
+            //Set variables
+            $arrayCalendarData = \G::array_change_key_case2($this->getCalendar($calendarUid), CASE_UPPER);
+
+            $calendarWorkDays = (isset($arrayData["CAL_WORK_DAYS"]))? $arrayData["CAL_WORK_DAYS"] : $arrayCalendarData["CAL_WORK_DAYS"];
+
+            $arrayCalendarWorkHour = array();
+            $arrayAux = (isset($arrayData["CAL_WORK_HOUR"]))? $arrayData["CAL_WORK_HOUR"] : $arrayCalendarData["CAL_WORK_HOUR"];
+
+            foreach ($arrayAux as $value) {
+                if (isset($arrayData["CAL_WORK_HOUR"]) && $value["DAY"] != "ALL" && !in_array($value["DAY"], $calendarWorkDays)) {
+                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"]), "Value specified for \"{0}\" does not exists in \"{1}\"")));
+                }
+
+                $arrayCalendarWorkHour[] = array(
+                    "CALENDAR_BUSINESS_DAY"   => $this->workDaysReplaceData($value["DAY"]),
+                    "CALENDAR_BUSINESS_START" => $value["HOUR_START"],
+                    "CALENDAR_BUSINESS_END"   => $value["HOUR_END"]
+                );
+            }
+
+            $arrayCalendarHoliday = array();
+            $arrayAux = (isset($arrayData["CAL_HOLIDAY"]))? $arrayData["CAL_HOLIDAY"] : $arrayCalendarData["CAL_HOLIDAY"];
+
+            foreach ($arrayAux as $value) {
+                $arrayCalendarHoliday[] = array(
+                    "CALENDAR_HOLIDAY_NAME"  => $value["NAME"],
+                    "CALENDAR_HOLIDAY_START" => $value["DATE_START"],
+                    "CALENDAR_HOLIDAY_END"   => $value["DATE_END"]
+                );
+            }
+
+            $arrayDataAux = array();
+            $arrayDataAux["CALENDAR_UID"] = $calendarUid;
+            $arrayDataAux["CALENDAR_NAME"] = (isset($arrayData["CAL_NAME"]))? $arrayData["CAL_NAME"] : $arrayCalendarData["CAL_NAME"];
+            $arrayDataAux["CALENDAR_DESCRIPTION"] = (isset($arrayData["CAL_DESCRIPTION"]))? $arrayData["CAL_DESCRIPTION"] : $arrayCalendarData["CAL_DESCRIPTION"];
+            $arrayDataAux["CALENDAR_WORK_DAYS"] = explode("|", $this->workDaysReplaceData(implode("|", $calendarWorkDays)));
+            $arrayDataAux["CALENDAR_STATUS"] = (isset($arrayData["CAL_STATUS"]))? $arrayData["CAL_STATUS"] : $arrayCalendarData["CAL_STATUS"];
+
+            $arrayDataAux["BUSINESS_DAY"] = $arrayCalendarWorkHour;
+            $arrayDataAux["HOLIDAY"] = $arrayCalendarHoliday;
+
+            //Update
+            $calendarDefinition = new \CalendarDefinition();
+
+            $calendarDefinition->saveCalendarInfo($arrayDataAux);
+
+            //Return
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = \G::array_change_key_case2($arrayData, CASE_LOWER);
+            }
+
+            return $arrayData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Delete Calendar
+     *
+     * @param string $calendarUid Unique id of Calendar
+     *
+     * return void
+     */
+    public function delete($calendarUid)
+    {
+        try {
+            //Verify data
+            $calendarDefinition = new \CalendarDefinition();
+
+            $this->throwExceptionIfNotExistsCalendar($calendarUid, $this->arrayFieldNameForException["calendarUid"]);
+
+            $arrayAux = $calendarDefinition->getAllCounterByCalendar("USER");
+            $nU = (isset($arrayAux[$calendarUid]))? $arrayAux[$calendarUid] : 0;
+            $arrayAux = $calendarDefinition->getAllCounterByCalendar("TASK");
+            $nT = (isset($arrayAux[$calendarUid]))? $arrayAux[$calendarUid] : 0;
+            $arrayAux = $calendarDefinition->getAllCounterByCalendar("PROCESS");
+            $nP = (isset($arrayAux[$calendarUid]))? $arrayAux[$calendarUid] : 0;
+
+            if ($nU + $nT + $nP > 0) {
+                throw (new \Exception(\G::LoadTranslation("ID_MSG_CANNOT_DELETE_CALENDAR")));
+            }
+
+            //Delete
+            $calendarDefinition->deleteCalendar($calendarUid);
         } catch (\Exception $e) {
             throw $e;
         }
