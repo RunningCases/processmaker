@@ -577,7 +577,6 @@ class Translation extends BaseTranslation
     public function generateTransaltionMafe ($lang='en')
     {
         if (!file_exists(PATH_TRUNK .'vendor/colosa/MichelangeloFE/' . 'labels.php')) {
-            throw new Exception( PATH_TRUNK .'vendor/colosa/MichelangeloFE/' . 'labels.php');
             throw new Exception( 'labels.php not exist in MAFE ');
         }
 
