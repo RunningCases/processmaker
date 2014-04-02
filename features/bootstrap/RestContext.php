@@ -1118,10 +1118,20 @@ class RestContext extends BehatContext
     /**
      * @Then /^the response has (\d+) records$/
      * @Then /^the response has (\d+) record$/
+     * @Then /^the response has (\d+) records in property "([^"]*)"$/
+     * @Then /^the response has (\d+) record in property "([^"]*)"$/
      */
-    public function theResponseHasRecords($quantityOfRecords)
+    public function theResponseHasRecords($quantityOfRecords, $responseProperty="")
     {
-        $data = $this->_data;
+        if($responseProperty!=""){
+            if(!isset($this->_data->$responseProperty)){
+                throw new Exception("the Response data doesn't have a property named: $responseProperty\n\n" );
+            }
+            $data = $this->_data->$responseProperty;
+        }else{
+            $data = $this->_data;
+        }
+        
         if (!is_array($data)) {
             if ($quantityOfRecords == 0) {
                 //if we expect 0 records and the response in fact is not an array, just return as a valid test

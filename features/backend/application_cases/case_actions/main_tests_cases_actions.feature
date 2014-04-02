@@ -260,5 +260,4 @@ Scenario Outline: Delete of the cases created in this script.
     | 7                  |
     | 8                  |
     | 9                  |
-    | 10                 |     
-
+    | 10                 |
