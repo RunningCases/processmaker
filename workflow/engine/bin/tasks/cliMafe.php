@@ -35,7 +35,7 @@ EOT
 );
 
 CLI::taskArg('workspace', true, true);
-CLI::taskOpt("lang", "You must specify language on which rebuild of the case cache list builder will be done; if you don't specify this, it will use 'en' by default", "l:","lang=");
+CLI::taskOpt("lang", "languaje", "l:","lang=");
 CLI::taskRun('run_create_translation');
 
 function run_create_translation($args, $opts)

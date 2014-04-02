@@ -258,9 +258,6 @@ function run_database_check($args, $opts) {
 }
 
 function database_upgrade($command, $args) {
-        print_r($command);
-    print_r($args);
-    die;
   $workspaces = get_workspaces_from_args($args);
   $checkOnly = (strcmp($command, "check") == 0);
   foreach ($workspaces as $workspace) {
