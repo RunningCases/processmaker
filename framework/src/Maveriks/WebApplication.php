@@ -8,6 +8,8 @@ class WebApplication
 {
     protected $rootDir = "";
     protected $workflowDir = "";
+    protected $workspaceDir = "";
+    protected $workspaceCacheDir = "";
     protected $requestUri = "";
     protected $responseMultipart = array();
 
@@ -85,7 +87,7 @@ class WebApplication
                 } else {
                     $this->dispatchApiRequest($request["uri"], $request["version"]);
                 }
-                Util\Logger::log("API::End Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
+                Util\Logger::log("API::End Dispatch");
                 break;
         }
     }
@@ -158,9 +160,23 @@ class WebApplication
         /*
          * Load Api ini file for Rest Service
          */
-        $apiIniConf = array();
+        $config = array();
+
         if (file_exists($apiIniFile)) {
-            $apiIniConf = Util\Common::parseIniFile($apiIniFile);
+            $cachedConfig = $this->workspaceCacheDir . "api-config.php";
+
+            // verify if config cache file exists, is array and the last modification date is the same when cache was created.
+            if (! file_exists($cachedConfig) || ! is_array($config = include($cachedConfig)) || $config["_chk"] != filemtime($apiIniFile)) {
+                $config = Util\Common::parseIniFile($apiIniFile);
+                $config["_chk"] = filemtime($apiIniFile);
+                if (! is_dir(dirname($cachedConfig))) {
+                    Util\Common::mk_dir(dirname($cachedConfig));
+                }
+                file_put_contents($cachedConfig, "<?php return " . var_export($config, true).";");
+                Util\Logger::log("Configuration cache was loaded and cached to: $cachedConfig");
+            } else {
+                Util\Logger::log("Loading Api Configuration from: $cachedConfig");
+            }
         }
 
         // Setting current workspace to Api class
@@ -217,8 +233,8 @@ class WebApplication
             }
 
             // adding aliases for Restler
-            if (array_key_exists('alias', $apiIniConf)) {
-                foreach ($apiIniConf['alias'] as $alias => $aliasData) {
+            if (array_key_exists('alias', $config)) {
+                foreach ($config['alias'] as $alias => $aliasData) {
                     if (is_array($aliasData)) {
                         foreach ($aliasData as $label => $namespace) {
                             $namespace = '\\' . ltrim($namespace, '\\');
@@ -373,7 +389,10 @@ class WebApplication
         require_once (PATH_DB . SYS_SYS . "/db.php");
 
         // defining constant for workspace shared directory
-        define("PATH_WORKSPACE", PATH_DB . SYS_SYS . PATH_SEP);
+        $this->workspaceDir = PATH_DB . SYS_SYS . PATH_SEP;
+        $this->workspaceCacheDir = PATH_DB . SYS_SYS . PATH_SEP . "cache" . PATH_SEP;
+
+        define("PATH_WORKSPACE", $this->workspaceDir);
         // including workspace shared classes -> particularlly for pmTables
 
         set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);
