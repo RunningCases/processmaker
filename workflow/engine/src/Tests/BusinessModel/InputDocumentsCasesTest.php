@@ -27,7 +27,7 @@ class InputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->oInputDocument = new \BusinessModel\Cases\InputDocument();
+        $this->oInputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
     }
 
     /**
@@ -57,7 +57,7 @@ class InputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get InputDocuments
      *
-     * @covers \BusinessModel\Cases\InputDocument::getCasesInputDocuments
+     * @covers \ProcessMaker\BusinessModel\Cases\InputDocument::getCasesInputDocuments
      * @depends testAddInputDocument
      * @param array $aResponse
      *
@@ -72,7 +72,7 @@ class InputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get InputDocument
      *
-     * @covers \BusinessModel\Cases\InputDocument::getCasesInputDocument
+     * @covers \ProcessMaker\BusinessModel\Cases\InputDocument::getCasesInputDocument
      * @depends testAddInputDocument
      * @param array $aResponse
      *
@@ -87,7 +87,7 @@ class InputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test remove InputDocument
      *
-     * @covers \BusinessModel\Cases\InputDocument::removeInputDocument
+     * @covers \ProcessMaker\BusinessModel\Cases\InputDocument::removeInputDocument
      * @depends testAddInputDocument
      * @param array $aResponse
      *

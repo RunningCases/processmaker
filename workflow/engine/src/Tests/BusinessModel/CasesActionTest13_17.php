@@ -45,7 +45,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
         $idCaseDraft = PMFNewCase($proUid, $usrUid, $tasUid, array());
         $this->idCaseDraft = $idCaseDraft;
 
-        $this->oCases = new \BusinessModel\Cases();
+        $this->oCases = new \ProcessMaker\BusinessModel\Cases();
         $listToDo = $this->oCases->getList(array('userId' => '00000000000000000000000000000001'));
         $this->nowCountTodo = $listToDo['total'];
 
@@ -59,7 +59,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in first field the function
      *
-     * @covers \BusinessModel\Cases::putCancelCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putCancelCase
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$app_uid' it must be a string.
      *
@@ -74,7 +74,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in first field the function
      *
-     * @covers \BusinessModel\Cases::putCancelCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putCancelCase
      * @expectedException        Exception
      * @expectedExceptionMessage The application with $app_uid: 'IdDoesNotExists' does not exist.
      *
@@ -89,7 +89,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in second field the function
      *
-     * @covers \BusinessModel\Cases::putCancelCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putCancelCase
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$usr_uid' it must be a string.
      *
@@ -104,7 +104,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in second field the function
      *
-     * @covers \BusinessModel\Cases::putCancelCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putCancelCase
      * @expectedException        Exception
      * @expectedExceptionMessage The user with $usr_uid: 'IdDoesNotExists' does not exist.
      *
@@ -119,7 +119,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in third field the function
      *
-     * @covers \BusinessModel\Cases::putCancelCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putCancelCase
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$del_index' it must be a integer.
      *
@@ -134,7 +134,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test for cancel case
      *
-     * @covers \BusinessModel\Cases::putCancelCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putCancelCase
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -142,7 +142,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     public function testPutCancelCase()
     {
         $this->oCases->putCancelCase($this->idCaseDraft, '00000000000000000000000000000001');
-        $this->oCases = new \BusinessModel\Cases();
+        $this->oCases = new \ProcessMaker\BusinessModel\Cases();
         $listDraft = $this->oCases->getList(array('userId' => '00000000000000000000000000000001', 'action' => 'draft'));
         $this->assertNotEquals($this->nowCountDraft, $listDraft['total']);
     }
@@ -150,7 +150,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in first field the function
      *
-     * @covers \BusinessModel\Cases::putPauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putPauseCase
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$app_uid' it must be a string.
      *
@@ -165,7 +165,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in first field the function
      *
-     * @covers \BusinessModel\Cases::putPauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putPauseCase
      * @expectedException        Exception
      * @expectedExceptionMessage The application with $app_uid: 'IdDoesNotExists' does not exist.
      *
@@ -180,7 +180,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in second field the function
      *
-     * @covers \BusinessModel\Cases::putPauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putPauseCase
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$usr_uid' it must be a string.
      *
@@ -195,7 +195,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in second field the function
      *
-     * @covers \BusinessModel\Cases::putPauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putPauseCase
      * @expectedException        Exception
      * @expectedExceptionMessage The user with $usr_uid: 'IdDoesNotExists' does not exist.
      *
@@ -210,7 +210,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in third field the function
      *
-     * @covers \BusinessModel\Cases::putPauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putPauseCase
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$del_index' it must be a integer.
      *
@@ -225,7 +225,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in fourth field the function
      *
-     * @covers \BusinessModel\Cases::putPauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putPauseCase
      * @expectedException        Exception
      * @expectedExceptionMessage The value '2014-44-44' is not a valid date for the format 'Y-m-d'.
      *
@@ -240,7 +240,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test for cancel case
      *
-     * @covers \BusinessModel\Cases::putPauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putPauseCase
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -248,7 +248,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     public function testPutPauseCase()
     {
         $this->oCases->putPauseCase($this->idCaseToDo, '00000000000000000000000000000001');
-        $this->oCases = new \BusinessModel\Cases();
+        $this->oCases = new \ProcessMaker\BusinessModel\Cases();
         $listPaused = $this->oCases->getList(array('userId' => '00000000000000000000000000000001', 'action' => 'paused'));
         $this->assertNotEquals($this->nowCountPaused, $listPaused['total']);
     }
@@ -256,7 +256,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in first field the function
      *
-     * @covers \BusinessModel\Cases::putUnpauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putUnpauseCase
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$app_uid' it must be a string.
      *
@@ -271,7 +271,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in first field the function
      *
-     * @covers \BusinessModel\Cases::putUnpauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putUnpauseCase
      * @expectedException        Exception
      * @expectedExceptionMessage The application with $app_uid: 'IdDoesNotExists' does not exist.
      *
@@ -286,7 +286,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in second field the function
      *
-     * @covers \BusinessModel\Cases::putUnpauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putUnpauseCase
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$usr_uid' it must be a string.
      *
@@ -301,7 +301,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in second field the function
      *
-     * @covers \BusinessModel\Cases::putUnpauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putUnpauseCase
      * @expectedException        Exception
      * @expectedExceptionMessage The user with $usr_uid: 'IdDoesNotExists' does not exist.
      *
@@ -316,7 +316,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in third field the function
      *
-     * @covers \BusinessModel\Cases::putUnpauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putUnpauseCase
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$del_index' it must be a integer.
      *
@@ -331,7 +331,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test for cancel case
      *
-     * @covers \BusinessModel\Cases::putUnpauseCase
+     * @covers \ProcessMaker\BusinessModel\Cases::putUnpauseCase
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -339,7 +339,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     public function testPutUnpauseCase()
     {
         $this->oCases->putUnpauseCase($this->idCaseToDo, '00000000000000000000000000000001');
-        $this->oCases = new \BusinessModel\Cases();
+        $this->oCases = new \ProcessMaker\BusinessModel\Cases();
         $listPaused = $this->oCases->getList(array('userId' => '00000000000000000000000000000001', 'action' => 'paused'));
         $this->assertEquals($this->nowCountPaused, $listPaused['total']);
     }
@@ -347,7 +347,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in first field the function
      *
-     * @covers \BusinessModel\Cases::deleteCase
+     * @covers \ProcessMaker\BusinessModel\Cases::deleteCase
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$app_uid' it must be a string.
      *
@@ -362,7 +362,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in first field the function
      *
-     * @covers \BusinessModel\Cases::deleteCase
+     * @covers \ProcessMaker\BusinessModel\Cases::deleteCase
      * @expectedException        Exception
      * @expectedExceptionMessage The application with $app_uid: 'IdDoesNotExists' does not exist.
      *
@@ -377,7 +377,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     /**
      * Test for cancel case
      *
-     * @covers \BusinessModel\Cases::deleteCase
+     * @covers \ProcessMaker\BusinessModel\Cases::deleteCase
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -385,7 +385,7 @@ class CasesAction13_17Test extends \PHPUnit_Framework_TestCase
     public function testDeleteCase()
     {
         $this->oCases->deleteCase($this->idCaseToDo);
-        $this->oCases = new \BusinessModel\Cases();
+        $this->oCases = new \ProcessMaker\BusinessModel\Cases();
         $listToDo = $this->oCases->getList(array('userId' => '00000000000000000000000000000001'));
         $this->assertNotEquals($this->nowCountTodo, $listToDo['total']);
     }
