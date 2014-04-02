@@ -2,6 +2,7 @@
 namespace Maveriks;
 
 use Maveriks\Util;
+use ProcessMaker\Services;
 
 class WebApplication
 {
@@ -141,6 +142,8 @@ class WebApplication
          */
         header('Access-Control-Allow-Origin: *');
 
+        require_once $this->rootDir . "framework/src/Maveriks/Extension/Restler/UploadFormat.php";
+
         // $servicesDir contains directory where Services Classes are allocated
         $servicesDir = $this->workflowDir . 'engine' . DS . 'src' . DS . 'ProcessMaker' . DS . 'Services' . DS;
         // $apiDir - contains directory to scan classes and add them to Restler
@@ -161,9 +164,7 @@ class WebApplication
         }
 
         // Setting current workspace to Api class
-        \ProcessMaker\Services\Api::setWorkspace(SYS_SYS);
-        // TODO remove this setting on the future, it is not needed, but if it is not present is throwing a warning
-        //\Luracast\Restler\Format\HtmlFormat::$viewPath = $servicesDir . 'oauth2/views';
+        Services\Api::setWorkspace(SYS_SYS);
 
         // create a new Restler instance
         //$rest = new \Luracast\Restler\Restler();
@@ -179,19 +180,12 @@ class WebApplication
         // Setting database connection source
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
         $port = empty($port) ? '' : ";port=$port";
-        \ProcessMaker\Services\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
+        Services\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
 
         // Setting default OAuth Client id, for local PM Web Designer
-        \ProcessMaker\Services\OAuth2\Server::setPmClientId($pmOauthClientId);
+        Services\OAuth2\Server::setPmClientId($pmOauthClientId);
 
-        require_once $this->workflowDir . "engine/src/Extension/Restler/UploadFormat.php";
-        //require_once PATH_CORE
-
-        //$rest->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');
-        //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
         $rest->setOverridingFormats('JsonFormat', 'UploadFormat');
-
-        // Override $_SERVER['REQUEST_URI'] to Restler handles the current url correctly
 
         $isPluginRequest = strpos($uri, '/plugin-') !== false ? true : false;
 
@@ -204,6 +198,7 @@ class WebApplication
             $uri = str_replace('/plugin-'.$pluginName, '', $uri);
         }
 
+        // Override $_SERVER['REQUEST_URI'] to Restler handles the modified url
         $_SERVER['REQUEST_URI'] = $uri;
 
         if (! $isPluginRequest) { // if it is not a request for a plugin endpoint
@@ -213,17 +208,15 @@ class WebApplication
             foreach ($classesList as $classFile) {
                 if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
                     $namespace = '\\ProcessMaker\\Services\\' . str_replace(
-                            DIRECTORY_SEPARATOR,
-                            '\\',
-                            str_replace('.php', '', str_replace($servicesDir, '', $classFile))
-                        );
-                    //var_dump($namespace); die;
+                        DIRECTORY_SEPARATOR,
+                        '\\',
+                        str_replace('.php', '', str_replace($servicesDir, '', $classFile))
+                    );
                     $rest->addAPIClass($namespace);
                 }
             }
 
             // adding aliases for Restler
-            //print_r($apiIniConf);
             if (array_key_exists('alias', $apiIniConf)) {
                 foreach ($apiIniConf['alias'] as $alias => $aliasData) {
                     if (is_array($aliasData)) {
