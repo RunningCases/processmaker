@@ -31,7 +31,7 @@ Scenario: Returns a list of the cases for the logged in user (Participated)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 57 records
+    And the response has 30 records
 
 
 Scenario: Returns a list of the cases for the logged in user (Unassigned)
@@ -55,7 +55,7 @@ Scenario: Returns a list of the cases for the logged in user (Advanced-Search)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 25 records
+    And the response has 30 records
 
 
 
@@ -74,28 +74,28 @@ Scenario Outline: Get paging of list inbox
     | test_description           | start | limit   | records | http_code |
     | lowercase in Start         |   a   | 1       | 1       |  200      |
     | uppercase in Start         |   A   | 1       | 1       |  200      |
-    | lowercase in Limit         |   1   | a       | 1       |  200      |
-    | uppercase in Limit         |   1   | A       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 14      |  200      |
+    | uppercase in Limit         |   1   | A       | 14      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
-    | start=3                    |   3   | 5       | 3       |  200      |
-    | limit and start =3         |   3   | 3       | 1       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
     | high number for start      | 1000  | 1       | 0       |  200      |
     | high number for start      | 1000  | 0       | 0       |  200      |
-    | empty result               |   1   | 0       | 1       |  200      |
+    | empty result               |   1   | 0       | 14      |  200      |
     | empty string               |   1   | 10000   | 14      |  200      |
     | invalid start              |   b   | 25      | 14      |  200      |
-    | invalid limit              |   1   | c       | 1       |  200      |
+    | invalid limit              |   1   | c       | 14      |  200      |
     | start equals zero          |   0   | 20      | 14      |  200      |
-    | search 0                   |   0   | 0       | 0       |  200      |
+    | search 0                   |   0   | 0       | 14      |  200      |
     | search 0                   |   0   | 100     | 14      |  200      |
-    | negative numbers in start  |  -10  | 25      | 14      |  200      |
-    | negative numbers in limit  |   1   | -25     | 1       |  200      |
+    | negative numbers in start  |  -10  | 25      | 4       |  200      |
+    | negative numbers in limit  |   1   | -25     | 14      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
     | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
-    | only start                 |  1    |         | 1       |  200      |
-    | only limit                 |       | 25      | 1       |  200      |
-    | without start and limit    |       |         | 1       |  200      |
+    | only start                 |  1    |         | 14      |  200      |
+    | only limit                 |       | 25      | 14      |  200      |
+    | without start and limit    |       |         | 14      |  200      |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -109,8 +109,8 @@ Scenario Outline: Get order type of Descending and Acending
 Examples:
     
     | test_description           | dir  | records |
-    | Order for Acending         | asc  | 1       |
-    | Order for Descending       | desc | 2       |
+    | Order for Acending         | asc  | 14      |
+    | Order for Descending       | desc | 14      |
 
 
 Scenario Outline: Get order type of Process Category
@@ -171,7 +171,7 @@ Scenario Outline: Get paging of list Draft
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
      Examples:
@@ -179,28 +179,28 @@ Scenario Outline: Get paging of list Draft
     | test_description           | start | limit   | records | http_code |
     | lowercase in Start         |   a   | 1       | 1       |  200      |
     | uppercase in Start         |   A   | 1       | 1       |  200      |
-    | lowercase in Limit         |   1   | a       | 1       |  200      |
-    | uppercase in Limit         |   1   | A       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 15      |  200      |
+    | uppercase in Limit         |   1   | A       | 15      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
-    | start=3                    |   3   | 5       | 3       |  200      |
-    | limit and start =3         |   3   | 3       | 1       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
     | high number for start      | 1000  | 1       | 0       |  200      |
     | high number for start      | 1000  | 0       | 0       |  200      |
-    | empty result               |   1   | 0       | 1       |  200      |
-    | empty string               |   1   | 10000   | 14      |  200      |
+    | empty result               |   1   | 0       | 15      |  200      |
+    | empty string               |   1   | 10000   | 15      |  200      |
     | invalid start              |   b   | 25      | 15      |  200      |
-    | invalid limit              |   1   | c       | 1       |  200      |
+    | invalid limit              |   1   | c       | 15      |  200      |
     | start equals zero          |   0   | 20      | 15      |  200      |
-    | search 0                   |   0   | 0       | 0       |  200      |
+    | search 0                   |   0   | 0       | 15      |  200      |
     | search 0                   |   0   | 100     | 15      |  200      |
-    | negative numbers in start  |  -10  | 25      | 15      |  200      |
-    | negative numbers in limit  |   1   | -25     | 1       |  200      |
+    | negative numbers in start  |  -10  | 25      | 5       |  200      |
+    | negative numbers in limit  |   1   | -25     | 15      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
-    | real numbers in start      |  0.0  | 10      | 10      |  200      |
+    | real numbers in start      |  0.0  | 12      | 12      |  200      |
     | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
-    | only start                 |  1    |         | 1       |  200      |
-    | only limit                 |       | 25      | 1       |  200      |
-    | without start and limit    |       |         | 1       |  200      |
+    | only start                 |  1    |         | 15      |  200      |
+    | only limit                 |       | 25      | 15      |  200      |
+    | without start and limit    |       |         | 15      |  200      |
 
 
 Scenario Outline: Get order type of Descending and Ascending
@@ -208,7 +208,7 @@ Scenario Outline: Get order type of Descending and Ascending
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
@@ -224,7 +224,7 @@ Scenario Outline: Get order type of Process Category
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
@@ -239,7 +239,7 @@ Scenario Outline: Get order type of Process
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
@@ -254,14 +254,14 @@ Scenario Outline: Get order type of Search of the process
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
     
     | test_description                                                | search                           | records |
     | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 4       |
-    | Filter all cases                                                |                                  | 5       |
+    | Filter all cases                                                |                                  | 15      |
 
 
 Scenario: Returns a list of the cases for the logged in user (Participated)
@@ -269,14 +269,14 @@ Scenario: Returns a list of the cases for the logged in user (Participated)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 57 records
+    And the response has 30 records
 
 Scenario Outline: Get paging of list Participated
     Given I request "cases/participated/paged?Start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
      Examples:
@@ -284,28 +284,28 @@ Scenario Outline: Get paging of list Participated
     | test_description           | start | limit   | records | http_code |
     | lowercase in Start         |   a   | 1       | 1       |  200      |
     | uppercase in Start         |   A   | 1       | 1       |  200      |
-    | lowercase in Limit         |   1   | a       | 1       |  200      |
-    | uppercase in Limit         |   1   | A       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 30      |  200      |
+    | uppercase in Limit         |   1   | A       | 30      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
-    | start=3                    |   3   | 5       | 3       |  200      |
-    | limit and start =3         |   3   | 3       | 1       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
     | high number for start      | 1000  | 1       | 0       |  200      |
     | high number for start      | 1000  | 0       | 0       |  200      |
-    | empty result               |   1   | 0       | 1       |  200      |
-    | empty string               |   1   | 10000   | 57      |  200      |
+    | empty result               |   1   | 0       | 30      |  200      |
+    | empty string               |   1   | 10000   | 30      |  200      |
     | invalid start              |   b   | 25      | 25      |  200      |
-    | invalid limit              |   1   | c       | 1       |  200      |
-    | start equals zero          |   0   | 20      | 20      |  200      |
-    | search 0                   |   0   | 0       | 0       |  200      |
-    | search 0                   |   0   | 100     | 57      |  200      |
-    | negative numbers in start  |  -10  | 25      | 25      |  200      |
-    | negative numbers in limit  |   1   | -25     | 1       |  200      |
+    | invalid limit              |   1   | c       | 30      |  200      |
+    | start equals zero          |   0   | 20      | 30      |  200      |
+    | search 0                   |   0   | 0       | 30      |  200      |
+    | search 0                   |   0   | 100     | 30      |  200      |
+    | negative numbers in start  |  -10  | 25      | 15      |  200      |
+    | negative numbers in limit  |   1   | -25     | 25      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
     | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
-    | only start                 |  1    |         | 1       |  200      |
-    | only limit                 |       | 25      | 25      |  200      |
-    | without start and limit    |       |         | 1       |  200      |
+    | only start                 |  1    |         | 30      |  200      |
+    | only limit                 |       | 25      | 30      |  200      |
+    | without start and limit    |       |         | 30      |  200      |
 
 
 Scenario Outline: Get order type of Descending an Descending
@@ -313,14 +313,14 @@ Scenario Outline: Get order type of Descending an Descending
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
     
     | test_description           | dir  | records |
-    | Order for Acending         | asc  | 57      |
-    | Order for Descending       | desc | 57      |
+    | Order for Acending         | asc  | 30      |
+    | Order for Descending       | desc | 30      |
 
     
 
@@ -329,14 +329,14 @@ Scenario Outline: Get order type of Process Category
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
     
     | test_description                           | cat_uid                           | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 25      |
-    | Filter all categories                      |                                   | 57      |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 27      |
+    | Filter all categories                      |                                   | 30      |
 
 
 Scenario Outline: Get order type of Process 
@@ -344,14 +344,14 @@ Scenario Outline: Get order type of Process
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
     
     | test_description                                 | pro_uid                          | records |
     | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 3       |
-    | Filter all cases                                 |                                  | 57      |
+    | Filter all cases                                 |                                  | 30      |
 
 
 
@@ -360,14 +360,14 @@ Scenario Outline: Get order type of Search
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
     
     | test_description                                                | search                           | records |
     | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 3       |
-    | Filter all cases                                                |                                  | 4       |
+    | Filter all cases                                                |                                  | 30      |
 
 
 Scenario: Returns a list of the cases for the logged in user (Unassigned)
@@ -383,7 +383,7 @@ Scenario Outline: Get paging of list Unassigned
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
      Examples:
@@ -391,28 +391,28 @@ Scenario Outline: Get paging of list Unassigned
     | test_description           | start | limit   | records | http_code |
     | lowercase in Start         |   a   | 1       | 1       |  200      |
     | uppercase in Start         |   A   | 1       | 1       |  200      |
-    | lowercase in Limit         |   1   | a       | 1       |  200      |
-    | uppercase in Limit         |   1   | A       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 12      |  200      |
+    | uppercase in Limit         |   1   | A       | 12      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
-    | start=3                    |   3   | 5       | 3       |  200      |
-    | limit and start =3         |   3   | 3       | 1       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
     | high number for start      | 1000  | 1       | 0       |  200      |
     | high number for start      | 1000  | 0       | 0       |  200      |
-    | empty result               |   1   | 0       | 1       |  200      |
+    | empty result               |   1   | 0       | 12      |  200      |
     | empty string               |   1   | 10000   | 12      |  200      |
     | invalid start              |   b   | 25      | 12      |  200      |
-    | invalid limit              |   1   | c       | 1       |  200      |
+    | invalid limit              |   1   | c       | 12      |  200      |
     | start equals zero          |   0   | 20      | 12      |  200      |
-    | search 0                   |   0   | 0       | 0       |  200      |
+    | search 0                   |   0   | 0       | 12      |  200      |
     | search 0                   |   0   | 100     | 12      |  200      |
-    | negative numbers in start  |  -10  | 25      | 12      |  200      |
-    | negative numbers in limit  |   1   | -25     | 1       |  200      |
+    | negative numbers in start  |  -10  | 25      | 2       |  200      |
+    | negative numbers in limit  |   1   | -25     | 12      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
     | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
-    | only start                 |  1    |         | 1       |  200      |
-    | only limit                 |       | 25      | 1       |  200      |
-    | without start and limit    |       |         | 1       |  200      |
+    | only start                 |  1    |         | 12      |  200      |
+    | only limit                 |       | 25      | 12      |  200      |
+    | without start and limit    |       |         | 12      |  200      |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -420,7 +420,7 @@ Scenario Outline: Get order type of Descending and Acending
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
@@ -435,7 +435,7 @@ Scenario Outline: Get order type of Process Category
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
@@ -450,7 +450,7 @@ Scenario Outline: Get order type of Process
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
@@ -465,14 +465,14 @@ Scenario Outline: Get order type of Search
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
     
     | test_description                                                | search                           | records |
     | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 3       |
-    | Filter all cases                                                |                                  | 3       |
+    | Filter all cases                                                |                                  | 12      |
 
 
 
@@ -489,7 +489,7 @@ Scenario Outline: Get paging of list Paused
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
      Examples:
@@ -497,28 +497,28 @@ Scenario Outline: Get paging of list Paused
     | test_description           | start | limit   | records | http_code |
     | lowercase in Start         |   a   | 1       | 1       |  200      |
     | uppercase in Start         |   A   | 1       | 1       |  200      |
-    | lowercase in Limit         |   1   | a       | 1       |  200      |
-    | uppercase in Limit         |   1   | A       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 12      |  200      |
+    | uppercase in Limit         |   1   | A       | 12      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
-    | start=3                    |   3   | 5       | 3       |  200      |
-    | limit and start =3         |   3   | 3       | 1       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
     | high number for start      | 1000  | 1       | 0       |  200      |
     | high number for start      | 1000  | 0       | 0       |  200      |
-    | empty result               |   1   | 0       | 1       |  200      |
+    | empty result               |   1   | 0       | 12      |  200      |
     | empty string               |   1   | 10000   | 12      |  200      |
     | invalid start              |   b   | 25      | 12      |  200      |
-    | invalid limit              |   1   | c       | 1       |  200      |
+    | invalid limit              |   1   | c       | 12      |  200      |
     | start equals zero          |   0   | 20      | 12      |  200      |
-    | search 0                   |   0   | 0       | 0       |  200      |
+    | search 0                   |   0   | 0       | 12      |  200      |
     | search 0                   |   0   | 100     | 12      |  200      |
-    | negative numbers in start  |  -10  | 25      | 12      |  200      |
-    | negative numbers in limit  |   1   | -25     | 1       |  200      |
+    | negative numbers in start  |  -10  | 25      | 2       |  200      |
+    | negative numbers in limit  |   1   | -25     | 12      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
     | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
-    | only start                 |  1    |         | 1       |  200      |
-    | only limit                 |       | 25      | 1       |  200      |
-    | without start and limit    |       |         | 1       |  200      |
+    | only start                 |  1    |         | 12      |  200      |
+    | only limit                 |       | 25      | 12      |  200      |
+    | without start and limit    |       |         | 12      |  200      |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -526,7 +526,7 @@ Scenario Outline: Get order type of Descending and Acending
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
@@ -541,7 +541,7 @@ Scenario Outline: Get order type of Process Category
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
@@ -556,7 +556,7 @@ Scenario Outline: Get order type of Process
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
@@ -571,14 +571,14 @@ Scenario Outline: Get order type of Search
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
 Examples:
     
     | test_description                                                | search                           | records |
     | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 2       |
-    | Filter all cases                                                |                                  | 3       |
+    | Filter all cases                                                |                                  | 12      |
 
 
 Scenario: Returns a list of the cases for the logged in user (Advanced Search)
@@ -586,7 +586,7 @@ Scenario: Returns a list of the cases for the logged in user (Advanced Search)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 50 records
+    And the response has 30 records
 
 
 Scenario Outline: Get paging of list Advanced Search
@@ -594,7 +594,7 @@ Scenario Outline: Get paging of list Advanced Search
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
      Examples:
@@ -602,28 +602,28 @@ Scenario Outline: Get paging of list Advanced Search
     | test_description           | start | limit   | records | http_code |
     | lowercase in Start         |   a   | 1       | 1       |  200      |
     | uppercase in Start         |   A   | 1       | 1       |  200      |
-    | lowercase in Limit         |   1   | a       | 1       |  200      |
-    | uppercase in Limit         |   1   | A       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 30      |  200      |
+    | uppercase in Limit         |   1   | A       | 30      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
-    | start=3                    |   3   | 5       | 3       |  200      |
-    | limit and start =3         |   3   | 3       | 1       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
     | high number for start      | 1000  | 1       | 0       |  200      |
     | high number for start      | 1000  | 0       | 0       |  200      |
-    | empty result               |   1   | 0       | 1       |  200      |
-    | empty string               |   1   | 10000   | 50      |  200      |
-    | invalid start              |   b   | 25      | 25      |  200      |
-    | invalid limit              |   1   | c       | 1       |  200      |
+    | empty result               |   1   | 0       | 30      |  200      |
+    | empty string               |   1   | 10000   | 30      |  200      |
+    | invalid start              |   b   | 25      | 30      |  200      |
+    | invalid limit              |   1   | c       | 30      |  200      |
     | start equals zero          |   0   | 20      | 20      |  200      |
-    | search 0                   |   0   | 0       | 0       |  200      |
-    | search 0                   |   0   | 100     | 50      |  200      |
-    | negative numbers in start  |  -10  | 25      | 25      |  200      |
-    | negative numbers in limit  |   1   | -25     | 1       |  200      |
+    | search 0                   |   0   | 0       | 30      |  200      |
+    | search 0                   |   0   | 100     | 30      |  200      |
+    | negative numbers in start  |  -10  | 25      | 15      |  200      |
+    | negative numbers in limit  |   1   | -25     | 25      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
     | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
-    | only start                 |  1    |         | 1       |  200      |
-    | only limit                 |       | 25      | 1       |  200      |
-    | without start and limit    |       |         | 1       |  200      |
+    | only start                 |  1    |         | 30      |  200      |
+    | only limit                 |       | 25      | 30      |  200      |
+    | without start and limit    |       |         | 30      |  200      |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -631,14 +631,14 @@ Scenario Outline: Get order type of Descending and Acending
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
     Examples:
     
     | test_description           | dir  | records |
-    | Order for Acending         | asc  | 50      |
-    | Order for Descending       | desc | 50      |
+    | Order for Acending         | asc  | 30      |
+    | Order for Descending       | desc | 30      |
     
 
 Scenario Outline: Get order type of Process Category 
@@ -646,14 +646,14 @@ Scenario Outline: Get order type of Process Category
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
     Examples:
     
     | test_description                           | cat_uid                           | records |
     | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 25      |
-    | Filter all categories                      |                                   | 50      |
+    | Filter all categories                      |                                   | 30      |
 
 
 
@@ -662,14 +662,14 @@ Scenario Outline: Get order type of Process
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
     Examples:
     
     | test_description                                 | pro_uid                          | records |
     | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 3       |
-    | Filter all cases                                 |                                  | 50      |
+    | Filter all cases                                 |                                  | 30      |
 
 
 
@@ -678,7 +678,7 @@ Scenario Outline: Get order type of Search
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
     Examples:
@@ -693,7 +693,7 @@ Scenario Outline: Get order for Status
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
     Examples:
@@ -710,7 +710,7 @@ Scenario Outline: Get order for User
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
     Examples:
@@ -727,7 +727,7 @@ Scenario Outline: Get order for date
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "object"
+    And the type is "array"
     And the response has <records> records in property "data"
 
     Examples:
