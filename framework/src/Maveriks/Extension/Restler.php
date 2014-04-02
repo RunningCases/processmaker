@@ -52,7 +52,7 @@ class Restler extends \Luracast\Restler\Restler
         }
         if ($this->flagMultipart === true) {
             $responseTemp['status'] = $this->responseCode;
-            $responseTemp['response'] = \G::json_decode($this->responseData);
+            $responseTemp['response'] = json_decode($this->responseData);
             $this->responseMultipart = $responseTemp;
         } else {
             echo $this->responseData;
