@@ -211,7 +211,7 @@ class InputDocument
             //Verify data
             $process = new \BusinessModel\Process();
 
-            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 

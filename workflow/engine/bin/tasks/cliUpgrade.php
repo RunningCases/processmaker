@@ -39,7 +39,6 @@ EOT
 CLI::taskOpt("buildACV", "If the option is enabled, performs the Build Cache View.", "ACV", "buildACV");
 CLI::taskRun("run_upgrade");
 
-
 /**
  * A version of rm_dir which does not exits on error.
  *
@@ -150,6 +149,7 @@ function run_upgrade($command, $args)
 
     G::browserCacheFilesSetUid();
 
+    upgradeFilesManager($command);
     //Status
     if ($errors) {
         CLI::logging("Upgrade finished but there were errors upgrading workspaces.\n");
@@ -162,3 +162,89 @@ function run_upgrade($command, $args)
     $flag = G::isPMUnderUpdating(0);
 }
 
+/**
+ * Function upgradeFilesManager
+ * access public
+ */
+
+function upgradeFilesManager($command = "") {
+    CLI::logging("> Updating Files Manager...\n\n");
+    $workspaces = get_workspaces_from_args($command);
+    foreach ($workspaces as $workspace) {
+        $name = $workspace->name;
+        require_once( PATH_DB . $name . '/db.php' );
+        require_once( PATH_THIRDPARTY . 'propel/Propel.php');
+        PROPEL::Init ( PATH_METHODS.'dbConnections/rootDbConnections.php' );
+        $con = Propel::getConnection("root");
+        $stmt = $con->createStatement();
+        $sDirectory = PATH_DATA . "sites/" . $name . "/" . "mailTemplates/";
+        $sDirectoryPublic = PATH_DATA . "sites/" . $name . "/" . "public/";
+        if ($dh = opendir($sDirectory)) {
+            $files = Array();
+            while ($file = readdir($dh)) {
+                if ($file != "." && $file != ".." && $file[0] != '.') {
+                    if (is_dir($sDirectory . "/" . $file)) {
+                        $inner_files =  listFiles($sDirectory . $file);
+                        if (is_array($inner_files)) $files = array_merge($files, $inner_files);
+                    } else {
+                        array_push($files, $sDirectory . $file);
+                    }
+                }
+            }
+            closedir($dh);
+        }
+        if ($dh = opendir($sDirectoryPublic)) {
+            while ($file = readdir($dh)) {
+                if ($file != "." && $file != ".." && $file[0] != '.') {
+                    if (is_dir($sDirectoryPublic . "/" . $file)) {
+                        $inner_files = listFiles($sDirectoryPublic . $file);
+                        if (is_array($inner_files)) $files = array_merge($files, $inner_files);
+                    } else {
+                        array_push($files, $sDirectoryPublic . $file);
+                    }
+                }
+            }
+            closedir($dh);
+        }
+        foreach ($files as $aFile) {
+            if (strpos($aFile, $sDirectory) !== false){
+                $processUid = current(explode("/", str_replace($sDirectory,'',$aFile)));
+            } else {
+                $processUid = current(explode("/", str_replace($sDirectoryPublic,'',$aFile)));
+            }
+            $sql = "SELECT PROCESS_FILES.PRF_PATH FROM PROCESS_FILES WHERE PROCESS_FILES.PRF_PATH='" . $aFile ."'";
+            $appRows = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+            $fileUid = '';
+            foreach ($appRows as $row) {
+                    $fileUid =  $row["PRF_PATH"];
+            }
+            if ($fileUid !== $aFile) {
+                $sPkProcessFiles = G::generateUniqueID();
+                $sDate = date('Y-m-d H:i:s');
+                $sql = "INSERT INTO PROCESS_FILES (PRF_UID, PRO_UID, USR_UID, PRF_UPDATE_USR_UID,
+                       PRF_PATH, PRF_TYPE, PRF_EDITABLE, PRF_CREATE_DATE, PRF_UPDATE_DATE)
+                       VALUES ('".$sPkProcessFiles."', '".$processUid."', '00000000000000000000000000000001', '',
+                       '".$aFile."', 'file', 'true', '".$sDate."', NULL)";
+                $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+            }
+        }
+    }
+}
+
+function listFiles($dir) {
+    if($dh = opendir($dir)) {
+        $files = Array();
+        while ($file = readdir($dh)) {
+            if ($file != "." && $file != ".." && $file[0] != '.') {
+                if (is_dir($dir . "/" . $file)) {
+                    $inner_files = listFiles($dir . "/" . $file);
+                    if (is_array($inner_files)) $files = array_merge($files, $inner_files);
+                } else {
+                    array_push($files, $dir . "/" . $file);
+                }
+            }
+        }
+        closedir($dh);
+        return $files;
+    }
+}

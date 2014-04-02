@@ -151,7 +151,7 @@ class WebEntry
             //Verify data
             $process = new \BusinessModel\Process();
 
-            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             if ($taskUid != "") {
                 $process->throwExceptionIfNotExistsTask($processUid, $taskUid, $this->arrayFieldNameForException["taskUid"]);
@@ -279,7 +279,7 @@ class WebEntry
             //Verify data
             $process = new \BusinessModel\Process();
 
-            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 

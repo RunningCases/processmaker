@@ -240,5 +240,57 @@ class Assignee extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+
+    /**
+     * @url GET /:prjUid/activity/:actUid/assignee/all
+     *
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
+     * @param string $type
+     *
+     */
+    public function doGetActivityAssigneesAll($prjUid, $actUid, $filter = '', $start = null, $limit = null, $type = '')
+    {
+        $response = array();
+        try {
+            $task = new \BusinessModel\Task();
+            $arrayData = $task->getTaskAssigneesAll($prjUid, $actUid, $filter, $start, $limit, $type);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //Response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @url GET /:prjUid/activity/:actUid/adhoc-assignee/all
+     *
+     * @param string $prjUid {@min 32} {@max 32}
+     * @param string $actUid {@min 32} {@max 32}
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
+     * @param string $type
+     *
+     */
+    public function doGetActivityAdhocAssigneesAll($prjUid, $actUid, $filter = '', $start = null, $limit = null, $type = '')
+    {
+        $response = array();
+        try {
+            $task = new \BusinessModel\Task();
+            $arrayData = $task->getTaskAdhocAssigneesAll($prjUid, $actUid, $filter, $start, $limit, $type);
+            //Response
+            $response = $arrayData;
+        } catch (\Exception $e) {
+            //Response
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
 }
 

@@ -147,11 +147,11 @@ class User
             $process = new \BusinessModel\Process();
             $group = new \BusinessModel\Group();
 
-            $group->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
+            $group->throwExceptionIfNotExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
-            $process->throwExceptionIfNoExistsUser($arrayData["USR_UID"], $this->arrayFieldNameForException["userUid"]);
+            $process->throwExceptionIfNotExistsUser($arrayData["USR_UID"], $this->arrayFieldNameForException["userUid"]);
 
             $this->throwExceptionIfExistsGroupUser($groupUid, $arrayData["USR_UID"], $this->arrayFieldNameForException["userUid"]);
 
@@ -188,9 +188,9 @@ class User
             $process = new \BusinessModel\Process();
             $group = new \BusinessModel\Group();
 
-            $group->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
+            $group->throwExceptionIfNotExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
 
-            $process->throwExceptionIfNoExistsUser($userUid, $this->arrayFieldNameForException["userUid"]);
+            $process->throwExceptionIfNotExistsUser($userUid, $this->arrayFieldNameForException["userUid"]);
 
             $this->throwExceptionIfNotExistsGroupUser($groupUid, $userUid, $this->arrayFieldNameForException["userUid"]);
 

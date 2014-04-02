@@ -360,7 +360,7 @@ class DynaForm
             //Verify data
             $process = new \BusinessModel\Process();
 
-            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
@@ -507,7 +507,7 @@ class DynaForm
             //Verify data
             $process = new \BusinessModel\Process();
 
-            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
@@ -542,7 +542,7 @@ class DynaForm
             $dynaFormUidCopyImport = $arrayData["COPY_IMPORT"]["DYN_UID"];
 
             //Verify data
-            $process->throwExceptionIfNoExistsProcess($processUidCopyImport, $this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID"));
+            $process->throwExceptionIfNotExistsProcess($processUidCopyImport, $this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID"));
 
             $this->throwExceptionIfNotExistsDynaForm($dynaFormUidCopyImport, $processUidCopyImport, $this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID"));
 
@@ -710,7 +710,7 @@ class DynaForm
             //Verify data
             $process = new \BusinessModel\Process();
 
-            $process->throwExceptionIfNoExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
+            $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 

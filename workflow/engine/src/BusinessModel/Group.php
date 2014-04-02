@@ -137,7 +137,7 @@ class Group
      *
      * return void Throw exception if doesn't exists the Group in table GROUP
      */
-    public function throwExceptionIfNoExistsGroup($groupUid, $fieldNameForException)
+    public function throwExceptionIfNotExistsGroup($groupUid, $fieldNameForException)
     {
         try {
             $group = new \Groupwf();
@@ -229,7 +229,7 @@ class Group
             //Verify data
             $process = new \BusinessModel\Process();
 
-            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
+            $this->throwExceptionIfNotExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
 
@@ -268,7 +268,7 @@ class Group
     {
         try {
             //Verify data
-            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
+            $this->throwExceptionIfNotExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
 
             //Delete
             $group = new \Groupwf();
@@ -340,7 +340,7 @@ class Group
 
             //Verif data
             if ($groupUid != "") {
-                $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
+                $this->throwExceptionIfNotExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
             }
 
             //Get data
@@ -387,7 +387,7 @@ class Group
 
             //Verif data
             if ($groupUid != "") {
-                $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
+                $this->throwExceptionIfNotExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
             }
 
             //Get data
@@ -555,7 +555,7 @@ class Group
     {
         try {
             //Verify data
-            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
+            $this->throwExceptionIfNotExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
 
             //Get data
             $arrayTotalUsersByGroup = $this->getTotalUsersByGroup($groupUid);
@@ -673,7 +673,7 @@ class Group
             //Verify data
             $process = new \BusinessModel\Process();
 
-            $this->throwExceptionIfNoExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
+            $this->throwExceptionIfNotExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
 
             $process->throwExceptionIfDataNotMetPagerVarDefinition(array("start" => $start, "limit" => $limit), $this->arrayFieldNameForException);
 

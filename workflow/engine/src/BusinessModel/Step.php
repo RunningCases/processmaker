@@ -196,7 +196,7 @@ class Step
      *
      * return void Throw exception if doesn't exist the Step in table STEP
      */
-    public function throwExceptionIfNoExistsStep($stepUid)
+    public function throwExceptionIfNotExistsStep($stepUid)
     {
         $step = new \Step();
 
@@ -217,7 +217,7 @@ class Step
      *
      * return void Throw exception if doesn't exist the Task in table TASK
      */
-    public function throwExceptionIfNoExistsTask($taskUid)
+    public function throwExceptionIfNotExistsTask($taskUid)
     {
         $task = new \Task();
 
@@ -238,7 +238,7 @@ class Step
      *
      * return void Throw exception if doesn't exist the Process in table PROCESS
      */
-    public function throwExceptionIfNoExistsProcess($processUid)
+    public function throwExceptionIfNotExistsProcess($processUid)
     {
         $process = new \Process();
 
@@ -269,9 +269,9 @@ class Step
             unset($arrayData["STEP_UID"]);
 
             //Verify data
-            $this->throwExceptionIfNoExistsTask($taskUid);
+            $this->throwExceptionIfNotExistsTask($taskUid);
 
-            $this->throwExceptionIfNoExistsProcess($processUid);
+            $this->throwExceptionIfNotExistsProcess($processUid);
 
             if (!isset($arrayData["STEP_TYPE_OBJ"])) {
                 throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "The \"{0}\" attribute is not defined")));
@@ -361,7 +361,7 @@ class Step
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
             //Verify data
-            $this->throwExceptionIfNoExistsStep($stepUid);
+            $this->throwExceptionIfNotExistsStep($stepUid);
 
             //Load Step
             $step = new \Step();
@@ -460,7 +460,7 @@ class Step
     {
         try {
             //Verify data
-            $this->throwExceptionIfNoExistsStep($stepUid);
+            $this->throwExceptionIfNotExistsStep($stepUid);
 
             //Get position
             $criteria = new \Criteria("workflow");
@@ -503,7 +503,7 @@ class Step
             $step->setArrayParamException($this->arrayParamException);
 
             //Verify data
-            $this->throwExceptionIfNoExistsTask($taskUid);
+            $this->throwExceptionIfNotExistsTask($taskUid);
 
             //Get data
             $criteria = new \Criteria("workflow");
@@ -544,7 +544,7 @@ class Step
             $arrayStep = array();
 
             //Verify data
-            $this->throwExceptionIfNoExistsStep($stepUid);
+            $this->throwExceptionIfNotExistsStep($stepUid);
 
             //Get data
             //Call plugin
@@ -642,11 +642,11 @@ class Step
 
             //Verify data
             if ($stepUid != "") {
-                $this->throwExceptionIfNoExistsStep($stepUid);
+                $this->throwExceptionIfNotExistsStep($stepUid);
             }
 
             if ($stepUid == "") {
-                $this->throwExceptionIfNoExistsTask($taskUid);
+                $this->throwExceptionIfNotExistsTask($taskUid);
             }
 
             //Get data
@@ -757,11 +757,11 @@ class Step
 
             //Verify data
             if ($stepUid != "") {
-                $this->throwExceptionIfNoExistsStep($stepUid);
+                $this->throwExceptionIfNotExistsStep($stepUid);
             }
 
             if ($stepUid == "") {
-                $this->throwExceptionIfNoExistsTask($taskUid);
+                $this->throwExceptionIfNotExistsTask($taskUid);
             }
 
             //Get data

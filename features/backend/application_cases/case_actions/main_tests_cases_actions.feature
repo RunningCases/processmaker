@@ -105,7 +105,7 @@ Scenario Outline: Reassigns a case to a different user
         }
         """
     And that I want to update a resource with the key "app_uid_<app_uid_number>" stored in session array
-    And I request "case/app_uid/reassign-case" with the key "app_uid" stored in session array as variable "app_uid_<app_uid_number>"
+    And I request "cases/app_uid/reassign-case" with the key "app_uid" stored in session array as variable "app_uid_<app_uid_number>"
     Then the response status code should be 200
     And the content type is "application/json"
     And the response charset is "UTF-8"
@@ -116,14 +116,98 @@ Scenario Outline: Reassigns a case to a different user
     | Description                           | app_uid_number | usr_uid_source                   | usr_uid_target                   |
     | Reassign the user adam                | 1              | 00000000000000000000000000000001 | 44811996752d567110634a1013636964 |
     | Reassign the user aaron               | 2              | 00000000000000000000000000000001 | 51049032352d56710347233042615067 |
-    | Reassign the user jeremiah            | 3              | 00000000000000000000000000000001 | 86677227852d5671f40ba25017213081 |
-    | Reassign the user chris               | 4              | 00000000000000000000000000000001 | 24166330352d56730cdd525035621101 |
-    | Reassign the user zachary             | 5              | 00000000000000000000000000000001 | 62625000752d5672d6661e6072881167 |
     | Reassign the user admin               | 6              | 24166330352d56730cdd525035621101 | 00000000000000000000000000000001 |
     | Reassign the user admin               | 7              | 44811996752d567110634a1013636964 | 00000000000000000000000000000001 |
-    | Reassign the user admin               | 8              | 51049032352d56710347233042615067 | 00000000000000000000000000000001 |
-    | Reassign the user admin               | 9              | 86677227852d5671f40ba25017213081 | 00000000000000000000000000000001 |
-    | Reassign the user admin               | 10             | 62625000752d5672d6661e6072881167 | 00000000000000000000000000000001 |
+   
+
+Scenario Outline: Cancel a case
+    Given PUT this data:
+        """
+        {
+        
+        }
+        """
+    And that I want to update a resource with the key "app_uid_<app_uid_number>" stored in session array
+    And I request "cases/app_uid/cancel" with the key "app_uid" stored in session array as variable "app_uid_<app_uid_number>"
+    Then the response status code should be 200
+    And the content type is "application/json"
+    And the response charset is "UTF-8"
+    And the type is "object"
+
+    Examples:
+    
+    | Description                                                    | app_uid_number |
+    | Cancel of the process "Derivation rules - Parallel"            | 3              |
+    | Cancel of the process "Derivation rules - parallel evaluation" | 5              |
+    | Cancel of the process "Derivation rules - selection"           | 10             |
+
+
+Scenario Outline: Pause a case
+    Given PUT this data:
+        """
+        {
+        
+        }
+        """
+    And that I want to update a resource with the key "app_uid_<app_uid_number>" stored in session array
+    And I request "cases/app_uid/pause" with the key "app_uid" stored in session array as variable "app_uid_<app_uid_number>"
+    Then the response status code should be 200
+    And the content type is "application/json"
+    And the response charset is "UTF-8"
+    And the type is "object"
+
+    Examples:
+    
+    | Description                                                    | app_uid_number |
+    | Pause of the process "Derivation rules - parallel evaluation"  | 4              |
+    | Pause of the process "Derivation rules - Parallel"             | 8              |
+    | Pause of the process "Derivation rules - parallel evaluation"  | 9              |
+
+
+Scenario Outline: Unpause a case
+    Given PUT this data:
+        """
+        {
+        
+        }
+        """
+    And that I want to update a resource with the key "app_uid_<app_uid_number>" stored in session array
+    And I request "cases/app_uid/unpause" with the key "app_uid" stored in session array as variable "app_uid_<app_uid_number>"
+    Then the response status code should be 200
+    And the content type is "application/json"
+    And the response charset is "UTF-8"
+    And the type is "object"
+
+    Examples:
+    
+    | Description                                                     | app_uid_number |
+    | Unpause of the process "Derivation rules - parallel evaluation" | 4              |
+    | Unpause of the process "Derivation rules - Parallel"            | 8              |
+    | Unpause of the process "Derivation rules - parallel evaluation" | 9              |
+
+
+Scenario Outline: Trigger a case
+    Given PUT this data:
+        """
+        {
+        
+        }
+        """
+    And that I want to update a resource with the key "app_uid_<app_uid_number>" stored in session array
+    And I request "cases/app_uid/execute-trigger/{tri_uid}" with the key "app_uid" stored in session array as variable "app_uid_<app_uid_number>"
+    Then the response status code should be 200
+    And the content type is "application/json"
+    And the response charset is "UTF-8"
+    And the type is "object"
+
+    Examples:
+    
+    | Description                                                     | app_uid_number |
+    |                                                                 |                |
+    |                                                                 |                |
+    |                                                                 |                |
+
+
 
 
 Scenario Outline: Route a case to the next task in the process
@@ -153,3 +237,28 @@ Scenario Outline: Route a case to the next task in the process
     | Route next activity "Derivation rules - Parallel"            | 8              |
     | Route next activity "Derivation rules - parallel evaluation" | 9              |
     | Route next activity "Derivation rules - selection"           | 10             |
+
+
+
+Scenario Outline: Delete of the cases created in this script.
+    Given that I want to delete a resource with the key "app_doc_uid" stored in session array as variable "app_doc_uid_<app_doc_uid_number>"
+    And I request "cases/551390121533343ee886813057396196/output-document"
+    And the response status code should be 200
+    And the content type is "application/json"
+    And the response charset is "UTF-8"
+    And the type is "object" 
+
+    Examples:
+
+    | app_doc_uid_number |
+    | 1                  |
+    | 2                  |
+    | 3                  |
+    | 4                  |
+    | 5                  |
+    | 6                  |
+    | 7                  |
+    | 8                  |
+    | 9                  |
+    | 10                 |     
+

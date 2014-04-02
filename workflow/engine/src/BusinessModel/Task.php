@@ -70,7 +70,7 @@ class Task
      *
      * return void Throw exception if doesn't exist the Task in table TASK
      */
-    public function throwExceptionIfNoExistsTask($taskUid)
+    public function throwExceptionIfNotExistsTask($taskUid)
     {
         $task = new \Task();
 
@@ -438,7 +438,7 @@ class Task
             $arrayAvailableStep = array();
 
             //Verify data
-            $this->throwExceptionIfNoExistsTask($taskUid);
+            $this->throwExceptionIfNotExistsTask($taskUid);
 
             //Load Task
             $task = new \Task();
@@ -641,7 +641,7 @@ class Task
             $step->setArrayParamException($this->arrayParamException);
 
             //Verify data
-            $this->throwExceptionIfNoExistsTask($taskUid);
+            $this->throwExceptionIfNotExistsTask($taskUid);
 
             //Get data
             $criteria = new \Criteria("workflow");
@@ -1937,5 +1937,254 @@ class Task
             unset($array[$variable]);
         }
     }
-}
 
+    /**
+     * Return a list of assignees of an activity
+     *
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
+     * @param string $type
+     *
+     * return array
+     *
+     * @access public
+     */
+    public function getTaskAssigneesAll($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
+    {
+        try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+            }
+            $aUsers = array();
+            $oTasks = new \Tasks();
+            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 1);
+            $aGroupUids = array();
+            foreach ($aAux as $aGroup) {
+                $aGroupUids[] = $aGroup['GRP_UID'];
+            }
+            foreach ($aGroupUids as $results) {
+                $oCriteria = new \Criteria('workflow');
+                $oCriteria->addSelectColumn('USR_UID');
+                $oCriteria->add(\GroupUserPeer::GRP_UID, $results);
+                $oGroupDataset = \GroupUserPeer::doSelectRS($oCriteria);
+                $oGroupDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                while ($oGroupDataset->next()) {
+                    $aGroupRow = $oGroupDataset->getRow();
+                    $oGroupCriteria = new \Criteria('workflow');
+                    $oGroupCriteria->addSelectColumn(\UsersPeer::USR_UID);
+                    $oGroupCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
+                    $oGroupCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
+                    $oGroupCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+                    if ($filter != '') {
+                        $oGroupCriteria->add($oGroupCriteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%$filter%",
+                                             \Criteria::LIKE)->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME,
+                                             "%$filter%", \Criteria::LIKE))->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME,
+                                             "%$filter%", \Criteria::LIKE)));
+                    }
+                    $oGroupCriteria->add(\UsersPeer::USR_UID, $aGroupRow["USR_UID"]);
+                    $oUserDataset = \UsersPeer::doSelectRS($oGroupCriteria);
+                    $oUserDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                    $oUserDataset->next();
+                    while ($aUserRow = $oUserDataset->getRow()) {
+                         $aUsers[] = array('aas_uid' => $aUserRow['USR_UID'],
+                                           'aas_name' => $aUserRow['USR_FIRSTNAME'],
+                                           'aas_lastname' => $aUserRow['USR_LASTNAME'],
+                                           'aas_username' => $aUserRow['USR_USERNAME'],
+                                           'aas_type' => "user" );
+                         $oUserDataset->next();
+                    }
+                }
+            }
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->addSelectColumn(\UsersPeer::USR_UID);
+            $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
+            $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
+            $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+            if ($filter != '') {
+                $oCriteria->add($oCriteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE)
+                                ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE))
+                                ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE )));
+            }
+            $oCriteria->addJoin(\TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
+            $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID);
+            $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
+            $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
+            $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                if ($type == '' || $type == 'user') {
+                    $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
+                                      'aas_name' => $aRow['USR_FIRSTNAME'],
+                                      'aas_lastname' => $aRow['USR_LASTNAME'],
+                                      'aas_username' => $aRow['USR_USERNAME'],
+                                      'aas_type' => "user" );
+                }
+                $oDataset->next();
+            }
+            $aUsersGroups = array();
+            $exclude = array("");
+            for ($i = 0; $i<=count($aUsers)-1; $i++) {
+                if (!in_array(trim($aUsers[$i]["aas_uid"]) ,$exclude)) {
+                    $aUsersGroups[] = $aUsers[$i];
+                    $exclude[] = trim($aUsers[$i]["aas_uid"]);
+                }
+            }
+            if ($start) {
+                if ($start < 0) {
+                    throw (new \Exception( 'Invalid value specified for `start`.'));
+                }
+            } else {
+                $start = 0;
+            }
+            if (isset($limit)) {
+                if ($limit < 0) {
+                    throw (new \Exception( 'Invalid value specified for `limit`.'));
+                } else {
+                    if ($limit == 0) {
+                        return array();
+                    }
+                }
+            } else {
+                $limit = 1000;
+            }
+            $aUsersGroups = $this->arrayPagination($aUsersGroups, $start, $limit);
+            return $aUsersGroups;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Return a list of adhoc assignees of an activity
+     *
+     * @param string $sProcessUID {@min 32} {@max 32}
+     * @param string $sTaskUID {@min 32} {@max 32}
+     * @param string $filter
+     * @param int    $start
+     * @param int    $limit
+     * @param string $type
+     *
+     * return array
+     *
+     * @access public
+     */
+    public function getTaskAdhocAssigneesAll($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
+    {
+        try {
+            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
+            if (is_null($oProcess)) {
+                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+            }
+            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
+            if (is_null($oActivity)) {
+                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+            }
+            $aUsers = array();
+            $oTasks = new \Tasks();
+            $aAux = $oTasks->getGroupsOfTask($sTaskUID, 2);
+            $aGroupUids = array();
+            foreach ($aAux as $aGroup) {
+                $aGroupUids[] = $aGroup['GRP_UID'];
+            }
+            foreach ($aGroupUids as $results) {
+                $oCriteria = new \Criteria('workflow');
+                $oCriteria->addSelectColumn('USR_UID');
+                $oCriteria->add(\GroupUserPeer::GRP_UID, $results);
+                $oGroupDataset = \GroupUserPeer::doSelectRS($oCriteria);
+                $oGroupDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                while ($oGroupDataset->next()) {
+                    $aGroupRow = $oGroupDataset->getRow();
+                    $oGroupCriteria = new \Criteria('workflow');
+                    $oGroupCriteria->addSelectColumn(\UsersPeer::USR_UID);
+                    $oGroupCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
+                    $oGroupCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
+                    $oGroupCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+                    if ($filter != '') {
+                        $oGroupCriteria->add($oGroupCriteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%$filter%",
+                            \Criteria::LIKE)->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME,
+                                "%$filter%", \Criteria::LIKE))->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME,
+                                "%$filter%", \Criteria::LIKE)));
+                    }
+                    $oGroupCriteria->add(\UsersPeer::USR_UID, $aGroupRow["USR_UID"]);
+                    $oUserDataset = \UsersPeer::doSelectRS($oGroupCriteria);
+                    $oUserDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                    $oUserDataset->next();
+                    while ($aUserRow = $oUserDataset->getRow()) {
+                        $aUsers[] = array('aas_uid' => $aUserRow['USR_UID'],
+                            'aas_name' => $aUserRow['USR_FIRSTNAME'],
+                            'aas_lastname' => $aUserRow['USR_LASTNAME'],
+                            'aas_username' => $aUserRow['USR_USERNAME'],
+                            'aas_type' => "user" );
+                        $oUserDataset->next();
+                    }
+                }
+            }
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->addSelectColumn(\UsersPeer::USR_UID);
+            $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
+            $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
+            $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+            if ($filter != '') {
+                $oCriteria->add($oCriteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE)
+                    ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE))
+                    ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE )));
+            }
+            $oCriteria->addJoin(\TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
+            $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID);
+            $oCriteria->add(\TaskUserPeer::TU_TYPE, 2);
+            $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
+            $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                if ($type == '' || $type == 'user') {
+                    $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
+                        'aas_name' => $aRow['USR_FIRSTNAME'],
+                        'aas_lastname' => $aRow['USR_LASTNAME'],
+                        'aas_username' => $aRow['USR_USERNAME'],
+                        'aas_type' => "user" );
+                }
+                $oDataset->next();
+            }
+            $aUsersGroups = array();
+            $exclude = array("");
+            for ($i = 0; $i<=count($aUsers)-1; $i++) {
+                if (!in_array(trim($aUsers[$i]["aas_uid"]) ,$exclude)) {
+                    $aUsersGroups[] = $aUsers[$i];
+                    $exclude[] = trim($aUsers[$i]["aas_uid"]);
+                }
+            }
+            if ($start) {
+                if ($start < 0) {
+                    throw (new \Exception( 'Invalid value specified for `start`.'));
+                }
+            } else {
+                $start = 0;
+            }
+            if (isset($limit)) {
+                if ($limit < 0) {
+                    throw (new \Exception( 'Invalid value specified for `limit`.'));
+                } else {
+                    if ($limit == 0) {
+                        return array();
+                    }
+                }
+            } else {
+                $limit = 1000;
+            }
+            $aUsersGroups = $this->arrayPagination($aUsersGroups, $start, $limit);
+            return $aUsersGroups;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+}
