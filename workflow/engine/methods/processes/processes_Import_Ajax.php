@@ -23,39 +23,41 @@
  */
 ini_set( 'max_execution_time', '0' );
 
-$ext = pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION);
+if (isset($_FILES["PROCESS_FILENAME"])) {
+    $ext = pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION);
 
-if ($ext == "pmx") {
-    $importer = new \ProcessMaker\Importer\XmlImporter();
-    $importer->setSourceFromGlobals("PROCESS_FILENAME");
-    $importer->setData("usr_uid", $_SESSION['USER_LOGGED']);
+    if ($ext == "pmx") {
+        $importer = new \ProcessMaker\Importer\XmlImporter();
+        $importer->setSourceFromGlobals("PROCESS_FILENAME");
+        $importer->setData("usr_uid", $_SESSION['USER_LOGGED']);
 
-    try {
-        $res = $importer->import();
+        try {
+            $res = $importer->import();
 
-        $result = array(
-            "success" => true,
-            "catchMessage" => "",
-            "ExistProcessInDatabase" => 0,
-            "ExistGroupsInDatabase" => 0,
-            "sNewProUid" => $res[0]["new_uid"],
-            "project_type" => "bpmn"
-        );
-    } catch (Exception $e) {
-        $result = array(
-            "success" => true,
-            "catchMessage" => "", //$e->getMessage(),
-            "ExistProcessInDatabase" => 1,
-            "ExistGroupsInDatabase" => 0,
-            "groupBeforeAccion" => "uploadFileNewProcess",
-            "sNewProUid" => "63626727053359dabb8fee8019503780",
-            "proFileName" => $_FILES['PROCESS_FILENAME']['name'],
-            "project_type" => "bpmn"
-        );
+            $result = array(
+                "success" => true,
+                "catchMessage" => "",
+                "ExistProcessInDatabase" => 0,
+                "ExistGroupsInDatabase" => 0,
+                "sNewProUid" => $res[0]["new_uid"],
+                "project_type" => "bpmn"
+            );
+        } catch (Exception $e) {
+            $result = array(
+                "success" => true,
+                "catchMessage" => "", //$e->getMessage(),
+                "ExistProcessInDatabase" => 1,
+                "ExistGroupsInDatabase" => 0,
+                "groupBeforeAccion" => "uploadFileNewProcess",
+                "sNewProUid" => "63626727053359dabb8fee8019503780",
+                "proFileName" => $_FILES['PROCESS_FILENAME']['name'],
+                "project_type" => "bpmn"
+            );
+        }
+
+        echo json_encode($result);
+        exit(0);
     }
-
-    echo json_encode($result);
-    exit(0);
 }
 
 function reservedWordsSqlValidate ($data)
