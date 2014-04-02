@@ -34,7 +34,7 @@ class Cases extends Api
      */
     public function doGetCasesListToDo(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
@@ -81,7 +81,7 @@ class Cases extends Api
      */
     public function doGetCasesListToDoPaged(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
@@ -128,7 +128,7 @@ class Cases extends Api
      */
     public function doGetCasesListDraft(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
@@ -175,7 +175,7 @@ class Cases extends Api
      */
     public function doGetCasesListDraftPaged(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
@@ -222,7 +222,7 @@ class Cases extends Api
      */
     public function doGetCasesListParticipated(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
@@ -269,7 +269,7 @@ class Cases extends Api
      */
     public function doGetCasesListParticipatedPaged(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
@@ -316,7 +316,7 @@ class Cases extends Api
      */
     public function doGetCasesListUnassigned(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
@@ -363,7 +363,7 @@ class Cases extends Api
      */
     public function doGetCasesListUnassignedPaged(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
@@ -410,7 +410,7 @@ class Cases extends Api
      */
     public function doGetCasesListPaused(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
@@ -457,7 +457,7 @@ class Cases extends Api
      */
     public function doGetCasesListPausedPaged(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
@@ -508,7 +508,7 @@ class Cases extends Api
      */
     public function doGetCasesListAdvancedSearch(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
@@ -567,7 +567,7 @@ class Cases extends Api
      */
     public function doGetCasesListAdvancedSearchPaged(
         $start = 0,
-        $limit = 'config',
+        $limit = 0,
         $sort = 'APP_CACHE_VIEW.APP_NUMBER',
         $dir = 'DESC',
         $cat_uid = '',
