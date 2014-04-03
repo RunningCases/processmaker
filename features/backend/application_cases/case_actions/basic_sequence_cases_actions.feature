@@ -121,7 +121,7 @@ Scenario: Returns a list of the cases for the logged in user (Draft)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 17 records
+    And the response has 18 records
 
 
 Scenario Outline: Reassigns a case to a different user, from user "administrator" to user "aaron"
@@ -129,10 +129,10 @@ Scenario Outline: Reassigns a case to a different user, from user "administrator
             """
             {
                 "usr_uid_source": "00000000000000000000000000000001",
-                "usr_uid_target": "51049032352d56710347233042615067",
+                "usr_uid_target": "51049032352d56710347233042615067"
             }
             """
-        And I request "cases/<app_uid>/reassign-case"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
+        And I request "cases/app_uid/reassign-case"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
@@ -145,7 +145,7 @@ Scenario Outline: Reassigns a case to a different user, from user "administrator
         | Reassig case 1, created in this script | 1           |
 
 
-Scenario: Route a case to the next task in the process
+Scenario Outline: Route a case to the next task in the process
         Given PUT this data:
             """
             {
@@ -153,7 +153,7 @@ Scenario: Route a case to the next task in the process
                 "del_index": "1"
             }
             """
-        And I request "cases/<app_uid>/route-case"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
+        And I request "cases/app_uid/route-case"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
@@ -167,14 +167,14 @@ Scenario: Route a case to the next task in the process
 
 
 
-Scenario: Cancel a case
+Scenario Outline: Cancel a case
         Given PUT this data:
             """
             {
                 
             }
             """
-        And I request "cases/<app_uid>/cancel"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
+        And I request "cases/app_uid/cancel"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
@@ -187,14 +187,14 @@ Scenario: Cancel a case
         | Cancel case 3, created in this script | 3           |
 
 
-Scenario: Pause a case
+Scenario Outline: Pause a case
         Given PUT this data:
             """
             {
               "unpaused_date": "2016-12-12"  
             }
             """
-        And I request "cases/<app_uid>/pause"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
+        And I request "cases/app_uid/pause"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
@@ -207,14 +207,14 @@ Scenario: Pause a case
         | Pause case 4, created in this script  | 4           |
 
 
-Scenario: Unpause a case
+Scenario Outline: Unpause a case
         Given PUT this data:
             """
             {
                 
             }
             """
-        And I request "cases/<app_uid>/unpause"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
+        And I request "cases/app_uid/unpause"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
@@ -227,14 +227,14 @@ Scenario: Unpause a case
         | Unpause case 4, created in this script | 4           |
 
 
-Scenario: Executes a ProcessMaker trigger for a case
+Scenario Outline: Executes a ProcessMaker trigger for a case
         Given PUT this data:
             """
             {
                 
             }
             """
-        And I request "cases/<app_uid>/execute-trigger/<tri_uid>"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
+        And I request "cases/app_uid/execute-trigger/<tri_uid>"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
@@ -247,19 +247,21 @@ Scenario: Executes a ProcessMaker trigger for a case
         | Ejecucion de trigger                   | 5           | 54962158250ec613ba5bc89016850103 |
 
 
-Scenario: Delete a case
+Scenario Outline: Delete a case
         Given PUT this data:
             """
             {
                 
             }
             """
+        
+        And that I want to delete a resource with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         And I request "cases"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
         And the type is "object"
-        And that I want to delete a resource with the key "app_uid" stored in session array as variable "app_uid_<case_number>"   
+           
 
 
         Examples:
