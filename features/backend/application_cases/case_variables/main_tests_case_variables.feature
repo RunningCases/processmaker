@@ -46,10 +46,7 @@ Scenario: Returns the variables can be system variables and/or case variables.
     And the "date3" property equals "2014-03-03"
     And the "date4" property equals "2014-03-01"
     And the "suggest2" property equals "51049032352d56710347233042615067"
-    And the "suggest2_label" property equals "aaron"
-    
-
-    
+    And the "suggest2_label" property equals "aaron"   
     And the "sample" property in row 1 of property "grid" equals "jose"
     And the "currency1" property equals "12,334,444.00"
     And the "percentage1" property equals "333.00 %"
