@@ -41,7 +41,7 @@ Scenario: Generate or regenerates an output documents for a given case
 
 Scenario: Delete an uploaded or generated document from a case.
         And that I want to delete a resource with the key "app_doc_uid_0" stored in session array
-        Gie I request "output-document"
+        Given I request "output-document"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
