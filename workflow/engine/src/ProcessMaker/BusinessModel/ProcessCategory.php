@@ -261,7 +261,9 @@ class ProcessCategory
             }
             //Return
             if ($oProcessCategory != '') {
-                return $oProcessCategory;
+                $oProcessCategory = array_change_key_case($oProcessCategory, CASE_LOWER);
+                $oResponse = json_decode(json_encode($oProcessCategory), false);
+                return $oResponse;
             } else {
                 throw (new \Exception( 'The Category with cat_uid: '.$cat_uid.' doesn\'t exist!'));
             }
@@ -291,7 +293,7 @@ class ProcessCategory
             $pcat->setCategoryUid( $catUid );
             $pcat->setCategoryName( $catName );
             $pcat->save();
-            $oProcessCategory = array_change_key_case($this->getCategory( $catUid ), CASE_LOWER);
+            $oProcessCategory = $this->getCategory( $catUid );
             //Return
             return $oProcessCategory;
         } catch (\Exception $e) {
@@ -321,9 +323,10 @@ class ProcessCategory
             $pcat->setCategoryUid( $catUID );
             $pcat->setCategoryName( $catName );
             $pcat->save();
-            $oProcessCategory = array_change_key_case($this->getCategory( $cat_uid ), CASE_LOWER);
+            $oProcessCategory = $this->getCategory( $cat_uid );
             //Return
-            return $oProcessCategory;
+            $oResponse = json_decode(json_encode($oProcessCategory), false);
+            return $oResponse;
 
         } catch (\Exception $e) {
             throw $e;
