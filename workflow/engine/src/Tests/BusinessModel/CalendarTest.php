@@ -12,17 +12,17 @@ if (!class_exists("Propel")) {
  */
 class CalendarTest extends \PHPUnit_Framework_TestCase
 {
-    private $calendar;
-    private $numCalendar = 2;
+    private static $calendar;
+    private static $numCalendar = 2;
 
     /**
      * Set class for test
      *
      * @coversNothing
      */
-    protected function setUp()
+    public static function setUpBeforeClass()
     {
-        $this->calendar = new \ProcessMaker\BusinessModel\Calendar();
+        self::$calendar = new \ProcessMaker\BusinessModel\Calendar();
     }
 
     /**
@@ -37,7 +37,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
         $arrayRecord = array();
 
         //Create
-        for ($i = 0; $i <= $this->numCalendar - 1; $i++) {
+        for ($i = 0; $i <= self::$numCalendar - 1; $i++) {
             $arrayData = array(
                 "CAL_NAME"        => "PHPUnit Calendar$i",
                 "CAL_DESCRIPTION" => "Description",
@@ -53,7 +53,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-            $arrayCalendar = $this->calendar->create($arrayData);
+            $arrayCalendar = self::$calendar->create($arrayData);
 
             $this->assertTrue(is_array($arrayCalendar));
             $this->assertNotEmpty($arrayCalendar);
@@ -79,9 +79,9 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
     {
         $arrayData = array("CAL_DESCRIPTION" => "Description...");
 
-        $arrayCalendar = $this->calendar->update($arrayRecord[1]["CAL_UID"], $arrayData);
+        $arrayCalendar = self::$calendar->update($arrayRecord[1]["CAL_UID"], $arrayData);
 
-        $arrayCalendar = $this->calendar->getCalendar($arrayRecord[1]["CAL_UID"]);
+        $arrayCalendar = self::$calendar->getCalendar($arrayRecord[1]["CAL_UID"]);
 
         $this->assertTrue(is_array($arrayCalendar));
         $this->assertNotEmpty($arrayCalendar);
@@ -99,15 +99,15 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCalendars($arrayRecord)
     {
-        $arrayCalendar = $this->calendar->getCalendars();
+        $arrayCalendar = self::$calendar->getCalendars();
 
         $this->assertNotEmpty($arrayCalendar);
 
-        $arrayCalendar = $this->calendar->getCalendars(null, null, null, 0, 0);
+        $arrayCalendar = self::$calendar->getCalendars(null, null, null, 0, 0);
 
         $this->assertEmpty($arrayCalendar);
 
-        $arrayCalendar = $this->calendar->getCalendars(array("filter" => "PHPUnit"));
+        $arrayCalendar = self::$calendar->getCalendars(array("filter" => "PHPUnit"));
 
         $this->assertTrue(is_array($arrayCalendar));
         $this->assertNotEmpty($arrayCalendar);
@@ -128,7 +128,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCalendar($arrayRecord)
     {
-        $arrayCalendar = $this->calendar->getCalendar($arrayRecord[0]["CAL_UID"]);
+        $arrayCalendar = self::$calendar->getCalendar($arrayRecord[0]["CAL_UID"]);
 
         $this->assertTrue(is_array($arrayCalendar));
         $this->assertNotEmpty($arrayCalendar);
@@ -150,10 +150,10 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
     public function testDelete($arrayRecord)
     {
         foreach ($arrayRecord as $value) {
-            $this->calendar->delete($value["CAL_UID"]);
+            self::$calendar->delete($value["CAL_UID"]);
         }
 
-        $arrayCalendar = $this->calendar->getCalendars(array("filter" => "PHPUnit"));
+        $arrayCalendar = self::$calendar->getCalendars(array("filter" => "PHPUnit"));
 
         $this->assertTrue(is_array($arrayCalendar));
         $this->assertEmpty($arrayCalendar);
