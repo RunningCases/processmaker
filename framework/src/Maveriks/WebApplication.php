@@ -3,6 +3,8 @@ namespace Maveriks;
 
 use Maveriks\Util;
 use ProcessMaker\Services;
+use ProcessMaker\Services\Api;
+use Luracast\Restler\RestException;
 
 class WebApplication
 {
@@ -106,10 +108,19 @@ class WebApplication
     public function multipart($uri, $version = "1.0")
     {
         $stringInput = file_get_contents('php://input');
-        if (is_null($stringInput)) {
-            return array(); //no body
+        if (empty($stringInput)) {
+            $rest = new \Maveriks\Extension\Restler();
+            $rest->setMessage(new RestException(Api::STAT_APP_EXCEPTION, "Invalid Request, multipart without body."));
+            exit();
+        } else {
+            $input = json_decode($stringInput);
+            if (empty($input->calls)) {
+                $rest = new \Maveriks\Extension\Restler();
+                $rest->setMessage(new RestException(Api::STAT_APP_EXCEPTION, "Invalid Request, multipart body without calls."));
+                exit();
+            }
         }
-        $input = json_decode($stringInput);
+
 
         $baseUrl = (empty($input->base_url)) ? $uri : $input->base_url;
         foreach($input->calls as $value) {
