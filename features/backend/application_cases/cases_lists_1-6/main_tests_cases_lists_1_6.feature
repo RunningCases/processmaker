@@ -59,21 +59,21 @@ Scenario: Returns a list of the cases for the logged in user (Advanced-Search)
 
 
 
-#Scenarios para filtros y paginacion de las listas
+#Scenarios para filtros y paginacion en listas
 Scenario Outline: Get paging of list inbox
-    Given I request "cases/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 
     Examples:
     
     | test_description           | start | limit   | records | http_code |
-    | lowercase in Start         |   a   | 1       | 1       |  200      |
-    | uppercase in Start         |   A   | 1       | 1       |  200      |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
     | lowercase in Limit         |   1   | a       | 14      |  200      |
     | uppercase in Limit         |   1   | A       | 14      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
@@ -104,7 +104,7 @@ Scenario Outline: Get order type of Descending and Acending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -119,7 +119,7 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -134,7 +134,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -149,7 +149,7 @@ Scenario Outline: Get order type of Search of number the process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
     Examples:
     
@@ -167,18 +167,18 @@ Scenario: Returns a list of the cases for the logged in user (Draft)
 
 
 Scenario Outline: Get paging of list Draft
-    Given I request "cases/draft/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/draft/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
      Examples:
     
     | test_description           | start | limit   | records | http_code |
-    | lowercase in Start         |   a   | 1       | 1       |  200      |
-    | uppercase in Start         |   A   | 1       | 1       |  200      |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
     | lowercase in Limit         |   1   | a       | 15      |  200      |
     | uppercase in Limit         |   1   | A       | 15      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
@@ -209,7 +209,7 @@ Scenario Outline: Get order type of Descending and Ascending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -225,7 +225,7 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -240,7 +240,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -255,7 +255,7 @@ Scenario Outline: Get order type of Search of the process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -272,18 +272,18 @@ Scenario: Returns a list of the cases for the logged in user (Participated)
     And the response has 30 records
 
 Scenario Outline: Get paging of list Participated
-    Given I request "cases/participated/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/participated/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
      Examples:
     
     | test_description           | start | limit   | records | http_code |
-    | lowercase in Start         |   a   | 1       | 1       |  200      |
-    | uppercase in Start         |   A   | 1       | 1       |  200      |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
     | lowercase in Limit         |   1   | a       | 30      |  200      |
     | uppercase in Limit         |   1   | A       | 30      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
@@ -314,7 +314,7 @@ Scenario Outline: Get order type of Descending an Descending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -330,7 +330,7 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -345,7 +345,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -361,7 +361,7 @@ Scenario Outline: Get order type of Search
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -379,18 +379,18 @@ Scenario: Returns a list of the cases for the logged in user (Unassigned)
 
 
 Scenario Outline: Get paging of list Unassigned
-    Given I request "cases/Unassigned/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/Unassigned/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
      Examples:
     
     | test_description           | start | limit   | records | http_code |
-    | lowercase in Start         |   a   | 1       | 1       |  200      |
-    | uppercase in Start         |   A   | 1       | 1       |  200      |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
     | lowercase in Limit         |   1   | a       | 12      |  200      |
     | uppercase in Limit         |   1   | A       | 12      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
@@ -421,7 +421,7 @@ Scenario Outline: Get order type of Descending and Acending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -436,7 +436,7 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -451,7 +451,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -466,7 +466,7 @@ Scenario Outline: Get order type of Search
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -485,18 +485,18 @@ Scenario: Returns a list of the cases for the logged in user (Paused)
 
 
 Scenario Outline: Get paging of list Paused
-    Given I request "cases/paused/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/paused/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
      Examples:
     
     | test_description           | start | limit   | records | http_code |
-    | lowercase in Start         |   a   | 1       | 1       |  200      |
-    | uppercase in Start         |   A   | 1       | 1       |  200      |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
     | lowercase in Limit         |   1   | a       | 12      |  200      |
     | uppercase in Limit         |   1   | A       | 12      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
@@ -527,7 +527,7 @@ Scenario Outline: Get order type of Descending and Acending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -542,7 +542,7 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -557,7 +557,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
 Examples:
     
@@ -572,7 +572,7 @@ Scenario Outline: Get order type of Search
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records 
 
 Examples:
     
@@ -590,18 +590,18 @@ Scenario: Returns a list of the cases for the logged in user (Advanced Search)
 
 
 Scenario Outline: Get paging of list Advanced Search
-    Given I request "cases/advanced-search/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/advanced-search/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
      Examples:
     
     | test_description           | start | limit   | records | http_code |
-    | lowercase in Start         |   a   | 1       | 1       |  200      |
-    | uppercase in Start         |   A   | 1       | 1       |  200      |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
     | lowercase in Limit         |   1   | a       | 30      |  200      |
     | uppercase in Limit         |   1   | A       | 30      |  200      |
     | limit=3                    |   1   | 3       | 3       |  200      |
@@ -632,7 +632,7 @@ Scenario Outline: Get order type of Descending and Acending
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
     Examples:
     
@@ -647,7 +647,7 @@ Scenario Outline: Get order type of Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
     Examples:
     
@@ -663,7 +663,7 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records 
 
     Examples:
     
@@ -679,7 +679,7 @@ Scenario Outline: Get order type of Search
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
     Examples:
     
@@ -694,7 +694,7 @@ Scenario Outline: Get order for Status
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
     Examples:
     
@@ -711,7 +711,7 @@ Scenario Outline: Get order for User
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
     Examples:
     
@@ -728,7 +728,7 @@ Scenario Outline: Get order for date
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records in property "data"
+    And the response has <records> records
 
     Examples:
     

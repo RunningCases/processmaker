@@ -14,7 +14,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetCalendars()
     {
-        $calendar = new \BusinessModel\Calendar();
+        $calendar = new \ProcessMaker\BusinessModel\Calendar();
 
         $arrayCalendar = $calendar->getCalendars();
 

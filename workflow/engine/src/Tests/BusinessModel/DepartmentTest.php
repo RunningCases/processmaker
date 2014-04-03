@@ -28,14 +28,14 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->oDepartment = new \BusinessModel\Department();
+        $this->oDepartment = new \ProcessMaker\BusinessModel\Department();
         return true;
     }
 
     /**
      * Test error for type in first field the function
      *
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$dep_data' it must be an array.
      *
@@ -50,7 +50,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for type in second field the function
      *
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$create' it must be a boolean.
      *
@@ -65,7 +65,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for empty array in first field the function
      *
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @expectedException        Exception
      * @expectedExceptionMessage The field '$dep_data' is empty.
      *
@@ -80,7 +80,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for create department with nonexistent dep_parent
      *
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @expectedException        Exception
      * @expectedExceptionMessage The departament with dep_parent: 'testUidDepartment' does not exist.
      *
@@ -96,7 +96,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for create department with nonexistent dep_manager
      *
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @expectedException        Exception
      * @expectedExceptionMessage The user with dep_manager: 'testUidUser' does not exist.
      *
@@ -112,7 +112,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for create department with incorrect dep_status
      *
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @expectedException        Exception
      * @expectedExceptionMessage The departament with dep_status: 'SUPER ACTIVO' is incorrect.
      *
@@ -128,7 +128,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for create department untitled
      *
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @expectedException        Exception
      * @expectedExceptionMessage The field dep_title is required.
      *
@@ -144,7 +144,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
     /**
      * Save department parent
      *
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -169,7 +169,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      *
      * @depends testCreateDepartmentParent
      * @param array $dep_data, Data for parent department
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @expectedException        Exception
      * @expectedExceptionMessage The departament with dep_title: 'Departamento Padre' already exists.
      *
@@ -185,7 +185,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for create department untitled
      *
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @expectedException        Exception
      * @expectedExceptionMessage The departament with dep_uid: 'testUidDepartment' does not exist.
      *
@@ -203,7 +203,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      *
      * @depends testCreateDepartmentParent
      * @param array $dep_data, Data for parent department
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -235,7 +235,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      * @depends testCreateDepartmentChild
      * @param array $dep_data, Data for parent department
      * @param array $child_data, Data for child department
-     * @covers \BusinessModel\Department::saveDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::saveDepartment
      * @expectedException        Exception
      * @expectedExceptionMessage The departament with dep_title: 'Departamento Padre' already exists.
      * @return array
@@ -259,7 +259,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      * @depends testCreateDepartmentChild
      * @param array $dep_data, Data for parent department
      * @param array $child_data, Data for child department
-     * @covers \BusinessModel\Department::getDepartments
+     * @covers \ProcessMaker\BusinessModel\Department::getDepartments
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -290,7 +290,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      *
      * @depends testCreateDepartmentParent
      * @param array $dep_data, Data for parent department
-     * @covers \BusinessModel\Department::getDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::getDepartment
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -319,7 +319,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      * @depends testCreateDepartmentChild
      * @param array $dep_data, Data for parent department
      * @param array $child_data, Data for child department
-     * @covers \BusinessModel\Department::deleteDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::deleteDepartment
      * @expectedException        Exception
      * @expectedExceptionMessage Can not delete the department, it has a children department.
      *
@@ -338,7 +338,7 @@ class DepartmentTest extends \PHPUnit_Framework_TestCase
      * @depends testCreateDepartmentChild
      * @param array $dep_data, Data for parent department
      * @param array $child_data, Data for child department
-     * @covers \BusinessModel\Department::deleteDepartment
+     * @covers \ProcessMaker\BusinessModel\Department::deleteDepartment
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
