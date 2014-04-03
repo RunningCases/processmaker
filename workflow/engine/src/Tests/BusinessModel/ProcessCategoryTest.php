@@ -8,7 +8,7 @@ if (!class_exists("Propel")) {
 /**
  * Class ProcessCategoryTest
  *
- * @package Tests\BusinessModel
+ * @package Tests/ProcessMaker/BusinessModel
  */
 class ProcessCategoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,7 +24,7 @@ class ProcessCategoryTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->oCategory = new \BusinessModel\ProcessCategory();
+        $this->oCategory = new \ProcessMaker\BusinessModel\ProcessCategory();
     }
 
 
