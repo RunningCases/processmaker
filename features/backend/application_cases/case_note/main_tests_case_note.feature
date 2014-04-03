@@ -27,4 +27,3 @@ Scenario: Create a new case note for specified case
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
-        
