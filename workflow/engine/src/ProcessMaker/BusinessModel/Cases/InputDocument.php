@@ -214,6 +214,7 @@ class InputDocument
             $arrayData["DEL_INDEX"] = $delIndex;
             $arrayData["TAS_UID"]   = $taskUid;
             $case->updateCase($applicationUid, $arrayData);
+            return($this->getCasesInputDocument($applicationUid, $userUid, $appDocUid));
         } catch (\Exception $e) {
             throw $e;
         }
