@@ -1,4 +1,4 @@
-ProcessMakerMichelangelo @RestAPI
+@ProcessMakerMichelangelo @RestAPI
 Feature: Case Note Negative Tests
 Requirements:
     a workspace with three cases of the process "Test Users-Step-Properties End Point"

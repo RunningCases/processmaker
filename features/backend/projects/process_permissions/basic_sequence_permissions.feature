@@ -1,4 +1,4 @@
-miche@ProcessMakerMichelangelo @RestAPI
+@ProcessMakerMichelangelo @RestAPI
 Feature: ProcessPermissions Resources
 
     @1: TEST FOR GET PROCESS PERMISSIONS /----------------------------------------------------------------------

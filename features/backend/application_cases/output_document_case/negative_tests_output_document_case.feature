@@ -1,3 +1,12 @@
+@ProcessMakerMichelangelo @RestAPI
+Feature: Output Documents cases Main Tests
+Requirements:
+    a workspace with one case of the process "Test Output Document Case" 
+    and there are six Output Documents in the process
+
+Background:
+    Given that I have a valid access_token
+
 Scenario Outline: Pull information of an inexistent input document. should return an error
     Given I request "cases/64654381053382b8bb4c415067063003/input-document/<input-document>"
     Then the response status code should be 200

@@ -3,6 +3,9 @@ namespace Maveriks\Extension;
 
 use Luracast\Restler\Defaults;
 use Luracast\Restler\Format\UrlEncodedFormat;
+use ProcessMaker\Services\Api;
+use Luracast\Restler\RestException;
+
 /**
  * Class Restler
  * Extension Restler class to implement in ProcessMaker
@@ -102,5 +105,21 @@ class Restler extends \Luracast\Restler\Restler
                 : $r;
         }
         return $includeQueryParameters ? $get : array(); //no body
+    }
+
+    /**
+     * This method call the function message
+     *
+     * @param RestException $e. Exception the error
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function setMessage(RestException $e)
+    {
+        $this->message($e);
     }
 }

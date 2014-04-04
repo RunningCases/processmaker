@@ -2,7 +2,7 @@
 
 <project name="ProcessMaker Michelangelo" default="build-phpcs">
     <target name="build"
-        depends="prepare,lint,phploc,pdepend,phpcs-ci,phpdox, behat"/>
+        depends="prepare,lint,phploc,pdepend,phpcs-ci,phpunit,phpdox,behat"/>
 
     <target name="build-simple"
         depends="prepare,phpunit,phpcs-ci,phploc,lint"/>
@@ -122,7 +122,12 @@
  </target>
 
  <target name="phpunit" description="Run unit tests with PHPUnit">
-  <exec executable="phpunit" failonerror="false"/>
+  <exec executable="phpunit">
+    <arg value="--testsuite" />
+    <arg value="api" />
+    <arg value="--bootstrap" />
+    <arg value="${basedir}/workflow/engine/src/Tests/bootstrap.php" />
+  </exec>
  </target>
 
  <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">

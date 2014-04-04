@@ -82,13 +82,14 @@ Scenario Outline: Create a new case in workspace with process "Derivation rules 
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
-        And store "caseId" in session array as variable "caseId_<case_number>"
-        And store "caseNumber" in session array as variable "caseNumber_<case_number>"
+        And store "app_uid" in session array as variable "app_uid_<case_number>"
+        And store "app_number" in session array as variable "app_number_<case_number>"
         
         Examples:
         | Description             | case_number | pro_uid                          | tas_uid                          |
         | Create case 16 in draft | 1           | 99209594750ec27ea338927000421575 | 68707275350ec281ada1c95068712556 |
         | Create case 17 in draft | 2           | 99209594750ec27ea338927000421575 | 68707275350ec281ada1c95068712556 |
+        | Create case 18 in draft | 5           | 99209594750ec27ea338927000421575 | 68707275350ec281ada1c95068712556 |
 
 
 Scenario Outline: Create a new case Impersonate in workspace with process "Derivation rules - sequential"
@@ -106,8 +107,8 @@ Scenario Outline: Create a new case Impersonate in workspace with process "Deriv
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
-        And store "caseId" in session array as variable "caseId_<case_number>"
-        And store "caseNumber" in session array as variable "caseNumber_<case_number>"
+        And store "app_uid" in session array as variable "app_uid_<case_number>"
+        And store "app_number" in session array as variable "app_number_<case_number>"
         
         Examples:
         | Description                        | case_number | usr_uid                          |
@@ -128,16 +129,15 @@ Scenario Outline: Reassigns a case to a different user, from user "administrator
             """
             {
                 "usr_uid_source": "00000000000000000000000000000001",
-                "usr_uid_target": "51049032352d56710347233042615067",
+                "usr_uid_target": "51049032352d56710347233042615067"
             }
             """
-        And I request "case/<case_number>/reassign-case"
+        And I request "cases/app_uid/reassign-case"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
         And the type is "object"
-        And that I want to update a resource with the key "case_number" stored in session array as variable "caseNumber_<case_number>"
-        And that I want to update a resource with the key "caseId" stored in session array as variable "caseId_<case_number>" 
+      
 
         Examples:
 
@@ -145,7 +145,7 @@ Scenario Outline: Reassigns a case to a different user, from user "administrator
         | Reassig case 1, created in this script | 1           |
 
 
-Scenario: Route a case to the next task in the process
+Scenario Outline: Route a case to the next task in the process
         Given PUT this data:
             """
             {
@@ -153,14 +153,12 @@ Scenario: Route a case to the next task in the process
                 "del_index": "1"
             }
             """
-        And I request "cases/<case_number>/route-case"
+        And I request "cases/app_uid/route-case"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
         And the type is "object"
-        And that I want to update a resource with the key "case_number" stored in session array as variable "caseNumber_<case_number>"
-        And that I want to update a resource with the key "caseId" stored in session array as variable "caseId_<case_number>"   
-
+      
 
         Examples:
 
@@ -169,21 +167,19 @@ Scenario: Route a case to the next task in the process
 
 
 
-Scenario: Cancel a case
+Scenario Outline: Cancel a case
         Given PUT this data:
             """
             {
                 
             }
             """
-        And I request "cases/<app_uid>/cancel"
+        And I request "cases/app_uid/cancel"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
         And the type is "object"
-        And that I want to update a resource with the key "case_number" stored in session array as variable "caseNumber_<case_number>"
-        And that I want to update a resource with the key "caseId" stored in session array as variable "caseId_<case_number>"   
-
+       
 
         Examples:
 
@@ -191,21 +187,19 @@ Scenario: Cancel a case
         | Cancel case 3, created in this script | 3           |
 
 
-Scenario: Pause a case
+Scenario Outline: Pause a case
         Given PUT this data:
             """
             {
               "unpaused_date": "2016-12-12"  
             }
             """
-        And I request "cases/<app_uid>/pause"
+        And I request "cases/app_uid/pause"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
         And the type is "object"
-        And that I want to update a resource with the key "case_number" stored in session array as variable "caseNumber_<case_number>"
-        And that I want to update a resource with the key "caseId" stored in session array as variable "caseId_<case_number>"   
-
+     
 
         Examples:
 
@@ -213,21 +207,19 @@ Scenario: Pause a case
         | Pause case 4, created in this script  | 4           |
 
 
-Scenario: Unpause a case
+Scenario Outline: Unpause a case
         Given PUT this data:
             """
             {
                 
             }
             """
-        And I request "cases/<app_uid>/unpause"
+        And I request "cases/app_uid/unpause"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
         And the type is "object"
-        And that I want to update a resource with the key "case_number" stored in session array as variable "caseNumber_<case_number>"
-        And that I want to update a resource with the key "caseId" stored in session array as variable "caseId_<case_number>"   
-
+       
 
         Examples:
 
@@ -235,42 +227,41 @@ Scenario: Unpause a case
         | Unpause case 4, created in this script | 4           |
 
 
-Scenario: Executes a ProcessMaker trigger for a case
+Scenario Outline: Executes a ProcessMaker trigger for a case
         Given PUT this data:
             """
             {
                 
             }
             """
-        And I request "cases/<app_uid>/execute-trigger/{tri_uid}"
+        And I request "cases/app_uid/execute-trigger/<tri_uid>"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
         And the type is "object"
-        And that I want to update a resource with the key "case_number" stored in session array as variable "caseNumber_<case_number>"
-        And that I want to update a resource with the key "caseId" stored in session array as variable "caseId_<case_number>"   
 
 
         Examples:
 
-        | test_description                       | case_number |
-        |                                        |             |
+        | test_description                       | case_number | tri_uid                          |
+        | Ejecucion de trigger                   | 5           | 54962158250ec613ba5bc89016850103 |
 
 
-Scenario: Delete a case
+Scenario Outline: Delete a case
         Given PUT this data:
             """
             {
                 
             }
             """
-        And I request "cases/<app_uid>"
+        
+        And that I want to delete a resource with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
+        And I request "cases"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
         And the type is "object"
-        And that I want to update a resource with the key "case_number" stored in session array as variable "caseNumber_<case_number>"
-        And that I want to update a resource with the key "caseId" stored in session array as variable "caseId_<case_number>"   
+           
 
 
         Examples:
@@ -280,6 +271,7 @@ Scenario: Delete a case
         | Delete a case 2, created in this script | 2           |       
         | Delete a case 3, created in this script | 3           |
         | Delete a case 4, created in this script | 4           |
+        | Delete a case 5, created in this script | 5           |
 
 
 #Listado de casos
