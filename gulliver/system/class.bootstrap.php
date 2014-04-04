@@ -159,6 +159,7 @@ class Bootstrap
         self::registerClass("XmlForm_Field_cellMark", PATH_GULLIVER . "class.xmlformExtension.php");
         self::registerClass("XmlForm_Field_DVEditor", PATH_GULLIVER . "class.xmlformExtension.php");
         self::registerClass("XmlForm_Field_FastSearch", PATH_GULLIVER . "class.xmlformExtension.php");
+        self::registerClass("xmlformTemplate", PATH_GULLIVER . "class.xmlformTemplate.php");
         self::registerClass("ymlDomain", PATH_GULLIVER . "class.ymlDomain.php");
         self::registerClass("ymlTestCases", PATH_GULLIVER . "class.ymlTestCases.php");
 
@@ -743,7 +744,7 @@ class Bootstrap
      * @param  array list plugins active
      * @return void
      */
-    public function LoadTranslationPlugins ($lang = SYS_LANG, $listPluginsActive)
+    public static function LoadTranslationPlugins ($lang = SYS_LANG, $listPluginsActive)
     {
         if ( ! ( is_array ( $listPluginsActive ) ) ) {
             return null;

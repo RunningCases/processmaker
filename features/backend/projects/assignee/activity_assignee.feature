@@ -129,3 +129,10 @@ Scenario Outline: List assignees of an activity using a filter
     And the type is "array"
     And the response has 4 records
 
+
+  Scenario: List assignees of an activity including users that are within groups
+    Given I request "project/4224292655297723eb98691001100052/activity/65496814252977243d57684076211485/assignee/all"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"

@@ -8,11 +8,25 @@ if (!class_exists("Propel")) {
 /**
  * Class ProcessCategoryTest
  *
- * @package Tests\BusinessModel
+ * @package Tests/ProcessMaker/BusinessModel
  */
 class ProcessCategoryTest extends \PHPUnit_Framework_TestCase
 {
     protected static $arrayUid = array();
+    protected $oCategory;
+
+    /**
+     * Set class for test
+     *
+     * @coversNothing
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function setUp()
+    {
+        $this->oCategory = new \ProcessMaker\BusinessModel\ProcessCategory();
+    }
+
 
     public static function tearDownAfterClass()
     {
@@ -24,6 +38,67 @@ class ProcessCategoryTest extends \PHPUnit_Framework_TestCase
                 $processCategory->delete();
             }
         }
+    }
+
+    /**
+     * Test add Category
+     *
+     * @covers \BusinessModel\ProcessCategory::addCategory
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testAddCategory()
+    {
+        $response = $this->oCategory->addCategory('New Category Test');
+        $this->assertTrue(is_object($response));
+        $aResponse = json_decode(json_encode($response), true);
+        return $aResponse;
+    }
+
+    /**
+     * Test put Category
+     *
+     * @covers \BusinessModel\ProcessCategory::updateCategory
+     * @depends testAddCategory
+     * @param array $aResponse
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testUpdateCategory(array $aResponse)
+    {
+        $response = $this->oCategory->updateCategory($aResponse["cat_uid"], 'Name Update Category Test');
+        $this->assertTrue(is_object($response));
+    }
+
+    /**
+     * Test get Category
+     *
+     * @covers \BusinessModel\ProcessCategory::getCategory
+     * @depends testAddCategory
+     * @param array $aResponse
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetCategory(array $aResponse)
+    {
+        $response = $this->oCategory->getCategory($aResponse["cat_uid"]);
+        $this->assertTrue(is_object($response));
+    }
+
+
+    /**
+     * Test delete Category
+     *
+     * @covers \BusinessModel\ProcessCategory::deleteCategory
+     * @depends testAddCategory
+     * @param array $aResponse
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testDeleteCategory(array $aResponse)
+    {
+        $response = $this->oCategory->deleteCategory($aResponse["cat_uid"]);
+        $this->assertTrue(empty($response));
     }
 
     public function testCreate()
@@ -46,9 +121,10 @@ class ProcessCategoryTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($processCategoryUid);
     }
 
+
     public function testGetCategories()
     {
-        $processCategory = new \BusinessModel\ProcessCategory();
+        $processCategory = new \ProcessMaker\BusinessModel\ProcessCategory();
 
         $arrayProcessCategory = $processCategory->getCategories();
 

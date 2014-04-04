@@ -157,6 +157,7 @@ class processMap
                 $oTask->position->x = (int) $aRow1['TAS_POSX'];
                 $oTask->position->y = (int) $aRow1['TAS_POSY'];
                 $oTask->derivation = new StdClass();
+                $oTask->derivation->type = '';
                 $oTask->derivation->to = array();
                 $oCriteria = new Criteria('workflow');
                 $oCriteria->add(RoutePeer::PRO_UID, $sProcessUID);
@@ -1909,7 +1910,7 @@ class processMap
         $aConditions[] = array('C2.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
         $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
-
+        $oCriteria->addAscendingOrderByColumn('DYN_TITLE');
         $oDataset = DynaformPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
@@ -4555,6 +4556,7 @@ class processMap
     {
         try {
             $oTask = new Task();
+            $oNewTask = new StdClass();
             $oNewTask->label = G::LoadTranslation('ID_SUBPROCESS');
             $oNewTask->uid = $oTask->create(array('PRO_UID' => $sProcessUID, 'TAS_TITLE' => $oNewTask->label, 'TAS_POSX' => $iX, 'TAS_POSY' => $iY, 'TAS_TYPE' => 'SUBPROCESS' ));
             //$oJSON = new Services_JSON();

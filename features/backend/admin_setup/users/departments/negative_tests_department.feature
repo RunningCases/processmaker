@@ -26,3 +26,12 @@ Scenario Outline: Create a new departments in the workspace with bad parameters 
         | without dep_title                  |                     |                                  | ACTIVE     | 400        | dep_title     |
         | Invalid dep_parent                 | Department 2        | 28036030000000000000005009591640 | ACTIVE     | 400        | dep_parent    |
         | Invalid dep_status                 | Department 3        |                                  | TRIGGER    | 400        | dep_status    |
+
+
+
+Scenario: Delete a department when have asigned user (negative tests)
+        Given that I want to delete a resource with the key "15978182252d5674d210310076985235"
+        And I request "department/15978182252d5674d210310076985235"
+        Then the response status code should be 400
+         And the response status message should have the following text "<cannot be deleted>"
+        

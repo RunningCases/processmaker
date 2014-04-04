@@ -27,7 +27,7 @@ use \BpmnArtifactPeer as ArtifactPeer;
 
 use \BasePeer;
 
-use ProcessMaker\Util\Hash;
+use ProcessMaker\Util\Common;
 use ProcessMaker\Exception;
 
 /**
@@ -99,7 +99,7 @@ class Bpmn extends Handler
     public function create($data)
     {
         // setting defaults
-        $data['PRJ_UID'] = array_key_exists('PRJ_UID', $data) ? $data['PRJ_UID'] : Hash::generateUID();
+        $data['PRJ_UID'] = array_key_exists('PRJ_UID', $data) ? $data['PRJ_UID'] : Common::generateUID();
 
         self::log("Create Project with data: ", $data);
         $this->project = new Project();
@@ -111,9 +111,21 @@ class Bpmn extends Handler
         self::log("Create Project Success!");
     }
 
-    public function update()
+    public function update($data)
     {
+        if (array_key_exists("PRJ_CREATE_DATE", $data) && empty($data["PRJ_CREATE_DATE"])) {
+            unset($data["PRJ_UPDATE_DATE"]);
+        }
 
+        if (array_key_exists("PRJ_UPDATE_DATE", $data)) {
+            unset($data["PRJ_UPDATE_DATE"]);
+        }
+
+        $this->project->fromArray($data, BasePeer::TYPE_FIELDNAME);
+        $this->project->setPrjUpdateDate(date("Y-m-d H:i:s"));
+        $this->project->save();
+
+        $this->updateDiagram(array("DIA_NAME" => $data["PRJ_NAME"]));
     }
 
     public function remove()
@@ -175,6 +187,11 @@ class Bpmn extends Handler
         return $this->prjUid;
     }
 
+    /**
+     * @param string $retType
+     * @return array|Project
+     * @throws \RuntimeException
+     */
     public function getProject($retType = "array")
     {
         if (empty($this->project)) {
@@ -195,12 +212,25 @@ class Bpmn extends Handler
         }
 
         // setting defaults
-        $data['DIA_UID'] = array_key_exists('DIA_UID', $data) ? $data['DIA_UID'] : Hash::generateUID();
+        $data['DIA_UID'] = array_key_exists('DIA_UID', $data) ? $data['DIA_UID'] : Common::generateUID();
         $data['DIA_NAME'] = array_key_exists('DIA_NAME', $data) ? $data['DIA_NAME'] : $this->project->getPrjName();
 
         $this->diagram = new Diagram();
         $this->diagram->fromArray($data, BasePeer::TYPE_FIELDNAME);
         $this->diagram->setPrjUid($this->project->getPrjUid());
+        $this->diagram->save();
+    }
+
+    public function updateDiagram($data)
+    {
+        if (empty($this->project)) {
+            throw new \Exception("Error: There is not an initialized project.");
+        }
+        if (! is_object($this->diagram)) {
+            $this->getDiagram();
+        }
+
+        $this->diagram->fromArray($data, BasePeer::TYPE_FIELDNAME);
         $this->diagram->save();
     }
 
@@ -225,7 +255,7 @@ class Bpmn extends Handler
         }
 
         // setting defaults
-        $data['PRO_UID'] = array_key_exists('PRO_UID', $data) ? $data['PRO_UID'] : Hash::generateUID();;
+        $data['PRO_UID'] = array_key_exists('PRO_UID', $data) ? $data['PRO_UID'] : Common::generateUID();;
         $data['PRO_NAME'] = array_key_exists('PRO_NAME', $data) ? $data['PRO_NAME'] : $this->diagram->getDiaName();
 
         $this->process = new Process();
@@ -256,7 +286,7 @@ class Bpmn extends Handler
         }
 
         // setting defaults
-        $data['ACT_UID'] = array_key_exists('ACT_UID', $data) ? $data['ACT_UID'] : Hash::generateUID();;
+        $data['ACT_UID'] = array_key_exists('ACT_UID', $data) ? $data['ACT_UID'] : Common::generateUID();;
 
         try {
             self::log("Add Activity with data: ", $data);
@@ -342,7 +372,7 @@ class Bpmn extends Handler
     public function addEvent($data)
     {
         // setting defaults
-        $data['EVN_UID'] = array_key_exists('EVN_UID', $data) ? $data['EVN_UID'] : Hash::generateUID();
+        $data['EVN_UID'] = array_key_exists('EVN_UID', $data) ? $data['EVN_UID'] : Common::generateUID();
 
         try {
             self::log("Add Event with data: ", $data);
@@ -432,7 +462,7 @@ class Bpmn extends Handler
     public function addGateway($data)
     {
         // setting defaults
-        $data['GAT_UID'] = array_key_exists('GAT_UID', $data) ? $data['GAT_UID'] : Hash::generateUID();
+        $data['GAT_UID'] = array_key_exists('GAT_UID', $data) ? $data['GAT_UID'] : Common::generateUID();
 
         try {
             self::log("Add Gateway with data: ", $data);
@@ -517,7 +547,7 @@ class Bpmn extends Handler
         self::log("Add Flow with data: ", $data);
 
         // setting defaults
-        $data['FLO_UID'] = array_key_exists('FLO_UID', $data) ? $data['FLO_UID'] : Hash::generateUID();
+        $data['FLO_UID'] = array_key_exists('FLO_UID', $data) ? $data['FLO_UID'] : Common::generateUID();
         if (array_key_exists('FLO_STATE', $data)) {
             $data['FLO_STATE'] = is_array($data['FLO_STATE']) ? json_encode($data['FLO_STATE']) : $data['FLO_STATE'];
         }

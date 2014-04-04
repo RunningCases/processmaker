@@ -14,7 +14,7 @@ abstract class Exporter
     /**
      * Exporter version
      */
-    const VERSION = "2.0";
+    const VERSION = "3.0";
 
     /**
      * @var \ProcessMaker\Project\Adapter\BpmnWorkflow
@@ -67,18 +67,18 @@ abstract class Exporter
     {
         $data = array();
 
-        $data["Metadata"] = $this->getMetadata();
-        $data["Metadata"]["project_name"] = $this->getProjectName();
+        $data["metadata"] = $this->getMetadata();
+        $data["metadata"]["project_name"] = $this->getProjectName();
 
         $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($this->prjUid);
         $bpmnStruct["BOUND"] = \BpmnBound::getAll($this->prjUid);
         $bpmnStruct["DATA"] = array();
         $bpmnStruct["DIAGRAM"] = \BpmnDiagram::getAll($this->prjUid);
         $bpmnStruct["DOCUMENTATION"] = array();
-        $bpmnStruct["BPMN_EVENT"] = \BpmnEvent::getAll($this->prjUid);
+        $bpmnStruct["EVENT"] = \BpmnEvent::getAll($this->prjUid);
         $bpmnStruct["EXTENSION"] = array();
         $bpmnStruct["FLOW"] = \BpmnFlow::getAll($this->prjUid, null, null, "", CASE_UPPER, false);
-        $bpmnStruct["BPMN_GATEWAY"] = \BpmnGateway::getAll($this->prjUid);
+        $bpmnStruct["GATEWAY"] = \BpmnGateway::getAll($this->prjUid);
         $bpmnStruct["LANE"] = array();
         $bpmnStruct["LANESET"] = array();
         $bpmnStruct["PARTICIPANT"] = array();
@@ -87,20 +87,21 @@ abstract class Exporter
 
         $oProcess = new \Processes();
         $workflowData = (array) $oProcess->getWorkflowData($this->prjUid);
+        $workflowData["process"]['PRO_DYNAFORMS'] = empty($workflowData["process"]['PRO_DYNAFORMS'])
+            ? "" : serialize($workflowData["process"]['PRO_DYNAFORMS']);
+
         $workflowData["process"] = array($workflowData["process"]);
         $workflowData["processCategory"] = empty($workflowData["processCategory"]) ? array() : $workflowData["processCategory"];
 
 
-        $data["BPMN-Definition"] = $bpmnStruct;
-        $data["Workflow-Definition"] = $workflowData;
-        $data["Workflow-Files"] = array();
+        $data["bpmn-definition"] = $bpmnStruct;
+        $data["workflow-definition"] = $workflowData;
+        $data["workflow-files"] = array();
 
         // getting dynaforms
-        $dynaforms = array();
-
         foreach ($workflowData["dynaforms"] as $dynaform) {
             $dynFile = PATH_DYNAFORM . $dynaform['DYN_FILENAME'] . '.xml';
-            $dynaforms[] = array(
+            $data["workflow-files"]["DYNAFORMS"][] = array(
                 "filename" => $dynaform['DYN_TITLE'],
                 "filepath" => $dynaform['DYN_FILENAME'] . '.xml',
                 "file_content" => file_get_contents($dynFile)
@@ -109,7 +110,7 @@ abstract class Exporter
             $htmlFile = PATH_DYNAFORM . $dynaform['DYN_FILENAME'] . '.html';
 
             if (file_exists($htmlFile)) {
-                $data["Workflow-Files"]["DYNAFORMS"][] = array(
+                $data["workflow-files"]["DYNAFORMS"][] = array(
                     "filename" => $dynaform['DYN_FILENAME'] . '.html',
                     "filepath" => $dynaform['DYN_FILENAME'] . '.html',
                     "file_content" => file_get_contents($htmlFile)
@@ -127,10 +128,10 @@ abstract class Exporter
 
             foreach ($templatesFiles as $templatesFile) {
                 if (is_dir($templatesFile)) continue;
-
-                $data["Workflow-Files"][$target][] = array(
-                    "filename" => basename($templatesFile),
-                    "filepath" => str_replace($templatesDir, "", $templatesFile),
+                $filename = basename($templatesFile);
+                $data["workflow-files"][$target][] = array(
+                    "filename" => $filename,
+                    "filepath" => $this->prjUid . PATH_SEP . $filename,
                     "file_content" => file_get_contents($templatesFile)
                 );
             }
@@ -144,7 +145,7 @@ abstract class Exporter
      *
      * @return string
      */
-    public function getContainerName()
+    public static function getContainerName()
     {
         return "ProcessMaker-Project";
     }

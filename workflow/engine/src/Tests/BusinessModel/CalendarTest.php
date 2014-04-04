@@ -12,26 +12,151 @@ if (!class_exists("Propel")) {
  */
 class CalendarTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetCalendars()
-    {
-        $calendar = new \BusinessModel\Calendar();
+    private static $calendar;
+    private static $numCalendar = 2;
 
-        $arrayCalendar = $calendar->getCalendars();
+    /**
+     * Set class for test
+     *
+     * @coversNothing
+     */
+    public static function setUpBeforeClass()
+    {
+        self::$calendar = new \ProcessMaker\BusinessModel\Calendar();
+    }
+
+    /**
+     * Test create calendars
+     *
+     * @covers \ProcessMaker\BusinessModel\Calendar::create
+     *
+     * @return array
+     */
+    public function testCreate()
+    {
+        $arrayRecord = array();
+
+        //Create
+        for ($i = 0; $i <= self::$numCalendar - 1; $i++) {
+            $arrayData = array(
+                "CAL_NAME"        => "PHPUnit Calendar$i",
+                "CAL_DESCRIPTION" => "Description",
+                "CAL_WORK_DAYS"   => array("MON", "TUE", "WED", "THU", "FRI"),
+                "CAL_STATUS"      => "ACTIVE",
+                "CAL_WORK_HOUR" => array(
+                    array("DAY" => "ALL", "HOUR_START" => "00:00", "HOUR_END" => "00:00"),
+                    array("DAY" => "MON", "HOUR_START" => "09:00", "HOUR_END" => "17:00")
+                ),
+                "CAL_HOLIDAY" => array(
+                    array("NAME" => "holiday1", "DATE_START" => "2014-03-01", "DATE_END" => "2014-03-31"),
+                    array("NAME" => "holiday2", "DATE_START" => "2014-03-01", "DATE_END" => "2014-03-31")
+                )
+            );
+
+            $arrayCalendar = self::$calendar->create($arrayData);
+
+            $this->assertTrue(is_array($arrayCalendar));
+            $this->assertNotEmpty($arrayCalendar);
+
+            $this->assertTrue(isset($arrayCalendar["CAL_UID"]));
+
+            $arrayRecord[] = $arrayCalendar;
+        }
+
+        //Return
+        return $arrayRecord;
+    }
+
+    /**
+     * Test update calendars
+     *
+     * @depends testCreate
+     * @param   array $arrayRecord Data of the calendars
+     *
+     * @covers \ProcessMaker\BusinessModel\Calendar::update
+     */
+    public function testUpdate($arrayRecord)
+    {
+        $arrayData = array("CAL_DESCRIPTION" => "Description...");
+
+        $arrayCalendar = self::$calendar->update($arrayRecord[1]["CAL_UID"], $arrayData);
+
+        $arrayCalendar = self::$calendar->getCalendar($arrayRecord[1]["CAL_UID"]);
+
+        $this->assertTrue(is_array($arrayCalendar));
+        $this->assertNotEmpty($arrayCalendar);
+
+        $this->assertEquals($arrayCalendar["CAL_DESCRIPTION"], $arrayData["CAL_DESCRIPTION"]);
+    }
+
+    /**
+     * Test get calendars
+     *
+     * @depends testCreate
+     * @param   array $arrayRecord Data of the calendars
+     *
+     * @covers \ProcessMaker\BusinessModel\Calendar::getCalendars
+     */
+    public function testGetCalendars($arrayRecord)
+    {
+        $arrayCalendar = self::$calendar->getCalendars();
 
         $this->assertNotEmpty($arrayCalendar);
 
-        $arrayCalendar = $calendar->getCalendars(null, null, null, 0, 0);
+        $arrayCalendar = self::$calendar->getCalendars(null, null, null, 0, 0);
 
         $this->assertEmpty($arrayCalendar);
 
-        $arrayCalendar = $calendar->getCalendars(array("filter" => "Default"));
+        $arrayCalendar = self::$calendar->getCalendars(array("filter" => "PHPUnit"));
 
+        $this->assertTrue(is_array($arrayCalendar));
         $this->assertNotEmpty($arrayCalendar);
 
-        $this->assertEquals($arrayCalendar[0]["CAL_UID"], "00000000000000000000000000000001");
-        $this->assertEquals($arrayCalendar[0]["CAL_NAME"], "Default");
-        $this->assertEquals($arrayCalendar[0]["CAL_DESCRIPTION"], "Default");
-        $this->assertEquals($arrayCalendar[0]["CAL_STATUS"], "ACTIVE");
+        $this->assertEquals($arrayCalendar[0]["CAL_UID"], $arrayRecord[0]["CAL_UID"]);
+        $this->assertEquals($arrayCalendar[0]["CAL_NAME"], $arrayRecord[0]["CAL_NAME"]);
+        $this->assertEquals($arrayCalendar[0]["CAL_DESCRIPTION"], $arrayRecord[0]["CAL_DESCRIPTION"]);
+        $this->assertEquals($arrayCalendar[0]["CAL_STATUS"], $arrayRecord[0]["CAL_STATUS"]);
+    }
+
+    /**
+     * Test get calendar
+     *
+     * @depends testCreate
+     * @param   array $arrayRecord Data of the calendars
+     *
+     * @covers \ProcessMaker\BusinessModel\Calendar::getCalendar
+     */
+    public function testGetCalendar($arrayRecord)
+    {
+        $arrayCalendar = self::$calendar->getCalendar($arrayRecord[0]["CAL_UID"]);
+
+        $this->assertTrue(is_array($arrayCalendar));
+        $this->assertNotEmpty($arrayCalendar);
+
+        $this->assertEquals($arrayCalendar["CAL_UID"], $arrayRecord[0]["CAL_UID"]);
+        $this->assertEquals($arrayCalendar["CAL_NAME"], $arrayRecord[0]["CAL_NAME"]);
+        $this->assertEquals($arrayCalendar["CAL_DESCRIPTION"], $arrayRecord[0]["CAL_DESCRIPTION"]);
+        $this->assertEquals($arrayCalendar["CAL_STATUS"], $arrayRecord[0]["CAL_STATUS"]);
+    }
+
+    /**
+     * Test delete calendars
+     *
+     * @depends testCreate
+     * @param   array $arrayRecord Data of the calendars
+     *
+     * @covers \ProcessMaker\BusinessModel\Calendar::delete
+     */
+    public function testDelete($arrayRecord)
+    {
+        foreach ($arrayRecord as $value) {
+            self::$calendar->delete($value["CAL_UID"]);
+        }
+
+        $arrayCalendar = self::$calendar->getCalendars(array("filter" => "PHPUnit"));
+
+        $this->assertTrue(is_array($arrayCalendar));
+        $this->assertEmpty($arrayCalendar);
     }
 }
 

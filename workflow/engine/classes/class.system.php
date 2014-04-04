@@ -154,7 +154,7 @@ class System
             return false;
         }
         if (exec( "cd $dir && git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/^* \(.*\)$/(Branch \\1)/'", $target )) {
-            exec( "cd $dir && git describe", $target );
+            //exec( "cd $dir && git describe", $target ); ??? <-- thi is returning "fatal: No names found, cannot describe anything." on apache error log file
             return implode( ' ', $target );
         }
         return false;

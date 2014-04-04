@@ -54,5 +54,11 @@ class ProcessCategory extends BaseProcessCategory
         $aRow = $dataset->getRow();
         return $aRow;
     }
+
+    public function exists ($catUid)
+    {
+        $oProCat = ProcessCategoryPeer::retrieveByPk( $catUid );
+        return (is_object( $oProCat ) && get_class( $oProCat ) == 'ProcessCategory');
+    }
 }
 
