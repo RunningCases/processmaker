@@ -32,6 +32,142 @@ class Department
     }
 
     /**
+     * Get list for Assigned User
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     */
+    public function getAssignedUser($dep_uid)
+    {
+        $dep_uid = Validator::depUid($dep_uid);
+        $oDept = new \Department();
+        $oDept->Load( $dep_uid );
+        $manager = $oDept->getDepManager();
+        $oCriteria = new \Criteria( 'workflow' );
+        $oCriteria->addSelectColumn( UsersPeer::USR_UID );
+        $oCriteria->addSelectColumn( UsersPeer::USR_USERNAME );
+        $oCriteria->addSelectColumn( UsersPeer::USR_FIRSTNAME );
+        $oCriteria->addSelectColumn( UsersPeer::USR_LASTNAME );
+        $oCriteria->addSelectColumn( UsersPeer::USR_STATUS );
+        $oCriteria->add( UsersPeer::DEP_UID, '' );
+        $oCriteria->add( UsersPeer::USR_STATUS, 'CLOSED', \Criteria::NOT_EQUAL );
+        $oCriteria->add( UsersPeer::DEP_UID, $dep_uid );
+        $oDataset = UsersPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        $aUsers = array ();
+        while ($oDataset->next()) {
+            $dataTemp = $oDataset->getRow();
+            $aUsers[] = array_change_key_case($dataTemp, CASE_LOWER);
+            $index = sizeof( $aUsers ) - 1;
+            $aUsers[$index]['usr_supervisor'] = ($manager == $aUsers[$index]['usr_uid']) ? true : false;
+        }
+        return $aUsers;
+    }
+
+    /**
+     * Get list for Available User
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     */
+    public function getAvailableUser($dep_uid)
+    {
+        $dep_uid = Validator::depUid($dep_uid);
+        $oCriteria = new \Criteria( 'workflow' );
+        $oCriteria->addSelectColumn( UsersPeer::USR_UID );
+        $oCriteria->addSelectColumn( UsersPeer::USR_USERNAME );
+        $oCriteria->addSelectColumn( UsersPeer::USR_FIRSTNAME );
+        $oCriteria->addSelectColumn( UsersPeer::USR_LASTNAME );
+        $oCriteria->addSelectColumn( UsersPeer::USR_STATUS );
+        $oCriteria->add( UsersPeer::DEP_UID, '' );
+        $oCriteria->add( UsersPeer::USR_STATUS, 'CLOSED', \Criteria::NOT_EQUAL );
+
+        $oDataset = UsersPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        $aUsers = array ();
+        while ($oDataset->next()) {
+            $dataTemp = $oDataset->getRow();
+            $aUsers[] = array_change_key_case($dataTemp, CASE_LOWER);
+        }
+        return $aUsers;
+    }
+
+    /**
+     * Put Assign User
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function assignUser($dep_uid, $usr_uid)
+    {
+        $dep_uid = Validator::depUid($dep_uid);
+        $usr_uid = Validator::usrUid($usr_uid);
+
+        $dep = new \Department();
+        $dep->load($dep_uid);
+        $dep_manager = $dep->getDepManager();
+        $manager = ($dep_manager == '') ? true : false;
+        $dep->addUserToDepartment( $dep_uid, $usr_uid, $manager, false );
+        $dep->updateDepartmentManager( $dep_uid );
+    }
+
+    /**
+     * Post Unassign User
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function unassignUser($dep_uid, $usr_uid)
+    {
+        $dep_uid = Validator::depUid($dep_uid);
+        $usr_uid = Validator::usrUid($usr_uid);
+
+        $dep = new \Department();
+        $dep->load( $dep_uid );
+        $manager = $dep->getDepManager();
+        $dep->removeUserFromDepartment( $dep_uid, $usr_uid );
+        if ($usr_uid == $manager) {
+            $editDepto['DEP_UID'] = $dep_uid;
+            $editDepto['DEP_MANAGER'] = '';
+            $dep->update( $editDepto );
+            $dep->updateDepartmentManager($dep_uid);
+        }
+    }
+
+    /**
+     * Put Set Manager User
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function setManagerUser($dep_uid, $usr_uid)
+    {
+        $dep_uid = Validator::depUid($dep_uid);
+        $usr_uid = Validator::usrUid($usr_uid);
+
+        $editDepartment['DEP_UID'] = $dep_uid;
+        $editDepartment['DEP_MANAGER'] = $usr_uid;
+        $oDept = new \Department();
+        $oDept->update( $editDepartment );
+        $oDept->updateDepartmentManager( $dep_uid );
+    }
+
+    /**
      * Get list for Departments
      * @var string $dep_uid. Uid for Department
      *
@@ -149,11 +285,15 @@ class Department
     public function deleteDepartment($dep_uid)
     {
         $dep_uid = Validator::depUid($dep_uid);
+        $oDepartment = new \Department();
+        $countUsers = $oDepartment->cantUsersInDepartment($dep_uid);
+        if ($countUsers != 0) {
+            throw (new \Exception("Department cannot be deleted while has assigned users."));
+        }
         $dep_data = $this->getDepartment($dep_uid);
         if ($dep_data['has_children'] != 0) {
             throw (new \Exception("Can not delete the department, it has a children department."));
         }
-        $oDepartment = new \Department();
         $oDepartment->remove($dep_uid);
     }
 

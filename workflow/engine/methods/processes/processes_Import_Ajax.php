@@ -28,18 +28,19 @@ if (isset($_FILES["PROCESS_FILENAME"])) {
 
     if ($ext == "pmx") {
         $importer = new \ProcessMaker\Importer\XmlImporter();
-        $importer->setSourceFromGlobals("PROCESS_FILENAME");
         $importer->setData("usr_uid", $_SESSION['USER_LOGGED']);
+        $importer->setSaveDir(PATH_DOCUMENT . 'input');
+        $importer->setSourceFromGlobals("PROCESS_FILENAME");
 
         try {
-            $res = $importer->import();
+            $prjUid = $importer->import();
 
             $result = array(
                 "success" => true,
                 "catchMessage" => "",
                 "ExistProcessInDatabase" => 0,
                 "ExistGroupsInDatabase" => 0,
-                "sNewProUid" => $res[0]["new_uid"],
+                "sNewProUid" => $prjUid,
                 "project_type" => "bpmn"
             );
         } catch (Exception $e) {
@@ -58,8 +59,25 @@ if (isset($_FILES["PROCESS_FILENAME"])) {
         echo json_encode($result);
         exit(0);
     }
-}
+} elseif (isset($_POST["PRO_FILENAME"]) && file_exists(PATH_DOCUMENT . 'input' . PATH_SEP . $_POST["PRO_FILENAME"])) {
 
+    switch ($_POST["IMPORT_OPTION"]) {
+        case 1: $option = ProcessMaker\Importer\XmlImporter::IMPORT_OPTION_OVERWRITE; break;
+        case 2: $option = ProcessMaker\Importer\XmlImporter::IMPORT_OPTION_DISABLE_AND_CREATE_NEW; break;
+        case 3: $option = ProcessMaker\Importer\XmlImporter::IMPORT_OPTION_CREATE_NEW; break;
+    }
+
+    $importer = new ProcessMaker\Importer\XmlImporter();
+    $importer->setData("usr_uid", $_SESSION['USER_LOGGED']);
+    $importer->setSourceFile(PATH_DOCUMENT . 'input' . PATH_SEP . $_POST["PRO_FILENAME"]);
+
+    try {
+        $res = $importer->import($option);
+    } catch (\Exception $e) {
+        die($e->getMessage());
+    }
+}
+die;
 function reservedWordsSqlValidate ($data)
 {
     $arrayAux = array ();
