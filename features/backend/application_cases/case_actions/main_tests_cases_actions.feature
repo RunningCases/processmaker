@@ -49,7 +49,7 @@ Scenario: Returns a list of the cases for the logged in user (Paused)
     And the response has 12 records
 
 
-Scenario: Returns information about a given case of the list Inbox
+Scenario: Returns information about a given case of the list Inbox of process "Derivation rules - Parallel"
     Given I request "cases/220090038533b0c40688174019225585"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -59,7 +59,7 @@ Scenario: Returns information about a given case of the list Inbox
     And the "app_name" property equals "#137"
     And the "app_status" property equals "TO_DO"
     And the "app_init_usr_uid" property equals "00000000000000000000000000000001"
-    And the "app_init_usr_username" property equals "Administrator  "
+    And the "app_init_usr_username" property equals "Administrator"
     And the "pro_uid" property equals "35894775350ec7daa099378048029617"
     And the "pro_name" property equals "Derivation rules - Parallel"
     And the "app_create_date" property equals "2014-04-01 14:58:08"

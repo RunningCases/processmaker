@@ -139,7 +139,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      */
     public function testUpdateReassignCase(array $aResponse)
     {
-        $response = $this->oCases->updateReassignCase($aResponse['app_uid'], self::$usrUid, null, self::$usrUid, self::$usrUid2);
+        $response = $this->oCases->updateReassignCase($aResponse['app_uid'], self::$usrUid, null, self::$usrUid2, self::$usrUid);
         $this->assertTrue(empty($response));
     }
 

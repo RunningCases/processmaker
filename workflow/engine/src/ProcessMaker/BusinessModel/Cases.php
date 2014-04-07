@@ -608,7 +608,7 @@ class Cases
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
-            $fields = $ws->reassignCase($userUid, $applicationUid, $delIndex, $userUidSource, $userUidTarget);
+            $fields = $ws->reassignCase($userUid, $applicationUid, $delIndex, $userUidTarget, $userUidSource);
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {
                 throw (new \Exception($array ["message"]));
