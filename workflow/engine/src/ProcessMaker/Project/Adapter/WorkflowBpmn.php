@@ -2,7 +2,7 @@
 namespace ProcessMaker\Project\Adapter;
 
 use ProcessMaker\Project;
-use ProcessMaker\Util\Hash;
+use ProcessMaker\Util\Common;
 
 /**
  * Class WorkflowBpmn

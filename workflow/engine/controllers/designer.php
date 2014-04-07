@@ -78,16 +78,16 @@ class Designer extends Controller
 
     protected function getClientCredentials()
     {
-        $oauthQuery = new Services\Api\OAuth2\PmPdo($this->getDsn());
+        $oauthQuery = new ProcessMaker\Services\OAuth2\PmPdo($this->getDsn());
         return $oauthQuery->getClientDetails($this->clientId);
     }
 
     protected function getAuthorizationCode($client)
     {
-        \Services\Api\OAuth2\Server::setDatabaseSource($this->getDsn());
-        \Services\Api\OAuth2\Server::setPmClientId($client['CLIENT_ID']);
+        \ProcessMaker\Services\OAuth2\Server::setDatabaseSource($this->getDsn());
+        \ProcessMaker\Services\OAuth2\Server::setPmClientId($client['CLIENT_ID']);
 
-        $oauthServer = new \Services\Api\OAuth2\Server();
+        $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
         $userId = $_SESSION['USER_LOGGED'];
         $authorize = true;
         $_GET = array_merge($_GET, array(

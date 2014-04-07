@@ -10,8 +10,9 @@ use \Task;
 use \Route;
 use \RoutePeer;
 
-use ProcessMaker\Util\Hash;
+use ProcessMaker\Util\Common;
 use ProcessMaker\Exception;
+use ProcessMaker\Util;
 
 /**
  * Class Workflow
@@ -55,7 +56,7 @@ class Workflow extends Handler
     public function create($data)
     {
         // setting defaults
-        $data['PRO_UID'] = array_key_exists('PRO_UID', $data) ? $data['PRO_UID'] : Hash::generateUID();
+        $data['PRO_UID'] = array_key_exists('PRO_UID', $data) ? $data['PRO_UID'] : Common::generateUID();
         $data['USR_UID'] = array_key_exists('PRO_CREATE_USER', $data) ? $data['PRO_CREATE_USER'] : null;
         $data['PRO_TITLE'] = array_key_exists('PRO_TITLE', $data) ? trim($data['PRO_TITLE']) : "";
         $data['PRO_CATEGORY'] = array_key_exists('PRO_CATEGORY', $data) ? $data['PRO_CATEGORY'] : "";
@@ -94,9 +95,10 @@ class Workflow extends Handler
         }
     }
 
-    public function update()
+    public function update($data)
     {
-        // TODO: Implement update() method.
+        $process = new Process();
+        $process->update($data);
     }
 
     public function remove()
@@ -165,7 +167,7 @@ class Workflow extends Handler
     public function addTask($taskData)
     {
         // Setting defaults
-        $taskData['TAS_UID'] = array_key_exists('TAS_UID', $taskData) ? $taskData['TAS_UID'] : Hash::generateUID();
+        $taskData['TAS_UID'] = array_key_exists('TAS_UID', $taskData) ? $taskData['TAS_UID'] : Common::generateUID();
         $taskData['PRO_UID'] = $this->proUid;
 
         try {
@@ -173,6 +175,12 @@ class Workflow extends Handler
             $task = new Task();
             $tasUid = $task->create($taskData, false);
             self::log("Add Task Success!");
+
+            // SubProcess Handling
+            if ($task->getTasType() == "SUBPROCESS") {
+                $this->addSubProcess($this->proUid, $tasUid);
+            }
+
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
             throw $e;
@@ -201,9 +209,17 @@ class Workflow extends Handler
     {
         try {
             self::log("Remove Task: $tasUid");
+            $task = \TaskPeer::retrieveByPK($tasUid);
+            $tasType = $task->getTasType();
+
             $task = new Tasks();
             $task->deleteTask($tasUid);
             self::log("Remove Task Success!");
+
+            if ($tasType == "SUBPROCESS") {
+                $this->removeSupProcess($this->proUid, $tasUid);
+            }
+
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
             throw $e;
@@ -235,6 +251,53 @@ class Workflow extends Handler
         $tasks = new Tasks();
 
         return $tasks->getAllTasks($this->proUid);
+    }
+
+    public function addSubProcess($proUid = '', $tasUid)//$iX = 0, $iY = 0)
+    {
+        try {
+            $subProcess = new \SubProcess();
+            $data = array(
+                'SP_UID' => Util\Common::generateUID(),
+                'PRO_UID' => 0,
+                'TAS_UID' => 0,
+                'PRO_PARENT' => $proUid,
+                'TAS_PARENT' => $tasUid,
+                'SP_TYPE' => 'SIMPLE',
+                'SP_SYNCHRONOUS' => 0,
+                'SP_SYNCHRONOUS_TYPE' => 'ALL',
+                'SP_SYNCHRONOUS_WAIT' => 0,
+                'SP_VARIABLES_OUT' => '',
+                'SP_VARIABLES_IN' => '',
+                'SP_GRID_IN' => ''
+            );
+
+            self::log("Adding SubProcess with data: ", $data);
+            $spUid = $subProcess->create($data);
+            self::log("Adding SubProcess success!, created sp_uid: ", $spUid);
+
+            return $spUid;
+        } catch (\Exception $oError) {
+            throw ($oError);
+        }
+    }
+
+    public function removeSupProcess($proUid, $tasUid)
+    {
+        try {
+            $subProcess = \SubProcess::findByParents($proUid, $tasUid);
+            self::log("Remove SupProcess: ".$subProcess->getSpUid());
+            $subProcess->delete();
+            self::log("Remove SupProcess Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function updateSubProcess()
+    {
+
     }
 
     /**
@@ -693,11 +756,11 @@ class Workflow extends Handler
             //Delete the process
             try {
                 $oProcess->remove($sProcessUID);
-            } catch (Exception $oError) {
+            } catch (\Exception $oError) {
                 throw ($oError);
             }
             return true;
-        } catch (Exception $oError) {
+        } catch (\Exception $oError) {
             throw ($oError);
         }
     }

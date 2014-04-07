@@ -149,7 +149,7 @@ class Process extends BaseProcess
      * $aData['PRO_UID'] the process id
      * $aData['USR_UID'] the userid
      * $aData['PRO_CATEGORY'] the id category
-     * @return void
+     * @return string
      */
 
     public function create ($aData, $generateUid = true)

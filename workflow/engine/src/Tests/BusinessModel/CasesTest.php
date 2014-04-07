@@ -28,14 +28,14 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->oCases = new \BusinessModel\Cases();
+        $this->oCases = new \ProcessMaker\BusinessModel\Cases();
         return true;
     }
 
     /**
      * Test error for type in first field the function
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      * @expectedException        Exception
      * @expectedExceptionMessage Invalid value for '$dataList' it must be an array.
      *
@@ -50,7 +50,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for empty userId in array
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      * @expectedException        Exception
      * @expectedExceptionMessage The user with userId: '' does not exist.
      *
@@ -65,7 +65,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for not exists userId in array
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      * @expectedException        Exception
      * @expectedExceptionMessage The user with userId: 'IdDoesNotExists' does not exist.
      *
@@ -80,7 +80,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for incorrect value $action in array
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      * @expectedException        Exception
      * @expectedExceptionMessage The value for $action is incorrect.
      *
@@ -95,7 +95,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for incorrect value $process in array
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      * @expectedException        Exception
      * @expectedExceptionMessage The process with $pro_uid: 'IdDoesNotExists' does not exist.
      *
@@ -113,7 +113,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for incorrect value $process in array
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      * @expectedException        Exception
      * @expectedExceptionMessage The category with $cat_uid: 'IdDoesNotExists' does not exist.
      *
@@ -131,7 +131,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for incorrect value $process in array
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      * @expectedException        Exception
      * @expectedExceptionMessage The user with $usr_uid: 'IdDoesNotExists' does not exist.
      *
@@ -149,7 +149,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for incorrect value $process in array
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      * @expectedException        Exception
      * @expectedExceptionMessage The value '2014-44-44' is not a valid date for the format 'Y-m-d'.
      *
@@ -167,7 +167,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test error for incorrect value $process in array
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      * @expectedException        Exception
      * @expectedExceptionMessage The value '2014-44-44' is not a valid date for the format 'Y-m-d'.
      *
@@ -185,7 +185,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get list to do not paged
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -208,7 +208,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get list to do
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -231,7 +231,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get list draft not paged
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -254,7 +254,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get list draft
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -277,7 +277,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get list participated not paged
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -300,7 +300,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get list participated
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -323,7 +323,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get list unassigned not paged
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -346,7 +346,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get list unassigned
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -369,7 +369,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get list search not paged
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -396,7 +396,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get list search
      *
-     * @covers \BusinessModel\Cases::getList
+     * @covers \ProcessMaker\BusinessModel\Cases::getList
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -423,7 +423,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test add Case
      *
-     * @covers \BusinessModel\Cases::addCase
+     * @covers \ProcessMaker\BusinessModel\Cases::addCase
      *
      * @copyright Colosa - Bolivia
      */
@@ -438,9 +438,9 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get Task Case
      *
-     * @covers \BusinessModel\Cases::getTaskCase
+     * @covers \ProcessMaker\BusinessModel\Cases::getTaskCase
      * @depends testAddCase
-     * @param array $aResponse, Data for parent department
+     * @param array $aResponse
      *
      * @copyright Colosa - Bolivia
      */
@@ -453,7 +453,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get Case Info
      *
-     * @covers \BusinessModel\Cases::getCaseInfo
+     * @covers \ProcessMaker\BusinessModel\Cases::getCaseInfo
      * @depends testAddCase
      * @param array $aResponse
      *
@@ -468,7 +468,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test put reassign case
      *
-     * @covers \BusinessModel\Cases::getCaseInfo
+     * @covers \ProcessMaker\BusinessModel\Cases::getCaseInfo
      * @depends testAddCase
      * @param array $aResponse
      *
@@ -483,7 +483,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test add Case to test route case
      *
-     * @covers \BusinessModel\Cases::addCase
+     * @covers \ProcessMaker\BusinessModel\Cases::addCase
      *
      * @copyright Colosa - Bolivia
      */
@@ -498,7 +498,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test put route case
      *
-     * @covers \BusinessModel\Cases::updateRouteCase
+     * @covers \ProcessMaker\BusinessModel\Cases::updateRouteCase
      * @depends testAddCaseRouteCase
      * @param array $aResponseRouteCase
      *
@@ -513,7 +513,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test add Case impersonate
      *
-     * @covers \BusinessModel\Cases::addCaseImpersonate
+     * @covers \ProcessMaker\BusinessModel\Cases::addCaseImpersonate
      *
      * @copyright Colosa - Bolivia
      */

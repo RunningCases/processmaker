@@ -39,7 +39,7 @@ abstract class Api
 
     public function getUserId()
     {
-        return \Services\Api\OAuth2\Server::getUserId();
+        return \ProcessMaker\Services\OAuth2\Server::getUserId();
     }
 }
 
