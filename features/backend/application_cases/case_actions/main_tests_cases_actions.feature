@@ -49,7 +49,7 @@ Scenario: Returns a list of the cases for the logged in user (Paused)
     And the response has 12 records
 
 
-Scenario: Returns information about a given case of the list Inbox of process "Derivation rules - Parallel"
+Scenario:  Returns information about a given case of the list Inbox of process "Derivation rules - Parallel"
     Given I request "cases/220090038533b0c40688174019225585"
     Then the response status code should be 200
     And the response charset is "UTF-8"
