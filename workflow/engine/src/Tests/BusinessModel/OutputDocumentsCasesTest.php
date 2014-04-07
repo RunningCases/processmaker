@@ -27,25 +27,26 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->oOutputDocument = new \BusinessModel\Cases\OutputDocument();
-
+        $this->oOutputDocument = new \ProcessMaker\BusinessModel\Cases\OutputDocument();
     }
 
     /**
      * Test add OutputDocument
      *
-     * @covers \BusinessModel\Cases\OutputDocument::addCasesOutputDocument
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::addCasesOutputDocument
      *
      * @copyright Colosa - Bolivia
      */
     public function testAddCasesOutputDocument()
     {
         \G::loadClass('pmFunctions');
-        $usrUid = '00000000000000000000000000000001';
-        $proUid = '1265557095225ff5c688f46031700471';
-        $tasUid = '1352844695225ff5fe54de2005407079';
+        \G::loadClass('pmFunctions');
+        $usrUid = '00000000000000000000000000000001';//an user id valid
+        $proUid = '1265557095225ff5c688f46031700471';//a process id valid
+        $tasUid = '46941969352af5be2ab3f39001216717';//a task id valid and related to the previous proUid
+        $outDocUid = '64016692453346d546d0ad1037377043';//a output document id valid and related to the previous task id
         $idCase = PMFNewCase($proUid, $usrUid, $tasUid, array());
-        $response = $this->oOutputDocument->addCasesOutputDocument($idCase, '10401087752fa8bc6f0cab6048419434', '00000000000000000000000000000001');
+        $response = $this->oOutputDocument->addCasesOutputDocument($idCase, $outDocUid, '00000000000000000000000000000001');
         $this->assertTrue(is_object($response));
         $aResponse = json_decode(json_encode($response), true);
         $aResponse = array_merge(array("idCase" => $idCase), $aResponse);
@@ -55,7 +56,7 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get OutputDocuments
      *
-     * @covers \BusinessModel\Cases\OutputDocument::getCasesOutputDocuments
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::getCasesOutputDocuments
      * @depends testAddCasesOutputDocument
      * @param array $aResponse
      *
@@ -70,7 +71,7 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test get OutputDocument
      *
-     * @covers \BusinessModel\Cases\OutputDocument::getCasesOutputDocument
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::getCasesOutputDocument
      * @depends testAddCasesOutputDocument
      * @param array $aResponse
      *
@@ -85,7 +86,7 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     /**
      * Test remove OutputDocument
      *
-     * @covers \BusinessModel\Cases\OutputDocument::removeOutputDocument
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::removeOutputDocument
      * @depends testAddCasesOutputDocument
      * @param array $aResponse
      *
@@ -93,7 +94,6 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
      */
     public function testRemoveOutputDocument(array $aResponse)
     {
-        echo $aResponse["app_doc_uid"];
         $response = $this->oOutputDocument->removeOutputDocument($aResponse["app_doc_uid"]);
         $this->assertTrue(empty($response));
     }

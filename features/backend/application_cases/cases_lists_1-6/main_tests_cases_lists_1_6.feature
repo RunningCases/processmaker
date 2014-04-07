@@ -1,55 +1,101 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Cases Actions - the features in this script are (inbox, draftCaseList, participatedCaseList, unassignedCaseList, pausedCaseList and advanced Search) and (getCaseInfo, taskCase, newCase, newCaseImpersonate, reassignCase and routeCase)
 Requirements:
-    a workspace with five of the process "Derivation rules - evaluation", "Derivation rules - Parallel", "Derivation rules - parallel evaluation", "Derivation rules - selection", "Derivation rules - sequential"
+    a workspace with five of the process "Derivation rules - evaluation", "Derivation rules - Parallel", "Derivation rules - parallel evaluation", "Derivation rules - selection", 
+    "Derivation rules - sequential, Test Case Note, Test Case Note - Negative test, Test Case Variables, Test Designer Report Tables, Test Input Document Case, Test Michelangelo, Test Output Document Case"
     
 Background:
     Given that I have a valid access_token
 
+
+#Obtener la cantidad de casos ACTUALES por cada listado
 
 Scenario: Returns a list of the cases for the logged in user (Inbox)
     Given I request "cases"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has 14 records
 
 
+Scenario: Returns a list of the cases for the logged in user (Draft)
+    Given I request "cases/draft"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And the response has 15 records
+
+
+Scenario: Returns a list of the cases for the logged in user (Participated)
+    Given I request "cases/participated"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And the response has 30 records
+
+
+Scenario: Returns a list of the cases for the logged in user (Unassigned)
+    Given I request "cases/unassigned"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And the response has 12 records
+
+
+Scenario: Returns a list of the cases for the logged in user (Paused)
+    Given I request "cases/paused"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And the response has 12 records
+
+
+Scenario: Returns a list of the cases for the logged in user (Advanced-Search)
+    Given I request "cases/advanced-search"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And the response has 30 records
+
+
+
+#Scenarios para filtros y paginacion en listas
 Scenario Outline: Get paging of list inbox
-    Given I request "cases/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "<type>"
+    And the type is "array"
     And the response has <records> records
 
-     Examples:
+
+    Examples:
     
-    | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | test_description           | start | limit   | records | http_code |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 14      |  200      |
+    | uppercase in Limit         |   1   | A       | 14      |  200      |
+    | limit=3                    |   1   | 3       | 3       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
+    | high number for start      | 1000  | 1       | 0       |  200      |
+    | high number for start      | 1000  | 0       | 0       |  200      |
+    | empty result               |   1   | 0       | 14      |  200      |
+    | empty string               |   1   | 10000   | 14      |  200      |
+    | invalid start              |   b   | 25      | 14      |  200      |
+    | invalid limit              |   1   | c       | 14      |  200      |
+    | start equals zero          |   0   | 20      | 14      |  200      |
+    | search 0                   |   0   | 0       | 14      |  200      |
+    | search 0                   |   0   | 100     | 14      |  200      |
+    | negative numbers in start  |  -10  | 25      | 4       |  200      |
+    | negative numbers in limit  |   1   | -25     | 14      |  200      |
+    | real numbers               |  0.0  | 1.0     | 1       |  200      |
+    | real numbers in start      |  0.0  | 12      | 12      |  200      |
+    | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
+    | only start                 |  1    |         | 14      |  200      |
+    | only limit                 |       | 25      | 14      |  200      |
+    | without start and limit    |       |         | 14      |  200      |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -63,8 +109,8 @@ Scenario Outline: Get order type of Descending and Acending
 Examples:
     
     | test_description           | dir  | records |
-    | Order for Acending         | asc  |         |
-    | Order for Descending       | desc |         |
+    | Order for Acending         | asc  | 14      |
+    | Order for Descending       | desc | 14      |
 
 
 Scenario Outline: Get order type of Process Category
@@ -77,9 +123,9 @@ Scenario Outline: Get order type of Process Category
 
 Examples:
     
-    | test_description                           | cat_uid                          | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  |         |
-    | Filter all categories                      |                                   |         |
+    | test_description                           | cat_uid                           | records |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 1       |
+    | Filter all categories                      |                                   | 14      |
 
 
 Scenario Outline: Get order type of Process
@@ -93,8 +139,8 @@ Scenario Outline: Get order type of Process
 Examples:
     
     | test_description                                 | pro_uid                          | records |
-    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 |         |
-    | Filter all cases                                 |                                  |         |
+    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 1       |
+    | Filter all cases                                 |                                  | 14      |
 
 
 Scenario Outline: Get order type of Search of number the process
@@ -105,11 +151,11 @@ Scenario Outline: Get order type of Search of number the process
     And the type is "array"
     And the response has <records> records
 
-Examples:
+    Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 |         |
-    | Filter all cases                                                |                                  |         |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 3       |
+    | Filter all cases                                                |                                  | 4       |
 
 
 Scenario: Returns a list of the cases for the logged in user (Draft)
@@ -117,44 +163,44 @@ Scenario: Returns a list of the cases for the logged in user (Draft)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has 15 records
 
 
 Scenario Outline: Get paging of list Draft
-    Given I request "cases/draft/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/draft/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "<type>"
+    And the type is "array"
     And the response has <records> records
 
      Examples:
     
-    | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | test_description           | start | limit   | records | http_code |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 15      |  200      |
+    | uppercase in Limit         |   1   | A       | 15      |  200      |
+    | limit=3                    |   1   | 3       | 3       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
+    | high number for start      | 1000  | 1       | 0       |  200      |
+    | high number for start      | 1000  | 0       | 0       |  200      |
+    | empty result               |   1   | 0       | 15      |  200      |
+    | empty string               |   1   | 10000   | 15      |  200      |
+    | invalid start              |   b   | 25      | 15      |  200      |
+    | invalid limit              |   1   | c       | 15      |  200      |
+    | start equals zero          |   0   | 20      | 15      |  200      |
+    | search 0                   |   0   | 0       | 15      |  200      |
+    | search 0                   |   0   | 100     | 15      |  200      |
+    | negative numbers in start  |  -10  | 25      | 5       |  200      |
+    | negative numbers in limit  |   1   | -25     | 15      |  200      |
+    | real numbers               |  0.0  | 1.0     | 1       |  200      |
+    | real numbers in start      |  0.0  | 12      | 12      |  200      |
+    | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
+    | only start                 |  1    |         | 15      |  200      |
+    | only limit                 |       | 25      | 15      |  200      |
+    | without start and limit    |       |         | 15      |  200      |
 
 
 Scenario Outline: Get order type of Descending and Ascending
@@ -168,8 +214,8 @@ Scenario Outline: Get order type of Descending and Ascending
 Examples:
     
     | test_description           | dir  | records |
-    | Order for Acending         | asc  |         |
-    | Order for Descending       | desc |         |
+    | Order for Acending         | asc  | 15      |
+    | Order for Descending       | desc | 15      |
 
     
 
@@ -184,8 +230,8 @@ Scenario Outline: Get order type of Process Category
 Examples:
     
     | test_description                           | cat_uid                           | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  |         |
-    | Filter all categories                      |                                   |         |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 9       |
+    | Filter all categories                      |                                   | 15      |
 
 
 Scenario Outline: Get order type of Process
@@ -199,8 +245,8 @@ Scenario Outline: Get order type of Process
 Examples:
     
     | test_description                                 | pro_uid                          | records |
-    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 |         |
-    | Filter all cases                                 |                                  |         |
+    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 2       |
+    | Filter all cases                                 |                                  | 15      |
 
 
 Scenario Outline: Get order type of Search of the process
@@ -214,8 +260,8 @@ Scenario Outline: Get order type of Search of the process
 Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 |         |
-    | Filter all cases                                                |                                  |         |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 4       |
+    | Filter all cases                                                |                                  | 15      |
 
 
 Scenario: Returns a list of the cases for the logged in user (Participated)
@@ -223,44 +269,43 @@ Scenario: Returns a list of the cases for the logged in user (Participated)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 6 records
-
+    And the response has 30 records
 
 Scenario Outline: Get paging of list Participated
-    Given I request "cases/participated/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/participated/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "<type>"
+    And the type is "array"
     And the response has <records> records
 
      Examples:
     
-    | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | test_description           | start | limit   | records | http_code |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 30      |  200      |
+    | uppercase in Limit         |   1   | A       | 30      |  200      |
+    | limit=3                    |   1   | 3       | 3       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
+    | high number for start      | 1000  | 1       | 0       |  200      |
+    | high number for start      | 1000  | 0       | 0       |  200      |
+    | empty result               |   1   | 0       | 30      |  200      |
+    | empty string               |   1   | 10000   | 30      |  200      |
+    | invalid start              |   b   | 25      | 25      |  200      |
+    | invalid limit              |   1   | c       | 30      |  200      |
+    | start equals zero          |   0   | 20      | 30      |  200      |
+    | search 0                   |   0   | 0       | 30      |  200      |
+    | search 0                   |   0   | 100     | 30      |  200      |
+    | negative numbers in start  |  -10  | 25      | 15      |  200      |
+    | negative numbers in limit  |   1   | -25     | 25      |  200      |
+    | real numbers               |  0.0  | 1.0     | 1       |  200      |
+    | real numbers in start      |  0.0  | 12      | 12      |  200      |
+    | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
+    | only start                 |  1    |         | 30      |  200      |
+    | only limit                 |       | 25      | 30      |  200      |
+    | without start and limit    |       |         | 30      |  200      |
 
 
 Scenario Outline: Get order type of Descending an Descending
@@ -274,8 +319,8 @@ Scenario Outline: Get order type of Descending an Descending
 Examples:
     
     | test_description           | dir  | records |
-    | Order for Acending         | asc  |         |
-    | Order for Descending       | desc |         |
+    | Order for Acending         | asc  | 30      |
+    | Order for Descending       | desc | 30      |
 
     
 
@@ -290,8 +335,8 @@ Scenario Outline: Get order type of Process Category
 Examples:
     
     | test_description                           | cat_uid                           | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  |         |
-    | Filter all categories                      |                                   |         |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 27      |
+    | Filter all categories                      |                                   | 30      |
 
 
 Scenario Outline: Get order type of Process 
@@ -305,8 +350,8 @@ Scenario Outline: Get order type of Process
 Examples:
     
     | test_description                                 | pro_uid                          | records |
-    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 |         |
-    | Filter all cases                                 |                                  |         |
+    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 3       |
+    | Filter all cases                                 |                                  | 30      |
 
 
 
@@ -321,8 +366,8 @@ Scenario Outline: Get order type of Search
 Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 |         |
-    | Filter all cases                                                |                                  |         |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 3       |
+    | Filter all cases                                                |                                  | 30      |
 
 
 Scenario: Returns a list of the cases for the logged in user (Unassigned)
@@ -330,44 +375,44 @@ Scenario: Returns a list of the cases for the logged in user (Unassigned)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has 12 records
 
 
 Scenario Outline: Get paging of list Unassigned
-    Given I request "cases/Unassigned/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/Unassigned/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "<type>"
+    And the type is "array"
     And the response has <records> records
 
      Examples:
     
-    | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | test_description           | start | limit   | records | http_code |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 12      |  200      |
+    | uppercase in Limit         |   1   | A       | 12      |  200      |
+    | limit=3                    |   1   | 3       | 3       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
+    | high number for start      | 1000  | 1       | 0       |  200      |
+    | high number for start      | 1000  | 0       | 0       |  200      |
+    | empty result               |   1   | 0       | 12      |  200      |
+    | empty string               |   1   | 10000   | 12      |  200      |
+    | invalid start              |   b   | 25      | 12      |  200      |
+    | invalid limit              |   1   | c       | 12      |  200      |
+    | start equals zero          |   0   | 20      | 12      |  200      |
+    | search 0                   |   0   | 0       | 12      |  200      |
+    | search 0                   |   0   | 100     | 12      |  200      |
+    | negative numbers in start  |  -10  | 25      | 2       |  200      |
+    | negative numbers in limit  |   1   | -25     | 12      |  200      |
+    | real numbers               |  0.0  | 1.0     | 1       |  200      |
+    | real numbers in start      |  0.0  | 12      | 12      |  200      |
+    | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
+    | only start                 |  1    |         | 12      |  200      |
+    | only limit                 |       | 25      | 12      |  200      |
+    | without start and limit    |       |         | 12      |  200      |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -381,8 +426,8 @@ Scenario Outline: Get order type of Descending and Acending
 Examples:
     
     | test_description           | dir  | records |
-    | Order for Acending         | asc  |         |
-    | Order for Descending       | desc |         |
+    | Order for Acending         | asc  | 12      |
+    | Order for Descending       | desc | 12      |
     
 
 Scenario Outline: Get order type of Process Category 
@@ -396,8 +441,8 @@ Scenario Outline: Get order type of Process Category
 Examples:
     
     | test_description                           | cat_uid                           | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  |         |
-    | Filter all categories                      |                                   |         |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 12      |
+    | Filter all categories                      |                                   | 12      |
 
 
 Scenario Outline: Get order type of Process 
@@ -411,8 +456,8 @@ Scenario Outline: Get order type of Process
 Examples:
     
     | test_description                                 | pro_uid                          | records |
-    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 |         |
-    | Filter all cases                                 |                                  |         |
+    | Filter for cases "Derivation rules - sequential" | 35894775350ec7daa099378048029617 | 6       |
+    | Filter all cases                                 |                                  | 12      |
 
 
 Scenario Outline: Get order type of Search 
@@ -426,8 +471,8 @@ Scenario Outline: Get order type of Search
 Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 |         |
-    | Filter all cases                                                |                                  |         |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 3       |
+    | Filter all cases                                                |                                  | 12      |
 
 
 
@@ -436,44 +481,44 @@ Scenario: Returns a list of the cases for the logged in user (Paused)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has 12 records
 
 
 Scenario Outline: Get paging of list Paused
-    Given I request "cases/paused/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/paused/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "<type>"
+    And the type is "array"
     And the response has <records> records
 
      Examples:
     
-    | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | test_description           | start | limit   | records | http_code |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 12      |  200      |
+    | uppercase in Limit         |   1   | A       | 12      |  200      |
+    | limit=3                    |   1   | 3       | 3       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
+    | high number for start      | 1000  | 1       | 0       |  200      |
+    | high number for start      | 1000  | 0       | 0       |  200      |
+    | empty result               |   1   | 0       | 12      |  200      |
+    | empty string               |   1   | 10000   | 12      |  200      |
+    | invalid start              |   b   | 25      | 12      |  200      |
+    | invalid limit              |   1   | c       | 12      |  200      |
+    | start equals zero          |   0   | 20      | 12      |  200      |
+    | search 0                   |   0   | 0       | 12      |  200      |
+    | search 0                   |   0   | 100     | 12      |  200      |
+    | negative numbers in start  |  -10  | 25      | 2       |  200      |
+    | negative numbers in limit  |   1   | -25     | 12      |  200      |
+    | real numbers               |  0.0  | 1.0     | 1       |  200      |
+    | real numbers in start      |  0.0  | 12      | 12      |  200      |
+    | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
+    | only start                 |  1    |         | 12      |  200      |
+    | only limit                 |       | 25      | 12      |  200      |
+    | without start and limit    |       |         | 12      |  200      |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -487,8 +532,8 @@ Scenario Outline: Get order type of Descending and Acending
 Examples:
     
     | test_description           | dir  | records |
-    | Order for Acending         | asc  |         |
-    | Order for Descending       | desc |         |
+    | Order for Acending         | asc  | 12      |
+    | Order for Descending       | desc | 12      |
 
     
 Scenario Outline: Get order type of Process Category 
@@ -502,8 +547,8 @@ Scenario Outline: Get order type of Process Category
 Examples:
     
     | test_description                           | cat_uid                           | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  |         |
-    | Filter all categories                      |                                   |         |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 1       |
+    | Filter all categories                      |                                   | 12      |
 
 
 Scenario Outline: Get order type of Process 
@@ -517,8 +562,8 @@ Scenario Outline: Get order type of Process
 Examples:
     
     | test_description                                 | pro_uid                          | records |
-    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 |         |
-    | Filter all cases                                 |                                  |         |
+    | Filter for cases "Derivation rules - sequential" | 48270290453359748c82a76038662132 | 2       |
+    | Filter all cases                                 |                                  | 12      |
 
 
 Scenario Outline: Get order type of Search 
@@ -527,13 +572,13 @@ Scenario Outline: Get order type of Search
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records 
 
 Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 |         |
-    | Filter all cases                                                |                                  |         |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 2       |
+    | Filter all cases                                                |                                  | 12      |
 
 
 Scenario: Returns a list of the cases for the logged in user (Advanced Search)
@@ -541,44 +586,44 @@ Scenario: Returns a list of the cases for the logged in user (Advanced Search)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has 30 records
 
 
 Scenario Outline: Get paging of list Advanced Search
-    Given I request "cases/advanced-search/paged?Start=<start>&limit=<limit>"
+    Given I request "cases/advanced-search/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "<type>"
+    And the type is "array"
     And the response has <records> records
 
      Examples:
     
-    | test_description           | start | limit   | records | http_code | type   |
-    | lowercase in Start         |   a   | 1       |         |  200      | array  |
-    | uppercase in Start         |   A   | 1       |         |  200      | array  |
-    | lowercase in Limit         |   1   | a       |         |  200      | array  |
-    | uppercase in Limit         |   1   | A       |         |  200      | array  |
-    | limit=3                    |   1   | 3       |         |  200      | array  |
-    | start=3                    |   3   | 3       |         |  200      | array  |
-    | limit and start =3         |   3   | 3       |         |  200      | array  |
-    | high number for start      | 1000  | 1       |         |  200      | array  |
-    | high number for start      | 1000  | 0       |         |  200      | array  |
-    | empty result               |   1   | 0       |         |  200      | array  |
-    | empty string               |   1   | 10000   |         |  200      | array  |
-    | invalid start              |   b   | 25      |         |  400      | string |
-    | invalid limit              |   1   | c       |         |  400      | string |
-    | start equals zero          |   0   | 20      |         |  400      | string |
-    | search 0                   |   0   | 0       |         |  200      | array  |
-    | search 0                   |   0   | 100     |         |  200      | array  |
-    | negative numbers in start  |  -10  | 25      |         |  400      | string |
-    | negative numbers in limit  |   1   | -25     |         |  400      | string |
-    | real numbers               |  0.0  | 1.0     |         |  200      | string |
-    | real numbers in start      |  0.0  | 25      |         |  200      | string |
-    | real numbers in limit      |  1    | 1.4599  |         |  400      | string |
-    | only start                 |  1    |         |         |  400      | string |
-    | only limit                 |       | 25      |         |  400      | string |
-    | without start and limit    |       |         |         |  400      | string |
+    | test_description           | start | limit   | records | http_code |
+    | lowercase in start         |   a   | 1       | 1       |  200      |
+    | uppercase in start         |   A   | 1       | 1       |  200      |
+    | lowercase in Limit         |   1   | a       | 30      |  200      |
+    | uppercase in Limit         |   1   | A       | 30      |  200      |
+    | limit=3                    |   1   | 3       | 3       |  200      |
+    | start=3                    |   3   | 5       | 5       |  200      |
+    | limit and start =3         |   3   | 3       | 3       |  200      |
+    | high number for start      | 1000  | 1       | 0       |  200      |
+    | high number for start      | 1000  | 0       | 0       |  200      |
+    | empty result               |   1   | 0       | 30      |  200      |
+    | empty string               |   1   | 10000   | 30      |  200      |
+    | invalid start              |   b   | 25      | 30      |  200      |
+    | invalid limit              |   1   | c       | 30      |  200      |
+    | start equals zero          |   0   | 20      | 20      |  200      |
+    | search 0                   |   0   | 0       | 30      |  200      |
+    | search 0                   |   0   | 100     | 30      |  200      |
+    | negative numbers in start  |  -10  | 25      | 15      |  200      |
+    | negative numbers in limit  |   1   | -25     | 25      |  200      |
+    | real numbers               |  0.0  | 1.0     | 1       |  200      |
+    | real numbers in start      |  0.0  | 12      | 12      |  200      |
+    | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
+    | only start                 |  1    |         | 30      |  200      |
+    | only limit                 |       | 25      | 30      |  200      |
+    | without start and limit    |       |         | 30      |  200      |
 
 
 Scenario Outline: Get order type of Descending and Acending
@@ -592,8 +637,8 @@ Scenario Outline: Get order type of Descending and Acending
     Examples:
     
     | test_description           | dir  | records |
-    | Order for Acending         | asc  |         |
-    | Order for Descending       | desc |         |
+    | Order for Acending         | asc  | 30      |
+    | Order for Descending       | desc | 30      |
     
 
 Scenario Outline: Get order type of Process Category 
@@ -607,8 +652,8 @@ Scenario Outline: Get order type of Process Category
     Examples:
     
     | test_description                           | cat_uid                           | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  |         |
-    | Filter all categories                      |                                   |         |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 25      |
+    | Filter all categories                      |                                   | 30      |
 
 
 
@@ -618,13 +663,13 @@ Scenario Outline: Get order type of Process
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has <records> records
+    And the response has <records> records 
 
     Examples:
     
     | test_description                                 | pro_uid                          | records |
-    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 |         |
-    | Filter all cases                                 |                                  |         |
+    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 3       |
+    | Filter all cases                                 |                                  | 30      |
 
 
 
@@ -639,8 +684,8 @@ Scenario Outline: Get order type of Search
     Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 |         |
-    | Filter all cases                                                |                                  |         |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 2       |
+    | Filter all cases                                                |                                  | 2       |
 
 
 Scenario Outline: Get order for Status
@@ -654,10 +699,10 @@ Scenario Outline: Get order for Status
     Examples:
     
     | test_description           | app_status  | records |
-    | Filter Status = All Status |             |         |
-    | Filter Status = Completed  | COMPLETED   |         |
-    | Filter Status = Draft      | DRAFT       |         |             
-    | Filter Status = To Do      | TO_DO       |         |
+    | Filter Status = All Status |             | 25      |
+    | Filter Status = Completed  | COMPLETED   | 2       |
+    | Filter Status = Draft      | DRAFT       | 15      |             
+    | Filter Status = To Do      | TO_DO       | 25      |
 
 
 Scenario Outline: Get order for User
@@ -671,10 +716,10 @@ Scenario Outline: Get order for User
     Examples:
     
     | test_description           | usr_uid                          | records |
-    | Filter Status = All User   |                                  |         |
-    | Filter Status = aaron      | 51049032352d56710347233042615067 |         |
-    | Filter Status = admin      | 00000000000000000000000000000001 |         |             
-    | Filter Status = chris      | 24166330352d56730cdd525035621101 |         |
+    | Filter Status = All User   |                                  | 25      |
+    | Filter Status = aaron      | 51049032352d56710347233042615067 | 2       |
+    | Filter Status = admin      | 00000000000000000000000000000001 | 2       |             
+    | Filter Status = chris      | 24166330352d56730cdd525035621101 | 2       |
 
 
 Scenario Outline: Get order for date
@@ -688,5 +733,5 @@ Scenario Outline: Get order for date
     Examples:
     
     | test_description         | date_from  | date_to    | records |
-    | Filter date = 2014-03-01 | 2014-03-01 | 2014-03-20 |         |
-    | Filter date = 2014-03-15 | 2014-03-15 | 2014-03-20 |         |
+    | Filter date = 2014-03-01 | 2014-03-01 | 2014-03-31 | 5       |
+    | Filter date = 2014-03-15 | 2014-03-15 | 2014-04-01 | 25      |

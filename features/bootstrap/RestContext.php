@@ -1,4 +1,4 @@
-FA<?php
+<?php
 use Behat\Behat\Context\BehatContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -339,6 +339,8 @@ class RestContext extends BehatContext
             $this->_headers['Authorization'] = 'Bearer ' . $this->access_token;
         }
 
+        
+
 
         if($urlType=="absolute"){
             $this->_requestUrl = $pageUrl;
@@ -367,7 +369,7 @@ class RestContext extends BehatContext
             case 'POST':
                 $postFields = is_object($this->_restObject)
                     ? (array)$this->_restObject
-                    : $this->_restObject;
+                    : $this->_restObject;               
                 $this->_request = $this->_client
                     ->post($url, $this->_headers,
                     (empty($this->_requestBody) ? $postFields :
@@ -1116,10 +1118,20 @@ class RestContext extends BehatContext
     /**
      * @Then /^the response has (\d+) records$/
      * @Then /^the response has (\d+) record$/
+     * @Then /^the response has (\d+) records in property "([^"]*)"$/
+     * @Then /^the response has (\d+) record in property "([^"]*)"$/
      */
-    public function theResponseHasRecords($quantityOfRecords)
+    public function theResponseHasRecords($quantityOfRecords, $responseProperty="")
     {
-        $data = $this->_data;
+        if($responseProperty!=""){
+            if(!isset($this->_data->$responseProperty)){
+                throw new Exception("the Response data doesn't have a property named: $responseProperty\n\n" );
+            }
+            $data = $this->_data->$responseProperty;
+        }else{
+            $data = $this->_data;
+        }
+        
         if (!is_array($data)) {
             if ($quantityOfRecords == 0) {
                 //if we expect 0 records and the response in fact is not an array, just return as a valid test
@@ -1191,6 +1203,8 @@ class RestContext extends BehatContext
         }
 
         $this->_restDeleteQueryStringSuffix = "/" . $varValue;
+
+        $this->printDebug("$varName = $varValue\nsessionVarName = $sessionVarName\n");
         
         $this->_restObjectMethod = 'delete';
     }
@@ -1259,7 +1273,7 @@ class RestContext extends BehatContext
         $pageUrl = str_replace($varName, $varValue, $pageUrl);
 
 
-        //$this->printDebug("URL: $pageUrl\n$varName = $varValue\n");
+        $this->printDebug("URL: $pageUrl\n$varName = $varValue\nsessionVarName = $sessionVarName\n");
 
 
         $this->iRequest($pageUrl, $urlType);
@@ -1434,5 +1448,60 @@ class RestContext extends BehatContext
     {
         $this->_restObjectMethod = 'delete';
     }
+
+     /**
+     * @Given /^store response count in session variable as "([^"]*)"$/
+     */
+    public function storeResponseCountInSessionVariableAs($varName)
+    {
+        $data = $this->_data;
+        $currentRecordsCount=count($data);
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = new StdClass();
+        }
+        $sessionData->$varName = $currentRecordsCount;
+        file_put_contents("session.data", json_encode($sessionData));
+    }
+
+   
+    /**
+     * @Given /^the response has (\d+) records more than "([^"]*)"$/
+     */
+    public function theResponseHasRecordsMoreThan($records, $base)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$base) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$base;
+        }
+
+        $totalRecords=$varValue + $records;
+
+        $this->theResponseHasRecords($totalRecords);
+    }
+
+
+     /**
+     * @Given /^POST upload an input document "([^"]*)" to "([^"]*)"$/
+     */
+    public function postUploadAnInputDocumentTo($file, $url, PyStringNode $string)
+    {
+        $postFields = json_decode($string);
+        $postFields->form ='@'.$file;
+       
+        $this->_restObjectMethod = 'post';
+        $this->_restObject = $postFields;
+        $this->iRequest($url);
+
+       
+    }
+
 
 }

@@ -95,9 +95,10 @@ class Workflow extends Handler
         }
     }
 
-    public function update()
+    public function update($data)
     {
-        // TODO: Implement update() method.
+        $process = new Process();
+        $process->update($data);
     }
 
     public function remove()
@@ -755,11 +756,11 @@ class Workflow extends Handler
             //Delete the process
             try {
                 $oProcess->remove($sProcessUID);
-            } catch (Exception $oError) {
+            } catch (\Exception $oError) {
                 throw ($oError);
             }
             return true;
-        } catch (Exception $oError) {
+        } catch (\Exception $oError) {
             throw ($oError);
         }
     }

@@ -12,8 +12,7 @@ Scenario: Returns a list of the cases for the logged in user (Inbox)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
-
+    
 
 Scenario: Get paging of list inbox
     Given I request "cases/paged"
@@ -21,8 +20,7 @@ Scenario: Get paging of list inbox
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
-
+    
 
 Scenario: Get order type of Descending 
     Given I request "cases?dir=DESC"
@@ -69,8 +67,7 @@ Scenario: Returns a list of the cases for the logged in user (Draft)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
-
+    
 
 Scenario: Get paging of list Draft
     Given I request "cases/draft/paged"
@@ -78,8 +75,7 @@ Scenario: Get paging of list Draft
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
-
+    
 
 Scenario: Get order type of Descending 
     Given I request "cases/draft?dir=DESC"
@@ -126,8 +122,7 @@ Scenario: Returns a list of the cases for the logged in user (Participated)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 6 records
-
+    
 
 Scenario: Get paging of list Participated
     Given I request "cases/participated/paged"
@@ -135,8 +130,7 @@ Scenario: Get paging of list Participated
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
-
+    
 
 Scenario: Get order type of Descending 
     Given I request "cases/participated?dir=DESC"
@@ -183,8 +177,7 @@ Scenario: Returns a list of the cases for the logged in user (Unassigned)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
-
+    
 
 Scenario: Get paging of list Unassigned
     Given I request "cases/unassigned/paged"
@@ -192,8 +185,7 @@ Scenario: Get paging of list Unassigned
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
-
+    
 
 Scenario: Get order type of Descending 
     Given I request "cases/unassigned?dir=DESC"
@@ -240,8 +232,7 @@ Scenario: Returns a list of the cases for the logged in user (Paused)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
-
+    
 
 Scenario: Get paging of list Paused
     Given I request "cases/paused/paged"
@@ -249,8 +240,7 @@ Scenario: Get paging of list Paused
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
-
+    
 
 Scenario: Get order type of Descending 
     Given I request "cases/paused?dir=DESC"
@@ -297,8 +287,7 @@ Scenario: Returns a list of the cases for the logged in user (Advanced Search)
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
-
+    
 
 Scenario: Get paging of list Advanced Search
     Given I request "cases/advanced-search/paged"
@@ -306,8 +295,7 @@ Scenario: Get paging of list Advanced Search
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
-
+    
 
 Scenario: Get order type of Descending 
     Given I request "cases/advanced-search?dir=DESC"
