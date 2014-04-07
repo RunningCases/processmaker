@@ -9,7 +9,6 @@ class XmlImporter extends Importer
     protected $dom;
     protected $root;
     protected $version = "";
-    protected $metadata;
 
     public function __construct()
     {
@@ -44,7 +43,16 @@ class XmlImporter extends Importer
             throw new \Exception("Invalid Document format, metadata section is missing or has multiple definition.");
         }
 
-        $this->metadata = $metadataNode->item(0);
+        $metadataNodeList = $metadataNode->item(0)->getElementsByTagName("meta");
+
+        if ($metadataNodeList->length == 0) {
+            throw new \Exception("Invalid Document format, metadata information is corrupt.");
+        }
+
+
+        foreach ($metadataNodeList as $metadataNode) {
+            $this->metadata[$metadataNode->getAttribute("key")] = $this->getTextNode($metadataNode);
+        }
 
         // load project definition
         /** @var \DOMElement[]|\DomNodeList $definitions */
