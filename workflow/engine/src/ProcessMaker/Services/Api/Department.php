@@ -44,6 +44,119 @@ class Department extends Api
      *
      * @return array
      *
+     * @url GET /:dep_uid/assigned-user
+     */
+    public function doGetAssignedUser($dep_uid)
+    {
+        try {
+            $oDepartment = new \ProcessMaker\BusinessModel\Department();
+            $response = $oDepartment->getAssignedUser($dep_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $dep_uid {@min 1}{@max 32}
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     *
+     * @url GET /:dep_uid/available-user
+     */
+    public function doGetAvailableUser($dep_uid)
+    {
+        try {
+            $oDepartment = new \ProcessMaker\BusinessModel\Department();
+            $response = $oDepartment->getAvailableUser($dep_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $dep_uid {@min 1}{@max 32}
+     * @param string $usr_uid {@min 1}{@max 32}
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     *
+     * @url PUT /:dep_uid/assign-user/:usr_uid
+     */
+    public function doPutAssignUser($dep_uid, $usr_uid)
+    {
+        try {
+            $oDepartment = new \ProcessMaker\BusinessModel\Department();
+            $response = $oDepartment->assignUser($dep_uid, $usr_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $dep_uid {@min 1}{@max 32}
+     * @param string $usr_uid {@min 1}{@max 32}
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     *
+     * @url PUT /:dep_uid/unassign-user/:usr_uid
+     */
+    public function doPutUnassignUser($dep_uid, $usr_uid)
+    {
+        try {
+            $oDepartment = new \ProcessMaker\BusinessModel\Department();
+            $response = $oDepartment->unassignUser($dep_uid, $usr_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $dep_uid {@min 1}{@max 32}
+     * @param string $usr_uid {@min 1}{@max 32}
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     *
+     * @url PUT /:dep_uid/set-manager/:usr_uid
+     */
+    public function doPutSetManager($dep_uid, $usr_uid)
+    {
+        try {
+            $oDepartment = new \ProcessMaker\BusinessModel\Department();
+            $response = $oDepartment->setManagerUser($dep_uid, $usr_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @param string $dep_uid {@min 1}{@max 32}
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return array
+     *
      * @url GET /:dep_uid
      */
     public function doGetDepartment($dep_uid)
