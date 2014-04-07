@@ -610,12 +610,16 @@ class Cases
             $ws = new \wsBase();
             $fields = $ws->reassignCase($userUid, $applicationUid, $delIndex, $userUidTarget, $userUidSource);
             $array = json_decode(json_encode($fields), true);
-            if ($array ["status_code"] != 0) {
-                throw (new \Exception($array ["message"]));
+            if (array_key_exists("status_code", $array)) {
+                if ($array ["status_code"] != 0) {
+                    throw (new \Exception($array ["message"]));
+                } else {
+                    unset($array['status_code']);
+                    unset($array['message']);
+                    unset($array['timestamp']);
+                }
             } else {
-                unset($array['status_code']);
-                unset($array['message']);
-                unset($array['timestamp']);
+                throw (new \Exception('The Application with app_uid: '.$applicationUid.' doesn\'t exist'));
             }
         } catch (\Exception $e) {
             throw $e;
