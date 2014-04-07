@@ -98,6 +98,20 @@ class InputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
      }
 
     /**
+     * Test error for incorrect value of case in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\InputDocument::getCasesInputDocuments
+     * @expectedException        Exception
+     * @expectedExceptionMessage The Application row '12345678912345678912345678912345678' doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetCasesInputDocumentsErrorIncorrectCaseValueArray()
+    {
+        $this->oInputDocument->getCasesInputDocuments('12345678912345678912345678912345678', self::$usrUid);
+    }
+
+    /**
      * Test get InputDocuments
      *
      * @covers \ProcessMaker\BusinessModel\Cases\InputDocument::getCasesInputDocuments
@@ -113,6 +127,38 @@ class InputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test error for incorrect value of task in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\InputDocument::getCasesInputDocument
+     * @depends testAddInputDocument
+     * @param array $aResponse
+     * @expectedException        Exception
+     * @expectedExceptionMessage The Application row '12345678912345678912345678912345678' doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetCasesInputDocumentErrorIncorrectCaseValueArray(array $aResponse)
+    {
+        $this->oInputDocument->getCasesInputDocument('12345678912345678912345678912345678', self::$usrUid, $aResponse["appDocUid"]);
+    }
+
+    /**
+     * Test error for incorrect value of input document in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\InputDocument::getCasesInputDocument
+     * @depends testAddInputDocument
+     * @param array $aResponse
+     * @expectedException        Exception
+     * @expectedExceptionMessage This input document with id: 12345678912345678912345678912345678 doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetCasesInputDocumentErrorIncorrectInputDocumentValueArray(array $aResponse)
+    {
+        $this->oInputDocument->getCasesInputDocument($aResponse["idCase"], self::$usrUid, '12345678912345678912345678912345678');
+    }
+
+    /**
      * Test get InputDocument
      *
      * @covers \ProcessMaker\BusinessModel\Cases\InputDocument::getCasesInputDocument
@@ -125,6 +171,22 @@ class InputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     {
         $response = $this->oInputDocument->getCasesInputDocument($aResponse["idCase"], self::$usrUid, $aResponse["appDocUid"]);
         $this->assertTrue(is_object($response));
+    }
+
+    /**
+     * Test error for incorrect value of input document in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\InputDocument::removeInputDocument
+     * @depends testAddInputDocument
+     * @param array $aResponse
+     * @expectedException        Exception
+     * @expectedExceptionMessage This input document with id: 12345678912345678912345678912345678 doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetCasesInputDocumentErrorIncorrectApplicationValueArray(array $aResponse)
+    {
+        $this->oInputDocument->removeInputDocument('12345678912345678912345678912345678');
     }
 
     /**
