@@ -20,8 +20,5 @@ Scenario: create a new case note for specified case (Negative Tests)
         Then the response status code should be 400
         And the response status message should have the following text "You do not have permission to cases notes"
 
-        
-
-
-
+       
 #case 124

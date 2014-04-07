@@ -9,7 +9,6 @@ Background:
 
 Scenario: List of case notes for this case
     Given I request "cases/1185553665335d2e209f723099733152/notes"
-    the response time should at least be (\d+) milliseconds$/
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
@@ -35,5 +34,12 @@ Scenario: Create a new case note for specified case
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
+
+Scenario: List of case notes for this case
+    Given I request "cases/1185553665335d2e209f723099733152/notes"
+    Then the response status code should be 200
+     And the response charset is "UTF-8"
+    And the type is "array"
+
 
 #case 125

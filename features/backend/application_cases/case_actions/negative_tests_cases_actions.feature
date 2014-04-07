@@ -45,12 +45,12 @@ Scenario Outline: Create a new case Impersonate (Negative Test)
         And the response status message should have the following text "<error_message>"
         
         Examples:
-        | Description                                                                                     | case_number | usr_uid                          | error_code | error_message | 
-        | Create new case with process "Derivation rules - sequential" - Case Start with chris            | 26          | 51049032352d56710347233042615067 | 400        | pro_uid       |
-        | Create new case with process "Derivation rules - evaluation" - Case Start with adam             | 27          | 44811996752d567110634a1013636964 | 400        | task_uid      |
-        | Create new case with process "Derivation rules - Parallel" - Case Start with aaron              | 28          | 24166330352d56730cdd525035621101 | 400        | pro_uid       |
-        | Create new case with process "Derivation rules - parallel evaluation"- Case Start with jeremiah | 29          | 86677227852d5671f40ba25017213081 | 400        | task_uid      |
-        | Create new case with process "Derivation rules - selection" - Case Start with admin             | 30          | 62625000752d5672d6661e6072881167 | 400        |               |
+        | Description                                                                                     | pro_uid                          | usr_uid                          | tas_uid                          | error_code | error_message | 
+        | Create new case with process "Derivation rules - sequential" invalid pro_uid                    | 99201111111111111138927000421575 | 51049032352d56710347233042615067 | 68707275350ec281ada1c95068712556 | 400        | pro_uid       |
+        | Create new case with process "Derivation rules - evaluation" invalid task_uid                   | 99209594750ec27ea338927000421575 | 44811996752d567110634a1013636964 | 68707211111111111111111111712556 | 400        | task_uid      |
+        | Create new case with process "Derivation rules - Parallel" usr_uid                              | 99209594750ec27ea338927000421575 | 24166331111111111111115035621101 | 68707275350ec281ada1c95068712556 | 400        | usr_uid       |
+        | Create new case with process "Derivation rules - without pro_uid                                |                                  | 86677227852d5671f40ba25017213081 | 68707275350ec281ada1c95068712556 | 400        | pro_uid       |
+        | Create new case with process "Derivation rules - selection" tas_uid                             | 99209594750ec27ea338927000421575 | 62625000752d5672d6661e6072881167 |                                  | 400        | tas_uid       |
 
 
 Scenario Outline: Create a case, derivate and cancel. then try do pause or route
