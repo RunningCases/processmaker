@@ -123,7 +123,10 @@
 
  <target name="phpunit" description="Run unit tests with PHPUnit">
   <exec executable="phpunit">
-    <arg path="${basedir}/workflow/engine/src" />
+    <arg value="--testsuite" />
+    <arg value="api" />
+    <arg value="--bootstrap" />
+    <arg value="${basedir}/workflow/engine/src/Tests/bootstrap.php" />
   </exec>
  </target>
 
