@@ -63,6 +63,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
             $arrayRecord[] = $arrayCalendar;
         }
 
+        //Create - Japanese characters
         $arrayData = array(
             "CAL_NAME"      => "私の名前（PHPUnitの）",
             "CAL_WORK_DAYS" => array("MON", "TUE", "WED", "THU", "FRI"),
@@ -143,6 +144,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCalendar($arrayRecord)
     {
+        //Get
         $arrayCalendar = self::$calendar->getCalendar($arrayRecord[0]["CAL_UID"]);
 
         $this->assertTrue(is_array($arrayCalendar));
@@ -153,6 +155,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($arrayCalendar["CAL_DESCRIPTION"], $arrayRecord[0]["CAL_DESCRIPTION"]);
         $this->assertEquals($arrayCalendar["CAL_STATUS"], $arrayRecord[0]["CAL_STATUS"]);
 
+        //Get - Japanese characters
         $arrayCalendar = self::$calendar->getCalendar($arrayRecord[self::$numCalendar]["CAL_UID"]);
 
         $this->assertTrue(is_array($arrayCalendar));
