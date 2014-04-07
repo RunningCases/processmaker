@@ -9,7 +9,7 @@ Background:
 
 
 Scenario: Returns a list of the uploaded documents for a given case
-    Given I request "cases/64654381053382b8bb4c415067063003/input-documents"
+    Given I request "cases/170220159534214f642abb8058832933/input-documents"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
@@ -17,14 +17,14 @@ Scenario: Returns a list of the uploaded documents for a given case
 
 
 Scenario: Returns an uploaded documents for a given case
-    Given I request "cases/64654381053382b8bb4c415067063003/input-document/6075490825331a1c5eebff9015468244"
+    Given I request "cases/170220159534214f642abb8058832933/input-document/6075490825331a1c5eebff9015468244"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
     
 
 Scenario: Post metadata and then upload documents for a given case
-        Given POST upload an input document "/home/wendy/uploadfiles/test1.html" to "cases/64654381053382b8bb4c415067063003/input-document"
+        Given POST upload an input document "/home/wendy/uploadfiles/test1.html" to "cases/170220159534214f642abb8058832933/input-document"
             """
             {
 
@@ -35,16 +35,16 @@ Scenario: Post metadata and then upload documents for a given case
 
             }
             """
-         Then the response status code should be 201
+         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
-        And store "" in session array
+        And store "app_doc_uid" in session array
 
 
 Scenario: Delete an uploaded or generated document from a case.
-        Given that I want to delete a resource with the key "" stored in session array
-        And I request "cases/64654381053382b8bb4c415067063003/input-document/{app_doc_uid}"
+        Given that I want to delete a resource with the key "app_doc_uid" stored in session array
+        And I request "cases/170220159534214f642abb8058832933/input-document"
         Then the response status code should be 200
         And the content type is "application/json"
         And the response charset is "UTF-8"
