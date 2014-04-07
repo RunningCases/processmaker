@@ -384,6 +384,7 @@ class RestContext extends BehatContext
                 $putFields = is_object($this->_restObject)
                     ? (array)$this->_restObject
                     : $this->_restObject;
+                $this->printDebug("URL F: $url\n");
                 $this->_request = $this->_client
                     ->put($url, $this->_headers,
                     (empty($this->_requestBody) ? $putFields :
@@ -1501,6 +1502,55 @@ class RestContext extends BehatContext
         $this->iRequest($url);
 
        
+    }
+
+
+    /**
+     * @Given /^the "([^"]*)" property in object (\d+) of property "([^"]*)" equals "([^"]*)"$/
+     */
+    public function thePropertyInObjectOfPropertyEquals($propertyName, $row, $propertyParent, $propertyValue)
+    {
+        $data = $this->_data;
+        if (empty($data)) {
+            throw new Exception("Response is empty or was not JSON\n\n"
+                . $this->_response->getBody(true));
+            return;
+        }
+
+        if (!isset($data->$propertyParent)) {
+            throw new Exception("Response has not the property '$propertyParent'\n\n"
+                . $this->_response->getBody(true));
+            return;
+        }
+
+        $data = $data->$propertyParent;
+
+        if (!empty($data)) {
+            if (!is_object($data)) {
+                throw new Exception("the $propertyParent in Response data is not an array!\n\n" );
+            }
+            if (is_object($data) && !isset($data->$row)) {
+                throw new Exception("the Response data is an array, but the row '$row' does not exists!\n\n" );
+            }
+            if (!isset($data->$row->$propertyName)) {
+                throw new Exception("Property '"
+                    . $propertyName . "' is not set!\n\n"
+                );
+            }
+            if (is_array($data->$row->$propertyName)) {
+                throw new Exception("$propertyName is an array and we expected a value\n\n"
+                    . $this->_response->getBody(true));
+            }
+            if ($data->$row->$propertyName != $propertyValue) {
+                throw new \Exception('Property value mismatch! (given: '
+                    . $propertyValue . ', match: '
+                    . $data->$row->$propertyName . ")\n\n"
+                );
+            }
+        } else {
+            throw new Exception("Response was not JSON\n\n"
+                . $this->_response->getBody(true));
+        }
     }
 
 

@@ -74,7 +74,7 @@ Scenario Outline: Create a new case in workspace with process "Derivation rules 
             {
                 "pro_uid": "<pro_uid>",
                 "tas_uid": "<tas_uid>",
-                "variables": [{"name": "admin", "lastname":"admin"}]
+                "variables": [{"name": "admin", "amount":"1030"}]
             }
             """
         And I request "cases"
