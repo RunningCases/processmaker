@@ -84,6 +84,34 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test error for incorrect value of process in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::addCase
+     * @expectedException        Exception
+     * @expectedExceptionMessage Invalid process 12345678912345678912345678912345678
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testAddCaseErrorIncorrectProcessValueArray()
+    {
+        $this->oCases->addCase('12345678912345678912345678912345678', self::$tasUid, self::$usrUid, array());
+    }
+
+    /**
+     * Test error for incorrect value of task in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::addCase
+     * @expectedException        Exception
+     * @expectedExceptionMessage Task invalid or the user is not assigned to the task
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testAddCaseErrorIncorrectTaskValueArray()
+    {
+        $this->oCases->addCase(self::$proUid, '12345678912345678912345678912345678', self::$usrUid, array());
+    }
+
+    /**
      * Test add Case
      *
      * @covers \ProcessMaker\BusinessModel\Cases::addCase
@@ -96,6 +124,20 @@ class CasesTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($response));
         $aResponse = json_decode(json_encode($response), true);
         return $aResponse;
+    }
+
+    /**
+     * Test error for incorrect value of case in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::getTaskCase
+     * @expectedException        Exception
+     * @expectedExceptionMessage Incorrect or unavailable information about this case: 12345678912345678912345678912345678
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetTaskCaseErrorIncorrectCaseValueArray()
+    {
+        $this->oCases->getTaskCase('12345678912345678912345678912345678', self::$usrUid);
     }
 
     /**
@@ -114,6 +156,20 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test error for incorrect value of case in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::getCaseInfo
+     * @expectedException        Exception
+     * @expectedExceptionMessage The Application row '12345678912345678912345678912345678' doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetCaseInfoErrorIncorrectCaseValueArray()
+    {
+        $this->oCases->getCaseInfo('12345678912345678912345678912345678', self::$usrUid);
+    }
+
+    /**
      * Test get Case Info
      *
      * @covers \ProcessMaker\BusinessModel\Cases::getCaseInfo
@@ -129,9 +185,39 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test error for incorrect value of user delegation in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::updateReassignCase
+     * @depends testAddCase
+     * @param array $aResponse
+     * @expectedException        Exception
+     * @expectedExceptionMessage Invalid Case Delegation index for this user
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testUpdateReassignCaseErrorIncorrectUserValueArray(array $aResponse)
+    {
+        $this->oCases->updateReassignCase($aResponse['app_uid'], self::$usrUid, null, self::$usrUid, self::$usrUid2);
+    }
+
+    /**
+     * Test error for incorrect value of case in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::updateReassignCase
+     * @expectedException        Exception
+     * @expectedExceptionMessage The Application with app_uid: 12345678912345678912345678912345678 doesn't exist
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testUpdateReassignCaseErrorIncorrectCaseValueArray()
+    {
+        $this->oCases->updateReassignCase('12345678912345678912345678912345678', self::$usrUid, null, self::$usrUid2, self::$usrUid);
+    }
+
+    /**
      * Test put reassign case
      *
-     * @covers \ProcessMaker\BusinessModel\Cases::getCaseInfo
+     * @covers \ProcessMaker\BusinessModel\Cases::updateReassignCase
      * @depends testAddCase
      * @param array $aResponse
      *
@@ -139,7 +225,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      */
     public function testUpdateReassignCase(array $aResponse)
     {
-        $response = $this->oCases->updateReassignCase($aResponse['app_uid'], self::$usrUid, null, self::$usrUid, self::$usrUid2);
+        $response = $this->oCases->updateReassignCase($aResponse['app_uid'], self::$usrUid, null, self::$usrUid2, self::$usrUid);
         $this->assertTrue(empty($response));
     }
 
@@ -159,6 +245,20 @@ class CasesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test error for incorrect value of case in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::updateRouteCase
+     * @expectedException        Exception
+     * @expectedExceptionMessage The row '12345678912345678912345678912345678, ' in table AppDelegation doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testUpdateRouteCaseErrorIncorrectCaseValueArray()
+    {
+        $this->oCases->updateRouteCase('12345678912345678912345678912345678', self::$usrUid, null);
+    }
+
+    /**
      * Test put route case
      *
      * @covers \ProcessMaker\BusinessModel\Cases::updateRouteCase
@@ -172,6 +272,35 @@ class CasesTest extends \PHPUnit_Framework_TestCase
         $response = $this->oCases->updateRouteCase($aResponseRouteCase['app_uid'], self::$usrUid, null);
         $this->assertTrue(empty($response));
     }
+
+    /**
+     * Test error for incorrect value of process in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::addCase
+     * @expectedException        Exception
+     * @expectedExceptionMessage Invalid process 12345678912345678912345678912345678
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testAddCaseImpersonateErrorIncorrectProcessValueArray()
+    {
+        $this->oCases->addCaseImpersonate('12345678912345678912345678912345678', self::$usrUid2, self::$tasUid, array());
+    }
+
+    /**
+     * Test error for incorrect value of task in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::addCase
+     * @expectedException        Exception
+     * @expectedExceptionMessage User not registered! 12345678912345678912345678912345678!!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testAddCaseImpersonateErrorIncorrectTaskValueArray()
+    {
+        $this->oCases->addCaseImpersonate(self::$proUid, '12345678912345678912345678912345678', self::$tasUid, array());
+    }
+
 
     /**
      * Test add Case impersonate
