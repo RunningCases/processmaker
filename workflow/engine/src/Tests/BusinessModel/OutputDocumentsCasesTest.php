@@ -102,6 +102,20 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test error for incorrect value of application in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::getCasesOutputDocuments
+     * @expectedException        Exception
+     * @expectedExceptionMessage The Application row '12345678912345678912345678912345678' doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetCasesOutputDocumentsErrorIncorrectApplicationValueArray()
+    {
+        $this->oOutputDocument->getCasesOutputDocuments('12345678912345678912345678912345678', self::$usrUid);
+    }
+
+    /**
      * Test get OutputDocuments
      *
      * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::getCasesOutputDocuments
@@ -117,6 +131,38 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test error for incorrect value of application in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::getCasesOutputDocument
+     * @depends testAddCasesOutputDocument
+     * @param array $aResponse
+     * @expectedException        Exception
+     * @expectedExceptionMessage The Application row '12345678912345678912345678912345678' doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetCasesOutputDocumentErrorIncorrectApplicationValueArray(array $aResponse)
+    {
+        $this->oOutputDocument->getCasesOutputDocument('12345678912345678912345678912345678', self::$usrUid, $aResponse["app_doc_uid"]);
+    }
+
+    /**
+     * Test error for incorrect value of output document in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::getCasesOutputDocument
+     * @depends testAddCasesOutputDocument
+     * @param array $aResponse
+     * @expectedException        Exception
+     * @expectedExceptionMessage This output document with id: 12345678912345678912345678912345678 doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetCasesOutputDocumentErrorIncorrectOutputDocumentValueArray(array $aResponse)
+    {
+        $this->oOutputDocument->getCasesOutputDocument($aResponse["idCase"], self::$usrUid, '12345678912345678912345678912345678');
+    }
+
+    /**
      * Test get OutputDocument
      *
      * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::getCasesOutputDocument
@@ -129,6 +175,20 @@ class OutputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
     {
         $response = $this->oOutputDocument->getCasesOutputDocument($aResponse["idCase"], self::$usrUid, $aResponse["app_doc_uid"]);
         $this->assertTrue(is_object($response));
+    }
+
+    /**
+     * Test error for incorrect value of output document in array
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\OutputDocument::removeOutputDocument
+     * @expectedException        Exception
+     * @expectedExceptionMessage This output document with id: 12345678912345678912345678912345678 doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testRemoveOutputDocumentErrorIncorrectOutputDocumentValueArray()
+    {
+        $this->oOutputDocument->removeOutputDocument('12345678912345678912345678912345678');
     }
 
     /**
