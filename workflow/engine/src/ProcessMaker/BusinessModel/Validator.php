@@ -344,7 +344,7 @@ class Validator
     {
         try {
             if (!is_array($data)) {
-                $msg = str_replace(array("{0}"), array($dataNameForException), "The data \"{0}\" is not array");
+                $msg = str_replace(array("{0}"), array($dataNameForException), "Invalid value for \"{0}\", this value must be an array.");
 
                 throw (new \Exception($msg));
             }
@@ -365,7 +365,7 @@ class Validator
     {
         try {
             if (empty($data)) {
-                $msg = str_replace(array("{0}"), array($dataNameForException), "The data \"{0}\" is empty");
+                $msg = str_replace(array("{0}"), array($dataNameForException), "Invalid value for \"{0}\", it can not be empty.");
 
                 throw (new \Exception($msg));
             }

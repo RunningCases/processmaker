@@ -161,7 +161,7 @@ class InputDocument
             $rsCriteria = \InputDocumentPeer::doSelectRS($criteria);
 
             if (!$rsCriteria->next()) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $inputDocumentUid), "The Input Document with {0}: {1} does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $inputDocumentUid), "The Input Document with {0}: {1} does not exist.");
 
                 throw (new \Exception($msg));
             }

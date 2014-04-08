@@ -265,7 +265,7 @@ class Trigger
             $rsCriteria = \TriggersPeer::doSelectRS($criteria);
 
             if (!$rsCriteria->next()) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $triggerUid), "The trigger with {0}: {1}, does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $triggerUid), "The trigger with {0}: {1}, does not exist.");
 
                 throw (new \Exception($msg));
             }
