@@ -9,7 +9,7 @@ Background:
 
 
 Scenario: Returns a list of the uploaded documents for a given case
-    Given I request "cases/170220159534214f642abb8058832000/input-documents"
+    Given I request "cases/170220159534214f642abb8058832900/input-documents"
     Then the response status code should be 404
 
 Scenario Outline: Post metadata and then upload documents for a given case

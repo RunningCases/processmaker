@@ -262,13 +262,19 @@ class Calendar
     public function create($arrayData)
     {
         try {
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+            $validator = new \ProcessMaker\BusinessModel\Validator();
+
+            $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
+            $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
+
+            //Set data
             $arrayData = \G::array_change_key_case2($arrayData, CASE_UPPER);
 
             unset($arrayData["CAL_UID"]);
 
             //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
-
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
             $this->throwExceptionIfExistsName($arrayData["CAL_NAME"], $this->arrayFieldNameForException["calendarName"]);
@@ -321,11 +327,7 @@ class Calendar
             $arrayDataAux = array();
             $arrayDataAux["CALENDAR_UID"] = \G::generateUniqueID();
             $arrayDataAux["CALENDAR_NAME"] = $arrayData["CAL_NAME"];
-
-            if (isset($arrayData["CAL_DESCRIPTION"])) {
-                $arrayDataAux["CALENDAR_DESCRIPTION"] = $arrayData["CAL_DESCRIPTION"];
-            }
-
+            $arrayDataAux["CALENDAR_DESCRIPTION"] = (isset($arrayData["CAL_DESCRIPTION"]))? $arrayData["CAL_DESCRIPTION"] : "";
             $arrayDataAux["CALENDAR_WORK_DAYS"] = explode("|", $this->workDaysReplaceData(implode("|", $arrayData["CAL_WORK_DAYS"])));
             $arrayDataAux["CALENDAR_STATUS"] = $arrayData["CAL_STATUS"];
 
@@ -361,11 +363,17 @@ class Calendar
     public function update($calendarUid, $arrayData)
     {
         try {
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+            $validator = new \ProcessMaker\BusinessModel\Validator();
+
+            $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
+            $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
+
+            //Set data
             $arrayData = \G::array_change_key_case2($arrayData, CASE_UPPER);
 
             //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
-
             $this->throwExceptionIfNotExistsCalendar($calendarUid, $this->arrayFieldNameForException["calendarUid"]);
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
