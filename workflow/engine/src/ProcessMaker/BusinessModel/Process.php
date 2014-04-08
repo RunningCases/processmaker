@@ -176,7 +176,7 @@ class Process
                     $fieldNameAux = (isset($arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]]))? $arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]] : "";
 
                     if ($arrayFieldDefinition[$fieldName]["required"] && !isset($arrayData[$fieldName])) {
-                        throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is not defined")));
+                        throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Undefined value for \"{0}\", it is required.")));
                     }
                 }
             }
@@ -201,12 +201,12 @@ class Process
                         case 1:
                             //empty
                             if (!$arrayFieldDefinition[$fieldName]["empty"] && trim($fieldValue) . "" == "") {
-                                throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is empty")));
+                                throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value for \"{0}\", it can not be empty.")));
                             }
 
                             //defaultValues
                             if (count($arrayFieldDefinition[$fieldName]["defaultValues"]) > 0 && !in_array($fieldValue, $arrayFieldDefinition[$fieldName]["defaultValues"])) {
-                                throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                throw (new \Exception(str_replace(array("{0}", "{1}"), array($fieldNameAux, implode("|", $arrayFieldDefinition[$fieldName]["defaultValues"])), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
                             }
 
                             //type
@@ -220,17 +220,17 @@ class Process
                                 switch ($arrayFieldDefinition[$fieldName]["type"]) {
                                     case "date":
                                         if (!preg_match("/^" . $eregDate . "$/", $fieldValue)) {
-                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value for \"{0}\".")));
                                         }
                                         break;
                                     case "hour":
                                         if (!preg_match("/^" . $eregHour . "$/", $fieldValue)) {
-                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value for \"{0}\".")));
                                         }
                                         break;
                                     case "datetime":
                                         if (!preg_match("/^" . $eregDatetime . "$/", $fieldValue)) {
-                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value for \"{0}\".")));
                                         }
                                         break;
                                 }
@@ -242,7 +242,7 @@ class Process
                                     //type
                                     if (!is_array($fieldValue)) {
                                         if ($fieldValue != "" && !preg_match("/^\s*array\s*\(.*\)\s*$/", $fieldValue)) {
-                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is not array")));
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value for \"{0}\", this value must be an array.")));
                                         }
                                     }
 
@@ -259,7 +259,7 @@ class Process
                                         }
 
                                         if (count($arrayAux) == 0) {
-                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "The \"{0}\" attribute is empty")));
+                                            throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value for \"{0}\", it can not be empty.")));
                                         }
                                     }
 
@@ -277,7 +277,7 @@ class Process
 
                                         foreach ($arrayAux as $value) {
                                             if (!in_array($value, $arrayFieldDefinition[$fieldName]["defaultValues"])) {
-                                                throw (new \Exception(str_replace(array("{0}"), array($fieldNameAux), "Invalid value specified for \"{0}\"")));
+                                                throw (new \Exception(str_replace(array("{0}", "{1}"), array($fieldNameAux, implode("|", $arrayFieldDefinition[$fieldName]["defaultValues"])), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
                                             }
                                         }
                                     }
@@ -307,7 +307,7 @@ class Process
                 $nameForException = (isset($arrayFieldNameForException[$key]))? $arrayFieldNameForException[$key] : "";
 
                 if (!is_null($value) && ($value . "" == "" || !preg_match("/^(?:\+|\-)?(?:0|[1-9]\d*)$/", $value . "") || (int)($value) < 0)) {
-                    throw (new \Exception(str_replace(array("{0}"), array($nameForException), "Invalid value specified for \"{0}\". Expecting positive integer value")));
+                    throw (new \Exception(str_replace(array("{0}"), array($nameForException), "Invalid value for \"{0}\". Expecting positive integer value.")));
                 }
             }
         } catch (\Exception $e) {
@@ -329,7 +329,7 @@ class Process
             $process = new \Process();
 
             if (!$process->processExists($processUid)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $processUid), "The project with {0}: {1} does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $processUid), "The project with {0}: {1} does not exist.");
 
                 throw (new \Exception($msg));
             }
@@ -352,7 +352,7 @@ class Process
             $user = new \Users();
 
             if (!$user->userExists($userUid)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $userUid), "The user with {0}: {1}, does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $userUid), "The user with {0}: {1}, does not exist.");
 
                 throw (new \Exception($msg));
             }
@@ -397,7 +397,7 @@ class Process
             $obj = \ProcessCategoryPeer::retrieveByPK($processCategoryUid);
 
             if (!(is_object($obj) && get_class($obj) == "ProcessCategory")) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $processCategoryUid), "The project category with {0}: {1}, does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $processCategoryUid), "The project category with {0}: {1}, does not exist.");
 
                 throw (new \Exception($msg));
             }
@@ -420,7 +420,7 @@ class Process
             $obj = \AdditionalTablesPeer::retrieveByPK($additionalTableUid);
 
             if (!(is_object($obj) && get_class($obj) == "AdditionalTables")) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $additionalTableUid), "The PM Table with {0}: {1} does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $additionalTableUid), "The PM Table with {0}: {1} does not exist.");
 
                 throw (new \Exception($msg));
             }
@@ -454,7 +454,7 @@ class Process
             $rsCriteria = \TaskPeer::doSelectRS($criteria);
 
             if (!$rsCriteria->next()) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $taskUid), "The activity with {0}: {1} does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $taskUid), "The activity with {0}: {1} does not exist.");
 
                 throw (new \Exception($msg));
             }
@@ -488,7 +488,7 @@ class Process
             }
 
             if ($flag == 0) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $fileName), "The routing screen template with {0}: {1} does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $fileName), "The routing screen template with {0}: {1} does not exist.");
 
                 throw (new \Exception($msg));
             }

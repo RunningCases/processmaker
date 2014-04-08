@@ -111,7 +111,7 @@ class TriggerWizard
             $arrayLibrary = $this->library->getRegisteredClasses();
 
             if (!isset($arrayLibrary[$this->libraryGetLibraryName($libraryName)])) {
-                $msg = str_replace(array("{0}", "{1}"), array($libraryFieldNameForException, $libraryName), "The library with {0}: \"{1}\" does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($libraryFieldNameForException, $libraryName), "The library with {0}: \"{1}\" does not exist.");
 
                 throw (new \Exception($msg));
             }
@@ -138,7 +138,7 @@ class TriggerWizard
             $library = $this->library->getLibraryDefinition($this->libraryGetLibraryName($libraryName));
 
             if (!isset($library->methods[$methodName])) {
-                $msg = str_replace(array("{0}", "{1}"), array($methodFieldNameForException, $methodName), "The function with {0}: \"{1}\" does not exist in the library");
+                $msg = str_replace(array("{0}", "{1}"), array($methodFieldNameForException, $methodName), "The function with {0}: \"{1}\" does not exist in the library.");
 
                 throw (new \Exception($msg));
             }
@@ -231,22 +231,22 @@ class TriggerWizard
 
             if ($nInputParam > 0 || $nOutputParam > 0) {
                 if (!isset($arrayData["TRI_PARAMS"])) {
-                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameForException), "The \"{0}\" attribute is not defined")));
+                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameForException), "Undefined value for \"{0}\", it is required.")));
                 }
 
                 if (!is_array($arrayData["TRI_PARAMS"])) {
-                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameForException), "The \"{0}\" attribute is not array")));
+                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameForException), "Invalid value for \"{0}\", this value must be an array.")));
                 }
 
                 $arrayData["TRI_PARAMS"] = array_change_key_case($arrayData["TRI_PARAMS"], CASE_UPPER);
 
                 if ($nInputParam > 0) {
                     if (!isset($arrayData["TRI_PARAMS"]["INPUT"])) {
-                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".INPUT")), "The \"{0}\" attribute is not defined")));
+                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".INPUT")), "Undefined value for \"{0}\", it is required.")));
                     }
 
                     if (!is_array($arrayData["TRI_PARAMS"]["INPUT"])) {
-                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".INPUT")), "The \"{0}\" attribute is not array")));
+                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".INPUT")), "Invalid value for \"{0}\", this value must be an array.")));
                     }
 
                     $arrayParamData["input"] = $arrayData["TRI_PARAMS"]["INPUT"];
@@ -254,11 +254,11 @@ class TriggerWizard
 
                 if ($nOutputParam > 0) {
                     if (!isset($arrayData["TRI_PARAMS"]["OUTPUT"])) {
-                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".OUTPUT")), "The \"{0}\" attribute is not defined")));
+                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".OUTPUT")), "Undefined value for \"{0}\", it is required.")));
                     }
 
                     if (!is_array($arrayData["TRI_PARAMS"]["OUTPUT"])) {
-                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".OUTPUT")), "The \"{0}\" attribute is not array")));
+                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".OUTPUT")), "Invalid value for \"{0}\", this value must be an array.")));
                     }
 
                     $arrayParamData["output"] = $arrayData["TRI_PARAMS"]["OUTPUT"];

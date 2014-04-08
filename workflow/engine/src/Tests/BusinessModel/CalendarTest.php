@@ -172,7 +172,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @covers \ProcessMaker\BusinessModel\Calendar::create
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage The data "$arrayData" is not array
+     * @expectedExceptionMessage Invalid value for "$arrayData", this value must be an array.
      */
     public function testCreateExceptionNoIsArrayData()
     {
@@ -187,7 +187,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @covers \ProcessMaker\BusinessModel\Calendar::create
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage The data "$arrayData" is empty
+     * @expectedExceptionMessage Invalid value for "$arrayData", it can not be empty.
      */
     public function testCreateExceptionEmptyData()
     {
@@ -202,7 +202,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @covers \ProcessMaker\BusinessModel\Calendar::create
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage The "CAL_NAME" attribute is not defined
+     * @expectedExceptionMessage Undefined value for "CAL_NAME", it is required.
      */
     public function testCreateExceptionRequiredDataCalName()
     {
@@ -222,7 +222,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @covers \ProcessMaker\BusinessModel\Calendar::create
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage The "CAL_NAME" attribute is empty
+     * @expectedExceptionMessage Invalid value for "CAL_NAME", it can not be empty.
      */
     public function testCreateExceptionInvalidDataCalName()
     {
@@ -242,7 +242,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @covers \ProcessMaker\BusinessModel\Calendar::create
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage Invalid value specified for "CAL_WORK_DAYS"
+     * @expectedExceptionMessage Invalid value for "CAL_WORK_DAYS", it only accepts values: "SUN|MON|TUE|WED|THU|FRI|SAT".
      */
     public function testCreateExceptionInvalidDataCalWorkDays()
     {
@@ -282,7 +282,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @covers \ProcessMaker\BusinessModel\Calendar::update
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage The data "$arrayData" is not array
+     * @expectedExceptionMessage Invalid value for "$arrayData", this value must be an array.
      */
     public function testUpdateExceptionNoIsArrayData()
     {
@@ -297,7 +297,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @covers \ProcessMaker\BusinessModel\Calendar::update
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage The data "$arrayData" is empty
+     * @expectedExceptionMessage Invalid value for "$arrayData", it can not be empty.
      */
     public function testUpdateExceptionEmptyData()
     {
@@ -312,7 +312,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @covers \ProcessMaker\BusinessModel\Calendar::update
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage The calendar with CAL_UID: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx does not exists
+     * @expectedExceptionMessage The calendar with CAL_UID: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx does not exist.
      */
     public function testUpdateExceptionInvalidCalUid()
     {
@@ -335,7 +335,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @param   array $arrayRecord Data of the calendars
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage The "CAL_NAME" attribute is empty
+     * @expectedExceptionMessage Invalid value for "CAL_NAME", it can not be empty.
      */
     public function testUpdateExceptionInvalidDataCalName($arrayRecord)
     {
@@ -358,7 +358,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @param   array $arrayRecord Data of the calendars
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage Invalid value specified for "CAL_WORK_DAYS"
+     * @expectedExceptionMessage Invalid value for "CAL_WORK_DAYS", it only accepts values: "SUN|MON|TUE|WED|THU|FRI|SAT".
      */
     public function testUpdateExceptionInvalidDataCalWorkDays($arrayRecord)
     {
