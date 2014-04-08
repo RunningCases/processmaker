@@ -98,6 +98,7 @@ class Workflow extends Handler
     public function update($data)
     {
         $process = new Process();
+        $data["PRO_UID"] = $this->getUid();
         $process->update($data);
     }
 
@@ -765,4 +766,9 @@ class Workflow extends Handler
         }
     }
 
+    public function setDisabled($value = true)
+    {
+        $status = $value ? "DISABLED" : "ACTIVE";
+        $this->update(array("PRO_STATUS" => $status));
+    }
 }
