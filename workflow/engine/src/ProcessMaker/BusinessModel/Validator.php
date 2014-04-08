@@ -9,7 +9,8 @@ namespace ProcessMaker\BusinessModel;
  *
  * @protected
  */
-class Validator{
+class Validator
+{
     /**
      * Validate dep_uid
      * @var string $dep_uid. Uid for Departament
@@ -330,6 +331,47 @@ class Validator{
             throw (new \Exception("The field '$nameField' is empty."));
         }
     }
-}
 
+    /**
+     * Verify if data is array
+     *
+     * @param string $data                 Data
+     * @param string $dataNameForException Data name for the exception
+     *
+     * return void Throw exception if data is not array
+     */
+    public function throwExceptionIfDataIsNotArray($data, $dataNameForException)
+    {
+        try {
+            if (!is_array($data)) {
+                $msg = str_replace(array("{0}"), array($dataNameForException), "The data \"{0}\" is not array");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if data is empty
+     *
+     * @param string $data                 Data
+     * @param string $dataNameForException Data name for the exception
+     *
+     * return void Throw exception if data is empty
+     */
+    public function throwExceptionIfDataIsEmpty($data, $dataNameForException)
+    {
+        try {
+            if (empty($data)) {
+                $msg = str_replace(array("{0}"), array($dataNameForException), "The data \"{0}\" is empty");
+
+                throw (new \Exception($msg));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+}
 

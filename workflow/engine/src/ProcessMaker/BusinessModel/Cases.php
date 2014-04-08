@@ -61,7 +61,9 @@ class Cases
         if ($start != 0) {
             $start--;
         }
-        if ((abs((int)$limit)) == 0) {
+        $limit = (int)$limit;
+        $limit = abs($limit);
+        if ($limit == 0) {
             G::LoadClass("configuration");
             $conf = new \Configurations();
             $generalConfCasesList = $conf->getConfiguration('ENVIRONMENT_SETTINGS', '');

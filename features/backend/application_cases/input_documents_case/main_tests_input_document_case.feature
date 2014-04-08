@@ -40,19 +40,11 @@ Scenario Outline: Post metadata and then upload documents for a given case
         | 4                  | /home/wendy/uploadfiles/test.txt   | 170220159534214f642abb8058832933 | 68671480353319e5e1dee74089764900 | 19582733053319e304cfa76025663570 | comment 1       |
 
 Scenario Outline: Returns an uploaded documents for a given case
-    Given I request "cases/<case_uid>/output-document/app_doc_uid"  with the key "app_doc_uid" stored in session array as variable "app_doc_uid_<app_doc_uid_number>"
+    Given I request "cases/<case_uid>/input-document/app_doc_uid"  with the key "app_doc_uid" stored in session array as variable "app_doc_uid_<app_doc_uid_number>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
-    And the "app_doc_uid" property equals "<app_doc_uid>"
-    And the "app_doc_filename" property equals "<app_doc_filename>"
-    And the "doc_uid" property equals "<doc_uid>"
-    And the "app_doc_version" property equals "<app_doc_version>"
-    And the "app_doc_create_date" property equals "<app_doc_create_date>"
-    And the "app_doc_create_user" property equals "<app_doc_create_user>"
-    And the "app_doc_type" property equals "<app_doc_type>"
-    And the "app_doc_index" property equals "<app_doc_index>"
-    And the "app_doc_link" property equals "<app_doc_link>"
+    
 
     
     Examples:
