@@ -13,8 +13,7 @@ Scenario: List of case notes for this case
     And the response charset is "UTF-8"
     And the type is "array"
     And the "note_content" property in row 0 equals "tercer case note creado desde script"
-    And the "note_content" property in row 1 equals "Test sin envio de email"
-
+    
 
 Scenario: Get a List of cases notes of a case with paged
     Given I request "cases/1185553665335d2e209f723099733152/notes/paged"
