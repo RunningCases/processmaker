@@ -8,7 +8,7 @@ Background:
 
 
 Scenario: List of case notes for this case
-    Given I request "cases/{uid}/notes"
+    Given I request "cases/1185553665335d2e209f723099733152/notes"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
@@ -22,7 +22,7 @@ Scenario: Create a new case note for specified case
                 "send_email": 1
             }
             """
-        And I request "case/{uid}/case"
+        And I request "case/1185553665335d2e209f723099733152/case"
         Then the response status code should be 201
         And the response charset is "UTF-8"
         And the content type is "application/json"

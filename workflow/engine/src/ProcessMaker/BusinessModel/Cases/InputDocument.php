@@ -58,6 +58,10 @@ class InputDocument
     public function getCasesInputDocument($applicationUid, $userUid, $inputDocumentUid)
     {
         try {
+            $oAppDocument = \AppDocumentPeer::retrieveByPK( $inputDocumentUid, 1 );
+            if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
+                throw (new \Exception('This input document with id: '.$inputDocumentUid.' doesn\'t exist!'));
+            }
             $sApplicationUID = $applicationUid;
             $sUserUID = $userUid;
             \G::LoadClass('case');
@@ -214,6 +218,7 @@ class InputDocument
             $arrayData["DEL_INDEX"] = $delIndex;
             $arrayData["TAS_UID"]   = $taskUid;
             $case->updateCase($applicationUid, $arrayData);
+            return($this->getCasesInputDocument($applicationUid, $userUid, $appDocUid));
         } catch (\Exception $e) {
             throw $e;
         }
