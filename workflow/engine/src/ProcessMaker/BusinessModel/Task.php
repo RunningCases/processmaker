@@ -75,10 +75,7 @@ class Task
         $task = new \Task();
 
         if (!$task->taskExists($taskUid)) {
-            $field = $this->arrayParamException["taskUid"];
-
-            $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
-            $msg = $msg . str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" doesn't exist in table {1}");
+            $msg = str_replace(array("{0}", "{1}"), array($this->arrayParamException["taskUid"], $taskUid), "The activity with {0}: {1} does not exist.");
 
             throw (new \Exception($msg));
         }
@@ -2188,3 +2185,4 @@ class Task
         }
     }
 }
+
