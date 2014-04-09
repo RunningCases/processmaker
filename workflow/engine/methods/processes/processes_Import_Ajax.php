@@ -21,13 +21,16 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+
+use ProcessMaker\Importer\XmlImporter;
+
 ini_set( 'max_execution_time', '0' );
 
 if (isset($_FILES["PROCESS_FILENAME"])) {
     $ext = pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION);
 
     if ($ext == "pmx") {
-        $importer = new \ProcessMaker\Importer\XmlImporter();
+        $importer = new XmlImporter();
         $importer->setData("usr_uid", $_SESSION['USER_LOGGED']);
         $importer->setSaveDir(PATH_DOCUMENT . 'input');
         $importer->setSourceFromGlobals("PROCESS_FILENAME");
@@ -50,7 +53,7 @@ if (isset($_FILES["PROCESS_FILENAME"])) {
                 "ExistProcessInDatabase" => 1,
                 "ExistGroupsInDatabase" => 0,
                 "groupBeforeAccion" => "uploadFileNewProcess",
-                "sNewProUid" => "63626727053359dabb8fee8019503780",
+                "sNewProUid" => "",
                 "proFileName" => $_FILES['PROCESS_FILENAME']['name'],
                 "project_type" => "bpmn"
             );
@@ -62,20 +65,31 @@ if (isset($_FILES["PROCESS_FILENAME"])) {
 } elseif (isset($_POST["PRO_FILENAME"]) && file_exists(PATH_DOCUMENT . 'input' . PATH_SEP . $_POST["PRO_FILENAME"])) {
 
     switch ($_POST["IMPORT_OPTION"]) {
-        case 1: $option = ProcessMaker\Importer\XmlImporter::IMPORT_OPTION_OVERWRITE; break;
-        case 2: $option = ProcessMaker\Importer\XmlImporter::IMPORT_OPTION_DISABLE_AND_CREATE_NEW; break;
-        case 3: $option = ProcessMaker\Importer\XmlImporter::IMPORT_OPTION_CREATE_NEW; break;
+        case 1: $option = XmlImporter::IMPORT_OPTION_OVERWRITE; break;
+        case 2: $option = XmlImporter::IMPORT_OPTION_DISABLE_AND_CREATE_NEW; break;
+        case 3: $option = XmlImporter::IMPORT_OPTION_CREATE_NEW; break;
     }
 
-    $importer = new ProcessMaker\Importer\XmlImporter();
+    $importer = new XmlImporter();
     $importer->setData("usr_uid", $_SESSION['USER_LOGGED']);
     $importer->setSourceFile(PATH_DOCUMENT . 'input' . PATH_SEP . $_POST["PRO_FILENAME"]);
 
     try {
         $res = $importer->import($option);
     } catch (\Exception $e) {
-        die($e->getMessage());
+        $result = array(
+            "success" => true,
+            "catchMessage" => $e->getMessage(),
+            "ExistProcessInDatabase" => 1,
+            "ExistGroupsInDatabase" => 0,
+            "groupBeforeAccion" => "uploadFileNewProcess",
+            "sNewProUid" => "",
+            "proFileName" => "",
+            "project_type" => "bpmn"
+        );
     }
+
+    exit(0);
 }
 
 function reservedWordsSqlValidate ($data)
