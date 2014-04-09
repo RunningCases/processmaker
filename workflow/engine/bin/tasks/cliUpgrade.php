@@ -177,74 +177,65 @@ function upgradeFilesManager($command = "") {
         PROPEL::Init ( PATH_METHODS.'dbConnections/rootDbConnections.php' );
         $con = Propel::getConnection("root");
         $stmt = $con->createStatement();
-        $sDirectory = PATH_DATA . "sites/" . $name . "/" . "mailTemplates/";
-        $sDirectoryPublic = PATH_DATA . "sites/" . $name . "/" . "public/";
-        if ($dh = opendir($sDirectory)) {
-            $files = Array();
-            while ($file = readdir($dh)) {
-                if ($file != "." && $file != ".." && $file[0] != '.') {
-                    if (is_dir($sDirectory . "/" . $file)) {
-                        $inner_files =  listFiles($sDirectory . $file);
-                        if (is_array($inner_files)) $files = array_merge($files, $inner_files);
-                    } else {
-                        array_push($files, $sDirectory . $file);
-                    }
-                }
+        $sDirectory = glob(PATH_DATA . "sites/" . $name . "/" . "mailTemplates/*");
+        $sDirectoryPublic = glob(PATH_DATA . "sites/" . $name . "/" . "public/*");
+        $files = array();
+        foreach($sDirectory as $valor) {
+            if (is_dir($valor)) {
+                $inner_files =  listFiles($valor);
+                if (is_array($inner_files)) $files = array_merge($files, $inner_files);
             }
-            closedir($dh);
+            if (is_file($valor)) {
+                array_push($files, $valor);
+            }
         }
-        if ($dh = opendir($sDirectoryPublic)) {
-            while ($file = readdir($dh)) {
-                if ($file != "." && $file != ".." && $file[0] != '.') {
-                    if (is_dir($sDirectoryPublic . "/" . $file)) {
-                        $inner_files = listFiles($sDirectoryPublic . $file);
-                        if (is_array($inner_files)) $files = array_merge($files, $inner_files);
-                    } else {
-                        array_push($files, $sDirectoryPublic . $file);
-                    }
-                }
+        foreach($sDirectoryPublic as $valor) {
+            if (is_dir($valor)) {
+                $inner_files =  listFiles($valor);
+                if (is_array($inner_files)) $files = array_merge($files, $inner_files);
             }
-            closedir($dh);
+            if (is_file($valor)) {
+                array_push($files, $valor);
+            }
         }
-        foreach ($files as $aFile) {
-            if (strpos($aFile, $sDirectory) !== false){
-                $processUid = current(explode("/", str_replace($sDirectory,'',$aFile)));
-            } else {
-                $processUid = current(explode("/", str_replace($sDirectoryPublic,'',$aFile)));
-            }
-            $sql = "SELECT PROCESS_FILES.PRF_PATH FROM PROCESS_FILES WHERE PROCESS_FILES.PRF_PATH='" . $aFile ."'";
-            $appRows = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
-            $fileUid = '';
-            foreach ($appRows as $row) {
-                    $fileUid =  $row["PRF_PATH"];
-            }
-            if ($fileUid !== $aFile) {
-                $sPkProcessFiles = G::generateUniqueID();
-                $sDate = date('Y-m-d H:i:s');
-                $sql = "INSERT INTO PROCESS_FILES (PRF_UID, PRO_UID, USR_UID, PRF_UPDATE_USR_UID,
+    }
+    $sDir = PATH_DATA . "sites/" . $name . "/" . "mailTemplates/";
+    $sDirPublic = PATH_DATA . "sites/" . $name . "/" . "public/";
+    foreach ($files as $aFile) {
+        if (strpos($aFile, $sDir) !== false){
+            $processUid = current(explode("/", str_replace($sDir,'',$aFile)));
+        } else {
+            $processUid = current(explode("/", str_replace($sDirPublic,'',$aFile)));
+        }
+        $sql = "SELECT PROCESS_FILES.PRF_PATH FROM PROCESS_FILES WHERE PROCESS_FILES.PRF_PATH='" . $aFile ."'";
+        $appRows = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+        $fileUid = '';
+        foreach ($appRows as $row) {
+            $fileUid =  $row["PRF_PATH"];
+        }
+        if ($fileUid !== $aFile) {
+            $sPkProcessFiles = G::generateUniqueID();
+            $sDate = date('Y-m-d H:i:s');
+            $sql = "INSERT INTO PROCESS_FILES (PRF_UID, PRO_UID, USR_UID, PRF_UPDATE_USR_UID,
                        PRF_PATH, PRF_TYPE, PRF_EDITABLE, PRF_CREATE_DATE, PRF_UPDATE_DATE)
                        VALUES ('".$sPkProcessFiles."', '".$processUid."', '00000000000000000000000000000001', '',
                        '".$aFile."', 'file', 'true', '".$sDate."', NULL)";
-                $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
-            }
+            $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
         }
     }
 }
 
 function listFiles($dir) {
-    if($dh = opendir($dir)) {
-        $files = Array();
-        while ($file = readdir($dh)) {
-            if ($file != "." && $file != ".." && $file[0] != '.') {
-                if (is_dir($dir . "/" . $file)) {
-                    $inner_files = listFiles($dir . "/" . $file);
-                    if (is_array($inner_files)) $files = array_merge($files, $inner_files);
-                } else {
-                    array_push($files, $dir . "/" . $file);
-                }
-            }
+    $files = array();
+    $lista = glob($dir.'/*');
+    foreach($lista as $valor) {
+        if (is_dir($valor)) {
+            $inner_files =  listFiles($valor);
+            if (is_array($inner_files)) $files = array_merge($files, $inner_files);
         }
-        closedir($dh);
-        return $files;
+        if (is_file($valor)) {
+            array_push($files, $valor);
+        }
     }
+    return $files;
 }
