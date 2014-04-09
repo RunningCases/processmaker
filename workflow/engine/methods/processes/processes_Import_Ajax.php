@@ -77,7 +77,7 @@ if (isset($_FILES["PROCESS_FILENAME"])) {
         die($e->getMessage());
     }
 }
-die;
+
 function reservedWordsSqlValidate ($data)
 {
     $arrayAux = array ();
@@ -118,6 +118,7 @@ if ($action == "uploadFileNewProcess") {
     try {
         //type of file: only pm
         $processFileType = $_REQUEST["processFileType"];
+
         $oProcess = new stdClass();
         $oData = new stdClass();
 
