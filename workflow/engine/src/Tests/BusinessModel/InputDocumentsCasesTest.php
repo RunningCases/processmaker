@@ -177,14 +177,12 @@ class InputDocumentsCasesTest extends \PHPUnit_Framework_TestCase
      * Test error for incorrect value of input document in array
      *
      * @covers \ProcessMaker\BusinessModel\Cases\InputDocument::removeInputDocument
-     * @depends testAddInputDocument
-     * @param array $aResponse
      * @expectedException        Exception
      * @expectedExceptionMessage This input document with id: 12345678912345678912345678912345678 doesn't exist!
      *
      * @copyright Colosa - Bolivia
      */
-    public function testGetCasesInputDocumentErrorIncorrectApplicationValueArray(array $aResponse)
+    public function testRemoveInputDocumentErrorIncorrectApplicationValueArray()
     {
         $this->oInputDocument->removeInputDocument('12345678912345678912345678912345678');
     }

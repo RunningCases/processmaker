@@ -61,7 +61,9 @@ class Cases
         if ($start != 0) {
             $start--;
         }
-        if ((abs((int)$limit)) == 0) {
+        $limit = (int)$limit;
+        $limit = abs($limit);
+        if ($limit == 0) {
             G::LoadClass("configuration");
             $conf = new \Configurations();
             $generalConfCasesList = $conf->getConfiguration('ENVIRONMENT_SETTINGS', '');
@@ -319,7 +321,7 @@ class Cases
                                 $array['app_name'] = $array['caseName'];
                                 $array['app_status'] = $array['caseStatus'];
                                 $array['app_init_usr_uid'] = $array['caseCreatorUser'];
-                                $array['app_init_usr_username'] = $array['caseCreatorUserName'];
+                                $array['app_init_usr_username'] = trim($array['caseCreatorUserName']);
                                 $array['pro_uid'] = $array['processId'];
                                 $array['pro_name'] = $array['processName'];
                                 $array['app_create_date'] = $array['createDate'];
@@ -410,7 +412,7 @@ class Cases
                     $array['app_name'] = $array['caseName'];
                     $array['app_status'] = $array['caseStatus'];
                     $array['app_init_usr_uid'] = $array['caseCreatorUser'];
-                    $array['app_init_usr_username'] = $array['caseCreatorUserName'];
+                    $array['app_init_usr_username'] = trim($array['caseCreatorUserName']);
                     $array['pro_uid'] = $array['processId'];
                     $array['pro_name'] = $array['processName'];
                     $array['app_create_date'] = $array['createDate'];
@@ -527,6 +529,14 @@ class Cases
             if ($variables) {
                 $variables = array_shift($variables);
             }
+            $oProcesses = new \Processes();
+            if (! $oProcesses->processExists($processUid)) {
+                throw (new \Exception( 'Invalid value specified for \'pro_uid\''));
+            }
+            $oTask = new \Task();
+            if (! $oTask->taskExists($taskUid)) {
+                throw (new \Exception( 'Invalid value specified for \'tas_uid\''));
+            }
             $fields = $ws->newCase($processUid, $userUid, $taskUid, $variables);
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {
@@ -567,6 +577,14 @@ class Cases
                 $variables = array_shift($variables);
             } elseif ($variables == null) {
                 $variables = array(array());
+            }
+            $oProcesses = new \Processes();
+            if (! $oProcesses->processExists($processUid)) {
+                throw (new \Exception( 'Invalid value specified for \'pro_uid\''));
+            }
+            $user = new \Users();
+            if (! $user->userExists( $userUid )) {
+                throw (new \Exception( 'Invalid value specified for \'usr_uid\''));
             }
             $fields = $ws->newCaseImpersonate($processUid, $userUid, $variables, $taskUid);
             $array = json_decode(json_encode($fields), true);

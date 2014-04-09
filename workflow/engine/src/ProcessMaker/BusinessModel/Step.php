@@ -167,9 +167,11 @@ class Step
      */
     public function throwExceptionIfHaveInvalidValueInTypeObj($stepTypeObj)
     {
-        if (!in_array($stepTypeObj, array("DYNAFORM", "INPUT_DOCUMENT", "OUTPUT_DOCUMENT", "EXTERNAL"))) {
+        $arrayDefaultValues = array("DYNAFORM", "INPUT_DOCUMENT", "OUTPUT_DOCUMENT", "EXTERNAL");
+
+        if (!in_array($stepTypeObj, $arrayDefaultValues)) {
             $field = $this->arrayParamException["stepTypeObj"];
-            throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
+            throw (new \Exception(str_replace(array("{0}", "{1}"), array($field, implode("|", $arrayDefaultValues)), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
         }
     }
 
@@ -182,10 +184,12 @@ class Step
      */
     public function throwExceptionIfHaveInvalidValueInMode($stepMode)
     {
-        if (!in_array($stepMode, array("EDIT", "VIEW"))) {
+        $arrayDefaultValues = array("EDIT", "VIEW");
+
+        if (!in_array($stepMode, $arrayDefaultValues)) {
             $field = $this->arrayParamException["stepMode"];
 
-            throw (new \Exception(str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"")));
+            throw (new \Exception(str_replace(array("{0}", "{1}"), array($field, implode("|", $arrayDefaultValues)), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
         }
     }
 
@@ -201,10 +205,7 @@ class Step
         $step = new \Step();
 
         if (!$step->StepExists($stepUid)) {
-            $field = $this->arrayParamException["stepUid"];
-
-            $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
-            $msg = $msg . str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" does not exist in table {1}");
+            $msg = str_replace(array("{0}", "{1}"), array($this->arrayParamException["stepUid"], $stepUid), "The step with {0}: {1} does not exist.");
 
             throw (new \Exception($msg));
         }
@@ -222,10 +223,7 @@ class Step
         $task = new \Task();
 
         if (!$task->taskExists($taskUid)) {
-            $field = $this->arrayParamException["taskUid"];
-
-            $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
-            $msg = $msg . str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" does not exist in table {1}");
+            $msg = str_replace(array("{0}", "{1}"), array($this->arrayParamException["taskUid"], $taskUid), "The activity with {0}: {1} does not exist.");
 
             throw (new \Exception($msg));
         }
@@ -243,10 +241,7 @@ class Step
         $process = new \Process();
 
         if (!$process->exists($processUid)) {
-            $field = $this->arrayParamException["processUid"];
-
-            $msg = str_replace(array("{0}"), array($field), "Invalid value specified for \"{0}\"") . " / ";
-            $msg = $msg . str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" does not exist in table {1}");
+            $msg = str_replace(array("{0}", "{1}"), array($this->arrayParamException["processUid"], $processUid), "The project with {0}: {1} does not exist.");
 
             throw (new \Exception($msg));
         }
@@ -274,33 +269,33 @@ class Step
             $this->throwExceptionIfNotExistsProcess($processUid);
 
             if (!isset($arrayData["STEP_TYPE_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "Undefined value for \"{0}\", it is required.")));
             }
 
             $arrayData["STEP_TYPE_OBJ"] = trim($arrayData["STEP_TYPE_OBJ"]);
 
             if ($arrayData["STEP_TYPE_OBJ"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "The \"{0}\" attribute is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "Invalid value for \"{0}\", it can not be empty.")));
             }
 
             if (!isset($arrayData["STEP_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "Undefined value for \"{0}\", it is required.")));
             }
 
             $arrayData["STEP_UID_OBJ"] = trim($arrayData["STEP_UID_OBJ"]);
 
             if ($arrayData["STEP_UID_OBJ"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "The \"{0}\" attribute is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "Invalid value for \"{0}\", it can not be empty.")));
             }
 
             if (!isset($arrayData["STEP_MODE"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "Undefined value for \"{0}\", it is required.")));
             }
 
             $arrayData["STEP_MODE"] = trim($arrayData["STEP_MODE"]);
 
             if ($arrayData["STEP_MODE"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "The \"{0}\" attribute is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "Invalid value for \"{0}\", it can not be empty.")));
             }
 
             $this->throwExceptionIfHaveInvalidValueInTypeObj($arrayData["STEP_TYPE_OBJ"]);
@@ -372,18 +367,18 @@ class Step
 
             //Verify data
             if (isset($arrayData["STEP_TYPE_OBJ"]) && !isset($arrayData["STEP_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "Undefined value for \"{0}\", it is required.")));
             }
 
             if (!isset($arrayData["STEP_TYPE_OBJ"]) && isset($arrayData["STEP_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "Undefined value for \"{0}\", it is required.")));
             }
 
             if (isset($arrayData["STEP_TYPE_OBJ"])) {
                 $arrayData["STEP_TYPE_OBJ"] = trim($arrayData["STEP_TYPE_OBJ"]);
 
                 if ($arrayData["STEP_TYPE_OBJ"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "The \"{0}\" attribute is empty")));
+                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "Invalid value for \"{0}\", it can not be empty.")));
                 }
             }
 
@@ -391,7 +386,7 @@ class Step
                 $arrayData["STEP_UID_OBJ"] = trim($arrayData["STEP_UID_OBJ"]);
 
                 if ($arrayData["STEP_UID_OBJ"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "The \"{0}\" attribute is empty")));
+                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "Invalid value for \"{0}\", it can not be empty.")));
                 }
             }
 
@@ -399,7 +394,7 @@ class Step
                 $arrayData["STEP_MODE"] = trim($arrayData["STEP_MODE"]);
 
                 if ($arrayData["STEP_MODE"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "The \"{0}\" attribute is empty")));
+                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "Invalid value for \"{0}\", it can not be empty.")));
                 }
             }
 
@@ -859,7 +854,8 @@ class Step
      *
      * @return void
      */
-    public function moveSteps($pro_uid, $tas_uid, $step_uid, $step_pos) {
+    public function moveSteps($pro_uid, $tas_uid, $step_uid, $step_pos)
+    {
         $this->setFormatFieldNameInUppercase(false);
         $this->setArrayParamException(array("taskUid" => "act_uid"));
         $aSteps = $this->getSteps($tas_uid);

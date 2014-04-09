@@ -221,7 +221,7 @@ class Calendar
             $obj = \CalendarDefinitionPeer::retrieveByPK($calendarUid);
 
             if (!(is_object($obj) && get_class($obj) == "CalendarDefinition")) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $calendarUid), "The calendar with {0}: {1} does not exists");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $calendarUid), "The calendar with {0}: {1} does not exist.");
 
                 throw (new \Exception($msg));
             }
@@ -262,13 +262,19 @@ class Calendar
     public function create($arrayData)
     {
         try {
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+            $validator = new \ProcessMaker\BusinessModel\Validator();
+
+            $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
+            $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
+
+            //Set data
             $arrayData = \G::array_change_key_case2($arrayData, CASE_UPPER);
 
             unset($arrayData["CAL_UID"]);
 
             //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
-
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
             $this->throwExceptionIfExistsName($arrayData["CAL_NAME"], $this->arrayFieldNameForException["calendarName"]);
@@ -295,7 +301,7 @@ class Calendar
             if (isset($arrayData["CAL_WORK_HOUR"])) {
                 foreach ($arrayData["CAL_WORK_HOUR"] as $value) {
                     if ($value["DAY"] != "ALL" && !in_array($value["DAY"], $arrayData["CAL_WORK_DAYS"])) {
-                        throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"]), "Value specified for \"{0}\" does not exists in \"{1}\"")));
+                        throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"]), "Value specified for \"{0}\" does not exist in \"{1}\".")));
                     }
 
                     $arrayCalendarWorkHour[] = array(
@@ -321,11 +327,7 @@ class Calendar
             $arrayDataAux = array();
             $arrayDataAux["CALENDAR_UID"] = \G::generateUniqueID();
             $arrayDataAux["CALENDAR_NAME"] = $arrayData["CAL_NAME"];
-
-            if (isset($arrayData["CAL_DESCRIPTION"])) {
-                $arrayDataAux["CALENDAR_DESCRIPTION"] = $arrayData["CAL_DESCRIPTION"];
-            }
-
+            $arrayDataAux["CALENDAR_DESCRIPTION"] = (isset($arrayData["CAL_DESCRIPTION"]))? $arrayData["CAL_DESCRIPTION"] : "";
             $arrayDataAux["CALENDAR_WORK_DAYS"] = explode("|", $this->workDaysReplaceData(implode("|", $arrayData["CAL_WORK_DAYS"])));
             $arrayDataAux["CALENDAR_STATUS"] = $arrayData["CAL_STATUS"];
 
@@ -361,11 +363,17 @@ class Calendar
     public function update($calendarUid, $arrayData)
     {
         try {
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+            $validator = new \ProcessMaker\BusinessModel\Validator();
+
+            $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
+            $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
+
+            //Set data
             $arrayData = \G::array_change_key_case2($arrayData, CASE_UPPER);
 
             //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
-
             $this->throwExceptionIfNotExistsCalendar($calendarUid, $this->arrayFieldNameForException["calendarUid"]);
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
@@ -400,7 +408,7 @@ class Calendar
 
             foreach ($arrayAux as $value) {
                 if (isset($arrayData["CAL_WORK_HOUR"]) && $value["DAY"] != "ALL" && !in_array($value["DAY"], $calendarWorkDays)) {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"]), "Value specified for \"{0}\" does not exists in \"{1}\"")));
+                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"]), "Value specified for \"{0}\" does not exist in \"{1}\".")));
                 }
 
                 $arrayCalendarWorkHour[] = array(

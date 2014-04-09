@@ -13,14 +13,14 @@ Scenario: Returns a list of the generated documents for a given cases
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 6 records
+    And the response has 1 records
     
 
 Scenario: Returns an generated document for a given case
-    Given I request "cases/33125846153383cecdf64f1079330191/output-document/3000248055333006ab56a01005891659"
+    Given I request "cases/33125846153383cecdf64f1079330191/output-document/75468909953383d0bc42f96046736849"
     Then the response status code should be 200
     And the response charset is "UTF-8"
-    And the type is "Object"
+    And the type is "object"
     
 
 Scenario: Generate or regenerates an output documents for a given case

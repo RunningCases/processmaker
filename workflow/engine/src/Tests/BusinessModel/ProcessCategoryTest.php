@@ -41,6 +41,20 @@ class ProcessCategoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test error for incorrect value of category name in array
+     *
+     * @covers \BusinessModel\ProcessCategory::addCategory
+     * @expectedException        Exception
+     * @expectedExceptionMessage cat_name. Process Category name can't be null
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testAddCategoryErrorIncorrectValue()
+    {
+        $this->oCategory->addCategory('');
+    }
+
+    /**
      * Test add Category
      *
      * @covers \BusinessModel\ProcessCategory::addCategory
@@ -53,6 +67,34 @@ class ProcessCategoryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($response));
         $aResponse = json_decode(json_encode($response), true);
         return $aResponse;
+    }
+
+    /**
+     * Test error for incorrect value of category name in array
+     *
+     * @covers \BusinessModel\ProcessCategory::addCategory
+     * @expectedException        Exception
+     * @expectedExceptionMessage cat_name. Duplicate Process Category name
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testAddCategoryErrorDuplicateValue()
+    {
+        $this->oCategory->addCategory('New Category Test');
+    }
+
+    /**
+     * Test error for incorrect value of category name in array
+     *
+     * @covers \BusinessModel\ProcessCategory::updateCategory
+     * @expectedException        Exception
+     * @expectedExceptionMessage cat_name. Duplicate Process Category name
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testUpdateCategoryErrorDuplicateValue()
+    {
+        $this->oCategory->addCategory('New Category Test');
     }
 
     /**
@@ -71,6 +113,20 @@ class ProcessCategoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test error for incorrect value of category id
+     *
+     * @covers \BusinessModel\ProcessCategory::getCategory
+     * @expectedException        Exception
+     * @expectedExceptionMessage The Category with cat_uid: 12345678912345678912345678912345678 doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testGetErrorValue()
+    {
+        $this->oCategory->getCategory('12345678912345678912345678912345678');
+    }
+
+    /**
      * Test get Category
      *
      * @covers \BusinessModel\ProcessCategory::getCategory
@@ -85,6 +141,19 @@ class ProcessCategoryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($response));
     }
 
+    /**
+     * Test error for incorrect value of category id
+     *
+     * @covers \BusinessModel\ProcessCategory::deleteCategory
+     * @expectedException        Exception
+     * @expectedExceptionMessage The Category with cat_uid: 12345678912345678912345678912345678 doesn't exist!
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function testDeleteErrorValue()
+    {
+        $this->oCategory->deleteCategory('12345678912345678912345678912345678');
+    }
 
     /**
      * Test delete Category
