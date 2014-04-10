@@ -203,7 +203,7 @@ class Translation extends BaseTranslation
         $translation = Array ();
 
         $c = new Criteria();
-        $c->add( TranslationPeer::TRN_ID, '%ID_MAFE_%', CRITERIA::LIKE );
+        $c->add( TranslationPeer::TRN_ID, '%ID_MAFE_%', Criteria::LIKE );
         $c->addAscendingOrderByColumn( 'TRN_CATEGORY' );
         $c->addAscendingOrderByColumn( 'TRN_ID' );
         $c->addAscendingOrderByColumn( 'TRN_LANG' );
@@ -224,7 +224,7 @@ class Translation extends BaseTranslation
                 G::mk_dir( dirname( $mafeFolder, 0777 ) );
             }
             if (! is_dir( dirname( $cacheFileMafe ) )) {
-                G::mk_dir( dirname( $cacheFileMafe ) );
+                G::mk_dir( dirname( $cacheFileMafe, 0777 ) );
             }
 
             $f = fopen( $cacheFileMafe, 'w+' );
