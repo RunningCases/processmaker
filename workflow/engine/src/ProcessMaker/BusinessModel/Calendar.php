@@ -8,8 +8,8 @@ class Calendar
 
         "CAL_NAME"        => array("fieldName" => "CALENDAR_NAME",        "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array(), "fieldNameAux" => "calendarName"),
         "CAL_DESCRIPTION" => array("fieldName" => "CALENDAR_DESCRIPTION", "type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "calendarDescription"),
-        "CAL_WORK_DAYS"   => array("fieldName" => "CALENDAR_WORK_DAYS",   "type" => "array",    "required" => true,  "empty" => false, "defaultValues" => array("SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"), "fieldNameAux" => "calendarWorkDays"),
-        "CAL_STATUS"      => array("fieldName" => "CALENDAR_STATUS",      "type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array("ACTIVE", "INACTIVE"), "fieldNameAux" => "calendarStatus"),
+        "CAL_WORK_DAYS"   => array("fieldName" => "CALENDAR_WORK_DAYS",   "type" => "array",    "required" => true,  "empty" => false, "defaultValues" => array(1, 2, 3, 4, 5, 6, 7), "fieldNameAux" => "calendarWorkDays"),
+        "CAL_STATUS"      => array("fieldName" => "CALENDAR_STATUS",      "type" => "string",   "required" => false, "empty" => false, "defaultValues" => array("ACTIVE", "INACTIVE"), "fieldNameAux" => "calendarStatus"),
         "CAL_WORK_HOUR"   => array("fieldName" => "CALENDAR_WORK_HOUR",   "type" => "array",    "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "calendarWorkHour"),
         "CAL_HOLIDAY"     => array("fieldName" => "CALENDAR_HOLIDAY",     "type" => "array",    "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "calendarHoliday"),
 
@@ -18,9 +18,9 @@ class Calendar
     );
 
     private $arrayWorkHourFieldDefinition = array(
-        "DAY"        => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array("SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT", "ALL"), "fieldNameAux" => "day"),
-        "HOUR_START" => array("type" => "hour",   "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "hourStart"),
-        "HOUR_END"   => array("type" => "hour",   "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "hourEnd")
+        "DAY"        => array("type" => "int",  "required" => true, "empty" => false, "defaultValues" => array(0, 1, 2, 3, 4, 5, 6, 7), "fieldNameAux" => "day"),
+        "HOUR_START" => array("type" => "hour", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "hourStart"),
+        "HOUR_END"   => array("type" => "hour", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "hourEnd")
     );
 
     private $arrayHolidayFieldDefinition = array(
@@ -188,20 +188,50 @@ class Calendar
     }
 
     /**
-     * Replace and Get Work Days
+     * Transform Work Days
      *
-     * @param string $workDays Work days
-     * @param bool   $toNumber If is true replace to numbers, replace to string otherwise
+     * @param mixed $workDays Work days
+     * @param bool  $toDb     If is true transform data to represent it according to database, do the reverse otherwise
      *
-     * return string Return Work days
+     * return mixed Return Work days
      */
-    public function workDaysReplaceData($workDays, $toNumber = true)
+    public function workDaysTransformData($workDays, $toDb = true)
     {
         try {
-            $arrayDayString = array("SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT", "ALL");
-            $arrayDayNumber = array(0, 1, 2, 3, 4, 5, 6, 7);
+            $arrayDayName = array("SUN", "ALL");
+            $arrayDay     = array(7, 0);
+            $arrayDayDb   = array(0, 7);
 
-            return ($toNumber)? str_replace($arrayDayString, $arrayDayNumber, $workDays) : str_replace($arrayDayNumber, $arrayDayString, $workDays);
+            $data = (is_string($workDays) && preg_match("/\|/", $workDays))? explode("|", $workDays) : $workDays;
+            $type = "int";
+
+            if (is_array($data)) {
+                $data = implode("|", $data);
+                $type = "array";
+            }
+
+            if ($toDb) {
+                $data = str_replace($arrayDay, $arrayDayName, $data);
+                $data = str_replace($arrayDayName, $arrayDayDb, $data);
+            } else {
+                $data = str_replace($arrayDayDb, $arrayDayName, $data);
+                $data = str_replace($arrayDayName, $arrayDay, $data);
+            }
+
+            switch ($type) {
+                case "int":
+                    $data = (int)($data);
+                    break;
+                case "array":
+                    $data = explode("|", $data);
+
+                    foreach ($data as $key => $value) {
+                        $data[$key] = (int)($value);
+                    }
+                    break;
+            }
+
+            return $data;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -300,12 +330,12 @@ class Calendar
 
             if (isset($arrayData["CAL_WORK_HOUR"])) {
                 foreach ($arrayData["CAL_WORK_HOUR"] as $value) {
-                    if ($value["DAY"] != "ALL" && !in_array($value["DAY"], $arrayData["CAL_WORK_DAYS"])) {
+                    if ($value["DAY"] != 0 && !in_array($value["DAY"], $arrayData["CAL_WORK_DAYS"], true)) {
                         throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"]), "Value specified for \"{0}\" does not exist in \"{1}\".")));
                     }
 
                     $arrayCalendarWorkHour[] = array(
-                        "CALENDAR_BUSINESS_DAY"   => $this->workDaysReplaceData($value["DAY"]),
+                        "CALENDAR_BUSINESS_DAY"   => $this->workDaysTransformData($value["DAY"]),
                         "CALENDAR_BUSINESS_START" => $value["HOUR_START"],
                         "CALENDAR_BUSINESS_END"   => $value["HOUR_END"]
                     );
@@ -328,8 +358,8 @@ class Calendar
             $arrayDataAux["CALENDAR_UID"] = \G::generateUniqueID();
             $arrayDataAux["CALENDAR_NAME"] = $arrayData["CAL_NAME"];
             $arrayDataAux["CALENDAR_DESCRIPTION"] = (isset($arrayData["CAL_DESCRIPTION"]))? $arrayData["CAL_DESCRIPTION"] : "";
-            $arrayDataAux["CALENDAR_WORK_DAYS"] = explode("|", $this->workDaysReplaceData(implode("|", $arrayData["CAL_WORK_DAYS"])));
-            $arrayDataAux["CALENDAR_STATUS"] = $arrayData["CAL_STATUS"];
+            $arrayDataAux["CALENDAR_WORK_DAYS"] = $this->workDaysTransformData($arrayData["CAL_WORK_DAYS"]);
+            $arrayDataAux["CALENDAR_STATUS"] = (isset($arrayData["CAL_STATUS"]))? $arrayData["CAL_STATUS"] : "ACTIVE";
 
             $arrayDataAux["BUSINESS_DAY"] = $arrayCalendarWorkHour;
             $arrayDataAux["HOLIDAY"] = $arrayCalendarHoliday;
@@ -401,18 +431,18 @@ class Calendar
             //Set variables
             $arrayCalendarData = \G::array_change_key_case2($this->getCalendar($calendarUid), CASE_UPPER);
 
-            $calendarWorkDays = (isset($arrayData["CAL_WORK_DAYS"]))? $arrayData["CAL_WORK_DAYS"] : $arrayCalendarData["CAL_WORK_DAYS"];
+            $calendarWorkDays = (isset($arrayData["CAL_WORK_DAYS"]))? $arrayData["CAL_WORK_DAYS"] : array_keys($arrayCalendarData["CAL_WORK_DAYS"]);
 
             $arrayCalendarWorkHour = array();
             $arrayAux = (isset($arrayData["CAL_WORK_HOUR"]))? $arrayData["CAL_WORK_HOUR"] : $arrayCalendarData["CAL_WORK_HOUR"];
 
             foreach ($arrayAux as $value) {
-                if (isset($arrayData["CAL_WORK_HOUR"]) && $value["DAY"] != "ALL" && !in_array($value["DAY"], $calendarWorkDays)) {
+                if (isset($arrayData["CAL_WORK_HOUR"]) && $value["DAY"] != 0 && !in_array($value["DAY"], $calendarWorkDays, true)) {
                     throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"]), "Value specified for \"{0}\" does not exist in \"{1}\".")));
                 }
 
                 $arrayCalendarWorkHour[] = array(
-                    "CALENDAR_BUSINESS_DAY"   => $this->workDaysReplaceData($value["DAY"]),
+                    "CALENDAR_BUSINESS_DAY"   => $this->workDaysTransformData($value["DAY"]),
                     "CALENDAR_BUSINESS_START" => $value["HOUR_START"],
                     "CALENDAR_BUSINESS_END"   => $value["HOUR_END"]
                 );
@@ -433,7 +463,7 @@ class Calendar
             $arrayDataAux["CALENDAR_UID"] = $calendarUid;
             $arrayDataAux["CALENDAR_NAME"] = (isset($arrayData["CAL_NAME"]))? $arrayData["CAL_NAME"] : $arrayCalendarData["CAL_NAME"];
             $arrayDataAux["CALENDAR_DESCRIPTION"] = (isset($arrayData["CAL_DESCRIPTION"]))? $arrayData["CAL_DESCRIPTION"] : $arrayCalendarData["CAL_DESCRIPTION"];
-            $arrayDataAux["CALENDAR_WORK_DAYS"] = explode("|", $this->workDaysReplaceData(implode("|", $calendarWorkDays)));
+            $arrayDataAux["CALENDAR_WORK_DAYS"] = $this->workDaysTransformData($calendarWorkDays);
             $arrayDataAux["CALENDAR_STATUS"] = (isset($arrayData["CAL_STATUS"]))? $arrayData["CAL_STATUS"] : $arrayCalendarData["CAL_STATUS"];
 
             $arrayDataAux["BUSINESS_DAY"] = $arrayCalendarWorkHour;
@@ -531,7 +561,7 @@ class Calendar
 
             foreach ($arrayData as $value) {
                 $arrayCalendarWorkHour[] = array(
-                    $this->getFieldNameByFormatFieldName("DAY")        => $this->workDaysReplaceData($value["CALENDAR_BUSINESS_DAY"] . "", false),
+                    $this->getFieldNameByFormatFieldName("DAY")        => $this->workDaysTransformData($value["CALENDAR_BUSINESS_DAY"] . "", false),
                     $this->getFieldNameByFormatFieldName("HOUR_START") => $value["CALENDAR_BUSINESS_START"] . "",
                     $this->getFieldNameByFormatFieldName("HOUR_END")   => $value["CALENDAR_BUSINESS_END"] . "",
                 );
@@ -548,16 +578,30 @@ class Calendar
                 );
             }
 
+            $conf = new \Configurations();
+            $confEnvSetting = $conf->getFormats();
+
+            $dateTime = new \DateTime($record["CALENDAR_CREATE_DATE"]);
+            $dateCreate = $dateTime->format($confEnvSetting["dateFormat"]);
+            $dateTime = new \DateTime($record["CALENDAR_UPDATE_DATE"]);
+            $dateUpdate = $dateTime->format($confEnvSetting["dateFormat"]);
+
+            $arrayCalendarWorkDays = array();
+
+            foreach ($this->workDaysTransformData($record["CALENDAR_WORK_DAYS"] . "", false) as $value) {
+                $arrayCalendarWorkDays[$value] = \G::LoadTranslation("ID_WEEKDAY_" . (($value != 7)? $value : 0));
+            }
+
             return array(
                 $this->getFieldNameByFormatFieldName("CAL_UID")             => $record["CALENDAR_UID"],
                 $this->getFieldNameByFormatFieldName("CAL_NAME")            => $record["CALENDAR_NAME"],
                 $this->getFieldNameByFormatFieldName("CAL_DESCRIPTION")     => $record["CALENDAR_DESCRIPTION"] . "",
-                $this->getFieldNameByFormatFieldName("CAL_WORK_DAYS")       => explode("|", $this->workDaysReplaceData($record["CALENDAR_WORK_DAYS"] . "", false)),
+                $this->getFieldNameByFormatFieldName("CAL_WORK_DAYS")       => $arrayCalendarWorkDays,
                 $this->getFieldNameByFormatFieldName("CAL_STATUS")          => $record["CALENDAR_STATUS"],
                 $this->getFieldNameByFormatFieldName("CAL_WORK_HOUR")       => $arrayCalendarWorkHour,
                 $this->getFieldNameByFormatFieldName("CAL_HOLIDAY")         => $arrayCalendarHoliday,
-                $this->getFieldNameByFormatFieldName("CAL_CREATE_DATE")     => $record["CALENDAR_CREATE_DATE"] . "",
-                $this->getFieldNameByFormatFieldName("CAL_UPDATE_DATE")     => $record["CALENDAR_UPDATE_DATE"] . "",
+                $this->getFieldNameByFormatFieldName("CAL_CREATE_DATE")     => $dateCreate,
+                $this->getFieldNameByFormatFieldName("CAL_UPDATE_DATE")     => $dateUpdate,
                 $this->getFieldNameByFormatFieldName("CAL_TOTAL_USERS")     => (int)($record["CALENDAR_TOTAL_USERS"]),
                 $this->getFieldNameByFormatFieldName("CAL_TOTAL_PROCESSES") => (int)($record["CALENDAR_TOTAL_PROCESSES"]),
                 $this->getFieldNameByFormatFieldName("CAL_TOTAL_TASKS")     => (int)($record["CALENDAR_TOTAL_TASKS"])

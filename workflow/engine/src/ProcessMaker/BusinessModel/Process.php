@@ -205,7 +205,7 @@ class Process
                             }
 
                             //defaultValues
-                            if (count($arrayFieldDefinition[$fieldName]["defaultValues"]) > 0 && !in_array($fieldValue, $arrayFieldDefinition[$fieldName]["defaultValues"])) {
+                            if (count($arrayFieldDefinition[$fieldName]["defaultValues"]) > 0 && !in_array($fieldValue, $arrayFieldDefinition[$fieldName]["defaultValues"], true)) {
                                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($fieldNameAux, implode("|", $arrayFieldDefinition[$fieldName]["defaultValues"])), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
                             }
 
@@ -276,7 +276,7 @@ class Process
                                         }
 
                                         foreach ($arrayAux as $value) {
-                                            if (!in_array($value, $arrayFieldDefinition[$fieldName]["defaultValues"])) {
+                                            if (!in_array($value, $arrayFieldDefinition[$fieldName]["defaultValues"], true)) {
                                                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($fieldNameAux, implode("|", $arrayFieldDefinition[$fieldName]["defaultValues"])), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
                                             }
                                         }
