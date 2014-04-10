@@ -169,6 +169,7 @@ class Translation extends BaseTranslation
             if (! is_dir( dirname( $cacheFileJS ) )) {
                 G::mk_dir( dirname( $cacheFileJS ) );
             }
+
             $f = fopen( $cacheFile, 'w+' );
             fwrite( $f, "<?php\n" );
             fwrite( $f, '$translation =' . 'unserialize(\'' . addcslashes( serialize( $translation ), '\\\'' ) . "');\n" );
@@ -178,7 +179,7 @@ class Translation extends BaseTranslation
             //$json = new Services_JSON(); DEPRECATED
             $f = fopen( $cacheFileJS, 'w' );
             if ($f == false) {
-               error_log("Error: Cannot write into cachefilejs: $cacheFileJS\n"); 
+               error_log("Error: Cannot write into cachefilejs: $cacheFileJS\n");
             } else {
               fwrite( $f, "var G_STRINGS =" . Bootstrap::json_encode( $translationJS ) . ";\n");
               fclose( $f );
@@ -188,6 +189,55 @@ class Translation extends BaseTranslation
             $res['cacheFileJS'] = $cacheFileJS;
             $res['rows'] = count( $translation );
             $res['rowsJS'] = count( $translationJS );
+            return $res;
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+    }
+
+    /* Load strings from a Database for labels MAFE.
+     *
+    */
+    public function generateFileTranslationMafe ()
+    {
+        $translation = Array ();
+
+        $c = new Criteria();
+        $c->add( TranslationPeer::TRN_ID, '%ID_MAFE_%', Criteria::LIKE );
+        $c->addAscendingOrderByColumn( 'TRN_CATEGORY' );
+        $c->addAscendingOrderByColumn( 'TRN_ID' );
+        $c->addAscendingOrderByColumn( 'TRN_LANG' );
+        $tranlations = TranslationPeer::doSelect( $c );
+
+        $mafeFolder = PATH_HTML . "translations";
+        $cacheFileMafe = PATH_HTML . "translations" . PATH_SEP. 'translationsMafe' . ".js";
+
+        foreach ($tranlations as $key => $row) {
+            if ($row->getTrnCategory() === 'LABEL') {
+                    $translation[$row->getTrnLang()][$row->getTrnId()] = $row->getTrnValue();
+            }
+        }
+
+        try {
+
+            if (! is_dir( dirname( $mafeFolder ) )) {
+                G::mk_dir( dirname( $mafeFolder, 0777 ) );
+            }
+            if (! is_dir( dirname( $cacheFileMafe ) )) {
+                G::mk_dir( dirname( $cacheFileMafe, 0777 ) );
+            }
+
+            $f = fopen( $cacheFileMafe, 'w+' );
+            if ($f == false) {
+               error_log("Error: Cannot write into cacheFileMafe: $cacheFileMafe\n");
+            } else {
+              fwrite( $f, "var __TRANSLATIONMAFE = " . Bootstrap::json_encode( $translation ) . ";\n");
+              fclose( $f );
+            }
+
+            $res['cacheFileMafe'] = $cacheFileMafe;
+            $res['languague'] = count($cacheFileMafe);
+            $res['rowsMafeJS'] = count( $translation );
             return $res;
         } catch (Exception $e) {
             echo $e->getMessage();
