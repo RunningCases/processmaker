@@ -330,10 +330,10 @@ class workspaceTools
             $extension = array_pop($names);
             $langid = array_pop($names);
             CLI::logging("Updating database translations with $poName\n");
-            Language::import($poFile, false, true);
+            Language::import($poFile, false, true, false);
             if ($first) {
                 CLI::logging("Updating XML form translations with $poName\n");
-                Language::import($poFile, true, false);
+                Language::import($poFile, true, false, true);
             }
         }
     }
