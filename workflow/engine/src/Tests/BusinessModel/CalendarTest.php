@@ -41,11 +41,10 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
             $arrayData = array(
                 "CAL_NAME"        => "PHPUnit Calendar$i",
                 "CAL_DESCRIPTION" => "Description",
-                "CAL_WORK_DAYS"   => array("MON", "TUE", "WED", "THU", "FRI"),
-                "CAL_STATUS"      => "ACTIVE",
+                "CAL_WORK_DAYS"   => array(1, 2, 3, 4, 5),
                 "CAL_WORK_HOUR" => array(
-                    array("DAY" => "ALL", "HOUR_START" => "00:00", "HOUR_END" => "00:00"),
-                    array("DAY" => "MON", "HOUR_START" => "09:00", "HOUR_END" => "17:00")
+                    array("DAY" => 0, "HOUR_START" => "00:00", "HOUR_END" => "00:00"),
+                    array("DAY" => 1, "HOUR_START" => "09:00", "HOUR_END" => "17:00")
                 ),
                 "CAL_HOLIDAY" => array(
                     array("NAME" => "holiday1", "DATE_START" => "2014-03-01", "DATE_END" => "2014-03-31"),
@@ -65,9 +64,9 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
 
         //Create - Japanese characters
         $arrayData = array(
-            "CAL_NAME"      => "私の名前（PHPUnitの）",
-            "CAL_WORK_DAYS" => array("MON", "TUE", "WED", "THU", "FRI"),
-            "CAL_STATUS"    => "ACTIVE"
+            "CAL_NAME"        => "私の名前（PHPUnitの）",
+            "CAL_DESCRIPTION" => "Description",
+            "CAL_WORK_DAYS"   => array(1, 2, 3, 4, 5)
         );
 
         $arrayCalendar = self::$calendar->create($arrayData);
@@ -131,7 +130,6 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($arrayCalendar[0]["CAL_UID"], $arrayRecord[0]["CAL_UID"]);
         $this->assertEquals($arrayCalendar[0]["CAL_NAME"], $arrayRecord[0]["CAL_NAME"]);
         $this->assertEquals($arrayCalendar[0]["CAL_DESCRIPTION"], $arrayRecord[0]["CAL_DESCRIPTION"]);
-        $this->assertEquals($arrayCalendar[0]["CAL_STATUS"], $arrayRecord[0]["CAL_STATUS"]);
     }
 
     /**
@@ -153,7 +151,6 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($arrayCalendar["CAL_UID"], $arrayRecord[0]["CAL_UID"]);
         $this->assertEquals($arrayCalendar["CAL_NAME"], $arrayRecord[0]["CAL_NAME"]);
         $this->assertEquals($arrayCalendar["CAL_DESCRIPTION"], $arrayRecord[0]["CAL_DESCRIPTION"]);
-        $this->assertEquals($arrayCalendar["CAL_STATUS"], $arrayRecord[0]["CAL_STATUS"]);
 
         //Get - Japanese characters
         $arrayCalendar = self::$calendar->getCalendar($arrayRecord[self::$numCalendar]["CAL_UID"]);
@@ -161,9 +158,9 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($arrayCalendar));
         $this->assertNotEmpty($arrayCalendar);
 
+        $this->assertEquals($arrayCalendar["CAL_UID"], $arrayRecord[self::$numCalendar]["CAL_UID"]);
         $this->assertEquals($arrayCalendar["CAL_NAME"], "私の名前（PHPUnitの）");
-        $this->assertEquals($arrayCalendar["CAL_WORK_DAYS"], array("MON", "TUE", "WED", "THU", "FRI"));
-        $this->assertEquals($arrayCalendar["CAL_STATUS"], "ACTIVE");
+        $this->assertEquals($arrayCalendar["CAL_DESCRIPTION"], "Description");
     }
 
     /**
@@ -209,8 +206,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
         $arrayData = array(
             //"CAL_NAME"        => "PHPUnit Calendar",
             "CAL_DESCRIPTION" => "Description",
-            "CAL_WORK_DAYS"   => array("MON", "TUE", "WED", "THU", "FRI"),
-            "CAL_STATUS"      => "ACTIVE"
+            "CAL_WORK_DAYS"   => array(1, 2, 3, 4, 5)
         );
 
         $arrayCalendar = self::$calendar->create($arrayData);
@@ -229,8 +225,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
         $arrayData = array(
             "CAL_NAME"        => "",
             "CAL_DESCRIPTION" => "Description",
-            "CAL_WORK_DAYS"   => array("MON", "TUE", "WED", "THU", "FRI"),
-            "CAL_STATUS"      => "ACTIVE"
+            "CAL_WORK_DAYS"   => array(1, 2, 3, 4, 5)
         );
 
         $arrayCalendar = self::$calendar->create($arrayData);
@@ -242,15 +237,14 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @covers \ProcessMaker\BusinessModel\Calendar::create
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage Invalid value for "CAL_WORK_DAYS", it only accepts values: "SUN|MON|TUE|WED|THU|FRI|SAT".
+     * @expectedExceptionMessage Invalid value for "CAL_WORK_DAYS", it only accepts values: "1|2|3|4|5|6|7".
      */
     public function testCreateExceptionInvalidDataCalWorkDays()
     {
         $arrayData = array(
             "CAL_NAME"        => "PHPUnit Calendar",
             "CAL_DESCRIPTION" => "Description",
-            "CAL_WORK_DAYS"   => array("MONDAY", "TUE", "WED", "THU", "FRI"),
-            "CAL_STATUS"      => "ACTIVE"
+            "CAL_WORK_DAYS"   => array(10, 2, 3, 4, 5)
         );
 
         $arrayCalendar = self::$calendar->create($arrayData);
@@ -269,8 +263,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
         $arrayData = array(
             "CAL_NAME"        => "PHPUnit Calendar0",
             "CAL_DESCRIPTION" => "Description",
-            "CAL_WORK_DAYS"   => array("MON", "TUE", "WED", "THU", "FRI"),
-            "CAL_STATUS"      => "ACTIVE"
+            "CAL_WORK_DAYS"   => array(1, 2, 3, 4, 5),
         );
 
         $arrayCalendar = self::$calendar->create($arrayData);
@@ -319,8 +312,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
         $arrayData = array(
             "CAL_NAME"        => "PHPUnit Calendar",
             "CAL_DESCRIPTION" => "Description",
-            "CAL_WORK_DAYS"   => array("MON", "TUE", "WED", "THU", "FRI"),
-            "CAL_STATUS"      => "ACTIVE"
+            "CAL_WORK_DAYS"   => array(1, 2, 3, 4, 5),
         );
 
         $arrayCalendar = self::$calendar->update("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", $arrayData);
@@ -342,8 +334,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
         $arrayData = array(
             "CAL_NAME"        => "",
             "CAL_DESCRIPTION" => "Description",
-            "CAL_WORK_DAYS"   => array("MON", "TUE", "WED", "THU", "FRI"),
-            "CAL_STATUS"      => "ACTIVE"
+            "CAL_WORK_DAYS"   => array(1, 2, 3, 4, 5),
         );
 
         $arrayCalendar = self::$calendar->update($arrayRecord[0]["CAL_UID"], $arrayData);
@@ -358,15 +349,14 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @param   array $arrayRecord Data of the calendars
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage Invalid value for "CAL_WORK_DAYS", it only accepts values: "SUN|MON|TUE|WED|THU|FRI|SAT".
+     * @expectedExceptionMessage Invalid value for "CAL_WORK_DAYS", it only accepts values: "1|2|3|4|5|6|7".
      */
     public function testUpdateExceptionInvalidDataCalWorkDays($arrayRecord)
     {
         $arrayData = array(
             "CAL_NAME"        => "PHPUnit Calendar",
             "CAL_DESCRIPTION" => "Description",
-            "CAL_WORK_DAYS"   => array("MONDAY", "TUE", "WED", "THU", "FRI"),
-            "CAL_STATUS"      => "ACTIVE"
+            "CAL_WORK_DAYS"   => array(10, 2, 3, 4, 5),
         );
 
         $arrayCalendar = self::$calendar->update($arrayRecord[0]["CAL_UID"], $arrayData);
