@@ -1,4 +1,4 @@
-ou  @ProcessMakerMichelangelo @RestAPI
+@ProcessMakerMichelangelo @RestAPI
 Feature: Process Category
   Requirements:
     a workspace with the workspace with one process category
