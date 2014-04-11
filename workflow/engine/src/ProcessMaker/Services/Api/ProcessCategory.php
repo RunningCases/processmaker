@@ -14,7 +14,7 @@ class ProcessCategory extends Api
     private $formatFieldNameInUppercase = false;
 
     /**
-     * @url GET
+     * @url GET /categories
      */
     public function doGetCategories($filter = null, $start = null, $limit = null)
     {
@@ -31,7 +31,7 @@ class ProcessCategory extends Api
     }
 
     /**
-     * @url GET /:cat_uid
+     * @url GET /category/:cat_uid
      *
      * @param string $cat_uid     {@min 32}{@max 32}
      */
@@ -50,7 +50,7 @@ class ProcessCategory extends Api
     }
 
     /**
-     * @url POST
+     * @url POST /category
      *
      * @param string $cat_name
      *
@@ -68,7 +68,7 @@ class ProcessCategory extends Api
     }
 
     /**
-     * @url PUT /:cat_uid
+     * @url PUT /category/:cat_uid
      *
      * @param string $cat_uid     {@min 32}{@max 32}
      * @param string $cat_name
@@ -87,7 +87,7 @@ class ProcessCategory extends Api
     }
 
     /**
-     * @url DELETE /:cat_uid
+     * @url DELETE /category/:cat_uid
      *
      * @param string $cat_uid     {@min 32}{@max 32}
      *
@@ -103,3 +103,4 @@ class ProcessCategory extends Api
         }
     }
 }
+
