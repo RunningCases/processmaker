@@ -12,7 +12,7 @@ Background:
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "array"
-        And the response has 16 record
+        And the response has 15 record
 
     
     Scenario: Get a single department of de Sales Division department 
@@ -31,8 +31,21 @@ Background:
         And the "dep_manager_firstname" property equals "Dylan"
         And the "dep_manager_lastname" property equals "Burns"
         And the "has_children" property equals "0"
+
+
+    Scenario: Get a List of Assigned User (Department: Sales Division)
+        Given I request "department/12921473252d567506e6e63079240767/assigned-user"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "array"
+        And the response has 4 record
+        And the "usr_username" property equals "joseph"
+        And the "usr_firstname" property equals "Joseph"
+        And the "usr_lastname" property equals "Bittner"
+        And the "usr_status" property equals "ACTIVE"
+        And the "usr_supervisor" property equals false
+
         
-  
     Scenario Outline: Create a new departments in the workspace
         Given POST this data:
             """
@@ -77,12 +90,12 @@ Background:
         And the response status message should have the following text "exist"
     
     
-    Scenario: List all Departaments in the workspace when exactly are 21 departaments created
+    Scenario: List all Departaments in the workspace when exactly are 20 departaments created
         Given I request "department"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "array"
-        And the response has 19 record
+        And the response has 20 record
 
            
     Scenario Outline: Update a department created in this script
@@ -126,25 +139,108 @@ Background:
         | 3              | Department 3 UPDATE  | ACTIVE     |
 
 
-     #Scenario: Assign user to department created in this script
-   #     Given POST this data:
-    #        """
-     #       {
+    Scenario Outline: Assign user to department created in this script
+        Given PUT this data:
+        """
+        {
 
-             #  "dep_title" : "TestDepartment",
-              #  "dep_parent" : "",git 
-               # "dep_status" : "ACTIVE"
+        }
+        """
+        And that I want to update a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
+        And I request "department/<dep_uid>/assign-user/<usr_uid>"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the content type is "application/json"
+        And the type is "object"
+        And store "dep_uid" in session array
 
-            #}
-            #"""
-        #And I request "department/<dep_uid>/assign-user/62511352152d5673bba9cd4062743508 "
-        #Then the response status code should be 201
-        #And the response charset is "UTF-8"
-        #And the content type is "application/json"
-        #And the type is "object"
-        #And store "dep_uid" in session array
+        Examples:
+
+        | Description                                                | dep_uid_number | usr_uid                          |
+        | Assign user arlene in department 1 created in this script  | 1              | 23085901752d5671483a4c2059274810 |
+        | Assign user andrew in department 1 created in this script  | 1              | 23085901752d5671483a4c2059274810 | 
+        | Assign user amy in department 2 created in this script     | 2              | 25286582752d56713231082039265791 |
+        | Assign user sandra in department 2 created in this script  | 2              | 25286582752d56713231082039265791 | 
+        | Assign user francis in department 5 created in this script | 5              | 62511352152d5673bba9cd4062743508 | 
 
    
+    Scenario Outline: Set manager user to department
+        Given PUT this data:
+        """
+        {
+
+        }
+        """
+        And that I want to update a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
+        And I request "department/<dep_uid>/set-manager/<usr_uid>"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the content type is "application/json"
+        And the type is "object"
+        And store "dep_uid" in session array
+
+
+        Examples:
+
+        | Description                          | dep_uid_number | usr_uid                          |
+        | Set manager user "arlene" in group 1 | 1              | 23085901752d5671483a4c2059274810 |
+        | Set manager user "sandra" in group 2 | 2              | 25286582752d56713231082039265791 | 
+        
+
+    Scenario Outline: Get a single department of created in this script 
+        Given that I want to get a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
+        And I request "department/<dep_uid>"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "object"
+        And that "dep_title" is set to "<dep_title>"
+        And that "dep_status" is set to "<dep_status>"
+        And that "dep_manager" is set to "<dep_manager>"
+        And that "dep_manager_username" is set to "<dep_manager_username>"
+        And that "dep_manager_firstname" is set to "<dep_manager_firstname>"
+        And that "dep_manager_lastname" is set to "<dep_manager_lastname>"
+
+        Examples:
+
+        | dep_uid_number | dep_title           | dep_status | dep_manager                      | dep_manager_username | dep_manager_firstname | dep_manager_lastname |
+        | 1              | Department 1 UPDATE | ACTIVE     | 23085901752d5671483a4c2059274810 | arlene               | Arlene                | Cleveland            |
+        | 2              | Department 2        | ACTIVE     | 25286582752d56713231082039265791 | sandra               | Sandra                | Casey                |
+        
+      
+    Scenario Outline: Unassign a User to department
+        Given POST this data:
+        """
+        {
+
+        }
+        """
+        And that I want to update a resource with the key "dep_uid" stored in session array
+        And I request "department/<dep_uid>/unassign-user/23085901752d5671483a4c2059274810"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the content type is "application/json"
+        And the type is "object"
+        And store "dep_uid" in session array
+
+
+        Examples:
+
+        | Description                                                  | dep_uid_number | usr_uid                          |
+        | Unassign user arlene in department 1 created in this script  | 1              | 23085901752d5671483a4c2059274810 |
+        | Unassign user andrew in department 1 created in this script  | 1              | 23085901752d5671483a4c2059274810 | 
+        | Unassign user amy in department 2 created in this script     | 2              | 25286582752d56713231082039265791 |
+        | Unassign user sandra in department 2 created in this script  | 2              | 25286582752d56713231082039265791 | 
+        | Unassign user francis in department 5 created in this script | 5              | 62511352152d5673bba9cd4062743508 |
+
+
+    Scenario: List all Departaments in the workspace when exactly are 15 departaments created
+        Given I request "department"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "array"
+        And the response has 20 record
+
+
     Scenario Outline: Delete a department created in this script
         Given that I want to delete a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
         And I request "department"
@@ -168,4 +264,4 @@ Background:
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "array"
-        And the response has 16 record
+        And the response has 15 record
