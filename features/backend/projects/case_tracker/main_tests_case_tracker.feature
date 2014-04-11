@@ -94,9 +94,9 @@ Feature: Case Tracker Main Tests
         Examples:
 
         | test_description       | i | cto_type_obj    | cto_uid_obj                      | cto_condition | cto_position |
-        | Assign dynaform        | 0 | DYNAFORM        | 14761752652d82c592fc180020076851 |               | 1            |
-        | Assign Input Document  | 1 | INPUT_DOCUMENT  | 87236534052d82c6d8c67d1001895377 |               | 2            |
-        | Assign Output Document | 2 | OUTPUT_DOCUMENT | 76247354052d82ca9d04509043789234 |               | 3            |
+        | Assign dynaform        | 1 | DYNAFORM        | 14761752652d82c592fc180020076851 |               | 1            |
+        | Assign Input Document  | 2 | INPUT_DOCUMENT  | 87236534052d82c6d8c67d1001895377 |               | 2            |
+        | Assign Output Document | 3 | OUTPUT_DOCUMENT | 76247354052d82ca9d04509043789234 |               | 3            |
 
     
     Scenario: Get list available Case Tracker Objects of a Project when there are exactly 0 objects
@@ -126,9 +126,9 @@ Feature: Case Tracker Main Tests
         Examples:
 
         | test_description                            | i | cto_condition  |
-        | Update dynaform, field cto_condition        | 0 | @@YEAR == 2011 |
-        | Update input document, field cto_condition  | 1 | @@YEAR == 2012 |
-        | Update output document, field cto_condition | 2 | @@YEAR == 2013 |
+        | Update dynaform, field cto_condition        | 1 | @@YEAR == 2011 |
+        | Update input document, field cto_condition  | 2 | @@YEAR == 2012 |
+        | Update output document, field cto_condition | 3 | @@YEAR == 2013 |
 
     
     Scenario Outline: Get a single Case Tracker Object of a Project to verify the update 
@@ -147,9 +147,9 @@ Feature: Case Tracker Main Tests
 
         Examples:
         | i | cto_type_obj    | cto_uid_obj                      | cto_condition  | cto_position | obj_title           | obj_description |
-        | 0 | DYNAFORM        | 14761752652d82c592fc180020076851 | @@YEAR == 2011 | 1            | DynaForm Demo       | Description     |
-        | 1 | INPUT_DOCUMENT  | 87236534052d82c6d8c67d1001895377 | @@YEAR == 2012 | 2            | InputDocument Demo  | Description     |
-        | 2 | OUTPUT_DOCUMENT | 76247354052d82ca9d04509043789234 | @@YEAR == 2013 | 3            | OutputDocument Demo | Description     |
+        | 1 | DYNAFORM        | 14761752652d82c592fc180020076851 | @@YEAR == 2011 | 1            | DynaForm Demo       | Description     |
+        | 2 | INPUT_DOCUMENT  | 87236534052d82c6d8c67d1001895377 | @@YEAR == 2012 | 2            | InputDocument Demo  | Description     |
+        | 3 | OUTPUT_DOCUMENT | 76247354052d82ca9d04509043789234 | @@YEAR == 2013 | 3            | OutputDocument Demo | Description     |
 
 
     Scenario: Get the Case Trackers Objects of a Project when there are exactly three objects
@@ -172,7 +172,7 @@ Feature: Case Tracker Main Tests
 
         Examples:
         | i |
-        | 0 |
         | 1 |
         | 2 |
+        | 3 |
 
