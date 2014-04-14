@@ -220,14 +220,12 @@ class Translation extends BaseTranslation
 
         try {
 
-            if (! is_dir( dirname( $mafeFolder ) )) {
-                G::mk_dir( dirname( $mafeFolder, 0777 ) );
-            }
+            G::verifyPath($mafeFolder, true);
             if (! is_dir( dirname( $cacheFileMafe ) )) {
-                G::mk_dir( dirname( $cacheFileMafe, 0777 ) );
+                G::mk_dir( dirname( $cacheFileMafe ) );
             }
 
-            $f = fopen( $cacheFileMafe, 'w+' );
+            $f = fopen( $cacheFileMafe, 'w' );
             if ($f == false) {
                error_log("Error: Cannot write into cacheFileMafe: $cacheFileMafe\n");
             } else {
