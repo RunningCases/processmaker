@@ -1,15 +1,15 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Reorder Steps
 Requirements:
-    a workspace with the process 7557786515322022952dcc8014985410 ("Ordenamiento") already loaded
+    a workspace with the process 857888611534814982bc651033834642 ("Ordenamiento Main") already loaded
     there are two activities and eight steps in the process
 
   Background:
     Given that I have a valid access_token  
 
 
-  Scenario Outline: obtain the position of the steps
-    Given I request "project/7557786515322022952dcc8014985410/activity/7976552835322023005e069088446535/step/<step_uid>"
+  Scenario Outline: obtain the position of the steps of activity Task 1
+    Given I request "project/857888611534814982bc651033834642/activity/1816381825348149bce1eb7071800593/step/<step_uid>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
@@ -18,12 +18,12 @@ Requirements:
     Examples:
 
         | test_description        | step_uid                         | step_position | 
-        | Position-dynaform1      | 8257746325322026c0e45e3047837732 | 1             |
-        | Position-dynaform2      | 30547852753220293960227013371359 | 2             |
-        | Position-dynaform3      | 840380819532202d132fb91020992676 | 3             |
-        | Position-dynaform4      | 663853222532202eec8a913042063689 | 4             |
-        | Position-input1         | 853418037532209018ab711041079957 | 5             |
-        | Position-input2         | 5384383215322090e71aef1047228013 | 6             |
+        | Position-dynaform1      | 940208541534815470963a6096949846 | 1             |
+        | Position-dynaform2      | 4489324795348154b6bf378055159323 | 2             |
+        | Position-dynaform3      | 5029631175348154f92d713030841274 | 3             |
+        | Position-dynaform4      | 87462252653481552cee045066635556 | 4             |
+        | Position-input1         | 72197903553481555d114d6063884645 | 5             |
+        | Position-input2         | 12394884153481558997b21066123068 | 6             |
         
 
   Scenario: Change order the step of "dynaform3" by position five
@@ -33,12 +33,12 @@ Requirements:
         "step_position": "5"
     }
     """
-    And I request "project/7557786515322022952dcc8014985410/activity/7976552835322023005e069088446535/step/840380819532202d132fb91020992676"
+    And I request "project/857888611534814982bc651033834642/activity/1816381825348149bce1eb7071800593/step/5029631175348154f92d713030841274"
     Then the response status code should be 200
 
   
   Scenario Outline: Obtain the position of the steps after changing position
-    Given I request "project/7557786515322022952dcc8014985410/activity/7976552835322023005e069088446535/step/<step_uid>"
+    Given I request "project/857888611534814982bc651033834642/activity/7976552835322023005e069088446535/step/<step_uid>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
@@ -47,12 +47,12 @@ Requirements:
     Examples:
 
         | test_description        | step_uid                         | step_position | 
-        | Position-dynaform1      | 8257746325322026c0e45e3047837732 | 1             |
-        | Position-dynaform2      | 30547852753220293960227013371359 | 2             |
-        | Position-dynaform4      | 663853222532202eec8a913042063689 | 3             |
-        | Position-input1         | 853418037532209018ab711041079957 | 4             |
-        | Position-dynaform3      | 840380819532202d132fb91020992676 | 5             |
-        | Position-input2         | 5384383215322090e71aef1047228013 | 6             |
+        | Position-dynaform1      | 940208541534815470963a6096949846 | 1             |
+        | Position-dynaform2      | 4489324795348154b6bf378055159323 | 2             |
+        | Position-dynaform4      | 87462252653481552cee045066635556 | 3             |
+        | Position-input1         | 72197903553481555d114d6063884645 | 4             |
+        | Position-dynaform3      | 5029631175348154f92d713030841274 | 5             |
+        | Position-input2         | 12394884153481558997b21066123068 | 6             |
 
  
 
@@ -63,12 +63,12 @@ Requirements:
         "step_position": "2"
     }
     """
-    And I request "project/7557786515322022952dcc8014985410/activity/7976552835322023005e069088446535/step/5384383215322090e71aef1047228013"
+    And I request "project/857888611534814982bc651033834642/activity/1816381825348149bce1eb7071800593/step/12394884153481558997b21066123068"
     Then the response status code should be 200
 
   
   Scenario Outline: Obtain the position of the steps after changing position
-    Given I request "project/7557786515322022952dcc8014985410/activity/7976552835322023005e069088446535/step/<step_uid>"
+    Given I request "project/857888611534814982bc651033834642/activity/1816381825348149bce1eb7071800593/step/<step_uid>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
@@ -77,9 +77,67 @@ Requirements:
     Examples:
 
         | test_description        | step_uid                         | step_position | 
-        | Position-dynaform1      | 8257746325322026c0e45e3047837732 | 1             |
-        | Position-input2         | 5384383215322090e71aef1047228013 | 2             |
-        | Position-dynaform2      | 30547852753220293960227013371359 | 3             |
-        | Position-dynaform4      | 663853222532202eec8a913042063689 | 4             |
-        | Position-input1         | 853418037532209018ab711041079957 | 5             |
-        | Position-dynaform3      | 840380819532202d132fb91020992676 | 6             |  
+        | Position-dynaform1      | 940208541534815470963a6096949846 | 1             |
+        | Position-input2         | 12394884153481558997b21066123068 | 2             |
+        | Position-dynaform2      | 4489324795348154b6bf378055159323 | 3             |
+        | Position-dynaform4      | 87462252653481552cee045066635556 | 4             |
+        | Position-input1         | 72197903553481555d114d6063884645 | 5             |
+        | Position-dynaform3      | 5029631175348154f92d713030841274 | 6             |
+
+
+Scenario: Change order the step of "input2"= position 2 by position six
+    Given PUT this data:
+    """
+    {
+        "step_position": "6"
+    }
+    """
+    And I request "project/857888611534814982bc651033834642/activity/1816381825348149bce1eb7071800593/step/12394884153481558997b21066123068"
+    Then the response status code should be 200
+
+  
+  Scenario Outline: Obtain the position of the steps after changing position
+    Given I request "project/857888611534814982bc651033834642/activity/1816381825348149bce1eb7071800593/step/<step_uid>"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+    And that "step_position" is set to "<step_position>"
+
+    Examples:
+
+        | test_description        | step_uid                         | step_position | 
+        | Position-dynaform1      | 940208541534815470963a6096949846 | 1             |
+        | Position-dynaform2      | 4489324795348154b6bf378055159323 | 2             |
+        | Position-dynaform4      | 87462252653481552cee045066635556 | 3             |
+        | Position-input1         | 72197903553481555d114d6063884645 | 4             |
+        | Position-dynaform3      | 5029631175348154f92d713030841274 | 5             |
+        | Position-input2         | 12394884153481558997b21066123068 | 6             |
+
+
+Scenario: Change order the step of "dynaform3"= position 5 by position 3
+    Given PUT this data:
+    """
+    {
+        "step_position": "3"
+    }
+    """
+    And I request "project/857888611534814982bc651033834642/activity/1816381825348149bce1eb7071800593/step/5029631175348154f92d713030841274"
+    Then the response status code should be 200
+
+  
+  Scenario Outline: Obtain the position of the steps after changing position
+    Given I request "project/857888611534814982bc651033834642/activity/1816381825348149bce1eb7071800593/step/<step_uid>"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+    And that "step_position" is set to "<step_position>"
+
+    Examples:
+
+        | test_description        | step_uid                         | step_position | 
+        | Position-dynaform1      | 940208541534815470963a6096949846 | 1             |
+        | Position-dynaform2      | 4489324795348154b6bf378055159323 | 2             |
+        | Position-dynaform3      | 5029631175348154f92d713030841274 | 3             |
+        | Position-dynaform4      | 87462252653481552cee045066635556 | 4             |
+        | Position-input1         | 72197903553481555d114d6063884645 | 5             |
+        | Position-input2         | 12394884153481558997b21066123068 | 6             |
