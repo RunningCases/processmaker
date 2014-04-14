@@ -72,6 +72,13 @@ class Designer extends Controller
             $this->setVar('buildhash', $buildhash);
         }
 
+        $translationMafe = "/translations/translationsMafe.js";
+        $this->setVar('translationMafe', $translationMafe);
+        if (!file_exists(PATH_HTML . "translations" . PATH_SEP. 'translationsMafe' . ".js")) {
+            $translation = new Translation();
+            $translation->generateFileTranslationMafe();
+        }
+
         $this->setView('designer/index');
         $this->render();
     }
