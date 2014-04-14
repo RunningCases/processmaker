@@ -146,7 +146,7 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
+        And that I want to update a resource with the key "dep_uid"  stored in session array as variable "dep_uid_<dep_uid_number>"
         And I request "department/<dep_uid>/assign-user/<usr_uid>"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -171,7 +171,7 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
+        And that I want to update a resource with the key "dep_uid"  stored in session array as variable "dep_uid_<dep_uid_number>"
         And I request "department/<dep_uid>/set-manager/<usr_uid>"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -188,7 +188,7 @@ Background:
         
 
     Scenario Outline: Get a single department of created in this script 
-        Given that I want to get a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
+        Given that I want to get a resource with the key "dep_uid"  stored in session array as variable "dep_uid_<dep_uid_number>"
         And I request "department/<dep_uid>"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -214,7 +214,7 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid" stored in session array
+        And that I want to update a resource with the key "dep_uid"  stored in session array
         And I request "department/<dep_uid>/unassign-user/23085901752d5671483a4c2059274810"
         Then the response status code should be 200
         And the response charset is "UTF-8"
