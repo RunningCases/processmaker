@@ -9,7 +9,7 @@ Background:
 
 
 Scenario: Get list of Categories
-    Given I request "categories"
+    Given I request "project/categories"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
@@ -18,7 +18,7 @@ Scenario: Get list of Categories
 
 
 Scenario: Get a Category specific
-    Given I request "category/4177095085330818c324501061677193"
+    Given I request "project/category/4177095085330818c324501061677193"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
@@ -32,7 +32,7 @@ Scenario: Create a new Categories
         "cat_name": "Test new Category"    
     }
     """
-    And I request "category"
+    And I request "project/category"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
@@ -41,7 +41,7 @@ Scenario: Create a new Categories
 
 
 Scenario: Get list of Categories
-    Given I request "categories"
+    Given I request "project/categories"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
@@ -57,7 +57,7 @@ Scenario: Update the Category created in this script
       }
       """
       And that I want to update a resource with the key "cat_uid" stored in session array
-      And I request "category"
+      And I request "project/category"
       And the content type is "application/json"
       Then the response status code should be 200
       And the response charset is "UTF-8"
@@ -65,7 +65,7 @@ Scenario: Update the Category created in this script
 
 Scenario: Delete the Category created previously in this script
     Given that I want to delete a resource with the key "cat_uid" stored in session array
-        And I request "category"
+        And I request "project/category"
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"

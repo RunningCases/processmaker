@@ -13,7 +13,7 @@ Scenario Outline: Create a new Categories (Negative Test)
         "cat_name": "<cat_name>"    
     }
     """
-    And I request "category"
+    And I request "project/category"
     Then the response status code should be <error_code>
     And the response status message should have the following text "<error_message>"
 
