@@ -11,7 +11,7 @@ Scenario Outline: Pull information of an inexistent input document. should retur
     Given I request "cases/64654381053382b8bb4c415067063003/input-document/<input-document>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
-    And the type is "object"
+    And the type is "array"
     And the "app_doc_uid" property equals "<app_doc_uid>"
     And the "app_doc_filename" property equals "<app_doc_filename>"
     And the "doc_uid" property equals "<doc_uid>"
