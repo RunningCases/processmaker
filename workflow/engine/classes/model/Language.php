@@ -148,7 +148,7 @@ class Language extends BaseLanguage
      * @param string $bXml
      * @return void
      */
-    public function import ($sLanguageFile, $updateXml = true, $updateDB = true)
+    public function import ($sLanguageFile, $updateXml = true, $updateDB = true, $generateMafe = true)
     {
         try {
             G::LoadSystem( 'i18n_po' );
@@ -286,6 +286,11 @@ class Language extends BaseLanguage
                 $trn = new Translation();
                 $trn->generateFileTranslation( $LOCALE );
                 $trn->addTranslationEnvironment( $LOCALE, $POHeaders, $countItemsSuccess );
+            }
+
+            if ($generateMafe) {
+                $trn = new Translation();
+                $trn->generateFileTranslationMafe();
             }
 
             //fill the results

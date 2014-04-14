@@ -127,8 +127,7 @@ class WebApplication
             $uriTemp = trim($baseUrl) . trim($value->url);
             if (strpos($uriTemp, '?') !== false) {
                 $dataGet = explode('?', $uriTemp);
-                parse_str($dataGet[1], $get);
-                $_GET = array_merge($_GET, $get);
+                parse_str($dataGet[1], $_GET);
             }
             $inputExecute = (empty($value->data)) ? '' : json_encode($value->data);
             $this->responseMultipart[] = $this->dispatchApiRequest($uriTemp, $version, true, $inputExecute);
