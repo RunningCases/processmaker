@@ -98,8 +98,7 @@ Background:
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
-        And store "dep_uid" in session array
-
+        
 
     Scenario: Set manager user to department (new supervisor of department: jacob)
         Given POST this data:
