@@ -9,7 +9,7 @@ Requirements:
 
 
   Scenario Outline: obtain the position of dynaform in process supervisor
-    Given I request "project/857888611534814982bc651033834642/process-supervisor/dynaform/step_uid"
+    Given I request "project/857888611534814982bc651033834642/process-supervisor/dynaform/<step_uid>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
@@ -31,12 +31,12 @@ Requirements:
         "pud_position": "1"
     }
     """
-    And I request "project/857888611534814982bc651033834642/activity/7976552835322023005e069088446535/step/114660532534bd926817991070085867"
+    And I request "project/857888611534814982bc651033834642/process-supervisor/7976552835322023005e069088446535/step/114660532534bd926817991070085867"
     Then the response status code should be 200
 
   
   Scenario Outline: Obtain the position of the steps after changing position
-    Given I request "project/857888611534814982bc651033834642/activity/7976552835322023005e069088446535/step/<step_uid>"
+    Given I request "project/857888611534814982bc651033834642/process-supervisor/7976552835322023005e069088446535/step/<step_uid>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
