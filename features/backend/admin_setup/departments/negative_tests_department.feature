@@ -45,7 +45,7 @@ Scenario Outline: Create a new departments in the workspace with bad parameters 
         | Invalid usr_uid        | 56255940652d5674c75bc70062927441 | 23085900000000000000002059274810 | 400        | usr_uid       |
         | Invalid dep_uid        | 56255900000000000000000062927441 | 23085901752d5671483a4c2059274810 | 400        | dep_uid       | 
         | Field Requered usr_uid | 56255940652d5674c75bc70062927441 |                                  | 404        | Not Found     |
-        | Field Requered dep_uid |                                  | 25286582752d56713231082039265791 | 404        | Not Found     | 
+        | Field Requered dep_uid |                                  | 25286582752d56713231082039265791 | 400        | dep_uid       | 
         
 
 

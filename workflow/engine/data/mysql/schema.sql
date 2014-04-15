@@ -1474,7 +1474,7 @@ CREATE TABLE `SESSION_STORAGE`
 	`CLIENT_ADDRESS` VARCHAR(32) default '0.0.0.0',
 	PRIMARY KEY (`ID`),
 	KEY `indexSessionStorage`(`ID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- PROCESS_FILES
 #-----------------------------------------------------------------------------
@@ -1510,7 +1510,7 @@ CREATE TABLE `OAUTH_ACCESS_TOKENS`
 	`EXPIRES` DATETIME  NOT NULL,
 	`SCOPE` VARCHAR(2000),
 	PRIMARY KEY (`ACCESS_TOKEN`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- OAUTH_AUTHORIZATION_CODES
 #-----------------------------------------------------------------------------
@@ -1527,7 +1527,7 @@ CREATE TABLE `OAUTH_AUTHORIZATION_CODES`
 	`EXPIRES` DATETIME  NOT NULL,
 	`SCOPE` VARCHAR(2000),
 	PRIMARY KEY (`AUTHORIZATION_CODE`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- OAUTH_CLIENTS
 #-----------------------------------------------------------------------------
@@ -1545,7 +1545,7 @@ CREATE TABLE `OAUTH_CLIENTS`
 	`REDIRECT_URI` VARCHAR(2000)  NOT NULL,
 	`USR_UID` VARCHAR(32)  NOT NULL,
 	PRIMARY KEY (`CLIENT_ID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- OAUTH_REFRESH_TOKENS
 #-----------------------------------------------------------------------------
@@ -1561,7 +1561,7 @@ CREATE TABLE `OAUTH_REFRESH_TOKENS`
 	`EXPIRES` DATETIME  NOT NULL,
 	`SCOPE` VARCHAR(2000),
 	PRIMARY KEY (`REFRESH_TOKEN`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- OAUTH_SCOPES
 #-----------------------------------------------------------------------------
@@ -1574,7 +1574,7 @@ CREATE TABLE `OAUTH_SCOPES`
 	`TYPE` VARCHAR(40)  NOT NULL,
 	`SCOPE` VARCHAR(2000),
 	`CLIENT_ID` VARCHAR(80)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- PMOAUTH_USER_ACCESS_TOKENS
 #-----------------------------------------------------------------------------
@@ -1589,7 +1589,7 @@ CREATE TABLE `PMOAUTH_USER_ACCESS_TOKENS`
 	`USER_ID` VARCHAR(32),
 	`SESSION_ID` VARCHAR(40)  NOT NULL,
 	PRIMARY KEY (`ACCESS_TOKEN`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_PROJECT
 #-----------------------------------------------------------------------------
@@ -1614,7 +1614,7 @@ CREATE TABLE `BPMN_PROJECT`
 	`PRJ_ORIGINAL_SOURCE` MEDIUMTEXT,
 	PRIMARY KEY (`PRJ_UID`),
 	KEY `BPMN_PROJECT_I_1`(`PRJ_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_PROCESS
 #-----------------------------------------------------------------------------
@@ -1638,7 +1638,7 @@ CREATE TABLE `BPMN_PROCESS`
 	CONSTRAINT `fk_bpmn_process_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_ACTIVITY
 #-----------------------------------------------------------------------------
@@ -1688,7 +1688,7 @@ CREATE TABLE `BPMN_ACTIVITY`
 	CONSTRAINT `fk_bpmn_activity_process`
 		FOREIGN KEY (`PRO_UID`)
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_ARTIFACT
 #-----------------------------------------------------------------------------
@@ -1714,7 +1714,7 @@ CREATE TABLE `BPMN_ARTIFACT`
 	CONSTRAINT `fk_bpmn_artifact_process`
 		FOREIGN KEY (`PRO_UID`)
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_DIAGRAM
 #-----------------------------------------------------------------------------
@@ -1734,7 +1734,7 @@ CREATE TABLE `BPMN_DIAGRAM`
 	CONSTRAINT `fk_bpmn_diagram_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_BOUND
 #-----------------------------------------------------------------------------
@@ -1767,7 +1767,7 @@ CREATE TABLE `BPMN_BOUND`
 	CONSTRAINT `fk_bpmn_bound_diagram`
 		FOREIGN KEY (`DIA_UID`)
 		REFERENCES `BPMN_DIAGRAM` (`DIA_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_DATA
 #-----------------------------------------------------------------------------
@@ -1799,7 +1799,7 @@ CREATE TABLE `BPMN_DATA`
 	CONSTRAINT `fk_bpmn_data_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_EVENT
 #-----------------------------------------------------------------------------
@@ -1842,7 +1842,7 @@ CREATE TABLE `BPMN_EVENT`
 	CONSTRAINT `fk_bpmn_event_process`
 		FOREIGN KEY (`PRO_UID`)
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_FLOW
 #-----------------------------------------------------------------------------
@@ -1880,7 +1880,7 @@ CREATE TABLE `BPMN_FLOW`
 	CONSTRAINT `fk_bpmn_flow_diagram`
 		FOREIGN KEY (`DIA_UID`)
 		REFERENCES `BPMN_DIAGRAM` (`DIA_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_GATEWAY
 #-----------------------------------------------------------------------------
@@ -1911,7 +1911,7 @@ CREATE TABLE `BPMN_GATEWAY`
 	CONSTRAINT `fk_bpmn_gateway_process`
 		FOREIGN KEY (`PRO_UID`)
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_LANESET
 #-----------------------------------------------------------------------------
@@ -1938,7 +1938,7 @@ CREATE TABLE `BPMN_LANESET`
 	CONSTRAINT `fk_bpmn_laneset_process`
 		FOREIGN KEY (`PRO_UID`)
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_LANE
 #-----------------------------------------------------------------------------
@@ -1964,7 +1964,7 @@ CREATE TABLE `BPMN_LANE`
 	CONSTRAINT `fk_bpmn_lane_laneset`
 		FOREIGN KEY (`LNS_UID`)
 		REFERENCES `BPMN_LANESET` (`LNS_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_PARTICIPANT
 #-----------------------------------------------------------------------------
@@ -1989,7 +1989,7 @@ CREATE TABLE `BPMN_PARTICIPANT`
 	CONSTRAINT `fk_bpmn_participant_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_EXTENSION
 #-----------------------------------------------------------------------------
@@ -2010,7 +2010,7 @@ CREATE TABLE `BPMN_EXTENSION`
 	CONSTRAINT `fk_bpmn_extension_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
 #-----------------------------------------------------------------------------
 #-- BPMN_DOCUMENTATION
 #-----------------------------------------------------------------------------
@@ -2031,6 +2031,6 @@ CREATE TABLE `BPMN_DOCUMENTATION`
 	CONSTRAINT `fk_bpmn_documentation_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB DEFAULT CHARSET='utf8';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

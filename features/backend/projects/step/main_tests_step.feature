@@ -68,18 +68,28 @@ Feature: Project Properties - Step Resources Main Tests
         And the response status message should have the following text "exists"
 
     
-    Scenario: Try delete a Input Document when it is assigned to a step
-        And that I want to delete a resource with the key "32743823452cd63105006e1076595203" stored in session array
-        And I request "project/14414793652a5d718b65590036026581/input-document"
+    Scenario Outline: Try delete a Input Document when it is assigned to a step
+        Given that I want to delete a resource with the key "step_uid" stored in session array as variable "step_uid_<step_number>"
+        And I request "project/16062437052cd6141881e06088349078/input-document"
         And the content type is "application/json"
         Then the response status code should be 400
+
+        Examples:
+
+        | step_number |
+        | 3           |
         
 
-    Scenario: Try delete a Output document when it is assigned to a step
-        Given that I want to delete a resource with the key "83199959452cd62589576c1018679557" stored in session array
-        And I request "project/<project>/output-document"
+    Scenario Outline: Try delete a Output document when it is assigned to a step
+        Given that I want to delete a resource with the key "step_uid" stored in session array as variable "step_uid_<step_number>"
+        And I request "project/16062437052cd6141881e06088349078/output-document"
         And the content type is "application/json"
         Then the response status code should be 400
+
+        Examples:
+
+        | step_number |
+        | 4           |
           
 
 
@@ -213,6 +223,12 @@ Feature: Project Properties - Step Resources Main Tests
         | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 22             | 81919273152cd636c665080083928728 | AFTER    |                   | 1           |
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 23             | 56359776552cd6378b38e47080912028 | AFTER    |                   | 2           |
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 24             | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
+        | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           | 25             | 81919273152cd636c665080083928728 | BEFORE   |                   | 1           |
+        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           | 26             | 56359776552cd6378b38e47080912028 | BEFORE   |                   | 2           |
+        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           | 27             | 57401970252cd6393531551040242546 | BEFORE   |                   | 3           |
+        | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           | 28             | 81919273152cd636c665080083928728 | AFTER    |                   | 1           |
+        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           | 29             | 56359776552cd6378b38e47080912028 | AFTER    |                   | 2           |
+        | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           | 30             | 57401970252cd6393531551040242546 | AFTER    |                   | 3           |
 
 
 Scenario: Trigger assigned to the step when it was already assigned
@@ -227,7 +243,7 @@ Scenario: Trigger assigned to the step when it was already assigned
         """
         And I request "project/16062437052cd6141881e06088349078/activity/10163687452cd6234e0dd25086954968/step/50332332752cd9b9a7cc989003652905/trigger" with the key "step_uid" stored in session array
         Then the response status code should be 400
-        And the response status message should have the following text "exists"
+        And the response status message should have the following text "exist"
 
 
     Scenario Outline: Try delete a trigger when it is assigned to a step
@@ -369,7 +385,7 @@ Scenario: Trigger assigned to the step when it was already assigned
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 2           | 6       |
         | Trigger assigned to Task 2 in type After    | 16062437052cd6141881e06088349078 | 10163687452cd6234e0dd25086954968 | 3           | 0       |
         | Trigger assigned to Task 2 in type before   | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 4           | 0       |
-        | Trigger assigned to External in type before | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           | 0       |
+        | Trigger assigned to External in type before | 16062437052cd6141881e06088349078 | 89706843252cd9decdcf9b3047762708 | 5           | 6       |
 
 
     Scenario Outline: Unassign all "DynaForm Demo1" from "Task1" and "Task 2"
