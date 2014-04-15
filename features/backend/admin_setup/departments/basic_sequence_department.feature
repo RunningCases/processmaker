@@ -38,7 +38,7 @@ Background:
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "array"
-        And the response has 7 record
+        And the response has 6 record
 
   
     Scenario: Create a new department in the workspace
@@ -92,7 +92,7 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid" stored in session array
+        And that I want to update a resource with the key "dep_uid"  stored in session array
         And I request "department/<dep_uid>/assign-user/23085901752d5671483a4c2059274810"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -108,7 +108,7 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid" stored in session array
+        And that I want to update a resource with the key "dep_uid"  stored in session array
         And I request "department/<dep_uid>/set-manager/24768775452d5671dbc1e92021979323"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -125,7 +125,7 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid" stored in session array
+        And that I want to update a resource with the key "dep_uid"  stored in session array
         And I request "department/<dep_uid>/unassign-user/23085901752d5671483a4c2059274810"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -141,7 +141,7 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid" stored in session array
+        And that I want to update a resource with the key "dep_uid"  stored in session array
         And I request "department/<dep_uid>/set-manager/38102442252d5671a629009013495090"
         Then the response status code should be 200
         And the response charset is "UTF-8"

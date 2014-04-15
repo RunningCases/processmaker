@@ -31,7 +31,7 @@ Requirements:
       
       Examples:
       | test_description                                  | project                          | records |
-      | List users and groups available to be supervisors | 85794888452ceeef3675164057928956 | 20      |
+      | List users and groups available to be supervisors | 85794888452ceeef3675164057928956 | 21      |
 
 
     Scenario Outline: Get a List of available groups process supervisor of a project
@@ -57,7 +57,7 @@ Requirements:
       
       Examples:
       | test_description                                      | project                          | records |
-      | List the unique admin user available to be supervisor | 85794888452ceeef3675164057928956 | 1       |
+      | List the unique admin user available to be supervisor | 85794888452ceeef3675164057928956 | 2       |
 
 
 
@@ -70,7 +70,7 @@ Requirements:
       
     Examples:
       | test_description           | project                          | pu_uid                           |
-      | Get the supervisor details | 85794888452ceeef3675164057928956 | 45562646852fa827abb79a5097602637 |
+      | Get the supervisor details | 85794888452ceeef3675164057928956 | 31336919452fa84404e3ac0086239686 |
 
  
     Scenario Outline: Get a List of dynaforms assigned to a process supervisor
