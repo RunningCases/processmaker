@@ -307,7 +307,7 @@ class OutputDocument
                 if ($oOutputDocument->validate()) {
                     $oConnection->begin();
                     if (isset($aData['OUT_DOC_TITLE'])) {
-                        $uid = $this->existsTitlePut($sProcessUID, $aData["OUT_DOC_TITLE"]);
+                        $uid = $this->existTitle($sProcessUID, $aData["OUT_DOC_TITLE"]);
                         if ($uid != '') {
                             if ($uid != $sOutputDocumentUID && $sFlag == 0)  {
                                 throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_SAVE")));
@@ -413,7 +413,7 @@ class OutputDocument
      * @param string $title      Title
      *
      */
-    public function existsTitlePut($processUid, $title)
+    public function existTitle($processUid, $title)
     {
         try {
             $aResp = '';
