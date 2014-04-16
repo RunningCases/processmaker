@@ -589,6 +589,11 @@ class Cases
             $fields = $ws->newCaseImpersonate($processUid, $userUid, $variables, $taskUid);
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {
+                if ($array ["status_code"] == 12) {
+                    throw (new \Exception( G::loadTranslation( 'ID_NO_STARTING_TASK' ) . '. \'tas_uid\'.'));
+                } elseif ($array ["status_code"] == 13) {
+                    throw (new \Exception( G::loadTranslation( 'ID_MULTIPLE_STARTING_TASKS' ) . '. \'tas_uid\'.'));
+                }
                 throw (new \Exception($array ["message"]));
             } else {
                 $array['app_uid'] = $array['caseId'];
@@ -626,7 +631,7 @@ class Cases
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
-            $fields = $ws->reassignCase($userUid, $applicationUid, $delIndex, $userUidTarget, $userUidSource);
+            $fields = $ws->reassignCase($userUid, $applicationUid, $delIndex, $userUidSource, $userUidTarget);
             $array = json_decode(json_encode($fields), true);
             if (array_key_exists("status_code", $array)) {
                 if ($array ["status_code"] != 0) {
