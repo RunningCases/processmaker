@@ -22,6 +22,7 @@ Scenario Outline: Generate or regenerates an output documents for a given case
         And the type is "array"
         And store "app_doc_uid" in session array as variable "app_doc_uid_<app_doc_uid_number>"
         
+        
         Examples:
 
         | test_description                             | app_doc_uid_number | out_doc_uid                      |
