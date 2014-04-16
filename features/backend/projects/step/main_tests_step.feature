@@ -179,7 +179,7 @@ Feature: Project Properties - Step Resources Main Tests
 
 
 
-    Scenario Outline: Assign a 3 triggers to a Step
+    Scenario Outline: Assign triggers to a Step
        Given POST this data:
         """
         {
