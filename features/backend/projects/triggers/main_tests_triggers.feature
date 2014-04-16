@@ -153,7 +153,3 @@ Feature: Testing triggers Main Tests
         And the response has 2 records
         And the "tri_title" property in row 0 equals "For event: change description"
         And the "tri_title" property in row 1 equals "para eventos" 
-    
-
-
-    

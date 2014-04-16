@@ -7,7 +7,7 @@ Background:
     Given that I have a valid access_token
 
 
-    Scenario: List all Departaments in the workspace when exactly are 16 departaments created
+    Scenario: List all Departaments in the workspace when exactly are 15 departaments created
         Given I request "department"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -39,12 +39,7 @@ Background:
         And the response charset is "UTF-8"
         And the type is "array"
         And the response has 4 record
-        And the "usr_username" property equals "joseph"
-        And the "usr_firstname" property equals "Joseph"
-        And the "usr_lastname" property equals "Bittner"
-        And the "usr_status" property equals "ACTIVE"
-        And the "usr_supervisor" property equals false
-
+       
         
     Scenario Outline: Create a new departments in the workspace
         Given POST this data:
@@ -67,11 +62,11 @@ Background:
         Examples:
 
         | test_description                                | dep_uid_number | dep_title           | dep_parent                       | dep_status |
-        | Created a department padre with status active   | 1              | Department 1        |                                  | ACTIVE     |
-        | Created a department hijo with status active    | 2              | Department 2        | 28036037252d56752770585009591640 | ACTIVE     |
-        | Created a department padre with status inactive | 3              | Department 3        |                                  | INACTIVE   |
-        | Created a department hijo with status inactive  | 4              | Department 4        | 28036037252d56752770585009591640 | INACTIVE   |
-        | Created a department with character special     | 5              | Department 5!@#$%^& |                                  | ACTIVE     |
+        | Created a department padre with status active   | 1              | Department A        |                                  | ACTIVE     |
+        | Created a department hijo with status active    | 2              | Department B        | 28036037252d56752770585009591640 | ACTIVE     |
+        | Created a department padre with status inactive | 3              | Department C        |                                  | INACTIVE   |
+        | Created a department hijo with status inactive  | 4              | Department D        | 28036037252d56752770585009591640 | INACTIVE   |
+        | Created a department with character special     | 5              | Department E!@#$%^& |                                  | ACTIVE     |
 
 
     Scenario: Create a department with same name
@@ -79,7 +74,7 @@ Background:
             """
             {
 
-                "dep_title" : "Department 1",
+                "dep_title" : "Department A",
                 "dep_parent" : "",
                 "dep_status" : "ACTIVE"
 
@@ -95,7 +90,7 @@ Background:
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "array"
-        And the response has 20 record
+        And the response has 18 record
 
            
     Scenario Outline: Update a department created in this script
@@ -118,8 +113,8 @@ Background:
         Examples:
 
         | test_description                                | dep_uid_number | dep_title           | dep_status |
-        | Update of field title and status of department  | 1              | Department 1 UPDATE | INACTIVE   |
-        | Update of field title and status of department  | 3              | Department 3 UPDATE | ACTIVE     |
+        | Update of field title and status of department  | A              | Department A UPDATE | INACTIVE   |
+        | Update of field title and status of department  | C              | Department B UPDATE | ACTIVE     |
         
 
     Scenario Outline: Get a single department after update of the department created of this script 
@@ -135,8 +130,8 @@ Background:
         Examples:
 
         | dep_uid_number | dep_title            | dep_status |
-        | 1              | Department 1 UPDATE  | INACTIVE   |
-        | 3              | Department 3 UPDATE  | ACTIVE     |
+        | 1              | Department A UPDATE  | INACTIVE   |
+        | 3              | Department B UPDATE  | ACTIVE     |
 
 
     Scenario Outline: Assign user to department created in this script
@@ -146,7 +141,7 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid"  stored in session array as variable "dep_uid_<dep_uid_number>"
+        And that I want to update a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
         And I request "department/<dep_uid>/assign-user/<usr_uid>"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -171,7 +166,7 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid"  stored in session array as variable "dep_uid_<dep_uid_number>"
+        And that I want to update a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
         And I request "department/<dep_uid>/set-manager/<usr_uid>"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -188,7 +183,7 @@ Background:
         
 
     Scenario Outline: Get a single department of created in this script 
-        Given that I want to get a resource with the key "dep_uid"  stored in session array as variable "dep_uid_<dep_uid_number>"
+        Given that I want to get a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
         And I request "department/<dep_uid>"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -203,8 +198,8 @@ Background:
         Examples:
 
         | dep_uid_number | dep_title           | dep_status | dep_manager                      | dep_manager_username | dep_manager_firstname | dep_manager_lastname |
-        | 1              | Department 1 UPDATE | ACTIVE     | 23085901752d5671483a4c2059274810 | arlene               | Arlene                | Cleveland            |
-        | 2              | Department 2        | ACTIVE     | 25286582752d56713231082039265791 | sandra               | Sandra                | Casey                |
+        | 1              | Department A UPDATE | ACTIVE     | 23085901752d5671483a4c2059274810 | arlene               | Arlene                | Cleveland            |
+        | 2              | Department B        | ACTIVE     | 25286582752d56713231082039265791 | sandra               | Sandra                | Casey                |
         
       
     Scenario Outline: Unassign a User to department
@@ -214,7 +209,7 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid"  stored in session array
+        And that I want to update a resource with the key "dep_uid" stored in session array
         And I request "department/<dep_uid>/unassign-user/23085901752d5671483a4c2059274810"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -238,7 +233,7 @@ Background:
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "array"
-        And the response has 20 record
+        And the response has 18 record
 
 
     Scenario Outline: Delete a department created in this script
