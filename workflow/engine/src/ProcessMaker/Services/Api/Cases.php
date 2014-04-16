@@ -697,6 +697,7 @@ class Cases extends Api
     }
 
     /**
+     * Route Case
      * @url PUT /:app_uid/route-case
      *
      * @param string $app_uid {@min 32}{@max 32}
