@@ -156,20 +156,24 @@ Feature: Files Manager Resources Main Tests
 
    
 
-  Scenario: Update the overwritten file to return to their original values
+  Scenario Outline: Update the overwritten file to return to their original values
   Given PUT this data:
       """
       {
           "prf_content": "Test QA"
       }
       """
-      And that I want to update a resource with the key "prf_uid" stored in session array
+      And that I want to update a resource with the key "prf_uid" stored in session array as variable "prf_uid_<prf_number>"
       And I request "project/1265557095225ff5c688f46031700471/file-manager"
       Then the response status code should be 200
       And the response charset is "UTF-8"
       And the content type is "application/json"
       And that "prf_filename" is set to "TestQA.html"
       And that "prf_content" is set to "Test QA"
+
+      Examples:
+      | prf_ filename | prf_content                                                 | prf_number |
+      | TestQA.html   | Test QA -  cuando se realiza la sobreescritura desde upload | 7          |
 
     
 
