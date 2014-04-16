@@ -307,8 +307,11 @@ class OutputDocument
                 if ($oOutputDocument->validate()) {
                     $oConnection->begin();
                     if (isset($aData['OUT_DOC_TITLE'])) {
-                        if ($this->existsTitle($sProcessUID, $aData["OUT_DOC_TITLE"]) && $sFlag == 0) {
-                            throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_SAVE")));
+                        $uid = $this->titleExists($sProcessUID, $aData["OUT_DOC_TITLE"]);
+                        if ($uid != '') {
+                            if ($uid != $sOutputDocumentUID && $sFlag == 0)  {
+                                throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_SAVE")));
+                            }
                         }
                         $oOutputDocument->setOutDocTitle($aData['OUT_DOC_TITLE']);
                     }
@@ -374,7 +377,6 @@ class OutputDocument
      *
      * @param string $processUid Unique id of Process
      * @param string $title      Title
-     * @param string $outputDocumentUidExclude Unique id of InputDocument to exclude
      *
      * return bool Return true if the title exists in the OutputDocuments of Process, false otherwise
      */
@@ -399,6 +401,37 @@ class OutputDocument
             } else {
                 return false;
             }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Checks if the title exists in the OutputDocuments of Process
+     *
+     * @param string $processUid Unique id of Process
+     * @param string $title      Title
+     *
+     */
+    public function titleExists($processUid, $title)
+    {
+        try {
+            $aResp = '';
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_UID);
+            $criteria->add(\OutputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->add(\ContentPeer::CON_VALUE, $title, \Criteria::EQUAL);
+            $criteria->add(\ContentPeer::CON_CATEGORY, "OUT_DOC_TITLE", \Criteria::EQUAL);
+            $criteria->add(\ContentPeer::CON_LANG, SYS_LANG, \Criteria::EQUAL);
+            $criteria->addJoin( \ContentPeer::CON_ID, \OutputDocumentPeer::OUT_DOC_UID, \Criteria::LEFT_JOIN );
+            $rsCriteria = \OutputDocumentPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $aResp = $aRow['OUT_DOC_UID'];
+                $rsCriteria->next();
+            }
+            return $aResp;
         } catch (\Exception $e) {
             throw $e;
         }
