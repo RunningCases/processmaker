@@ -179,7 +179,7 @@ Scenario Outline: Reassigns a case to a different user
     | Reassign the user jeremiah | 3           | 00000000000000000000000000000001 | 86677227852d5671f40ba25017213081 |
     | Reassign the user chris    | 4           | 00000000000000000000000000000001 | 24166330352d56730cdd525035621101 |
     | Reassign the user zachary  | 5           | 00000000000000000000000000000001 | 62625000752d5672d6661e6072881167 |
-    | Reassign the user admin    | 26          | 99209594750ec27ea338927000421575 | 00000000000000000000000000000001 |
+    | Reassign the user admin    | 26          | 51049032352d56710347233042615067 | 00000000000000000000000000000001 |
 
 
 Scenario: Returns a list of the cases for the logged in user (Draft)
