@@ -368,15 +368,14 @@ class Task
                     $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE_TEMPLATE");
                 }
                 //Additional configuration
-                if (isset($arrayProperty["TAS_DEF_MESSAGE_TYPE"]) && isset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"])) {
+                if (isset($arrayProperty["TAS_DEF_MESSAGE_TYPE"])) {
                     \G::LoadClass("configuration");
                     $oConf = new \Configurations();
+                    if (!isset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"])) {
+                        $arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"] = "alert_message.html";
+                    }
                     $oConf->aConfig = array("TAS_DEF_MESSAGE_TYPE" => $arrayProperty["TAS_DEF_MESSAGE_TYPE"], "TAS_DEF_MESSAGE_TEMPLATE" => $arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"]);
-
                     $oConf->saveConfig("TAS_EXTRA_PROPERTIES", $arrayProperty["TAS_UID"], "", "");
-
-                    unset($arrayProperty["TAS_DEF_MESSAGE_TYPE"]);
-                    unset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"]);
                 }
             } else {
                 $this->unsetVar($arrayProperty, "TAS_DEF_SUBJECT_MESSAGE");
@@ -386,7 +385,6 @@ class Task
             }
 
             $result = $task->update($arrayProperty);
-
             $arrayResult["status"] = "OK";
 
             if ($result == 3) {
