@@ -65,8 +65,8 @@ Scenario Outline: Get paging of list inbox
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "array"
-    And the response has <records> records
+    And the type is "object"
+    And the response has <records> records in property "data"
 
 
     Examples:
@@ -88,7 +88,7 @@ Scenario Outline: Get paging of list inbox
     | start equals zero          |   0   | 20      | 14      |  200      |
     | search 0                   |   0   | 0       | 14      |  200      |
     | search 0                   |   0   | 100     | 14      |  200      |
-    | negative numbers in start  |  -10  | 25      | 4       |  200      |
+    | negative numbers in start  |  -10  | 25      | 5       |  200      |
     | negative numbers in limit  |   1   | -25     | 14      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
@@ -154,8 +154,8 @@ Scenario Outline: Get order type of Search of number the process
     Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 3       |
-    | Filter all cases                                                |                                  | 4       |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 18                               | 1       |
+    | Filter all cases                                                |                                  | 14      |
 
 
 Scenario: Returns a list of the cases for the logged in user (Draft)
@@ -171,8 +171,8 @@ Scenario Outline: Get paging of list Draft
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "array"
-    And the response has <records> records
+    And the type is "object"
+    And the response has <records> records in property "data" 
 
      Examples:
     
@@ -193,7 +193,7 @@ Scenario Outline: Get paging of list Draft
     | start equals zero          |   0   | 20      | 15      |  200      |
     | search 0                   |   0   | 0       | 15      |  200      |
     | search 0                   |   0   | 100     | 15      |  200      |
-    | negative numbers in start  |  -10  | 25      | 5       |  200      |
+    | negative numbers in start  |  -10  | 25      | 6       |  200      |
     | negative numbers in limit  |   1   | -25     | 15      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
@@ -230,7 +230,7 @@ Scenario Outline: Get order type of Process Category
 Examples:
     
     | test_description                           | cat_uid                           | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 9       |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 8       |
     | Filter all categories                      |                                   | 15      |
 
 
@@ -245,7 +245,7 @@ Scenario Outline: Get order type of Process
 Examples:
     
     | test_description                                 | pro_uid                          | records |
-    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 2       |
+    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 1       |
     | Filter all cases                                 |                                  | 15      |
 
 
@@ -260,7 +260,7 @@ Scenario Outline: Get order type of Search of the process
 Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 4       |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 16                               | 4       |
     | Filter all cases                                                |                                  | 15      |
 
 
@@ -276,8 +276,8 @@ Scenario Outline: Get paging of list Participated
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "array"
-    And the response has <records> records
+    And the type is "object"
+    And the response has <records> records in property "data"
 
      Examples:
     
@@ -295,7 +295,7 @@ Scenario Outline: Get paging of list Participated
     | empty string               |   1   | 10000   | 30      |  200      |
     | invalid start              |   b   | 25      | 25      |  200      |
     | invalid limit              |   1   | c       | 30      |  200      |
-    | start equals zero          |   0   | 20      | 30      |  200      |
+    | start equals zero          |   0   | 20      | 20      |  200      |
     | search 0                   |   0   | 0       | 30      |  200      |
     | search 0                   |   0   | 100     | 30      |  200      |
     | negative numbers in start  |  -10  | 25      | 15      |  200      |
@@ -304,7 +304,7 @@ Scenario Outline: Get paging of list Participated
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
     | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
     | only start                 |  1    |         | 30      |  200      |
-    | only limit                 |       | 25      | 30      |  200      |
+    | only limit                 |       | 25      | 25      |  200      |
     | without start and limit    |       |         | 30      |  200      |
 
 
@@ -335,7 +335,7 @@ Scenario Outline: Get order type of Process Category
 Examples:
     
     | test_description                           | cat_uid                           | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 27      |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 26      |
     | Filter all categories                      |                                   | 30      |
 
 
@@ -350,7 +350,7 @@ Scenario Outline: Get order type of Process
 Examples:
     
     | test_description                                 | pro_uid                          | records |
-    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 3       |
+    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 2       |
     | Filter all cases                                 |                                  | 30      |
 
 
@@ -366,7 +366,7 @@ Scenario Outline: Get order type of Search
 Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 3       |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 17                               | 10      |
     | Filter all cases                                                |                                  | 30      |
 
 
@@ -379,12 +379,12 @@ Scenario: Returns a list of the cases for the logged in user (Unassigned)
 
 
 Scenario Outline: Get paging of list Unassigned
-    Given I request "cases/Unassigned/paged?start=<start>&limit=<limit>"
+    Given I request "cases/unassigned/paged?start=<start>&limit=<limit>"
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "array"
-    And the response has <records> records
+    And the type is "object"
+    And the response has <records> records in property "data"
 
      Examples:
     
@@ -405,7 +405,7 @@ Scenario Outline: Get paging of list Unassigned
     | start equals zero          |   0   | 20      | 12      |  200      |
     | search 0                   |   0   | 0       | 12      |  200      |
     | search 0                   |   0   | 100     | 12      |  200      |
-    | negative numbers in start  |  -10  | 25      | 2       |  200      |
+    | negative numbers in start  |  -10  | 25      | 3       |  200      |
     | negative numbers in limit  |   1   | -25     | 12      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
@@ -471,7 +471,7 @@ Scenario Outline: Get order type of Search
 Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 3       |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 16                               | 1       |
     | Filter all cases                                                |                                  | 12      |
 
 
@@ -511,7 +511,7 @@ Scenario Outline: Get paging of list Paused
     | start equals zero          |   0   | 20      | 12      |  200      |
     | search 0                   |   0   | 0       | 12      |  200      |
     | search 0                   |   0   | 100     | 12      |  200      |
-    | negative numbers in start  |  -10  | 25      | 2       |  200      |
+    | negative numbers in start  |  -10  | 25      | 3       |  200      |
     | negative numbers in limit  |   1   | -25     | 12      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
@@ -577,7 +577,7 @@ Scenario Outline: Get order type of Search
 Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 2       |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 16                               | 4       |
     | Filter all cases                                                |                                  | 12      |
 
 
@@ -594,8 +594,8 @@ Scenario Outline: Get paging of list Advanced Search
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "array"
-    And the response has <records> records
+    And the type is "object"
+    And the response has <records> records in property "data"
 
      Examples:
     
@@ -611,7 +611,7 @@ Scenario Outline: Get paging of list Advanced Search
     | high number for start      | 1000  | 0       | 0       |  200      |
     | empty result               |   1   | 0       | 30      |  200      |
     | empty string               |   1   | 10000   | 30      |  200      |
-    | invalid start              |   b   | 25      | 30      |  200      |
+    | invalid start              |   b   | 25      | 25      |  200      |
     | invalid limit              |   1   | c       | 30      |  200      |
     | start equals zero          |   0   | 20      | 20      |  200      |
     | search 0                   |   0   | 0       | 30      |  200      |
@@ -622,7 +622,7 @@ Scenario Outline: Get paging of list Advanced Search
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
     | real numbers in limit      |  1    | 1.4599  | 1       |  200      |
     | only start                 |  1    |         | 30      |  200      |
-    | only limit                 |       | 25      | 30      |  200      |
+    | only limit                 |       | 25      | 25      |  200      |
     | without start and limit    |       |         | 30      |  200      |
 
 
@@ -652,7 +652,7 @@ Scenario Outline: Get order type of Process Category
     Examples:
     
     | test_description                           | cat_uid                           | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 25      |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 26      |
     | Filter all categories                      |                                   | 30      |
 
 
@@ -668,7 +668,7 @@ Scenario Outline: Get order type of Process
     Examples:
     
     | test_description                                 | pro_uid                          | records |
-    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 3       |
+    | Filter for cases "Derivation rules - sequential" | 99209594750ec27ea338927000421575 | 2       |
     | Filter all cases                                 |                                  | 30      |
 
 
@@ -684,8 +684,8 @@ Scenario Outline: Get order type of Search
     Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 92535130653271a60de2e73021469732 | 2       |
-    | Filter all cases                                                |                                  | 2       |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 17                               | 10      |
+    | Filter all cases                                                |                                  | 30      |
 
 
 Scenario Outline: Get order for Status
@@ -699,10 +699,10 @@ Scenario Outline: Get order for Status
     Examples:
     
     | test_description           | app_status  | records |
-    | Filter Status = All Status |             | 25      |
+    | Filter Status = All Status |             | 30      |
     | Filter Status = Completed  | COMPLETED   | 2       |
     | Filter Status = Draft      | DRAFT       | 15      |             
-    | Filter Status = To Do      | TO_DO       | 25      |
+    | Filter Status = To Do      | TO_DO       | 30      |
 
 
 Scenario Outline: Get order for User
@@ -716,10 +716,10 @@ Scenario Outline: Get order for User
     Examples:
     
     | test_description           | usr_uid                          | records |
-    | Filter Status = All User   |                                  | 25      |
-    | Filter Status = aaron      | 51049032352d56710347233042615067 | 2       |
-    | Filter Status = admin      | 00000000000000000000000000000001 | 2       |             
-    | Filter Status = chris      | 24166330352d56730cdd525035621101 | 2       |
+    | Filter Status = All User   |                                  | 30      |
+    | Filter Status = aaron      | 51049032352d56710347233042615067 | 4       |
+    | Filter Status = admin      | 00000000000000000000000000000001 | 30      |             
+    | Filter Status = chris      | 24166330352d56730cdd525035621101 | 6       |
 
 
 Scenario Outline: Get order for date
@@ -734,4 +734,4 @@ Scenario Outline: Get order for date
     
     | test_description         | date_from  | date_to    | records |
     | Filter date = 2014-03-01 | 2014-03-01 | 2014-03-31 | 5       |
-    | Filter date = 2014-03-15 | 2014-03-15 | 2014-04-01 | 25      |
+    | Filter date = 2014-03-15 | 2014-03-15 | 2014-04-01 | 30      |

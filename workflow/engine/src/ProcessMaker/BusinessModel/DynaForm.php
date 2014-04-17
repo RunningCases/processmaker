@@ -282,7 +282,7 @@ class DynaForm
             $rsCriteria = \DynaformPeer::doSelectRS($criteria);
 
             if (!$rsCriteria->next()) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormUid), "The DynaForm with {0}: {1}, does not exist");
+                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormUid), "The DynaForm with {0}: {1}, does not exist.");
 
                 throw (new \Exception($msg));
             }
@@ -512,27 +512,27 @@ class DynaForm
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
             if (!isset($arrayData["COPY_IMPORT"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT")), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT")), "Undefined value for \"{0}\", it is required.")));
             }
 
             if (!isset($arrayData["COPY_IMPORT"]["PRJ_UID"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID")), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID")), "Undefined value for \"{0}\", it is required.")));
             }
 
             $arrayData["COPY_IMPORT"]["PRJ_UID"] = trim($arrayData["COPY_IMPORT"]["PRJ_UID"]);
 
             if ($arrayData["COPY_IMPORT"]["PRJ_UID"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID")), "The \"{0}\" attribute is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID")), "Invalid value for \"{0}\", it can not be empty.")));
             }
 
             if (!isset($arrayData["COPY_IMPORT"]["DYN_UID"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID")), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID")), "Undefined value for \"{0}\", it is required.")));
             }
 
             $arrayData["COPY_IMPORT"]["DYN_UID"] = trim($arrayData["COPY_IMPORT"]["DYN_UID"]);
 
             if ($arrayData["COPY_IMPORT"]["DYN_UID"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID")), "The \"{0}\" attribute is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID")), "Invalid value for \"{0}\", it can not be empty.")));
             }
 
             $this->throwExceptionIfExistsTitle($processUid, $arrayData["DYN_TITLE"], $this->arrayFieldNameForException["dynaFormTitle"]);
@@ -715,29 +715,29 @@ class DynaForm
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
             if ($arrayData["DYN_TYPE"] == "grid") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayFieldNameForException["dynaFormType"]), "Invalid value specified for \"{0}\"")));
+                throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayFieldNameForException["dynaFormType"], "xmlform"), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
             }
 
             if (!isset($arrayData["PMTABLE"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE")), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE")), "Undefined value for \"{0}\", it is required.")));
             }
 
             if (!isset($arrayData["PMTABLE"]["TAB_UID"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID")), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID")), "Undefined value for \"{0}\", it is required.")));
             }
 
             $arrayData["PMTABLE"]["TAB_UID"] = trim($arrayData["PMTABLE"]["TAB_UID"]);
 
             if ($arrayData["PMTABLE"]["TAB_UID"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID")), "The \"{0}\" attribute is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID")), "Invalid value for \"{0}\", it can not be empty.")));
             }
 
             if (!isset($arrayData["PMTABLE"]["FIELDS"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "The \"{0}\" attribute is not defined")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "Undefined value for \"{0}\", it is required.")));
             }
 
             if (count($arrayData["PMTABLE"]["FIELDS"]) == 0) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "The \"{0}\" attribute is empty")));
+                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "Invalid value for \"{0}\", it can not be empty.")));
             }
 
             $this->throwExceptionIfExistsTitle($processUid, $arrayData["DYN_TITLE"], $this->arrayFieldNameForException["dynaFormTitle"]);

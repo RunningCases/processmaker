@@ -10,10 +10,11 @@ abstract class Importer
     protected $importData = array();
     protected $filename = "";
     protected $saveDir = "";
+    protected $metadata = array();
 
-    const IMPORT_OPTION_OVERWRITE = "OVERWRITE_PROJECT";
-    const IMPORT_OPTION_DISABLE_AND_CREATE_NEW = "DISABLE_AND_CREATE_NEW_PROJECT";
-    const IMPORT_OPTION_CREATE_NEW = "CREATE_NEW_PROJECT";
+    const IMPORT_OPTION_OVERWRITE = "project.import.override";
+    const IMPORT_OPTION_DISABLE_AND_CREATE_NEW = "project.import.disable_and_create_new";
+    const IMPORT_OPTION_CREATE_NEW = "project.import.create_new";
 
     /**
      * Success, Project imported successfully.
@@ -36,11 +37,27 @@ abstract class Importer
 
         switch ($option) {
             case self::IMPORT_OPTION_CREATE_NEW:
-                $result = $this->doImport();
+                if ($this->targetExists()) {
+                    throw new \Exception(sprintf(
+                        "Project already exists, you need set an action to continue. " .
+                        "Available actions: [%s|%s|%s].", self::IMPORT_OPTION_CREATE_NEW,
+                        self::IMPORT_OPTION_OVERWRITE, self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW
+                    ), self::IMPORT_STAT_TARGET_ALREADY_EXISTS);
+                }
+                $generateUid = false;
+                $result = $this->doImport($generateUid);
                 break;
             case self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW:
+                $this->disableProject();
+                // this option should generate new uid for all objects
+                $generateUid = true;
+                $result = $this->doImport($generateUid);
                 break;
             case self::IMPORT_OPTION_OVERWRITE:
+                // this option shouldn't generate new uid for all objects
+                $generateUid = false;
+                $this->removeProject();
+                $result = $this->doImport($generateUid);
                 break;
         }
 
@@ -64,14 +81,6 @@ abstract class Importer
         $this->importData = $this->load();
 
         $this->validateImportData();
-
-        if ($this->targetExists()) {
-            throw new \Exception(sprintf(
-                "Project already exists, you need set an action to continue. " .
-                "Avaliable actions: [%s|%s|%s].", self::IMPORT_OPTION_CREATE_NEW,
-                self::IMPORT_OPTION_OVERWRITE, self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW
-            ), self::IMPORT_STAT_TARGET_ALREADY_EXISTS);
-        }
     }
 
     public function setData($key, $value)
@@ -118,9 +127,17 @@ abstract class Importer
 
     }
 
-    public function disableCurrentProject()
+    public function disableProject()
     {
+        $project = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($this->metadata["uid"]);
+        $project->setDisabled();
+    }
 
+    public function removeProject()
+    {
+        $project = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($this->metadata["uid"]);
+        $force = true;
+        $project->remove($force);
     }
 
     /**
@@ -179,7 +196,7 @@ abstract class Importer
         umask($oldUmask);
     }
 
-    protected function importBpmnTables(array $tables)
+    protected function importBpmnTables(array $tables, $generateUid = false)
     {
         // Build BPMN project struct
         $project = $tables["project"][0];
@@ -195,7 +212,7 @@ abstract class Importer
         $project["prj_author"] = isset($this->data["usr_uid"])? $this->data["usr_uid"]: "00000000000000000000000000000001";
         $project["process"] = $tables["process"][0];
 
-        return Adapter\BpmnWorkflow::createFromStruct($project);
+        return Adapter\BpmnWorkflow::createFromStruct($project, $generateUid);
     }
 
     protected function importWfTables(array $tables)
@@ -239,15 +256,19 @@ abstract class Importer
         }
     }
 
-    public function doImport()
+    public function doImport($generateUid = true)
     {
         $tables = $this->importData["tables"];
         $files = $this->importData["files"];
 
-        $result = $this->importBpmnTables($tables["bpmn"]);
+        $result = $this->importBpmnTables($tables["bpmn"], $generateUid);
         $this->importWfTables($tables["workflow"]);
         $this->importWfFiles($files["workflow"]);
 
-        return $result;
+        if ($generateUid) {
+            return $result[0]["new_uid"];
+        } else {
+            return $result;
+        }
     }
 }

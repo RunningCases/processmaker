@@ -12,6 +12,7 @@ Feature: Project Resources
     And the content type is "application/json"
     And the type is "array"
 
+"""
   Scenario: Get a single project
     
     Given I request "project/4224292655297723eb98691001100052"
@@ -38,3 +39,4 @@ Feature: Project Resources
   Scenario: Delete a project <project_uid>
     Given I request "project/<project_uid>"
     Then the response status code should be 200
+"""

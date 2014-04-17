@@ -14,6 +14,10 @@ class InputDocument
     public function getCasesInputDocuments($applicationUid, $userUid)
     {
         try {
+            $oApplication = \ApplicationPeer::retrieveByPk($applicationUid);
+            if (!is_object($oApplication)) {
+                throw (new \Exception("The Application with app_uid: '$applicationUid' doesn't exist!"));
+            }
             $sApplicationUID = $applicationUid;
             $sUserUID = $userUid;
             \G::LoadClass('case');
@@ -32,7 +36,7 @@ class InputDocument
                     $docrow['app_doc_filename'] = $row['APP_DOC_FILENAME'];
                     $docrow['doc_uid'] = $row['DOC_UID'];
                     $docrow['app_doc_version'] = $row['DOC_VERSION'];
-                    $docrow['app_doc_create_date'] = $row['CREATE_DATE'];
+                    $docrow['app_doc_create_date'] =     $row['CREATE_DATE'];
                     $docrow['app_doc_create_user'] = $row['CREATED_BY'];
                     $docrow['app_doc_type'] = $row['TYPE'];
                     $docrow['app_doc_index'] = $row['APP_DOC_INDEX'];
@@ -58,6 +62,10 @@ class InputDocument
     public function getCasesInputDocument($applicationUid, $userUid, $inputDocumentUid)
     {
         try {
+            $oAppDocument = \AppDocumentPeer::retrieveByPK( $inputDocumentUid, 1 );
+            if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
+                throw (new \Exception('This input document with inp_doc_uid: '.$inputDocumentUid.' doesn\'t exist!'));
+            }
             $sApplicationUID = $applicationUid;
             $sUserUID = $userUid;
             \G::LoadClass('case');
@@ -105,7 +113,7 @@ class InputDocument
         try {
             $oAppDocument = \AppDocumentPeer::retrieveByPK( $inputDocumentUid, 1 );
             if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
-                throw (new \Exception('This input document with id: '.$inputDocumentUid.' doesn\'t exist!'));
+                throw (new \Exception('This input document with inp_doc_uid: '.$inputDocumentUid.' doesn\'t exist!'));
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
@@ -214,6 +222,7 @@ class InputDocument
             $arrayData["DEL_INDEX"] = $delIndex;
             $arrayData["TAS_UID"]   = $taskUid;
             $case->updateCase($applicationUid, $arrayData);
+            return($this->getCasesInputDocument($applicationUid, $userUid, $appDocUid));
         } catch (\Exception $e) {
             throw $e;
         }

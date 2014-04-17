@@ -58,6 +58,11 @@ abstract class Exporter
         return $this->projectData["PRJ_NAME"];
     }
 
+    public function getProjectUid()
+    {
+        return $this->projectData["PRJ_UID"];
+    }
+
     /**
      * Builds Project Data Structure
      *
@@ -68,7 +73,8 @@ abstract class Exporter
         $data = array();
 
         $data["metadata"] = $this->getMetadata();
-        $data["metadata"]["project_name"] = $this->getProjectName();
+        $data["metadata"]["name"] = $this->getProjectName();
+        $data["metadata"]["uid"] = $this->getProjectUid();
 
         $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($this->prjUid);
         $bpmnStruct["BOUND"] = \BpmnBound::getAll($this->prjUid);
@@ -175,7 +181,7 @@ abstract class Exporter
             "export_server_addr" => isset($_SERVER["SERVER_ADDR"]) ? $_SERVER["SERVER_ADDR"].":".$_SERVER["SERVER_PORT"] : "Unknown",
             "export_server_os" => PHP_OS ,
             "export_server_php_version" => PHP_VERSION_ID,
-            "project_workspace" => defined("SYS_SYS") ? SYS_SYS : "Unknown",
+            "workspace" => defined("SYS_SYS") ? SYS_SYS : "Unknown",
         );
     }
 }

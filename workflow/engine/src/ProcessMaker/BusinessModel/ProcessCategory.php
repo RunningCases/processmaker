@@ -282,7 +282,10 @@ class ProcessCategory
     public function addCategory($cat_name)
     {
         try {
-            require_once 'classes/model/ProcessCategory.php';
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes". PATH_SEP . "model" . PATH_SEP . "ProcessCategory.php");
+            if ($cat_name == '') {
+                throw (new \Exception( 'cat_name. Process Category name can\'t be null'));
+            }
             $catName = trim( $cat_name );
             if ($this->existsName( $cat_name )) {
                 throw (new \Exception( 'cat_name. Duplicate Process Category name'));
@@ -312,7 +315,7 @@ class ProcessCategory
     public function updateCategory($cat_uid, $cat_name)
     {
         try {
-            require_once 'classes/model/ProcessCategory.php';
+            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes". PATH_SEP . "model" . PATH_SEP . "ProcessCategory.php");
             $catUID = $cat_uid;
             $catName = trim( $cat_name );
             if ($this->existsName( $cat_name )) {

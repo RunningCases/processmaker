@@ -121,11 +121,14 @@ class WebApplication
             }
         }
 
-
         $baseUrl = (empty($input->base_url)) ? $uri : $input->base_url;
         foreach($input->calls as $value) {
             $_SERVER["REQUEST_METHOD"] = (empty($value->method)) ? 'GET' : $value->method;
             $uriTemp = trim($baseUrl) . trim($value->url);
+            if (strpos($uriTemp, '?') !== false) {
+                $dataGet = explode('?', $uriTemp);
+                parse_str($dataGet[1], $_GET);
+            }
             $inputExecute = (empty($value->data)) ? '' : json_encode($value->data);
             $this->responseMultipart[] = $this->dispatchApiRequest($uriTemp, $version, true, $inputExecute);
         }

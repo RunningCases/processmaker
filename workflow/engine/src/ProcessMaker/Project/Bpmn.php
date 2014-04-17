@@ -125,15 +125,21 @@ class Bpmn extends Handler
         $this->project->setPrjUpdateDate(date("Y-m-d H:i:s"));
         $this->project->save();
 
-        $this->updateDiagram(array("DIA_NAME" => $data["PRJ_NAME"]));
+        if (isset($data["PRJ_NAME"])) {
+            $this->updateDiagram(array("DIA_NAME" => $data["PRJ_NAME"]));
+        }
     }
 
-    public function remove()
+    public function remove($force = false)
     {
         /*
          * 1. Remove Diagram related objects
          * 2. Remove Project related objects
          */
+
+        if (! $force && ! $this->canRemove()) {
+            throw new \Exception("Project with prj_uid: {$this->getUid()} can not be deleted, it has started cases.");
+        }
 
         self::log("Remove Project With Uid: {$this->prjUid}");
         foreach ($this->getActivities() as $activity) {
@@ -199,6 +205,13 @@ class Bpmn extends Handler
         }
 
         return $retType == "array" ? $this->project->toArray() : $this->project;
+    }
+
+    public function canRemove()
+    {
+        // TODO this must validate if the project can be deleted or not.
+        // TODO the project can be deleted only if it has not any started cases
+        return true;
     }
 
     /*
@@ -729,5 +742,11 @@ class Bpmn extends Handler
         //self::log("saved data: ", $data, "new data: ", $newData);
         //self::log("checksum saved data: ", self::getChecksum($data), "checksum new data: ", self::getChecksum($newData));
         return (self::getChecksum($data) !== self::getChecksum($newData));
+    }
+
+    public function setDisabled($value = true)
+    {
+        $status = $value ? "DISABLED" : "ACTIVE";
+        $this->update(array("PRJ_STATUS" => $status));
     }
 }
