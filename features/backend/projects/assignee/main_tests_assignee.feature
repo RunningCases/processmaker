@@ -92,7 +92,7 @@ Scenario Outline: List assignees of an activity using a filter
 
 
 Scenario Outline: List all assignees of an activity includ user of the groups
-    Given I request "project/4224292655297723eb98691001100052/activity/<activity>/assignee/all
+    Given I request "project/4224292655297723eb98691001100052/activity/<activity>/assignee/all"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
