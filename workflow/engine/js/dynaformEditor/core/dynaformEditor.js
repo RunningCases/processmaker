@@ -28,7 +28,7 @@ var verifyLogin = function() {
     }
 	var rpc = new leimnud.module.rpc.xmlhttp({
         url : '../login/authentication',
-        args: 'form[USR_USERNAME]=' + __usernameLogged__ + '&form[USR_PASSWORD]=' + document.getElementById('thePassword').value.trim() + '&form[USR_LANG]=' + SYS_LANG
+        args: 'form[USR_USERNAME]=' + __usernameLoggedDE__ + '&form[USR_PASSWORD]=' + document.getElementById('thePassword').value.trim() + '&form[USR_LANG]=' + SYS_LANG
     });
     rpc.callback = function(rpc) {
         if (rpc.xmlhttp.responseText.indexOf('form[USR_USERNAME]') == -1) {
@@ -565,7 +565,7 @@ var dynaformEditor={
         //    lineNumbers: true,
         //    lineWrapping: true });
         //}
-        
+
       }
     } else {
       showRowById('JS_TITLE');
@@ -774,7 +774,7 @@ var dynaformEditor={
       }
     }
     this.currentJS=field.value;
-    
+
     var res=this.ajax.get_javascripts(this.A,field.value);
     if(field.value == ''){
       if( typeof(res.aOptions[0]) !== "undefined" && res.aOptions[0].value != '___pm_boot_strap___'){
@@ -831,9 +831,9 @@ var dynaformEditor={
       }
     }
     var field=getField("JS_LIST","dynaforms_JSEditor");
-    
+
     var value=field.value;
-    
+
     if (this.currentJS)
     {
         field.value=this.currentJS;

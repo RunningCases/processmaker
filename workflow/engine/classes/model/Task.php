@@ -354,7 +354,7 @@ class Task extends BaseTask
      * create a new Task
      *
      * @param      array $aData with new values
-     * @return     void
+     * @return     string
      */
     public function create($aData, $generateUid = true)
     {

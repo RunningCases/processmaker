@@ -1,7 +1,7 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Reorder Process Supervisor - Dynaform and Input
 Requirements:
-    a workspace with the process 7557786515322022952dcc8014985410 ("Ordenamiento") already loaded
+    a workspace with the process 857888611534814982bc651033834642 ("Ordenamiento Main") already loaded
     there are two activities and eight steps in the process
 
   Background:
@@ -9,7 +9,7 @@ Requirements:
 
 
   Scenario Outline: obtain the position of dynaform in process supervisor
-    Given I request "project/7557786515322022952dcc8014985410/process-supervisors"
+    Given I request "project/857888611534814982bc651033834642/process-supervisor/dynaform/<step_uid>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
@@ -18,25 +18,30 @@ Requirements:
     Examples:
 
         | test_description        | step_uid                         | pud_position | 
-        | Position-dynaform1      | 8257746325322026c0e45e3047837732 | 1            |
-        | Position-dynaform2      | 30547852753220293960227013371359 | 2            |
-        | Position-dynaform3      | 840380819532202d132fb91020992676 | 3            |
-        | Position-dynaform4      | 663853222532202eec8a913042063689 | 4            |
+        | Position-dynaform1      | 674032139534bd91f9331a5032066933 | 1            |
+        | Position-dynaform2      | 583050735534bd923984f24007464958 | 2            |
+        | Position-dynaform3      | 114660532534bd926817991070085867 | 3            |
+        | Position-dynaform4      | 105517492534bd929a58c15055718131 | 4            |
                 
 
-  Scenario: Change order the dynaform of "dynaform3" by position one
+  Scenario Outline: Change order the dynaform of "dynaform3" by position one
     Given PUT this data:
     """
     {
         "pud_position": "1"
     }
     """
-    And I request "project/7557786515322022952dcc8014985410/activity/7976552835322023005e069088446535/step/840380819532202d132fb91020992676"
+    And I request "project/857888611534814982bc651033834642/process-supervisor/dynaform/<step_uid>"
     Then the response status code should be 200
+
+    Examples:
+
+        | test_description        | step_uid                         | pud_position | 
+        | Position-dynaform1      | 674032139534bd91f9331a5032066933 | 2            |
 
   
   Scenario Outline: Obtain the position of the steps after changing position
-    Given I request "project/7557786515322022952dcc8014985410/activity/7976552835322023005e069088446535/step/<step_uid>"
+    Given I request "project/857888611534814982bc651033834642/process-supervisor/7976552835322023005e069088446535/step/<step_uid>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
@@ -45,10 +50,10 @@ Requirements:
     Examples:
 
         | test_description        | step_uid                         | step_position | 
-        | Position-dynaform1      | 8257746325322026c0e45e3047837732 | 2             |
-        | Position-dynaform2      | 30547852753220293960227013371359 | 3             |
-        | Position-dynaform3      | 840380819532202d132fb91020992676 | 1             |
-        | Position-dynaform4      | 663853222532202eec8a913042063689 | 4             |
+        | Position-dynaform1      | 674032139534bd91f9331a5032066933 | 2             |
+        | Position-dynaform2      | 583050735534bd923984f24007464958 | 3             |
+        | Position-dynaform3      | 114660532534bd926817991070085867 | 1             |
+        | Position-dynaform4      | 105517492534bd929a58c15055718131 | 4             |
         
   
 
@@ -59,7 +64,7 @@ Requirements:
             "dyn_uid": "<dyn_uid>"
        }
        """
-       And I request "project/7557786515322022952dcc8014985410/process-supervisor/dynaform"
+       And I request "project/857888611534814982bc651033834642/process-supervisor/dynaform"
        Then the response status code should be 201
        And the response charset is "UTF-8"
        And the content type is "application/json"
@@ -69,11 +74,11 @@ Requirements:
 
        Examples:
        | test_description                  | pud_number       | dyn_uid                          |  
-       | Assign a dynaform5 for Supervisor | 1                | 240449806532203ef307192024451548 |       
+       | Assign a dynaform5 for Supervisor | 1                | 856447360534bdeab3c4a72086906269 |       
 
 
   Scenario Outline: Obtain the position of the steps after add new dynaform
-    Given I request "project/7557786515322022952dcc8014985410/activity/7976552835322023005e069088446535/step/<step_uid>"
+    Given I request "project/857888611534814982bc651033834642/activity/7976552835322023005e069088446535/step/<step_uid>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
@@ -86,7 +91,7 @@ Requirements:
         | Position-dynaform2      | 30547852753220293960227013371359 | 3             |
         | Position-dynaform3      | 840380819532202d132fb91020992676 | 1             |
         | Position-dynaform4      | 663853222532202eec8a913042063689 | 4             |
-        | Position-dynaform5      | 240449806532203ef307192024451548 | 5             |
+        | Position-dynaform5      | 925775829534bdee3ef85a0017515754 | 5             |
 
   
   Scenario Outline: Delete an dynaform5 to a process supervisor
@@ -98,23 +103,42 @@ Requirements:
 
        Examples:
        | test_description                | project                          | pud_number       |
-       | Delete dynaform5 for Supervisor | 7557786515322022952dcc8014985410 | 1                |
+       | Delete dynaform5 for Supervisor | 925775829534bdee3ef85a0017515754 | 1                |
+
+
+
+
+  
+  Scenario Outline: Obtain the position of the dynaforms after changing position
+    Given I request "project/857888611534814982bc651033834642/activity/7976552835322023005e069088446535/step/<step_uid>"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+    And that "step_position" is set to "<step_position>"
+
+    Examples:
+
+        | test_description        | step_uid                         | step_position | 
+        | Position-dynaform1      | 674032139534bd91f9331a5032066933 | 1             |
+        | Position-dynaform2      | 583050735534bd923984f24007464958 | 2             |
+        | Position-dynaform3      | 114660532534bd926817991070085867 | 3             |
+        | Position-dynaform4      | 105517492534bd929a58c15055718131 | 4             |
 
 
 
 Scenario Outline: obtain the position of Input Documents in process supervisor
-    Given I request "project/7557786515322022952dcc8014985410/process-supervisors"
+    Given I request "project/857888611534814982bc651033834642/process-supervisors"
     Then the response status code should be 200
     And the response charset is "UTF-8"
-    And the type is "object"
+    And the type is "array"
     And that "pui_position" is set to "<pui_position>"
 
     Examples:
 
         | test_description | step_uid                         | pud_position | 
-        | Position-Input1  | 853418037532209018ab711041079957 | 1            |
-        | Position-Input2  | 5384383215322090e71aef1047228013 | 2            |
-        | Position-Input3  | 17499504253220917664c33090176996 | 3            |
+        | Position-Input1  | 152101193534bdfdb530c96029300152 | 1            |
+        | Position-Input2  | 370888112534bdfde887e79055241597 | 2            |
+        | Position-Input3  | 392695739534bdfe1542bb4007328326 | 3            |
         
 
 
@@ -125,12 +149,12 @@ Scenario Outline: obtain the position of Input Documents in process supervisor
         "pud_position": "1"
     }
     """
-    And I request "project/7557786515322022952dcc8014985410/activity/7976552835322023005e069088446535/step/17499504253220917664c33090176996"
+    And I request "project/857888611534814982bc651033834642/activity/7976552835322023005e069088446535/step/392695739534bdfe1542bb4007328326"
     Then the response status code should be 200
 
   
   Scenario Outline: Obtain the position of the steps after changing position
-    Given I request "project/7557786515322022952dcc8014985410/process-supervisors"
+    Given I request "project/857888611534814982bc651033834642/process-supervisors"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
@@ -139,6 +163,48 @@ Scenario Outline: obtain the position of Input Documents in process supervisor
     Examples:
 
         | test_description | step_uid                         | pud_position | 
-        | Position-Input1  | 853418037532209018ab711041079957 | 2            |
-        | Position-Input2  | 5384383215322090e71aef1047228013 | 3            |
-        | Position-Input3  | 17499504253220917664c33090176996 | 1            |
+        | Position-Input1  | 152101193534bdfdb530c96029300152 | 2            |
+        | Position-Input2  | 370888112534bdfde887e79055241597 | 3            |
+        | Position-Input3  | 392695739534bdfe1542bb4007328326 | 1            |
+
+
+Scenario Outline: obtain the position of Input Documents in process supervisor
+    Given I request "project/857888611534814982bc651033834642/process-supervisors"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+    And that "pui_position" is set to "<pui_position>"
+
+    Examples:
+
+        | test_description | step_uid                         | pud_position | 
+        | Position-Input1  | 152101193534bdfdb530c96029300152 | 1            |
+        | Position-Input2  | 370888112534bdfde887e79055241597 | 2            |
+        | Position-Input3  | 392695739534bdfe1542bb4007328326 | 3            |
+        
+
+
+  Scenario: Change order the Input document of "Input3" by position three
+    Given PUT this data:
+    """
+    {
+        "pud_position": "3"
+    }
+    """
+    And I request "project/857888611534814982bc651033834642/activity/7976552835322023005e069088446535/step/392695739534bdfe1542bb4007328326"
+    Then the response status code should be 200
+
+  
+  Scenario Outline: Obtain the position of the steps after changing position
+    Given I request "project/857888611534814982bc651033834642/process-supervisors"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+    And that "pui_position" is set to "<pui_position>"
+
+    Examples:
+
+        | test_description | step_uid                         | pud_position | 
+        | Position-Input1  | 152101193534bdfdb530c96029300152 | 1            |
+        | Position-Input2  | 370888112534bdfde887e79055241597 | 2            |
+        | Position-Input3  | 392695739534bdfe1542bb4007328326 | 3            |

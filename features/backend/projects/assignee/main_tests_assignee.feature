@@ -91,7 +91,37 @@ Scenario Outline: List assignees of an activity using a filter
     | Filtered list should return 1 record | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | 1       | 36775342552d5674146d9c2078497230 | group    | emp    |
 
 
-  Scenario Outline: Get a single user or group of an activity
+Scenario Outline: List all assignees of an activity includ user of the groups
+    Given I request "project/4224292655297723eb98691001100052/activity/<activity>/assignee/all"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And that "aas_uid" is set to "<aas_uid>"
+    And that "aas_name" is set to "<aas_name>"
+    And that "aas_lastname" is set to "<aas_lastname>"
+    And that "aas_username" is set to "<aas_username>"
+    And that "aas_type" is set to "<aas_type>"
+
+    Examples:
+
+    | activity                         | aas_uid                          | aas_name      | aas_lastname | aas_username | aas_type  |
+    | 65496814252977243d57684076211485 | 00000000000000000000000000000001 | Administrator |              | admin        | user      |
+    | 65496814252977243d57684076211485 | 24166330352d56730cdd525035621101 | Chris         | Rogers       | chris        | user      |
+    | 65496814252977243d57684076211485 | 62625000752d5672d6661e6072881167 | Zachary       | Wegner       | zachary      | user      |
+    | 65496814252977243d57684076211485 | 33140476452d5671b0abda5073786635 | Gavin         | Brule        | gavin        | user      |
+    | 65496814252977243d57684076211485 | 86021298852d56716b85f73067566944 | Brianna       | Ciarleglio   | brianna      | user      |
+    | 65496814252977243d57684076211485 | 25286582752d56713231082039265791 | Amy           | Connelly     | amy          | user      |
+    | 65496814252977243d57684076211485 | 23085901752d5671483a4c2059274810 | Arlene        | Cleveland    | arlene       | user      |
+    | 65496814252977243d57684076211485 | 32444503652d5671778fd20059078570 | Carter        | Ching        | carter       | user      |
+    | 65496814252977243d57684076211485 | 33140476452d5671b0abda5073786635 | Gavin         | Brule        | gavin        | user      |
+    | 65496814252977243d57684076211485 | 50562411252d5671e788c02016273245 | Jason         | Boria        | jason        | user      |
+    | 65496814252977243d57684076211485 | 70952985852d567244ff0c1060856085 | Kevin         | Beam         | kevin        | user      |
+    | 65496814252977243d57684076211485 | 66955548552d567318736d1041697217 | Erick         | Blake        | erick        | user      |
+    | 65496814252977243d57684076211485 | 82857688652d5673a585726072326208 | Sandra        | Casey        | sandra       | user      |
+    
+
+Scenario Outline: Get a single user or group of an activity
     Given I request "project/<project>/activity/<activity>/assignee/<aas_uid>"
     Then the response status code should be 200
     And the response charset is "UTF-8"

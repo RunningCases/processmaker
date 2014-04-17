@@ -1501,12 +1501,12 @@ class Processes
         try {
             $aInput = array ();
             $oCriteria = new Criteria( 'workflow' );
-            $oCriteria->add( InputdocumentPeer::PRO_UID, $sProUid );
-            $oDataset = InputdocumentPeer::doSelectRS( $oCriteria );
+            $oCriteria->add( InputDocumentPeer::PRO_UID, $sProUid );
+            $oDataset = InputDocumentPeer::doSelectRS( $oCriteria );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $oInput = new Inputdocument();
+                $oInput = new InputDocument();
                 $aInput[] = $oInput->Load( $aRow['INP_DOC_UID'] );
                 $oDataset->next();
             }
@@ -1526,7 +1526,7 @@ class Processes
     public function createInputRows ($aInput)
     {
         foreach ($aInput as $key => $row) {
-            $oInput = new Inputdocument();
+            $oInput = new InputDocument();
             //unset ($row['TAS_UID']);
             if ($oInput->InputExists( $row['INP_DOC_UID'] )) {
                 $oInput->remove( $row['INP_DOC_UID'] );
@@ -1597,12 +1597,12 @@ class Processes
         try {
             $aOutput = array ();
             $oCriteria = new Criteria( 'workflow' );
-            $oCriteria->add( OutputdocumentPeer::PRO_UID, $sProUid );
-            $oDataset = OutputdocumentPeer::doSelectRS( $oCriteria );
+            $oCriteria->add( OutputDocumentPeer::PRO_UID, $sProUid );
+            $oDataset = OutputDocumentPeer::doSelectRS( $oCriteria );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $oOutput = new Outputdocument();
+                $oOutput = new OutputDocument();
                 $aOutput[] = $oOutput->Load( $aRow['OUT_DOC_UID'] );
                 $oDataset->next();
             }
@@ -1622,7 +1622,7 @@ class Processes
     public function createOutputRows ($aOutput)
     {
         foreach ($aOutput as $key => $row) {
-            $oOutput = new Outputdocument();
+            $oOutput = new OutputDocument();
             //unset ($row['TAS_UID']);
             if ($oOutput->OutputExists( $row['OUT_DOC_UID'] )) {
                 $oOutput->remove( $row['OUT_DOC_UID'] );
@@ -3559,13 +3559,59 @@ class Processes
         $this->createProcessCategoryRow( isset( $oData->processCategory ) ? $oData->processCategory : null );
 
         // create the process
-        $this->createProcessRow( $oData->process );
+//        $this->createProcessRow( $oData->process );
         $this->createTaskRows( $oData->tasks );
         //it was commented becuase it seems to be working fine
         //$this->createEventRows(isset($oData->event) ? $oData->event : array());
 
 
         $aRoutesUID = $this->createRouteRows( $oData->routes );
+
+        $this->createProcessPropertiesFromData($oData);
+
+//        $this->createLaneRows( $oData->lanes );
+//
+//
+//        if (isset( $oData->gateways )) {
+//            $this->createGatewayRows( $oData->gateways );
+//        }
+//        $this->createDynaformRows( $oData->dynaforms );
+//        $this->createInputRows( $oData->inputs );
+//        $this->createOutputRows( $oData->outputs );
+//        $this->createStepRows( $oData->steps );
+//        $this->createStepSupervisorRows( isset( $oData->stepSupervisor ) ? $oData->stepSupervisor : array () );
+//        $this->createTriggerRows( $oData->triggers );
+//        $this->createStepTriggerRows( $oData->steptriggers );
+//        $this->createTaskUserRows( $oData->taskusers );
+//        $this->createGroupRow( $oData->groupwfs );
+//        $this->createDBConnectionsRows( isset( $oData->dbconnections ) ? $oData->dbconnections : array () );
+//        $this->createReportTables( isset( $oData->reportTables ) ? $oData->reportTables : array (), isset( $oData->reportTablesVars ) ? $oData->reportTablesVars : array () );
+//        $this->createSubProcessRows( isset( $oData->subProcess ) ? $oData->subProcess : array () );
+//        $this->createCaseTrackerRows( isset( $oData->caseTracker ) ? $oData->caseTracker : array () );
+//        $this->createCaseTrackerObjectRows( isset( $oData->caseTrackerObject ) ? $oData->caseTrackerObject : array () );
+//        $this->createObjectPermissionsRows( isset( $oData->objectPermissions ) ? $oData->objectPermissions : array () );
+//        $this->createStageRows( isset( $oData->stage ) ? $oData->stage : array () );
+//
+//        $this->createFieldCondition( isset( $oData->fieldCondition ) ? $oData->fieldCondition : array (), $oData->dynaforms );
+//
+//        // Create before to createRouteRows for avoid duplicates
+//        $this->createEventRows( isset( $oData->event ) ? $oData->event : array () );
+//
+//        $this->createCaseSchedulerRows( isset( $oData->caseScheduler ) ? $oData->caseScheduler : array () );
+//
+//        //Create data related to Configuration table
+//        $this->createTaskExtraPropertiesRows( isset( $oData->taskExtraProperties ) ? $oData->taskExtraProperties : array () );
+
+        // and finally create the files, dynaforms (xml and html), emailTemplates and Public files
+        $this->createFiles( $oData, $pmFilename );
+    }
+
+    public function createProcessPropertiesFromData ($oData)
+    {
+        // (*) Creating process dependencies
+        // creating the process category
+        $this->createProcessCategoryRow( isset( $oData->processCategory ) ? $oData->processCategory : null );
+
         $this->createLaneRows( $oData->lanes );
 
 
@@ -3598,9 +3644,8 @@ class Processes
 
         //Create data related to Configuration table
         $this->createTaskExtraPropertiesRows( isset( $oData->taskExtraProperties ) ? $oData->taskExtraProperties : array () );
-        // and finally create the files, dynaforms (xml and html), emailTemplates and Public files
-        $this->createFiles( $oData, $pmFilename );
     }
+
 
     /**
      * this function creates a new Process, defined in the object $oData

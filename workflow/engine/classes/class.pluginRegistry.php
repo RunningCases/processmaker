@@ -140,6 +140,24 @@ class PMPluginRegistry
     }
 
     /**
+     * Load the singleton instance from a serialized stored file
+     *
+     * @param $file
+     * @return PMPluginRegistry
+     * @throws Exception
+     */
+    public static function loadSingleton($file)
+    {
+        self::$instance = unserialize(file_get_contents($file));
+
+        if (! is_object(self::$instance) || get_class(self::$instance) != "PMPluginRegistry") {
+            throw new Exception("Can't load main PMPluginRegistry object.");
+        }
+
+        return self::$instance;
+    }
+
+    /**
      * This function generates a storable representation of a value
      * param
      *

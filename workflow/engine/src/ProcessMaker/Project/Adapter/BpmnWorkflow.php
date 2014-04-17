@@ -2,7 +2,7 @@
 namespace ProcessMaker\Project\Adapter;
 
 use ProcessMaker\Project;
-use ProcessMaker\Util\Hash;
+use ProcessMaker\Util;
 
 /**
  * Class BpmnWorkflow
@@ -69,13 +69,25 @@ class BpmnWorkflow extends Project\Bpmn
 
         } catch (\Exception $e) {
             $prjUid = $this->getUid();
-            $this->remove();
+            //$this->remove();
+            $bpmnProject = Project\Bpmn::load($prjUid);
+            $bpmnProject->remove();
 
             throw new \RuntimeException(sprintf(
                 "Can't create Bpmn Project with prj_uid: %s, workflow creation fails." . PHP_EOL . $e->getMessage()
                 , $prjUid
             ));
         }
+    }
+
+    public function update($data)
+    {
+        parent::update($data);
+        $this->wp->update(array(
+            "PRO_UID" => $data["PRJ_UID"],
+            "PRO_TITLE" => $data["PRJ_NAME"],
+            "PRO_DESCRIPTION" => $data["PRJ_DESCRIPTION"],
+        ));
     }
 
     public static function getList($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)
@@ -134,6 +146,13 @@ class BpmnWorkflow extends Project\Bpmn
         if (array_key_exists("ACT_NAME", $data)) {
             $taskData["TAS_POSY"] = $data["BOU_Y"];
         }
+        if (array_key_exists("ACT_TYPE", $data)) {
+            if ($data["ACT_TYPE"] == "SUB_PROCESS") {
+                $taskData["TAS_TYPE"] = "SUBPROCESS";
+            } else {
+                $taskData["TAS_TYPE"] = "NORMAL";
+            }
+        }
 
         $this->wp->addTask($taskData);
 
@@ -163,6 +182,7 @@ class BpmnWorkflow extends Project\Bpmn
     {
         parent::removeActivity($actUid);
         $this->wp->removeTask($actUid);
+
     }
 
     public function removeGateway($gatUid)
@@ -364,9 +384,7 @@ class BpmnWorkflow extends Project\Bpmn
                                                 ));
                                             }
                                             break;
-//                                        case 'PARALLEL_JOIN':
-//                                            $routeType = 'SEC-JOIN';
-//                                            break;
+
                                         default:
                                             throw new \LogicException(sprintf("Unsupported Gateway type: %s", $gateway['GAT_TYPE']));
                                     }
@@ -389,120 +407,348 @@ class BpmnWorkflow extends Project\Bpmn
         }
     }
 
-//    public static function mapBpmnFlowsToWorkflowRoute2($flow, $flows, $gateways, $events)
-//    {
-//        $fromUid = $flow['FLO_ELEMENT_ORIGIN'];
-//        $result = array();
-//
-//        if ($flow['FLO_ELEMENT_ORIGIN_TYPE'] != "bpmnActivity") {
-//            // skip flows that comes from a element that is not an Activity
-//            self::log("Skip map FlowsToWorkflowRoute for -> flow with FLO_UID: {$flow['FLO_UID']}, that have FLO_ELEMENT_ORIGIN: {$flow['FLO_ELEMENT_ORIGIN_TYPE']}:$fromUid");
-//            return null;
-//        }
-//
-//        if ($flow['FLO_TYPE'] != 'SEQUENCE') {
-//            throw new \LogicException(sprintf(
-//                "Unsupported flow type: %s, ProcessMaker only support type '', Given: '%s'",
-//                'SEQUENCE', $flow['FLO_TYPE']
-//            ));
-//        }
-//
-//        switch ($flow['FLO_ELEMENT_DEST_TYPE']) {
-//            case 'bpmnActivity':
-//                // the most easy case, when the flow is connecting a activity with another activity
-//                $result[] = array("from" => $fromUid, "to" => $flow['FLO_ELEMENT_DEST'], "type" => 'SEQUENTIAL');
-//                break;
-//            case 'bpmnGateway':
-//                $gatUid = $flow['FLO_ELEMENT_DEST'];
-//
-//                // if it is a gateway it can fork one or more routes
-//                $gatFlows = self::findInArray($gatUid, "FLO_ELEMENT_ORIGIN", $flows);
-//
-//                foreach ($gatFlows as $gatFlow) {
-//                    switch ($gatFlow['FLO_ELEMENT_DEST_TYPE']) {
-//                        case 'bpmnActivity':
-//                            // getting gateway properties
-//                            $gateways = self::findInArray($gatUid, "GAT_UID", $gateways);
-//
-//                            if (! empty($gateways)) {
-//                                $gateway = $gateways[0];
-//                                $routeType = "";
-//
-//                                switch ($gateway['GAT_TYPE']) {
-//                                    case self::BPMN_GATEWAY_COMPLEX:
-//                                        $routeType = 'SELECT';
-//                                        break;
-//                                    case self::BPMN_GATEWAY_EXCLUSIVE:
-//                                        $routeType = 'EVALUATE';
-//                                        break;
-//                                    case self::BPMN_GATEWAY_INCLUSIVE:
-//                                        switch ($gateway['GAT_DIRECTION']) {
-//                                            case "DIVERGING":
-//                                                $routeType = 'PARALLEL-BY-EVALUATION';
-//                                                break;
-//                                            case "CONVERGING":
-//                                                $routeType = 'SEC-JOIN';
-//                                                break;
-//                                            default:
-//                                                throw new \LogicException(sprintf("Unsupported Gateway direction: %s", $gateway['GAT_DIRECTION']));
-//                                        }
-//                                        break;
-//                                    case self::BPMN_GATEWAY_PARALLEL:
-//                                        switch ($gateway['GAT_DIRECTION']) {
-//                                            case "DIVERGING":
-//                                                $routeType = 'PARALLEL';
-//                                                break;
-//                                            case "CONVERGING":
-//                                                $routeType = 'SEC-JOIN';
-//                                                break;
-//                                            default:
-//                                                throw new \LogicException(sprintf("Unsupported Gateway direction: %s", $gateway['GAT_DIRECTION']));
-//                                        }
-//                                        break;
-//                                    default:
-//                                        throw new \LogicException(sprintf("Unsupported Gateway type: %s", $gateway['GAT_TYPE']));
-//                                }
-//
-//                                $result[] = array("from" => $fromUid, "to" => $gatFlow['FLO_ELEMENT_DEST'], "type" => $routeType);
-//                            }
-//                            break;
-//                        default:
-//                            // for processmaker is only allowed flows between "gateway -> activity"
-//                            // any another flow is considered invalid
-//                            throw new \LogicException(sprintf(
-//                                "For ProcessMaker is only allowed flows between \"gateway -> activity\" " . PHP_EOL .
-//                                "Given: bpmnGateway -> " . $gatFlow['FLO_ELEMENT_DEST_TYPE']
-//                            ));
-//                    }
-//                }
-//                break;
-//            case 'bpmnEvent':
-//                $evnUid = $flow['FLO_ELEMENT_DEST'];
-//                $events = self::findInArray($evnUid, "EVN_UID", $events);
-//
-//
-//                if (! empty($events)) {
-//                    $event = $events[0];
-//
-//                    switch ($event['EVN_TYPE']) {
-//                        case 'END':
-//                            $routeType = 'SEQUENTIAL';
-//                            $result[] = array("from" => $fromUid, "to" => "-1", "type" => $routeType);
-//                            break;
-//                        default:
-//                            throw new \LogicException("Invalid connection to Event object type");
-//                    }
-//                }
-//                break;
-//        }
-//
-//        return empty($result) ? null : $result;
-//    }
-
     public function remove()
     {
         parent::remove();
         $this->wp->remove();
     }
 
+    public static function createFromStruct(array $projectData, $generateUid = true)
+    {
+        $bwp = new self;
+        $result = array();
+        $data = array();
+
+        if ($generateUid) {
+            $result[0]["old_uid"] = isset($projectData["prj_uid"]) ? $projectData["prj_uid"] : "";
+            $projectData["prj_uid"] = Util\Common::generateUID();
+            $result[0]["new_uid"] = $projectData["prj_uid"];
+            $result[0]["object"] = "project";
+        }
+
+        $data["PRJ_UID"] = $projectData["prj_uid"];
+        $data["PRJ_AUTHOR"] = $projectData["prj_author"];
+
+        $bwp->create($data);
+
+        $diagramData = $processData = array();
+
+        if (array_key_exists("diagrams", $projectData) && is_array($projectData["diagrams"]) && count($projectData["diagrams"]) > 0) {
+            $diagramData = array_change_key_case($projectData["diagrams"][0], CASE_UPPER);
+            if ($generateUid) {
+                $result[1]["old_uid"] = $diagramData["DIA_UID"];
+                $diagramData["DIA_UID"] = Util\Common::generateUID();
+                $result[1]["new_uid"] = $diagramData["DIA_UID"];
+                $result[1]["object"] = "diagram";
+            }
+        }
+
+        $bwp->addDiagram($diagramData);
+
+        if (array_key_exists("process", $projectData) && is_array($projectData["process"])) {
+            $processData = array_change_key_case($projectData["process"], CASE_UPPER);
+            if ($generateUid) {
+                $result[2]["old_uid"] = $processData["PRO_UID"];
+                $processData["PRO_UID"] = Util\Common::generateUID();
+                $result[2]["new_uid"] = $processData["PRO_UID"];
+                $result[2]["object"] = "process";
+            }
+        }
+
+        $bwp->addProcess($processData);
+
+        $mappedUid = array_merge($result, self::updateFromStruct($bwp->prjUid, $projectData, $generateUid));
+
+        return $generateUid ? $mappedUid : $bwp->getUid();
+    }
+
+    /**
+     * Compose and return a Project struct
+     *
+     * Example struct return:
+     *  array(
+     *    "prj_uid" => "25111170353317e324d6e23073851309",
+     *    "prj_name" => "example project",
+     *    "prj_description" => "project desc.",
+     *    ...
+     *    "diagrams" => array(
+     *      array(
+     *        "dia_uid" => "94208559153317e325f1c24068030751",
+     *        "dia_name" => "Example Diagram",
+     *        ...
+     *        "activities" => array(...),
+     *        "events" => array(...),
+     *        "gateways" => array(...),
+     *        "flows" => array(...),
+     *        "artifacts" => array(...),
+     *        "laneset" => array(...),
+     *        "lanes" => array(...)
+     *      )
+     *    )
+     *  )
+     *
+     * @param $prjUid
+     * @return array
+     */
+    public static function getStruct($prjUid)
+    {
+        $bwp = BpmnWorkflow::load($prjUid);
+
+        $project = array_change_key_case($bwp->getProject(), CASE_LOWER);
+        $diagram = $bwp->getDiagram();
+        $process = $bwp->getProcess();
+        $diagram["pro_uid"] = $process["PRO_UID"];
+
+        $configList = array("changeCaseTo" => CASE_LOWER);
+
+        if (! is_null($diagram)) {
+            $diagram = array_change_key_case($diagram, CASE_LOWER);
+            $diagram["activities"] = $bwp->getActivities($configList);
+            $diagram["events"] = $bwp->getEvents($configList);
+            $diagram["gateways"] = $bwp->getGateways($configList);
+            $diagram["flows"] = $bwp->getFlows($configList);
+            $diagram["artifacts"] = $bwp->getArtifacts($configList);
+            $diagram["laneset"] = $bwp->getLanesets($configList);
+            $diagram["lanes"] = $bwp->getLanes($configList);
+            $project["diagrams"][] = $diagram;
+        }
+
+        return $project;
+    }
+
+    /**
+     * Update project from a struct defined.
+     *
+     * This function make add, update or delete of elements of a project
+     * Actions is based on a diff from project save in Db and the given structure as param, by the following criteria.
+     *
+     * 1. Elements that are on the struct, but they are not in the Db will be created on Db
+     * 2. Elements that are on the struct and they are found in db, will be compared, if they have been modified then will be updated on Db
+     * 3. Elements found in Db but they are not present on the struct will be considered deleted, so they will be deleted from Db.
+     *
+     * Example Struct:
+     *  array(
+     *    "prj_uid" => "25111170353317e324d6e23073851309",
+     *    "prj_name" => "example project",
+     *    "prj_description" => "project desc.",
+     *    ...
+     *    "diagrams" => array(
+     *      array(
+     *        "dia_uid" => "94208559153317e325f1c24068030751",
+     *        "dia_name" => "Example Diagram",
+     *        ...
+     *        "activities" => array(...),
+     *        "events" => array(...),
+     *        "gateways" => array(...),
+     *        "flows" => array(...),
+     *        "artifacts" => array(...),
+     *        "laneset" => array(...),
+     *        "lanes" => array(...)
+     *      )
+     *    )
+     *  )
+     *
+     * Notes:
+     *   1. All elements keys are in lowercase
+     *   2. the "diagrams" element is an array of arrays
+     *
+     * @param $prjUid
+     * @param $projectData
+     * @return array
+     */
+    public static function updateFromStruct($prjUid, $projectData, $generateUid = true)
+    {
+        $diagram = isset($projectData["diagrams"]) && isset($projectData["diagrams"][0]) ? $projectData["diagrams"][0] : array();
+        $result = array();
+        $bwp = BpmnWorkflow::load($prjUid);
+        $projectRecord = array_change_key_case($projectData, CASE_UPPER);
+        $bwp->update($projectRecord);
+
+        /*
+         * Diagram's Activities Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["activities"] as $i => $activityData) {
+            $activityData = array_change_key_case($activityData, CASE_UPPER);
+            unset($activityData["_EXTENDED"], $activityData["BOU_ELEMENT_ID"]);
+            $activityData = Util\ArrayUtil::boolToIntValues($activityData);
+
+            $activity = $bwp->getActivity($activityData["ACT_UID"]);
+            if (is_null($activity)) {
+                if ($generateUid) {
+                    $oldActUid = $activityData["ACT_UID"];
+                    $activityData["ACT_UID"] = Util\Common::generateUID();
+                    $result[] = array("object" => "activity", "new_uid" => $activityData["ACT_UID"], "old_uid" => $oldActUid);
+                }
+                $bwp->addActivity($activityData);
+            } elseif (! $bwp->isEquals($activity, $activityData)) {
+                $bwp->updateActivity($activityData["ACT_UID"], $activityData);
+            } else {
+                Util\Logger::log("Update Activity ({$activityData["ACT_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["activities"][$i] = $activityData;
+            $whiteList[] = $activityData["ACT_UID"];
+        }
+
+        $activities = $bwp->getActivities();
+
+        // looking for removed elements
+        foreach ($activities as $activityData) {
+            if (! in_array($activityData["ACT_UID"], $whiteList)) {
+                $bwp->removeActivity($activityData["ACT_UID"]);
+            }
+        }
+
+
+        /*
+         * Diagram's Gateways Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["gateways"] as $i => $gatewayData) {
+            $gatewayData = array_change_key_case($gatewayData, CASE_UPPER);
+            unset($gatewayData["_EXTENDED"]);
+
+            $gateway = $bwp->getGateway($gatewayData["GAT_UID"]);
+            if (is_null($gateway)) {
+                if ($generateUid) {
+                    $oldActUid = $gatewayData["GAT_UID"];
+                    $gatewayData["GAT_UID"] = Util\Common::generateUID();
+                    $result[] = array("object" => "gateway", "new_uid" => $gatewayData["GAT_UID"], "old_uid" => $oldActUid);
+                }
+
+                $bwp->addGateway($gatewayData);
+            } elseif (! $bwp->isEquals($gateway, $gatewayData)) {
+                $bwp->updateGateway($gatewayData["GAT_UID"], $gatewayData);
+            } else {
+                Util\Logger::log("Update Gateway ({$gatewayData["GAT_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["gateways"][$i] = $gatewayData;
+            $whiteList[] = $gatewayData["GAT_UID"];
+        }
+
+        $gateways = $bwp->getGateways();
+
+        // looking for removed elements
+        foreach ($gateways as $gatewayData) {
+            if (! in_array($gatewayData["GAT_UID"], $whiteList)) {
+                $bwp->removeGateway($gatewayData["GAT_UID"]);
+            }
+        }
+
+        /*
+         * Diagram's Events Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["events"] as $i => $eventData) {
+            $eventData = array_change_key_case($eventData, CASE_UPPER);
+            unset($eventData["_EXTENDED"]);
+            if (array_key_exists("EVN_CANCEL_ACTIVITY", $eventData)) {
+                $eventData["EVN_CANCEL_ACTIVITY"] = $eventData["EVN_CANCEL_ACTIVITY"] ? 1 : 0;
+            }
+            if (array_key_exists("EVN_WAIT_FOR_COMPLETION", $eventData)) {
+                $eventData["EVN_WAIT_FOR_COMPLETION"] = $eventData["EVN_WAIT_FOR_COMPLETION"] ? 1 : 0;
+            }
+
+            $event = $bwp->getEvent($eventData["EVN_UID"]);
+            if (is_null($event)) {
+                if ($generateUid) {
+                    $oldActUid = $eventData["EVN_UID"];
+                    $eventData["EVN_UID"] = Util\Common::generateUID();
+                    $result[] = array("object" => "event", "new_uid" => $eventData["EVN_UID"], "old_uid" => $oldActUid);
+                }
+
+                $bwp->addEvent($eventData);
+            } elseif (! $bwp->isEquals($event, $eventData)) {
+                $bwp->updateEvent($eventData["EVN_UID"], $eventData);
+            } else {
+                Util\Logger::log("Update Event ({$eventData["EVN_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["events"][$i] = $eventData;
+            $whiteList[] = $eventData["EVN_UID"];
+        }
+
+        $events = $bwp->getEvents();
+
+        // looking for removed elements
+        foreach ($events as $eventData) {
+            if (! in_array($eventData["EVN_UID"], $whiteList)) {
+                // If it is not in the white list, then remove them
+                $bwp->removeEvent($eventData["EVN_UID"]);
+            }
+        }
+
+
+        /*
+         * Diagram's Flows Handling
+         */
+        $whiteList = array();
+
+        foreach ($diagram["flows"] as $i => $flowData) {
+            $flowData = array_change_key_case($flowData, CASE_UPPER);
+
+            // if it is a new flow record
+            if ($generateUid && ! \BpmnFlow::exists($flowData["FLO_UID"])) {
+                $oldFloUid = $flowData["FLO_UID"];
+                $flowData["FLO_UID"] = Util\Common::generateUID();
+                $result[] = array("object" => "flow", "new_uid" => $flowData["FLO_UID"], "old_uid" => $oldFloUid);
+
+                $mappedUid = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result);
+                if ($mappedUid !== false) {
+                    $flowData["FLO_ELEMENT_ORIGIN"] = $mappedUid;
+                }
+
+                $mappedUid = self::mapUid($flowData["FLO_ELEMENT_DEST"], $result);
+                if ($mappedUid !== false) {
+                    $flowData["FLO_ELEMENT_DEST"] = $mappedUid;
+                }
+            }
+
+            $diagram["flows"][$i] = $flowData;
+            $whiteList[] = $flowData["FLO_UID"];
+        }
+
+        foreach ($diagram["flows"] as $flowData) {
+            $flow = $bwp->getFlow($flowData["FLO_UID"]);
+            if (is_null($flow)) {
+                $bwp->addFlow($flowData, $diagram["flows"]);
+            } elseif (! $bwp->isEquals($flow, $flowData)) {
+                $bwp->updateFlow($flowData["FLO_UID"], $flowData, $diagram["flows"]);
+            } else {
+                Util\Logger::log("Update Flow ({$flowData["FLO_UID"]}) Skipped - No changes required");
+            }
+        }
+
+        $flows = $bwp->getFlows();
+
+        // looking for removed elements
+        foreach ($flows as $flowData) {
+            if (! in_array($flowData["FLO_UID"], $whiteList)) {
+                $bwp->removeFlow($flowData["FLO_UID"]);
+            }
+        }
+
+        $bwp->mapBpmnFlowsToWorkflowRoutes();
+
+        return $result;
+    }
+
+    protected static function mapUid($oldUid, $list)
+    {
+        foreach ($list as $item) {
+            if ($item["old_uid"] == $oldUid) {
+                return $item["new_uid"];
+            }
+        }
+
+        return false;
+    }
+
+    public function setDisabled($value = true)
+    {
+        parent::setDisabled($value);
+        $this->wp->setDisabled($value);
+    }
 }
