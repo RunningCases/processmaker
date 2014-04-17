@@ -86,14 +86,13 @@ Background:
 
 
     Scenario: Assign user to department created in this script (Assign user: arlene)
-        Given POST this data:
+        Given PUT this data:
         """
         {
 
         }
         """
-        And that I want to update a resource with the key "dep_uid"  stored in session array
-        And I request "department/<dep_uid>/assign-user/23085901752d5671483a4c2059274810"
+        And I request "department/<dep_uid>/assign-user/23085901752d5671483a4c2059274810"  with the key "dep_uid" stored in session array
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
@@ -101,14 +100,13 @@ Background:
         
 
     Scenario: Set manager user to department (new supervisor of department: jacob)
-        Given POST this data:
+        Given PUT this data:
         """
         {
 
         }
         """
-        And that I want to update a resource with the key "dep_uid"  stored in session array
-        And I request "department/<dep_uid>/set-manager/24768775452d5671dbc1e92021979323"
+        And I request "department/<dep_uid>/set-manager/24768775452d5671dbc1e92021979323"  with the key "dep_uid" stored in session array
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
@@ -118,14 +116,13 @@ Background:
 
 
     Scenario: Unassign a User to department (Unassign user: arlene)
-        Given POST this data:
+        Given PUT this data:
         """
         {
 
         }
         """
-        And that I want to update a resource with the key "dep_uid"  stored in session array
-        And I request "department/<dep_uid>/unassign-user/23085901752d5671483a4c2059274810"
+        And I request "department/<dep_uid>/unassign-user/23085901752d5671483a4c2059274810"  with the key "dep_uid" stored in session array
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
@@ -134,14 +131,13 @@ Background:
 
 
     Scenario: Set manager user to department (new supervisor of department: dylan)
-        Given POST this data:
+        Given PUT this data:
         """
         {
 
         }
         """
-        And that I want to update a resource with the key "dep_uid"  stored in session array
-        And I request "department/<dep_uid>/set-manager/38102442252d5671a629009013495090"
+        And I request "department/<dep_uid>/set-manager/38102442252d5671a629009013495090"  with the key "dep_uid" stored in session array
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"

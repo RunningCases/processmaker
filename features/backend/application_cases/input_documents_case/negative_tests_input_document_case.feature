@@ -10,7 +10,7 @@ Background:
 
 Scenario: Returns a list of the uploaded documents for a given case
     Given I request "cases/170220159534214f642abb8058832900/input-documents"
-    Then the response status code should be 404
+    Then the response status code should be 400
 
 Scenario Outline: Post metadata and then upload documents for a given case
         Given POST upload an input document "<document_file>" to "cases/<case_uid>/input-document"
