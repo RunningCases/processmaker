@@ -113,8 +113,8 @@ Background:
         Examples:
 
         | test_description                                | dep_uid_number | dep_title           | dep_status |
-        | Update of field title and status of department  | A              | Department A UPDATE | INACTIVE   |
-        | Update of field title and status of department  | C              | Department B UPDATE | ACTIVE     |
+        | Update of field title and status of department  | 1              | Department A UPDATE | INACTIVE   |
+        | Update of field title and status of department  | 2              | Department B UPDATE | ACTIVE     |
         
 
     Scenario Outline: Get a single department after update of the department created of this script 
@@ -141,14 +141,13 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
-        And I request "department/<dep_uid>/assign-user/<usr_uid>"
+        And that I want to update "Assigned users"
+        And I request "department/dep_uid/assign-user/<usr_uid>"  with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
-        And store "dep_uid" in session array
-
+        
         Examples:
 
         | Description                                                | dep_uid_number | usr_uid                          |
@@ -166,13 +165,12 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
-        And I request "department/<dep_uid>/set-manager/<usr_uid>"
+        And that I want to update "Department supervisor"
+        And I request "department/dep_uid/set-manager/<usr_uid>"  with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
-        And store "dep_uid" in session array
 
 
         Examples:
@@ -184,7 +182,7 @@ Background:
 
     Scenario Outline: Get a single department of created in this script 
         Given that I want to get a resource with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
-        And I request "department/<dep_uid>"
+        And I request "department"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
@@ -209,14 +207,13 @@ Background:
 
         }
         """
-        And that I want to update a resource with the key "dep_uid" stored in session array
-        And I request "department/<dep_uid>/unassign-user/23085901752d5671483a4c2059274810"
+        And that I want to update "Assigned users"
+        And I request "department/dep_uid/unassign-user/<usr_uid>"  with the key "dep_uid" stored in session array as variable "dep_uid_<dep_uid_number>"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
         And the type is "object"
-        And store "dep_uid" in session array
-
+       
 
         Examples:
 
