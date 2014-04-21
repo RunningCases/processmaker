@@ -16,7 +16,7 @@ Scenario: Returns a list of the generated documents for a given cases
     And the response has 1 records
     
 
-Scenario: Returns an generated document for a given case
+Scenario: Returns a generated document for a given case
     Given I request "cases/33125846153383cecdf64f1079330191/output-document/75468909953383d0bc42f96046736849"
     Then the response status code should be 200
     And the response charset is "UTF-8"
