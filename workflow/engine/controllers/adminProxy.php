@@ -1267,21 +1267,18 @@ class adminProxy extends HttpProxyController
     public function getMaintenanceInfo()
     {
         $data = array('info' => array());
-        //$oauthClients = new OauthClients();
-        //$oauthClients->
         $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
-
-        $statuses['pm_rest_client'] = (!empty($pmRestClient));
-
-        //$data = $pmRestClient->toArray(BasePeer::TYPE_COLNAME);
+        $status = ! empty($pmRestClient);
+        $row = $pmRestClient->toArray(BasePeer::TYPE_FIELDNAME);
 
         $data['info'] = array(
             array(
+                'client_id' => $row["CLIENT_ID"],
                 'name' => 'PM Web Designer (REST Client)',
-                'value' => ($statuses['pm_rest_client']? 'Registered' : 'Not Registered'),
-                'value_ok' => $statuses['pm_rest_client'],
+                'value' => ($status? 'Registered' : 'Not Registered'),
+                'value_ok' => $status,
                 'option' => array(
-                    'label' => ($statuses['pm_rest_client']? 'Restore' : 'Register'),
+                    'label' => ($status? 'Restore' : 'Register'),
                     'action' => 'doRegisterPMDesignerClient'
                 )
             )
