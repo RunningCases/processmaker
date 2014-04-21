@@ -117,6 +117,7 @@ Scenario Outline: Create a case, derivate and cancel. then try do pause or route
     Then the response status code should be 400
     And the response status message should have the following text "<error_message_pause>"
 
+    #Delete case
     And PUT this data:
             """
             {
