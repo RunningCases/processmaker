@@ -325,12 +325,12 @@ class User
             if ($form['USR_ROLE'] == '') {
                 throw new \Exception('Invalid value specified for `usr_role`, can`t be null');
             } else {
+                require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
                 $oCriteria = new \Criteria('rbac');
                 $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
                 $oDataset = \RolesPeer::doSelectRS($oCriteria);
                 $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                 $oDataset->next();
-                $aRow = $oDataset->getRow();
                 if ($oDataset->getRow()) {
                     $aData['USR_ROLE'] = $form['USR_ROLE'];
                 } else {
@@ -531,12 +531,12 @@ class User
                 $aData['USR_STATUS'] = $form['USR_STATUS'];
             }
             if ($form['USR_ROLE'] != '') {
+                require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
                 $oCriteria = new \Criteria('rbac');
                 $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
                 $oDataset = \RolesPeer::doSelectRS($oCriteria);
                 $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                 $oDataset->next();
-                $aRow = $oDataset->getRow();
                 if ($oDataset->getRow()) {
                     $aData['USR_ROLE'] = $form['USR_ROLE'];
                 } else {
