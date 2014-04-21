@@ -269,7 +269,7 @@ class OutputDocument
                 }
             }
             $g->sessionVarRestore();
-            $response = $this->getCasesOutputDocument($applicationUid, $userUid, $sDocUID);
+            $response = $this->getCasesOutputDocument($applicationUid, $userUid, $aFields['APP_DOC_UID']);
             return $response;
         } catch (\Exception $e) {
             throw $e;
