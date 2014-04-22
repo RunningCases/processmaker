@@ -187,33 +187,28 @@ class InputDocument
                 $_FILES["form"]["error"] = 0;
             }
             if (isset($_FILES) && isset($_FILES["form"]) && count($_FILES["form"]) > 0) {
-                $appDocUid = $case->addInputDocument(
-                    $inputDocumentUid,
-                    $appDocUid,
-                    $docVersion,
-                    $appDocType,
-                    $appDocComment,
-                    '',
-                    $applicationUid,
-                    $delIndex,
-                    $taskUid,
-                    $userUid,
-                    "xmlform",
-                    $_FILES["form"]["name"],
-                    $_FILES["form"]["error"],
-                    $_FILES["form"]["tmp_name"]
-                );
-           }
-           //Trigger - Execute after - Start
-           $arrayField["APP_DATA"] = $case->executeTriggers(
-               $taskUid,
-               "INPUT_DOCUMENT",
-               $inputDocumentUid,
-               "AFTER",
-               $arrayField["APP_DATA"]
-           );
-           //Trigger - Execute after - End
-
+                $appDocUid = $case->addInputDocument($inputDocumentUid,
+                                                     $appDocUid,
+                                                     $docVersion,
+                                                     $appDocType,
+                                                     $appDocComment,
+                                                     '',
+                                                     $applicationUid,
+                                                     $delIndex,
+                                                     $taskUid,
+                                                     $userUid,
+                                                     "xmlform",
+                                                     $_FILES["form"]["name"],
+                                                     $_FILES["form"]["error"],
+                                                     $_FILES["form"]["tmp_name"]);
+            }
+            //Trigger - Execute after - Start
+            $arrayField["APP_DATA"] = $case->executeTriggers ($taskUid,
+                                                              "INPUT_DOCUMENT",
+                                                              $inputDocumentUid,
+                                                              "AFTER",
+                                                              $arrayField["APP_DATA"]);
+            //Trigger - Execute after - End
             //Save data
             $arrayData = array();
             $arrayData["APP_NUMBER"] = $arrayField["APP_NUMBER"];

@@ -86,7 +86,7 @@ class OutputDocuments extends Api
         try {
             $request_data = (array)($request_data);
             $outputDocument = new \ProcessMaker\BusinessModel\OutputDocument();
-            $arrayData = $outputDocument->updateOutputDocument($prjUid, $request_data, $outputDocumentUid, 0);
+            $outputDocument->updateOutputDocument($prjUid, $request_data, 0, $outputDocumentUid);
         } catch (\Exception $e) {
             //Response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
