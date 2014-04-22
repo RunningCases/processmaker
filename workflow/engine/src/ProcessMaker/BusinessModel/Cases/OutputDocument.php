@@ -56,10 +56,6 @@ class OutputDocument
     public function getCasesOutputDocument($applicationUid, $userUid, $applicationDocumentUid)
     {
         try {
-            $oAppDocument = \AppDocumentPeer::retrieveByPK( $applicationDocumentUid, 1 );
-            if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
-                throw (new \Exception('This output document with id: '.$applicationDocumentUid.' doesn\'t exist!'));
-            }
             $sApplicationUID = $applicationUid;
             $sUserUID = $userUid;
             \G::LoadClass('case');
@@ -84,6 +80,10 @@ class OutputDocument
                     $docrow['app_doc_index'] = $row['APP_DOC_INDEX'];
                     $docrow['app_doc_link'] = 'cases/' . $row['DOWNLOAD_LINK'];
                     if ($docrow['app_doc_uid'] == $applicationDocumentUid) {
+                        $oAppDocument = \AppDocumentPeer::retrieveByPK( $applicationDocumentUid, $row['DOC_VERSION'] );
+                        if (is_null( $oAppDocument )) {
+                            throw (new \Exception('This output document with id: '.$applicationDocumentUid.' doesn\'t exist!'));
+                        }
                         $result = $docrow;
                     }
                 }
@@ -269,6 +269,11 @@ class OutputDocument
                 }
             }
             $g->sessionVarRestore();
+            $oAppDocument = \AppDocumentPeer::retrieveByPK( $aFields['APP_DOC_UID'], $lastDocVersion);
+            if ($oAppDocument->getAppDocStatus() == 'DELETED') {
+                $oAppDocument->setAppDocStatus('ACTIVE');
+                $oAppDocument->save();
+            }
             $response = $this->getCasesOutputDocument($applicationUid, $userUid, $aFields['APP_DOC_UID']);
             return $response;
         } catch (\Exception $e) {
