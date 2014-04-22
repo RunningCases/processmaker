@@ -283,11 +283,11 @@ class Calendar
     }
 
     /**
-     * Create Group
+     * Create Calendar
      *
      * @param array $arrayData Data
      *
-     * return array Return data of the new Group created
+     * return array Return data of the new Calendar created
      */
     public function create($arrayData)
     {
