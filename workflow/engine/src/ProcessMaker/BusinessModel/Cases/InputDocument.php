@@ -183,7 +183,9 @@ class InputDocument
             //Triggers
             $arrayTrigger = $case->loadTriggers($taskUid, "INPUT_DOCUMENT", $inputDocumentUid, "AFTER");
             //Add Input Document
+            $_FILES["form"]["name"] = '';
             $_FILES["form"]["error"] = '';
+            $_FILES["form"]["tmp_name"] = '';
             if ($_FILES["form"]["error"] == '') {
                 $_FILES["form"]["error"] = 0;
             }
