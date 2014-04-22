@@ -101,6 +101,7 @@ $jsFiles = array (
     "workflow/public_html/lib/js/underscore-min.js",
     "workflow/public_html/lib/js/jquery-ui-1.10.3.custom.min.js",
     "workflow/public_html/lib/js/jquery.layout.min.js",
+    "workflow/public_html/lib/js/modernizr.js",
     "workflow/public_html/lib/js/restclient.min.js",
     "workflow/public_html/lib/pmUI/pmui.min.js",
     "workflow/public_html/lib/mafe/mafe.min.js",
