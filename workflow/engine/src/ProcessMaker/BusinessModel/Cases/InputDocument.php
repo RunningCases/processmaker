@@ -183,7 +183,8 @@ class InputDocument
             //Triggers
             $arrayTrigger = $case->loadTriggers($taskUid, "INPUT_DOCUMENT", $inputDocumentUid, "AFTER");
             //Add Input Document
-            if (!$_FILES["form"]["error"]) {
+            $_FILES["form"]["error"] = '';
+            if ($_FILES["form"]["error"] == '') {
                 $_FILES["form"]["error"] = 0;
             }
             if (isset($_FILES) && isset($_FILES["form"]) && count($_FILES["form"]) > 0) {
