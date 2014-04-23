@@ -276,7 +276,7 @@ class Cases
                         //Complete empty values
                         $applicationUid = $data["APP_UID"]; //APP_UID
                         //Get all the indexes returned by Solr as columns
-                        for($i = count($columsToInclude); $i <= count($data) - 1; $i++) {
+                        for ($i = count($columsToInclude); $i <= count($data) - 1; $i++) {
                             if (is_array($data[$columsToIncludeFinal[$i]])) {
                                 foreach ($data[$columsToIncludeFinal[$i]] as $delIndex) {
                                     $delIndexes[] = $delIndex;
@@ -305,8 +305,7 @@ class Cases
                             foreach ($indexes as $index) {
                                 $row = $aaappsDBData[$index];
                             }
-                            if(!isset($row))
-                            {
+                            if (!isset($row)) {
                                 continue;
                             }
                             \G::LoadClass('wsBase');
@@ -501,7 +500,7 @@ class Cases
                 $oDataset->next();
             }
             //Return
-            if(empty($result)) {
+            if (empty($result)) {
                 throw (new \Exception('Incorrect or unavailable information about this case: ' .$applicationUid));
             } else {
                 return $result;

@@ -202,7 +202,7 @@ Ext.onReady(function(){
             // TODO Labels for var 'type' are hardcoded, they must be replaced on the future
             var color = r.get('PROJECT_TYPE') == 'bpmn'? 'green': 'blue';
             var type = r.get('PROJECT_TYPE') == 'bpmn'? ' (BPMN Project)': '';
-            return v + ' ' + String.format("<font color='{0}'>{1}</font>", color, type);
+            return Ext.util.Format.htmlEncode(v) + ' ' + String.format("<font color='{0}'>{1}</font>", color, type);
         }},
         {header: _('ID_TYPE'), dataIndex: 'PROJECT_TYPE', width: 60, hidden:false},
         {header: _('ID_CATEGORY'), dataIndex: 'PRO_CATEGORY_LABEL', width: 100, hidden:false},
