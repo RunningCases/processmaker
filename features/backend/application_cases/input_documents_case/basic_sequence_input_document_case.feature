@@ -13,8 +13,7 @@ Scenario: Returns a list of the uploaded documents for a given case
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 10 records
-
+    
 
 Scenario: Returns an uploaded documents for a given case
     Given I request "cases/170220159534214f642abb8058832933/input-document/925833635534215b9148a64026212674"
