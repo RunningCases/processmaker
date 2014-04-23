@@ -54,7 +54,7 @@ Scenario Outline: Create a new case Impersonate (Negative Test)
 
 
 Scenario Outline: Create a case, derivate and cancel. then try do pause or route
-        #Create case
+#Create case
         Given POST this data:
             """
             {
@@ -67,7 +67,7 @@ Scenario Outline: Create a case, derivate and cancel. then try do pause or route
         Then the response status code should be 200   
         And store "app_uid" in session array as variable "app_uid_<case_number>"
         
-        #Send some variables
+#Send some variables
         And PUT this data:
             """
             {
@@ -81,7 +81,8 @@ Scenario Outline: Create a case, derivate and cancel. then try do pause or route
         And the content type is "application/json"
         And the response charset is "UTF-8"
         And the type is "object"
-        #Cancel case
+
+#Cancel case
         And  PUT this data:
         """
         {
@@ -94,7 +95,7 @@ Scenario Outline: Create a case, derivate and cancel. then try do pause or route
         And the response charset is "UTF-8"
         And the type is "object"
 
-        #Route case: it should not allow
+#Route case: it should not allow
         And PUT this data:
             """
             {
@@ -106,7 +107,7 @@ Scenario Outline: Create a case, derivate and cancel. then try do pause or route
         Then the response status code should be 400
         And the response status message should have the following text "<error_message_route>"
 
-        #Pause case
+#Pause case
         And PUT this data:
         """
             {
@@ -117,22 +118,22 @@ Scenario Outline: Create a case, derivate and cancel. then try do pause or route
     Then the response status code should be 400
     And the response status message should have the following text "<error_message_pause>"
 
-    #Delete case
-    And PUT this data:
-            """
-            {
-                
-            }
-            """
-        
-        And that I want to delete a resource with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
+    Examples:
+    | Description                                                           | case_number | pro_uid                          | tas_uid                          | error_message_route                    | error_message_pause                    |
+    | Create new case with process "Derivation rules - sequential"          | 1           | 99209594750ec27ea338927000421575 | 68707275350ec281ada1c95068712556 | This case delegation is already closed | This case delegation is already closed |
+
+
+#Delete case
+    
+    Scenario Outline: Delete a case created previously in this script
+    Given that I want to delete a resource with the key "app_uid" stored in session array as variable "app_uid_<app_uid_number>"
         And I request "cases"
-        Then the response status code should be 200
         And the content type is "application/json"
+        Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
-    
 
-    Examples:
-        | Description                                                           | case_number | pro_uid                          | tas_uid                          | error_message_route                    | error_message_pause                    |
-        | Create new case with process "Derivation rules - sequential"          | 1           | 99209594750ec27ea338927000421575 | 68707275350ec281ada1c95068712556 | This case delegation is already closed | This case delegation is already closed |
+        Examples:
+
+        | app_uid_number |
+        | 1              |

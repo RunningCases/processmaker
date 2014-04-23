@@ -310,7 +310,6 @@ class CaseScheduler
             $sDaysPerformTask = '';
             $sWeeks = '';
             $sMonths = '';
-            $sMonths = '';
             $sStartDay = '';
             $nSW = 0;
             $aData['SCH_DAYS_PERFORM_TASK'] = '';
@@ -608,7 +607,6 @@ class CaseScheduler
             $sValue = '';
             $sDaysPerformTask = '';
             $sWeeks = '';
-            $sMonths = '';
             $sMonths = '';
             $sStartDay = '';
             $nSW = 0;
