@@ -1495,6 +1495,31 @@ CREATE TABLE `PROCESS_FILES`
 	`PRF_UPDATE_DATE` DATETIME,
 	PRIMARY KEY (`PRF_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Application files metadata';
+
+#-----------------------------------------------------------------------------
+#-- WEB_ENTRY
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS WEB_ENTRY;
+
+CREATE TABLE WEB_ENTRY
+(
+    WE_UID    VARCHAR(32) NOT NULL,
+    PRO_UID   VARCHAR(32) NOT NULL,
+    TAS_UID   VARCHAR(32) NOT NULL,
+    DYN_UID   VARCHAR(32) NOT NULL,
+    USR_UID   VARCHAR(32) DEFAULT '',
+    WE_METHOD VARCHAR(4) DEFAULT 'HTML',
+    WE_INPUT_DOCUMENT_ACCESS INTEGER DEFAULT 0,
+    WE_DATA           MEDIUMTEXT,
+    WE_CREATE_USR_UID VARCHAR(32) DEFAULT '' NOT NULL,
+    WE_UPDATE_USR_UID VARCHAR(32) DEFAULT '',
+    WE_CREATE_DATE    DATETIME NOT NULL,
+    WE_UPDATE_DATE    DATETIME,
+
+    PRIMARY KEY (WE_UID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #-----------------------------------------------------------------------------
 #-- OAUTH_ACCESS_TOKENS
 #-----------------------------------------------------------------------------
@@ -2034,3 +2059,4 @@ CREATE TABLE `BPMN_DOCUMENTATION`
 )ENGINE=InnoDB DEFAULT CHARSET='utf8';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
+
