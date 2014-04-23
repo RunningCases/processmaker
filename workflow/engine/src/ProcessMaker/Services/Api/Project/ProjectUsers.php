@@ -81,7 +81,7 @@ class ProjectUsers extends Api
         try {
             $request_data = (array)($request_data);
             $user = new \ProcessMaker\BusinessModel\ProjectUser();
-            $objectData = $user->postProjectWsUserCanStartTask($prj_uid, $act_uid, $request_data);
+            $objectData = $user->projectWsUserCanStartTask($prj_uid, $act_uid, $request_data);
             //Response
             $response = $objectData;
         } catch (\Exception $e) {
