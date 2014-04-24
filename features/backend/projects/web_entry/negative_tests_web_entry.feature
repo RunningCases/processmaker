@@ -11,7 +11,7 @@ Scenario Outline: Create a new Web Entry using the method: PHP pages with Web Se
     {
         "tas_uid": "<tas_uid>",
         "dyn_uid": "<dyn_uid>",
-        "usr_uid": "00000000000000000000000000000001",
+        "usr_uid": "<usr_uid>",
         "we_title": "<we_title>",
         "we_description": "pruebas negativas",
         "we_method": "<we_method>",
@@ -25,13 +25,16 @@ Scenario Outline: Create a new Web Entry using the method: PHP pages with Web Se
 
     Examples:
 
-    | test_description            | project                          | tas_uid                          | dyn_uid                          | we_title       | we_method | error_code | error_message |
-    | Invalid method              | 28733629952e66a362c4f63066393844 | 44199549652e66ba533bb06088252754 | 60308801852e66b7181ae21045247174 | DynaForm Demo1 | JS        | 400        | method        |
-    | Field required prj_uid      |                                  | 56118778152e66babcc2103002009439 | 99869771852e66b7dc4b858088901665 | DynaForm Demo2 | HTML      | 400        | prj_uid       |
-    | Field required tas_uid      | 28733629952e66a362c4f63066393844 |                                  | 60308801852e66b7181ae21045247174 | DynaForm Demo1 | WS        | 400        | tas_uid       |
-    | Field required dyn_uid      | 28733629952e66a362c4f63066393844 | 56118778152e66babcc2103002009439 |                                  | DynaForm Demo2 | HTML      | 400        | dyn_uid       |
-    | Field required method       | 28733629952e66a362c4f63066393844 | 44199549652e66ba533bb06088252754 | 60308801852e66b7181ae21045247174 | DynaForm Demo1 |           | 400        | method        |
-        
+    | test_description            | project                          | tas_uid                          | dyn_uid                          | usr_uid                          | we_title       | we_method | error_code | error_message |
+    | Invalid method              | 28733629952e66a362c4f63066393844 | 44199549652e66ba533bb06088252754 | 60308801852e66b7181ae21045247174 | 00000000000000000000000000000001 | DynaForm Demo1 | JS        | 400        | method        |
+    | Field required prj_uid      |                                  | 56118778152e66babcc2103002009439 | 99869771852e66b7dc4b858088901665 | 00000000000000000000000000000001 | DynaForm Demo2 | HTML      | 400        | prj_uid       |
+    | Field required tas_uid      | 28733629952e66a362c4f63066393844 |                                  | 60308801852e66b7181ae21045247174 | 00000000000000000000000000000001 | DynaForm Demo1 | WS        | 400        | tas_uid       |
+    | Field required dyn_uid      | 28733629952e66a362c4f63066393844 | 56118778152e66babcc2103002009439 |                                  | 00000000000000000000000000000001 | DynaForm Demo2 | HTML      | 400        | dyn_uid       |
+    | Field required method       | 28733629952e66a362c4f63066393844 | 44199549652e66ba533bb06088252754 | 60308801852e66b7181ae21045247174 | 00000000000000000000000000000001 | DynaForm Demo1 |           | 400        | method        |
+    | Field required usr_uid      | 28733629952e66a362c4f63066393844 | 44199549652e66ba533bb06088252754 | 60308801852e66b7181ae21045247174 |                                  | DynaForm Demo1 | WS        | 400        | usr_uid       |
+    | Field required we_title     | 28733629952e66a362c4f63066393844 | 44199549652e66ba533bb06088252754 | 60308801852e66b7181ae21045247174 | 00000000000000000000000000000001 |                | WS        | 400        | we_title      |
+    | Field required we_method    | 28733629952e66a362c4f63066393844 | 44199549652e66ba533bb06088252754 | 60308801852e66b7181ae21045247174 | 00000000000000000000000000000001 | DynaForm Demo1 |           | 400        | method        |
+         
     
 Scenario Outline: Create a new Web Entry using the method: Single HTML
     Given POST this data:
