@@ -16,7 +16,10 @@ use \ProcessMaker\Util;
  */
 class Project extends Api
 {
-    public function index()
+    /**
+     * @url GET
+     */
+    public function doGetProjects()
     {
         try {
             $start = null;
@@ -31,10 +34,15 @@ class Project extends Api
         }
     }
 
-    public function get($prjUid)
+    /**
+     * @url GET /:prj_uid
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetProject($prj_uid)
     {
         try {
-            return Adapter\BpmnWorkflow::getStruct($prjUid);
+            return Adapter\BpmnWorkflow::getStruct($prj_uid);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
