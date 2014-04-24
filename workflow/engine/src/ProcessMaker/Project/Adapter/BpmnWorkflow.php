@@ -600,6 +600,41 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
+        /*
+         * Diagram's Artifacts Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["artifacts"] as $i => $artifactData) {
+            $artifactData = array_change_key_case($artifactData, CASE_UPPER);
+            unset($artifactData["_EXTENDED"]);
+            $artifact = $bwp->getArtifact($artifactData["ART_UID"]);
+
+            if (is_null($artifact)) {
+                if ($generateUid) {
+                    $oldArtUid = $artifactData["ART_UID"];
+
+                    $artifactData["ART_UID"] = Util\Common::generateUID();
+                    $result[] = array("object" => "artifact", "new_uid" => $artifactData["ART_UID"], "old_uid" => $oldArtUid);
+                }
+
+                $bwp->addArtifact($artifactData);
+            } elseif (! $bwp->isEquals($artifact, $artifactData)) {
+                $bwp->updateArtifact($artifactData["ART_UID"], $artifactData);
+            } else {
+                Util\Logger::log("Update Artifact ({$artifactData["GAT_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["artifacts"][$i] = $artifactData;
+            $whiteList[] = $artifactData["ART_UID"];
+        }
+
+        $artifacts = $bwp->getArtifacts();
+        // looking for removed elements
+        foreach ($artifacts as $artifactData) {
+            if (! in_array($artifactData["ART_UID"], $whiteList)) {
+                $bwp->removeArtifact($artifactData["ART_UID"]);
+            }
+        }
 
         /*
          * Diagram's Gateways Handling
