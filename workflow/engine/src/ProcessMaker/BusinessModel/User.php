@@ -207,7 +207,6 @@ class User
     public function create($arrayData)
     {
         try {
-            global $RBAC;
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
             $form = $arrayData;

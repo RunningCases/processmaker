@@ -209,7 +209,7 @@ class ProjectUser
      *
      * @access public
      */
-    public function postProjectWsUserCanStartTask($sProcessUID, $sActivityUID, $oData)
+    public function projectWsUserCanStartTask($sProcessUID, $sActivityUID, $oData)
     {
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
