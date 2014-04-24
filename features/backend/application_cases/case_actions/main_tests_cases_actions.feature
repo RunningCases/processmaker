@@ -234,8 +234,6 @@ Scenario Outline: Sends variables to a case
 
 
 
-
-
 Scenario Outline: Route a case to the next task in the process
         Given PUT this data:
             """
