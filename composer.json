@@ -38,8 +38,11 @@
         }
     ],
 
+    "minimum-stability": "beta",
+    "prefer-stable": true,
+
     "require": {
-        "luracast/restler" : "v3.0.0",
+        "luracast/restler" : "3.0.0-RC4",
         "bshaffer/oauth2-server-php": "v1.0",
         "jquery/jquery": "1.10.2",
         "underscore/underscore": "1.5.2",
