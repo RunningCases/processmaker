@@ -54,28 +54,35 @@ class Project extends Api
     public function post($request_data)
     {
         try {
-            //TODO
-        } catch (\Exception $e) {
-            // TODO in case that $process->createProcess($userUid, $data); fails maybe the BPMN project was created successfully
-            //      so, we need remove it or change the creation order.
-
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-    }
-
-    public function put($prjUid, $request_data)
-    {
-        try {
-            return Adapter\BpmnWorkflow::updateFromStruct($prjUid, $request_data);
+            return Adapter\BpmnWorkflow::createFromStruct($request_data);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
-    public function delete($prjUid)
+    /**
+     * @url PUT /:prj_uid
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doPutProject($prj_uid, $request_data)
     {
         try {
-           // TODO
+            return Adapter\BpmnWorkflow::updateFromStruct($prj_uid, $request_data);
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * @param string $prj_uid {@min 1}{@max 32}
+     * @url DELETE /:prj_uid
+     */
+    public function delete($prj_uid)
+    {
+        try {
+            $oBpmnWf = Adapter\BpmnWorkflow::load($prj_uid);
+            $oBpmnWf->remove();
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
