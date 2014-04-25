@@ -18,6 +18,11 @@ class Restler extends \Luracast\Restler\Restler
     public $responseMultipart = array();
     public $inputExecute = '';
 
+    public function __construct($productionMode = false, $refreshCache = false)
+    {
+        parent::__construct($productionMode, $refreshCache);
+    }
+
     /**
      * This method to set the value flag Multipart
      *
