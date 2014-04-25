@@ -63,10 +63,15 @@ class Project extends Api
         }
     }
 
-    public function put($prjUid, $request_data)
+    /**
+     * @url PUT /:prj_uid
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doPutProject($prj_uid, $request_data)
     {
         try {
-            return Adapter\BpmnWorkflow::updateFromStruct($prjUid, $request_data);
+            return Adapter\BpmnWorkflow::updateFromStruct($prj_uid, $request_data);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
