@@ -58,7 +58,7 @@ G::LoadClass( 'pmFunctions' );
 //call plugin
 if (class_exists( 'folderData' )) {
     //$folderData = new folderData($sProUid, $proFields['PRO_TITLE'], $sAppUid, $Fields['APP_TITLE'], $sUsrUid);
-    $oPluginRegistry = PMPluginRegistry::getSingleton();
+    $oPluginRegistry = &PMPluginRegistry::getSingleton();
     $aAvailablePmFunctions = $oPluginRegistry->getPmFunctions();
     foreach ($aAvailablePmFunctions as $key => $class) {
         $filePlugin = PATH_PLUGINS . $class . PATH_SEP . 'classes' . PATH_SEP . 'class.pmFunctions.php';
@@ -165,7 +165,7 @@ class PMScript
 
         foreach ($tokens as $token) {
             if (is_string($token)) {
-                $result = $result . $token;
+                $result .= $token;
             } else {
                 list($id, $text) = $token;
 
@@ -175,18 +175,18 @@ class PMScript
                     case T_COMMENT:
                     case T_ML_COMMENT:  //we've defined this
                     case T_DOC_COMMENT: //and this
+                        if ($text != '<?php ' && $text != '<?php' && $text != '<? ' && $text != '<?' && $text != '<% ' && $text != '<%') {
+                            $result .= $text;
+                        }
                         break;
                     default:
-                        $result = $result . $text;
+                        $result .= $text;
                         break;
                 }
             }
         }
 
-        $result = trim($result);
-        $sScript = $result;
-
-        $this->sScript = $sScript;
+        $this->sScript = trim($result);
     }
 
     /**
