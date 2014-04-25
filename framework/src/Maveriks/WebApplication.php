@@ -69,7 +69,9 @@ class WebApplication
             } else {
                 return self::RUNNING_DEFAULT;
             }
-        } elseif (substr($this->requestUri, 1, 3) === "api") {
+        } elseif (substr($this->requestUri, 1, 3) === "api"
+            && count(explode("/", $this->requestUri)) >= 4 // url api pattern: /api/1.0/<workspace>/<resource>
+        ) {
             return self::RUNNING_API;
         } else {
             return self::RUNNING_WORKFLOW;
