@@ -195,10 +195,18 @@ class WebApplication
 
         // Setting current workspace to Api class
         Services\Api::setWorkspace(SYS_SYS);
+        $cacheDir = defined("PATH_C")? PATH_C: sys_get_temp_dir();
+
+        $sysConfig = \System::getSystemConfiguration();
+
+        \Luracast\Restler\Defaults::$cacheDirectory = $cacheDir;
+        $productionMode = (bool) !(isset($sysConfig["service_api_debug"]) && $sysConfig["service_api_debug"]);
+
+        Util\Logger::log("Serving API mode: " . ($productionMode? "production": "development"));
 
         // create a new Restler instance
         //$rest = new \Luracast\Restler\Restler();
-        $rest = new \Maveriks\Extension\Restler();
+        $rest = new \Maveriks\Extension\Restler($productionMode);
         // setting flag for multipart to Restler
         $rest->setFlagMultipart($multipart);
         $rest->inputExecute = $inputExecute;
@@ -272,6 +280,7 @@ class WebApplication
         }
 
         $rest->handle();
+
         if ($rest->flagMultipart === true) {
             return $rest->responseMultipart;
         }

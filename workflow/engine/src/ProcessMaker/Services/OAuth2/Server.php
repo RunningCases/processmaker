@@ -235,5 +235,10 @@ class Server implements iAuthenticate
     {
         return array_keys($this->scope);
     }
+
+    public function __getWWWAuthenticateString()
+    {
+        return "";
+    }
 }
 
