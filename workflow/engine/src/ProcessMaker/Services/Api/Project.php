@@ -54,11 +54,8 @@ class Project extends Api
     public function post($request_data)
     {
         try {
-            //TODO
+            return Adapter\BpmnWorkflow::createFromStruct($request_data);
         } catch (\Exception $e) {
-            // TODO in case that $process->createProcess($userUid, $data); fails maybe the BPMN project was created successfully
-            //      so, we need remove it or change the creation order.
-
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
@@ -77,10 +74,15 @@ class Project extends Api
         }
     }
 
-    public function delete($prjUid)
+    /**
+     * @param string $prj_uid {@min 1}{@max 32}
+     * @url DELETE /:prj_uid
+     */
+    public function delete($prj_uid)
     {
         try {
-           // TODO
+            $oBpmnWf = Adapter\BpmnWorkflow::load($prj_uid);
+            $oBpmnWf->remove();
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
