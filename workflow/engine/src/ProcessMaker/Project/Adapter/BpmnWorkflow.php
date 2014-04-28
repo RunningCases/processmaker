@@ -311,12 +311,12 @@ class BpmnWorkflow extends Project\Bpmn
 
         // create case scheduler
         if ($event->getEvnMarker() == "TIMER") {
-            $this->wp->addCaseScheduler();
+            $this->wp->addCaseScheduler($eventUid);
         }
 
         // create web entry
         if ($event->getEvnMarker() == "MESSAGE") {
-            $this->wp->addWebEntry();
+            $this->wp->addWebEntry($eventUid);
         }
 
         //return parent::addEvent($data);
