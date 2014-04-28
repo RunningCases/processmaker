@@ -775,7 +775,7 @@ class Workflow extends Handler
         $this->update(array("PRO_STATUS" => $status));
     }
 
-    public function addCaseScheduler($eventUid, $prj_uid)
+    public function addCaseScheduler($eventUid)
     {
         try {
             $caseScheduler = new \CaseScheduler();
@@ -783,7 +783,7 @@ class Workflow extends Handler
                 'SCH_NAME'=>'',
                 'SCH_DEL_USER_NAME'=>'',
                 'SCH_DEL_USER_UID'=>'',
-                'PRO_UID'=>$prj_uid,
+                'PRO_UID'=>$this->proUid,
                 'TAS_UID'=>'',
                 'SCH_TIME_NEXT_RUN'=>date('Y-m-d H:i:s'),
                 'SCH_LAST_RUN_TIME'=>NULL,
@@ -837,13 +837,13 @@ class Workflow extends Handler
 
     }
 
-    public function addWebEntry($eventUid, $prj_uid)
+    public function addWebEntry($eventUid)
     {
         try {
             $webEntry = new \WebEntry();
             $webEntryUid = $eventUid;
             $webEntry->setWeUid($webEntryUid);
-            $webEntry->setProUid($prj_uid);
+            $webEntry->setProUid($this->proUid);
             $webEntry->setWeMethod('');
             $webEntry->setWeCreateDate(date('Y-m-d H:i:s'));
             $webEntry->save();
