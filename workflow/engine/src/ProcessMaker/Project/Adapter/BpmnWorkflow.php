@@ -306,7 +306,21 @@ class BpmnWorkflow extends Project\Bpmn
             throw new \RuntimeException("Required param \"EVN_TYPE\" is missing.");
         }
 
-        return parent::addEvent($data);
+        $eventUid = parent::addEvent($data);
+        $event = \BpmnEventPeer::retrieveByPK($eventUid);
+
+        // create case scheduler
+        if ($event->getEvnMarker() == "TIMER") {
+            $this->wp->addCaseScheduler();
+        }
+
+        // create web entry
+        if ($event->getEvnMarker() == "MESSAGE") {
+            $this->wp->addWebEntry();
+        }
+
+        //return parent::addEvent($data);
+        return $eventUid;
     }
 
     public function mapBpmnFlowsToWorkflowRoutes()

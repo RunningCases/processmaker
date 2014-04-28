@@ -668,6 +668,9 @@ class Workflow extends Handler
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
+                if ($aRow['EVN_UID'] == 'TIMER') {
+                    $this->removeCaseScheduler();
+                }
                 $oEvent->remove($aRow['EVN_UID']);
                 $oDataset->next();
             }
@@ -770,5 +773,103 @@ class Workflow extends Handler
     {
         $status = $value ? "DISABLED" : "ACTIVE";
         $this->update(array("PRO_STATUS" => $status));
+    }
+
+    public function addCaseScheduler()
+    {
+        try {
+            $caseScheduler = new \CaseScheduler();
+            $data = array(
+                'SCH_NAME'=>'',
+                'SCH_DEL_USER_NAME'=>'',
+                'SCH_DEL_USER_UID'=>'',
+                'PRO_UID'=>'',
+                'TAS_UID'=>'',
+                'SCH_TIME_NEXT_RUN'=>date('Y-m-d H:i:s'),
+                'SCH_LAST_RUN_TIME'=>NULL,
+                'SCH_STATE'=>'',
+                'SCH_LAST_STATE'=>'',
+                'USR_UID'=>'',
+                'SCH_OPTION'=>'',
+                'SCH_START_TIME'=>date('Y-m-d H:i:s'),
+                'SCH_START_DATE'=>date('Y-m-d H:i:s'),
+                'SCH_DAYS_PERFORM_TASK'=>'',
+                'SCH_EVERY_DAYS'=>NULL,
+                'SCH_WEEK_DAYS'=>'',
+                'SCH_START_DAY'=>'',
+                'SCH_START_DAY_OPT_1'=>'',
+                'SCH_START_DAY_OPT_2'=>'',
+                'SCH_MONTHS'=>'',
+                'SCH_END_DATE'=>date('Y-m-d H:i:s'),
+                'SCH_REPEAT_EVERY'=>'',
+                'SCH_REPEAT_STOP_IF_RUNNING'=>'',
+                'CASE_SH_PLUGIN_UID'=>NULL,
+                'SCH_DEL_USER_PASS'=>'',
+                'SCH_UID'=>Common::generateUID(),
+                'SCH_REPEAT_UNTIL'=>''
+            );
+
+            self::log("Adding Case Scheduler with data: ", $data);
+            $caseSchedulerUid = $caseScheduler->create($data);
+            self::log("Adding Case Scheduler success!, created case Scheduler id: ", $caseSchedulerUid);
+
+            return $caseSchedulerUid;
+        } catch (\Exception $oError) {
+            throw ($oError);
+        }
+    }
+
+    public function removeCaseScheduler()
+    {
+        try {
+            $caseScheduler = new \CaseScheduler();
+            self::log("Remove Case Scheduler: ".$caseScheduler->getSchUid());
+            $caseScheduler->delete();
+            self::log("Remove Case Scheduler Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function updateCaseScheduler()
+    {
+
+    }
+
+    public function addWebEntry()
+    {
+        try {
+            $webEntry = new \WebEntry();
+            $webEntryUid = Common::generateUID();
+            $webEntry->setWeUid($webEntryUid);
+            $webEntry->setWeMethod('');
+            $webEntry->setWeCreateDate(date('Y-m-d H:i:s'));
+            $webEntry->save();
+
+            //Return
+            self::log("Adding Web Entry success!, created Web Entry id: ", $webEntryUid);
+            return $webEntryUid;
+        } catch (\Exception $oError) {
+            throw ($oError);
+        }
+    }
+
+    public function removeWebEntry()
+    {
+        try {
+            $webEntry = new \WebEntry();
+            self::log("Remove Web Entry: ".$webEntry->getWeUid());
+            $webEntry->delete();
+            self::log("Remove Web Entry Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function updateWebEntry()
+    {
+
     }
 }
