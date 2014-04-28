@@ -158,6 +158,9 @@ class Bpmn extends Handler
         foreach ($this->getFlows() as $flow) {
             $this->removeFlow($flow["FLO_UID"]);
         }
+        foreach ($this->getArtifacts() as $artifacts) {
+            $this->removeArtifact($artifacts["ART_UID"]);
+        }
 
         if ($process = $this->getProcess("object")) {
             $process->delete();
@@ -213,9 +216,12 @@ class Bpmn extends Handler
 
     public function canRemove()
     {
-        // TODO this must validate if the project can be deleted or not.
-        // TODO the project can be deleted only if it has not any started cases
-        return true;
+        $totalCases = \Process::getCasesCountForProcess($this->prjUid);
+        if ($totalCases == 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /*

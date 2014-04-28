@@ -62,7 +62,7 @@ class FilesManager
                     $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory;
                     break;
                 default:
-                    throw (new \Exception( 'Invalid value specified for `path`. Expecting `templates` or `public`'));
+                    throw (new \Exception( 'Invalid value specified for path. Expecting templates or public'));
                     break;
             }
             \G::verifyPath($sDirectory, true);
@@ -147,7 +147,7 @@ class FilesManager
         try {
             $aData['prf_path'] = rtrim($aData['prf_path'], '/') . '/';
             if (!$aData['prf_filename']) {
-                throw (new \Exception( 'Invalid value specified for `prf_filename`.'));
+                throw (new \Exception( 'Invalid value specified for prf_filename.'));
             }
             $extention = strstr($aData['prf_filename'], '.');
             if (!$extention) {
@@ -162,7 +162,7 @@ class FilesManager
             }
             $sMainDirectory = current(explode("/", $aData['prf_path']));
             if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
-                throw (new \Exception( 'Invalid value specified for `prf_path`. Expecting `templates/` or `public/`'));
+                throw (new \Exception( 'Invalid value specified for prf_path. Expecting templates/ or public/'));
             }
             if (strstr($aData['prf_path'],'/')) {
                 $sSubDirectory = substr($aData['prf_path'], strpos($aData['prf_path'], "/")+1) ;
@@ -329,7 +329,7 @@ class FilesManager
                 $rsCriteria->next();
             }
             if ($path == '') {
-                throw new \Exception('Invalid value specified for `prf_uid`.');
+                throw new \Exception('Invalid value specified for prf_uid.');
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
@@ -398,7 +398,7 @@ class FilesManager
                 $rsCriteria->next();
             }
             if ($path == '') {
-                throw new \Exception('Invalid value specified for `prf_uid`.');
+                throw new \Exception('Invalid value specified for prf_uid.');
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
@@ -440,7 +440,7 @@ class FilesManager
                 $rsCriteria->next();
             }
             if ($path == '') {
-                throw new \Exception('Invalid value specified for `prf_uid`.');
+                throw new \Exception('Invalid value specified for prf_uid.');
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
@@ -456,7 +456,7 @@ class FilesManager
                 $oProcessMap->downloadFile($sProcessUID,$sMainDirectory,$sSubDirectory,$sFile);
                 die();
             } else {
-                throw (new \Exception( 'Invalid value specified for `path`.'));
+                throw (new \Exception( 'Invalid value specified for path.'));
             }
         } catch (Exception $e) {
             throw $e;
@@ -492,7 +492,7 @@ class FilesManager
             if (file_exists($sDirectory.$sDirToDelete)) {
                 \G::rm_dir($sDirectory.$sDirToDelete);
             } else {
-                throw (new \Exception( 'Invalid value specified for `path`.'));
+                throw (new \Exception( 'Invalid value specified for path.'));
             }
             $criteria = new \Criteria("workflow");
             $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
