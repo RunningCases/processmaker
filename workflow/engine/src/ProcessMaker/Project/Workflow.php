@@ -668,8 +668,6 @@ class Workflow extends Handler
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $this->removeCaseScheduler($aRow['EVN_UID']);
-                $this->removeWebEntry($aRow['EVN_UID']);
                 $oEvent->remove($aRow['EVN_UID']);
                 $oDataset->next();
             }
@@ -818,7 +816,7 @@ class Workflow extends Handler
         }
     }
 
-    public function removeCaseScheduler($schUid)
+    public static function removeCaseScheduler($schUid)
     {
         try {
             $caseScheduler = new \CaseScheduler();
@@ -862,7 +860,7 @@ class Workflow extends Handler
         }
     }
 
-    public function removeWebEntry($weUid)
+    public static function removeWebEntry($weUid)
     {
         try {
             $webEntry = new \ProcessMaker\BusinessModel\WebEntry();

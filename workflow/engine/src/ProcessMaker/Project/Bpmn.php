@@ -476,12 +476,12 @@ class Bpmn extends Handler
 
             // delete case scheduler
             if ($event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
-                $this->removeCaseScheduler($evnUid);
+                Workflow::removeCaseScheduler($evnUid);
             }
 
             // delete web entry
             if ($event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
-                $this->removeWebEntry($evnUid);
+                Workflow::removeWebEntry($evnUid);
             }
 
             $event->delete();
@@ -834,31 +834,5 @@ class Bpmn extends Handler
     {
         $status = $value ? "DISABLED" : "ACTIVE";
         $this->update(array("PRJ_STATUS" => $status));
-    }
-
-    public function removeCaseScheduler($schUid)
-    {
-        try {
-            $caseScheduler = new \CaseScheduler();
-            self::log("Remove Case Scheduler: ".$schUid);
-            $caseScheduler->remove($schUid);
-            self::log("Remove Case Scheduler Success!");
-        } catch (\Exception $e) {
-            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
-            throw $e;
-        }
-    }
-
-    public function removeWebEntry($weUid)
-    {
-        try {
-            $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
-            self::log("Remove Web Entry: ".$weUid);
-            $webEntry->delete($weUid);
-            self::log("Remove Web Entry Success!");
-        } catch (\Exception $e) {
-            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
-            throw $e;
-        }
     }
 }
