@@ -456,7 +456,7 @@ class Table
     public function saveTableData ($pmt_uid, $pmt_data)
     {
         $pmt_uid = $this->validateTabUid($pmt_uid, false);
-        $rows = $pmt_data['pmt_rows'];
+        $rows = $pmt_data;
 
         $additionalTables = new AdditionalTables();
         $table = $additionalTables->load($pmt_uid, true);
