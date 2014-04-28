@@ -33,7 +33,6 @@
   // include object class
   //include_once 'classes/model/RbacUsers.php';
 
-//die("----LAST --as");
 /**
  * Skeleton subclass for performing query and update operations on the 'USERS' table.
  *
