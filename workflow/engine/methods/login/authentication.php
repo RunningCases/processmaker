@@ -185,7 +185,7 @@ try {
 
          $oauthClients = new OauthClients();
          $oauthClients->setClientId('x-pm-local-client');
-         $oauthClients->setClientSecret('179ad45c6ce2cb97cf1029e212046e82');
+         $oauthClients->setClientSecret('179ad45c6ce2cb97cf1029e212046e81');
          $oauthClients->setClientName('PM Web Designer');
          $oauthClients->setClientDescription('ProcessMaker Web Designer App');
          $oauthClients->setClientWebsite('www.processmaker.com');
