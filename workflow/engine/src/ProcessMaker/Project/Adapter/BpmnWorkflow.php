@@ -226,6 +226,18 @@ class BpmnWorkflow extends Project\Bpmn
                         if ($event && $event->getEvnType() == "START") {
                             $this->wp->setStartTask($data["FLO_ELEMENT_DEST"]);
                         }
+
+                        // update case scheduler
+                        if ($event->getEvnType() == "START" && $event->getEvnMarker() == "TIMER") {
+                            $aData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"], 'SCH_UID'=>$data["FLO_ELEMENT_ORIGIN"]);
+                            $this->wp->updateCaseScheduler($aData);
+                        }
+
+                        // update web entry
+                        if ($event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
+                            $aData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"], 'WE_UID'=>$data["FLO_ELEMENT_ORIGIN"]);
+                            $this->wp->updateWebEntry($aData);
+                        }
                         break;
                 }
                 break;
@@ -310,16 +322,15 @@ class BpmnWorkflow extends Project\Bpmn
         $event = \BpmnEventPeer::retrieveByPK($eventUid);
 
         // create case scheduler
-        if ($event->getEvnMarker() == "TIMER") {
+        if ($event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
             $this->wp->addCaseScheduler($eventUid);
         }
 
         // create web entry
-        if ($event->getEvnMarker() == "MESSAGE") {
+        if ($event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
             $this->wp->addWebEntry($eventUid);
         }
 
-        //return parent::addEvent($data);
         return $eventUid;
     }
 
