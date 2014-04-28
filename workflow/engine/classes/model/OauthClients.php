@@ -206,6 +206,13 @@ class OauthClients extends BaseOauthClients
 
         return array("numRecTotal" => $numRecTotal, "data" => $arrayData);
     }
+    
+
+    public function exists ($OclUid)
+    {
+    	$oOcl = OauthClientsPeer::retrieveByPk( $OclUid );
+    	return (is_object( $oOcl ) && get_class( $oOcl ) == 'OauthClients');
+    }
 }
 
 // OauthClients
