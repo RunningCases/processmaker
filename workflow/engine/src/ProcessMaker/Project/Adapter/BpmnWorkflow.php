@@ -308,15 +308,16 @@ class BpmnWorkflow extends Project\Bpmn
 
         $eventUid = parent::addEvent($data);
         $event = \BpmnEventPeer::retrieveByPK($eventUid);
+        $prj_uid = $event->getPrjUid();
 
         // create case scheduler
         if ($event->getEvnMarker() == "TIMER") {
-            $this->wp->addCaseScheduler();
+            $this->wp->addCaseScheduler($eventUid, $prj_uid);
         }
 
         // create web entry
         if ($event->getEvnMarker() == "MESSAGE") {
-            $this->wp->addWebEntry();
+            $this->wp->addWebEntry($eventUid, $prj_uid);
         }
 
         //return parent::addEvent($data);
