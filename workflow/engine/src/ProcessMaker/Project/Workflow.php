@@ -816,7 +816,7 @@ class Workflow extends Handler
         }
     }
 
-    public static function removeCaseScheduler($schUid)
+    public function removeCaseScheduler($schUid)
     {
         try {
             $caseScheduler = new \CaseScheduler();
@@ -860,7 +860,7 @@ class Workflow extends Handler
         }
     }
 
-    public static function removeWebEntry($weUid)
+    public function removeWebEntry($weUid)
     {
         try {
             $webEntry = new \ProcessMaker\BusinessModel\WebEntry();

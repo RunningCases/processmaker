@@ -382,6 +382,24 @@ class BpmnWorkflow extends Project\Bpmn
         return $eventUid;
     }
 
+    public function removeEvent($data)
+    {
+
+        $event = \BpmnEventPeer::retrieveByPK($data);
+
+        // delete case scheduler
+        if ($event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
+            $this->wp->removeCaseScheduler($data);
+        }
+
+        // delete web entry
+        if ($event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
+            $this->wp->removeWebEntry($data);
+        }
+
+        parent::removeEvent($data);
+    }
+
     public function mapBpmnFlowsToWorkflowRoutes()
     {
         $activities = $this->getActivities();

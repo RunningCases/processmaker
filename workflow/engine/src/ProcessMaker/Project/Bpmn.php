@@ -473,17 +473,6 @@ class Bpmn extends Handler
             self::log("Remove Event: $evnUid");
 
             $event = EventPeer::retrieveByPK($evnUid);
-
-            // delete case scheduler
-            if ($event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
-                Workflow::removeCaseScheduler($evnUid);
-            }
-
-            // delete web entry
-            if ($event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
-                Workflow::removeWebEntry($evnUid);
-            }
-
             $event->delete();
 
             self::log("Remove Event Success!");
