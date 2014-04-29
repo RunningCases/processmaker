@@ -3,7 +3,7 @@
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
 // actual class may be a subclass -- as returned by UsersRolesPeer::getOMClass()
-include_once 'classes/model/UsersRoles.php';
+//include_once 'classes/model/UsersRoles.php';
 
 /**
  * Base static class for performing query and update operations on the 'USERS_ROLES' table.
