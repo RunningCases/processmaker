@@ -668,9 +668,6 @@ class Workflow extends Handler
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                if ($aRow['EVN_UID'] == 'TIMER') {
-                    $this->removeCaseScheduler();
-                }
                 $oEvent->remove($aRow['EVN_UID']);
                 $oDataset->next();
             }
@@ -775,7 +772,7 @@ class Workflow extends Handler
         $this->update(array("PRO_STATUS" => $status));
     }
 
-    public function addCaseScheduler($eventUid)
+    public function addCaseScheduler($schUid)
     {
         try {
             $caseScheduler = new \CaseScheduler();
@@ -805,7 +802,7 @@ class Workflow extends Handler
                 'SCH_REPEAT_STOP_IF_RUNNING'=>'',
                 'CASE_SH_PLUGIN_UID'=>NULL,
                 'SCH_DEL_USER_PASS'=>'',
-                'SCH_UID'=>$eventUid,
+                'SCH_UID'=>$schUid,
                 'SCH_REPEAT_UNTIL'=>''
             );
 
@@ -819,12 +816,12 @@ class Workflow extends Handler
         }
     }
 
-    public function removeCaseScheduler()
+    public function removeCaseScheduler($schUid)
     {
         try {
             $caseScheduler = new \CaseScheduler();
-            self::log("Remove Case Scheduler: ".$caseScheduler->getSchUid());
-            $caseScheduler->delete();
+            self::log("Remove Case Scheduler: ".$schUid);
+            $caseScheduler->remove($schUid);
             self::log("Remove Case Scheduler Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
@@ -832,16 +829,23 @@ class Workflow extends Handler
         }
     }
 
-    public function updateCaseScheduler()
+    public function updateCaseScheduler($data)
     {
-
+        try {
+            $caseScheduler = new \CaseScheduler();
+            $caseScheduler->update($data);
+            self::log("Update Case Scheduler Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
-    public function addWebEntry($eventUid)
+    public function addWebEntry($weUid)
     {
         try {
             $webEntry = new \WebEntry();
-            $webEntryUid = $eventUid;
+            $webEntryUid = $weUid;
             $webEntry->setWeUid($webEntryUid);
             $webEntry->setProUid($this->proUid);
             $webEntry->setWeMethod('');
@@ -856,12 +860,12 @@ class Workflow extends Handler
         }
     }
 
-    public function removeWebEntry()
+    public function removeWebEntry($weUid)
     {
         try {
-            $webEntry = new \WebEntry();
-            self::log("Remove Web Entry: ".$webEntry->getWeUid());
-            $webEntry->delete();
+            $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
+            self::log("Remove Web Entry: ".$weUid);
+            $webEntry->delete($weUid);
             self::log("Remove Web Entry Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
@@ -869,8 +873,18 @@ class Workflow extends Handler
         }
     }
 
-    public function updateWebEntry()
+    public function updateWebEntry($data)
     {
+        try {
+            $webEntryUid = $data['WE_UID'];
+            $webEntry = \WebEntryPeer::retrieveByPK($webEntryUid);
+            $webEntry->fromArray($data, \BasePeer::TYPE_FIELDNAME);
+            $webEntry->save();
+            self::log("Update Web Entry Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
 
     }
 }

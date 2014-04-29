@@ -226,6 +226,18 @@ class BpmnWorkflow extends Project\Bpmn
                         if ($event && $event->getEvnType() == "START") {
                             $this->wp->setStartTask($data["FLO_ELEMENT_DEST"]);
                         }
+
+                        // update case scheduler
+                        if ($event->getEvnType() == "START" && $event->getEvnMarker() == "TIMER") {
+                            $aData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"], 'SCH_UID'=>$data["FLO_ELEMENT_ORIGIN"]);
+                            $this->wp->updateCaseScheduler($aData);
+                        }
+
+                        // update web entry
+                        if ($event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
+                            $aData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"], 'WE_UID'=>$data["FLO_ELEMENT_ORIGIN"]);
+                            $this->wp->updateWebEntry($aData);
+                        }
                         break;
                 }
                 break;
@@ -271,6 +283,54 @@ class BpmnWorkflow extends Project\Bpmn
                     $this->wp->setStartTask($activity->getActUid(), false);
                 }
             }
+
+            // update case scheduler
+            if (! is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "TIMER") {
+                $aData = array(
+                    'SCH_NAME'=>'',
+                    'SCH_DEL_USER_NAME'=>'',
+                    'SCH_DEL_USER_UID'=>'',
+                    'TAS_UID'=>'',
+                    'SCH_LAST_RUN_TIME'=>NULL,
+                    'SCH_STATE'=>'',
+                    'SCH_LAST_STATE'=>'',
+                    'USR_UID'=>'',
+                    'SCH_OPTION'=>'',
+                    'SCH_DAYS_PERFORM_TASK'=>'',
+                    'SCH_EVERY_DAYS'=>NULL,
+                    'SCH_WEEK_DAYS'=>'',
+                    'SCH_START_DAY'=>'',
+                    'SCH_START_DAY_OPT_1'=>'',
+                    'SCH_START_DAY_OPT_2'=>'',
+                    'SCH_MONTHS'=>'',
+                    'SCH_REPEAT_EVERY'=>'',
+                    'SCH_REPEAT_STOP_IF_RUNNING'=>'',
+                    'CASE_SH_PLUGIN_UID'=>NULL,
+                    'SCH_DEL_USER_PASS'=>'',
+                    'SCH_UID'=>$flow->getFloElementOrigin(),
+                    'SCH_REPEAT_UNTIL'=>''
+                );
+                $this->wp->updateCaseScheduler($aData);
+            }
+
+            // update web entry
+            if (! is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
+                $aData = array(
+                    'WE_UID'=>$flow->getFloElementOrigin(),
+                    'TAS_UID'=>'',
+                    'DYN_UID'=>'',
+                    'TAS_UID'=>'',
+                    'USR_UID'=>'',
+                    'WE_METHOD'=>'',
+                    'WE_INPUT_DOCUMENT_ACCESS'=>'',
+                    'WE_DATA'=>'',
+                    'WE_CREATE_USR_UID'=>'',
+                    'WE_UPDATE_USR_UID'=>'',
+                    'WE_UPDATE_DATE'=>date('Y-m-d H:i:s')
+                );
+                $this->wp->updateWebEntry($aData);
+            }
+
         } elseif ($flow->getFloElementOriginType() == "bpmnActivity" &&
             $flow->getFloElementDestType() == "bpmnEvent") {
             // verify case: activity -> event(end)
@@ -310,17 +370,34 @@ class BpmnWorkflow extends Project\Bpmn
         $event = \BpmnEventPeer::retrieveByPK($eventUid);
 
         // create case scheduler
-        if ($event->getEvnMarker() == "TIMER") {
+        if ($event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
             $this->wp->addCaseScheduler($eventUid);
         }
 
         // create web entry
-        if ($event->getEvnMarker() == "MESSAGE") {
+        if ($event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
             $this->wp->addWebEntry($eventUid);
         }
 
-        //return parent::addEvent($data);
         return $eventUid;
+    }
+
+    public function removeEvent($data)
+    {
+
+        $event = \BpmnEventPeer::retrieveByPK($data);
+
+        // delete case scheduler
+        if ($event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
+            $this->wp->removeCaseScheduler($data);
+        }
+
+        // delete web entry
+        if ($event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
+            $this->wp->removeWebEntry($data);
+        }
+
+        parent::removeEvent($data);
     }
 
     public function mapBpmnFlowsToWorkflowRoutes()
