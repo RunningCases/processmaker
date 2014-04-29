@@ -529,8 +529,12 @@ class CaseScheduler
             }
             $oCaseScheduler = new \CaseScheduler();
             $aFields = $oCaseScheduler->Load($sSchUID);
-            //$sOption = $aFields['SCH_OPTION'];
-            $sOption = $aData['SCH_OPTION'];
+            if ($aData['SCH_OPTION'] == null) {
+                $sOption = $aFields['SCH_OPTION'];
+                $aData['SCH_OPTION'] = $sOption;
+            } else {
+                $sOption = $aData['SCH_OPTION'];
+            }
             $aData['sch_repeat_stop_if_running'] = '0';
             $aData['case_sh_plugin_uid'] = null;
             $aData = array_change_key_case($aData, CASE_UPPER);
