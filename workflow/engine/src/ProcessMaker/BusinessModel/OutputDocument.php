@@ -83,7 +83,6 @@ class OutputDocument
                                               'out_doc_title' => $aRow['OUT_DOC_TITLE'],
                                               'out_doc_description' => $aRow['OUT_DOC_DESCRIPTION'],
                                               'out_doc_filename' => $aRow['OUT_DOC_FILENAME'],
-                                              'out_doc_template' => $aRow['OUT_DOC_TEMPLATE'],
                                               'out_doc_report_generator' => $aRow['OUT_DOC_REPORT_GENERATOR'],
                                               'out_doc_landscape' => $aRow['OUT_DOC_LANDSCAPE'],
                                               'out_doc_media' => $aRow['OUT_DOC_MEDIA'],
@@ -191,7 +190,6 @@ class OutputDocument
                                               'out_doc_title' => $aRow['OUT_DOC_TITLE'],
                                               'out_doc_description' => $aRow['OUT_DOC_DESCRIPTION'],
                                               'out_doc_filename' => $aRow['OUT_DOC_FILENAME'],
-                                              'out_doc_template' => $aRow['OUT_DOC_TEMPLATE'],
                                               'out_doc_report_generator' => $aRow['OUT_DOC_REPORT_GENERATOR'],
                                               'out_doc_landscape' => $aRow['OUT_DOC_LANDSCAPE'],
                                               'out_doc_media' => $aRow['OUT_DOC_MEDIA'],
@@ -261,6 +259,16 @@ class OutputDocument
                     $aData['OUT_DOC_PDF_SECURITY_PERMISSIONS'] = "";
                 }
             }
+            if (isset($aData['OUT_DOC_CURRENT_REVISION'])) {
+                $oOutputDocument->setOutDocCurrentRevision($aData['OUT_DOC_CURRENT_REVISION']);
+            } else {
+                $oOutputDocument->setOutDocCurrentRevision(0);
+            }
+            if (isset($aData['OUT_DOC_FIELD_MAPPING'])) {
+                $oOutputDocument->setOutDocFieldMapping($aData['OUT_DOC_FIELD_MAPPING']);
+            } else {
+                $oOutputDocument->setOutDocFieldMapping(null);
+            }
             $outDocUid = $oOutputDocument->create($aData);
             $aData = array_change_key_case($aData, CASE_LOWER);
             if (isset( $aData['out_doc_pdf_security_open_password'] ) && $aData['out_doc_pdf_security_open_password'] != "") {
@@ -321,10 +329,7 @@ class OutputDocument
                     if (isset($aData['OUT_DOC_FILENAME'])) {
                         $oOutputDocument->setOutDocFilename($aData['OUT_DOC_FILENAME']);
                     }
-                    if (isset($aData['OUT_DOC_TEMPLATE'])) {
-                        $oOutputDocument->setOutDocTemplate($aData['OUT_DOC_TEMPLATE']);
-                    }
-                    $iResult = $oOutputDocument->save();
+                    $oOutputDocument->save();
                     $oConnection->commit();
                 } else {
                     $sMessage = '';
@@ -338,7 +343,7 @@ class OutputDocument
                 throw (new \Exception('This row does not exist!'));
             }
         } catch (\Exception $e) {
-                throw $e;
+            throw $e;
         }
     }
 
