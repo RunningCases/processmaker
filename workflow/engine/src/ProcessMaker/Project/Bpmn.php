@@ -580,9 +580,10 @@ class Bpmn extends Handler
                 case "bpmnActivity": $class = "BpmnActivity"; break;
                 case "bpmnGateway": $class = "BpmnGateway"; break;
                 case "bpmnEvent": $class = "BpmnEvent"; break;
+                case "bpmnArtifact": $class = "bpmnArtifact"; break;
                 default:
-                    throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s], given %s.",
-                        "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", $data["FLO_ELEMENT_ORIGIN_TYPE"]
+                    throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
+                        "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_ORIGIN_TYPE"]
                     ));
             }
 
@@ -598,8 +599,8 @@ class Bpmn extends Handler
                 case "bpmnGateway": $class = "BpmnGateway"; break;
                 case "bpmnEvent": $class = "BpmnEvent"; break;
                 default:
-                    throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s], given %s.",
-                        "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", $data["FLO_ELEMENT_DEST_TYPE"]
+                    throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
+                        "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_DEST_TYPE"]
                     ));
             }
 
