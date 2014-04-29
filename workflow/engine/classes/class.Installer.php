@@ -147,7 +147,7 @@ class Installer
                 $this->run_query("GRANT ALL PRIVILEGES ON `$rb`.* TO $rb@'$host' IDENTIFIED BY '{$this->options['password']}' WITH GRANT OPTION", "Grant privileges for user $rb on database $rb");
                 $this->run_query("GRANT ALL PRIVILEGES ON `$rp`.* TO $rp@'$host' IDENTIFIED BY '{$this->options['password']}' WITH GRANT OPTION", "Grant privileges for user $rp on database $rp");
             }
-
+            
             /* Dump schema workflow && data  */
 
             $this->log("Import database schema:\n");
@@ -164,7 +164,26 @@ class Installer
             $this->log($qws, isset($qws['errors']));
             $qwv = $this->query_sql_file(PATH_WORKFLOW_MYSQL_DATA . $values, $this->connection_database);
             $this->log($qwv, isset($qwv['errors']));
-
+            
+            $http = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
+            $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
+            $host = $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] != '80' ? ':' . $_SERVER['SERVER_PORT'] : '');
+            $workspace = $this->options['name'];
+            
+            $endpoint = sprintf(
+            		'%s://%s/sys%s/%s/%s/oauth2/grant',
+            		$http,
+            		$host,
+            		$workspace,
+            		$lang,
+            		SYS_SKIN
+            );
+            
+            // inserting the outh_client
+            $query = ( "INSERT INTO OAUTH_CLIENTS (CLIENT_ID,CLIENT_SECRET,CLIENT_NAME,CLIENT_DESCRIPTION,CLIENT_WEBSITE,REDIRECT_URI,USR_UID ) VALUES 
+            		   ('x-pm-local-client','179ad45c6ce2cb97cf1029e212046e81','PM Web Designer','ProcessMaker Web Designer App','www.processmaker.com','" . $endpoint . "','00000000000000000000000000000001' )");
+            $this->run_query( $query );
+            
             /* Dump schema rbac && data  */
             $pws = PATH_RBAC_MYSQL_DATA . $schema;
             mysql_select_db($rb, $this->connection_database);

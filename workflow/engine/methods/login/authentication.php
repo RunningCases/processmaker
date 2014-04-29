@@ -168,32 +168,6 @@ try {
     $oServerConf =& serverConf::getSingleton();
     $oServerConf->sucessfulLogin();
     
-    // 
-    if (!(OauthClients::exists('x-pm-local-client'))) {
-    	$http = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
-        $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
-        $host = $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] != '80' ? ':' . $_SERVER['SERVER_PORT'] : '');
-            
-        $endpoint = sprintf(
-          		'%s://%s/sys%s/%s/%s/oauth2/grant',
-          		$http,
-           		$host,
-           		SYS_SYS,
-           		$lang,
-           		SYS_SKIN
-         );        
-
-         $oauthClients = new OauthClients();
-         $oauthClients->setClientId('x-pm-local-client');
-         $oauthClients->setClientSecret('179ad45c6ce2cb97cf1029e212046e81');
-         $oauthClients->setClientName('PM Web Designer');
-         $oauthClients->setClientDescription('ProcessMaker Web Designer App');
-         $oauthClients->setClientWebsite('www.processmaker.com');
-         $oauthClients->setRedirectUri($endpoint);
-         $oauthClients->setUsrUid("00000000000000000000000000000001");
-         $oauthClients->save();
-    }
-    
     // Assign the uid of user to userloggedobj
     $RBAC->loadUserRolePermission($RBAC->sSystem, $uid);
     $res = $RBAC->userCanAccess('PM_LOGIN');
