@@ -167,7 +167,7 @@ try {
     G::LoadClass('serverConfiguration');
     $oServerConf =& serverConf::getSingleton();
     $oServerConf->sucessfulLogin();
-    
+
     // Assign the uid of user to userloggedobj
     $RBAC->loadUserRolePermission($RBAC->sSystem, $uid);
     $res = $RBAC->userCanAccess('PM_LOGIN');
