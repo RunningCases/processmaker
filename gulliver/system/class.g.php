@@ -5292,6 +5292,12 @@ class G
     }
 
     public static function buildFrom($configuration, $from = '') {
+        if (!isset($configuration['MESS_FROM_NAME'])) {
+            $configuration['MESS_FROM_NAME'] = '';
+        }
+        if (!isset($configuration['MESS_FROM_MAIL'])) {
+            $configuration['MESS_FROM_MAIL'] = '';
+        }
         if ($from != '') {
             if (!preg_match('/(.+)@(.+)\.(.+)/', $from, $match)) {
                 if ($configuration['MESS_FROM_MAIL'] != '') {
