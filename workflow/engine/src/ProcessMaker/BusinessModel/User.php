@@ -210,34 +210,36 @@ class User
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
             $form = $arrayData;
-            if ($form['USR_REPLACED_BY'] != '') {
-                $oReplacedBy = \UsersPeer::retrieveByPK($form['USR_REPLACED_BY']);
-                if (is_null($oReplacedBy)) {
-                    throw new \Exception('usr_replaced_by:'.$form['USR_REPLACED_BY'].' '.\G::LoadTranslation('ID_AUTHENTICATION_SOURCE_INVALID'));
+            if (array_key_exists('USR_REPLACED_BY', $form)) {
+                if ($form['USR_REPLACED_BY'] != '') {
+                    $oReplacedBy = \UsersPeer::retrieveByPK($form['USR_REPLACED_BY']);
+                    if (is_null($oReplacedBy)) {
+                        throw new \Exception('usr_replaced_by:'.$form['USR_REPLACED_BY'].' '.\G::LoadTranslation('ID_AUTHENTICATION_SOURCE_INVALID'));
+                    }
                 }
             }
-            if ($form['USR_COUNTRY'] != '') {
-                $oCountry = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
-                if (is_null($oCountry)) {
-                    throw new \Exception('Invalid value for usr_country: '.$form['USR_COUNTRY']);
+            if (array_key_exists('USR_COUNTRY', $form)) {
+                if ($form['USR_COUNTRY'] != '') {
+                    $oCountry = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
+                    if (is_null($oCountry)) {
+                        throw new \Exception('Invalid value for usr_country: '.$form['USR_COUNTRY']);
+                    }
                 }
             }
-            if ($form['USR_CITY'] != '') {
-                $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
-                if (is_null($oCity)) {
-                    throw new \Exception('Invalid value for usr_city: '.$form['USR_CITY']);
+            if (array_key_exists('USR_CITY', $form)) {
+                if ($form['USR_CITY'] != '') {
+                    $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
+                    if (is_null($oCity)) {
+                        throw new \Exception('Invalid value for usr_city: '.$form['USR_CITY']);
+                    }
                 }
             }
-            if ($form['USR_LOCATION'] != '') {
-                $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
-                if (is_null($oLocation)) {
-                    throw new \Exception('Invalid value for usr_location: '.$form['USR_LOCATION']);
-                }
-            }
-            if ($form['USR_COUNTRY'] != '') {
-                $oReplacedBy = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
-                if (is_null($oReplacedBy)) {
-                    throw new \Exception('Invalid value for usr_country: '.$form['USR_COUNTRY']);
+            if (array_key_exists('USR_LOCATION', $form)) {
+                if ($form['USR_LOCATION'] != '') {
+                    $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
+                    if (is_null($oLocation)) {
+                        throw new \Exception('Invalid value for usr_location: '.$form['USR_LOCATION']);
+                    }
                 }
             }
             if (isset($arrayData['USR_UID'])) {
@@ -245,14 +247,20 @@ class User
             } else {
                 $form['USR_UID'] = '';
             }
-            $sConfirm = $this->testPassword($form['USR_NEW_PASS']);
-            if ($sConfirm['STATUS'] != 1) {
-                throw new \Exception('usr_new_pass. '.$sConfirm['DESCRIPTION']);
+            if (array_key_exists('USR_NEW_PASS', $form)) {
+                $sConfirm = $this->testPassword($form['USR_NEW_PASS']);
+                if ($sConfirm['STATUS'] != 1) {
+                    throw new \Exception('usr_new_pass. '.$sConfirm['DESCRIPTION']);
+                }
             }
-            if ($form['USR_NEW_PASS'] != $form['USR_CNF_PASS']) {
-                throw new \Exception('usr_new_pass or usr_cnf_pass. '.\G::LoadTranslation('ID_NEW_PASS_SAME_OLD_PASS'));
+            if (array_key_exists('USR_NEW_PASS', $form)) {
+                if ($form['USR_NEW_PASS'] != $form['USR_CNF_PASS']) {
+                    throw new \Exception('usr_new_pass or usr_cnf_pass. '.\G::LoadTranslation('ID_NEW_PASS_SAME_OLD_PASS'));
+                }
             }
-            $form['USR_PASSWORD'] = md5($form['USR_NEW_PASS']);
+            if (array_key_exists('USR_NEW_PASS', $form)) {
+                $form['USR_PASSWORD'] = md5($form['USR_NEW_PASS']);
+            }
             if (!isset($form['USR_CITY'])) {
                 $form['USR_CITY'] = '';
             }
@@ -264,7 +272,11 @@ class User
             }
             $criteria = new \Criteria();
             $criteria->addSelectColumn(\UsersPeer::USR_USERNAME);
-            $criteria->add(\UsersPeer::USR_USERNAME, utf8_encode($arrayData['USR_USERNAME']));
+            if (array_key_exists('USR_USERNAME', $form)) {
+                $criteria->add(\UsersPeer::USR_USERNAME, utf8_encode($arrayData['USR_USERNAME']));
+            } else {
+                throw new \Exception('usr_name. '.\G::LoadTranslation('ID_MSG_ERROR_USR_USERNAME'));
+            }
             if (\UsersPeer::doCount($criteria) > 0) {
                 throw new \Exception('usr_username. '.\G::LoadTranslation('ID_USERNAME_ALREADY_EXISTS', array('USER_ID' => $arrayData['USR_USERNAME'])));
             }
