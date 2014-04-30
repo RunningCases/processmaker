@@ -456,7 +456,7 @@ class Table
     public function saveTableData ($pmt_uid, $pmt_data)
     {
         $pmt_uid = $this->validateTabUid($pmt_uid, false);
-        $rows = $pmt_data['pmt_rows'];
+        $rows = $pmt_data;
 
         $additionalTables = new AdditionalTables();
         $table = $additionalTables->load($pmt_uid, true);
@@ -570,7 +570,7 @@ class Table
     public function updateTableData($pmt_uid, $pmt_data)
     {
         $pmt_uid = $this->validateTabUid($pmt_uid, false);
-        $rows = $pmt_data['pmt_rows'];
+        $rows = $pmt_data;
         $rows = array_merge( array_change_key_case( $rows, CASE_LOWER ), array_change_key_case( $rows, CASE_UPPER ) );
 
         $oAdditionalTables = new AdditionalTables();

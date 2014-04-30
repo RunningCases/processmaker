@@ -77,12 +77,10 @@ Scenario Outline: Update the Category created in this script
     Given PUT this data:
       """
       {
-        "cat_name": "cat_name"
+        "cat_name": "<cat_name>"
       }
       """
       And I request "project/category/cat_uid"  with the key "cat_uid" stored in session array as variable "cat_uid_<cat_uid_number>"
-      And store "cat_uid" in session array as variable "cat_uid_<cat_uid_number>"
-      
       And the content type is "application/json"
       Then the response status code should be 200
       And the response charset is "UTF-8"
@@ -101,8 +99,8 @@ Scenario Outline: Get a Category specific
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the "cat_name" property equals "UPDATE sample!@#$%^^&"
-    And the "cat_total_processes" property equals 0
+    And the "cat_name" property equals "<cat_name>"
+    And the "cat_total_processes" property equals <cat_total_processes>
 
     Examples:
 

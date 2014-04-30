@@ -100,5 +100,5 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
 if ($RBAC->userCanAccess("PM_SETUP") == 1) {
   $G_TMP_MENU->AddIdRawOption("PM_REQUIREMENTS", "../setup/systemInfo", G::LoadTranslation("ID_PROCESSMAKER_REQUIREMENTS_CHECK"), "", "", "settings");
   $G_TMP_MENU->AddIdRawOption("PHP_INFO", "../setup/systemInfo?option=php", G::LoadTranslation("ID_PHP_INFO"), "", "", "settings");
-  $G_TMP_MENU->AddIdRawOption("PHP_MAINTENANCE", "../admin/maintenance", 'Maintenance', "", "", "settings");
+  //$G_TMP_MENU->AddIdRawOption("PHP_MAINTENANCE", "../admin/maintenance", 'Maintenance', "", "", "settings");
 }

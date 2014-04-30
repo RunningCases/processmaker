@@ -33,7 +33,7 @@ class WebApplication
      */
     public function setRootDir($rootDir)
     {
-        $this->rootDir = $rootDir;
+        $this->rootDir = rtrim($rootDir, DS);
         $this->workflowDir = $rootDir . DS . "workflow" . DS;
     }
 
@@ -69,7 +69,9 @@ class WebApplication
             } else {
                 return self::RUNNING_DEFAULT;
             }
-        } elseif (substr($this->requestUri, 1, 3) === "api") {
+        } elseif (substr($this->requestUri, 1, 3) === "api"
+            && count(explode("/", $this->requestUri)) >= 4 // url api pattern: /api/1.0/<workspace>/<resource>
+        ) {
             return self::RUNNING_API;
         } else {
             return self::RUNNING_WORKFLOW;
@@ -158,7 +160,7 @@ class WebApplication
          */
         header('Access-Control-Allow-Origin: *');
 
-        require_once $this->rootDir . "framework/src/Maveriks/Extension/Restler/UploadFormat.php";
+        require_once $this->rootDir . "/framework/src/Maveriks/Extension/Restler/UploadFormat.php";
 
         // $servicesDir contains directory where Services Classes are allocated
         $servicesDir = $this->workflowDir . 'engine' . DS . 'src' . DS . 'ProcessMaker' . DS . 'Services' . DS;
@@ -195,10 +197,18 @@ class WebApplication
 
         // Setting current workspace to Api class
         Services\Api::setWorkspace(SYS_SYS);
+        $cacheDir = defined("PATH_C")? PATH_C: sys_get_temp_dir();
+
+        $sysConfig = \System::getSystemConfiguration();
+
+        \Luracast\Restler\Defaults::$cacheDirectory = $cacheDir;
+        $productionMode = (bool) !(isset($sysConfig["service_api_debug"]) && $sysConfig["service_api_debug"]);
+
+        Util\Logger::log("Serving API mode: " . ($productionMode? "production": "development"));
 
         // create a new Restler instance
         //$rest = new \Luracast\Restler\Restler();
-        $rest = new \Maveriks\Extension\Restler();
+        $rest = new \Maveriks\Extension\Restler($productionMode);
         // setting flag for multipart to Restler
         $rest->setFlagMultipart($multipart);
         $rest->inputExecute = $inputExecute;
@@ -237,6 +247,7 @@ class WebApplication
 
             foreach ($classesList as $classFile) {
                 if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
+                    require_once $classFile;
                     $namespace = '\\ProcessMaker\\Services\\' . str_replace(
                         DIRECTORY_SEPARATOR,
                         '\\',
@@ -272,6 +283,7 @@ class WebApplication
         }
 
         $rest->handle();
+
         if ($rest->flagMultipart === true) {
             return $rest->responseMultipart;
         }
@@ -372,7 +384,7 @@ class WebApplication
             PATH_RBAC_CORE . PATH_SEPARATOR .
             get_include_path()
         );
-
+        ///print_r(get_include_path()); die;
 
         /*
          * Setting Up Workspace

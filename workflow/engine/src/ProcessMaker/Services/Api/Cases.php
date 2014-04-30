@@ -514,7 +514,7 @@ class Cases extends Api
         $cat_uid = '',
         $pro_uid = '',
         $app_status = '',
-        $user = '',
+        $usr_uid = '',
         $date_from = '',
         $date_to = '',
         $search = ''
@@ -532,7 +532,7 @@ class Cases extends Api
             $dataList['category'] = $cat_uid;
             $dataList['process'] = $pro_uid;
             $dataList['status'] = $app_status;
-            $dataList['user'] = $user;
+            $dataList['user'] = $usr_uid;
             $dataList['dateFrom'] = $date_from;
             $dataList['dateTo'] = $date_to;
             $dataList['search'] = $search;

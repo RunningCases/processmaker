@@ -9,15 +9,15 @@ switch ($_SERVER['REQUEST_METHOD']) {
     break;
 
     case 'POST':
-        require_once PATH_CORE . 'src/Services/Api/OAuth2/Server.php';
+        require_once PATH_CORE . 'src/ProcessMaker/Services/OAuth2/Server.php';
 
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
         $port = empty($port) ? '' : ";port=$port";
 
-        \Services\Api\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
-        \Services\Api\OAuth2\Server::setPmClientId('x-pm-local-client');
+        \ProcessMaker\Services\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
+        \ProcessMaker\Services\OAuth2\Server::setPmClientId('x-pm-local-client');
 
-        $oauthServer = new \Services\Api\OAuth2\Server();
+        $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
         $userid = $_SESSION['USER_LOGGED'];
         $authorize = isset($_POST['authorize']) ? (bool) $_POST['authorize'] : false;
 

@@ -235,7 +235,7 @@ class OutputDocument
             if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms" || $row == "") {
                 $aData['out_doc_pdf_security_permissions'] = $aData['out_doc_pdf_security_permissions'];
             } else {
-                throw (new \Exception( 'Invalid value specified for `out_doc_pdf_security_permissions`'));
+                throw (new \Exception( 'Invalid value specified for out_doc_pdf_security_permissions'));
             }
         }
         try {
@@ -248,7 +248,7 @@ class OutputDocument
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($sProcessUID, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
             }
             if ($aData["OUT_DOC_TITLE"]=="") {
-                throw (new \Exception( 'Invalid value specified for `out_doc_title`, can`t be null'));
+                throw (new \Exception( 'Invalid value specified for out_doc_title, can not be null'));
             }
             if (isset($aData["OUT_DOC_TITLE"]) && $this->existsTitle($sProcessUID, $aData["OUT_DOC_TITLE"])) {
                 throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_SAVE")));
@@ -267,7 +267,7 @@ class OutputDocument
                 $aData['out_doc_pdf_security_open_password'] = \G::encrypt( $aData['out_doc_pdf_security_open_password'], $outDocUid );
                 $aData['out_doc_pdf_security_owner_password'] = \G::encrypt( $aData['out_doc_pdf_security_owner_password'], $outDocUid );
             }
-            $this->updateOutputDocument($sProcessUID, $aData, $outDocUid, 1);
+            $this->updateOutputDocument($sProcessUID, $aData, 1, $outDocUid);
             //Return
             unset($aData["PRO_UID"]);
             $aData = array_change_key_case($aData, CASE_LOWER);
@@ -287,7 +287,7 @@ class OutputDocument
      *
      * @access public
      */
-    public function updateOutputDocument($sProcessUID, $aData, $sOutputDocumentUID = '', $sFlag)
+    public function updateOutputDocument($sProcessUID, $aData, $sFlag, $sOutputDocumentUID = '')
     {
         $oConnection = \Propel::getConnection(\OutputDocumentPeer::DATABASE_NAME);
         $pemission = $aData['out_doc_pdf_security_permissions'];
@@ -296,7 +296,7 @@ class OutputDocument
             if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms" || $row == "") {
                 $aData['out_doc_pdf_security_permissions'] = $aData['out_doc_pdf_security_permissions'];
             } else {
-                throw (new \Exception( 'Invalid value specified for `out_doc_pdf_security_permissions`'));
+                throw (new \Exception( 'Invalid value specified for out_doc_pdf_security_permissions'));
             }
         }
         try {
@@ -309,7 +309,7 @@ class OutputDocument
                     if (isset($aData['OUT_DOC_TITLE'])) {
                         $uid = $this->titleExists($sProcessUID, $aData["OUT_DOC_TITLE"]);
                         if ($uid != '') {
-                            if ($uid != $sOutputDocumentUID && $sFlag == 0)  {
+                            if ($uid != $sOutputDocumentUID && $sFlag == 0) {
                                 throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_SAVE")));
                             }
                         }

@@ -89,7 +89,7 @@ class ProcessSupervisor
             $aResp = array();
             $oProcess = \ProcessUserPeer::retrieveByPK( $sPuUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `pu_uid`: '. $sPuUID .' does not correspond to a valid relation'));
+                throw (new \Exception( 'This id for pu_uid: '. $sPuUID .' does not correspond to a valid relation'));
             }
             // Groups
             $oCriteria = new \Criteria('workflow');
@@ -631,7 +631,7 @@ class ProcessSupervisor
     {
         $oTypeDynaform = \DynaformPeer::retrieveByPK($sDynUID);
         if (is_null( $oTypeDynaform )) {
-            throw (new \Exception( 'This id for `dyn_uid`: '. $sDynUID .' does not correspond to a registered Dynaform'));
+            throw (new \Exception( 'This id for dyn_uid: '. $sDynUID .' does not correspond to a registered Dynaform'));
         }
         $aResp = array();
         $sPuUIDT = array();
@@ -717,7 +717,7 @@ class ProcessSupervisor
     {
         $oTypeInputDocument= \InputDocumentPeer::retrieveByPK($sInputDocumentUID);
         if (is_null( $oTypeInputDocument )) {
-            throw (new \Exception( 'This id for `inp_doc_uid`: '. $sInputDocumentUID .' does not correspond to a registered InputDocument'));
+            throw (new \Exception( 'This id for inp_doc_uid: '. $sInputDocumentUID .' does not correspond to a registered InputDocument'));
         }
         $aResp = array();
         $sPuUIDT = array();
@@ -1031,3 +1031,4 @@ class ProcessSupervisor
         $oCriteria->save();
     }
 }
+

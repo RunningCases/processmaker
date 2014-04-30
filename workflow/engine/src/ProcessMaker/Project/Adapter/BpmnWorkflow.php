@@ -226,6 +226,18 @@ class BpmnWorkflow extends Project\Bpmn
                         if ($event && $event->getEvnType() == "START") {
                             $this->wp->setStartTask($data["FLO_ELEMENT_DEST"]);
                         }
+
+                        // update case scheduler
+                        if ($event && $event->getEvnType() == "START" && $event->getEvnMarker() == "TIMER") {
+                            $aData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"], 'SCH_UID'=>$data["FLO_ELEMENT_ORIGIN"]);
+                            $this->wp->updateCaseScheduler($aData);
+                        }
+
+                        // update web entry
+                        if ($event && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
+                            $aData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"], 'WE_UID'=>$data["FLO_ELEMENT_ORIGIN"]);
+                            $this->wp->updateWebEntry($aData);
+                        }
                         break;
                 }
                 break;
@@ -271,6 +283,25 @@ class BpmnWorkflow extends Project\Bpmn
                     $this->wp->setStartTask($activity->getActUid(), false);
                 }
             }
+
+            // update case scheduler
+            if (! is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "TIMER") {
+                $aData = array(
+                    'TAS_UID'=>'',
+                    'SCH_UID'=>$flow->getFloElementOrigin()
+                );
+                $this->wp->updateCaseScheduler($aData);
+            }
+
+            // update web entry
+            if (! is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
+                $aData = array(
+                    'TAS_UID'=>'',
+                    'WE_UID'=>$flow->getFloElementOrigin()
+                );
+                $this->wp->updateWebEntry($aData);
+            }
+
         } elseif ($flow->getFloElementOriginType() == "bpmnActivity" &&
             $flow->getFloElementDestType() == "bpmnEvent") {
             // verify case: activity -> event(end)
@@ -306,7 +337,38 @@ class BpmnWorkflow extends Project\Bpmn
             throw new \RuntimeException("Required param \"EVN_TYPE\" is missing.");
         }
 
-        return parent::addEvent($data);
+        $eventUid = parent::addEvent($data);
+        $event = \BpmnEventPeer::retrieveByPK($eventUid);
+
+        // create case scheduler
+        if ($event && $event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
+            $this->wp->addCaseScheduler($eventUid);
+        }
+
+        // create web entry
+        if ($event && $event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
+            $this->wp->addWebEntry($eventUid);
+        }
+
+        return $eventUid;
+    }
+
+    public function removeEvent($data)
+    {
+
+        $event = \BpmnEventPeer::retrieveByPK($data);
+
+        // delete case scheduler
+        if ($event && $event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
+            $this->wp->removeCaseScheduler($data);
+        }
+
+        // delete web entry
+        if ($event && $event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
+            $this->wp->removeWebEntry($data);
+        }
+
+        parent::removeEvent($data);
     }
 
     public function mapBpmnFlowsToWorkflowRoutes()
@@ -600,6 +662,41 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
+        /*
+         * Diagram's Artifacts Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["artifacts"] as $i => $artifactData) {
+            $artifactData = array_change_key_case($artifactData, CASE_UPPER);
+            unset($artifactData["_EXTENDED"]);
+            $artifact = $bwp->getArtifact($artifactData["ART_UID"]);
+
+            if (is_null($artifact)) {
+                if ($generateUid) {
+                    $oldArtUid = $artifactData["ART_UID"];
+
+                    $artifactData["ART_UID"] = Util\Common::generateUID();
+                    $result[] = array("object" => "artifact", "new_uid" => $artifactData["ART_UID"], "old_uid" => $oldArtUid);
+                }
+
+                $bwp->addArtifact($artifactData);
+            } elseif (! $bwp->isEquals($artifact, $artifactData)) {
+                $bwp->updateArtifact($artifactData["ART_UID"], $artifactData);
+            } else {
+                Util\Logger::log("Update Artifact ({$artifactData["GAT_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["artifacts"][$i] = $artifactData;
+            $whiteList[] = $artifactData["ART_UID"];
+        }
+
+        $artifacts = $bwp->getArtifacts();
+        // looking for removed elements
+        foreach ($artifacts as $artifactData) {
+            if (! in_array($artifactData["ART_UID"], $whiteList)) {
+                $bwp->removeArtifact($artifactData["ART_UID"]);
+            }
+        }
 
         /*
          * Diagram's Gateways Handling

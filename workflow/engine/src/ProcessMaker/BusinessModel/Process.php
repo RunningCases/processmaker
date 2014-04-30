@@ -1457,39 +1457,6 @@ class Process
     }
 
     /**
-     * Get all Web Entries of a Process
-     *
-     * @param string $processUid Unique id of Process
-     *
-     * return array Return an array with all Web Entries of a Process
-     */
-    public function getWebEntries($processUid)
-    {
-        try {
-            $arrayWebEntry = array();
-
-            //Verify data
-            //Get data
-            $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
-            $webEntry->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
-            $webEntry->setArrayFieldNameForException($this->arrayFieldNameForException);
-
-            $arrayWebEntryData = $webEntry->getData($processUid);
-
-            foreach ($arrayWebEntryData as $index => $value) {
-                $row = $value;
-
-                $arrayWebEntry[] = $webEntry->getWebEntryDataFromRecord($row);
-            }
-
-            //Return
-            return $arrayWebEntry;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
      * Get field names which are primary key in a PM Table
      *
      * @param string $additionalTableUid    Unique id of PM Table
