@@ -105,14 +105,8 @@ class WebEntry
     {
         $name = trim($name);
 
-        $arraySpecialCharSearch = array(
-            "/", "\\",
-            " "
-        );
-        $arraySpecialCharReplace = array(
-            "_", "_",
-            "_"
-        );
+        $arraySpecialCharSearch  = array("/", "\\", " ", "#");
+        $arraySpecialCharReplace = array("_", "_",  "_", "");
 
         $newName = str_replace($arraySpecialCharSearch, $arraySpecialCharReplace, $name);
 

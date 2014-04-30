@@ -2,6 +2,7 @@
 namespace ProcessMaker\Importer;
 
 use ProcessMaker\Util;
+use ProcessMaker\Project;
 use ProcessMaker\Project\Adapter;
 
 abstract class Importer
@@ -14,6 +15,7 @@ abstract class Importer
 
     const IMPORT_OPTION_OVERWRITE = "project.import.override";
     const IMPORT_OPTION_DISABLE_AND_CREATE_NEW = "project.import.disable_and_create_new";
+    const IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW = "project.import.keep_without_changing_and_create_new";
     const IMPORT_OPTION_CREATE_NEW = "project.import.create_new";
 
     /**
@@ -35,6 +37,8 @@ abstract class Importer
     {
         $this->prepare();
 
+        $name = $this->importData["tables"]["bpmn"]["project"][0]["prj_name"];
+
         switch ($option) {
             case self::IMPORT_OPTION_CREATE_NEW:
                 if ($this->targetExists()) {
@@ -45,22 +49,40 @@ abstract class Importer
                     ), self::IMPORT_STAT_TARGET_ALREADY_EXISTS);
                 }
                 $generateUid = false;
-                $result = $this->doImport($generateUid);
+                break;
+            case self::IMPORT_OPTION_OVERWRITE:
+                $this->removeProject();
+                // this option shouldn't generate new uid for all objects
+                $generateUid = false;
                 break;
             case self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW:
                 $this->disableProject();
                 // this option should generate new uid for all objects
                 $generateUid = true;
-                $result = $this->doImport($generateUid);
+                $name = "New - " . $name . " - " . date("M d, H:i");
                 break;
-            case self::IMPORT_OPTION_OVERWRITE:
-                // this option shouldn't generate new uid for all objects
-                $generateUid = false;
-                $this->removeProject();
-                $result = $this->doImport($generateUid);
+            case self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW:
+                // this option should generate new uid for all objects
+                $generateUid = true;
+                $name = \G::LoadTranslation("ID_COPY_OF") . " - " . $name . " - " . date("M d, H:i");
                 break;
         }
 
+        $this->importData["tables"]["bpmn"]["project"][0]["prj_name"] = $name;
+        $this->importData["tables"]["bpmn"]["diagram"][0]["dia_name"] = $name;
+        $this->importData["tables"]["bpmn"]["process"][0]["pro_name"] = $name;
+        $this->importData["tables"]["workflow"]["process"][0]["PRO_TITLE"] = $name;
+
+        if ($this->importData["tables"]["workflow"]["process"][0]["PRO_UPDATE_DATE"] . "" == "") {
+            $this->importData["tables"]["workflow"]["process"][0]["PRO_UPDATE_DATE"] = null;
+        }
+
+        $this->importData["tables"]["workflow"]["process"] = $this->importData["tables"]["workflow"]["process"][0];
+
+        //Import
+        $result = $this->doImport($generateUid);
+
+        //Return
         return $result;
     }
 
@@ -220,6 +242,7 @@ abstract class Importer
         $tables = (object) $tables;
 
         $processes = new \Processes();
+
         $processes->createProcessPropertiesFromData($tables);
     }
 
@@ -258,17 +281,95 @@ abstract class Importer
 
     public function doImport($generateUid = true)
     {
-        $tables = $this->importData["tables"];
-        $files = $this->importData["files"];
+        $arrayBpmnTables = $this->importData["tables"]["bpmn"];
+        $arrayWorkflowTables = $this->importData["tables"]["workflow"];
+        $arrayWorkflowFiles = $this->importData["files"]["workflow"];
 
-        $result = $this->importBpmnTables($tables["bpmn"], $generateUid);
-        $this->importWfTables($tables["workflow"]);
-        $this->importWfFiles($files["workflow"]);
+        //Import BPMN tables
+        $result = $this->importBpmnTables($arrayBpmnTables, $generateUid);
 
+        $projectUidOld = $arrayBpmnTables["project"][0]["prj_uid"];
+        $projectUid = ($generateUid)? $result[0]["new_uid"] : $result;
+
+        //Import workflow tables
         if ($generateUid) {
-            return $result[0]["new_uid"];
-        } else {
-            return $result;
+            //Update TAS_UID
+            foreach ($arrayWorkflowTables["tasks"] as $key1 => $value1) {
+                $taskUid = $arrayWorkflowTables["tasks"][$key1]["TAS_UID"];
+
+                foreach ($result as $value2) {
+                    $arrayItem = $value2;
+
+                    if ($arrayItem["old_uid"] == $taskUid) {
+                        $arrayWorkflowTables["tasks"][$key1]["TAS_UID_OLD"] = $taskUid;
+                        $arrayWorkflowTables["tasks"][$key1]["TAS_UID"] = $arrayItem["new_uid"];
+                        break;
+                    }
+                }
+            }
+
+            //Workflow tables
+            $workflowTables = (object)($arrayWorkflowTables);
+
+            $processes = new \Processes();
+            $processes->setProcessGUID($workflowTables, $projectUid);
+            $processes->renewAll($workflowTables);
+
+            $arrayWorkflowTables = (array)($workflowTables);
+
+            //Workflow files
+            foreach ($arrayWorkflowFiles as $key1 => $value1) {
+                $arrayFiles = $value1;
+
+                foreach ($arrayFiles as $key2 => $value2) {
+                    $file = $value2;
+
+                    $arrayWorkflowFiles[$key1][$key2]["file_path"] = str_replace($projectUidOld, $projectUid, $file["file_path"]);
+                    $arrayWorkflowFiles[$key1][$key2]["file_content"] = str_replace($projectUidOld, $projectUid, $file["file_content"]);
+                }
+            }
+
+            if (isset($arrayWorkflowTables["uid"])) {
+                foreach ($arrayWorkflowTables["uid"] as $key1 => $value1) {
+                    $arrayT = $value1;
+
+                    foreach ($arrayT as $key2 => $value2) {
+                        $uidOld = $key2;
+                        $uid = $value2;
+
+                        foreach ($arrayWorkflowFiles as $key3 => $value3) {
+                            $arrayFiles = $value3;
+
+                            foreach ($arrayFiles as $key4 => $value4) {
+                                $file = $value4;
+
+                                $arrayWorkflowFiles[$key3][$key4]["file_path"] = str_replace($uidOld, $uid, $file["file_path"]);
+                                $arrayWorkflowFiles[$key3][$key4]["file_content"] = str_replace($uidOld, $uid, $file["file_content"]);
+                            }
+                        }
+                    }
+                }
+            }
         }
+
+        $this->importWfTables($arrayWorkflowTables);
+
+        //Import workflow files
+        $this->importWfFiles($arrayWorkflowFiles);
+
+        //Update
+        $workflow = Project\Workflow::load($projectUid);
+
+        foreach ($arrayWorkflowTables["tasks"] as $key => $value) {
+            $arrayTaskData = $value;
+
+            $result = $workflow->updateTask($arrayTaskData["TAS_UID"], $arrayTaskData);
+        }
+
+        $workflow->update($arrayWorkflowTables["process"]);
+
+        //Return
+        return $projectUid;
     }
 }
+
