@@ -206,6 +206,7 @@ class OauthClients extends BaseOauthClients
 
         return array("numRecTotal" => $numRecTotal, "data" => $arrayData);
     }
+
 }
 
 // OauthClients

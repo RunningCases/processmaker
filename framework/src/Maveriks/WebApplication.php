@@ -33,7 +33,7 @@ class WebApplication
      */
     public function setRootDir($rootDir)
     {
-        $this->rootDir = $rootDir;
+        $this->rootDir = rtrim($rootDir, DS);
         $this->workflowDir = $rootDir . DS . "workflow" . DS;
     }
 
@@ -160,7 +160,7 @@ class WebApplication
          */
         header('Access-Control-Allow-Origin: *');
 
-        require_once $this->rootDir . "framework/src/Maveriks/Extension/Restler/UploadFormat.php";
+        require_once $this->rootDir . "/framework/src/Maveriks/Extension/Restler/UploadFormat.php";
 
         // $servicesDir contains directory where Services Classes are allocated
         $servicesDir = $this->workflowDir . 'engine' . DS . 'src' . DS . 'ProcessMaker' . DS . 'Services' . DS;
@@ -383,7 +383,7 @@ class WebApplication
             PATH_RBAC_CORE . PATH_SEPARATOR .
             get_include_path()
         );
-
+        ///print_r(get_include_path()); die;
 
         /*
          * Setting Up Workspace

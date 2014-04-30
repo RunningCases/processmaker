@@ -1269,7 +1269,12 @@ class adminProxy extends HttpProxyController
         $data = array('info' => array());
         $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
         $status = ! empty($pmRestClient);
-        $row = $pmRestClient->toArray(BasePeer::TYPE_FIELDNAME);
+
+        if ($status) {
+            $row = $pmRestClient->toArray(BasePeer::TYPE_FIELDNAME);
+        } else {
+            $row = array("CLIENT_ID" => '');
+        }
 
         $data['info'] = array(
             array(
