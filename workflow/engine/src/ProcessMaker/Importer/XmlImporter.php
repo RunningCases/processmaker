@@ -76,7 +76,7 @@ class XmlImporter extends Importer
             $tablesNodeList = $definition->getElementsByTagName("table");
 
             foreach ($tablesNodeList as $tableNode) {
-                $tableName = strtolower($tableNode->getAttribute("name"));
+                $tableName = ($defClass == "workflow")? $tableNode->getAttribute("name") : strtolower($tableNode->getAttribute("name"));
                 $tables[$defClass][$tableName] = array();
                 /** @var \DOMElement[] $recordsNodeList */
                 $recordsNodeList = $tableNode->getElementsByTagName("record");
@@ -137,3 +137,4 @@ class XmlImporter extends Importer
         }
     }
 }
+
