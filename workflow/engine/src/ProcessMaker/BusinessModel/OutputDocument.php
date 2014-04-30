@@ -220,67 +220,67 @@ class OutputDocument
     /**
      * Create a new output document for a project
      * @param string $sProcessUID
-     * @param array  $aData
+     * @param array  $outputDocumentData
      * @return array
      *
      * @access public
      */
-    public function addOutputDocument($sProcessUID, $aData)
+    public function addOutputDocument($sProcessUID, $outputDocumentData)
     {
-        $pemission = $aData['out_doc_pdf_security_permissions'];
+        $pemission = $outputDocumentData['out_doc_pdf_security_permissions'];
         $pemission = explode("|", $pemission);
         foreach ($pemission as $row) {
             if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms" || $row == "") {
-                $aData['out_doc_pdf_security_permissions'] = $aData['out_doc_pdf_security_permissions'];
+                $outputDocumentData['out_doc_pdf_security_permissions'] = $outputDocumentData['out_doc_pdf_security_permissions'];
             } else {
                 throw (new \Exception( 'Invalid value specified for out_doc_pdf_security_permissions'));
             }
         }
         try {
             require_once(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "OutputDocument.php");
-            $aData = array_change_key_case($aData, CASE_UPPER);
-            $aData['PRO_UID'] = $sProcessUID;
+            $outputDocumentData = array_change_key_case($outputDocumentData, CASE_UPPER);
+            $outputDocumentData['PRO_UID'] = $sProcessUID;
             //Verify data
             $process = new \Process();
             if (!$process->exists($sProcessUID)) {
                 throw (new \Exception(str_replace(array("{0}", "{1}"), array($sProcessUID, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
             }
-            if ($aData["OUT_DOC_TITLE"]=="") {
+            if ($outputDocumentData["OUT_DOC_TITLE"]=="") {
                 throw (new \Exception( 'Invalid value specified for out_doc_title, can not be null'));
             }
-            if (isset($aData["OUT_DOC_TITLE"]) && $this->existsTitle($sProcessUID, $aData["OUT_DOC_TITLE"])) {
+            if (isset($outputDocumentData["OUT_DOC_TITLE"]) && $this->existsTitle($sProcessUID, $outputDocumentData["OUT_DOC_TITLE"])) {
                 throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_SAVE")));
             }
             $oOutputDocument = new \OutputDocument();
-            if (isset( $aData['OUT_DOC_TITLE'] ) && $aData['OUT_DOC_TITLE'] != '') {
-                if (isset( $aData['OUT_DOC_PDF_SECURITY_ENABLED'] ) && $aData['OUT_DOC_PDF_SECURITY_ENABLED'] == "0") {
-                    $aData['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'] = "";
-                    $aData['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'] = "";
-                    $aData['OUT_DOC_PDF_SECURITY_PERMISSIONS'] = "";
+            if (isset( $outputDocumentData['OUT_DOC_TITLE'] ) && $outputDocumentData['OUT_DOC_TITLE'] != '') {
+                if (isset( $outputDocumentData['OUT_DOC_PDF_SECURITY_ENABLED'] ) && $outputDocumentData['OUT_DOC_PDF_SECURITY_ENABLED'] == "0") {
+                    $outputDocumentData['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'] = "";
+                    $outputDocumentData['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'] = "";
+                    $outputDocumentData['OUT_DOC_PDF_SECURITY_PERMISSIONS'] = "";
                 }
             }
-            if (isset($aData['OUT_DOC_CURRENT_REVISION'])) {
-                $oOutputDocument->setOutDocCurrentRevision($aData['OUT_DOC_CURRENT_REVISION']);
+            if (isset($outputDocumentData['OUT_DOC_CURRENT_REVISION'])) {
+                $oOutputDocument->setOutDocCurrentRevision($outputDocumentData['OUT_DOC_CURRENT_REVISION']);
             } else {
                 $oOutputDocument->setOutDocCurrentRevision(0);
             }
-            if (isset($aData['OUT_DOC_FIELD_MAPPING'])) {
-                $oOutputDocument->setOutDocFieldMapping($aData['OUT_DOC_FIELD_MAPPING']);
+            if (isset($outputDocumentData['OUT_DOC_FIELD_MAPPING'])) {
+                $oOutputDocument->setOutDocFieldMapping($outputDocumentData['OUT_DOC_FIELD_MAPPING']);
             } else {
                 $oOutputDocument->setOutDocFieldMapping(null);
             }
-            $outDocUid = $oOutputDocument->create($aData);
-            $aData = array_change_key_case($aData, CASE_LOWER);
-            if (isset( $aData['out_doc_pdf_security_open_password'] ) && $aData['out_doc_pdf_security_open_password'] != "") {
-                $aData['out_doc_pdf_security_open_password'] = \G::encrypt( $aData['out_doc_pdf_security_open_password'], $outDocUid );
-                $aData['out_doc_pdf_security_owner_password'] = \G::encrypt( $aData['out_doc_pdf_security_owner_password'], $outDocUid );
+            $outDocUid = $oOutputDocument->create($outputDocumentData);
+            $outputDocumentData = array_change_key_case($outputDocumentData, CASE_LOWER);
+            if (isset( $outputDocumentData['out_doc_pdf_security_open_password'] ) && $outputDocumentData['out_doc_pdf_security_open_password'] != "") {
+                $outputDocumentData['out_doc_pdf_security_open_password'] = \G::encrypt( $outputDocumentData['out_doc_pdf_security_open_password'], $outDocUid );
+                $outputDocumentData['out_doc_pdf_security_owner_password'] = \G::encrypt( $outputDocumentData['out_doc_pdf_security_owner_password'], $outDocUid );
             }
-            $this->updateOutputDocument($sProcessUID, $aData, 1, $outDocUid);
+            $this->updateOutputDocument($sProcessUID, $outputDocumentData, 1, $outDocUid);
             //Return
-            unset($aData["PRO_UID"]);
-            $aData = array_change_key_case($aData, CASE_LOWER);
-            $aData["out_doc_uid"] = $outDocUid;
-            return $aData;
+            unset($outputDocumentData["PRO_UID"]);
+            $outputDocumentData = array_change_key_case($outputDocumentData, CASE_LOWER);
+            $outputDocumentData["out_doc_uid"] = $outDocUid;
+            return $outputDocumentData;
         } catch (\Exception $e) {
                 throw $e;
         }
@@ -289,45 +289,45 @@ class OutputDocument
     /**
      * Update a output document for a project
      * @param string $sProcessUID
-     * @param array  $aData
+     * @param array  $outputDocumentData
      * @param string $sOutputDocumentUID
      * @param int $sFlag
      *
      * @access public
      */
-    public function updateOutputDocument($sProcessUID, $aData, $sFlag, $sOutputDocumentUID = '')
+    public function updateOutputDocument($sProcessUID, $outputDocumentData, $sFlag, $sOutputDocumentUID = '')
     {
         $oConnection = \Propel::getConnection(\OutputDocumentPeer::DATABASE_NAME);
-        $pemission = $aData['out_doc_pdf_security_permissions'];
+        $pemission = $outputDocumentData['out_doc_pdf_security_permissions'];
         $pemission = explode("|", $pemission);
         foreach ($pemission as $row) {
             if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms" || $row == "") {
-                $aData['out_doc_pdf_security_permissions'] = $aData['out_doc_pdf_security_permissions'];
+                $outputDocumentData['out_doc_pdf_security_permissions'] = $outputDocumentData['out_doc_pdf_security_permissions'];
             } else {
                 throw (new \Exception( 'Invalid value specified for out_doc_pdf_security_permissions'));
             }
         }
         try {
-            $aData = array_change_key_case($aData, CASE_UPPER);
+            $outputDocumentData = array_change_key_case($outputDocumentData, CASE_UPPER);
             $oOutputDocument = \OutputDocumentPeer::retrieveByPK($sOutputDocumentUID);
             if (!is_null($oOutputDocument)) {
-                $oOutputDocument->fromArray($aData, \BasePeer::TYPE_FIELDNAME);
+                $oOutputDocument->fromArray($outputDocumentData, \BasePeer::TYPE_FIELDNAME);
                 if ($oOutputDocument->validate()) {
                     $oConnection->begin();
-                    if (isset($aData['OUT_DOC_TITLE'])) {
-                        $uid = $this->titleExists($sProcessUID, $aData["OUT_DOC_TITLE"]);
+                    if (isset($outputDocumentData['OUT_DOC_TITLE'])) {
+                        $uid = $this->titleExists($sProcessUID, $outputDocumentData["OUT_DOC_TITLE"]);
                         if ($uid != '') {
                             if ($uid != $sOutputDocumentUID && $sFlag == 0) {
                                 throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_SAVE")));
                             }
                         }
-                        $oOutputDocument->setOutDocTitle($aData['OUT_DOC_TITLE']);
+                        $oOutputDocument->setOutDocTitle($outputDocumentData['OUT_DOC_TITLE']);
                     }
-                    if (isset($aData['OUT_DOC_DESCRIPTION'])) {
-                        $oOutputDocument->setOutDocDescription($aData['OUT_DOC_DESCRIPTION']);
+                    if (isset($outputDocumentData['OUT_DOC_DESCRIPTION'])) {
+                        $oOutputDocument->setOutDocDescription($outputDocumentData['OUT_DOC_DESCRIPTION']);
                     }
-                    if (isset($aData['OUT_DOC_FILENAME'])) {
-                        $oOutputDocument->setOutDocFilename($aData['OUT_DOC_FILENAME']);
+                    if (isset($outputDocumentData['OUT_DOC_FILENAME'])) {
+                        $oOutputDocument->setOutDocFilename($outputDocumentData['OUT_DOC_FILENAME']);
                     }
                     $oOutputDocument->save();
                     $oConnection->commit();
