@@ -247,6 +247,7 @@ class WebApplication
 
             foreach ($classesList as $classFile) {
                 if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
+                    require_once $classFile;
                     $namespace = '\\ProcessMaker\\Services\\' . str_replace(
                         DIRECTORY_SEPARATOR,
                         '\\',
