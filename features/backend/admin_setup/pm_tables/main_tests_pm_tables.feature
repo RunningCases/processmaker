@@ -56,8 +56,7 @@ Scenario Outline: Create news pmtable
         },{
             "fld_name" : "<fld_name_2>",
             "fld_label" : "<fld_label_2>",
-            "fld_type" : "<fld_type_2>",
-            "fld_size" : 45
+            "fld_type" : "<fld_type_2>"
         },{
             "fld_name" : "<fld_name_3>",
             "fld_label" : "<fld_label_3>",
@@ -90,6 +89,7 @@ Scenario Outline: Create a new Data of pm table.
     Given POST this data:
     """
     {
+        "UNO" : "<pmt_uid_number>",
         "CAMPO1" : "QA",
         "CAMPO2" : "<CAMPO2>"    
     }
@@ -136,10 +136,10 @@ Scenario Outline: Update a pm table of a project
 
     Examples:
 
-    | Description        | pmt_uid_number | fld_name   | fld_label  |
-    | Update a pmtable 1 | 1              | UPDATEUNO  | UPDATEUNO  |
-    | Update a pmtable 3 | 3              | UPDATETRES | UPDATETRES |
-    | Update a pmtable 6 | 6              | UPDATESEIS | UPDATESEIS |
+    | Description        | pmt_uid_number | fld_name   | fld_label  | fld_type |
+    | Update a pmtable 1 | 1              | UPDATEUNO  | UPDATEUNO  | VARCHAR  |
+    | Update a pmtable 3 | 3              | UPDATETRES | UPDATETRES | VARCHAR  |
+    | Update a pmtable 6 | 6              | UPDATESEIS | UPDATESEIS | VARCHAR  |
          
 
 Scenario Outline: Get a single the PMTABLE after update
@@ -155,10 +155,10 @@ Scenario Outline: Get a single the PMTABLE after update
 
     Examples:
 
-    | pmt_uid_number | fld_name   | fld_label  |
-    | 1              | UPDATEUNO  | UPDATEUNO  |
-    | 3              | UPDATETRES | UPDATETRES |
-    | 6              | UPDATESEIS | UPDATESEIS |
+    | pmt_uid_number | fld_name   | fld_label  | fld_type |
+    | 1              | UPDATEUNO  | UPDATEUNO  | VARCHAR  |
+    | 3              | UPDATETRES | UPDATETRES | VARCHAR  |
+    | 6              | UPDATESEIS | UPDATESEIS | VARCHAR  |
 
 
 
@@ -166,6 +166,7 @@ Scenario Outline: Update a a data of pm table
     Given PUT this data:
     """
     {
+        "UNO" : "<pmt_uid_number>",
         "CAMPO1" : "QA",
         "CAMPO2" : "<CAMPO2>"
     }
