@@ -3417,10 +3417,20 @@ class processMap
         $oDataset->next();
 
         while ($aRow = $oDataset->getRow()) {
-            $aRespLi[] = array('UID' => $aRow['GRP_UID'],
-                'USER_GROUP' => $aRow['GRP_TITLE'],
-                'TYPE_UID' => 'Group',
-                'PRO_UID' => $sProcessUID);
+            $group = new ProcessMaker\BusinessModel\Group();
+            $userGroup = $group->getUsers('USERS', $aRow['GRP_UID']);
+            foreach ($userGroup as $value) {
+                $userRole = new ProcessMaker\BusinessModel\User();
+                $permission = $userRole->loadUserRolePermission('PROCESSMAKER', $value["USR_UID"]);
+                foreach ($permission as $values) {
+                    if ($values["PER_CODE"] == 'PM_SUPERVISOR') {
+                        $aRespLi[] = array('UID' => $aRow['GRP_UID'],
+                            'USER_GROUP' => $aRow['GRP_TITLE'],
+                            'TYPE_UID' => 'Group',
+                            'PRO_UID' => $sProcessUID);
+                    }
+                }
+            }
             $oDataset->next();
         }
 
