@@ -229,14 +229,14 @@ class BpmnWorkflow extends Project\Bpmn
 
                         // update case scheduler
                         if ($event && $event->getEvnType() == "START" && $event->getEvnMarker() == "TIMER") {
-                            $aData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"], 'SCH_UID'=>$data["FLO_ELEMENT_ORIGIN"]);
-                            $this->wp->updateCaseScheduler($aData);
+                            $caseSchedulerData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"]);
+                            $this->wp->updateCaseScheduler($data["FLO_ELEMENT_ORIGIN"], $caseSchedulerData);
                         }
 
                         // update web entry
                         if ($event && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
-                            $aData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"], 'WE_UID'=>$data["FLO_ELEMENT_ORIGIN"]);
-                            $this->wp->updateWebEntry($aData);
+                            $webEntryData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"]);
+                            $this->wp->updateWebEntry($data["FLO_ELEMENT_ORIGIN"], $webEntryData);
                         }
                         break;
                 }
@@ -286,20 +286,14 @@ class BpmnWorkflow extends Project\Bpmn
 
             // update case scheduler
             if (! is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "TIMER") {
-                $aData = array(
-                    'TAS_UID'=>'',
-                    'SCH_UID'=>$flow->getFloElementOrigin()
-                );
-                $this->wp->updateCaseScheduler($aData);
+                $caseSchedulerData = array( 'TAS_UID'=>'' );
+                $this->wp->updateCaseScheduler($flow->getFloElementOrigin(), $caseSchedulerData);
             }
 
             // update web entry
             if (! is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
-                $aData = array(
-                    'TAS_UID'=>'',
-                    'WE_UID'=>$flow->getFloElementOrigin()
-                );
-                $this->wp->updateWebEntry($aData);
+                $webEntryData = array( 'TAS_UID'=>'' );
+                $this->wp->updateWebEntry($flow->getFloElementOrigin(), $webEntryData);
             }
 
         } elseif ($flow->getFloElementOriginType() == "bpmnActivity" &&

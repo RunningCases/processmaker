@@ -829,9 +829,10 @@ class Workflow extends Handler
         }
     }
 
-    public function updateCaseScheduler($data)
+    public function updateCaseScheduler($schUid, $data)
     {
         try {
+            $data = array_merge(array("SCH_UID" => $schUid), $data);
             $caseScheduler = new \CaseScheduler();
             $caseScheduler->update($data);
             self::log("Update Case Scheduler Success!");
@@ -873,10 +874,9 @@ class Workflow extends Handler
         }
     }
 
-    public function updateWebEntry($data)
+    public function updateWebEntry($webEntryUid, $data)
     {
         try {
-            $webEntryUid = $data['WE_UID'];
             $webEntry = \WebEntryPeer::retrieveByPK($webEntryUid);
             $webEntry->fromArray($data, \BasePeer::TYPE_FIELDNAME);
             $webEntry->save();

@@ -2,6 +2,7 @@
 namespace ProcessMaker\BusinessModel;
 
 use \G;
+use Luracast\Restler\User;
 
 class ProcessSupervisor
 {
@@ -201,13 +202,21 @@ class ProcessSupervisor
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\UsersPeer::USR_UID);
+            $oCriteria->addSelectColumn(\UsersPeer::USR_ROLE);
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS, \Criteria::NOT_IN);
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $aUIDS = array();
             while ($aRow = $oDataset->getRow()) {
-                $aUIDS [] = $aRow ['USR_UID'];
+                require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
+                $userRole = new \ProcessMaker\BusinessModel\User();
+                $permission = $userRole->loadUserRolePermission('PROCESSMAKER', $aRow['USR_UID']);
+                foreach ($permission as $key => $value) {
+                    if ($value["PER_CODE"] == 'PM_SUPERVISOR') {
+                        $aUIDS [] = $aRow ['USR_UID'];
+                    }
+                }
                 $oDataset->next();
             }
             $oCriteria = new \Criteria('workflow');
@@ -218,7 +227,6 @@ class ProcessSupervisor
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS, \Criteria::IN);
             $oCriteria->addAscendingOrderByColumn(\UsersPeer::USR_FIRSTNAME);
-            $oCriteria->add(\UsersPeer::USR_ROLE, 'PROCESSMAKER_ADMIN', \Criteria::EQUAL);
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
