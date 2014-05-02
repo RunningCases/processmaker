@@ -159,7 +159,9 @@ class ProcessSupervisor
     public function getAvailableProcessSupervisors($obj_type, $sProcessUID = '')
     {
         try {
+            require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
             $aRespLi = array();
+            $userRole = new \ProcessMaker\BusinessModel\User();
             // Groups
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\ProcessUserPeer::USR_UID);
@@ -193,9 +195,18 @@ class ProcessSupervisor
             $oDataset->next();
             if ($obj_type == 'group' || $obj_type == '') {
                 while ($aRow = $oDataset->getRow()) {
-                    $aRespLi[] = array('grp_uid' => $aRow['GRP_UID'],
-                                       'grp_name' => $aRow['GRP_TITLE'],
-                                       'obj_type' => "group");
+                    $group = new \ProcessMaker\BusinessModel\Group();
+                    $userGroup = $group->getUsers('USERS', $aRow['GRP_UID']);
+                    foreach ($userGroup as $value) {
+                        $permission = $userRole->loadUserRolePermission('PROCESSMAKER', $value["USR_UID"]);
+                        foreach ($permission as $values) {
+                            if ($values["PER_CODE"] == 'PM_SUPERVISOR') {
+                                $aRespLi[] = array('grp_uid' => $aRow['GRP_UID'],
+                                                   'grp_name' => $aRow['GRP_TITLE'],
+                                                   'obj_type' => "group");
+                            }
+                        }
+                    }
                     $oDataset->next();
                 }
             }
@@ -209,8 +220,6 @@ class ProcessSupervisor
             $oDataset->next();
             $aUIDS = array();
             while ($aRow = $oDataset->getRow()) {
-                require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
-                $userRole = new \ProcessMaker\BusinessModel\User();
                 $permission = $userRole->loadUserRolePermission('PROCESSMAKER', $aRow['USR_UID']);
                 foreach ($permission as $key => $value) {
                     if ($value["PER_CODE"] == 'PM_SUPERVISOR') {
