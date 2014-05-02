@@ -1197,7 +1197,7 @@ class RestContext extends BehatContext
      * @Given /^that I want to delete a resource with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
      * @Given /^that I want to delete a resource with the key "([^"]*)" stored in session array as variable "([^"]*)" in position (\d+)$/
      */
-    public function thatIWantToDeleteAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName, $position)
+    public function thatIWantToDeleteAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName, $position=null)
     {
         if (file_exists("session.data")) {
             $sessionData = json_decode(file_get_contents("session.data"));
