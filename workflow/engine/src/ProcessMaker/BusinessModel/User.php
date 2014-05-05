@@ -183,6 +183,7 @@ class User
         require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "UsersRoles.php");
         require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Systems.php");
         require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
+        require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RolesPeer.php");
         $this->sSystem = $sSystem;
         $this->usersRolesObj = new \UsersRoles();
         $this->systemObj = new \Systems();
@@ -403,7 +404,7 @@ class User
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
             $form = $arrayData;
             $countPermission = 0;
-            $permission = $this->loadUserRolePermission($RBAC->sSystem, $usrLoggedUid);
+            $permission = $this->loadUserRolePermission('PROCESSMAKER', $usrLoggedUid);
             foreach ($permission as $key => $value) {
                 if ($value["PER_CODE"] == 'PM_USERS') {
                     $countPermission+=1;
