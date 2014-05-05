@@ -170,7 +170,7 @@ try {
             if (!isset($newValues[$key]) || $newValues[$key] == '') {
                 $G_PUBLISH = new Publisher();
                 $aMessage = array ();
-                $aMessage['MESSAGE'] = G::LoadTranslation('ID_FILL_PRIMARY_KEYS');
+                $aMessage['MESSAGE'] = G::LoadTranslation('ID_FILL_PRIMARY_KEYS') . ' ('. $key . ') ';
                 $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', $aMessage );
                 G::RenderPage( 'publish', 'blank' );
                 die();
