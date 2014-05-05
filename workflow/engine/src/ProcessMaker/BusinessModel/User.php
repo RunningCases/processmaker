@@ -568,6 +568,10 @@ class User
                 } else {
                     $this->updateUser($userData);
                 }
+            } else {
+                $user = new \Users();
+                $dataUser = $user->load($usrUid);
+                $this->updateUser($userData, $dataUser['USR_ROLE']);
             }
             if (isset($form['USR_COUNTRY'])) {
                 if ($form['USR_COUNTRY'] != '') {
