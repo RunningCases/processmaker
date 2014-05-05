@@ -808,6 +808,19 @@ class Process extends BaseProcess
         return $aProcesses;
     }
 
+    public function getCasesCountForProcess($pro_uid)
+    {
+        $oCriteria = new Criteria( 'workflow' );
+        $oCriteria->addSelectColumn( 'COUNT(*) AS TOTAL_CASES' );
+        $oCriteria->add( ApplicationPeer::PRO_UID, $pro_uid );
+        $oDataset = ApplicationPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+
+        $oDataset->next();
+        $cases = $oDataset->getRow();
+        return (int)$cases['TOTAL_CASES'];
+    }
+
     public function getAllProcessesByCategory ()
     {
         $oCriteria = new Criteria( 'workflow' );

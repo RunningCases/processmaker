@@ -104,13 +104,14 @@ class OutputDocument
     public function removeOutputDocument($applicationDocumentUid)
     {
         try {
-            $oAppDocument = \AppDocumentPeer::retrieveByPK( $applicationDocumentUid, 1 );
+            $oAppDocumentVersion = new \AppDocument();
+            $lastDocVersion = $oAppDocumentVersion->getLastAppDocVersion($applicationDocumentUid);
+            $oAppDocument = \AppDocumentPeer::retrieveByPK( $applicationDocumentUid, $lastDocVersion);
             if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
                 throw (new \Exception('This output document with id: '.$applicationDocumentUid.' doesn\'t exist!'));
             }
-            \G::LoadClass('wsBase');
-            $ws = new \wsBase();
-            $ws->removeDocument($applicationDocumentUid);
+            $aFields = array ('APP_DOC_UID' => $applicationDocumentUid,'DOC_VERSION' => $lastDocVersion,'APP_DOC_STATUS' => 'DELETED');
+            $oAppDocument->update( $aFields );
         } catch (\Exception $e) {
             throw $e;
         }

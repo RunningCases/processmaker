@@ -2,6 +2,7 @@
 namespace ProcessMaker\BusinessModel;
 
 use \G;
+use Luracast\Restler\User;
 
 class ProcessSupervisor
 {
@@ -89,7 +90,7 @@ class ProcessSupervisor
             $aResp = array();
             $oProcess = \ProcessUserPeer::retrieveByPK( $sPuUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `pu_uid`: '. $sPuUID .' does not correspond to a valid relation'));
+                throw (new \Exception( 'This id for pu_uid: '. $sPuUID .' does not correspond to a valid relation'));
             }
             // Groups
             $oCriteria = new \Criteria('workflow');
@@ -158,7 +159,9 @@ class ProcessSupervisor
     public function getAvailableProcessSupervisors($obj_type, $sProcessUID = '')
     {
         try {
+            require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
             $aRespLi = array();
+            $userRole = new \ProcessMaker\BusinessModel\User();
             // Groups
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\ProcessUserPeer::USR_UID);
@@ -192,22 +195,37 @@ class ProcessSupervisor
             $oDataset->next();
             if ($obj_type == 'group' || $obj_type == '') {
                 while ($aRow = $oDataset->getRow()) {
-                    $aRespLi[] = array('grp_uid' => $aRow['GRP_UID'],
-                                       'grp_name' => $aRow['GRP_TITLE'],
-                                       'obj_type' => "group");
+                    $group = new \ProcessMaker\BusinessModel\Group();
+                    $userGroup = $group->getUsers('USERS', $aRow['GRP_UID']);
+                    foreach ($userGroup as $value) {
+                        $permission = $userRole->loadUserRolePermission('PROCESSMAKER', $value["USR_UID"]);
+                        foreach ($permission as $values) {
+                            if ($values["PER_CODE"] == 'PM_SUPERVISOR') {
+                                $aRespLi[] = array('grp_uid' => $aRow['GRP_UID'],
+                                                   'grp_name' => $aRow['GRP_TITLE'],
+                                                   'obj_type' => "group");
+                            }
+                        }
+                    }
                     $oDataset->next();
                 }
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\UsersPeer::USR_UID);
+            $oCriteria->addSelectColumn(\UsersPeer::USR_ROLE);
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS, \Criteria::NOT_IN);
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $aUIDS = array();
             while ($aRow = $oDataset->getRow()) {
-                $aUIDS [] = $aRow ['USR_UID'];
+                $permission = $userRole->loadUserRolePermission('PROCESSMAKER', $aRow['USR_UID']);
+                foreach ($permission as $key => $value) {
+                    if ($value["PER_CODE"] == 'PM_SUPERVISOR') {
+                        $aUIDS [] = $aRow ['USR_UID'];
+                    }
+                }
                 $oDataset->next();
             }
             $oCriteria = new \Criteria('workflow');
@@ -218,7 +236,6 @@ class ProcessSupervisor
             $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
             $oCriteria->add(\UsersPeer::USR_UID, $aUIDS, \Criteria::IN);
             $oCriteria->addAscendingOrderByColumn(\UsersPeer::USR_FIRSTNAME);
-            $oCriteria->add(\UsersPeer::USR_ROLE, 'PROCESSMAKER_ADMIN', \Criteria::EQUAL);
             $oCriteria->add(\UsersPeer::USR_STATUS, 'ACTIVE');
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -631,7 +648,7 @@ class ProcessSupervisor
     {
         $oTypeDynaform = \DynaformPeer::retrieveByPK($sDynUID);
         if (is_null( $oTypeDynaform )) {
-            throw (new \Exception( 'This id for `dyn_uid`: '. $sDynUID .' does not correspond to a registered Dynaform'));
+            throw (new \Exception( 'This id for dyn_uid: '. $sDynUID .' does not correspond to a registered Dynaform'));
         }
         $aResp = array();
         $sPuUIDT = array();
@@ -717,7 +734,7 @@ class ProcessSupervisor
     {
         $oTypeInputDocument= \InputDocumentPeer::retrieveByPK($sInputDocumentUID);
         if (is_null( $oTypeInputDocument )) {
-            throw (new \Exception( 'This id for `inp_doc_uid`: '. $sInputDocumentUID .' does not correspond to a registered InputDocument'));
+            throw (new \Exception( 'This id for inp_doc_uid: '. $sInputDocumentUID .' does not correspond to a registered InputDocument'));
         }
         $aResp = array();
         $sPuUIDT = array();

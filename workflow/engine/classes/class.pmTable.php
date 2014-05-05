@@ -770,6 +770,7 @@ class PmTable
         $types['DATE'] = 'DATE';
         $types['TIME'] = 'TIME';
         $types['DATETIME'] = 'DATETIME';
+        $types['TIMESTAMP'] = 'TIMESTAMP';
         //$types['BLOB'] = 'BLOB'; <- disabled
         //$types['CLOB'] = 'CLOB'; <- disabled
 

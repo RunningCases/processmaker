@@ -14,10 +14,6 @@ class InputDocument
     public function getCasesInputDocuments($applicationUid, $userUid)
     {
         try {
-            $oApplication = \ApplicationPeer::retrieveByPk($applicationUid);
-            if (!is_object($oApplication)) {
-                throw (new \Exception("The Application with app_uid: '$applicationUid' doesn't exist!"));
-            }
             $sApplicationUID = $applicationUid;
             $sUserUID = $userUid;
             \G::LoadClass('case');
@@ -62,10 +58,6 @@ class InputDocument
     public function getCasesInputDocument($applicationUid, $userUid, $inputDocumentUid)
     {
         try {
-            $oAppDocument = \AppDocumentPeer::retrieveByPK( $inputDocumentUid, 1 );
-            if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
-                throw (new \Exception('This input document with inp_doc_uid: '.$inputDocumentUid.' doesn\'t exist!'));
-            }
             $sApplicationUID = $applicationUid;
             $sUserUID = $userUid;
             \G::LoadClass('case');
@@ -90,6 +82,10 @@ class InputDocument
                     $docrow['app_doc_index'] = $row['APP_DOC_INDEX'];
                     $docrow['app_doc_link'] = 'cases/' . $row['DOWNLOAD_LINK'];
                     if ($docrow['app_doc_uid'] == $inputDocumentUid) {
+                        $oAppDocument = \AppDocumentPeer::retrieveByPK( $inputDocumentUid, $row['DOC_VERSION'] );
+                        if (is_null( $oAppDocument )) {
+                            throw (new \Exception('This input document with id: '.$inputDocumentUid.' doesn\'t exist!'));
+                        }
                         $result = $docrow;
                     }
                 }
@@ -183,34 +179,34 @@ class InputDocument
             //Triggers
             $arrayTrigger = $case->loadTriggers($taskUid, "INPUT_DOCUMENT", $inputDocumentUid, "AFTER");
             //Add Input Document
-            $_FILES["form"]["name"] = '';
-            $_FILES["form"]["error"] = '';
-            $_FILES["form"]["tmp_name"] = '';
-            if ($_FILES["form"]["error"] == '') {
+            if (empty($_FILES)) {
+                throw (new \Exception('This document filename doesn\'t exist!'));
+            }
+            if (!$_FILES["form"]["error"]) {
                 $_FILES["form"]["error"] = 0;
             }
             if (isset($_FILES) && isset($_FILES["form"]) && count($_FILES["form"]) > 0) {
                 $appDocUid = $case->addInputDocument($inputDocumentUid,
-                                                     $appDocUid,
-                                                     $docVersion,
-                                                     $appDocType,
-                                                     $appDocComment,
-                                                     '',
-                                                     $applicationUid,
-                                                     $delIndex,
-                                                     $taskUid,
-                                                     $userUid,
-                                                     "xmlform",
-                                                     $_FILES["form"]["name"],
-                                                     $_FILES["form"]["error"],
-                                                     $_FILES["form"]["tmp_name"]);
+                    $appDocUid,
+                    $docVersion,
+                    $appDocType,
+                    $appDocComment,
+                    '',
+                    $applicationUid,
+                    $delIndex,
+                    $taskUid,
+                    $userUid,
+                    "xmlform",
+                    $_FILES["form"]["name"],
+                    $_FILES["form"]["error"],
+                    $_FILES["form"]["tmp_name"]);
             }
             //Trigger - Execute after - Start
             $arrayField["APP_DATA"] = $case->executeTriggers ($taskUid,
-                                                              "INPUT_DOCUMENT",
-                                                              $inputDocumentUid,
-                                                              "AFTER",
-                                                              $arrayField["APP_DATA"]);
+                "INPUT_DOCUMENT",
+                $inputDocumentUid,
+                "AFTER",
+                $arrayField["APP_DATA"]);
             //Trigger - Execute after - End
             //Save data
             $arrayData = array();
@@ -226,4 +222,3 @@ class InputDocument
         }
     }
 }
-

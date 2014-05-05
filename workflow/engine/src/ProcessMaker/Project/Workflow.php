@@ -771,4 +771,120 @@ class Workflow extends Handler
         $status = $value ? "DISABLED" : "ACTIVE";
         $this->update(array("PRO_STATUS" => $status));
     }
+
+    public function addCaseScheduler($schUid)
+    {
+        try {
+            $caseScheduler = new \CaseScheduler();
+            $data = array(
+                'SCH_NAME'=>'',
+                'SCH_DEL_USER_NAME'=>'',
+                'SCH_DEL_USER_UID'=>'',
+                'PRO_UID'=>$this->proUid,
+                'TAS_UID'=>'',
+                'SCH_TIME_NEXT_RUN'=>date('Y-m-d H:i:s'),
+                'SCH_LAST_RUN_TIME'=>NULL,
+                'SCH_STATE'=>'',
+                'SCH_LAST_STATE'=>'',
+                'USR_UID'=>'',
+                'SCH_OPTION'=>'',
+                'SCH_START_TIME'=>date('Y-m-d H:i:s'),
+                'SCH_START_DATE'=>date('Y-m-d H:i:s'),
+                'SCH_DAYS_PERFORM_TASK'=>'',
+                'SCH_EVERY_DAYS'=>NULL,
+                'SCH_WEEK_DAYS'=>'',
+                'SCH_START_DAY'=>'',
+                'SCH_START_DAY_OPT_1'=>'',
+                'SCH_START_DAY_OPT_2'=>'',
+                'SCH_MONTHS'=>'',
+                'SCH_END_DATE'=>date('Y-m-d H:i:s'),
+                'SCH_REPEAT_EVERY'=>'',
+                'SCH_REPEAT_STOP_IF_RUNNING'=>'',
+                'CASE_SH_PLUGIN_UID'=>NULL,
+                'SCH_DEL_USER_PASS'=>'',
+                'SCH_UID'=>$schUid,
+                'SCH_REPEAT_UNTIL'=>''
+            );
+
+            self::log("Adding Case Scheduler with data: ", $data);
+            $caseSchedulerUid = $caseScheduler->create($data);
+            self::log("Adding Case Scheduler success!, created case Scheduler id: ", $caseSchedulerUid);
+
+            return $caseSchedulerUid;
+        } catch (\Exception $oError) {
+            throw ($oError);
+        }
+    }
+
+    public function removeCaseScheduler($schUid)
+    {
+        try {
+            $caseScheduler = new \CaseScheduler();
+            self::log("Remove Case Scheduler: ".$schUid);
+            $caseScheduler->remove($schUid);
+            self::log("Remove Case Scheduler Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function updateCaseScheduler($schUid, $data)
+    {
+        try {
+            $data = array_merge(array("SCH_UID" => $schUid), $data);
+            $caseScheduler = new \CaseScheduler();
+            $caseScheduler->update($data);
+            self::log("Update Case Scheduler Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function addWebEntry($weUid)
+    {
+        try {
+            $webEntry = new \WebEntry();
+            $webEntryUid = $weUid;
+            $webEntry->setWeUid($webEntryUid);
+            $webEntry->setProUid($this->proUid);
+            $webEntry->setWeMethod('');
+            $webEntry->setWeCreateDate(date('Y-m-d H:i:s'));
+            $webEntry->save();
+
+            //Return
+            self::log("Adding Web Entry success!, created Web Entry id: ", $webEntryUid);
+            return $webEntryUid;
+        } catch (\Exception $oError) {
+            throw ($oError);
+        }
+    }
+
+    public function removeWebEntry($weUid)
+    {
+        try {
+            $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
+            self::log("Remove Web Entry: ".$weUid);
+            $webEntry->delete($weUid);
+            self::log("Remove Web Entry Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function updateWebEntry($webEntryUid, $data)
+    {
+        try {
+            $webEntry = \WebEntryPeer::retrieveByPK($webEntryUid);
+            $webEntry->fromArray($data, \BasePeer::TYPE_FIELDNAME);
+            $webEntry->save();
+            self::log("Update Web Entry Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+
+    }
 }
