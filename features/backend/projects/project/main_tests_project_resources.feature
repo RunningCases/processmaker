@@ -39,9 +39,12 @@ Scenario Outline: Create new Projects
 
     Examples:
 
-    | Description                                      | project_new_uid_number | project_template         |
-    | Create a new process with sequencial derivation  | 1                      | process_template_v1.json |
-    | Create a new process with sequencial derivation  | 2                      | process_template_v2.json |
+    | Description                                                  | project_new_uid_number | project_template                              |
+    | Create a new process with evaluation derivation              | 1                      | process_template_evaluation.json              |
+    | Create a new process with parallel derivation                | 2                      | process_template_parallel.json                |
+    | Create a new process with parallel by evaluation derivation  | 3                      | process_template_parallel_por_evaluation.json |
+    | Create a new process with selection derivation               | 4                      | process_template_selection.json               |
+    | Create a new process with sequencial derivation              | 5                      | process_template_sequencial.json              |
 
 
 
@@ -248,7 +251,7 @@ Scenario Outline: Update the Projects and then check if the values had changed
     ]            
     }         
     """
-    And that I want to update a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>"
+    And that I want to update a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
     And I request "projects"
     And the content type is "application/json"
     Then the response status code should be 200
@@ -261,7 +264,7 @@ Scenario Outline: Update the Projects and then check if the values had changed
 
 
 Scenario Outline: Get definition of a project
-    Given that I want to get a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>"
+    Given that I want to get a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
     And I request "project"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -276,7 +279,7 @@ Scenario Outline: Get definition of a project
     | 1                      |
 
 Scenario Outline: Delete a Project activity created previously in this script
-    Given that I want to delete a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>"
+    Given that I want to delete a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
     And I request "projects"
     And the content type is "application/json"
     Then the response status code should be 200
@@ -287,6 +290,10 @@ Scenario Outline: Delete a Project activity created previously in this script
 
     | project_new_uid_number |
     | 1                      |
+    | 2                      |
+    | 3                      |
+    | 4                      |
+    | 5                      |
 
 
 Scenario: Get a list of projects

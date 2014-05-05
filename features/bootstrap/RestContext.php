@@ -498,8 +498,9 @@ class RestContext extends BehatContext
      */
     public function theResponseContentTypeIs($contentType)
     {
+
         if ($this->_contentType != $contentType) {
-            throw new Exception("Response Content Type was not $contentType\n\n");
+            throw new Exception("Response Content Type was not $contentType\n\n".$this->_response->getBody(true));
         }
     }
 
@@ -1161,7 +1162,11 @@ class RestContext extends BehatContext
         if (!isset($sessionData->$sessionVarName) ) {
             $varValue = '';
         }elseif(!is_null($position)){
-            $varValue = $sessionData->$sessionVarName[$position];
+            foreach ($sessionData->$sessionVarName as $key => $value) {
+                if($key == $position){
+                    $varValue = $value;
+                }
+            }            
         } else {
             $varValue = $sessionData->$sessionVarName;
         }
@@ -1172,7 +1177,7 @@ class RestContext extends BehatContext
 
      /**
      * @Given /^that I want to get a resource with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
-     * @Given /^that I want to get a resource with the key "([^"]*)" stored in session array as variable "([^"]*)" in postion (\d+)$/
+     * @Given /^that I want to get a resource with the key "([^"]*)" stored in session array as variable "([^"]*)" in position (\d+)$/
      */
     public function thatIWantToGetAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName, $position=null)
     {
@@ -1184,7 +1189,11 @@ class RestContext extends BehatContext
         if (!isset($sessionData->$sessionVarName) ) {
             $varValue = '';
         }elseif(!is_null($position)){
-            $varValue = $sessionData->$sessionVarName[$position];
+            foreach ($sessionData->$sessionVarName as $key => $value) {
+                if($key == $position){
+                    $varValue = $value;
+                }
+            }
         } else {
             $varValue = $sessionData->$sessionVarName;
         }
@@ -1207,7 +1216,11 @@ class RestContext extends BehatContext
         if (!isset($sessionData->$sessionVarName) ) {
             $varValue = '';
         }elseif(!is_null($position)){
-            $varValue = $sessionData->$sessionVarName[$position];
+            foreach ($sessionData->$sessionVarName as $key => $value) {
+                if($key == $position){
+                    $varValue = $value;
+                }
+            }
         } else {
             $varValue = $sessionData->$sessionVarName;
         }
