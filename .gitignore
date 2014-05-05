@@ -35,3 +35,4 @@ tests/functional/target/
 workflow/public_html/build-log.html
 temp.txt
 update.sh
+workflow/public_html/translations/
