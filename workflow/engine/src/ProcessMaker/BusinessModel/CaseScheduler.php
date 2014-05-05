@@ -535,9 +535,9 @@ class CaseScheduler
             } else {
                 $sOption = $caseSchedulerData['SCH_OPTION'];
             }
-            $caseSchedulerData['sch_repeat_stop_if_running'] = '0';
+/*            $caseSchedulerData['sch_repeat_stop_if_running'] = '0';
             $caseSchedulerData['case_sh_plugin_uid'] = null;
-            $caseSchedulerData = array_change_key_case($caseSchedulerData, CASE_UPPER);
+  */          $caseSchedulerData = array_change_key_case($caseSchedulerData, CASE_UPPER);
             if (empty($caseSchedulerData)) {
                 die( 'the information sended is empty!' );
             }

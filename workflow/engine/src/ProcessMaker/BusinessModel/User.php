@@ -413,11 +413,16 @@ class User
             if ($countPermission != 1) {
                 throw new \Exception('This user: '.$usrLoggedUid. ', can not update the data.');
             }
-            $criteria = new \Criteria();
-            $criteria->addSelectColumn(\UsersPeer::USR_USERNAME);
-            $criteria->add(\UsersPeer::USR_USERNAME, utf8_encode($arrayData['USR_USERNAME']));
-            if (\UsersPeer::doCount($criteria) > 0) {
-                throw new \Exception('usr_username. '.\G::LoadTranslation('ID_USERNAME_ALREADY_EXISTS', array('USER_ID' => $arrayData['USR_USERNAME'])));
+            if (isset($arrayData['USR_USERNAME'])) {
+                $criteria = new \Criteria();
+                $criteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+                $criteria->add(\UsersPeer::USR_USERNAME, utf8_encode($arrayData['USR_USERNAME']));
+                if (\UsersPeer::doCount($criteria) > 0) {
+                    throw new \Exception('usr_username. '.\G::LoadTranslation('ID_USERNAME_ALREADY_EXISTS', array('USER_ID' => $arrayData['USR_USERNAME'])));
+                }
+                if ($form['USR_USERNAME'] != '') {
+                    $aData['USR_USERNAME'] = $form['USR_USERNAME'];
+                }
             }
             if (isset($usrUid)) {
                 $form['USR_UID'] = $usrUid;
@@ -434,9 +439,7 @@ class User
                 $form['USR_AUTH_USER_DN'] = '';
             }
             $aData['USR_UID'] = $form['USR_UID'];
-            if ($form['USR_USERNAME'] != '') {
-                $aData['USR_USERNAME'] = $form['USR_USERNAME'];
-            }
+
             if (isset($form['USR_PASSWORD'])) {
                 if ($form['USR_PASSWORD'] != '') {
                     if ($form['USR_NEW_PASS'] != $form['USR_CNF_PASS']) {
@@ -519,84 +522,116 @@ class User
             if ($form['USR_LASTNAME'] != '') {
                 $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
             }
-            if ($form['USR_EMAIL'] != '') {
-                if (!filter_var($form['USR_EMAIL'], FILTER_VALIDATE_EMAIL)) {
-                    throw new \Exception('usr_email. '.\G::LoadTranslation('ID_INCORRECT_EMAIL'));
-                } else {
-                    $aData['USR_EMAIL'] = $form['USR_EMAIL'];
+            if (isset ($form['USR_EMAIL'])) {
+                if ($form['USR_EMAIL'] != '') {
+                    if (!filter_var($form['USR_EMAIL'], FILTER_VALIDATE_EMAIL)) {
+                        throw new \Exception('usr_email. '.\G::LoadTranslation('ID_INCORRECT_EMAIL'));
+                    } else {
+                        $aData['USR_EMAIL'] = $form['USR_EMAIL'];
+                    }
                 }
             }
-            if ($form['USR_DUE_DATE'] != '') {
-                $dueDate = explode("-", $form['USR_DUE_DATE']);
-                if (ctype_digit($dueDate[0])) {
-                    if (checkdate($dueDate[1], $dueDate[2], $dueDate[0]) == false) {
-                        throw new \Exception('usr_due_date. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
+            if (isset ($form['USR_DUE_DATE'])) {
+                if ($form['USR_DUE_DATE'] != '') {
+                    $dueDate = explode("-", $form['USR_DUE_DATE']);
+                    if (ctype_digit($dueDate[0])) {
+                        if (checkdate($dueDate[1], $dueDate[2], $dueDate[0]) == false) {
+                            throw new \Exception('usr_due_date. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
+                        } else {
+                            $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+                        }
                     } else {
-                        $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
+                        throw new \Exception('usr_due_date. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
                     }
-                } else {
-                    throw new \Exception('usr_due_date. '.\G::LoadTranslation('ID_MSG_ERROR_DUE_DATE'));
                 }
             }
             $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
-            if ($form['USR_STATUS'] != '') {
-                $aData['USR_STATUS'] = $form['USR_STATUS'];
+            if (isset ($form['USR_STATUS'])) {
+                if ($form['USR_STATUS'] != '') {
+                    $aData['USR_STATUS'] = $form['USR_STATUS'];
+                }
             }
-            if ($form['USR_ROLE'] != '') {
-                require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
-                $oCriteria = new \Criteria('rbac');
-                $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
-                $oDataset = \RolesPeer::doSelectRS($oCriteria);
-                $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                $oDataset->next();
-                if ($oDataset->getRow()) {
+            if (isset ($form['USR_ROLE'])) {
+                if ($form['USR_ROLE'] != '') {
+                    require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
+                    $oCriteria = new \Criteria('rbac');
+                    $oCriteria->add(\RolesPeer::ROL_CODE, $form['USR_ROLE']);
+                    $oDataset = \RolesPeer::doSelectRS($oCriteria);
+                    $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                    $oDataset->next();
+                    if ($oDataset->getRow()) {
+                        $aData['USR_ROLE'] = $form['USR_ROLE'];
+                    } else {
+                        throw new \Exception('usr_role. Invalid value for field.');
+                    }
+                    $this->updateUser($aData, $form['USR_ROLE']);
+                } else {
+                    $this->updateUser($aData);
+                }
+            }
+            if (isset ($form['USR_COUNTRY'])) {
+                if ($form['USR_COUNTRY'] != '') {
+                    $oReplacedBy = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
+                    if (is_null($oReplacedBy)) {
+                            throw new \Exception('Invalid value for usr_country: '.$form['USR_COUNTRY']);
+                    } else {
+                        $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
+                        $aData['USR_CITY'] = '';
+                        $aData['USR_LOCATION'] = '';
+                    }
+                }
+            }
+            if (isset ($form['USR_CITY'])) {
+                if ($form['USR_CITY'] != '') {
+                    $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
+                    if (is_null($oCity)) {
+                        throw new \Exception('Invalid value for usr_city: '.$form['USR_CITY']);
+                    } else {
+                        $aData['USR_CITY'] = $form['USR_CITY'];
+                    }
+                }
+            }
+            if (isset ($form['USR_LOCATION'])) {
+                if ($form['USR_LOCATION'] != '') {
+                    $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
+                    if (is_null($oLocation)) {
+                            throw new \Exception('Invalid value for usr_location: '.$form['USR_LOCATION']);
+                    } else {
+                        $aData['USR_LOCATION'] = $form['USR_LOCATION'];
+                    }
+                }
+            }
+            if (isset ($form['USR_ADDRESS'])) {
+                $aData['USR_ADDRESS'] = $form['USR_ADDRESS'];
+            }
+            if (isset ($form['USR_PHONE'])) {
+                $aData['USR_PHONE'] = $form['USR_PHONE'];
+            }
+            if (isset ($form['USR_FAX'])) {
+                $aData['USR_FAX'] = $form['USR_FAX'];
+            }
+            if (isset ($form['USR_CELLULAR'])) {
+                $aData['USR_CELLULAR'] = $form['USR_CELLULAR'];
+            }
+            if (isset ($form['USR_ZIP_CODE'])) {
+                $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
+            }
+            if (isset ($form['USR_POSITION'])) {
+                $aData['USR_POSITION'] = $form['USR_POSITION'];
+            }
+            if (isset ($form['USR_ROLE'])) {
+                if ($form['USR_ROLE'] != '') {
                     $aData['USR_ROLE'] = $form['USR_ROLE'];
-                } else {
-                    throw new \Exception('usr_role. Invalid value for field.');
-                }
-                $this->updateUser($aData, $form['USR_ROLE']);
-            } else {
-                $this->updateUser($aData);
-            }
-            if ($form['USR_COUNTRY'] != '') {
-                $oReplacedBy = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
-                if (is_null($oReplacedBy)) {
-                        throw new \Exception('Invalid value for usr_country: '.$form['USR_COUNTRY']);
-                } else {
-                    $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
-                    $aData['USR_CITY'] = '';
-                    $aData['USR_LOCATION'] = '';
                 }
             }
-            if ($form['USR_CITY'] != '') {
-                $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
-                if (is_null($oCity)) {
-                    throw new \Exception('Invalid value for usr_city: '.$form['USR_CITY']);
-                } else {
-                    $aData['USR_CITY'] = $form['USR_CITY'];
-                }
-            }
-            if ($form['USR_LOCATION'] != '') {
-                $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
-                if (is_null($oLocation)) {
-                        throw new \Exception('Invalid value for usr_location: '.$form['USR_LOCATION']);
-                } else {
-                    $aData['USR_LOCATION'] = $form['USR_LOCATION'];
-                }
-            }
-            $aData['USR_ADDRESS'] = $form['USR_ADDRESS'];
-            $aData['USR_PHONE'] = $form['USR_PHONE'];
-            $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
-            $aData['USR_POSITION'] = $form['USR_POSITION'];
-            if ($form['USR_ROLE'] != '') {
-                $aData['USR_ROLE'] = $form['USR_ROLE'];
-            }
-            if ($form['USR_REPLACED_BY'] != '') {
-                $oReplacedBy = \UsersPeer::retrieveByPK($form['USR_REPLACED_BY']);
-                if (is_null($oReplacedBy)) {
-                    throw new \Exception('usr_replaced_by:'.$form['USR_REPLACED_BY'].' '.\G::LoadTranslation('ID_AUTHENTICATION_SOURCE_INVALID'));
-                } else {
-                    $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+            if (isset ($form['USR_ROLE'])) {
+                if ($form['USR_REPLACED_BY'] != '') {
+                    $oReplacedBy = \UsersPeer::retrieveByPK($form['USR_REPLACED_BY']);
+                    if (is_null($oReplacedBy)) {
+                        throw new \Exception('usr_replaced_by:'.$form['USR_REPLACED_BY'].' '.\G::LoadTranslation('ID_AUTHENTICATION_SOURCE_INVALID'));
+                    } else {
+                        $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+                    }
                 }
             }
             if (isset($form['USR_AUTH_USER_DN'])) {
