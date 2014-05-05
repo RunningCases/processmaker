@@ -167,7 +167,7 @@ try {
         $id = key( $newValues );
         $newValues[$id] = $aData['APP_DATA'][$id];
         foreach ($aKeys as $key => $value) {
-            if ($newValues[$key] == '') {
+            if (!isset($newValues[$key]) || $newValues[$key] == '') {
                 $G_PUBLISH = new Publisher();
                 $aMessage = array ();
                 $aMessage['MESSAGE'] = G::LoadTranslation('ID_FILL_PRIMARY_KEYS');
