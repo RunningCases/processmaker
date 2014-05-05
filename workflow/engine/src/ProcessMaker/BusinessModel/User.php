@@ -449,7 +449,7 @@ class User
                     $memKey = 'rbacSession' . session_id();
                     $memcache = & \PMmemcached::getSingleton(defined('SYS_SYS') ? SYS_SYS : '' );
                     if (($RBAC->aUserInfo = $memcache->get($memKey)) === false) {
-                        $this->loadUserRolePermission($RBAC->sSystem, $usrLoggedUid);
+                        $this->loadUserRolePermission('PROCESSMAKER', $usrLoggedUid);
                         $memcache->set($memKey, $RBAC->aUserInfo, \PMmemcached::EIGHT_HOURS);
                     }
                     if ($RBAC->aUserInfo['PROCESSMAKER']['ROLE']['ROL_CODE'] == 'PROCESSMAKER_ADMIN') {
