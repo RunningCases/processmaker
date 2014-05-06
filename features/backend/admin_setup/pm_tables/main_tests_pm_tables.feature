@@ -76,15 +76,43 @@ Scenario Outline: Create news pmtable
     Examples:
 
     | test_description                                          | pmt_uid_number | pmt_tab_name | pmt_tab_dsc                     | fld_name_1 | fld_label_1 | fld_type_1 | fld_name_2 | fld_label_2 | fld_type_2 | fld_name_3 | fld_label_3 | fld_type_3    |
-    | Create pmtable with type varchar, bigint and boolean      | 1              | PMT_Test_QA1 | pmt table 1 created with script | UNO      | UNO       | VARCHAR  | DOS      | DOS       | BIGINT   | TRES     | TRES      | BOOLEAN     |
-    | Create pmtable with type varchar, char and date           | 2              | PMT_Test_QA2 | pmt table 2 created with script | UNO      | UNO       | VARCHAR  | DOS      | DOS       | CHAR     | TRES     | TRES      | DATE        |
-    | Create pmtable with type varchar, datetime and decimal    | 3              | PMT_Test_QA3 | pmt table 3 created with script | UNO      | UNO       | VARCHAR  | DOS      | DOS       | DATETIME | TRES     | TRES      | DECIMAL     |
-    | Create pmtable with type varchar, double and float        | 4              | PMT_Test_QA4 | pmt table 4 created with script | UNO      | UNO       | VARCHAR  | DOS      | DOS       | DOUBLE   | TRES     | TRES      | FLOAT       |
-    | Create pmtable with type varchar, integer and longvarchar | 5              | PMT_Test_QA5 | pmt table 5 created with script | UNO      | UNO       | VARCHAR  | DOS      | DOS       | INTEGER  | TRES     | TRES      | LONGVARCHAR |
-    | Create pmtable with type varchar, real and smallint       | 6              | PMT_Test_QA6 | pmt table 6 created with script | UNO      | UNO       | VARCHAR  | DOS      | DOS       | REAL     | TRES     | TRES      | SMALLINT    |
-    | Create pmtable with type varchar, time and tinyint        | 7              | PMT_Test_QA7 | pmt table 7 created with script | UNO      | UNO       | VARCHAR  | DOS      | DOS       | TIME     | TRES     | TRES      | TINYINT     |
+    | Create pmtable with type varchar, bigint and boolean      | 1              | PMT_Test_QA1 | pmt table 1 created with script | UNO        | UNO         | VARCHAR    | DOS        | DOS         | BIGINT     | TRES       | TRES        | BOOLEAN       |
+    | Create pmtable with type varchar, datetime and decimal    | 3              | PMT_Test_QA3 | pmt table 3 created with script | UNO        | UNO         | VARCHAR    | DOS        | DOS         | DATETIME   | TRES       | TRES        | DECIMAL       |
+    | Create pmtable with type varchar, double and float        | 4              | PMT_Test_QA4 | pmt table 4 created with script | UNO        | UNO         | VARCHAR    | DOS        | DOS         | DOUBLE     | TRES       | TRES        | FLOAT         |
+    | Create pmtable with type varchar, integer and longvarchar | 5              | PMT_Test_QA5 | pmt table 5 created with script | UNO        | UNO         | VARCHAR    | DOS        | DOS         | INTEGER    | TRES       | TRES        | LONGVARCHAR   |
+    | Create pmtable with type varchar, real and smallint       | 6              | PMT_Test_QA6 | pmt table 6 created with script | UNO        | UNO         | VARCHAR    | DOS        | DOS         | REAL       | TRES       | TRES        | SMALLINT      |
+    | Create pmtable with type varchar, time and tinyint        | 7              | PMT_Test_QA7 | pmt table 7 created with script | UNO        | UNO         | VARCHAR    | DOS        | DOS         | TIME       | TRES       | TRES        | TINYINT       |
 
 
+Scenario Outline: Create new pmtable with type date and char
+    Given POST this data:
+    """
+    {
+    "pmt_tab_name" : "PMT_Test_QA2",
+    "pmt_tab_dsc" : "pmt table 2 created with script",
+    "fields" : [
+        {
+            "fld_key" : 1,
+            "fld_name" : "EJEMPLO",
+            "fld_label" : "EJEMPLO",
+            "fld_type" : "DATE"
+        }
+            ]
+    }
+    """
+    And I request "pmtable"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And store "pmt_uid" in session array as variable "pmt_uid_<pmt_uid_number>"
+
+    Examples:
+
+    | test_description              | pmt_uid_number |
+    | Create pmtable with type date | 2              |
+    
+   
 Scenario Outline: Create a new Data of pm table.
     Given POST this data:
     """
