@@ -516,11 +516,15 @@ class User
                     $oUserProperty->update($aUserProperty);
                 }
             }
-            if ($form['USR_FIRSTNAME'] != '') {
-                $userData['USR_FIRSTNAME'] = $form['USR_FIRSTNAME'];
+            if (isset($form['USR_FIRSTNAME'])) {
+                if ($form['USR_FIRSTNAME'] != '') {
+                    $userData['USR_FIRSTNAME'] = $form['USR_FIRSTNAME'];
+                }
             }
-            if ($form['USR_LASTNAME'] != '') {
-                $userData['USR_LASTNAME'] = $form['USR_LASTNAME'];
+            if (isset($form['USR_LASTNAME'])) {
+                if ($form['USR_LASTNAME'] != '') {
+                    $userData['USR_LASTNAME'] = $form['USR_LASTNAME'];
+                }
             }
             if (isset($form['USR_EMAIL'])) {
                 if ($form['USR_EMAIL'] != '') {
