@@ -10,7 +10,7 @@ Background:
 Scenario Outline: Pull information of an inexistent output document. should return an error
     Given I request "cases/64654381053382b8bb4c415067063003/output-document/<output-document>"
     Then the response status code should be 400
-    And the response charset is "app_doc_uid"
+    And the response charset is "UTF-8"
     And the type is "array"
     
     Examples:
