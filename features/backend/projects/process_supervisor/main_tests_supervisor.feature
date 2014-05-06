@@ -31,7 +31,7 @@ Requirements:
       
       Examples:
       | test_description                                  | project                          | records |
-      | List users and groups available to be supervisors | 85794888452ceeef3675164057928956 | 21      |
+      | List users and groups available to be supervisors | 85794888452ceeef3675164057928956 | 3       |
 
 
     Scenario Outline: Get a List of available groups process supervisor of a project
@@ -44,7 +44,7 @@ Requirements:
       
       Examples:
       | test_description                               | project                          | records |
-      | List the 23 groups available to be supervisors | 85794888452ceeef3675164057928956 | 19      |
+      | List the 23 groups available to be supervisors | 85794888452ceeef3675164057928956 | 1       |
 
     
     Scenario Outline: Get a List of available users elegible as process supervisor
