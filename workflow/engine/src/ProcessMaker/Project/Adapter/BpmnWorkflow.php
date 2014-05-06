@@ -452,9 +452,10 @@ class BpmnWorkflow extends Project\Bpmn
                                     }
                                     $condition = array_key_exists('FLO_CONDITION', $gatewayFlow) ? $gatewayFlow["FLO_CONDITION"] : '';
 
-                                    $this->wp->addRoute($activity["ACT_UID"], $gatewayFlow['FLO_ELEMENT_DEST'], $routeType, $condition);
                                     if ($gatewayFlow['FLO_ELEMENT_DEST_TYPE'] == 'bpmnEvent') {
                                         $this->wp->addRoute($activity["ACT_UID"], -1, $routeType, $condition);
+                                    } else {
+                                        $this->wp->addRoute($activity["ACT_UID"], $gatewayFlow['FLO_ELEMENT_DEST'], $routeType, $condition);
                                     }
                                     break;
                                 default:
