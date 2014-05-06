@@ -177,7 +177,7 @@ abstract class Exporter
             "vendor_version" => \System::getVersion(),
             "vendor_version_code" => "Michelangelo",
             "export_timestamp" => date("U"),
-            "export_datetime" => date("F l j, Y - H:i:s (e, \G\M\TP)"),
+            "export_datetime" => date("Y-m-d\TH:i:sP)"),
             "export_server_addr" => isset($_SERVER["SERVER_ADDR"]) ? $_SERVER["SERVER_ADDR"].":".$_SERVER["SERVER_PORT"] : "Unknown",
             "export_server_os" => PHP_OS ,
             "export_server_php_version" => PHP_VERSION_ID,
