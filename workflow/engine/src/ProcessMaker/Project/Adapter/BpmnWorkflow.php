@@ -83,11 +83,26 @@ class BpmnWorkflow extends Project\Bpmn
     public function update($data)
     {
         parent::update($data);
-        $this->wp->update(array(
-            "PRO_UID" => $data["PRJ_UID"],
-            "PRO_TITLE" => $data["PRJ_NAME"],
-            "PRO_DESCRIPTION" => $data["PRJ_DESCRIPTION"],
-        ));
+
+        $arrayData = array();
+
+        if (isset($data["PRJ_UID"])) {
+            $arrayData["PRO_UID"] = $data["PRJ_UID"];
+        }
+
+        if (isset($data["PRJ_NAME"])) {
+            $arrayData["PRO_TITLE"] = $data["PRJ_NAME"];
+        }
+
+        if (isset($data["PRJ_DESCRIPTION"])) {
+            $arrayData["PRO_DESCRIPTION"] = $data["PRJ_DESCRIPTION"];
+        }
+
+        if (isset($data["PRJ_STATUS"])) {
+            $arrayData["PRO_STATUS"] = $data["PRJ_STATUS"];
+        }
+
+        $this->wp->update($arrayData);
     }
 
     public static function getList($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)

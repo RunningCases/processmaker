@@ -371,5 +371,99 @@ abstract class Importer
         //Return
         return $projectUid;
     }
+
+    /**
+     * Imports a Project sent through the POST method ($_FILES)
+     *
+     * @param array $arrayData      Data
+     * @param array $arrayFieldName The field's names
+     *
+     * return array Returns the data sent and the unique id of Project
+     */
+    public function importPostFile($arrayData, $arrayFieldName = array())
+    {
+        try {
+            //Set data
+            $arrayFieldName["projectFile"] = (isset($arrayFieldName["projectFile"]))? $arrayFieldName["projectFile"] : "PRJ_FILE";
+            $arrayFieldName["option"] = (isset($arrayFieldName["option"]))? $arrayFieldName["option"] : "OPTION";
+
+            $arrayFieldDefinition = array(
+                $arrayFieldName["projectFile"] => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                                         "fieldNameAux" => "projectFile"),
+                $arrayFieldName["option"]      => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array("CREATE", "OVERWRITE", "DISABLE", "KEEP"), "fieldNameAux" => "option")
+            );
+
+            $arrayFieldNameForException = $arrayFieldName;
+
+            if (isset($_FILES[$arrayFieldName["projectFile"]])) {
+                $_FILES["filepmx"] = $_FILES[$arrayFieldName["projectFile"]];
+            }
+
+            if (isset($arrayData[$arrayFieldName["projectFile"]]) &&
+                isset($arrayData[$arrayFieldName["projectFile"]]["name"]) &&
+                is_array($arrayData[$arrayFieldName["projectFile"]])
+            ) {
+                $arrayData[$arrayFieldName["projectFile"]] = $arrayData[$arrayFieldName["projectFile"]]["name"];
+            }
+
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+            $validator = new \ProcessMaker\BusinessModel\Validator();
+
+            $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
+            $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
+
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $arrayFieldDefinition, $arrayFieldNameForException, true);
+
+            if ((isset($_FILES["filepmx"]) && pathinfo($_FILES["filepmx"]["name"], PATHINFO_EXTENSION) != "pmx") ||
+                (isset($arrayData[$arrayFieldName["projectFile"]]) && pathinfo($arrayData[$arrayFieldName["projectFile"]], PATHINFO_EXTENSION) != "pmx")
+            ) {
+                throw (new \Exception("The file extension not is \"pmx\""));
+            }
+
+            //Set variables
+            $option = self::IMPORT_OPTION_CREATE_NEW;
+
+            switch ((isset($arrayData[$arrayFieldName["option"]]))? $arrayData[$arrayFieldName["option"]] : "CREATE") {
+                case "OVERWRITE":
+                    $option = self::IMPORT_OPTION_OVERWRITE;
+                    break;
+                case "DISABLE":
+                    $option = self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW;
+                    break;
+                case "KEEP":
+                    $option = self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW;
+                    break;
+            }
+
+            if (isset($_FILES["filepmx"])) {
+                $this->setSaveDir(PATH_DOCUMENT . "input");
+                $this->setSourceFromGlobals("filepmx");
+            } else {
+                if (isset($arrayData[$arrayFieldName["projectFile"]]) && file_exists(PATH_DOCUMENT . "input" . PATH_SEP . $arrayData[$arrayFieldName["projectFile"]])) {
+                    $this->setSourceFile(PATH_DOCUMENT . "input" . PATH_SEP . $arrayData[$arrayFieldName["projectFile"]]);
+                } else {
+                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayFieldNameForException["projectFile"], $arrayData[$arrayFieldName["projectFile"]]), "The file with {0}: \"{1}\" does not exist.")));
+                }
+            }
+
+            //Import
+            try {
+                $projectUid = $this->import($option);
+
+                $arrayData = array_merge(array("PRJ_UID" => $projectUid), $arrayData);
+            } catch (\Exception $e) {
+                throw (new \Exception("Project already exists"));
+            }
+
+            //Return
+            if ($arrayFieldName["projectFile"] != strtoupper($arrayFieldName["projectFile"])) {
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
+
+            return $arrayData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
 

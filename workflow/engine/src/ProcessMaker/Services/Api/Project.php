@@ -112,6 +112,30 @@ class Project extends Api
     }
 
     /**
+     * @url POST /import
+     *
+     * @param array $request_data
+     *
+     * @status 201
+     */
+    public function doPostImport($request_data)
+    {
+        try {
+            $importer = new \ProcessMaker\Importer\XmlImporter();
+
+            $importer->setData("usr_uid", $this->getUserId());
+
+            $arrayData = $importer->importPostFile($request_data, array("projectFile" => "prj_file", "option" => "option"));
+
+            $response = $arrayData;
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
      * @url GET /:prj_uid/process
      *
      * @param string $prj_uid {@min 32}{@max 32}
