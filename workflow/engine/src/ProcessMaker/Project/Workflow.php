@@ -16,7 +16,7 @@ use ProcessMaker\Util;
 
 /**
  * Class Workflow
- * 
+ *
  * @package ProcessMaker\Project
  * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
  */
@@ -451,7 +451,10 @@ class Workflow extends Handler
                 RoutePeer::ROU_NEXT_TASK => $toTasUid
             ));
 
-            $route->delete();
+            if ($route != null) {
+                $route->delete();
+            }
+
             self::log("Remove Route Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
@@ -754,6 +757,23 @@ class Workflow extends Handler
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(\CaseTrackerObjectPeer::PRO_UID, $sProcessUID);
             \ProcessUserPeer::doDelete($oCriteria);
+
+            //Delete Web Entries
+            $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
+
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\WebEntryPeer::WE_UID);
+            $criteria->add(\WebEntryPeer::PRO_UID, $sProcessUID, \Criteria::EQUAL);
+
+            $rsCriteria = \WebEntryPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $webEntry->delete($row["WE_UID"]);
+            }
+
             //Delete the process
             try {
                 $oProcess->remove($sProcessUID);
@@ -888,3 +908,4 @@ class Workflow extends Handler
 
     }
 }
+
