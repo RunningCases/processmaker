@@ -24,7 +24,7 @@ Scenario: Get definition of a project activity for obtent definition
    
 
 Scenario Outline: Create new Projects
-      Given POST data from file "<project_template>"
+    Given POST data from file "<project_template>"
     And I request "projects"
     Then the response status code should be 201
     And the response charset is "UTF-8"
