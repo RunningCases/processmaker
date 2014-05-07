@@ -62,12 +62,11 @@ if (isset($_FILES["PROCESS_FILENAME"])) {
         echo json_encode($result);
         exit(0);
     }
-} elseif (isset($_POST["PRO_FILENAME"]) && file_exists(PATH_DOCUMENT . 'input' . PATH_SEP . $_POST["PRO_FILENAME"])) {
-
+} elseif (isset($_POST["PRO_FILENAME"]) && file_exists(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]) && pathinfo(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"], PATHINFO_EXTENSION) == "pmx") {
     switch ($_POST["IMPORT_OPTION"]) {
         case 1: $option = XmlImporter::IMPORT_OPTION_OVERWRITE; break;
         case 2: $option = XmlImporter::IMPORT_OPTION_DISABLE_AND_CREATE_NEW; break;
-        case 3: $option = XmlImporter::IMPORT_OPTION_CREATE_NEW; break;
+        case 3: $option = XmlImporter::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW; break;
     }
 
     $importer = new XmlImporter();
@@ -75,7 +74,16 @@ if (isset($_FILES["PROCESS_FILENAME"])) {
     $importer->setSourceFile(PATH_DOCUMENT . 'input' . PATH_SEP . $_POST["PRO_FILENAME"]);
 
     try {
-        $res = $importer->import($option);
+        $prjUid = $importer->import($option);
+
+        $result = array(
+            "success" => true,
+            "catchMessage" => "",
+            "ExistProcessInDatabase" => 0,
+            "ExistGroupsInDatabase" => 0,
+            "sNewProUid" => $prjUid,
+            "project_type" => "bpmn"
+        );
     } catch (\Exception $e) {
         $result = array(
             "success" => true,
@@ -89,6 +97,7 @@ if (isset($_FILES["PROCESS_FILENAME"])) {
         );
     }
 
+    echo G::json_encode($result);
     exit(0);
 }
 
@@ -325,7 +334,7 @@ if ($action == "uploadFileNewProcessExist") {
             if ($option == 2) {
                 $oProcess->disablePreviousProcesses( $sProUid );
                 $sNewProUid = $oProcess->getUnusedProcessGUID();
-                $oProcess->setProcessGuid( $oData, $sNewProUid );
+                $oProcess->setProcessGUID($oData, $sNewProUid);
                 $oProcess->setProcessParent( $oData, $sProUid );
                 $oData->process['PRO_TITLE'] = "New - " . $oData->process['PRO_TITLE'] . ' - ' . date( 'M d, H:i' );
                 $oProcess->renewAll( $oData );
@@ -339,7 +348,7 @@ if ($action == "uploadFileNewProcessExist") {
             if ($option == 3) {
                 //krumo ($oData); die;
                 $sNewProUid = $oProcess->getUnusedProcessGUID();
-                $oProcess->setProcessGuid( $oData, $sNewProUid );
+                $oProcess->setProcessGUID($oData, $sNewProUid);
                 $oData->process['PRO_TITLE'] = G::LoadTranslation('ID_COPY_OF'). ' - ' . $oData->process['PRO_TITLE'] . ' - ' . date( 'M d, H:i' );
                 $oProcess->renewAll( $oData );
 
