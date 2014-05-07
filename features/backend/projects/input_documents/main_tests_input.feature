@@ -28,7 +28,7 @@ Feature: Input Documents Main Tests
             "inp_doc_form_needed": "<inp_doc_form_needed>",
             "inp_doc_original": "<inp_doc_original>",
             "inp_doc_published": "<inp_doc_published>",
-            "inp_doc_versioning": "<inp_doc_versioning>",
+            "inp_doc_versioning": <inp_doc_versioning>,
             "inp_doc_destination_path": "<inp_doc_destination_path>",
             "inp_doc_tags": "<inp_doc_tags>"
         }
@@ -67,7 +67,7 @@ Feature: Input Documents Main Tests
             "inp_doc_form_needed": "VIRTUAL",
             "inp_doc_original": "ORIGINAL",
             "inp_doc_published": "PRIVATE",
-            "inp_doc_versioning": "1",
+            "inp_doc_versioning": 1,
             "inp_doc_destination_path": "",
             "inp_doc_tags": "INPUT"
         }
@@ -96,7 +96,7 @@ Feature: Input Documents Main Tests
             "inp_doc_form_needed": "<inp_doc_form_needed>",
             "inp_doc_original": "<inp_doc_original>",
             "inp_doc_published": "<inp_doc_published>",
-            "inp_doc_versioning": "<inp_doc_versioning>",
+            "inp_doc_versioning": <inp_doc_versioning>,
             "inp_doc_destination_path": "<inp_doc_destination_path>",
             "inp_doc_tags": "<inp_doc_tags>"
         }
@@ -128,7 +128,7 @@ Feature: Input Documents Main Tests
         And that "inp_doc_title" is set to "<inp_doc_title>"
         And that "inp_doc_description" is set to "<inp_doc_description>"
         And that "inp_doc_form_needed" is set to "<inp_doc_form_needed>"
-        And that "inp_doc_versioning" is set to "<inp_doc_versioning>"
+        And that "inp_doc_versioning" is set to <inp_doc_versioning>
 
          Examples:
 

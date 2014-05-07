@@ -781,6 +781,7 @@
     <column name="OUT_DOC_PDF_SECURITY_OPEN_PASSWORD" type="VARCHAR" size="32" required="false" default=""/>
     <column name="OUT_DOC_PDF_SECURITY_OWNER_PASSWORD" type="VARCHAR" size="32" required="false" default=""/>
     <column name="OUT_DOC_PDF_SECURITY_PERMISSIONS" type="VARCHAR" size="150" required="false" default=""/>
+    <column name="OUT_DOC_OPEN_TYPE" type="INTEGER" default="0"/>
     <validator column="OUT_DOC_UID">
       <rule name="maxLength" value="32" message="Output Document UID can be no larger than ${value} in size"/>
       <rule name="required" message="Output Document UID is required."/>
@@ -3003,6 +3004,17 @@
   </table>
 
   <table name="SESSION_STORAGE">
+  	<vendor type="mysql">
+        <parameter name="Name" value="SESSION_STORAGE"/>
+        <parameter name="Engine" value="InnoDB"/>
+        <parameter name="Version" value="10"/>
+        <parameter name="Row_format" value="Dynamic"/>
+        <parameter name="Auto_increment" value=""/>
+        <parameter name="Check_time" value=""/>
+        <parameter name="Collation" value="utf8_general_ci"/>
+        <parameter name="Checksum" value=""/>
+        <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="ID" type="VARCHAR" size="128" required="true" primaryKey="true" />
     <column name="SET_TIME" type="VARCHAR"  size="10" required="true" />
     <column name="DATA" type="LONGVARCHAR" required="true" />
@@ -3046,10 +3058,49 @@
     <column name="PRF_UPDATE_DATE" type="TIMESTAMP" required="false" />
   </table>
 
+  <table name="WEB_ENTRY">
+      <vendor type="mysql">
+          <parameter name="Name" value="WEB_ENTRY" />
+          <parameter name="Engine" value="InnoDB" />
+          <parameter name="Version" value="10" />
+          <parameter name="Row_format" value="Dynamic" />
+          <parameter name="Data_free" value="0" />
+          <parameter name="Auto_increment" value="" />
+          <parameter name="Check_time" value="" />
+          <parameter name="Collation" value="utf8_general_ci" />
+          <parameter name="Checksum" value="" />
+          <parameter name="Create_options" value="" />
+      </vendor>
+      <column name="WE_UID"  type="VARCHAR" size="32" required="true" primaryKey="true" />
+      <column name="PRO_UID" type="VARCHAR" size="32" required="true" />
+      <column name="TAS_UID" type="VARCHAR" size="32" required="true" />
+      <column name="DYN_UID" type="VARCHAR" size="32" required="true" />
+      <column name="USR_UID" type="VARCHAR" size="32" default="" />
+      <column name="WE_METHOD" type="VARCHAR" size="4" default="HTML" />
+      <column name="WE_INPUT_DOCUMENT_ACCESS" type="INTEGER" default="0" />
+      <column name="WE_DATA" type="LONGVARCHAR" default="" />
+      <column name="WE_CREATE_USR_UID" type="VARCHAR" size="32" default="" required="true" />
+      <column name="WE_UPDATE_USR_UID" type="VARCHAR" size="32" default="" />
+      <column name="WE_CREATE_DATE" type="TIMESTAMP" required="true" />
+      <column name="WE_UPDATE_DATE" type="TIMESTAMP" />
+  </table>
+
   <!--
     OAUTH TABLES DEFINITION
   -->
   <table name="OAUTH_ACCESS_TOKENS">
+    <vendor type="mysql">
+      <parameter name="Name" value="OAUTH_ACCESS_TOKENS"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="ACCESS_TOKEN" type="VARCHAR" size="40" required="true" primaryKey="true" />
     <column name="CLIENT_ID" type="VARCHAR"  size="80" required="true" />
     <column name="USER_ID" type="VARCHAR"  size="32" required="false" />
@@ -3057,6 +3108,18 @@
     <column name="SCOPE" type="VARCHAR" size="2000" required="false" />
   </table>
   <table name="OAUTH_AUTHORIZATION_CODES">
+    <vendor type="mysql">
+      <parameter name="Name" value="OAUTH_AUTHORIZATION_CODES"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="AUTHORIZATION_CODE" type="VARCHAR" size="40" required="true" primaryKey="true" />
     <column name="CLIENT_ID" type="VARCHAR"  size="80" required="true" />
     <column name="USER_ID" type="VARCHAR"  size="32" required="false" />
@@ -3065,6 +3128,18 @@
     <column name="SCOPE" type="VARCHAR" size="2000" required="false" />
   </table>
   <table name="OAUTH_CLIENTS">
+    <vendor type="mysql">
+      <parameter name="Name" value="OAUTH_CLIENTS"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="CLIENT_ID" type="VARCHAR" size="80" required="true" primaryKey="true" />
     <column name="CLIENT_SECRET" type="VARCHAR"  size="80" required="true" />
     <column name="CLIENT_NAME" type="VARCHAR" size="256" required="true" />
@@ -3074,6 +3149,18 @@
     <column name="USR_UID" type="VARCHAR" size="32" required="true" />
   </table>
   <table name="OAUTH_REFRESH_TOKENS">
+    <vendor type="mysql">
+      <parameter name="Name" value="OAUTH_REFRESH_TOKENS"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="REFRESH_TOKEN" type="VARCHAR" size="40" required="true" primaryKey="true" />
     <column name="CLIENT_ID" type="VARCHAR"  size="80" required="true" />
     <column name="USER_ID" type="VARCHAR"  size="32" required="false" />
@@ -3081,12 +3168,36 @@
     <column name="SCOPE" type="VARCHAR" size="2000" required="false" />
   </table>
   <table name="OAUTH_SCOPES">
+    <vendor type="mysql">
+      <parameter name="Name" value="OAUTH_SCOPES"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="TYPE" type="VARCHAR" size="40" required="true" />
     <column name="SCOPE" type="VARCHAR" size="2000" required="false" />
     <column name="CLIENT_ID" type="VARCHAR"  size="80" required="false" />
   </table>
 
   <table name="PMOAUTH_USER_ACCESS_TOKENS">
+    <vendor type="mysql">
+      <parameter name="Name" value="PMOAUTH_USER_ACCESS_TOKENS"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="ACCESS_TOKEN" type="VARCHAR" size="40" required="true" primaryKey="true" />
     <column name="REFRESH_TOKEN" type="VARCHAR" size="40" required="true" />
     <column name="USER_ID" type="VARCHAR"  size="32" required="false" />
@@ -3097,6 +3208,18 @@
     BPMN TABLES DEFINITION
   -->
   <table name="BPMN_PROJECT">
+    <vendor type="mysql">
+      <parameter name="Name" value="BPMN_PROJECT"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_NAME" type="VARCHAR" size="255" required="true" default=""/>
     <column name="PRJ_DESCRIPTION" type="VARCHAR" size="512" required="false"/>
@@ -3116,6 +3239,18 @@
   </table>
 
   <table name="BPMN_PROCESS">
+    <vendor type="mysql">
+      <parameter name="Name" value="BPMN_PROCESS"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="DIA_UID" type="VARCHAR" size="32" required="false"/>
@@ -3136,6 +3271,18 @@
   </table>
 
   <table name="BPMN_ACTIVITY">
+    <vendor type="mysql">
+      <parameter name="Name" value="BPMN_ACTIVITY"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="ACT_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
@@ -3184,6 +3331,18 @@
   </table>
 
   <table name="BPMN_ARTIFACT">
+    <vendor type="mysql">
+      <parameter name="Name" value="BPMN_ARTIFACT"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="ART_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
@@ -3208,6 +3367,18 @@
   </table>
 
   <table name="BPMN_DIAGRAM">
+    <vendor type="mysql">
+      <parameter name="Name" value="BPMN_DIAGRAM"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="DIA_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="DIA_NAME" type="VARCHAR" size="255" required="false"/>
@@ -3224,6 +3395,18 @@
   </table>
 
   <table name="BPMN_BOUND">
+    <vendor type="mysql">
+      <parameter name="Name" value="BPMN_BOUND"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="BOU_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="DIA_UID" type="VARCHAR" size="32" required="true" default=""/>
@@ -3255,6 +3438,18 @@
   </table>
 
   <table name="BPMN_DATA">
+    <vendor type="mysql">
+      <parameter name="Name" value="BPMN_DATA"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="DAT_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
@@ -3285,6 +3480,18 @@
   </table>
 
   <table name="BPMN_EVENT">
+    <vendor type="mysql">
+      <parameter name="Name" value="BPMN_EVENT"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="EVN_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
@@ -3326,6 +3533,18 @@
   </table>
 
   <table name="BPMN_FLOW">
+  	<vendor type="mysql">
+      <parameter name="Name" value="BPMN_FLOW"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="FLO_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="DIA_UID" type="VARCHAR" size="32" required="true" default=""/>
@@ -3362,6 +3581,18 @@
   </table>
 
   <table name="BPMN_GATEWAY">
+  	<vendor type="mysql">
+      <parameter name="Name" value="BPMN_GATEWAY"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="GAT_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
@@ -3391,6 +3622,18 @@
   </table>
 
   <table name="BPMN_LANESET">
+    <vendor type="mysql">
+      <parameter name="Name" value="BPMN_LANESET"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="LNS_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false"/>
@@ -3416,6 +3659,18 @@
   </table>
 
   <table name="BPMN_LANE">
+  	<vendor type="mysql">
+      <parameter name="Name" value="BPMN_LANE"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="LAN_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="LNS_UID" type="VARCHAR" size="32" required="true"/>
@@ -3440,6 +3695,18 @@
   </table>
 
   <table name="BPMN_PARTICIPANT">
+    <vendor type="mysql">
+      <parameter name="Name" value="BPMN_PARTICIPANT"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="PAR_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="false" default=""/>
@@ -3461,6 +3728,18 @@
   </table>
 
   <table name="BPMN_EXTENSION">
+    <vendor type="mysql">
+      <parameter name="Name" value="BPMN_EXTENSION"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="EXT_UID" type="VARCHAR" size="32" required="true" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="EXT_ELEMENT" type="VARCHAR" size="32" required="true"/>
@@ -3478,6 +3757,18 @@
   </table>
 
   <table name="BPMN_DOCUMENTATION">
+  	<vendor type="mysql">
+      <parameter name="Name" value="BPMN_DOCUMENTATION"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Data_free" value="0"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+    </vendor>
     <column name="DOC_UID" type="VARCHAR" size="32" required="true" primaryKey="true"/>
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
     <column name="DOC_ELEMENT" type="VARCHAR" size="32" required="true"/>
@@ -3495,3 +3786,4 @@
   </table>
 
 </database>
+

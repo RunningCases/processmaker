@@ -1,77 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dynaForm name="tasks_AssignmentRules" width="99%" mode="edit" enableTemplate="0" border="0" height="305px">
-
-<TAS_UID type="hidden"/>
-
-<INDEX type="hidden"/>
-
-<IFORM type="hidden"/>
-
-<PRO_UID type="private"/>
-
-<LANG type="private"/>
-
-<TAS_ASSIGN_TYPE type="radiogroup" defaultvalue="BALANCED" group="1">
-  <en>Case to be assigned by
-  <option name="BALANCED">Cyclical Assignment</option>
-  <option name="MANUAL">Manual Assignment</option>
-  <option name="EVALUATE">Value Based Assignment</option>
-  <option name="REPORT_TO">Reports to</option>
-  <option name="SELF_SERVICE">Self Service</option>
-  <option name="SELF_SERVICE_EVALUATE">Self Service Value Based Assignment</option>
+  <TAS_UID type="hidden"/>
+  <INDEX type="hidden"/>
+  <IFORM type="hidden"/>
+  <PRO_UID type="private"/>
+  <LANG type="private"/>
+  <TAS_ASSIGN_TYPE type="radiogroup" defaultvalue="BALANCED" group="1">
+    <en><![CDATA[Case to be assigned by]]><option name="BALANCED"><![CDATA[Cyclical Assignment]]></option><option name="MANUAL"><![CDATA[Manual Assignment]]></option><option name="EVALUATE"><![CDATA[Value Based Assignment]]></option><option name="REPORT_TO"><![CDATA[Reports to]]></option><option name="SELF_SERVICE"><![CDATA[Self Service]]></option><option name="SELF_SERVICE_EVALUATE"><![CDATA[Self Service Value Based Assignment]]></option></en>
+  </TAS_ASSIGN_TYPE>
+  <TAS_ASSIGN_VARIABLE type="textpm" size="40" maxlength="155" defaultvalue="@@SYS_NEXT_USER_TO_BE_ASSIGNED" showVars="1" process="@#PRO_UID">
+    <en><![CDATA[Variable for Value Based Assignment]]></en>
+  </TAS_ASSIGN_VARIABLE>
+  <TAS_GROUP_VARIABLE type="textpm" size="40" maxlength="155" defaultvalue="@@SYS_GROUP_TO_BE_ASSIGNED" showVars="1" process="@#PRO_UID">
+    <en><![CDATA[Variable for Self Service Value Based Assignment]]></en>
+  </TAS_GROUP_VARIABLE>
   <!-- this feature is temporarily disabled -->
-  <!--option name="STATIC_MI">Static Partial Join for Multiple Instances</option>
-  <option name="CANCEL_MI">Cancelling Partial Join for Multiple Instances</option-->
-  </en>
-</TAS_ASSIGN_TYPE>
-
-<TAS_ASSIGN_VARIABLE type="textpm" size="40" maxlength="155" defaultvalue="@@SYS_NEXT_USER_TO_BE_ASSIGNED" showVars="1" process="@#PRO_UID">
-  <en>Variable for Value Based Assignment</en>
-</TAS_ASSIGN_VARIABLE>
-
-<TAS_GROUP_VARIABLE type="textpm" size="40" maxlength="155" defaultvalue="@@SYS_GROUP_TO_BE_ASSIGNED" showVars="1" process="@#PRO_UID">
-  <en>Variable for Self Service Value Based Assignment</en>
-</TAS_GROUP_VARIABLE>
-  <!-- this feature is temporarily disabled -->
-<!--TAS_MI_INSTANCE_VARIABLE type="textpm" size="40" maxlength="155" defaultvalue="@@SYS_VAR_TOTAL_INSTANCE" showVars="1" process="@#PRO_UID">
+  <!--TAS_MI_INSTANCE_VARIABLE type="textpm" size="40" maxlength="155" defaultvalue="@@SYS_VAR_TOTAL_INSTANCE" showVars="1" process="@#PRO_UID">
   <en>Variable for No of Instances</en>
 </TAS_MI_INSTANCE_VARIABLE>
 <TAS_MI_COMPLETE_VARIABLE type="textpm" size="40" maxlength="155" defaultvalue="@@SYS_VAR_TOTAL_INSTANCES_COMPLETE" showVars="1" process="@#PRO_UID">
   <en>Variable for No of Instances to complete</en>
 </TAS_MI_COMPLETE_VARIABLE-->
-
-<TAS_SELFSERVICE_TIMEOUT type="checkbox" value="1">
-    <en>Set a timeout</en>
-</TAS_SELFSERVICE_TIMEOUT>
-
-<TAS_SELFSERVICE_TIME type="text" required="1" validate="Int" size="3">
-    <en>Time</en>
-</TAS_SELFSERVICE_TIME>
-
-<TAS_SELFSERVICE_TIME_UNIT type="dropdown">
-    <en>
-        Time unit
-        <option name="HOURS">Hours</option>
-        <option name="DAYS">Days</option>
-    </en>
-</TAS_SELFSERVICE_TIME_UNIT>
-
-<TAS_SELFSERVICE_TRIGGER_UID type="dropdown" required="1">
-    <![CDATA[
+  <TAS_SELFSERVICE_TIMEOUT type="checkbox" value="1">
+    <en><![CDATA[Set a timeout]]></en>
+  </TAS_SELFSERVICE_TIMEOUT>
+  <TAS_SELFSERVICE_TIME type="text" required="1" validate="Int" size="3">
+    <en><![CDATA[Time]]></en>
+  </TAS_SELFSERVICE_TIME>
+  <TAS_SELFSERVICE_TIME_UNIT type="dropdown">
+    <en><![CDATA[Time unit]]><option name="HOURS"><![CDATA[Hours]]></option><option name="DAYS"><![CDATA[Days]]></option></en>
+  </TAS_SELFSERVICE_TIME_UNIT>
+  <TAS_SELFSERVICE_TRIGGER_UID type="dropdown" required="1"><![CDATA[
     SELECT TGR.TRI_UID, CON.CON_VALUE
     FROM   TRIGGERS AS TGR, CONTENT AS CON
     WHERE  TGR.PRO_UID = '@#PRO_UID' AND
            TGR.TRI_UID = CON.CON_ID AND CON.CON_CATEGORY = 'TRI_TITLE' AND CON.CON_LANG = '@#LANG'
     ORDER BY CON.CON_VALUE ASC
-    ]]>
-
-    <en>
-        Trigger to execute
-        <option name="">- Select a trigger -</option>
-    </en>
-</TAS_SELFSERVICE_TRIGGER_UID>
-
-<JS type="javascript"><![CDATA[
+    ]]><en><![CDATA[Trigger to execute]]><option name=""><![CDATA[- Select a trigger -]]></option></en></TAS_SELFSERVICE_TRIGGER_UID>
+  <JS type="javascript"><![CDATA[
 var selfServiceTimeoutDataShow = function (sw)
 {
     hideRowById("TAS_SELFSERVICE_TIME");
@@ -308,6 +274,4 @@ var insertFormVar = function(sFieldName, sValue) {
 };
 
 ]]></JS>
-
 </dynaForm>
-

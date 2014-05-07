@@ -105,7 +105,7 @@ return this;};Function.prototype.isObject=false;Function.prototype.isArray=false
 {return oThis.apply(Class,argumentsToArray(arguments).concat(args));};}
 catch(e){return this;}};Function.prototype.args=function()
 {var oThis=this;var args=argumentsToArray(arguments);return function()
-{return oThis.apply(oThis,argumentsToArray(arguments).concat(args));};};String.prototype.isAlphaUS=function()
+{try{return oThis.apply(oThis,argumentsToArray(arguments).concat(args));}catch(theError){}};};String.prototype.isAlphaUS=function()
 {var a=this.split("");var b="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_".split("");for(var i=0;i<a.length;i++)
 {if(!b.inArray(a[i])){return false;}}
 return true;};String.prototype.isString=true;String.prototype.trim=function(){return(this.replace(new RegExp("^([\\s]+)|([\\s]+)$","gm"),""));};String.prototype.leftTrim=function(){return(this.replace(new RegExp("^[\\s]+","gm"),""));};String.prototype.rightTrim=function(){return(this.replace(new RegExp("[\\s]+$","gm"),""));};String.prototype.stripTags=function()
@@ -1281,8 +1281,8 @@ selectdd.innerHTML="";for(i=0;i<=arrayOption.options.length-1;i++){if(swOptGroup
 optionAux=document.createElement("option");optGroupAux.appendChild(optionAux);optionAux.value=arrayOption.options[i].key;optionAux.text=arrayOption.options[i].value;}else{optionAux=document.createElement("option");selectdd.appendChild(optionAux);optionAux.value=arrayOption.options[i].key;optionAux.text=arrayOption.options[i].value;}}}
 if(selectdd.options.length==0){selectdd.options[0]=new Option("","");}}
 function dynaFormChanged(frm)
-{for(var i1=0;i1<=frm.elements.length-1;i1++){if(frm.elements[i1].type=="text"&&frm.elements[i1].value!=frm.elements[i1].defaultValue){return true;}
-if(frm.elements[i1].type=="textarea"&&frm.elements[i1].value!=frm.elements[i1].defaultValue){return true;}
+{for(var i1=0;i1<=frm.elements.length-1;i1++){if((frm.elements[i1].type=="radio"||frm.elements[i1].type=="checkbox")&&(frm.elements[i1].checked!=frm.elements[i1].defaultChecked)){return true;}
+if((frm.elements[i1].type=="textarea"||frm.elements[i1].type=="text"||frm.elements[i1].type=="file")&&(frm.elements[i1].value!=frm.elements[i1].defaultValue)){return true;}
 if(frm.elements[i1].tagName.toLowerCase()=="select"){var selectDefaultValue=frm.elements[i1].value;for(var i2=0;i2<=frm.elements[i1].options.length-1;i2++){if(frm.elements[i1].options[i2].defaultSelected){selectDefaultValue=frm.elements[i1].options[i2].value;break;}}
 if(frm.elements[i1].value!=selectDefaultValue){return true;}}}
 return false;}

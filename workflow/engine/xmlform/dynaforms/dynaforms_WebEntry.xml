@@ -1,61 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dynaForm type="xmlform" name="" width="450" enabletemplate="0" mode="edit">
-
-<PRO_UID type="hidden" showInTable="0"/>
-<LANG type="private" showInTable="0"/>
-<subtitle1 type="subtitle">
-  <en>Properties</en>
-</subtitle1>
-
-<TASKS type="dropdown" defaultvalue="" dependentfields="DYNAFORM" mode="edit" options="Array"><![CDATA[
+  <PRO_UID type="hidden" showInTable="0"/>
+  <LANG type="private" showInTable="0"/>
+  <subtitle1 type="subtitle">
+    <en><![CDATA[Properties]]></en>
+  </subtitle1>
+  <TASKS type="dropdown" defaultvalue="" dependentfields="DYNAFORM" mode="edit" options="Array"><![CDATA[
   SELECT TASK.TAS_UID AS TUID, CONTENT.CON_VALUE AS TVALUE FROM TASK
   LEFT JOIN PROCESS ON (PROCESS.PRO_UID=TASK.PRO_UID)
   LEFT JOIN CONTENT ON (TASK.TAS_UID=CONTENT.CON_ID AND CONTENT.CON_CATEGORY='TAS_TITLE' AND CONTENT.CON_LANG='@#LANG')
   WHERE TASK.PRO_UID=@@PRO_UID AND TASK.TAS_START='TRUE' ORDER BY CONTENT.CON_VALUE
-  ]]><en>Initial Task</en>
-</TASKS>
-
-<DYNAFORM type="dropdown" defaultvalue="" mode="edit" options="Array"><![CDATA[
+  ]]><en><![CDATA[Initial Task]]></en></TASKS>
+  <DYNAFORM type="dropdown" defaultvalue="" mode="edit" options="Array"><![CDATA[
   SELECT DYNAFORM.DYN_UID, CONTENT.CON_VALUE FROM DYNAFORM
   LEFT JOIN PROCESS ON (PROCESS.PRO_UID=DYNAFORM.PRO_UID)
   LEFT JOIN CONTENT ON (DYNAFORM.DYN_UID=CONTENT.CON_ID AND CONTENT.CON_CATEGORY='DYN_TITLE' AND CONTENT.CON_LANG='@#LANG')
   LEFT JOIN STEP ON (DYNAFORM.DYN_UID=STEP.STEP_UID_OBJ)
   WHERE DYNAFORM.PRO_UID=@@PRO_UID AND DYNAFORM.DYN_TYPE!='grid' AND STEP.TAS_UID="@#TASKS" ORDER BY CONTENT.CON_VALUE
-  ]]><en>Initial Dynaform</en>
-</DYNAFORM>
-
-<WE_TYPE type="dropdown" defaultvalue="" mode="edit">
-  <en>Method<option name="WS">PHP pages with Web Services</option><option name="SINGLE">Single HTML </option></en>
-</WE_TYPE>
-
-<WE_USR type="dropdown" defaultvalue="" mode="edit">
-  <en>Input Documents Access<option name="1">No Restriction</option><option name="2">Restricted to process permissions</option></en>
-</WE_USR>
-
-<subtitle2 type="subtitle">
-  <en><![CDATA[User]]></en>
-</subtitle2>
-<WS_USER type="text" defaultvalue="" mode="edit" options="Array">
-  <en>Web Service User</en>
-</WS_USER>
-<WS_PASS type="password" defaultvalue="" mode="edit" options="Array">
-  <en>Web Service Passsword</en>
-</WS_PASS>
-
-<WS_ROUNDROBIN type="yesno" defaultvalue="" mode="edit" options="Array">
-  <en>Cyclical Assignment</en>
-</WS_ROUNDROBIN>
-
-<TEST type="button" onclick="webEntry_validate(@QPRO_UID);">
-  <en>Test Configuration</en>
-</TEST>
-
-<SEARCH type="button" onclick="webEntry_generate(@QPRO_UID);">
-  <en>Generate Web Entry Page</en>
-</SEARCH>
-
-
-<js type="javascript"><![CDATA[
+  ]]><en><![CDATA[Initial Dynaform]]></en></DYNAFORM>
+  <WE_TYPE type="dropdown" defaultvalue="" mode="edit">
+    <en><![CDATA[Method]]><option name="WS"><![CDATA[PHP pages with Web Services]]></option><option name="SINGLE"><![CDATA[Single HTML]]></option></en>
+  </WE_TYPE>
+  <WE_USR type="dropdown" defaultvalue="" mode="edit">
+    <en><![CDATA[Input Documents Access]]><option name="1"><![CDATA[No Restriction]]></option><option name="2"><![CDATA[Restricted to process permissions]]></option></en>
+  </WE_USR>
+  <subtitle2 type="subtitle">
+    <en><![CDATA[User]]></en>
+  </subtitle2>
+  <WS_USER type="text" defaultvalue="" mode="edit" options="Array">
+    <en><![CDATA[Web Service User]]></en>
+  </WS_USER>
+  <WS_PASS type="password" defaultvalue="" mode="edit" options="Array">
+    <en><![CDATA[Web Service Passsword]]></en>
+  </WS_PASS>
+  <WS_ROUNDROBIN type="yesno" defaultvalue="" mode="edit" options="Array">
+    <en><![CDATA[Cyclical Assignment]]></en>
+  </WS_ROUNDROBIN>
+  <TEST type="button" onclick="webEntry_validate(@QPRO_UID);">
+    <en><![CDATA[Test Configuration]]></en>
+  </TEST>
+  <SEARCH type="button" onclick="webEntry_generate(@QPRO_UID);">
+    <en><![CDATA[Generate Web Entry Page]]></en>
+  </SEARCH>
+  <js type="javascript"><![CDATA[
 var oPanel1;
 getField('SEARCH').disabled = true;
 
@@ -244,5 +231,4 @@ var webEntry_generate = function(PRO_UID, TASKS, DYNAFORM) {
 
 hideRowById('WS_ROUNDROBIN');
 ]]></js>
-
-</dynaForm> 
+</dynaForm>

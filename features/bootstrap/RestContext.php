@@ -1,4 +1,4 @@
-FA<?php
+<?php
 use Behat\Behat\Context\BehatContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -339,6 +339,8 @@ class RestContext extends BehatContext
             $this->_headers['Authorization'] = 'Bearer ' . $this->access_token;
         }
 
+        
+
 
         if($urlType=="absolute"){
             $this->_requestUrl = $pageUrl;
@@ -367,7 +369,7 @@ class RestContext extends BehatContext
             case 'POST':
                 $postFields = is_object($this->_restObject)
                     ? (array)$this->_restObject
-                    : $this->_restObject;
+                    : $this->_restObject;               
                 $this->_request = $this->_client
                     ->post($url, $this->_headers,
                     (empty($this->_requestBody) ? $postFields :
@@ -382,6 +384,7 @@ class RestContext extends BehatContext
                 $putFields = is_object($this->_restObject)
                     ? (array)$this->_restObject
                     : $this->_restObject;
+                $this->printDebug("URL F: $url\n");
                 $this->_request = $this->_client
                     ->put($url, $this->_headers,
                     (empty($this->_requestBody) ? $putFields :
@@ -495,8 +498,9 @@ class RestContext extends BehatContext
      */
     public function theResponseContentTypeIs($contentType)
     {
+
         if ($this->_contentType != $contentType) {
-            throw new Exception("Response Content Type was not $contentType\n\n");
+            throw new Exception("Response Content Type was not $contentType\n\n".$this->_response->getBody(true));
         }
     }
 
@@ -1116,10 +1120,20 @@ class RestContext extends BehatContext
     /**
      * @Then /^the response has (\d+) records$/
      * @Then /^the response has (\d+) record$/
+     * @Then /^the response has (\d+) records in property "([^"]*)"$/
+     * @Then /^the response has (\d+) record in property "([^"]*)"$/
      */
-    public function theResponseHasRecords($quantityOfRecords)
+    public function theResponseHasRecords($quantityOfRecords, $responseProperty="")
     {
-        $data = $this->_data;
+        if($responseProperty!=""){
+            if(!isset($this->_data->$responseProperty)){
+                throw new Exception("the Response data doesn't have a property named: $responseProperty\n\n" );
+            }
+            $data = $this->_data->$responseProperty;
+        }else{
+            $data = $this->_data;
+        }
+        
         if (!is_array($data)) {
             if ($quantityOfRecords == 0) {
                 //if we expect 0 records and the response in fact is not an array, just return as a valid test
@@ -1136,8 +1150,9 @@ class RestContext extends BehatContext
 
     /**
      * @Given /^that I want to update a resource with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
+     * @Given /^that I want to update a resource with the key "([^"]*)" stored in session array as variable "([^"]*)" in position (\d+)$/
      */
-    public function thatIWantToUpdateAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName)
+    public function thatIWantToUpdateAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName, $position=null)
     {
         if (file_exists("session.data")) {
             $sessionData = json_decode(file_get_contents("session.data"));
@@ -1146,6 +1161,12 @@ class RestContext extends BehatContext
         }
         if (!isset($sessionData->$sessionVarName) ) {
             $varValue = '';
+        }elseif(!is_null($position)){
+            foreach ($sessionData->$sessionVarName as $key => $value) {
+                if($key == $position){
+                    $varValue = $value;
+                }
+            }            
         } else {
             $varValue = $sessionData->$sessionVarName;
         }
@@ -1156,8 +1177,9 @@ class RestContext extends BehatContext
 
      /**
      * @Given /^that I want to get a resource with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
+     * @Given /^that I want to get a resource with the key "([^"]*)" stored in session array as variable "([^"]*)" in position (\d+)$/
      */
-    public function thatIWantToGetAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName)
+    public function thatIWantToGetAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName, $position=null)
     {
          if (file_exists("session.data")) {
             $sessionData = json_decode(file_get_contents("session.data"));
@@ -1166,6 +1188,12 @@ class RestContext extends BehatContext
         }
         if (!isset($sessionData->$sessionVarName) ) {
             $varValue = '';
+        }elseif(!is_null($position)){
+            foreach ($sessionData->$sessionVarName as $key => $value) {
+                if($key == $position){
+                    $varValue = $value;
+                }
+            }
         } else {
             $varValue = $sessionData->$sessionVarName;
         }
@@ -1176,8 +1204,9 @@ class RestContext extends BehatContext
 
     /**
      * @Given /^that I want to delete a resource with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
+     * @Given /^that I want to delete a resource with the key "([^"]*)" stored in session array as variable "([^"]*)" in position (\d+)$/
      */
-    public function thatIWantToDeleteAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName)
+    public function thatIWantToDeleteAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName, $position=null)
     {
         if (file_exists("session.data")) {
             $sessionData = json_decode(file_get_contents("session.data"));
@@ -1186,6 +1215,12 @@ class RestContext extends BehatContext
         }
         if (!isset($sessionData->$sessionVarName) ) {
             $varValue = '';
+        }elseif(!is_null($position)){
+            foreach ($sessionData->$sessionVarName as $key => $value) {
+                if($key == $position){
+                    $varValue = $value;
+                }
+            }
         } else {
             $varValue = $sessionData->$sessionVarName;
         }
@@ -1244,6 +1279,8 @@ class RestContext extends BehatContext
      /**
      * @Given /^I request "([^"]*)"  with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
      * @Given /^I request "([^"]*)"  with the key "([^"]*)" stored in session array as variable "([^"]*)" and url is "([^"]*)"$/
+     * @Given /^I request "([^"]*)" with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
+     * @Given /^I request "([^"]*)" with the key "([^"]*)" stored in session array as variable "([^"]*)" and url is "([^"]*)"$/
      */
     public function iRequestWithTheKeyStoredInSessionArrayAsVariable($pageUrl, $varName, $sessionVarName, $urlType="")
     {
@@ -1481,43 +1518,94 @@ class RestContext extends BehatContext
      */
     public function postUploadAnInputDocumentTo($file, $url, PyStringNode $string)
     {
-        $baseUrl = $this->getParameter('base_url');
-        $url = $baseUrl.$url;
-        $accesstoken = $this->getParameter('access_token');
-        $headr = array();
-        $headr[] = 'Authorization: Bearer '.$accesstoken;
-
         $postFields = json_decode($string);
         $postFields->form ='@'.$file;
-        //print_r($postFields);
+       
+        $this->_restObjectMethod = 'post';
+        $this->_restObject = $postFields;
+        $this->iRequest($url);
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,$url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
-        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $postResult = curl_exec($ch);
-        print_r($postResult);
-        curl_close($ch);
-        
-        //Save result as usual
-        $this->_type = 'json';
-        //$this->_response = json_decode($postResult);
-        $this->_data = json_decode($postResult);
-
-        
-
-       // $postResult = (array)json_decode($postResult);
-
-
-
-
-
+       
     }
 
 
+    /**
+     * @Given /^the "([^"]*)" property in object (\d+) of property "([^"]*)" equals "([^"]*)"$/
+     */
+    public function thePropertyInObjectOfPropertyEquals($propertyName, $row, $propertyParent, $propertyValue)
+    {
+        $data = $this->_data;
+        if (empty($data)) {
+            throw new Exception("Response is empty or was not JSON\n\n"
+                . $this->_response->getBody(true));
+            return;
+        }
+
+        if (!isset($data->$propertyParent)) {
+            throw new Exception("Response has not the property '$propertyParent'\n\n"
+                . $this->_response->getBody(true));
+            return;
+        }
+
+        $data = $data->$propertyParent;
+
+        if (!empty($data)) {
+            if (!is_object($data)) {
+                throw new Exception("the $propertyParent in Response data is not an array!\n\n" );
+            }
+            if (is_object($data) && !isset($data->$row)) {
+                throw new Exception("the Response data is an array, but the row '$row' does not exists!\n\n" );
+            }
+            if (!isset($data->$row->$propertyName)) {
+                throw new Exception("Property '"
+                    . $propertyName . "' is not set!\n\n"
+                );
+            }
+            if (is_array($data->$row->$propertyName)) {
+                throw new Exception("$propertyName is an array and we expected a value\n\n"
+                    . $this->_response->getBody(true));
+            }
+            if ($data->$row->$propertyName != $propertyValue) {
+                throw new \Exception('Property value mismatch! (given: '
+                    . $propertyValue . ', match: '
+                    . $data->$row->$propertyName . ")\n\n"
+                );
+            }
+        } else {
+            throw new Exception("Response was not JSON\n\n"
+                . $this->_response->getBody(true));
+        }
+    }
+
+     /**
+     * @Given /^store "([^"]*)" in session array as variable "([^"]*)" where an object has "([^"]*)" equal to "([^"]*)"$/
+     */
+    public function storeInSessionArrayAsVariableWhereAnObjectHasEqualsTo($varName, $sessionVarName, $objectProperty, $objectValue)
+    {
+
+        $swFound=false;
+        if (file_exists("session.data")) {
+                    $sessionData = json_decode(file_get_contents("session.data"));
+                } else {
+                    $sessionData = new StdClass();
+                }
+
+                $sessionData->$sessionVarName = array();
 
 
-
+        foreach($this->_data as $obj){
+            if((isset($obj->$objectProperty))&&($obj->$objectProperty == $objectValue)){
+                $swFound=true;
+                $varValue = $obj->$varName;
+                
+                //$sessionData->$sessionVarName = $varValue;
+                $sessionData->{$sessionVarName}[] = $varValue;
+                file_put_contents("session.data", json_encode($sessionData));
+            }
+        }
+        if (!$swFound) {
+            //print_r($this->_data);
+            throw new \Exception("JSON Response does not have '$varName' property\n\n" );
+        }
+    }
 }

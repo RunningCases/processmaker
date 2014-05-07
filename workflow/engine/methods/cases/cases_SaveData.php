@@ -69,7 +69,7 @@ try {
     $triggers = $oCase->loadTriggers( $_SESSION['TASK'], 'DYNAFORM', $_GET['UID'], 'AFTER' );
 
     $_SESSION['TRIGGER_DEBUG']['NUM_TRIGGERS'] = count( $triggers );
-    $_SESSION['TRIGGER_DEBUG']['TIME'] = 'AFTER';
+    $_SESSION['TRIGGER_DEBUG']['TIME'] = G::toUpper(G::loadTranslation('ID_AFTER'));
     if ($_SESSION['TRIGGER_DEBUG']['NUM_TRIGGERS'] != 0) {
         $_SESSION['TRIGGER_DEBUG']['TRIGGERS_NAMES'] = $oCase->getTriggerNames( $triggers );
         $_SESSION['TRIGGER_DEBUG']['TRIGGERS_VALUES'] = $triggers;
@@ -165,8 +165,18 @@ try {
     // saving the data ina pm table in case that is a new record
     if (! empty( $newValues )) {
         $id = key( $newValues );
-       	$newValues[$id] = $aData['APP_DATA'][$id];
-       	$idPmtable = $oForm->fields[$id]->pmconnection->pmtable != '' ? $oForm->fields[$id]->pmconnection->pmtable : $oForm->fields[$id]->owner->tree->children[0]->attributes['pmtable'];
+        $newValues[$id] = $aData['APP_DATA'][$id];
+        foreach ($aKeys as $key => $value) {
+            if (!isset($newValues[$key]) || $newValues[$key] == '') {
+                $G_PUBLISH = new Publisher();
+                $aMessage = array ();
+                $aMessage['MESSAGE'] = G::LoadTranslation('ID_FILL_PRIMARY_KEYS') . ' ('. $key . ') ';
+                $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', $aMessage );
+                G::RenderPage( 'publish', 'blank' );
+                die();
+            }
+        }
+        $idPmtable = $oForm->fields[$id]->pmconnection->pmtable != '' ? $oForm->fields[$id]->pmconnection->pmtable : $oForm->fields[$id]->owner->tree->children[0]->attributes['pmtable'];
 
         if (!($oAdditionalTables->updateDataInTable($idPmtable, $newValues ))) {
             //<--This is to know if it is a new registry on the PM Table
@@ -310,6 +320,16 @@ try {
     //$oJSON = new Services_JSON();
     $_POST['__notValidateThisFields__'] = (isset( $_POST['__notValidateThisFields__'] ) && $_POST['__notValidateThisFields__'] != '') ? $_POST['__notValidateThisFields__'] : $_POST['DynaformRequiredFields'];
     if ($missing_req_values = $oForm->validateRequiredFields( $_POST['form'], Bootstrap::json_decode( stripslashes( $_POST['__notValidateThisFields__'] ) ) )) {
+        $fieldsRequired = Bootstrap::json_decode(str_replace(array("%27", "%39"), array("\"", "'"), $_POST["DynaformRequiredFields"]));
+
+        foreach ($fieldsRequired as $key1 => $value1) {
+           foreach ($missing_req_values as $key2 => $value2) {
+                if ($value1->name == $value2) {
+                    $missing_req_values[$key2] = $value1->label;
+                }
+           }
+        }
+
         $_POST['next_step'] = $aNextStep;
         $_POST['previous_step'] = $oCase->getPreviousStep( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['STEP_POSITION'] );
         $_POST['req_val'] = $missing_req_values;

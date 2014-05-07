@@ -31,8 +31,7 @@
   require_once 'classes/model/om/BaseRbacUsersPeer.php';
 
   // include object class
-  include_once 'classes/model/RbacUsers.php';
-
+  //include_once 'classes/model/RbacUsers.php';
 
 /**
  * Skeleton subclass for performing query and update operations on the 'USERS' table.

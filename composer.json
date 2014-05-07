@@ -7,39 +7,23 @@
 
     "repositories": [
         {
-            "type": "package",
-            "package": {
-                "name": "jquery/jquery",
-                "version": "1.10.2",
-                "dist": {
-                    "url": "http://code.jquery.com/jquery-1.10.2.min.js",
-                    "type": "file"
-                }
-            }
+            "packagist": false
         },
         {
-            "type": "package",
-            "package": {
-                "name": "underscore/underscore",
-                "version": "1.5.2",
-                "dist": {
-                    "url": "http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js",
-                    "type": "file"
-                }
-            }
+            "type": "composer",
+            "url": "http://composer-public.colosa.net/"
         },
         {
-            "type": "vcs",
-            "url":  "git@bitbucket.org:colosa/pmUI.git"
-        },
-        {
-            "type": "vcs",
-            "url":  "git@bitbucket.org:colosa/MichelangeloFE.git"
+            "type": "composer",
+            "url": "http://composer.colosa.net/"
         }
-    ],
+     ],
+
+    "minimum-stability": "stable",
+    "prefer-stable": true,
 
     "require": {
-        "luracast/restler" : "v3.0.0",
+        "luracast/restler" : "3.0.0",
         "bshaffer/oauth2-server-php": "v1.0",
         "jquery/jquery": "1.10.2",
         "underscore/underscore": "1.5.2",

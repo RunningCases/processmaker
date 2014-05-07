@@ -2,12 +2,18 @@
 namespace Maveriks;
 
 use Maveriks\Util;
+use ProcessMaker\Services;
+use ProcessMaker\Services\Api;
+use Luracast\Restler\RestException;
 
 class WebApplication
 {
     protected $rootDir = "";
     protected $workflowDir = "";
+    protected $workspaceDir = "";
+    protected $workspaceCacheDir = "";
     protected $requestUri = "";
+    protected $responseMultipart = array();
 
     const RUNNING_DEFAULT = "default.running";
     const RUNNING_INDEX = "index.running";
@@ -27,7 +33,7 @@ class WebApplication
      */
     public function setRootDir($rootDir)
     {
-        $this->rootDir = $rootDir;
+        $this->rootDir = rtrim($rootDir, DS);
         $this->workflowDir = $rootDir . DS . "workflow" . DS;
     }
 
@@ -63,7 +69,9 @@ class WebApplication
             } else {
                 return self::RUNNING_DEFAULT;
             }
-        } elseif (substr($this->requestUri, 1, 3) === "api") {
+        } elseif (substr($this->requestUri, 1, 3) === "api"
+            && count(explode("/", $this->requestUri)) >= 4 // url api pattern: /api/1.0/<workspace>/<resource>
+        ) {
             return self::RUNNING_API;
         } else {
             return self::RUNNING_WORKFLOW;
@@ -78,10 +86,55 @@ class WebApplication
                 $this->loadEnvironment($request["workspace"]);
 
                 Util\Logger::log("API::Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
-                $this->dispatchApiRequest($request["uri"], $request["version"]);
-                Util\Logger::log("API::End Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
+                if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtoupper($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'MULTIPART') {
+                    $this->multipart($request["uri"], $request["version"]);
+                } else {
+                    $this->dispatchApiRequest($request["uri"], $request["version"]);
+                }
+                Util\Logger::log("API::End Dispatch");
                 break;
         }
+    }
+
+    /**
+     * This method performs the functionality of multipart
+     *
+     * @param string $version. Version Api
+     *
+     * @access public
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @return void
+     */
+    public function multipart($uri, $version = "1.0")
+    {
+        $stringInput = file_get_contents('php://input');
+        if (empty($stringInput)) {
+            $rest = new \Maveriks\Extension\Restler();
+            $rest->setMessage(new RestException(Api::STAT_APP_EXCEPTION, "Invalid Request, multipart without body."));
+            exit();
+        } else {
+            $input = json_decode($stringInput);
+            if (empty($input->calls)) {
+                $rest = new \Maveriks\Extension\Restler();
+                $rest->setMessage(new RestException(Api::STAT_APP_EXCEPTION, "Invalid Request, multipart body without calls."));
+                exit();
+            }
+        }
+
+        $baseUrl = (empty($input->base_url)) ? $uri : $input->base_url;
+        foreach($input->calls as $value) {
+            $_SERVER["REQUEST_METHOD"] = (empty($value->method)) ? 'GET' : $value->method;
+            $uriTemp = trim($baseUrl) . trim($value->url);
+            if (strpos($uriTemp, '?') !== false) {
+                $dataGet = explode('?', $uriTemp);
+                parse_str($dataGet[1], $_GET);
+            }
+            $inputExecute = (empty($value->data)) ? '' : json_encode($value->data);
+            $this->responseMultipart[] = $this->dispatchApiRequest($uriTemp, $version, true, $inputExecute);
+        }
+        echo json_encode($this->responseMultipart);
     }
 
     /**
@@ -89,7 +142,7 @@ class WebApplication
      *
      * @author Erik Amaru Ortiz <erik@colosa.com>
      */
-    public function dispatchApiRequest($uri, $version = "1.0")
+    public function dispatchApiRequest($uri, $version = "1.0", $multipart = false, $inputExecute = '')
     {
         // to handle a request with "OPTIONS" method
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -107,33 +160,58 @@ class WebApplication
          */
         header('Access-Control-Allow-Origin: *');
 
+        require_once $this->rootDir . "/framework/src/Maveriks/Extension/Restler/UploadFormat.php";
+
         // $servicesDir contains directory where Services Classes are allocated
-        $servicesDir = $this->workflowDir . 'engine' . DS . 'src' . DS . 'Services' . DS;
+        $servicesDir = $this->workflowDir . 'engine' . DS . 'src' . DS . 'ProcessMaker' . DS . 'Services' . DS;
         // $apiDir - contains directory to scan classes and add them to Restler
         $apiDir = $servicesDir . 'Api' . DS;
         // $apiIniFile - contains file name of api ini configuration
         $apiIniFile = $servicesDir . DS . 'api.ini';
         // $authenticationClass - contains the class name that validate the authentication for Restler
-        $authenticationClass = 'Services\\Api\\OAuth2\\Server';
+        $authenticationClass = 'ProcessMaker\\Services\\OAuth2\\Server';
         // $pmOauthClientId - contains PM Local OAuth Id (Web Designer)
         $pmOauthClientId = 'x-pm-local-client';
 
         /*
          * Load Api ini file for Rest Service
          */
-        $apiIniConf = array();
+        $config = array();
+
         if (file_exists($apiIniFile)) {
-            $apiIniConf = Util\Common::parseIniFile($apiIniFile);
+            $cachedConfig = $this->workspaceCacheDir . "api-config.php";
+
+            // verify if config cache file exists, is array and the last modification date is the same when cache was created.
+            if (! file_exists($cachedConfig) || ! is_array($config = include($cachedConfig)) || $config["_chk"] != filemtime($apiIniFile)) {
+                $config = Util\Common::parseIniFile($apiIniFile);
+                $config["_chk"] = filemtime($apiIniFile);
+                if (! is_dir(dirname($cachedConfig))) {
+                    Util\Common::mk_dir(dirname($cachedConfig));
+                }
+                file_put_contents($cachedConfig, "<?php return " . var_export($config, true).";");
+                Util\Logger::log("Configuration cache was loaded and cached to: $cachedConfig");
+            } else {
+                Util\Logger::log("Loading Api Configuration from: $cachedConfig");
+            }
         }
 
         // Setting current workspace to Api class
-        \ProcessMaker\Services\Api::setWorkspace(SYS_SYS);
-        // TODO remove this setting on the future, it is not needed, but if it is not present is throwing a warning
-        //\Luracast\Restler\Format\HtmlFormat::$viewPath = $servicesDir . 'oauth2/views';
+        Services\Api::setWorkspace(SYS_SYS);
+        $cacheDir = defined("PATH_C")? PATH_C: sys_get_temp_dir();
+
+        $sysConfig = \System::getSystemConfiguration();
+
+        \Luracast\Restler\Defaults::$cacheDirectory = $cacheDir;
+        $productionMode = (bool) !(isset($sysConfig["service_api_debug"]) && $sysConfig["service_api_debug"]);
+
+        Util\Logger::log("Serving API mode: " . ($productionMode? "production": "development"));
 
         // create a new Restler instance
         //$rest = new \Luracast\Restler\Restler();
-        $rest = new \Maveriks\Extension\Restler();
+        $rest = new \Maveriks\Extension\Restler($productionMode);
+        // setting flag for multipart to Restler
+        $rest->setFlagMultipart($multipart);
+        $rest->inputExecute = $inputExecute;
         // setting api version to Restler
         $rest->setAPIVersion($version);
         // adding $authenticationClass to Restler
@@ -142,19 +220,12 @@ class WebApplication
         // Setting database connection source
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
         $port = empty($port) ? '' : ";port=$port";
-        \Services\Api\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
+        Services\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
 
         // Setting default OAuth Client id, for local PM Web Designer
-        \Services\Api\OAuth2\Server::setPmClientId($pmOauthClientId);
+        Services\OAuth2\Server::setPmClientId($pmOauthClientId);
 
-        require_once $this->workflowDir . "engine/src/Extension/Restler/UploadFormat.php";
-        //require_once PATH_CORE
-
-        //$rest->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');
-        //$rest->setOverridingFormats('UploadFormat', 'JsonFormat', 'XmlFormat', 'HtmlFormat');
         $rest->setOverridingFormats('JsonFormat', 'UploadFormat');
-
-        // Override $_SERVER['REQUEST_URI'] to Restler handles the current url correctly
 
         $isPluginRequest = strpos($uri, '/plugin-') !== false ? true : false;
 
@@ -167,6 +238,7 @@ class WebApplication
             $uri = str_replace('/plugin-'.$pluginName, '', $uri);
         }
 
+        // Override $_SERVER['REQUEST_URI'] to Restler handles the modified url
         $_SERVER['REQUEST_URI'] = $uri;
 
         if (! $isPluginRequest) { // if it is not a request for a plugin endpoint
@@ -175,19 +247,19 @@ class WebApplication
 
             foreach ($classesList as $classFile) {
                 if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
-                    $namespace = '\\Services\\' . str_replace(
-                            DIRECTORY_SEPARATOR,
-                            '\\',
-                            str_replace('.php', '', str_replace($servicesDir, '', $classFile))
-                        );
-                    //var_dump($namespace);
+                    require_once $classFile;
+                    $namespace = '\\ProcessMaker\\Services\\' . str_replace(
+                        DIRECTORY_SEPARATOR,
+                        '\\',
+                        str_replace('.php', '', str_replace($servicesDir, '', $classFile))
+                    );
                     $rest->addAPIClass($namespace);
                 }
             }
 
             // adding aliases for Restler
-            if (array_key_exists('alias', $apiIniConf)) {
-                foreach ($apiIniConf['alias'] as $alias => $aliasData) {
+            if (array_key_exists('alias', $config)) {
+                foreach ($config['alias'] as $alias => $aliasData) {
                     if (is_array($aliasData)) {
                         foreach ($aliasData as $label => $namespace) {
                             $namespace = '\\' . ltrim($namespace, '\\');
@@ -211,6 +283,10 @@ class WebApplication
         }
 
         $rest->handle();
+
+        if ($rest->flagMultipart === true) {
+            return $rest->responseMultipart;
+        }
     }
 
     public function parseApiRequestUri()
@@ -308,7 +384,7 @@ class WebApplication
             PATH_RBAC_CORE . PATH_SEPARATOR .
             get_include_path()
         );
-
+        ///print_r(get_include_path()); die;
 
         /*
          * Setting Up Workspace
@@ -339,7 +415,10 @@ class WebApplication
         require_once (PATH_DB . SYS_SYS . "/db.php");
 
         // defining constant for workspace shared directory
-        define("PATH_WORKSPACE", PATH_DB . SYS_SYS . PATH_SEP);
+        $this->workspaceDir = PATH_DB . SYS_SYS . PATH_SEP;
+        $this->workspaceCacheDir = PATH_DB . SYS_SYS . PATH_SEP . "cache" . PATH_SEP;
+
+        define("PATH_WORKSPACE", $this->workspaceDir);
         // including workspace shared classes -> particularlly for pmTables
 
         set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);

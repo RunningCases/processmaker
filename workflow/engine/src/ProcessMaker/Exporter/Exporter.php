@@ -21,7 +21,15 @@ abstract class Exporter
      */
     protected $bpmnProject;
 
-    protected $projectData;
+    /**
+     * @var array
+     */
+    protected $projectData = array();
+
+    /**
+     * @var array
+     */
+    protected $metadata = array();
 
     public function __construct($prjUid)
     {
@@ -29,6 +37,16 @@ abstract class Exporter
 
         $this->bpmnProject = Project\Bpmn::load($prjUid);
         $this->projectData = $this->bpmnProject->getProject();
+
+        $this->metadata = array(
+            "vendor_version" => \System::getVersion(),
+            "vendor_version_code" => "Michelangelo",
+            "export_timestamp" => date("U"),
+            "export_datetime" => date("Y-m-d\TH:i:sP"),
+            "export_server_addr" => isset($_SERVER["SERVER_ADDR"]) ? $_SERVER["SERVER_ADDR"].":".$_SERVER["SERVER_PORT"] : "Unknown",
+            "export_server_os" => PHP_OS ,
+            "export_server_php_version" => PHP_VERSION_ID,
+        );
     }
 
     /**
@@ -58,6 +76,11 @@ abstract class Exporter
         return $this->projectData["PRJ_NAME"];
     }
 
+    public function getProjectUid()
+    {
+        return $this->projectData["PRJ_UID"];
+    }
+
     /**
      * Builds Project Data Structure
      *
@@ -68,7 +91,9 @@ abstract class Exporter
         $data = array();
 
         $data["metadata"] = $this->getMetadata();
-        $data["metadata"]["project_name"] = $this->getProjectName();
+        $data["metadata"]["workspace"] = defined("SYS_SYS") ? SYS_SYS : "Unknown";
+        $data["metadata"]["name"] = $this->getProjectName();
+        $data["metadata"]["uid"] = $this->getProjectUid();
 
         $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($this->prjUid);
         $bpmnStruct["BOUND"] = \BpmnBound::getAll($this->prjUid);
@@ -160,22 +185,22 @@ abstract class Exporter
         return self::VERSION;
     }
 
+    public function setMetadata($key, $value)
+    {
+        $this->metadata[$key] = $value;
+    }
+
     /**
      * Returns all metadata to include on export content
      *
      * @return array
      */
-    public function getMetadata()
+    public function getMetadata($key = "", $default = "")
     {
-        return array(
-            "vendor_version" => \System::getVersion(),
-            "vendor_version_code" => "Michelangelo",
-            "export_timestamp" => date("U"),
-            "export_datetime" => date("F l j, Y - H:i:s (e, \G\M\TP)"),
-            "export_server_addr" => isset($_SERVER["SERVER_ADDR"]) ? $_SERVER["SERVER_ADDR"].":".$_SERVER["SERVER_PORT"] : "Unknown",
-            "export_server_os" => PHP_OS ,
-            "export_server_php_version" => PHP_VERSION_ID,
-            "project_workspace" => defined("SYS_SYS") ? SYS_SYS : "Unknown",
-        );
+        if (! empty($key)) {
+            return isset($this->metadata[$key]) ? $this->metadata[$key] : $default;
+        } else {
+            return $this->metadata;
+        }
     }
 }

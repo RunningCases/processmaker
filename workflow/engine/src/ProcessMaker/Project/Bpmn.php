@@ -67,6 +67,10 @@ class Bpmn extends Handler
         "gateway" => array("BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION", "BOU_SIZE_IDENTICAL", "BOU_UID",
             "DIA_UID", "ELEMENT_UID", "PRJ_UID", "PRO_UID"
         ),
+        "artifact" => array(
+            "PRJ_UID", "PRO_UID", "BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
+            "BOU_SIZE_IDENTICAL", "DIA_UID", "BOU_UID", "ELEMENT_UID"
+        ),
         "flow" => array("PRJ_UID", "DIA_UID", "FLO_ELEMENT_DEST_PORT", "FLO_ELEMENT_ORIGIN_PORT")
     );
 
@@ -125,15 +129,21 @@ class Bpmn extends Handler
         $this->project->setPrjUpdateDate(date("Y-m-d H:i:s"));
         $this->project->save();
 
-        $this->updateDiagram(array("DIA_NAME" => $data["PRJ_NAME"]));
+        if (isset($data["PRJ_NAME"])) {
+            $this->updateDiagram(array("DIA_NAME" => $data["PRJ_NAME"]));
+        }
     }
 
-    public function remove()
+    public function remove($force = false)
     {
         /*
          * 1. Remove Diagram related objects
          * 2. Remove Project related objects
          */
+
+        if (! $force && ! $this->canRemove()) {
+            throw new \Exception("Project with prj_uid: {$this->getUid()} can not be deleted, it has started cases.");
+        }
 
         self::log("Remove Project With Uid: {$this->prjUid}");
         foreach ($this->getActivities() as $activity) {
@@ -147,6 +157,9 @@ class Bpmn extends Handler
         }
         foreach ($this->getFlows() as $flow) {
             $this->removeFlow($flow["FLO_UID"]);
+        }
+        foreach ($this->getArtifacts() as $artifacts) {
+            $this->removeArtifact($artifacts["ART_UID"]);
         }
 
         if ($process = $this->getProcess("object")) {
@@ -199,6 +212,16 @@ class Bpmn extends Handler
         }
 
         return $retType == "array" ? $this->project->toArray() : $this->project;
+    }
+
+    public function canRemove()
+    {
+        $totalCases = \Process::getCasesCountForProcess($this->prjUid);
+        if ($totalCases == 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /*
@@ -557,9 +580,10 @@ class Bpmn extends Handler
                 case "bpmnActivity": $class = "BpmnActivity"; break;
                 case "bpmnGateway": $class = "BpmnGateway"; break;
                 case "bpmnEvent": $class = "BpmnEvent"; break;
+                case "bpmnArtifact": $class = "BpmnArtifact"; break;
                 default:
-                    throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s], given %s.",
-                        "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", $data["FLO_ELEMENT_ORIGIN_TYPE"]
+                    throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
+                        "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_ORIGIN_TYPE"]
                     ));
             }
 
@@ -574,9 +598,10 @@ class Bpmn extends Handler
                 case "bpmnActivity": $class = "BpmnActivity"; break;
                 case "bpmnGateway": $class = "BpmnGateway"; break;
                 case "bpmnEvent": $class = "BpmnEvent"; break;
+                case "bpmnArtifact": $class = "BpmnArtifact"; break;
                 default:
-                    throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s], given %s.",
-                        "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", $data["FLO_ELEMENT_DEST_TYPE"]
+                    throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
+                        "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_DEST_TYPE"]
                     ));
             }
 
@@ -669,18 +694,83 @@ class Bpmn extends Handler
 
     public function addArtifact($data)
     {
-        // TODO: Implement update() method.
+        // setting defaults
+        $data['ART_UID'] = array_key_exists('ART_UID', $data) ? $data['ART_UID'] : Common::generateUID();
+        try {
+            self::log("Add Artifact with data: ", $data);
+            $artifact = new Artifact();
+            $artifact->fromArray($data, BasePeer::TYPE_FIELDNAME);
+            $artifact->setPrjUid($this->getUid());
+            $artifact->setProUid($this->getProcess("object")->getProUid());
+            $artifact->save();
+            self::log("Add Artifact Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+
+        return $artifact->getArtUid();
     }
 
-    public function getArtifact($artUid)
+    public function updateArtifact($artUid, $data)
     {
-        // TODO: Implement update() method.
+        try {
+            self::log("Update Artifact: $artUid", "With data: ", $data);
+
+            $artifact = ArtifactPeer::retrieveByPk($artUid);
+
+            $artifact->fromArray($data);
+            $artifact->save();
+
+            self::log("Update Artifact Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
-    public function getArtifacts()
+    public function getArtifact($artUid, $retType = 'array')
     {
-        // TODO: Implement update() method.
-        return array();
+        $artifact = ArtifactPeer::retrieveByPK($artUid);
+
+        if ($retType != "object" && ! empty($artifact)) {
+            $artifact = $artifact->toArray();
+            $artifact = self::filterArrayKeys($artifact, self::$excludeFields["artifact"]);
+        }
+
+        return $artifact;
+    }
+
+    public function getArtifacts($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        $filter = $changeCaseTo != CASE_UPPER ? array_map("strtolower", self::$excludeFields["artifact"]) : self::$excludeFields["artifact"];
+
+        return self::filterCollectionArrayKeys(
+            Artifact::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo),
+            $filter
+        );
+    }
+
+    public function removeArtifact($artUid)
+    {
+        try {
+            self::log("Remove Artifact: $artUid");
+
+            $artifact = ArtifactPeer::retrieveByPK($artUid);
+            $artifact->delete();
+
+            // remove related object (flows)
+            Flow::removeAllRelated($artUid);
+
+            self::log("Remove Artifact Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function addLane($data)
@@ -729,5 +819,11 @@ class Bpmn extends Handler
         //self::log("saved data: ", $data, "new data: ", $newData);
         //self::log("checksum saved data: ", self::getChecksum($data), "checksum new data: ", self::getChecksum($newData));
         return (self::getChecksum($data) !== self::getChecksum($newData));
+    }
+
+    public function setDisabled($value = true)
+    {
+        $status = $value ? "DISABLED" : "ACTIVE";
+        $this->update(array("PRJ_STATUS" => $status));
     }
 }

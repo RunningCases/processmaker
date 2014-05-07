@@ -19,7 +19,7 @@ Requirements:
 
     Examples:
     | test_description                                                         | project                          | activity                         | records | ada_uid                          | ada_type |
-    | check if the list of possible users and groups to be assigned is correct | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 82      | 54731929352d56741de9d42002704749 | group    |
+    | check if the list of possible users and groups to be assigned is correct | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 80      | 54731929352d56741de9d42002704749 | group    |
 
  Scenario Outline: Get a list of available adhoc users and groups to be assigned to an activity with filter
     Given I request "project/<project>/activity/<activity>/adhoc-available-assignee?filter=<filter>&start=<start>&limit=<limit>"
@@ -69,7 +69,7 @@ Requirements:
 
     Examples:
     | test_description                                           | project                          | activity                         | records | ada_uid                           | ada_type |
-    | Verify that the activity has expected quantity of asignees | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 4       | 54731929352d56741de9d42002704749  | group    |
+    | Verify that the activity has expected quantity of asignees | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 6       | 54731929352d56741de9d42002704749  | group    |
     | Verify that the activity has expected quantity of asignees | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | 1       | 36775342552d5674146d9c2078497230  | group    |
 
 
@@ -122,8 +122,14 @@ Requirements:
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
-    
-  
+    And the response has 3 records
+
+  Scenario: List assignees of an activity
+    Given I request "project/4224292655297723eb98691001100052/activity/65496814252977243d57684076211485/adhoc-assignee/all"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+
 
   

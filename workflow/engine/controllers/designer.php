@@ -72,22 +72,29 @@ class Designer extends Controller
             $this->setVar('buildhash', $buildhash);
         }
 
+        $translationMafe = "/translations/translationsMafe.js";
+        $this->setVar('translationMafe', $translationMafe);
+        if (!file_exists(PATH_HTML . "translations" . PATH_SEP. 'translationsMafe' . ".js")) {
+            $translation = new Translation();
+            $translation->generateFileTranslationMafe();
+        }
+
         $this->setView('designer/index');
         $this->render();
     }
 
     protected function getClientCredentials()
     {
-        $oauthQuery = new Services\Api\OAuth2\PmPdo($this->getDsn());
+        $oauthQuery = new ProcessMaker\Services\OAuth2\PmPdo($this->getDsn());
         return $oauthQuery->getClientDetails($this->clientId);
     }
 
     protected function getAuthorizationCode($client)
     {
-        \Services\Api\OAuth2\Server::setDatabaseSource($this->getDsn());
-        \Services\Api\OAuth2\Server::setPmClientId($client['CLIENT_ID']);
+        \ProcessMaker\Services\OAuth2\Server::setDatabaseSource($this->getDsn());
+        \ProcessMaker\Services\OAuth2\Server::setPmClientId($client['CLIENT_ID']);
 
-        $oauthServer = new \Services\Api\OAuth2\Server();
+        $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
         $userId = $_SESSION['USER_LOGGED'];
         $authorize = true;
         $_GET = array_merge($_GET, array(

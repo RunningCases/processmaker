@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dynaForm type="xmlmenu">
-
-<MNU_ADD type="link" value="" link="#" onclick="inputdocsAdd(); return false;" colAlign="left" colWidth="100">
-  <en>New</en>
-</MNU_ADD>
-<PAGED_TABLE_ID type="private"/>
-<PAGED_TABLE_FAST_SEARCH type="FastSearch" label="@G::LoadTranslation(ID_SEARCH)"/>
-
-<PRO_UID type="private"/>
-<inputdocsEdit type="private" defaultValue="../inputdocs/inputdocs_Edit"/>
-<inputdocsDelete type="private" defaultValue="../inputdocs/inputdocs_Delete"/>
-<js type="javascript" replaceTags="1"><![CDATA[
+  <MNU_ADD type="link" value="" link="#" onclick="inputdocsAdd(); return false;" colAlign="left" colWidth="100">
+    <en><![CDATA[New]]></en>
+  </MNU_ADD>
+  <PAGED_TABLE_ID type="private"/>
+  <PAGED_TABLE_FAST_SEARCH type="FastSearch" label="@G::LoadTranslation(ID_SEARCH)"/>
+  <PRO_UID type="private"/>
+  <inputdocsEdit type="private" defaultValue="../inputdocs/inputdocs_Edit"/>
+  <inputdocsDelete type="private" defaultValue="../inputdocs/inputdocs_Delete"/>
+  <js type="javascript" replaceTags="1"><![CDATA[
 var currentPagedTable = @#PAGED_TABLE_ID;
   function inputdocsAdd(){//alert('@G::encryptlink(@#inputdocsEdit)?PRO_UID=@%PRO_UID');
 		popupWindow('@G::LoadTranslation(ID_NEW_INPUTDOCS)', '@G::encryptlink(@#inputdocsEdit)?PRO_UID=@%PRO_UID' , 500, 410);
@@ -64,6 +62,5 @@ var currentPagedTable = @#PAGED_TABLE_ID;
     });
   }
 ]]></js>
-
-<SEARCH_FILTER_FORM type="private"/>
+  <SEARCH_FILTER_FORM type="private"/>
 </dynaForm>
