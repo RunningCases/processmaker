@@ -493,6 +493,10 @@ class BpmnWorkflow extends Project\Bpmn
 
     public static function createFromStruct(array $projectData, $generateUid = true)
     {
+        $projectData["prj_name"] = trim($projectData["prj_name"]);
+        if ($projectData["prj_name"] == '') {
+            throw new \Exception("`prj_name` is required but it is empty.");
+        }
         if (\Process::existsByProTitle($projectData["prj_name"])) {
             throw new \Exception("Project with name: {$projectData["prj_name"]}, already exists.");
         }
