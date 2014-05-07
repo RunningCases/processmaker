@@ -120,7 +120,7 @@ Feature: Output Documents Main Tests
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 19 records
+    And the response has 17 records
 
 
   Scenario Outline: Update the Output Documents and then check if the values had changed

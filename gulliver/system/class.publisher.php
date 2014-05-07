@@ -90,6 +90,7 @@ class Publisher
             $this->Parts[$pos]['RenderedContent'] = ob_get_contents();
         }
         ob_end_clean();
+        $_SESSION['CONDITION_DYN_UID'] = (isset($_SESSION['CURRENT_DYN_UID']) ? $_SESSION['CURRENT_DYN_UID'] : (isset($_SESSION['CONDITION_DYN_UID']) ? $_SESSION['CONDITION_DYN_UID'] : ''));
         unset($_SESSION['CURRENT_DYN_UID']);
     }
 
@@ -287,12 +288,20 @@ class Publisher
                  * @date Fri Feb 19, 2009
                  */
                 if ($this->publishType == 'dynaform') {
-                    if (isset( $_SESSION['CURRENT_DYN_UID'] )) {
+                    if (isset($_SESSION['CURRENT_DYN_UID']) || isset($_SESSION['CONDITION_DYN_UID'])) {
                         require_once "classes/model/FieldCondition.php";
                         $oFieldCondition = new FieldCondition();
 
-                        #This dynaform has show/hide field conditions
-                        $ConditionalShowHideRoutines = $oFieldCondition->getConditionScript( $_SESSION['CURRENT_DYN_UID'] );
+                        //This dynaform has show/hide field conditions
+                        $dynUid = '';
+                        if (isset($_SESSION['CURRENT_DYN_UID']) && $_SESSION['CURRENT_DYN_UID'] != '') {
+                            $dynUid = $_SESSION['CURRENT_DYN_UID'];
+                        } else {
+                            if (isset($_SESSION['CONDITION_DYN_UID']) && $_SESSION['CONDITION_DYN_UID'] != '') {
+                                $dynUid = $_SESSION['CONDITION_DYN_UID'];
+                            }
+                        }
+                        $ConditionalShowHideRoutines = $oFieldCondition->getConditionScript($dynUid);
                     }
                 }
 

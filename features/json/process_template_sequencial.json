@@ -1,0 +1,307 @@
+{
+    "prj_uid": "7885138555360fb2e28f0a0063058599",
+    "prj_name": "sequencial",
+    "prj_description": "",
+    "prj_target_namespace": "",
+    "prj_expresion_language": null,
+    "prj_type_language": null,
+    "prj_exporter": null,
+    "prj_exporter_version": null,
+    "prj_create_date": "2014-04-30 09:31:26",
+    "prj_update_date": "2014-04-30 11:11:58",
+    "prj_author": "00000000000000000000000000000001",
+    "prj_author_version": null,
+    "prj_original_source": null,
+    "diagrams": [
+        {
+            "dia_uid": "7939319765360fb2e3441d2015716509",
+            "prj_uid": "7885138555360fb2e28f0a0063058599",
+            "dia_name": "sequencial",
+            "dia_is_closable": 0,
+            "pro_uid": "3587033585360fb2e368c05064394624",
+            "activities": [
+                {
+                    "act_uid": "1194280405360fb451aaba6003196951",
+                    "act_name": "Task # 2",
+                    "act_type": "TASK",
+                    "act_is_for_compensation": "0",
+                    "act_start_quantity": "1",
+                    "act_completion_quantity": "0",
+                    "act_task_type": "EMPTY",
+                    "act_implementation": "",
+                    "act_instantiate": "0",
+                    "act_script_type": "",
+                    "act_script": "",
+                    "act_loop_type": "NONE",
+                    "act_test_before": "0",
+                    "act_loop_maximum": "0",
+                    "act_loop_condition": "0",
+                    "act_loop_cardinality": "0",
+                    "act_loop_behavior": "0",
+                    "act_is_adhoc": "0",
+                    "act_is_collapsed": "0",
+                    "act_completion_condition": "0",
+                    "act_ordering": "0",
+                    "act_cancel_remaining_instances": "0",
+                    "act_protocol": "0",
+                    "act_method": "0",
+                    "act_is_global": "0",
+                    "act_referer": "0",
+                    "act_default_flow": "0",
+                    "act_master_diagram": "0",
+                    "bou_x": "461",
+                    "bou_y": "142",
+                    "bou_width": "160",
+                    "bou_height": "40",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "act_uid": "1986563825360fb452569d2062760807",
+                    "act_name": "Task # 3",
+                    "act_type": "TASK",
+                    "act_is_for_compensation": "0",
+                    "act_start_quantity": "1",
+                    "act_completion_quantity": "0",
+                    "act_task_type": "EMPTY",
+                    "act_implementation": "",
+                    "act_instantiate": "0",
+                    "act_script_type": "",
+                    "act_script": "",
+                    "act_loop_type": "NONE",
+                    "act_test_before": "0",
+                    "act_loop_maximum": "0",
+                    "act_loop_condition": "0",
+                    "act_loop_cardinality": "0",
+                    "act_loop_behavior": "0",
+                    "act_is_adhoc": "0",
+                    "act_is_collapsed": "0",
+                    "act_completion_condition": "0",
+                    "act_ordering": "0",
+                    "act_cancel_remaining_instances": "0",
+                    "act_protocol": "0",
+                    "act_method": "0",
+                    "act_is_global": "0",
+                    "act_referer": "0",
+                    "act_default_flow": "0",
+                    "act_master_diagram": "0",
+                    "bou_x": "695",
+                    "bou_y": "142",
+                    "bou_width": "160",
+                    "bou_height": "40",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "act_uid": "9008273035360fb4508c320094467351",
+                    "act_name": "Init",
+                    "act_type": "TASK",
+                    "act_is_for_compensation": "0",
+                    "act_start_quantity": "1",
+                    "act_completion_quantity": "0",
+                    "act_task_type": "EMPTY",
+                    "act_implementation": "",
+                    "act_instantiate": "0",
+                    "act_script_type": "",
+                    "act_script": "",
+                    "act_loop_type": "NONE",
+                    "act_test_before": "0",
+                    "act_loop_maximum": "0",
+                    "act_loop_condition": "0",
+                    "act_loop_cardinality": "0",
+                    "act_loop_behavior": "0",
+                    "act_is_adhoc": "0",
+                    "act_is_collapsed": "0",
+                    "act_completion_condition": "0",
+                    "act_ordering": "0",
+                    "act_cancel_remaining_instances": "0",
+                    "act_protocol": "0",
+                    "act_method": "0",
+                    "act_is_global": "0",
+                    "act_referer": "0",
+                    "act_default_flow": "0",
+                    "act_master_diagram": "0",
+                    "bou_x": "223",
+                    "bou_y": "142",
+                    "bou_width": "160",
+                    "bou_height": "40",
+                    "bou_container": "bpmnDiagram"
+                }
+            ],
+            "events": [
+                {
+                    "evn_uid": "2574218295360fb5948cc54092613191",
+                    "evn_name": "End # 1",
+                    "evn_type": "END",
+                    "evn_marker": "EMPTY",
+                    "evn_is_interrupting": "1",
+                    "evn_cancel_activity": "0",
+                    "evn_activity_ref": null,
+                    "evn_wait_for_completion": "0",
+                    "evn_error_name": null,
+                    "evn_error_code": null,
+                    "evn_escalation_name": null,
+                    "evn_escalation_code": null,
+                    "evn_message": "",
+                    "evn_operation_implementation_ref": null,
+                    "evn_time_date": null,
+                    "evn_time_cycle": null,
+                    "evn_time_duration": null,
+                    "evn_behavior": "THROW",
+                    "evn_operation_name": null,
+                    "bou_x": "932",
+                    "bou_y": "150",
+                    "bou_width": "33",
+                    "bou_height": "33",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "evn_uid": "3305003195360fb453597f2096959601",
+                    "evn_name": "Start  # 1",
+                    "evn_type": "START",
+                    "evn_marker": "EMPTY",
+                    "evn_is_interrupting": "1",
+                    "evn_cancel_activity": "0",
+                    "evn_activity_ref": null,
+                    "evn_wait_for_completion": "0",
+                    "evn_error_name": null,
+                    "evn_error_code": null,
+                    "evn_escalation_name": null,
+                    "evn_escalation_code": null,
+                    "evn_message": "LEAD",
+                    "evn_operation_implementation_ref": null,
+                    "evn_time_date": null,
+                    "evn_time_cycle": null,
+                    "evn_time_duration": null,
+                    "evn_behavior": "CATCH",
+                    "evn_operation_name": null,
+                    "bou_x": "127",
+                    "bou_y": "150",
+                    "bou_width": "33",
+                    "bou_height": "33",
+                    "bou_container": "bpmnDiagram"
+                }
+            ],
+            "gateways": [],
+            "flows": [
+                {
+                    "flo_uid": "1622978925360fba9291611064641741",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": null,
+                    "flo_element_origin": "9008273035360fb4508c320094467351",
+                    "flo_element_origin_type": "bpmnActivity",
+                    "flo_element_dest": "1194280405360fb451aaba6003196951",
+                    "flo_element_dest_type": "bpmnActivity",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": null,
+                    "flo_x1": "380",
+                    "flo_y1": "157",
+                    "flo_x2": "455",
+                    "flo_y2": "157",
+                    "flo_state": [
+                        {
+                            "x": 385,
+                            "y": 162
+                        },
+                        {
+                            "x": 460,
+                            "y": 162
+                        }
+                    ]
+                },
+                {
+                    "flo_uid": "2542949935360fbe55f6ed4023790635",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": null,
+                    "flo_element_origin": "1986563825360fb452569d2062760807",
+                    "flo_element_origin_type": "bpmnActivity",
+                    "flo_element_dest": "2574218295360fb5948cc54092613191",
+                    "flo_element_dest_type": "bpmnEvent",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": null,
+                    "flo_x1": "852",
+                    "flo_y1": "162",
+                    "flo_x2": "927",
+                    "flo_y2": "162",
+                    "flo_state": [
+                        {
+                            "x": 857,
+                            "y": 162
+                        },
+                        {
+                            "x": 894,
+                            "y": 162
+                        },
+                        {
+                            "x": 894,
+                            "y": 167
+                        },
+                        {
+                            "x": 932,
+                            "y": 167
+                        }
+                    ]
+                },
+                {
+                    "flo_uid": "6071665885360fbd11383d7068348078",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": null,
+                    "flo_element_origin": "1194280405360fb451aaba6003196951",
+                    "flo_element_origin_type": "bpmnActivity",
+                    "flo_element_dest": "1986563825360fb452569d2062760807",
+                    "flo_element_dest_type": "bpmnActivity",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": null,
+                    "flo_x1": "618",
+                    "flo_y1": "157",
+                    "flo_x2": "689",
+                    "flo_y2": "157",
+                    "flo_state": [
+                        {
+                            "x": 623,
+                            "y": 162
+                        },
+                        {
+                            "x": 694,
+                            "y": 162
+                        }
+                    ]
+                },
+                {
+                    "flo_uid": "9390292005360fba928d357072869399",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": null,
+                    "flo_element_origin": "3305003195360fb453597f2096959601",
+                    "flo_element_origin_type": "bpmnEvent",
+                    "flo_element_dest": "9008273035360fb4508c320094467351",
+                    "flo_element_dest_type": "bpmnActivity",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": null,
+                    "flo_x1": "155",
+                    "flo_y1": "157",
+                    "flo_x2": "217",
+                    "flo_y2": "157",
+                    "flo_state": [
+                        {
+                            "x": 160,
+                            "y": 167
+                        },
+                        {
+                            "x": 191,
+                            "y": 167
+                        },
+                        {
+                            "x": 191,
+                            "y": 162
+                        },
+                        {
+                            "x": 222,
+                            "y": 162
+                        }
+                    ]
+                }
+            ],
+            "artifacts": [],
+            "laneset": [],
+            "lanes": []
+        }
+    ]
+}

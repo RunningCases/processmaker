@@ -230,7 +230,7 @@ Scenario Outline: Create new Projects
     
     Examples:
 
-    | Description          | project_new_uid_number |
+    | Description          | project_new_uid_number | 
     | Create a new process | 1                      |
 
 

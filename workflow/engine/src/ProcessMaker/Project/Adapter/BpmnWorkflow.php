@@ -83,11 +83,26 @@ class BpmnWorkflow extends Project\Bpmn
     public function update($data)
     {
         parent::update($data);
-        $this->wp->update(array(
-            "PRO_UID" => $data["PRJ_UID"],
-            "PRO_TITLE" => $data["PRJ_NAME"],
-            "PRO_DESCRIPTION" => $data["PRJ_DESCRIPTION"],
-        ));
+
+        $arrayData = array();
+
+        if (isset($data["PRJ_UID"])) {
+            $arrayData["PRO_UID"] = $data["PRJ_UID"];
+        }
+
+        if (isset($data["PRJ_NAME"])) {
+            $arrayData["PRO_TITLE"] = $data["PRJ_NAME"];
+        }
+
+        if (isset($data["PRJ_DESCRIPTION"])) {
+            $arrayData["PRO_DESCRIPTION"] = $data["PRJ_DESCRIPTION"];
+        }
+
+        if (isset($data["PRJ_STATUS"])) {
+            $arrayData["PRO_STATUS"] = $data["PRJ_STATUS"];
+        }
+
+        $this->wp->update($arrayData);
     }
 
     public static function getList($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)
@@ -229,14 +244,14 @@ class BpmnWorkflow extends Project\Bpmn
 
                         // update case scheduler
                         if ($event && $event->getEvnType() == "START" && $event->getEvnMarker() == "TIMER") {
-                            $aData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"], 'SCH_UID'=>$data["FLO_ELEMENT_ORIGIN"]);
-                            $this->wp->updateCaseScheduler($aData);
+                            $caseSchedulerData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"]);
+                            $this->wp->updateCaseScheduler($data["FLO_ELEMENT_ORIGIN"], $caseSchedulerData);
                         }
 
                         // update web entry
                         if ($event && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
-                            $aData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"], 'WE_UID'=>$data["FLO_ELEMENT_ORIGIN"]);
-                            $this->wp->updateWebEntry($aData);
+                            $webEntryData = array('TAS_UID'=>$data["FLO_ELEMENT_DEST"]);
+                            $this->wp->updateWebEntry($data["FLO_ELEMENT_ORIGIN"], $webEntryData);
                         }
                         break;
                 }
@@ -286,20 +301,14 @@ class BpmnWorkflow extends Project\Bpmn
 
             // update case scheduler
             if (! is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "TIMER") {
-                $aData = array(
-                    'TAS_UID'=>'',
-                    'SCH_UID'=>$flow->getFloElementOrigin()
-                );
-                $this->wp->updateCaseScheduler($aData);
+                $caseSchedulerData = array( 'TAS_UID'=>'' );
+                $this->wp->updateCaseScheduler($flow->getFloElementOrigin(), $caseSchedulerData);
             }
 
             // update web entry
             if (! is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
-                $aData = array(
-                    'TAS_UID'=>'',
-                    'WE_UID'=>$flow->getFloElementOrigin()
-                );
-                $this->wp->updateWebEntry($aData);
+                $webEntryData = array( 'TAS_UID'=>'' );
+                $this->wp->updateWebEntry($flow->getFloElementOrigin(), $webEntryData);
             }
 
         } elseif ($flow->getFloElementOriginType() == "bpmnActivity" &&
@@ -524,7 +533,7 @@ class BpmnWorkflow extends Project\Bpmn
 
         $bwp->addProcess($processData);
 
-        $mappedUid = array_merge($result, self::updateFromStruct($bwp->prjUid, $projectData, true, $generateUid));
+        $mappedUid = array_merge($result, self::updateFromStruct($bwp->prjUid, $projectData, $generateUid, true));
 
         return $generateUid ? $mappedUid : $bwp->getUid();
     }
@@ -623,7 +632,7 @@ class BpmnWorkflow extends Project\Bpmn
      * @param $projectData
      * @return array
      */
-    public static function updateFromStruct($prjUid, $projectData, $flagInsert = false, $generateUid = true)
+    public static function updateFromStruct($prjUid, $projectData, $generateUid = true, $forceInsert = false)
     {
         $diagram = isset($projectData["diagrams"]) && isset($projectData["diagrams"][0]) ? $projectData["diagrams"][0] : array();
         $result = array();
@@ -643,9 +652,11 @@ class BpmnWorkflow extends Project\Bpmn
 
             $activity = $bwp->getActivity($activityData["ACT_UID"]);
 
-            if ($flagInsert || is_null($activity)) {
+            if ($forceInsert || is_null($activity)) {
                 if ($generateUid) {
                     //Activity
+                    unset($activityData["BOU_UID"]);
+
                     $uidOld = $activityData["ACT_UID"];
                     $activityData["ACT_UID"] = Util\Common::generateUID();
 
@@ -654,18 +665,6 @@ class BpmnWorkflow extends Project\Bpmn
                         "old_uid" => $uidOld,
                         "new_uid" => $activityData["ACT_UID"]
                     );
-
-                    //Bound
-                    if (isset($activityData["BOU_UID"])) {
-                        $uidOld = $activityData["BOU_UID"];
-                        $activityData["BOU_UID"] = Util\Common::generateUID();
-
-                        $result[] = array(
-                            "object"  => "bound",
-                            "old_uid" => $uidOld,
-                            "new_uid" => $activityData["BOU_UID"]
-                        );
-                    }
                 }
 
                 $bwp->addActivity($activityData);
@@ -698,7 +697,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             $artifact = $bwp->getArtifact($artifactData["ART_UID"]);
 
-            if ($flagInsert || is_null($artifact)) {
+            if ($forceInsert || is_null($artifact)) {
                 if ($generateUid) {
                     $oldArtUid = $artifactData["ART_UID"];
 
@@ -735,9 +734,11 @@ class BpmnWorkflow extends Project\Bpmn
 
             $gateway = $bwp->getGateway($gatewayData["GAT_UID"]);
 
-            if ($flagInsert || is_null($gateway)) {
+            if ($forceInsert || is_null($gateway)) {
                 if ($generateUid) {
                     //Gateway
+                    unset($gatewayData["BOU_UID"]);
+
                     $uidOld = $gatewayData["GAT_UID"];
                     $gatewayData["GAT_UID"] = Util\Common::generateUID();
 
@@ -746,18 +747,6 @@ class BpmnWorkflow extends Project\Bpmn
                         "old_uid" => $uidOld,
                         "new_uid" => $gatewayData["GAT_UID"]
                     );
-
-                    //Bound
-                    if (isset($gatewayData["BOU_UID"])) {
-                        $uidOld = $gatewayData["BOU_UID"];
-                        $gatewayData["BOU_UID"] = Util\Common::generateUID();
-
-                        $result[] = array(
-                            "object"  => "bound",
-                            "old_uid" => $uidOld,
-                            "new_uid" => $gatewayData["BOU_UID"]
-                        );
-                    }
                 }
 
                 $bwp->addGateway($gatewayData);
@@ -796,9 +785,11 @@ class BpmnWorkflow extends Project\Bpmn
 
             $event = $bwp->getEvent($eventData["EVN_UID"]);
 
-            if ($flagInsert || is_null($event)) {
+            if ($forceInsert || is_null($event)) {
                 if ($generateUid) {
                     //Event
+                    unset($eventData["BOU_UID"]);
+
                     $uidOld = $eventData["EVN_UID"];
                     $eventData["EVN_UID"] = Util\Common::generateUID();
 
@@ -807,18 +798,6 @@ class BpmnWorkflow extends Project\Bpmn
                         "old_uid" => $uidOld,
                         "new_uid" => $eventData["EVN_UID"]
                     );
-
-                    //Bound
-                    if (isset($eventData["BOU_UID"])) {
-                        $uidOld = $eventData["BOU_UID"];
-                        $eventData["BOU_UID"] = Util\Common::generateUID();
-
-                        $result[] = array(
-                            "object"  => "bound",
-                            "old_uid" => $uidOld,
-                            "new_uid" => $eventData["BOU_UID"]
-                        );
-                    }
                 }
 
                 $bwp->addEvent($eventData);
@@ -852,7 +831,7 @@ class BpmnWorkflow extends Project\Bpmn
             $flowData = array_change_key_case($flowData, CASE_UPPER);
 
             // if it is a new flow record
-            if ($flagInsert || ($generateUid && !\BpmnFlow::exists($flowData["FLO_UID"]))) {
+            if ($forceInsert || ($generateUid && !\BpmnFlow::exists($flowData["FLO_UID"]))) {
                 $oldFloUid = $flowData["FLO_UID"];
                 $flowData["FLO_UID"] = Util\Common::generateUID();
                 $result[] = array("object" => "flow", "new_uid" => $flowData["FLO_UID"], "old_uid" => $oldFloUid);
@@ -874,7 +853,7 @@ class BpmnWorkflow extends Project\Bpmn
 
         foreach ($diagram["flows"] as $flowData) {
             $flow = $bwp->getFlow($flowData["FLO_UID"]);
-            if ($flagInsert || is_null($flow)) {
+            if ($forceInsert || is_null($flow)) {
                 $bwp->addFlow($flowData);
             } elseif (! $bwp->isEquals($flow, $flowData)) {
                 $bwp->updateFlow($flowData["FLO_UID"], $flowData, $diagram["flows"]);
