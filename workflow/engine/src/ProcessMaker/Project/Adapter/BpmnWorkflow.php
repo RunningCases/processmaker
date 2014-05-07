@@ -416,10 +416,10 @@ class BpmnWorkflow extends Project\Bpmn
                             $gatewayFlow = $gatewayFlow->toArray();
 
                             switch ($gatewayFlow['FLO_ELEMENT_DEST_TYPE']) {
+                                case 'bpmnEvent':
                                 case 'bpmnActivity':
                                     // (gateway -> activity)
                                     $gateway = \BpmnGateway::findOneBy(\BpmnGatewayPeer::GAT_UID, $gatUid)->toArray();
-
                                     switch ($gateway["GAT_TYPE"]) {
                                         //case 'SELECTION':
                                         case self::BPMN_GATEWAY_COMPLEX:
@@ -461,7 +461,11 @@ class BpmnWorkflow extends Project\Bpmn
                                     }
                                     $condition = array_key_exists('FLO_CONDITION', $gatewayFlow) ? $gatewayFlow["FLO_CONDITION"] : '';
 
-                                    $this->wp->addRoute($activity["ACT_UID"], $gatewayFlow['FLO_ELEMENT_DEST'], $routeType, $condition);
+                                    if ($gatewayFlow['FLO_ELEMENT_DEST_TYPE'] == 'bpmnEvent') {
+                                        $this->wp->addRoute($activity["ACT_UID"], -1, $routeType, $condition);
+                                    } else {
+                                        $this->wp->addRoute($activity["ACT_UID"], $gatewayFlow['FLO_ELEMENT_DEST'], $routeType, $condition);
+                                    }
                                     break;
                                 default:
                                     // for processmaker is only allowed flows between "gateway -> activity"

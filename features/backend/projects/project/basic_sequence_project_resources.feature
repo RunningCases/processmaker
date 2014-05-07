@@ -449,7 +449,7 @@ Scenario Outline: Update the Projects and then check if the values had changed
 
 
 Scenario Outline: Get definition of a project
-    Given that I want to get a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in postion 0
+    Given that I want to get a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
     And I request "project"
     Then the response status code should be 200
     And the response charset is "UTF-8"
