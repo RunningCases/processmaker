@@ -101,6 +101,7 @@ class Project extends Api
         $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $exporter->getProjectName() . "-*.pmx") + 1;
         $outputFilename = $outputDir . sprintf("%s-%s.%s", $exporter->getProjectName(), $version, "pmx");
 
+        $exporter->setMetadata("export_version", $version);
         $exporter->saveExport($outputFilename);
 
         $httpStream = new \ProcessMaker\Util\IO\HttpStream();
