@@ -49,9 +49,18 @@ class Project extends Api
     }
 
     /**
+     * Post Project
+     *
+     * @param string $prj_name
+     * @param array $request_data
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url POST
      * @status 201
      */
-    public function post($request_data)
+    public function post($prj_name, $request_data)
     {
         try {
             return Adapter\BpmnWorkflow::createFromStruct($request_data);
