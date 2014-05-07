@@ -753,10 +753,18 @@ class Processes
     {
         $map = array ();
         foreach ($oData->tasks as $key => $val) {
-            $newGuid = $this->getUnusedTaskGUID();
-            $map[$val['TAS_UID']] = $newGuid;
-            $oData->tasks[$key]['TAS_UID'] = $newGuid;
+            if (!isset($val["TAS_UID_OLD"])) {
+                $uidNew = $this->getUnusedTaskGUID();
+                $map[$val["TAS_UID"]] = $uidNew;
+
+                $oData->tasks[$key]["TAS_UID"] = $uidNew;
+            } else {
+                $map[$val["TAS_UID_OLD"]] = $val["TAS_UID"];
+            }
         }
+
+        $oData->uid["TASK"] = $map;
+
         if (isset( $oData->routes ) && is_array( $oData->routes )) {
             foreach ($oData->routes as $key => $val) {
                 $newGuid = $map[$val['TAS_UID']];
@@ -845,6 +853,8 @@ class Processes
             $oData->dynaforms[$key]['DYN_UID'] = $newGuid;
         }
 
+        $oData->uid["DYNAFORM"] = $map;
+
         if (isset( $oData->process['PRO_DYNAFORMS'] ) && ! is_array( $oData->process['PRO_DYNAFORMS'] )) {
             $oData->process['PRO_DYNAFORMS'] = @unserialize( $oData->process['PRO_DYNAFORMS'] );
         }
@@ -889,9 +899,12 @@ class Processes
                     $oData->stepSupervisor[$key]['STEP_UID_OBJ'] = $newGuid;
                 }
             }
-            foreach ($oData->dynaformFiles as $key => $val) {
-                $newGuid = $map[$key];
-                $oData->dynaformFiles[$key] = $newGuid;
+
+            if (isset($oData->dynaformFiles)) {
+                foreach ($oData->dynaformFiles as $key => $value) {
+                    $newGuid = $map[$key];
+                    $oData->dynaformFiles[$key] = $newGuid;
+                }
             }
         }
         if (isset( $oData->gridFiles )) {
@@ -1550,6 +1563,9 @@ class Processes
             $map[$val['INP_DOC_UID']] = $newGuid;
             $oData->inputs[$key]['INP_DOC_UID'] = $newGuid;
         }
+
+        $oData->uid["INPUT_DOCUMENT"] = $map;
+
         foreach ($oData->steps as $key => $val) {
             if (isset( $val['STEP_TYPE_OBJ'] )) {
                 if ($val['STEP_TYPE_OBJ'] == 'INPUT_DOCUMENT') {
@@ -1646,6 +1662,9 @@ class Processes
             $map[$val['OUT_DOC_UID']] = $newGuid;
             $oData->outputs[$key]['OUT_DOC_UID'] = $newGuid;
         }
+
+        $oData->uid["OUTPUT_DOCUMENT"] = $map;
+
         foreach ($oData->steps as $key => $val) {
             if (isset( $val['STEP_TYPE_OBJ'] )) {
                 if ($val['STEP_TYPE_OBJ'] == 'OUTPUT_DOCUMENT') {
@@ -1688,6 +1707,9 @@ class Processes
             $map[$val['TRI_UID']] = $newGuid;
             $oData->triggers[$key]['TRI_UID'] = $newGuid;
         }
+
+        $oData->uid["TRIGGER"] = $map;
+
         foreach ($oData->steptriggers as $key => $val) {
             if (isset( $map[$val['TRI_UID']] )) {
                 $newGuid = $map[$val['TRI_UID']];
@@ -1695,6 +1717,13 @@ class Processes
             } else {
                 $oData->steptriggers[$key]['TRI_UID'] = $this->getUnusedTriggerGUID();
             }
+        }
+
+        if (isset($oData->process["PRO_TRI_DELETED"])) {
+            $oData->process["PRO_TRI_DELETED"] = $map[$oData->process["PRO_TRI_DELETED"]];
+            $oData->process["PRO_TRI_CANCELED"] = $map[$oData->process["PRO_TRI_CANCELED"]];
+            $oData->process["PRO_TRI_PAUSED"] = $map[$oData->process["PRO_TRI_PAUSED"]];
+            $oData->process["PRO_TRI_REASSIGNED"] = $map[$oData->process["PRO_TRI_REASSIGNED"]];
         }
     }
 
@@ -1712,6 +1741,8 @@ class Processes
             $map[$val['SP_UID']] = $newGuid;
             $oData->subProcess[$key]['SP_UID'] = $newGuid;
         }
+
+        $oData->uid["SUB_PROCESS"] = $map;
     }
 
     /**
@@ -1728,6 +1759,8 @@ class Processes
             $map[$val['CTO_UID']] = $newGuid;
             $oData->caseTrackerObject[$key]['CTO_UID'] = $newGuid;
         }
+
+        $oData->uid["CASE_TRACKER_OBJECT"] = $map;
     }
 
     /**
@@ -1745,6 +1778,9 @@ class Processes
             $map[$val['DBS_UID']] = $newGuid;
             $oData->dbconnections[$key]['DBS_UID'] = $newGuid;
         }
+
+        $oData->uid["DB_SOURCE"] = $map;
+
         $oData->sqlConnections = $map;
     }
 
@@ -1762,6 +1798,8 @@ class Processes
             $map[$val['OP_UID']] = $newGuid;
             $oData->objectPermissions[$key]['OP_UID'] = $newGuid;
         }
+
+        $oData->uid["OBJECT_PERMISSION"] = $map;
     }
 
     /**
@@ -1780,6 +1818,8 @@ class Processes
                 $oData->routes[$key]['ROU_UID'] = $newGuid;
             }
         }
+
+        $oData->uid["ROUTE"] = $map;
     }
 
     /**
@@ -1796,6 +1836,9 @@ class Processes
             $map[$val['STG_UID']] = $newGuid;
             $oData->stage[$key]['STG_UID'] = $newGuid;
         }
+
+        $oData->uid["STAGE"] = $map;
+
         foreach ($oData->tasks as $key => $val) {
             if (isset( $map[$val['STG_UID']] )) {
                 $newGuid = $map[$val['STG_UID']];
@@ -1818,6 +1861,8 @@ class Processes
             $map[$val['SWI_UID']] = $newGuid;
             $oData->lanes[$key]['SWI_UID'] = $newGuid;
         }
+
+        $oData->uid["SWIMLANE_ELEMENT"] = $map;
     }
 
     /**
@@ -1834,6 +1879,9 @@ class Processes
             $map[$val['REP_TAB_UID']] = $newGuid;
             $oData->reportTables[$key]['REP_TAB_UID'] = $newGuid;
         }
+
+        $oData->uid["REPORT_TABLE"] = $map;
+
         foreach ($oData->reportTablesVars as $key => $val) {
             if (isset( $map[$val['REP_TAB_UID']] )) {
                 /*TODO: Why this can be not defined?? The scenario was when
@@ -1859,6 +1907,8 @@ class Processes
             $map[$val['REP_VAR_UID']] = $newGuid;
             $oData->reportTablesVars[$key]['REP_VAR_UID'] = $newGuid;
         }
+
+        $oData->uid["REPORT_VAR"] = $map;
     }
 
     /**
@@ -1875,6 +1925,8 @@ class Processes
             $map[$val['FCD_UID']] = $newGuid;
             $oData->fieldCondition[$key]['FCD_UID'] = $newGuid;
         }
+
+        $oData->uid["FIELD_CONDITION"] = $map;
     }
 
     /**
@@ -1891,6 +1943,8 @@ class Processes
             $map[$val['EVN_UID']] = $newGuid;
             $oData->event[$key]['EVN_UID'] = $newGuid;
         }
+
+        $oData->uid["EVENT"] = $map;
     }
 
     /**
@@ -1907,6 +1961,8 @@ class Processes
             $map[$val['SCH_UID']] = $newGuid;
             $oData->caseScheduler[$key]['SCH_UID'] = $newGuid;
         }
+
+        $oData->uid["CASE_SCHEDULER"] = $map;
     }
 
     /**
@@ -1917,6 +1973,8 @@ class Processes
      */
     public function renewAll (&$oData)
     {
+        $oData->uid = array();
+
         $this->renewAllTaskGuid( $oData );
         $this->renewAllDynaformGuid( $oData );
         $this->renewAllInputGuid( $oData );
@@ -2017,6 +2075,9 @@ class Processes
                 $oData->steps[$key]['STEP_UID'] = $newGuid;
             }
         }
+
+        $oData->uid["STEP"] = $map;
+
         foreach ($oData->steptriggers as $key => $val) {
             if ($val['STEP_UID'] > 0) {
                 if (isset( $map[$val['STEP_UID']] )) {
@@ -2589,7 +2650,7 @@ class Processes
     }
 
     public function getWorkflowData($sProUid = '')
-    {   
+    {
         $oProcess = new Process();
         $oData = new StdClass();
         $oData->process = $this->getProcessRow( $sProUid, false );
@@ -2618,7 +2679,7 @@ class Processes
         $oData->event = $this->getEventRow( $sProUid );
         $oData->caseScheduler = $this->getCaseSchedulerRow( $sProUid );
         $oData->processCategory = $this->getProcessCategoryRow( $sProUid );
-        $oData->taskExtraProperties = $this->getTaskExtraPropertiesRows( $sProUid ); 
+        $oData->taskExtraProperties = $this->getTaskExtraPropertiesRows( $sProUid );
         $this->getGroupwfSupervisor( $sProUid, $oData);
 
         //krumo ($oData);die;
@@ -3220,8 +3281,8 @@ class Processes
     }
 
     /**
-     * The current method is for filter every row that exist in 
-     * the Configuration table 
+     * The current method is for filter every row that exist in
+     * the Configuration table
      *
      * @param array $aTaskExtraProperties
      * @return void
@@ -3231,15 +3292,18 @@ class Processes
         if (count($aTaskExtraProperties) > 0) {
             $oConfig = new Configuration();
             foreach ($aTaskExtraProperties as $key => $row) {
-                if ($oConfig->exists( $row['CFG_UID'], $row['OBJ_UID'], $row['PRO_UID'], $row['USR_UID'], $row['APP_UID']) ) {                    
+                if ($oConfig->exists( $row['CFG_UID'], $row['OBJ_UID'], $row['PRO_UID'], $row['USR_UID'], $row['APP_UID']) ) {
                     $oConfig->remove( $row['CFG_UID'], $row['OBJ_UID'], $row['PRO_UID'], $row['USR_UID'], $row['APP_UID'] );
                     $oConfig->setDeleted(false);
                 }
                 $res = $oConfig->create( $row );
                 $oConfig->setNew(true);
-                $oConfig->setProperties();
+
+                if (method_exists($oConfig, "setProperties")) {
+                    $oConfig->setProperties();
+                }
             }
-        }    
+        }
         return;
     }
 
@@ -3559,7 +3623,7 @@ class Processes
         $this->createProcessCategoryRow( isset( $oData->processCategory ) ? $oData->processCategory : null );
 
         // create the process
-//        $this->createProcessRow( $oData->process );
+        //$this->createProcessRow( $oData->process );
         $this->createTaskRows( $oData->tasks );
         //it was commented becuase it seems to be working fine
         //$this->createEventRows(isset($oData->event) ? $oData->event : array());
@@ -3949,7 +4013,7 @@ class Processes
             if (defined('PARTNER_FLAG')) {
                 @copy( PATH_TPL . "mails" . PATH_SEP . "unassignedMessagePartner.html", $dir . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'));
             } else {
-                @copy( PATH_TPL . "mails" . PATH_SEP . "unassignedMessage.html", $dir . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'));    
+                @copy( PATH_TPL . "mails" . PATH_SEP . "unassignedMessage.html", $dir . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'));
             }
         }
 
@@ -3974,7 +4038,7 @@ class Processes
     public function getTaskExtraPropertiesRows( $proId )
     {
         try {
-            
+
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn( ConfigurationPeer::CFG_UID );
             $oCriteria->addSelectColumn( ConfigurationPeer::OBJ_UID );
@@ -3988,7 +4052,7 @@ class Processes
             $oDataset = ConfigurationPeer::doSelectRS( $oCriteria );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();
-            
+
             $aConfRows = array();
             while ($aRow = $oDataset->getRow()) {
                 $aConfRows[] = $aRow;

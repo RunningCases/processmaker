@@ -101,6 +101,7 @@ class Project extends Api
         $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $exporter->getProjectName() . "-*.pmx") + 1;
         $outputFilename = $outputDir . sprintf("%s-%s.%s", $exporter->getProjectName(), $version, "pmx");
 
+        $exporter->setMetadata("export_version", $version);
         $exporter->saveExport($outputFilename);
 
         $httpStream = new \ProcessMaker\Util\IO\HttpStream();
@@ -109,6 +110,30 @@ class Project extends Api
         $httpStream->loadFromFile($outputFilename);
         $httpStream->setHeader("Content-Type", "application/$fileExtension");
         $httpStream->send();
+    }
+
+    /**
+     * @url POST /import
+     *
+     * @param array $request_data
+     *
+     * @status 201
+     */
+    public function doPostImport(array $request_data, $option = null)
+    {
+        try {
+            $importer = new \ProcessMaker\Importer\XmlImporter();
+
+            $importer->setData("usr_uid", $this->getUserId());
+
+            $arrayData = $importer->importPostFile($request_data, $option, array("projectFile" => "project_file", "option" => "option"));
+
+            $response = $arrayData;
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
     }
 
     /**

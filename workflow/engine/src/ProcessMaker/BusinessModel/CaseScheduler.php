@@ -236,163 +236,163 @@ class CaseScheduler
     /**
      * Create a new case scheduler of a project
      * @param string $sProcessUID
-     * @param array  $aData
+     * @param array  $caseSchedulerData
      * @param string $userUID
      * @return array
      *
      * @access public
      */
-    public function addCaseScheduler($sProcessUID, $aData, $userUID)
+    public function addCaseScheduler($sProcessUID, $caseSchedulerData, $userUID)
     {
         try {
             require_once(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "CaseScheduler.php");
-            $aData['sch_repeat_stop_if_running'] = '0';
-            $aData['case_sh_plugin_uid'] = null;
-            $aData = array_change_key_case($aData, CASE_UPPER);
-            $sOption = $aData['SCH_OPTION'];
-            if (empty($aData)) {
+            $caseSchedulerData['sch_repeat_stop_if_running'] = '0';
+            $caseSchedulerData['case_sh_plugin_uid'] = null;
+            $caseSchedulerData = array_change_key_case($caseSchedulerData, CASE_UPPER);
+            $sOption = $caseSchedulerData['SCH_OPTION'];
+            if (empty($caseSchedulerData)) {
                 die( 'the information sended is empty!' );
             }
-            $arrayTaskUid = $this->getTaskUid($aData['TAS_UID']);
+            $arrayTaskUid = $this->getTaskUid($caseSchedulerData['TAS_UID']);
             if (empty($arrayTaskUid)) {
-                throw (new \Exception( 'Task not found for id: '. $aData['TAS_UID']));
+                throw (new \Exception( 'Task not found for id: '. $caseSchedulerData['TAS_UID']));
             }
-            if ($aData['SCH_NAME']=='') {
+            if ($caseSchedulerData['SCH_NAME']=='') {
                 throw (new \Exception( 'sch_name can not be empty'));
             }
-            if ($this->existsName($sProcessUID, $aData['SCH_NAME'])) {
+            if ($this->existsName($sProcessUID, $caseSchedulerData['SCH_NAME'])) {
                 throw (new \Exception( 'Duplicate Case Scheduler name'));
             }
-            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['TAS_UID']);
+            $mUser = $this->getUser($caseSchedulerData['SCH_DEL_USER_NAME'], $caseSchedulerData['TAS_UID']);
             $oUser = \UsersPeer::retrieveByPK( $mUser );
             if (is_null($oUser)) {
                 throw (new \Exception($mUser));
             }
             $oUserPass = $oUser->getUsrPassword();
-            $aData['SCH_DEL_USER_PASS'] = $oUserPass;
+            $caseSchedulerData['SCH_DEL_USER_PASS'] = $oUserPass;
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
-                if (!preg_match($pattern, $aData['SCH_START_TIME'])) {
+                if (!preg_match($pattern, $caseSchedulerData['SCH_START_TIME'])) {
                     throw (new \Exception( 'Invalid value specified for sch_start_time. Expecting time in HH:MM format (The time can not be increased to 23:59)'));
                 }
             }
             $patternDate="/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/";
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
-                if (!preg_match($patternDate, $aData['SCH_START_DATE'])) {
+                if (!preg_match($patternDate, $caseSchedulerData['SCH_START_DATE'])) {
                     throw (new \Exception( 'Invalid value specified for sch_start_date. Expecting date in YYYY-MM-DD format, such as 2014-01-01'));
                 }
-                if (!preg_match($patternDate, $aData['SCH_END_DATE'])) {
+                if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
                     throw (new \Exception( 'Invalid value specified for sch_end_date. Expecting date in YYYY-MM-DD format, such as 2014-01-01'));
                 }
-                if ($aData['SCH_START_DATE'] == "") {
+                if ($caseSchedulerData['SCH_START_DATE'] == "") {
                     throw (new \Exception( 'sch_start_date can not be null'));
                 }
             }
             if ($sOption == '2') {
-                $aData['SCH_EVERY_DAYS'] = 1;
+                $caseSchedulerData['SCH_EVERY_DAYS'] = 1;
             } else {
-                $aData['SCH_EVERY_DAYS'] = 0;
+                $caseSchedulerData['SCH_EVERY_DAYS'] = 0;
             }
             $oCaseScheduler = new \CaseScheduler();
-            $aData['SCH_UID'] = \G::generateUniqueID();
-            $aData['PRO_UID'] = $sProcessUID;
-            $aData['SCH_STATE'] = 'ACTIVE';
-            $aData['SCH_LAST_STATE'] = 'CREATED'; // 'ACTIVE';
-            $aData['USR_UID'] = $userUID;
-            $aData['SCH_DEL_USER_UID'] = $aData['USR_UID'];
-            $sTimeTmp = $aData['SCH_START_TIME'];
-            $nActualTime = $aData['SCH_START_TIME']; // time();
+            $caseSchedulerData['SCH_UID'] = \G::generateUniqueID();
+            $caseSchedulerData['PRO_UID'] = $sProcessUID;
+            $caseSchedulerData['SCH_STATE'] = 'ACTIVE';
+            $caseSchedulerData['SCH_LAST_STATE'] = 'CREATED'; // 'ACTIVE';
+            $caseSchedulerData['USR_UID'] = $userUID;
+            $caseSchedulerData['SCH_DEL_USER_UID'] = $caseSchedulerData['USR_UID'];
+            $sTimeTmp = $caseSchedulerData['SCH_START_TIME'];
+            $nActualTime = $caseSchedulerData['SCH_START_TIME']; // time();
             $sValue = '';
             $sDaysPerformTask = '';
             $sWeeks = '';
             $sMonths = '';
             $sStartDay = '';
-            $aData['SCH_DAYS_PERFORM_TASK'] = '';
+            $caseSchedulerData['SCH_DAYS_PERFORM_TASK'] = '';
             switch ($sOption) {
                 case '1': // If the option is zero, set by default 1
-                    $aData['SCH_DAYS_PERFORM_TASK'] = '1';
-                    $sValue = $aData['SCH_DAYS_PERFORM_TASK'];
+                    $caseSchedulerData['SCH_DAYS_PERFORM_TASK'] = '1';
+                    $sValue = $caseSchedulerData['SCH_DAYS_PERFORM_TASK'];
                     switch ($sValue) {
                         case '1':
-                            $aData['SCH_DAYS_PERFORM_TASK'] = $aData['SCH_DAYS_PERFORM_TASK'] . '|1';
-                            $aData['SCH_MONTHS'] ='0|0|0|0|0|0|0|0|0|0|0|0';
-                            $aData['SCH_WEEK_DAYS'] ='0|0|0|0|0|0|0';
+                            $caseSchedulerData['SCH_DAYS_PERFORM_TASK'] = $caseSchedulerData['SCH_DAYS_PERFORM_TASK'] . '|1';
+                            $caseSchedulerData['SCH_MONTHS'] ='0|0|0|0|0|0|0|0|0|0|0|0';
+                            $caseSchedulerData['SCH_WEEK_DAYS'] ='0|0|0|0|0|0|0';
                             break;
                         case '2':
-                            $aData['SCH_OPTION'] = '2';
-                            $aData['SCH_EVERY_DAYS'] = '1'; //check
-                            $aData['SCH_WEEK_DAYS'] = '1|2|3|4|5|'; //check
+                            $caseSchedulerData['SCH_OPTION'] = '2';
+                            $caseSchedulerData['SCH_EVERY_DAYS'] = '1'; //check
+                            $caseSchedulerData['SCH_WEEK_DAYS'] = '1|2|3|4|5|'; //check
                             break;
                         case '3': // Every [n] Days
-                            $sDaysPerformTask = $aData['SCH_DAYS_PERFORM_TASK'];
-                            $aData['SCH_DAYS_PERFORM_TASK'] = $aData['SCH_DAYS_PERFORM_TASK'];
+                            $sDaysPerformTask = $caseSchedulerData['SCH_DAYS_PERFORM_TASK'];
+                            $caseSchedulerData['SCH_DAYS_PERFORM_TASK'] = $caseSchedulerData['SCH_DAYS_PERFORM_TASK'];
                             break;
                     }
                     break;
                 case '2': // If the option is zero, set by default 1
-                    if ($aData['SCH_WEEK_DAYS'] == "") {
+                    if ($caseSchedulerData['SCH_WEEK_DAYS'] == "") {
                         throw (new \Exception( 'sch_week_days can not be null'));
                     } else {
-                        $weeks = $aData['SCH_WEEK_DAYS'];
+                        $weeks = $caseSchedulerData['SCH_WEEK_DAYS'];
                         $weeks = explode("|", $weeks);
                         foreach ($weeks as $row) {
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7") {
-                                $aData['SCH_WEEK_DAYS'] = $aData['SCH_WEEK_DAYS'];
+                                $caseSchedulerData['SCH_WEEK_DAYS'] = $caseSchedulerData['SCH_WEEK_DAYS'];
                             } else {
                                 throw (new \Exception( 'Invalid value specified for sch_week_days'));
                             }
                         }
                     }
-                    $aData['SCH_MONTHS'] ='0|0|0|0|0|0|0|0|0|0|0|0';
-                    if (empty( $aData['SCH_EVERY_DAYS'] )) {
+                    $caseSchedulerData['SCH_MONTHS'] ='0|0|0|0|0|0|0|0|0|0|0|0';
+                    if (empty( $caseSchedulerData['SCH_EVERY_DAYS'] )) {
                         $nEveryDays = 1;
                     } else {
-                        $nEveryDays = $aData['SCH_EVERY_DAYS'];
+                        $nEveryDays = $caseSchedulerData['SCH_EVERY_DAYS'];
                     }
-                    $aData['SCH_EVERY_DAYS'] = $nEveryDays;
-                    if (! empty( $aData['SCH_WEEK_DAYS'] )) {
-                        $aWeekDays = $aData['SCH_WEEK_DAYS'];
+                    $caseSchedulerData['SCH_EVERY_DAYS'] = $nEveryDays;
+                    if (! empty( $caseSchedulerData['SCH_WEEK_DAYS'] )) {
+                        $aWeekDays = $caseSchedulerData['SCH_WEEK_DAYS'];
                     }
-                    $sStartTime = $aData['SCH_START_TIME'];
-                    $sWeeks = $aData['SCH_WEEK_DAYS'] . '|';
+                    $sStartTime = $caseSchedulerData['SCH_START_TIME'];
+                    $sWeeks = $caseSchedulerData['SCH_WEEK_DAYS'] . '|';
                     break;
                 case '3':
-                    $nStartDay = $aData['SCH_START_DAY'];
+                    $nStartDay = $caseSchedulerData['SCH_START_DAY'];
                     if ($nStartDay == "") {
                         throw (new \Exception( 'sch_start_day can not be null'));
                     }
                     if ($nStartDay == 1) {
-                        if ($aData['SCH_START_DAY_OPT_1'] == "") {
+                        if ($caseSchedulerData['SCH_START_DAY_OPT_1'] == "") {
                             throw (new \Exception( 'sch_start_day_opt_1 can not be null'));
                         }
-                        $temp = $aData['SCH_START_DAY_OPT_1'];
+                        $temp = $caseSchedulerData['SCH_START_DAY_OPT_1'];
                         $temp = (int)$temp;
                         if ($temp >= 1 && $temp <= 31) {
-                            $aData['SCH_START_DAY_OPT_1'] = $aData['SCH_START_DAY_OPT_1'];
+                            $caseSchedulerData['SCH_START_DAY_OPT_1'] = $caseSchedulerData['SCH_START_DAY_OPT_1'];
                         } else {
                             throw (new \Exception( 'Invalid value specified for sch_start_day_opt_1. Must be between 1 and 31'));
                         }
-                        $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_1'];
+                        $caseSchedulerData['SCH_START_DAY'] = $nStartDay . '|' . $caseSchedulerData['SCH_START_DAY_OPT_1'];
                     } else {
-                        if ($aData['SCH_START_DAY_OPT_2'] == "") {
+                        if ($caseSchedulerData['SCH_START_DAY_OPT_2'] == "") {
                             throw (new \Exception( 'sch_start_day_opt_2 can not be null'));
                         }
-                        $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_2'];
-                        $optionTwo = $aData['SCH_START_DAY_OPT_2']{0};
+                        $caseSchedulerData['SCH_START_DAY'] = $nStartDay . '|' . $caseSchedulerData['SCH_START_DAY_OPT_2'];
+                        $optionTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{0};
                         if ($optionTwo == "1" || $optionTwo == "2" || $optionTwo == "3" || $optionTwo == "4" || $optionTwo == "5") {
-                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                            $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
                             throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
                         }
-                        $pipelineTwo = $aData['SCH_START_DAY_OPT_2']{1};
+                        $pipelineTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{1};
                         if ($pipelineTwo == "|") {
-                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                            $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
                             throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
                         }
-                        $dayTwo = $aData['SCH_START_DAY_OPT_2']{2};
+                        $dayTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{2};
                         if ($dayTwo == "1" || $dayTwo == "2" || $dayTwo == "3" || $dayTwo == "4" || $dayTwo == "5" || $dayTwo == "6" || $dayTwo == "7") {
-                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                            $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
                             throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
                         }
@@ -400,22 +400,22 @@ class CaseScheduler
                     if ($nStartDay == "") {
                         throw (new \Exception( 'sch_start_day can not be null'));
                     }
-                    if ($aData['SCH_MONTHS'] == "") {
+                    if ($caseSchedulerData['SCH_MONTHS'] == "") {
                          throw (new \Exception( 'sch_months can not be null'));
                     }
-                    if (! empty( $aData['SCH_MONTHS'] )) {
-                        $aMonths = $aData['SCH_MONTHS'];
+                    if (! empty( $caseSchedulerData['SCH_MONTHS'] )) {
+                        $aMonths = $caseSchedulerData['SCH_MONTHS'];
                         $aMonths = explode("|", $aMonths);
                         foreach ($aMonths as $row) {
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7"|| $row == "8" || $row == "9" || $row == "10"|| $row == "11" || $row == "12") {
-                                $aData['SCH_MONTHS'] = $aData['SCH_MONTHS'];
+                                $caseSchedulerData['SCH_MONTHS'] = $caseSchedulerData['SCH_MONTHS'];
                             } else {
                                 throw (new \Exception( 'Invalid value specified for sch_months'));
                             }
                         }
                     }
-                    $sMonths = $aData['SCH_MONTHS'];
-                    $sStartDay = $aData['SCH_START_DAY'];
+                    $sMonths = $caseSchedulerData['SCH_MONTHS'];
+                    $sStartDay = $caseSchedulerData['SCH_START_DAY'];
                     $sValue = $nStartDay;
                     break;
             }
@@ -424,9 +424,9 @@ class CaseScheduler
                 if ($sStartDay == '') {
                     $sStartDay = date('Y-m-d');
                 } else {
-                    $size = strlen($aData['SCH_START_DAY']);
+                    $size = strlen($caseSchedulerData['SCH_START_DAY']);
                     if ($size > 4) {
-                        $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
+                        $aaStartDay = explode( "|", $caseSchedulerData['SCH_START_DAY'] );
                         $aaStartDay[0] = $aaStartDay[0];
                         $aaStartDay[1] = $aaStartDay[1];
                         $aaStartDay[2]= ($aaStartDay[2] == 7 ? 1 : $aaStartDay[2]);
@@ -435,75 +435,75 @@ class CaseScheduler
                 }
                 $dCurrentDay = date("d");
                 $dCurrentMonth = date("m");
-                $aStartDay = explode( "|", $aData['SCH_START_DAY'] );
+                $aStartDay = explode( "|", $caseSchedulerData['SCH_START_DAY'] );
                 if ($sOption == '3' && $aStartDay[0] == '1') {
                     $monthsArray = explode( "|", $sMonths );
                     foreach ($monthsArray as $row) {
                         if ($dCurrentMonth == $row && $dCurrentDay < $aStartDay[1]) {
-                            $startTime = $aData['SCH_START_TIME'] . ":00";
-                            $aData['SCH_TIME_NEXT_RUN'] = date('Y') . '-' . $row . '-' . $aStartDay[1] . ' ' . $startTime;
+                            $startTime = $caseSchedulerData['SCH_START_TIME'] . ":00";
+                            $caseSchedulerData['SCH_TIME_NEXT_RUN'] = date('Y') . '-' . $row . '-' . $aStartDay[1] . ' ' . $startTime;
                             break;
                         } else {
-                            $aData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
+                            $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
                         }
                     }
                 } else {
-                    $aData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
+                    $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
                 }
             } else {
                 if ($sOption == '4') {
                     $sDateTmp = date('Y-m-d');
-                    $aData['SCH_START_TIME'] = date('Y-m-d', strtotime( $sDateTmp )) . ' ' . date('H:i:s', strtotime( $sTimeTmp ));
-                    $aData['SCH_START_DATE'] = $aData['SCH_START_TIME'];
-                    $aData['SCH_END_DATE'] = $aData['SCH_START_TIME'];
+                    $caseSchedulerData['SCH_START_TIME'] = date('Y-m-d', strtotime( $sDateTmp )) . ' ' . date('H:i:s', strtotime( $sTimeTmp ));
+                    $caseSchedulerData['SCH_START_DATE'] = $caseSchedulerData['SCH_START_TIME'];
+                    $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_START_TIME'];
                 }
-                $aData['SCH_TIME_NEXT_RUN'] = $aData['SCH_START_TIME'];
+                $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $caseSchedulerData['SCH_START_TIME'];
                 if ($sOption == '5') {
-                    if ($aData['SCH_START_DATE'] != '') {
-                        $sDateTmp = $aData['SCH_START_DATE'];
+                    if ($caseSchedulerData['SCH_START_DATE'] != '') {
+                        $sDateTmp = $caseSchedulerData['SCH_START_DATE'];
                     } else {
                         $sDateTmp = date('Y-m-d');
-                        $aData['SCH_START_DATE'] = $sDateTmp;
+                        $caseSchedulerData['SCH_START_DATE'] = $sDateTmp;
                     }
-                    $aData['SCH_END_DATE'] = date('Y-m-d', strtotime( $sDateTmp )) . ' ' . date('H:i:s', strtotime( $sTimeTmp ));
-                    $aData['SCH_START_TIME'] = time();
-                    $aData['SCH_START_DATE'] = $aData['SCH_START_TIME'];
-                    if ($aData['SCH_REPEAT_EVERY'] == "") {
+                    $caseSchedulerData['SCH_END_DATE'] = date('Y-m-d', strtotime( $sDateTmp )) . ' ' . date('H:i:s', strtotime( $sTimeTmp ));
+                    $caseSchedulerData['SCH_START_TIME'] = time();
+                    $caseSchedulerData['SCH_START_DATE'] = $caseSchedulerData['SCH_START_TIME'];
+                    if ($caseSchedulerData['SCH_REPEAT_EVERY'] == "") {
                         throw (new \Exception( 'sch_repeat_every can not be null'));
                     }
                     $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
-                    if (!preg_match($patternHour, $aData['SCH_REPEAT_EVERY'])) {
+                    if (!preg_match($patternHour, $caseSchedulerData['SCH_REPEAT_EVERY'])) {
                         throw (new \Exception( 'Invalid value specified for sch_repeat_every. Expecting time in HH.MM format'));
                     }
-                    $nextRun = $aData['SCH_REPEAT_EVERY'] * 60 * 60;
-                    $aData['SCH_REPEAT_EVERY'] = $aData['SCH_REPEAT_EVERY'];
-                    $date = $aData['SCH_START_TIME'];
+                    $nextRun = $caseSchedulerData['SCH_REPEAT_EVERY'] * 60 * 60;
+                    $caseSchedulerData['SCH_REPEAT_EVERY'] = $caseSchedulerData['SCH_REPEAT_EVERY'];
+                    $date = $caseSchedulerData['SCH_START_TIME'];
                     $date += $nextRun;
                     $date = date("Y-m-d H:i", $date);
-                    $aData['SCH_TIME_NEXT_RUN'] = $date;
+                    $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $date;
                 }
             }
-            if (trim( $aData['SCH_END_DATE'] ) != '') {
-                $aData['SCH_END_DATE'] = $aData['SCH_END_DATE'];
+            if (trim( $caseSchedulerData['SCH_END_DATE'] ) != '') {
+                $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_END_DATE'];
             }
-            if (! empty( $aData['SCH_REPEAT_TASK_CHK'] )) {
-                $nOptEvery = $aData['SCH_REPEAT_EVERY_OPT'];
+            if (! empty( $caseSchedulerData['SCH_REPEAT_TASK_CHK'] )) {
+                $nOptEvery = $caseSchedulerData['SCH_REPEAT_EVERY_OPT'];
                 if ($nOptEvery == 2) {
-                    $aData['SCH_REPEAT_EVERY'] = $aData['SCH_REPEAT_EVERY'] * 60;
+                    $caseSchedulerData['SCH_REPEAT_EVERY'] = $caseSchedulerData['SCH_REPEAT_EVERY'] * 60;
                 } else {
-                    $aData['SCH_REPEAT_EVERY'] = $aData['SCH_REPEAT_EVERY'];
+                    $caseSchedulerData['SCH_REPEAT_EVERY'] = $caseSchedulerData['SCH_REPEAT_EVERY'];
                 }
             }
-            if ((isset( $aData['CASE_SH_PLUGIN_UID'] )) && ($aData['CASE_SH_PLUGIN_UID'] != "")) {
-                $aData['CASE_SH_PLUGIN_UID'] = $aData['CASE_SH_PLUGIN_UID'];
+            if ((isset( $caseSchedulerData['CASE_SH_PLUGIN_UID'] )) && ($caseSchedulerData['CASE_SH_PLUGIN_UID'] != "")) {
+                $caseSchedulerData['CASE_SH_PLUGIN_UID'] = $caseSchedulerData['CASE_SH_PLUGIN_UID'];
             }
             // check this data
-            $aData['SCH_REPEAT_UNTIL'] = '';
-            $aData['SCH_REPEAT_STOP_IF_RUNNING'] = '0';
-            $aData['CASE_SH_PLUGIN_UID'] = null;
+            $caseSchedulerData['SCH_REPEAT_UNTIL'] = '';
+            $caseSchedulerData['SCH_REPEAT_STOP_IF_RUNNING'] = '0';
+            $caseSchedulerData['CASE_SH_PLUGIN_UID'] = null;
             //
-            $oCaseScheduler->create( $aData );
-            $oCriteria = $this->getCaseScheduler($sProcessUID, $aData['SCH_UID']);
+            $oCaseScheduler->create( $caseSchedulerData );
+            $oCriteria = $this->getCaseScheduler($sProcessUID, $caseSchedulerData['SCH_UID']);
             return $oCriteria;
         } catch (Exception $oException) {
             die( $oException->getMessage() );
@@ -513,177 +513,181 @@ class CaseScheduler
     /**
      * Update case scheduler for a project
      * @param string $sProcessUID
-     * @param array  $aData
+     * @param array  $caseSchedulerData
      * @param string $userUID
      * @param string $sSchUID
      *
      * @access public
      */
-    public function updateCaseScheduler($sProcessUID, $aData, $userUID, $sSchUID = '')
+    public function updateCaseScheduler($sProcessUID, $caseSchedulerData, $userUID, $sSchUID = '')
     {
         try {
             require_once(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "CaseScheduler.php");
-            $aData = array_change_key_case($aData, CASE_UPPER);
-            if (empty( $aData )) {
+            $caseSchedulerData = array_change_key_case($caseSchedulerData, CASE_UPPER);
+            if (empty( $caseSchedulerData )) {
                 die( 'The information sended is empty!' );
             }
             $oCaseScheduler = new \CaseScheduler();
             $aFields = $oCaseScheduler->Load($sSchUID);
-            //$sOption = $aFields['SCH_OPTION'];
-            $sOption = $aData['SCH_OPTION'];
-            $aData['sch_repeat_stop_if_running'] = '0';
-            $aData['case_sh_plugin_uid'] = null;
-            $aData = array_change_key_case($aData, CASE_UPPER);
-            if (empty($aData)) {
+            if ($caseSchedulerData['SCH_OPTION'] == null) {
+                $sOption = $aFields['SCH_OPTION'];
+                $caseSchedulerData['SCH_OPTION'] = $sOption;
+            } else {
+                $sOption = $caseSchedulerData['SCH_OPTION'];
+            }
+            $caseSchedulerData['sch_repeat_stop_if_running'] = '0';
+            $caseSchedulerData['case_sh_plugin_uid'] = null;
+            $caseSchedulerData = array_change_key_case($caseSchedulerData, CASE_UPPER);
+            if (empty($caseSchedulerData)) {
                 die( 'the information sended is empty!' );
             }
-            $arrayTaskUid = $this->getTaskUid($aData['TAS_UID']);
+            $arrayTaskUid = $this->getTaskUid($caseSchedulerData['TAS_UID']);
             if (empty($arrayTaskUid)) {
-                throw (new \Exception( 'Task not found for id: '. $aData['TAS_UID']));
+                throw (new \Exception( 'Task not found for id: '. $caseSchedulerData['TAS_UID']));
             }
-            if ($aData['SCH_NAME']=='') {
+            if ($caseSchedulerData['SCH_NAME']=='') {
                 throw (new \Exception( 'sch_name can not be empty'));
             }
-            if ($this->existsNameUpdate($sSchUID, $aData['SCH_NAME'])) {
+            if ($this->existsNameUpdate($sSchUID, $caseSchedulerData['SCH_NAME'])) {
                 throw (new \Exception( 'Duplicate Case Scheduler name'));
             }
-            $mUser = $this->getUser($aData['SCH_DEL_USER_NAME'], $aData['TAS_UID']);
+            $mUser = $this->getUser($caseSchedulerData['SCH_DEL_USER_NAME'], $caseSchedulerData['TAS_UID']);
             $oUser = \UsersPeer::retrieveByPK( $mUser );
             if (is_null($oUser)) {
                 throw (new \Exception($mUser));
             }
             $oUserPass = $oUser->getUsrPassword();
-            $aData['SCH_DEL_USER_PASS'] = $oUserPass;
+            $caseSchedulerData['SCH_DEL_USER_PASS'] = $oUserPass;
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
-                if (!preg_match($pattern, $aData['SCH_START_TIME'])) {
+                if (!preg_match($pattern, $caseSchedulerData['SCH_START_TIME'])) {
                     throw (new \Exception( 'Invalid value specified for sch_start_time. Expecting time in HH:MM format (The time can not be increased to 23:59)'));
                 }
             }
             $patternDate="/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/";
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
-                if (!preg_match($patternDate, $aData['SCH_START_DATE'])) {
+                if (!preg_match($patternDate, $caseSchedulerData['SCH_START_DATE'])) {
                     throw (new \Exception( 'Invalid value specified for sch_start_date. Expecting date in YYYY-MM-DD format, such as 2014-01-01'));
                 }
-                if (!preg_match($patternDate, $aData['SCH_END_DATE'])) {
+                if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
                     throw (new \Exception( 'Invalid value specified for sch_end_date. Expecting date in YYYY-MM-DD format, such as 2014-01-01'));
                 }
-                if ($aData['SCH_START_DATE'] == "") {
+                if ($caseSchedulerData['SCH_START_DATE'] == "") {
                     throw (new \Exception( 'sch_start_date can not be null'));
                 }
             }
             if ($sOption == '2') {
-                $aData['SCH_EVERY_DAYS'] = 1;
+                $caseSchedulerData['SCH_EVERY_DAYS'] = 1;
             } else {
-                $aData['SCH_EVERY_DAYS'] = 0;
+                $caseSchedulerData['SCH_EVERY_DAYS'] = 0;
             }
             $oCaseScheduler = new \CaseScheduler();
-            $aData['SCH_UID'] = $sSchUID;
-            $aData['PRO_UID'] = $sProcessUID;
-            if ($aData['SCH_STATE'] == "" || $aData['SCH_STATE'] == null) {
+            $caseSchedulerData['SCH_UID'] = $sSchUID;
+            $caseSchedulerData['PRO_UID'] = $sProcessUID;
+            if ($caseSchedulerData['SCH_STATE'] == "" || $caseSchedulerData['SCH_STATE'] == null) {
                 throw (new \Exception( 'sch_state can not be null'));
             } else {
-                if ($aData['SCH_STATE']  == 'ACTIVE') {
-                    $aData['SCH_LAST_STATE']  = 'CREATED';
+                if ($caseSchedulerData['SCH_STATE']  == 'ACTIVE') {
+                    $caseSchedulerData['SCH_LAST_STATE']  = 'CREATED';
                 } else {
-                    $aData['SCH_LAST_STATE'] = 'ACTIVE';
+                    $caseSchedulerData['SCH_LAST_STATE'] = 'ACTIVE';
                 }
             }
-            $aData['USR_UID'] = $userUID;
-            $aData['SCH_DEL_USER_UID'] = $aData['USR_UID'];
-            $sTimeTmp = $aData['SCH_START_TIME'];
-            $nActualTime = $aData['SCH_START_TIME']; // time();
+            $caseSchedulerData['USR_UID'] = $userUID;
+            $caseSchedulerData['SCH_DEL_USER_UID'] = $caseSchedulerData['USR_UID'];
+            $sTimeTmp = $caseSchedulerData['SCH_START_TIME'];
+            $nActualTime = $caseSchedulerData['SCH_START_TIME']; // time();
             $sValue = '';
             $sDaysPerformTask = '';
             $sWeeks = '';
             $sMonths = '';
             $sStartDay = '';
-            $aData['SCH_DAYS_PERFORM_TASK'] = '';
+            $caseSchedulerData['SCH_DAYS_PERFORM_TASK'] = '';
             switch ($sOption) {
                 case '1': // If the option is zero, set by default 1
-                    $aData['SCH_DAYS_PERFORM_TASK'] = '1';
-                    $sValue = $aData['SCH_DAYS_PERFORM_TASK'];
+                    $caseSchedulerData['SCH_DAYS_PERFORM_TASK'] = '1';
+                    $sValue = $caseSchedulerData['SCH_DAYS_PERFORM_TASK'];
                     switch ($sValue) {
                         case '1':
-                            $aData['SCH_DAYS_PERFORM_TASK'] = $aData['SCH_DAYS_PERFORM_TASK'] . '|1';
-                            $aData['SCH_MONTHS'] ='0|0|0|0|0|0|0|0|0|0|0|0';
-                            $aData['SCH_WEEK_DAYS'] ='0|0|0|0|0|0|0';
+                            $caseSchedulerData['SCH_DAYS_PERFORM_TASK'] = $caseSchedulerData['SCH_DAYS_PERFORM_TASK'] . '|1';
+                            $caseSchedulerData['SCH_MONTHS'] ='0|0|0|0|0|0|0|0|0|0|0|0';
+                            $caseSchedulerData['SCH_WEEK_DAYS'] ='0|0|0|0|0|0|0';
                             break;
                         case '2':
-                            $aData['SCH_OPTION'] = '2';
-                            $aData['SCH_EVERY_DAYS'] = '1'; //check
-                            $aData['SCH_WEEK_DAYS'] = '1|2|3|4|5|'; //check
+                            $caseSchedulerData['SCH_OPTION'] = '2';
+                            $caseSchedulerData['SCH_EVERY_DAYS'] = '1'; //check
+                            $caseSchedulerData['SCH_WEEK_DAYS'] = '1|2|3|4|5|'; //check
                             break;
                         case '3': // Every [n] Days
-                            $sDaysPerformTask = $aData['SCH_DAYS_PERFORM_TASK'];
-                            $aData['SCH_DAYS_PERFORM_TASK'] = $aData['SCH_DAYS_PERFORM_TASK'];
+                            $sDaysPerformTask = $caseSchedulerData['SCH_DAYS_PERFORM_TASK'];
+                            $caseSchedulerData['SCH_DAYS_PERFORM_TASK'] = $caseSchedulerData['SCH_DAYS_PERFORM_TASK'];
                             break;
                     }
                     break;
                 case '2': // If the option is zero, set by default 1
-                    if ($aData['SCH_WEEK_DAYS'] == "") {
+                    if ($caseSchedulerData['SCH_WEEK_DAYS'] == "") {
                         throw (new \Exception( 'sch_week_days can not be null'));
                     } else {
-                        $weeks = $aData['SCH_WEEK_DAYS'];
+                        $weeks = $caseSchedulerData['SCH_WEEK_DAYS'];
                         $weeks = explode("|", $weeks);
                         foreach ($weeks as $row) {
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7") {
-                                $aData['SCH_WEEK_DAYS'] = $aData['SCH_WEEK_DAYS'];
+                                $caseSchedulerData['SCH_WEEK_DAYS'] = $caseSchedulerData['SCH_WEEK_DAYS'];
                             } else {
                                 throw (new \Exception( 'Invalid value specified for sch_week_days'));
                             }
                         }
                     }
-                    $aData['SCH_MONTHS'] ='0|0|0|0|0|0|0|0|0|0|0|0';
-                    if (empty( $aData['SCH_EVERY_DAYS'] )) {
+                    $caseSchedulerData['SCH_MONTHS'] ='0|0|0|0|0|0|0|0|0|0|0|0';
+                    if (empty( $caseSchedulerData['SCH_EVERY_DAYS'] )) {
                         $nEveryDays = 1;
                     } else {
-                        $nEveryDays = $aData['SCH_EVERY_DAYS'];
+                        $nEveryDays = $caseSchedulerData['SCH_EVERY_DAYS'];
                     }
-                    $aData['SCH_EVERY_DAYS'] = $nEveryDays;
-                    if (! empty( $aData['SCH_WEEK_DAYS'] )) {
-                        $aWeekDays = $aData['SCH_WEEK_DAYS'];
+                    $caseSchedulerData['SCH_EVERY_DAYS'] = $nEveryDays;
+                    if (! empty( $caseSchedulerData['SCH_WEEK_DAYS'] )) {
+                        $aWeekDays = $caseSchedulerData['SCH_WEEK_DAYS'];
                     }
-                    $sStartTime = $aData['SCH_START_TIME'];
-                    $sWeeks = $aData['SCH_WEEK_DAYS'] . '|';
+                    $sStartTime = $caseSchedulerData['SCH_START_TIME'];
+                    $sWeeks = $caseSchedulerData['SCH_WEEK_DAYS'] . '|';
                     break;
                 case '3':
-                    $nStartDay = $aData['SCH_START_DAY'];
+                    $nStartDay = $caseSchedulerData['SCH_START_DAY'];
                     if ($nStartDay == "") {
                         throw (new \Exception( 'sch_start_day can not be null'));
                     }
                     if ($nStartDay == 1) {
-                        if ($aData['SCH_START_DAY_OPT_1'] == "") {
+                        if ($caseSchedulerData['SCH_START_DAY_OPT_1'] == "") {
                             throw (new \Exception( 'sch_start_day_opt_1 can not be null'));
                         }
-                        $temp = $aData['SCH_START_DAY_OPT_1'];
+                        $temp = $caseSchedulerData['SCH_START_DAY_OPT_1'];
                         $temp = (int)$temp;
                         if ($temp >= 1 && $temp <= 31) {
-                            $aData['SCH_START_DAY_OPT_1'] = $aData['SCH_START_DAY_OPT_1'];
+                            $caseSchedulerData['SCH_START_DAY_OPT_1'] = $caseSchedulerData['SCH_START_DAY_OPT_1'];
                         } else {
                             throw (new \Exception( 'Invalid value specified for sch_start_day_opt_1. Must be between 1 and 31'));
                         }
-                        $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_1'];
+                        $caseSchedulerData['SCH_START_DAY'] = $nStartDay . '|' . $caseSchedulerData['SCH_START_DAY_OPT_1'];
                     } else {
-                        if ($aData['SCH_START_DAY_OPT_2'] == "") {
+                        if ($caseSchedulerData['SCH_START_DAY_OPT_2'] == "") {
                             throw (new \Exception( 'sch_start_day_opt_2 can not be null'));
                         }
-                        $aData['SCH_START_DAY'] = $nStartDay . '|' . $aData['SCH_START_DAY_OPT_2'];
-                            $optionTwo = $aData['SCH_START_DAY_OPT_2']{0};
+                        $caseSchedulerData['SCH_START_DAY'] = $nStartDay . '|' . $caseSchedulerData['SCH_START_DAY_OPT_2'];
+                            $optionTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{0};
                         if ($optionTwo == "1" || $optionTwo == "2" || $optionTwo == "3" || $optionTwo == "4" || $optionTwo == "5") {
-                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                            $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
                             throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
                         }
-                        $pipelineTwo = $aData['SCH_START_DAY_OPT_2']{1};
+                        $pipelineTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{1};
                         if ($pipelineTwo == "|") {
-                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                            $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
                             throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
                         }
-                        $dayTwo = $aData['SCH_START_DAY_OPT_2']{2};
+                        $dayTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{2};
                         if ($dayTwo == "1" || $dayTwo == "2" || $dayTwo == "3" || $dayTwo == "4" || $dayTwo == "5" || $dayTwo == "6" || $dayTwo == "7") {
-                            $aData['SCH_START_DAY_OPT_2'] = $aData['SCH_START_DAY_OPT_2'];
+                            $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
                             throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
                         }
@@ -691,22 +695,22 @@ class CaseScheduler
                     if ($nStartDay == "") {
                         throw (new \Exception( 'sch_start_day can not be null'));
                     }
-                    if ($aData['SCH_MONTHS'] == "") {
+                    if ($caseSchedulerData['SCH_MONTHS'] == "") {
                          throw (new \Exception( 'sch_months can not be null'));
                     }
-                    if (! empty( $aData['SCH_MONTHS'] )) {
-                        $aMonths = $aData['SCH_MONTHS'];
+                    if (! empty( $caseSchedulerData['SCH_MONTHS'] )) {
+                        $aMonths = $caseSchedulerData['SCH_MONTHS'];
                         $aMonths = explode("|", $aMonths);
                         foreach ($aMonths as $row) {
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7"|| $row == "8" || $row == "9" || $row == "10"|| $row == "11" || $row == "12") {
-                                $aData['SCH_MONTHS'] = $aData['SCH_MONTHS'];
+                                $caseSchedulerData['SCH_MONTHS'] = $caseSchedulerData['SCH_MONTHS'];
                             } else {
                                 throw (new \Exception( 'Invalid value specified for sch_months'));
                             }
                         }
                     }
-                    $sMonths = $aData['SCH_MONTHS'];
-                    $sStartDay = $aData['SCH_START_DAY'];
+                    $sMonths = $caseSchedulerData['SCH_MONTHS'];
+                    $sStartDay = $caseSchedulerData['SCH_START_DAY'];
                     $sValue = $nStartDay;
                     break;
             }
@@ -715,9 +719,9 @@ class CaseScheduler
                 if ($sStartDay == '') {
                     $sStartDay = date('Y-m-d');
                 } else {
-                    $size = strlen($aData['SCH_START_DAY']);
+                    $size = strlen($caseSchedulerData['SCH_START_DAY']);
                     if ($size > 4) {
-                        $aaStartDay = explode( "|", $aData['SCH_START_DAY'] );
+                        $aaStartDay = explode( "|", $caseSchedulerData['SCH_START_DAY'] );
                         $aaStartDay[0] = $aaStartDay[0];
                         $aaStartDay[1] = $aaStartDay[1];
                         $aaStartDay[2]= ($aaStartDay[2] == 7 ? 1 : $aaStartDay[2]);
@@ -726,75 +730,75 @@ class CaseScheduler
                 }
                 $dCurrentDay = date("d");
                 $dCurrentMonth = date("m");
-                $aStartDay = explode( "|", $aData['SCH_START_DAY'] );
+                $aStartDay = explode( "|", $caseSchedulerData['SCH_START_DAY'] );
                 $sDateTmp = '';
                 if ($sOption == '3' && $aStartDay[0] == '1') {
                     $monthsArray = explode( "|", $sMonths );
                     foreach ($monthsArray as $row) {
                         if ($dCurrentMonth == $row && $dCurrentDay < $aStartDay[1]) {
-                            $startTime = $aData['SCH_START_TIME'] . ":00";
-                            $aData['SCH_TIME_NEXT_RUN'] = date('Y') . '-' . $row . '-' . $aStartDay[1] . ' ' . $startTime;
+                            $startTime = $caseSchedulerData['SCH_START_TIME'] . ":00";
+                            $caseSchedulerData['SCH_TIME_NEXT_RUN'] = date('Y') . '-' . $row . '-' . $aStartDay[1] . ' ' . $startTime;
                             break;
                         } else {
-                            $aData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
+                            $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
                         }
                     }
                 } else {
-                    $aData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
+                    $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $oCaseScheduler->updateNextRun( $sOption, $sValue, $nActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths, $sDateTmp );
                 }
             } else {
                 if ($sOption == '4') {
                     $sDateTmp = date('Y-m-d');
-                    $aData['SCH_START_TIME'] = date('Y-m-d', strtotime( $sDateTmp )) . ' ' . date('H:i:s', strtotime( $sTimeTmp ));
-                    $aData['SCH_START_DATE'] = $aData['SCH_START_TIME'];
-                    $aData['SCH_END_DATE'] = $aData['SCH_START_TIME'];
+                    $caseSchedulerData['SCH_START_TIME'] = date('Y-m-d', strtotime( $sDateTmp )) . ' ' . date('H:i:s', strtotime( $sTimeTmp ));
+                    $caseSchedulerData['SCH_START_DATE'] = $caseSchedulerData['SCH_START_TIME'];
+                    $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_START_TIME'];
                 }
-                $aData['SCH_TIME_NEXT_RUN'] = $aData['SCH_START_TIME'];
+                $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $caseSchedulerData['SCH_START_TIME'];
                 if ($sOption == '5') {
-                    if ($aData['SCH_START_DATE'] != '') {
-                        $sDateTmp = $aData['SCH_START_DATE'];
+                    if ($caseSchedulerData['SCH_START_DATE'] != '') {
+                        $sDateTmp = $caseSchedulerData['SCH_START_DATE'];
                     } else {
                         $sDateTmp = date('Y-m-d');
-                        $aData['SCH_START_DATE'] = $sDateTmp;
+                        $caseSchedulerData['SCH_START_DATE'] = $sDateTmp;
                     }
-                    $aData['SCH_END_DATE'] = date('Y-m-d', strtotime($sDateTmp)) . ' ' . date('H:i:s', strtotime($sTimeTmp));
-                    $aData['SCH_START_TIME'] = time();
-                    $aData['SCH_START_DATE'] = $aData['SCH_START_TIME'];
-                    if ($aData['SCH_REPEAT_EVERY'] == "") {
+                    $caseSchedulerData['SCH_END_DATE'] = date('Y-m-d', strtotime($sDateTmp)) . ' ' . date('H:i:s', strtotime($sTimeTmp));
+                    $caseSchedulerData['SCH_START_TIME'] = time();
+                    $caseSchedulerData['SCH_START_DATE'] = $caseSchedulerData['SCH_START_TIME'];
+                    if ($caseSchedulerData['SCH_REPEAT_EVERY'] == "") {
                         throw (new \Exception( 'sch_repeat_every can not be null'));
                     }
                     $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
-                    if (!preg_match($patternHour, $aData['SCH_REPEAT_EVERY'])) {
+                    if (!preg_match($patternHour, $caseSchedulerData['SCH_REPEAT_EVERY'])) {
                         throw (new \Exception( 'Invalid value specified for sch_repeat_every. Expecting time in HH.MM format'));
                     }
-                    $nextRun = $aData['SCH_REPEAT_EVERY'] * 60 * 60;
-                    $aData['SCH_REPEAT_EVERY'] = $aData['SCH_REPEAT_EVERY'];
-                    $date = $aData['SCH_START_TIME'];
+                    $nextRun = $caseSchedulerData['SCH_REPEAT_EVERY'] * 60 * 60;
+                    $caseSchedulerData['SCH_REPEAT_EVERY'] = $caseSchedulerData['SCH_REPEAT_EVERY'];
+                    $date = $caseSchedulerData['SCH_START_TIME'];
                     $date += $nextRun;
                     $date = date("Y-m-d H:i", $date);
-                    $aData['SCH_TIME_NEXT_RUN'] = $date;
+                    $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $date;
                 }
             }
-            if (trim( $aData['SCH_END_DATE'] ) != '') {
-                $aData['SCH_END_DATE'] = $aData['SCH_END_DATE'];
+            if (trim( $caseSchedulerData['SCH_END_DATE'] ) != '') {
+                $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_END_DATE'];
             }
-            if (! empty( $aData['SCH_REPEAT_TASK_CHK'] )) {
-                $nOptEvery = $aData['SCH_REPEAT_EVERY_OPT'];
+            if (! empty( $caseSchedulerData['SCH_REPEAT_TASK_CHK'] )) {
+                $nOptEvery = $caseSchedulerData['SCH_REPEAT_EVERY_OPT'];
                 if ($nOptEvery == 2) {
-                    $aData['SCH_REPEAT_EVERY'] = $aData['SCH_REPEAT_EVERY'] * 60;
+                    $caseSchedulerData['SCH_REPEAT_EVERY'] = $caseSchedulerData['SCH_REPEAT_EVERY'] * 60;
                 } else {
-                    $aData['SCH_REPEAT_EVERY'] = $aData['SCH_REPEAT_EVERY'];
+                    $caseSchedulerData['SCH_REPEAT_EVERY'] = $caseSchedulerData['SCH_REPEAT_EVERY'];
                 }
             }
-            if ((isset( $aData['CASE_SH_PLUGIN_UID'] )) && ($aData['CASE_SH_PLUGIN_UID'] != "")) {
-                $aData['CASE_SH_PLUGIN_UID'] = $aData['CASE_SH_PLUGIN_UID'];
+            if ((isset( $caseSchedulerData['CASE_SH_PLUGIN_UID'] )) && ($caseSchedulerData['CASE_SH_PLUGIN_UID'] != "")) {
+                $caseSchedulerData['CASE_SH_PLUGIN_UID'] = $caseSchedulerData['CASE_SH_PLUGIN_UID'];
             }
             // check this data
-            $aData['SCH_REPEAT_UNTIL'] = '';
-            $aData['SCH_REPEAT_STOP_IF_RUNNING'] = '0';
-            $aData['CASE_SH_PLUGIN_UID'] = null;
+            $caseSchedulerData['SCH_REPEAT_UNTIL'] = '';
+            $caseSchedulerData['SCH_REPEAT_STOP_IF_RUNNING'] = '0';
+            $caseSchedulerData['CASE_SH_PLUGIN_UID'] = null;
             //
-            $oCaseScheduler->Update($aData);
+            $oCaseScheduler->Update($caseSchedulerData);
             $oCriteria = $this->getCaseScheduler($sProcessUID, $sSchUID);
             return $oCriteria;
         } catch (\Exception $e) {

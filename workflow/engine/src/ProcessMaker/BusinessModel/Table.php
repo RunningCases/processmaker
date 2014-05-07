@@ -973,7 +973,7 @@ class Table
     {
         $rep_tab_name = trim($rep_tab_name);
         if ((strpos($rep_tab_name, ' ')) || (strlen($rep_tab_name) < 4)) {
-            throw (new \Exception("The property rep_tab_name: '$rep_tab_name' is incorrect."));
+            throw (new \Exception("The property pmt_tab_name: '$rep_tab_name' is incorrect."));
         }
         $rep_tab_name = G::toUpper($rep_tab_name);
         if (substr($rep_tab_name, 0, 4) != 'PMT_') {

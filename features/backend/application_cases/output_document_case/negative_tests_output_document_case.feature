@@ -13,8 +13,7 @@ Scenario Outline: Pull information of an inexistent output document. should retu
     And the response charset is "UTF-8"
     And the type is "array"
     
-
     Examples:
 
-    | test_description                         | output-document                   | app_doc_uid                      | app_doc_filename             | doc_uid                          | app_doc_version | app_doc_create_date | app_doc_create_user     | app_doc_type | app_doc_index | app_doc_link                                                    |
-    | Get Input "Desert.jpg"                   | 6075490825331a1c5eebff9015468244 | 6075490825331a1c5eebff9015468244 | Desert.jpg                   | 68671480353319e5e1dee74089764900 | 1               | 2014-03-25 11:33:25 | , Administrator (admin) | OUTPUT        | 1             | cases/cases_ShowDocument?a=6075490825331a1c5eebff9015468244&v=1 |
+    | test_description       | output-document                  | app_doc_uid                      | app_doc_filename | doc_uid                          | app_doc_version | app_doc_create_date | app_doc_create_user     | app_doc_type | app_doc_index | app_doc_link                                                    |
+    | Get Input "Desert.jpg" | 6075490825eebff9015468244        | 6075490825331a1c5eebff9015468244 | Desert.jpg       | 68671480353319e5e1dee74089764900 | 1               | 2014-03-25 11:33:25 | , Administrator (admin) | OUTPUT       | 1             | cases/cases_ShowDocument?a=6075490825331a1c5eebff9015468244&v=1 |
