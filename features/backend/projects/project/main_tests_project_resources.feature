@@ -24,7 +24,7 @@ Scenario: Get definition of a project activity for obtent definition
    
 
 Scenario Outline: Create new Projects
-      Given POST data from file "<project_template>"
+    Given POST data from file "<project_template>"
     And I request "projects"
     Then the response status code should be 201
     And the response charset is "UTF-8"
@@ -45,7 +45,20 @@ Scenario Outline: Create new Projects
     | Create a new process with parallel by evaluation derivation  | 3                      | process_template_parallel_por_evaluation.json |
     | Create a new process with selection derivation               | 4                      | process_template_selection.json               |
     | Create a new process with sequencial derivation              | 5                      | process_template_sequencial.json              |
+    | Create a new process Complete                                | 6                      | process_template_complete.json                |
 
+
+Scenario Outline: Create new Projects with same name (negative test)
+    Given POST data from file "<project_template>"
+    And I request "projects"
+    Then the response status code should be 400
+    And the response status message should have the following text "<already_exists>"
+        
+    Examples:
+
+    | Description                          | project_template                 |
+    | Create a new process with same name  | process_template_evaluation.json |
+    
 
 Scenario: Get a list of projects
     Given I request "project"
@@ -706,6 +719,7 @@ Scenario Outline: Delete a Project activity created previously in this script
     | 3                      |
     | 4                      |
     | 5                      |
+    | 6                      |
 
 
 Scenario: Get a list of projects

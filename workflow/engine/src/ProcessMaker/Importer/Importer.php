@@ -44,8 +44,8 @@ abstract class Importer
                 if ($this->targetExists()) {
                     throw new \Exception(sprintf(
                         "Project already exists, you need set an action to continue. " .
-                        "Available actions: [%s|%s|%s].", self::IMPORT_OPTION_CREATE_NEW,
-                        self::IMPORT_OPTION_OVERWRITE, self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW
+                        "Available actions: [%s|%s|%s|%s].", self::IMPORT_OPTION_CREATE_NEW,
+                        self::IMPORT_OPTION_OVERWRITE, self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW, self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW
                     ), self::IMPORT_STAT_TARGET_ALREADY_EXISTS);
                 }
                 $generateUid = false;
@@ -206,7 +206,7 @@ abstract class Importer
 
         $data = $_FILES[$varName];
 
-        if ($data["error"] != 0){
+        if ($data["error"] != 0) {
             throw new \Exception("Error while uploading file. Error code: {$data["error"]}");
         }
 
@@ -263,7 +263,9 @@ abstract class Importer
                     $basePath = "";
             }
 
-            if (empty($basePath)) continue;
+            if (empty($basePath)) {
+                continue;
+            }
 
             foreach ($files as $file) {
                 $filename = $basePath . $file["file_path"];
@@ -366,6 +368,10 @@ abstract class Importer
             $result = $workflow->updateTask($arrayTaskData["TAS_UID"], $arrayTaskData);
         }
 
+        unset($arrayWorkflowTables["process"]["PRO_CREATE_USER"]);
+        unset($arrayWorkflowTables["process"]["PRO_CREATE_DATE"]);
+        unset($arrayWorkflowTables["process"]["PRO_UPDATE_DATE"]);
+
         $workflow->update($arrayWorkflowTables["process"]);
 
         //Return
@@ -375,21 +381,21 @@ abstract class Importer
     /**
      * Imports a Project sent through the POST method ($_FILES)
      *
-     * @param array $arrayData      Data
-     * @param array $arrayFieldName The field's names
+     * @param array  $arrayData      Data
+     * @param string $option         Option ("CREATE", "OVERWRITE", "DISABLE", "KEEP")
+     * @param array  $arrayFieldName The field's names
      *
      * return array Returns the data sent and the unique id of Project
      */
-    public function importPostFile($arrayData, $arrayFieldName = array())
+    public function importPostFile(array $arrayData, $option = "CREATE", array $arrayFieldName = array())
     {
         try {
             //Set data
-            $arrayFieldName["projectFile"] = (isset($arrayFieldName["projectFile"]))? $arrayFieldName["projectFile"] : "PRJ_FILE";
+            $arrayFieldName["projectFile"] = (isset($arrayFieldName["projectFile"]))? $arrayFieldName["projectFile"] : "PROJECT_FILE";
             $arrayFieldName["option"] = (isset($arrayFieldName["option"]))? $arrayFieldName["option"] : "OPTION";
 
             $arrayFieldDefinition = array(
-                $arrayFieldName["projectFile"] => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                                         "fieldNameAux" => "projectFile"),
-                $arrayFieldName["option"]      => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array("CREATE", "OVERWRITE", "DISABLE", "KEEP"), "fieldNameAux" => "option")
+                $arrayFieldName["projectFile"] => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "projectFile")
             );
 
             $arrayFieldNameForException = $arrayFieldName;
@@ -405,6 +411,9 @@ abstract class Importer
                 $arrayData[$arrayFieldName["projectFile"]] = $arrayData[$arrayFieldName["projectFile"]]["name"];
             }
 
+            $optionCaseUpper = (strtoupper($option) == $option)? true : false;
+            $option = strtoupper($option);
+
             //Verify data
             $process = new \ProcessMaker\BusinessModel\Process();
             $validator = new \ProcessMaker\BusinessModel\Validator();
@@ -414,6 +423,16 @@ abstract class Importer
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $arrayFieldDefinition, $arrayFieldNameForException, true);
 
+            $arrayOptionDefaultValues = array("CREATE", "OVERWRITE", "DISABLE", "KEEP");
+
+            if ($option . "" != "") {
+                if (!in_array($option, $arrayOptionDefaultValues, true)) {
+                    $strdv = implode("|", $arrayOptionDefaultValues);
+
+                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayFieldNameForException["option"], ($optionCaseUpper)? $strdv : strtolower($strdv)), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
+                }
+            }
+
             if ((isset($_FILES["filepmx"]) && pathinfo($_FILES["filepmx"]["name"], PATHINFO_EXTENSION) != "pmx") ||
                 (isset($arrayData[$arrayFieldName["projectFile"]]) && pathinfo($arrayData[$arrayFieldName["projectFile"]], PATHINFO_EXTENSION) != "pmx")
             ) {
@@ -421,19 +440,21 @@ abstract class Importer
             }
 
             //Set variables
-            $option = self::IMPORT_OPTION_CREATE_NEW;
+            $opt = self::IMPORT_OPTION_CREATE_NEW; //CREATE
 
-            switch ((isset($arrayData[$arrayFieldName["option"]]))? $arrayData[$arrayFieldName["option"]] : "CREATE") {
+            switch ($option) {
                 case "OVERWRITE":
-                    $option = self::IMPORT_OPTION_OVERWRITE;
+                    $opt = self::IMPORT_OPTION_OVERWRITE;
                     break;
                 case "DISABLE":
-                    $option = self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW;
+                    $opt = self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW;
                     break;
                 case "KEEP":
-                    $option = self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW;
+                    $opt = self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW;
                     break;
             }
+
+            $option = $opt;
 
             if (isset($_FILES["filepmx"])) {
                 $this->setSaveDir(PATH_DOCUMENT . "input");
@@ -452,7 +473,9 @@ abstract class Importer
 
                 $arrayData = array_merge(array("PRJ_UID" => $projectUid), $arrayData);
             } catch (\Exception $e) {
-                throw (new \Exception("Project already exists"));
+                $msg = str_replace(array(self::IMPORT_OPTION_CREATE_NEW, self::IMPORT_OPTION_OVERWRITE, self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW, self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW), $arrayOptionDefaultValues, $e->getMessage());
+
+                throw (new \Exception($msg));
             }
 
             //Return

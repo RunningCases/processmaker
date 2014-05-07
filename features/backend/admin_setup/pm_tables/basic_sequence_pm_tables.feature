@@ -195,7 +195,7 @@ Scenario Outline: Delete a pm table of a pmtable
 
 Scenario Outline: Delete a data of a pmtable
     Given that I want to delete a resource with the key "pmt_uid" stored in session array as variable "pmt_uid_<pmt_uid_number>"
-    And I request "pmtable/<pmt_uid>/data/CAMPO1/updatevalor2"
+    And I request "pmtable/<pmt_uid>/data/CAMPO1/valor1"
     And the content type is "application/json"
     Then the response status code should be 200
     And the response charset is "UTF-8"
