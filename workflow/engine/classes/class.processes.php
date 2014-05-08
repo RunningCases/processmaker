@@ -1719,11 +1719,12 @@ class Processes
             }
         }
 
-        if (isset($oData->process["PRO_TRI_DELETED"])) {
-            $oData->process["PRO_TRI_DELETED"] = $map[$oData->process["PRO_TRI_DELETED"]];
-            $oData->process["PRO_TRI_CANCELED"] = $map[$oData->process["PRO_TRI_CANCELED"]];
-            $oData->process["PRO_TRI_PAUSED"] = $map[$oData->process["PRO_TRI_PAUSED"]];
-            $oData->process["PRO_TRI_REASSIGNED"] = $map[$oData->process["PRO_TRI_REASSIGNED"]];
+        foreach (array("PRO_TRI_DELETED", "PRO_TRI_CANCELED", "PRO_TRI_PAUSED", "PRO_TRI_REASSIGNED") as $value) {
+            $key = $value;
+
+            if (isset($map[$oData->process[$key]])) {
+                $oData->process[$key] = $map[$oData->process[$key]];
+            }
         }
     }
 
@@ -3623,7 +3624,8 @@ class Processes
         $this->createProcessCategoryRow( isset( $oData->processCategory ) ? $oData->processCategory : null );
 
         // create the process
-        //$this->createProcessRow( $oData->process );
+        $this->createProcessRow($oData->process);
+
         $this->createTaskRows( $oData->tasks );
         //it was commented becuase it seems to be working fine
         //$this->createEventRows(isset($oData->event) ? $oData->event : array());
