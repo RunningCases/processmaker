@@ -462,7 +462,10 @@ class BpmnWorkflow extends Project\Bpmn
                                     $condition = array_key_exists('FLO_CONDITION', $gatewayFlow) ? $gatewayFlow["FLO_CONDITION"] : '';
 
                                     if ($gatewayFlow['FLO_ELEMENT_DEST_TYPE'] == 'bpmnEvent') {
-                                        $this->wp->addRoute($activity["ACT_UID"], -1, $routeType, $condition);
+                                        $event = \BpmnEventPeer::retrieveByPK($gatewayFlow['FLO_ELEMENT_DEST']);
+                                        if ($event->getEvnType() == "END") {
+                                            $this->wp->addRoute($activity["ACT_UID"], -1, $routeType, $condition);
+                                        }
                                     } else {
                                         $this->wp->addRoute($activity["ACT_UID"], $gatewayFlow['FLO_ELEMENT_DEST'], $routeType, $condition);
                                     }
@@ -490,6 +493,34 @@ class BpmnWorkflow extends Project\Bpmn
 
     public static function createFromStruct(array $projectData, $generateUid = true)
     {
+        $projectData["prj_name"] = trim($projectData["prj_name"]);
+        if ($projectData["prj_name"] == '') {
+            throw new \Exception("`prj_name` is required but it is empty.");
+        }
+        if (\Process::existsByProTitle($projectData["prj_name"])) {
+            throw new \Exception("Project with name: {$projectData["prj_name"]}, already exists.");
+        }
+        $activities = $projectData['diagrams']['0']['activities'];
+        foreach($activities as $value) {
+            if (empty($value['act_name'])) {
+                throw new \Exception("For activity: {$value['act_uid']} `act_name` is required but missing.");
+            }
+            if (empty($value['act_type'])) {
+                throw new \Exception("For activity: {$value['act_uid']} `act_type` is required but missing.");
+            }
+        }
+        $events = $projectData['diagrams']['0']['events'];
+        foreach($events as $value) {
+            if (empty($value['evn_name'])) {
+                throw new \Exception("For event: {$value['evn_uid']} `evn_name` is required but missing.");
+            }
+            if (empty($value['evn_type'])) {
+                throw new \Exception("For event: {$value['evn_uid']} `evn_type` is required but missing.");
+            }
+            if (empty($value['evn_marker'])) {
+                throw new \Exception("For event: {$value['evn_uid']} `evn_marker` is required but missing.");
+            }
+        }
         $bwp = new self;
         $result = array();
         $data = array();
