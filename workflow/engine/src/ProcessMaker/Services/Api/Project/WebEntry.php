@@ -11,21 +11,51 @@ use \Luracast\Restler\RestException;
  */
 class WebEntry extends Api
 {
+    private $webEntry;
+
     /**
-     * @url GET /:prj_uid/web-entry/:tas_uid/:dyn_uid
+     * Constructor of the class
      *
-     * @param string $dyn_uid {@min 32}{@max 32}
-     * @param string $tas_uid {@min 32}{@max 32}
-     * @param string $prj_uid {@min 32}{@max 32}
+     * return void
      */
-    public function doGetWebEntry($dyn_uid, $tas_uid, $prj_uid)
+    public function __construct()
     {
         try {
-            $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
-            $webEntry->setFormatFieldNameInUppercase(false);
-            $webEntry->setArrayFieldNameForException(array("processUid" => "prj_uid"));
+            $this->webEntry = new \ProcessMaker\BusinessModel\WebEntry();
 
-            $response = $webEntry->getWebEntry($prj_uid, $tas_uid, $dyn_uid);
+            $this->webEntry->setFormatFieldNameInUppercase(false);
+            $this->webEntry->setArrayFieldNameForException(array("processUid" => "prj_uid"));
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:prj_uid/web-entries
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetWebEntries($prj_uid)
+    {
+        try {
+            $response = $this->webEntry->getWebEntries($prj_uid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:prj_uid/web-entry/:we_uid
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     * @param string $we_uid  {@min 32}{@max 32}
+     */
+    public function doGetWebEntry($prj_uid, $we_uid)
+    {
+        try {
+            $response = $this->webEntry->getWebEntry($we_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -44,11 +74,7 @@ class WebEntry extends Api
     public function doPostWebEntry($prj_uid, $request_data)
     {
         try {
-            $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
-            $webEntry->setFormatFieldNameInUppercase(false);
-            $webEntry->setArrayFieldNameForException(array("processUid" => "prj_uid"));
-
-            $arrayData = $webEntry->create($prj_uid, $request_data);
+            $arrayData = $this->webEntry->create($prj_uid, $this->getUserId(), $request_data);
 
             $response = $arrayData;
 
@@ -59,20 +85,31 @@ class WebEntry extends Api
     }
 
     /**
-     * @url DELETE /:prj_uid/web-entry/:tas_uid/:dyn_uid
+     * @url PUT /:prj_uid/web-entry/:we_uid
      *
-     * @param string $dyn_uid {@min 32}{@max 32}
-     * @param string $tas_uid {@min 32}{@max 32}
-     * @param string $prj_uid {@min 32}{@max 32}
+     * @param string $prj_uid      {@min 32}{@max 32}
+     * @param string $we_uid       {@min 32}{@max 32}
+     * @param array  $request_data
      */
-    public function doDeleteWebEntry($dyn_uid, $tas_uid, $prj_uid)
+    public function doPutWebEntry($prj_uid, $we_uid, $request_data)
     {
         try {
-            $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
-            $webEntry->setFormatFieldNameInUppercase(false);
-            $webEntry->setArrayFieldNameForException(array("processUid" => "prj_uid"));
+            $arrayData = $this->webEntry->update($we_uid, $this->getUserId(), $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 
-            $webEntry->delete($prj_uid, $tas_uid, $dyn_uid);
+    /**
+     * @url DELETE /:prj_uid/web-entry/:we_uid
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     * @param string $we_uid  {@min 32}{@max 32}
+     */
+    public function doDeleteWebEntry($prj_uid, $we_uid)
+    {
+        try {
+            $this->webEntry->delete($we_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

@@ -704,7 +704,7 @@ class Task
             }
 
             return $arrayData;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
 
@@ -732,11 +732,11 @@ class Task
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -765,15 +765,6 @@ class Task
             foreach ($aAux as $aGroup) {
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
-            $groups = new \Groupwf();
-            $totalCount = 0;
-            $criteria = new \Criteria( 'workflow' );
-            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
-            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
-            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
-            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            $totalRows = \GroupwfPeer::doCount( $criteria );
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
@@ -788,14 +779,11 @@ class Task
             }
             $oDataset = \GroupwfPeer::doSelectRS( $criteria );
             $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
-            $processes = Array ();
-            $uids = array ();
             $groups = array ();
-            $aGroups = array ();
             while ($oDataset->next()) {
                 $groups[] = $oDataset->getRow();
             }
-            $result = array ('rows' => $groups,'totalCount' => $totalRows);
+            $result = array ('rows' => $groups);
             foreach ($result['rows'] as $results) {
                 if (in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
@@ -809,7 +797,7 @@ class Task
                     if ($type == '' || $type == 'group') {
                         $aUsers[] = array('aas_uid' => $results['GRP_UID'],
                                           'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                           ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                           ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                           'aas_lastname' => "",
@@ -849,14 +837,14 @@ class Task
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for `start`.'));
+                    throw (new \Exception( 'Invalid value specified for start.'));
                 }
             } else {
                 $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for `limit`.'));
+                    throw (new \Exception( 'Invalid value specified for limit.'));
                 } else {
                     if ($limit == 0) {
                         return array();
@@ -867,7 +855,7 @@ class Task
             }
             $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -894,14 +882,13 @@ class Task
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
             $iType = 1;
-            $aUsers = array();
             $oTasks = new \Tasks();
             $aAux = $oTasks->getGroupsOfTask($sTaskUID, $iType);
             $aUIDS1 = array();
@@ -914,9 +901,6 @@ class Task
                 $aUIDS2[] = $aUser['USR_UID'];
             }
             $aUsers = array();
-            $sDelimiter = \DBAdapter::getStringDelimiter();
-            $groups = new \Groupwf();
-            $result = $groups->getAllGroup($start, $limit, $filter);
             $c = 0;
             $oTasks = new \Tasks();
             $aAux = $oTasks->getGroupsOfTask($sTaskUID, 1);
@@ -924,15 +908,6 @@ class Task
             foreach ($aAux as $aGroup) {
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
-            $groups = new \Groupwf();
-            $totalCount = 0;
-            $criteria = new \Criteria( 'workflow' );
-            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
-            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
-            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
-            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            $totalRows = \GroupwfPeer::doCount( $criteria );
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
@@ -947,14 +922,11 @@ class Task
             }
             $oDataset = \GroupwfPeer::doSelectRS( $criteria );
             $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
-            $processes = Array ();
-            $uids = array ();
             $groups = array ();
-            $aGroups = array ();
             while ($oDataset->next()) {
                 $groups[] = $oDataset->getRow();
             }
-            $result = array ('rows' => $groups,'totalCount' => $totalRows);
+            $result = array ('rows' => $groups);
             foreach ($result['rows'] as $results) {
                 if (! in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
@@ -968,7 +940,7 @@ class Task
                     if ($type == '' || $type == 'group') {
                         $aUsers[] = array('aas_uid' => $results['GRP_UID'],
                                           'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                           ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                           ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                           'aas_lastname' => "",
@@ -977,7 +949,6 @@ class Task
                     }
                 }
             }
-            $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\UsersPeer::USR_UID);
             $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
@@ -1004,14 +975,14 @@ class Task
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for `start`.'));
+                    throw (new \Exception( 'Invalid value specified for start.'));
                 }
             } else {
                 $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for `limit`.'));
+                    throw (new \Exception( 'Invalid value specified for limit.'));
                 } else {
                     if ($limit == 0) {
                         return array();
@@ -1022,7 +993,7 @@ class Task
             }
             $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -1043,11 +1014,11 @@ class Task
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
             $iType = 1;
             $aUsers = array();
@@ -1078,15 +1049,6 @@ class Task
             foreach ($aAux as $aGroup) {
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
-            $groups = new \Groupwf();
-            $totalCount = 0;
-            $criteria = new \Criteria( 'workflow' );
-            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
-            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
-            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
-            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            $totalRows = \GroupwfPeer::doCount( $criteria );
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
@@ -1099,14 +1061,11 @@ class Task
             $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
             $oDataset = \GroupwfPeer::doSelectRS( $criteria );
             $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
-            $processes = Array ();
-            $uids = array ();
             $groups = array ();
-            $aGroups = array ();
             while ($oDataset->next()) {
                 $groups[] = $oDataset->getRow();
             }
-            $result = array ('rows' => $groups,'totalCount' => $totalRows);
+            $result = array ('rows' => $groups);
             foreach ($result['rows'] as $results) {
                 if (in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
@@ -1117,14 +1076,14 @@ class Task
                     $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
-                    $aUsers[] = array('aas_uid' => $results['GRP_UID'],
-                                      'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
-                                      ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
-                                      ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
-                                      'aas_lastname' => "",
-                                      'aas_username' => "",
-                                      'aas_type' => "group" );
+                    $aUsers = array('aas_uid' => $results['GRP_UID'],
+                                    'aas_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
+                                    ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                    ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
+                                    ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
+                                    'aas_lastname' => "",
+                                    'aas_username' => "",
+                                    'aas_type' => "group" );
                 }
             }
             $oCriteria = new \Criteria('workflow');
@@ -1157,7 +1116,7 @@ class Task
             } else {
                 return $aUsers;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -1179,11 +1138,11 @@ class Task
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
             $iType = 1;
             $iRelation = '';
@@ -1232,7 +1191,7 @@ class Task
                                              'TU_RELATION' => 2));
                 }
             }
-        } catch ( Exception $e ) {
+        } catch ( \Exception $e ) {
             throw $e;
         }
     }
@@ -1251,11 +1210,11 @@ class Task
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
             $iType = 1;
             $iRelation = '';
@@ -1276,7 +1235,7 @@ class Task
             } else {
                 throw (new \Exception( 'This row does not exist!' ));
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -1303,11 +1262,11 @@ class Task
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -1336,15 +1295,6 @@ class Task
             foreach ($aAux as $aGroup) {
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
-            $groups = new \Groupwf();
-            $totalCount = 0;
-            $criteria = new \Criteria( 'workflow' );
-            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
-            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
-            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
-            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            $totalRows = \GroupwfPeer::doCount( $criteria );
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
@@ -1359,14 +1309,11 @@ class Task
             }
             $oDataset = \GroupwfPeer::doSelectRS( $criteria );
             $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
-            $processes = Array ();
-            $uids = array ();
             $groups = array ();
-            $aGroups = array ();
             while ($oDataset->next()) {
                 $groups[] = $oDataset->getRow();
             }
-            $result = array ('rows' => $groups,'totalCount' => $totalRows);
+            $result = array ('rows' => $groups);
             foreach ($result['rows'] as $results) {
                 if (in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
@@ -1380,7 +1327,7 @@ class Task
                     if ($type == '' || $type == 'group') {
                         $aUsers[] = array('ada_uid' => $results['GRP_UID'],
                                           'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                           ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                           ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                           'ada_lastname' => "",
@@ -1420,14 +1367,14 @@ class Task
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for `start`.'));
+                    throw (new \Exception( 'Invalid value specified for start.'));
                 }
             } else {
                 $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for `limit`.'));
+                    throw (new \Exception( 'Invalid value specified for limit.'));
                 } else {
                     if ($limit == 0) {
                         return array();
@@ -1438,7 +1385,7 @@ class Task
             }
             $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -1463,16 +1410,14 @@ class Task
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
-            $aUsers = array();
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
-
             $iType = 2;
             $oTasks = new \Tasks();
             $aAux = $oTasks->getGroupsOfTask($sTaskUID, $iType);
@@ -1486,9 +1431,6 @@ class Task
                 $aUIDS2[] = $aUser['USR_UID'];
             }
             $aUsers = array();
-            $sDelimiter = \DBAdapter::getStringDelimiter();
-            $groups = new \Groupwf();
-            $result = $groups->getAllGroup($start, $limit, $filter);
             $c = 0;
             $oTasks = new \Tasks();
             $aAux = $oTasks->getGroupsOfTask($sTaskUID, 2);
@@ -1496,15 +1438,6 @@ class Task
             foreach ($aAux as $aGroup) {
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
-            $groups = new \Groupwf();
-            $totalCount = 0;
-            $criteria = new \Criteria( 'workflow' );
-            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
-            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
-            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
-            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            $totalRows = \GroupwfPeer::doCount( $criteria );
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
@@ -1519,14 +1452,11 @@ class Task
             }
             $oDataset = \GroupwfPeer::doSelectRS( $criteria );
             $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
-            $processes = Array ();
-            $uids = array ();
             $groups = array ();
-            $aGroups = array ();
             while ($oDataset->next()) {
                 $groups[] = $oDataset->getRow();
             }
-            $result = array ('rows' => $groups,'totalCount' => $totalRows);
+            $result = array ('rows' => $groups);
             foreach ($result['rows'] as $results) {
                 if (! in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
@@ -1540,7 +1470,7 @@ class Task
                     if ($type == '' || $type == 'group') {
                         $aUsers[] = array('ada_uid' => $results['GRP_UID'],
                                           'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                               ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                          ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                           ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                           ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                           'ada_lastname' => "",
@@ -1549,7 +1479,6 @@ class Task
                     }
                 }
             }
-            $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\UsersPeer::USR_UID);
             $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
@@ -1576,14 +1505,14 @@ class Task
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for `start`.'));
+                    throw (new \Exception( 'Invalid value specified for start.'));
                 }
             } else {
                 $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for `limit`.'));
+                    throw (new \Exception( 'Invalid value specified for limit.'));
                 } else {
                     if ($limit == 0) {
                         return array();
@@ -1594,12 +1523,10 @@ class Task
             }
             $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
-
-
 
     /**
      * Return a single Adhoc user or group assigned to an activity
@@ -1617,11 +1544,11 @@ class Task
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
             $iType = 2;
             $aUsers = array();
@@ -1652,15 +1579,6 @@ class Task
             foreach ($aAux as $aGroup) {
                 $aUIDS1[] = $aGroup['GRP_UID'];
             }
-            $groups = new \Groupwf();
-            $totalCount = 0;
-            $criteria = new \Criteria( 'workflow' );
-            $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
-            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
-            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
-            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
-            $totalRows = \GroupwfPeer::doCount( $criteria );
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
@@ -1673,14 +1591,11 @@ class Task
             $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
             $oDataset = \GroupwfPeer::doSelectRS( $criteria );
             $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
-            $processes = Array ();
-            $uids = array ();
             $groups = array ();
-            $aGroups = array ();
             while ($oDataset->next()) {
                 $groups[] = $oDataset->getRow();
             }
-            $result = array ('rows' => $groups,'totalCount' => $totalRows);
+            $result = array ('rows' => $groups);
             foreach ($result['rows'] as $results) {
                 if (in_array($results['GRP_UID'], $aUIDS1)) {
                     $c++;
@@ -1693,7 +1608,7 @@ class Task
                     $aRow2 = $oDataset2->getRow();
                     $aUsers[] = array('ada_uid' => $results['GRP_UID'],
                                       'ada_name' => (!isset($aRow2['GROUP_INACTIVE']) ? $results['GRP_TITLE'] .
-                                           ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
+                                      ' (' . $aRow2['MEMBERS_NUMBER'] . ' ' .
                                       ((int) $aRow2['MEMBERS_NUMBER'] == 1 ? \G::LoadTranslation('ID_USER') : \G::LoadTranslation('ID_USERS')).
                                       ')' . '' : $results['GRP_TITLE'] . ' ' . $aRow2['GROUP_INACTIVE']),
                                       'ada_lastname' => "",
@@ -1731,7 +1646,7 @@ class Task
             } else {
                 return $aUsers;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -1753,11 +1668,11 @@ class Task
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
             $iType = 2;
             $iRelation = '';
@@ -1806,7 +1721,7 @@ class Task
                                              'TU_RELATION' => 2));
                 }
             }
-        } catch ( Exception $e ) {
+        } catch ( \Exception $e ) {
             throw $e;
         }
     }
@@ -1825,11 +1740,11 @@ class Task
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
             $iType = 2;
             $iRelation = '';
@@ -1850,7 +1765,7 @@ class Task
             } else {
                 throw (new \Exception( 'This row does not exist!' ));
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -1952,11 +1867,11 @@ class Task
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
             $aUsers = array();
             $oTasks = new \Tasks();
@@ -1979,10 +1894,9 @@ class Task
                     $oGroupCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
                     $oGroupCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
                     if ($filter != '') {
-                        $oGroupCriteria->add($oGroupCriteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%$filter%",
-                                             \Criteria::LIKE)->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME,
-                                             "%$filter%", \Criteria::LIKE))->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME,
-                                             "%$filter%", \Criteria::LIKE)));
+                        $oGroupCriteria->add($oGroupCriteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE)
+                                             ->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE))
+                                             ->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE)));
                     }
                     $oGroupCriteria->add(\UsersPeer::USR_UID, $aGroupRow["USR_UID"]);
                     $oUserDataset = \UsersPeer::doSelectRS($oGroupCriteria);
@@ -2035,14 +1949,14 @@ class Task
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for `start`.'));
+                    throw (new \Exception( 'Invalid value specified for start.'));
                 }
             } else {
                 $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for `limit`.'));
+                    throw (new \Exception( 'Invalid value specified for limit.'));
                 } else {
                     if ($limit == 0) {
                         return array();
@@ -2053,7 +1967,7 @@ class Task
             }
             $aUsersGroups = $this->arrayPagination($aUsersGroups, $start, $limit);
             return $aUsersGroups;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -2077,11 +1991,11 @@ class Task
         try {
             $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for `prj_uid`: '. $sProcessUID .' does not correspond to a registered process'));
+                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
             if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for `act_uid`: '. $sTaskUID .' does not correspond to a registered activity'));
+                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
             }
             $aUsers = array();
             $oTasks = new \Tasks();
@@ -2104,10 +2018,9 @@ class Task
                     $oGroupCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
                     $oGroupCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
                     if ($filter != '') {
-                        $oGroupCriteria->add($oGroupCriteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%$filter%",
-                            \Criteria::LIKE)->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME,
-                                "%$filter%", \Criteria::LIKE))->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME,
-                                "%$filter%", \Criteria::LIKE)));
+                        $oGroupCriteria->add($oGroupCriteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE)
+                                             ->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE))
+                                             ->addOr($oGroupCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE)));
                     }
                     $oGroupCriteria->add(\UsersPeer::USR_UID, $aGroupRow["USR_UID"]);
                     $oUserDataset = \UsersPeer::doSelectRS($oGroupCriteria);
@@ -2115,10 +2028,10 @@ class Task
                     $oUserDataset->next();
                     while ($aUserRow = $oUserDataset->getRow()) {
                         $aUsers[] = array('aas_uid' => $aUserRow['USR_UID'],
-                            'aas_name' => $aUserRow['USR_FIRSTNAME'],
-                            'aas_lastname' => $aUserRow['USR_LASTNAME'],
-                            'aas_username' => $aUserRow['USR_USERNAME'],
-                            'aas_type' => "user" );
+                                          'aas_name' => $aUserRow['USR_FIRSTNAME'],
+                                          'aas_lastname' => $aUserRow['USR_LASTNAME'],
+                                          'aas_username' => $aUserRow['USR_USERNAME'],
+                                          'aas_type' => "user" );
                         $oUserDataset->next();
                     }
                 }
@@ -2130,8 +2043,8 @@ class Task
             $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
             if ($filter != '') {
                 $oCriteria->add($oCriteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE)
-                    ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE))
-                    ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE )));
+                                ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE))
+                                ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE )));
             }
             $oCriteria->addJoin(\TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
             $oCriteria->add(\TaskUserPeer::TAS_UID, $sTaskUID);
@@ -2143,10 +2056,10 @@ class Task
             while ($aRow = $oDataset->getRow()) {
                 if ($type == '' || $type == 'user') {
                     $aUsers[] = array('aas_uid' => $aRow['USR_UID'],
-                        'aas_name' => $aRow['USR_FIRSTNAME'],
-                        'aas_lastname' => $aRow['USR_LASTNAME'],
-                        'aas_username' => $aRow['USR_USERNAME'],
-                        'aas_type' => "user" );
+                                      'aas_name' => $aRow['USR_FIRSTNAME'],
+                                      'aas_lastname' => $aRow['USR_LASTNAME'],
+                                      'aas_username' => $aRow['USR_USERNAME'],
+                                      'aas_type' => "user" );
                 }
                 $oDataset->next();
             }
@@ -2160,14 +2073,14 @@ class Task
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for `start`.'));
+                    throw (new \Exception( 'Invalid value specified for start.'));
                 }
             } else {
                 $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for `limit`.'));
+                    throw (new \Exception( 'Invalid value specified for limit.'));
                 } else {
                     if ($limit == 0) {
                         return array();
@@ -2178,7 +2091,7 @@ class Task
             }
             $aUsersGroups = $this->arrayPagination($aUsersGroups, $start, $limit);
             return $aUsersGroups;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }

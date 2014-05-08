@@ -103,7 +103,6 @@ class Pmtable extends Api
      * @param string $pmt_uid {@min 1} {@max 32}
      *
      * @param array $request_data
-     * @param array $pmt_rows {@from body} {@required true}
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -114,8 +113,7 @@ class Pmtable extends Api
      */
     public function doPostPmTableData(
         $pmt_uid,
-        $request_data,
-        $pmt_rows = ''
+        $request_data
     ) {
         try {
             $oReportTable = new \ProcessMaker\BusinessModel\Table();
@@ -130,7 +128,6 @@ class Pmtable extends Api
      * @param string $pmt_uid {@min 1} {@max 32}
      *
      * @param array $request_data
-     * @param string $pmt_tab_dsc {@from body}
      * @return void
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -140,8 +137,7 @@ class Pmtable extends Api
      */
     public function doPutPmTable(
         $pmt_uid,
-        $request_data,
-        $pmt_tab_dsc = ''
+        $request_data
     ) {
         try {
             $request_data['pmt_uid'] = $pmt_uid;
@@ -156,7 +152,6 @@ class Pmtable extends Api
      * @param string $pmt_uid {@min 1} {@max 32}
      *
      * @param array $request_data
-     * @param array $pmt_rows {@from body} {@required true}
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -166,8 +161,7 @@ class Pmtable extends Api
      */
     public function doPutPmTableData(
         $pmt_uid,
-        $request_data,
-        $pmt_rows = ''
+        $request_data
     ) {
         try {
             $oReportTable = new \ProcessMaker\BusinessModel\Table();

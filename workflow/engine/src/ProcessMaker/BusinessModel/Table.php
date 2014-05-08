@@ -456,7 +456,7 @@ class Table
     public function saveTableData ($pmt_uid, $pmt_data)
     {
         $pmt_uid = $this->validateTabUid($pmt_uid, false);
-        $rows = $pmt_data['pmt_rows'];
+        $rows = $pmt_data;
 
         $additionalTables = new AdditionalTables();
         $table = $additionalTables->load($pmt_uid, true);
@@ -570,7 +570,7 @@ class Table
     public function updateTableData($pmt_uid, $pmt_data)
     {
         $pmt_uid = $this->validateTabUid($pmt_uid, false);
-        $rows = $pmt_data['pmt_rows'];
+        $rows = $pmt_data;
         $rows = array_merge( array_change_key_case( $rows, CASE_LOWER ), array_change_key_case( $rows, CASE_UPPER ) );
 
         $oAdditionalTables = new AdditionalTables();
@@ -973,7 +973,7 @@ class Table
     {
         $rep_tab_name = trim($rep_tab_name);
         if ((strpos($rep_tab_name, ' ')) || (strlen($rep_tab_name) < 4)) {
-            throw (new \Exception("The property rep_tab_name: '$rep_tab_name' is incorrect."));
+            throw (new \Exception("The property pmt_tab_name: '$rep_tab_name' is incorrect."));
         }
         $rep_tab_name = G::toUpper($rep_tab_name);
         if (substr($rep_tab_name, 0, 4) != 'PMT_') {

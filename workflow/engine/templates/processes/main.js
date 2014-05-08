@@ -202,7 +202,7 @@ Ext.onReady(function(){
             // TODO Labels for var 'type' are hardcoded, they must be replaced on the future
             var color = r.get('PROJECT_TYPE') == 'bpmn'? 'green': 'blue';
             var type = r.get('PROJECT_TYPE') == 'bpmn'? ' (BPMN Project)': '';
-            return v + ' ' + String.format("<font color='{0}'>{1}</font>", color, type);
+            return Ext.util.Format.htmlEncode(v) + ' ' + String.format("<font color='{0}'>{1}</font>", color, type);
         }},
         {header: _('ID_TYPE'), dataIndex: 'PROJECT_TYPE', width: 60, hidden:false},
         {header: _('ID_CATEGORY'), dataIndex: 'PRO_CATEGORY_LABEL', width: 100, hidden:false},
@@ -276,8 +276,7 @@ Ext.onReady(function(){
         disabled:true
       },{
         text: _('ID_DELETE'),
-        iconCls: 'button_menu_ext ss_sprite  ss_delete',
-        //icon: '/images/delete-16x16.gif',
+        iconCls: "button_menu_ext ss_sprite ss_cross",
         handler:deleteProcess
       },{
         xtype: 'tbseparator'
@@ -435,7 +434,7 @@ Ext.onReady(function(){
         handler: enableDisableDebug
       }, {
         text: _('ID_DELETE'),
-        icon: '/images/delete.png',
+        iconCls: "button_menu_ext ss_sprite ss_cross",
         handler: deleteProcess
       }, {
         text: _("ID_EXPORT"),
@@ -976,8 +975,14 @@ importProcessExistProcess = function()
                   success: function(o, resp) {
                     var resp_      = Ext.util.JSON.decode(resp.response.responseText);
                     var sNewProUid = resp_.sNewProUid;
+                    var projectType = (typeof(resp_.project_type) != "undefined")? resp_.project_type : "classicProject";
+
                     if (resp_.ExistGroupsInDatabase == 0) {
-                      window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                        if (projectType == "classicProject") {
+                            window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                        } else {
+                            window.location.href = "../designer?prj_uid=" + sNewProUid;
+                        }
                     }
                     else {
                       importProcessGlobal.proFileName       = resp_.fileName;
@@ -1217,3 +1222,4 @@ function enableDisableDebug()
   }
 
 }
+

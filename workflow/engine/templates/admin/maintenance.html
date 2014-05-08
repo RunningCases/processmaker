@@ -15,6 +15,7 @@ function main()
         reader : new Ext.data.JsonReader( {
             root : 'info',
             fields : [
+                {name : 'client_id'},
                 {name : 'name'},
                 {name : 'value'},
                 {name : 'value_ok'},
@@ -27,7 +28,7 @@ function main()
         title : 'Maintenance',
         stripeRows : true,
         autoHeight : true,
-        width : 550,
+        width : 600,
         enableColumnHide: false,
         enableColumnResize: false,
         enableHdMenu: false,
@@ -38,13 +39,18 @@ function main()
         store : store,
         columns : [
             {
+                id : 'client_id',
+                header : 'Client ID',
+                width : 160,
+                sortable : false,
+                dataIndex : 'client_id'
+            }, {
                 id : 'name',
                 header : 'Application',
-                width : 350,
+                width : 250,
                 sortable : false,
                 dataIndex : 'name'
-            },
-            {
+            }, {
                 header : 'Status',
                 width : 100,
                 sortable : false,
@@ -56,8 +62,7 @@ function main()
                         return '<font color="red">'+val+'</font>';
                     }
                 }
-            },
-            {
+            }, {
                 header : '',
                 width : 100,
                 sortable : false,

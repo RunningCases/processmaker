@@ -292,13 +292,13 @@ Scenario Outline: Get paging of list Participated
     | high number for start      | 1000  | 1       | 0       |  200      |
     | high number for start      | 1000  | 0       | 0       |  200      |
     | empty result               |   1   | 0       | 30      |  200      |
-    | empty string               |   1   | 10000   | 30      |  200      |
+    | empty string               |   1   | 10000   | 57      |  200      |
     | invalid start              |   b   | 25      | 25      |  200      |
     | invalid limit              |   1   | c       | 30      |  200      |
     | start equals zero          |   0   | 20      | 20      |  200      |
     | search 0                   |   0   | 0       | 30      |  200      |
-    | search 0                   |   0   | 100     | 30      |  200      |
-    | negative numbers in start  |  -10  | 25      | 15      |  200      |
+    | search 0                   |   0   | 100     | 57      |  200      |
+    | negative numbers in start  |  -10  | 25      | 25      |  200      |
     | negative numbers in limit  |   1   | -25     | 25      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
@@ -610,13 +610,13 @@ Scenario Outline: Get paging of list Advanced Search
     | high number for start      | 1000  | 1       | 0       |  200      |
     | high number for start      | 1000  | 0       | 0       |  200      |
     | empty result               |   1   | 0       | 30      |  200      |
-    | empty string               |   1   | 10000   | 30      |  200      |
+    | empty string               |   1   | 10000   | 57      |  200      |
     | invalid start              |   b   | 25      | 25      |  200      |
     | invalid limit              |   1   | c       | 30      |  200      |
     | start equals zero          |   0   | 20      | 20      |  200      |
     | search 0                   |   0   | 0       | 30      |  200      |
-    | search 0                   |   0   | 100     | 30      |  200      |
-    | negative numbers in start  |  -10  | 25      | 15      |  200      |
+    | search 0                   |   0   | 100     | 57      |  200      |
+    | negative numbers in start  |  -10  | 25      | 25      |  200      |
     | negative numbers in limit  |   1   | -25     | 25      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
     | real numbers in start      |  0.0  | 12      | 12      |  200      |
