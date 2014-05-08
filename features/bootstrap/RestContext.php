@@ -1528,6 +1528,21 @@ class RestContext extends BehatContext
        
     }
 
+    /**
+     * @Given /^POST upload a project file "([^"]*)" to "([^"]*)"$/
+     */
+    public function postUploadAProjectFile($file, $url, PyStringNode $string)
+    {
+        $postFields = json_decode($string);
+        $postFields->project_file ='@'.$file;
+       
+        $this->_restObjectMethod = 'post';
+        $this->_restObject = $postFields;
+        $this->iRequest($url);
+
+       
+    }
+
 
     /**
      * @Given /^the "([^"]*)" property in object (\d+) of property "([^"]*)" equals "([^"]*)"$/
