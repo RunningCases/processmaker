@@ -117,9 +117,9 @@ Scenario Outline: Create a new Data of pm table.
     Given POST this data:
     """
     {
-        "UNO" : "<pmt_uid_number>",
-        "CAMPO1" : "QA",
-        "CAMPO2" : "<CAMPO2>"    
+        "UNO" : "QA11",
+        "DOS" : "QA22",
+        "TRES" : "QA33"    
     }
     """
     And I request "pmtable/pmt_uid/data" with the key "pmt_uid" stored in session array as variable "pmt_uid_<pmt_uid_number>"  
@@ -130,14 +130,54 @@ Scenario Outline: Create a new Data of pm table.
     
     Examples:
 
-    | pmt_uid_number | CAMPO2 |
-    | 1              | DEV1   |
-    | 2              | DEV2   |
-    | 3              | DEV3   |
-    | 4              | DEV4   |
-    | 5              | DEV5   |
-    | 6              | DEV6   |
-    | 7              | DEV7   |
+    | pmt_uid_number |
+    | 1              |
+    | 2              |
+    | 3              |
+    | 4              |
+    | 5              |
+    | 6              |
+    | 7              |
+
+
+Scenario Outline: Update a a data of pm table
+    Given PUT this data:
+    """
+    {
+        "UNO" : "UPDATE QA11",
+        "DOS" : "UPDATE QA22",
+        "TRES" : "UPDATE QA33"
+    }
+    """
+    And that I want to update "PM Table"
+    And I request "pmtable/pmt_uid/data" with the key "pmt_uid" stored in session array as variable "pmt_uid_<pmt_uid_number>" 
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+
+    Examples:
+
+    | pmt_uid_number |
+    | 1              |
+    | 4              |
+    | 6              |
+
+
+Scenario Outline: Get data of the PMTABLE
+    Given I request "pmtable/pmt_uid/data" with the key "pmt_uid" stored in session array as variable "pmt_uid_<pmt_uid_number>" 
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And that "CAMPO1" is set to "QA"
+    And that "CAMPO2" is set to "CAMPO2"
+
+    Examples:
+
+    | pmt_uid_number | CAMPO2      |
+    | 1              | UPDATE QA11 |
+    | 4              | UPDATE QA22 |
+    | 6              | UPDATE QA33 |
 
 
 Scenario Outline: Update a pm table of a project
@@ -189,55 +229,80 @@ Scenario Outline: Get a single the PMTABLE after update
     | 6              | UPDATESEIS | UPDATESEIS | VARCHAR  |
 
 
-
-Scenario Outline: Update a a data of pm table
-    Given PUT this data:
-    """
-    {
-        "UNO" : "<pmt_uid_number>",
-        "CAMPO1" : "QA",
-        "CAMPO2" : "<CAMPO2>"
-    }
-    """
-    And that I want to update "PM Table"
-    And I request "pmtable/pmt_uid/data" with the key "pmt_uid" stored in session array as variable "pmt_uid_<pmt_uid_number>" 
-    And the content type is "application/json"
-    Then the response status code should be 200
-    And the response charset is "UTF-8"
-
-    Examples:
-
-    | pmt_uid_number | CAMPO2    |
-    | 1              | UPDATEQA2 |
-    | 4              | UPDATEQA4 |
-    | 6              | UPDATEQA6 |
-
-
-Scenario Outline: Get data of the PMTABLE
-    Given I request "pmtable/pmt_uid/data" with the key "pmt_uid" stored in session array as variable "pmt_uid_<pmt_uid_number>" 
-    Then the response status code should be 200
-    And the response charset is "UTF-8"
-    And the content type is "application/json"
-    And the type is "object"
-    And that "CAMPO1" is set to "QA"
-    And that "CAMPO2" is set to "CAMPO2"
-
-    Examples:
-
-    | pmt_uid_number | CAMPO2    |
-    | 1              | UPDATEQA2 |
-    | 4              | UPDATEQA4 |
-    | 6              | UPDATEQA6 |
-
-
 Scenario: Get the PMTABLE List when there are exactly two pmtables in this workspace
     Given I request "pmtable"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 2 records
+    And the response has 8 records
 
+#Test Delete of data
+
+Scenario Outline: Update a pm table of a project
+    Given PUT this data:
+    """
+    {
+    "rep_tab_dsc" : "descripcion de la tabla",
+    "fields" : [
+        {
+            "fld_key" : 1,
+            "fld_name" : "<fld_name>",
+            "fld_label" : "<fld_label>",
+            "fld_type" : "<fld_type>",
+            "fld_size" : 200
+        }
+               ]
+    }
+    """
+    And that I want to update a resource with the key "pmt_uid" stored in session array as variable "pmt_uid_<pmt_uid_number>"
+    And I request "pmtable"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+
+    Examples:
+
+    | Description        | pmt_uid_number | fld_name   | fld_label  | fld_type |
+    | Update a pmtable 1 | 4              | UPDATEUNO  | UPDATEUNO  | VARCHAR  |
+    | Update a pmtable 3 | 5              | UPDATETRES | UPDATETRES | VARCHAR  |
+    | Update a pmtable 6 | 7              | UPDATESEIS | UPDATESEIS | VARCHAR  |
+
+
+Scenario Outline: Get a single the PMTABLE after update
+    Given that I want to get a resource with the key "pmt_uid" stored in session array as variable "pmt_uid_<pmt_uid_number>"
+    And I request "pmtable"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And that "fld_name" is set to "<fld_name>"
+    And that "fld_label" is set to "<fld_label>"
+    And that "fld_type" is set to "<fld_type>"
+
+    Examples:
+
+    | pmt_uid_number | fld_name   | fld_label  | fld_type |
+    | 4              | UPDATEUNO  | UPDATEUNO  | VARCHAR  |
+    | 5              | UPDATETRES | UPDATETRES | VARCHAR  |
+    | 7              | UPDATESEIS | UPDATESEIS | VARCHAR  |
+
+
+Scenario Outline: Get a single the PMTABLE after update
+    Given that I want to get a resource with the key "pmt_uid" stored in session array as variable "pmt_uid_<pmt_uid_number>"
+    And I request "pmtable"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And the response has 0 records
+
+    Examples:
+
+    | pmt_uid_number |
+    | 4              |
+    | 5              |
+    | 7              |
 
 Scenario Outline: Delete a pm table of a pmtable
     Given that I want to delete a resource with the key "pmt_uid" stored in session array as variable "pmt_uid_<pmt_uid_number>"
@@ -270,7 +335,7 @@ Scenario Outline: Delete a data of a pmtable
     Examples:
 
     | pmt_uid_number |
-    | 1              |
+    | 2              |
 
 
 Scenario: Get the PMTABLE List when there are exactly ONE pmtables in this workspace
