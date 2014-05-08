@@ -309,7 +309,10 @@ class Bpmn extends Handler
         }
 
         // setting defaults
-        $data['ACT_UID'] = array_key_exists('ACT_UID', $data) ? $data['ACT_UID'] : Common::generateUID();;
+        $processUid = $process->getProUid();
+
+        $data["ACT_UID"] = (array_key_exists("ACT_UID", $data))? $data["ACT_UID"] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
 
         try {
             self::log("Add Activity with data: ", $data);
@@ -317,7 +320,7 @@ class Bpmn extends Handler
             $activity = new Activity();
             $activity->fromArray($data);
             $activity->setPrjUid($this->getUid());
-            $activity->setProUid($process->getProUid());
+            $activity->setProUid($processUid);
             $activity->save();
 
             self::log("Add Activity Success!");
@@ -395,7 +398,10 @@ class Bpmn extends Handler
     public function addEvent($data)
     {
         // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
         $data['EVN_UID'] = array_key_exists('EVN_UID', $data) ? $data['EVN_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
 
         try {
             self::log("Add Event with data: ", $data);
@@ -403,7 +409,7 @@ class Bpmn extends Handler
             $event = new Event();
             $event->fromArray($data);
             $event->setPrjUid($this->project->getPrjUid());
-            $event->setProUid($this->getProcess("object")->getProUid());
+            $event->setProUid($processUid);
             $event->save();
 
             self::log("Add Event Success!");
@@ -485,14 +491,17 @@ class Bpmn extends Handler
     public function addGateway($data)
     {
         // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
         $data['GAT_UID'] = array_key_exists('GAT_UID', $data) ? $data['GAT_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
 
         try {
             self::log("Add Gateway with data: ", $data);
             $gateway = new Gateway();
             $gateway->fromArray($data);
             $gateway->setPrjUid($this->getUid());
-            $gateway->setProUid($this->getProcess("object")->getProUid());
+            $gateway->setProUid($processUid);
             $gateway->save();
             self::log("Add Gateway Success!");
         } catch (\Exception $e) {
@@ -827,3 +836,4 @@ class Bpmn extends Handler
         $this->update(array("PRJ_STATUS" => $status));
     }
 }
+
