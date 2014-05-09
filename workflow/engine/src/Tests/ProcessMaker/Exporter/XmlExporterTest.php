@@ -151,7 +151,7 @@ class XmlExporterTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetTextNode()
     {
-        //Is not implemented. Metodo getTextNode() is private
+        //Is not implemented. Method getTextNode() is private
     }
 
     /**
