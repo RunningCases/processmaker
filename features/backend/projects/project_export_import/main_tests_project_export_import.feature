@@ -139,7 +139,8 @@ Scenario Outline: Import a process
     | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | overwrite     | 2              |
     | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | disable       | 3              |
     | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | keep          | 4              |
-    
+    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | overwrite     | 5              |
+
 
 #Verificar cantidad de dynaform, output, inputs, triggers, asignacion de usuarios, etc.
 
@@ -153,7 +154,7 @@ Scenario Outline: Get a List DynaForms of a Project Process Complete BPMN
     
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records | 
-    | create        | 1              | 601816709536cfeae7d7cd9079578104 | 2       |
+    | create        | 1              | 601816709536cfeae7d7cd9079578104 | 4       |
     | overwrite     | 2              | 1455892245368ebeb11c1a5001393784 | 26      |
     | disable       | 3              | 1455892245368ebeb11c1a5001393784 | 26      |
     | keep          | 4              | 1455892245368ebeb11c1a5001393784 | 26      |
