@@ -25,7 +25,7 @@ Scenario: Get a Category specific
     And the type is "array"
     And the "cat_uid" property equals "4177095085330818c324501061677193"
     And the "cat_name" property equals "Category Cases Lists"
-    And the "cat_total_processes" property equals 5
+    And the "cat_total_processes" property equals 6
   
 
 Scenario Outline: Create a new Categories
@@ -134,4 +134,4 @@ Scenario: Get a Category specific
     And the type is "array"
     And the "cat_uid" property equals "4177095085330818c324501061677193"
     And the "cat_name" property equals "Category Cases Lists"
-    And the "cat_total_processes" property equals 5
+    And the "cat_total_processes" property equals 6
