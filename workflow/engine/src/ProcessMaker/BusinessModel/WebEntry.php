@@ -352,7 +352,9 @@ class WebEntry
 
             switch ($webEntryMethod) {
                 case "WS":
-                    $user = new \Users();
+                    require_once(PATH_RBAC . "model" . PATH_SEP . "RbacUsers.php");
+
+                    $user = new \RbacUsers();
 
                     $arrayUserData = $user->load($arrayWebEntryData["USR_UID"]);
 
@@ -398,7 +400,7 @@ class WebEntry
                     $template->assign("dynaformUid", $dynaFormUid);
                     $template->assign("taskUid", $taskUid);
                     $template->assign("wsUser", $usrUsername);
-                    $template->assign("wsPass", "md5:" . md5($usrPassword));
+                    $template->assign("wsPass", "md5:" . $usrPassword);
                     $template->assign("wsRoundRobin", $wsRoundRobin);
 
                     if ($webEntryInputDocumentAccess == 0) {

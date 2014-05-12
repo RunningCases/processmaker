@@ -28,7 +28,7 @@ class CasesTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->oCases = new \BusinessModel\Cases();
+        $this->oCases = new \ProcessMaker\BusinessModel\Cases();
         return true;
     }
 
