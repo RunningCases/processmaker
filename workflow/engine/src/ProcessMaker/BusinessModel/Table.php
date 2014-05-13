@@ -972,13 +972,9 @@ class Table
     public function validateTabName ($rep_tab_name, $reportFlag = false)
     {
         $rep_tab_name = trim($rep_tab_name);
+        $nametype = ($reportFlag == false) ? 'pmt_tab_name' : 'rep_tab_name';
         if ((strpos($rep_tab_name, ' ')) || (strlen($rep_tab_name) < 4)) {
-            if ($reportFlag) {
-                throw (new \Exception("The property rep_tab_name: '$rep_tab_name' is incorrect."));
-            } else {
-                throw (new \Exception("The property pmt_tab_name: '$rep_tab_name' is incorrect."));
-            }
-
+            throw (new \Exception("The property $nametype: '$rep_tab_name' is incorrect."));
         }
         $rep_tab_name = G::toUpper($rep_tab_name);
         if (substr($rep_tab_name, 0, 4) != 'PMT_') {
