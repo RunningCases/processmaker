@@ -203,7 +203,7 @@ class Table
             $pro_uid = $this->validateProUid($pro_uid);
             $dataValidate['TAB_UID']            = (isset($dataValidate['REP_UID'])) ? $dataValidate['REP_UID'] : '';
             $dataValidate['PRO_UID']            = $pro_uid;
-            $dataValidate['REP_TAB_NAME']       = $this->validateTabName($dataValidate['REP_TAB_NAME']);
+            $dataValidate['REP_TAB_NAME']       = $this->validateTabName($dataValidate['REP_TAB_NAME'], $reportFlag);
             $tempRepTabName                     = $dataValidate['REP_TAB_CONNECTION'];
             $dataValidate['REP_TAB_CONNECTION'] = $this->validateRepConnection($tempRepTabName, $pro_uid);
             if ($dataValidate['REP_TAB_TYPE'] == 'GRID') {
@@ -969,11 +969,16 @@ class Table
      *
      * @return string
      */
-    public function validateTabName ($rep_tab_name)
+    public function validateTabName ($rep_tab_name, $reportFlag = false)
     {
         $rep_tab_name = trim($rep_tab_name);
         if ((strpos($rep_tab_name, ' ')) || (strlen($rep_tab_name) < 4)) {
-            throw (new \Exception("The property pmt_tab_name: '$rep_tab_name' is incorrect."));
+            if ($reportFlag) {
+                throw (new \Exception("The property rep_tab_name: '$rep_tab_name' is incorrect."));
+            } else {
+                throw (new \Exception("The property pmt_tab_name: '$rep_tab_name' is incorrect."));
+            }
+
         }
         $rep_tab_name = G::toUpper($rep_tab_name);
         if (substr($rep_tab_name, 0, 4) != 'PMT_') {
