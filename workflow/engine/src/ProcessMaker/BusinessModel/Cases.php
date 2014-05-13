@@ -700,16 +700,22 @@ class Cases
         Validator::appUid($app_uid, '$app_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
 
+        $case = new \Cases();
+        $fields = $case->loadCase($app_uid);
+        if ($fields['APP_STATUS'] == 'CANCELLED') {
+            throw (new \Exception("The case '$app_uid' is canceled"));
+        }
+
         if ($del_index === false) {
             $del_index = \AppDelegation::getCurrentIndex($app_uid);
         }
+
         Validator::isInteger($del_index, '$del_index');
 
         if ($unpaused_date != null) {
             Validator::isDate($unpaused_date, 'Y-m-d', '$unpaused_date');
         }
 
-        $case = new \Cases();
         $case->pauseCase( $app_uid, $del_index, $usr_uid, $unpaused_date );
     }
 
