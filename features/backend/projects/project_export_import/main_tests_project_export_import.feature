@@ -2,7 +2,7 @@
 Feature: Import/Export Process Main Tests
   Requirements:
     a workspace without the project 1455892245368ebeb11c1a5001393784 ("Process Complete BPMN") already loaded
-    there are many activities, steps, triggers, pmtables, asignee, events, etc. in the process
+    there are many activities, steps, triggers, pmtables, asignee, process supervisor, process permissions, etc. in the process
 
 Background:
     Given that I have a valid access_token
@@ -139,8 +139,7 @@ Scenario Outline: Import a process
     | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | overwrite     | 2              |
     | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | disable       | 3              |
     | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | keep          | 4              |
-    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | overwrite     | 5              |
-
+    
 
 #Verificar cantidad de dynaform, output, inputs, triggers, asignacion de usuarios, etc.
 
@@ -227,7 +226,7 @@ Scenario Outline: List assignees of each activity
 
 
 Scenario Outline: Get a List of current process supervisors of a project
-    Given I request "project/prj_uid/process-supervisors" stored in session array as variable "prj_uid_<prj_uid_number>"
+    Given I request "project/prj_uid/process-supervisors" with the key "prj_uid" stored in session array as variable "prj_uid_<prj_uid_number>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
@@ -243,7 +242,7 @@ Scenario Outline: Get a List of current process supervisors of a project
 
       
 Scenario Outline: Get a List of current Process Permissions of a project
-    Given I request "project/prj_uid/process-permissions" stored in session array as variable "prj_uid_<prj_uid_number>"
+    Given I request "project/prj_uid/process-permissions" with the key "prj_uid" stored in session array as variable "prj_uid_<prj_uid_number>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the response has <records> records
@@ -257,7 +256,7 @@ Scenario Outline: Get a List of current Process Permissions of a project
 
 
 Scenario Outline: Get a list templates folder of process files manager
-    Given I request "project/prj_uid/file-manager?path=templates" stored in session array as variable "prj_uid_<prj_uid_number>"
+    Given I request "project/prj_uid/file-manager?path=templates" with the key "prj_uid" stored in session array as variable "prj_uid_<prj_uid_number>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
@@ -369,3 +368,16 @@ Scenario: Get a list of projects
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
+
+
+Scenario Outline: Import a process
+    Given POST upload a project file "<project_file>" to "project/import?option=<import_option>"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    
+    Examples:
+    | project_file                                       | import_option |
+    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | create        |
+    
