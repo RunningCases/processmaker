@@ -52,7 +52,7 @@ Scenario Outline: Create new Projects with same name (negative test)
     Given POST data from file "<project_template>"
     And I request "projects"
     Then the response status code should be 400
-    And the response status message should have the following text "<already_exists>"
+    And the response status message should have the following text "already exists"
         
     Examples:
 
