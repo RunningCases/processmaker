@@ -370,9 +370,9 @@ class Cases
                 } catch (\InvalidIndexSearchTextException $e) {
                     $arrayData = array();
                     $arrayData[] = array ("app_uid" => $e->getMessage(),
-                        "app_name" => $e->getMessage(),
-                        "del_index" => $e->getMessage(),
-                        "pro_uid" => $e->getMessage());
+                                          "app_name" => $e->getMessage(),
+                                          "del_index" => $e->getMessage(),
+                                          "pro_uid" => $e->getMessage());
                     throw (new \Exception($arrayData));
                 }
             } else {
@@ -495,8 +495,8 @@ class Cases
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
                 $result = array ('tas_uid'   => $aRow['TAS_UID'],
-                    'tas_title'  => $aRow['TAS_TITLE'],
-                    'del_index' => $aRow['DEL_INDEX']);
+                                 'tas_title'  => $aRow['TAS_TITLE'],
+                                 'del_index' => $aRow['DEL_INDEX']);
                 $oDataset->next();
             }
             //Return
