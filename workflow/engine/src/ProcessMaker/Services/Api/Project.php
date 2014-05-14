@@ -133,6 +133,7 @@ class Project extends Api
         try {
             $importer = new \ProcessMaker\Importer\XmlImporter();
 
+            $importer->setSaveDir(PATH_DOCUMENT . "input");
             $importer->setData("usr_uid", $this->getUserId());
 
             $arrayData = $importer->importPostFile($request_data, $option, array("projectFile" => "project_file", "option" => "option"));

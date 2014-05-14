@@ -113,7 +113,7 @@ Scenario Outline: Create new pmtable with type date and char
     | Create pmtable with type date | 2              |
     
    
-Scenario Outline: Create a new Data of pm table.
+Scenario Outline: Create a new Data of pm table
     Given POST this data:
     """
     {
@@ -132,19 +132,16 @@ Scenario Outline: Create a new Data of pm table.
 
     | pmt_uid_number |
     | 1              |
-    | 2              |
-    | 3              |
     | 4              |
     | 5              |
     | 6              |
-    | 7              |
-
+    
 
 Scenario Outline: Update a a data of pm table
     Given PUT this data:
     """
     {
-        "UNO" : "UPDATE QA11",
+        "UNO" : "QA11",
         "DOS" : "UPDATE QA22",
         "TRES" : "UPDATE QA33"
     }
@@ -322,20 +319,6 @@ Scenario Outline: Delete a pm table of a pmtable
     | 5              |
     | 6              |
     | 7              |
-
-
-Scenario Outline: Delete a data of a pmtable
-    Given that I want to delete a resource with the key "pmt_uid" stored in session array as variable "pmt_uid_<pmt_uid_number>"
-    And I request "pmtable/<pmt_uid>/data/CAMPO1/QA"
-    And the content type is "application/json"
-    Then the response status code should be 200
-    And the response charset is "UTF-8"
-    And the type is "object"
-
-    Examples:
-
-    | pmt_uid_number |
-    | 2              |
 
 
 Scenario: Get the PMTABLE List when there are exactly ONE pmtables in this workspace
