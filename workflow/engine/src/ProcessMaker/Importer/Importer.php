@@ -210,6 +210,10 @@ abstract class Importer
             throw new \Exception("Error while uploading file. Error code: {$data["error"]}");
         }
 
+        if (! is_dir($this->getSaveDir())) {
+            Util\Common::mk_dir($this->getSaveDir());
+        }
+
         $this->filename = $this->getSaveDir() . $data["name"];
 
         $oldUmask = umask(0);
@@ -401,7 +405,7 @@ abstract class Importer
             $arrayFieldNameForException = $arrayFieldName;
 
             if (isset($_FILES[$arrayFieldName["projectFile"]])) {
-                $_FILES["filepmx"] = $_FILES[$arrayFieldName["projectFile"]];
+                $_FILES["filePmx"] = $_FILES[$arrayFieldName["projectFile"]];
             }
 
             if (isset($arrayData[$arrayFieldName["projectFile"]]) &&
@@ -418,7 +422,6 @@ abstract class Importer
             $process = new \ProcessMaker\BusinessModel\Process();
             $validator = new \ProcessMaker\BusinessModel\Validator();
 
-            $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
             $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $arrayFieldDefinition, $arrayFieldNameForException, true);
@@ -433,7 +436,7 @@ abstract class Importer
                 }
             }
 
-            if ((isset($_FILES["filepmx"]) && pathinfo($_FILES["filepmx"]["name"], PATHINFO_EXTENSION) != "pmx") ||
+            if ((isset($_FILES["filePmx"]) && pathinfo($_FILES["filePmx"]["name"], PATHINFO_EXTENSION) != "pmx") ||
                 (isset($arrayData[$arrayFieldName["projectFile"]]) && pathinfo($arrayData[$arrayFieldName["projectFile"]], PATHINFO_EXTENSION) != "pmx")
             ) {
                 throw (new \Exception("The file extension not is \"pmx\""));
@@ -456,12 +459,13 @@ abstract class Importer
 
             $option = $opt;
 
-            if (isset($_FILES["filepmx"])) {
-                $this->setSaveDir(PATH_DOCUMENT . "input");
-                $this->setSourceFromGlobals("filepmx");
+            if (isset($_FILES["filePmx"])) {
+                $this->setSourceFromGlobals("filePmx");
             } else {
-                if (isset($arrayData[$arrayFieldName["projectFile"]]) && file_exists(PATH_DOCUMENT . "input" . PATH_SEP . $arrayData[$arrayFieldName["projectFile"]])) {
-                    $this->setSourceFile(PATH_DOCUMENT . "input" . PATH_SEP . $arrayData[$arrayFieldName["projectFile"]]);
+                $filePmx = rtrim($this->getSaveDir(), PATH_SEP) . PATH_SEP . $arrayData[$arrayFieldName["projectFile"]];
+
+                if (isset($arrayData[$arrayFieldName["projectFile"]]) && file_exists($filePmx)) {
+                    $this->setSourceFile($filePmx);
                 } else {
                     throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayFieldNameForException["projectFile"], $arrayData[$arrayFieldName["projectFile"]]), "The file with {0}: \"{1}\" does not exist.")));
                 }

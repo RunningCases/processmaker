@@ -116,7 +116,7 @@ abstract class Exporter
             ? "" : serialize($workflowData["process"]['PRO_DYNAFORMS']);
 
         $workflowData["process"] = array($workflowData["process"]);
-        $workflowData["processCategory"] = empty($workflowData["processCategory"]) ? array() : $workflowData["processCategory"];
+        $workflowData["processCategory"] = empty($workflowData["processCategory"]) ? array() : array($workflowData["processCategory"]);
 
 
         $data["bpmn-definition"] = $bpmnStruct;

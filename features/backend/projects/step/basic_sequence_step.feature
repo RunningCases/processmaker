@@ -174,7 +174,7 @@ Feature: Project Properties - Step Resources
         And POST this data:
         """
         {
-            "tri_uid": "81919273152cd636c665080083928728",
+            "tri_uid": "1912812215371196449bf84008215531",
             "st_type": "BEFORE",
             "st_condition": "",
             "st_position": 1
@@ -215,7 +215,7 @@ Feature: Project Properties - Step Resources
         }
         """
         And that I want to update a resource with the key "tgr1" stored in session array
-        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/65093024352cd9df93d9675058012924/trigger/81919273152cd636c665080083928728"
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/65093024352cd9df93d9675058012924/trigger/1912812215371196449bf84008215531"
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -247,7 +247,7 @@ Feature: Project Properties - Step Resources
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "array"
-        And the "tri_uid" property in row 0 equals "57401970252cd6393531551040242546"
+        And the "tri_uid" property in row 0 equals "91825536453711c35b042f3058715506"
         And the "tri_title" property in row 0 equals "Trigger Demo3"
         And the "tri_description" property in row 0 equals "Description"
         And the "tri_type" property in row 0 equals "SCRIPT"
@@ -258,12 +258,12 @@ Feature: Project Properties - Step Resources
     #    Get a single Trigger assigned to a Step
     Scenario: Get a single Trigger "Trigger Demo1" assigned to first Step of "Task2"
         Given that I have a valid access_token
-        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/65093024352cd9df93d9675058012924/trigger/81919273152cd636c665080083928728/before"
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/65093024352cd9df93d9675058012924/trigger/1912812215371196449bf84008215531/before"
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
-        And that "tri_uid" is set to "81919273152cd636c665080083928728"
+        And that "tri_uid" is set to "1912812215371196449bf84008215531"
         And that "tri_title" is set to "Trigger Demo1"
         And that "tri_description" is set to "Description"
         And that "st_type" is set to "BEFORE"
@@ -275,7 +275,7 @@ Feature: Project Properties - Step Resources
     Scenario: Remove "Trigger Demo1" assigned to first Step of "Task2"
         Given that I have a valid access_token
         And that I want to delete a resource with the key "tgr1" stored in session array
-        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/65093024352cd9df93d9675058012924/trigger/81919273152cd636c665080083928728/before"
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/65093024352cd9df93d9675058012924/trigger/1912812215371196449bf84008215531/before"
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -321,7 +321,7 @@ Feature: Project Properties - Step Resources
         And POST this data:
         """
         {
-            "tri_uid": "81919273152cd636c665080083928728",
+            "tri_uid": "1912812215371196449bf84008215531",
             "st_type": "BEFORE_ASSIGNMENT",
             "st_condition": "",
             "st_position": 1
@@ -362,7 +362,7 @@ Feature: Project Properties - Step Resources
         }
         """
         And that I want to update a resource with the key "tgr1" stored in session array
-        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger/81919273152cd636c665080083928728"
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger/1912812215371196449bf84008215531"
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -394,7 +394,7 @@ Feature: Project Properties - Step Resources
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "array"
-        And the "tri_uid" property in row 0 equals "57401970252cd6393531551040242546"
+        And the "tri_uid" property in row 0 equals "91825536453711c35b042f3058715506"
         And the "tri_title" property in row 0 equals "Trigger Demo3"
         And the "tri_description" property in row 0 equals "Description"
         And the "tri_type" property in row 0 equals "SCRIPT"
@@ -405,12 +405,12 @@ Feature: Project Properties - Step Resources
     #    Get a single Trigger assigned to a Step
     Scenario: Get a single Trigger "Trigger Demo1" assigned to Step "Assign Task" of "Task2"
         Given that I have a valid access_token
-        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger/81919273152cd636c665080083928728/before-assignment"
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger/1912812215371196449bf84008215531/before-assignment"
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
-        And that "tri_uid" is set to "81919273152cd636c665080083928728"
+        And that "tri_uid" is set to "1912812215371196449bf84008215531"
         And that "tri_title" is set to "Trigger Demo1"
         And that "tri_description" is set to "Description"
         And that "st_type" is set to "BEFORE_ASSIGNMENT"
@@ -422,7 +422,7 @@ Feature: Project Properties - Step Resources
     Scenario: Remove "Trigger Demo1" assigned to Step "Assign Task" of "Task2"
         Given that I have a valid access_token
         And that I want to delete a resource with the key "tgr1" stored in session array
-        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger/81919273152cd636c665080083928728/before-assignment"
+        And I request "project/16062437052cd6141881e06088349078/activity/89706843252cd9decdcf9b3047762708/step/trigger/1912812215371196449bf84008215531/before-assignment"
         And the content type is "application/json"
         Then the response status code should be 200
         And the response charset is "UTF-8"

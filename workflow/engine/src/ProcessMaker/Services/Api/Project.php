@@ -120,7 +120,7 @@ class Project extends Api
         $fileExtension = pathinfo($outputFilename, PATHINFO_EXTENSION);
 
         $httpStream->loadFromFile($outputFilename);
-        $httpStream->setHeader("Content-Type", "application/$fileExtension");
+        $httpStream->setHeader("Content-Type", "application/xml; charset=UTF-8");
         $httpStream->send();
     }
 
@@ -136,6 +136,7 @@ class Project extends Api
         try {
             $importer = new \ProcessMaker\Importer\XmlImporter();
 
+            $importer->setSaveDir(PATH_DOCUMENT . "input");
             $importer->setData("usr_uid", $this->getUserId());
 
             $arrayData = $importer->importPostFile($request_data, $option, array("projectFile" => "project_file", "option" => "option"));

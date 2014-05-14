@@ -1521,4 +1521,232 @@ class Cases
         $appNote = new \AppNotes();
         $appNote->addCaseNote($app_uid, $usr_uid, $note_content, intval($send_mail));
     }
+
+    /**
+     * Get data Task Case
+     *
+     * @param string $sApplicationUID Unique id of Case
+     *
+     * return array Return an array with Task Case
+     */
+    public function getTasks($sApplicationUID)
+    {
+        try {
+            $iDelegation = \AppDelegation::getCurrentIndex($sApplicationUID);
+            $case = new \Cases();
+            $caseLoad = $case->loadCase($sApplicationUID);
+            $sProcessUID  = $caseLoad['PRO_UID'];
+            $sTask = '';
+            $bCT = true;
+            $oProcess = new \Process();
+            $oPM = array();
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->addSelectColumn(\TaskPeer::PRO_UID);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_UID);
+            $oCriteria->addSelectColumn(\ContentPeer::CON_VALUE);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_START);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_TYPE);
+            $aConditions = array();
+            $aConditions[] = array(0 => \TaskPeer::TAS_UID, 1 => \ContentPeer::CON_ID);
+            $aConditions[] = array(0 => \ContentPeer::CON_CATEGORY, 1 => \DBAdapter::getStringDelimiter() . 'TAS_TITLE' . \DBAdapter::getStringDelimiter() );
+            $aConditions[] = array(0 => \ContentPeer::CON_LANG, 1 => \DBAdapter::getStringDelimiter() . SYS_LANG . \DBAdapter::getStringDelimiter() );
+            $oCriteria->addJoinMC($aConditions, \Criteria::LEFT_JOIN);
+            $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
+            $oDataset = \TaskPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow1 = $oDataset->getRow()) {
+                $oTask = new \StdClass();
+                $oTask->tas_uid = $aRow1['TAS_UID'];
+                $oTask->tas_type = $aRow1['TAS_TYPE'];
+                if ($aRow1['TAS_TYPE'] == 'NORMAL') {
+                    if (($aRow1['CON_VALUE'] == "")) {
+                        //There is no Label in Current SYS_LANG language so try to find in English - by default
+                        $oTask1 = new \Task();
+                        $aRow1['CON_VALUE'] = $oTask1->getTasTitle();
+                    }
+                    $oTask->tas_title = htmlentities($aRow1['CON_VALUE'], ENT_QUOTES, 'UTF-8');
+                } else {
+                    $oCriteria = new \Criteria('workflow');
+                    $del = \DBAdapter::getStringDelimiter();
+                    $oCriteria->add(\SubProcessPeer::PRO_PARENT, $aRow1['PRO_UID']);
+                    $oCriteria->add(\SubProcessPeer::TAS_PARENT, $aRow1['TAS_UID']);
+
+                    $oCriteria->addAsColumn('TAS_TITLE', 'C1.CON_VALUE');
+                    $oCriteria->addAlias("C1", 'CONTENT');
+                    $tasTitleConds = array();
+                    $tasTitleConds[] = array(\SubProcessPeer::TAS_PARENT, 'C1.CON_ID');
+                    $tasTitleConds[] = array('C1.CON_CATEGORY', $del . 'TAS_TITLE' . $del);
+                    $tasTitleConds[] = array('C1.CON_LANG', $del . SYS_LANG . $del);
+                    $oCriteria->addJoinMC($tasTitleConds, \Criteria::LEFT_JOIN);
+
+                    $oDatasetX = \SubProcessPeer::doSelectRS($oCriteria);
+                    $oDatasetX->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                    $oDatasetX->next();
+                    $aRowx = $oDatasetX->getRow();
+                    if ($oProcess->exists($aRowx['PRO_UID'])) {
+                        $oTask->tas_title = htmlentities($aRowx['TAS_TITLE'], ENT_QUOTES, 'UTF-8');
+                    } else {
+                        $oTask->tas_title = htmlentities($aRow1['CON_VALUE'], ENT_QUOTES, 'UTF-8');
+                    }
+                }
+                $oTask->routing = new \StdClass();
+                $oTask->routing->rou_type = '';
+                $oTask->routing->to = array();
+                $oCriteria = new \Criteria('workflow');
+                $oCriteria->addSelectColumn(\RoutePeer::ROU_TYPE);
+                $oCriteria->addSelectColumn(\RoutePeer::ROU_NEXT_TASK);
+                $oCriteria->addSelectColumn(\RoutePeer::ROU_CONDITION);
+                $oCriteria->addSelectColumn(\RoutePeer::ROU_TO_LAST_USER);
+                $oCriteria->addSelectColumn(\RoutePeer::ROU_OPTIONAL);
+                $oCriteria->addSelectColumn(\UsersPeer::USR_UID);
+                $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
+                $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
+                $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_INIT_DATE);
+                $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_TASK_DUE_DATE);
+                $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_FINISH_DATE);
+                $oCriteria->addJoin(\AppDelegationPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
+                $oCriteria->addJoin(\AppDelegationPeer::PRO_UID, \RoutePeer::PRO_UID, \Criteria::LEFT_JOIN);
+                $oCriteria->add(\RoutePeer::PRO_UID, $sProcessUID);
+                $oCriteria->add(\RoutePeer::TAS_UID, $aRow1['TAS_UID']);
+                $oCriteria->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
+                $oCriteria->add(\AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
+                $oCriteria->addDescendingOrderByColumn(\AppDelegationPeer::DEL_INDEX);
+                $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
+                $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                $oDataset2->next();
+                while ($aRow2 = $oDataset2->getRow()) {
+                    switch ($aRow2['ROU_TYPE']) {
+                        case 'SEQUENTIAL':
+                            $aRow2['ROU_TYPE'] = 0;
+                            break;
+                        case 'SELECT':
+                            $aRow2['ROU_TYPE'] = 1;
+                            break;
+                        case 'EVALUATE':
+                            $aRow2['ROU_TYPE'] = 2;
+                            break;
+                        case 'PARALLEL':
+                            $aRow2['ROU_TYPE'] = 3;
+                            break;
+                        case 'PARALLEL-BY-EVALUATION':
+                            $aRow2['ROU_TYPE'] = 4;
+                            break;
+                        case 'SEC-JOIN':
+                            $aRow2['ROU_TYPE'] = 5;
+                            break;
+                        case 'DISCRIMINATOR':
+                            $aRow2['ROU_TYPE'] = 8;
+                            break;
+                    }
+                    $iDiff = strtotime($aRow2['DEL_FINISH_DATE']) - strtotime($aRow2['DEL_INIT_DATE']);
+                    $oTo = new \StdClass();
+                    $oTo->rou_next_task = $aRow2['ROU_NEXT_TASK'];
+                    $oTo->rou_condition = $aRow2['ROU_CONDITION'];
+                    $oTo->rou_to_last_user = $aRow2['ROU_TO_LAST_USER'];
+                    $oTo->rou_optional = $aRow2['ROU_OPTIONAL'];
+                    $oTo->usr_uid = ($aRow2['USR_UID'] != null ? $aRow2['USR_FIRSTNAME'] . ' ' . $aRow2['USR_LASTNAME'] : \G::LoadTranslation('ID_NONE'));
+                    $oTo->usr_firstname = $aRow2['USR_FIRSTNAME'];
+                    $oTo->usr_lastname = $aRow2['USR_LASTNAME'];
+                    $oTo->del_init_date = ($aRow2['DEL_INIT_DATE'] != null ? $aRow2['DEL_INIT_DATE'] : \G::LoadTranslation('ID_CASE_NOT_YET_STARTED'));
+                    $oTo->del_task_due_date = ($aRow2['DEL_TASK_DUE_DATE'] != null ? $aRow2['DEL_TASK_DUE_DATE'] : \G::LoadTranslation('ID_CASE_NOT_YET_STARTED'));
+                    $oTo->del_finish_date = ($aRow2['DEL_FINISH_DATE'] != null ? $aRow2['DEL_FINISH_DATE'] : \G::LoadTranslation('ID_NOT_FINISHED'));
+                    $oTo->duration = ($aRow2['DEL_FINISH_DATE'] != null ? (int) ($iDiff / 3600) . ' ' . ((int) ($iDiff / 3600) == 1 ? \G::LoadTranslation('ID_HOUR') : \G::LoadTranslation('ID_HOURS')) . ' ' . (int) (($iDiff % 3600) / 60) . ' ' . ((int) (($iDiff % 3600) / 60) == 1 ? \G::LoadTranslation('ID_MINUTE') : \G::LoadTranslation('ID_MINUTES')) . ' ' . (int) (($iDiff % 3600) % 60) . ' ' . ((int) (($iDiff % 3600) % 60) == 1 ? \G::LoadTranslation('ID_SECOND') : \G::LoadTranslation('ID_SECONDS')) : \G::LoadTranslation('ID_NOT_FINISHED'));
+                    $oTask->routing->rou_type = $aRow2['ROU_TYPE'];
+                    $oTask->routing->to[] = $oTo;
+                    $oDataset2->next();
+                }
+                if ($bCT) {
+                    $oCriteria = new \Criteria('workflow');
+                    $oCriteria->addSelectColumn('COUNT(*) AS CANT');
+                    $oCriteria->addSelectColumn('MIN(DEL_FINISH_DATE) AS FINISH');
+                    $oCriteria->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
+                    $oCriteria->add(\AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
+                    $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
+                    $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                    $oDataset2->next();
+                    $aRow2 = $oDataset2->getRow();
+                    $oCriteria = new \Criteria('workflow');
+                    $oCriteria->addSelectColumn('DEL_FINISH_DATE');
+                    $oCriteria->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
+                    $oCriteria->add(\AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
+                    $oCriteria->add(\AppDelegationPeer::DEL_FINISH_DATE, null);
+                    $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
+                    $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                    $oDataset2->next();
+                    $aRow3 = $oDataset2->getRow();
+                    if ($aRow3) {
+                        $aRow2['FINISH'] = '';
+                    }
+                    if (empty($aRow2["FINISH"]) && $aRow1["TAS_UID"] == $sTask) {
+                        $oTask->color = "#FF0000"; //Red
+                    } else {
+                        if (!empty($aRow2["FINISH"])) {
+                            $oTask->color = "#006633"; //Green
+                        } else {
+                            if ($oTask->routing->rou_type != 5) {
+                                if ($aRow2["CANT"] != 0) {
+                                    $oTask->color = "#FF0000"; //Red
+                                } else {
+                                    $oTask->color = "#939598"; //Gray
+                                }
+                            } else {
+                                if ($aRow3) {
+                                    $oTask->color = "#FF0000"; //Red
+                                } else {
+                                    $oTask->color = "#939598"; //Gray
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (($sApplicationUID != '') && ($iDelegation > 0) && ($sTask != '')) {
+                        $oCriteria = new \Criteria('workflow');
+                        $oCriteria->addSelectColumn('COUNT(*) AS CANT');
+                        $oCriteria->addSelectColumn('MIN(DEL_FINISH_DATE) AS FINISH');
+                        $oCriteria->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
+                        $oCriteria->add(\AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
+                        $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
+                        $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                        $oDataset2->next();
+                        $aRow2 = $oDataset2->getRow();
+                        $oCriteria = new \Criteria('workflow');
+                        $oCriteria->addSelectColumn('DEL_FINISH_DATE');
+                        $oCriteria->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
+                        $oCriteria->add(\AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
+                        $oCriteria->add(\AppDelegationPeer::DEL_FINISH_DATE, null);
+                        $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
+                        $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                        $oDataset2->next();
+                        $aRow3 = $oDataset2->getRow();
+                        if ($aRow3) {
+                            $aRow2['FINISH'] = '';
+                        }
+                        if (empty($aRow2["FINISH"]) && $aRow1["TAS_UID"] == $sTask) {
+                            $oTask->color = "#FF0000"; //Red
+                        } else {
+                            if (!empty($aRow2["FINISH"])) {
+                                $oTask->color = "#006633"; //Green
+                            } else {
+                                if ($oTask->routing->rou_type != 5) {
+                                    if ($aRow2["CANT"] != 0) {
+                                        $oTask->color = "#FF0000"; //Red
+                                    } else {
+                                        $oTask->color = "#939598"; //Gray
+                                    }
+                                } else {
+                                    $oTask->color = "#FF9900"; //Yellow
+                                }
+                            }
+                        }
+                    }
+                }
+                $oPM[] = $oTask;
+                $oDataset->next();
+            }
+            return $oPM;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }

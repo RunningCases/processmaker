@@ -238,7 +238,6 @@ Scenario Outline: Route a case to the next task in the process
         Given PUT this data:
             """
             {
-                "case_uid": "<case_number>",
                 "del_index": "1"
             }
             """
