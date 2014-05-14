@@ -371,6 +371,24 @@ class Processes
     }
 
     /**
+     * Verify if exists the "Process User" in table PROCESS_USER
+     *
+     * @param string $processUserUid Unique id of "Process User"
+     *
+     * return bool Return true if exists the "Process User" in table PROCESS_USER, false otherwise
+     */
+    public function processUserExists($processUserUid)
+    {
+        try {
+            $processUser = new ProcessUser();
+
+            return $processUser->Exists($processUserUid);
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * get an unused input GUID
      *
      * @return $sProUid
@@ -603,6 +621,24 @@ class Processes
     }
 
     /**
+     * Get an unused "Process User" unique id
+     *
+     * return string Return a new generated unique id
+     */
+    public function getUnusedProcessUserUid()
+    {
+        try {
+            do {
+                $newUid = G::generateUniqueID();
+            } while ($this->processUserExists($newUid));
+
+            return $newUid;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * change the GUID for a serialized process
      *
      * @param string $sProUid
@@ -726,6 +762,13 @@ class Processes
                 $oData->caseScheduler[$key]['PRO_UID'] = $sNewProUid;
             }
         }
+
+        if (isset($oData->processUser)) {
+            foreach ($oData->processUser as $key => $value) {
+                $oData->processUser[$key]["PRO_UID"] = $sNewProUid;
+            }
+        }
+
         return true;
     }
 
@@ -1504,6 +1547,32 @@ class Processes
     }
 
     /**
+     * Create "Process User" records
+     *
+     * @param array $arrayData Data to create
+     *
+     * return void
+     */
+    public function createProcessUser(array $arrayData)
+    {
+        try {
+            $processUser = new ProcessUser();
+
+            foreach ($arrayData as $value) {
+                $record = $value;
+
+                if ($processUser->Exists($record["PU_UID"])) {
+                    $result = $processUser->remove($record["PU_UID"]);
+                }
+
+                $result = $processUser->create($record);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Gets Input Documents Rows from aProcess.
      *
      * @param $sProUid string.
@@ -1967,6 +2036,34 @@ class Processes
     }
 
     /**
+     * Renew all the unique id for "Process User"
+     *
+     * @param $data Object with the data
+     *
+     * return void
+     */
+    public function renewAllProcessUserUid(&$data)
+    {
+        try {
+            if (isset($data->processUser)) {
+                $map = array();
+
+                foreach ($data->processUser as $key => $value) {
+                    $record = $value;
+
+                    $newUid = $this->getUnusedProcessUserUid();
+                    $map[$record["PU_UID"]] = $newUid;
+                    $data->processUser[$key]["PU_UID"] = $newUid;
+                }
+
+                $data->uid["PROCESS_USER"] = $map;
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Renew the GUID's for all the Uids for all the elements
      *
      * @param $oData array.
@@ -1994,6 +2091,7 @@ class Processes
         $this->renewAllFieldCondition( $oData );
         $this->renewAllEvent( $oData );
         $this->renewAllCaseScheduler( $oData );
+        $this->renewAllProcessUserUid($oData);
     }
 
     /**
@@ -2166,6 +2264,7 @@ class Processes
      * @param string $sProUid
      * @return $aDynaform array
      */
+    //Deprecated
     public function getGroupwfSupervisor ($sProUid, &$oData)
     {
         try {
@@ -2482,6 +2581,50 @@ class Processes
     }
 
     /**
+     * Get "Process User" (Groups) records of a Process
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return an array with all "Process User" (Groups)
+     */
+    public function getProcessUser($processUid)
+    {
+        try {
+            $arrayProcessUser = array();
+
+            //Get data
+            $criteria = new Criteria("workflow");
+
+            $criteria->add(ProcessUserPeer::PRO_UID, $processUid, Criteria::EQUAL);
+            $criteria->add(ProcessUserPeer::PU_TYPE, "GROUP_SUPERVISOR", Criteria::EQUAL);
+
+            $rsCriteria = ProcessUserPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                //Verify group status
+                $criteria2 = new Criteria("workflow");
+
+                $criteria2->add(GroupwfPeer::GRP_UID, $row["USR_UID"], Criteria::EQUAL);
+                $criteria2->add(GroupwfPeer::GRP_STATUS, "ACTIVE", Criteria::EQUAL);
+
+                $rsCriteria2 = GroupwfPeer::doSelectRS($criteria2);
+
+                if ($rsCriteria2->next()) {
+                    $arrayProcessUser[] = $row;
+                }
+            }
+
+            //Return
+            return $arrayProcessUser;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get Task User Rows from an array of data
      *
      * @param array $aTaskUser
@@ -2638,6 +2781,129 @@ class Processes
         }
     } #@!neyek
 
+    /**
+     * Merge groupwfs data
+     *
+     * @param array  $arrayGroupwfsData            Data groupwfs
+     * @param array  $arrayData                    Data for merge
+     * @param string $groupUidFieldNameInArrayData Field name of unique id
+     *
+     * return array Return an array with all groupwfs data
+     */
+    public function groupwfsMerge(array $arrayGroupwfsData, array $arrayData, $groupUidFieldNameInArrayData = "GRP_UID")
+    {
+        try {
+            $arrayUid = array();
+
+            foreach ($arrayGroupwfsData as $value) {
+                $record = $value;
+
+                $arrayUid[] = $record["GRP_UID"];
+            }
+
+            //Merge
+            $groupwf = new Groupwf();
+
+            foreach ($arrayData as $value) {
+                $record = $value;
+
+                if (isset($record[$groupUidFieldNameInArrayData]) && !in_array($record[$groupUidFieldNameInArrayData], $arrayUid)) {
+                    $arrayGroupwfsData[] = $groupwf->Load($record[$groupUidFieldNameInArrayData]);
+                }
+            }
+
+            //Return
+            return $arrayGroupwfsData;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Update unique ids in groupwfs data by database
+     *
+     * @param object $data Data
+     *
+     * return object Return data
+     */
+    public function groupwfsUpdateUidByDatabase($data)
+    {
+        try {
+            //Get Groupwf of database
+            $arrayGroupwf = array();
+
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(GroupwfPeer::GRP_UID);
+            $criteria->addSelectColumn(ContentPeer::CON_VALUE);
+            $criteria->addJoin(GroupwfPeer::GRP_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN);
+            $criteria->add(ContentPeer::CON_CATEGORY, "GRP_TITLE", Criteria::EQUAL);
+            $criteria->add(ContentPeer::CON_LANG, SYS_LANG, Criteria::EQUAL);
+
+            $rsCriteria = GroupwfPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayGroupwf[] = $row;
+            }
+
+            //Check if any group name exists in database
+            $arrayUid = array();
+
+            foreach ($data->groupwfs as $key => $value) {
+                $groupwfsRecord = $value;
+
+                foreach ($arrayGroupwf as $key2 => $value2) {
+                    $groupwfRecord = $value2;
+
+                    if ($groupwfRecord["CON_VALUE"] == $groupwfsRecord["GRP_TITLE"] && $groupwfRecord["GRP_UID"] != $groupwfsRecord["GRP_UID"]) {
+                        //Update unique id
+                        $uidOld = $data->groupwfs[$key]["GRP_UID"];
+
+                        $data->groupwfs[$key]["GRP_UID"] = $groupwfRecord["GRP_UID"];
+                        $arrayUid[$uidOld] = $groupwfRecord["GRP_UID"];
+                        break;
+                    }
+                }
+            }
+
+            //Update in $data
+            if (count($arrayUid) > 0) {
+                foreach ($data->taskusers as $key => $value) {
+                    $record = $value;
+
+                    if (isset($arrayUid[$record["USR_UID"]])) {
+                        $data->taskusers[$key]["USR_UID"]= $arrayUid[$record["USR_UID"]];
+                    }
+                }
+
+                foreach ($data->objectPermissions as $key => $value) {
+                    $record = $value;
+
+                    if (isset($arrayUid[$record["USR_UID"]])) {
+                        $data->objectPermissions[$key]["USR_UID"]= $arrayUid[$record["USR_UID"]];
+                    }
+                }
+
+                if (isset($data->processUser)) {
+                    foreach ($data->processUser as $key => $value) {
+                        $record = $value;
+
+                        if (isset($arrayUid[$record["USR_UID"]])) {
+                            $data->processUser[$key]["USR_UID"]= $arrayUid[$record["USR_UID"]];
+                        }
+                    }
+                }
+            }
+
+            //Return
+            return $data;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 
     /**
      * change Status of any Process
@@ -2681,7 +2947,9 @@ class Processes
         $oData->caseScheduler = $this->getCaseSchedulerRow( $sProUid );
         $oData->processCategory = $this->getProcessCategoryRow( $sProUid );
         $oData->taskExtraProperties = $this->getTaskExtraPropertiesRows( $sProUid );
-        $this->getGroupwfSupervisor( $sProUid, $oData);
+        $oData->processUser = $this->getProcessUser($sProUid);
+
+        $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
 
         //krumo ($oData);die;
         //$oJSON = new Services_JSON();
@@ -2975,7 +3243,7 @@ class Processes
         $oCriteria->addSelectColumn( ContentPeer::CON_ID );
         $oCriteria->addSelectColumn( ContentPeer::CON_VALUE );
         $oCriteria->add( ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-        $oCriteria->add( ContentPeer::CON_LANG, 'en' );
+        $oCriteria->add(ContentPeer::CON_LANG, SYS_LANG);
         $oCriteria->addJoin( ContentPeer::CON_ID, GroupwfPeer::GRP_UID );
         $oDataset = ContentPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
@@ -3049,6 +3317,7 @@ class Processes
      * @param $sGroupList array of a group list
      * @return $mergedGroupList array of existing groups
      */
+    //Deprecated
     public function mergeExistingGroups ($sGroupList)
     {
         $oCriteria = new Criteria( 'workflow' );
@@ -3101,6 +3370,7 @@ class Processes
      * the task and the group list
      * @return $mergedTaskUserList array of the merged task user list
      */
+    //Deprecated
     public function mergeExistingUsers ($sBaseGroupList, $sGroupList, $sTaskUserList)
     {
         foreach ($sTaskUserList as $taskuser) {
@@ -3710,6 +3980,8 @@ class Processes
 
         //Create data related to Configuration table
         $this->createTaskExtraPropertiesRows( isset( $oData->taskExtraProperties ) ? $oData->taskExtraProperties : array () );
+
+        $this->createProcessUser((isset($oData->processUser))? $oData->processUser : array());
     }
 
 
@@ -4037,7 +4309,7 @@ class Processes
     * @param $proId process Uid
     * @return $result
     */
-    public function getTaskExtraPropertiesRows( $proId )
+    public function getTaskExtraPropertiesRows($proId)
     {
         try {
 
