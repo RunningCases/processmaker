@@ -862,6 +862,26 @@ class Installer extends Controller
             $updatedConf['default_skin'] = $skinUri;
             $info->uri =  PATH_SEP . 'sys' . $_REQUEST['workspace'] . PATH_SEP . $langUri . PATH_SEP . $skinUri . PATH_SEP . 'login' . PATH_SEP . 'login';
 
+            //register PMDesigner Client
+            $http = (G::is_https() == true) ? 'https' : 'http';
+            $host = $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] != '80' ? ':' . $_SERVER['SERVER_PORT'] : '');
+
+            $endpoint = sprintf(
+                '%s://%s/sys%s/%s/%s/oauth2/grant',
+                $http,
+                $host,
+                $wf,
+                $langUri,
+                $skinUri
+            );
+
+            // inserting the outh_client
+            $query = sprintf( "USE %s;", $wf );
+            $this->mysqlQuery( $query );
+            $query = ( "INSERT INTO OAUTH_CLIENTS (CLIENT_ID,CLIENT_SECRET,CLIENT_NAME,CLIENT_DESCRIPTION,CLIENT_WEBSITE,REDIRECT_URI,USR_UID ) VALUES 
+                ('x-pm-local-client','179ad45c6ce2cb97cf1029e212046e81','PM Web Designer','ProcessMaker Web Designer App','www.processmaker.com','" . $endpoint . "','00000000000000000000000000000001' )");
+            $this->mysqlQuery( $query );
+
             $indexFileUpdated = true;
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $this->buildParternExtras($adminUsername, $adminPassword, $_REQUEST['workspace'], $langUri, $skinUri);
