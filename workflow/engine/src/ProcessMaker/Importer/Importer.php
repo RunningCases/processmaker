@@ -210,6 +210,10 @@ abstract class Importer
             throw new \Exception("Error while uploading file. Error code: {$data["error"]}");
         }
 
+        if (! is_dir($this->getSaveDir())) {
+            Util\Common::mk_dir($this->getSaveDir());
+        }
+
         $this->filename = $this->getSaveDir() . $data["name"];
 
         $oldUmask = umask(0);

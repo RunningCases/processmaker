@@ -145,7 +145,8 @@ Scenario Outline: Import a process
 
 Scenario Outline: Get a List DynaForms of a Project Process Complete BPMN   
     Given I request "project/prj_uid/dynaforms" with the key "prj_uid" stored in session array as variable "prj_uid_<prj_uid_number>"
-    And the content type is "application/json"se status code should be 200
+    And the content type is "application/json"
+    Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
     And the response has <records> records
@@ -157,8 +158,7 @@ Scenario Outline: Get a List DynaForms of a Project Process Complete BPMN
     | disable       | 3              | 1455892245368ebeb11c1a5001393784 | 26      |
     | keep          | 4              | 1455892245368ebeb11c1a5001393784 | 26      |
 
-    Then the respon
-
+  
 Scenario Outline: Get the Input Documents List when there are exactly zero input documents
     Given I request "project/prj_uid/input-documents" with the key "prj_uid" stored in session array as variable "prj_uid_<prj_uid_number>"
     And the content type is "application/json"
