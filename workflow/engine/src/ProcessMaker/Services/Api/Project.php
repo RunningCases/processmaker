@@ -63,6 +63,9 @@ class Project extends Api
     public function post($prj_name, $request_data)
     {
         try {
+            if (!isset($request_data['prj_author'])) {
+                $request_data['prj_author'] = $this->getUserId();
+            }
             return Adapter\BpmnWorkflow::createFromStruct($request_data);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
