@@ -223,12 +223,8 @@ if ($action == "uploadFileNewProcess") {
         if (! is_null( $optionGroupExistInDatabase )) {
             if ($optionGroupExistInDatabase == 1) {
                 $oData->groupwfs = $oProcess->renameExistingGroups( $oData->groupwfs );
-            } else if ($optionGroupExistInDatabase == 2) {
-                $oBaseGroup = $oData->groupwfs;
-                $oNewGroup = $oProcess->mergeExistingGroups( $oData->groupwfs );
-                $oData->groupwfs = $oNewGroup;
-                $oData->taskusers = $oProcess->mergeExistingUsers( $oBaseGroup, $oNewGroup, $oData->taskusers );
-                $oData->objectPermissions = $oProcess->mergeExistingUsers( $oBaseGroup, $oNewGroup, $oData->objectPermissions );
+            } elseif ($optionGroupExistInDatabase == 2) {
+                $oData = $oProcess->groupwfsUpdateUidByDatabase($oData);
             }
             $result->ExistGroupsInDatabase = 0;
         } else {
@@ -301,11 +297,8 @@ if ($action == "uploadFileNewProcessExist") {
         if (! is_null( $optionGroupExistInDatabase )) {
             if ($optionGroupExistInDatabase == 1) {
                 $oData->groupwfs = $oProcess->renameExistingGroups( $oData->groupwfs );
-            } else if ($optionGroupExistInDatabase == 2) {
-                $oBaseGroup = $oData->groupwfs;
-                $oNewGroup = $oProcess->mergeExistingGroups( $oData->groupwfs );
-                $oData->groupwfs = $oNewGroup;
-                $oData->taskusers = $oProcess->mergeExistingUsers( $oBaseGroup, $oNewGroup, $oData->taskusers );
+            } elseif ($optionGroupExistInDatabase == 2) {
+                $oData = $oProcess->groupwfsUpdateUidByDatabase($oData);
             }
             $result->ExistGroupsInDatabase = 0;
         } else {
