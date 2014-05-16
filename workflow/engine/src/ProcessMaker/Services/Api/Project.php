@@ -63,6 +63,9 @@ class Project extends Api
     public function post($prj_name, $request_data)
     {
         try {
+            if (!isset($request_data['prj_author'])) {
+                $request_data['prj_author'] = $this->getUserId();
+            }
             return Adapter\BpmnWorkflow::createFromStruct($request_data);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -133,6 +136,7 @@ class Project extends Api
         try {
             $importer = new \ProcessMaker\Importer\XmlImporter();
 
+            $importer->setSaveDir(PATH_DOCUMENT . "input");
             $importer->setData("usr_uid", $this->getUserId());
 
             $arrayData = $importer->importPostFile($request_data, $option, array("projectFile" => "project_file", "option" => "option"));

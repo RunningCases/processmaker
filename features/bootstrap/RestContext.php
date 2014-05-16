@@ -1531,9 +1531,9 @@ class RestContext extends BehatContext
     /**
      * @Given /^POST upload a project file "([^"]*)" to "([^"]*)"$/
      */
-    public function postUploadAProjectFile($file, $url, PyStringNode $string)
+    public function postUploadAProjectFile($file, $url)
     {
-        $postFields = json_decode($string);
+        $postFields = new StdClass();
         $postFields->project_file ='@'.$file;
        
         $this->_restObjectMethod = 'post';
