@@ -668,6 +668,7 @@ class BpmnWorkflow extends Project\Bpmn
         $diagram = isset($projectData["diagrams"]) && isset($projectData["diagrams"][0]) ? $projectData["diagrams"][0] : array();
         $result = array();
 
+        $projectData['prj_uid'] = $prjUid;
         $bwp = BpmnWorkflow::load($prjUid);
         $projectRecord = array_change_key_case($projectData, CASE_UPPER);
         $bwp->update($projectRecord);
@@ -799,7 +800,6 @@ class BpmnWorkflow extends Project\Bpmn
                 $bwp->removeGateway($gatewayData["GAT_UID"]);
             }
         }
-
         /*
          * Diagram's Events Handling
          */

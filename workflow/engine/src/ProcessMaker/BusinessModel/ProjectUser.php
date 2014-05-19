@@ -108,26 +108,43 @@ class ProjectUser
                 throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
             }
             $aUsers = array();
-            $sDelimiter = \DBAdapter::getStringDelimiter();
+            $usersIds = array();
+
             $oCriteria = new \Criteria('workflow');
-            $oCriteria->setDistinct();
-            $oCriteria->addSelectColumn(\UsersPeer::USR_UID);
-            $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
-            $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
-            $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
-            $oCriteria->addJoin(\TaskUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
-            $oCriteria->addJoin(\TaskUserPeer::TAS_UID, \TaskPeer::TAS_UID,  \Criteria::LEFT_JOIN);
+            $oCriteria->addSelectColumn(\TaskUserPeer::USR_UID);
+            $oCriteria->addJoin(\TaskPeer::TAS_UID, \TaskUserPeer::TAS_UID,  \Criteria::LEFT_JOIN);
             $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 1);
-            $oCriteria->addGroupByColumn(\TaskUserPeer::USR_UID);
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
+            while ($oDataset->next()) {
+                $aRow = $oDataset->getRow();
+                if (!in_array($aRow['USR_UID'], $usersIds)) {
+                    $usersIds[] = $aRow['USR_UID'];
+                }
+            }
+
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->addSelectColumn(\GroupUserPeer::USR_UID);
+            $oCriteria->addJoin(\TaskPeer::TAS_UID, \TaskUserPeer::TAS_UID,  \Criteria::LEFT_JOIN);
+            $oCriteria->addJoin(\TaskUserPeer::TAS_UID, \GroupUserPeer::GRP_UID, \Criteria::LEFT_JOIN);
+            $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
+            $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
+            $oCriteria->add(\TaskUserPeer::TU_RELATION, 2);
+            $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            while ($oDataset->next()) {
+                $aRow = $oDataset->getRow();
+                if (!in_array($aRow['USR_UID'], $usersIds)) {
+                    $usersIds[] = $aRow['USR_UID'];
+                }
+            }
+
+            foreach($usersIds as $value) {
                 \G::LoadClass( 'case' );
                 $oCase = new \Cases();
-                $startTasks = $oCase->getStartCases( $aRow['USR_UID'] );
+                $startTasks = $oCase->getStartCases( $value );
                 foreach ($startTasks as $task) {
                     if ((isset( $task['pro_uid'] )) && ($task['pro_uid'] == $sProcessUID) ) {
                         $taskValue = explode( '(', $task['value'] );
