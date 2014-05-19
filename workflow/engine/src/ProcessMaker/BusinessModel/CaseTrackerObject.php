@@ -67,30 +67,28 @@ class CaseTrackerObject
             unset($arrayData["CTO_UID"]);
 
             //Verify data
-            $process = new \Process();
+            $process = new \ProcessMaker\BusinessModel\Process();
 
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            $process->throwExceptionIfNotExistsProcess($processUid, "prj_uid");
 
             if (!isset($arrayData["CTO_TYPE_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array(strtolower("CTO_TYPE_OBJ")), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array(strtolower("CTO_TYPE_OBJ"))));
             }
 
             if (!isset($arrayData["CTO_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array(strtolower("CTO_UID_OBJ")), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array(strtolower("CTO_UID_OBJ"))));
             }
 
             $step = new \ProcessMaker\BusinessModel\Step();
 
-            $msg = $step->existsObjectUid($arrayData["CTO_TYPE_OBJ"], $arrayData["CTO_UID_OBJ"]);
+            $msg = $step->existsObjectUid($arrayData["CTO_TYPE_OBJ"], $arrayData["CTO_UID_OBJ"], strtolower("CTO_UID_OBJ"));
 
             if ($msg != "") {
-                throw (new \Exception($msg));
+                throw new \Exception($msg);
             }
 
             if ($this->existsRecord($processUid, $arrayData["CTO_TYPE_OBJ"], $arrayData["CTO_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid . ", " . $arrayData["CTO_TYPE_OBJ"] . ", " . $arrayData["CTO_UID_OBJ"], "CASE_TRACKER_OBJECT"), "The record \"{0}\", exists in table {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_RECORD_EXISTS_IN_TABLE", array($processUid . ", " . $arrayData["CTO_TYPE_OBJ"] . ", " . $arrayData["CTO_UID_OBJ"], "CASE_TRACKER_OBJECT")));
             }
 
             $ctoPosition = $arrayData["CTO_POSITION"];
@@ -144,28 +142,28 @@ class CaseTrackerObject
 
             //Verify data
             if (!$caseTrackerObject->caseTrackerObjectExists($caseTrackerObjectUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($caseTrackerObjectUid, "CASE_TRACKER_OBJECT"), "The UID \"{0}\" doesn't exist in table {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_CASE_TRACKER_OBJECT_DOES_NOT_EXIST", array(strtolower("CTO_UID"), $caseTrackerObjectUid)));
             }
 
             if (isset($arrayData["CTO_TYPE_OBJ"]) && !isset($arrayData["CTO_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array(strtolower("CTO_UID_OBJ")), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array(strtolower("CTO_UID_OBJ"))));
             }
 
             if (!isset($arrayData["CTO_TYPE_OBJ"]) && isset($arrayData["CTO_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array(strtolower("CTO_TYPE_OBJ")), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array(strtolower("CTO_TYPE_OBJ"))));
             }
 
             if (isset($arrayData["CTO_TYPE_OBJ"]) && isset($arrayData["CTO_UID_OBJ"])) {
                 $step = new \ProcessMaker\BusinessModel\Step();
 
-                $msg = $step->existsObjectUid($arrayData["CTO_TYPE_OBJ"], $arrayData["CTO_UID_OBJ"]);
+                $msg = $step->existsObjectUid($arrayData["CTO_TYPE_OBJ"], $arrayData["CTO_UID_OBJ"], strtolower("CTO_UID_OBJ"));
 
                 if ($msg != "") {
-                    throw (new \Exception($msg));
+                    throw new \Exception($msg);
                 }
 
                 if ($this->existsRecord($processUid, $arrayData["CTO_TYPE_OBJ"], $arrayData["CTO_UID_OBJ"], 0, $caseTrackerObjectUid)) {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid . ", " . $arrayData["CTO_TYPE_OBJ"] . ", " . $arrayData["CTO_UID_OBJ"], "CASE_TRACKER_OBJECT"), "The record \"{0}\", exists in table {1}")));
+                    throw new \Exception(\G::LoadTranslation("ID_RECORD_EXISTS_IN_TABLE", array($processUid . ", " . $arrayData["CTO_TYPE_OBJ"] . ", " . $arrayData["CTO_UID_OBJ"], "CASE_TRACKER_OBJECT")));
                 }
             }
 
@@ -230,7 +228,7 @@ class CaseTrackerObject
 
             //Verify data
             if (!$caseTrackerObject->caseTrackerObjectExists($caseTrackerObjectUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($caseTrackerObjectUid, "CASE_TRACKER_OBJECT"), "The UID \"{0}\" doesn't exist in table {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_CASE_TRACKER_OBJECT_DOES_NOT_EXIST", array(strtolower("CTO_UID"), $caseTrackerObjectUid)));
             }
 
             //Delete
@@ -256,7 +254,7 @@ class CaseTrackerObject
             $caseTrackerObject = new \CaseTrackerObject();
 
             if (!$caseTrackerObject->caseTrackerObjectExists($caseTrackerObjectUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($caseTrackerObjectUid, "CASE_TRACKER_OBJECT"), "The UID \"{0}\" doesn't exist in table {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_CASE_TRACKER_OBJECT_DOES_NOT_EXIST", array(strtolower("CTO_UID"), $caseTrackerObjectUid)));
             }
 
             //Get data

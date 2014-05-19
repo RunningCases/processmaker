@@ -95,24 +95,24 @@ class Trigger
                 $step = new \Step();
 
                 if (!$step->StepExists($stepUid)) {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
+                    throw new \Exception(\G::LoadTranslation("ID_STEP_DOES_NOT_EXIST", array("step_uid", $stepUid)));
                 }
             }
 
             $task = new \Task();
 
             if (!$task->taskExists($taskUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid, "TASK"), "The UID \"{0}\" doesn't exist in table {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_ACTIVITY_DOES_NOT_EXIST", array("act_uid", $taskUid)));
             }
 
             $trigger = new \Triggers();
 
             if (!$trigger->TriggerExists($triggerUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($triggerUid, "TRIGGERS"), "The UID \"{0}\" doesn't exist in table {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_TRIGGER_DOES_NOT_EXIST", array("tri_uid", $triggerUid)));
             }
 
             if ($this->existsRecord($stepUid, $type, $taskUid, $triggerUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid . ", " . $type . ", " . $taskUid . ", " . $triggerUid, "STEP_TRIGGER"), "The record \"{0}\", exists in table {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_RECORD_EXISTS_IN_TABLE", array($stepUid . ", " . $type . ", " . $taskUid . ", " . $triggerUid, "STEP_TRIGGER")));
             }
 
             //Create
@@ -175,14 +175,14 @@ class Trigger
                 $step = new \Step();
 
                 if (!$step->StepExists($stepUid)) {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid, "STEP"), "The UID \"{0}\" doesn't exist in table {1}")));
+                    throw new \Exception(\G::LoadTranslation("ID_STEP_DOES_NOT_EXIST", array("step_uid", $stepUid)));
                 }
             }
 
             $trigger = new \Triggers();
 
             if (!$trigger->TriggerExists($triggerUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($triggerUid, "TRIGGERS"), "The UID \"{0}\" doesn't exist in table {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_TRIGGER_DOES_NOT_EXIST", array("tri_uid", $triggerUid)));
             }
 
             //Update
@@ -245,7 +245,7 @@ class Trigger
 
             //Verify data
             if (!$this->existsRecord($stepUid, $type, $taskUid, $triggerUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid . ", " . $type . ", " . $taskUid . ", " . $triggerUid, "STEP_TRIGGER"), "The record \"{0}\", doesn't exist in table {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_RECORD_DOES_NOT_EXIST_IN_TABLE", array($stepUid . ", " . $type . ", " . $taskUid . ", " . $triggerUid, "STEP_TRIGGER")));
             }
 
             //Get position
@@ -326,7 +326,7 @@ class Trigger
 
             //Verify data
             if (!$this->existsRecord($stepUid, $type, $taskUid, $triggerUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($stepUid . ", " . $type . ", " . $taskUid . ", " . $triggerUid, "STEP_TRIGGER"), "The record \"{0}\", doesn't exist in table {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_RECORD_DOES_NOT_EXIST_IN_TABLE", array($stepUid . ", " . $type . ", " . $taskUid . ", " . $triggerUid, "STEP_TRIGGER")));
             }
 
             //Get data
@@ -372,7 +372,8 @@ class Trigger
      *
      * @return void
      */
-    public function moveStepTriggers($tasUid, $stepUid, $triUid, $type, $newPos) {
+    public function moveStepTriggers($tasUid, $stepUid, $triUid, $type, $newPos)
+    {
         $stepTrigger = new \ProcessMaker\BusinessModel\Step();
         $tempStep = $stepUid;
         $typeCompare = $type;

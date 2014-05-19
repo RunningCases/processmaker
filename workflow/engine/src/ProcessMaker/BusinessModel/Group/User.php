@@ -95,9 +95,7 @@ class User
             $obj = \GroupUserPeer::retrieveByPK($groupUid, $userUid);
 
             if (!(is_object($obj) && get_class($obj) == "GroupUser")) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $userUid), "The user with {0}: {1} is not assigned to the group");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_GROUP_USER_IS_NOT_ASSIGNED", array($fieldNameForException, $userUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -119,9 +117,7 @@ class User
             $obj = \GroupUserPeer::retrieveByPK($groupUid, $userUid);
 
             if (is_object($obj) && get_class($obj) == "GroupUser") {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $userUid), "The user with {0}: {1} is already assigned to the group");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_GROUP_USER_IS_ALREADY_ASSIGNED", array($fieldNameForException, $userUid)));
             }
         } catch (\Exception $e) {
             throw $e;
