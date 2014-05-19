@@ -18,22 +18,58 @@ abstract class Importer
     const IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW = "project.import.keep_without_changing_and_create_new";
     const IMPORT_OPTION_CREATE_NEW = "project.import.create_new";
 
-    /**
-     * Success, Project imported successfully.
-     */
-    const IMPORT_STAT_SUCCESS = 100;
-    /**
-     * Error, Target Project already exists.
-     */
-    const IMPORT_STAT_TARGET_ALREADY_EXISTS = 101;
-    /**
-     * Error, Invalid file type or the file have corrupt data.
-     */
-    const IMPORT_STAT_INVALID_SOURCE_FILE = 102;
+    const GROUP_IMPORT_OPTION_RENAME = "group.import.rename";
+    const GROUP_IMPORT_OPTION_MERGE_PREEXISTENT = "group.import.merge.preexistent";
+    const GROUP_IMPORT_OPTION_CREATE_NEW = "group.import.create_new";
+
+    const IMPORT_STAT_SUCCESS = 100;               //Success, Project imported successfully.
+    const IMPORT_STAT_TARGET_ALREADY_EXISTS = 101; //Error, Target Project already exists.
+    const IMPORT_STAT_INVALID_SOURCE_FILE = 102;   //Error, Invalid file type or the file have corrupt data.
+    const IMPORT_STAT_GROUP_ALREADY_EXISTS = 105;  //Error, Group already exists.
 
     public abstract function load();
 
-    public function import($option = self::IMPORT_OPTION_CREATE_NEW)
+    /**
+     * Verify if exists reserved words SQL
+     *
+     * @param object $data Data
+     *
+     * return void Throw exception if exists reserved words SQL
+     */
+    public function throwExceptionIfExistsReservedWordsSql($data)
+    {
+        $arrayReservedWordsSql = \G::reservedWordsSql();
+
+        $arrayAux = array();
+
+        foreach ($data->reportTables as $key => $value) {
+            $record = $value;
+
+            if (in_array(strtoupper($record["REP_TAB_NAME"]), $arrayReservedWordsSql)) {
+                $arrayAux[] = $record["REP_TAB_NAME"];
+            }
+        }
+
+        if (count($arrayAux) > 0) {
+            throw new \Exception(\G::LoadTranslation("ID_PMTABLE_INVALID_NAME", array(implode(", ", $arrayAux))));
+        }
+
+        $arrayAux = array();
+
+        foreach ($data->reportTablesVars as $key => $value) {
+            $record = $value;
+
+            if (in_array(strtoupper($record["REP_VAR_NAME"]), $arrayReservedWordsSql)) {
+                $arrayAux[] = $record["REP_VAR_NAME"];
+            }
+        }
+
+        if (count($arrayAux) > 0) {
+            throw new \Exception(\G::LoadTranslation("ID_PMTABLE_INVALID_FIELD_NAME", array(implode(", ", $arrayAux))));
+        }
+    }
+
+    public function import($option = self::IMPORT_OPTION_CREATE_NEW, $optionGroup = self::GROUP_IMPORT_OPTION_CREATE_NEW)
     {
         $this->prepare();
 
@@ -65,6 +101,35 @@ abstract class Importer
                 // this option should generate new uid for all objects
                 $generateUid = true;
                 $name = \G::LoadTranslation("ID_COPY_OF") . " - " . $name . " - " . date("M d, H:i");
+                break;
+        }
+
+        $processes = new \Processes();
+
+        switch ($optionGroup) {
+            case self::GROUP_IMPORT_OPTION_CREATE_NEW:
+                $arrayAux = $processes->checkExistingGroups($this->importData["tables"]["workflow"]["groupwfs"]);
+
+                if (is_array($arrayAux) && count($arrayAux) > 0) {
+                    throw new \Exception(
+                        str_replace(
+                            array("{0}"),
+                            array(implode("|", array(self::GROUP_IMPORT_OPTION_CREATE_NEW, self::GROUP_IMPORT_OPTION_RENAME, self::GROUP_IMPORT_OPTION_MERGE_PREEXISTENT))),
+                            "Group already exists, you need set an action to continue. Available actions: [{0}]."
+                        ),
+                        self::IMPORT_STAT_GROUP_ALREADY_EXISTS
+                    );
+                }
+                break;
+            case self::GROUP_IMPORT_OPTION_RENAME:
+                $arrayAux = $processes->renameExistingGroups($this->importData["tables"]["workflow"]["groupwfs"]);
+
+                if (is_array($arrayAux) && count($arrayAux) > 0) {
+                    $this->importData["tables"]["workflow"]["groupwfs"] = $arrayAux;
+                }
+                break;
+            case self::GROUP_IMPORT_OPTION_MERGE_PREEXISTENT:
+                $this->importData["tables"]["workflow"] = (array)($processes->groupwfsUpdateUidByDatabase((object)($this->importData["tables"]["workflow"])));
                 break;
         }
 
@@ -127,6 +192,8 @@ abstract class Importer
         if (! isset($this->importData["tables"]["bpmn"]["project"]) || count($this->importData["tables"]["bpmn"]["project"]) !== 1) {
             throw new \Exception("BPMN table: \"Project\", definition is missing or has multiple definition.");
         }
+
+        $this->throwExceptionIfExistsReservedWordsSql((object)($this->importData["tables"]["workflow"]));
 
         return true;
     }
@@ -386,17 +453,19 @@ abstract class Importer
      * Imports a Project sent through the POST method ($_FILES)
      *
      * @param array  $arrayData      Data
-     * @param string $option         Option ("CREATE", "OVERWRITE", "DISABLE", "KEEP")
+     * @param string $option         Option for Project ("CREATE", "OVERWRITE", "DISABLE", "KEEP")
+     * @param string $optionGroup    Option for Group ("CREATE", "RENAME", "MERGE")
      * @param array  $arrayFieldName The field's names
      *
      * return array Returns the data sent and the unique id of Project
      */
-    public function importPostFile(array $arrayData, $option = "CREATE", array $arrayFieldName = array())
+    public function importPostFile(array $arrayData, $option = "CREATE", $optionGroup = "CREATE", array $arrayFieldName = array())
     {
         try {
             //Set data
             $arrayFieldName["projectFile"] = (isset($arrayFieldName["projectFile"]))? $arrayFieldName["projectFile"] : "PROJECT_FILE";
             $arrayFieldName["option"] = (isset($arrayFieldName["option"]))? $arrayFieldName["option"] : "OPTION";
+            $arrayFieldName["optionGroup"] = (isset($arrayFieldName["optionGroup"]))? $arrayFieldName["optionGroup"] : "OPTION_GROUP";
 
             $arrayFieldDefinition = array(
                 $arrayFieldName["projectFile"] => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "projectFile")
@@ -418,6 +487,9 @@ abstract class Importer
             $optionCaseUpper = (strtoupper($option) == $option)? true : false;
             $option = strtoupper($option);
 
+            $optionGroupCaseUpper = (strtoupper($optionGroup) == $optionGroup)? true : false;
+            $optionGroup = strtoupper($optionGroup);
+
             //Verify data
             $process = new \ProcessMaker\BusinessModel\Process();
             $validator = new \ProcessMaker\BusinessModel\Validator();
@@ -427,12 +499,29 @@ abstract class Importer
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $arrayFieldDefinition, $arrayFieldNameForException, true);
 
             $arrayOptionDefaultValues = array("CREATE", "OVERWRITE", "DISABLE", "KEEP");
+            $arrayOptionGroupDefaultValues = array("CREATE", "RENAME", "MERGE");
 
-            if ($option . "" != "") {
-                if (!in_array($option, $arrayOptionDefaultValues, true)) {
-                    $strdv = implode("|", $arrayOptionDefaultValues);
+            $arrayAux = array(
+                array($option,      $arrayOptionDefaultValues,      $arrayFieldNameForException["option"],      $optionCaseUpper),
+                array($optionGroup, $arrayOptionGroupDefaultValues, $arrayFieldNameForException["optionGroup"], $optionGroupCaseUpper)
+            );
 
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayFieldNameForException["option"], ($optionCaseUpper)? $strdv : strtolower($strdv)), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
+            foreach ($arrayAux as $value) {
+                $opt = $value[0];
+                $arrayDefaultValues = $value[1];
+                $fieldNameForException = $value[2];
+                $caseUpper = $value[3];
+
+                if ($opt != "") {
+                    if (!in_array($opt, $arrayDefaultValues, true)) {
+                        $strdv = implode("|", $arrayDefaultValues);
+
+                        throw new \Exception(
+                            str_replace(array("{0}", "{1}"),
+                            array($fieldNameForException, ($caseUpper)? $strdv : strtolower($strdv)),
+                            "Invalid value for \"{0}\", it only accepts values: \"{1}\".")
+                        );
+                    }
                 }
             }
 
@@ -443,21 +532,22 @@ abstract class Importer
             }
 
             //Set variables
-            $opt = self::IMPORT_OPTION_CREATE_NEW; //CREATE
+            $arrayAux = array(
+                (($option != "")? "CREATE" : "") => self::IMPORT_OPTION_CREATE_NEW,
+                "OVERWRITE" => self::IMPORT_OPTION_OVERWRITE,
+                "DISABLE"   => self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW,
+                "KEEP"      => self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW
+            );
 
-            switch ($option) {
-                case "OVERWRITE":
-                    $opt = self::IMPORT_OPTION_OVERWRITE;
-                    break;
-                case "DISABLE":
-                    $opt = self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW;
-                    break;
-                case "KEEP":
-                    $opt = self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW;
-                    break;
-            }
+            $option = $arrayAux[$option];
 
-            $option = $opt;
+            $arrayAux = array(
+                (($optionGroup != "")? "CREATE" : "") => self::GROUP_IMPORT_OPTION_CREATE_NEW,
+                "RENAME" => self::GROUP_IMPORT_OPTION_RENAME,
+                "MERGE"  => self::GROUP_IMPORT_OPTION_MERGE_PREEXISTENT
+            );
+
+            $optionGroup = $arrayAux[$optionGroup];
 
             if (isset($_FILES["filePmx"])) {
                 $this->setSourceFromGlobals("filePmx");
@@ -473,13 +563,32 @@ abstract class Importer
 
             //Import
             try {
-                $projectUid = $this->import($option);
+                $projectUid = $this->import($option, $optionGroup);
 
                 $arrayData = array_merge(array("PRJ_UID" => $projectUid), $arrayData);
             } catch (\Exception $e) {
-                $msg = str_replace(array(self::IMPORT_OPTION_CREATE_NEW, self::IMPORT_OPTION_OVERWRITE, self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW, self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW), $arrayOptionDefaultValues, $e->getMessage());
+                $strOpt  = implode("|", $arrayOptionDefaultValues);
+                $strOptg = implode("|", $arrayOptionGroupDefaultValues);
 
-                throw (new \Exception($msg));
+                $strOpt = ($optionCaseUpper)? $strOpt : strtolower($strOpt);
+                $strOptg = ($optionGroupCaseUpper)? $strOptg : strtolower($strOptg);
+
+                $msg = str_replace(
+                    array(
+                        self::IMPORT_OPTION_CREATE_NEW,
+                        self::IMPORT_OPTION_OVERWRITE,
+                        self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW,
+                        self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW,
+
+                        self::GROUP_IMPORT_OPTION_CREATE_NEW,
+                        self::GROUP_IMPORT_OPTION_RENAME,
+                        self::GROUP_IMPORT_OPTION_MERGE_PREEXISTENT
+                    ),
+                    array_merge(explode("|", $strOpt), explode("|", $strOptg)),
+                    $e->getMessage()
+                );
+
+                throw new \Exception($msg);
             }
 
             //Return

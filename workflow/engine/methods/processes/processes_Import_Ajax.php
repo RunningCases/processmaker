@@ -24,57 +24,18 @@
 
 use ProcessMaker\Importer\XmlImporter;
 
-ini_set( 'max_execution_time', '0' );
+ini_set("max_execution_time", 0);
 
-if (isset($_FILES["PROCESS_FILENAME"])) {
-    $ext = pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION);
-
-    if ($ext == "pmx") {
-        $importer = new XmlImporter();
-        $importer->setData("usr_uid", $_SESSION['USER_LOGGED']);
-        $importer->setSaveDir(PATH_DOCUMENT . 'input');
-        $importer->setSourceFromGlobals("PROCESS_FILENAME");
-
-        try {
-            $prjUid = $importer->import();
-
-            $result = array(
-                "success" => true,
-                "catchMessage" => "",
-                "ExistProcessInDatabase" => 0,
-                "ExistGroupsInDatabase" => 0,
-                "sNewProUid" => $prjUid,
-                "project_type" => "bpmn"
-            );
-        } catch (Exception $e) {
-            $result = array(
-                "success" => true,
-                "catchMessage" => "", //$e->getMessage(),
-                "ExistProcessInDatabase" => 1,
-                "ExistGroupsInDatabase" => 0,
-                "groupBeforeAccion" => "uploadFileNewProcess",
-                "sNewProUid" => "",
-                "proFileName" => $_FILES['PROCESS_FILENAME']['name'],
-                "project_type" => "bpmn"
-            );
-        }
-
-        echo json_encode($result);
-        exit(0);
-    }
-} elseif (isset($_POST["PRO_FILENAME"]) && file_exists(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]) && pathinfo(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"], PATHINFO_EXTENSION) == "pmx") {
-    switch ($_POST["IMPORT_OPTION"]) {
-        case 1: $option = XmlImporter::IMPORT_OPTION_OVERWRITE; break;
-        case 2: $option = XmlImporter::IMPORT_OPTION_DISABLE_AND_CREATE_NEW; break;
-        case 3: $option = XmlImporter::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW; break;
-    }
-
+if (isset($_FILES["PROCESS_FILENAME"]) &&
+    pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "pmx"
+) {
     $importer = new XmlImporter();
-    $importer->setData("usr_uid", $_SESSION['USER_LOGGED']);
-    $importer->setSourceFile(PATH_DOCUMENT . 'input' . PATH_SEP . $_POST["PRO_FILENAME"]);
+    $importer->setData("usr_uid", $_SESSION["USER_LOGGED"]);
+    $importer->setSaveDir(PATH_DOCUMENT . "input");
+    $importer->setSourceFromGlobals("PROCESS_FILENAME");
 
     try {
-        $prjUid = $importer->import($option);
+        $prjUid = $importer->import();
 
         $result = array(
             "success" => true,
@@ -84,16 +45,18 @@ if (isset($_FILES["PROCESS_FILENAME"])) {
             "sNewProUid" => $prjUid,
             "project_type" => "bpmn"
         );
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         $result = array(
             "success" => true,
-            "catchMessage" => $e->getMessage(),
-            "ExistProcessInDatabase" => 1,
-            "ExistGroupsInDatabase" => 0,
-            "groupBeforeAccion" => "uploadFileNewProcess",
+            "catchMessage" => (in_array($e->getCode(), array(XmlImporter::IMPORT_STAT_TARGET_ALREADY_EXISTS, XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS)))? "" : $e->getMessage(),
+            "ExistProcessInDatabase" => ($e->getCode() == XmlImporter::IMPORT_STAT_TARGET_ALREADY_EXISTS)? 1 : 0,
+            "ExistGroupsInDatabase"  => ($e->getCode() == XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS)? 1 : 0,
             "sNewProUid" => "",
-            "proFileName" => "",
-            "project_type" => "bpmn"
+            "project_type" => "bpmn",
+
+            "proFileName" => $_FILES["PROCESS_FILENAME"]["name"],
+            "groupBeforeAccion" => "uploadFileNewProcess",
+            "importOption" => 0
         );
     }
 
@@ -101,37 +64,72 @@ if (isset($_FILES["PROCESS_FILENAME"])) {
     exit(0);
 }
 
-function reservedWordsSqlValidate ($data)
-{
-    $arrayAux = array ();
-    $reservedWordsSql = G::reservedWordsSql();
+if (isset($_POST["PRO_FILENAME"]) &&
+    file_exists(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]) &&
+    pathinfo(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"], PATHINFO_EXTENSION) == "pmx"
+) {
+    $option = XmlImporter::IMPORT_OPTION_CREATE_NEW;
 
-    foreach ($data->reportTables as $rptIndex => $rptValue) {
-        if (in_array( strtoupper( $rptValue["REP_TAB_NAME"] ), $reservedWordsSql )) {
-            $arrayAux[] = $rptValue["REP_TAB_NAME"];
-        }
+    switch ((isset($_POST["IMPORT_OPTION"]))? (int)($_POST["IMPORT_OPTION"]) : 0) {
+        case 1:
+            $option = XmlImporter::IMPORT_OPTION_OVERWRITE;
+            break;
+        case 2:
+            $option = XmlImporter::IMPORT_OPTION_DISABLE_AND_CREATE_NEW;
+            break;
+        case 3:
+            $option = XmlImporter::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW;
+            break;
     }
 
-    if (count( $arrayAux ) > 0) {
-        throw (new Exception( G::LoadTranslation( "ID_PMTABLE_INVALID_NAME", array (implode( ", ", $arrayAux )
-        ) ) ));
+    $optionGroup = XmlImporter::GROUP_IMPORT_OPTION_CREATE_NEW;
+
+    switch ((isset($_POST["optionGroupExistInDatabase"]))? (int)($_POST["optionGroupExistInDatabase"]) : 0) {
+        case 1:
+            $optionGroup = XmlImporter::GROUP_IMPORT_OPTION_RENAME;
+            break;
+        case 2:
+            $optionGroup = XmlImporter::GROUP_IMPORT_OPTION_MERGE_PREEXISTENT;
+            break;
     }
 
-    $arrayAux = array ();
+    $importer = new XmlImporter();
+    $importer->setData("usr_uid", $_SESSION["USER_LOGGED"]);
+    $importer->setSourceFile(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]);
 
-    foreach ($data->reportTablesVars as $rptIndex => $rptValue) {
-        if (in_array( strtoupper( $rptValue["REP_VAR_NAME"] ), $reservedWordsSql )) {
-            $arrayAux[] = $rptValue["REP_VAR_NAME"];
-        }
+    try {
+        $prjUid = $importer->import($option, $optionGroup);
+
+        $result = array(
+            "success" => true,
+            "catchMessage" => "",
+            "ExistProcessInDatabase" => 0,
+            "ExistGroupsInDatabase" => 0,
+            "sNewProUid" => $prjUid,
+            "project_type" => "bpmn"
+        );
+    } catch (Exception $e) {
+        $result = array(
+            "success" => true,
+            "catchMessage" => (in_array($e->getCode(), array(XmlImporter::IMPORT_STAT_TARGET_ALREADY_EXISTS, XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS)))? "" : $e->getMessage(),
+            "ExistProcessInDatabase" => ($e->getCode() == XmlImporter::IMPORT_STAT_TARGET_ALREADY_EXISTS)? 1 : 0,
+            "ExistGroupsInDatabase"  => ($e->getCode() == XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS)? 1 : 0,
+            "sNewProUid" => "",
+            "project_type" => "bpmn",
+
+            "proFileName" => $_POST["PRO_FILENAME"],
+            "groupBeforeAccion" => "uploadFileNewProcess",
+            "importOption" => (isset($_POST["IMPORT_OPTION"]))? (int)($_POST["IMPORT_OPTION"]) : 0
+        );
     }
 
-    if (count( $arrayAux ) > 0) {
-        throw (new Exception( G::LoadTranslation( "ID_PMTABLE_INVALID_FIELD_NAME", array (implode( ", ", $arrayAux )
-        ) ) ));
-    }
+    echo G::json_encode($result);
+    exit(0);
 }
 
 $action = isset( $_REQUEST['ajaxAction'] ) ? $_REQUEST['ajaxAction'] : null;
+
+$importer = new XmlImporter();
 
 $result = new stdClass();
 $result->success = true;
@@ -201,7 +199,7 @@ if ($action == "uploadFileNewProcess") {
             $oData = $oProcess->getProcessData( $path . $filename );
         }
 
-        reservedWordsSqlValidate( $oData );
+        $importer->throwExceptionIfExistsReservedWordsSql($oData);
 
         //!Upload file
         $Fields['PRO_FILENAME'] = $filename;
@@ -286,7 +284,7 @@ if ($action == "uploadFileNewProcessExist") {
             $oData = $oProcess->getProcessData( $path . $filename );
         }
 
-        reservedWordsSqlValidate( $oData );
+        $importer->throwExceptionIfExistsReservedWordsSql($oData);
 
         $Fields['PRO_FILENAME'] = $filename;
         $sProUid = $oData->process['PRO_UID'];
@@ -352,7 +350,7 @@ if ($action == "uploadFileNewProcessExist") {
         }
 
         //!data ouput
-        $result->fileName = $filename;
+        $result->proFileName = $filename;
         $result->importOption = $option;
         $result->sNewProUid = $sNewProUid;
         $result->success = true;
