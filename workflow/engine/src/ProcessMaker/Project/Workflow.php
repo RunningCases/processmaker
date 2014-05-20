@@ -129,7 +129,7 @@ class Workflow extends Handler
     {
         //return Project::getAll($start, $limit, $filter, $changeCaseTo);
         $process = new Process();
-        $processes = $process->getAllProcesses( $start, $limit, "", "");
+        $processes = $process->getAllProcesses($start, $limit);
         //$processes = $process->getAll();
 
         if ($changeCaseTo != CASE_UPPER) {
