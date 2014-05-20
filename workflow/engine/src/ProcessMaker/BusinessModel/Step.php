@@ -118,12 +118,13 @@ class Step
     /**
      * Verify if exists the "Object UID" in the corresponding table
      *
-     * @param string $type      Type of Step (DYNAFORM, INPUT_DOCUMENT, OUTPUT_DOCUMENT)
-     * @param string $objectUid Unique id of Object
+     * @param string $type                  Type of Step (DYNAFORM, INPUT_DOCUMENT, OUTPUT_DOCUMENT)
+     * @param string $objectUid             Unique id of Object
+     * @param string $fieldNameForException Field name for the exception
      *
      * return strin Return empty string if $objectUid exists in the corresponding table, return string with data if $objectUid doesn't exist
      */
-    public function existsObjectUid($type, $objectUid)
+    public function existsObjectUid($type, $objectUid, $fieldNameForException)
     {
         try {
             $msg = "";
@@ -133,21 +134,21 @@ class Step
                     $dynaform = new \Dynaform();
 
                     if (!$dynaform->dynaformExists($objectUid)) {
-                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "DYNAFORM"), "The UID \"{0}\" does not exist in table {1}");
+                        $msg = \G::LoadTranslation("ID_DYNAFORM_DOES_NOT_EXIST", array($fieldNameForException, $objectUid));
                     }
                     break;
                 case "INPUT_DOCUMENT":
                     $inputdoc = new \InputDocument();
 
                     if (!$inputdoc->InputExists($objectUid)) {
-                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "INPUT_DOCUMENT"), "The UID \"{0}\" does not exist in table {1}");
+                        $msg = \G::LoadTranslation("ID_INPUT_DOCUMENT_DOES_NOT_EXIST", array($fieldNameForException, $objectUid));
                     }
                     break;
                 case "OUTPUT_DOCUMENT":
                     $outputdoc = new \OutputDocument();
 
                     if (!$outputdoc->OutputExists($objectUid)) {
-                        $msg = str_replace(array("{0}", "{1}"), array($objectUid, "OUTPUT_DOCUMENT"), "The UID \"{0}\" does not exist in table {1}");
+                        $msg = \G::LoadTranslation("ID_OUTPUT_DOCUMENT_DOES_NOT_EXIST", array($fieldNameForException, $objectUid));
                     }
                     break;
             }
@@ -171,7 +172,8 @@ class Step
 
         if (!in_array($stepTypeObj, $arrayDefaultValues)) {
             $field = $this->arrayParamException["stepTypeObj"];
-            throw (new \Exception(str_replace(array("{0}", "{1}"), array($field, implode("|", $arrayDefaultValues)), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
+
+            throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES", array($field, implode("|", $arrayDefaultValues))));
         }
     }
 
@@ -189,7 +191,7 @@ class Step
         if (!in_array($stepMode, $arrayDefaultValues)) {
             $field = $this->arrayParamException["stepMode"];
 
-            throw (new \Exception(str_replace(array("{0}", "{1}"), array($field, implode("|", $arrayDefaultValues)), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
+            throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES", array($field, implode("|", $arrayDefaultValues))));
         }
     }
 
@@ -205,9 +207,7 @@ class Step
         $step = new \Step();
 
         if (!$step->StepExists($stepUid)) {
-            $msg = str_replace(array("{0}", "{1}"), array($this->arrayParamException["stepUid"], $stepUid), "The step with {0}: {1} does not exist.");
-
-            throw (new \Exception($msg));
+            throw new \Exception(\G::LoadTranslation("ID_STEP_DOES_NOT_EXIST", array($this->arrayParamException["stepUid"], $stepUid)));
         }
     }
 
@@ -223,9 +223,7 @@ class Step
         $task = new \Task();
 
         if (!$task->taskExists($taskUid)) {
-            $msg = str_replace(array("{0}", "{1}"), array($this->arrayParamException["taskUid"], $taskUid), "The activity with {0}: {1} does not exist.");
-
-            throw (new \Exception($msg));
+            throw new \Exception(\G::LoadTranslation("ID_ACTIVITY_DOES_NOT_EXIST", array($this->arrayParamException["taskUid"], $taskUid)));
         }
     }
 
@@ -241,9 +239,7 @@ class Step
         $process = new \Process();
 
         if (!$process->exists($processUid)) {
-            $msg = str_replace(array("{0}", "{1}"), array($this->arrayParamException["processUid"], $processUid), "The project with {0}: {1} does not exist.");
-
-            throw (new \Exception($msg));
+            throw new \Exception(\G::LoadTranslation("ID_PROJECT_DOES_NOT_EXIST", array($this->arrayParamException["processUid"], $processUid)));
         }
     }
 
@@ -269,47 +265,47 @@ class Step
             $this->throwExceptionIfNotExistsProcess($processUid);
 
             if (!isset($arrayData["STEP_TYPE_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->arrayParamException["stepTypeObj"])));
             }
 
             $arrayData["STEP_TYPE_OBJ"] = trim($arrayData["STEP_TYPE_OBJ"]);
 
             if ($arrayData["STEP_TYPE_OBJ"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "Invalid value for \"{0}\", it can not be empty.")));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array($this->arrayParamException["stepTypeObj"])));
             }
 
             if (!isset($arrayData["STEP_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->arrayParamException["stepUidObj"])));
             }
 
             $arrayData["STEP_UID_OBJ"] = trim($arrayData["STEP_UID_OBJ"]);
 
             if ($arrayData["STEP_UID_OBJ"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "Invalid value for \"{0}\", it can not be empty.")));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array($this->arrayParamException["stepUidObj"])));
             }
 
             if (!isset($arrayData["STEP_MODE"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->arrayParamException["stepMode"])));
             }
 
             $arrayData["STEP_MODE"] = trim($arrayData["STEP_MODE"]);
 
             if ($arrayData["STEP_MODE"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "Invalid value for \"{0}\", it can not be empty.")));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array($this->arrayParamException["stepMode"])));
             }
 
             $this->throwExceptionIfHaveInvalidValueInTypeObj($arrayData["STEP_TYPE_OBJ"]);
 
             $this->throwExceptionIfHaveInvalidValueInMode($arrayData["STEP_MODE"]);
 
-            $msg = $this->existsObjectUid($arrayData["STEP_TYPE_OBJ"], $arrayData["STEP_UID_OBJ"]);
+            $msg = $this->existsObjectUid($arrayData["STEP_TYPE_OBJ"], $arrayData["STEP_UID_OBJ"], $this->arrayParamException["stepUidObj"]);
 
             if ($msg != "") {
-                throw (new \Exception($msg));
+                throw new \Exception($msg);
             }
 
             if ($this->existsRecord($taskUid, $arrayData["STEP_TYPE_OBJ"], $arrayData["STEP_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid . ", " . $arrayData["STEP_TYPE_OBJ"] . ", " . $arrayData["STEP_UID_OBJ"], "STEP"), "The record \"{0}\", exists in table {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_RECORD_EXISTS_IN_TABLE", array($taskUid . ", " . $arrayData["STEP_TYPE_OBJ"] . ", " . $arrayData["STEP_UID_OBJ"], "STEP")));
             }
 
             //Create
@@ -367,18 +363,18 @@ class Step
 
             //Verify data
             if (isset($arrayData["STEP_TYPE_OBJ"]) && !isset($arrayData["STEP_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->arrayParamException["stepUidObj"])));
             }
 
             if (!isset($arrayData["STEP_TYPE_OBJ"]) && isset($arrayData["STEP_UID_OBJ"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->arrayParamException["stepTypeObj"])));
             }
 
             if (isset($arrayData["STEP_TYPE_OBJ"])) {
                 $arrayData["STEP_TYPE_OBJ"] = trim($arrayData["STEP_TYPE_OBJ"]);
 
                 if ($arrayData["STEP_TYPE_OBJ"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepTypeObj"]), "Invalid value for \"{0}\", it can not be empty.")));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array($this->arrayParamException["stepTypeObj"])));
                 }
             }
 
@@ -386,7 +382,7 @@ class Step
                 $arrayData["STEP_UID_OBJ"] = trim($arrayData["STEP_UID_OBJ"]);
 
                 if ($arrayData["STEP_UID_OBJ"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepUidObj"]), "Invalid value for \"{0}\", it can not be empty.")));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array($this->arrayParamException["stepUidObj"])));
                 }
             }
 
@@ -394,7 +390,7 @@ class Step
                 $arrayData["STEP_MODE"] = trim($arrayData["STEP_MODE"]);
 
                 if ($arrayData["STEP_MODE"] == "") {
-                    throw (new \Exception(str_replace(array("{0}"), array($this->arrayParamException["stepMode"]), "Invalid value for \"{0}\", it can not be empty.")));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array($this->arrayParamException["stepMode"])));
                 }
             }
 
@@ -407,14 +403,14 @@ class Step
             }
 
             if (isset($arrayData["STEP_TYPE_OBJ"]) && isset($arrayData["STEP_UID_OBJ"])) {
-                $msg = $this->existsObjectUid($arrayData["STEP_TYPE_OBJ"], $arrayData["STEP_UID_OBJ"]);
+                $msg = $this->existsObjectUid($arrayData["STEP_TYPE_OBJ"], $arrayData["STEP_UID_OBJ"], $this->arrayParamException["stepUidObj"]);
 
                 if ($msg != "") {
-                    throw (new \Exception($msg));
+                    throw new \Exception($msg);
                 }
 
                 if ($this->existsRecord($taskUid, $arrayData["STEP_TYPE_OBJ"], $arrayData["STEP_UID_OBJ"], 0, $stepUid)) {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($taskUid . ", " . $arrayData["STEP_TYPE_OBJ"] . ", " . $arrayData["STEP_UID_OBJ"], "STEP"), "The record \"{0}\", exists in table {1}")));
+                    throw new \Exception(\G::LoadTranslation("ID_RECORD_EXISTS_IN_TABLE", array($taskUid . ", " . $arrayData["STEP_TYPE_OBJ"] . ", " . $arrayData["STEP_UID_OBJ"], "STEP")));
                 }
             }
 

@@ -17,11 +17,9 @@ class CaseTracker
             $arrayDataIni = $arrayData;
 
             //Verify data
-            $process = new \Process();
+            $process = new \ProcessMaker\BusinessModel\Process();
 
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" does not exist in table {1}")));
-            }
+            $process->throwExceptionIfNotExistsProcess($processUid, "prj_uid");
 
             //Update
             $caseTracker = new \CaseTracker();
@@ -64,11 +62,9 @@ class CaseTracker
             $arrayCaseTracker = array();
 
             //Verify data
-            $process = new \Process();
+            $process = new \ProcessMaker\BusinessModel\Process();
 
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" does not exist in table {1}")));
-            }
+            $process->throwExceptionIfNotExistsProcess($processUid, "prj_uid");
 
             //Get data
             $criteria = new \Criteria();
@@ -118,11 +114,9 @@ class CaseTracker
             $arrayAvailableCaseTrackerObject = array();
 
             //Verify data
-            $process = new \Process();
+            $process = new \ProcessMaker\BusinessModel\Process();
 
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" does not exist in table {1}")));
-            }
+            $process->throwExceptionIfNotExistsProcess($processUid, "prj_uid");
 
             //Get Uids
             $arrayDynaFormUid = array();
@@ -315,11 +309,9 @@ class CaseTracker
             $arrayCaseTrackerObject = array();
 
             //Verify data
-            $process = new \Process();
+            $process = new \ProcessMaker\BusinessModel\Process();
 
-            if (!$process->exists($processUid)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($processUid, "PROCESS"), "The UID \"{0}\" does not exist in table {1}")));
-            }
+            $process->throwExceptionIfNotExistsProcess($processUid, "prj_uid");
 
             $dynaform = new \Dynaform();
             $inputDocument = new \InputDocument();

@@ -33,20 +33,20 @@ class XmlImporter extends Importer
         $this->version = $this->root->getAttribute("version");
 
         if (empty($this->version)) {
-            throw new \Exception("ProcessMaker Project version is missing on file source.");
+            throw new \Exception(\G::LoadTranslation("ID_IMPORTER_FILE_PROCESSMAKER_PROJECT_VERSION_IS_MISSING"));
         }
 
         // read metadata section
         $metadataNode = $this->root->getElementsByTagName("metadata");
 
         if ($metadataNode->length != 1) {
-            throw new \Exception("Invalid Document format, metadata section is missing or has multiple definition.");
+            throw new \Exception(\G::LoadTranslation("ID_IMPORTER_FILE_INVALID_DOCUMENT_FORMAT_METADATA_IS_MISSING"));
         }
 
         $metadataNodeList = $metadataNode->item(0)->getElementsByTagName("meta");
 
         if ($metadataNodeList->length == 0) {
-            throw new \Exception("Invalid Document format, metadata information is corrupt.");
+            throw new \Exception(\G::LoadTranslation("ID_IMPORTER_FILE_INVALID_DOCUMENT_FORMAT_METADATA_IS_CORRUPT"));
         }
 
 
@@ -59,9 +59,9 @@ class XmlImporter extends Importer
         $definitions = $this->root->getElementsByTagName("definition");
 
         if ($definitions->length == 0) {
-            throw new \Exception("Definition section is missing.");
+            throw new \Exception(\G::LoadTranslation("ID_IMPORTER_FILE_DEFINITION_SECTION_IS_MISSING"));
         } elseif ($definitions->length < 2) {
-            throw new \Exception("Definition section is incomplete.");
+            throw new \Exception(\G::LoadTranslation("ID_IMPORTER_FILE_DEFINITION_SECTION_IS_INCOMPLETE"));
         }
 
         $tables = array();
@@ -89,7 +89,10 @@ class XmlImporter extends Importer
                     $columns = array();
 
                     foreach ($recordsNode->childNodes as $columnNode) {
-                        if ($columnNode->nodeName == "#text") continue;
+                        if ($columnNode->nodeName == "#text") {
+                            continue;
+                        }
+
                         //$columns[strtoupper($columnNode->nodeName)] = self::getTextNode($columnNode);;
                         $columnName = $defClass == "workflow" ? strtoupper($columnNode->nodeName) : $columnNode->nodeName;
                         $columns[$columnName] = self::getTextNode($columnNode);
@@ -132,7 +135,7 @@ class XmlImporter extends Importer
     {
         if ($node->nodeType == XML_ELEMENT_NODE) {
             return $node->textContent;
-        } else if ($node->nodeType == XML_TEXT_NODE || $node->nodeType == XML_CDATA_SECTION_NODE) {
+        } elseif ($node->nodeType == XML_TEXT_NODE || $node->nodeType == XML_CDATA_SECTION_NODE) {
             return (string) simplexml_import_dom($node->parentNode);
         }
     }

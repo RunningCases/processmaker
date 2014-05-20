@@ -256,7 +256,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @covers \ProcessMaker\BusinessModel\Calendar::create
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage The calendar name with CAL_NAME: "PHPUnit Calendar0" already exists
+     * @expectedExceptionMessage The calendar name with CAL_NAME: "PHPUnit Calendar0" already exists.
      */
     public function testCreateExceptionExistsCalName()
     {
@@ -371,7 +371,7 @@ class CalendarTest extends \PHPUnit_Framework_TestCase
      * @param   array $arrayRecord Data of the calendars
      *
      * @expectedException        Exception
-     * @expectedExceptionMessage The calendar name with CAL_NAME: "PHPUnit Calendar1" already exists
+     * @expectedExceptionMessage The calendar name with CAL_NAME: "PHPUnit Calendar1" already exists.
      */
     public function testUpdateExceptionExistsCalName($arrayRecord)
     {
