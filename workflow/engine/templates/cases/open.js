@@ -1521,19 +1521,36 @@ Ext.onReady(function(){
 	                  TabPanel.setActiveTab(tabId);
 	                }
 	                else {
-	                  TabPanel.add({
-	                    id: tabId,
-	                    title: menuSelectedTitle[name],
-	                    frameConfig:{name: name + 'Frame', id: name + 'Frame'},
-	                    defaultSrc : uri,
-	                    loadMask:{msg:_('ID_LOADING_GRID')+'...'},
-	                    autoWidth: true,
-	                    closable:true,
-	                    autoScroll: true,
-	                    bodyStyle:{height: (PMExt.getBrowser().screen.height-60) + 'px', overflow:'auto'}
-	                  }).show();
+                            if (_PROJECT_TYPE === 'classic') {
+                                TabPanel.add({
+                                    id: tabId,
+                                    title: menuSelectedTitle[name],
+                                    frameConfig: {name: name + 'Frame', id: name + 'Frame'},
+                                    defaultSrc: uri,
+                                    loadMask: {msg: _('ID_LOADING_GRID') + '...'},
+                                    autoWidth: true,
+                                    closable: true,
+                                    autoScroll: true,
+                                    bodyStyle: {height: (PMExt.getBrowser().screen.height - 60) + 'px', overflow: 'auto'}
+                                }).show();
 
-	                  TabPanel.doLayout();
+                                TabPanel.doLayout();
+                            }
+                            if (_PROJECT_TYPE === 'bpmn') {
+                                TabPanel.add({
+                                    id: tabId,
+                                    title: menuSelectedTitle[name],
+                                    frameConfig: {name: name + 'Frame', id: name + 'Frame'},
+                                    defaultSrc: '../designer?prj_uid=' + _PRO_UID + '&prj_readonly=true&app_uid=' + _APP_UID,
+                                    loadMask: {msg: _('ID_LOADING_GRID') + '...'},
+                                    autoWidth: true,
+                                    closable: true,
+                                    autoScroll: true,
+                                    bodyStyle: {height: (PMExt.getBrowser().screen.height - 60) + 'px', overflow: 'auto'}
+                                }).show();
+
+                                TabPanel.doLayout();
+                            }
 	                }
 	            }
 	          },
