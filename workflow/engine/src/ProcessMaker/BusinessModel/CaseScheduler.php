@@ -70,7 +70,7 @@ class CaseScheduler
         try {
             $oCaseSchedulerTest = \CaseSchedulerPeer::retrieveByPK( $sCaseSchedulerUID );
             if (is_null($oCaseSchedulerTest)) {
-                throw (new \Exception( 'This id: '. $sCaseSchedulerUID .' does not correspond to a registered case scheduler'));
+                throw new \Exception(\G::LoadTranslation("ID_CASE_SCHEDULER_DOES_NOT_EXIST", array($sCaseSchedulerUID)));
             }
             $oCriteria = new \Criteria( 'workflow' );
             $oCriteria->clearSelectColumns();
@@ -217,7 +217,7 @@ class CaseScheduler
                 $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
                 $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
                 if (! ($userIsAssigned >= 1)) {
-                    throw (new \Exception( "The User " . $sWS_USER . " doesn't have the activity " . $sTASKS . " assigned"));
+                    throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_HAVE_ACTIVITY", array($sWS_USER, $sTASKS)));
                 }
             }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
@@ -251,17 +251,17 @@ class CaseScheduler
             $caseSchedulerData = array_change_key_case($caseSchedulerData, CASE_UPPER);
             $sOption = $caseSchedulerData['SCH_OPTION'];
             if (empty($caseSchedulerData)) {
-                die( 'the information sended is empty!' );
+                die( \G::LoadTranslation("ID_INFORMATION_EMPTY") );
             }
             $arrayTaskUid = $this->getTaskUid($caseSchedulerData['TAS_UID']);
             if (empty($arrayTaskUid)) {
-                throw (new \Exception( 'Task not found for id: '. $caseSchedulerData['TAS_UID']));
+                throw (new \Exception( \G::LoadTranslation("ID_TASK_NOT_FOUND", array($caseSchedulerData['TAS_UID']))));
             }
             if ($caseSchedulerData['SCH_NAME']=='') {
-                throw (new \Exception( 'sch_name can not be empty'));
+                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_EMPTY", array ('sch_name')));
             }
             if ($this->existsName($sProcessUID, $caseSchedulerData['SCH_NAME'])) {
-                throw (new \Exception( 'Duplicate Case Scheduler name'));
+                throw new \Exception(\G::LoadTranslation("ID_CASE_SCHEDULER_DUPLICATE"));
             }
             $mUser = $this->getUser($caseSchedulerData['SCH_DEL_USER_NAME'], $caseSchedulerData['TAS_UID']);
             $oUser = \UsersPeer::retrieveByPK( $mUser );
@@ -273,19 +273,19 @@ class CaseScheduler
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
                 if (!preg_match($pattern, $caseSchedulerData['SCH_START_TIME'])) {
-                    throw (new \Exception( 'Invalid value specified for sch_start_time. Expecting time in HH:MM format (The time can not be increased to 23:59)'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_TIME"));
                 }
             }
             $patternDate="/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/";
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
                 if (!preg_match($patternDate, $caseSchedulerData['SCH_START_DATE'])) {
-                    throw (new \Exception( 'Invalid value specified for sch_start_date. Expecting date in YYYY-MM-DD format, such as 2014-01-01'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_DATE"));
                 }
                 if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
-                    throw (new \Exception( 'Invalid value specified for sch_end_date. Expecting date in YYYY-MM-DD format, such as 2014-01-01'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_END_DATE"));
                 }
                 if ($caseSchedulerData['SCH_START_DATE'] == "") {
-                    throw (new \Exception( 'sch_start_date can not be null'));
+                    throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_date')));
                 }
             }
             if ($sOption == '2') {
@@ -331,7 +331,7 @@ class CaseScheduler
                     break;
                 case '2': // If the option is zero, set by default 1
                     if ($caseSchedulerData['SCH_WEEK_DAYS'] == "") {
-                        throw (new \Exception( 'sch_week_days can not be null'));
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_week_days')));
                     } else {
                         $weeks = $caseSchedulerData['SCH_WEEK_DAYS'];
                         $weeks = explode("|", $weeks);
@@ -339,7 +339,7 @@ class CaseScheduler
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7") {
                                 $caseSchedulerData['SCH_WEEK_DAYS'] = $caseSchedulerData['SCH_WEEK_DAYS'];
                             } else {
-                                throw (new \Exception( 'Invalid value specified for sch_week_days'));
+                                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('sch_week_days')));
                             }
                         }
                     }
@@ -359,49 +359,49 @@ class CaseScheduler
                 case '3':
                     $nStartDay = $caseSchedulerData['SCH_START_DAY'];
                     if ($nStartDay == "") {
-                        throw (new \Exception( 'sch_start_day can not be null'));
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_day')));
                     }
                     if ($nStartDay == 1) {
                         if ($caseSchedulerData['SCH_START_DAY_OPT_1'] == "") {
-                            throw (new \Exception( 'sch_start_day_opt_1 can not be null'));
+                            throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_day_opt_1')));
                         }
                         $temp = $caseSchedulerData['SCH_START_DAY_OPT_1'];
                         $temp = (int)$temp;
                         if ($temp >= 1 && $temp <= 31) {
                             $caseSchedulerData['SCH_START_DAY_OPT_1'] = $caseSchedulerData['SCH_START_DAY_OPT_1'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for sch_start_day_opt_1. Must be between 1 and 31'));
+                            throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_DAY_1"));
                         }
                         $caseSchedulerData['SCH_START_DAY'] = $nStartDay . '|' . $caseSchedulerData['SCH_START_DAY_OPT_1'];
                     } else {
                         if ($caseSchedulerData['SCH_START_DAY_OPT_2'] == "") {
-                            throw (new \Exception( 'sch_start_day_opt_2 can not be null'));
+                            throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_day_opt_2')));
                         }
                         $caseSchedulerData['SCH_START_DAY'] = $nStartDay . '|' . $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         $optionTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{0};
                         if ($optionTwo == "1" || $optionTwo == "2" || $optionTwo == "3" || $optionTwo == "4" || $optionTwo == "5") {
                             $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
+                            throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('sch_start_day_opt_2')));
                         }
                         $pipelineTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{1};
                         if ($pipelineTwo == "|") {
                             $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
+                            throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('sch_start_day_opt_2')));
                         }
                         $dayTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{2};
                         if ($dayTwo == "1" || $dayTwo == "2" || $dayTwo == "3" || $dayTwo == "4" || $dayTwo == "5" || $dayTwo == "6" || $dayTwo == "7") {
                             $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
+                            throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('sch_start_day_opt_2')));
                         }
                     }
                     if ($nStartDay == "") {
-                        throw (new \Exception( 'sch_start_day can not be null'));
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_day')));
                     }
                     if ($caseSchedulerData['SCH_MONTHS'] == "") {
-                         throw (new \Exception( 'sch_months can not be null'));
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_months')));
                     }
                     if (! empty( $caseSchedulerData['SCH_MONTHS'] )) {
                         $aMonths = $caseSchedulerData['SCH_MONTHS'];
@@ -410,7 +410,7 @@ class CaseScheduler
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7"|| $row == "8" || $row == "9" || $row == "10"|| $row == "11" || $row == "12") {
                                 $caseSchedulerData['SCH_MONTHS'] = $caseSchedulerData['SCH_MONTHS'];
                             } else {
-                                throw (new \Exception( 'Invalid value specified for sch_months'));
+                                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('sch_months')));
                             }
                         }
                     }
@@ -469,11 +469,11 @@ class CaseScheduler
                     $caseSchedulerData['SCH_START_TIME'] = time();
                     $caseSchedulerData['SCH_START_DATE'] = $caseSchedulerData['SCH_START_TIME'];
                     if ($caseSchedulerData['SCH_REPEAT_EVERY'] == "") {
-                        throw (new \Exception( 'sch_repeat_every can not be null'));
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_repeat_every')));
                     }
                     $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
                     if (!preg_match($patternHour, $caseSchedulerData['SCH_REPEAT_EVERY'])) {
-                        throw (new \Exception( 'Invalid value specified for sch_repeat_every. Expecting time in HH.MM format'));
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_REPEAT"));
                     }
                     $nextRun = $caseSchedulerData['SCH_REPEAT_EVERY'] * 60 * 60;
                     $caseSchedulerData['SCH_REPEAT_EVERY'] = $caseSchedulerData['SCH_REPEAT_EVERY'];
@@ -525,7 +525,7 @@ class CaseScheduler
             require_once(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "CaseScheduler.php");
             $caseSchedulerData = array_change_key_case($caseSchedulerData, CASE_UPPER);
             if (empty( $caseSchedulerData )) {
-                die( 'The information sended is empty!' );
+                die( \G::LoadTranslation("ID_INFORMATION_EMPTY") );
             }
             $oCaseScheduler = new \CaseScheduler();
             $aFields = $oCaseScheduler->Load($sSchUID);
@@ -538,18 +538,15 @@ class CaseScheduler
             $caseSchedulerData['sch_repeat_stop_if_running'] = '0';
             $caseSchedulerData['case_sh_plugin_uid'] = null;
             $caseSchedulerData = array_change_key_case($caseSchedulerData, CASE_UPPER);
-            if (empty($caseSchedulerData)) {
-                die( 'the information sended is empty!' );
-            }
             $arrayTaskUid = $this->getTaskUid($caseSchedulerData['TAS_UID']);
             if (empty($arrayTaskUid)) {
-                throw (new \Exception( 'Task not found for id: '. $caseSchedulerData['TAS_UID']));
+                throw new \Exception(\G::LoadTranslation("ID_TASK_NOT_FOUND", array($caseSchedulerData['TAS_UID'])));
             }
             if ($caseSchedulerData['SCH_NAME']=='') {
-                throw (new \Exception( 'sch_name can not be empty'));
+                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_EMPTY", array ('sch_name')));
             }
             if ($this->existsNameUpdate($sSchUID, $caseSchedulerData['SCH_NAME'])) {
-                throw (new \Exception( 'Duplicate Case Scheduler name'));
+                throw new \Exception(\G::LoadTranslation("ID_CASE_SCHEDULER_DUPLICATE"));
             }
             $mUser = $this->getUser($caseSchedulerData['SCH_DEL_USER_NAME'], $caseSchedulerData['TAS_UID']);
             $oUser = \UsersPeer::retrieveByPK( $mUser );
@@ -561,19 +558,19 @@ class CaseScheduler
             if ($sOption != '5') {
                 $pattern="/^([0-1][0-9]|[2][0-3])[\:]([0-5][0-9])$/";
                 if (!preg_match($pattern, $caseSchedulerData['SCH_START_TIME'])) {
-                    throw (new \Exception( 'Invalid value specified for sch_start_time. Expecting time in HH:MM format (The time can not be increased to 23:59)'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_TIME"));
                 }
             }
             $patternDate="/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/";
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
                 if (!preg_match($patternDate, $caseSchedulerData['SCH_START_DATE'])) {
-                    throw (new \Exception( 'Invalid value specified for sch_start_date. Expecting date in YYYY-MM-DD format, such as 2014-01-01'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_DATE"));
                 }
                 if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
-                    throw (new \Exception( 'Invalid value specified for sch_end_date. Expecting date in YYYY-MM-DD format, such as 2014-01-01'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_END_DATE"));
                 }
                 if ($caseSchedulerData['SCH_START_DATE'] == "") {
-                    throw (new \Exception( 'sch_start_date can not be null'));
+                    throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_date')));
                 }
             }
             if ($sOption == '2') {
@@ -626,7 +623,7 @@ class CaseScheduler
                     break;
                 case '2': // If the option is zero, set by default 1
                     if ($caseSchedulerData['SCH_WEEK_DAYS'] == "") {
-                        throw (new \Exception( 'sch_week_days can not be null'));
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_week_days')));
                     } else {
                         $weeks = $caseSchedulerData['SCH_WEEK_DAYS'];
                         $weeks = explode("|", $weeks);
@@ -634,7 +631,7 @@ class CaseScheduler
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7") {
                                 $caseSchedulerData['SCH_WEEK_DAYS'] = $caseSchedulerData['SCH_WEEK_DAYS'];
                             } else {
-                                throw (new \Exception( 'Invalid value specified for sch_week_days'));
+                                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('sch_week_days')));
                             }
                         }
                     }
@@ -654,49 +651,49 @@ class CaseScheduler
                 case '3':
                     $nStartDay = $caseSchedulerData['SCH_START_DAY'];
                     if ($nStartDay == "") {
-                        throw (new \Exception( 'sch_start_day can not be null'));
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_day')));
                     }
                     if ($nStartDay == 1) {
                         if ($caseSchedulerData['SCH_START_DAY_OPT_1'] == "") {
-                            throw (new \Exception( 'sch_start_day_opt_1 can not be null'));
+                            throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_day_opt_1')));
                         }
                         $temp = $caseSchedulerData['SCH_START_DAY_OPT_1'];
                         $temp = (int)$temp;
                         if ($temp >= 1 && $temp <= 31) {
                             $caseSchedulerData['SCH_START_DAY_OPT_1'] = $caseSchedulerData['SCH_START_DAY_OPT_1'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for sch_start_day_opt_1. Must be between 1 and 31'));
+                            throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_DAY_1"));
                         }
                         $caseSchedulerData['SCH_START_DAY'] = $nStartDay . '|' . $caseSchedulerData['SCH_START_DAY_OPT_1'];
                     } else {
                         if ($caseSchedulerData['SCH_START_DAY_OPT_2'] == "") {
-                            throw (new \Exception( 'sch_start_day_opt_2 can not be null'));
+                            throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_day_opt_2')));
                         }
                         $caseSchedulerData['SCH_START_DAY'] = $nStartDay . '|' . $caseSchedulerData['SCH_START_DAY_OPT_2'];
                             $optionTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{0};
                         if ($optionTwo == "1" || $optionTwo == "2" || $optionTwo == "3" || $optionTwo == "4" || $optionTwo == "5") {
                             $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
+                            throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('sch_start_day_opt_2')));
                         }
                         $pipelineTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{1};
                         if ($pipelineTwo == "|") {
                             $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
+                            throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('sch_start_day_opt_2')));
                         }
                         $dayTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{2};
                         if ($dayTwo == "1" || $dayTwo == "2" || $dayTwo == "3" || $dayTwo == "4" || $dayTwo == "5" || $dayTwo == "6" || $dayTwo == "7") {
                             $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
-                            throw (new \Exception( 'Invalid value specified for sch_start_day_opt_2'));
+                            throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('sch_start_day_opt_2')));
                         }
                     }
                     if ($nStartDay == "") {
-                        throw (new \Exception( 'sch_start_day can not be null'));
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_day')));
                     }
                     if ($caseSchedulerData['SCH_MONTHS'] == "") {
-                         throw (new \Exception( 'sch_months can not be null'));
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_months')));
                     }
                     if (! empty( $caseSchedulerData['SCH_MONTHS'] )) {
                         $aMonths = $caseSchedulerData['SCH_MONTHS'];
@@ -705,7 +702,7 @@ class CaseScheduler
                             if ($row == "1" || $row == "2" || $row == "3" || $row == "4" || $row == "5"|| $row == "6" || $row == "7"|| $row == "8" || $row == "9" || $row == "10"|| $row == "11" || $row == "12") {
                                 $caseSchedulerData['SCH_MONTHS'] = $caseSchedulerData['SCH_MONTHS'];
                             } else {
-                                throw (new \Exception( 'Invalid value specified for sch_months'));
+                                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('sch_months')));
                             }
                         }
                     }
@@ -765,11 +762,11 @@ class CaseScheduler
                     $caseSchedulerData['SCH_START_TIME'] = time();
                     $caseSchedulerData['SCH_START_DATE'] = $caseSchedulerData['SCH_START_TIME'];
                     if ($caseSchedulerData['SCH_REPEAT_EVERY'] == "") {
-                        throw (new \Exception( 'sch_repeat_every can not be null'));
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_repeat_every')));
                     }
                     $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
                     if (!preg_match($patternHour, $caseSchedulerData['SCH_REPEAT_EVERY'])) {
-                        throw (new \Exception( 'Invalid value specified for sch_repeat_every. Expecting time in HH.MM format'));
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_REPEAT"));
                     }
                     $nextRun = $caseSchedulerData['SCH_REPEAT_EVERY'] * 60 * 60;
                     $caseSchedulerData['SCH_REPEAT_EVERY'] = $caseSchedulerData['SCH_REPEAT_EVERY'];

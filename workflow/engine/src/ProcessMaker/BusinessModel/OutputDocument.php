@@ -235,7 +235,7 @@ class OutputDocument
             if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms" || $row == "") {
                 $outputDocumentData['out_doc_pdf_security_permissions'] = $outputDocumentData['out_doc_pdf_security_permissions'];
             } else {
-                throw (new \Exception( 'Invalid value specified for out_doc_pdf_security_permissions'));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('out_doc_pdf_security_permissions')));
             }
         }
         try {
@@ -245,7 +245,7 @@ class OutputDocument
             //Verify data
             Validator::proUid($sProcessUID, '$pro_uid');
             if ($outputDocumentData["OUT_DOC_TITLE"]=="") {
-                throw (new \Exception( 'Invalid value specified for out_doc_title, can not be null'));
+                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('out_doc_title')));
             }
             if (isset($outputDocumentData["OUT_DOC_TITLE"]) && $this->existsTitle($sProcessUID, $outputDocumentData["OUT_DOC_TITLE"])) {
                 throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_SAVE")));
@@ -303,7 +303,7 @@ class OutputDocument
             if ($row == "print" || $row == "modify" || $row == "copy" || $row == "forms" || $row == "") {
                 $outputDocumentData['out_doc_pdf_security_permissions'] = $outputDocumentData['out_doc_pdf_security_permissions'];
             } else {
-                throw (new \Exception( 'Invalid value specified for out_doc_pdf_security_permissions'));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('out_doc_pdf_security_permissions')));
             }
         }
         try {
@@ -339,10 +339,10 @@ class OutputDocument
                     foreach ($aValidationFailures as $oValidationFailure) {
                         $sMessage .= $oValidationFailure->getMessage();
                     }
-                    throw (new \Exception('The registry cannot be updated!' . $sMessage));
+                    throw (new \Exception(\G::LoadTranslation("ID_REGISTRY_CANNOT_BE_UPDATED") . $sMessage));
                 }
             } else {
-                throw (new \Exception('This row does not exist!'));
+                throw new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST"));
             }
         } catch (\Exception $e) {
             throw $e;
