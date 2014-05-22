@@ -12,20 +12,20 @@ use \Luracast\Restler\RestException;
 class Trigger extends Api
 {
     /**
-     * @url GET /:projectUid/activity/:activityUid/step/:stepUid/trigger/:triggerUid/:type
+     * @url GET /:prj_uid/activity/:act_uid/step/:step_uid/trigger/:tri_uid/:type
      *
-     * @param string $triggerUid
-     * @param string $stepUid
-     * @param string $activityUid
-     * @param string $projectUid
-     * @param string $type {@from body}{@choice before,after}
+     * @param string $tri_uid
+     * @param string $step_uid
+     * @param string $act_uid
+     * @param string $prj_uid
+     * @param string $type     {@from body}{@choice before,after}
      */
-    public function doGetActivityStepTrigger($triggerUid, $stepUid, $activityUid, $projectUid, $type)
+    public function doGetActivityStepTrigger($tri_uid, $step_uid, $act_uid, $prj_uid, $type)
     {
         try {
             $stepTrigger = new \ProcessMaker\BusinessModel\Step\Trigger();
 
-            $response = $stepTrigger->getTrigger($stepUid, strtoupper($type), $activityUid, $triggerUid);
+            $response = $stepTrigger->getTrigger($step_uid, strtoupper($type), $act_uid, $tri_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -34,65 +34,65 @@ class Trigger extends Api
     }
 
     /**
-     * @url POST /:projectUid/activity/:activityUid/step/:stepUid/trigger
+     * @url POST /:prj_uid/activity/:act_uid/step/:step_uid/trigger
      *
-     * @param string $stepUid
-     * @param string $activityUid
-     * @param string $projectUid
+     * @param string $step_uid
+     * @param string $act_uid
+     * @param string $prj_uid
      * @param StepTriggerPostStructure $request_data
      *
      * @status 201
      */
-    public function doPostActivityStepTrigger($stepUid, $activityUid, $projectUid, StepTriggerPostStructure $request_data = null)
+    public function doPostActivityStepTrigger($step_uid, $act_uid, $prj_uid, StepTriggerPostStructure $request_data = null)
     {
         try {
             $request_data = (array)($request_data);
 
             $stepTrigger = new \ProcessMaker\BusinessModel\Step\Trigger();
 
-            $arrayData = $stepTrigger->create($stepUid, $request_data["st_type"], $activityUid, $request_data["tri_uid"], $request_data);
+            $arrayData = $stepTrigger->create($step_uid, $request_data["st_type"], $act_uid, $request_data["tri_uid"], $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url PUT /:projectUid/activity/:activityUid/step/:stepUid/trigger/:triggerUid
+     * @url PUT /:prj_uid/activity/:act_uid/step/:step_uid/trigger/:tri_uid
      *
-     * @param string $triggerUid
-     * @param string $stepUid
-     * @param string $activityUid
-     * @param string $projectUid
+     * @param string $tri_uid
+     * @param string $step_uid
+     * @param string $act_uid
+     * @param string $prj_uid
      * @param StepTriggerPutStructure $request_data
      */
-    public function doPutActivityStepTrigger($triggerUid, $stepUid, $activityUid, $projectUid, StepTriggerPutStructure $request_data = null)
+    public function doPutActivityStepTrigger($tri_uid, $step_uid, $act_uid, $prj_uid, StepTriggerPutStructure $request_data = null)
     {
         try {
             $request_data = (array)($request_data);
 
             $stepTrigger = new \ProcessMaker\BusinessModel\Step\Trigger();
 
-            $arrayData = $stepTrigger->update($stepUid, $request_data["st_type"], $activityUid, $triggerUid, $request_data);
+            $arrayData = $stepTrigger->update($step_uid, $request_data["st_type"], $act_uid, $tri_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url DELETE /:projectUid/activity/:activityUid/step/:stepUid/trigger/:triggerUid/:type
+     * @url DELETE /:prj_uid/activity/:act_uid/step/:step_uid/trigger/:tri_uid/:type
      *
-     * @param string $triggerUid
-     * @param string $stepUid
-     * @param string $activityUid
-     * @param string $projectUid
-     * @param string $type {@from body}{@choice before,after}
+     * @param string $tri_uid
+     * @param string $step_uid
+     * @param string $act_uid
+     * @param string $prj_uid
+     * @param string $type     {@from body}{@choice before,after}
      */
-    public function doDeleteActivityStepTrigger($triggerUid, $stepUid, $activityUid, $projectUid, $type)
+    public function doDeleteActivityStepTrigger($tri_uid, $step_uid, $act_uid, $prj_uid, $type)
     {
         try {
             $stepTrigger = new \ProcessMaker\BusinessModel\Step\Trigger();
 
-            $stepTrigger->delete($stepUid, strtoupper($type), $activityUid, $triggerUid);
+            $stepTrigger->delete($step_uid, strtoupper($type), $act_uid, $tri_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -101,19 +101,19 @@ class Trigger extends Api
     //Step "Assign Task"
 
     /**
-     * @url GET /:projectUid/activity/:activityUid/step/trigger/:triggerUid/:type
+     * @url GET /:prj_uid/activity/:act_uid/step/trigger/:tri_uid/:type
      *
-     * @param string $triggerUid
-     * @param string $activityUid
-     * @param string $projectUid
-     * @param string $type {@from body}{@choice before-assignment,before-routing,after-routing}
+     * @param string $tri_uid
+     * @param string $act_uid
+     * @param string $prj_uid
+     * @param string $type    {@from body}{@choice before-assignment,before-routing,after-routing}
      */
-    public function doGetActivityStepAssignTaskTrigger($triggerUid, $activityUid, $projectUid, $type)
+    public function doGetActivityStepAssignTaskTrigger($tri_uid, $act_uid, $prj_uid, $type)
     {
         try {
             $stepTrigger = new \ProcessMaker\BusinessModel\Step\Trigger();
 
-            $response = $stepTrigger->getTrigger("", strtoupper(str_replace("-", "_", $type)), $activityUid, $triggerUid);
+            $response = $stepTrigger->getTrigger("", strtoupper(str_replace("-", "_", $type)), $act_uid, $tri_uid);
 
             return $response;
         } catch (\Exception $e) {
@@ -122,62 +122,62 @@ class Trigger extends Api
     }
 
     /**
-     * @url POST /:projectUid/activity/:activityUid/step/trigger
+     * @url POST /:prj_uid/activity/:act_uid/step/trigger
      *
-     * @param string $activityUid
-     * @param string $projectUid
+     * @param string $act_uid
+     * @param string $prj_uid
      * @param StepAssignTaskTriggerPostStructure $request_data
      *
      * @status 201
      */
-    public function doPostActivityStepAssignTaskTrigger($activityUid, $projectUid, StepAssignTaskTriggerPostStructure $request_data = null)
+    public function doPostActivityStepAssignTaskTrigger($act_uid, $prj_uid, StepAssignTaskTriggerPostStructure $request_data = null)
     {
         try {
             $request_data = (array)($request_data);
 
             $stepTrigger = new \ProcessMaker\BusinessModel\Step\Trigger();
 
-            $arrayData = $stepTrigger->create("", $request_data["st_type"], $activityUid, $request_data["tri_uid"], $request_data);
+            $arrayData = $stepTrigger->create("", $request_data["st_type"], $act_uid, $request_data["tri_uid"], $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url PUT /:projectUid/activity/:activityUid/step/trigger/:triggerUid
+     * @url PUT /:prj_uid/activity/:act_uid/step/trigger/:tri_uid
      *
-     * @param string $triggerUid
-     * @param string $activityUid
-     * @param string $projectUid
+     * @param string $tri_uid
+     * @param string $act_uid
+     * @param string $prj_uid
      * @param StepAssignTaskTriggerPutStructure $request_data
      */
-    public function doPutActivityStepAssignTaskTrigger($triggerUid, $activityUid, $projectUid, StepAssignTaskTriggerPutStructure $request_data = null)
+    public function doPutActivityStepAssignTaskTrigger($tri_uid, $act_uid, $prj_uid, StepAssignTaskTriggerPutStructure $request_data = null)
     {
         try {
             $request_data = (array)($request_data);
 
             $stepTrigger = new \ProcessMaker\BusinessModel\Step\Trigger();
 
-            $arrayData = $stepTrigger->update("", $request_data["st_type"], $activityUid, $triggerUid, $request_data);
+            $arrayData = $stepTrigger->update("", $request_data["st_type"], $act_uid, $tri_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 
     /**
-     * @url DELETE /:projectUid/activity/:activityUid/step/trigger/:triggerUid/:type
+     * @url DELETE /:prj_uid/activity/:act_uid/step/trigger/:tri_uid/:type
      *
-     * @param string $triggerUid
-     * @param string $activityUid
-     * @param string $projectUid
-     * @param string $type {@from body}{@choice before-assignment,before-routing,after-routing}
+     * @param string $tri_uid
+     * @param string $act_uid
+     * @param string $prj_uid
+     * @param string $type    {@from body}{@choice before-assignment,before-routing,after-routing}
      */
-    public function doDeleteActivityStepAssignTaskTrigger($triggerUid, $activityUid, $projectUid, $type)
+    public function doDeleteActivityStepAssignTaskTrigger($tri_uid, $act_uid, $prj_uid, $type)
     {
         try {
             $stepTrigger = new \ProcessMaker\BusinessModel\Step\Trigger();
 
-            $stepTrigger->delete("", strtoupper(str_replace("-", "_", $type)), $activityUid, $triggerUid);
+            $stepTrigger->delete("", strtoupper(str_replace("-", "_", $type)), $act_uid, $tri_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

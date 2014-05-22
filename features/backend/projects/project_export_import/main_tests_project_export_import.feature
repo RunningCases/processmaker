@@ -1,21 +1,14 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Import/Export Process Main Tests
   Requirements:
-    a workspace without the project 1455892245368ebeb11c1a5001393784 ("Process Complete BPMN") already loaded
+    a workspace without the project 1455892245368ebeb11c1a5001393784 ("Process Complete BPMN", "Export process empty") already loaded
     there are many activities, steps, triggers, pmtables, asignee, process supervisor, process permissions, etc. in the process
 
 Background:
     Given that I have a valid access_token
 
 
-Scenario: Get for Export Project
-    Given I request "project/1455892245368ebeb11c1a5001393784/export"
-    Then the response status code should be 200
-    And the response charset is "UTF-8"
-    And the content type is "application/xml"
-    And the type is "array"
-
-#Verificar cantidad de dynaform, output, inputs, triggers, asignacion de usuarios, etc.
+#Verificar cantidad de dynaform, output, inputs, triggers, asignacion de usuarios, etc. del proyecto "Process Complete BPMN"
 
 Scenario: Get a List DynaForms of a Project Process Complete BPMN   
     Given I request "project/1455892245368ebeb11c1a5001393784/dynaforms"
@@ -39,6 +32,7 @@ Scenario: Get the Output Documents List when there are exactly two output docume
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
+    And that "out_doc_template" is set to "Ejemplo de Output Document"
     And the response has 1 records
     
 Scenario: Get the Triggers List when there are exactly two triggers
@@ -86,6 +80,20 @@ Scenario: Get a list templates folder of process files manager
     And the type is "array"
     And the response has 1 records
 
+Scenario: Verify that there are report tables
+    Given I request "project/1455892245368ebeb11c1a5001393784/report-tables"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the response has 1 record
+
+Scenario: Get the Case Trackers Objects of a Project
+        And I request "project/1455892245368ebeb11c1a5001393784/case-tracker/objects"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "array"
+        And the response has 1 record
+
 Scenario: Get a single Process
     Given that I want to get a resource with the key "obj_uid" stored in session array
     And I request "project/1455892245368ebeb11c1a5001393784/process"
@@ -122,6 +130,24 @@ Scenario: Get a single Process
     And that "pro_summary_dynaform" is set to "898822326536be3a12addb0034537553"
     And that "pro_calendar" is set to "14606161052f50839307899033145440"
 
+#Export Process
+
+Scenario: Get for Export Project
+    Given I request "project/1455892245368ebeb11c1a5001393784/export"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/xml"
+    And save exported process to "/home/wendy/uploadfiles/" as "Process_Complete_BPMN"
+
+
+Scenario: Delete a Project created previously in this script
+    Given that I want to delete a resource with the key "prj_uid" stored in session array
+    And I request "projects/1455892245368ebeb11c1a5001393784"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+
 #Import Process
 
 Scenario Outline: Import a process
@@ -136,9 +162,10 @@ Scenario Outline: Import a process
  	Examples:
  	| project_file                                       | import_option | prj_uid_number |
  	| /home/wendy/uploadfiles/Process_NewCreate_BPMN.pmx | create        | 1              |
-    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | overwrite     | 2              |
-    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | disable       | 3              |
-    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | keep          | 4              |
+    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | create        | 2              |
+    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | overwrite     | 3              |
+    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | disable       | 4              |
+    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | keep          | 5              |
     
 
 #Verificar cantidad de dynaform, output, inputs, triggers, asignacion de usuarios, etc.
@@ -154,9 +181,10 @@ Scenario Outline: Get a List DynaForms of a Project Process Complete BPMN
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records | 
     | create        | 1              | 601816709536cfeae7d7cd9079578104 | 4       |
-    | overwrite     | 2              | 1455892245368ebeb11c1a5001393784 | 26      |
-    | disable       | 3              | 1455892245368ebeb11c1a5001393784 | 26      |
-    | keep          | 4              | 1455892245368ebeb11c1a5001393784 | 26      |
+    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 26      |
+    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 26      |
+    | disable       | 4              | 1455892245368ebeb11c1a5001393784 | 26      |
+    | keep          | 5              | 1455892245368ebeb11c1a5001393784 | 26      |
 
   
 Scenario Outline: Get the Input Documents List when there are exactly zero input documents
@@ -170,9 +198,10 @@ Scenario Outline: Get the Input Documents List when there are exactly zero input
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records |
     | create        | 1              | 601816709536cfeae7d7cd9079578104 | 0       |
-    | overwrite     | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | disable       | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | keep          | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | disable       | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | keep          | 5              | 1455892245368ebeb11c1a5001393784 | 1       |
    
 
 Scenario Outline: Get the Output Documents List when there are exactly two output documents
@@ -186,9 +215,10 @@ Scenario Outline: Get the Output Documents List when there are exactly two outpu
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records |
     | create        | 1              | 601816709536cfeae7d7cd9079578104 | 0       |
-    | overwrite     | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | disable       | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | keep          | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | disable       | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | keep          | 5              | 1455892245368ebeb11c1a5001393784 | 1       |
 
     
 Scenario Outline: Get the Triggers List when there are exactly two triggers
@@ -202,9 +232,10 @@ Scenario Outline: Get the Triggers List when there are exactly two triggers
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records |
     | create        | 1              | 601816709536cfeae7d7cd9079578104 | 0       |
-    | overwrite     | 2              | 1455892245368ebeb11c1a5001393784 | 3       |
-    | disable       | 3              | 1455892245368ebeb11c1a5001393784 | 3       |
-    | keep          | 4              | 1455892245368ebeb11c1a5001393784 | 3       |
+    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 3       |
+    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 3       |
+    | disable       | 4              | 1455892245368ebeb11c1a5001393784 | 3       |
+    | keep          | 5              | 1455892245368ebeb11c1a5001393784 | 3       |
 
         
 Scenario Outline: List assignees of each activity
@@ -220,9 +251,10 @@ Scenario Outline: List assignees of each activity
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records | project                          | activity                         | records | aas_uid                          | aas_type |
     | create        | 1              | 601816709536cfeae7d7cd9079578104 | 0       | 601816709536cfeae7d7cd9079578104 | 771350954536cfec446fab9019867857 | 1       | 70084316152d56749e0f393054862525 | group    |
-    | overwrite     | 2              | 1455892245368ebeb11c1a5001393784 | 26      | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | 1       | 70084316152d56749e0f393054862525 | group    |
-    | disable       | 3              | 1455892245368ebeb11c1a5001393784 | 26      | 1455892245368ebeb11c1a5001393784 | 4790702485368efad167477011123879 | 1       | 70084316152d56749e0f393054862525 | group    |
-    | keep          | 4              | 1455892245368ebeb11c1a5001393784 | 26      | 1455892245368ebeb11c1a5001393784 | 2072984565368efc137a394001073529 | 1       | 70084316152d56749e0f393054862525 | group    |
+    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 26      | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | 1       | 70084316152d56749e0f393054862525 | group    |
+    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 26      | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | 1       | 70084316152d56749e0f393054862525 | group    |
+    | disable       | 4              | 1455892245368ebeb11c1a5001393784 | 26      | 1455892245368ebeb11c1a5001393784 | 4790702485368efad167477011123879 | 1       | 70084316152d56749e0f393054862525 | group    |
+    | keep          | 5              | 1455892245368ebeb11c1a5001393784 | 26      | 1455892245368ebeb11c1a5001393784 | 2072984565368efc137a394001073529 | 1       | 70084316152d56749e0f393054862525 | group    |
 
 
 Scenario Outline: Get a List of current process supervisors of a project
@@ -236,9 +268,10 @@ Scenario Outline: Get a List of current process supervisors of a project
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records |
     | create        | 1              | 601816709536cfeae7d7cd9079578104 | 0       |
-    | overwrite     | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | disable       | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | keep          | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | disable       | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | keep          | 5              | 1455892245368ebeb11c1a5001393784 | 1       |
 
       
 Scenario Outline: Get a List of current Process Permissions of a project
@@ -250,9 +283,10 @@ Scenario Outline: Get a List of current Process Permissions of a project
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records |
     | create        | 1              | 601816709536cfeae7d7cd9079578104 | 0       |
-    | overwrite     | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | disable       | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | keep          | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | disable       | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | keep          | 5              | 1455892245368ebeb11c1a5001393784 | 1       |
 
 
 Scenario Outline: Get a list templates folder of process files manager
@@ -266,9 +300,10 @@ Scenario Outline: Get a list templates folder of process files manager
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records |
     | create        | 1              | 601816709536cfeae7d7cd9079578104 | 0       |
-    | overwrite     | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | disable       | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | keep          | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | disable       | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | keep          | 5              | 1455892245368ebeb11c1a5001393784 | 1       |
 
 
 Scenario: Get a single Process process "Process Complete BPMN"
@@ -358,8 +393,8 @@ Scenario Outline: Delete a Project created previously in this script
     | prj_uid_number |
     | 1              |
     | 2              |
-    | 3              |
     | 4              |
+    | 5              |
     
 
 Scenario: Get a list of projects
@@ -380,4 +415,66 @@ Scenario Outline: Import a process
     Examples:
     | project_file                                       | import_option |
     | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | create        |
+
+
+#For example, to export a empty process
+
+Scenario: Get for Export Project "Export process empty"
+    Given I request "project/5195971265375127fce82f4015927137/export"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/xml"
+    And save exported process to "/home/wendy/uploadfiles/" as "Export process empty"
+
+Scenario: Delete a Project created previously in this script "Export process empty"
+    Given that I want to delete a resource with the key "prj_uid" stored in session array
+    And I request "projects/5195971265375127fce82f4015927137" 
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
     
+Scenario: Import a process "Export process empty"
+    Given POST upload a project file "/home/wendy/uploadfiles/Export_process_empty.pmx" to "project/import?option=create"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+
+Scenario: Get a List DynaForms of a Project "Export process empty"  
+    Given I request "project/5195971265375127fce82f4015927137/dynaforms" with the key "prj_uid" stored in session array
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And the response has 0 records
+    
+Scenario: Get the Input Documents List when there are exactly zero input documents
+    Given I request "project/5195971265375127fce82f4015927137/input-documents" with the key "prj_uid" stored in session array
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And the response has 0 records
+
+Scenario: Get the Output Documents List when there are exactly zero output documents
+    Given I request "project/5195971265375127fce82f4015927137/output-documents" with the key "prj_uid" stored in session array
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has 0 records
+
+Scenario: Verify that there are report tables
+    Given I request "project/5195971265375127fce82f4015927137/report-tables"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the response has 0 record
+
+Scenario: Get the Case Trackers Objects of a Project
+        And I request "project/5195971265375127fce82f4015927137/case-tracker/objects"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "array"
+        And the response has 0 record

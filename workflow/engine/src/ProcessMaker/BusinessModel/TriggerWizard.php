@@ -111,9 +111,7 @@ class TriggerWizard
             $arrayLibrary = $this->library->getRegisteredClasses();
 
             if (!isset($arrayLibrary[$this->libraryGetLibraryName($libraryName)])) {
-                $msg = str_replace(array("{0}", "{1}"), array($libraryFieldNameForException, $libraryName), "The library with {0}: \"{1}\" does not exist.");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_LIBRARY_DOES_NOT_EXIST", array($libraryFieldNameForException, $libraryName)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -138,9 +136,7 @@ class TriggerWizard
             $library = $this->library->getLibraryDefinition($this->libraryGetLibraryName($libraryName));
 
             if (!isset($library->methods[$methodName])) {
-                $msg = str_replace(array("{0}", "{1}"), array($methodFieldNameForException, $methodName), "The function with {0}: \"{1}\" does not exist in the library.");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_LIBRARY_FUNCTION_DOES_NOT_EXIST", array($methodFieldNameForException, $methodName)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -177,26 +173,20 @@ class TriggerWizard
             $triggerParam = unserialize($arrayTriggerData["TRI_PARAM"]);
 
             if ($arrayTriggerData["TRI_PARAM"] == "" || !isset($triggerParam["hash"])) {
-                $msg = str_replace(array("{0}", "{1}"), array($triggerUidFieldNameForException, $triggerUid), "The trigger with {0}: {1}, has not been created with the wizard");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_TRIGGER_HAS_NOT_BEEN_CREATED_WITH_WIZARD", array($triggerUidFieldNameForException, $triggerUid)));
             }
 
             $arrayTriggerData["TRI_PARAM"] = $triggerParam;
 
             if (md5($arrayTriggerData["TRI_WEBBOT"]) != $arrayTriggerData["TRI_PARAM"]["hash"]) {
-                $msg = str_replace(array("{0}", "{1}"), array($triggerUidFieldNameForException, $triggerUid), "The trigger with {0}: {1}, has been modified manually. It is invalid for the wizard");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_TRIGGER_HAS_BEEN_MODIFIED_MANUALLY_INVALID_FOR_WIZARD", array($triggerUidFieldNameForException, $triggerUid)));
             }
 
             $triggerParamLibraryName = (preg_match("/^class\.?(.*)\.pmFunctions\.php$/", $arrayTriggerData["TRI_PARAM"]["params"]["LIBRARY_CLASS"], $arrayMatch))? ((isset($arrayMatch[1]) && $arrayMatch[1] != "")? $arrayMatch[1] : "pmFunctions") : $arrayTriggerData["TRI_PARAM"]["params"]["LIBRARY_CLASS"];
             $triggerParamMethodName = $arrayTriggerData["TRI_PARAM"]["params"]["PMFUNTION_NAME"];
 
             if ($libraryName != $triggerParamLibraryName || $methodName != $triggerParamMethodName) {
-                $msg = str_replace(array("{0}", "{1}", "{2}", "{3}"), array($libraryName, $methodName, $triggerUidFieldNameForException, $triggerUid), "The wizard with the library \"{0}\" and function \"{1}\", is invalid for the trigger with {2}: {3}");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_WIZARD_LIBRARY_AND_FUNCTION_IS_INVALID_FOR_TRIGGER", array($libraryName, $methodName, $triggerUidFieldNameForException, $triggerUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -231,22 +221,22 @@ class TriggerWizard
 
             if ($nInputParam > 0 || $nOutputParam > 0) {
                 if (!isset($arrayData["TRI_PARAMS"])) {
-                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameForException), "Undefined value for \"{0}\", it is required.")));
+                    throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($fieldNameForException)));
                 }
 
                 if (!is_array($arrayData["TRI_PARAMS"])) {
-                    throw (new \Exception(str_replace(array("{0}"), array($fieldNameForException), "Invalid value for \"{0}\", this value must be an array.")));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_THIS_MUST_BE_ARRAY", array($fieldNameForException)));
                 }
 
                 $arrayData["TRI_PARAMS"] = array_change_key_case($arrayData["TRI_PARAMS"], CASE_UPPER);
 
                 if ($nInputParam > 0) {
                     if (!isset($arrayData["TRI_PARAMS"]["INPUT"])) {
-                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".INPUT")), "Undefined value for \"{0}\", it is required.")));
+                        throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->getFieldNameByFormatFieldName($fieldNameForException . ".INPUT"))));
                     }
 
                     if (!is_array($arrayData["TRI_PARAMS"]["INPUT"])) {
-                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".INPUT")), "Invalid value for \"{0}\", this value must be an array.")));
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_THIS_MUST_BE_ARRAY", array($this->getFieldNameByFormatFieldName($fieldNameForException . ".INPUT"))));
                     }
 
                     $arrayParamData["input"] = $arrayData["TRI_PARAMS"]["INPUT"];
@@ -254,11 +244,11 @@ class TriggerWizard
 
                 if ($nOutputParam > 0) {
                     if (!isset($arrayData["TRI_PARAMS"]["OUTPUT"])) {
-                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".OUTPUT")), "Undefined value for \"{0}\", it is required.")));
+                        throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->getFieldNameByFormatFieldName($fieldNameForException . ".OUTPUT"))));
                     }
 
                     if (!is_array($arrayData["TRI_PARAMS"]["OUTPUT"])) {
-                        throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($fieldNameForException . ".OUTPUT")), "Invalid value for \"{0}\", this value must be an array.")));
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_THIS_MUST_BE_ARRAY", array($this->getFieldNameByFormatFieldName($fieldNameForException . ".OUTPUT"))));
                     }
 
                     $arrayParamData["output"] = $arrayData["TRI_PARAMS"]["OUTPUT"];

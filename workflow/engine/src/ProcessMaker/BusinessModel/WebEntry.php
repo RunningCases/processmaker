@@ -178,9 +178,7 @@ class WebEntry
             $webEntry = \WebEntryPeer::retrieveByPK($webEntryUid);
 
             if (is_null($webEntry)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $webEntryUid), "The web entry with {0}: {1} does not exist.");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_WEB_ENTRY_DOES_NOT_EXIST", array($fieldNameForException, $webEntryUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -201,9 +199,7 @@ class WebEntry
     {
         try {
             if ($this->existsTitle($processUid, $webEntryTitle, $webEntryUidExclude)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $webEntryTitle), "The web entry title with {0}: \"{1}\" already exists");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_WEB_ENTRY_TITLE_ALREADY_EXISTS", array($fieldNameForException, $webEntryTitle)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -262,11 +258,11 @@ class WebEntry
 
             if (isset($arrayData["TAS_UID"])) {
                 if ($arrayTaskData["TAS_START"] == "FALSE") {
-                    throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "The task \"{0}\" is not initial task")));
+                    throw new \Exception(\G::LoadTranslation("ID_ACTIVITY_IS_NOT_INITIAL_ACTIVITY", array($arrayTaskData["TAS_TITLE"])));
                 }
 
                 if ($arrayTaskData["TAS_ASSIGN_TYPE"] != "BALANCED") {
-                    throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "Web Entry only works with tasks which have \"Cyclical Assignment\", the task \"{0}\" does not have a valid assignment type. Please change the Assignment Rules")));
+                    throw new \Exception(\G::LoadTranslation("ID_WEB_ENTRY_ACTIVITY_DOES_NOT_HAVE_VALID_ASSIGNMENT_TYPE", array($arrayTaskData["TAS_TITLE"])));
                 }
             }
 
@@ -274,7 +270,7 @@ class WebEntry
                 $task = new \Tasks();
 
                 if ($task->assignUsertoTask($arrayData["TAS_UID"]) == 0) {
-                    throw (new \Exception(str_replace(array("{0}"), array($arrayTaskData["TAS_TITLE"]), "The task \"{0}\" does not have users")));
+                    throw new \Exception(\G::LoadTranslation("ID_ACTIVITY_DOES_NOT_HAVE_USERS", array($arrayTaskData["TAS_TITLE"])));
                 }
             }
 
@@ -286,7 +282,7 @@ class WebEntry
                 $step = new \ProcessMaker\BusinessModel\Step();
 
                 if (!$step->existsRecord($arrayDataMain["TAS_UID"], "DYNAFORM", $arrayData["DYN_UID"])) {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayDynaFormData["DYN_TITLE"], $arrayTaskData["TAS_TITLE"]), "The DynaForm \"{0}\" isn't assigned to the task \"{1}\"")));
+                    throw new \Exception(\G::LoadTranslation("ID_DYNAFORM_IS_NOT_ASSIGNED_TO_ACTIVITY", array($arrayDynaFormData["DYN_TITLE"], $arrayTaskData["TAS_TITLE"])));
                 }
             }
 
@@ -299,7 +295,7 @@ class WebEntry
                 $projectUser = new \ProcessMaker\BusinessModel\ProjectUser();
 
                 if (!$projectUser->userIsAssignedToTask($arrayData["USR_UID"], $arrayDataMain["TAS_UID"])) {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayUserData["USR_USERNAME"], $arrayTaskData["TAS_TITLE"]), "The user \"{0}\" does not have the task \"{1}\" assigned")));
+                    throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_HAVE_ACTIVITY_ASSIGNED", array($arrayUserData["USR_USERNAME"], $arrayTaskData["TAS_TITLE"])));
                 }
             }
         } catch (\Exception $e) {
@@ -605,7 +601,7 @@ class WebEntry
                         $msg = $msg . (($msg != "")? "\n" : "") . $validationFailure->getMessage();
                     }
 
-                    throw (new \Exception("The registry cannot be created!.\n" . $msg));
+                    throw new \Exception(\G::LoadTranslation("ID_RECORD_CANNOT_BE_CREATED") . "\n" . $msg);
                 }
             } catch (\Exception $e) {
                 $cnn->rollback();
@@ -690,7 +686,7 @@ class WebEntry
                         $msg = $msg . (($msg != "")? "\n" : "") . $validationFailure->getMessage();
                     }
 
-                    throw (new \Exception("The registry cannot be created!.\n" . $msg));
+                    throw new \Exception(\G::LoadTranslation("ID_RECORD_CANNOT_BE_CREATED") . "\n" . $msg);
                 }
             } catch (\Exception $e) {
                 $cnn->rollback();

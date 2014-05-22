@@ -83,6 +83,7 @@ class OutputDocument
                                               'out_doc_title' => $aRow['OUT_DOC_TITLE'],
                                               'out_doc_description' => $aRow['OUT_DOC_DESCRIPTION'],
                                               'out_doc_filename' => $aRow['OUT_DOC_FILENAME'],
+                                              'out_doc_template' => $aRow['OUT_DOC_TEMPLATE'],
                                               'out_doc_report_generator' => $aRow['OUT_DOC_REPORT_GENERATOR'],
                                               'out_doc_landscape' => $aRow['OUT_DOC_LANDSCAPE'],
                                               'out_doc_media' => $aRow['OUT_DOC_MEDIA'],
@@ -190,6 +191,7 @@ class OutputDocument
                                               'out_doc_title' => $aRow['OUT_DOC_TITLE'],
                                               'out_doc_description' => $aRow['OUT_DOC_DESCRIPTION'],
                                               'out_doc_filename' => $aRow['OUT_DOC_FILENAME'],
+                                              'out_doc_template' => $aRow['OUT_DOC_TEMPLATE'],
                                               'out_doc_report_generator' => $aRow['OUT_DOC_REPORT_GENERATOR'],
                                               'out_doc_landscape' => $aRow['OUT_DOC_LANDSCAPE'],
                                               'out_doc_media' => $aRow['OUT_DOC_MEDIA'],
@@ -241,10 +243,7 @@ class OutputDocument
             $outputDocumentData = array_change_key_case($outputDocumentData, CASE_UPPER);
             $outputDocumentData['PRO_UID'] = $sProcessUID;
             //Verify data
-            $process = new \Process();
-            if (!$process->exists($sProcessUID)) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($sProcessUID, "PROCESS"), "The UID \"{0}\" doesn't exist in table {1}")));
-            }
+            Validator::proUid($sProcessUID, '$pro_uid');
             if ($outputDocumentData["OUT_DOC_TITLE"]=="") {
                 throw (new \Exception( 'Invalid value specified for out_doc_title, can not be null'));
             }
@@ -328,6 +327,9 @@ class OutputDocument
                     }
                     if (isset($outputDocumentData['OUT_DOC_FILENAME'])) {
                         $oOutputDocument->setOutDocFilename($outputDocumentData['OUT_DOC_FILENAME']);
+                    }
+                    if (isset($outputDocumentData['OUT_DOC_TEMPLATE'])) {
+                        $oOutputDocument->setOutDocTemplate($outputDocumentData['OUT_DOC_TEMPLATE']);
                     }
                     $oOutputDocument->save();
                     $oConnection->commit();
