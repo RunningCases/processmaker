@@ -846,7 +846,12 @@ importProcessExistGroup = function()
                   success : function(o, resp) {
                     var resp_            = Ext.util.JSON.decode(resp.response.responseText);
                     var sNewProUid       = resp_.sNewProUid;
-                    window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+
+                    if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
+                        window.location.href = "../designer?prj_uid=" + sNewProUid;
+                    } else {
+                        window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                    }
                   },
                   failure: function(o, resp) {
                     w.close();
@@ -975,17 +980,16 @@ importProcessExistProcess = function()
                   success: function(o, resp) {
                     var resp_      = Ext.util.JSON.decode(resp.response.responseText);
                     var sNewProUid = resp_.sNewProUid;
-                    var projectType = (typeof(resp_.project_type) != "undefined")? resp_.project_type : "classicProject";
 
                     if (resp_.ExistGroupsInDatabase == 0) {
-                        if (projectType == "classicProject") {
-                            window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
-                        } else {
+                        if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
                             window.location.href = "../designer?prj_uid=" + sNewProUid;
+                        } else {
+                            window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                         }
                     }
                     else {
-                      importProcessGlobal.proFileName       = resp_.fileName;
+                      importProcessGlobal.proFileName       = resp_.proFileName;
                       importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
                       importProcessGlobal.sNewProUid        = resp_.sNewProUid;
                       importProcessGlobal.importOption      = resp_.importOption;
@@ -1090,8 +1094,9 @@ importProcess = function()
                       if (resp_.catchMessage == "") {
                         if (resp_.ExistProcessInDatabase == "0") {
                           if (resp_.ExistGroupsInDatabase == "0") {
-                            var sNewProUid       = resp_.sNewProUid;
-                            if (resp_.project_type && resp_.project_type == "bpmn") {
+                            var sNewProUid = resp_.sNewProUid;
+
+                            if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
                                 window.location.href = "../designer?prj_uid=" + sNewProUid;
                             } else {
                                 window.location.href = "processes_Map?PRO_UID=" + sNewProUid;

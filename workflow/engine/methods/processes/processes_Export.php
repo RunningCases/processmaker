@@ -30,7 +30,7 @@ try {
         $exporter = new ProcessMaker\Exporter\XmlExporter($_GET["pro_uid"]);
 
         $version = ProcessMaker\Util\Common::getLastVersion($outputDir . $exporter->getProjectName() . "-*.pmx") + 1;
-        $outputFilename = sprintf("%s-%s.%s", $exporter->getProjectName(), $version, "pmx");
+        $outputFilename = sprintf("%s-%s.%s", str_replace(" ", "_", $exporter->getProjectName()), $version, "pmx");
         $exporter->saveExport($outputDir . $outputFilename);
     } else {
         $oProcess = new Processes();
@@ -134,3 +134,4 @@ echo json_encode($response);
 //    $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', $aMessage );
 //    G::RenderPage( 'publish', 'raw' );
 //}
+

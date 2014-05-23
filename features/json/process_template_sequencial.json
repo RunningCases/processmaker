@@ -299,7 +299,52 @@
                     ]
                 }
             ],
-            "artifacts": [],
+            "artifacts": [
+                            { 
+                                "art_uid": "9008273035360fb4508c320094467351",
+                                "art_type": "VERTICAL_LINE",
+                                "art_name": "linea ejemplo",
+                                "art_category_ref": "9008273035360fb4508c320094467351",
+                                "bou_x": "180",
+                                "bou_y": "0",
+                                "bou_width": "50",
+                                "bou_height": "0",
+                                "bou_container": ""
+                            },
+                            { 
+                                "art_uid": "9008273035360fb4508c320094467351",
+                                "art_type": "VERTICAL_LINE",
+                                "art_name": "linea ejemplo",
+                                "art_category_ref": "9008273035360fb4508c320094467351",
+                                "bou_x": "420",
+                                "bou_y": "0",
+                                "bou_width": "50",
+                                "bou_height": "0",
+                                "bou_container": ""
+                            },
+                            { 
+                                "art_uid": "9008273035360fb4508c320094467351",
+                                "art_type": "VERTICAL_LINE",
+                                "art_name": "linea ejemplo",
+                                "art_category_ref": "9008273035360fb4508c320094467351",
+                                "bou_x": "660",
+                                "bou_y": "0",
+                                "bou_width": "50",
+                                "bou_height": "0",
+                                "bou_container": ""
+                            },
+                            { 
+                                "art_uid": "9008273035360fb4508c320094467351",
+                                "art_type": "VERTICAL_LINE",
+                                "art_name": "linea ejemplo",
+                                "art_category_ref": "9008273035360fb4508c320094467351",
+                                "bou_x": "900",
+                                "bou_y": "0",
+                                "bou_width": "50",
+                                "bou_height": "0",
+                                "bou_container": ""
+                            }                       
+                         ],
             "laneset": [],
             "lanes": []
         }

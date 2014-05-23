@@ -989,5 +989,22 @@ class Cases extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+    /**
+     * @url GET /:app_uid/tasks
+     *
+     * @param string $app_uid {@min 32}{@max 32}
+     */
+    public function doGetTasks($app_uid)
+    {
+        try {
+            $cases = new \ProcessMaker\BusinessModel\Cases();
+            $oData = $cases->getTasks($app_uid);
+            return $oData;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
 }
 

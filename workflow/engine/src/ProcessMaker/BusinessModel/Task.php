@@ -75,9 +75,7 @@ class Task
         $task = new \Task();
 
         if (!$task->taskExists($taskUid)) {
-            $msg = str_replace(array("{0}", "{1}"), array($this->arrayParamException["taskUid"], $taskUid), "The activity with {0}: {1} does not exist.");
-
-            throw (new \Exception($msg));
+            throw new \Exception(\G::LoadTranslation("ID_ACTIVITY_DOES_NOT_EXIST", array($this->arrayParamException["taskUid"], $taskUid)));
         }
     }
 

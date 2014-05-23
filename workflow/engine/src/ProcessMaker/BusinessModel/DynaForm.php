@@ -282,9 +282,7 @@ class DynaForm
             $rsCriteria = \DynaformPeer::doSelectRS($criteria);
 
             if (!$rsCriteria->next()) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormUid), "The DynaForm with {0}: {1}, does not exist.");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_DYNAFORM_DOES_NOT_EXIST", array($fieldNameForException, $dynaFormUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -305,9 +303,7 @@ class DynaForm
     {
         try {
             if ($this->existsTitle($processUid, $dynaFormTitle, $dynaFormUidExclude)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormTitle), "The DynaForm title with {0}: \"{1}\", already exists");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_DYNAFORM_TITLE_ALREADY_EXISTS", array($fieldNameForException, $dynaFormTitle)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -331,9 +327,7 @@ class DynaForm
             $arrayDynaFormData = $dynaForm->Load($dynaFormUid);
 
             if ($arrayDynaFormData["DYN_TYPE"] != "grid") {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $dynaFormUid), "The DynaForm with {0}: {1}, is not grid");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_DYNAFORM_IS_NOT_GRID", array($fieldNameForException, $dynaFormUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -458,10 +452,11 @@ class DynaForm
 
             $processUid = $arrayDynaFormData["PRO_UID"];
 
-            //Verify dependencies dynaforms
-            $resultDependeds = $this->dynaFormDepends($dynaFormUid, $processUid);
-            if ($resultDependeds != '') {
-                throw (new \Exception($resultDependeds));
+            //Verify dependences dynaforms
+            $resultDepends = $this->dynaFormDepends($dynaFormUid, $processUid);
+
+            if ($resultDepends != "") {
+                throw new \Exception($resultDepends);
             }
 
             //Delete
@@ -512,27 +507,27 @@ class DynaForm
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
             if (!isset($arrayData["COPY_IMPORT"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT")), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->getFieldNameByFormatFieldName("COPY_IMPORT"))));
             }
 
             if (!isset($arrayData["COPY_IMPORT"]["PRJ_UID"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID")), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID"))));
             }
 
             $arrayData["COPY_IMPORT"]["PRJ_UID"] = trim($arrayData["COPY_IMPORT"]["PRJ_UID"]);
 
             if ($arrayData["COPY_IMPORT"]["PRJ_UID"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID")), "Invalid value for \"{0}\", it can not be empty.")));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array($this->getFieldNameByFormatFieldName("COPY_IMPORT.PRJ_UID"))));
             }
 
             if (!isset($arrayData["COPY_IMPORT"]["DYN_UID"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID")), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID"))));
             }
 
             $arrayData["COPY_IMPORT"]["DYN_UID"] = trim($arrayData["COPY_IMPORT"]["DYN_UID"]);
 
             if ($arrayData["COPY_IMPORT"]["DYN_UID"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID")), "Invalid value for \"{0}\", it can not be empty.")));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array($this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID"))));
             }
 
             $this->throwExceptionIfExistsTitle($processUid, $arrayData["DYN_TITLE"], $this->arrayFieldNameForException["dynaFormTitle"]);
@@ -715,29 +710,29 @@ class DynaForm
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
             if ($arrayData["DYN_TYPE"] == "grid") {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayFieldNameForException["dynaFormType"], "xmlform"), "Invalid value for \"{0}\", it only accepts values: \"{1}\".")));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES", array($this->arrayFieldNameForException["dynaFormType"], "xmlform")));
             }
 
             if (!isset($arrayData["PMTABLE"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE")), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->getFieldNameByFormatFieldName("PMTABLE"))));
             }
 
             if (!isset($arrayData["PMTABLE"]["TAB_UID"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID")), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID"))));
             }
 
             $arrayData["PMTABLE"]["TAB_UID"] = trim($arrayData["PMTABLE"]["TAB_UID"]);
 
             if ($arrayData["PMTABLE"]["TAB_UID"] == "") {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID")), "Invalid value for \"{0}\", it can not be empty.")));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array($this->getFieldNameByFormatFieldName("PMTABLE.TAB_UID"))));
             }
 
             if (!isset($arrayData["PMTABLE"]["FIELDS"])) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "Undefined value for \"{0}\", it is required.")));
+                throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS"))));
             }
 
             if (count($arrayData["PMTABLE"]["FIELDS"]) == 0) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "Invalid value for \"{0}\", it can not be empty.")));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS"))));
             }
 
             $this->throwExceptionIfExistsTitle($processUid, $arrayData["DYN_TITLE"], $this->arrayFieldNameForException["dynaFormTitle"]);
@@ -756,7 +751,7 @@ class DynaForm
             }
 
             if ($flagValidFieldKey == 0) {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "The attribute {0}, has an element invalid (incorrect keys)")));
+                throw new \Exception(\G::LoadTranslation("ID_ATTRIBUTE_HAS_INVALID_ELEMENT_KEY", array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS"))));
             }
 
             //Is Primary Key
@@ -777,7 +772,7 @@ class DynaForm
             }
 
             if ($flagValidFieldPk == 0) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS.FLD_NAME"), $invalidFieldPk), "The field {0}: {1}, is not a primary key field of the PM Table")));
+                throw new \Exception(\G::LoadTranslation("ID_PMTABLE_FIELD_IS_NOT_PRIMARY_KEY", array($this->getFieldNameByFormatFieldName("PMTABLE.FIELDS.FLD_NAME"), $invalidFieldPk)));
             }
 
             //All Primary Keys
@@ -793,7 +788,7 @@ class DynaForm
             }
 
             if ($flagAllFieldPk == 0) {
-                throw (new \Exception(str_replace(array("{0}", "{1}"), array($missingFieldPk, $this->getFieldNameByFormatFieldName("PMTABLE.FIELDS")), "The primary key field {0} of the PM Table is missing in the attribute {1}")));
+                throw new \Exception(\G::LoadTranslation("ID_PMTABLE_PRIMARY_KEY_FIELD_IS_MISSING_IN_ATTRIBUTE", array($missingFieldPk, $this->getFieldNameByFormatFieldName("PMTABLE.FIELDS"))));
             }
 
             //Total of Primary Keys
@@ -801,7 +796,7 @@ class DynaForm
             $n2 = count($arrayFieldPkAux);
 
             if ($n1 != $n2) {
-                throw (new \Exception(str_replace(array("{0}", "{1}", "{2}"), array($n1, $this->getFieldNameByFormatFieldName("PMTABLE.FIELDS"), $n2), "The total primary key fields of the PM Table is {0}, the attribute {1} has {2} primary keys")));
+                throw new \Exception(\G::LoadTranslation("ID_PMTABLE_TOTAL_PRIMARY_KEY_FIELDS_IS_NOT_EQUAL_IN_ATTRIBUTE", array($n1, $this->getFieldNameByFormatFieldName("PMTABLE.FIELDS"), $n2)));
             }
 
             //Set data
@@ -889,7 +884,7 @@ class DynaForm
                 //Return
                 return $arrayDataAux;
             } else {
-                throw (new \Exception(str_replace(array("{0}"), array($this->getFieldNameByFormatFieldName($msgMethod)), "It is trying to create a DynaForm by \"{0}\", please send only one attribute for creation")));
+                throw new \Exception(\G::LoadTranslation("ID_DYNAFORM_IT_IS_TRYING_CREATE_BY_SEVERAL_METHODS", array($this->getFieldNameByFormatFieldName($msgMethod))));
             }
         } catch (\Exception $e) {
             throw $e;
