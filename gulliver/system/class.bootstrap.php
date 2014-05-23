@@ -49,6 +49,7 @@ class Bootstrap
         // (!) Backward compatibility, the original function is in System class
         if (! class_exists("System")) {
             require_once PATH_CORE . "classes" . PATH_SEP . "class.system.php";
+        }
 
         return System::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
     }
