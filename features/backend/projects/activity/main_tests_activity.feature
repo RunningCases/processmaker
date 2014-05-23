@@ -186,19 +186,12 @@ Scenario: Get a activity (Review of variables after the update) Task1
     And the response charset is "UTF-8"
     And the type is "object"
     And the property "tas_type" of "properties" is set to "ADHOC"
-    And the property "tas_duration" of "properties" is set to 2
-    And the property "tas_type_day" of "properties" is set to "DAYS"
     And the property "tas_timeunit" of "properties" is set to "DAYS"
     And the property "tas_priority_variable" of "properties" is set to "@@PROCESS"    
     And the property "tas_assign_type" of "properties" is set to "BALANCED"    
-    And the property "tas_assign_variable" of "properties" is set to "@@USER_LOGGED"    
-    And the property "tas_group_variable" of "properties" is set to "@@USER_LOGGED"
     And the property "tas_transfer_fly" of "properties" is set to "TRUE"
     And the property "tas_send_last_email" of "properties" is set to "TRUE"
     And the property "tas_derivation_screen_tpl" of "properties" is set to "test activity.html"
-    And the property "tas_selfservice_timeout" of "properties" is set to 1
-    And the property "tas_selfservice_time" of "properties" is set to 1
-    And the property "tas_selfservice_time_unit" of "properties" is set to "HOURS"
     And the property "tas_selfservice_trigger_uid" of "properties" is set to ""
     And the property "tas_title" of "properties" is set to "Task 1 Update Activity"
     And the property "tas_description" of "properties" is set to "Update Description"
@@ -206,9 +199,7 @@ Scenario: Get a activity (Review of variables after the update) Task1
     And the property "tas_def_description" of "properties" is set to "Case Description UPDATE"
     And the property "tas_def_message" of "properties" is set to "Esta es una Notificacion - UPDATE"
     And the property "tas_def_subject_message" of "properties" is set to "UPDATE Titulo de Notificacion 1"
-    And the property "tas_calendar" of "properties" is set to "14606161052f50839307899033145440"
     And the property "tas_def_message_type" of "properties" is set to "text"
-    And the property "tas_def_message_template" of "properties" is set to "test activity.html"
     
     
 Scenario: Update the Definition of a Activity to return to baseline of the task1

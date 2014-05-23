@@ -251,9 +251,7 @@ class Calendar
             $obj = \CalendarDefinitionPeer::retrieveByPK($calendarUid);
 
             if (!(is_object($obj) && get_class($obj) == "CalendarDefinition")) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $calendarUid), "The calendar with {0}: {1} does not exist.");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_CALENDAR_DOES_NOT_EXIST", array($fieldNameForException, $calendarUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -273,9 +271,7 @@ class Calendar
     {
         try {
             if ($this->existsName($calendarName, $calendarUidExclude)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $calendarName), "The calendar name with {0}: \"{1}\" already exists");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_CALENDAR_NAME_ALREADY_EXISTS", array($fieldNameForException, $calendarName)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -331,7 +327,7 @@ class Calendar
             if (isset($arrayData["CAL_WORK_HOUR"])) {
                 foreach ($arrayData["CAL_WORK_HOUR"] as $value) {
                     if ($value["DAY"] != 0 && !in_array($value["DAY"], $arrayData["CAL_WORK_DAYS"], true)) {
-                        throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"]), "Value specified for \"{0}\" does not exist in \"{1}\".")));
+                        throw new \Exception(\G::LoadTranslation("ID_VALUE_SPECIFIED_DOES_NOT_EXIST", array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"])));
                     }
 
                     $arrayCalendarWorkHour[] = array(
@@ -438,7 +434,7 @@ class Calendar
 
             foreach ($arrayAux as $value) {
                 if (isset($arrayData["CAL_WORK_HOUR"]) && $value["DAY"] != 0 && !in_array($value["DAY"], $calendarWorkDays, true)) {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"]), "Value specified for \"{0}\" does not exist in \"{1}\".")));
+                    throw new \Exception(\G::LoadTranslation("ID_VALUE_SPECIFIED_DOES_NOT_EXIST", array($this->arrayWorkHourFieldNameForException["day"], $this->arrayFieldNameForException["calendarWorkDays"])));
                 }
 
                 $arrayCalendarWorkHour[] = array(

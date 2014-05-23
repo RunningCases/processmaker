@@ -131,7 +131,7 @@ class Project extends Api
      *
      * @status 201
      */
-    public function doPostImport(array $request_data, $option = null)
+    public function doPostImport(array $request_data, $option = null, $option_group = null)
     {
         try {
             $importer = new \ProcessMaker\Importer\XmlImporter();
@@ -139,7 +139,12 @@ class Project extends Api
             $importer->setSaveDir(PATH_DOCUMENT . "input");
             $importer->setData("usr_uid", $this->getUserId());
 
-            $arrayData = $importer->importPostFile($request_data, $option, array("projectFile" => "project_file", "option" => "option"));
+            $arrayData = $importer->importPostFile(
+                $request_data,
+                $option,
+                $option_group,
+                array("projectFile" => "project_file", "option" => "option", "optionGroup" => "option_group")
+            );
 
             $response = $arrayData;
 
