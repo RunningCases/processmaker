@@ -50,56 +50,6 @@ class Bootstrap
         if (! class_exists("System")) {
             require_once PATH_CORE . "classes" . PATH_SEP . "class.system.php";
 
-        $readGlobalIniFile = false;
-        $readWsIniFile = false;
-
-        if (empty($globalIniFile)) {
-            $globalIniFile = PATH_CORE . 'config' . PATH_SEP . 'env.ini';
-        }
-
-        if (empty($wsIniFile)) {
-            if (defined('PATH_DB')) {
-                // if we're on a valid workspace env.
-                if (empty($wsName)) {
-                    $uriParts = explode('/', getenv("REQUEST_URI"));
-                    if (isset($uriParts[1])) {
-                        if (substr($uriParts[1], 0, 3) == 'sys') {
-                            $wsName = substr($uriParts[1], 3);
-                        }
-                    }
-                }
-                $wsIniFile = PATH_DB . $wsName . PATH_SEP . 'env.ini';
-            }
-        }
-
-        $readGlobalIniFile = file_exists($globalIniFile) ? true : false;
-        $readWsIniFile = file_exists($wsIniFile) ? true : false;
-
-        if (isset($_SESSION['PROCESSMAKER_ENV'])) {
-            $md5 = array();
-
-            if ($readGlobalIniFile) {
-                $md5[] = md5_file($globalIniFile);
-            }
-            if ($readWsIniFile) {
-                $md5[] = md5_file($wsIniFile);
-            }
-            $hash = implode('-', $md5);
-
-            if ($_SESSION['PROCESSMAKER_ENV_HASH'] === $hash) {
-                $_SESSION['PROCESSMAKER_ENV']['from_cache'] = 1;
-                return $_SESSION['PROCESSMAKER_ENV'];
-            }
-        }
-
-        // default configuration
-        $config = array('debug' => 0, 'debug_sql' => 0, 'debug_time' => 0, 'debug_calendar' => 0, 'wsdl_cache' => 1, 'memory_limit' => "256M", 'time_zone' => 'America/New_York', 'memcached' => 0, 'memcached_server' => '', 'default_skin' => 'neoclassic', 'default_lang' => 'en', 'proxy_host' => '', 'proxy_port' => '', 'proxy_user' => '', 'proxy_pass' => '' , 'size_log_file' => 5000000 , 'number_log_file' => 5, 'ie_cookie_lifetime' => 1, 'safari_cookie_lifetime' => 1);
-
-        // read the global env.ini configuration file
-        if ($readGlobalIniFile && ($globalConf = @parse_ini_file($globalIniFile)) !== false) {
-            $config = array_merge($config, $globalConf);
-        }
-
         return System::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
     }
 
