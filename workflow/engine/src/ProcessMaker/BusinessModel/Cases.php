@@ -501,7 +501,7 @@ class Cases
             }
             //Return
             if (empty($result)) {
-                throw (new \Exception('Incorrect or unavailable information about this case: ' .$applicationUid));
+                throw new \Exception(\G::LoadTranslation("ID_CASES_INCORRECT_INFORMATION", array($applicationUid)));
             } else {
                 return $result;
             }
@@ -528,13 +528,10 @@ class Cases
             if ($variables) {
                 $variables = array_shift($variables);
             }
-            $oProcesses = new \Processes();
-            if (! $oProcesses->processExists($processUid)) {
-                throw (new \Exception( 'Invalid value specified for \'pro_uid\''));
-            }
+            Validator::proUid($processUid, '$pro_uid');
             $oTask = new \Task();
             if (! $oTask->taskExists($taskUid)) {
-                throw (new \Exception( 'Invalid value specified for \'tas_uid\''));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('tas_uid')));
             }
             $fields = $ws->newCase($processUid, $userUid, $taskUid, $variables);
             $array = json_decode(json_encode($fields), true);
@@ -577,21 +574,18 @@ class Cases
             } elseif ($variables == null) {
                 $variables = array(array());
             }
-            $oProcesses = new \Processes();
-            if (! $oProcesses->processExists($processUid)) {
-                throw (new \Exception( 'Invalid value specified for \'pro_uid\''));
-            }
+            Validator::proUid($processUid, '$pro_uid');
             $user = new \Users();
             if (! $user->userExists( $userUid )) {
-                throw (new \Exception( 'Invalid value specified for \'usr_uid\''));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('usr_uid')));
             }
             $fields = $ws->newCaseImpersonate($processUid, $userUid, $variables, $taskUid);
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {
                 if ($array ["status_code"] == 12) {
-                    throw (new \Exception( G::loadTranslation( 'ID_NO_STARTING_TASK' ) . '. \'tas_uid\'.'));
+                    throw (new \Exception(\G::loadTranslation('ID_NO_STARTING_TASK') . '. tas_uid.'));
                 } elseif ($array ["status_code"] == 13) {
-                    throw (new \Exception( G::loadTranslation( 'ID_MULTIPLE_STARTING_TASKS' ) . '. \'tas_uid\'.'));
+                    throw (new \Exception(\G::loadTranslation('ID_MULTIPLE_STARTING_TASKS') . '. tas_uid.'));
                 }
                 throw (new \Exception($array ["message"]));
             } else {
@@ -641,7 +635,7 @@ class Cases
                     unset($array['timestamp']);
                 }
             } else {
-                throw (new \Exception('The Application with app_uid: '.$applicationUid.' doesn\'t exist'));
+                throw new \Exception(\G::LoadTranslation("ID_CASES_INCORRECT_INFORMATION", array($applicationUid)));
             }
         } catch (\Exception $e) {
             throw $e;
