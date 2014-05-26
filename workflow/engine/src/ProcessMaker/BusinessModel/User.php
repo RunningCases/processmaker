@@ -223,7 +223,7 @@ class User
                 if ($form['USR_COUNTRY'] != '') {
                     $oCountry = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
                     if (is_null($oCountry)) {
-                        throw new \Exception('Invalid value for usr_country: '.$form['USR_COUNTRY']);
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($form['USR_COUNTRY'])));
                     }
                 }
             }
@@ -231,7 +231,7 @@ class User
                 if ($form['USR_CITY'] != '') {
                     $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
                     if (is_null($oCity)) {
-                        throw new \Exception('Invalid value for usr_city: '.$form['USR_CITY']);
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($form['USR_CITY'])));
                     }
                 }
             }
@@ -239,7 +239,7 @@ class User
                 if ($form['USR_LOCATION'] != '') {
                     $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
                     if (is_null($oLocation)) {
-                        throw new \Exception('Invalid value for usr_location: '.$form['USR_LOCATION']);
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($form['USR_LOCATION'])));
                     }
                 }
             }
@@ -298,7 +298,7 @@ class User
                 $userData['USR_LASTNAME'] = $form['USR_LASTNAME'];
             }
             if ($form['USR_EMAIL'] == '') {
-                throw new \Exception('Invalid value specified for usr_email, can not be null.');
+                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('usr_email')));
             } else {
                 if (!filter_var($form['USR_EMAIL'], FILTER_VALIDATE_EMAIL)) {
                     throw new \Exception('usr_email. '.\G::LoadTranslation('ID_INCORRECT_EMAIL'));
@@ -326,16 +326,16 @@ class User
             $userData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
             $statusWF = $form['USR_STATUS'];
             if ($form['USR_STATUS'] == '') {
-                throw new \Exception('Invalid value specified for usr_status, can not be null');
+                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('usr_status')));
             } else {
                 if ($form['USR_STATUS'] == 'ACTIVE' || $form['USR_STATUS'] == 'INACTIVE' || $form['USR_STATUS'] == 'VACATION') {
                     $userData['USR_STATUS'] = $form['USR_STATUS'];
                 } else {
-                    throw new \Exception('usr_status. Invalid value for status field.');
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('usr_status')));
                 }
             }
             if ($form['USR_ROLE'] == '') {
-                throw new \Exception('Invalid value specified for usr_role, can not be null');
+                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('usr_role')));
             } else {
                 require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
                 $oCriteria = new \Criteria('rbac');
@@ -346,7 +346,7 @@ class User
                 if ($oDataset->getRow()) {
                     $userData['USR_ROLE'] = $form['USR_ROLE'];
                 } else {
-                    throw new \Exception('usr_role. Invalid value for role field.');
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('usr_role')));
                 }
             }
             try {
@@ -411,7 +411,7 @@ class User
                 }
             }
             if ($countPermission != 1) {
-                throw new \Exception('This user: '.$usrLoggedUid. ', can not update the data.');
+                throw new \Exception(\G::LoadTranslation("ID_USER_CAN_NOT_UPDATE", array($usrLoggedUid)));
             }
             if (isset($arrayUserData['USR_USERNAME'])) {
                 $criteria = new \Criteria();
@@ -566,7 +566,7 @@ class User
                     if ($oDataset->getRow()) {
                         $userData['USR_ROLE'] = $form['USR_ROLE'];
                     } else {
-                        throw new \Exception('usr_role. Invalid value for field.');
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('usr_role')));
                     }
                     $this->updateUser($userData, $form['USR_ROLE']);
                 } else {
@@ -581,7 +581,7 @@ class User
                 if ($form['USR_COUNTRY'] != '') {
                     $oReplacedBy = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
                     if (is_null($oReplacedBy)) {
-                            throw new \Exception('Invalid value for usr_country: '.$form['USR_COUNTRY']);
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($form['USR_COUNTRY'])));
                     } else {
                         $userData['USR_COUNTRY'] = $form['USR_COUNTRY'];
                         $userData['USR_CITY'] = '';
@@ -593,7 +593,7 @@ class User
                 if ($form['USR_CITY'] != '') {
                     $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
                     if (is_null($oCity)) {
-                        throw new \Exception('Invalid value for usr_city: '.$form['USR_CITY']);
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($form['USR_CITY'])));
                     } else {
                         $userData['USR_CITY'] = $form['USR_CITY'];
                     }
@@ -603,7 +603,7 @@ class User
                 if ($form['USR_LOCATION'] != '') {
                     $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
                     if (is_null($oLocation)) {
-                            throw new \Exception('Invalid value for usr_location: '.$form['USR_LOCATION']);
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($form['USR_LOCATION'])));
                     } else {
                         $userData['USR_LOCATION'] = $form['USR_LOCATION'];
                     }
@@ -695,7 +695,7 @@ class User
             $c = $oProcessMap->getCriteriaUsersCases('CANCELLED', $USR_UID);
             $history += \ApplicationPeer::doCount($c);
             if ($total > 0) {
-                throw (new \Exception( 'The user with usr_uid: '. $USR_UID .', cannot be deleted while it has cases assigned.'));
+                throw new \Exception(\G::LoadTranslation("ID_USER_CAN_NOT_BE_DELETED", array($USR_UID)));
             } else {
                 $UID = $usrUid;
                 \G::LoadClass('tasks');
@@ -745,14 +745,14 @@ class User
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for start.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_START"));
                 } else {
                     $oCriteria->setOffset($start);
                 }
             }
             if ($limit != '') {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for limit.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_LIMIT"));
                 } else {
                     if ($limit == 0) {
                         return $aUserInfo;
@@ -788,10 +788,7 @@ class User
         try {
             $filter = '';
             $aUserInfo = array();
-            $oUser = \UsersPeer::retrieveByPK($userUid);
-            if (is_null($oUser)) {
-                throw (new \Exception( 'This id for usr_uid: '. $userUid .' does not correspond to a registered user'));
-            }
+            Validator::usrUid($userUid, '$usr_uid');
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
             $oCriteria = new \Criteria();
             if ($filter != '') {

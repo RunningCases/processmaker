@@ -62,7 +62,7 @@ class FilesManager
                     $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory;
                     break;
                 default:
-                    throw (new \Exception( 'Invalid value specified for path. Expecting templates or public'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('path')));
                     break;
             }
             \G::verifyPath($sDirectory, true);
@@ -147,7 +147,7 @@ class FilesManager
         try {
             $aData['prf_path'] = rtrim($aData['prf_path'], '/') . '/';
             if (!$aData['prf_filename']) {
-                throw (new \Exception( 'Invalid value specified for prf_filename.'));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('prf_filename')));
             }
             $extention = strstr($aData['prf_filename'], '.');
             if (!$extention) {
@@ -162,7 +162,7 @@ class FilesManager
             }
             $sMainDirectory = current(explode("/", $aData['prf_path']));
             if ($sMainDirectory != 'public' && $sMainDirectory != 'templates') {
-                throw (new \Exception( 'Invalid value specified for prf_path. Expecting templates/ or public/'));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_PRF_PATH"));
             }
             if (strstr($aData['prf_path'],'/')) {
                 $sSubDirectory = substr($aData['prf_path'], strpos($aData['prf_path'], "/")+1) ;
@@ -186,7 +186,8 @@ class FilesManager
             $content = $aData['prf_content'];
             if (is_string($content)) {
                 if (file_exists(PATH_SEP.$sDirectory)) {
-                    throw (new \Exception( 'The file: '.$sMainDirectory. PATH_SEP . $sSubDirectory . $aData['prf_filename'] . ' already exists.'));
+                    $directory = $sMainDirectory. PATH_SEP . $sSubDirectory . $aData['prf_filename'];
+                    throw new \Exception(\G::LoadTranslation("ID_EXISTS_FILE", array($directory)));
                 }
             }
             if (!file_exists($sCheckDirectory)) {
@@ -329,7 +330,7 @@ class FilesManager
                 $rsCriteria->next();
             }
             if ($path == '') {
-                throw new \Exception('Invalid value specified for prf_uid.');
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('prf_uid')));
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
@@ -348,7 +349,7 @@ class FilesManager
                 $sEditable = false;
             }
             if ($sEditable == false) {
-                throw (new \Exception( 'Unable to edit. Make sure your file has an editable extension.'));
+                throw new \Exception(\G::LoadTranslation("ID_UNABLE_TO_EDIT"));
             }
             $oProcessFiles = \ProcessFilesPeer::retrieveByPK($prfUid);
             $sDate = date('Y-m-d H:i:s');
@@ -398,7 +399,7 @@ class FilesManager
                 $rsCriteria->next();
             }
             if ($path == '') {
-                throw new \Exception('Invalid value specified for prf_uid.');
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('prf_uid')));
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
@@ -440,7 +441,7 @@ class FilesManager
                 $rsCriteria->next();
             }
             if ($path == '') {
-                throw new \Exception('Invalid value specified for prf_uid.');
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('prf_uid')));
             }
             $sFile = end(explode("/",$path));
             $sPath = str_replace($sFile,'',$path);
@@ -492,7 +493,7 @@ class FilesManager
             if (file_exists($sDirectory.$sDirToDelete)) {
                 \G::rm_dir($sDirectory.$sDirToDelete);
             } else {
-                throw (new \Exception( 'Invalid value specified for path.'));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('path')));
             }
             $criteria = new \Criteria("workflow");
             $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
