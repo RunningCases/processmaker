@@ -1,4 +1,5 @@
 var stagesmap=function(){
+	var menu_edit_items = [];
 	this.data={
 		load:function(){
 			var r = new leimnud.module.rpc.xmlhttp({
@@ -22,6 +23,7 @@ var stagesmap=function(){
 					    {image:"/images/add.png",text:G_STRINGS.ID_PROCESSMAP_ADD_STAGE,launch:this.addStage.extend(this)}
 					  ]
 				  });
+				  menu_add = this.menu;
 				  this.observers.menu.register(this.parent.closure({instance:this.menu,method:this.menu.remove}),this.menu);
 				}
 				this.data.render.title();
@@ -226,8 +228,8 @@ var stagesmap=function(){
 				});
 				if(this.options.rw===true)
 				{
-				  var menu = new this.parent.module.app.menuRight();
-				  menu.make({
+				  this.menuEdit = new this.parent.module.app.menuRight();
+				  this.menuEdit.make({
 				  	target:a,
 				  	width:201,
 				  	theme:this.options.theme,
@@ -318,7 +320,8 @@ var stagesmap=function(){
 				  	},args:index})}
 				  	]
 				  });
-				  this.observers.menu.register(menu.remove,menu);
+				  menu_edit_items.push(this.menuEdit);	  
+				  this.observers.menu.register(this.menuEdit.remove,this.menuEdit);
 				}
 				this.panels.editor.elements.content.appendChild(a);
 				a.appendChild(b);
@@ -368,6 +371,11 @@ var stagesmap=function(){
 						  },args:[a,c,index,options.object.drag]}),
 
 						finish	:this.parent.closure({instance:this,method:function(div,divC,uid,drag){
+							for(var j=0;j<this.data.db.stages.length;j++){
+								if(menu_edit_items[j].options.target.textContent == options.label){
+									menu_edit = menu_edit_items[j];
+								}
+							}
 							if(!drag.moved){return false;}
 							var pos  = this.parent.dom.position(div);
 							var h=pos;
