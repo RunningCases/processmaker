@@ -128,8 +128,8 @@ def buildMafe(homeDir, targetDir, mode)
     imgTargetDir = targetDir + "/img"
     ##
 
-    ##executeInto(homeDir, ["rmdir", "compass", "compress_js_files", "compress_app_files"])
-    executeInto(homeDir, ["mafe"])
+    executeInto(homeDir, ["rmdir", "dir", "compass", "compress_js_files", "compress_app_files"])
+    #executeInto(homeDir, ["dir", "mafe"])
 
     puts "\nCopying files into: #{mafeDir}".bold
     copyFiles({
