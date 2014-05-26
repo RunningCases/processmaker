@@ -24,10 +24,14 @@ class Designer extends Controller
     public function index($httpData)
     {
         $proUid = isset($httpData->prj_uid) ? $httpData->prj_uid : '';
+        $appUid = isset($httpData->app_uid) ? $httpData->app_uid : '';
+        $proReadOnly = isset($httpData->prj_readonly) ? $httpData->prj_readonly : 'false';
         $client = $this->getClientCredentials();
         $authCode = $this->getAuthorizationCode($client);
 
         $this->setVar('prj_uid', $proUid);
+        $this->setVar('app_uid', $appUid);
+        $this->setVar('prj_readonly', $proReadOnly);
 
         $credentials = array();
         $credentials['client_id'] = $client['CLIENT_ID'];

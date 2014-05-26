@@ -344,9 +344,7 @@ class Validator
     {
         try {
             if (!is_array($data)) {
-                $msg = str_replace(array("{0}"), array($dataNameForException), "Invalid value for \"{0}\", this value must be an array.");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_THIS_MUST_BE_ARRAY", array($dataNameForException)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -365,9 +363,7 @@ class Validator
     {
         try {
             if (empty($data)) {
-                $msg = str_replace(array("{0}"), array($dataNameForException), "Invalid value for \"{0}\", it can not be empty.");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array($dataNameForException)));
             }
         } catch (\Exception $e) {
             throw $e;

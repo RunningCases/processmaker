@@ -15,8 +15,7 @@ class XmlExporterTest extends \PHPUnit_Framework_TestCase
 {
     protected static $exporter;
     protected static $projectUid = "";
-    protected static $projectName = "";
-    protected static $fileXml = "";
+    protected static $filePmx = "";
 
     /**
      * Set class for test
@@ -25,11 +24,9 @@ class XmlExporterTest extends \PHPUnit_Framework_TestCase
      */
     public static function setUpBeforeClass()
     {
-        self::$projectName = \ProcessMaker\Util\Common::generateUID();
-
         $json = "
         {
-            \"prj_name\": \"" . self::$projectName . "\",
+            \"prj_name\": \"" . \ProcessMaker\Util\Common::generateUID() . "\",
             \"prj_author\": \"00000000000000000000000000000001\",
             \"diagrams\": [
                 {
@@ -49,7 +46,7 @@ class XmlExporterTest extends \PHPUnit_Framework_TestCase
         $arrayResult = \ProcessMaker\Project\Adapter\BpmnWorkflow::createFromStruct(json_decode($json, true));
 
         self::$projectUid = $arrayResult[0]["new_uid"];
-        self::$fileXml = PATH_DOCUMENT . "output" . PATH_SEP . self::$projectUid . ".xml";
+        self::$filePmx = PATH_DOCUMENT . "output" . PATH_SEP . self::$projectUid . ".pmx";
 
         self::$exporter = new \ProcessMaker\Exporter\XmlExporter(self::$projectUid);
     }
@@ -62,10 +59,9 @@ class XmlExporterTest extends \PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         $bpmnWf = \ProcessMaker\Project\Adapter\BpmnWorkflow::load(self::$projectUid);
-
         $bpmnWf->remove();
 
-        unlink(self::$fileXml);
+        unlink(self::$filePmx);
     }
 
     /**
@@ -127,7 +123,7 @@ class XmlExporterTest extends \PHPUnit_Framework_TestCase
             $node = $value;
 
             if ($node->hasAttribute("class")) {
-                $this->assertTrue(in_array($node->getAttribute("class"), array("BPMN", "workflow")));
+                $this->assertContains($node->getAttribute("class"), array("BPMN", "workflow"));
             }
         }
     }
@@ -139,9 +135,9 @@ class XmlExporterTest extends \PHPUnit_Framework_TestCase
      */
     public function testSaveExport()
     {
-        self::$exporter->saveExport(self::$fileXml);
+        self::$exporter->saveExport(self::$filePmx);
 
-        $this->assertTrue(file_exists(self::$fileXml));
+        $this->assertTrue(file_exists(self::$filePmx));
     }
 
     /**

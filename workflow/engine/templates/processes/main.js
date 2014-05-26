@@ -554,22 +554,27 @@ function saveProcess()
 {
   var projectType = Ext.getCmp('newProjectWin')._projectType;
 
-  Ext.getCmp('newProcessForm').getForm().submit( {
-    url : '../processProxy/saveProcess?type=' + projectType,
-    waitMsg : _('ID_SAVING_PROCESS'),
-    waitTitle : "&nbsp;",
-    timeout : 36000,
-    success : function(obj, resp) {
-      if (projectType == 'classicProject') {
-        location.href = 'processes_Map?PRO_UID='+resp.result.PRO_UID;
-      } else {
-        location.href = '../designer?prj_uid='+resp.result.PRO_UID;
-      }
-    },
-    failure: function(obj, resp) {
-      PMExt.error( _('ID_ERROR'), resp.result.msg);
+  Ext.getCmp('PRO_TITLE').setValue((Ext.getCmp('PRO_TITLE').getValue()).trim());
+  if (Ext.getCmp('newProcessForm').getForm().isValid()) {
+        Ext.getCmp('newProcessForm').getForm().submit({
+          url : '../processProxy/saveProcess?type=' + projectType,
+          waitMsg : _('ID_SAVING_PROCESS'),
+          waitTitle : "&nbsp;",
+          timeout : 36000,
+          success : function(obj, resp) {
+            if (projectType == 'classicProject') {
+              location.href = 'processes_Map?PRO_UID='+resp.result.PRO_UID;
+            } else {
+              location.href = '../designer?prj_uid='+resp.result.PRO_UID;
+            }
+          },
+          failure: function(obj, resp) {
+            PMExt.error( _('ID_ERROR'), resp.result.msg);
+          }
+        });
+    } else {
+        PMExt.error( _('ID_ERROR'), _('ID_INVALID_PROCESS_NAME'));
     }
-  });
 }
 
 function doSearch(){
@@ -846,7 +851,12 @@ importProcessExistGroup = function()
                   success : function(o, resp) {
                     var resp_            = Ext.util.JSON.decode(resp.response.responseText);
                     var sNewProUid       = resp_.sNewProUid;
-                    window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+
+                    if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
+                        window.location.href = "../designer?prj_uid=" + sNewProUid;
+                    } else {
+                        window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                    }
                   },
                   failure: function(o, resp) {
                     w.close();
@@ -975,17 +985,16 @@ importProcessExistProcess = function()
                   success: function(o, resp) {
                     var resp_      = Ext.util.JSON.decode(resp.response.responseText);
                     var sNewProUid = resp_.sNewProUid;
-                    var projectType = (typeof(resp_.project_type) != "undefined")? resp_.project_type : "classicProject";
 
                     if (resp_.ExistGroupsInDatabase == 0) {
-                        if (projectType == "classicProject") {
-                            window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
-                        } else {
+                        if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
                             window.location.href = "../designer?prj_uid=" + sNewProUid;
+                        } else {
+                            window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                         }
                     }
                     else {
-                      importProcessGlobal.proFileName       = resp_.fileName;
+                      importProcessGlobal.proFileName       = resp_.proFileName;
                       importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
                       importProcessGlobal.sNewProUid        = resp_.sNewProUid;
                       importProcessGlobal.importOption      = resp_.importOption;
@@ -1090,8 +1099,9 @@ importProcess = function()
                       if (resp_.catchMessage == "") {
                         if (resp_.ExistProcessInDatabase == "0") {
                           if (resp_.ExistGroupsInDatabase == "0") {
-                            var sNewProUid       = resp_.sNewProUid;
-                            if (resp_.project_type && resp_.project_type == "bpmn") {
+                            var sNewProUid = resp_.sNewProUid;
+
+                            if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
                                 window.location.href = "../designer?prj_uid=" + sNewProUid;
                             } else {
                                 window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
@@ -1166,7 +1176,7 @@ function activeDeactive(){
         store.reload();
         var activator = Ext.getCmp('activator');
         activator.setDisabled(true);
-        activator.setText('Status');
+        activator.setText(_('ID_STATUS'));
         activator.setIcon('');
       },
       failure: function ( result, request) {
@@ -1202,7 +1212,7 @@ function enableDisableDebug()
         store.reload();
         var activator = Ext.getCmp('activator');
         activator.setDisabled(true);
-        activator.setText('Status');
+        activator.setText(_('ID_STATUS'));
         activator.setIcon('');
       },
       failure: function ( result, request) {

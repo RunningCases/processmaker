@@ -275,7 +275,7 @@ class AppCacheView extends BaseAppCacheView
         $rows[] = array();
         $tasks  = array();
 
-        //check starting task assigned directly to this user
+        //check self service tasks assigned directly to this user
         $c = new Criteria();
         $c->clearSelectColumns();
         $c->addSelectColumn(TaskPeer::TAS_UID);
@@ -284,6 +284,7 @@ class AppCacheView extends BaseAppCacheView
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(TaskPeer::TAS_ASSIGN_TYPE, 'SELF_SERVICE');
+        $c->add(TaskPeer::TAS_GROUP_VARIABLE, '');
         $c->add(TaskUserPeer::USR_UID, $userUid);
 
         $rs = TaskPeer::doSelectRS($c);
@@ -310,6 +311,7 @@ class AppCacheView extends BaseAppCacheView
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(TaskPeer::TAS_ASSIGN_TYPE, 'SELF_SERVICE');
+        $c->add(TaskPeer::TAS_GROUP_VARIABLE, '');
         $c->add(TaskUserPeer::USR_UID, $aGroups, Criteria::IN);
 
         $rs = TaskPeer::doSelectRS($c);
@@ -1053,8 +1055,7 @@ class AppCacheView extends BaseAppCacheView
         if (!$doCount) {
             //Completed - getCompleted()
             $criteria->addGroupByColumn(AppCacheViewPeer::APP_UID);
-
-            //$criteria->addGroupByColumn(AppCacheViewPeer::USR_UID);
+            $criteria->addGroupByColumn(AppCacheViewPeer::DEL_INDEX);
         }
 
         return $criteria;
@@ -1200,7 +1201,7 @@ class AppCacheView extends BaseAppCacheView
 
             $sql = "SELECT *
                     FROM `information_schema`.`USER_PRIVILEGES`
-                    WHERE GRANTEE = \"'$mysqlUser'\" and PRIVILEGE_TYPE = 'SUPER' ";
+                    WHERE GRANTEE = \"'$mysqlUser'\" ";
 
             $rs1 = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
             $rs1->next();

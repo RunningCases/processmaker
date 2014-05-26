@@ -96,6 +96,13 @@ class workspaceTools
         $stop = microtime(true);
         $final = $stop - $start;
         CLI::logging("<*>   Backup log files Process took $final seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> check Mafe Requirements...\n");
+        $this->checkMafeRequirements($workSpace, $lang);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
     }
 
     /**
@@ -1440,5 +1447,44 @@ class workspaceTools
             }
         }
     }
+
+    public function checkMafeRequirements ($workspace,$lang) {
+        $this->initPropel(true);
+        $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
+        if (empty($pmRestClient)) {
+            if (is_file(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info')) {
+                $SERVER_INFO = file_get_contents(PATH_DATA . 'sites/' . $workspace . '/'.'.server_info');
+                $SERVER_INFO = unserialize($SERVER_INFO);
+
+                $envFile = PATH_CONFIG . 'env.ini';
+                $skin ='neoclassic';
+                if (file_exists($envFile) ) {
+                    $sysConf = System::getSystemConfiguration($envFile);
+                    $lang = $sysConf['default_lang'];
+                    $skin = $sysConf['default_skin'];
+                }
+
+                $endpoint = sprintf(
+                    '%s/sys%s/%s/%s/oauth2/grant',
+                    $SERVER_INFO['HTTP_ORIGIN'],
+                    $workspace,
+                    $lang,
+                    $skin
+                );
+
+                $oauthClients = new OauthClients();
+                $oauthClients->setClientId('x-pm-local-client');
+                $oauthClients->setClientSecret('179ad45c6ce2cb97cf1029e212046e81');
+                $oauthClients->setClientName('PM Web Designer');
+                $oauthClients->setClientDescription('ProcessMaker Web Designer App');
+                $oauthClients->setClientWebsite('www.processmaker.com');
+                $oauthClients->setRedirectUri($endpoint);
+                $oauthClients->save();
+            } else {
+                eprintln("WARNING! No server info found!", 'red');
+            }
+        }
+    }
+
 }
 

@@ -129,6 +129,11 @@ class OutputDocumentStructure
     public $out_doc_filename;
 
     /**
+     * @var string {@from body}
+     */
+    public $out_doc_template;
+
+    /**
      * @var string {@from body} {@choice TCPDF,HTML2PDF}
      */
     public $out_doc_report_generator;
