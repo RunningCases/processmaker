@@ -335,12 +335,12 @@ class Bootstrap
         }
 
         require_once PATH_THIRDPARTY . 'smarty/libs/Smarty.class.php';
-        
+
         // file has absolute path
         if (substr($template, 0, 1) != PATH_SEP) {
             $template = PATH_TEMPLATE . $template;
         }
-        
+
         if (! file_exists($template)) {
             throw new Exception("Template: $template, doesn't exist!");
         }
@@ -2788,11 +2788,11 @@ class Bootstrap
                 throw new Exception(
                     "ERROR: Verdors are missing!" . PHP_EOL .
                         "Please execute the following commands to prepare/install vendors:" .PHP_EOL.PHP_EOL.
-                        "$>curl -sS https://getcomposer.org/installer | php" . PHP_EOL . 
+                        "$>curl -sS https://getcomposer.org/installer | php" . PHP_EOL .
                         "$>php composer.phar install"
                 );
             }
-        } 
+        }
 
         if (! file_exists(PATH_TRUNK . 'vendor' . PATH_SEP . "autoload.php")) {
             throw new Exception(

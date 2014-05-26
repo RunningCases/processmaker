@@ -1121,17 +1121,25 @@ var gridtb = new Ext.Toolbar(
   },
   '-',
   new Ext.Toolbar.Button({
-    text : TRANSLATIONS.ID_SHOW_DIRS,
+    text : _('ID_SHOW_DIRS'),
+    id: 'showOrHiDirs',
     enableToggle : true,
     pressed : false,
     handler : function(btn, e) {
-      if (btn.pressed) {
-        datastore.sendWhat = 'both';
-        loadDir();
-      } else {
-        datastore.sendWhat = 'files';
-        loadDir();
-      }
+        if (btn.pressed) {
+            datastore.sendWhat = 'both';
+            loadDir();
+        } else {
+            datastore.sendWhat = 'files';
+            loadDir();
+        }
+        if (showDirs) {
+            Ext.getCmp("showOrHiDirs").setText(_('ID_SHOW_DIRS'));
+            showDirs = false;
+        } else {
+            Ext.getCmp("showOrHiDirs").setText(_('ID_HIDE_DIRS'));
+            showDirs = true;
+        }
     }
   }), '-', new Ext.form.TextField({
     name : "filterValue",
@@ -1151,19 +1159,18 @@ var gridtb = new Ext.Toolbar(
   }), new Ext.Toolbar.Button({
     text : '&nbsp;X&nbsp;',
     handler : function() {
-      datastore.clearFilter();
-      Ext.getCmp("filterField").setValue("");
+        datastore.clearFilter();
+        Ext.getCmp("filterField").setValue("");
+        datastore.setBaseParam( 'search', '');
+        datastore.load({params:{ start : 0 , limit : 100 }});
     }
   })
 
   ]);
 function filterDataStore(btn, e) {
-  var filterVal = Ext.getCmp("filterField").getValue();
-  if (filterVal.length > 1) {
-    datastore.filter('name', eval('/' + filterVal + '/gi'));
-  } else {
-    datastore.clearFilter();
-  }
+    var filterVal = Ext.getCmp("filterField").getValue();
+    datastore.setBaseParam( 'search', filterVal);
+    datastore.load({params:{ start : 0 , limit : 100 }});
 }
 // add a paging toolbar to the grid's footer
 var gridbb = new Ext.PagingToolbar({
@@ -1271,7 +1278,7 @@ rowExpander, {
   header: _("ID_OWNER"),
   dataIndex: "owner",
   width: 100,
-  sortable: true,
+  sortable: false,
   groupable: true,
   renderer: renderFullName
   //sortable: false
@@ -1290,7 +1297,7 @@ rowExpander, {
   header: _("ID_TYPE"),
   dataIndex: "type",
   width: 100,
-  sortable: true,
+  sortable: false,
   groupable: true,
   //align: "right",
   renderer: renderType
@@ -1298,7 +1305,7 @@ rowExpander, {
   header: _("ID_PROCESS"),
   dataIndex: "proTitle",
   width: 150,
-  sortable: true,
+  sortable: false,
   groupable: true
   //align: "right"
   //renderer: renderType
@@ -1306,7 +1313,7 @@ rowExpander, {
   header: _("ID_CASE"),
   dataIndex: "appLabel",
   width: 150,
-  sortable: true,
+  sortable: false,
   groupable: true
   //align: "right"
   //renderer: renderType

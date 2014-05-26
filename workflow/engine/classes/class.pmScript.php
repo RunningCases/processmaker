@@ -246,6 +246,22 @@ class PMScript
                     }
                 }
                 $sScript .= $sAux;
+                /** patch1: support for the expression: @@a = @@b = @@c = @@d; */
+                $bEqual = true;
+                if ($i < $iOcurrences - 1) {
+                    $ii = $aMatch[0][$i][1] + strlen($aMatch[0][$i][0]);
+                    $ss = trim(substr($this->sScript, $ii, $aMatch[0][$i + 1][1] - $ii));
+                } else {
+                    $ii = $aMatch[0][$i][1] + strlen($aMatch[0][$i][0]);
+                    $ss = trim(substr($this->sScript, $ii));
+                }
+                $sw0 = strpos($ss, '=') === 0 || strpos($ss, '+=') === 0 || strpos($ss, '-=') === 0;
+                $sw1 = strpos($ss, '==') === 0 || strpos($ss, '===') === 0 || strpos($ss, '!=') === 0 || strpos($ss, '!==') === 0 || strpos($ss, '<=') === 0 || strpos($ss, '>=') === 0;
+                $sw3 = substr(trim($sAux), strlen(trim($sAux)) - 6, strlen(trim($sAux))) === "empty(";
+                if (($sw0 && !$sw1) || $sw3) {
+                    $bEqual = false;
+                }
+                /** patch1 end */
                 $iAux = $aMatch[0][$i][1] + strlen( $aMatch[0][$i][0] );
                 switch ($aMatch[1][$i][0]) {
                     case '@':
@@ -694,8 +710,8 @@ function getEngineDataBaseName ($connection)
  */
 function executeQueryOci ($sql, $connection, $aParameter = array())
 {
-
     $aDNS = $connection->getDSN();
+
     $sUsername = $aDNS["username"];
     $sPassword = $aDNS["password"];
     $sHostspec = $aDNS["hostspec"];
@@ -703,8 +719,14 @@ function executeQueryOci ($sql, $connection, $aParameter = array())
     $sPort = $aDNS["port"];
 
     if ($sPort != "1521") {
-        // if not default port
-        $conn = oci_connect( $sUsername, $sPassword, $sHostspec . ":" . $sPort . "/" . $sDatabse );
+        $flagTns = ($sDatabse == "" && ($sPort . "" == "" || $sPort . "" == "0"))? 1 : 0;
+
+        if ($flagTns == 0) {
+            // if not default port
+            $conn = oci_connect($sUsername, $sPassword, $sHostspec . ":" . $sPort . "/" . $sDatabse);
+        } else {
+            $conn = oci_connect($sUsername, $sPassword, $sHostspec);
+        }
     } else {
         $conn = oci_connect( $sUsername, $sPassword, $sHostspec . "/" . $sDatabse );
     }
@@ -718,6 +740,7 @@ function executeQueryOci ($sql, $connection, $aParameter = array())
     switch (true) {
         case preg_match( "/^(SELECT|SHOW|DESCRIBE|DESC|WITH)\s/i", $sql ):
             $stid = oci_parse( $conn, $sql );
+
             if (count( $aParameter ) > 0) {
                 foreach ($aParameter as $key => $val) {
                     oci_bind_by_name( $stid, $key, $val );
