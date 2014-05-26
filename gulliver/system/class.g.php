@@ -1763,7 +1763,7 @@ class G
                                 if ($nl2brRecursive) {
                                     foreach ($aRow as $sKey => $vValue) {
                                         if (!is_array($vValue)) {
-                                            $aRow[$sKey] = nl2br($aRow[$sKey]);
+                                            $aRow[$sKey] = str_replace($nrt, $nrthtml, nl2br($aRow[$sKey]));
                                         }
                                     }
                                 }
@@ -5231,6 +5231,7 @@ class G
         if (!isset($allFunctions['user'])) {
             $allFunctions['user'] = array();
         }
+        $allFunctions['user'][] = 'sort';
         return in_array(strtolower($functionName), $allFunctions['user']);
     }
 

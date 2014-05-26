@@ -7,10 +7,10 @@ if (! isset ($_SESSION ['USER_LOGGED'])) {
     die ();
 }
 
+$search = isset($_REQUEST ['search']) ? $_REQUEST ['search'] : null;
+
 if (isset ($_REQUEST ['action']) && isset($_REQUEST['sort']) && isset($_REQUEST['dir'])) {
-    if ($_REQUEST['sort'] == "appDocCreateDate" && ($_REQUEST['dir'] == 'ASC' || $_REQUEST['dir'] == 'DESC')) {
-        sortContent();
-    }
+    sortContent();
 }
 
 
@@ -200,7 +200,8 @@ function expandNode()
             $limit,
             $start,
             $user,
-            true
+            true,
+            $search
         );
 
         $folderContent=$folderContentObj['documents'];
@@ -501,7 +502,10 @@ function sortContent()
         $folderListObj = $oPMFolder->getFolderList(
                         ($_POST["node"] != "root")? (($_POST["node"] == "NA")? "" : $_POST["node"]) : $rootFolder,
                         $limit,
-                        $start
+                        $start,
+                        $direction,
+                        (isset($_POST["sort"]))? $_POST["sort"]:"appDocCreateDate",
+                        $search
         );
 
         $folderList=$folderListObj['folders'];
@@ -524,7 +528,8 @@ function sortContent()
                         $user,
                         true,
                         $direction,
-                        (isset($_POST["sort"]))? $_POST["sort"]:"appDocCreateDate"
+                        (isset($_POST["sort"]))? $_POST["sort"]:"appDocCreateDate",
+                        $search
         );
 
         $folderContent = $folderContentObj['documents'];
