@@ -90,7 +90,7 @@ class ProcessSupervisor
             $aResp = array();
             $oProcess = \ProcessUserPeer::retrieveByPK( $sPuUID );
             if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for pu_uid: '. $sPuUID .' does not correspond to a valid relation'));
+                throw new \Exception(\G::LoadTranslation("ID_NOT_VALID_RELATION", array($sPuUID)));
             }
             // Groups
             $oCriteria = new \Criteria('workflow');
@@ -321,7 +321,7 @@ class ProcessSupervisor
             $aResp = array();
             $oDynaformSupervisor = \StepSupervisorPeer::retrieveByPK( $sPudUID );
             if (is_null( $oDynaformSupervisor ) ) {
-                throw (new \Exception( 'This id: '. $sPudUID .' does not correspond to a registered process supervisor '));
+                throw new \Exception(\G::LoadTranslation("ID_NOT_REGISTERED_PROCESS_SUPERVISOR", array($sPudUID)));
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
@@ -473,7 +473,7 @@ class ProcessSupervisor
             $aResp = array();
             $oInputDocumentSupervisor = \StepSupervisorPeer::retrieveByPK( $sPuiUID );
             if (is_null( $oInputDocumentSupervisor ) ) {
-                throw (new \Exception( 'This id: '. $sPuiUID .' does not correspond to a registered process supervisor '));
+                throw new \Exception(\G::LoadTranslation("ID_NOT_REGISTERED_PROCESS_SUPERVISOR", array($sPuiUID)));
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
@@ -575,16 +575,16 @@ class ProcessSupervisor
         $oTypeAssigneeG = \GroupwfPeer::retrieveByPK( $sUsrUID );
         $oTypeAssigneeU = \UsersPeer::retrieveByPK( $sUsrUID );
         if (is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
-            throw (new \Exception( 'This id: '. $sUsrUID .' does not correspond to a registered ' .$sTypeUID ));
+            throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_CORRESPOND_TYPE", array($sUsrUID, $sTypeUID)));
         }
         if (is_null( $oTypeAssigneeG ) && ! is_null( $oTypeAssigneeU) ) {
             if ( "SUPERVISOR"!= $sTypeUID ) {
-                throw (new \Exception( 'This id: '. $sUsrUID .' does not correspond to a registered ' .$sTypeUID ));
+                throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_CORRESPOND_TYPE", array($sUsrUID, $sTypeUID)));
             }
         }
         if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
             if ( "GROUP_SUPERVISOR" != $sTypeUID ) {
-                throw (new \Exception( 'This id: '. $sUsrUID .' does not correspond to a registered ' .$sTypeUID ));
+                throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_CORRESPOND_TYPE", array($sUsrUID, $sTypeUID)));
             }
         }
         // validate Groups
@@ -632,7 +632,7 @@ class ProcessSupervisor
             $oCriteria = $this->getProcessSupervisor($sProcessUID, $sPuUID);
             return $oCriteria;
         } else {
-            throw (new \Exception('This relation already exist!'));
+            throw new \Exception(\G::LoadTranslation("ID_RELATION_EXIST"));
         }
     }
 
@@ -648,7 +648,7 @@ class ProcessSupervisor
     {
         $oTypeDynaform = \DynaformPeer::retrieveByPK($sDynUID);
         if (is_null( $oTypeDynaform )) {
-            throw (new \Exception( 'This id for dyn_uid: '. $sDynUID .' does not correspond to a registered Dynaform'));
+            throw new \Exception(\G::LoadTranslation("ID_DOES NOT_DYNAFORM", array($sDynUID)));
         }
         $aResp = array();
         $sPuUIDT = array();
@@ -717,7 +717,7 @@ class ProcessSupervisor
             }
             return $aResp;
         } else {
-            throw (new \Exception('This relation already exist!'));
+            throw new \Exception(\G::LoadTranslation("ID_RELATION_EXIST"));
         }
     }
 
@@ -734,7 +734,7 @@ class ProcessSupervisor
     {
         $oTypeInputDocument= \InputDocumentPeer::retrieveByPK($sInputDocumentUID);
         if (is_null( $oTypeInputDocument )) {
-            throw (new \Exception( 'This id for inp_doc_uid: '. $sInputDocumentUID .' does not correspond to a registered InputDocument'));
+            throw new \Exception(\G::LoadTranslation("ID_DOES NOT_INPUT_DOCUMENT", array($sInputDocumentUID)));
         }
         $aResp = array();
         $sPuUIDT = array();
@@ -804,7 +804,7 @@ class ProcessSupervisor
             }
             return $aResp;
         } else {
-            throw (new \Exception('This relation already exist!'));
+            throw new \Exception(\G::LoadTranslation("ID_RELATION_EXIST"));
         }
     }
 
@@ -826,7 +826,7 @@ class ProcessSupervisor
                 $oConnection->commit();
                 return $iResult;
             } else {
-                throw (new \Exception('This row does not exist!'));
+                throw new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST"));
             }
         } catch (\Exception $e) {
             $oConnection->rollback();
@@ -849,7 +849,7 @@ class ProcessSupervisor
                 $oProcessMap = new \processMap(new \DBConnection());
                 $oProcessMap->removeSupervisorStep( $oDynaformSupervidor->getStepUid(), $sProcessUID, 'DYNAFORM', $oDynaformSupervidor->getStepUidObj(), $oDynaformSupervidor->getStepPosition() );
             } else {
-                throw (new \Exception('This row does not exist!'));
+                throw new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST"));
             }
         } catch (Exception $oError) {
             throw ($oError);
@@ -871,7 +871,7 @@ class ProcessSupervisor
                 $oProcessMap = new \processMap(new \DBConnection());
                 $oProcessMap->removeSupervisorStep( $oInputDocumentSupervidor->getStepUid(), $sProcessUID, 'INPUT_DOCUMENT', $oInputDocumentSupervidor->getStepUidObj(), $oInputDocumentSupervidor->getStepPosition() );
             } else {
-                throw (new \Exception('This row does not exist!'));
+                throw new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST"));
             }
         } catch (Exception $oError) {
             throw ($oError);

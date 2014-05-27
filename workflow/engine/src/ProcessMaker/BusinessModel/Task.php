@@ -728,14 +728,8 @@ class Task
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
@@ -878,14 +872,8 @@ class Task
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $iType = 1;
             $oTasks = new \Tasks();
             $aAux = $oTasks->getGroupsOfTask($sTaskUID, $iType);
@@ -973,14 +961,14 @@ class Task
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for start.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_START"));
                 }
             } else {
                 $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for limit.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_LIMIT"));
                 } else {
                     if ($limit == 0) {
                         return array();
@@ -1010,14 +998,8 @@ class Task
     public function getTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $iType = 1;
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -1110,7 +1092,7 @@ class Task
                 $oDataset->next();
             }
             if (empty($aUsers)) {
-                throw (new \Exception( 'Record not found for id: '. $sAssigneeUID));
+                throw new \Exception(\G::LoadTranslation("ID_RECORD_NOT_FOUND", array($sAssigneeUID)));
             } else {
                 return $aUsers;
             }
@@ -1134,14 +1116,8 @@ class Task
     public function addTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID, $assType)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $iType = 1;
             $iRelation = '';
             $oCriteria = new \Criteria('workflow');
@@ -1157,23 +1133,23 @@ class Task
             }
             $oTaskUser = \TaskUserPeer::retrieveByPK( $sTaskUID, $sAssigneeUID, $iType, $iRelation );
             if (! is_null( $oTaskUser )) {
-                throw (new \Exception( 'This id: '. $sAssigneeUID .' is already assigned to task: ' . $sTaskUID ));
+                throw new \Exception(\G::LoadTranslation("ID_ALREADY_ASSIGNED", array($sAssigneeUID, $sTaskUID)));
             } else {
                 $oTypeAssigneeG = \GroupwfPeer::retrieveByPK( $sAssigneeUID );
                 $oTypeAssigneeU = \UsersPeer::retrieveByPK( $sAssigneeUID );
                 if (is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
-                    throw (new \Exception( 'This id: '. $sAssigneeUID .' does not correspond to a registered ' .$assType ));
+                    throw new \Exception(\G::LoadTranslation("ID_DOES_NOT_CORRESPOND", array($sAssigneeUID, $assType)));
                 }
                 if (is_null( $oTypeAssigneeG ) && ! is_null( $oTypeAssigneeU) ) {
                     $type = "user";
                     if ( $type != $assType ) {
-                        throw (new \Exception( 'This id: '. $sAssigneeUID .' does not correspond to a registered ' .$assType ));
+                        throw new \Exception(\G::LoadTranslation("ID_DOES_NOT_CORRESPOND", array($sAssigneeUID, $assType)));
                     }
                 }
                 if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
                     $type = "group";
                     if ( $type != $assType ) {
-                        throw (new \Exception( 'This id: '. $sAssigneeUID .' does not correspond to a registered ' .$assType ));
+                        throw new \Exception(\G::LoadTranslation("ID_DOES_NOT_CORRESPOND", array($sAssigneeUID, $assType)));
                     }
                 }
                 $oTaskUser = new \TaskUser();
@@ -1206,14 +1182,8 @@ class Task
     public function removeTaskAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $iType = 1;
             $iRelation = '';
             $oCriteria = new \Criteria('workflow');
@@ -1231,7 +1201,7 @@ class Task
             if (! is_null( $oTaskUser )) {
                 \TaskUserPeer::doDelete($oCriteria);
             } else {
-                throw (new \Exception( 'This row does not exist!' ));
+                throw new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST"));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -1258,14 +1228,8 @@ class Task
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
@@ -1365,14 +1329,14 @@ class Task
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for start.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_START"));
                 }
             } else {
                 $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for limit.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_LIMIT"));
                 } else {
                     if ($limit == 0) {
                         return array();
@@ -1408,14 +1372,8 @@ class Task
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "GroupUser.php");
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $iType = 2;
             $oTasks = new \Tasks();
             $aAux = $oTasks->getGroupsOfTask($sTaskUID, $iType);
@@ -1503,14 +1461,14 @@ class Task
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for start.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_START"));
                 }
             } else {
                 $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for limit.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_LIMIT"));
                 } else {
                     if ($limit == 0) {
                         return array();
@@ -1540,14 +1498,8 @@ class Task
     public function getTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $iType = 2;
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -1640,7 +1592,7 @@ class Task
                 $oDataset->next();
             }
             if (empty($aUsers)) {
-                throw (new \Exception( 'Record not found for id: '. $sAssigneeUID));
+                throw new \Exception(\G::LoadTranslation("ID_RECORD_NOT_FOUND", array($sAssigneeUID)));
             } else {
                 return $aUsers;
             }
@@ -1664,14 +1616,8 @@ class Task
     public function addTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID, $assType)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $iType = 2;
             $iRelation = '';
             $oCriteria = new \Criteria('workflow');
@@ -1687,23 +1633,23 @@ class Task
             }
             $oTaskUser = \TaskUserPeer::retrieveByPK( $sTaskUID, $sAssigneeUID, $iType, $iRelation );
             if (! is_null( $oTaskUser )) {
-                throw (new \Exception( 'This id: '. $sAssigneeUID .' is already assigned to task: ' . $sTaskUID ));
+                throw new \Exception(\G::LoadTranslation("ID_ALREADY_ASSIGNED", array($sAssigneeUID, $sTaskUID)));
             } else {
                 $oTypeAssigneeG = \GroupwfPeer::retrieveByPK( $sAssigneeUID );
                 $oTypeAssigneeU = \UsersPeer::retrieveByPK( $sAssigneeUID );
                 if (is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
-                    throw (new \Exception( 'This id: '. $sAssigneeUID .' does not correspond to a registered ' .$assType ));
+                    throw new \Exception(\G::LoadTranslation("ID_DOES_NOT_CORRESPOND", array($sAssigneeUID, $assType)));
                 }
                 if (is_null( $oTypeAssigneeG ) && ! is_null( $oTypeAssigneeU) ) {
                     $type = "user";
                     if ( $type != $assType ) {
-                        throw (new \Exception( 'This id: '. $sAssigneeUID .' does not correspond to a registered ' .$assType ));
+                        throw new \Exception(\G::LoadTranslation("ID_DOES_NOT_CORRESPOND", array($sAssigneeUID, $assType)));
                     }
                 }
                 if (! is_null( $oTypeAssigneeG ) && is_null( $oTypeAssigneeU ) ) {
                     $type = "group";
                     if ( $type != $assType ) {
-                        throw (new \Exception( 'This id: '. $sAssigneeUID .' does not correspond to a registered ' .$assType ));
+                        throw new \Exception(\G::LoadTranslation("ID_DOES_NOT_CORRESPOND", array($sAssigneeUID, $assType)));
                     }
                 }
                 $oTaskUser = new \TaskUser();
@@ -1736,14 +1682,8 @@ class Task
     public function removeTaskAdhocAssignee($sProcessUID, $sTaskUID, $sAssigneeUID)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $iType = 2;
             $iRelation = '';
             $oCriteria = new \Criteria('workflow');
@@ -1761,7 +1701,7 @@ class Task
             if (! is_null( $oTaskUser )) {
                 \TaskUserPeer::doDelete($oCriteria);
             } else {
-                throw (new \Exception( 'This row does not exist!' ));
+                throw new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST"));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -1863,14 +1803,8 @@ class Task
     public function getTaskAssigneesAll($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $aUsers = array();
             $oTasks = new \Tasks();
             $aAux = $oTasks->getGroupsOfTask($sTaskUID, 1);
@@ -1947,14 +1881,14 @@ class Task
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for start.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_START"));
                 }
             } else {
                 $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for limit.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_LIMIT"));
                 } else {
                     if ($limit == 0) {
                         return array();
@@ -1987,14 +1921,8 @@ class Task
     public function getTaskAdhocAssigneesAll($sProcessUID, $sTaskUID, $filter, $start, $limit, $type)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oActivity = \TaskPeer::retrieveByPK( $sTaskUID );
-            if (is_null($oActivity)) {
-                throw (new \Exception( 'This id for act_uid: '. $sTaskUID .' does not correspond to a registered activity'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            $this->validateActUid($sTaskUID);
             $aUsers = array();
             $oTasks = new \Tasks();
             $aAux = $oTasks->getGroupsOfTask($sTaskUID, 2);
@@ -2071,14 +1999,14 @@ class Task
             }
             if ($start) {
                 if ($start < 0) {
-                    throw (new \Exception( 'Invalid value specified for start.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_START"));
                 }
             } else {
                 $start = 0;
             }
             if (isset($limit)) {
                 if ($limit < 0) {
-                    throw (new \Exception( 'Invalid value specified for limit.'));
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_LIMIT"));
                 } else {
                     if ($limit == 0) {
                         return array();

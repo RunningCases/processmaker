@@ -84,7 +84,7 @@ class InputDocument
                     if ($docrow['app_doc_uid'] == $inputDocumentUid) {
                         $oAppDocument = \AppDocumentPeer::retrieveByPK( $inputDocumentUid, $row['DOC_VERSION'] );
                         if (is_null( $oAppDocument )) {
-                            throw (new \Exception('This input document with id: '.$inputDocumentUid.' doesn\'t exist!'));
+                            throw new \Exception(\G::LoadTranslation("ID_CASES_INPUT_DOES_NOT_EXIST", array($inputDocumentUid)));
                         }
                         $result = $docrow;
                     }
@@ -109,7 +109,7 @@ class InputDocument
         try {
             $oAppDocument = \AppDocumentPeer::retrieveByPK( $inputDocumentUid, 1 );
             if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
-                throw (new \Exception('This input document with inp_doc_uid: '.$inputDocumentUid.' doesn\'t exist!'));
+                throw new \Exception(\G::LoadTranslation("ID_CASES_INPUT_DOES_NOT_EXIST", array($inputDocumentUid)));
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
@@ -180,7 +180,7 @@ class InputDocument
             $arrayTrigger = $case->loadTriggers($taskUid, "INPUT_DOCUMENT", $inputDocumentUid, "AFTER");
             //Add Input Document
             if (empty($_FILES)) {
-                throw (new \Exception('This document filename doesn\'t exist!'));
+                throw new \Exception(\G::LoadTranslation("ID_CASES_INPUT_FILENAME_DOES_NOT_EXIST"));
             }
             if (!$_FILES["form"]["error"]) {
                 $_FILES["form"]["error"] = 0;
