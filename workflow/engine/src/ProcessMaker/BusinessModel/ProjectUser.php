@@ -17,10 +17,7 @@ class ProjectUser
     public function getProjectUsers($sProcessUID)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
             $aUsers = array();
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
@@ -103,10 +100,7 @@ class ProjectUser
     public function getProjectStartingTasks($sProcessUID)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
             $aUsers = array();
             $usersIds = array();
 
@@ -183,14 +177,8 @@ class ProjectUser
     public function getProjectStartingTaskUsers($sProcessUID, $sUserUID)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
-            $oUser = \UsersPeer::retrieveByPK($sUserUID);
-            if (is_null($oUser)) {
-                throw (new \Exception( 'This id for usr_uid: '. $sUserUID .' does not correspond to a registered user'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
+            Validator::usrUid($sUserUID, '$usr_uid');
             $aUsers = array();
             \G::LoadClass( 'case' );
             $oCase = new \Cases();
@@ -207,7 +195,7 @@ class ProjectUser
                 }
             }
             if (sizeof($aUsers) < 1) {
-                throw (new \Exception( 'This user usr_uid: '. $sUserUID .' does not have initial activities assigned in this project.'));
+                throw new \Exception(\G::LoadTranslation("ID_USER_NOT_INITIAL ACTIVITIES", array($sUserUID)));
             }
             return $aUsers;
         } catch (Exception $e) {
@@ -229,10 +217,7 @@ class ProjectUser
     public function projectWsUserCanStartTask($sProcessUID, $sActivityUID, $oData)
     {
         try {
-            $oProcess = \ProcessPeer::retrieveByPK( $sProcessUID );
-            if (is_null($oProcess)) {
-                throw (new \Exception( 'This id for prj_uid: '. $sProcessUID .' does not correspond to a registered process'));
-            }
+            Validator::proUid($sProcessUID, '$prj_uid');
             /**
              * process_webEntryValidate
              * validates if the username and password are valid data and if the user assigned
@@ -309,9 +294,9 @@ class ProjectUser
                     $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
                     if (! ($userIsAssigned >= 1)) {
                         if ($sTASKS) {
-                            throw (new \Exception( "The usr_uid: " . $sWS_USER . " doesn't have the activity act_uid: " . $sTASKS . " assigned"));
+                            throw new \Exception(\G::LoadTranslation("ID_USER_NOT_ID_ACTIVITY", array($sWS_USER, $sTASKS)));
                         } else {
-                            throw (new \Exception( "The usr_uid: " . $sWS_USER . " doesn't have an activity assigned"));
+                            throw new \Exception(\G::LoadTranslation("ID_USER_NOT_ACTIVITY", array($sWS_USER)));
                         }
                     }
                 }
