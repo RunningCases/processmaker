@@ -566,7 +566,7 @@ class WebEntry
 
                 $webEntry->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
-                $webEntryUid = \G::generateUniqueID();
+                $webEntryUid = \ProcessMaker\Util\Common::generateUID();
 
                 $webEntry->setWeUid($webEntryUid);
                 $webEntry->setProUid($processUid);
@@ -833,7 +833,7 @@ class WebEntry
                 $this->getFieldNameByFormatFieldName("WE_CREATE_USR_UID")        => $record["WE_CREATE_USR_UID"],
                 $this->getFieldNameByFormatFieldName("WE_UPDATE_USR_UID")        => $record["WE_UPDATE_USR_UID"] . "",
                 $this->getFieldNameByFormatFieldName("WE_CREATE_DATE")           => $webEntryCreateDate,
-                $this->getFieldNameByFormatFieldName("WE_UPDATE_DATE")           => $webEntryUpdateDate . ""
+                $this->getFieldNameByFormatFieldName("WE_UPDATE_DATE")           => $webEntryUpdateDate
             );
         } catch (\Exception $e) {
             throw $e;
