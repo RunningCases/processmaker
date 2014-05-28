@@ -125,6 +125,7 @@ class Translation extends BaseTranslation
             $rows[] = $rs->getRow();
         }
 
+        $result = new StdClass();
         $result->data = $rows;
         $result->totalCount = $totalCount;
 
