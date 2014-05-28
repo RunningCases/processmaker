@@ -82,7 +82,7 @@ class OutputDocument
                     if ($docrow['app_doc_uid'] == $applicationDocumentUid) {
                         $oAppDocument = \AppDocumentPeer::retrieveByPK( $applicationDocumentUid, $row['DOC_VERSION'] );
                         if (is_null( $oAppDocument )) {
-                            throw (new \Exception('This output document with id: '.$applicationDocumentUid.' doesn\'t exist!'));
+                            throw new \Exception(\G::LoadTranslation("ID_CASES_OUTPUT_DOES_NOT_EXIST", array($applicationDocumentUid)));
                         }
                         $result = $docrow;
                     }
@@ -108,7 +108,7 @@ class OutputDocument
             $lastDocVersion = $oAppDocumentVersion->getLastAppDocVersion($applicationDocumentUid);
             $oAppDocument = \AppDocumentPeer::retrieveByPK( $applicationDocumentUid, $lastDocVersion);
             if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
-                throw (new \Exception('This output document with id: '.$applicationDocumentUid.' doesn\'t exist!'));
+                throw new \Exception(\G::LoadTranslation("ID_CASES_OUTPUT_DOES_NOT_EXIST", array($applicationDocumentUid)));
             }
             $aFields = array ('APP_DOC_UID' => $applicationDocumentUid,'DOC_VERSION' => $lastDocVersion,'APP_DOC_STATUS' => 'DELETED');
             $oAppDocument->update( $aFields );
