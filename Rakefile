@@ -7,7 +7,12 @@ end
 
 
 task :required do
-    #puts "Executind task: required"
+    begin
+        require 'json'
+    rescue LoadError
+        puts "JSON gem not found.\nInstall it by running 'gem install json'"
+        exit(1)
+    end
 end
 
 
@@ -44,8 +49,10 @@ task :build => [:required] do
     buildPmUi(Dir.pwd + "/vendor/colosa/pmUI", targetDir, mode)
     buildMafe(Dir.pwd + "/vendor/colosa/MichelangeloFE", targetDir, mode)
 
-    hashVendors = getHash(Dir.pwd + "/vendor/colosa/pmUI")+'-'+getHash(Dir.pwd + "/vendor/colosa/MichelangeloFE")
+    pmuiHash = getHash(Dir.pwd + "/vendor/colosa/pmUI")
+    mafeHash = getHash(Dir.pwd + "/vendor/colosa/MichelangeloFE")
 
+    hashVendors = pmuiHash+"-"+mafeHash
     ## Building minified JS Files 
     puts "Building file: " + "/js/mafe-#{hashVendors}.js".cyan
     mafeCompresedFile = targetDir + "/js/mafe-#{hashVendors}.js"
@@ -75,9 +82,20 @@ task :build => [:required] do
     end
 
     # Create buildhash file
-    puts "Generated file: " + "/buildhash".cyan
+    puts "create file: " + "/buildhash".cyan
     File.open(targetDir+"/buildhash", 'w+') do |writeFile|
         writeFile.write hashVendors
+    end
+
+    puts "create file: " + "/versions".cyan
+    versions = {
+        :pmui_ver => getVersion(Dir.pwd + "/vendor/colosa/pmUI"),
+        :pmui_hash => pmuiHash,
+        :mafe_ver => getVersion(Dir.pwd + "/vendor/colosa/MichelangeloFE"),
+        :mafe_hash => mafeHash
+    }
+    File.open(targetDir+"/versions", 'w+') do |writeFile|
+        writeFile.write versions.to_json
     end
 
     puts "-- DONE --\n".bold
