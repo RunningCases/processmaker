@@ -484,6 +484,27 @@ class Process
     }
 
     /**
+     * Verify if does not exist the Permission in table PERMISSIONS (Database RBAC)
+     *
+     * @param string $permissionUid         Unique id of Permission
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if does not exist the Permission in table PERMISSIONS
+     */
+    public function throwExceptionIfNotExistsPermission($permissionUid, $fieldNameForException)
+    {
+        try {
+            $obj = \PermissionsPeer::retrieveByPK($permissionUid);
+
+            if (is_null($obj)) {
+                throw new \Exception(\G::LoadTranslation("ID_PERMISSION_DOES_NOT_EXIST", array($fieldNameForException, $permissionUid)));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Update Process
      *
      * @param string $processUid Unique id of Process
