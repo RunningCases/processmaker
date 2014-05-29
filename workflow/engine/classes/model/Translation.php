@@ -92,12 +92,12 @@ class Translation extends BaseTranslation
                     "$dateFrom",
                     Criteria::GREATER_EQUAL
                 )->addAnd(
-                        $oCriteria->getNewCriterion(
-                            TranslationPeer::TRN_UPDATE_DATE,
-                            "$dateTo",
-                            Criteria::LESS_EQUAL
-                        )
+                    $oCriteria->getNewCriterion(
+                        TranslationPeer::TRN_UPDATE_DATE,
+                        "$dateTo",
+                        Criteria::LESS_EQUAL
                     )
+                )
             );
         }
         // end filter
