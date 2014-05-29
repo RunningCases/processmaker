@@ -92,12 +92,12 @@ class Translation extends BaseTranslation
                     "$dateFrom",
                     Criteria::GREATER_EQUAL
                 )->addAnd(
-                    $oCriteria->getNewCriterion(
-                        TranslationPeer::TRN_UPDATE_DATE,
-                        "$dateTo",
-                        Criteria::LESS_EQUAL
+                        $oCriteria->getNewCriterion(
+                            TranslationPeer::TRN_UPDATE_DATE,
+                            "$dateTo",
+                            Criteria::LESS_EQUAL
+                        )
                     )
-               )
             );
         }
         // end filter
@@ -124,7 +124,8 @@ class Translation extends BaseTranslation
         while ($rs->next()) {
             $rows[] = $rs->getRow();
         }
-        $result = new StdClass;
+
+        $result = new StdClass();
         $result->data = $rows;
         $result->totalCount = $totalCount;
 
@@ -179,10 +180,10 @@ class Translation extends BaseTranslation
             //$json = new Services_JSON(); DEPRECATED
             $f = fopen( $cacheFileJS, 'w' );
             if ($f == false) {
-               error_log("Error: Cannot write into cachefilejs: $cacheFileJS\n");
+                error_log("Error: Cannot write into cachefilejs: $cacheFileJS\n");
             } else {
-              fwrite( $f, "var G_STRINGS =" . Bootstrap::json_encode( $translationJS ) . ";\n");
-              fclose( $f );
+                fwrite( $f, "var G_STRINGS =" . Bootstrap::json_encode( $translationJS ) . ";\n");
+                fclose( $f );
             }
 
             $res['cacheFile'] = $cacheFile;
@@ -214,7 +215,7 @@ class Translation extends BaseTranslation
 
         foreach ($tranlations as $key => $row) {
             if ($row->getTrnCategory() === 'LABEL') {
-                    $translation[$row->getTrnLang()][$row->getTrnId()] = $row->getTrnValue();
+                $translation[$row->getTrnLang()][$row->getTrnId()] = $row->getTrnValue();
             }
         }
 
@@ -227,10 +228,10 @@ class Translation extends BaseTranslation
 
             $f = fopen( $cacheFileMafe, 'w' );
             if ($f == false) {
-               error_log("Error: Cannot write into cacheFileMafe: $cacheFileMafe\n");
+                error_log("Error: Cannot write into cacheFileMafe: $cacheFileMafe\n");
             } else {
-              fwrite( $f, "var __TRANSLATIONMAFE = " . Bootstrap::json_encode( $translation ) . ";\n");
-              fclose( $f );
+                fwrite( $f, "var __TRANSLATIONMAFE = " . Bootstrap::json_encode( $translation ) . ";\n");
+                fclose( $f );
             }
 
             $res['cacheFileMafe'] = $cacheFileMafe;
@@ -621,7 +622,7 @@ class Translation extends BaseTranslation
         }
         return false;
     }
-    
+
     public function generateTransaltionMafe ($lang='en')
     {
         if (!file_exists(PATH_TRUNK .'vendor/colosa/MichelangeloFE/' . 'labels.php')) {
@@ -635,4 +636,3 @@ class Translation extends BaseTranslation
         }
     }
 }
-
