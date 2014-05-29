@@ -71,7 +71,7 @@ class WebEntry extends Api
      *
      * @status 201
      */
-    public function doPostWebEntry($prj_uid, $request_data)
+    public function doPostWebEntry($prj_uid, array $request_data)
     {
         try {
             $arrayData = $this->webEntry->create($prj_uid, $this->getUserId(), $request_data);
@@ -91,7 +91,7 @@ class WebEntry extends Api
      * @param string $we_uid       {@min 32}{@max 32}
      * @param array  $request_data
      */
-    public function doPutWebEntry($prj_uid, $we_uid, $request_data)
+    public function doPutWebEntry($prj_uid, $we_uid, array $request_data)
     {
         try {
             $arrayData = $this->webEntry->update($we_uid, $this->getUserId(), $request_data);

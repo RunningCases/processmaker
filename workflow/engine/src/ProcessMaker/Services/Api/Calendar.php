@@ -5,7 +5,7 @@ use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
 
 /**
- * Group Api Controller
+ * Calendar Api Controller
  *
  * @protected
  */

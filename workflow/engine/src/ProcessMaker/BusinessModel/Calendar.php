@@ -644,7 +644,10 @@ class Calendar
             $criteria = $this->getCalendarCriteria();
 
             if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]) && trim($arrayFilterData["filter"]) != "") {
-                $criteria->add(\CalendarDefinitionPeer::CALENDAR_NAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE);
+                $criteria->add(
+                    $criteria->getNewCriterion(\CalendarDefinitionPeer::CALENDAR_NAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE)->addOr(
+                    $criteria->getNewCriterion(\CalendarDefinitionPeer::CALENDAR_DESCRIPTION, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE))
+                );
             }
 
             //Number records total
