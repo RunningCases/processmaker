@@ -25,7 +25,7 @@ task :build => [:required] do
 
     if mode == "production"
         targetDir = publicDir + "/lib"
-        pmUIFontsDir = targetDir + "/css/fonts"
+        pmUIFontsDir = targetDir + "/fonts"
     else
         targetDir = publicDir + "/lib-dev"
         pmUIFontsDir = pmUIDir + "/fonts"
@@ -112,7 +112,7 @@ def buildPmUi(homeDir, targetDir, mode)
 
     puts "\nCopying font files into: #{pmUIFontsDir}".bold
     theme = "mafe"
-    copyFiles({"#{homeDir}/themes/#{theme}/fonts/*" => "#{targetDir}"})
+    copyFiles({"#{homeDir}/themes/#{theme}/fonts/*" => "#{pmUIFontsDir}"})
 
     puts "\nPMUI Build Finished".magenta
 end
@@ -169,10 +169,9 @@ end
 
 
 def getVersion(path)
-    if File.exists? path + '/VERSION.txt'
-        version = File.read path + '/VERSION.txt'
-    else
-        version = "(unknown)"
+    version = ""
+    Dir.chdir(path) do
+        version = `rake version`
     end
 
     return version.strip
@@ -180,7 +179,11 @@ end
 
 
 def getHash(path)
-    hash = `git rev-parse --short HEAD`
+    hash = ""
+    Dir.chdir(path) do
+        hash = `git rev-parse --short HEAD`
+    end
+
     return hash.strip
 end
 
@@ -309,3 +312,4 @@ class String
     def bold;           "\033[1m#{self}\033[22m" end
     def reverse_color;  "\033[7m#{self}\033[27m" end
 end
+
