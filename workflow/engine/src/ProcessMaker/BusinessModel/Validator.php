@@ -26,11 +26,11 @@ class Validator
     {
         $dep_uid = trim($dep_uid);
         if ($dep_uid == '') {
-            throw (new \Exception("The departament with $nameField: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_DEPARTMENT_NOT_EXIST", array($nameField,''))));
         }
         $oDepartment = new \Department();
         if (!($oDepartment->existsDepartment($dep_uid))) {
-            throw (new \Exception("The departament with $nameField: '$dep_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_DEPARTMENT_NOT_EXIST", array($nameField,$dep_uid))));
         }
         return $dep_uid;
     }
@@ -52,7 +52,7 @@ class Validator
     {
         $dep_title = trim($dep_title);
         if ($dep_title == '') {
-            throw (new \Exception("The departament with dep_title: '' is incorrect."));
+            throw (new \Exception(\G::LoadTranslation("ID_DEPARTMENT_NOT_EXIST", array('dep_title',''))));
         }
 
         $oCriteria = new \Criteria( 'workflow' );
@@ -71,7 +71,7 @@ class Validator
         $oDataset = \DepartmentPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
         if ($oDataset->next()) {
-            throw (new \Exception("The departament with dep_title: '$dep_title' already exists."));
+            throw (new \Exception(\G::LoadTranslation("ID_DEPARTMENT_NOT_EXIST", array('dep_title',$dep_title))));
         }
         return $dep_title;
     }
@@ -92,7 +92,7 @@ class Validator
         $dep_status = trim($dep_status);
         $values = array('ACTIVE', 'INACTIVE');
         if (!in_array($dep_status, $values)) {
-            throw (new \Exception("The departament with dep_status: '$dep_status' is incorrect."));
+            throw (new \Exception(\G::LoadTranslation("ID_DEPARTMENT_NOT_EXIST", array('dep_status',$dep_status))));
         }
         return $dep_status;
     }
@@ -113,11 +113,11 @@ class Validator
     {
         $usr_uid = trim($usr_uid);
         if ($usr_uid == '') {
-            throw (new \Exception("The user with $nameField: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_USER_NOT_EXIST", array($nameField,''))));
         }
         $oUsers = new \Users();
         if (!($oUsers->userExists($usr_uid))) {
-            throw (new \Exception("The user with $nameField: '$usr_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_USER_NOT_EXIST", array($nameField,$usr_uid))));
         }
         return $usr_uid;
     }
@@ -138,11 +138,11 @@ class Validator
     {
         $app_uid = trim($app_uid);
         if ($app_uid == '') {
-            throw (new \Exception("The application with $nameField: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_APPLICATION_NOT_EXIST", array($nameField,''))));
         }
         $oApplication = new \Application();
         if (!($oApplication->exists($app_uid))) {
-            throw (new \Exception("The application with $nameField: '$app_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_APPLICATION_NOT_EXIST", array($nameField,$app_uid))));
         }
         return $app_uid;
     }
@@ -163,11 +163,11 @@ class Validator
     {
         $tri_uid = trim($tri_uid);
         if ($tri_uid == '') {
-            throw (new \Exception("The trigger with $nameField: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_TRIGGER_NOT_EXIST", array($nameField,''))));
         }
         $oTriggers = new \Triggers();
         if (!($oTriggers->TriggerExists($tri_uid))) {
-            throw (new \Exception("The trigger with $nameField: '$tri_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_TRIGGER_NOT_EXIST", array($nameField,$tri_uid))));
         }
         return $tri_uid;
     }
@@ -188,11 +188,11 @@ class Validator
     {
         $pro_uid = trim($pro_uid);
         if ($pro_uid == '') {
-            throw (new \Exception("The process with $nameField: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_PROCESS_NOT_EXIST", array($nameField,''))));
         }
         $oProcess = new \Process();
         if (!($oProcess->exists($pro_uid))) {
-            throw (new \Exception("The process with $nameField: '$pro_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_PROCESS_NOT_EXIST", array($nameField,$pro_uid))));
         }
         return $pro_uid;
     }
@@ -213,11 +213,11 @@ class Validator
     {
         $cat_uid = trim($cat_uid);
         if ($cat_uid == '') {
-            throw (new \Exception("The category with $nameField: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_CATEGORY_NOT_EXIST", array($nameField,''))));
         }
         $oCategory = new \ProcessCategory();
         if (!($oCategory->exists($cat_uid))) {
-            throw (new \Exception("The category with $nameField: '$cat_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_CATEGORY_NOT_EXIST", array($nameField,$cat_uid))));
         }
         return $cat_uid;
     }
@@ -238,11 +238,11 @@ class Validator
     {
         $date = trim($date);
         if ($date == '') {
-            throw (new \Exception("The value '' is not a valid date for the format '$format'."));
+            throw (new \Exception(\G::LoadTranslation("ID_DATE_NOT_VALID", array('',$format))));
         }
         $d = \DateTime::createFromFormat($format, $date);
         if (!($d && $d->format($format) == $date)) {
-            throw (new \Exception("The value '$date' is not a valid date for the format '$format'."));
+            throw (new \Exception(\G::LoadTranslation("ID_DATE_NOT_VALID", array($date,$format))));
         }
         return $date;
     }
@@ -260,7 +260,7 @@ class Validator
     static public function isArray($field, $nameField)
     {
         if (!is_array($field)) {
-            throw (new \Exception("Invalid value for '$nameField' it must be an array."));
+            throw (new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_ARRAY", array($nameField))));
         }
     }
 
@@ -277,7 +277,7 @@ class Validator
     static public function isString($field, $nameField)
     {
         if (!is_string($field)) {
-            throw (new \Exception("Invalid value for '$nameField' it must be a string."));
+            throw (new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_STRING", array($nameField))));
         }
     }
 
@@ -294,7 +294,7 @@ class Validator
     static public function isInteger($field, $nameField)
     {
         if (!is_integer($field)) {
-            throw (new \Exception("Invalid value for '$nameField' it must be a integer."));
+            throw (new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_INTEGER", array($nameField))));
         }
     }
 
@@ -311,7 +311,7 @@ class Validator
     static public function isBoolean($field, $nameField)
     {
         if (!is_bool($field)) {
-            throw (new \Exception("Invalid value for '$nameField' it must be a boolean."));
+            throw (new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_BOOLEAN", array($nameField))));
         }
     }
 
@@ -328,7 +328,7 @@ class Validator
     static public function isNotEmpty($field, $nameField)
     {
         if (empty($field)) {
-            throw (new \Exception("The field '$nameField' is empty."));
+            throw (new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_IS_EMPTY", array($nameField))));
         }
     }
 

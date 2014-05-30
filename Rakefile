@@ -7,7 +7,12 @@ end
 
 
 task :required do
-    #puts "Executind task: required"
+    begin
+        require 'json'
+    rescue LoadError
+        puts "JSON gem not found.\nInstall it by running 'gem install json'"
+        exit(1)
+    end
 end
 
 
@@ -25,7 +30,7 @@ task :build => [:required] do
 
     if mode == "production"
         targetDir = publicDir + "/lib"
-        pmUIFontsDir = targetDir + "/css/fonts"
+        pmUIFontsDir = targetDir + "/fonts"
     else
         targetDir = publicDir + "/lib-dev"
         pmUIFontsDir = pmUIDir + "/fonts"
@@ -44,8 +49,10 @@ task :build => [:required] do
     buildPmUi(Dir.pwd + "/vendor/colosa/pmUI", targetDir, mode)
     buildMafe(Dir.pwd + "/vendor/colosa/MichelangeloFE", targetDir, mode)
 
-    hashVendors = getHash(Dir.pwd + "/vendor/colosa/pmUI")+'-'+getHash(Dir.pwd + "/vendor/colosa/MichelangeloFE")
+    pmuiHash = getHash(Dir.pwd + "/vendor/colosa/pmUI")
+    mafeHash = getHash(Dir.pwd + "/vendor/colosa/MichelangeloFE")
 
+    hashVendors = pmuiHash+"-"+mafeHash
     ## Building minified JS Files 
     puts "Building file: " + "/js/mafe-#{hashVendors}.js".cyan
     mafeCompresedFile = targetDir + "/js/mafe-#{hashVendors}.js"
@@ -75,9 +82,20 @@ task :build => [:required] do
     end
 
     # Create buildhash file
-    puts "Generated file: " + "/buildhash".cyan
+    puts "create file: " + "/buildhash".cyan
     File.open(targetDir+"/buildhash", 'w+') do |writeFile|
         writeFile.write hashVendors
+    end
+
+    puts "create file: " + "/versions".cyan
+    versions = {
+        :pmui_ver => getVersion(Dir.pwd + "/vendor/colosa/pmUI"),
+        :pmui_hash => pmuiHash,
+        :mafe_ver => getVersion(Dir.pwd + "/vendor/colosa/MichelangeloFE"),
+        :mafe_hash => mafeHash
+    }
+    File.open(targetDir+"/versions", 'w+') do |writeFile|
+        writeFile.write versions.to_json
     end
 
     puts "-- DONE --\n".bold
@@ -112,7 +130,7 @@ def buildPmUi(homeDir, targetDir, mode)
 
     puts "\nCopying font files into: #{pmUIFontsDir}".bold
     theme = "mafe"
-    copyFiles({"#{homeDir}/themes/#{theme}/fonts/*" => "#{targetDir}"})
+    copyFiles({"#{homeDir}/themes/#{theme}/fonts/*" => "#{pmUIFontsDir}"})
 
     puts "\nPMUI Build Finished".magenta
 end
@@ -169,10 +187,9 @@ end
 
 
 def getVersion(path)
-    if File.exists? path + '/VERSION.txt'
-        version = File.read path + '/VERSION.txt'
-    else
-        version = "(unknown)"
+    version = ""
+    Dir.chdir(path) do
+        version = `rake version`
     end
 
     return version.strip
@@ -180,7 +197,11 @@ end
 
 
 def getHash(path)
-    hash = `git rev-parse --short HEAD`
+    hash = ""
+    Dir.chdir(path) do
+        hash = `git rev-parse --short HEAD`
+    end
+
     return hash.strip
 end
 
@@ -309,3 +330,4 @@ class String
     def bold;           "\033[1m#{self}\033[22m" end
     def reverse_color;  "\033[7m#{self}\033[27m" end
 end
+

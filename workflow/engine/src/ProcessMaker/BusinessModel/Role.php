@@ -62,7 +62,7 @@ class Role
      *
      * return void
      */
-    public function setArrayFieldNameForException($arrayData)
+    public function setArrayFieldNameForException(array $arrayData)
     {
         try {
             foreach ($arrayData as $key => $value) {
@@ -191,9 +191,9 @@ class Role
     public function throwExceptionIfNotExistsRole($roleUid, $fieldNameForException)
     {
         try {
-            $role = \RolesPeer::retrieveByPK($roleUid);
+            $obj = \RolesPeer::retrieveByPK($roleUid);
 
-            if (is_null($role)) {
+            if (is_null($obj)) {
                 throw new \Exception(\G::LoadTranslation("ID_ROLE_DOES_NOT_EXIST", array($fieldNameForException, $roleUid)));
             }
         } catch (\Exception $e) {
@@ -251,7 +251,7 @@ class Role
      *
      * return void Throw exception if data has an invalid value
      */
-    public function throwExceptionIfDataIsInvalid($roleUid, $arrayData)
+    public function throwExceptionIfDataIsInvalid($roleUid, array $arrayData)
     {
         try {
             //Set variables
@@ -289,7 +289,7 @@ class Role
      *
      * return array Return data of the new Role created
      */
-    public function create($arrayData)
+    public function create(array $arrayData)
     {
         try {
             //Verify data
@@ -335,7 +335,7 @@ class Role
      *
      * return array Return data of the Role updated
      */
-    public function update($roleUid, $arrayData)
+    public function update($roleUid, array $arrayData)
     {
         try {
             $arrayDataBackup = $arrayData;
@@ -445,7 +445,7 @@ class Role
      *
      * return array Return an array with data Role
      */
-    public function getRoleDataFromRecord($record)
+    public function getRoleDataFromRecord(array $record)
     {
         try {
             $conf = new \Configurations();
@@ -487,7 +487,7 @@ class Role
      *
      * return array Return an array with all Roles
      */
-    public function getRoles($arrayFilterData = null, $sortField = null, $sortDir = null, $start = null, $limit = null)
+    public function getRoles(array $arrayFilterData = null, $sortField = null, $sortDir = null, $start = null, $limit = null)
     {
         try {
             $arrayRole = array();
