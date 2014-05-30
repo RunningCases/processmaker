@@ -264,7 +264,7 @@ class Department
             if (isset($dep_data['DEP_TITLE'])) {
                 Validator::depTitle($dep_data['DEP_TITLE']);
             } else {
-                throw (new \Exception("The field dep_title is required."));
+                throw (new \Exception(\G::LoadTranslation("ID_FIELD_REQUIRED", array('dep_title'))));
             }
             $dep_uid = $oDepartment->create($dep_data);
             $response = $this->getDepartment($dep_uid);
@@ -288,11 +288,11 @@ class Department
         $oDepartment = new \Department();
         $countUsers = $oDepartment->cantUsersInDepartment($dep_uid);
         if ($countUsers != 0) {
-            throw (new \Exception("Department cannot be deleted while has assigned users."));
+            throw (new \Exception(\G::LoadTranslation("ID_CANT_DELETE_DEPARTMENT_HAS_USERS")));
         }
         $dep_data = $this->getDepartment($dep_uid);
         if ($dep_data['has_children'] != 0) {
-            throw (new \Exception("Can not delete the department, it has a children department."));
+            throw (new \Exception(\G::LoadTranslation("ID_CANT_DELETE_DEPARTMENT_HAS_CHILDREN")));
         }
         $oDepartment->remove($dep_uid);
     }
