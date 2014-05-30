@@ -66,7 +66,7 @@ class Role extends Api
      *
      * @status 201
      */
-    public function doPost($request_data)
+    public function doPost(array $request_data)
     {
         try {
             $arrayData = $this->role->create($request_data);
@@ -85,7 +85,7 @@ class Role extends Api
      * @param string $rol_uid      {@min 32}{@max 32}
      * @param array  $request_data
      */
-    public function doPut($rol_uid, $request_data)
+    public function doPut($rol_uid, array $request_data)
     {
         try {
             $arrayData = $this->role->update($rol_uid, $request_data);
