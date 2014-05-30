@@ -151,7 +151,7 @@ Scenario: Delete a Project created previously in this script
 #Import Process
 
 Scenario Outline: Import a process
- 	Given POST upload a project file "<project_file>" to "project/import?option=<import_option>"
+ 	Given POST upload a project file "<project_file>" to "project/import?option=<import_option>&option_group=merge"
  	Then the response status code should be 201
     And the response charset is "UTF-8"
     And the content type is "application/json"

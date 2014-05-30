@@ -67,7 +67,7 @@ class WebEntry
      *
      * return void
      */
-    public function setArrayFieldNameForException($arrayData)
+    public function setArrayFieldNameForException(array $arrayData)
     {
         try {
             foreach ($arrayData as $key => $value) {
@@ -175,9 +175,9 @@ class WebEntry
     public function throwExceptionIfNotExistsWebEntry($webEntryUid, $fieldNameForException)
     {
         try {
-            $webEntry = \WebEntryPeer::retrieveByPK($webEntryUid);
+            $obj = \WebEntryPeer::retrieveByPK($webEntryUid);
 
-            if (is_null($webEntry)) {
+            if (is_null($obj)) {
                 throw new \Exception(\G::LoadTranslation("ID_WEB_ENTRY_DOES_NOT_EXIST", array($fieldNameForException, $webEntryUid)));
             }
         } catch (\Exception $e) {
@@ -215,7 +215,7 @@ class WebEntry
      *
      * return void Throw exception if data has an invalid value
      */
-    public function throwExceptionIfDataIsInvalid($webEntryUid, $processUid, $arrayData)
+    public function throwExceptionIfDataIsInvalid($webEntryUid, $processUid, array $arrayData)
     {
         try {
             //Set variables
@@ -537,7 +537,7 @@ class WebEntry
      *
      * return array Return data of the new Web Entry created
      */
-    public function create($processUid, $userUidCreator, $arrayData)
+    public function create($processUid, $userUidCreator, array $arrayData)
     {
         try {
             //Verify data
@@ -566,7 +566,7 @@ class WebEntry
 
                 $webEntry->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
-                $webEntryUid = \G::generateUniqueID();
+                $webEntryUid = \ProcessMaker\Util\Common::generateUID();
 
                 $webEntry->setWeUid($webEntryUid);
                 $webEntry->setProUid($processUid);
@@ -622,7 +622,7 @@ class WebEntry
      *
      * return array Return data of the Web Entry updated
      */
-    public function update($webEntryUid, $userUidUpdater, $arrayData)
+    public function update($webEntryUid, $userUidUpdater, array $arrayData)
     {
         try {
             //Verify data
@@ -797,7 +797,7 @@ class WebEntry
      *
      * return array Return an array with data Web Entry
      */
-    public function getWebEntryDataFromRecord($record)
+    public function getWebEntryDataFromRecord(array $record)
     {
         try {
             if ($record["WE_METHOD"] == "WS") {
@@ -833,7 +833,7 @@ class WebEntry
                 $this->getFieldNameByFormatFieldName("WE_CREATE_USR_UID")        => $record["WE_CREATE_USR_UID"],
                 $this->getFieldNameByFormatFieldName("WE_UPDATE_USR_UID")        => $record["WE_UPDATE_USR_UID"] . "",
                 $this->getFieldNameByFormatFieldName("WE_CREATE_DATE")           => $webEntryCreateDate,
-                $this->getFieldNameByFormatFieldName("WE_UPDATE_DATE")           => $webEntryUpdateDate . ""
+                $this->getFieldNameByFormatFieldName("WE_UPDATE_DATE")           => $webEntryUpdateDate
             );
         } catch (\Exception $e) {
             throw $e;
