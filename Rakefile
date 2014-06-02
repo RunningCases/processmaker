@@ -44,9 +44,6 @@ task :build => [:required] do
     pmUIDir = targetDir + "/pmUI"
     mafeDir = targetDir + "/mafe"
 
-    puts getVersion(Dir.pwd + "/vendor/colosa/pmUI")
-    exit
-
     prepareDirs([pmUIDir, mafeDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
 
     buildPmUi(Dir.pwd + "/vendor/colosa/pmUI", targetDir, mode)
