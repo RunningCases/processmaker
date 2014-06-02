@@ -25,7 +25,7 @@ class Cases
     {
         Validator::isArray($dataList, '$dataList');
         if (!isset($dataList["userId"])) {
-            throw (new \Exception("The user with userId: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_USER_NOT_EXIST", array('userId',''))));
         } else {
             Validator::usrUid($dataList["userId"], "userId");
         }
@@ -53,7 +53,7 @@ class Cases
 
         $valuesCorrect = array('todo', 'draft', 'paused', 'sent', 'selfservice', 'unassigned', 'search');
         if (!in_array($action, $valuesCorrect)) {
-            throw (new \Exception('The value for $action is incorrect.'));
+            throw (new \Exception(\G::LoadTranslation("ID_INCORRECT_VALUE_ACTION")));
         }
 
         $start = (int)$start;
@@ -501,7 +501,7 @@ class Cases
             }
             //Return
             if (empty($result)) {
-                throw (new \Exception('Incorrect or unavailable information about this case: ' .$applicationUid));
+                throw new \Exception(\G::LoadTranslation("ID_CASES_INCORRECT_INFORMATION", array($applicationUid)));
             } else {
                 return $result;
             }
@@ -528,13 +528,10 @@ class Cases
             if ($variables) {
                 $variables = array_shift($variables);
             }
-            $oProcesses = new \Processes();
-            if (! $oProcesses->processExists($processUid)) {
-                throw (new \Exception( 'Invalid value specified for \'pro_uid\''));
-            }
+            Validator::proUid($processUid, '$pro_uid');
             $oTask = new \Task();
             if (! $oTask->taskExists($taskUid)) {
-                throw (new \Exception( 'Invalid value specified for \'tas_uid\''));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('tas_uid')));
             }
             $fields = $ws->newCase($processUid, $userUid, $taskUid, $variables);
             $array = json_decode(json_encode($fields), true);
@@ -577,21 +574,18 @@ class Cases
             } elseif ($variables == null) {
                 $variables = array(array());
             }
-            $oProcesses = new \Processes();
-            if (! $oProcesses->processExists($processUid)) {
-                throw (new \Exception( 'Invalid value specified for \'pro_uid\''));
-            }
+            Validator::proUid($processUid, '$pro_uid');
             $user = new \Users();
             if (! $user->userExists( $userUid )) {
-                throw (new \Exception( 'Invalid value specified for \'usr_uid\''));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('usr_uid')));
             }
             $fields = $ws->newCaseImpersonate($processUid, $userUid, $variables, $taskUid);
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {
                 if ($array ["status_code"] == 12) {
-                    throw (new \Exception( G::loadTranslation( 'ID_NO_STARTING_TASK' ) . '. \'tas_uid\'.'));
+                    throw (new \Exception(\G::loadTranslation('ID_NO_STARTING_TASK') . '. tas_uid.'));
                 } elseif ($array ["status_code"] == 13) {
-                    throw (new \Exception( G::loadTranslation( 'ID_MULTIPLE_STARTING_TASKS' ) . '. \'tas_uid\'.'));
+                    throw (new \Exception(\G::loadTranslation('ID_MULTIPLE_STARTING_TASKS') . '. tas_uid.'));
                 }
                 throw (new \Exception($array ["message"]));
             } else {
@@ -641,7 +635,7 @@ class Cases
                     unset($array['timestamp']);
                 }
             } else {
-                throw (new \Exception('The Application with app_uid: '.$applicationUid.' doesn\'t exist'));
+                throw new \Exception(\G::LoadTranslation("ID_CASES_INCORRECT_INFORMATION", array($applicationUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -675,7 +669,7 @@ class Cases
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
         if ($fields['APP_STATUS'] == 'CANCELLED') {
-            throw (new \Exception("The case '$app_uid' is already canceled"));
+            throw (new \Exception(\G::LoadTranslation("ID_CASE_ALREADY_CANCELED", array($app_uid))));
         }
         $case->cancelCase( $app_uid, $del_index, $usr_uid );
     }
@@ -703,7 +697,7 @@ class Cases
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
         if ($fields['APP_STATUS'] == 'CANCELLED') {
-            throw (new \Exception("The case '$app_uid' is canceled"));
+            throw (new \Exception(\G::LoadTranslation("ID_CASE_IS_CANCELED", array($app_uid))));
         }
 
         if ($del_index === false) {
@@ -1419,7 +1413,7 @@ class Cases
         $respView  = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'VIEW' );
         $respBlock = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'BLOCK' );
         if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
-            throw (new \Exception("You do not have permission to cases notes."));
+            throw (new \Exception(\G::LoadTranslation("ID_CASES_NOTES_NO_PERMISSIONS")));
         }
 
         if ($sort != 'APP_NOTE.NOTE_DATE') {
@@ -1502,7 +1496,7 @@ class Cases
 
         Validator::isString($note_content, '$note_content');
         if (strlen($note_content) > 500) {
-            throw (new \Exception("Invalid value for '$note_content', the permitted maximum length of 500 characters."));
+            throw (new \Exception(\G::LoadTranslation("ID_INVALID_MAX_PERMITTED", array($note_content,'500'))));
         }
 
         Validator::isBoolean($send_mail, '$send_mail');
@@ -1514,7 +1508,7 @@ class Cases
         $respView  = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'VIEW' );
         $respBlock = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'BLOCK' );
         if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
-            throw (new \Exception("You do not have permission to cases notes."));
+            throw (new \Exception(\G::LoadTranslation("ID_CASES_NOTES_NO_PERMISSIONS")));
         }
 
         $note_content = addslashes($note_content);
@@ -1546,6 +1540,15 @@ class Cases
             $oCriteria->addSelectColumn(\ContentPeer::CON_VALUE);
             $oCriteria->addSelectColumn(\TaskPeer::TAS_START);
             $oCriteria->addSelectColumn(\TaskPeer::TAS_TYPE);
+
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_ASSIGN_TYPE);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_ASSIGN_LOCATION);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_ASSIGN_LOCATION_ADHOC);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_LAST_ASSIGNED);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_START);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_TO_LAST_USER);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_DERIVATION);
+
             $aConditions = array();
             $aConditions[] = array(0 => \TaskPeer::TAS_UID, 1 => \ContentPeer::CON_ID);
             $aConditions[] = array(0 => \ContentPeer::CON_CATEGORY, 1 => \DBAdapter::getStringDelimiter() . 'TAS_TITLE' . \DBAdapter::getStringDelimiter() );
@@ -1590,6 +1593,15 @@ class Cases
                         $oTask->tas_title = htmlentities($aRow1['CON_VALUE'], ENT_QUOTES, 'UTF-8');
                     }
                 }
+
+                $oTask->tas_assign_type = $aRow1['TAS_ASSIGN_TYPE'];
+                $oTask->tas_assign_location = $aRow1['TAS_ASSIGN_LOCATION'];
+                $oTask->tas_assign_location_adhoc = $aRow1['TAS_ASSIGN_LOCATION_ADHOC'];
+                $oTask->tas_last_assigned = $aRow1['TAS_LAST_ASSIGNED'];
+                $oTask->tas_start = $aRow1['TAS_START'];
+                $oTask->tas_to_last_user = $aRow1['TAS_TO_LAST_USER'];
+                $oTask->tas_derivation = $aRow1['TAS_DERIVATION'];
+
                 $oTask->routing = new \StdClass();
                 $oTask->routing->rou_type = '';
                 $oTask->routing->to = array();
@@ -1615,30 +1627,8 @@ class Cases
                 $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
                 $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                 $oDataset2->next();
+
                 while ($aRow2 = $oDataset2->getRow()) {
-                    switch ($aRow2['ROU_TYPE']) {
-                        case 'SEQUENTIAL':
-                            $aRow2['ROU_TYPE'] = 0;
-                            break;
-                        case 'SELECT':
-                            $aRow2['ROU_TYPE'] = 1;
-                            break;
-                        case 'EVALUATE':
-                            $aRow2['ROU_TYPE'] = 2;
-                            break;
-                        case 'PARALLEL':
-                            $aRow2['ROU_TYPE'] = 3;
-                            break;
-                        case 'PARALLEL-BY-EVALUATION':
-                            $aRow2['ROU_TYPE'] = 4;
-                            break;
-                        case 'SEC-JOIN':
-                            $aRow2['ROU_TYPE'] = 5;
-                            break;
-                        case 'DISCRIMINATOR':
-                            $aRow2['ROU_TYPE'] = 8;
-                            break;
-                    }
                     $iDiff = strtotime($aRow2['DEL_FINISH_DATE']) - strtotime($aRow2['DEL_INIT_DATE']);
                     $oTo = new \StdClass();
                     $oTo->rou_next_task = $aRow2['ROU_NEXT_TASK'];
@@ -1679,22 +1669,22 @@ class Cases
                         $aRow2['FINISH'] = '';
                     }
                     if (empty($aRow2["FINISH"]) && $aRow1["TAS_UID"] == $sTask) {
-                        $oTask->color = "#FF0000"; //Red
+                        $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
                     } else {
                         if (!empty($aRow2["FINISH"])) {
-                            $oTask->color = "#006633"; //Green
+                            $oTask->status = G::LoadTranslation( 'ID_COMPLETED_TASK' );
                         } else {
-                            if ($oTask->routing->rou_type != 5) {
+                            if ($oTask->routing->rou_type != 'SEC-JOIN') {
                                 if ($aRow2["CANT"] != 0) {
-                                    $oTask->color = "#FF0000"; //Red
+                                    $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
                                 } else {
-                                    $oTask->color = "#939598"; //Gray
+                                    $oTask->status = G::LoadTranslation( 'ID_PENDING_TASK' );
                                 }
                             } else {
                                 if ($aRow3) {
-                                    $oTask->color = "#FF0000"; //Red
+                                    $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
                                 } else {
-                                    $oTask->color = "#939598"; //Gray
+                                    $oTask->status = G::LoadTranslation( 'ID_PENDING_TASK' );
                                 }
                             }
                         }
@@ -1723,19 +1713,19 @@ class Cases
                             $aRow2['FINISH'] = '';
                         }
                         if (empty($aRow2["FINISH"]) && $aRow1["TAS_UID"] == $sTask) {
-                            $oTask->color = "#FF0000"; //Red
+                            $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
                         } else {
                             if (!empty($aRow2["FINISH"])) {
-                                $oTask->color = "#006633"; //Green
+                                $oTask->status = G::LoadTranslation( 'ID_COMPLETED_TASK' );
                             } else {
-                                if ($oTask->routing->rou_type != 5) {
+                                if ($oTask->routing->rou_type != 'SEC-JOIN') {
                                     if ($aRow2["CANT"] != 0) {
-                                        $oTask->color = "#FF0000"; //Red
+                                        $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
                                     } else {
-                                        $oTask->color = "#939598"; //Gray
+                                        $oTask->status = G::LoadTranslation( 'ID_PENDING_TASK' );
                                     }
                                 } else {
-                                    $oTask->color = "#FF9900"; //Yellow
+                                    $oTask->status = G::LoadTranslation( 'ID_PARALLEL_TASK' );
                                 }
                             }
                         }

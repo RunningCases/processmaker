@@ -175,7 +175,7 @@ class Trigger
 
         if (isset($dataTrigger['TRI_TITLE'])) {
             if (!$this->verifyNameTrigger($sProcessUID, $dataTrigger['TRI_TITLE'], $sTriggerUid)) {
-                throw new \Exception('A trigger with the same name already exists in this process');
+                throw new \Exception(\G::LoadTranslation("ID_CANT_SAVE_TRIGGER"));
             }
         }
 

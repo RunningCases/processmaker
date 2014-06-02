@@ -5,6 +5,10 @@
 try {
     $rootDir = realpath(__DIR__ . "/../../") . DIRECTORY_SEPARATOR;
 
+    require $rootDir . "framework/src/Maveriks/Util/ClassLoader.php";
+    $loader = Maveriks\Util\ClassLoader::getInstance();
+    $loader->add($rootDir . 'framework/src/', "Maveriks");
+
     if (! is_dir($rootDir . 'vendor')) {
         if (file_exists($rootDir . 'composer.phar')) {
             throw new Exception(
@@ -22,18 +26,6 @@ try {
         }
     }
 
-    if (! file_exists($rootDir . 'vendor' . DIRECTORY_SEPARATOR . "autoload.php")) {
-        throw new Exception(
-            "ERROR: Problems with Vendors!" . PHP_EOL .
-            "Please execute the following command to repair vendors:" .PHP_EOL.PHP_EOL.
-            "$>php composer.phar update"
-        );
-    }
-
-    require $rootDir . "framework/src/Maveriks/Util/ClassLoader.php";
-
-    $loader = Maveriks\Util\ClassLoader::getInstance();
-    $loader->add($rootDir . 'framework/src/', "Maveriks");
     $loader->add($rootDir . 'workflow/engine/src/', "ProcessMaker");
     //$loader->add($rootDir . "workflow/engine/classes/model/");
     $loader->add($rootDir . 'workflow/engine/src/');
