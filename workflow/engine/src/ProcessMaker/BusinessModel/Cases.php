@@ -25,7 +25,7 @@ class Cases
     {
         Validator::isArray($dataList, '$dataList');
         if (!isset($dataList["userId"])) {
-            throw (new \Exception("The user with userId: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_USER_NOT_EXIST", array('userId',''))));
         } else {
             Validator::usrUid($dataList["userId"], "userId");
         }
@@ -53,7 +53,7 @@ class Cases
 
         $valuesCorrect = array('todo', 'draft', 'paused', 'sent', 'selfservice', 'unassigned', 'search');
         if (!in_array($action, $valuesCorrect)) {
-            throw (new \Exception('The value for $action is incorrect.'));
+            throw (new \Exception(\G::LoadTranslation("ID_INCORRECT_VALUE_ACTION")));
         }
 
         $start = (int)$start;
@@ -501,7 +501,7 @@ class Cases
             }
             //Return
             if (empty($result)) {
-                throw (new \Exception('Incorrect or unavailable information about this case: ' .$applicationUid));
+                throw new \Exception(\G::LoadTranslation("ID_CASES_INCORRECT_INFORMATION", array($applicationUid)));
             } else {
                 return $result;
             }
@@ -528,13 +528,10 @@ class Cases
             if ($variables) {
                 $variables = array_shift($variables);
             }
-            $oProcesses = new \Processes();
-            if (! $oProcesses->processExists($processUid)) {
-                throw (new \Exception( 'Invalid value specified for \'pro_uid\''));
-            }
+            Validator::proUid($processUid, '$pro_uid');
             $oTask = new \Task();
             if (! $oTask->taskExists($taskUid)) {
-                throw (new \Exception( 'Invalid value specified for \'tas_uid\''));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('tas_uid')));
             }
             $fields = $ws->newCase($processUid, $userUid, $taskUid, $variables);
             $array = json_decode(json_encode($fields), true);
@@ -577,21 +574,18 @@ class Cases
             } elseif ($variables == null) {
                 $variables = array(array());
             }
-            $oProcesses = new \Processes();
-            if (! $oProcesses->processExists($processUid)) {
-                throw (new \Exception( 'Invalid value specified for \'pro_uid\''));
-            }
+            Validator::proUid($processUid, '$pro_uid');
             $user = new \Users();
             if (! $user->userExists( $userUid )) {
-                throw (new \Exception( 'Invalid value specified for \'usr_uid\''));
+                throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('usr_uid')));
             }
             $fields = $ws->newCaseImpersonate($processUid, $userUid, $variables, $taskUid);
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {
                 if ($array ["status_code"] == 12) {
-                    throw (new \Exception( G::loadTranslation( 'ID_NO_STARTING_TASK' ) . '. \'tas_uid\'.'));
+                    throw (new \Exception(\G::loadTranslation('ID_NO_STARTING_TASK') . '. tas_uid.'));
                 } elseif ($array ["status_code"] == 13) {
-                    throw (new \Exception( G::loadTranslation( 'ID_MULTIPLE_STARTING_TASKS' ) . '. \'tas_uid\'.'));
+                    throw (new \Exception(\G::loadTranslation('ID_MULTIPLE_STARTING_TASKS') . '. tas_uid.'));
                 }
                 throw (new \Exception($array ["message"]));
             } else {
@@ -641,7 +635,7 @@ class Cases
                     unset($array['timestamp']);
                 }
             } else {
-                throw (new \Exception('The Application with app_uid: '.$applicationUid.' doesn\'t exist'));
+                throw new \Exception(\G::LoadTranslation("ID_CASES_INCORRECT_INFORMATION", array($applicationUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -675,7 +669,7 @@ class Cases
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
         if ($fields['APP_STATUS'] == 'CANCELLED') {
-            throw (new \Exception("The case '$app_uid' is already canceled"));
+            throw (new \Exception(\G::LoadTranslation("ID_CASE_ALREADY_CANCELED", array($app_uid))));
         }
         $case->cancelCase( $app_uid, $del_index, $usr_uid );
     }
@@ -703,7 +697,7 @@ class Cases
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
         if ($fields['APP_STATUS'] == 'CANCELLED') {
-            throw (new \Exception("The case '$app_uid' is canceled"));
+            throw (new \Exception(\G::LoadTranslation("ID_CASE_IS_CANCELED", array($app_uid))));
         }
 
         if ($del_index === false) {
@@ -1419,7 +1413,7 @@ class Cases
         $respView  = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'VIEW' );
         $respBlock = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'BLOCK' );
         if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
-            throw (new \Exception("You do not have permission to cases notes."));
+            throw (new \Exception(\G::LoadTranslation("ID_CASES_NOTES_NO_PERMISSIONS")));
         }
 
         if ($sort != 'APP_NOTE.NOTE_DATE') {
@@ -1502,7 +1496,7 @@ class Cases
 
         Validator::isString($note_content, '$note_content');
         if (strlen($note_content) > 500) {
-            throw (new \Exception("Invalid value for '$note_content', the permitted maximum length of 500 characters."));
+            throw (new \Exception(\G::LoadTranslation("ID_INVALID_MAX_PERMITTED", array($note_content,'500'))));
         }
 
         Validator::isBoolean($send_mail, '$send_mail');
@@ -1514,7 +1508,7 @@ class Cases
         $respView  = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'VIEW' );
         $respBlock = $case->getAllObjectsFrom( $pro_uid, $app_uid, $tas_uid, $usr_uid, 'BLOCK' );
         if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
-            throw (new \Exception("You do not have permission to cases notes."));
+            throw (new \Exception(\G::LoadTranslation("ID_CASES_NOTES_NO_PERMISSIONS")));
         }
 
         $note_content = addslashes($note_content);

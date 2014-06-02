@@ -730,6 +730,15 @@ class Main extends Controller
             }
         }
 
+        
+        if (file_exists(PATH_HTML . "lib/versions")) {
+            $versions = json_decode(file_get_contents(PATH_HTML . "lib/versions"), true);
+            $pmuiVer = $versions["pmui_ver"];
+            $mafeVer = $versions["mafe_ver"];
+        } else {
+            $pmuiVer = $mafeVer = "(unknown)";
+        }
+
         $sysSection = G::loadTranslation('ID_SYSTEM_INFO' );
         $pmSection = G::LoadTranslation('ID_PROCESS_INFORMATION');
 
@@ -740,6 +749,8 @@ class Main extends Controller
             $systemName = SYSTEM_NAME;
         }
         $properties[] = array ($systemName. ' Ver.', System::getVersion() . $ee, $pmSection);
+        $properties[] = array("PMUI JS Lib. Ver.", $pmuiVer, $pmSection);
+        $properties[] = array("MAFE JS Lib. Ver.", $mafeVer, $pmSection);
 
         if (file_exists(PATH_DATA. 'log/upgrades.log')) {
             $properties[] = array (G::LoadTranslation('ID_UPGRADES_PATCHES'), '<a href="#" onclick="showUpgradedLogs(); return false;">' . G::LoadTranslation( 'ID_UPGRADE_VIEW_LOG') . '</a>' ,$pmSection);

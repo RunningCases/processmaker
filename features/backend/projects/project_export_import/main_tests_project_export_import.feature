@@ -32,6 +32,7 @@ Scenario: Get the Output Documents List when there are exactly two output docume
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
+    And that "out_doc_template" is set to "Ejemplo de Output Document"
     And the response has 1 records
     
 Scenario: Get the Triggers List when there are exactly two triggers
@@ -150,7 +151,7 @@ Scenario: Delete a Project created previously in this script
 #Import Process
 
 Scenario Outline: Import a process
- 	Given POST upload a project file "<project_file>" to "project/import?option=<import_option>"
+ 	Given POST upload a project file "<project_file>" to "project/import?option=<import_option>&option_group=merge"
  	Then the response status code should be 201
     And the response charset is "UTF-8"
     And the content type is "application/json"

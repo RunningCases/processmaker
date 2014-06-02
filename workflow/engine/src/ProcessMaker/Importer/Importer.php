@@ -78,11 +78,21 @@ abstract class Importer
         switch ($option) {
             case self::IMPORT_OPTION_CREATE_NEW:
                 if ($this->targetExists()) {
-                    throw new \Exception(sprintf(
-                        "Project already exists, you need set an action to continue. " .
-                        "Available actions: [%s|%s|%s|%s].", self::IMPORT_OPTION_CREATE_NEW,
-                        self::IMPORT_OPTION_OVERWRITE, self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW, self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW
-                    ), self::IMPORT_STAT_TARGET_ALREADY_EXISTS);
+                    throw new \Exception(
+                        \G::LoadTranslation(
+                            "ID_IMPORTER_PROJECT_ALREADY_EXISTS_SET_ACTION_TO_CONTINUE",
+                            array(implode(
+                                "|",
+                                array(
+                                    self::IMPORT_OPTION_CREATE_NEW,
+                                    self::IMPORT_OPTION_OVERWRITE,
+                                    self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW,
+                                    self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW
+                                )
+                            ))
+                        ),
+                        self::IMPORT_STAT_TARGET_ALREADY_EXISTS
+                    );
                 }
                 $generateUid = false;
                 break;
@@ -112,10 +122,16 @@ abstract class Importer
 
                 if (is_array($arrayAux) && count($arrayAux) > 0) {
                     throw new \Exception(
-                        str_replace(
-                            array("{0}"),
-                            array(implode("|", array(self::GROUP_IMPORT_OPTION_CREATE_NEW, self::GROUP_IMPORT_OPTION_RENAME, self::GROUP_IMPORT_OPTION_MERGE_PREEXISTENT))),
-                            "Group already exists, you need set an action to continue. Available actions: [{0}]."
+                        \G::LoadTranslation(
+                            "ID_IMPORTER_GROUP_ALREADY_EXISTS_SET_ACTION_TO_CONTINUE",
+                            array(implode(
+                                "|",
+                                array(
+                                    self::GROUP_IMPORT_OPTION_CREATE_NEW,
+                                    self::GROUP_IMPORT_OPTION_RENAME,
+                                    self::GROUP_IMPORT_OPTION_MERGE_PREEXISTENT
+                                )
+                            ))
                         ),
                         self::IMPORT_STAT_GROUP_ALREADY_EXISTS
                     );
@@ -160,7 +176,7 @@ abstract class Importer
     {
         if ($this->validateSource() === false) {
             throw new \Exception(
-                "Error, Invalid file type or the file have corrupt data",
+                \G::LoadTranslation("ID_IMPORTER_ERROR_FILE_INVALID_TYPE_OR_CORRUPT_DATA"),
                 self::IMPORT_STAT_INVALID_SOURCE_FILE
             );
         }
@@ -187,10 +203,10 @@ abstract class Importer
     public function validateImportData()
     {
         if (! isset($this->importData["tables"]["bpmn"])) {
-            throw new \Exception("BPMN Definition is missing.");
+            throw new \Exception(\G::LoadTranslation("ID_IMPORTER_BPMN_DEFINITION_IS_MISSING"));
         }
         if (! isset($this->importData["tables"]["bpmn"]["project"]) || count($this->importData["tables"]["bpmn"]["project"]) !== 1) {
-            throw new \Exception("BPMN table: \"Project\", definition is missing or has multiple definition.");
+            throw new \Exception(\G::LoadTranslation("ID_IMPORTER_BPMN_PROJECT_TABLE_DEFINITION_IS_MISSING"));
         }
 
         $this->throwExceptionIfExistsReservedWordsSql((object)($this->importData["tables"]["workflow"]));
@@ -268,13 +284,13 @@ abstract class Importer
     public function setSourceFromGlobals($varName)
     {
         if (! array_key_exists($varName, $_FILES)) {
-            throw new \Exception("Couldn't find specified source \"$varName\" in PHP Globals");
+            throw new \Exception(\G::LoadTranslation("ID_IMPORTER_COULD_NOT_FIND_SPECIFIED_SOURCE_IN_PHP_GLOBALS", array($varName)));
         }
 
         $data = $_FILES[$varName];
 
         if ($data["error"] != 0) {
-            throw new \Exception("Error while uploading file. Error code: {$data["error"]}");
+            throw new \Exception(\G::LoadTranslation("ID_IMPORTER_ERROR_WHILE_UPLOADING_FILE", array($data["error"])));
         }
 
         if (! is_dir($this->getSaveDir())) {
@@ -517,9 +533,10 @@ abstract class Importer
                         $strdv = implode("|", $arrayDefaultValues);
 
                         throw new \Exception(
-                            str_replace(array("{0}", "{1}"),
-                            array($fieldNameForException, ($caseUpper)? $strdv : strtolower($strdv)),
-                            "Invalid value for \"{0}\", it only accepts values: \"{1}\".")
+                            \G::LoadTranslation(
+                                "ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES",
+                                array($fieldNameForException, ($caseUpper)? $strdv : strtolower($strdv))
+                            )
                         );
                     }
                 }
@@ -528,7 +545,7 @@ abstract class Importer
             if ((isset($_FILES["filePmx"]) && pathinfo($_FILES["filePmx"]["name"], PATHINFO_EXTENSION) != "pmx") ||
                 (isset($arrayData[$arrayFieldName["projectFile"]]) && pathinfo($arrayData[$arrayFieldName["projectFile"]], PATHINFO_EXTENSION) != "pmx")
             ) {
-                throw (new \Exception("The file extension not is \"pmx\""));
+                throw new \Exception(\G::LoadTranslation("ID_IMPORTER_FILE_EXTENSION_IS_NOT_PMX"));
             }
 
             //Set variables
@@ -557,7 +574,7 @@ abstract class Importer
                 if (isset($arrayData[$arrayFieldName["projectFile"]]) && file_exists($filePmx)) {
                     $this->setSourceFile($filePmx);
                 } else {
-                    throw (new \Exception(str_replace(array("{0}", "{1}"), array($arrayFieldNameForException["projectFile"], $arrayData[$arrayFieldName["projectFile"]]), "The file with {0}: \"{1}\" does not exist.")));
+                    throw new \Exception(\G::LoadTranslation("ID_IMPORTER_FILE_DOES_NOT_EXIST", array($arrayFieldNameForException["projectFile"], $arrayData[$arrayFieldName["projectFile"]])));
                 }
             }
 

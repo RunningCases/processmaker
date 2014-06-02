@@ -175,7 +175,7 @@ class Trigger
 
         if (isset($dataTrigger['TRI_TITLE'])) {
             if (!$this->verifyNameTrigger($sProcessUID, $dataTrigger['TRI_TITLE'], $sTriggerUid)) {
-                throw new \Exception('A trigger with the same name already exists in this process');
+                throw new \Exception(\G::LoadTranslation("ID_CANT_SAVE_TRIGGER"));
             }
         }
 
@@ -265,9 +265,7 @@ class Trigger
             $rsCriteria = \TriggersPeer::doSelectRS($criteria);
 
             if (!$rsCriteria->next()) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $triggerUid), "The trigger with {0}: {1}, does not exist.");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_TRIGGER_DOES_NOT_EXIST", array($fieldNameForException, $triggerUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -288,9 +286,7 @@ class Trigger
     {
         try {
             if (!$this->verifyNameTrigger($processUid, $triggerTitle, $triggerUidExclude)) {
-                $msg = str_replace(array("{0}", "{1}"), array($fieldNameForException, $triggerTitle), "The trigger title with {0}: \"{1}\" already exists");
-
-                throw (new \Exception($msg));
+                throw new \Exception(\G::LoadTranslation("ID_TRIGGER_TITLE_ALREADY_EXISTS", array($fieldNameForException, $triggerTitle)));
             }
         } catch (\Exception $e) {
             throw $e;

@@ -2221,7 +2221,7 @@ class wsBase
                 }
             }
 
-            //Execute triggers before derivation
+            //Execute triggers before derivation BEFORE_ROUTING
             $aTriggers = $oCase->loadTriggers( $appdel['TAS_UID'], 'ASSIGN_TASK', - 2, 'BEFORE' );
 
             if (count( $aTriggers ) > 0) {
@@ -2267,6 +2267,51 @@ class wsBase
                         unset($appFields['APP_PROC_CODE']);
                         unset($appFields['APP_PIN']);
                         //$appFields['APP_DATA']['APPLICATION'] = $caseId;
+                        $oCase->updateCase( $caseId, $appFields );
+                    }
+                }
+            }
+
+            //Execute triggers before derivation BEFORE_ASSIGNMENT
+            $aTriggers = $oCase->loadTriggers( $appdel['TAS_UID'], 'ASSIGN_TASK', - 1, 'BEFORE' );
+
+            if (count( $aTriggers ) > 0) {
+                $varTriggers .= "<b>-= Before Derivation =-</b><br/>";
+
+                $oPMScript = new PMScript();
+
+                foreach ($aTriggers as $aTrigger) {
+                    //Set variables
+                    $params = new stdClass();
+                    $params->appData = $appFields["APP_DATA"];
+
+                    if ($this->stored_system_variables) {
+                        $params->option = "STORED SESSION";
+                        $params->SID = $this->wsSessionId;
+                    }
+
+                    $appFields["APP_DATA"] = array_merge( $appFields["APP_DATA"], G::getSystemConstants( $params ) );
+
+                    //PMScript
+                    $oPMScript->setFields( $appFields['APP_DATA'] );
+                    $bExecute = true;
+
+                    if ($aTrigger['ST_CONDITION'] !== '') {
+                        $oPMScript->setScript( $aTrigger['ST_CONDITION'] );
+                        $bExecute = $oPMScript->evaluate();
+                    }
+
+                    if ($bExecute) {
+                        $oPMScript->setScript( $aTrigger['TRI_WEBBOT'] );
+                        $oPMScript->execute();
+
+                        $oTrigger = TriggersPeer::retrieveByPk( $aTrigger['TRI_UID'] );
+                        $varTriggers .= "&nbsp;- " . nl2br( htmlentities( $oTrigger->getTriTitle(), ENT_QUOTES ) ) . "<br/>";
+                        $appFields['APP_DATA'] = $oPMScript->aFields;
+                        unset($appFields['APP_STATUS']);
+                        unset($appFields['APP_PROC_STATUS']);
+                        unset($appFields['APP_PROC_CODE']);
+                        unset($appFields['APP_PIN']);
                         $oCase->updateCase( $caseId, $appFields );
                     }
                 }
@@ -3090,7 +3135,7 @@ class wsBase
             }
 
             if (! empty( $unpauseDate )) {
-                if (! preg_match( "/^\d{4}-\d{2}-\d{2}$/", $unpauseDate )) {
+                if (! preg_match( "/^\d{4}-\d{2}-\d{2}| \d{2}:\d{2}:\d{2}$/", $unpauseDate )) {
                     $result = new wsResponse( 100, G::LoadTranslation( "ID_INVALID_DATA" ) . " $unpauseDate" );
 
                     $g->sessionVarRestore();

@@ -176,7 +176,7 @@ class ProcessPermissions
         }
 
         if ($op_uid != '' && empty($aObjectsPermissions)) {
-            throw (new \Exception( 'This row does not exist!!' ));
+            throw (new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST")));
         } elseif ($op_uid != '' && !empty($aObjectsPermissions)) {
             $aObjectsPermissions = array_change_key_case($aObjectsPermissions, CASE_LOWER);
             return current($aObjectsPermissions);
@@ -314,11 +314,11 @@ class ProcessPermissions
     {
         $pro_uid = trim($pro_uid);
         if ($pro_uid == '') {
-            throw (new \Exception("The project with prj_uid: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_PROJECT_NOT_EXIST", array('prj_uid',''))));
         }
         $oProcess = new \Process();
         if (!($oProcess->processExists($pro_uid))) {
-            throw (new \Exception("The project with prj_uid: '$pro_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_PROJECT_NOT_EXIST", array('prj_uid',$pro_uid))));
         }
         return $pro_uid;
     }
@@ -336,11 +336,11 @@ class ProcessPermissions
     {
         $op_uid = trim($op_uid);
         if ($op_uid == '') {
-            throw (new \Exception("The process permission with op_uid: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_PROCESS_PERMISSION_NOT_EXIST", array('op_uid',''))));
         }
         $oObjectPermission = new \ObjectPermission();
         if (!($oObjectPermission->Exists($op_uid))) {
-            throw (new \Exception("The process permission with op_uid: '$op_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_PROCESS_PERMISSION_NOT_EXIST", array('op_uid',$op_uid))));
         }
         return $op_uid;
     }
@@ -358,11 +358,11 @@ class ProcessPermissions
     {
         $usr_uid = trim($usr_uid);
         if ($usr_uid == '') {
-            throw (new \Exception("The user with usr_uid: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_USER_NOT_EXIST", array('usr_uid',''))));
         }
         $oUsers = new \Users();
         if (!($oUsers->userExists($usr_uid))) {
-            throw (new \Exception("The user with usr_uid: '$usr_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_USER_NOT_EXIST", array('usr_uid',$usr_uid))));
         }
         return $usr_uid;
     }
@@ -380,11 +380,11 @@ class ProcessPermissions
     {
         $grp_uid = trim($grp_uid);
         if ($grp_uid == '') {
-            throw (new \Exception("The group with usr_uid: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_GROUP_NOT_EXIST", array('grp_uid',''))));
         }
         $oGroup = new \Groupwf();
         if (!($oGroup->GroupwfExists($grp_uid))) {
-            throw (new \Exception("The group with usr_uid: '$grp_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_GROUP_NOT_EXIST", array('grp_uid',$grp_uid))));
         }
         return $grp_uid;
     }
@@ -402,11 +402,11 @@ class ProcessPermissions
     {
         $tas_uid = trim($tas_uid);
         if ($tas_uid == '') {
-            throw (new \Exception("The task with tas_uid: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_TASK_NOT_EXIST", array('tas_uid',''))));
         }
         $oTask = new \Task();
         if (!($oTask->taskExists($tas_uid))) {
-            throw (new \Exception("The task with tas_uid: '$tas_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_TASK_NOT_EXIST", array('tas_uid',$tas_uid))));
         }
         return $tas_uid;
     }
@@ -424,11 +424,11 @@ class ProcessPermissions
     {
         $dyn_uid = trim($dyn_uid);
         if ($dyn_uid == '') {
-            throw (new \Exception("The dynaform with dynaforms: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_DYNAFORM_NOT_EXIST", array('dyn_uid',''))));
         }
         $oDynaform = new \Dynaform();
         if (!($oDynaform->dynaformExists($dyn_uid))) {
-            throw (new \Exception("The dynaform with dynaforms: '$dyn_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_DYNAFORM_NOT_EXIST", array('dyn_uid',$dyn_uid))));
         }
         return $dyn_uid;
     }
@@ -446,11 +446,11 @@ class ProcessPermissions
     {
         $inp_uid = trim($inp_uid);
         if ($inp_uid == '') {
-            throw (new \Exception("The input with inputs: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_INPUT_NOT_EXIST", array('inp_uid',''))));
         }
         $oInputDocument = new \InputDocument();
         if (!($oInputDocument->InputExists($inp_uid))) {
-            throw (new \Exception("The input with inputs: '$inp_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_INPUT_NOT_EXIST", array('inp_uid',$inp_uid))));
         }
         return $inp_uid;
     }
@@ -468,11 +468,11 @@ class ProcessPermissions
     {
         $out_uid = trim($out_uid);
         if ($out_uid == '') {
-            throw (new \Exception("The output with outputs: '' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_EXIST", array('out_uid',''))));
         }
         $oOutputDocument = new \OutputDocument();
         if (!($oOutputDocument->OutputExists($out_uid))) {
-            throw (new \Exception("The output with outputs: '$out_uid' does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_OUTPUT_NOT_EXIST", array('out_uid',$out_uid))));
         }
         return $out_uid;
     }
