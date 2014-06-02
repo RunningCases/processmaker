@@ -44,6 +44,9 @@ task :build => [:required] do
     pmUIDir = targetDir + "/pmUI"
     mafeDir = targetDir + "/mafe"
 
+    puts getVersion(Dir.pwd + "/vendor/colosa/pmUI")
+    exit
+
     prepareDirs([pmUIDir, mafeDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
 
     buildPmUi(Dir.pwd + "/vendor/colosa/pmUI", targetDir, mode)
@@ -192,7 +195,7 @@ def getVersion(path)
         version = `rake version`
     end
 
-    return version.strip
+    return /([0-9\.]{5}+)/.match(version)
 end
 
 
