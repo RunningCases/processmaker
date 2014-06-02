@@ -28,7 +28,7 @@ class Event
 
         $oProcess = new \Process();
         if (!($oProcess->processExists($pro_uid))) {
-            throw (new \Exception( 'This process does not exist!' ));
+            throw (new \Exception(\G::LoadTranslation("ID_PROCESS_NOT_EXIST", array('pro_uid',$pro_uid))));
         }
 
         $sDelimiter = \DBAdapter::getStringDelimiter();
@@ -75,7 +75,7 @@ class Event
         }
 
         if ($evn_uid != '' && empty($eventsArray)) {
-            throw (new \Exception( 'This row does not exist!' ));
+            throw (new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST")));
         } elseif ($evn_uid != '' && !empty($eventsArray)) {
             return current($eventsArray);
         }
@@ -106,18 +106,18 @@ class Event
         $dataEvent = array_change_key_case($dataEvent, CASE_UPPER);
         if ($dataEvent['EVN_RELATED_TO'] == 'SINGLE') {
             if (empty($dataEvent['TAS_UID'])) {
-                throw (new \Exception('The field "tas_uid" is required!'));
+                throw (new \Exception(\G::LoadTranslation("ID_FIELD_REQUIRED", array('tas_uid'))));
             }
             $this->validateTasUid($dataEvent['TAS_UID']);
         } else {
             if (empty($dataEvent['EVN_TAS_UID_FROM'])) {
-                throw (new \Exception('The field "evn_tas_uid_from" is required!'));
+                throw (new \Exception(\G::LoadTranslation("ID_FIELD_REQUIRED", array('evn_tas_uid_from'))));
             }
             $this->validateTasUid($dataEvent['EVN_TAS_UID_FROM']);
             $dataEvent['TAS_UID'] = $dataEvent['EVN_TAS_UID_FROM'];
 
             if (empty($dataEvent['EVN_TAS_UID_TO'])) {
-                throw (new \Exception('The field "evn_tas_uid_to" is required!'));
+                throw (new \Exception(\G::LoadTranslation("ID_FIELD_REQUIRED", array('evn_tas_uid_to'))));
             }
             $this->validateTasUid($dataEvent['EVN_TAS_UID_TO']);
         }
@@ -178,11 +178,11 @@ class Event
     {
         $pro_uid = trim($pro_uid);
         if ($pro_uid == '') {
-            throw (new \Exception("The project with prj_uid: '', does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_PROJECT_NOT_EXIST", array('prj_uid',''))));
         }
         $oProcess = new \Process();
         if (!($oProcess->processExists($pro_uid))) {
-            throw (new \Exception("The project with prj_uid: '$pro_uid', does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_PROJECT_NOT_EXIST", array('prj_uid',$pro_uid))));
         }
         return $pro_uid;
     }
@@ -200,11 +200,11 @@ class Event
     {
         $evn_uid = trim($evn_uid);
         if ($evn_uid == '') {
-            throw (new \Exception("The event with evn_uid: '', does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_EVENT_NOT_EXIST", array('evn_uid',''))));
         }
         $oEvent = new \Event();
         if (!($oEvent->Exists($evn_uid))) {
-            throw (new \Exception("The event with evn_uid: '$evn_uid', does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_EVENT_NOT_EXIST", array('evn_uid',$evn_uid))));
         }
         return $evn_uid;
     }
@@ -222,11 +222,11 @@ class Event
     {
         $tas_uid = trim($tas_uid);
         if ($tas_uid == '') {
-            throw (new \Exception("The task with tas_uid: '', does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_TASK_NOT_EXIST", array('tas_uid',''))));
         }
         $oTask = new \Task();
         if (!($oTask->taskExists($tas_uid))) {
-            throw (new \Exception("The task with tas_uid: '$tas_uid', does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_TASK_NOT_EXIST", array('tas_uid',$tas_uid))));
         }
         return $tas_uid;
     }
@@ -244,12 +244,12 @@ class Event
     {
         $tri_uid = trim($tri_uid);
         if ($tri_uid == '') {
-            throw (new \Exception("The trigger with tri_uid: '', does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_TRIGGER_NOT_EXIST", array('tri_uid',''))));
         }
 
         $oTriggers = new \Triggers();
         if (!($oTriggers->TriggerExists($tri_uid))) {
-            throw (new \Exception("The trigger with tri_uid: '', does not exist."));
+            throw (new \Exception(\G::LoadTranslation("ID_TRIGGER_NOT_EXIST", array('tri_uid',$tri_uid))));
         }
 
         return $tri_uid;
