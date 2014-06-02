@@ -355,6 +355,10 @@ class Role
             //Verify data
             $this->throwExceptionIfNotExistsRole($roleUid, $this->arrayFieldNameForException["roleUid"]);
 
+            if ($roleUid == "00000000000000000000000000000002") {
+                throw new \Exception(\G::LoadTranslation("ID_ROLES_MSG"));
+            }
+
             $this->throwExceptionIfDataIsInvalid($roleUid, $arrayData);
 
             //Update
