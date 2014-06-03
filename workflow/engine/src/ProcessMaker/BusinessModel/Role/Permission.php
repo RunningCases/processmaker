@@ -1,11 +1,11 @@
 <?php
 namespace ProcessMaker\BusinessModel\Role;
 
-class User
+class Permission
 {
     private $arrayFieldDefinition = array(
         "ROL_UID" => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "roleUid"),
-        "USR_UID" => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(), "fieldNameAux" => "userUid")
+        "PER_UID" => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(), "fieldNameAux" => "permissionUid")
     );
 
     private $formatFieldNameInUppercase = true;
@@ -85,21 +85,21 @@ class User
     }
 
     /**
-     * Verify if it's assigned the User to Role
+     * Verify if it's assigned the Permission to Role
      *
      * @param string $roleUid               Unique id of Role
-     * @param string $userUid               Unique id of User
+     * @param string $permissionUid         Unique id of Permission
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if it's assigned the User to Role
+     * return void Throw exception if it's assigned the Permission to Role
      */
-    public function throwExceptionIfItsAssignedUserToRole($roleUid, $userUid, $fieldNameForException)
+    public function throwExceptionIfItsAssignedPermissionToRole($roleUid, $permissionUid, $fieldNameForException)
     {
         try {
-            $obj = \UsersRolesPeer::retrieveByPK($userUid, $roleUid);
+            $obj = \RolesPermissionsPeer::retrieveByPK($roleUid, $permissionUid);
 
             if (!is_null($obj)) {
-                throw new \Exception(\G::LoadTranslation("ID_ROLE_USER_IS_ALREADY_ASSIGNED", array($fieldNameForException, $userUid)));
+                throw new \Exception(\G::LoadTranslation("ID_ROLE_PERMISSION_IS_ALREADY_ASSIGNED", array($fieldNameForException, $permissionUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -107,21 +107,21 @@ class User
     }
 
     /**
-     * Verify if not it's assigned the User to Role
+     * Verify if not it's assigned the Permission to Role
      *
      * @param string $roleUid               Unique id of Role
-     * @param string $userUid               Unique id of User
+     * @param string $permissionUid         Unique id of Permission
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if not it's assigned the User to Role
+     * return void Throw exception if not it's assigned the Permission to Role
      */
-    public function throwExceptionIfNotItsAssignedUserToRole($roleUid, $userUid, $fieldNameForException)
+    public function throwExceptionIfNotItsAssignedPermissionToRole($roleUid, $permissionUid, $fieldNameForException)
     {
         try {
-            $obj = \UsersRolesPeer::retrieveByPK($userUid, $roleUid);
+            $obj = \RolesPermissionsPeer::retrieveByPK($roleUid, $permissionUid);
 
             if (is_null($obj)) {
-                throw new \Exception(\G::LoadTranslation("ID_ROLE_USER_IS_NOT_ASSIGNED", array($fieldNameForException, $userUid)));
+                throw new \Exception(\G::LoadTranslation("ID_ROLE_PERMISSION_IS_NOT_ASSIGNED", array($fieldNameForException, $permissionUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -129,12 +129,12 @@ class User
     }
 
     /**
-     * Assign User to Role
+     * Assign Permission to Role
      *
      * @param string $roleUid   Unique id of Role
      * @param array  $arrayData Data
      *
-     * return array Return data of the User assigned to Role
+     * return array Return data of the Permission assigned to Role
      */
     public function create($roleUid, array $arrayData)
     {
@@ -158,12 +158,12 @@ class User
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
-            $process->throwExceptionIfNotExistsUser($arrayData["USR_UID"], $this->arrayFieldNameForException["userUid"]);
+            $process->throwExceptionIfNotExistsPermission($arrayData["PER_UID"], $this->arrayFieldNameForException["permissionUid"]);
 
-            $this->throwExceptionIfItsAssignedUserToRole($roleUid, $arrayData["USR_UID"], $this->arrayFieldNameForException["userUid"]);
+            $this->throwExceptionIfItsAssignedPermissionToRole($roleUid, $arrayData["PER_UID"], $this->arrayFieldNameForException["permissionUid"]);
 
-            if ($arrayData["USR_UID"] == "00000000000000000000000000000001") {
-                throw new \Exception(\G::LoadTranslation("ID_ADMINISTRATOR_ROLE_CANT_CHANGED"));
+            if ($roleUid == "00000000000000000000000000000002") {
+                throw new \Exception(\G::LoadTranslation("ID_ROLE_PERMISSION_ROLE_PERMISSIONS_CAN_NOT_BE_CHANGED", array("PROCESSMAKER_ADMIN")));
             }
 
             //Create
@@ -171,7 +171,7 @@ class User
 
             $arrayData = array_merge(array("ROL_UID" => $roleUid), $arrayData);
 
-            $role->assignUserToRole($arrayData);
+            $role->assignPermissionRole($arrayData);
 
             //Return
             if (!$this->formatFieldNameInUppercase) {
@@ -185,14 +185,14 @@ class User
     }
 
     /**
-     * Unassign User of the Role
+     * Unassign Permission of the Role
      *
-     * @param string $roleUid Unique id of Role
-     * @param string $userUid Unique id of User
+     * @param string $roleUid       Unique id of Role
+     * @param string $permissionUid Unique id of Permission
      *
      * return void
      */
-    public function delete($roleUid, $userUid)
+    public function delete($roleUid, $permissionUid)
     {
         try {
             //Verify data
@@ -201,51 +201,48 @@ class User
 
             $role->throwExceptionIfNotExistsRole($roleUid, $this->arrayFieldNameForException["roleUid"]);
 
-            $process->throwExceptionIfNotExistsUser($userUid, $this->arrayFieldNameForException["userUid"]);
+            $process->throwExceptionIfNotExistsPermission($permissionUid, $this->arrayFieldNameForException["permissionUid"]);
 
-            $this->throwExceptionIfNotItsAssignedUserToRole($roleUid, $userUid, $this->arrayFieldNameForException["userUid"]);
+            $this->throwExceptionIfNotItsAssignedPermissionToRole($roleUid, $permissionUid, $this->arrayFieldNameForException["permissionUid"]);
 
-            if ($userUid == "00000000000000000000000000000001") {
-                throw new \Exception(\G::LoadTranslation("ID_ADMINISTRATOR_ROLE_CANT_CHANGED"));
+            if ($roleUid == "00000000000000000000000000000002") {
+                throw new \Exception(\G::LoadTranslation("ID_ROLE_PERMISSION_ROLE_PERMISSIONS_CAN_NOT_BE_CHANGED", array("PROCESSMAKER_ADMIN")));
             }
 
             //Delete
             $role = new \Roles();
 
-            $role->deleteUserRole($roleUid, $userUid);
+            $role->deletePermissionRole($roleUid, $permissionUid);
         } catch (\Exception $e) {
             throw $e;
         }
     }
 
     /**
-     * Get criteria for User
+     * Get criteria for Permission
      *
-     * @param string $roleUid             Unique id of Role
-     * @param array  $arrayUserUidExclude Unique id of Users to exclude
+     * @param string $roleUid                   Unique id of Role
+     * @param array  $arrayPermissionUidExclude Unique id of Permissions to exclude
      *
      * return object
      */
-    public function getUserCriteria($roleUid, array $arrayUserUidExclude = null)
+    public function getPermissionCriteria($roleUid, array $arrayPermissionUidExclude = null)
     {
         try {
             $criteria = new \Criteria("rbac");
 
-            $criteria->addSelectColumn(\RbacUsersPeer::USR_UID);
-            $criteria->addSelectColumn(\RbacUsersPeer::USR_USERNAME);
-            $criteria->addSelectColumn(\RbacUsersPeer::USR_FIRSTNAME);
-            $criteria->addSelectColumn(\RbacUsersPeer::USR_LASTNAME);
-            $criteria->addSelectColumn(\RbacUsersPeer::USR_STATUS);
+            $criteria->addSelectColumn(\PermissionsPeer::PER_UID);
+            $criteria->addSelectColumn(\PermissionsPeer::PER_CODE);
 
             if ($roleUid != "") {
-                $criteria->addJoin(\UsersRolesPeer::USR_UID, \RbacUsersPeer::USR_UID, \Criteria::LEFT_JOIN);
-                $criteria->add(\UsersRolesPeer::ROL_UID, $roleUid, \Criteria::EQUAL);
+                $criteria->addJoin(\RolesPermissionsPeer::PER_UID, \PermissionsPeer::PER_UID, \Criteria::LEFT_JOIN);
+                $criteria->add(\RolesPermissionsPeer::ROL_UID, $roleUid, \Criteria::EQUAL);
             }
 
-            $criteria->add(\RbacUsersPeer::USR_USERNAME, "", \Criteria::NOT_EQUAL);
+            $criteria->add(\PermissionsPeer::PER_STATUS, 1, \Criteria::EQUAL);
 
-            if (!is_null($arrayUserUidExclude) && is_array($arrayUserUidExclude)) {
-                $criteria->add(\RbacUsersPeer::USR_UID, $arrayUserUidExclude, \Criteria::NOT_IN);
+            if (!is_null($arrayPermissionUidExclude) && is_array($arrayPermissionUidExclude)) {
+                $criteria->add(\PermissionsPeer::PER_UID, $arrayPermissionUidExclude, \Criteria::NOT_IN);
             }
 
             return $criteria;
@@ -255,21 +252,19 @@ class User
     }
 
     /**
-     * Get data of a User from a record
+     * Get data of a Permission from a record
      *
      * @param array $record Record
      *
-     * return array Return an array with data User
+     * return array Return an array with data Permission
      */
-    public function getUserDataFromRecord(array $record)
+    public function getPermissionDataFromRecord(array $record)
     {
         try {
             return array(
-                $this->getFieldNameByFormatFieldName("USR_UID")       => $record["USR_UID"],
-                $this->getFieldNameByFormatFieldName("USR_USERNAME")  => $record["USR_USERNAME"],
-                $this->getFieldNameByFormatFieldName("USR_FIRSTNAME") => $record["USR_FIRSTNAME"] . "",
-                $this->getFieldNameByFormatFieldName("USR_LASTNAME")  => $record["USR_LASTNAME"] . "",
-                $this->getFieldNameByFormatFieldName("USR_STATUS")    => ($record["USR_STATUS"] . "" == "1")? "ACTIVE" : "INACTIVE"
+                $this->getFieldNameByFormatFieldName("PER_UID")  => $record["PER_UID"],
+                $this->getFieldNameByFormatFieldName("PER_CODE") => $record["PER_CODE"],
+                $this->getFieldNameByFormatFieldName("PER_NAME") => $record["PER_NAME"]
             );
         } catch (\Exception $e) {
             throw $e;
@@ -277,22 +272,22 @@ class User
     }
 
     /**
-     * Get all Users of a Role
+     * Get all Permissions of a Role
      *
      * @param string $roleUid         Unique id of Role
-     * @param string $option          Option (USERS, AVAILABLE-USERS)
+     * @param string $option          Option (PERMISSIONS, AVAILABLE-PERMISSIONS)
      * @param array  $arrayFilterData Data of the filters
      * @param string $sortField       Field name to sort
      * @param string $sortDir         Direction of sorting (ASC, DESC)
      * @param int    $start           Start
      * @param int    $limit           Limit
      *
-     * return array Return an array with all Users of a Role
+     * return array Return an array with all Permissions of a Role
      */
-    public function getUsers($roleUid, $option, array $arrayFilterData = null, $sortField = null, $sortDir = null, $start = null, $limit = null)
+    public function getPermissions($roleUid, $option, array $arrayFilterData = null, $sortField = null, $sortDir = null, $start = null, $limit = null)
     {
         try {
-            $arrayUser = array();
+            $arrayPermission = array();
 
             //Verify data
             $process = new \ProcessMaker\BusinessModel\Process();
@@ -302,7 +297,7 @@ class User
 
             $process->throwExceptionIfDataNotMetFieldDefinition(
                 array("OPTION" => $option),
-                array("OPTION" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array("USERS", "AVAILABLE-USERS"), "fieldNameAux" => "option")),
+                array("OPTION" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array("PERMISSIONS", "AVAILABLE-PERMISSIONS"), "fieldNameAux" => "option")),
                 array("option" => "\$option"),
                 true
             );
@@ -311,50 +306,49 @@ class User
 
             //Get data
             if (!is_null($limit) && $limit . "" == "0") {
-                return $arrayUser;
+                return $arrayPermission;
             }
+
+            //Set variables
+            $rolePermission = new \RolesPermissions();
 
             //SQL
             switch ($option) {
-                case "USERS":
+                case "PERMISSIONS":
                     //Criteria
-                    $criteria = $this->getUserCriteria($roleUid);
+                    $criteria = $this->getPermissionCriteria($roleUid);
                     break;
-                case "AVAILABLE-USERS":
+                case "AVAILABLE-PERMISSIONS":
                     //Get Uids
                     $arrayUid = array();
 
-                    $criteria = $this->getUserCriteria($roleUid);
+                    $criteria = $this->getPermissionCriteria($roleUid);
 
-                    $rsCriteria = \RbacUsersPeer::doSelectRS($criteria);
+                    $rsCriteria = \PermissionsPeer::doSelectRS($criteria);
                     $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
                     while ($rsCriteria->next()) {
                         $row = $rsCriteria->getRow();
 
-                        $arrayUid[] = $row["USR_UID"];
+                        $arrayUid[] = $row["PER_UID"];
                     }
 
                     //Criteria
-                    $criteria = $this->getUserCriteria("", $arrayUid);
+                    $criteria = $this->getPermissionCriteria("", $arrayUid);
                     break;
             }
 
             if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]) && trim($arrayFilterData["filter"]) != "") {
-                $criteria->add(
-                    $criteria->getNewCriterion(\RbacUsersPeer::USR_USERNAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE)->addOr(
-                    $criteria->getNewCriterion(\RbacUsersPeer::USR_FIRSTNAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE)->addOr(
-                    $criteria->getNewCriterion(\RbacUsersPeer::USR_LASTNAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE)))
-                );
+                $criteria->add(\PermissionsPeer::PER_CODE, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE);
             }
 
             //Number records total
             $criteriaCount = clone $criteria;
 
             $criteriaCount->clearSelectColumns();
-            $criteriaCount->addAsColumn("NUM_REC", "COUNT(" . \RbacUsersPeer::USR_UID . ")");
+            $criteriaCount->addAsColumn("NUM_REC", "COUNT(" . \PermissionsPeer::PER_UID . ")");
 
-            $rsCriteriaCount = \RbacUsersPeer::doSelectRS($criteriaCount);
+            $rsCriteriaCount = \PermissionsPeer::doSelectRS($criteriaCount);
             $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             $rsCriteriaCount->next();
@@ -366,13 +360,13 @@ class User
             if (!is_null($sortField) && trim($sortField) != "") {
                 $sortField = strtoupper($sortField);
 
-                if (in_array($sortField, array("USR_UID", "USR_USERNAME", "USR_FIRSTNAME", "USR_LASTNAME", "USR_STATUS"))) {
-                    $sortField = \RbacUsersPeer::TABLE_NAME . "." . $sortField;
+                if (in_array($sortField, array("PER_UID", "PER_CODE"))) {
+                    $sortField = \PermissionsPeer::TABLE_NAME . "." . $sortField;
                 } else {
-                    $sortField = \RbacUsersPeer::USR_USERNAME;
+                    $sortField = \PermissionsPeer::PER_CODE;
                 }
             } else {
-                $sortField = \RbacUsersPeer::USR_USERNAME;
+                $sortField = \PermissionsPeer::PER_CODE;
             }
 
             if (!is_null($sortDir) && trim($sortDir) != "" && strtoupper($sortDir) == "DESC") {
@@ -389,17 +383,20 @@ class User
                 $criteria->setLimit((int)($limit));
             }
 
-            $rsCriteria = \RbacUsersPeer::doSelectRS($criteria);
+            $rsCriteria = \PermissionsPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
-                $arrayUser[] = $this->getUserDataFromRecord($row);
+                $rolePermission->setPerUid($row["PER_UID"]);
+                $row["PER_NAME"] = $rolePermission->getPermissionName();
+
+                $arrayPermission[] = $this->getPermissionDataFromRecord($row);
             }
 
             //Return
-            return $arrayUser;
+            return $arrayPermission;
         } catch (\Exception $e) {
             throw $e;
         }
