@@ -1540,6 +1540,15 @@ class Cases
             $oCriteria->addSelectColumn(\ContentPeer::CON_VALUE);
             $oCriteria->addSelectColumn(\TaskPeer::TAS_START);
             $oCriteria->addSelectColumn(\TaskPeer::TAS_TYPE);
+
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_ASSIGN_TYPE);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_ASSIGN_LOCATION);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_ASSIGN_LOCATION_ADHOC);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_LAST_ASSIGNED);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_START);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_TO_LAST_USER);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_DERIVATION);
+
             $aConditions = array();
             $aConditions[] = array(0 => \TaskPeer::TAS_UID, 1 => \ContentPeer::CON_ID);
             $aConditions[] = array(0 => \ContentPeer::CON_CATEGORY, 1 => \DBAdapter::getStringDelimiter() . 'TAS_TITLE' . \DBAdapter::getStringDelimiter() );
@@ -1584,6 +1593,15 @@ class Cases
                         $oTask->tas_title = htmlentities($aRow1['CON_VALUE'], ENT_QUOTES, 'UTF-8');
                     }
                 }
+
+                $oTask->tas_assign_type = $aRow1['TAS_ASSIGN_TYPE'];
+                $oTask->tas_assign_location = $aRow1['TAS_ASSIGN_LOCATION'];
+                $oTask->tas_assign_location_adhoc = $aRow1['TAS_ASSIGN_LOCATION_ADHOC'];
+                $oTask->tas_last_assigned = $aRow1['TAS_LAST_ASSIGNED'];
+                $oTask->tas_start = $aRow1['TAS_START'];
+                $oTask->tas_to_last_user = $aRow1['TAS_TO_LAST_USER'];
+                $oTask->tas_derivation = $aRow1['TAS_DERIVATION'];
+
                 $oTask->routing = new \StdClass();
                 $oTask->routing->rou_type = '';
                 $oTask->routing->to = array();
@@ -1609,30 +1627,8 @@ class Cases
                 $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
                 $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                 $oDataset2->next();
+
                 while ($aRow2 = $oDataset2->getRow()) {
-                    switch ($aRow2['ROU_TYPE']) {
-                        case 'SEQUENTIAL':
-                            $aRow2['ROU_TYPE'] = 0;
-                            break;
-                        case 'SELECT':
-                            $aRow2['ROU_TYPE'] = 1;
-                            break;
-                        case 'EVALUATE':
-                            $aRow2['ROU_TYPE'] = 2;
-                            break;
-                        case 'PARALLEL':
-                            $aRow2['ROU_TYPE'] = 3;
-                            break;
-                        case 'PARALLEL-BY-EVALUATION':
-                            $aRow2['ROU_TYPE'] = 4;
-                            break;
-                        case 'SEC-JOIN':
-                            $aRow2['ROU_TYPE'] = 5;
-                            break;
-                        case 'DISCRIMINATOR':
-                            $aRow2['ROU_TYPE'] = 8;
-                            break;
-                    }
                     $iDiff = strtotime($aRow2['DEL_FINISH_DATE']) - strtotime($aRow2['DEL_INIT_DATE']);
                     $oTo = new \StdClass();
                     $oTo->rou_next_task = $aRow2['ROU_NEXT_TASK'];
@@ -1673,22 +1669,22 @@ class Cases
                         $aRow2['FINISH'] = '';
                     }
                     if (empty($aRow2["FINISH"]) && $aRow1["TAS_UID"] == $sTask) {
-                        $oTask->color = "#FF0000"; //Red
+                        $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
                     } else {
                         if (!empty($aRow2["FINISH"])) {
-                            $oTask->color = "#006633"; //Green
+                            $oTask->status = G::LoadTranslation( 'ID_COMPLETED_TASK' );
                         } else {
-                            if ($oTask->routing->rou_type != 5) {
+                            if ($oTask->routing->rou_type != 'SEC-JOIN') {
                                 if ($aRow2["CANT"] != 0) {
-                                    $oTask->color = "#FF0000"; //Red
+                                    $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
                                 } else {
-                                    $oTask->color = "#939598"; //Gray
+                                    $oTask->status = G::LoadTranslation( 'ID_PENDING_TASK' );
                                 }
                             } else {
                                 if ($aRow3) {
-                                    $oTask->color = "#FF0000"; //Red
+                                    $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
                                 } else {
-                                    $oTask->color = "#939598"; //Gray
+                                    $oTask->status = G::LoadTranslation( 'ID_PENDING_TASK' );
                                 }
                             }
                         }
@@ -1717,19 +1713,19 @@ class Cases
                             $aRow2['FINISH'] = '';
                         }
                         if (empty($aRow2["FINISH"]) && $aRow1["TAS_UID"] == $sTask) {
-                            $oTask->color = "#FF0000"; //Red
+                            $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
                         } else {
                             if (!empty($aRow2["FINISH"])) {
-                                $oTask->color = "#006633"; //Green
+                                $oTask->status = G::LoadTranslation( 'ID_COMPLETED_TASK' );
                             } else {
-                                if ($oTask->routing->rou_type != 5) {
+                                if ($oTask->routing->rou_type != 'SEC-JOIN') {
                                     if ($aRow2["CANT"] != 0) {
-                                        $oTask->color = "#FF0000"; //Red
+                                        $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
                                     } else {
-                                        $oTask->color = "#939598"; //Gray
+                                        $oTask->status = G::LoadTranslation( 'ID_PENDING_TASK' );
                                     }
                                 } else {
-                                    $oTask->color = "#FF9900"; //Yellow
+                                    $oTask->status = G::LoadTranslation( 'ID_PARALLEL_TASK' );
                                 }
                             }
                         }

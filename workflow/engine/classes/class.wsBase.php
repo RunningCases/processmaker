@@ -3125,7 +3125,6 @@ class wsBase
 
                 return $result;
             }
-
             if (empty( $userUid )) {
                 $result = new wsResponse( 100, G::LoadTranslation( "ID_REQUIRED_FIELD" ) . " userUid" );
 
@@ -3133,8 +3132,7 @@ class wsBase
 
                 return $result;
             }
-
-            if (! empty( $unpauseDate )) {
+            if( strlen($unpauseDate) >=10 ){
                 if (! preg_match( "/^\d{4}-\d{2}-\d{2}| \d{2}:\d{2}:\d{2}$/", $unpauseDate )) {
                     $result = new wsResponse( 100, G::LoadTranslation( "ID_INVALID_DATA" ) . " $unpauseDate" );
 
@@ -3142,8 +3140,9 @@ class wsBase
 
                     return $result;
                 }
+            }  else {
+            	$unpauseDate = null;
             }
-
             $case = new Cases();
             $case->pauseCase( $caseUid, $delIndex, $userUid, $unpauseDate );
 
@@ -3154,7 +3153,6 @@ class wsBase
             );
 
             $g->sessionVarRestore();
-
             return $result;
         } catch (Exception $e) {
             $result = new wsResponse(100, $e->getMessage());
