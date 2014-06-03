@@ -192,7 +192,7 @@ def getVersion(path)
         version = `rake version`
     end
 
-    return version.strip
+    return /([0-9\.]{5}+)/.match(version)
 end
 
 
