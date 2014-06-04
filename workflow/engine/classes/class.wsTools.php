@@ -520,9 +520,9 @@ class workspaceTools
             CLI::logging("-> Rebuild Cache View with language $lang...\n");
             //build using the method in AppCacheView Class
             $res = $appCache->fillAppCacheView($lang);
-            //set status in config table
-            $confParams = Array('LANG' => $lang, 'STATUS' => 'active');
         }
+        //set status in config table
+        $confParams = Array('LANG' => $lang, 'STATUS' => 'active');
         $oConf->aConfig = $confParams;
         $oConf->saveConfig('APP_CACHE_VIEW_ENGINE', '', '', '');
 
