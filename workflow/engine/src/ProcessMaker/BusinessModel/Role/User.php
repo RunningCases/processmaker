@@ -143,7 +143,6 @@ class User
             $process = new \ProcessMaker\BusinessModel\Process();
             $validator = new \ProcessMaker\BusinessModel\Validator();
 
-            $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
             $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
 
             //Set data
@@ -237,12 +236,18 @@ class User
             $criteria->addSelectColumn(\RbacUsersPeer::USR_LASTNAME);
             $criteria->addSelectColumn(\RbacUsersPeer::USR_STATUS);
 
+            $criteria->addAlias("USR", \RbacUsersPeer::TABLE_NAME);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\RbacUsersPeer::USR_UID, "USR.USR_UID", \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
             if ($roleUid != "") {
                 $criteria->addJoin(\UsersRolesPeer::USR_UID, \RbacUsersPeer::USR_UID, \Criteria::LEFT_JOIN);
                 $criteria->add(\UsersRolesPeer::ROL_UID, $roleUid, \Criteria::EQUAL);
             }
 
-            $criteria->add(\RbacUsersPeer::USR_USERNAME, "", \Criteria::NOT_EQUAL);
+            $criteria->add("USR.USR_USERNAME", "", \Criteria::NOT_EQUAL);
 
             if (!is_null($arrayUserUidExclude) && is_array($arrayUserUidExclude)) {
                 $criteria->add(\RbacUsersPeer::USR_UID, $arrayUserUidExclude, \Criteria::NOT_IN);
