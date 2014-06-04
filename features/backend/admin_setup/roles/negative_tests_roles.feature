@@ -35,14 +35,14 @@ Scenario Outline:  Assign User to Role (NEGATIVE TESTS)
             "usr_uid": "<usr_uid>"
         }
     """
-    And I request "role/rol_uid/user"
+    And I request "role/<rol_uid>/user" 
     Then the response status code should be <error_code>
     And the response status message should have the following text "<error_message>"
  
     Examples:
 
     | Description             | rol_uid                          | usr_uid                          | error_code | error_message |
-    | Without rol_uid         | 00000000000000000000000000000004 | 51049032352d56710347233042615067 | 400        | rol_uid       |
+    | Without rol_uid         |                                  | 51049032352d56710347233042615067 | 400        | rol_uid       |
     | Without usr_uid         | 00000000000000000000000000000004 |                                  | 400        | usr_uid       |
     | Assign same user to rol | 00000000000000000000000000000002 | 00000000000000000000000000000001 | 400        | usr_uid       |
    
@@ -54,9 +54,10 @@ Scenario Outline: Assign Permission "PM_DASHBOARD" to Role (NEGATIVE TESTS)
             "per_uid": "<per_uid>"
         }
     """
-    And I request "role/rol_uid/permission"
+    And I request "role/<rol_uid>/permission"
     Then the response status code should be <error_code>
     And the response status message should have the following text "<error_message>"
+
 
     Examples:
 
