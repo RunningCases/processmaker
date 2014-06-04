@@ -143,7 +143,6 @@ class Permission
             $process = new \ProcessMaker\BusinessModel\Process();
             $validator = new \ProcessMaker\BusinessModel\Validator();
 
-            $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
             $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
 
             //Set data
