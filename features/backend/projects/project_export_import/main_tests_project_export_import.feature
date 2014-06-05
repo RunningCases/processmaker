@@ -26,7 +26,7 @@ Scenario: Get a List DynaForms of a Project Process Complete BPMN
     And the type is "array"
     And the response has 1 records
    
-Scenario: Get the Output Documents List when there are exactly two output documents
+Scenario: Get the Output Documents List when there are exactly two output documents " BUG-14907, No se visualiza los cambios en el editor tiny de OutputDocuments"
     Given I request "project/1455892245368ebeb11c1a5001393784/output-documents"
     Then the response status code should be 200
     And the response charset is "UTF-8"

@@ -408,13 +408,13 @@ Scenario Outline: Assign Permission "PM_DASHBOARD" to Role
     | Assign Permissions "PM_CASES" to rol 1              | 1              | 00000000000000000000000000000005 |
     | Assign Permissions "PM_LOGIN" to rol 2              | 2              | 00000000000000000000000000000001 |
     | Assign Permissions "PM_ALLCASES" to rol 2           | 2              | 00000000000000000000000000000006 |
-    | Assign Permissions "PM_REPORTS" to rol 2            | 2              | 00000000000000000000000000000008 |
+    | Assign Permissions "PM_FOLDERS_VIEW" to rol 2       | 2              | 00000000000000000000000000000015 |
     | Assign Permissions "PM_REASSIGNCASE" to rol 2       | 2              | 00000000000000000000000000000007 |
     | Assign Permissions "PM_SUPERVISOR" to rol 2         | 2              | 00000000000000000000000000000009 |
     | Assign Permissions "PM_SETUP_ADVANCE" to rol 3      | 3              | 00000000000000000000000000000010 |
     | Assign Permissions "PM_DASHBOARD" to rol 4          | 4              | 00000000000000000000000000000011 |
     | Assign Permissions "PM_WEBDAV" to rol 5             | 5              | 00000000000000000000000000000012 |
-    | Assign Permissions "PM_DELETECASE" to rol 6         | 6              | 00000000000000000000000000000013 |
+    | Assign Permissions "PM_LOGIN" to rol 6              | 6              | 00000000000000000000000000000001 |
     | Assign Permissions "PM_EDITPERSONALINFO" to rol 7   | 7              | 00000000000000000000000000000014 |
     | Assign Permissions "PM_FOLDERS_VIEW" to rol 8       | 8              | 00000000000000000000000000000015 |
     | Assign Permissions "PM_FOLDERS_ADD_FOLDER" to rol 8 | 8              | 00000000000000000000000000000016 |
@@ -482,13 +482,13 @@ Scenario Outline: Unassign Permission of the Role
     | Unassign Permissions "PM_CASES" to rol 1              | 1              | 00000000000000000000000000000005 |
     | Unassign Permissions "PM_LOGIN" to rol 2              | 2              | 00000000000000000000000000000001 |
     | Unassign Permissions "PM_ALLCASES" to rol 2           | 2              | 00000000000000000000000000000006 |
-    | Unassign Permissions "PM_REPORTS" to rol 2            | 2              | 00000000000000000000000000000008 |
+    | Unassign Permissions "PM_FOLDERS_VIEW" to rol 2       | 2              | 00000000000000000000000000000015 |
     | Unassign Permissions "PM_REASSIGNCASE" to rol 2       | 2              | 00000000000000000000000000000007 |
     | Unassign Permissions "PM_SUPERVISOR" to rol 2         | 2              | 00000000000000000000000000000009 |
     | Unassign Permissions "PM_SETUP_ADVANCE" to rol 3      | 3              | 00000000000000000000000000000010 |
     | Unassign Permissions "PM_DASHBOARD" to rol 4          | 4              | 00000000000000000000000000000011 |
     | Unassign Permissions "PM_WEBDAV" to rol 5             | 5              | 00000000000000000000000000000012 |
-    | Unassign Permissions "PM_DELETECASE" to rol 6         | 6              | 00000000000000000000000000000013 |
+    | Unassign Permissions "PM_LOGIN" to rol 6              | 6              | 00000000000000000000000000000001 |
     | Unassign Permissions "PM_EDITPERSONALINFO" to rol 7   | 7              | 00000000000000000000000000000014 |
     | Unassign Permissions "PM_FOLDERS_VIEW" to rol 8       | 8              | 00000000000000000000000000000015 |
     | Unassign Permissions "PM_FOLDERS_ADD_FOLDER" to rol 8 | 8              | 00000000000000000000000000000016 |
