@@ -21,11 +21,11 @@ Feature: Case Tracker Negative Tests
 
         Examples:
 
-        | test_description                                            | project                          | map_type   | routing_history | message_history | error_code | error_message          |
-        | Invalid map type                                            | 50259961452d82bf57f4f62051572528 | STAGGEES   | 1               | 1               | 400        | map_type               |
-        | Invalid Routing History                                     | 50259961452d82bf57f4f62051572528 | STAGES     | 20              | 0               | 400        | routing_history        |
-        | Invalid Message History                                     | 50259961452d82bf57f4f62051572528 | STAGES     | 1               | 20              | 400        | message_history        |
-        | Field requered project                                      |                                  | STAGES     | 0               | 1               | 400        | prj_uid                |
+        | test_description        | project                          | map_type | routing_history | message_history | error_code | error_message   |
+        | Invalid map type        | 50259961452d82bf57f4f62051572528 | STAGGEES | 1               | 1               | 400        | map_type        |
+        | Invalid Routing History | 50259961452d82bf57f4f62051572528 | STAGES   | 20              | 0               | 400        | routing_history |
+        | Invalid Message History | 50259961452d82bf57f4f62051572528 | STAGES   | 1               | 20              | 400        | message_history |
+        | Field requered project  |                                  | STAGES   | 0               | 1               | 400        | prj_uid         |
        
 
    Scenario Outline: Assigning objects to process case tracker with bad parameters (negative tests)
@@ -45,9 +45,8 @@ Feature: Case Tracker Negative Tests
 
         Examples:
 
-        | test_description       | project                          | cto_type_obj    | cto_uid_obj                      | cto_condition | cto_position | error_code | error_message          |
-        | Invalid cto_type_obj   | 50259961452d82bf57f4f62051572528 | DYNAFORM        | 00001752652d82c592fc100000000051 |               | 1            | 400        | DYNAFORM               |
-        | Invalid cto_uid_obj    | 50259961452d82bf57f4f62051572528 | INPUT_DOCUMENT  | 8700000000000006d8c67d1001895377 |               | 2            | 400        | INPUT_DOCUMENT         |
-        | Invalid cto_position   | 50259961452d82bf57f4f62051572528 | OUTPUT_DOCUMENT | 76247354052d82ca9d04509043789234 |               | 3,9999.87    | 400        | cto_position           | 
-        | Field requered project |                                  | DYNAFORM        | 14761752652d82c592fc180020076851 |               | 1            | 400        | prj_uid                |
-       
+        | test_description       | project                          | cto_type_obj    | cto_uid_obj                      | cto_condition | cto_position | error_code | error_message  |
+        | Invalid cto_type_obj   | 50259961452d82bf57f4f62051572528 | SAMPLE          | 76247354052d82ca9d04509043789234 |               | 1            | 400        | cto_type_obj   |
+        | Invalid cto_uid_obj    | 50259961452d82bf57f4f62051572528 | INPUT_DOCUMENT  | 8700000000000006d8c67d1001895377 |               | 2            | 400        | cto_uid_obj    |
+        | Invalid cto_position   | 50259961452d82bf57f4f62051572528 | OUTPUT_DOCUMENT | 76247354052d82ca9d04509043789234 |               | 3,9999.87    | 400        | cto_position   | 
+        | Field requered project |                                  | DYNAFORM        | 14761752652d82c592fc180020076851 |               | 1            | 400        | prj_uid        |
