@@ -183,3 +183,25 @@ Feature: Case Scheduler Main Tests
     | 11             |
     | 12             |      
     | 13             |
+
+
+
+#Scenario para la revision del "BUG 15040"
+#Scenario Outline: Create new Projects for test create new case scheduler and allow to keep the same
+#    Given POST data from file "<project_template>"
+#    And I request "projects"
+#    Then the response status code should be 201
+#    And the response charset is "UTF-8"
+#    And the content type is "application/json"
+#    And the type is "array"
+#    And store "new_uid" in session array as variable "project_new_uid_<project_new_uid_number>" where an object has "object" equal to "project"
+#    And store "new_uid" in session array as variable "diagram_new_uid_<project_new_uid_number>" where an object has "object" equal to "diagram"
+#    And store "new_uid" in session array as variable "activity_new_uid_<project_new_uid_number>" where an object has "object" equal to "activity"
+#    And store "new_uid" in session array as variable "event_new_uid_<project_new_uid_number>" where an object has "object" equal to "event"
+#    And store "new_uid" in session array as variable "flow_new_uid_<project_new_uid_number>" where an object has "object" equal to "flow"
+#
+#    Examples:
+#
+#    | Description                                    | project_new_uid_number | project_template                 |
+#    | Create a new process with event case scheduler | 1                      | process_template_evaluation.json |
+#    | Create a new process with same case scheduler  | 2                      | process_template_parallel.json   |
