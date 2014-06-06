@@ -731,10 +731,17 @@ class BpmnWorkflow extends Project\Bpmn
 
             if ($forceInsert || is_null($artifact)) {
                 if ($generateUid) {
-                    $oldArtUid = $artifactData["ART_UID"];
+                    //Artifact
+                    unset($artifactData["BOU_UID"]);
 
+                    $uidOld = $artifactData["ART_UID"];
                     $artifactData["ART_UID"] = Util\Common::generateUID();
-                    $result[] = array("object" => "artifact", "new_uid" => $artifactData["ART_UID"], "old_uid" => $oldArtUid);
+
+                    $result[] = array(
+                        "object"  => "artifact",
+                        "old_uid" => $uidOld,
+                        "new_uid" => $artifactData["ART_UID"]
+                    );
                 }
 
                 $bwp->addArtifact($artifactData);

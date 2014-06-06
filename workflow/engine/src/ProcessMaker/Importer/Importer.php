@@ -311,7 +311,7 @@ abstract class Importer
         $project = $tables["project"][0];
         $diagram = $tables["diagram"][0];
         $diagram["activities"] = $tables["activity"];
-        $diagram["artifacts"] = array();
+        $diagram["artifacts"] = $tables["artifact"];
         $diagram["events"] = $tables["event"];
         $diagram["flows"] = $tables["flow"];
         $diagram["gateways"] = $tables["gateway"];
