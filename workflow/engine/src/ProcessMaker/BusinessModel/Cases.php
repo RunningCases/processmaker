@@ -11,6 +11,61 @@ use \CasesPeer;
  */
 class Cases
 {
+    private $formatFieldNameInUppercase = true;
+
+    /**
+     * Set the format of the fields name (uppercase, lowercase)
+     *
+     * @param bool $flag Value that set the format
+     *
+     * return void
+     */
+    public function setFormatFieldNameInUppercase($flag)
+    {
+        try {
+            $this->formatFieldNameInUppercase = $flag;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get the name of the field according to the format
+     *
+     * @param string $fieldName Field name
+     *
+     * return string Return the field name according the format
+     */
+    public function getFieldNameByFormatFieldName($fieldName)
+    {
+        try {
+            return ($this->formatFieldNameInUppercase)? strtoupper($fieldName) : strtolower($fieldName);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if does not exist the Case in table APPLICATION
+     *
+     * @param string $applicationUid        Unique id of Case
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if does not exist the Case in table APPLICATION
+     */
+    public function throwExceptionIfNotExistsCase($applicationUid, $fieldNameForException)
+    {
+        try {
+            $obj = \ApplicationPeer::retrieveByPK($applicationUid);
+
+            if (is_null($obj)) {
+                throw new \Exception(\G::LoadTranslation("ID_CASE_DOES_NOT_EXIST2", array($fieldNameForException, $applicationUid)));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     /**
      * Get list for Cases
      *
@@ -654,7 +709,8 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function putCancelCase($app_uid, $usr_uid, $del_index = false) {
+    public function putCancelCase($app_uid, $usr_uid, $del_index = false)
+    {
         Validator::isString($app_uid, '$app_uid');
         Validator::isString($usr_uid, '$usr_uid');
 
@@ -687,7 +743,8 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function putPauseCase($app_uid, $usr_uid, $del_index = false, $unpaused_date = null) {
+    public function putPauseCase($app_uid, $usr_uid, $del_index = false, $unpaused_date = null)
+    {
         Validator::isString($app_uid, '$app_uid');
         Validator::isString($usr_uid, '$usr_uid');
 
@@ -724,7 +781,8 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function putUnpauseCase($app_uid, $usr_uid, $del_index = false) {
+    public function putUnpauseCase($app_uid, $usr_uid, $del_index = false)
+    {
         Validator::isString($app_uid, '$app_uid');
         Validator::isString($usr_uid, '$usr_uid');
 
@@ -751,7 +809,8 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function putExecuteTriggerCase($app_uid, $tri_uid, $usr_uid, $del_index = false) {
+    public function putExecuteTriggerCase($app_uid, $tri_uid, $usr_uid, $del_index = false)
+    {
         Validator::isString($app_uid, '$app_uid');
         Validator::isString($tri_uid, '$tri_uid');
         Validator::isString($usr_uid, '$usr_uid');
@@ -779,7 +838,8 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function deleteCase($app_uid) {
+    public function deleteCase($app_uid)
+    {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
         $case = new \Cases();
@@ -1348,7 +1408,8 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function getCaseVariables($app_uid) {
+    public function getCaseVariables($app_uid)
+    {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
 
@@ -1367,7 +1428,8 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function setCaseVariables($app_uid, $app_data) {
+    public function setCaseVariables($app_uid, $app_data)
+    {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
         Validator::isArray($app_data, '$app_data');
@@ -1388,7 +1450,8 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function getCaseNotes($app_uid, $usr_uid, $data_get) {
+    public function getCaseNotes($app_uid, $usr_uid, $data_get)
+    {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
         Validator::isString($usr_uid, '$usr_uid');
@@ -1487,7 +1550,8 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function saveCaseNote($app_uid, $usr_uid, $note_content, $send_mail = false) {
+    public function saveCaseNote($app_uid, $usr_uid, $note_content, $send_mail = false)
+    {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
 
@@ -1517,226 +1581,329 @@ class Cases
     }
 
     /**
-     * Get data Task Case
+     * Get data of a Task from a record
      *
-     * @param string $sApplicationUID Unique id of Case
+     * @param array $record Record
      *
-     * return array Return an array with Task Case
+     * return array Return an array with data Task
      */
-    public function getTasks($sApplicationUID)
+    public function getTaskDataFromRecord(array $record)
     {
         try {
-            $iDelegation = \AppDelegation::getCurrentIndex($sApplicationUID);
-            $case = new \Cases();
-            $caseLoad = $case->loadCase($sApplicationUID);
-            $sProcessUID  = $caseLoad['PRO_UID'];
-            $sTask = '';
-            $bCT = true;
-            $oProcess = new \Process();
-            $oPM = array();
-            $oCriteria = new \Criteria('workflow');
-            $oCriteria->addSelectColumn(\TaskPeer::PRO_UID);
-            $oCriteria->addSelectColumn(\TaskPeer::TAS_UID);
-            $oCriteria->addSelectColumn(\ContentPeer::CON_VALUE);
-            $oCriteria->addSelectColumn(\TaskPeer::TAS_START);
-            $oCriteria->addSelectColumn(\TaskPeer::TAS_TYPE);
+            return array(
+                $this->getFieldNameByFormatFieldName("TAS_UID")         => $record["TAS_UID"],
+                $this->getFieldNameByFormatFieldName("TAS_TITLE")       => $record["TAS_TITLE"] . "",
+                $this->getFieldNameByFormatFieldName("TAS_DESCRIPTION") => $record["TAS_DESCRIPTION"] . "",
+                $this->getFieldNameByFormatFieldName("TAS_START")       => ($record["TAS_START"] == "TRUE")? 1 : 0,
+                $this->getFieldNameByFormatFieldName("TAS_TYPE")        => $record["TAS_TYPE"],
+                $this->getFieldNameByFormatFieldName("TAS_DERIVATION")  => $record["TAS_DERIVATION"],
+                $this->getFieldNameByFormatFieldName("TAS_ASSIGN_TYPE") => $record["TAS_ASSIGN_TYPE"],
+                $this->getFieldNameByFormatFieldName("USR_UID")         => $record["USR_UID"] . "",
+                $this->getFieldNameByFormatFieldName("USR_USERNAME")    => $record["USR_USERNAME"] . "",
+                $this->getFieldNameByFormatFieldName("USR_FIRSTNAME")   => $record["USR_FIRSTNAME"] . "",
+                $this->getFieldNameByFormatFieldName("USR_LASTNAME")    => $record["USR_LASTNAME"] . ""
+            );
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 
-            $oCriteria->addSelectColumn(\TaskPeer::TAS_ASSIGN_TYPE);
-            $oCriteria->addSelectColumn(\TaskPeer::TAS_ASSIGN_LOCATION);
-            $oCriteria->addSelectColumn(\TaskPeer::TAS_ASSIGN_LOCATION_ADHOC);
-            $oCriteria->addSelectColumn(\TaskPeer::TAS_LAST_ASSIGNED);
-            $oCriteria->addSelectColumn(\TaskPeer::TAS_START);
-            $oCriteria->addSelectColumn(\TaskPeer::TAS_TO_LAST_USER);
-            $oCriteria->addSelectColumn(\TaskPeer::TAS_DERIVATION);
+    /**
+     * Get all Tasks of Case
+     * Based in: processmaker/workflow/engine/classes/class.processMap.php
+     * Method:   processMap::load()
+     *
+     * @param string $applicationUid Unique id of Case
+     *
+     * return array Return an array with all Tasks of Case
+     */
+    public function getTasks($applicationUid)
+    {
+        try {
+            $arrayTask = array();
 
-            $aConditions = array();
-            $aConditions[] = array(0 => \TaskPeer::TAS_UID, 1 => \ContentPeer::CON_ID);
-            $aConditions[] = array(0 => \ContentPeer::CON_CATEGORY, 1 => \DBAdapter::getStringDelimiter() . 'TAS_TITLE' . \DBAdapter::getStringDelimiter() );
-            $aConditions[] = array(0 => \ContentPeer::CON_LANG, 1 => \DBAdapter::getStringDelimiter() . SYS_LANG . \DBAdapter::getStringDelimiter() );
-            $oCriteria->addJoinMC($aConditions, \Criteria::LEFT_JOIN);
-            $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
-            $oDataset = \TaskPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow1 = $oDataset->getRow()) {
-                $oTask = new \StdClass();
-                $oTask->tas_uid = $aRow1['TAS_UID'];
-                $oTask->tas_type = $aRow1['TAS_TYPE'];
-                if ($aRow1['TAS_TYPE'] == 'NORMAL') {
-                    if (($aRow1['CON_VALUE'] == "")) {
+            //Verify data
+            $this->throwExceptionIfNotExistsCase($applicationUid, $this->getFieldNameByFormatFieldName("APP_UID"));
+
+            //Set variables
+            $process = new \Process();
+            $application = new \Application();
+            $conf = new \Configurations();
+
+            $arrayApplicationData = $application->Load($applicationUid);
+            $processUid = $arrayApplicationData["PRO_UID"];
+
+            $confEnvSetting = $conf->getFormats();
+
+            $taskUid = "";
+
+            //Get data
+            //SQL
+            $delimiter = \DBAdapter::getStringDelimiter();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\TaskPeer::TAS_UID);
+            $criteria->addAsColumn("TAS_TITLE", "CT.CON_VALUE");
+            $criteria->addAsColumn("TAS_DESCRIPTION", "CD.CON_VALUE");
+            $criteria->addSelectColumn(\TaskPeer::TAS_START);
+            $criteria->addSelectColumn(\TaskPeer::TAS_TYPE);
+            $criteria->addSelectColumn(\TaskPeer::TAS_DERIVATION);
+            $criteria->addSelectColumn(\TaskPeer::TAS_ASSIGN_TYPE);
+            $criteria->addSelectColumn(\UsersPeer::USR_UID);
+            $criteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+            $criteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
+            $criteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
+
+            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
+            $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\TaskPeer::TAS_UID, "CT.CON_ID", \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "TAS_TITLE" . $delimiter, \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\TaskPeer::TAS_UID, "CD.CON_ID", \Criteria::EQUAL);
+            $arrayCondition[] = array("CD.CON_CATEGORY", $delimiter . "TAS_DESCRIPTION" . $delimiter, \Criteria::EQUAL);
+            $arrayCondition[] = array("CD.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $criteria->addJoin(\TaskPeer::TAS_LAST_ASSIGNED, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
+
+            $criteria->add(\TaskPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+
+            $rsCriteria = \TaskPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                //Task
+                if ($row["TAS_TYPE"] == "NORMAL") {
+                    if (($row["TAS_TITLE"] . "" == "")) {
                         //There is no Label in Current SYS_LANG language so try to find in English - by default
-                        $oTask1 = new \Task();
-                        $aRow1['CON_VALUE'] = $oTask1->getTasTitle();
+                        $task = new \Task();
+                        $task->setTasUid($row["TAS_UID"]);
+
+                        $row["TAS_TITLE"] = $task->getTasTitle();
                     }
-                    $oTask->tas_title = htmlentities($aRow1['CON_VALUE'], ENT_QUOTES, 'UTF-8');
                 } else {
-                    $oCriteria = new \Criteria('workflow');
-                    $del = \DBAdapter::getStringDelimiter();
-                    $oCriteria->add(\SubProcessPeer::PRO_PARENT, $aRow1['PRO_UID']);
-                    $oCriteria->add(\SubProcessPeer::TAS_PARENT, $aRow1['TAS_UID']);
+                    $criteria2 = new \Criteria("workflow");
 
-                    $oCriteria->addAsColumn('TAS_TITLE', 'C1.CON_VALUE');
-                    $oCriteria->addAlias("C1", 'CONTENT');
-                    $tasTitleConds = array();
-                    $tasTitleConds[] = array(\SubProcessPeer::TAS_PARENT, 'C1.CON_ID');
-                    $tasTitleConds[] = array('C1.CON_CATEGORY', $del . 'TAS_TITLE' . $del);
-                    $tasTitleConds[] = array('C1.CON_LANG', $del . SYS_LANG . $del);
-                    $oCriteria->addJoinMC($tasTitleConds, \Criteria::LEFT_JOIN);
+                    $criteria2->addSelectColumn(\SubProcessPeer::PRO_UID);
+                    $criteria2->addAsColumn("TAS_TITLE", "CT.CON_VALUE");
+                    $criteria2->addAsColumn("TAS_DESCRIPTION", "CD.CON_VALUE");
 
-                    $oDatasetX = \SubProcessPeer::doSelectRS($oCriteria);
-                    $oDatasetX->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                    $oDatasetX->next();
-                    $aRowx = $oDatasetX->getRow();
-                    if ($oProcess->exists($aRowx['PRO_UID'])) {
-                        $oTask->tas_title = htmlentities($aRowx['TAS_TITLE'], ENT_QUOTES, 'UTF-8');
-                    } else {
-                        $oTask->tas_title = htmlentities($aRow1['CON_VALUE'], ENT_QUOTES, 'UTF-8');
+                    $criteria2->addAlias("CT", \ContentPeer::TABLE_NAME);
+                    $criteria2->addAlias("CD", \ContentPeer::TABLE_NAME);
+
+                    $arrayCondition = array();
+                    $arrayCondition[] = array(\SubProcessPeer::TAS_PARENT, "CT.CON_ID", \Criteria::EQUAL);
+                    $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "TAS_TITLE" . $delimiter, \Criteria::EQUAL);
+                    $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+                    $criteria2->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+                    $arrayCondition = array();
+                    $arrayCondition[] = array(\SubProcessPeer::TAS_PARENT, "CD.CON_ID", \Criteria::EQUAL);
+                    $arrayCondition[] = array("CD.CON_CATEGORY", $delimiter . "TAS_DESCRIPTION" . $delimiter, \Criteria::EQUAL);
+                    $arrayCondition[] = array("CD.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+                    $criteria2->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+                    $criteria2->add(\SubProcessPeer::PRO_PARENT, $processUid);
+                    $criteria2->add(\SubProcessPeer::TAS_PARENT, $row["TAS_UID"]);
+
+                    $rsCriteria2 = \SubProcessPeer::doSelectRS($criteria2);
+                    $rsCriteria2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                    $rsCriteria2->next();
+
+                    $row2 = $rsCriteria2->getRow();
+
+                    if ($process->exists($row2["PRO_UID"])) {
+                        $row["TAS_TITLE"] = $row2["TAS_TITLE"];
+                        $row["TAS_DESCRIPTION"] = $row2["TAS_DESCRIPTION"];
                     }
                 }
 
-                $oTask->tas_assign_type = $aRow1['TAS_ASSIGN_TYPE'];
-                $oTask->tas_assign_location = $aRow1['TAS_ASSIGN_LOCATION'];
-                $oTask->tas_assign_location_adhoc = $aRow1['TAS_ASSIGN_LOCATION_ADHOC'];
-                $oTask->tas_last_assigned = $aRow1['TAS_LAST_ASSIGNED'];
-                $oTask->tas_start = $aRow1['TAS_START'];
-                $oTask->tas_to_last_user = $aRow1['TAS_TO_LAST_USER'];
-                $oTask->tas_derivation = $aRow1['TAS_DERIVATION'];
+                //Routes
+                $routeType = "";
+                $arrayRoute = array();
 
-                $oTask->routing = new \StdClass();
-                $oTask->routing->rou_type = '';
-                $oTask->routing->to = array();
-                $oCriteria = new \Criteria('workflow');
-                $oCriteria->addSelectColumn(\RoutePeer::ROU_TYPE);
-                $oCriteria->addSelectColumn(\RoutePeer::ROU_NEXT_TASK);
-                $oCriteria->addSelectColumn(\RoutePeer::ROU_CONDITION);
-                $oCriteria->addSelectColumn(\RoutePeer::ROU_TO_LAST_USER);
-                $oCriteria->addSelectColumn(\RoutePeer::ROU_OPTIONAL);
-                $oCriteria->addSelectColumn(\UsersPeer::USR_UID);
-                $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
-                $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
-                $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_INIT_DATE);
-                $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_TASK_DUE_DATE);
-                $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_FINISH_DATE);
-                $oCriteria->addJoin(\AppDelegationPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
-                $oCriteria->addJoin(\AppDelegationPeer::PRO_UID, \RoutePeer::PRO_UID, \Criteria::LEFT_JOIN);
-                $oCriteria->add(\RoutePeer::PRO_UID, $sProcessUID);
-                $oCriteria->add(\RoutePeer::TAS_UID, $aRow1['TAS_UID']);
-                $oCriteria->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
-                $oCriteria->add(\AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
-                $oCriteria->addDescendingOrderByColumn(\AppDelegationPeer::DEL_INDEX);
-                $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
-                $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                $oDataset2->next();
+                $criteria2 = new \Criteria("workflow");
 
-                while ($aRow2 = $oDataset2->getRow()) {
-                    $iDiff = strtotime($aRow2['DEL_FINISH_DATE']) - strtotime($aRow2['DEL_INIT_DATE']);
-                    $oTo = new \StdClass();
-                    $oTo->rou_next_task = $aRow2['ROU_NEXT_TASK'];
-                    $oTo->rou_condition = $aRow2['ROU_CONDITION'];
-                    $oTo->rou_to_last_user = $aRow2['ROU_TO_LAST_USER'];
-                    $oTo->rou_optional = $aRow2['ROU_OPTIONAL'];
-                    $oTo->usr_uid = ($aRow2['USR_UID'] != null ? $aRow2['USR_FIRSTNAME'] . ' ' . $aRow2['USR_LASTNAME'] : \G::LoadTranslation('ID_NONE'));
-                    $oTo->usr_firstname = $aRow2['USR_FIRSTNAME'];
-                    $oTo->usr_lastname = $aRow2['USR_LASTNAME'];
-                    $oTo->del_init_date = ($aRow2['DEL_INIT_DATE'] != null ? $aRow2['DEL_INIT_DATE'] : \G::LoadTranslation('ID_CASE_NOT_YET_STARTED'));
-                    $oTo->del_task_due_date = ($aRow2['DEL_TASK_DUE_DATE'] != null ? $aRow2['DEL_TASK_DUE_DATE'] : \G::LoadTranslation('ID_CASE_NOT_YET_STARTED'));
-                    $oTo->del_finish_date = ($aRow2['DEL_FINISH_DATE'] != null ? $aRow2['DEL_FINISH_DATE'] : \G::LoadTranslation('ID_NOT_FINISHED'));
-                    $oTo->duration = ($aRow2['DEL_FINISH_DATE'] != null ? (int) ($iDiff / 3600) . ' ' . ((int) ($iDiff / 3600) == 1 ? \G::LoadTranslation('ID_HOUR') : \G::LoadTranslation('ID_HOURS')) . ' ' . (int) (($iDiff % 3600) / 60) . ' ' . ((int) (($iDiff % 3600) / 60) == 1 ? \G::LoadTranslation('ID_MINUTE') : \G::LoadTranslation('ID_MINUTES')) . ' ' . (int) (($iDiff % 3600) % 60) . ' ' . ((int) (($iDiff % 3600) % 60) == 1 ? \G::LoadTranslation('ID_SECOND') : \G::LoadTranslation('ID_SECONDS')) : \G::LoadTranslation('ID_NOT_FINISHED'));
-                    $oTask->routing->rou_type = $aRow2['ROU_TYPE'];
-                    $oTask->routing->to[] = $oTo;
-                    $oDataset2->next();
+                $criteria2->addAsColumn("ROU_NUMBER", \RoutePeer::ROU_CASE);
+                $criteria2->addSelectColumn(\RoutePeer::ROU_TYPE);
+                $criteria2->addSelectColumn(\RoutePeer::ROU_CONDITION);
+                $criteria2->addAsColumn("TAS_UID", \RoutePeer::ROU_NEXT_TASK);
+                $criteria2->add(\RoutePeer::PRO_UID, $processUid, \Criteria::EQUAL);
+                $criteria2->add(\RoutePeer::TAS_UID, $row["TAS_UID"], \Criteria::EQUAL);
+                $criteria2->addAscendingOrderByColumn("ROU_NUMBER");
+
+                $rsCriteria2 = \RoutePeer::doSelectRS($criteria2);
+                $rsCriteria2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                while ($rsCriteria2->next()) {
+                    $row2 = $rsCriteria2->getRow();
+
+                    $routeType = $row2["ROU_TYPE"];
+
+                    $arrayRoute[] = array(
+                        $this->getFieldNameByFormatFieldName("ROU_NUMBER")    => (int)($row2["ROU_NUMBER"]),
+                        $this->getFieldNameByFormatFieldName("ROU_CONDITION") => $row2["ROU_CONDITION"] . "",
+                        $this->getFieldNameByFormatFieldName("TAS_UID")       => $row2["TAS_UID"]
+                    );
                 }
-                if ($bCT) {
-                    $oCriteria = new \Criteria('workflow');
-                    $oCriteria->addSelectColumn('COUNT(*) AS CANT');
-                    $oCriteria->addSelectColumn('MIN(DEL_FINISH_DATE) AS FINISH');
-                    $oCriteria->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
-                    $oCriteria->add(\AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
-                    $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
-                    $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                    $oDataset2->next();
-                    $aRow2 = $oDataset2->getRow();
-                    $oCriteria = new \Criteria('workflow');
-                    $oCriteria->addSelectColumn('DEL_FINISH_DATE');
-                    $oCriteria->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
-                    $oCriteria->add(\AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
-                    $oCriteria->add(\AppDelegationPeer::DEL_FINISH_DATE, null);
-                    $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
-                    $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                    $oDataset2->next();
-                    $aRow3 = $oDataset2->getRow();
-                    if ($aRow3) {
-                        $aRow2['FINISH'] = '';
+
+                //Delegations
+                $arrayAppDelegation = array();
+
+                $criteria2 = new \Criteria("workflow");
+
+                $criteria2->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
+                $criteria2->addSelectColumn(\AppDelegationPeer::DEL_INIT_DATE);
+                $criteria2->addSelectColumn(\AppDelegationPeer::DEL_TASK_DUE_DATE);
+                $criteria2->addSelectColumn(\AppDelegationPeer::DEL_FINISH_DATE);
+                $criteria2->addSelectColumn(\UsersPeer::USR_UID);
+                $criteria2->addSelectColumn(\UsersPeer::USR_USERNAME);
+                $criteria2->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
+                $criteria2->addSelectColumn(\UsersPeer::USR_LASTNAME);
+
+                $criteria2->addJoin(\AppDelegationPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
+
+                $criteria2->add(\AppDelegationPeer::APP_UID, $applicationUid, \Criteria::EQUAL);
+                $criteria2->add(\AppDelegationPeer::TAS_UID, $row["TAS_UID"], \Criteria::EQUAL);
+                $criteria2->addAscendingOrderByColumn(\AppDelegationPeer::DEL_INDEX);
+
+                $rsCriteria2 = \AppDelegationPeer::doSelectRS($criteria2);
+                $rsCriteria2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                while ($rsCriteria2->next()) {
+                    $row2 = $rsCriteria2->getRow();
+
+                    $arrayAppDelegationDate = array(
+                        "DEL_INIT_DATE"     => array("date" => $row2["DEL_INIT_DATE"],     "dateFormated" => \G::LoadTranslation("ID_CASE_NOT_YET_STARTED")),
+                        "DEL_TASK_DUE_DATE" => array("date" => $row2["DEL_TASK_DUE_DATE"], "dateFormated" => \G::LoadTranslation("ID_CASE_NOT_YET_STARTED")),
+                        "DEL_FINISH_DATE"   => array("date" => $row2["DEL_FINISH_DATE"],   "dateFormated" => \G::LoadTranslation("ID_NOT_FINISHED"))
+                    );
+
+                    foreach ($arrayAppDelegationDate as $key => $value) {
+                        $d = $value;
+
+                        if (!empty($d["date"])) {
+                            $dateTime = new \DateTime($d["date"]);
+                            $arrayAppDelegationDate[$key]["dateFormated"] = $dateTime->format($confEnvSetting["dateFormat"]);
+                        }
                     }
-                    if (empty($aRow2["FINISH"]) && $aRow1["TAS_UID"] == $sTask) {
-                        $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
+
+                    $appDelegationDuration = \G::LoadTranslation("ID_NOT_FINISHED");
+
+                    if (!empty($row2["DEL_FINISH_DATE"]) && !empty($row2["DEL_INIT_DATE"])) {
+                        $t = strtotime($row2["DEL_FINISH_DATE"]) - strtotime($row2["DEL_INIT_DATE"]);
+
+                        $h = $t * (1 / 60) * (1 / 60);
+                        $m = ($h - (int)($h)) * (60 / 1);
+                        $s = ($m - (int)($m)) * (60 / 1);
+
+                        $h = (int)($h);
+                        $m = (int)($m);
+
+                        $appDelegationDuration = $h . " " . (($h == 1)? \G::LoadTranslation("ID_HOUR") : \G::LoadTranslation("ID_HOURS"));
+                        $appDelegationDuration = $appDelegationDuration . " " . $m . " " . (($m == 1)? \G::LoadTranslation("ID_MINUTE") : \G::LoadTranslation("ID_MINUTES"));
+                        $appDelegationDuration = $appDelegationDuration . " " . $s . " " . (($s == 1)? \G::LoadTranslation("ID_SECOND") : \G::LoadTranslation("ID_SECONDS"));
+                    }
+
+                    $arrayAppDelegation[] = array(
+                        $this->getFieldNameByFormatFieldName("DEL_INDEX")         => (int)($row2["DEL_INDEX"]),
+                        $this->getFieldNameByFormatFieldName("DEL_INIT_DATE")     => $arrayAppDelegationDate["DEL_INIT_DATE"]["dateFormated"],
+                        $this->getFieldNameByFormatFieldName("DEL_TASK_DUE_DATE") => $arrayAppDelegationDate["DEL_TASK_DUE_DATE"]["dateFormated"],
+                        $this->getFieldNameByFormatFieldName("DEL_FINISH_DATE")   => $arrayAppDelegationDate["DEL_FINISH_DATE"]["dateFormated"],
+                        $this->getFieldNameByFormatFieldName("DEL_DURATION")      => $appDelegationDuration,
+                        $this->getFieldNameByFormatFieldName("USR_UID")           => $row2["USR_UID"],
+                        $this->getFieldNameByFormatFieldName("USR_USERNAME")      => $row2["USR_USERNAME"] . "",
+                        $this->getFieldNameByFormatFieldName("USR_FIRSTNAME")     => $row2["USR_FIRSTNAME"] . "",
+                        $this->getFieldNameByFormatFieldName("USR_LASTNAME")      => $row2["USR_LASTNAME"] . ""
+                    );
+                }
+
+                //Status
+                $status = "";
+
+                //$criteria2
+                $criteria2 = new \Criteria("workflow");
+
+                $criteria2->addAsColumn("CANT", "COUNT(" . \AppDelegationPeer::APP_UID . ")");
+                $criteria2->addAsColumn("FINISH", "MIN(" . \AppDelegationPeer::DEL_FINISH_DATE . ")");
+                $criteria2->add(\AppDelegationPeer::APP_UID, $applicationUid, \Criteria::EQUAL);
+                $criteria2->add(\AppDelegationPeer::TAS_UID, $row["TAS_UID"], \Criteria::EQUAL);
+
+                $rsCriteria2 = \AppDelegationPeer::doSelectRS($criteria2);
+                $rsCriteria2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                $rsCriteria2->next();
+
+                $row2 = $rsCriteria2->getRow();
+
+                //$criteria3
+                $criteria3 = new \Criteria("workflow");
+
+                $criteria3->addSelectColumn(\AppDelegationPeer::DEL_FINISH_DATE);
+                $criteria3->add(\AppDelegationPeer::APP_UID, $applicationUid, \Criteria::EQUAL);
+                $criteria3->add(\AppDelegationPeer::TAS_UID, $row["TAS_UID"], \Criteria::EQUAL);
+                $criteria3->add(\AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL);
+
+                $rsCriteria3 = \AppDelegationPeer::doSelectRS($criteria3);
+                $rsCriteria3->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                $rsCriteria3->next();
+
+                $row3 = $rsCriteria3->getRow();
+
+                if ($row3) {
+                    $row2["FINISH"] = "";
+                }
+
+                //Status
+                if (empty($row2["FINISH"]) && !is_null($taskUid) && $row["TAS_UID"] == $taskUid) {
+                    $status = "TASK_IN_PROGRESS"; //Red
+                } else {
+                    if (!empty($row2["FINISH"])) {
+                        $status = "TASK_COMPLETED"; //Green
                     } else {
-                        if (!empty($aRow2["FINISH"])) {
-                            $oTask->status = G::LoadTranslation( 'ID_COMPLETED_TASK' );
-                        } else {
-                            if ($oTask->routing->rou_type != 'SEC-JOIN') {
-                                if ($aRow2["CANT"] != 0) {
-                                    $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
-                                } else {
-                                    $oTask->status = G::LoadTranslation( 'ID_PENDING_TASK' );
-                                }
+                        if ($routeType != "SEC-JOIN") {
+                            if ($row2["CANT"] != 0) {
+                                $status = "TASK_IN_PROGRESS"; //Red
                             } else {
-                                if ($aRow3) {
-                                    $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
-                                } else {
-                                    $oTask->status = G::LoadTranslation( 'ID_PENDING_TASK' );
-                                }
+                                $status = "TASK_PENDING_NOT_EXECUTED"; //Gray
+                            }
+                        } else {
+                            //$status = "TASK_PARALLEL"; //Yellow
+
+                            if ($row3) {
+                                $status = "TASK_IN_PROGRESS"; //Red
+                            } else {
+                                $status = "TASK_PENDING_NOT_EXECUTED"; //Gray
                             }
                         }
                     }
-                } else {
-                    if (($sApplicationUID != '') && ($iDelegation > 0) && ($sTask != '')) {
-                        $oCriteria = new \Criteria('workflow');
-                        $oCriteria->addSelectColumn('COUNT(*) AS CANT');
-                        $oCriteria->addSelectColumn('MIN(DEL_FINISH_DATE) AS FINISH');
-                        $oCriteria->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
-                        $oCriteria->add(\AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
-                        $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
-                        $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                        $oDataset2->next();
-                        $aRow2 = $oDataset2->getRow();
-                        $oCriteria = new \Criteria('workflow');
-                        $oCriteria->addSelectColumn('DEL_FINISH_DATE');
-                        $oCriteria->add(\AppDelegationPeer::APP_UID, $sApplicationUID);
-                        $oCriteria->add(\AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
-                        $oCriteria->add(\AppDelegationPeer::DEL_FINISH_DATE, null);
-                        $oDataset2 = \AppDelegationPeer::doSelectRS($oCriteria);
-                        $oDataset2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                        $oDataset2->next();
-                        $aRow3 = $oDataset2->getRow();
-                        if ($aRow3) {
-                            $aRow2['FINISH'] = '';
-                        }
-                        if (empty($aRow2["FINISH"]) && $aRow1["TAS_UID"] == $sTask) {
-                            $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
-                        } else {
-                            if (!empty($aRow2["FINISH"])) {
-                                $oTask->status = G::LoadTranslation( 'ID_COMPLETED_TASK' );
-                            } else {
-                                if ($oTask->routing->rou_type != 'SEC-JOIN') {
-                                    if ($aRow2["CANT"] != 0) {
-                                        $oTask->status = G::LoadTranslation( 'ID_TASK_IN_PROGRESS' );
-                                    } else {
-                                        $oTask->status = G::LoadTranslation( 'ID_PENDING_TASK' );
-                                    }
-                                } else {
-                                    $oTask->status = G::LoadTranslation( 'ID_PARALLEL_TASK' );
-                                }
-                            }
-                        }
-                    }
                 }
-                $oPM[] = $oTask;
-                $oDataset->next();
+
+                //Set data
+                $arrayAux = $this->getTaskDataFromRecord($row);
+                $arrayAux[$this->getFieldNameByFormatFieldName("ROUTE")][$this->getFieldNameByFormatFieldName("TYPE")] = $routeType;
+                $arrayAux[$this->getFieldNameByFormatFieldName("ROUTE")][$this->getFieldNameByFormatFieldName("TO")] = $arrayRoute;
+                $arrayAux[$this->getFieldNameByFormatFieldName("DELEGATIONS")] = $arrayAppDelegation;
+                $arrayAux[$this->getFieldNameByFormatFieldName("STATUS")] = $status;
+
+                $arrayTask[] = $arrayAux;
             }
-            return $oPM;
+
+            //Return
+            return $arrayTask;
         } catch (\Exception $e) {
             throw $e;
         }
     }
 }
+
