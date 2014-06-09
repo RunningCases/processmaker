@@ -21,30 +21,30 @@ Scenario Outline:  Create new Role (NEGATIVE TESTS)
     Examples:
 
     | test_description                                      | rol_code                    | rol_name                                      | rol_status  | error_code | error_message   |
-    | Create Role with same name                            | PROCESSMAKER_OPERATOR       | Operator                                      | ACTIVE      | 400        | already_exists  |
-    | Create Role without fill required fields "rol_code"   |                             | sample                                        |             | 400        | required_fields |
-    | Create Role without fill required fields "rol_name"   | PROCESSMAKER_ADMINISTRATOR1 |                                               | ACTIVE      | 400        | required_fields |
-    | Create Role without fill required fields "rol_status" | PROCESSMAKER_MANAGER1       | Rol con code manager                          |             | 400        | required_fields |
+    | Create Role with same name                            | PROCESSMAKER_OPERATOR       | Operator                                      | ACTIVE      | 400        | already exists  |
+    | Create Role without fill required fields "rol_code"   |                             | sample                                        |             | 400        | rol_code        |
+    | Create Role without fill required fields "rol_name"   | PROCESSMAKER_ADMINISTRATOR1 |                                               | ACTIVE      | 400        | rol_name        |
+    | Create Role without fill required fields "rol_status" | PROCESSMAKER_MANAGER1       | Rol con code manager                          |             | 400        | rol_status      |
     | Create Role with wrong field rol_status               | PROCESSMAKER_ADMINISTRATOR2 | Rol con code administrator/inactive           | SAMPLE      | 400        | rol_status      |
     
 
-#Scenario Outline:  Assign User to Role (NEGATIVE TESTS)
-#    Given POST this data:
-#    """
-#        {
-#            "usr_uid": "<usr_uid>"
-#        }
-#    """
-#    And I request "role/rol_uid/user"
-#    Then the response status code should be <error_code>
-#    And the response status message should have the following text "<error_message>"
-# 
-#    Examples:
-#
-#    | Description             | rol_uid                          | usr_uid                          | error_code | error_message |
-#    | Without rol_uid         | 00000000000000000000000000000004 | 51049032352d56710347233042615067 | 400        | rol_uid       |
-#    | Without usr_uid         | 00000000000000000000000000000004 |                                  | 400        | usr_uid       |
-#    | Assign same user to rol | 00000000000000000000000000000002 | 00000000000000000000000000000001 | 400        | usr_uid       |
+Scenario Outline:  Assign User to Role (NEGATIVE TESTS)
+    Given POST this data:
+    """
+        {
+            "usr_uid": "<usr_uid>"
+        }
+    """
+    And I request "role/<rol_uid>/user" 
+    Then the response status code should be <error_code>
+    And the response status message should have the following text "<error_message>"
+ 
+    Examples:
+
+    | Description             | rol_uid                          | usr_uid                          | error_code | error_message |
+    | Without rol_uid         |                                  | 51049032352d56710347233042615067 | 400        | rol_uid       |
+    | Without usr_uid         | 00000000000000000000000000000004 |                                  | 400        | usr_uid       |
+    | Assign same user to rol | 00000000000000000000000000000002 | 00000000000000000000000000000001 | 400        | usr_uid       |
    
 
 Scenario Outline: Assign Permission "PM_DASHBOARD" to Role (NEGATIVE TESTS)
@@ -54,9 +54,10 @@ Scenario Outline: Assign Permission "PM_DASHBOARD" to Role (NEGATIVE TESTS)
             "per_uid": "<per_uid>"
         }
     """
-    And I request "role/rol_uid/permission"
+    And I request "role/<rol_uid>/permission"
     Then the response status code should be <error_code>
     And the response status message should have the following text "<error_message>"
+
 
     Examples:
 

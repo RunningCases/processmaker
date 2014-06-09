@@ -589,6 +589,19 @@ function doSearch(){
 editProcess = function(typeParam)
 {
   var rowSelected = processesGrid.getSelectionModel().getSelected();
+  if (!rowSelected) {
+      Ext.Msg.show({
+          title: '',
+          msg: _('ID_NO_SELECTION_WARNING'),
+          buttons: Ext.Msg.INFO,
+          fn: function () {
+          },
+          animEl: 'elId',
+          icon: Ext.MessageBox.INFO,
+          buttons: Ext.MessageBox.OK
+      });
+      return;
+  }
   var url, pro_uid = rowSelected.data.PRO_UID;
   var type = rowSelected.data.PROJECT_TYPE;
 

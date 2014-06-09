@@ -114,14 +114,13 @@ def buildPmUi(homeDir, targetDir, mode)
     version = getVersion(homeDir)
 
     puts "Generating Theme files"
-    executeInto(homeDir, ["compileTheme[mafe]", "js"])
-
+    themeDir = Dir.pwd + "/vendor/colosa/MichelangeloFE/themes/mafe"
+    executeInto(homeDir, ["compileTheme[#{themeDir}]", "js"])
     puts "\nCopying lib files into: #{pmUIDir}".bold
-
     copyFiles({
         "#{homeDir}/build/js/pmui-#{version}.js" => "#{pmUIDir}/pmui.min.js",
-        "#{homeDir}/themes/mafe/build/pmui-mafe.css" => "#{pmUIDir}/pmui.min.css",
-        "#{homeDir}/themes/mafe/build/images/*.png" => "#{targetDir}/css/images/",
+        "#{themeDir}/build/pmui-mafe.css" => "#{pmUIDir}/pmui.min.css",
+        "#{themeDir}/build/images/*.png" => "#{targetDir}/css/images/",
         "#{homeDir}/img/*" => "#{imgTargetDir}"
     })
 
