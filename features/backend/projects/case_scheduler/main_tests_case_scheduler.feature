@@ -185,7 +185,7 @@ Scenario Outline: Delete all case scheduler of a project created previously in t
 
 
 
-Scenario para la revision del "BUG 15040" donde se comprueba la creacion de nuevos case scheduler en diferentes proyectos.
+#Scenario para la revision del "BUG 15040" donde se comprueba la creacion de nuevos case scheduler en diferentes proyectos.
 
 Scenario: Create a new case scheduler with same name
       Given POST this data:
