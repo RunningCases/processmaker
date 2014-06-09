@@ -347,7 +347,6 @@ class Groupwf extends BaseGroupwf
         $criteria->addSelectColumn( GroupwfPeer::GRP_STATUS );
         $criteria->addSelectColumn( GroupwfPeer::GRP_UX );
         $criteria->addAsColumn( 'GRP_TITLE', ContentPeer::CON_VALUE );
-        $criteria->addSelectColumn( ContentPeer::CON_VALUE, 'COCHALO' );
         $criteria->addJoin( GroupwfPeer::GRP_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN );
         $criteria->add( ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
         $criteria->add( ContentPeer::CON_LANG, SYS_LANG );
