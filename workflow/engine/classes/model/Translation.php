@@ -207,7 +207,7 @@ class Translation extends BaseTranslation
         $c->add( TranslationPeer::TRN_ID, '%ID_MAFE_%', Criteria::LIKE );
         $c->addAscendingOrderByColumn( 'TRN_CATEGORY' );
         $c->addAscendingOrderByColumn( 'TRN_ID' );
-        $c->addAscendingOrderByColumn( 'TRN_LANG' );
+        //$c->addAscendingOrderByColumn( 'TRN_LANG' );
         $tranlations = TranslationPeer::doSelect( $c );
 
         $mafeFolder = PATH_HTML . "translations";
