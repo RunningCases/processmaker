@@ -4,64 +4,63 @@ Feature: Case Scheduler Main Tests
     a workspace with the process 1265557095225ff5c688f46031700471 ("Test Michelangelo") already loaded
     there are zero case scheduler in the process and there four tasks in the process
 
-  Background:
-    Given that I have a valid access_token
+Background:
+  Given that I have a valid access_token
  
-  Scenario: Get the case schedulers list when there are exactly zero case schedulers 
-      Given I request "project/1265557095225ff5c688f46031700471/case-schedulers"
-      Then the response status code should be 200
-      And the response charset is "UTF-8"
-      And the content type is "application/json"
-      And the type is "array"
-      And the response has 0 record
+Scenario: Get the case schedulers list when there are exactly zero case schedulers 
+    Given I request "project/1265557095225ff5c688f46031700471/case-schedulers"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has 0 record
 
 
-  Scenario Outline: Create a 13 case scheduler for a project
-      Given POST this data:
-      """
-      {
-          "sch_del_user_name": "<sch_del_user_name>",
-          "tas_uid": "<tas_uid>",
-          "sch_name": "<sch_name>",
-          "sch_option": "<sch_option>",
-          "sch_start_date": "<sch_start_date>",
-          "sch_end_date": "<sch_end_date>",
-          "sch_start_time": "<sch_start_time>",
-          "sch_week_days": "<sch_week_days>",
-          "sch_start_day": "<sch_start_day>",
-          "sch_start_day_opt_1": "<sch_start_day_opt_1>",
-          "sch_months": "<sch_months>",          
-          "sch_start_day_opt_2": "<sch_start_day_opt_2>",          
-          "sch_repeat_every": "<sch_repeat_every>"          
-      }
-      """
-      And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
-      Then the response status code should be <error_code>
-      And the response charset is "UTF-8"
-      And the content type is "application/json"
-      And the type is "object"
-      And store "sch_uid" in session array as variable "sch_uid_<sch_uid_number>"
+Scenario Outline: Create a 13 case scheduler for a project
+    Given POST this data:
+    """
+    {
+      "sch_del_user_name": "<sch_del_user_name>",
+      "tas_uid": "<tas_uid>",
+      "sch_name": "<sch_name>",
+      "sch_option": "<sch_option>",
+      "sch_start_date": "<sch_start_date>",
+      "sch_end_date": "<sch_end_date>",
+      "sch_start_time": "<sch_start_time>",
+      "sch_week_days": "<sch_week_days>",
+      "sch_start_day": "<sch_start_day>",
+      "sch_start_day_opt_1": "<sch_start_day_opt_1>",
+      "sch_months": "<sch_months>",          
+      "sch_start_day_opt_2": "<sch_start_day_opt_2>",          
+      "sch_repeat_every": "<sch_repeat_every>"          
+    }
+    """
+    And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
+    Then the response status code should be <error_code>
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And store "sch_uid" in session array as variable "sch_uid_<sch_uid_number>"
 
-
-      Examples:
+    Examples:
  
-      | test_description                                                                          | sch_uid_number | sch_del_user_name | tas_uid                          | sch_name                              | sch_option | sch_start_date |  sch_end_date | sch_start_time | sch_week_days    | sch_start_day | sch_start_day_opt_1 | sch_months                      | sch_start_day_opt_2 | sch_repeat_every | error_code |
-      | Create with Daily                                                                         | 1              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Daily 123@#$           | 1          | 2014-01-30     | 2014-02-20    | 12:00          |                  |               |                     |                                 |                     |                  | 201        |
-      | Create with Weekly, sch_week_days=monday                                                  | 2              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Weekly monday 345%$#   | 2          | 2014-02-20     | 2014-03-20    | 08:00          | 1                |               |                     |                                 |                     |                  | 201        |
-      | Create with Weekly, sch_week_days=tuesday, wednesday, thursday, friday, saturday, sunday  | 3              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Weekly 345%$#          | 2          | 2014-02-20     | 2014-03-20    | 08:00          | 2\|3\|4\|5\|6\|7 |               |                     |                                 |                     |                  | 201        |
-      | Create with Monthly and day of month, day of month=1, of the month(s)=3,4                 | 4              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 1       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 1             | 15                  | 3\|4                            |                     |                  | 201        |
-      | Create with Monthly and day of month, day of month=1, of the month=1,2,5,6,7,8,9,10,11,12 | 5              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 2       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 1             | 15                  | 1\|2\|5\|6\|7\|8\|9\|10\|11\|12 |                     |                  | 201        |
-      | Create with Monthly and the day=first and Monday                                          | 6              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 3       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 1\|7                |                  | 201        |
-      | Create with Monthly and the day=second and Saturday                                       | 7              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 4       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 2\|6                |                  | 201        |
-      | Create with Monthly and the day=Third and Friday                                          | 8              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 5       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 3\|5                |                  | 201        |
-      | Create with Monthly and the day=second and Thursday                                       | 9              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 6       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 2\|4                |                  | 201        |
-      | Create with Monthly and the day=last and Wednesday                                        | 10             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 7       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 5\|3                |                  | 201        |
-      | Create with Monthly and the day=last and Wednesday, of the month=1,2,6,7,8,9,10,11,12     | 11             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 8       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 1\|2\|6\|7\|8\|9\|10\|11\|12    | 5\|3                |                  | 201        |
-      | Create with One time only                                                                 | 12             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-One Time only 678%$@   | 4          |                |               | 20:00          |                  |               |                     |                                 |                     |                  | 201        |
-      | Create with Every                                                                         | 13             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Every 987&%@           | 5          |                |               |                |                  |               |                     |                                 |                     | 12.30            | 201        |
+    | test_description                                                                          | sch_uid_number | sch_del_user_name | tas_uid                          | sch_name                              | sch_option | sch_start_date |  sch_end_date | sch_start_time | sch_week_days    | sch_start_day | sch_start_day_opt_1 | sch_months                      | sch_start_day_opt_2 | sch_repeat_every | error_code |
+    | Create with Daily                                                                         | 1              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Daily 123@#$           | 1          | 2014-01-30     | 2014-02-20    | 12:00          |                  |               |                     |                                 |                     |                  | 201        |
+    | Create with Weekly, sch_week_days=monday                                                  | 2              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Weekly monday 345%$#   | 2          | 2014-02-20     | 2014-03-20    | 08:00          | 1                |               |                     |                                 |                     |                  | 201        |
+    | Create with Weekly, sch_week_days=tuesday, wednesday, thursday, friday, saturday, sunday  | 3              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Weekly 345%$#          | 2          | 2014-02-20     | 2014-03-20    | 08:00          | 2\|3\|4\|5\|6\|7 |               |                     |                                 |                     |                  | 201        |
+    | Create with Monthly and day of month, day of month=1, of the month(s)=3,4                 | 4              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 1       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 1             | 15                  | 3\|4                            |                     |                  | 201        |
+    | Create with Monthly and day of month, day of month=1, of the month=1,2,5,6,7,8,9,10,11,12 | 5              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 2       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 1             | 15                  | 1\|2\|5\|6\|7\|8\|9\|10\|11\|12 |                     |                  | 201        |
+    | Create with Monthly and the day=first and Monday                                          | 6              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 3       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 1\|7                |                  | 201        |
+    | Create with Monthly and the day=second and Saturday                                       | 7              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 4       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 2\|6                |                  | 201        |
+    | Create with Monthly and the day=Third and Friday                                          | 8              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 5       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 3\|5                |                  | 201        |
+    | Create with Monthly and the day=second and Thursday                                       | 9              | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 6       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 2\|4                |                  | 201        |
+    | Create with Monthly and the day=last and Wednesday                                        | 10             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 7       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 3\|4\|5                         | 5\|3                |                  | 201        |
+    | Create with Monthly and the day=last and Wednesday, of the month=1,2,6,7,8,9,10,11,12     | 11             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Monthly 567&^% 8       | 3          | 2014-03-21     | 2014-04-18    | 18:00          |                  | 2             |                     | 1\|2\|6\|7\|8\|9\|10\|11\|12    | 5\|3                |                  | 201        |
+    | Create with One time only                                                                 | 12             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-One Time only 678%$@   | 4          |                |               | 20:00          |                  |               |                     |                                 |                     |                  | 201        |
+    | Create with Every                                                                         | 13             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Every 987&%@           | 5          |                |               |                |                  |               |                     |                                 |                     | 12.30            | 201        |
       
 
-  Scenario: Create a new case scheduler with same name
+Scenario: Create a new case scheduler with same name
       Given POST this data:
       """
       {
@@ -85,7 +84,7 @@ Feature: Case Scheduler Main Tests
       And the response status message should have the following text "Duplicate Case Scheduler name"
       
   
-  Scenario: Get the case schedulers list when there are exactly 13 case schedulers 
+Scenario: Get the case schedulers list when there are exactly 13 case schedulers 
       Given I request "project/1265557095225ff5c688f46031700471/case-schedulers"
       Then the response status code should be 200
       And the response charset is "UTF-8"
@@ -94,7 +93,7 @@ Feature: Case Scheduler Main Tests
       And the response has 13 record
   
 
-  Scenario Outline: Update the case schedulers for a project and then check if the values had changed
+Scenario Outline: Update the case schedulers for a project and then check if the values had changed
     Given PUT this data:
       """
       {
@@ -130,7 +129,7 @@ Feature: Case Scheduler Main Tests
       | Update Every                                                                         | 13             | admin             | 1352844695225ff5fe54de2005407079 | Update Case Scheduler-Every 987&%@           | 5          |                |               |                |               |               |                     |                        |                     | 18.30            |ACTIVE    |
 
 
-   Scenario Outline: Get a single case scheduler of a project and check some properties
+Scenario Outline: Get a single case scheduler of a project and check some properties
       Given that I want to get a resource with the key "sch_uid" stored in session array as variable "sch_uid_<sch_uid_number>"
       And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
       Then the response status code should be 200
@@ -159,7 +158,7 @@ Feature: Case Scheduler Main Tests
 
 
 
-  Scenario Outline: Delete all case scheduler of a project created previously in this script
+Scenario Outline: Delete all case scheduler of a project created previously in this script
     Given that I want to delete a resource with the key "sch_uid" stored in session array as variable "sch_uid_<sch_uid_number>"
       And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
       Then the response status code should be 200
@@ -186,22 +185,27 @@ Feature: Case Scheduler Main Tests
 
 
 
-#Scenario para la revision del "BUG 15040"
-#Scenario Outline: Create new Projects for test create new case scheduler and allow to keep the same
-#    Given POST data from file "<project_template>"
-#    And I request "projects"
-#    Then the response status code should be 201
-#    And the response charset is "UTF-8"
-#    And the content type is "application/json"
-#    And the type is "array"
-#    And store "new_uid" in session array as variable "project_new_uid_<project_new_uid_number>" where an object has "object" equal to "project"
-#    And store "new_uid" in session array as variable "diagram_new_uid_<project_new_uid_number>" where an object has "object" equal to "diagram"
-#    And store "new_uid" in session array as variable "activity_new_uid_<project_new_uid_number>" where an object has "object" equal to "activity"
-#    And store "new_uid" in session array as variable "event_new_uid_<project_new_uid_number>" where an object has "object" equal to "event"
-#    And store "new_uid" in session array as variable "flow_new_uid_<project_new_uid_number>" where an object has "object" equal to "flow"
-#
-#    Examples:
-#
-#    | Description                                    | project_new_uid_number | project_template                 |
-#    | Create a new process with event case scheduler | 1                      | process_template_evaluation.json |
-#    | Create a new process with same case scheduler  | 2                      | process_template_parallel.json   |
+Scenario para la revision del "BUG 15040" donde se comprueba la creacion de nuevos case scheduler en diferentes proyectos.
+
+Scenario: Create a new case scheduler with same name
+      Given POST this data:
+      """
+      {
+          "sch_option": "5",
+          "sch_name": "Case Scheduler-Every 987&%@",
+          "sch_del_user_name": "admin",
+          "tas_uid": "46941969352af5be2ab3f39001216717",
+          "sch_start_time": "",
+          "sch_start_date": "",
+          "sch_end_date": "",
+          "sch_week_days": "", 
+          "sch_start_day": "",
+          "sch_start_day_opt_1": "",
+          "sch_start_day_opt_2": "",
+          "sch_months": "",    
+          "sch_repeat_every": "12.30"
+      }
+      """
+      And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
+      Then the response status code should be 400
+      And the response status message should have the following text "Duplicate Case Scheduler name"
