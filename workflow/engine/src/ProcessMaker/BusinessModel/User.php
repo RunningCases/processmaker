@@ -223,7 +223,7 @@ class User
                 if ($form['USR_COUNTRY'] != '') {
                     $oCountry = \IsoCountryPeer::retrieveByPK($form['USR_COUNTRY']);
                     if (is_null($oCountry)) {
-                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($form['USR_COUNTRY'])));
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('usr_country')));
                     }
                 }
             }
@@ -231,7 +231,7 @@ class User
                 if ($form['USR_CITY'] != '') {
                     $oCity = \IsoSubdivisionPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_CITY']);
                     if (is_null($oCity)) {
-                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($form['USR_CITY'])));
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('usr_city')));
                     }
                 }
             }
@@ -239,7 +239,7 @@ class User
                 if ($form['USR_LOCATION'] != '') {
                     $oLocation = \IsoLocationPeer::retrieveByPK($form['USR_COUNTRY'], $form['USR_LOCATION']);
                     if (is_null($oLocation)) {
-                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($form['USR_LOCATION'])));
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('usr_location')));
                     }
                 }
             }

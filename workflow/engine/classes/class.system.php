@@ -68,6 +68,7 @@ class System
         'size_log_file' => 5000000,
         'number_log_file' => 5,
         'ie_cookie_lifetime' => 1,
+        'safari_cookie_lifetime' => 1,
         'error_reporting' => "",
         'display_errors' => 'On'
     );
