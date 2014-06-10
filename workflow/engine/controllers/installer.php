@@ -895,7 +895,7 @@ class Installer extends Controller
                 '%s://%s/sys%s/%s/%s/oauth2/grant',
                 $http,
                 $host,
-                $wf,
+                $workspace,
                 $langUri,
                 $skinUri
             );
