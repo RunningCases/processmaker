@@ -6,6 +6,15 @@ Feature: PM Group Main Tests
     Background:
         Given that I have a valid access_token
 
+    Scenario: Get the Groups list when there are 20 records
+        And I request "groups?filter=&start=0&limit=50"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "array"
+        And the response has 20 records
+
+
     Scenario Outline: Get list Groups of workspace using different filters
         And I request "groups?filter=<filter>&start=<start>&limit=<limit>"
         And the content type is "application/json"
@@ -32,7 +41,7 @@ Feature: PM Group Main Tests
         | Search letters 'de    | de     |   0   | 5       | 2       |  200      |
        
 
-     Scenario Outline: Create 3 new Groups 
+    Scenario Outline: Create 3 new Groups 
         Given POST this data:
         """
         {
@@ -55,6 +64,19 @@ Feature: PM Group Main Tests
         | 1              | Demo Group2 for main behat | ACTIVE     |
         | 2              | Demo Group3 for main behat | INACTIVE   |             
 
+
+    Scenario: Create new group with same name 
+        Given POST this data:
+        """
+        {
+            "grp_title": "Accounting",
+            "grp_status": "ACTIVE"
+        }
+        """
+        And I request "group"
+        Then the response status code should be 400
+        And the response status message should have the following text "already exists"
+        
     
     Scenario: Get the Groups list when there are 23 records
         And I request "groups?filter=&start=0&limit=50"
@@ -105,6 +127,37 @@ Feature: PM Group Main Tests
         | 0              | Update Demo Group1 for main behat | INACTIVE   |
         | 1              | Update Demo Group2 for main behat | INACTIVE   |
         | 2              | Update Demo Group3 for main behat | ACTIVE     | 
+
+
+    Scenario Outline: Update Group putting the same name of a group created in this script
+        Given PUT this data:
+        """
+        {
+            "grp_title": "<grp_title>",
+            "grp_status": "<grp_status>"
+        }
+        """
+        And that I want to update a resource with the key "grp_uid" stored in session array as variable "grp_uid_<grp_uid_number>"
+        And I request "group"
+        Then the response status code should be 400
+        And the response status message should have the following text "exists"
+
+        Examples:
+
+        | grp_uid_number | grp_title                  | grp_status |
+        | 2              | Demo Group2 for main behat | INACTIVE   |
+
+       
+
+
+
+
+
+
+
+
+
+
 
        
     #ASSIGN USER TO GROUP
