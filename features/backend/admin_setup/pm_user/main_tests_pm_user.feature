@@ -100,13 +100,13 @@ Feature: User Main Tests
 
         Examples:
 
-        | Test_description                     | usr_number | usr_photo            |
+        | Test_description                     | usr_number | usr_photo                  |
         | Create without replaced by, calendar | 1          | /home/wendy/photo/pic1.jpg |
         | Create without calendar              | 2          | /home/wendy/photo/pic2.jpg |
         | Create with all fields               | 3          | /home/wendy/photo/pic3.jpg |
         
 
-    Scenario: Get the users List when there are exactly 63 users
+    Scenario: Get the users List when there are exactly 68 users
         And I request "users"
         And the content type is "application/json"
         Then the response status code should be 200
@@ -115,15 +115,39 @@ Feature: User Main Tests
         And the response has 68 records
 
 
+    Scenario Outline: Create new User with same name
+        Given POST this data:
+        """
+            {
+                "usr_firstname": "<usr_firstname>",
+                "usr_lastname": "<usr_lastname>",
+                "usr_username": "<usr_username>",
+                "usr_email": "<usr_email>",
+                "usr_address": "<usr_address>",
+                "usr_zip_code": "<usr_zip_code>",
+                "usr_country": "<usr_country>",
+                "usr_city": "<usr_city>",
+                "usr_location": "<usr_location>",
+                "usr_phone": "<usr_phone>",
+                "usr_position": "<usr_position>",
+                "usr_replaced_by": "<usr_replaced_by>",
+                "usr_due_date": "<usr_due_date>",
+                "usr_calendar": "<usr_calendar>",
+                "usr_status": "<usr_status>",
+                "usr_role": "<usr_role>",
+                "usr_new_pass": "<usr_new_pass>",
+                "usr_cnf_pass": "<usr_cnf_pass>"
+            }
+        """
+        And I request "user"
+        Then the response status code should be 400
+        And the response status message should have the following text "already exists"
+        
+        Examples:
 
-    Scenario: Get the users List when there are exactly 63 users
-        And I request "users"
-        And the content type is "application/json"
-        Then the response status code should be 200
-        And the response charset is "UTF-8"
-        And the type is "array"
-        And the response has 68 records
-
+        | usr_firstname | usr_lastname | usr_username | usr_email              | usr_address | usr_zip_code | usr_country | usr_city | usr_location | usr_phone    | usr_position   | usr_replaced_by                  | usr_due_date | usr_calendar                     | usr_status | usr_role               | usr_new_pass | usr_cnf_pass |
+        | Amy           | Connelly     | amy          | colosaqatest@gmail.com |             |              |             |          |              |              |                |                                  | 2015-01-14   |                                  | ACTIVE     | PROCESSMAKER_OPERATOR  | sample       | sample       |
+        
 
     Scenario Outline: Update User and then check if the values had changed
         Given PUT this data:
@@ -198,7 +222,42 @@ Feature: User Main Tests
         | Update usr_status                                | 3          | sarita        | sandler      | sarita       | saraah@gmail.com  | laberh #985 | 555-9999     | AR          | B        | BUE          | 2353643644   | Desarrollo     | 61364466452d56711adb378002702791 | 2014-12-12   | 99159704252f501c63f8c58025859967 | INACTIVE   | PROCESSMAKER_ADMIN     | admin        | admin        |
         
 
-    Scenario: Get the users List when there are exactly 63 users
+    Scenario Outline: Update User with the same data from an existing user
+        Given PUT this data:
+        """
+            {
+                "usr_firstname": "<usr_firstname>",
+                "usr_lastname": "<usr_lastname>",
+                "usr_username": "<usr_username>",
+                "usr_email": "<usr_email>",
+                "usr_address": "<usr_address>",
+                "usr_zip_code": "<usr_zip_code>",
+                "usr_country": "<usr_country>",
+                "usr_city": "<usr_city>",
+                "usr_location": "<usr_location>",
+                "usr_phone": "<usr_phone>",
+                "usr_position": "<usr_position>",
+                "usr_replaced_by": "<usr_replaced_by>",
+                "usr_due_date": "<usr_due_date>",
+                "usr_calendar": "<usr_calendar>",
+                "usr_status": "<usr_status>",
+                "usr_role": "<usr_role>",
+                "usr_new_pass": "<usr_new_pass>",
+                "usr_cnf_pass": "<usr_cnf_pass>"
+            }
+        """
+        And that I want to update a resource with the key "usr_uid" stored in session array as variable "usr_uid_<usr_number>"
+        And I request "user"
+        Then the response status code should be 400
+        And the response status message should have the following text "already exists"
+        
+        Examples:
+
+        | usr_number | usr_firstname | usr_lastname | usr_username | usr_email         | usr_address | usr_zip_code | usr_country | usr_city | usr_location | usr_phone    | usr_position   | usr_replaced_by                  | usr_due_date | usr_calendar                     | usr_status | usr_role               | usr_new_pass | usr_cnf_pass |
+        | 4          | micaela       | sanchez      | micaela      | micaela@gmail.com | sancjh #544 | 555-6652     | US          | FL       | MIA          | 555-6655-555 | Gerencia       |                                  | 2016-02-15   |                                  | VACATION   | PROCESSMAKER_OPERATOR  | sample       | sample       |
+        
+
+    Scenario: Get the users List when there are exactly 68 users
         And I request "users"
         And the content type is "application/json"
         Then the response status code should be 200
@@ -206,6 +265,7 @@ Feature: User Main Tests
         And the type is "array"
         And the response has 68 records
     
+
     Scenario Outline: Delete all users created previously in this script
         Given that I want to delete a resource with the key "usr_uid" stored in session array as variable "usr_uid_<usr_number>"
         And I request "user"
@@ -231,4 +291,3 @@ Feature: User Main Tests
         And the response charset is "UTF-8"
         And the type is "array"
         And the response has 63 records
-    

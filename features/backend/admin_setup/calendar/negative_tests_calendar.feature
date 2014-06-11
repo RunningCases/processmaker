@@ -141,3 +141,25 @@ Scenario: Create a new Calendars (wrong date_end)
     And I request "calendar"
     Then the response status code should be 400
     And the response status message should have the following text "date_end"
+
+
+Scenario: Create a new Calendars (with work days less than 3)
+    Given POST this data:
+    """
+    {
+        "cal_name": "Sample Calendar",
+        "cal_description": "Creacion de Calendar 400",
+        "cal_work_days": [1,2],
+        "cal_work_hour": [
+            {"day": 0, "hour_start": "00:00", "hour_end": "00:00"},
+            {"day": 7, "hour_start": "09:00", "hour_end": "17:00"}
+        ],
+        "cal_holiday": [
+            {"name": "holiday1", "date_start": "2010-01-01", "date_end": "2010-01-10"},
+            {"name": "holiday2", "date_start": "2014-04-01", "date_end": "2014-04-04"}
+        ]
+    }
+    """
+    And I request "calendar"
+    Then the response status code should be 400
+    And the response status message should have the following text "least 3 Working Days"
