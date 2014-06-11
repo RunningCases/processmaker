@@ -187,25 +187,25 @@ Scenario Outline: Delete all case scheduler of a project created previously in t
 
 #Scenario para la revision del "BUG 15040" donde se comprueba la creacion de nuevos case scheduler en diferentes proyectos.
 
-Scenario: Create a new case scheduler with same name
-      Given POST this data:
-      """
-      {
-          "sch_option": "5",
-          "sch_name": "Case Scheduler-Every 987&%@",
-          "sch_del_user_name": "admin",
-          "tas_uid": "46941969352af5be2ab3f39001216717",
-          "sch_start_time": "",
-          "sch_start_date": "",
-          "sch_end_date": "",
-          "sch_week_days": "", 
-          "sch_start_day": "",
-          "sch_start_day_opt_1": "",
-          "sch_start_day_opt_2": "",
-          "sch_months": "",    
-          "sch_repeat_every": "12.30"
-      }
-      """
-      And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
-      Then the response status code should be 400
-      And the response status message should have the following text "Duplicate Case Scheduler name"
+#Scenario: Create a new case scheduler with same name
+#      Given POST this data:
+#      """
+#      {
+#          "sch_option": "5",
+#          "sch_name": "Case Scheduler-Every 987&%@",
+#          "sch_del_user_name": "admin",
+#          "tas_uid": "46941969352af5be2ab3f39001216717",
+#          "sch_start_time": "",
+#          "sch_start_date": "",
+#          "sch_end_date": "",
+#          "sch_week_days": "", 
+#          "sch_start_day": "",
+#          "sch_start_day_opt_1": "",
+#          "sch_start_day_opt_2": "",
+#          "sch_months": "",    
+#          "sch_repeat_every": "12.30"
+#      }
+#      """
+#      And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
+#      Then the response status code should be 400
+#      And the response status message should have the following text "Duplicate Case Scheduler name"
