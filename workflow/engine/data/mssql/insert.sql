@@ -6452,7 +6452,7 @@ SELECT 'LABEL','ID_GRID_WIZARD','en','ProcessMaker Grid Wizard','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_UPLOAD_FROM_FILE','en','Upload from file','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_FIELD_REQUIRED','en','This field is required','2014-01-15' 
+SELECT 'LABEL','ID_FIELD_REQUIRED','en','The field {0} is required.','2014-05-29' 
   UNION ALL
 SELECT 'LABEL','ID_ERROR_REGISTERED','en','Errors registered:','2014-01-15' 
   UNION ALL
@@ -6589,6 +6589,8 @@ SELECT 'LABEL','ID_INSTALL_USE_CURRENT_USER','en','Use the current user as a Dat
 SELECT 'LABEL','ID_ACCOUNT_OPTIONS','en','Account Options','2014-05-16' 
   UNION ALL
 SELECT 'LABEL','ID_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON','en','User must change password at next logon','2014-05-16' 
+  UNION ALL
+SELECT 'LABEL','ID_HIDE_DIRS','en','Hide Dirs','2014-05-26' 
   UNION ALL
 SELECT 'LABEL','ID_UNDEFINED_VALUE_IS_REQUIRED','en','Undefined value for "{0}", it is required.','2014-05-20' 
   UNION ALL
@@ -6731,11 +6733,11 @@ SELECT 'LABEL','ID_INVALID_VALUE_FOR','en','Invalid value specified for: {0}','2
 SELECT 'LABEL','ID_CASE_SCHEDULER_DOES_NOT_EXIST','en','This case scheduler with sch_uid: {0} does not exist!','2014-05-21' 
   UNION ALL
 SELECT 'LABEL','ID_INFORMATION_EMPTY','en','The information sended is empty!','2014-05-21' 
-  UNION ALL
-SELECT 'LABEL','ID_TASK_NOT_FOUND','en','Task not found for id: {0}','2014-05-21' 
  ;
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
+SELECT 'LABEL','ID_TASK_NOT_FOUND','en','Task not found for id: {0}','2014-05-21' 
+  UNION ALL
 SELECT 'LABEL','ID_CAN_NOT_BE_EMPTY','en','{0}, can not be empty','2014-05-21' 
   UNION ALL
 SELECT 'LABEL','ID_CASE_SCHEDULER_DUPLICATE','en','Duplicate Case Scheduler name','2014-05-21' 
@@ -6793,6 +6795,94 @@ SELECT 'LABEL','ID_DOES_NOT_CORRESPOND','en','This id: {0} does not correspond t
 SELECT 'LABEL','ID_USER_CAN_NOT_UPDATE','en','This user: {0}, can not update the data.','2014-05-22' 
   UNION ALL
 SELECT 'LABEL','ID_USER_CAN_NOT_BE_DELETED','en','The user with usr_uid: {0}, cannot be deleted while it has cases assigned.','2014-05-22' 
+  UNION ALL
+SELECT 'LABEL','ID_ROLE_DOES_NOT_EXIST','en','The role with {0}: {1} does not exist.','2014-06-03' 
+  UNION ALL
+SELECT 'LABEL','ID_ROLE_CODE_ALREADY_EXISTS','en','The role code with {0}: "{1}" already exists.','2014-06-03' 
+  UNION ALL
+SELECT 'LABEL','ID_ROLE_NAME_ALREADY_EXISTS','en','The role name with {0}: "{1}" already exists.','2014-05-27' 
+  UNION ALL
+SELECT 'LABEL','ID_ROLE_FIELD_CANNOT_CONTAIN_SPECIAL_CHARACTERS','en','The "{0}" field cannot contain special characters or spaces.','2014-05-27' 
+  UNION ALL
+SELECT 'LABEL','ID_ROLE_USER_IS_ALREADY_ASSIGNED','en','The user with {0}: {1} is already assigned to the role.','2014-05-28' 
+  UNION ALL
+SELECT 'LABEL','ID_ROLE_USER_IS_NOT_ASSIGNED','en','The user with {0}: {1} is not assigned to the role.','2014-05-28' 
+  UNION ALL
+SELECT 'LABEL','ID_PERMISSION_DOES_NOT_EXIST','en','The permission with {0}: {1} does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_ROLE_PERMISSION_IS_ALREADY_ASSIGNED','en','The permission with {0}: {1} is already assigned to the role.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_ROLE_PERMISSION_IS_NOT_ASSIGNED','en','The permission with {0}: {1} is not assigned to the role.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_ROLE_PERMISSION_ROLE_PERMISSIONS_CAN_NOT_BE_CHANGED','en','The permissions of the "{0}" role can not be changed.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_DEPARTMENT_NOT_EXIST','en','The departament with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_USER_NOT_EXIST','en','The user with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_APPLICATION_NOT_EXIST','en','The application with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_TRIGGER_NOT_EXIST','en','The trigger with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_EVENT_NOT_EXIST','en','The event with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_TASK_NOT_EXIST','en','The task with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_PROCESS_PERMISSION_NOT_EXIST','en','The process permission with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_GROUP_NOT_EXIST','en','The group with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_DYNAFORM_NOT_EXIST','en','The dynaform with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_INPUT_NOT_EXIST','en','The input with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_OUTPUT_NOT_EXIST','en','The output with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_PROCESS_NOT_EXIST','en','The process with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_PROJECT_NOT_EXIST','en','The project with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_DBC_NOT_EXIST','en','The database connection with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_CATEGORY_NOT_EXIST','en','The category with {0}: ''{1}'' does not exist.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_DATE_NOT_VALID','en','The value ''{0}'' is not a valid date for the format ''{1}''.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_INVALID_VALUE_ARRAY','en','Invalid value for ''{0}'' it must be an array.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_INVALID_VALUE_STRING','en','Invalid value for ''{0}'' it must be a string.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_INVALID_VALUE_INTEGER','en','Invalid value for ''{0}'' it must be a integer.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_INVALID_VALUE_BOOLEAN','en','Invalid value for ''{0}'' it must be a boolean.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_INVALID_VALUE_IS_EMPTY','en','The field ''{0}'' is empty.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_INCORRECT_VALUE_ACTION','en','The value for $action is incorrect.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_CASE_ALREADY_CANCELED','en','The case ''{0}'' is already canceled','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_CASE_IS_CANCELED','en','The case ''{0}'' is canceled','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_INVALID_MAX_PERMITTED','en','Invalid value for ''{0}'', the permitted maximum length of {1} characters.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_DBC_TYPE_INVALID','en','The dababase connection with dbs_type: ''{0}'' is invalid','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_DBC_SERVER_INVALID','en','The dababase connection with dbs_server: ''{0}'', is invalid','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_DBC_DBNAME_INVALID','en','The dababase connection with dbs_database_name: ''{0}'' is invalid','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_DBC_PORT_INVALID','en','The dababase connection with dbs_port: ''{0}'' is invalid','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_DBC_ENCODE_INVALID','en','The dababase connection with dbs_encode: ''{0}'' is invalid','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_CANT_DELETE_DEPARTMENT_HAS_CHILDREN','en','Can not delete the department, it has a children department.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_CANT_DELETE_DEPARTMENT_HAS_USERS','en','Department cannot be deleted while has assigned users.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_CANT_SAVE_TRIGGER','en','A trigger with the same name already exists in this process.','2014-05-29' 
+  UNION ALL
+SELECT 'LABEL','ID_CASE_DOES_NOT_EXIST2','en','The case with {0}: {1} does not exist.','2014-06-05' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 
