@@ -337,8 +337,6 @@ class Role
     public function update($roleUid, array $arrayData)
     {
         try {
-            $arrayDataBackup = $arrayData;
-
             //Verify data
             $process = new \ProcessMaker\BusinessModel\Process();
             $validator = new \ProcessMaker\BusinessModel\Validator();
@@ -347,6 +345,7 @@ class Role
 
             //Set data
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+            $arrayDataBackup = $arrayData;
 
             $arrayRoleData = $this->getRole($roleUid);
 
