@@ -117,6 +117,12 @@ class Bpmn extends Handler
 
     public function update($data)
     {
+        if (isset($data["PRJ_NAME"])) {
+            $process = new \ProcessMaker\BusinessModel\Process();
+
+            $process->throwExceptionIfExistsTitle($data["PRJ_NAME"], strtolower("PRJ_NAME"), $this->prjUid);
+        }
+
         if (array_key_exists("PRJ_CREATE_DATE", $data) && empty($data["PRJ_CREATE_DATE"])) {
             unset($data["PRJ_UPDATE_DATE"]);
         }

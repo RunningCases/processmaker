@@ -151,6 +151,7 @@ class CaseScheduler
             $criteria = new \Criteria("workflow");
             $criteria->addSelectColumn(\CaseSchedulerPeer::TAS_UID);
             $criteria->add(\CaseSchedulerPeer::SCH_NAME, $name, \Criteria::EQUAL);
+            $criteria->add(\CaseSchedulerPeer::PRO_UID, $processUid, \Criteria::EQUAL);
             $rsCriteria = \CaseSchedulerPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
@@ -168,13 +169,14 @@ class CaseScheduler
      *
      * return bool Return true if the name exists, false otherwise
      */
-    public function existsNameUpdate($schUid, $name)
+    public function existsNameUpdate($processUid, $schUid, $name)
     {
         try {
             $criteria = new \Criteria("workflow");
             $criteria->addSelectColumn(\CaseSchedulerPeer::TAS_UID);
             $criteria->add(\CaseSchedulerPeer::SCH_NAME, $name, \Criteria::EQUAL);
             $criteria->add(\CaseSchedulerPeer::SCH_UID, $schUid, \Criteria::NOT_EQUAL);
+            $criteria->add(\CaseSchedulerPeer::PRO_UID, $processUid, \Criteria::EQUAL);
             $rsCriteria = \CaseSchedulerPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
@@ -217,7 +219,7 @@ class CaseScheduler
                 $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
                 $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
                 if (! ($userIsAssigned >= 1)) {
-                    throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_HAVE_ACTIVITY", array($sWS_USER, $sTASKS)));
+                    throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_HAVE_ACTIVITY_ASSIGNED", array($sWS_USER, $sTASKS)));
                 }
             }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
@@ -545,7 +547,7 @@ class CaseScheduler
             if ($caseSchedulerData['SCH_NAME']=='') {
                 throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_EMPTY", array ('sch_name')));
             }
-            if ($this->existsNameUpdate($sSchUID, $caseSchedulerData['SCH_NAME'])) {
+            if ($this->existsNameUpdate($sProcessUID, $sSchUID, $caseSchedulerData['SCH_NAME'])) {
                 throw new \Exception(\G::LoadTranslation("ID_CASE_SCHEDULER_DUPLICATE"));
             }
             $mUser = $this->getUser($caseSchedulerData['SCH_DEL_USER_NAME'], $caseSchedulerData['TAS_UID']);

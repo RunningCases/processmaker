@@ -263,6 +263,11 @@ class FilesManager
             if ($path == '') {
                 throw new \Exception(\G::LoadTranslation('ID_PMTABLE_UPLOADING_FILE_PROBLEM'));
             }
+            $extention = strstr($_FILES['prf_file']['name'], '.');
+            if (!$extention) {
+                $extention = '.html';
+                $_FILES['prf_file']['name'] = $_FILES['prf_file']['name'].$extention;
+            }
             $file = end(explode("/",$path));
             $path = str_replace($file,'',$path);
             if ($file == $_FILES['prf_file']['name']) {

@@ -26,7 +26,7 @@ Scenario: Get a List DynaForms of a Project Process Complete BPMN
     And the type is "array"
     And the response has 1 records
    
-Scenario: Get the Output Documents List when there are exactly two output documents
+Scenario: Get the Output Documents List when there are exactly two output documents " BUG-14907, No se visualiza los cambios en el editor tiny de OutputDocuments"
     Given I request "project/1455892245368ebeb11c1a5001393784/output-documents"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -478,3 +478,79 @@ Scenario: Get the Case Trackers Objects of a Project
         And the response charset is "UTF-8"
         And the type is "array"
         And the response has 0 record
+
+
+
+#Revision del BUG xxxx, donde no permite crear un nuevo Output Document
+
+Scenario Outline: Create 17 new Output Documents
+    Given POST this data:
+    """
+    {
+        "out_doc_title":            "Output Document",
+        "out_doc_description":      "",
+        "out_doc_filename":         "Output Document",
+        "out_doc_template":         "Example",
+        "out_doc_report_generator": "TCPDF",
+        "out_doc_landscape":        "1",
+        "out_doc_media":            "Letter",
+        "out_doc_left_margin":      "30",
+        "out_doc_right_margin":     "30",
+        "out_doc_top_margin":       "30",
+        "out_doc_bottom_margin":    "30",
+        "out_doc_generate":         "DOC",
+        "out_doc_type":             "HTML",
+        "out_doc_versioning":       "0",
+        "out_doc_destination_path": "",
+        "out_doc_tags":             "",
+        "out_doc_pdf_security_enabled":        "0",
+        "out_doc_pdf_security_open_password":  "",
+        "out_doc_pdf_security_owner_password": "",
+        "out_doc_pdf_security_permissions":    ""
+    }
+    """
+    And I request "project/5195971265375127fce82f4015927137/output-document"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And store "out_doc_uid" in session array as variable "out_doc_uid_<out_doc_number>"
+
+    Examples:
+
+    | test_description                                           | out_doc_number |
+    | Create new output document with same name in other proyect | 1              |
+        
+
+Scenario: Get the Output Documents List when there are exactly zero output documents
+    Given I request "project/5195971265375127fce82f4015927137/output-documents" with the key "prj_uid" stored in session array
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has 1 records
+    And that "out_doc_title" is set to "Output Document"
+    And that "out_doc_filename" is set to "Output Document"
+
+Scenario Outline: Delete Output documents created previously in this script
+    Given that I want to delete a resource with the key "out_doc_uid" stored in session array as variable "out_doc_uid_<out_doc_number>"
+    And I request "project/5195971265375127fce82f4015927137/output-document"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+
+    Examples:
+
+    | out_doc_number |
+    | 1              |
+
+Scenario: Get the Output Documents List when there are exactly zero output documents
+    Given I request "project/5195971265375127fce82f4015927137/output-documents" with the key "prj_uid" stored in session array
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has 0 records
+
+#Culminacion del BUG xxxx, donde no permite crear un nuevo Output Document en otro proyecto
