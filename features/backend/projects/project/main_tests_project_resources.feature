@@ -728,3 +728,45 @@ Scenario: Get a list of projects
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
+
+
+
+#BUG 15088-Al editar el nombre de un proceso este permite ingresar el nombre de uno ya existente
+Scenario: Update the Projects by setting the name of an existing project
+    Given PUT this data:
+    """
+    {
+    "prj_uid": "5195971265375127fce82f4015927137",
+    "prj_name": "Process Complete BPMN",
+    "prj_description": "",
+    "prj_target_namespace": "",
+    "prj_expresion_language": "",
+    "prj_type_language": "",
+    "prj_exporter": "",
+    "prj_exporter_version": "",
+    "prj_create_date": "2014-05-15 15:16:15",
+    "prj_update_date": "2014-06-09 23:00:34",
+    "prj_author": "00000000000000000000000000000001",
+    "prj_author_version": "",
+    "prj_original_source": "",
+    "diagrams": [
+        {
+            "dia_uid": "3539627265375127fe1a1d2011478753",
+            "prj_uid": "5195971265375127fce82f4015927137",
+            "dia_name": "Export process empty",
+            "dia_is_closable": 0,
+            "pro_uid": "2365993365375127fe87052082426765",
+            "activities": [],
+            "events": [],
+            "gateways": [],
+            "flows": [],
+            "artifacts": [],
+            "laneset": [],
+            "lanes": []
+        }
+    ]
+    }
+    """
+    And I request "projects/5195971265375127fce82f4015927137"
+    Then the response status code should be 400
+    And the response status message should have the following text "exist"
