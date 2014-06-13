@@ -160,7 +160,7 @@ class Server implements iAuthenticate
         $request = \OAuth2\Request::createFromGlobals();
         $response = $this->server->handleTokenRequest($request);
 
-        /* DEPREACATED
+
         $token = $response->getParameters();
         if (array_key_exists('access_token', $token)) {
             $data = $this->storage->getAccessToken($token['access_token']);
@@ -168,7 +168,7 @@ class Server implements iAuthenticate
             // verify if the client is our local PM Designer client
             if ($data['client_id'] == self::getPmClientId()) {
                 error_log('do stuff - is a request from local pm client');
-                require_once "classes/model/PmoauthUserAccessTokens.php";
+                //require_once "classes/model/PmoauthUserAccessTokens.php";
 
                 $userToken = new \PmoauthUserAccessTokens();
                 $userToken->setAccessToken($token['access_token']);
@@ -178,7 +178,7 @@ class Server implements iAuthenticate
 
                 $userToken->save();
             }
-        }*/
+        }
 
         $response->send();
     }

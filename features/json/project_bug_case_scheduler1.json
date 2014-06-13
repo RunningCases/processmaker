@@ -1,0 +1,247 @@
+{
+    "prj_uid": "389919491539908f4d28ac3003781865",
+    "prj_name": "Test Case Scheduler 1",
+    "prj_description": "",
+    "prj_target_namespace": "",
+    "prj_expresion_language": null,
+    "prj_type_language": null,
+    "prj_exporter": null,
+    "prj_exporter_version": null,
+    "prj_create_date": "2014-06-11 21:57:08",
+    "prj_update_date": "2014-06-11 22:04:17",
+    "prj_author": "00000000000000000000000000000001",
+    "prj_author_version": null,
+    "prj_original_source": null,
+    "diagrams": [
+        {
+            "dia_uid": "959471697539908f4defe73070997549",
+            "prj_uid": "389919491539908f4d28ac3003781865",
+            "dia_name": "Test Case Scheduler 1",
+            "dia_is_closable": 0,
+            "pro_uid": "517734158539908f4e2a880067307827",
+            "activities": [
+                {
+                    "act_uid": "14620112353990aa1793bc9000635862",
+                    "act_name": "Task # 2",
+                    "act_type": "TASK",
+                    "act_is_for_compensation": "0",
+                    "act_start_quantity": "1",
+                    "act_completion_quantity": "0",
+                    "act_task_type": "EMPTY",
+                    "act_implementation": "",
+                    "act_instantiate": "0",
+                    "act_script_type": "",
+                    "act_script": "",
+                    "act_loop_type": "NONE",
+                    "act_test_before": "0",
+                    "act_loop_maximum": "0",
+                    "act_loop_condition": "0",
+                    "act_loop_cardinality": "0",
+                    "act_loop_behavior": "0",
+                    "act_is_adhoc": "0",
+                    "act_is_collapsed": "0",
+                    "act_completion_condition": "0",
+                    "act_ordering": "0",
+                    "act_cancel_remaining_instances": "1",
+                    "act_protocol": "0",
+                    "act_method": "0",
+                    "act_is_global": "0",
+                    "act_referer": "0",
+                    "act_default_flow": "0",
+                    "act_master_diagram": "0",
+                    "bou_x": "687",
+                    "bou_y": "146",
+                    "bou_width": "160",
+                    "bou_height": "40",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "act_uid": "43564710653990900d9c192059183354",
+                    "act_name": "Task # 1",
+                    "act_type": "TASK",
+                    "act_is_for_compensation": "0",
+                    "act_start_quantity": "1",
+                    "act_completion_quantity": "0",
+                    "act_task_type": "EMPTY",
+                    "act_implementation": "",
+                    "act_instantiate": "0",
+                    "act_script_type": "",
+                    "act_script": "",
+                    "act_loop_type": "NONE",
+                    "act_test_before": "0",
+                    "act_loop_maximum": "0",
+                    "act_loop_condition": "0",
+                    "act_loop_cardinality": "0",
+                    "act_loop_behavior": "0",
+                    "act_is_adhoc": "0",
+                    "act_is_collapsed": "0",
+                    "act_completion_condition": "0",
+                    "act_ordering": "0",
+                    "act_cancel_remaining_instances": "1",
+                    "act_protocol": "0",
+                    "act_method": "0",
+                    "act_is_global": "0",
+                    "act_referer": "0",
+                    "act_default_flow": "0",
+                    "act_master_diagram": "0",
+                    "bou_x": "463",
+                    "bou_y": "146",
+                    "bou_width": "160",
+                    "bou_height": "40",
+                    "bou_container": "bpmnDiagram"
+                }
+            ],
+            "events": [
+                {
+                    "evn_uid": "41079638153990aa18d20b7078965871",
+                    "evn_name": "End # 1",
+                    "evn_type": "END",
+                    "evn_marker": "EMPTY",
+                    "evn_is_interrupting": "1",
+                    "evn_cancel_activity": "0",
+                    "evn_activity_ref": null,
+                    "evn_wait_for_completion": "0",
+                    "evn_error_name": null,
+                    "evn_error_code": null,
+                    "evn_escalation_name": null,
+                    "evn_escalation_code": null,
+                    "evn_message": "",
+                    "evn_operation_implementation_ref": null,
+                    "evn_time_date": null,
+                    "evn_time_cycle": null,
+                    "evn_time_duration": null,
+                    "evn_behavior": "THROW",
+                    "evn_operation_name": null,
+                    "bou_x": "933",
+                    "bou_y": "153",
+                    "bou_width": "33",
+                    "bou_height": "33",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "evn_uid": "85267329953990900f2b458079762625",
+                    "evn_name": "Timer Start Event # 1",
+                    "evn_type": "START",
+                    "evn_marker": "TIMER",
+                    "evn_is_interrupting": "1",
+                    "evn_cancel_activity": "0",
+                    "evn_activity_ref": null,
+                    "evn_wait_for_completion": "0",
+                    "evn_error_name": null,
+                    "evn_error_code": null,
+                    "evn_escalation_name": null,
+                    "evn_escalation_code": null,
+                    "evn_message": "LEAD",
+                    "evn_operation_implementation_ref": null,
+                    "evn_time_date": null,
+                    "evn_time_cycle": null,
+                    "evn_time_duration": null,
+                    "evn_behavior": "CATCH",
+                    "evn_operation_name": null,
+                    "bou_x": "353",
+                    "bou_y": "149",
+                    "bou_width": "33",
+                    "bou_height": "33",
+                    "bou_container": "bpmnDiagram"
+                }
+            ],
+            "gateways": [],
+            "flows": [
+                {
+                    "flo_uid": "60053417353990aa193eea3078529262",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": null,
+                    "flo_element_origin": "14620112353990aa1793bc9000635862",
+                    "flo_element_origin_type": "bpmnActivity",
+                    "flo_element_dest": "41079638153990aa18d20b7078965871",
+                    "flo_element_dest_type": "bpmnEvent",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": null,
+                    "flo_x1": "844",
+                    "flo_y1": "165",
+                    "flo_x2": "928",
+                    "flo_y2": "165",
+                    "flo_state": [
+                        {
+                            "x": 849,
+                            "y": 166
+                        },
+                        {
+                            "x": 891,
+                            "y": 166
+                        },
+                        {
+                            "x": 891,
+                            "y": 171
+                        },
+                        {
+                            "x": 933,
+                            "y": 171
+                        }
+                    ]
+                },
+                {
+                    "flo_uid": "6366955205399094d32eaf4099435252",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": null,
+                    "flo_element_origin": "85267329953990900f2b458079762625",
+                    "flo_element_origin_type": "bpmnEvent",
+                    "flo_element_dest": "43564710653990900d9c192059183354",
+                    "flo_element_dest_type": "bpmnActivity",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": null,
+                    "flo_x1": "381",
+                    "flo_y1": "161",
+                    "flo_x2": "457",
+                    "flo_y2": "161",
+                    "flo_state": [
+                        {
+                            "x": 386,
+                            "y": 166
+                        },
+                        {
+                            "x": 424,
+                            "y": 166
+                        },
+                        {
+                            "x": 424,
+                            "y": 161
+                        },
+                        {
+                            "x": 462,
+                            "y": 161
+                        }
+                    ]
+                },
+                {
+                    "flo_uid": "95596469053990aa193b429071614085",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": null,
+                    "flo_element_origin": "43564710653990900d9c192059183354",
+                    "flo_element_origin_type": "bpmnActivity",
+                    "flo_element_dest": "14620112353990aa1793bc9000635862",
+                    "flo_element_dest_type": "bpmnActivity",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": null,
+                    "flo_x1": "620",
+                    "flo_y1": "161",
+                    "flo_x2": "681",
+                    "flo_y2": "161",
+                    "flo_state": [
+                        {
+                            "x": 625,
+                            "y": 166
+                        },
+                        {
+                            "x": 686,
+                            "y": 166
+                        }
+                    ]
+                }
+            ],
+            "artifacts": [],
+            "laneset": [],
+            "lanes": []
+        }
+    ]
+}

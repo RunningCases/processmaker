@@ -219,7 +219,7 @@ class CaseScheduler
                 $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
                 $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
                 if (! ($userIsAssigned >= 1)) {
-                    throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_HAVE_ACTIVITY", array($sWS_USER, $sTASKS)));
+                    throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_HAVE_ACTIVITY_ASSIGNED", array($sWS_USER, $sTASKS)));
                 }
             }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);

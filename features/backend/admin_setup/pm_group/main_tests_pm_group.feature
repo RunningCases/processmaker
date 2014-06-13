@@ -106,7 +106,7 @@ Feature: PM Group Main Tests
 
         | grp_uid_number | grp_title                         | grp_status |
         | 0              | Update Demo Group1 for main behat | INACTIVE   |
-        | 1              | Update Demo Group2 for main behat | INACTIVE   |
+        | 1              | Update Demo Group2 for main behat | ACTIVE     |
         | 2              | Update Demo Group3 for main behat | ACTIVE     |    
 
    
@@ -125,7 +125,7 @@ Feature: PM Group Main Tests
 
         | grp_uid_number | grp_title                         | grp_status |
         | 0              | Update Demo Group1 for main behat | INACTIVE   |
-        | 1              | Update Demo Group2 for main behat | INACTIVE   |
+        | 1              | Update Demo Group2 for main behat | ACTIVE     |
         | 2              | Update Demo Group3 for main behat | ACTIVE     | 
 
 
@@ -144,22 +144,11 @@ Feature: PM Group Main Tests
 
         Examples:
 
-        | grp_uid_number | grp_title                  | grp_status |
-        | 2              | Demo Group2 for main behat | INACTIVE   |
-
-       
+        | grp_uid_number | grp_title                         | grp_status |
+        | 2              | Update Demo Group2 for main behat | INACTIVE   |
 
 
-
-
-
-
-
-
-
-
-
-       
+      
     #ASSIGN USER TO GROUP
     
     Scenario Outline: Get list Users of workspace using different filters for a group
