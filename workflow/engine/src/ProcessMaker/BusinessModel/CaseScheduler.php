@@ -820,6 +820,10 @@ class CaseScheduler
             if (!isset($sSchUID)) {
                 return;
             }
+            $event = \BpmnEventPeer::retrieveByPK($sSchUID);
+            if (is_object($event)) {
+                $event->delete();
+            }
             $oCaseScheduler->remove($sSchUID);
         } catch (\Exception $e) {
             throw $e;
