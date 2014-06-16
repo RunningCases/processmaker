@@ -25,7 +25,7 @@ abstract class BasePmoauthUserAccessTokensPeer
     const CLASS_DEFAULT = 'classes.model.PmoauthUserAccessTokens';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -43,6 +43,9 @@ abstract class BasePmoauthUserAccessTokensPeer
     /** the column name for the SESSION_ID field */
     const SESSION_ID = 'PMOAUTH_USER_ACCESS_TOKENS.SESSION_ID';
 
+    /** the column name for the SESSION_NAME field */
+    const SESSION_NAME = 'PMOAUTH_USER_ACCESS_TOKENS.SESSION_NAME';
+
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
 
@@ -54,10 +57,10 @@ abstract class BasePmoauthUserAccessTokensPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('AccessToken', 'RefreshToken', 'UserId', 'SessionId', ),
-        BasePeer::TYPE_COLNAME => array (PmoauthUserAccessTokensPeer::ACCESS_TOKEN, PmoauthUserAccessTokensPeer::REFRESH_TOKEN, PmoauthUserAccessTokensPeer::USER_ID, PmoauthUserAccessTokensPeer::SESSION_ID, ),
-        BasePeer::TYPE_FIELDNAME => array ('ACCESS_TOKEN', 'REFRESH_TOKEN', 'USER_ID', 'SESSION_ID', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('AccessToken', 'RefreshToken', 'UserId', 'SessionId', 'SessionName', ),
+        BasePeer::TYPE_COLNAME => array (PmoauthUserAccessTokensPeer::ACCESS_TOKEN, PmoauthUserAccessTokensPeer::REFRESH_TOKEN, PmoauthUserAccessTokensPeer::USER_ID, PmoauthUserAccessTokensPeer::SESSION_ID, PmoauthUserAccessTokensPeer::SESSION_NAME, ),
+        BasePeer::TYPE_FIELDNAME => array ('ACCESS_TOKEN', 'REFRESH_TOKEN', 'USER_ID', 'SESSION_ID', 'SESSION_NAME', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -67,10 +70,10 @@ abstract class BasePmoauthUserAccessTokensPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('AccessToken' => 0, 'RefreshToken' => 1, 'UserId' => 2, 'SessionId' => 3, ),
-        BasePeer::TYPE_COLNAME => array (PmoauthUserAccessTokensPeer::ACCESS_TOKEN => 0, PmoauthUserAccessTokensPeer::REFRESH_TOKEN => 1, PmoauthUserAccessTokensPeer::USER_ID => 2, PmoauthUserAccessTokensPeer::SESSION_ID => 3, ),
-        BasePeer::TYPE_FIELDNAME => array ('ACCESS_TOKEN' => 0, 'REFRESH_TOKEN' => 1, 'USER_ID' => 2, 'SESSION_ID' => 3, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('AccessToken' => 0, 'RefreshToken' => 1, 'UserId' => 2, 'SessionId' => 3, 'SessionName' => 4, ),
+        BasePeer::TYPE_COLNAME => array (PmoauthUserAccessTokensPeer::ACCESS_TOKEN => 0, PmoauthUserAccessTokensPeer::REFRESH_TOKEN => 1, PmoauthUserAccessTokensPeer::USER_ID => 2, PmoauthUserAccessTokensPeer::SESSION_ID => 3, PmoauthUserAccessTokensPeer::SESSION_NAME => 4, ),
+        BasePeer::TYPE_FIELDNAME => array ('ACCESS_TOKEN' => 0, 'REFRESH_TOKEN' => 1, 'USER_ID' => 2, 'SESSION_ID' => 3, 'SESSION_NAME' => 4, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -178,6 +181,8 @@ abstract class BasePmoauthUserAccessTokensPeer
         $criteria->addSelectColumn(PmoauthUserAccessTokensPeer::USER_ID);
 
         $criteria->addSelectColumn(PmoauthUserAccessTokensPeer::SESSION_ID);
+
+        $criteria->addSelectColumn(PmoauthUserAccessTokensPeer::SESSION_NAME);
 
     }
 
