@@ -149,6 +149,7 @@ class WebApplication
             header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, HEADERS');
             header('Access-Control-Allow-Headers: authorization, content-type');
             header("Access-Control-Allow-Credentials", "false");
+            header('Access-Control-Allow-Origin: *');
             header('Access-Control-Max-Age: 60');
             die();
         }
@@ -435,16 +436,6 @@ class WebApplication
         define("PATH_DYNAFORM",                 PATH_DATA_SITE . "xmlForms/");
         define("PATH_IMAGES_ENVIRONMENT_FILES", PATH_DATA_SITE . "usersFiles" . PATH_SEP);
         define("PATH_IMAGES_ENVIRONMENT_USERS", PATH_DATA_SITE . "usersPhotographies" . PATH_SEP);
-
-        if (is_file(PATH_DATA_SITE.PATH_SEP . ".server_info")) {
-            $SERVER_INFO = file_get_contents(PATH_DATA_SITE.PATH_SEP.".server_info");
-            $SERVER_INFO = unserialize($SERVER_INFO);
-
-            define("SERVER_NAME", $SERVER_INFO ["SERVER_NAME"]);
-            define("SERVER_PORT", $SERVER_INFO ["SERVER_PORT"]);
-        } else {
-            echo "WARNING! No server info found!";
-        }
 
         /**
          * Global definitions, before it was the defines.php file
