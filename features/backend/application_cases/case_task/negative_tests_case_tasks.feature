@@ -9,7 +9,7 @@ Background:
 Scenario: Get list case tasks of case 174
     Given I request "cases/38365249000000000046753088523464/tasks"
     Then the response status code should be 400
-    And the response status message should have the following text "doesn't exist"
+    And the response status message should have the following text "app_uid"
 
 
 Scenario: Get list case tasks of case 174
