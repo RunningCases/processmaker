@@ -286,6 +286,19 @@ if ($action == "uploadFileNewProcessExist") {
 
         $importer->throwExceptionIfExistsReservedWordsSql($oData);
 
+        //**cheking if the PRO_CREATE_USER exist**//
+        $usrCrtr = $oData->process['PRO_CREATE_USER'];
+
+        $exist = new Users();
+        if($exist->userExists($usrCrtr)){
+        	$usrInfo = $exist->getAllInformation($usrCrtr);
+        	if ($usrInfo['status'] == 'CLOSED'){
+        		$oData->process['PRO_CREATE_USER'] = $_SESSION['USER_LOGGED'];
+        	}
+        } else {
+        	$oData->process['PRO_CREATE_USER'] = $_SESSION['USER_LOGGED'];
+        }
+
         $Fields['PRO_FILENAME'] = $filename;
         $sProUid = $oData->process['PRO_UID'];
 
