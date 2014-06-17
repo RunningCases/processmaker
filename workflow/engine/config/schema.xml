@@ -3080,7 +3080,7 @@
       <column name="USR_UID" type="VARCHAR" size="32" default="" />
       <column name="WE_METHOD" type="VARCHAR" size="4" default="HTML" />
       <column name="WE_INPUT_DOCUMENT_ACCESS" type="INTEGER" default="0" />
-      <column name="WE_DATA" type="LONGVARCHAR" default="" />
+      <column name="WE_DATA" type="LONGVARCHAR" />
       <column name="WE_CREATE_USR_UID" type="VARCHAR" size="32" default="" required="true" />
       <column name="WE_UPDATE_USR_UID" type="VARCHAR" size="32" default="" />
       <column name="WE_CREATE_DATE" type="TIMESTAMP" required="true" />
@@ -3203,7 +3203,8 @@
     <column name="ACCESS_TOKEN" type="VARCHAR" size="40" required="true" primaryKey="true" />
     <column name="REFRESH_TOKEN" type="VARCHAR" size="40" required="true" />
     <column name="USER_ID" type="VARCHAR"  size="32" required="false" />
-    <column name="SESSION_ID" type="VARCHAR" size="40" required="true" />
+    <column name="SESSION_ID" type="VARCHAR" size="64" required="true" />
+    <column name="SESSION_NAME" type="VARCHAR" size="64" required="true" />
   </table>
 
   <!--
