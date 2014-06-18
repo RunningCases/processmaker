@@ -68,7 +68,7 @@ Feature: PM Group Negative Tests
         And the response status message should have the following text "already assigned"
 
 
-    # Scenario: Delete a pm_group when have asigned user (negative tests) "Credit Supervisors"
+    # Scenario: Delete a pm_group when have asigned user and this is assigned to a task (negative tests) "Credit Supervisors"
     # Given that I want to delete a "Group"
     # And I request "group/53254668952d56744764b08079100881"
     # Then the response status code should be 400
