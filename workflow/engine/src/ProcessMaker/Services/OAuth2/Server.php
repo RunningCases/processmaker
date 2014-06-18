@@ -162,7 +162,9 @@ class Server implements iAuthenticate
 
 
         $token = $response->getParameters();
-        if (array_key_exists('access_token', $token)) {
+        if (array_key_exists('access_token', $token)
+            && array_key_exists('refresh_token', $token)
+        ) {
             session_start();
             $data = $this->storage->getAccessToken($token['access_token']);
 

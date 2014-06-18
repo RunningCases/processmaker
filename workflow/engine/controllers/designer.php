@@ -50,6 +50,8 @@ class Designer extends Controller
         $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
         $response = $oauthServer->getServer()->handleTokenRequest($request);
         $clientToken = $response->getParameters();
+        $clientToken["client_id"] = $client['CLIENT_ID'];
+        $clientToken["client_secret"] = $client['CLIENT_SECRET'];
 
         $this->setVar('prj_uid', $proUid);
         $this->setVar('app_uid', $appUid);
