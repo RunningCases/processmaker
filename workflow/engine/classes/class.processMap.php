@@ -1239,7 +1239,7 @@ class processMap
             $result = $groups->getAllGroup($start, $limit, $filter);
             $c = 0;
             foreach ($result['rows'] as $results) {
-                if (!in_array($results['GRP_UID'], $aUIDS1)) {
+                if ($results["GRP_STATUS"] == "ACTIVE" && !in_array($results["GRP_UID"], $aUIDS1)) {
                     $c++;
                     $oCriteria = new Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');

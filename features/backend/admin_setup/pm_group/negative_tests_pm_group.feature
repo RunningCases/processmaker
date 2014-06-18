@@ -54,3 +54,22 @@ Feature: PM Group Negative Tests
         And the content type is "application/json"
         Then the response status code should be 400
         And the response status message should have the following text "usr_uid"
+
+
+    Scenario: Assign the same user to the group
+        Given POST this data:
+        """
+        {
+            "usr_uid": "00000000000000000000000000000001"
+        }
+        """
+        And I request "group/70084316152d56749e0f393054862525/user"
+        Then the response status code should be 400
+        And the response status message should have the following text "already assigned"
+
+
+    # Scenario: Delete a pm_group when have asigned user (negative tests) "Credit Supervisors"
+    # Given that I want to delete a "Group"
+    # And I request "group/53254668952d56744764b08079100881"
+    # Then the response status code should be 400
+    # And the response status message should have the following text "cannot be deleted"   

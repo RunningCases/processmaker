@@ -332,7 +332,7 @@ accessTokenSetup.application = {
                                 });
 
                                 var btn2 = new Ext.Button({
-                                    text: "Delete",
+                                    text: "Remove Access",
                                     iconCls: "button_menu_ext ss_sprite ss_cross",
                                     renderTo: id2,
 
@@ -342,11 +342,11 @@ accessTokenSetup.application = {
                                         sm.selectRow(rowIndex, true);
 
                                         var record = grdpnlMain.getSelectionModel().getSelected();
-
+                                        console.log(record);
                                         if (typeof(record) != "undefined") {
                                             Ext.MessageBox.confirm(
                                                 _("ID_CONFIRM"),
-                                                "Do you want to delete selected Application?",
+                                                "Are you sure to remove access to the <b>"+record.get("CLIENT_NAME")+"</b> application?",
                                                 function (btn)
                                                 {
                                                     if (btn == "yes") {
@@ -394,13 +394,13 @@ accessTokenSetup.application = {
             //style: "margin: 0 auto 0 auto;",
             //width: 550,
             //height: 450,
-            title: "<div><div style=\"float: left;\">" + "Applications" + "</div><div id=\"divClientSetup\" style=\"float: right;\"></div><div style=\"clear: both; height: 0; line-height:0; font-size: 0;\"></div></div>",
+            title: "<div><div style=\"float: left;\">" + "User Applications" + "</div><div id=\"divClientSetup\" style=\"float: right;\"></div><div style=\"clear: both; height: 0; line-height:0; font-size: 0;\"></div></div>",
             border: false,
 
             listeners: {
                 afterrender: function (grid)
                 {
-                    var btn = new Ext.Button({
+                    /*ar btn = new Ext.Button({
                         text: "&nbsp;" + "Setup My Applications",
                         iconCls: "button_menu_ext ss_sprite ss_cog",
                         renderTo: "divClientSetup",
@@ -409,7 +409,7 @@ accessTokenSetup.application = {
                         {
                             location.href = "clientSetup";
                         }
-                    });
+                    });*/
                 }
             }
         });

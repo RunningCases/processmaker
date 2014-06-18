@@ -72,3 +72,10 @@ Feature: PM User Main Tests
         | Wrong password               | jhon          | smith        | jhon         | jhon@gmail.com         | grenn #344  | 555-6555     | AR            | B        | BUE          | 555-6655-555 | Gerencia       |                                  | 2016-02-15   |                                  | ACTIVE     | PROCESSMAKER_OPERATOR  | sample       | igual        |    400     | string | same            | 
         | Short length of the password | will          | carter       | will         | will@gmail.com         | saim #45    | 555-6522     | US            | FL       | MIA          | 23344444     | Adminsitracion | 44811996752d567110634a1013636964 | 2014-12-12   |                                  | ACTIVE     | PROCESSMAKER_MANAGER   | hol          | hol          |    400     | string | Minimum length  |
         | Create with User exist       | Peter         | Vanko        | peter        | colosaqatest@gmail.com |             |              |               |          |              |              |                |                                  | 2016-02-15   |                                  | ACTIVE     | PROCESSMAKER_OPERATOR  | sample       | sample       |    400     | string | exists          |  
+
+
+ # Scenario: Delete a pm_user when have asigned cases (negative tests) "amy"
+    # Given that I want to delete a "User"
+    # And I request "user/25286582752d56713231082039265791"
+    # Then the response status code should be 400
+    # And the response status message should have the following text "cannot be deleted"   
