@@ -74,8 +74,8 @@ Feature: PM User Main Tests
         | Create with User exist       | Peter         | Vanko        | peter        | colosaqatest@gmail.com |             |              |               |          |              |              |                |                                  | 2016-02-15   |                                  | ACTIVE     | PROCESSMAKER_OPERATOR  | sample       | sample       |    400     | string | exists          |  
 
 
- # Scenario: Delete a pm_user when have asigned cases (negative tests) "amy"
-    # Given that I want to delete a "User"
-    # And I request "user/25286582752d56713231082039265791"
-    # Then the response status code should be 400
-    # And the response status message should have the following text "cannot be deleted"   
+Scenario: Delete a pm_user when have asigned cases (negative tests) "amy with 4 cases"
+    Given that I want to delete a "User"
+    And I request "user/25286582752d56713231082039265791"
+    Then the response status code should be 400
+    And the response status message should have the following text "cannot be deleted"   

@@ -166,8 +166,8 @@ Scenario: Create a new Calendars (with work days less than 3)
 
 
 
-#Scenario: Delete Calendar when it is assigned to a project "Test Process"
-#    Given that I want to delete a "Calendar"
-#    And I request "calendar/14606161052f50839307899033145440"
-#    Then the response status code should be 400
-#    And the response status message should have the following text "cannot be deleted" 
+Scenario: Delete Calendar when it is assigned to a project "Test Process"
+    Given that I want to delete a "Calendar"
+    And I request "calendar/14606161052f50839307899033145440"
+    Then the response status code should be 400
+    And the response status message should have the following text "cannot be deleted" 
