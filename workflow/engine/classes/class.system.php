@@ -1107,8 +1107,10 @@ class System
         }
 
         // Workspace environment configuration
-        if (($wsConf = @parse_ini_file($wsIniFile)) !== false) {
-            $config = array_merge($config, $wsConf);
+        if (file_exists($wsIniFile) ) {
+            if (($wsConf = @parse_ini_file($wsIniFile)) !== false) {
+                $config = array_merge($config, $wsConf);
+            }
         }
 
         // validation debug config, only binary value is valid; debug = 1, to enable
