@@ -1057,9 +1057,13 @@ class Bootstrap
         if ($skinName == "classic") {
             $configurationFile = Bootstrap::ExpandPath("skinEngine") . 'base' . PATH_SEP . 'config.xml';
         } else {
-            $configurationFile = PATH_CUSTOM_SKINS . $skinName . PATH_SEP . 'config.xml';
+            $configurationFile = "";
 
-            if (!is_file($configurationFile)) {
+            if (defined("PATH_CUSTOM_SKINS")) {
+                $configurationFile = PATH_CUSTOM_SKINS . $skinName . PATH_SEP . 'config.xml';
+            }
+
+            if (! is_file($configurationFile)) {
                 $configurationFile = Bootstrap::ExpandPath("skinEngine") . $skinName . PATH_SEP . 'config.xml';
             }
         }

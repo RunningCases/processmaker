@@ -7,8 +7,8 @@ Feature: Group
     Background:
         Given that I have a valid access_token
 
-   
-   Scenario Outline: Get the Trigger Wizard List when there are exactly 6 library 
+
+   Scenario Outline: Get the Trigger Wizard List when there are exactly 6 library
         And I request "project/14414793652a5d718b65590036026581/trigger-wizards"
         And the content type is "application/json"
         Then the response status code should be 200
@@ -22,13 +22,13 @@ Feature: Group
         Examples:
         | i | lib_name       | lib_title                      | lib_class_name                       |
         | 0 | pmFunctions    | ProcessMaker Functions         | class.pmFunctions.php                |
-        | 1 | pmTrSharepoint | Sharepoint DWS Triggers v. 0.1 | class.pmTrSharepoint.pmFunctions.php |
-        | 2 | pmSugar        | Sugar CRM Triggers             | class.pmSugar.pmFunctions.php        |
-        | 3 | pmTalend       | Talend ETL Integration         | class.pmTalend.pmFunctions.php       |
-        | 4 | pmZimbra       | Zimbra Triggers v. 0.1         | class.pmZimbra.pmFunctions.php       |      
-        | 5 | pmTrAlfresco   | Alfresco DM Triggers v. 0.1    | class.pmTrAlfresco.pmFunctions.php   |
-       
-        
+        | 1 | pmSugar        | Sugar CRM Triggers             | class.pmSugar.pmFunctions.php        |
+        | 2 | pmTalend       | Talend ETL Integration         | class.pmTalend.pmFunctions.php       |
+        | 3 | pmTrAlfresco   | Alfresco DM Triggers v. 0.1    | class.pmTrAlfresco.pmFunctions.php   |
+        | 4 | pmTrSharepoint | Sharepoint DWS Triggers v. 0.1 | class.pmTrSharepoint.pmFunctions.php |
+        | 5 | pmZimbra       | Zimbra Triggers v. 0.1         | class.pmZimbra.pmFunctions.php       |
+
+
     Scenario Outline: Get a single Library
         And I request "project/14414793652a5d718b65590036026581/trigger-wizard/<lib_name>"
         And the content type is "application/json"
@@ -48,7 +48,7 @@ Feature: Group
         | pmTalend       | Talend ETL Integration         | class.pmTalend.pmFunctions.php       |
         | pmSugar        | Sugar CRM Triggers             | class.pmSugar.pmFunctions.php        |
 
-    
+
     Scenario Outline: Get a single Function of the Library
         And I request "project/14414793652a5d718b65590036026581/trigger-wizard/<lib_name>/<fn_name>"
         And the content type is "application/json"
@@ -119,14 +119,14 @@ Scenario Outline: Create new Trigger: createDWS
             "tri_type": "<tri_type>",
             "tri_params": {
                     "input": {
-                    
+
                     "sharepointServer": "<tri_params.input.sharepointServer>",
                     "auth": "<tri_params.input.auth>",
                     "name": "<tri_params.input.name>",
                     "users": "<tri_params.input.users>",
                     "title": "<tri_params.input.title>",
                     "documents": "<tri_params.input.documents>"
-                    
+
                 },
                 "output": {
                     "tri_answer": "<tri_params.output.tri_answer>"
@@ -189,14 +189,14 @@ Scenario Outline: Create new Trigger: createDWS
             "tri_type": "<tri_type>",
             "tri_params": {
                     "input": {
-                    
+
                     "sharepointServer": "<tri_params.input.sharepointServer>",
                     "auth": "<tri_params.input.auth>",
                     "name": "<tri_params.input.name>",
                     "users": "<tri_params.input.users>",
                     "title": "<tri_params.input.title>",
                     "documents": "<tri_params.input.documents>"
-                    
+
                 },
                 "output": {
                     "tri_answer": "<tri_params.output.tri_answer>"
@@ -210,12 +210,12 @@ Scenario Outline: Create new Trigger: createDWS
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "object"
-        
+
         Examples:
         | i | lib_name       | fn_name   | tri_title                 | tri_description | tri_type | tri_params.input.sharepointServer | tri_params.input.auth | tri_params.input.name | tri_params.input.users | tri_params.input.title | tri_params.input.documents | tri_params.output.tri_answer |
         | 1 | pmTrSharepoint | createDWS | Sharepoint 1 - Modified   |                 | SCRIPT   | @@SERVER_URL                      | username:password     | Test DWS              | @@users                | Test DWS               | /files/test.doc            | $respuesta                   |
 
-    
+
     Scenario Outline: Get a Trigger that was created with the wizard
         Given that I want to get a resource with the key "tri_uid" stored in session array as variable "tri_uid<i>"
         And I request "project/14414793652a5d718b65590036026581/trigger-wizard/<lib_name>/<fn_name>"
@@ -228,12 +228,12 @@ Scenario Outline: Create new Trigger: createDWS
         And that "tri_type" is set to "<tri_type>"
 
         Examples:
-       
+
         | i | lib_name       | fn_name                             | tri_title     | tri_description | tri_type |
         | 0 | pmFunctions    | PMFAddAttachmentToArray             | My trigger... | ...             | SCRIPT   |
         | 1 | pmTrSharepoint | createDWS                           | Test DWS      |                 | SCRIPT   |
 
-    
+
     Scenario Outline: Delete a trigger of a project
         Given that I want to delete a resource with the key "tri_uid" stored in session array as variable "tri_uid<i>"
         And I request "project/14414793652a5d718b65590036026581/trigger"
@@ -248,7 +248,7 @@ Scenario Outline: Create new Trigger: createDWS
         | 1 |
         | 2 |
 
-    
+
     Scenario: Get a List of triggers of a project
         And I request "project/14414793652a5d718b65590036026581/triggers"
         And the content type is "application/json"

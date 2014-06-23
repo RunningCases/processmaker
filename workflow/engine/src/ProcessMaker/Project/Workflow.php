@@ -44,7 +44,7 @@ class Workflow extends Handler
             $process = new Process();
             $processData = $process->load($proUid);
         } catch (\Exception $e) {
-            throw new Exception\ProjectNotFound($me, $proUid);
+            throw $e;
         }
 
         $me->process = $processData;
