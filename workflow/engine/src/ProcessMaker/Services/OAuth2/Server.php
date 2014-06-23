@@ -199,7 +199,7 @@ class Server implements iAuthenticate
         $request = \OAuth2\Request::createFromGlobals();
         $allowed = $this->server->verifyResourceRequest($request);
         $token = $this->server->getAccessTokenData($request);
-
+        self::$userId = $token['user_id'];
         // Session handling to prevent session lose in other places like, home, admin, etc
         // when user is using the new designer that have not session because it is using only the API
 
@@ -208,7 +208,7 @@ class Server implements iAuthenticate
             $pmAccessToken = new \PmoauthUserAccessTokens();
             $session = $pmAccessToken->getSessionData($token['ACCESS_TOKEN']);
 
-            if ($session !== false) {
+            if ($session !== false &&  array_key_exists($session->getSessionId(), $_COOKIE)) {
                 // increase the timeout for local php session cookie
                 $config = \Bootstrap::getSystemConfiguration();
 
