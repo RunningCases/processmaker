@@ -208,7 +208,7 @@ class Server implements iAuthenticate
             $pmAccessToken = new \PmoauthUserAccessTokens();
             $session = $pmAccessToken->getSessionData($token['ACCESS_TOKEN']);
 
-            if ($session !== false) {
+            if ($session !== false &&  array_key_exists($session->getSessionId(), $_COOKIE)) {
                 // increase the timeout for local php session cookie
                 $config = \Bootstrap::getSystemConfiguration();
 
