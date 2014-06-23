@@ -268,6 +268,9 @@ class FilesManager
                 $extention = '.html';
                 $_FILES['prf_file']['name'] = $_FILES['prf_file']['name'].$extention;
             }
+            if ($extention != 'html' || $extention != 'txt') {
+                throw new \Exception(\G::LoadTranslation('ID_FILE_UPLOAD_INCORRECT_EXTENSION'));
+            }
             $file = end(explode("/",$path));
             $path = str_replace($file,'',$path);
             if ($file == $_FILES['prf_file']['name']) {
