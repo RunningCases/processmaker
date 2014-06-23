@@ -266,6 +266,12 @@ class Group
             //Verify data
             $this->throwExceptionIfNotExistsGroup($groupUid, $this->arrayFieldNameForException["groupUid"]);
 
+            $arrayTotalTasksByGroup = $this->getTotalTasksByGroup($groupUid);
+
+            if (isset($arrayTotalTasksByGroup[$groupUid]) && $arrayTotalTasksByGroup[$groupUid] > 0) {
+                throw new \Exception(\G::LoadTranslation("ID_GROUP_CANNOT_DELETE_WHILE_ASSIGNED_TO_TASK"));
+            }
+
             //Delete
             $group = new \Groupwf();
 
@@ -343,7 +349,7 @@ class Group
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\GroupUserPeer::GRP_UID);
-            $criteria->addSelectColumn("COUNT(" . \GroupUserPeer::GRP_UID . ") AS NUM_REC");
+            $criteria->addAsColumn("NUM_REC", "COUNT(" . \GroupUserPeer::GRP_UID . ")");
             $criteria->addJoin(\GroupUserPeer::USR_UID, \UsersPeer::USR_UID, \Criteria::INNER_JOIN);
 
             if ($groupUid != "") {
@@ -359,7 +365,7 @@ class Group
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
-                $arrayData[$row["GRP_UID"]] = $row["NUM_REC"];
+                $arrayData[$row["GRP_UID"]] = (int)($row["NUM_REC"]);
             }
 
             //Return
@@ -390,7 +396,7 @@ class Group
             $criteria = new \Criteria("workflow");
 
             $criteria->addAsColumn("GRP_UID", \TaskUserPeer::USR_UID);
-            $criteria->addSelectColumn("COUNT(" . \TaskUserPeer::USR_UID . ") AS NUM_REC");
+            $criteria->addAsColumn("NUM_REC", "COUNT(" . \TaskUserPeer::USR_UID . ")");
 
             if ($groupUid != "") {
                 $criteria->add(\TaskUserPeer::USR_UID, $groupUid, \Criteria::EQUAL);
@@ -406,7 +412,7 @@ class Group
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
-                $arrayData[$row["GRP_UID"]] = $row["NUM_REC"];
+                $arrayData[$row["GRP_UID"]] = (int)($row["NUM_REC"]);
             }
 
             //Return
@@ -430,8 +436,8 @@ class Group
                 $this->getFieldNameByFormatFieldName("GRP_UID")    => $record["GRP_UID"],
                 $this->getFieldNameByFormatFieldName("GRP_TITLE")  => $record["GRP_TITLE"],
                 $this->getFieldNameByFormatFieldName("GRP_STATUS") => $record["GRP_STATUS"],
-                $this->getFieldNameByFormatFieldName("GRP_USERS")  => (int)($record["GRP_USERS"]),
-                $this->getFieldNameByFormatFieldName("GRP_TASKS")  => (int)($record["GRP_TASKS"])
+                $this->getFieldNameByFormatFieldName("GRP_USERS")  => $record["GRP_USERS"],
+                $this->getFieldNameByFormatFieldName("GRP_TASKS")  => $record["GRP_TASKS"]
             );
         } catch (\Exception $e) {
             throw $e;
@@ -478,7 +484,7 @@ class Group
             $criteriaCount = clone $criteria;
 
             $criteriaCount->clearSelectColumns();
-            $criteriaCount->addSelectColumn("COUNT(" . \GroupwfPeer::GRP_UID . ") AS NUM_REC");
+            $criteriaCount->addAsColumn("NUM_REC", "COUNT(" . \GroupwfPeer::GRP_UID . ")");
 
             $rsCriteriaCount = \GroupwfPeer::doSelectRS($criteriaCount);
             $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -486,22 +492,16 @@ class Group
             $rsCriteriaCount->next();
             $row = $rsCriteriaCount->getRow();
 
-            $numRecTotal = $row["NUM_REC"];
+            $numRecTotal = (int)($row["NUM_REC"]);
 
             //SQL
             if (!is_null($sortField) && trim($sortField) != "") {
                 $sortField = strtoupper($sortField);
 
-                switch ($sortField) {
-                    case "GRP_UID":
-                    case "GRP_STATUS":
-                    case "GRP_LDAP_DN":
-                    case "GRP_UX":
-                        $sortField = \GroupwfPeer::TABLE_NAME . "." . $sortField;
-                        break;
-                    default:
-                        $sortField = "GRP_TITLE";
-                        break;
+                if (in_array($sortField, array("GRP_UID", "GRP_STATUS", "GRP_LDAP_DN", "GRP_UX"))) {
+                    $sortField = \GroupwfPeer::TABLE_NAME . "." . $sortField;
+                } else {
+                    $sortField = "GRP_TITLE";
                 }
             } else {
                 $sortField = "GRP_TITLE";
@@ -708,7 +708,7 @@ class Group
             $criteriaCount = clone $criteria;
 
             $criteriaCount->clearSelectColumns();
-            $criteriaCount->addSelectColumn("COUNT(" . \UsersPeer::USR_UID . ") AS NUM_REC");
+            $criteriaCount->addAsColumn("NUM_REC", "COUNT(" . \UsersPeer::USR_UID . ")");
 
             $rsCriteriaCount = \UsersPeer::doSelectRS($criteriaCount);
             $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -716,24 +716,16 @@ class Group
             $rsCriteriaCount->next();
             $row = $rsCriteriaCount->getRow();
 
-            $numRecTotal = $row["NUM_REC"];
+            $numRecTotal = (int)($row["NUM_REC"]);
 
             //SQL
             if (!is_null($sortField) && trim($sortField) != "") {
                 $sortField = strtoupper($sortField);
 
-                switch ($sortField) {
-                    case "USR_UID":
-                    case "USR_USERNAME":
-                    case "USR_FIRSTNAME":
-                    case "USR_LASTNAME":
-                    case "USR_EMAIL":
-                    case "USR_STATUS":
-                        $sortField = \UsersPeer::TABLE_NAME . "." . $sortField;
-                        break;
-                    default:
-                        $sortField = \UsersPeer::USR_USERNAME;
-                        break;
+                if (in_array($sortField, array("USR_UID", "USR_USERNAME", "USR_FIRSTNAME", "USR_LASTNAME", "USR_EMAIL", "USR_STATUS"))) {
+                    $sortField = \UsersPeer::TABLE_NAME . "." . $sortField;
+                } else {
+                    $sortField = \UsersPeer::USR_USERNAME;
                 }
             } else {
                 $sortField = \UsersPeer::USR_USERNAME;
