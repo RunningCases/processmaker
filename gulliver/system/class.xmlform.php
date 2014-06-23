@@ -1167,6 +1167,7 @@ class XmlForm_Field_Text extends XmlForm_Field_SimpleText
             $html .= 'id="form[' . $this->name . ']" ';
             $html .= 'name="form[' . $this->name . ']" ';
             $html .= $this->NSFieldType() . ' ';
+            $this->enableHtml = false;
             $html .= 'type="hidden" value="' . $this->htmlentities( $value, ENT_QUOTES, 'utf-8' ) . '" />';
         }
 
@@ -3741,7 +3742,7 @@ class XmlForm_Field_Listbox extends XmlForm_Field
             return $html;
         } elseif ($this->mode === 'view') {
             $valuesFound = array('__NULL__');
-            $html = '<select multiple="multiple" size="' . $this->size . '" style="background: none;" disabled="disabled">';
+            $html = '<select id="form[' . $this->name . ']" ' . $this->NSFieldType() . ' multiple="multiple" size="' . $this->size . '" style="background: none;" disabled="disabled">';
             foreach ($this->option as $optionName => $option) {
                 if (in_array( $optionName . "", $value )) {
                     $valuesFound[] = $optionName . "";

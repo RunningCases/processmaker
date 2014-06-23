@@ -4,11 +4,11 @@ namespace ProcessMaker\BusinessModel;
 class ProcessCategory
 {
     private $arrayFieldDefinition = array(
-        "CAT_UID"    => array("fieldName" => "CATEGORY_UID",    "type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "processCategoryUid"),
+        "CAT_UID"    => array("fieldName" => "CATEGORY_UID",    "type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "categoryUid"),
 
-        "CAT_PARENT" => array("fieldName" => "CATEGORY_PARENT", "type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "processCategoryParent"),
-        "CAT_NAME"   => array("fieldName" => "CATEGORY_NAME",   "type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(), "fieldNameAux" => "processCategoryName"),
-        "CAT_ICON"   => array("fieldName" => "CATEGORY_ICON",   "type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "processCategoryIcon")
+        "CAT_PARENT" => array("fieldName" => "CATEGORY_PARENT", "type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "categoryParent"),
+        "CAT_NAME"   => array("fieldName" => "CATEGORY_NAME",   "type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(), "fieldNameAux" => "categoryName"),
+        "CAT_ICON"   => array("fieldName" => "CATEGORY_ICON",   "type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "categoryIcon")
     );
 
     private $formatFieldNameInUppercase = true;
@@ -60,7 +60,7 @@ class ProcessCategory
      *
      * return void
      */
-    public function setArrayFieldNameForException($arrayData)
+    public function setArrayFieldNameForException(array $arrayData)
     {
         try {
             foreach ($arrayData as $key => $value) {
@@ -88,14 +88,244 @@ class ProcessCategory
     }
 
     /**
-     * Get criteria for Process Category
+     * Verify if exists the name of a Category
      *
-     * return object
+     * @param string $categoryName       Name
+     * @param string $categoryUidExclude Unique id of Category to exclude
+     *
+     * return bool Return true if exists the name of a Category, false otherwise
      */
-    public function getProcessCategoryCriteria()
+    public function existsName($categoryName, $categoryUidExclude = "")
     {
         try {
             $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ProcessCategoryPeer::CATEGORY_UID);
+
+            if ($categoryUidExclude != "") {
+                $criteria->add(\ProcessCategoryPeer::CATEGORY_UID, $categoryUidExclude, \Criteria::NOT_EQUAL);
+            }
+
+            $criteria->add(\ProcessCategoryPeer::CATEGORY_NAME, $categoryName, \Criteria::EQUAL);
+
+            $rsCriteria = \ProcessCategoryPeer::doSelectRS($criteria);
+
+            if ($rsCriteria->next()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if does not exist the Category in table PROCESS_CATEGORY
+     *
+     * @param string $categoryUid           Unique id of Category
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if does not exist the Category in table PROCESS_CATEGORY
+     */
+    public function throwExceptionIfNotExistsCategory($categoryUid, $fieldNameForException)
+    {
+        try {
+            $obj = \ProcessCategoryPeer::retrieveByPK($categoryUid);
+
+            if (is_null($obj)) {
+                throw new \Exception(\G::LoadTranslation("ID_CATEGORY_NOT_EXIST", array($fieldNameForException, $categoryUid)));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if exists the name of a Category
+     *
+     * @param string $categoryName          Name
+     * @param string $fieldNameForException Field name for the exception
+     * @param string $categoryUidExclude    Unique id of Category to exclude
+     *
+     * return void Throw exception if exists the name of a Category
+     */
+    public function throwExceptionIfExistsName($categoryName, $fieldNameForException, $categoryUidExclude = "")
+    {
+        try {
+            if ($this->existsName($categoryName, $categoryUidExclude)) {
+                throw new \Exception(\G::LoadTranslation("ID_CATEGORY_NAME_ALREADY_EXISTS", array($fieldNameForException, $categoryName)));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Validate the data if they are invalid (INSERT and UPDATE)
+     *
+     * @param string $categoryUid Unique id of Category
+     * @param array  $arrayData   Data
+     *
+     * return void Throw exception if data has an invalid value
+     */
+    public function throwExceptionIfDataIsInvalid($categoryUid, array $arrayData)
+    {
+        try {
+            //Set variables
+            $arrayCategoryData = ($categoryUid == "")? array() : $this->getCategory($categoryUid, true);
+            $flagInsert        = ($categoryUid == "")? true : false;
+
+            $arrayDataMain = array_merge($arrayCategoryData, $arrayData);
+
+            //Verify data - Field definition
+            $process = new \ProcessMaker\BusinessModel\Process();
+
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, $flagInsert);
+
+            //Verify data
+            if (isset($arrayData["CAT_NAME"])) {
+                $this->throwExceptionIfExistsName($arrayData["CAT_NAME"], $this->arrayFieldNameForException["categoryName"], $categoryUid);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Create Category
+     *
+     * @param array $arrayData Data
+     *
+     * return array Return data of the new Category created
+     */
+    public function create(array $arrayData)
+    {
+        try {
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+            $validator = new \ProcessMaker\BusinessModel\Validator();
+
+            $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
+
+            //Set data
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+
+            unset($arrayData["CAT_UID"]);
+
+            //Verify data
+            $this->throwExceptionIfDataIsInvalid("", $arrayData);
+
+            //Create
+            $category = new \ProcessCategory();
+
+            $categoryUid = \ProcessMaker\Util\Common::generateUID();
+
+            $category->setNew(true);
+            $category->setCategoryUid($categoryUid);
+            $category->setCategoryName($arrayData["CAT_NAME"]);
+
+            $result = $category->save();
+
+            //Return
+            return $this->getCategory($categoryUid);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Update Category
+     *
+     * @param string $categoryUid Unique id of Category
+     * @param array  $arrayData   Data
+     *
+     * return array Return data of the Category updated
+     */
+    public function update($categoryUid, array $arrayData)
+    {
+        try {
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+            $validator = new \ProcessMaker\BusinessModel\Validator();
+
+            $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
+
+            //Set data
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+            $arrayDataBackup = $arrayData;
+
+            //Verify data
+            $this->throwExceptionIfNotExistsCategory($categoryUid, $this->arrayFieldNameForException["categoryUid"]);
+
+            $this->throwExceptionIfDataIsInvalid($categoryUid, $arrayData);
+
+            //Update
+            $category = new \ProcessCategory();
+
+            $category->setNew(false);
+            $category->setCategoryUid($categoryUid);
+
+            if (isset($arrayData["CAT_NAME"])) {
+                $category->setCategoryName($arrayData["CAT_NAME"]);
+            }
+
+            $result = $category->save();
+
+            $arrayData = $arrayDataBackup;
+
+            //Return
+            if (!$this->formatFieldNameInUppercase) {
+                $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            }
+
+            return $arrayData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Delete Category
+     *
+     * @param string $categoryUid Unique id of Category
+     *
+     * return void
+     */
+    public function delete($categoryUid)
+    {
+        try {
+            //Verify data
+            $this->throwExceptionIfNotExistsCategory($categoryUid, $this->arrayFieldNameForException["categoryUid"]);
+
+            $process = new \Process();
+
+            $arrayTotalProcessesByCategory = $process->getAllProcessesByCategory();
+
+            if (isset($arrayTotalProcessesByCategory[$categoryUid])) {
+                throw new \Exception(\G::LoadTranslation("ID_MSG_CANNOT_DELETE_CATEGORY"));
+            }
+
+            //Delete
+            $category = new \ProcessCategory();
+
+            $category->setCategoryUid($categoryUid);
+            $category->delete();
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get criteria for Category
+     *
+     * return object
+     */
+    public function getCategoryCriteria()
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
             $criteria->addSelectColumn(\ProcessCategoryPeer::CATEGORY_UID);
             $criteria->addSelectColumn(\ProcessCategoryPeer::CATEGORY_PARENT);
             $criteria->addSelectColumn(\ProcessCategoryPeer::CATEGORY_NAME);
@@ -109,13 +339,13 @@ class ProcessCategory
     }
 
     /**
-     * Get data of a Process Category from a record
+     * Get data of a Category from a record
      *
      * @param array $record Record
      *
-     * return array Return an array with data Process Category
+     * return array Return an array with data Category
      */
-    public function getProcessCategoryDataFromRecord($record)
+    public function getCategoryDataFromRecord(array $record)
     {
         try {
             return array(
@@ -129,7 +359,7 @@ class ProcessCategory
     }
 
     /**
-     * Get all Process Categories
+     * Get all Categories
      *
      * @param array  $arrayFilterData Data of the filters
      * @param string $sortField       Field name to sort
@@ -137,12 +367,12 @@ class ProcessCategory
      * @param int    $start           Start
      * @param int    $limit           Limit
      *
-     * return array Return an array with all Process Categories
+     * return array Return an array with all Categories
      */
-    public function getCategories($arrayFilterData = null, $sortField = null, $sortDir = null, $start = null, $limit = null)
+    public function getCategories(array $arrayFilterData = null, $sortField = null, $sortDir = null, $start = null, $limit = null)
     {
         try {
-            $arrayProcessCategory = array();
+            $arrayCategory = array();
 
             //Verify data
             $process = new \ProcessMaker\BusinessModel\Process();
@@ -151,7 +381,7 @@ class ProcessCategory
 
             //Get data
             if (!is_null($limit) && $limit . "" == "0") {
-                return $arrayProcessCategory;
+                return $arrayCategory;
             }
 
             //Set variables
@@ -160,7 +390,7 @@ class ProcessCategory
             $arrayTotalProcessesByCategory = $process->getAllProcessesByCategory();
 
             //SQL
-            $criteria = $this->getProcessCategoryCriteria();
+            $criteria = $this->getCategoryCriteria();
 
             if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]) && trim($arrayFilterData["filter"]) != "") {
                 $criteria->add(\ProcessCategoryPeer::CATEGORY_NAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE);
@@ -170,7 +400,7 @@ class ProcessCategory
             $criteriaCount = clone $criteria;
 
             $criteriaCount->clearSelectColumns();
-            $criteriaCount->addSelectColumn("COUNT(" . \ProcessCategoryPeer::CATEGORY_UID . ") AS NUM_REC");
+            $criteriaCount->addAsColumn("NUM_REC", "COUNT(" . \ProcessCategoryPeer::CATEGORY_UID . ")");
 
             $rsCriteriaCount = \ProcessCategoryPeer::doSelectRS($criteriaCount);
             $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -185,16 +415,10 @@ class ProcessCategory
                 $sortField = strtoupper($sortField);
                 $sortField = (isset($this->arrayFieldDefinition[$sortField]["fieldName"]))? $this->arrayFieldDefinition[$sortField]["fieldName"] : $sortField;
 
-                switch ($sortField) {
-                    case "CATEGORY_UID":
-                    case "CATEGORY_PARENT":
-                    case "CATEGORY_NAME":
-                    case "CATEGORY_ICON":
-                        $sortField = \ProcessCategoryPeer::TABLE_NAME . "." . $sortField;
-                        break;
-                    default:
-                        $sortField = \ProcessCategoryPeer::CATEGORY_NAME;
-                        break;
+                if (in_array($sortField, array("CATEGORY_UID", "CATEGORY_PARENT", "CATEGORY_NAME", "CATEGORY_ICON"))) {
+                    $sortField = \ProcessCategoryPeer::TABLE_NAME . "." . $sortField;
+                } else {
+                    $sortField = \ProcessCategoryPeer::CATEGORY_NAME;
                 }
             } else {
                 $sortField = \ProcessCategoryPeer::CATEGORY_NAME;
@@ -222,187 +446,59 @@ class ProcessCategory
 
                 $row["CATEGORY_TOTAL_PROCESSES"] = (isset($arrayTotalProcessesByCategory[$row["CATEGORY_UID"]]))? $arrayTotalProcessesByCategory[$row["CATEGORY_UID"]] : 0;
 
-                $arrayProcessCategory[] = $this->getProcessCategoryDataFromRecord($row);
+                $arrayCategory[] = $this->getCategoryDataFromRecord($row);
             }
 
             //Return
-            return $arrayProcessCategory;
+            return $arrayCategory;
         } catch (\Exception $e) {
             throw $e;
         }
     }
 
     /**
-     * Get a Process Category
+     * Get data of a Category
      *
-     * @param string $cat_uid       Category Id
+     * @param string $categoryUid   Unique id of Category
+     * @param bool   $flagGetRecord Value that set the getting
      *
-     * return array Return an object with the Process Category
+     * return array Return an array with data of a Category
      */
-    public function getCategory($cat_uid)
+    public function getCategory($categoryUid, $flagGetRecord = false)
     {
         try {
-            $oProcessCategory = '';
-            $process = new \Process();
-            $oTotalProcessesByCategory = $process->getAllProcessesByCategory();
-            $criteria = $this->getAProcessCategoryCriteria($cat_uid);
-            $criteriaCount = clone $criteria;
-            $criteriaCount->clearSelectColumns();
-            $criteriaCount->addSelectColumn("COUNT(" . \ProcessCategoryPeer::CATEGORY_UID . ") AS NUM_REC");
-            $rsCriteriaCount = \ProcessCategoryPeer::doSelectRS($criteriaCount);
-            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $rsCriteriaCount->next();
+            //Verify data
+            $this->throwExceptionIfNotExistsCategory($categoryUid, $this->arrayFieldNameForException["categoryUid"]);
+
+            //Set variables
+            if (!$flagGetRecord) {
+                $process = new \Process();
+
+                $arrayTotalProcessesByCategory = $process->getAllProcessesByCategory();
+            }
+
+            //Get data
+            //SQL
+            $criteria = $this->getCategoryCriteria();
+
+            $criteria->add(\ProcessCategoryPeer::CATEGORY_UID, $categoryUid, \Criteria::EQUAL);
+
             $rsCriteria = \ProcessCategoryPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            while ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-                $row["CATEGORY_TOTAL_PROCESSES"] = (isset($oTotalProcessesByCategory[$row["CATEGORY_UID"]]))? $oTotalProcessesByCategory[$row["CATEGORY_UID"]] : 0;
-                $oProcessCategory = $this->getProcessCategoryDataFromRecord($row);
-            }
-            //Return
-            if ($oProcessCategory != '') {
-                $oProcessCategory = array_change_key_case($oProcessCategory, CASE_LOWER);
-                $oResponse = json_decode(json_encode($oProcessCategory), false);
-                return $oResponse;
-            } else {
-                throw (new \Exception( 'The Category with cat_uid: '.$cat_uid.' doesn\'t exist!'));
-            }
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
 
-    /**
-     * Post Process Category
-     *
-     * @param string $cat_name   Name of Category
-     *
-     * return array
-     */
-    public function addCategory($cat_name)
-    {
-        try {
-            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes". PATH_SEP . "model" . PATH_SEP . "ProcessCategory.php");
-            if ($cat_name == '') {
-                throw (new \Exception( 'cat_name. Process Category name can\'t be null'));
-            }
-            $catName = trim( $cat_name );
-            if ($this->existsName( $cat_name )) {
-                throw (new \Exception( 'cat_name. Duplicate Process Category name'));
-            }
-            $catUid = \G::GenerateUniqueID();
-            $pcat = new \ProcessCategory();
-            $pcat->setNew( true );
-            $pcat->setCategoryUid( $catUid );
-            $pcat->setCategoryName( $catName );
-            $pcat->save();
-            $oProcessCategory = $this->getCategory( $catUid );
-            //Return
-            return $oProcessCategory;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Put Process Category
-     *
-     * @param string $cat_uid    Category id
-     * @param string $cat_name   Category Name
-     *
-     * return array
-     */
-    public function updateCategory($cat_uid, $cat_name)
-    {
-        try {
-            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes". PATH_SEP . "model" . PATH_SEP . "ProcessCategory.php");
-            $catUID = $cat_uid;
-            $catName = trim( $cat_name );
-            if ($this->existsName( $cat_name )) {
-                throw (new \Exception( 'cat_name. Duplicate Process Category name'));
-            }
-            $pcat = new \ProcessCategory();
-            $pcat->setNew( false );
-            $pcat->setCategoryUid( $catUID );
-            $pcat->setCategoryName( $catName );
-            $pcat->save();
-            $oProcessCategory = $this->getCategory( $cat_uid );
-            //Return
-            $oResponse = json_decode(json_encode($oProcessCategory), false);
-            return $oResponse;
-
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Delete Process Category
-     *
-     * @param string $cat_uid    Category id
-     *
-     * return array
-     */
-    public function deleteCategory($cat_uid)
-    {
-        try {
-            require_once 'classes/model/ProcessCategory.php';
-            $criteria = $this->getAProcessCategoryCriteria($cat_uid);
-            $rsCriteria = \ProcessCategoryPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
+
             $row = $rsCriteria->getRow();
-            if ($row) {
-                $cat = new \ProcessCategory();
-                $cat->setCategoryUid( $cat_uid );
-                $cat->delete();
-            } else {
-                throw (new \Exception( 'The Category with cat_uid: '.$cat_uid.' doesn\'t exist!'));
+
+            if (!$flagGetRecord) {
+                $row["CATEGORY_TOTAL_PROCESSES"] = (isset($arrayTotalProcessesByCategory[$row["CATEGORY_UID"]]))? $arrayTotalProcessesByCategory[$row["CATEGORY_UID"]] : 0;
             }
 
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Get criteria for Process Category
-     *
-     * return object
-     */
-    public function getAProcessCategoryCriteria($cat_uid)
-    {
-        try {
-            $criteria = new \Criteria("workflow");
-            $criteria->addSelectColumn(\ProcessCategoryPeer::CATEGORY_UID);
-            $criteria->addSelectColumn(\ProcessCategoryPeer::CATEGORY_PARENT);
-            $criteria->addSelectColumn(\ProcessCategoryPeer::CATEGORY_NAME);
-            $criteria->addSelectColumn(\ProcessCategoryPeer::CATEGORY_ICON);
-            $criteria->add(\ProcessCategoryPeer::CATEGORY_UID, $cat_uid);
-            return $criteria;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Checks if the name exists
-     *
-     * @param string $name       Name
-     *
-     * return bool Return true if the name exists, false otherwise
-     */
-    public function existsName($name)
-    {
-        try {
-            $criteria = new \Criteria("workflow");
-            $criteria->add(\ProcessCategoryPeer::CATEGORY_NAME, $name, \Criteria::EQUAL);
-            $rsCriteria = \ProcessCategoryPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $rsCriteria->next();
-            return $rsCriteria->getRow();
+            //Return
+            return (!$flagGetRecord)? $this->getCategoryDataFromRecord($row) : $row;
         } catch (\Exception $e) {
             throw $e;
         }
     }
 }
+

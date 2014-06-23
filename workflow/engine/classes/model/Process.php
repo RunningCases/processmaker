@@ -569,17 +569,20 @@ class Process extends BaseProcess
 
     public static function existsByProTitle ($PRO_TITLE)
     {
-        $oCriteria = new Criteria( 'workflow' );
-        $oCriteria->addSelectColumn( 'COUNT(*) AS PROCESS' );
+        $oCriteria = new Criteria("workflow");
+
+        $oCriteria->addSelectColumn("COUNT(" . ContentPeer::CON_ID . ") AS NUM_REC");
+
         $oCriteria->add( ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
         $oCriteria->add( ContentPeer::CON_LANG, SYS_LANG );
         $oCriteria->add( ContentPeer::CON_VALUE, $PRO_TITLE );
         $oDataset = ContentPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+
         $oDataset->next();
         $aRow = $oDataset->getRow();
 
-        return $aRow['PROCESS'] ? true : false;
+        return ((int)($aRow["NUM_REC"]) > 0)? true : false;
     }
 
     public function getAllProcessesCount ()
@@ -760,7 +763,7 @@ class Process extends BaseProcess
             $aProcesses[] = $process;
 
         }
-        
+
         $memcache = & PMmemcached::getSingleton( SYS_SYS );
         if (isset($memcache) && $memcache->enabled == 1 ) {
         	return $aProcesses;
@@ -893,7 +896,7 @@ class Process extends BaseProcess
             $r = $memcache->delete( $memkeyTotal );
         }
     }
-    
+
     public function orderMemcache($dataMemcache, $start, $limit)
     {
     	if ($this->dir=='ASC') {
@@ -911,7 +914,7 @@ class Process extends BaseProcess
     public function ordProcessAsc ($a, $b)
     {
     	if (($this->sort) == '')  {
-    		$this->sort = 'PRO_TITLE'; 
+    		$this->sort = 'PRO_TITLE';
     	}
         if (strtolower($a[$this->sort]) > strtolower($b[$this->sort])) {
             return 1;
