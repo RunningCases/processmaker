@@ -2,6 +2,9 @@
 /*
  * ProcessMaker Web Application Bootstrap
  */
+if (isset($_SERVER['UNENCODED_URL'])) {
+    $_SERVER['REQUEST_URI'] = $_SERVER['UNENCODED_URL'];
+}
 try {
     $rootDir = realpath(__DIR__ . "/../../") . DIRECTORY_SEPARATOR;
 
