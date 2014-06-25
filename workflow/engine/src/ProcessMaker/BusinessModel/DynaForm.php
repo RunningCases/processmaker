@@ -367,6 +367,10 @@ class DynaForm
 
             $dynaFormUid = $dynaForm->create($arrayData);
 
+            $oDynaform = \DynaformPeer::retrieveByPK( $dynaFormUid );
+            $oDynaform->setDynContent( $arrayData['DYN_CONTENT'] );
+            $oDynaform->save();
+
             //Return
             unset($arrayData["PRO_UID"]);
 
@@ -907,6 +911,7 @@ class DynaForm
             $criteria->addAsColumn("DYN_TITLE", "CT.CON_VALUE");
             $criteria->addAsColumn("DYN_DESCRIPTION", "CD.CON_VALUE");
             $criteria->addSelectColumn(\DynaformPeer::DYN_TYPE);
+            $criteria->addSelectColumn(\DynaformPeer::DYN_CONTENT);
 
             $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
             $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
@@ -953,7 +958,8 @@ class DynaForm
                 $this->getFieldNameByFormatFieldName("DYN_UID")         => $record["DYN_UID"],
                 $this->getFieldNameByFormatFieldName("DYN_TITLE")       => $record["DYN_TITLE"],
                 $this->getFieldNameByFormatFieldName("DYN_DESCRIPTION") => $record["DYN_DESCRIPTION"] . "",
-                $this->getFieldNameByFormatFieldName("DYN_TYPE")        => $record["DYN_TYPE"] . ""
+                $this->getFieldNameByFormatFieldName("DYN_TYPE")        => $record["DYN_TYPE"] . "",
+                $this->getFieldNameByFormatFieldName("DYN_CONTENT")        => $record["DYN_CONTENT"] . ""
             );
         } catch (\Exception $e) {
             throw $e;
