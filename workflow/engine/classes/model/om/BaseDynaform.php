@@ -52,6 +52,12 @@ abstract class BaseDynaform extends BaseObject implements Persistent
     protected $dyn_filename = '';
 
     /**
+     * The value for the dyn_content field.
+     * @var        string
+     */
+    protected $dyn_content;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -107,6 +113,17 @@ abstract class BaseDynaform extends BaseObject implements Persistent
     {
 
         return $this->dyn_filename;
+    }
+
+    /**
+     * Get the [dyn_content] column value.
+     * 
+     * @return     string
+     */
+    public function getDynContent()
+    {
+
+        return $this->dyn_content;
     }
 
     /**
@@ -198,6 +215,28 @@ abstract class BaseDynaform extends BaseObject implements Persistent
     } // setDynFilename()
 
     /**
+     * Set the value of [dyn_content] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setDynContent($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->dyn_content !== $v) {
+            $this->dyn_content = $v;
+            $this->modifiedColumns[] = DynaformPeer::DYN_CONTENT;
+        }
+
+    } // setDynContent()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -222,12 +261,14 @@ abstract class BaseDynaform extends BaseObject implements Persistent
 
             $this->dyn_filename = $rs->getString($startcol + 3);
 
+            $this->dyn_content = $rs->getString($startcol + 4);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 4; // 4 = DynaformPeer::NUM_COLUMNS - DynaformPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 5; // 5 = DynaformPeer::NUM_COLUMNS - DynaformPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Dynaform object", $e);
@@ -443,6 +484,9 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             case 3:
                 return $this->getDynFilename();
                 break;
+            case 4:
+                return $this->getDynContent();
+                break;
             default:
                 return null;
                 break;
@@ -467,6 +511,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             $keys[1] => $this->getProUid(),
             $keys[2] => $this->getDynType(),
             $keys[3] => $this->getDynFilename(),
+            $keys[4] => $this->getDynContent(),
         );
         return $result;
     }
@@ -510,6 +555,9 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             case 3:
                 $this->setDynFilename($value);
                 break;
+            case 4:
+                $this->setDynContent($value);
+                break;
         } // switch()
     }
 
@@ -549,6 +597,10 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             $this->setDynFilename($arr[$keys[3]]);
         }
 
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setDynContent($arr[$keys[4]]);
+        }
+
     }
 
     /**
@@ -574,6 +626,10 @@ abstract class BaseDynaform extends BaseObject implements Persistent
 
         if ($this->isColumnModified(DynaformPeer::DYN_FILENAME)) {
             $criteria->add(DynaformPeer::DYN_FILENAME, $this->dyn_filename);
+        }
+
+        if ($this->isColumnModified(DynaformPeer::DYN_CONTENT)) {
+            $criteria->add(DynaformPeer::DYN_CONTENT, $this->dyn_content);
         }
 
 
@@ -635,6 +691,8 @@ abstract class BaseDynaform extends BaseObject implements Persistent
         $copyObj->setDynType($this->dyn_type);
 
         $copyObj->setDynFilename($this->dyn_filename);
+
+        $copyObj->setDynContent($this->dyn_content);
 
 
         $copyObj->setNew(true);
