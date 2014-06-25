@@ -302,7 +302,7 @@ class ProcessCategory
 
             $arrayTotalProcessesByCategory = $process->getAllProcessesByCategory();
 
-            if (isset($arrayTotalProcessesByCategory[$categoryUid])) {
+            if (isset($arrayTotalProcessesByCategory[$categoryUid]) && (int)($arrayTotalProcessesByCategory[$categoryUid])> 0) {
                 throw new \Exception(\G::LoadTranslation("ID_MSG_CANNOT_DELETE_CATEGORY"));
             }
 
@@ -351,7 +351,7 @@ class ProcessCategory
             return array(
                 $this->getFieldNameByFormatFieldName("CAT_UID")             => $record["CATEGORY_UID"],
                 $this->getFieldNameByFormatFieldName("CAT_NAME")            => $record["CATEGORY_NAME"],
-                $this->getFieldNameByFormatFieldName("CAT_TOTAL_PROCESSES") => (int)($record["CATEGORY_TOTAL_PROCESSES"])
+                $this->getFieldNameByFormatFieldName("CAT_TOTAL_PROCESSES") => $record["CATEGORY_TOTAL_PROCESSES"]
             );
         } catch (\Exception $e) {
             throw $e;
@@ -408,7 +408,7 @@ class ProcessCategory
             $rsCriteriaCount->next();
             $row = $rsCriteriaCount->getRow();
 
-            $numRecTotal = $row["NUM_REC"];
+            $numRecTotal = (int)($row["NUM_REC"]);
 
             //SQL
             if (!is_null($sortField) && trim($sortField) != "") {
@@ -444,7 +444,7 @@ class ProcessCategory
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
-                $row["CATEGORY_TOTAL_PROCESSES"] = (isset($arrayTotalProcessesByCategory[$row["CATEGORY_UID"]]))? $arrayTotalProcessesByCategory[$row["CATEGORY_UID"]] : 0;
+                $row["CATEGORY_TOTAL_PROCESSES"] = (isset($arrayTotalProcessesByCategory[$row["CATEGORY_UID"]]))? (int)($arrayTotalProcessesByCategory[$row["CATEGORY_UID"]]) : 0;
 
                 $arrayCategory[] = $this->getCategoryDataFromRecord($row);
             }
@@ -491,7 +491,7 @@ class ProcessCategory
             $row = $rsCriteria->getRow();
 
             if (!$flagGetRecord) {
-                $row["CATEGORY_TOTAL_PROCESSES"] = (isset($arrayTotalProcessesByCategory[$row["CATEGORY_UID"]]))? $arrayTotalProcessesByCategory[$row["CATEGORY_UID"]] : 0;
+                $row["CATEGORY_TOTAL_PROCESSES"] = (isset($arrayTotalProcessesByCategory[$row["CATEGORY_UID"]]))? (int)($arrayTotalProcessesByCategory[$row["CATEGORY_UID"]]) : 0;
             }
 
             //Return
