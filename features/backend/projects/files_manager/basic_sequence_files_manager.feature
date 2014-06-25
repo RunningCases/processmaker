@@ -44,9 +44,9 @@ Feature: Files Manager Resources
     Examples:
     | test_description             | file_name       | path                  | content  | http_code | type   | i |
     | into public folder           | testbehat1.txt  | public/               | test     | 200       | object | 0 |
-    | into mailtemplates folder    | testbehat1.txt  | templates/            | test     | 200       | object | 1 |
+    | into mailtemplates folder    | testbehat1.html | templates/            | test     | 200       | object | 1 |
     | into public subfolder        | testbehat1.txt  | public/test_folder    | test     | 200       | object | 2 |
-    | into mailtemplates subfolder | testbehat1.txt  | templates/test_folder | test     | 200       | object | 3 |
+    | into mailtemplates subfolder | testbehat1.html | templates/test_folder | test     | 200       | object | 3 |
 
   Scenario Outline: Post files
   Given PUT this data:
