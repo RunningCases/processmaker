@@ -154,14 +154,14 @@ class Bpmn extends Handler
         }
 
         self::log("Remove Project With Uid: {$this->prjUid}");
+        foreach ($this->getEvents() as $event) {
+            $this->removeEvent($event["EVN_UID"]);
+        }
         foreach ($this->getActivities() as $activity) {
             $this->removeActivity($activity["ACT_UID"]);
         }
         foreach ($this->getGateways() as $gateway) {
             $this->removeGateway($gateway["GAT_UID"]);
-        }
-        foreach ($this->getEvents() as $event) {
-            $this->removeEvent($event["EVN_UID"]);
         }
         foreach ($this->getFlows() as $flow) {
             $this->removeFlow($flow["FLO_UID"]);
@@ -485,8 +485,8 @@ class Bpmn extends Handler
     {
         try {
             self::log("Remove Event: $evnUid");
-
             $event = EventPeer::retrieveByPK($evnUid);
+
             $event->delete();
 
             self::log("Remove Event Success!");
