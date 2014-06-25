@@ -105,8 +105,6 @@ class Bpmn extends Handler
         // setting defaults
         $data['PRJ_UID'] = array_key_exists('PRJ_UID', $data) ? $data['PRJ_UID'] : Common::generateUID();
 
-        unset($data["PRJ_UPDATE_DATE"]);
-
         self::log("Create Project with data: ", $data);
         $this->project = new Project();
         $this->project->fromArray($data, BasePeer::TYPE_FIELDNAME);
