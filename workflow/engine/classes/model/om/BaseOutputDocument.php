@@ -151,7 +151,7 @@ abstract class BaseOutputDocument extends BaseObject implements Persistent
      * The value for the out_doc_open_type field.
      * @var        int
      */
-    protected $out_doc_open_type = 0;
+    protected $out_doc_open_type = 1;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -853,7 +853,7 @@ abstract class BaseOutputDocument extends BaseObject implements Persistent
             $v = (int) $v;
         }
 
-        if ($this->out_doc_open_type !== $v || $v === 0) {
+        if ($this->out_doc_open_type !== $v || $v === 1) {
             $this->out_doc_open_type = $v;
             $this->modifiedColumns[] = OutputDocumentPeer::OUT_DOC_OPEN_TYPE;
         }

@@ -530,7 +530,7 @@ class Role
             $rsCriteriaCount->next();
             $row = $rsCriteriaCount->getRow();
 
-            $numRecTotal = $row["NUM_REC"];
+            $numRecTotal = (int)($row["NUM_REC"]);
 
             //SQL
             if (!is_null($sortField) && trim($sortField) != "") {
