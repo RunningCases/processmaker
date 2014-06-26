@@ -73,6 +73,8 @@ class DynaformMapBuilder
 
         $tMap->addColumn('DYN_FILENAME', 'DynFilename', 'string', CreoleTypes::VARCHAR, true, 100);
 
+        $tMap->addColumn('DYN_CONTENT', 'DynContent', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
         $tMap->addValidator('DYN_TYPE', 'validValues', 'propel.validator.ValidValuesValidator', 'xmlform|grid', 'Please select a valid dynaform type.');
 
     } // doBuild()
