@@ -36,7 +36,7 @@ Scenario Outline: Create a new Categories
     }
     """
     And I request "project/category"
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "object"
@@ -71,7 +71,7 @@ Scenario: Create Category with same name
       """
       And I request "project/category"
       Then the response status code should be 400
-      And the response status message should have the following text "Duplicate"
+      And the response status message should have the following text "exist"
 
 
 Scenario Outline: Update the Category created in this script
@@ -103,7 +103,7 @@ Scenario Outline: Update the Category putting the same name
     """
     And I request "project/category/cat_uid"  with the key "cat_uid" stored in session array as variable "cat_uid_<cat_uid_number>"
     Then the response status code should be 400
-    And the response status message should have the following text "Duplicate Process Category"
+    And the response status message should have the following text "exist"
       
     Examples:
 
