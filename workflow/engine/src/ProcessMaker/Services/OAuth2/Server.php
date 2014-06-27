@@ -160,25 +160,29 @@ class Server implements iAuthenticate
         $request = \OAuth2\Request::createFromGlobals();
         $response = $this->server->handleTokenRequest($request);
 
-        /* DEPREACATED
+
         $token = $response->getParameters();
-        if (array_key_exists('access_token', $token)) {
+        if (array_key_exists('access_token', $token)
+            && array_key_exists('refresh_token', $token)
+        ) {
+            session_start();
             $data = $this->storage->getAccessToken($token['access_token']);
 
             // verify if the client is our local PM Designer client
             if ($data['client_id'] == self::getPmClientId()) {
                 error_log('do stuff - is a request from local pm client');
-                require_once "classes/model/PmoauthUserAccessTokens.php";
+                //require_once "classes/model/PmoauthUserAccessTokens.php";
 
                 $userToken = new \PmoauthUserAccessTokens();
                 $userToken->setAccessToken($token['access_token']);
                 $userToken->setRefreshToken($token['refresh_token']);
                 $userToken->setUserId($data['user_id']);
                 $userToken->setSessionId(session_id());
+                $userToken->setSessionName(session_name());
 
                 $userToken->save();
             }
-        }*/
+        }
 
         $response->send();
     }
@@ -195,17 +199,30 @@ class Server implements iAuthenticate
         $request = \OAuth2\Request::createFromGlobals();
         $allowed = $this->server->verifyResourceRequest($request);
         $token = $this->server->getAccessTokenData($request);
-
         self::$userId = $token['user_id'];
+        // Session handling to prevent session lose in other places like, home, admin, etc
+        // when user is using the new designer that have not session because it is using only the API
 
-        // verify if the client is not our local PM Designer client
-        if ($token['client_id'] != self::getPmClientId()) {
-            //return $allowed;
-        }
+        if ($allowed && $token['client_id'] == self::getPmClientId()) {
 
-        // making a local session verification for PM Web Designer Client
-        if (! isset($_SESSION) || ! array_key_exists('USER_LOGGED', $_SESSION)) {
-            //return false;
+            $pmAccessToken = new \PmoauthUserAccessTokens();
+            $session = $pmAccessToken->getSessionData($token['ACCESS_TOKEN']);
+
+            if ($session !== false &&  array_key_exists($session->getSessionId(), $_COOKIE)) {
+                // increase the timeout for local php session cookie
+                $config = \Bootstrap::getSystemConfiguration();
+
+                if (isset($config['session.gc_maxlifetime'])) {
+                    $lifetime = $config['session.gc_maxlifetime'];
+                } else {
+                    $lifetime = ini_get('session.gc_maxlifetime');
+                }
+                if (empty($lifetime)) {
+                    $lifetime = 1440;
+                }
+
+                setcookie($session->getSessionName(), $_COOKIE[$session->getSessionId()], time() + $lifetime, "/");
+            }
         }
 
         return $allowed;

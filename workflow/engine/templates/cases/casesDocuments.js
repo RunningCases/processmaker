@@ -1246,7 +1246,7 @@ var rowExpander = new Ext.ux.grid.RowExpander({
 //dataIndex maps the column to the specific data field in
 //the data store
 var cm = new Ext.grid.ColumnModel([
-rowExpander, {
+{
   id: "gridcm", //id assigned so we can apply custom css (e.g. -> .x-grid-col-topic b { color:#333 })
   header: _("ID_NAME"),
   dataIndex: "name",
@@ -1941,9 +1941,15 @@ var documentsTab = {
           'celldblclick' : {
             fn : function(grid, rowIndex,
               columnIndex, e) {
+                if (ext_itemgrid.getSelectionModel().getSelected().get('type') == "Directory") {
+                    itemSelected = ext_itemgrid.getSelectionModel().getSelected().get('id');
+                    chDir( ext_itemgrid.getSelectionModel().getSelected().get('id'));
+                    itemSelected = "";
+                    return true;
+                }
               if (ext_itemgrid.getSelectionModel().getSelected().get('outDocGenerate') == '') {
-          		openActionDialog(this, 'download', '');
-          	  }
+                openActionDialog(this, 'download', '');
+              }
               if (Ext.isOpera) {
                 // because Opera <= 9
                 // doesn't support the

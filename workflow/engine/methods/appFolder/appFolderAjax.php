@@ -21,7 +21,16 @@ if (! isset ($_REQUEST ['action'])) {
     die ();
 }
 
-if (($_REQUEST['action']) != 'rename') {
+$_REQUEST['action'] = ($_REQUEST['action'] == 'rename') ? 'renameFolder' : $_REQUEST['action'];
+
+if (! function_exists ($_REQUEST['action']) || !G::isUserFunction($_REQUEST['action'])) {
+    $res ['success'] = false;
+    $res ['message'] = 'The requested action does not exist';
+    print G::json_encode ($res);
+    die ();
+}
+
+if (($_REQUEST['action']) != 'renameFolder') {
     $functionName = $_REQUEST ['action'];
     $functionParams = isset ($_REQUEST ['params']) ? $_REQUEST ['params'] : array ();
 
@@ -42,12 +51,6 @@ if (($_REQUEST['action']) != 'rename') {
     renameFolder ($oldname, $newname, $uid);
 }
 
-if (! function_exists ($_REQUEST['action']) || !G::isUserFunction($_REQUEST['action'])) {
-    $res ['success'] = false;
-    $res ['message'] = 'The requested action does not exist';
-    print G::json_encode ($res);
-    die ();
-}
 /////////////////////////////////////////////
 
 function renameFolder($oldname, $newname, $uid)
@@ -179,7 +182,9 @@ function expandNode()
         $folderListObj = $oPMFolder->getFolderList(
             ($_POST["node"] != "root")? (($_POST["node"] == "NA")? "" : $_POST["node"]) : $rootFolder,
             $limit,
-            $start
+            $start,
+            'ASC',
+            'name'
         );
 
         $folderList=$folderListObj['folders'];

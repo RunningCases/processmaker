@@ -13,9 +13,7 @@ Scenario Outline: Import a process negative tests
     Examples:
     | Description                                   | project_file                                       | import_option | error_code | error_message  |
     | Import process when the process alredy exists | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | create        | 400        | already exists |
-    #| Invalid path                                 | /processmaker/sample/Project_invalido.pmx          | create        | 400        | invalid        |
-    | Field Required project_file                   |                                                    | create        | 400        | project_file   |
-   
+    
 
 Scenario Outline: Import a process with wrong "option"
     Given POST upload a project file "<project_file>" to "project/import?option=<option>&option_group=<option_group>"

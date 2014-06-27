@@ -40,8 +40,7 @@ class Cases extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'todo';
@@ -87,8 +86,7 @@ class Cases extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'todo';
@@ -134,8 +132,7 @@ class Cases extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'draft';
@@ -181,8 +178,7 @@ class Cases extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'draft';
@@ -228,8 +224,7 @@ class Cases extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'sent';
@@ -275,8 +270,7 @@ class Cases extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'sent';
@@ -322,8 +316,7 @@ class Cases extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'unassigned';
@@ -369,8 +362,7 @@ class Cases extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'unassigned';
@@ -416,8 +408,7 @@ class Cases extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'paused';
@@ -463,8 +454,7 @@ class Cases extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'paused';
@@ -518,8 +508,7 @@ class Cases extends Api
         $date_from = '',
         $date_to = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'search';
@@ -577,8 +566,7 @@ class Cases extends Api
         $date_from = '',
         $date_to = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'search';
@@ -625,7 +613,7 @@ class Cases extends Api
      *
      * @param string $app_uid {@min 32}{@max 32}
      */
-        public function doGetTaskCase($app_uid)
+    public function doGetTaskCase($app_uid)
     {
         try {
             $userUid = $this->getUserId();
@@ -645,7 +633,7 @@ class Cases extends Api
      * @param array $variables {@from body}
      *
      */
-    public function doPostCase($pro_uid, $tas_uid, $variables=null)
+    public function doPostCase($pro_uid, $tas_uid, $variables = null)
     {
         try {
             $userUid = $this->getUserId();
@@ -666,7 +654,7 @@ class Cases extends Api
      * @param array $variables {@from body}
      *
      */
-    public function doPostCaseImpersonate($pro_uid, $usr_uid, $tas_uid, $variables=null)
+    public function doPostCaseImpersonate($pro_uid, $usr_uid, $tas_uid, $variables = null)
     {
         try {
             $cases = new \ProcessMaker\BusinessModel\Cases();
@@ -894,8 +882,7 @@ class Cases extends Api
         $date_from = '',
         $date_to = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['paged']  = false;
 
@@ -945,8 +932,7 @@ class Cases extends Api
         $date_from = '',
         $date_to = '',
         $search = ''
-    )
-    {
+    ) {
         try {
             $dataList['start'] = $start;
             $dataList['limit'] = $limit;
@@ -998,13 +984,15 @@ class Cases extends Api
     public function doGetTasks($app_uid)
     {
         try {
-            $cases = new \ProcessMaker\BusinessModel\Cases();
-            $oData = $cases->getTasks($app_uid);
-            return $oData;
+            $case = new \ProcessMaker\BusinessModel\Cases();
+            $case->setFormatFieldNameInUppercase(false);
+
+            $response = $case->getTasks($app_uid);
+
+            return $response;
         } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
-
 }
 

@@ -6,16 +6,16 @@ Background:
     Given that I have a valid access_token
 
 Scenario Outline: Create a new departments in the workspace with bad parameters (negative tests)
-        Given POST this data:
-            """
-            {
+    Given POST this data:
+        """
+        {
 
-                "dep_title" : "<dep_title>",
-                "dep_parent" : "<dep_parent>",
-                "dep_status" : "<dep_status>"
+            "dep_title" : "<dep_title>",
+            "dep_parent" : "<dep_parent>",
+            "dep_status" : "<dep_status>"
 
-            }
-            """
+        }
+        """
         And I request "department"
         Then the response status code should be <error_code>
         And the response status message should have the following text "<error_message>"
@@ -29,7 +29,7 @@ Scenario Outline: Create a new departments in the workspace with bad parameters 
        
 
  Scenario Outline: Assign user to department (NEGATIVE TEST)
-        Given PUT this data:
+    Given PUT this data:
         """
         {
 
@@ -50,8 +50,7 @@ Scenario Outline: Create a new departments in the workspace with bad parameters 
 
 
 Scenario: Delete a department when have asigned user (negative tests)
-        Given that I want to delete a "Department"
-        And I request "department/15978182252d5674d210310076985235"
-        Then the response status code should be 400
-        And the response status message should have the following text "cannot be deleted"
-        
+    Given that I want to delete a "Department"
+    And I request "department/15978182252d5674d210310076985235"
+    Then the response status code should be 400
+    And the response status message should have the following text "cannot be deleted"   

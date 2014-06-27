@@ -2,7 +2,10 @@
 $response = new stdclass();
 $response->status = isset($_SESSION['USER_LOGGED']);
 if (isset($_REQUEST['dynaformEditorParams'])) {
-    $_SESSION['Current_Dynafom']['Parameters'] = unserialize(stripslashes($_REQUEST['dynaformEditorParams']));
+    $arrayParameterAux = unserialize(rawurldecode($_REQUEST["dynaformEditorParams"]));
+    $arrayParameterAux["DYNAFORM_NAME"] = base64_decode($arrayParameterAux["DYNAFORM_NAME"]);
+    $_SESSION["Current_Dynafom"]["Parameters"] = $arrayParameterAux;
+
     if (isset($_REQUEST['DYN_UID'])) {
         if (class_exists('Dynaform')) {
             require_once 'classes/model/Dynaform.php';

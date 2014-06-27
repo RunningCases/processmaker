@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 2.5.1.1\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-05-22 15:21:26\n"
+"PO-Revision-Date: 2014-06-11 09:56:42\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -15016,8 +15016,8 @@ msgstr "Upload from file"
 # TRANSLATION
 # LABEL/ID_FIELD_REQUIRED
 #: LABEL/ID_FIELD_REQUIRED
-msgid "This field is required"
-msgstr "This field is required"
+msgid "The field {0} is required."
+msgstr "The field {0} is required."
 
 # TRANSLATION
 # LABEL/ID_ERROR_REGISTERED
@@ -15420,6 +15420,12 @@ msgstr "Account Options"
 #: LABEL/ID_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON
 msgid "User must change password at next logon"
 msgstr "User must change password at next logon"
+
+# TRANSLATION
+# LABEL/ID_HIDE_DIRS
+#: LABEL/ID_HIDE_DIRS
+msgid "Hide Dirs"
+msgstr "Hide Dirs"
 
 # TRANSLATION
 # LABEL/ID_UNDEFINED_VALUE_IS_REQUIRED
@@ -16026,6 +16032,270 @@ msgstr "This user: {0}, can not update the data."
 #: LABEL/ID_USER_CAN_NOT_BE_DELETED
 msgid "The user with usr_uid: {0}, cannot be deleted while it has cases assigned."
 msgstr "The user with usr_uid: {0}, cannot be deleted while it has cases assigned."
+
+# TRANSLATION
+# LABEL/ID_ROLE_DOES_NOT_EXIST
+#: LABEL/ID_ROLE_DOES_NOT_EXIST
+msgid "The role with {0}: {1} does not exist."
+msgstr "The role with {0}: {1} does not exist."
+
+# TRANSLATION
+# LABEL/ID_ROLE_CODE_ALREADY_EXISTS
+#: LABEL/ID_ROLE_CODE_ALREADY_EXISTS
+msgid "The role code with {0}: \"{1}\" already exists."
+msgstr "The role code with {0}: \"{1}\" already exists."
+
+# TRANSLATION
+# LABEL/ID_ROLE_NAME_ALREADY_EXISTS
+#: LABEL/ID_ROLE_NAME_ALREADY_EXISTS
+msgid "The role name with {0}: \"{1}\" already exists."
+msgstr "The role name with {0}: \"{1}\" already exists."
+
+# TRANSLATION
+# LABEL/ID_ROLE_FIELD_CANNOT_CONTAIN_SPECIAL_CHARACTERS
+#: LABEL/ID_ROLE_FIELD_CANNOT_CONTAIN_SPECIAL_CHARACTERS
+msgid "The \"{0}\" field cannot contain special characters or spaces."
+msgstr "The \"{0}\" field cannot contain special characters or spaces."
+
+# TRANSLATION
+# LABEL/ID_ROLE_USER_IS_ALREADY_ASSIGNED
+#: LABEL/ID_ROLE_USER_IS_ALREADY_ASSIGNED
+msgid "The user with {0}: {1} is already assigned to the role."
+msgstr "The user with {0}: {1} is already assigned to the role."
+
+# TRANSLATION
+# LABEL/ID_ROLE_USER_IS_NOT_ASSIGNED
+#: LABEL/ID_ROLE_USER_IS_NOT_ASSIGNED
+msgid "The user with {0}: {1} is not assigned to the role."
+msgstr "The user with {0}: {1} is not assigned to the role."
+
+# TRANSLATION
+# LABEL/ID_PERMISSION_DOES_NOT_EXIST
+#: LABEL/ID_PERMISSION_DOES_NOT_EXIST
+msgid "The permission with {0}: {1} does not exist."
+msgstr "The permission with {0}: {1} does not exist."
+
+# TRANSLATION
+# LABEL/ID_ROLE_PERMISSION_IS_ALREADY_ASSIGNED
+#: LABEL/ID_ROLE_PERMISSION_IS_ALREADY_ASSIGNED
+msgid "The permission with {0}: {1} is already assigned to the role."
+msgstr "The permission with {0}: {1} is already assigned to the role."
+
+# TRANSLATION
+# LABEL/ID_ROLE_PERMISSION_IS_NOT_ASSIGNED
+#: LABEL/ID_ROLE_PERMISSION_IS_NOT_ASSIGNED
+msgid "The permission with {0}: {1} is not assigned to the role."
+msgstr "The permission with {0}: {1} is not assigned to the role."
+
+# TRANSLATION
+# LABEL/ID_ROLE_PERMISSION_ROLE_PERMISSIONS_CAN_NOT_BE_CHANGED
+#: LABEL/ID_ROLE_PERMISSION_ROLE_PERMISSIONS_CAN_NOT_BE_CHANGED
+msgid "The permissions of the \"{0}\" role can not be changed."
+msgstr "The permissions of the \"{0}\" role can not be changed."
+
+# TRANSLATION
+# LABEL/ID_DEPARTMENT_NOT_EXIST
+#: LABEL/ID_DEPARTMENT_NOT_EXIST
+msgid "The departament with {0}: '{1}' does not exist."
+msgstr "The departament with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_USER_NOT_EXIST
+#: LABEL/ID_USER_NOT_EXIST
+msgid "The user with {0}: '{1}' does not exist."
+msgstr "The user with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_APPLICATION_NOT_EXIST
+#: LABEL/ID_APPLICATION_NOT_EXIST
+msgid "The application with {0}: '{1}' does not exist."
+msgstr "The application with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_TRIGGER_NOT_EXIST
+#: LABEL/ID_TRIGGER_NOT_EXIST
+msgid "The trigger with {0}: '{1}' does not exist."
+msgstr "The trigger with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_EVENT_NOT_EXIST
+#: LABEL/ID_EVENT_NOT_EXIST
+msgid "The event with {0}: '{1}' does not exist."
+msgstr "The event with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_TASK_NOT_EXIST
+#: LABEL/ID_TASK_NOT_EXIST
+msgid "The task with {0}: '{1}' does not exist."
+msgstr "The task with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_PROCESS_PERMISSION_NOT_EXIST
+#: LABEL/ID_PROCESS_PERMISSION_NOT_EXIST
+msgid "The process permission with {0}: '{1}' does not exist."
+msgstr "The process permission with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_GROUP_NOT_EXIST
+#: LABEL/ID_GROUP_NOT_EXIST
+msgid "The group with {0}: '{1}' does not exist."
+msgstr "The group with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_DYNAFORM_NOT_EXIST
+#: LABEL/ID_DYNAFORM_NOT_EXIST
+msgid "The dynaform with {0}: '{1}' does not exist."
+msgstr "The dynaform with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_INPUT_NOT_EXIST
+#: LABEL/ID_INPUT_NOT_EXIST
+msgid "The input with {0}: '{1}' does not exist."
+msgstr "The input with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_OUTPUT_NOT_EXIST
+#: LABEL/ID_OUTPUT_NOT_EXIST
+msgid "The output with {0}: '{1}' does not exist."
+msgstr "The output with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_PROCESS_NOT_EXIST
+#: LABEL/ID_PROCESS_NOT_EXIST
+msgid "The process with {0}: '{1}' does not exist."
+msgstr "The process with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_PROJECT_NOT_EXIST
+#: LABEL/ID_PROJECT_NOT_EXIST
+msgid "The project with {0}: '{1}' does not exist."
+msgstr "The project with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_DBC_NOT_EXIST
+#: LABEL/ID_DBC_NOT_EXIST
+msgid "The database connection with {0}: '{1}' does not exist."
+msgstr "The database connection with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_CATEGORY_NOT_EXIST
+#: LABEL/ID_CATEGORY_NOT_EXIST
+msgid "The category with {0}: '{1}' does not exist."
+msgstr "The category with {0}: '{1}' does not exist."
+
+# TRANSLATION
+# LABEL/ID_DATE_NOT_VALID
+#: LABEL/ID_DATE_NOT_VALID
+msgid "The value '{0}' is not a valid date for the format '{1}'."
+msgstr "The value '{0}' is not a valid date for the format '{1}'."
+
+# TRANSLATION
+# LABEL/ID_INVALID_VALUE_ARRAY
+#: LABEL/ID_INVALID_VALUE_ARRAY
+msgid "Invalid value for '{0}' it must be an array."
+msgstr "Invalid value for '{0}' it must be an array."
+
+# TRANSLATION
+# LABEL/ID_INVALID_VALUE_STRING
+#: LABEL/ID_INVALID_VALUE_STRING
+msgid "Invalid value for '{0}' it must be a string."
+msgstr "Invalid value for '{0}' it must be a string."
+
+# TRANSLATION
+# LABEL/ID_INVALID_VALUE_INTEGER
+#: LABEL/ID_INVALID_VALUE_INTEGER
+msgid "Invalid value for '{0}' it must be a integer."
+msgstr "Invalid value for '{0}' it must be a integer."
+
+# TRANSLATION
+# LABEL/ID_INVALID_VALUE_BOOLEAN
+#: LABEL/ID_INVALID_VALUE_BOOLEAN
+msgid "Invalid value for '{0}' it must be a boolean."
+msgstr "Invalid value for '{0}' it must be a boolean."
+
+# TRANSLATION
+# LABEL/ID_INVALID_VALUE_IS_EMPTY
+#: LABEL/ID_INVALID_VALUE_IS_EMPTY
+msgid "The field '{0}' is empty."
+msgstr "The field '{0}' is empty."
+
+# TRANSLATION
+# LABEL/ID_INCORRECT_VALUE_ACTION
+#: LABEL/ID_INCORRECT_VALUE_ACTION
+msgid "The value for $action is incorrect."
+msgstr "The value for $action is incorrect."
+
+# TRANSLATION
+# LABEL/ID_CASE_ALREADY_CANCELED
+#: LABEL/ID_CASE_ALREADY_CANCELED
+msgid "The case '{0}' is already canceled"
+msgstr "The case '{0}' is already canceled"
+
+# TRANSLATION
+# LABEL/ID_CASE_IS_CANCELED
+#: LABEL/ID_CASE_IS_CANCELED
+msgid "The case '{0}' is canceled"
+msgstr "The case '{0}' is canceled"
+
+# TRANSLATION
+# LABEL/ID_INVALID_MAX_PERMITTED
+#: LABEL/ID_INVALID_MAX_PERMITTED
+msgid "Invalid value for '{0}', the permitted maximum length of {1} characters."
+msgstr "Invalid value for '{0}', the permitted maximum length of {1} characters."
+
+# TRANSLATION
+# LABEL/ID_DBC_TYPE_INVALID
+#: LABEL/ID_DBC_TYPE_INVALID
+msgid "The dababase connection with dbs_type: '{0}' is invalid"
+msgstr "The dababase connection with dbs_type: '{0}' is invalid"
+
+# TRANSLATION
+# LABEL/ID_DBC_SERVER_INVALID
+#: LABEL/ID_DBC_SERVER_INVALID
+msgid "The dababase connection with dbs_server: '{0}', is invalid"
+msgstr "The dababase connection with dbs_server: '{0}', is invalid"
+
+# TRANSLATION
+# LABEL/ID_DBC_DBNAME_INVALID
+#: LABEL/ID_DBC_DBNAME_INVALID
+msgid "The dababase connection with dbs_database_name: '{0}' is invalid"
+msgstr "The dababase connection with dbs_database_name: '{0}' is invalid"
+
+# TRANSLATION
+# LABEL/ID_DBC_PORT_INVALID
+#: LABEL/ID_DBC_PORT_INVALID
+msgid "The dababase connection with dbs_port: '{0}' is invalid"
+msgstr "The dababase connection with dbs_port: '{0}' is invalid"
+
+# TRANSLATION
+# LABEL/ID_DBC_ENCODE_INVALID
+#: LABEL/ID_DBC_ENCODE_INVALID
+msgid "The dababase connection with dbs_encode: '{0}' is invalid"
+msgstr "The dababase connection with dbs_encode: '{0}' is invalid"
+
+# TRANSLATION
+# LABEL/ID_CANT_DELETE_DEPARTMENT_HAS_CHILDREN
+#: LABEL/ID_CANT_DELETE_DEPARTMENT_HAS_CHILDREN
+msgid "Can not delete the department, it has a children department."
+msgstr "Can not delete the department, it has a children department."
+
+# TRANSLATION
+# LABEL/ID_CANT_DELETE_DEPARTMENT_HAS_USERS
+#: LABEL/ID_CANT_DELETE_DEPARTMENT_HAS_USERS
+msgid "[LABEL/ID_CANT_DELETE_DEPARTMENT_HAS_USERS] Department cannot be deleted while has assigned users."
+msgstr "Department cannot be deleted while has assigned users."
+
+# TRANSLATION
+# LABEL/ID_CANT_SAVE_TRIGGER
+#: LABEL/ID_CANT_SAVE_TRIGGER
+msgid "A trigger with the same name already exists in this process."
+msgstr "A trigger with the same name already exists in this process."
+
+# TRANSLATION
+# LABEL/ID_CASE_DOES_NOT_EXIST2
+#: LABEL/ID_CASE_DOES_NOT_EXIST2
+msgid "The case with {0}: {1} does not exist."
+msgstr "The case with {0}: {1} does not exist."
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
@@ -21919,6 +22189,30 @@ msgstr "Encode"
 msgid "[dbConnections/dbConnections_Edit.xml?DBS_ENCODE-]"
 msgstr "..."
 
+# dbConnections/dbConnections_Edit.xml?DBS_CONNECTION_TYPE
+# dbConnections/dbConnections_Edit.xml
+#: dropdown - DBS_CONNECTION_TYPE
+msgid "Select Connection Type"
+msgstr "Select Connection Type"
+
+# dbConnections/dbConnections_Edit.xml?DBS_CONNECTION_TYPE-NORMAL
+# dbConnections/dbConnections_Edit.xml
+#: dropdown - DBS_CONNECTION_TYPE - NORMAL
+msgid "[dbConnections/dbConnections_Edit.xml?DBS_CONNECTION_TYPE-NORMAL]"
+msgstr "Normal"
+
+# dbConnections/dbConnections_Edit.xml?DBS_CONNECTION_TYPE-TNS
+# dbConnections/dbConnections_Edit.xml
+#: dropdown - DBS_CONNECTION_TYPE - TNS
+msgid "[dbConnections/dbConnections_Edit.xml?DBS_CONNECTION_TYPE-TNS]"
+msgstr "TNS"
+
+# dbConnections/dbConnections_Edit.xml?DBS_TNS
+# dbConnections/dbConnections_Edit.xml
+#: text - DBS_TNS
+msgid "TNS"
+msgstr "TNS"
+
 # dbConnections/dbConnections_Edit.xml?DBS_SERVER
 # dbConnections/dbConnections_Edit.xml
 #: text - DBS_SERVER
@@ -21996,6 +22290,30 @@ msgstr "Encode"
 #: dropdown - DBS_ENCODE -
 msgid "[dbConnections/dbConnections_New.xml?DBS_ENCODE-]"
 msgstr "..."
+
+# dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE
+# dbConnections/dbConnections_New.xml
+#: dropdown - DBS_CONNECTION_TYPE
+msgid "[dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE] Select Connection Type"
+msgstr "Select Connection Type"
+
+# dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE-NORMAL
+# dbConnections/dbConnections_New.xml
+#: dropdown - DBS_CONNECTION_TYPE - NORMAL
+msgid "[dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE-NORMAL]"
+msgstr "Normal"
+
+# dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE-TNS
+# dbConnections/dbConnections_New.xml
+#: dropdown - DBS_CONNECTION_TYPE - TNS
+msgid "[dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE-TNS]"
+msgstr "TNS"
+
+# dbConnections/dbConnections_New.xml?DBS_TNS
+# dbConnections/dbConnections_New.xml
+#: text - DBS_TNS
+msgid "[dbConnections/dbConnections_New.xml?DBS_TNS] TNS"
+msgstr "TNS"
 
 # dbConnections/dbConnections_New.xml?DBS_SERVER
 # dbConnections/dbConnections_New.xml

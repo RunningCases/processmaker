@@ -900,6 +900,7 @@ class Task
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UX );
             $criteria->addAsColumn( 'GRP_TITLE', \ContentPeer::CON_VALUE );
             $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
+            $criteria->add(\GroupwfPeer::GRP_STATUS, "ACTIVE", \Criteria::EQUAL);
             $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
             $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
             $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
