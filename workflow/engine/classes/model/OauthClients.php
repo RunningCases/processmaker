@@ -151,6 +151,8 @@ class OauthClients extends BaseOauthClients
         $criteria->addSelectColumn(OauthClientsPeer::REDIRECT_URI);
         $criteria->addSelectColumn(OauthClientsPeer::USR_UID);
 
+        $criteria->add(OauthClientsPeer::CLIENT_ID, 'x-pm-local-client', Criteria::NOT_EQUAL);
+
         if ($arrayFilterData && isset($arrayFilterData["USR_UID"]) && $arrayFilterData["USR_UID"] != "") {
             $criteria->add(OauthClientsPeer::USR_UID, $arrayFilterData["USR_UID"], Criteria::EQUAL);
         }

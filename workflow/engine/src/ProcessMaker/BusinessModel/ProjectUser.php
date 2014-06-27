@@ -122,7 +122,7 @@ class ProjectUser
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\GroupUserPeer::USR_UID);
             $oCriteria->addJoin(\TaskPeer::TAS_UID, \TaskUserPeer::TAS_UID,  \Criteria::LEFT_JOIN);
-            $oCriteria->addJoin(\TaskUserPeer::TAS_UID, \GroupUserPeer::GRP_UID, \Criteria::LEFT_JOIN);
+            $oCriteria->addJoin(\TaskUserPeer::USR_UID, \GroupUserPeer::GRP_UID, \Criteria::LEFT_JOIN);
             $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 2);

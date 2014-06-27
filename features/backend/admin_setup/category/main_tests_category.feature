@@ -36,7 +36,7 @@ Scenario Outline: Create a new Categories
     }
     """
     And I request "project/category"
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "object"
@@ -44,12 +44,13 @@ Scenario Outline: Create a new Categories
 
     Examples:
 
-    | test_description                                      | cat_uid_number | cat_name       |
-    | Create new Category with character special            | 1              | sample!@#$%^^& | 
-    | Create new Category with only character numeric       | 2              | 32425325       |
-    | Create new Category with only character special       | 3              | @$@$#@%        |
-    | Create new Category with normal character             | 4              | sample         |
-
+    | test_description                                      | cat_uid_number | cat_name                                               |
+    | Create new Category with character special            | 1              | sample!@#$%^^&                                         | 
+    | Create new Category with only character numeric       | 2              | 32425325                                               |
+    | Create new Category with only character special       | 3              | @$@$#@%                                                |
+    | Create new Category with normal character             | 4              | sample                                                 |
+    | Create new Category with short name                   | 5              | s                                                      |
+    | Create new Category with long name                    | 6              | Prueba de Creacion de nuevo categoria con nombre largo |
 
 
 Scenario: Get list of Categories
@@ -58,7 +59,7 @@ Scenario: Get list of Categories
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 5 records
+    And the response has 7 records
 
 
 Scenario: Create Category with same name
@@ -70,7 +71,7 @@ Scenario: Create Category with same name
       """
       And I request "project/category"
       Then the response status code should be 400
-      And the response status message should have the following text "Duplicate"
+      And the response status message should have the following text "exist"
 
 
 Scenario Outline: Update the Category created in this script
@@ -88,11 +89,30 @@ Scenario Outline: Update the Category created in this script
 
     Examples:
 
-    | test_description             | cat_uid_number | cat_name              |
-    | Update Category              | 1              | UPDATE sample!@#$%^^& | 
-    | Update Category              | 2              | UPDATE 32425325       |
+    | test_description  | cat_uid_number | cat_name              |
+    | Update Category   | 1              | UPDATE sample!@#$%^^& | 
+    | Update Category   | 2              | UPDATE 32425325       |
+
+
+Scenario Outline: Update the Category putting the same name
+    Given PUT this data:
+    """
+    {
+        "cat_name": "<cat_name>"
+    }
+    """
+    And I request "project/category/cat_uid"  with the key "cat_uid" stored in session array as variable "cat_uid_<cat_uid_number>"
+    Then the response status code should be 400
+    And the response status message should have the following text "exist"
+      
+    Examples:
+
+    | test_description | cat_uid_number | cat_name |
+    | Update Category  | 5              | sample   | 
     
 
+
+    
 Scenario Outline: Get a Category specific
     Given I request "project/category/cat_uid"  with the key "cat_uid" stored in session array as variable "cat_uid_<cat_uid_number>"
     Then the response status code should be 200
@@ -124,7 +144,17 @@ Scenario Outline: Delete the Category created previously in this script
         | 2              |
         | 3              |
         | 4              |
+        | 5              |
+        | 6              |
 
+
+Scenario: Get list of Categories
+    Given I request "project/categories"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has 1 records
 
 Scenario: Get a Category specific
     Given I request "project/category/4177095085330818c324501061677193"

@@ -1646,11 +1646,12 @@ class Processes
         foreach ($oData->inputs as $key => $val) {
             $newGuid = $this->getUnusedInputGUID();
             $map[$val['INP_DOC_UID']] = $newGuid;
+            $oData->inputFiles[$oData->inputs[$key]['INP_DOC_UID']] = $newGuid;
             $oData->inputs[$key]['INP_DOC_UID'] = $newGuid;
         }
-
-        $oData->uid["INPUT_DOCUMENT"] = $map;
-
+        if (!isset($oData->inputFiles)) {
+        	$oData->inputFiles = array();
+        }
         foreach ($oData->steps as $key => $val) {
             if (isset( $val['STEP_TYPE_OBJ'] )) {
                 if ($val['STEP_TYPE_OBJ'] == 'INPUT_DOCUMENT') {
@@ -3483,6 +3484,12 @@ class Processes
                         $XmlContent = fread( $fp, $fsXmlContent ); //reading string $XmlContent
                         $XmlContent = str_replace( $oData->process['PRO_UID_OLD'], $oData->process['PRO_UID'], $XmlContent );
                         $XmlContent = str_replace( $XmlGuid, $newXmlGuid, $XmlContent );
+
+                        foreach($oData->inputFiles as $input => $valInput){
+                        	$oldInput = $input;
+                        	$newInput = $oData->inputFiles[$oldInput];
+                        	$XmlContent = str_replace( $oldInput, $newInput, $XmlContent );
+                        }
 
                         //foreach
                         if (isset( $oData->gridFiles )) {

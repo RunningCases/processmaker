@@ -21,3 +21,11 @@ Scenario Outline: Create a new Categories (Negative Test)
 
     | test_description   | cat_name       | error_code | error_message |
     | without name       |                | 400        | cat_name      | 
+
+
+
+Scenario: Delete the Category when it is assigned to a project "Category Cases Lists"
+    Given that I want to delete a "Category"
+    And I request "project/category/4177095085330818c324501061677193"
+    Then the response status code should be 400
+    And the response status message should have the following text "cannot be deleted" 

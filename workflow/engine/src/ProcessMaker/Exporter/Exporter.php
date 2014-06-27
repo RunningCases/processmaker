@@ -96,6 +96,7 @@ abstract class Exporter
         $data["metadata"]["uid"] = $this->getProjectUid();
 
         $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($this->prjUid);
+        $bpmnStruct["ARTIFACT"] = \BpmnArtifact::getAll($this->prjUid);
         $bpmnStruct["BOUND"] = \BpmnBound::getAll($this->prjUid);
         $bpmnStruct["DATA"] = array();
         $bpmnStruct["DIAGRAM"] = \BpmnDiagram::getAll($this->prjUid);
@@ -152,7 +153,10 @@ abstract class Exporter
             $templatesFiles = Util\Common::rglob("$templatesDir/*", 0, true);
 
             foreach ($templatesFiles as $templatesFile) {
-                if (is_dir($templatesFile)) continue;
+                if (is_dir($templatesFile)) {
+                    continue;
+                }
+
                 $filename = basename($templatesFile);
                 $data["workflow-files"][$target][] = array(
                     "filename" => $filename,
@@ -204,3 +208,4 @@ abstract class Exporter
         }
     }
 }
+

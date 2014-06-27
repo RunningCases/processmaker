@@ -296,7 +296,7 @@ if ((preg_match("/msie/i", $_SERVER ['HTTP_USER_AGENT']) != 1 ||
    $config['safari_cookie_lifetime'] == 1)) {
     ini_set('session.cookie_lifetime', $timelife);
 }
-//session_start();
+session_start();
 
 //$e_all = defined( 'E_DEPRECATED' ) ? E_ALL & ~ E_DEPRECATED : E_ALL;
 //$e_all = defined( 'E_STRICT' ) ? $e_all & ~ E_STRICT : $e_all;
@@ -313,11 +313,14 @@ ini_set( 'soap.wsdl_cache_enabled', $config['wsdl_cache'] );
 ini_set( 'date.timezone', $config['time_zone'] );
 
 define( 'DEBUG_SQL_LOG', $config['debug_sql'] );
+define( 'DEBUG_SQL', $config['debug'] );
 define( 'DEBUG_TIME_LOG', $config['debug_time'] );
 define( 'DEBUG_CALENDAR_LOG', $config['debug_calendar'] );
 define( 'MEMCACHED_ENABLED', $config['memcached'] );
 define( 'MEMCACHED_SERVER', $config['memcached_server'] );
 define( 'TIME_ZONE', $config['time_zone'] );
+
+define ('WS_IN_LOGIN', isset($config['WS_IN_LOGIN']) ? $config['WS_IN_LOGIN'] : 'serverconf');
 
 // IIS Compatibility, SERVER_ADDR doesn't exist on that env, so we need to define it.
 $_SERVER['SERVER_ADDR'] = isset( $_SERVER['SERVER_ADDR'] ) ? $_SERVER['SERVER_ADDR'] : $_SERVER['SERVER_NAME'];
@@ -629,12 +632,6 @@ if (file_exists( $sSerializedFile )) {
 //changed to autoloader
 //require_once ("propel/Propel.php");
 //require_once ("creole/Creole.php");
-
-list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
-$port = empty($port) ? '' : ";port=$port";
-$handler = new PmSessionHandler(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
-
-session_start();
 
 if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
     define( 'PM_PID', mt_rand( 1, 999999 ) );

@@ -1239,7 +1239,7 @@ class processMap
             $result = $groups->getAllGroup($start, $limit, $filter);
             $c = 0;
             foreach ($result['rows'] as $results) {
-                if (!in_array($results['GRP_UID'], $aUIDS1)) {
+                if ($results["GRP_STATUS"] == "ACTIVE" && !in_array($results["GRP_UID"], $aUIDS1)) {
                     $c++;
                     $oCriteria = new Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
@@ -3339,6 +3339,7 @@ class processMap
         $oCriteria->addJoin(ProcessUserPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
         $oCriteria->add(ProcessUserPeer::PU_TYPE, 'SUPERVISOR');
         $oCriteria->add(ProcessUserPeer::PRO_UID, $sProcessUID);
+        $oCriteria->add(UsersPeer::USR_STATUS, "CLOSED", Criteria::NOT_EQUAL);
         $oCriteria->addAscendingOrderByColumn(UsersPeer::USR_FIRSTNAME);
         $oDataset = ProcessUserPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);

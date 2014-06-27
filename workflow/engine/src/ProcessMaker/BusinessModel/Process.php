@@ -1603,6 +1603,8 @@ class Process
             $triggerLibrary = \triggerLibrary::getSingleton();
             $library = $triggerLibrary->getRegisteredClasses();
 
+            ksort($library);
+
             foreach ($library as $key => $value) {
                 $libraryName = (preg_match("/^class\.?(.*)\.pmFunctions\.php$/", $key, $arrayMatch))? ((isset($arrayMatch[1]) && $arrayMatch[1] != "")? $arrayMatch[1] : "pmFunctions") : $key;
 

@@ -173,11 +173,17 @@ class FilesManager
                 case 'templates':
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     $sCheckDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory;
+                    if ($extention != '.html') {
+                        throw new \Exception(\G::LoadTranslation('ID_FILE_UPLOAD_INCORRECT_EXTENSION'));
+                    }
                     break;
                 case 'public':
                     $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     $sCheckDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory;
                     $sEditable = false;
+                    if ($extention == '.exe') {
+                        throw new \Exception(\G::LoadTranslation('ID_FILE_UPLOAD_INCORRECT_EXTENSION'));
+                    }
                     break;
                 default:
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];

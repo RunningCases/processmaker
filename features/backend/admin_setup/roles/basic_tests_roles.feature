@@ -47,52 +47,67 @@ Scenario Outline:  Create new Role
 
 #Assign users to role
 
-#Scenario: List assigned Users to Role & List available Users to assign to Role
-#    Given I request "role/00000000000000000000000000000003/users"
-#    Then the response status code should be 200
-#    And the response charset is "UTF-8"
-#    And the content type is "application/json"
-#    And the type is "array"
-#    And the response has 61 records
-#
-#Scenario:  Assign User to Role
-#    Given POST this data:
-#    """
-#        {
-#            "usr_uid": "310985970530cbfa4ec0593063369294"
-#        }
-#    """
-#    And I request "role/00000000000000000000000000000003/user"
-#    Then the response status code should be 201
-#    And the response charset is "UTF-8"
-#    And the content type is "application/json"
-#    And the type is "object"
-#   
-#
-#Scenario: Get list of Roles
-#    Given I request "roles"
-#    Then the response status code should be 200
-#    And the response charset is "UTF-8"
-#    And the content type is "application/json"
-#    And the type is "array"
-#    And the response has 62 records
-#
-#
-#Scenario: Unassign User of the Role
-#    Given that I want to delete a resource with the key "310985970530cbfa4ec0593063369294"
-#    And I request "role/00000000000000000000000000000003/user/310985970530cbfa4ec0593063369294"
-#    And the content type is "application/json"
-#    Then the response status code should be 200
-#    And the response charset is "UTF-8"
-#
-#
-#Scenario: Get list of Roles
-#    Given I request "roles"
-#    Then the response status code should be 200
-#    And the response charset is "UTF-8"
-#    And the content type is "application/json"
-#    And the type is "array"
-#    And the response has 61 records
+Scenario: List assigned Users to Role & List available Users to assign to Role
+    Given I request "role/00000000000000000000000000000003/users"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has 61 records
+
+Scenario:  Assign User to Role
+    Given POST this data:
+    """
+        {
+            "usr_uid": "310985970530cbfa4ec0593063369294"
+        }
+    """
+    And I request "role/00000000000000000000000000000003/user"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+   
+
+Scenario: Get list of Roles
+    Given I request "roles"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has 4 records
+
+
+Scenario: Unassign User of the Role
+    Given that I want to delete a "User from a role" 
+    And I request "role/00000000000000000000000000000003/user/310985970530cbfa4ec0593063369294"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+
+   
+Scenario:  Assign User "Wendy" to Role "PROCESSMAKER_ADMIN"
+    Given POST this data:
+    """
+        {
+            "usr_uid": "310985970530cbfa4ec0593063369294"
+        }
+    """
+    And I request "role/00000000000000000000000000000002/user"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+
+
+Scenario: Get list of Roles
+    Given I request "roles"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has 4 records
+
 #Culminacion de los endpoint de asignacion de usuarios
 
 #Role and Permission
@@ -111,7 +126,7 @@ Scenario: List assigned Permissions to Role & List available Permissions to assi
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 14 recordsuser
+    And the response has 14 records
 
 Scenario: Assign Permission "PM_DASHBOARD" to Role
     Given POST this data:
@@ -126,7 +141,7 @@ Scenario: Assign Permission "PM_DASHBOARD" to Role
     And the content type is "application/json"
     And the type is "object"
    
-Scenario: List assigned Permissions to Role & List available Permissions to assign to Role
+Scenario: List assigned Permissions to Role
     Given I request "role/00000000000000000000000000000003/permissions"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -134,21 +149,23 @@ Scenario: List assigned Permissions to Role & List available Permissions to assi
     And the type is "array"
     And the response has 4 records
 
-Scenario: List assigned Permissions to Role & List available Permissions to assign to Role
+Scenario: List available Permissions to assign to Role
     Given I request "role/00000000000000000000000000000003/available-permissions"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 15 records
+    And the response has 13 records
+
 
 Scenario: Unassign Permission of the Role
-    Given that I want to delete a resource with the key ""
+    Given that I want to delete a "Permmission from a role"
     And I request "role/00000000000000000000000000000003/permission/00000000000000000000000000000011"
     And the content type is "application/json"
     Then the response status code should be 200
     And the response charset is "UTF-8"
 
+   
 Scenario: List assigned Permissions to Role & List available Permissions to assign to Role
     Given I request "role/00000000000000000000000000000003/permissions"
     Then the response status code should be 200
