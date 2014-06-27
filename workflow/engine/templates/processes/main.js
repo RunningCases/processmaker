@@ -416,13 +416,6 @@ Ext.onReady(function(){
         text: _('ID_EDIT'),
         iconCls: 'button_menu_ext ss_sprite  ss_pencil',
         handler: editProcess
-      },{
-        id: 'edit_with_classic_editor',
-        text: 'Edit with classic editor',
-        iconCls: 'button_menu_ext ss_sprite  ss_pencil',
-        handler: function() {
-            editProcess("classic");
-        }
       }, {
         id: 'activator2',
         text: '',
