@@ -249,22 +249,22 @@ Feature: Process Permissions Resources Tests
         And the response has 1 record
 
 Scenario Outline: Create a new Process permission in proyect "Process Complete BPMN"
-      Given POST this data:
-            """
-            {
-                "op_case_status": "<op_case_status>",
-                "tas_uid": "<tas_uid>",
-                "op_user_relation": "<op_user_relation>",
-                "usr_uid": "<usr_uid>",
-                "op_task_source" : "<op_task_source>",
-                "op_participate": "<op_participate>",
-                "op_obj_type": "<op_obj_type>",
-                "dynaforms" : "<dynaforms>",
-                "inputs" : "<inputs>",
-                "outputs" : "<outputs>",                
-                "op_action": "<op_action>"
-            }
-            """
+    Given POST this data:
+        """
+        {
+            "op_case_status": "<op_case_status>",
+            "tas_uid": "<tas_uid>",
+            "op_user_relation": "<op_user_relation>",
+            "usr_uid": "<usr_uid>",
+            "op_task_source" : "<op_task_source>",
+            "op_participate": "<op_participate>",
+            "op_obj_type": "<op_obj_type>",
+            "dynaforms" : "<dynaforms>",
+            "inputs" : "<inputs>",
+            "outputs" : "<outputs>",                
+            "op_action": "<op_action>"
+        }
+        """
         And I request "project/1455892245368ebeb11c1a5001393784/process-permission"
         Then the response status code should be 201
         And store "op_uid" in session array
@@ -276,15 +276,17 @@ Scenario Outline: Create a new Process permission in proyect "Process Complete B
 
         | op_number | op_case_status  | tas_uid                          | op_user_relation| usr_uid                          | op_task_source                   | op_participate | op_obj_type  | dynaforms                        | inputs                           | outputs                          | op_action | 
         | 1         | COMPLETED       |                                  | 1               | 00000000000000000000000000000001 |                                  | 0              | MSGS_HISTORY |                                  |                                  |                                  | RESEND    |
+        | 2         | COMPLETED       |                                  | 1               | 00000000000000000000000000000001 |                                  | 0              | MSGS_HISTORY |                                  |                                  |                                  | RESEND    |
 
- Scenario: Get a List of current Process Permissions of a project
-       Given I request "project/1455892245368ebeb11c1a5001393784/process-permissions"
+
+Scenario: Get a List of current Process Permissions of a project
+        Given I request "project/1455892245368ebeb11c1a5001393784/process-permissions"
         Then the response status code should be 200
         And the response charset is "UTF-8"
-        And the response has 2 record
+        And the response has 3 record
 
 Scenario Outline: Delete all Process Supervisor created previously in this script   
-      Given that I want to delete a resource with the key "op_uid" stored in session array as variable "op_uid_<op_number>"
+        Given that I want to delete a resource with the key "op_uid" stored in session array as variable "op_uid_<op_number>"
         And I request "project/1455892245368ebeb11c1a5001393784/process-permission"
         And the content type is "application/json"
         Then the response status code should be 200
@@ -293,11 +295,12 @@ Scenario Outline: Delete all Process Supervisor created previously in this scrip
         
         Examples:
 
-        | op_number  |         
-        | 1          |
+        | op_number |         
+        | 1         |
+        | 2         |
 
   Scenario: Get a List of current Process Permissions of a project
-       Given I request "project/1455892245368ebeb11c1a5001393784/process-permissions"
+        Given I request "project/1455892245368ebeb11c1a5001393784/process-permissions"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the response has 1 record
