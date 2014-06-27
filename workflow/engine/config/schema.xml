@@ -459,6 +459,7 @@
     <column name="DYN_TYPE" type="VARCHAR" size="20" required="true" default="xmlform"/>
     <column name="DYN_FILENAME" type="VARCHAR" size="100" required="true" default=""/>
     <column name="DYN_CONTENT" type="LONGVARCHAR"/>
+    <column name="DYN_VERSION" type="INTEGER" required="true"/>
     <validator column="DYN_TYPE">
       <rule name="validValues" value="xmlform|grid" message="Please select a valid dynaform type."/>
     </validator>
