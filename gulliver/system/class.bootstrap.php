@@ -31,6 +31,10 @@ class Bootstrap
 
     public static function registerClass($className, $includePath)
     {
+        if (! class_exists('\Maveriks\Util\ClassLoader')) {
+            self::displayMaveriksNotLoadedError();
+        }
+
         $loader = Maveriks\Util\ClassLoader::getInstance();
         $loader->addClass($className, $includePath);
     }
@@ -2831,6 +2835,29 @@ class Bootstrap
         }
 
         return $result;
+    }
+
+    public static function displayMaveriksNotLoadedError()
+    {
+        if (! class_exists('\Maveriks\Util\ClassLoader')) {
+            require PATH_TRUNK . "framework/src/Maveriks/pattern/Mvc/View.php";
+            require PATH_TRUNK . "framework/src/Maveriks/pattern/Mvc/PhtmlView.php";
+
+            $message = "Please review your apache virtual host configuration file, and be sure you have the following rules:
+
+        <IfModule mod_rewrite.c>
+            RewriteEngine On
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule ^(.*)$ /app.php [QSA,L]
+        </IfModule>";
+
+            $view = new Maveriks\Pattern\Mvc\PhtmlView(PATH_TRUNK . "framework/src/templates/error.phtml");
+            $view->set("title", "Sistem Configuration Error");
+            $view->set("message", htmlentities($message));
+
+            echo $view->getOutput();
+            die();
+        }
     }
 }
 
