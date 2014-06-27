@@ -8,7 +8,8 @@ class DynaForm
 
         "DYN_TITLE"       => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                  "fieldNameAux" => "dynaFormTitle"),
         "DYN_DESCRIPTION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormDescription"),
-        "DYN_TYPE"        => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("xmlform", "grid"), "fieldNameAux" => "dynaFormType")
+        "DYN_TYPE"        => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("xmlform", "grid"), "fieldNameAux" => "dynaFormType"),
+        "DYN_CONTENT"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormContent")
     );
 
     private $formatFieldNameInUppercase = true;
@@ -366,10 +367,6 @@ class DynaForm
             $arrayData["PRO_UID"] = $processUid;
 
             $dynaFormUid = $dynaForm->create($arrayData);
-
-            $oDynaform = \DynaformPeer::retrieveByPK( $dynaFormUid );
-            $oDynaform->setDynContent( $arrayData['DYN_CONTENT'] );
-            $oDynaform->save();
 
             //Return
             unset($arrayData["PRO_UID"]);
@@ -959,7 +956,7 @@ class DynaForm
                 $this->getFieldNameByFormatFieldName("DYN_TITLE")       => $record["DYN_TITLE"],
                 $this->getFieldNameByFormatFieldName("DYN_DESCRIPTION") => $record["DYN_DESCRIPTION"] . "",
                 $this->getFieldNameByFormatFieldName("DYN_TYPE")        => $record["DYN_TYPE"] . "",
-                $this->getFieldNameByFormatFieldName("DYN_CONTENT")        => $record["DYN_CONTENT"] . ""
+                $this->getFieldNameByFormatFieldName("DYN_CONTENT")     => $record["DYN_CONTENT"] . ""
             );
         } catch (\Exception $e) {
             throw $e;
