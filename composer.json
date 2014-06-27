@@ -28,7 +28,8 @@
         "jquery/jquery": "1.10.2",
         "underscore/underscore": "1.5.2",
         "colosa/pmUI": "dev-master",
-        "colosa/MichelangeloFE": "dev-master"
+        "colosa/MichelangeloFE": "dev-master",
+        "colosa/pmdynaform": "dev-master"
     },
     "require-dev":{
         "guzzle/guzzle":"~3.1.1",
