@@ -461,7 +461,7 @@ class Variable
                 $variableDbConnectionUid = $row["VAR_DBCONNECTION"];
                 $variableSql = $row["VAR_SQL"];
             } else {
-                throw new \Exception(\G::LoadTranslation("ID_PROCESS_VARIABLE_DOES_NOT_EXIST", array(strtolower($this->arrayFieldNameForException["varName"]), $variableName)));
+                throw new \Exception(\G::LoadTranslation("ID_PROCESS_VARIABLE_DOES_NOT_EXIST", array(strtolower("VAR_NAME"), $variableName)));
             }
 
             //Verify data
