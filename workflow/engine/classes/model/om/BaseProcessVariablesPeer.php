@@ -2,52 +2,67 @@
 
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by DynaformPeer::getOMClass()
-include_once 'classes/model/Dynaform.php';
+// actual class may be a subclass -- as returned by ProcessVariablesPeer::getOMClass()
+include_once 'classes/model/ProcessVariables.php';
 
 /**
- * Base static class for performing query and update operations on the 'DYNAFORM' table.
+ * Base static class for performing query and update operations on the 'PROCESS_VARIABLES' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseDynaformPeer
+abstract class BaseProcessVariablesPeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'workflow';
 
     /** the table name for this class */
-    const TABLE_NAME = 'DYNAFORM';
+    const TABLE_NAME = 'PROCESS_VARIABLES';
 
     /** A class that can be returned by this peer. */
-    const CLASS_DEFAULT = 'classes.model.Dynaform';
+    const CLASS_DEFAULT = 'classes.model.ProcessVariables';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 11;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
-    /** the column name for the DYN_UID field */
-    const DYN_UID = 'DYNAFORM.DYN_UID';
+    /** the column name for the VAR_UID field */
+    const VAR_UID = 'PROCESS_VARIABLES.VAR_UID';
 
-    /** the column name for the PRO_UID field */
-    const PRO_UID = 'DYNAFORM.PRO_UID';
+    /** the column name for the PRJ_UID field */
+    const PRJ_UID = 'PROCESS_VARIABLES.PRJ_UID';
 
-    /** the column name for the DYN_TYPE field */
-    const DYN_TYPE = 'DYNAFORM.DYN_TYPE';
+    /** the column name for the VAR_NAME field */
+    const VAR_NAME = 'PROCESS_VARIABLES.VAR_NAME';
 
-    /** the column name for the DYN_FILENAME field */
-    const DYN_FILENAME = 'DYNAFORM.DYN_FILENAME';
+    /** the column name for the VAR_FIELD_TYPE field */
+    const VAR_FIELD_TYPE = 'PROCESS_VARIABLES.VAR_FIELD_TYPE';
 
-    /** the column name for the DYN_CONTENT field */
-    const DYN_CONTENT = 'DYNAFORM.DYN_CONTENT';
+    /** the column name for the VAR_FIELD_SIZE field */
+    const VAR_FIELD_SIZE = 'PROCESS_VARIABLES.VAR_FIELD_SIZE';
 
-    /** the column name for the DYN_VERSION field */
-    const DYN_VERSION = 'DYNAFORM.DYN_VERSION';
+    /** the column name for the VAR_LABEL field */
+    const VAR_LABEL = 'PROCESS_VARIABLES.VAR_LABEL';
+
+    /** the column name for the VAR_DBCONNECTION field */
+    const VAR_DBCONNECTION = 'PROCESS_VARIABLES.VAR_DBCONNECTION';
+
+    /** the column name for the VAR_SQL field */
+    const VAR_SQL = 'PROCESS_VARIABLES.VAR_SQL';
+
+    /** the column name for the VAR_NULL field */
+    const VAR_NULL = 'PROCESS_VARIABLES.VAR_NULL';
+
+    /** the column name for the VAR_DEFAULT field */
+    const VAR_DEFAULT = 'PROCESS_VARIABLES.VAR_DEFAULT';
+
+    /** the column name for the VAR_ACCEPTED_VALUES field */
+    const VAR_ACCEPTED_VALUES = 'PROCESS_VARIABLES.VAR_ACCEPTED_VALUES';
 
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
@@ -60,10 +75,10 @@ abstract class BaseDynaformPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('DynUid', 'ProUid', 'DynType', 'DynFilename', 'DynContent', 'DynVersion', ),
-        BasePeer::TYPE_COLNAME => array (DynaformPeer::DYN_UID, DynaformPeer::PRO_UID, DynaformPeer::DYN_TYPE, DynaformPeer::DYN_FILENAME, DynaformPeer::DYN_CONTENT, DynaformPeer::DYN_VERSION, ),
-        BasePeer::TYPE_FIELDNAME => array ('DYN_UID', 'PRO_UID', 'DYN_TYPE', 'DYN_FILENAME', 'DYN_CONTENT', 'DYN_VERSION', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('VarUid', 'PrjUid', 'VarName', 'VarFieldType', 'VarFieldSize', 'VarLabel', 'VarDbconnection', 'VarSql', 'VarNull', 'VarDefault', 'VarAcceptedValues', ),
+        BasePeer::TYPE_COLNAME => array (ProcessVariablesPeer::VAR_UID, ProcessVariablesPeer::PRJ_UID, ProcessVariablesPeer::VAR_NAME, ProcessVariablesPeer::VAR_FIELD_TYPE, ProcessVariablesPeer::VAR_FIELD_SIZE, ProcessVariablesPeer::VAR_LABEL, ProcessVariablesPeer::VAR_DBCONNECTION, ProcessVariablesPeer::VAR_SQL, ProcessVariablesPeer::VAR_NULL, ProcessVariablesPeer::VAR_DEFAULT, ProcessVariablesPeer::VAR_ACCEPTED_VALUES, ),
+        BasePeer::TYPE_FIELDNAME => array ('VAR_UID', 'PRJ_UID', 'VAR_NAME', 'VAR_FIELD_TYPE', 'VAR_FIELD_SIZE', 'VAR_LABEL', 'VAR_DBCONNECTION', 'VAR_SQL', 'VAR_NULL', 'VAR_DEFAULT', 'VAR_ACCEPTED_VALUES', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
     /**
@@ -73,10 +88,10 @@ abstract class BaseDynaformPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('DynUid' => 0, 'ProUid' => 1, 'DynType' => 2, 'DynFilename' => 3, 'DynContent' => 4, 'DynVersion' => 5, ),
-        BasePeer::TYPE_COLNAME => array (DynaformPeer::DYN_UID => 0, DynaformPeer::PRO_UID => 1, DynaformPeer::DYN_TYPE => 2, DynaformPeer::DYN_FILENAME => 3, DynaformPeer::DYN_CONTENT => 4, DynaformPeer::DYN_VERSION => 5, ),
-        BasePeer::TYPE_FIELDNAME => array ('DYN_UID' => 0, 'PRO_UID' => 1, 'DYN_TYPE' => 2, 'DYN_FILENAME' => 3, 'DYN_CONTENT' => 4, 'DYN_VERSION' => 5, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('VarUid' => 0, 'PrjUid' => 1, 'VarName' => 2, 'VarFieldType' => 3, 'VarFieldSize' => 4, 'VarLabel' => 5, 'VarDbconnection' => 6, 'VarSql' => 7, 'VarNull' => 8, 'VarDefault' => 9, 'VarAcceptedValues' => 10, ),
+        BasePeer::TYPE_COLNAME => array (ProcessVariablesPeer::VAR_UID => 0, ProcessVariablesPeer::PRJ_UID => 1, ProcessVariablesPeer::VAR_NAME => 2, ProcessVariablesPeer::VAR_FIELD_TYPE => 3, ProcessVariablesPeer::VAR_FIELD_SIZE => 4, ProcessVariablesPeer::VAR_LABEL => 5, ProcessVariablesPeer::VAR_DBCONNECTION => 6, ProcessVariablesPeer::VAR_SQL => 7, ProcessVariablesPeer::VAR_NULL => 8, ProcessVariablesPeer::VAR_DEFAULT => 9, ProcessVariablesPeer::VAR_ACCEPTED_VALUES => 10, ),
+        BasePeer::TYPE_FIELDNAME => array ('VAR_UID' => 0, 'PRJ_UID' => 1, 'VAR_NAME' => 2, 'VAR_FIELD_TYPE' => 3, 'VAR_FIELD_SIZE' => 4, 'VAR_LABEL' => 5, 'VAR_DBCONNECTION' => 6, 'VAR_SQL' => 7, 'VAR_NULL' => 8, 'VAR_DEFAULT' => 9, 'VAR_ACCEPTED_VALUES' => 10, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
     /**
@@ -86,8 +101,8 @@ abstract class BaseDynaformPeer
      */
     public static function getMapBuilder()
     {
-        include_once 'classes/model/map/DynaformMapBuilder.php';
-        return BasePeer::getMapBuilder('classes.model.map.DynaformMapBuilder');
+        include_once 'classes/model/map/ProcessVariablesMapBuilder.php';
+        return BasePeer::getMapBuilder('classes.model.map.ProcessVariablesMapBuilder');
     }
     /**
      * Gets a map (hash) of PHP names to DB column names.
@@ -100,7 +115,7 @@ abstract class BaseDynaformPeer
     public static function getPhpNameMap()
     {
         if (self::$phpNameMap === null) {
-            $map = DynaformPeer::getTableMap();
+            $map = ProcessVariablesPeer::getTableMap();
             $columns = $map->getColumns();
             $nameMap = array();
             foreach ($columns as $column) {
@@ -155,12 +170,12 @@ abstract class BaseDynaformPeer
      *      $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. DynaformPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. ProcessVariablesPeer::COLUMN_NAME).
      * @return     string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(DynaformPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(ProcessVariablesPeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -177,22 +192,32 @@ abstract class BaseDynaformPeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
-        $criteria->addSelectColumn(DynaformPeer::DYN_UID);
+        $criteria->addSelectColumn(ProcessVariablesPeer::VAR_UID);
 
-        $criteria->addSelectColumn(DynaformPeer::PRO_UID);
+        $criteria->addSelectColumn(ProcessVariablesPeer::PRJ_UID);
 
-        $criteria->addSelectColumn(DynaformPeer::DYN_TYPE);
+        $criteria->addSelectColumn(ProcessVariablesPeer::VAR_NAME);
 
-        $criteria->addSelectColumn(DynaformPeer::DYN_FILENAME);
+        $criteria->addSelectColumn(ProcessVariablesPeer::VAR_FIELD_TYPE);
 
-        $criteria->addSelectColumn(DynaformPeer::DYN_CONTENT);
+        $criteria->addSelectColumn(ProcessVariablesPeer::VAR_FIELD_SIZE);
 
-        $criteria->addSelectColumn(DynaformPeer::DYN_VERSION);
+        $criteria->addSelectColumn(ProcessVariablesPeer::VAR_LABEL);
+
+        $criteria->addSelectColumn(ProcessVariablesPeer::VAR_DBCONNECTION);
+
+        $criteria->addSelectColumn(ProcessVariablesPeer::VAR_SQL);
+
+        $criteria->addSelectColumn(ProcessVariablesPeer::VAR_NULL);
+
+        $criteria->addSelectColumn(ProcessVariablesPeer::VAR_DEFAULT);
+
+        $criteria->addSelectColumn(ProcessVariablesPeer::VAR_ACCEPTED_VALUES);
 
     }
 
-    const COUNT = 'COUNT(DYNAFORM.DYN_UID)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT DYNAFORM.DYN_UID)';
+    const COUNT = 'COUNT(PROCESS_VARIABLES.VAR_UID)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT PROCESS_VARIABLES.VAR_UID)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -210,9 +235,9 @@ abstract class BaseDynaformPeer
         // clear out anything that might confuse the ORDER BY clause
         $criteria->clearSelectColumns()->clearOrderByColumns();
         if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->addSelectColumn(DynaformPeer::COUNT_DISTINCT);
+            $criteria->addSelectColumn(ProcessVariablesPeer::COUNT_DISTINCT);
         } else {
-            $criteria->addSelectColumn(DynaformPeer::COUNT);
+            $criteria->addSelectColumn(ProcessVariablesPeer::COUNT);
         }
 
         // just in case we're grouping: add those columns to the select statement
@@ -220,7 +245,7 @@ abstract class BaseDynaformPeer
             $criteria->addSelectColumn($column);
         }
 
-        $rs = DynaformPeer::doSelectRS($criteria, $con);
+        $rs = ProcessVariablesPeer::doSelectRS($criteria, $con);
         if ($rs->next()) {
             return $rs->getInt(1);
         } else {
@@ -233,7 +258,7 @@ abstract class BaseDynaformPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      Connection $con
-     * @return     Dynaform
+     * @return     ProcessVariables
      * @throws     PropelException Any exceptions caught during processing will be
      *       rethrown wrapped into a PropelException.
      */
@@ -241,7 +266,7 @@ abstract class BaseDynaformPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = DynaformPeer::doSelect($critcopy, $con);
+        $objects = ProcessVariablesPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -258,7 +283,7 @@ abstract class BaseDynaformPeer
      */
     public static function doSelect(Criteria $criteria, $con = null)
     {
-        return DynaformPeer::populateObjects(DynaformPeer::doSelectRS($criteria, $con));
+        return ProcessVariablesPeer::populateObjects(ProcessVariablesPeer::doSelectRS($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect()
@@ -282,7 +307,7 @@ abstract class BaseDynaformPeer
 
         if (!$criteria->getSelectColumns()) {
             $criteria = clone $criteria;
-            DynaformPeer::addSelectColumns($criteria);
+            ProcessVariablesPeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
@@ -304,7 +329,7 @@ abstract class BaseDynaformPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = DynaformPeer::getOMClass();
+        $cls = ProcessVariablesPeer::getOMClass();
         $cls = Propel::import($cls);
         // populate the object(s)
         while ($rs->next()) {
@@ -339,13 +364,13 @@ abstract class BaseDynaformPeer
      */
     public static function getOMClass()
     {
-        return DynaformPeer::CLASS_DEFAULT;
+        return ProcessVariablesPeer::CLASS_DEFAULT;
     }
 
     /**
-     * Method perform an INSERT on the database, given a Dynaform or Criteria object.
+     * Method perform an INSERT on the database, given a ProcessVariables or Criteria object.
      *
-     * @param      mixed $values Criteria or Dynaform object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or ProcessVariables object containing data that is used to create the INSERT statement.
      * @param      Connection $con the connection to use
      * @return     mixed The new primary key.
      * @throws     PropelException Any exceptions caught during processing will be
@@ -360,7 +385,7 @@ abstract class BaseDynaformPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from Dynaform object
+            $criteria = $values->buildCriteria(); // build Criteria from ProcessVariables object
         }
 
 
@@ -382,9 +407,9 @@ abstract class BaseDynaformPeer
     }
 
     /**
-     * Method perform an UPDATE on the database, given a Dynaform or Criteria object.
+     * Method perform an UPDATE on the database, given a ProcessVariables or Criteria object.
      *
-     * @param      mixed $values Criteria or Dynaform object containing data create the UPDATE statement.
+     * @param      mixed $values Criteria or ProcessVariables object containing data create the UPDATE statement.
      * @param      Connection $con The connection to use (specify Connection exert more control over transactions).
      * @return     int The number of affected rows (if supported by underlying database driver).
      * @throws     PropelException Any exceptions caught during processing will be
@@ -401,8 +426,8 @@ abstract class BaseDynaformPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(DynaformPeer::DYN_UID);
-            $selectCriteria->add(DynaformPeer::DYN_UID, $criteria->remove(DynaformPeer::DYN_UID), $comparison);
+            $comparison = $criteria->getComparison(ProcessVariablesPeer::VAR_UID);
+            $selectCriteria->add(ProcessVariablesPeer::VAR_UID, $criteria->remove(ProcessVariablesPeer::VAR_UID), $comparison);
 
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
@@ -416,7 +441,7 @@ abstract class BaseDynaformPeer
     }
 
     /**
-     * Method to DELETE all rows from the DYNAFORM table.
+     * Method to DELETE all rows from the PROCESS_VARIABLES table.
      *
      * @return     int The number of affected rows (if supported by underlying database driver).
      */
@@ -430,7 +455,7 @@ abstract class BaseDynaformPeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
-            $affectedRows += BasePeer::doDeleteAll(DynaformPeer::TABLE_NAME, $con);
+            $affectedRows += BasePeer::doDeleteAll(ProcessVariablesPeer::TABLE_NAME, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -440,9 +465,9 @@ abstract class BaseDynaformPeer
     }
 
     /**
-     * Method perform a DELETE on the database, given a Dynaform or Criteria object OR a primary key value.
+     * Method perform a DELETE on the database, given a ProcessVariables or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or Dynaform object or primary key or array of primary keys
+     * @param      mixed $values Criteria or ProcessVariables object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      Connection $con the connection to use
      * @return     int  The number of affected rows (if supported by underlying database driver).
@@ -454,18 +479,18 @@ abstract class BaseDynaformPeer
     public static function doDelete($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(DynaformPeer::DATABASE_NAME);
+            $con = Propel::getConnection(ProcessVariablesPeer::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
-        } elseif ($values instanceof Dynaform) {
+        } elseif ($values instanceof ProcessVariables) {
 
             $criteria = $values->buildPkeyCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(DynaformPeer::DYN_UID, (array) $values, Criteria::IN);
+            $criteria->add(ProcessVariablesPeer::VAR_UID, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -488,24 +513,24 @@ abstract class BaseDynaformPeer
     }
 
     /**
-     * Validates all modified columns of given Dynaform object.
+     * Validates all modified columns of given ProcessVariables object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      Dynaform $obj The object to validate.
+     * @param      ProcessVariables $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
      */
-    public static function doValidate(Dynaform $obj, $cols = null)
+    public static function doValidate(ProcessVariables $obj, $cols = null)
     {
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(DynaformPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(DynaformPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(ProcessVariablesPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(ProcessVariablesPeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -519,12 +544,9 @@ abstract class BaseDynaformPeer
             }
         } else {
 
-        if ($obj->isNew() || $obj->isColumnModified(DynaformPeer::DYN_TYPE))
-            $columns[DynaformPeer::DYN_TYPE] = $obj->getDynType();
-
         }
 
-        return BasePeer::doValidate(DynaformPeer::DATABASE_NAME, DynaformPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(ProcessVariablesPeer::DATABASE_NAME, ProcessVariablesPeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -532,7 +554,7 @@ abstract class BaseDynaformPeer
      *
      * @param      mixed $pk the primary key.
      * @param      Connection $con the connection to use
-     * @return     Dynaform
+     * @return     ProcessVariables
      */
     public static function retrieveByPK($pk, $con = null)
     {
@@ -540,12 +562,12 @@ abstract class BaseDynaformPeer
             $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
-        $criteria = new Criteria(DynaformPeer::DATABASE_NAME);
+        $criteria = new Criteria(ProcessVariablesPeer::DATABASE_NAME);
 
-        $criteria->add(DynaformPeer::DYN_UID, $pk);
+        $criteria->add(ProcessVariablesPeer::VAR_UID, $pk);
 
 
-        $v = DynaformPeer::doSelect($criteria, $con);
+        $v = ProcessVariablesPeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -569,8 +591,8 @@ abstract class BaseDynaformPeer
             $objs = array();
         } else {
             $criteria = new Criteria();
-            $criteria->add(DynaformPeer::DYN_UID, $pks, Criteria::IN);
-            $objs = DynaformPeer::doSelect($criteria, $con);
+            $criteria->add(ProcessVariablesPeer::VAR_UID, $pks, Criteria::IN);
+            $objs = ProcessVariablesPeer::doSelect($criteria, $con);
         }
         return $objs;
     }
@@ -582,14 +604,14 @@ if (Propel::isInit()) {
     // the MapBuilder classes register themselves with Propel during initialization
     // so we need to load them here.
     try {
-        BaseDynaformPeer::getMapBuilder();
+        BaseProcessVariablesPeer::getMapBuilder();
     } catch (Exception $e) {
         Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
     }
 } else {
     // even if Propel is not yet initialized, the map builder class can be registered
     // now and then it will be loaded when Propel initializes.
-    require_once 'classes/model/map/DynaformMapBuilder.php';
-    Propel::registerMapBuilder('classes.model.map.DynaformMapBuilder');
+    require_once 'classes/model/map/ProcessVariablesMapBuilder.php';
+    Propel::registerMapBuilder('classes.model.map.ProcessVariablesMapBuilder');
 }
 
