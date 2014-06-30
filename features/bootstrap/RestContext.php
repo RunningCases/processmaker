@@ -1644,8 +1644,18 @@ class RestContext extends BehatContext
 
         file_put_contents($exportedProcessFileName, $this->_response->getBody(true));
 
-        
-        
+
+
     }
 
+    /**
+     * @overrides
+     */
+    public function printDebug($string)
+    {
+        //echo "\n\033[36m|  " . strtr($string, array("\n" => "\n|  ")) . "\033[0m\n\n";
+
+        $fp = fopen(sys_get_temp_dir() . "/behat.log", "a+");
+        fwrite($fp, $string . PHP_EOL);
+    }
 }
