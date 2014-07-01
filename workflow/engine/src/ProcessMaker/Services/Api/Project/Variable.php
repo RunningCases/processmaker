@@ -55,7 +55,7 @@ class Variable extends Api
      *
      * @status 201
      */
-    public function doPostVariable($prj_uid, array $request_data)
+    public function doPostVariable($prj_uid, $request_data)
     {
         try {
             $request_data = (array)($request_data);

@@ -365,6 +365,10 @@ class DynaForm
             //Create
             $dynaForm = new \Dynaform();
 
+            if (isset($arrayData["DYN_VERSION"])) {
+                $arrayData["DYN_VERSION"] = 1;
+            }
+
             $arrayData["PRO_UID"] = $processUid;
 
             $dynaFormUid = $dynaForm->create($arrayData);
@@ -951,6 +955,10 @@ class DynaForm
             if ($record["DYN_DESCRIPTION"] . "" == "") {
                 //There is no transaltion for this Document name, try to get/regenerate the label
                 $record["DYN_DESCRIPTION"] = \Content::load("DYN_DESCRIPTION", "", $record["DYN_UID"], SYS_LANG);
+            }
+
+            if ($record["DYN_VERSION"] == 0) {
+                $record["DYN_VERSION"] = 1;
             }
 
             return array(
