@@ -967,7 +967,7 @@ class DynaForm
                 $this->getFieldNameByFormatFieldName("DYN_DESCRIPTION") => $record["DYN_DESCRIPTION"] . "",
                 $this->getFieldNameByFormatFieldName("DYN_TYPE")        => $record["DYN_TYPE"] . "",
                 $this->getFieldNameByFormatFieldName("DYN_CONTENT")     => $record["DYN_CONTENT"] . "",
-                $this->getFieldNameByFormatFieldName("DYN_VERSION")     => $record["DYN_VERSION"] . ""
+                $this->getFieldNameByFormatFieldName("DYN_VERSION")     => (int)($record["DYN_VERSION"])
             );
         } catch (\Exception $e) {
             throw $e;
