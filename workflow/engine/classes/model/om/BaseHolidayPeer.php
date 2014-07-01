@@ -349,7 +349,7 @@ abstract class BaseHolidayPeer
         }
 
         $criteria->remove(HolidayPeer::HLD_UID); // remove pkey col since this table uses auto-increment
-
+                
 
         // Set the correct dbName
         $criteria->setDbName(self::DATABASE_NAME);

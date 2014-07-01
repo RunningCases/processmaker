@@ -204,6 +204,7 @@ CREATE TABLE `DYNAFORM`
 	`PRO_UID` VARCHAR(32) default '0' NOT NULL,
 	`DYN_TYPE` VARCHAR(20) default 'xmlform' NOT NULL,
 	`DYN_FILENAME` VARCHAR(100) default '' NOT NULL,
+	`DYN_CONTENT` MEDIUMTEXT,
 	PRIMARY KEY (`DYN_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Forms required';
 #-----------------------------------------------------------------------------
@@ -2058,5 +2059,27 @@ CREATE TABLE `BPMN_DOCUMENTATION`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- PROCESS_VARIABLES
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `PROCESS_VARIABLES`;
+
+
+CREATE TABLE `PROCESS_VARIABLES`
+(
+	`VAR_UID` VARCHAR(32)  NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`VAR_NAME` VARCHAR(60) default '',
+	`VAR_FIELD_TYPE` VARCHAR(32) default '',
+	`VAR_FIELD_SIZE` INTEGER,
+	`VAR_LABEL` VARCHAR(64) default '',
+	`VAR_DBCONNECTION` VARCHAR(32),
+	`VAR_SQL` VARCHAR(512),
+	`VAR_NULL` TINYINT(32) default 0,
+	`VAR_DEFAULT` VARCHAR(32) default '',
+	`VAR_ACCEPTED_VALUES` VARCHAR(128) default '',
+	PRIMARY KEY (`VAR_UID`)
+)ENGINE=InnoDB ;
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

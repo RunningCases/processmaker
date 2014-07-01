@@ -162,7 +162,7 @@ Scenario Outline: Get a single user or group of an activity
 
 #BUG 15041 Inactive Groups are display in list of available groups Accounting
 
-Scenario Outline: BUG 15041 Get the list of available groups
+Scenario Outline: BUG 15041 Get the list of available groups- Task2
     Given I request "project/<project>/activity/<activity>/available-assignee?filter=<filter>&start=<start>&limit=<limit>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -174,10 +174,8 @@ Scenario Outline: BUG 15041 Get the list of available groups
 
     Examples:
     | test_description                | project                          | activity                         | filter     | start | limit | records | aas_uid                          | aas_type|
-    | "Accounting" group is available | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | Accounting | 0     | 50    | 1       | 68911670852a22d93c22c06005808422 | group   |
+    | "Accounting" group is available | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | Accounting | 0     | 50    | 1       | 54731929352d56741de9d42002704749 | group   |
     
-
-
 
 Scenario: BUG 15041 Update Group to disable group 
         Given PUT this data:
@@ -201,12 +199,10 @@ Scenario Outline: BUG 15041 Get the list of available users and groups to be ass
     And the content type is "application/json"
     And the type is "array"
     And the response has <records> records
-    And the "aas_uid" property in row 0 equals "<aas_uid>"
-    And the "aas_type" property in row 0 equals "<aas_type>"
-
+    
     Examples:
-    | test_description                | project                          | activity                         | filter     | start | limit | records | aas_uid                          | aas_type|
-    | "Accounting" group is available | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | Accounting | 0     | 50    | 0       | 68911670852a22d93c22c06005808422 | group   |
+    | test_description                | project                          | activity                         | filter     | start | limit | records |
+    | "Accounting" group is available | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | Accounting | 0     | 50    | 0       |
             
 
 Scenario: BUG 15041 Update Group to enable group 

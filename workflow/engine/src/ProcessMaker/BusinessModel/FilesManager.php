@@ -173,11 +173,17 @@ class FilesManager
                 case 'templates':
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     $sCheckDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory;
+                    if ($extention != '.html') {
+                        throw new \Exception(\G::LoadTranslation('ID_FILE_UPLOAD_INCORRECT_EXTENSION'));
+                    }
                     break;
                 case 'public':
                     $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     $sCheckDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory;
                     $sEditable = false;
+                    if ($extention == '.exe') {
+                        throw new \Exception(\G::LoadTranslation('ID_FILE_UPLOAD_INCORRECT_EXTENSION'));
+                    }
                     break;
                 default:
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
@@ -185,7 +191,7 @@ class FilesManager
             }
             $content = $aData['prf_content'];
             if (is_string($content)) {
-                if (file_exists(PATH_SEP.$sDirectory)) {
+                if (file_exists($sDirectory)) {
                     $directory = $sMainDirectory. PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     throw new \Exception(\G::LoadTranslation("ID_EXISTS_FILE", array($directory)));
                 }
@@ -387,7 +393,7 @@ class FilesManager
      * @param string $prfUid {@min 32} {@max 32}
      *
      *
-     * @access public 
+     * @access public
      */
     public function deleteProcessFilesManager($sProcessUID, $prfUid)
     {

@@ -1629,7 +1629,7 @@ class RestContext extends BehatContext
      */
     public function saveExportedProcessTo($destinationFolder, $exportedProcessFileName="")
     {
-        
+
         if($exportedProcessFileName == ""){//Obtain name from XML
             $exportedProcessFileName=$this->_data->xpath('//metadata/meta[@key="name"]');
             $exportedProcessFileName = $exportedProcessFileName[0];
@@ -1643,9 +1643,19 @@ class RestContext extends BehatContext
         $this->printDebug("Exporting process to: $exportedProcessFileName");
 
         file_put_contents($exportedProcessFileName, $this->_response->getBody(true));
+        chmod($exportedProcessFileName, 0777);
 
-        
-        
+
     }
 
+    /**
+     * @overrides
+     */
+    public function printDebug($string)
+    {
+        //echo "\n\033[36m|  " . strtr($string, array("\n" => "\n|  ")) . "\033[0m\n\n";
+
+        $fp = fopen(sys_get_temp_dir() . "/behat.log", "a+");
+        fwrite($fp, $string . PHP_EOL);
+    }
 }
