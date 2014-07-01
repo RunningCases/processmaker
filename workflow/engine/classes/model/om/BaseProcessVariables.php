@@ -7,61 +7,91 @@ require_once 'propel/om/Persistent.php';
 
 include_once 'propel/util/Criteria.php';
 
-include_once 'classes/model/DynaformPeer.php';
+include_once 'classes/model/ProcessVariablesPeer.php';
 
 /**
- * Base class that represents a row from the 'DYNAFORM' table.
+ * Base class that represents a row from the 'PROCESS_VARIABLES' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseDynaform extends BaseObject implements Persistent
+abstract class BaseProcessVariables extends BaseObject implements Persistent
 {
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        DynaformPeer
+     * @var        ProcessVariablesPeer
     */
     protected static $peer;
 
     /**
-     * The value for the dyn_uid field.
+     * The value for the var_uid field.
      * @var        string
      */
-    protected $dyn_uid = '';
+    protected $var_uid;
 
     /**
-     * The value for the pro_uid field.
+     * The value for the prj_uid field.
      * @var        string
      */
-    protected $pro_uid = '0';
+    protected $prj_uid;
 
     /**
-     * The value for the dyn_type field.
+     * The value for the var_name field.
      * @var        string
      */
-    protected $dyn_type = 'xmlform';
+    protected $var_name = '';
 
     /**
-     * The value for the dyn_filename field.
+     * The value for the var_field_type field.
      * @var        string
      */
-    protected $dyn_filename = '';
+    protected $var_field_type = '';
 
     /**
-     * The value for the dyn_content field.
-     * @var        string
-     */
-    protected $dyn_content;
-
-    /**
-     * The value for the dyn_version field.
+     * The value for the var_field_size field.
      * @var        int
      */
-    protected $dyn_version;
+    protected $var_field_size;
+
+    /**
+     * The value for the var_label field.
+     * @var        string
+     */
+    protected $var_label = '';
+
+    /**
+     * The value for the var_dbconnection field.
+     * @var        string
+     */
+    protected $var_dbconnection;
+
+    /**
+     * The value for the var_sql field.
+     * @var        string
+     */
+    protected $var_sql;
+
+    /**
+     * The value for the var_null field.
+     * @var        int
+     */
+    protected $var_null = 0;
+
+    /**
+     * The value for the var_default field.
+     * @var        string
+     */
+    protected $var_default = '';
+
+    /**
+     * The value for the var_accepted_values field.
+     * @var        string
+     */
+    protected $var_accepted_values = '';
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -78,78 +108,133 @@ abstract class BaseDynaform extends BaseObject implements Persistent
     protected $alreadyInValidation = false;
 
     /**
-     * Get the [dyn_uid] column value.
+     * Get the [var_uid] column value.
      * 
      * @return     string
      */
-    public function getDynUid()
+    public function getVarUid()
     {
 
-        return $this->dyn_uid;
+        return $this->var_uid;
     }
 
     /**
-     * Get the [pro_uid] column value.
+     * Get the [prj_uid] column value.
      * 
      * @return     string
      */
-    public function getProUid()
+    public function getPrjUid()
     {
 
-        return $this->pro_uid;
+        return $this->prj_uid;
     }
 
     /**
-     * Get the [dyn_type] column value.
+     * Get the [var_name] column value.
      * 
      * @return     string
      */
-    public function getDynType()
+    public function getVarName()
     {
 
-        return $this->dyn_type;
+        return $this->var_name;
     }
 
     /**
-     * Get the [dyn_filename] column value.
+     * Get the [var_field_type] column value.
      * 
      * @return     string
      */
-    public function getDynFilename()
+    public function getVarFieldType()
     {
 
-        return $this->dyn_filename;
+        return $this->var_field_type;
     }
 
     /**
-     * Get the [dyn_content] column value.
-     * 
-     * @return     string
-     */
-    public function getDynContent()
-    {
-
-        return $this->dyn_content;
-    }
-
-    /**
-     * Get the [dyn_version] column value.
+     * Get the [var_field_size] column value.
      * 
      * @return     int
      */
-    public function getDynVersion()
+    public function getVarFieldSize()
     {
 
-        return $this->dyn_version;
+        return $this->var_field_size;
     }
 
     /**
-     * Set the value of [dyn_uid] column.
+     * Get the [var_label] column value.
+     * 
+     * @return     string
+     */
+    public function getVarLabel()
+    {
+
+        return $this->var_label;
+    }
+
+    /**
+     * Get the [var_dbconnection] column value.
+     * 
+     * @return     string
+     */
+    public function getVarDbconnection()
+    {
+
+        return $this->var_dbconnection;
+    }
+
+    /**
+     * Get the [var_sql] column value.
+     * 
+     * @return     string
+     */
+    public function getVarSql()
+    {
+
+        return $this->var_sql;
+    }
+
+    /**
+     * Get the [var_null] column value.
+     * 
+     * @return     int
+     */
+    public function getVarNull()
+    {
+
+        return $this->var_null;
+    }
+
+    /**
+     * Get the [var_default] column value.
+     * 
+     * @return     string
+     */
+    public function getVarDefault()
+    {
+
+        return $this->var_default;
+    }
+
+    /**
+     * Get the [var_accepted_values] column value.
+     * 
+     * @return     string
+     */
+    public function getVarAcceptedValues()
+    {
+
+        return $this->var_accepted_values;
+    }
+
+    /**
+     * Set the value of [var_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setDynUid($v)
+    public function setVarUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -158,20 +243,20 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->dyn_uid !== $v || $v === '') {
-            $this->dyn_uid = $v;
-            $this->modifiedColumns[] = DynaformPeer::DYN_UID;
+        if ($this->var_uid !== $v) {
+            $this->var_uid = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_UID;
         }
 
-    } // setDynUid()
+    } // setVarUid()
 
     /**
-     * Set the value of [pro_uid] column.
+     * Set the value of [prj_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setProUid($v)
+    public function setPrjUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -180,20 +265,20 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->pro_uid !== $v || $v === '0') {
-            $this->pro_uid = $v;
-            $this->modifiedColumns[] = DynaformPeer::PRO_UID;
+        if ($this->prj_uid !== $v) {
+            $this->prj_uid = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::PRJ_UID;
         }
 
-    } // setProUid()
+    } // setPrjUid()
 
     /**
-     * Set the value of [dyn_type] column.
+     * Set the value of [var_name] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setDynType($v)
+    public function setVarName($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -202,20 +287,20 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->dyn_type !== $v || $v === 'xmlform') {
-            $this->dyn_type = $v;
-            $this->modifiedColumns[] = DynaformPeer::DYN_TYPE;
+        if ($this->var_name !== $v || $v === '') {
+            $this->var_name = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_NAME;
         }
 
-    } // setDynType()
+    } // setVarName()
 
     /**
-     * Set the value of [dyn_filename] column.
+     * Set the value of [var_field_type] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setDynFilename($v)
+    public function setVarFieldType($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -224,42 +309,20 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->dyn_filename !== $v || $v === '') {
-            $this->dyn_filename = $v;
-            $this->modifiedColumns[] = DynaformPeer::DYN_FILENAME;
+        if ($this->var_field_type !== $v || $v === '') {
+            $this->var_field_type = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_FIELD_TYPE;
         }
 
-    } // setDynFilename()
+    } // setVarFieldType()
 
     /**
-     * Set the value of [dyn_content] column.
-     * 
-     * @param      string $v new value
-     * @return     void
-     */
-    public function setDynContent($v)
-    {
-
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->dyn_content !== $v) {
-            $this->dyn_content = $v;
-            $this->modifiedColumns[] = DynaformPeer::DYN_CONTENT;
-        }
-
-    } // setDynContent()
-
-    /**
-     * Set the value of [dyn_version] column.
+     * Set the value of [var_field_size] column.
      * 
      * @param      int $v new value
      * @return     void
      */
-    public function setDynVersion($v)
+    public function setVarFieldSize($v)
     {
 
         // Since the native PHP type for this column is integer,
@@ -268,12 +331,144 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             $v = (int) $v;
         }
 
-        if ($this->dyn_version !== $v) {
-            $this->dyn_version = $v;
-            $this->modifiedColumns[] = DynaformPeer::DYN_VERSION;
+        if ($this->var_field_size !== $v) {
+            $this->var_field_size = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_FIELD_SIZE;
         }
 
-    } // setDynVersion()
+    } // setVarFieldSize()
+
+    /**
+     * Set the value of [var_label] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setVarLabel($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->var_label !== $v || $v === '') {
+            $this->var_label = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_LABEL;
+        }
+
+    } // setVarLabel()
+
+    /**
+     * Set the value of [var_dbconnection] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setVarDbconnection($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->var_dbconnection !== $v) {
+            $this->var_dbconnection = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_DBCONNECTION;
+        }
+
+    } // setVarDbconnection()
+
+    /**
+     * Set the value of [var_sql] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setVarSql($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->var_sql !== $v) {
+            $this->var_sql = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_SQL;
+        }
+
+    } // setVarSql()
+
+    /**
+     * Set the value of [var_null] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setVarNull($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->var_null !== $v || $v === 0) {
+            $this->var_null = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_NULL;
+        }
+
+    } // setVarNull()
+
+    /**
+     * Set the value of [var_default] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setVarDefault($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->var_default !== $v || $v === '') {
+            $this->var_default = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_DEFAULT;
+        }
+
+    } // setVarDefault()
+
+    /**
+     * Set the value of [var_accepted_values] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setVarAcceptedValues($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->var_accepted_values !== $v || $v === '') {
+            $this->var_accepted_values = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_ACCEPTED_VALUES;
+        }
+
+    } // setVarAcceptedValues()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -292,27 +487,37 @@ abstract class BaseDynaform extends BaseObject implements Persistent
     {
         try {
 
-            $this->dyn_uid = $rs->getString($startcol + 0);
+            $this->var_uid = $rs->getString($startcol + 0);
 
-            $this->pro_uid = $rs->getString($startcol + 1);
+            $this->prj_uid = $rs->getString($startcol + 1);
 
-            $this->dyn_type = $rs->getString($startcol + 2);
+            $this->var_name = $rs->getString($startcol + 2);
 
-            $this->dyn_filename = $rs->getString($startcol + 3);
+            $this->var_field_type = $rs->getString($startcol + 3);
 
-            $this->dyn_content = $rs->getString($startcol + 4);
+            $this->var_field_size = $rs->getInt($startcol + 4);
 
-            $this->dyn_version = $rs->getInt($startcol + 5);
+            $this->var_label = $rs->getString($startcol + 5);
+
+            $this->var_dbconnection = $rs->getString($startcol + 6);
+
+            $this->var_sql = $rs->getString($startcol + 7);
+
+            $this->var_null = $rs->getInt($startcol + 8);
+
+            $this->var_default = $rs->getString($startcol + 9);
+
+            $this->var_accepted_values = $rs->getString($startcol + 10);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 6; // 6 = DynaformPeer::NUM_COLUMNS - DynaformPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 11; // 11 = ProcessVariablesPeer::NUM_COLUMNS - ProcessVariablesPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating Dynaform object", $e);
+            throw new PropelException("Error populating ProcessVariables object", $e);
         }
     }
 
@@ -332,12 +537,12 @@ abstract class BaseDynaform extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(DynaformPeer::DATABASE_NAME);
+            $con = Propel::getConnection(ProcessVariablesPeer::DATABASE_NAME);
         }
 
         try {
             $con->begin();
-            DynaformPeer::doDelete($this, $con);
+            ProcessVariablesPeer::doDelete($this, $con);
             $this->setDeleted(true);
             $con->commit();
         } catch (PropelException $e) {
@@ -363,7 +568,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(DynaformPeer::DATABASE_NAME);
+            $con = Propel::getConnection(ProcessVariablesPeer::DATABASE_NAME);
         }
 
         try {
@@ -398,14 +603,14 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             // If this object has been modified, then save it to the database.
             if ($this->isModified()) {
                 if ($this->isNew()) {
-                    $pk = DynaformPeer::doInsert($this, $con);
+                    $pk = ProcessVariablesPeer::doInsert($this, $con);
                     $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
                                          // should always be true here (even though technically
                                          // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
-                    $affectedRows += DynaformPeer::doUpdate($this, $con);
+                    $affectedRows += ProcessVariablesPeer::doUpdate($this, $con);
                 }
                 $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
             }
@@ -476,7 +681,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = DynaformPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = ProcessVariablesPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -499,7 +704,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = DynaformPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = ProcessVariablesPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->getByPosition($pos);
     }
 
@@ -514,22 +719,37 @@ abstract class BaseDynaform extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                return $this->getDynUid();
+                return $this->getVarUid();
                 break;
             case 1:
-                return $this->getProUid();
+                return $this->getPrjUid();
                 break;
             case 2:
-                return $this->getDynType();
+                return $this->getVarName();
                 break;
             case 3:
-                return $this->getDynFilename();
+                return $this->getVarFieldType();
                 break;
             case 4:
-                return $this->getDynContent();
+                return $this->getVarFieldSize();
                 break;
             case 5:
-                return $this->getDynVersion();
+                return $this->getVarLabel();
+                break;
+            case 6:
+                return $this->getVarDbconnection();
+                break;
+            case 7:
+                return $this->getVarSql();
+                break;
+            case 8:
+                return $this->getVarNull();
+                break;
+            case 9:
+                return $this->getVarDefault();
+                break;
+            case 10:
+                return $this->getVarAcceptedValues();
                 break;
             default:
                 return null;
@@ -549,14 +769,19 @@ abstract class BaseDynaform extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = DynaformPeer::getFieldNames($keyType);
+        $keys = ProcessVariablesPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getDynUid(),
-            $keys[1] => $this->getProUid(),
-            $keys[2] => $this->getDynType(),
-            $keys[3] => $this->getDynFilename(),
-            $keys[4] => $this->getDynContent(),
-            $keys[5] => $this->getDynVersion(),
+            $keys[0] => $this->getVarUid(),
+            $keys[1] => $this->getPrjUid(),
+            $keys[2] => $this->getVarName(),
+            $keys[3] => $this->getVarFieldType(),
+            $keys[4] => $this->getVarFieldSize(),
+            $keys[5] => $this->getVarLabel(),
+            $keys[6] => $this->getVarDbconnection(),
+            $keys[7] => $this->getVarSql(),
+            $keys[8] => $this->getVarNull(),
+            $keys[9] => $this->getVarDefault(),
+            $keys[10] => $this->getVarAcceptedValues(),
         );
         return $result;
     }
@@ -573,7 +798,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = DynaformPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = ProcessVariablesPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->setByPosition($pos, $value);
     }
 
@@ -589,22 +814,37 @@ abstract class BaseDynaform extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                $this->setDynUid($value);
+                $this->setVarUid($value);
                 break;
             case 1:
-                $this->setProUid($value);
+                $this->setPrjUid($value);
                 break;
             case 2:
-                $this->setDynType($value);
+                $this->setVarName($value);
                 break;
             case 3:
-                $this->setDynFilename($value);
+                $this->setVarFieldType($value);
                 break;
             case 4:
-                $this->setDynContent($value);
+                $this->setVarFieldSize($value);
                 break;
             case 5:
-                $this->setDynVersion($value);
+                $this->setVarLabel($value);
+                break;
+            case 6:
+                $this->setVarDbconnection($value);
+                break;
+            case 7:
+                $this->setVarSql($value);
+                break;
+            case 8:
+                $this->setVarNull($value);
+                break;
+            case 9:
+                $this->setVarDefault($value);
+                break;
+            case 10:
+                $this->setVarAcceptedValues($value);
                 break;
         } // switch()
     }
@@ -627,30 +867,50 @@ abstract class BaseDynaform extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = DynaformPeer::getFieldNames($keyType);
+        $keys = ProcessVariablesPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setDynUid($arr[$keys[0]]);
+            $this->setVarUid($arr[$keys[0]]);
         }
 
         if (array_key_exists($keys[1], $arr)) {
-            $this->setProUid($arr[$keys[1]]);
+            $this->setPrjUid($arr[$keys[1]]);
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setDynType($arr[$keys[2]]);
+            $this->setVarName($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
-            $this->setDynFilename($arr[$keys[3]]);
+            $this->setVarFieldType($arr[$keys[3]]);
         }
 
         if (array_key_exists($keys[4], $arr)) {
-            $this->setDynContent($arr[$keys[4]]);
+            $this->setVarFieldSize($arr[$keys[4]]);
         }
 
         if (array_key_exists($keys[5], $arr)) {
-            $this->setDynVersion($arr[$keys[5]]);
+            $this->setVarLabel($arr[$keys[5]]);
+        }
+
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setVarDbconnection($arr[$keys[6]]);
+        }
+
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setVarSql($arr[$keys[7]]);
+        }
+
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setVarNull($arr[$keys[8]]);
+        }
+
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setVarDefault($arr[$keys[9]]);
+        }
+
+        if (array_key_exists($keys[10], $arr)) {
+            $this->setVarAcceptedValues($arr[$keys[10]]);
         }
 
     }
@@ -662,30 +922,50 @@ abstract class BaseDynaform extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(DynaformPeer::DATABASE_NAME);
+        $criteria = new Criteria(ProcessVariablesPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(DynaformPeer::DYN_UID)) {
-            $criteria->add(DynaformPeer::DYN_UID, $this->dyn_uid);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_UID)) {
+            $criteria->add(ProcessVariablesPeer::VAR_UID, $this->var_uid);
         }
 
-        if ($this->isColumnModified(DynaformPeer::PRO_UID)) {
-            $criteria->add(DynaformPeer::PRO_UID, $this->pro_uid);
+        if ($this->isColumnModified(ProcessVariablesPeer::PRJ_UID)) {
+            $criteria->add(ProcessVariablesPeer::PRJ_UID, $this->prj_uid);
         }
 
-        if ($this->isColumnModified(DynaformPeer::DYN_TYPE)) {
-            $criteria->add(DynaformPeer::DYN_TYPE, $this->dyn_type);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_NAME)) {
+            $criteria->add(ProcessVariablesPeer::VAR_NAME, $this->var_name);
         }
 
-        if ($this->isColumnModified(DynaformPeer::DYN_FILENAME)) {
-            $criteria->add(DynaformPeer::DYN_FILENAME, $this->dyn_filename);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_FIELD_TYPE)) {
+            $criteria->add(ProcessVariablesPeer::VAR_FIELD_TYPE, $this->var_field_type);
         }
 
-        if ($this->isColumnModified(DynaformPeer::DYN_CONTENT)) {
-            $criteria->add(DynaformPeer::DYN_CONTENT, $this->dyn_content);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_FIELD_SIZE)) {
+            $criteria->add(ProcessVariablesPeer::VAR_FIELD_SIZE, $this->var_field_size);
         }
 
-        if ($this->isColumnModified(DynaformPeer::DYN_VERSION)) {
-            $criteria->add(DynaformPeer::DYN_VERSION, $this->dyn_version);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_LABEL)) {
+            $criteria->add(ProcessVariablesPeer::VAR_LABEL, $this->var_label);
+        }
+
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_DBCONNECTION)) {
+            $criteria->add(ProcessVariablesPeer::VAR_DBCONNECTION, $this->var_dbconnection);
+        }
+
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_SQL)) {
+            $criteria->add(ProcessVariablesPeer::VAR_SQL, $this->var_sql);
+        }
+
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_NULL)) {
+            $criteria->add(ProcessVariablesPeer::VAR_NULL, $this->var_null);
+        }
+
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_DEFAULT)) {
+            $criteria->add(ProcessVariablesPeer::VAR_DEFAULT, $this->var_default);
+        }
+
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_ACCEPTED_VALUES)) {
+            $criteria->add(ProcessVariablesPeer::VAR_ACCEPTED_VALUES, $this->var_accepted_values);
         }
 
 
@@ -702,9 +982,9 @@ abstract class BaseDynaform extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(DynaformPeer::DATABASE_NAME);
+        $criteria = new Criteria(ProcessVariablesPeer::DATABASE_NAME);
 
-        $criteria->add(DynaformPeer::DYN_UID, $this->dyn_uid);
+        $criteria->add(ProcessVariablesPeer::VAR_UID, $this->var_uid);
 
         return $criteria;
     }
@@ -715,18 +995,18 @@ abstract class BaseDynaform extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getDynUid();
+        return $this->getVarUid();
     }
 
     /**
-     * Generic method to set the primary key (dyn_uid column).
+     * Generic method to set the primary key (var_uid column).
      *
      * @param      string $key Primary key.
      * @return     void
      */
     public function setPrimaryKey($key)
     {
-        $this->setDynUid($key);
+        $this->setVarUid($key);
     }
 
     /**
@@ -735,27 +1015,37 @@ abstract class BaseDynaform extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of Dynaform (or compatible) type.
+     * @param      object $copyObj An object of ProcessVariables (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @throws     PropelException
      */
     public function copyInto($copyObj, $deepCopy = false)
     {
 
-        $copyObj->setProUid($this->pro_uid);
+        $copyObj->setPrjUid($this->prj_uid);
 
-        $copyObj->setDynType($this->dyn_type);
+        $copyObj->setVarName($this->var_name);
 
-        $copyObj->setDynFilename($this->dyn_filename);
+        $copyObj->setVarFieldType($this->var_field_type);
 
-        $copyObj->setDynContent($this->dyn_content);
+        $copyObj->setVarFieldSize($this->var_field_size);
 
-        $copyObj->setDynVersion($this->dyn_version);
+        $copyObj->setVarLabel($this->var_label);
+
+        $copyObj->setVarDbconnection($this->var_dbconnection);
+
+        $copyObj->setVarSql($this->var_sql);
+
+        $copyObj->setVarNull($this->var_null);
+
+        $copyObj->setVarDefault($this->var_default);
+
+        $copyObj->setVarAcceptedValues($this->var_accepted_values);
 
 
         $copyObj->setNew(true);
 
-        $copyObj->setDynUid(''); // this is a pkey column, so set to default value
+        $copyObj->setVarUid(NULL); // this is a pkey column, so set to default value
 
     }
 
@@ -768,7 +1058,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return     Dynaform Clone of current object.
+     * @return     ProcessVariables Clone of current object.
      * @throws     PropelException
      */
     public function copy($deepCopy = false)
@@ -787,12 +1077,12 @@ abstract class BaseDynaform extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return     DynaformPeer
+     * @return     ProcessVariablesPeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new DynaformPeer();
+            self::$peer = new ProcessVariablesPeer();
         }
         return self::$peer;
     }

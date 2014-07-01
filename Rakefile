@@ -43,10 +43,12 @@ task :build => [:required] do
 
     pmUIDir = targetDir + "/pmUI"
     mafeDir = targetDir + "/mafe"
+    pmdynaformDir = targetDir + "/pmdynaform"
 
-    prepareDirs([pmUIDir, mafeDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
+    prepareDirs([pmUIDir, mafeDir, pmdynaformDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
 
     buildPmUi(Dir.pwd + "/vendor/colosa/pmUI", targetDir, mode)
+    buildPmdynaform(Dir.pwd + "/vendor/colosa/pmDynaform", targetDir, mode)
     buildMafe(Dir.pwd + "/vendor/colosa/MichelangeloFE", targetDir, mode)
 
     pmuiHash = getHash(Dir.pwd + "/vendor/colosa/pmUI")
@@ -132,6 +134,20 @@ def buildPmUi(homeDir, targetDir, mode)
     copyFiles({"#{homeDir}/themes/#{theme}/fonts/*" => "#{pmUIFontsDir}"})
 
     puts "\nPMUI Build Finished".magenta
+end
+
+def buildPmdynaform(homeDir, targetDir, mode)
+  puts "\nBuilding PmDynaform library".green.bold
+  
+  # Defining target directories
+  pmdynaformDir = targetDir + "/pmdynaform"
+  
+  executeInto(homeDir, [ "default"])
+
+  system("cp -r #{homeDir}/build #{pmdynaformDir}")
+  system("cp -r #{homeDir}/libs #{pmdynaformDir}")
+  
+  puts "\nPmDynaform Build Finished!".magenta
 end
 
 def buildMafe(homeDir, targetDir, mode)
