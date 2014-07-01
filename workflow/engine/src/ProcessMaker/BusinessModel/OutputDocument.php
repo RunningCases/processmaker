@@ -363,7 +363,7 @@ class OutputDocument
             require_once(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "OutputDocument.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ObjectPermission.php");
             require_once(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Step.php");
-            $this->throwExceptionIfItsAssignedInOtherObjects($sOutputDocumentUID, "inputDocumentUid");
+            $this->throwExceptionIfItsAssignedInOtherObjects($sOutputDocumentUID, "outputDocumentUid");
             \G::LoadClass( 'processMap' );
             $oOutputDocument = new \OutputDocument();
             $fields = $oOutputDocument->load( $sOutputDocumentUID );
