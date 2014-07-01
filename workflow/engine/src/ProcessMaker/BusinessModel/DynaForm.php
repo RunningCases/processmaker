@@ -9,7 +9,8 @@ class DynaForm
         "DYN_TITLE"       => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                  "fieldNameAux" => "dynaFormTitle"),
         "DYN_DESCRIPTION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormDescription"),
         "DYN_TYPE"        => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("xmlform", "grid"), "fieldNameAux" => "dynaFormType"),
-        "DYN_CONTENT"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormContent")
+        "DYN_CONTENT"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormContent"),
+        "DYN_VERSION"     => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(),                  "fieldNameAux" => "dynaFormVersion")
     );
 
     private $formatFieldNameInUppercase = true;
@@ -363,6 +364,10 @@ class DynaForm
 
             //Create
             $dynaForm = new \Dynaform();
+
+            if (isset($arrayData["DYN_VERSION"])) {
+                $arrayData["DYN_VERSION"] = 1;
+            }
 
             $arrayData["PRO_UID"] = $processUid;
 
@@ -909,6 +914,7 @@ class DynaForm
             $criteria->addAsColumn("DYN_DESCRIPTION", "CD.CON_VALUE");
             $criteria->addSelectColumn(\DynaformPeer::DYN_TYPE);
             $criteria->addSelectColumn(\DynaformPeer::DYN_CONTENT);
+            $criteria->addSelectColumn(\DynaformPeer::DYN_VERSION);
 
             $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
             $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
@@ -951,12 +957,17 @@ class DynaForm
                 $record["DYN_DESCRIPTION"] = \Content::load("DYN_DESCRIPTION", "", $record["DYN_UID"], SYS_LANG);
             }
 
+            if ($record["DYN_VERSION"] == 0) {
+                $record["DYN_VERSION"] = 1;
+            }
+
             return array(
                 $this->getFieldNameByFormatFieldName("DYN_UID")         => $record["DYN_UID"],
                 $this->getFieldNameByFormatFieldName("DYN_TITLE")       => $record["DYN_TITLE"],
                 $this->getFieldNameByFormatFieldName("DYN_DESCRIPTION") => $record["DYN_DESCRIPTION"] . "",
                 $this->getFieldNameByFormatFieldName("DYN_TYPE")        => $record["DYN_TYPE"] . "",
-                $this->getFieldNameByFormatFieldName("DYN_CONTENT")     => $record["DYN_CONTENT"] . ""
+                $this->getFieldNameByFormatFieldName("DYN_CONTENT")     => $record["DYN_CONTENT"] . "",
+                $this->getFieldNameByFormatFieldName("DYN_VERSION")     => (int)($record["DYN_VERSION"])
             );
         } catch (\Exception $e) {
             throw $e;
