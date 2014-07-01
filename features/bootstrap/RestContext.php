@@ -1629,7 +1629,7 @@ class RestContext extends BehatContext
      */
     public function saveExportedProcessTo($destinationFolder, $exportedProcessFileName="")
     {
-        
+
         if($exportedProcessFileName == ""){//Obtain name from XML
             $exportedProcessFileName=$this->_data->xpath('//metadata/meta[@key="name"]');
             $exportedProcessFileName = $exportedProcessFileName[0];
@@ -1643,7 +1643,7 @@ class RestContext extends BehatContext
         $this->printDebug("Exporting process to: $exportedProcessFileName");
 
         file_put_contents($exportedProcessFileName, $this->_response->getBody(true));
-
+        chmod($exportedProcessFileName, 0777);
 
 
     }

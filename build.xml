@@ -2,7 +2,7 @@
 
 <project name="ProcessMaker Michelangelo" default="build-phpcs">
     <target name="build"
-        depends="prepare,lint,phploc,pdepend,phpcs-ci,phpunit,phpdox,behat"/>
+        depends="prepare,lint,phploc,phpcs-ci,phpunit,phpdox,behat"/>
 
     <target name="build-simple"
         depends="prepare,phpunit,phpcs-ci,phploc,lint"/>
