@@ -313,11 +313,14 @@ ini_set( 'soap.wsdl_cache_enabled', $config['wsdl_cache'] );
 ini_set( 'date.timezone', $config['time_zone'] );
 
 define( 'DEBUG_SQL_LOG', $config['debug_sql'] );
+define( 'DEBUG_SQL', $config['debug'] );
 define( 'DEBUG_TIME_LOG', $config['debug_time'] );
 define( 'DEBUG_CALENDAR_LOG', $config['debug_calendar'] );
 define( 'MEMCACHED_ENABLED', $config['memcached'] );
 define( 'MEMCACHED_SERVER', $config['memcached_server'] );
 define( 'TIME_ZONE', $config['time_zone'] );
+
+define ('WS_IN_LOGIN', isset($config['WS_IN_LOGIN']) ? $config['WS_IN_LOGIN'] : 'serverconf');
 
 // IIS Compatibility, SERVER_ADDR doesn't exist on that env, so we need to define it.
 $_SERVER['SERVER_ADDR'] = isset( $_SERVER['SERVER_ADDR'] ) ? $_SERVER['SERVER_ADDR'] : $_SERVER['SERVER_NAME'];

@@ -2,7 +2,7 @@
 
 <project name="ProcessMaker Michelangelo" default="build-phpcs">
     <target name="build"
-        depends="prepare,lint,phploc,pdepend,phpcs-ci,phpunit,phpdox,behat"/>
+        depends="prepare,lint,phploc,phpcs-ci,phpunit,phpdox,behat"/>
 
     <target name="build-simple"
         depends="prepare,phpunit,phpcs-ci,phploc,lint"/>
@@ -27,11 +27,12 @@
     </target>
 
     <target name="clean" description="Cleanup build artifacts">
-    <delete dir="${basedir}/build/api"/>
-    <delete dir="${basedir}/build/code-browser"/>
-    <delete dir="${basedir}/build/coverage"/>
-    <delete dir="${basedir}/build/logs"/>
-    <delete dir="${basedir}/build/pdepend"/>
+        <delete dir="${basedir}/build/api"/>
+        <delete dir="${basedir}/build/code-browser"/>
+        <delete dir="${basedir}/build/coverage"/>
+        <delete dir="${basedir}/build/logs"/>
+        <delete dir="${basedir}/build/pdepend"/>
+        <delete dir="${basedir}/build/docs"/>
     </target>
 
     <target name="prepare" depends="clean" description="Prepare for build">
@@ -41,6 +42,8 @@
         <mkdir dir="${basedir}/build/logs"/>
         <mkdir dir="${basedir}/build/pdepend"/>
         <mkdir dir="${basedir}/build/phpdox"/>
+        <mkdir dir="${basedir}/build/docs"/>
+        <mkdir dir="${basedir}/build/docs/html"/>
     </target>
 
  <target name="lint" description="Perform syntax check of sourcecode files">

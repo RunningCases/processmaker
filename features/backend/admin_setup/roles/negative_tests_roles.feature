@@ -67,8 +67,8 @@ Scenario Outline: Assign Permission "PM_DASHBOARD" to Role (NEGATIVE TESTS)
     | Create rol without per_uid                            | 00000000000000000000000000000004 |                                  | 400        | per_uid       |
 
 
- # Scenario: Delete a role when have asigned users (negative tests) "PROCESSMAKER_OPERATOR"
-    # Given that I want to delete a "Role"
-    # And I request "role/00000000000000000000000000000003"
-    # Then the response status code should be 400
-    # And the response status message should have the following text "cannot be deleted" 
+Scenario: Delete a role when have asigned users (negative tests) "PROCESSMAKER_OPERATOR"
+    Given that I want to delete a "Role"
+    And I request "role/00000000000000000000000000000003"
+    Then the response status code should be 400
+    And the response status message should have the following text "cannot be deleted" 

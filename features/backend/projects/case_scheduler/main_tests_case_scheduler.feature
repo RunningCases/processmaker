@@ -217,32 +217,53 @@ Scenario Outline: Delete all case scheduler of a project created previously in t
 # 
 #    | test_description   | sch_uid_number |
 #    | Create with Daily  | 1              |
-    
-Scenario Outline: Create new Projects with event case scheduler
-    Given POST data from file "<project_template>"
-    And I request "projects"
-    Then the response status code should be 201
-    And the response charset is "UTF-8"
-    And the content type is "application/json"
-    And the type is "array"
-    And store "new_uid" in session array as variable "project_new_uid_<project_new_uid_number>" where an object has "object" equal to "project"
-    
-    Examples:
+#    
+#
+#Scenario Outline: Create new Projects with event case scheduler
+#    Given POST data from file "<project_template>"
+#    And I request "projects"
+#    Then the response status code should be 201
+#    And the response charset is "UTF-8"
+#    And the content type is "application/json"
+#    And the type is "array"
+#    And store "new_uid" in session array as variable "project_new_uid_<project_new_uid_number>" where an object has "object" equal to "project"
+#    And store "new_uid" in session array as variable "diagram_new_uid_<project_new_uid_number>" where an object has "object" equal to "diagram"
+#    And store "new_uid" in session array as variable "activity_new_uid_<project_new_uid_number>" where an object has "object" equal to "activity"
+#    And store "new_uid" in session array as variable "evn_uid_<evn_uid_number>" where an object has "object" equal to "event"
+#    And store "new_uid" in session array as variable "flow_new_uid_<project_new_uid_number>" where an object has "object" equal to "flow"
+#    
+#    Examples:
+#
+#    | Description                                    | project_new_uid_number | evn_uid_number | project_template                 |
+#    | Create a new project with event case scheduler | 1                      | 3              | project_bug_case_scheduler1.json |
+#    | Create a new project with event case scheduler | 2                      | 4              | project_bug_case_scheduler2.json |
+#    
+#
+#Scenario Outline: Delete all Events created previously in this script
+#    Given that I want to delete a resource with the key "evn_uid" stored in session array as variable "evn_uid_<evn_uid_number>"
+#    And I request "project/<project_new_uid_number>/event"
+#    Then the response status code should be 200
+#    And the response charset is "UTF-8"
+#    And the type is "object"
+#
+#    Examples:
+#
+#    | project_new_uid_number | evn_uid_number | 
+#    | 1                      | 3              |
+#    | 2                      | 4              |
+#
+#
+#Scenario Outline: Delete a Project previously created in this script
+#    Given that I want to delete a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
+#    And I request "projects"
+#    And the content type is "application/json"
+#    Then the response status code should be 200
+#    And the response charset is "UTF-8"
+#    And the type is "object"
+#
+#    Examples:
+#
+#    | project_new_uid_number |
+#    | 1                      |
+#    | 2                      |
 
-    | Description                                    | project_new_uid_number | project_template                 |
-    | Create a new project with event case scheduler | 1                      | project_bug_case_scheduler1.json |
-    | Create a new project with event case scheduler | 2                      | project_bug_case_scheduler2.json |
-    
-Scenario Outline: Delete a Project previously created in this script
-    Given that I want to delete a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
-    And I request "projects"
-    And the content type is "application/json"
-    Then the response status code should be 200
-    And the response charset is "UTF-8"
-    And the type is "object"
-
-    Examples:
-
-    | project_new_uid_number |
-    | 1                      |
-    | 2                      |

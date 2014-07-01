@@ -7,97 +7,91 @@ require_once 'propel/om/Persistent.php';
 
 include_once 'propel/util/Criteria.php';
 
-include_once 'classes/model/WebEntryPeer.php';
+include_once 'classes/model/ProcessVariablesPeer.php';
 
 /**
- * Base class that represents a row from the 'WEB_ENTRY' table.
+ * Base class that represents a row from the 'PROCESS_VARIABLES' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseWebEntry extends BaseObject implements Persistent
+abstract class BaseProcessVariables extends BaseObject implements Persistent
 {
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        WebEntryPeer
+     * @var        ProcessVariablesPeer
     */
     protected static $peer;
 
     /**
-     * The value for the we_uid field.
+     * The value for the var_uid field.
      * @var        string
      */
-    protected $we_uid;
+    protected $var_uid;
 
     /**
-     * The value for the pro_uid field.
+     * The value for the prj_uid field.
      * @var        string
      */
-    protected $pro_uid;
+    protected $prj_uid;
 
     /**
-     * The value for the tas_uid field.
+     * The value for the var_name field.
      * @var        string
      */
-    protected $tas_uid;
+    protected $var_name = '';
 
     /**
-     * The value for the dyn_uid field.
+     * The value for the var_field_type field.
      * @var        string
      */
-    protected $dyn_uid;
+    protected $var_field_type = '';
 
     /**
-     * The value for the usr_uid field.
-     * @var        string
-     */
-    protected $usr_uid = '';
-
-    /**
-     * The value for the we_method field.
-     * @var        string
-     */
-    protected $we_method = 'HTML';
-
-    /**
-     * The value for the we_input_document_access field.
+     * The value for the var_field_size field.
      * @var        int
      */
-    protected $we_input_document_access = 0;
+    protected $var_field_size;
 
     /**
-     * The value for the we_data field.
+     * The value for the var_label field.
      * @var        string
      */
-    protected $we_data;
+    protected $var_label = '';
 
     /**
-     * The value for the we_create_usr_uid field.
+     * The value for the var_dbconnection field.
      * @var        string
      */
-    protected $we_create_usr_uid = '';
+    protected $var_dbconnection;
 
     /**
-     * The value for the we_update_usr_uid field.
+     * The value for the var_sql field.
      * @var        string
      */
-    protected $we_update_usr_uid = '';
+    protected $var_sql;
 
     /**
-     * The value for the we_create_date field.
+     * The value for the var_null field.
      * @var        int
      */
-    protected $we_create_date;
+    protected $var_null = 0;
 
     /**
-     * The value for the we_update_date field.
-     * @var        int
+     * The value for the var_default field.
+     * @var        string
      */
-    protected $we_update_date;
+    protected $var_default = '';
+
+    /**
+     * The value for the var_accepted_values field.
+     * @var        string
+     */
+    protected $var_accepted_values = '';
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -114,186 +108,133 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
     protected $alreadyInValidation = false;
 
     /**
-     * Get the [we_uid] column value.
+     * Get the [var_uid] column value.
      * 
      * @return     string
      */
-    public function getWeUid()
+    public function getVarUid()
     {
 
-        return $this->we_uid;
+        return $this->var_uid;
     }
 
     /**
-     * Get the [pro_uid] column value.
+     * Get the [prj_uid] column value.
      * 
      * @return     string
      */
-    public function getProUid()
+    public function getPrjUid()
     {
 
-        return $this->pro_uid;
+        return $this->prj_uid;
     }
 
     /**
-     * Get the [tas_uid] column value.
+     * Get the [var_name] column value.
      * 
      * @return     string
      */
-    public function getTasUid()
+    public function getVarName()
     {
 
-        return $this->tas_uid;
+        return $this->var_name;
     }
 
     /**
-     * Get the [dyn_uid] column value.
+     * Get the [var_field_type] column value.
      * 
      * @return     string
      */
-    public function getDynUid()
+    public function getVarFieldType()
     {
 
-        return $this->dyn_uid;
+        return $this->var_field_type;
     }
 
     /**
-     * Get the [usr_uid] column value.
-     * 
-     * @return     string
-     */
-    public function getUsrUid()
-    {
-
-        return $this->usr_uid;
-    }
-
-    /**
-     * Get the [we_method] column value.
-     * 
-     * @return     string
-     */
-    public function getWeMethod()
-    {
-
-        return $this->we_method;
-    }
-
-    /**
-     * Get the [we_input_document_access] column value.
+     * Get the [var_field_size] column value.
      * 
      * @return     int
      */
-    public function getWeInputDocumentAccess()
+    public function getVarFieldSize()
     {
 
-        return $this->we_input_document_access;
+        return $this->var_field_size;
     }
 
     /**
-     * Get the [we_data] column value.
+     * Get the [var_label] column value.
      * 
      * @return     string
      */
-    public function getWeData()
+    public function getVarLabel()
     {
 
-        return $this->we_data;
+        return $this->var_label;
     }
 
     /**
-     * Get the [we_create_usr_uid] column value.
+     * Get the [var_dbconnection] column value.
      * 
      * @return     string
      */
-    public function getWeCreateUsrUid()
+    public function getVarDbconnection()
     {
 
-        return $this->we_create_usr_uid;
+        return $this->var_dbconnection;
     }
 
     /**
-     * Get the [we_update_usr_uid] column value.
+     * Get the [var_sql] column value.
      * 
      * @return     string
      */
-    public function getWeUpdateUsrUid()
+    public function getVarSql()
     {
 
-        return $this->we_update_usr_uid;
+        return $this->var_sql;
     }
 
     /**
-     * Get the [optionally formatted] [we_create_date] column value.
+     * Get the [var_null] column value.
      * 
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                          If format is NULL, then the integer unix timestamp will be returned.
-     * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-     * @throws     PropelException - if unable to convert the date/time to timestamp.
+     * @return     int
      */
-    public function getWeCreateDate($format = 'Y-m-d H:i:s')
+    public function getVarNull()
     {
 
-        if ($this->we_create_date === null || $this->we_create_date === '') {
-            return null;
-        } elseif (!is_int($this->we_create_date)) {
-            // a non-timestamp value was set externally, so we convert it
-            $ts = strtotime($this->we_create_date);
-            if ($ts === -1 || $ts === false) {
-                throw new PropelException("Unable to parse value of [we_create_date] as date/time value: " .
-                    var_export($this->we_create_date, true));
-            }
-        } else {
-            $ts = $this->we_create_date;
-        }
-        if ($format === null) {
-            return $ts;
-        } elseif (strpos($format, '%') !== false) {
-            return strftime($format, $ts);
-        } else {
-            return date($format, $ts);
-        }
+        return $this->var_null;
     }
 
     /**
-     * Get the [optionally formatted] [we_update_date] column value.
+     * Get the [var_default] column value.
      * 
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                          If format is NULL, then the integer unix timestamp will be returned.
-     * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-     * @throws     PropelException - if unable to convert the date/time to timestamp.
+     * @return     string
      */
-    public function getWeUpdateDate($format = 'Y-m-d H:i:s')
+    public function getVarDefault()
     {
 
-        if ($this->we_update_date === null || $this->we_update_date === '') {
-            return null;
-        } elseif (!is_int($this->we_update_date)) {
-            // a non-timestamp value was set externally, so we convert it
-            $ts = strtotime($this->we_update_date);
-            if ($ts === -1 || $ts === false) {
-                throw new PropelException("Unable to parse value of [we_update_date] as date/time value: " .
-                    var_export($this->we_update_date, true));
-            }
-        } else {
-            $ts = $this->we_update_date;
-        }
-        if ($format === null) {
-            return $ts;
-        } elseif (strpos($format, '%') !== false) {
-            return strftime($format, $ts);
-        } else {
-            return date($format, $ts);
-        }
+        return $this->var_default;
     }
 
     /**
-     * Set the value of [we_uid] column.
+     * Get the [var_accepted_values] column value.
+     * 
+     * @return     string
+     */
+    public function getVarAcceptedValues()
+    {
+
+        return $this->var_accepted_values;
+    }
+
+    /**
+     * Set the value of [var_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setWeUid($v)
+    public function setVarUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -302,20 +243,20 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->we_uid !== $v) {
-            $this->we_uid = $v;
-            $this->modifiedColumns[] = WebEntryPeer::WE_UID;
+        if ($this->var_uid !== $v) {
+            $this->var_uid = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_UID;
         }
 
-    } // setWeUid()
+    } // setVarUid()
 
     /**
-     * Set the value of [pro_uid] column.
+     * Set the value of [prj_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setProUid($v)
+    public function setPrjUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -324,20 +265,20 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->pro_uid !== $v) {
-            $this->pro_uid = $v;
-            $this->modifiedColumns[] = WebEntryPeer::PRO_UID;
+        if ($this->prj_uid !== $v) {
+            $this->prj_uid = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::PRJ_UID;
         }
 
-    } // setProUid()
+    } // setPrjUid()
 
     /**
-     * Set the value of [tas_uid] column.
+     * Set the value of [var_name] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setTasUid($v)
+    public function setVarName($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -346,20 +287,20 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->tas_uid !== $v) {
-            $this->tas_uid = $v;
-            $this->modifiedColumns[] = WebEntryPeer::TAS_UID;
+        if ($this->var_name !== $v || $v === '') {
+            $this->var_name = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_NAME;
         }
 
-    } // setTasUid()
+    } // setVarName()
 
     /**
-     * Set the value of [dyn_uid] column.
+     * Set the value of [var_field_type] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setDynUid($v)
+    public function setVarFieldType($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -368,64 +309,20 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->dyn_uid !== $v) {
-            $this->dyn_uid = $v;
-            $this->modifiedColumns[] = WebEntryPeer::DYN_UID;
+        if ($this->var_field_type !== $v || $v === '') {
+            $this->var_field_type = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_FIELD_TYPE;
         }
 
-    } // setDynUid()
+    } // setVarFieldType()
 
     /**
-     * Set the value of [usr_uid] column.
-     * 
-     * @param      string $v new value
-     * @return     void
-     */
-    public function setUsrUid($v)
-    {
-
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->usr_uid !== $v || $v === '') {
-            $this->usr_uid = $v;
-            $this->modifiedColumns[] = WebEntryPeer::USR_UID;
-        }
-
-    } // setUsrUid()
-
-    /**
-     * Set the value of [we_method] column.
-     * 
-     * @param      string $v new value
-     * @return     void
-     */
-    public function setWeMethod($v)
-    {
-
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->we_method !== $v || $v === 'HTML') {
-            $this->we_method = $v;
-            $this->modifiedColumns[] = WebEntryPeer::WE_METHOD;
-        }
-
-    } // setWeMethod()
-
-    /**
-     * Set the value of [we_input_document_access] column.
+     * Set the value of [var_field_size] column.
      * 
      * @param      int $v new value
      * @return     void
      */
-    public function setWeInputDocumentAccess($v)
+    public function setVarFieldSize($v)
     {
 
         // Since the native PHP type for this column is integer,
@@ -434,20 +331,20 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (int) $v;
         }
 
-        if ($this->we_input_document_access !== $v || $v === 0) {
-            $this->we_input_document_access = $v;
-            $this->modifiedColumns[] = WebEntryPeer::WE_INPUT_DOCUMENT_ACCESS;
+        if ($this->var_field_size !== $v) {
+            $this->var_field_size = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_FIELD_SIZE;
         }
 
-    } // setWeInputDocumentAccess()
+    } // setVarFieldSize()
 
     /**
-     * Set the value of [we_data] column.
+     * Set the value of [var_label] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setWeData($v)
+    public function setVarLabel($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -456,20 +353,20 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->we_data !== $v) {
-            $this->we_data = $v;
-            $this->modifiedColumns[] = WebEntryPeer::WE_DATA;
+        if ($this->var_label !== $v || $v === '') {
+            $this->var_label = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_LABEL;
         }
 
-    } // setWeData()
+    } // setVarLabel()
 
     /**
-     * Set the value of [we_create_usr_uid] column.
+     * Set the value of [var_dbconnection] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setWeCreateUsrUid($v)
+    public function setVarDbconnection($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -478,20 +375,20 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->we_create_usr_uid !== $v || $v === '') {
-            $this->we_create_usr_uid = $v;
-            $this->modifiedColumns[] = WebEntryPeer::WE_CREATE_USR_UID;
+        if ($this->var_dbconnection !== $v) {
+            $this->var_dbconnection = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_DBCONNECTION;
         }
 
-    } // setWeCreateUsrUid()
+    } // setVarDbconnection()
 
     /**
-     * Set the value of [we_update_usr_uid] column.
+     * Set the value of [var_sql] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setWeUpdateUsrUid($v)
+    public function setVarSql($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -500,70 +397,78 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->we_update_usr_uid !== $v || $v === '') {
-            $this->we_update_usr_uid = $v;
-            $this->modifiedColumns[] = WebEntryPeer::WE_UPDATE_USR_UID;
+        if ($this->var_sql !== $v) {
+            $this->var_sql = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_SQL;
         }
 
-    } // setWeUpdateUsrUid()
+    } // setVarSql()
 
     /**
-     * Set the value of [we_create_date] column.
+     * Set the value of [var_null] column.
      * 
      * @param      int $v new value
      * @return     void
      */
-    public function setWeCreateDate($v)
+    public function setVarNull($v)
     {
 
-        if ($v !== null && !is_int($v)) {
-            $ts = strtotime($v);
-            //Date/time accepts null values
-            if ($v == '') {
-                $ts = null;
-            }
-            if ($ts === -1 || $ts === false) {
-                throw new PropelException("Unable to parse date/time value for [we_create_date] from input: " .
-                    var_export($v, true));
-            }
-        } else {
-            $ts = $v;
-        }
-        if ($this->we_create_date !== $ts) {
-            $this->we_create_date = $ts;
-            $this->modifiedColumns[] = WebEntryPeer::WE_CREATE_DATE;
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
         }
 
-    } // setWeCreateDate()
+        if ($this->var_null !== $v || $v === 0) {
+            $this->var_null = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_NULL;
+        }
+
+    } // setVarNull()
 
     /**
-     * Set the value of [we_update_date] column.
+     * Set the value of [var_default] column.
      * 
-     * @param      int $v new value
+     * @param      string $v new value
      * @return     void
      */
-    public function setWeUpdateDate($v)
+    public function setVarDefault($v)
     {
 
-        if ($v !== null && !is_int($v)) {
-            $ts = strtotime($v);
-            //Date/time accepts null values
-            if ($v == '') {
-                $ts = null;
-            }
-            if ($ts === -1 || $ts === false) {
-                throw new PropelException("Unable to parse date/time value for [we_update_date] from input: " .
-                    var_export($v, true));
-            }
-        } else {
-            $ts = $v;
-        }
-        if ($this->we_update_date !== $ts) {
-            $this->we_update_date = $ts;
-            $this->modifiedColumns[] = WebEntryPeer::WE_UPDATE_DATE;
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
         }
 
-    } // setWeUpdateDate()
+        if ($this->var_default !== $v || $v === '') {
+            $this->var_default = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_DEFAULT;
+        }
+
+    } // setVarDefault()
+
+    /**
+     * Set the value of [var_accepted_values] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setVarAcceptedValues($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->var_accepted_values !== $v || $v === '') {
+            $this->var_accepted_values = $v;
+            $this->modifiedColumns[] = ProcessVariablesPeer::VAR_ACCEPTED_VALUES;
+        }
+
+    } // setVarAcceptedValues()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -582,39 +487,37 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
     {
         try {
 
-            $this->we_uid = $rs->getString($startcol + 0);
+            $this->var_uid = $rs->getString($startcol + 0);
 
-            $this->pro_uid = $rs->getString($startcol + 1);
+            $this->prj_uid = $rs->getString($startcol + 1);
 
-            $this->tas_uid = $rs->getString($startcol + 2);
+            $this->var_name = $rs->getString($startcol + 2);
 
-            $this->dyn_uid = $rs->getString($startcol + 3);
+            $this->var_field_type = $rs->getString($startcol + 3);
 
-            $this->usr_uid = $rs->getString($startcol + 4);
+            $this->var_field_size = $rs->getInt($startcol + 4);
 
-            $this->we_method = $rs->getString($startcol + 5);
+            $this->var_label = $rs->getString($startcol + 5);
 
-            $this->we_input_document_access = $rs->getInt($startcol + 6);
+            $this->var_dbconnection = $rs->getString($startcol + 6);
 
-            $this->we_data = $rs->getString($startcol + 7);
+            $this->var_sql = $rs->getString($startcol + 7);
 
-            $this->we_create_usr_uid = $rs->getString($startcol + 8);
+            $this->var_null = $rs->getInt($startcol + 8);
 
-            $this->we_update_usr_uid = $rs->getString($startcol + 9);
+            $this->var_default = $rs->getString($startcol + 9);
 
-            $this->we_create_date = $rs->getTimestamp($startcol + 10, null);
-
-            $this->we_update_date = $rs->getTimestamp($startcol + 11, null);
+            $this->var_accepted_values = $rs->getString($startcol + 10);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 12; // 12 = WebEntryPeer::NUM_COLUMNS - WebEntryPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 11; // 11 = ProcessVariablesPeer::NUM_COLUMNS - ProcessVariablesPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating WebEntry object", $e);
+            throw new PropelException("Error populating ProcessVariables object", $e);
         }
     }
 
@@ -634,12 +537,12 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(WebEntryPeer::DATABASE_NAME);
+            $con = Propel::getConnection(ProcessVariablesPeer::DATABASE_NAME);
         }
 
         try {
             $con->begin();
-            WebEntryPeer::doDelete($this, $con);
+            ProcessVariablesPeer::doDelete($this, $con);
             $this->setDeleted(true);
             $con->commit();
         } catch (PropelException $e) {
@@ -665,7 +568,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(WebEntryPeer::DATABASE_NAME);
+            $con = Propel::getConnection(ProcessVariablesPeer::DATABASE_NAME);
         }
 
         try {
@@ -700,14 +603,14 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             // If this object has been modified, then save it to the database.
             if ($this->isModified()) {
                 if ($this->isNew()) {
-                    $pk = WebEntryPeer::doInsert($this, $con);
+                    $pk = ProcessVariablesPeer::doInsert($this, $con);
                     $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
                                          // should always be true here (even though technically
                                          // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
-                    $affectedRows += WebEntryPeer::doUpdate($this, $con);
+                    $affectedRows += ProcessVariablesPeer::doUpdate($this, $con);
                 }
                 $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
             }
@@ -778,7 +681,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = WebEntryPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = ProcessVariablesPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -801,7 +704,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = WebEntryPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = ProcessVariablesPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->getByPosition($pos);
     }
 
@@ -816,40 +719,37 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                return $this->getWeUid();
+                return $this->getVarUid();
                 break;
             case 1:
-                return $this->getProUid();
+                return $this->getPrjUid();
                 break;
             case 2:
-                return $this->getTasUid();
+                return $this->getVarName();
                 break;
             case 3:
-                return $this->getDynUid();
+                return $this->getVarFieldType();
                 break;
             case 4:
-                return $this->getUsrUid();
+                return $this->getVarFieldSize();
                 break;
             case 5:
-                return $this->getWeMethod();
+                return $this->getVarLabel();
                 break;
             case 6:
-                return $this->getWeInputDocumentAccess();
+                return $this->getVarDbconnection();
                 break;
             case 7:
-                return $this->getWeData();
+                return $this->getVarSql();
                 break;
             case 8:
-                return $this->getWeCreateUsrUid();
+                return $this->getVarNull();
                 break;
             case 9:
-                return $this->getWeUpdateUsrUid();
+                return $this->getVarDefault();
                 break;
             case 10:
-                return $this->getWeCreateDate();
-                break;
-            case 11:
-                return $this->getWeUpdateDate();
+                return $this->getVarAcceptedValues();
                 break;
             default:
                 return null;
@@ -869,20 +769,19 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = WebEntryPeer::getFieldNames($keyType);
+        $keys = ProcessVariablesPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getWeUid(),
-            $keys[1] => $this->getProUid(),
-            $keys[2] => $this->getTasUid(),
-            $keys[3] => $this->getDynUid(),
-            $keys[4] => $this->getUsrUid(),
-            $keys[5] => $this->getWeMethod(),
-            $keys[6] => $this->getWeInputDocumentAccess(),
-            $keys[7] => $this->getWeData(),
-            $keys[8] => $this->getWeCreateUsrUid(),
-            $keys[9] => $this->getWeUpdateUsrUid(),
-            $keys[10] => $this->getWeCreateDate(),
-            $keys[11] => $this->getWeUpdateDate(),
+            $keys[0] => $this->getVarUid(),
+            $keys[1] => $this->getPrjUid(),
+            $keys[2] => $this->getVarName(),
+            $keys[3] => $this->getVarFieldType(),
+            $keys[4] => $this->getVarFieldSize(),
+            $keys[5] => $this->getVarLabel(),
+            $keys[6] => $this->getVarDbconnection(),
+            $keys[7] => $this->getVarSql(),
+            $keys[8] => $this->getVarNull(),
+            $keys[9] => $this->getVarDefault(),
+            $keys[10] => $this->getVarAcceptedValues(),
         );
         return $result;
     }
@@ -899,7 +798,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = WebEntryPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = ProcessVariablesPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->setByPosition($pos, $value);
     }
 
@@ -915,40 +814,37 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                $this->setWeUid($value);
+                $this->setVarUid($value);
                 break;
             case 1:
-                $this->setProUid($value);
+                $this->setPrjUid($value);
                 break;
             case 2:
-                $this->setTasUid($value);
+                $this->setVarName($value);
                 break;
             case 3:
-                $this->setDynUid($value);
+                $this->setVarFieldType($value);
                 break;
             case 4:
-                $this->setUsrUid($value);
+                $this->setVarFieldSize($value);
                 break;
             case 5:
-                $this->setWeMethod($value);
+                $this->setVarLabel($value);
                 break;
             case 6:
-                $this->setWeInputDocumentAccess($value);
+                $this->setVarDbconnection($value);
                 break;
             case 7:
-                $this->setWeData($value);
+                $this->setVarSql($value);
                 break;
             case 8:
-                $this->setWeCreateUsrUid($value);
+                $this->setVarNull($value);
                 break;
             case 9:
-                $this->setWeUpdateUsrUid($value);
+                $this->setVarDefault($value);
                 break;
             case 10:
-                $this->setWeCreateDate($value);
-                break;
-            case 11:
-                $this->setWeUpdateDate($value);
+                $this->setVarAcceptedValues($value);
                 break;
         } // switch()
     }
@@ -971,54 +867,50 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = WebEntryPeer::getFieldNames($keyType);
+        $keys = ProcessVariablesPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setWeUid($arr[$keys[0]]);
+            $this->setVarUid($arr[$keys[0]]);
         }
 
         if (array_key_exists($keys[1], $arr)) {
-            $this->setProUid($arr[$keys[1]]);
+            $this->setPrjUid($arr[$keys[1]]);
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setTasUid($arr[$keys[2]]);
+            $this->setVarName($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
-            $this->setDynUid($arr[$keys[3]]);
+            $this->setVarFieldType($arr[$keys[3]]);
         }
 
         if (array_key_exists($keys[4], $arr)) {
-            $this->setUsrUid($arr[$keys[4]]);
+            $this->setVarFieldSize($arr[$keys[4]]);
         }
 
         if (array_key_exists($keys[5], $arr)) {
-            $this->setWeMethod($arr[$keys[5]]);
+            $this->setVarLabel($arr[$keys[5]]);
         }
 
         if (array_key_exists($keys[6], $arr)) {
-            $this->setWeInputDocumentAccess($arr[$keys[6]]);
+            $this->setVarDbconnection($arr[$keys[6]]);
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setWeData($arr[$keys[7]]);
+            $this->setVarSql($arr[$keys[7]]);
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setWeCreateUsrUid($arr[$keys[8]]);
+            $this->setVarNull($arr[$keys[8]]);
         }
 
         if (array_key_exists($keys[9], $arr)) {
-            $this->setWeUpdateUsrUid($arr[$keys[9]]);
+            $this->setVarDefault($arr[$keys[9]]);
         }
 
         if (array_key_exists($keys[10], $arr)) {
-            $this->setWeCreateDate($arr[$keys[10]]);
-        }
-
-        if (array_key_exists($keys[11], $arr)) {
-            $this->setWeUpdateDate($arr[$keys[11]]);
+            $this->setVarAcceptedValues($arr[$keys[10]]);
         }
 
     }
@@ -1030,54 +922,50 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(WebEntryPeer::DATABASE_NAME);
+        $criteria = new Criteria(ProcessVariablesPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(WebEntryPeer::WE_UID)) {
-            $criteria->add(WebEntryPeer::WE_UID, $this->we_uid);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_UID)) {
+            $criteria->add(ProcessVariablesPeer::VAR_UID, $this->var_uid);
         }
 
-        if ($this->isColumnModified(WebEntryPeer::PRO_UID)) {
-            $criteria->add(WebEntryPeer::PRO_UID, $this->pro_uid);
+        if ($this->isColumnModified(ProcessVariablesPeer::PRJ_UID)) {
+            $criteria->add(ProcessVariablesPeer::PRJ_UID, $this->prj_uid);
         }
 
-        if ($this->isColumnModified(WebEntryPeer::TAS_UID)) {
-            $criteria->add(WebEntryPeer::TAS_UID, $this->tas_uid);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_NAME)) {
+            $criteria->add(ProcessVariablesPeer::VAR_NAME, $this->var_name);
         }
 
-        if ($this->isColumnModified(WebEntryPeer::DYN_UID)) {
-            $criteria->add(WebEntryPeer::DYN_UID, $this->dyn_uid);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_FIELD_TYPE)) {
+            $criteria->add(ProcessVariablesPeer::VAR_FIELD_TYPE, $this->var_field_type);
         }
 
-        if ($this->isColumnModified(WebEntryPeer::USR_UID)) {
-            $criteria->add(WebEntryPeer::USR_UID, $this->usr_uid);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_FIELD_SIZE)) {
+            $criteria->add(ProcessVariablesPeer::VAR_FIELD_SIZE, $this->var_field_size);
         }
 
-        if ($this->isColumnModified(WebEntryPeer::WE_METHOD)) {
-            $criteria->add(WebEntryPeer::WE_METHOD, $this->we_method);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_LABEL)) {
+            $criteria->add(ProcessVariablesPeer::VAR_LABEL, $this->var_label);
         }
 
-        if ($this->isColumnModified(WebEntryPeer::WE_INPUT_DOCUMENT_ACCESS)) {
-            $criteria->add(WebEntryPeer::WE_INPUT_DOCUMENT_ACCESS, $this->we_input_document_access);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_DBCONNECTION)) {
+            $criteria->add(ProcessVariablesPeer::VAR_DBCONNECTION, $this->var_dbconnection);
         }
 
-        if ($this->isColumnModified(WebEntryPeer::WE_DATA)) {
-            $criteria->add(WebEntryPeer::WE_DATA, $this->we_data);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_SQL)) {
+            $criteria->add(ProcessVariablesPeer::VAR_SQL, $this->var_sql);
         }
 
-        if ($this->isColumnModified(WebEntryPeer::WE_CREATE_USR_UID)) {
-            $criteria->add(WebEntryPeer::WE_CREATE_USR_UID, $this->we_create_usr_uid);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_NULL)) {
+            $criteria->add(ProcessVariablesPeer::VAR_NULL, $this->var_null);
         }
 
-        if ($this->isColumnModified(WebEntryPeer::WE_UPDATE_USR_UID)) {
-            $criteria->add(WebEntryPeer::WE_UPDATE_USR_UID, $this->we_update_usr_uid);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_DEFAULT)) {
+            $criteria->add(ProcessVariablesPeer::VAR_DEFAULT, $this->var_default);
         }
 
-        if ($this->isColumnModified(WebEntryPeer::WE_CREATE_DATE)) {
-            $criteria->add(WebEntryPeer::WE_CREATE_DATE, $this->we_create_date);
-        }
-
-        if ($this->isColumnModified(WebEntryPeer::WE_UPDATE_DATE)) {
-            $criteria->add(WebEntryPeer::WE_UPDATE_DATE, $this->we_update_date);
+        if ($this->isColumnModified(ProcessVariablesPeer::VAR_ACCEPTED_VALUES)) {
+            $criteria->add(ProcessVariablesPeer::VAR_ACCEPTED_VALUES, $this->var_accepted_values);
         }
 
 
@@ -1094,9 +982,9 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(WebEntryPeer::DATABASE_NAME);
+        $criteria = new Criteria(ProcessVariablesPeer::DATABASE_NAME);
 
-        $criteria->add(WebEntryPeer::WE_UID, $this->we_uid);
+        $criteria->add(ProcessVariablesPeer::VAR_UID, $this->var_uid);
 
         return $criteria;
     }
@@ -1107,18 +995,18 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getWeUid();
+        return $this->getVarUid();
     }
 
     /**
-     * Generic method to set the primary key (we_uid column).
+     * Generic method to set the primary key (var_uid column).
      *
      * @param      string $key Primary key.
      * @return     void
      */
     public function setPrimaryKey($key)
     {
-        $this->setWeUid($key);
+        $this->setVarUid($key);
     }
 
     /**
@@ -1127,39 +1015,37 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of WebEntry (or compatible) type.
+     * @param      object $copyObj An object of ProcessVariables (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @throws     PropelException
      */
     public function copyInto($copyObj, $deepCopy = false)
     {
 
-        $copyObj->setProUid($this->pro_uid);
+        $copyObj->setPrjUid($this->prj_uid);
 
-        $copyObj->setTasUid($this->tas_uid);
+        $copyObj->setVarName($this->var_name);
 
-        $copyObj->setDynUid($this->dyn_uid);
+        $copyObj->setVarFieldType($this->var_field_type);
 
-        $copyObj->setUsrUid($this->usr_uid);
+        $copyObj->setVarFieldSize($this->var_field_size);
 
-        $copyObj->setWeMethod($this->we_method);
+        $copyObj->setVarLabel($this->var_label);
 
-        $copyObj->setWeInputDocumentAccess($this->we_input_document_access);
+        $copyObj->setVarDbconnection($this->var_dbconnection);
 
-        $copyObj->setWeData($this->we_data);
+        $copyObj->setVarSql($this->var_sql);
 
-        $copyObj->setWeCreateUsrUid($this->we_create_usr_uid);
+        $copyObj->setVarNull($this->var_null);
 
-        $copyObj->setWeUpdateUsrUid($this->we_update_usr_uid);
+        $copyObj->setVarDefault($this->var_default);
 
-        $copyObj->setWeCreateDate($this->we_create_date);
-
-        $copyObj->setWeUpdateDate($this->we_update_date);
+        $copyObj->setVarAcceptedValues($this->var_accepted_values);
 
 
         $copyObj->setNew(true);
 
-        $copyObj->setWeUid(NULL); // this is a pkey column, so set to default value
+        $copyObj->setVarUid(NULL); // this is a pkey column, so set to default value
 
     }
 
@@ -1172,7 +1058,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return     WebEntry Clone of current object.
+     * @return     ProcessVariables Clone of current object.
      * @throws     PropelException
      */
     public function copy($deepCopy = false)
@@ -1191,12 +1077,12 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return     WebEntryPeer
+     * @return     ProcessVariablesPeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new WebEntryPeer();
+            self::$peer = new ProcessVariablesPeer();
         }
         return self::$peer;
     }

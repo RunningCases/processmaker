@@ -170,6 +170,10 @@ class Dynaform extends BaseDynaform
             $this->setDynType( isset( $aData['DYN_TYPE'] ) ? $aData['DYN_TYPE'] : 'xmlform' );
             $this->setDynFilename( $aData['PRO_UID'] . PATH_SEP . $dynUid );
 
+            if (isset($aData["DYN_CONTENT"])) {
+                $this->setDynContent($aData["DYN_CONTENT"]);
+            }
+            $this->setDynVersion( $aData['DYN_VERSION'] );
             if ($this->validate()) {
                 $con->begin();
                 $res = $this->save();
