@@ -354,5 +354,120 @@ class Variable
             throw $e;
         }
     }
+
+    /**
+     * Get required variables in the SQL
+     *
+     * @param string $sql SQL
+     *
+     * return array Return an array with required variables in the SQL
+     */
+    public function sqlGetRequiredVariables($sql)
+    {
+        try {
+            $arrayVariableRequired = array();
+
+            preg_match_all("/@[@%#\?\x24\=]([A-Za-z_]\w*)/", $sql, $arrayMatch, PREG_SET_ORDER);
+
+            foreach ($arrayMatch as $value) {
+                $arrayVariableRequired[] = $value[1];
+            }
+
+            return $arrayVariableRequired;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if some required variable in the SQL is missing in the variables
+     *
+     * @param string $variableName  Variable name
+     * @param string $variableSql   SQL
+     * @param array  $arrayVariable The variables
+     *
+     * return void Throw exception if some required variable in the SQL is missing in the variables
+     */
+    public function throwExceptionIfSomeRequiredVariableSqlIsMissingInVariables($variableName, $variableSql, array $arrayVariable)
+    {
+        try {
+            $arrayResult = array_diff(array_unique($this->sqlGetRequiredVariables($variableSql)), array_keys($arrayVariable));
+
+            if (count($arrayResult) > 0) {
+                throw new \Exception(\G::LoadTranslation("ID_PROCESS_VARIABLE_REQUIRED_VARIABLES_FOR_QUERY", array($variableName, implode(", ", $arrayResult))));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get all records by execute SQL
+     *
+     * @param string $processUid    Unique id of Process
+     * @param string $variableName  Variable name
+     * @param array  $arrayVariable The variables
+     *
+     * return array Return an array with all records
+     */
+    public function executeSql($processUid, $variableName, array $arrayVariable = array())
+    {
+        try {
+            $arrayRecord = array();
+
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+
+            $process->throwExceptionIfNotExistsProcess($processUid, strtolower("PRJ_UID"));
+
+            //Set data
+            $variableDbConnectionUid = "";
+            $variableSql = "";
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DBCONNECTION);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_SQL);
+            $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
+            $criteria->add(\ProcessVariablesPeer::VAR_NAME, $variableName, \Criteria::EQUAL);
+
+            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $variableDbConnectionUid = $row["VAR_DBCONNECTION"];
+                $variableSql = $row["VAR_SQL"];
+            } else {
+                throw new \Exception(\G::LoadTranslation("ID_PROCESS_VARIABLE_DOES_NOT_EXIST", array(strtolower("VAR_NAME"), $variableName)));
+            }
+
+            //Verify data
+            $this->throwExceptionIfSomeRequiredVariableSqlIsMissingInVariables($variableName, $variableSql, $arrayVariable);
+
+            //Get data
+            $_SESSION["PROCESS"] = $processUid;
+
+            $cnn = \Propel::getConnection(($variableDbConnectionUid . "" != "")? $variableDbConnectionUid : "workflow");
+            $stmt = $cnn->createStatement();
+
+            $rs = $stmt->executeQuery(\G::replaceDataField($variableSql, $arrayVariable), \ResultSet::FETCHMODE_NUM);
+
+            while ($rs->next()) {
+                $row = $rs->getRow();
+
+                $arrayRecord[] = array(
+                    strtolower("VALUE") => $row[0],
+                    strtolower("TEXT")  => $row[1]
+                );
+            }
+
+            //Return
+            return $arrayRecord;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
 
