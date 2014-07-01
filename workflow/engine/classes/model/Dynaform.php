@@ -173,7 +173,9 @@ class Dynaform extends BaseDynaform
             if (isset($aData["DYN_CONTENT"])) {
                 $this->setDynContent($aData["DYN_CONTENT"]);
             }
-            $this->setDynVersion( $aData['DYN_VERSION'] );
+            if (isset($aData["DYN_VERSION"])) {
+                $this->setDynVersion( $aData['DYN_VERSION'] );
+            }
             if ($this->validate()) {
                 $con->begin();
                 $res = $this->save();
