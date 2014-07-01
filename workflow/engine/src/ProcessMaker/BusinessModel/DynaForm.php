@@ -358,16 +358,16 @@ class DynaForm
 
             $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
+            if (!isset($arrayData["DYN_VERSION"])) {
+                $arrayData["DYN_VERSION"] = 1;
+            }
+
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
             $this->throwExceptionIfExistsTitle($processUid, $arrayData["DYN_TITLE"], $this->arrayFieldNameForException["dynaFormTitle"]);
 
             //Create
             $dynaForm = new \Dynaform();
-
-            if (!isset($arrayData["DYN_VERSION"])) {
-                $arrayData["DYN_VERSION"] = 1;
-            }
 
             $arrayData["PRO_UID"] = $processUid;
 
