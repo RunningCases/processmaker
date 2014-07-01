@@ -299,15 +299,23 @@ class Variable
         try {
             if (isset($aData["VAR_NAME"])) {
                 Validator::isString($aData['VAR_NAME'], '$var_name');
+            } else {
+                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_name' )));
             }
             if (isset($aData["VAR_FIELD_TYPE"])) {
                 Validator::isString($aData['VAR_FIELD_TYPE'], '$var_field_type');
+            } else {
+                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_field_type' )));
             }
             if (isset($aData["VAR_FIELD_SIZE"])) {
                 Validator::isInteger($aData["VAR_FIELD_SIZE"], '$var_field_size');
+            } else {
+                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_field_size' )));
             }
             if (isset($aData["VAR_LABEL"])) {
                 Validator::isString($aData['VAR_LABEL'], '$var_label');
+            } else {
+                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_label' )));
             }
             if (isset($aData["VAR_DBCONNECTION"])) {
                 Validator::isString($aData['VAR_DBCONNECTION'], '$var_dbconnection');
@@ -316,7 +324,10 @@ class Variable
                 Validator::isString($aData['VAR_SQL'], '$var_sql');
             }
             if (isset($aData["VAR_NULL"])) {
-            Validator::isInteger($aData['VAR_NULL'], '$var_null');
+                Validator::isInteger($aData['VAR_NULL'], '$var_null');
+                if ($aData["VAR_NULL"] != 0 || $aData["VAR_NULL"] !=1 ) {
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES", array('$var_null','0, 1' )));
+                }
             }
             if (isset($aData["VAR_DEFAULT"])) {
                 Validator::isString($aData['VAR_DEFAULT'], '$var_default');
