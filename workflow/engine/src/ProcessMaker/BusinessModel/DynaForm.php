@@ -365,7 +365,7 @@ class DynaForm
             //Create
             $dynaForm = new \Dynaform();
 
-            if (isset($arrayData["DYN_VERSION"])) {
+            if (!isset($arrayData["DYN_VERSION"])) {
                 $arrayData["DYN_VERSION"] = 1;
             }
 
