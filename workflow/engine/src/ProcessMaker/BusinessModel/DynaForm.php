@@ -10,7 +10,7 @@ class DynaForm
         "DYN_DESCRIPTION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormDescription"),
         "DYN_TYPE"        => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("xmlform", "grid"), "fieldNameAux" => "dynaFormType"),
         "DYN_CONTENT"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormContent"),
-        "DYN_VERSION"     => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(),                  "fieldNameAux" => "dynaFormVersion")
+        "DYN_VERSION"     => array("type" => "int",    "required" => true,  "empty" => false, "defaultValues" => array(1 ,2),              "fieldNameAux" => "dynaFormVersion")
     );
 
     private $formatFieldNameInUppercase = true;
@@ -358,16 +358,16 @@ class DynaForm
 
             $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
+            if (!isset($arrayData["DYN_VERSION"])) {
+                $arrayData["DYN_VERSION"] = 1;
+            }
+
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, true);
 
             $this->throwExceptionIfExistsTitle($processUid, $arrayData["DYN_TITLE"], $this->arrayFieldNameForException["dynaFormTitle"]);
 
             //Create
             $dynaForm = new \Dynaform();
-
-            if (isset($arrayData["DYN_VERSION"])) {
-                $arrayData["DYN_VERSION"] = 1;
-            }
 
             $arrayData["PRO_UID"] = $processUid;
 
