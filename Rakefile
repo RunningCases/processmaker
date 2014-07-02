@@ -44,6 +44,7 @@ task :build => [:required] do
     pmUIDir = targetDir + "/pmUI"
     mafeDir = targetDir + "/mafe"
     pmdynaformDir = targetDir + "/pmdynaform"
+    
 
     prepareDirs([pmUIDir, mafeDir, pmdynaformDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
 
@@ -53,6 +54,7 @@ task :build => [:required] do
 
     pmuiHash = getHash(Dir.pwd + "/vendor/colosa/pmUI")
     mafeHash = getHash(Dir.pwd + "/vendor/colosa/MichelangeloFE")
+    pmdynaformHash = getHash(Dir.pwd + "/vendor/colosa/pmDynaform")
 
     hashVendors = pmuiHash+"-"+mafeHash
     ## Building minified JS Files 
@@ -94,7 +96,9 @@ task :build => [:required] do
         :pmui_ver => getVersion(Dir.pwd + "/vendor/colosa/pmUI"),
         :pmui_hash => pmuiHash,
         :mafe_ver => getVersion(Dir.pwd + "/vendor/colosa/MichelangeloFE"),
-        :mafe_hash => mafeHash
+        :mafe_hash => mafeHash,
+        :pmdynaform_ver => getVersion(Dir.pwd + "/vendor/colosa/pmDynaform"),
+        :pmdynaform_hash => pmdynaformHash
     }
     File.open(targetDir+"/versions", 'w+') do |writeFile|
         writeFile.write versions.to_json
@@ -207,7 +211,11 @@ def getVersion(path)
         version = `rake version`
     end
 
-    return /([0-9\.]{5}+)/.match(version)
+    if version.lines.count > 1
+        version = /([0-9\.]{5}+)/.match(version)
+    end
+
+    return version.strip
 end
 
 

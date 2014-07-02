@@ -205,6 +205,7 @@ CREATE TABLE `DYNAFORM`
 	`DYN_TYPE` VARCHAR(20) default 'xmlform' NOT NULL,
 	`DYN_FILENAME` VARCHAR(100) default '' NOT NULL,
 	`DYN_CONTENT` MEDIUMTEXT,
+	`DYN_VERSION` INTEGER,
 	PRIMARY KEY (`DYN_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Forms required';
 #-----------------------------------------------------------------------------

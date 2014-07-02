@@ -283,8 +283,10 @@ class CaseScheduler
                 if (!preg_match($patternDate, $caseSchedulerData['SCH_START_DATE'])) {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_DATE"));
                 }
-                if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
-                    throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_END_DATE"));
+                if (!isset($caseSchedulerData['SCH_END_DATE'])) {
+                    if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_END_DATE"));
+                    }
                 }
                 if ($caseSchedulerData['SCH_START_DATE'] == "") {
                     throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_date')));
@@ -568,8 +570,10 @@ class CaseScheduler
                 if (!preg_match($patternDate, $caseSchedulerData['SCH_START_DATE'])) {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_DATE"));
                 }
-                if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
-                    throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_END_DATE"));
+                if (isset($caseSchedulerData['SCH_END_DATE'])) {
+                    if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_END_DATE"));
+                    }
                 }
                 if ($caseSchedulerData['SCH_START_DATE'] == "") {
                     throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_date')));
