@@ -228,19 +228,19 @@ Ext.onReady(function(){
         iconCls: 'button_menu_ext ss_sprite ss_add',
         menu: [
             {
-                text: "New Project",
-                iconCls: 'silk-add',
-                icon: '',
-                handler: function () {
-                    newProcess({type:"classicProject"});
-                }
-            },
-            {
                 text: "New BPMN Project",
                 iconCls: 'silk-add',
                 icon: '',
                 handler: function () {
                     newProcess({type:"bpmnProject"});
+                }
+            },
+            {
+                text: "New Project",
+                iconCls: 'silk-add',
+                icon: '',
+                handler: function () {
+                    newProcess({type:"classicProject"});
                 }
             }
         ],

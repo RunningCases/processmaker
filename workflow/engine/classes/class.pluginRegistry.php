@@ -1495,5 +1495,15 @@ class PMPluginRegistry
     {
         $this->_restServiceEnabled[$sNamespace] = $enable;
     }
+
+    /**
+     * Return all cron files registered
+     *
+     * @return array
+     */
+    public function getCronFiles()
+    {
+        return $this->_aCronFiles;
+    }
 }
 

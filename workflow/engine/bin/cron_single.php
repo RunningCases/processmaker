@@ -39,6 +39,7 @@ if (!defined('PATH_HOME')) {
     define('PATH_OUTTRUNK', $pathOutTrunk);
 
     require_once (PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths.php');
+    require_once PATH_TRUNK . "framework/src/Maveriks/Util/ClassLoader.php";
 
     G::LoadThirdParty('pear/json','class.json');
     G::LoadThirdParty('smarty/libs','Smarty.class');
