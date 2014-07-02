@@ -10,7 +10,7 @@ class DynaForm
         "DYN_DESCRIPTION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormDescription"),
         "DYN_TYPE"        => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("xmlform", "grid"), "fieldNameAux" => "dynaFormType"),
         "DYN_CONTENT"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormContent"),
-        "DYN_VERSION"     => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(),                  "fieldNameAux" => "dynaFormVersion")
+        "DYN_VERSION"     => array("type" => "int",    "required" => false,  "empty" => true, "defaultValues" => array(1 ,2),              "fieldNameAux" => "dynaFormVersion")
     );
 
     private $formatFieldNameInUppercase = true;
@@ -953,13 +953,17 @@ class DynaForm
                 $record["DYN_DESCRIPTION"] = \Content::load("DYN_DESCRIPTION", "", $record["DYN_UID"], SYS_LANG);
             }
 
+            if ($record["DYN_VERSION"] == 0) {
+                $record["DYN_VERSION"] = 1;
+            }
+
             return array(
                 $this->getFieldNameByFormatFieldName("DYN_UID")         => $record["DYN_UID"],
                 $this->getFieldNameByFormatFieldName("DYN_TITLE")       => $record["DYN_TITLE"],
                 $this->getFieldNameByFormatFieldName("DYN_DESCRIPTION") => $record["DYN_DESCRIPTION"] . "",
                 $this->getFieldNameByFormatFieldName("DYN_TYPE")        => $record["DYN_TYPE"] . "",
                 $this->getFieldNameByFormatFieldName("DYN_CONTENT")     => $record["DYN_CONTENT"] . "",
-                $this->getFieldNameByFormatFieldName("DYN_VERSION")     => $record["DYN_VERSION"] . ""
+                $this->getFieldNameByFormatFieldName("DYN_VERSION")     => (int)($record["DYN_VERSION"])
             );
         } catch (\Exception $e) {
             throw $e;

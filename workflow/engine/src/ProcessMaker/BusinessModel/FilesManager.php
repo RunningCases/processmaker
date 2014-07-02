@@ -191,7 +191,7 @@ class FilesManager
             }
             $content = $aData['prf_content'];
             if (is_string($content)) {
-                if (file_exists(PATH_SEP.$sDirectory)) {
+                if (file_exists($sDirectory)) {
                     $directory = $sMainDirectory. PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     throw new \Exception(\G::LoadTranslation("ID_EXISTS_FILE", array($directory)));
                 }
@@ -393,7 +393,7 @@ class FilesManager
      * @param string $prfUid {@min 32} {@max 32}
      *
      *
-     * @access public 
+     * @access public
      */
     public function deleteProcessFilesManager($sProcessUID, $prfUid)
     {
