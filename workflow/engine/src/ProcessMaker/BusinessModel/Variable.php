@@ -325,7 +325,7 @@ class Variable
             }
             if (isset($aData["VAR_NULL"])) {
                 Validator::isInteger($aData['VAR_NULL'], '$var_null');
-                if ($aData["VAR_NULL"] != 0 || $aData["VAR_NULL"] !=1 ) {
+                if ($aData["VAR_NULL"] != 0 && $aData["VAR_NULL"] !=1 ) {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES", array('$var_null','0, 1' )));
                 }
             }
