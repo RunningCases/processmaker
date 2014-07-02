@@ -153,7 +153,6 @@ class Variable
             Validator::proUid($processUid, '$prj_uid');
 
             $this->throwExceptionIfNotExistsVariable($variableUid);
-
             //Delete
             $criteria = new \Criteria("workflow");
 
@@ -476,6 +475,26 @@ class Variable
 
             //Return
             return $arrayRecord;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if does not exist the variable in table PROCESS_VARIABLES
+     *
+     * @param string $variableUid           Unique id of variable
+     *
+     * return void Throw exception if does not exist the variable in table PROCESS_VARIABLES
+     */
+    public function throwExceptionIfNotExistsVariable($variableUid)
+    {
+        try {
+            $obj = \ProcessVariablesPeer::retrieveByPK($variableUid);
+
+            if (is_null($obj)) {
+                throw new \Exception('var_uid: '.$variableUid. ' '.\G::LoadTranslation("ID_DOES_NOT_EXIST"));
+            }
         } catch (\Exception $e) {
             throw $e;
         }
