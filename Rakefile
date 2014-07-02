@@ -212,13 +212,14 @@ def getVersion(path)
     version = ""
     Dir.chdir(path) do
         version = `rake version`
+        version = version.strip
     end
 
     if version.lines.count > 1
-        version = /([0-9\.]{5}+)/.match(version)
+        version = version.split("\n").last
     end
 
-    return version.strip
+    return version
 end
 
 
