@@ -94,7 +94,9 @@ class Variable
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
             $this->throwExceptionFieldDefinition($arrayData);
-            $this->existsName($processUid, $arrayData["VAR_NAME"]);
+            if (isset($aData["VAR_NAME"])) {
+                $this->existsName($processUid, $arrayData["VAR_NAME"]);
+            }
             //Update
             $cnn = \Propel::getConnection("workflow");
             try {
