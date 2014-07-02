@@ -48,8 +48,6 @@ class Variable
                     }
                     if (isset($arrayData["VAR_FIELD_SIZE"])) {
                         $variable->setVarFieldSize($arrayData["VAR_FIELD_SIZE"]);
-                    } else {
-                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_field_size' )));
                     }
                     if (isset($arrayData["VAR_LABEL"])) {
                         $variable->setVarLabel($arrayData["VAR_LABEL"]);
