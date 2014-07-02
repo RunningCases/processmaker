@@ -150,6 +150,9 @@ def buildPmdynaform(homeDir, targetDir, mode)
 
   system("cp -r #{homeDir}/build #{pmdynaformDir}")
   system("cp -r #{homeDir}/libs #{pmdynaformDir}")
+  system("rm #{pmdynaformDir}/build/appBuild.js")
+  readyForm = "$(document).ready(function () {var data = document.location.search.replace(\"?data=\", \"\");data = decodeURIComponent(data);if (typeof data !== \"object\")data = JSON.parse(data);$(\".pmdynaform-container\").remove();new PMDynaform.View.Form({tagName: \"div\", renderTo: $(\".container\"), model: new PMDynaform.Model.Form(data)});});"
+  system("echo '#{readyForm}' >> #{pmdynaformDir}/build/appBuild.js ")
   
   puts "\nPmDynaform Build Finished!".magenta
 end
