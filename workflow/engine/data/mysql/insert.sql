@@ -4169,7 +4169,16 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CANT_DELETE_DEPARTMENT_HAS_CHILDREN','en','Can not delete the department, it has a children department.','2014-05-29') ,
 ( 'LABEL','ID_CANT_DELETE_DEPARTMENT_HAS_USERS','en','Department cannot be deleted while has assigned users.','2014-05-29') ,
 ( 'LABEL','ID_CANT_SAVE_TRIGGER','en','A trigger with the same name already exists in this process.','2014-05-29') ,
-( 'LABEL','ID_CASE_DOES_NOT_EXIST2','en','The case with {0}: {1} does not exist.','2014-06-05') ;
+( 'LABEL','ID_CASE_DOES_NOT_EXIST2','en','The case with {0}: {1} does not exist.','2014-06-05') ,
+( 'LABEL','ID_CATEGORY_NAME_ALREADY_EXISTS','en','The category name with {0}: "{1}" already exists.','2014-06-12') ,
+( 'LABEL','ID_MSG_CONFIRM_DELETE_USER_ASSINGED_SUPERVISOR','en','The user can not be deleted while this assigned as a supervisor. Want removed anyway?','2014-06-20') ,
+( 'LABEL','ID_NAME_STG_TITLE_REQUIRE','en','Stage title required','2014-06-25') ,
+( 'LABEL','ID_INPUT_DOCUMENT_ITS_ASSIGNED','en','The Input Document with {0}: {1} it''s assigned in "{2}".','2014-06-26') ,
+( 'LABEL','ID_PROCESS_VARIABLE_DOES_NOT_EXIST','en','The variable with {0}: {1} does not exist.','2014-06-30') ,
+( 'LABEL','ID_PROCESS_VARIABLE_REQUIRED_VARIABLES_FOR_QUERY','en','The variable "{0}" required the variables "{1}" for the query.','2014-06-30') ;
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
+
+( 'LABEL','ID_OUTPUT_DOCUMENT_ITS_ASSIGNED','en','The Output Document with {0}: {1} it''s assigned in "{2}".','2014-07-01') ;
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,
