@@ -11,8 +11,8 @@ Scenario Outline: Import a process negative tests
 
 
     Examples:
-    | Description                                   | project_file                                       | import_option | error_code | error_message  |
-    | Import process when the process alredy exists | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | create        | 400        | already exists |
+    | Description                                   | project_file                            | import_option | error_code | error_message  |
+    | Import process when the process alredy exists | /uploadfiles/Process_Complete_BPMN.pmx  | create        | 400        | already exists |
     
 
 Scenario Outline: Import a process with wrong "option"
@@ -22,6 +22,6 @@ Scenario Outline: Import a process with wrong "option"
 
 
     Examples:
-    | Description          | project_file                                       | option | option_group | error_message |
-    | Invalid option       | /home/wendy/uploadfiles/Process_NewCreate_BPMN.pmx | sample | merge        | option        |
-    | Invalid option_group | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | create | sample       | option_group  |
+    | Description          | project_file                            | option | option_group | error_message |
+    | Invalid option       | /uploadfiles/Process_NewCreate_BPMN.pmx | sample | merge        | option        |
+    | Invalid option_group | /uploadfiles/Process_Complete_BPMN.pmx  | create | sample       | option_group  |

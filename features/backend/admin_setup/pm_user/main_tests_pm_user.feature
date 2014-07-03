@@ -101,9 +101,9 @@ Feature: User Main Tests
         Examples:
 
         | Test_description                     | usr_number | usr_photo                  |
-        | Create without replaced by, calendar | 1          | /home/wendy/photo/pic1.jpg |
-        | Create without calendar              | 2          | /home/wendy/photo/pic2.jpg |
-        | Create with all fields               | 3          | /home/wendy/photo/pic3.jpg |
+        | Create without replaced by, calendar | 1          | /photo/pic1.jpg |
+        | Create without calendar              | 2          | /photo/pic2.jpg |
+        | Create with all fields               | 3          | /photo/pic3.jpg |
         
 
     Scenario: Get the users List when there are exactly 68 users
