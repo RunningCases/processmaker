@@ -85,6 +85,7 @@ Feature: Project Properties - Step Resources Main Tests
         And I request "project/16062437052cd6141881e06088349078/output-document"
         And the content type is "application/json"
         Then the response status code should be 400
+        And the response status message should have the following text "assigned"
 
         Examples:
 
