@@ -348,6 +348,14 @@ class Variable
             if (isset($aData["VAR_FIELD_TYPE"])) {
                 Validator::isString($aData['VAR_FIELD_TYPE'], '$var_field_type');
                 Validator::isNotEmpty($aData['VAR_FIELD_TYPE'], '$var_field_type');
+                if ($aData["VAR_FIELD_TYPE"] != 'text' && $aData["VAR_FIELD_TYPE"] != 'currency' && $aData["VAR_FIELD_TYPE"] != 'password' && $aData["VAR_FIELD_TYPE"] != 'suggest' &&
+                    $aData["VAR_FIELD_TYPE"] != 'text area' && $aData["VAR_FIELD_TYPE"] != 'title' && $aData["VAR_FIELD_TYPE"] != 'subtitle' && $aData["VAR_FIELD_TYPE"] != 'button' &&
+                    $aData["VAR_FIELD_TYPE"] != 'submit' && $aData["VAR_FIELD_TYPE"] != 'reset' && $aData["VAR_FIELD_TYPE"] != 'dropdown' && $aData["VAR_FIELD_TYPE"] != 'yes/no' &&
+                    $aData["VAR_FIELD_TYPE"] != 'listbox' && $aData["VAR_FIELD_TYPE"] != 'checkbox' && $aData["VAR_FIELD_TYPE"] != 'checkgroup' && $aData["VAR_FIELD_TYPE"] != 'radiogroup' &&
+                    $aData["VAR_FIELD_TYPE"] != 'date' && $aData["VAR_FIELD_TYPE"] != 'hidden' && $aData["VAR_FIELD_TYPE"] != 'link' && $aData["VAR_FIELD_TYPE"] != 'file' &&
+                    $aData["VAR_FIELD_TYPE"] != 'javascript' && $aData["VAR_FIELD_TYPE"] != 'grid') {
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('$var_field_type')));
+                }
             }
             if (isset($aData["VAR_FIELD_SIZE"])) {
                 Validator::isInteger($aData["VAR_FIELD_SIZE"], '$var_field_size');
