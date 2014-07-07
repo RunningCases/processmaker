@@ -189,83 +189,84 @@ Scenario Outline: Delete all case scheduler of a project created previously in t
 
 #Scenario para la revision del "BUG 15040" donde se comprueba la creacion de nuevos case scheduler en diferentes proyectos BPMN.
 
-#Scenario Outline: Create a new case scheduler with same name
-#  Given POST this data:
-#    """
-#    {
-#      "sch_option": "5",
-#      "sch_name": "sample",
-#      "sch_del_user_name": "admin",
-#      "tas_uid": "4790702485368efad167477011123879",
-#      "sch_start_time": "",
-#      "sch_start_date": "",
-#      "sch_end_date": "",
-#      "sch_week_days": "", 
-#      "sch_start_day": "",
-#      "sch_start_day_opt_1": "",
-#      "sch_start_day_opt_2": "",
-#      "sch_months": "",    
-#      "sch_repeat_every": "12.30"
-#    }
-#    """
-#    And I request "project/1455892245368ebeb11c1a5001393784/case-scheduler"
-#    Then the response status code should be 201
-#    And the response charset is "UTF-8"
-#    And the content type is "application/json"
-#    And the type is "object"
-#    And store "sch_uid" in session array as variable "sch_uid_<sch_uid_number>"
-#
-#    Examples:
-# 
-#    | test_description   | sch_uid_number |
-#    | Create with Daily  | 1              |
-#    
-#
-#Scenario Outline: Create new Projects with event case scheduler
-#    Given POST data from file "<project_template>"
-#    And I request "projects"
-#    Then the response status code should be 201
-#    And the response charset is "UTF-8"
-#    And the content type is "application/json"
-#    And the type is "array"
-#    And store "new_uid" in session array as variable "project_new_uid_<project_new_uid_number>" where an object has "object" equal to "project"
-#    And store "new_uid" in session array as variable "diagram_new_uid_<project_new_uid_number>" where an object has "object" equal to "diagram"
-#    And store "new_uid" in session array as variable "activity_new_uid_<project_new_uid_number>" where an object has "object" equal to "activity"
-#    And store "new_uid" in session array as variable "evn_uid_<evn_uid_number>" where an object has "object" equal to "event"
-#    And store "new_uid" in session array as variable "flow_new_uid_<project_new_uid_number>" where an object has "object" equal to "flow"
-#    
-#    Examples:
-#
-#    | Description                                    | project_new_uid_number | evn_uid_number | project_template                 |
-#    | Create a new project with event case scheduler | 1                      | 3              | project_bug_case_scheduler1.json |
-#    | Create a new project with event case scheduler | 2                      | 4              | project_bug_case_scheduler2.json |
-#    
-#
-#Scenario Outline: Delete all Events created previously in this script
-#    Given that I want to delete a resource with the key "evn_uid" stored in session array as variable "evn_uid_<evn_uid_number>"
-#    And I request "project/<project_new_uid_number>/event"
-#    Then the response status code should be 200
-#    And the response charset is "UTF-8"
-#    And the type is "object"
-#
-#    Examples:
-#
-#    | project_new_uid_number | evn_uid_number | 
-#    | 1                      | 3              |
-#    | 2                      | 4              |
-#
-#
-#Scenario Outline: Delete a Project previously created in this script
-#    Given that I want to delete a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
-#    And I request "projects"
-#    And the content type is "application/json"
-#    Then the response status code should be 200
-#    And the response charset is "UTF-8"
-#    And the type is "object"
-#
-#    Examples:
-#
-#    | project_new_uid_number |
-#    | 1                      |
-#    | 2                      |
+Scenario Outline: Create a new case scheduler with same name
+  Given POST this data:
+    """
+    {
+      "sch_option": "5",
+      "sch_name": "sample",
+      "sch_del_user_name": "admin",
+      "tas_uid": "4790702485368efad167477011123879",
+      "sch_start_time": "",
+      "sch_start_date": "",
+      "sch_end_date": "",
+      "sch_week_days": "", 
+      "sch_start_day": "",
+      "sch_start_day_opt_1": "",
+      "sch_start_day_opt_2": "",
+      "sch_months": "",    
+      "sch_repeat_every": "12.30"
+    }
+    """
+    And I request "project/<project>/case-scheduler"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And store "sch_uid" in session array as variable "sch_uid_<sch_uid_number>"
+
+    Examples:
+ 
+    | test_description                                           | sch_uid_number | project                          |
+    | Create with Daily in project Derivation rules - evaluation | 1              | 46279907250ec73b9b25a78031279680 |
+    | Create with Daily in project Derivation rules - Parallel   | 2              | 35894775350ec7daa099378048029617 |
+    
+
+Scenario Outline: Delete case scheduler of a project created previously in this script
+    Given that I want to delete a resource with the key "sch_uid" stored in session array as variable "sch_uid_<sch_uid_number>"
+      And I request "project/46279907250ec73b9b25a78031279680/case-scheduler"
+      Then the response status code should be 200
+      And the response charset is "UTF-8"
+      And the type is "object"
+
+    Examples:
+ 
+    | sch_uid_number |
+    | 1              | 
+    | 2              |
+
+
+Scenario Outline: Create new Projects with event case scheduler
+    Given POST data from file "<project_template>"
+    And I request "projects"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And store "new_uid" in session array as variable "project_new_uid_<project_new_uid_number>" where an object has "object" equal to "project"
+    And store "new_uid" in session array as variable "diagram_new_uid_<project_new_uid_number>" where an object has "object" equal to "diagram"
+    And store "new_uid" in session array as variable "activity_new_uid_<project_new_uid_number>" where an object has "object" equal to "activity"
+    And store "new_uid" in session array as variable "evn_uid_<evn_uid_number>" where an object has "object" equal to "event"
+    And store "new_uid" in session array as variable "flow_new_uid_<project_new_uid_number>" where an object has "object" equal to "flow"
+    
+    Examples:
+
+    | Description                                      | project_new_uid_number | evn_uid_number | project_template                 |
+    | Create a new project with event case scheduler 1 | 1                      | 3              | project_bug_case_scheduler1.json |
+    | Create a new project with event case scheduler 2 | 2                      | 4              | project_bug_case_scheduler2.json |
+    
+
+Scenario Outline: Delete a Project previously created in this script
+    Given that I want to delete a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
+    And I request "projects"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+
+    Examples:
+
+    | project_new_uid_number |
+    | 1                      |
+    | 2                      |
 
