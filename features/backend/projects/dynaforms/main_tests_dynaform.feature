@@ -26,12 +26,15 @@ Feature: Dynaform Main Tests
 
 
     Scenario Outline: Normal Dynaform creation
-        Given POST this data:
+        Given POST a dynaform:
         """
         {
             "dyn_title": "<dyn_title>",
             "dyn_description": "<dyn_description>",
-            "dyn_type": "<dyn_type>"
+            "dyn_type": "<dyn_type>",
+            "dyn_content": "<dyn_content>",
+            "dyn_version": 1
+
         }
         """
         And I request "project/<project>/dynaform"
@@ -42,20 +45,45 @@ Feature: Dynaform Main Tests
         And store "dyn_uid" in session array as variable "dyn_uid_<dyn_uid_number>"
 
         Examples:
-        | test_description           | project                          | dyn_title         | dyn_description | dyn_type | dyn_uid_number |
-        | create dynaform xmlform P1 | 14414793652a5d718b65590036026581 | Dynaform - Normal | dyn normal P1   | xmlform  | 1              |
-        | create dynaform grid P1    | 14414793652a5d718b65590036026581 | Dynaform - Grid   | dyn grid P1     | grid     | 2              |
-        | create dynaform xmlform P2 | 42445320652cd534acb3824056962285 | Dynaform - Normal | dyn normal P2   | xmlform  | 3              |
-        | create dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid   | dyn grid P2     | grid     | 4              |
+        | test_description           | project                          | dyn_title         | dyn_description | dyn_type | dyn_content      | dyn_uid_number |
+        | create dynaform xmlform P1 | 14414793652a5d718b65590036026581 | Dynaform - Normal | dyn normal P1   | xmlform  | sample content 1 | 1              |
+        | create dynaform grid P1    | 14414793652a5d718b65590036026581 | Dynaform - Grid   | dyn grid P1     | grid     | sample content 2 | 2              |
+        | create dynaform xmlform P2 | 42445320652cd534acb3824056962285 | Dynaform - Normal | dyn normal P2   | xmlform  |                  | 3              | 
+        | create dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid   | dyn grid P2     | grid     | sample content 4 | 4              | 
+
+
+
+     Scenario Outline: Get a single dynaform and check some properties
+        Given that I want to get a resource with the key "dyn_uid" stored in session array as variable "dyn_uid_<dyn_uid_number>"
+        And I request "project/<project>/dynaform"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "object"
+        And that "dyn_title" is set to "<dyn_title>"
+        And that "dyn_description" is set to "<dyn_description>"
+        And that "dyn_type" is set to "<dyn_type>"
+        And that "dyn_content" is set to "<dyn_content>"
+        And that "dyn_version" is set to 1
+
+        Examples:
+        | test_description           | project                          | dyn_title         | dyn_description | dyn_type | dyn_content      | dyn_uid_number |
+        | create dynaform xmlform P1 | 14414793652a5d718b65590036026581 | Dynaform - Normal | dyn normal P1   | xmlform  | sample content 1 | 1              |
+        | create dynaform grid P1    | 14414793652a5d718b65590036026581 | Dynaform - Grid   | dyn grid P1     | grid     | sample content 2 | 2              |
+        | create dynaform xmlform P2 | 42445320652cd534acb3824056962285 | Dynaform - Normal | dyn normal P2   | xmlform  |                  | 3              | 
+        | create dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid   | dyn grid P2     | grid     | sample content 4 | 4              | 
+
 
 
     Scenario: Create dynaform with same name
-        Given POST this data:
+        Given POST a dynaform:
         """
         {
             "dyn_title": "Dynaform - Normal",
             "dyn_description": "dyn normal P1",
-            "dyn_type": "xmlform"
+            "dyn_type": "xmlform",
+            "dyn_content": "sample content 1",
+            "dyn_version": 1
         }
         """
         And I request "project/14414793652a5d718b65590036026581/dynaform"
@@ -185,12 +213,15 @@ Feature: Dynaform Main Tests
 
 
     Scenario Outline: Update the Dynaform and then check if the values had changed
-        Given PUT this data:
+        Given PUT a dynaform:
         """
         {
             "dyn_title": "<dyn_title>",
             "dyn_description": "<dyn_description>",
-            "dyn_type": "<dyn_type>"
+            "dyn_type": "<dyn_type>",
+            "dyn_content": "<dyn_content>",
+            "dyn_version": 1
+
         }
         """
         And that I want to update a resource with the key "dyn_uid" stored in session array as variable "dyn_uid_<dyn_uid_number>"
@@ -202,11 +233,11 @@ Feature: Dynaform Main Tests
         
 
      Examples:
-        | test_description           | project                          | dyn_title                  | dyn_description                    | dyn_type | dyn_uid_number |
-        | Update dynaform xmlform P1 | 14414793652a5d718b65590036026581 | My DynaForm1 Modified      | My DynaForm1 DESCRIPTION Modified  | grid     | 1              |
-        | Update dynaform grid P1    | 14414793652a5d718b65590036026581 | Dynaform - Grid Modified   | dyn grid P1 DESCRIPTION Modified   | xmlform  | 2              |
-        | Update dynaform xmlform P2 | 42445320652cd534acb3824056962285 | Dynaform - Normal Modified | dyn normal P2 DESCRIPTION Modified | grid     | 3              |
-        | Update dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid Modified   | dyn grid P2 DESCRIPTION Modified   | xmlform  | 4              |
+        | test_description           | project                          | dyn_title                  | dyn_description                    | dyn_type | dyn_content             | dyn_uid_number |
+        | Update dynaform xmlform P1 | 14414793652a5d718b65590036026581 | My DynaForm1 Modified      | My DynaForm1 DESCRIPTION Modified  | grid     | update sample content 1 | 1              |
+        | Update dynaform grid P1    | 14414793652a5d718b65590036026581 | Dynaform - Grid Modified   | dyn grid P1 DESCRIPTION Modified   | xmlform  | update sample content 2 | 2              |
+        | Update dynaform xmlform P2 | 42445320652cd534acb3824056962285 | Dynaform - Normal Modified | dyn normal P2 DESCRIPTION Modified | grid     | sample                  | 3              |
+        | Update dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid Modified   | dyn grid P2 DESCRIPTION Modified   | xmlform  | sample content 4        | 4              |
 
 
        
@@ -220,14 +251,15 @@ Feature: Dynaform Main Tests
         And that "dyn_title" is set to "<dyn_title>"
         And that "dyn_description" is set to "<dyn_description>"
         And that "dyn_type" is set to "<dyn_type>"
+        And that "dyn_content" is set to "<dyn_content>"
+        And that "dyn_version" is set to 1
 
-    
-    Examples:
-        | test_description           | project                          | dyn_title                  | dyn_description                    | dyn_type | dyn_uid_number |
-        | Update dynaform xmlform P1 | 14414793652a5d718b65590036026581 | My DynaForm1 Modified      | My DynaForm1 DESCRIPTION Modified  | grid     | 1              |
-        | Update dynaform grid P1    | 14414793652a5d718b65590036026581 | Dynaform - Grid Modified   | dyn grid P1 DESCRIPTION Modified   | xmlform  | 2              |
-        | Update dynaform xmlform P2 | 42445320652cd534acb3824056962285 | Dynaform - Normal Modified | dyn normal P2 DESCRIPTION Modified | grid     | 3              |
-        | Update dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid Modified   | dyn grid P2 DESCRIPTION Modified   | xmlform  | 4              |
+        Examples:
+        | test_description           | project                          | dyn_title                  | dyn_description                    | dyn_type | dyn_content             | dyn_uid_number |
+        | Update dynaform xmlform P1 | 14414793652a5d718b65590036026581 | My DynaForm1 Modified      | My DynaForm1 DESCRIPTION Modified  | grid     | update sample content 1 | 1              |
+        | Update dynaform grid P1    | 14414793652a5d718b65590036026581 | Dynaform - Grid Modified   | dyn grid P1 DESCRIPTION Modified   | xmlform  | update sample content 2 | 2              |
+        | Update dynaform xmlform P2 | 42445320652cd534acb3824056962285 | Dynaform - Normal Modified | dyn normal P2 DESCRIPTION Modified | grid     | sample                  | 3              |
+        | Update dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid Modified   | dyn grid P2 DESCRIPTION Modified   | xmlform  | sample content 4        | 4              |
 
 
 

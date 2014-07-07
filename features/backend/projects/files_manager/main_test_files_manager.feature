@@ -131,11 +131,11 @@ Scenario Outline: Upload files to same folders
   And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
 
   Examples:
-  | file                              | prf_path  | prf_number |
-  |/home/wendy/uploadfiles/test1.html | templates | 4          | 
-  |/home/wendy/uploadfiles/test2.html | templates | 5          |
-  |/home/wendy/uploadfiles/test.txt   | public    | 6          |
-  |/home/wendy/uploadfiles/TestQA.html| templates | 7          |
+  | file                    | prf_path  | prf_number |
+  | /uploadfiles/test1.html | templates | 4          | 
+  | /uploadfiles/test2.html | templates | 5          |
+  | /uploadfiles/test.txt   | public    | 6          |
+  | /uploadfiles/TestQA.html| templates | 7          |
 
 
 Scenario Outline: Verify if TestQA was overwrited 
@@ -216,12 +216,12 @@ Scenario Outline: Delete folder
 
 
 #BUG 15207, The "Upload" accepts files with other extensions
-#
-#Scenario Outline: Upload files to same folders "Project - Process Complete BPMN"
-#  Given POST I want to upload the file "<file>" to path "<prf_path>". Url "project/1455892245368ebeb11c1a5001393784/file-manager"
-#  And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
-#  And the response status message should have the following text "incorrect extension"
-#
-#  Examples:
-#  | file                                 | prf_path  | prf_number |
-#  |/home/wendy/uploadfiles/SnagIt823.exe | templates | 1          | 
+
+Scenario Outline: Upload files to same folders "Project - Process Complete BPMN"
+  Given POST I want to upload the file "<file>" to path "<prf_path>". Url "project/1455892245368ebeb11c1a5001393784/file-manager"
+  And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
+  And the response status message should have the following text "incorrect extension"
+
+  Examples:
+  | file                       | prf_path  | prf_number |
+  | /uploadfiles/SnagIt823.exe | templates | 1          | 
