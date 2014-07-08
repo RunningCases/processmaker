@@ -72,9 +72,9 @@ Scenario Outline: Update a process variable
 
     Examples:
     | test_description  | var_uid_number | var_field_type | var_field_size | var_label            | var_dbconnection | var_sql                                 | var_null | var_default | var_accepted_values |
-    | Update a text     | 1              | text           | 12             | Texto 1 - Updated    |                  |                                         | 0        |             |                     |
+    | Update a text     | 1              | string         | 12             | Texto 1 - Updated    |                  |                                         | 0        |             |                     |
     | Update a date     | 2              | date           | 10             | Fecha - Updated      |                  |                                         | 0        |             |                     |
-    | Update a dropdown | 3              | dropdown       | 12             | Dropdown 1 - Updated |                  | SELECT IC_UID, IC_NAME FROM ISO_COUNTRY | 0        |             |                     |
+    | Update a dropdown | 3              | string         | 12             | Dropdown 1 - Updated |                  | SELECT IC_UID, IC_NAME FROM ISO_COUNTRY | 0        |             |                     |
  
 
     
