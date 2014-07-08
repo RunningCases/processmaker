@@ -198,6 +198,8 @@ class WebApplication
          */
         header('Access-Control-Allow-Origin: *');
 
+        $_SERVER['REQUEST_URI'] = $uri;
+
         if (is_null($this->rest)) {
             $this->initRest($uri, $version, $multipart, $inputExecute);
         }
@@ -293,7 +295,6 @@ class WebApplication
         }
 
         // Override $_SERVER['REQUEST_URI'] to Restler handles the modified url
-        $_SERVER['REQUEST_URI'] = $uri;
 
         if (! $isPluginRequest) { // if it is not a request for a plugin endpoint
             // scan all api directory to find api classes
