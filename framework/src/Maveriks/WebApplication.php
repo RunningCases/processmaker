@@ -303,6 +303,7 @@ class WebApplication
                 if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
                     $relClassPath = str_replace('.php', '', str_replace($servicesDir, '', $classFile));
                     $namespace = '\\ProcessMaker\\Services\\' . str_replace(DS, '\\', $relClassPath);
+                    $namespace = strpos($namespace, "//", '', $namespace);
 
                     if (! class_exists($namespace)) {
                         require_once $classFile;
