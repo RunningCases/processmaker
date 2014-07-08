@@ -150,6 +150,9 @@ def buildPmdynaform(homeDir, targetDir, mode)
 
   system("cp -r #{homeDir}/build #{pmdynaformDir}")
   system("cp -r #{homeDir}/libs #{pmdynaformDir}")
+  system("rm #{pmdynaformDir}/build/appBuild.js")
+  readyForm = ""
+  system("echo '#{readyForm}' >> #{pmdynaformDir}/build/appBuild.js ")
   
   puts "\nPmDynaform Build Finished!".magenta
 end
@@ -209,13 +212,14 @@ def getVersion(path)
     version = ""
     Dir.chdir(path) do
         version = `rake version`
+        version = version.strip
     end
 
     if version.lines.count > 1
-        version = /([0-9\.]{5}+)/.match(version)
+        version = version.split("\n").last
     end
 
-    return version.strip
+    return version
 end
 
 

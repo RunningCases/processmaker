@@ -607,3 +607,69 @@ Scenario: case tasks of case 145, case on unassigned list
     And that "del_finish_date" is set to "Not finished"
     And that "duration" is set to "Not finished"
     And that "color" is set to "#FF0000"
+
+
+# BUG 15290, Derivation Of Screen Error in execution
+
+Scenario Outline: Create a new case with process attach in the bug reporter
+    Given POST this data:
+        """
+        {
+            "pro_uid": "<pro_uid>",
+            "tas_uid": "<tas_uid>",
+            "variables": [{"name": "admin", "amount":"1030"}]
+        }
+        """
+        And I request "cases"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the content type is "application/json"
+        And the type is "object"
+        And store "app_uid" in session array as variable "app_uid_<case_number>"
+        And store "app_number" in session array as variable "app_number_<case_number>"
+        
+        Examples:
+        | Description                                                    | case_number | pro_uid                          | tas_uid                          |
+        | Create new case with process "testExecutionOfDerivationScreen" | 1           | 87648819953a85c0abc01d3080475981 | 75617018953a885be331271018981055 |
+
+
+Scenario Outline: Route a case to the next task in the process
+        Given PUT this data:
+            """
+            {
+                "del_index": "1"
+            }
+            """
+        And I request "cases/app_uid/route-case"  with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
+        Then the response status code should be 200
+        And the content type is "application/json"
+        And the response charset is "UTF-8"
+        And the type is "object"
+      
+
+        Examples:
+
+        | test_description             | case_number |
+        | Derivate case of the process | 1           |
+        
+
+Scenario Outline: Delete a case
+        Given PUT this data:
+            """
+            {
+                
+            }
+            """
+        
+        And that I want to delete a resource with the key "app_uid" stored in session array as variable "app_uid_<case_number>"
+        And I request "cases"
+        Then the response status code should be 200
+        And the content type is "application/json"
+        And the response charset is "UTF-8"
+        And the type is "object"
+           
+
+        Examples:
+
+        | test_description | case_number |
+        | Delete a case 1  | 1           |

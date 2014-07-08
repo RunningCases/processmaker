@@ -3485,10 +3485,12 @@ class Processes
                         $XmlContent = str_replace( $oData->process['PRO_UID_OLD'], $oData->process['PRO_UID'], $XmlContent );
                         $XmlContent = str_replace( $XmlGuid, $newXmlGuid, $XmlContent );
 
-                        foreach($oData->inputFiles as $input => $valInput){
-                        	$oldInput = $input;
-                        	$newInput = $oData->inputFiles[$oldInput];
-                        	$XmlContent = str_replace( $oldInput, $newInput, $XmlContent );
+                        if (isset( $oData->inputFiles )) {
+                            foreach($oData->inputFiles as $input => $valInput){
+                                $oldInput = $input;
+                                $newInput = $oData->inputFiles[$oldInput];
+                                $XmlContent = str_replace( $oldInput, $newInput, $XmlContent );
+                            }
                         }
 
                         //foreach

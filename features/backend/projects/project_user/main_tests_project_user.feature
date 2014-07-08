@@ -59,8 +59,8 @@ Feature: Project User Resources Main Tests
 
     Examples:
 
-    | test_description                  | act_uid                          | username | password |
-    | Properties of user admin - task 1 | 1352844695225ff5fe54de2005407079 | admin    | admin    |
-    | Properties of user owen - task 1  | 1352844695225ff5fe54de2005407079 | owen     | sample   |
-    | Properties of user admin - task 1 | 1352844695225ff5fe54de2005407079 | alyssa   | sample   | 
-    | Properties of user owen - task 2  | 46941969352af5be2ab3f39001216717 | admin    | admin    |     
+    | test_description                  | act_uid                          | username | password   |
+    | Properties of user admin - task 1 | 1352844695225ff5fe54de2005407079 | admin    | sample123* |
+    | Properties of user owen - task 1  | 1352844695225ff5fe54de2005407079 | owen     | sample     |
+    | Properties of user admin - task 1 | 1352844695225ff5fe54de2005407079 | alyssa   | sample     | 
+    | Properties of user owen - task 2  | 46941969352af5be2ab3f39001216717 | admin    | sample123* |     

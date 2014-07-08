@@ -5,24 +5,52 @@ use Maveriks\Util;
 use ProcessMaker\Services;
 use ProcessMaker\Services\Api;
 use Luracast\Restler\RestException;
-
+/**
+ * Web application bootstrap
+ *
+ * @author Erik Amaru Ortiz <aortiz.erik@gmail.com>
+ */
 class WebApplication
 {
-    protected $rootDir = "";
-    protected $workflowDir = "";
-    protected $workspaceDir = "";
-    protected $workspaceCacheDir = "";
-    protected $requestUri = "";
-    protected $responseMultipart = array();
-
     const RUNNING_DEFAULT = "default.running";
     const RUNNING_INDEX = "index.running";
     const RUNNING_WORKFLOW = "workflow.running";
     const RUNNING_API = "api.running";
-
     const SERVICE_API = "service.api";
     const REDIRECT_DEFAULT = "redirect.default";
 
+    /**
+     * @var string application root directory
+     */
+    protected $rootDir = "";
+    /**
+     * @var string workflow directory
+     */
+    protected $workflowDir = "";
+    /**
+     * @var string workspace directory located into shared directory
+     */
+    protected $workspaceDir = "";
+    /**
+     * @var string workspace cache directory
+     */
+    protected $workspaceCacheDir = "";
+    /**
+     * @var string request location uri
+     */
+    protected $requestUri = "";
+    /**
+     * @var array holds multiple request response
+     */
+    protected $responseMultipart = array();
+    /**
+     * @var \Maveriks\Extension\Restler main REST dispatcher object
+     */
+    protected $rest;
+
+    /**
+     * class constructor
+     */
     public function __construct()
     {
         defined("DS") || define("DS", DIRECTORY_SEPARATOR);
@@ -61,6 +89,10 @@ class WebApplication
         return $this->requestUri;
     }
 
+    /**
+     * Routes the request to dispatch
+     * @return string
+     */
     public function route()
     {
         if ($this->requestUri === "/") {
@@ -78,6 +110,10 @@ class WebApplication
         }
     }
 
+    /**
+     * Run application
+     * @param string $type the request type to run and dispatch, by now only self::SERVICE_API is accepted
+     */
     public function run($type = "")
     {
         switch ($type) {
@@ -86,8 +122,9 @@ class WebApplication
                 $this->loadEnvironment($request["workspace"]);
 
                 Util\Logger::log("API::Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
+
                 if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtoupper($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'MULTIPART') {
-                    $this->multipart($request["uri"], $request["version"]);
+                    $this->dispatchMultipleApiRequest($request["uri"], $request["version"]);
                 } else {
                     $this->dispatchApiRequest($request["uri"], $request["version"]);
                 }
@@ -97,19 +134,16 @@ class WebApplication
     }
 
     /**
-     * This method performs the functionality of multipart
+     * Dispatch multiple api request
      *
-     * @param string $version. Version Api
-     *
-     * @access public
+     * @param string $uri the request uri
+     * @param string $version version of api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @return void
      */
-    public function multipart($uri, $version = "1.0")
+    public function dispatchMultipleApiRequest($uri, $version = "1.0")
     {
         $stringInput = file_get_contents('php://input');
+
         if (empty($stringInput)) {
             $rest = new \Maveriks\Extension\Restler();
             $rest->setMessage(new RestException(Api::STAT_APP_EXCEPTION, "Invalid Request, multipart without body."));
@@ -124,22 +158,25 @@ class WebApplication
         }
 
         $baseUrl = (empty($input->base_url)) ? $uri : $input->base_url;
+
         foreach($input->calls as $value) {
-            $_SERVER["REQUEST_METHOD"] = (empty($value->method)) ? 'GET' : $value->method;
+            $_SERVER["REQUEST_METHOD"] = empty($value->method) ? 'GET' : $value->method;
             $uriTemp = trim($baseUrl) . trim($value->url);
+
             if (strpos($uriTemp, '?') !== false) {
                 $dataGet = explode('?', $uriTemp);
                 parse_str($dataGet[1], $_GET);
             }
-            $inputExecute = (empty($value->data)) ? '' : json_encode($value->data);
+
+            $inputExecute = empty($value->data) ? '' : json_encode($value->data);
             $this->responseMultipart[] = $this->dispatchApiRequest($uriTemp, $version, true, $inputExecute);
         }
+
         echo json_encode($this->responseMultipart);
     }
 
     /**
      * This method dispatch rest/api service
-     *
      * @author Erik Amaru Ortiz <erik@colosa.com>
      */
     public function dispatchApiRequest($uri, $version = "1.0", $multipart = false, $inputExecute = '')
@@ -161,6 +198,22 @@ class WebApplication
          */
         header('Access-Control-Allow-Origin: *');
 
+        if (is_null($this->rest)) {
+            $this->initRest($uri, $version, $multipart, $inputExecute);
+        }
+
+        $this->rest->handle();
+
+        if ($this->rest->flagMultipart === true) {
+            return $this->rest->responseMultipart;
+        }
+    }
+
+    /**
+     * create a new instance of local $rest Restler object
+     */
+    protected function initRest($uri, $version, $multipart = false, $inputExecute = '')
+    {
         require_once $this->rootDir . "/framework/src/Maveriks/Extension/Restler/UploadFormat.php";
 
         // $servicesDir contains directory where Services Classes are allocated
@@ -209,14 +262,14 @@ class WebApplication
 
         // create a new Restler instance
         //$rest = new \Luracast\Restler\Restler();
-        $rest = new \Maveriks\Extension\Restler($productionMode);
+        $this->rest = new \Maveriks\Extension\Restler($productionMode);
         // setting flag for multipart to Restler
-        $rest->setFlagMultipart($multipart);
-        $rest->inputExecute = $inputExecute;
+        $this->rest->setFlagMultipart($multipart);
+        $this->rest->inputExecute = $inputExecute;
         // setting api version to Restler
-        $rest->setAPIVersion($version);
+        $this->rest->setAPIVersion($version);
         // adding $authenticationClass to Restler
-        $rest->addAuthenticationClass($authenticationClass, '');
+        $this->rest->addAuthenticationClass($authenticationClass, '');
 
         // Setting database connection source
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
@@ -226,7 +279,7 @@ class WebApplication
         // Setting default OAuth Client id, for local PM Web Designer
         Services\OAuth2\Server::setPmClientId($pmOauthClientId);
 
-        $rest->setOverridingFormats('JsonFormat', 'UploadFormat');
+        $this->rest->setOverridingFormats('JsonFormat', 'UploadFormat');
 
         $isPluginRequest = strpos($uri, '/plugin-') !== false ? true : false;
 
@@ -248,13 +301,15 @@ class WebApplication
 
             foreach ($classesList as $classFile) {
                 if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
-                    require_once $classFile;
-                    $namespace = '\\ProcessMaker\\Services\\' . str_replace(
-                        DIRECTORY_SEPARATOR,
-                        '\\',
-                        str_replace('.php', '', str_replace($servicesDir, '', $classFile))
-                    );
-                    $rest->addAPIClass($namespace);
+                    $relClassPath = str_replace('.php', '', str_replace($servicesDir, '', $classFile));
+                    $namespace = '\\ProcessMaker\\Services\\' . str_replace(DS, '\\', $relClassPath);
+                    $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
+
+                    if (! class_exists($namespace)) {
+                        require_once $classFile;
+                    }
+
+                    $this->rest->addAPIClass($namespace);
                 }
             }
 
@@ -264,7 +319,7 @@ class WebApplication
                     if (is_array($aliasData)) {
                         foreach ($aliasData as $label => $namespace) {
                             $namespace = '\\' . ltrim($namespace, '\\');
-                            $rest->addAPIClass($namespace, $alias);
+                            $this->rest->addAPIClass($namespace, $alias);
                         }
                     }
                 }
@@ -281,12 +336,6 @@ class WebApplication
 //                    }
 //                }
 //            }
-        }
-
-        $rest->handle();
-
-        if ($rest->flagMultipart === true) {
-            return $rest->responseMultipart;
         }
     }
 
