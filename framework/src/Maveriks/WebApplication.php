@@ -5,6 +5,7 @@ use Maveriks\Util;
 use ProcessMaker\Services;
 use ProcessMaker\Services\Api;
 use Luracast\Restler\RestException;
+
 /**
  * Web application bootstrap
  *
@@ -121,7 +122,7 @@ class WebApplication
                 $request = $this->parseApiRequestUri();
                 $this->loadEnvironment($request["workspace"]);
 
-                Util\Logger::log("API::Dispatching ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
+                Util\Logger::log("REST API Dispatching url: ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
 
                 if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtoupper($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'MULTIPART') {
                     $this->dispatchMultipleApiRequest($request["uri"], $request["version"]);
@@ -142,6 +143,7 @@ class WebApplication
      */
     public function dispatchMultipleApiRequest($uri, $version = "1.0")
     {
+
         $stringInput = file_get_contents('php://input');
 
         if (empty($stringInput)) {
@@ -181,6 +183,8 @@ class WebApplication
      */
     public function dispatchApiRequest($uri, $version = "1.0", $multipart = false, $inputExecute = '')
     {
+        $this->initRest($uri, "1.0", $multipart);
+
         // to handle a request with "OPTIONS" method
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, HEADERS');
@@ -198,12 +202,9 @@ class WebApplication
          */
         header('Access-Control-Allow-Origin: *');
 
-        $_SERVER['REQUEST_URI'] = $uri;
+        $_SERVER['REQUEST_URI'] = $uri;        
 
-        if (is_null($this->rest)) {
-            $this->initRest($uri, $version, $multipart, $inputExecute);
-        }
-
+        $this->rest->inputExecute = $inputExecute;
         $this->rest->handle();
 
         if ($this->rest->flagMultipart === true) {
@@ -214,7 +215,7 @@ class WebApplication
     /**
      * create a new instance of local $rest Restler object
      */
-    protected function initRest($uri, $version, $multipart = false, $inputExecute = '')
+    protected function initRest($uri, $version, $multipart = false)
     {
         require_once $this->rootDir . "/framework/src/Maveriks/Extension/Restler/UploadFormat.php";
 
@@ -267,7 +268,6 @@ class WebApplication
         $this->rest = new \Maveriks\Extension\Restler($productionMode);
         // setting flag for multipart to Restler
         $this->rest->setFlagMultipart($multipart);
-        $this->rest->inputExecute = $inputExecute;
         // setting api version to Restler
         $this->rest->setAPIVersion($version);
         // adding $authenticationClass to Restler
@@ -306,9 +306,9 @@ class WebApplication
                     $namespace = '\\ProcessMaker\\Services\\' . str_replace(DS, '\\', $relClassPath);
                     $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
 
-                    if (! class_exists($namespace)) {
+                    //if (! class_exists($namespace)) {
                         require_once $classFile;
-                    }
+                    //}
 
                     $this->rest->addAPIClass($namespace);
                 }
