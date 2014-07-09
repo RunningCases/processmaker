@@ -355,7 +355,6 @@ class Variable
             }
             if (isset($aData["VAR_FIELD_SIZE"])) {
                 Validator::isInteger($aData["VAR_FIELD_SIZE"], '$var_field_size');
-                Validator::isNotEmpty($aData['VAR_FIELD_SIZE'], '$var_field_size');
             }
             if (isset($aData["VAR_LABEL"])) {
                 Validator::isString($aData['VAR_LABEL'], '$var_label');
