@@ -33,11 +33,11 @@ Scenario Outline: Post metadata and then upload documents for a given case
         And store "app_doc_uid" in session array as variable "app_doc_uid_<app_doc_uid_number>"
 
         Examples:
-        | app_doc_uid_number | document_file           | case_uid                         | inp_doc_uid                      | tas_uid                          | app_doc_comment |
-        | 1                  | /uploadfiles/test1.html | 170220159534214f642abb8058832933 | 68671480353319e5e1dee74089764900 | 19582733053319e304cfa76025663570 | comment 1       |
-        | 2                  | /uploadfiles/random.jpg | 170220159534214f642abb8058832933 | 68671480353319e5e1dee74089764900 | 19582733053319e304cfa76025663570 | comment 1       |
-        | 3                  | /uploadfiles/test.pm    | 170220159534214f642abb8058832933 | 68671480353319e5e1dee74089764900 | 19582733053319e304cfa76025663570 | comment 1       |
-        | 4                  | /uploadfiles/test.txt   | 170220159534214f642abb8058832933 | 68671480353319e5e1dee74089764900 | 19582733053319e304cfa76025663570 | comment 1       |
+        | app_doc_uid_number | document_file | case_uid                         | inp_doc_uid                      | tas_uid                          | app_doc_comment |
+        | 1                  | test1.html    | 170220159534214f642abb8058832933 | 68671480353319e5e1dee74089764900 | 19582733053319e304cfa76025663570 | comment 1       |
+        | 2                  | random.jpg    | 170220159534214f642abb8058832933 | 68671480353319e5e1dee74089764900 | 19582733053319e304cfa76025663570 | comment 1       |
+        | 3                  | test.pm       | 170220159534214f642abb8058832933 | 68671480353319e5e1dee74089764900 | 19582733053319e304cfa76025663570 | comment 1       |
+        | 4                  | test.txt      | 170220159534214f642abb8058832933 | 68671480353319e5e1dee74089764900 | 19582733053319e304cfa76025663570 | comment 1       |
 
 Scenario Outline: Returns an uploaded documents for a given case
     Given I request "cases/<case_uid>/input-document/app_doc_uid"  with the key "app_doc_uid" stored in session array as variable "app_doc_uid_<app_doc_uid_number>"
