@@ -73,11 +73,12 @@ Feature: Project Properties - Step Resources Main Tests
         And I request "project/16062437052cd6141881e06088349078/input-document"
         And the content type is "application/json"
         Then the response status code should be 400
+        And the response status message should have the following text "assigned"
 
         Examples:
 
         | step_number |
-        | 3           |
+        | 2           |
         
 
     Scenario Outline: Try delete a Output document when it is assigned to a step
@@ -90,7 +91,7 @@ Feature: Project Properties - Step Resources Main Tests
         Examples:
 
         | step_number |
-        | 4           |
+        | 3           |
           
 
 

@@ -349,13 +349,12 @@ class Variable
                 Validator::isString($aData['VAR_FIELD_TYPE'], '$var_field_type');
                 Validator::isNotEmpty($aData['VAR_FIELD_TYPE'], '$var_field_type');
                 if ($aData["VAR_FIELD_TYPE"] != 'string' && $aData["VAR_FIELD_TYPE"] != 'integer' && $aData["VAR_FIELD_TYPE"] != 'boolean' && $aData["VAR_FIELD_TYPE"] != 'float' &&
-                    $aData["VAR_FIELD_TYPE"] != 'datetime' && $aData["VAR_FIELD_TYPE"] != 'date_of_birth') {
+                    $aData["VAR_FIELD_TYPE"] != 'datetime' && $aData["VAR_FIELD_TYPE"] != 'date_of_birth' && $aData["VAR_FIELD_TYPE"] != 'date') {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('$var_field_type')));
                 }
             }
             if (isset($aData["VAR_FIELD_SIZE"])) {
                 Validator::isInteger($aData["VAR_FIELD_SIZE"], '$var_field_size');
-                Validator::isNotEmpty($aData['VAR_FIELD_SIZE'], '$var_field_size');
             }
             if (isset($aData["VAR_LABEL"])) {
                 Validator::isString($aData['VAR_LABEL'], '$var_label');

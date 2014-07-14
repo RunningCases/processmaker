@@ -59,6 +59,8 @@ Scenario Outline: Create a 13 case scheduler for a project
     | Create with One time only                                                                 | 12             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-One Time only 678%$@ | 4          |                |              | 20:00          |                  |               |                     |                                 |                     |                  |
     | Create with Every                                                                         | 13             | admin             | 46941969352af5be2ab3f39001216717 | Case Scheduler-Every 987&%@         | 5          |                |              |                |                  |               |                     |                                 |                     | 12.30            |
     | Create with Daily - Test BUG 15316                                                        | 14             | admin             | 46941969352af5be2ab3f39001216717 | Bug 15316                           | 1          | 2014-01-30     |              | 12:00          |                  |               |                     |                                 |                     |                  |
+    | Test BUG 15330, 15331: Every format in the properties Invalid Start Timer 1.00            | 15             | admin             | 46941969352af5be2ab3f39001216717 | BUG 15330 1.0                       | 5          |                |              |                |                  |               |                     |                                 |                     | 1.00             |
+    | Test BUG 15330, 15331: Every format in the properties Invalid Start Timer 01.00           | 16             | admin             | 46941969352af5be2ab3f39001216717 | BUG 15330 01.00                     | 5          |                |              |                |                  |               |                     |                                 |                     | 01.00            |
       
 
 Scenario: Create a new case scheduler with same name
@@ -82,7 +84,7 @@ Scenario: Create a new case scheduler with same name
       """
       And I request "project/1265557095225ff5c688f46031700471/case-scheduler"
       Then the response status code should be 400
-      And the response status message should have the following text "Duplicate Case Scheduler name"
+      And the response status message should have the following text "Duplicate"
       
   
 Scenario: Get the case schedulers list when there are exactly 13 case schedulers 
@@ -91,7 +93,7 @@ Scenario: Get the case schedulers list when there are exactly 13 case schedulers
       And the response charset is "UTF-8"
       And the content type is "application/json"
       And the type is "array"
-      And the response has 14 record
+      And the response has 16 record
   
 
 Scenario Outline: Update the case schedulers for a project and then check if the values had changed
@@ -184,6 +186,8 @@ Scenario Outline: Delete all case scheduler of a project created previously in t
     | 12             |      
     | 13             |
     | 14             |
+    | 15             |
+    | 16             |
 
 
 

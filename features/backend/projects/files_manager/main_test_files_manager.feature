@@ -50,11 +50,11 @@ Scenario Outline: Create files and subfolders
   And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
 
   Examples:
-  | test_description             | prf_filename      | prf_path                      | prf_content                   | http_code | type   | prf_number |
-  | into public folder           | file_test_1.txt   | public/                       | only text                     | 200       | object | 0          |
-  | into mailtemplates folder    | file_test_2.html  | templates/                    | <h1>Test</h1><p>html test</p> | 200       | object | 1          |
-  | into public subfolder        | file_test_3       | public/public_subfolder       | test                          | 200       | object | 2          |
-  | into mailtemplates subfolder | file_test_4       | templates/templates_subfolder | test                          | 200       | object | 3          |
+  | test_description             | prf_filename     | prf_path                      | prf_content                   | http_code | type   | prf_number |
+  | into public folder           | file_test_1.txt  | public/                       | only text                     | 200       | object | 0          |
+  | into mailtemplates folder    | file_test_2.html | templates/                    | <h1>Test</h1><p>html test</p> | 200       | object | 1          |
+  | into public subfolder        | file_test_3      | public/public_subfolder       | test                          | 200       | object | 2          |
+  | into mailtemplates subfolder | file_test_4      | templates/templates_subfolder | test                          | 200       | object | 3          |
 
 
 Scenario: Create files and subfolders with same name in path public
@@ -100,11 +100,11 @@ Scenario Outline: Update files by updating the content
   And the type is "<type>"
 
   Examples:
-  | test_description                 | prf_filename             | prf_content                                  | http_code | type   | prf_number |
-  | put into public folder           | file_test_1.txt          | only text - modified                         | 200       | object | 0          |
-  | put into mailtemplates folder    | file_test_2.html         | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          |
-  | put into public subfolder        | file_test_3              | put test                                     | 200       | object | 2          |
-  | put into mailtemplates subfolder | file_test_4              | put test                                     | 200       | object | 3          |
+  | test_description                 | prf_filename     | prf_content                                  | http_code | type   | prf_number |
+  | put into public folder           | file_test_1.txt  | only text - modified                         | 200       | object | 0          |
+  | put into mailtemplates folder    | file_test_2.html | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          |
+  | put into public subfolder        | file_test_3      | put test                                     | 200       | object | 2          |
+  | put into mailtemplates subfolder | file_test_4      | put test                                     | 200       | object | 3          |
 
 
 Scenario Outline: Get a single Files Manager and check some properties
@@ -119,11 +119,11 @@ Scenario Outline: Get a single Files Manager and check some properties
   And that "prf_content" is set to "<prf_content>"
   
   Examples:
-  | test_description                 | prf_filename      | prf_content                                  | http_code | type   | prf_number | row | prf_path                      |
-  | put into public folder           | file_test_1.txt   | only text - modified                         | 200       | object | 0          | 1   | public/                       |
-  | put into mailtemplates folder    | file_test_2.html  | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          | 1   | templates/                    |
-  | put into public subfolder        | file_test_3       | put test                                     | 200       | object | 2          | 0   | public/public_subfolder       |
-  | put into mailtemplates subfolder | file_test_4       | put test                                     | 200       | object | 3          | 0   | templates/templates_subfolder |
+  | test_description                 | prf_filename     | prf_content                                  | http_code | type   | prf_number | row | prf_path                      |
+  | put into public folder           | file_test_1.txt  | only text - modified                         | 200       | object | 0          | 1   | public/                       |
+  | put into mailtemplates folder    | file_test_2.html | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          | 1   | templates/                    |
+  | put into public subfolder        | file_test_3      | put test                                     | 200       | object | 2          | 0   | public/public_subfolder       |
+  | put into mailtemplates subfolder | file_test_4      | put test                                     | 200       | object | 3          | 0   | templates/templates_subfolder |
 
   
 Scenario Outline: Upload files to same folders
@@ -131,11 +131,11 @@ Scenario Outline: Upload files to same folders
   And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
 
   Examples:
-  | file                    | prf_path  | prf_number |
-  | /uploadfiles/test1.html | templates | 4          | 
-  | /uploadfiles/test2.html | templates | 5          |
-  | /uploadfiles/test.txt   | public    | 6          |
-  | /uploadfiles/TestQA.html| templates | 7          |
+  | file       | prf_path  | prf_number |
+  | test1.html | templates | 4          | 
+  | test2.html | templates | 5          |
+  | test.txt   | public    | 6          |
+  | TestQA.html| templates | 7          |
 
 
 Scenario Outline: Verify if TestQA was overwrited 
@@ -223,5 +223,5 @@ Scenario Outline: Upload files to same folders "Project - Process Complete BPMN"
   And the response status message should have the following text "incorrect extension"
 
   Examples:
-  | file                       | prf_path  | prf_number |
-  | /uploadfiles/SnagIt823.exe | templates | 1          | 
+  | file          | prf_path  | prf_number |
+  | SnagIt823.exe | templates | 1          | 

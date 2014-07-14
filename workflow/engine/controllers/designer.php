@@ -28,6 +28,7 @@ class Designer extends Controller
         $proReadOnly = isset($httpData->prj_readonly) ? $httpData->prj_readonly : 'false';
         $client = $this->getClientCredentials();
         $authCode = $this->getAuthorizationCode($client);
+        $debug = false; //System::isDebugMode();
 
         $loader = Maveriks\Util\ClassLoader::getInstance();
         $loader->add(PATH_TRUNK . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
@@ -57,9 +58,9 @@ class Designer extends Controller
         $this->setVar('app_uid', $appUid);
         $this->setVar('prj_readonly', $proReadOnly);
         $this->setVar('credentials', base64_encode(json_encode($clientToken)));
-        $this->setVar('isDebugMode', System::isDebugMode());
+        $this->setVar('isDebugMode', $debug);
 
-        if (System::isDebugMode()) {
+        if ($debug) {
             if (! file_exists(PATH_HTML . "lib-dev/pmUI/build.cache")) {
                 throw new RuntimeException("Development JS Files were are not generated!.\nPlease execute: \$>rake pmBuildDebug in pmUI project");
             }
