@@ -291,3 +291,10 @@ Feature: User Main Tests
         And the response charset is "UTF-8"
         And the type is "array"
         And the response has 63 records
+
+
+    Scenario: Delete a user when assigned to a process and has initiated cases
+        Given that I want to delete a "User"
+        And I request "user/24166330352d56730cdd525035621101"
+        Then the response status code should be 400
+        And the response status message should have the following text "cannot be deleted"
