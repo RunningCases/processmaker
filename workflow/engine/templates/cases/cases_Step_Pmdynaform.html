@@ -8,11 +8,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
         <link rel='stylesheet' type='text/css' href='/css/neoclassic-blank.css' />
-        
+
         <link rel="stylesheet" href="/lib/pmdynaform/libs/bootstrap-3.1.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="/lib/pmdynaform/build/css/PMDynaform.css">
-        
-        <!--<script type="text/javascript" src="/js/maborak/core/maborak.js"></script>-->
+
         <script type="text/javascript" src="/lib/pmdynaform/libs/jquery/jquery-1.11.js"></script>
         <script type="text/javascript" src="/lib/pmdynaform/libs/jquery/jquery.inputmask.js"></script>
 
@@ -321,27 +320,31 @@
             </div>   
         </script>
 
-
+        <script type="text/template" id="tpl-label">
+            <div id="<%=id%>" class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%>">
+            <<%=etiquete[type]%> class="pmdynaform-label">
+            <p class="<%=className[type]%>">
+            <span><%= label %></span>
+            </p>
+            </<%=etiquete[type]%>>				
+            </div>
+        </script>
 
         <script type="text/javascript" src="/lib/pmdynaform/build/js/PMDynaform.js"></script>
-        
         <script type="text/javascript">
             var jsondata = '{JSON_DATA}';
             var pm_run_outside_main_app = '{PM_RUN_OUTSIDE_MAIN_APP}';
             var dyn_uid = '{DYN_UID}';
         </script>
-        
         <script type="text/javascript" src="/jscore/cases/core/cases_Step.js"></script>
         <script type="text/javascript" src="/jscore/cases/core/cases_Step_Pmdynaform.js"></script>
-
         <table width="100%" align="center">
             <tr class="userGroupTitle">
                 <td width="100%" align="center">{CASE} #: {APP_NUMBER}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{TITLE}: {APP_TITLE}</td>
             </tr>
         </table>
-        
         <a style="float: left; margin: 10px 2px 2px 10px; cursor: pointer; opacity: 1;"><img src="/lib/img/pager-previous-icon.png" style="padding-right:5px;width:25px;height:20px;">Previous Step</a>
         <a style="float: right; margin: 10px 10px 2px 2px; cursor: pointer; opacity: 1;">Next step<img src="/lib/img/pager-next-icon.png" style="padding-left:5px;width:25px;height:20px;"></a>
-        
+
     </body>
 </html>
