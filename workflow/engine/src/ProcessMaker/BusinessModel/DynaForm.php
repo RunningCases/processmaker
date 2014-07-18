@@ -1001,5 +1001,74 @@ class DynaForm
             throw $e;
         }
     }
+
+    /**
+     * Get data of a DynaForm
+     *
+     * @param string $projectUid Unique id of Project
+     * @param string $dynaFormUid Unique id of DynaForm
+     *
+     * return array Return an array with data of a DynaForm
+     */
+    public function getDynaFormFields($projectUid, $dynaFormUid)
+    {
+        try {
+
+            //Verify data
+            Validator::proUid($projectUid, '$prj_uid');
+            $this->throwExceptionIfNotExistsDynaForm($dynaFormUid, "", $this->arrayFieldNameForException["dynaFormUid"]);
+
+            //Get data
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_UID);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::PRJ_UID);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_TYPE);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_SIZE);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_LABEL);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DBCONNECTION);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_SQL);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NULL);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DEFAULT);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_ACCEPTED_VALUES);
+
+            $criteria->add(\ProcessVariablesPeer::PRJ_UID, $projectUid, \Criteria::EQUAL);
+
+            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $rsCriteria->next();
+            $arrayVariables = array();
+
+            while ($aRow = $rsCriteria->getRow()) {
+                if ($aRow['VAR_NULL'] == 1) {
+                    $required = true;
+                } else {
+                    $required = false;
+                }
+                $arrayVariables[] = array('var_uid' => $aRow['VAR_UID'],
+                                        'name' => $aRow['VAR_NAME'],
+                                        'valueType' => $aRow['VAR_FIELD_TYPE'],
+                                        'maxLength' => (int)$aRow['VAR_FIELD_SIZE'],
+                                        'label' => $aRow['VAR_LABEL'],
+                                        'dbConnection' => $aRow['VAR_DBCONNECTION'],
+                                        'sql' => $aRow['VAR_SQL'],
+                                        'required' => $required,
+                                        'default' => $aRow['VAR_DEFAULT'],
+                                        'options' => $aRow['VAR_ACCEPTED_VALUES']);
+                $rsCriteria->next();
+            }
+            //Return
+            return $arrayVariables;
+
+
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
 }
 
