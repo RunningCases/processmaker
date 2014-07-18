@@ -2840,8 +2840,8 @@ class Bootstrap
     public static function displayMaveriksNotLoadedError()
     {
         if (! class_exists('\Maveriks\Util\ClassLoader')) {
-            require PATH_TRUNK . "framework/src/Maveriks/pattern/Mvc/View.php";
-            require PATH_TRUNK . "framework/src/Maveriks/pattern/Mvc/PhtmlView.php";
+            require PATH_TRUNK . "framework/src/Maveriks/Pattern/Mvc/View.php";
+            require PATH_TRUNK . "framework/src/Maveriks/Pattern/Mvc/PhtmlView.php";
 
             $message = "Please review your apache virtual host configuration file, and be sure you have the following rules:
 

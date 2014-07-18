@@ -41,9 +41,9 @@ Feature: Project User Resources
       And the type is "<type>"
 
     Examples:
-    | test_description      | act_uid                          | username | password | http_code | type   |
-    | error username        | 1352844695225ff5fe54de2005407079 | adm      | admin    | 400       | string |
-    | error password        | 1352844695225ff5fe54de2005407079 | admin    | adm      | 400       | string |
-    | short activity        | 1352844695225ff5fe54de20         | admin    | admin    | 400       | string |
-    | error activity        | 225ff5fe54de20054070791352844695 | admin    | admin    | 400       | string |
-    | all ok                | 1352844695225ff5fe54de2005407079 | admin    | admin    | 200       | array  |
+    | test_description      | act_uid                          | username | password   | http_code | type   |
+    | error username        | 1352844695225ff5fe54de2005407079 | adm      | admin      | 400       | string |
+    | error password        | 1352844695225ff5fe54de2005407079 | admin    | adm        | 400       | string |
+    | short activity        | 1352844695225ff5fe54de20         | admin    | admin      | 400       | string |
+    | error activity        | 225ff5fe54de20054070791352844695 | admin    | admin      | 400       | string |
+    | all ok                | 1352844695225ff5fe54de2005407079 | admin    | sample123* | 200       | array  |

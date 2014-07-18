@@ -20,7 +20,7 @@ Feature: Process variables Resources
         """
         {
           "var_name": "My Variable",
-          "var_field_type": "text_field",
+          "var_field_type": "string",
           "var_field_size": 12,
           "var_label": "Nombre:",
           "var_dbconnection": "",
@@ -44,8 +44,8 @@ Feature: Process variables Resources
         And PUT this data:
         """
         {
-          "var_name": "My Variable Modify",
-          "var_field_type": "text_field",
+          
+          "var_field_type": "string",
           "var_field_size": 1,
           "var_label": "Nombre modificado:",
           "var_dbconnection": "",

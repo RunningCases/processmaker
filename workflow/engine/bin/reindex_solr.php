@@ -110,12 +110,46 @@ if (! defined ('PATH_HOME')) {
   define ('PATH_HOME', $pathhome);
   define ('PATH_TRUNK', $pathTrunk);
   define ('PATH_OUTTRUNK', $pathOutTrunk);
-  
+  define( 'PATH_CLASSES', PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP );
+
+  require_once PATH_TRUNK . "framework/src/Maveriks/Util/ClassLoader.php";
   require_once (PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths.php');
   require_once (PATH_GULLIVER . "class.bootstrap.php");
   Bootstrap::registerSystemClasses();
   spl_autoload_register(array('Bootstrap', 'autoloadClass'));
-  
+
+  Bootstrap::registerClass('BaseProcess',         PATH_HOME . "engine/classes/model/om/BaseProcess.php");
+  Bootstrap::registerClass('ProcessPeer',         PATH_HOME . "engine/classes/model/ProcessPeer.php");
+  Bootstrap::registerClass('BaseAppSolrQueue',    PATH_HOME . "engine/classes/model/om/BaseAppSolrQueue.php");
+  Bootstrap::registerClass('BaseDynaform',        PATH_HOME . "engine/classes/model/om/BaseDynaform.php");
+  Bootstrap::registerClass('DynaformPeer',        PATH_HOME . "engine/classes/model/DynaformPeer.php");
+  Bootstrap::registerClass('BaseTaskUser',        PATH_HOME . "engine/classes/model/om/BaseTaskUser.php");
+  Bootstrap::registerClass('BaseTask',            PATH_HOME . "engine/classes/model/om/BaseTask.php");
+  Bootstrap::registerClass('BaseGroupUserPeer',   PATH_HOME . "engine/classes/model/om/BaseGroupUserPeer.php");
+  Bootstrap::registerClass('BaseGroupUser',       PATH_HOME . "engine/classes/model/om/BaseGroupUser.php");
+  Bootstrap::registerClass('BaseUsers',           PATH_HOME . "engine/classes/model/om/BaseUsers.php");
+  Bootstrap::registerClass('BaseContent',         PATH_HOME . "engine/classes/model/om/BaseContent.php");
+  Bootstrap::registerClass('BaseContentPeer',     PATH_HOME . "engine/classes/model/om/BaseContentPeer.php");
+  Bootstrap::registerClass('ContentPeer',         PATH_HOME . "engine/classes/model/ContentPeer.php");
+  Bootstrap::registerClass('BaseAppThread',       PATH_HOME . "engine/classes/model/om/BaseAppThread.php");
+  Bootstrap::registerClass('AppThreadPeer',       PATH_HOME . "engine/classes/model/AppThreadPeer.php");
+  Bootstrap::registerClass('BaseApplication',     PATH_HOME . "engine/classes/model/om/BaseApplication.php");
+  Bootstrap::registerClass('ApplicationPeer',     PATH_HOME . "engine/classes/model/ApplicationPeer.php");
+  Bootstrap::registerClass('BaseAppDelegation',   PATH_HOME . "engine/classes/model/om/BaseAppDelegation.php");
+  Bootstrap::registerClass('BaseAppDelegationPeer',PATH_HOME . "engine/classes/model/om/BaseAppDelegationPeer.php");
+  Bootstrap::registerClass('BaseEvent',           PATH_HOME . "engine/classes/model/om/BaseEvent.php");
+  Bootstrap::registerClass('BaseEventPeer',       PATH_HOME . "engine/classes/model/om/BaseEventPeer.php");
+  Bootstrap::registerClass('BaseAppEvent',        PATH_HOME . "engine/classes/model/om/BaseAppEvent.php");
+  Bootstrap::registerClass('AppEventPeer',        PATH_HOME . "engine/classes/model/AppEventPeer.php");
+  Bootstrap::registerClass('BaseCaseScheduler',   PATH_HOME . "engine/classes/model/om/BaseCaseScheduler.php");
+  Bootstrap::registerClass('BaseCaseSchedulerPeer',PATH_HOME . "engine/classes/model/om/BaseCaseSchedulerPeer.php");
+  Bootstrap::registerClass('CaseSchedulerPeer',    PATH_HOME . "engine/classes/model/CaseSchedulerPeer.php");
+
+  require_once 'classes/model/AppDelegation.php';
+  require_once 'classes/model/Event.php';
+  require_once 'classes/model/AppEvent.php';
+  require_once 'classes/model/CaseScheduler.php';
+
   G::LoadThirdParty ('pear/json', 'class.json');
   G::LoadThirdParty ('smarty/libs', 'Smarty.class');
   G::LoadSystem ('error');
@@ -140,10 +174,6 @@ if (! defined ('PATH_HOME')) {
   require_once ("creole/Creole.php");
 }
 
-require_once 'classes/model/AppDelegation.php';
-require_once 'classes/model/Event.php';
-require_once 'classes/model/AppEvent.php';
-require_once 'classes/model/CaseScheduler.php';
 // G::loadClass('pmScript');
 
 // //default values
@@ -338,7 +368,7 @@ function saveLog($sSource, $sType, $sDescription)
       print date ('H:i:s') . " ($sSource) $sType $sDescription <br>\n";
     
     G::verifyPath (PATH_DATA . 'log' . PATH_SEP, true);
-    $message = date ('Y-m-d H:i:s') . '(' . $sSource . ') ' . $sDescription . "\n";
+    $message = '(' . $sSource . ') ' . $sDescription . "\n";
     if ($sType == 'action') {
       G::log($message, PATH_DATA);
     }

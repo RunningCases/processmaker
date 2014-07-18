@@ -101,9 +101,9 @@ Feature: User Main Tests
         Examples:
 
         | Test_description                     | usr_number | usr_photo                  |
-        | Create without replaced by, calendar | 1          | /home/wendy/photo/pic1.jpg |
-        | Create without calendar              | 2          | /home/wendy/photo/pic2.jpg |
-        | Create with all fields               | 3          | /home/wendy/photo/pic3.jpg |
+        | Create without replaced by, calendar | 1          | /photo/pic1.jpg |
+        | Create without calendar              | 2          | /photo/pic2.jpg |
+        | Create with all fields               | 3          | /photo/pic3.jpg |
         
 
     Scenario: Get the users List when there are exactly 68 users
@@ -291,3 +291,10 @@ Feature: User Main Tests
         And the response charset is "UTF-8"
         And the type is "array"
         And the response has 63 records
+
+
+    Scenario: Delete a user when assigned to a process and has initiated cases
+        Given that I want to delete a "User"
+        And I request "user/24166330352d56730cdd525035621101"
+        Then the response status code should be 400
+        And the response status message should have the following text "cannot be deleted"

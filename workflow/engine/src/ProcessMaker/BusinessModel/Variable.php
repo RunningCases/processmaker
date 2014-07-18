@@ -36,15 +36,45 @@ class Variable
                 if ($variable->validate()) {
                     $cnn->begin();
 
-                    $variable->setVarName($arrayData["VAR_NAME"]);
-                    $variable->setVarFieldType($arrayData["VAR_FIELD_TYPE"]);
-                    $variable->setVarFieldSize($arrayData["VAR_FIELD_SIZE"]);
-                    $variable->setVarLabel($arrayData["VAR_LABEL"]);
-                    $variable->setVarDbconnection($arrayData["VAR_DBCONNECTION"]);
-                    $variable->setVarSql($arrayData["VAR_SQL"]);
-                    $variable->setVarNull($arrayData["VAR_NULL"]);
-                    $variable->setVarDefault($arrayData["VAR_DEFAULT"]);
-                    $variable->setVarAcceptedValues($arrayData["VAR_ACCEPTED_VALUES"]);
+                    if (isset($arrayData["VAR_NAME"])) {
+                        $variable->setVarName($arrayData["VAR_NAME"]);
+                    } else {
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_name' )));
+                    }
+                    if (isset($arrayData["VAR_FIELD_TYPE"])) {
+                        $variable->setVarFieldType($arrayData["VAR_FIELD_TYPE"]);
+                    } else {
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_field_type' )));
+                    }
+                    if (isset($arrayData["VAR_FIELD_SIZE"])) {
+                        $variable->setVarFieldSize($arrayData["VAR_FIELD_SIZE"]);
+                    }
+                    if (isset($arrayData["VAR_LABEL"])) {
+                        $variable->setVarLabel($arrayData["VAR_LABEL"]);
+                    } else {
+                        throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_label' )));
+                    }
+                    if (isset($arrayData["VAR_DBCONNECTION"])) {
+                        $variable->setVarDbconnection($arrayData["VAR_DBCONNECTION"]);
+                    } else {
+                        $variable->setVarDbconnection("");
+                    }
+                    if (isset($arrayData["VAR_SQL"])) {
+                        $variable->setVarSql($arrayData["VAR_SQL"]);
+                    } else {
+                        $variable->setVarSql("");
+                    }
+                    if (isset($arrayData["VAR_NULL"])) {
+                        $variable->setVarNull($arrayData["VAR_NULL"]);
+                    } else {
+                        $variable->setVarNull(0);
+                    }
+                    if (isset($arrayData["VAR_DEFAULT"])) {
+                        $variable->setVarDefault($arrayData["VAR_DEFAULT"]);
+                    }
+                    if (isset($arrayData["VAR_ACCEPTED_VALUES"])) {
+                        $variable->setVarAcceptedValues($arrayData["VAR_ACCEPTED_VALUES"]);
+                    }
 
                     $variable->save();
                     $cnn->commit();
@@ -66,12 +96,10 @@ class Variable
             }
 
             //Return
-            unset($arrayData["PRJ_UID"]);
+            $variable = $this->getVariable($processUid, $sPkProcessVariables);
 
-            $arrayData = array_merge(array("VAR_UID" => $sPkProcessVariables), $arrayData);
-            $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+            return $variable;
 
-            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -94,7 +122,7 @@ class Variable
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
             $this->throwExceptionFieldDefinition($arrayData);
-            $this->existsName($processUid, $arrayData["VAR_NAME"]);
+
             //Update
             $cnn = \Propel::getConnection("workflow");
             try {
@@ -104,17 +132,34 @@ class Variable
 
                 if ($variable->validate()) {
                     $cnn->begin();
-
-                    $variable->setVarName($arrayData["VAR_NAME"]);
-                    $variable->setVarFieldType($arrayData["VAR_FIELD_TYPE"]);
-                    $variable->setVarFieldSize($arrayData["VAR_FIELD_SIZE"]);
-                    $variable->setVarLabel($arrayData["VAR_LABEL"]);
-                    $variable->setVarDbconnection($arrayData["VAR_DBCONNECTION"]);
-                    $variable->setVarSql($arrayData["VAR_SQL"]);
-                    $variable->setVarNull($arrayData["VAR_NULL"]);
-                    $variable->setVarDefault($arrayData["VAR_DEFAULT"]);
-                    $variable->setVarAcceptedValues($arrayData["VAR_ACCEPTED_VALUES"]);
-
+                    if (isset($arrayData["VAR_NAME"])) {
+                        $this->existsName($processUid, $arrayData["VAR_NAME"]);
+                        $variable->setVarName($arrayData["VAR_NAME"]);
+                    }
+                    if (isset($arrayData["VAR_FIELD_TYPE"])) {
+                        $variable->setVarFieldType($arrayData["VAR_FIELD_TYPE"]);
+                    }
+                    if (isset($arrayData["VAR_FIELD_SIZE"])) {
+                        $variable->setVarFieldSize($arrayData["VAR_FIELD_SIZE"]);
+                    }
+                    if (isset($arrayData["VAR_LABEL"])) {
+                        $variable->setVarLabel($arrayData["VAR_LABEL"]);
+                    }
+                    if (isset($arrayData["VAR_DBCONNECTION"])) {
+                        $variable->setVarDbconnection($arrayData["VAR_DBCONNECTION"]);
+                    }
+                    if (isset($arrayData["VAR_SQL"])) {
+                        $variable->setVarSql($arrayData["VAR_SQL"]);
+                    }
+                    if (isset($arrayData["VAR_NULL"])) {
+                        $variable->setVarNull($arrayData["VAR_NULL"]);
+                    }
+                    if (isset($arrayData["VAR_DEFAULT"])) {
+                        $variable->setVarDefault($arrayData["VAR_DEFAULT"]);
+                    }
+                    if (isset($arrayData["VAR_ACCEPTED_VALUES"])) {
+                        $variable->setVarAcceptedValues($arrayData["VAR_ACCEPTED_VALUES"]);
+                    }
                     $variable->save();
                     $cnn->commit();
                 } else {
@@ -210,11 +255,11 @@ class Variable
                     'prj_uid' => $aRow['PRJ_UID'],
                     'var_name' => $aRow['VAR_NAME'],
                     'var_field_type' => $aRow['VAR_FIELD_TYPE'],
-                    'var_field_size' => $aRow['VAR_FIELD_SIZE'],
+                    'var_field_size' => (int)$aRow['VAR_FIELD_SIZE'],
                     'var_label' => $aRow['VAR_LABEL'],
                     'var_dbconnection' => $aRow['VAR_DBCONNECTION'],
                     'var_sql' => $aRow['VAR_SQL'],
-                    'var_null' => $aRow['VAR_NULL'],
+                    'var_null' => (int)$aRow['VAR_NULL'],
                     'var_default' => $aRow['VAR_DEFAULT'],
                     'var_accepted_values' => $aRow['VAR_ACCEPTED_VALUES']);
                 $rsCriteria->next();
@@ -270,11 +315,11 @@ class Variable
                     'prj_uid' => $aRow['PRJ_UID'],
                     'var_name' => $aRow['VAR_NAME'],
                     'var_field_type' => $aRow['VAR_FIELD_TYPE'],
-                    'var_field_size' => $aRow['VAR_FIELD_SIZE'],
+                    'var_field_size' => (int)$aRow['VAR_FIELD_SIZE'],
                     'var_label' => $aRow['VAR_LABEL'],
                     'var_dbconnection' => $aRow['VAR_DBCONNECTION'],
                     'var_sql' => $aRow['VAR_SQL'],
-                    'var_null' => $aRow['VAR_NULL'],
+                    'var_null' => (int)$aRow['VAR_NULL'],
                     'var_default' => $aRow['VAR_DEFAULT'],
                     'var_accepted_values' => $aRow['VAR_ACCEPTED_VALUES']);
                 $rsCriteria->next();
@@ -298,23 +343,22 @@ class Variable
         try {
             if (isset($aData["VAR_NAME"])) {
                 Validator::isString($aData['VAR_NAME'], '$var_name');
-            } else {
-                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_name' )));
+                Validator::isNotEmpty($aData['VAR_NAME'], '$var_name');
             }
             if (isset($aData["VAR_FIELD_TYPE"])) {
                 Validator::isString($aData['VAR_FIELD_TYPE'], '$var_field_type');
-            } else {
-                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_field_type' )));
+                Validator::isNotEmpty($aData['VAR_FIELD_TYPE'], '$var_field_type');
+                if ($aData["VAR_FIELD_TYPE"] != 'string' && $aData["VAR_FIELD_TYPE"] != 'integer' && $aData["VAR_FIELD_TYPE"] != 'boolean' && $aData["VAR_FIELD_TYPE"] != 'float' &&
+                    $aData["VAR_FIELD_TYPE"] != 'datetime' && $aData["VAR_FIELD_TYPE"] != 'date_of_birth' && $aData["VAR_FIELD_TYPE"] != 'date') {
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('$var_field_type')));
+                }
             }
             if (isset($aData["VAR_FIELD_SIZE"])) {
                 Validator::isInteger($aData["VAR_FIELD_SIZE"], '$var_field_size');
-            } else {
-                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_field_size' )));
             }
             if (isset($aData["VAR_LABEL"])) {
                 Validator::isString($aData['VAR_LABEL'], '$var_label');
-            } else {
-                throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_label' )));
+                Validator::isNotEmpty($aData['VAR_LABEL'], '$var_label');
             }
             if (isset($aData["VAR_DBCONNECTION"])) {
                 Validator::isString($aData['VAR_DBCONNECTION'], '$var_dbconnection');
@@ -327,9 +371,6 @@ class Variable
                 if ($aData["VAR_NULL"] != 0 && $aData["VAR_NULL"] !=1 ) {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES", array('$var_null','0, 1' )));
                 }
-            }
-            if (isset($aData["VAR_DEFAULT"])) {
-                Validator::isString($aData['VAR_DEFAULT'], '$var_default');
             }
             if (isset($aData["VAR_ACCEPTED_VALUES"])) {
                 Validator::isString($aData['VAR_ACCEPTED_VALUES'], '$var_accepted_values');
