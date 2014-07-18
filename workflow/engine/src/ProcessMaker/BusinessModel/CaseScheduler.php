@@ -469,13 +469,12 @@ class CaseScheduler
                         $sDateTmp = date('Y-m-d');
                         $caseSchedulerData['SCH_START_DATE'] = $sDateTmp;
                     }
-                    $caseSchedulerData['SCH_END_DATE'] = date('Y-m-d', strtotime( $sDateTmp )) . ' ' . date('H:i:s', strtotime( $sTimeTmp ));
                     $caseSchedulerData['SCH_START_TIME'] = time();
                     $caseSchedulerData['SCH_START_DATE'] = $caseSchedulerData['SCH_START_TIME'];
                     if ($caseSchedulerData['SCH_REPEAT_EVERY'] == "") {
                         throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_repeat_every')));
                     }
-                    $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
+                    $patternHour="/^([0-9]|0[0-9]|1[0-9]|2[0-3]).[0-5][0-9]$/";
                     if (!preg_match($patternHour, $caseSchedulerData['SCH_REPEAT_EVERY'])) {
                         throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_REPEAT"));
                     }
@@ -676,7 +675,7 @@ class CaseScheduler
                             throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_day_opt_2')));
                         }
                         $caseSchedulerData['SCH_START_DAY'] = $nStartDay . '|' . $caseSchedulerData['SCH_START_DAY_OPT_2'];
-                            $optionTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{0};
+                        $optionTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{0};
                         if ($optionTwo == "1" || $optionTwo == "2" || $optionTwo == "3" || $optionTwo == "4" || $optionTwo == "5") {
                             $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
@@ -764,13 +763,12 @@ class CaseScheduler
                         $sDateTmp = date('Y-m-d');
                         $caseSchedulerData['SCH_START_DATE'] = $sDateTmp;
                     }
-                    $caseSchedulerData['SCH_END_DATE'] = date('Y-m-d', strtotime($sDateTmp)) . ' ' . date('H:i:s', strtotime($sTimeTmp));
                     $caseSchedulerData['SCH_START_TIME'] = time();
                     $caseSchedulerData['SCH_START_DATE'] = $caseSchedulerData['SCH_START_TIME'];
                     if ($caseSchedulerData['SCH_REPEAT_EVERY'] == "") {
                         throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_repeat_every')));
                     }
-                    $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
+                    $patternHour="/^([0-9]|0[0-9]|1[0-9]|2[0-3]).[0-5][0-9]$/";
                     if (!preg_match($patternHour, $caseSchedulerData['SCH_REPEAT_EVERY'])) {
                         throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_REPEAT"));
                     }

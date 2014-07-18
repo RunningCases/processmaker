@@ -78,6 +78,10 @@ class RestContext extends BehatContext
             throw new \Exception('Parameters not loaded!');
         } else {
             $parameters = $this->_parameters;
+
+            if(($name=="uploadFilesFolder")&&(!isset($parameters[$name]) ) ){
+                $parameters[$name] = "/opt/uploadfiles/";
+            }
             return (isset($parameters[$name])) ? $parameters[$name] : null;
         }
     }
@@ -1362,6 +1366,7 @@ class RestContext extends BehatContext
     */
     public function postIWantToUploadTheFileToPathPublicUrl($prfFile, $prfPath, $url)
     {
+        $prfFile = $this->getParameter('uploadFilesFolder') . $prfFile;
         $baseUrl = $this->getParameter('base_url');
         $url = $baseUrl.$url;
         $accesstoken = $this->getParameter('access_token');
@@ -1421,6 +1426,7 @@ class RestContext extends BehatContext
     */
     public function postIWantToUploadTheImageToUser($imageFile, $usrUid, $url)
     {
+        $imageFile = $this->getParameter('uploadFilesFolder') . $imageFile;
         $baseUrl = $this->getParameter('base_url');
         $url = $baseUrl.$url.$usrUid."/image-upload";
         
@@ -1462,6 +1468,7 @@ class RestContext extends BehatContext
         }
 
         $usrUid = $varValue;
+        $imageFile = $imageFile;
 
         $this->postIWantToUploadTheImageToUser($imageFile, $usrUid, $url);
     }
@@ -1518,6 +1525,7 @@ class RestContext extends BehatContext
      */
     public function postUploadAnInputDocumentTo($file, $url, PyStringNode $string)
     {
+        $file = $this->getParameter('uploadFilesFolder') . $file;
         $postFields = json_decode($string);
         $postFields->form ='@'.$file;
        
@@ -1533,6 +1541,7 @@ class RestContext extends BehatContext
      */
     public function postUploadAProjectFile($file, $url)
     {
+        $file = $this->getParameter('uploadFilesFolder') . $file;
         $postFields = new StdClass();
         $postFields->project_file ='@'.$file;
        
@@ -1637,7 +1646,7 @@ class RestContext extends BehatContext
 
 
         }
-        
+        $destinationFolder = $this->getParameter('uploadFilesFolder') . $destinationFolder;
         $exportedProcessFileName = $destinationFolder.str_replace(" ","_",$exportedProcessFileName).".pmx";
 
         $this->printDebug("Exporting process to: $exportedProcessFileName");
@@ -1646,6 +1655,50 @@ class RestContext extends BehatContext
         chmod($exportedProcessFileName, 0777);
 
 
+    }
+
+
+     /**
+     * @Given /^POST a dynaform:$/
+     */
+    public function postADynaform(PyStringNode $string)
+    {
+        $postFields = json_decode($string);
+        
+        if ((isset($postFields->dyn_content))&&(file_exists($this->getParameter('uploadFilesFolder') . $postFields->dyn_content))) {
+            $postFields->dyn_content = $this->getParameter('uploadFilesFolder') . $postFields->dyn_content;
+            $this->printDebug("Extracting dyanform content from: ".$postFields->dyn_content."\n");
+            $postFields->dyn_content = file_get_contents($postFields->dyn_content);
+            
+            $string = json_encode($postFields);
+        }
+
+
+
+        $this->_restObjectMethod = 'post';
+        $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
+        $this->_requestBody = $string;
+    }
+
+    /**
+     * @Given /^PUT a dynaform:$/
+     */
+    public function putADynaform(PyStringNode $string)
+    {
+        $postFields = json_decode($string);
+
+        if ((isset($postFields->dyn_content))&&(file_exists($this->getParameter('uploadFilesFolder') . $postFields->dyn_content))) {
+            $postFields->dyn_content = $this->getParameter('uploadFilesFolder') . $postFields->dyn_content;
+            $this->printDebug("Extracting dyanform content from: ".$postFields->dyn_content."\n");
+            $postFields->dyn_content = file_get_contents($postFields->dyn_content);
+            
+            $string = json_encode($postFields);
+        }
+
+
+        $this->_restObjectMethod = 'put';
+        $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
+        $this->_requestBody = $string;
     }
 
     /**

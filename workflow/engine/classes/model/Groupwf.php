@@ -316,6 +316,7 @@ class Groupwf extends BaseGroupwf
             $rows[] = $rs->getRow();
         }
 
+        $result = new stdClass();
         $result->data = $rows;
         $result->totalCount = $totalCount;
 

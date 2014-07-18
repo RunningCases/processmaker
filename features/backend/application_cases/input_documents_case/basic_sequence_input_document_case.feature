@@ -23,7 +23,7 @@ Scenario: Returns an uploaded documents for a given case
     
 
 Scenario: Post metadata and then upload documents for a given case
-        Given POST upload an input document "/home/wendy/uploadfiles/test1.html" to "cases/170220159534214f642abb8058832933/input-document"
+        Given POST upload an input document "test1.html" to "cases/170220159534214f642abb8058832933/input-document"
             """
             {
 

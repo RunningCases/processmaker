@@ -145,6 +145,7 @@ class Dashboard extends Controller
             $oConfiguration->aConfig = $dataDashboard;
             $oConfiguration->saveConfig('Dashboard', '', '', $_SESSION['USER_LOGGED']);
 
+            $result = new stdClass();
             $result->success = '1';
             return $result;
         } catch (Exception $error) {

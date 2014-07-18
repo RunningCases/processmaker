@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: ProcessMaker 2.5.1.1\n"
+"Project-Id-Version: ProcessMaker 2.5.2.3\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-06-11 09:56:42\n"
+"PO-Revision-Date: 2014-07-03 12:29:08\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -16296,6 +16296,48 @@ msgstr "A trigger with the same name already exists in this process."
 #: LABEL/ID_CASE_DOES_NOT_EXIST2
 msgid "The case with {0}: {1} does not exist."
 msgstr "The case with {0}: {1} does not exist."
+
+# TRANSLATION
+# LABEL/ID_CATEGORY_NAME_ALREADY_EXISTS
+#: LABEL/ID_CATEGORY_NAME_ALREADY_EXISTS
+msgid "The category name with {0}: \"{1}\" already exists."
+msgstr "The category name with {0}: \"{1}\" already exists."
+
+# TRANSLATION
+# LABEL/ID_MSG_CONFIRM_DELETE_USER_ASSINGED_SUPERVISOR
+#: LABEL/ID_MSG_CONFIRM_DELETE_USER_ASSINGED_SUPERVISOR
+msgid "The user can not be deleted while this assigned as a supervisor. Want removed anyway?"
+msgstr "The user can not be deleted while this assigned as a supervisor. Want removed anyway?"
+
+# TRANSLATION
+# LABEL/ID_NAME_STG_TITLE_REQUIRE
+#: LABEL/ID_NAME_STG_TITLE_REQUIRE
+msgid "Stage title required"
+msgstr "Stage title required"
+
+# TRANSLATION
+# LABEL/ID_INPUT_DOCUMENT_ITS_ASSIGNED
+#: LABEL/ID_INPUT_DOCUMENT_ITS_ASSIGNED
+msgid "The Input Document with {0}: {1} it's assigned in \"{2}\"."
+msgstr "The Input Document with {0}: {1} it's assigned in \"{2}\"."
+
+# TRANSLATION
+# LABEL/ID_PROCESS_VARIABLE_DOES_NOT_EXIST
+#: LABEL/ID_PROCESS_VARIABLE_DOES_NOT_EXIST
+msgid "The variable with {0}: {1} does not exist."
+msgstr "The variable with {0}: {1} does not exist."
+
+# TRANSLATION
+# LABEL/ID_PROCESS_VARIABLE_REQUIRED_VARIABLES_FOR_QUERY
+#: LABEL/ID_PROCESS_VARIABLE_REQUIRED_VARIABLES_FOR_QUERY
+msgid "The variable \"{0}\" required the variables \"{1}\" for the query."
+msgstr "The variable \"{0}\" required the variables \"{1}\" for the query."
+
+# TRANSLATION
+# LABEL/ID_OUTPUT_DOCUMENT_ITS_ASSIGNED
+#: LABEL/ID_OUTPUT_DOCUMENT_ITS_ASSIGNED
+msgid "The Output Document with {0}: {1} it's assigned in \"{2}\"."
+msgstr "The Output Document with {0}: {1} it's assigned in \"{2}\"."
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
