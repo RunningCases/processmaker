@@ -71,7 +71,8 @@ class Bpmn extends Handler
             "PRJ_UID", "PRO_UID", "BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
             "BOU_SIZE_IDENTICAL", "DIA_UID", "BOU_UID", "ELEMENT_UID"
         ),
-        "flow" => array("PRJ_UID", "DIA_UID", "FLO_ELEMENT_DEST_PORT", "FLO_ELEMENT_ORIGIN_PORT")
+        "flow" => array("PRJ_UID", "DIA_UID", "FLO_ELEMENT_DEST_PORT", "FLO_ELEMENT_ORIGIN_PORT"),
+        "data" => array("PRJ_UID"),
     );
 
 
@@ -787,6 +788,89 @@ class Bpmn extends Handler
             throw $e;
         }
     }
+
+    //////1111
+    public function addData($data)
+    {
+        // setting defaults
+        $data['DATA_UID'] = array_key_exists('DAT_UID', $data) ? $data['DAT_UID'] : Common::generateUID();
+        try {
+            self::log("Add BpmnData with data: ", $data);
+            $bpmnData = new \BpmnData();
+            $bpmnData->fromArray($data, BasePeer::TYPE_FIELDNAME);
+            $bpmnData->setPrjUid($this->getUid());
+            $bpmnData->setProUid($this->getProcess("object")->getProUid());
+            $bpmnData->save();
+            self::log("Add BpmnData Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+
+        return $bpmnData->getDatUid();
+    }
+
+    public function updateData($datUid, $data)
+    {
+        try {
+            self::log("Update BpmnData: $datUid", "With data: ", $data);
+
+            $bpmnData = ArtifactPeer::retrieveByPk($datUid);
+
+            $bpmnData->fromArray($data);
+            $bpmnData->save();
+
+            self::log("Update BpmnData Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function getData($datUid, $retType = 'array')
+    {
+        $bpmnData = ArtifactPeer::retrieveByPK($datUid);
+
+        if ($retType != "object" && ! empty($bpmnData)) {
+            $bpmnData = $bpmnData->toArray();
+            $bpmnData = self::filterArrayKeys($bpmnData, self::$excludeFields["data"]);
+        }
+
+        return $bpmnData;
+    }
+
+    public function getDataCollection($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        $filter = $changeCaseTo != CASE_UPPER ? array_map("strtolower", self::$excludeFields["data"]) : self::$excludeFields["data"];
+
+        return self::filterCollectionArrayKeys(
+            \BpmnData::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo),
+            $filter
+        );
+    }
+
+    public function removeData($datUid)
+    {
+        try {
+            self::log("Remove BpmnData: $datUid");
+
+            $bpmnData = \BpmnDataPeer::retrieveByPK($datUid);
+            $bpmnData->delete();
+
+            // remove related object (flows)
+            Flow::removeAllRelated($datUid);
+
+            self::log("Remove BpmnData Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+    //////2222
 
     public function addLane($data)
     {
