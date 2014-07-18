@@ -1026,10 +1026,9 @@ class DynaForm
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
 
-            while ($aRow = $rsCriteria->getRow()) {
-                $contentDecode = json_decode($aRow['DYN_CONTENT'],true);
-                $rsCriteria->next();
-            }
+            $aRow = $rsCriteria->getRow();
+            $contentDecode = json_decode($aRow['DYN_CONTENT'],true);
+
             $content = $contentDecode['items'][0]['items'];
 
             foreach ($content as $key => $value) {
@@ -1116,8 +1115,7 @@ class DynaForm
                             $optionsMerged = $options;
                         }
 
-
-                        $arrayVariables[] = array(  'variable' => $aRow['VAR_NAME'],
+                        $arrayVariables[] = array(  'variable' => $variable,
                                                     'valueType' => $valueTypeMerged,
                                                     'maxLength' => $maxLengthMerged,
                                                     'label' => $labelMerged,
@@ -1136,19 +1134,18 @@ class DynaForm
                                                     'placeHolder' => $placeHolder,
                                                     'pickType' => $pickType);
                         $rsCriteria->next();
+
                     }
 
                 } else {
-                    $arrayVariables[] = array(  'variable' => $aRow['VAR_NAME'],
-                                                'valueType' => $valueTypeMerged,
-                                                'maxLength' => $maxLengthMerged,
-                                                'label' => $labelMerged,
-                                                'defaultValue' => $defaultValueMerged,
-                                                'required' => $requiredMerged,
-                                                'dbConnection' => $dbConnectionMerged,
-                                                'sql' => $sqlMerged,
-                                                'options' => $optionsMerged,
-                                                //values from fields properties
+                    $arrayVariables[] = array(  'valueType' => $valueType,
+                                                'maxLength' => $maxLength,
+                                                'label' => $label,
+                                                'defaultValue' => $defaultValue,
+                                                'required' => $required,
+                                                'dbConnection' => $dbConnection,
+                                                'sql' => $sql,
+                                                'options' => $options,
                                                 'type' => $type,
                                                 'colSpan' => $colSpan,
                                                 'name' => $name,
