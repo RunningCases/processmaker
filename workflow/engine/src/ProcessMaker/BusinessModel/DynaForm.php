@@ -1013,57 +1013,154 @@ class DynaForm
     public function getDynaFormFields($projectUid, $dynaFormUid)
     {
         try {
-
+            $arrayVariables = array();
             //Verify data
             Validator::proUid($projectUid, '$prj_uid');
             $this->throwExceptionIfNotExistsDynaForm($dynaFormUid, "", $this->arrayFieldNameForException["dynaFormUid"]);
 
             //Get data
             $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_UID);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::PRJ_UID);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_TYPE);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_SIZE);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_LABEL);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DBCONNECTION);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_SQL);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NULL);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DEFAULT);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_ACCEPTED_VALUES);
-
-            $criteria->add(\ProcessVariablesPeer::PRJ_UID, $projectUid, \Criteria::EQUAL);
-
-            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
-
+            $criteria->addSelectColumn(\DynaformPeer::DYN_CONTENT);
+            $criteria->add(\DynaformPeer::DYN_UID, $dynaFormUid, \Criteria::EQUAL);
+            $rsCriteria = \DynaformPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
             $rsCriteria->next();
-            $arrayVariables = array();
 
             while ($aRow = $rsCriteria->getRow()) {
-                if ($aRow['VAR_NULL'] == 1) {
-                    $required = true;
-                } else {
-                    $required = false;
-                }
-                $arrayVariables[] = array('var_uid' => $aRow['VAR_UID'],
-                                        'name' => $aRow['VAR_NAME'],
-                                        'valueType' => $aRow['VAR_FIELD_TYPE'],
-                                        'maxLength' => (int)$aRow['VAR_FIELD_SIZE'],
-                                        'label' => $aRow['VAR_LABEL'],
-                                        'dbConnection' => $aRow['VAR_DBCONNECTION'],
-                                        'sql' => $aRow['VAR_SQL'],
-                                        'required' => $required,
-                                        'default' => $aRow['VAR_DEFAULT'],
-                                        'options' => $aRow['VAR_ACCEPTED_VALUES']);
+                $contentDecode = json_decode($aRow['DYN_CONTENT'],true);
                 $rsCriteria->next();
+            }
+            $content = $contentDecode['items'][0]['items'];
+
+            foreach ($content as $key => $value) {
+
+                $valueType = (isset($value[0]["valueType"])) ? $value[0]["valueType"]:null;
+                $maxLength = (isset($value[0]["maxLength"])) ? $value[0]["maxLength"]:null;
+                $label = (isset($value[0]["label"])) ? $value[0]["label"]:null;
+                $defaultValue = (isset($value[0]["defaultValue"])) ? $value[0]["defaultValue"]:null;
+                $required = (isset($value[0]["required"])) ? $value[0]["required"]:null;
+                $dbConnection = (isset($value[0]["dbConnection"])) ? $value[0]["dbConnection"]:null;
+                $sql = (isset($value[0]["sql"])) ? $value[0]["sql"]:null;
+                $options = (isset($value[0]["options"])) ? $value[0]["options"]:null;
+                //fields properties
+                $type = (isset($value[0]["type"])) ? $value[0]["type"]:null;
+                $colSpan = (isset($value[0]["colSpan"])) ? $value[0]["colSpan"]:null;
+                $name = (isset($value[0]["name"])) ? $value[0]["name"]:null;
+                $readonly = (isset($value[0]["readonly"])) ? $value[0]["readonly"]:null;
+                $hint = (isset($value[0]["hint"])) ? $value[0]["hint"]:null;
+                $dependentsField = (isset($value[0]["dependentsField"])) ? $value[0]["dependentsField"]:null;
+                $placeHolder = (isset($value[0]["placeHolder"])) ? $value[0]["placeHolder"]:null;
+                $pickType = (isset($value[0]["pickType"])) ? $value[0]["pickType"]:null;
+
+                if (isset($value[0]["variable"])) {
+                    $variable = $value[0]["variable"];
+
+                    $criteria = new \Criteria("workflow");
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_UID);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::PRJ_UID);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_TYPE);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_SIZE);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_LABEL);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DBCONNECTION);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_SQL);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NULL);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DEFAULT);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_ACCEPTED_VALUES);
+                    $criteria->add(\ProcessVariablesPeer::PRJ_UID, $projectUid, \Criteria::EQUAL);
+                    $criteria->add(\ProcessVariablesPeer::VAR_NAME, $variable, \Criteria::EQUAL);
+                    $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+                    $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                    $rsCriteria->next();
+
+                    while ($aRow = $rsCriteria->getRow()) {
+
+                        if ($valueType == null && $valueType == '') {
+                            $valueTypeMerged = $aRow['VAR_FIELD_TYPE'];
+                        } else {
+                            $valueTypeMerged = $valueType;
+                        }
+                        if ($maxLength == null && $maxLength == '') {
+                            $maxLengthMerged = (int)$aRow['VAR_FIELD_SIZE'];
+                        } else {
+                            $maxLengthMerged = $maxLength;
+                        }
+                        if ($label == null && $label == '') {
+                            $labelMerged = $aRow['VAR_LABEL'];
+                        } else {
+                            $labelMerged = $label;
+                        }
+                        if ($defaultValue == null && $defaultValue == '') {
+                            $defaultValueMerged = $aRow['VAR_DEFAULT'];
+                        } else {
+                            $defaultValueMerged = $defaultValue;
+                        }
+                        if ($required == null && $required == '') {
+                            $requiredMerged = ($aRow['VAR_NULL']==1) ? true:false;
+                        } else {
+                            $requiredMerged = $required;
+                        }
+                        if ($dbConnection == null && $dbConnection == '') {
+                            $dbConnectionMerged = $aRow['VAR_DBCONNECTION'];
+                        } else {
+                            $dbConnectionMerged = $dbConnection;
+                        }
+                        if ($sql == null && $sql == '') {
+                            $sqlMerged = $aRow['VAR_SQL'];
+                        } else {
+                            $sqlMerged = $sql;
+                        }
+                        if ($options == null && $options == '') {
+                            $optionsMerged = $aRow['VAR_ACCEPTED_VALUES'];
+                        } else {
+                            $optionsMerged = $options;
+                        }
+
+
+                        $arrayVariables[] = array(  'variable' => $aRow['VAR_NAME'],
+                                                    'valueType' => $valueTypeMerged,
+                                                    'maxLength' => $maxLengthMerged,
+                                                    'label' => $labelMerged,
+                                                    'defaultValue' => $defaultValueMerged,
+                                                    'required' => $requiredMerged,
+                                                    'dbConnection' => $dbConnectionMerged,
+                                                    'sql' => $sqlMerged,
+                                                    'options' => $optionsMerged,
+                                                    //values from fields properties
+                                                    'type' => $type,
+                                                    'colSpan' => $colSpan,
+                                                    'name' => $name,
+                                                    'readonly' => $readonly,
+                                                    'hint' => $hint,
+                                                    'dependentsField' => $dependentsField,
+                                                    'placeHolder' => $placeHolder,
+                                                    'pickType' => $pickType);
+                        $rsCriteria->next();
+                    }
+
+                } else {
+                    $arrayVariables[] = array(  'variable' => $aRow['VAR_NAME'],
+                                                'valueType' => $valueTypeMerged,
+                                                'maxLength' => $maxLengthMerged,
+                                                'label' => $labelMerged,
+                                                'defaultValue' => $defaultValueMerged,
+                                                'required' => $requiredMerged,
+                                                'dbConnection' => $dbConnectionMerged,
+                                                'sql' => $sqlMerged,
+                                                'options' => $optionsMerged,
+                                                //values from fields properties
+                                                'type' => $type,
+                                                'colSpan' => $colSpan,
+                                                'name' => $name,
+                                                'readonly' => $readonly,
+                                                'hint' => $hint,
+                                                'dependentsField' => $dependentsField,
+                                                'placeHolder' => $placeHolder,
+                                                'pickType' => $pickType);
+                }
             }
             //Return
             return $arrayVariables;
-
-
 
         } catch (\Exception $e) {
             throw $e;
