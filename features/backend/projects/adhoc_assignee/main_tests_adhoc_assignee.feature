@@ -132,4 +132,63 @@ Requirements:
     And the type is "array"
 
 
+
+#BUG 15041 Inactive Groups are display in list of available groups Accounting
+
+Scenario Outline: BUG 15041 Get the list of available groups- Task2
+    Given I request "project/<project>/activity/<activity>/adhoc-available-assignee?filter=<filter>&start=<start>&limit=<limit>"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has <records> records
+    And the "ada_uid" property in row 0 equals "<ada_uid>"
+    And the "ada_type" property in row 0 equals "<ada_type>"
+
+    Examples:
+    | test_description                | project                          | activity                         | filter     | start | limit | records | ada_uid                          | ada_type|
+    | "Accounting" group is available | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | Accounting | 0     | 50    | 1       | 54731929352d56741de9d42002704749 | group   |
+    
+
+Scenario: BUG 15041 Update Group to disable group 
+        Given PUT this data:
+        """
+        {
+            "grp_title": "Accounting",
+            "grp_status": "INACTIVE"
+        }
+        """
+        And I request "group/54731929352d56741de9d42002704749"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "object"
+
+
+Scenario Outline: BUG 15041 Get the list of available users and groups to be assigned to an activity using filter
+    Given I request "project/<project>/activity/<activity>/adhoc-available-assignee?filter=<filter>&start=<start>&limit=<limit>"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has <records> records
+    
+    Examples:
+    | test_description                | project                          | activity                         | filter     | start | limit | records |
+    | "Accounting" group is available | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | Accounting | 0     | 50    | 0       |
+            
+
+Scenario: BUG 15041 Update Group to enable group 
+        Given PUT this data:
+        """
+        {
+            "grp_title": "Accounting",
+            "grp_status": "ACTIVE"
+        }
+        """
+        And I request "group/54731929352d56741de9d42002704749"
+        And the content type is "application/json"
+        Then the response status code should be 200
+        And the response charset is "UTF-8"
+        And the type is "object"
   
