@@ -673,6 +673,7 @@ class BpmnWorkflow extends Project\Bpmn
             $diagram["laneset"] = $bwp->getLanesets($configList);
             $diagram["lanes"] = $bwp->getLanes($configList);
             $diagram["data"] = $bwp->getDataCollection($configList);
+            $diagram["participants"] = $bwp->getParticipants($configList);
             $project["diagrams"][] = $diagram;
         }
 
@@ -959,6 +960,53 @@ class BpmnWorkflow extends Project\Bpmn
             if (! in_array($dataObjectData["DAT_UID"], $whiteList)) {
                 // If it is not in the white list, then remove them
                 $bwp->removeData($dataObjectData["DAT_UID"]);
+            }
+        }
+
+        ////
+        /*
+         * Diagram's Participant Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["participants"] as $i => $participantData) {
+            $participantData = array_change_key_case($participantData, CASE_UPPER);
+            unset($participantData["_EXTENDED"]);
+
+            $dataObject = $bwp->getParticipant($participantData["PAR_UID"]);
+
+            if ($forceInsert || is_null($dataObject)) {
+                if ($generateUid) {
+                    //Event
+                    unset($participantData["BOU_UID"]);
+
+                    $uidOld = $participantData["PAR_UID"];
+                    $participantData["PAR_UID"] = Util\Common::generateUID();
+
+                    $result[] = array(
+                        "object"  => "participant",
+                        "old_uid" => $uidOld,
+                        "new_uid" => $participantData["PAR_UID"]
+                    );
+                }
+
+                $bwp->addParticipant($participantData);
+            } elseif (! $bwp->isEquals($dataObject, $participantData)) {
+                $bwp->updateParticipant($participantData["PAR_UID"], $participantData);
+            } else {
+                Util\Logger::log("Update Participant ({$participantData["PAR_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["participant"][$i] = $participantData;
+            $whiteList[] = $participantData["PAR_UID"];
+        }
+
+        $dataCollection = $bwp->getParticipants();
+
+        // looking for removed elements
+        foreach ($dataCollection as $participantData) {
+            if (! in_array($participantData["PAR_UID"], $whiteList)) {
+                // If it is not in the white list, then remove them
+                $bwp->removeParticipant($participantData["PAR_UID"]);
             }
         }
 

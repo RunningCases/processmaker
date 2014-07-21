@@ -270,7 +270,8 @@ try {
             $ds->next();
             $row = $ds->getRow();
             if (isset($row) && $row["DYN_VERSION"] == 2) {
-                $oTemplatePower = new TemplatePower(PATH_TPL . 'cases/cases_Step_Pmdynaform.html');
+                //$oTemplatePower = new TemplatePower(PATH_TPL . 'cases/cases_Step_Pmdynaform.html');
+                $oTemplatePower = new TemplatePower(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform.html');
                 $oTemplatePower->prepare();
                 $oTemplatePower->assign("JSON_DATA", $row["DYN_CONTENT"]);
                 $oTemplatePower->assign("CASE", $array["CASE"]);
