@@ -36,4 +36,41 @@ window.onload = function () {
             parent.setCurrent(dyn_uid);
         }
     }
+//    TYPE:ASSIGN_TASK
+//    UID:-1
+//    POSITION:10000
+//    ACTION:ASSIGN
+    var submit = document.getElementsByTagName("button");
+    $a = submit;
+    if (submit.length > 0) {
+        submit = submit[0];
+        var form = document.getElementsByTagName("form")[0];
+        $b = form;
+
+        var TYPE = document.createElement("input");
+        TYPE.type = "hidden";
+        TYPE.value = "ASSIGN_TASK";
+        TYPE.name = "TYPE";
+
+        var UID = document.createElement("input");
+        UID.type = "hidden";
+        UID.value = "-1";
+        UID.name = "UID";
+
+        var POSITION = document.createElement("input");
+        POSITION.type = "hidden";
+        POSITION.value = "10000";
+        POSITION.value = "POSITION";
+
+        var ACTION = document.createElement("input");
+        ACTION.type = "hidden";
+        ACTION.value = "ASSIGN";
+        ACTION.value = "ACTION";
+
+        form.appendChild(TYPE);
+        form.appendChild(UID);
+        form.appendChild(POSITION);
+        form.appendChild(ACTION);
+
+    }
 };
