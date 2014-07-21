@@ -1066,7 +1066,7 @@ class DynaForm
                         $maxLengthMerged = ($maxLength == null && $maxLength == '') ? (int)$aRow['VAR_FIELD_SIZE'] : $maxLength;
                         $labelMerged = ($label == null && $label == '') ? $aRow['VAR_LABEL'] : $label;
                         $defaultValueMerged = ($defaultValue == null && $defaultValue == '') ? $aRow['VAR_DEFAULT'] : $defaultValue;
-                        $requiredMerged =  ($required == null && $required == '') ? ($aRow['VAR_NULL']==1) ? true:false : $required;
+                        $requiredMerged =  ($required == null && $required == '') ? ($aRow['VAR_NULL']==1) ? false: true : $required;
                         $dbConnectionMerged = ($dbConnection == null && $dbConnection == '') ? $aRow['VAR_DBCONNECTION'] : $dbConnection;
                         $sqlMerged = ($sql == null && $sql == '') ? $aRow['VAR_SQL'] : $sql;
                         $optionsMerged = ($options == null && $options == '') ? $aRow['VAR_ACCEPTED_VALUES'] : $options;
