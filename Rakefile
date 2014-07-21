@@ -153,6 +153,38 @@ def buildPmdynaform(homeDir, targetDir, mode)
   system("rm #{pmdynaformDir}/build/appBuild.js")
   readyForm = ""
   system("echo '#{readyForm}' >> #{pmdynaformDir}/build/appBuild.js ")
+  system("cp #{Dir.pwd}/workflow/engine/templates/cases/cases_Step_Pmdynaform.html #{pmdynaformDir}/build/cases_Step_Pmdynaform.html")
+  system("cp #{Dir.pwd}/workflow/engine/templates/cases/cases_Step_Pmdynaform_Preview.html #{pmdynaformDir}/build/cases_Step_Pmdynaform_Preview.html")
+  
+  template = ""
+  config = File.read "#{homeDir}/config/templates.json"
+  json = JSON.parse config
+  json.each do |key|
+    s = ""
+    key["files"].each do |source|
+      s += File.read  "#{homeDir}/#{source}"
+      s += "\n"
+    end
+    template += s
+  end
+  
+  target = "#{pmdynaformDir}/build/cases_Step_Pmdynaform.html"
+  html = File.read target 
+  while html['###TEMPLATES##'] do
+    html['###TEMPLATES###'] = template
+  end
+  File.open(target, 'w+') do |file|
+    file.write html
+  end
+  
+  target = "#{pmdynaformDir}/build/cases_Step_Pmdynaform_Preview.html"
+  html = File.read target 
+  while html['###TEMPLATES##'] do
+    html['###TEMPLATES###'] = template
+  end
+  File.open(target, 'w+') do |file|
+    file.write html
+  end
   
   puts "\nPmDynaform Build Finished!".magenta
 end

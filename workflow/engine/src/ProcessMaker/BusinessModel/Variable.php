@@ -372,9 +372,6 @@ class Variable
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES", array('$var_null','0, 1' )));
                 }
             }
-            if (isset($aData["VAR_DEFAULT"])) {
-                Validator::isString($aData['VAR_DEFAULT'], '$var_default');
-            }
             if (isset($aData["VAR_ACCEPTED_VALUES"])) {
                 Validator::isString($aData['VAR_ACCEPTED_VALUES'], '$var_accepted_values');
             }
