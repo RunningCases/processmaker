@@ -1071,8 +1071,7 @@ class DynaForm
                         $sqlMerged = ($sql == null && $sql == '') ? $aRow['VAR_SQL'] : $sql;
                         $optionsMerged = ($options == null && $options == '') ? $aRow['VAR_ACCEPTED_VALUES'] : $options;
 
-                        $aVariables = array('variable' => $variable,
-                                            'valueType' => $valueTypeMerged,
+                        $aVariables = array('valueType' => $valueTypeMerged,
                                             'maxLength' => $maxLengthMerged,
                                             'label' => $labelMerged,
                                             'defaultValue' => $defaultValueMerged,
@@ -1109,6 +1108,8 @@ class DynaForm
                         if (isset($value[0]["name"])) {
                             $aVariables = array_merge(array('name' => $value[0]["name"]), $aVariables);
                         }
+                        $aVariables = array_merge(array('variable' => $variable), $aVariables);
+
                         $arrayVariables[] = $aVariables;
                         $rsCriteria->next();
                     }
