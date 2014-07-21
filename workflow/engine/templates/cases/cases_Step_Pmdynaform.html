@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PMDynaform</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+        <link rel='stylesheet' type='text/css' href='/css/neoclassic-blank.css' />
+
+        <link rel="stylesheet" href="/lib/pmdynaform/libs/bootstrap-3.1.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/lib/pmdynaform/build/css/PMDynaform.css">
+
+        <script type="text/javascript" src="/lib/pmdynaform/libs/jquery/jquery-1.11.js"></script>
+        <script type="text/javascript" src="/lib/pmdynaform/libs/jquery/jquery.inputmask.js"></script>
+
+        <script type="text/javascript" src="/lib/pmdynaform/libs/bootstrap-3.1.1/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/lib/pmdynaform/libs/underscore/underscore-1.6.js"></script>
+        <script type="text/javascript" src="/lib/pmdynaform/libs/backbone/backbone-min.js"></script>	
+
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="text/template" id="fieldset-template">
+            <fieldset>
+            <legend>Options</legend>
+
+            <div class='col-sm-12'>
+            <div class='form-group'>
+            <label for="user_locale">Language</label>
+            <select class="form-control" id="user_locale" name="user[locale]"><option value="de" selected="selected">Deutsch</option>
+            <option value="en">English</option></select>
+            </div>
+            </div>
+
+            </fieldset>
+        </script>
+
+        <script type="text/template" id="tpl-exoinput">
+            <div class="form-group">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+            </div>    
+        </script>
+
+        <script type="text/template" id="tpl-panelfield">
+            <div class="col-xs-<%- colSpan %>">		  			 			 
+            </div>
+        </script>
+
+        <script type="text/template" id="tpl-row">
+            <div class="row show-grid">	      
+            </div>
+        </script>
+
+        <script type="text/template" id="tpl-validator">
+            <ul>
+
+            <% for (var item in message) {%>
+            <li><span><%= message[item]%> </span></li>
+            <%}%>
+            </ul>
+        </script>
+        <script type="text/template" id="tpl-datetime">
+            <div class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%>">
+            <div class="input-append date">
+            <label class="col-lg-<%=colSpanLabel%> control-label"> 
+            <span><%= label %></span>
+            <%if(required){%>
+            <span class="pmdynaform-field-required">*</span>
+            <%}%>
+            </label>
+            <div class="col-lg-<%=colSpanControl%>">
+            <div class="input-group">
+            <input class="form-control" data-format="<%=format%>" type="text"></input>
+            <span class=" input-group-addon add-on">
+            <i data-time-icon="icon-time" data-date-icon="icon-calendar">	      	
+            </i>
+            </span>
+            <%if (hint !== "" && hint !== null){%>
+            <span class="glyphicon glyphicon-question-sign " data-toggle="tooltip" data-placement="bottom" title="<%=hint%>"></span>
+            <%}%>
+            </div>
+            </div>
+            </div>
+            </div>	
+        </script>
+        <script type="text/template" id="tpl-date">
+            <div class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%>">
+            <div class="input-append date">
+            <label class="col-lg-<%=colSpanLabel%> control-label">  
+            <span><%= label %></span>
+            <%if(required){%>
+            <span class="pmdynaform-field-required">*</span>
+            <%}%>
+            </label>	  	
+            <div class="col-lg-<%=colSpanControl%>">
+            <div class="input-group">
+            <input class="form-control" data-format="<%=format%>" type="text"></input>
+            <span class=" input-group-addon add-on">
+            <i data-time-icon="icon-time" data-date-icon="icon-calendar">	      	
+            </i>
+            </span>
+            <%if (hint !== "" && hint !== null){%>
+            <span class="glyphicon glyphicon-question-sign " data-toggle="tooltip" data-placement="bottom" title="<%=hint%>"></span>
+            <%}%>
+            </div>
+            </div>
+            </div>
+            </div>	
+        </script>
+        <script type="text/template" id="tpl-time">
+            <div class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%>">
+            <div class="input-append date">
+            <label class="col-lg-<%=colSpanLabel%> control-label">  
+            <span><%= label %></span>
+            <%if(required){%>
+            <span class="pmdynaform-field-required">*</span>
+            <%}%>
+            </label>	  	
+            <div class="col-lg-<%=colSpanControl%>">
+            <div class="input-group">
+            <input class="form-control" data-format="<%=format%>" type="text"></input>
+            <span class=" input-group-addon add-on">
+            <i data-time-icon="icon-time" data-date-icon="icon-calendar">	      	
+            </i>
+            </span>
+            <%if (hint !== "" && hint !== null){%>
+            <span class="glyphicon glyphicon-question-sign " data-toggle="tooltip" data-placement="bottom" title="<%=hint%>"></span>
+            <%}%>
+            </div>
+            </div>
+            </div>
+            </div>	
+        </script>
+
+        <script type="text/template" id="tpl-text">
+            <div id="<%=id%>" class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%>">
+            <label class="col-lg-<%=colSpanLabel%> control-label"> 
+            <span><%= label %></span>
+            <%if(required){%>
+            <span class="pmdynaform-field-required">*</span>
+            <%}%>
+            </label>
+            <div class="col-lg-<%=colSpanControl%>">
+            <input  type=<%=type%>
+            class="form-control" 
+            placeholder= "<%= placeholder %>"
+            value= "<%= value%>"
+            <% if(typeof maxLength === "number"){%>
+            maxlength="<%= maxLength%>"
+            <% }%>
+            <% if(disabled === true){%>disabled<%}%>
+            autocomplete="off"
+            >
+            <% if(!valid){%>
+            <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+            <%}%>
+            <%if (hint !== "" && hint !== null){%>
+            <span class="glyphicon glyphicon-question-sign " data-toggle="tooltip" data-placement="bottom" title="<%=hint%>"></span>
+            <%}%>				
+            </div>
+            </div>   
+        </script>
+
+
+
+        <script type="text/template" id="tpl-textarea">
+            <div class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%>">
+            <label class="col-lg-<%=colSpanLabel%> control-label"> 
+            <span><%= label %></span>
+            <%if(required){%>
+            <span class="pmdynaform-field-required">*</span>
+            <%}%>
+            </label>
+            <div class="col-lg-<%=colSpanControl%>">
+            <textarea   class="form-control" 
+            rows="<%= rows %>"
+            value="<%= value %>"
+            ></textarea>
+            <%if (hint !== "" && hint !== null){%>
+            <span class="glyphicon glyphicon-question-sign " data-toggle="tooltip" data-placement="bottom" title="<%=hint%>"></span>
+            <%}%>
+            </div>
+            </div>	
+        </script>
+
+        <script type="text/template" id="tpl-checkbox">
+            <div class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%>">
+            <label class="col-lg-<%=colSpanLabel%> control-label">  
+            <span><%= label %></span>
+            <%if(required){%>
+            <span class="pmdynaform-field-required">*</span>
+            <%}%>
+            </label>
+            <div class="col-lg-<%=colSpanControl%>">
+            <div class="pmdynaform-checkbox-items">
+            <% for(var option in options) { %>
+            <div class="checkbox">        
+            <label>
+            <input
+            value="<%=options[option].value%>" 
+            type="<%=type%>"
+            <% if(options[option].selected){%>checked<%}%>>
+            <span><%= options[option].label %> </span> 
+            </label>
+            </div>
+            <% } %>	
+            </div>
+            <%if (hint !== "" && hint !== null){%>
+            <span class="glyphicon glyphicon-question-sign " data-toggle="tooltip" data-placement="bottom" title="<%=hint%>"></span>
+            <%}%>
+            </div>
+            </div>    
+        </script>
+
+
+        <script type="text/template" id="tpl-radio">
+            <div class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%>">
+            <label class="col-lg-<%=colSpanLabel%> control-label">  
+            <span><%= label %></span>
+            <%if(required){%>
+            <span class="pmdynaform-field-required">*</span>
+            <%}%>
+            </label>
+            <div class="col-lg-<%=colSpanControl%>">
+            <div class="pmdynaform-radio-items">
+            <% for(var option in options) { %>
+            <div class="radio">    
+            <label>
+            <input name="<%=name%>"
+            value="<%=options[option].value%>" 
+            type="<%=type%>">
+            <span><%= options[option].label %> </span> 
+            </label>
+            </div>
+            <% } %>	
+            </div>
+            <%if (hint !== "" && hint !== null){%>
+            <span class="glyphicon glyphicon-question-sign " data-toggle="tooltip" data-placement="bottom" title="<%=hint%>"></span>
+            <%}%>
+            </div>
+            </div>
+        </script>
+
+
+
+        <script type="text/template" id="tpl-dropdown">
+            <div class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%>">	
+            <label class="col-lg-<%=colSpanLabel%> control-label">  
+            <span><%= label %></span>
+            <%if(required){%>
+            <span class="pmdynaform-field-required">*</span>
+            <%}%>
+            </label>
+            <div class="col-lg-<%=colSpanControl%>">
+            <select class="form-control">
+            <% for(var option in options) { %>
+            <option value=<%= options[option].value %>><%= options[option].label %></option>
+            <% } %>
+            </select>
+            <%if (hint !== "" && hint !== null){%>
+            <span class="glyphicon glyphicon-question-sign " data-toggle="tooltip" data-placement="bottom" title="<%=hint%>"></span>
+            <%}%>
+            </div>
+            </div>	
+        </script>
+
+        <script type="text/template" id="tpl-button">
+            <div id="<%=id%>" class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%> text-center">
+            <button type=<%=type%> class="btn btn-primary"> <span> <%= label %> </span></button>
+            </div>
+        </script>
+
+        <script type="text/template" id="tpl-submit">
+            <div class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%> text-center">
+            <button type=<%=type%> class="btn btn-default"> <span> <%= label %> </span></button>
+            </div>	
+        </script>
+
+        <script type="text/template" id="tpl-file">
+            <label for="exampleInputFile">
+            <span><%= label %></span>
+            <%if(required){%>
+            <span class="pmdynaform-field-required">*</span>
+            <%}%>
+            </label>
+            <input type="file" id="exampleInputFile">
+            <%if (hint !== "" && hint !== null){%>
+            <span class="glyphicon glyphicon-question-sign " data-toggle="tooltip" data-placement="bottom" title="<%=hint%>"></span>
+            <%}%>
+            <p class="help-block">Example block-level help text here.</p>
+        </script>
+
+        <script type="text/template" id="tpl-suggest-list">
+            <div class="list-group col-sm-12 col-md-12 col-lg-12 col-xs-12 pmdynaform-suggest">  		
+            </div>
+        </script>
+        <script type="text/template" id="tpl-suggest-element">
+            <span class="list-group-item"><%= value %></span>  		
+        </script>
+
+        <script type="text/template" id="tpl-link">
+            <div id="<%=id%>" class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%> col-xs-<%=colSpan%>">
+            <label class="col-lg-<%=colSpanLabel%> control-label"> 
+            <span><%= label %></span>
+            <%if(required){%>
+            <span class="pmdynaform-field-required">*</span>
+            <%}%>
+            </label>
+            <div class="col-lg-<%=colSpanControl%>">
+            <button type="button" class="btn btn-link"> <span> <%= name %> </span></button>			
+            </div>
+            </div>   
+        </script>
+
+        <script type="text/template" id="tpl-empty">
+            <div class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%>">
+            </div>   
+        </script>
+
+        <script type="text/template" id="tpl-label">
+            <div id="<%=id%>" class="form-group col-sm-<%=colSpan%> col-md-<%=colSpan%> col-lg-<%=colSpan%>">
+            <<%=etiquete[type]%> class="pmdynaform-label">
+            <p class="<%=className[type]%>">
+            <span><%= label %></span>
+            </p>
+            </<%=etiquete[type]%>>				
+            </div>
+        </script>
+
+        <script type="text/javascript" src="/lib/pmdynaform/build/js/PMDynaform.js"></script>
+        <script type="text/javascript">
+            var jsondata = '{JSON_DATA}';
+            var pm_run_outside_main_app = '{PM_RUN_OUTSIDE_MAIN_APP}';
+            var dyn_uid = '{DYN_UID}';
+        </script>
+        <script type="text/javascript" src="/jscore/cases/core/cases_Step.js"></script>
+        <script type="text/javascript" src="/jscore/cases/core/cases_Step_Pmdynaform.js"></script>
+        <table width="100%" align="center">
+            <tr class="userGroupTitle">
+                <td width="100%" align="center">{CASE} #: {APP_NUMBER}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{TITLE}: {APP_TITLE}</td>
+            </tr>
+        </table>
+        <a style="float: left; margin: 10px 2px 2px 10px; cursor: pointer; opacity: 1;"><img src="/lib/img/pager-previous-icon.png" style="padding-right:5px;width:25px;height:20px;">Previous Step</a>
+        <a style="float: right; margin: 10px 10px 2px 2px; cursor: pointer; opacity: 1;">Next step<img src="/lib/img/pager-next-icon.png" style="padding-left:5px;width:25px;height:20px;"></a>
+
+    </body>
+</html>
