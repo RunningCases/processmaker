@@ -98,7 +98,7 @@ abstract class Exporter
         $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($this->prjUid);
         $bpmnStruct["ARTIFACT"] = \BpmnArtifact::getAll($this->prjUid);
         $bpmnStruct["BOUND"] = \BpmnBound::getAll($this->prjUid);
-        $bpmnStruct["DATA"] = array();
+        $bpmnStruct["DATA"] = \BpmnData::getAll($this->prjUid);
         $bpmnStruct["DIAGRAM"] = \BpmnDiagram::getAll($this->prjUid);
         $bpmnStruct["DOCUMENTATION"] = array();
         $bpmnStruct["EVENT"] = \BpmnEvent::getAll($this->prjUid);
@@ -107,7 +107,7 @@ abstract class Exporter
         $bpmnStruct["GATEWAY"] = \BpmnGateway::getAll($this->prjUid);
         $bpmnStruct["LANE"] = array();
         $bpmnStruct["LANESET"] = array();
-        $bpmnStruct["PARTICIPANT"] = array();
+        $bpmnStruct["PARTICIPANT"] = \BpmnParticipant::getAll($this->prjUid);
         $bpmnStruct["PROCESS"] = \BpmnProcess::getAll($this->prjUid);
         $bpmnStruct["PROJECT"] = array(\BpmnProjectPeer::retrieveByPK($this->prjUid)->toArray());
 
