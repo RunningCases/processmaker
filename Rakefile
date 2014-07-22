@@ -13,10 +13,16 @@ task :required do
         puts "JSON gem not found.\nInstall it by running 'gem install json'"
         exit(1)
     end
+    begin
+        require 'ftools'
+    rescue LoadError
+        puts "JSON gem not found.\nInstall it by running 'gem install ftools'"
+        exit(1)
+    end
 end
 
 
-desc "Copy Files to ProcessMaker"
+desc "Build Front-End for ProcessMaker"
 task :build => [:required] do
     mode = "production"
     #argv1 = ARGV.last
@@ -47,7 +53,7 @@ task :build => [:required] do
     
 
     prepareDirs([pmUIDir, mafeDir, pmdynaformDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
-
+    
     buildPmUi(Dir.pwd + "/vendor/colosa/pmUI", targetDir, mode)
     buildPmdynaform(Dir.pwd + "/vendor/colosa/pmDynaform", targetDir, mode)
     buildMafe(Dir.pwd + "/vendor/colosa/MichelangeloFE", targetDir, mode)
@@ -224,18 +230,24 @@ def buildMafe(homeDir, targetDir, mode)
     puts "\nMichelangelo FE Build Finished\n".magenta
 end
 
-def prepareDirs(dirs)
-    homeDir = Dir.pwd
-
+def prepareDirs(dirs)    
     puts "Preparing Directories..."
 
     dirs.each do |dir|
         if File.directory?(dir)
-            puts "Removing #{dir}"
-            system "rm -rf #{dir}"
+            if !File.writable?(dir)
+                raise "Error, directory " + dir + " is not writable."
+            end
+            FileUtils.rm_rf(dir)
         end
-        #Dir.mkdir(dir)
-        system("mkdir -p #{dir}")
+        
+        begin
+          puts 'create '.green + dir
+          FileUtils.mkdir_p(dir)
+        rescue Exception => e
+          puts ' (failed)'.red
+          raise RuntimeError, e.message
+        end
     end
 end
 
@@ -266,23 +278,18 @@ end
 
 def executeInto(path, tasks)
     Dir.chdir(path) do
-	    tasks.each do |task|
-            system "rake #{task}"
+	      tasks.each do |task|
+            system "rake #{task}" or raise "An error was raised executing task '#{task}' into #{path}".red
         end
-	end
+	  end
 end
-
 
 def copyFiles(files)
     files.each do |from, to|
-        print "   Copy ".green + from.gsub(Dir.pwd+'/vendor/colosa/', '')+' -> '.brown+to.gsub(Dir.pwd, '').gray
-        system('cp -Rf '+from+' '+to+' 2>&1')
-
-        if $? == 0
-            puts " (ok)".green
-        else
-            puts " (failed)".red
-        end
+        puts "   copy ".green + from.gsub(Dir.pwd+'/vendor/colosa/', '')
+        puts '   into '.green + to.gsub(Dir.pwd, '')
+        
+        system('cp -Rf '+from+' '+to+' 2>&1') or raise "Can't copy into directory #{to}".red
     end
 end
 
