@@ -1018,7 +1018,6 @@ class DynaForm
             Validator::proUid($projectUid, '$prj_uid');
             $this->throwExceptionIfNotExistsDynaForm($dynaFormUid, "", $this->arrayFieldNameForException["dynaFormUid"]);
 
-            //Get data
             $criteria = new \Criteria("workflow");
             $criteria->addSelectColumn(\DynaformPeer::DYN_CONTENT);
             $criteria->add(\DynaformPeer::DYN_UID, $dynaFormUid, \Criteria::EQUAL);
@@ -1041,22 +1040,11 @@ class DynaForm
                 $dbConnection = (isset($value[0]["dbConnection"])) ? $value[0]["dbConnection"]:null;
                 $sql = (isset($value[0]["sql"])) ? $value[0]["sql"]:null;
                 $options = (isset($value[0]["options"])) ? $value[0]["options"]:null;
-                //fields properties
-                $type = (isset($value[0]["type"])) ? $value[0]["type"]:null;
-                $colSpan = (isset($value[0]["colSpan"])) ? $value[0]["colSpan"]:null;
-                $name = (isset($value[0]["name"])) ? $value[0]["name"]:null;
-                $readonly = (isset($value[0]["readonly"])) ? $value[0]["readonly"]:null;
-                $hint = (isset($value[0]["hint"])) ? $value[0]["hint"]:null;
-                $dependentsField = (isset($value[0]["dependentsField"])) ? $value[0]["dependentsField"]:null;
-                $placeHolder = (isset($value[0]["placeHolder"])) ? $value[0]["placeHolder"]:null;
-                $pickType = (isset($value[0]["pickType"])) ? $value[0]["pickType"]:null;
 
                 if (isset($value[0]["variable"])) {
                     $variable = $value[0]["variable"];
 
                     $criteria = new \Criteria("workflow");
-                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_UID);
-                    $criteria->addSelectColumn(\ProcessVariablesPeer::PRJ_UID);
                     $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
                     $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_TYPE);
                     $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_SIZE);
@@ -1074,88 +1062,63 @@ class DynaForm
 
                     while ($aRow = $rsCriteria->getRow()) {
 
-                        if ($valueType == null && $valueType == '') {
-                            $valueTypeMerged = $aRow['VAR_FIELD_TYPE'];
-                        } else {
-                            $valueTypeMerged = $valueType;
-                        }
-                        if ($maxLength == null && $maxLength == '') {
-                            $maxLengthMerged = (int)$aRow['VAR_FIELD_SIZE'];
-                        } else {
-                            $maxLengthMerged = $maxLength;
-                        }
-                        if ($label == null && $label == '') {
-                            $labelMerged = $aRow['VAR_LABEL'];
-                        } else {
-                            $labelMerged = $label;
-                        }
-                        if ($defaultValue == null && $defaultValue == '') {
-                            $defaultValueMerged = $aRow['VAR_DEFAULT'];
-                        } else {
-                            $defaultValueMerged = $defaultValue;
-                        }
-                        if ($required == null && $required == '') {
-                            $requiredMerged = ($aRow['VAR_NULL']==1) ? true:false;
-                        } else {
-                            $requiredMerged = $required;
-                        }
-                        if ($dbConnection == null && $dbConnection == '') {
-                            $dbConnectionMerged = $aRow['VAR_DBCONNECTION'];
-                        } else {
-                            $dbConnectionMerged = $dbConnection;
-                        }
-                        if ($sql == null && $sql == '') {
-                            $sqlMerged = $aRow['VAR_SQL'];
-                        } else {
-                            $sqlMerged = $sql;
-                        }
-                        if ($options == null && $options == '') {
-                            $optionsMerged = $aRow['VAR_ACCEPTED_VALUES'];
-                        } else {
-                            $optionsMerged = $options;
-                        }
+                        $valueTypeMerged = ($valueType == null && $valueType == '') ? $aRow['VAR_FIELD_TYPE'] : $valueType;
+                        $maxLengthMerged = ($maxLength == null && $maxLength == '') ? (int)$aRow['VAR_FIELD_SIZE'] : $maxLength;
+                        $labelMerged = ($label == null && $label == '') ? $aRow['VAR_LABEL'] : $label;
+                        $defaultValueMerged = ($defaultValue == null && $defaultValue == '') ? $aRow['VAR_DEFAULT'] : $defaultValue;
+                        $requiredMerged =  ($required == null && $required == '') ? ($aRow['VAR_NULL']==1) ? false: true : $required;
+                        $dbConnectionMerged = ($dbConnection == null && $dbConnection == '') ? $aRow['VAR_DBCONNECTION'] : $dbConnection;
+                        $sqlMerged = ($sql == null && $sql == '') ? $aRow['VAR_SQL'] : $sql;
+                        $optionsMerged = ($options == null && $options == '') ? $aRow['VAR_ACCEPTED_VALUES'] : $options;
 
-                        $arrayVariables[] = array(  'variable' => $variable,
-                                                    'valueType' => $valueTypeMerged,
-                                                    'maxLength' => $maxLengthMerged,
-                                                    'label' => $labelMerged,
-                                                    'defaultValue' => $defaultValueMerged,
-                                                    'required' => $requiredMerged,
-                                                    'dbConnection' => $dbConnectionMerged,
-                                                    'sql' => $sqlMerged,
-                                                    'options' => $optionsMerged,
-                                                    //values from fields properties
-                                                    'type' => $type,
-                                                    'colSpan' => $colSpan,
-                                                    'name' => $name,
-                                                    'readonly' => $readonly,
-                                                    'hint' => $hint,
-                                                    'dependentsField' => $dependentsField,
-                                                    'placeHolder' => $placeHolder,
-                                                    'pickType' => $pickType);
+                        $aVariables = array('valueType' => $valueTypeMerged,
+                                            'maxLength' => $maxLengthMerged,
+                                            'label' => $labelMerged,
+                                            'defaultValue' => $defaultValueMerged,
+                                            'required' => $requiredMerged,
+                                            'dbConnection' => $dbConnectionMerged,
+                                            'sql' => $sqlMerged,
+                                            'options' => $optionsMerged);
+
+                        //fields properties
+                        if (isset($value[0]["pickType"])) {
+                            $aVariables = array_merge(array('pickType' => $value[0]["pickType"]), $aVariables);
+                        }
+                        if (isset($value[0]["placeHolder"])) {
+                            $aVariables = array_merge(array('placeHolder' => $value[0]["placeHolder"]), $aVariables);
+                        }
+                        if (isset($value[0]["dependentsField"])) {
+                            $aVariables = array_merge(array('dependentsField' => $value[0]["dependentsField"]), $aVariables);
+                        }
+                        if (isset($value[0]["hint"])) {
+                            $aVariables = array_merge(array('hint' => $value[0]["hint"]), $aVariables);
+                        }
+                        if (isset($value[0]["readonly"])) {
+                            $aVariables = array_merge(array('readonly' => $value[0]["readonly"]), $aVariables);
+                        }
+                        if (isset($value[0]["readonly"])) {
+                            $aVariables = array_merge(array('readonly' => $value[0]["readonly"]), $aVariables);
+                        }
+                        if (isset($value[0]["colSpan"])) {
+                            $aVariables = array_merge(array('colSpan' => $value[0]["colSpan"]), $aVariables);
+                        }
+                        if (isset($value[0]["type"])) {
+                            $aVariables = array_merge(array('type' => $value[0]["type"]), $aVariables);
+                        }
+                        if (isset($value[0]["name"])) {
+                            $aVariables = array_merge(array('name' => $value[0]["name"]), $aVariables);
+                        }
+                        $aVariables = array_merge(array('variable' => $variable), $aVariables);
+
+                        $arrayVariables[] = $aVariables;
                         $rsCriteria->next();
-
                     }
 
                 } else {
-                    $arrayVariables[] = array(  'valueType' => $valueType,
-                                                'maxLength' => $maxLength,
-                                                'label' => $label,
-                                                'defaultValue' => $defaultValue,
-                                                'required' => $required,
-                                                'dbConnection' => $dbConnection,
-                                                'sql' => $sql,
-                                                'options' => $options,
-                                                'type' => $type,
-                                                'colSpan' => $colSpan,
-                                                'name' => $name,
-                                                'readonly' => $readonly,
-                                                'hint' => $hint,
-                                                'dependentsField' => $dependentsField,
-                                                'placeHolder' => $placeHolder,
-                                                'pickType' => $pickType);
+                    $arrayVariablesDef[] = $value[0];
                 }
             }
+            $arrayVariables = array_merge($arrayVariables, $arrayVariablesDef);
             //Return
             return $arrayVariables;
 
