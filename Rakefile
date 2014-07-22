@@ -21,6 +21,9 @@ task :required do
     end
 end
 
+task :log do
+    puts getLog
+end
 
 desc "Build Front-End for ProcessMaker"
 task :build => [:required] do
@@ -50,13 +53,14 @@ task :build => [:required] do
     pmUIDir = targetDir + "/pmUI"
     mafeDir = targetDir + "/mafe"
     pmdynaformDir = targetDir + "/pmdynaform"
-    
 
-    prepareDirs([pmUIDir, mafeDir, pmdynaformDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
+    prepareDirs([targetDir, pmUIDir, mafeDir, pmdynaformDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
     
     buildPmUi(Dir.pwd + "/vendor/colosa/pmUI", targetDir, mode)
     buildPmdynaform(Dir.pwd + "/vendor/colosa/pmDynaform", targetDir, mode)
     buildMafe(Dir.pwd + "/vendor/colosa/MichelangeloFE", targetDir, mode)
+
+
 
     pmuiHash = getHash(Dir.pwd + "/vendor/colosa/pmUI")
     mafeHash = getHash(Dir.pwd + "/vendor/colosa/MichelangeloFE")
@@ -108,6 +112,22 @@ task :build => [:required] do
     }
     File.open(targetDir+"/versions", 'w+') do |writeFile|
         writeFile.write versions.to_json
+    end
+
+    File.open(targetDir+"/lib-pmui.log", 'w+') do |writeFile|
+        writeFile.write getLogFrom(Dir.pwd + "/vendor/colosa/pmUI")
+    end
+
+    File.open(targetDir+"/lib-mafe.log", 'w+') do |writeFile|
+        writeFile.write getLogFrom(Dir.pwd + "/vendor/colosa/MichelangeloFE")
+    end
+
+    File.open(targetDir+"/lib-pmdynaform.log", 'w+') do |writeFile|
+        writeFile.write getLogFrom(Dir.pwd + "/vendor/colosa/pmDynaform")
+    end
+
+    File.open(targetDir+"/processmaker.log", 'w+') do |writeFile|
+        writeFile.write getLog()
     end
 
     puts "-- DONE --\n".bold
@@ -238,6 +258,7 @@ def prepareDirs(dirs)
             if !File.writable?(dir)
                 raise "Error, directory " + dir + " is not writable."
             end
+
             FileUtils.rm_rf(dir)
         end
         
@@ -276,12 +297,27 @@ def getHash(path)
     return hash.strip
 end
 
-def executeInto(path, tasks)
+
+def getLogFrom(path)
+    log = ""
+
     Dir.chdir(path) do
-	      tasks.each do |task|
+        log = `git log -30 --pretty='[%cr] %h %d %s <%an>' --no-merges`
+    end
+
+    return log.strip
+end
+
+def executeInto(path, tasks, ret = nil)
+    output = ''
+    
+    Dir.chdir(path) do
+	    tasks.each do |task|
             system "rake #{task}" or raise "An error was raised executing task '#{task}' into #{path}".red
         end
-	  end
+	end
+
+    return output
 end
 
 def copyFiles(files)
@@ -395,5 +431,10 @@ class String
     def bg_gray;        "\033[47m#{self}\033[0m" end
     def bold;           "\033[1m#{self}\033[22m" end
     def reverse_color;  "\033[7m#{self}\033[27m" end
+end
+
+def getLog
+    output = `git log -30 --pretty='[%cr] %h %d %s <%an>' --no-merges`
+    return output
 end
 
