@@ -315,6 +315,8 @@ abstract class Importer
         $diagram["events"] = $tables["event"];
         $diagram["flows"] = $tables["flow"];
         $diagram["gateways"] = $tables["gateway"];
+        $diagram["data"] = $tables["data"];
+        $diagram["participants"] = $tables["participant"];
         $diagram["lanes"] = array();
         $diagram["laneset"] = array();
         $project["diagrams"] = array($diagram);
