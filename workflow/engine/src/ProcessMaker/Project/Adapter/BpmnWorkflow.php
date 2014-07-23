@@ -566,9 +566,6 @@ class BpmnWorkflow extends Project\Bpmn
         }
         $events = $projectData['diagrams']['0']['events'];
         foreach ($events as $value) {
-            if (empty($value['evn_name'])) {
-                throw new \Exception("For event: {$value['evn_uid']} `evn_name` is required but missing.");
-            }
             if (empty($value['evn_type'])) {
                 throw new \Exception("For event: {$value['evn_uid']} `evn_type` is required but missing.");
             }
