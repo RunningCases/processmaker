@@ -18,6 +18,8 @@ abstract class Importer
     const IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW = "project.import.keep_without_changing_and_create_new";
     const IMPORT_OPTION_CREATE_NEW = "project.import.create_new";
 
+    const IMPORT_OPTION_WORKFLOW_TO_BPMN_GENERATE = "project.import.workflow_to_bpmn_generate";
+
     const GROUP_IMPORT_OPTION_RENAME = "group.import.rename";
     const GROUP_IMPORT_OPTION_MERGE_PREEXISTENT = "group.import.merge.preexistent";
     const GROUP_IMPORT_OPTION_CREATE_NEW = "group.import.create_new";
@@ -28,6 +30,20 @@ abstract class Importer
     const IMPORT_STAT_GROUP_ALREADY_EXISTS = 105;  //Error, Group already exists.
 
     public abstract function load();
+
+    /**
+     * Set import data
+     *
+     * @param array $arrayData Data
+     *
+     * return void
+     */
+    public function setImportData(array $arrayData)
+    {
+        $this->importData = $arrayData;
+
+        $this->validateImportData();
+    }
 
     /**
      * Verify if exists reserved words SQL
@@ -71,7 +87,16 @@ abstract class Importer
 
     public function import($option = self::IMPORT_OPTION_CREATE_NEW, $optionGroup = self::GROUP_IMPORT_OPTION_CREATE_NEW)
     {
-        $this->prepare();
+        $generateUid = false;
+
+        if ($option != self::IMPORT_OPTION_WORKFLOW_TO_BPMN_GENERATE) {
+            $this->prepare();
+        } else {
+            $generateUid = true;
+
+            $option = "";
+            $optionGroup = "";
+        }
 
         $name = $this->importData["tables"]["bpmn"]["project"][0]["prj_name"];
 
@@ -315,8 +340,8 @@ abstract class Importer
         $diagram["events"] = $tables["event"];
         $diagram["flows"] = $tables["flow"];
         $diagram["gateways"] = $tables["gateway"];
-        $diagram["data"] = $tables["data"];
-        $diagram["participants"] = $tables["participant"];
+        $diagram["data"] = (isset($tables["data"]))? $tables["data"] : array();
+        $diagram["participants"] = (isset($tables["participant"]))? $tables["participant"] : array();
         $diagram["lanes"] = array();
         $diagram["laneset"] = array();
         $project["diagrams"] = array($diagram);
@@ -415,7 +440,7 @@ abstract class Importer
                 foreach ($arrayFiles as $key2 => $value2) {
                     $file = $value2;
 
-                    $arrayWorkflowFiles[$key1][$key2]["file_path"] = str_replace($projectUidOld, $projectUid, $file["file_path"]);
+                    $arrayWorkflowFiles[$key1][$key2]["file_path"] = str_replace($projectUidOld, $projectUid, (isset($file["file_path"]))? $file["file_path"] : $file["filepath"]);
                     $arrayWorkflowFiles[$key1][$key2]["file_content"] = str_replace($projectUidOld, $projectUid, $file["file_content"]);
                 }
             }

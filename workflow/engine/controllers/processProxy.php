@@ -447,5 +447,27 @@ class ProcessProxy extends HttpProxyController
         }
         $this->rows = $rows;
     }
+
+    /**
+     * Generate BPMN (New record is generated)
+     *
+     * return void
+     */
+    public function generateBpmn()
+    {
+        try {
+            $processUid = $_POST["processUid"];
+
+            $workflowBpmn = new \ProcessMaker\Project\Adapter\WorkflowBpmn();
+
+            $projectUid = $workflowBpmn->generateBpmn($processUid, "processUid");
+
+            $this->status = "OK";
+            $this->projectUid = $projectUid;
+        } catch (Exception $e) {
+            $this->status  = "ERROR";
+            $this->message = $e->getMessage();
+        }
+    }
 }
 

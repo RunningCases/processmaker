@@ -714,7 +714,11 @@ class Bpmn extends Handler
     public function addArtifact($data)
     {
         // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
         $data['ART_UID'] = array_key_exists('ART_UID', $data) ? $data['ART_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
         try {
             self::log("Add Artifact with data: ", $data);
             $artifact = new Artifact();
@@ -796,7 +800,11 @@ class Bpmn extends Handler
     public function addData($data)
     {
         // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
         $data['DATA_UID'] = array_key_exists('DAT_UID', $data) ? $data['DAT_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
         try {
             self::log("Add BpmnData with data: ", $data);
             $bpmnData = new \BpmnData();
@@ -878,7 +886,11 @@ class Bpmn extends Handler
     public function addParticipant($data)
     {
         // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
         $data['PAR_UID'] = array_key_exists('PAR_UID', $data) ? $data['PAR_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
         try {
             self::log("Add Participant with data: ", $data);
             $participant = new Participant();

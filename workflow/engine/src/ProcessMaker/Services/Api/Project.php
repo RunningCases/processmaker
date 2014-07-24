@@ -194,6 +194,30 @@ class Project extends Api
     }
 
     /**
+     * @url POST /process/:pro_uid/generate-bpmn
+     *
+     * @param string $pro_uid {@min 32}{@max 32}
+     *
+     * @status 201
+     */
+    public function doPostProcessGenerateBpmn($pro_uid)
+    {
+        try {
+            $workflowBpmn = new \ProcessMaker\Project\Adapter\WorkflowBpmn();
+
+            $projectUid = $workflowBpmn->generateBpmn($pro_uid, "pro_uid");
+
+            $arrayData = array_change_key_case(array("PRJ_UID" => $projectUid), CASE_LOWER);
+
+            $response = $arrayData;
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
      * @url GET /:prj_uid/dynaforms
      *
      * @param string $prj_uid {@min 32}{@max 32}

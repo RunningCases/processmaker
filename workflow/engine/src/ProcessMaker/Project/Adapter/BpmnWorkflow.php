@@ -926,7 +926,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             if ($forceInsert || is_null($dataObject)) {
                 if ($generateUid) {
-                    //Event
+                    //Data
                     unset($dataObjectData["BOU_UID"]);
 
                     $uidOld = $dataObjectData["DAT_UID"];
@@ -973,7 +973,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             if ($forceInsert || is_null($dataObject)) {
                 if ($generateUid) {
-                    //Event
+                    //Participant
                     unset($participantData["BOU_UID"]);
 
                     $uidOld = $participantData["PAR_UID"];
@@ -993,7 +993,7 @@ class BpmnWorkflow extends Project\Bpmn
                 Util\Logger::log("Update Participant ({$participantData["PAR_UID"]}) Skipped - No changes required");
             }
 
-            $diagram["participant"][$i] = $participantData;
+            $diagram["participants"][$i] = $participantData;
             $whiteList[] = $participantData["PAR_UID"];
         }
 
