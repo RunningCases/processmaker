@@ -1,12 +1,12 @@
 function dynaFormChanged (frm) {
     for (var i1 = 0; i1 <= frm.elements.length - 1; i1++) {
-        if ((frm.elements[i1].type == "radio" || frm.elements[i1].type == "checkbox") && (frm.elements[i1].checked != frm.elements[i1].defaultChecked)) {
+        if ((frm.elements[i1].type === "radio" || frm.elements[i1].type === "checkbox") && (frm.elements[i1].checked !== frm.elements[i1].defaultChecked)) {
             return true;
         }
-        if ((frm.elements[i1].type == "textarea" || frm.elements[i1].type == "text" || frm.elements[i1].type == "file") && (frm.elements[i1].value != frm.elements[i1].defaultValue)) {
+        if ((frm.elements[i1].type === "textarea" || frm.elements[i1].type === "text" || frm.elements[i1].type === "file") && (frm.elements[i1].value !== frm.elements[i1].defaultValue)) {
             return true;
         }
-        if (frm.elements[i1].tagName.toLowerCase() == "select") {
+        if (frm.elements[i1].tagName.toLowerCase() === "select") {
             var selectDefaultValue = frm.elements[i1].value;
             for (var i2 = 0; i2 <= frm.elements[i1].options.length - 1; i2++) {
                 if (frm.elements[i1].options[i2].defaultSelected) {
@@ -14,12 +14,24 @@ function dynaFormChanged (frm) {
                     break;
                 }
             }
-            if (frm.elements[i1].value != selectDefaultValue) {
+            if (frm.elements[i1].value !== selectDefaultValue) {
                 return true;
             }
         }
     }
     return false;
+}
+
+function validateNameField (form, type) {
+    var i, j = 0, dt, name;
+    dt = form.getElementsByTagName(type);
+    for (i = 0; i < dt.length; i++) {
+        name = dt[i].name;
+        if (!name)
+            name = "field" + type + j;
+        dt[i].name = "form[" + name + "]";
+        j++;
+    }
 }
 
 window.onload = function () {
@@ -36,41 +48,49 @@ window.onload = function () {
             parent.setCurrent(dyn_uid);
         }
     }
-//    TYPE:ASSIGN_TASK
-//    UID:-1
-//    POSITION:10000
-//    ACTION:ASSIGN
-    var submit = document.getElementsByTagName("button");
-    $a = submit;
-    if (submit.length > 0) {
-        submit = submit[0];
-        var form = document.getElementsByTagName("form")[0];
-        $b = form;
 
-        var TYPE = document.createElement("input");
-        TYPE.type = "hidden";
-        TYPE.value = "ASSIGN_TASK";
-        TYPE.name = "TYPE";
+    var form = document.getElementsByTagName("form")[0];
+    validateNameField(form, "input");
+    validateNameField(form, "textarea");
+    validateNameField(form, "select");
 
-        var UID = document.createElement("input");
-        UID.type = "hidden";
-        UID.value = "-1";
-        UID.name = "UID";
+    var type = document.createElement("input");
+    type.type = "hidden";
+    type.value = "ASSIGN_TASK";
+    type.name = "TYPE";
 
-        var POSITION = document.createElement("input");
-        POSITION.type = "hidden";
-        POSITION.value = "10000";
-        POSITION.value = "POSITION";
+    var uid = document.createElement("input");
+    uid.type = "hidden";
+    uid.value = dyn_uid;
+    uid.name = "UID";
 
-        var ACTION = document.createElement("input");
-        ACTION.type = "hidden";
-        ACTION.value = "ASSIGN";
-        ACTION.value = "ACTION";
+    var position = document.createElement("input");
+    position.type = "hidden";
+    position.value = "10000";
+    position.name = "POSITION";
 
-        form.appendChild(TYPE);
-        form.appendChild(UID);
-        form.appendChild(POSITION);
-        form.appendChild(ACTION);
+    var action = document.createElement("input");
+    action.type = "hidden";
+    action.value = "ASSIGN";
+    action.name = "ACTION";
 
-    }
+    var dynaformname = document.createElement("input");
+    dynaformname.type = "hidden";
+    dynaformname.value = __DynaformName__;
+    dynaformname.name = "__DynaformName__";
+
+    var appuid = document.createElement("input");
+    appuid.type = "hidden";
+    appuid.value = app_uid;
+    appuid.name = "APP_UID";
+
+    form.action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
+    form.method = "post";
+    form.appendChild(type);
+    form.appendChild(uid);
+    form.appendChild(position);
+    form.appendChild(action);
+    form.appendChild(dynaformname);
+    form.appendChild(appuid);
+
 };
