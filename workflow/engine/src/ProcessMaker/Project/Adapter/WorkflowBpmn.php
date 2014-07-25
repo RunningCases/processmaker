@@ -86,4 +86,12 @@ class WorkflowBpmn extends Project\Workflow
         parent::remove();
         $this->bp->remove();
     }
+
+    public function addTask($taskData)
+    {
+        $tasUid = parent::addTask($taskData);
+
+        // logica para bpmn
+        $this->bp->addActivity(array('ACT_UID'=>$tasUid));
+    }
 }
