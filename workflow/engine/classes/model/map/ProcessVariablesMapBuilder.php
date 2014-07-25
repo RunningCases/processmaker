@@ -85,7 +85,7 @@ class ProcessVariablesMapBuilder
 
         $tMap->addColumn('VAR_DEFAULT', 'VarDefault', 'string', CreoleTypes::VARCHAR, false, 32);
 
-        $tMap->addColumn('VAR_ACCEPTED_VALUES', 'VarAcceptedValues', 'string', CreoleTypes::VARCHAR, false, 128);
+        $tMap->addColumn('VAR_ACCEPTED_VALUES', 'VarAcceptedValues', 'string', CreoleTypes::LONGVARCHAR, false, null);
 
     } // doBuild()
 

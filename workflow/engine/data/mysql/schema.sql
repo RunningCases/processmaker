@@ -205,7 +205,7 @@ CREATE TABLE `DYNAFORM`
 	`DYN_TYPE` VARCHAR(20) default 'xmlform' NOT NULL,
 	`DYN_FILENAME` VARCHAR(100) default '' NOT NULL,
 	`DYN_CONTENT` MEDIUMTEXT,
-	`DYN_VERSION` INTEGER,
+	`DYN_VERSION` INTEGER  NOT NULL,
 	PRIMARY KEY (`DYN_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Forms required';
 #-----------------------------------------------------------------------------
@@ -2079,7 +2079,7 @@ CREATE TABLE `PROCESS_VARIABLES`
 	`VAR_SQL` VARCHAR(512),
 	`VAR_NULL` TINYINT(32) default 0,
 	`VAR_DEFAULT` VARCHAR(32) default '',
-	`VAR_ACCEPTED_VALUES` VARCHAR(128) default '',
+	`VAR_ACCEPTED_VALUES` MEDIUMTEXT,
 	PRIMARY KEY (`VAR_UID`)
 )ENGINE=InnoDB ;
 # This restores the fkey checks, after having unset them earlier

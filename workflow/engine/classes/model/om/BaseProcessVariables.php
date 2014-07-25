@@ -91,7 +91,7 @@ abstract class BaseProcessVariables extends BaseObject implements Persistent
      * The value for the var_accepted_values field.
      * @var        string
      */
-    protected $var_accepted_values = '';
+    protected $var_accepted_values;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -463,7 +463,7 @@ abstract class BaseProcessVariables extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->var_accepted_values !== $v || $v === '') {
+        if ($this->var_accepted_values !== $v) {
             $this->var_accepted_values = $v;
             $this->modifiedColumns[] = ProcessVariablesPeer::VAR_ACCEPTED_VALUES;
         }
