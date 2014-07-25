@@ -999,7 +999,7 @@ class BpmnWorkflow extends Project\Bpmn
                 Util\Logger::log("Update Participant ({$participantData["PAR_UID"]}) Skipped - No changes required");
             }
 
-            $diagram["participant"][$i] = $participantData;
+            $diagram["participants"][$i] = $participantData;
             $whiteList[] = $participantData["PAR_UID"];
         }
 
