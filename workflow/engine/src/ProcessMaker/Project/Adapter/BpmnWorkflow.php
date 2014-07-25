@@ -720,6 +720,12 @@ class BpmnWorkflow extends Project\Bpmn
     public static function updateFromStruct($prjUid, $projectData, $generateUid = true, $forceInsert = false)
     {
         $diagram = isset($projectData["diagrams"]) && isset($projectData["diagrams"][0]) ? $projectData["diagrams"][0] : array();
+        $diagram["activities"] = isset($diagram["activities"])? $diagram["activities"]: array();
+        $diagram["artifacts"]  = isset($diagram["artifacts"])? $diagram["artifacts"]: array();
+        $diagram["gateways"] = isset($diagram["gateways"])? $diagram["gateways"]: array();
+        $diagram["events"] = isset($diagram["events"])? $diagram["events"]: array();
+        $diagram["data"] = isset($diagram["data"])? $diagram["data"]: array();
+        $diagram["participants"] = isset($diagram["participants"])? $diagram["participants"]: array();
         $result = array();
 
         $projectData['prj_uid'] = $prjUid;

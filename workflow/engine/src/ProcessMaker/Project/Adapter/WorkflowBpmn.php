@@ -792,5 +792,13 @@ class WorkflowBpmn extends Project\Workflow
             throw $e;
         }
     }
+
+    public function addTask($taskData)
+    {
+        $tasUid = parent::addTask($taskData);
+
+        // logica para bpmn
+        $this->bp->addActivity(array('ACT_UID'=>$tasUid));
+    }
 }
 
