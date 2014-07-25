@@ -171,6 +171,12 @@ class Bpmn extends Handler
         foreach ($this->getArtifacts() as $artifacts) {
             $this->removeArtifact($artifacts["ART_UID"]);
         }
+        foreach ($this->getDataCollection() as $bpmnData) {
+            $this->removeData($bpmnData["DAT_UID"]);
+        }
+        foreach ($this->getParticipants() as $participant) {
+            $this->removeParticipant($participant["PAR_UID"]);
+        }
 
         if ($process = $this->getProcess("object")) {
             $process->delete();
@@ -600,6 +606,8 @@ class Bpmn extends Handler
                 case "bpmnGateway": $class = "BpmnGateway"; break;
                 case "bpmnEvent": $class = "BpmnEvent"; break;
                 case "bpmnArtifact": $class = "BpmnArtifact"; break;
+                case "bpmnData": $class = "BpmnData"; break;
+                case "bpmnParticipant": $class = "BpmnParticipant"; break;
                 default:
                     throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
                         "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_ORIGIN_TYPE"]
@@ -618,6 +626,8 @@ class Bpmn extends Handler
                 case "bpmnGateway": $class = "BpmnGateway"; break;
                 case "bpmnEvent": $class = "BpmnEvent"; break;
                 case "bpmnArtifact": $class = "BpmnArtifact"; break;
+                case "bpmnData": $class = "BpmnData"; break;
+                case "bpmnParticipant": $class = "BpmnParticipant"; break;
                 default:
                     throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
                         "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_DEST_TYPE"]
