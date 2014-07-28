@@ -160,13 +160,41 @@ Scenario Outline: Import a process
 
 
  	Examples:
- 	| project_file               | import_option | prj_uid_number |
- 	| Process_NewCreate_BPMN.pmx | create        | 1              |
-    | Process_Complete_BPMN.pmx  | create        | 2              |
-    | Process_Complete_BPMN.pmx  | overwrite     | 3              |
-    | Process_Complete_BPMN.pmx  | disable       | 4              |
-    | Process_Complete_BPMN.pmx  | keep          | 5              |
+ 	| project_file                | import_option | prj_uid_number |
+ 	| Process_NewCreate_BPMN.pmx  | create        | 1              |
+    | Process_Complete_BPMN.pmx   | create        | 2              |
+    | Process_Complete_BPMN.pmx   | overwrite     | 3              |
+    | Process_Complete_BPMN.pmx   | disable       | 4              |
+    | Process_Complete_BPMN.pmx   | keep          | 5              |
+    | Test_Event_without_name.pmx | create        | 6              |
     
+#Verificar que se hayan exportado los eventos de forma correcta
+
+Scenario: Get a single Process process "Test_Event_without_name.pmx"
+    Given that I want to get a resource with the key "prj_uid" stored in session array as variable "prj_uid_<prj_uid_number>" 
+    And I request "project/601816709536cfeae7d7cd9079578104/process"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+    And that "prj_name" is set to "Test Event without name"
+    And that "evn_uid" is set to "51368855353d127b52c8904071509317"
+    And that "evn_name" is set to ""
+    And that "evn_uid" is set to "89601044553d127b52634d4017150624"
+    And that "evn_name" is set to ""
+    And that "flo_element_origin" is set to "89601044553d127b52634d4017150624"
+    
+
+
+
+
+
+
+
+
+
+
+
 
 #Verificar cantidad de dynaform, output, inputs, triggers, asignacion de usuarios, etc.
 

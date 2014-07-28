@@ -68,31 +68,19 @@ Feature: Project Properties - Step Resources Main Tests
         And the response status message should have the following text "exists"
 
     
-    Scenario Outline: Try delete a Input Document when it is assigned to a step
-        Given that I want to delete a resource with the key "step_uid" stored in session array as variable "step_uid_<step_number>"
-        And I request "project/16062437052cd6141881e06088349078/input-document"
-        And the content type is "application/json"
+    Scenario: Try delete a Input Document when it is assigned to a step
+        Given that I want to delete a "InputDocument"
+        And I request "project/16062437052cd6141881e06088349078/input-document/83199959452cd62589576c1018679557"
         Then the response status code should be 400
         And the response status message should have the following text "assigned"
 
-        Examples:
 
-        | step_number |
-        | 2           |
-        
-
-    Scenario Outline: Try delete a Output document when it is assigned to a step
-        Given that I want to delete a resource with the key "step_uid" stored in session array as variable "step_uid_<step_number>"
-        And I request "project/16062437052cd6141881e06088349078/output-document"
-        And the content type is "application/json"
+    Scenario: Try delete a Output document when it is assigned to a step
+         Given that I want to delete a "OutputDocument"
+        And I request "project/16062437052cd6141881e06088349078/output-document/32743823452cd63105006e1076595203"
         Then the response status code should be 400
         And the response status message should have the following text "assigned"
 
-        Examples:
-
-        | step_number |
-        | 3           |
-          
 
 
     Scenario Outline: Update the five steps and then check if the values had changed
