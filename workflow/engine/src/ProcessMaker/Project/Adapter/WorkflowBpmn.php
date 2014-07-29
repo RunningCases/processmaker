@@ -401,17 +401,17 @@ class WorkflowBpmn extends Project\Workflow
                 $rsCriteria = \BpmnFlowPeer::doSelectRS($criteria);
                 $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-                $gatwayParentUid = "";
+                $gatewayParentUid = "";
 
                 if ($rsCriteria->next()) {
                     $row = $rsCriteria->getRow();
 
-                    $gatwayParentUid = $row["GAT_UID"];
+                    $gatewayParentUid = $row["GAT_UID"];
                 } else {
                     throw new \Exception(\G::LoadTranslation("ID_ROUTE_PARENT_DOES_NOT_EXIST_FOR_ROUTE_SECJOIN"));
                 }
 
-                $arrayGatewayData = $this->bp->getGateway2($gatwayParentUid);
+                $arrayGatewayData = $this->bp->getGateway2($gatewayParentUid);
 
                 $gatewayParentType = $arrayGatewayData["GAT_TYPE"];
 

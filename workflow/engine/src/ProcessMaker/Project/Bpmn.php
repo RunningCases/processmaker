@@ -559,7 +559,7 @@ class Bpmn extends Handler
         return $gateway;
     }
 
-    public function getGateway2($gatwayUid)
+    public function getGateway2($gatewayUid)
     {
         try {
             $criteria = new Criteria("workflow");
@@ -567,7 +567,7 @@ class Bpmn extends Handler
             $criteria->addSelectColumn(GatewayPeer::TABLE_NAME . ".*");
             $criteria->addSelectColumn(BoundPeer::TABLE_NAME . ".*");
             $criteria->addJoin(GatewayPeer::GAT_UID, BoundPeer::ELEMENT_UID, Criteria::LEFT_JOIN);
-            $criteria->add(GatewayPeer::GAT_UID, $gatwayUid, Criteria::EQUAL);
+            $criteria->add(GatewayPeer::GAT_UID, $gatewayUid, Criteria::EQUAL);
 
             $rsCriteria = GatewayPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -1059,12 +1059,12 @@ class Bpmn extends Handler
         $this->update(array("PRJ_STATUS" => $status));
     }
 
-    public function getGatewayByDirectionActivityAndFlow($gatwayDirection, $activityUid)
+    public function getGatewayByDirectionActivityAndFlow($gatewayDirection, $activityUid)
     {
         try {
             $criteria = new Criteria("workflow");
 
-            if ($gatwayDirection == "DIVERGING") {
+            if ($gatewayDirection == "DIVERGING") {
                 $criteria->addSelectColumn(FlowPeer::FLO_ELEMENT_DEST . " AS GAT_UID");
 
                 $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN, $activityUid, Criteria::EQUAL);
@@ -1085,16 +1085,16 @@ class Bpmn extends Handler
             $rsCriteria = FlowPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-            $gatwayUid = "";
+            $gatewayUid = "";
 
             if ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
-                $gatwayUid = $row["GAT_UID"];
+                $gatewayUid = $row["GAT_UID"];
             }
 
             //Return
-            return $this->getGateway2($gatwayUid);
+            return $this->getGateway2($gatewayUid);
         } catch (\Exception $e) {
             throw $e;
         }
