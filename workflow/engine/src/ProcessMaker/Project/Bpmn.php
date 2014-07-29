@@ -802,7 +802,6 @@ class Bpmn extends Handler
         }
     }
 
-    //////1111
     public function addData($data)
     {
         // setting defaults
@@ -828,7 +827,7 @@ class Bpmn extends Handler
         try {
             self::log("Update BpmnData: $datUid", "With data: ", $data);
 
-            $bpmnData = ArtifactPeer::retrieveByPk($datUid);
+            $bpmnData = \BpmnDataPeer::retrieveByPk($datUid);
 
             $bpmnData->fromArray($data);
             $bpmnData->save();
@@ -842,7 +841,7 @@ class Bpmn extends Handler
 
     public function getData($datUid, $retType = 'array')
     {
-        $bpmnData = ArtifactPeer::retrieveByPK($datUid);
+        $bpmnData = \BpmnDataPeer::retrieveByPK($datUid);
 
         if ($retType != "object" && ! empty($bpmnData)) {
             $bpmnData = $bpmnData->toArray();
@@ -883,7 +882,6 @@ class Bpmn extends Handler
             throw $e;
         }
     }
-    //////2222
 
     public function addParticipant($data)
     {
