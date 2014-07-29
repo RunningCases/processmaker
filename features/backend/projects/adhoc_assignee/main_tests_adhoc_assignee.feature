@@ -174,8 +174,8 @@ Scenario Outline: BUG 15041 Get the list of available users and groups to be ass
     And the response has <records> records
     
     Examples:
-    | test_description                | project                          | activity                         | filter     | start | limit | records |
-    | "Accounting" group is available | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | Accounting | 0     | 50    | 0       |
+    | test_description                      | project                          | activity                         | filter     | start | limit | records |
+    | "Accounting" group is available Task2 | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | Accounting | 0     | 50    | 0       |
             
 
 Scenario: BUG 15041 Update Group to enable group 
