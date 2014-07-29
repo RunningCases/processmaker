@@ -40,6 +40,23 @@ try {
     if ($_GET['APP_UID'] !== $_SESSION['APPLICATION']) {
         throw new Exception( G::LoadTranslation( 'ID_INVALID_APPLICATION_ID_MSG', array ('<a href=\'' . $_SERVER['HTTP_REFERER'] . '\'>{1}</a>',G::LoadTranslation( 'ID_REOPEN' ) ) ) );
     }
+    
+    /*
+     * PMDynaform
+     * DYN_VERSION is 1: classic Dynaform, 
+     * DYN_VERSION is 2: responsive form, Pmdynaform.
+     */
+    $a = new Criteria("workflow");
+    $a->addSelectColumn(DynaformPeer::DYN_VERSION);
+    $a->add(DynaformPeer::DYN_UID, $_GET['UID'], Criteria::EQUAL);
+    $a = ProcessPeer::doSelectRS($a);
+    $a->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    $a->next();
+    $row = $a->getRow();
+    $swpmdynaform = isset($row) && $row["DYN_VERSION"] == 2;
+    if ($swpmdynaform) {
+        $pmdynaform = $_POST["form"];
+    }
 
     $oForm = new Form( $_SESSION["PROCESS"] . "/" . $_GET["UID"], PATH_DYNAFORM );
     $oForm->validatePost();
@@ -166,6 +183,10 @@ try {
     $aData['USER_UID'] = $_SESSION['USER_LOGGED'];
     //$aData['APP_STATUS'] = $Fields['APP_STATUS'];
     $aData['PRO_UID'] = $_SESSION['PROCESS'];
+    
+    if ($swpmdynaform) {
+        $aData['APP_DATA'] = array_merge($aData['APP_DATA'], $pmdynaform);
+    }
 
     $oCase->updateCase( $_SESSION['APPLICATION'], $aData );
 
