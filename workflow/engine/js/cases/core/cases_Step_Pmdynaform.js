@@ -34,10 +34,12 @@ function validateNameField (form, type) {
     }
 }
 
-window.onload = function () {
+$(window).load(function () {
     var data = JSON.parse(jsondata);
-    var modelPMDynaform = new PMDynaform.Model.Form(data);
-    var viewPMDynaform = new PMDynaform.View.Form({tagName: "div", renderTo: $(".container"), model: modelPMDynaform});
+
+    window.dynaform = new PMDynaform.core.Project({
+        data: data
+    });
 
     if (pm_run_outside_main_app === 'true') {
         if (parent.showCaseNavigatorPanel) {
@@ -56,33 +58,33 @@ window.onload = function () {
 
     var type = document.createElement("input");
     type.type = "hidden";
-    type.value = "ASSIGN_TASK";
     type.name = "TYPE";
+    type.value = "ASSIGN_TASK";
 
     var uid = document.createElement("input");
     uid.type = "hidden";
-    uid.value = dyn_uid;
     uid.name = "UID";
+    uid.value = dyn_uid;
 
     var position = document.createElement("input");
     position.type = "hidden";
-    position.value = "10000";
     position.name = "POSITION";
+    position.value = "10000";
 
     var action = document.createElement("input");
     action.type = "hidden";
-    action.value = "ASSIGN";
     action.name = "ACTION";
+    action.value = "ASSIGN";
 
     var dynaformname = document.createElement("input");
     dynaformname.type = "hidden";
-    dynaformname.value = __DynaformName__;
     dynaformname.name = "__DynaformName__";
+    dynaformname.value = __DynaformName__;
 
     var appuid = document.createElement("input");
     appuid.type = "hidden";
-    appuid.value = app_uid;
     appuid.name = "APP_UID";
+    appuid.value = app_uid;
 
     form.action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
     form.method = "post";
@@ -92,5 +94,7 @@ window.onload = function () {
     form.appendChild(action);
     form.appendChild(dynaformname);
     form.appendChild(appuid);
-
-};
+    
+    var dyn_forward = document.getElementById("dyn_forward");
+    dyn_forward.href = "cases_Step?TYPE=" + type.value + "&UID=" + dyn_uid + "&POSITION=" + position.value + "&ACTION=" + action.value + "";
+});

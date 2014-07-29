@@ -162,6 +162,7 @@ class ProcessSupervisor
         try {
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
             $aRespLi = array();
+            $aRespLiGroups = array();
             $userRole = new \ProcessMaker\BusinessModel\User();
             // Groups
             $oCriteria = new \Criteria('workflow');
