@@ -112,6 +112,7 @@ abstract class Exporter
         $bpmnStruct["PROJECT"] = array(\BpmnProjectPeer::retrieveByPK($this->prjUid)->toArray());
 
         $workflow = new \ProcessMaker\Project\Workflow();
+
         list($workflowData, $workflowFile) = $workflow->getData($this->prjUid);
 
         $data["bpmn-definition"] = $bpmnStruct;

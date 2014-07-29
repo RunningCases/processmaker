@@ -28,6 +28,8 @@ use \BpmnParticipant as Participant;
 use \BpmnParticipantPeer as ParticipantPeer;
 
 use \BasePeer;
+use \Criteria as Criteria;
+use \ResultSet as ResultSet;
 
 use ProcessMaker\Util\Common;
 use ProcessMaker\Exception;
@@ -557,6 +559,31 @@ class Bpmn extends Handler
         return $gateway;
     }
 
+    public function getGateway2($gatwayUid)
+    {
+        try {
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(GatewayPeer::TABLE_NAME . ".*");
+            $criteria->addSelectColumn(BoundPeer::TABLE_NAME . ".*");
+            $criteria->addJoin(GatewayPeer::GAT_UID, BoundPeer::ELEMENT_UID, Criteria::LEFT_JOIN);
+            $criteria->add(GatewayPeer::GAT_UID, $gatwayUid, Criteria::EQUAL);
+
+            $rsCriteria = GatewayPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                //Return
+                return $rsCriteria->getRow();
+            }
+
+            //Return
+            return false;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     public function getGateways($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
         if (is_array($start)) {
@@ -1030,6 +1057,47 @@ class Bpmn extends Handler
     {
         $status = $value ? "DISABLED" : "ACTIVE";
         $this->update(array("PRJ_STATUS" => $status));
+    }
+
+    public function getGatewayByDirectionActivityAndFlow($gatwayDirection, $activityUid)
+    {
+        try {
+            $criteria = new Criteria("workflow");
+
+            if ($gatwayDirection == "DIVERGING") {
+                $criteria->addSelectColumn(FlowPeer::FLO_ELEMENT_DEST . " AS GAT_UID");
+
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN, $activityUid, Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN_TYPE, "bpmnActivity", Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST_TYPE, "bpmnGateway", Criteria::EQUAL);
+            } else {
+                //CONVERGING
+                $criteria->addSelectColumn(FlowPeer::FLO_ELEMENT_ORIGIN . " AS GAT_UID");
+
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN_TYPE, "bpmnGateway", Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST, $activityUid, Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST_TYPE, "bpmnActivity", Criteria::EQUAL);
+            }
+
+            $criteria->add(FlowPeer::PRJ_UID, $this->prjUid, Criteria::EQUAL);
+            $criteria->add(FlowPeer::FLO_TYPE, "SEQUENCE", Criteria::EQUAL);
+
+            $rsCriteria = FlowPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            $gatwayUid = "";
+
+            if ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $gatwayUid = $row["GAT_UID"];
+            }
+
+            //Return
+            return $this->getGateway2($gatwayUid);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
 

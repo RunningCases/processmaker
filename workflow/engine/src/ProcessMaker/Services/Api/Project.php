@@ -194,20 +194,34 @@ class Project extends Api
     }
 
     /**
-     * @url POST /process/:pro_uid/generate-bpmn
+     * @url POST /generate-bpmn
      *
-     * @param string $pro_uid {@min 32}{@max 32}
+     * @param array $request_data
      *
      * @status 201
      */
-    public function doPostProcessGenerateBpmn($pro_uid)
+    public function doPostGenerateBpmn(array $request_data)
     {
         try {
+            //Set data
+            $request_data = array_change_key_case($request_data, CASE_UPPER);
+
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+
+            $process->throwExceptionIfDataNotMetFieldDefinition(
+                $request_data,
+                array("PRO_UID" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "processUid")),
+                array("processUid" => "pro_uid"),
+                true
+            );
+
+            //Generate BPMN
             $workflowBpmn = new \ProcessMaker\Project\Adapter\WorkflowBpmn();
 
-            $projectUid = $workflowBpmn->generateBpmn($pro_uid, "pro_uid");
+            $projectUid = $workflowBpmn->generateBpmn($request_data["PRO_UID"], "pro_uid", $this->getUserId());
 
-            $arrayData = array_change_key_case(array("PRJ_UID" => $projectUid), CASE_LOWER);
+            $arrayData = array_change_key_case(array_merge(array("PRJ_UID" => $projectUid), $request_data), CASE_LOWER);
 
             $response = $arrayData;
 

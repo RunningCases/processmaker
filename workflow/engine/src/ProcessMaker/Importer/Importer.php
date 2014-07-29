@@ -18,8 +18,6 @@ abstract class Importer
     const IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW = "project.import.keep_without_changing_and_create_new";
     const IMPORT_OPTION_CREATE_NEW = "project.import.create_new";
 
-    const IMPORT_OPTION_WORKFLOW_TO_BPMN_GENERATE = "project.import.workflow_to_bpmn_generate";
-
     const GROUP_IMPORT_OPTION_RENAME = "group.import.rename";
     const GROUP_IMPORT_OPTION_MERGE_PREEXISTENT = "group.import.merge.preexistent";
     const GROUP_IMPORT_OPTION_CREATE_NEW = "group.import.create_new";
@@ -30,20 +28,6 @@ abstract class Importer
     const IMPORT_STAT_GROUP_ALREADY_EXISTS = 105;  //Error, Group already exists.
 
     public abstract function load();
-
-    /**
-     * Set import data
-     *
-     * @param array $arrayData Data
-     *
-     * return void
-     */
-    public function setImportData(array $arrayData)
-    {
-        $this->importData = $arrayData;
-
-        $this->validateImportData();
-    }
 
     /**
      * Verify if exists reserved words SQL
@@ -87,16 +71,7 @@ abstract class Importer
 
     public function import($option = self::IMPORT_OPTION_CREATE_NEW, $optionGroup = self::GROUP_IMPORT_OPTION_CREATE_NEW)
     {
-        $generateUid = false;
-
-        if ($option != self::IMPORT_OPTION_WORKFLOW_TO_BPMN_GENERATE) {
-            $this->prepare();
-        } else {
-            $generateUid = true;
-
-            $option = "";
-            $optionGroup = "";
-        }
+        $this->prepare();
 
         $name = $this->importData["tables"]["bpmn"]["project"][0]["prj_name"];
 
@@ -353,46 +328,16 @@ abstract class Importer
 
     protected function importWfTables(array $tables)
     {
-        $tables = (object) $tables;
+        $workflow = new \ProcessMaker\Project\Workflow();
 
-        $processes = new \Processes();
-
-        $processes->createProcessPropertiesFromData($tables);
+        $workflow->createDataByArrayData($tables);
     }
 
     protected function importWfFiles(array $workflowFiles)
     {
-        foreach ($workflowFiles as $target => $files) {
-            switch ($target) {
-                case "dynaforms":
-                    $basePath = PATH_DYNAFORM;
-                    break;
-                case "public":
-                    $basePath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP;
-                    break;
-                case "templates":
-                    $basePath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "mailTemplates" . PATH_SEP;
-                    break;
-                default:
-                    $basePath = "";
-            }
+        $workflow = new \ProcessMaker\Project\Workflow();
 
-            if (empty($basePath)) {
-                continue;
-            }
-
-            foreach ($files as $file) {
-                $filename = $basePath . $file["file_path"];
-                $path = dirname($filename);
-
-                if (! is_dir($path)) {
-                    Util\Common::mk_dir($path, 0775);
-                }
-
-                file_put_contents($filename, $file["file_content"]);
-                chmod($filename, 0775);
-            }
-        }
+        $workflow->createDataFileByArrayFile($workflowFiles);
     }
 
     public function doImport($generateUid = true)
@@ -409,63 +354,13 @@ abstract class Importer
 
         //Import workflow tables
         if ($generateUid) {
-            //Update TAS_UID
-            foreach ($arrayWorkflowTables["tasks"] as $key1 => $value1) {
-                $taskUid = $arrayWorkflowTables["tasks"][$key1]["TAS_UID"];
+            $result[0]["object"]  = "project";
+            $result[0]["old_uid"] = $projectUidOld;
+            $result[0]["new_uid"] = $projectUid;
 
-                foreach ($result as $value2) {
-                    $arrayItem = $value2;
+            $workflow = new \ProcessMaker\Project\Workflow();
 
-                    if ($arrayItem["old_uid"] == $taskUid) {
-                        $arrayWorkflowTables["tasks"][$key1]["TAS_UID_OLD"] = $taskUid;
-                        $arrayWorkflowTables["tasks"][$key1]["TAS_UID"] = $arrayItem["new_uid"];
-                        break;
-                    }
-                }
-            }
-
-            //Workflow tables
-            $workflowTables = (object)($arrayWorkflowTables);
-
-            $processes = new \Processes();
-            $processes->setProcessGUID($workflowTables, $projectUid);
-            $processes->renewAll($workflowTables);
-
-            $arrayWorkflowTables = (array)($workflowTables);
-
-            //Workflow files
-            foreach ($arrayWorkflowFiles as $key1 => $value1) {
-                $arrayFiles = $value1;
-
-                foreach ($arrayFiles as $key2 => $value2) {
-                    $file = $value2;
-
-                    $arrayWorkflowFiles[$key1][$key2]["file_path"] = str_replace($projectUidOld, $projectUid, (isset($file["file_path"]))? $file["file_path"] : $file["filepath"]);
-                    $arrayWorkflowFiles[$key1][$key2]["file_content"] = str_replace($projectUidOld, $projectUid, $file["file_content"]);
-                }
-            }
-
-            if (isset($arrayWorkflowTables["uid"])) {
-                foreach ($arrayWorkflowTables["uid"] as $key1 => $value1) {
-                    $arrayT = $value1;
-
-                    foreach ($arrayT as $key2 => $value2) {
-                        $uidOld = $key2;
-                        $uid = $value2;
-
-                        foreach ($arrayWorkflowFiles as $key3 => $value3) {
-                            $arrayFiles = $value3;
-
-                            foreach ($arrayFiles as $key4 => $value4) {
-                                $file = $value4;
-
-                                $arrayWorkflowFiles[$key3][$key4]["file_path"] = str_replace($uidOld, $uid, $file["file_path"]);
-                                $arrayWorkflowFiles[$key3][$key4]["file_content"] = str_replace($uidOld, $uid, $file["file_content"]);
-                            }
-                        }
-                    }
-                }
-            }
+            list($arrayWorkflowTables, $arrayWorkflowFiles) = $workflow->updateDataUidByArrayUid($arrayWorkflowTables, $arrayWorkflowFiles, $result);
         }
 
         $this->importWfTables($arrayWorkflowTables);

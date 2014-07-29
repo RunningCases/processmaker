@@ -460,7 +460,7 @@ class ProcessProxy extends HttpProxyController
 
             $workflowBpmn = new \ProcessMaker\Project\Adapter\WorkflowBpmn();
 
-            $projectUid = $workflowBpmn->generateBpmn($processUid, "processUid");
+            $projectUid = $workflowBpmn->generateBpmn($processUid, "processUid", $_SESSION["USER_LOGGED"]);
 
             $this->status = "OK";
             $this->projectUid = $projectUid;
