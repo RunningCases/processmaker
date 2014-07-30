@@ -932,7 +932,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             if ($forceInsert || is_null($dataObject)) {
                 if ($generateUid) {
-                    //Event
+                    //Data
                     unset($dataObjectData["BOU_UID"]);
 
                     $uidOld = $dataObjectData["DAT_UID"];
@@ -979,7 +979,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             if ($forceInsert || is_null($dataObject)) {
                 if ($generateUid) {
-                    //Event
+                    //Participant
                     unset($participantData["BOU_UID"]);
 
                     $uidOld = $participantData["PAR_UID"];

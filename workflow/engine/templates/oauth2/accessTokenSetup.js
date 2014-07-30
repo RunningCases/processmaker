@@ -342,7 +342,7 @@ accessTokenSetup.application = {
                                         sm.selectRow(rowIndex, true);
 
                                         var record = grdpnlMain.getSelectionModel().getSelected();
-                                        console.log(record);
+
                                         if (typeof(record) != "undefined") {
                                             Ext.MessageBox.confirm(
                                                 _("ID_CONFIRM"),
