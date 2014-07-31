@@ -40,6 +40,7 @@ class ProcessSupervisor
                                  'grp_name' => $aRow['GRP_TITLE']);
                 $oDataset->next();
             }
+
             // Users
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\ProcessUserPeer::USR_UID);
@@ -161,6 +162,7 @@ class ProcessSupervisor
         try {
             require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Roles.php");
             $aRespLi = array();
+            $aRespLiGroups = array();
             $userRole = new \ProcessMaker\BusinessModel\User();
             // Groups
             $oCriteria = new \Criteria('workflow');
@@ -201,13 +203,20 @@ class ProcessSupervisor
                         $permission = $userRole->loadUserRolePermission('PROCESSMAKER', $value["USR_UID"]);
                         foreach ($permission as $values) {
                             if ($values["PER_CODE"] == 'PM_SUPERVISOR') {
-                                $aRespLi[] = array('grp_uid' => $aRow['GRP_UID'],
+                                $aRespLiGroups[] = array('grp_uid' => $aRow['GRP_UID'],
                                                    'grp_name' => $aRow['GRP_TITLE'],
                                                    'obj_type' => "group");
                             }
                         }
                     }
                     $oDataset->next();
+                }
+            }
+            $exclude = array("");
+            for ($i = 0; $i<=count($aRespLiGroups)-1; $i++) {
+                if (!in_array(trim($aRespLiGroups[$i]["grp_uid"]) ,$exclude)) {
+                    $aRespLi[] = $aRespLiGroups[$i];
+                    $exclude[] = trim($aRespLiGroups[$i]["grp_uid"]);
                 }
             }
             $sDelimiter = \DBAdapter::getStringDelimiter();

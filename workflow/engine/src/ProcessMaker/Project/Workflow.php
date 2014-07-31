@@ -911,5 +911,253 @@ class Workflow extends Handler
         }
 
     }
+
+    public function addLine($position, $direction = "HORIZONTAL")
+    {
+        try {
+            self::log("Add Line with data: position $position, direction $direction");
+
+            $swimlaneElement = new \SwimlanesElements();
+
+            $swiUid = $swimlaneElement->create(array(
+                "PRO_UID"  => $this->proUid,
+                "SWI_TYPE" => "LINE",
+                "SWI_X"    => ($direction == "HORIZONTAL")? 0 : $position,
+                "SWI_Y"    => ($direction == "HORIZONTAL")? $position : 0
+            ));
+
+            self::log("Add Line Success!");
+
+            //Return
+            return $swiUid;
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
+            throw $e;
+        }
+    }
+
+    public function addText($text, $x, $y)
+    {
+        try {
+            self::log("Add Text with data: text \"$text\"");
+
+            $swimlaneElement = new \SwimlanesElements();
+
+            $swiUid = $swimlaneElement->create(array(
+                "PRO_UID"  => $this->proUid,
+                "SWI_TYPE" => "TEXT",
+                "SWI_TEXT" => $text,
+                "SWI_X"    => $x,
+                "SWI_Y"    => $y
+            ));
+
+            self::log("Add Text Success!");
+
+            //Return
+            return $swiUid;
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
+            throw $e;
+        }
+    }
+
+    public function createDataByArrayData(array $arrayData)
+    {
+        try {
+            $processes = new \Processes();
+
+            $processes->createProcessPropertiesFromData((object)($arrayData));
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
+            throw $e;
+        }
+    }
+
+    public function createDataFileByArrayFile(array $arrayFile)
+    {
+        try {
+            foreach ($arrayFile as $target => $files) {
+                switch (strtoupper($target)) {
+                    case "DYNAFORMS":
+                        $basePath = PATH_DYNAFORM;
+                        break;
+                    case "PUBLIC":
+                        $basePath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP;
+                        break;
+                    case "TEMPLATES":
+                        $basePath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "mailTemplates" . PATH_SEP;
+                        break;
+                    default:
+                        $basePath = "";
+                }
+
+                if (empty($basePath)) {
+                    continue;
+                }
+
+                foreach ($files as $file) {
+                    $filename = $basePath . ((isset($file["file_path"]))? $file["file_path"] : $file["filepath"]);
+                    $path = dirname($filename);
+
+                    if (!is_dir($path)) {
+                        Util\Common::mk_dir($path, 0775);
+                    }
+
+                    file_put_contents($filename, $file["file_content"]);
+                    chmod($filename, 0775);
+                }
+            }
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
+            throw $e;
+        }
+    }
+
+    public function getData($processUid)
+    {
+        try {
+            $process = new \Processes();
+
+            //Get data
+            $workflowData = (array)($process->getWorkflowData($processUid));
+            $workflowData["process"]["PRO_DYNAFORMS"] = (empty($workflowData["process"]["PRO_DYNAFORMS"]))? "" : serialize($workflowData["process"]["PRO_DYNAFORMS"]);
+
+            $workflowData["process"] = array($workflowData["process"]);
+            $workflowData["processCategory"] = (empty($workflowData["processCategory"]))? array() : array($workflowData["processCategory"]);
+
+            //Get files
+            $workflowFile = array();
+
+            //Getting DynaForms
+            foreach ($workflowData["dynaforms"] as $dynaform) {
+                $dynFile = PATH_DYNAFORM . $dynaform["DYN_FILENAME"] . ".xml";
+
+                $workflowFile["DYNAFORMS"][] = array(
+                    "filename" => $dynaform["DYN_TITLE"],
+                    "filepath" => $dynaform["DYN_FILENAME"] . ".xml",
+                    "file_content" => file_get_contents($dynFile)
+                );
+
+                $htmlFile = PATH_DYNAFORM . $dynaform["DYN_FILENAME"] . ".html";
+
+                if (file_exists($htmlFile)) {
+                    $workflowFile["DYNAFORMS"][] = array(
+                        "filename" => $dynaform["DYN_FILENAME"] . ".html",
+                        "filepath" => $dynaform["DYN_FILENAME"] . ".html",
+                        "file_content" => file_get_contents($htmlFile)
+                    );
+                }
+            }
+
+            //Getting templates files
+            $workspaceTargetDirs = array("TEMPLATES" => "mailTemplates", "PUBLIC" => "public");
+            $workspaceDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP;
+
+            foreach ($workspaceTargetDirs as $target => $workspaceTargetDir) {
+                $templatesDir = $workspaceDir . $workspaceTargetDir . PATH_SEP . $processUid;
+                $templatesFiles = Util\Common::rglob("$templatesDir/*", 0, true);
+
+                foreach ($templatesFiles as $templatesFile) {
+                    if (is_dir($templatesFile)) {
+                        continue;
+                    }
+
+                    $filename = basename($templatesFile);
+
+                    $workflowFile[$target][] = array(
+                        "filename" => $filename,
+                        "filepath" => $processUid . PATH_SEP . $filename,
+                        "file_content" => file_get_contents($templatesFile)
+                    );
+                }
+            }
+
+            //Return
+            self::log("Getting Workflow data Success!");
+
+            return array($workflowData, $workflowFile);
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
+            throw $e;
+        }
+    }
+
+    public function updateDataUidByArrayUid(array $arrayWorkflowData, array $arrayWorkflowFile, array $arrayUid)
+    {
+        try {
+            $processUidOld = $arrayUid[0]["old_uid"];
+            $processUid = $arrayUid[0]["new_uid"];
+
+            //Update TAS_UID
+            foreach ($arrayWorkflowData["tasks"] as $key => $value) {
+                $taskUid = $arrayWorkflowData["tasks"][$key]["TAS_UID"];
+
+                foreach ($arrayUid as $value2) {
+                    $arrayItem = $value2;
+
+                    if ($arrayItem["old_uid"] == $taskUid) {
+                        $arrayWorkflowData["tasks"][$key]["TAS_UID_OLD"] = $taskUid;
+                        $arrayWorkflowData["tasks"][$key]["TAS_UID"] = $arrayItem["new_uid"];
+                        break;
+                    }
+                }
+            }
+
+            //Workflow tables
+            $workflowData = (object)($arrayWorkflowData);
+
+            $processes = new \Processes();
+            $processes->setProcessGUID($workflowData, $processUid);
+            $processes->renewAll($workflowData);
+
+            $arrayWorkflowData = (array)($workflowData);
+
+            //Workflow files
+            foreach ($arrayWorkflowFile as $key => $value) {
+                $arrayFile = $value;
+
+                foreach ($arrayFile as $key2 => $value2) {
+                    $file = $value2;
+
+                    $arrayWorkflowFile[$key][$key2]["file_path"] = str_replace($processUidOld, $processUid, (isset($file["file_path"]))? $file["file_path"] : $file["filepath"]);
+                    $arrayWorkflowFile[$key][$key2]["file_content"] = str_replace($processUidOld, $processUid, $file["file_content"]);
+                }
+            }
+
+            if (isset($arrayWorkflowData["uid"])) {
+                foreach ($arrayWorkflowData["uid"] as $key => $value) {
+                    $arrayT = $value;
+
+                    foreach ($arrayT as $key2 => $value2) {
+                        $uidOld = $key2;
+                        $uid = $value2;
+
+                        foreach ($arrayWorkflowFile as $key3 => $value3) {
+                            $arrayFile = $value3;
+
+                            foreach ($arrayFile as $key4 => $value4) {
+                                $file = $value4;
+
+                                $arrayWorkflowFile[$key3][$key4]["file_path"] = str_replace($uidOld, $uid, $file["file_path"]);
+                                $arrayWorkflowFile[$key3][$key4]["file_content"] = str_replace($uidOld, $uid, $file["file_content"]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Return
+            return array($arrayWorkflowData, $arrayWorkflowFile);
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
+            throw $e;
+        }
+    }
 }
 

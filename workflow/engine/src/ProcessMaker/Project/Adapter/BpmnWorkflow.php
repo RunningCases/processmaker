@@ -566,9 +566,6 @@ class BpmnWorkflow extends Project\Bpmn
         }
         $events = $projectData['diagrams']['0']['events'];
         foreach ($events as $value) {
-            if (empty($value['evn_name'])) {
-                throw new \Exception("For event: {$value['evn_uid']} `evn_name` is required but missing.");
-            }
             if (empty($value['evn_type'])) {
                 throw new \Exception("For event: {$value['evn_uid']} `evn_type` is required but missing.");
             }
@@ -672,6 +669,8 @@ class BpmnWorkflow extends Project\Bpmn
             $diagram["artifacts"] = $bwp->getArtifacts($configList);
             $diagram["laneset"] = $bwp->getLanesets($configList);
             $diagram["lanes"] = $bwp->getLanes($configList);
+            $diagram["data"] = $bwp->getDataCollection($configList);
+            $diagram["participants"] = $bwp->getParticipants($configList);
             $project["diagrams"][] = $diagram;
         }
 
@@ -721,6 +720,12 @@ class BpmnWorkflow extends Project\Bpmn
     public static function updateFromStruct($prjUid, $projectData, $generateUid = true, $forceInsert = false)
     {
         $diagram = isset($projectData["diagrams"]) && isset($projectData["diagrams"][0]) ? $projectData["diagrams"][0] : array();
+        $diagram["activities"] = isset($diagram["activities"])? $diagram["activities"]: array();
+        $diagram["artifacts"]  = isset($diagram["artifacts"])? $diagram["artifacts"]: array();
+        $diagram["gateways"] = isset($diagram["gateways"])? $diagram["gateways"]: array();
+        $diagram["events"] = isset($diagram["events"])? $diagram["events"]: array();
+        $diagram["data"] = isset($diagram["data"])? $diagram["data"]: array();
+        $diagram["participants"] = isset($diagram["participants"])? $diagram["participants"]: array();
         $result = array();
 
         $projectData['prj_uid'] = $prjUid;
@@ -862,6 +867,7 @@ class BpmnWorkflow extends Project\Bpmn
                 $bwp->removeGateway($gatewayData["GAT_UID"]);
             }
         }
+
         /*
          * Diagram's Events Handling
          */
@@ -911,6 +917,99 @@ class BpmnWorkflow extends Project\Bpmn
             if (! in_array($eventData["EVN_UID"], $whiteList)) {
                 // If it is not in the white list, then remove them
                 $bwp->removeEvent($eventData["EVN_UID"]);
+            }
+        }
+
+        /*
+         * Diagram's Data Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["data"] as $i => $dataObjectData) {
+            $dataObjectData = array_change_key_case($dataObjectData, CASE_UPPER);
+            unset($dataObjectData["_EXTENDED"]);
+
+            $dataObject = $bwp->getData($dataObjectData["DAT_UID"]);
+
+            if ($forceInsert || is_null($dataObject)) {
+                if ($generateUid) {
+                    //Data
+                    unset($dataObjectData["BOU_UID"]);
+
+                    $uidOld = $dataObjectData["DAT_UID"];
+                    $dataObjectData["DAT_UID"] = Util\Common::generateUID();
+
+                    $result[] = array(
+                        "object"  => "data",
+                        "old_uid" => $uidOld,
+                        "new_uid" => $dataObjectData["DAT_UID"]
+                    );
+                }
+
+                $bwp->addData($dataObjectData);
+            } elseif (! $bwp->isEquals($dataObject, $dataObjectData)) {
+                $bwp->updateData($dataObjectData["DAT_UID"], $dataObjectData);
+            } else {
+                Util\Logger::log("Update Data ({$dataObjectData["DAT_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["data"][$i] = $dataObjectData;
+            $whiteList[] = $dataObjectData["DAT_UID"];
+        }
+
+        $dataCollection = $bwp->getDataCollection();
+
+        // looking for removed elements
+        foreach ($dataCollection as $dataObjectData) {
+            if (! in_array($dataObjectData["DAT_UID"], $whiteList)) {
+                // If it is not in the white list, then remove them
+                $bwp->removeData($dataObjectData["DAT_UID"]);
+            }
+        }
+
+        ////
+        /*
+         * Diagram's Participant Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["participants"] as $i => $participantData) {
+            $participantData = array_change_key_case($participantData, CASE_UPPER);
+            unset($participantData["_EXTENDED"]);
+
+            $dataObject = $bwp->getParticipant($participantData["PAR_UID"]);
+
+            if ($forceInsert || is_null($dataObject)) {
+                if ($generateUid) {
+                    //Participant
+                    unset($participantData["BOU_UID"]);
+
+                    $uidOld = $participantData["PAR_UID"];
+                    $participantData["PAR_UID"] = Util\Common::generateUID();
+
+                    $result[] = array(
+                        "object"  => "participant",
+                        "old_uid" => $uidOld,
+                        "new_uid" => $participantData["PAR_UID"]
+                    );
+                }
+
+                $bwp->addParticipant($participantData);
+            } elseif (! $bwp->isEquals($dataObject, $participantData)) {
+                $bwp->updateParticipant($participantData["PAR_UID"], $participantData);
+            } else {
+                Util\Logger::log("Update Participant ({$participantData["PAR_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["participants"][$i] = $participantData;
+            $whiteList[] = $participantData["PAR_UID"];
+        }
+
+        $dataCollection = $bwp->getParticipants();
+
+        // looking for removed elements
+        foreach ($dataCollection as $participantData) {
+            if (! in_array($participantData["PAR_UID"], $whiteList)) {
+                // If it is not in the white list, then remove them
+                $bwp->removeParticipant($participantData["PAR_UID"]);
             }
         }
 

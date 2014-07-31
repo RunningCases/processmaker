@@ -137,7 +137,7 @@ Scenario: Get for Export Project
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/xml"
-    And save exported process to "/uploadfiles/" as "Process_Complete_BPMN"
+    And save exported process to "/" as "Process_Complete_BPMN"
 
 
 Scenario: Delete a Project created previously in this script
@@ -160,13 +160,41 @@ Scenario Outline: Import a process
 
 
  	Examples:
- 	| project_file                            | import_option | prj_uid_number |
- 	| /uploadfiles/Process_NewCreate_BPMN.pmx | create        | 1              |
-    | /uploadfiles/Process_Complete_BPMN.pmx  | create        | 2              |
-    | /uploadfiles/Process_Complete_BPMN.pmx  | overwrite     | 3              |
-    | /uploadfiles/Process_Complete_BPMN.pmx  | disable       | 4              |
-    | /uploadfiles/Process_Complete_BPMN.pmx  | keep          | 5              |
+ 	| project_file                | import_option | prj_uid_number |
+ 	| Process_NewCreate_BPMN.pmx  | create        | 1              |
+    | Process_Complete_BPMN.pmx   | create        | 2              |
+    | Process_Complete_BPMN.pmx   | overwrite     | 3              |
+    | Process_Complete_BPMN.pmx   | disable       | 4              |
+    | Process_Complete_BPMN.pmx   | keep          | 5              |
+    | Test_Event_without_name.pmx | create        | 6              |
     
+#Verificar que se hayan exportado los eventos de forma correcta
+
+Scenario: Get a single Process process "Test_Event_without_name.pmx"
+    Given that I want to get a resource with the key "prj_uid" stored in session array as variable "prj_uid_<prj_uid_number>" 
+    And I request "project/601816709536cfeae7d7cd9079578104/process"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+    And that "prj_name" is set to "Test Event without name"
+    And that "evn_uid" is set to "51368855353d127b52c8904071509317"
+    And that "evn_name" is set to ""
+    And that "evn_uid" is set to "89601044553d127b52634d4017150624"
+    And that "evn_name" is set to ""
+    And that "flo_element_origin" is set to "89601044553d127b52634d4017150624"
+    
+
+
+
+
+
+
+
+
+
+
+
 
 #Verificar cantidad de dynaform, output, inputs, triggers, asignacion de usuarios, etc.
 
@@ -413,8 +441,8 @@ Scenario Outline: Import a process
     And the type is "object"
     
     Examples:
-    | project_file                            | import_option |
-    | /uploadfiles/Process_Complete_BPMN.pmx  | create        |
+    | project_file               | import_option |
+    | Process_Complete_BPMN.pmx  | create        |
 
 
 #For example, to export a empty process
@@ -424,7 +452,7 @@ Scenario: Get for Export Project "Export process empty"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/xml"
-    And save exported process to "/uploadfiles/" as "Export process empty"
+    And save exported process to "/" as "Export process empty"
 
 Scenario: Delete a Project created previously in this script "Export process empty"
     Given that I want to delete a resource with the key "prj_uid" stored in session array
@@ -435,7 +463,7 @@ Scenario: Delete a Project created previously in this script "Export process emp
     And the type is "object"
     
 Scenario: Import a process "Export process empty"
-    Given POST upload a project file "/uploadfiles/Export_process_empty.pmx" to "project/import?option=create"
+    Given POST upload a project file "Export_process_empty.pmx" to "project/import?option=create"
     Then the response status code should be 201
     And the response charset is "UTF-8"
     And the content type is "application/json"

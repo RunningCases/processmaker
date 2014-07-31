@@ -355,7 +355,6 @@ class Variable
             }
             if (isset($aData["VAR_FIELD_SIZE"])) {
                 Validator::isInteger($aData["VAR_FIELD_SIZE"], '$var_field_size');
-                Validator::isNotEmpty($aData['VAR_FIELD_SIZE'], '$var_field_size');
             }
             if (isset($aData["VAR_LABEL"])) {
                 Validator::isString($aData['VAR_LABEL'], '$var_label');
@@ -372,12 +371,6 @@ class Variable
                 if ($aData["VAR_NULL"] != 0 && $aData["VAR_NULL"] !=1 ) {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES", array('$var_null','0, 1' )));
                 }
-            }
-            if (isset($aData["VAR_DEFAULT"])) {
-                Validator::isString($aData['VAR_DEFAULT'], '$var_default');
-            }
-            if (isset($aData["VAR_ACCEPTED_VALUES"])) {
-                Validator::isString($aData['VAR_ACCEPTED_VALUES'], '$var_accepted_values');
             }
         } catch (\Exception $e) {
             throw $e;
