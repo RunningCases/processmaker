@@ -274,19 +274,26 @@ try {
             $row = $ds->getRow();
             $file = "";
             if (isset($row) && $row["DYN_VERSION"] == 2) {
-                /*$oTemplatePower = new TemplatePower(PATH_TPL . 'cases/cases_Step_Pmdynaform.html');
-                $oTemplatePower = new TemplatePower(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform.html', T_BYVAR);
-                $oTemplatePower->prepare();
-                $oTemplatePower->assign("JSON_DATA", $row["DYN_CONTENT"]);
-                $oTemplatePower->assign("CASE", $array["CASE"]);
-                $oTemplatePower->assign("APP_NUMBER", $array["APP_NUMBER"]);
-                $oTemplatePower->assign("TITLE", $array["TITLE"]);
-                $oTemplatePower->assign("APP_TITLE", $array["APP_TITLE"]);
-                $oTemplatePower->assign("PM_RUN_OUTSIDE_MAIN_APP", (!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false");
-                $oTemplatePower->assign("DYN_UID", $_GET['UID']);
-                $oTemplatePower->assign("DYNAFORMNAME", $row["PRO_UID"] . "_" . $row["DYN_UID"]);
-                $oTemplatePower->assign("APP_UID", $_SESSION['APPLICATION']);
-                $oTemplatePower->printToScreen();*/
+                //merge data
+                $fields = array("input", "textarea", "select");
+                $fieldsJSON = array("text", "textarea", "select");
+                $dataJSON = G::json_decode($row["DYN_CONTENT"]);
+                $n1 = count($fields);
+                $n2 = count($dataJSON->items[0]->items);
+                for ($i1 = 0; $i1 < $n1; $i1++) {
+                    $i3 = 0;
+                    for ($i2 = 0; $i2 < $n2; $i2++) {
+                        if ($dataJSON->items[0]->items[$i2][0]->type == $fieldsJSON[$i1]) {
+                            $key = "field" . $fields[$i1] . $i3;
+                            $valueField = isset($Fields['APP_DATA'][$key]) ? $Fields['APP_DATA'][$key] : "";
+                            $dataJSON->items[0]->items[$i2][0]->defaultValue = $valueField;
+                            $i3 = $i3 + 1;
+                        }
+                    }
+                }
+                $row["DYN_CONTENT"] = G::json_encode($dataJSON);
+                //set template
+                ob_clean();
                 $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform.html');
                 $file = str_replace("{JSON_DATA}", $row["DYN_CONTENT"], $file);
                 $file = str_replace("{CASE}", $array["CASE"], $file);
