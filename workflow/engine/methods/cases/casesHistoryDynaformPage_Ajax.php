@@ -380,7 +380,56 @@ if ($actionAjax == 'dynaformChangeLogViewHistory') {
     $Fields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_STEP_LABEL'] = '';
     $Fields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_STEP'] = '#';
     $Fields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_ACTION'] = 'return false;';
-    $G_PUBLISH->AddContent( 'dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_POST['DYN_UID'], '', $Fields['APP_DATA'], '', '', 'view' );
+    
+    /*
+     * PMDynaform
+     * DYN_VERSION is 1: classic Dynaform, 
+     * DYN_VERSION is 2: responsive form, Pmdynaform.
+     */
+    $a = new Criteria("workflow");
+    $a->addSelectColumn(DynaformPeer::DYN_VERSION);
+    $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
+    $a->addSelectColumn(DynaformPeer::PRO_UID);
+    $a->addSelectColumn(DynaformPeer::DYN_UID);
+    $a->add(DynaformPeer::DYN_UID, $_GET['DYN_UID'], Criteria::EQUAL);
+    $ds = ProcessPeer::doSelectRS($a);
+    $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    $ds->next();
+    $row = $ds->getRow();
+    $file = "";
+    if (isset($row) && $row["DYN_VERSION"] == 2) {
+        //merge data
+        $fields = array("input", "textarea", "select");
+        $fieldsJSON = array("text", "textarea", "select");
+        $dataJSON = G::json_decode($row["DYN_CONTENT"]);
+        $n1 = count($fields);
+        $n2 = count($dataJSON->items[0]->items);
+        for ($i1 = 0; $i1 < $n1; $i1++) {
+            $i3 = 0;
+            for ($i2 = 0; $i2 < $n2; $i2++) {
+                if ($dataJSON->items[0]->items[$i2][0]->type == $fieldsJSON[$i1]) {
+                    $key = "field" . $fields[$i1] . $i3;
+                    $valueField = isset($Fields['APP_DATA'][$key]) ? $Fields['APP_DATA'][$key] : "";
+                    $dataJSON->items[0]->items[$i2][0]->options = array($valueField);
+                    $dataJSON->items[0]->items[$i2][0]->type = 'label';
+                    $i3 = $i3 + 1;
+                }
+            }
+        }
+        $row["DYN_CONTENT"] = G::json_encode($dataJSON);
+        //set template
+        ob_clean();
+        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform_View.html');
+        $file = str_replace("{JSON_DATA}", $row["DYN_CONTENT"], $file);
+        $file = str_replace("{PM_RUN_OUTSIDE_MAIN_APP}", (!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $file);
+        $file = str_replace("{DYN_UID}", $_GET['DYN_UID'], $file);
+        $file = str_replace("{DYNAFORMNAME}", $row["PRO_UID"] . "_" . $row["DYN_UID"], $file);
+        $file = str_replace("{APP_UID}", $_SESSION['APPLICATION'], $file);
+        echo $file;
+        exit();
+    } else {
+        $G_PUBLISH->AddContent( 'dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_POST['DYN_UID'], '', $Fields['APP_DATA'], '', '', 'view' );
+    }
     ?>
 
     <script language="javascript">
@@ -463,8 +512,56 @@ if ($actionAjax == 'historyDynaformGridPreview') {
 
     $_SESSION['CURRENT_DYN_UID'] = $_POST['DYN_UID'];
     $_SESSION['DYN_UID_PRINT'] = $_POST['DYN_UID'];
-    $G_PUBLISH->AddContent( 'dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_POST['DYN_UID'], '', $Fields['APP_DATA'], '', '', 'view' );
-
+    
+    /*
+     * PMDynaform
+     * DYN_VERSION is 1: classic Dynaform, 
+     * DYN_VERSION is 2: responsive form, Pmdynaform.
+     */
+    $a = new Criteria("workflow");
+    $a->addSelectColumn(DynaformPeer::DYN_VERSION);
+    $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
+    $a->addSelectColumn(DynaformPeer::PRO_UID);
+    $a->addSelectColumn(DynaformPeer::DYN_UID);
+    $a->add(DynaformPeer::DYN_UID, $_GET['DYN_UID'], Criteria::EQUAL);
+    $ds = ProcessPeer::doSelectRS($a);
+    $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    $ds->next();
+    $row = $ds->getRow();
+    $file = "";
+    if (isset($row) && $row["DYN_VERSION"] == 2) {
+        //merge data
+        $fields = array("input", "textarea", "select");
+        $fieldsJSON = array("text", "textarea", "select");
+        $dataJSON = G::json_decode($row["DYN_CONTENT"]);
+        $n1 = count($fields);
+        $n2 = count($dataJSON->items[0]->items);
+        for ($i1 = 0; $i1 < $n1; $i1++) {
+            $i3 = 0;
+            for ($i2 = 0; $i2 < $n2; $i2++) {
+                if ($dataJSON->items[0]->items[$i2][0]->type == $fieldsJSON[$i1]) {
+                    $key = "field" . $fields[$i1] . $i3;
+                    $valueField = isset($Fields['APP_DATA'][$key]) ? $Fields['APP_DATA'][$key] : "";
+                    $dataJSON->items[0]->items[$i2][0]->options = array($valueField);
+                    $dataJSON->items[0]->items[$i2][0]->type = 'label';
+                    $i3 = $i3 + 1;
+                }
+            }
+        }
+        $row["DYN_CONTENT"] = G::json_encode($dataJSON);
+        //set template
+        ob_clean();
+        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform_View.html');
+        $file = str_replace("{JSON_DATA}", $row["DYN_CONTENT"], $file);
+        $file = str_replace("{PM_RUN_OUTSIDE_MAIN_APP}", (!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $file);
+        $file = str_replace("{DYN_UID}", $_GET['DYN_UID'], $file);
+        $file = str_replace("{DYNAFORMNAME}", $row["PRO_UID"] . "_" . $row["DYN_UID"], $file);
+        $file = str_replace("{APP_UID}", $_SESSION['APPLICATION'], $file);
+        echo $file;
+        exit();
+    } else {
+        $G_PUBLISH->AddContent( 'dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_POST['DYN_UID'], '', $Fields['APP_DATA'], '', '', 'view' );
+    }
     ?>
     <script language="javascript">
 
