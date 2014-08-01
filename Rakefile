@@ -173,14 +173,12 @@ def buildPmdynaform(homeDir, targetDir, mode)
   pmdynaformDir = targetDir + "/pmdynaform"
   
   executeInto(homeDir, [ "default"])
-
-  system("cp -r #{homeDir}/build #{pmdynaformDir}")
-  system("cp -r #{homeDir}/libs #{pmdynaformDir}")
-  system("rm #{pmdynaformDir}/build/appBuild.js")
-  readyForm = ""
-  system("echo '#{readyForm}' >> #{pmdynaformDir}/build/appBuild.js ")
-  system("cp #{Dir.pwd}/workflow/engine/templates/cases/cases_Step_Pmdynaform.html #{pmdynaformDir}/build/cases_Step_Pmdynaform.html")
-  system("cp #{Dir.pwd}/workflow/engine/templates/cases/cases_Step_Pmdynaform_Preview.html #{pmdynaformDir}/build/cases_Step_Pmdynaform_Preview.html")
+  
+  require 'fileutils'
+  Dir.mkdir("#{pmdynaformDir}/build")
+  FileUtils.cp_r(Dir["#{homeDir}/build/*"],"#{pmdynaformDir}/build")
+  Dir.mkdir("#{pmdynaformDir}/libs")
+  FileUtils.cp_r(Dir["#{homeDir}/libs/*"],"#{pmdynaformDir}/libs")
   
   template = ""
   config = File.read "#{homeDir}/config/templates.json"
@@ -188,28 +186,25 @@ def buildPmdynaform(homeDir, targetDir, mode)
   json.each do |key|
     s = ""
     key["files"].each do |source|
-      s += File.read  "#{homeDir}/#{source}"
+      s += File.read "#{homeDir}/#{source}"
       s += "\n"
     end
     template += s
   end
   
-  target = "#{pmdynaformDir}/build/cases_Step_Pmdynaform.html"
-  html = File.read target 
-  while html['###TEMPLATES##'] do
-    html['###TEMPLATES###'] = template
-  end
-  File.open(target, 'w+') do |file|
-    file.write html
-  end
-  
-  target = "#{pmdynaformDir}/build/cases_Step_Pmdynaform_Preview.html"
-  html = File.read target 
-  while html['###TEMPLATES##'] do
-    html['###TEMPLATES###'] = template
-  end
-  File.open(target, 'w+') do |file|
-    file.write html
+  htmlTemplates=["cases_Step_Pmdynaform.html","cases_Step_Pmdynaform_Preview.html","cases_Step_Pmdynaform_View.html"]
+  htmlTemplates.each do |htmlTemplate|
+    
+    FileUtils.cp("#{Dir.pwd}/workflow/engine/templates/cases/#{htmlTemplate}", "#{pmdynaformDir}/build/#{htmlTemplate}")
+    
+    target = "#{pmdynaformDir}/build/#{htmlTemplate}"
+    html = File.read target 
+    while html['###TEMPLATES##'] do
+      html['###TEMPLATES###'] = template
+    end
+    File.open(target, 'w+') do |file|
+      file.write html
+    end
   end
   
   puts "\nPmDynaform Build Finished!".magenta
