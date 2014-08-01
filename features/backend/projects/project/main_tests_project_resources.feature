@@ -720,8 +720,7 @@ Scenario Outline: Get definition of a project
     And the type is "object"
     And that "prj_name" is set to "Update Evaluation"
     And that "prj_description" is set to "Update"
-    And that "par_name" property in object "participants" equals "abcd"
-
+    
     
     Examples:
 
@@ -731,13 +730,17 @@ Scenario Outline: Get definition of a project
 
 #Test of successful export and import of objects "Data Object, Data Store, Black Box and Text" 
 
-Scenario: Get for Export Project - Test process NEW
-    Given that I want to get a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
-    And I request "project/<project_uid>/export"
+Scenario Outline: Get for Export Project - Test process NEW
+    Given I request "project/new_uid/export" with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/xml"
     And save exported process to "/" as "Test process NEW.pmx"
+
+    Examples:
+
+    | project_new_uid_number |
+    | 7                      |
 
 
 Scenario Outline: Delete a Project activity created previously in this script - Test process NEW
@@ -765,7 +768,7 @@ Scenario Outline: Import a process - Test process NEW
 
     Examples:
     | project_file               | import_option | prj_uid_number |
-    | Process_NewCreate_BPMN.pmx | create        | 7              |
+    | Process_NewCreate_BPMN.pmx | CREATE        | 7              |
 
 
 
