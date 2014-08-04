@@ -610,12 +610,12 @@ Scenario Outline: Get paging of list Advanced Search
     | high number for start      | 1000  | 1       | 0       |  200      |
     | high number for start      | 1000  | 0       | 0       |  200      |
     | empty result               |   1   | 0       | 30      |  200      |
-    | empty string               |   1   | 10000   | 57      |  200      |
+    | empty string               |   1   | 10000   | 83      |  200      |
     | invalid start              |   b   | 25      | 25      |  200      |
     | invalid limit              |   1   | c       | 30      |  200      |
     | start equals zero          |   0   | 20      | 20      |  200      |
     | search 0                   |   0   | 0       | 30      |  200      |
-    | search 0                   |   0   | 100     | 57      |  200      |
+    | search 0                   |   0   | 100     | 83      |  200      |
     | negative numbers in start  |  -10  | 25      | 25      |  200      |
     | negative numbers in limit  |   1   | -25     | 25      |  200      |
     | real numbers               |  0.0  | 1.0     | 1       |  200      |
@@ -652,7 +652,7 @@ Scenario Outline: Get order type of Process Category
     Examples:
     
     | test_description                           | cat_uid                           | records |
-    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 26      |
+    | Filter for Category "Category Cases Lists" | 4177095085330818c324501061677193  | 30      |
     | Filter all categories                      |                                   | 30      |
 
 
@@ -684,7 +684,7 @@ Scenario Outline: Get order type of Search
     Examples:
     
     | test_description                                                | search                           | records |
-    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 17                               | 10      |
+    | Filter for cases "Derivation rules - Parallel -> Case number 6" | 17                               | 16      |
     | Filter all cases                                                |                                  | 30      |
 
 
@@ -719,7 +719,7 @@ Scenario Outline: Get order for User
     | Filter Status = All User   |                                  | 30      |
     | Filter Status = aaron      | 51049032352d56710347233042615067 | 4       |
     | Filter Status = admin      | 00000000000000000000000000000001 | 30      |             
-    | Filter Status = chris      | 24166330352d56730cdd525035621101 | 6       |
+    | Filter Status = chris      | 24166330352d56730cdd525035621101 | 7       |
 
 
 Scenario Outline: Get order for date
@@ -733,5 +733,5 @@ Scenario Outline: Get order for date
     Examples:
     
     | test_description         | date_from  | date_to    | records |
-    | Filter date = 2014-03-01 | 2014-03-01 | 2014-03-31 | 5       |
+    | Filter date = 2014-03-01 | 2014-03-01 | 2014-03-31 | 7       |
     | Filter date = 2014-03-15 | 2014-03-15 | 2014-04-01 | 30      |
