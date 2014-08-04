@@ -217,7 +217,7 @@ Scenario Outline: Delete folder
 
 #BUG 15207, The "Upload" accepts files with other extensions
 
-Scenario Outline: Upload files to same folders "Project - Process Complete BPMN"
+Scenario Outline: Upload files with incorret extension ".exe" - "Project - Process Complete BPMN"
   Given POST I want to upload the file "<file>" to path "<prf_path>". Url "project/1455892245368ebeb11c1a5001393784/file-manager"
   And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
   And the response status message should have the following text "incorrect extension"
