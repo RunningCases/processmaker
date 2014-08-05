@@ -1311,6 +1311,36 @@ class RestContext extends BehatContext
 
     }
 
+    /**
+     * @Given /^I request "([^"]*)" with the key "([^"]*)" stored in session array as variable "([^"]*)" in position (\d+)$/
+     */
+    public function iRequestWithTheKeyStoredInSessionArrayAsVariableInPosition($pageUrl, $varName, $sessionVarName, $position)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$sessionVarName) ) {
+            $varValue = '';
+        } else {
+            foreach ($sessionData->$sessionVarName as $key => $value) {
+                if($key == $position){
+                    $varValue = $value;
+                }
+            }
+        }
+
+        $pageUrl = str_replace($varName, $varValue, $pageUrl);
+
+
+        $this->printDebug("URL: $pageUrl\n$varName = $varValue\nsessionVarName = $sessionVarName\n");
+
+
+        $this->iRequest($pageUrl);
+    }
+
+
      /**
      * @Given /^the property "([^"]*)" of "([^"]*)" is set to "([^"]*)"$/
      */
