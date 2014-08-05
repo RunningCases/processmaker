@@ -24,7 +24,8 @@ function dynaFormChanged (frm) {
 $(window).load(function () {
     var data = JSON.parse(jsondata);
     window.dynaform = new PMDynaform.core.Project({
-        data: data
+        data: data,
+        submitRest: false
     });
 
     if (pm_run_outside_main_app === 'true') {
