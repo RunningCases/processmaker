@@ -571,6 +571,7 @@ class Variable
                         $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
                         $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
                         $criteria->add(\ProcessVariablesPeer::VAR_NAME, $value[0]["variable"], \Criteria::EQUAL);
+                        $criteria->add(\ProcessVariablesPeer::VAR_UID, $variableUid, \Criteria::EQUAL);
                         $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
                         $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
                         $rsCriteria->next();
