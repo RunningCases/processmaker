@@ -110,7 +110,7 @@ class WebEntry
 
         $newName = str_replace($arraySpecialCharSearch, $arraySpecialCharReplace, $name);
 
-        $arraySpecialCharSearch  = array("/[\!-\)\:-\@]/", "/[\{\}\[\]\¿\?\+]/");
+        $arraySpecialCharSearch  = array("/[\!-\)\:-\@]/", "/[\{\}\[\]\|\¿\?\+\*]/");
         $arraySpecialCharReplace = array("",               "");
 
         $newName = preg_replace($arraySpecialCharSearch, $arraySpecialCharReplace, $newName);

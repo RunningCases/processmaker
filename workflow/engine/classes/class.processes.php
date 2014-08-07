@@ -1589,6 +1589,31 @@ class Processes
     }
 
     /**
+     * Create "Process Variables" records
+     *
+     * @param array $arrayData Data to create
+     *
+     * return void
+     */
+    public function createProcessVariables(array $arrayData)
+    {
+        try {
+            foreach ($arrayData as $value) {
+                $processVariables = new ProcessVariables();
+                $record = $value;
+
+                if ($processVariables->Exists($record["VAR_UID"])) {
+                    $result = $processVariables->remove($record["VAR_UID"]);
+                }
+                $result = $processVariables->create($record);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+
+    /**
      * Gets Input Documents Rows from aProcess.
      *
      * @param $sProUid string.
@@ -2598,6 +2623,32 @@ class Processes
     }
 
     /**
+     * Get "Process Variables" records of a Process Variables
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return an array with all "Process Variables"
+     */
+    public function getProcessVariables ($sProUid)
+    {
+        try {
+            $aVars = array ();
+            $oCriteria = new Criteria( 'workflow' );
+            $oCriteria->add( ProcessVariablesPeer::PRJ_UID, $sProUid );
+            $oDataset = ProcessVariablesPeer::doSelectRS( $oCriteria );
+            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $aVars[] = $aRow;
+                $oDataset->next();
+            }
+            return $aVars;
+        } catch (Exception $oError) {
+            throw $oError;
+        }
+    }
+
+    /**
      * Get "Process User" (Groups) records of a Process
      *
      * @param string $processUid Unique id of Process
@@ -2965,6 +3016,7 @@ class Processes
         $oData->processCategory = $this->getProcessCategoryRow( $sProUid );
         $oData->taskExtraProperties = $this->getTaskExtraPropertiesRows( $sProUid );
         $oData->processUser = $this->getProcessUser($sProUid);
+        $oData->processVariables = $this->getProcessVariables($sProUid);
 
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
 
@@ -4007,6 +4059,8 @@ class Processes
         $this->createTaskExtraPropertiesRows( isset( $oData->taskExtraProperties ) ? $oData->taskExtraProperties : array () );
 
         $this->createProcessUser((isset($oData->processUser))? $oData->processUser : array());
+        $this->createProcessVariables((isset($oData->processVariables))? $oData->processVariables : array());
+
     }
 
 

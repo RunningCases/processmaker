@@ -34,7 +34,6 @@ class ProjectUser
             $oCriteria->addJoin(\TaskUserPeer::TAS_UID, \TaskPeer::TAS_UID,  \Criteria::LEFT_JOIN);
             $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
-            $oCriteria->addGroupByColumn(\TaskUserPeer::USR_UID);
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -148,7 +147,6 @@ class ProjectUser
                                           'act_uid' => $task['uid']);
                     }
                 }
-                $oDataset->next();
             }
             $new = array();
             $exclude = array("");

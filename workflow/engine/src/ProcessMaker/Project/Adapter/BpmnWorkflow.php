@@ -566,9 +566,6 @@ class BpmnWorkflow extends Project\Bpmn
         }
         $events = $projectData['diagrams']['0']['events'];
         foreach ($events as $value) {
-            if (empty($value['evn_name'])) {
-                throw new \Exception("For event: {$value['evn_uid']} `evn_name` is required but missing.");
-            }
             if (empty($value['evn_type'])) {
                 throw new \Exception("For event: {$value['evn_uid']} `evn_type` is required but missing.");
             }
@@ -723,6 +720,12 @@ class BpmnWorkflow extends Project\Bpmn
     public static function updateFromStruct($prjUid, $projectData, $generateUid = true, $forceInsert = false)
     {
         $diagram = isset($projectData["diagrams"]) && isset($projectData["diagrams"][0]) ? $projectData["diagrams"][0] : array();
+        $diagram["activities"] = isset($diagram["activities"])? $diagram["activities"]: array();
+        $diagram["artifacts"]  = isset($diagram["artifacts"])? $diagram["artifacts"]: array();
+        $diagram["gateways"] = isset($diagram["gateways"])? $diagram["gateways"]: array();
+        $diagram["events"] = isset($diagram["events"])? $diagram["events"]: array();
+        $diagram["data"] = isset($diagram["data"])? $diagram["data"]: array();
+        $diagram["participants"] = isset($diagram["participants"])? $diagram["participants"]: array();
         $result = array();
 
         $projectData['prj_uid'] = $prjUid;
@@ -823,10 +826,16 @@ class BpmnWorkflow extends Project\Bpmn
         /*
          * Diagram's Gateways Handling
          */
+        $arrayUidGatewayParallel = array();
+        $flagGatewayParallel = false;
+
         $whiteList = array();
+
         foreach ($diagram["gateways"] as $i => $gatewayData) {
             $gatewayData = array_change_key_case($gatewayData, CASE_UPPER);
             unset($gatewayData["_EXTENDED"]);
+
+            $flagAddOrUpdate = false;
 
             $gateway = $bwp->getGateway($gatewayData["GAT_UID"]);
 
@@ -846,10 +855,23 @@ class BpmnWorkflow extends Project\Bpmn
                 }
 
                 $bwp->addGateway($gatewayData);
+
+                $flagAddOrUpdate = true;
             } elseif (! $bwp->isEquals($gateway, $gatewayData)) {
                 $bwp->updateGateway($gatewayData["GAT_UID"], $gatewayData);
+
+                $flagAddOrUpdate = true;
             } else {
                 Util\Logger::log("Update Gateway ({$gatewayData["GAT_UID"]}) Skipped - No changes required");
+            }
+
+            if ($flagAddOrUpdate) {
+                $arrayGatewayData = $bwp->getGateway($gatewayData["GAT_UID"]);
+
+                if ($arrayGatewayData["GAT_TYPE"] == "PARALLEL") {
+                    $arrayUidGatewayParallel[] = $gatewayData["GAT_UID"];
+                    $flagGatewayParallel = true;
+                }
             }
 
             $diagram["gateways"][$i] = $gatewayData;
@@ -929,7 +951,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             if ($forceInsert || is_null($dataObject)) {
                 if ($generateUid) {
-                    //Event
+                    //Data
                     unset($dataObjectData["BOU_UID"]);
 
                     $uidOld = $dataObjectData["DAT_UID"];
@@ -976,7 +998,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             if ($forceInsert || is_null($dataObject)) {
                 if ($generateUid) {
-                    //Event
+                    //Participant
                     unset($participantData["BOU_UID"]);
 
                     $uidOld = $participantData["PAR_UID"];
@@ -996,7 +1018,7 @@ class BpmnWorkflow extends Project\Bpmn
                 Util\Logger::log("Update Participant ({$participantData["PAR_UID"]}) Skipped - No changes required");
             }
 
-            $diagram["participant"][$i] = $participantData;
+            $diagram["participants"][$i] = $participantData;
             $whiteList[] = $participantData["PAR_UID"];
         }
 
@@ -1009,7 +1031,6 @@ class BpmnWorkflow extends Project\Bpmn
                 $bwp->removeParticipant($participantData["PAR_UID"]);
             }
         }
-
 
         /*
          * Diagram's Flows Handling
@@ -1045,6 +1066,11 @@ class BpmnWorkflow extends Project\Bpmn
                 if ($flowData["FLO_ELEMENT_DEST"] == $value["old_uid"]) {
                     $flowData["FLO_ELEMENT_DEST"] = $value["new_uid"];
                 }
+            }
+
+            //Update condition
+            if ($flagGatewayParallel && $flowData["FLO_ELEMENT_ORIGIN_TYPE"] == "bpmnGateway" && in_array($flowData["FLO_ELEMENT_ORIGIN"], $arrayUidGatewayParallel)) {
+                $flowData["FLO_CONDITION"] = "";
             }
 
             $diagram["flows"][$i] = $flowData;
