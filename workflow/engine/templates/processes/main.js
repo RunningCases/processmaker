@@ -394,11 +394,10 @@ Ext.onReady(function(){
     }
 
     if (rowSelected.data.PROJECT_TYPE == "bpmn"){
-      Ext.getCmp('edit_with_classic_editor').setDisabled(false);
+        Ext.getCmp("mnuGenerateBpmn").setDisabled(true);
     } else {
-      Ext.getCmp('edit_with_classic_editor').setDisabled(true);
+        Ext.getCmp("mnuGenerateBpmn").setDisabled(false);
     }
-
   }, this);
   processesGrid.on('contextmenu', function (evt) {
       evt.preventDefault();
@@ -435,6 +434,15 @@ Ext.onReady(function(){
         handler: function () {
           exportProcess();
         }
+      },
+      {
+          id: "mnuGenerateBpmn",
+          text: _("ID_GENERATE_BPMN_PROJECT"),
+          iconCls: "button_menu_ext ss_sprite ss_page_white_go",
+          handler: function ()
+          {
+              generateBpmn();
+          }
       }
     ]
   });
@@ -584,7 +592,7 @@ editProcess = function(typeParam)
   var rowSelected = processesGrid.getSelectionModel().getSelected();
   if (!rowSelected) {
       Ext.Msg.show({
-          title: '',
+          title: _("ID_INFORMATION"),
           msg: _('ID_NO_SELECTION_WARNING'),
           buttons: Ext.Msg.INFO,
           fn: function () {
@@ -617,7 +625,7 @@ editNewProcess = function(){
     location.href = '../designer?pro_uid='+rowSelected.data.PRO_UID
   } else {
      Ext.Msg.show({
-      title:'',
+      title: _("ID_INFORMATION"),
       msg: _('ID_NO_SELECTION_WARNING'),
       buttons: Ext.Msg.INFO,
       fn: function(){},
@@ -701,7 +709,7 @@ deleteProcess = function(){
     }
   } else {
     Ext.Msg.show({
-      title:'',
+      title: _("ID_INFORMATION"),
       msg: _('ID_NO_SELECTION_WARNING'),
       buttons: Ext.Msg.INFO,
       fn: function(){},
@@ -743,12 +751,66 @@ function exportProcess() {
   }
   else {
     Ext.Msg.show({
-      title: "",
+      title: _("ID_INFORMATION"),
       msg: _("ID_NO_SELECTION_WARNING"),
       icon: Ext.MessageBox.INFO,
       buttons: Ext.MessageBox.OK
     });
   }
+}
+
+function generateBpmn()
+{
+    var record = processesGrid.getSelectionModel().getSelections();
+
+    if (typeof(record) != "undefined") {
+        if (record.length == 1) {
+            var loadMaskGenerateBpmn = new Ext.LoadMask(Ext.getBody(), {msg: _("ID_PROCESSING")});
+            var processUid = record[0].get("PRO_UID");
+
+            loadMaskGenerateBpmn.show();
+
+            Ext.Ajax.request({
+                url: "../processProxy/generateBpmn",
+                method: "POST",
+                params: {
+                    processUid: processUid
+                },
+
+                success: function (response, opts)
+                {
+                    var dataResponse = Ext.util.JSON.decode(response.responseText);
+
+                    if (dataResponse.status) {
+                        if (dataResponse.status == "OK") {
+                            //processesGrid.store.reload();
+                            location.assign("../designer?prj_uid=" + dataResponse.projectUid);
+                        } else {
+                            Ext.MessageBox.show({
+                                title: _("ID_ERROR"),
+                                icon: Ext.MessageBox.ERROR,
+                                buttons: Ext.MessageBox.OK,
+                                msg: dataResponse.message
+                            });
+                        }
+                    }
+
+                    loadMaskGenerateBpmn.hide();
+                },
+                failure: function (response, opts)
+                {
+                    loadMaskGenerateBpmn.hide();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: _("ID_INFORMATION"),
+                icon: Ext.MessageBox.INFO,
+                buttons: Ext.MessageBox.OK,
+                msg: _("ID_NO_SELECTION_WARNING")
+            });
+        }
+    }
 }
 
 importProcessExistGroup = function()
@@ -1191,7 +1253,7 @@ function activeDeactive(){
     });
   } else {
      Ext.Msg.show({
-      title:'',
+      title: _("ID_INFORMATION"),
       msg: _('ID_NO_SELECTION_WARNING'),
       buttons: Ext.Msg.INFO,
       fn: function(){},
@@ -1227,7 +1289,7 @@ function enableDisableDebug()
     });
   } else {
     Ext.Msg.show({
-      title:'',
+      title: _("ID_INFORMATION"),
       msg: _('ID_NO_SELECTION_WARNING'),
       buttons: Ext.Msg.INFO,
       fn: function(){},

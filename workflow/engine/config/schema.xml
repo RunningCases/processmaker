@@ -3801,7 +3801,7 @@
         <column name="VAR_SQL" type="VARCHAR" size="512" />
         <column name="VAR_NULL" type="TINYINT" size="32" default="0"/>
         <column name="VAR_DEFAULT" type="VARCHAR" size="32" default=""/>
-        <column name="VAR_ACCEPTED_VALUES" type="VARCHAR" size="128" default=""/>
+        <column name="VAR_ACCEPTED_VALUES" type="LONGVARCHAR"/>
     </table>
 </database>
 

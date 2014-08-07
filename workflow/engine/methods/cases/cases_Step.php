@@ -257,32 +257,14 @@ try {
             $oDbConnections->loadAdditionalConnections();
             $_SESSION['CURRENT_DYN_UID'] = $_GET['UID'];
 
-            /*
-             * Checks the type of Dynaform.
-             * DYN_VERSION: 1 is classic Dynaform, 2 is Pmdynaform (responsive form).
-             */
-            $a = new Criteria("workflow");
-            $a->addSelectColumn(DynaformPeer::DYN_VERSION);
-            $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
-            $a->add(DynaformPeer::DYN_UID, $_GET['UID'], Criteria::EQUAL);
-            $ds = ProcessPeer::doSelectRS($a);
-            $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $ds->next();
-            $row = $ds->getRow();
-            if (isset($row) && $row["DYN_VERSION"] == 2) {
-                $oTemplatePower = new TemplatePower(PATH_TPL . 'cases/cases_Step_Pmdynaform.html');
-                $oTemplatePower->prepare();
-                $oTemplatePower->assign("JSON_DATA", $row["DYN_CONTENT"]);
-                $oTemplatePower->assign("CASE", $array["CASE"]);
-                $oTemplatePower->assign("APP_NUMBER", $array["APP_NUMBER"]);
-                $oTemplatePower->assign("TITLE", $array["TITLE"]);
-                $oTemplatePower->assign("APP_TITLE", $array["APP_TITLE"]);
-                $oTemplatePower->assign("PM_RUN_OUTSIDE_MAIN_APP", (!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false");
-                $oTemplatePower->assign("DYN_UID", $_GET['UID']);
+            G::LoadClass('pmDynaform');
+            $a = new pmDynaform($_GET['UID'], $Fields['APP_DATA']);
+            if ($a->isResponsive()) {
+                $a->mergeValues();
+                $a->printEdit((!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $_SESSION['APPLICATION'], $array);
             } else {
                 $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', $Fields['APP_DATA'], 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'], '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
             }
-            
             break;
         case 'INPUT_DOCUMENT': 
             if ($noShowTitle == 0) {
@@ -1043,36 +1025,29 @@ try {
     die();
 }
 
-/*
- * Checks the type of Dynaform.
- * DYN_VERSION: 1 is classic Dynaform, 2 is Pmdynaform (responsive form).
- */
-if (isset($row) && $row["DYN_VERSION"] == 2) {
-    $oTemplatePower->printToScreen();
-} else {
-    $oHeadPublisher = & headPublisher::getSingleton();
-    $oHeadPublisher->addScriptFile( "/jscore/cases/core/cases_Step.js" );
+$oHeadPublisher = & headPublisher::getSingleton();
+$oHeadPublisher->addScriptFile( "/jscore/cases/core/cases_Step.js" );
 
-    if (!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) {
-        $oHeadPublisher->addScriptCode( "
-                                            if (typeof parent != 'undefined') {
-                                                if (parent.showCaseNavigatorPanel) {
-                                                    parent.showCaseNavigatorPanel('$sStatus');
-                                                }
+if (!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) {
+    $oHeadPublisher->addScriptCode( "
+                                        if (typeof parent != 'undefined') {
+                                            if (parent.showCaseNavigatorPanel) {
+                                                parent.showCaseNavigatorPanel('$sStatus');
+                                            }
 
-                                                if (parent.setCurrent) {
-                                                    parent.setCurrent('" . $_GET['UID'] . "');
-                                                }
-                                            }" );
+                                            if (parent.setCurrent) {
+                                                parent.setCurrent('" . $_GET['UID'] . "');
+                                            }
+                                        }" );
 
-    }
-
-    G::RenderPage( 'publish', 'blank' );
-
-    if ($_SESSION['TRIGGER_DEBUG']['ISSET']) {
-        G::evalJScript( '
-        if (typeof showdebug != \'undefined\') {
-          showdebug();
-        }' );
-    }
 }
+
+G::RenderPage( 'publish', 'blank' );
+
+if ($_SESSION['TRIGGER_DEBUG']['ISSET']) {
+    G::evalJScript( '
+    if (typeof showdebug != \'undefined\') {
+      showdebug();
+    }' );
+}
+

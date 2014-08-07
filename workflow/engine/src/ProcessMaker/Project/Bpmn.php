@@ -24,8 +24,12 @@ use \BpmnEventPeer as EventPeer;
 use \BpmnGatewayPeer as GatewayPeer;
 use \BpmnFlowPeer as FlowPeer;
 use \BpmnArtifactPeer as ArtifactPeer;
+use \BpmnParticipant as Participant;
+use \BpmnParticipantPeer as ParticipantPeer;
 
 use \BasePeer;
+use \Criteria as Criteria;
+use \ResultSet as ResultSet;
 
 use ProcessMaker\Util\Common;
 use ProcessMaker\Exception;
@@ -73,6 +77,7 @@ class Bpmn extends Handler
         ),
         "flow" => array("PRJ_UID", "DIA_UID", "FLO_ELEMENT_DEST_PORT", "FLO_ELEMENT_ORIGIN_PORT"),
         "data" => array("PRJ_UID"),
+        "participant" => array("PRJ_UID"),
     );
 
 
@@ -167,6 +172,12 @@ class Bpmn extends Handler
         }
         foreach ($this->getArtifacts() as $artifacts) {
             $this->removeArtifact($artifacts["ART_UID"]);
+        }
+        foreach ($this->getDataCollection() as $bpmnData) {
+            $this->removeData($bpmnData["DAT_UID"]);
+        }
+        foreach ($this->getParticipants() as $participant) {
+            $this->removeParticipant($participant["PAR_UID"]);
         }
 
         if ($process = $this->getProcess("object")) {
@@ -548,6 +559,31 @@ class Bpmn extends Handler
         return $gateway;
     }
 
+    public function getGateway2($gatewayUid)
+    {
+        try {
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(GatewayPeer::TABLE_NAME . ".*");
+            $criteria->addSelectColumn(BoundPeer::TABLE_NAME . ".*");
+            $criteria->addJoin(GatewayPeer::GAT_UID, BoundPeer::ELEMENT_UID, Criteria::LEFT_JOIN);
+            $criteria->add(GatewayPeer::GAT_UID, $gatewayUid, Criteria::EQUAL);
+
+            $rsCriteria = GatewayPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                //Return
+                return $rsCriteria->getRow();
+            }
+
+            //Return
+            return false;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     public function getGateways($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
         if (is_array($start)) {
@@ -597,6 +633,8 @@ class Bpmn extends Handler
                 case "bpmnGateway": $class = "BpmnGateway"; break;
                 case "bpmnEvent": $class = "BpmnEvent"; break;
                 case "bpmnArtifact": $class = "BpmnArtifact"; break;
+                case "bpmnData": $class = "BpmnData"; break;
+                case "bpmnParticipant": $class = "BpmnParticipant"; break;
                 default:
                     throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
                         "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_ORIGIN_TYPE"]
@@ -615,6 +653,8 @@ class Bpmn extends Handler
                 case "bpmnGateway": $class = "BpmnGateway"; break;
                 case "bpmnEvent": $class = "BpmnEvent"; break;
                 case "bpmnArtifact": $class = "BpmnArtifact"; break;
+                case "bpmnData": $class = "BpmnData"; break;
+                case "bpmnParticipant": $class = "BpmnParticipant"; break;
                 default:
                     throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
                         "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_DEST_TYPE"]
@@ -711,7 +751,11 @@ class Bpmn extends Handler
     public function addArtifact($data)
     {
         // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
         $data['ART_UID'] = array_key_exists('ART_UID', $data) ? $data['ART_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
         try {
             self::log("Add Artifact with data: ", $data);
             $artifact = new Artifact();
@@ -789,11 +833,14 @@ class Bpmn extends Handler
         }
     }
 
-    //////1111
     public function addData($data)
     {
         // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
         $data['DATA_UID'] = array_key_exists('DAT_UID', $data) ? $data['DAT_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
         try {
             self::log("Add BpmnData with data: ", $data);
             $bpmnData = new \BpmnData();
@@ -815,7 +862,7 @@ class Bpmn extends Handler
         try {
             self::log("Update BpmnData: $datUid", "With data: ", $data);
 
-            $bpmnData = ArtifactPeer::retrieveByPk($datUid);
+            $bpmnData = \BpmnDataPeer::retrieveByPk($datUid);
 
             $bpmnData->fromArray($data);
             $bpmnData->save();
@@ -829,7 +876,7 @@ class Bpmn extends Handler
 
     public function getData($datUid, $retType = 'array')
     {
-        $bpmnData = ArtifactPeer::retrieveByPK($datUid);
+        $bpmnData = \BpmnDataPeer::retrieveByPK($datUid);
 
         if ($retType != "object" && ! empty($bpmnData)) {
             $bpmnData = $bpmnData->toArray();
@@ -870,7 +917,91 @@ class Bpmn extends Handler
             throw $e;
         }
     }
-    //////2222
+
+    public function addParticipant($data)
+    {
+        // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
+        $data['PAR_UID'] = array_key_exists('PAR_UID', $data) ? $data['PAR_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
+        try {
+            self::log("Add Participant with data: ", $data);
+            $participant = new Participant();
+            $participant->fromArray($data, BasePeer::TYPE_FIELDNAME);
+            $participant->setPrjUid($this->getUid());
+            $participant->setProUid($this->getProcess("object")->getProUid());
+            $participant->save();
+            self::log("Add Participant Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+
+        return $participant->getParUid();
+    }
+
+    public function updateParticipant($parUid, $data)
+    {
+        try {
+            self::log("Update Participant: $parUid", "With data: ", $data);
+
+            $participant = ParticipantPeer::retrieveByPk($parUid);
+
+            $participant->fromArray($data);
+            $participant->save();
+
+            self::log("Update Participant Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function getParticipant($parUid, $retType = 'array')
+    {
+        $participant = ParticipantPeer::retrieveByPK($parUid);
+
+        if ($retType != "object" && ! empty($participant)) {
+            $participant = $participant->toArray();
+            $participant = self::filterArrayKeys($participant, self::$excludeFields["participant"]);
+        }
+
+        return $participant;
+    }
+
+    public function getParticipants($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        $filter = $changeCaseTo != CASE_UPPER ? array_map("strtolower", self::$excludeFields["participant"]) : self::$excludeFields["participant"];
+
+        return self::filterCollectionArrayKeys(
+            Participant::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo),
+            $filter
+        );
+    }
+
+    public function removeParticipant($parUid)
+    {
+        try {
+            self::log("Remove Participant: $parUid");
+
+            $participant = ParticipantPeer::retrieveByPK($parUid);
+            $participant->delete();
+
+            // remove related object (flows)
+            Flow::removeAllRelated($parUid);
+
+            self::log("Remove Participant Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
 
     public function addLane($data)
     {
@@ -924,6 +1055,47 @@ class Bpmn extends Handler
     {
         $status = $value ? "DISABLED" : "ACTIVE";
         $this->update(array("PRJ_STATUS" => $status));
+    }
+
+    public function getGatewayByDirectionActivityAndFlow($gatewayDirection, $activityUid)
+    {
+        try {
+            $criteria = new Criteria("workflow");
+
+            if ($gatewayDirection == "DIVERGING") {
+                $criteria->addSelectColumn(FlowPeer::FLO_ELEMENT_DEST . " AS GAT_UID");
+
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN, $activityUid, Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN_TYPE, "bpmnActivity", Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST_TYPE, "bpmnGateway", Criteria::EQUAL);
+            } else {
+                //CONVERGING
+                $criteria->addSelectColumn(FlowPeer::FLO_ELEMENT_ORIGIN . " AS GAT_UID");
+
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN_TYPE, "bpmnGateway", Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST, $activityUid, Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST_TYPE, "bpmnActivity", Criteria::EQUAL);
+            }
+
+            $criteria->add(FlowPeer::PRJ_UID, $this->prjUid, Criteria::EQUAL);
+            $criteria->add(FlowPeer::FLO_TYPE, "SEQUENCE", Criteria::EQUAL);
+
+            $rsCriteria = FlowPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            $gatewayUid = "";
+
+            if ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $gatewayUid = $row["GAT_UID"];
+            }
+
+            //Return
+            return $this->getGateway2($gatewayUid);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
 

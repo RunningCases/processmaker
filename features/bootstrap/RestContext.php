@@ -1311,6 +1311,36 @@ class RestContext extends BehatContext
 
     }
 
+    /**
+     * @Given /^I request "([^"]*)" with the key "([^"]*)" stored in session array as variable "([^"]*)" in position (\d+)$/
+     */
+    public function iRequestWithTheKeyStoredInSessionArrayAsVariableInPosition($pageUrl, $varName, $sessionVarName, $position)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$sessionVarName) ) {
+            $varValue = '';
+        } else {
+            foreach ($sessionData->$sessionVarName as $key => $value) {
+                if($key == $position){
+                    $varValue = $value;
+                }
+            }
+        }
+
+        $pageUrl = str_replace($varName, $varValue, $pageUrl);
+
+
+        $this->printDebug("URL: $pageUrl\n$varName = $varValue\nsessionVarName = $sessionVarName\n");
+
+
+        $this->iRequest($pageUrl);
+    }
+
+
      /**
      * @Given /^the property "([^"]*)" of "([^"]*)" is set to "([^"]*)"$/
      */
@@ -1629,8 +1659,56 @@ class RestContext extends BehatContext
         }
         if (!$swFound) {
             //print_r($this->_data);
-            throw new \Exception("JSON Response does not have '$varName' property\n\n" );
+            $this->printDebug("JSON Response does not have '$sessionVarName' property\n\n");
+            //throw new \Exception("JSON Response does not have '$sessionVarName' property\n\n" );
         }
+    }
+
+     /**
+     * @Given /^that "([^"]*)" property in object "([^"]*)" equals "([^"]*)"$/
+     */
+    public function thatPropertyInObjectEquals($propertyName, $propertyParent, $value)
+    {
+        $data = $this->_data;
+        if (empty($data)) {
+            throw new Exception("Response is empty or was not JSON\n\n"
+                . $this->_response->getBody(true));
+            return;
+        }
+
+        if (!isset($data->$propertyParent)) {
+            throw new Exception("Response has not the property '$propertyParent'\n\n"
+                . $this->_response->getBody(true));
+            return;
+        }
+
+        $data = $data->$propertyParent;
+
+        if (!empty($data)) {
+            if (!is_object($data)) {
+                throw new Exception("the $propertyParent in Response data is not an object!\n\n" );
+            }
+            if (!isset($data->$propertyName)) {
+                throw new Exception("Property '"
+                    . $propertyName . "' is not set!\n\n"
+                );
+            }
+            if (is_array($data->$propertyName)) {
+                throw new Exception("$propertyName is an array and we expected a value\n\n"
+                    . $this->_response->getBody(true));
+            }
+            if ($data->$propertyName != $propertyValue) {
+                throw new \Exception('Property value mismatch! (given: '
+                    . $propertyValue . ', match: '
+                    . $data->$propertyName . ")\n\n"
+                );
+            }
+        } else {
+            throw new Exception("Response was not JSON\n\n"
+                . $this->_response->getBody(true));
+        }
+
+        
     }
      /**
      * @Given /^save exported process to "([^"]*)"$/

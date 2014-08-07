@@ -98,7 +98,7 @@ abstract class Exporter
         $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($this->prjUid);
         $bpmnStruct["ARTIFACT"] = \BpmnArtifact::getAll($this->prjUid);
         $bpmnStruct["BOUND"] = \BpmnBound::getAll($this->prjUid);
-        $bpmnStruct["DATA"] = array();
+        $bpmnStruct["DATA"] = \BpmnData::getAll($this->prjUid);
         $bpmnStruct["DIAGRAM"] = \BpmnDiagram::getAll($this->prjUid);
         $bpmnStruct["DOCUMENTATION"] = array();
         $bpmnStruct["EVENT"] = \BpmnEvent::getAll($this->prjUid);
@@ -107,64 +107,17 @@ abstract class Exporter
         $bpmnStruct["GATEWAY"] = \BpmnGateway::getAll($this->prjUid);
         $bpmnStruct["LANE"] = array();
         $bpmnStruct["LANESET"] = array();
-        $bpmnStruct["PARTICIPANT"] = array();
+        $bpmnStruct["PARTICIPANT"] = \BpmnParticipant::getAll($this->prjUid);
         $bpmnStruct["PROCESS"] = \BpmnProcess::getAll($this->prjUid);
         $bpmnStruct["PROJECT"] = array(\BpmnProjectPeer::retrieveByPK($this->prjUid)->toArray());
 
-        $oProcess = new \Processes();
-        $workflowData = (array) $oProcess->getWorkflowData($this->prjUid);
-        $workflowData["process"]['PRO_DYNAFORMS'] = empty($workflowData["process"]['PRO_DYNAFORMS'])
-            ? "" : serialize($workflowData["process"]['PRO_DYNAFORMS']);
+        $workflow = new \ProcessMaker\Project\Workflow();
 
-        $workflowData["process"] = array($workflowData["process"]);
-        $workflowData["processCategory"] = empty($workflowData["processCategory"]) ? array() : array($workflowData["processCategory"]);
-
+        list($workflowData, $workflowFile) = $workflow->getData($this->prjUid);
 
         $data["bpmn-definition"] = $bpmnStruct;
         $data["workflow-definition"] = $workflowData;
-        $data["workflow-files"] = array();
-
-        // getting dynaforms
-        foreach ($workflowData["dynaforms"] as $dynaform) {
-            $dynFile = PATH_DYNAFORM . $dynaform['DYN_FILENAME'] . '.xml';
-            $data["workflow-files"]["DYNAFORMS"][] = array(
-                "filename" => $dynaform['DYN_TITLE'],
-                "filepath" => $dynaform['DYN_FILENAME'] . '.xml',
-                "file_content" => file_get_contents($dynFile)
-            );
-
-            $htmlFile = PATH_DYNAFORM . $dynaform['DYN_FILENAME'] . '.html';
-
-            if (file_exists($htmlFile)) {
-                $data["workflow-files"]["DYNAFORMS"][] = array(
-                    "filename" => $dynaform['DYN_FILENAME'] . '.html',
-                    "filepath" => $dynaform['DYN_FILENAME'] . '.html',
-                    "file_content" => file_get_contents($htmlFile)
-                );
-            }
-        }
-
-        // getting templates files
-        $workspaceTargetDirs = array("TEMPLATES" => "mailTemplates", "PUBLIC" => "public");
-        $workspaceDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP;
-
-        foreach ($workspaceTargetDirs as $target => $workspaceTargetDir) {
-            $templatesDir = $workspaceDir . $workspaceTargetDir . PATH_SEP . $this->prjUid;
-            $templatesFiles = Util\Common::rglob("$templatesDir/*", 0, true);
-
-            foreach ($templatesFiles as $templatesFile) {
-                if (is_dir($templatesFile)) {
-                    continue;
-                }
-
-                $filename = basename($templatesFile);
-                $data["workflow-files"][$target][] = array(
-                    "filename" => $filename,
-                    "filepath" => $this->prjUid . PATH_SEP . $filename,
-                    "file_content" => file_get_contents($templatesFile)
-                );
-            }
-        }
+        $data["workflow-files"] = $workflowFile;
 
         return $data;
     }
