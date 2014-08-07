@@ -209,5 +209,4 @@ Scenario Outline: Create new Projects (Negative Tests)
     | Field required prj_name        |                         | Prueba          | Task # 1 | TASK     | End # 1  | EMPTY      | 400        | prj_name        |
     | Field required act_name        | Test negative project 2 | Prueba 1        |          | TASK     | End # 1  | EMPTY      | 400        | act_name        |
     | Field required act_type        | Test negative project 3 | Prueba 2        | Task # 1 |          | End # 1  | EMPTY      | 400        | act_type        |
-    | Field required evn_name        | Test negative project 4 | Prueba 3        | Task # 1 | TASK     |          | EMPTY      | 400        | evn_name        |
     | Field required evn_marker      | Test negative project 5 | Prueba 4        | Task # 1 | TASK     | End # 1  |            | 400        | evn_marker      |

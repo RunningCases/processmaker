@@ -19,5 +19,22 @@
         <div id="container"></div>
         ###TEMPLATES###
         <script type="text/javascript" src="/lib/pmdynaform/build/js/PMDynaform.js"></script>
+        <script type="text/javascript">
+            var jsondata = '{JSON_DATA}';
+            var pm_run_outside_main_app = '{PM_RUN_OUTSIDE_MAIN_APP}';
+            var dyn_uid = '{DYN_UID}';
+            var __DynaformName__ = '{DYNAFORMNAME}';
+            var app_uid = '{APP_UID}';
+            $(window).load(function () {
+                var data = JSON.parse(jsondata);
+                window.dynaform = new PMDynaform.core.Project({
+                    data: data
+                });
+                $(document).find('form').submit(function (e) {
+                    e.preventDefault();
+                    return false;
+                });
+            });
+        </script>
     </body>
 </html>

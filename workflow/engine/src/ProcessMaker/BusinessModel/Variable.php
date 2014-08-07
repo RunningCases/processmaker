@@ -73,9 +73,9 @@ class Variable
                         $variable->setVarDefault($arrayData["VAR_DEFAULT"]);
                     }
                     if (isset($arrayData["VAR_ACCEPTED_VALUES"])) {
-                        $variable->setVarAcceptedValues($arrayData["VAR_ACCEPTED_VALUES"]);
+                        $encodeAcceptedValues = json_encode($arrayData["VAR_ACCEPTED_VALUES"]);
+                        $variable->setVarAcceptedValues($encodeAcceptedValues);
                     }
-
                     $variable->save();
                     $cnn->commit();
                 } else {
@@ -158,7 +158,8 @@ class Variable
                         $variable->setVarDefault($arrayData["VAR_DEFAULT"]);
                     }
                     if (isset($arrayData["VAR_ACCEPTED_VALUES"])) {
-                        $variable->setVarAcceptedValues($arrayData["VAR_ACCEPTED_VALUES"]);
+                        $encodeAcceptedValues = json_encode($arrayData["VAR_ACCEPTED_VALUES"]);
+                        $variable->setVarAcceptedValues($encodeAcceptedValues);
                     }
                     $variable->save();
                     $cnn->commit();
@@ -198,6 +199,8 @@ class Variable
             Validator::proUid($processUid, '$prj_uid');
 
             $this->throwExceptionIfNotExistsVariable($variableUid);
+
+            $this->verifyUse($processUid, $variableUid);
             //Delete
             $criteria = new \Criteria("workflow");
 
@@ -372,9 +375,6 @@ class Variable
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES", array('$var_null','0, 1' )));
                 }
             }
-            if (isset($aData["VAR_ACCEPTED_VALUES"])) {
-                Validator::isString($aData['VAR_ACCEPTED_VALUES'], '$var_accepted_values');
-            }
         } catch (\Exception $e) {
             throw $e;
         }
@@ -385,7 +385,6 @@ class Variable
      *
      * @param string $processUid         Unique id of Process
      * @param string $variableName       Name
-     * @param string $variableUidExclude Unique id of Variable to exclude
      *
      */
     public function existsName($processUid, $variableName)
@@ -536,6 +535,54 @@ class Variable
             if (is_null($obj)) {
                 throw new \Exception('var_uid: '.$variableUid. ' '.\G::LoadTranslation("ID_DOES_NOT_EXIST"));
             }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if the variable is being used in a Dynaform
+     *
+     * @param string $processUid       Unique id of Process
+     * @param string $variableUid       Unique id of Variable
+     *
+     */
+    public function verifyUse($processUid, $variableUid)
+    {
+        try {
+
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\DynaformPeer::DYN_CONTENT);
+            $criteria->addSelectColumn(\DynaformPeer::DYN_UID);
+            $criteria->add(\DynaformPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $rsCriteria = \DynaformPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+
+                $row = $rsCriteria->getRow();
+
+                $contentDecode = json_decode($row["DYN_CONTENT"], true);
+                $content = $contentDecode['items'][0]['items'];
+
+                foreach ($content as $key => $value) {
+                    if (isset($value[0]["variable"])) {
+                        $criteria = new \Criteria("workflow");
+                        $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
+                        $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
+                        $criteria->add(\ProcessVariablesPeer::VAR_NAME, $value[0]["variable"], \Criteria::EQUAL);
+                        $criteria->add(\ProcessVariablesPeer::VAR_UID, $variableUid, \Criteria::EQUAL);
+                        $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+                        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                        $rsCriteria->next();
+
+                        if ($rsCriteria->getRow()) {
+                            throw new \Exception(\G::LoadTranslation("ID_VARIABLE_IN_USE", array($variableUid, $row["DYN_UID"])));
+                        }
+                    }
+                }
+                }
+
         } catch (\Exception $e) {
             throw $e;
         }
