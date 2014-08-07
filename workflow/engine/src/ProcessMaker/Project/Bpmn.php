@@ -28,6 +28,8 @@ use \BpmnParticipant as Participant;
 use \BpmnParticipantPeer as ParticipantPeer;
 
 use \BasePeer;
+use \Criteria as Criteria;
+use \ResultSet as ResultSet;
 
 use ProcessMaker\Util\Common;
 use ProcessMaker\Exception;
@@ -557,6 +559,31 @@ class Bpmn extends Handler
         return $gateway;
     }
 
+    public function getGateway2($gatewayUid)
+    {
+        try {
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(GatewayPeer::TABLE_NAME . ".*");
+            $criteria->addSelectColumn(BoundPeer::TABLE_NAME . ".*");
+            $criteria->addJoin(GatewayPeer::GAT_UID, BoundPeer::ELEMENT_UID, Criteria::LEFT_JOIN);
+            $criteria->add(GatewayPeer::GAT_UID, $gatewayUid, Criteria::EQUAL);
+
+            $rsCriteria = GatewayPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                //Return
+                return $rsCriteria->getRow();
+            }
+
+            //Return
+            return false;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     public function getGateways($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
         if (is_array($start)) {
@@ -724,7 +751,11 @@ class Bpmn extends Handler
     public function addArtifact($data)
     {
         // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
         $data['ART_UID'] = array_key_exists('ART_UID', $data) ? $data['ART_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
         try {
             self::log("Add Artifact with data: ", $data);
             $artifact = new Artifact();
@@ -805,7 +836,11 @@ class Bpmn extends Handler
     public function addData($data)
     {
         // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
         $data['DATA_UID'] = array_key_exists('DAT_UID', $data) ? $data['DAT_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
         try {
             self::log("Add BpmnData with data: ", $data);
             $bpmnData = new \BpmnData();
@@ -886,7 +921,11 @@ class Bpmn extends Handler
     public function addParticipant($data)
     {
         // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
         $data['PAR_UID'] = array_key_exists('PAR_UID', $data) ? $data['PAR_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
         try {
             self::log("Add Participant with data: ", $data);
             $participant = new Participant();
@@ -1016,6 +1055,47 @@ class Bpmn extends Handler
     {
         $status = $value ? "DISABLED" : "ACTIVE";
         $this->update(array("PRJ_STATUS" => $status));
+    }
+
+    public function getGatewayByDirectionActivityAndFlow($gatewayDirection, $activityUid)
+    {
+        try {
+            $criteria = new Criteria("workflow");
+
+            if ($gatewayDirection == "DIVERGING") {
+                $criteria->addSelectColumn(FlowPeer::FLO_ELEMENT_DEST . " AS GAT_UID");
+
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN, $activityUid, Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN_TYPE, "bpmnActivity", Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST_TYPE, "bpmnGateway", Criteria::EQUAL);
+            } else {
+                //CONVERGING
+                $criteria->addSelectColumn(FlowPeer::FLO_ELEMENT_ORIGIN . " AS GAT_UID");
+
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN_TYPE, "bpmnGateway", Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST, $activityUid, Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST_TYPE, "bpmnActivity", Criteria::EQUAL);
+            }
+
+            $criteria->add(FlowPeer::PRJ_UID, $this->prjUid, Criteria::EQUAL);
+            $criteria->add(FlowPeer::FLO_TYPE, "SEQUENCE", Criteria::EQUAL);
+
+            $rsCriteria = FlowPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            $gatewayUid = "";
+
+            if ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $gatewayUid = $row["GAT_UID"];
+            }
+
+            //Return
+            return $this->getGateway2($gatewayUid);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
 

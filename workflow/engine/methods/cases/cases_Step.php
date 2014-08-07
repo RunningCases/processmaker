@@ -257,52 +257,14 @@ try {
             $oDbConnections->loadAdditionalConnections();
             $_SESSION['CURRENT_DYN_UID'] = $_GET['UID'];
 
-            /*
-             * PMDynaform
-             * DYN_VERSION is 1: classic Dynaform, 
-             * DYN_VERSION is 2: responsive form, Pmdynaform.
-             */
-            $a = new Criteria("workflow");
-            $a->addSelectColumn(DynaformPeer::DYN_VERSION);
-            $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
-            $a->addSelectColumn(DynaformPeer::PRO_UID);
-            $a->addSelectColumn(DynaformPeer::DYN_UID);
-            $a->add(DynaformPeer::DYN_UID, $_GET['UID'], Criteria::EQUAL);
-            $ds = ProcessPeer::doSelectRS($a);
-            $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $ds->next();
-            $row = $ds->getRow();
-            $file = "";
-            if (isset($row) && $row["DYN_VERSION"] == 2) {
-                /*$oTemplatePower = new TemplatePower(PATH_TPL . 'cases/cases_Step_Pmdynaform.html');
-                $oTemplatePower = new TemplatePower(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform.html', T_BYVAR);
-                $oTemplatePower->prepare();
-                $oTemplatePower->assign("JSON_DATA", $row["DYN_CONTENT"]);
-                $oTemplatePower->assign("CASE", $array["CASE"]);
-                $oTemplatePower->assign("APP_NUMBER", $array["APP_NUMBER"]);
-                $oTemplatePower->assign("TITLE", $array["TITLE"]);
-                $oTemplatePower->assign("APP_TITLE", $array["APP_TITLE"]);
-                $oTemplatePower->assign("PM_RUN_OUTSIDE_MAIN_APP", (!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false");
-                $oTemplatePower->assign("DYN_UID", $_GET['UID']);
-                $oTemplatePower->assign("DYNAFORMNAME", $row["PRO_UID"] . "_" . $row["DYN_UID"]);
-                $oTemplatePower->assign("APP_UID", $_SESSION['APPLICATION']);
-                $oTemplatePower->printToScreen();*/
-                $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform.html');
-                $file = str_replace("{JSON_DATA}", $row["DYN_CONTENT"], $file);
-                $file = str_replace("{CASE}", $array["CASE"], $file);
-                $file = str_replace("{APP_NUMBER}", $array["APP_NUMBER"], $file);
-                $file = str_replace("{TITLE}", $array["TITLE"], $file);
-                $file = str_replace("{APP_TITLE}", $array["APP_TITLE"], $file);
-                $file = str_replace("{PM_RUN_OUTSIDE_MAIN_APP}", (!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $file);
-                $file = str_replace("{DYN_UID}", $_GET['UID'], $file);
-                $file = str_replace("{DYNAFORMNAME}", $row["PRO_UID"] . "_" . $row["DYN_UID"], $file);
-                $file = str_replace("{APP_UID}", $_SESSION['APPLICATION'], $file);
-                echo $file;
-                exit();
+            G::LoadClass('pmDynaform');
+            $a = new pmDynaform($_GET['UID'], $Fields['APP_DATA']);
+            if ($a->isResponsive()) {
+                $a->mergeValues();
+                $a->printEdit((!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $_SESSION['APPLICATION'], $array);
             } else {
                 $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', $Fields['APP_DATA'], 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'], '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
             }
-            
             break;
         case 'INPUT_DOCUMENT': 
             if ($noShowTitle == 0) {

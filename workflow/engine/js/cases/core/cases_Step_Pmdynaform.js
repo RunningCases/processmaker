@@ -21,23 +21,12 @@ function dynaFormChanged (frm) {
     }
     return false;
 }
-
-function validateNameField (form, type) {
-    var i, j = 0, dt, name;
-    dt = form.getElementsByTagName(type);
-    for (i = 0; i < dt.length; i++) {
-        name = dt[i].name;
-        if (!name)
-            name = "field" + type + j;
-        dt[i].name = "form[" + name + "]";
-        j++;
-    }
-}
-
-window.onload = function () {
+$(window).load(function () {
     var data = JSON.parse(jsondata);
-    var modelPMDynaform = new PMDynaform.Model.Form(data);
-    var viewPMDynaform = new PMDynaform.View.Form({tagName: "div", renderTo: $(".container"), model: modelPMDynaform});
+    window.dynaform = new PMDynaform.core.Project({
+        data: data,
+        submitRest: false
+    });
 
     if (pm_run_outside_main_app === 'true') {
         if (parent.showCaseNavigatorPanel) {
@@ -50,39 +39,49 @@ window.onload = function () {
     }
 
     var form = document.getElementsByTagName("form")[0];
-    validateNameField(form, "input");
-    validateNameField(form, "textarea");
-    validateNameField(form, "select");
+
+    var el = form.elements;
+    var k = 0;
+    var dt = data.items[0].items;
+    for (var i = 0; i < dt.length; i++) {
+        var dr = dt[i];
+        for (var j = 0; j < dr.length; j++) {
+            if (dr[j].name) {
+                el[k].name = "form[" + dr[j].name + "]";
+                k = k + 1;
+            }
+        }
+    }
 
     var type = document.createElement("input");
     type.type = "hidden";
-    type.value = "ASSIGN_TASK";
     type.name = "TYPE";
+    type.value = "ASSIGN_TASK";
 
     var uid = document.createElement("input");
     uid.type = "hidden";
-    uid.value = dyn_uid;
     uid.name = "UID";
+    uid.value = dyn_uid;
 
     var position = document.createElement("input");
     position.type = "hidden";
-    position.value = "10000";
     position.name = "POSITION";
+    position.value = "10000";
 
     var action = document.createElement("input");
     action.type = "hidden";
-    action.value = "ASSIGN";
     action.name = "ACTION";
+    action.value = "ASSIGN";
 
     var dynaformname = document.createElement("input");
     dynaformname.type = "hidden";
-    dynaformname.value = __DynaformName__;
     dynaformname.name = "__DynaformName__";
+    dynaformname.value = __DynaformName__;
 
     var appuid = document.createElement("input");
     appuid.type = "hidden";
-    appuid.value = app_uid;
     appuid.name = "APP_UID";
+    appuid.value = app_uid;
 
     form.action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
     form.method = "post";
@@ -93,4 +92,9 @@ window.onload = function () {
     form.appendChild(dynaformname);
     form.appendChild(appuid);
 
-};
+    var dyn_forward = document.getElementById("dyn_forward");
+    dyn_forward.onclick = function () {
+        form.submit();
+        return false;
+    };
+});
