@@ -1512,7 +1512,8 @@ class Process
             return array(
                 $this->getFieldNameByFormatFieldName("VAR_NAME")  => trim($record["name"]),
                 $this->getFieldNameByFormatFieldName("VAR_LABEL") => trim($record["label"]),
-                $this->getFieldNameByFormatFieldName("VAR_TYPE")  => trim($record["type"])
+                $this->getFieldNameByFormatFieldName("VAR_TYPE")  => trim($record["type"]),
+                $this->getFieldNameByFormatFieldName("VAR_SOURCE")  => trim($record["source"])
             );
         } catch (\Exception $e) {
             throw $e;
@@ -1566,8 +1567,12 @@ class Process
                     $arrayVar = self::getDynaformsVars($processUid);
 
                     foreach ($arrayVar as $key => $value) {
-                        $arrayVariable[] = $this->getVariableDataFromRecord(array("name" => $value["sName"], "label" => $value["sLabel"], "type" => $value["sType"]));
+                        $arrayVariable[] = $this->getVariableDataFromRecord(array("name" => $value["sName"], "label" => $value["sLabel"], "type" => $value["sType"], "source" => $value["sUid"]));
                     }
+
+                    $arrayHtmlVariable = self::getHtmlFormVars($processUid);
+                    $arrayVariable = array_merge($arrayVariable, $arrayHtmlVariable);
+
                     break;
             }
 
@@ -1633,10 +1638,10 @@ class Process
         if ($bSystemVars) {
             $aAux = G::getSystemConstants();
             foreach ($aAux as $sName => $sValue) {
-                $aFields[] = array ('sName' => $sName,'sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLES'));
+                $aFields[] = array ('sName' => $sName,'sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLES'), 'sUid' => '');
             }
             //we're adding the ping variable to the system list
-            $aFields[] = array ('sName' => 'PIN','sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLES'));
+            $aFields[] = array ('sName' => 'PIN','sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLES'), 'sUid' => '');
         }
 
         $aInvalidTypes = array("title", "subtitle", "file", "button", "reset", "submit", "javascript");
@@ -1648,6 +1653,7 @@ class Process
 
         $oCriteria = new Criteria( 'workflow' );
         $oCriteria->addSelectColumn( \DynaformPeer::DYN_FILENAME );
+        $oCriteria->addSelectColumn( \DynaformPeer::DYN_UID );
         $oCriteria->add( \DynaformPeer::PRO_UID, $sProcessUID );
         $oCriteria->add( \DynaformPeer::DYN_TYPE, 'xmlform' );
         $oDataset = \DynaformPeer::doSelectRS( $oCriteria );
@@ -1678,8 +1684,8 @@ class Process
                         $aFields[] = array (
                             'sName' => $field->tagName,
                             'sType' => $field->getAttribute("type"),
-                            'sLabel' => ($field->getAttribute("type") != 'grid' ? $label : '[ ' . G::LoadTranslation('ID_GRID') . ' ]')
-                        );
+                            'sLabel' => ($field->getAttribute("type") != 'grid' ? $label : '[ ' . G::LoadTranslation('ID_GRID') . ' ]'),
+                            'sUid' => $aRow['DYN_UID']);
                     }
                 }
             }
@@ -1777,5 +1783,44 @@ class Process
 
         return $aFields;
     }
+
+    /**
+     * Function getHtmlFormVars
+     *
+     * @access public
+     * @param string $sProcessUID
+     * @return array
+     */
+    public static function getHtmlFormVars ($sProcessUID)
+    {
+        //Get data
+        $criteria = new \Criteria("workflow");
+
+        $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_UID);
+        $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
+        $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_LABEL);
+        $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_TYPE);
+
+        $criteria->add(\ProcessVariablesPeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
+
+        $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+
+        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        $rsCriteria->next();
+        $arrayVariables = array();
+
+        while ($aRow = $rsCriteria->getRow()) {
+            $arrayVariables[] = array(  'var_name' => $aRow['VAR_NAME'],
+                                        'var_label' => $aRow['VAR_LABEL'],
+                                        'var_type' => $aRow['VAR_FIELD_TYPE'],
+                                        'var_source' => $aRow['VAR_UID']);
+            $rsCriteria->next();
+        }
+        //Return
+        return $arrayVariables;
+
+    }
+
 }
 
