@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dynaForm type="xmlform" name="1455892245368ebeb11c1a5001393784/898822326536be3a12addb0034537553" width="500" enabletemplate="0" mode="edit" nextstepsave="" printdynaform="1">
+  <TITULO type="title" enablehtml="0" btn_cancel="Cancel" required="0" readonly="0" savelabel="0">
+      <en>Test Funcionalidad - Dynaform</en>
+        </TITULO>
+          <Subtitulo type="subtitle" enablehtml="0" btn_cancel="Cancel" required="0" readonly="0" savelabel="0">
+              <en>Texto</en>
+                </Subtitulo>
+                  <Nombre type="text" maxlength="64" validate="Alpha" required="1" readonly="0" size="15" mode="edit" btn_cancel="Cancel" mask="" strto="UPPER" dependentfields="" defaultvalue="" hint="Fill this field with your name." formula="" function="" sqlconnection="" savelabel="0">
+                      <en>Alphabetic-UPPER</en>
+                        </Nombre>
+                          <Integer type="text" maxlength="64" validate="Int" required="1" readonly="0" size="15" mode="edit" btn_cancel="Cancel">
+                              <en>Integer</en>
+                                </Integer>
+                                  <Email type="text" maxlength="64" validate="Email" strto="LOWER" required="1" readonly="0" size="15" mode="edit" btn_cancel="Cancel">
+                                      <en>Email-lower</en>
+                                        </Email>
+                                          <Currency type="currency" maxlength="15" currency="$" validate="Real" mask="###,###,###,###.## $" required="1" readonly="0" size="15" mode="edit" btn_cancel="Cancel" defaultvalue="" hint="" formula="" function="" sqlconnection="" savelabel="0">    <en>Currency-Real </en>
+                                            </Currency>
+                                              <Password type="password" maxlength="15" required="1" autocomplete="0" readonly="0" size="15" mode="edit" btn_cancel="Cancel">
+                                                  <en>Password</en>
+                                                    </Password>
+                                                      <Suggest type="suggest" required="1" savelabel="1" size="15" mode="edit" sqlconnection="" maxresults="6" shownoresults="0" store_new_entry="0" table="" primary_key_type="0" btn_cancel="Cancel" defaultvalue="" hint="Fill in with a user name." primary_key="" table_data="" primary_key_data="" primary_key_type_data="" field="" readonly="0"><![CDATA[SELECT USR_UID, USR_USERNAME, CONCAT(USR_FIRSTNAME, " ", USR_LASTNAME) FROM USERS ]]><en>Suggest</en></Suggest>
+                                                        <Text_area type="textarea" required="1" readonly="0" rows="2" cols="32" mode="edit" btn_cancel="Cancel">
+                                                            <en>Text-Area</en>
+                                                              </Text_area>
+                                                                <Subtitulo2 type="subtitle" enablehtml="0" btn_cancel="Cancel" required="0" readonly="0" savelabel="0">
+                                                                    <en><![CDATA[Multi-Selección]]></en>
+                                                                      </Subtitulo2>
+                                                                        <Dropdown type="dropdown" required="1" readonly="0" savelabel="0" mode="edit" options="Array" btn_cancel="Cancel" dependentfields="" defaultvalue="" hint="" sqlconnection="">
+                                                                            <en>Dropdown  <option name="Grids">Grids</option><option name="Input-Document">Input-Document</option><option name="Output-Document">Output-Document</option><option name="Triggers">Triggers</option></en>
+                                                                              </Dropdown>
+                                                                                <ListBox type="listbox" required="1" size="4" mode="edit" options="Array" btn_cancel="Cancel">
+                                                                                    <en>List-Box  <option name="Box1">Box1</option>
+                                                                                        <option name="Box2">Box2</option>
+                                                                                            <option name="Box3">Box3</option>
+                                                                                              </en>
+                                                                                                </ListBox>
+                                                                                                  <Checkbox type="checkbox" value="On" falsevalue="Off" required="1" defaultvalue="Off" readonly="0" labelonright="0" enablehtml="0" btn_cancel="Cancel">
+                                                                                                      <en>Check-Box</en>
+                                                                                                        </Checkbox>
+                                                                                                          <Checkgroup type="checkgroup" mode="edit" options="Array" btn_cancel="Cancel" required="1">
+                                                                                                              <en>Check-group  <option name="Check1">Check1</option>
+                                                                                                                  <option name="Check2">Check2</option>
+                                                                                                                      <option name="Check3">Check3</option>
+                                                                                                                        </en>
+                                                                                                                          </Checkgroup>
+                                                                                                                            <RadioGroup type="radiogroup" required="1" mode="edit" options="Array" btn_cancel="Cancel">
+                                                                                                                                <en>Radio-Group  <option name="Radio1">Radio1</option>
+                                                                                                                                    <option name="Radio2">Radio2</option>
+                                                                                                                                        <option name="Radio3">Radio3</option>
+                                                                                                                                          </en>
+                                                                                                                                            </RadioGroup>
+                                                                                                                                              <Fecha type="date" relativedate="1" beforedate="0m" afterdate="1y" mask="%Y-%m-%d" editable="0" required="1" readonly="0" showtime="0" defaultvalue_sel="today" mode="edit" btn_cancel="Cancel" startdate="" enddate="" defaultvalue="today" hint="" savelabel="0">
+                                                                                                                                                  <en>Fecha</en>
+                                                                                                                                                    </Fecha>
+                                                                                                                                                      <Hidden type="hidden" defaultvalue="Hidden" mode="edit" btn_cancel="Cancel"/>
+                                                                                                                                                        <Link type="link" target_sel="_blank" target="_blank" value="ProcessMaker" btn_cancel="Cancel" link="http://www.processmaker.com" hint="" required="0" readonly="0" savelabel="0">
+                                                                                                                                                            <en>Link</en>
+                                                                                                                                                              </Link>
+                                                                                                                                                                <AddFile type="file" required="0" btn_cancel="Cancel">
+                                                                                                                                                                    <en>Add-File</en>
+                                                                                                                                                                      </AddFile>
+                                                                                                                                                                        <Javascript type="javascript"><![CDATA[alert("Prueba JS");]]></Javascript>
+                                                                                                                                                                          <Subtitulo3 type="subtitle" enablehtml="0" btn_cancel="Cancel">
+                                                                                                                                                                              <en>Botones</en>
+                                                                                                                                                                                </Subtitulo3>
+                                                                                                                                                                                  <YesNo type="yesno" readonly="0" mode="edit" btn_cancel="Cancel" required="0" defaultvalue="" hint="Oculta el botón (Conditions editor)" savelabel="0">
+                                                                                                                                                                                      <en>Yes-No</en>
+                                                                                                                                                                                        </YesNo>
+                                                                                                                                                                                          <Boton type="button" btn_cancel="Cancel">
+                                                                                                                                                                                              <en><![CDATA[Botón]]></en>
+                                                                                                                                                                                                </Boton>
+                                                                                                                                                                                                  <Submit type="submit" btn_cancel="Cancel">
+                                                                                                                                                                                                      <en>Submit</en>
+                                                                                                                                                                                                        </Submit>
+                                                                                                                                                                                                          <Reset type="reset" btn_cancel="Cancel">
+                                                                                                                                                                                                              <en>Reset</en>
+                                                                                                                                                                                                                </Reset>
+                                                                                                                                                                                                                </dynaForm>

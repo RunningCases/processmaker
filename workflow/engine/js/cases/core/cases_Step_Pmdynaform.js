@@ -21,24 +21,11 @@ function dynaFormChanged (frm) {
     }
     return false;
 }
-
-function validateNameField (form, type) {
-    var i, j = 0, dt, name;
-    dt = form.getElementsByTagName(type);
-    for (i = 0; i < dt.length; i++) {
-        name = dt[i].name;
-        if (!name)
-            name = "field" + type + j;
-        dt[i].name = "form[" + name + "]";
-        j++;
-    }
-}
-
 $(window).load(function () {
     var data = JSON.parse(jsondata);
-
     window.dynaform = new PMDynaform.core.Project({
-        data: data
+        data: data,
+        submitRest: false
     });
 
     if (pm_run_outside_main_app === 'true') {
@@ -52,9 +39,19 @@ $(window).load(function () {
     }
 
     var form = document.getElementsByTagName("form")[0];
-    validateNameField(form, "input");
-    validateNameField(form, "textarea");
-    validateNameField(form, "select");
+
+    var el = form.elements;
+    var k = 0;
+    var dt = data.items[0].items;
+    for (var i = 0; i < dt.length; i++) {
+        var dr = dt[i];
+        for (var j = 0; j < dr.length; j++) {
+            if (dr[j].name) {
+                el[k].name = "form[" + dr[j].name + "]";
+                k = k + 1;
+            }
+        }
+    }
 
     var type = document.createElement("input");
     type.type = "hidden";
@@ -94,7 +91,10 @@ $(window).load(function () {
     form.appendChild(action);
     form.appendChild(dynaformname);
     form.appendChild(appuid);
-    
+
     var dyn_forward = document.getElementById("dyn_forward");
-    dyn_forward.href = "cases_Step?TYPE=" + type.value + "&UID=" + dyn_uid + "&POSITION=" + position.value + "&ACTION=" + action.value + "";
+    dyn_forward.onclick = function () {
+        form.submit();
+        return false;
+    };
 });

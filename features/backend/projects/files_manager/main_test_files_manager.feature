@@ -201,6 +201,7 @@ Scenario Outline: Delete file
   | delete mailtemplates subfolder   | 4          |
   | delete mailtemplates subfolder   | 5          |
   | delete mailtemplates subfolder   | 6          |
+  | delete                           | 7          |
 
 
 Scenario Outline: Delete folder
@@ -217,11 +218,12 @@ Scenario Outline: Delete folder
 
 #BUG 15207, The "Upload" accepts files with other extensions
 
-Scenario Outline: Upload files to same folders "Project - Process Complete BPMN"
-  Given POST I want to upload the file "<file>" to path "<prf_path>". Url "project/1455892245368ebeb11c1a5001393784/file-manager"
-  And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
+Scenario Outline: Upload files with incorret extension ".exe" - "Project - Process Complete BPMN"
+  Given POST I want to upload the file "<file>" to path "<prf_path>". Url "project/1265557095225ff5c688f46031700471/file-manager"
+  #And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
   And the response status message should have the following text "incorrect extension"
 
   Examples:
-  | file          | prf_path  | prf_number |
-  | SnagIt823.exe | templates | 1          | 
+  | file            | prf_path  | prf_number |
+  | filemanager.exe | templates | 1          | 
+

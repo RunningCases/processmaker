@@ -80,8 +80,10 @@ class RestContext extends BehatContext
             $parameters = $this->_parameters;
 
             if(($name=="uploadFilesFolder")&&(!isset($parameters[$name]) ) ){
-                $parameters[$name] = "/opt/uploadfiles/";
+                $defaultUploadPath = __DIR__ . "/../resources/uploadfiles/";
+                $parameters[$name] = $defaultUploadPath;
             }
+            $this->printDebug("Parameter: $name = ".$parameters[$name]);
             return (isset($parameters[$name])) ? $parameters[$name] : null;
         }
     }
@@ -1311,6 +1313,36 @@ class RestContext extends BehatContext
 
     }
 
+    /**
+     * @Given /^I request "([^"]*)" with the key "([^"]*)" stored in session array as variable "([^"]*)" in position (\d+)$/
+     */
+    public function iRequestWithTheKeyStoredInSessionArrayAsVariableInPosition($pageUrl, $varName, $sessionVarName, $position)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$sessionVarName) ) {
+            $varValue = '';
+        } else {
+            foreach ($sessionData->$sessionVarName as $key => $value) {
+                if($key == $position){
+                    $varValue = $value;
+                }
+            }
+        }
+
+        $pageUrl = str_replace($varName, $varValue, $pageUrl);
+
+
+        $this->printDebug("URL: $pageUrl\n$varName = $varValue\nsessionVarName = $sessionVarName\n");
+
+
+        $this->iRequest($pageUrl);
+    }
+
+
      /**
      * @Given /^the property "([^"]*)" of "([^"]*)" is set to "([^"]*)"$/
      */
@@ -1367,57 +1399,36 @@ class RestContext extends BehatContext
     public function postIWantToUploadTheFileToPathPublicUrl($prfFile, $prfPath, $url)
     {
         $prfFile = $this->getParameter('uploadFilesFolder') . $prfFile;
-        $baseUrl = $this->getParameter('base_url');
-        $url = $baseUrl.$url;
         $accesstoken = $this->getParameter('access_token');
         $headr = array();
         $headr[] = 'Authorization: Bearer '.$accesstoken;
         $path = rtrim($prfPath, '/') . '/';
         $sfile = end(explode("/",$prfFile));
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,$url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array('prf_filename'=>$sfile, "prf_path" => $path));
-        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $postResult = curl_exec($ch);
+    
+        $postFields = array('prf_filename'=>$sfile, "prf_path" => $path);
         
-        curl_close($ch);
+        $this->_restObjectMethod = 'post';
+        $this->_restObject = $postFields;
+        $this->iRequest($url);
+
+        $postResult = json_decode($this->_response->getBody(true));
+
+
+        if(!isset($postResult->error)){
+
+
+            $prfUid = $postResult->prf_uid;
+            $url = $this->getParameter('base_url').$url.'/'.$prfUid."/upload";
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL,$url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, array('prf_file'=>'@'.$prfFile));
+            curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            $postResult = curl_exec($ch);
+            curl_close($ch);
+      }
         
-        //Save result as usual
-        $this->_type = 'json';
-        $this->_data = json_decode($postResult);
-
-        $postResult = (array)json_decode($postResult);
-
-        
-
-
-
-        if (sizeof($postResult) > 2) {
-            $prfUid = $postResult["prf_uid"];
-        } else {
-            throw new Exception($postResult["error"]->message);
-            //var_dump($postResult["error"]);
-        }
-        $url = $url.'/'.$prfUid."/upload";
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,$url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array('prf_file'=>'@'.$prfFile));
-        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $postResult = curl_exec($ch);
-        curl_close($ch);
-
-       //se guarda el prf_uid en una variable
-        
-        //Wen: Esto borra todo el session data, por favor corregir o no guardar la variable desde aca
-        
-        //$varName = 'prf_uid';
-        //$sessionData = new StdClass(); 
-        //$sessionData->$varName = $prfUid;
-        //file_put_contents("session.data", json_encode($sessionData));
     }
 
     //UPLOAD IMAGE
@@ -1548,7 +1559,6 @@ class RestContext extends BehatContext
         $this->_restObjectMethod = 'post';
         $this->_restObject = $postFields;
         $this->iRequest($url);
-
        
     }
 

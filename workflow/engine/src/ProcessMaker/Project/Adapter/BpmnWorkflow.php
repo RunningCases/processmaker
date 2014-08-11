@@ -826,10 +826,16 @@ class BpmnWorkflow extends Project\Bpmn
         /*
          * Diagram's Gateways Handling
          */
+        $arrayUidGatewayParallel = array();
+        $flagGatewayParallel = false;
+
         $whiteList = array();
+
         foreach ($diagram["gateways"] as $i => $gatewayData) {
             $gatewayData = array_change_key_case($gatewayData, CASE_UPPER);
             unset($gatewayData["_EXTENDED"]);
+
+            $flagAddOrUpdate = false;
 
             $gateway = $bwp->getGateway($gatewayData["GAT_UID"]);
 
@@ -849,10 +855,23 @@ class BpmnWorkflow extends Project\Bpmn
                 }
 
                 $bwp->addGateway($gatewayData);
+
+                $flagAddOrUpdate = true;
             } elseif (! $bwp->isEquals($gateway, $gatewayData)) {
                 $bwp->updateGateway($gatewayData["GAT_UID"], $gatewayData);
+
+                $flagAddOrUpdate = true;
             } else {
                 Util\Logger::log("Update Gateway ({$gatewayData["GAT_UID"]}) Skipped - No changes required");
+            }
+
+            if ($flagAddOrUpdate) {
+                $arrayGatewayData = $bwp->getGateway($gatewayData["GAT_UID"]);
+
+                if ($arrayGatewayData["GAT_TYPE"] == "PARALLEL") {
+                    $arrayUidGatewayParallel[] = $gatewayData["GAT_UID"];
+                    $flagGatewayParallel = true;
+                }
             }
 
             $diagram["gateways"][$i] = $gatewayData;
@@ -1013,7 +1032,6 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
-
         /*
          * Diagram's Flows Handling
          */
@@ -1048,6 +1066,11 @@ class BpmnWorkflow extends Project\Bpmn
                 if ($flowData["FLO_ELEMENT_DEST"] == $value["old_uid"]) {
                     $flowData["FLO_ELEMENT_DEST"] = $value["new_uid"];
                 }
+            }
+
+            //Update condition
+            if ($flagGatewayParallel && $flowData["FLO_ELEMENT_ORIGIN_TYPE"] == "bpmnGateway" && in_array($flowData["FLO_ELEMENT_ORIGIN"], $arrayUidGatewayParallel)) {
+                $flowData["FLO_CONDITION"] = "";
             }
 
             $diagram["flows"][$i] = $flowData;
