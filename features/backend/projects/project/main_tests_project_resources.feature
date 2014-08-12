@@ -773,7 +773,18 @@ Scenario Outline: Import a process - Test process NEW
 
 
 
+Scenario Outline: Delete a Project activity created previously in this script - Test process NEW
+    Given that I want to delete a resource with the key "prj_uid" stored in session array as variable "prj_uid_<prj_uid_number>"
+    And I request "projects"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
 
+    Examples:
+
+    | prj_uid_number |
+    | 7                      |
 
 
 
@@ -804,8 +815,7 @@ Scenario Outline: Delete a Project activity created previously in this script
     | 4                      |
     | 5                      |
     | 6                      |
-    | 7                      |
-
+ 
 
 Scenario: Get a list of projects
     Given I request "project"
