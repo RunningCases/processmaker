@@ -581,7 +581,7 @@ class Variable
                         }
                     }
                 }
-                }
+            }
 
         } catch (\Exception $e) {
             throw $e;

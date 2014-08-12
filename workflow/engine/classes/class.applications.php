@@ -504,14 +504,16 @@ class Applications
         $oDataset = AppCacheViewPeer::doSelectRS( $Criteria );
 
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $oDataset->next();
-        //g::pr($oDataset);
+
         $result = array ();
         $result['totalCount'] = $totalCount;
         $rows = array ();
         $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
         $index = $start;
-        while ($aRow = $oDataset->getRow()) {
+
+        while ($oDataset->next()) {
+            $aRow = $oDataset->getRow();
+
             //$aRow = $oAppCache->replaceRowUserData($aRow);
 
             /*
@@ -568,7 +570,6 @@ class Applications
             }
 
             $rows[] = $aRow;
-            $oDataset->next();
         }
 
         $result['data'] = $rows;
