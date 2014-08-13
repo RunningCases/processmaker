@@ -75,7 +75,10 @@
 
 </head>
 <body onresize="resizingFrame();">
-    <section class="navBar" id="idNavBar">
+
+
+<div class="ui-layout-north">
+     <section class="navBar" id="idNavBar">
         <div class="head"></div>
         <nav>
             <ul>
@@ -88,11 +91,39 @@
         </nav>
         
     </section>
+</div>
+
+<div id="p-center-layout">
+    <!--BODY-->
+    
+    <div class="ui-layout-center tab-content" id="div-layout-canvas">
+        <!--TODO INSERT DIV CANVAS-->
+    </div>
+    <div class="ui-layout-east" id="div-layout-properties">
+        <div class="ui-layout-center">
+            <div id="diagram-treecontainer"></div>
+        </div>
+        <div class="ui-layout-south">
+            <div style="font-size: 11px;" id="diagram-property-grid"> </div>
+        </div>
+    </div>
+    <!--END BODY-->
+</div>
+
+
+<div class="ui-layout-west">   
+    <div class="bpmn_shapes">
+            <!--<div class="head"></div>-->
+       
+      
+     </div>
+</div>    
+    
+    
+   
     
     <section class="content" id="idContent">
-        <div class="bpmn_shapes">
-            <div class="head"></div>
-        </div>
+        
         <div class="content_controls">
             <div class="head"></div>
             <ul>
