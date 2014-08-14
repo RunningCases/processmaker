@@ -186,16 +186,6 @@ Scenario: Get a single Process process "Test_Event_without_name.pmx"
     
 
 
-
-
-
-
-
-
-
-
-
-
 #Verificar cantidad de dynaform, output, inputs, triggers, asignacion de usuarios, etc.
 
 Scenario Outline: Get a List DynaForms of a Project Process Complete BPMN   
@@ -423,6 +413,7 @@ Scenario Outline: Delete a Project created previously in this script
     | 2              |
     | 4              |
     | 5              |
+    | 6              |
     
 
 Scenario: Get a list of projects

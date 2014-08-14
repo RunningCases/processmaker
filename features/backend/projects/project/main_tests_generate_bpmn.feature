@@ -42,8 +42,8 @@ Scenario Outline: Get a List DynaForms of a Project Process Complete BPMN
 
     Examples:
 
-    | test_description           | pro_uid_number |
-    | process imported to a bpmn | 1              |
+    | test_description             | pro_uid_number |
+    | List of Dynaform the project | 1              |
 
  Scenario Outline: Get the Input Documents List when there are exactly zero input documents
     Given I request "project/prj_uid/input-documents" with the key "prj_uid" stored in session array as variable "prj_uid_<pro_uid_number>"
@@ -55,9 +55,10 @@ Scenario Outline: Get a List DynaForms of a Project Process Complete BPMN
 
     Examples:
 
-    | test_description           | pro_uid_number |
-    | process imported to a bpmn | 1              |
+    | test_description                   | pro_uid_number |
+    | List of Input Document the project | 1              |
    
+
 Scenario Outline: Get the Output Documents List when there are exactly two output documents " BUG-14907, No se visualiza los cambios en el editor tiny de OutputDocuments"
     Given I request "project/prj_uid/output-documents" with the key "prj_uid" stored in session array as variable "prj_uid_<pro_uid_number>"
     Then the response status code should be 200
@@ -69,8 +70,9 @@ Scenario Outline: Get the Output Documents List when there are exactly two outpu
     
     Examples:
 
-    | test_description           | pro_uid_number |
-    | process imported to a bpmn | 1              |
+    | test_description                    | pro_uid_number |
+    | List of Output Document the project | 1              |
+
     
 Scenario Outline: Get the Triggers List when there are exactly two triggers
     Given I request "project/prj_uid/triggers" with the key "prj_uid" stored in session array as variable "prj_uid_<pro_uid_number>"
@@ -81,9 +83,9 @@ Scenario Outline: Get the Triggers List when there are exactly two triggers
     And the response has 7 records
 
     Examples:
-
-    | test_description           | pro_uid_number |
-    | process imported to a bpmn | 1              |
+ 
+    | test_description             | pro_uid_number |
+    | List of Triggers the project | 1              |
         
 
 Scenario Outline: Get a List of current process supervisors of a project
@@ -96,8 +98,8 @@ Scenario Outline: Get a List of current process supervisors of a project
 
     Examples:
 
-    | test_description           | pro_uid_number |
-    | process imported to a bpmn | 1              |
+    | test_description                       | pro_uid_number |
+    | List of Process Supervisor the project | 1              |
 
          
 Scenario Outline: Get a List of current Process Permissions of a project
@@ -108,8 +110,8 @@ Scenario Outline: Get a List of current Process Permissions of a project
 
     Examples:
 
-    | test_description           | pro_uid_number |
-    | process imported to a bpmn | 1              |
+    | test_description                        | pro_uid_number |
+    | List of Process Permissions the project | 1              |
 
     
 Scenario Outline: Get a single Process
@@ -151,3 +153,17 @@ Scenario Outline: Get a single Process
 
     | test_description           | pro_uid_number |
     | process imported to a bpmn | 1              |
+
+
+Scenario Outline: Delete a Project activity created previously in this script
+    Given that I want to delete a resource with the key "prj_uid" stored in session array as variable "prj_uid_<pro_uid_number>"
+    And I request "projects"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+
+    Examples:
+
+    | pro_uid_number |
+    | 1              |
