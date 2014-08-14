@@ -12,7 +12,7 @@ Background:
     Given POST this data:
     """
     {
-        "pro_uid": "36725102153eaca546b7cf8057019174"
+        "pro_uid": "22872259053dff3046d8db7020830606"
     }
     """
     And I request "project/generate-bpmn"
