@@ -1024,7 +1024,9 @@ switch(action){case'mask':case'move':dataNewMask=me.replaceMasks(newValue,newCur
 break;case 256:newValue=currentValue.substring(0,cursorStart);newValue+='.';newValue+=currentValue.substring(cursorEnd,currentValue.length);newCursor=cursorStart+1;break;case 35:case 36:case 37:case 38:case 39:case 40:newValue=currentValue;switch(keyCode){case 36:newCursor=0;break;case 35:newCursor=currentValue.length;break;case 37:newCursor=cursorStart-1;break;case 39:newCursor=cursorStart+1;break;}
 break;default:newKey=String.fromCharCode(keyCode);newValue=currentValue.substring(0,cursorStart);newValue+=newKey;newValue+=currentValue.substring(cursorEnd,currentValue.length);newCursor=cursorStart+1;break;}
 if(newCursor<0)newCursor=0;me.element.value=newValue;me.setSelectionRange(newCursor,newCursor);}};this.sendOnChange=function(){if(me.element.fireEvent){me.element.fireEvent("onchange");}else{var evObj=document.createEvent('HTMLEvents');evObj.initEvent('change',true,true);me.element.dispatchEvent(evObj);}};this.handleKeyDown=function(event){if(me.element.readOnly){return true;}
-if(me.validate=='Any'&&me.mask=='')return true;var pressKey=(window.event)?window.event.keyCode:event.which;if(pressKey==107||pressKey==187||pressKey==191||pressKey==192||pressKey==172||pressKey==171||pressKey==226||pressKey==220||pressKey==226||pressKey==0||pressKey==221||pressKey==222||pressKey==186){pressKey=43;}
+if(me.validate=='Any'&&me.mask=='')return true;var pressKey=(window.event)?window.event.keyCode:event.which;if(me.validate=="NodeName"&&(pressKey==189||pressKey==173)){return true;}
+if(me.validate=="NodeName"&&(pressKey==0||pressKey==192||pressKey==109)){return false;}
+if(pressKey==107||pressKey==187||pressKey==191||pressKey==172||pressKey==171||pressKey==226||pressKey==220||pressKey==226||pressKey==221||pressKey==222||pressKey==186){pressKey=43;}
 switch(pressKey){case 8:case 46:case 35:case 36:case 37:case 38:case 39:case 40:case 43:if((pressKey==8||pressKey==46)&&me.validate=="NodeName"){return true;}
 if(pressKey==46&&me.validate=="Email"){return true;}
 if(me.validate=="Email"&&pressKey!=8&&(me.element.value.length>me.element.maxLength-1)){return false;}
@@ -1058,6 +1060,7 @@ if(pressKey==46){me.applyMask(256);}
 else{me.applyMask(pressKey);}
 if(updateOnChange){me.sendOnChange();}}
 if(me.browser.name=='Firefox'){if(keyCode==0)return true;}
+if(me.browser.name=='Microsoft Internet Explorer'||me.browser.name=='Netscape'){if(event.preventDefault){event.preventDefault();}else{event.returnValue=false;}}
 if(me.browser.name=='Chrome'||me.browser.name=='Safari'){event.returnValue=false;}
 else{return false;}}};if(this.element){this.element.onblur=function(event)
 {var evt=event||window.event;var keyPressed=evt.which||evt.keyCode;if((me.mask!='')&&((me.mType=='currency')||(me.mType=='percentage')||((me.validate=="Real")&&(me.mType=='text')))&&(me.mask.indexOf('-')==-1)&&(me.element.value!='')){masks=me.mask;aMasks=masks.split(';');for(m=0;m<aMasks.length;m++){var separatorField=",";if(typeof(me.comma_separator)!='undefined'){separatorField=me.comma_separator;}else{txtRealMask=aMasks[m].split('');p=txtRealMask.length-1;for(;p>=0;p--){if(txtRealMask[p]!='#'&&txtRealMask[p]!='%'&&txtRealMask[p]!=' '){separatorField=txtRealMask[p];break;}}}
@@ -1207,7 +1210,7 @@ dropdowns=grids[j].getElementsByTagName('select');for(i=0;i<dropdowns.length;i++
 fieldGridName=$label[1]+"["+$label[2]+"["+$label[3].split("]")[0];if(!notValidateThisFields.inArray(fieldGridName)){invalidFields.push($fieldName);}
 vtext.failed();}else{vtext.passed();}}}
 return(invalidFields);};var swSubmitValidateForm=1;var validateForm=function(sRequiredFields){if(swSubmitValidateForm==1){swSubmitValidateForm=0;sFormName=document.getElementById('__DynaformName__');if(typeof(__dynaformSVal__)!='undefined'&&(typeof(sFormName)!='undefined'&&sFormName!='login')&&(typeof(__usernameLogged__)!='undefined'&&__usernameLogged__!='')){if(!sessionPersits()){showPromptLogin('session');swSubmitValidateForm=1;return false;}}
-if(typeof(sRequiredFields)!='object'||sRequiredFields.indexOf("%27")>0){sRequiredFields=sRequiredFields.replace(/%27/gi,'"');}
+sRequiredFields=sRequiredFields.replace(/\n/g," ");if(typeof(sRequiredFields)!='object'||sRequiredFields.indexOf("%27")>0){sRequiredFields=sRequiredFields.replace(/%27/gi,'"');}
 if(typeof(sRequiredFields)!='object'||sRequiredFields.indexOf("%39")>0){sRequiredFields=sRequiredFields.replace(/%39/gi,"'");}
 aRequiredFields=eval(sRequiredFields);var sMessage='';var invalid_fields=Array();var fielEmailInvalid=Array();for(var i=0;i<aRequiredFields.length;i++){aRequiredFields[i].label=(aRequiredFields[i].label=='')?aRequiredFields[i].name:aRequiredFields[i].label;if(!notValidateThisFields.inArray(aRequiredFields[i].name)){if(typeof aRequiredFields[i].required!='undefined'){required=aRequiredFields[i].required;}else{required=1;}
 if(typeof aRequiredFields[i].validate!='undefined'){validate=aRequiredFields[i].validate;}else{validate='';}
@@ -1355,6 +1358,7 @@ this.aElements[this.aElements.length-1].validate=this.aFields[j].oProperties.val
 break;case"percentage":this.aElements.push(new G_Percentage(oForm,elem,elemName));if(this.aFields[j].oProperties){if(this.aFields[j].oProperties.comma_separator){this.aElements[this.aElements.length-1].comma_separator=this.aFields[j].oProperties.comma_separator;}
 this.aElements[this.aElements.length-1].validate=this.aFields[j].oProperties.validate;this.aElements[this.aElements.length-1].mask=this.aFields[j].oProperties.mask;}
 break;case"dropdown":this.aElements.push(new G_DropDown(oForm,elem,elemName));if(this.aFields[j].oProperties){this.aElements[this.aElements.length-1].mask=this.aFields[j].oProperties.sMask;}
+break;case"date":this.aElements.push(new G_Date(oForm,elem,elemName));if(this.aFields[j].oProperties){this.aElements[this.aElements.length-1].mask=dateSetMask(this.aFields[j].oProperties.mask);}
 break;default:this.aElements.push(new G_Field(oForm,elem,elemName));if(this.aFields[j].oProperties){this.aElements[this.aElements.length-1].mask=this.aFields[j].oProperties.sMask;}
 break;}}}}
 var sw=false;if(this.allDependentFields==""){sw=true;}
