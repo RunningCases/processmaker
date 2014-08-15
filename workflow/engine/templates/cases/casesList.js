@@ -1788,15 +1788,31 @@ Ext.onReady ( function() {
     ' '
   ];
 
+  var clearDateFrom = new Ext.Action({
+      text:  "X",
+      ctCls: "pm_search_x_button_des",
+      handler: function(){
+          Ext.getCmp("dateFrom").setValue("");
+      }
+  });
 
+  var clearDateTo = new Ext.Action({
+      text:  "X",
+      ctCls: "pm_search_x_button_des",
+      handler: function(){
+          Ext.getCmp("dateTo").setValue("");
+      }
+  });
 
   var toolbarSearch = [
       ' ',
       _('ID_DELEGATE_DATE_FROM'),
       dateFrom,
+      clearDateFrom,
       ' ',
       _('ID_TO'),
       dateTo,
+      clearDateTo,
       "->",
       '-',
       textSearch,
