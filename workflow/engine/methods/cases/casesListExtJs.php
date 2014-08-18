@@ -101,6 +101,10 @@ $allUsers = getAllUsersArray( $action );
 
 $oHeadPublisher->assign( 'reassignReaderFields', $reassignReaderFields ); //sending the fields to get from proxy
 $oHeadPublisher->addExtJsScript( 'cases/reassignList', false );
+if (class_exists( 'enterprisePlugin' )) {
+    $oHeadPublisher->addExtJsScript(PATH_PLUGINS . "enterprise" . PATH_SEP . "advancedTools" . PATH_SEP , false, true);
+}
+
 $oHeadPublisher->assign( 'pageSize', $pageSize ); //sending the page size
 $oHeadPublisher->assign( 'columns', $columns ); //sending the columns to display in grid
 $oHeadPublisher->assign( 'readerFields', $readerFields ); //sending the fields to get from proxy
