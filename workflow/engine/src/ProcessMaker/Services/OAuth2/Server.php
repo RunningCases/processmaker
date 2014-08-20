@@ -182,7 +182,7 @@ class Server implements iAuthenticate
      *
      * @format JsonFormat,UploadFormat
      */
-    public function postAuthorize()
+    public function postAuthorize($authorize = null, $userId = null, $returnResponse = false)
     {
         session_start();
 
@@ -190,8 +190,12 @@ class Server implements iAuthenticate
             throw new RestException(400, "Local Authentication Error, user session is not started.");
         }
 
-        $userId = $_SESSION['USER_LOGGED'];
-        $authorize = array_key_exists('cancel', $_REQUEST)? false: true;
+        if (empty($userId)) {
+            $userId = $_SESSION['USER_LOGGED'];
+        }
+        if (empty($authorize)) {
+            $authorize = array_key_exists('cancel', $_REQUEST)? false: true;
+        }
 
         $request = \OAuth2\Request::createFromGlobals();
         $response = new \OAuth2\Response();
@@ -203,7 +207,11 @@ class Server implements iAuthenticate
             $userId
         );
 
-        die($response->send());
+        if ($returnResponse) {
+            return $response;
+        } else {
+            die($response->send());
+        }
     }
 
 
