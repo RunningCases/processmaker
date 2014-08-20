@@ -45,7 +45,7 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
             'access_token_table' => 'OAUTH_ACCESS_TOKENS',
             'refresh_token_table' => 'OAUTH_REFRESH_TOKENS',
             'code_table' => 'OAUTH_AUTHORIZATION_CODES',
-            'user_table' => 'OAUTH_USERS',
+            'user_table' => 'USERS',
             'jwt_table' => 'OAUTH_JWT',
         ), $config);
     }
@@ -193,12 +193,12 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
     // plaintext passwords are bad!  Override this for your application
     protected function checkPassword($user, $password)
     {
-        return $user['password'] == sha1($password);
+        return $user['USR_PASSWORD'] == md5($password);
     }
 
     public function getUser($username)
     {
-        $stmt = $this->db->prepare($sql = sprintf('SELECT * FROM %s WHERE USERNAME=:username', $this->config['user_table']));
+        $stmt = $this->db->prepare($sql = sprintf('SELECT * FROM %s WHERE USR_USERNAME=:username', $this->config['user_table']));
         $stmt->execute(array('username' => $username));
 
         if (!$userInfo = $stmt->fetch()) {

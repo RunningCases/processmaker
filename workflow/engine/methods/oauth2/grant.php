@@ -9,7 +9,7 @@ if (! empty($_GET['error'])) {
 
 $http = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
 $host = $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] != '80' ? ':' . $_SERVER['SERVER_PORT'] : '');
-$endpoint = sprintf('%s://%s/api/1.0/%s/token', $http, $host, SYS_SYS);
+$endpoint = sprintf('%s://%s/%s/oauth2/token', $http, $host, SYS_SYS);
 $code = empty($_GET['code']) ? 'NN' : $_GET['code'];
 
 $clientId = 'x-pm-local-client';
