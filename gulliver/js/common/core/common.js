@@ -2191,7 +2191,7 @@ function __()
         eval("trn = TRANSLATIONS_" + argv[0].toUpperCase() + "[argv[1]];");
       }
     } else {
-      trn = argv[1];
+      trn =  argv[1];
     }
   } else {
     PMExt.error('Processmaker JS Core Error', 'The TRANSLATIONS ' + argv[0].toUpperCase() + ' global object is not loaded!');
