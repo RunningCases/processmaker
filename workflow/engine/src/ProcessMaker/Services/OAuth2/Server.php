@@ -55,7 +55,7 @@ class Server implements iAuthenticate
         $this->server->addGrantType(new \OAuth2\GrantType\AuthorizationCode($this->storage));
 
         // Add the "Client Credentials" grant type (it is the simplest of the grant types)
-        $this->server->addGrantType(new \OAuth2\GrantType\ClientCredentials($this->storage));
+        $this->server->addGrantType(new \ProcessMaker\Services\OAuth2\PmClientCredentials($this->storage));
 
         // Add the "Refresh token" grant type
         $this->server->addGrantType(new \OAuth2\GrantType\RefreshToken($this->storage));
@@ -184,7 +184,7 @@ class Server implements iAuthenticate
      */
     public function postAuthorize($authorize = null, $userId = null, $returnResponse = false)
     {
-        session_start();
+        @session_start();
 
         if (! isset($_SESSION['USER_LOGGED'])) {
             throw new RestException(400, "Local Authentication Error, user session is not started.");
