@@ -591,9 +591,7 @@ Ext.onReady ( function() {
         if( c.dataIndex == 'APP_DEL_PREVIOUS_USER') c.renderer = previous_full_name;
         if( c.dataIndex == 'APP_CURRENT_USER')      c.renderer = full_name;
     }
-    if (c.header.substring(0, 3) == 'ID_') {
-        c.header = __('enterprise', c.header);
-    }
+    c.header = __('enterprise', _(c.header));
   }
 
   //adding the hidden field DEL_INIT_DATE

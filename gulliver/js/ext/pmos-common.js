@@ -340,7 +340,7 @@ function _()
       }
     }
     else {
-      trn = '**' + argv[0] + '**';
+      trn = argv[0];
     }
   }
   else {

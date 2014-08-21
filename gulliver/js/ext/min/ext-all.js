@@ -32,7 +32,7 @@ if(image!=''){Ext.get('x-box-mc-inner').setStyle('background-image','url("'+imag
 Ext.get('x-box-mc-inner').setStyle('background-position','5px 10px');Ext.get('x-box-mc-inner').setStyle('background-repeat','no-repeat');Ext.get('x-box-mc-inner').setStyle('padding-left','45px');m.slideIn('t').pause(time).ghost("t",{remove:true});}};}();function _()
 {var argv=_.arguments;var argc=argv.length;if(typeof TRANSLATIONS!='undefined'&&TRANSLATIONS){if(typeof TRANSLATIONS[argv[0]]!='undefined'){if(argc>1){trn=TRANSLATIONS[argv[0]];for(i=1;i<argv.length;i++){trn=trn.replace('{'+(i-1)+'}',argv[i]);}}
 else{trn=TRANSLATIONS[argv[0]];}}
-else{trn='**'+argv[0]+'**';}}
+else{trn=argv[0];}}
 else{PMExt.error('Processmaker JS Core Error','The TRANSLATIONS global object is not loaded!');trn='';}
 return trn;}
 function __()
