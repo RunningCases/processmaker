@@ -3893,6 +3893,8 @@ class Cases
         if ($this->appSolr != null) {
             $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
         }
+
+        $this->getExecuteTriggerProcess($sApplicationUID, "UNPAUSE");
     }
 
     /*

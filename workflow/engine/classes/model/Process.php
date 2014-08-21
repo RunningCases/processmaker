@@ -864,7 +864,11 @@ class Process extends BaseProcess
             case 'REASSIGNED':
                 $var = ProcessPeer::PRO_TRI_REASSIGNED;
                 break;
+            case "UNPAUSE":
+                $var = ProcessPeer::PRO_TRI_UNPAUSED;
+                break;
         }
+
         $oCriteria = new Criteria( 'workflow' );
         $oCriteria->addSelectColumn( $var );
         $oCriteria->addSelectColumn( TriggersPeer::TRI_WEBBOT );
@@ -877,6 +881,7 @@ class Process extends BaseProcess
             $row = $oDataSet->getRow();
             $webBotTrigger = $row['TRI_WEBBOT'];
         }
+
         return $webBotTrigger;
     }
 
