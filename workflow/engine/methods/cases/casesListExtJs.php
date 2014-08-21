@@ -101,7 +101,9 @@ $allUsers = getAllUsersArray( $action );
 
 $oHeadPublisher->assign( 'reassignReaderFields', $reassignReaderFields ); //sending the fields to get from proxy
 $oHeadPublisher->addExtJsScript( 'cases/reassignList', false );
+$enableEnterprise = false;
 if (class_exists( 'enterprisePlugin' )) {
+    $enableEnterprise = true;
     $oHeadPublisher->addExtJsScript(PATH_PLUGINS . "enterprise" . PATH_SEP . "advancedTools" . PATH_SEP , false, true);
 }
 
@@ -117,6 +119,7 @@ $oHeadPublisher->assign( 'categoryValues', $category ); //Sending the listing of
 $oHeadPublisher->assign( 'userValues', $users ); //Sending the listing of users
 $oHeadPublisher->assign( 'allUsersValues', $allUsers ); //Sending the listing of all users
 $oHeadPublisher->assign( 'solrEnabled', $solrEnabled ); //Sending the status of solar
+$oHeadPublisher->assign( 'enableEnterprise', $enableEnterprise ); //sending the page size
 
 //menu permissions
 /*$c = new Criteria('workflow');
