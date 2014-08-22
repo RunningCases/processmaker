@@ -1965,7 +1965,7 @@ class XmlForm_Field_Textarea extends XmlForm_Field
         }
 
         $html = '';
-        $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;";
+        $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;resize:none;";
         if ($this->renderMode == 'edit') {
             //EDIT MODE
             $readOnlyText = ($this->readOnly == 1 || $this->readOnly == '1') ? 'readOnly="readOnly"' : '';
@@ -2031,7 +2031,7 @@ class XmlForm_Field_Textarea extends XmlForm_Field
 
             $arrayOptions[$r] = $v;
 
-            $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;";
+            $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;resize:none;";
             $html = '';
             if ($this->renderMode == 'edit') {
                 //EDIT MODE
