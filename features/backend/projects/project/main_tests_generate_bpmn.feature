@@ -167,3 +167,16 @@ Scenario Outline: Delete a Project activity created previously in this script
 
     | pro_uid_number |
     | 1              |
+
+#Negative test, to import an invalid project
+
+Scenario: Generate BPMN with wrong project
+    Given POST this data:
+    """
+    {
+        "pro_uid": "22872259050000000000db7020830606"
+    }
+    """
+    And I request "project/generate-bpmn"
+    Then the response status code should be 400
+    And the response status message should have the following text "exist"
