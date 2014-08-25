@@ -1,6 +1,8 @@
 <?php
 namespace Maveriks\Pattern\Mvc;
 
+use Maveriks\Util\Common;
+
 class SmartyView extends View
 {
     protected $smarty;
@@ -13,8 +15,13 @@ class SmartyView extends View
         $this->smarty = new \Smarty();
         $this->smarty->compile_dir  = defined('PATH_SMARTY_C')? PATH_SMARTY_C : sys_get_temp_dir();
         $this->smarty->cache_dir    = defined('PATH_SMARTY_CACHE')? PATH_SMARTY_CACHE : sys_get_temp_dir();
-        //$this->smarty->config_dir   = PATH_THIRDPARTY . 'smarty/configs';
-        //$this->smarty->register_function('translate', 'translate');
+
+        if (! is_dir($this->smarty->compile_dir)) {
+            Common::mk_dir($this->smarty->compile_dir);
+        }
+        if (! is_dir($this->smarty->cache_dir)) {
+            Common::mk_dir($this->smarty->cache_dir);
+        }
     }
 
     public function assign($name, $value)

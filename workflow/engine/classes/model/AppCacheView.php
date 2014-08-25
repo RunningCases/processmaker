@@ -672,6 +672,7 @@ class AppCacheView extends BaseAppCacheView
         }
 
         $criteria->add(AppCacheViewPeer::APP_STATUS, "CANCELLED", CRITERIA::EQUAL);
+        $criteria->add(AppCacheViewPeer::DEL_LAST_INDEX, '1', Criteria::EQUAL);
 
         if (!empty($userUid)) {
             $criteria->add(AppCacheViewPeer::USR_UID, $userUid);
@@ -1049,7 +1050,8 @@ class AppCacheView extends BaseAppCacheView
         )->addOr(
             //Cancelled - getCancelled()
             $criteria->getNewCriterion(AppCacheViewPeer::APP_STATUS, "CANCELLED", CRITERIA::EQUAL)->addAnd(
-            $criteria->getNewCriterion(AppCacheViewPeer::DEL_THREAD_STATUS, "CLOSED"))
+            $criteria->getNewCriterion(AppCacheViewPeer::DEL_THREAD_STATUS, "CLOSED"))->addAnd(
+            $criteria->getNewCriterion(AppCacheViewPeer::DEL_LAST_INDEX, '1', Criteria::EQUAL))
         )->addOr(
             $criteria->getNewCriterion(AppCacheViewPeer::APP_STATUS, "COMPLETED", CRITERIA::EQUAL)->addAnd(
             $criteria->getNewCriterion(AppCacheViewPeer::DEL_LAST_INDEX, '1', Criteria::EQUAL))
