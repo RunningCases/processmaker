@@ -497,9 +497,33 @@ var openSummaryWindow = function(appUid, delIndex, action)
         });
 
         var tabs = new Array();
+        var isMovil = {
+            Android: function() {
+                return navigator.userAgent.match(/Android/i);
+            },
+            BlackBerry: function() {
+                return navigator.userAgent.match(/BlackBerry/i);
+            },
+            iOS: function() {
+                return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+            },
+            Opera: function() {
+                return navigator.userAgent.match(/Opera Mini/i);
+            },
+            Windows: function() {
+                return navigator.userAgent.match(/IEMobile/i);
+            },
+            other: function() {
+                return navigator.userAgent.match(/Mobile/i);
+            },
+            any: function() {
+                return isMovil.Android() || isMovil.BlackBerry() || isMovil.iOS() || isMovil.Opera() || isMovil.Windows() || isMovil.other();
+            }
+        };
+
         tabs.push(sumaryInfPanel);
         if (response.dynUid != '') {
-            if(navigator.userAgent.match(/iPad/i) != null){
+            if (isMovil.any()) {
                 var src = '../cases/summary?APP_UID=' + appUid + '&DEL_INDEX=' + delIndex + '&DYN_UID=' + response.dynUid;
 
                 var windowOpen = function() {

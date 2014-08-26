@@ -87,11 +87,11 @@ try {
 
 ?>
 <script type="text/javascript">
-    window.onload = function() {
+    leimnud.event.add(window,"load",function(){
         if (parent.document.getElementById('buttonOpenDynaform') != null) {
             parent.document.getElementById('buttonOpenDynaform').setAttribute('class', 'x-btn x-btn-noicon')
             parent.document.getElementById('buttonOpenDynaform').style = "width: auto;";
         }
-    };
+    });
 </script>
 <?php
