@@ -21,7 +21,7 @@ class Variable
 
             $this->existsName($processUid, $arrayData["VAR_NAME"]);
 
-            $this->throwExceptionFieldDefinition($arrayData);
+            //$this->throwExceptionFieldDefinition($arrayData);
 
             //Create
             $cnn = \Propel::getConnection("workflow");
@@ -121,7 +121,7 @@ class Variable
             Validator::proUid($processUid, '$prj_uid');
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
-            $this->throwExceptionFieldDefinition($arrayData);
+            //$this->throwExceptionFieldDefinition($arrayData);
 
             //Update
             $cnn = \Propel::getConnection("workflow");
