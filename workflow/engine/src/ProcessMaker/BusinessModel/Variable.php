@@ -126,9 +126,7 @@ class Variable
             //Update
             $cnn = \Propel::getConnection("workflow");
             try {
-
                 $variable = \ProcessVariablesPeer::retrieveByPK($variableUid);
-                $variable->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
                 if ($variable->validate()) {
                     $cnn->begin();
