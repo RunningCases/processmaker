@@ -564,20 +564,21 @@ class Variable
 
                 $contentDecode = json_decode($row["DYN_CONTENT"], true);
                 $content = $contentDecode['items'][0]['items'];
+                if (is_array($content)) {
+                    foreach ($content as $key => $value) {
+                        if (isset($value[0]["variable"])) {
+                            $criteria = new \Criteria("workflow");
+                            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
+                            $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
+                            $criteria->add(\ProcessVariablesPeer::VAR_NAME, $value[0]["variable"], \Criteria::EQUAL);
+                            $criteria->add(\ProcessVariablesPeer::VAR_UID, $variableUid, \Criteria::EQUAL);
+                            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+                            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                            $rsCriteria->next();
 
-                foreach ($content as $key => $value) {
-                    if (isset($value[0]["variable"])) {
-                        $criteria = new \Criteria("workflow");
-                        $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
-                        $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
-                        $criteria->add(\ProcessVariablesPeer::VAR_NAME, $value[0]["variable"], \Criteria::EQUAL);
-                        $criteria->add(\ProcessVariablesPeer::VAR_UID, $variableUid, \Criteria::EQUAL);
-                        $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
-                        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                        $rsCriteria->next();
-
-                        if ($rsCriteria->getRow()) {
-                            throw new \Exception(\G::LoadTranslation("ID_VARIABLE_IN_USE", array($variableUid, $row["DYN_UID"])));
+                            if ($rsCriteria->getRow()) {
+                                throw new \Exception(\G::LoadTranslation("ID_VARIABLE_IN_USE", array($variableUid, $row["DYN_UID"])));
+                            }
                         }
                     }
                 }
