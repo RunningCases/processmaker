@@ -3639,6 +3639,10 @@ class processMap
                     $sObjectType = G::LoadTranslation('MSGS_HISTORY');
                     $sObject = G::LoadTranslation('ID_ALL');
                     break;
+                case 'SUMMARY_FORM':
+                    $sObjectType = G::LoadTranslation('ID_SUMMARY_FORM');
+                    $sObject = G::LoadTranslation('ID_ALL');
+                    break;
                 default:
                     $sObjectType = G::LoadTranslation('ID_ALL');
                     $sObject = G::LoadTranslation('ID_ALL');

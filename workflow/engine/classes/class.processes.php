@@ -2753,7 +2753,7 @@ class Processes
             if ($oContent->Exists( $ConCategory, $ConParent, $ConId, $ConLang )) {
                 $oContent->removeContent( $ConCategory, $ConParent, $ConId );
             }
-            $oContent->addContent( $ConCategory, $ConParent, $ConId, $ConLang, "" );
+            $oContent->addContent( $ConCategory, $ConParent, $ConId, $ConLang, $aRow['DBS_DESCRIPTION'] );
         }
     } #@!neyek
 

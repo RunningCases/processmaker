@@ -29,7 +29,13 @@
   function resize()
   {
     var h = $(window).height() - 42;
-    $('iframe').height(h)
+    $('iframe').height(h);
+    //IE V10-V11
+    if (navigator.appVersion.indexOf("MSIE 1") != -1) {
+      h = $('iframe').attr('style');
+      $('iframe').attr('style', h+' padding-top : 40px;');
+    }
+
   }
   
   function redirect(url)

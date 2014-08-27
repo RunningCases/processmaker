@@ -35,8 +35,9 @@ Feature: DataBase Connections Main Tests
 
         Examples:
 
-        | test_description           | dbs_uid_number | dbs_type | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description    |
-        | Test mysql db connection   | 1              | mysql    | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | mysql connection   |
+        | test_description              | dbs_uid_number | dbs_type             | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description       |
+        | Test mysql db connection      | 1              | mysql                | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | mysql connection      |
+        | Test SQL Server db connection | 2              | microsoft sql server | 192.168.11.99              | wf_michelangelo   | sa             | mafe12345    | 1433     | utf8       | SQL Server connection |
 
 
     Scenario Outline: Create a new database connection
@@ -63,15 +64,16 @@ Feature: DataBase Connections Main Tests
 
         Examples:
 
-        | test_description           | dbs_uid_number | dbs_type | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description    |
-        | Create mysql db connection | 1              | mysql    | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | mysql connection   |
+        | test_description                | dbs_uid_number | dbs_type | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description       |
+        | Create mysql db connection      | 1              | mysql    | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | mysql connection      |
+        | Create SQL Server db connection | 2              | mssql    | 192.168.11.99              | wf_michelangelo   | sa             | mafe12345    | 1433     | utf8       | SQL Server connection |
 
 
     Scenario: Get the DataBase Connections List when there are exactly three DataBase Connections
         Given I request "project/74737540052e1641ab88249082085472/database-connections"
         Then the response status code should be 200
         And the response charset is "UTF-8"
-        And the response has 1 record
+        And the response has 2 record
 
     
     Scenario Outline: Update a database connection
@@ -97,8 +99,9 @@ Feature: DataBase Connections Main Tests
 
         Examples:
 
-        | test_description           | dbs_uid_number | dbs_type | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description           |
-        | Update mysql db connection | 1              | mysql    | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | update mysql connection   |
+        | test_description                | dbs_uid_number | dbs_type | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description              |
+        | Update mysql db connection      | 1              | mysql    | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | update mysql connection      |
+        | Update sql server db connection | 2              | mssql    | 192.168.11.99              | wf_michelangelo   | sa             | mafe12345    | 1433     | utf8       | update SQL Server connection |
 
 
     Scenario Outline: Get a single database connection and check some properties
@@ -118,9 +121,10 @@ Feature: DataBase Connections Main Tests
 
         Examples:
 
-        | test_description           | dbs_uid_number | dbs_type | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description           |
-        | Update mysql db connection | 1              | mysql    | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | update mysql connection   |
-
+        | test_description                | dbs_uid_number | dbs_type | dbs_server                 | dbs_database_name | dbs_username   | dbs_password | dbs_port | dbs_encode | dbs_description              |
+        | Update mysql db connection      | 1              | mysql    | michelangelo-be.colosa.net | test              | testuser       | sample       | 3306     | utf8       | update mysql connection      |
+        | Update sql server db connection | 2              | mssql    | 192.168.11.99              | wf_michelangelo   | sa             | mafe12345    | 1433     | utf8       | update SQL Server connection |
+ 
 
     Scenario Outline: Delete all Database Connection created previously in this script
         Given that I want to delete a resource with the key "dbs_uid" stored in session array as variable "dbs_uid_<dbs_uid_number>"
@@ -133,6 +137,7 @@ Feature: DataBase Connections Main Tests
 
         | dbs_uid_number |
         | 1              |
+        | 2              |
        
 
     Scenario: Get the DataBase Connections List when there are exactly zero DataBase Connections

@@ -334,6 +334,7 @@ class Ajax
             $processData['PRO_AUTHOR'] = '(USER DELETED)';
         }
 
+        G::LoadClass('configuration');
         $conf = new Configurations();
         $conf->getFormats();
         $processData['PRO_CREATE_DATE'] = $conf->getSystemDate($processData['PRO_CREATE_DATE']);
@@ -809,7 +810,7 @@ class Ajax
     public function dynaformViewFromHistory()
     {
         ?>
-        <link rel="stylesheet" type="text/css" href="/css/classic.css" />
+        <link rel="stylesheet" type="text/css" href="/css/<?php echo SYS_SKIN; ?>.css" />
 
         <script type="text/javascript">
             //!Code that simulated reload library javascript maborak

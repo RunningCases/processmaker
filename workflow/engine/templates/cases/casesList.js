@@ -591,6 +591,9 @@ Ext.onReady ( function() {
         if( c.dataIndex == 'APP_DEL_PREVIOUS_USER') c.renderer = previous_full_name;
         if( c.dataIndex == 'APP_CURRENT_USER')      c.renderer = full_name;
     }
+    if (enableEnterprise) {
+      c.header = __('enterprise', _(c.header));
+    }
   }
 
   //adding the hidden field DEL_INIT_DATE
@@ -1788,15 +1791,31 @@ Ext.onReady ( function() {
     ' '
   ];
 
+  var clearDateFrom = new Ext.Action({
+      text:  "X",
+      ctCls: "pm_search_x_button_des",
+      handler: function(){
+          Ext.getCmp("dateFrom").setValue("");
+      }
+  });
 
+  var clearDateTo = new Ext.Action({
+      text:  "X",
+      ctCls: "pm_search_x_button_des",
+      handler: function(){
+          Ext.getCmp("dateTo").setValue("");
+      }
+  });
 
   var toolbarSearch = [
       ' ',
       _('ID_DELEGATE_DATE_FROM'),
       dateFrom,
+      clearDateFrom,
       ' ',
       _('ID_TO'),
       dateTo,
+      clearDateTo,
       "->",
       '-',
       textSearch,
