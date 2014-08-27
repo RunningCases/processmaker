@@ -704,7 +704,6 @@ Scenario Outline: Get definition of a project
     And that "prj_name" is set to "Update Evaluation"
     And that "prj_description" is set to "Update"
 
-    
     Examples:
 
     | project_new_uid_number |
@@ -720,8 +719,7 @@ Scenario Outline: Get definition of a project
     And the type is "object"
     And that "prj_name" is set to "Update Evaluation"
     And that "prj_description" is set to "Update"
-    
-    
+        
     Examples:
 
     | project_new_uid_number |
@@ -765,12 +763,9 @@ Scenario Outline: Import a process - Test process NEW
     And the type is "object"
     And store "prj_uid" in session array as variable "prj_uid_<prj_uid_number>"
 
-
     Examples:
     | project_file               | import_option | prj_uid_number |
     | Process_NewCreate_BPMN.pmx | CREATE        | 7              |
-
-
 
 
 Scenario Outline: Delete a Project activity created previously in this script - Test process NEW
@@ -784,15 +779,7 @@ Scenario Outline: Delete a Project activity created previously in this script - 
     Examples:
 
     | prj_uid_number |
-    | 7                      |
-
-
-
-
-
-
-
-
+    | 7              |
 
 
 #Culmination of test objects for Objects "Data, Data Store, Black Box and Text"
@@ -823,7 +810,6 @@ Scenario: Get a list of projects
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-
 
 
 #BUG 15088-Al editar el nombre de un proceso este permite ingresar el nombre de uno ya existente
@@ -864,4 +850,4 @@ Scenario: Update the Projects by setting the name of an existing project
     """
     And I request "projects/5195971265375127fce82f4015927137"
     Then the response status code should be 400
-    And the response status message should have the following text "exist"
+    And the response status message should have the following text "exists"
