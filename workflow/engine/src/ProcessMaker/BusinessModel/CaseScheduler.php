@@ -283,11 +283,6 @@ class CaseScheduler
                 if (!preg_match($patternDate, $caseSchedulerData['SCH_START_DATE'])) {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_DATE"));
                 }
-                if (!isset($caseSchedulerData['SCH_END_DATE'])) {
-                    if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
-                        throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_END_DATE"));
-                    }
-                }
                 if ($caseSchedulerData['SCH_START_DATE'] == "") {
                     throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_date')));
                 }
@@ -486,8 +481,10 @@ class CaseScheduler
                     $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $date;
                 }
             }
-            if (trim( $caseSchedulerData['SCH_END_DATE'] ) != '') {
-                $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_END_DATE'];
+            if (! empty( $caseSchedulerData['SCH_REPEAT_TASK_CHK'] )) {
+                if (trim( $caseSchedulerData['SCH_END_DATE'] ) != '') {
+                    $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_END_DATE'];
+                }
             }
             if (! empty( $caseSchedulerData['SCH_REPEAT_TASK_CHK'] )) {
                 $nOptEvery = $caseSchedulerData['SCH_REPEAT_EVERY_OPT'];
@@ -568,11 +565,6 @@ class CaseScheduler
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
                 if (!preg_match($patternDate, $caseSchedulerData['SCH_START_DATE'])) {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_DATE"));
-                }
-                if (isset($caseSchedulerData['SCH_END_DATE'])) {
-                    if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
-                        throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_END_DATE"));
-                    }
                 }
                 if ($caseSchedulerData['SCH_START_DATE'] == "") {
                     throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_date')));
@@ -780,8 +772,10 @@ class CaseScheduler
                     $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $date;
                 }
             }
-            if (trim( $caseSchedulerData['SCH_END_DATE'] ) != '') {
-                $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_END_DATE'];
+            if (! empty( $caseSchedulerData['SCH_REPEAT_TASK_CHK'] )) {
+                if (trim( $caseSchedulerData['SCH_END_DATE'] ) != '') {
+                    $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_END_DATE'];
+                }
             }
             if (! empty( $caseSchedulerData['SCH_REPEAT_TASK_CHK'] )) {
                 $nOptEvery = $caseSchedulerData['SCH_REPEAT_EVERY_OPT'];
