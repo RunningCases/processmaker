@@ -319,6 +319,15 @@ class XmlForm_Field
         if ($this->sql === '') {
             return 1;
         }
+
+        if(isset($this->mode) && $this->mode == "edit" && (isset($this->owner->values[$this->name]) && $this->owner->values[$this->name] !== "") && ($this->type == "text" || $this->type == "currency" || $this->type == "percentage" || $this->type == "textarea" || $this->type == "hidden" || $this->type == "suggest")){
+        	return 1;
+        }
+
+        if(isset($this->mode) && $this->mode == "view" && ($this->type == "text" || $this->type == "currency" || $this->type == "percentage" || $this->type == "textarea" || $this->type == "hidden" || $this->type == "suggest")){
+        	return 1;
+        }
+
         if (! $this->sqlConnection) {
             $this->sqlConnection = 'workflow';
         }
@@ -1956,7 +1965,7 @@ class XmlForm_Field_Textarea extends XmlForm_Field
         }
 
         $html = '';
-        $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;";
+        $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;resize:none;";
         if ($this->renderMode == 'edit') {
             //EDIT MODE
             $readOnlyText = ($this->readOnly == 1 || $this->readOnly == '1') ? 'readOnly="readOnly"' : '';
@@ -2022,7 +2031,7 @@ class XmlForm_Field_Textarea extends XmlForm_Field
 
             $arrayOptions[$r] = $v;
 
-            $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;";
+            $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;resize:none;";
             $html = '';
             if ($this->renderMode == 'edit') {
                 //EDIT MODE

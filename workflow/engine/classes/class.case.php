@@ -577,7 +577,7 @@ class Cases
                     if ($jump != '') {
                         $aCases = $oAppDel->LoadParallel($sAppUid);
                         $aFields['TAS_UID'] = '';
-                        $aFields['CURRENT_USER'] = '';
+                        $aFields['CURRENT_USER'] = array();
                         foreach ($aCases as $key => $value) {
                             $oCurUser->load($value['USR_UID']);
                             $aFields['CURRENT_USER'][]= $oCurUser->getUsrFirstname() . ' ' . $oCurUser->getUsrLastname();
@@ -3893,6 +3893,8 @@ class Cases
         if ($this->appSolr != null) {
             $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
         }
+
+        $this->getExecuteTriggerProcess($sApplicationUID, "UNPAUSE");
     }
 
     /*
@@ -5069,7 +5071,8 @@ class Cases
             "INPUT" => Array(),
             "OUTPUT" => Array(),
             "CASES_NOTES" => 0,
-            "MSGS_HISTORY" => Array()
+            "MSGS_HISTORY" => Array(),
+            "SUMMARY_FORM" => 0
         );
 
         //permissions per user
@@ -5226,6 +5229,7 @@ class Cases
                             $oDataset->next();
                         }
                         $RESULT['CASES_NOTES'] = 1;
+                        $RESULT['SUMMARY_FORM'] = 1;
 
                         // Message History
                         $RESULT['MSGS_HISTORY'] = array('PERMISSION' => $ACTION);
@@ -5373,6 +5377,9 @@ class Cases
                     case 'CASES_NOTES':
                         $RESULT['CASES_NOTES'] = 1;
                         break;
+                    case 'SUMMARY_FORM':
+                        $RESULT['SUMMARY_FORM'] = 1;
+                        break;
                     case 'MSGS_HISTORY':
                         // Permission
                         $RESULT['MSGS_HISTORY'] = array('PERMISSION' => $ACTION);
@@ -5424,7 +5431,8 @@ class Cases
             "INPUT_DOCUMENTS" => $RESULT['INPUT'],
             "OUTPUT_DOCUMENTS" => $RESULT['OUTPUT'],
             "CASES_NOTES" => $RESULT['CASES_NOTES'],
-            "MSGS_HISTORY" => $RESULT['MSGS_HISTORY']
+            "MSGS_HISTORY" => $RESULT['MSGS_HISTORY'],
+            "SUMMARY_FORM" => $RESULT['SUMMARY_FORM']
         );
     }
 

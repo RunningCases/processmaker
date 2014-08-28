@@ -334,6 +334,7 @@ class Ajax
             $processData['PRO_AUTHOR'] = '(USER DELETED)';
         }
 
+        G::LoadClass('configuration');
         $conf = new Configurations();
         $conf->getFormats();
         $processData['PRO_CREATE_DATE'] = $conf->getSystemDate($processData['PRO_CREATE_DATE']);
@@ -349,6 +350,7 @@ class Ajax
             print G::json_encode( $response );
             die();
         }
+        G::LoadClass('tasks');
         $task = new Task();
         if ($_SESSION['TASK'] == '-1') {
             $_SESSION['TASK'] = $_SESSION['CURRENT_TASK'];
@@ -809,7 +811,7 @@ class Ajax
     public function dynaformViewFromHistory()
     {
         ?>
-        <link rel="stylesheet" type="text/css" href="/css/classic.css" />
+        <link rel="stylesheet" type="text/css" href="/css/<?php echo SYS_SKIN; ?>.css" />
 
         <script type="text/javascript">
             //!Code that simulated reload library javascript maborak
