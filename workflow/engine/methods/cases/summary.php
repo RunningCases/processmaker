@@ -50,7 +50,11 @@ try {
     $respView = $case->getAllObjectsFrom( $applicationFields['PRO_UID'], $_REQUEST['APP_UID'], $applicationFields['TAS_UID'], $_SESSION['USER_LOGGED'], 'VIEW' );
 
     if ($respView['SUMMARY_FORM'] == 0) {
-        throw new Exception( G::LoadTranslation( 'ID_SUMMARY_FORM_NO_PERMISSIONS' ) );
+        global $G_PUBLISH;
+        $G_PUBLISH = new Publisher();
+        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', array ('MESSAGE' => G::LoadTranslation( 'ID_SUMMARY_FORM_NO_PERMISSIONS' )) );
+        G::RenderPage( 'publish', 'blank' );
+        die();
     }
 
     if (file_exists( PATH_DYNAFORM . $applicationFields['PRO_UID'] . PATH_SEP . $_REQUEST['DYN_UID'] . '.xml' )) {
@@ -81,3 +85,13 @@ try {
     die();
 }
 
+?>
+<script type="text/javascript">
+    leimnud.event.add(window,"load",function(){
+        if (parent.document.getElementById('buttonOpenDynaform') != null) {
+            parent.document.getElementById('buttonOpenDynaform').setAttribute('class', 'x-btn x-btn-noicon')
+            parent.document.getElementById('buttonOpenDynaform').style = "width: auto;";
+        }
+    });
+</script>
+<?php

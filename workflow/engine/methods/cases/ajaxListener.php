@@ -350,6 +350,7 @@ class Ajax
             print G::json_encode( $response );
             die();
         }
+        G::LoadClass('tasks');
         $task = new Task();
         if ($_SESSION['TASK'] == '-1') {
             $_SESSION['TASK'] = $_SESSION['CURRENT_TASK'];
