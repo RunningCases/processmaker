@@ -31,7 +31,7 @@ include_once 'adapter/DBAdapter.php';
  *
  * @author     Hans Lellelid <hans@xmpl.rg> (Propel)
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author     Magnús Þór Torfason <magnus@handtolvur.is> (Torque)
+ * @author     Magnï¿½s ï¿½ï¿½r Torfason <magnus@handtolvur.is> (Torque)
  * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author     Rafal Krzewski <Rafal.Krzewski@e-point.pl> (Torque)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -603,4 +603,27 @@ class Propel {
 		}
 	}
 
+    /**
+     * @param  $name string The connection name
+     * @return Connection A database connection
+     * @throws PropelException
+     */
+    public static function getDbConnection($name)
+    {
+        if (! empty(self::$configuration['datasources'][$name]['connection'])) {
+            return self::getConnection($name);
+        }
+
+        // the connection names always should be have a underscore like: workflow_ro, rbac_rw
+        // on fallback, we will try found a connection named: "workflow" if "workflow_ro" does not exist.
+        // the name without the "_ro" part.
+        
+        $defaultDbName = substr($name, 0, strrpos($name, '_'));
+
+        if (! empty(self::$configuration['datasources'][$defaultDbName]['connection'])) {
+            return self::getConnection($defaultDbName);
+        }
+
+        throw new PropelException('Error, database connection named "'.$name.'" is not defined for Propel.');
+    }
 }
