@@ -580,6 +580,7 @@
     <column name="INP_DOC_VERSIONING" type="TINYINT" required="true" default="0"/>
     <column name="INP_DOC_DESTINATION_PATH" type="LONGVARCHAR" required="false"/>
     <column name="INP_DOC_TAGS" type="LONGVARCHAR" required="false"/>
+    <column name="INP_DOC_TYPE_FILE" type="VARCHAR" size="200" required="false" default="*.*"/>
     <validator column="INP_DOC_UID">
       <rule name="maxLength" value="32" message="Input Document UID can be no larger than ${value} in size"/>
       <rule name="required" message="Input Document UID is required."/>

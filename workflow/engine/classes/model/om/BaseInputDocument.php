@@ -76,6 +76,12 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
     protected $inp_doc_tags;
 
     /**
+     * The value for the inp_doc_type_file field.
+     * @var        string
+     */
+    protected $inp_doc_type_file = '*.*';
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -175,6 +181,17 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
     {
 
         return $this->inp_doc_tags;
+    }
+
+    /**
+     * Get the [inp_doc_type_file] column value.
+     * 
+     * @return     string
+     */
+    public function getInpDocTypeFile()
+    {
+
+        return $this->inp_doc_type_file;
     }
 
     /**
@@ -354,6 +371,28 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
     } // setInpDocTags()
 
     /**
+     * Set the value of [inp_doc_type_file] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setInpDocTypeFile($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->inp_doc_type_file !== $v || $v === '*.*') {
+            $this->inp_doc_type_file = $v;
+            $this->modifiedColumns[] = InputDocumentPeer::INP_DOC_TYPE_FILE;
+        }
+
+    } // setInpDocTypeFile()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -386,12 +425,14 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
 
             $this->inp_doc_tags = $rs->getString($startcol + 7);
 
+            $this->inp_doc_type_file = $rs->getString($startcol + 8);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 8; // 8 = InputDocumentPeer::NUM_COLUMNS - InputDocumentPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 9; // 9 = InputDocumentPeer::NUM_COLUMNS - InputDocumentPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating InputDocument object", $e);
@@ -619,6 +660,9 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
             case 7:
                 return $this->getInpDocTags();
                 break;
+            case 8:
+                return $this->getInpDocTypeFile();
+                break;
             default:
                 return null;
                 break;
@@ -647,6 +691,7 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
             $keys[5] => $this->getInpDocVersioning(),
             $keys[6] => $this->getInpDocDestinationPath(),
             $keys[7] => $this->getInpDocTags(),
+            $keys[8] => $this->getInpDocTypeFile(),
         );
         return $result;
     }
@@ -701,6 +746,9 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
                 break;
             case 7:
                 $this->setInpDocTags($value);
+                break;
+            case 8:
+                $this->setInpDocTypeFile($value);
                 break;
         } // switch()
     }
@@ -757,6 +805,10 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
             $this->setInpDocTags($arr[$keys[7]]);
         }
 
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setInpDocTypeFile($arr[$keys[8]]);
+        }
+
     }
 
     /**
@@ -798,6 +850,10 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
 
         if ($this->isColumnModified(InputDocumentPeer::INP_DOC_TAGS)) {
             $criteria->add(InputDocumentPeer::INP_DOC_TAGS, $this->inp_doc_tags);
+        }
+
+        if ($this->isColumnModified(InputDocumentPeer::INP_DOC_TYPE_FILE)) {
+            $criteria->add(InputDocumentPeer::INP_DOC_TYPE_FILE, $this->inp_doc_type_file);
         }
 
 
@@ -867,6 +923,8 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
         $copyObj->setInpDocDestinationPath($this->inp_doc_destination_path);
 
         $copyObj->setInpDocTags($this->inp_doc_tags);
+
+        $copyObj->setInpDocTypeFile($this->inp_doc_type_file);
 
 
         $copyObj->setNew(true);

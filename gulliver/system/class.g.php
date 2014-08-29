@@ -5328,6 +5328,177 @@ class G
         }
         return $from;
     }
+
+    /**
+    * Verify the InputDoc extension, cheking the file name extension (.pdf, .ppt) and the file content. 
+    *
+    * 
+    *
+    */
+    public function verifyInputDocExtension($InpDocAllowedFiles, $filesName, $filesTmpName){
+    	$allowedTypes = explode(", ", $InpDocAllowedFiles);
+    	$flag = 0;
+
+    	if (!extension_loaded('fileinfo')) {
+    		$dtype = explode(".", $filesName);
+
+    		foreach ($allowedTypes as $types => $val) {
+    			if((preg_match('/^\*\.?[a-z]{2,8}$/', $val)) || ($val == '*.*')){
+    				$allowedDocTypes = substr($val, 2);
+    				if(($dtype[count($dtype) -1]) != $allowedDocTypes){
+    					$flag = 1;
+    				} else {
+    					$flag = 0;
+    					break;
+    				}
+    			} else {
+    				$message = G::LoadTranslation('ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT' );
+    				G::SendMessageText( $message, "ERROR" );
+
+    				$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
+    				G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+    				die();
+    			}
+    		}
+    	} else {
+    		$finfo = new finfo(FILEINFO_MIME_TYPE);
+    		$finfo_ = $finfo->file($filesTmpName);
+    		$docType = explode("/", $finfo_);
+    	
+    		foreach ($allowedTypes as $types => $val) {
+    			if((preg_match('/^\*\.?[a-z]{2,8}$/', $val)) || ($val == '*.*')){
+    				$allowedDocTypes = substr($val, 2);
+    	
+    				switch($allowedDocTypes){
+    					case '*':
+    						$flag = 0;
+    						break;
+    					case 'xls':
+    						if($docType[1] != 'vnd.ms-excel'){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					case 'doc':
+    						if($docType[1] != 'msword'){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					case 'ppt':
+    						if($docType[1] != 'vnd.ms-office'){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					case 'docx':
+    					case 'pptx':
+    					case 'xlsx':
+    						if($docType[1] != 'zip'){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					case 'exe':
+    					case 'wmv':
+    						if($docType[1] != 'octet-stream'){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					case 'jpg':
+    						if ($docType[1] != 'jpeg'){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					case 'mp3':
+    						if ($docType[1] != 'mpeg'){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					case 'rar':
+    						if ($docType[1] != 'x-rar'){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					case 'txt':
+    					case 'pm':
+    						if ($docType[1] != 'plain'){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					case 'htm':
+    					case 'html':
+    						if ($docType[1] != 'html'){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					case 'po':
+    						if ($docType[1] != 'x-po'){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					case 'pdf':
+    					case 'png':
+    					case 'jpeg':
+    					case 'gif':
+    					case 'zip':
+    					case 'mp4':
+    						if ($docType[1] != $allowedDocTypes){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    						break;
+    					default:
+    						$dtype = explode(".", $filesName);
+    						if(($dtype[count($dtype) - 1]) != $allowedDocTypes){
+    							$flag = 1;
+    						} else {
+    							$flag = 0;
+    						}
+    				}
+    	
+    				if($flag == 0){
+    					break;
+    				}
+    			} else {
+    				$message = G::LoadTranslation('ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT' );
+    				G::SendMessageText( $message, "ERROR" );
+    	
+    				$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
+    				G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+    				die();
+    			}
+    		}
+    	}
+
+    	if( $flag == 1){
+    		$message = G::LoadTranslation( 'ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' );
+    		G::SendMessageText( $message, "ERROR" );
+    	
+    		$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
+    		G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+    		die();
+    	}
+    }
 }
 
 /**
