@@ -14,22 +14,37 @@ if ($RBAC->userCanAccess("PM_SETUP") != 1) {
 $bCronIsRunning = false;
 $sLastExecution = null;
 $processcTimeProcess = 0;
-$processcTimeStart = 0;
+$processcTimeStart   = 0;
 
-if (file_exists( PATH_DATA . "cron" )) {
-    $arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
-    $bCronIsRunning = (boolean) ($arrayCron["bCronIsRunning"]);
+$osIsLinux = strtoupper(substr(PHP_OS, 0, 3)) != "WIN";
+
+if (file_exists(PATH_DATA . "cron")) {
+    //Windows flag
+    //Get data of cron file
+    $arrayCron = unserialize(trim(file_get_contents(PATH_DATA . "cron")));
+
+    $bCronIsRunning = (boolean)($arrayCron["bCronIsRunning"]);
     $sLastExecution = $arrayCron["sLastExecution"];
-    $processcTimeProcess = (isset( $arrayCron["processcTimeProcess"] )) ? intval( $arrayCron["processcTimeProcess"] ) : 10;
-    $processcTimeStart = (isset( $arrayCron["processcTimeStart"] )) ? $arrayCron["processcTimeStart"] : 0;
+    $processcTimeProcess = (isset($arrayCron["processcTimeProcess"]))? (int)($arrayCron["processcTimeProcess"]) : 10; //Minutes
+    $processcTimeStart   = (isset($arrayCron["processcTimeStart"]))? $arrayCron["processcTimeStart"] : 0;
 }
 
-if ($bCronIsRunning && $processcTimeStart != 0) {
-    if ((time() - $processcTimeStart) > ($processcTimeProcess * 60)) {
-        //Cron finished his execution for some reason
-        $bCronIsRunning = false;
+if ($osIsLinux) {
+    //Linux flag
+    //Check if cron it's running
+    exec("ps -fea | grep cron.php | grep -v grep", $arrayOutput);
+
+    if (count($arrayOutput) > 0) {
+        $bCronIsRunning = true;
     }
 }
+
+//if ($bCronIsRunning && $processcTimeStart != 0) {
+//    if ((time() - $processcTimeStart) > ($processcTimeProcess * 60)) {
+//        //Cron finished his execution for some reason
+//        $bCronIsRunning = false;
+//    }
+//}
 
 //Data
 $c = new Configurations();
