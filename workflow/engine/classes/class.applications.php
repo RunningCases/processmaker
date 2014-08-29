@@ -501,7 +501,7 @@ class Applications
         $Criteria->setOffset( $start );
 
         //execute the query
-        $oDataset = AppCacheViewPeer::doSelectRS( $Criteria );
+        $oDataset = AppCacheViewPeer::doSelectRS( $Criteria, Propel::getDbConnection('workflow_ro') );
 
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
 
