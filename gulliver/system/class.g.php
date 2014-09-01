@@ -5348,7 +5348,7 @@ class G
     				if(($dtype[count($dtype) -1]) != $allowedDocTypes){
     					$flag = 1;
     				} else {
-    					$flag = 0;
+    					return true;
     					break;
     				}
     			} else {
@@ -5371,27 +5371,27 @@ class G
     	
     				switch($allowedDocTypes){
     					case '*':
-    						$flag = 0;
+    						return true;
     						break;
     					case 'xls':
     						if($docType[1] != 'vnd.ms-excel'){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					case 'doc':
     						if($docType[1] != 'msword'){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					case 'ppt':
     						if($docType[1] != 'vnd.ms-office'){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					case 'docx':
@@ -5400,7 +5400,7 @@ class G
     						if($docType[1] != 'zip'){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					case 'exe':
@@ -5408,28 +5408,28 @@ class G
     						if($docType[1] != 'octet-stream'){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					case 'jpg':
     						if ($docType[1] != 'jpeg'){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					case 'mp3':
     						if ($docType[1] != 'mpeg'){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					case 'rar':
     						if ($docType[1] != 'x-rar'){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					case 'txt':
@@ -5437,7 +5437,7 @@ class G
     						if ($docType[1] != 'plain'){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					case 'htm':
@@ -5445,14 +5445,14 @@ class G
     						if ($docType[1] != 'html'){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					case 'po':
     						if ($docType[1] != 'x-po'){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					case 'pdf':
@@ -5464,7 +5464,7 @@ class G
     						if ($docType[1] != $allowedDocTypes){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
     						break;
     					default:
@@ -5472,12 +5472,8 @@ class G
     						if(($dtype[count($dtype) - 1]) != $allowedDocTypes){
     							$flag = 1;
     						} else {
-    							$flag = 0;
+    							return true;
     						}
-    				}
-    	
-    				if($flag == 0){
-    					break;
     				}
     			} else {
     				$message = G::LoadTranslation('ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT' );
@@ -5489,14 +5485,8 @@ class G
     			}
     		}
     	}
-
     	if( $flag == 1){
-    		$message = G::LoadTranslation( 'ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' );
-    		G::SendMessageText( $message, "ERROR" );
-    	
-    		$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
-    		G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
-    		die();
+    		return false;
     	}
     }
 }
