@@ -25,6 +25,12 @@ $(window).load(function () {
     var data = JSON.parse(jsondata);
     window.dynaform = new PMDynaform.core.Project({
         data: data,
+        keys: {
+            server: location.host,
+            projectId: prj_uid,
+            workspace: workspace
+        },
+        token: credentials,
         submitRest: false
     });
 
