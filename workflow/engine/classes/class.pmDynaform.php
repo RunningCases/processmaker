@@ -19,7 +19,6 @@ class pmDynaform
     {
         $this->dyn_uid = $dyn_uid;
         $this->app_data = $app_data;
-
         $this->getDynaform();
     }
 
@@ -87,6 +86,18 @@ class pmDynaform
     public function printEdit($pm_run_outside_main_app, $application, $headData)
     {
         ob_clean();
+
+        $a = $this->clientToken();
+        $clientToken = array(
+            "accessToken" => $a["access_token"],
+            "expiresIn" => $a["expires_in"],
+            "tokenType" => $a["token_type"],
+            "scope" => $a["scope"],
+            "refreshToken" => $a["refresh_token"],
+            "clientId" => $a["client_id"],
+            "clientSecret" => $a["client_secret"]
+        );
+
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform.html');
         $file = str_replace("{JSON_DATA}", $this->record["DYN_CONTENT"], $file);
         $file = str_replace("{CASE}", $headData["CASE"], $file);
@@ -97,9 +108,78 @@ class pmDynaform
         $file = str_replace("{DYN_UID}", $this->dyn_uid, $file);
         $file = str_replace("{DYNAFORMNAME}", $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"], $file);
         $file = str_replace("{APP_UID}", $application, $file);
+        $file = str_replace("{PRJ_UID}", $this->app_data["PROCESS"], $file);
+        $file = str_replace("{WORKSPACE}", $this->app_data["SYS_SYS"], $file);
+        $file = str_replace("{credentials}", json_encode($clientToken), $file);
         echo $file;
         exit();
     }
 
-}
+    private function clientToken()
+    {
+        $client = $this->getClientCredentials();
+        $authCode = $this->getAuthorizationCode($client);
 
+
+        $request = array(
+            'grant_type' => 'authorization_code',
+            'code' => $authCode
+        );
+        $server = array(
+            'REQUEST_METHOD' => 'POST'
+        );
+        $headers = array(
+            "PHP_AUTH_USER" => $client['CLIENT_ID'],
+            "PHP_AUTH_PW" => $client['CLIENT_SECRET'],
+            "Content-Type" => "multipart/form-data;",
+            "Authorization" => "Basic " . base64_encode($client['CLIENT_ID'] . ":" . $client['CLIENT_SECRET'])
+        );
+
+        $request = new \OAuth2\Request(array(), $request, array(), array(), array(), $server, null, $headers);
+        $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
+        $response = $oauthServer->getServer()->handleTokenRequest($request);
+        $clientToken = $response->getParameters();
+        $clientToken["client_id"] = $client['CLIENT_ID'];
+        $clientToken["client_secret"] = $client['CLIENT_SECRET'];
+
+        return $clientToken;
+    }
+
+    protected $clientId = 'x-pm-local-client';
+
+    protected function getClientCredentials()
+    {
+        $oauthQuery = new ProcessMaker\Services\OAuth2\PmPdo($this->getDsn());
+        return $oauthQuery->getClientDetails($this->clientId);
+    }
+
+    protected function getAuthorizationCode($client)
+    {
+        \ProcessMaker\Services\OAuth2\Server::setDatabaseSource($this->getDsn());
+        \ProcessMaker\Services\OAuth2\Server::setPmClientId($client['CLIENT_ID']);
+
+        $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
+        $userId = $_SESSION['USER_LOGGED'];
+        $authorize = true;
+        $_GET = array_merge($_GET, array(
+            'response_type' => 'code',
+            'client_id' => $client['CLIENT_ID'],
+            'scope' => implode(' ', $oauthServer->getScope())
+        ));
+
+        $response = $oauthServer->postAuthorize($authorize, $userId, true);
+        $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=') + 5, 40);
+
+        return $code;
+    }
+
+    private function getDsn()
+    {
+        list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
+        $port = empty($port) ? '' : ";port=$port";
+        $dsn = DB_ADAPTER . ':host=' . $host . ';dbname=' . DB_NAME . $port;
+
+        return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
+    }
+
+}
