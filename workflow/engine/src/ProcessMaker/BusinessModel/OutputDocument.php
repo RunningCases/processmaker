@@ -392,18 +392,26 @@ class OutputDocument
     {
         try {
             $delimiter = \DBAdapter::getStringDelimiter();
+
             $criteria = new \Criteria("workflow");
+
             $criteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_UID);
-            $criteria->addAlias("CT", "CONTENT");
+
+            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
+
             $arrayCondition = array();
             $arrayCondition[] = array(\OutputDocumentPeer::OUT_DOC_UID, "CT.CON_ID", \Criteria::EQUAL);
             $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "OUT_DOC_TITLE" . $delimiter, \Criteria::EQUAL);
             $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
             $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
             $criteria->add(\OutputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
-            $criteria->add(\ContentPeer::CON_VALUE, $title, \Criteria::EQUAL);
+
+
+            $criteria->add("CT.CON_VALUE", $title, \Criteria::EQUAL);
+
             $rsCriteria = \OutputDocumentPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
             if ($rsCriteria->next()) {
                 return true;
             } else {

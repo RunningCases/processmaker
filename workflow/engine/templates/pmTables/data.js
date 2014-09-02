@@ -84,7 +84,7 @@ Ext.onReady(function(){
   contextMenu = new Ext.menu.Menu({
       items : [ editButton, deleteButton ]
   });
-  
+
   searchText = new Ext.form.TextField ({
     id: 'searchTxt',
     ctCls:'pm_search_text_field',
@@ -398,7 +398,7 @@ Ext.onReady(function(){
     ];
   }
   else
-	tbar = [genDataReportButton, 
+	tbar = [genDataReportButton,
        '->',
        appUidSearch,
        searchText,
@@ -473,7 +473,8 @@ onMessageContextMenu = function (grid, rowIndex, e) {
 //Do Search Function
 DoSearch = function(){
    infoGrid.store.setBaseParam('textFilter', searchText.getValue());
-   infoGrid.store.load({params: {start : 0 , limit : pageSize , appUid : appUidSearch.getValue() }});
+   infoGrid.store.setBaseParam('appUid', appUidSearch.getValue() );
+   infoGrid.store.load()
 };
 
 //Load Grid By Default
@@ -482,7 +483,7 @@ GridByDefault = function(){
   appUidSearch.reset();
   infoGrid.store.setBaseParam('textFilter', searchText.getValue());
   infoGrid.store.load();
-}; 
+};
 
 //Capitalize String Function
 capitalize = function(s){

@@ -1638,10 +1638,10 @@ class Process
         if ($bSystemVars) {
             $aAux = G::getSystemConstants();
             foreach ($aAux as $sName => $sValue) {
-                $aFields[] = array ('sName' => $sName,'sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLES'), 'sUid' => '');
+                $aFields[] = array ('sName' => $sName,'sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLE'), 'sUid' => '');
             }
             //we're adding the ping variable to the system list
-            $aFields[] = array ('sName' => 'PIN','sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLES'), 'sUid' => '');
+            $aFields[] = array ('sName' => 'PIN','sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLE'), 'sUid' => '');
         }
 
         $aInvalidTypes = array("title", "subtitle", "file", "button", "reset", "submit", "javascript");
