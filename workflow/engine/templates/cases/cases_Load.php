@@ -20,17 +20,13 @@
       var oClientWinSize = getClientWindowSize();
 
 
-    if(document.compatMode == 'CSS1Compat' && document.documentMode == '10'){
-        document.documentElement.style.overflowY = 'scroll';
-    }
-
     function autoResizeScreen() {
       oCasesFrame    = document.getElementById('casesFrame');
       height = getClientWindowSize().height-90;
-      oCasesFrame.style.height = height;
+      oCasesFrame.style.height = height + 'px';;
       oCasesSubFrame = oCasesFrame.contentWindow.document.getElementById('casesSubFrame');
         if(oCasesSubFrame){
-          oCasesSubFrame.style.height = height-5;
+          oCasesSubFrame.style.height = (height-5) + 'px';;
         }
         else {
           setTimeout('autoResizeScreen()', 2000);
