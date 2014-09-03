@@ -4385,7 +4385,7 @@ class G
         }
 
         // Next get the name of the useragent yes seperately and for good reason
-        if (preg_match( '/MSIE/i', $u_agent ) && ! preg_match( '/Opera/i', $u_agent )) {
+        if ((preg_match('~Trident/7.0; rv:11.0~',$_SERVER["HTTP_USER_AGENT"]) || preg_match( '/MSIE/i', $u_agent )) && ! preg_match( '/Opera/i', $u_agent )) {
             $bname = 'Internet Explorer';
             $ub = "MSIE";
         } elseif (preg_match( '/Firefox/i', $u_agent )) {
@@ -4419,7 +4419,7 @@ class G
             if (strripos( $u_agent, "Version" ) < strripos( $u_agent, $ub )) {
                 $version = $matches['version'][0];
             } else {
-                $version = $matches['version'][1];
+                $version = isset($matches['version'][1]) ? $matches['version'][1] : '';
             }
         } else {
             $version = $matches['version'][0];
