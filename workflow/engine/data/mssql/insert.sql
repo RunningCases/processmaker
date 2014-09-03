@@ -20,148 +20,148 @@ SELECT 'PER_NAME','','00000000000000000000000000000008','en','Reports' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000007','en','Reassign case' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000006','en','All cases' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000005','en','Create cases' UNION ALL
-SELECT 'PER_NAME','','00000000000000000000000000000004','en','Factory' UNION ALL
+SELECT 'PER_NAME','','00000000000000000000000000000004','en','Design processes' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000003','en','Users' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000001','en','Login' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000002','en','Setup';
 
-INSERT INTO [LANGUAGE] ([LAN_ID],[LAN_NAME],[LAN_NATIVE_NAME],[LAN_DIRECTION],[LAN_WEIGHT],[LAN_ENABLED],[LAN_CALENDAR]) 
-SELECT 'aa','Afar','','L','0','0','GREGORIAN'  UNION ALL
-SELECT 'ab','Abkhazian','','L','1','0','GREGORIAN'  UNION ALL
-SELECT 'af','Afrikaans','','L','2','0','GREGORIAN'  UNION ALL
-SELECT 'am','Amharic','','L','3','0','GREGORIAN'  UNION ALL
-SELECT 'ar','Arabic','','L','4','0','GREGORIAN'  UNION ALL
-SELECT 'as','Assamese','','L','5','0','GREGORIAN'  UNION ALL
-SELECT 'ay','Aymara','','L','6','0','GREGORIAN'  UNION ALL
-SELECT 'az','Azerbaijani','','L','7','0','GREGORIAN'  UNION ALL
-SELECT 'ba','Bashkir','','L','8','0','GREGORIAN'  UNION ALL
-SELECT 'be','Byelorussian','','L','9','0','GREGORIAN'  UNION ALL
-SELECT 'bg','Bulgarian','','L','10','0','GREGORIAN'  UNION ALL
-SELECT 'bh','Bihari','','L','11','0','GREGORIAN'  UNION ALL
-SELECT 'bi','Bislama','','L','12','0','GREGORIAN'  UNION ALL
-SELECT 'bn','Bengali','','L','13','0','GREGORIAN'  UNION ALL
-SELECT 'bo','Tibetan','','L','14','0','GREGORIAN'  UNION ALL
-SELECT 'br','Breton','','L','15','0','GREGORIAN'  UNION ALL
-SELECT 'ca','Catalan','','L','16','0','GREGORIAN'  UNION ALL
-SELECT 'co','Corsican','','L','17','0','GREGORIAN'  UNION ALL
-SELECT 'cs','Czech','','L','18','0','GREGORIAN'  UNION ALL
-SELECT 'cy','Welsh','','L','19','0','GREGORIAN'  UNION ALL
-SELECT 'da','Danish','','L','20','0','GREGORIAN'  UNION ALL
-SELECT 'de','German','','L','21','0','GREGORIAN'  UNION ALL
-SELECT 'dz','Bhutani','','L','22','0','GREGORIAN'  UNION ALL
-SELECT 'el','Greek','','L','23','0','GREGORIAN'  UNION ALL
-SELECT 'en','English','','L','24','1','GREGORIAN'  UNION ALL
-SELECT 'eo','Esperanto','','L','25','0','GREGORIAN'  UNION ALL
-SELECT 'es','Spanish','','L','26','0','GREGORIAN'  UNION ALL
-SELECT 'et','Estonian','','L','27','0','GREGORIAN'  UNION ALL
-SELECT 'eu','Basque','','L','28','0','GREGORIAN'  UNION ALL
-SELECT 'fa','Persian','','R','29','0','PERSIAN'  UNION ALL
-SELECT 'fi','Finnish','','L','30','0','GREGORIAN'  UNION ALL
-SELECT 'fj','Fiji','','L','31','0','GREGORIAN'  UNION ALL
-SELECT 'fo','Faeroese','','L','32','0','GREGORIAN'  UNION ALL
-SELECT 'fr','French','','L','33','0','GREGORIAN'  UNION ALL
-SELECT 'fy','Frisian','','L','34','0','GREGORIAN'  UNION ALL
-SELECT 'ga','Irish','','L','35','0','GREGORIAN'  UNION ALL
-SELECT 'gd','Gaelic','','L','36','0','GREGORIAN'  UNION ALL
-SELECT 'gl','Galician','','L','37','0','GREGORIAN'  UNION ALL
-SELECT 'gn','Guarani','','L','38','0','GREGORIAN'  UNION ALL
-SELECT 'gu','Gujarati','','L','39','0','GREGORIAN'  UNION ALL
-SELECT 'ha','Hausa','','L','40','0','GREGORIAN'  UNION ALL
-SELECT 'hi','Hindi','','L','41','0','GREGORIAN'  UNION ALL
-SELECT 'hr','Croatian','','L','42','0','GREGORIAN'  UNION ALL
-SELECT 'hu','Hungarian','','L','43','0','GREGORIAN'  UNION ALL
-SELECT 'hy','Armenian','','L','44','0','GREGORIAN'  UNION ALL
-SELECT 'ia','Interlingua','','L','45','0','GREGORIAN'  UNION ALL
-SELECT 'ie','Interlingue','','L','46','0','GREGORIAN'  UNION ALL
-SELECT 'ik','Inupiak','','L','47','0','GREGORIAN'  UNION ALL
-SELECT 'in','Indonesian','','L','48','0','GREGORIAN'  UNION ALL
-SELECT 'is','Icelandic','','L','49','0','GREGORIAN'  UNION ALL
-SELECT 'it','Italian','','L','50','0','GREGORIAN'  UNION ALL
-SELECT 'iw','Hebrew','','R','51','0','GREGORIAN'  UNION ALL
-SELECT 'ja','Japanese','','L','52','0','GREGORIAN'  UNION ALL
-SELECT 'ji','Yiddish','','L','53','0','GREGORIAN'  UNION ALL
-SELECT 'jw','Javanese','','L','54','0','GREGORIAN'  UNION ALL
-SELECT 'ka','Georgian','','L','55','0','GREGORIAN'  UNION ALL
-SELECT 'kk','Kazakh','','L','56','0','GREGORIAN'  UNION ALL
-SELECT 'kl','Greenlandic','','L','57','0','GREGORIAN'  UNION ALL
-SELECT 'km','Cambodian','','L','58','0','GREGORIAN'  UNION ALL
-SELECT 'kn','Kannada','','L','59','0','GREGORIAN'  UNION ALL
-SELECT 'ko','Korean','','L','60','0','GREGORIAN'  UNION ALL
-SELECT 'ks','Kashmiri','','L','61','0','GREGORIAN'  UNION ALL
-SELECT 'ku','Kurdish','','L','62','0','GREGORIAN'  UNION ALL
-SELECT 'ky','Kirghiz','','L','63','0','GREGORIAN'  UNION ALL
-SELECT 'la','Latin','','L','64','0','GREGORIAN'  UNION ALL
-SELECT 'ln','Lingala','','L','65','0','GREGORIAN'  UNION ALL
-SELECT 'lo','Laothian','','L','66','0','GREGORIAN'  UNION ALL
-SELECT 'lt','Lithuanian','','L','67','0','GREGORIAN'  UNION ALL
-SELECT 'lv','Latvian','','L','68','0','GREGORIAN'  UNION ALL
-SELECT 'mg','Malagasy','','L','69','0','GREGORIAN'  UNION ALL
-SELECT 'mi','Maori','','L','70','0','GREGORIAN'  UNION ALL
-SELECT 'mk','Macedonian','','L','71','0','GREGORIAN'  UNION ALL
-SELECT 'ml','Malayalam','','L','72','0','GREGORIAN'  UNION ALL
-SELECT 'mn','Mongolian','','L','73','0','GREGORIAN'  UNION ALL
-SELECT 'mo','Moldavian','','L','74','0','GREGORIAN'  UNION ALL
-SELECT 'mr','Marathi','','L','75','0','GREGORIAN'  UNION ALL
-SELECT 'ms','Malay','','L','76','0','GREGORIAN'  UNION ALL
-SELECT 'mt','Maltese','','L','77','0','GREGORIAN'  UNION ALL
-SELECT 'my','Burmese','','L','78','0','GREGORIAN'  UNION ALL
-SELECT 'na','Nauru','','L','79','0','GREGORIAN'  UNION ALL
-SELECT 'ne','Nepali','','L','80','0','GREGORIAN'  UNION ALL
-SELECT 'nl','Dutch','','L','81','0','GREGORIAN'  UNION ALL
-SELECT 'no','Norwegian','','L','82','0','GREGORIAN'  UNION ALL
-SELECT 'oc','Occitan','','L','83','0','GREGORIAN'  UNION ALL
-SELECT 'om','Oromo','','L','84','0','GREGORIAN'  UNION ALL
-SELECT 'or','Oriya','','L','85','0','GREGORIAN'  UNION ALL
-SELECT 'pa','Punjabi','','L','86','0','GREGORIAN'  UNION ALL
-SELECT 'pl','Polish','','L','87','0','GREGORIAN'  UNION ALL
-SELECT 'ps','Pashto','','L','88','0','GREGORIAN'  UNION ALL
-SELECT 'pt','Portuguese','','L','89','0','GREGORIAN'  UNION ALL
-SELECT 'qu','Quechua','','L','90','0','GREGORIAN'  UNION ALL
-SELECT 'rm','Rhaeto-Romance','','L','91','0','GREGORIAN'  UNION ALL
-SELECT 'rn','Kirundi','','L','92','0','GREGORIAN'  UNION ALL
-SELECT 'ro','Romanian','','L','93','0','GREGORIAN'  UNION ALL
-SELECT 'ru','Russian','','L','94','0','GREGORIAN'  UNION ALL
-SELECT 'rw','Kinyarwanda','','L','95','0','GREGORIAN'  UNION ALL
-SELECT 'sa','Sanskrit','','L','96','0','GREGORIAN'  UNION ALL
-SELECT 'sd','Sindhi','','L','97','0','GREGORIAN'  UNION ALL
-SELECT 'sg','Sangro','','L','98','0','GREGORIAN'  UNION ALL
-SELECT 'sh','Serbo-Croatian','','L','99','0','GREGORIAN'  UNION ALL
-SELECT 'si','Singhalese','','L','100','0','GREGORIAN'  UNION ALL
-SELECT 'sk','Slovak','','L','101','0','GREGORIAN'  UNION ALL
-SELECT 'sl','Slovenian','','L','102','0','GREGORIAN'  UNION ALL
-SELECT 'sm','Samoan','','L','103','0','GREGORIAN'  UNION ALL
-SELECT 'sn','Shona','','L','104','0','GREGORIAN'  UNION ALL
-SELECT 'so','Somali','','L','105','0','GREGORIAN'  UNION ALL
-SELECT 'sq','Albanian','','L','106','0','GREGORIAN'  UNION ALL
-SELECT 'sr','Serbian','','L','107','0','GREGORIAN'  UNION ALL
-SELECT 'ss','Siswati','','L','108','0','GREGORIAN'  UNION ALL
-SELECT 'st','Sesotho','','L','109','0','GREGORIAN'  UNION ALL
-SELECT 'su','Sudanese','','L','110','0','GREGORIAN'  UNION ALL
-SELECT 'sv','Swedish','','L','111','0','GREGORIAN'  UNION ALL
-SELECT 'sw','Swahili','','L','112','0','GREGORIAN'  UNION ALL
-SELECT 'ta','Tamil','','L','113','0','GREGORIAN'  UNION ALL
-SELECT 'te','Tegulu','','L','114','0','GREGORIAN'  UNION ALL
-SELECT 'tg','Tajik','','L','115','0','GREGORIAN'  UNION ALL
-SELECT 'th','Thai','','L','116','0','GREGORIAN'  UNION ALL
-SELECT 'ti','Tigrinya','','L','117','0','GREGORIAN'  UNION ALL
-SELECT 'tk','Turkmen','','L','118','0','GREGORIAN'  UNION ALL
-SELECT 'tl','Tagalog','','L','119','0','GREGORIAN'  UNION ALL
-SELECT 'tn','Setswana','','L','120','0','GREGORIAN'  UNION ALL
-SELECT 'to','Tonga','','L','121','0','GREGORIAN'  UNION ALL
-SELECT 'tr','Turkish','','L','122','0','GREGORIAN'  UNION ALL
-SELECT 'ts','Tsonga','','L','123','0','GREGORIAN'  UNION ALL
-SELECT 'tt','Tatar','','L','124','0','GREGORIAN'  UNION ALL
-SELECT 'tw','Twi','','L','125','0','GREGORIAN'  UNION ALL
-SELECT 'uk','Ukrainian','','L','126','0','GREGORIAN'  UNION ALL
-SELECT 'ur','Urdu','','L','127','0','GREGORIAN'  UNION ALL
-SELECT 'uz','Uzbek','','L','128','0','GREGORIAN'  UNION ALL
-SELECT 'vi','Vietnamese','','L','129','0','GREGORIAN'  UNION ALL
-SELECT 'vo','Volapuk','','L','130','0','GREGORIAN'  UNION ALL
-SELECT 'wo','Wolof','','L','131','0','GREGORIAN'  UNION ALL
-SELECT 'xh','Xhosa','','L','132','0','GREGORIAN'  UNION ALL
-SELECT 'yo','Yoruba','','L','133','0','GREGORIAN'  UNION ALL
-SELECT 'zh','Chinese','','L','134','0','GREGORIAN'  UNION ALL
-SELECT 'zu','Zulu','','L','135','0','GREGORIAN' ;
+INSERT INTO [LANGUAGE] ([LAN_ID],[LAN_LOCATION],[LAN_NAME],[LAN_NATIVE_NAME],[LAN_DIRECTION],[LAN_WEIGHT],[LAN_ENABLED],[LAN_CALENDAR]) 
+SELECT 'aa','','Afar','','L','0','0','GREGORIAN'  UNION ALL
+SELECT 'ab','','Abkhazian','','L','1','0','GREGORIAN'  UNION ALL
+SELECT 'af','','Afrikaans','','L','2','0','GREGORIAN'  UNION ALL
+SELECT 'am','','Amharic','','L','3','0','GREGORIAN'  UNION ALL
+SELECT 'ar','','Arabic','','L','4','0','GREGORIAN'  UNION ALL
+SELECT 'as','','Assamese','','L','5','0','GREGORIAN'  UNION ALL
+SELECT 'ay','','Aymara','','L','6','0','GREGORIAN'  UNION ALL
+SELECT 'az','','Azerbaijani','','L','7','0','GREGORIAN'  UNION ALL
+SELECT 'ba','','Bashkir','','L','8','0','GREGORIAN'  UNION ALL
+SELECT 'be','','Byelorussian','','L','9','0','GREGORIAN'  UNION ALL
+SELECT 'bg','BG','Bulgarian','','L','10','0','GREGORIAN'  UNION ALL
+SELECT 'bh','','Bihari','','L','11','0','GREGORIAN'  UNION ALL
+SELECT 'bi','','Bislama','','L','12','0','GREGORIAN'  UNION ALL
+SELECT 'bn','BD','Bengali','','L','13','0','GREGORIAN'  UNION ALL
+SELECT 'bo','','Tibetan','','L','14','0','GREGORIAN'  UNION ALL
+SELECT 'br','','Breton','','L','15','0','GREGORIAN'  UNION ALL
+SELECT 'ca','ES','Catalan','','L','16','0','GREGORIAN'  UNION ALL
+SELECT 'co','','Corsican','','L','17','0','GREGORIAN'  UNION ALL
+SELECT 'cs','CZ','Czech','','L','18','0','GREGORIAN'  UNION ALL
+SELECT 'cy','','Welsh','','L','19','0','GREGORIAN'  UNION ALL
+SELECT 'da','DK','Danish','','L','20','0','GREGORIAN'  UNION ALL
+SELECT 'de','DE','German','','L','21','0','GREGORIAN'  UNION ALL
+SELECT 'dz','','Bhutani','','L','22','0','GREGORIAN'  UNION ALL
+SELECT 'el','GR','Greek','','L','23','0','GREGORIAN'  UNION ALL
+SELECT 'en','US','English','','L','24','1','GREGORIAN'  UNION ALL
+SELECT 'eo','','Esperanto','','L','25','0','GREGORIAN'  UNION ALL
+SELECT 'es','ES','Spanish','','L','26','0','GREGORIAN'  UNION ALL
+SELECT 'et','EE','Estonian','','L','27','0','GREGORIAN'  UNION ALL
+SELECT 'eu','','Basque','','L','28','0','GREGORIAN'  UNION ALL
+SELECT 'fa','IR','Persian','','R','29','0','PERSIAN'  UNION ALL
+SELECT 'fi','FI','Finnish','','L','30','0','GREGORIAN'  UNION ALL
+SELECT 'fj','','Fiji','','L','31','0','GREGORIAN'  UNION ALL
+SELECT 'fo','FO','Faeroese','','L','32','0','GREGORIAN'  UNION ALL
+SELECT 'fr','FR','French','','L','33','0','GREGORIAN'  UNION ALL
+SELECT 'fy','','Frisian','','L','34','0','GREGORIAN'  UNION ALL
+SELECT 'ga','','Irish','','L','35','0','GREGORIAN'  UNION ALL
+SELECT 'gd','','Gaelic','','L','36','0','GREGORIAN'  UNION ALL
+SELECT 'gl','','Galician','','L','37','0','GREGORIAN'  UNION ALL
+SELECT 'gn','','Guarani','','L','38','0','GREGORIAN'  UNION ALL
+SELECT 'gu','','Gujarati','','L','39','0','GREGORIAN'  UNION ALL
+SELECT 'ha','','Hausa','','L','40','0','GREGORIAN'  UNION ALL
+SELECT 'hi','','Hindi','','L','41','0','GREGORIAN'  UNION ALL
+SELECT 'hr','HR','Croatian','','L','42','0','GREGORIAN'  UNION ALL
+SELECT 'hu','HU','Hungarian','','L','43','0','GREGORIAN'  UNION ALL
+SELECT 'hy','','Armenian','','L','44','0','GREGORIAN'  UNION ALL
+SELECT 'ia','','Interlingua','','L','45','0','GREGORIAN'  UNION ALL
+SELECT 'ie','','Interlingue','','L','46','0','GREGORIAN'  UNION ALL
+SELECT 'ik','','Inupiak','','L','47','0','GREGORIAN'  UNION ALL
+SELECT 'in','ID','Indonesian','','L','48','0','GREGORIAN'  UNION ALL
+SELECT 'is','IS','Icelandic','','L','49','0','GREGORIAN'  UNION ALL
+SELECT 'it','IT','Italian','','L','50','0','GREGORIAN'  UNION ALL
+SELECT 'iw','IL','Hebrew','','R','51','0','GREGORIAN'  UNION ALL
+SELECT 'ja','JP','Japanese','','L','52','0','GREGORIAN'  UNION ALL
+SELECT 'ji','','Yiddish','','L','53','0','GREGORIAN'  UNION ALL
+SELECT 'jw','','Javanese','','L','54','0','GREGORIAN'  UNION ALL
+SELECT 'ka','','Georgian','','L','55','0','GREGORIAN'  UNION ALL
+SELECT 'kk','','Kazakh','','L','56','0','GREGORIAN'  UNION ALL
+SELECT 'kl','','Greenlandic','','L','57','0','GREGORIAN'  UNION ALL
+SELECT 'km','','Cambodian','','L','58','0','GREGORIAN'  UNION ALL
+SELECT 'kn','','Kannada','','L','59','0','GREGORIAN'  UNION ALL
+SELECT 'ko','KR','Korean','','L','60','0','GREGORIAN'  UNION ALL
+SELECT 'ks','','Kashmiri','','L','61','0','GREGORIAN'  UNION ALL
+SELECT 'ku','','Kurdish','','L','62','0','GREGORIAN'  UNION ALL
+SELECT 'ky','','Kirghiz','','L','63','0','GREGORIAN'  UNION ALL
+SELECT 'la','','Latin','','L','64','0','GREGORIAN'  UNION ALL
+SELECT 'ln','','Lingala','','L','65','0','GREGORIAN'  UNION ALL
+SELECT 'lo','','Laothian','','L','66','0','GREGORIAN'  UNION ALL
+SELECT 'lt','LT','Lithuanian','','L','67','0','GREGORIAN'  UNION ALL
+SELECT 'lv','LV','Latvian','','L','68','0','GREGORIAN'  UNION ALL
+SELECT 'mg','','Malagasy','','L','69','0','GREGORIAN'  UNION ALL
+SELECT 'mi','','Maori','','L','70','0','GREGORIAN'  UNION ALL
+SELECT 'mk','','Macedonian','','L','71','0','GREGORIAN'  UNION ALL
+SELECT 'ml','','Malayalam','','L','72','0','GREGORIAN'  UNION ALL
+SELECT 'mn','','Mongolian','','L','73','0','GREGORIAN'  UNION ALL
+SELECT 'mo','','Moldavian','','L','74','0','GREGORIAN'  UNION ALL
+SELECT 'mr','','Marathi','','L','75','0','GREGORIAN'  UNION ALL
+SELECT 'ms','MY','Malay','','L','76','0','GREGORIAN'  UNION ALL
+SELECT 'mt','','Maltese','','L','77','0','GREGORIAN'  UNION ALL
+SELECT 'my','','Burmese','','L','78','0','GREGORIAN'  UNION ALL
+SELECT 'na','','Nauru','','L','79','0','GREGORIAN'  UNION ALL
+SELECT 'ne','','Nepali','','L','80','0','GREGORIAN'  UNION ALL
+SELECT 'nl','NL','Dutch','','L','81','0','GREGORIAN'  UNION ALL
+SELECT 'no','NO','Norwegian','','L','82','0','GREGORIAN'  UNION ALL
+SELECT 'oc','','Occitan','','L','83','0','GREGORIAN'  UNION ALL
+SELECT 'om','','Oromo','','L','84','0','GREGORIAN'  UNION ALL
+SELECT 'or','','Oriya','','L','85','0','GREGORIAN'  UNION ALL
+SELECT 'pa','','Punjabi','','L','86','0','GREGORIAN'  UNION ALL
+SELECT 'pl','PL','Polish','','L','87','0','GREGORIAN'  UNION ALL
+SELECT 'ps','','Pashto','','L','88','0','GREGORIAN'  UNION ALL
+SELECT 'pt','BR','Portuguese','','L','89','0','GREGORIAN'  UNION ALL
+SELECT 'qu','','Quechua','','L','90','0','GREGORIAN'  UNION ALL
+SELECT 'rm','','Rhaeto-Romance','','L','91','0','GREGORIAN'  UNION ALL
+SELECT 'rn','','Kirundi','','L','92','0','GREGORIAN'  UNION ALL
+SELECT 'ro','RO','Romanian','','L','93','0','GREGORIAN'  UNION ALL
+SELECT 'ru','RU','Russian','','L','94','0','GREGORIAN'  UNION ALL
+SELECT 'rw','','Kinyarwanda','','L','95','0','GREGORIAN'  UNION ALL
+SELECT 'sa','','Sanskrit','','L','96','0','GREGORIAN'  UNION ALL
+SELECT 'sd','','Sindhi','','L','97','0','GREGORIAN'  UNION ALL
+SELECT 'sg','','Sangro','','L','98','0','GREGORIAN'  UNION ALL
+SELECT 'sh','','Serbo-Croatian','','L','99','0','GREGORIAN'  UNION ALL
+SELECT 'si','','Singhalese','','L','100','0','GREGORIAN'  UNION ALL
+SELECT 'sk','SK','Slovak','','L','101','0','GREGORIAN'  UNION ALL
+SELECT 'sl','SI','Slovenian','','L','102','0','GREGORIAN'  UNION ALL
+SELECT 'sm','','Samoan','','L','103','0','GREGORIAN'  UNION ALL
+SELECT 'sn','','Shona','','L','104','0','GREGORIAN'  UNION ALL
+SELECT 'so','','Somali','','L','105','0','GREGORIAN'  UNION ALL
+SELECT 'sq','','Albanian','','L','106','0','GREGORIAN'  UNION ALL
+SELECT 'sr','YU','Serbian','','L','107','0','GREGORIAN'  UNION ALL
+SELECT 'ss','','Siswati','','L','108','0','GREGORIAN'  UNION ALL
+SELECT 'st','','Sesotho','','L','109','0','GREGORIAN'  UNION ALL
+SELECT 'su','','Sudanese','','L','110','0','GREGORIAN'  UNION ALL
+SELECT 'sv','SE','Swedish','','L','111','0','GREGORIAN'  UNION ALL
+SELECT 'sw','','Swahili','','L','112','0','GREGORIAN'  UNION ALL
+SELECT 'ta','LK','Tamil','','L','113','0','GREGORIAN'  UNION ALL
+SELECT 'te','','Tegulu','','L','114','0','GREGORIAN'  UNION ALL
+SELECT 'tg','','Tajik','','L','115','0','GREGORIAN'  UNION ALL
+SELECT 'th','TH','Thai','','L','116','0','GREGORIAN'  UNION ALL
+SELECT 'ti','','Tigrinya','','L','117','0','GREGORIAN'  UNION ALL
+SELECT 'tk','','Turkmen','','L','118','0','GREGORIAN'  UNION ALL
+SELECT 'tl','PH','Tagalog','','L','119','0','GREGORIAN'  UNION ALL
+SELECT 'tn','','Setswana','','L','120','0','GREGORIAN'  UNION ALL
+SELECT 'to','','Tonga','','L','121','0','GREGORIAN'  UNION ALL
+SELECT 'tr','TR','Turkish','','L','122','0','GREGORIAN'  UNION ALL
+SELECT 'ts','','Tsonga','','L','123','0','GREGORIAN'  UNION ALL
+SELECT 'tt','','Tatar','','L','124','0','GREGORIAN'  UNION ALL
+SELECT 'tw','','Twi','','L','125','0','GREGORIAN'  UNION ALL
+SELECT 'uk','UA','Ukrainian','','L','126','0','GREGORIAN'  UNION ALL
+SELECT 'ur','','Urdu','','L','127','0','GREGORIAN'  UNION ALL
+SELECT 'uz','','Uzbek','','L','128','0','GREGORIAN'  UNION ALL
+SELECT 'vi','VN','Vietnamese','','L','129','0','GREGORIAN'  UNION ALL
+SELECT 'vo','','Volapuk','','L','130','0','GREGORIAN'  UNION ALL
+SELECT 'wo','','Wolof','','L','131','0','GREGORIAN'  UNION ALL
+SELECT 'xh','','Xhosa','','L','132','0','GREGORIAN'  UNION ALL
+SELECT 'yo','','Yoruba','','L','133','0','GREGORIAN'  UNION ALL
+SELECT 'zh','CN','Chinese','','L','134','0','GREGORIAN'  UNION ALL
+SELECT 'zu','','Zulu','','L','135','0','GREGORIAN' ;
 
 INSERT INTO [ISO_COUNTRY] ([IC_UID],[IC_NAME],[IC_SORT_ORDER]) 
 SELECT 'AD', 'Andorra',''  UNION ALL
@@ -3082,7 +3082,7 @@ SELECT 'LABEL','ID_DISPLAY_OF','en','of','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_DELETE_LANGUAGE_WARNING','en','To delete a language you should select a item from the list first.','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_DELETE_LANGUAGE_CONFIRM','en','Do you want remove the language "{0}" ?','2014-01-15' 
+SELECT 'LABEL','ID_DELETE_LANGUAGE_CONFIRM','en','Are you sure you want to delete the language "{0}"?','2014-07-15' 
   UNION ALL
 SELECT 'LABEL','ID_DELETE_LANGUAGE','en','Remove','2014-01-15' 
   UNION ALL
@@ -5642,7 +5642,7 @@ SELECT 'LABEL','ID_PASSWORD_CURRENT_ENTER','en','Enter the current password','20
   UNION ALL
 SELECT 'LABEL','ID_PASSWORD_CURRENT_INCORRECT','en','The current password is incorrect','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_MAX_LIFETIME','en','Maximum lifetime cleaned up (ms)','2014-01-15' 
+SELECT 'LABEL','ID_MAX_LIFETIME','en','Cookie lifetime (seconds)','2014-09-02' 
   UNION ALL
 SELECT 'LABEL','ID_SUCCESSFUL_CONNECTION','en','Successful connection','2014-01-15' 
   UNION ALL
@@ -5840,7 +5840,7 @@ SELECT 'LABEL','ID_LOGIN_WITH_FACEBOOK','en','Login with Facebook!!','2014-01-15
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP6','en','xxx','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5','en','ProcessMaker uses a workspaces to store data. Please select a valid workspace name and credentials to log in it.','2014-01-15' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5','en','ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login.','2014-09-02' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_2','en','If you are installing ProcessMaker on a remote web server, you will need to get this information from your Database Server.','2014-01-15' 
   UNION ALL
@@ -5960,7 +5960,7 @@ SELECT 'LABEL','ID_NOT_PASSED','en','Not Passed.','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_PREINSTALLATION','en','Pre-installation check','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_DIRECTORY_FILE_PERMISSION','en','Directory File Permission','2014-01-15' 
+SELECT 'LABEL','ID_DIRECTORY_FILE_PERMISSION','en','File Permisions','2014-09-02' 
   UNION ALL
 SELECT 'LABEL','ID_DATA_CORRECT','en','The data is correct.','2014-01-15' 
   UNION ALL
@@ -6899,6 +6899,44 @@ SELECT 'LABEL','ID_PROCESS_VARIABLE_REQUIRED_VARIABLES_FOR_QUERY','en','The vari
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
 SELECT 'LABEL','ID_OUTPUT_DOCUMENT_ITS_ASSIGNED','en','The Output Document with {0}: {1} it''s assigned in "{2}".','2014-07-01' 
+  UNION ALL
+SELECT 'LABEL','ID_EXISTS_FILES','en','The file exists.','2014-07-17' 
+  UNION ALL
+SELECT 'LABEL','ID_FILENAME_REQUIRED','en','The filename is required.','2014-07-17' 
+  UNION ALL
+SELECT 'LABEL','ID_VARIABLE_IN_USE','en','The variable with var_uid: {0} is being used by dynaform with dyn_uid: {1}','2014-08-01' 
+  UNION ALL
+SELECT 'LABEL','ID_ROUTE_IS_SECJOIN','en','The route is of "SEC-JOIN" type.','2014-07-29' 
+  UNION ALL
+SELECT 'LABEL','ID_ROUTE_PARENT_DOES_NOT_EXIST_FOR_ROUTE_SECJOIN','en','The parent route does not exist for this route of "SEC-JOIN" type.','2014-07-29' 
+  UNION ALL
+SELECT 'LABEL','ID_GENERATE_BPMN_PROJECT','en','Generate BPMN Project','2014-07-24' 
+  UNION ALL
+SELECT 'LABEL','ID_PROCESS_DOES_NOT_EXIST','en','The process with {0}: {1} does not exist.','2014-07-24' 
+  UNION ALL
+SELECT 'LABEL','ID_PROJECT_IS_BPMN','en','The project with {0}: {1} is BPMN process.','2014-07-24' 
+  UNION ALL
+SELECT 'LABEL','ID_USE_LANGUAGE_URL','en','Use the language of URL','2014-08-08' 
+  UNION ALL
+SELECT 'LABEL','ID_SUMMARY_FORM_NO_PERMISSIONS','en','You do not have permission to have access to the summary form','2014-08-26' 
+  UNION ALL
+SELECT 'LABEL','ID_SUMMARY_FORM','en','Summary form','2014-08-21' 
+  UNION ALL
+SELECT 'LABEL','ID_LANGUAGE_CANT_DELETE_DEFAULT','en','You can''t delete the default language.','2014-08-21' 
+  UNION ALL
+SELECT 'LABEL','ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT','en','The format is incorrect, check the following examples:    *.*   *.png   *.pdf, *.doc, *.xls','2014-08-25' 
+  UNION ALL
+SELECT 'LABEL','ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION','en','The file has not been attached because the extension is not allowed or because it doesn''t correspond to the content of it.','2014-08-25' 
+  UNION ALL
+SELECT 'LABEL','ID_INPUT_DOC_TYPE_FILE_REQUIRED','en','You must specify the allowed file extensions, use *.* to allow any extension.','2014-08-25' 
+  UNION ALL
+SELECT 'LABEL','ID_TINY_SYSTEM_VARIABLE','en','System Variable','2014-08-27' 
+  UNION ALL
+SELECT 'LABEL','ID_CHOOSE_PROVIDER','en','Please select provider','2014-08-27' 
+  UNION ALL
+SELECT 'LABEL','ID_INDEX','en','Index','2014-08-27' 
+  UNION ALL
+SELECT 'LABEL','ID_ERROR_JS_NOT_AVAILABLE','en','Your browser does not support javascript or it is disabled, please use a different browser or activate the javascript. Forms won''t work totally because javascript is used.','2014-08-29' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 
