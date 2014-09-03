@@ -18,9 +18,12 @@
       document.documentElement.style.overflowY = 'hidden';
 
       var oClientWinSize = getClientWindowSize();
-      
 
-    
+
+    if(document.compatMode == 'CSS1Compat' && document.documentMode == '10'){
+        document.documentElement.style.overflowY = 'scroll';
+    }
+
     function autoResizeScreen() {
       oCasesFrame    = document.getElementById('casesFrame');
       height = getClientWindowSize().height-90;
