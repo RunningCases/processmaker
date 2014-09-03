@@ -96,8 +96,9 @@ if ($_SESSION["TRIGGER_DEBUG"]["NUM_TRIGGERS"] > 0) {
 //***Validating the file allowed extensions***
 $oInputDocument = new InputDocument();
 $InpDocData = $oInputDocument->load( $inputDocumentUid );
-if(!G::verifyInputDocExtension($InpDocData['INP_DOC_TYPE_FILE'], $_FILES["form"]["name"]["APP_DOC_FILENAME"], $_FILES["form"]["tmp_name"]["APP_DOC_FILENAME"])){
-	$message = G::LoadTranslation( 'ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' );
+$res = G::verifyInputDocExtension($InpDocData['INP_DOC_TYPE_FILE'], $_FILES["form"]["name"]["APP_DOC_FILENAME"], $_FILES["form"]["tmp_name"]["APP_DOC_FILENAME"]);
+if($res->status == 0){
+	$message = $res->message;
 	G::SendMessageText( $message, "ERROR" );
 	$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
 	G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );

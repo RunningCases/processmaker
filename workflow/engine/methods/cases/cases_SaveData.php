@@ -280,13 +280,14 @@ try {
                         $oFolder = new AppFolder();
 
                         //***Validating the file allowed extensions***
-						if(!G::verifyInputDocExtension($aID['INP_DOC_TYPE_FILE'], $_FILES["form"]["name"]["input"], $_FILES["form"]["tmp_name"]["input"])){
-							$message = G::LoadTranslation( 'ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' );
-							G::SendMessageText( $message, "ERROR" );
-							$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
-							G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
-							die();
-						}
+                        $res = G::verifyInputDocExtension($aID['INP_DOC_TYPE_FILE'], $_FILES["form"]["name"]["input"], $_FILES["form"]["tmp_name"]["input"]);
+                        if($res->status == 0){
+                        	$message = $res->message;
+                        	G::SendMessageText( $message, "ERROR" );
+                        	$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
+                        	G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+                        	die();
+                        }
 
                         $aFields = array ("APP_UID" => $_SESSION["APPLICATION"],"DEL_INDEX" => $_SESSION["INDEX"],"USR_UID" => $_SESSION["USER_LOGGED"],"DOC_UID" => $indocUid,"APP_DOC_TYPE" => "INPUT","APP_DOC_CREATE_DATE" => date( "Y-m-d H:i:s" ),"APP_DOC_COMMENT" => "","APP_DOC_TITLE" => "","APP_DOC_FILENAME" => $arrayFileName[$i],"FOLDER_UID" => $oFolder->createFromPath( $aID["INP_DOC_DESTINATION_PATH"] ),"APP_DOC_TAGS" => $oFolder->parseTags( $aID["INP_DOC_TAGS"] ),"APP_DOC_FIELDNAME" => $fieldName);
                     } else {
