@@ -267,6 +267,7 @@ CREATE TABLE `INPUT_DOCUMENT`
 	`INP_DOC_VERSIONING` TINYINT default 0 NOT NULL,
 	`INP_DOC_DESTINATION_PATH` MEDIUMTEXT,
 	`INP_DOC_TAGS` MEDIUMTEXT,
+	`INP_DOC_TYPE_FILE` VARCHAR(200) default '*.*',
 	PRIMARY KEY (`INP_DOC_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Documentation required';
 #-----------------------------------------------------------------------------
