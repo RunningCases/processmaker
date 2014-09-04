@@ -815,6 +815,25 @@ class System
     }
 
     /**
+     * Returns tables name without prefix RBAC
+     *
+     * @param array $aOldSchema original schema array
+     * @return array with tablesToRename
+     */
+    public static function verifyRbacSchema ($aOldSchema)
+    {
+        $aChanges = array ();
+        
+        foreach ($aOldSchema as $sTableName => $aColumns) {
+            if(substr($sTableName, 0,4) != 'RBAC') {
+                $aChanges[] = $sTableName;
+            }
+        }
+        
+        return $aChanges;        
+    }
+
+    /**
      * Returns the difference between two schema arrays
      *
      * @param array $aOldSchema original schema array
