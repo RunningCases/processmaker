@@ -64,7 +64,7 @@ class Roles extends BaseRoles {
                 $this->setNew(false);
 
                 $this->getRolName();
-                $aFields['ROL_NAME'] = ($this->rol_name != '' ? $this->rol_name: $this->getRolCode());
+                $aFields['ROL_NAME'] = $this->rol_name;
 
                 return $aFields;
             } else {
@@ -83,14 +83,11 @@ class Roles extends BaseRoles {
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $aRow = $oDataset->getRow();
-
+            
             $roles = new Roles();
         	$roles->load($aRow['ROL_UID']);
         	$aRow['ROL_NAME'] = $roles->getRolName();
-        	if ($aRow['ROL_NAME'] == '') {
-        	    $aRow['ROL_NAME'] = $roles->getRolCode();
-        	}
-
+            
             if (is_array($aRow)) {
                 return $aRow;
             } else {
@@ -162,16 +159,16 @@ class Roles extends BaseRoles {
         $oCriteria->add(RolesPeer::ROL_CREATE_DATE, '', Criteria::NOT_EQUAL);
         $oCriteria->add(RolesPeer::ROL_UPDATE_DATE, '', Criteria::NOT_EQUAL);
         $oCriteria->addJoin(RolesPeer::ROL_SYSTEM, SystemsPeer::SYS_UID);
-
+    
         if ($filter != '') {
           $oCriteria->add(RolesPeer::ROL_CODE, '%'.$filter.'%', Criteria::LIKE);
         }
-
+    
         $oCriteria->setOffset($start);
         $oCriteria->setLimit($limit);
-
+    
         $result['LIST'] = $oCriteria;
-
+    
         return $result;
 	}
 
@@ -186,9 +183,6 @@ class Roles extends BaseRoles {
         	$o = new Roles();
         	$o->load($row['ROL_UID']);
         	$row['ROL_NAME'] = $o->getRolName();
-        	if ($row['ROL_NAME'] == '') {
-        	    $row['ROL_NAME'] = $o->getRolCode();
-        	}
         	$aRows[] = $row;
         }
         return $aRows;
@@ -326,9 +320,6 @@ class Roles extends BaseRoles {
         if (is_array($row)) {
             $o = RolesPeer::retrieveByPK($row['ROL_UID']);
             $row['ROL_NAME'] = $o->getRolName();
-            if ($row['ROL_NAME'] == '') {
-                $row['ROL_NAME'] = $o->getRolCode();
-            }
             return $row;
         } else {
             return null;

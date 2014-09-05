@@ -631,8 +631,8 @@ class Installer extends Controller
         $db_username = trim( $_REQUEST['db_username'] );
         $db_password = trim( $_REQUEST['db_password'] );
         $wf = trim( $_REQUEST['wfDatabase'] );
-        $rb = trim( $_REQUEST['rbDatabase'] );
-        $rp = trim( $_REQUEST['rpDatabase'] );
+        $rb = trim( $_REQUEST['wfDatabase'] );
+        $rp = trim( $_REQUEST['wfDatabase'] );
         $workspace = trim( $_REQUEST['workspace'] );
         $pathConfig = trim( $_REQUEST['pathConfig'] );
         $pathLanguages = trim( $_REQUEST['pathLanguages'] );
@@ -659,35 +659,21 @@ class Installer extends Controller
             if ($deleteDB) {
                 $q = sprintf( 'DROP DATABASE IF EXISTS %s;', $wf, $wf );
                 $this->mysqlQuery( $q );
-
-                $q = sprintf( 'DROP DATABASE IF EXISTS %s;', $rb, $rb );
-                $this->mysqlQuery( $q );
-
-                $q = sprintf( 'DROP DATABASE IF EXISTS %s;', $rp, $rp );
-                $this->mysqlQuery( $q );
             }
 
             // CREATE databases wf_workflow, rb_workflow and rp_workflow
             $q = sprintf( 'CREATE DATABASE IF NOT EXISTS %s;', $wf, $wf );
             $this->mysqlQuery( $q );
 
-            $q = sprintf( 'CREATE DATABASE IF NOT EXISTS %s;', $rb, $rb );
-            $this->mysqlQuery( $q );
-
-            $q = sprintf( 'CREATE DATABASE IF NOT EXISTS %s;', $rp, $rp );
-            $this->mysqlQuery( $q );
-
             // CREATE users and GRANT Privileges
             $wf_workpace = $wf;
-            $rb_workpace = $rb;
-            $rp_workpace = $rp;
+            $rb_workpace = $wf;
+            $rp_workpace = $wf;
             if (!$userLogged) {
                 $wfPass = G::generate_password( 12 );
-                $rbPass = G::generate_password( 12 );
-                $rpPass = G::generate_password( 12 );
                 $this->setGrantPrivilegesMySQL( $wf, $wfPass, $wf, $db_hostname );
-                $this->setGrantPrivilegesMySQL( $rb, $rbPass, $rb, $db_hostname );
-                $this->setGrantPrivilegesMySQL( $rp, $rpPass, $rp, $db_hostname );
+                $this->setGrantPrivilegesMySQL( $rb, $wfPass, $wf, $db_hostname );
+                $this->setGrantPrivilegesMySQL( $rp, $wfPass, $wf, $db_hostname );
             } else {
                 $wfPass = $db_password;
                 $rbPass = $db_password;
@@ -743,20 +729,20 @@ class Installer extends Controller
             $dbData .= sprintf( "\$dbUser       = '%s';\n", $wf );
             $dbData .= sprintf( "\$dbPass       = '%s';\n", $wfPass );
             $dbData .= sprintf( "\$dbRbacHost   = '%s';\n", $db_host );
-            $dbData .= sprintf( "\$dbRbacName   = '%s';\n", $rb_workpace );
-            $dbData .= sprintf( "\$dbRbacUser   = '%s';\n", $rb );
-            $dbData .= sprintf( "\$dbRbacPass   = '%s';\n", $rbPass );
+            $dbData .= sprintf( "\$dbRbacName   = '%s';\n", $wf_workpace );
+            $dbData .= sprintf( "\$dbRbacUser   = '%s';\n", $wf );
+            $dbData .= sprintf( "\$dbRbacPass   = '%s';\n", $wfPass );
             $dbData .= sprintf( "\$dbReportHost = '%s';\n", $db_host );
-            $dbData .= sprintf( "\$dbReportName = '%s';\n", $rp_workpace );
-            $dbData .= sprintf( "\$dbReportUser = '%s';\n", $rp );
-            $dbData .= sprintf( "\$dbReportPass = '%s';\n", $rpPass );
+            $dbData .= sprintf( "\$dbReportName = '%s';\n", $wf_workpace );
+            $dbData .= sprintf( "\$dbReportUser = '%s';\n", $wf );
+            $dbData .= sprintf( "\$dbReportPass = '%s';\n", $wfPass );
             $databasesText = str_replace( '{dbData}', $dbData, @file_get_contents( PATH_HOME . 'engine/templates/installer/databases.tpl' ) );
 
             $this->installLog( G::LoadTranslation('ID_CREATING', SYS_LANG, Array($databases_file) ));
             file_put_contents( $databases_file, $databasesText );
 
             // Execute scripts to create and populates databases
-            $query = sprintf( "USE %s;", $rb_workpace );
+            $query = sprintf( "USE %s;", $wf_workpace );
             $this->mysqlQuery( $query );
 
             $this->mysqlFileQuery( PATH_RBAC_HOME . 'engine/data/mysql/schema.sql' );
@@ -802,7 +788,7 @@ class Installer extends Controller
             $query = sprintf( "USE %s;", $rb_workpace );
             $this->mysqlQuery( $query );
 
-            $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, md5( $adminPassword ) );
+            $query = sprintf( "UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, md5( $adminPassword ) );
             $this->mysqlQuery( $query );
 
             // Write the paths_installed.php file (contains all the information configured so far)
@@ -958,8 +944,8 @@ class Installer extends Controller
         $db_username = trim( $_REQUEST['db_username'] );
         $db_password = trim( $_REQUEST['db_password'] );
         $wf = trim( $_REQUEST['wfDatabase'] );
-        $rb = trim( $_REQUEST['rbDatabase'] );
-        $rp = trim( $_REQUEST['rpDatabase'] );
+        $rb = trim( $_REQUEST['wfDatabase'] );
+        $rp = trim( $_REQUEST['wfDatabase'] );
         $workspace = trim( $_REQUEST['workspace'] );
         $pathConfig = trim( $_REQUEST['pathConfig'] );
         $pathLanguages = trim( $_REQUEST['pathLanguages'] );
@@ -988,32 +974,16 @@ class Installer extends Controller
             if ($deleteDB) {
                 $q = sprintf( "IF EXISTS (SELECT name FROM sys.databases WHERE name='%s' ) DROP DATABASE %s", $wf, $wf );
                 $this->mssqlQuery( $q );
-
-                $q = sprintf( "IF EXISTS (SELECT name FROM sys.databases WHERE name='%s' ) DROP DATABASE %s", $rb, $rb );
-                $this->mssqlQuery( $q );
-
-                $q = sprintf( "IF EXISTS (SELECT name FROM sys.databases WHERE name='%s' ) DROP DATABASE %s", $rp, $rp );
-                $this->mssqlQuery( $q );
             }
 
             // CREATE databases wf_workflow, rb_workflow and rp_workflow
             $q = sprintf( "IF NOT EXISTS (SELECT * FROM sys.databases WHERE name='%s' ) CREATE DATABASE %s", $wf, $wf );
             $this->mssqlQuery( $q );
 
-            $q = sprintf( "IF NOT EXISTS (SELECT * FROM sys.databases WHERE name='%s' ) CREATE DATABASE %s", $rb, $rb );
-            $this->mssqlQuery( $q );
-
-            $q = sprintf( "IF NOT EXISTS (SELECT * FROM sys.databases WHERE name='%s' ) CREATE DATABASE %s", $rp, $rp );
-            $this->mssqlQuery( $q );
-
             //CREATE users and GRANT Privileges
             $wfPass = G::generate_password( 12 );
-            $rbPass = G::generate_password( 12 );
-            $rpPass = G::generate_password( 12 );
             $this->setGrantPrivilegesMSSQL( $wf, $wfPass, $wf );
-            $this->setGrantPrivilegesMSSQL( $rb, $rbPass, $rb );
-            $this->setGrantPrivilegesMSSQL( $rp, $rpPass, $rp );
-
+            
             //Generate the db.php file and folders
             $path_site = $pathShared . "/sites/" . $workspace . "/";
             $db_file = $path_site . "db.php";
@@ -1032,13 +1002,13 @@ class Installer extends Controller
             $dbText .= sprintf( "  define ('DB_USER',        '%s' );\n", $wf );
             $dbText .= sprintf( "  define ('DB_PASS',        '%s' );\n", $wfPass );
             $dbText .= sprintf( "  define ('DB_RBAC_HOST',   '%s' );\n", $db_host );
-            $dbText .= sprintf( "  define ('DB_RBAC_NAME',   '%s' );\n", $rb );
-            $dbText .= sprintf( "  define ('DB_RBAC_USER',   '%s' );\n", $rb );
-            $dbText .= sprintf( "  define ('DB_RBAC_PASS',   '%s' );\n", $rbPass );
+            $dbText .= sprintf( "  define ('DB_RBAC_NAME',   '%s' );\n", $wf );
+            $dbText .= sprintf( "  define ('DB_RBAC_USER',   '%s' );\n", $wf );
+            $dbText .= sprintf( "  define ('DB_RBAC_PASS',   '%s' );\n", $wfPass );
             $dbText .= sprintf( "  define ('DB_REPORT_HOST', '%s' );\n", $db_host );
-            $dbText .= sprintf( "  define ('DB_REPORT_NAME', '%s' );\n", $rp );
-            $dbText .= sprintf( "  define ('DB_REPORT_USER', '%s' );\n", $rp );
-            $dbText .= sprintf( "  define ('DB_REPORT_PASS', '%s' );\n", $rpPass );
+            $dbText .= sprintf( "  define ('DB_REPORT_NAME', '%s' );\n", $wf );
+            $dbText .= sprintf( "  define ('DB_REPORT_USER', '%s' );\n", $wf );
+            $dbText .= sprintf( "  define ('DB_REPORT_PASS', '%s' );\n", $wfPass );
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $dbText .= "\n";
                 $dbText .= "  define ('PARTNER_FLAG', " . ((defined('PARTNER_FLAG')) ? PARTNER_FLAG : ((isset($_REQUEST['PARTNER_FLAG'])) ? $_REQUEST['PARTNER_FLAG']:'false')) . ");\n";
@@ -1058,20 +1028,20 @@ class Installer extends Controller
             $dbData .= sprintf( "\$dbUser       = '%s';\n", $wf );
             $dbData .= sprintf( "\$dbPass       = '%s';\n", $wfPass );
             $dbData .= sprintf( "\$dbRbacHost   = '%s';\n", $db_host );
-            $dbData .= sprintf( "\$dbRbacName   = '%s';\n", $rb );
-            $dbData .= sprintf( "\$dbRbacUser   = '%s';\n", $rb );
-            $dbData .= sprintf( "\$dbRbacPass   = '%s';\n", $rbPass );
+            $dbData .= sprintf( "\$dbRbacName   = '%s';\n", $wf );
+            $dbData .= sprintf( "\$dbRbacUser   = '%s';\n", $wf );
+            $dbData .= sprintf( "\$dbRbacPass   = '%s';\n", $wfPass );
             $dbData .= sprintf( "\$dbReportHost = '%s';\n", $db_host );
-            $dbData .= sprintf( "\$dbReportName = '%s';\n", $rp );
-            $dbData .= sprintf( "\$dbReportUser = '%s';\n", $rp );
-            $dbData .= sprintf( "\$dbReportPass = '%s';\n", $rpPass );
+            $dbData .= sprintf( "\$dbReportName = '%s';\n", $wf );
+            $dbData .= sprintf( "\$dbReportUser = '%s';\n", $wf );
+            $dbData .= sprintf( "\$dbReportPass = '%s';\n", $wfPass );
             $databasesText = str_replace( '{dbData}', $dbData, @file_get_contents( PATH_HOME . 'engine/templates/installer/databases.tpl' ) );
 
             $this->installLog( G::LoadTranslation('ID_CREATING', SYS_LANG, Array($databases_file) ));
             file_put_contents( $databases_file, $databasesText );
 
             //execute scripts to create and populates databases
-            $query = sprintf( "USE %s;", $rb );
+            $query = sprintf( "USE %s;", $wf );
             $this->mssqlQuery( $query );
 
             $this->mssqlFileQuery( PATH_RBAC_HOME . 'engine/data/mssql/schema.sql' );
@@ -1108,10 +1078,10 @@ class Installer extends Controller
             $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, md5( $adminPassword ) );
             $this->mssqlQuery( $query );
 
-            $query = sprintf( "USE %s;", $rb );
+            $query = sprintf( "USE %s;", $wf );
             $this->mssqlQuery( $query );
 
-            $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, md5( $adminPassword ) );
+            $query = sprintf( "UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, md5( $adminPassword ) );
             $this->mssqlQuery( $query );
 
             // Write the paths_installed.php file (contains all the information configured so far)
@@ -1185,18 +1155,10 @@ class Installer extends Controller
             $link = @mysql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
             $dataset = @mysql_query( "show databases like '" . $_REQUEST['wfDatabase'] . "'", $link );
             $info->wfDatabaseExists = (@mysql_num_rows( $dataset ) > 0);
-            $dataset = @mysql_query( "show databases like '" . $_REQUEST['rbDatabase'] . "'", $link );
-            $info->rbDatabaseExists = (@mysql_num_rows( $dataset ) > 0);
-            $dataset = @mysql_query( "show databases like '" . $_REQUEST['rpDatabase'] . "'", $link );
-            $info->rpDatabaseExists = (@mysql_num_rows( $dataset ) > 0);
         } else {
             $link = @mssql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
             $dataset = @mssql_query( "select * from sys.databases where name = '" . $_REQUEST['wfDatabase'] . "'", $link );
             $info->wfDatabaseExists = (@mssql_num_rows( $dataset ) > 0);
-            $dataset = @mssql_query( "select * from sys.databases where name = '" . $_REQUEST['rbDatabase'] . "'", $link );
-            $info->rbDatabaseExists = (@mssql_num_rows( $dataset ) > 0);
-            $dataset = @mssql_query( "select * from sys.databases where name = '" . $_REQUEST['rpDatabase'] . "'", $link );
-            $info->rpDatabaseExists = (@mssql_num_rows( $dataset ) > 0);
         }
 
         $info->errMessage = G::LoadTranslation('ID_DATABASE_EXISTS_OVERWRITE');

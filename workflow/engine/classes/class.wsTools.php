@@ -60,11 +60,11 @@ class workspaceTools
      *
      * @param bool $first true if this is the first workspace to be upgrade
      */
-    public function upgrade($first = false, $buildCacheView = false, $workSpace = SYS_SYS, $lang = 'en')
+    public function upgrade($first = false, $buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en')
     {
         $start = microtime(true);
         CLI::logging("> Updating database...\n");
-        $this->upgradeDatabase();
+        $this->upgradeDatabase($onedb);
         $stop = microtime(true);
         $final = $stop - $start;
         CLI::logging("<*>   Database Upgrade Process took $final seconds.\n");
@@ -164,9 +164,17 @@ class workspaceTools
          * $matches will contain several groups:
          * ((define('(<key>)2', ')1 (<value>)3 (');)4 )0
          */
-        $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'rb_', 'DB_RBAC_USER' => 'rb_', 'DB_REPORT_NAME' => 'rp_', 'DB_REPORT_USER' => 'rp_');
+        $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'wf_', 'DB_RBAC_USER' => 'wf_', 'DB_REPORT_NAME' => 'wf_', 'DB_REPORT_USER' => 'wf_');
         $key = isset($matches['key']) ? $matches['key'] : $matches[2];
         $value = isset($matches['value']) ? $matches['value'] : $matches[3];
+        
+        if (!$this->onedb) {
+            if (array_search($key, array('DB_PASS', 'DB_RBAC_PASS', 'DB_REPORT_PASS'))) {
+                $value = $this->dbInfo['DB_PASS'];
+            }
+        }
+
+
         if (array_search($key, array('DB_HOST', 'DB_RBAC_HOST', 'DB_REPORT_HOST')) !== false) {
             /* Change the database hostname for these keys */
             $value = $this->newHost;
@@ -674,7 +682,7 @@ class workspaceTools
      * @param bool $checkOnly only check if the upgrade is needed if true
      * @return array bool upgradeSchema for more information
      */
-    public function upgradeDatabase ($checkOnly = false)
+    public function upgradeDatabase ($onedb = false, $checkOnly = false)
     {
         G::LoadClass("patch");
         $this->initPropel( true );
@@ -682,7 +690,7 @@ class workspaceTools
         $systemSchema = System::getSystemSchema();
         $systemSchemaRbac = System::getSystemSchemaRbac();// obtiene el Schema de Rbac
         $this->upgradeSchema( $systemSchema );
-        $this->upgradeSchema( $systemSchemaRbac, false, true );// Hace Upgrade de Rbac
+        $this->upgradeSchema( $systemSchemaRbac, false, true, $onedb ); // Hace Upgrade de Rbac
         $this->upgradeData();
         p11835::execute();
         return true;
@@ -696,7 +704,7 @@ class workspaceTools
      * @return array bool the changes if checkOnly is true, else return
      * true on success
      */
-    public function upgradeSchema($schema, $checkOnly = false, $rbac = false)
+    public function upgradeSchema($schema, $checkOnly = false, $rbac = false, $onedb = false)
     {
         $dbInfo = $this->getDBInfo();
 
@@ -705,6 +713,19 @@ class workspaceTools
         }
 
         $workspaceSchema = $this->getSchema($rbac);
+
+        $oDataBase = $this->getDatabase($rbac);
+
+        if (!$onedb) {
+            if($rbac){            
+                $rename = System::verifyRbacSchema($workspaceSchema);
+                if (count($rename) > 0) {
+                    foreach ($rename as $tableName) {
+                        $oDataBase->executeQuery($oDataBase->generateRenameTableSQL($tableName));
+                    }
+                }
+            }
+        }
 
         $changes = System::compareSchema($workspaceSchema, $schema);
 
@@ -718,8 +739,6 @@ class workspaceTools
                 return $changed;
             }
         }
-
-        $oDataBase = $this->getDatabase($rbac);
 
         $oDataBase->iFetchType = MYSQL_NUM;
 
@@ -913,9 +932,7 @@ class workspaceTools
         }
 
         $wfDsn = $fields['DB_ADAPTER'] . '://' . $fields['DB_USER'] . ':' . $fields['DB_PASS'] . '@' . $fields['DB_HOST'] . '/' . $fields['DB_NAME'];
-        $rbDsn = $fields['DB_ADAPTER'] . '://' . $fields['DB_RBAC_USER'] . ':' . $fields['DB_RBAC_PASS'] . '@' . $fields['DB_RBAC_HOST'] . '/' . $fields['DB_RBAC_NAME'];
-        $rpDsn = $fields['DB_ADAPTER'] . '://' . $fields['DB_REPORT_USER'] . ':' . $fields['DB_REPORT_PASS'] . '@' . $fields['DB_REPORT_HOST'] . '/' . $fields['DB_REPORT_NAME'];
-
+        
         $info = array('Workspace Name' => $fields['WORKSPACE_NAME'],
             //'Available Databases'  => $fields['AVAILABLE_DB'],
             'Workflow Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_USER'], $fields['DB_PASS'], $fields['DB_HOST'], $fields['DB_NAME']), 'RBAC Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_RBAC_USER'], $fields['DB_RBAC_PASS'], $fields['DB_RBAC_HOST'], $fields['DB_RBAC_NAME']), 'Report Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_REPORT_USER'], $fields['DB_REPORT_PASS'], $fields['DB_REPORT_HOST'], $fields['DB_REPORT_NAME']), 'MySql Version' => $fields['DATABASE']
@@ -951,10 +968,16 @@ class workspaceTools
      *
      * @param string $path the directory where to create the sql files
      */
-    public function exportDatabase($path)
+    public function exportDatabase($path, $onedb = false)
     {
         $dbInfo = $this->getDBInfo();
-        $databases = array("wf", "rp", "rb");
+
+        if ($onedb) {
+            $databases = array("rb", "rp");
+        } else {
+            $databases = array("wf", "rp", "rb");
+        }
+
         $dbNames = array();
         foreach ($databases as $db) {
             $dbInfo = $this->getDBCredentials($db);

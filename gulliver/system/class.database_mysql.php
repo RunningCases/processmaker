@@ -115,6 +115,18 @@ class database extends database_base
     }
 
     /**
+     * generate rename table sentence
+     *
+     * @param $sTableOld old table name
+     * @return $sSql sql sentence
+     */
+    public function generateRenameTableSQL ($sTableOld)
+    {
+        $sSQL = 'ALTER TABLE ' . $sTableOld . ' RENAME TO RBAC_' . $sTableOld;
+        return $sSQL;
+    }
+
+    /**
      * generate drop column sentence
      *
      * @param $sTable table name

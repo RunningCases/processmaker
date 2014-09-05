@@ -59,7 +59,7 @@ class RbacUsersMapBuilder {
 	{
 		$this->dbMap = Propel::getDatabaseMap('rbac');
 
-		$tMap = $this->dbMap->addTable('USERS');
+		$tMap = $this->dbMap->addTable('RBAC_USERS');
 		$tMap->setPhpName('RbacUsers');
 
 		$tMap->setUseIdGenerator(false);

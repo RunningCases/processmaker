@@ -27,6 +27,8 @@
 
 G::LoadClass("system");
 G::LoadClass("wsTools");
+G::LoadSystem("dbMaintenance");
+G::LoadClass("cli");
 
 CLI::taskName('upgrade');
 CLI::taskDescription(<<<EOT
@@ -38,6 +40,24 @@ EOT
 );
 CLI::taskOpt("buildACV", "If the option is enabled, performs the Build Cache View.", "ACV", "buildACV");
 CLI::taskRun("run_upgrade");
+
+CLI::taskName('unify-database');
+CLI::taskDescription(<<<EOT
+    Unify Rbac, Reports and Workflow databases schemas to match the latest version
+
+    Specify the workspaces whose databases schemas should be unifyied.
+    If no workspace is specified, then the database schema will be upgraded or
+    repaired on all available workspaces.
+
+    This command will read the system schema and attempt to modify the workspaces
+    tables to match this new schema. Use this command to unify databases
+    schemas or before ProcessMaker has been upgraded, so the database schemas will
+    changed to match the new ProcessMaker code.
+EOT
+);
+CLI::taskArg('workspace');
+Add a comment to this line
+CLI::taskRun("run_unify_database");
 
 /**
  * A version of rm_dir which does not exits on error.
@@ -238,4 +258,99 @@ function listFiles($dir) {
         }
     }
     return $files;
+}
+
+function run_unify_database($args)
+{ 
+    $workspaces = get_workspaces_from_args($args);
+    
+    CLI::logging("UPGRADE", PROCESSMAKER_PATH . "upgrade.log");
+    CLI::logging("Checking workspaces...\n");
+    //setting flag to true to check into sysGeneric.php
+    $flag = G::isPMUnderUpdating(0);
+    
+    //start to unify
+    $count = count($workspaces);
+    
+    if ($count > 1) {
+        if(!Bootstrap::isLinuxOs()){
+            CLI::error("This is not a Linux enviroment, please especify workspace.\n");
+            return;
+        }
+    }
+
+    foreach ($workspaces as $workspace) {
+        
+        if (! $workspace->workspaceExists()) {
+            echo "Workspace {$workspace->name} not found\n";
+            return false;
+        }
+        
+        $ws = $workspace->name;
+        $sContent = file_get_contents (PATH_DB . $ws . PATH_SEP . 'db.php');
+
+        if (strpos($sContent, 'rb_')) {
+            $workspace->onedb = false;
+        } else {
+            $workspace->onedb = true;
+        }
+    }
+
+    $first = true;
+    $errors = false;
+    $countWorkspace = 0;
+    $buildCacheView = array_key_exists("buildACV", $args);
+    
+    foreach ($workspaces as $workspace) { 
+        try { 
+            $countWorkspace++;
+
+            if ($workspace->onedb) {
+                CLI::logging("Workspace $workspace->name already one Database...\n");
+            } else {
+                //create destination path
+                $parentDirectory = PATH_DATA . "upgrade";
+                if (! file_exists( $parentDirectory )) {
+                    mkdir( $parentDirectory );
+                }
+                $tempDirectory = $parentDirectory . basename(tempnam(__FILE__, ''));
+                if (is_writable( $parentDirectory )) {
+                    mkdir( $tempDirectory );
+                } else {
+                    throw new Exception( "Could not create directory:" . $parentDirectory );
+                }
+                $metadata = $workspace->getMetadata();
+                CLI::logging( "Exporting rb and rp databases to a temporal location...\n" );
+                $metadata["databases"] = $workspace->exportDatabase( $tempDirectory,true );
+                $metadata["version"] = 1;
+                
+                list ($dbHost, $dbUser, $dbPass) = @explode( SYSTEM_HASH, G::decrypt( HASH_INSTALLATION, SYSTEM_HASH ) );
+                $link = mysql_connect( $dbHost, $dbUser, $dbPass );
+                
+                foreach ($metadata->databases as $db) {
+                    $dbName = 'wf_'.$workspace->name;
+                    CLI::logging( "+> Restoring {$db->name} to $dbName database\n" );
+                    $restore = $workspace->executeSQLScript( $dbName, "$tempDirectory/{$db->name}.sql" );
+                    
+                    CLI::logging( "+> Remove {$db->name} database\n" );
+
+                    $sql = "DROP DATABASE IF EXISTS {$db->name};";
+                    if (! @mysql_query( $sql )) {
+                        throw new Exception( mysql_error() );
+                    }
+                }
+                
+                CLI::logging( "Removing temporary files\n" );
+                G::rm_dir( $tempDirectory );
+ 
+                $newDBNames = $workspace->resetDBInfo( $dbHost, true );
+
+                CLI::logging( CLI::info( "Done restoring databases" ) . "\n" );
+            }                
+        } catch (Exception $e) { 
+            CLI::logging("Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
+            $errors = true;
+        }
+    }
+    $flag = G::isPMUnderUpdating(0);
 }
