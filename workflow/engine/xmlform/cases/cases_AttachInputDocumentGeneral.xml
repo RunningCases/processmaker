@@ -6,6 +6,7 @@
   <APP_DOC_UID type="hidden"/>
   <actionType type="hidden"/>
   <docVersion type="hidden"/>
+  <fileTypes type="hidden"/>
   <APP_DOC_FILENAME type="file">
     <en><![CDATA[File]]></en>
   </APP_DOC_FILENAME>
@@ -39,6 +40,27 @@ var verifyInfo = function(oForm)
     oAux.focus();
     return;
   }
+
+  docType = oAux.value.split(".");
+  docType = docType[docType.length - 1];
+
+  allowedTypes = getField('fileTypes').value.split(", ");
+
+  for(i=0; i<allowedTypes.length; i++){
+    allowed = allowedTypes[i].replace('*','').replace('.','');
+    if((allowed != '*') && (docType != allowed)){
+      flag = 1;
+    } else {
+      flag = 0;
+      i = allowedTypes.length;
+    }
+  }
+  if( flag == 1){
+    alert('@G::LoadTranslation(ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION)');
+    oAux.focus();
+    return;
+  }
+
   getField('SAVE').disabled = true;
   getField('BTN_CANCEL').disabled = true;
   oForm.submit();

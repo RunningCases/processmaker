@@ -81,6 +81,8 @@ class InputDocumentMapBuilder
 
         $tMap->addColumn('INP_DOC_TAGS', 'InpDocTags', 'string', CreoleTypes::LONGVARCHAR, false, null);
 
+        $tMap->addColumn('INP_DOC_TYPE_FILE', 'InpDocTypeFile', 'string', CreoleTypes::VARCHAR, false, 200);
+
         $tMap->addValidator('INP_DOC_UID', 'maxLength', 'propel.validator.MaxLengthValidator', '32', 'Input Document UID can be no larger than 32 in size');
 
         $tMap->addValidator('INP_DOC_UID', 'required', 'propel.validator.RequiredValidator', '', 'Input Document UID is required.');

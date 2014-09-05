@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 2.5.2.3\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-08-21 17:02:40\n"
+"PO-Revision-Date: 2014-09-02 10:32:26\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -12616,8 +12616,8 @@ msgstr "The current password is incorrect"
 # TRANSLATION
 # LABEL/ID_MAX_LIFETIME
 #: LABEL/ID_MAX_LIFETIME
-msgid "Maximum lifetime cleaned up (ms)"
-msgstr "Maximum lifetime cleaned up (ms)"
+msgid "Cookie lifetime (seconds)"
+msgstr "Cookie lifetime (seconds)"
 
 # TRANSLATION
 # LABEL/ID_SUCCESSFUL_CONNECTION
@@ -13204,8 +13204,8 @@ msgstr "xxx"
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5
-msgid "ProcessMaker uses a workspaces to store data. Please select a valid workspace name and credentials to log in it."
-msgstr "ProcessMaker uses a workspaces to store data. Please select a valid workspace name and credentials to log in it."
+msgid "ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login."
+msgstr "ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login."
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_2
@@ -13558,8 +13558,8 @@ msgstr "Pre-installation check"
 # TRANSLATION
 # LABEL/ID_DIRECTORY_FILE_PERMISSION
 #: LABEL/ID_DIRECTORY_FILE_PERMISSION
-msgid "Directory File Permission"
-msgstr "Directory File Permission"
+msgid "File Permisions"
+msgstr "File Permisions"
 
 # TRANSLATION
 # LABEL/ID_DATA_CORRECT
@@ -16396,8 +16396,8 @@ msgstr "Use the language of URL"
 # TRANSLATION
 # LABEL/ID_SUMMARY_FORM_NO_PERMISSIONS
 #: LABEL/ID_SUMMARY_FORM_NO_PERMISSIONS
-msgid "You do not have permission to summary form"
-msgstr "You do not have permission to summary form"
+msgid "You do not have permission to have access to the summary form"
+msgstr "You do not have permission to have access to the summary form"
 
 # TRANSLATION
 # LABEL/ID_SUMMARY_FORM
@@ -16410,6 +16410,48 @@ msgstr "Summary form"
 #: LABEL/ID_LANGUAGE_CANT_DELETE_DEFAULT
 msgid "You can't delete the default language."
 msgstr "You can't delete the default language."
+
+# TRANSLATION
+# LABEL/ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT
+#: LABEL/ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT
+msgid "The format is incorrect, check the following examples:    *.*   *.png   *.pdf, *.doc, *.xls"
+msgstr "The format is incorrect, check the following examples:    *.*   *.png   *.pdf, *.doc, *.xls"
+
+# TRANSLATION
+# LABEL/ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION
+#: LABEL/ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION
+msgid "The file has not been attached because the extension is not allowed or because it doesn't correspond to the content of it."
+msgstr "The file has not been attached because the extension is not allowed or because it doesn't correspond to the content of it."
+
+# TRANSLATION
+# LABEL/ID_INPUT_DOC_TYPE_FILE_REQUIRED
+#: LABEL/ID_INPUT_DOC_TYPE_FILE_REQUIRED
+msgid "You must specify the allowed file extensions, use *.* to allow any extension."
+msgstr "You must specify the allowed file extensions, use *.* to allow any extension."
+
+# TRANSLATION
+# LABEL/ID_TINY_SYSTEM_VARIABLE
+#: LABEL/ID_TINY_SYSTEM_VARIABLE
+msgid "System Variable"
+msgstr "System Variable"
+
+# TRANSLATION
+# LABEL/ID_CHOOSE_PROVIDER
+#: LABEL/ID_CHOOSE_PROVIDER
+msgid "Please select provider"
+msgstr "Please select provider"
+
+# TRANSLATION
+# LABEL/ID_INDEX
+#: LABEL/ID_INDEX
+msgid "Index"
+msgstr "Index"
+
+# TRANSLATION
+# LABEL/ID_ERROR_JS_NOT_AVAILABLE
+#: LABEL/ID_ERROR_JS_NOT_AVAILABLE
+msgid "Your browser does not support javascript or it is disabled, please use a different browser or activate the javascript. Forms won't work totally because javascript is used."
+msgstr "Your browser does not support javascript or it is disabled, please use a different browser or activate the javascript. Forms won't work totally because javascript is used."
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

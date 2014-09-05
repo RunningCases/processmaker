@@ -17,9 +17,34 @@ var currentPagedTable = @#PAGED_TABLE_ID;
 		popupWindow('@G::LoadTranslation(ID_EDIT_INPUTDOCS)', '@G::encryptlink(@#inputdocsEdit)?INP_DOC_UID='+ uid , 500, 410);
   }
   function validate_form(){
-    var sw = true;
-    sw = sw && (getField('INP_DOC_TITLE').value!='');
-    return sw;
+    if(getField('INP_DOC_TITLE').value == ''){
+      alert('@G::LoadTranslation(ID_INPUT_DOC_TITLE_REQUIRED)');
+      getField('INP_DOC_TITLE').focus();
+      return false;
+    }
+
+    oTypeFile = getField('INP_DOC_TYPE_FILE');
+  	if (oTypeFile.value == '' ){
+   	  alert('@G::LoadTranslation(ID_INPUT_DOC_TYPE_FILE_REQUIRED)');
+      oTypeFile.focus();
+      return false;
+    }
+
+    allowedTypes = getField('INP_DOC_TYPE_FILE').value.split(", ");
+    expreg = /^\*\.?[a-z]{2,8}$/;
+
+    for(i=0; i<allowedTypes.length; i++){
+      atype = allowedTypes[i];
+
+      if((atype=='*.*') || (expreg.test(atype)) ){
+        //
+      } else {
+        alert('@G::LoadTranslation(ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT)');
+        oTypeFile.focus();
+        return false;
+      }
+    }
+    return true;
   }
   function inputdocsSave( form ) {
   var nameInput = getField('INP_DOC_TITLE').value;
@@ -34,16 +59,12 @@ var currentPagedTable = @#PAGED_TABLE_ID;
 	   }else{
 	   alert(G_STRINGS.ID_EXIST_INPUTDOCUMENT);return false;
 	   }
-	   }else{
-	     alert('@G::LoadTranslation(ID_INPUT_DOC_TITLE_REQUIRED)'); return false;
 	   }
     }else{
       if (validate_form()){
       ajax_post( form.action, form, 'POST' );
 	    currentPopupWindow.remove();
 	    @#PAGED_TABLE_ID.refresh();
-	  }else{
-	    alert('@G::LoadTranslation(ID_INPUT_DOC_TITLE_REQUIRED)'); return false;
 	  }
     }
   }

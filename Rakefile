@@ -226,6 +226,7 @@ def buildMafe(homeDir, targetDir, mode)
 
     puts "\nCopying files into: #{mafeDir}".bold
     copyFiles({
+        "#{homeDir}/lib/jQueryUI/images/*.png" => "#{cssTargetDir}/images/",
         "#{homeDir}/build/js/designer.js" => "#{mafeDir}/designer.min.js",
         "#{homeDir}/build/js/mafe.js" => "#{mafeDir}/mafe.min.js",
         "#{homeDir}/build/css/mafe.css" => "#{mafeDir}/mafe.min.css",

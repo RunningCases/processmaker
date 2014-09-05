@@ -714,7 +714,7 @@ class workspaceTools
             if ($changed) {
                 return $changes;
             } else {
-                CLI::logging("-> Nothing to change in the data base structure\n");
+                CLI::logging("-> Nothing to change in the data base structure (" . ($rbac ? 'RBAC' : 'WORKFLOW') . ")\n");
                 return $changed;
             }
         }
