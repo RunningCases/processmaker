@@ -56,7 +56,6 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskArg('workspace');
-Add a comment to this line
 CLI::taskRun("run_unify_database");
 
 /**

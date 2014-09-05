@@ -703,13 +703,13 @@ class Installer extends Controller
             $dbText .= sprintf( "  define ('DB_USER',        '%s' );\n", $wf );
             $dbText .= sprintf( "  define ('DB_PASS',        '%s' );\n", $wfPass );
             $dbText .= sprintf( "  define ('DB_RBAC_HOST',   '%s' );\n", $db_host );
-            $dbText .= sprintf( "  define ('DB_RBAC_NAME',   '%s' );\n", $rb_workpace );
-            $dbText .= sprintf( "  define ('DB_RBAC_USER',   '%s' );\n", $rb );
-            $dbText .= sprintf( "  define ('DB_RBAC_PASS',   '%s' );\n", $rbPass );
+            $dbText .= sprintf( "  define ('DB_RBAC_NAME',   '%s' );\n", $wf_workpace );
+            $dbText .= sprintf( "  define ('DB_RBAC_USER',   '%s' );\n", $wf );
+            $dbText .= sprintf( "  define ('DB_RBAC_PASS',   '%s' );\n", $wfPass );
             $dbText .= sprintf( "  define ('DB_REPORT_HOST', '%s' );\n", $db_host );
-            $dbText .= sprintf( "  define ('DB_REPORT_NAME', '%s' );\n", $rp_workpace );
-            $dbText .= sprintf( "  define ('DB_REPORT_USER', '%s' );\n", $rp );
-            $dbText .= sprintf( "  define ('DB_REPORT_PASS', '%s' );\n", $rpPass );
+            $dbText .= sprintf( "  define ('DB_REPORT_NAME', '%s' );\n", $wf_workpace );
+            $dbText .= sprintf( "  define ('DB_REPORT_USER', '%s' );\n", $wf );
+            $dbText .= sprintf( "  define ('DB_REPORT_PASS', '%s' );\n", $wfPass );
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $dbText .= "\n";
                 $dbText .= "  define ('PARTNER_FLAG', " . ((defined('PARTNER_FLAG')) ? PARTNER_FLAG : ((isset($_REQUEST['PARTNER_FLAG'])) ? $_REQUEST['PARTNER_FLAG']:'false')) . ");\n";
