@@ -902,10 +902,11 @@ function executeCaseSelfService()
                         //saving the case`s data if the 'Execution' is set in ONCE.
                         if($taskSelfServiceJustOneExecution == "ONCE"){
                         	$oAppTimeoutActionExecuted = new AppTimeoutActionExecuted();
-                        	$data_self["APP_UID"] = $appcacheAppUid;
-                        	$data_self["DEL_INDEX"] = $appcacheDelIndex;
-                        	$data_self["EXECUTION_DATE"] = time();
-                        	$oAppTimeoutActionExecuted->create($data_self);
+                        	$dataSelf = array();
+                        	$dataSelf["APP_UID"] = $appcacheAppUid;
+                        	$dataSelf["DEL_INDEX"] = $appcacheDelIndex;
+                        	$dataSelf["EXECUTION_DATE"] = time();
+                        	$oAppTimeoutActionExecuted->create($dataSelf);
                         }
 
                         $appFields["APP_DATA"] = array_merge($appFields["APP_DATA"], $oPMScript->aFields);
