@@ -18,7 +18,7 @@ abstract class BaseRbacUsersPeer {
 	const DATABASE_NAME = 'rbac';
 
 	/** the table name for this class */
-	const TABLE_NAME = 'USERS';
+	const TABLE_NAME = 'RBAC_USERS';
 
 	/** A class that can be returned by this peer. */
 	const CLASS_DEFAULT = 'classes.model.RbacUsers';
@@ -31,46 +31,46 @@ abstract class BaseRbacUsersPeer {
 
 
 	/** the column name for the USR_UID field */
-	const USR_UID = 'USERS.USR_UID';
+	const USR_UID = 'RBAC_USERS.USR_UID';
 
 	/** the column name for the USR_USERNAME field */
-	const USR_USERNAME = 'USERS.USR_USERNAME';
+	const USR_USERNAME = 'RBAC_USERS.USR_USERNAME';
 
 	/** the column name for the USR_PASSWORD field */
-	const USR_PASSWORD = 'USERS.USR_PASSWORD';
+	const USR_PASSWORD = 'RBAC_USERS.USR_PASSWORD';
 
 	/** the column name for the USR_FIRSTNAME field */
-	const USR_FIRSTNAME = 'USERS.USR_FIRSTNAME';
+	const USR_FIRSTNAME = 'RBAC_USERS.USR_FIRSTNAME';
 
 	/** the column name for the USR_LASTNAME field */
-	const USR_LASTNAME = 'USERS.USR_LASTNAME';
+	const USR_LASTNAME = 'RBAC_USERS.USR_LASTNAME';
 
 	/** the column name for the USR_EMAIL field */
-	const USR_EMAIL = 'USERS.USR_EMAIL';
+	const USR_EMAIL = 'RBAC_USERS.USR_EMAIL';
 
 	/** the column name for the USR_DUE_DATE field */
-	const USR_DUE_DATE = 'USERS.USR_DUE_DATE';
+	const USR_DUE_DATE = 'RBAC_USERS.USR_DUE_DATE';
 
 	/** the column name for the USR_CREATE_DATE field */
-	const USR_CREATE_DATE = 'USERS.USR_CREATE_DATE';
+	const USR_CREATE_DATE = 'RBAC_USERS.USR_CREATE_DATE';
 
 	/** the column name for the USR_UPDATE_DATE field */
-	const USR_UPDATE_DATE = 'USERS.USR_UPDATE_DATE';
+	const USR_UPDATE_DATE = 'RBAC_USERS.USR_UPDATE_DATE';
 
 	/** the column name for the USR_STATUS field */
-	const USR_STATUS = 'USERS.USR_STATUS';
+	const USR_STATUS = 'RBAC_USERS.USR_STATUS';
 
 	/** the column name for the USR_AUTH_TYPE field */
-	const USR_AUTH_TYPE = 'USERS.USR_AUTH_TYPE';
+	const USR_AUTH_TYPE = 'RBAC_USERS.USR_AUTH_TYPE';
 
 	/** the column name for the UID_AUTH_SOURCE field */
-	const UID_AUTH_SOURCE = 'USERS.UID_AUTH_SOURCE';
+	const UID_AUTH_SOURCE = 'RBAC_USERS.UID_AUTH_SOURCE';
 
 	/** the column name for the USR_AUTH_USER_DN field */
-	const USR_AUTH_USER_DN = 'USERS.USR_AUTH_USER_DN';
+	const USR_AUTH_USER_DN = 'RBAC_USERS.USR_AUTH_USER_DN';
 
 	/** the column name for the USR_AUTH_SUPERVISOR_DN field */
-	const USR_AUTH_SUPERVISOR_DN = 'USERS.USR_AUTH_SUPERVISOR_DN';
+	const USR_AUTH_SUPERVISOR_DN = 'RBAC_USERS.USR_AUTH_SUPERVISOR_DN';
 
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
@@ -230,8 +230,8 @@ abstract class BaseRbacUsersPeer {
 
 	}
 
-	const COUNT = 'COUNT(USERS.USR_UID)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT USERS.USR_UID)';
+	const COUNT = 'COUNT(RBAC_USERS.USR_UID)';
+	const COUNT_DISTINCT = 'COUNT(DISTINCT RBAC_USERS.USR_UID)';
 
 	/**
 	 * Returns the number of rows matching criteria.
