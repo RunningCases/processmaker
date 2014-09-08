@@ -2,11 +2,13 @@
 Feature: Assignee Resources
   Requirements:
     a workspace with the process 4224292655297723eb98691001100052 ("Test Users-Step-Properties End Point") already loaded
+    there are one group in the task 1 and there are zero users in the task two
+    and workspace with the process 1455892245368ebeb11c1a5001393784 - "Process Complete BPMN" already loaded" already loaded
 
-  Background:
+Background:
     Given that I have a valid access_token
 
- Scenario Outline: Get the list of available users and groups to be assigned to an activity
+Scenario Outline: Get the list of available users and groups to be assigned to an activity
     Check that there are exactly 79 available users for task "Task 1"
     Given I request "project/<project>/activity/<activity>/available-assignee"
     Then the response status code should be 200
@@ -18,8 +20,10 @@ Feature: Assignee Resources
     And the "aas_type" property in row 0 equals "<aas_type>"
 
     Examples:
-    | test_description                                                         | project                          | activity                         | records | aas_uid                          | aas_type |
-    | check if the list of possible users and groups to be assigned is correct | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 79      | 54731929352d56741de9d42002704749 | group    |
+    | test_description                                                                                                  | project                          | activity                         | records | aas_uid                          | aas_type |
+    | check if the list of possible users and groups to be assigned is correct                                          | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 79      | 54731929352d56741de9d42002704749 | group    |
+    | check if the list of possible users and groups to be assigned is correct, Task 1 of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | 82      | 54731929352d56741de9d42002704749 | group    |
+
 
 Scenario Outline: Get the list of available users and groups to be assigned to an activity using filter
     Given I request "project/<project>/activity/<activity>/available-assignee?filter=<filter>&start=<start>&limit=<limit>"
@@ -32,11 +36,13 @@ Scenario Outline: Get the list of available users and groups to be assigned to a
     And the "aas_type" property in row 0 equals "<aas_type>"
 
     Examples:
-    | test_description                                               | project                          | activity                         | filter    | start | limit | records | aas_uid                          | aas_type|
-    | Using filter="fin" with no limits should return 2 groups       | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | fin       | 0     | 50    | 2       | 66623507552d56742865613066097298 | group   |
-    | Using filter="fin", start="1", limit="1" should return 1 group | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | fin       | 0     | 1     | 1       | 66623507552d56742865613066097298 | group   |
-    | Using filter="financial" should return 1 available group       | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | financial | 0     | 1     | 1       | 99025456252d567468f0798036479112 | group   |
-    | Using filter="finance"   should return 1 available group       | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | finance   | 0     | 1     | 1       | 66623507552d56742865613066097298 | group   |
+    | test_description                                                                                 | project                          | activity                         | filter    | start | limit | records | aas_uid                          | aas_type|
+    | Using filter="fin" with no limits should return 2 groups                                         | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | fin       | 0     | 50    | 2       | 66623507552d56742865613066097298 | group   |
+    | Using filter="fin", start="1", limit="1" should return 1 group                                   | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | fin       | 0     | 1     | 1       | 66623507552d56742865613066097298 | group   |
+    | Using filter="financial" should return 1 available group                                         | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | financial | 0     | 1     | 1       | 99025456252d567468f0798036479112 | group   |
+    | Using filter="finance"   should return 1 available group                                         | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | finance   | 0     | 1     | 1       | 66623507552d56742865613066097298 | group   |
+    | Using filter get available users that match with "fin"-Task 1 of process Process Complete BPMN   | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | fin       | 0     | 50    | 2       | 66623507552d56742865613066097298 | group   |
+    | Using filter get 1 available user that match with "fin"-Task 1 of process Process Complete BPMN  | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | fin       | 0     | 1     | 1       | 66623507552d56742865613066097298 | group   |
 
 
   Scenario Outline: Assign 2 users and 2 group to an activity
@@ -52,11 +58,15 @@ Scenario Outline: Get the list of available users and groups to be assigned to a
     And the type is "object"
 
     Examples:
-    | test_description                  | project                          | activity                         | aas_uid                          | aas_type |
-    | assign a user  to the first task  | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 73005191052d56727901138030694610 | user     |
-    | assign a user  to the first task  | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 25286582752d56713231082039265791 | user     |
-    | assign a group to the first task  | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 54731929352d56741de9d42002704749 | group    |
-    | assign a group to the second task | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | 36775342552d5674146d9c2078497230 | group    |
+    | test_description                                                                 | project                          | activity                         | aas_uid                          | aas_type |
+    | assign a user  to the first task of process Test Users-Step-Properties End Point | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 73005191052d56727901138030694610 | user     |
+    | assign a user  to the first task of process Test Users-Step-Properties End Point | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 25286582752d56713231082039265791 | user     |
+    | assign a group to the first task of process Test Users-Step-Properties End Point | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 54731929352d56741de9d42002704749 | group    |
+    | assign a group to the second task of process Test Users-Step-Properties End Point| 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | 36775342552d5674146d9c2078497230 | group    |
+    | Assign a user  to the first task of process Process Complete BPMN                | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | 73005191052d56727901138030694610 | user     |
+    | Assign a user  to the first task of process Process Complete BPMN                | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | 25286582752d56713231082039265791 | user     |
+    | Assign a group to the first task of process Process Complete BPMN                | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | 54731929352d56741de9d42002704749 | group    |
+    | Assign a group to the second task of process Process Complete BPMN               | 1455892245368ebeb11c1a5001393784 | 4790702485368efad167477011123879 | 36775342552d5674146d9c2078497230 | group    |
 
 
   Scenario Outline: After assignation - List assignees of each activity
@@ -70,9 +80,10 @@ Scenario Outline: Get the list of available users and groups to be assigned to a
     And the "aas_type" property in row 0 equals "<aas_type>"
 
     Examples:
-    | test_description                                           | project                          | activity                         | records | aas_uid                          | aas_type |
-    | Verify that the activity has expected quantity of asignees | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 7       | 54731929352d56741de9d42002704749 | group    |
-    | Verify that the activity has expected quantity of asignees | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | 5       | 36775342552d5674146d9c2078497230 | group    |
+    | test_description                                                                                           | project                          | activity                         | records | aas_uid                          | aas_type |
+    | Verify that the activity has expected quantity of asignees of process Test Users-Step-Properties End Point | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 7       | 54731929352d56741de9d42002704749 | group    |
+    | Verify that the activity has expected quantity of asignees of process Test Users-Step-Properties End Point | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | 5       | 36775342552d5674146d9c2078497230 | group    |
+     | Verify that the activity has expected quantity of asignees of process Process Complete BPMN               | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | 4       | 54731929352d56741de9d42002704749 | group    |
 
 
 Scenario Outline: List assignees of an activity using a filter
@@ -144,11 +155,16 @@ Scenario Outline: Get a single user or group of an activity
     Then the response status code should be 200
 
     Examples:
-    | test_description                 | project                          | activity                         | aas_uid                          |
-    | Remove a user from activity      | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 73005191052d56727901138030694610 |
-    | Remove a user from activity      | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 25286582752d56713231082039265791 |
-    | Remove a user from activity      | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 54731929352d56741de9d42002704749 |
-    | Remove a user from activity      | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | 36775342552d5674146d9c2078497230 |
+    | test_description                                                            | project                          | activity                         | aas_uid                          |
+    | Remove a user from activity of process Test Users-Step-Properties End Point | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 73005191052d56727901138030694610 |
+    | Remove a user from activity of process Test Users-Step-Properties End Point | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 25286582752d56713231082039265791 |
+    | Remove a user from activity of process Test Users-Step-Properties End Point | 4224292655297723eb98691001100052 | 65496814252977243d57684076211485 | 54731929352d56741de9d42002704749 |
+    | Remove a user from activity of process Test Users-Step-Properties End Point | 4224292655297723eb98691001100052 | 68911670852a22d93c22c06005808422 | 36775342552d5674146d9c2078497230 |
+    | Remove a user from activity of process of process Process Complete BPMN     | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | 73005191052d56727901138030694610 |
+    | Remove a user from activity of process of process Process Complete BPMN     | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | 25286582752d56713231082039265791 | 
+    | Remove a user from activity of process of process Process Complete BPMN     | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | 54731929352d56741de9d42002704749 | 
+    | Remove a user from activity of process of process Process Complete BPMN     | 1455892245368ebeb11c1a5001393784 | 4790702485368efad167477011123879 | 36775342552d5674146d9c2078497230 | 
+
 
 
   Scenario: List assignees of an activity
