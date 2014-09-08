@@ -1238,6 +1238,7 @@
     <column name="TAS_SELFSERVICE_TIME" type="VARCHAR" size="15" default=""/>
     <column name="TAS_SELFSERVICE_TIME_UNIT" type="VARCHAR" size="15" default=""/>
     <column name="TAS_SELFSERVICE_TRIGGER_UID" type="VARCHAR" size="32" default=""/>
+    <column name="TAS_SELFSERVICE_EXECUTION" type="VARCHAR" size="15" default="EVERY_TIME"/>
 
     <validator column="TAS_TYPE">
       <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN" message="Please select a valid value for TAS_TYPE."/>
@@ -3804,6 +3805,12 @@
         <column name="VAR_NULL" type="TINYINT" size="32" default="0"/>
         <column name="VAR_DEFAULT" type="VARCHAR" size="32" default=""/>
         <column name="VAR_ACCEPTED_VALUES" type="LONGVARCHAR"/>
+    </table>
+
+    <table name="APP_TIMEOUT_ACTION_EXECUTED">
+	  <column name="APP_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true" />
+	  <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
+	  <column name="EXECUTION_DATE" type="TIMESTAMP" required="false"/>
     </table>
 </database>
 
