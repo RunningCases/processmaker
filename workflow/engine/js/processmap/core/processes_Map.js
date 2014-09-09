@@ -118,6 +118,7 @@ var saveDataTaskTemporal = function(iForm)
         oTaskData.TAS_SELFSERVICE_TIME = (sw == 1)? getField("TAS_SELFSERVICE_TIME").value : "";
         oTaskData.TAS_SELFSERVICE_TIME_UNIT = (sw == 1)? getField("TAS_SELFSERVICE_TIME_UNIT").value : "";
         oTaskData.TAS_SELFSERVICE_TRIGGER_UID = (sw == 1)? getField("TAS_SELFSERVICE_TRIGGER_UID").value : "";
+        oTaskData.TAS_SELFSERVICE_EXECUTION = (sw == 1)? getField("TAS_SELFSERVICE_EXECUTION").value : "";
         break;
       case 3:
       case '3':

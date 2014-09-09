@@ -608,6 +608,7 @@ CREATE TABLE `TASK`
 	`TAS_SELFSERVICE_TIME` VARCHAR(15) default '',
 	`TAS_SELFSERVICE_TIME_UNIT` VARCHAR(15) default '',
 	`TAS_SELFSERVICE_TRIGGER_UID` VARCHAR(32) default '',
+	`TAS_SELFSERVICE_EXECUTION` VARCHAR(15) default 'EVERY_TIME',
 	PRIMARY KEY (`TAS_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Task of workflow';
 #-----------------------------------------------------------------------------
@@ -2086,3 +2087,17 @@ CREATE TABLE `PROCESS_VARIABLES`
 )ENGINE=InnoDB ;
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
+#-----------------------------------------------------------------------------
+#-- APP_TIMEOUT_ACTION_EXECUTED
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `APP_TIMEOUT_ACTION_EXECUTED`;
+
+
+CREATE TABLE `APP_TIMEOUT_ACTION_EXECUTED`
+(
+	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`EXECUTION_DATE` DATETIME,
+	PRIMARY KEY (`APP_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
