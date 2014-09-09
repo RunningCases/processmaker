@@ -697,6 +697,23 @@ class workspaceTools
         return true;
     }
 
+    private function setFormatRows()
+    {
+        switch ($this->dbAdapter) {
+            case 'mysql':
+                $this->assoc = MYSQL_ASSOC;
+                $this->num = MYSQL_NUM;
+                break;
+            case 'sqlsrv':
+                $this->assoc = SQLSRV_FETCH_ASSOC;
+                $this->num = SQLSRV_FETCH_NUMERIC;
+                break;
+            default:
+                throw new Exception("Unknown adapter hae been set for associate fetch index row format.");
+                break;
+        }
+    }
+
     /**
      * Upgrade this workspace database from a schema
      *
@@ -713,12 +730,14 @@ class workspaceTools
             throw new Exception("Only MySQL is supported");
         }
 
+        $this->setFormatRows();
+
         $workspaceSchema = $this->getSchema($rbac);
 
         $oDataBase = $this->getDatabase($rbac);
 
         if (!$onedb) {
-            if($rbac){            
+            if($rbac){
                 $rename = System::verifyRbacSchema($workspaceSchema);
                 if (count($rename) > 0) {
                     foreach ($rename as $tableName) {
@@ -741,7 +760,7 @@ class workspaceTools
             }
         }
 
-        $oDataBase->iFetchType = MYSQL_NUM;
+        $oDataBase->iFetchType = $this->num;
 
         $oDataBase->logQuery(count($changes));
 
