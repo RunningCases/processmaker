@@ -1525,7 +1525,7 @@ return 0;_b.DOM.remE(this.idAs);this.sInp=val;if(val.length<this.oP.minchars)
 {this.aSug=[];this.nInpC=val.length;return 0;}
 var ol=this.nInpC;this.nInpC=val.length?val.length:0;var l=this.aSug.length;if(this.nInpC>ol&&l&&l<this.oP.maxentries&&this.oP.cache)
 {var arr=[];for(var i=0;i<l;i++)
-{var flagSearch=0;if(this.searchType=="*searchtype*"&&this.aSug[i].value.toLowerCase().indexOf(val.toLowerCase())>0){flagSearch=1;}
+{var flagSearch=0;if(this.searchType=="*searchtype*"&&this.aSug[i].value.toLowerCase().indexOf(val.toLowerCase())>-1){flagSearch=1;}
 if(this.searchType=="searchtype*"&&this.aSug[i].value.substr(0,val.length).toLowerCase()==val.toLowerCase()){flagSearch=1;}
 if(this.searchType=="*searchtype"&&this.aSug[i].value.substr(this.aSug[i].value.length-val.length).toLowerCase()==val.toLowerCase()){flagSearch=1;}
 if(flagSearch==1){arr.push(this.aSug[i]);}}
