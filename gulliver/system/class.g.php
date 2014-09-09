@@ -5367,26 +5367,27 @@ class G
     		foreach ($allowedTypes as $types => $val) {
     			if((preg_match('/^\*\.?[a-z]{2,8}$/', $val)) || ($val == '*.*')){
     				$allowedDocTypes = substr($val, 2);
-    	
+    				$dtype = explode(".", $filesName);
+
     				switch($allowedDocTypes){
     					case '*':
     						$res->status = true;
 							return $res;
     						break;
     					case 'xls':
-    						if($docType[1] != 'vnd.ms-excel'){
-    							$flag = 1;
-    						} else {
+    						if($docType[1] == 'vnd.ms-excel' || ($dtype[count($dtype) - 1] == 'xls' && $docType[1] == 'plain')){
     							$res->status = true;
-								return $res;
+    							return $res;
+    						} else {
+    							$flag = 1;
     						}
     						break;
     					case 'doc':
-    						if($docType[1] != 'msword'){
-    							$flag = 1;
-    						} else {
+    						if($docType[1] == 'msword' || ($dtype[count($dtype) - 1] == 'doc' && $docType[1] == 'html')){
     							$res->status = true;
-								return $res;
+    							return $res;
+    						} else {
+								$flag = 1;
     						}
     						break;
     					case 'ppt':
@@ -5476,11 +5477,10 @@ class G
     							$flag = 1;
     						} else {
     							$res->status = true;
-								return $res;
+    							return $res;
     						}
     						break;
     					default:
-    						$dtype = explode(".", $filesName);
     						if(($dtype[count($dtype) - 1]) != $allowedDocTypes){
     							$flag = 1;
     						} else {
