@@ -1155,6 +1155,15 @@ class Installer extends Controller
             $link = @mysql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
             $dataset = @mysql_query( "show databases like '" . $_REQUEST['wfDatabase'] . "'", $link );
             $info->wfDatabaseExists = (@mysql_num_rows( $dataset ) > 0);
+        } else if ($_REQUEST['db_engine'] == 'mssql') {
+            $link = @mssql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
+            $dataset = @mssql_query( "select * from sys.databases where name = '" . $_REQUEST['wfDatabase'] . "'", $link );
+            $info->wfDatabaseExists = (@mssql_num_rows( $dataset ) > 0);
+        } else if ($_REQUEST['db_engine'] == 'sqlsrv') {
+            $arguments = array("UID" => $_REQUEST['db_username'], "PWD" => $_REQUEST['db_password']);
+            $link = @sqlsrv_connect( $_REQUEST['db_hostname'], $arguments);
+            $dataset = @sqlsrv_query( $link, "select * from sys.databases where name = '" . $_REQUEST['wfDatabase'] . "'");
+            $info->wfDatabaseExists = (@sqlsrv_num_rows( $dataset ) > 0);
         } else {
             $link = @mssql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
             $dataset = @mssql_query( "select * from sys.databases where name = '" . $_REQUEST['wfDatabase'] . "'", $link );
