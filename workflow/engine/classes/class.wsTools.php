@@ -686,11 +686,12 @@ class workspaceTools
     {
         G::LoadClass("patch");
         $this->initPropel( true );
+        p11835::$dbAdapter = $this->dbAdapter;
         p11835::isApplicable();
-        $systemSchema = System::getSystemSchema();
-        $systemSchemaRbac = System::getSystemSchemaRbac();// obtiene el Schema de Rbac
+        $systemSchema = System::getSystemSchema($this->dbAdapter);
+        $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
         $this->upgradeSchema( $systemSchema );
-        $this->upgradeSchema( $systemSchemaRbac, false, true, $onedb ); // Hace Upgrade de Rbac
+        $this->upgradeSchema( $systemSchemaRbac, false, true, $onedb ); // perform Upgrade to Rbac
         $this->upgradeData();
         p11835::execute();
         return true;
@@ -735,7 +736,7 @@ class workspaceTools
             if ($changed) {
                 return $changes;
             } else {
-                CLI::logging("-> Nothing to change in the data base structure (" . ($rbac ? 'RBAC' : 'WORKFLOW') . ")\n");
+                CLI::logging("-> Nothing to change in the data base structure of " . (($rbac == true)?"RBAC":"WORKFLOW") . "\n");
                 return $changed;
             }
         }
