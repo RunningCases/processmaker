@@ -5346,12 +5346,12 @@ class G
     		foreach ($allowedTypes as $types => $val) {
     			if((preg_match('/^\*\.?[a-z]{2,8}$/', $val)) || ($val == '*.*')){
     				$allowedDocTypes = substr($val, 2);
-    				if(($dtype[count($dtype) -1]) != $allowedDocTypes){
-    					$flag = 1;
-    				} else {
+    				if(($dtype[count($dtype) -1]) == $allowedDocTypes || $allowedDocTypes == '*'){
     					$res->status = true;
-						return $res;
-						break;
+    					return $res;
+    					break;
+    				} else {
+    					$flag = 1;
     				}
     			} else {
     				$res->status = false;
