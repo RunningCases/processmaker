@@ -686,14 +686,32 @@ class workspaceTools
     {
         G::LoadClass("patch");
         $this->initPropel( true );
+        p11835::$dbAdapter = $this->dbAdapter;
         p11835::isApplicable();
-        $systemSchema = System::getSystemSchema();
-        $systemSchemaRbac = System::getSystemSchemaRbac();// obtiene el Schema de Rbac
+        $systemSchema = System::getSystemSchema($this->dbAdapter);
+        $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
         $this->upgradeSchema( $systemSchema );
-        $this->upgradeSchema( $systemSchemaRbac, false, true, $onedb ); // Hace Upgrade de Rbac
+        $this->upgradeSchema( $systemSchemaRbac, false, true, $onedb ); // perform Upgrade to Rbac
         $this->upgradeData();
         p11835::execute();
         return true;
+    }
+
+    private function setFormatRows()
+    {
+        switch ($this->dbAdapter) {
+            case 'mysql':
+                $this->assoc = MYSQL_ASSOC;
+                $this->num = MYSQL_NUM;
+                break;
+            case 'sqlsrv':
+                $this->assoc = SQLSRV_FETCH_ASSOC;
+                $this->num = SQLSRV_FETCH_NUMERIC;
+                break;
+            default:
+                throw new Exception("Unknown adapter hae been set for associate fetch index row format.");
+                break;
+        }
     }
 
     /**
@@ -712,12 +730,14 @@ class workspaceTools
             throw new Exception("Only MySQL is supported");
         }
 
+        $this->setFormatRows();
+
         $workspaceSchema = $this->getSchema($rbac);
 
         $oDataBase = $this->getDatabase($rbac);
 
         if (!$onedb) {
-            if($rbac){            
+            if($rbac){
                 $rename = System::verifyRbacSchema($workspaceSchema);
                 if (count($rename) > 0) {
                     foreach ($rename as $tableName) {
@@ -735,12 +755,12 @@ class workspaceTools
             if ($changed) {
                 return $changes;
             } else {
-                CLI::logging("-> Nothing to change in the data base structure (" . ($rbac ? 'RBAC' : 'WORKFLOW') . ")\n");
+                CLI::logging("-> Nothing to change in the data base structure of " . (($rbac == true)?"RBAC":"WORKFLOW") . "\n");
                 return $changed;
             }
         }
 
-        $oDataBase->iFetchType = MYSQL_NUM;
+        $oDataBase->iFetchType = $this->num;
 
         $oDataBase->logQuery(count($changes));
 
