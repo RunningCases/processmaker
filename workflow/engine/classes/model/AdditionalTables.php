@@ -97,6 +97,7 @@ class AdditionalTables extends BaseAdditionalTables
         $oCriteria->addSelectColumn(FieldsPeer::FLD_NULL);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_AUTO_INCREMENT);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_KEY);
+        $oCriteria->addSelectColumn(FieldsPeer::FLD_TABLE_INDEX);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_FOREIGN_KEY);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_FOREIGN_KEY_TABLE);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_DYN_NAME);
