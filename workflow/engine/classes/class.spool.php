@@ -589,6 +589,10 @@ class spoolRun
         }
         $aConfiguration = System::getEmailConfiguration();
 
+        if (!isset($aConfiguration["MESS_ENABLED"])) {
+            $aConfiguration["MESS_ENABLED"] = '0';
+        }
+
         if ($aConfiguration["MESS_ENABLED"] == "1") {
             require_once ("classes/model/AppMessage.php");
 
