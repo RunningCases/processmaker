@@ -562,8 +562,10 @@ class Installer extends Controller
     public function setGrantPrivilegesMySQL ($psUser, $psPassword, $psDatabase, $host)
     {
         $host = ($host == 'localhost' || $host == '127.0.0.1' ? 'localhost' : '%');
+                
         $sql = sprintf( "GRANT ALL PRIVILEGES ON `%s`.* TO %s@'%s' IDENTIFIED BY '%s' WITH GRANT OPTION", $psDatabase, $psUser, $host, $psPassword );
         $query = @mysql_query( $sql, $this->link );
+        
         if (! $query) {
             $errorMessage = mysql_error( $this->link );
             $this->installLog( G::LoadTranslation('ID_MYSQL_ERROR', SYS_LANG, Array($errorMessage) ) );
@@ -710,6 +712,7 @@ class Installer extends Controller
             $dbText .= sprintf( "  define ('DB_REPORT_NAME', '%s' );\n", $wf_workpace );
             $dbText .= sprintf( "  define ('DB_REPORT_USER', '%s' );\n", $wf );
             $dbText .= sprintf( "  define ('DB_REPORT_PASS', '%s' );\n", $wfPass );
+            
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $dbText .= "\n";
                 $dbText .= "  define ('PARTNER_FLAG', " . ((defined('PARTNER_FLAG')) ? PARTNER_FLAG : ((isset($_REQUEST['PARTNER_FLAG'])) ? $_REQUEST['PARTNER_FLAG']:'false')) . ");\n";
@@ -783,9 +786,6 @@ class Installer extends Controller
             $this->mysqlQuery( $query );
 
             $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, md5( $adminPassword ) );
-            $this->mysqlQuery( $query );
-
-            $query = sprintf( "USE %s;", $rb_workpace );
             $this->mysqlQuery( $query );
 
             $query = sprintf( "UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, md5( $adminPassword ) );
@@ -1155,6 +1155,15 @@ class Installer extends Controller
             $link = @mysql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
             $dataset = @mysql_query( "show databases like '" . $_REQUEST['wfDatabase'] . "'", $link );
             $info->wfDatabaseExists = (@mysql_num_rows( $dataset ) > 0);
+        } else if ($_REQUEST['db_engine'] == 'mssql') {
+            $link = @mssql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
+            $dataset = @mssql_query( "select * from sys.databases where name = '" . $_REQUEST['wfDatabase'] . "'", $link );
+            $info->wfDatabaseExists = (@mssql_num_rows( $dataset ) > 0);
+        } else if ($_REQUEST['db_engine'] == 'sqlsrv') {
+            $arguments = array("UID" => $_REQUEST['db_username'], "PWD" => $_REQUEST['db_password']);
+            $link = @sqlsrv_connect( $_REQUEST['db_hostname'], $arguments);
+            $dataset = @sqlsrv_query( $link, "select * from sys.databases where name = '" . $_REQUEST['wfDatabase'] . "'");
+            $info->wfDatabaseExists = (@sqlsrv_num_rows( $dataset ) > 0);
         } else {
             $link = @mssql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
             $dataset = @mssql_query( "select * from sys.databases where name = '" . $_REQUEST['wfDatabase'] . "'", $link );

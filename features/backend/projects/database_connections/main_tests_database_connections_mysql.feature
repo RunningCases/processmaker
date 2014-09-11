@@ -36,7 +36,7 @@ Feature: DataBase Connections Main Tests MySQL
             }
             """
         And I request "project/<project>/database-connection/test"
-        Then if database-connection is active continue
+        Then if database-connection with id "<dbs_uid_number>" is active
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the content type is "application/json"
@@ -49,7 +49,8 @@ Feature: DataBase Connections Main Tests MySQL
 
 
     Scenario Outline: Create a new database connection
-        Given POST this data:
+        Given database-connection with id "<dbs_uid_number>" is active
+        And POST this data:
             """
             {
                 "dbs_type": "<dbs_type>",
@@ -77,21 +78,23 @@ Feature: DataBase Connections Main Tests MySQL
 
 
     Scenario Outline: Get the DataBase Connections List when there are exactly one DataBase Connections in each process
-        Given I request "project/<project>/database-connections"
+        Given database-connection with id "<dbs_uid_number>" is active
+        And I request "project/<project>/database-connections"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the response has <record> record
 
         Examples:
 
-        | test_description                                            | project                          | record |
-        | List DB in the process Data Base Connenctions .pm           | 74737540052e1641ab88249082085472 | 1      |
-        | List DB in the process testExecutionOfDerivationScreen .pmx | 87648819953a85c0abc01d3080475981 | 1      |
+        | test_description                                            | project                          | record | dbs_uid_number |
+        | List DB in the process Data Base Connenctions .pm           | 74737540052e1641ab88249082085472 | 1      | 1              |
+        | List DB in the process testExecutionOfDerivationScreen .pmx | 87648819953a85c0abc01d3080475981 | 1      | 2              |
 
 
     
     Scenario Outline: Update a database connection
-        Given PUT this data:
+        Given database-connection with id "<dbs_uid_number>" is active
+        And PUT this data:
             """
             {
                 "dbs_type": "<dbs_type>",
@@ -118,7 +121,8 @@ Feature: DataBase Connections Main Tests MySQL
 
 
     Scenario Outline: Get a single database connection and check some properties
-        Given that I want to get a resource with the key "dbs_uid" stored in session array as variable "dbs_uid_<dbs_uid_number>"
+        Given database-connection with id "<dbs_uid_number>" is active
+        And that I want to get a resource with the key "dbs_uid" stored in session array as variable "dbs_uid_<dbs_uid_number>"
         And I request "project/<project>/database-connection"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -140,7 +144,8 @@ Feature: DataBase Connections Main Tests MySQL
 
 
     Scenario Outline: Delete all Database Connection created previously in this script
-        Given that I want to delete a resource with the key "dbs_uid" stored in session array as variable "dbs_uid_<dbs_uid_number>"
+        Given database-connection with id "<dbs_uid_number>" is active
+        And that I want to delete a resource with the key "dbs_uid" stored in session array as variable "dbs_uid_<dbs_uid_number>"
         And I request "project/<project>/database-connection"
         Then the response status code should be 200
         And the response charset is "UTF-8"
@@ -154,13 +159,14 @@ Feature: DataBase Connections Main Tests MySQL
               
 
     Scenario Outline: Get the DataBase Connections List when there are exactly zero DataBase Connections
-        Given I request "project/<project>/database-connections"
+        Given database-connection with id "<dbs_uid_number>" is active
+        And I request "project/<project>/database-connections"
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the response has <record> record
 
         Examples:
 
-        | test_description                                            | project                          | record |
-        | List DB in the process Data Base Connenctions .pm           | 74737540052e1641ab88249082085472 | 0      |
-        | List DB in the process testExecutionOfDerivationScreen .pmx | 87648819953a85c0abc01d3080475981 | 0      |
+        | test_description                                            | project                          | record | dbs_uid_number |
+        | List DB in the process Data Base Connenctions .pm           | 74737540052e1641ab88249082085472 | 0      | 1              |
+        | List DB in the process testExecutionOfDerivationScreen .pmx | 87648819953a85c0abc01d3080475981 | 0      | 2              |

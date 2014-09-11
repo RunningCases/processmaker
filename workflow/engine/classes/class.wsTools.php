@@ -61,7 +61,7 @@ class workspaceTools
      * @param bool $first true if this is the first workspace to be upgrade
      */
     public function upgrade($first = false, $buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en')
-    {
+    {   
         $start = microtime(true);
         CLI::logging("> Updating database...\n");
         $this->upgradeDatabase($onedb);
@@ -465,7 +465,7 @@ class workspaceTools
      * @param string $lang not currently used
      */
     public function upgradeCacheView($fill = true, $checkOnly = false, $lang = "en")
-    {
+    {   
         $this->initPropel(true);
 
         //require_once ('classes/model/AppCacheView.php');
@@ -479,19 +479,17 @@ class workspaceTools
         //setup the appcacheview object, and the path for the sql files
         $appCache = new AppCacheView();
         $appCache->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
-
+        
         $userGrants = $appCache->checkGrantsForUser(false);
-
         $currentUser = $userGrants['user'];
         $currentUserIsSuper = $userGrants['super'];
-
         //if user does not have the SUPER privilege we need to use the root user and grant the SUPER priv. to normal user.
         if (!$currentUserIsSuper) {
             $appCache->checkGrantsForUser(true);
             $appCache->setSuperForUser($currentUser);
             $currentUserIsSuper = true;
         }
-
+        
         CLI::logging("-> Creating table\n");
         //now check if table APPCACHEVIEW exists, and it have correct number of fields, etc.
         $res = $appCache->checkAppCacheView();
@@ -499,7 +497,7 @@ class workspaceTools
         CLI::logging("-> Update DEL_LAST_INDEX field in APP_DELEGATION table\n");
         //Update APP_DELEGATION.DEL_LAST_INDEX data
         $res = $appCache->updateAppDelegationDelLastIndex($lang, $checkOnly);
-
+        
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
         Bootstrap::LoadSystem( 'rbac' );
@@ -683,17 +681,35 @@ class workspaceTools
      * @return array bool upgradeSchema for more information
      */
     public function upgradeDatabase ($onedb = false, $checkOnly = false)
-    {
+    {   
         G::LoadClass("patch");
         $this->initPropel( true );
+        p11835::$dbAdapter = $this->dbAdapter;
         p11835::isApplicable();
-        $systemSchema = System::getSystemSchema();
-        $systemSchemaRbac = System::getSystemSchemaRbac();// obtiene el Schema de Rbac
+        $systemSchema = System::getSystemSchema($this->dbAdapter);
+        $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
         $this->upgradeSchema( $systemSchema );
-        $this->upgradeSchema( $systemSchemaRbac, false, true, $onedb ); // Hace Upgrade de Rbac
+        $this->upgradeSchema( $systemSchemaRbac, false, true, $onedb ); // perform Upgrade to Rbac
         $this->upgradeData();
         p11835::execute();
         return true;
+    }
+
+    private function setFormatRows()
+    {
+        switch ($this->dbAdapter) {
+            case 'mysql':
+                $this->assoc = MYSQL_ASSOC;
+                $this->num = MYSQL_NUM;
+                break;
+            case 'sqlsrv':
+                $this->assoc = SQLSRV_FETCH_ASSOC;
+                $this->num = SQLSRV_FETCH_NUMERIC;
+                break;
+            default:
+                throw new Exception("Unknown adapter hae been set for associate fetch index row format.");
+                break;
+        }
     }
 
     /**
@@ -707,17 +723,24 @@ class workspaceTools
     public function upgradeSchema($schema, $checkOnly = false, $rbac = false, $onedb = false)
     {
         $dbInfo = $this->getDBInfo();
+        
+        if ($dbInfo['DB_NAME'] == $dbInfo['DB_RBAC_NAME']) {
+            $onedb = true;
+        } else {
+            $onedb = false;
+        }
 
         if (strcmp($dbInfo["DB_ADAPTER"], "mysql") != 0) {
             throw new Exception("Only MySQL is supported");
         }
 
-        $workspaceSchema = $this->getSchema($rbac);
+        $this->setFormatRows();
 
+        $workspaceSchema = $this->getSchema($rbac);
         $oDataBase = $this->getDatabase($rbac);
 
         if (!$onedb) {
-            if($rbac){            
+            if($rbac){
                 $rename = System::verifyRbacSchema($workspaceSchema);
                 if (count($rename) > 0) {
                     foreach ($rename as $tableName) {
@@ -735,12 +758,12 @@ class workspaceTools
             if ($changed) {
                 return $changes;
             } else {
-                CLI::logging("-> Nothing to change in the data base structure (" . ($rbac ? 'RBAC' : 'WORKFLOW') . ")\n");
+                CLI::logging("-> Nothing to change in the data base structure of " . (($rbac == true)?"RBAC":"WORKFLOW") . "\n");
                 return $changed;
             }
         }
 
-        $oDataBase->iFetchType = MYSQL_NUM;
+        $oDataBase->iFetchType = $this->num;
 
         $oDataBase->logQuery(count($changes));
 

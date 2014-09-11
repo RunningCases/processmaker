@@ -5,8 +5,9 @@ Feature: Dynaform Main Tests
     there are three activities in the process
     and a workspace with the process 42445320652cd534acb3824056962285 ("Sample Project #2 (DynaForms Resources)") already loaded, this process will be used for the import of Dynaform
     there are one dynaform in the process 
+    and workspace with the process 1455892245368ebeb11c1a5001393784 - "Process Complete BPMN" already loaded" already loaded
 
- Background:
+Background:
         Given that I have a valid access_token
 
 
@@ -18,11 +19,12 @@ Feature: Dynaform Main Tests
         And the type is "array"
         And the response has <records> records
 
-     Examples:
+    Examples:
 
-        | project                          | records |
-        | 14414793652a5d718b65590036026581 | 0       |
-        | 42445320652cd534acb3824056962285 | 1       |
+        | Description                                                  | project                          | records |
+        | Get for the amount dynaform of process Sample Project #1     | 14414793652a5d718b65590036026581 | 0       |
+        | Get for the amount dynaform of process Sample Project #2     | 42445320652cd534acb3824056962285 | 1       |
+        | Get for the amount dynaform of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 26      |
 
 
     Scenario Outline: Normal Dynaform creation
@@ -45,15 +47,16 @@ Feature: Dynaform Main Tests
         And store "dyn_uid" in session array as variable "dyn_uid_<dyn_uid_number>"
 
         Examples:
-        | test_description           | project                          | dyn_title         | dyn_description | dyn_type | dyn_content      | dyn_uid_number |
-        | create dynaform xmlform P1 | 14414793652a5d718b65590036026581 | Dynaform - Normal | dyn normal P1   | xmlform  | sample content 1 | 1              |
-        | create dynaform grid P1    | 14414793652a5d718b65590036026581 | Dynaform - Grid   | dyn grid P1     | grid     | sample content 2 | 2              |
-        | create dynaform xmlform P2 | 42445320652cd534acb3824056962285 | Dynaform - Normal | dyn normal P2   | xmlform  |                  | 3              | 
-        | create dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid   | dyn grid P2     | grid     | sample content 4 | 4              | 
+        | test_description                                            | project                          | dyn_title         | dyn_description | dyn_type | dyn_content      | dyn_uid_number |
+        | Create dynaform xmlform P1 of process Sample Project #1     | 14414793652a5d718b65590036026581 | Dynaform - Normal | dyn normal P1   | xmlform  | sample content 1 | 1              |
+        | Create dynaform grid P1 of process Sample Project #1        | 14414793652a5d718b65590036026581 | Dynaform - Grid   | dyn grid P1     | grid     | sample content 2 | 2              |
+        | Create dynaform xmlform P2 of process Sample Project #2     | 42445320652cd534acb3824056962285 | Dynaform - Normal | dyn normal P2   | xmlform  |                  | 3              | 
+        | Create dynaform grid P2 of process Sample Project #2        | 42445320652cd534acb3824056962285 | Dynaform - Grid   | dyn grid P2     | grid     | sample content 4 | 4              | 
+        | Create dynaform xmlform P1 of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | Dynaform - Normal | dyn normal P1   | xmlform  | sample content 1 | 9              |
+        | Create dynaform grid P1 of process Process Complete BPMN    | 1455892245368ebeb11c1a5001393784 | Dynaform - Grid   | dyn grid P1     | grid     | sample content 2 | 10             |
+        
 
-
-
-     Scenario Outline: Get a single dynaform and check some properties
+    Scenario Outline: Get a single dynaform and check some properties
         Given that I want to get a resource with the key "dyn_uid" stored in session array as variable "dyn_uid_<dyn_uid_number>"
         And I request "project/<project>/dynaform"
         And the content type is "application/json"
@@ -67,13 +70,14 @@ Feature: Dynaform Main Tests
         And that "dyn_version" is set to 1
 
         Examples:
-        | test_description           | project                          | dyn_title         | dyn_description | dyn_type | dyn_content      | dyn_uid_number |
-        | create dynaform xmlform P1 | 14414793652a5d718b65590036026581 | Dynaform - Normal | dyn normal P1   | xmlform  | sample content 1 | 1              |
-        | create dynaform grid P1    | 14414793652a5d718b65590036026581 | Dynaform - Grid   | dyn grid P1     | grid     | sample content 2 | 2              |
-        | create dynaform xmlform P2 | 42445320652cd534acb3824056962285 | Dynaform - Normal | dyn normal P2   | xmlform  |                  | 3              | 
-        | create dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid   | dyn grid P2     | grid     | sample content 4 | 4              | 
-
-
+        | test_description                                            | project                          | dyn_title         | dyn_description | dyn_type | dyn_content      | dyn_uid_number |
+        | Create dynaform xmlform P1 of process Sample Project #1     | 14414793652a5d718b65590036026581 | Dynaform - Normal | dyn normal P1   | xmlform  | sample content 1 | 1              |
+        | Create dynaform grid P1 of process Sample Project #1        | 14414793652a5d718b65590036026581 | Dynaform - Grid   | dyn grid P1     | grid     | sample content 2 | 2              |
+        | Create dynaform xmlform P2 of process Sample Project #2     | 42445320652cd534acb3824056962285 | Dynaform - Normal | dyn normal P2   | xmlform  |                  | 3              | 
+        | Create dynaform grid P2 of process Sample Project #2        | 42445320652cd534acb3824056962285 | Dynaform - Grid   | dyn grid P2     | grid     | sample content 4 | 4              | 
+        | Create dynaform xmlform P1 of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | Dynaform - Normal | dyn normal P1   | xmlform  | sample content 1 | 9              |
+        | Create dynaform grid P1 of process Process Complete BPMN    | 1455892245368ebeb11c1a5001393784 | Dynaform - Grid   | dyn grid P1     | grid     | sample content 2 | 10             |
+        
 
     Scenario: Create dynaform with same name
         Given POST a dynaform:
@@ -114,11 +118,11 @@ Feature: Dynaform Main Tests
 
         Examples:
 
-        | test_description       | project                          | dyn_title         | dyn_description | dyn_type | dyn_uid_number | copy_prj_uid                     | copy_dyn_uid                     |
-        | create dynaform copy 1 | 14414793652a5d718b65590036026581 | Dynaform - Copy 1 | dyn copy        | xmlform  | 5              | 42445320652cd534acb3824056962285 | 70070685552cd53605650f7062918506 |
-        | create dynaform copy 2 | 42445320652cd534acb3824056962285 | Dynaform - Copy 2 | dyn copy        | xmlform  | 6              | 42445320652cd534acb3824056962285 | 70070685552cd53605650f7062918506 |
- 
-
+        | test_description                                        | project                          | dyn_title         | dyn_description | dyn_type | dyn_uid_number | copy_prj_uid                     | copy_dyn_uid                     |
+        | create dynaform copy 1 of process Sample Project #1     | 14414793652a5d718b65590036026581 | Dynaform - Copy 1 | dyn copy        | xmlform  | 5              | 42445320652cd534acb3824056962285 | 70070685552cd53605650f7062918506 |
+        | create dynaform copy 2 of process Sample Project #2     | 42445320652cd534acb3824056962285 | Dynaform - Copy 2 | dyn copy        | xmlform  | 6              | 42445320652cd534acb3824056962285 | 70070685552cd53605650f7062918506 |
+        | create dynaform copy 1 of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | Dynaform - Copy 1 | dyn copy        | xmlform  | 11             | 42445320652cd534acb3824056962285 | 70070685552cd53605650f7062918506 |
+        
 
      Scenario: Create a Dynaform using the Copy/Import with same name
         Given POST this data:
@@ -167,10 +171,11 @@ Feature: Dynaform Main Tests
 
         Examples:
 
-        | test_description          | project                          | dyn_title            | dyn_description   | dyn_type | dyn_uid_number | tab_uid                          | fld_name_01  | pro_variable_01 |
-        | create dynaform pmtable 1 | 14414793652a5d718b65590036026581 | Dynaform - pmtable 1 | dyn from pmtable1 | xmlform  | 7              | 65193158852cc1a93a5a535084878044 | DYN_UID      | @#APPLICATION   |
-        | create dynaform pmtable 2 | 42445320652cd534acb3824056962285 | Dynaform - pmtable2  | dyn from pmtable2 | xmlform  | 8              | 65193158852cc1a93a5a535084878044 | DYN_UID      | @#APPLICATION   |
-
+        | test_description                                           | project                          | dyn_title            | dyn_description   | dyn_type | dyn_uid_number | tab_uid                          | fld_name_01  | pro_variable_01 |
+        | create dynaform pmtable 1 of process Sample Project #1     | 14414793652a5d718b65590036026581 | Dynaform - pmtable 1 | dyn from pmtable1 | xmlform  | 7              | 65193158852cc1a93a5a535084878044 | DYN_UID      | @#APPLICATION   |
+        | create dynaform pmtable 2 of process Sample Project #2     | 42445320652cd534acb3824056962285 | Dynaform - pmtable2  | dyn from pmtable2 | xmlform  | 8              | 65193158852cc1a93a5a535084878044 | DYN_UID      | @#APPLICATION   |
+        | create dynaform pmtable 1 of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | Dynaform - pmtable 1 | dyn from pmtable1 | xmlform  | 12             | 65193158852cc1a93a5a535084878044 | DYN_UID      | @#APPLICATION   |
+        
 
      Scenario: Create dynaform based on a PMTable with same name
         Given POST this data:
@@ -232,15 +237,15 @@ Feature: Dynaform Main Tests
         And the type is "object"
         
 
-     Examples:
-        | test_description           | project                          | dyn_title                  | dyn_description                    | dyn_type | dyn_content             | dyn_uid_number |
-        | Update dynaform xmlform P1 | 14414793652a5d718b65590036026581 | My DynaForm1 Modified      | My DynaForm1 DESCRIPTION Modified  | grid     | update sample content 1 | 1              |
-        | Update dynaform grid P1    | 14414793652a5d718b65590036026581 | Dynaform - Grid Modified   | dyn grid P1 DESCRIPTION Modified   | xmlform  | update sample content 2 | 2              |
-        | Update dynaform xmlform P2 | 42445320652cd534acb3824056962285 | Dynaform - Normal Modified | dyn normal P2 DESCRIPTION Modified | grid     | sample                  | 3              |
-        | Update dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid Modified   | dyn grid P2 DESCRIPTION Modified   | xmlform  | sample content 4        | 4              |
+        Examples:
+        | test_description                        | project                          | dyn_title                  | dyn_description                    | dyn_type | dyn_content             | dyn_uid_number |
+        | Update dynaform xmlform P1              | 14414793652a5d718b65590036026581 | My DynaForm1 Modified      | My DynaForm1 DESCRIPTION Modified  | grid     | update sample content 1 | 1              |
+        | Update dynaform grid P1                 | 14414793652a5d718b65590036026581 | Dynaform - Grid Modified   | dyn grid P1 DESCRIPTION Modified   | xmlform  | update sample content 2 | 2              |
+        | Update dynaform xmlform P2              | 42445320652cd534acb3824056962285 | Dynaform - Normal Modified | dyn normal P2 DESCRIPTION Modified | grid     | sample                  | 3              |
+        | Update dynaform grid P2                 | 42445320652cd534acb3824056962285 | Dynaform - Grid Modified   | dyn grid P2 DESCRIPTION Modified   | xmlform  | sample content 4        | 4              |
+        | Update of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | Dynaform - Normal Modified | dyn normal P1 DESCRIPTION Modified | xmlform  | update sample content 1 | 9              |
+        
 
-
-       
     Scenario Outline: Get a single dynaform and check some properties
         Given that I want to get a resource with the key "dyn_uid" stored in session array as variable "dyn_uid_<dyn_uid_number>"
         And I request "project/<project>/dynaform"
@@ -255,13 +260,13 @@ Feature: Dynaform Main Tests
         And that "dyn_version" is set to 1
 
         Examples:
-        | test_description           | project                          | dyn_title                  | dyn_description                    | dyn_type | dyn_content             | dyn_uid_number |
-        | Update dynaform xmlform P1 | 14414793652a5d718b65590036026581 | My DynaForm1 Modified      | My DynaForm1 DESCRIPTION Modified  | grid     | update sample content 1 | 1              |
-        | Update dynaform grid P1    | 14414793652a5d718b65590036026581 | Dynaform - Grid Modified   | dyn grid P1 DESCRIPTION Modified   | xmlform  | update sample content 2 | 2              |
-        | Update dynaform xmlform P2 | 42445320652cd534acb3824056962285 | Dynaform - Normal Modified | dyn normal P2 DESCRIPTION Modified | grid     | sample                  | 3              |
-        | Update dynaform grid P2    | 42445320652cd534acb3824056962285 | Dynaform - Grid Modified   | dyn grid P2 DESCRIPTION Modified   | xmlform  | sample content 4        | 4              |
-
-
+        | test_description                        | project                          | dyn_title                  | dyn_description                    | dyn_type | dyn_content             | dyn_uid_number |
+        | Update dynaform xmlform P1              | 14414793652a5d718b65590036026581 | My DynaForm1 Modified      | My DynaForm1 DESCRIPTION Modified  | grid     | update sample content 1 | 1              |
+        | Update dynaform grid P1                 | 14414793652a5d718b65590036026581 | Dynaform - Grid Modified   | dyn grid P1 DESCRIPTION Modified   | xmlform  | update sample content 2 | 2              |
+        | Update dynaform xmlform P2              | 42445320652cd534acb3824056962285 | Dynaform - Normal Modified | dyn normal P2 DESCRIPTION Modified | grid     | sample                  | 3              |
+        | Update dynaform grid P2                 | 42445320652cd534acb3824056962285 | Dynaform - Grid Modified   | dyn grid P2 DESCRIPTION Modified   | xmlform  | sample content 4        | 4              |
+        | Update of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | Dynaform - Normal Modified | dyn normal P1 DESCRIPTION Modified | xmlform  | update sample content 1 | 9              |
+        
 
     Scenario Outline: Delete all Dynaform created previously in this script
         Given that I want to delete a resource with the key "dyn_uid" stored in session array as variable "dyn_uid_<dyn_uid_number>"
@@ -283,6 +288,10 @@ Feature: Dynaform Main Tests
         | 42445320652cd534acb3824056962285 | 6              |
         | 14414793652a5d718b65590036026581 | 7              |
         | 42445320652cd534acb3824056962285 | 8              |
+        | 1455892245368ebeb11c1a5001393784 | 9              |
+        | 1455892245368ebeb11c1a5001393784 | 10             |
+        | 1455892245368ebeb11c1a5001393784 | 11             |
+        | 1455892245368ebeb11c1a5001393784 | 12             |
     
     
     Scenario Outline: Get a List DynaForms of a Project   
@@ -298,3 +307,4 @@ Feature: Dynaform Main Tests
         | project                          | records |
         | 14414793652a5d718b65590036026581 | 0       |
         | 42445320652cd534acb3824056962285 | 1       |
+        | 1455892245368ebeb11c1a5001393784 | 26      |
