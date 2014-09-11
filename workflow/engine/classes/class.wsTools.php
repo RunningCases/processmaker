@@ -61,7 +61,7 @@ class workspaceTools
      * @param bool $first true if this is the first workspace to be upgrade
      */
     public function upgrade($first = false, $buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en')
-    {
+    {   
         $start = microtime(true);
         CLI::logging("> Updating database...\n");
         $this->upgradeDatabase($onedb);
@@ -465,7 +465,7 @@ class workspaceTools
      * @param string $lang not currently used
      */
     public function upgradeCacheView($fill = true, $checkOnly = false, $lang = "en")
-    {
+    {   
         $this->initPropel(true);
 
         //require_once ('classes/model/AppCacheView.php');
@@ -479,19 +479,17 @@ class workspaceTools
         //setup the appcacheview object, and the path for the sql files
         $appCache = new AppCacheView();
         $appCache->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
-
+        
         $userGrants = $appCache->checkGrantsForUser(false);
-
         $currentUser = $userGrants['user'];
         $currentUserIsSuper = $userGrants['super'];
-
         //if user does not have the SUPER privilege we need to use the root user and grant the SUPER priv. to normal user.
         if (!$currentUserIsSuper) {
             $appCache->checkGrantsForUser(true);
             $appCache->setSuperForUser($currentUser);
             $currentUserIsSuper = true;
         }
-
+        
         CLI::logging("-> Creating table\n");
         //now check if table APPCACHEVIEW exists, and it have correct number of fields, etc.
         $res = $appCache->checkAppCacheView();
@@ -499,7 +497,7 @@ class workspaceTools
         CLI::logging("-> Update DEL_LAST_INDEX field in APP_DELEGATION table\n");
         //Update APP_DELEGATION.DEL_LAST_INDEX data
         $res = $appCache->updateAppDelegationDelLastIndex($lang, $checkOnly);
-
+        
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
         Bootstrap::LoadSystem( 'rbac' );
@@ -683,7 +681,7 @@ class workspaceTools
      * @return array bool upgradeSchema for more information
      */
     public function upgradeDatabase ($onedb = false, $checkOnly = false)
-    {
+    {   
         G::LoadClass("patch");
         $this->initPropel( true );
         p11835::$dbAdapter = $this->dbAdapter;
@@ -725,6 +723,12 @@ class workspaceTools
     public function upgradeSchema($schema, $checkOnly = false, $rbac = false, $onedb = false)
     {
         $dbInfo = $this->getDBInfo();
+        
+        if ($dbInfo['DB_NAME'] == $dbInfo['DB_RBAC_NAME']) {
+            $onedb = true;
+        } else {
+            $onedb = false;
+        }
 
         if (strcmp($dbInfo["DB_ADAPTER"], "mysql") != 0) {
             throw new Exception("Only MySQL is supported");
@@ -733,7 +737,6 @@ class workspaceTools
         $this->setFormatRows();
 
         $workspaceSchema = $this->getSchema($rbac);
-
         $oDataBase = $this->getDatabase($rbac);
 
         if (!$onedb) {

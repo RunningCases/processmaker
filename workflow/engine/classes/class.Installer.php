@@ -133,19 +133,13 @@ class Installer
                 //Delete workspace directory if exists
                 //Drop databases
                 $this->run_query("DROP DATABASE IF EXISTS " . $wf, "Drop database $wf");
-                $this->run_query("DROP DATABASE IF EXISTS " . $rb, "Drop database $rb");
-                $this->run_query("DROP DATABASE IF EXISTS " . $rp, "Drop database $rp");
             }
 
             $this->run_query("CREATE DATABASE IF NOT EXISTS " . $wf . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci", "Create database $wf");
-            $this->run_query("CREATE DATABASE IF NOT EXISTS " . $rb . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci", "Create database $rb");
-            $this->run_query("CREATE DATABASE IF NOT EXISTS " . $rp . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci", "Create database $rp");
-
+            
             if ($this->cc_status == 1) {
                 $host = ($islocal) ? "localhost" : "%";
                 $this->run_query("GRANT ALL PRIVILEGES ON `$wf`.* TO $wf@'$host' IDENTIFIED BY '{$this->options['password']}' WITH GRANT OPTION", "Grant privileges for user $wf on database $wf");
-                $this->run_query("GRANT ALL PRIVILEGES ON `$rb`.* TO $rb@'$host' IDENTIFIED BY '{$this->options['password']}' WITH GRANT OPTION", "Grant privileges for user $rb on database $rb");
-                $this->run_query("GRANT ALL PRIVILEGES ON `$rp`.* TO $rp@'$host' IDENTIFIED BY '{$this->options['password']}' WITH GRANT OPTION", "Grant privileges for user $rp on database $rp");
             }
 
             /* Dump schema workflow && data  */
