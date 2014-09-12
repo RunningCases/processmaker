@@ -54,8 +54,8 @@ $(window).load(function () {
         for (var j = 0; j < dr.length; j++) {
             if (dr[j].name) {
                 el[k].name = "form[" + dr[j].name + "]";
-                k = k + 1;
             }
+            k = k + 1;
         }
     }
 

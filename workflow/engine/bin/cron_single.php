@@ -332,6 +332,8 @@ Bootstrap::registerClass('UsersPeer',           PATH_HOME . "engine/classes/mode
 
 Bootstrap::registerClass('Xml_Node',            PATH_GULLIVER . "class.xmlDocument.php");
 
+Bootstrap::registerClass('wsResponse',          PATH_HOME . "engine/classes/class.wsResponse.php");
+
 G::LoadClass("dates");
 
 if (!defined('SYS_SYS')) {

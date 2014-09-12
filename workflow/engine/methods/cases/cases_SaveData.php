@@ -186,6 +186,7 @@ try {
     
     if ($swpmdynaform) {
         $aData['APP_DATA'] = array_merge($aData['APP_DATA'], $pmdynaform);
+        $_POST["DynaformRequiredFields"] = '[]';
     }
 
     $oCase->updateCase( $_SESSION['APPLICATION'], $aData );
