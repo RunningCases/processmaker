@@ -1152,6 +1152,12 @@ function createReportTable()
       return false;
     }
 
+    if (row.data['field_index']) {
+        hasSomeIndex = true;
+    } else {
+        hasSomeIndex = false;
+    }
+
     if (row.data['field_key']) {
       hasSomePrimaryKey = true;
     }
@@ -1246,7 +1252,7 @@ function editorFieldsEnableDisable(fieldTypeValue, fieldIndex, fieldInc, sizeEdi
     var swI = 1;
 
     //Date
-    if (fieldTypeValue == "DATE" || fieldTypeValue == "DATETIME" || fieldTypeValue == "TIME") {
+    if (fieldTypeValue == "DATE" || fieldTypeValue == "DATETIME" || fieldTypeValue == "TIME" || fieldTypeValue == "TEXT") {
         swSize = 0; //Disable
         swPK = 0;
         swAI = 0;

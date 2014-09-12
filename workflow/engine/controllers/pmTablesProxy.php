@@ -322,7 +322,7 @@ class pmTablesProxy extends HttpProxyController
                     'FLD_NULL' => $column->field_null ? 1 : 0,
                     'FLD_AUTO_INCREMENT' => $column->field_autoincrement ? 1 : 0,
                     'FLD_KEY' => $column->field_key ? 1 : 0,
-                    'FLD_TABLE_INDEX' => $column->field_index ? 1 : 0,
+                    'FLD_TABLE_INDEX' => (isset($column->field_index) && $column->field_index) ? 1 : 0,
                     'FLD_FOREIGN_KEY' => 0,
                     'FLD_FOREIGN_KEY_TABLE' => '',
                     'FLD_DYN_NAME' => $column->field_dyn,

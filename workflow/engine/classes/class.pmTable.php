@@ -302,7 +302,7 @@ class PmTable
             }
 
             // define the Index attribute if it is defined
-            if ($column->field_index) {
+            if (isset($column->field_index) && $column->field_index) {
                 $columnNode->setAttribute( 'index', "true" );
                 $indexColumnNode = $this->dom->createElement( 'index-column' );
                 $indexColumnNode->setAttribute( 'name', $column->field_name );
