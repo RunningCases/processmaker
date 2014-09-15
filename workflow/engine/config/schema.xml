@@ -581,6 +581,8 @@
     <column name="INP_DOC_DESTINATION_PATH" type="LONGVARCHAR" required="false"/>
     <column name="INP_DOC_TAGS" type="LONGVARCHAR" required="false"/>
     <column name="INP_DOC_TYPE_FILE" type="VARCHAR" size="200" required="false" default="*.*"/>
+    <column name="INP_DOC_MAX_FILESIZE" type="INTEGER" required="true" default="0"/> 
+    <column name="INP_DOC_MAX_FILESIZE_UNIT" type="VARCHAR" size="2" required="true" default="KB"/>
     <validator column="INP_DOC_UID">
       <rule name="maxLength" value="32" message="Input Document UID can be no larger than ${value} in size"/>
       <rule name="required" message="Input Document UID is required."/>
@@ -836,7 +838,7 @@
     <column name="PRO_TRI_CANCELED" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_TRI_PAUSED" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_TRI_REASSIGNED" type="VARCHAR" size="32" required="true" default=""/>
-    <column name="PRO_TRI_UNPAUSED" type="VARCHAR" size="32" required="true" default=""/> 
+    <column name="PRO_TRI_UNPAUSED" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_SHOW_DELEGATE" type="TINYINT" required="true" default="1"/>
     <column name="PRO_SHOW_DYNAFORM" type="TINYINT" required="true" default="0"/>
     <column name="PRO_CATEGORY" type="VARCHAR" size="48" required="true" default=""/>
