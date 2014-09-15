@@ -281,7 +281,7 @@ try {
                         $oFolder = new AppFolder();
 
                         //***Validating the file allowed extensions***
-                        $res = G::verifyInputDocExtension($aID['INP_DOC_TYPE_FILE'], $_FILES["form"]["name"]["input"], $_FILES["form"]["tmp_name"]["input"]);
+                        $res = G::verifyInputDocExtension($aID['INP_DOC_TYPE_FILE'], $_FILES["form"]["name"][$fieldIndex], $_FILES["form"]["tmp_name"][$fieldIndex]);
                         if($res->status == 0){
                         	$message = $res->message;
                         	G::SendMessageText( $message, "ERROR" );
