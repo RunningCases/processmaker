@@ -158,7 +158,7 @@ class workspaceTools
     }
 
     private function resetDBInfoCallback($matches)
-    {
+    {   
         /* This function changes the values of defines while keeping their formatting
          * intact.
          * $matches will contain several groups:
@@ -173,7 +173,6 @@ class workspaceTools
                 $value = $this->dbInfo['DB_PASS'];
             }
         }
-
 
         if (array_search($key, array('DB_HOST', 'DB_RBAC_HOST', 'DB_REPORT_HOST')) !== false) {
             /* Change the database hostname for these keys */
@@ -214,14 +213,23 @@ class workspaceTools
         $this->newHost = $newHost;
         $this->resetDBNames = $resetDBNames;
         $this->resetDBDiff = array();
+        $this->onedb = false;
 
         if (!$this->workspaceExists()) {
             throw new Exception("Could not find db.php in the workspace");
         }
         $sDbFile = file_get_contents($this->dbPath);
+        
         if ($sDbFile === false) {
             throw new Exception("Could not read database information from db.php");
+        } else {
+            if (strpos($sDbFile, 'rb_')) {
+                $this->onedb = false;
+            } else {
+                $this->onedb = true;
+            }
         }
+        
         /* Match all defines in the config file. Check updateDBCallback to know what
          * keys are changed and what groups are matched.
          * This regular expression will match any "define ('<key>', '<value>');"
@@ -481,20 +489,22 @@ class workspaceTools
         $appCache->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
         
         $userGrants = $appCache->checkGrantsForUser(false);
+        
         $currentUser = $userGrants['user'];
         $currentUserIsSuper = $userGrants['super'];
         //if user does not have the SUPER privilege we need to use the root user and grant the SUPER priv. to normal user.
+        
         if (!$currentUserIsSuper) {
             $appCache->checkGrantsForUser(true);
             $appCache->setSuperForUser($currentUser);
             $currentUserIsSuper = true;
         }
         
-        CLI::logging("-> Creating table\n");
+        CLI::logging("-> Creating tables \n");
         //now check if table APPCACHEVIEW exists, and it have correct number of fields, etc.
         $res = $appCache->checkAppCacheView();
 
-        CLI::logging("-> Update DEL_LAST_INDEX field in APP_DELEGATION table\n");
+        CLI::logging("-> Update DEL_LAST_INDEX field in APP_DELEGATION table \n");
         //Update APP_DELEGATION.DEL_LAST_INDEX data
         $res = $appCache->updateAppDelegationDelLastIndex($lang, $checkOnly);
         
@@ -1370,7 +1380,9 @@ class workspaceTools
                 CLI::logging("> Restoring " . CLI::info($backupWorkspace) . " to " . CLI::info($workspaceName) . "\n");
             }
             $workspace = new workspaceTools($workspaceName);
+            
             if ($workspace->workspaceExists()) {
+                
                 if ($overwrite) {
                     CLI::logging(CLI::warning("> Workspace $workspaceName already exist, overwriting!") . "\n");
                 } else {
@@ -1410,7 +1422,7 @@ class workspaceTools
             if (!$link) {
                 throw new Exception('Could not connect to system database: ' . mysql_error());
             }
-
+            
             $newDBNames = $workspace->resetDBInfo($dbHost, $createWorkspace);
 
             foreach ($metadata->databases as $db) {
@@ -1439,7 +1451,6 @@ class workspaceTools
             $stop = microtime(true);
             $final = $stop - $start;
             CLI::logging("<*>   Updating cache view Process took $final seconds.\n");
-
 
             mysql_close($link);
         }
@@ -1518,7 +1529,7 @@ class workspaceTools
     }
 
     public function checkMafeRequirements ($workspace,$lang) {
-        $this->initPropel(true);
+        $this->initPropel(true); 
         $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
         if (empty($pmRestClient)) {
             if (is_file(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info')) {
