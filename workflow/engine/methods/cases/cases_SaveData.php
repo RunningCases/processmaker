@@ -249,7 +249,6 @@ try {
                 $i = $i + 1;
             }
         }
-
         if (count( $arrayField ) > 0) {
             for ($i = 0; $i <= count( $arrayField ) - 1; $i ++) {
                 if ($arrayFileError[$i] == 0) {
@@ -289,15 +288,15 @@ try {
                         //Get the Custom Folder ID (create if necessary)
                         $oFolder = new AppFolder();
 
-                        //***Validating the file allowed extensions***
-                        $res = G::verifyInputDocExtension($aID['INP_DOC_TYPE_FILE'], $_FILES["form"]["name"]["input"], $_FILES["form"]["tmp_name"]["input"]);
-                        if($res->status == 0){
-                        	$message = $res->message;
-                        	G::SendMessageText( $message, "ERROR" );
-                        	$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
-                        	G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
-                        	die();
-                        }
+						//***Validating the file allowed extensions***
+						$res = G::verifyInputDocExtension($aID['INP_DOC_TYPE_FILE'], $arrayFileName[$i], $arrayFileTmpName[$i]);
+						if($res->status == 0){
+							$message = $res->message;
+							G::SendMessageText( $message, "ERROR" );
+							$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
+							G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+							die();
+						}
 
                         //Validate Filesize of $_FILE
                         $inpDocMaxFilesize = $aID["INP_DOC_MAX_FILESIZE"];
