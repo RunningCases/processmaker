@@ -298,7 +298,7 @@ try {
 							die();
 						}
 
-                        //Validate Filesize of $_FILE
+                        //--- Validate Filesize of $_FILE
                         $inpDocMaxFilesize = $aID["INP_DOC_MAX_FILESIZE"];
                         $inpDocMaxFilesizeUnit = $aID["INP_DOC_MAX_FILESIZE_UNIT"];
 

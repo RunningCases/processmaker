@@ -3031,7 +3031,7 @@ class XmlForm_Field_File extends XmlForm_Field
 
         if (isset($this->input) && $this->input != null) {
             if (count($arrayInputDocumentData) > 0) {
-                $maxUploadFilesizeLabel = ($arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] . "" != "0" && $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] != "")? "Max upload file size [" . $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] . " " . $arrayInputDocumentData["INP_DOC_MAX_FILESIZE_UNIT"] . "]" : "";
+                $maxUploadFilesizeLabel = ($arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] . "" != "0" && $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] != "")? G::LoadTranslation("ID_MAX_FILE_SIZE") . " [" . $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] . " " . $arrayInputDocumentData["INP_DOC_MAX_FILESIZE_UNIT"] . "]" : "";
 
                 $arrayInputDocumentData["INP_DOC_TITLE"] = (isset($arrayInputDocumentData["INP_DOC_TITLE"]))? $arrayInputDocumentData["INP_DOC_TITLE"] : null;
                 $html = $html . "<br /><label><img src=\"/images/inputdocument.gif\" width=\"22px\" width=\"22px\" alt=\"\" /><font size=\"1\">(" . trim($arrayInputDocumentData["INP_DOC_TITLE"]) . ") " . $maxUploadFilesizeLabel . "</font></label>";
