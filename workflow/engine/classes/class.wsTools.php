@@ -830,7 +830,7 @@ class workspaceTools
         $sql = '';
         switch ($data['action']) {
             case 1:
-                $sql = $dataoneBase->generateInsertSQL($data['table'], $data['data']);
+                $sql = $dataBase->generateInsertSQL($data['table'], $data['data']);
                 $message = "-> Row added in {$data['table']}\n";
                 break;
             case 2:
@@ -1509,7 +1509,7 @@ class workspaceTools
     }
 
     public function checkMafeRequirements ($workspace,$lang) {
-        $this->initPropel(true);
+        $this->initPropel(true); 
         $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
         if (empty($pmRestClient)) {
             if (is_file(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info')) {
