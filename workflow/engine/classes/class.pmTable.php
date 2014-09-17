@@ -182,7 +182,7 @@ class PmTable
      * Build the pmTable with all dependencies
      */
     public function build ()
-    {
+    {   
         $this->prepare();
         $this->preparePropelIniFile();
         $this->buildSchema();
@@ -273,6 +273,10 @@ class PmTable
                 break;
         }
 
+        $indexNode = $this->dom->createElement( 'index' );
+        $indexNode->setAttribute( 'name', 'indexTable' );
+        $flag = false;
+
         foreach ($this->columns as $column) {
 
             // create the column node
@@ -296,9 +300,20 @@ class PmTable
             if ($column->field_autoincrement) {
                 $columnNode->setAttribute( 'autoIncrement', "true" );
             }
+
+            // define the Index attribute if it is defined
+            if (isset($column->field_index) && $column->field_index) {
+                $columnNode->setAttribute( 'index', "true" );
+                $indexColumnNode = $this->dom->createElement( 'index-column' );
+                $indexColumnNode->setAttribute( 'name', $column->field_name );
+                $indexNode->appendChild( $indexColumnNode );
+                $flag = true;
+            }
             $tableNode->appendChild( $columnNode );
         }
-
+        if ($flag) {
+            $tableNode->appendChild( $indexNode );
+        }
         $xpath = new DOMXPath( $this->dom );
         $xtable = $xpath->query( '/database/table[@name="' . $this->tableName . '"]' );
 
@@ -377,7 +392,7 @@ class PmTable
      * Save the xml schema for propel
      */
     public function saveSchema ()
-    {
+    {   
         $this->dom->save( $this->configDir . $this->schemaFilename );
     }
 

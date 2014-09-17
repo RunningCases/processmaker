@@ -186,6 +186,7 @@ try {
     
     if ($swpmdynaform) {
         $aData['APP_DATA'] = array_merge($aData['APP_DATA'], $pmdynaform);
+        $_POST["DynaformRequiredFields"] = '[]';
     }
 
     $oCase->updateCase( $_SESSION['APPLICATION'], $aData );
@@ -248,7 +249,6 @@ try {
                 $i = $i + 1;
             }
         }
-
         if (count( $arrayField ) > 0) {
             for ($i = 0; $i <= count( $arrayField ) - 1; $i ++) {
                 if ($arrayFileError[$i] == 0) {
@@ -279,15 +279,15 @@ try {
                         //Get the Custom Folder ID (create if necessary)
                         $oFolder = new AppFolder();
 
-                        //***Validating the file allowed extensions***
-                        $res = G::verifyInputDocExtension($aID['INP_DOC_TYPE_FILE'], $_FILES["form"]["name"]["input"], $_FILES["form"]["tmp_name"]["input"]);
-                        if($res->status == 0){
-                        	$message = $res->message;
-                        	G::SendMessageText( $message, "ERROR" );
-                        	$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
-                        	G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
-                        	die();
-                        }
+						//***Validating the file allowed extensions***
+						$res = G::verifyInputDocExtension($aID['INP_DOC_TYPE_FILE'], $arrayFileName[$i], $arrayFileTmpName[$i]);
+						if($res->status == 0){
+							$message = $res->message;
+							G::SendMessageText( $message, "ERROR" );
+							$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
+							G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+							die();
+						}
 
                         $aFields = array ("APP_UID" => $_SESSION["APPLICATION"],"DEL_INDEX" => $_SESSION["INDEX"],"USR_UID" => $_SESSION["USER_LOGGED"],"DOC_UID" => $indocUid,"APP_DOC_TYPE" => "INPUT","APP_DOC_CREATE_DATE" => date( "Y-m-d H:i:s" ),"APP_DOC_COMMENT" => "","APP_DOC_TITLE" => "","APP_DOC_FILENAME" => $arrayFileName[$i],"FOLDER_UID" => $oFolder->createFromPath( $aID["INP_DOC_DESTINATION_PATH"] ),"APP_DOC_TAGS" => $oFolder->parseTags( $aID["INP_DOC_TAGS"] ),"APP_DOC_FIELDNAME" => $fieldName);
                     } else {

@@ -161,6 +161,12 @@ Ext.onReady(function(){
           hideable:false
       },
       {
+          id: 'field_index',
+          dataIndex: 'field_index',
+          hidden: true,
+          hideable:false
+      },
+      {
           id: 'field_null',
           dataIndex: 'field_null',
           hidden: true,
@@ -238,10 +244,11 @@ Ext.onReady(function(){
 
                           var fieldNull = Ext.getCmp("field_null");
                           var fieldPrimaryKey = Ext.getCmp("field_primary_key");
+                          var fieldIndex = Ext.getCmp("field_index");
                           var fieldInc = Ext.getCmp("field_incre");
                           var sizeEdit = Ext.getCmp("sizeEdit");
 
-                          editorFieldsEnableDisable(selCombo, fieldNull, fieldPrimaryKey, fieldInc, sizeEdit);
+                          editorFieldsEnableDisable(selCombo, fieldNull, fieldPrimaryKey, fieldIndex, fieldInc, sizeEdit);
 
                           flagShowMessageError = 1;
                       }
@@ -297,6 +304,20 @@ Ext.onReady(function(){
             disabled: true,
             inputValue: 'always'
         }
+      }, {
+        xtype: 'booleancolumn',
+        header: _('ID_INDEX'),
+        dataIndex: 'field_index',
+        align: 'center',
+        width: 80,
+        trueText: _('ID_YES'),
+        falseText: _('ID_NO'),
+        editor: {
+            xtype: 'checkbox',
+            id: 'field_index',
+            disabled: true,
+            inputValue: 'always'
+        }
       }
   ];
 
@@ -331,6 +352,7 @@ Ext.onReady(function(){
           {name: 'uid', type: 'string'},
           {name: 'field_uid', type: 'string'},
           {name: 'field_key', type: 'string'},
+          {name: 'field_index', type: 'string'},
           {name: 'field_name', type: 'string'},
           {name: 'field_label', type: 'string'},
           {name: 'field_type'},
@@ -393,10 +415,11 @@ Ext.onReady(function(){
                 var fieldTypeValue = Ext.getCmp("fieldType").getValue();
                 var fieldNull = Ext.getCmp("field_null");
                 var fieldPrimaryKey = Ext.getCmp("field_primary_key");
+                var fieldIndex = Ext.getCmp("field_index");
                 var fieldInc = Ext.getCmp("field_incre");
                 var sizeEdit = Ext.getCmp("sizeEdit");
 
-                editorFieldsEnableDisable(fieldTypeValue, fieldNull, fieldPrimaryKey, fieldInc, sizeEdit);
+                editorFieldsEnableDisable(fieldTypeValue, fieldNull, fieldPrimaryKey, fieldIndex, fieldInc, sizeEdit);
             },
             250
         );
@@ -407,7 +430,10 @@ Ext.onReady(function(){
       //if a column was set as PK so can't be null
       if (row.get('field_key') == true) {
         row.data.field_null = false;
+      }
 
+      if (row.get('field_index') == true) {
+        row.data.field_null = false;
       }
       row.commit();
     }
@@ -838,6 +864,10 @@ function createReportTable()
       return false;
     }
 
+    if (row.data['field_index']) {
+      hasSomeIndex = true;
+    }
+
     if (row.data['field_key']) {
       hasSomePrimaryKey = true;
     }
@@ -939,6 +969,7 @@ function addColumn() {
     field_type : '',
     field_size : '',
     field_key  : 0,
+    field_index  : 0,
     field_null : 1
   });
   var len = assignedGrid.getStore().data.length;
@@ -968,18 +999,20 @@ function removeColumn()
   });
 }
 
-function editorFieldsEnableDisable(fieldTypeValue, fieldNull, fieldPrimaryKey, fieldInc, sizeEdit)
+function editorFieldsEnableDisable(fieldTypeValue, fieldNull, fieldPrimaryKey, fieldIndex, fieldInc, sizeEdit)
 {
     var swSize = 1; //Enable
     var swNull = 1;
     var swPK = 1;
     var swAI = 1;
+    var swI = 1;
 
     //Date
     if (fieldTypeValue == "DATE" || fieldTypeValue == "DATETIME" || fieldTypeValue == "TIME") {
         swSize = 0; //Disable
         swPK = 0;
         swAI = 0;
+        swI = 0;
     }
 
     //Numbers
@@ -994,12 +1027,14 @@ function editorFieldsEnableDisable(fieldTypeValue, fieldNull, fieldPrimaryKey, f
     if (fieldTypeValue == "DECIMAL" || fieldTypeValue == "FLOAT") {
         swPK = 0;
         swAI = 0;
+        swI = 0;
     }
 
     if (fieldTypeValue == "DOUBLE" || fieldTypeValue == "REAL") {
        swSize = 0;
        swPK = 0;
        swAI = 0;
+       swI = 0;
     }
 
     //String
@@ -1010,6 +1045,7 @@ function editorFieldsEnableDisable(fieldTypeValue, fieldNull, fieldPrimaryKey, f
     if (fieldTypeValue == "LONGVARCHAR") {
         swPK = 0;
         swAI = 0;
+        swI = 0;
     }
 
     //Boolean
@@ -1018,6 +1054,7 @@ function editorFieldsEnableDisable(fieldTypeValue, fieldNull, fieldPrimaryKey, f
         swNull = 0;
         swPK = 0;
         swAI = 0;
+        swI = 0;
     }
 
     //Set enable/disable
@@ -1033,6 +1070,13 @@ function editorFieldsEnableDisable(fieldTypeValue, fieldNull, fieldPrimaryKey, f
     } else {
         fieldPrimaryKey.disable();
         fieldPrimaryKey.setValue(false);
+    }
+
+    if (swI == 1) {
+        fieldIndex.enable();
+    } else {
+        fieldIndex.disable();
+        fieldIndex.setValue(false);
     }
 
     if (swAI == 1) {
@@ -1067,14 +1111,15 @@ AssignFieldsAction = function(){
     var meta = mapPMFieldType(records[i].data['FIELD_UID']);
     var row = new PMRow({
       uid  : '',
-      field_uid  : records[i].data['FIELD_UID'],
-      field_dyn  : records[i].data['FIELD_NAME'],
-      field_name  : records[i].data['FIELD_NAME'].toUpperCase(),
-      field_label : records[i].data['FIELD_NAME'].toUpperCase(),
-      field_type  : meta.type,
-      field_size  : meta.size,
-      field_key   : 0,
-      field_null  : 1
+      field_uid     : records[i].data['FIELD_UID'],
+      field_dyn     : records[i].data['FIELD_NAME'],
+      field_name    : records[i].data['FIELD_NAME'].toUpperCase(),
+      field_label   : records[i].data['FIELD_NAME'].toUpperCase(),
+      field_type    : meta.type,
+      field_size    : meta.size,
+      field_key     : 0,
+      field_index   : 0,
+      field_null    : 1
     });
 
     store.add(row);
@@ -1124,6 +1169,7 @@ AssignAllFieldsAction = function(){
         field_type  : meta.type,
         field_size  : meta.size,
         field_key   : 0,
+        field_index : 0,
         field_null  : 1
       });
 
@@ -1207,6 +1253,7 @@ var DDLoadFields = function(){
           field_type  : meta.type,
           field_size  : meta.size,
           field_key   : 0,
+          field_index : 0,
           field_null  : 1
         });
 
@@ -1223,25 +1270,25 @@ var DDLoadFields = function(){
 
 function loadTableRowsFromArray(records)
 {
-  var PMRow = assignedGrid.getStore().recordType;
-  if (records.length == 0) return;
-
-  for (i=0;i<records.length; i++) {
-    var row = new PMRow({
-      uid        : records[i].FLD_UID,
-      field_uid  : records[i].FLD_DYN_UID,
-      field_dyn  : records[i].FLD_DYN_NAME,
-      field_name : records[i].FLD_NAME,
-      field_label: records[i].FLD_DESCRIPTION,
-      field_type : records[i].FLD_TYPE,
-      field_size : records[i].FLD_SIZE,
-      field_key  : records[i].FLD_KEY == '1' ? true : false,
-      field_null : records[i].FLD_NULL  == '1' ? true : false,
-      field_autoincrement  : records[i].FLD_AUTO_INCREMENT  == '1' ? true : false,
-      field_filter: records[i].FLD_FILTER == '1' ? true : false
-    });
-    store.add(row);
-  }
+    var PMRow = assignedGrid.getStore().recordType;
+    if (records.length == 0) return;
+    for (i=0;i<records.length; i++) {
+        var row = new PMRow({
+            uid                   : records[i].FLD_UID,
+            field_uid             : records[i].FLD_DYN_UID,
+            field_dyn             : records[i].FLD_DYN_NAME,
+            field_name            : records[i].FLD_NAME,
+            field_label           : records[i].FLD_DESCRIPTION,
+            field_type            : records[i].FLD_TYPE,
+            field_size            : records[i].FLD_SIZE,
+            field_key             : records[i].FLD_KEY == '1' ? true : false,
+            field_index           : records[i].FLD_TABLE_INDEX == '1' ? true : false,
+            field_null            : records[i].FLD_NULL  == '1' ? true : false,
+            field_autoincrement   : records[i].FLD_AUTO_INCREMENT  == '1' ? true : false,
+            field_filter          : records[i].FLD_FILTER == '1' ? true : false
+        });
+        store.add(row);
+    }
 }
 
 

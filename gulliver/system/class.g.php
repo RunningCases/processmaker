@@ -5497,7 +5497,7 @@ class G
     	}
     	if( $flag == 1){
     		$res->status = false;
-    		$res->message = G::LoadTranslation('ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' );
+    		$res->message = G::LoadTranslation('ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' ) . ' ' . $filesName;
     		return $res;
     	}
     }

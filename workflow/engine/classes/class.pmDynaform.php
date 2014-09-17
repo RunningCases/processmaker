@@ -51,13 +51,15 @@ class pmDynaform
             $dr = $dt[$i];
             $n2 = count($dr);
             for ($j = 0; $j < $n2; $j++) {
-                if ($dr[$j]->name) {
+                if (isset($dr[$j]->name)) {
                     $valueField = isset($this->app_data[$dr[$j]->name]) ? $this->app_data[$dr[$j]->name] : "";
                     $dataJSON->items[0]->items[$i][$j]->defaultValue = $valueField;
                 }
             }
         }
-        return G::json_encode($dataJSON);
+        $a = G::json_encode($dataJSON);
+        $a = str_replace("\/", "/", $a);
+        return $a;
     }
 
     public function mergeValues()
