@@ -889,6 +889,8 @@ class processMap
 
     public function getStepTriggersCriteria($sStepUID = '', $sTaskUID = '', $sType = '')
     {
+        $imgEx = "<div><img src='/images/hasCondition.png' height='16' width='16'></div>";
+        $imgNoEx = '<div></div>';
         $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn('C.CON_VALUE');
@@ -896,6 +898,7 @@ class processMap
         $oCriteria->addSelectColumn('TRI_UID');
         $oCriteria->addAsColumn('TRI_LOCATE_WEBBOT_PARAM', '(SELECT LOCATE(MD5(' . TriggersPeer::TRI_WEBBOT . '),' . TriggersPeer::TRI_PARAM . ') FROM ' . TriggersPeer::TABLE_NAME . ' WHERE ' . TriggersPeer::TRI_UID . '=' . StepTriggerPeer::TRI_UID . ' )');
         $oCriteria->addSelectColumn('ST_TYPE');
+        $oCriteria->addSelectColumn('IF ('.StepTriggerPeer::ST_CONDITION.' = "", "'.$imgNoEx.'", "'.$imgEx.'") AS CONDITION_SET');
         $oCriteria->addSelectColumn(StepTriggerPeer::ST_POSITION);
         $oCriteria->addAsColumn('TRI_TITLE', 'C.CON_VALUE');
         $oCriteria->addAlias('C', 'CONTENT');
