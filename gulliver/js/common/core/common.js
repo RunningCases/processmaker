@@ -2233,3 +2233,12 @@ var stripNonNumeric = function (str) {
    }
    return out;
 };
+
+function inputDocumentVerifySize(inpDocMaxFileSize, file)
+{
+    try {
+        return (file.files[0].size <= inpDocMaxFileSize)? 1 : 0;
+    } catch (e) {
+        return 1;
+    }
+}

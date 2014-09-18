@@ -3517,9 +3517,10 @@ class Cases
      * @param string $file File ($_FILES["form"]["name"]["APP_DOC_FILENAME"] or path to file)
      * @param int $fileError File error ($_FILES["form"]["error"]["APP_DOC_FILENAME"] or 0)
      * @param string $fileTmpName File temporal name ($_FILES["form"]["tmp_name"]["APP_DOC_FILENAME"] or null)
+     * @param string $fileSize    File size ($_FILES["form"]["size"]["APP_DOC_FILENAME"] or 0)
      * @return string Return application document ID
      */
-    public function addInputDocument($inputDocumentUid, $appDocUid, $docVersion, $appDocType, $appDocComment, $inputDocumentAction, $applicationUid, $delIndex, $taskUid, $userUid, $option, $file, $fileError = 0, $fileTmpName = null)
+    public function addInputDocument($inputDocumentUid, $appDocUid, $docVersion, $appDocType, $appDocComment, $inputDocumentAction, $applicationUid, $delIndex, $taskUid, $userUid, $option, $file, $fileError = 0, $fileTmpName = null, $fileSize = 0)
     {
         $appDocFileName = null;
         $sw = 0;
@@ -3548,6 +3549,16 @@ class Cases
         //Info
         $inputDocument = new InputDocument();
         $arrayInputDocumentData = $inputDocument->load($inputDocumentUid);
+
+        //---
+        $inpDocMaxFilesize = $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"];
+        $inpDocMaxFilesizeUnit = $arrayInputDocumentData["INP_DOC_MAX_FILESIZE_UNIT"];
+
+        $inpDocMaxFilesize = $inpDocMaxFilesize * (($inpDocMaxFilesizeUnit == "MB")? 1024 *1024 : 1024); //Bytes
+
+        if ($fileSize > $inpDocMaxFilesize) {
+            throw new Exception(G::LoadTranslation("ID_SIZE_VERY_LARGE_PERMITTED"));
+        }
 
         //Get the Custom Folder ID (create if necessary)
         $appFolder = new AppFolder();
