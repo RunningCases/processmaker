@@ -7,6 +7,12 @@
   <actionType type="hidden"/>
   <docVersion type="hidden"/>
   <fileTypes type="hidden"/>
+  <INP_DOC_MAX_FILESIZE type="hidden" showInTable="0" />
+
+  <INP_DOC_MAX_FILESIZE_LABEL type="text" maxlength="30" validate="Any" size="10" mode="view">
+      <en>Max size accepted</en>
+  </INP_DOC_MAX_FILESIZE_LABEL>
+
   <APP_DOC_FILENAME type="file">
     <en><![CDATA[File]]></en>
   </APP_DOC_FILENAME>
@@ -31,6 +37,10 @@ leimnud.event.add(window, 'load', function() {
   }
 });
 
+if (getField("INP_DOC_MAX_FILESIZE").value == 0 || getField("INP_DOC_MAX_FILESIZE").value == "") {
+    hideRow("INP_DOC_MAX_FILESIZE_LABEL");
+}
+
 var verifyInfo = function(oForm)
 {
   oAux = getField('APP_DOC_FILENAME');
@@ -39,6 +49,13 @@ var verifyInfo = function(oForm)
     alert('@G::LoadTranslation(ID_PLEASE_SELECT_FILE)');
     oAux.focus();
     return;
+  }
+
+  var flagFilesize = inputDocumentVerifySize(parseInt(getField("INP_DOC_MAX_FILESIZE").value), getField("APP_DOC_FILENAME"));
+
+  if (flagFilesize == 0) {
+      new leimnud.module.app.alert().make({label: _("ID_SIZE_VERY_LARGE_PERMITTED")});
+      return;
   }
 
   docType = oAux.value.split(".");
