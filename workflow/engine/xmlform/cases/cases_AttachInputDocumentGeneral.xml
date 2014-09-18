@@ -51,11 +51,13 @@ var verifyInfo = function(oForm)
     return;
   }
 
-  var flagFilesize = inputDocumentVerifySize(parseInt(getField("INP_DOC_MAX_FILESIZE").value), getField("APP_DOC_FILENAME"));
+  if (getField("INP_DOC_MAX_FILESIZE").value != "" && getField("INP_DOC_MAX_FILESIZE").value > 0) {
+      var flagFilesize = inputDocumentVerifySize(parseInt(getField("INP_DOC_MAX_FILESIZE").value), getField("APP_DOC_FILENAME"));
 
-  if (flagFilesize == 0) {
-      new leimnud.module.app.alert().make({label: _("ID_SIZE_VERY_LARGE_PERMITTED")});
-      return;
+      if (flagFilesize == 0) {
+          new leimnud.module.app.alert().make({label: _("ID_SIZE_VERY_LARGE_PERMITTED")});
+          return;
+      }
   }
 
   docType = oAux.value.split(".");

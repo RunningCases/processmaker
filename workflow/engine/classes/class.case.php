@@ -3550,14 +3550,16 @@ class Cases
         $inputDocument = new InputDocument();
         $arrayInputDocumentData = $inputDocument->load($inputDocumentUid);
 
-        //---
+        //--- Validate Filesize of $_FILE
         $inpDocMaxFilesize = $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"];
         $inpDocMaxFilesizeUnit = $arrayInputDocumentData["INP_DOC_MAX_FILESIZE_UNIT"];
 
         $inpDocMaxFilesize = $inpDocMaxFilesize * (($inpDocMaxFilesizeUnit == "MB")? 1024 *1024 : 1024); //Bytes
 
-        if ($fileSize > $inpDocMaxFilesize) {
-            throw new Exception(G::LoadTranslation("ID_SIZE_VERY_LARGE_PERMITTED"));
+        if ($inpDocMaxFilesize > 0 && $fileSize > 0) {
+            if ($fileSize > $inpDocMaxFilesize) {
+                throw new Exception(G::LoadTranslation("ID_SIZE_VERY_LARGE_PERMITTED"));
+            }
         }
 
         //Get the Custom Folder ID (create if necessary)
