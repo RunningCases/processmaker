@@ -899,7 +899,7 @@ class wsBase
      * @param $aAttachment = null
      * @param boolean $showMessage = true
      * @param int $delIndex = 0
-     * @param $config = null
+     * @param $config = array
      * @return $result will return an object
      */
     public function sendMessage(
