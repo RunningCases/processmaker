@@ -31,7 +31,7 @@
     <en><![CDATA[Allowed file extensions  (use *.* to allow any extension)]]></en>
   </INP_DOC_TYPE_FILE>
 
-  <INP_DOC_MAX_FILESIZE type="text" maxlength="10" size="8" mode="edit">
+  <INP_DOC_MAX_FILESIZE type="text" defaultvalue="0" maxlength="10" size="8" mode="edit">
       <en>Maximum file size</en>
   </INP_DOC_MAX_FILESIZE>
 
