@@ -831,6 +831,7 @@ function getEmailConfiguration ()
  * @param array | $aAttachment = array() | Attachment | An Optional arrray. An array of files (full paths) to be attached to the email.
  * @param boolean | $showMessage = true | Show message | Optional parameter.
  * @param int | $delIndex = 0 | Delegation index of the case | Optional parameter. The delegation index of the current task in the case.
+ * @param array | $config = array() | Alternative Email Settings | An optional array: An array of parameters to be used in the Email sent (EmailEngine, Server, Port, FromEmail, Username, UserPassword, and SecureConnection).
  * @return int | | result | Result of sending email
  *
  */
@@ -846,7 +847,8 @@ function PMFSendMessage(
     $aFields = array(),
     $aAttachment = array(),
     $showMessage = true,
-    $delIndex = 0
+    $delIndex = 0,
+    $config = array()
 ) {
     ini_set ( "pcre.backtrack_limit", 1000000 );
     ini_set ( 'memory_limit', '-1' );
@@ -876,12 +878,14 @@ function PMFSendMessage(
         $aFields,
         $aAttachment,
         $showMessage,
-        $delIndex
+        $delIndex,
+        $config
     );
 
     if ($result->status_code == 0) {
         return 1;
     } else {
+    	error_log($result->message);
         return 0;
     }
 }
