@@ -222,23 +222,26 @@ class Server implements iAuthenticate
      *
      * @format JsonFormat,UploadFormat
      */
-    public function postToken()
+    public function postToken($request = null, $returnResponse = false)
     {
         // Handle a request for an OAuth2.0 Access Token and send the response to the client
-        $request = \OAuth2\Request::createFromGlobals();
+        if ($request == null) {
+            $request = \OAuth2\Request::createFromGlobals();
+        }
         $response = $this->server->handleTokenRequest($request);
-
 
         $token = $response->getParameters();
         if (array_key_exists('access_token', $token)
             && array_key_exists('refresh_token', $token)
         ) {
-            session_start();
+            if ($request == null) {
+                session_start();
+            }
             $data = $this->storage->getAccessToken($token['access_token']);
 
             // verify if the client is our local PM Designer client
             if ($data['client_id'] == self::getPmClientId()) {
-                error_log('do stuff - is a request from local pm client');
+                //error_log('do stuff - is a request from local pm client');
                 //require_once "classes/model/PmoauthUserAccessTokens.php";
 
                 $userToken = new \PmoauthUserAccessTokens();
@@ -252,7 +255,11 @@ class Server implements iAuthenticate
             }
         }
 
-        $response->send();
+        if ($returnResponse) {
+            return $response;
+        } else {
+            $response->send();
+        }
     }
 
     /**
@@ -276,10 +283,9 @@ class Server implements iAuthenticate
             $pmAccessToken = new \PmoauthUserAccessTokens();
             $session = $pmAccessToken->getSessionData($token['ACCESS_TOKEN']);
 
-            if ($session !== false &&  array_key_exists($session->getSessionId(), $_COOKIE)) {
+            if ($session !== false &&  array_key_exists($session->getSessionName(), $_COOKIE)) {
                 // increase the timeout for local php session cookie
                 $config = \Bootstrap::getSystemConfiguration();
-
                 if (isset($config['session.gc_maxlifetime'])) {
                     $lifetime = $config['session.gc_maxlifetime'];
                 } else {
@@ -289,7 +295,7 @@ class Server implements iAuthenticate
                     $lifetime = 1440;
                 }
 
-                setcookie($session->getSessionName(), $_COOKIE[$session->getSessionId()], time() + $lifetime, "/");
+                setcookie($session->getSessionName(), $session->getSessionId(), time() + $lifetime, "/");
             }
         }
 
