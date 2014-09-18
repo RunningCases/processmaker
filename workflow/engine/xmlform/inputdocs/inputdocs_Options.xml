@@ -45,29 +45,21 @@ var currentPagedTable = @#PAGED_TABLE_ID;
       }
     }
 
-    if (getField("INP_DOC_MAX_FILESIZE").value.trim() != "") {
-        var maxFilesize = parseInt(getField("INP_DOC_MAX_FILESIZE").value.trim());
-        var maxFilesizeUnit = getField("INP_DOC_MAX_FILESIZE_UNIT").value;
+    var maxFilesize = parseInt(getField("INP_DOC_MAX_FILESIZE").value.trim());
+    var maxFilesizeUnit = getField("INP_DOC_MAX_FILESIZE_UNIT").value;
 
-        var uploadMaxFilesize = parseInt(getField("INP_DOC_UPLOAD_MAX_FILESIZE").value);
+    var uploadMaxFilesize = parseInt(getField("INP_DOC_UPLOAD_MAX_FILESIZE").value);
 
-        maxFilesize = maxFilesize * ((maxFilesizeUnit == "MB")?  1024 * 1024 : 1024);
+    maxFilesize = maxFilesize * ((maxFilesizeUnit == "MB")?  1024 * 1024 : 1024);
 
+    if (maxFilesize != "" && maxFilesize != 0) {
         if(maxFilesize > 0) {
             if(maxFilesize > uploadMaxFilesize) {
                 new leimnud.module.app.alert().make({label: _("ID_SIZE_VERY_LARGE_PERMITTED")});
                 getField("INP_DOC_MAX_FILESIZE").focus();
                 return false;
             }
-        } else {
-            new leimnud.module.app.alert().make({label: _("ID_MAXIMUM_SIZE_FILE_GREATER_THAN_ZERO")});
-            getField("INP_DOC_MAX_FILESIZE").focus();
-            return false;
         }
-    } else {
-        new leimnud.module.app.alert().make({label: _("ID_MAXIMUM_SIZE_FILE_REQUIRED")});
-        getField("INP_DOC_MAX_FILESIZE").focus();
-        return false;
     }
 
     return true;
