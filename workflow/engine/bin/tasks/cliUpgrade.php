@@ -168,7 +168,6 @@ function run_upgrade($command, $args)
 
     G::browserCacheFilesSetUid();
 
-    upgradeFilesManager($command);
     //Status
     if ($errors) {
         CLI::logging("Upgrade finished but there were errors upgrading workspaces.\n");
@@ -179,69 +178,6 @@ function run_upgrade($command, $args)
 
     //setting flag to false
     $flag = G::isPMUnderUpdating(0);
-}
-
-/**
- * Function upgradeFilesManager
- * access public
- */
-
-function upgradeFilesManager($command = "") {
-    CLI::logging("> Updating Files Manager...\n\n");
-    $workspaces = get_workspaces_from_args($command);
-    foreach ($workspaces as $workspace) {
-        $name = $workspace->name;
-        require_once( PATH_DB . $name . '/db.php' );
-        require_once( PATH_THIRDPARTY . 'propel/Propel.php');
-        PROPEL::Init ( PATH_METHODS.'dbConnections/rootDbConnections.php' );
-        $con = Propel::getConnection("root");
-        $stmt = $con->createStatement();
-        $sDirectory = glob(PATH_DATA . "sites/" . $name . "/" . "mailTemplates/*");
-        $sDirectoryPublic = glob(PATH_DATA . "sites/" . $name . "/" . "public/*");
-        $files = array();
-        foreach($sDirectory as $valor) {
-            if (is_dir($valor)) {
-                $inner_files =  listFiles($valor);
-                if (is_array($inner_files)) $files = array_merge($files, $inner_files);
-            }
-            if (is_file($valor)) {
-                array_push($files, $valor);
-            }
-        }
-        foreach($sDirectoryPublic as $valor) {
-            if (is_dir($valor)) {
-                $inner_files =  listFiles($valor);
-                if (is_array($inner_files)) $files = array_merge($files, $inner_files);
-            }
-            if (is_file($valor)) {
-                array_push($files, $valor);
-            }
-        }
-    }
-    $sDir = PATH_DATA . "sites/" . $name . "/" . "mailTemplates/";
-    $sDirPublic = PATH_DATA . "sites/" . $name . "/" . "public/";
-    foreach ($files as $aFile) {
-        if (strpos($aFile, $sDir) !== false){
-            $processUid = current(explode("/", str_replace($sDir,'',$aFile)));
-        } else {
-            $processUid = current(explode("/", str_replace($sDirPublic,'',$aFile)));
-        }
-        $sql = "SELECT PROCESS_FILES.PRF_PATH FROM PROCESS_FILES WHERE PROCESS_FILES.PRF_PATH='" . $aFile ."'";
-        $appRows = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
-        $fileUid = '';
-        foreach ($appRows as $row) {
-            $fileUid =  $row["PRF_PATH"];
-        }
-        if ($fileUid !== $aFile) {
-            $sPkProcessFiles = G::generateUniqueID();
-            $sDate = date('Y-m-d H:i:s');
-            $sql = "INSERT INTO PROCESS_FILES (PRF_UID, PRO_UID, USR_UID, PRF_UPDATE_USR_UID,
-                       PRF_PATH, PRF_TYPE, PRF_EDITABLE, PRF_CREATE_DATE, PRF_UPDATE_DATE)
-                       VALUES ('".$sPkProcessFiles."', '".$processUid."', '00000000000000000000000000000001', '',
-                       '".$aFile."', 'file', 'true', '".$sDate."', NULL)";
-            $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
-        }
-    }
 }
 
 function listFiles($dir) {
