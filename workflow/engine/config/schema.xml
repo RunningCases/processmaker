@@ -3811,9 +3811,51 @@
     </table>
 
     <table name="APP_TIMEOUT_ACTION_EXECUTED">
-	  <column name="APP_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true" />
-	  <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
-	  <column name="EXECUTION_DATE" type="TIMESTAMP" required="false"/>
+        <column name="APP_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true" />
+        <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
+        <column name="EXECUTION_DATE" type="TIMESTAMP" required="false"/>
+    </table>
+
+    <table name="ADDONS_STORE">
+        <column name="STORE_ID"             type="VARCHAR"  size="32"   primaryKey="true" />
+        <column name="STORE_VERSION"        type="INTEGER" />
+        <column name="STORE_LOCATION"       type="VARCHAR"  size="2048" required="true" />
+        <column name="STORE_TYPE"           type="VARCHAR"  size="255"  required="true" />
+        <column name="STORE_LAST_UPDATED"   type="TIMESTAMP" />
+    </table>
+
+    <table name="ADDONS_MANAGER">
+        <column name="ADDON_ID"                 type="VARCHAR"      size="255"  required="true" primaryKey="true" />
+        <column name="STORE_ID"                 type="VARCHAR"      size="32"   required="true" primaryKey="true" />
+        <column name="ADDON_NAME"               type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_NICK"               type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_DOWNLOAD_FILENAME"  type="VARCHAR"      size="1024" required="false" />
+        <column name="ADDON_DESCRIPTION"        type="VARCHAR"      size="2048" required="false" />
+        <column name="ADDON_STATE"              type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_STATE_CHANGED"      type="TIMESTAMP"    required="false" />
+        <column name="ADDON_STATUS"             type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_VERSION"            type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_TYPE"               type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_PUBLISHER"          type="VARCHAR"      size="255"  required="false" />
+        <column name="ADDON_RELEASE_DATE"       type="TIMESTAMP"    required="false" />
+        <column name="ADDON_RELEASE_TYPE"       type="VARCHAR"      size="255"  required="false" />
+        <column name="ADDON_RELEASE_NOTES"      type="VARCHAR"      size="255"  required="false" />
+        <column name="ADDON_DOWNLOAD_URL"       type="VARCHAR"      size="2048" required="false" />
+        <column name="ADDON_DOWNLOAD_PROGRESS"  type="FLOAT"        required="false" />
+        <column name="ADDON_DOWNLOAD_MD5"       type="VARCHAR"      size="32"   required="false" />
+    </table>
+
+    <table name="LICENSE_MANAGER">
+        <column name="LICENSE_UID"          type="VARCHAR"      size="32"       primaryKey="true" />
+        <column name="LICENSE_USER"         type="VARCHAR"      size="150"      required="true" default="0"/>
+        <column name="LICENSE_START"        type="INTEGER"      required="true" default="0"/>
+        <column name="LICENSE_END"          type="INTEGER"      required="true" default="0"/>
+        <column name="LICENSE_SPAN"         type="INTEGER"      required="true" default="0"/>
+        <column name="LICENSE_STATUS"       type="VARCHAR"      size="100"      required="true" default=""/>
+        <column name="LICENSE_DATA"         type="LONGVARCHAR"  required="true" />
+        <column name="LICENSE_PATH"         type="VARCHAR"      size="255"      required="true" default="0"/>
+        <column name="LICENSE_WORKSPACE"    type="VARCHAR"      size="32"       required="true" default="0"/>
+        <column name="LICENSE_TYPE"         type="VARCHAR"      size="32"       required="true" default="0"/>
     </table>
 </database>
 
