@@ -37,8 +37,8 @@ leimnud.event.add(window, 'load', function() {
   }
 });
 
-if (getField("INP_DOC_MAX_FILESIZE").value == 0 || getField("INP_DOC_MAX_FILESIZE").value == "") {
-    hideRow("INP_DOC_MAX_FILESIZE_LABEL");
+if (getField("INP_DOC_MAX_FILESIZE").value != "" && parseInt(getField("INP_DOC_MAX_FILESIZE").value) > 0) {
+    showRow("INP_DOC_MAX_FILESIZE_LABEL");
 }
 
 var verifyInfo = function(oForm)
