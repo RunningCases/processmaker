@@ -44,9 +44,13 @@ $msgType = $_SESSION['G_MESSAGE_TYPE'];
 
 if (!isset($_SESSION['FAILED_LOGINS'])) {
     $_SESSION['FAILED_LOGINS'] = 0;
+    $_SESSION["USERNAME_PREVIOUS1"] = "";
+    $_SESSION["USERNAME_PREVIOUS2"] = "";
 }
 
 $sFailedLogins = $_SESSION['FAILED_LOGINS'];
+$usernamePrevious1 = $_SESSION["USERNAME_PREVIOUS1"];
+$usernamePrevious2 = $_SESSION["USERNAME_PREVIOUS2"];
 
 $aFields['LOGIN_VERIFY_MSG'] = G::loadTranslation('LOGIN_VERIFY_MSG');
 //$aFields['LOGIN_VERIFY_MSG'] = Bootstrap::loadTranslation('LOGIN_VERIFY_MSG');
@@ -120,6 +124,8 @@ if (strlen($msgType) > 0) {
 }
 
 $_SESSION['FAILED_LOGINS'] = $sFailedLogins;
+$_SESSION["USERNAME_PREVIOUS1"] = $usernamePrevious1;
+$_SESSION["USERNAME_PREVIOUS2"] = $usernamePrevious2;
 
 //translation
 //$Translations = G::getModel("Translation");
