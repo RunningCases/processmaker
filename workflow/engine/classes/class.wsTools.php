@@ -113,27 +113,28 @@ class workspaceTools
      * access public
      */
     public function upgradeFilesManager($workSpace) {
+    	$this->initPropel(true);
     	$con = Propel::getConnection("root");
     	$stmt = $con->createStatement();
     	$sDirectory = glob(PATH_DATA . "sites/" . $workSpace . "/" . "mailTemplates/*");
     	$sDirectoryPublic = glob(PATH_DATA . "sites/" . $workSpace . "/" . "public/*");
     	$files = array();
-    	foreach($sDirectory as $valor) {
-    		if (is_dir($valor)) {
-    			$inner_files =  listFiles($valor);
+    	foreach($sDirectory as $mailTemplate) {
+    		if (is_dir($mailTemplate)) {
+    			$inner_files =  listFiles($mailTemplate);
     			if (is_array($inner_files)) $files = array_merge($files, $inner_files);
     		}
-    		if (is_file($valor)) {
-    			array_push($files, $valor);
+    		if (is_file($mailTemplate)) {
+    			array_push($files, $mailTemplate);
     		}
     	}
-    	foreach($sDirectoryPublic as $valor) {
-    		if (is_dir($valor)) {
-    			$inner_files =  listFiles($valor);
+    	foreach($sDirectoryPublic as $publicFile) {
+    		if (is_dir($publicFile)) {
+    			$inner_files =  listFiles($publicFile);
     			if (is_array($inner_files)) $files = array_merge($files, $inner_files);
     		}
-    		if (is_file($valor)) {
-    			array_push($files, $valor);
+    		if (is_file($publicFile)) {
+    			array_push($files, $publicFile);
     		}
     	}
     	$sDir = PATH_DATA . "sites/" . $workSpace . "/" . "mailTemplates/";
