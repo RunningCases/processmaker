@@ -83,7 +83,7 @@ class PMPlugin
     public function registerMenu($menuId, $menuFilename)
     {
         $oPluginRegistry =& PMPluginRegistry::getSingleton();
-        $sMenuFilename   = PATH_PLUGINS . $this->sPluginFolder . PATH_SEP . $menuFilename;
+        $sMenuFilename   = ($this->sClassName == 'enterprisePlugin') ? PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . $menuFilename : PATH_PLUGINS . $this->sPluginFolder . PATH_SEP . $menuFilename;
         $oPluginRegistry->registerMenu($this->sNamespace, $menuId, $sMenuFilename);
     }
 
