@@ -92,7 +92,14 @@ try {
             $errLabel = 'WRONG_LOGIN_CREDENTIALS';
         }
 
+        $_SESSION["USERNAME_PREVIOUS1"] = $_SESSION["USERNAME_PREVIOUS2"];
+        $_SESSION["USERNAME_PREVIOUS2"] = $usr;
+
         if (!isset($uid) || $uid < 0) {
+            if ($_SESSION["USERNAME_PREVIOUS1"] != "" && $_SESSION["USERNAME_PREVIOUS2"] != "" && $_SESSION["USERNAME_PREVIOUS1"] != $_SESSION["USERNAME_PREVIOUS2"]) {
+                $_SESSION["FAILED_LOGINS"] = 0;
+            }
+
             if (isset($_SESSION['FAILED_LOGINS']) && ($uid == -1 || $uid == -2)) {
                 $_SESSION['FAILED_LOGINS']++;
             }
@@ -102,12 +109,12 @@ try {
             if (PPP_FAILED_LOGINS > 0) {
                 if ($_SESSION['FAILED_LOGINS'] >= PPP_FAILED_LOGINS) {
                     $oConnection = Propel::getConnection('rbac');
-                    $oStatement  = $oConnection->prepareStatement("SELECT USR_UID FROM USERS WHERE USR_USERNAME = '" . $usr . "'");
+                    $oStatement  = $oConnection->prepareStatement("SELECT USR_UID FROM RBAC_USERS WHERE USR_USERNAME = '" . $usr . "'");
                     $oDataset    = $oStatement->executeQuery();
                     if ($oDataset->next()) {
                         $sUserUID = $oDataset->getString('USR_UID');
                         $oConnection = Propel::getConnection('rbac');
-                        $oStatement  = $oConnection->prepareStatement("UPDATE USERS SET USR_STATUS = 0 WHERE USR_UID = '" . $sUserUID . "'");
+                        $oStatement  = $oConnection->prepareStatement("UPDATE RBAC_USERS SET USR_STATUS = 0 WHERE USR_UID = '" . $sUserUID . "'");
                         $oStatement->executeQuery();
                         $oConnection = Propel::getConnection('workflow');
                         $oStatement  = $oConnection->prepareStatement("UPDATE USERS SET USR_STATUS = 'INACTIVE' WHERE USR_UID = '" . $sUserUID . "'");

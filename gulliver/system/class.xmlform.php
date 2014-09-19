@@ -3007,18 +3007,36 @@ class XmlForm_Field_File extends XmlForm_Field
             $styleDisplay = "display: none;";
         }
 
-        $html = $html1 . "<input type=\"file\" ".$pmtype." id=\"form" . $rowId . "[" . $this->name . "]\" name=\"form" . $rowId . "[" . $this->name . "]\" value=\"" . $value . "\" class=\"module_app_input___gray_file\" style=\"" . $styleDisplay . "\"" . $mode . " " . $this->NSRequiredValue() . " />" . $html2;
-        if (isset( $this->input ) && $this->input != null) {
-            require_once ("classes/model/InputDocument.php");
+        $arrayInputDocumentData = array();
+        $inpDocMaxFilesize = "";
+
+        if (isset($this->input) && $this->input != null) {
+            require_once ("classes" . PATH_SEP . "model" . PATH_SEP . "InputDocument.php");
 
             try {
-                $indoc = new InputDocument();
-                $aDoc = $indoc->load( $this->input );
-                $aDoc["INP_DOC_TITLE"] = (isset( $aDoc["INP_DOC_TITLE"] )) ? $aDoc["INP_DOC_TITLE"] : null;
-                $html = $html . "<label><img src=\"/images/inputdocument.gif\" width=\"22px\" width=\"22px\" alt=\"\" /><font size=\"1\">(" . trim( $aDoc["INP_DOC_TITLE"] ) . ")</font></label>";
+                $inputDocument = new InputDocument();
+                $arrayInputDocumentData = $inputDocument->load($this->input);
             } catch (Exception $e) {
                 //Then the input document doesn"t exits, id referencial broken
-                $html = $html . "&nbsp;<font color=\"red\"><img src=\"/images/alert_icon.gif\" width=\"16px\" width=\"16px\" alt=\"\" /><font size=\"1\">(" . G::loadTranslation( "ID_INPUT_DOC_DOESNT_EXIST" ) . ")</font></font>";
+            }
+        }
+
+        if (count($arrayInputDocumentData) > 0) {
+            $inpDocMaxFilesize = $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] * (($arrayInputDocumentData["INP_DOC_MAX_FILESIZE_UNIT"] == "MB")? 1024 *1024 : 1024); //Bytes
+        }
+
+        $pmInputDocument = "pmindocmaxfilesize=\"" . $inpDocMaxFilesize . "\""; //Bytes
+
+        $html = $html1 . "<input type=\"file\" " . $pmtype . " " . $pmInputDocument . " id=\"form" . $rowId . "[" . $this->name . "]\" name=\"form" . $rowId . "[" . $this->name . "]\" value=\"" . $value . "\" class=\"module_app_input___gray_file\" style=\"" . $styleDisplay . "\"" . $mode . " " . $this->NSRequiredValue() . " />" . $html2;
+
+        if (isset($this->input) && $this->input != null) {
+            if (count($arrayInputDocumentData) > 0) {
+                $maxUploadFilesizeLabel = ($arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] . "" != "0" && $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] != "")? G::LoadTranslation("ID_MAX_FILE_SIZE") . " [" . $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] . " " . $arrayInputDocumentData["INP_DOC_MAX_FILESIZE_UNIT"] . "]" : "";
+
+                $arrayInputDocumentData["INP_DOC_TITLE"] = (isset($arrayInputDocumentData["INP_DOC_TITLE"]))? $arrayInputDocumentData["INP_DOC_TITLE"] : null;
+                $html = $html . "<br /><label><img src=\"/images/inputdocument.gif\" width=\"22px\" width=\"22px\" alt=\"\" /><font size=\"1\">(" . trim($arrayInputDocumentData["INP_DOC_TITLE"]) . ") " . $maxUploadFilesizeLabel . "</font></label>";
+            } else {
+                $html = $html . "&nbsp;<font color=\"red\"><img src=\"/images/alert_icon.gif\" width=\"16px\" width=\"16px\" alt=\"\" /><font size=\"1\">(" . G::loadTranslation("ID_INPUT_DOC_DOESNT_EXIST") . ")</font></font>";
             }
         }
 

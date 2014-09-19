@@ -82,6 +82,18 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
     protected $inp_doc_type_file = '*.*';
 
     /**
+     * The value for the inp_doc_max_filesize field.
+     * @var        int
+     */
+    protected $inp_doc_max_filesize = 0;
+
+    /**
+     * The value for the inp_doc_max_filesize_unit field.
+     * @var        string
+     */
+    protected $inp_doc_max_filesize_unit = 'KB';
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -192,6 +204,28 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
     {
 
         return $this->inp_doc_type_file;
+    }
+
+    /**
+     * Get the [inp_doc_max_filesize] column value.
+     * 
+     * @return     int
+     */
+    public function getInpDocMaxFilesize()
+    {
+
+        return $this->inp_doc_max_filesize;
+    }
+
+    /**
+     * Get the [inp_doc_max_filesize_unit] column value.
+     * 
+     * @return     string
+     */
+    public function getInpDocMaxFilesizeUnit()
+    {
+
+        return $this->inp_doc_max_filesize_unit;
     }
 
     /**
@@ -393,6 +427,50 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
     } // setInpDocTypeFile()
 
     /**
+     * Set the value of [inp_doc_max_filesize] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setInpDocMaxFilesize($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->inp_doc_max_filesize !== $v || $v === 0) {
+            $this->inp_doc_max_filesize = $v;
+            $this->modifiedColumns[] = InputDocumentPeer::INP_DOC_MAX_FILESIZE;
+        }
+
+    } // setInpDocMaxFilesize()
+
+    /**
+     * Set the value of [inp_doc_max_filesize_unit] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setInpDocMaxFilesizeUnit($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->inp_doc_max_filesize_unit !== $v || $v === 'KB') {
+            $this->inp_doc_max_filesize_unit = $v;
+            $this->modifiedColumns[] = InputDocumentPeer::INP_DOC_MAX_FILESIZE_UNIT;
+        }
+
+    } // setInpDocMaxFilesizeUnit()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -427,12 +505,16 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
 
             $this->inp_doc_type_file = $rs->getString($startcol + 8);
 
+            $this->inp_doc_max_filesize = $rs->getInt($startcol + 9);
+
+            $this->inp_doc_max_filesize_unit = $rs->getString($startcol + 10);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 9; // 9 = InputDocumentPeer::NUM_COLUMNS - InputDocumentPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 11; // 11 = InputDocumentPeer::NUM_COLUMNS - InputDocumentPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating InputDocument object", $e);
@@ -663,6 +745,12 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
             case 8:
                 return $this->getInpDocTypeFile();
                 break;
+            case 9:
+                return $this->getInpDocMaxFilesize();
+                break;
+            case 10:
+                return $this->getInpDocMaxFilesizeUnit();
+                break;
             default:
                 return null;
                 break;
@@ -692,6 +780,8 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
             $keys[6] => $this->getInpDocDestinationPath(),
             $keys[7] => $this->getInpDocTags(),
             $keys[8] => $this->getInpDocTypeFile(),
+            $keys[9] => $this->getInpDocMaxFilesize(),
+            $keys[10] => $this->getInpDocMaxFilesizeUnit(),
         );
         return $result;
     }
@@ -749,6 +839,12 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
                 break;
             case 8:
                 $this->setInpDocTypeFile($value);
+                break;
+            case 9:
+                $this->setInpDocMaxFilesize($value);
+                break;
+            case 10:
+                $this->setInpDocMaxFilesizeUnit($value);
                 break;
         } // switch()
     }
@@ -809,6 +905,14 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
             $this->setInpDocTypeFile($arr[$keys[8]]);
         }
 
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setInpDocMaxFilesize($arr[$keys[9]]);
+        }
+
+        if (array_key_exists($keys[10], $arr)) {
+            $this->setInpDocMaxFilesizeUnit($arr[$keys[10]]);
+        }
+
     }
 
     /**
@@ -854,6 +958,14 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
 
         if ($this->isColumnModified(InputDocumentPeer::INP_DOC_TYPE_FILE)) {
             $criteria->add(InputDocumentPeer::INP_DOC_TYPE_FILE, $this->inp_doc_type_file);
+        }
+
+        if ($this->isColumnModified(InputDocumentPeer::INP_DOC_MAX_FILESIZE)) {
+            $criteria->add(InputDocumentPeer::INP_DOC_MAX_FILESIZE, $this->inp_doc_max_filesize);
+        }
+
+        if ($this->isColumnModified(InputDocumentPeer::INP_DOC_MAX_FILESIZE_UNIT)) {
+            $criteria->add(InputDocumentPeer::INP_DOC_MAX_FILESIZE_UNIT, $this->inp_doc_max_filesize_unit);
         }
 
 
@@ -925,6 +1037,10 @@ abstract class BaseInputDocument extends BaseObject implements Persistent
         $copyObj->setInpDocTags($this->inp_doc_tags);
 
         $copyObj->setInpDocTypeFile($this->inp_doc_type_file);
+
+        $copyObj->setInpDocMaxFilesize($this->inp_doc_max_filesize);
+
+        $copyObj->setInpDocMaxFilesizeUnit($this->inp_doc_max_filesize_unit);
 
 
         $copyObj->setNew(true);
