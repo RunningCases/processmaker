@@ -831,7 +831,7 @@ function getEmailConfiguration ()
  * @param array | $aAttachment = array() | Attachment | An Optional arrray. An array of files (full paths) to be attached to the email.
  * @param boolean | $showMessage = true | Show message | Optional parameter.
  * @param int | $delIndex = 0 | Delegation index of the case | Optional parameter. The delegation index of the current task in the case.
- * @param array | $config = array() | Alternative Email Settings | An optional array: An array of parameters to be used in the Email sent (EmailEngine, Server, Port, FromEmail, Username, UserPassword, and SecureConnection).
+ * @param array | $config = array() | Alternative Email Settings | An optional array: An array of parameters to be used in the Email sent (MESS_ENGINE, MESS_SERVER, MESS_PORT, MESS_FROM_MAIL, MESS_RAUTH, MESS_ACCOUNT, MESS_PASSWORD, and SMTPSecure).
  * @return int | | result | Result of sending email
  *
  */

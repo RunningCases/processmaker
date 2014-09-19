@@ -84,6 +84,13 @@ class workspaceTools
         CLI::logging("<*>   Updating Content Process took $final seconds.\n");
 
         $start = microtime(true);
+        CLI::logging("> check Mafe Requirements...\n");
+        $this->checkMafeRequirements($workSpace, $lang);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
+
+        $start = microtime(true);
         CLI::logging("> Updating cache view...\n");
         $this->upgradeCacheView($buildCacheView, true, $lang);
         $stop = microtime(true);
@@ -96,13 +103,6 @@ class workspaceTools
         $stop = microtime(true);
         $final = $stop - $start;
         CLI::logging("<*>   Backup log files Process took $final seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> check Mafe Requirements...\n");
-        $this->checkMafeRequirements($workSpace, $lang);
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
     }
 
     /**

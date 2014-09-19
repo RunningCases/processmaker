@@ -152,7 +152,7 @@ def buildPmUi(homeDir, targetDir, mode)
     copyFiles({
         "#{homeDir}/build/js/pmui-#{version}.js" => "#{pmUIDir}/pmui.min.js",
         "#{themeDir}/build/pmui-mafe.css" => "#{pmUIDir}/pmui.min.css",
-        "#{themeDir}/build/images/*.png" => "#{targetDir}/css/images/",
+        "#{themeDir}/build/images/*" => "#{targetDir}/css/images/",
         "#{homeDir}/img/*" => "#{imgTargetDir}"
     })
 

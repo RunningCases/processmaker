@@ -899,7 +899,7 @@ class wsBase
      * @param $aAttachment = null
      * @param boolean $showMessage = true
      * @param int $delIndex = 0
-     * @param $config = null
+     * @param $config = array
      * @return $result will return an object
      */
     public function sendMessage(
@@ -914,37 +914,13 @@ class wsBase
         $aAttachment = null,
         $showMessage = true,
         $delIndex = 0,
-    	$config = null
+    	$config = array()
     ) {
         try {
             if (!class_exists('System')) {
                 G::LoadClass('system');
             }
-            $aSetup = System::getEmailConfiguration();
-
-            if($config != null){
-		        if(isset($config['EmailEngine']) && $config['EmailEngine'] != ""){
-		        	$aSetup['MESS_ENGINE'] = $config['EmailEngine']; //EmailEngine
-		        }
-            	if(isset($config['Server']) && $config['Server'] != ""){
-            		$aSetup['MESS_SERVER'] = $config['Server']; //Server
-            	}
-            	if(isset($config['Port']) && $config['Port'] != ""){
-            		$aSetup['MESS_PORT'] = $config['Port']; //port
-            	}
-		        if(isset($config['UserName']) && $config['UserName'] != ""){
-		        	$aSetup['MESS_ACCOUNT'] = $config['UserName']; //userName
-		        }
-		        if(isset($config['FromEmail']) && $config['FromEmail'] != ""){
-		        	$aSetup['MESS_FROM_MAIL'] = $config['FromEmail']; //fromEmail
-		        }
-		        if(isset($config['UserPassword']) && $config['UserPassword'] != ""){
-		        	$aSetup['MESS_PASSWORD'] = $config['UserPassword']; //userPassword
-		        }
-		        if(isset($config['SecureConnection']) && $config['SecureConnection'] != ""){
-		        	$aSetup['SMTPSecure'] = $config['SecureConnection']; //secureConnection
-		        }
-            }
+            $aSetup = !empty($config) ? $config : System::getEmailConfiguration();
 
             $oSpool = new spoolRun();
 
