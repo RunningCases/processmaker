@@ -2868,7 +2868,6 @@ class Bootstrap
         } catch (Exception $e) {
             
         }
-        error_log('hasPassword bootstrap ' . $passEncrypt);
 
         return $passEncrypt;
     }
@@ -2876,11 +2875,9 @@ class Bootstrap
     public function verifyHashPassword ($pass, $userPass)
     {
         //$verify = Bootstrap::hasPassword($pass);
-        error_log('contraseña config...');
         if (Bootstrap::hasPassword($pass) == $userPass) {
             return true;
         }
-        error_log('contraseña anterior...');
         if (Bootstrap::hasPassword($pass, true) == $userPass) {
             return true;
         }

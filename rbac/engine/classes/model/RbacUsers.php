@@ -81,7 +81,6 @@ class RbacUsers extends BaseRbacUsers
                 $aFields = $rs[0]->toArray(BasePeer::TYPE_FIELDNAME);
                 //verify password with md5, and md5 format
                 if (mb_strtoupper($sUsername, 'utf-8') === mb_strtoupper($aFields['USR_USERNAME'], 'utf-8')) {
-                    error_log('contraseña bbdd... '. $aFields['USR_PASSWORD']);
                     if( Bootstrap::verifyHashPassword($sPassword, $aFields['USR_PASSWORD']) ) {
                         if ($aFields['USR_DUE_DATE'] < date('Y-m-d')) {
                             return -4;

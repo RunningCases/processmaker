@@ -351,16 +351,13 @@ class enterprisePlugin extends PMPlugin
         G::LoadClass( "configuration" );
         $config= new Configurations();
         $typeEncrypt = $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
-        //$typeEncrypt = ($typeEncrypt == null) ? 'md5' : isset($typeEncrypt['current']) ? $typeEncrypt['current'] : 'md5';
         $encrypt = 'md5';
         if ($typeEncrypt != null) {
             if (isset($typeEncrypt['current']) && $typeEncrypt['current'] != '') {
                 $encrypt = $typeEncrypt['current'];
-                error_log('hashPassword bootstrap ' . $encrypt);
             }
             if ($previous && isset($typeEncrypt['previous']) && $typeEncrypt['previous'] != '' ) {
                 $encrypt = $typeEncrypt['previous'];
-                error_log('hashPassword bootstrap ' . $encrypt);
             }
         }
         eval("\$var = hash('" . $encrypt . "', '" . $pass . "');");
