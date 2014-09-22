@@ -32,6 +32,7 @@
 
 require_once 'class.plugin.php';
 
+
 class pluginDetail
 {
     public $sNamespace;
@@ -294,17 +295,19 @@ class PMPluginRegistry
      */
     public function disablePlugin ($sNamespace, $eventPlugin = 1)
     {
+        //require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
         $sw = false;
-
+        //G::pr($this->_aPluginDetails);die;
         foreach ($this->_aPluginDetails as $namespace => $detail) {
             if ($namespace == $sNamespace) {
+                //G::pr($detail);die;
                 unset( $this->_aPluginDetails[$sNamespace] );
 
                 if ($eventPlugin == 1) {
-                    $plugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
-                    $this->_aPlugins[$detail->sNamespace] = $plugin;
-                    if (method_exists( $plugin, "disable" )) {
-                        $plugin->disable();
+                    //$plugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
+                    $this->_aPlugins[$detail->sNamespace] = $detail;
+                    if (method_exists( $detail, "disable" )) {
+                        $detail->disable();
                     }
                 }
 

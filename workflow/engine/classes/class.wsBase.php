@@ -899,6 +899,7 @@ class wsBase
      * @param $aAttachment = null
      * @param boolean $showMessage = true
      * @param int $delIndex = 0
+     * @param $config = array
      * @return $result will return an object
      */
     public function sendMessage(
@@ -912,13 +913,14 @@ class wsBase
         $appFields = null,
         $aAttachment = null,
         $showMessage = true,
-        $delIndex = 0
+        $delIndex = 0,
+    	$config = array()
     ) {
         try {
             if (!class_exists('System')) {
                 G::LoadClass('system');
             }
-            $aSetup = System::getEmailConfiguration();
+            $aSetup = !empty($config) ? $config : System::getEmailConfiguration();
 
             $oSpool = new spoolRun();
 

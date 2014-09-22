@@ -3324,7 +3324,7 @@ var validateForm = function(sRequiredFields) {
                         if (input.value != "") {
                             var pmindocmaxfilesize = input.getAttribute("pmindocmaxfilesize");
 
-                            if (pmindocmaxfilesize != null && pmindocmaxfilesize != "") {
+                            if (pmindocmaxfilesize != null && pmindocmaxfilesize != "" && pmindocmaxfilesize > 0) {
                                 var flagFilesize = inputDocumentVerifySize(parseInt(pmindocmaxfilesize), input);
 
                                 if (flagFilesize == 0) {

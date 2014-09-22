@@ -84,6 +84,13 @@ class workspaceTools
         CLI::logging("<*>   Updating Content Process took $final seconds.\n");
 
         $start = microtime(true);
+        CLI::logging("> check Mafe Requirements...\n");
+        $this->checkMafeRequirements($workSpace, $lang);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
+
+        $start = microtime(true);
         CLI::logging("> Updating cache view...\n");
         $this->upgradeCacheView($buildCacheView, true, $lang);
         $stop = microtime(true);
@@ -97,12 +104,63 @@ class workspaceTools
         $final = $stop - $start;
         CLI::logging("<*>   Backup log files Process took $final seconds.\n");
 
-        $start = microtime(true);
-        CLI::logging("> check Mafe Requirements...\n");
-        $this->checkMafeRequirements($workSpace, $lang);
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
+        CLI::logging("> Updating Files Manager...\n\n");
+        $this->upgradeFilesManager($workSpace);
+    }
+
+    /**
+     * Function upgradeFilesManager
+     * access public
+     */
+    public function upgradeFilesManager($workSpace) {
+    	$this->initPropel(true);
+    	$con = Propel::getConnection("root");
+    	$stmt = $con->createStatement();
+    	$sDirectory = glob(PATH_DATA . "sites/" . $workSpace . "/" . "mailTemplates/*");
+    	$sDirectoryPublic = glob(PATH_DATA . "sites/" . $workSpace . "/" . "public/*");
+    	$files = array();
+    	foreach($sDirectory as $mailTemplate) {
+    		if (is_dir($mailTemplate)) {
+    			$inner_files =  listFiles($mailTemplate);
+    			if (is_array($inner_files)) $files = array_merge($files, $inner_files);
+    		}
+    		if (is_file($mailTemplate)) {
+    			array_push($files, $mailTemplate);
+    		}
+    	}
+    	foreach($sDirectoryPublic as $publicFile) {
+    		if (is_dir($publicFile)) {
+    			$inner_files =  listFiles($publicFile);
+    			if (is_array($inner_files)) $files = array_merge($files, $inner_files);
+    		}
+    		if (is_file($publicFile)) {
+    			array_push($files, $publicFile);
+    		}
+    	}
+    	$sDir = PATH_DATA . "sites/" . $workSpace . "/" . "mailTemplates/";
+    	$sDirPublic = PATH_DATA . "sites/" . $workSpace . "/" . "public/";
+    	foreach ($files as $aFile) {
+    		if (strpos($aFile, $sDir) !== false){
+    			$processUid = current(explode("/", str_replace($sDir,'',$aFile)));
+    		} else {
+    			$processUid = current(explode("/", str_replace($sDirPublic,'',$aFile)));
+    		}
+    		$sql = "SELECT PROCESS_FILES.PRF_PATH FROM PROCESS_FILES WHERE PROCESS_FILES.PRF_PATH='" . $aFile ."'";
+    		$appRows = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+    		$fileUid = '';
+    		foreach ($appRows as $row) {
+    			$fileUid =  $row["PRF_PATH"];
+    		}
+    		if ($fileUid !== $aFile) {
+    			$sPkProcessFiles = G::generateUniqueID();
+    			$sDate = date('Y-m-d H:i:s');
+    			$sql = "INSERT INTO PROCESS_FILES (PRF_UID, PRO_UID, USR_UID, PRF_UPDATE_USR_UID,
+    			PRF_PATH, PRF_TYPE, PRF_EDITABLE, PRF_CREATE_DATE, PRF_UPDATE_DATE)
+    			VALUES ('".$sPkProcessFiles."', '".$processUid."', '00000000000000000000000000000001', '',
+    			'".$aFile."', 'file', 'true', '".$sDate."', NULL)";
+    			$stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+    		}
+    	}
     }
 
     /**

@@ -102,3 +102,15 @@ if ($RBAC->userCanAccess("PM_SETUP") == 1) {
   $G_TMP_MENU->AddIdRawOption("PHP_INFO", "../setup/systemInfo?option=php", G::LoadTranslation("ID_PHP_INFO"), "", "", "settings");
   //$G_TMP_MENU->AddIdRawOption("PHP_MAINTENANCE", "../admin/maintenance", 'Maintenance', "", "", "settings");
 }
+
+
+require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
+
+$enterprise = new enterprisePlugin('enterprise');
+
+if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
+    $enterprise->enable();
+}
+$enterprise->setup();
+
+
