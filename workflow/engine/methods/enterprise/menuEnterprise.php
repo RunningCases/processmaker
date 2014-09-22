@@ -20,11 +20,11 @@ if (class_exists("pmLicenseManager")) {
         $licStatusMsg = "&nbsp;<font color=\"red\">(" . $licenseStatusInfo["message"] . ")</font>";
     }
 
-    $G_TMP_MENU->AddIdRawOption("PMENTERPRISE", "../enterprise/addonsStore", "Enterprise Plugins Manager" . $licStatusMsg, "", "", "plugins");
+    $G_TMP_MENU->AddIdRawOption("PMENTERPRISE", "../enterprise/addonsStore", G::LoadTranslation('ID_MENU_NAME') . $licStatusMsg, "", "", "plugins");
 
     if (isset($pmLicenseManagerO->result) && ($pmLicenseManagerO->result == "OK")) {
         if (file_exists(PATH_HOME . "engine" . PATH_SEP . "methods" . PATH_SEP . "cases" . PATH_SEP . "casesListExtJs.php")) {
-            $G_TMP_MENU->AddIdRawOption("CASES_LIST_SETUP", "../enterprise/advancedTools/casesListSetup", "Cases Lists", "", "", "settings");
+            $G_TMP_MENU->AddIdRawOption("CASES_LIST_SETUP", "../cases/casesListSetup", G::LoadTranslation('ID_CASES_LIST'), "", "", "settings");
         }
     }
 }
