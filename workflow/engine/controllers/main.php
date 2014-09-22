@@ -379,7 +379,7 @@ class Main extends Controller
             $newPass = G::generate_password();
 
             $aData['USR_UID'] = $userData['USR_UID'];
-            $aData['USR_PASSWORD'] = md5( $newPass );
+            $aData['USR_PASSWORD'] = Bootstrap::hasPassword( $newPass );
 
             $rbacUser->update( $aData );
             $user->update( $aData );

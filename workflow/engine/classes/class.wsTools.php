@@ -1566,5 +1566,12 @@ class workspaceTools
         }
     }
 
+    public function changeHashPassword ($workspace,$response) {
+        G::LoadClass("patch");
+        $this->initPropel( true );
+
+        $oPluginRegistry =& PMPluginRegistry::getSingleton();
+        $oPluginRegistry->executeTriggers ( PM_HASH_PASSWORD , $response );
+    }
 }
 

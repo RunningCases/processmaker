@@ -430,7 +430,7 @@ Ext.onReady(function(){
               },
               {
                 xtype: 'textfield',
-                fieldLabel: '<span id="pathLogFileSpan"></span> ' + _('ID_INSTALLATION_LOG'),
+                fieldLabel: '<span id="pathLogFileSpan"></span> ' + _('ID_INSTALLATION_FILE_LOG'),
                 id: 'pathLogFile',
                 width: 430,
                 value: path_shared + 'log' + path_sep + 'install.log',

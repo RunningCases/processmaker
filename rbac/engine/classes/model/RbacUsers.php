@@ -80,10 +80,9 @@ class RbacUsers extends BaseRbacUsers
             if (is_array($rs) && isset($rs[0]) && is_object($rs[0]) && get_class($rs[0]) == 'RbacUsers') {
                 $aFields = $rs[0]->toArray(BasePeer::TYPE_FIELDNAME);
                 //verify password with md5, and md5 format
-                //if ( $aFields['USR_PASSWORD'] == md5 ($sPassword ) ) {
                 if (mb_strtoupper($sUsername, 'utf-8') === mb_strtoupper($aFields['USR_USERNAME'], 'utf-8')) {
-                    if ($aFields['USR_PASSWORD'] == md5($sPassword) ||
-                        'md5:' . $aFields['USR_PASSWORD'] === $sPassword) {
+                    error_log('contraseña bbdd... '. $aFields['USR_PASSWORD']);
+                    if( Bootstrap::verifyHashPassword($sPassword, $aFields['USR_PASSWORD']) ) {
                         if ($aFields['USR_DUE_DATE'] < date('Y-m-d')) {
                             return -4;
                         }

@@ -40,6 +40,14 @@ try {
             $pwd = trim($frm['USR_PASSWORD']);
         }
 
+        require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
+
+        $enterprise = new enterprisePlugin('enterprise');
+        
+        if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
+            $enterprise->enable();
+        }
+        $enterprise->setup();
         $uid = $RBAC->VerifyLogin($usr , $pwd);
         $RBAC->cleanSessionFiles(72); //cleaning session files older than 72 hours
 
