@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 2.5.2.3\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-09-02 10:32:26\n"
+"PO-Revision-Date: 2014-09-22 16:11:21\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -13202,6 +13202,12 @@ msgid "xxx"
 msgstr "xxx"
 
 # TRANSLATION
+# LABEL/ID_SIZE_VERY_LARGE_PERMITTED
+#: LABEL/ID_SIZE_VERY_LARGE_PERMITTED
+msgid "The size is very large as permitted!"
+msgstr "The size is very large as permitted!"
+
+# TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5
 msgid "ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login."
@@ -13496,8 +13502,8 @@ msgid "Database Configuration"
 msgstr "Database Configuration"
 
 # TRANSLATION
-# LABEL/ID_INSTALLATION_LOG
-#: LABEL/ID_INSTALLATION_LOG
+# LABEL/ID_INSTALLATION_FILE_LOG
+#: LABEL/ID_INSTALLATION_FILE_LOG
 msgid "Installation log file"
 msgstr "Installation log file"
 
@@ -16452,6 +16458,492 @@ msgstr "Index"
 #: LABEL/ID_ERROR_JS_NOT_AVAILABLE
 msgid "Your browser does not support javascript or it is disabled, please use a different browser or activate the javascript. Forms won't work totally because javascript is used."
 msgstr "Your browser does not support javascript or it is disabled, please use a different browser or activate the javascript. Forms won't work totally because javascript is used."
+
+# TRANSLATION
+# LABEL/ID_MAXIMUM_SIZE_FILE_REQUIRED
+#: LABEL/ID_MAXIMUM_SIZE_FILE_REQUIRED
+msgid "The maximum size file, is required!"
+msgstr "The maximum size file, is required!"
+
+# TRANSLATION
+# LABEL/ID_BEFORE_UPDATE
+#: LABEL/ID_BEFORE_UPDATE
+msgid "Before Upgrade"
+msgstr "Before Upgrade"
+
+# TRANSLATION
+# LABEL/ID_WAIT_INSTALLING_PLUGIN
+#: LABEL/ID_WAIT_INSTALLING_PLUGIN
+msgid "Please wait while installing the plugin..."
+msgstr "Please wait while installing the plugin..."
+
+# TRANSLATION
+# LABEL/ID_UPGRADING_PLUGIN
+#: LABEL/ID_UPGRADING_PLUGIN
+msgid "Please wait while upgrading the plugin..."
+msgstr "Please wait while upgrading the plugin..."
+
+# TRANSLATION
+# LABEL/ID_UPGRADE_FINISHED
+#: LABEL/ID_UPGRADE_FINISHED
+msgid "Upgrade finished."
+msgstr "Upgrade finished."
+
+# TRANSLATION
+# LABEL/ID_DOWNLOADING_UPGRADE
+#: LABEL/ID_DOWNLOADING_UPGRADE
+msgid "Downloading upgrade:"
+msgstr "Downloading upgrade:"
+
+# TRANSLATION
+# LABEL/ID_INSTALLATION_LOG
+#: LABEL/ID_INSTALLATION_LOG
+msgid "Installation log:"
+msgstr "Installation log:"
+
+# TRANSLATION
+# LABEL/ID_UPGRADE_STARTING
+#: LABEL/ID_UPGRADE_STARTING
+msgid "Please wait while the upgrade is starting..."
+msgstr "Please wait while the upgrade is starting..."
+
+# TRANSLATION
+# LABEL/ID_DOWNLOAD_MANUALLY
+#: LABEL/ID_DOWNLOAD_MANUALLY
+msgid "You can download it manually here"
+msgstr "You can download it manually here"
+
+# TRANSLATION
+# LABEL/ID_UNKNOWN
+#: LABEL/ID_UNKNOWN
+msgid "Unknown"
+msgstr "Unknown"
+
+# TRANSLATION
+# LABEL/ID_INSTALL_ERROR
+#: LABEL/ID_INSTALL_ERROR
+msgid "Install Error"
+msgstr "Install Error"
+
+# TRANSLATION
+# LABEL/ID_ERROR_INSTALLING_ADDON
+#: LABEL/ID_ERROR_INSTALLING_ADDON
+msgid "There was a problem installing this addon."
+msgstr "There was a problem installing this addon."
+
+# TRANSLATION
+# LABEL/ID_SERVER_ERROR
+#: LABEL/ID_SERVER_ERROR
+msgid "Server error"
+msgstr "Server error"
+
+# TRANSLATION
+# LABEL/ID_MARKET_SERVER_CONTACTING
+#: LABEL/ID_MARKET_SERVER_CONTACTING
+msgid "There was a problem contacting the market server."
+msgstr "There was a problem contacting the market server."
+
+# TRANSLATION
+# LABEL/ID_SALES_DEPARTMENT_REQUEST
+#: LABEL/ID_SALES_DEPARTMENT_REQUEST
+msgid "It will send a request to Sales Department, do you want to continue?"
+msgstr "It will send a request to Sales Department, do you want to continue?"
+
+# TRANSLATION
+# LABEL/ID_SENDING_REQUEST_SALES_DEPARTMENT
+#: LABEL/ID_SENDING_REQUEST_SALES_DEPARTMENT
+msgid "Sending request to ProcessMaker Sales Department, please wait..."
+msgstr "Sending request to ProcessMaker Sales Department, please wait..."
+
+# TRANSLATION
+# LABEL/ID_NO_INTERNET_CONECTION
+#: LABEL/ID_NO_INTERNET_CONECTION
+msgid "Enterprise Plugins Manager no connected to internet."
+msgstr "Enterprise Plugins Manager no connected to internet."
+
+# TRANSLATION
+# LABEL/ID_WAIT_WHILE_UPGRADING_PROCESSMAKER
+#: LABEL/ID_WAIT_WHILE_UPGRADING_PROCESSMAKER
+msgid "Please wait while upgrading ProcessMaker..."
+msgstr "Please wait while upgrading ProcessMaker..."
+
+# TRANSLATION
+# LABEL/ID_ERROR_UPGRADING_SYSTEM
+#: LABEL/ID_ERROR_UPGRADING_SYSTEM
+msgid "Error upgrading System."
+msgstr "Error upgrading System."
+
+# TRANSLATION
+# LABEL/ID_ERROR_CHECK_FOR_UPDATE_DONE
+#: LABEL/ID_ERROR_CHECK_FOR_UPDATE_DONE
+msgid "An error has occurred, press \"OK\" to check whether the system has been upgrade."
+msgstr "An error has occurred, press \"OK\" to check whether the system has been upgrade."
+
+# TRANSLATION
+# LABEL/ID_UPGRADE_LABEL
+#: LABEL/ID_UPGRADE_LABEL
+msgid "Upgrade"
+msgstr "Upgrade"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_LICENSE
+#: LABEL/ID_UPDATE_LICENSE
+msgid "Upload License"
+msgstr "Upload License"
+
+# TRANSLATION
+# LABEL/ID_SELECT_LICENSE_FILE
+#: LABEL/ID_SELECT_LICENSE_FILE
+msgid "Select a license file"
+msgstr "Select a license file"
+
+# TRANSLATION
+# LABEL/ID_LICENSE_FILE
+#: LABEL/ID_LICENSE_FILE
+msgid "License file"
+msgstr "License file"
+
+# TRANSLATION
+# LABEL/ID_WARNING_ENTERPRISE_LICENSE_MSG
+#: LABEL/ID_WARNING_ENTERPRISE_LICENSE_MSG
+msgid "Please select a valid license file."
+msgstr "Please select a valid license file."
+
+# TRANSLATION
+# LABEL/ID_WARNING_ENTERPRISE_LICENSE_MSG_DAT
+#: LABEL/ID_WARNING_ENTERPRISE_LICENSE_MSG_DAT
+msgid "The file doesn't have a .dat extension, please select another file."
+msgstr "The file doesn't have a .dat extension, please select another file."
+
+# TRANSLATION
+# LABEL/ID_UPDATING_LICENSE_MSG
+#: LABEL/ID_UPDATING_LICENSE_MSG
+msgid "Uploading the license file..."
+msgstr "Uploading the license file..."
+
+# TRANSLATION
+# LABEL/ID_SUCCESSFULLY_UPLOADED
+#: LABEL/ID_SUCCESSFULLY_UPLOADED
+msgid "Successfully uploaded."
+msgstr "Successfully uploaded."
+
+# TRANSLATION
+# LABEL/ID_WARNING_ERROR_UPDATING
+#: LABEL/ID_WARNING_ERROR_UPDATING
+msgid "Error uploading the license file."
+msgstr "Error uploading the license file."
+
+# TRANSLATION
+# LABEL/ID_UPLOAD_PLUGIN
+#: LABEL/ID_UPLOAD_PLUGIN
+msgid "Upload Plugin"
+msgstr "Upload Plugin"
+
+# TRANSLATION
+# LABEL/ID_SELECT_PLUGIN_FILE
+#: LABEL/ID_SELECT_PLUGIN_FILE
+msgid "Select a plugin file"
+msgstr "Select a plugin file"
+
+# TRANSLATION
+# LABEL/ID_PLUGIN_FILE
+#: LABEL/ID_PLUGIN_FILE
+msgid "Plugin file"
+msgstr "Plugin file"
+
+# TRANSLATION
+# LABEL/ID_SELECT_PLUGIN
+#: LABEL/ID_SELECT_PLUGIN
+msgid "Please select a plugin"
+msgstr "Please select a plugin"
+
+# TRANSLATION
+# LABEL/ID_INSTALLING_PLUGIN
+#: LABEL/ID_INSTALLING_PLUGIN
+msgid "Installing plugin..."
+msgstr "Installing plugin..."
+
+# TRANSLATION
+# LABEL/ID_ERROR_UPLOADING_PLUGIN
+#: LABEL/ID_ERROR_UPLOADING_PLUGIN
+msgid "Error uploading the plugin"
+msgstr "Error uploading the plugin"
+
+# TRANSLATION
+# LABEL/ID_CURRENT_VERSION
+#: LABEL/ID_CURRENT_VERSION
+msgid "Current version"
+msgstr "Current version"
+
+# TRANSLATION
+# LABEL/ID_NO_NEW_VERSIONS
+#: LABEL/ID_NO_NEW_VERSIONS
+msgid "No new versions available"
+msgstr "No new versions available"
+
+# TRANSLATION
+# LABEL/ID_CHECK_UPDATES
+#: LABEL/ID_CHECK_UPDATES
+msgid "Check for updates (you need to be connected to Internet)"
+msgstr "Check for updates (you need to be connected to Internet)"
+
+# TRANSLATION
+# LABEL/ID_YOUR_LICENSE
+#: LABEL/ID_YOUR_LICENSE
+msgid "Your license"
+msgstr "Your license"
+
+# TRANSLATION
+# LABEL/ID_CURRENT_LICENSE
+#: LABEL/ID_CURRENT_LICENSE
+msgid "Current license"
+msgstr "Current license"
+
+# TRANSLATION
+# LABEL/ID_LICENSE_SERVER
+#: LABEL/ID_LICENSE_SERVER
+msgid "License server"
+msgstr "License server"
+
+# TRANSLATION
+# LABEL/ID_ISSUED_TO
+#: LABEL/ID_ISSUED_TO
+msgid "Issued to"
+msgstr "Issued to"
+
+# TRANSLATION
+# LABEL/ID_EXPIRES
+#: LABEL/ID_EXPIRES
+msgid "Expires (days)"
+msgstr "Expires (days)"
+
+# TRANSLATION
+# LABEL/ID_IMPORT_LICENSE
+#: LABEL/ID_IMPORT_LICENSE
+msgid "Import license"
+msgstr "Import license"
+
+# TRANSLATION
+# LABEL/ID_RENEW
+#: LABEL/ID_RENEW
+msgid "Renew"
+msgstr "Renew"
+
+# TRANSLATION
+# LABEL/ID_UNISTALL
+#: LABEL/ID_UNISTALL
+msgid "Uninstall"
+msgstr "Uninstall"
+
+# TRANSLATION
+# LABEL/ID_UNISTALL_TIP
+#: LABEL/ID_UNISTALL_TIP
+msgid "Uninstall this plugin"
+msgstr "Uninstall this plugin"
+
+# TRANSLATION
+# LABEL/ID_CONFIRM_DELETE_PLUGIN
+#: LABEL/ID_CONFIRM_DELETE_PLUGIN
+msgid "[LABEL/ID_CONFIRM_DELETE_PLUGIN] Are you sure that you want to remove this plugin?"
+msgstr "Are you sure that you want to remove this plugin?"
+
+# TRANSLATION
+# LABEL/ID_CONFIRM_DELETE_PLUGIN_WARNING
+#: LABEL/ID_CONFIRM_DELETE_PLUGIN_WARNING
+msgid "Uninstalling the plugin, it can affect your others workspaces."
+msgstr "Uninstalling the plugin, it can affect your others workspaces."
+
+# TRANSLATION
+# LABEL/ID_ERROR_UNISTALLING
+#: LABEL/ID_ERROR_UNISTALLING
+msgid "Error uninstalling"
+msgstr "Error uninstalling"
+
+# TRANSLATION
+# LABEL/ID_ENABLE_PLUGIN_TIP
+#: LABEL/ID_ENABLE_PLUGIN_TIP
+msgid "Enable the selected addon"
+msgstr "Enable the selected addon"
+
+# TRANSLATION
+# LABEL/ID_ERROR_ENABLING
+#: LABEL/ID_ERROR_ENABLING
+msgid "Error enabling"
+msgstr "Error enabling"
+
+# TRANSLATION
+# LABEL/ID_DISABLE_PLUGIN_TIP
+#: LABEL/ID_DISABLE_PLUGIN_TIP
+msgid "Disable the selected plugin"
+msgstr "Disable the selected plugin"
+
+# TRANSLATION
+# LABEL/ID_ERROR_DISABLING
+#: LABEL/ID_ERROR_DISABLING
+msgid "Error disabling"
+msgstr "Error disabling"
+
+# TRANSLATION
+# LABEL/ID_ADMIN
+#: LABEL/ID_ADMIN
+msgid "Admin"
+msgstr "Admin"
+
+# TRANSLATION
+# LABEL/ID_ADMIN_PLUGIN_TIP
+#: LABEL/ID_ADMIN_PLUGIN_TIP
+msgid "Admin the selected plugin"
+msgstr "Admin the selected plugin"
+
+# TRANSLATION
+# LABEL/ID_PUBLISHER
+#: LABEL/ID_PUBLISHER
+msgid "Publisher"
+msgstr "Publisher"
+
+# TRANSLATION
+# LABEL/ID_LATEST_VERSION
+#: LABEL/ID_LATEST_VERSION
+msgid "Latest version"
+msgstr "Latest version"
+
+# TRANSLATION
+# LABEL/ID_BUY_NOW
+#: LABEL/ID_BUY_NOW
+msgid "Buy now"
+msgstr "Buy now"
+
+# TRANSLATION
+# LABEL/ID_INSTALLED
+#: LABEL/ID_INSTALLED
+msgid "Installed"
+msgstr "Installed"
+
+# TRANSLATION
+# LABEL/ID_INSTALL_NOW
+#: LABEL/ID_INSTALL_NOW
+msgid "Install now"
+msgstr "Install now"
+
+# TRANSLATION
+# LABEL/ID_UPGRADE_NOW
+#: LABEL/ID_UPGRADE_NOW
+msgid "Upgrade now"
+msgstr "Upgrade now"
+
+# TRANSLATION
+# LABEL/ID_INSTALLING
+#: LABEL/ID_INSTALLING
+msgid "Installing"
+msgstr "Installing"
+
+# TRANSLATION
+# LABEL/ID_CANCELLING
+#: LABEL/ID_CANCELLING
+msgid "Cancelling"
+msgstr "Cancelling"
+
+# TRANSLATION
+# LABEL/ID_INSTALL_FROM_FILE
+#: LABEL/ID_INSTALL_FROM_FILE
+msgid "Install from file"
+msgstr "Install from file"
+
+# TRANSLATION
+# LABEL/ID_INSTALL_FROM_FILE_PLUGIN_TIP
+#: LABEL/ID_INSTALL_FROM_FILE_PLUGIN_TIP
+msgid "Upload a plugin file"
+msgstr "Upload a plugin file"
+
+# TRANSLATION
+# LABEL/ID_REFRESH_LABEL_PLUGIN_TIP
+#: LABEL/ID_REFRESH_LABEL_PLUGIN_TIP
+msgid "Refresh the plugin list"
+msgstr "Refresh the plugin list"
+
+# TRANSLATION
+# LABEL/ID_ENTERPRISE_PLUGINS
+#: LABEL/ID_ENTERPRISE_PLUGINS
+msgid "Enterprise Plugins"
+msgstr "Enterprise Plugins"
+
+# TRANSLATION
+# LABEL/ID_CAUTION_NOTICE
+#: LABEL/ID_CAUTION_NOTICE
+msgid "<h3>Caution: Before continuing, please read these instructions carefully:</h3><ul style=\"font: 16px;\"><li><a href=\"http://wiki.processmaker.com/index.php/Upgrading_ProcessMaker\" onclick=\"window.open(this.href, \"_blank\"); return (false);\">Read the wiki</a> carefully regarding the automatic upgrade.</li><li>Make a backup of all ProcessMaker files, including the database before proceeding.</li><li>This automatic upgrade may not always work depending on your server configuration.</li><li>In case the upgrade fails, read the wiki regarding alternative methods of upgrading.</li></ul>"
+msgstr "<h3>Caution: Before continuing, please read these instructions carefully:</h3><ul style=\"font: 16px;\"><li><a href=\"http://wiki.processmaker.com/index.php/Upgrading_ProcessMaker\" onclick=\"window.open(this.href, \"_blank\"); return (false);\">Read the wiki</a> carefully regarding the automatic upgrade.</li><li>Make a backup of all ProcessMaker files, including the database before proceeding.</li><li>This automatic upgrade may not always work depending on your server configuration.</li><li>In case the upgrade fails, read the wiki regarding alternative methods of upgrading.</li></ul>"
+
+# TRANSLATION
+# LABEL/ID_AUDITLOG_DISPLAY
+#: LABEL/ID_AUDITLOG_DISPLAY
+msgid "Audit Log"
+msgstr "Audit Log"
+
+# TRANSLATION
+# LABEL/ID_ENABLE_AUDIT_LOG
+#: LABEL/ID_ENABLE_AUDIT_LOG
+msgid "Enable Audit Log"
+msgstr "Enable Audit Log"
+
+# TRANSLATION
+# LABEL/ID_AUDIT_LOG_ENABLED
+#: LABEL/ID_AUDIT_LOG_ENABLED
+msgid "Audit Log has been enabled"
+msgstr "Audit Log has been enabled"
+
+# TRANSLATION
+# LABEL/ID_AUDIT_LOG_DISABLED
+#: LABEL/ID_AUDIT_LOG_DISABLED
+msgid "Audit Log has been disabled"
+msgstr "Audit Log has been disabled"
+
+# TRANSLATION
+# LABEL/ID_AUDIT_LOG_DETAILS_1
+#: LABEL/ID_AUDIT_LOG_DETAILS_1
+msgid "Audit Log details1"
+msgstr "Audit Log details1"
+
+# TRANSLATION
+# LABEL/ID_AUDIT_LOG_DETAILS_2
+#: LABEL/ID_AUDIT_LOG_DETAILS_2
+msgid "Audit Log details 2"
+msgstr "Audit Log details 2"
+
+# TRANSLATION
+# LABEL/ID_PRIVATE
+#: LABEL/ID_PRIVATE
+msgid "Private"
+msgstr "Private"
+
+# TRANSLATION
+# LABEL/ID_CASES_LIST
+#: LABEL/ID_CASES_LIST
+msgid "[LABEL/ID_CASES_LIST] Cases Lists"
+msgstr "Cases Lists"
+
+# TRANSLATION
+# LABEL/ID_MENU_NAME
+#: LABEL/ID_MENU_NAME
+msgid "Enterprise Plugins Manager"
+msgstr "Enterprise Plugins Manager"
+
+# TRANSLATION
+# LABEL/ID_LEFT
+#: LABEL/ID_LEFT
+msgid "left"
+msgstr "left"
+
+# TRANSLATION
+# LABEL/ID_CENTER
+#: LABEL/ID_CENTER
+msgid "center"
+msgstr "center"
+
+# TRANSLATION
+# LABEL/ID_RIGHT
+#: LABEL/ID_RIGHT
+msgid "right"
+msgstr "right"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
@@ -30500,7 +30992,7 @@ msgstr "File"
 # setup/upgrade.xml?UPGRADE
 # setup/upgrade.xml
 #: button - UPGRADE
-msgid "Upgrade"
+msgid "[setup/upgrade.xml?UPGRADE] Upgrade"
 msgstr "Upgrade"
 
 # setup/uplogo.xml?TITLE1
