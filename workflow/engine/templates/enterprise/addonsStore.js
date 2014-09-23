@@ -732,7 +732,6 @@ Ext.onReady(function() {
           }
 
           if (sw == 1) {
-            var pm = PROCESSMAKER_URL;
             uploadForm.getForm().submit({
               url: "../enterprise/addonsStoreAction",
               params: {
@@ -740,10 +739,8 @@ Ext.onReady(function() {
               },
               waitMsg: _('ID_UPDATING_LICENSE_MSG'),
               success: function (form, o) {
-                //Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_SUCCESSFULLY_UPLOADED'));
-                //parent.parent.window.location.href = newLocation();
                 Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_SUCCESSFULLY_UPLOADED'), function () {
-                    parent.parent.window.location.href = PROCESSMAKER_URL + (SYS_SKIN.substring(0,2) == 'ux')? "/main/login" :"/setup/login/login";
+                    parent.parent.window.location.href = newLocation()
                 });
               },
               failure: function (form, o) {
