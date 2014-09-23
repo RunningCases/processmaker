@@ -132,7 +132,7 @@
     </vendor>
     <column name="USR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default="" />
     <column name="USR_USERNAME" type="VARCHAR" size="100" required="true" default="" />
-    <column name="USR_PASSWORD" type="VARCHAR" size="32" required="true" default="" />
+    <column name="USR_PASSWORD" type="VARCHAR" size="128" required="true" default="" />
     <column name="USR_FIRSTNAME" type="VARCHAR" size="50" required="true" default="" />
     <column name="USR_LASTNAME" type="VARCHAR" size="50" required="true" default="" />
     <column name="USR_EMAIL" type="VARCHAR" size="100" required="true" default="" />

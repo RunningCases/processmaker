@@ -985,7 +985,7 @@ class PMPluginRegistry
                 $classFile = '';
 
                 foreach ($this->_aFolders as $row => $folder) {
-                    $fname = PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
+                    $fname = $folder->sNamespace == 'enterprise' ? PATH_CORE . 'classes' . PATH_SEP . 'class.' . $folder->sFolderName . '.php' : PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
                     if ($detail->sNamespace == $folder->sNamespace && file_exists( $fname )) {
                         $found = true;
                         $classFile = $fname;
@@ -1021,11 +1021,12 @@ class PMPluginRegistry
             if ($triggerId == $detail->sTriggerId) {
                 //review all folders registered for this namespace
                 foreach ($this->_aFolders as $row => $folder) {
-                    $fname = PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
+                    $fname = $folder->sNamespace == 'enterprise' ? PATH_CORE . 'classes' . PATH_SEP . 'class.' . $folder->sFolderName . '.php' : PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
                     if ($detail->sNamespace == $folder->sNamespace && file_exists( $fname )) {
                         $found = true;
                     }
                 }
+
             }
         }
         return $found;

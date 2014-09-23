@@ -306,7 +306,7 @@ class Installer extends Controller
         $info->pathLogFile->result = file_exists( $_REQUEST['pathLogFile'] );
 
         if ($info->pathLogFile->result) {
-            $info->pathLogFile->message = G::LoadTranslation('ID_INSTALLATION_LOG');
+            $info->pathLogFile->message = G::LoadTranslation('ID_INSTALLATION_FILE_LOG');
         }
 
         if ($info->success) {
