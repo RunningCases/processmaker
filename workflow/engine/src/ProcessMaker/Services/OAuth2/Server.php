@@ -295,7 +295,7 @@ class Server implements iAuthenticate
                     $lifetime = 1440;
                 }
 
-                setcookie($session->getSessionName(), $session->getSessionId(), time() + $lifetime, "/");
+                setcookie($session->getSessionName(), $_COOKIE[$session->getSessionName()], time() + $lifetime, "/");
             }
         }
 
