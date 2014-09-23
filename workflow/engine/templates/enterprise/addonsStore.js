@@ -1017,7 +1017,7 @@ Ext.onReady(function() {
       value: license_expires+'/'+license_span+" ("+license_start_date+" / "+license_end_date+")",
       hidden: !licensed,
       hideLabel: !licensed
-      },
+      }
     ],
     buttons : [
     {
