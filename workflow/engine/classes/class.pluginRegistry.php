@@ -259,7 +259,7 @@ class PMPluginRegistry
                 $this->registerFolder( $sNamespace, $sNamespace, $detail->sPluginFolder );
                 //register the default directory, later we can have more
                 $this->_aPluginDetails[$sNamespace]->enabled = true;
-                $oPlugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
+                $oPlugin = $detail;
                 $this->_aPlugins[$detail->sNamespace] = $oPlugin;
                 if (method_exists( $oPlugin, 'enable' )) {
                     $oPlugin->enable();
