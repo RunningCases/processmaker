@@ -20,7 +20,7 @@ Scenario Outline: Get the case schedulers list when there are exactly zero case 
  
     | test_description                                    | project                          | record |
     | Get case scheduler of process Test Michelangelo     | 1265557095225ff5c688f46031700471 | 0      |
-    | Get case scheduler of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 0      |
+    | Get case scheduler of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 1      |
   
 
 Scenario Outline: Create any case scheduler for a project
@@ -122,7 +122,7 @@ Scenario Outline: Get the case schedulers list when there are exactly 16 case sc
  
       | test_description                                    | project                          | record |
       | Get case scheduler of process Test Michelangelo     | 1265557095225ff5c688f46031700471 | 16     |
-      | Get case scheduler of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 16     |
+      | Get case scheduler of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 17     |
   
 
 Scenario Outline: Update the case schedulers for a project and then check if the values had changed
