@@ -57,7 +57,7 @@ $rsCriteria = ProcessPeer::doSelectRS($criteria);
 $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
 if (!$rsCriteria->next()) {
-    echo "You not have privileges to edit this process.";
+    echo "You don't have privileges to edit this process.";
     exit(0);
 }
 
