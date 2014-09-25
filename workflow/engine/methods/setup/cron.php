@@ -73,16 +73,6 @@ foreach ($workspaces as $index => $workspace) {
 
 sort( $arrayAux );
 
-$arrayWorkspace = array ();
-
-foreach ($arrayAux as $index => $value) {
-    $arrayWorkspace[] = array ($value,$value
-    );
-}
-
-array_unshift( $arrayWorkspace, array ("ALL",G::LoadTranslation( "ID_ALL_WORKSPACES" )
-) );
-
 //Status
 $arrayStatus = array (array ("ALL",G::LoadTranslation( "ID_ALL" )
 ),array ("COMPLETED",G::LoadTranslation( "COMPLETED" )
@@ -95,7 +85,6 @@ $oHeadPublisher->addContent( "setup/cron" ); //Adding a html file .html
 $oHeadPublisher->addExtJsScript( "setup/cron", false ); //Adding a javascript file .js
 $oHeadPublisher->assign( "CONFIG", $config );
 $oHeadPublisher->assign( "CRON", $cronInfo );
-$oHeadPublisher->assign( "WORKSPACE", $arrayWorkspace );
 $oHeadPublisher->assign( "STATUS", $arrayStatus );
 
 G::RenderPage( "publish", "extJs" );
