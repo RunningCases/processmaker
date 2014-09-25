@@ -33,7 +33,7 @@ try {
 $confReassignList = getReassignList();
 
 // evaluates an action and the configuration for the list that will be rendered
-$config = getAdditionalFields( $action, (class_exists( 'enterprisePlugin' ) ? $confCasesList : array ()) );
+$config = getAdditionalFields( $action, $confCasesList );
 $columns = $config['caseColumns'];
 $readerFields = $config['caseReaderFields'];
 $reassignColumns = $confReassignList['caseColumns'];

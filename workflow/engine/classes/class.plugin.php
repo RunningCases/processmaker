@@ -43,8 +43,7 @@ define('PM_SINGLE_SIGN_ON',          1014);
 define('PM_GET_CASES_AJAX_LISTENER', 1015);
 define('PM_BEFORE_CREATE_USER',      1016);
 define('PM_AFTER_LOGIN',             1017);
-
-
+define('PM_HASH_PASSWORD',           1018);
 
 /**
  * @package workflow.engine.classes

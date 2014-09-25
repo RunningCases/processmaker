@@ -105,6 +105,12 @@ class enterprisePlugin extends PMPlugin
 
     public function install()
     {
+        $pluginRegistry = &PMPluginRegistry::getSingleton();
+
+        $pluginDetail = $pluginRegistry->getPluginDetails("enterprise.php");
+        $pluginRegistry->enablePlugin($pluginDetail->sNamespace);
+
+        file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
     }
 
     public function uninstall()
@@ -113,25 +119,16 @@ class enterprisePlugin extends PMPlugin
 
     public function setup()
     {
-        $urlPart = substr(SYS_SKIN, 0, 2) == 'ux' && SYS_SKIN != 'uxs' ? 'main/login' : 'login/login';
-
         $this->registerMenu("setup", "menuEnterprise.php");
-
-        //including the file inside the enterprise folder
+        ////including the file inside the enterprise folder
         require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
         $this->registerTrigger(PM_LOGIN, "enterpriseSystemUpdate");
-
-        $licenseManager = &pmLicenseManager::getSingleton();
-        $oHeadPublisher = &headPublisher::getSingleton();
-
+        $this->registerTrigger(PM_HASH_PASSWORD, 'setHashPassword');
     }
 
     public function enable()
     {
         $this->setConfiguration();
-        $pluginRegistry = &PMPluginRegistry::getSingleton();
-
-        file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
 
         require_once (PATH_CORE . 'classes/model/AddonsStore.php');
         AddonsStore::checkLicenseStore();
@@ -347,6 +344,25 @@ class enterprisePlugin extends PMPlugin
 
             fclose($file);
         }
+    }
+
+    public function hashPassword ($pass, $previous=false)
+    {
+        G::LoadClass( "configuration" );
+        $config= new Configurations();
+        $typeEncrypt = $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
+        $encrypt = 'md5';
+        if ($typeEncrypt != null) {
+            if (isset($typeEncrypt['current']) && $typeEncrypt['current'] != '') {
+                $encrypt = $typeEncrypt['current'];
+            }
+            if ($previous && isset($typeEncrypt['previous']) && $typeEncrypt['previous'] != '' ) {
+                $encrypt = $typeEncrypt['previous'];
+            }
+        }
+        eval("\$var = hash('" . $encrypt . "', '" . $pass . "');");
+
+        return $var;
     }
 }
 

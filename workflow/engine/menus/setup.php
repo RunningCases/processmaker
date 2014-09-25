@@ -109,6 +109,7 @@ require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enter
 $enterprise = new enterprisePlugin('enterprise');
 
 if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
+    $enterprise->install();
     $enterprise->enable();
 }
 $enterprise->setup();

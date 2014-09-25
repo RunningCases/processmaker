@@ -130,7 +130,7 @@ switch ($_POST['action']) {
                 $form['USR_NEW_PASS'] = '';
             }
             if ($form['USR_NEW_PASS'] != '') {
-                $form['USR_PASSWORD'] = md5($form['USR_NEW_PASS']);
+                $form['USR_PASSWORD'] = Bootstrap::hasPassword($form['USR_NEW_PASS']);
             }
             if (!isset($form['USR_CITY'])) {
                 $form['USR_CITY'] = '';
@@ -214,7 +214,7 @@ switch ($_POST['action']) {
                  */
                 require_once 'classes/model/UsersProperties.php';
                 $oUserProperty = new UsersProperties();
-                $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($aData['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array(md5($aData['USR_PASSWORD'])))));
+                $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($aData['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array(Bootstrap::hasPassword($aData['USR_PASSWORD'])))));
                 $aUserProperty['USR_LOGGED_NEXT_TIME'] = $form['USR_LOGGED_NEXT_TIME'];
                 $oUserProperty->update($aUserProperty);
             } else {

@@ -259,7 +259,11 @@ class PMPluginRegistry
                 $this->registerFolder( $sNamespace, $sNamespace, $detail->sPluginFolder );
                 //register the default directory, later we can have more
                 $this->_aPluginDetails[$sNamespace]->enabled = true;
-                $oPlugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
+                if (class_exists($detail->sClassName)) {
+                    $oPlugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );    
+                } else {
+                    $oPlugin = $detail;
+                }
                 $this->_aPlugins[$detail->sNamespace] = $oPlugin;
                 if (method_exists( $oPlugin, 'enable' )) {
                     $oPlugin->enable();
@@ -985,7 +989,7 @@ class PMPluginRegistry
                 $classFile = '';
 
                 foreach ($this->_aFolders as $row => $folder) {
-                    $fname = PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
+                    $fname = $folder->sNamespace == 'enterprise' ? PATH_CORE . 'classes' . PATH_SEP . 'class.' . $folder->sFolderName . '.php' : PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
                     if ($detail->sNamespace == $folder->sNamespace && file_exists( $fname )) {
                         $found = true;
                         $classFile = $fname;
@@ -1021,11 +1025,12 @@ class PMPluginRegistry
             if ($triggerId == $detail->sTriggerId) {
                 //review all folders registered for this namespace
                 foreach ($this->_aFolders as $row => $folder) {
-                    $fname = PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
+                    $fname = $folder->sNamespace == 'enterprise' ? PATH_CORE . 'classes' . PATH_SEP . 'class.' . $folder->sFolderName . '.php' : PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
                     if ($detail->sNamespace == $folder->sNamespace && file_exists( $fname )) {
                         $found = true;
                     }
                 }
+
             }
         }
         return $found;
