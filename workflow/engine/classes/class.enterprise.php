@@ -1,5 +1,5 @@
 <?php
-require_once (PATH_PLUGINS . "enterprise" . PATH_SEP . "classes" . PATH_SEP . "class.enterpriseUtils.php");
+require_once ("classes" . PATH_SEP . "class.enterpriseUtils.php");
 
 if (!defined("PM_VERSION")) {
     if (file_exists(PATH_METHODS . "login/version-pmos.php")) {
@@ -13,7 +13,7 @@ class enterpriseClass extends PMPlugin
 {
     public function __construct()
     {
-        set_include_path(PATH_PLUGINS . 'enterprise' . PATH_SEPARATOR . get_include_path());
+        set_include_path(PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEPARATOR . get_include_path());
     }
 
     public function getFieldsForPageSetup()
@@ -117,9 +117,48 @@ class enterpriseClass extends PMPlugin
             }
         }
     }
+
+    public function setHashPassword ($object)
+    {
+        $type = array('md5', 'sha256');
+        if (!in_array($object->hash, $type)) {
+            throw new Exception( 'Type: ' . $object->hash. ' No valid.');
+            return false;
+        }
+
+        G::LoadClass( "configuration" );
+        $config = new Configurations();
+        $typeEncrypt = $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
+        if ($typeEncrypt == null) {
+            $typeEncrypt = array('current' => $object->hash, 'previous' => 'md5');
+        } else {
+            $typeEncrypt['previous'] = $typeEncrypt['current'];
+            $typeEncrypt['current'] = $object->hash;
+        }
+        if ($object->hash != $typeEncrypt['previous']) {
+            $config->aConfig = $typeEncrypt;
+            $config->saveConfig('ENTERPRISE_SETTING_ENCRYPT', '');
+        }
+
+        require_once 'classes/model/RbacUsersPeer.php';
+        require_once 'classes/model/UsersProperties.php';
+        $userProperty = new UsersProperties();
+
+        $criteria = new Criteria($object->workspace->dbInfo['DB_RBAC_NAME']);
+        $criteria->add(RbacUsersPeer::USR_STATUS, 0, Criteria::NOT_EQUAL);
+        $dataset = RbacUsersPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        
+        while ($dataset->next()) {
+            $row = $dataset->getRow();
+            $property = $userProperty->loadOrCreateIfNotExists($row['USR_UID'], array());
+            $property['USR_LOGGED_NEXT_TIME'] = 1;
+            $userProperty->update($property);
+        }
+    }
 }
 
 if (!class_exists("pmLicenseManager")) {
-    require_once (PATH_PLUGINS . 'enterprise/class.pmLicenseManager.php');
+    require_once ("classes" . PATH_SEP . "class.pmLicenseManager.php");
 }
 

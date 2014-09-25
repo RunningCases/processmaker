@@ -35,7 +35,7 @@ Scenario Outline: Get a list public folder of process files manager
   Examples:
   | test_description                          | project                          | records |
   | Get list of process Test Michelangelo     | 1265557095225ff5c688f46031700471 | 0       |
-  | Get list of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 2       |
+  | Get list of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 4       |
 
 
 Scenario Outline: Get a list templates folder of process files manager

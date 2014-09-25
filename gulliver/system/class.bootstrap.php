@@ -2859,5 +2859,30 @@ class Bootstrap
             die();
         }
     }
+
+    public function hasPassword($pass, $previous=false) {
+        $passEncrypt = md5($pass);
+        try {
+            require_once PATH_CORE .'methods' . PATH_SEP .'enterprise/enterprise.php';
+            $passEncrypt = enterprisePlugin::hashPassword($pass, $previous);
+        } catch (Exception $e) {
+            
+        }
+
+        return $passEncrypt;
+    }
+    
+    public function verifyHashPassword ($pass, $userPass)
+    {
+        //$verify = Bootstrap::hasPassword($pass);
+        if (Bootstrap::hasPassword($pass) == $userPass) {
+            return true;
+        }
+        if (Bootstrap::hasPassword($pass, true) == $userPass) {
+            return true;
+        }
+        return false;
+    }
+
 }
 

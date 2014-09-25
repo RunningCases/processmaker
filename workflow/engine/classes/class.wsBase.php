@@ -1189,7 +1189,7 @@ class wsBase
             $arrayData = array ();
 
             $arrayData["USR_USERNAME"] = $userName;
-            $arrayData["USR_PASSWORD"] = md5( $password );
+            $arrayData["USR_PASSWORD"] = Bootstrap::hasPassword( $password );
             $arrayData["USR_FIRSTNAME"] = $firstName;
             $arrayData["USR_LASTNAME"] = $lastName;
             $arrayData["USR_EMAIL"] = $email;
@@ -1380,7 +1380,7 @@ class wsBase
             }
 
             if (! empty( $password )) {
-                $arrayData["USR_PASSWORD"] = md5( $password );
+                $arrayData["USR_PASSWORD"] = Bootstrap::hasPassword( $password );
             }
 
             //Update user
