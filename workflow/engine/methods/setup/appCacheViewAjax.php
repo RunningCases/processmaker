@@ -257,7 +257,7 @@ switch ($request) {
             $conf->aConfig = $confParams;
             $conf->saveConfig( 'APP_CACHE_VIEW_ENGINE', '', '', '' );
 
-            $response = new StdClass();
+            $result = new StdClass();
             $result->success = true;
             $result->msg = G::LoadTranslation('ID_TITLE_COMPLETED');
 
