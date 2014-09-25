@@ -43,7 +43,7 @@ try {
         require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
 
         $enterprise = new enterprisePlugin('enterprise');
-        
+
         if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
             $enterprise->enable();
         }
@@ -100,7 +100,7 @@ try {
             $errLabel = 'WRONG_LOGIN_CREDENTIALS';
         }
 
-        $_SESSION["USERNAME_PREVIOUS1"] = $_SESSION["USERNAME_PREVIOUS2"];
+        $_SESSION["USERNAME_PREVIOUS1"] = (isset($_SESSION["USERNAME_PREVIOUS2"]))? $_SESSION["USERNAME_PREVIOUS2"] : "";
         $_SESSION["USERNAME_PREVIOUS2"] = $usr;
 
         if (!isset($uid) || $uid < 0) {

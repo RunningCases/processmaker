@@ -186,13 +186,15 @@ class adminProxy extends HttpProxyController
                         $message  = G::loadTranslation('ID_CALENDAR_INVALID_NAME');
                         break;
                     }
-                    if ($aDefinitions['CALENDAR_NAME'] != $_POST['name']) {
-                        $validated = true;
-                    } else {
-                        if ($aDefinitions['CALENDAR_NAME'] != $oldName) {
-                            $validated = false;
-                            $message  = G::loadTranslation('ID_CALENDAR_INVALID_NAME');
-                            break;
+                    if (isset($aDefinitions['CALENDAR_NAME'])) {
+                        if ($aDefinitions['CALENDAR_NAME'] != $_POST['name']) {
+                            $validated = true;
+                        } else {
+                            if ($aDefinitions['CALENDAR_NAME'] != $oldName) {
+                                $validated = false;
+                                $message  = G::loadTranslation('ID_CALENDAR_INVALID_NAME');
+                                break;
+                            }
                         }
                     }
                 }
