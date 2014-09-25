@@ -42,12 +42,11 @@ try {
 
         require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
 
-        $enterprise = new enterprisePlugin('enterprise');
-
         if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
+            $enterprise = new enterprisePlugin('enterprise');
             $enterprise->enable();
+            $enterprise->setup();
         }
-        $enterprise->setup();
         $uid = $RBAC->VerifyLogin($usr , $pwd);
         $RBAC->cleanSessionFiles(72); //cleaning session files older than 72 hours
 
@@ -161,11 +160,13 @@ try {
 
         //Execute the SSO Script from plugin
         $oPluginRegistry =& PMPluginRegistry::getSingleton();
+        $lSession="";
+        $loginInfo = new loginInfo ($usr, $pwd, $lSession  );
         if ($oPluginRegistry->existsTrigger ( PM_LOGIN )) {
-            $lSession="";
-            $loginInfo = new loginInfo ($usr, $pwd, $lSession  );
             $oPluginRegistry->executeTriggers ( PM_LOGIN , $loginInfo );
         }
+        G::LoadClass("enterprise");
+        enterpriseClass::enterpriseSystemUpdate($loginInfo);
         $_SESSION['USER_LOGGED']  = $uid;
         $_SESSION['USR_USERNAME'] = $usr;
     } else {

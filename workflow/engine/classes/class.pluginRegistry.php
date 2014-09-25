@@ -1162,7 +1162,7 @@ class PMPluginRegistry
                         } else {
                             $aux = explode( chr( 92 ), $detail->sFilename );
                         }
-                        $sFilename = PATH_PLUGINS . $aux[count( $aux ) - 1];
+                        $sFilename = (($detail->sNamespace == 'enterprise') ? PATH_CORE. 'methods' . PATH_SEP . 'enterprise' . PATH_SEP : PATH_PLUGINS) . $aux[count( $aux ) - 1];
                         if (! file_exists( $sFilename )) {
                             continue;
                         }
