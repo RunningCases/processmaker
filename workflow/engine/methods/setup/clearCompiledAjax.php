@@ -1,5 +1,6 @@
 <?php
 try {
+    $response = new stdClass;
     if (isset( $_POST['javascriptCache'] ) || isset( $_POST['metadataCache'] ) || isset( $_POST['htmlCache'] )) {
 
         if (isset( $_POST['javascriptCache'] )) {
