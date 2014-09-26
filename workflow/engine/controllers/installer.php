@@ -562,10 +562,10 @@ class Installer extends Controller
     public function setGrantPrivilegesMySQL ($psUser, $psPassword, $psDatabase, $host)
     {
         $host = ($host == 'localhost' || $host == '127.0.0.1' ? 'localhost' : '%');
-                
+
         $sql = sprintf( "GRANT ALL PRIVILEGES ON `%s`.* TO %s@'%s' IDENTIFIED BY '%s' WITH GRANT OPTION", $psDatabase, $psUser, $host, $psPassword );
         $query = @mysql_query( $sql, $this->link );
-        
+
         if (! $query) {
             $errorMessage = mysql_error( $this->link );
             $this->installLog( G::LoadTranslation('ID_MYSQL_ERROR', SYS_LANG, Array($errorMessage) ) );
@@ -644,7 +644,7 @@ class Installer extends Controller
         $adminPassword = trim( $_REQUEST['adminPassword'] );
         $adminUsername = trim( $_REQUEST['adminUsername'] );
         $deleteDB = ($_REQUEST['deleteDB'] == 'true');
-        $userLogged = ($_REQUEST['userLogged'] == 'true');
+        $userLogged = (isset($_REQUEST['userLogged']) ? ($_REQUEST['userLogged'] == 'true') : false);
 
         if (substr( $pathShared, - 1 ) != '/') {
             $pathShared .= '/';
@@ -712,7 +712,7 @@ class Installer extends Controller
             $dbText .= sprintf( "  define ('DB_REPORT_NAME', '%s' );\n", $wf_workpace );
             $dbText .= sprintf( "  define ('DB_REPORT_USER', '%s' );\n", $wf );
             $dbText .= sprintf( "  define ('DB_REPORT_PASS', '%s' );\n", $wfPass );
-            
+
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $dbText .= "\n";
                 $dbText .= "  define ('PARTNER_FLAG', " . ((defined('PARTNER_FLAG')) ? PARTNER_FLAG : ((isset($_REQUEST['PARTNER_FLAG'])) ? $_REQUEST['PARTNER_FLAG']:'false')) . ");\n";
@@ -889,7 +889,7 @@ class Installer extends Controller
             // inserting the outh_client
             $query = sprintf( "USE %s;", $wf );
             $this->mysqlQuery( $query );
-            $query = ( "INSERT INTO OAUTH_CLIENTS (CLIENT_ID,CLIENT_SECRET,CLIENT_NAME,CLIENT_DESCRIPTION,CLIENT_WEBSITE,REDIRECT_URI,USR_UID ) VALUES 
+            $query = ( "INSERT INTO OAUTH_CLIENTS (CLIENT_ID,CLIENT_SECRET,CLIENT_NAME,CLIENT_DESCRIPTION,CLIENT_WEBSITE,REDIRECT_URI,USR_UID ) VALUES
                 ('x-pm-local-client','179ad45c6ce2cb97cf1029e212046e81','PM Web Designer','ProcessMaker Web Designer App','www.processmaker.com','" . $endpoint . "','00000000000000000000000000000001' )");
             $this->mysqlQuery( $query );
 
@@ -983,7 +983,7 @@ class Installer extends Controller
             //CREATE users and GRANT Privileges
             $wfPass = G::generate_password( 12 );
             $this->setGrantPrivilegesMSSQL( $wf, $wfPass, $wf );
-            
+
             //Generate the db.php file and folders
             $path_site = $pathShared . "/sites/" . $workspace . "/";
             $db_file = $path_site . "db.php";

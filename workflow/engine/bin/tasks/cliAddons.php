@@ -114,31 +114,13 @@ function change_hash($command, $opts)
     Bootstrap::LoadClass("plugin");
     foreach ($workspaces as $workspace) {
         CLI::logging("Checking workspace: ".pakeColor::colorize($workspace->name, "INFO")."\n");
-        $path = PATH_DATA . 'sites' . PATH_SEP . $workspace->name . PATH_SEP;
         try {
-            if (file_exists($path . 'plugin.singleton')) {
-                define('SYS_SYS', $workspace->name);
-                define('PATH_DATA_SITE', $path);
-
-                $oPluginRegistry =& PMPluginRegistry::getSingleton();
-                $oPluginRegistry->setupPlugins();
-                $oPluginRegistry->unSerializeInstance(file_get_contents($path . 'plugin.singleton'));
-                $oPluginRegistry =& PMPluginRegistry::getSingleton();
-                $oPluginRegistry->unSerializeInstance(file_get_contents($path . 'plugin.singleton'));
-
-                if ($oPluginRegistry->existsTrigger ( PM_HASH_PASSWORD )) {
-                    $response = new stdclass();
-                    $response->workspace = $workspace;
-                    $response->hash = $hash;
-                    $workspace->changeHashPassword($workspace->name, $response);
-                    $workspace->close();
-                    CLI::logging(pakeColor::colorize("Changed...", "ERROR") . "\n");
-                } else {
-                    CLI::logging(pakeColor::colorize("You can't use the \"change-password-hash-method\" option because the license has expired or your workspace doesn't have the Enteprise plugin enabled.", "ERROR") . "\n");
-                }
-            } else {
-                CLI::logging(pakeColor::colorize("You can't use the \"change-password-hash-method\" option because the license has expired or your workspace doesn't have the Enteprise plugin enabled.", "INFO") . "\n");
-            }
+            $response = new stdclass();
+            $response->workspace = $workspace;
+            $response->hash = $hash;
+            $workspace->changeHashPassword($workspace->name, $response);
+            $workspace->close();
+            CLI::logging(pakeColor::colorize("Changed...", "ERROR") . "\n");
         } catch (Exception $e) {
             echo "> Error:   ".CLI::error($e->getMessage()) . "\n";
         }

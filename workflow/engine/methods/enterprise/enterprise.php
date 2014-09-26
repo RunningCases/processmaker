@@ -24,7 +24,7 @@ class enterprisePlugin extends PMPlugin
         $this->sFriendlyName = "ProcessMaker Enterprise Edition";
         $this->sDescription  = "ProcessMaker Enterprise Edition $VERSION";
         $this->sPluginFolder = "enterprise";
-        $this->sSetupPage    = "../enterprise/pluginsList.php";
+        $this->sSetupPage    = "../enterprise/addonsStore.php";
         $this->iVersion      = $VERSION;
         $this->iPMVersion    = "2.0.31";
         $this->aDependences  = null;
@@ -119,11 +119,12 @@ class enterprisePlugin extends PMPlugin
 
     public function setup()
     {
-        $this->registerMenu("setup", "menuEnterprise.php");
-        ////including the file inside the enterprise folder
-        require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-        $this->registerTrigger(PM_LOGIN, "enterpriseSystemUpdate");
-        $this->registerTrigger(PM_HASH_PASSWORD, 'setHashPassword');
+        if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
+            $pluginRegistry = &PMPluginRegistry::getSingleton();
+            $pluginDetail = $pluginRegistry->getPluginDetails("enterprise.php");
+            $pluginRegistry->enablePlugin($pluginDetail->sNamespace);
+            file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
+        }
     }
 
     public function enable()

@@ -3019,6 +3019,7 @@ class Processes
         $oData->processVariables = $this->getProcessVariables($sProUid);
 
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
+        $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
         //krumo ($oData);die;
         //$oJSON = new Services_JSON();
