@@ -27,7 +27,7 @@ function runBgProcessmaker($task, $log)
 
     $elem = array_shift($data); //delete first element
 
-    run_addon_install($data);
+    run_addon_core_install($data);
 }
 
 try {
