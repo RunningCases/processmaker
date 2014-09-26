@@ -1686,7 +1686,7 @@ class workspaceTools
             }
             CLI::logging("    Removing $pathFileEnterprise...\n");
             copy($pathFileEnterprise , $pathNewFile. PATH_SEP . 'enterprise.php');
-            G::rm_dir($pathDirectoryEnterprise);
+            G::rm_dir($pathFileEnterprise);
             if (file_exists($pathFileEnterprise)) {
                 CLI::logging(CLI::info("    Remove manually $pathFileEnterprise...\n"));
             }
