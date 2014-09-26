@@ -1624,12 +1624,11 @@ class workspaceTools
         }
     }
 
-    public function changeHashPassword ($workspace,$response) {
-        G::LoadClass("patch");
+    public function changeHashPassword ($workspace, $response)
+    {
         $this->initPropel( true );
-
-        $oPluginRegistry =& PMPluginRegistry::getSingleton();
-        $oPluginRegistry->executeTriggers ( PM_HASH_PASSWORD , $response );
+        G::LoadClass("enterprise");
+        enterpriseClass::setHashPassword($response);
     }
 }
 
