@@ -52,7 +52,7 @@ var currentPagedTable = @#PAGED_TABLE_ID;
 
     maxFilesize = maxFilesize * ((maxFilesizeUnit == "MB")?  1024 * 1024 : 1024);
 
-    if (maxFilesize != "" && maxFilesize != 0) {
+    if (getField("INP_DOC_MAX_FILESIZE").value != "") {
         if(maxFilesize > 0) {
             if(maxFilesize > uploadMaxFilesize) {
                 new leimnud.module.app.alert().make({label: _("ID_SIZE_VERY_LARGE_PERMITTED")});
@@ -60,6 +60,10 @@ var currentPagedTable = @#PAGED_TABLE_ID;
                 return false;
             }
         }
+    } else {
+        alert('@G::LoadTranslation(ID_INPUT_DOC_MAX_FILESIZE_REQUIRED)');
+        maxFilesize.focus();
+        return false;
     }
 
     return true;
