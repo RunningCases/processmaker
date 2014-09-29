@@ -1653,36 +1653,36 @@ class workspaceTools
             CLI::logging("    Without changes... \n");
             return true;
         }
-        CLI::logging("    Migrating version Enterprise Core...\n");
+        CLI::logging("    Migrating Enterprise Core version...\n");
         if (!file_exists($pathNewFile)) {
             CLI::logging("    Creating folder in $pathNewFile\n");
             G::mk_dir($newDiretory, 0777);
         }
         $shared_stat = stat(PATH_DATA);
         if (file_exists($pathDirectoryEnterprise)) {
-            CLI::logging("    Copying Directory Enterprise to $pathNewFile...\n");
+            CLI::logging("    Copying Enterprise Directory to $pathNewFile...\n");
 
             if ($shared_stat !== false) {
                 workspaceTools::dirPerms($pathDirectoryEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
             } else {
-                CLI::logging(CLI::error("Could not get the shared folder permissions, not changing workspace permissions") . "\n");
+                CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
             }
             if (G::recursive_copy($pathDirectoryEnterprise, $pathNewFile . PATH_SEP. 'enterprise')) {
                 CLI::logging("    Removing $pathDirectoryEnterprise...\n");
                 G::rm_dir($pathDirectoryEnterprise);
             } else {
-                CLI::logging(CLI::error("    Error: Failure at coping from $pathDirectoryEnterprise...\n"));
+                CLI::logging(CLI::error("    Error: Failure to copy from $pathDirectoryEnterprise...\n"));
             }
             if (file_exists($pathDirectoryEnterprise)) {
                 CLI::logging(CLI::info("    Remove manually $pathDirectoryEnterprise...\n"));
             }
         }
         if (file_exists($pathFileEnterprise)) {
-            CLI::logging("    Copying file Enterprise.php to $pathNewFile...\n");
+            CLI::logging("    Copying Enterprise.php file to $pathNewFile...\n");
             if ($shared_stat !== false) {
                 workspaceTools::dirPerms($pathFileEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
             } else {
-                CLI::logging(CLI::error("Could not get the shared folder permissions, not changing workspace permissions") . "\n");
+                CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
             }
             CLI::logging("    Removing $pathFileEnterprise...\n");
             copy($pathFileEnterprise , $pathNewFile. PATH_SEP . 'enterprise.php');
