@@ -61,7 +61,8 @@ Ext.onReady(function(){
         {name : 'CASES_COUNT_TO_DO', type:'float'},
         {name : 'CASES_COUNT_COMPLETED', type:'float'},
         {name : 'CASES_COUNT_CANCELLED', type:'float'},
-        {name : 'PROJECT_TYPE', type:'string'}
+        {name : 'PROJECT_TYPE', type:'string'},
+        {name : "PRO_TYPE_PROCESS", type: "string"}
       ]
     }),
 
@@ -216,8 +217,9 @@ Ext.onReady(function(){
         {header: _('ID_DRAFT'), dataIndex: 'CASES_COUNT_DRAFT', width: 50, align:'right'},
         {header: _('ID_COMPLETED'), dataIndex: 'CASES_COUNT_COMPLETED', width: 70, align:'right'},
         {header: _('ID_CANCELLED'), dataIndex: 'CASES_COUNT_CANCELLED', width: 70, align:'right'},
-        {header: _('ID_TOTAL_CASES'), dataIndex: 'CASES_COUNT', width: 80,renderer:function(v){return "<b>"+v+"</b>";}, align:'right'},
-        {header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 50, align:'center'}
+        {header: _('ID_TOTAL_CASES'), dataIndex: 'CASES_COUNT', width: 75,renderer:function(v){return "<b>"+v+"</b>";}, align:'right'},
+        {header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 50, align:'center'},
+        {header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 75, align:"left"}
       ]
     }),
     store: store,

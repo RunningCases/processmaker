@@ -54,6 +54,13 @@ WHERE
         <option name="">- Don't execute anything -</option>
     </en>
   </PRO_TRI_UNPAUSED>
+  <PRO_TYPE_PROCESS type="dropdown" defaultvalue="PUBLIC" colWidth="80" titleAlign="left" align="left">
+    <en>
+      Type of process (only owner can edit the private processes)
+      <option name="PUBLIC">Public</option>
+      <option name="PRIVATE">Private</option>
+    </en>
+  </PRO_TYPE_PROCESS>
   <BTN_CANCEL type="button" onclick="cancel();">
     <en><![CDATA[Cancel]]></en>
   </BTN_CANCEL>
