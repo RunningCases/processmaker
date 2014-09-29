@@ -40,6 +40,13 @@ try {
             $pwd = trim($frm['USR_PASSWORD']);
         }
 
+        require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
+
+        if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
+            $enterprise = new enterprisePlugin('enterprise');
+            $enterprise->enable();
+            $enterprise->setup();
+        }
         $uid = $RBAC->VerifyLogin($usr , $pwd);
         $RBAC->cleanSessionFiles(72); //cleaning session files older than 72 hours
 
@@ -92,7 +99,14 @@ try {
             $errLabel = 'WRONG_LOGIN_CREDENTIALS';
         }
 
+        $_SESSION["USERNAME_PREVIOUS1"] = (isset($_SESSION["USERNAME_PREVIOUS2"]))? $_SESSION["USERNAME_PREVIOUS2"] : "";
+        $_SESSION["USERNAME_PREVIOUS2"] = $usr;
+
         if (!isset($uid) || $uid < 0) {
+            if ($_SESSION["USERNAME_PREVIOUS1"] != "" && $_SESSION["USERNAME_PREVIOUS2"] != "" && $_SESSION["USERNAME_PREVIOUS1"] != $_SESSION["USERNAME_PREVIOUS2"]) {
+                $_SESSION["FAILED_LOGINS"] = 0;
+            }
+
             if (isset($_SESSION['FAILED_LOGINS']) && ($uid == -1 || $uid == -2)) {
                 $_SESSION['FAILED_LOGINS']++;
             }
@@ -102,12 +116,12 @@ try {
             if (PPP_FAILED_LOGINS > 0) {
                 if ($_SESSION['FAILED_LOGINS'] >= PPP_FAILED_LOGINS) {
                     $oConnection = Propel::getConnection('rbac');
-                    $oStatement  = $oConnection->prepareStatement("SELECT USR_UID FROM USERS WHERE USR_USERNAME = '" . $usr . "'");
+                    $oStatement  = $oConnection->prepareStatement("SELECT USR_UID FROM RBAC_USERS WHERE USR_USERNAME = '" . $usr . "'");
                     $oDataset    = $oStatement->executeQuery();
                     if ($oDataset->next()) {
                         $sUserUID = $oDataset->getString('USR_UID');
                         $oConnection = Propel::getConnection('rbac');
-                        $oStatement  = $oConnection->prepareStatement("UPDATE USERS SET USR_STATUS = 0 WHERE USR_UID = '" . $sUserUID . "'");
+                        $oStatement  = $oConnection->prepareStatement("UPDATE RBAC_USERS SET USR_STATUS = 0 WHERE USR_UID = '" . $sUserUID . "'");
                         $oStatement->executeQuery();
                         $oConnection = Propel::getConnection('workflow');
                         $oStatement  = $oConnection->prepareStatement("UPDATE USERS SET USR_STATUS = 'INACTIVE' WHERE USR_UID = '" . $sUserUID . "'");
@@ -146,11 +160,13 @@ try {
 
         //Execute the SSO Script from plugin
         $oPluginRegistry =& PMPluginRegistry::getSingleton();
+        $lSession="";
+        $loginInfo = new loginInfo ($usr, $pwd, $lSession  );
         if ($oPluginRegistry->existsTrigger ( PM_LOGIN )) {
-            $lSession="";
-            $loginInfo = new loginInfo ($usr, $pwd, $lSession  );
             $oPluginRegistry->executeTriggers ( PM_LOGIN , $loginInfo );
         }
+        G::LoadClass("enterprise");
+        enterpriseClass::enterpriseSystemUpdate($loginInfo);
         $_SESSION['USER_LOGGED']  = $uid;
         $_SESSION['USR_USERNAME'] = $usr;
     } else {

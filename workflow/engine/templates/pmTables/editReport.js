@@ -262,125 +262,138 @@ Ext.onReady(function(){
                   });
 
 
-  //columns for table columns grid
-  var cmColumns = [
-      {
-          id: 'uid',
-          dataIndex: 'uid',
-          hidden: true,
-          hideable:false
-      },
-      {
-          dataIndex: '_index',
-          hidden: true,
-          hideable:false
-      },
-      {
-          dataIndex: '_isset',
-          hidden: true,
-          hideable:false
-      },
-      {
-          id: 'field_uid',
-          dataIndex: 'field_uid',
-          hidden: true,
-          hideable:false
-      },
-      {
-          id: 'field_key',
-          dataIndex: 'field_key',
-          hidden: true,
-          hideable:false
-      },
-      {
-          id: 'field_null',
-          dataIndex: 'field_null',
-          hidden: true,
-          hideable:false
-      },
-      {
-          id: 'field_dyn',
-          header: _("ID_DYNAFORM_FIELD"),
-          dataIndex: 'field_dyn',
-          width: 220,
-          // use shorthand alias defined above
-          editor: {
-            xtype: 'displayfield',
-            style: 'font-size:11px; padding-left:7px'
-          }
-      }, {
-          id: 'field_name',
-          header: _("ID_FIELD_NAME"),
-          dataIndex: 'field_name',
-          width: 220,
-          editor: {
-            xtype: 'textfield',
-            allowBlank: true,
-            listeners:{
-              change: function(f,e){
-                this.setValue(this.getValue().toUpperCase());
+    //columns for table columns grid
+    var cmColumns = [
+        {
+            id: 'uid',
+            dataIndex: 'uid',
+            hidden: true,
+            hideable:false
+        },
+        {
+            dataIndex: '_index',
+            hidden: true,
+            hideable:false
+        },
+        {
+            dataIndex: '_isset',
+            hidden: true,
+            hideable:false
+        },
+        {
+            id: 'field_uid',
+            dataIndex: 'field_uid',
+            hidden: true,
+            hideable:false
+        },
+        {
+            id: 'field_key',
+            dataIndex: 'field_key',
+            hidden: true,
+            hideable:false
+        },
+        {
+            id: 'field_index',
+            dataIndex: 'field_index',
+            hidden: true,
+            hideable:false
+        },
+        {
+            id: 'field_null',
+            dataIndex: 'field_null',
+            hidden: true,
+            hideable:false
+        },
+        {
+            id: 'field_dyn',
+            header: _("ID_DYNAFORM_FIELD"),
+            dataIndex: 'field_dyn',
+            width: 220,
+            // use shorthand alias defined above
+            editor: {
+              xtype: 'displayfield',
+              style: 'font-size:11px; padding-left:7px'
+            }
+        }, {
+            id: 'field_name',
+            header: _("ID_FIELD_NAME"),
+            dataIndex: 'field_name',
+            width: 220,
+            editor: {
+              xtype: 'textfield',
+              allowBlank: true,
+              listeners:{
+                change: function(f,e){
+                  this.setValue(this.getValue().toUpperCase());
+                }
               }
             }
-          }
-      }, {
-          id: 'field_label',
-          header: _("ID_FIELD_LABEL"),
-          dataIndex: 'field_label',
-          width: 220,
-          editor:{
-            xtype: 'textfield',
-            allowBlank: true
-          }
-      }, {
-          id: 'field_type',
-          header: _("ID_TYPE"),
-          dataIndex: 'field_type',
-          width: 105,
-          editor: new fm.ComboBox({
-              typeAhead: true,
-              triggerAction: 'all',
-              editable: false,
-              lazyRender: true,
-              mode: 'local',
-              displayField:'type',
-              valueField:'type_id',
-              store: new Ext.data.SimpleStore({
-                  fields: ['type_id', 'type'],
-                  //data : [['VARCHAR',_("ID_VARCHAR")],['TEXT',_("ID_TEXT")],['DATE',_("ID_DATE")],['INT',_("ID_INT")],['FLOAT',_("ID_FLOAT")]],
-                  data: columnsTypes,
-                  sortInfo: {field:'type_id', direction:'ASC'}
-              }),
-              listeners: {
-                  beforerender: function (combo)
-                  {
-                      if (combo.getValue() == "" && combo.store.getAt(0)) {
-                          combo.setValue(combo.store.getAt(0).get(combo.valueField));
-                      }
-                  },
-                  beforeshow: function (combo)
-                  {
-                      if (combo.getValue() == "" && combo.store.getAt(0)) {
-                          combo.setValue(combo.store.getAt(0).get(combo.valueField));
-                      }
-                  },
-                  'select': function(combo, row, index) {
-                    if (cm && cm instanceof Ext.grid.ColumnModel) {
+        }, {
+            id: 'field_label',
+            header: _("ID_FIELD_LABEL"),
+            dataIndex: 'field_label',
+            width: 220,
+            editor:{
+              xtype: 'textfield',
+              allowBlank: true
+            }
+        }, {
+            id: 'field_type',
+            header: _("ID_TYPE"),
+            dataIndex: 'field_type',
+            width: 105,
+            editor: new fm.ComboBox({
+                typeAhead: true,
+                triggerAction: 'all',
+                editable: false,
+                lazyRender: true,
+                mode: 'local',
+                displayField:'type',
+                valueField:'type_id',
+                store: new Ext.data.SimpleStore({
+                    fields: ['type_id', 'type'],
+                    //data : [['VARCHAR',_("ID_VARCHAR")],['TEXT',_("ID_TEXT")],['DATE',_("ID_DATE")],['INT',_("ID_INT")],['FLOAT',_("ID_FLOAT")]],
+                    data: columnsTypes,
+                    sortInfo: {field:'type_id', direction:'ASC'}
+                }),
+                listeners: {
+                    beforerender: function (combo)
+                    {
+                        if (combo.getValue() == "" && combo.store.getAt(0)) {
+                            combo.setValue(combo.store.getAt(0).get(combo.valueField));
+                        }
+                    },
+                    beforeshow: function (combo)
+                    {
+                        if (combo.getValue() == "" && combo.store.getAt(0)) {
+                            combo.setValue(combo.store.getAt(0).get(combo.valueField));
+                        }
+                    },
+                    'select': function(combo, row, index) {
+                      if (cm && cm instanceof Ext.grid.ColumnModel) {
                         var valueCombo = combo.getValue();
                         var changeValue = !(valueCombo === assignedGrid.getSelectionModel().getSelected().get('field_type'));
                         validateFieldSizeAutoincrement(valueCombo, changeValue);
+                        var fieldTypeValue = combo.getValue();
+                        var fieldIndex = Ext.getCmp("field_index");
+                        var fieldInc = Ext.getCmp("field_incre");
+                        var sizeEdit = Ext.getCmp("sizeEdit");
+
+                        editorFieldsEnableDisable(fieldTypeValue, fieldIndex, fieldInc, sizeEdit);
+
                         flagShowMessageError = 1;
-                    }
-                  }//select
-              }
-          })
-      }, {
-          id: 'field_size',
-          header: _("ID_SIZE"),
-          dataIndex: 'field_size',
-          width: 50,
-          align: 'right',
-          editor: sizeField
-      }, {
+                      }
+                    }//select
+                }
+            })
+        }, {
+            id: 'field_size',
+            header: _("ID_SIZE"),
+            dataIndex: 'field_size',
+            width: 50,
+            align: 'right',
+            editor: sizeField
+        }, {
 
         xtype: 'booleancolumn',
         header: _('ID_AUTO_INCREMENT'),
@@ -395,7 +408,21 @@ Ext.onReady(function(){
             disabled: true,
             inputValue: 'always'
         }
-      }
+        }, {
+            xtype: 'booleancolumn',
+            header: _('ID_INDEX'),
+            dataIndex: 'field_index',
+            align: 'center',
+            width: 80,
+            trueText: _('ID_YES'),
+            falseText: _('ID_NO'),
+            editor: {
+                xtype: 'checkbox',
+                id: 'field_index',
+                disabled: true,
+                inputValue: 'always'
+            }
+        }
   ];
   
 function validateFieldSizeAutoincrement(valueType, defaultValue) {
@@ -470,6 +497,7 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
           {name: '_isset'},
           {name: 'field_uid', type: 'string'},
           {name: 'field_key', type: 'string'},
+          {name: 'field_index', type: 'string'},
           {name: 'field_name', type: 'string'},
           {name: 'field_label', type: 'string'},
           {name: 'field_type'},
@@ -528,11 +556,23 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
       //
     },
     beforeedit: function(roweditor, rowIndex) {
-      row = assignedGrid.getSelectionModel().getSelected();
-      if (row.get('field_name') == 'APP_UID' || row.get('field_name') == 'APP_NUMBER' || row.get('field_name') == 'ROW') {
-          editor.stopEditing();
-        return false;
-      }
+        row = assignedGrid.getSelectionModel().getSelected();
+        if (row.get('field_name') == 'APP_UID' || row.get('field_name') == 'APP_NUMBER' || row.get('field_name') == 'ROW') {
+            editor.stopEditing();
+          return false;
+        }
+        setTimeout(
+            function ()
+            {
+                var fieldTypeValue = row.get('field_type');
+                var fieldIndex = Ext.getCmp("field_index");
+                var fieldInc = Ext.getCmp("field_incre");
+                var sizeEdit = Ext.getCmp("sizeEdit");
+
+                editorFieldsEnableDisable(fieldTypeValue, fieldIndex, fieldInc, sizeEdit);
+            },
+            250
+        );
     }
   });
 
@@ -1112,6 +1152,12 @@ function createReportTable()
       return false;
     }
 
+    if (row.data['field_index']) {
+        hasSomeIndex = true;
+    } else {
+        hasSomeIndex = false;
+    }
+
     if (row.data['field_key']) {
       hasSomePrimaryKey = true;
     }
@@ -1169,14 +1215,15 @@ function addColumn()
 
   var PMRow = assignedGrid.getStore().recordType;
   var row = new PMRow({
-    uid  : '',
-    field_uid  : '',
-    field_dyn  : '',
+    uid         : '',
+    field_uid   : '',
+    field_dyn   : '',
     field_name  : '',
     field_label : '',
     field_type  : '',
     field_size  : '',
     field_key   : 0,
+    field_index : 0,
     field_null  : 1
   });
   var len = assignedGrid.getStore().data.length;
@@ -1196,6 +1243,93 @@ function removeColumn()
   });
 }
 
+function editorFieldsEnableDisable(fieldTypeValue, fieldIndex, fieldInc, sizeEdit)
+{
+    var swSize = 1; //Enable
+    var swNull = 1;
+    var swPK = 1;
+    var swAI = 1;
+    var swI = 1;
+
+    //Date
+    if (fieldTypeValue == "DATE" || fieldTypeValue == "DATETIME" || fieldTypeValue == "TIME" || fieldTypeValue == "TEXT") {
+        swSize = 0; //Disable
+        swPK = 0;
+        swAI = 0;
+        swI = 0;
+    }
+
+    //Numbers
+    if (fieldTypeValue == "INTEGER" || fieldTypeValue == "BIGINT") {
+       //Enable All
+    }
+
+    if (fieldTypeValue == "TINYINT" || fieldTypeValue == "SMALLINT") {
+       swSize = 0;
+    }
+
+    if (fieldTypeValue == "DECIMAL" || fieldTypeValue == "FLOAT") {
+        swPK = 0;
+        swAI = 0;
+        swI = 0;
+    }
+
+    if (fieldTypeValue == "DOUBLE" || fieldTypeValue == "REAL") {
+       swSize = 0;
+       swPK = 0;
+       swAI = 0;
+       swI = 0;
+    }
+
+    //String
+    if (fieldTypeValue == "CHAR" || fieldTypeValue == "VARCHAR") {
+        swAI = 0;
+    }
+
+    if (fieldTypeValue == "LONGVARCHAR") {
+        swPK = 0;
+        swAI = 0;
+        swI = 0;
+    }
+
+    //Boolean
+    if (fieldTypeValue == "BOOLEAN") {
+        swSize = 0;
+        swNull = 0;
+        swPK = 0;
+        swAI = 0;
+        swI = 0;
+    }
+
+    if (swI == 1) {
+        fieldIndex.enable();
+    } else {
+        fieldIndex.disable();
+        fieldIndex.setValue(false);
+    }
+
+    if (swAI == 1) {
+        fieldInc.enable();
+    } else {
+        fieldInc.disable();
+        fieldInc.setValue(false);
+    }
+
+    if (swSize == 1) {
+        sizeEdit.enable();
+
+        if (fieldTypeValue == "CHAR" || fieldTypeValue == "VARCHAR" || fieldTypeValue == "LONGVARCHAR") {
+            sizeEdit.setMaxValue(((fieldTypeValue == "CHAR") ? 255 : 999));
+            sizeEdit.getEl().dom.maxLength = 3;
+        } else {
+            sizeEdit.setMaxValue(99);
+            sizeEdit.getEl().dom.maxLength = 2;
+        }
+    } else {
+        sizeEdit.disable();
+        sizeEdit.setValue("");
+    }
+}
 ////ASSIGNBUTON FUNCTIONALITY
 AssignFieldsAction = function(){
   records = Ext.getCmp('availableGrid').getSelectionModel().getSelections();
@@ -1342,18 +1476,19 @@ function setReportFields(records) {
       typeField = 'INTEGER';
     }
     var row = new PMRow({
-      uid  : '',
-      _index      : records[i].data['_index'] !== '' ? records[i].data['_index'] : records[i].data['FIELD_DYN'],
-      field_uid   : records[i].data['FIELD_UID'],
-      field_dyn   : records[i].data['FIELD_NAME'],
-      field_name  : records[i].data['FIELD_NAME'].toUpperCase(),
-      field_label : records[i].data['FIELD_NAME'].toUpperCase(),
-      field_type  : typeField,
-      field_size  : sizeField,
-      field_key   : 0,
-      field_null  : 1,
-      field_filter: 0,
-      field_autoincrement : 0
+      uid           : '',
+      _index        : records[i].data['_index'] !== '' ? records[i].data['_index'] : records[i].data['FIELD_DYN'],
+      field_uid     : records[i].data['FIELD_UID'],
+      field_dyn     : records[i].data['FIELD_NAME'],
+      field_name    : records[i].data['FIELD_NAME'].toUpperCase(),
+      field_label   : records[i].data['FIELD_NAME'].toUpperCase(),
+      field_type    : typeField,
+      field_size    : sizeField,
+      field_key     : 0,
+      field_index   : 0,
+      field_null    : 1,
+      field_filter  : 0,
+      field_autoincrement   : 0
     });
 
     store.add(row);
@@ -1464,18 +1599,19 @@ function loadTableRowsFromArray(records)
     }
 
     var row = new PMRow({
-      uid        : records[i].FLD_UID,
-      field_uid  : records[i].FLD_DYN_UID,
-      field_dyn  : records[i].FLD_DYN_NAME,
-      field_name : records[i].FLD_NAME,
-      field_label: records[i].FLD_DESCRIPTION,
-      field_type : records[i].FLD_TYPE,
-      field_size : records[i].FLD_SIZE,
-      field_key  : records[i].FLD_KEY,
-      field_null  : records[i].FLD_NULL,
-      field_autoincrement  : records[i].FLD_AUTO_INCREMENT  == '1' ? true : false,
-      field_filter: records[i].FLD_FILTER == '1' ? true : false,
-      _index : ''
+      uid                   : records[i].FLD_UID,
+      field_uid             : records[i].FLD_DYN_UID,
+      field_dyn             : records[i].FLD_DYN_NAME,
+      field_name            : records[i].FLD_NAME,
+      field_label           : records[i].FLD_DESCRIPTION,
+      field_type            : records[i].FLD_TYPE,
+      field_size            : records[i].FLD_SIZE,
+      field_key             : records[i].FLD_KEY,
+      field_index           : records[i].FLD_TABLE_INDEX == '1' ? true : false,
+      field_null            : records[i].FLD_NULL,
+      field_autoincrement   : records[i].FLD_AUTO_INCREMENT  == '1' ? true : false,
+      field_filter          : records[i].FLD_FILTER == '1' ? true : false,
+      _index                : ''
     });
 
     store.add(row);

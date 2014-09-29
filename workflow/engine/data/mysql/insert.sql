@@ -3642,6 +3642,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_COPYRIGHT','en','Copyright Â© 2003-2011 Colosa, Inc. All rights reserved.','2014-01-15') ,
 ( 'LABEL','ID_LOGIN_WITH_FACEBOOK','en','Login with Facebook!!','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP6','en','xxx','2014-01-15') ,
+( 'LABEL','ID_SIZE_VERY_LARGE_PERMITTED','en','The size is very large as permitted!','2014-09-10') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5','en','ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login.','2014-09-02') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_2','en','If you are installing ProcessMaker on a remote web server, you will need to get this information from your Database Server.','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_1','en','ProcessMaker stores all of its data in a database. This screen gives the installation program the information needed to create this database.','2014-01-15') ,
@@ -3682,10 +3683,10 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DELETE_DATABASES','en','Delete Databases if exists','2014-01-15') ,
 ( 'LABEL','ID_RP_DATABASE_NAME','en','Report Database Name','2014-01-15') ,
 ( 'LABEL','ID_RB_DATABASE_NAME','en','Rbac Database Name','2014-01-15') ,
-( 'LABEL','ID_WF_DATABASE_NAME','en','Workflow Database Name','2014-01-15') ,
-( 'LABEL','ID_CHANGE_DATABASE_NAME','en','Change Database names','2014-01-15') ;
+( 'LABEL','ID_WF_DATABASE_NAME','en','Workflow Database Name','2014-01-15') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
+( 'LABEL','ID_CHANGE_DATABASE_NAME','en','Change Database names','2014-01-15') ,
 ( 'LABEL','ID_ADMIN_USERNAME','en','Admin Username','2014-01-15') ,
 ( 'LABEL','ID_ADMIN_PASSWORD','en','Confirm Admin Password','2014-01-15') ,
 ( 'LABEL','ID_WORKSPACE_NAME','en','Workspace Name','2014-01-15') ,
@@ -3693,7 +3694,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_HOST_NAME_LABEL','en','Host Name','2014-01-15') ,
 ( 'LABEL','ID_DATABASE_ENGINE','en','Database Engine','2014-01-15') ,
 ( 'LABEL','ID_DATABASE_CONFIGURATION','en','Database Configuration','2014-01-15') ,
-( 'LABEL','ID_INSTALLATION_LOG','en','Installation log file','2014-01-15') ,
+( 'LABEL','ID_INSTALLATION_FILE_LOG','en','Installation log file','2014-01-15') ,
 ( 'LABEL','ID_WORFLOW_DATA_DIRECTORY','en','Workflow Data Directory','2014-01-15') ,
 ( 'LABEL','ID_WORKFLOW_DATA_DIRECTORY_REQUIRED','en','"Workflow Data Directory" is required.','2014-01-15') ,
 ( 'LABEL','ID_PUBLIC_INDEX_FILE','en','Public Index file','2014-01-15') ,
@@ -3764,10 +3765,10 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','DYNAFIELD_EMPTY','en','The name field is empty','2014-01-15') ,
 ( 'LABEL','DYNAFIELD_NODENAME_NUMBER','en','The field name should not start with a number','2014-01-15') ,
 ( 'LABEL','ID_EMPTY_NODENAME','en','The name field is empty','2014-01-15') ,
-( 'LABEL','ID_TAS_DURATION_REQUIRE','en','Duration task required','2014-01-15') ,
-( 'LABEL','ID_NAME_TAS_TITLE_REQUIRE','en','Task title required','2014-01-15') ;
+( 'LABEL','ID_TAS_DURATION_REQUIRE','en','Duration task required','2014-01-15') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
+( 'LABEL','ID_NAME_TAS_TITLE_REQUIRE','en','Task title required','2014-01-15') ,
 ( 'LABEL','APP_TITLE_CASE_LABEL_UPDATE','en','The System has detected that the changes on case labels will affect more than 1000 records, so the work will be scheduled by the cron to perform the update the next time the cron will run.','2014-01-15') ,
 ( 'LABEL','ID_MESSAGE_LOGIN','en','The default language that is configured in this place is for the "dropdown" of the languages that are displaying on the login screen, this configuration is set for each workspace.','2014-01-15') ,
 ( 'LABEL','ID_MESSAGE_SYSTEM','en','The language that is set by default applies directly when the domain is entered (eg.- http://127.0.0.1:8081), the system reads the configuration and redirects the link to the selected language','2014-01-15') ,
@@ -3846,10 +3847,10 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASES_NOTES_NO_PERMISSIONS','en','You do not have permission to cases notes','2014-01-15') ,
 ( 'LABEL','ID_DELETE_DOCUMENT','en','Do you want to delete selected document?','2014-01-15') ,
 ( 'LABEL','ID_CRON_ACTIONS_LOG','en','Cron Actions Log','2014-01-15') ,
-( 'LABEL','ID_AUTH_SOURCE_MISSING','en','The plugin that is related to this authentication source was removed or disabled, please consult to your system administrator.','2014-01-15') ,
-( 'LABEL','ID_TRIGGER_REQUIRED','en','Trigger is required','2014-01-15') ;
+( 'LABEL','ID_AUTH_SOURCE_MISSING','en','The plugin that is related to this authentication source was removed or disabled, please consult to your system administrator.','2014-01-15') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
+( 'LABEL','ID_TRIGGER_REQUIRED','en','Trigger is required','2014-01-15') ,
 ( 'LABEL','ID_TIME_REQUIRED','en','Time is required','2014-01-15') ,
 ( 'LABEL','ID_CURRENT_WORKSPACE','en','Current Workspace','2014-01-15') ,
 ( 'LABEL','ID_PM_FUNCTION_CHANGE_CASE','en','The "{0}" function has {1} the current case, the script has stopped to avoid conflicts.','2014-01-15') ,
@@ -3928,10 +3929,10 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SLOW','en','slow','2014-01-15') ,
 ( 'LABEL','ID_FAILED_VALIDATIONS_IN_CLASS','en','Failed Validation in class {CLASS}.','2014-01-15') ,
 ( 'LABEL','ID_ERROR_CHANGE_SEQUENCE_NUMBER','en','Unable to generate numerical sequence another user performing the same request.','2014-01-15') ,
-( 'LABEL','ID_CANT_RESOLVE_APPLICATION','en','Can''t resolve the Aplication ID for this request.','2014-01-15') ,
-( 'LABEL','ID_FAILED_VALIDATION_IN_CLASS1','en','Failed Validation in class {CLASS}.','2014-01-15') ;
+( 'LABEL','ID_CANT_RESOLVE_APPLICATION','en','Can''t resolve the Aplication ID for this request.','2014-01-15') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
+( 'LABEL','ID_FAILED_VALIDATION_IN_CLASS1','en','Failed Validation in class {CLASS}.','2014-01-15') ,
 ( 'LABEL','ID_REQUIRED_NAME_CASE_SCHEDULER','en','You forgot the name of the Case Scheduler','2014-01-15') ,
 ( 'LABEL','ID_DUPLICATE_CASE_SCHEDULER_NAME','en','Duplicate Case Scheduler name.','2014-01-15') ,
 ( 'LABEL','ID_MSG_CLEAR_GRID_FIRST_ITEM','en','Do you want to clear the information from the first row?','2014-01-15') ,
@@ -4010,10 +4011,10 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SMTP_ERROR_MET_TURN_SMTP_NOT_IMPLEMENTED','en','This method, TURN, of the SMTP is not implemented','2014-02-12') ,
 ( 'LABEL','ID_EVENT_ADD_CURRENT','en','Add current task user','2014-02-12') ,
 ( 'LABEL','ID_EVENT_ADD_USERS','en','Add users','2014-02-12') ,
-( 'LABEL','ID_EVENT_REMOVE_SELECTED','en','Remove selected','2014-02-12') ,
-( 'LABEL','ID_EVENT_ADD_DYNAVAR','en','Add dynavar','2014-02-12') ;
+( 'LABEL','ID_EVENT_REMOVE_SELECTED','en','Remove selected','2014-02-12') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
+( 'LABEL','ID_EVENT_ADD_DYNAVAR','en','Add dynavar','2014-02-12') ,
 ( 'LABEL','ID_EVENT_ADD_GROUP','en','Add groups','2014-02-12') ,
 ( 'LABEL','ID_EXECUTION','en','Execution','2014-02-12') ,
 ( 'LABEL','ID_GROUP_CANNOT_DELETE_WHILE_ASSIGNED_TO_TASK','en','Group cannot be deleted while it''s assigned to a task','2014-04-03') ,
@@ -4092,10 +4093,10 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASES_OUTPUT_DOES_NOT_EXIST','en','This output document with out_doc_id: {0} does not exist!','2014-05-21') ,
 ( 'LABEL','ID_CASES_INCORRECT_INFORMATION','en','Incorrect or unavailable information about this case: {0}','2014-05-21') ,
 ( 'LABEL','ID_INVALID_VALUE_FOR','en','Invalid value specified for: {0}','2014-05-21') ,
-( 'LABEL','ID_CASE_SCHEDULER_DOES_NOT_EXIST','en','This case scheduler with sch_uid: {0} does not exist!','2014-05-21') ,
-( 'LABEL','ID_INFORMATION_EMPTY','en','The information sended is empty!','2014-05-21') ;
+( 'LABEL','ID_CASE_SCHEDULER_DOES_NOT_EXIST','en','This case scheduler with sch_uid: {0} does not exist!','2014-05-21') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
+( 'LABEL','ID_INFORMATION_EMPTY','en','The information sended is empty!','2014-05-21') ,
 ( 'LABEL','ID_TASK_NOT_FOUND','en','Task not found for id: {0}','2014-05-21') ,
 ( 'LABEL','ID_CAN_NOT_BE_EMPTY','en','{0}, can not be empty','2014-05-21') ,
 ( 'LABEL','ID_CASE_SCHEDULER_DUPLICATE','en','Duplicate Case Scheduler name','2014-05-21') ,
@@ -4174,10 +4175,10 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MSG_CONFIRM_DELETE_USER_ASSINGED_SUPERVISOR','en','The user can not be deleted while this assigned as a supervisor. Want removed anyway?','2014-06-20') ,
 ( 'LABEL','ID_NAME_STG_TITLE_REQUIRE','en','Stage title required','2014-06-25') ,
 ( 'LABEL','ID_INPUT_DOCUMENT_ITS_ASSIGNED','en','The Input Document with {0}: {1} it''s assigned in "{2}".','2014-06-26') ,
-( 'LABEL','ID_PROCESS_VARIABLE_DOES_NOT_EXIST','en','The variable with {0}: {1} does not exist.','2014-06-30') ,
-( 'LABEL','ID_PROCESS_VARIABLE_REQUIRED_VARIABLES_FOR_QUERY','en','The variable "{0}" required the variables "{1}" for the query.','2014-06-30') ;
+( 'LABEL','ID_PROCESS_VARIABLE_DOES_NOT_EXIST','en','The variable with {0}: {1} does not exist.','2014-06-30') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
+( 'LABEL','ID_PROCESS_VARIABLE_REQUIRED_VARIABLES_FOR_QUERY','en','The variable "{0}" required the variables "{1}" for the query.','2014-06-30') ,
 ( 'LABEL','ID_OUTPUT_DOCUMENT_ITS_ASSIGNED','en','The Output Document with {0}: {1} it''s assigned in "{2}".','2014-07-01') ,
 ( 'LABEL','ID_EXISTS_FILES','en','The file exists.','2014-07-17') ,
 ( 'LABEL','ID_FILENAME_REQUIRED','en','The filename is required.','2014-07-17') ,
@@ -4196,8 +4197,91 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_INPUT_DOC_TYPE_FILE_REQUIRED','en','You must specify the allowed file extensions, use *.* to allow any extension.','2014-08-25') ,
 ( 'LABEL','ID_TINY_SYSTEM_VARIABLE','en','System Variable','2014-08-27') ,
 ( 'LABEL','ID_CHOOSE_PROVIDER','en','Please select provider','2014-08-27') ,
-( 'LABEL','ID_INDEX','en','Index','2014-08-27') ,
-( 'LABEL','ID_ERROR_JS_NOT_AVAILABLE','en','Your browser does not support javascript or it is disabled, please use a different browser or activate the javascript. Forms won''t work totally because javascript is used.','2014-08-29') ;
+( 'LABEL','ID_INDEX','en','Index','2014-09-10') ,
+( 'LABEL','ID_ERROR_JS_NOT_AVAILABLE','en','Your browser does not support javascript or it is disabled, please use a different browser or activate the javascript. Forms won''t work totally because javascript is used.','2014-08-29') ,
+( 'LABEL','ID_MAXIMUM_SIZE_FILE_REQUIRED','en','The maximum size file, is required!','2014-09-12') ,
+( 'LABEL','ID_BEFORE_UPDATE','en','Before Upgrade','2014-09-18') ,
+( 'LABEL','ID_WAIT_INSTALLING_PLUGIN','en','Please wait while installing the plugin...','2014-09-18') ,
+( 'LABEL','ID_UPGRADING_PLUGIN','en','Please wait while upgrading the plugin...','2014-09-18') ,
+( 'LABEL','ID_UPGRADE_FINISHED','en','Upgrade finished.','2014-09-18') ,
+( 'LABEL','ID_DOWNLOADING_UPGRADE','en','Downloading upgrade:','2014-09-18') ,
+( 'LABEL','ID_INSTALLATION_LOG','en','Installation log:','2014-09-18') ,
+( 'LABEL','ID_UPGRADE_STARTING','en','Please wait while the upgrade is starting...','2014-09-18') ,
+( 'LABEL','ID_DOWNLOAD_MANUALLY','en','You can download it manually here','2014-09-18') ,
+( 'LABEL','ID_UNKNOWN','en','Unknown','2014-09-18') ,
+( 'LABEL','ID_INSTALL_ERROR','en','Install Error','2014-09-18') ,
+( 'LABEL','ID_ERROR_INSTALLING_ADDON','en','There was a problem installing this addon.','2014-09-18') ,
+( 'LABEL','ID_SERVER_ERROR','en','Server error','2014-09-18') ,
+( 'LABEL','ID_MARKET_SERVER_CONTACTING','en','There was a problem contacting the market server.','2014-09-18') ,
+( 'LABEL','ID_SALES_DEPARTMENT_REQUEST','en','It will send a request to Sales Department, do you want to continue?','2014-09-18') ,
+( 'LABEL','ID_SENDING_REQUEST_SALES_DEPARTMENT','en','Sending request to ProcessMaker Sales Department, please wait...','2014-09-18') ,
+( 'LABEL','ID_NO_INTERNET_CONECTION','en','Enterprise Plugins Manager no connected to internet.','2014-09-18') ,
+( 'LABEL','ID_WAIT_WHILE_UPGRADING_PROCESSMAKER','en','Please wait while upgrading ProcessMaker...','2014-09-18') ,
+( 'LABEL','ID_ERROR_UPGRADING_SYSTEM','en','Error upgrading System.','2014-09-18') ,
+( 'LABEL','ID_ERROR_CHECK_FOR_UPDATE_DONE','en','An error has occurred, press "OK" to check whether the system has been upgrade.','2014-09-18') ,
+( 'LABEL','ID_UPGRADE_LABEL','en','Upgrade','2014-09-18') ,
+( 'LABEL','ID_UPDATE_LICENSE','en','Upload License','2014-09-18') ,
+( 'LABEL','ID_SELECT_LICENSE_FILE','en','Select a license file','2014-09-18') ,
+( 'LABEL','ID_LICENSE_FILE','en','License file','2014-09-18') ,
+( 'LABEL','ID_WARNING_ENTERPRISE_LICENSE_MSG','en','Please select a valid license file.','2014-09-18') ,
+( 'LABEL','ID_WARNING_ENTERPRISE_LICENSE_MSG_DAT','en','The file doesn''t have a .dat extension, please select another file.','2014-09-18') ,
+( 'LABEL','ID_UPDATING_LICENSE_MSG','en','Uploading the license file...','2014-09-18') ,
+( 'LABEL','ID_SUCCESSFULLY_UPLOADED','en','Successfully uploaded.','2014-09-18') ,
+( 'LABEL','ID_WARNING_ERROR_UPDATING','en','Error uploading the license file.','2014-09-18') ,
+( 'LABEL','ID_UPLOAD_PLUGIN','en','Upload Plugin','2014-09-18') ,
+( 'LABEL','ID_SELECT_PLUGIN_FILE','en','Select a plugin file','2014-09-18') ,
+( 'LABEL','ID_PLUGIN_FILE','en','Plugin file','2014-09-18') ,
+( 'LABEL','ID_SELECT_PLUGIN','en','Please select a plugin','2014-09-18') ,
+( 'LABEL','ID_INSTALLING_PLUGIN','en','Installing plugin...','2014-09-18') ,
+( 'LABEL','ID_ERROR_UPLOADING_PLUGIN','en','Error uploading the plugin','2014-09-18') ,
+( 'LABEL','ID_CURRENT_VERSION','en','Current version','2014-09-18') ,
+( 'LABEL','ID_NO_NEW_VERSIONS','en','No new versions available','2014-09-18') ,
+( 'LABEL','ID_CHECK_UPDATES','en','Check for updates (you need to be connected to Internet)','2014-09-18') ,
+( 'LABEL','ID_YOUR_LICENSE','en','Your license','2014-09-18') ,
+( 'LABEL','ID_CURRENT_LICENSE','en','Current license','2014-09-18') ,
+( 'LABEL','ID_LICENSE_SERVER','en','License server','2014-09-18') ,
+( 'LABEL','ID_ISSUED_TO','en','Issued to','2014-09-18') ,
+( 'LABEL','ID_EXPIRES','en','Expires (days)','2014-09-18') ,
+( 'LABEL','ID_IMPORT_LICENSE','en','Import license','2014-09-18') ,
+( 'LABEL','ID_RENEW','en','Renew','2014-09-18') ,
+( 'LABEL','ID_UNISTALL','en','Uninstall','2014-09-18') ,
+( 'LABEL','ID_UNISTALL_TIP','en','Uninstall this plugin','2014-09-18') ,
+( 'LABEL','ID_CONFIRM_DELETE_PLUGIN','en','Are you sure that you want to remove this plugin?','2014-09-18') ,
+( 'LABEL','ID_CONFIRM_DELETE_PLUGIN_WARNING','en','Uninstalling the plugin, it can affect your others workspaces.','2014-09-18') ,
+( 'LABEL','ID_ERROR_UNISTALLING','en','Error uninstalling','2014-09-18') ,
+( 'LABEL','ID_ENABLE_PLUGIN_TIP','en','Enable the selected addon','2014-09-18') ,
+( 'LABEL','ID_ERROR_ENABLING','en','Error enabling','2014-09-18') ,
+( 'LABEL','ID_DISABLE_PLUGIN_TIP','en','Disable the selected plugin','2014-09-18') ,
+( 'LABEL','ID_ERROR_DISABLING','en','Error disabling','2014-09-18') ,
+( 'LABEL','ID_ADMIN','en','Admin','2014-09-18') ,
+( 'LABEL','ID_ADMIN_PLUGIN_TIP','en','Admin the selected plugin','2014-09-18') ,
+( 'LABEL','ID_PUBLISHER','en','Publisher','2014-09-18') ,
+( 'LABEL','ID_LATEST_VERSION','en','Latest version','2014-09-18') ,
+( 'LABEL','ID_BUY_NOW','en','Buy now','2014-09-18') ;
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
+
+( 'LABEL','ID_INSTALLED','en','Installed','2014-09-18') ,
+( 'LABEL','ID_INSTALL_NOW','en','Install now','2014-09-18') ,
+( 'LABEL','ID_UPGRADE_NOW','en','Upgrade now','2014-09-18') ,
+( 'LABEL','ID_INSTALLING','en','Installing','2014-09-18') ,
+( 'LABEL','ID_CANCELLING','en','Cancelling','2014-09-18') ,
+( 'LABEL','ID_INSTALL_FROM_FILE','en','Install from file','2014-09-18') ,
+( 'LABEL','ID_INSTALL_FROM_FILE_PLUGIN_TIP','en','Upload a plugin file','2014-09-18') ,
+( 'LABEL','ID_REFRESH_LABEL_PLUGIN_TIP','en','Refresh the plugin list','2014-09-18') ,
+( 'LABEL','ID_ENTERPRISE_PLUGINS','en','Enterprise Plugins','2014-09-18') ,
+( 'LABEL','ID_CAUTION_NOTICE','en','<h3>Caution: Before continuing, please read these instructions carefully:</h3><ul style="font: 16px;"><li><a href="http://wiki.processmaker.com/index.php/Upgrading_ProcessMaker" onclick="window.open(this.href, "_blank"); return (false);">Read the wiki</a> carefully regarding the automatic upgrade.</li><li>Make a backup of all ProcessMaker files, including the database before proceeding.</li><li>This automatic upgrade may not always work depending on your server configuration.</li><li>In case the upgrade fails, read the wiki regarding alternative methods of upgrading.</li></ul>','2014-09-18') ,
+( 'LABEL','ID_AUDITLOG_DISPLAY','en','Audit Log','2014-09-19') ,
+( 'LABEL','ID_ENABLE_AUDIT_LOG','en','Enable Audit Log','2014-09-19') ,
+( 'LABEL','ID_AUDIT_LOG_ENABLED','en','Audit Log has been enabled','2014-09-19') ,
+( 'LABEL','ID_AUDIT_LOG_DISABLED','en','Audit Log has been disabled','2014-09-19') ,
+( 'LABEL','ID_AUDIT_LOG_DETAILS_1','en','Audit Log details1','2014-09-19') ,
+( 'LABEL','ID_AUDIT_LOG_DETAILS_2','en','Audit Log details 2','2014-09-19') ,
+( 'LABEL','ID_PRIVATE','en','Private','2014-09-22') ,
+( 'LABEL','ID_CASES_LIST','en','Cases Lists','2014-09-18') ,
+( 'LABEL','ID_MENU_NAME','en','Enterprise Plugins Manager','2014-09-18') ,
+( 'LABEL','ID_LEFT','en','left','2014-09-18') ,
+( 'LABEL','ID_CENTER','en','center','2014-09-18') ,
+( 'LABEL','ID_RIGHT','en','right','2014-09-18') ;
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,

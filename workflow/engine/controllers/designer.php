@@ -49,7 +49,7 @@ class Designer extends Controller
 
         $request = new \OAuth2\Request(array(), $request, array(), array(), array(), $server, null, $headers);
         $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
-        $response = $oauthServer->getServer()->handleTokenRequest($request);
+        $response = $oauthServer->postToken($request, true);
         $clientToken = $response->getParameters();
         $clientToken["client_id"] = $client['CLIENT_ID'];
         $clientToken["client_secret"] = $client['CLIENT_SECRET'];

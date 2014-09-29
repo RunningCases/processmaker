@@ -40,10 +40,10 @@ try {
     if ($_GET['APP_UID'] !== $_SESSION['APPLICATION']) {
         throw new Exception( G::LoadTranslation( 'ID_INVALID_APPLICATION_ID_MSG', array ('<a href=\'' . $_SERVER['HTTP_REFERER'] . '\'>{1}</a>',G::LoadTranslation( 'ID_REOPEN' ) ) ) );
     }
-    
+
     /*
      * PMDynaform
-     * DYN_VERSION is 1: classic Dynaform, 
+     * DYN_VERSION is 1: classic Dynaform,
      * DYN_VERSION is 2: responsive form, Pmdynaform.
      */
     $a = new Criteria("workflow");
@@ -183,9 +183,10 @@ try {
     $aData['USER_UID'] = $_SESSION['USER_LOGGED'];
     //$aData['APP_STATUS'] = $Fields['APP_STATUS'];
     $aData['PRO_UID'] = $_SESSION['PROCESS'];
-    
+
     if ($swpmdynaform) {
         $aData['APP_DATA'] = array_merge($aData['APP_DATA'], $pmdynaform);
+        $_POST["DynaformRequiredFields"] = '[]';
     }
 
     $oCase->updateCase( $_SESSION['APPLICATION'], $aData );
@@ -248,12 +249,12 @@ try {
                 $i = $i + 1;
             }
         }
-
         if (count( $arrayField ) > 0) {
             for ($i = 0; $i <= count( $arrayField ) - 1; $i ++) {
                 if ($arrayFileError[$i] == 0) {
                     $indocUid = null;
                     $fieldName = null;
+                    $fileSizeByField = 0;
 
                     if (is_array( $arrayField[$i] )) {
                         if (isset( $_POST["INPUTS"][$arrayField[$i]["grdName"]][$arrayField[$i]["grdFieldName"]] ) && ! empty( $_POST["INPUTS"][$arrayField[$i]["grdName"]][$arrayField[$i]["grdFieldName"]] )) {
@@ -261,12 +262,20 @@ try {
                         }
 
                         $fieldName = $arrayField[$i]["grdName"] . "_" . $arrayField[$i]["index"] . "_" . $arrayField[$i]["grdFieldName"];
+
+                        if (isset($_FILES["form"]["size"][$arrayField[$i]["grdName"]][$arrayField[$i]["index"]][$arrayField[$i]["grdFieldName"]])) {
+                            $fileSizeByField = $_FILES["form"]["size"][$arrayField[$i]["grdName"]][$arrayField[$i]["index"]][$arrayField[$i]["grdFieldName"]];
+                        }
                     } else {
                         if (isset( $_POST["INPUTS"][$arrayField[$i]] ) && ! empty( $_POST["INPUTS"][$arrayField[$i]] )) {
                             $indocUid = $_POST["INPUTS"][$arrayField[$i]];
                         }
 
                         $fieldName = $arrayField[$i];
+
+                        if (isset($_FILES["form"]["size"][$fieldName])) {
+                            $fileSizeByField = $_FILES["form"]["size"][$fieldName];
+                        }
                     }
 
                     if ($indocUid != null) {
@@ -278,6 +287,31 @@ try {
 
                         //Get the Custom Folder ID (create if necessary)
                         $oFolder = new AppFolder();
+
+						//***Validating the file allowed extensions***
+						$res = G::verifyInputDocExtension($aID['INP_DOC_TYPE_FILE'], $arrayFileName[$i], $arrayFileTmpName[$i]);
+						if($res->status == 0){
+							$message = $res->message;
+							G::SendMessageText( $message, "ERROR" );
+							$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
+							G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+							die();
+						}
+
+                        //--- Validate Filesize of $_FILE
+                        $inpDocMaxFilesize = $aID["INP_DOC_MAX_FILESIZE"];
+                        $inpDocMaxFilesizeUnit = $aID["INP_DOC_MAX_FILESIZE_UNIT"];
+
+                        $inpDocMaxFilesize = $inpDocMaxFilesize * (($inpDocMaxFilesizeUnit == "MB")? 1024 *1024 : 1024); //Bytes
+
+                        if ($inpDocMaxFilesize > 0 && $fileSizeByField > 0) {
+                            if ($fileSizeByField > $inpDocMaxFilesize) {
+                                G::SendMessageText(G::LoadTranslation("ID_SIZE_VERY_LARGE_PERMITTED"), "ERROR");
+                                $arrayAux1 = explode("sys" . SYS_SYS, $_SERVER["HTTP_REFERER"]);
+                                G::header("location: /sys" . SYS_SYS . $arrayAux1[1]);
+                                exit(0);
+                            }
+                        }
 
                         $aFields = array ("APP_UID" => $_SESSION["APPLICATION"],"DEL_INDEX" => $_SESSION["INDEX"],"USR_UID" => $_SESSION["USER_LOGGED"],"DOC_UID" => $indocUid,"APP_DOC_TYPE" => "INPUT","APP_DOC_CREATE_DATE" => date( "Y-m-d H:i:s" ),"APP_DOC_COMMENT" => "","APP_DOC_TITLE" => "","APP_DOC_FILENAME" => $arrayFileName[$i],"FOLDER_UID" => $oFolder->createFromPath( $aID["INP_DOC_DESTINATION_PATH"] ),"APP_DOC_TAGS" => $oFolder->parseTags( $aID["INP_DOC_TAGS"] ),"APP_DOC_FIELDNAME" => $fieldName);
                     } else {

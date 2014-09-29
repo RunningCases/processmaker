@@ -620,6 +620,7 @@ class Process extends BaseProcess
         $oCriteria->addSelectColumn( ProcessPeer::PRO_CREATE_DATE );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_CREATE_USER );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_DEBUG );
+        $oCriteria->addSelectColumn(ProcessPeer::PRO_TYPE_PROCESS);
 
         $oCriteria->addSelectColumn( UsersPeer::USR_UID );
         $oCriteria->addSelectColumn( UsersPeer::USR_USERNAME );
@@ -641,6 +642,10 @@ class Process extends BaseProcess
 
         $oCriteria->addJoin( ProcessPeer::PRO_CREATE_USER, UsersPeer::USR_UID, Criteria::LEFT_JOIN );
         $oCriteria->addJoin( ProcessPeer::PRO_CATEGORY, ProcessCategoryPeer::CATEGORY_UID, Criteria::LEFT_JOIN );
+        $oCriteria->add(
+                $oCriteria->getNewCriterion(ProcessPeer::PRO_TYPE_PROCESS, "PUBLIC", Criteria::EQUAL)->addOr(
+                $oCriteria->getNewCriterion(ProcessPeer::PRO_CREATE_USER, $_SESSION["USER_LOGGED"], Criteria::EQUAL))
+        );
 
         $this->tmpCriteria = clone $oCriteria;
 
@@ -697,6 +702,7 @@ class Process extends BaseProcess
         foreach ($processes as $process) {
             $proTitle = isset( $processesDetails[$process['PRO_UID']] ) && isset( $processesDetails[$process['PRO_UID']]['PRO_TITLE'] ) ? $processesDetails[$process['PRO_UID']]['PRO_TITLE'] : '';
             $proDescription = isset( $processesDetails[$process['PRO_UID']] ) && isset( $processesDetails[$process['PRO_UID']]['PRO_DESCRIPTION'] ) ? $processesDetails[$process['PRO_UID']]['PRO_DESCRIPTION'] : '';
+            $process["PRO_TYPE_PROCESS"] = ($process["PRO_TYPE_PROCESS"] == "PUBLIC") ? G::LoadTranslation("ID_PUBLIC") : G::LoadTranslation("ID_PRIVATE");
 
             // verify if the title is already set on the current language
             if (trim( $proTitle ) == '') {

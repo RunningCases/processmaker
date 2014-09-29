@@ -598,9 +598,13 @@ class Propel {
 	 */
 	public static function close()
 	{
-		foreach(self::$connectionMap as $conn) {
-			$conn->close();
-		}
+		$last = '';
+ 		foreach(self::$connectionMap as $conn) {
+			if ($last != $conn->lastQuery) {
+				$conn->close();
+			}
+			$last = $conn->lastQuery;
+ 		}
 	}
 
     /**
