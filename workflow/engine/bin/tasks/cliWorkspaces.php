@@ -447,7 +447,7 @@ function run_workspace_restore($args, $opts) {
     $workspace = array_key_exists("workspace", $opts) ? $opts['workspace'] : NULL;
     $overwrite = array_key_exists("overwrite", $opts);
     $multiple = array_key_exists("multiple", $opts);
-    $dstWorkspace = $args[1];
+    $dstWorkspace = isset($args[1]) ? $args[1] : null;
     if(!empty($multiple)){
         if(!Bootstrap::isLinuxOs()){
             CLI::error("This is not a Linux enviroment, cannot use this multiple [-m] feature.\n");
