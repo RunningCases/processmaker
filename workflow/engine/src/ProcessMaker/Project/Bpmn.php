@@ -4,8 +4,6 @@ namespace ProcessMaker\Project;
 use \BpmnProject as Project;
 use \BpmnProcess as Process;
 use \BpmnDiagram as Diagram;
-use \BpmnLaneset as Laneset;
-use \BpmnLane as Lane;
 use \BpmnActivity as Activity;
 use \BpmnBound as Bound;
 use \BpmnEvent as Event;
@@ -16,8 +14,7 @@ use \BpmnArtifact as Artifact;
 use \BpmnProjectPeer as ProjectPeer;
 use \BpmnProcessPeer as ProcessPeer;
 use \BpmnDiagramPeer as DiagramPeer;
-use \BpmnLanesetPeer as LanesetPeer;
-use \BpmnLanePeer as LanePeer;
+
 use \BpmnActivityPeer as ActivityPeer;
 use \BpmnBoundPeer as BoundPeer;
 use \BpmnEventPeer as EventPeer;
@@ -26,6 +23,10 @@ use \BpmnFlowPeer as FlowPeer;
 use \BpmnArtifactPeer as ArtifactPeer;
 use \BpmnParticipant as Participant;
 use \BpmnParticipantPeer as ParticipantPeer;
+use \BpmnLaneset as Laneset;
+use \BpmnLanesetPeer as LanesetPeer;
+use \BpmnLane as Lane;
+use \BpmnLanePeer as LanePeer;
 
 use \BasePeer;
 use \Criteria as Criteria;
@@ -78,6 +79,8 @@ class Bpmn extends Handler
         "flow" => array("PRJ_UID", "DIA_UID", "FLO_ELEMENT_DEST_PORT", "FLO_ELEMENT_ORIGIN_PORT"),
         "data" => array("PRJ_UID"),
         "participant" => array("PRJ_UID"),
+        "laneset" => array(),
+        "lane" => array()
     );
 
 
@@ -179,7 +182,12 @@ class Bpmn extends Handler
         foreach ($this->getParticipants() as $participant) {
             $this->removeParticipant($participant["PAR_UID"]);
         }
-
+        foreach ($this->getLanesets() as $laneset) {
+            $this->removeLaneset($laneset["LNS_UID"]);
+        }
+        foreach ($this->getLanes() as $lane) {
+            $this->removeLane($lane["LAN_UID"]);
+        }
         if ($process = $this->getProcess("object")) {
             $process->delete();
         }
@@ -635,6 +643,8 @@ class Bpmn extends Handler
                 case "bpmnArtifact": $class = "BpmnArtifact"; break;
                 case "bpmnData": $class = "BpmnData"; break;
                 case "bpmnParticipant": $class = "BpmnParticipant"; break;
+                case "bpmnLaneset": $class = "BpmnLaneset"; break;
+                case "bpmnLane": $class = "BpmnLane"; break;
                 default:
                     throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
                         "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_ORIGIN_TYPE"]
@@ -655,6 +665,8 @@ class Bpmn extends Handler
                 case "bpmnArtifact": $class = "BpmnArtifact"; break;
                 case "bpmnData": $class = "BpmnData"; break;
                 case "bpmnParticipant": $class = "BpmnParticipant"; break;
+                case "bpmnLaneset": $class = "BpmnLaneset"; break;
+                case "bpmnLane": $class = "BpmnLane"; break;
                 default:
                     throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
                         "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_DEST_TYPE"]
@@ -1005,36 +1017,136 @@ class Bpmn extends Handler
 
     public function addLane($data)
     {
-        // TODO: Implement update() method.
+        // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
+        $data['LAN_UID'] = array_key_exists('LAN_UID', $data) ? $data['LAN_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
+        try {
+            self::log("Add Lane with data: ", $data);
+            $lane = new Lane();
+            $lane->fromArray($data, BasePeer::TYPE_FIELDNAME);
+            $lane->setPrjUid($this->getUid());
+            //$lane->setProUid($this->getProcess("object")->getProUid());
+            $lane->save();
+            self::log("Add Lane Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+
+        return $lane->getLanUid();
     }
 
-    public function getLane($lanUid)
+    public function getLane($lanUid, $retType = 'array')
     {
-        // TODO: Implement update() method.
+        $lane = LanePeer::retrieveByPK($lanUid);
+
+        if ($retType != "object" && ! empty($lane)) {
+            $lane = $lane->toArray();
+            $lane = self::filterArrayKeys($lane, self::$excludeFields["lane"]);
+        }
+
+        return $lane;
     }
 
-    public function getLanes()
+    public function getLanes($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
-        // TODO: Implement update() method.
-        return array();
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        $filter = $changeCaseTo != CASE_UPPER ? array_map("strtolower", self::$excludeFields["lane"]) : self::$excludeFields["lane"];
+
+        return self::filterCollectionArrayKeys(
+            Lane::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo),
+            $filter
+        );
+    }
+
+    public function removeLane($lanUid)
+    {
+        try {
+            self::log("Remove Lane: $lanUid");
+
+            $lane = LanePeer::retrieveByPK($lanUid);
+            $lane->delete();
+
+            // remove related object (flows)
+            Flow::removeAllRelated($lanUid);
+
+            self::log("Remove Lane Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function addLaneset($data)
     {
-        // TODO: Implement update() method.
+        // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+        $data['LNS_UID'] = array_key_exists('LNS_UID', $data) ? $data['LNS_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
+        try {
+            self::log("Add Laneset with data: ", $data);
+            $laneset = new Laneset();
+            $laneset->fromArray($data, BasePeer::TYPE_FIELDNAME);
+            $laneset->setPrjUid($this->getUid());
+            $laneset->setProUid($this->getProcess("object")->getProUid());
+            $laneset->save();
+            self::log("Add Laneset Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+
+        return $laneset->getLnsUid();
     }
 
-    public function getLaneset($lnsUid)
+    public function getLaneset($lnsUid, $retType = 'array')
     {
-        // TODO: Implement update() method.
+        $laneset = LanesetPeer::retrieveByPK($lnsUid);
+
+        if ($retType != "object" && ! empty($laneset)) {
+            $laneset = $laneset->toArray();
+            $laneset = self::filterArrayKeys($laneset, self::$excludeFields["laneset"]);
+        }
+
+        return $laneset;
     }
 
-    public function getLanesets()
+    public function getLanesets($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
-        // TODO: Implement update() method.
-        return array();
+        if (is_array($start)) {
+            extract($start);
+        }
+        $filter = $changeCaseTo != CASE_UPPER ? array_map("strtolower", self::$excludeFields["laneset"]) : self::$excludeFields["laneset"];
+        return self::filterCollectionArrayKeys(
+            Laneset::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo),
+            $filter
+        );
     }
 
+    public function removeLaneset($lnsUid)
+    {
+        try {
+            self::log("Remove Laneset: $lnsUid");
+
+            $laneset = LanesetPeer::retrieveByPK($lnsUid);
+            $laneset->delete();
+
+            // remove related object (flows)
+            Flow::removeAllRelated($lnsUid);
+
+            self::log("Remove Laneset Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
 
     public function isModified($element, $uid, $newData)
     {

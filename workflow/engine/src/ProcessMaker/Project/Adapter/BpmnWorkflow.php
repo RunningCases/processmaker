@@ -671,6 +671,8 @@ class BpmnWorkflow extends Project\Bpmn
             $diagram["lanes"] = $bwp->getLanes($configList);
             $diagram["data"] = $bwp->getDataCollection($configList);
             $diagram["participants"] = $bwp->getParticipants($configList);
+            $diagram["lanesets"] = $bwp->getLanesets($configList);
+            $diagram["lanes"] = $bwp->getLanes($configList);
             $project["diagrams"][] = $diagram;
         }
 
@@ -726,6 +728,8 @@ class BpmnWorkflow extends Project\Bpmn
         $diagram["events"] = isset($diagram["events"])? $diagram["events"]: array();
         $diagram["data"] = isset($diagram["data"])? $diagram["data"]: array();
         $diagram["participants"] = isset($diagram["participants"])? $diagram["participants"]: array();
+        $diagram["lanesets"] = isset($diagram["lanesets"])? $diagram["lanesets"]: array();
+        $diagram["lanes"] = isset($diagram["lanes"])? $diagram["lanes"]: array();
         $result = array();
 
         $projectData['prj_uid'] = $prjUid;
@@ -1031,6 +1035,97 @@ class BpmnWorkflow extends Project\Bpmn
                 $bwp->removeParticipant($participantData["PAR_UID"]);
             }
         }
+
+        ////
+        /*
+         * Diagram's Laneset Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["laneset"] as $i => $lanesetData) {
+            $lanesetData = array_change_key_case($lanesetData, CASE_UPPER);
+
+            $dataObject = $bwp->getLaneset($lanesetData["LNS_UID"]);
+
+            if ($forceInsert || is_null($dataObject)) {
+                if ($generateUid) {
+                    //Laneset
+                    unset($lanesetData["BOU_UID"]);
+
+                    $uidOld = $lanesetData["LNS_UID"];
+                    $lanesetData["LNS_UID"] = Util\Common::generateUID();
+
+                    $result[] = array(
+                        "object"  => "laneset",
+                        "old_uid" => $uidOld,
+                        "new_uid" => $lanesetData["LNS_UID"]
+                    );
+                }
+                $bwp->addLaneset($lanesetData);
+            } elseif (! $bwp->isEquals($dataObject, $lanesetData)) {
+                $bwp->updateLanseset($lanesetData["LNS_UID"], $lanesetData);
+            } else {
+                Util\Logger::log("Update Laneset ({$lanesetData["LNS_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["laneset"][$i] = $lanesetData;
+            $whiteList[] = $lanesetData["LNS_UID"];
+        }
+
+        $dataCollection = $bwp->getLanesets();
+
+        // looking for removed elements
+        foreach ($dataCollection as $lanesetData) {
+            if (! in_array($lanesetData["LNS_UID"], $whiteList)) {
+                // If it is not in the white list, then remove them
+                $bwp->removeLaneset($lanesetData["LNS_UID"]);
+            }
+        }
+
+        ////
+        /*
+         * Diagram's Lane Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["lanes"] as $i => $laneData) {
+            $laneData = array_change_key_case($laneData, CASE_UPPER);
+
+            $dataObject = $bwp->getLane($laneData["LAN_UID"]);
+
+            if ($forceInsert || is_null($dataObject)) {
+                if ($generateUid) {
+                    //Laneset
+                    unset($laneData["BOU_UID"]);
+
+                    $uidOld = $laneData["LAN_UID"];
+                    $laneData["LAN_UID"] = Util\Common::generateUID();
+
+                    $result[] = array(
+                        "object"  => "lane",
+                        "old_uid" => $uidOld,
+                        "new_uid" => $laneData["LAN_UID"]
+                    );
+                }
+                $bwp->addLane($laneData);
+            } elseif (! $bwp->isEquals($dataObject, $laneData)) {
+                $bwp->updateLanse($laneData["LAN_UID"], $laneData);
+            } else {
+                Util\Logger::log("Update Lane ({$laneData["LAN_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["lane"][$i] = $laneData;
+            $whiteList[] = $laneData["LAN_UID"];
+        }
+
+        $dataCollection = $bwp->getLanes();
+
+        // looking for removed elements
+        foreach ($dataCollection as $laneData) {
+            if (! in_array($laneData["LAN_UID"], $whiteList)) {
+                // If it is not in the white list, then remove them
+                $bwp->removeLane($laneData["LAN_UID"]);
+            }
+        }
+
 
         /*
          * Diagram's Flows Handling

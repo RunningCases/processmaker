@@ -32,8 +32,6 @@ class BpmnArtifact extends BaseBpmnArtifact
     private function setBoundDefaults()
     {
         $this->bound->setBouElementType(lcfirst(str_replace(__NAMESPACE__, '', __CLASS__)));
-        $this->bound->setBouElement('pm_canvas');
-        $this->bound->setBouContainer('bpmnDiagram');
 
         $this->bound->setPrjUid($this->getPrjUid());
         $this->bound->setElementUid($this->getArtUid());
@@ -41,7 +39,16 @@ class BpmnArtifact extends BaseBpmnArtifact
         $process = BpmnProcessPeer::retrieveByPK($this->getProUid());
 
         if (is_object($process)) {
+
             $this->bound->setDiaUid($process->getDiaUid());
+
+            if ($this->bound->getBouElement() == null && $this->bound->getBouElement() == '' && $this->bound->getBouElement() == $process->getDiaUid()) {
+                $this->bound->setBouContainer('bpmnDiagram');
+                $this->bound->setBouElement($process->getDiaUid());
+            } else {
+                $this->bound->setBouContainer('bpmnLane');
+                $this->bound->setBouElement($this->bound->getBouElement());
+            }
         }
     }
 
