@@ -63,6 +63,13 @@ class workspaceTools
     public function upgrade($first = false, $buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en')
     {   
         $start = microtime(true);
+        CLI::logging("> Verify enterprise old...\n");
+        $this->verifyEnterprise($workSpace);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Verify took $final seconds.\n");
+
+        $start = microtime(true);
         CLI::logging("> Updating database...\n");
         $this->upgradeDatabase($onedb);
         $stop = microtime(true);
@@ -1629,6 +1636,61 @@ class workspaceTools
         $this->initPropel( true );
         G::LoadClass("enterprise");
         enterpriseClass::setHashPassword($response);
+    }
+
+    public function verifyEnterprise ($workspace)
+    {
+        $this->initPropel( true );
+        $pathBackup = PATH_DATA . 'backups';
+        if (!file_exists($pathBackup)) {
+            G::mk_dir($pathBackup, 0777);
+        }
+        $pathNewFile = PATH_DATA . 'backups' . PATH_SEP . 'enterpriseBackup';
+        $pathDirectoryEnterprise = PATH_CORE . 'plugins' . PATH_SEP . 'enterprise';
+        $pathFileEnterprise = PATH_CORE . 'plugins' . PATH_SEP . 'enterprise.php';
+
+        if (!file_exists($pathDirectoryEnterprise) && !file_exists(PATH_PLUGIN . 'enterprise.php')) {
+            CLI::logging("    Without changes... \n");
+            return true;
+        }
+        CLI::logging("    Migrating Enterprise Core version...\n");
+        if (!file_exists($pathNewFile)) {
+            CLI::logging("    Creating folder in $pathNewFile\n");
+            G::mk_dir($newDiretory, 0777);
+        }
+        $shared_stat = stat(PATH_DATA);
+        if (file_exists($pathDirectoryEnterprise)) {
+            CLI::logging("    Copying Enterprise Directory to $pathNewFile...\n");
+
+            if ($shared_stat !== false) {
+                workspaceTools::dirPerms($pathDirectoryEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+            } else {
+                CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
+            }
+            if (G::recursive_copy($pathDirectoryEnterprise, $pathNewFile . PATH_SEP. 'enterprise')) {
+                CLI::logging("    Removing $pathDirectoryEnterprise...\n");
+                G::rm_dir($pathDirectoryEnterprise);
+            } else {
+                CLI::logging(CLI::error("    Error: Failure to copy from $pathDirectoryEnterprise...\n"));
+            }
+            if (file_exists($pathDirectoryEnterprise)) {
+                CLI::logging(CLI::info("    Remove manually $pathDirectoryEnterprise...\n"));
+            }
+        }
+        if (file_exists($pathFileEnterprise)) {
+            CLI::logging("    Copying Enterprise.php file to $pathNewFile...\n");
+            if ($shared_stat !== false) {
+                workspaceTools::dirPerms($pathFileEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+            } else {
+                CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
+            }
+            CLI::logging("    Removing $pathFileEnterprise...\n");
+            copy($pathFileEnterprise , $pathNewFile. PATH_SEP . 'enterprise.php');
+            G::rm_dir($pathFileEnterprise);
+            if (file_exists($pathFileEnterprise)) {
+                CLI::logging(CLI::info("    Remove manually $pathFileEnterprise...\n"));
+            }
+        }
     }
 }
 
