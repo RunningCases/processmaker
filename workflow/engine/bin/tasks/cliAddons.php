@@ -12,7 +12,7 @@ if (CLI2) {
     Download and install an addon
 EOT
   );
-  CLI::taskRun(run_addon_install);
+  CLI::taskRun(run_addon_core_install);
 } else {
   pake_desc("install addon");
   pake_task("addon-install");
@@ -28,8 +28,8 @@ CLI::taskArg('workspace', false);
 CLI::taskArg('hash', false);
 CLI::taskRun("change_hash");
 
-//function run_addon_install($args, $opts) {
-function run_addon_install($args)
+//function run_addon_core_install($args, $opts) {
+function run_addon_core_install($args)
 {
     try {
         if (!extension_loaded("mysql")) {

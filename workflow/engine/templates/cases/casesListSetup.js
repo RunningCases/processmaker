@@ -374,7 +374,7 @@ Ext.onReady(function () {
                 renderer: function (value, metaData, record, rowIndex, colIndex, store)
                 {
                     var arrayMatch = [];
-                    var newValue = value;
+                    var newValue = _(value);
 
                     if ((arrayMatch = /^\*\*(.+)\*\*$/.exec(value))) {
                         newValue = _(arrayMatch[1]);
