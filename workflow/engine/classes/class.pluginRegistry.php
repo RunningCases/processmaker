@@ -32,6 +32,7 @@
 
 require_once 'class.plugin.php';
 
+
 class pluginDetail
 {
     public $sNamespace;
@@ -258,7 +259,11 @@ class PMPluginRegistry
                 $this->registerFolder( $sNamespace, $sNamespace, $detail->sPluginFolder );
                 //register the default directory, later we can have more
                 $this->_aPluginDetails[$sNamespace]->enabled = true;
-                $oPlugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
+                if (class_exists($detail->sClassName)) {
+                    $oPlugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );    
+                } else {
+                    $oPlugin = $detail;
+                }
                 $this->_aPlugins[$detail->sNamespace] = $oPlugin;
                 if (method_exists( $oPlugin, 'enable' )) {
                     $oPlugin->enable();
@@ -294,17 +299,19 @@ class PMPluginRegistry
      */
     public function disablePlugin ($sNamespace, $eventPlugin = 1)
     {
+        //require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
         $sw = false;
-
+        //G::pr($this->_aPluginDetails);die;
         foreach ($this->_aPluginDetails as $namespace => $detail) {
             if ($namespace == $sNamespace) {
+                //G::pr($detail);die;
                 unset( $this->_aPluginDetails[$sNamespace] );
 
                 if ($eventPlugin == 1) {
-                    $plugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
-                    $this->_aPlugins[$detail->sNamespace] = $plugin;
-                    if (method_exists( $plugin, "disable" )) {
-                        $plugin->disable();
+                    //$plugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
+                    $this->_aPlugins[$detail->sNamespace] = $detail;
+                    if (method_exists( $detail, "disable" )) {
+                        $detail->disable();
                     }
                 }
 
@@ -982,7 +989,7 @@ class PMPluginRegistry
                 $classFile = '';
 
                 foreach ($this->_aFolders as $row => $folder) {
-                    $fname = PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
+                    $fname = $folder->sNamespace == 'enterprise' ? PATH_CORE . 'classes' . PATH_SEP . 'class.' . $folder->sFolderName . '.php' : PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
                     if ($detail->sNamespace == $folder->sNamespace && file_exists( $fname )) {
                         $found = true;
                         $classFile = $fname;
@@ -1018,11 +1025,12 @@ class PMPluginRegistry
             if ($triggerId == $detail->sTriggerId) {
                 //review all folders registered for this namespace
                 foreach ($this->_aFolders as $row => $folder) {
-                    $fname = PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
+                    $fname = $folder->sNamespace == 'enterprise' ? PATH_CORE . 'classes' . PATH_SEP . 'class.' . $folder->sFolderName . '.php' : PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
                     if ($detail->sNamespace == $folder->sNamespace && file_exists( $fname )) {
                         $found = true;
                     }
                 }
+
             }
         }
         return $found;
@@ -1154,7 +1162,7 @@ class PMPluginRegistry
                         } else {
                             $aux = explode( chr( 92 ), $detail->sFilename );
                         }
-                        $sFilename = PATH_PLUGINS . $aux[count( $aux ) - 1];
+                        $sFilename = (($detail->sNamespace == 'enterprise') ? PATH_CORE. 'methods' . PATH_SEP . 'enterprise' . PATH_SEP : PATH_PLUGINS) . $aux[count( $aux ) - 1];
                         if (! file_exists( $sFilename )) {
                             continue;
                         }

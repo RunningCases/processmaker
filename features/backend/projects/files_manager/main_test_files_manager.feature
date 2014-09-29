@@ -3,13 +3,14 @@ Feature: Files Manager Resources Main Tests
   Requirements:
   a workspace with the process 1265557095225ff5c688f46031700471 ("Test Michelangelo") already loaded
   there are two output documents in the process
+  and workspace with the process 1455892245368ebeb11c1a5001393784 - "Process Complete BPMN" already loaded" already loaded
 
 Background:
   Given that I have a valid access_token
 
  
-Scenario: Get a list of main process files manager
-  Given I request "project/1265557095225ff5c688f46031700471/file-manager"
+Scenario Outline: Get a list of main process files manager
+  Given I request "project/<project>/file-manager"
   Then the response status code should be 200
   And the response charset is "UTF-8"
   And the content type is "application/json"
@@ -17,21 +18,39 @@ Scenario: Get a list of main process files manager
   And the "name" property in row 0 equals "templates"
   And the "name" property in row 1 equals "public"
 
-Scenario: Get a list public folder of process files manager
-  Given I request "project/1265557095225ff5c688f46031700471/file-manager?path=public"
+  Examples:
+  | test_description                          | project                          |
+  | Get list of process Test Michelangelo     | 1265557095225ff5c688f46031700471 |
+  | Get list of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 |
+
+
+Scenario Outline: Get a list public folder of process files manager
+  Given I request "project/<project>/file-manager?path=public"
   Then the response status code should be 200
   And the response charset is "UTF-8"
   And the content type is "application/json"
   And the type is "array"
-  And the response has 0 records
+  And the response has <records> records
   
-Scenario: Get a list templates folder of process files manager
-  Given I request "project/1265557095225ff5c688f46031700471/file-manager?path=templates"
+  Examples:
+  | test_description                          | project                          | records |
+  | Get list of process Test Michelangelo     | 1265557095225ff5c688f46031700471 | 0       |
+  | Get list of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 4       |
+
+
+Scenario Outline: Get a list templates folder of process files manager
+  Given I request "project/<project>/file-manager?path=templates"
   Then the response status code should be 200
   And the response charset is "UTF-8"
   And the content type is "application/json"
   And the type is "array"
   And the response has 2 records
+
+  Examples:
+  | test_description                          | project                          | records |
+  | Get list of process Test Michelangelo     | 1265557095225ff5c688f46031700471 | 2       |
+  | Get list of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 2       |
+
 
 Scenario Outline: Create files and subfolders 
   Given POST this data:
@@ -42,7 +61,7 @@ Scenario Outline: Create files and subfolders
     "prf_content": "<prf_content>"
   }
   """
-  And I request "project/1265557095225ff5c688f46031700471/file-manager"
+  And I request "project/<project>/file-manager"
   Then the response status code should be <http_code>
   And the response charset is "UTF-8"
   And the content type is "application/json"
@@ -50,11 +69,15 @@ Scenario Outline: Create files and subfolders
   And store "prf_uid" in session array as variable "prf_uid_<prf_number>"
 
   Examples:
-  | test_description             | prf_filename     | prf_path                      | prf_content                   | http_code | type   | prf_number |
-  | into public folder           | file_test_1.txt  | public/                       | only text                     | 200       | object | 0          |
-  | into mailtemplates folder    | file_test_2.html | templates/                    | <h1>Test</h1><p>html test</p> | 200       | object | 1          |
-  | into public subfolder        | file_test_3      | public/public_subfolder       | test                          | 200       | object | 2          |
-  | into mailtemplates subfolder | file_test_4      | templates/templates_subfolder | test                          | 200       | object | 3          |
+  | test_description                  | project                          | prf_filename     | prf_path                      | prf_content                   | http_code | type   | prf_number |
+  | into public folder           .pm  | 1265557095225ff5c688f46031700471 | file_test_1.txt  | public/                       | only text                     | 200       | object | 0          |
+  | into mailtemplates folder    .pm  | 1265557095225ff5c688f46031700471 | file_test_2.html | templates/                    | <h1>Test</h1><p>html test</p> | 200       | object | 1          |
+  | into public subfolder        .pm  | 1265557095225ff5c688f46031700471 | file_test_3      | public/public_subfolder       | test                          | 200       | object | 2          |
+  | into mailtemplates subfolder .pm  | 1265557095225ff5c688f46031700471 | file_test_4      | templates/templates_subfolder | test                          | 200       | object | 3          |
+  | into public folder           .pmx | 1455892245368ebeb11c1a5001393784 | file_test_1.txt  | public/                       | only text                     | 200       | object | 8          |
+  | into mailtemplates folder    .pmx | 1455892245368ebeb11c1a5001393784 | file_test_2.html | templates/                    | <h1>Test</h1><p>html test</p> | 200       | object | 9          |
+  | into public subfolder        .pmx | 1455892245368ebeb11c1a5001393784 | file_test_3      | public/public_subfolder       | test                          | 200       | object | 10         |
+  | into mailtemplates subfolder .pmx | 1455892245368ebeb11c1a5001393784 | file_test_4      | templates/templates_subfolder | test                          | 200       | object | 11         |
 
 
 Scenario: Create files and subfolders with same name in path public
@@ -93,23 +116,27 @@ Scenario Outline: Update files by updating the content
   }
   """
   And that I want to update a resource with the key "prf_uid" stored in session array as variable "prf_uid_<prf_number>"
-  And I request "project/1265557095225ff5c688f46031700471/file-manager"
+  And I request "project/<project>/file-manager"
   Then the response status code should be <http_code>
   And the response charset is "UTF-8"
   And the content type is "application/json"
   And the type is "<type>"
 
   Examples:
-  | test_description                 | prf_filename     | prf_content                                  | http_code | type   | prf_number |
-  | put into public folder           | file_test_1.txt  | only text - modified                         | 200       | object | 0          |
-  | put into mailtemplates folder    | file_test_2.html | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          |
-  | put into public subfolder        | file_test_3      | put test                                     | 200       | object | 2          |
-  | put into mailtemplates subfolder | file_test_4      | put test                                     | 200       | object | 3          |
+  | test_description                 .pm  | project                          | prf_filename     | prf_content                                  | http_code | type   | prf_number |
+  | put into public folder           .pm  | 1265557095225ff5c688f46031700471 | file_test_1.txt  | only text - modified                         | 200       | object | 0          |
+  | put into mailtemplates folder    .pm  | 1265557095225ff5c688f46031700471 | file_test_2.html | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          |
+  | put into public subfolder        .pm  | 1265557095225ff5c688f46031700471 | file_test_3      | put test                                     | 200       | object | 2          |
+  | put into mailtemplates subfolder .pm  | 1265557095225ff5c688f46031700471 | file_test_4      | put test                                     | 200       | object | 3          |
+  | put into public folder           .pmx | 1455892245368ebeb11c1a5001393784 | file_test_1.txt  | only text - modified                         | 200       | object | 8          |
+  | put into mailtemplates folder    .pmx | 1455892245368ebeb11c1a5001393784 | file_test_2.html | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 9          |
+  | put into public subfolder        .pmx | 1455892245368ebeb11c1a5001393784 | file_test_3      | put test                                     | 200       | object | 10         |
+  | put into mailtemplates subfolder .pmx | 1455892245368ebeb11c1a5001393784 | file_test_4      | put test                                     | 200       | object | 11         |
 
 
 Scenario Outline: Get a single Files Manager and check some properties
   Given that I want to get a resource with the key "prf_uid" stored in session array as variable "prf_uid_<prf_number>"
-  Given I request "project/1265557095225ff5c688f46031700471/file-manager"
+  Given I request "project/<project>/file-manager"
   Then the response status code should be 200
   And the response charset is "UTF-8"
   And the content type is "application/json"
@@ -119,11 +146,15 @@ Scenario Outline: Get a single Files Manager and check some properties
   And that "prf_content" is set to "<prf_content>"
   
   Examples:
-  | test_description                 | prf_filename     | prf_content                                  | http_code | type   | prf_number | row | prf_path                      |
-  | put into public folder           | file_test_1.txt  | only text - modified                         | 200       | object | 0          | 1   | public/                       |
-  | put into mailtemplates folder    | file_test_2.html | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          | 1   | templates/                    |
-  | put into public subfolder        | file_test_3      | put test                                     | 200       | object | 2          | 0   | public/public_subfolder       |
-  | put into mailtemplates subfolder | file_test_4      | put test                                     | 200       | object | 3          | 0   | templates/templates_subfolder |
+  | test_description                 .pm  | project                          | prf_filename     | prf_content                                  | http_code | type   | prf_number | row | prf_path                      |
+  | put into public folder           .pm  | 1265557095225ff5c688f46031700471 | file_test_1.txt  | only text - modified                         | 200       | object | 0          | 1   | public/                       |
+  | put into mailtemplates folder    .pm  | 1265557095225ff5c688f46031700471 | file_test_2.html | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 1          | 1   | templates/                    |
+  | put into public subfolder        .pm  | 1265557095225ff5c688f46031700471 | file_test_3      | put test                                     | 200       | object | 2          | 0   | public/public_subfolder       |
+  | put into mailtemplates subfolder .pm  | 1265557095225ff5c688f46031700471 | file_test_4      | put test                                     | 200       | object | 3          | 0   | templates/templates_subfolder |
+  | put into public folder           .pmx | 1455892245368ebeb11c1a5001393784 | file_test_1.txt  | only text - modified                         | 200       | object | 8          | 1   | public/                       |
+  | put into mailtemplates folder    .pmx | 1455892245368ebeb11c1a5001393784 | file_test_2.html | <h1>Test</h1><p>html test</p><i>modified</i> | 200       | object | 9          | 1   | templates/                    |
+  | put into public subfolder        .pmx | 1455892245368ebeb11c1a5001393784 | file_test_3      | put test                                     | 200       | object | 10         | 0   | public/public_subfolder       |
+  | put into mailtemplates subfolder .pmx | 1455892245368ebeb11c1a5001393784 | file_test_4      | put test                                     | 200       | object | 11         | 0   | templates/templates_subfolder |
 
   
 Scenario Outline: Upload files to same folders
@@ -179,11 +210,15 @@ Scenario Outline: Download files
   Then the response status code should be 200
         
   Examples:
-  | test_description  | prf_number |
-  | Download file     | 0          |
-  | Download file     | 1          |
-  | Download file     | 2          |
-  | Download file     | 4          |
+  | test_description  | prf_number | project                          |
+  | Download file     | 0          | 1265557095225ff5c688f46031700471 |
+  | Download file     | 1          | 1265557095225ff5c688f46031700471 |
+  | Download file     | 2          | 1265557095225ff5c688f46031700471 |
+  | Download file     | 4          | 1265557095225ff5c688f46031700471 |
+  | Download file     | 8          | 1455892245368ebeb11c1a5001393784 |
+  | Download file     | 9          | 1455892245368ebeb11c1a5001393784 |
+  | Download file     | 10         | 1455892245368ebeb11c1a5001393784 |
+  | Download file     | 11         | 1455892245368ebeb11c1a5001393784 |
 
     
 Scenario Outline: Delete file
@@ -202,6 +237,10 @@ Scenario Outline: Delete file
   | delete mailtemplates subfolder   | 5          |
   | delete mailtemplates subfolder   | 6          |
   | delete                           | 7          |
+  | delete                           | 8          |
+  | delete                           | 9          |
+  | delete                           | 10         |
+  | delete                           | 11         |
 
 
 Scenario Outline: Delete folder
@@ -226,4 +265,3 @@ Scenario Outline: Upload files with incorret extension ".exe" - "Project - Proce
   Examples:
   | file            | prf_path  | prf_number |
   | filemanager.exe | templates | 1          | 
-

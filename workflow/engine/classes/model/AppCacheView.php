@@ -1201,7 +1201,6 @@ class AppCacheView extends BaseAppCacheView
             $rs1->next();
             $row = $rs1->getRow();
             $mysqlUser = str_replace('@', "'@'", $row[0]);
-
             $super = false;
 
             $sql = "SELECT *
@@ -1211,8 +1210,8 @@ class AppCacheView extends BaseAppCacheView
             $rs1 = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
             $rs1->next();
             $row = $rs1->getRow();
-
-            if (is_array($row = $rs1->getRow())) {
+            
+            if ($row['PRIVILEGE_TYPE'] == 'SUPER') {
                 $super = G::LoadTranslation('ID_TRUE'); //true;
             }
 

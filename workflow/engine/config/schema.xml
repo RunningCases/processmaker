@@ -580,6 +580,9 @@
     <column name="INP_DOC_VERSIONING" type="TINYINT" required="true" default="0"/>
     <column name="INP_DOC_DESTINATION_PATH" type="LONGVARCHAR" required="false"/>
     <column name="INP_DOC_TAGS" type="LONGVARCHAR" required="false"/>
+    <column name="INP_DOC_TYPE_FILE" type="VARCHAR" size="200" required="false" default="*.*"/>
+    <column name="INP_DOC_MAX_FILESIZE" type="INTEGER" required="true" default="0"/>
+    <column name="INP_DOC_MAX_FILESIZE_UNIT" type="VARCHAR" size="2" required="true" default="KB"/>
     <validator column="INP_DOC_UID">
       <rule name="maxLength" value="32" message="Input Document UID can be no larger than ${value} in size"/>
       <rule name="required" message="Input Document UID is required."/>
@@ -835,7 +838,8 @@
     <column name="PRO_TRI_CANCELED" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_TRI_PAUSED" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_TRI_REASSIGNED" type="VARCHAR" size="32" required="true" default=""/>
-    <column name="PRO_TRI_UNPAUSED" type="VARCHAR" size="32" required="true" default=""/> 
+    <column name="PRO_TRI_UNPAUSED" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="PRO_TYPE_PROCESS" type="VARCHAR" size="32" required="true" default="PUBLIC"/>
     <column name="PRO_SHOW_DELEGATE" type="TINYINT" required="true" default="1"/>
     <column name="PRO_SHOW_DYNAFORM" type="TINYINT" required="true" default="0"/>
     <column name="PRO_CATEGORY" type="VARCHAR" size="48" required="true" default=""/>
@@ -1237,6 +1241,7 @@
     <column name="TAS_SELFSERVICE_TIME" type="VARCHAR" size="15" default=""/>
     <column name="TAS_SELFSERVICE_TIME_UNIT" type="VARCHAR" size="15" default=""/>
     <column name="TAS_SELFSERVICE_TRIGGER_UID" type="VARCHAR" size="32" default=""/>
+    <column name="TAS_SELFSERVICE_EXECUTION" type="VARCHAR" size="15" default="EVERY_TIME"/>
 
     <validator column="TAS_TYPE">
       <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN" message="Please select a valid value for TAS_TYPE."/>
@@ -2169,21 +2174,22 @@
       <parameter name="Create_options" value=""/>
       <parameter name="Comment" value=""/>
     </vendor>
-    <column name="FLD_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-    <column name="ADD_TAB_UID" type="VARCHAR" size="32" required="true" default=""/>
-    <column name="FLD_INDEX" type="INTEGER" required="true" default="1"/>
-    <column name="FLD_NAME" type="VARCHAR" size="60" required="true" default=""/>
-    <column name="FLD_DESCRIPTION" type="LONGVARCHAR" required="true"/>
-    <column name="FLD_TYPE" type="VARCHAR" size="20" required="true" default=""/>
-    <column name="FLD_SIZE" type="INTEGER" required="false" default="0"/>
-    <column name="FLD_NULL" type="TINYINT" required="true" default="1"/>
-    <column name="FLD_AUTO_INCREMENT" type="TINYINT" required="true" default="0"/>
-    <column name="FLD_KEY" type="TINYINT" required="true" default="0"/>
-    <column name="FLD_FOREIGN_KEY" type="TINYINT" required="true" default="0"/>
-    <column name="FLD_FOREIGN_KEY_TABLE" type="VARCHAR" size="32" required="true" default=""/>
-    <column name="FLD_DYN_NAME" type="VARCHAR" size="128" required="false" default=""/>
-    <column name="FLD_DYN_UID" type="VARCHAR" size="128" required="false" default=""/>
-    <column name="FLD_FILTER" type="TINYINT" required="false" default="0"/>
+    <column name="FLD_UID"                  type="VARCHAR"      size="32" required="true" primaryKey="true" default=""/>
+    <column name="ADD_TAB_UID"              type="VARCHAR"      size="32" required="true" default=""/>
+    <column name="FLD_INDEX"                type="INTEGER"      required="true" default="1"/>
+    <column name="FLD_NAME"                 type="VARCHAR"      size="60" required="true" default=""/>
+    <column name="FLD_DESCRIPTION"          type="LONGVARCHAR"  required="true"/>
+    <column name="FLD_TYPE"                 type="VARCHAR"      size="20" required="true" default=""/>
+    <column name="FLD_SIZE"                 type="INTEGER"      required="false" default="0"/>
+    <column name="FLD_NULL"                 type="TINYINT"      required="true" default="1"/>
+    <column name="FLD_AUTO_INCREMENT"       type="TINYINT"      required="true" default="0"/>
+    <column name="FLD_KEY"                  type="TINYINT"      required="true" default="0"/>
+    <column name="FLD_TABLE_INDEX"          type="TINYINT"      required="true" default="0"/>
+    <column name="FLD_FOREIGN_KEY"          type="TINYINT"      required="false" default="0"/>
+    <column name="FLD_FOREIGN_KEY_TABLE"    type="VARCHAR"      size="32" required="true" default=""/>
+    <column name="FLD_DYN_NAME"             type="VARCHAR"      size="128" required="false" default=""/>
+    <column name="FLD_DYN_UID"              type="VARCHAR"      size="128" required="false" default=""/>
+    <column name="FLD_FILTER"               type="TINYINT"      required="false" default="0"/>
   </table>
   <table name="SHADOW_TABLE">
     <vendor type="mysql">
@@ -3803,6 +3809,54 @@
         <column name="VAR_NULL" type="TINYINT" size="32" default="0"/>
         <column name="VAR_DEFAULT" type="VARCHAR" size="32" default=""/>
         <column name="VAR_ACCEPTED_VALUES" type="LONGVARCHAR"/>
+    </table>
+
+    <table name="APP_TIMEOUT_ACTION_EXECUTED">
+        <column name="APP_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true" />
+        <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
+        <column name="EXECUTION_DATE" type="TIMESTAMP" required="false"/>
+    </table>
+
+    <table name="ADDONS_STORE">
+        <column name="STORE_ID"             type="VARCHAR"  size="32"   primaryKey="true" />
+        <column name="STORE_VERSION"        type="INTEGER" />
+        <column name="STORE_LOCATION"       type="VARCHAR"  size="2048" required="true" />
+        <column name="STORE_TYPE"           type="VARCHAR"  size="255"  required="true" />
+        <column name="STORE_LAST_UPDATED"   type="TIMESTAMP" />
+    </table>
+
+    <table name="ADDONS_MANAGER">
+        <column name="ADDON_ID"                 type="VARCHAR"      size="255"  required="true" primaryKey="true" />
+        <column name="STORE_ID"                 type="VARCHAR"      size="32"   required="true" primaryKey="true" />
+        <column name="ADDON_NAME"               type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_NICK"               type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_DOWNLOAD_FILENAME"  type="VARCHAR"      size="1024" required="false" />
+        <column name="ADDON_DESCRIPTION"        type="VARCHAR"      size="2048" required="false" />
+        <column name="ADDON_STATE"              type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_STATE_CHANGED"      type="TIMESTAMP"    required="false" />
+        <column name="ADDON_STATUS"             type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_VERSION"            type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_TYPE"               type="VARCHAR"      size="255"  required="true" />
+        <column name="ADDON_PUBLISHER"          type="VARCHAR"      size="255"  required="false" />
+        <column name="ADDON_RELEASE_DATE"       type="TIMESTAMP"    required="false" />
+        <column name="ADDON_RELEASE_TYPE"       type="VARCHAR"      size="255"  required="false" />
+        <column name="ADDON_RELEASE_NOTES"      type="VARCHAR"      size="255"  required="false" />
+        <column name="ADDON_DOWNLOAD_URL"       type="VARCHAR"      size="2048" required="false" />
+        <column name="ADDON_DOWNLOAD_PROGRESS"  type="FLOAT"        required="false" />
+        <column name="ADDON_DOWNLOAD_MD5"       type="VARCHAR"      size="32"   required="false" />
+    </table>
+
+    <table name="LICENSE_MANAGER">
+        <column name="LICENSE_UID"          type="VARCHAR"      size="32"       primaryKey="true" />
+        <column name="LICENSE_USER"         type="VARCHAR"      size="150"      required="true" default="0"/>
+        <column name="LICENSE_START"        type="INTEGER"      required="true" default="0"/>
+        <column name="LICENSE_END"          type="INTEGER"      required="true" default="0"/>
+        <column name="LICENSE_SPAN"         type="INTEGER"      required="true" default="0"/>
+        <column name="LICENSE_STATUS"       type="VARCHAR"      size="100"      required="true" default=""/>
+        <column name="LICENSE_DATA"         type="LONGVARCHAR"  required="true" />
+        <column name="LICENSE_PATH"         type="VARCHAR"      size="255"      required="true" default="0"/>
+        <column name="LICENSE_WORKSPACE"    type="VARCHAR"      size="32"       required="true" default="0"/>
+        <column name="LICENSE_TYPE"         type="VARCHAR"      size="32"       required="true" default="0"/>
     </table>
 </database>
 

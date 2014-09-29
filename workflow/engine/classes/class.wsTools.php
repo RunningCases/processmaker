@@ -60,11 +60,18 @@ class workspaceTools
      *
      * @param bool $first true if this is the first workspace to be upgrade
      */
-    public function upgrade($first = false, $buildCacheView = false, $workSpace = SYS_SYS, $lang = 'en')
-    {
+    public function upgrade($first = false, $buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en')
+    {   
+        $start = microtime(true);
+        CLI::logging("> Verify enterprise old...\n");
+        $this->verifyEnterprise($workSpace);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Verify took $final seconds.\n");
+
         $start = microtime(true);
         CLI::logging("> Updating database...\n");
-        $this->upgradeDatabase();
+        $this->upgradeDatabase($onedb);
         $stop = microtime(true);
         $final = $stop - $start;
         CLI::logging("<*>   Database Upgrade Process took $final seconds.\n");
@@ -84,6 +91,13 @@ class workspaceTools
         CLI::logging("<*>   Updating Content Process took $final seconds.\n");
 
         $start = microtime(true);
+        CLI::logging("> check Mafe Requirements...\n");
+        $this->checkMafeRequirements($workSpace, $lang);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
+
+        $start = microtime(true);
         CLI::logging("> Updating cache view...\n");
         $this->upgradeCacheView($buildCacheView, true, $lang);
         $stop = microtime(true);
@@ -97,12 +111,63 @@ class workspaceTools
         $final = $stop - $start;
         CLI::logging("<*>   Backup log files Process took $final seconds.\n");
 
-        $start = microtime(true);
-        CLI::logging("> check Mafe Requirements...\n");
-        $this->checkMafeRequirements($workSpace, $lang);
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
+        CLI::logging("> Updating Files Manager...\n\n");
+        $this->upgradeFilesManager($workSpace);
+    }
+
+    /**
+     * Function upgradeFilesManager
+     * access public
+     */
+    public function upgradeFilesManager($workSpace) {
+    	$this->initPropel(true);
+    	$con = Propel::getConnection("root");
+    	$stmt = $con->createStatement();
+    	$sDirectory = glob(PATH_DATA . "sites/" . $workSpace . "/" . "mailTemplates/*");
+    	$sDirectoryPublic = glob(PATH_DATA . "sites/" . $workSpace . "/" . "public/*");
+    	$files = array();
+    	foreach($sDirectory as $mailTemplate) {
+    		if (is_dir($mailTemplate)) {
+    			$inner_files =  listFiles($mailTemplate);
+    			if (is_array($inner_files)) $files = array_merge($files, $inner_files);
+    		}
+    		if (is_file($mailTemplate)) {
+    			array_push($files, $mailTemplate);
+    		}
+    	}
+    	foreach($sDirectoryPublic as $publicFile) {
+    		if (is_dir($publicFile)) {
+    			$inner_files =  listFiles($publicFile);
+    			if (is_array($inner_files)) $files = array_merge($files, $inner_files);
+    		}
+    		if (is_file($publicFile)) {
+    			array_push($files, $publicFile);
+    		}
+    	}
+    	$sDir = PATH_DATA . "sites/" . $workSpace . "/" . "mailTemplates/";
+    	$sDirPublic = PATH_DATA . "sites/" . $workSpace . "/" . "public/";
+    	foreach ($files as $aFile) {
+    		if (strpos($aFile, $sDir) !== false){
+    			$processUid = current(explode("/", str_replace($sDir,'',$aFile)));
+    		} else {
+    			$processUid = current(explode("/", str_replace($sDirPublic,'',$aFile)));
+    		}
+    		$sql = "SELECT PROCESS_FILES.PRF_PATH FROM PROCESS_FILES WHERE PROCESS_FILES.PRF_PATH='" . $aFile ."'";
+    		$appRows = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+    		$fileUid = '';
+    		foreach ($appRows as $row) {
+    			$fileUid =  $row["PRF_PATH"];
+    		}
+    		if ($fileUid !== $aFile) {
+    			$sPkProcessFiles = G::generateUniqueID();
+    			$sDate = date('Y-m-d H:i:s');
+    			$sql = "INSERT INTO PROCESS_FILES (PRF_UID, PRO_UID, USR_UID, PRF_UPDATE_USR_UID,
+    			PRF_PATH, PRF_TYPE, PRF_EDITABLE, PRF_CREATE_DATE, PRF_UPDATE_DATE)
+    			VALUES ('".$sPkProcessFiles."', '".$processUid."', '00000000000000000000000000000001', '',
+    			'".$aFile."', 'file', 'true', '".$sDate."', NULL)";
+    			$stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+    		}
+    	}
     }
 
     /**
@@ -158,15 +223,22 @@ class workspaceTools
     }
 
     private function resetDBInfoCallback($matches)
-    {
+    {   
         /* This function changes the values of defines while keeping their formatting
          * intact.
          * $matches will contain several groups:
          * ((define('(<key>)2', ')1 (<value>)3 (');)4 )0
          */
-        $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'rb_', 'DB_RBAC_USER' => 'rb_', 'DB_REPORT_NAME' => 'rp_', 'DB_REPORT_USER' => 'rp_');
+        $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'wf_', 'DB_RBAC_USER' => 'wf_', 'DB_REPORT_NAME' => 'wf_', 'DB_REPORT_USER' => 'wf_');
         $key = isset($matches['key']) ? $matches['key'] : $matches[2];
         $value = isset($matches['value']) ? $matches['value'] : $matches[3];
+        
+        if (!$this->onedb) {
+            if (array_search($key, array('DB_PASS', 'DB_RBAC_PASS', 'DB_REPORT_PASS'))) {
+                $value = $this->dbInfo['DB_PASS'];
+            }
+        }
+
         if (array_search($key, array('DB_HOST', 'DB_RBAC_HOST', 'DB_REPORT_HOST')) !== false) {
             /* Change the database hostname for these keys */
             $value = $this->newHost;
@@ -206,14 +278,23 @@ class workspaceTools
         $this->newHost = $newHost;
         $this->resetDBNames = $resetDBNames;
         $this->resetDBDiff = array();
+        $this->onedb = false;
 
         if (!$this->workspaceExists()) {
             throw new Exception("Could not find db.php in the workspace");
         }
         $sDbFile = file_get_contents($this->dbPath);
+        
         if ($sDbFile === false) {
             throw new Exception("Could not read database information from db.php");
+        } else {
+            if (strpos($sDbFile, 'rb_')) {
+                $this->onedb = false;
+            } else {
+                $this->onedb = true;
+            }
         }
+        
         /* Match all defines in the config file. Check updateDBCallback to know what
          * keys are changed and what groups are matched.
          * This regular expression will match any "define ('<key>', '<value>');"
@@ -457,7 +538,7 @@ class workspaceTools
      * @param string $lang not currently used
      */
     public function upgradeCacheView($fill = true, $checkOnly = false, $lang = "en")
-    {
+    {   
         $this->initPropel(true);
 
         //require_once ('classes/model/AppCacheView.php');
@@ -471,27 +552,27 @@ class workspaceTools
         //setup the appcacheview object, and the path for the sql files
         $appCache = new AppCacheView();
         $appCache->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
-
+        
         $userGrants = $appCache->checkGrantsForUser(false);
-
+        
         $currentUser = $userGrants['user'];
         $currentUserIsSuper = $userGrants['super'];
-
         //if user does not have the SUPER privilege we need to use the root user and grant the SUPER priv. to normal user.
+        
         if (!$currentUserIsSuper) {
             $appCache->checkGrantsForUser(true);
             $appCache->setSuperForUser($currentUser);
             $currentUserIsSuper = true;
         }
-
-        CLI::logging("-> Creating table\n");
+        
+        CLI::logging("-> Creating tables \n");
         //now check if table APPCACHEVIEW exists, and it have correct number of fields, etc.
         $res = $appCache->checkAppCacheView();
 
-        CLI::logging("-> Update DEL_LAST_INDEX field in APP_DELEGATION table\n");
+        CLI::logging("-> Update DEL_LAST_INDEX field in APP_DELEGATION table \n");
         //Update APP_DELEGATION.DEL_LAST_INDEX data
         $res = $appCache->updateAppDelegationDelLastIndex($lang, $checkOnly);
-
+        
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
         Bootstrap::LoadSystem( 'rbac' );
@@ -674,18 +755,36 @@ class workspaceTools
      * @param bool $checkOnly only check if the upgrade is needed if true
      * @return array bool upgradeSchema for more information
      */
-    public function upgradeDatabase ($checkOnly = false)
-    {
+    public function upgradeDatabase ($onedb = false, $checkOnly = false)
+    {   
         G::LoadClass("patch");
         $this->initPropel( true );
+        p11835::$dbAdapter = $this->dbAdapter;
         p11835::isApplicable();
-        $systemSchema = System::getSystemSchema();
-        $systemSchemaRbac = System::getSystemSchemaRbac();// obtiene el Schema de Rbac
+        $systemSchema = System::getSystemSchema($this->dbAdapter);
+        $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
         $this->upgradeSchema( $systemSchema );
-        $this->upgradeSchema( $systemSchemaRbac, false, true );// Hace Upgrade de Rbac
+        $this->upgradeSchema( $systemSchemaRbac, false, true, $onedb ); // perform Upgrade to Rbac
         $this->upgradeData();
         p11835::execute();
         return true;
+    }
+
+    private function setFormatRows()
+    {
+        switch ($this->dbAdapter) {
+            case 'mysql':
+                $this->assoc = MYSQL_ASSOC;
+                $this->num = MYSQL_NUM;
+                break;
+            case 'sqlsrv':
+                $this->assoc = SQLSRV_FETCH_ASSOC;
+                $this->num = SQLSRV_FETCH_NUMERIC;
+                break;
+            default:
+                throw new Exception("Unknown adapter hae been set for associate fetch index row format.");
+                break;
+        }
     }
 
     /**
@@ -696,15 +795,35 @@ class workspaceTools
      * @return array bool the changes if checkOnly is true, else return
      * true on success
      */
-    public function upgradeSchema($schema, $checkOnly = false, $rbac = false)
+    public function upgradeSchema($schema, $checkOnly = false, $rbac = false, $onedb = false)
     {
         $dbInfo = $this->getDBInfo();
+        
+        if ($dbInfo['DB_NAME'] == $dbInfo['DB_RBAC_NAME']) {
+            $onedb = true;
+        } else {
+            $onedb = false;
+        }
 
         if (strcmp($dbInfo["DB_ADAPTER"], "mysql") != 0) {
             throw new Exception("Only MySQL is supported");
         }
 
+        $this->setFormatRows();
+
         $workspaceSchema = $this->getSchema($rbac);
+        $oDataBase = $this->getDatabase($rbac);
+
+        if (!$onedb) {
+            if($rbac){
+                $rename = System::verifyRbacSchema($workspaceSchema);
+                if (count($rename) > 0) {
+                    foreach ($rename as $tableName) {
+                        $oDataBase->executeQuery($oDataBase->generateRenameTableSQL($tableName));
+                    }
+                }
+            }
+        }
 
         $changes = System::compareSchema($workspaceSchema, $schema);
 
@@ -714,14 +833,12 @@ class workspaceTools
             if ($changed) {
                 return $changes;
             } else {
-                CLI::logging("-> Nothing to change in the data base structure\n");
+                CLI::logging("-> Nothing to change in the data base structure of " . (($rbac == true)?"RBAC":"WORKFLOW") . "\n");
                 return $changed;
             }
         }
 
-        $oDataBase = $this->getDatabase($rbac);
-
-        $oDataBase->iFetchType = MYSQL_NUM;
+        $oDataBase->iFetchType = $this->num;
 
         $oDataBase->logQuery(count($changes));
 
@@ -913,9 +1030,7 @@ class workspaceTools
         }
 
         $wfDsn = $fields['DB_ADAPTER'] . '://' . $fields['DB_USER'] . ':' . $fields['DB_PASS'] . '@' . $fields['DB_HOST'] . '/' . $fields['DB_NAME'];
-        $rbDsn = $fields['DB_ADAPTER'] . '://' . $fields['DB_RBAC_USER'] . ':' . $fields['DB_RBAC_PASS'] . '@' . $fields['DB_RBAC_HOST'] . '/' . $fields['DB_RBAC_NAME'];
-        $rpDsn = $fields['DB_ADAPTER'] . '://' . $fields['DB_REPORT_USER'] . ':' . $fields['DB_REPORT_PASS'] . '@' . $fields['DB_REPORT_HOST'] . '/' . $fields['DB_REPORT_NAME'];
-
+        
         $info = array('Workspace Name' => $fields['WORKSPACE_NAME'],
             //'Available Databases'  => $fields['AVAILABLE_DB'],
             'Workflow Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_USER'], $fields['DB_PASS'], $fields['DB_HOST'], $fields['DB_NAME']), 'RBAC Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_RBAC_USER'], $fields['DB_RBAC_PASS'], $fields['DB_RBAC_HOST'], $fields['DB_RBAC_NAME']), 'Report Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_REPORT_USER'], $fields['DB_REPORT_PASS'], $fields['DB_REPORT_HOST'], $fields['DB_REPORT_NAME']), 'MySql Version' => $fields['DATABASE']
@@ -951,10 +1066,16 @@ class workspaceTools
      *
      * @param string $path the directory where to create the sql files
      */
-    public function exportDatabase($path)
+    public function exportDatabase($path, $onedb = false)
     {
         $dbInfo = $this->getDBInfo();
-        $databases = array("wf", "rp", "rb");
+
+        if ($onedb) {
+            $databases = array("rb", "rp");
+        } else {
+            $databases = array("wf", "rp", "rb");
+        }
+
         $dbNames = array();
         foreach ($databases as $db) {
             $dbInfo = $this->getDBCredentials($db);
@@ -1324,7 +1445,9 @@ class workspaceTools
                 CLI::logging("> Restoring " . CLI::info($backupWorkspace) . " to " . CLI::info($workspaceName) . "\n");
             }
             $workspace = new workspaceTools($workspaceName);
+            
             if ($workspace->workspaceExists()) {
+                
                 if ($overwrite) {
                     CLI::logging(CLI::warning("> Workspace $workspaceName already exist, overwriting!") . "\n");
                 } else {
@@ -1364,7 +1487,7 @@ class workspaceTools
             if (!$link) {
                 throw new Exception('Could not connect to system database: ' . mysql_error());
             }
-
+            
             $newDBNames = $workspace->resetDBInfo($dbHost, $createWorkspace);
 
             foreach ($metadata->databases as $db) {
@@ -1393,7 +1516,6 @@ class workspaceTools
             $stop = microtime(true);
             $final = $stop - $start;
             CLI::logging("<*>   Updating cache view Process took $final seconds.\n");
-
 
             mysql_close($link);
         }
@@ -1472,7 +1594,7 @@ class workspaceTools
     }
 
     public function checkMafeRequirements ($workspace,$lang) {
-        $this->initPropel(true);
+        $this->initPropel(true); 
         $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
         if (empty($pmRestClient)) {
             if (is_file(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info')) {
@@ -1509,5 +1631,66 @@ class workspaceTools
         }
     }
 
+    public function changeHashPassword ($workspace, $response)
+    {
+        $this->initPropel( true );
+        G::LoadClass("enterprise");
+        enterpriseClass::setHashPassword($response);
+    }
+
+    public function verifyEnterprise ($workspace)
+    {
+        $this->initPropel( true );
+        $pathBackup = PATH_DATA . 'backups';
+        if (!file_exists($pathBackup)) {
+            G::mk_dir($pathBackup, 0777);
+        }
+        $pathNewFile = PATH_DATA . 'backups' . PATH_SEP . 'enterpriseBackup';
+        $pathDirectoryEnterprise = PATH_CORE . 'plugins' . PATH_SEP . 'enterprise';
+        $pathFileEnterprise = PATH_CORE . 'plugins' . PATH_SEP . 'enterprise.php';
+
+        if (!file_exists($pathDirectoryEnterprise) && !file_exists(PATH_PLUGIN . 'enterprise.php')) {
+            CLI::logging("    Without changes... \n");
+            return true;
+        }
+        CLI::logging("    Migrating Enterprise Core version...\n");
+        if (!file_exists($pathNewFile)) {
+            CLI::logging("    Creating folder in $pathNewFile\n");
+            G::mk_dir($newDiretory, 0777);
+        }
+        $shared_stat = stat(PATH_DATA);
+        if (file_exists($pathDirectoryEnterprise)) {
+            CLI::logging("    Copying Enterprise Directory to $pathNewFile...\n");
+
+            if ($shared_stat !== false) {
+                workspaceTools::dirPerms($pathDirectoryEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+            } else {
+                CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
+            }
+            if (G::recursive_copy($pathDirectoryEnterprise, $pathNewFile . PATH_SEP. 'enterprise')) {
+                CLI::logging("    Removing $pathDirectoryEnterprise...\n");
+                G::rm_dir($pathDirectoryEnterprise);
+            } else {
+                CLI::logging(CLI::error("    Error: Failure to copy from $pathDirectoryEnterprise...\n"));
+            }
+            if (file_exists($pathDirectoryEnterprise)) {
+                CLI::logging(CLI::info("    Remove manually $pathDirectoryEnterprise...\n"));
+            }
+        }
+        if (file_exists($pathFileEnterprise)) {
+            CLI::logging("    Copying Enterprise.php file to $pathNewFile...\n");
+            if ($shared_stat !== false) {
+                workspaceTools::dirPerms($pathFileEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+            } else {
+                CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
+            }
+            CLI::logging("    Removing $pathFileEnterprise...\n");
+            copy($pathFileEnterprise , $pathNewFile. PATH_SEP . 'enterprise.php');
+            G::rm_dir($pathFileEnterprise);
+            if (file_exists($pathFileEnterprise)) {
+                CLI::logging(CLI::info("    Remove manually $pathFileEnterprise...\n"));
+            }
+        }
+    }
 }
 
