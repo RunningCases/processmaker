@@ -601,7 +601,7 @@ class Process extends BaseProcess
         }
     }
 
-    public function getAllProcesses ($start, $limit, $category = null, $processName = null, $counters = true, $reviewSubProcess = false)
+    public function getAllProcesses ($start, $limit, $category = null, $processName = null, $counters = true, $reviewSubProcess = false, $userLogged = "")
     {
     	require_once PATH_RBAC . "model/RbacUsers.php";
         require_once "classes/model/ProcessCategory.php";
@@ -642,10 +642,13 @@ class Process extends BaseProcess
 
         $oCriteria->addJoin( ProcessPeer::PRO_CREATE_USER, UsersPeer::USR_UID, Criteria::LEFT_JOIN );
         $oCriteria->addJoin( ProcessPeer::PRO_CATEGORY, ProcessCategoryPeer::CATEGORY_UID, Criteria::LEFT_JOIN );
-        $oCriteria->add(
+
+        if ($userLogged != "") {
+            $oCriteria->add(
                 $oCriteria->getNewCriterion(ProcessPeer::PRO_TYPE_PROCESS, "PUBLIC", Criteria::EQUAL)->addOr(
-                $oCriteria->getNewCriterion(ProcessPeer::PRO_CREATE_USER, $_SESSION["USER_LOGGED"], Criteria::EQUAL))
-        );
+                $oCriteria->getNewCriterion(ProcessPeer::PRO_CREATE_USER, $userLogged, Criteria::EQUAL))
+            );
+        }
 
         $this->tmpCriteria = clone $oCriteria;
 
