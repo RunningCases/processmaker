@@ -480,20 +480,6 @@ class Group
                 $criteria->add(\ContentPeer::CON_VALUE, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE);
             }
 
-            //Number records total
-            $criteriaCount = clone $criteria;
-
-            $criteriaCount->clearSelectColumns();
-            $criteriaCount->addAsColumn("NUM_REC", "COUNT(" . \GroupwfPeer::GRP_UID . ")");
-
-            $rsCriteriaCount = \GroupwfPeer::doSelectRS($criteriaCount);
-            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            $rsCriteriaCount->next();
-            $row = $rsCriteriaCount->getRow();
-
-            $numRecTotal = (int)($row["NUM_REC"]);
-
             //SQL
             if (!is_null($sortField) && trim($sortField) != "") {
                 $sortField = strtoupper($sortField);
@@ -703,20 +689,6 @@ class Group
                     $criteria = $this->getUserCriteria("", $arrayFilterData, $arrayUid);
                     break;
             }
-
-            //Number records total
-            $criteriaCount = clone $criteria;
-
-            $criteriaCount->clearSelectColumns();
-            $criteriaCount->addAsColumn("NUM_REC", "COUNT(" . \UsersPeer::USR_UID . ")");
-
-            $rsCriteriaCount = \UsersPeer::doSelectRS($criteriaCount);
-            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            $rsCriteriaCount->next();
-            $row = $rsCriteriaCount->getRow();
-
-            $numRecTotal = (int)($row["NUM_REC"]);
 
             //SQL
             if (!is_null($sortField) && trim($sortField) != "") {
