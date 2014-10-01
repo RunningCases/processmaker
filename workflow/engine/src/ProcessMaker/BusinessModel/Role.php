@@ -518,20 +518,6 @@ class Role
                 $criteria->add(\RolesPeer::ROL_CODE, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE);
             }
 
-            //Number records total
-            $criteriaCount = clone $criteria;
-
-            $criteriaCount->clearSelectColumns();
-            $criteriaCount->addAsColumn("NUM_REC", "COUNT(" . \RolesPeer::ROL_UID . ")");
-
-            $rsCriteriaCount = \RolesPeer::doSelectRS($criteriaCount);
-            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            $rsCriteriaCount->next();
-            $row = $rsCriteriaCount->getRow();
-
-            $numRecTotal = (int)($row["NUM_REC"]);
-
             //SQL
             if (!is_null($sortField) && trim($sortField) != "") {
                 $sortField = strtoupper($sortField);
