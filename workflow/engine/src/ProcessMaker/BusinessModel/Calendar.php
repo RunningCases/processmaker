@@ -650,20 +650,6 @@ class Calendar
                 );
             }
 
-            //Number records total
-            $criteriaCount = clone $criteria;
-
-            $criteriaCount->clearSelectColumns();
-            $criteriaCount->addSelectColumn("COUNT(" . \CalendarDefinitionPeer::CALENDAR_UID . ") AS NUM_REC");
-
-            $rsCriteriaCount = \CalendarDefinitionPeer::doSelectRS($criteriaCount);
-            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            $rsCriteriaCount->next();
-            $row = $rsCriteriaCount->getRow();
-
-            $numRecTotal = $row["NUM_REC"];
-
             //SQL
             if (!is_null($sortField) && trim($sortField) != "") {
                 $sortField = strtoupper($sortField);

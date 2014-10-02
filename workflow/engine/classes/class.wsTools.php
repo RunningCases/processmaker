@@ -229,14 +229,16 @@ class workspaceTools
          * $matches will contain several groups:
          * ((define('(<key>)2', ')1 (<value>)3 (');)4 )0
          */
-        $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'wf_', 'DB_RBAC_USER' => 'wf_', 'DB_REPORT_NAME' => 'wf_', 'DB_REPORT_USER' => 'wf_');
         $key = isset($matches['key']) ? $matches['key'] : $matches[2];
         $value = isset($matches['value']) ? $matches['value'] : $matches[3];
         
-        if (!$this->onedb) {
-            if (array_search($key, array('DB_PASS', 'DB_RBAC_PASS', 'DB_REPORT_PASS'))) {
-                $value = $this->dbInfo['DB_PASS'];
-            }
+        if($this->onedb){
+        	$dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'wf_', 'DB_RBAC_USER' => 'wf_', 'DB_REPORT_NAME' => 'wf_', 'DB_REPORT_USER' => 'wf_');
+        	if (array_search($key, array('DB_PASS', 'DB_RBAC_PASS', 'DB_REPORT_PASS'))) {
+        		$value = $this->dbInfo['DB_PASS'];
+        	}
+        } else{
+        	$dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'rb_', 'DB_RBAC_USER' => 'rb_', 'DB_REPORT_NAME' => 'rp_', 'DB_REPORT_USER' => 'rp_');
         }
 
         if (array_search($key, array('DB_HOST', 'DB_RBAC_HOST', 'DB_REPORT_HOST')) !== false) {
@@ -1502,7 +1504,7 @@ class workspaceTools
             $versionOld = ( isset($version[0])) ? $version[0] : '';
             CLI::logging(CLI::info("$versionOld < $versionPresent") . "\n");
 
-            if ( $versionOld < $versionPresent) {
+            if ( $versionOld < $versionPresent || strpos($versionPresent, "Branch")) {
                 $start = microtime(true);
                 CLI::logging("> Updating database...\n");
                 $workspace->upgradeDatabase();
