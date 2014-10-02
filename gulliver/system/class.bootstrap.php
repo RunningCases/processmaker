@@ -2860,29 +2860,46 @@ class Bootstrap
         }
     }
 
-    public function hasPassword($pass, $previous=false) {
-        $passEncrypt = md5($pass);
-        try {
-            require_once PATH_CORE .'methods' . PATH_SEP .'enterprise/enterprise.php';
-            $passEncrypt = enterprisePlugin::hashPassword($pass, $previous);
-        } catch (Exception $e) {
-            
+    public function getConfigHashPassword()
+    {
+        G::LoadClass( "configuration" );
+        $config= new Configurations();
+        return $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
+    }
+
+    public function hashPassword($pass, $config = '', $includeHash = false, $hashOld = false)
+    {
+        $typeEncrypt = ($config != '') ? $config : Bootstrap::getConfigHashPassword();
+        $encrypt = 'md5';
+        if ($typeEncrypt != null) {
+            if (isset($typeEncrypt['current']) && $typeEncrypt['current'] != '') {
+                $encrypt = $typeEncrypt['current'];
+            }
+            if ($hashOld && isset($typeEncrypt['previous']) && $typeEncrypt['previous'] != '' ) {
+                $encrypt = $typeEncrypt['previous'];
+            }
+        }
+        if ($includeHash) {
+            $var = $encrypt . ':' . $pass;
+        } else {
+            eval("\$var = hash('" . $encrypt . "', '" . $pass . "');");
         }
 
-        return $passEncrypt;
+        return $var;
     }
-    
+
     public function verifyHashPassword ($pass, $userPass)
     {
-        //$verify = Bootstrap::hasPassword($pass);
-        if (Bootstrap::hasPassword($pass) == $userPass) {
+        $config = Bootstrap::getConfigHashPassword();
+        if (Bootstrap::hashPassword($pass, $config) == $userPass
+            || Bootstrap::hashPassword($pass, $config, true) == $userPass) {
             return true;
         }
-        if (Bootstrap::hasPassword($pass, true) == $userPass) {
+        if (Bootstrap::hashPassword($pass, $config, false, true) == $userPass
+            || Bootstrap::hashPassword($pass, $config, true, true) == $userPass) {
             return true;
         }
         return false;
     }
-
 }
 
