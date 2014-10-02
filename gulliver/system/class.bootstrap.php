@@ -2860,16 +2860,16 @@ class Bootstrap
         }
     }
 
-    public function getConfigHashPassword()
+    public function getPasswordHashType()
     {
         G::LoadClass( "configuration" );
         $config= new Configurations();
         return $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
     }
 
-    public function hashPassword($pass, $config = '', $includeHash = false, $hashOld = false)
+    public function hashPassword($pass, $hashType = '', $includeHashType = false, $hashOld = false)
     {
-        $typeEncrypt = ($config != '') ? $config : Bootstrap::getConfigHashPassword();
+        $typeEncrypt = ($hashType != '') ? $hashType : Bootstrap::getPasswordHashType();
         $encrypt = 'md5';
         if ($typeEncrypt != null) {
             if (isset($typeEncrypt['current']) && $typeEncrypt['current'] != '') {
@@ -2879,7 +2879,7 @@ class Bootstrap
                 $encrypt = $typeEncrypt['previous'];
             }
         }
-        if ($includeHash) {
+        if ($includeHashType) {
             $var = $encrypt . ':' . $pass;
         } else {
             eval("\$var = hash('" . $encrypt . "', '" . $pass . "');");
@@ -2890,13 +2890,13 @@ class Bootstrap
 
     public function verifyHashPassword ($pass, $userPass)
     {
-        $config = Bootstrap::getConfigHashPassword();
-        if (Bootstrap::hashPassword($pass, $config) == $userPass
-            || Bootstrap::hashPassword($pass, $config, true) == $userPass) {
+        $hashType = Bootstrap::getPasswordHashType();
+        if (Bootstrap::hashPassword($pass, $hashType) == $userPass
+            || Bootstrap::hashPassword($pass, $hashType, true) == $userPass) {
             return true;
         }
-        if (Bootstrap::hashPassword($pass, $config, false, true) == $userPass
-            || Bootstrap::hashPassword($pass, $config, true, true) == $userPass) {
+        if (Bootstrap::hashPassword($pass, $hashType, false, true) == $userPass
+            || Bootstrap::hashPassword($pass, $hashType, true, true) == $userPass) {
             return true;
         }
         return false;
