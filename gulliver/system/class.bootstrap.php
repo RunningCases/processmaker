@@ -2879,10 +2879,9 @@ class Bootstrap
                 $encrypt = $typeEncrypt['previous'];
             }
         }
+        eval("\$var = hash('" . $encrypt . "', '" . $pass . "');");
         if ($includeHashType) {
-            $var = $encrypt . ':' . $pass;
-        } else {
-            eval("\$var = hash('" . $encrypt . "', '" . $pass . "');");
+            $var = $encrypt . ':' . $var;
         }
 
         return $var;
@@ -2892,11 +2891,11 @@ class Bootstrap
     {
         $hashType = Bootstrap::getPasswordHashType();
         if (Bootstrap::hashPassword($pass, $hashType) == $userPass
-            || Bootstrap::hashPassword($pass, $hashType, true) == $userPass) {
+            || $pass === Bootstrap::hashPassword($userPass, $hashType, true)) {
             return true;
         }
         if (Bootstrap::hashPassword($pass, $hashType, false, true) == $userPass
-            || Bootstrap::hashPassword($pass, $hashType, true, true) == $userPass) {
+            ||$pass ===  Bootstrap::hashPassword($userPass, $hashType, true, true)) {
             return true;
         }
         return false;
