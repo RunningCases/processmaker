@@ -2860,28 +2860,43 @@ class Bootstrap
         }
     }
 
-    public function getPasswordHashType()
+    public function getPasswordHashConfig()
     {
-        G::LoadClass( "configuration" );
+        G::LoadClass('configuration');
         $config= new Configurations();
-        return $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
+        $passwordHashConfig = $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
+        if (!is_null($passwordHashConfig)) {
+            if (!is_array($passwordHashConfig)) {
+                $passwordHashConfig = array();
+            }
+            if (!isset($passwordHashConfig['current'])) {
+                $passwordHashConfig['current'] = 'md5';
+            }
+            if (!isset($passwordHashConfig['previous'])) {
+                $passwordHashConfig['previous'] = 'md5';
+            }
+        } else {
+            $passwordHashConfig = array('current' => 'md5', 'previous' => 'md5');
+        }
+        return $passwordHashConfig;
     }
 
-    public function hashPassword($pass, $hashType = '', $includeHashType = false, $hashOld = false)
+    public function getPasswordHashType()
     {
-        $typeEncrypt = ($hashType != '') ? $hashType : Bootstrap::getPasswordHashType();
-        $encrypt = 'md5';
-        if ($typeEncrypt != null) {
-            if (isset($typeEncrypt['current']) && $typeEncrypt['current'] != '') {
-                $encrypt = $typeEncrypt['current'];
-            }
-            if ($hashOld && isset($typeEncrypt['previous']) && $typeEncrypt['previous'] != '' ) {
-                $encrypt = $typeEncrypt['previous'];
-            }
+        $passwordHashConfig = Bootstrap::getPasswordHashConfig();
+        return $passwordHashConfig['current'];
+    }
+
+    public function hashPassword($pass, $hashType = '', $includeHashType = false)
+    {
+        if ($hashType == '') {
+            $hashType = Bootstrap::getPasswordHashType();
         }
-        eval("\$var = hash('" . $encrypt . "', '" . $pass . "');");
+
+        eval("\$var = hash('" . $hashType . "', '" . $pass . "');");
+
         if ($includeHashType) {
-            $var = $encrypt . ':' . $var;
+            $var = $hashType . ':' . $var;
         }
 
         return $var;
@@ -2889,13 +2904,13 @@ class Bootstrap
 
     public function verifyHashPassword ($pass, $userPass)
     {
-        $hashType = Bootstrap::getPasswordHashType();
-        if (Bootstrap::hashPassword($pass, $hashType) == $userPass
-            || $pass === Bootstrap::hashPassword($userPass, $hashType, true)) {
+        $passwordHashConfig = Bootstrap::getPasswordHashConfig();
+        $hashTypeCurrent = $passwordHashConfig['current'];
+        $hashTypePrevious = $passwordHashConfig['previous'];
+        if ((Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) || ($pass === $hashTypeCurrent . ':' . $userPass)) {
             return true;
         }
-        if (Bootstrap::hashPassword($pass, $hashType, false, true) == $userPass
-            ||$pass ===  Bootstrap::hashPassword($userPass, $hashType, true, true)) {
+        if ((Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) || ($pass === $hashTypePrevious . ':' . $userPass)) {
             return true;
         }
         return false;

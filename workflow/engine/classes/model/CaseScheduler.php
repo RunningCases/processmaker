@@ -338,7 +338,7 @@ class CaseScheduler extends BaseCaseScheduler
                 $processId = $aRow["PRO_UID"];
                 $taskId = $aRow["TAS_UID"];
                 $client = new SoapClient( $defaultEndpoint );
-                $params = array ('userid' => $user,'password' => Bootstrap::hashPassword($pass, '', true));
+                $params = array ('userid' => $user,'password' => Bootstrap::getPasswordHashType() . ':' . $pass);
                 $result = $client->__SoapCall( 'login', array ($params) );
                 eprint( " - Logging as user $user............." );
                 if ($result->status_code == 0) {
@@ -500,7 +500,7 @@ class CaseScheduler extends BaseCaseScheduler
                 $processId = $aRow["PRO_UID"];
                 $taskId = $aRow["TAS_UID"];
                 $client = new SoapClient( $defaultEndpoint );
-                $params = array ('userid' => $user,'password' => Bootstrap::hashPassword($pass, '', true));
+                $params = array ('userid' => $user,'password' => Bootstrap::getPasswordHashType() . ':' . $pass);
                 $result = $client->__SoapCall( 'login', array ($params) );
                 eprint( " - Logging as user $user............." );
                 if ($result->status_code == 0) {
