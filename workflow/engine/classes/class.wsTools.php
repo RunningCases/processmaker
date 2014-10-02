@@ -1651,7 +1651,7 @@ class workspaceTools
         $pathDirectoryEnterprise = PATH_CORE . 'plugins' . PATH_SEP . 'enterprise';
         $pathFileEnterprise = PATH_CORE . 'plugins' . PATH_SEP . 'enterprise.php';
 
-        if (!file_exists($pathDirectoryEnterprise) && !file_exists(PATH_PLUGIN . 'enterprise.php')) {
+        if (!file_exists($pathDirectoryEnterprise) && !file_exists($pathFileEnterprise)) {
             CLI::logging("    Without changes... \n");
             return true;
         }
