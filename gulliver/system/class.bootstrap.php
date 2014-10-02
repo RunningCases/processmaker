@@ -2860,29 +2860,45 @@ class Bootstrap
         }
     }
 
-    public function hasPassword($pass, $previous=false) {
-        $passEncrypt = md5($pass);
-        try {
-            require_once PATH_CORE .'methods' . PATH_SEP .'enterprise/enterprise.php';
-            $passEncrypt = enterprisePlugin::hashPassword($pass, $previous);
-        } catch (Exception $e) {
-            
+    public function getPasswordHashType()
+    {
+        G::LoadClass( "configuration" );
+        $config= new Configurations();
+        return $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
+    }
+
+    public function hashPassword($pass, $hashType = '', $includeHashType = false, $hashOld = false)
+    {
+        $typeEncrypt = ($hashType != '') ? $hashType : Bootstrap::getPasswordHashType();
+        $encrypt = 'md5';
+        if ($typeEncrypt != null) {
+            if (isset($typeEncrypt['current']) && $typeEncrypt['current'] != '') {
+                $encrypt = $typeEncrypt['current'];
+            }
+            if ($hashOld && isset($typeEncrypt['previous']) && $typeEncrypt['previous'] != '' ) {
+                $encrypt = $typeEncrypt['previous'];
+            }
+        }
+        eval("\$var = hash('" . $encrypt . "', '" . $pass . "');");
+        if ($includeHashType) {
+            $var = $encrypt . ':' . $var;
         }
 
-        return $passEncrypt;
+        return $var;
     }
-    
+
     public function verifyHashPassword ($pass, $userPass)
     {
-        //$verify = Bootstrap::hasPassword($pass);
-        if (Bootstrap::hasPassword($pass) == $userPass) {
+        $hashType = Bootstrap::getPasswordHashType();
+        if (Bootstrap::hashPassword($pass, $hashType) == $userPass
+            || $pass === Bootstrap::hashPassword($userPass, $hashType, true)) {
             return true;
         }
-        if (Bootstrap::hasPassword($pass, true) == $userPass) {
+        if (Bootstrap::hashPassword($pass, $hashType, false, true) == $userPass
+            ||$pass ===  Bootstrap::hashPassword($userPass, $hashType, true, true)) {
             return true;
         }
         return false;
     }
-
 }
 
