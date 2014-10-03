@@ -131,7 +131,7 @@ try {
                     }
                     //Log failed authentications
             	    $message  = "| Many failed authentication attempts for USER: " . $usr . " | IP: " . G::getIpAddress() . " |  WS: " . SYS_SYS;
-            	    $message .= " | BROWSER: " . $_SERVER['HTTP_USER_AGENT'] ." | \n" ;
+            	    $message .= " | BROWSER: " . $_SERVER['HTTP_USER_AGENT'];
 
             	    G::log($message, PATH_DATA, 'loginFailed.log');
                 }
