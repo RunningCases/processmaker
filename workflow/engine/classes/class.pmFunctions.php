@@ -378,7 +378,7 @@ function evaluateFunction ($aGrid, $sExpresion)
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#WSLogin.28.29
  *
  * @param string(32) | $user | Username of the user | The username of the user who will login to ProcessMaker. All subsequent actions will be limited to the permissions of that user.
- * @param string(32) | $pass | Password encrypted | The user's password encrypted as an MD5 hash with 'md5:' prepended.
+ * @param string(32) | $pass | Password encrypted | The user's password encrypted as an MD5 or SHA256 hash with '{hashType}:' prepended.
  * @param string(32) | $endpoint="" | URI of the WSDL | The URI (address) of the WSDL definition of the ProcessMaker web services.
  * @return string | $unique ID | Unique Id |The unique ID for the initiated session.
  *
@@ -2849,7 +2849,7 @@ function PMFAddAttachmentToArray($arrayData, $index, $value, $suffix = " Copy({i
  *
  * @name PMFRemoveMask
  * @label PMF Remove Mask
- * 
+ *
  * @param string | $field | Value the field
  * @param string | $separator | Separator of thousands (, or .)
  * @param string | $currency | symbol of currency
