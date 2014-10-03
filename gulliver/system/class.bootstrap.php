@@ -2860,29 +2860,60 @@ class Bootstrap
         }
     }
 
-    public function hasPassword($pass, $previous=false) {
-        $passEncrypt = md5($pass);
-        try {
-            require_once PATH_CORE .'methods' . PATH_SEP .'enterprise/enterprise.php';
-            $passEncrypt = enterprisePlugin::hashPassword($pass, $previous);
-        } catch (Exception $e) {
-            
+    public function getPasswordHashConfig()
+    {
+        G::LoadClass('configuration');
+        $config= new Configurations();
+        $passwordHashConfig = $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
+        if (!is_null($passwordHashConfig)) {
+            if (!is_array($passwordHashConfig)) {
+                $passwordHashConfig = array();
+            }
+            if (!isset($passwordHashConfig['current'])) {
+                $passwordHashConfig['current'] = 'md5';
+            }
+            if (!isset($passwordHashConfig['previous'])) {
+                $passwordHashConfig['previous'] = 'md5';
+            }
+        } else {
+            $passwordHashConfig = array('current' => 'md5', 'previous' => 'md5');
+        }
+        return $passwordHashConfig;
+    }
+
+    public function getPasswordHashType()
+    {
+        $passwordHashConfig = Bootstrap::getPasswordHashConfig();
+        return $passwordHashConfig['current'];
+    }
+
+    public function hashPassword($pass, $hashType = '', $includeHashType = false)
+    {
+        if ($hashType == '') {
+            $hashType = Bootstrap::getPasswordHashType();
         }
 
-        return $passEncrypt;
+        eval("\$var = hash('" . $hashType . "', '" . $pass . "');");
+
+        if ($includeHashType) {
+            $var = $hashType . ':' . $var;
+        }
+
+        return $var;
     }
-    
+
     public function verifyHashPassword ($pass, $userPass)
     {
-        //$verify = Bootstrap::hasPassword($pass);
-        if (Bootstrap::hasPassword($pass) == $userPass) {
+        $passwordHashConfig = Bootstrap::getPasswordHashConfig();
+        $hashTypeCurrent = $passwordHashConfig['current'];
+        $hashTypePrevious = $passwordHashConfig['previous'];
+        if ((Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) || ($pass === $hashTypeCurrent . ':' . $userPass)) {
             return true;
         }
-        if (Bootstrap::hasPassword($pass, true) == $userPass) {
+        if ((Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) || ($pass === $hashTypePrevious . ':' . $userPass)) {
             return true;
         }
         return false;
     }
-
 }
 

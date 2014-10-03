@@ -346,25 +346,6 @@ class enterprisePlugin extends PMPlugin
             fclose($file);
         }
     }
-
-    public function hashPassword ($pass, $previous=false)
-    {
-        G::LoadClass( "configuration" );
-        $config= new Configurations();
-        $typeEncrypt = $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
-        $encrypt = 'md5';
-        if ($typeEncrypt != null) {
-            if (isset($typeEncrypt['current']) && $typeEncrypt['current'] != '') {
-                $encrypt = $typeEncrypt['current'];
-            }
-            if ($previous && isset($typeEncrypt['previous']) && $typeEncrypt['previous'] != '' ) {
-                $encrypt = $typeEncrypt['previous'];
-            }
-        }
-        eval("\$var = hash('" . $encrypt . "', '" . $pass . "');");
-
-        return $var;
-    }
 }
 
 $oPluginRegistry = &PMPluginRegistry::getSingleton();

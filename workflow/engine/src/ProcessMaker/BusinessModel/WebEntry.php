@@ -396,7 +396,7 @@ class WebEntry
                     $template->assign("dynaformUid", $dynaFormUid);
                     $template->assign("taskUid", $taskUid);
                     $template->assign("wsUser", $usrUsername);
-                    $template->assign("wsPass", "md5:" . $usrPassword);
+                    $template->assign("wsPass", Bootstrap::getPasswordHashType() . ':' . $usrPassword);
                     $template->assign("wsRoundRobin", $wsRoundRobin);
 
                     if ($webEntryInputDocumentAccess == 0) {
