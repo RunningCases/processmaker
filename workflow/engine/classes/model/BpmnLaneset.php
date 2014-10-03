@@ -40,14 +40,8 @@ class BpmnLaneset extends BaseBpmnLaneset {
         if (is_object($process)) {
 
             $this->bound->setDiaUid($process->getDiaUid());
-
-            if ($this->bound->getBouElement() == null && $this->bound->getBouElement() == '' && $this->bound->getBouElement() == $process->getDiaUid()) {
-                $this->bound->setBouContainer('bpmnDiagram');
-                $this->bound->setBouElement($process->getDiaUid());
-            } else {
-                $this->bound->setBouContainer('bpmnLane');
-                $this->bound->setBouElement($this->bound->getBouElement());
-            }
+            $this->bound->setBouContainer('bpmnDiagram');
+            $this->bound->setBouElement($process->getDiaUid());
         }
     }
 

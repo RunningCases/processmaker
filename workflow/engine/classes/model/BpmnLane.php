@@ -39,6 +39,7 @@ class BpmnLane extends BaseBpmnLane {
         $project = BpmnProjectPeer::retrieveByPK($this->getPrjUid());
 
         if (is_object($project)) {
+
             $criteria = new Criteria('workflow');
             $criteria->addSelectColumn(BpmnProcessPeer::DIA_UID);
             $criteria->add(BpmnProcessPeer::PRJ_UID, $this->getPrjUid(), \Criteria::EQUAL);
@@ -47,8 +48,8 @@ class BpmnLane extends BaseBpmnLane {
             $rsCriteria->next();
             $row = $rsCriteria->getRow();
             $this->bound->setDiaUid($row["DIA_UID"]);
-            $this->bound->setBouContainer('bpmnDiagram');
-            $this->bound->setBouElement($row["DIA_UID"]);
+            $this->bound->setBouContainer('bpmnLane');
+            $this->bound->setBouElement($this->getLnsUid());
         }
     }
 
