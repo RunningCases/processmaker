@@ -1240,7 +1240,7 @@ class workspaceTools
         mysql_query("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($database));
 
         // Check for safe mode and if mysql exist on server
-        $flagFunction = '';
+        $flagFunction = null;
         if ( !ini_get('safe_mode') ) {
             $flagFunction = shell_exec('mysql --version');
         }
@@ -1357,7 +1357,7 @@ class workspaceTools
         $chmod = @chmod($filename, $perms);
         if ($chgrp === false || $chmod === false || $chown === false) {
             if (strtoupper( substr( PHP_OS, 0, 3 ) ) === 'WIN') {
-                exec( 'icacls ' . $filename . '/grant Administrador:(D,WDAC) /T', $res );
+                exec( 'icacls ' . $filename . ' /grant Administrador:(D,WDAC) /T', $res );
             } else {
                 CLI::logging(CLI::error("Failed to set permissions for $filename") . "\n");
             }
