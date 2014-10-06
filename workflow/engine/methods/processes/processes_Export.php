@@ -26,6 +26,10 @@ $response = new StdClass();
 $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
 
 try {
+	if(empty($_GET)){
+		$proUid = Bootstrap::json_decode( $_POST['data']);
+		$_GET["pro_uid"] = $proUid->pro_uid;
+	}
     if (\BpmnProject::exists($_GET["pro_uid"])) {
         $exporter = new ProcessMaker\Exporter\XmlExporter($_GET["pro_uid"]);
 
@@ -40,15 +44,25 @@ try {
 
         rename($outputDir . $outputFilename . "tpm", $outputDir . $outputFilename);
     }
-
     $response->file_hash = base64_encode($outputFilename);
     $response->success = true;
+
+    /* Render page */
+    if (isset( $_REQUEST["processMap"] ) && $_REQUEST["processMap"] == 1) {
+    	$link = explode("?", $result['FILENAME_LINK']);
+    	$result['FILENAME_LINK'] = $link[0] . '?file_hash=' . $response->file_hash;
+
+    	$G_PUBLISH = new Publisher();
+    	$G_PUBLISH->AddContent( "xmlform", "xmlform", "processes/processes_Export", "", $result );
+    
+    	G::RenderPage( "publish", "raw" );
+    } else{
+    	echo json_encode($response);
+    }
 } catch (Exception $e) {
     $response->message = $e->getMessage();
     $response->success = false;
 }
-
-echo json_encode($response);
 
 
 //  ************* DEPRECATED (it will be removed soon) *********************************
