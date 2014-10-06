@@ -358,6 +358,7 @@ class WebApplication
 //            }
         }
 
+        Services\OAuth2\Server::setWorkspace(SYS_SYS);
         $this->rest->addAPIClass('\ProcessMaker\\Services\\OAuth2\\Server', 'oauth2');
     }
 
