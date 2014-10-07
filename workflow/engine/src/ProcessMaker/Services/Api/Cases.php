@@ -458,7 +458,7 @@ class Cases extends Api
         try {
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'paused';
-            $dataList['paged']  = false;
+            $dataList["paged"]  = true;
 
             $dataList['start'] = $start;
             $dataList['limit'] = $limit;
