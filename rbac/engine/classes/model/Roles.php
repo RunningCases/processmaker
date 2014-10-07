@@ -236,9 +236,8 @@ class Roles extends BaseRoles {
             if ($obj->validate()) {
                 $result = $obj->save();
                 $con->commit();
-
                 $obj->setRolName($rol_name);
-
+                G::auditLog("CreateRole", $rol_name);
             } else {
                 $e = new Exception("Failed Validation in class " . get_class($this) . ".");
                 $e->aValidationFailures = $this->getValidationFailures();
@@ -263,8 +262,8 @@ class Roles extends BaseRoles {
             if ($this->validate()) {
                 $result = $this->save();
                 $con->commit();
-
                 $this->setRolName($rol_name);
+                G::auditLog("UpdateRole", $rol_name." (".$fields['ROL_UID'].") ");
                 return $result;
             } else {
                 $con->rollback();
@@ -281,10 +280,11 @@ class Roles extends BaseRoles {
         try {
             $con->begin();
             $this->setRolUid($ROL_UID);
+            $rol_name = $this->load($ROL_UID);
             Content::removeContent('ROL_NAME', '', $this->getRolUid());
             $result = $this->delete();
-
             $con->commit();
+            G::auditLog("DeleteRole", $rol_name['ROL_NAME']." (".$ROL_UID.") ");
             return $result;
         } catch( exception $e ) {
             $con->rollback();
@@ -514,6 +514,10 @@ class Roles extends BaseRoles {
         $oUsersRoles->setRolUid($aData['ROL_UID']);
         $oUsersRoles->save();
 
+        $rol = $this->load($aData['ROL_UID']);
+        $oUsersRbac = new RbacUsers();
+        $user = $oUsersRbac->load($aData['USR_UID']);
+        G::auditLog("AssignUsersToRole", "Assign user ".$user['USR_USERNAME']." (".$aData['USR_UID'].") to Role ".$rol['ROL_NAME']." (".$aData['ROL_UID'].") ");
     }
 
     function deleteUserRole($ROL_UID, $USR_UID) {
@@ -524,6 +528,11 @@ class Roles extends BaseRoles {
             $crit->add(UsersRolesPeer::ROL_UID, $ROL_UID);
         }
         UsersRolesPeer::doDelete($crit);
+        $rol = $this->load($ROL_UID);
+        $oUsersRbac = new RbacUsers();
+        $user = $oUsersRbac->load($USR_UID);
+        
+        G::auditLog("DeleteUsersToRole", "Delete user ".$user['USR_USERNAME']." (".$USR_UID.") to Role ".$rol['ROL_NAME']." (".$ROL_UID.") ");
     }
 
     function getRolePermissions($ROL_UID, $filter='', $status=null) {
@@ -619,7 +628,10 @@ class Roles extends BaseRoles {
         if (isset($sData['PER_NAME'])) {
             $o->setPermissionName($sData['PER_NAME']);
         }
+        $permission = $o->getPermissionName($sData['PER_UID']);
+        $role = $this->load($sData['ROL_UID']);
         $o->save();
+        G::auditLog("AddPermissionToRole", "Add Permission ".$permission." (".$sData['PER_UID'].") to Role ".$role['ROL_NAME']." (".$sData['ROL_UID'].") ");
     }
 
     function deletePermissionRole($ROL_UID, $PER_UID) {
@@ -627,6 +639,13 @@ class Roles extends BaseRoles {
         $crit->add(RolesPermissionsPeer::ROL_UID, $ROL_UID);
         $crit->add(RolesPermissionsPeer::PER_UID, $PER_UID);
         RolesPermissionsPeer::doDelete($crit);
+
+        $o = new RolesPermissions();
+        $o->setPerUid($PER_UID);
+        $permission = $o->getPermissionName($PER_UID);
+        $role = $this->load($ROL_UID);
+        
+        G::auditLog("DeletePermissionToRole", "Delete Permission ".$permission." (".$PER_UID.") to Role ".$role['ROL_NAME']." (".$ROL_UID.") ");
     }
 
     function numUsersWithRole($ROL_UID) {

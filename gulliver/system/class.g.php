@@ -5272,6 +5272,21 @@ class G
     }
 
     /**
+    */
+    public function auditLog($actionToLog, $valueToLog = "")
+    { 
+        $oServerConf = & serverConf::getSingleton();
+        $sflagAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', SYS_SYS );
+
+        if ($sflagAudit) {
+            $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined'; 
+            $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User'; 
+            $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : '-';
+            G::log("|". $workspace ."|". $username . "|" . $fullname ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
+        }        
+    }
+
+    /**
      * Changes all keys in an array and sub-arrays
      *
      * @param array $arrayData The array to work on

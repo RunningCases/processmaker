@@ -301,6 +301,8 @@ class Language extends BaseLanguage
             $results->headers = $POHeaders;
             $results->errMsg = $errorMsg;
 
+            G::auditLog("UploadLanguage", $languageID);
+
             return $results;
         } catch (Exception $oError) {
             throw ($oError);
@@ -549,6 +551,7 @@ class Language extends BaseLanguage
                 }
             } //end foreach
         }
+        G::auditLog("ExportLanguage", $_GET['LOCALE']);
         G::streamFile( $sPOFile, true );
     }
     public function updateLanguagePlugin ($plugin, $idLanguage)

@@ -224,6 +224,8 @@ switch ($_POST['action']) {
             $dep_uid = $_REQUEST['uid'];
             $dep_manager = $_REQUEST['manager'];
             $dep_status = $_REQUEST['status'];
+            $dep_parent = $_REQUEST['parent'];
+            $editDepartment['DEP_PARENT'] = $dep_parent;
             $editDepartment['DEP_UID'] = $dep_uid;
             $editDepartment['DEPO_TITLE'] = $dep_name;
             $editDepartment['DEP_STATUS'] = $dep_status;
@@ -231,6 +233,13 @@ switch ($_POST['action']) {
             $oDept = new Department();
             $oDept->update( $editDepartment );
             $oDept->updateDepartmentManager( $dep_uid );
+
+            if ($dep_parent == '') {
+                G::auditLog("UpdateDepartament", $dep_name." (".$dep_uid.") ");
+            } else {
+                G::auditLog("UpdateSubDepartament", $dep_name." (".$dep_uid.") ");
+            }
+
             echo '{success: true}';
         } catch (exception $e) {
             echo '{success: false}';

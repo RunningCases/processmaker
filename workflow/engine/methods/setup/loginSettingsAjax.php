@@ -30,10 +30,13 @@ switch ($request) {
 
         $conf->saveConfig( 'ENVIRONMENT_SETTINGS', '' );
 
+        $lang = isset( $_REQUEST['lang'] ) ? $_REQUEST['lang'] : 'en';
         //remove from memcache when this value is updated/created
         $memcache->delete( 'flagForgotPassword' );
 
         $response->success = true;
+        G::auditLog("UpdateLoginSettings", "DefaultLanguage->".$lang." EnableForgotPassword->".$_REQUEST['forgotPasswd']);
+
         echo G::json_encode( $response );
 
         break;
