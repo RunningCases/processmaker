@@ -110,6 +110,8 @@ if ($actionAjax == 'messageHistoryGridList_JXP') {
     $r->data = $aProcesses;
     $r->totalCount = $totalCount;
 
+    $r->data[0]["APP_MSG_TYPE"] = ($r->data[0]["APP_MSG_TYPE"] == "TRIGGER")? G::LoadTranslation("ID_TRIGGER_DB") : $r->data[0]["APP_MSG_TYPE"];
+
     echo G::json_encode( $r );
 }
 if ($actionAjax == 'showHistoryMessage') {

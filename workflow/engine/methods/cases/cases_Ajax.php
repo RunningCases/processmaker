@@ -551,6 +551,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
 
         for ($j = 0; $j < $rs->getRecordCount(); $j ++) {
             $result = $rs->getRow();
+            $result["TYPE"] = ($result["TYPE"] == "INPUT")? G::LoadTranslation("ID_INPUT_DB") : $result["TYPE"];
             $aProcesses[] = $result;
             $rs->next();
             $totalCount ++;
