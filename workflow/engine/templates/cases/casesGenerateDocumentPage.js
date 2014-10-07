@@ -330,7 +330,7 @@
             {dataIndex: "ORIGIN",      header: _("ID_ORIGIN_TASK"),     sortable: true, width: 70},
             {dataIndex: "CREATED_BY",  header: _("ID_CREATED_BY"),      sortable: true, width: 70},
             {dataIndex: "CREATE_DATE", header: _("ID_CREATE_DATE"),     sortable: true, width: 70, renderer: startDateRender},
-            {dataIndex: "DELETE_FILE", header: _("ID_ACTION"),          sortable: false, menuDisabled: true, hideable: false, width: 30, align: "center", renderer: renderDeleteFile}
+            {dataIndex: "DELETE_FILE", header: _("ID_ACTIONS"),         sortable: false, menuDisabled: true, hideable: false, width: 30, align: "center", renderer: renderDeleteFile}
           ]
         }),
         store: store,
