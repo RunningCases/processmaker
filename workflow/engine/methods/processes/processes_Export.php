@@ -49,8 +49,8 @@ try {
 
     /* Render page */
     if (isset( $_REQUEST["processMap"] ) && $_REQUEST["processMap"] == 1) {
-    	$link = explode("?", $result['FILENAME_LINK']);
-    	$result['FILENAME_LINK'] = $link[0] . '?file_hash=' . $response->file_hash;
+    	$link = parse_url($result['FILENAME_LINK']);
+    	$result['FILENAME_LINK'] = $link['path'] . '?file_hash=' . $response->file_hash;
 
     	$G_PUBLISH = new Publisher();
     	$G_PUBLISH->AddContent( "xmlform", "xmlform", "processes/processes_Export", "", $result );
