@@ -188,7 +188,7 @@ class AppProxy extends HttpProxyController
             $criteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
             $criteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_INDEX);
             if (AppDelegationPeer::doCount($criteria) > 0) {
-                $dataset = AppDelegationPeer::doSelectRS($criteria);
+                $dataset = AppDelegationPeer::doSelectRS($criteria, Propel::getDbConnection('workflow_ro'));
                 $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $dataset->next();
                 $row = $dataset->getRow();
@@ -243,7 +243,7 @@ class AppProxy extends HttpProxyController
                 $criteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
                 $criteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_INDEX);
                 if (AppDelegationPeer::doCount($criteria) > 0) {
-                    $dataset = AppDelegationPeer::doSelectRS($criteria);
+                    $dataset = AppDelegationPeer::doSelectRS($criteria, Propel::getDbConnection('workflow_ro') );
                     $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                     $dataset->next();
                     $row = $dataset->getRow();

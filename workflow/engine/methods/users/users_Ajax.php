@@ -59,7 +59,7 @@ try {
                 G::LoadClass('Users');
                 $oUser = new Users();
                 $oCriteria = $oUser->loadByUsername($_POST['sUsername']);
-                $oDataset = UsersPeer::doSelectRS($oCriteria);
+                $oDataset = UsersPeer::doSelectRs($oCriteria, Propel::getDbConnection('workflow_ro'));
                 $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $oDataset->next();
                 $aRow = $oDataset->getRow();
