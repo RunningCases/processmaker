@@ -534,8 +534,9 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         global $G_PUBLISH;
 
         $arrayToTranslation = array(
-            "OUTPUT" => G::LoadTranslation("ID_OUTPUT_DB"),
-            "INPUT"  => G::LoadTranslation("ID_INPUT_DB")
+            "INPUT"    => G::LoadTranslation("ID_INPUT_DB"),
+            "OUTPUT"   => G::LoadTranslation("ID_OUTPUT_DB"),
+            "ATTACHED" => G::LoadTranslation("ID_ATTACHED_DB")
         );
 
         $oCase = new Cases();
