@@ -5277,12 +5277,13 @@ class G
     { 
         $oServerConf = & serverConf::getSingleton();
         $sflagAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', SYS_SYS );
+        $ipClient = G::getIpAddress();
 
         if ($sflagAudit) {
             $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined'; 
             $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User'; 
             $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : '-';
-            G::log("|". $workspace ."|". $username . "|" . $fullname ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
+            G::log("|". $workspace ."|". $ipClient ."|". $username . "|" . $fullname ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
         }        
     }
 

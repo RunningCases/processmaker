@@ -43,6 +43,7 @@ audit.application = {
             if (typeof record != "undefined") {
                 var strData = "<b>" + _("ID_DATE_LABEL") + "</b><br />" + record.get("DATE") + "<br />";
                 strData = strData + "<b>" + _("ID_USER") + "</b><br />" + record.get("WORKSPACE") + "<br />";
+                strData = strData + "<b>" + _("ID_IP") + "</b><br />" + record.get("IP") + "<br />";
                 strData = strData + "<b>" + _("ID_ACTION") + "</b><br />" + record.get("ACTION") + "<br />";
                 strData = strData + "<b>" + _("ID_DESCRIPTION") + "</b><br />" + record.get("DESCRIPTION") + "<br />";
 
@@ -65,6 +66,7 @@ audit.application = {
                 fields: [
                     {name: "DATE"},
                     {name: "USER"},
+                    {name: "IP"},
                     {name: "ACTION"},
                     {name: "DESCRIPTION"}
                 ]
@@ -161,8 +163,9 @@ audit.application = {
             },
             columns: [
                 {id: "ID", dataIndex: "DATE", hidden: true, hideable: false},
-                {header: _("ID_DATE_LABEL"), dataIndex: "DATE", width: 10},
+                {header: _("ID_DATE_LABEL"), dataIndex: "DATE", width: 15},
                 {header: _("ID_USER"), dataIndex: "USER", width: 15},
+                {header: _("ID_IP"), dataIndex: "IP", width: 10},
                 {header: _("ID_ACTION"), dataIndex: "ACTION", width: 15},
                 {header: _("ID_DESCRIPTION"), dataIndex: "DESCRIPTION"}
             ]

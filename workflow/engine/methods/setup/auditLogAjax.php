@@ -19,9 +19,10 @@ function auditLogArraySet ($str, $filter)
     if (count( $arrayAux ) > 1) {
         $date = (isset( $arrayAux[0] )) ? trim( $arrayAux[0] ) : "";
         $workspace = (isset( $arrayAux[1] )) ? trim( $arrayAux[1] ) : "";
-        $user = (isset( $arrayAux[3] )) ? trim( $arrayAux[3] ) : "";
-        $action = (isset( $arrayAux[4] )) ? trim( $arrayAux[4] ) : "";
-        $description = (isset( $arrayAux[5] )) ? trim( $arrayAux[5] ) : "";
+        $ip = (isset( $arrayAux[2] )) ? trim( $arrayAux[2] ) : "";
+        $user = (isset( $arrayAux[4] )) ? trim( $arrayAux[4] ) : "";
+        $action = (isset( $arrayAux[5] )) ? trim( $arrayAux[5] ) : "";
+        $description = (isset( $arrayAux[6] )) ? trim( $arrayAux[6] ) : "";
     }
 
     $mktDate = (! empty( $date )) ? mktimeDate( $date ) : 0;
@@ -48,7 +49,7 @@ function auditLogArraySet ($str, $filter)
         $sw = 0;
         $string = $filter["description"];
         
-        if ( (stristr($date, $string) !== false) || (stristr($user, $string) !== false) || (stristr($action, $string) !== false) || (stristr($description, $string) !== false) ) {
+        if ( (stristr($date, $string) !== false) || (stristr($ip, $string) !== false) || (stristr($user, $string) !== false) || (stristr($action, $string) !== false) || (stristr($description, $string) !== false) ) {
             $sw = 1;
         }
     }
@@ -56,7 +57,7 @@ function auditLogArraySet ($str, $filter)
     $arrayData = array ();
 
     if ($sw == 1) {
-        $arrayData = array ("DATE" => $date, "USER" => $user, "ACTION" => $action, "DESCRIPTION" => $description);
+        $arrayData = array ("DATE" => $date, "USER" => $user, "IP" =>$ip, "ACTION" => $action, "DESCRIPTION" => $description);
     }
 
     return $arrayData;

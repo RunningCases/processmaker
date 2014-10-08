@@ -1056,6 +1056,7 @@ class adminProxy extends HttpProxyController
                         try {
                             list($imageWidth, $imageHeight, $imageType) = @getimagesize($dir . '/' . 'tmp' . $fileName);
                             G::resizeImage($dir . '/tmp' . $fileName, $imageWidth, 49, $dir . '/' . $fileName);
+                            G::auditLog("UploadLogo", $fileName);
                         } catch (Exception $e) {
                             $error = $e->getMessage();
                         }
@@ -1072,8 +1073,7 @@ class adminProxy extends HttpProxyController
             }
         } elseif ($_FILES['img']['type'] != '') {
             $failed = "1";
-        }
-        G::auditLog("UploadLogo", $fileName);
+        }        
         echo '{success: true, failed: ' . $failed . ', uploaded: ' . $uploaded . ', type: "' . $_FILES['img']['type'] . '"}';
         exit();
     }
