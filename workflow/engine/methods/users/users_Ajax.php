@@ -231,7 +231,7 @@ try {
                 $userInstance->update($userData);
                 
                 $msg = $_REQUEST['NEW_USR_STATUS'] == 'ACTIVE'? "Enable User" : "Disable User";
-                g::auditLog($msg, $userData['USR_USERNAME']." (".$userData['USR_UID'].") ");
+                G::auditLog($msg, $userData['USR_USERNAME']." (".$userData['USR_UID'].") ");
                 $response->status = 'OK';
             } else {
                 $response->status = 'ERROR';
