@@ -187,6 +187,7 @@ switch ($_POST['action']) {
                 require_once 'classes/model/Users.php';
                 $oUser = new Users();
                 $oUser->create($aData);
+                G::auditLog("CreateUser", $aData['USR_USERNAME']);
 
                 if ($_FILES['USR_PHOTO']['error'] != 1) {
                     //print (PATH_IMAGES_ENVIRONMENT_USERS);
@@ -363,6 +364,7 @@ switch ($_POST['action']) {
                 require_once 'classes/model/Users.php';
                 $oUser = new Users();
                 $oUser->update($aData);
+                G::auditLog("UpdateUser", $aData['USR_USERNAME']." (".$aData['USR_UID'].") ");
                 if ($_FILES['USR_PHOTO']['error'] != 1) {
                     if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
                         $aAux = explode('.', $_FILES['USR_PHOTO']['name']);

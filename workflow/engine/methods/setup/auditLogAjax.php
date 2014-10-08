@@ -3,110 +3,95 @@
 function mktimeDate ($date)
 {
     $arrayAux = getdate( strtotime( $date ) );
-
     $mktDate = mktime( $arrayAux["hours"], $arrayAux["minutes"], $arrayAux["seconds"], $arrayAux["mon"], $arrayAux["mday"], $arrayAux["year"] );
-
     return $mktDate;
 }
 
-function cronArraySet ($str, $filter)
-{
+function auditLogArraySet ($str, $filter)
+{   
     $arrayAux = explode( "|", $str );
-
     $date = "";
     $workspace = "";
     $action = "";
-    $status = "";
-    $description = trim( $arrayAux[0] );
-
+    $user = "";
+    $description = "";
+    
     if (count( $arrayAux ) > 1) {
         $date = (isset( $arrayAux[0] )) ? trim( $arrayAux[0] ) : "";
         $workspace = (isset( $arrayAux[1] )) ? trim( $arrayAux[1] ) : "";
-        $action = (isset( $arrayAux[2] )) ? trim( $arrayAux[2] ) : "";
-        $status = (isset( $arrayAux[3] )) ? trim( $arrayAux[3] ) : "";
-        $description = (isset( $arrayAux[4] )) ? trim( $arrayAux[4] ) : "";
+        $ip = (isset( $arrayAux[2] )) ? trim( $arrayAux[2] ) : "";
+        $user = (isset( $arrayAux[4] )) ? trim( $arrayAux[4] ) : "";
+        $action = (isset( $arrayAux[5] )) ? trim( $arrayAux[5] ) : "";
+        $description = (isset( $arrayAux[6] )) ? trim( $arrayAux[6] ) : "";
     }
 
     $mktDate = (! empty( $date )) ? mktimeDate( $date ) : 0;
-
+    
     //Filter
     $sw = 1;
-
-    if ($filter["workspace"] != "ALL" && $workspace != $filter["workspace"]) {
+    if ($workspace != $filter["workspace"]) {
         $sw = 0;
     }
 
-    if ($filter["status"] != "ALL") {
-        switch ($filter["status"]) {
-            case "COMPLETED":
-                if ($status != "action") {
-                    $sw = 0;
-                }
-                break;
-            case "FAILED":
-                if ($status == "action") {
-                    $sw = 0;
-                }
-                break;
-        }
-    }
-
-    if (! empty( $filter["dateFrom"] ) && $mktDate > 0) {
+    if ($filter["dateFrom"] && $mktDate > 0) {
         if (! (mktimeDate( $filter["dateFrom"] ) <= $mktDate)) {
             $sw = 0;
         }
     }
 
-    if (! empty( $filter["dateTo"] ) && $mktDate > 0) {
+    if ($filter["dateTo"] && $mktDate > 0) {
         if (! ($mktDate <= mktimeDate( $filter["dateTo"] . " 23:59:59" ))) {
             $sw = 0;
+        }
+    }
+
+    if ($filter["description"]) {
+        $sw = 0;
+        $string = $filter["description"];
+        
+        if ( (stristr($date, $string) !== false) || (stristr($ip, $string) !== false) || (stristr($user, $string) !== false) || (stristr($action, $string) !== false) || (stristr($description, $string) !== false) ) {
+            $sw = 1;
         }
     }
 
     $arrayData = array ();
 
     if ($sw == 1) {
-        $arrayData = array ("DATE" => $date, "ACTION" => $action, "STATUS" => $status, "DESCRIPTION" => $description
-        );
+        $arrayData = array ("DATE" => $date, "USER" => $user, "IP" =>$ip, "ACTION" => $action, "DESCRIPTION" => $description);
     }
 
     return $arrayData;
 }
 
-function cronDataGet ($filter, $r, $i)
-{
-    $i = $i + 1;
-
+function getAuditLogData ($filter, $r, $i)
+{   
     $arrayData = array ();
     $strAux = null;
-    $numRec = 0;
-    $cont = 0;
+    $count = 0;
 
-    $file = PATH_DATA . "log" . PATH_SEP . "cron.log";
+    $file = PATH_DATA . "log" . PATH_SEP . "audit.log";
 
     if (file_exists($file)) {
         $arrayFileData = file($file);
-
-        for ($k = 0; $k <= count($arrayFileData) - 1; $k++) {
+        
+        for ($k = 0; $k < count($arrayFileData); $k++) {
+            
             $strAux = $arrayFileData[$k];
 
-            if (!empty($strAux)) {
-                $arrayAux = cronArraySet($strAux, $filter);
+            if ($strAux) {
+                $arrayAux = auditLogArraySet($strAux, $filter);
 
                 if (count($arrayAux) > 0) {
-                    $cont = $cont + 1;
+                    $count = $count + 1;
 
-                    if ($cont >= $i && count($arrayData) + 1 <= $r) {
+                    if ($count > $i && count($arrayData) < $r) {
                         $arrayData[] = $arrayAux;
                     }
                 }
             }
         }
     }
-
-    $numRec = $cont;
-
-    return array($numRec, $arrayData);
+    return array($count, $arrayData);
 }
 
 $option = (isset( $_REQUEST["option"] )) ? $_REQUEST["option"] : null;
@@ -117,19 +102,18 @@ switch ($option) {
     case "LST":
         $pageSize = $_REQUEST["pageSize"];
         $workspace = SYS_SYS;
-        $status = $_REQUEST["status"];
+        $description = $_REQUEST["description"];
         $dateFrom = $_REQUEST["dateFrom"];
         $dateTo = $_REQUEST["dateTo"];
 
-        $arrayFilter = array ("workspace" => $workspace,"status" => $status,"dateFrom" => str_replace( "T00:00:00", null, $dateFrom ),"dateTo" => str_replace( "T00:00:00", null, $dateTo )
+        $arrayFilter = array ("workspace" => $workspace,"description" => $description,"dateFrom" => str_replace( "T00:00:00", null, $dateFrom ),"dateTo" => str_replace( "T00:00:00", null, $dateTo )
         );
 
         $limit = isset( $_REQUEST["limit"] ) ? $_REQUEST["limit"] : $pageSize;
         $start = isset( $_REQUEST["start"] ) ? $_REQUEST["start"] : 0;
 
-        list ($numRec, $data) = cronDataGet( $arrayFilter, $limit, $start );
-
-        $response = array ("success" => true,"resultTotal" => $numRec,"resultRoot" => $data
+        list ($count, $data) = getAuditLogData( $arrayFilter, $limit, $start );
+        $response = array ("success" => true,"resultTotal" => $count,"resultRoot" => $data
         );
         break;
     case "EMPTY":
@@ -139,12 +123,10 @@ switch ($option) {
             $file = PATH_DATA . "log" . PATH_SEP . "cron.log";
 
             if (file_exists( $file )) {
-                //file_put_contents($file, null);
                 unlink( $file );
             }
 
             $response["status"] = "OK";
-            G::auditLog("Cron", "ClearCron");
         } catch (Exception $e) {
             $response["message"] = $e->getMessage();
             $status = 0;
@@ -157,4 +139,3 @@ switch ($option) {
 }
 
 echo G::json_encode( $response );
-

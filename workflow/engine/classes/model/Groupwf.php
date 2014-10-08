@@ -272,6 +272,26 @@ class Groupwf extends BaseGroupwf
         return $c;
     }
 
+    public function loadByGroupUid ($UidGroup)
+    {
+        $c = new Criteria( 'workflow' );
+        $del = DBAdapter::getStringDelimiter();
+
+        $c->clearSelectColumns();
+        $c->addSelectColumn( ContentPeer::CON_VALUE );
+
+        $c->add( ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+        $c->add( ContentPeer::CON_ID, $UidGroup );
+        $c->add( ContentPeer::CON_LANG, SYS_LANG );
+        
+        $dataset = ContentPeer::doSelectRS( $c );
+        $dataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        $dataset->next();
+        $row = $dataset->getRow();
+
+        return $row;
+    }
+
     public function getAll ($start = null, $limit = null, $search = null)
     {
         $totalCount = 0;

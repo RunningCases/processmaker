@@ -200,6 +200,8 @@ class AdditionalTables extends BaseAdditionalTables
                   'APP_UID'     => '',
                   'SHD_DATE'    => date('Y-m-d H:i:s')));
                  */
+                
+                G::auditLog("CreatePMTable", $aData['ADD_TAB_NAME']);
                 return $aData['ADD_TAB_UID'];
             } else {
                 $sMessage = '';
@@ -226,6 +228,7 @@ class AdditionalTables extends BaseAdditionalTables
                     $oConnection->begin();
                     $iResult = $oAdditionalTables->save();
                     $oConnection->commit();
+                    G::auditLog("UpdatePMTable", $aData['ADD_TAB_NAME']." (".$aData['ADD_TAB_UID'].") ");
                 } else {
                     $sMessage = '';
                     $aValidationFailures = $oAdditionalTables->getValidationFailures();

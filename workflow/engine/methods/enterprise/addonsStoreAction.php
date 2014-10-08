@@ -177,6 +177,13 @@ try {
             }
 
             $result["success"] = $addon->setEnabled(($action == "enable"));
+
+            if ($action == "enable") {
+                G::auditLog("EnablePlugin", $_REQUEST['addon']);
+            } else {
+                G::auditLog("DisablePlugin", $_REQUEST['addon']);
+            }
+
             break;
         case "install":
             $status = 1;
