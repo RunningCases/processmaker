@@ -49,7 +49,7 @@ try {
     $aData['SCH_UID'] = G::generateUniqueID();
     $aData['SCH_NAME'] = $_POST['form']['SCH_NAME'];
     $aData['SCH_DEL_USER_NAME'] = $_POST['form']['SCH_USER_NAME'];
-    $aData['SCH_DEL_USER_PASS'] = md5( $_POST['form']['SCH_USER_PASSWORD'] );
+    $aData['SCH_DEL_USER_PASS'] = Bootstrap::hashPassword($_POST['form']['SCH_USER_PASSWORD']);
     $aData['SCH_DEL_USER_UID'] = $_POST['form']['SCH_USER_UID'];
     $aData['PRO_UID'] = $_POST['form']['PRO_UID'];
     $aData['TAS_UID'] = $_POST['form']['TAS_UID'];
