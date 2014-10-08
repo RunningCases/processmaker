@@ -347,7 +347,9 @@ try {
             exit(0);
             break;
         case "addonslist":
-            $result = AddonsStore::addonList();
+            $type = (isset($_REQUEST['type'])) ?  $_REQUEST['type']: 'plugin';
+            $result = AddonsStore::addonList($type);
+            break;
             break;
         default:
             throw (new Exception("Action \"$action\" is not valid"));

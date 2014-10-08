@@ -21,8 +21,8 @@ class enterprisePlugin extends PMPlugin
         $VERSION = System::getVersion();
 
         $res = parent::PMPlugin($sNamespace, $sFilename);
-        $this->sFriendlyName = "ProcessMaker Enterprise Edition";
-        $this->sDescription  = "ProcessMaker Enterprise Edition $VERSION";
+        $this->sFriendlyName = "ProcessMaker Enterprise Core Edition";
+        $this->sDescription  = "ProcessMaker Enterprise Core Edition $VERSION";
         $this->sPluginFolder = "enterprise";
         $this->sSetupPage    = "../enterprise/addonsStore.php";
         $this->iVersion      = $VERSION;

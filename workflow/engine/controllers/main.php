@@ -44,11 +44,12 @@ class Main extends Controller
 
         // license notification
         $expireInLabel = '';
-        if (class_exists( 'pmLicenseManager' )) {
-            $pmLicenseManager = &pmLicenseManager::getSingleton();
-            $expireIn = $pmLicenseManager->getExpireIn();
-            $expireInLabel = $pmLicenseManager->getExpireInLabel();
-        }
+
+        require_once ("classes" . PATH_SEP . "class.pmLicenseManager.php");
+        $pmLicenseManager = &pmLicenseManager::getSingleton();
+        $expireIn = $pmLicenseManager->getExpireIn();
+        $expireInLabel = $pmLicenseManager->getExpireInLabel();
+
         $this->setVar( 'licenseNotification', $expireInLabel );
 
         // setting variables on javascript env.

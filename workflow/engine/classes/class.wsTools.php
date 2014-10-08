@@ -1506,6 +1506,13 @@ class workspaceTools
             $versionOld = ( isset($version[0])) ? $version[0] : '';
             CLI::logging(CLI::info("$versionOld < $versionPresent") . "\n");
 
+            $start = microtime(true);
+            CLI::logging("> Verify enterprise old...\n");
+            $this->verifyEnterprise($workSpace);
+            $stop = microtime(true);
+            $final = $stop - $start;
+            CLI::logging("<*>   Verify took $final seconds.\n");
+
             if ( $versionOld < $versionPresent || strpos($versionPresent, "Branch")) {
                 $start = microtime(true);
                 CLI::logging("> Updating database...\n");
