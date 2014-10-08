@@ -2119,7 +2119,7 @@ CREATE TABLE `ADDONS_STORE`
 	`STORE_TYPE` VARCHAR(255)  NOT NULL,
 	`STORE_LAST_UPDATED` DATETIME,
 	PRIMARY KEY (`STORE_ID`)
-)ENGINE=MyISAM ;
+)ENGINE=InnoDB ;
 
 #-----------------------------------------------------------------------------
 #-- ADDONS_MANAGER
@@ -2147,7 +2147,7 @@ CREATE TABLE `ADDONS_MANAGER`
 	`ADDON_DOWNLOAD_PROGRESS` FLOAT,
 	`ADDON_DOWNLOAD_MD5` VARCHAR(32),
 	PRIMARY KEY (`ADDON_ID`,`STORE_ID`)
-)ENGINE=MyISAM  DEFAULT CHARSET='utf8' COMMENT='Addons manager';
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Addons manager';
 
 
 #-----------------------------------------------------------------------------
@@ -2167,4 +2167,4 @@ CREATE TABLE IF NOT EXISTS `LICENSE_MANAGER` (
   `LICENSE_WORKSPACE` varchar(32) NOT NULL DEFAULT '0',
   `LICENSE_TYPE` varchar(32) NOT NULL DEFAULT '0',
   PRIMARY KEY (`LICENSE_UID`)
-)ENGINE=MyISAM DEFAULT CHARSET='utf8' COMMENT='Licenses Manager';
+)ENGINE=InnoDB DEFAULT CHARSET='utf8' COMMENT='Licenses Manager';
