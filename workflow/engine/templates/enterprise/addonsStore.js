@@ -499,7 +499,7 @@ Ext.onReady(function() {
                               "force": true
                           }
                       });
-                        addonsFixtureStore.load({
+                        addonsFeaturesStore.load({
                             params: {
                                 "force": true
                             }
@@ -615,18 +615,18 @@ Ext.onReady(function() {
   });
 
 
-    var addonsFixtureStore = new Ext.data.JsonStore({
+    var addonsFeaturesStore = new Ext.data.JsonStore({
         proxy: new Ext.data.HttpProxy({
             url: "addonsStoreAction",
             method: "POST"
         }),
         baseParams: {
             "action": "addonsList",
-            "type" : "fixture"
+            "type" : "features"
         },
         autoDestroy: true,
         messageProperty: 'error',
-        storeId: 'addonsFixtureStore',
+        storeId: 'addonsFeaturesStore',
         root: 'addons',
         idProperty: 'id',
         sortInfo: {
@@ -638,14 +638,14 @@ Ext.onReady(function() {
         'log', 'progress'],
         listeners: {
             'beforeload': function(store, options) {
-                Ext.ComponentMgr.get('loading-fixture-indicator').setValue('<img src="/images/documents/_indicator.gif" />');
+                Ext.ComponentMgr.get('loading-features-indicator').setValue('<img src="/images/documents/_indicator.gif" />');
                 return true;
             },
             "exception": function(e, type, action, options, response, arg) {
-                Ext.ComponentMgr.get('loading-fixture-indicator').setValue('<span class="button_menu_ext ss_sprite ss_status_offline">&nbsp;</span>');
+                Ext.ComponentMgr.get('loading-features-indicator').setValue('<span class="button_menu_ext ss_sprite ss_status_offline">&nbsp;</span>');
             },
             "load": function(store, records, options) {
-                Ext.ComponentMgr.get('loading-fixture-indicator').setValue("");
+                Ext.ComponentMgr.get('loading-features-indicator').setValue("");
                 progressWindow.hide();
                 store.filterBy(function (record, id) {
                     if (record.get('type') == 'core') {
@@ -659,8 +659,8 @@ Ext.onReady(function() {
                     return true;
                 });
 
-                if (addonsFixtureGrid.disabled) {
-                    addonsFixtureGrid.enable();
+                if (addonsFeatureGrid.disabled) {
+                    addonsFeatureGrid.enable();
                 }
 
                 errors = store.reader.jsonData.errors;
@@ -677,11 +677,11 @@ Ext.onReady(function() {
                 }
 
                 if (store_errors.length > 0) {
-                    Ext.ComponentMgr.get('loading-fixture-indicator').setValue('<span class="button_menu_ext ss_sprite ss_status_offline" >&nbsp;</span>');
+                    Ext.ComponentMgr.get('loading-features-indicator').setValue('<span class="button_menu_ext ss_sprite ss_status_offline" >&nbsp;</span>');
                     //storeError(error_msg);
                     reloadTask.cancel();
                 } else {
-                    Ext.ComponentMgr.get('loading-fixture-indicator').setValue('<span class="button_menu_ext ss_sprite ss_status_online">&nbsp;</span>');
+                    Ext.ComponentMgr.get('loading-features-indicator').setValue('<span class="button_menu_ext ss_sprite ss_status_online">&nbsp;</span>');
                 }
             }
         }
@@ -1512,15 +1512,15 @@ Ext.onReady(function() {
         }
     });
 
-    // create the Grid Fixtures
-    var addonsFixtureGrid = new Ext.grid.GridPanel({
-        store: addonsFixtureStore,
+    // create the Grid Features
+    var addonsFeatureGrid = new Ext.grid.GridPanel({
+        store: addonsFeaturesStore,
         colspan: 2,
         flex: 1,
         padding: 5,
         columns: [
             {
-                id       : 'icon-column-fixture',
+                id       : 'icon-column-feature',
                 header   : '',
                 width    : 30,
                 hideable : false,
@@ -1530,7 +1530,7 @@ Ext.onReady(function() {
                 }
             },
             {
-                id       :'nick-column-fixture',
+                id       :'nick-column-feature',
                 header   : _('ID_NAME'),
                 width    : 300,
                 sortable : true,
@@ -1546,13 +1546,13 @@ Ext.onReady(function() {
                 }
             },
             {
-                id       :'description-column-fixture',
+                id       :'description-column-feature',
                 header   : _('ID_DESCRIPTION'),
                 width    : 400,
                 dataIndex: 'description'
             },
             {
-                id       : 'enabled-column-fixture',
+                id       : 'enabled-column-feature',
                 header   : _('ID_ENABLED'),
                 width    : 60,
                 dataIndex: 'enabled',
@@ -1566,7 +1566,7 @@ Ext.onReady(function() {
                 }
             },
             {
-                id       : "status-fixture",
+                id       : "status-feature",
                 header   : _('ID_STATUS'),
                 width    : 120,
                 sortable : false,
@@ -1627,7 +1627,7 @@ Ext.onReady(function() {
               disabled: (INTERNET_CONNECTION == 1)? false : true,
               handler: function (b, e) {
                 reloadTask.cancel();
-                addonsFixtureStore.load({
+                addonsFeaturesStore.load({
                     params: {
                         "force": true
                     }
@@ -1637,7 +1637,7 @@ Ext.onReady(function() {
             '->',
             {
               xtype:"displayfield",
-              id:'loading-fixture-indicator'
+              id:'loading-features-indicator'
             }
         ],
         listeners: {
@@ -1709,7 +1709,7 @@ Ext.onReady(function() {
                 items : addonsGrid
             },{
                 title:  _('ID_ENTERPRISE_FIXTURES'),
-                items : addonsFixtureGrid
+                items : addonsFeatureGrid
             }
         ]
     });
@@ -1745,7 +1745,7 @@ Ext.onReady(function() {
 
   addonsGrid.addListener("rowcontextmenu", onMessageMnuContext, this);
   
-    addonsFixtureGrid.on("rowcontextmenu",
+    addonsFeatureGrid.on("rowcontextmenu",
         function (grid, rowIndex, evt) {
           var sm = grid.getSelectionModel();
           sm.selectRow(rowIndex, sm.isSelected(rowIndex));
@@ -1753,7 +1753,7 @@ Ext.onReady(function() {
         this
     );
     
-    addonsFixtureGrid.addListener("rowcontextmenu", onMessageMnuContext, this);
+    addonsFeatureGrid.addListener("rowcontextmenu", onMessageMnuContext, this);
 
   ///////
   var viewport = new Ext.Viewport({
@@ -1767,7 +1767,7 @@ Ext.onReady(function() {
 
   if (licensed) {
     addonsStore.load();
-    addonsFixtureStore.load();
+    addonsFeaturesStore.load();
   }
 });
 

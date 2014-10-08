@@ -125,7 +125,7 @@ class AddonsStore extends BaseAddonsStore
             } else {
                 $status = "available";
                 $enabled = false;
-                if (!$addonInLicense && in_array($addon->getAddonName(), $licenseManager->fixtures) == 1) {
+                if (!$addonInLicense && in_array($addon->getAddonName(), $licenseManager->licensedfeatures) == 1) {
                     $status = "installed";
                     $enabled = true;
                 }
@@ -172,7 +172,7 @@ class AddonsStore extends BaseAddonsStore
         return $result;
     }
 
-    public static function addonFixtureList()
+    public static function addonFeatureList()
     {
         $result = array();
 
@@ -425,17 +425,17 @@ class AddonsStore extends BaseAddonsStore
                 }
             }
         } else {
-            $list = unserialize($pmLicenseManagerO->fixturesList);
-            foreach ($list['addons'] as $key => $fixture) {
+            $list = unserialize($pmLicenseManagerO->licensedfeaturesList);
+            foreach ($list['addons'] as $key => $feature) {
                 $addon = new AddonsManager();
-                $addon->setAddonId($fixture['name']);
-                $addon->setStoreId($fixture['guid']);
-                $addon->setAddonName($fixture['name']);
-                $addon->setAddonDescription($fixture['description']);
-                $addon->setAddonNick($fixture['nick']);
+                $addon->setAddonId($feature['name']);
+                $addon->setStoreId($feature['guid']);
+                $addon->setAddonName($feature['name']);
+                $addon->setAddonDescription($feature['description']);
+                $addon->setAddonNick($feature['nick']);
                 $addon->setAddonVersion("");
-                $addon->setAddonStatus($fixture['status']);
-                $addon->setAddonType("fixture");
+                $addon->setAddonStatus($feature['status']);
+                $addon->setAddonType("features");
                 $addon->setAddonPublisher("Colosa");
                 $addon->setAddonDownloadUrl("");
                 $addon->setAddonDownloadMd5("");
