@@ -1164,6 +1164,7 @@ class processMap
                 $c++;
                 $oGroup = new Groupwf();
                 $aFields = $oGroup->load($aRow['USR_UID']);
+                $aRow['GRP_TITLE'] = ($aRow['GRP_TITLE']=="")? $aFields['GRP_TITLE'] : $aRow['GRP_TITLE'];
                 if ($aFields['GRP_STATUS'] == 'ACTIVE') {
                     $oCriteria = new Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
