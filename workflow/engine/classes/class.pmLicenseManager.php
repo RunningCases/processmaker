@@ -53,6 +53,8 @@ class pmLicenseManager
         );
 
         $this->result = $results['RESULT'];
+        $this->features = array();
+        $this->fixtures = array();
         if (in_array($this->result, $validStatus)) {
             $this->serial="3ptta7Xko2prrptrZnSd356aqmPXvMrayNPFj6CLdaR1pWtrW6qPw9jV0OHjxrDGu8LVxtmSm9nP5kR23HRpdZWccpeui+bKkK°DoqCt2Kqgpq6Vg37s";
             $info['FIRST_NAME']       = $results['DATA']['FIRST_NAME'];
@@ -64,7 +66,9 @@ class pmLicenseManager
             $this->plan     = isset($results ['DATA']['PLAN'])?$results ['DATA']['PLAN']:"";
             $this->id       = $results ['ID'];
             $this->expireIn = $this->getExpireIn ();
-            $this->features = $this->result!='TMINUS'?isset($results ['DATA']['CUSTOMER_PLUGIN'])?$results ['DATA']['CUSTOMER_PLUGIN']:$this->getActiveFeatures():array();
+            $this->features = $this->result!='TMINUS'?isset($results ['DATA']['CUSTOMER_PLUGIN'])? $results ['DATA']['CUSTOMER_PLUGIN'] : $this->getActiveFeatures() : array();
+            $this->fixtures = $this->result!='TMINUS'?isset($results ['DATA']['CUSTOMER_FIXTURE'])? $results ['DATA']['CUSTOMER_FIXTURE'] : $this->getActiveFixtures() : array();
+            $this->fixturesList = isset($results ['DATA']['FIXTURE_LIST'])? $results ['DATA']['FIXTURE_LIST'] : null;
             $this->status   = $this->getCurrentLicenseStatus ();
 
             if (isset ( $results ['LIC'] )) {
@@ -352,7 +356,9 @@ class pmLicenseManager
     public function installLicense($path, $redirect = true)
     {
         $application = new license_application ( $path, false, true, false, true, true );
+
         $results = $application->validate ( false, false, "", "", "80", true );
+
         //if the result is ok then it is saved into DB
         $res = $results ['RESULT'];
         if (( $res != 'OK') && ($res != 'EXPIRED' ) && ($res != 'TMINUS') ) {
@@ -496,6 +502,17 @@ class pmLicenseManager
 
     public function getActiveFeatures()
     {
+        if (file_exists ( PATH_PLUGINS . 'enterprise/data/default' )) {
+            return array();
+        }
+        return unserialize(G::decrypt($this->serial, file_get_contents(PATH_PLUGINS . 'enterprise/data/default')));
+    }
+
+    public function getActiveFixtures()
+    {
+        if (!file_exists ( PATH_PLUGINS . 'enterprise/data/default' )) {
+            return array();
+        }
         return unserialize(G::decrypt($this->serial, file_get_contents(PATH_PLUGINS . 'enterprise/data/default')));
     }
 }
