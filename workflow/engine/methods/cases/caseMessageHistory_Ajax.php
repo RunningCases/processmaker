@@ -22,6 +22,11 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+$arrayToTranslation = array(
+    "TRIGGER"    => G::LoadTranslation("ID_TRIGGER_DB"),
+    "DERIVATION" => G::LoadTranslation("ID_DERIVATION_DB")
+);
+
 $actionAjax = isset( $_REQUEST['actionAjax'] ) ? $_REQUEST['actionAjax'] : null;
 
 if ($actionAjax == 'messageHistoryGridList_JXP') {
@@ -110,7 +115,7 @@ if ($actionAjax == 'messageHistoryGridList_JXP') {
     $r->data = $aProcesses;
     $r->totalCount = $totalCount;
 
-    $r->data[0]["APP_MSG_TYPE"] = ($r->data[0]["APP_MSG_TYPE"] == "TRIGGER")? G::LoadTranslation("ID_TRIGGER_DB") : $r->data[0]["APP_MSG_TYPE"];
+    $r->data[0]["APP_MSG_TYPE"] = (array_key_exists($r->data[0]["APP_MSG_TYPE"], $arrayToTranslation))? $arrayToTranslation[$r->data[0]["APP_MSG_TYPE"]] : $r->data[0]["APP_MSG_TYPE"];
 
     echo G::json_encode( $r );
 }
