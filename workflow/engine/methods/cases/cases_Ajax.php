@@ -533,6 +533,12 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         G::LoadClass( "BasePeer" );
         global $G_PUBLISH;
 
+        $arrayToTranslation = array(
+            "INPUT"    => G::LoadTranslation("ID_INPUT_DB"),
+            "OUTPUT"   => G::LoadTranslation("ID_OUTPUT_DB"),
+            "ATTACHED" => G::LoadTranslation("ID_ATTACHED_DB")
+        );
+
         $oCase = new Cases();
         $aProcesses = Array ();
         $G_PUBLISH = new Publisher();
@@ -551,6 +557,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
 
         for ($j = 0; $j < $rs->getRecordCount(); $j ++) {
             $result = $rs->getRow();
+            $result["TYPE"] = (array_key_exists($result["TYPE"], $arrayToTranslation))? $arrayToTranslation[$result["TYPE"]] : $result["TYPE"];
             $aProcesses[] = $result;
             $rs->next();
             $totalCount ++;
