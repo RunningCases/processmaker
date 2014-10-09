@@ -1518,6 +1518,7 @@ Ext.onReady(function() {
         colspan: 2,
         flex: 1,
         padding: 5,
+        disabled: !licensed,
         columns: [
             {
                 id       : 'icon-column-feature',
