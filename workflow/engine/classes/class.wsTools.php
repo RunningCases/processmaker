@@ -1523,7 +1523,7 @@ class workspaceTools
 
             $start = microtime(true);
             CLI::logging("> Verify enterprise old...\n");
-            $this->verifyEnterprise($workSpace);
+            $workspace->verifyEnterprise($workspaceName);
             $stop = microtime(true);
             $final = $stop - $start;
             CLI::logging("<*>   Verify took $final seconds.\n");
