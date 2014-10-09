@@ -19,7 +19,7 @@ CREATE TABLE `RBAC_PERMISSIONS`
 	`PER_STATUS` INTEGER default 1 NOT NULL,
 	`PER_SYSTEM` VARCHAR(32) default '00000000000000000000000000000002' NOT NULL,
 	PRIMARY KEY (`PER_UID`)
-)ENGINE=MyISAM  DEFAULT CHARSET='utf8' COMMENT='Permissions';
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Permissions';
 #-----------------------------------------------------------------------------
 #-- ROLES
 #-----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ CREATE TABLE `RBAC_ROLES`
 	`ROL_UPDATE_DATE` DATETIME,
 	`ROL_STATUS` INTEGER default 1 NOT NULL,
 	PRIMARY KEY (`ROL_UID`)
-)ENGINE=MyISAM  DEFAULT CHARSET='utf8' COMMENT='Roles';
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Roles';
 #-----------------------------------------------------------------------------
 #-- ROLES_PERMISSIONS
 #-----------------------------------------------------------------------------
@@ -50,7 +50,7 @@ CREATE TABLE `RBAC_ROLES_PERMISSIONS`
 	`ROL_UID` VARCHAR(32) default '' NOT NULL,
 	`PER_UID` VARCHAR(32) default '' NOT NULL,
 	PRIMARY KEY (`ROL_UID`,`PER_UID`)
-)ENGINE=MyISAM  DEFAULT CHARSET='utf8' COMMENT='Permissions of the roles';
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Permissions of the roles';
 #-----------------------------------------------------------------------------
 #-- SYSTEMS
 #-----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ CREATE TABLE `RBAC_SYSTEMS`
 	`SYS_UPDATE_DATE` DATETIME,
 	`SYS_STATUS` INTEGER default 0 NOT NULL,
 	PRIMARY KEY (`SYS_UID`)
-)ENGINE=MyISAM  DEFAULT CHARSET='utf8' COMMENT='Systems';
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Systems';
 #-----------------------------------------------------------------------------
 #-- USERS
 #-----------------------------------------------------------------------------
@@ -91,7 +91,7 @@ CREATE TABLE `RBAC_USERS`
 	`USR_AUTH_USER_DN` VARCHAR(255) default '' NOT NULL,
 	`USR_AUTH_SUPERVISOR_DN` VARCHAR(255) default '' NOT NULL,
 	PRIMARY KEY (`USR_UID`)
-)ENGINE=MyISAM  DEFAULT CHARSET='utf8' COMMENT='Users';
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Users';
 #-----------------------------------------------------------------------------
 #-- USERS_ROLES
 #-----------------------------------------------------------------------------
@@ -104,7 +104,7 @@ CREATE TABLE `RBAC_USERS_ROLES`
 	`USR_UID` VARCHAR(32) default '' NOT NULL,
 	`ROL_UID` VARCHAR(32) default '' NOT NULL,
 	PRIMARY KEY (`USR_UID`,`ROL_UID`)
-)ENGINE=MyISAM  DEFAULT CHARSET='utf8' COMMENT='Roles of the users';
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Roles of the users';
 #-----------------------------------------------------------------------------
 #-- AUTHENTICATION_SOURCE
 #-----------------------------------------------------------------------------
@@ -129,6 +129,6 @@ CREATE TABLE `RBAC_AUTHENTICATION_SOURCE`
 	`AUTH_SOURCE_OBJECT_CLASSES` VARCHAR(255) default '' NOT NULL,
 	`AUTH_SOURCE_DATA` MEDIUMTEXT,
 	PRIMARY KEY (`AUTH_SOURCE_UID`)
-)ENGINE=MyISAM  DEFAULT CHARSET='utf8';
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

@@ -225,6 +225,8 @@ class Bootstrap
         self::registerClass("cronFile", PATH_CLASSES . "class.plugin.php");
         self::registerClass("pluginDetail", PATH_CLASSES . "class.pluginRegistry.php");
         self::registerClass("PMPluginRegistry", PATH_CLASSES . "class.pluginRegistry.php");
+        self::registerClass("featuresDetail", PATH_CLASSES . "class.licensedFeatures.php");
+        self::registerClass("PMLicensedFeatures", PATH_CLASSES . "class.licensedFeatures.php");
         self::registerClass("PMDashlet", PATH_CLASSES . "class.pmDashlet.php");
         self::registerClass("pmGauge", PATH_CLASSES . "class.pmGauge.php");
         self::registerClass("pmPhing", PATH_CLASSES . "class.pmPhing.php");

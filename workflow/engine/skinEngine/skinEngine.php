@@ -755,16 +755,16 @@ class SkinEngine
         $name = $conf->userNameFormat(isset($_SESSION['USR_USERNAME']) ? $_SESSION['USR_USERNAME']: '', isset($_SESSION['USR_FULLNAME']) ? htmlentities($_SESSION['USR_FULLNAME'] , ENT_QUOTES, 'UTF-8'): '', isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '');
         $smarty->assign('user',$name);
       }
-      if(class_exists('pmLicenseManager')){
-        $pmLicenseManagerO = &pmLicenseManager::getSingleton();
-        $expireIn          = $pmLicenseManagerO->getExpireIn();
-        $expireInLabel     = $pmLicenseManagerO->getExpireInLabel();
-        //if($expireIn<=30){
-        if($expireInLabel != ""){
-          $smarty->assign('msgVer', '<label class="textBlack">'.$expireInLabel.'</label>&nbsp;&nbsp;');
+
+        if (defined('SYS_SYS')) {
+            require_once ("classes" . PATH_SEP . "class.pmLicenseManager.php");
+            $pmLicenseManagerO = &pmLicenseManager::getSingleton();
+            $expireIn          = $pmLicenseManagerO->getExpireIn();
+            $expireInLabel     = $pmLicenseManagerO->getExpireInLabel();
+            if($expireInLabel != ""){
+                $smarty->assign('msgVer', '<label class="textBlack">'.$expireInLabel.'</label>&nbsp;&nbsp;');
+            }
         }
-        //}
-      }
 
       if (defined('SYS_SYS')) {
         $logout = '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/login/login';

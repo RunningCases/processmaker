@@ -260,7 +260,7 @@ switch ($request) {
             $result = new StdClass();
             $result->success = true;
             $result->msg = G::LoadTranslation('ID_TITLE_COMPLETED');
-
+            G::auditLog("BuildCache");
             echo G::json_encode( $result );
 
         } catch (Exception $e) {

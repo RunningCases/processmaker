@@ -69,6 +69,7 @@ class AuthenticationSource extends BaseAuthenticationSource {
         $oConnection->begin();
         $iResult = $oAuthenticationSource->save();
         $oConnection->commit();
+        G::auditLog("CreateAuthSource", $aData['AUTH_SOURCE_NAME']);
         return $aData['AUTH_SOURCE_UID'];
   	  }
   	  else {
@@ -97,6 +98,7 @@ class AuthenticationSource extends BaseAuthenticationSource {
   	    	$oConnection->begin();
           $iResult = $oAuthenticationSource->save();
           $oConnection->commit();
+          G::auditLog("UpdateAuthSource", $aData['AUTH_SOURCE_NAME']." (".$aData['AUTH_SOURCE_UID'].") ");
           return $iResult;
   	    }
   	    else {
@@ -126,10 +128,14 @@ class AuthenticationSource extends BaseAuthenticationSource {
     $oConnection = Propel::getConnection(AuthenticationSourcePeer::DATABASE_NAME);
   	try {
   	  $oAuthenticationSource = AuthenticationSourcePeer::retrieveByPK($sUID);
+      $authenticationSource = $this->load($sUID);
+
   	  if (!is_null($oAuthenticationSource)) {
   	  	$oConnection->begin();
         $iResult = $oAuthenticationSource->delete();
         $oConnection->commit();
+        
+        G::auditLog("DeleteAuthSource", $authenticationSource['AUTH_SOURCE_NAME']." (".$sUID.") ");
         return $iResult;
       }
       else {

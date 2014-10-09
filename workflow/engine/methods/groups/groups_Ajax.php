@@ -149,7 +149,10 @@ switch ($_POST['action']) {
         unset( $newGroup['GRP_UID'] );
         $group = new Groupwf();
         $group->create( $newGroup );
+        G::auditLog("CreateGroup", $newGroup['GRP_TITLE']);
+
         echo '{success: true}';
+
         break;
     case 'saveEditGroup':
         G::LoadClass( 'groups' );
@@ -158,6 +161,7 @@ switch ($_POST['action']) {
         $editGroup['GRP_TITLE'] = trim( $_POST['name'] );
         $group = new Groupwf();
         $group->update( $editGroup );
+        G::auditLog("UpdateGroup", $editGroup['GRP_TITLE']." (".$_POST['grp_uid'].") ");
         echo '{success: true}';
         break;
     case 'deleteGroup':
@@ -167,6 +171,7 @@ switch ($_POST['action']) {
             return;
         }
         $group->remove( urldecode( $_POST['GRP_UID'] ) );
+        G::auditLog("DeleteGroup", $_POST['GRP_NAME']." (".$_POST['GRP_UID'].") ");
         require_once 'classes/model/TaskUser.php';
         $oProcess = new TaskUser();
         $oCriteria = new Criteria( 'workflow' );

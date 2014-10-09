@@ -170,6 +170,7 @@ function newSkin ($baseSkin = 'classic')
         file_put_contents( $configFileFinal, $xmlConfiguration );
         $response['success'] = true;
         $response['message'] = G::LoadTranslation( 'ID_SKIN_SUCCESS_CREATE' );
+        G::auditLog("CreateSkin", $skinName);
         print_r( G::json_encode( $response ) );
     } catch (Exception $e) {
         $response['success'] = false;
@@ -285,6 +286,7 @@ function importSkin ()
 
         $response['success'] = true;
         $response['message'] = G::LoadTranslation( 'ID_SKIN_SUCCESSFUL_IMPORTED' );
+        G::auditLog("ImportSkin", $skinName);
         print_r( G::json_encode( $response ) );
     } catch (Exception $e) {
         $response['success'] = false;
@@ -329,7 +331,7 @@ function exportSkin ($skinToExport = "")
 
         $response['success'] = true;
         $response['message'] = $skinTar;
-
+        G::auditLog("ExportSkin", $skinName);
         print_r( G::json_encode( $response ) );
     } catch (Exception $e) {
         $response['success'] = false;
@@ -355,6 +357,7 @@ function deleteSkin ()
         G::rm_dir( PATH_CUSTOM_SKINS . $folderId );
         $response['success'] = true;
         $response['message'] = "$folderId deleted";
+        G::auditLog("DeleteSkin", $folderId);
     } catch (Exception $e) {
         $response['success'] = false;
         $response['error'] = $response['message'] = $e->getMessage();
