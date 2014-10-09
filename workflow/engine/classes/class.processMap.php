@@ -1260,7 +1260,10 @@ class processMap
             $oCriteria->addSelectColumn(UsersPeer::USR_UID);
             $oCriteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
             $oCriteria->addSelectColumn(UsersPeer::USR_LASTNAME);
-            $oCriteria->add(UsersPeer::USR_STATUS, 'ACTIVE');
+            $oCriteria->add(
+                    $oCriteria->getNewCriterion(UsersPeer::USR_STATUS, "ACTIVE", Criteria::EQUAL)->addOr(
+                    $oCriteria->getNewCriterion(UsersPeer::USR_STATUS, "VACATION", Criteria::EQUAL))
+            );
             $oCriteria->add(UsersPeer::USR_UID, $aUIDS2, Criteria::NOT_IN);
             $oDataset = UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
