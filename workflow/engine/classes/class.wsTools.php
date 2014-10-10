@@ -1668,7 +1668,13 @@ class workspaceTools
     {
         $this->initPropel( true );
         G::LoadClass("enterprise");
-        enterpriseClass::setHashPassword($response);
+        $licensedFeatures = & PMLicensedFeatures::getSingleton();
+        if ($licensedFeatures->verifyfeature('95OY24wcXpEMzIyRmlNSnF0STNFSHJzMG9wYTJKekpLNmY2ZmRCeGtuZk5oUDloaUNhUGVjTDJBPT0=')) {
+            enterpriseClass::setHashPassword($response);
+        } else {
+            return false;
+        }
+        return true;
     }
 
     public function verifyEnterprise ($workspace)
