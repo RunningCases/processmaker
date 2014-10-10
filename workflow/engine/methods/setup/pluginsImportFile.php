@@ -239,6 +239,8 @@ try {
     $size = file_put_contents( PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance() );
     
     $response = $oPluginRegistry->verifyTranslation( $details->sNamespace);
+    G::auditLog("InstallPlugin", "Plugin Name: ".$details->sNamespace );
+
     //if ($response->recordsCountSuccess <= 0) {
         //throw (new Exception( 'The plugin ' . $details->sNamespace . ' couldn\'t verify any translation item. Verified Records:' . $response->recordsCountSuccess));
     //}
