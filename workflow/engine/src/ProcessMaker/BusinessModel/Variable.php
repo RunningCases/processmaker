@@ -636,12 +636,6 @@ class Variable
             //Get data
             $_SESSION["PROCESS"] = $processUid;
 
-            $cnn = \Propel::getConnection(($variableDbConnectionUid . "" != "")? $variableDbConnectionUid : "workflow");
-            $stmt = $cnn->createStatement();
-
-            $rs = $stmt->executeQuery(\G::replaceDataField($variableSql, $arrayVariable), \ResultSet::FETCHMODE_NUM);
-
-
             foreach ($arrayVariable as $keyRequest => $valueRequest) {
                 $keyRequest = strtoupper($keyRequest);
 
@@ -663,6 +657,9 @@ class Variable
             }
 
             $sqlQuery = $variableSql . $sqlConditionLike . $sqlLimit;
+
+            $cnn = \Propel::getConnection(($variableDbConnectionUid . "" != "")? $variableDbConnectionUid : "workflow");
+            $stmt = $cnn->createStatement();
 
             $rs = $stmt->executeQuery(\G::replaceDataField($sqlQuery, $arrayVariable), \ResultSet::FETCHMODE_NUM);
 
