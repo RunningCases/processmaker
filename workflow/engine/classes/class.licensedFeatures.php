@@ -65,25 +65,19 @@ class PMLicensedFeatures
 
     public function verifyfeature ($featureName)
     {
+        if (!class_exists("pmLicenseManager")) {
+            require_once ("classes" . PATH_SEP . "class.pmLicenseManager.php");
+        }
         $licenseManager = &pmLicenseManager::getSingleton();
+
         $_SESSION['__sw__'] = true;
         $padl = new padl();
+        $value = $padl->_decrypt($featureName);
 
-        $enable = in_array($padl->_decrypt($featureName), $licenseManager->features);
+        $enable = in_array($value[0], $licenseManager->licensedfeatures);
 
-        $this->featuresDetails[$padl->_decrypt($featureName)]->enabled = $enable;
+        $this->featuresDetails[$value[0]]->enabled = $enable;
         return $enable;
-    }
-
-    public static function loadSingleton($file)
-    {
-        self::$instancefeature = unserialize(file_get_contents($file));
-
-        if (! is_object(self::$instancefeature) || get_class(self::$instancefeature) != "PMLicensedFeatures") {
-            throw new Exception("Can't load main PMLicensedFeatures object.");
-        }
-
-        return self::$instancefeature;
     }
 }
 

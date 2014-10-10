@@ -28,6 +28,7 @@ $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
 
 $oServerConf = & serverConf::getSingleton();
 $sAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', SYS_SYS );
+$licensedFeatures = & PMLicensedFeatures::getSingleton();
 
 if ($RBAC->userCanAccess('PM_SETUP') == 1 ) {
     //settings options
@@ -98,7 +99,7 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
     $G_TMP_MENU->AddIdRawOption('LOG_CASE_SCHEDULER', '../cases/cases_Scheduler_Log', G::LoadTranslation('ID_CASE_SCHEDULER'), "icon-logs-list.png",'', 'logs');
     $G_TMP_MENU->AddIdRawOption("CRON", "../setup/cron", G::LoadTranslation("ID_CRON_ACTIONS"), null, null, "logs");
     $G_TMP_MENU->AddIdRawOption('EMAILS', '../mails/emailList', ucfirst (strtolower ( G::LoadTranslation('ID_EMAILS'))), '', '', 'logs');
-    if (isset($sAudit) && $sAudit != false) {
+    if (isset($sAudit) && $sAudit != false && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
         $G_TMP_MENU->AddIdRawOption('AUDIT_LOG', '../setup/auditLog', ucfirst (G::LoadTranslation('ID_AUDITLOG_DISPLAY')), '', '', 'logs'); 
     }
 }
@@ -107,7 +108,9 @@ if ($RBAC->userCanAccess("PM_SETUP") == 1) {
     $G_TMP_MENU->AddIdRawOption("PM_REQUIREMENTS", "../setup/systemInfo", G::LoadTranslation("ID_PROCESSMAKER_REQUIREMENTS_CHECK"), "", "", "settings");
     $G_TMP_MENU->AddIdRawOption("PHP_INFO", "../setup/systemInfo?option=php", G::LoadTranslation("ID_PHP_INFO"), "", "", "settings");
     //$G_TMP_MENU->AddIdRawOption("PHP_MAINTENANCE", "../admin/maintenance", 'Maintenance', "", "", "settings");
-    $G_TMP_MENU->AddIdRawOption("AUDIT_LOG", "auditLogConfig", G::LoadTranslation("ID_AUDITLOG_DISPLAY"), "", "", "settings");
+    if ($licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
+        $G_TMP_MENU->AddIdRawOption("AUDIT_LOG", "auditLogConfig", G::LoadTranslation("ID_AUDITLOG_DISPLAY"), "", "", "settings");
+    }
 }
 
 require_once 'classes/class.pmLicenseManager.php';
