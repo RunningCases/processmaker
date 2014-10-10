@@ -410,7 +410,7 @@ class pmTablesProxy extends HttpProxyController
         if ($errors == '') {
             $result->success = true;
             $result->message = $count.G::LoadTranslation( 'ID_TABLES_REMOVED_SUCCESSFULLY' );
-            G::auditLog("DeletePMTable", $table['ADD_TAB_NAME']." (".$table['ADD_TAB_UID'].") ");
+            G::auditLog("DeletePmtable", "Table Name: ". $table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
         } else {
             $result->success = false;
             $result->message = $count. G::LoadTranslation( 'ID_TABLES_REMOVED_WITH_ERRORS' ) .$errors;
@@ -509,7 +509,7 @@ class pmTablesProxy extends HttpProxyController
                 if ($obj->validate()) {
                     $obj->save();
                     $toSave = true;
-                    G::auditLog("AddDataInPMTable", $table['ADD_TAB_NAME']." (".$table['ADD_TAB_UID'].") ");
+                    G::auditLog("AddDataPmtable", "Table Name: ".$table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
                     $primaryKeysValues = array ();
                     foreach ($primaryKeys as $primaryKey) {
                         $method = 'get' . AdditionalTables::getPHPName( $primaryKey['FLD_NAME'] );
@@ -583,7 +583,7 @@ class pmTablesProxy extends HttpProxyController
         }
 
         if ($result) {
-            G::auditLog("UpdateDataInPMTable", $table['ADD_TAB_NAME']." (".$table['ADD_TAB_UID'].") ");
+            G::auditLog("UpdateDataPmtable", "Table Name: ".$table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
         }
 
         $this->success = $result;
@@ -610,7 +610,7 @@ class pmTablesProxy extends HttpProxyController
 
         require_once $sPath . $this->className . '.php';
 
-        G::auditLog("DeleteDataInPMTable", $table['ADD_TAB_NAME']." (".$table['ADD_TAB_UID'].") ");
+        G::auditLog("DeleteDataPmtable", "Table Name: ".$table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
 
         $this->success = $this->_dataDestroy( $httpData->rows );
         $this->message = $this->success ? G::loadTranslation( 'ID_DELETED_SUCCESSFULLY' ) : G::loadTranslation( 'ID_DELETE_FAILED' );
