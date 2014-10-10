@@ -528,6 +528,7 @@ class pmTablesProxy extends HttpProxyController
                 $toSave = false;
             }
 
+            $result = new stdclass();
             if ($toSave) {
                 $result->success = true;
                 $result->message = G::LoadTranslation('ID_RECORD_SAVED_SUCCESFULLY');
@@ -610,7 +611,7 @@ class pmTablesProxy extends HttpProxyController
         require_once $sPath . $this->className . '.php';
 
         G::auditLog("DeleteDataInPMTable", $table['ADD_TAB_NAME']." (".$table['ADD_TAB_UID'].") ");
-        
+
         $this->success = $this->_dataDestroy( $httpData->rows );
         $this->message = $this->success ? G::loadTranslation( 'ID_DELETED_SUCCESSFULLY' ) : G::loadTranslation( 'ID_DELETE_FAILED' );
     }
