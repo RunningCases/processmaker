@@ -115,7 +115,7 @@ class Department extends BaseDepartment
 
                 $con->commit();
                 
-                G::auditLog("Create ".$msgLog, $aData['DEP_TITLE']);
+                G::auditLog("Create".$msgLog, $msgLog." Name: ". $aData['DEP_TITLE']);
 
                 return $this->getDepUid();
             } else {
@@ -290,7 +290,7 @@ class Department extends BaseDepartment
                 Content::removeContent( 'DEPO_TITLE', '', $oPro->getDepUid() );
                 Content::removeContent( 'DEPO_DESCRIPTION', '', $oPro->getDepUid() );
 
-                G::auditLog("DeleteDepartament", $dptoTitle['DEPO_TITLE']." (".$oPro->getDepUid().") ");
+                G::auditLog("DeleteDepartament", "Departament Name: ".$dptoTitle['DEPO_TITLE']." Departament ID: (".$oPro->getDepUid().") ");
                 return $oPro->delete();
             } else {
                 throw (new Exception( "The row '$ProUid' in table Group doesn't exist!" ));

@@ -270,7 +270,7 @@ switch ($option) {
             if ($result["status"] == "OK") {
                 $response["status"] = $result["status"]; //OK
                 $response["message"] = $result["message"];
-                G::auditLog("InstallPlugin", $file);
+                G::auditLog("InstallPlugin", "Plugin Name: ".$file);
             } else {
                 throw (new Exception($result["message"]));
             }

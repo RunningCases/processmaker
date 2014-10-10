@@ -33,6 +33,12 @@ function auditLogArraySet ($str, $filter)
         $sw = 0;
     }
 
+    if ($filter["action"] != "ALL") {
+        if ($action != $filter["action"]) {
+            $sw = 0;
+        }       
+    }
+
     if ($filter["dateFrom"] && $mktDate > 0) {
         if (! (mktimeDate( $filter["dateFrom"] ) <= $mktDate)) {
             $sw = 0;
@@ -55,9 +61,11 @@ function auditLogArraySet ($str, $filter)
     }
 
     $arrayData = array ();
+    $newAction = preg_replace('/([A-Z])/', '_$1', $action);
+    $newAction = "ID".strtoupper($newAction);
 
     if ($sw == 1) {
-        $arrayData = array ("DATE" => $date, "USER" => $user, "IP" =>$ip, "ACTION" => $action, "DESCRIPTION" => $description);
+        $arrayData = array ("DATE" => $date, "USER" => $user, "IP" =>$ip, "ACTION" => G::LoadTranslation($newAction), "DESCRIPTION" => $description);
     }
 
     return $arrayData;
@@ -80,7 +88,6 @@ function getAuditLogData ($filter, $r, $i)
 
             if ($strAux) {
                 $arrayAux = auditLogArraySet($strAux, $filter);
-
                 if (count($arrayAux) > 0) {
                     $count = $count + 1;
 
@@ -91,6 +98,7 @@ function getAuditLogData ($filter, $r, $i)
             }
         }
     }
+
     return array($count, $arrayData);
 }
 
@@ -102,11 +110,12 @@ switch ($option) {
     case "LST":
         $pageSize = $_REQUEST["pageSize"];
         $workspace = SYS_SYS;
+        $action = $_REQUEST["action"];
         $description = $_REQUEST["description"];
         $dateFrom = $_REQUEST["dateFrom"];
         $dateTo = $_REQUEST["dateTo"];
 
-        $arrayFilter = array ("workspace" => $workspace,"description" => $description,"dateFrom" => str_replace( "T00:00:00", null, $dateFrom ),"dateTo" => str_replace( "T00:00:00", null, $dateTo )
+        $arrayFilter = array ("workspace" => $workspace, "action" => $action, "description" => $description,"dateFrom" => str_replace( "T00:00:00", null, $dateFrom ),"dateTo" => str_replace( "T00:00:00", null, $dateTo )
         );
 
         $limit = isset( $_REQUEST["limit"] ) ? $_REQUEST["limit"] : $pageSize;

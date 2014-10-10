@@ -59,6 +59,15 @@ leimnud.event.add(getField('TASKS'), 'change', function() {
     }
 });
 /**/
+
+leimnud.event.add(getField("WS_USER"), "keypress", function() {
+    hideRowById("SEARCH");
+});
+
+leimnud.event.add(getField("WS_PASS"), "keypress", function() {
+    hideRowById("SEARCH");
+});
+
 leimnud.event.add(getField('WE_TYPE'), 'change', function() {
   if (getField('WE_TYPE').value=='WS') {
     hideRowById("SEARCH");

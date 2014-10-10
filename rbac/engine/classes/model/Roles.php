@@ -237,7 +237,7 @@ class Roles extends BaseRoles {
                 $result = $obj->save();
                 $con->commit();
                 $obj->setRolName($rol_name);
-                G::auditLog("CreateRole", $rol_name);
+                G::auditLog("CreateRole", "Role Name: ". $rol_name);
             } else {
                 $e = new Exception("Failed Validation in class " . get_class($this) . ".");
                 $e->aValidationFailures = $this->getValidationFailures();
@@ -263,7 +263,7 @@ class Roles extends BaseRoles {
                 $result = $this->save();
                 $con->commit();
                 $this->setRolName($rol_name);
-                G::auditLog("UpdateRole", $rol_name." (".$fields['ROL_UID'].") ");
+                G::auditLog("UpdateRole", "Role Name: ".$rol_name." Role ID: (".$fields['ROL_UID'].") ");
                 return $result;
             } else {
                 $con->rollback();
@@ -284,7 +284,7 @@ class Roles extends BaseRoles {
             Content::removeContent('ROL_NAME', '', $this->getRolUid());
             $result = $this->delete();
             $con->commit();
-            G::auditLog("DeleteRole", $rol_name['ROL_NAME']." (".$ROL_UID.") ");
+            G::auditLog("DeleteRole", "Role Name: ".$rol_name['ROL_NAME']." Role UID: (".$ROL_UID.") ");
             return $result;
         } catch( exception $e ) {
             $con->rollback();
@@ -645,7 +645,7 @@ class Roles extends BaseRoles {
         $permission = $o->getPermissionName($PER_UID);
         $role = $this->load($ROL_UID);
         
-        G::auditLog("DeletePermissionToRole", "Delete Permission ".$permission." (".$PER_UID.") to Role ".$role['ROL_NAME']." (".$ROL_UID.") ");
+        G::auditLog("DeletePermissionToRole", "Delete Permission ".$permission." (".$PER_UID.") from Role ".$role['ROL_NAME']." (".$ROL_UID.") ");
     }
 
     function numUsersWithRole($ROL_UID) {

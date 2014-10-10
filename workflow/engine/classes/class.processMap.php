@@ -1164,6 +1164,7 @@ class processMap
                 $c++;
                 $oGroup = new Groupwf();
                 $aFields = $oGroup->load($aRow['USR_UID']);
+                $aRow['GRP_TITLE'] = ($aRow['GRP_TITLE']=="")? $aFields['GRP_TITLE'] : $aRow['GRP_TITLE'];
                 if ($aFields['GRP_STATUS'] == 'ACTIVE') {
                     $oCriteria = new Criteria('workflow');
                     $oCriteria->addSelectColumn('COUNT(*) AS MEMBERS_NUMBER');
@@ -1259,7 +1260,10 @@ class processMap
             $oCriteria->addSelectColumn(UsersPeer::USR_UID);
             $oCriteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
             $oCriteria->addSelectColumn(UsersPeer::USR_LASTNAME);
-            $oCriteria->add(UsersPeer::USR_STATUS, 'ACTIVE');
+            $oCriteria->add(
+                    $oCriteria->getNewCriterion(UsersPeer::USR_STATUS, "ACTIVE", Criteria::EQUAL)->addOr(
+                    $oCriteria->getNewCriterion(UsersPeer::USR_STATUS, "VACATION", Criteria::EQUAL))
+            );
             $oCriteria->add(UsersPeer::USR_UID, $aUIDS2, Criteria::NOT_IN);
             $oDataset = UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
