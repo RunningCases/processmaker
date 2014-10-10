@@ -1056,7 +1056,7 @@ class adminProxy extends HttpProxyController
                         try {
                             list($imageWidth, $imageHeight, $imageType) = @getimagesize($dir . '/' . 'tmp' . $fileName);
                             G::resizeImage($dir . '/tmp' . $fileName, $imageWidth, 49, $dir . '/' . $fileName);
-                            G::auditLog("UploadLogo", $fileName);
+                            G::auditLog("UploadLogo", "File Name: ".$fileName);
                         } catch (Exception $e) {
                             $error = $e->getMessage();
                         }
@@ -1138,7 +1138,7 @@ class adminProxy extends HttpProxyController
                     if (file_exists($dir . '/tmp' . $imgname)) {
                         unlink ($dir . '/tmp' . $imgname);
                     }
-                    G::auditLog("DeleteLogo", $imgname);
+                    G::auditLog("DeleteLogo", "File Name: ".$imgname);
                 } else {
                     echo '{success: false}';
                     exit();
@@ -1191,7 +1191,7 @@ class adminProxy extends HttpProxyController
                     $oConf->saveConfig('USER_LOGO_REPLACEMENT', '', '', '');
 
                     G::SendTemporalMessage('ID_REPLACED_LOGO', 'tmp-info', 'labels');
-                    G::auditLog("ReplaceLogo", $snameLogo);
+                    G::auditLog("ReplaceLogo", "File Name: ".$snameLogo);
 
                     break;
                 case 'restoreLogo':

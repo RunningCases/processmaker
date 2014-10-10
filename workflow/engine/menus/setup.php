@@ -99,7 +99,7 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
     $G_TMP_MENU->AddIdRawOption("CRON", "../setup/cron", G::LoadTranslation("ID_CRON_ACTIONS"), null, null, "logs");
     $G_TMP_MENU->AddIdRawOption('EMAILS', '../mails/emailList', ucfirst (strtolower ( G::LoadTranslation('ID_EMAILS'))), '', '', 'logs');
     if (isset($sAudit) && $sAudit != false) {
-        $G_TMP_MENU->AddIdRawOption('AUDIT_LOG', '../setup/auditLog', ucfirst (strtolower ( G::LoadTranslation('ID_AUDITLOG_DISPLAY'))), '', '', 'logs'); 
+        $G_TMP_MENU->AddIdRawOption('AUDIT_LOG', '../setup/auditLog', ucfirst (G::LoadTranslation('ID_AUDITLOG_DISPLAY')), '', '', 'logs'); 
     }
 }
 

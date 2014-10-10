@@ -80,6 +80,7 @@ audit.application = {
                     this.baseParams = {
                         "option": "LST",
                         "pageSize": pageSize,
+                        "action": Ext.getCmp("cboAction").getValue(),
                         "description": Ext.getCmp("fldDescription").getValue(),
                         "dateFrom": Ext.getCmp("dateFrom").getValue(),
                         "dateTo": Ext.getCmp("dateTo").getValue()
@@ -126,6 +127,30 @@ audit.application = {
             width: 150
         });
 
+        var storeAction = new Ext.data.ArrayStore({
+            idIndex: 0,
+            fields: ["id", "value"],
+            data: ACTION
+        });
+
+        var cboAction = new Ext.form.ComboBox({
+            id: "cboAction",
+            valueField: "id",
+            displayField: "value",
+            value: "ALL",
+            store: storeAction,
+            triggerAction: "all",
+            mode: "local",
+            editable: false,
+            width: 150,
+            listeners: {
+                select: function (combo, record, index)
+                {
+                    pagingAudit.moveFirst();
+                }
+            }
+        });
+        
         var cboPageSize = new Ext.form.ComboBox({
             id: "cboPageSize",
 
@@ -196,6 +221,9 @@ audit.application = {
             enableHdMenu: false,
             tbar: [
                 "->",
+                {xtype: "tbtext", text: _("ID_ACTION") + "&nbsp;"},
+                cboAction, 
+                "-",
                 {xtype: "tbtext", text: _("ID_DESCRIPTION") + "&nbsp;"},
                 fldDescription,
                 "-",

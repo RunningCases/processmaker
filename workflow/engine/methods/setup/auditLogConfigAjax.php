@@ -13,13 +13,13 @@ switch ($_GET['action']) {
                 $oServerConf->setAuditLogProperty( 'AL_OPTION', 1, SYS_SYS );
                 $oServerConf->unsetAuditLogProperty( 'AL_NEXT_DATE', SYS_SYS );
                 $response->enable = true;
-                G::auditLog("Enable AuditLog");
+                G::auditLog("EnableAuditLog");
             } else {
                 $oServerConf->setAuditLogProperty( 'AL_OPTION', 0, SYS_SYS );
                 $oServerConf->unsetAuditLogProperty( 'AL_NEXT_DATE', SYS_SYS );
                 $oServerConf->setAuditLogProperty( 'AL_TYPE', 'endaudit', SYS_SYS );
                 $response->enable = false;
-                G::auditLog("Disable AuditLog");
+                G::auditLog("DisableAuditLog");
             }
             $response->success = true;
             

@@ -650,7 +650,7 @@ function fieldSave()
     }
     
 
-    G::auditLog("Set ".$list." List Columns", $msgLog);
+    G::auditLog("SetColumns", "Set ".$list." List Columns".$msgLog);
 
     echo G::json_encode($result);
 }
