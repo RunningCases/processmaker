@@ -235,9 +235,9 @@ switch ($_POST['action']) {
             $oDept->updateDepartmentManager( $dep_uid );
 
             if ($dep_parent == '') {
-                G::auditLog("UpdateDepartament", $dep_name." (".$dep_uid.") ");
+                G::auditLog("UpdateDepartament", "Departament Name: ".$dep_name." (".$dep_uid.") ");
             } else {
-                G::auditLog("UpdateSubDepartament", $dep_name." (".$dep_uid.") ");
+                G::auditLog("UpdateSubDepartament", "Sub Departament Name: ".$dep_name." (".$dep_uid.") ");
             }
 
             echo '{success: true}';

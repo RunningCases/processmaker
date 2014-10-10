@@ -70,7 +70,7 @@ class DashletInstance extends BaseDashletInstance
                 $connection->commit();
 
                 $dashletData = $this->load($data['DAS_INS_UID']);
-                G::auditLog($msg, $dashletData['DAS_INS_TITLE']." (".$dashletData['DAS_INS_UID'].") ");
+                G::auditLog($msg, "Dashlet Instance Name: ".$dashletData['DAS_INS_TITLE']." Dashlet Instance ID: (".$dashletData['DAS_INS_UID'].") ");
 
                 return $data['DAS_INS_UID'];
             } else {
@@ -98,7 +98,7 @@ class DashletInstance extends BaseDashletInstance
                 $result = $dashletInstance->delete();
                 $connection->commit();
 
-                G::auditLog("DeleteDashletInstance", $dashletData['DAS_INS_TITLE']." (".$dasInsUid.") ");
+                G::auditLog("DeleteDashletInstance", "Dashlet Instance Name: ". $dashletData['DAS_INS_TITLE']." Dashlet Instance ID: (".$dasInsUid.") ");
                 return $result;
             } else {
                 throw new Exception('Error trying to delete: The row "' .  $dasInsUid. '" does not exist.');

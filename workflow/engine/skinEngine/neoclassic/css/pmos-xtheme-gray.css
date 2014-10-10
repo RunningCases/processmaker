@@ -886,6 +886,11 @@ antes funcionaba.
   background-image: url(/skins/neoclassic/images/icons_silk/sprites.png) !important;
   background-position: 0 -10873px !important;
 }
+.ICON_AUDIT_LOG{
+  background-image: url(/images/Audit.png) !important;
+    width: 16px !important;
+    height: 16px !important;
+}
 .ICON_EMAILS {
   /*ss_email_edit*/
 

@@ -69,7 +69,7 @@ class AuthenticationSource extends BaseAuthenticationSource {
         $oConnection->begin();
         $iResult = $oAuthenticationSource->save();
         $oConnection->commit();
-        G::auditLog("CreateAuthSource", $aData['AUTH_SOURCE_NAME']);
+        G::auditLog("CreateAuthSource", "Authentication Source Name: ". $aData['AUTH_SOURCE_NAME']);
         return $aData['AUTH_SOURCE_UID'];
   	  }
   	  else {
@@ -98,7 +98,7 @@ class AuthenticationSource extends BaseAuthenticationSource {
   	    	$oConnection->begin();
           $iResult = $oAuthenticationSource->save();
           $oConnection->commit();
-          G::auditLog("UpdateAuthSource", $aData['AUTH_SOURCE_NAME']." (".$aData['AUTH_SOURCE_UID'].") ");
+          G::auditLog("UpdateAuthSource", "Authentication Source Name: ".$aData['AUTH_SOURCE_NAME']." Authentication Source ID: (".$aData['AUTH_SOURCE_UID'].") ");
           return $iResult;
   	    }
   	    else {
@@ -135,7 +135,7 @@ class AuthenticationSource extends BaseAuthenticationSource {
         $iResult = $oAuthenticationSource->delete();
         $oConnection->commit();
         
-        G::auditLog("DeleteAuthSource", $authenticationSource['AUTH_SOURCE_NAME']." (".$sUID.") ");
+        G::auditLog("DeleteAuthSource", "Authentication Source Name: ".$authenticationSource['AUTH_SOURCE_NAME']." Authentication Source ID: (".$sUID.") ");
         return $iResult;
       }
       else {

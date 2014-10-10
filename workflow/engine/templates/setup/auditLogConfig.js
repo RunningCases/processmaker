@@ -29,7 +29,7 @@ Ext.onReady(function() {
     ],    
     buttons : [{
       id      : 'btn_save',
-      text    : _('ID_SAVE'),
+      text    : _('ID_SAVE_SETTINGS'),
       disabled: true,
       handler : saveOption    
     }]
