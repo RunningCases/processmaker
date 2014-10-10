@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: ProcessMaker 2.8\n"
+"Project-Id-Version: ProcessMaker 2.8.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-10-10 16:02:15\n"
+"PO-Revision-Date: 2014-10-10 17:13:58\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -17388,6 +17388,12 @@ msgstr "Set Columns"
 #: LABEL/ID_DISABLE_AUDIT_LOG
 msgid "Disable Audit Log"
 msgstr "Disable Audit Log"
+
+# TRANSLATION
+# LABEL/ID_REMOVE_PLUGIN
+#: LABEL/ID_REMOVE_PLUGIN
+msgid "Remove Plugin"
+msgstr "Remove Plugin"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
