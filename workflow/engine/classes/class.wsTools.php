@@ -233,12 +233,13 @@ class workspaceTools
         $value = isset($matches['value']) ? $matches['value'] : $matches[3];
 
         if($this->onedb){
-        	$dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'wf_', 'DB_RBAC_USER' => 'wf_', 'DB_REPORT_NAME' => 'wf_', 'DB_REPORT_USER' => 'wf_');
+        	$dbInfo = $this->getDBInfo();
+            $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'wf_', 'DB_RBAC_USER' => 'wf_', 'DB_REPORT_NAME' => 'wf_', 'DB_REPORT_USER' => 'wf_');
         	if (array_search($key, array('DB_PASS', 'DB_RBAC_PASS', 'DB_REPORT_PASS'))) {
-        		$value = $this->dbInfo['DB_PASS'];
+        		$value = $dbInfo['DB_PASS'];
         	}
         } else{
-        	$dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'rb_', 'DB_RBAC_USER' => 'rb_', 'DB_REPORT_NAME' => 'rp_', 'DB_REPORT_USER' => 'rp_');
+            $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'rb_', 'DB_RBAC_USER' => 'rb_', 'DB_REPORT_NAME' => 'rp_', 'DB_REPORT_USER' => 'rp_');
         }
 
         if (array_search($key, array('DB_HOST', 'DB_RBAC_HOST', 'DB_REPORT_HOST')) !== false) {
@@ -272,7 +273,7 @@ class workspaceTools
      * @param bool $resetDBNames if true, also reset all database names
      * @return array contains the new database names as values
      */
-    public function resetDBInfo($newHost, $resetDBNames = true)
+    public function resetDBInfo($newHost, $resetDBNames = true, $onedb = false)
     {
         if (count(explode(":", $newHost)) < 2) {
             $newHost .= ':3306';
@@ -280,7 +281,7 @@ class workspaceTools
         $this->newHost = $newHost;
         $this->resetDBNames = $resetDBNames;
         $this->resetDBDiff = array();
-        $this->onedb = false;
+        $this->onedb = $onedb;
 
         if (!$this->workspaceExists()) {
             throw new Exception("Could not find db.php in the workspace");
@@ -289,14 +290,7 @@ class workspaceTools
 
         if ($sDbFile === false) {
             throw new Exception("Could not read database information from db.php");
-        } else {
-            if (strpos($sDbFile, 'rb_')) {
-                $this->onedb = false;
-            } else {
-                $this->onedb = true;
-            }
         }
-
         /* Match all defines in the config file. Check updateDBCallback to know what
          * keys are changed and what groups are matched.
          * This regular expression will match any "define ('<key>', '<value>');"
@@ -434,7 +428,7 @@ class workspaceTools
      * @return database connection
      */
     private function getDatabase($rbac = false)
-    {
+    {   
         if (isset($this->db) && $this->db->isConnected() &&  $rbac == false) {
             return $this->db;
         }
@@ -847,6 +841,7 @@ class workspaceTools
         if (!empty($changes['tablesToAdd'])) {
             CLI::logging("-> " . count($changes['tablesToAdd']) . " tables to add\n");
         }
+
         foreach ($changes['tablesToAdd'] as $sTable => $aColumns) {
             $oDataBase->executeQuery($oDataBase->generateCreateTableSQL($sTable, $aColumns));
             if (isset($changes['tablesToAdd'][$sTable]['INDEXES'])) {
@@ -859,6 +854,7 @@ class workspaceTools
         if (!empty($changes['tablesToAlter'])) {
             CLI::logging("-> " . count($changes['tablesToAlter']) . " tables to alter\n");
         }
+
         foreach ($changes['tablesToAlter'] as $sTable => $aActions) {
             foreach ($aActions as $sAction => $aAction) {
                 foreach ($aAction as $sColumn => $vData) {
@@ -974,6 +970,9 @@ class workspaceTools
             $dbNetView = new NET($this->dbHost);
             $dbNetView->loginDbServer($this->dbUser, $this->dbPass);
             try {
+                if (!defined('DB_ADAPTER')) {
+                    require_once($this->dbPath);
+                }
                 $sMySQLVersion = $dbNetView->getDbServerVersion('mysql');
             } catch (Exception $oException) {
                 $sMySQLVersion = 'Unknown';
@@ -1315,6 +1314,12 @@ class workspaceTools
         }
     }
 
+    public function executeScript($database, $filename, $parameters)
+    {
+        $this->executeSQLScript($database, $filename, $parameters);
+        return true;
+    }
+
     static public function restoreLegacy($directory)
     {
         throw new Exception("Use gulliver to restore backups from old versions");
@@ -1435,6 +1440,13 @@ class workspaceTools
                 throw new Exception("Backup version {$metadata->version} not supported");
             }
             $backupWorkspace = $metadata->WORKSPACE_NAME;
+            
+            if (strpos($metadata->DB_RBAC_NAME, 'rb_') === false) {
+                $onedb = true;
+            } else {
+                $onedb = false;
+            }
+            
             if (isset($dstWorkspace)) {
                 $workspaceName = $dstWorkspace;
                 $createWorkspace = true;
@@ -1449,7 +1461,7 @@ class workspaceTools
                 CLI::logging("> Restoring " . CLI::info($backupWorkspace) . " to " . CLI::info($workspaceName) . "\n");
             }
             $workspace = new workspaceTools($workspaceName);
-
+            
             if ($workspace->workspaceExists()) {
 
                 if ($overwrite) {
@@ -1492,14 +1504,17 @@ class workspaceTools
                 throw new Exception('Could not connect to system database: ' . mysql_error());
             }
 
-            $newDBNames = $workspace->resetDBInfo($dbHost, $createWorkspace);
+            $dbName = '';
+            $newDBNames = $workspace->resetDBInfo($dbHost, $createWorkspace, $onedb);
 
             foreach ($metadata->databases as $db) {
-                $dbName = $newDBNames[$db->name];
-                CLI::logging("+> Restoring database {$db->name} to $dbName\n");
-                $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql",$aParameters);
-                $workspace->createDBUser($dbName, $db->pass, "localhost", $dbName);
-                $workspace->createDBUser($dbName, $db->pass, "%", $dbName);
+                if ($dbName != $newDBNames[$db->name]) { 
+                    $dbName = $newDBNames[$db->name];
+                    CLI::logging("+> Restoring database {$db->name} to $dbName\n");
+                    $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql",$aParameters);
+                    $workspace->createDBUser($dbName, $db->pass, "localhost", $dbName);
+                    $workspace->createDBUser($dbName, $db->pass, "%", $dbName);
+                }
             }
 
             $version = explode('-', $metadata->PM_VERSION);
@@ -1508,7 +1523,7 @@ class workspaceTools
 
             $start = microtime(true);
             CLI::logging("> Verify enterprise old...\n");
-            $this->verifyEnterprise($workSpace);
+            $workspace->verifyEnterprise($workspaceName);
             $stop = microtime(true);
             $final = $stop - $start;
             CLI::logging("<*>   Verify took $final seconds.\n");
@@ -1516,7 +1531,7 @@ class workspaceTools
             if ( $versionOld < $versionPresent || strpos($versionPresent, "Branch")) {
                 $start = microtime(true);
                 CLI::logging("> Updating database...\n");
-                $workspace->upgradeDatabase();
+                $workspace->upgradeDatabase($onedb);
                 $stop = microtime(true);
                 $final = $stop - $start;
                 CLI::logging("<*>   Database Upgrade Process took $final seconds.\n");
