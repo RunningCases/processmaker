@@ -76,6 +76,9 @@ class PMLicensedFeatures
 
         $enable = in_array($value[0], $licenseManager->licensedfeatures);
 
+        if (!isset($this->featuresDetails[$value[0]]) || !is_object($this->featuresDetails[$value[0]])) {
+            $this->featuresDetails[$value[0]] = new stdclass();
+        }
         $this->featuresDetails[$value[0]]->enabled = $enable;
         return $enable;
     }
