@@ -224,7 +224,7 @@ Ext.onReady(function(){
     }),
     store: store,
     tbar:[
-      /*{
+      {
         xtype: 'tbsplit',
         text: _('ID_NEW'),
         iconCls: 'button_menu_ext ss_sprite ss_add',
@@ -251,24 +251,13 @@ Ext.onReady(function(){
                 obj.showMenu();
             }
         }
-      },*//*
+      },/*
       {
         text: _('ID_NEW'),
         iconCls: 'button_menu_ext ss_sprite ss_add',
         //icon: '/images/addc.png',
         handler: newProcess
       },*/
-
-      {
-        text: _("ID_NEW"),
-        iconCls: "button_menu_ext ss_sprite ss_add",
-        icon: "",
-        handler: function ()
-        {
-            newProcess({type: "classicProject"});
-        }
-      },
-
     	'-'
       ,{
         text: _('ID_EDIT'),
