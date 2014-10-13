@@ -121,7 +121,7 @@ class adminProxy extends HttpProxyController
         $this->restart = $restart;
         $this->url     = "/sys" . SYS_SYS . "/" . (($sysConf["default_lang"] != "")? $sysConf["default_lang"] : ((defined("SYS_LANG") && SYS_LANG != "")? SYS_LANG : "en")) . "/" . $sysConf["default_skin"] . $urlPart;
         $this->message = 'Saved Successfully';
-        
+        $msg = "";        
         if($httpData->proxy_host != '' || $httpData->proxy_port != '' || $httpData->proxy_user != '') {
             $msg = " Host -> ".$httpData->proxy_host." Port -> ".$httpData->proxy_port." User -> ".$httpData->proxy_user; 
         }
