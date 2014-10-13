@@ -13,6 +13,7 @@ function auditLogArraySet ($str, $filter)
     $date = "";
     $workspace = "";
     $action = "";
+    $ip = "";
     $user = "";
     $description = "";
     

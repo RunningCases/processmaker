@@ -6,7 +6,7 @@ switch ($_GET['action']) {
         try {
             G::LoadClass( 'serverConfiguration' );
             $oServerConf = & serverConf::getSingleton();
-
+            $response = new $oServerConf;
             /*you can use SYS_TEMP or SYS_SYS ON AUDIT_LOG_CONF to save for each workspace*/
             $oServerConf->unsetAuditLogProperty( 'AL_TYPE', SYS_SYS );
             if (isset( $_POST['acceptAL'] )) {
@@ -15,11 +15,11 @@ switch ($_GET['action']) {
                 $response->enable = true;
                 G::auditLog("EnableAuditLog");
             } else {
+                G::auditLog("DisableAuditLog");
                 $oServerConf->setAuditLogProperty( 'AL_OPTION', 0, SYS_SYS );
                 $oServerConf->unsetAuditLogProperty( 'AL_NEXT_DATE', SYS_SYS );
                 $oServerConf->setAuditLogProperty( 'AL_TYPE', 'endaudit', SYS_SYS );
                 $response->enable = false;
-                G::auditLog("DisableAuditLog");
             }
             $response->success = true;
             
