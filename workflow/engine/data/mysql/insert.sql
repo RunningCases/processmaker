@@ -4320,7 +4320,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DELETE_CATEGORY','en','Delete Category','2014-10-10') ,
 ( 'LABEL','ID_BUILD_CACHE','en','Build Cache','2014-10-10') ,
 ( 'LABEL','ID_CLEAR_CRON','en','Clear Cron','2014-10-10') ,
-( 'LABEL','ID_UPDATE_ENVIRONMENTS_SETTINGS','en','Update Environment Settings','2014-10-10') ,
+( 'LABEL','ID_REPLACE_LOGO','en','Replace Logo','2014-10-13') ,
 ( 'LABEL','ID_UPDATE_LOGIN_SETTINGS','en','Update Login Settings','2014-10-10') ,
 ( 'LABEL','ID_DISABLE_HEART_BEAT','en','Disable Heart Beat','2014-10-10') ,
 ( 'LABEL','ID_CREATE_PMTABLE','en','Create PM Table','2014-10-10') ,
@@ -4363,7 +4363,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CREATE_GROUP','en','Create New Group','2014-10-13') ,
 ( 'LABEL','ID_DELETE_GROUP','en','Remove Group','2014-10-13') ,
 ( 'LABEL','ID_DISABLE_PLUGIN','en','Disable Plugin','2014-10-13') ,
-( 'LABEL','ID_ENABLE_PLUGIN','en','Enable Plugin','2014-10-13') ;
+( 'LABEL','ID_ENABLE_PLUGIN','en','Enable Plugin','2014-10-13') ,
+( 'LABEL','ID_UPDATE_ENVIRONMENT_SETTINGS','en','Update Environment Settings','2014-10-13') ;
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,
