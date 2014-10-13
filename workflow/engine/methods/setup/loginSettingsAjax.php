@@ -35,7 +35,7 @@ switch ($request) {
         $memcache->delete( 'flagForgotPassword' );
 
         $response->success = true;
-        G::auditLog("UpdateLoginSettings", "DefaultLanguage->".$lang." EnableForgotPassword->".$_REQUEST['forgotPasswd']);
+        G::auditLog("UpdateLoginSettings", "DefaultLanguage->".$lang." EnableForgotPassword->".$conf->aConfig['login_enableForgotPassword']);
 
         echo G::json_encode( $response );
 
