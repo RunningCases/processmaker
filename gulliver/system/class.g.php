@@ -1403,7 +1403,7 @@ class G
      *
      * @return string $ret
      */
-    public function getformatedDate ($date, $format = 'yyyy-mm-dd', $lang = '')
+    public static function getformatedDate ($date, $format = 'yyyy-mm-dd', $lang = '')
     {
         /**
          * ******************************************************************************************************
@@ -1528,7 +1528,7 @@ class G
      * @author Erik Amaru Ortiz <erik@colosa.com>
      * @name complete_field($string, $lenght, $type={1:number/2:string/3:float})
      */
-    public function complete_field ($campo, $long, $tipo)
+    public static function complete_field ($campo, $long, $tipo)
     {
         $campo = trim( $campo );
         switch ($tipo) {
