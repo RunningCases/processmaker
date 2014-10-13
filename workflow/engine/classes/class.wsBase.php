@@ -920,7 +920,8 @@ class wsBase
             if (!class_exists('System')) {
                 G::LoadClass('system');
             }
-            $aSetup = !empty($config) ? $config : System::getEmailConfiguration();
+            $licensedFeatures = & PMLicensedFeatures::getSingleton();
+            $aSetup = (!empty($config) && $licensedFeatures->verifyfeature('nKaNTNuT1MzK0RsMEtXTnYzR09ucHF2WGNuS0hRdDBBak42WXJhNVVOOG1INEVoaU1EaTllbjBBeEJNeG9wRVJ6NmxQelhyVTBvdThzPQ==') ) ? $config : System::getEmailConfiguration();
 
             $oSpool = new spoolRun();
 

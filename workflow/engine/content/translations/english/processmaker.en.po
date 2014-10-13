@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: ProcessMaker 2.5.2.3\n"
+"Project-Id-Version: ProcessMaker 2.8.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-09-22 16:11:21\n"
+"PO-Revision-Date: 2014-10-13 12:37:31\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -10036,8 +10036,8 @@ msgstr "Resume"
 # TRANSLATION
 # LABEL/ID_USER_ID
 #: LABEL/ID_USER_ID
-msgid "User ID (*)"
-msgstr "User ID (*)"
+msgid "[LABEL/ID_USER_ID] Username"
+msgstr "Username"
 
 # TRANSLATION
 # LABEL/ID_PHONE
@@ -12412,8 +12412,8 @@ msgstr "Ajax communication failed"
 # TRANSLATION
 # LABEL/ID_CHECK_FIELDS_MARK_RED
 #: LABEL/ID_CHECK_FIELDS_MARK_RED
-msgid "Please check the fields mark in red."
-msgstr "Please check the fields mark in red."
+msgid "Please check the fields marked in red."
+msgstr "Please check the fields marked in red."
 
 # TRANSLATION
 # LABEL/ID_INPUT_ERROR
@@ -13204,8 +13204,8 @@ msgstr "xxx"
 # TRANSLATION
 # LABEL/ID_SIZE_VERY_LARGE_PERMITTED
 #: LABEL/ID_SIZE_VERY_LARGE_PERMITTED
-msgid "The size is very large as permitted!"
-msgstr "The size is very large as permitted!"
+msgid "The file is too large . Please upload a smaller file."
+msgstr "The file is too large . Please upload a smaller file."
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5
@@ -14392,8 +14392,8 @@ msgstr "All Categories"
 # TRANSLATION
 # LABEL/ID_CASES_NOTES_NO_PERMISSIONS
 #: LABEL/ID_CASES_NOTES_NO_PERMISSIONS
-msgid "You do not have permission to cases notes"
-msgstr "You do not have permission to cases notes"
+msgid "You do not have permission to access cases notes"
+msgstr "You do not have permission to access cases notes"
 
 # TRANSLATION
 # LABEL/ID_DELETE_DOCUMENT
@@ -16456,8 +16456,8 @@ msgstr "Index"
 # TRANSLATION
 # LABEL/ID_ERROR_JS_NOT_AVAILABLE
 #: LABEL/ID_ERROR_JS_NOT_AVAILABLE
-msgid "Your browser does not support javascript or it is disabled, please use a different browser or activate the javascript. Forms won't work totally because javascript is used."
-msgstr "Your browser does not support javascript or it is disabled, please use a different browser or activate the javascript. Forms won't work totally because javascript is used."
+msgid "Your browser doesn't support JavaScript or it may be disabled. Please use a different browser or enable the JavaScript, Dynaforms won't entirely work because JavaScript is used."
+msgstr "Your browser doesn't support JavaScript or it may be disabled. Please use a different browser or enable the JavaScript, Dynaforms won't entirely work because JavaScript is used."
 
 # TRANSLATION
 # LABEL/ID_MAXIMUM_SIZE_FILE_REQUIRED
@@ -16900,14 +16900,14 @@ msgstr "Audit Log has been disabled"
 # TRANSLATION
 # LABEL/ID_AUDIT_LOG_DETAILS_1
 #: LABEL/ID_AUDIT_LOG_DETAILS_1
-msgid "Audit Log details1"
-msgstr "Audit Log details1"
+msgid "When this option is enabled, all changes made in the \"ADMIN\" tab are registered in a log."
+msgstr "When this option is enabled, all changes made in the \"ADMIN\" tab are registered in a log."
 
 # TRANSLATION
 # LABEL/ID_AUDIT_LOG_DETAILS_2
 #: LABEL/ID_AUDIT_LOG_DETAILS_2
-msgid "Audit Log details 2"
-msgstr "Audit Log details 2"
+msgid "and the user will be able to see those changes in the \"Audit Log\" option in Logs Menu"
+msgstr "and the user will be able to see those changes in the \"Audit Log\" option in Logs Menu"
 
 # TRANSLATION
 # LABEL/ID_PRIVATE
@@ -16944,6 +16944,492 @@ msgstr "center"
 #: LABEL/ID_RIGHT
 msgid "right"
 msgstr "right"
+
+# TRANSLATION
+# LABEL/ID_LANGUAGE_CANT_DELETE_CURRENTLY
+#: LABEL/ID_LANGUAGE_CANT_DELETE_CURRENTLY
+msgid "The language, which the system is currently using, cannot be deleted."
+msgstr "The language, which the system is currently using, cannot be deleted."
+
+# TRANSLATION
+# LABEL/ID_INPUT_DOC_MAX_FILESIZE_REQUIRED
+#: LABEL/ID_INPUT_DOC_MAX_FILESIZE_REQUIRED
+msgid "Maximum file size parameter is required."
+msgstr "Maximum file size parameter is required."
+
+# TRANSLATION
+# LABEL/ID_AUDIT_LOG_ACTIONS
+#: LABEL/ID_AUDIT_LOG_ACTIONS
+msgid "Audit Log Actions"
+msgstr "Audit Log Actions"
+
+# TRANSLATION
+# LABEL/ID_RESET_FILTERS
+#: LABEL/ID_RESET_FILTERS
+msgid "Reset Filters"
+msgstr "Reset Filters"
+
+# TRANSLATION
+# LABEL/ID_INPUT_DB
+#: LABEL/ID_INPUT_DB
+msgid "Input"
+msgstr "Input"
+
+# TRANSLATION
+# LABEL/ID_TRIGGER_DB
+#: LABEL/ID_TRIGGER_DB
+msgid "Trigger"
+msgstr "Trigger"
+
+# TRANSLATION
+# LABEL/ID_IP
+#: LABEL/ID_IP
+msgid "IP Client"
+msgstr "IP Client"
+
+# TRANSLATION
+# LABEL/ID_OUTPUT_DB
+#: LABEL/ID_OUTPUT_DB
+msgid "Output"
+msgstr "Output"
+
+# TRANSLATION
+# LABEL/ID_ATTACHED_DB
+#: LABEL/ID_ATTACHED_DB
+msgid "Attached"
+msgstr "Attached"
+
+# TRANSLATION
+# LABEL/ID_DERIVATION_DB
+#: LABEL/ID_DERIVATION_DB
+msgid "Derivation"
+msgstr "Derivation"
+
+# TRANSLATION
+# LABEL/ID_OPEN_DYNAFORM_TAB
+#: LABEL/ID_OPEN_DYNAFORM_TAB
+msgid "Open the Dynaform in a new tab"
+msgstr "Open the Dynaform in a new tab"
+
+# TRANSLATION
+# LABEL/ID_ENTERPRISE_FEATURES
+#: LABEL/ID_ENTERPRISE_FEATURES
+msgid "Enterprise features"
+msgstr "Enterprise features"
+
+# TRANSLATION
+# LABEL/ID_CREATE_USER
+#: LABEL/ID_CREATE_USER
+msgid "Create User"
+msgstr "Create User"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_USER
+#: LABEL/ID_UPDATE_USER
+msgid "Update User"
+msgstr "Update User"
+
+# TRANSLATION
+# LABEL/ID_DELETE_USER
+#: LABEL/ID_DELETE_USER
+msgid "Delete User"
+msgstr "Delete User"
+
+# TRANSLATION
+# LABEL/ID_ENABLE_USER
+#: LABEL/ID_ENABLE_USER
+msgid "Enable User"
+msgstr "Enable User"
+
+# TRANSLATION
+# LABEL/ID_DISABLE_USER
+#: LABEL/ID_DISABLE_USER
+msgid "Disable User"
+msgstr "Disable User"
+
+# TRANSLATION
+# LABEL/ID_ASSIGN_AUTHENTICATION_SOURCE
+#: LABEL/ID_ASSIGN_AUTHENTICATION_SOURCE
+msgid "Assign Authentication Source"
+msgstr "Assign Authentication Source"
+
+# TRANSLATION
+# LABEL/ID_ASSIGN_USER_TO_GROUP
+#: LABEL/ID_ASSIGN_USER_TO_GROUP
+msgid "Assign Users To Group"
+msgstr "Assign Users To Group"
+
+# TRANSLATION
+# LABEL/ID_CREATE_AUTH_SOURCE
+#: LABEL/ID_CREATE_AUTH_SOURCE
+msgid "Create Authentication Source"
+msgstr "Create Authentication Source"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_AUTH_SOURCE
+#: LABEL/ID_UPDATE_AUTH_SOURCE
+msgid "Update Authentication Source"
+msgstr "Update Authentication Source"
+
+# TRANSLATION
+# LABEL/ID_DELETE_AUTH_SOURCE
+#: LABEL/ID_DELETE_AUTH_SOURCE
+msgid "Delete Authentication Source"
+msgstr "Delete Authentication Source"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_ROLE
+#: LABEL/ID_UPDATE_ROLE
+msgid "Update Role"
+msgstr "Update Role"
+
+# TRANSLATION
+# LABEL/ID_DELETE_ROLE
+#: LABEL/ID_DELETE_ROLE
+msgid "Delete Role"
+msgstr "Delete Role"
+
+# TRANSLATION
+# LABEL/ID_ASSIGN_USER_TO_ROLE
+#: LABEL/ID_ASSIGN_USER_TO_ROLE
+msgid "Assign Users To Role"
+msgstr "Assign Users To Role"
+
+# TRANSLATION
+# LABEL/ID_DELETE_USER_TO_ROLE
+#: LABEL/ID_DELETE_USER_TO_ROLE
+msgid "Delete Users To Role"
+msgstr "Delete Users To Role"
+
+# TRANSLATION
+# LABEL/ID_ADD_PERMISSION_TO_ROLE
+#: LABEL/ID_ADD_PERMISSION_TO_ROLE
+msgid "Add Permission To Role"
+msgstr "Add Permission To Role"
+
+# TRANSLATION
+# LABEL/ID_DELETE_PERMISSION_TO_ROLE
+#: LABEL/ID_DELETE_PERMISSION_TO_ROLE
+msgid "Delete Permission To Role"
+msgstr "Delete Permission To Role"
+
+# TRANSLATION
+# LABEL/ID_CREATE_SKIN
+#: LABEL/ID_CREATE_SKIN
+msgid "Create Skin"
+msgstr "Create Skin"
+
+# TRANSLATION
+# LABEL/ID_IMPORT_SKIN
+#: LABEL/ID_IMPORT_SKIN
+msgid "Import Skin"
+msgstr "Import Skin"
+
+# TRANSLATION
+# LABEL/ID_EXPORT_SKIN
+#: LABEL/ID_EXPORT_SKIN
+msgid "Export Skin"
+msgstr "Export Skin"
+
+# TRANSLATION
+# LABEL/ID_DELETE_SKIN
+#: LABEL/ID_DELETE_SKIN
+msgid "Delete Skin"
+msgstr "Delete Skin"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_GROUP
+#: LABEL/ID_UPDATE_GROUP
+msgid "Update Group"
+msgstr "Update Group"
+
+# TRANSLATION
+# LABEL/ID_CREATE_CATEGORY
+#: LABEL/ID_CREATE_CATEGORY
+msgid "Create Category"
+msgstr "Create Category"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_CATEGORY
+#: LABEL/ID_UPDATE_CATEGORY
+msgid "Update Category"
+msgstr "Update Category"
+
+# TRANSLATION
+# LABEL/ID_DELETE_CATEGORY
+#: LABEL/ID_DELETE_CATEGORY
+msgid "Delete Category"
+msgstr "Delete Category"
+
+# TRANSLATION
+# LABEL/ID_BUILD_CACHE
+#: LABEL/ID_BUILD_CACHE
+msgid "[LABEL/ID_BUILD_CACHE] Build Cache"
+msgstr "Build Cache"
+
+# TRANSLATION
+# LABEL/ID_CLEAR_CRON
+#: LABEL/ID_CLEAR_CRON
+msgid "Clear Cron"
+msgstr "Clear Cron"
+
+# TRANSLATION
+# LABEL/ID_REPLACE_LOGO
+#: LABEL/ID_REPLACE_LOGO
+msgid "Replace Logo"
+msgstr "Replace Logo"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_LOGIN_SETTINGS
+#: LABEL/ID_UPDATE_LOGIN_SETTINGS
+msgid "Update Login Settings"
+msgstr "Update Login Settings"
+
+# TRANSLATION
+# LABEL/ID_DISABLE_HEART_BEAT
+#: LABEL/ID_DISABLE_HEART_BEAT
+msgid "Disable Heart Beat"
+msgstr "Disable Heart Beat"
+
+# TRANSLATION
+# LABEL/ID_CREATE_PMTABLE
+#: LABEL/ID_CREATE_PMTABLE
+msgid "Create PM Table"
+msgstr "Create PM Table"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_PMTABLE
+#: LABEL/ID_UPDATE_PMTABLE
+msgid "Update PM Table"
+msgstr "Update PM Table"
+
+# TRANSLATION
+# LABEL/ID_DELETE_PMTABLE
+#: LABEL/ID_DELETE_PMTABLE
+msgid "Delete PM Table"
+msgstr "Delete PM Table"
+
+# TRANSLATION
+# LABEL/ID_ADD_DATA_PMTABLE
+#: LABEL/ID_ADD_DATA_PMTABLE
+msgid "Add Data to PM table"
+msgstr "Add Data to PM table"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_DATA_PMTABLE
+#: LABEL/ID_UPDATE_DATA_PMTABLE
+msgid "Update Data from PM Table"
+msgstr "Update Data from PM Table"
+
+# TRANSLATION
+# LABEL/ID_DELETE_DATA_PMTABLE
+#: LABEL/ID_DELETE_DATA_PMTABLE
+msgid "Delete Data from PM Table"
+msgstr "Delete Data from PM Table"
+
+# TRANSLATION
+# LABEL/ID_IMPORT_TABLE
+#: LABEL/ID_IMPORT_TABLE
+msgid "Import Table"
+msgstr "Import Table"
+
+# TRANSLATION
+# LABEL/ID_EXPORT_TABLE
+#: LABEL/ID_EXPORT_TABLE
+msgid "Export Table"
+msgstr "Export Table"
+
+# TRANSLATION
+# LABEL/ID_CREATE_CALENDAR
+#: LABEL/ID_CREATE_CALENDAR
+msgid "Create Calendar"
+msgstr "Create Calendar"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_CALENDAR
+#: LABEL/ID_UPDATE_CALENDAR
+msgid "Update Calendar"
+msgstr "Update Calendar"
+
+# TRANSLATION
+# LABEL/ID_DELETE_CALENDAR
+#: LABEL/ID_DELETE_CALENDAR
+msgid "Delete Calendar"
+msgstr "Delete Calendar"
+
+# TRANSLATION
+# LABEL/ID_CREATE_DASHLET_INSTANCE
+#: LABEL/ID_CREATE_DASHLET_INSTANCE
+msgid "Create Dashlet Instance"
+msgstr "Create Dashlet Instance"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_DASHLET_INSTANCE
+#: LABEL/ID_UPDATE_DASHLET_INSTANCE
+msgid "Update Dashlet Instance"
+msgstr "Update Dashlet Instance"
+
+# TRANSLATION
+# LABEL/ID_DELETE_DASHLET_INSTANCE
+#: LABEL/ID_DELETE_DASHLET_INSTANCE
+msgid "Delete Dashlet Instance"
+msgstr "Delete Dashlet Instance"
+
+# TRANSLATION
+# LABEL/ID_CREATE_DEPARTAMENT
+#: LABEL/ID_CREATE_DEPARTAMENT
+msgid "Create Departament"
+msgstr "Create Departament"
+
+# TRANSLATION
+# LABEL/ID_CREATE_SUB_DEPARTAMENT
+#: LABEL/ID_CREATE_SUB_DEPARTAMENT
+msgid "Create Sub Departament"
+msgstr "Create Sub Departament"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_DEPARTAMENT
+#: LABEL/ID_UPDATE_DEPARTAMENT
+msgid "Update Departament"
+msgstr "Update Departament"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_SUB_DEPARTAMENT
+#: LABEL/ID_UPDATE_SUB_DEPARTAMENT
+msgid "Update Sub Departament"
+msgstr "Update Sub Departament"
+
+# TRANSLATION
+# LABEL/ID_DELETE_DEPARTAMENT
+#: LABEL/ID_DELETE_DEPARTAMENT
+msgid "Delete Departament"
+msgstr "Delete Departament"
+
+# TRANSLATION
+# LABEL/ID_ASSIGN_MANAGER_TO_DEPARTAMENT
+#: LABEL/ID_ASSIGN_MANAGER_TO_DEPARTAMENT
+msgid "Assign Manager To Departament"
+msgstr "Assign Manager To Departament"
+
+# TRANSLATION
+# LABEL/ID_ASSIGN_USER_TO_DEPARTAMENT
+#: LABEL/ID_ASSIGN_USER_TO_DEPARTAMENT
+msgid "Assign Users To Departament"
+msgstr "Assign Users To Departament"
+
+# TRANSLATION
+# LABEL/ID_REMOVE_USERS_FROM_DEPARTAMENT
+#: LABEL/ID_REMOVE_USERS_FROM_DEPARTAMENT
+msgid "Remove Users From Departament"
+msgstr "Remove Users From Departament"
+
+# TRANSLATION
+# LABEL/ID_UPLOAD_LANGUAGE
+#: LABEL/ID_UPLOAD_LANGUAGE
+msgid "Upload Language"
+msgstr "Upload Language"
+
+# TRANSLATION
+# LABEL/ID_EXPORT_LANGUAGE
+#: LABEL/ID_EXPORT_LANGUAGE
+msgid "Export Language"
+msgstr "Export Language"
+
+# TRANSLATION
+# LABEL/ID_DELETE_LAGUAGE
+#: LABEL/ID_DELETE_LAGUAGE
+msgid "Delete Language"
+msgstr "Delete Language"
+
+# TRANSLATION
+# LABEL/ID_UPLOAD_SYSTEM_SETTINGS
+#: LABEL/ID_UPLOAD_SYSTEM_SETTINGS
+msgid "Upload System Settings"
+msgstr "Upload System Settings"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_EMAIL_SETTINGS
+#: LABEL/ID_UPDATE_EMAIL_SETTINGS
+msgid "Update Email Settings"
+msgstr "Update Email Settings"
+
+# TRANSLATION
+# LABEL/ID_CREATE_EMAIL_SETTINGS
+#: LABEL/ID_CREATE_EMAIL_SETTINGS
+msgid "Create Email Settings"
+msgstr "Create Email Settings"
+
+# TRANSLATION
+# LABEL/ID_UPLOAD_LOGO
+#: LABEL/ID_UPLOAD_LOGO
+msgid "Upload Logo"
+msgstr "Upload Logo"
+
+# TRANSLATION
+# LABEL/ID_DELETE_LOGO
+#: LABEL/ID_DELETE_LOGO
+msgid "Delete Logo"
+msgstr "Delete Logo"
+
+# TRANSLATION
+# LABEL/ID_INSTALL_PLUGIN
+#: LABEL/ID_INSTALL_PLUGIN
+msgid "Install Plugin"
+msgstr "Install Plugin"
+
+# TRANSLATION
+# LABEL/ID_SET_COLUMNS
+#: LABEL/ID_SET_COLUMNS
+msgid "Set Columns"
+msgstr "Set Columns"
+
+# TRANSLATION
+# LABEL/ID_DISABLE_AUDIT_LOG
+#: LABEL/ID_DISABLE_AUDIT_LOG
+msgid "Disable Audit Log"
+msgstr "Disable Audit Log"
+
+# TRANSLATION
+# LABEL/ID_REMOVE_PLUGIN
+#: LABEL/ID_REMOVE_PLUGIN
+msgid "Remove Plugin"
+msgstr "Remove Plugin"
+
+# TRANSLATION
+# LABEL/ID_CREATE_ROLE
+#: LABEL/ID_CREATE_ROLE
+msgid "[LABEL/ID_CREATE_ROLE] Create New Role"
+msgstr "Create New Role"
+
+# TRANSLATION
+# LABEL/ID_CREATE_GROUP
+#: LABEL/ID_CREATE_GROUP
+msgid "[LABEL/ID_CREATE_GROUP] Create New Group"
+msgstr "Create New Group"
+
+# TRANSLATION
+# LABEL/ID_DELETE_GROUP
+#: LABEL/ID_DELETE_GROUP
+msgid "Remove Group"
+msgstr "Remove Group"
+
+# TRANSLATION
+# LABEL/ID_DISABLE_PLUGIN
+#: LABEL/ID_DISABLE_PLUGIN
+msgid "Disable Plugin"
+msgstr "Disable Plugin"
+
+# TRANSLATION
+# LABEL/ID_ENABLE_PLUGIN
+#: LABEL/ID_ENABLE_PLUGIN
+msgid "Enable Plugin"
+msgstr "Enable Plugin"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_ENVIRONMENT_SETTINGS
+#: LABEL/ID_UPDATE_ENVIRONMENT_SETTINGS
+msgid "Update Environment Settings"
+msgstr "Update Environment Settings"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
@@ -25262,7 +25748,7 @@ msgstr "-- Default --"
 # events/eventsEditAction.xml?TRI_UID
 # events/eventsEditAction.xml
 #: dropdown - TRI_UID
-msgid "Trigger"
+msgid "[events/eventsEditAction.xml?TRI_UID] Trigger"
 msgstr "Trigger"
 
 # events/eventsEditAction.xml?TRI_UID-
@@ -35690,7 +36176,7 @@ msgstr "Last Name"
 # users/users_Edit.xml?USR_USERNAME
 # users/users_Edit.xml
 #: text - USR_USERNAME
-msgid "[users/users_Edit.xml?USR_USERNAME] User ID (*)"
+msgid "User ID (*)"
 msgstr "User ID (*)"
 
 # users/users_Edit.xml?USR_EMAIL
@@ -37928,7 +38414,7 @@ msgstr "Label"
 # dynaforms/fields/file.xml?PME_INPUT
 # dynaforms/fields/file.xml
 #: dropdown - PME_INPUT
-msgid "Input"
+msgid "[dynaforms/fields/file.xml?PME_INPUT] Input"
 msgstr "Input"
 
 # dynaforms/fields/file.xml?PME_INPUT-

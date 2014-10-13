@@ -5273,18 +5273,19 @@ class G
 
     /**
     */
-    public function auditLog($actionToLog, $valueToLog = "")
-    { 
+    public static function auditLog($actionToLog, $valueToLog = "")
+    {
         $oServerConf = & serverConf::getSingleton();
         $sflagAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', SYS_SYS );
         $ipClient = G::getIpAddress();
 
-        if ($sflagAudit) {
-            $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined'; 
-            $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User'; 
+        $licensedFeatures = & PMLicensedFeatures::getSingleton();
+        if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
+            $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
+            $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User';
             $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : '-';
             G::log("|". $workspace ."|". $ipClient ."|". $username . "|" . $fullname ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
-        }        
+        }
     }
 
     /**
@@ -5346,9 +5347,9 @@ class G
     }
 
    /**
-    * Verify the InputDoc extension, cheking the file name extension (.pdf, .ppt) and the file content. 
+    * Verify the InputDoc extension, cheking the file name extension (.pdf, .ppt) and the file content.
     *
-    * 
+    *
     *
     */
     public function verifyInputDocExtension($InpDocAllowedFiles, $filesName, $filesTmpName){
@@ -5379,7 +5380,7 @@ class G
     		$finfo = new finfo(FILEINFO_MIME_TYPE);
     		$finfo_ = $finfo->file($filesTmpName);
     		$docType = explode("/", $finfo_);
-    	
+
     		foreach ($allowedTypes as $types => $val) {
     			if((preg_match('/^\*\.?[a-z]{2,8}$/', $val)) || ($val == '*.*')){
     				$allowedDocTypes = substr($val, 2);

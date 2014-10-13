@@ -4770,7 +4770,7 @@ SELECT 'LABEL','ID_PLEASE_SELECT_PHOTO','en','Please select a photo','2014-01-15
   UNION ALL
 SELECT 'LABEL','ID_RESUME','en','Resume','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_USER_ID','en','User ID (*)','2014-01-15' 
+SELECT 'LABEL','ID_USER_ID','en','Username','2014-10-09' 
   UNION ALL
 SELECT 'LABEL','ID_PHONE','en','Phone','2014-01-15' 
   UNION ALL
@@ -5572,7 +5572,7 @@ SELECT 'LABEL','ID_FAILED_DASHBOARD INSTANCE','en','Dashboard Instance registere
   UNION ALL
 SELECT 'LABEL','ID_AJAX_COMMUNICATION_FAILED','en','Ajax communication failed','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_CHECK_FIELDS_MARK_RED','en','Please check the fields mark in red.','2014-01-15' 
+SELECT 'LABEL','ID_CHECK_FIELDS_MARK_RED','en','Please check the fields marked in red.','2014-10-06' 
   UNION ALL
 SELECT 'LABEL','ID_INPUT_ERROR','en','Input Error','2014-01-15' 
   UNION ALL
@@ -5840,7 +5840,7 @@ SELECT 'LABEL','ID_LOGIN_WITH_FACEBOOK','en','Login with Facebook!!','2014-01-15
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP6','en','xxx','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_SIZE_VERY_LARGE_PERMITTED','en','The size is very large as permitted!','2014-09-10' 
+SELECT 'LABEL','ID_SIZE_VERY_LARGE_PERMITTED','en','The file is too large . Please upload a smaller file.','2014-10-08' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5','en','ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login.','2014-09-02' 
   UNION ALL
@@ -6240,7 +6240,7 @@ SELECT 'LABEL','ID_MSG_ENABLE_HTML_EDITING','en','<b>Warning:</b> Editing the HT
   UNION ALL
 SELECT 'LABEL','ID_ALL_CATEGORIES','en','All Categories','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_CASES_NOTES_NO_PERMISSIONS','en','You do not have permission to cases notes','2014-01-15' 
+SELECT 'LABEL','ID_CASES_NOTES_NO_PERMISSIONS','en','You do not have permission to access cases notes','2014-09-30' 
   UNION ALL
 SELECT 'LABEL','ID_DELETE_DOCUMENT','en','Do you want to delete selected document?','2014-01-15' 
   UNION ALL
@@ -6938,7 +6938,7 @@ SELECT 'LABEL','ID_CHOOSE_PROVIDER','en','Please select provider','2014-08-27'
   UNION ALL
 SELECT 'LABEL','ID_INDEX','en','Index','2014-09-10' 
   UNION ALL
-SELECT 'LABEL','ID_ERROR_JS_NOT_AVAILABLE','en','Your browser does not support javascript or it is disabled, please use a different browser or activate the javascript. Forms won''t work totally because javascript is used.','2014-08-29' 
+SELECT 'LABEL','ID_ERROR_JS_NOT_AVAILABLE','en','Your browser doesn''t support JavaScript or it may be disabled. Please use a different browser or enable the JavaScript, Dynaforms won''t entirely work because JavaScript is used.','2014-10-09' 
   UNION ALL
 SELECT 'LABEL','ID_MAXIMUM_SIZE_FILE_REQUIRED','en','The maximum size file, is required!','2014-09-12' 
   UNION ALL
@@ -7088,9 +7088,9 @@ SELECT 'LABEL','ID_AUDIT_LOG_ENABLED','en','Audit Log has been enabled','2014-09
   UNION ALL
 SELECT 'LABEL','ID_AUDIT_LOG_DISABLED','en','Audit Log has been disabled','2014-09-19' 
   UNION ALL
-SELECT 'LABEL','ID_AUDIT_LOG_DETAILS_1','en','Audit Log details1','2014-09-19' 
+SELECT 'LABEL','ID_AUDIT_LOG_DETAILS_1','en','When this option is enabled, all changes made in the "ADMIN" tab are registered in a log.','2014-09-30' 
   UNION ALL
-SELECT 'LABEL','ID_AUDIT_LOG_DETAILS_2','en','Audit Log details 2','2014-09-19' 
+SELECT 'LABEL','ID_AUDIT_LOG_DETAILS_2','en','and the user will be able to see those changes in the "Audit Log" option in Logs Menu','2014-10-10' 
   UNION ALL
 SELECT 'LABEL','ID_PRIVATE','en','Private','2014-09-22' 
   UNION ALL
@@ -7103,6 +7103,170 @@ SELECT 'LABEL','ID_LEFT','en','left','2014-09-18'
 SELECT 'LABEL','ID_CENTER','en','center','2014-09-18' 
   UNION ALL
 SELECT 'LABEL','ID_RIGHT','en','right','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_LANGUAGE_CANT_DELETE_CURRENTLY','en','The language, which the system is currently using, cannot be deleted.','2014-09-25' 
+  UNION ALL
+SELECT 'LABEL','ID_INPUT_DOC_MAX_FILESIZE_REQUIRED','en','Maximum file size parameter is required.','2014-09-30' 
+  UNION ALL
+SELECT 'LABEL','ID_AUDIT_LOG_ACTIONS','en','Audit Log Actions','2014-09-30' 
+  UNION ALL
+SELECT 'LABEL','ID_RESET_FILTERS','en','Reset Filters','2014-10-07' 
+  UNION ALL
+SELECT 'LABEL','ID_INPUT_DB','en','Input','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_TRIGGER_DB','en','Trigger','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_IP','en','IP Client','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_OUTPUT_DB','en','Output','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_ATTACHED_DB','en','Attached','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_DERIVATION_DB','en','Derivation','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_OPEN_DYNAFORM_TAB','en','Open the Dynaform in a new tab','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ENTERPRISE_FEATURES','en','Enterprise features','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_USER','en','Create User','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_USER','en','Update User','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_USER','en','Delete User','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ENABLE_USER','en','Enable User','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLE_USER','en','Disable User','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_AUTHENTICATION_SOURCE','en','Assign Authentication Source','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_USER_TO_GROUP','en','Assign Users To Group','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_AUTH_SOURCE','en','Create Authentication Source','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_AUTH_SOURCE','en','Update Authentication Source','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_AUTH_SOURCE','en','Delete Authentication Source','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_ROLE','en','Update Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_ROLE','en','Delete Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_USER_TO_ROLE','en','Assign Users To Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_USER_TO_ROLE','en','Delete Users To Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ADD_PERMISSION_TO_ROLE','en','Add Permission To Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_PERMISSION_TO_ROLE','en','Delete Permission To Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_SKIN','en','Create Skin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_IMPORT_SKIN','en','Import Skin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_EXPORT_SKIN','en','Export Skin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_SKIN','en','Delete Skin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_GROUP','en','Update Group','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_CATEGORY','en','Create Category','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_CATEGORY','en','Update Category','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_CATEGORY','en','Delete Category','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_BUILD_CACHE','en','Build Cache','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CLEAR_CRON','en','Clear Cron','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_REPLACE_LOGO','en','Replace Logo','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_LOGIN_SETTINGS','en','Update Login Settings','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLE_HEART_BEAT','en','Disable Heart Beat','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_PMTABLE','en','Create PM Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_PMTABLE','en','Update PM Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_PMTABLE','en','Delete PM Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ADD_DATA_PMTABLE','en','Add Data to PM table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_DATA_PMTABLE','en','Update Data from PM Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_DATA_PMTABLE','en','Delete Data from PM Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_IMPORT_TABLE','en','Import Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_EXPORT_TABLE','en','Export Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_CALENDAR','en','Create Calendar','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_CALENDAR','en','Update Calendar','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_CALENDAR','en','Delete Calendar','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_DASHLET_INSTANCE','en','Create Dashlet Instance','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_DASHLET_INSTANCE','en','Update Dashlet Instance','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_DASHLET_INSTANCE','en','Delete Dashlet Instance','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_DEPARTAMENT','en','Create Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_SUB_DEPARTAMENT','en','Create Sub Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_DEPARTAMENT','en','Update Departament','2014-10-10' 
+ ;
+INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
+
+SELECT 'LABEL','ID_UPDATE_SUB_DEPARTAMENT','en','Update Sub Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_DEPARTAMENT','en','Delete Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_MANAGER_TO_DEPARTAMENT','en','Assign Manager To Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_USER_TO_DEPARTAMENT','en','Assign Users To Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_REMOVE_USERS_FROM_DEPARTAMENT','en','Remove Users From Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPLOAD_LANGUAGE','en','Upload Language','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_EXPORT_LANGUAGE','en','Export Language','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_LAGUAGE','en','Delete Language','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPLOAD_SYSTEM_SETTINGS','en','Upload System Settings','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_EMAIL_SETTINGS','en','Update Email Settings','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_EMAIL_SETTINGS','en','Create Email Settings','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPLOAD_LOGO','en','Upload Logo','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_LOGO','en','Delete Logo','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_INSTALL_PLUGIN','en','Install Plugin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_SET_COLUMNS','en','Set Columns','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLE_AUDIT_LOG','en','Disable Audit Log','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_REMOVE_PLUGIN','en','Remove Plugin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_ROLE','en','Create New Role','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_GROUP','en','Create New Group','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_GROUP','en','Remove Group','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLE_PLUGIN','en','Disable Plugin','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_ENABLE_PLUGIN','en','Enable Plugin','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_ENVIRONMENT_SETTINGS','en','Update Environment Settings','2014-10-13' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 

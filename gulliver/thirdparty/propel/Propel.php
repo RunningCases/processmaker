@@ -614,6 +614,11 @@ class Propel {
      */
     public static function getDbConnection($name)
     {
+        $licensedFeatures = & PMLicensedFeatures::getSingleton();
+        if (! $licensedFeatures->verifyfeature('02YeEFKNnVoOWFKMzN4ZmpXT0V3MU9SVklnOXNCcE9zcXJKa0tpemNmQkJ5OTUvOWlLdFhibGp0MHVHUlV0VmNpNw==')) {
+            return null;
+        }
+
         if (! empty(self::$configuration['datasources'][$name]['connection'])) {
             return self::getConnection($name);
         }

@@ -118,7 +118,18 @@ function change_hash($command, $opts)
             $response = new stdclass();
             $response->workspace = $workspace;
             $response->hash = $hash;
-            $workspace->changeHashPassword($workspace->name, $response);
+            if (!defined("SYS_SYS")) {
+                define("SYS_SYS", $workspace->name);
+            }
+            if (!defined("PATH_DATA_SITE")) {
+                define("PATH_DATA_SITE", PATH_DATA . "sites/" . SYS_SYS . "/");
+            }
+            $_SESSION['__sw__'] = '';
+            if (!$workspace->changeHashPassword($workspace->name, $response)) {
+                CLI::logging(pakeColor::colorize("This command cannot be used because your license does not include it.", "ERROR") . "\n");
+                $workspace->close();
+                die;
+            }
             $workspace->close();
             CLI::logging(pakeColor::colorize("Changed...", "ERROR") . "\n");
         } catch (Exception $e) {

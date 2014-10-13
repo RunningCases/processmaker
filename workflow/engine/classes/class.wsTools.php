@@ -1032,10 +1032,14 @@ class workspaceTools
 
         $wfDsn = $fields['DB_ADAPTER'] . '://' . $fields['DB_USER'] . ':' . $fields['DB_PASS'] . '@' . $fields['DB_HOST'] . '/' . $fields['DB_NAME'];
 
+        if ($fields['DB_NAME'] == $fields['DB_RBAC_NAME']) {
+            $info = array('Workspace Name' => $fields['WORKSPACE_NAME'], 'Workflow Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_USER'], $fields['DB_PASS'], $fields['DB_HOST'], $fields['DB_NAME']), 'MySql Version' => $fields['DATABASE']);
+        } else {
         $info = array('Workspace Name' => $fields['WORKSPACE_NAME'],
             //'Available Databases'  => $fields['AVAILABLE_DB'],
             'Workflow Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_USER'], $fields['DB_PASS'], $fields['DB_HOST'], $fields['DB_NAME']), 'RBAC Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_RBAC_USER'], $fields['DB_RBAC_PASS'], $fields['DB_RBAC_HOST'], $fields['DB_RBAC_NAME']), 'Report Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_REPORT_USER'], $fields['DB_REPORT_PASS'], $fields['DB_REPORT_HOST'], $fields['DB_REPORT_NAME']), 'MySql Version' => $fields['DATABASE']
         );
+        }
 
         foreach ($info as $k => $v) {
             if (is_numeric($k)) {
@@ -1070,15 +1074,18 @@ class workspaceTools
     public function exportDatabase($path, $onedb = false)
     {
         $dbInfo = $this->getDBInfo();
-
+        
         if ($onedb) {
             $databases = array("rb", "rp");
+        } else if ($dbInfo['DB_NAME'] == $dbInfo['DB_RBAC_NAME']) {
+            $databases = array("wf");
         } else {
             $databases = array("wf", "rp", "rb");
         }
 
         $dbNames = array();
-        foreach ($databases as $db) {
+        
+        foreach ($databases as $db) {            
             $dbInfo = $this->getDBCredentials($db);
             $oDbMaintainer = new DataBaseMaintenance($dbInfo["host"], $dbInfo["user"], $dbInfo["pass"]);
             CLI::logging("Saving database {$dbInfo["name"]}\n");
@@ -1139,7 +1146,7 @@ class workspaceTools
      * @param bool $compress specifies wheter the backup is compressed or not
      */
     public function backup($backupFile, $compress = true)
-    {
+    {   
         /* $filename can be a string, in which case it's used as the filename of
          * the backup, or it can be a previously created tar, which allows for
          * multiple workspaces in one backup.
@@ -1661,7 +1668,13 @@ class workspaceTools
     {
         $this->initPropel( true );
         G::LoadClass("enterprise");
-        enterpriseClass::setHashPassword($response);
+        $licensedFeatures = & PMLicensedFeatures::getSingleton();
+        if ($licensedFeatures->verifyfeature('95OY24wcXpEMzIyRmlNSnF0STNFSHJzMG9wYTJKekpLNmY2ZmRCeGtuZk5oUDloaUNhUGVjTDJBPT0=')) {
+            enterpriseClass::setHashPassword($response);
+        } else {
+            return false;
+        }
+        return true;
     }
 
     public function verifyEnterprise ($workspace)
