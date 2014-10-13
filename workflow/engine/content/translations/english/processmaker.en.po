@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 2.8.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-10-13 09:11:02\n"
+"PO-Revision-Date: 2014-10-13 12:37:31\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -17174,10 +17174,10 @@ msgid "Clear Cron"
 msgstr "Clear Cron"
 
 # TRANSLATION
-# LABEL/ID_UPDATE_ENVIRONMENTS_SETTINGS
-#: LABEL/ID_UPDATE_ENVIRONMENTS_SETTINGS
-msgid "Update Environment Settings"
-msgstr "Update Environment Settings"
+# LABEL/ID_REPLACE_LOGO
+#: LABEL/ID_REPLACE_LOGO
+msgid "Replace Logo"
+msgstr "Replace Logo"
 
 # TRANSLATION
 # LABEL/ID_UPDATE_LOGIN_SETTINGS
@@ -17424,6 +17424,12 @@ msgstr "Disable Plugin"
 #: LABEL/ID_ENABLE_PLUGIN
 msgid "Enable Plugin"
 msgstr "Enable Plugin"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_ENVIRONMENT_SETTINGS
+#: LABEL/ID_UPDATE_ENVIRONMENT_SETTINGS
+msgid "Update Environment Settings"
+msgstr "Update Environment Settings"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
