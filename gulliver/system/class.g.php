@@ -2296,7 +2296,7 @@ class G
      * @param string $sText
      * @return string strtolower($sText)
      */
-    public function toLower ($sText)
+    public static function toLower ($sText)
     {
         return strtolower( $sText );
     }
@@ -5260,12 +5260,12 @@ class G
      * @param type $pathData
      * @param type $file
      */
-    public function log($message, $pathData = PATH_DATA, $file = 'cron.log')
+    public static function log($message, $pathData = PATH_DATA, $file = 'cron.log')
     {
         $config = System::getSystemConfiguration();
         G::LoadSystem('logger');
 
-        $oLogger =& Logger::getSingleton($pathData, PATH_SEP, $file);
+        $oLogger = Logger::getSingleton($pathData, PATH_SEP, $file);
         $oLogger->limitFile = $config['number_log_file'];
         $oLogger->limitSize = $config['size_log_file'];
         $oLogger->write($message);

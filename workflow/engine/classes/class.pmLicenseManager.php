@@ -19,7 +19,7 @@ class pmLicenseManager
         //to do: this files probably needs to be in core, since they are GPL2
         //include_once (PATH_PLUGINS . 'enterprise' . PATH_SEP . 'classes' . PATH_SEP . 'class.license.lib.php');
         //include_once (PATH_PLUGINS . 'enterprise' . PATH_SEP . 'classes' . PATH_SEP . 'class.license.app.php');
-        
+
         require_once PATH_CORE . 'classes' . PATH_SEP . 'class.license.lib.php';
         require_once PATH_CORE . 'classes' . PATH_SEP . 'class.license.app.php';
 
@@ -113,7 +113,7 @@ class pmLicenseManager
         $this->activateFeatures ();
     }
 
-    public function &getSingleton()
+    public static function getSingleton()
     {
         if (self::$instance == null) {
             self::$instance = new pmLicenseManager ();
