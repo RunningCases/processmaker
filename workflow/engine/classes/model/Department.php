@@ -402,7 +402,7 @@ class Department extends BaseDepartment
             if (is_object( $oUser ) && get_class( $oUser ) == 'Users') {
                 $oUser->setDepUid( $depId );
                 $oUser->save();
-                G::auditLog("AssignUsersToDepartament", "Assign user ".$user['USR_USERNAME']." (".$userId.") to departament ".$dptoTitle['DEPO_TITLE']." (".$depId.") ");
+                G::auditLog("AssignUserToDepartament", "Assign user ".$user['USR_USERNAME']." (".$userId.") to departament ".$dptoTitle['DEPO_TITLE']." (".$depId.") ");
             }
 
             //if the user is a manager update Department Table

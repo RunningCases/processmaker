@@ -230,7 +230,7 @@ try {
                 $userData['USR_STATUS'] = $_REQUEST['NEW_USR_STATUS'];
                 $userInstance->update($userData);
                 
-                $msg = $_REQUEST['NEW_USR_STATUS'] == 'ACTIVE'? "Enable User" : "Disable User";
+                $msg = $_REQUEST['NEW_USR_STATUS'] == 'ACTIVE'? "EnableUser" : "DisableUser";
                 G::auditLog($msg, "User Name: ".$userData['USR_USERNAME']." User ID: (".$userData['USR_UID'].") ");
                 $response->status = 'OK';
             } else {
@@ -357,7 +357,7 @@ try {
             }
             $aData['USR_AUTH_USER_DN'] = $auth_dn;
             $RBAC->updateUser($aData);
-            g::auditLog("AssignAuthenticationSource", "User Name: ".$aData['USR_USERNAME'].' User ID: ('.$aData['USR_UID'].') assign to '.$aData['USR_AUTH_TYPE']);
+            G::auditLog("AssignAuthenticationSource", "User Name: ".$aData['USR_USERNAME'].' User ID: ('.$aData['USR_UID'].') assign to '.$aData['USR_AUTH_TYPE']);
             echo '{success: true}';
             break;
         case 'usersList':
