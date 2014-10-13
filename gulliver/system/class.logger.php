@@ -46,7 +46,7 @@ class Logger
         $this->filePath = $this->path . $this->fullName;
     }
 
-    public function getSingleton($pathData, $pathSep, $file = 'cron.log')
+    public static function getSingleton($pathData, $pathSep, $file = 'cron.log')
     {
         if (self::$instance == null) {
             self::$instance = new Logger($pathData, $pathSep, $file);

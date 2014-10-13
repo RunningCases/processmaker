@@ -523,9 +523,11 @@ class DataBaseMaintenance
                 fwrite( $file, $data );
             }
         }
-
-        foreach ($tablesBpmn as $table) {
-            fwrite( $file, $sqlTablesBpmn[$table] );
+        
+        if (count ($sqlTablesBpmn) > 0) {
+            foreach ($tablesBpmn as $table) {
+                fwrite( $file, $sqlTablesBpmn[$table] );
+            }
         }
 
         fclose( $file );
@@ -622,7 +624,7 @@ class DataBaseMaintenance
      * @return string $tableSchema
      */
     function getSchemaFromTable ($tablename)
-    {
+    {   
         //$tableSchema = "/* Structure for table `$tablename` */\n";
         //$tableSchema .= "DROP TABLE IF EXISTS `$tablename`;\n\n";
         $tableSchema = "";

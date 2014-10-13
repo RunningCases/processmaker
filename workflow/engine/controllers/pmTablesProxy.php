@@ -410,6 +410,7 @@ class pmTablesProxy extends HttpProxyController
         if ($errors == '') {
             $result->success = true;
             $result->message = $count.G::LoadTranslation( 'ID_TABLES_REMOVED_SUCCESSFULLY' );
+            G::auditLog("DeletePmtable", "Table Name: ". $table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
         } else {
             $result->success = false;
             $result->message = $count. G::LoadTranslation( 'ID_TABLES_REMOVED_WITH_ERRORS' ) .$errors;
@@ -508,7 +509,7 @@ class pmTablesProxy extends HttpProxyController
                 if ($obj->validate()) {
                     $obj->save();
                     $toSave = true;
-
+                    G::auditLog("AddDataPmtable", "Table Name: ".$table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
                     $primaryKeysValues = array ();
                     foreach ($primaryKeys as $primaryKey) {
                         $method = 'get' . AdditionalTables::getPHPName( $primaryKey['FLD_NAME'] );
@@ -527,6 +528,7 @@ class pmTablesProxy extends HttpProxyController
                 $toSave = false;
             }
 
+            $result = new stdclass();
             if ($toSave) {
                 $result->success = true;
                 $result->message = G::LoadTranslation('ID_RECORD_SAVED_SUCCESFULLY');
@@ -580,6 +582,10 @@ class pmTablesProxy extends HttpProxyController
             $result = $this->_dataUpdate( $row, $primaryKeys );
         }
 
+        if ($result) {
+            G::auditLog("UpdateDataPmtable", "Table Name: ".$table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
+        }
+
         $this->success = $result;
         $this->message = $result ? G::loadTranslation( 'ID_UPDATED_SUCCESSFULLY' ) : G::loadTranslation( 'ID_UPDATE_FAILED' );
     }
@@ -603,6 +609,8 @@ class pmTablesProxy extends HttpProxyController
         }
 
         require_once $sPath . $this->className . '.php';
+
+        G::auditLog("DeleteDataPmtable", "Table Name: ".$table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
 
         $this->success = $this->_dataDestroy( $httpData->rows );
         $this->message = $this->success ? G::loadTranslation( 'ID_DELETED_SUCCESSFULLY' ) : G::loadTranslation( 'ID_DELETE_FAILED' );
@@ -678,6 +686,7 @@ class pmTablesProxy extends HttpProxyController
                 $this->success = true;
                 $this->message = G::loadTranslation( 'ID_FILE_IMPORTED_SUCCESSFULLY', array ($filename
                 ) );
+                G::auditLog("ImportTable", $filename);
             }
         } else {
             $sMessage = G::LoadTranslation( 'ID_UPLOAD_VALID_CSV_FILE' );
@@ -919,6 +928,7 @@ class pmTablesProxy extends HttpProxyController
                             // is a report table, try populate it
                             $additionalTable->populateReportTable( $table['ADD_TAB_NAME'], pmTable::resolveDbSource( $table['DBS_UID'] ), $table['ADD_TAB_TYPE'], $table['PRO_UID'], $table['ADD_TAB_GRID'], $table['ADD_TAB_UID'] );
                         }
+                        G::auditLog("ImportTable", $table['ADD_TAB_NAME']." (".$table['ADD_TAB_UID'].") ");
                         break;
                     case '@DATA':
                         $fstName = intval( fread( $fp, 9 ) );
@@ -1104,6 +1114,7 @@ class pmTablesProxy extends HttpProxyController
                     $bytesSaved += fwrite( $fp, $fsData ); //writing the size of xml file
                     $bytesSaved += fwrite( $fp, $SDATA ); //writing the xmlfile
                 }
+                G::auditLog("ExportTable", $table->ADD_TAB_NAME." (".$table->ADD_TAB_UID.") ");
             }
 
             fclose( $fp );

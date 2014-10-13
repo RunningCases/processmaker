@@ -121,6 +121,12 @@ class adminProxy extends HttpProxyController
         $this->restart = $restart;
         $this->url     = "/sys" . SYS_SYS . "/" . (($sysConf["default_lang"] != "")? $sysConf["default_lang"] : ((defined("SYS_LANG") && SYS_LANG != "")? SYS_LANG : "en")) . "/" . $sysConf["default_skin"] . $urlPart;
         $this->message = 'Saved Successfully';
+        $msg = "";        
+        if($httpData->proxy_host != '' || $httpData->proxy_port != '' || $httpData->proxy_user != '') {
+            $msg = " Host -> ".$httpData->proxy_host." Port -> ".$httpData->proxy_port." User -> ".$httpData->proxy_user; 
+        }
+
+        G::auditLog("UploadSystemSettings", "Time Zone -> ".$httpData->time_zone." Memory Limit -> ".$httpData->memory_limit."  Cookie lifetime -> ".$httpData->max_life_time." Default Skin -> ".$httpData->default_skin." Default Language -> ". $httpData->default_lang. $msg);
     }
 
     public function uxUserUpdate($httpData)
@@ -732,6 +738,7 @@ class adminProxy extends HttpProxyController
                 );
                 $this->success='true';
                 $this->msg='Saved';
+                G::auditLog("UpdateEmailSettings", "EnableEmailNotifications->".$aFields['MESS_ENABLED']."  EmailEngine->".$aFields['MESS_ENGINE']."  Server->".$aFields['MESS_SERVER']."  Port->".$aFields['MESS_PORT']."  RequireAuthentication->".$aFields['MESS_RAUTH']."   FromMail->".$aFields['MESS_ACCOUNT']."  FromName->".$aFields['MESS_FROM_NAME']."  Use Secure Connection->".$aFields['SMTPSecure']);
             } else {
                 $oConfiguration->create(
                     array(
@@ -745,6 +752,7 @@ class adminProxy extends HttpProxyController
                 );
                 $this->success='true';
                 $this->msg='Saved';
+                G::auditLog("CreateEmailSettings", "EnableEmailNotifications->".$aFields['MESS_ENABLED']."  EmailEngine->".$aFields['MESS_ENGINE']."  Server->".$aFields['MESS_SERVER']."  Port->".$aFields['MESS_PORT']."  RequireAuthentication->".$aFields['MESS_RAUTH']."   FromMail->".$aFields['MESS_ACCOUNT']."  FromName->".$aFields['MESS_FROM_NAME']."  Use Secure Connection->".$aFields['SMTPSecure']);
             }
         } catch (Exception $e) {
             $this->success= false;
@@ -1048,6 +1056,7 @@ class adminProxy extends HttpProxyController
                         try {
                             list($imageWidth, $imageHeight, $imageType) = @getimagesize($dir . '/' . 'tmp' . $fileName);
                             G::resizeImage($dir . '/tmp' . $fileName, $imageWidth, 49, $dir . '/' . $fileName);
+                            G::auditLog("UploadLogo", "File Name: ".$fileName);
                         } catch (Exception $e) {
                             $error = $e->getMessage();
                         }
@@ -1064,8 +1073,7 @@ class adminProxy extends HttpProxyController
             }
         } elseif ($_FILES['img']['type'] != '') {
             $failed = "1";
-        }
-
+        }        
         echo '{success: true, failed: ' . $failed . ', uploaded: ' . $uploaded . ', type: "' . $_FILES['img']['type'] . '"}';
         exit();
     }
@@ -1130,6 +1138,7 @@ class adminProxy extends HttpProxyController
                     if (file_exists($dir . '/tmp' . $imgname)) {
                         unlink ($dir . '/tmp' . $imgname);
                     }
+                    G::auditLog("DeleteLogo", "File Name: ".$imgname);
                 } else {
                     echo '{success: false}';
                     exit();
@@ -1182,6 +1191,8 @@ class adminProxy extends HttpProxyController
                     $oConf->saveConfig('USER_LOGO_REPLACEMENT', '', '', '');
 
                     G::SendTemporalMessage('ID_REPLACED_LOGO', 'tmp-info', 'labels');
+                    G::auditLog("ReplaceLogo", "File Name: ".$snameLogo);
+
                     break;
                 case 'restoreLogo':
                     $snameLogo = $_GET['NAMELOGO'];
@@ -1194,8 +1205,8 @@ class adminProxy extends HttpProxyController
 
                     $oConf->aConfig = $aConf;
                     $oConf->saveConfig('USER_LOGO_REPLACEMENT', '', '', '');
-
                     G::SendTemporalMessage('ID_REPLACED_LOGO', 'tmp-info', 'labels');
+                    G::auditLog("RestoreLogo", "Restore Original Logo");
                     break;
             }
         } catch (Exception $oException) {

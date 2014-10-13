@@ -33,6 +33,9 @@ class enterpriseClass extends PMPlugin
 
     public function enterpriseSystemUpdate($data) //$data = $oData
     {
+        if (count(glob(PATH_DATA_SITE . 'license/*.dat')) == 0) {
+            return;
+        }
         require_once ("classes/model/Users.php");
         $user = $data;
         $criteria = new Criteria("workflow");

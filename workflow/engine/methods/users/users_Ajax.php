@@ -201,6 +201,7 @@ try {
             $oUser = new Users();
             $aFields = $oUser->load($UID);
             $aFields['USR_STATUS'] = 'CLOSED';
+            $userName = $aFields['USR_USERNAME'];
             $aFields['USR_USERNAME'] = '';
             $oUser->update($aFields);
 
@@ -216,8 +217,8 @@ try {
 
             $criteria->add(ProcessUserPeer::USR_UID, $UID, Criteria::EQUAL);
             $criteria->add(ProcessUserPeer::PU_TYPE, "SUPERVISOR", Criteria::EQUAL);
-
             ProcessUserPeer::doDelete($criteria);
+            G::auditLog("DeleteUser", "User Name: ". $userName." User ID: (".$UID.") ");
             break;
         case 'changeUserStatus':
             $response = new stdclass();
@@ -228,6 +229,9 @@ try {
                 $userData = $userInstance->load($_REQUEST['USR_UID']);
                 $userData['USR_STATUS'] = $_REQUEST['NEW_USR_STATUS'];
                 $userInstance->update($userData);
+                
+                $msg = $_REQUEST['NEW_USR_STATUS'] == 'ACTIVE'? "EnableUser" : "DisableUser";
+                G::auditLog($msg, "User Name: ".$userData['USR_USERNAME']." User ID: (".$userData['USR_UID'].") ");
                 $response->status = 'OK';
             } else {
                 $response->status = 'ERROR';
@@ -353,6 +357,7 @@ try {
             }
             $aData['USR_AUTH_USER_DN'] = $auth_dn;
             $RBAC->updateUser($aData);
+            G::auditLog("AssignAuthenticationSource", "User Name: ".$aData['USR_USERNAME'].' User ID: ('.$aData['USR_UID'].') assign to '.$aData['USR_AUTH_TYPE']);
             echo '{success: true}';
             break;
         case 'usersList':

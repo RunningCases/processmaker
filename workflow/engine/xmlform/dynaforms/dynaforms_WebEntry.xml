@@ -45,6 +45,7 @@
   <js type="javascript"><![CDATA[
 var oPanel1;
 getField('SEARCH').disabled = true;
+hideRowById("SEARCH");
 
   //hideRowById('WS_USER');
   //hideRowById('WS_PASS');
@@ -58,8 +59,20 @@ leimnud.event.add(getField('TASKS'), 'change', function() {
     }
 });
 /**/
+
+leimnud.event.add(getField("WS_USER"), "keypress", function() {
+    hideRowById("SEARCH");
+});
+
+leimnud.event.add(getField("WS_PASS"), "keypress", function() {
+    hideRowById("SEARCH");
+});
+
 leimnud.event.add(getField('WE_TYPE'), 'change', function() {
   if (getField('WE_TYPE').value=='WS') {
+    hideRowById("SEARCH");
+    showRowById("TEST");
+
     showRowById('WE_USR');
     showRowById('WS_USER');
     showRowById('WS_PASS');
@@ -67,11 +80,14 @@ leimnud.event.add(getField('WE_TYPE'), 'change', function() {
     showRowById('subtitle2');
   }
   else {
+    hideRowById("TEST");
+    showRowById("SEARCH");
+
     hideRowById('WS_USER');
     hideRowById('WS_PASS');
     hideRowById('WS_ROUNDROBIN');
     hideRowById('subtitle2');
-    
+
   }hideRowById('WS_ROUNDROBIN');
 }.extend(getField('WE_TYPE')));
 
@@ -82,7 +98,7 @@ leimnud.event.add(getField('WE_TYPE'), 'change', function() {
  * @makes a rpc to processes_webEntryValidate in order to validate if the
  * process user has the permissions to create and use a webentry
  */
- 
+
 var webEntry_validate = function(PRO_UID, TASKS, DYNAFORM) {
     //G.alert(PRO_UID);
   //  G.alert(getField('WE_TYPE').value);
@@ -118,6 +134,8 @@ var tasksName = getField('TASKS')[getField('TASKS').selectedIndex].innerHTML;
        //var scs=rpc.xmlhttp.responseText.extractScript();
        //scs.evalScript();
          if(rpc.xmlhttp.responseText>=1){
+           showRowById("SEARCH");
+
            getField('SEARCH').disabled = false;
            //webEntry_generate(PRO_UID);
          } else {
@@ -129,7 +147,7 @@ var tasksName = getField('TASKS')[getField('TASKS').selectedIndex].innerHTML;
 
 
 }
-    
+
 }
 
 var webEntry_generate = function(PRO_UID, TASKS, DYNAFORM) {
@@ -144,7 +162,7 @@ var webEntry_generate = function(PRO_UID, TASKS, DYNAFORM) {
   }
   else
   {  if(odynaform.value=='')
-  		{  alert('This process does not have an assigned dynaform'); 
+  		{  alert('This process does not have an assigned dynaform');
   		}
   		else
   		{  sw=1;
@@ -180,7 +198,7 @@ var webEntry_generate = function(PRO_UID, TASKS, DYNAFORM) {
        	scs.evalScript();
        }.extend(this);
        oRPC.make();
-     } 
+     }
     else
      {
      	 var k = new leimnud.module.rpc.xmlhttp({
@@ -188,28 +206,28 @@ var webEntry_generate = function(PRO_UID, TASKS, DYNAFORM) {
              async : true,
              method: 'POST',
              args  : "action=webEntry_Val_Assig&data="+{
-             	PRO_UID:PRO_UID, 
-             	TASKS:getField('TASKS').value, 
+             	PRO_UID:PRO_UID,
+             	TASKS:getField('TASKS').value,
              	DYNAFORM:getField('DYNAFORM').value
              	}.toJSONString()
        });
-       
+
        k.callback = function(rpc){
        if(rpc.xmlhttp.responseText!=1){
          	msgBox(G_STRINGS.WEBEN_ONLY_BALANCEDJS,"alert");
-         } 
+         }
        }.extend(this);
-       k.make(); 
-     	 
+       k.make();
+
      		var oRPC = new leimnud.module.rpc.xmlhttp({
        	    url   : '../processes/processes_Ajax',
              async : true,
              method: 'POST',
              args  : "action=webEntry_generate&data="+{PRO_UID:PRO_UID, TASKS:getField('TASKS').value, DYNAFORM:getField('DYNAFORM').value, WE_TYPE:getField('WE_TYPE').value, WS_USER:getField('WS_USER').value, WS_PASS:getField('WS_PASS').value, WS_ROUNDROBIN:getField('WS_ROUNDROBIN').value, WE_USR:getField('WE_USR').value  }.toJSONString()
-       	});       	
+       	});
        	oRPC.make();
-       	oPanel.remove();  
-       	Pm.tmp.editProcessPanel.clearContent();     	
+       	oPanel.remove();
+       	Pm.tmp.editProcessPanel.clearContent();
         Pm.tmp.editProcessPanel.loader.show();
         var r = new leimnud.module.rpc.xmlhttp({
 					url:'../processes/processes_Ajax',
@@ -222,7 +240,7 @@ var webEntry_generate = function(PRO_UID, TASKS, DYNAFORM) {
 					Pm.tmp.editProcessPanel.loader.hide();
 					var scs = rpc.xmlhttp.responseText.extractScript();
 					Pm.tmp.editProcessPanel.addContent(rpc.xmlhttp.responseText);
-					scs.evalScript();					
+					scs.evalScript();
 				}.extend(this,panel);
 				r.make();
      }

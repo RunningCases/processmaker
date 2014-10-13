@@ -1403,7 +1403,7 @@ class G
      *
      * @return string $ret
      */
-    public function getformatedDate ($date, $format = 'yyyy-mm-dd', $lang = '')
+    public static function getformatedDate ($date, $format = 'yyyy-mm-dd', $lang = '')
     {
         /**
          * ******************************************************************************************************
@@ -1528,7 +1528,7 @@ class G
      * @author Erik Amaru Ortiz <erik@colosa.com>
      * @name complete_field($string, $lenght, $type={1:number/2:string/3:float})
      */
-    public function complete_field ($campo, $long, $tipo)
+    public static function complete_field ($campo, $long, $tipo)
     {
         $campo = trim( $campo );
         switch ($tipo) {
@@ -2296,7 +2296,7 @@ class G
      * @param string $sText
      * @return string strtolower($sText)
      */
-    public function toLower ($sText)
+    public static function toLower ($sText)
     {
         return strtolower( $sText );
     }
@@ -5260,15 +5260,32 @@ class G
      * @param type $pathData
      * @param type $file
      */
-    public function log($message, $pathData = PATH_DATA, $file = 'cron.log')
+    public static function log($message, $pathData = PATH_DATA, $file = 'cron.log')
     {
         $config = System::getSystemConfiguration();
         G::LoadSystem('logger');
 
-        $oLogger =& Logger::getSingleton($pathData, PATH_SEP, $file);
+        $oLogger = Logger::getSingleton($pathData, PATH_SEP, $file);
         $oLogger->limitFile = $config['number_log_file'];
         $oLogger->limitSize = $config['size_log_file'];
         $oLogger->write($message);
+    }
+
+    /**
+    */
+    public static function auditLog($actionToLog, $valueToLog = "")
+    {
+        $oServerConf = & serverConf::getSingleton();
+        $sflagAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', SYS_SYS );
+        $ipClient = G::getIpAddress();
+
+        $licensedFeatures = PMLicensedFeatures::getSingleton();
+        if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
+            $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
+            $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User';
+            $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : '-';
+            G::log("|". $workspace ."|". $ipClient ."|". $username . "|" . $fullname ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
+        }
     }
 
     /**
@@ -5330,9 +5347,9 @@ class G
     }
 
    /**
-    * Verify the InputDoc extension, cheking the file name extension (.pdf, .ppt) and the file content. 
+    * Verify the InputDoc extension, cheking the file name extension (.pdf, .ppt) and the file content.
     *
-    * 
+    *
     *
     */
     public function verifyInputDocExtension($InpDocAllowedFiles, $filesName, $filesTmpName){
@@ -5363,7 +5380,7 @@ class G
     		$finfo = new finfo(FILEINFO_MIME_TYPE);
     		$finfo_ = $finfo->file($filesTmpName);
     		$docType = explode("/", $finfo_);
-    	
+
     		foreach ($allowedTypes as $types => $val) {
     			if((preg_match('/^\*\.?[a-z]{2,8}$/', $val)) || ($val == '*.*')){
     				$allowedDocTypes = substr($val, 2);
