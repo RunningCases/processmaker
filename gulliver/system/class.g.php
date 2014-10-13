@@ -5279,7 +5279,7 @@ class G
         $sflagAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', SYS_SYS );
         $ipClient = G::getIpAddress();
 
-        $licensedFeatures = & PMLicensedFeatures::getSingleton();
+        $licensedFeatures = PMLicensedFeatures::getSingleton();
         if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
             $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
             $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User';
