@@ -4301,9 +4301,9 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DISABLE_USER','en','Disable User','2014-10-10') ,
 ( 'LABEL','ID_ASSIGN_AUTHENTICATION_SOURCE','en','Assign Authentication Source','2014-10-10') ,
 ( 'LABEL','ID_ASSIGN_USER_TO_GROUP','en','Assign Users To Group','2014-10-10') ,
-( 'LABEL','ID_CREATE_AUTH_SOURCE','en','Create Auth Source','2014-10-10') ,
-( 'LABEL','ID_UPDATE_AUTH_SOURCE','en','Update Auth Source','2014-10-10') ,
-( 'LABEL','ID_DELETE_AUTH_SOURCE','en','Delete Auth Source','2014-10-10') ,
+( 'LABEL','ID_CREATE_AUTH_SOURCE','en','Create Authentication Source','2014-10-13') ,
+( 'LABEL','ID_UPDATE_AUTH_SOURCE','en','Update Authentication Source','2014-10-13') ,
+( 'LABEL','ID_DELETE_AUTH_SOURCE','en','Delete Authentication Source','2014-10-13') ,
 ( 'LABEL','ID_UPDATE_ROLE','en','Update Role','2014-10-10') ,
 ( 'LABEL','ID_DELETE_ROLE','en','Delete Role','2014-10-10') ,
 ( 'LABEL','ID_ASSIGN_USER_TO_ROLE','en','Assign Users To Role','2014-10-10') ,
@@ -4358,7 +4358,12 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_INSTALL_PLUGIN','en','Install Plugin','2014-10-10') ,
 ( 'LABEL','ID_SET_COLUMNS','en','Set Columns','2014-10-10') ,
 ( 'LABEL','ID_DISABLE_AUDIT_LOG','en','Disable Audit Log','2014-10-10') ,
-( 'LABEL','ID_REMOVE_PLUGIN','en','Remove Plugin','2014-10-10') ;
+( 'LABEL','ID_REMOVE_PLUGIN','en','Remove Plugin','2014-10-10') ,
+( 'LABEL','ID_CREATE_ROLE','en','Create New Role','2014-10-13') ,
+( 'LABEL','ID_CREATE_GROUP','en','Create New Group','2014-10-13') ,
+( 'LABEL','ID_DELETE_GROUP','en','Remove Group','2014-10-13') ,
+( 'LABEL','ID_DISABLE_PLUGIN','en','Disable Plugin','2014-10-13') ,
+( 'LABEL','ID_ENABLE_PLUGIN','en','Enable Plugin','2014-10-13') ;
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,

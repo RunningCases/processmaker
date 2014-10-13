@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 2.8.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-10-10 17:13:58\n"
+"PO-Revision-Date: 2014-10-13 09:11:02\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -17062,20 +17062,20 @@ msgstr "Assign Users To Group"
 # TRANSLATION
 # LABEL/ID_CREATE_AUTH_SOURCE
 #: LABEL/ID_CREATE_AUTH_SOURCE
-msgid "Create Auth Source"
-msgstr "Create Auth Source"
+msgid "Create Authentication Source"
+msgstr "Create Authentication Source"
 
 # TRANSLATION
 # LABEL/ID_UPDATE_AUTH_SOURCE
 #: LABEL/ID_UPDATE_AUTH_SOURCE
-msgid "Update Auth Source"
-msgstr "Update Auth Source"
+msgid "Update Authentication Source"
+msgstr "Update Authentication Source"
 
 # TRANSLATION
 # LABEL/ID_DELETE_AUTH_SOURCE
 #: LABEL/ID_DELETE_AUTH_SOURCE
-msgid "Delete Auth Source"
-msgstr "Delete Auth Source"
+msgid "Delete Authentication Source"
+msgstr "Delete Authentication Source"
 
 # TRANSLATION
 # LABEL/ID_UPDATE_ROLE
@@ -17394,6 +17394,36 @@ msgstr "Disable Audit Log"
 #: LABEL/ID_REMOVE_PLUGIN
 msgid "Remove Plugin"
 msgstr "Remove Plugin"
+
+# TRANSLATION
+# LABEL/ID_CREATE_ROLE
+#: LABEL/ID_CREATE_ROLE
+msgid "[LABEL/ID_CREATE_ROLE] Create New Role"
+msgstr "Create New Role"
+
+# TRANSLATION
+# LABEL/ID_CREATE_GROUP
+#: LABEL/ID_CREATE_GROUP
+msgid "[LABEL/ID_CREATE_GROUP] Create New Group"
+msgstr "Create New Group"
+
+# TRANSLATION
+# LABEL/ID_DELETE_GROUP
+#: LABEL/ID_DELETE_GROUP
+msgid "Remove Group"
+msgstr "Remove Group"
+
+# TRANSLATION
+# LABEL/ID_DISABLE_PLUGIN
+#: LABEL/ID_DISABLE_PLUGIN
+msgid "Disable Plugin"
+msgstr "Disable Plugin"
+
+# TRANSLATION
+# LABEL/ID_ENABLE_PLUGIN
+#: LABEL/ID_ENABLE_PLUGIN
+msgid "Enable Plugin"
+msgstr "Enable Plugin"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
