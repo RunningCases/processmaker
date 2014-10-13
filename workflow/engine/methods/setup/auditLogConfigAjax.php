@@ -6,7 +6,7 @@ switch ($_GET['action']) {
         try {
             G::LoadClass( 'serverConfiguration' );
             $oServerConf = & serverConf::getSingleton();
-
+            $response = new $oServerConf;
             /*you can use SYS_TEMP or SYS_SYS ON AUDIT_LOG_CONF to save for each workspace*/
             $oServerConf->unsetAuditLogProperty( 'AL_TYPE', SYS_SYS );
             if (isset( $_POST['acceptAL'] )) {
