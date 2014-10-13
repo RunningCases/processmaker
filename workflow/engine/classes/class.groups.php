@@ -122,7 +122,7 @@ class Groups
                 $oUsr = new Users();
                 $usrName = $oUsr->load($UsrUid);
                 
-                G::auditLog("AssignUsersToGroup", "Assign user ". $usrName['USR_USERNAME'] ." (".$UsrUid.") to group ".$grpName['CON_VALUE']." (".$GrpUid.") ");
+                G::auditLog("AssignUserToGroup", "Assign user ". $usrName['USR_USERNAME'] ." (".$UsrUid.") to group ".$grpName['CON_VALUE']." (".$GrpUid.") ");
             }
         } catch (exception $oError) {
             throw ($oError);

@@ -517,7 +517,7 @@ class Roles extends BaseRoles {
         $rol = $this->load($aData['ROL_UID']);
         $oUsersRbac = new RbacUsers();
         $user = $oUsersRbac->load($aData['USR_UID']);
-        G::auditLog("AssignUsersToRole", "Assign user ".$user['USR_USERNAME']." (".$aData['USR_UID'].") to Role ".$rol['ROL_NAME']." (".$aData['ROL_UID'].") ");
+        G::auditLog("AssignUserToRole", "Assign user ".$user['USR_USERNAME']." (".$aData['USR_UID'].") to Role ".$rol['ROL_NAME']." (".$aData['ROL_UID'].") ");
     }
 
     function deleteUserRole($ROL_UID, $USR_UID) {
@@ -532,7 +532,7 @@ class Roles extends BaseRoles {
         $oUsersRbac = new RbacUsers();
         $user = $oUsersRbac->load($USR_UID);
         
-        G::auditLog("DeleteUsersToRole", "Delete user ".$user['USR_USERNAME']." (".$USR_UID.") to Role ".$rol['ROL_NAME']." (".$ROL_UID.") ");
+        G::auditLog("DeleteUserToRole", "Delete user ".$user['USR_USERNAME']." (".$USR_UID.") to Role ".$rol['ROL_NAME']." (".$ROL_UID.") ");
     }
 
     function getRolePermissions($ROL_UID, $filter='', $status=null) {
