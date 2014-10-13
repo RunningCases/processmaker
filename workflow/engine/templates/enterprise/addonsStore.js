@@ -1709,7 +1709,7 @@ Ext.onReady(function() {
                 title:  _('ID_ENTERPRISE_PLUGINS'),
                 items : addonsGrid
             },{
-                title:  _('ID_ENTERPRISE_FIXTURES'),
+                title:  _('ID_ENTERPRISE_FEATURES'),
                 items : addonsFeatureGrid
             }
         ]
