@@ -261,7 +261,7 @@ class RbacUsers extends BaseRbacUsers
         $oCriteria->addSelectColumn('COUNT(*) AS CNT');
         $oCriteria->add(RbacUsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
         $oCriteria->addGroupByColumn(RbacUsersPeer::UID_AUTH_SOURCE);
-        $oDataset = RbacUsersPeer::doSelect($oCriteria, Propel::getDbConnection('rbac_ro'));
+        $oDataset = RbacUsersPeer::doSelectRS($oCriteria, Propel::getDbConnection('rbac_ro'));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
         $aAuth = Array();
@@ -287,7 +287,7 @@ class RbacUsers extends BaseRbacUsers
             $oCriteria->add(RbacUsersPeer::UID_AUTH_SOURCE, $auth_source, Criteria::EQUAL);
         }
         $oCriteria->add(RbacUsersPeer::USR_STATUS, 0, Criteria::NOT_EQUAL);
-        $oDataset = RbacUsersPeer::doSelect($oCriteria, Propel::getDbConnection('rbac_ro'));
+        $oDataset = RbacUsersPeer::doSelectRS($oCriteria, Propel::getDbConnection('rbac_ro'));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $aUsers = array();
         while ($oDataset->next()) {
