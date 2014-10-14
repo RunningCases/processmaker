@@ -5,13 +5,13 @@
   <subtitle1 type="subtitle">
     <en><![CDATA[Properties]]></en>
   </subtitle1>
-  <TASKS type="dropdown" defaultvalue="" dependentfields="DYNAFORM" mode="edit" options="Array"><![CDATA[
+  <TASKS type="dropdown" required="1" defaultvalue="" dependentfields="DYNAFORM" mode="edit" options="Array"><![CDATA[
   SELECT TASK.TAS_UID AS TUID, CONTENT.CON_VALUE AS TVALUE FROM TASK
   LEFT JOIN PROCESS ON (PROCESS.PRO_UID=TASK.PRO_UID)
   LEFT JOIN CONTENT ON (TASK.TAS_UID=CONTENT.CON_ID AND CONTENT.CON_CATEGORY='TAS_TITLE' AND CONTENT.CON_LANG='@#LANG')
   WHERE TASK.PRO_UID=@@PRO_UID AND TASK.TAS_START='TRUE' ORDER BY CONTENT.CON_VALUE
   ]]><en><![CDATA[Initial Task]]></en></TASKS>
-  <DYNAFORM type="dropdown" defaultvalue="" mode="edit" options="Array"><![CDATA[
+  <DYNAFORM type="dropdown" required="1" defaultvalue="" mode="edit" options="Array"><![CDATA[
   SELECT DYNAFORM.DYN_UID, CONTENT.CON_VALUE FROM DYNAFORM
   LEFT JOIN PROCESS ON (PROCESS.PRO_UID=DYNAFORM.PRO_UID)
   LEFT JOIN CONTENT ON (DYNAFORM.DYN_UID=CONTENT.CON_ID AND CONTENT.CON_CATEGORY='DYN_TITLE' AND CONTENT.CON_LANG='@#LANG')
