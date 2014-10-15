@@ -216,7 +216,7 @@ function getAllUsersArray ($action)
         }
 
         $cUsers->addAscendingOrderByColumn( AppCacheViewPeer::APP_CURRENT_USER );
-        $oDataset = AppCacheViewPeer::doSelectRS( $cUsers );
+        $oDataset = AppCacheViewPeer::doSelectRS( $cUsers , Propel::getDbConnection('workflow_ro') );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $oDataset->next();
         while ($aRow = $oDataset->getRow()) {
@@ -282,7 +282,7 @@ function getStatusArray ($action, $userUid)
         $cStatus->clearSelectColumns();
         $cStatus->setDistinct();
         $cStatus->addSelectColumn( AppCacheViewPeer::APP_STATUS );
-        $oDataset = AppCacheViewPeer::doSelectRS( $cStatus );
+        $oDataset = AppCacheViewPeer::doSelectRS( $cStatus, Propel::getDbConnection('workflow_ro') );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $oDataset->next();
         while ($aRow = $oDataset->getRow()) {

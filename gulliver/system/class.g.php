@@ -1403,7 +1403,7 @@ class G
      *
      * @return string $ret
      */
-    public function getformatedDate ($date, $format = 'yyyy-mm-dd', $lang = '')
+    public static function getformatedDate ($date, $format = 'yyyy-mm-dd', $lang = '')
     {
         /**
          * ******************************************************************************************************
@@ -1528,7 +1528,7 @@ class G
      * @author Erik Amaru Ortiz <erik@colosa.com>
      * @name complete_field($string, $lenght, $type={1:number/2:string/3:float})
      */
-    public function complete_field ($campo, $long, $tipo)
+    public static function complete_field ($campo, $long, $tipo)
     {
         $campo = trim( $campo );
         switch ($tipo) {
@@ -2296,7 +2296,7 @@ class G
      * @param string $sText
      * @return string strtolower($sText)
      */
-    public function toLower ($sText)
+    public static function toLower ($sText)
     {
         return strtolower( $sText );
     }
@@ -5260,12 +5260,12 @@ class G
      * @param type $pathData
      * @param type $file
      */
-    public function log($message, $pathData = PATH_DATA, $file = 'cron.log')
+    public static function log($message, $pathData = PATH_DATA, $file = 'cron.log')
     {
         $config = System::getSystemConfiguration();
         G::LoadSystem('logger');
 
-        $oLogger =& Logger::getSingleton($pathData, PATH_SEP, $file);
+        $oLogger = Logger::getSingleton($pathData, PATH_SEP, $file);
         $oLogger->limitFile = $config['number_log_file'];
         $oLogger->limitSize = $config['size_log_file'];
         $oLogger->write($message);
@@ -5279,7 +5279,7 @@ class G
         $sflagAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', SYS_SYS );
         $ipClient = G::getIpAddress();
 
-        $licensedFeatures = & PMLicensedFeatures::getSingleton();
+        $licensedFeatures = PMLicensedFeatures::getSingleton();
         if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
             $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
             $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User';

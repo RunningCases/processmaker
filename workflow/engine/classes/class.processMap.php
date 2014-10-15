@@ -110,7 +110,7 @@ class processMap
             $aConditions[] = array(0 => ContentPeer::CON_LANG, 1 => DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter() );
             $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
             $oCriteria->add(TaskPeer::PRO_UID, $sProcessUID);
-            $oDataset = TaskPeer::doSelectRS($oCriteria);
+            $oDataset = TaskPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
 
@@ -140,7 +140,7 @@ class processMap
                     $tasTitleConds[] = array('C1.CON_LANG', $del . SYS_LANG . $del);
                     $oCriteria->addJoinMC($tasTitleConds, Criteria::LEFT_JOIN);
 
-                    $oDatasetX = SubProcessPeer::doSelectRS($oCriteria);
+                    $oDatasetX = SubProcessPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
                     $oDatasetX->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                     $oDatasetX->next();
                     $aRowx = $oDatasetX->getRow();
@@ -162,7 +162,7 @@ class processMap
                 $oCriteria = new Criteria('workflow');
                 $oCriteria->add(RoutePeer::PRO_UID, $sProcessUID);
                 $oCriteria->add(RoutePeer::TAS_UID, $aRow1['TAS_UID']);
-                $oDataset2 = RoutePeer::doSelectRS($oCriteria);
+                $oDataset2 = RoutePeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
                 $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $oDataset2->next();
                 while ($aRow2 = $oDataset2->getRow()) {
@@ -205,7 +205,7 @@ class processMap
                     $oCriteria->addSelectColumn('MIN(DEL_FINISH_DATE) AS FINISH');
                     $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
                     $oCriteria->add(AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
-                    $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria);
+                    $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
                     $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow2 = $oDataset2->getRow();
@@ -214,7 +214,7 @@ class processMap
                     $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
                     $oCriteria->add(AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
                     $oCriteria->add(AppDelegationPeer::DEL_FINISH_DATE, null);
-                    $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria);
+                    $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
                     $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                     $oDataset2->next();
                     $aRow3 = $oDataset2->getRow();
@@ -266,7 +266,7 @@ class processMap
                         $oCriteria->addSelectColumn('MIN(DEL_FINISH_DATE) AS FINISH');
                         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
                         $oCriteria->add(AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
-                        $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria);
+                        $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
                         $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                         $oDataset2->next();
                         $aRow2 = $oDataset2->getRow();
@@ -275,7 +275,7 @@ class processMap
                         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
                         $oCriteria->add(AppDelegationPeer::TAS_UID, $aRow1['TAS_UID']);
                         $oCriteria->add(AppDelegationPeer::DEL_FINISH_DATE, null);
-                        $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria);
+                        $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
                         $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                         $oDataset2->next();
                         $aRow3 = $oDataset2->getRow();
@@ -391,7 +391,7 @@ class processMap
             $aConditions[] = array(0 => ContentPeer::CON_LANG, 1 => DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter() );
             $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
             $oCriteria->add(SwimlanesElementsPeer::PRO_UID, $sProcessUID);
-            $oDataset = SwimlanesElementsPeer::doSelectRS($oCriteria);
+            $oDataset = SwimlanesElementsPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
@@ -804,7 +804,7 @@ class processMap
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(StepPeer::TAS_UID, $sTaskUID);
             $oCriteria->addAscendingOrderByColumn(StepPeer::STEP_POSITION);
-            $oDataset = StepPeer::doSelectRS($oCriteria);
+            $oDataset = StepPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
@@ -945,7 +945,7 @@ class processMap
             $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(DynaformPeer::DYN_UID, $sUIDs, Criteria::NOT_IN);
             $oCriteria->add(DynaformPeer::DYN_TYPE, 'xmlform');
-            $oDataset = DynaformPeer::doSelectRS($oCriteria);
+            $oDataset = DynaformPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $i = 0;
@@ -973,7 +973,7 @@ class processMap
             $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
             $oCriteria->add(InputDocumentPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(InputDocumentPeer::INP_DOC_UID, $sUIDs, Criteria::NOT_IN);
-            $oDataset = InputDocumentPeer::doSelectRS($oCriteria);
+            $oDataset = InputDocumentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
@@ -996,7 +996,7 @@ class processMap
             $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
             $oCriteria->add(OutputDocumentPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(OutputDocumentPeer::OUT_DOC_UID, $sUIDs, Criteria::NOT_IN);
-            $oDataset = OutputDocumentPeer::doSelectRS($oCriteria);
+            $oDataset = OutputDocumentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
@@ -1156,7 +1156,7 @@ class processMap
             $oCriteria->add(TaskUserPeer::TAS_UID, $sTaskUID);
             $oCriteria->add(TaskUserPeer::TU_TYPE, $iType);
             $oCriteria->add(TaskUserPeer::TU_RELATION, 2);
-            $oDataset = TaskUserPeer::doSelectRS($oCriteria);
+            $oDataset = TaskUserPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $c = 0;
@@ -1190,7 +1190,7 @@ class processMap
             $oCriteria->add(TaskUserPeer::TAS_UID, $sTaskUID);
             $oCriteria->add(TaskUserPeer::TU_TYPE, $iType);
             $oCriteria->add(TaskUserPeer::TU_RELATION, 1);
-            $oDataset = TaskUserPeer::doSelectRS($oCriteria);
+            $oDataset = TaskUserPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
@@ -1918,7 +1918,7 @@ class processMap
         $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
         $oCriteria->addAscendingOrderByColumn('DYN_TITLE');
-        $oDataset = DynaformPeer::doSelectRS($oCriteria);
+        $oDataset = DynaformPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
         $dynaformArray = array();
@@ -1968,7 +1968,7 @@ class processMap
         $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
 
-        $oDataset = DynaformPeer::doSelectRS($oCriteria);
+        $oDataset = DynaformPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
         $dynaformArray = array();
@@ -2038,7 +2038,7 @@ class processMap
         $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(OutputDocumentPeer::PRO_UID, $sProcessUID);
 
-        $oDataset = OutputDocumentPeer::doSelectRS($oCriteria);
+        $oDataset = OutputDocumentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
         $outputDocArray = array();
@@ -2114,7 +2114,7 @@ class processMap
         $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(InputDocumentPeer::PRO_UID, $sProcessUID);
 
-        $oDataset = InputDocumentPeer::doSelectRS($oCriteria);
+        $oDataset = InputDocumentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro') );
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
         $inputDocArray = "";

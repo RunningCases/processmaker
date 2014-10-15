@@ -212,7 +212,7 @@ class Users extends BaseUsers
     public function loadByUsernameInArray ($sUsername)
     {
         $c = $this->loadByUsername( $sUsername );
-        $rs = UsersPeer::doSelectRS( $c );
+        $rs = UsersPeer::doSelectRS( $c, Propel::getDbConnection('workflow_ro') );
         $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $rs->next();
         $row = $rs->getRow();

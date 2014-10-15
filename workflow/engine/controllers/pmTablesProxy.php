@@ -53,9 +53,19 @@ class pmTablesProxy extends HttpProxyController
             }
             $addTables['count'] += count( $reportTablesOldList );
 
-            foreach ($reportTablesOldList as $i => $oldRepTab) {
-                $addTables['rows'][] = array ('ADD_TAB_UID' => $oldRepTab['REP_TAB_UID'],'PRO_UID' => $oldRepTab['PRO_UID'],'DBS_UID' => ($oldRepTab['REP_TAB_CONNECTION'] == 'wf' ? 'workflow' : 'rp'),'ADD_TAB_DESCRIPTION' => $oldRepTab['REP_TAB_TITLE'],'ADD_TAB_NAME' => $oldRepTab['REP_TAB_NAME'],'ADD_TAB_TYPE' => $oldRepTab['REP_TAB_TYPE'],'TYPE' => 'CLASSIC' );
-            }
+        	if(($start+$limit) > $addTables['count']){
+				foreach ($reportTablesOldList as $i => $oldRepTab) {
+					if($filter != ''){
+						$oldTableName = strtolower($oldRepTab['REP_TAB_NAME']);
+						$oldTableDesc = strtolower($oldRepTab['REP_TAB_TITLE']);
+						if((strpos($oldTableName, $filter) !== false) || (strpos($oldTableDesc, $filter) !== false)){
+							$addTables['rows'][] = array ('ADD_TAB_UID' => $oldRepTab['REP_TAB_UID'],'PRO_UID' => $oldRepTab['PRO_UID'],'DBS_UID' => ($oldRepTab['REP_TAB_CONNECTION'] == 'wf' ? 'workflow' : 'rp'),'ADD_TAB_DESCRIPTION' => $oldRepTab['REP_TAB_TITLE'],'ADD_TAB_NAME' => $oldRepTab['REP_TAB_NAME'],'ADD_TAB_TYPE' => $oldRepTab['REP_TAB_TYPE'],'TYPE' => 'CLASSIC' );
+						}
+					} else {
+						$addTables['rows'][] = array ('ADD_TAB_UID' => $oldRepTab['REP_TAB_UID'],'PRO_UID' => $oldRepTab['PRO_UID'],'DBS_UID' => ($oldRepTab['REP_TAB_CONNECTION'] == 'wf' ? 'workflow' : 'rp'),'ADD_TAB_DESCRIPTION' => $oldRepTab['REP_TAB_TITLE'],'ADD_TAB_NAME' => $oldRepTab['REP_TAB_NAME'],'ADD_TAB_TYPE' => $oldRepTab['REP_TAB_TYPE'],'TYPE' => 'CLASSIC' );
+					}
+				}
+			}
         } else {
             $addTables = AdditionalTables::getAll( $start, $limit, $filter );
         }

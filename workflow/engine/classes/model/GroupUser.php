@@ -98,7 +98,7 @@ class GroupUser extends BaseGroupUser
                 $oUsr = new Users();
                 $usrName = $oUsr->load($sUserUid);
                 
-                G::auditLog("AssignUsersToGroup", "Remove user: ".$usrName['USR_USERNAME'] ." (".$sUserUid.") from group ".$grpName['CON_VALUE']." (".$sGrpUid.") ");
+                G::auditLog("AssignUserToGroup", "Remove user: ".$usrName['USR_USERNAME'] ." (".$sUserUid.") from group ".$grpName['CON_VALUE']." (".$sGrpUid.") ");
 
                 return $iResult;
             } else {

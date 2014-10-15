@@ -369,8 +369,10 @@ class Department extends BaseDepartment
         
         if ($managerId) {
             $user = $oUser->loadDetailed ($managerId);
-            $dptoTitle = $oDept->Load($depId);
-            G::auditLog("AssignManagerToDepartament", "Assign Manager ".$user['USR_USERNAME']." (".$managerId.") to ".$dptoTitle['DEPO_TITLE']." (".$depId.") ");
+            if (is_object( $oDept ) && get_class( $oDept ) == 'Department') {
+                $dptoTitle = $oDept->Load($depId);
+                G::auditLog("AssignManagerToDepartament", "Assign Manager ".$user['USR_USERNAME']." (".$managerId.") to ".$dptoTitle['DEPO_TITLE']." (".$depId.") ");
+            }
         }
         // get children departments to update the reportsTo of these children
         $childrenCriteria = new Criteria( 'workflow' );
@@ -402,7 +404,7 @@ class Department extends BaseDepartment
             if (is_object( $oUser ) && get_class( $oUser ) == 'Users') {
                 $oUser->setDepUid( $depId );
                 $oUser->save();
-                G::auditLog("AssignUsersToDepartament", "Assign user ".$user['USR_USERNAME']." (".$userId.") to departament ".$dptoTitle['DEPO_TITLE']." (".$depId.") ");
+                G::auditLog("AssignUserToDepartament", "Assign user ".$user['USR_USERNAME']." (".$userId.") to departament ".$dptoTitle['DEPO_TITLE']." (".$depId.") ");
             }
 
             //if the user is a manager update Department Table
