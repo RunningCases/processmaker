@@ -414,39 +414,19 @@ class pmTablesProxy extends HttpProxyController
                     }
                 }
 
-            $index = array_search($row->id, $tableCasesList);
-            if ($index != null) {
-                global $action;
-                global $conf;
-                global $confCasesList;
-                switch ($index) {
-                case 'draft':
-                    $confCasesList = $confCasesListDraft;
-                    break;
-                case 'paused':
-                    $confCasesList = $confCasesListPaused;
-                    break;
-                case 'sent':
-                    $confCasesList = $confCasesListSent;
-                    break;
-                case 'todo':
-                    $confCasesList = $confCasesListTodo;
-                    break;
-                case 'unassigned':
-                    $confCasesList = $confCasesListUnassigned;
-                    break;
+                foreach ($tableCasesList as $action => $idTable) {
+                    if ($idTable == $row->id) {
+                        $arrayField  = $this->getDefaultFields($action, 0);
+                        $arrayConfig = $this->getDefaultConfig($action, 0);
+
+                        $resultJson = $this->genericJsonResponse("", array(), $arrayField, $arrayConfig["rowsperpage"], $arrayConfig["dateformat"]);
+
+                        $conf = new Configurations();
+                        $conf->saveObject($resultJson, "casesList", $action, "", "", "");
+                    }
                 }
-                $action = $index;
 
-                $arrayField  = $this->getDefaultFields($action, 0);
-                $arrayConfig = $this->getDefaultConfig($action, 0);
-
-                $result = $this->genericJsonResponse("", array(), $arrayField, $arrayConfig["rowsperpage"], $arrayConfig["dateformat"]);
-
-                $conf = new Configurations();
-                $conf->saveObject($result, "casesList", $action, "", "", "");
-            }
-            if ($row->type == 'CLASSIC') {
+                if ($row->type == 'CLASSIC') {
                     G::LoadClass( 'reportTables' );
                     $rp = new reportTables();
                     $rp->deleteReportTable( $row->id );

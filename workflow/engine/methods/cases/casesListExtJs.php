@@ -23,8 +23,9 @@ $conf = new Configurations();
 try {
     // the setup for search is the same as the Sent (participated)
     $confCasesList = $conf->getConfiguration( 'casesList', ($action == 'search' || $action == 'simple_search') ? 'search' : $action );
-    $table = AdditionalTables::load($confCasesList['PMTable']);
-    $confCasesList = ($table != null) ? $table : array ();
+    $aditionalTable = new AdditionalTables();
+    $table = $aditionalTable->load($confCasesList['PMTable']);
+    $confCasesList = ($table != null) ? $confCasesList : array ();
     $generalConfCasesList = $conf->getConfiguration( 'ENVIRONMENT_SETTINGS', '' );
 } catch (Exception $e) {
     $confCasesList = array ();
