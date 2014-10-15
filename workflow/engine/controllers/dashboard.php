@@ -465,7 +465,8 @@ class Dashboard extends Controller
     public function verifyTitleDashlet ($data)
     {
         $this->setResponseType("json");
-        
+
+        $response = new stdclass();
         $response->message = "OK";
         $criteria = new Criteria("workflow");
 
