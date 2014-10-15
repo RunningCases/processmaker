@@ -890,7 +890,7 @@ class AppCacheView extends BaseAppCacheView
             return $oCriteria;
         } else {
             //This list do not have a PMTable
-            if (is_array($this->confCasesList) && count($this->confCasesList["second"]["data"]) > 0) {
+            if (is_array($this->confCasesList) && isset($this->confCasesList["second"]) && count($this->confCasesList["second"]["data"]) > 0) {
                 foreach ($this->confCasesList["second"]["data"] as $fieldData) {
                     if (in_array($fieldData["name"], $defaultFields)) {
                         switch ($fieldData["fieldType"]) {
