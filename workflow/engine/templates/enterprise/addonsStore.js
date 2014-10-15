@@ -1008,9 +1008,8 @@ Ext.onReady(function() {
 
   var pnlSetup = new Ext.FormPanel({
       frame: true,
-      title: _('ID_SETUP_WEBSERVICES'),
       height: 178,
-      //bodyStyle: "padding: 5px 5px 5px 5px;",
+      bodyStyle: "padding: 5px 5px 5px 5px;",
       disabled: !licensed,
 
       items: [
@@ -1054,12 +1053,8 @@ Ext.onReady(function() {
 
   var licensePanel = new Ext.FormPanel( {
     frame: true,
-    title: _('ID_YOUR_LICENSE'),
     labelWidth: 130,
     labelAlign: "right",
-    //width : '50%',
-    anchor: "right 50%",
-    //bodyStyle: "padding: 5px 5px 5px 5px;",
     defaultType: "displayfield",
     autoHeight: true,
 
@@ -1513,12 +1508,15 @@ Ext.onReady(function() {
     });
 
     // create the Grid Features
-    var addonsFeatureGrid = new Ext.grid.GridPanel({
-        store: addonsFeaturesStore,
-        colspan: 2,
-        flex: 1,
-        padding: 5,
-        disabled: !licensed,
+    var cmodel = new Ext.grid.ColumnModel({
+        viewConfig: {
+            forceFit:true,
+            cls:"x-grid-empty",
+            emptyText: _('ID_NO_RECORDS_FOUND')
+        },
+        defaults: {
+            width: 50
+        },
         columns: [
             {
                 id       : 'icon-column-feature',
@@ -1533,7 +1531,7 @@ Ext.onReady(function() {
             {
                 id       :'nick-column-feature',
                 header   : _('ID_NAME'),
-                width    : 300,
+                width    : 150,
                 sortable : true,
                 dataIndex: 'nick',
                 renderer: function (val, metadata, record, rowIndex, colIndex, store) {
@@ -1549,7 +1547,7 @@ Ext.onReady(function() {
             {
                 id       :'description-column-feature',
                 header   : _('ID_DESCRIPTION'),
-                width    : 400,
+                width    : 200,
                 dataIndex: 'description'
             },
             {
@@ -1569,7 +1567,7 @@ Ext.onReady(function() {
             {
                 id       : "status-feature",
                 header   : _('ID_STATUS'),
-                width    : 120,
+                width    : 60,
                 sortable : false,
                 hideable : false,
                 dataIndex: "status",
@@ -1614,10 +1612,27 @@ Ext.onReady(function() {
                     return (str);
                 }
             }
-        ],
-        stripeRows: true,
+        ]
+    });
+
+    var addonsFeatureGrid = new Ext.grid.EditorGridPanel({
+        region: 'center',
+        layout: 'fit',
+        id: 'addonsFeatureGrid',
         autoHeight : true,
-        stateId: "grid",
+        autoWidth : true,
+        stateful : true,
+        stateId : 'addonsFeatureGrid',
+        enableColumnResize: true,
+        enableHdMenu: true,
+        frame:false,
+        columnLines: false,
+        viewConfig: {
+            forceFit:true
+        },
+        disabled: !licensed,
+        store: addonsFeaturesStore,
+        cm: cmodel,
         tbar:
         [
             {
@@ -1642,6 +1657,9 @@ Ext.onReady(function() {
             }
         ],
         listeners: {
+            render: function(){
+                this.loadMask = new Ext.LoadMask(this.body, {msg:_('ID_LOADING_GRID')});
+            },
             "cellclick": function (grid, rowIndex, columnIndex, e) {
                 var record = grid.getStore().getAt(rowIndex);
                 var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
@@ -1700,10 +1718,7 @@ Ext.onReady(function() {
 
     var tabEnterprise = new Ext.TabPanel({
         activeTab: 0,
-        //width:600,
-        anchor: '100%',
         height: 370,
-        plain:true,
         defaults:{autoScroll: true},
         items:[{
                 title:  _('ID_ENTERPRISE_PLUGINS'),
@@ -1714,28 +1729,28 @@ Ext.onReady(function() {
             }
         ]
     });
+    var tabSetup= new Ext.TabPanel({
+        activeTab: 0,
+        height: 190,
+        defaults:{autoScroll: true},
+        items:[{
+                title:  _('ID_YOUR_LICENSE'),
+                items : licensePanel
+            },{
+                title:  _('ID_SETUP_WEBSERVICES'),
+                items : pnlSetup
+            }
+        ]
+    });
 
 
     var fullBox = new Ext.Panel({
         id:'main-panel-vbox',
-        baseCls:'x-plain',
-        anchor: "right 100%",
-        layout:'vbox',
-        //padding: 10,
-        //defaultMargins: "5",
-        layoutConfig: {
-            align : 'stretch',
-            pack  : 'start'
-        },
-
-        defaults: {
-            frame:true
-        },
-        //items:[topBox, addonsGrid]
-        items:[topBox, tabEnterprise]
+        region:'west',
+        margins:'5 0 5 5',
+        items:[ tabSetup, tabEnterprise]
     });
 
-  ///////
   addonsGrid.on("rowcontextmenu",
     function (grid, rowIndex, evt) {
       var sm = grid.getSelectionModel();
