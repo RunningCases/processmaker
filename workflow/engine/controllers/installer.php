@@ -887,7 +887,11 @@ class Installer extends Controller
             );
 
             // inserting the outh_client
-            $query = sprintf( "USE %s;", $wf );
+            if (!$userLogged) {
+                $query = sprintf( "USE %s;", $wf );
+            } else {
+                $query = sprintf( "USE %s;", trim( $_REQUEST['wfDatabase']) );
+            }
             $this->mysqlQuery( $query );
             $query = ( "INSERT INTO OAUTH_CLIENTS (CLIENT_ID,CLIENT_SECRET,CLIENT_NAME,CLIENT_DESCRIPTION,CLIENT_WEBSITE,REDIRECT_URI,USR_UID ) VALUES
                 ('x-pm-local-client','179ad45c6ce2cb97cf1029e212046e81','PM Web Designer','ProcessMaker Web Designer App','www.processmaker.com','" . $endpoint . "','00000000000000000000000000000001' )");
