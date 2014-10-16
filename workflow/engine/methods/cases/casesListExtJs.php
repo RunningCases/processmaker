@@ -23,9 +23,14 @@ $conf = new Configurations();
 try {
     // the setup for search is the same as the Sent (participated)
     $confCasesList = $conf->getConfiguration( 'casesList', ($action == 'search' || $action == 'simple_search') ? 'search' : $action );
-    $aditionalTable = new AdditionalTables();
-    $table = $aditionalTable->load($confCasesList['PMTable']);
+
+    $table = null;
+    if (isset($confCasesList['PMTable'])) {
+        $aditionalTable = new AdditionalTables();
+        $table = $aditionalTable->load($confCasesList['PMTable']);
+    }
     $confCasesList = ($table != null) ? $confCasesList : array ();
+
     $generalConfCasesList = $conf->getConfiguration( 'ENVIRONMENT_SETTINGS', '' );
 } catch (Exception $e) {
     $confCasesList = array ();
@@ -372,7 +377,7 @@ function getAdditionalFields($action, $confCasesList = array())
     $config = new Configurations();
     $arrayConfig = $config->casesListDefaultFieldsAndConfig($action);
 
-    if (is_array($confCasesList) && count($confCasesList) > 0 && count($confCasesList["second"]["data"]) > 0) {
+    if (is_array($confCasesList) && count($confCasesList) > 0 && isset($confCasesList["second"]) && count($confCasesList["second"]["data"]) > 0) {
         //For the case list builder in the enterprise plugin
         $caseColumns = array();
         $caseReaderFields = array();
