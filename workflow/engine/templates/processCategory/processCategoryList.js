@@ -124,7 +124,7 @@ Ext.onReady(function(){
     url: 'processCategory_Ajax?action=saveNewCategory',
     frame: true,
     items:[
-           {xtype: 'textfield', fieldLabel: _('ID_CATEGORY_NAME'), name: 'category', width: 250, allowBlank: false}
+           {xtype: 'textfield', fieldLabel: _('ID_CATEGORY_NAME'), name: 'category', width: 250, maxLength :100, allowBlank: false}
            ],
            buttons: [
                      {text: _('ID_SAVE'), handler: SaveNewCategory},
@@ -138,7 +138,7 @@ Ext.onReady(function(){
     frame: true,
     items:[
            {xtype: 'textfield', name: 'cat_uid', hidden: true },
-           {xtype: 'textfield', fieldLabel: _('ID_CATEGORY_NAME'), name: 'category', width: 250, allowBlank: false}
+           {xtype: 'textfield', fieldLabel: _('ID_CATEGORY_NAME'), name: 'category', width: 250, maxLength :100, allowBlank: false}
            ],
            buttons: [
                      {text: _('ID_SAVE'), handler: UpdateCategory},
