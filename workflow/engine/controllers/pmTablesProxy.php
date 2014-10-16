@@ -42,7 +42,7 @@ class pmTablesProxy extends HttpProxyController
         if ($pro_uid !== null) {
             $process = $pro_uid == '' ? array ('not_equal' => $pro_uid
             ) : array ('equal' => $pro_uid);
-            $addTables = AdditionalTables::getAll( $start, $limit, $filter, $process );
+            $addTables = AdditionalTables::getAll( false, false, $filter, $process );
 
             $c = $processMap->getReportTablesCriteria( $pro_uid );
             $oDataset = RoutePeer::doSelectRS( $c );
