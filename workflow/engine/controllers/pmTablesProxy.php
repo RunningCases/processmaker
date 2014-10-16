@@ -42,7 +42,7 @@ class pmTablesProxy extends HttpProxyController
         if ($pro_uid !== null) {
             $process = $pro_uid == '' ? array ('not_equal' => $pro_uid
             ) : array ('equal' => $pro_uid);
-            $addTables = AdditionalTables::getAll( $start, $limit, $filter, $process );
+            $addTables = AdditionalTables::getAll( false, false, $filter, $process );
 
             $c = $processMap->getReportTablesCriteria( $pro_uid );
             $oDataset = RoutePeer::doSelectRS( $c );
@@ -51,21 +51,20 @@ class pmTablesProxy extends HttpProxyController
             while ($oDataset->next()) {
                 $reportTablesOldList[] = $oDataset->getRow();
             }
-            $addTables['count'] += count( $reportTablesOldList );
-
-        	if(($start+$limit) > $addTables['count']){
-				foreach ($reportTablesOldList as $i => $oldRepTab) {
-					if($filter != ''){
-						$oldTableName = strtolower($oldRepTab['REP_TAB_NAME']);
-						$oldTableDesc = strtolower($oldRepTab['REP_TAB_TITLE']);
-						if((strpos($oldTableName, $filter) !== false) || (strpos($oldTableDesc, $filter) !== false)){
-							$addTables['rows'][] = array ('ADD_TAB_UID' => $oldRepTab['REP_TAB_UID'],'PRO_UID' => $oldRepTab['PRO_UID'],'DBS_UID' => ($oldRepTab['REP_TAB_CONNECTION'] == 'wf' ? 'workflow' : 'rp'),'ADD_TAB_DESCRIPTION' => $oldRepTab['REP_TAB_TITLE'],'ADD_TAB_NAME' => $oldRepTab['REP_TAB_NAME'],'ADD_TAB_TYPE' => $oldRepTab['REP_TAB_TYPE'],'TYPE' => 'CLASSIC' );
-						}
-					} else {
-						$addTables['rows'][] = array ('ADD_TAB_UID' => $oldRepTab['REP_TAB_UID'],'PRO_UID' => $oldRepTab['PRO_UID'],'DBS_UID' => ($oldRepTab['REP_TAB_CONNECTION'] == 'wf' ? 'workflow' : 'rp'),'ADD_TAB_DESCRIPTION' => $oldRepTab['REP_TAB_TITLE'],'ADD_TAB_NAME' => $oldRepTab['REP_TAB_NAME'],'ADD_TAB_TYPE' => $oldRepTab['REP_TAB_TYPE'],'TYPE' => 'CLASSIC' );
-					}
-				}
-			}
+            foreach ($reportTablesOldList as $i => $oldRepTab) {
+            	if($filter != ''){
+            		if((stripos($oldRepTab['REP_TAB_NAME'], $filter) !== false) || (stripos($oldRepTab['REP_TAB_TITLE'], $filter) !== false)){
+            			$addTables['rows'][] = array ('ADD_TAB_UID' => $oldRepTab['REP_TAB_UID'],'PRO_UID' => $oldRepTab['PRO_UID'],'DBS_UID' => ($oldRepTab['REP_TAB_CONNECTION'] == 'wf' ? 'workflow' : 'rp'),'ADD_TAB_DESCRIPTION' => $oldRepTab['REP_TAB_TITLE'],'ADD_TAB_NAME' => $oldRepTab['REP_TAB_NAME'],'ADD_TAB_TYPE' => $oldRepTab['REP_TAB_TYPE'],'TYPE' => 'CLASSIC' );
+            		}
+            	} else {
+            		$addTables['rows'][] = array ('ADD_TAB_UID' => $oldRepTab['REP_TAB_UID'],'PRO_UID' => $oldRepTab['PRO_UID'],'DBS_UID' => ($oldRepTab['REP_TAB_CONNECTION'] == 'wf' ? 'workflow' : 'rp'),'ADD_TAB_DESCRIPTION' => $oldRepTab['REP_TAB_TITLE'],'ADD_TAB_NAME' => $oldRepTab['REP_TAB_NAME'],'ADD_TAB_TYPE' => $oldRepTab['REP_TAB_TYPE'],'TYPE' => 'CLASSIC' );
+            	}
+            }
+            $addTables['count'] = count($addTables['rows']);
+            if($start != 0){
+           	    $addTables['rows'] = array_splice($addTables['rows'], $start);
+            }
+            $addTables['rows'] = array_splice($addTables['rows'], 0, $limit);
         } else {
             $addTables = AdditionalTables::getAll( $start, $limit, $filter );
         }
