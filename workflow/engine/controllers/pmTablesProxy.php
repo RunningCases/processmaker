@@ -386,6 +386,19 @@ class pmTablesProxy extends HttpProxyController
         $count = 0;
         $result = new StdClass();
 
+        $tableCasesList = array();
+        $conf = new Configurations();
+        $confCasesListDraft = $conf->getConfiguration( 'casesList', 'draft');
+        $confCasesListPaused = $conf->getConfiguration( 'casesList', 'paused');
+        $confCasesListSent = $conf->getConfiguration( 'casesList', 'sent');
+        $confCasesListTodo = $conf->getConfiguration( 'casesList', 'todo');
+        $confCasesListUnassigned = $conf->getConfiguration( 'casesList', 'unassigned');
+        $tableCasesList['draft'] = ($confCasesListDraft != null) ? $confCasesListDraft['PMTable'] : '';
+        $tableCasesList['paused'] = ($confCasesListPaused != null) ? $confCasesListPaused['PMTable'] : '';
+        $tableCasesList['sent'] = ($confCasesListSent != null) ? $confCasesListSent['PMTable'] : '';
+        $tableCasesList['todo'] = ($confCasesListTodo != null) ? $confCasesListTodo['PMTable'] : '';
+        $tableCasesList['unassigned'] = ($confCasesListUnassigned != null) ? $confCasesListUnassigned['PMTable'] : '';
+
         foreach ($rows as $row) {
             try {
                 $at = new AdditionalTables();
@@ -397,6 +410,14 @@ class pmTablesProxy extends HttpProxyController
                     $existReportTableOld = $rtOld->load( $row->id );
                     if (count($existReportTableOld) == 0) {
                         throw new Exception( G::LoadTranslation('ID_TABLE_NOT_EXIST_SKIPPED') );
+                    }
+                }
+
+                foreach ($tableCasesList as $action => $idTable) {
+                    if ($idTable == $row->id) {
+                        $conf = new Configurations();
+                        $resultJson = $conf->casesListDefaultFieldsAndConfig($action);
+                        $conf->saveObject($resultJson, "casesList", $action, "", "", "");
                     }
                 }
 

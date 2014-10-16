@@ -675,7 +675,7 @@ try {
 
     switch ($xaction) {
         case "FIELD_SET":
-            if (isset($confCasesList['second']['data'])) {
+            if (is_array($confCasesList) && isset($confCasesList['second']['data'])) {
                 foreach ($confCasesList['second']['data'] as $key => $value) {
                     $confCasesList['second']['data'][$key]['align_label'] = $confCasesList['second']['data'][$key]['align'];
                 }
