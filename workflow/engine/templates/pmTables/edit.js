@@ -1008,7 +1008,7 @@ function editorFieldsEnableDisable(fieldTypeValue, fieldNull, fieldPrimaryKey, f
     var swI = 1;
 
     //Date
-    if (fieldTypeValue == "DATE" || fieldTypeValue == "DATETIME" || fieldTypeValue == "TIME") {
+    if (fieldTypeValue == "DATE" || fieldTypeValue == "DATETIME" || fieldTypeValue == "TIMESTAMP" || fieldTypeValue == "TIME") {
         swSize = 0; //Disable
         swPK = 0;
         swAI = 0;
