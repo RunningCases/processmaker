@@ -178,7 +178,7 @@ class adminProxy extends HttpProxyController
         $httpData=array_unique((array)$httpData);
         $message = '';
         $oldName = isset($_POST['oldName'])? $_POST['oldName']:'';
-
+        
         switch ($_POST['action']){
             case 'calendarName':
                 require_once ('classes/model/CalendarDefinition.php');
@@ -193,14 +193,10 @@ class adminProxy extends HttpProxyController
                         break;
                     }
                     if (isset($aDefinitions['CALENDAR_NAME'])) {
-                        if ($aDefinitions['CALENDAR_NAME'] != $_POST['name']) {
-                            $validated = true;
-                        } else {
-                            if ($aDefinitions['CALENDAR_NAME'] != $oldName) {
-                                $validated = false;
-                                $message  = G::loadTranslation('ID_CALENDAR_INVALID_NAME');
-                                break;
-                            }
+                        if ($aDefinitions['CALENDAR_NAME'] == $_POST['name']) {
+                            $validated = false;
+                            $message  = G::loadTranslation('ID_CALENDAR_INVALID_NAME');
+                            break;
                         }
                     }
                 }
