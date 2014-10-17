@@ -426,25 +426,27 @@ class AddonsStore extends BaseAddonsStore
             }
         } else {
             $list = unserialize($pmLicenseManagerO->licensedfeaturesList);
-            foreach ($list['addons'] as $key => $feature) {
-                $addon = new AddonsManager();
-                $addon->setAddonId($feature['name']);
-                $addon->setStoreId($feature['guid']);
-                $addon->setAddonName($feature['name']);
-                $addon->setAddonDescription($feature['description']);
-                $addon->setAddonNick($feature['nick']);
-                $addon->setAddonVersion("");
-                $addon->setAddonStatus($feature['status']);
-                $addon->setAddonType("features");
-                $addon->setAddonPublisher("Colosa");
-                $addon->setAddonDownloadUrl("");
-                $addon->setAddonDownloadMd5("");
-                $addon->setAddonReleaseDate(null);
-                $addon->setAddonReleaseType('localRegistry');
-                $addon->setAddonReleaseNotes("");
-                $addon->setAddonState("");
+            if (is_array($list)) {
+                foreach ($list['addons'] as $key => $feature) {
+                    $addon = new AddonsManager();
+                    $addon->setAddonId($feature['name']);
+                    $addon->setStoreId($feature['guid']);
+                    $addon->setAddonName($feature['name']);
+                    $addon->setAddonDescription($feature['description']);
+                    $addon->setAddonNick($feature['nick']);
+                    $addon->setAddonVersion("");
+                    $addon->setAddonStatus($feature['status']);
+                    $addon->setAddonType("features");
+                    $addon->setAddonPublisher("Colosa");
+                    $addon->setAddonDownloadUrl("");
+                    $addon->setAddonDownloadMd5("");
+                    $addon->setAddonReleaseDate(null);
+                    $addon->setAddonReleaseType('localRegistry');
+                    $addon->setAddonReleaseNotes("");
+                    $addon->setAddonState("");
 
-                $addon->save();
+                    $addon->save();
+                }
             }
         }
 
