@@ -122,6 +122,7 @@ class Installer extends Controller
         $info->multibyte = new stdclass();
         $info->soap = new stdclass();
         $info->ldap = new stdclass();
+        $info->mcrypt = new stdclass(); 
         $info->memory = new stdclass();
 
         $info->php->version = phpversion();
@@ -195,6 +196,10 @@ class Installer extends Controller
             $info->soap->result = true;
             $info->soap->version = G::LoadTranslation('ID_ENABLED');
         }
+
+        //mcrypt  info
+        $info->mcrypt->result = extension_loaded("mcrypt");
+        $info->mcrypt->version = ($info->mcrypt->result)? G::LoadTranslation("ID_ENABLED") : G::LoadTranslation("ID_NOT_ENABLED");
 
         // ldap info
         $info->ldap->result = false;

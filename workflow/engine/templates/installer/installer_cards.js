@@ -56,6 +56,7 @@ Ext.onReady(function(){
         Ext.getCmp('gd').setValue        (getFieldOutput(response.gd.version,       response.gd.result));
         Ext.getCmp('multibyte').setValue (getFieldOutput(response.multibyte.version,response.multibyte.result));
         Ext.getCmp('soap').setValue      (getFieldOutput(response.soap.version,     response.soap.result));
+        Ext.getCmp("mcrypt").setValue    (getFieldOutput(response.mcrypt.version,   response.mcrypt.result));
         Ext.getCmp('ldap').setValue      (getFieldOutput(response.ldap.version,     response.ldap.result));
         Ext.getCmp('memory').setValue    (getFieldOutput(response.memory.version,   response.memory.result));
 
@@ -204,7 +205,7 @@ Ext.onReady(function(){
         var noExistsMsg = '<span style="color: green;">' + _('ID_NO_EXIST') + '</span>';
         var response = Ext.util.JSON.decode(response.responseText);
         Ext.get('wfDatabaseSpan').dom.innerHTML = (response.wfDatabaseExists ? existMsg : noExistsMsg);
-        
+
         var dbFlag = ((!response.wfDatabaseExists) || Ext.getCmp('deleteDB').getValue());
         wizard.onClientValidation(4, dbFlag);
 
@@ -307,6 +308,11 @@ Ext.onReady(function(){
                 xtype     : 'displayfield',
                 fieldLabel: _('ID_PROCESSMAKER_REQUIREMENTS_SOAP'),
                 id  : 'soap'
+              },
+              {
+                   xtype: "displayfield",
+                   id: "mcrypt",
+                   fieldLabel: _("ID_MCRYPT_SUPPORT")
               },
               {
                 xtype     : 'displayfield',
