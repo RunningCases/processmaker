@@ -244,7 +244,7 @@ var saveTaskData = function(oForm, iForm, iType)
   oTaskData.TAS_TITLE = stringReplace("\\+", "__ADD__", oTaskData.TAS_TITLE);
   oTaskData.TAS_DESCRIPTION = stringReplace("\\+", "__ADD__", oTaskData.TAS_DESCRIPTION);
 
-  //Set AJAX
+  //Set AJAX  
   var sParameters = "function=saveTaskData";
 
   var oRPC = new leimnud.module.rpc.xmlhttp({
