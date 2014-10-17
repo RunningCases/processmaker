@@ -59,11 +59,15 @@ class license_application extends padl
      * */
     public function license_application($license_path = 'license.dat', $use_mcrypt = true, $use_time = true, $use_server = true, $allow_local = false, $challenge = false)
     {
-        # check to see if the class has been secured
-        unset($_SESSION['__sw__']);
-        if ($challenge) {
-            $_SESSION['__sw__'] = true;
+        //Check to see if the class has been secured
+        if (isset($_SESSION)) {
+            unset($_SESSION["__sw__"]);
+
+            if ($challenge) {
+                $_SESSION["__sw__"] = true;
+            }
         }
+
         $this->_check_secure();
         $this->_LICENSE_PATH = $license_path;
         $this->init($use_mcrypt, $use_time, $use_server, $allow_local);
