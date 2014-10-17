@@ -122,6 +122,7 @@ class Installer extends Controller
         $info->multibyte = new stdclass();
         $info->soap = new stdclass();
         $info->ldap = new stdclass();
+        $info->mcrypt = new stdclass(); 
         $info->memory = new stdclass();
 
         $info->php->version = phpversion();
@@ -195,6 +196,10 @@ class Installer extends Controller
             $info->soap->result = true;
             $info->soap->version = G::LoadTranslation('ID_ENABLED');
         }
+
+        //mcrypt  info
+        $info->mcrypt->result = extension_loaded("mcrypt");
+        $info->mcrypt->version = ($info->mcrypt->result)? G::LoadTranslation("ID_ENABLED") : G::LoadTranslation("ID_NOT_ENABLED");
 
         // ldap info
         $info->ldap->result = false;
@@ -887,7 +892,11 @@ class Installer extends Controller
             );
 
             // inserting the outh_client
-            $query = sprintf( "USE %s;", $wf );
+            if (!$userLogged) {
+                $query = sprintf( "USE %s;", $wf );
+            } else {
+                $query = sprintf( "USE %s;", trim( $_REQUEST['wfDatabase']) );
+            }
             $this->mysqlQuery( $query );
             $query = ( "INSERT INTO OAUTH_CLIENTS (CLIENT_ID,CLIENT_SECRET,CLIENT_NAME,CLIENT_DESCRIPTION,CLIENT_WEBSITE,REDIRECT_URI,USR_UID ) VALUES
                 ('x-pm-local-client','179ad45c6ce2cb97cf1029e212046e81','PM Web Designer','ProcessMaker Web Designer App','www.processmaker.com','" . $endpoint . "','00000000000000000000000000000001' )");

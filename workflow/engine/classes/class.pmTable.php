@@ -289,6 +289,14 @@ class PmTable
                 $columnNode->setAttribute( 'size', $column->field_size );
             }
 
+            if ($column->field_type == 'DECIMAL') {
+                if ($column->field_size > 2) {
+                    $columnNode->setAttribute( 'scale', 2 );
+                } else {
+                    $columnNode->setAttribute( 'scale', 1 );
+                }
+            }
+
             $columnNode->setAttribute( 'required', ($column->field_null ? 'false' : 'true') );
 
             // only define the primaryKey attribute if it is defined

@@ -121,9 +121,9 @@ class adminProxy extends HttpProxyController
         $this->restart = $restart;
         $this->url     = "/sys" . SYS_SYS . "/" . (($sysConf["default_lang"] != "")? $sysConf["default_lang"] : ((defined("SYS_LANG") && SYS_LANG != "")? SYS_LANG : "en")) . "/" . $sysConf["default_skin"] . $urlPart;
         $this->message = 'Saved Successfully';
-        $msg = "";        
+        $msg = "";
         if($httpData->proxy_host != '' || $httpData->proxy_port != '' || $httpData->proxy_user != '') {
-            $msg = " Host -> ".$httpData->proxy_host." Port -> ".$httpData->proxy_port." User -> ".$httpData->proxy_user; 
+            $msg = " Host -> ".$httpData->proxy_host." Port -> ".$httpData->proxy_port." User -> ".$httpData->proxy_user;
         }
 
         G::auditLog("UploadSystemSettings", "Time Zone -> ".$httpData->time_zone." Memory Limit -> ".$httpData->memory_limit."  Cookie lifetime -> ".$httpData->max_life_time." Default Skin -> ".$httpData->default_skin." Default Language -> ". $httpData->default_lang. $msg);
@@ -178,7 +178,7 @@ class adminProxy extends HttpProxyController
         $httpData=array_unique((array)$httpData);
         $message = '';
         $oldName = isset($_POST['oldName'])? $_POST['oldName']:'';
-
+        
         switch ($_POST['action']){
             case 'calendarName':
                 require_once ('classes/model/CalendarDefinition.php');
@@ -193,14 +193,10 @@ class adminProxy extends HttpProxyController
                         break;
                     }
                     if (isset($aDefinitions['CALENDAR_NAME'])) {
-                        if ($aDefinitions['CALENDAR_NAME'] != $_POST['name']) {
-                            $validated = true;
-                        } else {
-                            if ($aDefinitions['CALENDAR_NAME'] != $oldName) {
-                                $validated = false;
-                                $message  = G::loadTranslation('ID_CALENDAR_INVALID_NAME');
-                                break;
-                            }
+                        if ($aDefinitions['CALENDAR_NAME'] == $_POST['name']) {
+                            $validated = false;
+                            $message  = G::loadTranslation('ID_CALENDAR_INVALID_NAME');
+                            break;
                         }
                     }
                 }
@@ -654,6 +650,7 @@ class adminProxy extends HttpProxyController
         $oSpool->sendMail();
         $G_PUBLISH = new Publisher();
 
+        $o = new stdclass();
         if ($oSpool->status == 'sent') {
             $o->status = true;
             $o->success = true;
@@ -1073,7 +1070,7 @@ class adminProxy extends HttpProxyController
             }
         } elseif ($_FILES['img']['type'] != '') {
             $failed = "1";
-        }        
+        }
         echo '{success: true, failed: ' . $failed . ', uploaded: ' . $uploaded . ', type: "' . $_FILES['img']['type'] . '"}';
         exit();
     }

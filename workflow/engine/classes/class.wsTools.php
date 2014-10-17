@@ -64,7 +64,7 @@ class workspaceTools
     {
         $start = microtime(true);
         CLI::logging("> Verify enterprise old...\n");
-        $this->verifyEnterprise($workSpace);
+        $this->verifyFilesOldEnterprise($workSpace);
         $stop = microtime(true);
         $final = $stop - $start;
         CLI::logging("<*>   Verify took $final seconds.\n");
@@ -1529,8 +1529,8 @@ class workspaceTools
             CLI::logging(CLI::info("$versionOld < $versionPresent") . "\n");
 
             $start = microtime(true);
-            CLI::logging("> Verify enterprise old...\n");
-            $workspace->verifyEnterprise($workspaceName);
+            CLI::logging("> Verify files enterprise old...\n");
+            $workspace->verifyFilesOldEnterprise($workspaceName);
             $stop = microtime(true);
             $final = $stop - $start;
             CLI::logging("<*>   Verify took $final seconds.\n");
@@ -1543,6 +1543,13 @@ class workspaceTools
                 $final = $stop - $start;
                 CLI::logging("<*>   Database Upgrade Process took $final seconds.\n");
             }
+            $start = microtime(true);
+            CLI::logging("> Verify License Enterprise...\n");
+            $workspace->verifyLicenseEnterprise($workspaceName);
+            $stop = microtime(true);
+            $final = $stop - $start;
+            CLI::logging("<*>   Verify took $final seconds.\n");
+
             $start = microtime(true);
             CLI::logging("> Updating cache view...\n");
             $workspace->upgradeCacheView(true, false, $lang);
@@ -1677,7 +1684,7 @@ class workspaceTools
         return true;
     }
 
-    public function verifyEnterprise ($workspace)
+    public function verifyFilesOldEnterprise ($workspace)
     {
         $this->initPropel( true );
         $pathBackup = PATH_DATA . 'backups';
@@ -1729,6 +1736,29 @@ class workspaceTools
             if (file_exists($pathFileEnterprise)) {
                 CLI::logging(CLI::info("    Remove manually $pathFileEnterprise...\n"));
             }
+        }
+    }
+
+    public function verifyLicenseEnterprise ($workspace)
+    {
+        $this->initPropel( true );
+
+        require_once ("classes/model/LicenseManager.php");
+        $oCriteria = new Criteria('workflow');
+        $oCriteria->add(LicenseManagerPeer::LICENSE_STATUS, 'ACTIVE');
+        $oDataset = LicenseManagerPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $row = array();
+        if ($oDataset->next()) {
+            $row = $oDataset->getRow();
+
+            $tr = LicenseManagerPeer::retrieveByPK ( $row['LICENSE_UID'] );
+            $pos = strpos( $row['LICENSE_PATH'], 'license_' );
+            $license = substr( $row['LICENSE_PATH'], $pos, strlen($row['LICENSE_PATH']));
+            $tr->setLicensePath   ( PATH_DATA . "sites/" . $workspace . "/licenses/" . $license);
+            $tr->setLicenseWorkspace ( $workspace );
+
+            $res = $tr->save ();
         }
     }
 }
