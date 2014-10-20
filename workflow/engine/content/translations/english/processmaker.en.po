@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 2.8.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-10-20 16:08:34\n"
+"PO-Revision-Date: 2014-10-20 16:34:34\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -17454,6 +17454,12 @@ msgstr "It will be generated a file with information related to your System, thi
 #: LABEL/ID_CURRENT_BROWSER_NOT_SUPPORTED
 msgid "The current browser is not supported, please use a different browser. Miminum system requirements Internet Explorer 8, Chrome 26, Firefox 20"
 msgstr "The current browser is not supported, please use a different browser. Miminum system requirements Internet Explorer 8, Chrome 26, Firefox 20"
+
+# TRANSLATION
+# LABEL/ID_PMTABLES_CANT_EXPORT
+#: LABEL/ID_PMTABLES_CANT_EXPORT
+msgid "The are no tables to export."
+msgstr "The are no tables to export."
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
