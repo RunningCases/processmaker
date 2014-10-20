@@ -1434,7 +1434,7 @@ class adminProxy extends HttpProxyController
         require_once ("classes/model/RbacUsers.php");
         $criteria = new Criteria( "rbac" );
         $criteria->addSelectColumn( RbacUsersPeer::USR_AUTH_TYPE );
-        $criteria->addSelectColumn( "COUNT(USERS.USR_UID) AS USERS_NUMBER" );
+        $criteria->addSelectColumn( "COUNT(".RbacUsersPeer::USR_UID . ") AS USERS_NUMBER" );
         $criteria->add( RbacUsersPeer::USR_UID, null, Criteria::ISNOTNULL );
         $criteria->addGroupByColumn(RbacUsersPeer::USR_AUTH_TYPE);
         $rs = RbacUsersPeer::doSelectRS( $criteria );
@@ -1448,7 +1448,6 @@ class adminProxy extends HttpProxyController
                 $users['USR_AUTH_TYPE'] = $row['USERS_NUMBER'];
             }
         }
-        
         $params["users"] =$users;
 
         //Number of cases.
@@ -1458,23 +1457,18 @@ class adminProxy extends HttpProxyController
 
         //Number of active processes.
         $criteria = new Criteria( "workflow" );
+        $criteria->addSelectColumn( ProcessPeer::PRO_STATUS );
         $criteria->addSelectColumn( "COUNT(PROCESS.PRO_UID) AS NUMBER_PROCESS" );
-        $criteria->add( ProcessPeer::PRO_STATUS, 'ACTIVE', Criteria::NOT_EQUAL);
+        $criteria->addGroupByColumn(ProcessPeer::PRO_STATUS);
         $rs = UsersPeer::doSelectRS( $criteria );
         $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $rs->next();
-        $row = $rs->getRow();
-        $params["process active"] = $row["NUMBER_PROCESS"];
-
-        $criteria = new Criteria( "workflow" );
-        $criteria->addSelectColumn( "COUNT(PROCESS.PRO_UID) AS NUMBER_PROCESS" );
-        $criteria->add( ProcessPeer::PRO_STATUS, 'INACTIVE', Criteria::NOT_EQUAL);
-        $rs = UsersPeer::doSelectRS( $criteria );
-        $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $rs->next();
-        $row = $rs->getRow();
-        $params["process inactive"] = $row["NUMBER_PROCESS"];
-
+        $process = array();
+        while ($rs->next()) {
+            $row = $rs->getRow();
+            G::pr($row);
+            $process[$row['PRO_STATUS']] = $row['NUMBER_PROCESS'];
+        }
+        $params["process"] = $process;
 
         //Country/city (Timezone)
         $params["Timezone"] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
