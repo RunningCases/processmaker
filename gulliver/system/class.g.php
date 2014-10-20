@@ -5518,6 +5518,49 @@ class G
     		return $res;
     	}
     }
+
+    /**
+     * Get the actual browser.
+     */
+    public function getActualBrowser(){
+    	$browser=array("TRIDENT","IE","OPERA","MOZILLA","NETSCAPE","FIREFOX","SAFARI","CHROME");
+    	$info['browser'] = "OTHER";
+    
+    	foreach($browser as $parent){
+    		if($parent == 'TRIDENT'){
+    			$parent = "RV";
+    		}
+    		$s = strpos(strtoupper($_SERVER['HTTP_USER_AGENT']), $parent);
+    		$f = $s + strlen($parent);
+    		$version = substr($_SERVER['HTTP_USER_AGENT'], $f, 15);
+    		$version = preg_replace('/[^0-9,.]/','',$version);
+    		if ($s){
+    			$info['browser'] = $parent;
+    			$info['version'] = $version;
+    		}
+    	}
+    
+    	$info['browser'] = ($info['browser']=='RV')? 'IE':$info['browser'];
+    	return $info;
+    }
+    
+    /**
+     * Check the browser compativility
+     */
+    public function checkBrowserCompatibility($browser = null, $version = null){
+    	if($browser == null || $version == null){
+    		$info = G::getActualBrowser();
+    		$browser = $info['browser'];
+    		$version = $info['version'];
+    	}
+    	if ((($browser== 'IE') && (($version >= 8) && ($version <= 11))) ||
+    			(($browser== 'CHROME') && ($version >= 26)) ||
+    			(($browser== 'FIREFOX') && ($version >= 20))
+    	){
+    		return true;
+    	}
+    	return false;
+    }
 }
 
 /**
