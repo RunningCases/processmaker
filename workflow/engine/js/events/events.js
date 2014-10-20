@@ -14,7 +14,7 @@ var eventsNewAction = function(oForm) {
       url   : '../events/eventsNewAction',
       method: 'POST',
       args  : 'PRO_UID=' + getField('PRO_UID').value
-            + "&EVN_DESCRIPTION=" + stringReplace("\\&", "AMP", getField("EVN_DESCRIPTION").value)
+            + "&EVN_DESCRIPTION=" + stringReplace("\\&", "__AMP__", getField("EVN_DESCRIPTION").value)
             + '&EVN_STATUS=' + getField('EVN_STATUS').value
             + '&EVN_WHEN=' + getField('EVN_WHEN').value
             + '&EVN_WHEN_OCCURS=' + getField('EVN_WHEN_OCCURS').value
