@@ -104,7 +104,9 @@ class Event extends BaseEvent
             $aData['EVN_UID'] = G::generateUniqueID();
         }
 
-        $aData["EVN_DESCRIPTION"] = str_replace("__AMP__", "&", $aData["EVN_DESCRIPTION"]);
+        if (isset($aData["EVN_DESCRIPTION"])) {
+            $aData["EVN_DESCRIPTION"] = str_replace("AMP", "&", $aData["EVN_DESCRIPTION"]);
+        }
 
         $oConnection = Propel::getConnection( EventPeer::DATABASE_NAME );
         try {
