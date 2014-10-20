@@ -1465,7 +1465,6 @@ class adminProxy extends HttpProxyController
         $process = array();
         while ($rs->next()) {
             $row = $rs->getRow();
-            G::pr($row);
             $process[$row['PRO_STATUS']] = $row['NUMBER_PROCESS'];
         }
         $params["process"] = $process;
@@ -1473,7 +1472,7 @@ class adminProxy extends HttpProxyController
         //Country/city (Timezone)
         $params["Timezone"] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
 
-        $support = PATH_DATA_SITE . 'support.txt';
+        $support = PATH_DATA_SITE . SYS_SYS . '-' . date('YmdHis') . '.spm';
         file_put_contents($support, serialize($params));
         G::streamFile($support, true);
         G::rm_dir($support);

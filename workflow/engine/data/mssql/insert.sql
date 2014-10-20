@@ -7277,6 +7277,8 @@ SELECT 'LABEL','ID_GENERATE_INFO_SUPPORT','en','It will be generated a file with
 SELECT 'LABEL','ID_CURRENT_BROWSER_NOT_SUPPORTED','en','The current browser is not supported, please use a different browser. Miminum system requirements Internet Explorer 8, Chrome 26, Firefox 20','2014-10-20' 
   UNION ALL
 SELECT 'LABEL','ID_PMTABLES_CANT_EXPORT','en','The are no tables to export.','2014-10-20' 
+  UNION ALL
+SELECT 'LABEL','ID_SUPPORT','en','Support','2014-10-20' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 

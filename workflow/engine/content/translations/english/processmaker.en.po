@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 2.8.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-10-20 16:34:34\n"
+"PO-Revision-Date: 2014-10-20 18:13:40\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -17460,6 +17460,12 @@ msgstr "The current browser is not supported, please use a different browser. Mi
 #: LABEL/ID_PMTABLES_CANT_EXPORT
 msgid "The are no tables to export."
 msgstr "The are no tables to export."
+
+# TRANSLATION
+# LABEL/ID_SUPPORT
+#: LABEL/ID_SUPPORT
+msgid "Support"
+msgstr "Support"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
