@@ -2,6 +2,8 @@
     ServerName 127.0.0.1
 
     DocumentRoot /example/path/to/processmaker/workflow/public_html
+    DirectoryIndex index.html index.php
+
     <Directory /example/path/to/processmaker/workflow/public_html>
         Options Indexes FollowSymLinks MultiViews
         AllowOverride None
@@ -13,7 +15,7 @@
         <IfModule mod_rewrite.c>
             RewriteEngine On
             RewriteCond %{REQUEST_FILENAME} !-f
-            RewriteRule ^(.*)$ /app.php [QSA,L]
+            RewriteRule ^.*/(.*)$ app.php [QSA,L,NC]
         </IfModule>
     </Directory>
 </VirtualHost>
