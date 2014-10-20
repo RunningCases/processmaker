@@ -644,14 +644,16 @@ ExportPMTable = function(){
   var toExportRows = new Array();
 
   for(var i=0; i<rows.length; i++){
-    toExportRows.push([
-      rows[i].get('ADD_TAB_UID'),
-      rows[i].get('PRO_UID'),
-      rows[i].get('ADD_TAB_NAME'),
-      (rows[i].get('PRO_UID') ? _('ID_REPORT_TABLE'): _('ID_PMTABLE')),
-      true,
-      (rows[i].get('PRO_UID') ? false : true)
-    ]);
+	if (rows[i].get('TYPE') == '') {
+      toExportRows.push([
+        rows[i].get('ADD_TAB_UID'),
+        rows[i].get('PRO_UID'),
+        rows[i].get('ADD_TAB_NAME'),
+        (rows[i].get('PRO_UID') ? _('ID_REPORT_TABLE'): _('ID_PMTABLE')),
+        true,
+        (rows[i].get('PRO_UID') ? false : true)
+      ]);
+	}
   }
 
   Export.targetGrid.store.loadData(toExportRows);
