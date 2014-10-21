@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 2.8.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-10-13 12:37:31\n"
+"PO-Revision-Date: 2014-10-20 18:13:40\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -16924,8 +16924,8 @@ msgstr "Cases Lists"
 # TRANSLATION
 # LABEL/ID_MENU_NAME
 #: LABEL/ID_MENU_NAME
-msgid "Enterprise Plugins Manager"
-msgstr "Enterprise Plugins Manager"
+msgid "Enterprise Manager"
+msgstr "Enterprise Manager"
 
 # TRANSLATION
 # LABEL/ID_LEFT
@@ -17430,6 +17430,42 @@ msgstr "Enable Plugin"
 #: LABEL/ID_UPDATE_ENVIRONMENT_SETTINGS
 msgid "Update Environment Settings"
 msgstr "Update Environment Settings"
+
+# TRANSLATION
+# LABEL/ID_NAME_EXISTS
+#: LABEL/ID_NAME_EXISTS
+msgid "The name exists"
+msgstr "The name exists"
+
+# TRANSLATION
+# LABEL/ID_MCRYPT_SUPPORT
+#: LABEL/ID_MCRYPT_SUPPORT
+msgid "Mcrypt Support"
+msgstr "Mcrypt Support"
+
+# TRANSLATION
+# LABEL/ID_GENERATE_INFO_SUPPORT
+#: LABEL/ID_GENERATE_INFO_SUPPORT
+msgid "It will be generated a file with information related to your System, this will help the support team to provide a better support to those issues that may appear"
+msgstr "It will be generated a file with information related to your System, this will help the support team to provide a better support to those issues that may appear"
+
+# TRANSLATION
+# LABEL/ID_CURRENT_BROWSER_NOT_SUPPORTED
+#: LABEL/ID_CURRENT_BROWSER_NOT_SUPPORTED
+msgid "The current browser is not supported, please use a different browser. Miminum system requirements Internet Explorer 8, Chrome 26, Firefox 20"
+msgstr "The current browser is not supported, please use a different browser. Miminum system requirements Internet Explorer 8, Chrome 26, Firefox 20"
+
+# TRANSLATION
+# LABEL/ID_PMTABLES_CANT_EXPORT
+#: LABEL/ID_PMTABLES_CANT_EXPORT
+msgid "The are no tables to export."
+msgstr "The are no tables to export."
+
+# TRANSLATION
+# LABEL/ID_SUPPORT
+#: LABEL/ID_SUPPORT
+msgid "Support"
+msgstr "Support"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

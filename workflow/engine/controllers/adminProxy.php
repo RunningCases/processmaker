@@ -122,7 +122,7 @@ class adminProxy extends HttpProxyController
         $this->url     = "/sys" . SYS_SYS . "/" . (($sysConf["default_lang"] != "")? $sysConf["default_lang"] : ((defined("SYS_LANG") && SYS_LANG != "")? SYS_LANG : "en")) . "/" . $sysConf["default_skin"] . $urlPart;
         $this->message = 'Saved Successfully';
         $msg = "";
-        if($httpData->proxy_host != '' || $httpData->proxy_port != '' || $httpData->proxy_user != '') {
+        if ($httpData->proxy_host != '' || $httpData->proxy_port != '' || $httpData->proxy_user != '') {
             $msg = " Host -> ".$httpData->proxy_host." Port -> ".$httpData->proxy_port." User -> ".$httpData->proxy_user;
         }
 
@@ -178,7 +178,7 @@ class adminProxy extends HttpProxyController
         $httpData=array_unique((array)$httpData);
         $message = '';
         $oldName = isset($_POST['oldName'])? $_POST['oldName']:'';
-        
+
         switch ($_POST['action']){
             case 'calendarName':
                 require_once ('classes/model/CalendarDefinition.php');
@@ -1355,6 +1355,127 @@ class adminProxy extends HttpProxyController
         }
 
         return $result;
+    }
+
+    public function generateInfoSupport ()
+    {
+        require_once (PATH_CONTROLLERS . "installer.php");
+        $params = array ();
+
+        $oServerConf = &serverConf::getSingleton();
+        $pluginRegistry = &PMPluginRegistry::getSingleton();
+        $licenseManager = &pmLicenseManager::getSingleton();
+
+        //License Information:
+        $activeLicense = $licenseManager->getActiveLicense();
+        $params['license'] = $licenseManager;
+
+        //Operative System version (Linux, Windows)
+        try {
+            $os = '';
+            if (file_exists( '/etc/redhat-release' )) {
+                $fnewsize = filesize( '/etc/redhat-release' );
+                $fp = fopen( '/etc/redhat-release', 'r' );
+                $os = trim( fread( $fp, $fnewsize ) );
+                fclose( $fp );
+            }
+            $os .= " (" . PHP_OS . ")";
+        } catch (Exception $e) {
+        }
+        $params['system'] = $os;
+
+        //On premise or cloud
+        $licInfo = $oServerConf->getProperty( 'LICENSE_INFO' );
+        $params['licenseType'] = isset($licInfo[SYS_SYS]) ? isset($licInfo[SYS_SYS]['TYPE'])? $licInfo[SYS_SYS]['TYPE'] : ''  : '';
+
+        //ProcessMaker Version
+        $params['pmVersion'] = System::getVersion();
+        if (file_exists(PATH_DATA. 'log/upgrades.log')) {
+            $params['pmUpgrade'] = file_get_contents(PATH_DATA. 'log/upgrades.log', 'r');
+        } else {
+            $params['pmUpgrade'] = G::LoadTranslation('ID_UPGRADE_NEVER_UPGRADE');
+        }
+
+        //Database server Version (MySQL version)
+        $installer = new Installer();
+        $systemInfo = $installer->getSystemInfo();
+        $params['dbVersion'] = mysql_get_server_info();//$systemInfo->mysql->version;
+
+        //PHP Version
+        $params['php'] = $systemInfo->php->version;
+
+        //Apache - IIS Version
+        $params['apache'] = apache_get_version();
+
+        //Installed Plugins (license info?)
+        $arrayAddon = array ();
+
+        if (file_exists( PATH_DATA_SITE . "ee" )) {
+            $arrayAddon = unserialize( trim( file_get_contents( PATH_DATA_SITE . "ee" ) ) );
+        }
+
+        $plugins = array();
+        foreach ($arrayAddon as $addon) {
+            $sFileName = substr( $addon["sFilename"], 0, strpos( $addon["sFilename"], "-" ) );
+
+            if (file_exists( PATH_PLUGINS . $sFileName . ".php" )) {
+                $plugin = array();
+                $addonDetails = $pluginRegistry->getPluginDetails( $sFileName . ".php" );
+                $plugin['name'] = $addonDetails->sNamespace;
+                $plugin['description'] = $addonDetails->sDescription;
+                $plugin['version'] = $addonDetails->iVersion;
+                $plugin['enable'] = $addonDetails->enabled;
+                $plugins[] = $plugin;
+            }
+        }
+        $params['plugins'] = $plugins;
+
+        //Number of Users registered in PM. Including LDAP users and PM users.
+        require_once ("classes/model/RbacUsers.php");
+        $criteria = new Criteria( "rbac" );
+        $criteria->addSelectColumn( RbacUsersPeer::USR_AUTH_TYPE );
+        $criteria->addSelectColumn( "COUNT(".RbacUsersPeer::USR_UID . ") AS USERS_NUMBER" );
+        $criteria->add( RbacUsersPeer::USR_UID, null, Criteria::ISNOTNULL );
+        $criteria->addGroupByColumn(RbacUsersPeer::USR_AUTH_TYPE);
+        $rs = RbacUsersPeer::doSelectRS( $criteria );
+        $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        $users = array('local' => 0);
+        while ($rs->next()) {
+            $row = $rs->getRow();
+            if ($row['USR_AUTH_TYPE'] == '' || $row['USR_AUTH_TYPE'] == 'MYSQL') {
+                $users['local'] = (int)$users['local'] + (int)$row['USERS_NUMBER'];
+            } else {
+                $users['USR_AUTH_TYPE'] = $row['USERS_NUMBER'];
+            }
+        }
+        $params["users"] =$users;
+
+        //Number of cases.
+        $oSequences = new Sequences();
+        $maxNumber = $oSequences->getSequeceNumber("APP_NUMBER");
+        $params["cases"] = $maxNumber - 1;
+
+        //Number of active processes.
+        $criteria = new Criteria( "workflow" );
+        $criteria->addSelectColumn( ProcessPeer::PRO_STATUS );
+        $criteria->addSelectColumn( "COUNT(PROCESS.PRO_UID) AS NUMBER_PROCESS" );
+        $criteria->addGroupByColumn(ProcessPeer::PRO_STATUS);
+        $rs = UsersPeer::doSelectRS( $criteria );
+        $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        $process = array();
+        while ($rs->next()) {
+            $row = $rs->getRow();
+            $process[$row['PRO_STATUS']] = $row['NUMBER_PROCESS'];
+        }
+        $params["process"] = $process;
+
+        //Country/city (Timezone)
+        $params["Timezone"] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
+
+        $support = PATH_DATA_SITE . SYS_SYS . '-' . date('YmdHis') . '.spm';
+        file_put_contents($support, serialize($params));
+        G::streamFile($support, true);
+        G::rm_dir($support);
     }
 }
 

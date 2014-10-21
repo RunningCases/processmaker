@@ -458,6 +458,14 @@ Ext.onReady(function() {
      });
   }
 
+    var enterpriseFileSupport = function () {
+        var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _('ID_PROCESSING')});
+        myMask.show();
+        //window.location = '../../uxmodern/main/generateInfoSupport';
+        window.location = '../adminProxy/generateInfoSupport',
+        myMask.hide();
+    };
+
   function enterpriseProcessAjax(option)
   {
       switch (option) {
@@ -1006,50 +1014,76 @@ Ext.onReady(function() {
       ]
   });
 
-  var pnlSetup = new Ext.FormPanel({
-      frame: true,
-      height: 178,
-      bodyStyle: "padding: 5px 5px 5px 5px;",
-      disabled: !licensed,
+    var pnlSetup = new Ext.FormPanel({
+        frame: true,
+        height: 160,
+        disabled: !licensed,
 
-      items: [
-          {
-              layout: "column",
-              items: [
-                  {
-                      columnWidth: 0.80,
-                      xtype: "container",
-                      items: [
-                          {
-                              xtype: "checkbox",
-                              id: "chkEeInternetConnection",
-                              name: "chkEeInternetConnection",
-                              checked: (INTERNET_CONNECTION == 1)? true : false,
-                              boxLabel: _('ID_CHECK_UPDATES')
-                          }
-                      ]
-                  },
-                  {
-                      columnWidth: 0.20,
-                      xtype: "button",
-                      id: "btnEeSetup",
-                      text: _('ID_SAVE'),
-                      handler: function () {
-                          enterpriseProcessAjax("SETUP");
-                      }
-                  }
-              ]
-          }
-      ]
-  });
+        items: [
+            {
+                layout: "column",
+                items: [
+                    {
+                        columnWidth: 0.80,
+                        xtype: "container",
+                        items: [
+                            {
+                                xtype: "checkbox",
+                                id: "chkEeInternetConnection",
+                                name: "chkEeInternetConnection",
+                                checked: (INTERNET_CONNECTION == 1)? true : false,
+                                boxLabel: _('ID_CHECK_UPDATES')
+                            }
+                        ]
+                    },
+                    {
+                        columnWidth: 0.20,
+                        xtype: "button",
+                        id: "btnEeSetup",
+                        text: _('ID_SAVE'),
+                        handler: function () {
+                            enterpriseProcessAjax("SETUP");
+                        }
+                    }
+                ]
+            }
+        ]
+    });
+  
+    var pnlSupport = new Ext.FormPanel({
+        frame: true,
+        height: 160,
+        disabled: !licensed,
 
-  var pnlSystem = new Ext.Container({
-      //autoEl: "div",
-      //width:  550,
-      anchor: "right 50%",
-      //items: [pnlUpgrade, pnlSetup]
-      items: [ pnlSetup]
-  });
+        items: [
+            {
+                layout: "column",
+                items: [
+                    {
+                        columnWidth: 0.80,
+                        xtype: "container",
+                        items: [
+                            {
+                                xtype:'label',
+                                text: _('ID_GENERATE_INFO_SUPPORT'),
+                                name: 'lblGenerateInfoSupport',
+                                labelStyle: 'font-weight:bold;',
+                            }
+                        ]
+                    },
+                    {
+                        columnWidth: 0.20,
+                        xtype: "button",
+                        id: "btnGenerate",
+                        text: _('ID_GENERATE'),
+                        handler: function () {
+                            enterpriseFileSupport();
+                        }
+                    }
+                ]
+            }
+        ]
+    });
 
   var licensePanel = new Ext.FormPanel( {
     frame: true,
@@ -1695,27 +1729,6 @@ Ext.onReady(function() {
         }
     });
 
-
-
-  var topBox = new Ext.Panel({
-    id:'main-panel-hbox',
-    baseCls:'x-plain',
-    layout:'hbox',
-    flex: 0,
-    //defaultMargins: "5",
-    //autoHeight: true,
-    layoutConfig: {
-        align : 'stretchmax',
-        pack  : 'start'
-    },
-    defaults: {
-        frame:true,
-        flex: 1,
-        height: 182
-    },
-    items:[licensePanel, pnlSystem]
-  });
-
     var tabEnterprise = new Ext.TabPanel({
         activeTab: 0,
         height: 370,
@@ -1739,6 +1752,9 @@ Ext.onReady(function() {
             },{
                 title:  _('ID_SETUP_WEBSERVICES'),
                 items : pnlSetup
+            },{
+                title:  _('ID_SUPPORT'),
+                items : pnlSupport
             }
         ]
     });

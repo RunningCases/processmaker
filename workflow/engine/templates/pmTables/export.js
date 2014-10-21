@@ -139,6 +139,11 @@ Export.submit = function()
   var rows = Export.targetGrid.getStore();
   var rowsData = new Array();
 
+  if (rows.getCount() == 0){
+	  PMExt.info(_('ID_INFO'), _('ID_PMTABLES_CANT_EXPORT'));
+	  return false;
+  }
+
   for (i=0; i < rows.getCount(); i++) {
     row = rows.getAt(i);
     if ( row.data._SCHEMA == false && row.data._DATA == false) {
