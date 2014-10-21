@@ -5391,10 +5391,10 @@ class G
                     switch($allowedDocTypes){
                         case '*':
                             $res->status = true;
-                                    return $res;
+                            return $res;
                             break;
                         case 'xls':
-                            if($docType[1] == 'vnd.ms-excel' || ($dtype[count($dtype) - 1] == 'xls' && $docType[1] == 'plain')){
+                            if ($docType[1] == 'vnd.ms-excel' || ($dtype[count($dtype) - 1] == 'xls' && $docType[1] == 'plain')) {
                                 $res->status = true;
                                 return $res;
                             } else {
@@ -5402,7 +5402,7 @@ class G
                             }
                             break;
                         case 'doc':
-                            if($docType[1] == 'msword' || ($dtype[count($dtype) - 1] == 'doc' && $docType[1] == 'html')){
+                            if ($docType[1] == 'msword' || ($dtype[count($dtype) - 1] == 'doc' && $docType[1] == 'html')) {
                                 $res->status = true;
                                 return $res;
                             } else {
@@ -5504,7 +5504,7 @@ class G
                                 $flag = 1;
                             } else {
                                 $res->status = true;
-                                            return $res;
+                                return $res;
                             }
                     }
                 } else {
