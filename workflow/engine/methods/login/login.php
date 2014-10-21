@@ -26,7 +26,7 @@
 $browserSupported = G::checkBrowserCompatibility();
 if ($browserSupported==false){
 	if(!isset($_SESSION['G_MESSAGE']) || $_SESSION['G_MESSAGE'] == ""){
-		G::SendTemporalMessage ('ID_BROWSER_NOT_SUPPORTED', 'warning');
+		G::SendTemporalMessage ('ID_CURRENT_BROWSER_NOT_SUPPORTED', 'warning');
 	}
 }
 
