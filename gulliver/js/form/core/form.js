@@ -3308,6 +3308,38 @@ var validateForm = function(sRequiredFields) {
                 }
             }
 
+            arrayForm = document.getElementsByTagName("form");
+            i1 = 0;
+            i2 = 0;
+
+            for (i1 = 0; i1 <= arrayForm.length - 1; i1++) {
+                var frm = arrayForm[i1];
+
+                var arrayInput = frm.getElementsByTagName("input");
+
+                for (i2 = 0; i2 <= arrayInput.length - 1; i2++) {
+                    var inputAux2 = arrayInput[i2];
+
+                    if (inputAux2.type == "file") {
+                        if (inputAux2.value != "") {
+                            var pmindocmaxfilesize = inputAux2.getAttribute("pmindocmaxfilesize");
+
+                            if (pmindocmaxfilesize != null && pmindocmaxfilesize != "" && pmindocmaxfilesize > 0) {
+                                var flagFilesize = inputDocumentVerifySize(parseInt(pmindocmaxfilesize), inputAux2);
+
+                                if (flagFilesize == 0) {
+                                    new leimnud.module.app.alert().make({label: _("ID_SIZE_VERY_LARGE_PERMITTED")});
+
+                                    swSubmitValidateForm = 1;
+
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             return true;
         }
     } else {

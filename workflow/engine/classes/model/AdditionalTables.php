@@ -97,6 +97,7 @@ class AdditionalTables extends BaseAdditionalTables
         $oCriteria->addSelectColumn(FieldsPeer::FLD_NULL);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_AUTO_INCREMENT);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_KEY);
+        $oCriteria->addSelectColumn(FieldsPeer::FLD_TABLE_INDEX);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_FOREIGN_KEY);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_FOREIGN_KEY_TABLE);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_DYN_NAME);
@@ -199,6 +200,8 @@ class AdditionalTables extends BaseAdditionalTables
                   'APP_UID'     => '',
                   'SHD_DATE'    => date('Y-m-d H:i:s')));
                  */
+                
+                G::auditLog("CreatePmtable", "PM Table Name: ".$aData['ADD_TAB_NAME']);
                 return $aData['ADD_TAB_UID'];
             } else {
                 $sMessage = '';
@@ -225,6 +228,7 @@ class AdditionalTables extends BaseAdditionalTables
                     $oConnection->begin();
                     $iResult = $oAdditionalTables->save();
                     $oConnection->commit();
+                    G::auditLog("UpdatePmtable", "PM Table Name: ".$aData['ADD_TAB_NAME']." PM Table ID: (".$aData['ADD_TAB_UID'].") ");
                 } else {
                     $sMessage = '';
                     $aValidationFailures = $oAdditionalTables->getValidationFailures();

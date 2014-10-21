@@ -1769,4 +1769,64 @@ class RestContext extends BehatContext
         $fp = fopen(sys_get_temp_dir() . "/behat.log", "a+");
         fwrite($fp, $string . PHP_EOL);
     }
+      /**
+     * @Then /^if database-connection with id "([^"]*)" is active$/
+     */
+    public function ifDatabaseConnectionWithIdIsActive($dbConnectionId)
+    {
+        if(!(isset($this->_response))){
+        throw new \Exception('Empty result ' );
+        }
+        $message="";
+        $sw_error=false;
+            if($bodyResponse=json_decode($this->_response->getBody(true))){
+            //print_r($bodyResponse);
+            foreach($bodyResponse as $testDetail){
+                $message.=$testDetail->test;
+                if(isset($testDetail->error)){
+                    $sw_error=true;
+                    $message .= " -> ".$testDetail->error;
+                }else{
+                    $message.=" -> [OK]";
+                }
+                $message.=" | ";
+            }
+
+            }else{
+                throw new \Exception('Empty result ' );
+            }
+
+            if (file_exists("session.data")) {
+                    $sessionData = json_decode(file_get_contents("session.data"));
+                } else {
+                    $sessionData = new StdClass();
+                }
+                if(!isset($sessionData->dbconnectionStatus)){
+                    $sessionData->dbconnectionStatus = new StdClass();
+                }
+            $sessionData->dbconnectionStatus->$dbConnectionId = !$sw_error;
+            file_put_contents("session.data", json_encode($sessionData));
+            if($sw_error){
+
+            throw new PendingException($message);
+        }
+    }
+    /**
+     * @Given /^database-connection with id "([^"]*)" is active$/
+     */
+    public function databaseConnectionWithIdIsActive($dbConnectionId)
+    {
+        if (file_exists("session.data")) {
+                    $sessionData = json_decode(file_get_contents("session.data"));
+                } else {
+                    $sessionData = new StdClass();
+                }
+                
+            if(!$sessionData->dbconnectionStatus->$dbConnectionId){
+            
+
+            throw new PendingException("Skip inactive dbconnection: $dbConnectionId");
+        }
+    }
+
 }

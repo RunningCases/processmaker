@@ -44,11 +44,12 @@ class Main extends Controller
 
         // license notification
         $expireInLabel = '';
-        if (class_exists( 'pmLicenseManager' )) {
-            $pmLicenseManager = &pmLicenseManager::getSingleton();
-            $expireIn = $pmLicenseManager->getExpireIn();
-            $expireInLabel = $pmLicenseManager->getExpireInLabel();
-        }
+
+        require_once ("classes" . PATH_SEP . "class.pmLicenseManager.php");
+        $pmLicenseManager = &pmLicenseManager::getSingleton();
+        $expireIn = $pmLicenseManager->getExpireIn();
+        $expireInLabel = $pmLicenseManager->getExpireInLabel();
+
         $this->setVar( 'licenseNotification', $expireInLabel );
 
         // setting variables on javascript env.
@@ -379,7 +380,7 @@ class Main extends Controller
             $newPass = G::generate_password();
 
             $aData['USR_UID'] = $userData['USR_UID'];
-            $aData['USR_PASSWORD'] = md5( $newPass );
+            $aData['USR_PASSWORD'] = Bootstrap::hashPassword( $newPass );
 
             $rbacUser->update( $aData );
             $user->update( $aData );

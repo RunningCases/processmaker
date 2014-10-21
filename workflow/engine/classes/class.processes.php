@@ -2753,7 +2753,7 @@ class Processes
             if ($oContent->Exists( $ConCategory, $ConParent, $ConId, $ConLang )) {
                 $oContent->removeContent( $ConCategory, $ConParent, $ConId );
             }
-            $oContent->addContent( $ConCategory, $ConParent, $ConId, $ConLang, "" );
+            $oContent->addContent( $ConCategory, $ConParent, $ConId, $ConLang, $aRow['DBS_DESCRIPTION'] );
         }
     } #@!neyek
 
@@ -3019,6 +3019,7 @@ class Processes
         $oData->processVariables = $this->getProcessVariables($sProUid);
 
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
+        $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
         //krumo ($oData);die;
         //$oJSON = new Services_JSON();

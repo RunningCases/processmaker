@@ -1403,7 +1403,7 @@ class G
      *
      * @return string $ret
      */
-    public function getformatedDate ($date, $format = 'yyyy-mm-dd', $lang = '')
+    public static function getformatedDate ($date, $format = 'yyyy-mm-dd', $lang = '')
     {
         /**
          * ******************************************************************************************************
@@ -1528,7 +1528,7 @@ class G
      * @author Erik Amaru Ortiz <erik@colosa.com>
      * @name complete_field($string, $lenght, $type={1:number/2:string/3:float})
      */
-    public function complete_field ($campo, $long, $tipo)
+    public static function complete_field ($campo, $long, $tipo)
     {
         $campo = trim( $campo );
         switch ($tipo) {
@@ -2296,7 +2296,7 @@ class G
      * @param string $sText
      * @return string strtolower($sText)
      */
-    public function toLower ($sText)
+    public static function toLower ($sText)
     {
         return strtolower( $sText );
     }
@@ -4385,7 +4385,7 @@ class G
         }
 
         // Next get the name of the useragent yes seperately and for good reason
-        if (preg_match( '/MSIE/i', $u_agent ) && ! preg_match( '/Opera/i', $u_agent )) {
+        if ((preg_match('~Trident/7.0; rv:11.0~', $u_agent) || preg_match( '/MSIE/i', $u_agent )) && ! preg_match( '/Opera/i', $u_agent )) {
             $bname = 'Internet Explorer';
             $ub = "MSIE";
         } elseif (preg_match( '/Firefox/i', $u_agent )) {
@@ -4419,7 +4419,7 @@ class G
             if (strripos( $u_agent, "Version" ) < strripos( $u_agent, $ub )) {
                 $version = $matches['version'][0];
             } else {
-                $version = $matches['version'][1];
+                $version = isset($matches['version'][1]) ? $matches['version'][1] : '';
             }
         } else {
             $version = $matches['version'][0];
@@ -5260,15 +5260,32 @@ class G
      * @param type $pathData
      * @param type $file
      */
-    public function log($message, $pathData = PATH_DATA, $file = 'cron.log')
+    public static function log($message, $pathData = PATH_DATA, $file = 'cron.log')
     {
         $config = System::getSystemConfiguration();
         G::LoadSystem('logger');
 
-        $oLogger =& Logger::getSingleton($pathData, PATH_SEP, $file);
+        $oLogger = Logger::getSingleton($pathData, PATH_SEP, $file);
         $oLogger->limitFile = $config['number_log_file'];
         $oLogger->limitSize = $config['size_log_file'];
         $oLogger->write($message);
+    }
+
+    /**
+    */
+    public static function auditLog($actionToLog, $valueToLog = "")
+    {
+        $oServerConf = & serverConf::getSingleton();
+        $sflagAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', SYS_SYS );
+        $ipClient = G::getIpAddress();
+
+        $licensedFeatures = PMLicensedFeatures::getSingleton();
+        if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
+            $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
+            $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User';
+            $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : '-';
+            G::log("|". $workspace ."|". $ipClient ."|". $username . "|" . $fullname ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
+        }
     }
 
     /**
@@ -5327,6 +5344,222 @@ class G
             }
         }
         return $from;
+    }
+
+   /**
+    * Verify the InputDoc extension, cheking the file name extension (.pdf, .ppt) and the file content.
+    *
+    *
+    *
+    */
+    public function verifyInputDocExtension($InpDocAllowedFiles, $filesName, $filesTmpName){
+    	$allowedTypes = explode(", ", $InpDocAllowedFiles);
+    	$flag = 0;
+    	$res = new stdclass();
+
+    	if (!extension_loaded('fileinfo')) {
+    		$dtype = explode(".", $filesName);
+
+    		foreach ($allowedTypes as $types => $val) {
+    			if((preg_match('/^\*\.?[a-z]{2,8}$/', $val)) || ($val == '*.*')){
+    				$allowedDocTypes = substr($val, 2);
+    				if(($dtype[count($dtype) -1]) == $allowedDocTypes || $allowedDocTypes == '*'){
+    					$res->status = true;
+    					return $res;
+    					break;
+    				} else {
+    					$flag = 1;
+    				}
+    			} else {
+    				$res->status = false;
+    				$res->message = G::LoadTranslation('ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT' );
+    				return $res;
+    			}
+    		}
+    	} else {
+    		$finfo = new finfo(FILEINFO_MIME_TYPE);
+    		$finfo_ = $finfo->file($filesTmpName);
+    		$docType = explode("/", $finfo_);
+
+    		foreach ($allowedTypes as $types => $val) {
+    			if((preg_match('/^\*\.?[a-z]{2,8}$/', $val)) || ($val == '*.*')){
+    				$allowedDocTypes = substr($val, 2);
+    				$dtype = explode(".", $filesName);
+
+    				switch($allowedDocTypes){
+    					case '*':
+    						$res->status = true;
+							return $res;
+    						break;
+    					case 'xls':
+    						if($docType[1] == 'vnd.ms-excel' || ($dtype[count($dtype) - 1] == 'xls' && $docType[1] == 'plain')){
+    							$res->status = true;
+    							return $res;
+    						} else {
+    							$flag = 1;
+    						}
+    						break;
+    					case 'doc':
+    						if($docType[1] == 'msword' || ($dtype[count($dtype) - 1] == 'doc' && $docType[1] == 'html')){
+    							$res->status = true;
+    							return $res;
+    						} else {
+								$flag = 1;
+    						}
+    						break;
+    					case 'ppt':
+    						if($docType[1] != 'vnd.ms-office'){
+    							$flag = 1;
+    						} else {
+    							$res->status = true;
+								return $res;
+    						}
+    						break;
+    					case 'docx':
+    					case 'pptx':
+    					case 'xlsx':
+    						if($docType[1] != 'zip'){
+    							$flag = 1;
+    						} else {
+    							$res->status = true;
+								return $res;
+    						}
+    						break;
+    					case 'exe':
+    					case 'wmv':
+    						if($docType[1] != 'octet-stream'){
+    							$flag = 1;
+    						} else {
+    							$res->status = true;
+								return $res;
+    						}
+    						break;
+    					case 'jpg':
+    						if ($docType[1] != 'jpeg'){
+    							$flag = 1;
+    						} else {
+    							$res->status = true;
+								return $res;
+    						}
+    						break;
+    					case 'mp3':
+    						if ($docType[1] != 'mpeg'){
+    							$flag = 1;
+    						} else {
+    							$res->status = true;
+								return $res;
+    						}
+    						break;
+    					case 'rar':
+    						if ($docType[1] != 'x-rar'){
+    							$flag = 1;
+    						} else {
+    							$res->status = true;
+								return $res;
+    						}
+    						break;
+    					case 'txt':
+    					case 'pm':
+    						if ($docType[1] != 'plain'){
+    							$flag = 1;
+    						} else {
+    							$res->status = true;
+								return $res;
+    						}
+    						break;
+    					case 'htm':
+    					case 'html':
+    						if ($docType[1] != 'html'){
+    							$flag = 1;
+    						} else {
+    							$res->status = true;
+								return $res;
+    						}
+    						break;
+    					case 'po':
+    						if ($docType[1] != 'x-po'){
+    							$flag = 1;
+    						} else {
+    							$res->status = true;
+								return $res;
+    						}
+    						break;
+    					case 'pdf':
+    					case 'png':
+    					case 'jpeg':
+    					case 'gif':
+    					case 'zip':
+    					case 'mp4':
+    						if ($docType[1] != $allowedDocTypes){
+    							$flag = 1;
+    						} else {
+    							$res->status = true;
+    							return $res;
+    						}
+    						break;
+    					default:
+    						if(($dtype[count($dtype) - 1]) != $allowedDocTypes){
+    							$flag = 1;
+    						} else {
+    							$res->status = true;
+								return $res;
+    						}
+    				}
+    			} else {
+    				$res->status = false;
+    				$res->message = G::LoadTranslation('ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT' );
+    				return $res;
+    			}
+    		}
+    	}
+    	if( $flag == 1){
+    		$res->status = false;
+    		$res->message = G::LoadTranslation('ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' ) . ' ' . $filesName;
+    		return $res;
+    	}
+    }
+
+    /**
+     * Get the actual browser.
+     */
+    public function getActualBrowser(){
+    	$browser=array("TRIDENT","IE","OPERA","MOZILLA","NETSCAPE","FIREFOX","SAFARI","CHROME");
+    	$info['browser'] = "OTHER";
+    
+    	foreach($browser as $parent){
+    		if($parent == 'TRIDENT'){
+    			$parent = "RV";
+    		}
+    		$s = strpos(strtoupper($_SERVER['HTTP_USER_AGENT']), $parent);
+    		$f = $s + strlen($parent);
+    		$version = substr($_SERVER['HTTP_USER_AGENT'], $f, 15);
+    		$version = preg_replace('/[^0-9,.]/','',$version);
+    		if ($s){
+    			$info['browser'] = $parent;
+    			$info['version'] = $version;
+    		}
+    	}
+    
+    	$info['browser'] = ($info['browser']=='RV')? 'IE':$info['browser'];
+    	return $info;
+    }
+    
+    /**
+     * Check the browser compativility
+     */
+    public function checkBrowserCompatibility($browser = null, $version = null){
+    	if($browser == null || $version == null){
+    		$info = G::getActualBrowser();
+    		$browser = $info['browser'];
+    		$version = $info['version'];
+    	}
+    	if ((($browser== 'IE') && (($version >= 8) && ($version <= 11))) ||
+    			(($browser== 'CHROME') && ($version >= 26)) ||
+    			(($browser== 'FIREFOX') && ($version >= 20))
+    	){
+    		return true;
+    	}
+    	return false;
     }
 }
 

@@ -253,7 +253,11 @@ class CalendarDefinition extends BaseCalendarDefinition
         if (! (is_object( $tr ) && get_class( $tr ) == 'CalendarDefinition')) {
             $tr = new CalendarDefinition();
             $tr->setCalendarCreateDate( 'now' );
+            G::auditLog("CreateCalendar", "Calendar Name: ".$aData['CALENDAR_NAME']);
+        } else {
+            G::auditLog("UpdateCalendar", "Calendar Name: ".$aData['CALENDAR_NAME']." Calendar ID: (".$CalendarUid.") ");
         }
+
         $tr->setCalendarUid( $CalendarUid );
         $tr->setCalendarName( $CalendarName );
         $tr->setCalendarUpdateDate( 'now' );
@@ -315,6 +319,8 @@ class CalendarDefinition extends BaseCalendarDefinition
         if ($tr->validate()) {
             // we save it, since we get no validation errors, or do whatever else you like.
             $res = $tr->save();
+            $deletedCalendar = $tr->getCalendarName();
+            G::auditLog("DeleteCalendar", "Calendar Name: ".$deletedCalendar." Calendar ID: (".$CalendarUid.") ");
         } else {
             // Something went wrong. We can now get the validationFailures and handle them.
             $msg = '';

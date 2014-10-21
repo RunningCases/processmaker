@@ -209,7 +209,7 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
 
         // the default behavior is to use "username" as the user_id
         return array_merge(array(
-            'user_id' => $username
+            'user_id' => $userInfo['USR_UID'] //$username
         ), $userInfo);
     }
 

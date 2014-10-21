@@ -18,7 +18,7 @@ class Applications
         $sort = "APP_CACHE_VIEW.APP_NUMBER",
         $category = null,
         $configuration = true,
-        $paged = false
+        $paged = true
     ) {
         $callback = isset($callback)? $callback : "stcCallback1001";
         $dir = isset($dir)? $dir : "DESC";
@@ -443,10 +443,14 @@ class Applications
         }
 
         //Add sortable options
-        if ($sort != "") {
+        $sortBk = $sort;
+
+        if ($sortBk != "") {
+            $sort = "";
+
             //Current delegation (*)
             if (($action == "sent" || $action == "search" || $action == "simple_search" || $action == "to_revise" || $action == "to_reassign") && ($status != "TO_DO")) {
-                switch ($sort) {
+                switch ($sortBk) {
                     case "APP_CACHE_VIEW.APP_CURRENT_USER":
                         $sort = "USRCR_" . $conf->userNameFormatGetFirstFieldByUsersTable();
                         break;
@@ -455,10 +459,12 @@ class Applications
                         break;
                 }
             }
+
             if (isset( $oAppCache->confCasesList['PMTable'] ) && ! empty( $oAppCache->confCasesList['PMTable'] ) && $tableNameAux != '') {
-                $sortTable = explode(".", $sort);
+                $sortTable = explode(".", $sortBk);
 
                 $additionalTableUid = $oAppCache->confCasesList["PMTable"];
+
                 require_once 'classes/model/Fields.php';
                 $oCriteria = new Criteria('workflow');
 
@@ -489,6 +495,15 @@ class Applications
                 }
             }
 
+            if ($sort == "") {
+                $sort = $sortBk;
+
+                if (!in_array($sortBk, $Criteria->getSelectColumns())) {
+                    $sort = AppCacheViewPeer::APP_NUMBER; //DEFAULT VALUE
+                    $dir = "DESC";
+                }
+            }
+
             if ($dir == "DESC") {
                 $Criteria->addDescendingOrderByColumn($sort);
             } else {
@@ -501,7 +516,7 @@ class Applications
         $Criteria->setOffset( $start );
 
         //execute the query
-        $oDataset = AppCacheViewPeer::doSelectRS( $Criteria );
+        $oDataset = AppCacheViewPeer::doSelectRS( $Criteria, Propel::getDbConnection('workflow_ro') );
 
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
 

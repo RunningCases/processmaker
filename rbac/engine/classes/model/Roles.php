@@ -64,7 +64,7 @@ class Roles extends BaseRoles {
                 $this->setNew(false);
 
                 $this->getRolName();
-                $aFields['ROL_NAME'] = $this->rol_name;
+                $aFields['ROL_NAME'] = ($this->rol_name != '' ? $this->rol_name: $this->getRolCode());
 
                 return $aFields;
             } else {
@@ -83,11 +83,14 @@ class Roles extends BaseRoles {
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $aRow = $oDataset->getRow();
-            
+
             $roles = new Roles();
         	$roles->load($aRow['ROL_UID']);
         	$aRow['ROL_NAME'] = $roles->getRolName();
-            
+        	if ($aRow['ROL_NAME'] == '') {
+        	    $aRow['ROL_NAME'] = $roles->getRolCode();
+        	}
+
             if (is_array($aRow)) {
                 return $aRow;
             } else {
@@ -159,16 +162,16 @@ class Roles extends BaseRoles {
         $oCriteria->add(RolesPeer::ROL_CREATE_DATE, '', Criteria::NOT_EQUAL);
         $oCriteria->add(RolesPeer::ROL_UPDATE_DATE, '', Criteria::NOT_EQUAL);
         $oCriteria->addJoin(RolesPeer::ROL_SYSTEM, SystemsPeer::SYS_UID);
-    
+
         if ($filter != '') {
           $oCriteria->add(RolesPeer::ROL_CODE, '%'.$filter.'%', Criteria::LIKE);
         }
-    
+
         $oCriteria->setOffset($start);
         $oCriteria->setLimit($limit);
-    
+
         $result['LIST'] = $oCriteria;
-    
+
         return $result;
 	}
 
@@ -183,6 +186,9 @@ class Roles extends BaseRoles {
         	$o = new Roles();
         	$o->load($row['ROL_UID']);
         	$row['ROL_NAME'] = $o->getRolName();
+        	if ($row['ROL_NAME'] == '') {
+        	    $row['ROL_NAME'] = $o->getRolCode();
+        	}
         	$aRows[] = $row;
         }
         return $aRows;
@@ -230,9 +236,8 @@ class Roles extends BaseRoles {
             if ($obj->validate()) {
                 $result = $obj->save();
                 $con->commit();
-
                 $obj->setRolName($rol_name);
-
+                G::auditLog("CreateRole", "Role Name: ". $rol_name);
             } else {
                 $e = new Exception("Failed Validation in class " . get_class($this) . ".");
                 $e->aValidationFailures = $this->getValidationFailures();
@@ -257,8 +262,8 @@ class Roles extends BaseRoles {
             if ($this->validate()) {
                 $result = $this->save();
                 $con->commit();
-
                 $this->setRolName($rol_name);
+                G::auditLog("UpdateRole", "Role Name: ".$rol_name." Role ID: (".$fields['ROL_UID'].") ");
                 return $result;
             } else {
                 $con->rollback();
@@ -275,10 +280,11 @@ class Roles extends BaseRoles {
         try {
             $con->begin();
             $this->setRolUid($ROL_UID);
+            $rol_name = $this->load($ROL_UID);
             Content::removeContent('ROL_NAME', '', $this->getRolUid());
             $result = $this->delete();
-
             $con->commit();
+            G::auditLog("DeleteRole", "Role Name: ".$rol_name['ROL_NAME']." Role UID: (".$ROL_UID.") ");
             return $result;
         } catch( exception $e ) {
             $con->rollback();
@@ -320,6 +326,9 @@ class Roles extends BaseRoles {
         if (is_array($row)) {
             $o = RolesPeer::retrieveByPK($row['ROL_UID']);
             $row['ROL_NAME'] = $o->getRolName();
+            if ($row['ROL_NAME'] == '') {
+                $row['ROL_NAME'] = $o->getRolCode();
+            }
             return $row;
         } else {
             return null;
@@ -505,6 +514,10 @@ class Roles extends BaseRoles {
         $oUsersRoles->setRolUid($aData['ROL_UID']);
         $oUsersRoles->save();
 
+        $rol = $this->load($aData['ROL_UID']);
+        $oUsersRbac = new RbacUsers();
+        $user = $oUsersRbac->load($aData['USR_UID']);
+        G::auditLog("AssignUserToRole", "Assign user ".$user['USR_USERNAME']." (".$aData['USR_UID'].") to Role ".$rol['ROL_NAME']." (".$aData['ROL_UID'].") ");
     }
 
     function deleteUserRole($ROL_UID, $USR_UID) {
@@ -515,6 +528,11 @@ class Roles extends BaseRoles {
             $crit->add(UsersRolesPeer::ROL_UID, $ROL_UID);
         }
         UsersRolesPeer::doDelete($crit);
+        $rol = $this->load($ROL_UID);
+        $oUsersRbac = new RbacUsers();
+        $user = $oUsersRbac->load($USR_UID);
+        
+        G::auditLog("DeleteUserToRole", "Delete user ".$user['USR_USERNAME']." (".$USR_UID.") to Role ".$rol['ROL_NAME']." (".$ROL_UID.") ");
     }
 
     function getRolePermissions($ROL_UID, $filter='', $status=null) {
@@ -610,7 +628,10 @@ class Roles extends BaseRoles {
         if (isset($sData['PER_NAME'])) {
             $o->setPermissionName($sData['PER_NAME']);
         }
+        $permission = $o->getPermissionName($sData['PER_UID']);
+        $role = $this->load($sData['ROL_UID']);
         $o->save();
+        G::auditLog("AddPermissionToRole", "Add Permission ".$permission." (".$sData['PER_UID'].") to Role ".$role['ROL_NAME']." (".$sData['ROL_UID'].") ");
     }
 
     function deletePermissionRole($ROL_UID, $PER_UID) {
@@ -618,6 +639,13 @@ class Roles extends BaseRoles {
         $crit->add(RolesPermissionsPeer::ROL_UID, $ROL_UID);
         $crit->add(RolesPermissionsPeer::PER_UID, $PER_UID);
         RolesPermissionsPeer::doDelete($crit);
+
+        $o = new RolesPermissions();
+        $o->setPerUid($PER_UID);
+        $permission = $o->getPermissionName($PER_UID);
+        $role = $this->load($ROL_UID);
+        
+        G::auditLog("DeletePermissionToRole", "Delete Permission ".$permission." (".$PER_UID.") from Role ".$role['ROL_NAME']." (".$ROL_UID.") ");
     }
 
     function numUsersWithRole($ROL_UID) {

@@ -372,60 +372,64 @@ function run_drafts_clean($args, $opts) {
 }
 
 function run_workspace_backup($args, $opts) {
-  $workspaces = array();
-  if (sizeof($args) > 2) {
-    $filename = array_pop($args);
-    foreach ($args as $arg) {
-      $workspaces[] = new workspaceTools($arg);
+    $workspaces = array();
+    if (sizeof($args) > 2) {
+        $filename = array_pop($args);
+        foreach ($args as $arg) {
+            $workspaces[] = new workspaceTools($arg);
+        }
+    } else if (sizeof($args) > 0) {
+        $workspace = new workspaceTools($args[0]);
+        $workspaces[] = $workspace;
+        if (sizeof($args) == 2) {
+            $filename = $args[1];
+        } else {
+            $filename = "{$workspace->name}.tar";
+        }
+    } else {
+        throw new Exception("No workspace specified for backup");
     }
-  } else if (sizeof($args) > 0) {
-    $workspace = new workspaceTools($args[0]);
-    $workspaces[] = $workspace;
-    if (sizeof($args) == 2)
-      $filename = $args[1];
-    else
-      $filename = "{$workspace->name}.tar";
-  } else {
-    throw new Exception("No workspace specified for backup");
-  }
-  foreach ($workspaces as $workspace)
-    if (!$workspace->workspaceExists())
-      throw new Exception("Workspace '{$workspace->name}' not found");
-  //If this is a relative path, put the file in the backups directory
-  if (strpos($filename, "/") === false && strpos($filename, '\\') === false){
-    $filename = PATH_DATA . "backups/$filename";
-  }
-  CLI::logging("Backing up to $filename\n");
 
-  $filesize = array_key_exists("filesize", $opts) ? $opts['filesize'] : -1;
-  if($filesize >= 0)
-  {
-      if(!Bootstrap::isLinuxOs()){
+
+    foreach ($workspaces as $workspace) {
+        if (!$workspace->workspaceExists()) {
+            throw new Exception("Workspace '{$workspace->name}' not found");
+        }        
+    }
+  
+    //If this is a relative path, put the file in the backups directory
+    if (strpos($filename, "/") === false && strpos($filename, '\\') === false){
+        $filename = PATH_DATA . "backups/$filename";
+    }
+    CLI::logging("Backing up to $filename\n");
+
+    $filesize = array_key_exists("filesize", $opts) ? $opts['filesize'] : -1;
+
+    if ($filesize >= 0) {
+        if (!Bootstrap::isLinuxOs()) {
             CLI::error("This is not a Linux enviroment, cannot use this filesize [-s] feature.\n");
             return;
-      }
-      $multipleBackup = new multipleFilesBackup ($filename,$filesize);//if filesize is 0 the default size will be took
-      //using new method
-      foreach ($workspaces as $workspace){
-          $multipleBackup->addToBackup($workspace);
-      }
-      $multipleBackup->letsBackup();
-  }
-  else
-  {
-    //ansient method to backup into one large file
-    $backup = workspaceTools::createBackup($filename);
+        }
+        $multipleBackup = new multipleFilesBackup ($filename,$filesize);//if filesize is 0 the default size will be took
+        //using new method
+        foreach ($workspaces as $workspace) {
+            $multipleBackup->addToBackup($workspace);
+        }
+        $multipleBackup->letsBackup();
+    } else {
+        //ansient method to backup into one large file
+        $backup = workspaceTools::createBackup($filename);
 
-    foreach ($workspaces as $workspace)
-      $workspace->backup($backup);
-  }
-  CLI::logging("\n");
-  workspaceTools::printSysInfo();
-  foreach ($workspaces as $workspace) {
+        foreach ($workspaces as $workspace) {
+            $workspace->backup($backup);
+        }
+    }
     CLI::logging("\n");
-    $workspace->printMetadata(false);
-  }
-
+    workspaceTools::printSysInfo();
+    foreach ($workspaces as $workspace) {
+        CLI::logging("\n");
+        $workspace->printMetadata(false);
+    }
 }
 
 function run_workspace_restore($args, $opts) {
@@ -447,7 +451,7 @@ function run_workspace_restore($args, $opts) {
     $workspace = array_key_exists("workspace", $opts) ? $opts['workspace'] : NULL;
     $overwrite = array_key_exists("overwrite", $opts);
     $multiple = array_key_exists("multiple", $opts);
-    $dstWorkspace = $args[1];
+    $dstWorkspace = isset($args[1]) ? $args[1] : null;
     if(!empty($multiple)){
         if(!Bootstrap::isLinuxOs()){
             CLI::error("This is not a Linux enviroment, cannot use this multiple [-m] feature.\n");

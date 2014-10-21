@@ -497,15 +497,97 @@ var openSummaryWindow = function(appUid, delIndex, action)
         });
 
         var tabs = new Array();
+        var isMovil = {
+            Android: function() {
+                return navigator.userAgent.match(/Android/i);
+            },
+            BlackBerry: function() {
+                return navigator.userAgent.match(/BlackBerry/i);
+            },
+            iOS: function() {
+                return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+            },
+            Opera: function() {
+                return navigator.userAgent.match(/Opera Mini/i);
+            },
+            Windows: function() {
+                return navigator.userAgent.match(/IEMobile/i);
+            },
+            other: function() {
+                return navigator.userAgent.match(/Mobile/i);
+            },
+            any: function() {
+                return isMovil.Android() || isMovil.BlackBerry() || isMovil.iOS() || isMovil.Opera() || isMovil.Windows() || isMovil.other();
+            }
+        };
+
         tabs.push(sumaryInfPanel);
         if (response.dynUid != '') {
-          tabs.push({title: Ext.util.Format.capitalize(_('ID_MORE_INFORMATION')), bodyCfg: {
-            tag: 'iframe',
-            id: 'summaryIFrame',
-            src: '../cases/summary?APP_UID=' + appUid + '&DEL_INDEX=' + delIndex + '&DYN_UID=' + response.dynUid,
-            style: {border: '0px none', height: '300px'},
-            onload: ''
-          }});
+            if (isMovil.any()) {
+                var src = '../cases/summary?APP_UID=' + appUid + '&DEL_INDEX=' + delIndex + '&DYN_UID=' + response.dynUid;
+
+                var windowOpen = function() {
+                    window.open(src,'_blank');
+                };
+
+                var openDynaform = new Ext.Action({
+                    text: _('ID_OPEN_DYNAFORM_TAB'),
+                    id: 'buttonOpenDynaform',
+                    handler: windowOpen
+                });
+
+                var fieldsAS = new Ext.form.FieldSet({
+                    bodyStyle:'align:center',
+                    items: [
+                        {
+                            xtype:'button',
+                            id: 'buttonOpenDynaform',
+                            name: 'buttonOpenDynaform',
+                            hidden: true,
+                            text: _('ID_OPEN_DYNAFORM_TAB'),
+                            handler:function() {
+                                window.open(src,'_blank');
+                            }
+                        },
+                        {
+                            html:'<iframe src="'+ src +'" width="100%" height="350" frameBorder="0"></iframe>'
+                        }
+                    ]
+                });
+                var panel =  new Ext.FormPanel({
+                    labelAlign:'center',
+                    autoScroll: true,
+                    fileUpload: true,
+                    width:'100%',
+                    height: '50px',
+                    bodyStyle:'padding:10px',
+                    waitMsgTarget : true,
+                    frame: true,
+                    defaults: {
+                      anchor: '100%',
+                      allowBlank: false,
+                      resizable: true,
+                      msgTarget: 'side',
+                      align:'center'
+                    },
+                    items:[
+                    fieldsAS
+                    ]
+                  });
+                tabs.push({
+                    title: Ext.util.Format.capitalize(_('ID_MORE_INFORMATION')),
+                    layout: 'fit',
+                    items: [panel]
+                });
+            } else {
+                tabs.push({title: Ext.util.Format.capitalize(_('ID_MORE_INFORMATION')), bodyCfg: {
+                    tag: 'iframe',
+                    id: 'summaryIFrame',
+                    src: '../cases/summary?APP_UID=' + appUid + '&DEL_INDEX=' + delIndex + '&DYN_UID=' + response.dynUid,
+                    style: {border: '0px none', height: '300px', overflow: 'auto'},
+                    onload: ''
+                }});
+            }
         }
         tabs.push({title: Ext.util.Format.capitalize(_('ID_UPLOADED_DOCUMENTS')), bodyCfg: {
           tag: 'iframe',

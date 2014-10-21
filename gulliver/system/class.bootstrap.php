@@ -225,6 +225,8 @@ class Bootstrap
         self::registerClass("cronFile", PATH_CLASSES . "class.plugin.php");
         self::registerClass("pluginDetail", PATH_CLASSES . "class.pluginRegistry.php");
         self::registerClass("PMPluginRegistry", PATH_CLASSES . "class.pluginRegistry.php");
+        self::registerClass("featuresDetail", PATH_CLASSES . "class.licensedFeatures.php");
+        self::registerClass("PMLicensedFeatures", PATH_CLASSES . "class.licensedFeatures.php");
         self::registerClass("PMDashlet", PATH_CLASSES . "class.pmDashlet.php");
         self::registerClass("pmGauge", PATH_CLASSES . "class.pmGauge.php");
         self::registerClass("pmPhing", PATH_CLASSES . "class.pmPhing.php");
@@ -2858,6 +2860,62 @@ class Bootstrap
             echo $view->getOutput();
             die();
         }
+    }
+
+    public function getPasswordHashConfig()
+    {
+        G::LoadClass('configuration');
+        $config= new Configurations();
+        $passwordHashConfig = $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
+        if (!is_null($passwordHashConfig)) {
+            if (!is_array($passwordHashConfig)) {
+                $passwordHashConfig = array();
+            }
+            if (!isset($passwordHashConfig['current'])) {
+                $passwordHashConfig['current'] = 'md5';
+            }
+            if (!isset($passwordHashConfig['previous'])) {
+                $passwordHashConfig['previous'] = 'md5';
+            }
+        } else {
+            $passwordHashConfig = array('current' => 'md5', 'previous' => 'md5');
+        }
+        return $passwordHashConfig;
+    }
+
+    public function getPasswordHashType()
+    {
+        $passwordHashConfig = Bootstrap::getPasswordHashConfig();
+        return $passwordHashConfig['current'];
+    }
+
+    public function hashPassword($pass, $hashType = '', $includeHashType = false)
+    {
+        if ($hashType == '') {
+            $hashType = Bootstrap::getPasswordHashType();
+        }
+
+        eval("\$var = hash('" . $hashType . "', '" . $pass . "');");
+
+        if ($includeHashType) {
+            $var = $hashType . ':' . $var;
+        }
+
+        return $var;
+    }
+
+    public function verifyHashPassword ($pass, $userPass)
+    {
+        $passwordHashConfig = Bootstrap::getPasswordHashConfig();
+        $hashTypeCurrent = $passwordHashConfig['current'];
+        $hashTypePrevious = $passwordHashConfig['previous'];
+        if ((Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) || ($pass === $hashTypeCurrent . ':' . $userPass)) {
+            return true;
+        }
+        if ((Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) || ($pass === $hashTypePrevious . ':' . $userPass)) {
+            return true;
+        }
+        return false;
     }
 }
 

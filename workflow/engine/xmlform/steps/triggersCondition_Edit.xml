@@ -68,7 +68,9 @@ var insertFormVar = function(sFieldName, sValue) {
 function saveTriggerCondition(oForm)
 {
   ajax_post(oForm.action, oForm, 'POST');
+  var sType = document.getElementById('form[ST_TYPE]').value;
   currentPopupWindow.remove();
+  showTriggers('@#STEP_UID', sType);
 }
 
 ]]></JS>

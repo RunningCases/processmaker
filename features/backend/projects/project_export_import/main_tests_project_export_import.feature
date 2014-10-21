@@ -78,7 +78,7 @@ Scenario: Get a list templates folder of process files manager
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
+    And the response has 2 records
 
 Scenario: Verify that there are report tables
     Given I request "project/1455892245368ebeb11c1a5001393784/report-tables"

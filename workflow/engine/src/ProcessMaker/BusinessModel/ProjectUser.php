@@ -336,7 +336,7 @@ class ProjectUser
 
             $params = array(
                 "userid"   => $username,
-                "password" => "md5:" . md5($password)
+                "password" => Bootstrap::hashPassword($password, '', true)
             );
 
             $response = $client->login($params);

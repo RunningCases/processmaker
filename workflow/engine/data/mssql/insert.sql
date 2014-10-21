@@ -20,148 +20,148 @@ SELECT 'PER_NAME','','00000000000000000000000000000008','en','Reports' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000007','en','Reassign case' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000006','en','All cases' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000005','en','Create cases' UNION ALL
-SELECT 'PER_NAME','','00000000000000000000000000000004','en','Factory' UNION ALL
+SELECT 'PER_NAME','','00000000000000000000000000000004','en','Design processes' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000003','en','Users' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000001','en','Login' UNION ALL
 SELECT 'PER_NAME','','00000000000000000000000000000002','en','Setup';
 
-INSERT INTO [LANGUAGE] ([LAN_ID],[LAN_NAME],[LAN_NATIVE_NAME],[LAN_DIRECTION],[LAN_WEIGHT],[LAN_ENABLED],[LAN_CALENDAR]) 
-SELECT 'aa','Afar','','L','0','0','GREGORIAN'  UNION ALL
-SELECT 'ab','Abkhazian','','L','1','0','GREGORIAN'  UNION ALL
-SELECT 'af','Afrikaans','','L','2','0','GREGORIAN'  UNION ALL
-SELECT 'am','Amharic','','L','3','0','GREGORIAN'  UNION ALL
-SELECT 'ar','Arabic','','L','4','0','GREGORIAN'  UNION ALL
-SELECT 'as','Assamese','','L','5','0','GREGORIAN'  UNION ALL
-SELECT 'ay','Aymara','','L','6','0','GREGORIAN'  UNION ALL
-SELECT 'az','Azerbaijani','','L','7','0','GREGORIAN'  UNION ALL
-SELECT 'ba','Bashkir','','L','8','0','GREGORIAN'  UNION ALL
-SELECT 'be','Byelorussian','','L','9','0','GREGORIAN'  UNION ALL
-SELECT 'bg','Bulgarian','','L','10','0','GREGORIAN'  UNION ALL
-SELECT 'bh','Bihari','','L','11','0','GREGORIAN'  UNION ALL
-SELECT 'bi','Bislama','','L','12','0','GREGORIAN'  UNION ALL
-SELECT 'bn','Bengali','','L','13','0','GREGORIAN'  UNION ALL
-SELECT 'bo','Tibetan','','L','14','0','GREGORIAN'  UNION ALL
-SELECT 'br','Breton','','L','15','0','GREGORIAN'  UNION ALL
-SELECT 'ca','Catalan','','L','16','0','GREGORIAN'  UNION ALL
-SELECT 'co','Corsican','','L','17','0','GREGORIAN'  UNION ALL
-SELECT 'cs','Czech','','L','18','0','GREGORIAN'  UNION ALL
-SELECT 'cy','Welsh','','L','19','0','GREGORIAN'  UNION ALL
-SELECT 'da','Danish','','L','20','0','GREGORIAN'  UNION ALL
-SELECT 'de','German','','L','21','0','GREGORIAN'  UNION ALL
-SELECT 'dz','Bhutani','','L','22','0','GREGORIAN'  UNION ALL
-SELECT 'el','Greek','','L','23','0','GREGORIAN'  UNION ALL
-SELECT 'en','English','','L','24','1','GREGORIAN'  UNION ALL
-SELECT 'eo','Esperanto','','L','25','0','GREGORIAN'  UNION ALL
-SELECT 'es','Spanish','','L','26','0','GREGORIAN'  UNION ALL
-SELECT 'et','Estonian','','L','27','0','GREGORIAN'  UNION ALL
-SELECT 'eu','Basque','','L','28','0','GREGORIAN'  UNION ALL
-SELECT 'fa','Persian','','R','29','0','PERSIAN'  UNION ALL
-SELECT 'fi','Finnish','','L','30','0','GREGORIAN'  UNION ALL
-SELECT 'fj','Fiji','','L','31','0','GREGORIAN'  UNION ALL
-SELECT 'fo','Faeroese','','L','32','0','GREGORIAN'  UNION ALL
-SELECT 'fr','French','','L','33','0','GREGORIAN'  UNION ALL
-SELECT 'fy','Frisian','','L','34','0','GREGORIAN'  UNION ALL
-SELECT 'ga','Irish','','L','35','0','GREGORIAN'  UNION ALL
-SELECT 'gd','Gaelic','','L','36','0','GREGORIAN'  UNION ALL
-SELECT 'gl','Galician','','L','37','0','GREGORIAN'  UNION ALL
-SELECT 'gn','Guarani','','L','38','0','GREGORIAN'  UNION ALL
-SELECT 'gu','Gujarati','','L','39','0','GREGORIAN'  UNION ALL
-SELECT 'ha','Hausa','','L','40','0','GREGORIAN'  UNION ALL
-SELECT 'hi','Hindi','','L','41','0','GREGORIAN'  UNION ALL
-SELECT 'hr','Croatian','','L','42','0','GREGORIAN'  UNION ALL
-SELECT 'hu','Hungarian','','L','43','0','GREGORIAN'  UNION ALL
-SELECT 'hy','Armenian','','L','44','0','GREGORIAN'  UNION ALL
-SELECT 'ia','Interlingua','','L','45','0','GREGORIAN'  UNION ALL
-SELECT 'ie','Interlingue','','L','46','0','GREGORIAN'  UNION ALL
-SELECT 'ik','Inupiak','','L','47','0','GREGORIAN'  UNION ALL
-SELECT 'in','Indonesian','','L','48','0','GREGORIAN'  UNION ALL
-SELECT 'is','Icelandic','','L','49','0','GREGORIAN'  UNION ALL
-SELECT 'it','Italian','','L','50','0','GREGORIAN'  UNION ALL
-SELECT 'iw','Hebrew','','R','51','0','GREGORIAN'  UNION ALL
-SELECT 'ja','Japanese','','L','52','0','GREGORIAN'  UNION ALL
-SELECT 'ji','Yiddish','','L','53','0','GREGORIAN'  UNION ALL
-SELECT 'jw','Javanese','','L','54','0','GREGORIAN'  UNION ALL
-SELECT 'ka','Georgian','','L','55','0','GREGORIAN'  UNION ALL
-SELECT 'kk','Kazakh','','L','56','0','GREGORIAN'  UNION ALL
-SELECT 'kl','Greenlandic','','L','57','0','GREGORIAN'  UNION ALL
-SELECT 'km','Cambodian','','L','58','0','GREGORIAN'  UNION ALL
-SELECT 'kn','Kannada','','L','59','0','GREGORIAN'  UNION ALL
-SELECT 'ko','Korean','','L','60','0','GREGORIAN'  UNION ALL
-SELECT 'ks','Kashmiri','','L','61','0','GREGORIAN'  UNION ALL
-SELECT 'ku','Kurdish','','L','62','0','GREGORIAN'  UNION ALL
-SELECT 'ky','Kirghiz','','L','63','0','GREGORIAN'  UNION ALL
-SELECT 'la','Latin','','L','64','0','GREGORIAN'  UNION ALL
-SELECT 'ln','Lingala','','L','65','0','GREGORIAN'  UNION ALL
-SELECT 'lo','Laothian','','L','66','0','GREGORIAN'  UNION ALL
-SELECT 'lt','Lithuanian','','L','67','0','GREGORIAN'  UNION ALL
-SELECT 'lv','Latvian','','L','68','0','GREGORIAN'  UNION ALL
-SELECT 'mg','Malagasy','','L','69','0','GREGORIAN'  UNION ALL
-SELECT 'mi','Maori','','L','70','0','GREGORIAN'  UNION ALL
-SELECT 'mk','Macedonian','','L','71','0','GREGORIAN'  UNION ALL
-SELECT 'ml','Malayalam','','L','72','0','GREGORIAN'  UNION ALL
-SELECT 'mn','Mongolian','','L','73','0','GREGORIAN'  UNION ALL
-SELECT 'mo','Moldavian','','L','74','0','GREGORIAN'  UNION ALL
-SELECT 'mr','Marathi','','L','75','0','GREGORIAN'  UNION ALL
-SELECT 'ms','Malay','','L','76','0','GREGORIAN'  UNION ALL
-SELECT 'mt','Maltese','','L','77','0','GREGORIAN'  UNION ALL
-SELECT 'my','Burmese','','L','78','0','GREGORIAN'  UNION ALL
-SELECT 'na','Nauru','','L','79','0','GREGORIAN'  UNION ALL
-SELECT 'ne','Nepali','','L','80','0','GREGORIAN'  UNION ALL
-SELECT 'nl','Dutch','','L','81','0','GREGORIAN'  UNION ALL
-SELECT 'no','Norwegian','','L','82','0','GREGORIAN'  UNION ALL
-SELECT 'oc','Occitan','','L','83','0','GREGORIAN'  UNION ALL
-SELECT 'om','Oromo','','L','84','0','GREGORIAN'  UNION ALL
-SELECT 'or','Oriya','','L','85','0','GREGORIAN'  UNION ALL
-SELECT 'pa','Punjabi','','L','86','0','GREGORIAN'  UNION ALL
-SELECT 'pl','Polish','','L','87','0','GREGORIAN'  UNION ALL
-SELECT 'ps','Pashto','','L','88','0','GREGORIAN'  UNION ALL
-SELECT 'pt','Portuguese','','L','89','0','GREGORIAN'  UNION ALL
-SELECT 'qu','Quechua','','L','90','0','GREGORIAN'  UNION ALL
-SELECT 'rm','Rhaeto-Romance','','L','91','0','GREGORIAN'  UNION ALL
-SELECT 'rn','Kirundi','','L','92','0','GREGORIAN'  UNION ALL
-SELECT 'ro','Romanian','','L','93','0','GREGORIAN'  UNION ALL
-SELECT 'ru','Russian','','L','94','0','GREGORIAN'  UNION ALL
-SELECT 'rw','Kinyarwanda','','L','95','0','GREGORIAN'  UNION ALL
-SELECT 'sa','Sanskrit','','L','96','0','GREGORIAN'  UNION ALL
-SELECT 'sd','Sindhi','','L','97','0','GREGORIAN'  UNION ALL
-SELECT 'sg','Sangro','','L','98','0','GREGORIAN'  UNION ALL
-SELECT 'sh','Serbo-Croatian','','L','99','0','GREGORIAN'  UNION ALL
-SELECT 'si','Singhalese','','L','100','0','GREGORIAN'  UNION ALL
-SELECT 'sk','Slovak','','L','101','0','GREGORIAN'  UNION ALL
-SELECT 'sl','Slovenian','','L','102','0','GREGORIAN'  UNION ALL
-SELECT 'sm','Samoan','','L','103','0','GREGORIAN'  UNION ALL
-SELECT 'sn','Shona','','L','104','0','GREGORIAN'  UNION ALL
-SELECT 'so','Somali','','L','105','0','GREGORIAN'  UNION ALL
-SELECT 'sq','Albanian','','L','106','0','GREGORIAN'  UNION ALL
-SELECT 'sr','Serbian','','L','107','0','GREGORIAN'  UNION ALL
-SELECT 'ss','Siswati','','L','108','0','GREGORIAN'  UNION ALL
-SELECT 'st','Sesotho','','L','109','0','GREGORIAN'  UNION ALL
-SELECT 'su','Sudanese','','L','110','0','GREGORIAN'  UNION ALL
-SELECT 'sv','Swedish','','L','111','0','GREGORIAN'  UNION ALL
-SELECT 'sw','Swahili','','L','112','0','GREGORIAN'  UNION ALL
-SELECT 'ta','Tamil','','L','113','0','GREGORIAN'  UNION ALL
-SELECT 'te','Tegulu','','L','114','0','GREGORIAN'  UNION ALL
-SELECT 'tg','Tajik','','L','115','0','GREGORIAN'  UNION ALL
-SELECT 'th','Thai','','L','116','0','GREGORIAN'  UNION ALL
-SELECT 'ti','Tigrinya','','L','117','0','GREGORIAN'  UNION ALL
-SELECT 'tk','Turkmen','','L','118','0','GREGORIAN'  UNION ALL
-SELECT 'tl','Tagalog','','L','119','0','GREGORIAN'  UNION ALL
-SELECT 'tn','Setswana','','L','120','0','GREGORIAN'  UNION ALL
-SELECT 'to','Tonga','','L','121','0','GREGORIAN'  UNION ALL
-SELECT 'tr','Turkish','','L','122','0','GREGORIAN'  UNION ALL
-SELECT 'ts','Tsonga','','L','123','0','GREGORIAN'  UNION ALL
-SELECT 'tt','Tatar','','L','124','0','GREGORIAN'  UNION ALL
-SELECT 'tw','Twi','','L','125','0','GREGORIAN'  UNION ALL
-SELECT 'uk','Ukrainian','','L','126','0','GREGORIAN'  UNION ALL
-SELECT 'ur','Urdu','','L','127','0','GREGORIAN'  UNION ALL
-SELECT 'uz','Uzbek','','L','128','0','GREGORIAN'  UNION ALL
-SELECT 'vi','Vietnamese','','L','129','0','GREGORIAN'  UNION ALL
-SELECT 'vo','Volapuk','','L','130','0','GREGORIAN'  UNION ALL
-SELECT 'wo','Wolof','','L','131','0','GREGORIAN'  UNION ALL
-SELECT 'xh','Xhosa','','L','132','0','GREGORIAN'  UNION ALL
-SELECT 'yo','Yoruba','','L','133','0','GREGORIAN'  UNION ALL
-SELECT 'zh','Chinese','','L','134','0','GREGORIAN'  UNION ALL
-SELECT 'zu','Zulu','','L','135','0','GREGORIAN' ;
+INSERT INTO [LANGUAGE] ([LAN_ID],[LAN_LOCATION],[LAN_NAME],[LAN_NATIVE_NAME],[LAN_DIRECTION],[LAN_WEIGHT],[LAN_ENABLED],[LAN_CALENDAR]) 
+SELECT 'aa','','Afar','','L','0','0','GREGORIAN'  UNION ALL
+SELECT 'ab','','Abkhazian','','L','1','0','GREGORIAN'  UNION ALL
+SELECT 'af','','Afrikaans','','L','2','0','GREGORIAN'  UNION ALL
+SELECT 'am','','Amharic','','L','3','0','GREGORIAN'  UNION ALL
+SELECT 'ar','','Arabic','','L','4','0','GREGORIAN'  UNION ALL
+SELECT 'as','','Assamese','','L','5','0','GREGORIAN'  UNION ALL
+SELECT 'ay','','Aymara','','L','6','0','GREGORIAN'  UNION ALL
+SELECT 'az','','Azerbaijani','','L','7','0','GREGORIAN'  UNION ALL
+SELECT 'ba','','Bashkir','','L','8','0','GREGORIAN'  UNION ALL
+SELECT 'be','','Byelorussian','','L','9','0','GREGORIAN'  UNION ALL
+SELECT 'bg','BG','Bulgarian','','L','10','0','GREGORIAN'  UNION ALL
+SELECT 'bh','','Bihari','','L','11','0','GREGORIAN'  UNION ALL
+SELECT 'bi','','Bislama','','L','12','0','GREGORIAN'  UNION ALL
+SELECT 'bn','BD','Bengali','','L','13','0','GREGORIAN'  UNION ALL
+SELECT 'bo','','Tibetan','','L','14','0','GREGORIAN'  UNION ALL
+SELECT 'br','','Breton','','L','15','0','GREGORIAN'  UNION ALL
+SELECT 'ca','ES','Catalan','','L','16','0','GREGORIAN'  UNION ALL
+SELECT 'co','','Corsican','','L','17','0','GREGORIAN'  UNION ALL
+SELECT 'cs','CZ','Czech','','L','18','0','GREGORIAN'  UNION ALL
+SELECT 'cy','','Welsh','','L','19','0','GREGORIAN'  UNION ALL
+SELECT 'da','DK','Danish','','L','20','0','GREGORIAN'  UNION ALL
+SELECT 'de','DE','German','','L','21','0','GREGORIAN'  UNION ALL
+SELECT 'dz','','Bhutani','','L','22','0','GREGORIAN'  UNION ALL
+SELECT 'el','GR','Greek','','L','23','0','GREGORIAN'  UNION ALL
+SELECT 'en','US','English','','L','24','1','GREGORIAN'  UNION ALL
+SELECT 'eo','','Esperanto','','L','25','0','GREGORIAN'  UNION ALL
+SELECT 'es','ES','Spanish','','L','26','0','GREGORIAN'  UNION ALL
+SELECT 'et','EE','Estonian','','L','27','0','GREGORIAN'  UNION ALL
+SELECT 'eu','','Basque','','L','28','0','GREGORIAN'  UNION ALL
+SELECT 'fa','IR','Persian','','R','29','0','PERSIAN'  UNION ALL
+SELECT 'fi','FI','Finnish','','L','30','0','GREGORIAN'  UNION ALL
+SELECT 'fj','','Fiji','','L','31','0','GREGORIAN'  UNION ALL
+SELECT 'fo','FO','Faeroese','','L','32','0','GREGORIAN'  UNION ALL
+SELECT 'fr','FR','French','','L','33','0','GREGORIAN'  UNION ALL
+SELECT 'fy','','Frisian','','L','34','0','GREGORIAN'  UNION ALL
+SELECT 'ga','','Irish','','L','35','0','GREGORIAN'  UNION ALL
+SELECT 'gd','','Gaelic','','L','36','0','GREGORIAN'  UNION ALL
+SELECT 'gl','','Galician','','L','37','0','GREGORIAN'  UNION ALL
+SELECT 'gn','','Guarani','','L','38','0','GREGORIAN'  UNION ALL
+SELECT 'gu','','Gujarati','','L','39','0','GREGORIAN'  UNION ALL
+SELECT 'ha','','Hausa','','L','40','0','GREGORIAN'  UNION ALL
+SELECT 'hi','','Hindi','','L','41','0','GREGORIAN'  UNION ALL
+SELECT 'hr','HR','Croatian','','L','42','0','GREGORIAN'  UNION ALL
+SELECT 'hu','HU','Hungarian','','L','43','0','GREGORIAN'  UNION ALL
+SELECT 'hy','','Armenian','','L','44','0','GREGORIAN'  UNION ALL
+SELECT 'ia','','Interlingua','','L','45','0','GREGORIAN'  UNION ALL
+SELECT 'ie','','Interlingue','','L','46','0','GREGORIAN'  UNION ALL
+SELECT 'ik','','Inupiak','','L','47','0','GREGORIAN'  UNION ALL
+SELECT 'in','ID','Indonesian','','L','48','0','GREGORIAN'  UNION ALL
+SELECT 'is','IS','Icelandic','','L','49','0','GREGORIAN'  UNION ALL
+SELECT 'it','IT','Italian','','L','50','0','GREGORIAN'  UNION ALL
+SELECT 'iw','IL','Hebrew','','R','51','0','GREGORIAN'  UNION ALL
+SELECT 'ja','JP','Japanese','','L','52','0','GREGORIAN'  UNION ALL
+SELECT 'ji','','Yiddish','','L','53','0','GREGORIAN'  UNION ALL
+SELECT 'jw','','Javanese','','L','54','0','GREGORIAN'  UNION ALL
+SELECT 'ka','','Georgian','','L','55','0','GREGORIAN'  UNION ALL
+SELECT 'kk','','Kazakh','','L','56','0','GREGORIAN'  UNION ALL
+SELECT 'kl','','Greenlandic','','L','57','0','GREGORIAN'  UNION ALL
+SELECT 'km','','Cambodian','','L','58','0','GREGORIAN'  UNION ALL
+SELECT 'kn','','Kannada','','L','59','0','GREGORIAN'  UNION ALL
+SELECT 'ko','KR','Korean','','L','60','0','GREGORIAN'  UNION ALL
+SELECT 'ks','','Kashmiri','','L','61','0','GREGORIAN'  UNION ALL
+SELECT 'ku','','Kurdish','','L','62','0','GREGORIAN'  UNION ALL
+SELECT 'ky','','Kirghiz','','L','63','0','GREGORIAN'  UNION ALL
+SELECT 'la','','Latin','','L','64','0','GREGORIAN'  UNION ALL
+SELECT 'ln','','Lingala','','L','65','0','GREGORIAN'  UNION ALL
+SELECT 'lo','','Laothian','','L','66','0','GREGORIAN'  UNION ALL
+SELECT 'lt','LT','Lithuanian','','L','67','0','GREGORIAN'  UNION ALL
+SELECT 'lv','LV','Latvian','','L','68','0','GREGORIAN'  UNION ALL
+SELECT 'mg','','Malagasy','','L','69','0','GREGORIAN'  UNION ALL
+SELECT 'mi','','Maori','','L','70','0','GREGORIAN'  UNION ALL
+SELECT 'mk','','Macedonian','','L','71','0','GREGORIAN'  UNION ALL
+SELECT 'ml','','Malayalam','','L','72','0','GREGORIAN'  UNION ALL
+SELECT 'mn','','Mongolian','','L','73','0','GREGORIAN'  UNION ALL
+SELECT 'mo','','Moldavian','','L','74','0','GREGORIAN'  UNION ALL
+SELECT 'mr','','Marathi','','L','75','0','GREGORIAN'  UNION ALL
+SELECT 'ms','MY','Malay','','L','76','0','GREGORIAN'  UNION ALL
+SELECT 'mt','','Maltese','','L','77','0','GREGORIAN'  UNION ALL
+SELECT 'my','','Burmese','','L','78','0','GREGORIAN'  UNION ALL
+SELECT 'na','','Nauru','','L','79','0','GREGORIAN'  UNION ALL
+SELECT 'ne','','Nepali','','L','80','0','GREGORIAN'  UNION ALL
+SELECT 'nl','NL','Dutch','','L','81','0','GREGORIAN'  UNION ALL
+SELECT 'no','NO','Norwegian','','L','82','0','GREGORIAN'  UNION ALL
+SELECT 'oc','','Occitan','','L','83','0','GREGORIAN'  UNION ALL
+SELECT 'om','','Oromo','','L','84','0','GREGORIAN'  UNION ALL
+SELECT 'or','','Oriya','','L','85','0','GREGORIAN'  UNION ALL
+SELECT 'pa','','Punjabi','','L','86','0','GREGORIAN'  UNION ALL
+SELECT 'pl','PL','Polish','','L','87','0','GREGORIAN'  UNION ALL
+SELECT 'ps','','Pashto','','L','88','0','GREGORIAN'  UNION ALL
+SELECT 'pt','BR','Portuguese','','L','89','0','GREGORIAN'  UNION ALL
+SELECT 'qu','','Quechua','','L','90','0','GREGORIAN'  UNION ALL
+SELECT 'rm','','Rhaeto-Romance','','L','91','0','GREGORIAN'  UNION ALL
+SELECT 'rn','','Kirundi','','L','92','0','GREGORIAN'  UNION ALL
+SELECT 'ro','RO','Romanian','','L','93','0','GREGORIAN'  UNION ALL
+SELECT 'ru','RU','Russian','','L','94','0','GREGORIAN'  UNION ALL
+SELECT 'rw','','Kinyarwanda','','L','95','0','GREGORIAN'  UNION ALL
+SELECT 'sa','','Sanskrit','','L','96','0','GREGORIAN'  UNION ALL
+SELECT 'sd','','Sindhi','','L','97','0','GREGORIAN'  UNION ALL
+SELECT 'sg','','Sangro','','L','98','0','GREGORIAN'  UNION ALL
+SELECT 'sh','','Serbo-Croatian','','L','99','0','GREGORIAN'  UNION ALL
+SELECT 'si','','Singhalese','','L','100','0','GREGORIAN'  UNION ALL
+SELECT 'sk','SK','Slovak','','L','101','0','GREGORIAN'  UNION ALL
+SELECT 'sl','SI','Slovenian','','L','102','0','GREGORIAN'  UNION ALL
+SELECT 'sm','','Samoan','','L','103','0','GREGORIAN'  UNION ALL
+SELECT 'sn','','Shona','','L','104','0','GREGORIAN'  UNION ALL
+SELECT 'so','','Somali','','L','105','0','GREGORIAN'  UNION ALL
+SELECT 'sq','','Albanian','','L','106','0','GREGORIAN'  UNION ALL
+SELECT 'sr','YU','Serbian','','L','107','0','GREGORIAN'  UNION ALL
+SELECT 'ss','','Siswati','','L','108','0','GREGORIAN'  UNION ALL
+SELECT 'st','','Sesotho','','L','109','0','GREGORIAN'  UNION ALL
+SELECT 'su','','Sudanese','','L','110','0','GREGORIAN'  UNION ALL
+SELECT 'sv','SE','Swedish','','L','111','0','GREGORIAN'  UNION ALL
+SELECT 'sw','','Swahili','','L','112','0','GREGORIAN'  UNION ALL
+SELECT 'ta','LK','Tamil','','L','113','0','GREGORIAN'  UNION ALL
+SELECT 'te','','Tegulu','','L','114','0','GREGORIAN'  UNION ALL
+SELECT 'tg','','Tajik','','L','115','0','GREGORIAN'  UNION ALL
+SELECT 'th','TH','Thai','','L','116','0','GREGORIAN'  UNION ALL
+SELECT 'ti','','Tigrinya','','L','117','0','GREGORIAN'  UNION ALL
+SELECT 'tk','','Turkmen','','L','118','0','GREGORIAN'  UNION ALL
+SELECT 'tl','PH','Tagalog','','L','119','0','GREGORIAN'  UNION ALL
+SELECT 'tn','','Setswana','','L','120','0','GREGORIAN'  UNION ALL
+SELECT 'to','','Tonga','','L','121','0','GREGORIAN'  UNION ALL
+SELECT 'tr','TR','Turkish','','L','122','0','GREGORIAN'  UNION ALL
+SELECT 'ts','','Tsonga','','L','123','0','GREGORIAN'  UNION ALL
+SELECT 'tt','','Tatar','','L','124','0','GREGORIAN'  UNION ALL
+SELECT 'tw','','Twi','','L','125','0','GREGORIAN'  UNION ALL
+SELECT 'uk','UA','Ukrainian','','L','126','0','GREGORIAN'  UNION ALL
+SELECT 'ur','','Urdu','','L','127','0','GREGORIAN'  UNION ALL
+SELECT 'uz','','Uzbek','','L','128','0','GREGORIAN'  UNION ALL
+SELECT 'vi','VN','Vietnamese','','L','129','0','GREGORIAN'  UNION ALL
+SELECT 'vo','','Volapuk','','L','130','0','GREGORIAN'  UNION ALL
+SELECT 'wo','','Wolof','','L','131','0','GREGORIAN'  UNION ALL
+SELECT 'xh','','Xhosa','','L','132','0','GREGORIAN'  UNION ALL
+SELECT 'yo','','Yoruba','','L','133','0','GREGORIAN'  UNION ALL
+SELECT 'zh','CN','Chinese','','L','134','0','GREGORIAN'  UNION ALL
+SELECT 'zu','','Zulu','','L','135','0','GREGORIAN' ;
 
 INSERT INTO [ISO_COUNTRY] ([IC_UID],[IC_NAME],[IC_SORT_ORDER]) 
 SELECT 'AD', 'Andorra',''  UNION ALL
@@ -3082,7 +3082,7 @@ SELECT 'LABEL','ID_DISPLAY_OF','en','of','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_DELETE_LANGUAGE_WARNING','en','To delete a language you should select a item from the list first.','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_DELETE_LANGUAGE_CONFIRM','en','Do you want remove the language "{0}" ?','2014-01-15' 
+SELECT 'LABEL','ID_DELETE_LANGUAGE_CONFIRM','en','Are you sure you want to delete the language "{0}"?','2014-07-15' 
   UNION ALL
 SELECT 'LABEL','ID_DELETE_LANGUAGE','en','Remove','2014-01-15' 
   UNION ALL
@@ -4770,7 +4770,7 @@ SELECT 'LABEL','ID_PLEASE_SELECT_PHOTO','en','Please select a photo','2014-01-15
   UNION ALL
 SELECT 'LABEL','ID_RESUME','en','Resume','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_USER_ID','en','User ID (*)','2014-01-15' 
+SELECT 'LABEL','ID_USER_ID','en','Username','2014-10-09' 
   UNION ALL
 SELECT 'LABEL','ID_PHONE','en','Phone','2014-01-15' 
   UNION ALL
@@ -5572,7 +5572,7 @@ SELECT 'LABEL','ID_FAILED_DASHBOARD INSTANCE','en','Dashboard Instance registere
   UNION ALL
 SELECT 'LABEL','ID_AJAX_COMMUNICATION_FAILED','en','Ajax communication failed','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_CHECK_FIELDS_MARK_RED','en','Please check the fields mark in red.','2014-01-15' 
+SELECT 'LABEL','ID_CHECK_FIELDS_MARK_RED','en','Please check the fields marked in red.','2014-10-06' 
   UNION ALL
 SELECT 'LABEL','ID_INPUT_ERROR','en','Input Error','2014-01-15' 
   UNION ALL
@@ -5642,7 +5642,7 @@ SELECT 'LABEL','ID_PASSWORD_CURRENT_ENTER','en','Enter the current password','20
   UNION ALL
 SELECT 'LABEL','ID_PASSWORD_CURRENT_INCORRECT','en','The current password is incorrect','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_MAX_LIFETIME','en','Maximum lifetime cleaned up (ms)','2014-01-15' 
+SELECT 'LABEL','ID_MAX_LIFETIME','en','Cookie lifetime (seconds)','2014-09-02' 
   UNION ALL
 SELECT 'LABEL','ID_SUCCESSFUL_CONNECTION','en','Successful connection','2014-01-15' 
   UNION ALL
@@ -5840,7 +5840,9 @@ SELECT 'LABEL','ID_LOGIN_WITH_FACEBOOK','en','Login with Facebook!!','2014-01-15
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP6','en','xxx','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5','en','ProcessMaker uses a workspaces to store data. Please select a valid workspace name and credentials to log in it.','2014-01-15' 
+SELECT 'LABEL','ID_SIZE_VERY_LARGE_PERMITTED','en','The file is too large . Please upload a smaller file.','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5','en','ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login.','2014-09-02' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_2','en','If you are installing ProcessMaker on a remote web server, you will need to get this information from your Database Server.','2014-01-15' 
   UNION ALL
@@ -5921,11 +5923,11 @@ SELECT 'LABEL','ID_RP_DATABASE_NAME','en','Report Database Name','2014-01-15'
 SELECT 'LABEL','ID_RB_DATABASE_NAME','en','Rbac Database Name','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_WF_DATABASE_NAME','en','Workflow Database Name','2014-01-15' 
-  UNION ALL
-SELECT 'LABEL','ID_CHANGE_DATABASE_NAME','en','Change Database names','2014-01-15' 
  ;
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
+SELECT 'LABEL','ID_CHANGE_DATABASE_NAME','en','Change Database names','2014-01-15' 
+  UNION ALL
 SELECT 'LABEL','ID_ADMIN_USERNAME','en','Admin Username','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_ADMIN_PASSWORD','en','Confirm Admin Password','2014-01-15' 
@@ -5940,7 +5942,7 @@ SELECT 'LABEL','ID_DATABASE_ENGINE','en','Database Engine','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_DATABASE_CONFIGURATION','en','Database Configuration','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_INSTALLATION_LOG','en','Installation log file','2014-01-15' 
+SELECT 'LABEL','ID_INSTALLATION_FILE_LOG','en','Installation log file','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_WORFLOW_DATA_DIRECTORY','en','Workflow Data Directory','2014-01-15' 
   UNION ALL
@@ -5960,7 +5962,7 @@ SELECT 'LABEL','ID_NOT_PASSED','en','Not Passed.','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_PREINSTALLATION','en','Pre-installation check','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_DIRECTORY_FILE_PERMISSION','en','Directory File Permission','2014-01-15' 
+SELECT 'LABEL','ID_DIRECTORY_FILE_PERMISSION','en','File Permisions','2014-09-02' 
   UNION ALL
 SELECT 'LABEL','ID_DATA_CORRECT','en','The data is correct.','2014-01-15' 
   UNION ALL
@@ -6083,11 +6085,11 @@ SELECT 'LABEL','DYNAFIELD_NODENAME_NUMBER','en','The field name should not start
 SELECT 'LABEL','ID_EMPTY_NODENAME','en','The name field is empty','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_TAS_DURATION_REQUIRE','en','Duration task required','2014-01-15' 
-  UNION ALL
-SELECT 'LABEL','ID_NAME_TAS_TITLE_REQUIRE','en','Task title required','2014-01-15' 
  ;
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
+SELECT 'LABEL','ID_NAME_TAS_TITLE_REQUIRE','en','Task title required','2014-01-15' 
+  UNION ALL
 SELECT 'LABEL','APP_TITLE_CASE_LABEL_UPDATE','en','The System has detected that the changes on case labels will affect more than 1000 records, so the work will be scheduled by the cron to perform the update the next time the cron will run.','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_MESSAGE_LOGIN','en','The default language that is configured in this place is for the "dropdown" of the languages that are displaying on the login screen, this configuration is set for each workspace.','2014-01-15' 
@@ -6238,18 +6240,18 @@ SELECT 'LABEL','ID_MSG_ENABLE_HTML_EDITING','en','<b>Warning:</b> Editing the HT
   UNION ALL
 SELECT 'LABEL','ID_ALL_CATEGORIES','en','All Categories','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_CASES_NOTES_NO_PERMISSIONS','en','You do not have permission to cases notes','2014-01-15' 
+SELECT 'LABEL','ID_CASES_NOTES_NO_PERMISSIONS','en','You do not have permission to access cases notes','2014-09-30' 
   UNION ALL
 SELECT 'LABEL','ID_DELETE_DOCUMENT','en','Do you want to delete selected document?','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_CRON_ACTIONS_LOG','en','Cron Actions Log','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_AUTH_SOURCE_MISSING','en','The plugin that is related to this authentication source was removed or disabled, please consult to your system administrator.','2014-01-15' 
-  UNION ALL
-SELECT 'LABEL','ID_TRIGGER_REQUIRED','en','Trigger is required','2014-01-15' 
  ;
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
+SELECT 'LABEL','ID_TRIGGER_REQUIRED','en','Trigger is required','2014-01-15' 
+  UNION ALL
 SELECT 'LABEL','ID_TIME_REQUIRED','en','Time is required','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_CURRENT_WORKSPACE','en','Current Workspace','2014-01-15' 
@@ -6407,11 +6409,11 @@ SELECT 'LABEL','ID_FAILED_VALIDATIONS_IN_CLASS','en','Failed Validation in class
 SELECT 'LABEL','ID_ERROR_CHANGE_SEQUENCE_NUMBER','en','Unable to generate numerical sequence another user performing the same request.','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_CANT_RESOLVE_APPLICATION','en','Can''t resolve the Aplication ID for this request.','2014-01-15' 
-  UNION ALL
-SELECT 'LABEL','ID_FAILED_VALIDATION_IN_CLASS1','en','Failed Validation in class {CLASS}.','2014-01-15' 
  ;
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
+SELECT 'LABEL','ID_FAILED_VALIDATION_IN_CLASS1','en','Failed Validation in class {CLASS}.','2014-01-15' 
+  UNION ALL
 SELECT 'LABEL','ID_REQUIRED_NAME_CASE_SCHEDULER','en','You forgot the name of the Case Scheduler','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_DUPLICATE_CASE_SCHEDULER_NAME','en','Duplicate Case Scheduler name.','2014-01-15' 
@@ -6569,11 +6571,11 @@ SELECT 'LABEL','ID_EVENT_ADD_CURRENT','en','Add current task user','2014-02-12'
 SELECT 'LABEL','ID_EVENT_ADD_USERS','en','Add users','2014-02-12' 
   UNION ALL
 SELECT 'LABEL','ID_EVENT_REMOVE_SELECTED','en','Remove selected','2014-02-12' 
-  UNION ALL
-SELECT 'LABEL','ID_EVENT_ADD_DYNAVAR','en','Add dynavar','2014-02-12' 
  ;
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
+SELECT 'LABEL','ID_EVENT_ADD_DYNAVAR','en','Add dynavar','2014-02-12' 
+  UNION ALL
 SELECT 'LABEL','ID_EVENT_ADD_GROUP','en','Add groups','2014-02-12' 
   UNION ALL
 SELECT 'LABEL','ID_EXECUTION','en','Execution','2014-02-12' 
@@ -6731,11 +6733,11 @@ SELECT 'LABEL','ID_CASES_INCORRECT_INFORMATION','en','Incorrect or unavailable i
 SELECT 'LABEL','ID_INVALID_VALUE_FOR','en','Invalid value specified for: {0}','2014-05-21' 
   UNION ALL
 SELECT 'LABEL','ID_CASE_SCHEDULER_DOES_NOT_EXIST','en','This case scheduler with sch_uid: {0} does not exist!','2014-05-21' 
-  UNION ALL
-SELECT 'LABEL','ID_INFORMATION_EMPTY','en','The information sended is empty!','2014-05-21' 
  ;
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
+SELECT 'LABEL','ID_INFORMATION_EMPTY','en','The information sended is empty!','2014-05-21' 
+  UNION ALL
 SELECT 'LABEL','ID_TASK_NOT_FOUND','en','Task not found for id: {0}','2014-05-21' 
   UNION ALL
 SELECT 'LABEL','ID_CAN_NOT_BE_EMPTY','en','{0}, can not be empty','2014-05-21' 
@@ -6893,12 +6895,390 @@ SELECT 'LABEL','ID_NAME_STG_TITLE_REQUIRE','en','Stage title required','2014-06-
 SELECT 'LABEL','ID_INPUT_DOCUMENT_ITS_ASSIGNED','en','The Input Document with {0}: {1} it''s assigned in "{2}".','2014-06-26' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESS_VARIABLE_DOES_NOT_EXIST','en','The variable with {0}: {1} does not exist.','2014-06-30' 
-  UNION ALL
-SELECT 'LABEL','ID_PROCESS_VARIABLE_REQUIRED_VARIABLES_FOR_QUERY','en','The variable "{0}" required the variables "{1}" for the query.','2014-06-30' 
  ;
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
+SELECT 'LABEL','ID_PROCESS_VARIABLE_REQUIRED_VARIABLES_FOR_QUERY','en','The variable "{0}" required the variables "{1}" for the query.','2014-06-30' 
+  UNION ALL
 SELECT 'LABEL','ID_OUTPUT_DOCUMENT_ITS_ASSIGNED','en','The Output Document with {0}: {1} it''s assigned in "{2}".','2014-07-01' 
+  UNION ALL
+SELECT 'LABEL','ID_EXISTS_FILES','en','The file exists.','2014-07-17' 
+  UNION ALL
+SELECT 'LABEL','ID_FILENAME_REQUIRED','en','The filename is required.','2014-07-17' 
+  UNION ALL
+SELECT 'LABEL','ID_VARIABLE_IN_USE','en','The variable with var_uid: {0} is being used by dynaform with dyn_uid: {1}','2014-08-01' 
+  UNION ALL
+SELECT 'LABEL','ID_ROUTE_IS_SECJOIN','en','The route is of "SEC-JOIN" type.','2014-07-29' 
+  UNION ALL
+SELECT 'LABEL','ID_ROUTE_PARENT_DOES_NOT_EXIST_FOR_ROUTE_SECJOIN','en','The parent route does not exist for this route of "SEC-JOIN" type.','2014-07-29' 
+  UNION ALL
+SELECT 'LABEL','ID_GENERATE_BPMN_PROJECT','en','Generate BPMN Project','2014-07-24' 
+  UNION ALL
+SELECT 'LABEL','ID_PROCESS_DOES_NOT_EXIST','en','The process with {0}: {1} does not exist.','2014-07-24' 
+  UNION ALL
+SELECT 'LABEL','ID_PROJECT_IS_BPMN','en','The project with {0}: {1} is BPMN process.','2014-07-24' 
+  UNION ALL
+SELECT 'LABEL','ID_USE_LANGUAGE_URL','en','Use the language of URL','2014-08-08' 
+  UNION ALL
+SELECT 'LABEL','ID_SUMMARY_FORM_NO_PERMISSIONS','en','You do not have permission to have access to the summary form','2014-08-26' 
+  UNION ALL
+SELECT 'LABEL','ID_SUMMARY_FORM','en','Summary form','2014-08-21' 
+  UNION ALL
+SELECT 'LABEL','ID_LANGUAGE_CANT_DELETE_DEFAULT','en','You can''t delete the default language.','2014-08-21' 
+  UNION ALL
+SELECT 'LABEL','ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT','en','The format is incorrect, check the following examples:    *.*   *.png   *.pdf, *.doc, *.xls','2014-08-25' 
+  UNION ALL
+SELECT 'LABEL','ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION','en','The file has not been attached because the extension is not allowed or because it doesn''t correspond to the content of it.','2014-08-25' 
+  UNION ALL
+SELECT 'LABEL','ID_INPUT_DOC_TYPE_FILE_REQUIRED','en','You must specify the allowed file extensions, use *.* to allow any extension.','2014-08-25' 
+  UNION ALL
+SELECT 'LABEL','ID_TINY_SYSTEM_VARIABLE','en','System Variable','2014-08-27' 
+  UNION ALL
+SELECT 'LABEL','ID_CHOOSE_PROVIDER','en','Please select provider','2014-08-27' 
+  UNION ALL
+SELECT 'LABEL','ID_INDEX','en','Index','2014-09-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ERROR_JS_NOT_AVAILABLE','en','Your browser doesn''t support JavaScript or it may be disabled. Please use a different browser or enable the JavaScript, Dynaforms won''t entirely work because JavaScript is used.','2014-10-09' 
+  UNION ALL
+SELECT 'LABEL','ID_MAXIMUM_SIZE_FILE_REQUIRED','en','The maximum size file, is required!','2014-09-12' 
+  UNION ALL
+SELECT 'LABEL','ID_BEFORE_UPDATE','en','Before Upgrade','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_WAIT_INSTALLING_PLUGIN','en','Please wait while installing the plugin...','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UPGRADING_PLUGIN','en','Please wait while upgrading the plugin...','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UPGRADE_FINISHED','en','Upgrade finished.','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_DOWNLOADING_UPGRADE','en','Downloading upgrade:','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_INSTALLATION_LOG','en','Installation log:','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UPGRADE_STARTING','en','Please wait while the upgrade is starting...','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_DOWNLOAD_MANUALLY','en','You can download it manually here','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UNKNOWN','en','Unknown','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_INSTALL_ERROR','en','Install Error','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ERROR_INSTALLING_ADDON','en','There was a problem installing this addon.','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_SERVER_ERROR','en','Server error','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MARKET_SERVER_CONTACTING','en','There was a problem contacting the market server.','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_SALES_DEPARTMENT_REQUEST','en','It will send a request to Sales Department, do you want to continue?','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_SENDING_REQUEST_SALES_DEPARTMENT','en','Sending request to ProcessMaker Sales Department, please wait...','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_NO_INTERNET_CONECTION','en','Enterprise Plugins Manager no connected to internet.','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_WAIT_WHILE_UPGRADING_PROCESSMAKER','en','Please wait while upgrading ProcessMaker...','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ERROR_UPGRADING_SYSTEM','en','Error upgrading System.','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ERROR_CHECK_FOR_UPDATE_DONE','en','An error has occurred, press "OK" to check whether the system has been upgrade.','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UPGRADE_LABEL','en','Upgrade','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_LICENSE','en','Upload License','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_SELECT_LICENSE_FILE','en','Select a license file','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_LICENSE_FILE','en','License file','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_WARNING_ENTERPRISE_LICENSE_MSG','en','Please select a valid license file.','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_WARNING_ENTERPRISE_LICENSE_MSG_DAT','en','The file doesn''t have a .dat extension, please select another file.','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATING_LICENSE_MSG','en','Uploading the license file...','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_SUCCESSFULLY_UPLOADED','en','Successfully uploaded.','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_WARNING_ERROR_UPDATING','en','Error uploading the license file.','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UPLOAD_PLUGIN','en','Upload Plugin','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_SELECT_PLUGIN_FILE','en','Select a plugin file','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_PLUGIN_FILE','en','Plugin file','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_SELECT_PLUGIN','en','Please select a plugin','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_INSTALLING_PLUGIN','en','Installing plugin...','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ERROR_UPLOADING_PLUGIN','en','Error uploading the plugin','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_CURRENT_VERSION','en','Current version','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_NO_NEW_VERSIONS','en','No new versions available','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_CHECK_UPDATES','en','Check for updates (you need to be connected to Internet)','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_YOUR_LICENSE','en','Your license','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_CURRENT_LICENSE','en','Current license','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_LICENSE_SERVER','en','License server','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ISSUED_TO','en','Issued to','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_EXPIRES','en','Expires (days)','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_IMPORT_LICENSE','en','Import license','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_RENEW','en','Renew','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UNISTALL','en','Uninstall','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UNISTALL_TIP','en','Uninstall this plugin','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_CONFIRM_DELETE_PLUGIN','en','Are you sure that you want to remove this plugin?','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_CONFIRM_DELETE_PLUGIN_WARNING','en','Uninstalling the plugin, it can affect your others workspaces.','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ERROR_UNISTALLING','en','Error uninstalling','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ENABLE_PLUGIN_TIP','en','Enable the selected addon','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ERROR_ENABLING','en','Error enabling','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLE_PLUGIN_TIP','en','Disable the selected plugin','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ERROR_DISABLING','en','Error disabling','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ADMIN','en','Admin','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ADMIN_PLUGIN_TIP','en','Admin the selected plugin','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_PUBLISHER','en','Publisher','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_LATEST_VERSION','en','Latest version','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_BUY_NOW','en','Buy now','2014-09-18' 
+ ;
+INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
+
+SELECT 'LABEL','ID_INSTALLED','en','Installed','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_INSTALL_NOW','en','Install now','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UPGRADE_NOW','en','Upgrade now','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_INSTALLING','en','Installing','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_CANCELLING','en','Cancelling','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_INSTALL_FROM_FILE','en','Install from file','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_INSTALL_FROM_FILE_PLUGIN_TIP','en','Upload a plugin file','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_REFRESH_LABEL_PLUGIN_TIP','en','Refresh the plugin list','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ENTERPRISE_PLUGINS','en','Enterprise Plugins','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_CAUTION_NOTICE','en','<h3>Caution: Before continuing, please read these instructions carefully:</h3><ul style="font: 16px;"><li><a href="http://wiki.processmaker.com/index.php/Upgrading_ProcessMaker" onclick="window.open(this.href, "_blank"); return (false);">Read the wiki</a> carefully regarding the automatic upgrade.</li><li>Make a backup of all ProcessMaker files, including the database before proceeding.</li><li>This automatic upgrade may not always work depending on your server configuration.</li><li>In case the upgrade fails, read the wiki regarding alternative methods of upgrading.</li></ul>','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_AUDITLOG_DISPLAY','en','Audit Log','2014-09-19' 
+  UNION ALL
+SELECT 'LABEL','ID_ENABLE_AUDIT_LOG','en','Enable Audit Log','2014-09-19' 
+  UNION ALL
+SELECT 'LABEL','ID_AUDIT_LOG_ENABLED','en','Audit Log has been enabled','2014-09-19' 
+  UNION ALL
+SELECT 'LABEL','ID_AUDIT_LOG_DISABLED','en','Audit Log has been disabled','2014-09-19' 
+  UNION ALL
+SELECT 'LABEL','ID_AUDIT_LOG_DETAILS_1','en','When this option is enabled, all changes made in the "ADMIN" tab are registered in a log.','2014-09-30' 
+  UNION ALL
+SELECT 'LABEL','ID_AUDIT_LOG_DETAILS_2','en','and the user will be able to see those changes in the "Audit Log" option in Logs Menu','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_PRIVATE','en','Private','2014-09-22' 
+  UNION ALL
+SELECT 'LABEL','ID_CASES_LIST','en','Cases Lists','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MENU_NAME','en','Enterprise Manager','2014-10-17' 
+  UNION ALL
+SELECT 'LABEL','ID_LEFT','en','left','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_CENTER','en','center','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_RIGHT','en','right','2014-09-18' 
+  UNION ALL
+SELECT 'LABEL','ID_LANGUAGE_CANT_DELETE_CURRENTLY','en','The language, which the system is currently using, cannot be deleted.','2014-09-25' 
+  UNION ALL
+SELECT 'LABEL','ID_INPUT_DOC_MAX_FILESIZE_REQUIRED','en','Maximum file size parameter is required.','2014-09-30' 
+  UNION ALL
+SELECT 'LABEL','ID_AUDIT_LOG_ACTIONS','en','Audit Log Actions','2014-09-30' 
+  UNION ALL
+SELECT 'LABEL','ID_RESET_FILTERS','en','Reset Filters','2014-10-07' 
+  UNION ALL
+SELECT 'LABEL','ID_INPUT_DB','en','Input','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_TRIGGER_DB','en','Trigger','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_IP','en','IP Client','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_OUTPUT_DB','en','Output','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_ATTACHED_DB','en','Attached','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_DERIVATION_DB','en','Derivation','2014-10-08' 
+  UNION ALL
+SELECT 'LABEL','ID_OPEN_DYNAFORM_TAB','en','Open the Dynaform in a new tab','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ENTERPRISE_FEATURES','en','Enterprise features','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_USER','en','Create User','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_USER','en','Update User','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_USER','en','Delete User','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ENABLE_USER','en','Enable User','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLE_USER','en','Disable User','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_AUTHENTICATION_SOURCE','en','Assign Authentication Source','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_USER_TO_GROUP','en','Assign Users To Group','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_AUTH_SOURCE','en','Create Authentication Source','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_AUTH_SOURCE','en','Update Authentication Source','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_AUTH_SOURCE','en','Delete Authentication Source','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_ROLE','en','Update Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_ROLE','en','Delete Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_USER_TO_ROLE','en','Assign Users To Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_USER_TO_ROLE','en','Delete Users To Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ADD_PERMISSION_TO_ROLE','en','Add Permission To Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_PERMISSION_TO_ROLE','en','Delete Permission To Role','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_SKIN','en','Create Skin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_IMPORT_SKIN','en','Import Skin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_EXPORT_SKIN','en','Export Skin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_SKIN','en','Delete Skin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_GROUP','en','Update Group','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_CATEGORY','en','Create Category','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_CATEGORY','en','Update Category','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_CATEGORY','en','Delete Category','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_BUILD_CACHE','en','Build Cache','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CLEAR_CRON','en','Clear Cron','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_REPLACE_LOGO','en','Replace Logo','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_LOGIN_SETTINGS','en','Update Login Settings','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLE_HEART_BEAT','en','Disable Heart Beat','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_PMTABLE','en','Create PM Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_PMTABLE','en','Update PM Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_PMTABLE','en','Delete PM Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ADD_DATA_PMTABLE','en','Add Data to PM table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_DATA_PMTABLE','en','Update Data from PM Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_DATA_PMTABLE','en','Delete Data from PM Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_IMPORT_TABLE','en','Import Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_EXPORT_TABLE','en','Export Table','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_CALENDAR','en','Create Calendar','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_CALENDAR','en','Update Calendar','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_CALENDAR','en','Delete Calendar','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_DASHLET_INSTANCE','en','Create Dashlet Instance','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_DASHLET_INSTANCE','en','Update Dashlet Instance','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_DASHLET_INSTANCE','en','Delete Dashlet Instance','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_DEPARTAMENT','en','Create Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_SUB_DEPARTAMENT','en','Create Sub Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_DEPARTAMENT','en','Update Departament','2014-10-10' 
+ ;
+INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
+
+SELECT 'LABEL','ID_UPDATE_SUB_DEPARTAMENT','en','Update Sub Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_DEPARTAMENT','en','Delete Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_MANAGER_TO_DEPARTAMENT','en','Assign Manager To Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_USER_TO_DEPARTAMENT','en','Assign Users To Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_REMOVE_USERS_FROM_DEPARTAMENT','en','Remove Users From Departament','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPLOAD_LANGUAGE','en','Upload Language','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_EXPORT_LANGUAGE','en','Export Language','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_LAGUAGE','en','Delete Language','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPLOAD_SYSTEM_SETTINGS','en','Upload System Settings','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_EMAIL_SETTINGS','en','Update Email Settings','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_EMAIL_SETTINGS','en','Create Email Settings','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_UPLOAD_LOGO','en','Upload Logo','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_LOGO','en','Delete Logo','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_INSTALL_PLUGIN','en','Install Plugin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_SET_COLUMNS','en','Set Columns','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLE_AUDIT_LOG','en','Disable Audit Log','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_REMOVE_PLUGIN','en','Remove Plugin','2014-10-10' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_ROLE','en','Create New Role','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_GROUP','en','Create New Group','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_GROUP','en','Remove Group','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLE_PLUGIN','en','Disable Plugin','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_ENABLE_PLUGIN','en','Enable Plugin','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_ENVIRONMENT_SETTINGS','en','Update Environment Settings','2014-10-13' 
+  UNION ALL
+SELECT 'LABEL','ID_NAME_EXISTS','en','The name exists','2014-10-15' 
+  UNION ALL
+SELECT 'LABEL','ID_MCRYPT_SUPPORT','en','Mcrypt Support','2014-10-17' 
+  UNION ALL
+SELECT 'LABEL','ID_GENERATE_INFO_SUPPORT','en','It will be generated a file with information related to your System, this will help the support team to provide a better support to those issues that may appear','2014-10-20' 
+  UNION ALL
+SELECT 'LABEL','ID_CURRENT_BROWSER_NOT_SUPPORTED','en','The current browser is not supported, please use a different browser. Miminum system requirements Internet Explorer 8, Chrome 26, Firefox 20','2014-10-20' 
+  UNION ALL
+SELECT 'LABEL','ID_PMTABLES_CANT_EXPORT','en','The are no tables to export.','2014-10-20' 
+  UNION ALL
+SELECT 'LABEL','ID_SUPPORT','en','Support','2014-10-20' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 

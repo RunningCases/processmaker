@@ -17,7 +17,9 @@ class WebApplication
     const RUNNING_INDEX = "index.running";
     const RUNNING_WORKFLOW = "workflow.running";
     const RUNNING_API = "api.running";
+    const RUNNING_OAUTH2 = "api.oauth2";
     const SERVICE_API = "service.api";
+    const SERVICE_OAUTH2 = "service.oauth2";
     const REDIRECT_DEFAULT = "redirect.default";
 
     /**
@@ -96,8 +98,6 @@ class WebApplication
      */
     public function route()
     {
-        $this->requestUri = strlen($this->requestUri) > 1? rtrim($this->requestUri, '/'): $this->requestUri;
-
         if ($this->requestUri === "/") {
             if (file_exists("index.html")) {
                 return self::RUNNING_INDEX;
@@ -112,41 +112,8 @@ class WebApplication
             list($this->requestUri,) = explode('?', $this->requestUri);
             $uriParts = explode('/', $this->requestUri);
 
-            if ($uriParts[2] == 'oauth2') {
-
-                if (! isset($uriParts[2])) {
-                    return self::RUNNING_WORKFLOW;
-                }
-
-                /*$workspace = $uriParts[1];
-                $class = 'oauth2';
-                $action = isset($uriParts[3])? $uriParts[3]: 'index';*/
-
-                $uriTemp = explode('/', $_SERVER['REQUEST_URI']);
-                array_shift($uriTemp);
-                $workspace = array_shift($uriTemp);
-                $_SERVER['REQUEST_URI'] = '/' . implode('/', $uriTemp);
-
-                $this->loadEnvironment($workspace);
-                $this->configureRest($workspace, '1.0');
-                //var_dump(class_exists('ProcessMaker\\Services\\OAuth2\\Server'));
-                $this->rest->addAPIClass('\ProcessMaker\\Services\\OAuth2\\Server', 'oauth2');
-                $this->rest->handle();
-
-                /*
-
-                $this->loadEnvironment($workspace);
-
-                require_once PATH_CONTROLLERS . $class . '.php';
-
-                if (is_callable(array($class, $action))) {
-                    $controller = new $class();
-                    $controller->setHttpRequestData($_REQUEST);
-                    $controller->call($action);
-                } else {
-                    header('location: /errors/error404?url=' . urlencode($this->requestUri));
-                }*/
-
+            if (isset($uriParts[2]) && $uriParts[2] == "oauth2") {
+                return self::RUNNING_OAUTH2;
             } else {
                 return self::RUNNING_WORKFLOW;
             }
@@ -172,6 +139,16 @@ class WebApplication
                     $this->dispatchApiRequest($request["uri"], $request["version"]);
                 }
                 Util\Logger::log("API::End Dispatch");
+                break;
+
+            case self::SERVICE_OAUTH2:
+                $uriTemp = explode('/', $_SERVER['REQUEST_URI']);
+                array_shift($uriTemp);
+                $workspace = array_shift($uriTemp);
+                $uri = '/' . implode('/', $uriTemp);
+
+                $this->loadEnvironment($workspace);
+                $this->dispatchApiRequest($uri, $version = "1.0");
                 break;
         }
     }
@@ -244,7 +221,7 @@ class WebApplication
          */
         header('Access-Control-Allow-Origin: *');
 
-        $_SERVER['REQUEST_URI'] = $uri;        
+        $_SERVER['REQUEST_URI'] = $uri;
 
         $this->rest->inputExecute = $inputExecute;
         $this->rest->handle();
@@ -269,6 +246,8 @@ class WebApplication
         $apiIniFile = $servicesDir . DS . 'api.ini';
         // $authenticationClass - contains the class name that validate the authentication for Restler
         $authenticationClass = 'ProcessMaker\\Services\\OAuth2\\Server';
+        // $pmOauthClientId - contains PM Local OAuth Id (Web Designer)
+        $pmOauthClientId = 'x-pm-local-client';
 
         /*
          * Load Api ini file for Rest Service
@@ -292,8 +271,36 @@ class WebApplication
             }
         }
 
-        $this->configureRest(SYS_SYS, $version, $multipart);
+        // Setting current workspace to Api class
+        Services\Api::setWorkspace(SYS_SYS);
+        $cacheDir = defined("PATH_C")? PATH_C: sys_get_temp_dir();
+
+        $sysConfig = \System::getSystemConfiguration();
+
+        \Luracast\Restler\Defaults::$cacheDirectory = $cacheDir;
+        $productionMode = (bool) !(isset($sysConfig["service_api_debug"]) && $sysConfig["service_api_debug"]);
+
+        Util\Logger::log("Serving API mode: " . ($productionMode? "production": "development"));
+
+        // create a new Restler instance
+        //$rest = new \Luracast\Restler\Restler();
+        $this->rest = new \Maveriks\Extension\Restler($productionMode);
+        // setting flag for multipart to Restler
+        $this->rest->setFlagMultipart($multipart);
+        // setting api version to Restler
+        $this->rest->setAPIVersion($version);
+        // adding $authenticationClass to Restler
         $this->rest->addAuthenticationClass($authenticationClass, '');
+
+        // Setting database connection source
+        list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
+        $port = empty($port) ? '' : ";port=$port";
+        Services\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
+
+        // Setting default OAuth Client id, for local PM Web Designer
+        Services\OAuth2\Server::setPmClientId($pmOauthClientId);
+
+        $this->rest->setOverridingFormats('JsonFormat', 'UploadFormat');
 
         $isPluginRequest = strpos($uri, '/plugin-') !== false ? true : false;
 
@@ -319,7 +326,7 @@ class WebApplication
                     $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
 
                     //if (! class_exists($namespace)) {
-                        require_once $classFile;
+                    require_once $classFile;
                     //}
 
                     $this->rest->addAPIClass($namespace);
@@ -350,44 +357,9 @@ class WebApplication
 //                }
 //            }
         }
-    }
 
-    public function configureRest($workspace, $version, $multipart = false)
-    {
-        // $pmOauthClientId - contains PM Local OAuth Id (Web Designer)
-        $pmOauthClientId = 'x-pm-local-client';
-
-        // Setting current workspace to Api class
-        Services\Api::setWorkspace($workspace);
-        $cacheDir = defined("PATH_C")? PATH_C: sys_get_temp_dir();
-
-        $sysConfig = \System::getSystemConfiguration();
-
-        \Luracast\Restler\Defaults::$cacheDirectory = $cacheDir;
-        $productionMode = false; //(bool) !(isset($sysConfig["service_api_debug"]) && $sysConfig["service_api_debug"]);
-
-        Util\Logger::log("Serving API mode: " . ($productionMode? "production": "development"));
-
-        // create a new Restler instance
-        //$rest = new \Luracast\Restler\Restler();
-        $this->rest = new \Maveriks\Extension\Restler($productionMode);
-        $this->rest->setworkspace($workspace);
-        // setting flag for multipart to Restler
-        $this->rest->setFlagMultipart($multipart);
-        // setting api version to Restler
-        $this->rest->setAPIVersion($version);
-        // adding $authenticationClass to Restler
-
-        // Setting database connection source
-        list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
-        $port = empty($port) ? '' : ";port=$port";
-        Services\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
-
-        // Setting default OAuth Client id, for local PM Web Designer
-        Services\OAuth2\Server::setPmClientId($pmOauthClientId);
-        Services\OAuth2\Server::setWorkspace($workspace);
-
-        $this->rest->setOverridingFormats('JsonFormat', 'UploadFormat');
+        Services\OAuth2\Server::setWorkspace(SYS_SYS);
+        $this->rest->addAPIClass('\ProcessMaker\\Services\\OAuth2\\Server', 'oauth2');
     }
 
     public function parseApiRequestUri()

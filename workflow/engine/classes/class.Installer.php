@@ -133,19 +133,13 @@ class Installer
                 //Delete workspace directory if exists
                 //Drop databases
                 $this->run_query("DROP DATABASE IF EXISTS " . $wf, "Drop database $wf");
-                $this->run_query("DROP DATABASE IF EXISTS " . $rb, "Drop database $rb");
-                $this->run_query("DROP DATABASE IF EXISTS " . $rp, "Drop database $rp");
             }
 
             $this->run_query("CREATE DATABASE IF NOT EXISTS " . $wf . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci", "Create database $wf");
-            $this->run_query("CREATE DATABASE IF NOT EXISTS " . $rb . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci", "Create database $rb");
-            $this->run_query("CREATE DATABASE IF NOT EXISTS " . $rp . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci", "Create database $rp");
 
             if ($this->cc_status == 1) {
                 $host = ($islocal) ? "localhost" : "%";
                 $this->run_query("GRANT ALL PRIVILEGES ON `$wf`.* TO $wf@'$host' IDENTIFIED BY '{$this->options['password']}' WITH GRANT OPTION", "Grant privileges for user $wf on database $wf");
-                $this->run_query("GRANT ALL PRIVILEGES ON `$rb`.* TO $rb@'$host' IDENTIFIED BY '{$this->options['password']}' WITH GRANT OPTION", "Grant privileges for user $rb on database $rb");
-                $this->run_query("GRANT ALL PRIVILEGES ON `$rp`.* TO $rp@'$host' IDENTIFIED BY '{$this->options['password']}' WITH GRANT OPTION", "Grant privileges for user $rp on database $rp");
             }
 
             /* Dump schema workflow && data  */
@@ -180,7 +174,7 @@ class Installer
             );
 
             // inserting the outh_client
-            $query = ( "INSERT INTO OAUTH_CLIENTS (CLIENT_ID,CLIENT_SECRET,CLIENT_NAME,CLIENT_DESCRIPTION,CLIENT_WEBSITE,REDIRECT_URI,USR_UID ) VALUES 
+            $query = ( "INSERT INTO OAUTH_CLIENTS (CLIENT_ID,CLIENT_SECRET,CLIENT_NAME,CLIENT_DESCRIPTION,CLIENT_WEBSITE,REDIRECT_URI,USR_UID ) VALUES
             		   ('x-pm-local-client','179ad45c6ce2cb97cf1029e212046e81','PM Web Designer','ProcessMaker Web Designer App','www.processmaker.com','" . $endpoint . "','00000000000000000000000000000001' )");
             $this->run_query( $query );
 
@@ -443,7 +437,7 @@ class Installer
         // The mysql_escape_string function has been DEPRECATED as of PHP 5.3.0.
         // $this->run_query('UPDATE USERS SET USR_USERNAME = \''.mysql_escape_string($this->options['admin']['username']).'\', `USR_PASSWORD` = \''.md5($this->options['admin']['password']).'\' WHERE `USR_UID` = \'00000000000000000000000000000001\' LIMIT 1',
         //   "Add 'admin' user in ProcessMaker (rb)");
-        $this->run_query('UPDATE USERS SET USR_USERNAME = \'' . mysql_real_escape_string($this->options['admin']['username']) . '\', ' . '  `USR_PASSWORD` = \'' . md5($this->options['admin']['password']) . '\' ' . '  WHERE `USR_UID` = \'00000000000000000000000000000001\' LIMIT 1', "Add 'admin' user in ProcessMaker (rb)");
+        $this->run_query('UPDATE RBAC_USERS SET USR_USERNAME = \'' . mysql_real_escape_string($this->options['admin']['username']) . '\', ' . '  `USR_PASSWORD` = \'' . md5($this->options['admin']['password']) . '\' ' . '  WHERE `USR_UID` = \'00000000000000000000000000000001\' LIMIT 1', "Add 'admin' user in ProcessMaker (rb)");
     }
 
     /**
