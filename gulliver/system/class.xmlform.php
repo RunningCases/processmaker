@@ -3746,7 +3746,11 @@ class XmlForm_Field_Listbox extends XmlForm_Field
         $arrayAux = array();
 
         foreach ($value as $index2 => $value2) {
-            $arrayAux[] = $value2 . "";
+            if (!is_array($value2)) {
+                $arrayAux[] = $value2 . "";
+            } else {
+                $arrayAux[] = "";
+            }
         }
 
         $value = $arrayAux;
