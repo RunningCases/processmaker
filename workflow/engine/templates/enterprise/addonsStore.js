@@ -1049,7 +1049,7 @@ Ext.onReady(function() {
             }
         ]
     });
-  
+
     var pnlSupport = new Ext.FormPanel({
         frame: true,
         height: 160,
@@ -1091,6 +1091,7 @@ Ext.onReady(function() {
     labelAlign: "right",
     defaultType: "displayfield",
     autoHeight: true,
+    buttonAlign: 'left',
 
     items: [
         {
@@ -1110,7 +1111,7 @@ Ext.onReady(function() {
           hideLabel: licensed,
           value: "<font color='red'>"+license_message+"</font>&nbsp;("+license_start_date+"/"+license_end_date+")<br />"+license_user
         },
-    
+
         {
           id: "license_user",
           fieldLabel: _('ID_ISSUED_TO'),
@@ -1118,7 +1119,7 @@ Ext.onReady(function() {
           hidden: !licensed,
           hideLabel: !licensed
           },
-    
+
           {
           id: "license_expires",
           fieldLabel: _('ID_EXPIRES'),
@@ -1376,7 +1377,7 @@ Ext.onReady(function() {
               renderer: function (val) {
                 var str = "";
                 var text = "";
-        
+
                 switch (val) {
                     case "available": text = _('ID_BUY_NOW'); break;
                     case "installed": text = _('ID_INSTALLED'); break;
@@ -1389,7 +1390,7 @@ Ext.onReady(function() {
                     case "download-start": text = "<img src=\"/images/enterprise/loader.gif\" />"; break;
                     default: text = val; break;
                 }
-        
+
                 switch (val) {
                   case "available":
                   case "ready":
@@ -1400,17 +1401,17 @@ Ext.onReady(function() {
                   case "download-start":
                     str = "<div class=\"" + val + " roundedCorners\">" + text + "</div>";
                     break;
-        
+
                   case "installed":
                   case "disabled":
                     str = "<div style=\"margin-right: 0.85em; font-weight: bold; text-align: center;\">" + text + "</div>";
                     break;
-        
+
                   default:
                     str = "<div class=\"" + val + " roundedCorners\">" + text + "</div>";
                     break;
                 }
-        
+
                 return (str);
               }
             }
@@ -1608,7 +1609,7 @@ Ext.onReady(function() {
                 renderer: function (val) {
                     var str = "";
                     var text = "";
-            
+
                     switch (val) {
                         case "available": text = _('ID_BUY_NOW'); break;
                         case "installed": text = _('ID_INSTALLED'); break;
@@ -1621,7 +1622,7 @@ Ext.onReady(function() {
                         case "download-start": text = "<img src=\"/images/enterprise/loader.gif\" />"; break;
                         default: text = val; break;
                     }
-            
+
                     switch (val) {
                       case "available":
                       case "ready":
@@ -1632,17 +1633,17 @@ Ext.onReady(function() {
                       case "download-start":
                         str = "<div class=\"" + val + " roundedCorners\">" + text + "</div>";
                         break;
-            
+
                       case "installed":
                       case "disabled":
                         str = "<div style=\"margin-right: 0.85em; font-weight: bold; text-align: center;\">" + text + "</div>";
                         break;
-            
+
                       default:
                         str = "<div class=\"" + val + " roundedCorners\">" + text + "</div>";
                         break;
                     }
-            
+
                     return (str);
                 }
             }
@@ -1697,7 +1698,7 @@ Ext.onReady(function() {
             "cellclick": function (grid, rowIndex, columnIndex, e) {
                 var record = grid.getStore().getAt(rowIndex);
                 var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
-        
+
                 if (fieldName != "status") {
                   return;
                 }
@@ -1776,7 +1777,7 @@ Ext.onReady(function() {
   );
 
   addonsGrid.addListener("rowcontextmenu", onMessageMnuContext, this);
-  
+
     addonsFeatureGrid.on("rowcontextmenu",
         function (grid, rowIndex, evt) {
           var sm = grid.getSelectionModel();
@@ -1784,7 +1785,7 @@ Ext.onReady(function() {
         },
         this
     );
-    
+
     addonsFeatureGrid.addListener("rowcontextmenu", onMessageMnuContext, this);
 
   ///////
