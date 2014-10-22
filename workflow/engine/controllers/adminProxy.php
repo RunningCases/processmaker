@@ -1368,7 +1368,14 @@ class adminProxy extends HttpProxyController
 
         //License Information:
         $activeLicense = $licenseManager->getActiveLicense();
-        $params['license'] = $licenseManager;
+        $licenseInfo = array();
+        $noInclude = array('licensedfeaturesList', 'result', 'serial');
+        foreach ($licenseManager as $index => $value) {
+            if (!in_array($index, $noInclude)) {
+                $licenseInfo[$index] = G::sanitizeInput($value);
+            }
+        }
+        $params['license'] = $licenseInfo;
 
         //Operative System version (Linux, Windows)
         try {
@@ -1391,9 +1398,9 @@ class adminProxy extends HttpProxyController
         //ProcessMaker Version
         $params['pmVersion'] = System::getVersion();
         if (file_exists(PATH_DATA. 'log/upgrades.log')) {
-            $params['pmUpgrade'] = file_get_contents(PATH_DATA. 'log/upgrades.log', 'r');
+            $params['pmUpgrade'] = serialize(file_get_contents(PATH_DATA. 'log/upgrades.log', 'r'));
         } else {
-            $params['pmUpgrade'] = G::LoadTranslation('ID_UPGRADE_NEVER_UPGRADE');
+            $params['pmUpgrade'] = serialize(G::LoadTranslation('ID_UPGRADE_NEVER_UPGRADE'));
         }
 
         //Database server Version (MySQL version)
