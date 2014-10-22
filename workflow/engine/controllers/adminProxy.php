@@ -1399,13 +1399,21 @@ class adminProxy extends HttpProxyController
         //Database server Version (MySQL version)
         $installer = new Installer();
         $systemInfo = $installer->getSystemInfo();
-        $params['dbVersion'] = mysql_get_server_info();//$systemInfo->mysql->version;
+        try {
+            $params['dbVersion'] = mysql_get_server_info();
+        } catch (Exception $e) {
+            $params['dbVersion'] = '';
+        }
 
         //PHP Version
         $params['php'] = $systemInfo->php->version;
 
         //Apache - IIS Version
-        $params['apache'] = apache_get_version();
+        try {
+            $params['apache'] = apache_get_version();
+        } catch (Exception $e) {
+            $params['apache'] = '';
+        }
 
         //Installed Plugins (license info?)
         $arrayAddon = array ();
@@ -1472,7 +1480,7 @@ class adminProxy extends HttpProxyController
         //Country/city (Timezone)
         $params["Timezone"] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
 
-        $support = PATH_DATA_SITE . SYS_SYS . '-' . date('YmdHis') . '.spm';
+        $support = PATH_DATA_SITE . G::sanitizeString($licenseManager->info['FIRST_NAME'] . '-' . $licenseManager->info['LAST_NAME'] . '-' . SYS_SYS . '-' . date('YmdHis'), false, false) . '.spm';
         file_put_contents($support, serialize($params));
         G::streamFile($support, true);
         G::rm_dir($support);
