@@ -4391,15 +4391,15 @@ class G
         } elseif (preg_match( '/Firefox/i', $u_agent )) {
             $bname = 'Mozilla Firefox';
             $ub = "Firefox";
+        } elseif ((preg_match( '/Opera/i', $u_agent )) || (preg_match( '/OPR/i', $u_agent ))) {
+          	$bname = 'Opera';
+           	$ub = "Opera";
         } elseif (preg_match( '/Chrome/i', $u_agent )) {
             $bname = 'Google Chrome';
             $ub = "Chrome";
         } elseif (preg_match( '/Safari/i', $u_agent )) {
             $bname = 'Apple Safari';
             $ub = "Safari";
-        } elseif (preg_match( '/Opera/i', $u_agent )) {
-            $bname = 'Opera';
-            $ub = "Opera";
         } elseif (preg_match( '/Netscape/i', $u_agent )) {
             $bname = 'Netscape';
             $ub = "Netscape";
@@ -4427,7 +4427,19 @@ class G
 
         // check if we have a number
         if ($version == null || $version == "") {
-            $version = "?";
+        	if($ub == 'MSIE'){
+        		$parent = 'RV';
+        	} elseif ($ub == 'Opera'){
+        		$parent = 'OPR';
+        	}
+        	if ($parent != null || $parent != ""){
+        		$s = strpos(strtoupper($u_agent), $parent);
+        		$f = $s + strlen($parent);
+        		$version = substr($u_agent, $f, 15);
+        		$version = preg_replace('/[^0-9,.]/','',$version);
+            }else {
+                $version = "?";
+        	}
         }
 
         return array ('userAgent' => $u_agent,'name' => strtolower( $ub ),'longName' => $bname,'version' => $version,'platform' => $platform,'pattern' => $pattern
@@ -5552,13 +5564,13 @@ class G
     public function checkBrowserCompatibility($browser = null, $version = null)
     {
         if ($browser == null || $version == null) {
-            $info = G::getActualBrowser();
-            $browser = $info['browser'];
+            $info = G::getBrowser();
+	    	$browser = $info['name'];
             $version = $info['version'];
         }
-        if ((($browser== 'IE') && (($version >= 8) && ($version <= 11))) ||
-            (($browser== 'CHROME') && ($version >= 26)) ||
-            (($browser== 'FIREFOX') && ($version >= 20))
+        if ((($browser== 'msie') && (($version >= 8) && ($version <= 11))) ||
+			(($browser== 'chrome') && ($version >= 26)) ||
+			(($browser== 'firefox') && ($version >= 20))
         ) {
             return true;
         }
