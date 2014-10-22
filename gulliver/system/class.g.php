@@ -5534,31 +5534,6 @@ class G
     }
 
     /**
-     * Get the actual browser.
-     */
-    public function getActualBrowser ()
-    {
-        $browser=array("TRIDENT","IE","OPERA","MOZILLA","NETSCAPE","FIREFOX","SAFARI","CHROME");
-        $info['browser'] = "OTHER";
-
-        foreach ($browser as $parent) {
-            if( $parent == 'TRIDENT') {
-                $parent = "RV";
-            }
-            $s = strpos(strtoupper($_SERVER['HTTP_USER_AGENT']), $parent);
-            $f = $s + strlen($parent);
-            $version = substr($_SERVER['HTTP_USER_AGENT'], $f, 15);
-            $version = preg_replace('/[^0-9,.]/','',$version);
-            if ($s) {
-                $info['browser'] = $parent;
-                $info['version'] = $version;
-            }
-        }
-        $info['browser'] = ($info['browser']=='RV')? 'IE':$info['browser'];
-        return $info;
-    }
-
-    /*
     * Check the browser compativility
     */
     public function checkBrowserCompatibility($browser = null, $version = null)
