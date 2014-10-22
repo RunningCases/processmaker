@@ -9,6 +9,16 @@ var eventsNewAction = function(oForm) {
     return false;
   }
 
+  if (getField("EVN_TAS_ESTIMATED_DURATION").value.trim() == "") {
+      msgBox("Set a estimated task duration please.", "alert");
+      return false;
+  }
+
+  if (getField("EVN_WHEN").value.trim() == ""){
+      msgBox("Set a days please.", "alert");
+      return false;
+  }
+
   if (oForm) {
     oRPC = new leimnud.module.rpc.xmlhttp({
       url   : '../events/eventsNewAction',

@@ -21,7 +21,7 @@ var triggerSave = function (form){
    ajax_post(form.action, form, 'POST');
     currentPopupWindow.remove();
   }
-  
+
 var eventsNew = function() {
   popupWindow('@G::LoadTranslation(ID_NEW_EVENT)', '@G::encryptlink(@#eventsNew)?PRO_UID=@%PRO_UID&EVN_TYPE=@%EVN_TYPE' , 540, 500);
 };
@@ -35,6 +35,21 @@ var eventsEditAction = function(sUID) {
 };
 
 var eventsSave = function(oForm) {
+  if (getField("EVN_DESCRIPTION").value.trim() == "") {
+      msgBox("Set a description please.", "alert");
+      return false;
+  }
+
+  if (getField("EVN_TAS_ESTIMATED_DURATION").value.trim() == "") {
+      msgBox("Set a estimated task duration please.", "alert");
+      return false;
+  }
+
+  if (getField("EVN_WHEN").value.trim() == ""){
+      msgBox("Set a days please.", "alert");
+      return false;
+  }
+
   if (oForm.onsubmit()) {
     res = ajax_post(oForm.action, oForm, 'POST');
     currentPopupWindow.remove();
@@ -43,11 +58,9 @@ var eventsSave = function(oForm) {
 };
 
 var eventsTriggerSave = function(oForm) {
-  if (oForm.onsubmit()) {
     res = ajax_post(oForm.action, oForm, 'POST');
     currentPopupWindow.remove();
     @#PAGED_TABLE_ID.refresh();
-  }
 };
 
 var eventsDelete = function(sUID) {
