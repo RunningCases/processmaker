@@ -1307,7 +1307,7 @@ var G_Grid = function(oForm, sGridName){
       document.getElementById(aAux[0]+']['+ aAux[1] + '][' + oField.sFieldName + ']').value = symbol+''+document.getElementById(aAux[0]+']['+ aAux[1] + '][' + oField.sFieldName + ']').value;
 
       // return focus the field typed
-      if (typeof document.getElementById(domId) != 'undefined') {
+      if ((typeof document.getElementById(domId) != 'object') && (typeof document.getElementById(domId) != 'undefined')) {
         document.getElementById(domId).focus();
       }
 
