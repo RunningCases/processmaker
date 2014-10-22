@@ -1474,10 +1474,10 @@ function G_Text(form, element, name)
       }
 
       if (me.browser.name == 'Microsoft Internet Explorer' || me.browser.name == 'Netscape'){
-    	    if (event.preventDefault) {
-    		    event.preventDefault();
+    	    if (window.event.preventDefault) {
+    	    	window.event.preventDefault();
     		} else {
-    			event.returnValue = false;
+    			window.event.returnValue = false;
     		}
       }
 
