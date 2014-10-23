@@ -216,7 +216,7 @@ Ext.onReady(function() {
                 success: function (response, opts) {
                     var dataResponse = Ext.util.JSON.decode(response.responseText);
 
-                    if (dataResponse.message == "OK") {
+                    if (dataResponse.message == 'OK') {
                         var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _('ID_SAVING_LABEL') + '.' + _('ID_PLEASE_WAIT') });
                         myMask.show();
                         Ext.Ajax.request({
@@ -231,7 +231,7 @@ Ext.onReady(function() {
                                           window.location.href = 'dashletsList';
                                         break;
                                         default:
-                                          Ext.MessageBox.alert( _('ID_ALERT'), _('ID_FAILED_DASHBOARD INSTANCE') );
+                                          Ext.MessageBox.alert( _('ID_ALERT'), _('ID_FAILED_DASHBOARD_INSTANCE') );
                                         break;
                                      }
                                    },
@@ -241,7 +241,7 @@ Ext.onReady(function() {
                                    }
                         });
                     } else {
-                        Ext.MessageBox.alert(_("ID_ERROR"), _("ID_NAME_EXISTS"));
+                        Ext.MessageBox.alert(_('ID_ERROR'), _('ID_DASHLET_TITLE_EXISTS'));
                     }
                 },
                 failure: function (response, opts) {
