@@ -464,12 +464,13 @@ class Dashboard extends Controller
 
     public function verifyTitleDashlet ($data)
     {
+        $response = new stdclass();
         $this->setResponseType("json");
 
-        $response = new stdclass();
         $response->message = "OK";
         $criteria = new Criteria("workflow");
 
+        $criteria->addSelectColumn(DashletInstancePeer::DAS_INS_UID);
         $criteria->addSelectColumn(DashletInstancePeer::DAS_INS_ADDITIONAL_PROPERTIES);
         $rsCriteria = DashletInstancePeer::doSelectRS($criteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -478,7 +479,7 @@ class Dashboard extends Controller
             $row = $rsCriteria->getRow();
             $arrayField = unserialize($row["DAS_INS_ADDITIONAL_PROPERTIES"]);
 
-            if (isset($arrayField["DAS_INS_TITLE"]) && $arrayField["DAS_INS_TITLE"] != "") {
+            if (isset($arrayField["DAS_INS_TITLE"]) && $arrayField["DAS_INS_TITLE"] != "" && ($data->DAS_INS_UID != $row["DAS_INS_UID"])) {
                 if ($data->DAS_INS_TITLE == $arrayField["DAS_INS_TITLE"]) {
                     $response->message = "ERROR";
                 }
