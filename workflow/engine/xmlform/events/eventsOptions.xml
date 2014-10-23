@@ -21,7 +21,7 @@ var triggerSave = function (form){
    ajax_post(form.action, form, 'POST');
     currentPopupWindow.remove();
   }
-  
+
 var eventsNew = function() {
   popupWindow('@G::LoadTranslation(ID_NEW_EVENT)', '@G::encryptlink(@#eventsNew)?PRO_UID=@%PRO_UID&EVN_TYPE=@%EVN_TYPE' , 540, 500);
 };
@@ -35,19 +35,30 @@ var eventsEditAction = function(sUID) {
 };
 
 var eventsSave = function(oForm) {
-  if (oForm.onsubmit()) {
-    res = ajax_post(oForm.action, oForm, 'POST');
-    currentPopupWindow.remove();
-    @#PAGED_TABLE_ID.refresh();
+  if (getField("EVN_DESCRIPTION").value.trim() == "") {
+      new leimnud.module.app.alert().make({label: _("ID_PLEASE_ENTER_DESCRIPTION")});
+      return false;
   }
+
+  if (getField("EVN_TAS_ESTIMATED_DURATION").value.trim() == "") {
+      new leimnud.module.app.alert().make({label: _("ID_PLEASE_CONFIGURE_ESTIMATED_DURATION_TASK")});
+      return false;
+  }
+
+  if (getField("EVN_WHEN").value.trim() == ""){
+      new leimnud.module.app.alert().make({label: _("ID_PLEASE_SET_VALUE_DAYS_EXECUTION_TIME_FIELD")});
+      return false;
+  }
+
+  res = ajax_post(oForm.action, oForm, 'POST');
+  currentPopupWindow.remove();
+  @#PAGED_TABLE_ID.refresh();
 };
 
 var eventsTriggerSave = function(oForm) {
-  if (oForm.onsubmit()) {
     res = ajax_post(oForm.action, oForm, 'POST');
     currentPopupWindow.remove();
     @#PAGED_TABLE_ID.refresh();
-  }
 };
 
 var eventsDelete = function(sUID) {

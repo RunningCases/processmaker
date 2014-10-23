@@ -5,8 +5,18 @@
 
 var eventsNewAction = function(oForm) {
   if(getField('EVN_DESCRIPTION').value.trim() == ''){
-    msgBox('Set a description please.', 'alert');
+    new leimnud.module.app.alert().make({label: _("ID_PLEASE_ENTER_DESCRIPTION")});
     return false;
+  }
+
+  if (getField("EVN_TAS_ESTIMATED_DURATION").value.trim() == "") {
+      new leimnud.module.app.alert().make({label: _("ID_PLEASE_CONFIGURE_ESTIMATED_DURATION_TASK")});
+      return false;
+  }
+
+  if (getField("EVN_WHEN").value.trim() == ""){
+      new leimnud.module.app.alert().make({label: _("ID_PLEASE_SET_VALUE_DAYS_EXECUTION_TIME_FIELD")});
+      return false;
   }
 
   if (oForm) {
