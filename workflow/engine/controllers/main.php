@@ -731,12 +731,12 @@ class Main extends Controller
             }
         }
 
-        
+
         if (file_exists(PATH_HTML . "lib/versions")) {
             $versions = json_decode(file_get_contents(PATH_HTML . "lib/versions"), true);
             $pmuiVer = $versions["pmui_ver"];
             $mafeVer = $versions["mafe_ver"];
-            $pmdynaformVer = $versions["pmdynaform_ver"];
+            $pmdynaformVer = isset($versions["pmdynaform_ver"]) ? $versions["pmdynaform_ver"] : '';
         } else {
             $pmuiVer = $mafeVer = $pmdynaformVer = "(unknown)";
         }
