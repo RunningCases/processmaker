@@ -165,7 +165,7 @@ document.getElementById('form[DYN_TITLE]').value = document.getElementById('form
   var oPanel;
   function assignVariables(){
     
-    if ((document.getElementById('form[ADD_TABLE]').value!='') && (document.getElementById('form[DYN_TITLE]').value!='')) {
+    if ((document.getElementById('form[ADD_TABLE]').value.trim() != '') && (document.getElementById('form[DYN_TITLE]').value.trim() != '')) {
         table_uid = document.getElementById('form[ADD_TABLE]').value;
        	oPanel = new leimnud.module.panel();
       	oPanel.options = {
@@ -184,7 +184,7 @@ document.getElementById('form[DYN_TITLE]').value = document.getElementById('form
         var PRO_UID = document.getElementById('form[PRO_UID]').value;
         var DYN_UID = document.getElementById('form[DYN_UID]').value;
         var ADD_TABLE = document.getElementById('form[ADD_TABLE]').value;
-        var DYN_TITLE = document.getElementById('form[DYN_TITLE]').value;
+        var DYN_TITLE = document.getElementById('form[DYN_TITLE]').value.trim();
         var DYN_TYPE = document.getElementById('form[DYN_TYPE]').value;
         var ACTION = document.getElementById('form[ACTION]').value;
         var DYN_DESCRIPTION = document.getElementById('form[DYN_DESCRIPTION]').value;
@@ -204,7 +204,7 @@ document.getElementById('form[DYN_TITLE]').value = document.getElementById('form
         oRPC.make();
         lastPopupWindow.remove();
     } else { 
-      if (document.getElementById('form[ADD_TABLE]').value == '') {
+      if (document.getElementById('form[ADD_TABLE]').value.trim() == '') {
         msgBox("@G::LoadTranslation(ID_PMTABLE)"+" "+"@G::LoadTranslation(ID_IS_REQUIRED)", "alert");
         return false;
       } else {  
