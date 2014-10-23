@@ -294,7 +294,7 @@
                 </select>
             </div>
             <div style = "float: right;"> <b>{$processTitle}:</b>
-                <select id="comboProcess" onchange="redirect();" style="width: 200px">
+                <select id="comboProcess" onchange="redirect();" style="width: 220px">
                     {foreach from=$processValues key=k item=VALUE}
                     <option value="{$VALUE[0]}">{$VALUE[1]}</option>
                     {/foreach}
@@ -311,7 +311,7 @@
                 <input type="button" class="fontText" onclick="setTextSearch();" tabindex="2" value=" x ">
             </div>
             <div style = "float: right;"><b>{$searchTitle}:</b>
-                <input type="text" size="27" maxlength="60" value="" id='searchText' placeholder="{$searchTitle}...">
+                <input type="text" size="24" maxlength="60" value="" id='searchText' placeholder="{$searchTitle}...">
             </div>
 
 

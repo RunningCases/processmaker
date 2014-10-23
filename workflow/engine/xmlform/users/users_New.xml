@@ -92,7 +92,7 @@ SELECT ROL_CODE AS USR_ROLE, ROL_CODE AS CODE FROM ROLES WHERE ROL_SYSTEM = '000
   </USR_RESUME>
   -->
   <MAX_FILES_SIZE type="edit" mode="view">
-    <en><![CDATA[Max upload file size]]></en>
+    <en><![CDATA[Maximum upload file size]]></en>
   </MAX_FILES_SIZE>
   <BTN_CANCEL type="button" onclick="cancel();">
     <en><![CDATA[Cancel]]></en>
