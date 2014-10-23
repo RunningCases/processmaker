@@ -205,15 +205,13 @@ document.getElementById('form[DYN_TITLE]').value = document.getElementById('form
         lastPopupWindow.remove();
     } else { 
       if (document.getElementById('form[ADD_TABLE]').value.trim() == '') {
-        msgBox("@G::LoadTranslation(ID_PMTABLE)"+" "+"@G::LoadTranslation(ID_IS_REQUIRED)", "alert");
+        msgBox("@G::LoadTranslation(ID_PMTABLE_REQUIRED)", "alert");
         return false;
       } else {  
         msgBox("@G::LoadTranslation(ID_REQUIRED_NAME_DYNAFORM)", "alert");        
         return false;
       }
-    }
-
-    
+    }    
   }
 
   function cancel(){
