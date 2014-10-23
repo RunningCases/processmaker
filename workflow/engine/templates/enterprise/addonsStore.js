@@ -763,20 +763,17 @@ Ext.onReady(function() {
                 waitTitle: _('ID_PLEASE_WAIT'),
                 waitMsg: _('ID_UPDATING_LICENSE_MSG'),
                 success: function (form, o) {
-                    Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_SUCCESSFULLY_UPLOADED'), function () {
+                    Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_SUCCESSFULLY_UPLOADED') + ' ' + _('ID_ENTERPRISE_INSTALLED'), function () {
                         parent.parent.window.location.href = newLocation();
                     });
                 },
                 failure: function (form, action) {
                     if (action.failureType == 'server') {
                         parent.parent.window.location.href = newLocation();
-                    } else if (action.failureType == 'client') {
-                        var dataResponse = eval("(" + action.response.responseText.trim() + ")"); //json
-                        Ext.MessageBox.alert(_('ID_WARNING'), (dataResponse.errors)? dataResponse.errors : _('ID_WARNING_ERROR_UPDATING'));
-                    } else {
-                        var dataResponse = eval("(" + action.response.responseText.trim() + ")"); //json
-                        Ext.MessageBox.alert(_('ID_WARNING'), (dataResponse.errors)? dataResponse.errors : _('ID_WARNING_ERROR_UPDATING'));
+                        return;
                     }
+                    var dataResponse = eval("(" + action.response.responseText.trim() + ")"); //json
+                    Ext.MessageBox.alert(_('ID_WARNING'), (dataResponse.errors)? dataResponse.errors : _('ID_WARNING_ERROR_UPDATING'));
                 }
             });
           }
