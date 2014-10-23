@@ -286,6 +286,8 @@ switch ($option) {
         break;
     case "list":
         $status = 1;
+        $response = new stdclass();
+        $response->status = 'OK';
         try {
             if (EnterpriseUtils::getInternetConnection() == 0) {
                 throw (new Exception("Enterprise Plugins Manager no connected to internet."));

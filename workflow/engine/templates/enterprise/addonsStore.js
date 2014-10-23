@@ -42,21 +42,9 @@ Ext.onReady(function() {
           }
         }
 
-        if (sw == 0) {
-          Ext.ComponentMgr.get("cboPmVersion").setDisabled(true);
-          Ext.ComponentMgr.get("btnPmUpgrade").setDisabled(true);
-        }
       },
       load: function (store, record, option) {
-        Ext.ComponentMgr.get("cboPmVersion").setDisabled(false);
-        Ext.ComponentMgr.get("btnPmUpgrade").setDisabled(false);
-
-        if (store.getAt(0)) {
-          Ext.ComponentMgr.get("cboPmVersion").setValue(store.getAt(0).get(Ext.ComponentMgr.get("cboPmVersion").valueField));
-        } else {
-          Ext.ComponentMgr.get("cboPmVersion").setDisabled(true);
-          Ext.ComponentMgr.get("btnPmUpgrade").setDisabled(true);
-        }
+        //
       }
     }
   });
@@ -99,50 +87,6 @@ Ext.onReady(function() {
         site = PROCESSMAKER_URL + "/setup/main?s=PMENTERPRISE";
     }
     return site;
-  }
-  function processMakerUpgrade() {
-    swReloadTask = 0;
-    var noticeWindow = new Ext.Window({
-      closable: false,
-      autoHeight: true,
-      modal: true,
-      width: 600,
-      height: 350,
-      id: "notice_window",
-      title: _('ID_BEFORE_UPDATE'),
-      bodyStyle: "font: normal 13px sans;",
-      bbar: new Ext.Toolbar({
-        buttonAlign: "center",
-        padding: 15,
-        items: [
-        {
-          id: "upgrade-continue",
-          //text: " Continue &raquo; ",
-          text: _('ID_CONTINUE')+" &gt;&gt; ",
-          handler: function () {
-            noticeWindow.hide();
-
-            processMakerInstall();
-          }
-        },
-        {
-          id: "upgrade-cancel",
-          text: "<b> "+ _('ID_CANCEL')+" </b>",
-          handler: function () {
-            swReloadTask = 1;
-            noticeWindow.hide();
-          }
-        }]
-      }),
-      items: [{
-        id: "notice",
-        preventBodyReset : true,
-        padding: 15,
-        html: _('ID_CAUTION_NOTICE')
-      }]
-    });
-
-    noticeWindow.show();
   }
 
   function upgradeStatus(addonId, storeId, record) {
@@ -393,7 +337,6 @@ Ext.onReady(function() {
       var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _('ID_WAIT_WHILE_UPGRADING_PROCESSMAKER')});
       myMask.show();
 
-      var cboPm = Ext.ComponentMgr.get("cboPmVersion");
 
       var record = cboPm.findRecord(cboPm.valueField, cboPm.getValue());
       var index  = cboPm.store.indexOf(record);
@@ -499,9 +442,6 @@ Ext.onReady(function() {
 
                       reloadTask.cancel();
 
-                      Ext.ComponentMgr.get("cboPmVersion").reset();
-                      Ext.ComponentMgr.get("cboPmVersion").store.load();
-
                       addonsStore.load({
                           params: {
                               "force": true
@@ -567,22 +507,17 @@ Ext.onReady(function() {
       "load": function(store, records, options) {
         //reloadTask.delay(15000); //1 millisecond = 0.001 seconds
 
-        //Ext.ComponentMgr.get('btnPmUpgrade').disable();
         Ext.ComponentMgr.get('loading-indicator').setValue("");
         progressWindow.hide();
         store.filterBy(function (record, id) {
-          if (record.get('type') == 'core') {
-            coreRecord = record.copy();
-
-            //Ext.ComponentMgr.get('btnPmUpgrade').enable();
-            //console.log("Core state: " + record.get('status'));
-            //console.log(record);
-            status = record.get('status');
-            if (status == "download-start" || status == "download" || status == "install" || status == "install-finish") {
-              upgradeStatus(record.get('id'), record.get('store'), record);
+            if (record.get('type') == 'core') {
+                coreRecord = record.copy();
+                status = record.get('status');
+                if (status == "download-start" || status == "download" || status == "install" || status == "install-finish") {
+                    upgradeStatus(record.get('id'), record.get('store'), record);
+                }
+                return false;
             }
-            return false;
-          }
 
           if (record.get('status') == 'download-start' || record.get('status') == 'download' || record.get('status') == 'cancel' || record.get('status') == 'install') {
               //
@@ -820,22 +755,29 @@ Ext.onReady(function() {
 
           if (sw == 1) {
             uploadForm.getForm().submit({
-              url: "../enterprise/addonsStoreAction",
-              params: {
-                action: "importLicense"
-              },
-              waitMsg: _('ID_UPDATING_LICENSE_MSG'),
-              success: function (form, o) {
-                Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_SUCCESSFULLY_UPLOADED'), function () {
-                    parent.parent.window.location.href = newLocation()
-                });
-              },
-              failure: function (form, o) {
-                var dataResponse = eval("(" + o.response.responseText + ")"); //json
-                console.log('error', dataResponse);
-
-                Ext.MessageBox.alert(_('ID_WARNING'), (dataResponse.errors)? dataResponse.errors : _('ID_WARNING_ERROR_UPDATING'));
-              }
+                url: "../enterprise/addonsStoreAction",
+                params: {
+                    action: "importLicense"
+                },
+                method: 'POST',
+                waitTitle: _('ID_PLEASE_WAIT'),
+                waitMsg: _('ID_UPDATING_LICENSE_MSG'),
+                success: function (form, o) {
+                    Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_SUCCESSFULLY_UPLOADED'), function () {
+                        parent.parent.window.location.href = newLocation();
+                    });
+                },
+                failure: function (form, action) {
+                    if (action.failureType == 'server') {
+                        parent.parent.window.location.href = newLocation();
+                    } else if (action.failureType == 'client') {
+                        var dataResponse = eval("(" + action.response.responseText.trim() + ")"); //json
+                        Ext.MessageBox.alert(_('ID_WARNING'), (dataResponse.errors)? dataResponse.errors : _('ID_WARNING_ERROR_UPDATING'));
+                    } else {
+                        var dataResponse = eval("(" + action.response.responseText.trim() + ")"); //json
+                        Ext.MessageBox.alert(_('ID_WARNING'), (dataResponse.errors)? dataResponse.errors : _('ID_WARNING_ERROR_UPDATING'));
+                    }
+                }
             });
           }
         }
@@ -939,81 +881,6 @@ Ext.onReady(function() {
     }]
   });
 
-  var pnlUpgrade = new Ext.FormPanel({
-      frame: true,
-      title: _('ID_UPGRADE_SYSTEM'),
-
-      bodyStyle: "padding: 5px 5px 5px 5px;",
-      disabled: !licensed,
-
-      items: [
-          {
-              layout: "column",
-              items: [
-                      {
-                          columnWidth: 0.20,
-                          xtype: "label",
-                          text: _('ID_CURRENT_VERSION') + ":"
-                      },
-                      {
-                          columnWidth: 0.60,
-                          xtype: "label",
-                          text: PROCESSMAKER_VERSION
-                      },
-                      {
-                          columnWidth: 0.20,
-                          xtype: "label",
-                          text: ""
-                      }
-              ]
-          },
-          {
-              layout: "column",
-              style: "margin-top: 10px;",
-              items: [
-                      {
-                          columnWidth: 0.20,
-                          xtype: "label",
-                          text: _('ID_LATEST_VERSION') + ":"
-                      },
-                      {
-                          columnWidth: 0.60,
-                          xtype: "container",
-                          items: [
-                              {
-                                  xtype: "combo",
-                                  id: "cboPmVersion",
-                                  editable: false,
-                                  store: storePM,
-                                  triggerAction: "all",
-                                  autoSelect: true,
-                                  mode: "local",
-                                  valueField:   "OBJ_VERSION",
-                                  displayField: "OBJ_VERSION_NAME",
-                                  hidden:true,
-                                  emptyText: _('ID_NO_NEW_VERSIONS')
-                              }
-                          ]
-                      },
-                      {
-                          columnWidth: 0.20,
-                          xtype: "button",
-                          id: "btnPmUpgrade",
-                          text: _('ID_UPGRADE_LABEL'),
-                          disabled: true,
-                          handler: function () {
-                              if (INTERNET_CONNECTION == 1) {
-                                  processMakerUpgrade();
-                              } else {
-                                  Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_NO_INTERNET_CONECTION'));
-                              }
-                          }
-                      }
-              ]
-          }
-      ]
-  });
-
     var pnlSetup = new Ext.FormPanel({
         frame: true,
         height: 160,
@@ -1049,7 +916,7 @@ Ext.onReady(function() {
             }
         ]
     });
-
+  
     var pnlSupport = new Ext.FormPanel({
         frame: true,
         height: 160,
@@ -1087,48 +954,42 @@ Ext.onReady(function() {
 
   var licensePanel = new Ext.FormPanel( {
     frame: true,
-    labelWidth: 130,
     labelAlign: "right",
     defaultType: "displayfield",
-    autoHeight: true,
-    buttonAlign: 'left',
-
     items: [
         {
-          id: "license_name",
-          fieldLabel: _('ID_CURRENT_LICENSE'),
-          value: license_name
+            id: "license_name",
+            fieldLabel: _('ID_CURRENT_LICENSE'),
+            value: license_name
         },
         {
-          id: "license_server",
-          fieldLabel: _('ID_LICENSE_SERVER'),
-          value: license_server
+            id: "license_server",
+            fieldLabel: _('ID_LICENSE_SERVER'),
+            value: license_server
         },
         {
-          id: "license_message",
-          fieldLabel:_('ID_STATUS'),
-          hidden: licensed,
-          hideLabel: licensed,
-          value: "<font color='red'>"+license_message+"</font>&nbsp;("+license_start_date+"/"+license_end_date+")<br />"+license_user
+            id: "license_message",
+            fieldLabel:_('ID_STATUS'),
+            hidden: licensed,
+            hideLabel: licensed,
+            value: "<font color='red'>"+license_message+"</font>&nbsp;("+license_start_date+"/"+license_end_date+")<br />"+license_user
         },
-
         {
-          id: "license_user",
-          fieldLabel: _('ID_ISSUED_TO'),
-          value: license_user,
-          hidden: !licensed,
-          hideLabel: !licensed
-          },
-
-          {
-          id: "license_expires",
-          fieldLabel: _('ID_EXPIRES'),
-          value: license_expires+'/'+license_span+" ("+license_start_date+" / "+license_end_date+")",
-          hidden: !licensed,
-          hideLabel: !licensed
-          }
-        ],
-        buttons : [
+            id: "license_user",
+            fieldLabel: _('ID_ISSUED_TO'),
+            value: license_user,
+            hidden: !licensed,
+            hideLabel: !licensed
+        },
+        {
+            id: "license_expires",
+            fieldLabel: _('ID_EXPIRES'),
+            value: license_expires+'/'+license_span+" ("+license_start_date+" / "+license_end_date+")",
+            hidden: !licensed,
+            hideLabel: !licensed
+        }
+    ],
+    buttons : [
         {
           text: _('ID_IMPORT_LICENSE'),
           disable: false,
@@ -1287,16 +1148,13 @@ Ext.onReady(function() {
     items: [btnEnable, btnDisable, btnAdmin]
   });
 
-    var addonsGrid = new Ext.grid.GridPanel({
+    var addonsGrid = new Ext.grid.EditorGridPanel({
         store: addonsStore,
-        colspan: 2,
-        flex: 1,
+        defaultType: "displayfield",
         padding: 5,
-        //anchor : '100%',
-        //height: 300,
         autoHeight : true,
         disabled: !licensed,
-            columns: [
+        columns: [
             expander,
             {
               id       : 'icon-column',
@@ -1417,18 +1275,6 @@ Ext.onReady(function() {
             }
         ],
         tbar:[
-            /*{
-                text:'Install',
-                tooltip:'Install this addon',
-                //iconCls:'add',
-                handler: function(b, e) {
-                  record = addonsGrid.getSelectionModel().getSelected();
-                  console.log(record.get('name') + ' ' + record.get('store'));
-                  installAddon(record.get('name'), record.get('store'));
-                }
-            },
-            btnUninstall,
-            '-',*/
             btnEnable,
             btnDisable,
             btnAdmin,
@@ -1698,7 +1544,7 @@ Ext.onReady(function() {
             "cellclick": function (grid, rowIndex, columnIndex, e) {
                 var record = grid.getStore().getAt(rowIndex);
                 var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
-
+        
                 if (fieldName != "status") {
                   return;
                 }
@@ -1733,7 +1579,11 @@ Ext.onReady(function() {
     var tabEnterprise = new Ext.TabPanel({
         activeTab: 0,
         height: 370,
-        defaults:{autoScroll: true},
+        defaults:{
+            autoScroll: true,
+            layout:'form',
+            frame:true,
+        },
         items:[{
                 title:  _('ID_ENTERPRISE_PLUGINS'),
                 items : addonsGrid
@@ -1777,7 +1627,7 @@ Ext.onReady(function() {
   );
 
   addonsGrid.addListener("rowcontextmenu", onMessageMnuContext, this);
-
+  
     addonsFeatureGrid.on("rowcontextmenu",
         function (grid, rowIndex, evt) {
           var sm = grid.getSelectionModel();
@@ -1785,7 +1635,7 @@ Ext.onReady(function() {
         },
         this
     );
-
+    
     addonsFeatureGrid.addListener("rowcontextmenu", onMessageMnuContext, this);
 
   ///////
