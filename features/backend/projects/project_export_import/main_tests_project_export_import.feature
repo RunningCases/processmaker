@@ -318,8 +318,8 @@ Scenario Outline: Get a list templates folder of process files manager
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records |
     | create        | 1              | 601816709536cfeae7d7cd9079578104 | 0       |
-    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 2       |
+    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 2       |
     | disable       | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
     | keep          | 5              | 1455892245368ebeb11c1a5001393784 | 1       |
 
