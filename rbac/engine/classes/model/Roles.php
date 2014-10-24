@@ -29,6 +29,7 @@
 require_once 'classes/model/Permissions.php';
 require_once 'classes/model/Systems.php';
 require_once 'classes/model/RolesPermissions.php';
+require_once 'classes/model/RbacUsers.php';
 
 require_once 'classes/model/om/BaseRoles.php';
 require_once 'classes/model/om/BaseRbacUsers.php';
