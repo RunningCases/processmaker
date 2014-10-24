@@ -200,7 +200,7 @@ class AdditionalTables extends BaseAdditionalTables
                   'APP_UID'     => '',
                   'SHD_DATE'    => date('Y-m-d H:i:s')));
                  */
-                
+
                 G::auditLog("CreatePmtable", "PM Table Name: ".$aData['ADD_TAB_NAME']);
                 return $aData['ADD_TAB_UID'];
             } else {
@@ -404,11 +404,11 @@ class AdditionalTables extends BaseAdditionalTables
          */
         $types = array('DECIMAL', 'DOUBLE', 'FLOAT', 'REAL');
 
-        if ($keyOrderUppercase == true) {
+        if ($keyOrderUppercase) {
             foreach ($aData['FIELDS'] as $aField) {
                 $field = '$oCriteria->addSelectColumn(' . $sClassPeerName . '::' . $aField['FLD_NAME'] . ');';
                 if (in_array($aField['FLD_TYPE'], $types)) {
-                    $field = '$oCriteria->addAsColumn("' . $aField['FLD_NAME'] . '", "round(" . ' . $sClassPeerName . '::' . $aField['FLD_NAME'] . ' . ", 2)" );';
+                    $field = '$oCriteria->addAsColumn("' . $aField['FLD_NAME'] . '", "round(" . ' . $sClassPeerName . '::' . $aField['FLD_NAME'] . ' . ", ' . ($aField['FLD_TYPE'] == 'DOUBLE' ? '8' : '2') . ')");';
                 }
                 eval($field);
                 /*if ($aField['FLD_KEY'] == '1') {
@@ -446,9 +446,17 @@ class AdditionalTables extends BaseAdditionalTables
 
         if (isset($_POST['sort'])) {
             if ($_POST['dir'] == 'ASC') {
-                eval('$oCriteria->addAscendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
+                if ($keyOrderUppercase) {
+                    eval('$oCriteria->addAscendingOrderByColumn("' . $_POST['sort'] . '");');
+                } else {
+                    eval('$oCriteria->addAscendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
+                }
             } else {
-                eval('$oCriteria->addDescendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
+                if ($keyOrderUppercase) {
+                    eval('$oCriteria->addDescendingOrderByColumn("' . $_POST['sort'] . '");');
+                } else {
+                    eval('$oCriteria->addDescendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
+                }
             }
         }
 
