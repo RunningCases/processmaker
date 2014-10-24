@@ -827,10 +827,12 @@ class OutputDocument extends BaseOutputDocument
         $pdf->setLanguageArray($lg);
 
         if (isset($aProperties['pdfSecurity'])) {
+            $tcpdfPermissions = array('print', 'modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-high');
             $pdfSecurity = $aProperties['pdfSecurity'];
             $userPass = G::decrypt($pdfSecurity['openPassword'], $sUID);
             $ownerPass = ($pdfSecurity['ownerPassword'] != '') ? G::decrypt($pdfSecurity['ownerPassword'], $sUID) : null;
             $permissions = explode("|", $pdfSecurity['permissions']);
+            $permissions = array_diff($tcpdfPermissions, $permissions);
             $pdf->SetProtection($permissions, $userPass, $ownerPass);
         }
         // ---------------------------------------------------------
@@ -861,7 +863,9 @@ class OutputDocument extends BaseOutputDocument
             $sContent = mb_convert_encoding($sContent, 'HTML-ENTITIES', 'UTF-8');
         }
         $doc = new DOMDocument('1.0', 'UTF-8');
-        $doc->loadHtml($sContent);
+        if ($sContent != '') {
+            $doc->loadHtml($sContent);
+        }
         $pdf->writeHTML($doc->saveXML(), false, false, false, false, '');
         // ---------------------------------------------------------
         // Close and output PDF document
