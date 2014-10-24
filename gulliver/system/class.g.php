@@ -4374,6 +4374,7 @@ class G
         $bname = 'Unknown';
         $platform = 'Unknown';
         $version = "";
+        $ub = "other";
 
         //First get the platform?
         if (preg_match( '/linux/i', $u_agent )) {
@@ -4403,11 +4404,13 @@ class G
         } elseif (preg_match( '/Netscape/i', $u_agent )) {
             $bname = 'Netscape';
             $ub = "Netscape";
+        } elseif (preg_match( '/bingbot/i', $u_agent )) {
+            $bname = 'Bing Bot';
+            $ub = "bingbot";
         }
 
         // finally get the correct version number
-        $known = array ('Version',$ub,'other'
-        );
+        $known = array ('Version',$ub,'other');
         $pattern = '#(?P<browser>' . join( '|', $known ) . ')[/ ]+(?P<version>[0-9.|a-zA-Z.]*)#';
         @preg_match_all( $pattern, $u_agent, $matches );
 
@@ -4432,7 +4435,7 @@ class G
         	} elseif ($ub == 'Opera'){
         		$parent = 'OPR';
         	}
-        	if ($parent != null || $parent != ""){
+        	if (isset($parent) && $parent != ""){
         		$s = strpos(strtoupper($u_agent), $parent);
         		$f = $s + strlen($parent);
         		$version = substr($u_agent, $f, 15);

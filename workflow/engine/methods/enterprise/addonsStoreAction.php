@@ -125,14 +125,6 @@ try {
                     }
 
                     file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
-
-                    ///////
-                    $message  = "A license has been correctly installed. Please login again to apply the changes";
-                    G::SendMessageText($message, "INFO");
-                    $_SESSION["___PMEE_INSTALLED_LIC___"] = $message;
-
-                    //G::header("location: ../enterprise/pluginsList"); //ok
-                    //exit(0);
                 }
             }
             break;

@@ -371,7 +371,7 @@ class pmLicenseManager
             $oServerConf->setProperty ( 'ACTIVE_LICENSE',array(SYS_SYS => $path));
             $this->saveDataLicense( $results, $path, $redirect );
             if ($redirect) {
-                G::Header ( 'location: licenseManagerList' );
+                G::Header ( 'location: ../enterprise/addonsStore' );
             } else {
                 return true;
             }
