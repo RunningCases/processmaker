@@ -2918,7 +2918,11 @@ class G
      */
     public function unhtmlentities ($string)
     {
-        $trans_tbl = get_html_translation_table( HTML_ENTITIES );
+        if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+            $trans_tbl = get_html_translation_table( HTML_ENTITIES );
+        } else {
+            $trans_tbl = get_html_translation_table( HTML_ENTITIES, ENT_COMPAT, 'ISO-8859-1' );
+        }
         foreach ($trans_tbl as $k => $v) {
             $ttr[$v] = utf8_encode( $k );
         }
@@ -4393,8 +4397,8 @@ class G
             $bname = 'Mozilla Firefox';
             $ub = "Firefox";
         } elseif ((preg_match( '/Opera/i', $u_agent )) || (preg_match( '/OPR/i', $u_agent ))) {
-          	$bname = 'Opera';
-           	$ub = "Opera";
+            $bname = 'Opera';
+            $ub = "Opera";
         } elseif (preg_match( '/Chrome/i', $u_agent )) {
             $bname = 'Google Chrome';
             $ub = "Chrome";
@@ -5324,8 +5328,7 @@ class G
         return $arrayData;
     }
 
-    public static function buildFrom($configuration, $from = '')
-    {
+    public static function buildFrom($configuration, $from = '') {
         if (!isset($configuration['MESS_FROM_NAME'])) {
             $configuration['MESS_FROM_NAME'] = '';
         }
@@ -5539,20 +5542,19 @@ class G
     /**
     * Check the browser compativility
     */
-    public function checkBrowserCompatibility($browser = null, $version = null)
-    {
-        if ($browser == null || $version == null) {
-            $info = G::getBrowser();
+	public function checkBrowserCompatibility($browser = null, $version = null){
+	    if($browser == null || $version == null){
+	    	$info = G::getBrowser();
 	    	$browser = $info['name'];
-            $version = $info['version'];
-        }
-        if ((($browser== 'msie') && (($version >= 8) && ($version <= 11))) ||
+	    	$version = $info['version'];
+	    }
+		if ((($browser== 'msie') && (($version >= 8) && ($version <= 11))) ||
 			(($browser== 'chrome') && ($version >= 26)) ||
 			(($browser== 'firefox') && ($version >= 20))
-        ) {
-            return true;
-        }
-        return false;
+		){
+			return true;
+		}
+		return false;
     }
 
     /*
