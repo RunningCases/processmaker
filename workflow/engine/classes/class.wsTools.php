@@ -621,26 +621,28 @@ class workspaceTools
         // end of reset
 
         //close connection
-        $connection = Propel::getConnection( 'workflow' );
+        if (substr(PHP_OS, 0, 3) != 'WIN') {
+            $connection = Propel::getConnection( 'workflow' );
 
-        $sql_sleep = "SELECT * FROM information_schema.processlist WHERE command = 'Sleep' and user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() ORDER BY id;";
-        $stmt_sleep = $connection->createStatement();
-        $rs_sleep = $stmt_sleep->executeQuery( $sql_sleep, ResultSet::FETCHMODE_ASSOC );
+            $sql_sleep = "SELECT * FROM information_schema.processlist WHERE command = 'Sleep' and user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() ORDER BY id;";
+            $stmt_sleep = $connection->createStatement();
+            $rs_sleep = $stmt_sleep->executeQuery( $sql_sleep, ResultSet::FETCHMODE_ASSOC );
 
-        while ($rs_sleep->next()) {
-            $row_sleep = $rs_sleep->getRow();
-            $oStatement_sleep = $connection->prepareStatement( "kill ". $row_sleep['ID'] );
-            $oStatement_sleep->executeQuery();
-        }
+            while ($rs_sleep->next()) {
+                $row_sleep = $rs_sleep->getRow();
+                $oStatement_sleep = $connection->prepareStatement( "kill ". $row_sleep['ID'] );
+                $oStatement_sleep->executeQuery();
+            }
 
-        $sql_query = "SELECT * FROM information_schema.processlist WHERE user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() ORDER BY id;";
-        $stmt_query = $connection->createStatement();
-        $rs_query = $stmt_query->executeQuery( $sql_query, ResultSet::FETCHMODE_ASSOC );
+            $sql_query = "SELECT * FROM information_schema.processlist WHERE user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() ORDER BY id;";
+            $stmt_query = $connection->createStatement();
+            $rs_query = $stmt_query->executeQuery( $sql_query, ResultSet::FETCHMODE_ASSOC );
 
-        while ($rs_query->next()) {
-            $row_query = $rs_query->getRow();
-            $oStatement_query = $connection->prepareStatement( "kill ". $row_query['ID'] );
-            $oStatement_query->executeQuery();
+            while ($rs_query->next()) {
+                $row_query = $rs_query->getRow();
+                $oStatement_query = $connection->prepareStatement( "kill ". $row_query['ID'] );
+                $oStatement_query->executeQuery();
+            }
         }
     }
 
