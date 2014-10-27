@@ -271,12 +271,12 @@ class SkinEngine
     $dirBody = null;
 
     if (isset($_SERVER["HTTP_USER_AGENT"]) && preg_match("/^.*\(.*Trident.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)) {
-    	
+
     	//Get the IE version
     	if(preg_match("/^.*\(.*MSIE (\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch) || preg_match("/^.*\(.*rv.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)){
     		$ie = intval($arrayMatch[1]);
     	}
-        
+
         $swTrident = (preg_match("/^.*Trident.*$/", $_SERVER["HTTP_USER_AGENT"]))? 1 : 0; //Trident only in IE8+
 
         $sw = 1;
@@ -284,8 +284,8 @@ class SkinEngine
         if ((($ie == 7 && $swTrident == 1) || $ie == 8) && !preg_match("/^ux.+$/", SYS_SKIN)) { //IE8
             $sw = 0;
         }
-        
-       
+
+
         if ($sw == 1) {
             if ($ie == 10 || $ie == 11 ) {
                 $ie = 8;
@@ -669,12 +669,12 @@ class SkinEngine
       $header = null;
 
       if (preg_match("/^.*\(.*Trident.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)) {
-      	
+
       	  //Get the IE version
 	      if(preg_match("/^.*\(.*MSIE (\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch) || preg_match("/^.*\(.*rv.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)){
 	          $ie = intval($arrayMatch[1]);
 	      }
-	      
+
           if ($ie == 10 || $ie == 11) {
               $ie = 8;
 
@@ -767,9 +767,8 @@ class SkinEngine
         }
 
       if (defined('SYS_SYS')) {
-        $logout = '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/login/login';
-      }
-      else {
+          $logout = "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . ((SYS_COLLECTION != "tracker")? "/login/login" : "/tracker/login");
+      } else {
         $logout = '/sys/' . SYS_LANG . '/' . SYS_SKIN . '/login/login';
       }
 
@@ -810,3 +809,4 @@ class SkinEngine
     }
   }
 }
+
