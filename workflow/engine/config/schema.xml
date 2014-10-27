@@ -3858,5 +3858,25 @@
         <column name="LICENSE_WORKSPACE"    type="VARCHAR"      size="32"       required="true" default="0"/>
         <column name="LICENSE_TYPE"         type="VARCHAR"      size="32"       required="true" default="0"/>
     </table>
+
+    <table name="APP_ASSIGN_SELF_SERVICE_VALUE">
+        <vendor type="mysql">
+            <parameter name="Name" value="APP_ASSIGN_SELF_SERVICE_VALUE" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+        </vendor>
+        <column name="APP_UID"   type="VARCHAR" size="32" required="true" />
+        <column name="DEL_INDEX" type="INTEGER" required="true" default="0" />
+        <column name="PRO_UID"   type="VARCHAR" size="32" required="true" />
+        <column name="TAS_UID"   type="VARCHAR" size="32" required="true" />
+        <column name="GRP_UID"   type="VARCHAR" size="32" required="true" default="" />
+    </table>
 </database>
 

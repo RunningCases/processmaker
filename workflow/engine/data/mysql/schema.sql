@@ -2168,3 +2168,19 @@ CREATE TABLE IF NOT EXISTS `LICENSE_MANAGER` (
   `LICENSE_TYPE` varchar(32) NOT NULL DEFAULT '0',
   PRIMARY KEY (`LICENSE_UID`)
 )ENGINE=InnoDB DEFAULT CHARSET='utf8' COMMENT='Licenses Manager';
+
+#---------------------------------------------------------------------------
+#-- APP_ASSIGN_SELF_SERVICE_VALUE
+#---------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS APP_ASSIGN_SELF_SERVICE_VALUE;
+
+CREATE TABLE APP_ASSIGN_SELF_SERVICE_VALUE
+(
+    APP_UID   VARCHAR(32) NOT NULL,
+    DEL_INDEX INTEGER     DEFAULT 0 NOT NULL,
+    PRO_UID   VARCHAR(32) NOT NULL,
+    TAS_UID   VARCHAR(32) NOT NULL,
+    GRP_UID   VARCHAR(32) DEFAULT '' NOT NULL
+)ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
