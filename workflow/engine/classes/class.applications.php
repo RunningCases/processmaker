@@ -417,7 +417,7 @@ class Applications
             //Check also $distinct in the method getListCounters(), this in AppCacheView.php
             $distinct = true;
 
-            if (($action == "search" ||  $action == "todo" || $action == "selfservice" || $action == "unassigned" || $action == "to_reassign" || $action == "to_revise") || ($status == "TO_DO")) {
+            if (($action == "todo" || $action == "selfservice" || $action == "unassigned" || $action == "to_reassign" || $action == "to_revise") || ($status == "TO_DO")) {
                 $distinct = false;
             }
 
