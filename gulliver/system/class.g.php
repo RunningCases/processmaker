@@ -5375,11 +5375,11 @@ class G
         $res = new stdclass();
 
         if (!extension_loaded('fileinfo')) {
-            $dtype = explode(".", $filesName);
+            $dtype = explode(".", strtolower($filesName));
 
             foreach ($allowedTypes as $types => $val) {
-                if ((preg_match('/^\*\.?[a-z]{2,8}$/', $val)) || ($val == '*.*')) {
-                    $allowedDocTypes = substr($val, 2);
+                if ((preg_match('/^\*\.?[a-zA-Z0-9]{2,15}$/', $val)) || ($val == '*.*')) {
+                    $allowedDocTypes = strtolower(substr($val, 2));
                     if (($dtype[count($dtype) -1]) == $allowedDocTypes || $allowedDocTypes == '*') {
                         $res->status = true;
                         return $res;
@@ -5399,9 +5399,9 @@ class G
             $docType = explode("/", $finfo_);
 
             foreach ($allowedTypes as $types => $val) {
-                if ((preg_match('/^\*\.?[a-z]{2,8}$/', $val)) || ($val == '*.*')) {
-                    $allowedDocTypes = substr($val, 2);
-                    $dtype = explode(".", $filesName);
+                if ((preg_match('/^\*\.?[a-zA-Z0-9]{2,15}$/', $val)) || ($val == '*.*')) {
+                    $allowedDocTypes = strtolower(substr($val, 2));
+                    $dtype = explode(".", strtolower($filesName));
 
                     switch($allowedDocTypes){
                         case '*':

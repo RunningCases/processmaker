@@ -67,7 +67,7 @@ var verifyInfo = function(oForm)
 
   for(i=0; i<allowedTypes.length; i++){
     allowed = allowedTypes[i].replace('*','').replace('.','');
-    if((allowed != '*') && (docType != allowed)){
+    if((allowed != '*') && (docType.toLowerCase() != allowed.toLowerCase())){
       flag = 1;
     } else {
       flag = 0;
