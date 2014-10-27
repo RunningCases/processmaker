@@ -1039,6 +1039,15 @@ class Cases
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
             }
+
+            if ($Fields["APP_STATUS"] == "COMPLETED") {
+                //Delete records of the table APP_ASSIGN_SELF_SERVICE_VALUE
+                $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+                $appAssignSelfServiceValue->remove($sAppUid);
+            }
+
+            //Return
             return $Fields;
         } catch (exception $e) {
             throw ($e);
@@ -1130,6 +1139,11 @@ class Cases
             $oCriteria2->add(SubApplicationPeer::APP_PARENT, $sAppUid);
             SubApplicationPeer::doDelete($oCriteria2);
 
+            //Delete records of the table APP_ASSIGN_SELF_SERVICE_VALUE
+            $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+            $appAssignSelfServiceValue->remove($sAppUid);
+
             //Delete records of the Report Table
             $this->reportTableDeleteRecord($sAppUid);
 
@@ -1193,6 +1207,11 @@ class Cases
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
             }
+
+            //Delete record of the table APP_ASSIGN_SELF_SERVICE_VALUE
+            $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+            $appAssignSelfServiceValue->remove($sAppUid, $iDelIndex);
         } catch (exception $e) {
             throw ($e);
         }
@@ -6757,3 +6776,4 @@ class Cases
         return $unserializedData;
     }
 }
+

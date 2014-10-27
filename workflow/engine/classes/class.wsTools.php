@@ -428,7 +428,7 @@ class workspaceTools
      * @return database connection
      */
     private function getDatabase($rbac = false)
-    {   
+    {
         if (isset($this->db) && $this->db->isConnected() &&  $rbac == false) {
             return $this->db;
         }
@@ -1074,7 +1074,7 @@ class workspaceTools
     public function exportDatabase($path, $onedb = false)
     {
         $dbInfo = $this->getDBInfo();
-        
+
         if ($onedb) {
             $databases = array("rb", "rp");
         } else if ($dbInfo['DB_NAME'] == $dbInfo['DB_RBAC_NAME']) {
@@ -1084,8 +1084,8 @@ class workspaceTools
         }
 
         $dbNames = array();
-        
-        foreach ($databases as $db) {            
+
+        foreach ($databases as $db) {
             $dbInfo = $this->getDBCredentials($db);
             $oDbMaintainer = new DataBaseMaintenance($dbInfo["host"], $dbInfo["user"], $dbInfo["pass"]);
             CLI::logging("Saving database {$dbInfo["name"]}\n");
@@ -1146,7 +1146,7 @@ class workspaceTools
      * @param bool $compress specifies wheter the backup is compressed or not
      */
     public function backup($backupFile, $compress = true)
-    {   
+    {
         /* $filename can be a string, in which case it's used as the filename of
          * the backup, or it can be a previously created tar, which allows for
          * multiple workspaces in one backup.
@@ -1447,13 +1447,13 @@ class workspaceTools
                 throw new Exception("Backup version {$metadata->version} not supported");
             }
             $backupWorkspace = $metadata->WORKSPACE_NAME;
-            
+
             if (strpos($metadata->DB_RBAC_NAME, 'rb_') === false) {
                 $onedb = true;
             } else {
                 $onedb = false;
             }
-            
+
             if (isset($dstWorkspace)) {
                 $workspaceName = $dstWorkspace;
                 $createWorkspace = true;
@@ -1468,7 +1468,7 @@ class workspaceTools
                 CLI::logging("> Restoring " . CLI::info($backupWorkspace) . " to " . CLI::info($workspaceName) . "\n");
             }
             $workspace = new workspaceTools($workspaceName);
-            
+
             if ($workspace->workspaceExists()) {
 
                 if ($overwrite) {
@@ -1515,7 +1515,7 @@ class workspaceTools
             $newDBNames = $workspace->resetDBInfo($dbHost, $createWorkspace, $onedb);
 
             foreach ($metadata->databases as $db) {
-                if ($dbName != $newDBNames[$db->name]) { 
+                if ($dbName != $newDBNames[$db->name]) {
                     $dbName = $newDBNames[$db->name];
                     CLI::logging("+> Restoring database {$db->name} to $dbName\n");
                     $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql",$aParameters);
@@ -1759,6 +1759,23 @@ class workspaceTools
             $tr->setLicenseWorkspace ( $workspace );
 
             $res = $tr->save ();
+        }
+    }
+
+    /**
+     * Generate data for table APP_ASSIGN_SELF_SERVICE_VALUE
+     *
+     * return void
+     */
+    public function appAssignSelfServiceValueTableGenerateData()
+    {
+        try {
+            $this->initPropel(true);
+
+            $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+            $appAssignSelfServiceValue->generateData();
+        } catch (Exception $e) {
+            throw $e;
         }
     }
 }
