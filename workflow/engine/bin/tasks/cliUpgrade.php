@@ -270,7 +270,7 @@ function run_unify_database($args)
                 $link = mysql_connect( $dbHost, $dbUser, $dbPass );
 
                 foreach ($metadata['databases'] as $db) {
-                    $dbName = 'wf_'.$workspace->name;
+                    $dbName = $metadata['DB_NAME'];
                     CLI::logging( "+> Restoring {$db['name']} to $dbName database\n" );
 
                     $aParameters = array('dbHost'=>$dbHost,'dbUser'=>$dbUser,'dbPass'=>$dbPass);
@@ -290,7 +290,7 @@ function run_unify_database($args)
                 CLI::logging( "Removing temporary files\n" );
                 G::rm_dir( $tempDirectory );
 
-                $newDBNames = $workspace->resetDBInfo( $dbHost, true, true );
+                $newDBNames = $workspace->resetDBInfo( $dbHost, true, true, true );
 
                 CLI::logging( CLI::info( "Done restoring databases" ) . "\n" );
             }
