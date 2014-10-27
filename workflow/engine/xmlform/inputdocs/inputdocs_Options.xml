@@ -31,7 +31,7 @@ var currentPagedTable = @#PAGED_TABLE_ID;
     }
 
     allowedTypes = getField('INP_DOC_TYPE_FILE').value.split(", ");
-    expreg = /^\*\.?[a-z]{2,8}$/;
+    expreg = /^\*\.?[a-zA-Z0-9]{2,15}$/;
 
     for(i=0; i<allowedTypes.length; i++){
       atype = allowedTypes[i];
