@@ -912,7 +912,7 @@ class OutputDocument extends BaseOutputDocument
             'landscape' => $sLandscape,
             'method' => 'fpdf',
             'margins' => array('left' => 15, 'right' => 15, 'top' => 15, 'bottom' => 15,),
-            'encoding' => '',
+            'encoding' => (version_compare(PHP_VERSION, '5.4.0', '<') ? '' : 'utf-8'),
             'ps2pdf' => false,
             'compress' => true,
             'output' => 2,
