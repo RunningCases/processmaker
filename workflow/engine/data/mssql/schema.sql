@@ -3238,3 +3238,41 @@ CREATE TABLE WEB_ENTRY
     CONSTRAINT WEB_ENTRY_PK PRIMARY KEY (WE_UID)
 );
 
+/* --------------------------------------------------------------------------- */
+/* APP_ASSIGN_SELF_SERVICE_VALUE */
+/* --------------------------------------------------------------------------- */
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'APP_ASSIGN_SELF_SERVICE_VALUE')
+BEGIN
+  DECLARE @reftable_71 nvarchar(60), @constraintname_71 nvarchar(60)
+  DECLARE refcursor CURSOR FOR
+  select reftables.name tablename, cons.name constraintname
+   from sysobjects tables,
+     sysobjects reftables,
+     sysobjects cons,
+     sysreferences ref
+    where tables.id = ref.rkeyid
+   and cons.id = ref.constid
+   and reftables.id = ref.fkeyid
+   and tables.name = 'APP_ASSIGN_SELF_SERVICE_VALUE'
+  OPEN refcursor
+  FETCH NEXT from refcursor into @reftable_71, @constraintname_71
+  while @@FETCH_STATUS = 0
+  BEGIN
+    exec ('alter table ' + @reftable_71 + ' drop constraint ' + @constraintname_71)
+    FETCH NEXT from refcursor into @reftable_71, @constraintname_71
+  END
+  CLOSE refcursor
+  DEALLOCATE refcursor
+  DROP TABLE [APP_ASSIGN_SELF_SERVICE_VALUE]
+END
+
+CREATE TABLE APP_ASSIGN_SELF_SERVICE_VALUE
+(
+    APP_UID   VARCHAR(32) NOT NULL,
+    DEL_INDEX INT         DEFAULT 0 NOT NULL,
+    PRO_UID   VARCHAR(32) NOT NULL,
+    TAS_UID   VARCHAR(32) NOT NULL,
+    GRP_UID   VARCHAR(32) DEFAULT '' NOT NULL
+);
+

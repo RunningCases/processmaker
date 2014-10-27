@@ -1831,3 +1831,20 @@ ALTER TABLE WEB_ENTRY
 ADD CONSTRAINT WEB_ENTRY_PK
 PRIMARY KEY (WE_UID);
 
+/*
+---------------------------------------------------------------------------
+APP_ASSIGN_SELF_SERVICE_VALUE
+---------------------------------------------------------------------------
+*/
+
+DROP TABLE APP_ASSIGN_SELF_SERVICE_VALUE CASCADE CONSTRAINTS;
+
+CREATE TABLE APP_ASSIGN_SELF_SERVICE_VALUE
+(
+    APP_UID   VARCHAR2(32) NOT NULL,
+    DEL_INDEX NUMBER       DEFAULT 0 NOT NULL,
+    PRO_UID   VARCHAR2(32) NOT NULL,
+    TAS_UID   VARCHAR2(32) NOT NULL,
+    GRP_UID   VARCHAR2(32) DEFAULT '' NOT NULL
+);
+

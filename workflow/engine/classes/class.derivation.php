@@ -601,6 +601,20 @@ class Derivation
                     if ($canDerivate) {
                         $aSP = isset( $aSP ) ? $aSP : null;
                         $iNewDelIndex = $this->doDerivation( $currentDelegation, $nextDel, $appFields, $aSP );
+
+                        //Create record in table APP_ASSIGN_SELF_SERVICE_VALUE
+                        $task = new Task();
+                        $arrayNextTaskData = $task->load($nextDel["TAS_UID"]);
+
+                        if ($arrayNextTaskData["TAS_ASSIGN_TYPE"] == "SELF_SERVICE" && trim($arrayNextTaskData["TAS_GROUP_VARIABLE"]) != "") {
+                            $nextTaskGroupVariable = trim($arrayNextTaskData["TAS_GROUP_VARIABLE"], " @#");
+
+                            if (isset($appFields["APP_DATA"][$nextTaskGroupVariable]) && trim($appFields["APP_DATA"][$nextTaskGroupVariable]) != "") {
+                                $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+                                $appAssignSelfServiceValue->create($appFields["APP_UID"], $iNewDelIndex, array("PRO_UID" => $appFields["PRO_UID"], "TAS_UID" => $nextDel["TAS_UID"], "GRP_UID" => trim($appFields["APP_DATA"][$nextTaskGroupVariable])));
+                            }
+                        }
                     } else {
                         //when the task doesnt generate a new AppDelegation
                         $iAppThreadIndex = $appFields['DEL_THREAD'];
