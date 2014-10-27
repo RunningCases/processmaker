@@ -250,7 +250,16 @@ class workspaceTools
                 /* Change the database name to the new workspace, following the standard
                  * of prefix (either wf_, rp_, rb_) and the workspace name.
                  */
-                $dbName = $dbPrefix[$key] . $this->name;
+                if($this->unify){
+            		$nameDb = explode("_", $value);
+            		if(!isset($nameDb[1])){
+            			$dbName = $value;
+            		} else {
+            			$dbName = $dbPrefix[$key] . $nameDb[1];
+            		}
+            	}else {
+            		$dbName = $dbPrefix[$key] . $this->name;
+            	}
             } else {
                 $dbName = $value;
             }
@@ -273,7 +282,7 @@ class workspaceTools
      * @param bool $resetDBNames if true, also reset all database names
      * @return array contains the new database names as values
      */
-    public function resetDBInfo($newHost, $resetDBNames = true, $onedb = false)
+    public function resetDBInfo($newHost, $resetDBNames = true, $onedb = false, $unify = false)
     {
         if (count(explode(":", $newHost)) < 2) {
             $newHost .= ':3306';
@@ -282,6 +291,7 @@ class workspaceTools
         $this->resetDBNames = $resetDBNames;
         $this->resetDBDiff = array();
         $this->onedb = $onedb;
+        $this->unify = $unify;
 
         if (!$this->workspaceExists()) {
             throw new Exception("Could not find db.php in the workspace");
