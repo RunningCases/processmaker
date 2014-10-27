@@ -1406,7 +1406,7 @@ function copyMoveExecuteTree($uidFolder, $newUidFolder)
 
             $docUid = $appDocument->create($docInfo);
 
-            //Copy file
+            //Copy  file
             $arrayPathFromFile = G::getPathFromFileUID($docInfo["APP_UID"], $docUid);
             $newFile = $arrayPathFromFile[0] . PATH_SEP . $arrayPathFromFile[1] . "_" . $docInfo["DOC_VERSION"] . "." . $extension;
 
