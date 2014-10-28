@@ -20,9 +20,8 @@ Feature: Case Tracker Main Tests
 
         Examples:
 
-        | test_description                                | project                          | map_type   | routing_history | message_history |
-        | Get of process Sample Project #4 (Case Tracker) | 50259961452d82bf57f4f62051572528 | PROCESSMAP | 1               | 1               |
-        | Get of process Process Complete BPMN            | 1455892245368ebeb11c1a5001393784 | PROCESSMAP | 1               | 1               |
+        | test_description                     | project                          | map_type   | routing_history | message_history |
+        | Get of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | PROCESSMAP | 1               | 1               |
         
     
     Scenario Outline: Update Case Tracker data of a Project and then check if the values has changed
