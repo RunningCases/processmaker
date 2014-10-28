@@ -73,6 +73,32 @@ class Server implements iAuthenticate
         $this->server->setScopeUtil($scope);
     }
 
+    /**
+     * @url POST /:token/expire
+     *
+     */
+    public function doPostExpireToken($token)
+    {
+        try {
+            $this->storage->expireToken($token);
+        } catch (\Exception $e) {
+            throw new RestException(400, $e->getMessage());
+        }
+    }
+
+    /**
+     * @url DELETE /:token
+     *
+     */
+    public function doDeleteToken($token)
+    {
+        try {
+            $this->storage->deleteToken($token);
+        } catch (\Exception $e) {
+            throw new RestException(400, $e->getMessage());
+        }
+    }
+
     public static function setDatabaseSource($user, $password = '', $dsn = '')
     {
         if (is_array($user)) {

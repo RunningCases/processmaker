@@ -145,6 +145,24 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
         return $stmt->execute(compact('code'));
     }
 
+    public function expireToken($token)
+    {
+        $access_token = new \OauthAccessTokens();
+        $access_token->load($token);
+        $stmt = $this->db->prepare(sprintf('UPDATE %s SET EXPIRES=%s WHERE ACCESS_TOKEN=:token', $this->config['access_token_table'], "'".Date('Y-m-d H:i:s')."'"));
+        return $stmt->execute(compact('token'));
+    }
+
+    public function deleteToken($token)
+    {
+        $access_token = new \OauthAccessTokens();
+        $access_token->load($token);
+        $stmt = $this->db->prepare(sprintf('DELETE FROM %s WHERE ACCESS_TOKEN = :token', $this->config['access_token_table']));
+        $stmt->execute(compact('token'));
+        $stmt = $this->db->prepare(sprintf('DELETE FROM %s WHERE EXPIRES>%s', $this->config['refresh_token_table'], "'".Date('Y-m-d H:i:s')."'"));
+        return $stmt->execute(compact('token'));
+    }
+
     /* OAuth2_Storage_UserCredentialsInterface */
     public function checkUserCredentials($username, $password)
     {
