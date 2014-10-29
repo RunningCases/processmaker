@@ -42,6 +42,12 @@ function updatePageSize ()
 
 function skinList ()
 {
+    if (isset($_REQUEST['textFilter']) && $_REQUEST['textFilter'] != '') {
+        $textFilter = $_REQUEST['textFilter'];
+    } else {
+        $textFilter = '';
+    }
+
     G::loadClass( 'system' );
 
     $skinList = System::getSkingList();
@@ -58,6 +64,9 @@ function skinList ()
         );
     }
 
+    $skinListArray = array();
+    $skinListArray['skins'] = array();
+
     foreach ($skinList['skins'] as $key => $value) {
         if (! isset($value['SKIN_ID']) || ! in_array($value['SKIN_ID'], $filterList)) {
             if ($value['SKIN_FOLDER_ID'] != 'simplified' && $value['SKIN_FOLDER_ID'] != 'uxs' && $value['SKIN_FOLDER_ID'] != 'uxmodern') {
@@ -73,7 +82,15 @@ function skinList ()
                     $value['SKIN_STATUS'] = G::LoadTranslation( 'ID_INACTIVE' );
                 }
 
-                $skinListArray['skins'][] = $value;
+                if ($textFilter != '') {
+                    if (stripos($value['SKIN_NAME'], $textFilter) !== false ||
+                        stripos($value['SKIN_DESCRIPTION'], $textFilter) !== false ||
+                        stripos($value['SKIN_AUTHOR'], $textFilter) !== false) {
+                        $skinListArray['skins'][] = $value;
+                    }
+                } else {
+                    $skinListArray['skins'][] = $value;
+                }
             }
         }
     }
