@@ -13,7 +13,7 @@ function closeCaseNotesWindow(){
   }
 }
 
-function openCaseNotesWindow(appUid1, modalSw, appTitle, proUid, taskUid)
+function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskUid)
 {
   Ext.MessageBox.show({
     msg: _('ID_CASE_NOTES_LOADING'),
@@ -26,6 +26,7 @@ function openCaseNotesWindow(appUid1, modalSw, appTitle, proUid, taskUid)
 
   Ext.QuickTips.init();
   appUid  = !appUid1 ? "": appUid1;
+  delIndex = (!delIndex)? 0: delIndex;
   proUid  = !proUid  ? "": proUid;
   taskUid = !taskUid ? "": taskUid;
 
@@ -33,7 +34,7 @@ function openCaseNotesWindow(appUid1, modalSw, appTitle, proUid, taskUid)
   var loadSize=10;
 
   storeNotes = new Ext.data.JsonStore({
-    url : '../appProxy/getNotesList?appUid='+appUid+'&pro='+proUid+'&tas='+taskUid,
+    url: "../appProxy/getNotesList?appUid=" + appUid + "&delIndex=" + delIndex + "&pro=" + proUid + "&tas=" + taskUid,
     root: 'notes',
     totalProperty: 'totalCount',
     fields: ['USR_USERNAME','USR_FIRSTNAME','USR_LASTNAME','USR_FULL_NAME','NOTE_DATE','NOTE_CONTENT', 'USR_UID', 'user'],
@@ -79,12 +80,12 @@ function openCaseNotesWindow(appUid1, modalSw, appTitle, proUid, taskUid)
               icon: Ext.MessageBox.ERROR,
               buttons: Ext.MessageBox.OK,
               fn : function(btn) {
-                try 
+                try
                      {
                        prnt = parent.parent;
                        top.location = top.location;
                      }
-                   catch (err) 
+                   catch (err)
                       {
                        parent.location = parent.location;
                       }
@@ -393,12 +394,12 @@ function sendNote()
               icon : Ext.MessageBox.ERROR,
               buttons : Ext.Msg.OK,
               fn : function(btn) {
-                try 
+                try
                      {
                        prnt = parent.parent;
                        top.location = top.location;
                      }
-                   catch (err) 
+                   catch (err)
                       {
                        parent.location = parent.location;
                       }
@@ -618,12 +619,12 @@ var openSummaryWindow = function(appUid, delIndex, action)
               icon : Ext.MessageBox.ERROR,
               buttons : Ext.Msg.OK,
               fn : function(btn) {
-                   try 
+                   try
                      {
                        prnt = parent.parent;
                        top.location = top.location;
                      }
-                   catch (err) 
+                   catch (err)
                       {
                        parent.location = parent.location;
                       }
