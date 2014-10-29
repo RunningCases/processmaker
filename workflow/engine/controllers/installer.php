@@ -122,7 +122,7 @@ class Installer extends Controller
         $info->multibyte = new stdclass();
         $info->soap = new stdclass();
         $info->ldap = new stdclass();
-        $info->mcrypt = new stdclass(); 
+        $info->mcrypt = new stdclass();
         $info->memory = new stdclass();
 
         $info->php->version = phpversion();
@@ -328,7 +328,7 @@ class Installer extends Controller
     public function testConnection ()
     {
         $this->setResponseType( 'json' );
-        if ($_REQUEST['db_engine'] == 'mysql') {
+        if (isset($_REQUEST["db_engine"]) && $_REQUEST["db_engine"] == "mysql") {
             return $this->testMySQLconnection();
         } else {
             return $this->testMSSQLconnection();
@@ -945,6 +945,8 @@ class Installer extends Controller
     public function createMSSQLWorkspace ()
     {
         ini_set( 'max_execution_time', '0' );
+
+        $info = new stdClass();
         $info->result = false;
         $info->message = '';
 
@@ -1229,8 +1231,10 @@ class Installer extends Controller
 
     private function testMSSQLconnection ()
     {
+        $info = new stdClass();
         $info->result = false;
         $info->message = '';
+
         if (! function_exists( "mssql_connect" )) {
             $info->message = G::LoadTranslation('ID_PHP_MSSQL_NOT_INSTALLED');
             return $info;
