@@ -1505,13 +1505,14 @@ function uploadExternalDocument()
             } else {
                 require_once ("classes/model/AppDocument.php");
                 $oAppDocument = new AppDocument();
-                foreach ($_POST['selitems'] as $docId) {
-                    $arrayDocId = explode ('_',$docId);
-                    $docInfo=$oAppDocument->load($arrayDocId[0]);
-                    $docInfo['FOLDER_UID'] =  $_POST['new_dir'];
-                    $docInfo['APP_DOC_CREATE_DATE'] = date('Y-m-d H:i:s');
-                    $oAppDocument->update($docInfo);
-                    //G::pr($docInfo);
+                if (isset($_POST['selitems']) && is_array($_POST['selitems'])) {
+                    foreach ($_POST['selitems'] as $docId) {
+                        $arrayDocId = explode ('_',$docId);
+                        $docInfo=$oAppDocument->load($arrayDocId[0]);
+                        $docInfo['FOLDER_UID'] =  $_POST['new_dir'];
+                        $docInfo['APP_DOC_CREATE_DATE'] = date('Y-m-d H:i:s');
+                        $oAppDocument->update($docInfo);
+                    }
                 }
             }
         }
