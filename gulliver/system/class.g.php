@@ -5365,178 +5365,157 @@ class G
         return $from;
     }
 
+    public function getRealExtension($extensionInpDoc) {
+        $aux = explode('.', strtolower($extensionInpDoc));
+        return isset($aux[1]) ? $aux[1] : '';
+    }
+
    /**
     * Verify the InputDoc extension, cheking the file name extension (.pdf, .ppt) and the file content.
     *
     *
     *
     */
-    public function verifyInputDocExtension($InpDocAllowedFiles, $filesName, $filesTmpName)
+    public function verifyInputDocExtension($InpDocAllowedFiles, $fileName, $filesTmpName)
     {
-        $allowedTypes = explode(", ", $InpDocAllowedFiles);
-        $flag = 0;
+        // Initialize variables
         $res = new stdclass();
+        $allowedTypes = array_map('G::getRealExtension', explode(', ', $InpDocAllowedFiles));
 
-        if (!extension_loaded('fileinfo')) {
-            $dtype = explode(".", strtolower($filesName));
-
-            foreach ($allowedTypes as $types => $val) {
-                if ((preg_match('/^\*\.?[a-zA-Z0-9]{2,15}$/', $val)) || ($val == '*.*')) {
-                    $allowedDocTypes = strtolower(substr($val, 2));
-                    if (($dtype[count($dtype) -1]) == $allowedDocTypes || $allowedDocTypes == '*') {
-                        $res->status = true;
-                        return $res;
-                        break;
-                    } else {
-                            $flag = 1;
-                    }
-                } else {
-                    $res->status = false;
-                    $res->message = G::LoadTranslation('ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT' );
-                    return $res;
-                }
-            }
-        } else {
-            $finfo = new finfo(FILEINFO_MIME_TYPE);
-            $finfo_ = $finfo->file($filesTmpName);
-            $docType = explode("/", $finfo_);
-
-            foreach ($allowedTypes as $types => $val) {
-                if ((preg_match('/^\*\.?[a-zA-Z0-9]{2,15}$/', $val)) || ($val == '*.*')) {
-                    $allowedDocTypes = strtolower(substr($val, 2));
-                    $dtype = explode(".", strtolower($filesName));
-
-                    switch($allowedDocTypes){
-                        case '*':
-                            $res->status = true;
-                            return $res;
-                            break;
-                        case 'xls':
-                            if ($docType[1] == 'vnd.ms-excel' || ($dtype[count($dtype) - 1] == 'xls' && $docType[1] == 'plain')) {
-                                $res->status = true;
-                                return $res;
-                            } else {
-                                $flag = 1;
-                            }
-                            break;
-                        case 'doc':
-                            if ($docType[1] == 'msword' || ($dtype[count($dtype) - 1] == 'doc' && $docType[1] == 'html')) {
-                                $res->status = true;
-                                return $res;
-                            } else {
-                                $flag = 1;
-                            }
-                            break;
-                        case 'ppt':
-                            if ($docType[1] != 'vnd.ms-office') {
-                                $flag = 1;
-                            } else {
-                                $res->status = true;
-                                return $res;
-                            }
-                            break;
-                        case 'docx':
-                        case 'pptx':
-                        case 'xlsx':
-                            if ($docType[1] != 'zip') {
-                                $flag = 1;
-                            } else {
-                                $res->status = true;
-                                return $res;
-                            }
-                            break;
-                        case 'exe':
-                        case 'wmv':
-                            if($docType[1] != 'octet-stream'){
-                                $flag = 1;
-                            } else {
-                                $res->status = true;
-                                return $res;
-                            }
-                            break;
-                        case 'jpg':
-                            if ($docType[1] != 'jpeg'){
-                                $flag = 1;
-                            } else {
-                                $res->status = true;
-                                return $res;
-                            }
-                            break;
-                        case 'mp3':
-                            if ($docType[1] != 'mpeg'){
-                                $flag = 1;
-                            } else {
-                                $res->status = true;
-                                return $res;
-                            }
-                            break;
-                        case 'rar':
-                            if ($docType[1] != 'x-rar'){
-                                $flag = 1;
-                            } else {
-                                $res->status = true;
-                                return $res;
-                            }
-                            break;
-                        case 'txt':
-                        case 'pm':
-                            if ($docType[1] != 'plain'){
-                                $flag = 1;
-                            } else {
-                                $res->status = true;
-                                return $res;
-                            }
-                            break;
-                        case 'htm':
-                        case 'html':
-                            if ($docType[1] != 'html'){
-                                $flag = 1;
-                            } else {
-                                $res->status = true;
-                                return $res;
-                            }
-                            break;
-                        case 'po':
-                            if ($docType[1] != 'x-po'){
-                                $flag = 1;
-                            } else {
-                                $res->status = true;
-                                return $res;
-                            }
-                            break;
-                        case 'pdf':
-                        case 'png':
-                        case 'jpeg':
-                        case 'gif':
-                        case 'zip':
-                        case 'mp4':
-                            if ($docType[1] != $allowedDocTypes){
-                                $flag = 1;
-                            } else {
-                                $res->status = true;
-                                return $res;
-                            }
-                            break;
-                        default:
-                            if(($dtype[count($dtype) - 1]) != $allowedDocTypes){
-                                $flag = 1;
-                            } else {
-                                $res->status = true;
-                                return $res;
-                            }
-                    }
-                } else {
-                    $res->status = false;
-                    $res->message = G::LoadTranslation('ID_UPLOAD_ERR_WRONG_ALLOWED_EXTENSION_FORMAT' );
-                    return $res;
-                }
-            }
-        }
-        if ( $flag == 1) {
-            $res->status = false;
-            $res->message = G::LoadTranslation('ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' ) . ' ' . $filesName;
+        // If required extension is *.* don't validate
+        if (in_array('*', $allowedTypes)) {
+            $res->status = true;
             return $res;
         }
+
+        // Get the file extension
+        $aux = pathinfo($fileName);
+        $fileExtension = isset($aux['extension']) ? strtolower($aux['extension']) : '';
+
+        // If no valid extension finish (unnecesary check file content)
+        $validExtension = in_array($fileExtension, $allowedTypes);
+        if (!$validExtension) {
+            $res->status = false;
+            $res->message = G::LoadTranslation('ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' ) . ' ' . $fileName;
+            return $res;
+        }
+
+        // If not enabled fileinfo extension finish validation
+        if (!extension_loaded('fileinfo')) {
+            $res->status = true;
+            return $res;
+        }
+
+        // If enabled fileinfo extension check the content
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo->file($filesTmpName);
+        $docType = explode('/', $mimeType);
+
+        // If is a empty file finish validation
+        if ($docType[1] == 'x-empty') {
+            $res->status = true;
+            return $res;
+        }
+
+        // Check file content
+        foreach ($allowedTypes as $allowedType) {
+            switch ($allowedType) {
+                case 'xls':
+                    if ($docType[1] == 'vnd.ms-excel' || ($fileExtension == 'xls' && $docType[1] == 'plain')) {
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                case 'doc':
+                    if ($docType[1] == 'msword' || ($fileExtension == 'doc' && $docType[1] == 'html')) {
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                case 'ppt':
+                    if ($docType[1] == 'vnd.ms-office') {
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                case 'docx':
+                case 'pptx':
+                case 'xlsx':
+                    if ($docType[1] == 'zip') {
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                case 'exe':
+                case 'wmv':
+                    if($docType[1] == 'octet-stream'){
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                case 'jpg':
+                    if ($docType[1] == 'jpeg'){
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                case 'mp3':
+                    if ($docType[1] == 'mpeg'){
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                case 'rar':
+                    if ($docType[1] == 'x-rar'){
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                case 'txt':
+                case 'pm':
+                    if ($docType[1] == 'plain'){
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                case 'htm':
+                case 'html':
+                    if ($docType[1] == 'html'){
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                case 'po':
+                    if ($docType[1] == 'x-po'){
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                case 'pdf':
+                case 'png':
+                case 'jpeg':
+                case 'gif':
+                case 'zip':
+                case 'mp4':
+                    if ($docType[1] == $allowedType){
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+                default:
+                    if ($validExtension) {
+                        $res->status = true;
+                        return $res;
+                    }
+                    break;
+            }
+        }
+
+        // If content don't match return error
+        $res->status = false;
+        $res->message = G::LoadTranslation('ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' ) . ' ' . $fileName;
+        return $res;
+
     }
 
     /**
