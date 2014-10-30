@@ -156,8 +156,8 @@ Ext.onReady(function(){
                             success: function(f,a){
                              nwTitle    =formNewSite.getForm().findField('NW_TITLE').getValue();
                              aoDbWf     =formNewSite.getForm().findField('AO_DB_WF').getValue();
-                             aoDbRb     =aoDbWf; 
-                             aoDbRp     =aoDbWf; 
+                             aoDbRb     =aoDbWf;
+                             aoDbRp     =aoDbWf;
                              nwUsername =formNewSite.getForm().findField('NW_USERNAME').getValue();
                              nwPassword =formNewSite.getForm().findField('NW_PASSWORD').getValue();
                              nwPassword2=formNewSite.getForm().findField('NW_PASSWORD2').getValue();
@@ -172,7 +172,7 @@ Ext.onReady(function(){
                                 }
                                 if (a.failureType === Ext.form.Action.SERVER_INVALID){
                                     var text = JSON.parse(a.response.responseText);
-                                    if (typeof text.message) {
+                                    if (typeof(text.message) != 'undefined') {
                                         Ext.Msg.alert(_('ID_ERROR'), _('ID_MYSQL_ERROR', text.message));
                                     } else {
                                         Ext.Msg.alert(_('ID_WARNING'), _('NEW_SITE_NOT_AVAILABLE'));

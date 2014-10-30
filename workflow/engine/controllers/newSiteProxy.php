@@ -50,8 +50,8 @@ class newSiteProxy extends HttpProxyController
                 //the site does not available
                 $this->error = true;
                 $this->message = $result['result']['database']['ao']['ao_db_wf']['message'];
-                $this->message .= ', ' . $result['result']['database']['ao']['ao_db_rb']['message'];
-                $this->message .= ', ' . $result['result']['database']['ao']['ao_db_rp']['message'];
+                //$this->message .= ', ' . $result['result']['database']['ao']['ao_db_rb']['message'];
+                //$this->message .= ', ' . $result['result']['database']['ao']['ao_db_rp']['message'];
             }
         } else {
             $this->error = true;
