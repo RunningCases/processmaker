@@ -1462,8 +1462,10 @@ class workspaceTools
 
             if (strpos($metadata->DB_RBAC_NAME, 'rb_') === false) {
                 $onedb = true;
+                $oldDatabases = 1;
             } else {
                 $onedb = false;
+                $oldDatabases = 3;
             }
 
             if (isset($dstWorkspace)) {
@@ -1484,6 +1486,16 @@ class workspaceTools
             if ($workspace->workspaceExists()) {
 
                 if ($overwrite) {
+                    $overwriteSite = new workspaceTools($dstWorkspace);
+                    if ($overwriteSite->dbInfo['DB_NAME'] == $overwriteSite->dbInfo['DB_RBAC_NAME']) {
+                        $newDatabases = 1;
+                    } else {
+                        $newDatabases = 3;
+                    }
+
+                    if ($newDatabases != $oldDatabases) {
+                        throw new Exception("We can't overwrite this workspace because it has a different amount of databases. Not only the 'source' but also the 'target' must have the same amount of databases.");
+                    }
                     CLI::logging(CLI::warning("> Workspace $workspaceName already exist, overwriting!") . "\n");
                 } else {
                     throw new Exception("Destination workspace already exist (use -o to overwrite)");
