@@ -3332,7 +3332,7 @@ class processMap
                 'LA_PRO_UID' => $aRow['PRO_UID'],
                 'LA_USR_UID' => $aRow['USR_UID'],
                 'LA_PU_NAME' => $aRow['GRP_TITLE'],
-                'LA_PU_TYPE_NAME' => 'Group');
+                'LA_PU_TYPE_NAME' => G::LoadTranslation('ID_GROUP'));
             $oDataset->next();
         }
 
@@ -3359,7 +3359,7 @@ class processMap
                 'LA_PRO_UID' => $aRow['PRO_UID'],
                 'LA_USR_UID' => $aRow['USR_UID'],
                 'LA_PU_NAME' => $aRow['USR_FIRSTNAME'] . ' ' . $aRow['USR_LASTNAME'],
-                'LA_PU_TYPE_NAME' => 'User');
+                'LA_PU_TYPE_NAME' => G::LoadTranslation('ID_USER'));
             $oDataset->next();
         }
 
@@ -3407,6 +3407,7 @@ class processMap
                 'UID' => 'char',
                 'USER_GROUP' => 'char',
                 'TYPE_UID' => 'char',
+                'TYPE_UID_LABEL' => 'char',
                 'PRO_UID' => 'char')
         );
         $oCriteria = new Criteria('workflow');
@@ -3429,6 +3430,7 @@ class processMap
             $aRespLi[] = array('UID' => $aRow['GRP_UID'],
                 'USER_GROUP' => $aRow['GRP_TITLE'],
                 'TYPE_UID' => 'Group',
+                'TYPE_UID_LABEL' => G::LoadTranslation('ID_GROUP'),
                 'PRO_UID' => $sProcessUID);
             $oDataset->next();
         }
@@ -3475,6 +3477,7 @@ class processMap
             $aRespLi[] = array('UID' => $aRow['USR_UID'],
                 'USER_GROUP' => $aRow['USR_FIRSTNAME'] . ' ' . $aRow['USR_LASTNAME'],
                 'TYPE_UID' => 'User',
+                'TYPE_UID_LABEL' => G::LoadTranslation('ID_USER'),
                 'PRO_UID' => $sProcessUID);
             $oDataset->next();
         }
@@ -3664,8 +3667,13 @@ class processMap
             }
             //Obtain action (permission)
             $sAction = G::LoadTranslation('ID_' . $aRow['OP_ACTION']);
+            if ($aRow['OP_CASE_STATUS'] == '') {
+                $sStatus = G::LoadTranslation('ID_ALL');
+            } else {
+                $sStatus = G::LoadTranslation('ID_' . $aRow['OP_CASE_STATUS']);
+            }
             //Add to array
-            $aObjectsPermissions[] = array('OP_UID' => $aRow['OP_UID'], 'TASK_TARGET' => $sTaskTarget, 'GROUP_USER' => $sUserGroup, 'TASK_SOURCE' => $sTaskSource, 'OBJECT_TYPE' => $sObjectType, 'OBJECT' => $sObject, 'PARTICIPATED' => $sParticipated, 'ACTION' => $sAction, 'OP_CASE_STATUS' => $aRow['OP_CASE_STATUS']);
+            $aObjectsPermissions[] = array('OP_UID' => $aRow['OP_UID'], 'TASK_TARGET' => $sTaskTarget, 'GROUP_USER' => $sUserGroup, 'TASK_SOURCE' => $sTaskSource, 'OBJECT_TYPE' => $sObjectType, 'OBJECT' => $sObject, 'PARTICIPATED' => $sParticipated, 'ACTION' => $sAction, 'OP_CASE_STATUS' => $sStatus);
             $oDataset->next();
         }
         global $_DBArray;
@@ -3813,8 +3821,13 @@ class processMap
             }
             //Obtain action (permission)
             $sAction = G::LoadTranslation('ID_' . $aRow['OP_ACTION']);
+            if ($aRow['OP_CASE_STATUS'] == '') {
+                $sStatus = G::LoadTranslation('ID_ALL');
+            } else {
+                $sStatus = G::LoadTranslation('ID_' . $aRow['OP_CASE_STATUS']);
+            }
             //Add to array
-            $aObjectsPermissions[] = array('OP_UID' => $aRow['OP_UID'], 'TASK_TARGET' => $sTaskTarget, 'GROUP_USER' => $sUserGroup, 'TASK_SOURCE' => $sTaskSource, 'OBJECT_TYPE' => $sObjectType, 'OBJECT' => $sObject, 'PARTICIPATED' => $sParticipated, 'ACTION' => $sAction, 'OP_CASE_STATUS' => $aRow['OP_CASE_STATUS']);
+            $aObjectsPermissions[] = array('OP_UID' => $aRow['OP_UID'], 'TASK_TARGET' => $sTaskTarget, 'GROUP_USER' => $sUserGroup, 'TASK_SOURCE' => $sTaskSource, 'OBJECT_TYPE' => $sObjectType, 'OBJECT' => $sObject, 'PARTICIPATED' => $sParticipated, 'ACTION' => $sAction, 'OP_CASE_STATUS' => $sStatus);
             $oDataset->next();
         }
         return $aObjectsPermissions;
@@ -6148,7 +6161,7 @@ class processMap
     }
 
     /**
-     * listProcessesUser for Extjs
+     * listExtProcessesSupervisors for Extjs
      *
      * @param string $sProcessUID
      * @return array(aProcessUser) $aProcessUser

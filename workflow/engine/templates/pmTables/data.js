@@ -78,7 +78,7 @@ Ext.onReady(function(){
 
   appUidSearch = new Ext.form.Checkbox ({
 	  id: 'appUidSearch',
-      boxLabel : 'Search also in the APP_UID field'
+      boxLabel : _('ID_SEARCH_ALSO_APP_UID')
   });
 
   contextMenu = new Ext.menu.Menu({
