@@ -671,8 +671,6 @@ class BpmnWorkflow extends Project\Bpmn
             $diagram["lanes"] = $bwp->getLanes($configList);
             $diagram["data"] = $bwp->getDataCollection($configList);
             $diagram["participants"] = $bwp->getParticipants($configList);
-            $diagram["lanesets"] = $bwp->getLanesets($configList);
-            $diagram["lanes"] = $bwp->getLanes($configList);
             $project["diagrams"][] = $diagram;
         }
 
@@ -728,7 +726,7 @@ class BpmnWorkflow extends Project\Bpmn
         $diagram["events"] = isset($diagram["events"])? $diagram["events"]: array();
         $diagram["data"] = isset($diagram["data"])? $diagram["data"]: array();
         $diagram["participants"] = isset($diagram["participants"])? $diagram["participants"]: array();
-        $diagram["lanesets"] = isset($diagram["lanesets"])? $diagram["lanesets"]: array();
+        $diagram["laneset"] = isset($diagram["laneset"])? $diagram["laneset"]: array();
         $diagram["lanes"] = isset($diagram["lanes"])? $diagram["lanes"]: array();
         $result = array();
 
@@ -1062,7 +1060,7 @@ class BpmnWorkflow extends Project\Bpmn
                 }
                 $bwp->addLaneset($lanesetData);
             } elseif (! $bwp->isEquals($dataObject, $lanesetData)) {
-                $bwp->updateLanseset($lanesetData["LNS_UID"], $lanesetData);
+                $bwp->updateLaneset($lanesetData["LNS_UID"], $lanesetData);
             } else {
                 Util\Logger::log("Update Laneset ({$lanesetData["LNS_UID"]}) Skipped - No changes required");
             }
@@ -1107,12 +1105,12 @@ class BpmnWorkflow extends Project\Bpmn
                 }
                 $bwp->addLane($laneData);
             } elseif (! $bwp->isEquals($dataObject, $laneData)) {
-                $bwp->updateLanse($laneData["LAN_UID"], $laneData);
+                $bwp->updateLane($laneData["LAN_UID"], $laneData);
             } else {
                 Util\Logger::log("Update Lane ({$laneData["LAN_UID"]}) Skipped - No changes required");
             }
 
-            $diagram["lane"][$i] = $laneData;
+            $diagram["lanes"][$i] = $laneData;
             $whiteList[] = $laneData["LAN_UID"];
         }
 

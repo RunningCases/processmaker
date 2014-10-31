@@ -1083,6 +1083,22 @@ class Bpmn extends Handler
         }
     }
 
+    public function updateLane($lanUid, $data)
+    {
+        try {
+            self::log("Update Lane: $lanUid", "With data: ", $data);
+            $lane = LanePeer::retrieveByPk($lanUid);
+
+            $lane->fromArray($data);
+            $lane->save();
+
+            self::log("Update Lane Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
     public function addLaneset($data)
     {
         // setting defaults
@@ -1142,6 +1158,23 @@ class Bpmn extends Handler
             Flow::removeAllRelated($lnsUid);
 
             self::log("Remove Laneset Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function updateLaneset($lnsUid, $data)
+    {
+        try {
+            self::log("Update Laneset: $lnsUid", "With data: ", $data);
+
+            $laneset = LanesetPeer::retrieveByPk($lnsUid);
+
+            $laneset->fromArray($data);
+            $laneset->save();
+
+            self::log("Update Laneset Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
             throw $e;
