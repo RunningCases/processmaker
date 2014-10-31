@@ -5552,6 +5552,13 @@ class G
        $clean = ($lowercase) ? (function_exists('mb_strtolower')) ? mb_strtolower($clean, 'UTF-8') : strtolower($clean) : $clean;
        return $clean;
    }
+
+   public static function getInputDocSupportedExtension()
+   {
+       $arraySupportedExtension = array("Doc", "docx", "xls", "xlsx", "ppt", "pptx", "pdf", "exe", "jpg", "jpeg", "gif", "png", "mp3", "mp4", "wmv", "rar", "txt", "pm", "htm", "html", "po", "zip");
+
+       return $arraySupportedExtension;
+   }
 }
 
 /**
@@ -5647,4 +5654,3 @@ function __ ($msgID, $lang = SYS_LANG, $data = null)
 {
     return G::LoadTranslation( $msgID, $lang, $data );
 }
-
