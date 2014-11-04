@@ -477,6 +477,7 @@ class Process extends BaseProcess
         $this->setProTriCanceled( isset( $aData['PRO_TRI_CANCELED'] ) ? $aData['PRO_TRI_CANCELED'] : '' );
         $this->setProTriPaused( isset( $aData['PRO_TRI_PAUSED'] ) ? $aData['PRO_TRI_PAUSED'] : '' );
         $this->setProTriReassigned( isset( $aData['PRO_TRI_REASSIGNED'] ) ? $aData['PRO_TRI_REASSIGNED'] : '' );
+        $this->setProTriUnpaused( isset( $aData['PRO_TRI_UNPAUSED'] ) ? $aData['PRO_TRI_UNPAUSED'] : '' );
         $this->setProShowDelegate( $aData['PRO_SHOW_DELEGATE'] );
         $this->setProShowDynaform( $aData['PRO_SHOW_DYNAFORM'] );
         $this->setProDerivationScreenTpl( isset( $aData['PRO_DERIVATION_SCREEN_TPL']) ? $aData['PRO_DERIVATION_SCREEN_TPL'] : '' );
