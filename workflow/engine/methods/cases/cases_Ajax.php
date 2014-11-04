@@ -922,6 +922,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $inpDocMaxFilesizeUnit = $InpDocData["INP_DOC_MAX_FILESIZE_UNIT"];
         $inpDocMaxFilesize = $inpDocMaxFilesize * (($inpDocMaxFilesizeUnit == "MB")? 1024 *1024 : 1024); //Bytes
 
+        $Fields["INP_DOC_SUPPORTED_EXTENSIONS_FILENAME_LABEL"] = "[" . $InpDocData["INP_DOC_TYPE_FILE"]. "]";
         $Fields["INP_DOC_MAX_FILESIZE"] = $inpDocMaxFilesize;
         $Fields["INP_DOC_MAX_FILESIZE_LABEL"] = ($inpDocMaxFilesize > 0)? "[" . $InpDocData["INP_DOC_MAX_FILESIZE"] . " " . $InpDocData["INP_DOC_MAX_FILESIZE_UNIT"] . "]" : "";
         $Fields['fileTypes'] = $InpDocData['INP_DOC_TYPE_FILE'];
@@ -943,6 +944,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $inpDocMaxFilesizeUnit = $InpDocData["INP_DOC_MAX_FILESIZE_UNIT"];
         $inpDocMaxFilesize = $inpDocMaxFilesize * (($inpDocMaxFilesizeUnit == "MB")? 1024 *1024 : 1024); //Bytes
 
+        $Fields["INP_DOC_SUPPORTED_EXTENSIONS_FILENAME_LABEL"] = "[" . $InpDocData["INP_DOC_TYPE_FILE"]. "]";
         $Fields["INP_DOC_MAX_FILESIZE"] = $inpDocMaxFilesize;
         $Fields["INP_DOC_MAX_FILESIZE_LABEL"] = ($inpDocMaxFilesize > 0)? "[" . $InpDocData["INP_DOC_MAX_FILESIZE"] . " " . $InpDocData["INP_DOC_MAX_FILESIZE_UNIT"] . "]" : "";
         $Fields['fileTypes'] = $InpDocData['INP_DOC_TYPE_FILE'];

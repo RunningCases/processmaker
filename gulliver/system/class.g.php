@@ -5647,4 +5647,3 @@ function __ ($msgID, $lang = SYS_LANG, $data = null)
 {
     return G::LoadTranslation( $msgID, $lang, $data );
 }
-
