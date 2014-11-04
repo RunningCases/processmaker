@@ -1675,7 +1675,7 @@ class workspaceTools
 
                 $endpoint = sprintf(
                     '%s/sys%s/%s/%s/oauth2/grant',
-                    $SERVER_INFO['HTTP_ORIGIN'],
+                    isset($SERVER_INFO['HTTP_ORIGIN']) ? $SERVER_INFO['HTTP_ORIGIN'] : '',
                     $workspace,
                     $lang,
                     $skin
