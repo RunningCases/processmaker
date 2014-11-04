@@ -34,6 +34,7 @@ switch ($request) {
         //remove from memcache when this value is updated/created
         $memcache->delete( 'flagForgotPassword' );
 
+        $response = new stdclass();
         $response->success = true;
         G::auditLog("UpdateLoginSettings", "DefaultLanguage->".$lang." EnableForgotPassword->".$conf->aConfig['login_enableForgotPassword']);
 
