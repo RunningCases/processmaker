@@ -1257,13 +1257,24 @@ class workspaceTools
     {
         mysql_query("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($database));
 
-        // Check for safe mode and if mysql exist on server
+        //check function shell_exec
+        $disabled_functions = ini_get('disable_functions');
+        $flag = false;
+        if ($disabled_functions!='') {
+            $arr = explode(',', $disabled_functions);
+            sort($arr);
+            if (in_array("shell_exec", $arr)) {
+                $flag = true;
+            }
+        }
+
+        // Check if mysql exist on server
         $flagFunction = null;
-        if ( !ini_get('safe_mode') ) {
+        if ( !$flag ) {
             $flagFunction = shell_exec('mysql --version');
         }
 
-        if ( !ini_get('safe_mode') && !is_null($flagFunction) ) {
+        if ( !$flag && !is_null($flagFunction) ) {
             $command = 'mysql'
             . ' --host=' . $parameters['dbHost']
             . ' --user=' . $parameters['dbUser']
