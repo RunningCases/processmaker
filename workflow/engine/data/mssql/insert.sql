@@ -4804,7 +4804,7 @@ SELECT 'LABEL','NEW_SITE_SUCCESS_CONFIRMNOTE','en','Note.- If you open the new s
   UNION ALL
 SELECT 'LABEL','NEW_SITE_SUCCESS_CONFIRM','en','Do you want open the new site?','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','NEW_SITE_NOT_AVAILABLE','en','This site is not available','2014-01-15' 
+SELECT 'LABEL','NEW_SITE_NOT_AVAILABLE','en','Workspace already exists, please choose a different name.','2014-10-30' 
   UNION ALL
 SELECT 'LABEL','NEW_SITE_CONFIRM_TO_CREATE','en','Are you sure to create this site?','2014-01-15' 
   UNION ALL
@@ -7299,6 +7299,12 @@ SELECT 'LABEL','ID_PMTABLE_REQUIRED','en','It is required to select a PM table',
 SELECT 'LABEL','ID_PLEASE_ENTER_DESCRIPTION','en','Please, enter a description.','2014-10-23' 
   UNION ALL
 SELECT 'LABEL','ID_PLEASE_CONFIGURE_ESTIMATED_DURATION_TASK','en','Please, configure the estimated duration of the task.','2014-10-23' 
+  UNION ALL
+SELECT 'LABEL','ID_FORMAT_24_HOURS','en','Format 24 hrs. (HH:MM)','2014-10-30' 
+  UNION ALL
+SELECT 'LABEL','ID_HOUR_HOURS','en','Hour(s)','2014-10-30' 
+  UNION ALL
+SELECT 'LABEL','ID_SEARCH_ALSO_APP_UID','en','Search also in the APP_UID field','2014-10-30' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 2.8.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-10-27 16:00:00\n"
+"PO-Revision-Date: 2014-11-04 14:21:16\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -10132,8 +10132,8 @@ msgstr "Do you want open the new site?"
 # TRANSLATION
 # LABEL/NEW_SITE_NOT_AVAILABLE
 #: LABEL/NEW_SITE_NOT_AVAILABLE
-msgid "This site is not available"
-msgstr "This site is not available"
+msgid "Workspace already exists, please choose a different name."
+msgstr "Workspace already exists, please choose a different name."
 
 # TRANSLATION
 # LABEL/NEW_SITE_CONFIRM_TO_CREATE
@@ -17526,6 +17526,24 @@ msgstr "Please, enter a description."
 #: LABEL/ID_PLEASE_CONFIGURE_ESTIMATED_DURATION_TASK
 msgid "Please, configure the estimated duration of the task."
 msgstr "Please, configure the estimated duration of the task."
+
+# TRANSLATION
+# LABEL/ID_FORMAT_24_HOURS
+#: LABEL/ID_FORMAT_24_HOURS
+msgid "Format 24 hrs. (HH:MM)"
+msgstr "Format 24 hrs. (HH:MM)"
+
+# TRANSLATION
+# LABEL/ID_HOUR_HOURS
+#: LABEL/ID_HOUR_HOURS
+msgid "Hour(s)"
+msgstr "Hour(s)"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_ALSO_APP_UID
+#: LABEL/ID_SEARCH_ALSO_APP_UID
+msgid "Search also in the APP_UID field"
+msgstr "Search also in the APP_UID field"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

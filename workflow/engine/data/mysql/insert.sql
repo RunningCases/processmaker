@@ -3118,7 +3118,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','NEW_SITE_SUCCESS','en','Your new site was successfully created with name:','2014-01-15') ,
 ( 'LABEL','NEW_SITE_SUCCESS_CONFIRMNOTE','en','Note.- If you open the new site your current session will be closed.','2014-01-15') ,
 ( 'LABEL','NEW_SITE_SUCCESS_CONFIRM','en','Do you want open the new site?','2014-01-15') ,
-( 'LABEL','NEW_SITE_NOT_AVAILABLE','en','This site is not available','2014-01-15') ,
+( 'LABEL','NEW_SITE_NOT_AVAILABLE','en','Workspace already exists, please choose a different name.','2014-10-30') ,
 ( 'LABEL','NEW_SITE_CONFIRM_TO_CREATE','en','Are you sure to create this site?','2014-01-15') ,
 ( 'LABEL','ID_SAVING','en','Saving...','2014-01-15') ,
 ( 'LABEL','ID_SET_A_TABLE_NAME','en','Set a Table Name','2014-01-15') ,
@@ -4380,7 +4380,10 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DASHLET_TITLE_EXISTS','en','Dashlet title already exists.','2014-10-23') ,
 ( 'LABEL','ID_PMTABLE_REQUIRED','en','It is required to select a PM table','2014-10-27') ,
 ( 'LABEL','ID_PLEASE_ENTER_DESCRIPTION','en','Please, enter a description.','2014-10-23') ,
-( 'LABEL','ID_PLEASE_CONFIGURE_ESTIMATED_DURATION_TASK','en','Please, configure the estimated duration of the task.','2014-10-23') ;
+( 'LABEL','ID_PLEASE_CONFIGURE_ESTIMATED_DURATION_TASK','en','Please, configure the estimated duration of the task.','2014-10-23') ,
+( 'LABEL','ID_FORMAT_24_HOURS','en','Format 24 hrs. (HH:MM)','2014-10-30') ,
+( 'LABEL','ID_HOUR_HOURS','en','Hour(s)','2014-10-30') ,
+( 'LABEL','ID_SEARCH_ALSO_APP_UID','en','Search also in the APP_UID field','2014-10-30') ;
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,
