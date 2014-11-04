@@ -568,7 +568,7 @@ Ext.onReady(function(){
         defaults:{margins:'0 0 35 0'},
         items:[
                {xtype:'button',text: '>', handler: AssignUserAction, id: 'assignUButton', disabled: true},
-               {xtype:'button',text: '>>', handler: AssignAllUsersAction, id: 'assignUButtonAll', disabled: false},
+               {xtype:'button',text: '>>', handler: AssignAllUsersAction, id: 'assignUButtonAll', disabled: false}
                ],
         hidden: true
     });
