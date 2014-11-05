@@ -1552,6 +1552,13 @@ class workspaceTools
             foreach ($metadata->databases as $db) {
                 if ($dbName != $newDBNames[$db->name]) {
                     $dbName = $newDBNames[$db->name];
+                    
+                    if (mysql_select_db($dbName, $link)) {
+                        if(!$overwrite) {
+                            throw new Exception("Destination Database already exist (use -o to overwrite)");
+                        }
+                    }
+
                     CLI::logging("+> Restoring database {$db->name} to $dbName\n");
                     $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql",$aParameters);
                     $workspace->createDBUser($dbName, $db->pass, "localhost", $dbName);
