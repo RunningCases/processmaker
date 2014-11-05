@@ -1415,8 +1415,6 @@ Ext.onReady(function() {
                 renderer: function (val, metadata, record, rowIndex, colIndex, store) {
                     if (record.get('release_type') == 'beta') {
                       return val + " <span style='color:red'> (Beta)</span>";
-                    } else if (record.get('release_type') == 'localRegistry') {
-                      return val + " <span style='color:gray'> (Local)</span>";
                     } else {
                       return val;
                     }
