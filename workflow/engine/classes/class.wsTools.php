@@ -1553,7 +1553,7 @@ class workspaceTools
                 if ($dbName != $newDBNames[$db->name]) {
                     $dbName = $newDBNames[$db->name];
                     
-                    if (mysql_select_db($db->name, $link)) {
+                    if (mysql_select_db($dbName, $link)) {
                         if(!$overwrite) {
                             throw new Exception("Destination Database already exist (use -o to overwrite)");
                         }
