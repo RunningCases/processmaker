@@ -7,7 +7,7 @@
     <en><![CDATA[Current Version]]></en>
   </PM_VERSION>
   <MAX_FILE_SIZE type="edit" mode="view">
-    <en><![CDATA[Max upload file size in bytes]]></en>
+    <en><![CDATA[Maximum upload file size in bytes]]></en>
   </MAX_FILE_SIZE>
   <UPGRADE_FILENAME type="file">
     <en><![CDATA[File]]></en>

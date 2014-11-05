@@ -22,6 +22,13 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+//Browser Compatibility
+$browserSupported = G::checkBrowserCompatibility();
+if ($browserSupported==false){
+	if(!isset($_SESSION['G_MESSAGE']) || $_SESSION['G_MESSAGE'] == ""){
+		G::SendTemporalMessage ('ID_CURRENT_BROWSER_NOT_SUPPORTED', 'warning');
+	}
+}
 
 $aFields = array();
 

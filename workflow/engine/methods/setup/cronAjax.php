@@ -144,6 +144,7 @@ switch ($option) {
             }
 
             $response["status"] = "OK";
+            G::auditLog("ClearCron");
         } catch (Exception $e) {
             $response["message"] = $e->getMessage();
             $status = 0;

@@ -631,6 +631,27 @@ function fieldSave()
 
     $conf->saveObject($result, "casesList", $action, "", "", "");
 
+    $msgLog = '';
+    
+    if($action == 'todo') {
+        $list = 'Inbox';
+    } elseif ($action == 'sent') {
+        $list = 'Participated';
+    } else {
+        $list = ucwords($action); 
+    }
+
+    for ($i=4; $i<count( $arrayNewSecond ); $i++) {
+        if ($i == count( $arrayNewSecond )-1) {
+            $msgLog .= $arrayNewSecond[$i]['label'];
+        } else {
+            $msgLog .= $arrayNewSecond[$i]['label'].'-';
+        }
+    }
+    
+
+    G::auditLog("SetColumns", "Set ".$list." List Columns".$msgLog);
+
     echo G::json_encode($result);
 }
 
@@ -654,7 +675,7 @@ try {
 
     switch ($xaction) {
         case "FIELD_SET":
-            if (isset($confCasesList['second']['data'])) {
+            if (is_array($confCasesList) && isset($confCasesList['second']['data'])) {
                 foreach ($confCasesList['second']['data'] as $key => $value) {
                     $confCasesList['second']['data'][$key]['align_label'] = $confCasesList['second']['data'][$key]['align'];
                 }

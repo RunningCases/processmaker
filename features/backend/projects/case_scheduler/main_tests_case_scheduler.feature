@@ -8,7 +8,7 @@ Feature: Case Scheduler Main Tests
 Background:
   Given that I have a valid access_token
  
-Scenario Outline: Get the case schedulers list when there are exactly zero case schedulers 
+Scenario Outline: Get the case schedulers list when there are exactly case schedulers 
     Given I request "project/<project>/case-schedulers"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -116,7 +116,7 @@ Scenario Outline: Get the case schedulers list when there are exactly 16 case sc
       And the response charset is "UTF-8"
       And the content type is "application/json"
       And the type is "array"
-      And the response has 16 record
+      And the response has <record> record
 
       Examples:
  

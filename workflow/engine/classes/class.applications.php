@@ -18,7 +18,7 @@ class Applications
         $sort = "APP_CACHE_VIEW.APP_NUMBER",
         $category = null,
         $configuration = true,
-        $paged = false
+        $paged = true
     ) {
         $callback = isset($callback)? $callback : "stcCallback1001";
         $dir = isset($dir)? $dir : "DESC";
@@ -417,7 +417,7 @@ class Applications
             //Check also $distinct in the method getListCounters(), this in AppCacheView.php
             $distinct = true;
 
-            if (($action == "search" ||  $action == "todo" || $action == "selfservice" || $action == "unassigned" || $action == "to_reassign" || $action == "to_revise") || ($status == "TO_DO")) {
+            if ($action != "sent" && (($action == "todo" || $action == "selfservice" || $action == "unassigned" || $action == "to_reassign" || $action == "to_revise") || ($status == "TO_DO"))) {
                 $distinct = false;
             }
 
@@ -443,10 +443,14 @@ class Applications
         }
 
         //Add sortable options
-        if ($sort != "") {
+        $sortBk = $sort;
+
+        if ($sortBk != "") {
+            $sort = "";
+
             //Current delegation (*)
             if (($action == "sent" || $action == "search" || $action == "simple_search" || $action == "to_revise" || $action == "to_reassign") && ($status != "TO_DO")) {
-                switch ($sort) {
+                switch ($sortBk) {
                     case "APP_CACHE_VIEW.APP_CURRENT_USER":
                         $sort = "USRCR_" . $conf->userNameFormatGetFirstFieldByUsersTable();
                         break;
@@ -455,10 +459,12 @@ class Applications
                         break;
                 }
             }
+
             if (isset( $oAppCache->confCasesList['PMTable'] ) && ! empty( $oAppCache->confCasesList['PMTable'] ) && $tableNameAux != '') {
-                $sortTable = explode(".", $sort);
+                $sortTable = explode(".", $sortBk);
 
                 $additionalTableUid = $oAppCache->confCasesList["PMTable"];
+
                 require_once 'classes/model/Fields.php';
                 $oCriteria = new Criteria('workflow');
 
@@ -487,6 +493,14 @@ class Applications
                 if (is_array($row)) {
                     $sort = $tableNameAux . "." . $sortTable[1];
                 }
+            }
+
+            if ($sort == "") {
+                $sort = $sortBk;
+            }
+
+            if (!in_array($sort, $Criteria->getSelectColumns())) {
+                $sort = AppCacheViewPeer::APP_NUMBER; //DEFAULT VALUE
             }
 
             if ($dir == "DESC") {

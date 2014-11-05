@@ -378,7 +378,7 @@ function evaluateFunction ($aGrid, $sExpresion)
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#WSLogin.28.29
  *
  * @param string(32) | $user | Username of the user | The username of the user who will login to ProcessMaker. All subsequent actions will be limited to the permissions of that user.
- * @param string(32) | $pass | Password encrypted | The user's password encrypted as an MD5 hash with 'md5:' prepended.
+ * @param string(32) | $pass | Password encrypted | The user's password encrypted as an MD5 or SHA256 hash with '{hashType}:' prepended.
  * @param string(32) | $endpoint="" | URI of the WSDL | The URI (address) of the WSDL definition of the ProcessMaker web services.
  * @return string | $unique ID | Unique Id |The unique ID for the initiated session.
  *
@@ -821,10 +821,10 @@ function getEmailConfiguration ()
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFSendMessage.28.29
  *
  * @param string(32) | $caseId | UID for case | The UID (unique identification) for a case, which is a string of 32 hexadecimal characters to identify the case.
- * @param string(32) | $sFrom | Email addres | The email address of the person who sends out the email.
+ * @param string(32) | $sFrom | Email address | The email address of the person who sends out the email.
  * @param string(100) | $sTo | Email receptor | The email address(es) to whom the email is sent. If multiple recipients, separate each email address with a comma.
- * @param string(100) | $sCc = '' | Email addres for copies | The email address(es) of people who will receive carbon copies of the email.
- * @param string(100) | $sBcc = ''| Email addres for copies hidden | The email address(es) of people who will receive blind carbon copies of the email.
+ * @param string(100) | $sCc = '' | Email address for copies | The email address(es) of people who will receive carbon copies of the email.
+ * @param string(100) | $sBcc = ''| Email address for copies hidden | The email address(es) of people who will receive blind carbon copies of the email.
  * @param string(50) | $sSubject | Subject of the email | The subject (title) of the email.
  * @param string(50) | $sTemplate | Name of the template | The name of the template file in plain text or HTML format which will produce the body of the email.
  * @param array | $aFields = array() | An optional associative array | Optional parameter. An associative array where the keys are the variable names and the values are the variables' values.
@@ -2849,7 +2849,7 @@ function PMFAddAttachmentToArray($arrayData, $index, $value, $suffix = " Copy({i
  *
  * @name PMFRemoveMask
  * @label PMF Remove Mask
- * 
+ *
  * @param string | $field | Value the field
  * @param string | $separator | Separator of thousands (, or .)
  * @param string | $currency | symbol of currency

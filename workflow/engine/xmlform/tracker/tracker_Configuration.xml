@@ -7,7 +7,7 @@
   <en>Map type <option name="NONE">None</option><option name="PROCESSMAP">Process Map</option><option name="STAGES">Stages Map</option></en>
 </CT_MAP_TYPE>
 
-<CT_STAGES_MAP_EDIT type="link" link="#" onclick="editStagesMap(@QPRO_UID);">
+<CT_STAGES_MAP_EDIT type="link" link="#" onclick="editStagesMap(@QPRO_UID);return false;">
   <en>Edit</en>
 </CT_STAGES_MAP_EDIT>
 

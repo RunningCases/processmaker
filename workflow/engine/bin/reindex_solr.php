@@ -350,7 +350,7 @@ function saveLog($sSource, $sType, $sDescription)
       print date ('H:i:s') . " ($sSource) $sType $sDescription <br>\n";
 
     G::verifyPath (PATH_DATA . 'log' . PATH_SEP, true);
-    $message = '(' . $sSource . ') ' . $sDescription . "\n";
+    $message = '(' . $sSource . ') ' . $sDescription;
     if ($sType == 'action') {
       G::log($message, PATH_DATA);
     }

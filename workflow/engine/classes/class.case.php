@@ -1039,6 +1039,15 @@ class Cases
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
             }
+
+            if ($Fields["APP_STATUS"] == "COMPLETED") {
+                //Delete records of the table APP_ASSIGN_SELF_SERVICE_VALUE
+                $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+                $appAssignSelfServiceValue->remove($sAppUid);
+            }
+
+            //Return
             return $Fields;
         } catch (exception $e) {
             throw ($e);
@@ -1130,6 +1139,11 @@ class Cases
             $oCriteria2->add(SubApplicationPeer::APP_PARENT, $sAppUid);
             SubApplicationPeer::doDelete($oCriteria2);
 
+            //Delete records of the table APP_ASSIGN_SELF_SERVICE_VALUE
+            $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+            $appAssignSelfServiceValue->remove($sAppUid);
+
             //Delete records of the Report Table
             $this->reportTableDeleteRecord($sAppUid);
 
@@ -1193,6 +1207,11 @@ class Cases
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
             }
+
+            //Delete record of the table APP_ASSIGN_SELF_SERVICE_VALUE
+            $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+            $appAssignSelfServiceValue->remove($sAppUid, $iDelIndex);
         } catch (exception $e) {
             throw ($e);
         }
@@ -5071,12 +5090,21 @@ class Cases
      * function getAllObjectsFrom ($PRO_UID, $APP_UID, $TAS_UID, $USR_UID, $ACTION)
      * @author Erik Amaru Ortiz <erik@colosa.com>
      * @access public
-     * @param  Process ID, Application ID, Task ID, User ID, Action
+     * @param  Process ID, Application ID, Task ID, User ID, Action, Delegation index
      * @return Array within all user permitions all objects' types
      */
-    public function getAllObjectsFrom($PRO_UID, $APP_UID, $TAS_UID = '', $USR_UID = '', $ACTION = '')
+    public function getAllObjectsFrom($PRO_UID, $APP_UID, $TAS_UID = "", $USR_UID = "", $ACTION = "", $delIndex = 0)
     {
         $aCase = $this->loadCase($APP_UID);
+
+        if ($delIndex != 0) {
+            $appDelay = new AppDelay();
+
+            if ($appDelay->isPaused($APP_UID, $delIndex)) {
+                $aCase["APP_STATUS"] = "PAUSED";
+            }
+        }
+
         $USER_PERMISSIONS = Array();
         $GROUP_PERMISSIONS = Array();
         $RESULT = Array(
@@ -5106,30 +5134,26 @@ class Cases
                         )
                 )
         );
-        $oCriteria->add(
-                $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, 'ALL')->addOr(
-                        $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, '')->addOr(
-                                $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, '0')
-                        )
-                )
-        );
+
         $rs = ObjectPermissionPeer::doSelectRS($oCriteria);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $rs->next();
-        while ($row = $rs->getRow()) {
-            if (
-                    (($aCase['APP_STATUS'] == $row['OP_CASE_STATUS']) ||
-                    ($row['OP_CASE_STATUS'] == '') ||
-                    ($row['OP_CASE_STATUS'] == 'ALL')) ||
-                    ($row['OP_CASE_STATUS'] == '')) {
+
+        while ($rs->next()) {
+            $row = $rs->getRow();
+
+            if ($row["OP_CASE_STATUS"] == "ALL" || $row["OP_CASE_STATUS"] == "" || $row["OP_CASE_STATUS"] == "0" ||
+                $row["OP_CASE_STATUS"] == $aCase["APP_STATUS"]
+            ) {
                 array_push($USER_PERMISSIONS, $row);
             }
-            $rs->next();
         }
+
         //permissions per group
         G::loadClass('groups');
+
         $gr = new Groups();
         $records = $gr->getActiveGroupsForAnUser($USR_UID);
+
         foreach ($records as $group) {
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ObjectPermissionPeer::USR_UID, $group);
@@ -5142,20 +5166,22 @@ class Cases
                             )
                     )
             );
-            $oCriteria->add(
-                    $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, 'ALL')->addOr(
-                            $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, '')->addOr(
-                                    $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, '0')
-                            )
-                    )
-            );
+
             $rs = ObjectPermissionPeer::doSelectRS($oCriteria);
             $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             while ($rs->next()) {
-                array_push($GROUP_PERMISSIONS, $rs->getRow());
+                $row = $rs->getRow();
+
+                if ($row["OP_CASE_STATUS"] == "ALL" || $row["OP_CASE_STATUS"] == "" || $row["OP_CASE_STATUS"] == "0" ||
+                    $row["OP_CASE_STATUS"] == $aCase["APP_STATUS"]
+                ) {
+                    array_push($GROUP_PERMISSIONS, $row);
+                }
             }
         }
+
         $PERMISSIONS = array_merge($USER_PERMISSIONS, $GROUP_PERMISSIONS);
+
         foreach ($PERMISSIONS as $row) {
             $USER = $row['USR_UID'];
             $USER_RELATION = $row['OP_USER_RELATION'];
@@ -5247,7 +5273,7 @@ class Cases
                         // Message History
                         $RESULT['MSGS_HISTORY'] = array('PERMISSION' => $ACTION);
 
-                        $delIndex = array();
+                        $arrayDelIndex = array();
 
                         $oCriteria = new Criteria('workflow');
                         if ($USER_RELATION == 1) {
@@ -5265,7 +5291,7 @@ class Cases
                             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                             $oDataset->next();
                             while ($aRow = $oDataset->getRow()) {
-                                $delIndex[] = $aRow['DEL_INDEX'];
+                                $arrayDelIndex[] = $aRow["DEL_INDEX"];
                                 $oDataset->next();
                             }
                         } else {
@@ -5284,11 +5310,11 @@ class Cases
                             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                             $oDataset->next();
                             while ($aRow = $oDataset->getRow()) {
-                                $delIndex[] = $aRow['DEL_INDEX'];
+                                $arrayDelIndex[] = $aRow["DEL_INDEX"];
                                 $oDataset->next();
                             }
                         }
-                        $RESULT['MSGS_HISTORY'] = array_merge(array('DEL_INDEX' => $delIndex), $RESULT['MSGS_HISTORY']);
+                        $RESULT["MSGS_HISTORY"] = array_merge(array("DEL_INDEX" => $arrayDelIndex), $RESULT["MSGS_HISTORY"]);
                         break;
                     case 'DYNAFORM':
                         $oCriteria = new Criteria('workflow');
@@ -5396,7 +5422,7 @@ class Cases
                     case 'MSGS_HISTORY':
                         // Permission
                         $RESULT['MSGS_HISTORY'] = array('PERMISSION' => $ACTION);
-                        $delIndex = array();
+                        $arrayDelIndex = array();
                         $oCriteria = new Criteria('workflow');
                         if ($USER_RELATION == 1) {
                             $oCriteria->add(AppDelegationPeer::APP_UID, $APP_UID);
@@ -5411,7 +5437,7 @@ class Cases
                             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                             $oDataset->next();
                             while ($aRow = $oDataset->getRow()) {
-                                $delIndex[] = $aRow['DEL_INDEX'];
+                                $arrayDelIndex[] = $aRow["DEL_INDEX"];
                                 $oDataset->next();
                             }
                         } else {
@@ -5429,11 +5455,11 @@ class Cases
                             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                             $oDataset->next();
                             while ($aRow = $oDataset->getRow()) {
-                                $delIndex[] = $aRow['DEL_INDEX'];
+                                $arrayDelIndex[] = $aRow["DEL_INDEX"];
                                 $oDataset->next();
                             }
                         }
-                        $RESULT['MSGS_HISTORY'] = array_merge(array('DEL_INDEX' => $delIndex), $RESULT['MSGS_HISTORY']);
+                        $RESULT["MSGS_HISTORY"] = array_merge(array("DEL_INDEX" => $arrayDelIndex), $RESULT["MSGS_HISTORY"]);
                         break;
 
                 }
@@ -6757,3 +6783,4 @@ class Cases
         return $unserializedData;
     }
 }
+

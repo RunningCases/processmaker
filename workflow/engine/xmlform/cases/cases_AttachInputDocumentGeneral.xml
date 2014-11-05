@@ -10,12 +10,17 @@
   <INP_DOC_MAX_FILESIZE type="hidden" showInTable="0" />
 
   <INP_DOC_MAX_FILESIZE_LABEL type="text" maxlength="30" validate="Any" size="10" mode="view">
-      <en>Max size accepted</en>
+      <en>Max. file size</en>
   </INP_DOC_MAX_FILESIZE_LABEL>
 
   <APP_DOC_FILENAME type="file">
     <en><![CDATA[File]]></en>
   </APP_DOC_FILENAME>
+
+  <INP_DOC_SUPPORTED_EXTENSIONS_FILENAME_LABEL type="text" maxlength="30" validate="Any" size="10" mode="view">
+     <en>Allowed Extensions</en>
+  </INP_DOC_SUPPORTED_EXTENSIONS_FILENAME_LABEL>
+
   <APP_DOC_COMMENT type="textarea" rows="5" cols="32" colWidth="200" titleAlign="left" align="left">
     <en><![CDATA[Comments]]></en>
   </APP_DOC_COMMENT>
@@ -67,7 +72,7 @@ var verifyInfo = function(oForm)
 
   for(i=0; i<allowedTypes.length; i++){
     allowed = allowedTypes[i].replace('*','').replace('.','');
-    if((allowed != '*') && (docType != allowed)){
+    if((allowed != '*') && (docType.toLowerCase() != allowed.toLowerCase())){
       flag = 1;
     } else {
       flag = 0;

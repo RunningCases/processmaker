@@ -31,7 +31,7 @@ var currentPagedTable = @#PAGED_TABLE_ID;
     }
 
     allowedTypes = getField('INP_DOC_TYPE_FILE').value.split(", ");
-    expreg = /^\*\.?[a-z]{2,8}$/;
+    expreg = /^\*\.?[a-zA-Z0-9]{2,15}$/;
 
     for(i=0; i<allowedTypes.length; i++){
       atype = allowedTypes[i];
@@ -55,7 +55,7 @@ var currentPagedTable = @#PAGED_TABLE_ID;
     if (getField("INP_DOC_MAX_FILESIZE").value != "") {
         if(maxFilesize > 0) {
             if(maxFilesize > uploadMaxFilesize) {
-                new leimnud.module.app.alert().make({label: _("ID_SIZE_VERY_LARGE_PERMITTED")});
+                new leimnud.module.app.alert().make({label: _("ID_INPUT_MAX_SIZE")});
                 getField("INP_DOC_MAX_FILESIZE").focus();
                 return false;
             }

@@ -682,7 +682,7 @@ class database extends database_base
                    `OP_OBJ_UID` varchar(32) NOT NULL,
                    `OP_ACTION` varchar(10) NOT NULL default 'VIEW',
                    KEY `PRO_UID` (`PRO_UID`,`TAS_UID`,`USR_UID`,`OP_TASK_SOURCE`,`OP_OBJ_UID`)
-                   )ENGINE=MyISAM DEFAULT CHARSET=latin1;";
+                   )ENGINE=InnoDB DEFAULT CHARSET=latin1;";
         return $sql;
     }
 

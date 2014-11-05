@@ -61,7 +61,9 @@ if ($actionAjax == 'historyDynaformGrid_Ajax') {
     }
 
     $newDir = '/tmp/test/directory';
-    $r = G::verifyPath( $newDir );
+    G::verifyPath( $newDir );
+
+    $r = new stdclass();
     $r->data = $aProcesses;
     $r->totalCount = 2;
 

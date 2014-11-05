@@ -224,7 +224,7 @@ class RBAC
                 $oCriteria = new Criteria( 'rbac' );
                 $oCriteria->add( AuthenticationSourcePeer::AUTH_SOURCE_PROVIDER, $sClassName );
                 $oCriteria->addAscendingOrderByColumn( AuthenticationSourcePeer::AUTH_SOURCE_NAME );
-                $oDataset = AuthenticationSourcePeer::doSelectRS( $oCriteria );
+                $oDataset = AuthenticationSourcePeer::doSelectRS( $oCriteria, Propel::getDbConnection('rbac_ro') );
                 $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
                 $oDataset->next();
                 $aRow = $oDataset->getRow();

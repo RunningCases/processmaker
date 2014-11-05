@@ -920,7 +920,8 @@ class wsBase
             if (!class_exists('System')) {
                 G::LoadClass('system');
             }
-            $aSetup = !empty($config) ? $config : System::getEmailConfiguration();
+            $licensedFeatures = & PMLicensedFeatures::getSingleton();
+            $aSetup = (!empty($config) && $licensedFeatures->verifyfeature('nKaNTNuT1MzK0RsMEtXTnYzR09ucHF2WGNuS0hRdDBBak42WXJhNVVOOG1INEVoaU1EaTllbjBBeEJNeG9wRVJ6NmxQelhyVTBvdThzPQ==') ) ? $config : System::getEmailConfiguration();
 
             $oSpool = new spoolRun();
 
@@ -1189,7 +1190,7 @@ class wsBase
             $arrayData = array ();
 
             $arrayData["USR_USERNAME"] = $userName;
-            $arrayData["USR_PASSWORD"] = Bootstrap::hasPassword( $password );
+            $arrayData["USR_PASSWORD"] = Bootstrap::hashPassword( $password );
             $arrayData["USR_FIRSTNAME"] = $firstName;
             $arrayData["USR_LASTNAME"] = $lastName;
             $arrayData["USR_EMAIL"] = $email;
@@ -1380,7 +1381,7 @@ class wsBase
             }
 
             if (! empty( $password )) {
-                $arrayData["USR_PASSWORD"] = Bootstrap::hasPassword( $password );
+                $arrayData["USR_PASSWORD"] = Bootstrap::hashPassword( $password );
             }
 
             //Update user

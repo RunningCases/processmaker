@@ -260,7 +260,7 @@ class PMPluginRegistry
                 //register the default directory, later we can have more
                 $this->_aPluginDetails[$sNamespace]->enabled = true;
                 if (class_exists($detail->sClassName)) {
-                    $oPlugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );    
+                    $oPlugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
                 } else {
                     $oPlugin = $detail;
                 }
@@ -1512,6 +1512,89 @@ class PMPluginRegistry
     public function getCronFiles()
     {
         return $this->_aCronFiles;
+    }
+
+    /**
+     * Update the plugin attributes in all workspaces
+     *
+     * @param string $pluginName Plugin name
+     *
+     * return void
+     */
+    public function updatePluginAttributesInAllWorkspaces($pluginName)
+    {
+        try {
+            G::LoadClass("system");
+            G::LoadClass("wsTools");
+
+            //Set variables
+            $pluginFileName = $pluginName . ".php";
+
+            //Verify data
+            if (!file_exists(PATH_PLUGINS . $pluginFileName)) {
+                throw new Exception("Error: The plugin not exists");
+            }
+
+            //Update plugin attributes
+            require_once(PATH_PLUGINS . $pluginFileName);
+
+            $pmPluginRegistry = &PMPluginRegistry::getSingleton();
+
+            $pluginDetails = $pmPluginRegistry->getPluginDetails($pluginFileName);
+
+            if (isset($pluginDetails->aWorkspaces) && is_array($pluginDetails->aWorkspaces) && count($pluginDetails->aWorkspaces) > 0) {
+                $arrayWorkspace = array();
+
+                foreach (System::listWorkspaces() as $value) {
+                    $workspaceTools = $value;
+
+                    $arrayWorkspace[] = $workspaceTools->name;
+                }
+
+                $arrayWorkspaceAux = array_diff($arrayWorkspace, $pluginDetails->aWorkspaces); //Workspaces to update
+                $strWorkspaceNoWritable = "";
+
+                $arrayWorkspace = array();
+
+                foreach ($arrayWorkspaceAux as $value) {
+                    $workspace = $value;
+
+                    $workspacePathDataSite = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP;
+
+                    if (file_exists($workspacePathDataSite . "plugin.singleton")) {
+                        $pmPluginRegistry = PMPluginRegistry::loadSingleton($workspacePathDataSite . "plugin.singleton");
+
+                        if (isset($pmPluginRegistry->_aPluginDetails[$pluginName])) {
+                            if (!is_writable($workspacePathDataSite . "plugin.singleton")) {
+                                $strWorkspaceNoWritable .= (($strWorkspaceNoWritable != "")? ", " : "") . $workspace;
+                            }
+
+                            $arrayWorkspace[] = $workspace;
+                        }
+                    }
+                }
+
+                //Verify data
+                if ($strWorkspaceNoWritable != "") {
+                    throw new Exception("Error: The workspaces \"$strWorkspaceNoWritable\" has problems of permissions of write in file \"plugin.singleton\", solve this problem");
+                }
+
+                //Update plugin attributes
+                foreach ($arrayWorkspace as $value) {
+                    $workspace = $value;
+
+                    $workspacePathDataSite = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP;
+
+                    $pmPluginRegistry = PMPluginRegistry::loadSingleton($workspacePathDataSite . "plugin.singleton");
+
+                    $pmPluginRegistry->disablePlugin($pluginName);
+
+                    file_put_contents($workspacePathDataSite . "plugin.singleton", $pmPluginRegistry->serializeInstance());
+                }
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }
 

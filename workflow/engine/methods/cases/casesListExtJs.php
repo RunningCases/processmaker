@@ -23,6 +23,14 @@ $conf = new Configurations();
 try {
     // the setup for search is the same as the Sent (participated)
     $confCasesList = $conf->getConfiguration( 'casesList', ($action == 'search' || $action == 'simple_search') ? 'search' : $action );
+
+    $table = null;
+    if (isset($confCasesList['PMTable'])) {
+        $aditionalTable = new AdditionalTables();
+        $table = $aditionalTable->load($confCasesList['PMTable']);
+    }
+    $confCasesList = ($table != null) ? $confCasesList : array ();
+
     $generalConfCasesList = $conf->getConfiguration( 'ENVIRONMENT_SETTINGS', '' );
 } catch (Exception $e) {
     $confCasesList = array ();
@@ -216,7 +224,7 @@ function getAllUsersArray ($action)
         }
 
         $cUsers->addAscendingOrderByColumn( AppCacheViewPeer::APP_CURRENT_USER );
-        $oDataset = AppCacheViewPeer::doSelectRS( $cUsers );
+        $oDataset = AppCacheViewPeer::doSelectRS( $cUsers , Propel::getDbConnection('workflow_ro') );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $oDataset->next();
         while ($aRow = $oDataset->getRow()) {
@@ -282,7 +290,7 @@ function getStatusArray ($action, $userUid)
         $cStatus->clearSelectColumns();
         $cStatus->setDistinct();
         $cStatus->addSelectColumn( AppCacheViewPeer::APP_STATUS );
-        $oDataset = AppCacheViewPeer::doSelectRS( $cStatus );
+        $oDataset = AppCacheViewPeer::doSelectRS( $cStatus, Propel::getDbConnection('workflow_ro') );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $oDataset->next();
         while ($aRow = $oDataset->getRow()) {
@@ -369,7 +377,7 @@ function getAdditionalFields($action, $confCasesList = array())
     $config = new Configurations();
     $arrayConfig = $config->casesListDefaultFieldsAndConfig($action);
 
-    if (is_array($confCasesList) && count($confCasesList) > 0 && count($confCasesList["second"]["data"]) > 0) {
+    if (is_array($confCasesList) && count($confCasesList) > 0 && isset($confCasesList["second"]) && count($confCasesList["second"]["data"]) > 0) {
         //For the case list builder in the enterprise plugin
         $caseColumns = array();
         $caseReaderFields = array();

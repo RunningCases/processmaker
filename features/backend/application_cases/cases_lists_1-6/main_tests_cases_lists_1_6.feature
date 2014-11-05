@@ -489,8 +489,8 @@ Scenario Outline: Get paging of list Paused
     Then the response status code should be <http_code>
     And the response charset is "UTF-8"
     And the content type is "application/json"
-    And the type is "array"
-    And the response has <records> records
+    And the type is "object"
+    And the response has <records> records in property "data"
 
      Examples:
     

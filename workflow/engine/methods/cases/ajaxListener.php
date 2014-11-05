@@ -516,6 +516,7 @@ class Ajax
         $task = new Task();
         $tasks = $task->load($_SESSION['TASK']);
         $case = new Cases();
+        $result = new stdclass();
         $result->data = $case->getUsersToReassign($_SESSION['TASK'], $_SESSION['USER_LOGGED'], $tasks['PRO_UID']);
 
         print G::json_encode($result);
@@ -526,6 +527,7 @@ class Ajax
         $cases = new Cases();
         $user = new Users();
         $app = new Application();
+        $result = new stdclass();
 
         $TO_USR_UID = $_POST['USR_UID'];
         try {
@@ -547,6 +549,7 @@ class Ajax
 
     public function pauseCase()
     {
+        $result = new stdclass();
         try {
             $unpauseDate = $_REQUEST['unpauseDate'] . ' '. $_REQUEST['unpauseTime'];
             $oCase = new Cases();
@@ -588,6 +591,7 @@ class Ajax
 
     public function unpauseCase()
     {
+        $result = new stdclass();
         try {
             $applicationUID = (isset($_POST['APP_UID'])) ? $_POST['APP_UID'] : $_SESSION['APPLICATION'];
             $delIndex = (isset($_POST['DEL_INDEX'])) ? $_POST['DEL_INDEX'] : $_SESSION['INDEX'];
@@ -610,6 +614,7 @@ class Ajax
 
     public function deleteCase()
     {
+        $result = new stdclass();
         try {
             $applicationUID = (isset($_POST['APP_UID'])) ? $_POST['APP_UID'] : $_SESSION['APPLICATION'];
             $app = new Application();
@@ -630,6 +635,7 @@ class Ajax
 
     public function reactivateCase()
     {
+        $result = new stdclass();
         try {
             $applicationUID = (isset($_POST['APP_UID'])) ? $_POST['APP_UID'] : $_SESSION['APPLICATION'];
             $delIndex = (isset($_POST['DEL_INDEX'])) ? $_POST['DEL_INDEX'] : $_SESSION['INDEX'];
