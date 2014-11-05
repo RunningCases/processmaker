@@ -3,23 +3,63 @@ try {
     $response = new stdClass;
     if (isset( $_POST['javascriptCache'] ) || isset( $_POST['metadataCache'] ) || isset( $_POST['htmlCache'] )) {
 
-        $msgLog = '';
-        if (isset( $_POST['javascriptCache'] )) {
-            G::rm_dir( PATH_C . 'ExtJs' );
+        $msgLog = "";
+        $msgLogAux = "";
+
+        if (isset($_POST["javascriptCache"])) {
+            G::rm_dir(PATH_C . "ExtJs");
             $response->javascript = true;
-            $msgLog .= 'Javascript cache ';
-        }
 
-        if (isset( $_POST['metadataCache'] )) {
-            G::rm_dir( PATH_C . 'xmlform' );
-            $response->xmlform = true;
-            $msgLog .= 'Forms Metadata cache ';
-        }
+            $msgLog = $msgLog . "Javascript Cache";
 
-        if (isset( $_POST['htmlCache'] )) {
-            G::rm_dir( PATH_C . 'smarty' );
-            $response->smarty = true;
-            $msgLog .= 'Forms Html Templates cache ';
+            if (isset($_POST["metadataCache"])) {
+                G::rm_dir(PATH_C . "xmlform");
+                $response->xmlform = true;
+
+                $msgLogAux = $msgLog;
+                $msgLog = $msgLog . ", Forms Metadata Cache";
+
+                if (isset($_POST["htmlCache"])) {
+                    G::rm_dir(PATH_C . "smarty");
+                    $response->smarty = true;
+
+                    $msgLog = $msgLog . " and Forms Html Templates Cache.";
+                } else {
+                    $msgLog = $msgLogAux ." and Forms Metadata Cache.";
+                }
+            } else {
+                if (isset($_POST["htmlCache"])) {
+                    G::rm_dir(PATH_C . "smarty");
+                    $response->smarty = true;
+
+                    $msgLog = $msgLog . " and Forms Html Templates Cache.";
+                } else {
+                    $msgLog = $msgLog . ".";
+                }
+            }
+        } else {
+            if (isset($_POST["metadataCache"])) {
+                G::rm_dir(PATH_C . "xmlform");
+                $response->xmlform = true;
+
+                $msgLog = $msgLog . "Forms Metadata Cache";
+
+                if (isset($_POST["htmlCache"])) {
+                    G::rm_dir(PATH_C . "smarty");
+                    $response->smarty = true;
+
+                    $msgLog = $msgLog . " and Forms Html Templates Cache.";
+                } else {
+                    $msgLog = $msgLog . ".";
+                }
+            } else {
+                if (isset($_POST["htmlCache"])) {
+                    G::rm_dir(PATH_C . "smarty");
+                    $response->smarty = true;
+
+                    $msgLog = $msgLog . "Forms Html Templates Cache.";
+                }
+            }
         }
 
         $response->success = true;
