@@ -497,11 +497,10 @@ class Applications
 
             if ($sort == "") {
                 $sort = $sortBk;
+            }
 
-                if (!in_array($sortBk, $Criteria->getSelectColumns())) {
-                    $sort = AppCacheViewPeer::APP_NUMBER; //DEFAULT VALUE
-                    $dir = "DESC";
-                }
+            if (!in_array($sort, $Criteria->getSelectColumns())) {
+                $sort = AppCacheViewPeer::APP_NUMBER; //DEFAULT VALUE
             }
 
             if ($dir == "DESC") {
