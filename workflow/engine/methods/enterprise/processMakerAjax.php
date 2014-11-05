@@ -270,6 +270,7 @@ switch ($option) {
             if ($result["status"] == "OK") {
                 $response["status"] = $result["status"]; //OK
                 $response["message"] = $result["message"];
+                G::auditLog("InstallPlugin", "Plugin Name: ".$file);
             } else {
                 throw (new Exception($result["message"]));
             }
@@ -285,6 +286,8 @@ switch ($option) {
         break;
     case "list":
         $status = 1;
+        $response = new stdclass();
+        $response->status = 'OK';
         try {
             if (EnterpriseUtils::getInternetConnection() == 0) {
                 throw (new Exception("Enterprise Plugins Manager no connected to internet."));

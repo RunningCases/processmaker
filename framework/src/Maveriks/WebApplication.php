@@ -112,7 +112,7 @@ class WebApplication
             list($this->requestUri,) = explode('?', $this->requestUri);
             $uriParts = explode('/', $this->requestUri);
 
-            if ($uriParts[2] == 'oauth2') {
+            if (isset($uriParts[2]) && $uriParts[2] == "oauth2") {
                 return self::RUNNING_OAUTH2;
             } else {
                 return self::RUNNING_WORKFLOW;
@@ -358,6 +358,7 @@ class WebApplication
 //            }
         }
 
+        Services\OAuth2\Server::setWorkspace(SYS_SYS);
         $this->rest->addAPIClass('\ProcessMaker\\Services\\OAuth2\\Server', 'oauth2');
     }
 

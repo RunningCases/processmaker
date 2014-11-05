@@ -27,6 +27,12 @@ Ext.onReady(function () {
             case "FIELD_SAVE":
 
                 var rs = firstGrid.store.data.items;
+                if (pmTablesDropdown.getValue() == '') {
+                    if (rs.length != 0) {
+                        Ext.Msg.alert(_("ID_INFO"), _("ID_EMPTY_PMTABLE"));
+                        return;
+                    }
+                }
                 var fv = [];
 
                 for (i = 0; i <= rs.length - 1; i++) {

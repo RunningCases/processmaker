@@ -27,7 +27,7 @@ class AddonsManager extends BaseAddonsManager
      */
 
     public function getDownloadFilename()
-    {   
+    {
         $filename = $this->getAddonDownloadFilename();
         if (!isset($filename) || empty($filename)) {
             $filename = "download.tar";
@@ -37,7 +37,7 @@ class AddonsManager extends BaseAddonsManager
     }
 
     public function getDownloadDirectory()
-    {   
+    {
         $dir = PATH_DATA . "upgrade/{$this->getStoreId()}_{$this->getAddonName()}";
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
@@ -52,7 +52,7 @@ class AddonsManager extends BaseAddonsManager
      *               if file exists but md5 for the download is not available.
      */
     public function checkDownload()
-    {   
+    {
         $filename = $this->getDownloadFilename();
         if (!file_exists($filename)) {
             return false;
@@ -70,7 +70,7 @@ class AddonsManager extends BaseAddonsManager
      * @return bool true if is of type 'plugin', false otherwise
      */
     public function isPlugin()
-    {   
+    {
         return ($this->getAddonType() == 'plugin');
     }
 
@@ -166,17 +166,17 @@ class AddonsManager extends BaseAddonsManager
                     return (null);
                 }
 
-                ///////
+                $oPluginRegistry = &PMPluginRegistry::getSingleton();
+                $details = $oPluginRegistry->getPluginDetails($this->getAddonName() . ".php");
+                $v = (!($details == null))? $details->iVersion : null;
+
+                if ($v != "") {
+                    return ($v);
+                }
+
                 if (file_exists(PATH_PLUGINS . $this->getAddonName() . PATH_SEP . "VERSION")) {
                     return (trim(file_get_contents(PATH_PLUGINS . $this->getAddonName() . PATH_SEP . "VERSION")));
                 }
-
-                ///////
-                $oPluginRegistry = &PMPluginRegistry::getSingleton();
-                $details = $oPluginRegistry->getPluginDetails($this->getAddonName() . ".php");
-
-                $v = (!($details == null))? $details->iVersion : null;
-                return ($v);
             } else {
                 if ($this->getAddonType() == "core") {
                     throw new Exception("Addon type \"" . $this->getAddonType() . "\" unsupported");

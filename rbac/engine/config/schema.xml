@@ -4,7 +4,7 @@
   <table name="RBAC_PERMISSIONS">
     <vendor type="mysql">
       <parameter name="Name" value="RBAC_PERMISSIONS"/>
-      <parameter name="Engine" value="MyISAM"/>
+      <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
       <parameter name="Row_format" value="Dynamic"/>
       <parameter name="Rows" value="5"/>
@@ -32,7 +32,7 @@
   <table name="RBAC_ROLES">
     <vendor type="mysql">
       <parameter name="Name" value="RBAC_ROLES"/>
-      <parameter name="Engine" value="MyISAM"/>
+      <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
       <parameter name="Row_format" value="Dynamic"/>
       <parameter name="Rows" value="3"/>
@@ -61,7 +61,7 @@
   <table name="RBAC_ROLES_PERMISSIONS">
     <vendor type="mysql">
       <parameter name="Name" value="RBAC_ROLES_PERMISSIONS"/>
-      <parameter name="Engine" value="MyISAM"/>
+      <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
       <parameter name="Row_format" value="Dynamic"/>
       <parameter name="Rows" value="7"/>
@@ -85,7 +85,7 @@
   <table name="RBAC_SYSTEMS">
     <vendor type="mysql">
       <parameter name="Name" value="RBAC_SYSTEMS"/>
-      <parameter name="Engine" value="MyISAM"/>
+      <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
       <parameter name="Row_format" value="Dynamic"/>
       <parameter name="Rows" value="2"/>
@@ -112,7 +112,7 @@
   <table name="RBAC_USERS">
     <vendor type="mysql">
       <parameter name="Name" value="RBAC_USERS"/>
-      <parameter name="Engine" value="MyISAM"/>
+      <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
       <parameter name="Row_format" value="Dynamic"/>
       <parameter name="Rows" value="11"/>
@@ -148,7 +148,7 @@
   <table name="RBAC_USERS_ROLES">
     <vendor type="mysql">
       <parameter name="Name" value="RBAC_USERS_ROLES"/>
-      <parameter name="Engine" value="MyISAM"/>
+      <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
       <parameter name="Row_format" value="Dynamic"/>
       <parameter name="Rows" value="11"/>
@@ -172,7 +172,7 @@
   <table name="RBAC_AUTHENTICATION_SOURCE">
     <vendor type="mysql">
       <parameter name="Name" value="AUTHENTICATION_SOURCE"/>
-      <parameter name="Engine" value="MyISAM"/>
+      <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
       <parameter name="Row_format" value="Dynamic"/>
       <parameter name="Rows" value="88"/>

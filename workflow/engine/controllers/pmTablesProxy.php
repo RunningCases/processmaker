@@ -42,7 +42,7 @@ class pmTablesProxy extends HttpProxyController
         if ($pro_uid !== null) {
             $process = $pro_uid == '' ? array ('not_equal' => $pro_uid
             ) : array ('equal' => $pro_uid);
-            $addTables = AdditionalTables::getAll( $start, $limit, $filter, $process );
+            $addTables = AdditionalTables::getAll( false, false, $filter, $process );
 
             $c = $processMap->getReportTablesCriteria( $pro_uid );
             $oDataset = RoutePeer::doSelectRS( $c );
@@ -51,11 +51,20 @@ class pmTablesProxy extends HttpProxyController
             while ($oDataset->next()) {
                 $reportTablesOldList[] = $oDataset->getRow();
             }
-            $addTables['count'] += count( $reportTablesOldList );
-
             foreach ($reportTablesOldList as $i => $oldRepTab) {
-                $addTables['rows'][] = array ('ADD_TAB_UID' => $oldRepTab['REP_TAB_UID'],'PRO_UID' => $oldRepTab['PRO_UID'],'DBS_UID' => ($oldRepTab['REP_TAB_CONNECTION'] == 'wf' ? 'workflow' : 'rp'),'ADD_TAB_DESCRIPTION' => $oldRepTab['REP_TAB_TITLE'],'ADD_TAB_NAME' => $oldRepTab['REP_TAB_NAME'],'ADD_TAB_TYPE' => $oldRepTab['REP_TAB_TYPE'],'TYPE' => 'CLASSIC' );
+            	if($filter != ''){
+            		if((stripos($oldRepTab['REP_TAB_NAME'], $filter) !== false) || (stripos($oldRepTab['REP_TAB_TITLE'], $filter) !== false)){
+            			$addTables['rows'][] = array ('ADD_TAB_UID' => $oldRepTab['REP_TAB_UID'],'PRO_UID' => $oldRepTab['PRO_UID'],'DBS_UID' => ($oldRepTab['REP_TAB_CONNECTION'] == 'wf' ? 'workflow' : 'rp'),'ADD_TAB_DESCRIPTION' => $oldRepTab['REP_TAB_TITLE'],'ADD_TAB_NAME' => $oldRepTab['REP_TAB_NAME'],'ADD_TAB_TYPE' => $oldRepTab['REP_TAB_TYPE'],'TYPE' => 'CLASSIC' );
+            		}
+            	} else {
+            		$addTables['rows'][] = array ('ADD_TAB_UID' => $oldRepTab['REP_TAB_UID'],'PRO_UID' => $oldRepTab['PRO_UID'],'DBS_UID' => ($oldRepTab['REP_TAB_CONNECTION'] == 'wf' ? 'workflow' : 'rp'),'ADD_TAB_DESCRIPTION' => $oldRepTab['REP_TAB_TITLE'],'ADD_TAB_NAME' => $oldRepTab['REP_TAB_NAME'],'ADD_TAB_TYPE' => $oldRepTab['REP_TAB_TYPE'],'TYPE' => 'CLASSIC' );
+            	}
             }
+            $addTables['count'] = count($addTables['rows']);
+            if($start != 0){
+           	    $addTables['rows'] = array_splice($addTables['rows'], $start);
+            }
+            $addTables['rows'] = array_splice($addTables['rows'], 0, $limit);
         } else {
             $addTables = AdditionalTables::getAll( $start, $limit, $filter );
         }
@@ -377,6 +386,19 @@ class pmTablesProxy extends HttpProxyController
         $count = 0;
         $result = new StdClass();
 
+        $tableCasesList = array();
+        $conf = new Configurations();
+        $confCasesListDraft = $conf->getConfiguration( 'casesList', 'draft');
+        $confCasesListPaused = $conf->getConfiguration( 'casesList', 'paused');
+        $confCasesListSent = $conf->getConfiguration( 'casesList', 'sent');
+        $confCasesListTodo = $conf->getConfiguration( 'casesList', 'todo');
+        $confCasesListUnassigned = $conf->getConfiguration( 'casesList', 'unassigned');
+        $tableCasesList['draft'] = ($confCasesListDraft != null) ? $confCasesListDraft['PMTable'] : '';
+        $tableCasesList['paused'] = ($confCasesListPaused != null) ? $confCasesListPaused['PMTable'] : '';
+        $tableCasesList['sent'] = ($confCasesListSent != null) ? $confCasesListSent['PMTable'] : '';
+        $tableCasesList['todo'] = ($confCasesListTodo != null) ? $confCasesListTodo['PMTable'] : '';
+        $tableCasesList['unassigned'] = ($confCasesListUnassigned != null) ? $confCasesListUnassigned['PMTable'] : '';
+
         foreach ($rows as $row) {
             try {
                 $at = new AdditionalTables();
@@ -388,6 +410,14 @@ class pmTablesProxy extends HttpProxyController
                     $existReportTableOld = $rtOld->load( $row->id );
                     if (count($existReportTableOld) == 0) {
                         throw new Exception( G::LoadTranslation('ID_TABLE_NOT_EXIST_SKIPPED') );
+                    }
+                }
+
+                foreach ($tableCasesList as $action => $idTable) {
+                    if ($idTable == $row->id) {
+                        $conf = new Configurations();
+                        $resultJson = $conf->casesListDefaultFieldsAndConfig($action);
+                        $conf->saveObject($resultJson, "casesList", $action, "", "", "");
                     }
                 }
 
@@ -410,6 +440,7 @@ class pmTablesProxy extends HttpProxyController
         if ($errors == '') {
             $result->success = true;
             $result->message = $count.G::LoadTranslation( 'ID_TABLES_REMOVED_SUCCESSFULLY' );
+            G::auditLog("DeletePmtable", "Table Name: ". $table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
         } else {
             $result->success = false;
             $result->message = $count. G::LoadTranslation( 'ID_TABLES_REMOVED_WITH_ERRORS' ) .$errors;
@@ -508,7 +539,7 @@ class pmTablesProxy extends HttpProxyController
                 if ($obj->validate()) {
                     $obj->save();
                     $toSave = true;
-
+                    G::auditLog("AddDataPmtable", "Table Name: ".$table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
                     $primaryKeysValues = array ();
                     foreach ($primaryKeys as $primaryKey) {
                         $method = 'get' . AdditionalTables::getPHPName( $primaryKey['FLD_NAME'] );
@@ -527,6 +558,7 @@ class pmTablesProxy extends HttpProxyController
                 $toSave = false;
             }
 
+            $result = new stdclass();
             if ($toSave) {
                 $result->success = true;
                 $result->message = G::LoadTranslation('ID_RECORD_SAVED_SUCCESFULLY');
@@ -580,6 +612,10 @@ class pmTablesProxy extends HttpProxyController
             $result = $this->_dataUpdate( $row, $primaryKeys );
         }
 
+        if ($result) {
+            G::auditLog("UpdateDataPmtable", "Table Name: ".$table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
+        }
+
         $this->success = $result;
         $this->message = $result ? G::loadTranslation( 'ID_UPDATED_SUCCESSFULLY' ) : G::loadTranslation( 'ID_UPDATE_FAILED' );
     }
@@ -603,6 +639,8 @@ class pmTablesProxy extends HttpProxyController
         }
 
         require_once $sPath . $this->className . '.php';
+
+        G::auditLog("DeleteDataPmtable", "Table Name: ".$table['ADD_TAB_NAME']." Table ID: (".$table['ADD_TAB_UID'].") ");
 
         $this->success = $this->_dataDestroy( $httpData->rows );
         $this->message = $this->success ? G::loadTranslation( 'ID_DELETED_SUCCESSFULLY' ) : G::loadTranslation( 'ID_DELETE_FAILED' );
@@ -678,6 +716,7 @@ class pmTablesProxy extends HttpProxyController
                 $this->success = true;
                 $this->message = G::loadTranslation( 'ID_FILE_IMPORTED_SUCCESSFULLY', array ($filename
                 ) );
+                G::auditLog("ImportTable", $filename);
             }
         } else {
             $sMessage = G::LoadTranslation( 'ID_UPLOAD_VALID_CSV_FILE' );
@@ -919,6 +958,7 @@ class pmTablesProxy extends HttpProxyController
                             // is a report table, try populate it
                             $additionalTable->populateReportTable( $table['ADD_TAB_NAME'], pmTable::resolveDbSource( $table['DBS_UID'] ), $table['ADD_TAB_TYPE'], $table['PRO_UID'], $table['ADD_TAB_GRID'], $table['ADD_TAB_UID'] );
                         }
+                        G::auditLog("ImportTable", $table['ADD_TAB_NAME']." (".$table['ADD_TAB_UID'].") ");
                         break;
                     case '@DATA':
                         $fstName = intval( fread( $fp, 9 ) );
@@ -1104,6 +1144,7 @@ class pmTablesProxy extends HttpProxyController
                     $bytesSaved += fwrite( $fp, $fsData ); //writing the size of xml file
                     $bytesSaved += fwrite( $fp, $SDATA ); //writing the xmlfile
                 }
+                G::auditLog("ExportTable", $table->ADD_TAB_NAME." (".$table->ADD_TAB_UID.") ");
             }
 
             fclose( $fp );

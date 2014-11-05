@@ -21,8 +21,8 @@ class enterprisePlugin extends PMPlugin
         $VERSION = System::getVersion();
 
         $res = parent::PMPlugin($sNamespace, $sFilename);
-        $this->sFriendlyName = "ProcessMaker Enterprise Edition";
-        $this->sDescription  = "ProcessMaker Enterprise Edition $VERSION";
+        $this->sFriendlyName = "ProcessMaker Enterprise Core Edition";
+        $this->sDescription  = "ProcessMaker Enterprise Core Edition $VERSION";
         $this->sPluginFolder = "enterprise";
         $this->sSetupPage    = "../enterprise/addonsStore.php";
         $this->iVersion      = $VERSION;
@@ -345,25 +345,6 @@ class enterprisePlugin extends PMPlugin
 
             fclose($file);
         }
-    }
-
-    public function hashPassword ($pass, $previous=false)
-    {
-        G::LoadClass( "configuration" );
-        $config= new Configurations();
-        $typeEncrypt = $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
-        $encrypt = 'md5';
-        if ($typeEncrypt != null) {
-            if (isset($typeEncrypt['current']) && $typeEncrypt['current'] != '') {
-                $encrypt = $typeEncrypt['current'];
-            }
-            if ($previous && isset($typeEncrypt['previous']) && $typeEncrypt['previous'] != '' ) {
-                $encrypt = $typeEncrypt['previous'];
-            }
-        }
-        eval("\$var = hash('" . $encrypt . "', '" . $pass . "');");
-
-        return $var;
     }
 }
 

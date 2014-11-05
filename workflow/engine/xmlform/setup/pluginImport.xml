@@ -4,7 +4,7 @@
     <en><![CDATA[Import Plugin]]></en>
   </TITLE1>
   <MAX_FILE_SIZE type="edit" mode="view">
-    <en><![CDATA[Max upload file size in bytes]]></en>
+    <en><![CDATA[Maximum upload file size in bytes]]></en>
   </MAX_FILE_SIZE>
   <PLUGIN_FILENAME type="file">
     <en><![CDATA[File]]></en>

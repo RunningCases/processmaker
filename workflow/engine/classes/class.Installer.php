@@ -697,8 +697,8 @@ class Installer
             }
         }
         $rt['ao']['ao_db_wf'] = $this->check_db($this->options['advanced']['ao_db_wf']);
-        $rt['ao']['ao_db_rb'] = $this->check_db($this->options['advanced']['ao_db_rb']);
-        $rt['ao']['ao_db_rp'] = $this->check_db($this->options['advanced']['ao_db_rp']);
+        //$rt['ao']['ao_db_rb'] = $this->check_db($this->options['advanced']['ao_db_rb']);
+        //$rt['ao']['ao_db_rp'] = $this->check_db($this->options['advanced']['ao_db_rp']);
         return $rt;
     }
 

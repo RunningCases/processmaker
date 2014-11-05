@@ -130,7 +130,7 @@ switch ($_POST['action']) {
                 $form['USR_NEW_PASS'] = '';
             }
             if ($form['USR_NEW_PASS'] != '') {
-                $form['USR_PASSWORD'] = Bootstrap::hasPassword($form['USR_NEW_PASS']);
+                $form['USR_PASSWORD'] = Bootstrap::hashPassword($form['USR_NEW_PASS']);
             }
             if (!isset($form['USR_CITY'])) {
                 $form['USR_CITY'] = '';
@@ -187,6 +187,7 @@ switch ($_POST['action']) {
                 require_once 'classes/model/Users.php';
                 $oUser = new Users();
                 $oUser->create($aData);
+                G::auditLog("CreateUser", "User Name: ". $aData['USR_USERNAME']);
 
                 if ($_FILES['USR_PHOTO']['error'] != 1) {
                     //print (PATH_IMAGES_ENVIRONMENT_USERS);
@@ -214,7 +215,7 @@ switch ($_POST['action']) {
                  */
                 require_once 'classes/model/UsersProperties.php';
                 $oUserProperty = new UsersProperties();
-                $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($aData['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array(Bootstrap::hasPassword($aData['USR_PASSWORD'])))));
+                $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($aData['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array(Bootstrap::hashPassword($aData['USR_PASSWORD'])))));
                 $aUserProperty['USR_LOGGED_NEXT_TIME'] = $form['USR_LOGGED_NEXT_TIME'];
                 $oUserProperty->update($aUserProperty);
             } else {
@@ -228,7 +229,7 @@ switch ($_POST['action']) {
                         $aData['USR_PASSWORD'] = $form['USR_PASSWORD'];
                         require_once 'classes/model/UsersProperties.php';
                         $oUserProperty = new UsersProperties();
-                        $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($form['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array(md5($form['USR_PASSWORD'])))));
+                        $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($form['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array(Bootstrap::hashPassword($form['USR_PASSWORD'])))));
 
                         $memKey = 'rbacSession' . session_id();
                         $memcache = & PMmemcached::getSingleton(defined('SYS_SYS') ? SYS_SYS : '' );
@@ -363,6 +364,7 @@ switch ($_POST['action']) {
                 require_once 'classes/model/Users.php';
                 $oUser = new Users();
                 $oUser->update($aData);
+                G::auditLog("UpdateUser", "User Name: ". $aData['USR_USERNAME']." User ID: (".$aData['USR_UID'].") ");
                 if ($_FILES['USR_PHOTO']['error'] != 1) {
                     if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
                         $aAux = explode('.', $_FILES['USR_PHOTO']['name']);

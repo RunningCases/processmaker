@@ -42,21 +42,9 @@ Ext.onReady(function() {
           }
         }
 
-        if (sw == 0) {
-          Ext.ComponentMgr.get("cboPmVersion").setDisabled(true);
-          Ext.ComponentMgr.get("btnPmUpgrade").setDisabled(true);
-        }
       },
       load: function (store, record, option) {
-        Ext.ComponentMgr.get("cboPmVersion").setDisabled(false);
-        Ext.ComponentMgr.get("btnPmUpgrade").setDisabled(false);
-
-        if (store.getAt(0)) {
-          Ext.ComponentMgr.get("cboPmVersion").setValue(store.getAt(0).get(Ext.ComponentMgr.get("cboPmVersion").valueField));
-        } else {
-          Ext.ComponentMgr.get("cboPmVersion").setDisabled(true);
-          Ext.ComponentMgr.get("btnPmUpgrade").setDisabled(true);
-        }
+        //
       }
     }
   });
@@ -99,50 +87,6 @@ Ext.onReady(function() {
         site = PROCESSMAKER_URL + "/setup/main?s=PMENTERPRISE";
     }
     return site;
-  }
-  function processMakerUpgrade() {
-    swReloadTask = 0;
-    var noticeWindow = new Ext.Window({
-      closable: false,
-      autoHeight: true,
-      modal: true,
-      width: 600,
-      height: 350,
-      id: "notice_window",
-      title: _('ID_BEFORE_UPDATE'),
-      bodyStyle: "font: normal 13px sans;",
-      bbar: new Ext.Toolbar({
-        buttonAlign: "center",
-        padding: 15,
-        items: [
-        {
-          id: "upgrade-continue",
-          //text: " Continue &raquo; ",
-          text: _('ID_CONTINUE')+" &gt;&gt; ",
-          handler: function () {
-            noticeWindow.hide();
-
-            processMakerInstall();
-          }
-        },
-        {
-          id: "upgrade-cancel",
-          text: "<b> "+ _('ID_CANCEL')+" </b>",
-          handler: function () {
-            swReloadTask = 1;
-            noticeWindow.hide();
-          }
-        }]
-      }),
-      items: [{
-        id: "notice",
-        preventBodyReset : true,
-        padding: 15,
-        html: _('ID_CAUTION_NOTICE')
-      }]
-    });
-
-    noticeWindow.show();
   }
 
   function upgradeStatus(addonId, storeId, record) {
@@ -393,7 +337,6 @@ Ext.onReady(function() {
       var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _('ID_WAIT_WHILE_UPGRADING_PROCESSMAKER')});
       myMask.show();
 
-      var cboPm = Ext.ComponentMgr.get("cboPmVersion");
 
       var record = cboPm.findRecord(cboPm.valueField, cboPm.getValue());
       var index  = cboPm.store.indexOf(record);
@@ -458,6 +401,14 @@ Ext.onReady(function() {
      });
   }
 
+    var enterpriseFileSupport = function () {
+        var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _('ID_PROCESSING')});
+        myMask.show();
+        //window.location = '../../uxmodern/main/generateInfoSupport';
+        window.location = '../adminProxy/generateInfoSupport',
+        myMask.hide();
+    };
+
   function enterpriseProcessAjax(option)
   {
       switch (option) {
@@ -491,14 +442,16 @@ Ext.onReady(function() {
 
                       reloadTask.cancel();
 
-                      Ext.ComponentMgr.get("cboPmVersion").reset();
-                      Ext.ComponentMgr.get("cboPmVersion").store.load();
-
                       addonsStore.load({
                           params: {
                               "force": true
                           }
                       });
+                        addonsFeaturesStore.load({
+                            params: {
+                                "force": true
+                            }
+                        });
 
                       Ext.getCmp("refresh-btn").setDisabled(!Ext.getCmp("chkEeInternetConnection").checked);
 
@@ -518,8 +471,9 @@ Ext.onReady(function() {
       url: "addonsStoreAction",
       method: "POST"
     }),
-    baseParams: {"action": "addonsList"
-                },
+    baseParams: {
+        "action": "addonsList"
+    },
 
     //url: "addonsStoreAction?action=addonsList",
 
@@ -553,22 +507,17 @@ Ext.onReady(function() {
       "load": function(store, records, options) {
         //reloadTask.delay(15000); //1 millisecond = 0.001 seconds
 
-        //Ext.ComponentMgr.get('btnPmUpgrade').disable();
         Ext.ComponentMgr.get('loading-indicator').setValue("");
         progressWindow.hide();
         store.filterBy(function (record, id) {
-          if (record.get('type') == 'core') {
-            coreRecord = record.copy();
-
-            //Ext.ComponentMgr.get('btnPmUpgrade').enable();
-            //console.log("Core state: " + record.get('status'));
-            //console.log(record);
-            status = record.get('status');
-            if (status == "download-start" || status == "download" || status == "install" || status == "install-finish") {
-              upgradeStatus(record.get('id'), record.get('store'), record);
+            if (record.get('type') == 'core') {
+                coreRecord = record.copy();
+                status = record.get('status');
+                if (status == "download-start" || status == "download" || status == "install" || status == "install-finish") {
+                    upgradeStatus(record.get('id'), record.get('store'), record);
+                }
+                return false;
             }
-            return false;
-          }
 
           if (record.get('status') == 'download-start' || record.get('status') == 'download' || record.get('status') == 'cancel' || record.get('status') == 'install') {
               //
@@ -607,6 +556,79 @@ Ext.onReady(function() {
       }
     }
   });
+
+
+    var addonsFeaturesStore = new Ext.data.JsonStore({
+        proxy: new Ext.data.HttpProxy({
+            url: "addonsStoreAction",
+            method: "POST"
+        }),
+        baseParams: {
+            "action": "addonsList",
+            "type" : "features"
+        },
+        autoDestroy: true,
+        messageProperty: 'error',
+        storeId: 'addonsFeaturesStore',
+        root: 'addons',
+        idProperty: 'id',
+        sortInfo: {
+            field: 'nick',
+            direction: 'ASC' // or 'DESC' (case sensitive for local sorting)
+        },
+        fields: ['id', 'name', 'store', 'nick', 'latest_version', 'version', 'status',
+        'type', 'release_type', 'url', 'enabled', 'publisher', 'description',
+        'log', 'progress'],
+        listeners: {
+            'beforeload': function(store, options) {
+                Ext.ComponentMgr.get('loading-features-indicator').setValue('<img src="/images/documents/_indicator.gif" />');
+                return true;
+            },
+            "exception": function(e, type, action, options, response, arg) {
+                Ext.ComponentMgr.get('loading-features-indicator').setValue('<span class="button_menu_ext ss_sprite ss_status_offline">&nbsp;</span>');
+            },
+            "load": function(store, records, options) {
+                Ext.ComponentMgr.get('loading-features-indicator').setValue("");
+                progressWindow.hide();
+                store.filterBy(function (record, id) {
+                    if (record.get('type') == 'core') {
+                        coreRecord = record.copy();
+                        status = record.get('status');
+                        if (status == "download-start" || status == "download" || status == "install" || status == "install-finish") {
+                          upgradeStatus(record.get('id'), record.get('store'), record);
+                        }
+                        return false;
+                    }
+                    return true;
+                });
+
+                if (addonsFeatureGrid.disabled) {
+                    addonsFeatureGrid.enable();
+                }
+
+                errors = store.reader.jsonData.errors;
+                for (var i = 0, n = errors.length; i<n; i++) {
+                    //console.log(errors[i]);
+                    error = errors[i];
+                    installError(error.addonId, error.storeId);
+                }
+
+                store_errors = store.reader.jsonData.store_errors;
+                error_msg = "";
+                for (var i = 0, n = store_errors.length; i<n; i++) {
+                    error_msg += "<p>" + store_errors[i].msg + "</p>";
+                }
+
+                if (store_errors.length > 0) {
+                    Ext.ComponentMgr.get('loading-features-indicator').setValue('<span class="button_menu_ext ss_sprite ss_status_offline" >&nbsp;</span>');
+                    //storeError(error_msg);
+                    reloadTask.cancel();
+                } else {
+                    Ext.ComponentMgr.get('loading-features-indicator').setValue('<span class="button_menu_ext ss_sprite ss_status_online">&nbsp;</span>');
+                }
+            }
+        }
+      });
 
   var upgradeStore = new Ext.data.Store({
     recordType: addonsStore.recordType
@@ -733,22 +755,26 @@ Ext.onReady(function() {
 
           if (sw == 1) {
             uploadForm.getForm().submit({
-              url: "../enterprise/addonsStoreAction",
-              params: {
-                action: "importLicense"
-              },
-              waitMsg: _('ID_UPDATING_LICENSE_MSG'),
-              success: function (form, o) {
-                Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_SUCCESSFULLY_UPLOADED'), function () {
-                    parent.parent.window.location.href = newLocation()
-                });
-              },
-              failure: function (form, o) {
-                var dataResponse = eval("(" + o.response.responseText + ")"); //json
-                console.log('error', dataResponse);
-
-                Ext.MessageBox.alert(_('ID_WARNING'), (dataResponse.errors)? dataResponse.errors : _('ID_WARNING_ERROR_UPDATING'));
-              }
+                url: "../enterprise/addonsStoreAction",
+                params: {
+                    action: "importLicense"
+                },
+                method: 'POST',
+                waitTitle: _('ID_PLEASE_WAIT'),
+                waitMsg: _('ID_UPDATING_LICENSE_MSG'),
+                success: function (form, o) {
+                    Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_SUCCESSFULLY_UPLOADED') + ' ' + _('ID_ENTERPRISE_INSTALLED'), function () {
+                        parent.parent.window.location.href = newLocation();
+                    });
+                },
+                failure: function (form, action) {
+                    if (action.failureType == 'server') {
+                        parent.parent.window.location.href = newLocation();
+                        return;
+                    }
+                    var dataResponse = eval("(" + action.response.responseText.trim() + ")"); //json
+                    Ext.MessageBox.alert(_('ID_WARNING'), (dataResponse.errors)? dataResponse.errors : _('ID_WARNING_ERROR_UPDATING'));
+                }
             });
           }
         }
@@ -852,186 +878,127 @@ Ext.onReady(function() {
     }]
   });
 
-  var pnlUpgrade = new Ext.FormPanel({
-      frame: true,
-      title: _('ID_UPGRADE_SYSTEM'),
+    var pnlSetup = new Ext.FormPanel({
+        frame: true,
+        height: 160,
+        disabled: !licensed,
 
-      bodyStyle: "padding: 5px 5px 5px 5px;",
-      disabled: !licensed,
+        items: [
+            {
+                layout: "column",
+                items: [
+                    {
+                        columnWidth: 0.80,
+                        xtype: "container",
+                        items: [
+                            {
+                                xtype: "checkbox",
+                                id: "chkEeInternetConnection",
+                                name: "chkEeInternetConnection",
+                                checked: (INTERNET_CONNECTION == 1)? true : false,
+                                boxLabel: _('ID_CHECK_UPDATES')
+                            }
+                        ]
+                    },
+                    {
+                        columnWidth: 0.20,
+                        xtype: "button",
+                        id: "btnEeSetup",
+                        text: _('ID_SAVE'),
+                        handler: function () {
+                            enterpriseProcessAjax("SETUP");
+                        }
+                    }
+                ]
+            }
+        ]
+    });
+  
+    var pnlSupport = new Ext.FormPanel({
+        frame: true,
+        height: 160,
+        disabled: !licensed,
 
-      items: [
-          {
-              layout: "column",
-              items: [
-                      {
-                          columnWidth: 0.20,
-                          xtype: "label",
-                          text: _('ID_CURRENT_VERSION') + ":"
-                      },
-                      {
-                          columnWidth: 0.60,
-                          xtype: "label",
-                          text: PROCESSMAKER_VERSION
-                      },
-                      {
-                          columnWidth: 0.20,
-                          xtype: "label",
-                          text: ""
-                      }
-              ]
-          },
-          {
-              layout: "column",
-              style: "margin-top: 10px;",
-              items: [
-                      {
-                          columnWidth: 0.20,
-                          xtype: "label",
-                          text: _('ID_LATEST_VERSION') + ":"
-                      },
-                      {
-                          columnWidth: 0.60,
-                          xtype: "container",
-                          items: [
-                              {
-                                  xtype: "combo",
-                                  id: "cboPmVersion",
-                                  editable: false,
-                                  store: storePM,
-                                  triggerAction: "all",
-                                  autoSelect: true,
-                                  mode: "local",
-                                  valueField:   "OBJ_VERSION",
-                                  displayField: "OBJ_VERSION_NAME",
-                                  hidden:true,
-                                  emptyText: _('ID_NO_NEW_VERSIONS')
-                              }
-                          ]
-                      },
-                      {
-                          columnWidth: 0.20,
-                          xtype: "button",
-                          id: "btnPmUpgrade",
-                          text: _('ID_UPGRADE_LABEL'),
-                          disabled: true,
-                          handler: function () {
-                              if (INTERNET_CONNECTION == 1) {
-                                  processMakerUpgrade();
-                              } else {
-                                  Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_NO_INTERNET_CONECTION'));
-                              }
-                          }
-                      }
-              ]
-          }
-      ]
-  });
-
-  var pnlSetup = new Ext.FormPanel({
-      frame: true,
-      title: _('ID_SETUP_WEBSERVICES'),
-      height: 188,
-      bodyStyle: "padding: 5px 5px 5px 5px;",
-      disabled: !licensed,
-
-      items: [
-          {
-              layout: "column",
-              items: [
-                  {
-                      columnWidth: 0.80,
-                      xtype: "container",
-                      items: [
-                          {
-                              xtype: "checkbox",
-                              id: "chkEeInternetConnection",
-                              name: "chkEeInternetConnection",
-                              checked: (INTERNET_CONNECTION == 1)? true : false,
-                              boxLabel: _('ID_CHECK_UPDATES')
-                          }
-                      ]
-                  },
-                  {
-                      columnWidth: 0.20,
-                      xtype: "button",
-                      id: "btnEeSetup",
-                      text: _('ID_SAVE'),
-                      handler: function () {
-                          enterpriseProcessAjax("SETUP");
-                      }
-                  }
-              ]
-          }
-      ]
-  });
-
-  var pnlSystem = new Ext.Container({
-      autoEl: "div",
-      //width:  550,
-      anchor: "right 50%",
-      //items: [pnlUpgrade, pnlSetup]
-      items: [ pnlSetup]
-  });
+        items: [
+            {
+                layout: "column",
+                items: [
+                    {
+                        columnWidth: 0.80,
+                        xtype: "container",
+                        items: [
+                            {
+                                xtype:'label',
+                                text: _('ID_GENERATE_INFO_SUPPORT'),
+                                name: 'lblGenerateInfoSupport',
+                                labelStyle: 'font-weight:bold;',
+                            }
+                        ]
+                    },
+                    {
+                        columnWidth: 0.20,
+                        xtype: "button",
+                        id: "btnGenerate",
+                        text: _('ID_GENERATE'),
+                        handler: function () {
+                            enterpriseFileSupport();
+                        }
+                    }
+                ]
+            }
+        ]
+    });
 
   var licensePanel = new Ext.FormPanel( {
     frame: true,
-    title: _('ID_YOUR_LICENSE'),
-    labelWidth: 150,
     labelAlign: "right",
-    //width : '50%',
-    anchor: "right 50%",
-    bodyStyle: "padding: 5px 5px 5px 5px;",
     defaultType: "displayfield",
-    autoHeight: true,
-
     items: [
-    {
-      id: "license_name",
-      fieldLabel: _('ID_CURRENT_LICENSE'),
-      value: license_name
-    },
-    {
-      id: "license_server",
-      fieldLabel: _('ID_LICENSE_SERVER'),
-      value: license_server
-    },
-    {
-      id: "license_message",
-      fieldLabel:_('ID_STATUS'),
-      hidden: licensed,
-      hideLabel: licensed,
-      value: "<font color='red'>"+license_message+"</font>&nbsp;("+license_start_date+"/"+license_end_date+")<br />"+license_user
-    },
-
-    {
-      id: "license_user",
-      fieldLabel: _('ID_ISSUED_TO'),
-      value: license_user,
-      hidden: !licensed,
-      hideLabel: !licensed
-      },
-
-      {
-      id: "license_expires",
-      fieldLabel: _('ID_EXPIRES'),
-      value: license_expires+'/'+license_span+" ("+license_start_date+" / "+license_end_date+")",
-      hidden: !licensed,
-      hideLabel: !licensed
-      }
+        {
+            id: "license_name",
+            fieldLabel: _('ID_CURRENT_LICENSE'),
+            value: license_name
+        },
+        {
+            id: "license_server",
+            fieldLabel: _('ID_LICENSE_SERVER'),
+            value: license_server
+        },
+        {
+            id: "license_message",
+            fieldLabel:_('ID_STATUS'),
+            hidden: licensed,
+            hideLabel: licensed,
+            value: "<font color='red'>"+license_message+"</font>&nbsp;("+license_start_date+"/"+license_end_date+")<br />"+license_user
+        },
+        {
+            id: "license_user",
+            fieldLabel: _('ID_ISSUED_TO'),
+            value: license_user,
+            hidden: !licensed,
+            hideLabel: !licensed
+        },
+        {
+            id: "license_expires",
+            fieldLabel: _('ID_EXPIRES'),
+            value: license_expires+'/'+license_span+" ("+license_start_date+" / "+license_end_date+")",
+            hidden: !licensed,
+            hideLabel: !licensed
+        }
     ],
     buttons : [
-    {
-      text: _('ID_IMPORT_LICENSE'),
-      disable: false,
-      handler: function() {
-        addLicenseWindow.show();
-      }
-    },
-    {
-      text : _('ID_RENEW'),
-      hidden: true,
-      disabled : true
-    }
+        {
+          text: _('ID_IMPORT_LICENSE'),
+          disable: false,
+          handler: function() {
+            addLicenseWindow.show();
+          }
+        },
+        {
+          text : _('ID_RENEW'),
+          hidden: true,
+          disabled : true
+        }
     ]
   });
 
@@ -1178,296 +1145,474 @@ Ext.onReady(function() {
     items: [btnEnable, btnDisable, btnAdmin]
   });
 
-  var addonsGrid = new Ext.grid.GridPanel({
-    store: addonsStore,
-    colspan: 2,
-    flex: 1,
-    padding: 5,
-    disabled: !licensed,
-    columns: [
-    expander,
-    {
-      id       : 'icon-column',
-      header   : '',
-      width    : 30,
-      //sortable : true,
-      menuDisabled: true,
-      hideable : false,
-      dataIndex: 'status',
-      renderer : function (val, metadata, record, rowIndex, colIndex, store) {
-        return "<img src=\"/images/enterprise/" + val + ".png\" />";
-      }
-    },
-    {
-      id       :'nick-column',
-      header   : _('ID_NAME'),
-      //width    : 160,
-      //sortable : true,
-      menuDisabled: true,
-      dataIndex: 'nick',
-      renderer: function (val, metadata, record, rowIndex, colIndex, store) {
-          if (record.get('release_type') == 'beta') {
-            return val + " <span style='color:red'> (Beta)</span>";
-          } else if (record.get('release_type') == 'localRegistry') {
-            return val + " <span style='color:gray'> (Local)</span>";
-          } else {
-            return val;
-          }
-      }
-    },
-    {
-      id       : 'publisher-column',
-      header   : _('ID_PUBLISHER'),
-      //sortable : true,
-      menuDisabled: true,
-      dataIndex: 'publisher'
-    },
-    {
-      id       : 'version-column',
-      header   : _('ID_VERSION'),
-      //width    : 160,
-      //sortable : true,
-      menuDisabled: true,
-      dataIndex: 'version'
-    },
-    {
-      id       : 'latest-version-column',
-      header   : _('ID_LATEST_VERSION'),
-      //width    : 160,
-      //sortable : true,
-      menuDisabled: true,
-      dataIndex: 'latest_version'
-    },
-    {
-      id       : 'enabled-column',
-      header   : _('ID_ENABLED'),
-      width    : 60,
-      //sortable : true,
-      menuDisabled: true,
-      dataIndex: 'enabled',
-      renderer: function (val) {
-        if (val === true) {
-          return "<img src=\"/images/enterprise/tick-white.png\" />";
-        } else if (val === false) {
-          return "<img src=\"/images/enterprise/cross-white.png\" />";
-        }
-        return '';
-      }
-    },
-    {
-      id       : "status",
-      header   : "",
-      width    : 120,
-      //sortable : true,
-      menuDisabled: true,
-      hideable : false,
-      dataIndex: "status",
-      renderer: function (val) {
-        var str = "";
-        var text = "";
-
-        switch (val) {
-            case "available": text = _('ID_BUY_NOW'); break;
-            case "installed": text = _('ID_INSTALLED'); break;
-            case "ready":     text = _('ID_INSTALL_NOW'); break;
-            case "upgrade":   text = _('ID_UPGRADE_NOW'); break;
-            case "download":  text = _('ID_CANCEL'); break;
-            case "install":   text = _('ID_INSTALLING'); break;
-            case "cancel":    text = _('ID_CANCELLING'); break;
-            case "disabled":  text = _('ID_DISABLED'); break;
-            case "download-start": text = "<img src=\"/images/enterprise/loader.gif\" />"; break;
-            default: text = val; break;
-        }
-
-        switch (val) {
-          case "available":
-          case "ready":
-          case "upgrade":
-          case "download":
-          case "install":
-          case "cancel":
-          case "download-start":
-            str = "<div class=\"" + val + " roundedCorners\">" + text + "</div>";
-            break;
-
-          case "installed":
-          case "disabled":
-            str = "<div style=\"margin-right: 0.85em; font-weight: bold; text-align: center;\">" + text + "</div>";
-            break;
-
-          default:
-            str = "<div class=\"" + val + " roundedCorners\">" + text + "</div>";
-            break;
-        }
-
-        return (str);
-      }
-    }
-    ],
-    tbar:[/*{
-        text:'Install',
-        tooltip:'Install this addon',
-        //iconCls:'add',
-        handler: function(b, e) {
-          record = addonsGrid.getSelectionModel().getSelected();
-          console.log(record.get('name') + ' ' + record.get('store'));
-          installAddon(record.get('name'), record.get('store'));
-        }
-    },
-    btnUninstall,
-    '-',*/
-    btnEnable,
-    btnDisable,
-    btnAdmin,
-    '-',
-    {
-      id: "import-btn",
-      text: _('ID_INSTALL_FROM_FILE'),
-      tooltip: _('ID_INSTALL_FROM_FILE_PLUGIN_TIP'),
-      iconCls:"button_menu_ext ss_sprite ss_application_add",
-
-      //ref: "../removeButton",
-      disabled: false,
-      handler: function () {
-        var sw = 1;
-        var msg = "";
-        if (sw == 1 && PATH_PLUGINS_WRITABLE == 0) {
-          sw = 0;
-          msg = PATH_PLUGINS_WRITABLE_MESSAGE;
-        }
-        if (sw == 1) {
-          addPluginWindow.show();
-        } else {
-          Ext.MessageBox.alert(_('ID_WARNING'), msg);
-        }
-      }
-    },
-    '-',
-    {
-      id: 'refresh-btn',
-      text:_('ID_REFRESH_LABEL'),
-      iconCls:'button_menu_ext ss_sprite ss_database_refresh',
-      tooltip: _('ID_REFRESH_LABEL_PLUGIN_TIP'),
-      disabled: (INTERNET_CONNECTION == 1)? false : true,
-      handler: function (b, e) {
-        reloadTask.cancel();
-        addonsStore.load({
-            params: {
-                "force": true
-            }
-        });
-      }
-    },
-    '->',
-    {
-      xtype:"displayfield",
-      id:'loading-indicator'
-    }
-    ],
-    plugins: expander,
-    collapsible: false,
-    animCollapse: false,
-    stripeRows: true,
-    autoExpandColumn: 'nick-column',
-    title: _('ID_ENTERPRISE_PLUGINS'),
-    sm: new Ext.grid.RowSelectionModel({
-      singleSelect:true,
-      listeners: {
-        selectionchange: function (sel) {
-          if (sel.getCount() == 0 || sel.getSelected().get("name") == "enterprise") {
-            //btnUninstall.setDisabled(true);
-            btnEnable.setDisabled(true);
-            btnDisable.setDisabled(true);
-            btnAdmin.setDisabled(true);
-          } else {
-            record = sel.getSelected();
-
-            //btnUninstall.setDisabled(!(record.get("status") == "installed" || record.get("status") == "upgrade" || record.get("status") == "disabled"));
-            btnEnable.setDisabled(!(record.get("enabled") === false));
-            btnDisable.setDisabled(!(record.get("enabled") === true));
-            btnAdmin.setDisabled(!(record.get("enabled") === true));
-          }
-        }
-      }
-    }),
-    //config options for stateful behavior
-    stateful: true,
-    stateId: "grid",
-    listeners: {
-      "cellclick": function (grid, rowIndex, columnIndex, e) {
-        var record = grid.getStore().getAt(rowIndex);
-        var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
-        //var data = record.get(fieldName);
-
-        if (fieldName != "status") {
-          return;
-        }
-
-        switch (record.get("status")) {
-          case "upgrade":
-          case "ready":
-              if (INTERNET_CONNECTION == 1) {
-                  installAddon(record.get("id"), record.get("store"));
-              } else {
-                  Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_NO_INTERNET_CONECTION'));
+    var addonsGrid = new Ext.grid.EditorGridPanel({
+        store: addonsStore,
+        defaultType: "displayfield",
+        padding: 5,
+        autoHeight : true,
+        disabled: !licensed,
+        columns: [
+            expander,
+            {
+              id       : 'icon-column',
+              header   : '',
+              width    : 30,
+              //sortable : true,
+              menuDisabled: true,
+              hideable : false,
+              dataIndex: 'status',
+              renderer : function (val, metadata, record, rowIndex, colIndex, store) {
+                return "<img src=\"/images/enterprise/" + val + ".png\" />";
               }
-              break;
-          case "download":
-            Ext.Ajax.request({
-              url: "addonsStoreAction",
-              params: {
-                "action": "cancel",
-                "addon": record.get("id"),
-                "store": record.get("store")
+            },
+            {
+              id       :'nick-column',
+              header   : _('ID_NAME'),
+              width    : 160,
+              //sortable : true,
+              menuDisabled: true,
+              dataIndex: 'nick',
+              renderer: function (val, metadata, record, rowIndex, colIndex, store) {
+                  if (record.get('release_type') == 'beta') {
+                    return val + " <span style='color:red'> (Beta)</span>";
+                  } else if (record.get('release_type') == 'localRegistry') {
+                    return val + " <span style='color:gray'> (Local)</span>";
+                  } else {
+                    return val;
+                  }
+              }
+            },
+            {
+              id       : 'publisher-column',
+              header   : _('ID_PUBLISHER'),
+              //sortable : true,
+              menuDisabled: true,
+              dataIndex: 'publisher'
+            },
+            {
+              id       : 'version-column',
+              header   : _('ID_VERSION'),
+              //width    : 160,
+              //sortable : true,
+              menuDisabled: true,
+              dataIndex: 'version'
+            },
+            {
+              id       : 'latest-version-column',
+              header   : _('ID_LATEST_VERSION'),
+              //width    : 160,
+              //sortable : true,
+              menuDisabled: true,
+              dataIndex: 'latest_version'
+            },
+            {
+              id       : 'enabled-column',
+              header   : _('ID_ENABLED'),
+              width    : 60,
+              //sortable : true,
+              menuDisabled: true,
+              dataIndex: 'enabled',
+              renderer: function (val) {
+                if (val === true) {
+                  return "<img src=\"/images/enterprise/tick-white.png\" />";
+                } else if (val === false) {
+                  return "<img src=\"/images/enterprise/cross-white.png\" />";
                 }
-            });
-            break;
-          case "available":
-            addonAvailable(record.get("id"));
-            break;
+                return '';
+              }
+            },
+            {
+              id       : "status",
+              header   : "",
+              width    : 120,
+              //sortable : true,
+              menuDisabled: true,
+              hideable : false,
+              dataIndex: "status",
+              renderer: function (val) {
+                var str = "";
+                var text = "";
+
+                switch (val) {
+                    case "available": text = _('ID_BUY_NOW'); break;
+                    case "installed": text = _('ID_INSTALLED'); break;
+                    case "ready":     text = _('ID_INSTALL_NOW'); break;
+                    case "upgrade":   text = _('ID_UPGRADE_NOW'); break;
+                    case "download":  text = _('ID_CANCEL'); break;
+                    case "install":   text = _('ID_INSTALLING'); break;
+                    case "cancel":    text = _('ID_CANCELLING'); break;
+                    case "disabled":  text = _('ID_DISABLED'); break;
+                    case "download-start": text = "<img src=\"/images/enterprise/loader.gif\" />"; break;
+                    default: text = val; break;
+                }
+
+                switch (val) {
+                  case "available":
+                  case "ready":
+                  case "upgrade":
+                  case "download":
+                  case "install":
+                  case "cancel":
+                  case "download-start":
+                    str = "<div class=\"" + val + " roundedCorners\">" + text + "</div>";
+                    break;
+
+                  case "installed":
+                  case "disabled":
+                    str = "<div style=\"margin-right: 0.85em; font-weight: bold; text-align: center;\">" + text + "</div>";
+                    break;
+
+                  default:
+                    str = "<div class=\"" + val + " roundedCorners\">" + text + "</div>";
+                    break;
+                }
+
+                return (str);
+              }
+            }
+        ],
+        tbar:[
+            btnEnable,
+            btnDisable,
+            btnAdmin,
+            '-',
+            {
+                id: "import-btn",
+                text: _('ID_INSTALL_FROM_FILE'),
+                tooltip: _('ID_INSTALL_FROM_FILE_PLUGIN_TIP'),
+                iconCls:"button_menu_ext ss_sprite ss_application_add",
+
+                //ref: "../removeButton",
+                disabled: false,
+                handler: function () {
+                  var sw = 1;
+                  var msg = "";
+                  if (sw == 1 && PATH_PLUGINS_WRITABLE == 0) {
+                    sw = 0;
+                    msg = PATH_PLUGINS_WRITABLE_MESSAGE;
+                  }
+                  if (sw == 1) {
+                    addPluginWindow.show();
+                  } else {
+                    Ext.MessageBox.alert(_('ID_WARNING'), msg);
+                  }
+                }
+            },
+            '-',
+            {
+                id: 'refresh-btn',
+                text:_('ID_REFRESH_LABEL'),
+                iconCls:'button_menu_ext ss_sprite ss_database_refresh',
+                tooltip: _('ID_REFRESH_LABEL_PLUGIN_TIP'),
+                disabled: (INTERNET_CONNECTION == 1)? false : true,
+                handler: function (b, e) {
+                  reloadTask.cancel();
+                  addonsStore.load({
+                      params: {
+                          "force": true
+                      }
+                  });
+                }
+            },
+            '->',
+            {
+                xtype:"displayfield",
+                id:'loading-indicator'
+            }
+        ],
+        plugins: expander,
+        collapsible: false,
+        animCollapse: false,
+        stripeRows: true,
+        autoExpandColumn: 'nick-column',
+        //title: _('ID_ENTERPRISE_PLUGINS'),
+        sm: new Ext.grid.RowSelectionModel({
+            singleSelect:true,
+            listeners: {
+                selectionchange: function (sel) {
+                    if (sel.getCount() == 0 || sel.getSelected().get("name") == "enterprise") {
+                        //btnUninstall.setDisabled(true);
+                        btnEnable.setDisabled(true);
+                        btnDisable.setDisabled(true);
+                        btnAdmin.setDisabled(true);
+                    } else {
+                        record = sel.getSelected();
+                        //btnUninstall.setDisabled(!(record.get("status") == "installed" || record.get("status") == "upgrade" || record.get("status") == "disabled"));
+                        btnEnable.setDisabled(!(record.get("enabled") === false));
+                        btnDisable.setDisabled(!(record.get("enabled") === true));
+                        btnAdmin.setDisabled(!(record.get("enabled") === true));
+                    }
+                }
+            }
+        }),
+        //config options for stateful behavior
+        stateful: true,
+        stateId: "grid",
+        listeners: {
+            "cellclick": function (grid, rowIndex, columnIndex, e) {
+                var record = grid.getStore().getAt(rowIndex);
+                var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
+                //var data = record.get(fieldName);
+
+                if (fieldName != "status") {
+                    return;
+                }
+
+                switch (record.get("status")) {
+                    case "upgrade":
+                    case "ready":
+                        if (INTERNET_CONNECTION == 1) {
+                            installAddon(record.get("id"), record.get("store"));
+                        } else {
+                            Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_NO_INTERNET_CONECTION'));
+                        }
+                        break;
+                    case "download":
+                        Ext.Ajax.request({
+                            url: "addonsStoreAction",
+                            params: {
+                                "action": "cancel",
+                                "addon": record.get("id"),
+                                "store": record.get("store")
+                            }
+                        });
+                        break;
+                    case "available":
+                        addonAvailable(record.get("id"));
+                        break;
+                }
+            }
         }
-      }
-    }
-  });
+    });
 
-  var topBox = new Ext.Panel({
-    id:'main-panel-hbox',
-    baseCls:'x-plain',
-    layout:'hbox',
-    flex: 0,
-    //defaultMargins: "5",
-    //autoHeight: true,
-    layoutConfig: {
-        align : 'stretchmax',
-        pack  : 'start'
-    },
-    defaults: {
-        frame:true,
-        flex: 1,
-        height: 210
-    },
-    items:[licensePanel, pnlSystem]
-  });
+    // create the Grid Features
+    var cmodel = new Ext.grid.ColumnModel({
+        viewConfig: {
+            forceFit:true,
+            cls:"x-grid-empty",
+            emptyText: _('ID_NO_RECORDS_FOUND')
+        },
+        defaults: {
+            width: 50
+        },
+        columns: [
+            {
+                id       : 'icon-column-feature',
+                header   : '',
+                width    : 30,
+                hideable : false,
+                dataIndex: 'status',
+                renderer : function (val, metadata, record, rowIndex, colIndex, store) {
+                  return "<img src=\"/images/enterprise/" + val + ".png\" />";
+                }
+            },
+            {
+                id       :'nick-column-feature',
+                header   : _('ID_NAME'),
+                width    : 150,
+                sortable : true,
+                dataIndex: 'nick',
+                renderer: function (val, metadata, record, rowIndex, colIndex, store) {
+                    if (record.get('release_type') == 'beta') {
+                      return val + " <span style='color:red'> (Beta)</span>";
+                    } else {
+                      return val;
+                    }
+                }
+            },
+            {
+                id       :'description-column-feature',
+                header   : _('ID_DESCRIPTION'),
+                width    : 200,
+                dataIndex: 'description'
+            },
+            {
+                id       : 'enabled-column-feature',
+                header   : _('ID_ENABLED'),
+                width    : 60,
+                dataIndex: 'enabled',
+                renderer: function (val) {
+                  if (val === true) {
+                    return "<img src=\"/images/enterprise/tick-white.png\" />";
+                  } else if (val === false) {
+                    return "<img src=\"/images/enterprise/cross-white.png\" />";
+                  }
+                  return '';
+                }
+            },
+            {
+                id       : "status-feature",
+                header   : _('ID_STATUS'),
+                width    : 60,
+                sortable : false,
+                hideable : false,
+                dataIndex: "status",
+                renderer: function (val) {
+                    var str = "";
+                    var text = "";
 
-  var fullBox = new Ext.Panel({
-    id:'main-panel-vbox',
-    baseCls:'x-plain',
-    anchor: "right 100%",
-    layout:'vbox',
-    //padding: 10,
-    //defaultMargins: "5",
-    layoutConfig: {
-        align : 'stretch',
-        pack  : 'start'
-    },
+                    switch (val) {
+                        case "available": text = _('ID_BUY_NOW'); break;
+                        case "installed": text = _('ID_INSTALLED'); break;
+                        case "ready":     text = _('ID_INSTALL_NOW'); break;
+                        case "upgrade":   text = _('ID_UPGRADE_NOW'); break;
+                        case "download":  text = _('ID_CANCEL'); break;
+                        case "install":   text = _('ID_INSTALLING'); break;
+                        case "cancel":    text = _('ID_CANCELLING'); break;
+                        case "disabled":  text = _('ID_DISABLED'); break;
+                        case "download-start": text = "<img src=\"/images/enterprise/loader.gif\" />"; break;
+                        default: text = val; break;
+                    }
 
-    defaults: {
-        frame:true
-    },
-    items:[topBox, addonsGrid]
-  });
+                    switch (val) {
+                      case "available":
+                      case "ready":
+                      case "upgrade":
+                      case "download":
+                      case "install":
+                      case "cancel":
+                      case "download-start":
+                        str = "<div class=\"" + val + " roundedCorners\">" + text + "</div>";
+                        break;
 
-  ///////
+                      case "installed":
+                      case "disabled":
+                        str = "<div style=\"margin-right: 0.85em; font-weight: bold; text-align: center;\">" + text + "</div>";
+                        break;
+
+                      default:
+                        str = "<div class=\"" + val + " roundedCorners\">" + text + "</div>";
+                        break;
+                    }
+
+                    return (str);
+                }
+            }
+        ]
+    });
+
+    var addonsFeatureGrid = new Ext.grid.EditorGridPanel({
+        region: 'center',
+        layout: 'fit',
+        id: 'addonsFeatureGrid',
+        autoHeight : true,
+        autoWidth : true,
+        stateful : true,
+        stateId : 'addonsFeatureGrid',
+        enableColumnResize: true,
+        enableHdMenu: true,
+        frame:false,
+        columnLines: false,
+        viewConfig: {
+            forceFit:true
+        },
+        disabled: !licensed,
+        store: addonsFeaturesStore,
+        cm: cmodel,
+        tbar:
+        [
+            {
+              id: 'refresh-btn',
+              text:_('ID_REFRESH_LABEL'),
+              iconCls:'button_menu_ext ss_sprite ss_database_refresh',
+              tooltip: _('ID_REFRESH_LABEL_PLUGIN_TIP'),
+              disabled: (INTERNET_CONNECTION == 1)? false : true,
+              handler: function (b, e) {
+                reloadTask.cancel();
+                addonsFeaturesStore.load({
+                    params: {
+                        "force": true
+                    }
+                });
+              }
+            },
+            '->',
+            {
+              xtype:"displayfield",
+              id:'loading-features-indicator'
+            }
+        ],
+        listeners: {
+            render: function(){
+                this.loadMask = new Ext.LoadMask(this.body, {msg:_('ID_LOADING_GRID')});
+            },
+            "cellclick": function (grid, rowIndex, columnIndex, e) {
+                var record = grid.getStore().getAt(rowIndex);
+                var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
+        
+                if (fieldName != "status") {
+                  return;
+                }
+
+                switch (record.get("status")) {
+                    case "upgrade":
+                    case "ready":
+                        if (INTERNET_CONNECTION == 1) {
+                            installAddon(record.get("id"), record.get("store"));
+                        } else {
+                            Ext.MessageBox.alert(_('ID_INFORMATION'), _('ID_NO_INTERNET_CONECTION'));
+                        }
+                        break;
+                    case "download":
+                        Ext.Ajax.request({
+                          url: "addonsStoreAction",
+                          params: {
+                            "action": "cancel",
+                            "addon": record.get("id"),
+                            "store": record.get("store")
+                            }
+                        });
+                        break;
+                    case "available":
+                        addonAvailable(record.get("id"));
+                        break;
+                }
+            }
+        }
+    });
+
+    var tabEnterprise = new Ext.TabPanel({
+        activeTab: 0,
+        height: 370,
+        defaults:{
+            autoScroll: true,
+            layout:'form',
+            frame:true,
+        },
+        items:[{
+                title:  _('ID_ENTERPRISE_PLUGINS'),
+                items : addonsGrid
+            },{
+                title:  _('ID_ENTERPRISE_FEATURES'),
+                items : addonsFeatureGrid
+            }
+        ]
+    });
+    var tabSetup= new Ext.TabPanel({
+        activeTab: 0,
+        height: 190,
+        defaults:{autoScroll: true},
+        items:[{
+                title:  _('ID_YOUR_LICENSE'),
+                items : licensePanel
+            },{
+                title:  _('ID_SETUP_WEBSERVICES'),
+                items : pnlSetup
+            },{
+                title:  _('ID_SUPPORT'),
+                items : pnlSupport
+            }
+        ]
+    });
+
+
+    var fullBox = new Ext.Panel({
+        id:'main-panel-vbox',
+        region:'west',
+        margins:'5 0 5 5',
+        items:[ tabSetup, tabEnterprise]
+    });
+
   addonsGrid.on("rowcontextmenu",
     function (grid, rowIndex, evt) {
       var sm = grid.getSelectionModel();
@@ -1477,6 +1622,16 @@ Ext.onReady(function() {
   );
 
   addonsGrid.addListener("rowcontextmenu", onMessageMnuContext, this);
+  
+    addonsFeatureGrid.on("rowcontextmenu",
+        function (grid, rowIndex, evt) {
+          var sm = grid.getSelectionModel();
+          sm.selectRow(rowIndex, sm.isSelected(rowIndex));
+        },
+        this
+    );
+    
+    addonsFeatureGrid.addListener("rowcontextmenu", onMessageMnuContext, this);
 
   ///////
   var viewport = new Ext.Viewport({
@@ -1490,6 +1645,7 @@ Ext.onReady(function() {
 
   if (licensed) {
     addonsStore.load();
+    addonsFeaturesStore.load();
   }
 });
 

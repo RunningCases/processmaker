@@ -70,7 +70,6 @@ cron.application = {
                 var formItems = Ext.getCmp("frmLogView").form.items;
                 formItems.items[0].setValue(strData);
 
-                winLog.setTitle("Log - " + _("ID_WORKSPACE") + "&nbsp;" + record.get("WORKSPACE"));
                 winLog.show();
             }
         }
@@ -260,6 +259,14 @@ cron.application = {
             items: ["-", _("ID_PAGE_SIZE") + "&nbsp;", cboPageSize]
         });
 
+        var renderStatus = function(val) {
+            if (val == 'action') {
+                return _('ID_COMPLETED');
+            } else {
+                return _('ID_FAILED');
+            }
+        };
+
         var cmodel = new Ext.grid.ColumnModel({
             defaults: {
                 width: 50,
@@ -270,7 +277,7 @@ cron.application = {
                 {id: "ID", dataIndex: "DATE", hidden: true, hideable: false},
                 {header: _("ID_DATE_LABEL"), dataIndex: "DATE", width: 10, align: "center"},
                 {header: _("ID_ACTION"), dataIndex: "ACTION", width: 10},
-                {header: _("ID_STATUS"), dataIndex: "STATUS", width: 7, align: "center"},
+                {header: _("ID_STATUS"), dataIndex: "STATUS", width: 7, align: "center", renderer: renderStatus},
                 {header: _("ID_DESCRIPTION"), dataIndex: "DESCRIPTION"}
             ]
         });

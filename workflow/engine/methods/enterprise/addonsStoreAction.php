@@ -125,14 +125,6 @@ try {
                     }
 
                     file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
-
-                    ///////
-                    $message  = "A license has been correctly installed. Please login again to apply the changes";
-                    G::SendMessageText($message, "INFO");
-                    $_SESSION["___PMEE_INSTALLED_LIC___"] = $message;
-
-                    //G::header("location: ../enterprise/pluginsList"); //ok
-                    //exit(0);
                 }
             }
             break;
@@ -177,6 +169,13 @@ try {
             }
 
             $result["success"] = $addon->setEnabled(($action == "enable"));
+
+            if ($action == "enable") {
+                G::auditLog("EnablePlugin", "Plugin Name: ".$_REQUEST['addon']);
+            } else {
+                G::auditLog("DisablePlugin", "Plugin Name: ".$_REQUEST['addon']);
+            }
+
             break;
         case "install":
             $status = 1;
@@ -340,7 +339,9 @@ try {
             exit(0);
             break;
         case "addonslist":
-            $result = AddonsStore::addonList();
+            $type = (isset($_REQUEST['type'])) ?  $_REQUEST['type']: 'plugin';
+            $result = AddonsStore::addonList($type);
+            break;
             break;
         default:
             throw (new Exception("Action \"$action\" is not valid"));

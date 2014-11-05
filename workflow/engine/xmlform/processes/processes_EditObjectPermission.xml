@@ -9,11 +9,11 @@
 
 <OP_CASE_STATUS type="dropdown" mode="edit">
   <en>Status Case
-  <option name="ALL">ALL</option>
-  <option name="DRAFT">DRAFT</option>
-  <option name="TO_DO">TO_DO</option>
-  <option name="PAUSED">PAUSED</option>
-  <option name="COMPLETED">COMPLETED</option>
+  <option name="ALL">All</option>
+  <option name="DRAFT">Draft</option>
+  <option name="TO_DO">To Do</option>
+  <option name="PAUSED">Paused</option>
+  <option name="COMPLETED">Completed</option>
   </en>
 </OP_CASE_STATUS>
 

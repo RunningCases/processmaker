@@ -334,6 +334,9 @@ Bootstrap::registerClass('Xml_Node',            PATH_GULLIVER . "class.xmlDocume
 
 Bootstrap::registerClass('wsResponse',          PATH_HOME . "engine/classes/class.wsResponse.php");
 
+Bootstrap::registerClass('PMLicensedFeatures',  PATH_HOME . "engine/classes/class.LicensedFeatures.php");
+Bootstrap::registerClass('AddonsManagerPeer',   PATH_HOME . "engine/classes/model/AddonsManagerPeer.php");
+
 G::LoadClass("dates");
 
 if (!defined('SYS_SYS')) {
@@ -950,7 +953,7 @@ function saveLog($sSource, $sType, $sDescription)
         }
 
         G::verifyPath(PATH_DATA . "log" . PATH_SEP, true);
-        G::log("| $sObject | " . $sSource . " | $sType | " . $sDescription . "\n", PATH_DATA);
+        G::log("| $sObject | " . $sSource . " | $sType | " . $sDescription, PATH_DATA);
     } catch (Exception $e) {
         //CONTINUE
     }
