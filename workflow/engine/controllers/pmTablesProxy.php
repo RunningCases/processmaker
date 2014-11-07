@@ -393,11 +393,11 @@ class pmTablesProxy extends HttpProxyController
         $confCasesListSent = $conf->getConfiguration( 'casesList', 'sent');
         $confCasesListTodo = $conf->getConfiguration( 'casesList', 'todo');
         $confCasesListUnassigned = $conf->getConfiguration( 'casesList', 'unassigned');
-        $tableCasesList['draft'] = ($confCasesListDraft != null) ? $confCasesListDraft['PMTable'] : '';
-        $tableCasesList['paused'] = ($confCasesListPaused != null) ? $confCasesListPaused['PMTable'] : '';
-        $tableCasesList['sent'] = ($confCasesListSent != null) ? $confCasesListSent['PMTable'] : '';
-        $tableCasesList['todo'] = ($confCasesListTodo != null) ? $confCasesListTodo['PMTable'] : '';
-        $tableCasesList['unassigned'] = ($confCasesListUnassigned != null) ? $confCasesListUnassigned['PMTable'] : '';
+        $tableCasesList['draft'] = ($confCasesListDraft != null) ? (isset($confCasesListDraft['PMTable']) ? $confCasesListDraft['PMTable'] : '') : '';
+        $tableCasesList['paused'] = ($confCasesListPaused != null) ? (isset($confCasesListPaused['PMTable']) ? $confCasesListPaused['PMTable'] : '') : '';
+        $tableCasesList['sent'] = ($confCasesListSent != null) ? (isset($confCasesListSent['PMTable']) ? $confCasesListSent['PMTable'] : '') : '';
+        $tableCasesList['todo'] = ($confCasesListTodo != null) ? (isset($confCasesListTodo['PMTable']) ? $confCasesListTodo['PMTable'] : '') : '';
+        $tableCasesList['unassigned'] = ($confCasesListUnassigned != null) ? (isset($confCasesListUnassigned['PMTable']) ? $confCasesListUnassigned['PMTable'] : '') : '';
 
         foreach ($rows as $row) {
             try {
