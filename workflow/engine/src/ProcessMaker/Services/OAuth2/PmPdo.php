@@ -149,7 +149,7 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
     {
         $access_token = new \OauthAccessTokens();
         $access_token->load($token);
-        $stmt = $this->db->prepare(sprintf('UPDATE %s SET EXPIRES=%s WHERE ACCESS_TOKEN=:token', $this->config['access_token_table'], "'".Date('Y-m-d H:i:s')."'"));
+        $stmt = $this->db->prepare(sprintf('UPDATE %s SET EXPIRES=%s WHERE ACCESS_TOKEN=:token', $this->config['access_token_table'], "'".Date('Y-m-d H:i:s',strtotime("-1 minute"))."'"));
         return $stmt->execute(compact('token'));
     }
 
