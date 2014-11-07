@@ -201,7 +201,8 @@ class AdditionalTables extends BaseAdditionalTables
                   'SHD_DATE'    => date('Y-m-d H:i:s')));
                  */
 
-                G::auditLog("CreatePmtable", "PM Table Name: ".$aData['ADD_TAB_NAME']);
+                $addTabDescription = ($aData["ADD_TAB_DESCRIPTION"] != "")? ", Description: " . $aData["ADD_TAB_DESCRIPTION"] : "";
+                G::auditLog("CreatePmtable", "PM Table Name: " . $aData['ADD_TAB_NAME'] . $addTabDescription);
                 return $aData['ADD_TAB_UID'];
             } else {
                 $sMessage = '';
@@ -228,7 +229,8 @@ class AdditionalTables extends BaseAdditionalTables
                     $oConnection->begin();
                     $iResult = $oAdditionalTables->save();
                     $oConnection->commit();
-                    G::auditLog("UpdatePmtable", "PM Table Name: ".$aData['ADD_TAB_NAME']." PM Table ID: (".$aData['ADD_TAB_UID'].") ");
+                    $addTabDescription = ($aData["ADD_TAB_DESCRIPTION"] != "")? ", Description: " . $aData["ADD_TAB_DESCRIPTION"] : "";
+                    G::auditLog("UpdatePmtable", "PM Table Name: ".$aData['ADD_TAB_NAME'] . $addTabDescription . ", PM Table ID: (".$aData['ADD_TAB_UID'].") ");
                 } else {
                     $sMessage = '';
                     $aValidationFailures = $oAdditionalTables->getValidationFailures();
