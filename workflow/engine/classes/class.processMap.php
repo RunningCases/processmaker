@@ -1466,7 +1466,6 @@ class processMap
                     //if the $iForm is not one of the defaults then search under Plugins for an extended property. By JHL Jan 18, 2011
                     $oPluginRegistry = & PMPluginRegistry::getSingleton();
                     $activePluginsForTaskProperties = $oPluginRegistry->getTaskExtendedProperties();
-                    $oPM->taskOptions = array();
                     foreach ($activePluginsForTaskProperties as $key => $taskPropertiesInfo) {
                         $id = $taskPropertiesInfo->sNamespace . "--" . $taskPropertiesInfo->sName;
                         if ($id == $iForm) {
