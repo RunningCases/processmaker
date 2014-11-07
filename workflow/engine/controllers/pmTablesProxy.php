@@ -357,9 +357,9 @@ class pmTablesProxy extends HttpProxyController
 
             foreach ($columns as $i => $column) {
                 if ($i != $nFields) {
-                    $fieldsName = $fieldsName . $columns[$i]->field_name . ", ";
+                    $fieldsName = $fieldsName . $columns[$i]->field_name . " [" . implode(', ', get_object_vars($column)) . "], ";
                 } else {
-                    $fieldsName = $fieldsName . $columns[$i]->field_name . ".";
+                    $fieldsName = $fieldsName . $columns[$i]->field_name . " [" . implode(', ', get_object_vars($column)) . "].";
                 }
             }
 
