@@ -305,6 +305,7 @@ class pmTablesProxy extends HttpProxyController
             if ($data['REP_TAB_UID'] == '' || (isset( $httpData->forceUid ) && $httpData->forceUid)) {
                 //new report table
                 //create record
+
                 $addTabUid = $oAdditionalTables->create( $addTabData );
             } else {
                 //editing report table
@@ -349,6 +350,20 @@ class pmTablesProxy extends HttpProxyController
                     $result->message = $result->msg = $e->getMessage();
                 }
             }
+
+            //--- Message Audit Log
+            $nFields = count($columns) - 1;
+            $fieldsName = "";
+
+            foreach ($columns as $i => $column) {
+                if ($i != $nFields) {
+                    $fieldsName = $fieldsName . $columns[$i]->field_name . ", ";
+                } else {
+                    $fieldsName = $fieldsName . $columns[$i]->field_name . ".";
+                }
+            }
+
+            G::auditLog((isset($data["REP_TAB_UID"]) && $data["REP_TAB_UID"] == "")? "CreatePmtable" : "UpdatePmtable", "Fields: " . $fieldsName);
 
             $result->success = true;
             $result->message = $result->msg = $buildResult;
