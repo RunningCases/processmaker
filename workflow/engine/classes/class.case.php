@@ -985,6 +985,13 @@ class Cases
             if (isset($Fields['APP_DESCRIPTION'])) {
                 unset($Fields['APP_DESCRIPTION']);
             }
+            if (isset($Fields["APP_STATUS"]) && $Fields["APP_STATUS"] == "COMPLETED") {
+                $Fields['USR_UID'] = $Fields['CURRENT_USER_UID'];
+                $listCompleted = new ListCompleted();
+                $listCompleted->create($Fields);
+                $listMyInbox = new ListMyInbox();
+                $listMyInbox->refresh($Fields);
+            }
             $oApp->update($Fields);
 
             $DEL_INDEX = isset($Fields['DEL_INDEX']) ? $Fields['DEL_INDEX'] : '';
@@ -1176,6 +1183,8 @@ class Cases
             $oAppDel = AppDelegationPeer::retrieveByPk($sAppUid, $iDelIndex);
             $oAppDel->setDelInitDate("now");
             $oAppDel->save();
+            $inbox = new ListInbox();
+            $inbox->update(array('APP_UID'=>$sAppUid, 'DEL_INDEX'=>$iDelIndex, 'DEL_INIT_DATE'=>Date("Y-m-d H:i:s")));
             //update searchindex
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
@@ -1895,6 +1904,8 @@ class Cases
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
                 }
             }
+            $inbox = new ListInbox();
+            $inbox->remove($sAppUid, $iDelIndex);
         } catch (exception $e) {
             throw ($e);
         }
