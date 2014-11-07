@@ -48,7 +48,6 @@ class adminProxy extends HttpProxyController
         }
 
         $sysConf = System::getSystemConfiguration($envFile);
-
         $updatedConf = array();
 
         if ($sysConf['default_lang'] != $httpData->default_lang) {
@@ -123,10 +122,10 @@ class adminProxy extends HttpProxyController
         $this->message = 'Saved Successfully';
         $msg = "";
         if ($httpData->proxy_host != '' || $httpData->proxy_port != '' || $httpData->proxy_user != '') {
-            $msg = " Host -> ".$httpData->proxy_host." Port -> ".$httpData->proxy_port." User -> ".$httpData->proxy_user;
+            $msg = ", Host -> " . $httpData->proxy_host . ", Port -> " . $httpData->proxy_port . ", User -> " . $httpData->proxy_user;
         }
 
-        G::auditLog("UploadSystemSettings", "Time Zone -> ".$httpData->time_zone." Memory Limit -> ".$httpData->memory_limit."  Cookie lifetime -> ".$httpData->max_life_time." Default Skin -> ".$httpData->default_skin." Default Language -> ". $httpData->default_lang. $msg);
+        G::auditLog("UploadSystemSettings", "Time Zone -> " . $httpData->time_zone . ", Memory Limit -> " . $httpData->memory_limit . ", Cookie lifetime -> " . $httpData->max_life_time . ", Default Skin -> " . $httpData->default_skin . ", Default Language -> " . $httpData->default_lang . $msg);
     }
 
     public function uxUserUpdate($httpData)
@@ -722,6 +721,9 @@ class adminProxy extends HttpProxyController
             $UsrUid='';
             $AppUid='';
 
+            $messEnabled = (isset($aFields["MESS_ENABLED"]) && $aFields["MESS_ENABLED"] == "1")? G::LoadTranslation("ID_YES") : G::LoadTranslation("ID_NO");
+            $messRauth = (isset($aFields["MESS_RAUTH"]) && $aFields["MESS_RAUTH"] == "1")? G::LoadTranslation("ID_YES") : G::LoadTranslation("ID_NO");
+
             if ($oConfiguration->exists($CfgUid, $ObjUid, $ProUid, $UsrUid, $AppUid)) {
                 $oConfiguration->update(
                     array (
@@ -735,7 +737,7 @@ class adminProxy extends HttpProxyController
                 );
                 $this->success='true';
                 $this->msg='Saved';
-                G::auditLog("UpdateEmailSettings", "EnableEmailNotifications->".$aFields['MESS_ENABLED']."  EmailEngine->".$aFields['MESS_ENGINE']."  Server->".$aFields['MESS_SERVER']."  Port->".$aFields['MESS_PORT']."  RequireAuthentication->".$aFields['MESS_RAUTH']."   FromMail->".$aFields['MESS_ACCOUNT']."  FromName->".$aFields['MESS_FROM_NAME']."  Use Secure Connection->".$aFields['SMTPSecure']);
+                G::auditLog("UpdateEmailSettings", "EnableEmailNotifications-> " . $messEnabled . ", EmailEngine-> " . $aFields['MESS_ENGINE'] . ", Server-> " . $aFields['MESS_SERVER'] . ", Port-> " . $aFields['MESS_PORT'] . ", RequireAuthentication-> " . $messRauth . ", FromMail-> " . $aFields['MESS_ACCOUNT'] . ", FromName-> " . $aFields['MESS_FROM_NAME'] . ", Use Secure Connection-> " . $aFields['SMTPSecure']);
             } else {
                 $oConfiguration->create(
                     array(
@@ -749,7 +751,7 @@ class adminProxy extends HttpProxyController
                 );
                 $this->success='true';
                 $this->msg='Saved';
-                G::auditLog("CreateEmailSettings", "EnableEmailNotifications->".$aFields['MESS_ENABLED']."  EmailEngine->".$aFields['MESS_ENGINE']."  Server->".$aFields['MESS_SERVER']."  Port->".$aFields['MESS_PORT']."  RequireAuthentication->".$aFields['MESS_RAUTH']."   FromMail->".$aFields['MESS_ACCOUNT']."  FromName->".$aFields['MESS_FROM_NAME']."  Use Secure Connection->".$aFields['SMTPSecure']);
+                G::auditLog("CreateEmailSettings", "EnableEmailNotifications-> " . $messEnabled . ", EmailEngine-> " . $aFields['MESS_ENGINE'] . ", Server-> " . $aFields['MESS_SERVER'] . ", Port-> " . $aFields['MESS_PORT'] . ", RequireAuthentication-> " . $messRauth . ", FromMail-> " . $aFields['MESS_ACCOUNT'] . ", FromName-> " . $aFields['MESS_FROM_NAME'] . ", Use Secure Connection-> " . $aFields['SMTPSecure']);
             }
         } catch (Exception $e) {
             $this->success= false;

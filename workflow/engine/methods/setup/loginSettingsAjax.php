@@ -36,7 +36,9 @@ switch ($request) {
 
         $response = new stdclass();
         $response->success = true;
-        G::auditLog("UpdateLoginSettings", "DefaultLanguage->".$lang." EnableForgotPassword->".$conf->aConfig['login_enableForgotPassword']);
+
+        $messEnableForgotPassword = (isset($conf->aConfig["login_enableForgotPassword"]) && $conf->aConfig["login_enableForgotPassword"] == "1")? G::LoadTranslation("ID_YES") : G::LoadTranslation("ID_NO");
+        G::auditLog("UpdateLoginSettings", "DefaultLanguage-> " . $lang . " EnableForgotPassword-> " . $messEnableForgotPassword);
 
         echo G::json_encode( $response );
 
