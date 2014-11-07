@@ -145,6 +145,17 @@ switch ($_POST['action']) {
                 $form['USR_LOGGED_NEXT_TIME'] = 0;
             }
 
+            $firstName = $form['USR_FIRSTNAME'] ? " - First Name: ". $form['USR_FIRSTNAME'] : "";
+            $lastName = $form['USR_LASTNAME'] ? " - Last Name: ". $form['USR_LASTNAME'] : "";
+            $email = $form['USR_EMAIL'] ? " - Email: ". $form['USR_EMAIL'] : "";
+            $dueDate = $form['USR_DUE_DATE'] ? " - Due Date: ". $form['USR_DUE_DATE'] : "";
+            $status = $form['USR_STATUS'] ? " - Status: ". $form['USR_STATUS'] : "";
+            $address = $form['USR_ADDRESS'] ? " - Address: ". $form['USR_ADDRESS'] : "";
+            $phone = $form['USR_PHONE'] ? " - Phone: ". $form['USR_PHONE'] : "";  
+            $zipCode = $form['USR_ZIP_CODE'] ? " - Zip Code: ". $form['USR_ZIP_CODE'] : "";  
+            $position = $form['USR_POSITION'] ? " - Position: ". $form['USR_POSITION'] : "";  
+            $role = $form['USR_ROLE'] ? " - Role: ". $form['USR_ROLE'] : "";
+
             if ($form['USR_UID'] == '') {
                 $criteria = new Criteria();
                 $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
@@ -187,8 +198,8 @@ switch ($_POST['action']) {
                 require_once 'classes/model/Users.php';
                 $oUser = new Users();
                 $oUser->create($aData);
-                G::auditLog("CreateUser", "User Name: ". $aData['USR_USERNAME']);
-
+                G::auditLog("CreateUser", "User Name: ". $aData['USR_USERNAME']." - User ID: (".$aData['USR_UID'].") ".$firstName.$lastName.$email.$dueDate.$status.$address.$phone.$zipCode.$position.$role );
+                
                 if ($_FILES['USR_PHOTO']['error'] != 1) {
                     //print (PATH_IMAGES_ENVIRONMENT_USERS);
                     if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
@@ -364,7 +375,7 @@ switch ($_POST['action']) {
                 require_once 'classes/model/Users.php';
                 $oUser = new Users();
                 $oUser->update($aData);
-                G::auditLog("UpdateUser", "User Name: ". $aData['USR_USERNAME']." User ID: (".$aData['USR_UID'].") ");
+                G::auditLog("UpdateUser", "User Name: ". $aData['USR_USERNAME']." - User ID: (".$aData['USR_UID'].") ".$firstName.$lastName.$email.$dueDate.$status.$address.$phone.$zipCode.$position.$role );
                 if ($_FILES['USR_PHOTO']['error'] != 1) {
                     if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
                         $aAux = explode('.', $_FILES['USR_PHOTO']['name']);

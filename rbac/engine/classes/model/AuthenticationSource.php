@@ -69,7 +69,20 @@ class AuthenticationSource extends BaseAuthenticationSource {
         $oConnection->begin();
         $iResult = $oAuthenticationSource->save();
         $oConnection->commit();
-        G::auditLog("CreateAuthSource", "Authentication Source Name: ". $aData['AUTH_SOURCE_NAME']);
+        
+        $authSourceServerName = isset($aData['AUTH_SOURCE_SERVER_NAME']) ? ' - Server Name: '.$aData['AUTH_SOURCE_SERVER_NAME'] : '';
+        $authSourcePort = isset($aData['AUTH_SOURCE_PORT']) ? ' - Port: '.$aData['AUTH_SOURCE_PORT'] : '';
+        $authSourceEnabledTLS = isset($aData['AUTH_SOURCE_ENABLED_TLS']) ? ' - TLS: '.$aData['AUTH_SOURCE_ENABLED_TLS'] : '';
+        $authSourceVersion = isset($aData['AUTH_SOURCE_VERSION']) ? ' - Version: '.$aData['AUTH_SOURCE_VERSION'] : '';
+        $authSourceBaseDn = isset($aData['AUTH_SOURCE_BASE_DN']) ? ' - BaseDN: '.$aData['AUTH_SOURCE_BASE_DN'] : '';
+        $authAnonymous = $aData['AUTH_ANONYMOUS'] = 1? ' - Anonymous: YES' : ' - Anonymous: NO';
+        $authSourceSearchUser = isset($aData['AUTH_SOURCE_SEARCH_USER']) ? ' - Search User: '. $aData['AUTH_SOURCE_SEARCH_USER'] : '';
+        $authSourceLdapType = isset($aData['AUTH_SOURCE_DATA']['LDAP_TYPE']) ? ' - LDAP type: '.$aData['AUTH_SOURCE_DATA']['LDAP_TYPE'] : '';
+        $authSourceIdentifier = isset($aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER']) ? ' - Identifier: '.$aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : '';
+        $authSourceFilter = isset($aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_ADDITIONAL_FILTER']) ? ' - Aditional Filter: '.$aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_ADDITIONAL_FILTER'] : '';
+
+        G::auditLog("CreateAuthSource", "Authentication Source Name: ".$aData['AUTH_SOURCE_NAME']." - Authentication Source ID: (".$aData['AUTH_SOURCE_UID'].") ".$authSourceServerName.$authSourcePort.$authSourceEnabledTLS.$authSourceVersion.$authSourceBaseDn.$authAnonymous.$authSourceSearchUser.$authSourceLdapType.$authSourceIdentifier.$authSourceFilter);
+
         return $aData['AUTH_SOURCE_UID'];
   	  }
   	  else {
@@ -88,6 +101,17 @@ class AuthenticationSource extends BaseAuthenticationSource {
   }
 
   function update($aData) {
+    $authSourceServerName = isset($aData['AUTH_SOURCE_SERVER_NAME']) ? ' - Server Name: '.$aData['AUTH_SOURCE_SERVER_NAME'] : '';
+    $authSourcePort = isset($aData['AUTH_SOURCE_PORT']) ? ' - Port: '.$aData['AUTH_SOURCE_PORT'] : '';
+    $authSourceEnabledTLS = isset($aData['AUTH_SOURCE_ENABLED_TLS']) ? ' - TLS: '.$aData['AUTH_SOURCE_ENABLED_TLS'] : '';
+    $authSourceVersion = isset($aData['AUTH_SOURCE_VERSION']) ? ' - Version: '.$aData['AUTH_SOURCE_VERSION'] : '';
+    $authSourceBaseDn = isset($aData['AUTH_SOURCE_BASE_DN']) ? ' - BaseDN: '.$aData['AUTH_SOURCE_BASE_DN'] : '';
+    $authAnonymous = $aData['AUTH_ANONYMOUS'] = 1? ' - Anonymous: YES' : ' - Anonymous: NO';
+    $authSourceSearchUser = isset($aData['AUTH_SOURCE_SEARCH_USER']) ? ' - Search User: '. $aData['AUTH_SOURCE_SEARCH_USER'] : '';
+    $authSourceLdapType = isset($aData['AUTH_SOURCE_DATA']['LDAP_TYPE']) ? ' - LDAP type: '.$aData['AUTH_SOURCE_DATA']['LDAP_TYPE'] : '';
+    $authSourceIdentifier = isset($aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER']) ? ' - Identifier: '.$aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : '';
+    $authSourceFilter = isset($aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_ADDITIONAL_FILTER']) ? ' - Aditional Filter: '.$aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_ADDITIONAL_FILTER'] : '';
+
     $aData['AUTH_SOURCE_DATA'] = (is_array($aData['AUTH_SOURCE_DATA']) ? serialize($aData['AUTH_SOURCE_DATA']) : $aData['AUTH_SOURCE_DATA']);
     $oConnection = Propel::getConnection(AuthenticationSourcePeer::DATABASE_NAME);
   	try {
@@ -98,7 +122,7 @@ class AuthenticationSource extends BaseAuthenticationSource {
   	    	$oConnection->begin();
           $iResult = $oAuthenticationSource->save();
           $oConnection->commit();
-          G::auditLog("UpdateAuthSource", "Authentication Source Name: ".$aData['AUTH_SOURCE_NAME']." Authentication Source ID: (".$aData['AUTH_SOURCE_UID'].") ");
+          G::auditLog("UpdateAuthSource", "Authentication Source Name: ".$aData['AUTH_SOURCE_NAME']." - Authentication Source ID: (".$aData['AUTH_SOURCE_UID'].") ".$authSourceServerName.$authSourcePort.$authSourceEnabledTLS.$authSourceVersion.$authSourceBaseDn.$authAnonymous.$authSourceSearchUser.$authSourceLdapType.$authSourceIdentifier.$authSourceFilter);
           return $iResult;
   	    }
   	    else {

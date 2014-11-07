@@ -149,7 +149,7 @@ switch ($_POST['action']) {
         unset( $newGroup['GRP_UID'] );
         $group = new Groupwf();
         $group->create( $newGroup );
-        G::auditLog("CreateGroup", "Group Name: ".$newGroup['GRP_TITLE']);
+        G::auditLog("CreateGroup", "Group Name: ".$newGroup['GRP_TITLE']." - Group Status: ".$newGroup['GRP_STATUS']);
 
         echo '{success: true}';
 
@@ -161,7 +161,7 @@ switch ($_POST['action']) {
         $editGroup['GRP_TITLE'] = trim( $_POST['name'] );
         $group = new Groupwf();
         $group->update( $editGroup );
-        G::auditLog("UpdateGroup", "Group Name: ".$editGroup['GRP_TITLE']." Group ID: (".$_POST['grp_uid'].") ");
+        G::auditLog("UpdateGroup", "Group Name: ".$editGroup['GRP_TITLE']." - Group ID: (".$_POST['grp_uid'].") - Group Status: ".$editGroup['GRP_STATUS']);
         echo '{success: true}';
         break;
     case 'deleteGroup':
