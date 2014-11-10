@@ -1206,6 +1206,7 @@ CREATE TABLE `APP_HISTORY`
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`TAS_UID` VARCHAR(32) default '' NOT NULL,
 	`DYN_UID` VARCHAR(32) default '' NOT NULL,
+ `OBJ_TYPE` VARCHAR(20) default 'DYNAFORM' NOT NULL,
 	`USR_UID` VARCHAR(32) default '' NOT NULL,
 	`APP_STATUS` VARCHAR(100) default '' NOT NULL,
 	`HISTORY_DATE` DATETIME,
@@ -2380,3 +2381,4 @@ CREATE TABLE `LIST_UNASSIGNED_GROUP`
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Unassiged list';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
+
