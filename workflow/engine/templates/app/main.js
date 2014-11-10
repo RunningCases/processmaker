@@ -522,7 +522,6 @@ var openSummaryWindow = function(appUid, delIndex, action)
             }
         };
 
-        tabs.push(sumaryInfPanel);
         if (response.dynUid != '') {
             if (isMovil.any()) {
                 var src = '../cases/summary?APP_UID=' + appUid + '&DEL_INDEX=' + delIndex + '&DYN_UID=' + response.dynUid;
@@ -590,6 +589,7 @@ var openSummaryWindow = function(appUid, delIndex, action)
                 }});
             }
         }
+        tabs.push(sumaryInfPanel);
         tabs.push({title: Ext.util.Format.capitalize(_('ID_UPLOADED_DOCUMENTS')), bodyCfg: {
           tag: 'iframe',
           id: 'summaryIFrame',
