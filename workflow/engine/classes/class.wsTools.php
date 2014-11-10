@@ -1496,7 +1496,7 @@ class workspaceTools
 
             if ($workspace->workspaceExists()) {
 
-                if ($overwrite) {                    
+                if ($overwrite) {
                     if ($workspace->dbInfo['DB_NAME'] == $workspace->dbInfo['DB_RBAC_NAME']) {
                         $newDatabases = 1;
                     } else {
