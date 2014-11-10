@@ -306,7 +306,7 @@ NewCategoryWindow = function(){
     width: 420,
     items: [newForm],
     id: 'w',
-    model: true
+    modal: true
   });
   w.show();
 };

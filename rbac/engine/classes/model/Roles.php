@@ -218,6 +218,7 @@ class Roles extends BaseRoles {
             $con->begin();
             $sRolCode = $aData['ROL_CODE'];
             $sRolSystem = $aData['ROL_SYSTEM'];
+            $status = $fields['ROL_STATUS'] = 1 ? 'ACTIVE' : 'INACTIVE';
             $oCriteria = new Criteria('rbac');
             $oCriteria->add(RolesPeer::ROL_CODE, $sRolCode);
             $oCriteria->add(RolesPeer::ROL_SYSTEM, $sRolSystem);
@@ -238,7 +239,7 @@ class Roles extends BaseRoles {
                 $result = $obj->save();
                 $con->commit();
                 $obj->setRolName($rol_name);
-                G::auditLog("CreateRole", "Role Name: ". $rol_name);
+                G::auditLog("CreateRole", "Role Name: ". $rol_name ." - Role Code: ".$aData['ROL_CODE']." - Role Status: ".$status);
             } else {
                 $e = new Exception("Failed Validation in class " . get_class($this) . ".");
                 $e->aValidationFailures = $this->getValidationFailures();
@@ -264,7 +265,8 @@ class Roles extends BaseRoles {
                 $result = $this->save();
                 $con->commit();
                 $this->setRolName($rol_name);
-                G::auditLog("UpdateRole", "Role Name: ".$rol_name." Role ID: (".$fields['ROL_UID'].") ");
+                $status = $fields['ROL_STATUS'] = 1 ? 'ACTIVE' : 'INACTIVE';
+                G::auditLog("UpdateRole", "Role Name: ".$rol_name." - Role ID: (".$fields['ROL_UID'].") - Role Code: ".$fields['ROL_CODE']." - Role Status: ".$status);
                 return $result;
             } else {
                 $con->rollback();
