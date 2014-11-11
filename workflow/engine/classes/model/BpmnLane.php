@@ -48,7 +48,7 @@ class BpmnLane extends BaseBpmnLane {
             $rsCriteria->next();
             $row = $rsCriteria->getRow();
             $this->bound->setDiaUid($row["DIA_UID"]);
-            $this->bound->setBouContainer('bpmnLane');
+            $this->bound->setBouContainer('bpmnPool');
             $this->bound->setBouElement($this->getLnsUid());
         }
     }

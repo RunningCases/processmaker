@@ -234,10 +234,26 @@ switch ($_POST['action']) {
             $oDept->update( $editDepartment );
             $oDept->updateDepartmentManager( $dep_uid );
 
+            $managerName = ' - No Manager Selected';
+
+            if ($_REQUEST['manager'] != '') {
+                $oCriteria = new Criteria( 'workflow' );
+                $oCriteria->addSelectColumn( UsersPeer::USR_USERNAME );
+                $oCriteria->add( UsersPeer::USR_UID, $dep_manager);
+
+                $oDataset = UsersPeer::doSelectRS( $oCriteria );
+                $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+
+                while ($oDataset->next()) {
+                    $aRow = $oDataset->getRow();
+                    $managerName = $aRow['USR_USERNAME'] ? " - Department Manager: ".$aRow['USR_USERNAME'] : 'No Manager'; 
+                }
+            }
+
             if ($dep_parent == '') {
-                G::auditLog("UpdateDepartament", "Departament Name: ".$dep_name." (".$dep_uid.") ");
+                G::auditLog("UpdateDepartament", "Department Name: ".$dep_name." (".$dep_uid.")  - Department Status: ".$dep_status.$managerName);
             } else {
-                G::auditLog("UpdateSubDepartament", "Sub Departament Name: ".$dep_name." (".$dep_uid.") ");
+                G::auditLog("UpdateSubDepartament", "Sub Department Name: ".$dep_name." (".$dep_uid.")  - Sub Department Status: ".$dep_status.$managerName);
             }
 
             echo '{success: true}';
