@@ -5087,7 +5087,7 @@ class Cases
         $RESULT_OBJECTS['CASES_NOTES'] = G::arrayDiff(
                         $MAIN_OBJECTS['VIEW']['CASES_NOTES'], $MAIN_OBJECTS['BLOCK']['CASES_NOTES']
         );
-        array_push($RESULT_OBJECTS['DYNAFORMS'], -1);
+        array_push($RESULT_OBJECTS["DYNAFORMS"], -1, -2);
         array_push($RESULT_OBJECTS['INPUT_DOCUMENTS'], -1);
         array_push($RESULT_OBJECTS['OUTPUT_DOCUMENTS'], -1);
         array_push($RESULT_OBJECTS['CASES_NOTES'], -1);
@@ -5244,10 +5244,16 @@ class Cases
                             $oDataset->next();
                         }
 
-                        //inputs
+                        //InputDocuments and OutputDocuments
                         $oCriteria = new Criteria('workflow');
                         $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
                         $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_TYPE);
+
+                        $arrayCondition = array();
+                        $arrayCondition[] = array(AppDelegationPeer::APP_UID, AppDocumentPeer::APP_UID, Criteria::EQUAL);
+                        $arrayCondition[] = array(AppDelegationPeer::DEL_INDEX, AppDocumentPeer::DEL_INDEX, Criteria::EQUAL);
+                        $oCriteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+
                         $oCriteria->add(AppDelegationPeer::APP_UID, $APP_UID);
                         $oCriteria->add(AppDelegationPeer::PRO_UID, $PRO_UID);
                         if ($aCase['APP_STATUS'] != 'COMPLETED') {
@@ -5261,23 +5267,21 @@ class Cases
                                         addOr($oCriteria->
                                                 getNewCriterion(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED'))
                         );
-                        $aConditions = Array();
-                        $aConditions[] = array(AppDelegationPeer::APP_UID, AppDocumentPeer::APP_UID);
-                        $aConditions[] = array(AppDelegationPeer::DEL_INDEX, AppDocumentPeer::DEL_INDEX);
-                        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
 
-                        $oDataset = DynaformPeer::doSelectRS($oCriteria);
+                        $oDataset = AppDelegationPeer::doSelectRS($oCriteria);
                         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                        $oDataset->next();
-                        while ($aRow = $oDataset->getRow()) {
+
+                        while ($oDataset->next()) {
+                            $aRow = $oDataset->getRow();
+
                             if ($aRow['APP_DOC_TYPE'] == "ATTACHED") {
                                 $aRow['APP_DOC_TYPE'] = "INPUT";
                             }
                             if (!in_array($aRow['APP_DOC_UID'], $RESULT[$aRow['APP_DOC_TYPE']])) {
                                 array_push($RESULT[$aRow['APP_DOC_TYPE']], $aRow['APP_DOC_UID']);
                             }
-                            $oDataset->next();
                         }
+
                         $RESULT['CASES_NOTES'] = 1;
                         $RESULT['SUMMARY_FORM'] = 1;
 
