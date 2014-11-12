@@ -960,7 +960,7 @@ class Cases
                 //only when that variable is set.. from Save
                 $FieldsBefore = $this->loadCase($sAppUid);
                 $FieldsDifference = $this->arrayRecursiveDiff($FieldsBefore['APP_DATA'], $aApplicationFields);
-                $fieldsOnBoth = array_intersect_assoc($FieldsBefore['APP_DATA'], $aApplicationFields);
+                $fieldsOnBoth = @array_intersect_assoc($FieldsBefore['APP_DATA'], $aApplicationFields);
                 //Add fields that weren't in previous version
                 foreach ($aApplicationFields as $key => $value) {
                     if (!(isset($fieldsOnBoth[$key]))) {
