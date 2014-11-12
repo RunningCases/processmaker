@@ -71,16 +71,16 @@ if (isset( $_REQUEST['action'] )) {
 
             $proc = new Process();
             $aProcess = $proc->getAllProcessesByCategory();
-
+            $result = "";
             $aCat = array ();
             while ($oDataset->next()) {
                 $aCat[] = $oDataset->getRow();
                 $index = sizeof( $aCat ) - 1;
                 $aCat[$index]['TOTAL_PROCESSES'] = isset( $aProcess[$aCat[$index]['CATEGORY_UID']] ) ? $aProcess[$aCat[$index]['CATEGORY_UID']] : 0;
             }
-            $r['data'] = $aCat;
-            $r['totalCount'] = $total_categories;
-            echo G::json_encode( $r );
+            $result['data'] = $aCat;
+            $result['totalCount'] = $total_categories;
+            echo G::json_encode( $result );
             break;
         case 'updatePageSize':
             G::LoadClass( 'configuration' );
