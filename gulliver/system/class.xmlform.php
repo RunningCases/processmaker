@@ -737,47 +737,54 @@ class XmlForm_Field
                     $aKeys = array ();
                     $aValues = explode( '|', $oOwner->fields[$this->pmconnection]->keys );
                     $i = 0;
-                    foreach ($aData['FIELDS'] as $aField) {
-                        if ($aField['FLD_KEY'] == '1') {
-                            // note added by gustavo cruz gustavo[at]colosa[dot]com
-                            // this additional [if] checks if a case variable has been set
-                            // in the keys attribute, so it can be parsed and replaced for
-                            // their respective value.
-                            if (preg_match( "/@#/", $aValues[$i] )) {
-                                // check if a case are running in order to prevent that preview is
-                                // erroneous rendered.
-                                if (isset( $_SESSION['APPLICATION'] )) {
-                                    G::LoadClass( 'case' );
-                                    $oApp = new Cases();
-                                    if ($oApp->loadCase( $_SESSION['APPLICATION'] ) != null) {
-                                        $aFields = $oApp->loadCase( $_SESSION['APPLICATION'] );
-                                        $formVariable = substr( $aValues[$i], 2 );
-                                        if (isset( $aFields['APP_DATA'][$formVariable] )) {
-                                            $formVariableValue = $aFields['APP_DATA'][$formVariable];
-                                            $aKeys[$aField['FLD_NAME']] = (isset( $formVariableValue ) ? G::replaceDataField( $formVariableValue, $oOwner->values ) : '');
-                                        } else {
-                                            $aKeys[$aField['FLD_NAME']] = '';
-                                        }
-                                    } else {
-                                        $aKeys[$aField['FLD_NAME']] = '';
-                                    }
-                                } else {
-                                    $aKeys[$aField['FLD_NAME']] = '';
-                                }
-                            } else {
-                                $aKeys[$aField['FLD_NAME']] = (isset( $aValues[$i] ) ? G::replaceDataField( $aValues[$i], $oOwner->values ) : '');
-                            }
-                            $i ++;
-                        }
+                    if($aData == "" || count($aData['FIELDS']) < 1){
+                    	$message = G::LoadTranslation( 'ID_PMTABLE_NOT_FOUND' );
+                        G::SendMessageText( $message, "WARNING" );
+                        $sValue = "";
+                    } else {
+                    	foreach ($aData['FIELDS'] as $aField) {
+                    		if ($aField['FLD_KEY'] == '1') {
+                    			// note added by gustavo cruz gustavo[at]colosa[dot]com
+                    			// this additional [if] checks if a case variable has been set
+                    			// in the keys attribute, so it can be parsed and replaced for
+                    			// their respective value.
+                    			if (preg_match( "/@#/", $aValues[$i] )) {
+                    				// check if a case are running in order to prevent that preview is
+                    				// erroneous rendered.
+                    				if (isset( $_SESSION['APPLICATION'] )) {
+                    					G::LoadClass( 'case' );
+                    					$oApp = new Cases();
+                    					if ($oApp->loadCase( $_SESSION['APPLICATION'] ) != null) {
+                    						$aFields = $oApp->loadCase( $_SESSION['APPLICATION'] );
+                    						$formVariable = substr( $aValues[$i], 2 );
+                    						if (isset( $aFields['APP_DATA'][$formVariable] )) {
+                    							$formVariableValue = $aFields['APP_DATA'][$formVariable];
+                    							$aKeys[$aField['FLD_NAME']] = (isset( $formVariableValue ) ? G::replaceDataField( $formVariableValue, $oOwner->values ) : '');
+                    						} else {
+                    							$aKeys[$aField['FLD_NAME']] = '';
+                    						}
+                    					} else {
+                    						$aKeys[$aField['FLD_NAME']] = '';
+                    					}
+                    				} else {
+                    					$aKeys[$aField['FLD_NAME']] = '';
+                    				}
+                    			} else {
+                    				$aKeys[$aField['FLD_NAME']] = (isset( $aValues[$i] ) ? G::replaceDataField( $aValues[$i], $oOwner->values ) : '');
+                    			}
+                    			$i ++;
+                    		}
+                    	}
+                    	try {
+                    		$aData = $oAdditionalTables->getDataTable( $oOwner->fields[$this->pmconnection]->pmtable, $aKeys );
+                    	} catch (Exception $oError) {
+                    		$aData = array ();
+                    	}
+                    	if (isset( $aData[$this->pmfield] )) {
+                    		$sValue = $aData[$this->pmfield];
+                    	}
                     }
-                    try {
-                        $aData = $oAdditionalTables->getDataTable( $oOwner->fields[$this->pmconnection]->pmtable, $aKeys );
-                    } catch (Exception $oError) {
-                        $aData = array ();
-                    }
-                    if (isset( $aData[$this->pmfield] )) {
-                        $sValue = $aData[$this->pmfield];
-                    }
+                    
                 }
             }
         }
