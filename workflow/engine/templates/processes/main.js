@@ -1207,7 +1207,7 @@ importProcess = function()
 
                       Ext.MessageBox.show({
                         title   : '',
-                        msg     : resp_.catchMessage,
+                        msg     : resp.catchMessage,
                         buttons : Ext.MessageBox.OK,
                         animEl  : 'mb9',
                         fn      : function(){},
