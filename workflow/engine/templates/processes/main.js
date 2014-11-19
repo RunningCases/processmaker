@@ -1166,6 +1166,19 @@ importProcess = function()
 
                       var resp_ = Ext.util.JSON.decode(resp.response.responseText);
 
+                      if (resp_.status) {
+                          if (resp_.status == "DISABLED-CODE") {
+                              Ext.MessageBox.show({
+                                  title: _("ID_ERROR"),
+                                  msg: "<div style=\"overflow: auto; width: 500px; height: 150px;\">" + stringReplace("\\x0A", "<br />", resp_.message) + "</div>", //\n 10
+                                  icon: Ext.MessageBox.ERROR,
+                                  buttons: Ext.MessageBox.OK
+                              });
+
+                              return;
+                          }
+                      }
+
                       if (resp_.catchMessage == "") {
                         if (resp_.ExistProcessInDatabase == "0") {
                           if (resp_.ExistGroupsInDatabase == "0") {

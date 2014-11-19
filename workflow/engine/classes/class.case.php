@@ -3234,12 +3234,23 @@ class Cases
         } else {
             $sStepUid = $sStepUidObj;
         }
+
+        $delimiter = DBAdapter::getStringDelimiter();
+
         $c = new Criteria();
         $c->clearSelectColumns();
         $c->addSelectColumn(TriggersPeer::TRI_UID);
+        $c->addAsColumn("TRI_TITLE", ContentPeer::CON_VALUE);
         $c->addSelectColumn(StepTriggerPeer::ST_CONDITION);
         $c->addSelectColumn(TriggersPeer::TRI_TYPE);
         $c->addSelectColumn(TriggersPeer::TRI_WEBBOT);
+
+        $arrayCondition = array();
+        $arrayCondition[] = array(TriggersPeer::TRI_UID, ContentPeer::CON_ID, Criteria::EQUAL);
+        $arrayCondition[] = array(ContentPeer::CON_CATEGORY, $delimiter . "TRI_TITLE" . $delimiter, Criteria::EQUAL);
+        $arrayCondition[] = array(ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL);
+        $c->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+
         $c->add(StepTriggerPeer::STEP_UID, $sStepUid);
         $c->add(StepTriggerPeer::TAS_UID, $sTasUid);
         $c->add(StepTriggerPeer::ST_TYPE, $sTriggerType);
@@ -3247,13 +3258,13 @@ class Cases
         $c->addAscendingOrderByColumn(StepTriggerPeer::ST_POSITION);
         $rs = TriggersPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $rs->next();
-        $row = $rs->getRow();
-        while (is_array($row)) {
-            $aTriggers[] = $row;
-            $rs->next();
+
+        while ($rs->next()) {
             $row = $rs->getRow();
+
+            $aTriggers[] = $row;
         }
+
         return $aTriggers;
     }
 
@@ -3270,22 +3281,55 @@ class Cases
 
     public function executeTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType, $aFields = array())
     {
+        G::LoadClass("codeScanner");
+
         $aTriggers = $this->loadTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType);
+
         if (count($aTriggers) > 0) {
             global $oPMScript;
+
             $oPMScript = new PMScript();
             $oPMScript->setFields($aFields);
+
+            $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+
+            $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+
+            $strFoundDisabledCode = "";
+
             foreach ($aTriggers as $aTrigger) {
+                //Check disabled code
+                $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $aTrigger["TRI_WEBBOT"]);
+
+                if (count($arrayFoundDisabledCode) > 0) {
+                    $strCodeAndLine = "";
+
+                    foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
+                        $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
+                    }
+
+                    $strFoundDisabledCode .= "<br />- " . $aTrigger["TRI_TITLE"] . ": " . $strCodeAndLine;
+                    continue;
+                }
+
+                //Execute
                 $bExecute = true;
+
                 if ($aTrigger['ST_CONDITION'] !== '') {
                     $oPMScript->setScript($aTrigger['ST_CONDITION']);
                     $bExecute = $oPMScript->evaluate();
                 }
+
                 if ($bExecute) {
                     $oPMScript->setScript($aTrigger['TRI_WEBBOT']);
                     $oPMScript->execute();
                 }
             }
+
+            if ($strFoundDisabledCode != "") {
+                G::SendTemporalMessage(G::LoadTranslation("ID_DISABLED_CODE_TRIGGER_TO_EXECUTE", array($strFoundDisabledCode)), "", "string");
+            }
+
             return $oPMScript->aFields;
         } else {
             return $aFields;
