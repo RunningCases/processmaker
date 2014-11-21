@@ -928,24 +928,6 @@ class Installer extends Controller
                 }
             }
             
-            //2nd STRUCTURE
-            $this->initPropel(true);
-            G::LoadClass("configuration");
-            $conf = new Configurations();
-            if (!$conf->exists("ENVIRONMENT_SETTINGS")) {
-            	$conf->aConfig = array ("format" => '@userName (@firstName @lastName)',
-            			"dateFormat" => 'd/m/Y',
-            			"startCaseHideProcessInf" => false,
-            			"casesListDateFormat" => 'Y-m-d H:i:s',
-            			"casesListRowNumber" => 25,
-            			"casesListRefreshTime" => 120 );
-            	$conf->saveConfig( 'ENVIRONMENT_SETTINGS', '' );
-            }
-            $conf->setDirectoryStructureVer(2);
-            //$this->installLog( G::LoadTranslation('ID_INDEX_FILE_UPDATED', SYS_LANG, Array($indexFileUpdated, $sysConf['default_lang'],$sysConf['default_skin'])));
-            //CLI::logging(CLI::info("Version Directory Structure is 2 now.\n"));
-
-            
             $this->installLog( G::LoadTranslation('ID_INDEX_FILE_UPDATED', SYS_LANG, Array($indexFileUpdated, $sysConf['default_lang'],$sysConf['default_skin'])));
             $this->installLog( G::LoadTranslation('ID_INSTALL_SUCESS') );
 

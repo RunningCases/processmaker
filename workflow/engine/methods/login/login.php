@@ -215,6 +215,20 @@ if ($flagGettingStarted == 0) {
     $oHeadPublisher->addScriptCode('var flagGettingStarted = 0;');
 }
 
+//2nd STRUCTURE
+require_once ('classes/class.configuration.php');
+$conf = new Configurations();
+if (!$conf->exists("ENVIRONMENT_SETTINGS")) {
+    $conf->aConfig = array ("format" => '@userName (@firstName @lastName)',
+        "dateFormat" => 'd/m/Y',
+        "startCaseHideProcessInf" => false,
+        "casesListDateFormat" => 'Y-m-d H:i:s',
+        "casesListRowNumber" => 25,
+        "casesListRefreshTime" => 120 );
+    $conf->saveConfig( 'ENVIRONMENT_SETTINGS', '' );
+}
+$conf->setDirectoryStructureVer(2);
+
 $dummy = '';
 
 $oConf->loadConfig($dummy, 'ENVIRONMENT_SETTINGS', '');
