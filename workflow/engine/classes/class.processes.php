@@ -4420,6 +4420,103 @@ class Processes
             throw ($oError);
         }
     }
+
+    /**
+     * Get disabled code
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return array with disabled code found, array empty otherwise
+     */
+    public function getDisabledCode($processUid = "")
+    {
+        try {
+            G::LoadClass("codeScanner");
+
+            $arrayDisabledCode = array();
+
+            //Set variables
+            $cs = new CodeScanner("DISABLED_CODE");
+
+            $delimiter = DBAdapter::getStringDelimiter();
+
+            //Processes
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(ProcessPeer::PRO_UID);
+            $criteria->addAsColumn("PRO_TITLE", ContentPeer::CON_VALUE);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(ProcessPeer::PRO_UID, ContentPeer::CON_ID, Criteria::EQUAL);
+            $arrayCondition[] = array(ContentPeer::CON_CATEGORY, $delimiter . "PRO_TITLE" . $delimiter, Criteria::EQUAL);
+            $arrayCondition[] = array(ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+
+            if ($processUid != "") {
+                $criteria->add(ProcessPeer::PRO_UID, $processUid, Criteria::EQUAL);
+            }
+
+            $rsCriteria = ProcessPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $processUid   = $row["PRO_UID"];
+                $processTitle = $row["PRO_TITLE"];
+
+                //Triggers
+                $criteriaTrigger = new Criteria("workflow");
+
+                $criteriaTrigger->addSelectColumn(TriggersPeer::TRI_UID);
+                $criteriaTrigger->addAsColumn("TRI_TITLE", ContentPeer::CON_VALUE);
+                $criteriaTrigger->addSelectColumn(TriggersPeer::TRI_WEBBOT);
+
+                $arrayCondition = array();
+                $arrayCondition[] = array(TriggersPeer::TRI_UID, ContentPeer::CON_ID, Criteria::EQUAL);
+                $arrayCondition[] = array(ContentPeer::CON_CATEGORY, $delimiter . "TRI_TITLE" . $delimiter, Criteria::EQUAL);
+                $arrayCondition[] = array(ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL);
+                $criteriaTrigger->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+
+                $criteriaTrigger->add(TriggersPeer::PRO_UID, $processUid, Criteria::EQUAL);
+
+                $rsCriteriaTrigger = TriggersPeer::doSelectRS($criteriaTrigger);
+                $rsCriteriaTrigger->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+                while ($rsCriteriaTrigger->next()) {
+                    $row = $rsCriteriaTrigger->getRow();
+
+                    $triggerUid    = $row["TRI_UID"];
+                    $triggerTitle  = $row["TRI_TITLE"];
+                    $triggerWebbot = $row["TRI_WEBBOT"];
+
+                    //Check disabled code
+                    $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $triggerWebbot);
+
+                    if (count($arrayFoundDisabledCode) > 0) {
+                        if (!isset($arrayDisabledCode[$processUid])) {
+                            $arrayDisabledCode[$processUid] = array(
+                                "processUid"   => $processUid,
+                                "processTitle" => $processTitle,
+                                "triggers"     => array()
+                            );
+                        }
+
+                        $arrayDisabledCode[$processUid]["triggers"][] = array(
+                            "triggerUid"   => $triggerUid,
+                            "triggerTitle" => $triggerTitle,
+                            "disabledCode" => $arrayFoundDisabledCode["source"],
+                        );
+                    }
+                }
+            }
+
+            //Return
+            return $arrayDisabledCode;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }
 //end class processes
 

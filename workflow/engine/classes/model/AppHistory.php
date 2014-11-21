@@ -165,7 +165,7 @@ class AppHistory extends BaseAppHistory
                     $title = $arrayOutputDocumentData["OUT_DOC_TITLE"] . " (" . G::LoadTranslation("ID_OUTPUT_DOCUMENT") . ")";
                     break;
                 case "ASSIGN_TASK":
-                    $title = G::LoadTranslation("ASSIGN_TASK") . " (" . G::LoadTranslation("ID_TRIGGERS") . ")";
+                    $title = G::LoadTranslation("ID_ASSIGN_TASK") . " (" . G::LoadTranslation("ID_TRIGGERS") . ")";
                     break;
             }
 
