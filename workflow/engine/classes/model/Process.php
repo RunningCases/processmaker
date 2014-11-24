@@ -644,6 +644,14 @@ class Process extends BaseProcess
         $oCriteria->addJoin( ProcessPeer::PRO_CREATE_USER, UsersPeer::USR_UID, Criteria::LEFT_JOIN );
         $oCriteria->addJoin( ProcessPeer::PRO_CATEGORY, ProcessCategoryPeer::CATEGORY_UID, Criteria::LEFT_JOIN );
 
+        if ($this->sort == "PRO_CREATE_DATE") {
+            if ($this->dir == "DESC") {
+                $oCriteria->addDescendingOrderByColumn(ProcessPeer::PRO_CREATE_DATE);
+            } else {
+                $oCriteria->addAscendingOrderByColumn(ProcessPeer::PRO_CREATE_DATE);
+            }
+        }
+
         if ($userLogged != "") {
             $oCriteria->add(
                 $oCriteria->getNewCriterion(ProcessPeer::PRO_TYPE_PROCESS, "PUBLIC", Criteria::EQUAL)->addOr(
@@ -782,10 +790,13 @@ class Process extends BaseProcess
         if ($limit == '') {
         	$limit = count($aProcesses);
         }
-        if ($this->dir=='ASC') {
-            usort( $aProcesses, array($this, "ordProcessAsc") );
-        } else {
-            usort( $aProcesses, array($this, "ordProcessDesc") );
+
+        if ($this->sort != "PRO_CREATE_DATE") {
+            if ($this->dir == "ASC") {
+                usort($aProcesses, array($this, "ordProcessAsc"));
+            } else {
+                usort($aProcesses, array($this, "ordProcessDesc"));
+            }
         }
 
         return $aProcesses;

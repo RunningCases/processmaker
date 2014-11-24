@@ -1551,7 +1551,7 @@ class workspaceTools
             foreach ($metadata->databases as $db) {
                 if ($dbName != $newDBNames[$db->name]) {
                     $dbName = $newDBNames[$db->name];
-                    
+
                     if (mysql_select_db($dbName, $link)) {
                         if(!$overwrite) {
                             throw new Exception("Destination Database already exist (use -o to overwrite)");
@@ -1819,4 +1819,26 @@ class workspaceTools
             throw $e;
         }
     }
+
+    /**
+     * Get disabled code
+     *
+     * return array Return array with disabled code found, array empty otherwise
+     */
+    public function getDisabledCode()
+    {
+        try {
+            $this->initPropel(true);
+
+            G::LoadClass("processes");
+
+            $process = new Processes();
+
+            //Return
+            return $process->getDisabledCode();
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }
+

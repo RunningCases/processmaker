@@ -63,18 +63,41 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
         }
 
     }
-    print $flag;
-    //print'krlos';return ;
+
+    echo $flag;
 } else {
+    G::LoadClass("processMap");
+    G::LoadClass("codeScanner");
+
+    $response = array();
+
     try {
         $oTrigger = new Triggers();
 
-        G::LoadClass( 'processMap' );
         $oProcessMap = new processMap( new DBConnection() );
         if (isset( $_POST['form'] )) {
             $value = $_POST['form'];
         } else {
             $value = $_POST;
+        }
+
+        if (isset($value["TRI_WEBBOT"])) {
+            //Check disabled code
+            $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+
+            $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+
+            $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $value["TRI_WEBBOT"]);
+
+            if (count($arrayFoundDisabledCode) > 0) {
+                $strCodeAndLine = "";
+
+                foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
+                    $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
+                }
+
+                throw new Exception(G::LoadTranslation("ID_DISABLED_CODE_TRIGGER", array($strCodeAndLine)));
+            }
         }
 
         if ($value['TRI_UID'] != '') {
@@ -86,15 +109,17 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
         //print_r($_POST['form']);die;
         $oTrigger->update( $value );
 
-        if (! isset( $_POST['mode'] )) {
-            $oProcessMap->triggersList( $value['PRO_UID'] );
-        }
-        $result->success = true;
-        $result->msg = G::LoadTranslation( 'ID_TRIGGERS_SAVED' );
+        //if (! isset( $_POST['mode'] )) {
+        //    $oProcessMap->triggersList( $value['PRO_UID'] );
+        //}
+
+        $response["success"] = true;
+        $response["msg"] = G::LoadTranslation("ID_TRIGGERS_SAVED");
     } catch (Exception $e) {
-        $result->success = false;
-        $result->msg = $e->getMessage();
+        $response["success"] = false;
+        $response["msg"] = $e->getMessage();
     }
-    print G::json_encode( $result );
+
+    echo G::json_encode($response);
 }
 

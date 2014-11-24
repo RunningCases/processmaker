@@ -2549,10 +2549,14 @@
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="TAS_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="DYN_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="OBJ_TYPE" type="VARCHAR" size="20" required="true" default="DYNAFORM" />
     <column name="USR_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="APP_STATUS" type="VARCHAR" size="100" required="true" default=""/>
     <column name="HISTORY_DATE" type="TIMESTAMP" required="false"/>
     <column name="HISTORY_DATA" type="LONGVARCHAR" required="true"/>
+    <validator column="OBJ_TYPE">
+        <rule name="validValues" value="DYNAFORM|INPUT_DOCUMENT|OUTPUT_DOCUMENT|EXTERNAL|ASSIGN_TASK" message="Please select a valid value for OBJ_TYPE." />
+    </validator>
     <index name="indexAppHistory">
       <index-column name="APP_UID"/>
       <index-column name="TAS_UID"/>

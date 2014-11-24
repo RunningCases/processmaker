@@ -1488,6 +1488,7 @@ class adminProxy extends HttpProxyController
 
         //Country/city (Timezone)
         $params["Timezone"] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
+        $params["countWorkspace"] = count(System::listWorkspaces());
 
         $support = PATH_DATA_SITE . G::sanitizeString($licenseManager->info['FIRST_NAME'] . '-' . $licenseManager->info['LAST_NAME'] . '-' . SYS_SYS . '-' . date('YmdHis'), false, false) . '.spm';
         file_put_contents($support, serialize($params));
