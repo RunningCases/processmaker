@@ -34,6 +34,77 @@ try {
         throw (new Exception( G::loadTranslation( 'ID_ERROR_UPLOADING_PLUGIN_FILENAME' ) ));
     }
 
+    //save the files Enterprise
+    if ($_FILES['form']['error']['PLUGIN_FILENAME'] == 0) {
+        $filename = $_FILES['form']['name']['PLUGIN_FILENAME'];
+        $path = PATH_DOCUMENT . 'input' . PATH_SEP;
+        if (strpos($filename, 'enterprise') !== false) {
+
+            G::LoadThirdParty( 'pear/Archive', 'Tar' );
+            $tar = new Archive_Tar( $path . $filename );
+            $sFileName = substr( $filename, 0, strrpos( $filename, '.' ) );
+            $sClassName = substr( $filename, 0, strpos( $filename, '-' ) );
+
+            $files = $tar->listContent();
+            $licenseName = '';
+            $listFiles = array();
+            foreach ($files as $key => $val) {
+                if (strpos(trim($val['filename']), 'enterprise/data/') !== false) {
+                    $listFiles[] = trim($val['filename']);
+                }
+                if (strpos(trim($val['filename']), 'license_') !== false) {
+                    $licenseName = trim($val['filename']);
+                }
+            }
+            $tar->extractList( $listFiles,  PATH_PLUGINS . 'data');
+            $tar->extractList( $licenseName, PATH_PLUGINS);
+
+            $pluginRegistry = &PMPluginRegistry::getSingleton();
+            $autoPlugins = glob(PATH_PLUGINS . "data/enterprise/data/*.tar");
+            $autoPluginsA = array();
+
+            foreach ($autoPlugins as $filePath) {
+                $plName = basename($filePath);
+                //if (!(in_array($plName, $def))) {
+                if (strpos($plName, 'enterprise') === false) {
+                    $autoPluginsA[]["sFilename"] = $plName;
+                }
+            }
+
+            $aPlugins = $autoPluginsA;
+            foreach ($aPlugins as $key=>$aPlugin) {
+                $sClassName = substr($aPlugin["sFilename"], 0, strpos($aPlugin["sFilename"], "-"));
+
+                $oTar = new Archive_Tar(PATH_PLUGINS . "data/enterprise/data/" . $aPlugin["sFilename"]);
+                $oTar->extract(PATH_PLUGINS);
+
+                if (!(class_exists($sClassName))) {
+                    require_once (PATH_PLUGINS . $sClassName . ".php");
+                }
+
+                $pluginDetail = $pluginRegistry->getPluginDetails($sClassName . ".php");
+                $pluginRegistry->installPlugin($pluginDetail->sNamespace); //error
+            }
+
+            file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
+            $licfile = glob(PATH_PLUGINS . "*.dat");
+
+            if ((isset($licfile[0])) && ( is_file($licfile[0]) )) {
+                $licfilename = basename($licfile[0]);
+                @copy($licfile[0], PATH_DATA_SITE . $licfilename);
+                @unlink($licfile[0]);
+            }
+
+            require_once ('classes/model/AddonsStore.php');
+            AddonsStore::checkLicenseStore();
+            $licenseManager = &pmLicenseManager::getSingleton();
+            AddonsStore::updateAll(false);
+
+            $message = G::loadTranslation( 'ID_ENTERPRISE_INSTALLED') . ' ' . G::loadTranslation( 'ID_LOG_AGAIN');
+            G::SendMessageText($message, "INFO");
+            die('<script type="text/javascript">parent.parent.location = "../login/login";</script>');
+        }
+    }
     //save the file
     if ($_FILES['form']['error']['PLUGIN_FILENAME'] == 0) {
         $filename = $_FILES['form']['name']['PLUGIN_FILENAME'];
@@ -91,6 +162,20 @@ try {
         }
         $res = $tar->extract( $path );
 
+        //Check disabled code
+        G::LoadClass("codeScanner");
+
+        $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+
+        $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+
+        $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", $path . $pluginFile), $cs->checkDisabledCode("PATH", $path . $sClassName));
+
+        if (count($arrayFoundDisabledCode) > 0) {
+            throw new Exception(G::LoadTranslation("ID_DISABLED_CODE_PLUGIN"));
+        }
+
+        //Check if is enterprise plugin
         $sContent = file_get_contents( $path . $pluginFile );
         $chain = preg_quote( 'extends enterprisePlugin' );
         if (strpos( $sContent, $chain )) {
@@ -166,12 +251,14 @@ try {
 
     $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
     $size = file_put_contents( PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance() );
-    
+
     $response = $oPluginRegistry->verifyTranslation( $details->sNamespace);
+    G::auditLog("InstallPlugin", "Plugin Name: ".$details->sNamespace );
+
     //if ($response->recordsCountSuccess <= 0) {
         //throw (new Exception( 'The plugin ' . $details->sNamespace . ' couldn\'t verify any translation item. Verified Records:' . $response->recordsCountSuccess));
     //}
-    
+
     G::header( "Location: pluginsMain" );
     die();
 } catch (Exception $e) {

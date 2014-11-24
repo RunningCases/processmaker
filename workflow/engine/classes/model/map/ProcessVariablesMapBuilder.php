@@ -69,17 +69,17 @@ class ProcessVariablesMapBuilder
 
         $tMap->addColumn('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('VAR_NAME', 'VarName', 'string', CreoleTypes::VARCHAR, false, 60);
+        $tMap->addColumn('VAR_NAME', 'VarName', 'string', CreoleTypes::VARCHAR, false, 255);
 
         $tMap->addColumn('VAR_FIELD_TYPE', 'VarFieldType', 'string', CreoleTypes::VARCHAR, false, 32);
 
         $tMap->addColumn('VAR_FIELD_SIZE', 'VarFieldSize', 'int', CreoleTypes::INTEGER, false, null);
 
-        $tMap->addColumn('VAR_LABEL', 'VarLabel', 'string', CreoleTypes::VARCHAR, false, 64);
+        $tMap->addColumn('VAR_LABEL', 'VarLabel', 'string', CreoleTypes::VARCHAR, false, 255);
 
         $tMap->addColumn('VAR_DBCONNECTION', 'VarDbconnection', 'string', CreoleTypes::VARCHAR, false, 32);
 
-        $tMap->addColumn('VAR_SQL', 'VarSql', 'string', CreoleTypes::VARCHAR, false, 512);
+        $tMap->addColumn('VAR_SQL', 'VarSql', 'string', CreoleTypes::LONGVARCHAR, false, null);
 
         $tMap->addColumn('VAR_NULL', 'VarNull', 'int', CreoleTypes::TINYINT, false, 32);
 

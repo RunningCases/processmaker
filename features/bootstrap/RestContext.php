@@ -80,8 +80,10 @@ class RestContext extends BehatContext
             $parameters = $this->_parameters;
 
             if(($name=="uploadFilesFolder")&&(!isset($parameters[$name]) ) ){
-                $parameters[$name] = "/opt/uploadfiles/";
+                $defaultUploadPath = __DIR__ . "/../resources/uploadfiles/";
+                $parameters[$name] = $defaultUploadPath;
             }
+            $this->printDebug("Parameter: $name = ".$parameters[$name]);
             return (isset($parameters[$name])) ? $parameters[$name] : null;
         }
     }
@@ -335,12 +337,16 @@ class RestContext extends BehatContext
     /**
      * @When /^I request "([^"]*)"$/
      */
-    public function iRequest($pageUrl, $urlType="")
+    public function iRequest($pageUrl, $urlType="",$customHeader=array())
     {
         $this->_startTime = microtime(true);
         $baseUrl = $this->getParameter('base_url');
         if ($this->access_token != null) {
             $this->_headers['Authorization'] = 'Bearer ' . $this->access_token;
+        }elseif(!empty($customHeader)){
+            foreach($customHeader as $headerKey => $headerValue){
+                $this->_headers[$headerKey] = $headerValue;
+            }
         }
 
         
@@ -445,7 +451,7 @@ class RestContext extends BehatContext
                         $message = 'unexpected control character found';
                         break;
                     case JSON_ERROR_SYNTAX :
-                        $message = "malformed JSON \n\n ------\n".$this->_response->getBody(true)."\n ------";
+                        $message = "malformed JSON:: \n\n ------\n".$this->_response->getBody(true)."\n ------";
                         break;
                     case JSON_ERROR_UTF8 :
                         $message = 'malformed UTF-8 characters, possibly ' .
@@ -1050,9 +1056,11 @@ class RestContext extends BehatContext
      */
     public function storeInAsVariable($varName, $sessionVarName)
     {
+       
         if (!isset($this->_data->$varName)) {
             throw new \Exception("JSON Response does not have '$varName' property\n\n" );
         }
+
 
         $varValue = $this->_data->$varName;
         if (file_exists("session.data")) {
@@ -1397,57 +1405,36 @@ class RestContext extends BehatContext
     public function postIWantToUploadTheFileToPathPublicUrl($prfFile, $prfPath, $url)
     {
         $prfFile = $this->getParameter('uploadFilesFolder') . $prfFile;
-        $baseUrl = $this->getParameter('base_url');
-        $url = $baseUrl.$url;
         $accesstoken = $this->getParameter('access_token');
         $headr = array();
         $headr[] = 'Authorization: Bearer '.$accesstoken;
         $path = rtrim($prfPath, '/') . '/';
         $sfile = end(explode("/",$prfFile));
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,$url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array('prf_filename'=>$sfile, "prf_path" => $path));
-        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $postResult = curl_exec($ch);
+    
+        $postFields = array('prf_filename'=>$sfile, "prf_path" => $path);
         
-        curl_close($ch);
+        $this->_restObjectMethod = 'post';
+        $this->_restObject = $postFields;
+        $this->iRequest($url);
+
+        $postResult = json_decode($this->_response->getBody(true));
+
+
+        if(!isset($postResult->error)){
+
+
+            $prfUid = $postResult->prf_uid;
+            $url = $this->getParameter('base_url').$url.'/'.$prfUid."/upload";
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL,$url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, array('prf_file'=>'@'.$prfFile));
+            curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            $postResult = curl_exec($ch);
+            curl_close($ch);
+      }
         
-        //Save result as usual
-        $this->_type = 'json';
-        $this->_data = json_decode($postResult);
-
-        $postResult = (array)json_decode($postResult);
-
-        
-
-
-
-        if (sizeof($postResult) > 2) {
-            $prfUid = $postResult["prf_uid"];
-        } else {
-            throw new Exception($postResult["error"]->message);
-            //var_dump($postResult["error"]);
-        }
-        $url = $url.'/'.$prfUid."/upload";
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,$url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array('prf_file'=>'@'.$prfFile));
-        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $postResult = curl_exec($ch);
-        curl_close($ch);
-
-       //se guarda el prf_uid en una variable
-        
-        //Wen: Esto borra todo el session data, por favor corregir o no guardar la variable desde aca
-        
-        //$varName = 'prf_uid';
-        //$sessionData = new StdClass(); 
-        //$sessionData->$varName = $prfUid;
-        //file_put_contents("session.data", json_encode($sessionData));
     }
 
     //UPLOAD IMAGE
@@ -1578,7 +1565,6 @@ class RestContext extends BehatContext
         $this->_restObjectMethod = 'post';
         $this->_restObject = $postFields;
         $this->iRequest($url);
-
        
     }
 
@@ -1789,4 +1775,414 @@ class RestContext extends BehatContext
         $fp = fopen(sys_get_temp_dir() . "/behat.log", "a+");
         fwrite($fp, $string . PHP_EOL);
     }
+      /**
+     * @Then /^if database-connection with id "([^"]*)" is active$/
+     */
+    public function ifDatabaseConnectionWithIdIsActive($dbConnectionId)
+    {
+        if(!(isset($this->_response))){
+        throw new \Exception('Empty result ' );
+        }
+        $message="";
+        $sw_error=false;
+            if($bodyResponse=json_decode($this->_response->getBody(true))){
+            //print_r($bodyResponse);
+            foreach($bodyResponse as $testDetail){
+                $message.=$testDetail->test;
+                if(isset($testDetail->error)){
+                    $sw_error=true;
+                    $message .= " -> ".$testDetail->error;
+                }else{
+                    $message.=" -> [OK]";
+                }
+                $message.=" | ";
+            }
+
+            }else{
+                throw new \Exception('Empty result ' );
+            }
+
+            if (file_exists("session.data")) {
+                    $sessionData = json_decode(file_get_contents("session.data"));
+                } else {
+                    $sessionData = new StdClass();
+                }
+                if(!isset($sessionData->dbconnectionStatus)){
+                    $sessionData->dbconnectionStatus = new StdClass();
+                }
+            $sessionData->dbconnectionStatus->$dbConnectionId = !$sw_error;
+            file_put_contents("session.data", json_encode($sessionData));
+            if($sw_error){
+
+            throw new PendingException($message);
+        }
+    }
+    /**
+     * @Given /^database-connection with id "([^"]*)" is active$/
+     */
+    public function databaseConnectionWithIdIsActive($dbConnectionId)
+    {
+        if (file_exists("session.data")) {
+                    $sessionData = json_decode(file_get_contents("session.data"));
+                } else {
+                    $sessionData = new StdClass();
+                }
+                
+            if(!$sessionData->dbconnectionStatus->$dbConnectionId){
+            
+
+            throw new PendingException("Skip inactive dbconnection: $dbConnectionId");
+        }
+    }
+     /**
+     * @Given /^OAUTH register an application$/
+     */
+    public function oauthRegisterAnApplication(PyStringNode $data)
+    {
+        $this->printDebug("Register Application...");
+        $baseUrl            = $this->getParameter('base_url');
+        $login_url          = $this->getParameter('login_url');
+        $authentication_url = $this->getParameter('authentication_url');
+        $oauth_app_url      = $this->getParameter('oauth_app_url');
+        $oauth_authorization_url      = $this->getParameter('oauth_authorization_url');
+        
+        $user_name          = $this->getParameter('user_name');
+        $user_password      = $this->getParameter('user_password');
+        $cookie_file        = sys_get_temp_dir()."pmcookie";
+       
+            
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $authentication_url);
+            curl_setopt($ch, CURLOPT_REFERER, $login_url);
+            curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/32.0.1700.107 Chrome/32.0.1700.107 Safari/537.36');
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, "form[USR_USERNAME]=$user_name&form[USR_PASSWORD]=$user_password&form[USER_LANG]=en&form[URL]");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_COOKIESESSION, true);
+            curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_file); 
+            curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            $answer = curl_exec($ch);
+            $newurl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL); 
+            
+            
+            if (strpos($newurl, "/login/login") !== false) {
+                 throw new Exception('Bad credentials');
+            }
+
+
+            //print "<textarea>$answer</textarea>";
+            if (curl_error($ch)) {
+                throw new Exception(curl_error($ch));
+            }
+
+
+            // Read the session saved in the cookie file
+            
+            if(!file_exists($cookie_file)){
+                throw new Exception('Invalid Cookie/Session: '.$cookie_file);
+            }
+            
+
+
+            //another request preserving the session
+
+            $data = json_decode((string) $data);
+            
+            $name=$data->name;
+            $description=$data->description;
+            $webSite = $data->webSite;
+            $redirectUri=$data->redirectUri;
+            $applicationNumber=$data->applicationNumber;
+
+            //1. Register application
+            curl_setopt($ch, CURLOPT_URL, $oauth_app_url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, "option=INS&name=$name&description=$description&webSite=$webSite&redirectUri=$redirectUri");
+            $answer = curl_exec($ch);
+            if (curl_error($ch)) {
+                throw new Exception(curl_error($ch));
+            }
+            $newurl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL); 
+
+            if (strpos($newurl, "/login/login") !== false) {
+                 throw new Exception('Not authenticated');
+            }
+           // json_decode(json)
+            $response=json_decode($answer);
+            $this->printDebug("Register application:\n".$answer."\n");
+            $this->_restObjectMethod = 'post';
+            $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
+            $this->_response = json_decode($answer);
+
+            
+            if (file_exists("session.data")) {
+                $sessionData = json_decode(file_get_contents("session.data"));
+            } else {
+                $sessionData = new StdClass();
+            }
+            foreach($response->data as $key => $varValue){
+                $sessionVarName=$key."_".$applicationNumber;
+                $sessionData->$sessionVarName = $varValue;
+                $this->printDebug("Save $sessionVarName = $varValue");
+            }
+            //print_r($sessionData);
+            
+            $clientId = $response->data->CLIENT_ID;
+            $clientSecret = $response->data->CLIENT_SECRET;
+
+            //2. Request Authorization
+            curl_setopt($ch, CURLOPT_URL, $oauth_authorization_url."?"."response_type=code&client_id=$clientId&scope=*");
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, "allow=Accept&transaction_id=");
+            //print "response_type=code&client_id=$clientId&scope=*";
+            $answer = curl_exec($ch);
+            if (curl_error($ch)) {
+                throw new Exception(curl_error($ch));
+            }
+            $newurl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL); 
+            $codeA = explode("code=",$newurl);
+            
+            $code = $codeA[1];
+            $this->printDebug("Authorization code:\n".$code."\n");
+
+            //3. Request Token
+            $headr = array();
+            $headr[] = 'Content-Type: application/json';
+            $headr[] = 'Authorization: Basic '.base64_encode("$clientId:$clientSecret");
+
+            curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
+            //curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_setopt($ch, CURLOPT_URL, $baseUrl."oauth2/token");
+            //curl_setopt($ch, CURLOPT_USERPWD, "$clientId:$clientSecret");
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array("grant_type"=>"authorization_code","code"=>$code)));
+
+            $answer = curl_exec($ch);
+            if (curl_error($ch)) {
+                throw new Exception(curl_error($ch));
+            }
+            $newurl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+            $this->printDebug("Request token:\n".$answer."\n");
+            //print_r("Request token:\n".$newurl."\n");
+            foreach(json_decode($answer) as $key => $varValue){
+                $sessionVarName=$key."_".$applicationNumber;
+                $sessionData->$sessionVarName = $varValue;
+                $this->printDebug("Save $sessionVarName = $varValue");
+            }
+file_put_contents("session.data", json_encode($sessionData));
+       
+    }
+
+/**
+     * @Given /^I request a owner password credential grant$/
+     */
+    public function iRequestAOwnerPasswordCredentialGrant()
+    {
+        $baseUrl            = $this->getParameter('base_url');
+        $clientId            = $this->getParameter('client_id');
+        $clientSecret            = $this->getParameter('client_secret');
+
+        $this->printDebug("Password credentials");
+
+        $headr = array();
+        $headr['Authorization'] = 'Basic '.base64_encode("$clientId:$clientSecret");
+
+        $this->iRequest($baseUrl."oauth2/token", "absolute",$headr);
+        //print_r($this->_data);
+        if(isset($this->_data->error)){
+            throw new Exception($this->_data->error." : ".$this->_data->error_description);
+        }
+    }
+ /**
+     * @Given /^I request a client credential grant$/
+     */
+    public function iRequestAClientCredentialGrant()
+    {
+        $baseUrl            = $this->getParameter('base_url');
+        $clientId            = $this->getParameter('client_id');
+        $clientSecret            = $this->getParameter('client_secret');
+
+        $this->printDebug("Client credentials");
+
+        $headr = array();
+        $headr['Authorization'] = 'Basic '.base64_encode("$clientId:$clientSecret");
+
+        $this->iRequest($baseUrl."oauth2/token", "absolute",$headr);
+        //print_r($this->_data);
+        if(isset($this->_data->error)){
+            throw new Exception($this->_data->error." : ".$this->_data->error_description);
+        }
+    }
+     /**
+     * @Given /^I request a refresh token for "([^"]*)"$/
+     */
+    public function iRequestARefreshToken($refreshTokenSession)
+    {
+        $refArray=explode("_",$refreshTokenSession);
+        $varNumber = $refArray[2];
+        $baseUrl            = $this->getParameter('base_url');
+        $clientId            = $this->getParameter('client_id');
+        $clientSecret            = $this->getParameter('client_secret');
+        $this->printDebug("Refresh token");
+
+        $headr = array();
+        
+        $request=array();
+        $request['grant_type']="refresh_token";
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$refreshTokenSession) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$refreshTokenSession;
+            $clientIdName="CLIENT_ID_$varNumber";
+            $clientSecretName="CLIENT_SECRET_$varNumber";
+            $clientId            = $sessionData->$clientIdName;
+            $clientSecret            = $sessionData->$clientSecretName;
+        }
+        $headr['Authorization'] = 'Basic '.base64_encode("$clientId:$clientSecret");
+        $request['refresh_token']=$varValue;
+        $this->_requestBody=json_encode($request);
+print_r($this->_requestBody);
+        $this->iRequest($baseUrl."oauth2/token", "absolute", $headr);
+        print_r($this->_data);
+        if(isset($this->_data->error)){
+            throw new Exception($this->_data->error." : ".$this->_data->error_description);
+        }
+    }
+
+     /**
+     * @Given /^OAUTH request implicit grant$/
+     */
+    public function oauthRequestImplicitGrant(PyStringNode $data)
+    {
+        $this->printDebug("Implicit Grant");
+        $baseUrl            = $this->getParameter('base_url');
+        $login_url          = $this->getParameter('login_url');
+        $authentication_url = $this->getParameter('authentication_url');
+        $oauth_app_url      = $this->getParameter('oauth_app_url');
+        $oauth_authorization_url      = $this->getParameter('oauth_authorization_url');
+        
+        $user_name          = $this->getParameter('user_name');
+        $user_password      = $this->getParameter('user_password');
+        $cookie_file        = sys_get_temp_dir()."pmcookie";
+       
+            
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $authentication_url);
+        curl_setopt($ch, CURLOPT_REFERER, $login_url);
+        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/32.0.1700.107 Chrome/32.0.1700.107 Safari/537.36');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "form[USR_USERNAME]=$user_name&form[USR_PASSWORD]=$user_password&form[USER_LANG]=en&form[URL]");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_COOKIESESSION, true);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_file); 
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $answer = curl_exec($ch);
+        $newurl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL); 
+        
+        //print_r($newurl);
+        if (strpos($newurl, "/login/login") !== false) {
+             throw new Exception('Bad credentials');
+        }
+
+
+        //print "<textarea>$answer</textarea>";
+        if (curl_error($ch)) {
+            throw new Exception(curl_error($ch));
+        }
+
+
+        // Read the session saved in the cookie file
+        
+        if(!file_exists($cookie_file)){
+            throw new Exception('Invalid Cookie/Session: '.$cookie_file);
+        }
+
+        //another request preserving the session
+
+        $data = json_decode((string) $data);
+        
+        $response_type=$data->response_type;
+        $client_id=$data->client_id;
+        $scope = $data->scope;
+         $implicit_grant_number = $data->implicit_grant_number;
+       
+
+        //1. Register application
+        curl_setopt($ch, CURLOPT_URL, $oauth_authorization_url."?response_type=$response_type&client_id=$client_id&scope=$scope");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "transaction_id=");
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $answer = curl_exec($ch);
+        if (curl_error($ch)) {
+            throw new Exception(curl_error($ch));
+        }
+        $newurl = urldecode(curl_getinfo($ch, CURLINFO_EFFECTIVE_URL)); 
+
+
+        if (strpos($newurl, "/login/login") !== false) {
+             throw new Exception('Not authenticated');
+        }
+        $parts = parse_url($newurl);
+        
+        parse_str($parts['fragment'], $fragment);
+        //print_r($fragment);
+       // json_decode(json)
+        $response=json_decode($answer);
+
+        if (file_exists("session.data")) {
+                $sessionData = json_decode(file_get_contents("session.data"));
+            } else {
+                $sessionData = new StdClass();
+            }
+            foreach($fragment as $key => $varValue){
+                $sessionVarName=$key."_".$implicit_grant_number;
+                $sessionData->$sessionVarName = $varValue;
+            }
+            //print_r($sessionData);
+            file_put_contents("session.data", json_encode($sessionData));
+        //print_r("\nRegister application:\n".$answer."\n$oauth_authorization_url?response_type=$response_type&client_id=$client_id&scope=$scope\n");
+        //print_r($newurl);
+        $this->_restObjectMethod = 'post';
+        $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
+        $this->_response = json_decode($answer);
+
+
+    }
+
+     /**
+     * @Given /^that I assign an access token from session variable "([^"]*)"$/
+     */
+    public function thatIAssignAnAccessTokenFromSessionVariable($varName)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$varName) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$varName;
+        }        
+        $access_token = $varValue;
+        if (strlen($access_token)<= 10) {
+           
+            throw new Exception ("Access token is not valid\n\n" );
+        }
+        $this->printDebug("Access token set to: $access_token");
+        $this->access_token = $access_token;
+    }
+
+    
+
+
 }

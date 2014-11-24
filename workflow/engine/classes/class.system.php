@@ -170,7 +170,7 @@ class System
      */
     public static function getSysInfo ()
     {
-        $ipe = explode( " ", $_SERVER['SSH_CONNECTION'] );
+        $ipe = isset($_SERVER['SSH_CONNECTION']) ? explode( " ", $_SERVER['SSH_CONNECTION'] ) : array();
 
         if (getenv( 'HTTP_CLIENT_IP' )) {
             $ip = getenv( 'HTTP_CLIENT_IP' );
@@ -215,8 +215,8 @@ class System
         $Fields['SYSTEM'] = $distro;
         $Fields['PHP'] = phpversion();
         $Fields['PM_VERSION'] = self::getVersion();
-        $Fields['SERVER_ADDR'] = $ipe[2]; //lookup($ipe[2]);
-        $Fields['IP'] = $ipe[0]; //lookup($ipe[0]);
+        $Fields['SERVER_ADDR'] = isset($ipe[2]) ? $ipe[2] : ''; //lookup($ipe[2]);
+        $Fields['IP'] = isset($ipe[0]) ? $ipe[0] : ''; //lookup($ipe[0]);
 
 
         $Fields['PLUGINS_LIST'] = System::getPlugins();
@@ -815,6 +815,25 @@ class System
     }
 
     /**
+     * Returns tables name without prefix RBAC
+     *
+     * @param array $aOldSchema original schema array
+     * @return array with tablesToRename
+     */
+    public static function verifyRbacSchema ($aOldSchema)
+    {
+        $aChanges = array ();
+
+        foreach ($aOldSchema as $sTableName => $aColumns) {
+            if(substr($sTableName, 0,4) != 'RBAC') {
+                $aChanges[] = $sTableName;
+            }
+        }
+
+        return $aChanges;
+    }
+
+    /**
      * Returns the difference between two schema arrays
      *
      * @param array $aOldSchema original schema array
@@ -1142,7 +1161,7 @@ class System
         @preg_match( $patt, $content, $match );
 
         if (is_array( $match ) && count( $match ) > 0 && isset( $match[1] )) {
-            $newUrl = 'sys/' . $conf['lang'] . '/' . $conf['skin'] . '/login/login';
+            $newUrl = "sys/" . (($conf["lang"] != "")? $conf["lang"] : ((defined("SYS_LANG") && SYS_LANG != "")? SYS_LANG : "en")) . "/" . $conf["skin"] . "/login/login";
 
             $newMetaStr = str_replace( $match[1], $newUrl, $match[0] );
             $newContent = str_replace( $match[0], $newMetaStr, $content );

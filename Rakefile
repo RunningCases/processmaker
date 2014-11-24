@@ -152,7 +152,7 @@ def buildPmUi(homeDir, targetDir, mode)
     copyFiles({
         "#{homeDir}/build/js/pmui-#{version}.js" => "#{pmUIDir}/pmui.min.js",
         "#{themeDir}/build/pmui-mafe.css" => "#{pmUIDir}/pmui.min.css",
-        "#{themeDir}/build/images/*.png" => "#{targetDir}/css/images/",
+        "#{themeDir}/build/images/*" => "#{targetDir}/css/images/",
         "#{homeDir}/img/*" => "#{imgTargetDir}"
     })
 
@@ -226,10 +226,12 @@ def buildMafe(homeDir, targetDir, mode)
 
     puts "\nCopying files into: #{mafeDir}".bold
     copyFiles({
+        "#{homeDir}/lib/jQueryUI/images/*.png" => "#{cssTargetDir}/images/",
         "#{homeDir}/build/js/designer.js" => "#{mafeDir}/designer.min.js",
         "#{homeDir}/build/js/mafe.js" => "#{mafeDir}/mafe.min.js",
         "#{homeDir}/build/css/mafe.css" => "#{mafeDir}/mafe.min.css",
-        "#{homeDir}/img/*.*" => "#{imgTargetDir}"
+        "#{homeDir}/img/*.*" => "#{imgTargetDir}",
+        "#{homeDir}/srcForm/img/*.*" => "#{imgTargetDir}"
     })
 
     puts "\nCopying lib files into: #{jsTargetDir}".bold

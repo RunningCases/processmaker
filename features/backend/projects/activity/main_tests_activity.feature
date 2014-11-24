@@ -1,8 +1,8 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Activity Resources Main Tests
   Requirements:
-    a workspace with the process 59534741653502b6d1820d6012095837 already loaded
-    the process name is "Test Activity"
+    a workspace with the process 59534741653502b6d1820d6012095837 - "Test Activity" already loaded
+    and workspace with the process 1455892245368ebeb11c1a5001393784 - "Process Complete BPMN" already loaded
     there are three Activity Resources in the process
 
 Background:
@@ -10,7 +10,7 @@ Background:
 
     
 Scenario Outline: Get the Properties and Definition of 3 Activities
-    Given I request "project/59534741653502b6d1820d6012095837/activity/<activity>"
+    Given I request "project/<project>/activity/<activity>"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
@@ -20,14 +20,17 @@ Scenario Outline: Get the Properties and Definition of 3 Activities
 
     Examples:
 
-    | activity                         | tas_title |
-    | 28629650453502b70b7f3a8051740006 | Task 1    |
-    | 52976670353502b71e2b0a8036043148 | Task 2    |
-    | 24689389453502b73597aa5052425148 | Task 3    |
+    | Description                          | activity                         | project                          | tas_title         |
+    | Get of process Test Activity Task 1  | 28629650453502b70b7f3a8051740006 | 59534741653502b6d1820d6012095837 | Task 1            |
+    | Get of process Test Activity Task 2  | 52976670353502b71e2b0a8036043148 | 59534741653502b6d1820d6012095837 | Task 2            |
+    | Get of process Test Activity Task 3  | 24689389453502b73597aa5052425148 | 59534741653502b6d1820d6012095837 | Task 3            |
+    | Get of process Process Complete BPMN | 6274755055368eed1116388064384542 | 1455892245368ebeb11c1a5001393784 | Dynaform          |
+    | Get of process Process Complete BPMN | 4790702485368efad167477011123879 | 1455892245368ebeb11c1a5001393784 | Grids             |
+    | Get of process Process Complete BPMN | 2072984565368efc137a394001073529 | 1455892245368ebeb11c1a5001393784 | Dynaform and Grid |
         
         
 Scenario Outline: Get the Properties of a Activity are exactly three activity
-    Given I request "project/59534741653502b6d1820d6012095837/activity/<activity>?filter=properties"
+    Given I request "project/<project>/activity/<activity>?filter=properties"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
@@ -35,15 +38,18 @@ Scenario Outline: Get the Properties of a Activity are exactly three activity
 
     Examples:
 
-    | activity                         | tas_title |
-    | 28629650453502b70b7f3a8051740006 | Task 1    |
-    | 52976670353502b71e2b0a8036043148 | Task 2    |
-    | 24689389453502b73597aa5052425148 | Task 3    |
+    | Description                          | project                          | activity                         | tas_title         |
+    | Get of process Test Activity Task 1  | 59534741653502b6d1820d6012095837 | 28629650453502b70b7f3a8051740006 | Task 1            |
+    | Get of process Test Activity Task 2  | 59534741653502b6d1820d6012095837 | 52976670353502b71e2b0a8036043148 | Task 2            |
+    | Get of process Test Activity Task 3  | 59534741653502b6d1820d6012095837 | 24689389453502b73597aa5052425148 | Task 3            |
+    | Get of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | Dynaform          |
+    | Get of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 4790702485368efad167477011123879 | Grids             |
+    | Get of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 2072984565368efc137a394001073529 | Dynaform and Grid |
         
     
 
 Scenario Outline: Get the Definition of a Activity are exactly three activity
-    Given I request "project/59534741653502b6d1820d6012095837/activity/<activity>?filter=definition"
+    Given I request "project/<project>/activity/<activity>?filter=definition"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "object"
@@ -51,13 +57,16 @@ Scenario Outline: Get the Definition of a Activity are exactly three activity
 
     Examples:
 
-    | activity                         | tas_title |
-    | 28629650453502b70b7f3a8051740006 | Task 1    |
-    | 52976670353502b71e2b0a8036043148 | Task 2    |
-    | 24689389453502b73597aa5052425148 | Task 3    |
+    | Description                          | project                          | activity                         | tas_title         |
+    | Get of process Test Activity Task 1  | 59534741653502b6d1820d6012095837 | 28629650453502b70b7f3a8051740006 | Task 1            |
+    | Get of process Test Activity Task 2  | 59534741653502b6d1820d6012095837 | 52976670353502b71e2b0a8036043148 | Task 2            |
+    | Get of process Test Activity Task 3  | 59534741653502b6d1820d6012095837 | 24689389453502b73597aa5052425148 | Task 3            |
+    | Get of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 6274755055368eed1116388064384542 | Dynaform          |
+    | Get of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 4790702485368efad167477011123879 | Grids             |
+    | Get of process Process Complete BPMN | 1455892245368ebeb11c1a5001393784 | 2072984565368efc137a394001073529 | Dynaform and Grid |
         
 
-Scenario: Get a activity (Verification of initial values) "Task1"
+Scenario: Get a activity (Verification of initial values) "Task1" of process Test Activity
     Given I request "project/59534741653502b6d1820d6012095837/activity/28629650453502b70b7f3a8051740006"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -85,7 +94,7 @@ Scenario: Get a activity (Verification of initial values) "Task1"
     And the property "tas_def_message_template" of "properties" is set to "alert_message.html"
 
 
-Scenario: Get a activity (Verification of initial values) "Task2"
+Scenario: Get a activity (Verification of initial values) "Task2" of process Test Activity
     Given I request "project/59534741653502b6d1820d6012095837/activity/52976670353502b71e2b0a8036043148"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -112,7 +121,7 @@ Scenario: Get a activity (Verification of initial values) "Task2"
     And the property "tas_def_message_template" of "properties" is set to "alert_message.html"
 
 
-Scenario: Get a activity (Verification of initial values) "Task3"
+Scenario: Get a activity (Verification of initial values) "Task3" of process Test Activity
     Given I request "project/59534741653502b6d1820d6012095837/activity/24689389453502b73597aa5052425148"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -139,7 +148,33 @@ Scenario: Get a activity (Verification of initial values) "Task3"
     And the property "tas_def_message_template" of "properties" is set to "alert_message.html"
 
 
-Scenario: Update the Definition of a Activity "Task1" and the check if the values had changed
+Scenario: Get a activity (Verification of initial values) "Task1" of process Process Complete BPMN
+    Given I request "project/1455892245368ebeb11c1a5001393784/activity/6274755055368eed1116388064384542"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+    And the property "tas_type" of "properties" is set to "NORMAL"
+    And the property "tas_duration" of "properties" is set to "1"
+    And the property "tas_type_day" of "properties" is set to ""
+    And the property "tas_timeunit" of "properties" is set to "DAYS"
+    And the property "tas_priority_variable" of "properties" is set to ""    
+    And the property "tas_assign_type" of "properties" is set to "BALANCED"    
+    And the property "tas_assign_variable" of "properties" is set to "@@SYS_NEXT_USER_TO_BE_ASSIGNED"    
+    And the property "tas_transfer_fly" of "properties" is set to "FALSE"
+    And the property "tas_derivation_screen_tpl" of "properties" is set to ""
+    And the property "tas_selfservice_timeout" of "properties" is set to "0"
+    And the property "tas_selfservice_time" of "properties" is set to ""
+    And the property "tas_selfservice_time_unit" of "properties" is set to ""
+    And the property "tas_selfservice_trigger_uid" of "properties" is set to ""
+    And the property "tas_title" of "properties" is set to "Dynaform"
+    And the property "tas_description" of "properties" is set to ""
+    And the property "tas_def_title" of "properties" is set to ""
+    And the property "tas_def_description" of "properties" is set to ""
+    And the property "tas_calendar" of "properties" is set to ""
+    And the property "tas_def_message_type" of "properties" is set to "text"
+    And the property "tas_def_message_template" of "properties" is set to "alert_message.html"
+
+Scenario: Update the Definition of a Activity "Task1" of process Test Activity and the check if the values had changed
     Given PUT this data:
     """
     {
@@ -180,7 +215,7 @@ Scenario: Update the Definition of a Activity "Task1" and the check if the value
         
     
 
-Scenario: Get a activity (Review of variables after the update) Task1
+Scenario: Get a activity (Review of variables after the update) Task1 of process Test Activity
     Given I request "project/59534741653502b6d1820d6012095837/activity/28629650453502b70b7f3a8051740006"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -202,7 +237,7 @@ Scenario: Get a activity (Review of variables after the update) Task1
     And the property "tas_def_message_type" of "properties" is set to "text"
     
     
-Scenario: Update the Definition of a Activity to return to baseline of the task1
+Scenario: Update the Definition of a Activity to return to baseline of the task1 of process Test Activity
     Given PUT this data:
     """
         {
@@ -243,7 +278,7 @@ Scenario: Update the Definition of a Activity to return to baseline of the task1
     And the type is "object"
         
     
-Scenario: Get a activity (Verification of initial values) Task1
+Scenario: Get a activity (Verification of initial values) Task1 of process Test Activity
     Given I request "project/59534741653502b6d1820d6012095837/activity/28629650453502b70b7f3a8051740006"
     Then the response status code should be 200
     And the response charset is "UTF-8"

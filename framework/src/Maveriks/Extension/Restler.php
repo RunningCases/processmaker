@@ -18,6 +18,8 @@ class Restler extends \Luracast\Restler\Restler
     public $responseMultipart = array();
     public $inputExecute = '';
 
+    protected $workspace;
+
     public function __construct($productionMode = false, $refreshCache = false)
     {
         parent::__construct($productionMode, $refreshCache);
@@ -126,5 +128,15 @@ class Restler extends \Luracast\Restler\Restler
     public function setMessage(RestException $e)
     {
         $this->message($e);
+    }
+
+    public function setWorkspace($workspace)
+    {
+        $this->workspace = $workspace;
+    }
+
+    public function getWorkspace()
+    {
+        return $this->workspace;
     }
 }

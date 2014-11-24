@@ -396,20 +396,6 @@ class ProcessCategory
                 $criteria->add(\ProcessCategoryPeer::CATEGORY_NAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE);
             }
 
-            //Number records total
-            $criteriaCount = clone $criteria;
-
-            $criteriaCount->clearSelectColumns();
-            $criteriaCount->addAsColumn("NUM_REC", "COUNT(" . \ProcessCategoryPeer::CATEGORY_UID . ")");
-
-            $rsCriteriaCount = \ProcessCategoryPeer::doSelectRS($criteriaCount);
-            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            $rsCriteriaCount->next();
-            $row = $rsCriteriaCount->getRow();
-
-            $numRecTotal = (int)($row["NUM_REC"]);
-
             //SQL
             if (!is_null($sortField) && trim($sortField) != "") {
                 $sortField = strtoupper($sortField);

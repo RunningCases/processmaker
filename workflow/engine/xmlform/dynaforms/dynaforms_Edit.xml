@@ -7,7 +7,7 @@
   <TITLE type="title" group="1">
     <en><![CDATA[Dynaform Information]]></en>
   </TITLE>
-  <ADD_TABLE type="dropdown" sqlConnection="dbarray">
+  <ADD_TABLE type="dropdown" sqlConnection="dbarray" required="1">
   SELECT * FROM ADDITIONAL_TABLES
   <en><![CDATA[Create from a PM Table]]></en>
 </ADD_TABLE>
@@ -164,9 +164,8 @@ document.getElementById('form[DYN_TITLE]').value = document.getElementById('form
   }
   var oPanel;
   function assignVariables(){
-    //alert("test");
-
-    if(document.getElementById('form[ADD_TABLE]').value!=''){
+    
+    if ((document.getElementById('form[ADD_TABLE]').value.trim() != '') && (document.getElementById('form[DYN_TITLE]').value.trim() != '')) {
         table_uid = document.getElementById('form[ADD_TABLE]').value;
        	oPanel = new leimnud.module.panel();
       	oPanel.options = {
@@ -185,19 +184,17 @@ document.getElementById('form[DYN_TITLE]').value = document.getElementById('form
         var PRO_UID = document.getElementById('form[PRO_UID]').value;
         var DYN_UID = document.getElementById('form[DYN_UID]').value;
         var ADD_TABLE = document.getElementById('form[ADD_TABLE]').value;
-        var DYN_TITLE = document.getElementById('form[DYN_TITLE]').value;
+        var DYN_TITLE = document.getElementById('form[DYN_TITLE]').value.trim();
         var DYN_TYPE = document.getElementById('form[DYN_TYPE]').value;
         var ACTION = document.getElementById('form[ACTION]').value;
         var DYN_DESCRIPTION = document.getElementById('form[DYN_DESCRIPTION]').value;
-
-        //alert("pepe2");
 
         oRPC = new leimnud.module.rpc.xmlhttp({
             url    : '../dynaforms/dynaforms_AssignVariables',
             method : 'POST',
             args   : 'PRO_UID=' + PRO_UID + '&DYN_UID=' + DYN_UID + '&ADD_TABLE=' + ADD_TABLE + '&DYN_TITLE=' + DYN_TITLE + '&DYN_TYPE=' + DYN_TYPE + '&DYN_DESCRIPTION=' + DYN_DESCRIPTION + '&ACTION=' + ACTION
         });
-        //alert("alert");
+        
         oRPC.callback = function(oRPC) {
             oPanel.loader.hide();
             var scs = oRPC.xmlhttp.responseText.extractScript();
@@ -206,10 +203,15 @@ document.getElementById('form[DYN_TITLE]').value = document.getElementById('form
         }.extend(this);
         oRPC.make();
         lastPopupWindow.remove();
-
-
-        //popupWindow('Assign Variable', '?PRO_UID=@%PRO_UID&TABLE_UID='+table_uid , 500, 300);
-    }
+    } else { 
+      if (document.getElementById('form[ADD_TABLE]').value.trim() == '') {
+        msgBox("@G::LoadTranslation(ID_PMTABLE_REQUIRED)", "alert");
+        return false;
+      } else {  
+        msgBox("@G::LoadTranslation(ID_REQUIRED_NAME_DYNAFORM)", "alert");        
+        return false;
+      }
+    }    
   }
 
   function cancel(){

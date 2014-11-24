@@ -78,7 +78,7 @@ Scenario: Get a list templates folder of process files manager
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
+    And the response has 2 records
 
 Scenario: Verify that there are report tables
     Given I request "project/1455892245368ebeb11c1a5001393784/report-tables"
@@ -184,16 +184,6 @@ Scenario: Get a single Process process "Test_Event_without_name.pmx"
     And that "evn_name" is set to ""
     And that "flo_element_origin" is set to "89601044553d127b52634d4017150624"
     
-
-
-
-
-
-
-
-
-
-
 
 
 #Verificar cantidad de dynaform, output, inputs, triggers, asignacion de usuarios, etc.
@@ -328,8 +318,8 @@ Scenario Outline: Get a list templates folder of process files manager
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records |
     | create        | 1              | 601816709536cfeae7d7cd9079578104 | 0       |
-    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 2       |
+    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 2       |
     | disable       | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
     | keep          | 5              | 1455892245368ebeb11c1a5001393784 | 1       |
 
@@ -423,6 +413,7 @@ Scenario Outline: Delete a Project created previously in this script
     | 2              |
     | 4              |
     | 5              |
+    | 6              |
     
 
 Scenario: Get a list of projects

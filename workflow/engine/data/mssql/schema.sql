@@ -593,6 +593,8 @@ CREATE TABLE [INPUT_DOCUMENT]
 	[INP_DOC_VERSIONING] TINYINT default 0 NOT NULL,
 	[INP_DOC_DESTINATION_PATH] NVARCHAR(MAX)  NULL,
 	[INP_DOC_TAGS] NVARCHAR(MAX)  NULL,
+ [INP_DOC_MAX_FILESIZE] INT default 0 NOT NULL,
+	[INP_DOC_MAX_FILESIZE_UNIT] VARCHAR(2) default 'KB' NOT NULL,
 	CONSTRAINT INPUT_DOCUMENT_PK PRIMARY KEY ([INP_DOC_UID])
 );
 
@@ -904,6 +906,8 @@ CREATE TABLE [PROCESS]
 	[PRO_TRI_CANCELED] VARCHAR(32) default '' NOT NULL,
 	[PRO_TRI_PAUSED] VARCHAR(32) default '' NOT NULL,
 	[PRO_TRI_REASSIGNED] VARCHAR(32) default '' NOT NULL,
+ [PRO_TRI_UNPAUSED] VARCHAR(32) default '' NOT NULL,
+ [PRO_TYPE_PROCESS] VARCHAR(32) default 'PUBLIC' NOT NULL,
 	[PRO_SHOW_DELEGATE] TINYINT default 1 NOT NULL,
 	[PRO_SHOW_DYNAFORM] TINYINT default 0 NOT NULL,
 	[PRO_CATEGORY] VARCHAR(48) default '' NOT NULL,
@@ -2608,6 +2612,7 @@ CREATE TABLE [APP_HISTORY]
 	[PRO_UID] VARCHAR(32) default '' NOT NULL,
 	[TAS_UID] VARCHAR(32) default '' NOT NULL,
 	[DYN_UID] VARCHAR(32) default '' NOT NULL,
+ [OBJ_TYPE] VARCHAR(20) default 'DYNAFORM' NOT NULL,
 	[USR_UID] VARCHAR(32) default '' NOT NULL,
 	[APP_STATUS] VARCHAR(100) default '' NOT NULL,
 	[HISTORY_DATE] CHAR(19)  NULL,
@@ -3232,5 +3237,43 @@ CREATE TABLE WEB_ENTRY
     WE_UPDATE_DATE    CHAR(19),
 
     CONSTRAINT WEB_ENTRY_PK PRIMARY KEY (WE_UID)
+);
+
+/* --------------------------------------------------------------------------- */
+/* APP_ASSIGN_SELF_SERVICE_VALUE */
+/* --------------------------------------------------------------------------- */
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'APP_ASSIGN_SELF_SERVICE_VALUE')
+BEGIN
+  DECLARE @reftable_71 nvarchar(60), @constraintname_71 nvarchar(60)
+  DECLARE refcursor CURSOR FOR
+  select reftables.name tablename, cons.name constraintname
+   from sysobjects tables,
+     sysobjects reftables,
+     sysobjects cons,
+     sysreferences ref
+    where tables.id = ref.rkeyid
+   and cons.id = ref.constid
+   and reftables.id = ref.fkeyid
+   and tables.name = 'APP_ASSIGN_SELF_SERVICE_VALUE'
+  OPEN refcursor
+  FETCH NEXT from refcursor into @reftable_71, @constraintname_71
+  while @@FETCH_STATUS = 0
+  BEGIN
+    exec ('alter table ' + @reftable_71 + ' drop constraint ' + @constraintname_71)
+    FETCH NEXT from refcursor into @reftable_71, @constraintname_71
+  END
+  CLOSE refcursor
+  DEALLOCATE refcursor
+  DROP TABLE [APP_ASSIGN_SELF_SERVICE_VALUE]
+END
+
+CREATE TABLE APP_ASSIGN_SELF_SERVICE_VALUE
+(
+    APP_UID   VARCHAR(32) NOT NULL,
+    DEL_INDEX INT         DEFAULT 0 NOT NULL,
+    PRO_UID   VARCHAR(32) NOT NULL,
+    TAS_UID   VARCHAR(32) NOT NULL,
+    GRP_UID   VARCHAR(32) DEFAULT '' NOT NULL
 );
 

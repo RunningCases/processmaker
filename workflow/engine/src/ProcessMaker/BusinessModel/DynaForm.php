@@ -1014,6 +1014,7 @@ class DynaForm
     {
         try {
             $arrayVariables = array();
+            $arrayVariablesDef = array();
             //Verify data
             Validator::proUid($projectUid, '$prj_uid');
             $this->throwExceptionIfNotExistsDynaForm($dynaFormUid, "", $this->arrayFieldNameForException["dynaFormUid"]);
@@ -1092,9 +1093,6 @@ class DynaForm
                         }
                         if (isset($value[0]["hint"])) {
                             $aVariables = array_merge(array('hint' => $value[0]["hint"]), $aVariables);
-                        }
-                        if (isset($value[0]["readonly"])) {
-                            $aVariables = array_merge(array('readonly' => $value[0]["readonly"]), $aVariables);
                         }
                         if (isset($value[0]["readonly"])) {
                             $aVariables = array_merge(array('readonly' => $value[0]["readonly"]), $aVariables);

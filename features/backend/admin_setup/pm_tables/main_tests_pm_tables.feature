@@ -76,7 +76,6 @@ Scenario Outline: Create news pmtable
     Examples:
 
     | test_description                                          | pmt_uid_number | pmt_tab_name | pmt_tab_dsc                     | fld_name_1 | fld_label_1 | fld_type_1 | fld_name_2 | fld_label_2 | fld_type_2 | fld_name_3 | fld_label_3 | fld_type_3    |
-    | Create pmtable with type varchar, bigint and boolean      | 1              | PMT_Test_QA1 | pmt table 1 created with script | UNO        | UNO         | VARCHAR    | DOS        | DOS         | BIGINT     | TRES       | TRES        | BOOLEAN       |
     | Create pmtable with type varchar, datetime and decimal    | 3              | PMT_Test_QA3 | pmt table 3 created with script | UNO        | UNO         | VARCHAR    | DOS        | DOS         | DATETIME   | TRES       | TRES        | DECIMAL       |
     | Create pmtable with type varchar, double and float        | 4              | PMT_Test_QA4 | pmt table 4 created with script | UNO        | UNO         | VARCHAR    | DOS        | DOS         | DOUBLE     | TRES       | TRES        | FLOAT         |
     | Create pmtable with type varchar, integer and longvarchar | 5              | PMT_Test_QA5 | pmt table 5 created with script | UNO        | UNO         | VARCHAR    | DOS        | DOS         | INTEGER    | TRES       | TRES        | LONGVARCHAR   |
@@ -111,7 +110,66 @@ Scenario Outline: Create new pmtable with type date and char
 
     | test_description              | pmt_uid_number |
     | Create pmtable with type date | 2              |
+
+
+Scenario Outline: Create new pmtable with type bigint
+    Given POST this data:
+    """
+    {
+    "pmt_tab_name" : "PMT_Test_QA1",
+    "pmt_tab_dsc" : "pmt table 1 created with script",
+    "fields" : [
+        {
+            "fld_key" : 1,
+            "fld_name" : "EJEMPLOA",
+            "fld_label" : "EJEMPLOA",
+            "fld_type" : "BIGINT"
+        }
+            ]
+    }
+    """
+    And I request "pmtable"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And store "pmt_uid" in session array as variable "pmt_uid_<pmt_uid_number>"
+
+    Examples:
+
+    | test_description              | pmt_uid_number |
+    | Create pmtable with type date | 1              |
     
+
+Scenario Outline: Create new pmtable with type boolean
+    Given POST this data:
+    """
+    {
+    "pmt_tab_name" : "PMT_Test_QA8",
+    "pmt_tab_dsc" : "pmt table 1 created with script",
+    "fields" : [
+        {
+            "fld_key" : 1,
+            "fld_name" : "EJEMPLOB",
+            "fld_label" : "EJEMPLOB",
+            "fld_type" : "BOOLEAN"
+        }
+            ]
+    }
+    """
+    And I request "pmtable"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And store "pmt_uid" in session array as variable "pmt_uid_<pmt_uid_number>"
+
+    Examples:
+
+    | test_description              | pmt_uid_number |
+    | Create pmtable with type date | 8              |
+
+
    
 Scenario Outline: Create a new Data of pm table
     Given POST this data:
@@ -131,7 +189,6 @@ Scenario Outline: Create a new Data of pm table
     Examples:
 
     | pmt_uid_number |
-    | 1              |
     | 4              |
     | 5              |
     | 6              |
@@ -155,7 +212,6 @@ Scenario Outline: Update a a data of pm table
     Examples:
 
     | pmt_uid_number |
-    | 1              |
     | 4              |
     | 6              |
 
@@ -232,7 +288,7 @@ Scenario: Get the PMTABLE List when there are exactly two pmtables in this works
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 8 records
+    And the response has 9 records
 
 #Test Delete of data
 
@@ -319,6 +375,7 @@ Scenario Outline: Delete a pm table of a pmtable
     | 5              |
     | 6              |
     | 7              |
+    | 8              |
 
 
 Scenario: Get the PMTABLE List when there are exactly ONE pmtables in this workspace

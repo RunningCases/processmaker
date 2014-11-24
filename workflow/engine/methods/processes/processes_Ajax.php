@@ -488,6 +488,22 @@ try {
             //            ';
             //            $oHeadPublisher->addScriptCode($jscriptCode);
             $_REQUEST['fcontent'] = $fcontent;
+
+            preg_match_all('/\@(?:([\>])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*(?:[\\\\][\w\W])?)*)\))((?:\s*\[[\'"]?\w+[\'"]?\])+)?/',$fcontent,$matches);
+            foreach ($matches[0] as $key => $value) {
+                preg_match('/(\!--)'.$value.'(-->)/',$fcontent, $match);
+                if (count($match)==0) {
+                    $fcontent = preg_replace ('/'.$value.'/i','<!--'.$value.'-->',$fcontent);
+                }
+            }
+            preg_match_all('/\@(?:([\<])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*(?:[\\\\][\w\W])?)*)\))((?:\s*\[[\'"]?\w+[\'"]?\])+)?/',$fcontent,$matches);
+            foreach ($matches[0] as $key => $value) {
+                    preg_match('/(\!--)'.$value.'(-->)/',$fcontent, $match);
+                    if (count($match)==0) {
+                        $fcontent = preg_replace ('/'.$value.'/i','<!--'.$value.'-->',$fcontent);
+                    }
+            }
+
             //if($extion[count($extion)-1]=='html' || $extion[count($extion)-1]=='txt'){
             $aData = Array('pro_uid' => $_REQUEST['pro_uid'], 'fcontent' => $fcontent, 'filename' => $_REQUEST['filename']);
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'processes/processes_FileEdit', '', $aData);
@@ -694,6 +710,21 @@ try {
             $response->casesNumRec = $casesNumRec;
             //$json = new Services_JSON();
             $sOutput = Bootstrap::json_encode($response);
+            break;
+        case "verifyNameFile":
+            $response = array();
+            $status = "OK";
+
+            $filename = $_POST["filename"];
+
+            $pathDirectory = PATH_DATA_MAILTEMPLATES . $_REQUEST["pro_uid"] . PATH_SEP;
+
+            if (file_exists($pathDirectory . PATH_SEP . $filename)) {
+                $status = "ERROR";
+            }
+
+            $response["status"] = $status;
+            echo Bootstrap::json_encode($response);
             break;
     }
     if (isset($sOutput)) {

@@ -1213,8 +1213,17 @@ function G_Text(form, element, name)
     if (me.validate == 'Any' && me.mask == '') return true;
 
     var pressKey = (window.event)? window.event.keyCode : event.which;
-    if (pressKey == 107 || pressKey == 187 || pressKey == 191 || pressKey == 192 || pressKey == 172 || pressKey == 171 || pressKey == 226 || pressKey == 220 || pressKey == 226 || pressKey == 0 || pressKey == 221 || pressKey == 222 || pressKey == 186) {
-        pressKey = 43;
+
+    if (me.validate == "NodeName" && (pressKey == 189 || pressKey == 173)) {
+        return true;
+    }
+
+    if (me.validate == "NodeName" && (pressKey == 0 || pressKey == 192 ||  pressKey == 109)) {
+        return false;
+    }
+
+    if (pressKey == 107 || pressKey == 187 || pressKey == 191 || pressKey == 172 || pressKey == 171 || pressKey == 226 || pressKey == 220 || pressKey == 226 || pressKey == 221 || pressKey == 222 || pressKey == 186) {
+       pressKey = 43;
     }
 
     switch(pressKey){
@@ -1462,6 +1471,14 @@ function G_Text(form, element, name)
 
       if (me.browser.name == 'Firefox') {
         if (keyCode == 0) return true;
+      }
+
+      if (me.browser.name == 'Microsoft Internet Explorer' || me.browser.name == 'Netscape'){
+    	    if (window.event.preventDefault) {
+    	    	window.event.preventDefault();
+    		} else {
+    			window.event.returnValue = false;
+    		}
       }
 
       if (me.browser.name == 'Chrome' || me.browser.name == 'Safari'){
@@ -2960,6 +2977,7 @@ var validateForm = function(sRequiredFields) {
          *  i.ei <form onsubmit="myaction(MyjsString)" ...   with var MyjsString = "some string that is into a variable, so this broke the html";
         */
 
+        sRequiredFields = sRequiredFields.replace(/\n/g, " ");
         if( typeof(sRequiredFields) != 'object' || sRequiredFields.indexOf("%27") > 0 ) {
             sRequiredFields = sRequiredFields.replace(/%27/gi, '"');
         }
@@ -3284,6 +3302,38 @@ var validateForm = function(sRequiredFields) {
                                 inputAux.value = link.innerHTML;
 
                                 frm.appendChild(inputAux);
+                            }
+                        }
+                    }
+                }
+            }
+
+            arrayForm = document.getElementsByTagName("form");
+            i1 = 0;
+            i2 = 0;
+
+            for (i1 = 0; i1 <= arrayForm.length - 1; i1++) {
+                var frm = arrayForm[i1];
+
+                var arrayInput = frm.getElementsByTagName("input");
+
+                for (i2 = 0; i2 <= arrayInput.length - 1; i2++) {
+                    var inputAux2 = arrayInput[i2];
+
+                    if (inputAux2.type == "file") {
+                        if (inputAux2.value != "") {
+                            var pmindocmaxfilesize = inputAux2.getAttribute("pmindocmaxfilesize");
+
+                            if (pmindocmaxfilesize != null && pmindocmaxfilesize != "" && pmindocmaxfilesize > 0) {
+                                var flagFilesize = inputDocumentVerifySize(parseInt(pmindocmaxfilesize), inputAux2);
+
+                                if (flagFilesize == 0) {
+                                    new leimnud.module.app.alert().make({label: _("ID_SIZE_VERY_LARGE_PERMITTED")});
+
+                                    swSubmitValidateForm = 1;
+
+                                    return false;
+                                }
                             }
                         }
                     }
@@ -3930,15 +3980,15 @@ function dropDownSetOption(elem, arrayOption)
 function dynaFormChanged(frm)
 {
     for (var i1 = 0; i1 <= frm.elements.length - 1; i1++) {
-        
+
         if((frm.elements[i1].type=="radio" || frm.elements[i1].type=="checkbox") && (frm.elements[i1].checked!=frm.elements[i1].defaultChecked)) {
           return true;
         }
-        
+
         if((frm.elements[i1].type=="textarea" || frm.elements[i1].type=="text" || frm.elements[i1].type=="file") && (frm.elements[i1].value!=frm.elements[i1].defaultValue)) {
           return true;
         }
-        
+
 
         if (frm.elements[i1].tagName.toLowerCase() == "select") {
             var selectDefaultValue = frm.elements[i1].value;

@@ -577,7 +577,7 @@ class Cases
                     if ($jump != '') {
                         $aCases = $oAppDel->LoadParallel($sAppUid);
                         $aFields['TAS_UID'] = '';
-                        $aFields['CURRENT_USER'] = '';
+                        $aFields['CURRENT_USER'] = array();
                         foreach ($aCases as $key => $value) {
                             $oCurUser->load($value['USR_UID']);
                             $aFields['CURRENT_USER'][]= $oCurUser->getUsrFirstname() . ' ' . $oCurUser->getUsrLastname();
@@ -960,7 +960,7 @@ class Cases
                 //only when that variable is set.. from Save
                 $FieldsBefore = $this->loadCase($sAppUid);
                 $FieldsDifference = $this->arrayRecursiveDiff($FieldsBefore['APP_DATA'], $aApplicationFields);
-                $fieldsOnBoth = array_intersect_assoc($FieldsBefore['APP_DATA'], $aApplicationFields);
+                $fieldsOnBoth = @array_intersect_assoc($FieldsBefore['APP_DATA'], $aApplicationFields);
                 //Add fields that weren't in previous version
                 foreach ($aApplicationFields as $key => $value) {
                     if (!(isset($fieldsOnBoth[$key]))) {
@@ -984,6 +984,13 @@ class Cases
             }
             if (isset($Fields['APP_DESCRIPTION'])) {
                 unset($Fields['APP_DESCRIPTION']);
+            }
+            if (isset($Fields["APP_STATUS"]) && $Fields["APP_STATUS"] == "COMPLETED") {
+                $Fields['USR_UID'] = $Fields['CURRENT_USER_UID'];
+                $listCompleted = new ListCompleted();
+                $listCompleted->create($Fields);
+                $listMyInbox = new ListMyInbox();
+                $listMyInbox->refresh($Fields);
             }
             $oApp->update($Fields);
 
@@ -1039,6 +1046,15 @@ class Cases
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
             }
+
+            if ($Fields["APP_STATUS"] == "COMPLETED") {
+                //Delete records of the table APP_ASSIGN_SELF_SERVICE_VALUE
+                $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+                $appAssignSelfServiceValue->remove($sAppUid);
+            }
+
+            //Return
             return $Fields;
         } catch (exception $e) {
             throw ($e);
@@ -1130,6 +1146,11 @@ class Cases
             $oCriteria2->add(SubApplicationPeer::APP_PARENT, $sAppUid);
             SubApplicationPeer::doDelete($oCriteria2);
 
+            //Delete records of the table APP_ASSIGN_SELF_SERVICE_VALUE
+            $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+            $appAssignSelfServiceValue->remove($sAppUid);
+
             //Delete records of the Report Table
             $this->reportTableDeleteRecord($sAppUid);
 
@@ -1162,6 +1183,8 @@ class Cases
             $oAppDel = AppDelegationPeer::retrieveByPk($sAppUid, $iDelIndex);
             $oAppDel->setDelInitDate("now");
             $oAppDel->save();
+            $inbox = new ListInbox();
+            $inbox->update(array('APP_UID'=>$sAppUid, 'DEL_INDEX'=>$iDelIndex, 'DEL_INIT_DATE'=>Date("Y-m-d H:i:s")));
             //update searchindex
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
@@ -1193,6 +1216,11 @@ class Cases
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
             }
+
+            //Delete record of the table APP_ASSIGN_SELF_SERVICE_VALUE
+            $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+            $appAssignSelfServiceValue->remove($sAppUid, $iDelIndex);
         } catch (exception $e) {
             throw ($e);
         }
@@ -1876,6 +1904,8 @@ class Cases
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
                 }
             }
+            $inbox = new ListInbox();
+            $inbox->remove($sAppUid, $iDelIndex);
         } catch (exception $e) {
             throw ($e);
         }
@@ -3204,12 +3234,23 @@ class Cases
         } else {
             $sStepUid = $sStepUidObj;
         }
+
+        $delimiter = DBAdapter::getStringDelimiter();
+
         $c = new Criteria();
         $c->clearSelectColumns();
         $c->addSelectColumn(TriggersPeer::TRI_UID);
+        $c->addAsColumn("TRI_TITLE", ContentPeer::CON_VALUE);
         $c->addSelectColumn(StepTriggerPeer::ST_CONDITION);
         $c->addSelectColumn(TriggersPeer::TRI_TYPE);
         $c->addSelectColumn(TriggersPeer::TRI_WEBBOT);
+
+        $arrayCondition = array();
+        $arrayCondition[] = array(TriggersPeer::TRI_UID, ContentPeer::CON_ID, Criteria::EQUAL);
+        $arrayCondition[] = array(ContentPeer::CON_CATEGORY, $delimiter . "TRI_TITLE" . $delimiter, Criteria::EQUAL);
+        $arrayCondition[] = array(ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL);
+        $c->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+
         $c->add(StepTriggerPeer::STEP_UID, $sStepUid);
         $c->add(StepTriggerPeer::TAS_UID, $sTasUid);
         $c->add(StepTriggerPeer::ST_TYPE, $sTriggerType);
@@ -3217,13 +3258,13 @@ class Cases
         $c->addAscendingOrderByColumn(StepTriggerPeer::ST_POSITION);
         $rs = TriggersPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $rs->next();
-        $row = $rs->getRow();
-        while (is_array($row)) {
-            $aTriggers[] = $row;
-            $rs->next();
+
+        while ($rs->next()) {
             $row = $rs->getRow();
+
+            $aTriggers[] = $row;
         }
+
         return $aTriggers;
     }
 
@@ -3240,22 +3281,55 @@ class Cases
 
     public function executeTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType, $aFields = array())
     {
+        G::LoadClass("codeScanner");
+
         $aTriggers = $this->loadTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType);
+
         if (count($aTriggers) > 0) {
             global $oPMScript;
+
             $oPMScript = new PMScript();
             $oPMScript->setFields($aFields);
+
+            $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+
+            $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+
+            $strFoundDisabledCode = "";
+
             foreach ($aTriggers as $aTrigger) {
+                //Check disabled code
+                $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $aTrigger["TRI_WEBBOT"]);
+
+                if (count($arrayFoundDisabledCode) > 0) {
+                    $strCodeAndLine = "";
+
+                    foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
+                        $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
+                    }
+
+                    $strFoundDisabledCode .= "<br />- " . $aTrigger["TRI_TITLE"] . ": " . $strCodeAndLine;
+                    continue;
+                }
+
+                //Execute
                 $bExecute = true;
+
                 if ($aTrigger['ST_CONDITION'] !== '') {
                     $oPMScript->setScript($aTrigger['ST_CONDITION']);
                     $bExecute = $oPMScript->evaluate();
                 }
+
                 if ($bExecute) {
                     $oPMScript->setScript($aTrigger['TRI_WEBBOT']);
                     $oPMScript->execute();
                 }
             }
+
+            if ($strFoundDisabledCode != "") {
+                G::SendTemporalMessage(G::LoadTranslation("ID_DISABLED_CODE_TRIGGER_TO_EXECUTE", array($strFoundDisabledCode)), "", "string");
+            }
+
             return $oPMScript->aFields;
         } else {
             return $aFields;
@@ -3517,9 +3591,10 @@ class Cases
      * @param string $file File ($_FILES["form"]["name"]["APP_DOC_FILENAME"] or path to file)
      * @param int $fileError File error ($_FILES["form"]["error"]["APP_DOC_FILENAME"] or 0)
      * @param string $fileTmpName File temporal name ($_FILES["form"]["tmp_name"]["APP_DOC_FILENAME"] or null)
+     * @param string $fileSize    File size ($_FILES["form"]["size"]["APP_DOC_FILENAME"] or 0)
      * @return string Return application document ID
      */
-    public function addInputDocument($inputDocumentUid, $appDocUid, $docVersion, $appDocType, $appDocComment, $inputDocumentAction, $applicationUid, $delIndex, $taskUid, $userUid, $option, $file, $fileError = 0, $fileTmpName = null)
+    public function addInputDocument($inputDocumentUid, $appDocUid, $docVersion, $appDocType, $appDocComment, $inputDocumentAction, $applicationUid, $delIndex, $taskUid, $userUid, $option, $file, $fileError = 0, $fileTmpName = null, $fileSize = 0)
     {
         $appDocFileName = null;
         $sw = 0;
@@ -3548,6 +3623,18 @@ class Cases
         //Info
         $inputDocument = new InputDocument();
         $arrayInputDocumentData = $inputDocument->load($inputDocumentUid);
+
+        //--- Validate Filesize of $_FILE
+        $inpDocMaxFilesize = $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"];
+        $inpDocMaxFilesizeUnit = $arrayInputDocumentData["INP_DOC_MAX_FILESIZE_UNIT"];
+
+        $inpDocMaxFilesize = $inpDocMaxFilesize * (($inpDocMaxFilesizeUnit == "MB")? 1024 *1024 : 1024); //Bytes
+
+        if ($inpDocMaxFilesize > 0 && $fileSize > 0) {
+            if ($fileSize > $inpDocMaxFilesize) {
+                throw new Exception(G::LoadTranslation("ID_SIZE_VERY_LARGE_PERMITTED"));
+            }
+        }
 
         //Get the Custom Folder ID (create if necessary)
         $appFolder = new AppFolder();
@@ -3893,6 +3980,8 @@ class Cases
         if ($this->appSolr != null) {
             $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
         }
+
+        $this->getExecuteTriggerProcess($sApplicationUID, "UNPAUSE");
     }
 
     /*
@@ -5042,7 +5131,7 @@ class Cases
         $RESULT_OBJECTS['CASES_NOTES'] = G::arrayDiff(
                         $MAIN_OBJECTS['VIEW']['CASES_NOTES'], $MAIN_OBJECTS['BLOCK']['CASES_NOTES']
         );
-        array_push($RESULT_OBJECTS['DYNAFORMS'], -1);
+        array_push($RESULT_OBJECTS["DYNAFORMS"], -1, -2);
         array_push($RESULT_OBJECTS['INPUT_DOCUMENTS'], -1);
         array_push($RESULT_OBJECTS['OUTPUT_DOCUMENTS'], -1);
         array_push($RESULT_OBJECTS['CASES_NOTES'], -1);
@@ -5056,12 +5145,21 @@ class Cases
      * function getAllObjectsFrom ($PRO_UID, $APP_UID, $TAS_UID, $USR_UID, $ACTION)
      * @author Erik Amaru Ortiz <erik@colosa.com>
      * @access public
-     * @param  Process ID, Application ID, Task ID, User ID, Action
+     * @param  Process ID, Application ID, Task ID, User ID, Action, Delegation index
      * @return Array within all user permitions all objects' types
      */
-    public function getAllObjectsFrom($PRO_UID, $APP_UID, $TAS_UID = '', $USR_UID = '', $ACTION = '')
+    public function getAllObjectsFrom($PRO_UID, $APP_UID, $TAS_UID = "", $USR_UID = "", $ACTION = "", $delIndex = 0)
     {
         $aCase = $this->loadCase($APP_UID);
+
+        if ($delIndex != 0) {
+            $appDelay = new AppDelay();
+
+            if ($appDelay->isPaused($APP_UID, $delIndex)) {
+                $aCase["APP_STATUS"] = "PAUSED";
+            }
+        }
+
         $USER_PERMISSIONS = Array();
         $GROUP_PERMISSIONS = Array();
         $RESULT = Array(
@@ -5069,7 +5167,8 @@ class Cases
             "INPUT" => Array(),
             "OUTPUT" => Array(),
             "CASES_NOTES" => 0,
-            "MSGS_HISTORY" => Array()
+            "MSGS_HISTORY" => Array(),
+            "SUMMARY_FORM" => 0
         );
 
         //permissions per user
@@ -5090,30 +5189,26 @@ class Cases
                         )
                 )
         );
-        $oCriteria->add(
-                $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, 'ALL')->addOr(
-                        $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, '')->addOr(
-                                $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, '0')
-                        )
-                )
-        );
+
         $rs = ObjectPermissionPeer::doSelectRS($oCriteria);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $rs->next();
-        while ($row = $rs->getRow()) {
-            if (
-                    (($aCase['APP_STATUS'] == $row['OP_CASE_STATUS']) ||
-                    ($row['OP_CASE_STATUS'] == '') ||
-                    ($row['OP_CASE_STATUS'] == 'ALL')) ||
-                    ($row['OP_CASE_STATUS'] == '')) {
+
+        while ($rs->next()) {
+            $row = $rs->getRow();
+
+            if ($row["OP_CASE_STATUS"] == "ALL" || $row["OP_CASE_STATUS"] == "" || $row["OP_CASE_STATUS"] == "0" ||
+                $row["OP_CASE_STATUS"] == $aCase["APP_STATUS"]
+            ) {
                 array_push($USER_PERMISSIONS, $row);
             }
-            $rs->next();
         }
+
         //permissions per group
         G::loadClass('groups');
+
         $gr = new Groups();
         $records = $gr->getActiveGroupsForAnUser($USR_UID);
+
         foreach ($records as $group) {
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ObjectPermissionPeer::USR_UID, $group);
@@ -5126,20 +5221,22 @@ class Cases
                             )
                     )
             );
-            $oCriteria->add(
-                    $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, 'ALL')->addOr(
-                            $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, '')->addOr(
-                                    $oCriteria->getNewCriterion(ObjectPermissionPeer::OP_CASE_STATUS, '0')
-                            )
-                    )
-            );
+
             $rs = ObjectPermissionPeer::doSelectRS($oCriteria);
             $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             while ($rs->next()) {
-                array_push($GROUP_PERMISSIONS, $rs->getRow());
+                $row = $rs->getRow();
+
+                if ($row["OP_CASE_STATUS"] == "ALL" || $row["OP_CASE_STATUS"] == "" || $row["OP_CASE_STATUS"] == "0" ||
+                    $row["OP_CASE_STATUS"] == $aCase["APP_STATUS"]
+                ) {
+                    array_push($GROUP_PERMISSIONS, $row);
+                }
             }
         }
+
         $PERMISSIONS = array_merge($USER_PERMISSIONS, $GROUP_PERMISSIONS);
+
         foreach ($PERMISSIONS as $row) {
             $USER = $row['USR_UID'];
             $USER_RELATION = $row['OP_USER_RELATION'];
@@ -5191,10 +5288,16 @@ class Cases
                             $oDataset->next();
                         }
 
-                        //inputs
+                        //InputDocuments and OutputDocuments
                         $oCriteria = new Criteria('workflow');
                         $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
                         $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_TYPE);
+
+                        $arrayCondition = array();
+                        $arrayCondition[] = array(AppDelegationPeer::APP_UID, AppDocumentPeer::APP_UID, Criteria::EQUAL);
+                        $arrayCondition[] = array(AppDelegationPeer::DEL_INDEX, AppDocumentPeer::DEL_INDEX, Criteria::EQUAL);
+                        $oCriteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+
                         $oCriteria->add(AppDelegationPeer::APP_UID, $APP_UID);
                         $oCriteria->add(AppDelegationPeer::PRO_UID, $PRO_UID);
                         if ($aCase['APP_STATUS'] != 'COMPLETED') {
@@ -5208,29 +5311,28 @@ class Cases
                                         addOr($oCriteria->
                                                 getNewCriterion(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED'))
                         );
-                        $aConditions = Array();
-                        $aConditions[] = array(AppDelegationPeer::APP_UID, AppDocumentPeer::APP_UID);
-                        $aConditions[] = array(AppDelegationPeer::DEL_INDEX, AppDocumentPeer::DEL_INDEX);
-                        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
 
-                        $oDataset = DynaformPeer::doSelectRS($oCriteria);
+                        $oDataset = AppDelegationPeer::doSelectRS($oCriteria);
                         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                        $oDataset->next();
-                        while ($aRow = $oDataset->getRow()) {
+
+                        while ($oDataset->next()) {
+                            $aRow = $oDataset->getRow();
+
                             if ($aRow['APP_DOC_TYPE'] == "ATTACHED") {
                                 $aRow['APP_DOC_TYPE'] = "INPUT";
                             }
                             if (!in_array($aRow['APP_DOC_UID'], $RESULT[$aRow['APP_DOC_TYPE']])) {
                                 array_push($RESULT[$aRow['APP_DOC_TYPE']], $aRow['APP_DOC_UID']);
                             }
-                            $oDataset->next();
                         }
+
                         $RESULT['CASES_NOTES'] = 1;
+                        $RESULT['SUMMARY_FORM'] = 1;
 
                         // Message History
                         $RESULT['MSGS_HISTORY'] = array('PERMISSION' => $ACTION);
 
-                        $delIndex = array();
+                        $arrayDelIndex = array();
 
                         $oCriteria = new Criteria('workflow');
                         if ($USER_RELATION == 1) {
@@ -5248,7 +5350,7 @@ class Cases
                             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                             $oDataset->next();
                             while ($aRow = $oDataset->getRow()) {
-                                $delIndex[] = $aRow['DEL_INDEX'];
+                                $arrayDelIndex[] = $aRow["DEL_INDEX"];
                                 $oDataset->next();
                             }
                         } else {
@@ -5267,11 +5369,11 @@ class Cases
                             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                             $oDataset->next();
                             while ($aRow = $oDataset->getRow()) {
-                                $delIndex[] = $aRow['DEL_INDEX'];
+                                $arrayDelIndex[] = $aRow["DEL_INDEX"];
                                 $oDataset->next();
                             }
                         }
-                        $RESULT['MSGS_HISTORY'] = array_merge(array('DEL_INDEX' => $delIndex), $RESULT['MSGS_HISTORY']);
+                        $RESULT["MSGS_HISTORY"] = array_merge(array("DEL_INDEX" => $arrayDelIndex), $RESULT["MSGS_HISTORY"]);
                         break;
                     case 'DYNAFORM':
                         $oCriteria = new Criteria('workflow');
@@ -5373,10 +5475,13 @@ class Cases
                     case 'CASES_NOTES':
                         $RESULT['CASES_NOTES'] = 1;
                         break;
+                    case 'SUMMARY_FORM':
+                        $RESULT['SUMMARY_FORM'] = 1;
+                        break;
                     case 'MSGS_HISTORY':
                         // Permission
                         $RESULT['MSGS_HISTORY'] = array('PERMISSION' => $ACTION);
-                        $delIndex = array();
+                        $arrayDelIndex = array();
                         $oCriteria = new Criteria('workflow');
                         if ($USER_RELATION == 1) {
                             $oCriteria->add(AppDelegationPeer::APP_UID, $APP_UID);
@@ -5391,7 +5496,7 @@ class Cases
                             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                             $oDataset->next();
                             while ($aRow = $oDataset->getRow()) {
-                                $delIndex[] = $aRow['DEL_INDEX'];
+                                $arrayDelIndex[] = $aRow["DEL_INDEX"];
                                 $oDataset->next();
                             }
                         } else {
@@ -5409,11 +5514,11 @@ class Cases
                             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                             $oDataset->next();
                             while ($aRow = $oDataset->getRow()) {
-                                $delIndex[] = $aRow['DEL_INDEX'];
+                                $arrayDelIndex[] = $aRow["DEL_INDEX"];
                                 $oDataset->next();
                             }
                         }
-                        $RESULT['MSGS_HISTORY'] = array_merge(array('DEL_INDEX' => $delIndex), $RESULT['MSGS_HISTORY']);
+                        $RESULT["MSGS_HISTORY"] = array_merge(array("DEL_INDEX" => $arrayDelIndex), $RESULT["MSGS_HISTORY"]);
                         break;
 
                 }
@@ -5424,7 +5529,8 @@ class Cases
             "INPUT_DOCUMENTS" => $RESULT['INPUT'],
             "OUTPUT_DOCUMENTS" => $RESULT['OUTPUT'],
             "CASES_NOTES" => $RESULT['CASES_NOTES'],
-            "MSGS_HISTORY" => $RESULT['MSGS_HISTORY']
+            "MSGS_HISTORY" => $RESULT['MSGS_HISTORY'],
+            "SUMMARY_FORM" => $RESULT['SUMMARY_FORM']
         );
     }
 
@@ -6736,3 +6842,4 @@ class Cases
         return $unserializedData;
     }
 }
+

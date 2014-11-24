@@ -17,7 +17,9 @@ class WebApplication
     const RUNNING_INDEX = "index.running";
     const RUNNING_WORKFLOW = "workflow.running";
     const RUNNING_API = "api.running";
+    const RUNNING_OAUTH2 = "api.oauth2";
     const SERVICE_API = "service.api";
+    const SERVICE_OAUTH2 = "service.oauth2";
     const REDIRECT_DEFAULT = "redirect.default";
 
     /**
@@ -107,7 +109,14 @@ class WebApplication
         ) {
             return self::RUNNING_API;
         } else {
-            return self::RUNNING_WORKFLOW;
+            list($this->requestUri,) = explode('?', $this->requestUri);
+            $uriParts = explode('/', $this->requestUri);
+
+            if (isset($uriParts[2]) && $uriParts[2] == "oauth2") {
+                return self::RUNNING_OAUTH2;
+            } else {
+                return self::RUNNING_WORKFLOW;
+            }
         }
     }
 
@@ -130,6 +139,16 @@ class WebApplication
                     $this->dispatchApiRequest($request["uri"], $request["version"]);
                 }
                 Util\Logger::log("API::End Dispatch");
+                break;
+
+            case self::SERVICE_OAUTH2:
+                $uriTemp = explode('/', $_SERVER['REQUEST_URI']);
+                array_shift($uriTemp);
+                $workspace = array_shift($uriTemp);
+                $uri = '/' . implode('/', $uriTemp);
+
+                $this->loadEnvironment($workspace);
+                $this->dispatchApiRequest($uri, $version = "1.0");
                 break;
         }
     }
@@ -202,7 +221,7 @@ class WebApplication
          */
         header('Access-Control-Allow-Origin: *');
 
-        $_SERVER['REQUEST_URI'] = $uri;        
+        $_SERVER['REQUEST_URI'] = $uri;
 
         $this->rest->inputExecute = $inputExecute;
         $this->rest->handle();
@@ -307,7 +326,7 @@ class WebApplication
                     $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
 
                     //if (! class_exists($namespace)) {
-                        require_once $classFile;
+                    require_once $classFile;
                     //}
 
                     $this->rest->addAPIClass($namespace);
@@ -338,6 +357,9 @@ class WebApplication
 //                }
 //            }
         }
+
+        Services\OAuth2\Server::setWorkspace(SYS_SYS);
+        $this->rest->addAPIClass('\ProcessMaker\\Services\\OAuth2\\Server', 'oauth2');
     }
 
     public function parseApiRequestUri()

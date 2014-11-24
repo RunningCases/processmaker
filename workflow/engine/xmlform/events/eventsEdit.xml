@@ -56,7 +56,7 @@ SELECT TAS_UID, TAS_TITLE FROM tasks
   </EVN_ACTION>
   <TRI_UID type="dropdown" required="0" sqlconnection="dbarray">
   SELECT * FROM TMP_TRIGGERS
-  <en><![CDATA[]]></en>
+  <en><![CDATA[Create a new trigger]]></en>
 </TRI_UID>
   <TITLE3 type="title">
     <en><![CDATA[Event scheduled graph]]></en>

@@ -56,6 +56,10 @@ try {
             $app->run(Maveriks\WebApplication::SERVICE_API);
             break;
 
+        case Maveriks\WebApplication::RUNNING_OAUTH2:
+            $app->run(Maveriks\WebApplication::SERVICE_OAUTH2);
+            break;
+
         case Maveriks\WebApplication::RUNNING_INDEX:
             $response = new Maveriks\Http\Response(file_get_contents("index.html"), 302);
             $response->send();

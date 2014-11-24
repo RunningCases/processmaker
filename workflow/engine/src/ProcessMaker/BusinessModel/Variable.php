@@ -126,9 +126,7 @@ class Variable
             //Update
             $cnn = \Propel::getConnection("workflow");
             try {
-
                 $variable = \ProcessVariablesPeer::retrieveByPK($variableUid);
-                $variable->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
                 if ($variable->validate()) {
                     $cnn->begin();
@@ -351,10 +349,10 @@ class Variable
             if (isset($aData["VAR_FIELD_TYPE"])) {
                 Validator::isString($aData['VAR_FIELD_TYPE'], '$var_field_type');
                 Validator::isNotEmpty($aData['VAR_FIELD_TYPE'], '$var_field_type');
-                if ($aData["VAR_FIELD_TYPE"] != 'string' && $aData["VAR_FIELD_TYPE"] != 'integer' && $aData["VAR_FIELD_TYPE"] != 'boolean' && $aData["VAR_FIELD_TYPE"] != 'float' &&
+                /*if ($aData["VAR_FIELD_TYPE"] != 'string' && $aData["VAR_FIELD_TYPE"] != 'integer' && $aData["VAR_FIELD_TYPE"] != 'boolean' && $aData["VAR_FIELD_TYPE"] != 'float' &&
                     $aData["VAR_FIELD_TYPE"] != 'datetime' && $aData["VAR_FIELD_TYPE"] != 'date_of_birth' && $aData["VAR_FIELD_TYPE"] != 'date') {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('$var_field_type')));
-                }
+                }*/
             }
             if (isset($aData["VAR_FIELD_SIZE"])) {
                 Validator::isInteger($aData["VAR_FIELD_SIZE"], '$var_field_size');
@@ -483,7 +481,6 @@ class Variable
 
             $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
             if ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
@@ -564,25 +561,119 @@ class Variable
 
                 $contentDecode = json_decode($row["DYN_CONTENT"], true);
                 $content = $contentDecode['items'][0]['items'];
+                if (is_array($content)) {
+                    foreach ($content as $key => $value) {
+                        if (isset($value[0]["variable"])) {
+                            $criteria = new \Criteria("workflow");
+                            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
+                            $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
+                            $criteria->add(\ProcessVariablesPeer::VAR_NAME, $value[0]["variable"], \Criteria::EQUAL);
+                            $criteria->add(\ProcessVariablesPeer::VAR_UID, $variableUid, \Criteria::EQUAL);
+                            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+                            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                            $rsCriteria->next();
 
-                foreach ($content as $key => $value) {
-                    if (isset($value[0]["variable"])) {
-                        $criteria = new \Criteria("workflow");
-                        $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
-                        $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
-                        $criteria->add(\ProcessVariablesPeer::VAR_NAME, $value[0]["variable"], \Criteria::EQUAL);
-                        $criteria->add(\ProcessVariablesPeer::VAR_UID, $variableUid, \Criteria::EQUAL);
-                        $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
-                        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                        $rsCriteria->next();
-
-                        if ($rsCriteria->getRow()) {
-                            throw new \Exception(\G::LoadTranslation("ID_VARIABLE_IN_USE", array($variableUid, $row["DYN_UID"])));
+                            if ($rsCriteria->getRow()) {
+                                throw new \Exception(\G::LoadTranslation("ID_VARIABLE_IN_USE", array($variableUid, $row["DYN_UID"])));
+                            }
                         }
                     }
                 }
-                }
+            }
 
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get all records by execute SQL suggest
+     *
+     * @param string $processUid    Unique id of Process
+     * @param string $variableName  Variable name
+     * @param array  $arrayVariable The variables
+     *
+     * return array Return an array with all records
+     */
+    public function executeSqlSuggest($processUid, $variableName, array $arrayVariable = array())
+    {
+        try {
+            $arrayRecord = array();
+
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+
+            $process->throwExceptionIfNotExistsProcess($processUid, strtolower("PRJ_UID"));
+
+            //Set data
+            $variableDbConnectionUid = "";
+            $variableSql = "";
+            $sqlLimit = "";
+            $variableSqlLimit = "";
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DBCONNECTION);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_SQL);
+            $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
+            $criteria->add(\ProcessVariablesPeer::VAR_NAME, $variableName, \Criteria::EQUAL);
+
+            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            if ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $variableDbConnectionUid = $row["VAR_DBCONNECTION"];
+                $variableSql = $row["VAR_SQL"];
+            } else {
+                throw new \Exception(\G::LoadTranslation("ID_PROCESS_VARIABLE_DOES_NOT_EXIST", array(strtolower("VAR_NAME"), $variableName)));
+            }
+
+            //Verify data
+            $this->throwExceptionIfSomeRequiredVariableSqlIsMissingInVariables($variableName, $variableSql, $arrayVariable);
+
+            //Get data
+            $_SESSION["PROCESS"] = $processUid;
+
+            foreach ($arrayVariable as $keyRequest => $valueRequest) {
+                $keyRequest = strtoupper($keyRequest);
+
+                if ($keyRequest == 'LIMIT') {
+                    if (strpos($variableSql, 'LIMIT')) {
+                        $variableSqlLimit = explode("LIMIT", $variableSql);
+                        $sqlLimit = " LIMIT " . $variableSqlLimit[1];
+                        $variableSql = $variableSqlLimit[0];
+                    } else {
+                        $sqlLimit = " LIMIT ". 0 . ", " . $valueRequest;
+                    }
+                } else {
+                    if (strpos($variableSql, 'WHERE')) {
+                        $sqlConditionLike = " AND " . $keyRequest . " LIKE '%" . $valueRequest . "%'";
+                    } else {
+                        $sqlConditionLike = " WHERE " . $keyRequest . " LIKE '%" . $valueRequest . "%'";
+                    }
+                }
+            }
+
+            $sqlQuery = $variableSql . $sqlConditionLike . $sqlLimit;
+
+            $cnn = \Propel::getConnection(($variableDbConnectionUid . "" != "")? $variableDbConnectionUid : "workflow");
+            $stmt = $cnn->createStatement();
+
+            $rs = $stmt->executeQuery(\G::replaceDataField($sqlQuery, $arrayVariable), \ResultSet::FETCHMODE_NUM);
+
+            while ($rs->next()) {
+                $row = $rs->getRow();
+
+                $arrayRecord[] = array(
+                    strtolower("VALUE") => $row[0],
+                    strtolower("TEXT")  => $row[1]
+                );
+            }
+
+            //Return
+            return $arrayRecord;
         } catch (\Exception $e) {
             throw $e;
         }

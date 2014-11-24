@@ -272,6 +272,26 @@ class Groupwf extends BaseGroupwf
         return $c;
     }
 
+    public function loadByGroupUid ($UidGroup)
+    {
+        $c = new Criteria( 'workflow' );
+        $del = DBAdapter::getStringDelimiter();
+
+        $c->clearSelectColumns();
+        $c->addSelectColumn( ContentPeer::CON_VALUE );
+
+        $c->add( ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
+        $c->add( ContentPeer::CON_ID, $UidGroup );
+        $c->add( ContentPeer::CON_LANG, SYS_LANG );
+
+        $dataset = ContentPeer::doSelectRS( $c );
+        $dataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        $dataset->next();
+        $row = $dataset->getRow();
+
+        return $row;
+    }
+
     public function getAll ($start = null, $limit = null, $search = null)
     {
         $totalCount = 0;
@@ -323,7 +343,7 @@ class Groupwf extends BaseGroupwf
         return $result;
     }
 
-    public function getAllGroup ($start = null, $limit = null, $search = null)
+    public function getAllGroup ($start = null, $limit = null, $search = null, $sortField = null, $sortDir = null)
     {
         require_once PATH_RBAC . "model/RbacUsers.php";
         require_once 'classes/model/TaskUser.php';
@@ -335,7 +355,6 @@ class Groupwf extends BaseGroupwf
         $criteria->addJoin( GroupwfPeer::GRP_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN );
         $criteria->add( ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
         $criteria->add( ContentPeer::CON_LANG, SYS_LANG );
-        $criteria->addAscendingOrderByColumn( ContentPeer::CON_VALUE );
 
         if ($search) {
             $criteria->add( ContentPeer::CON_VALUE, '%' . $search . '%', Criteria::LIKE );
@@ -351,7 +370,16 @@ class Groupwf extends BaseGroupwf
         $criteria->addJoin( GroupwfPeer::GRP_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN );
         $criteria->add( ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
         $criteria->add( ContentPeer::CON_LANG, SYS_LANG );
-        $criteria->addAscendingOrderByColumn( ContentPeer::CON_VALUE );
+
+        if (is_null($sortField) || trim($sortField) == "") {
+            $sortField = ContentPeer::CON_VALUE;
+        }
+
+        if (!is_null($sortDir) && trim($sortDir) != "" && strtoupper($sortDir) == "DESC") {
+            $criteria->addDescendingOrderByColumn($sortField);
+        } else {
+            $criteria->addAscendingOrderByColumn($sortField);
+        }
 
         if ($start != '') {
             $criteria->setOffset( $start );

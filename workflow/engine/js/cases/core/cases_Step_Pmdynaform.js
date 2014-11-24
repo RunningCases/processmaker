@@ -25,6 +25,12 @@ $(window).load(function () {
     var data = JSON.parse(jsondata);
     window.dynaform = new PMDynaform.core.Project({
         data: data,
+        keys: {
+            server: location.host,
+            projectId: prj_uid,
+            workspace: workspace
+        },
+        token: credentials,
         submitRest: false
     });
 
@@ -48,8 +54,8 @@ $(window).load(function () {
         for (var j = 0; j < dr.length; j++) {
             if (dr[j].name) {
                 el[k].name = "form[" + dr[j].name + "]";
-                k = k + 1;
             }
+            k = k + 1;
         }
     }
 

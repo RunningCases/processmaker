@@ -342,7 +342,7 @@ class Content extends BaseContent
             `CON_LANG` VARCHAR(10) default '' NOT NULL,
             `CON_VALUE` MEDIUMTEXT NOT NULL,
             CONSTRAINT CONTENT_BACKUP_PK PRIMARY KEY (CON_CATEGORY,CON_PARENT,CON_ID,CON_LANG)
-        )Engine=MyISAM  DEFAULT CHARSET='utf8' COMMENT='Table for add content';" );
+        )Engine=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Table for add content';" );
         $oStatement->executeQuery();
 
         $sql = " SELECT DISTINCT CON_LANG
