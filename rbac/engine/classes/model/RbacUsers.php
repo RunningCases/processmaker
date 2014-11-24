@@ -29,6 +29,10 @@
  */
 require_once 'classes/model/om/BaseRbacUsers.php';
 
+if (!class_exists('PMLicensedFeatures')) {
+  G::LoadClass('licensedFeatures');
+}
+
 /**
  * Skeleton subclass for representing a row from the 'USERS' table.
  *
