@@ -39,7 +39,7 @@ try {
             $usr = mb_strtolower(trim($frm['USR_USERNAME']), 'UTF-8');
             $pwd = trim($frm['USR_PASSWORD']);
         }
-
+        /*----------------------------------********---------------------------------*/
         require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
 
         if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
@@ -47,6 +47,7 @@ try {
             $enterprise->enable();
             $enterprise->setup();
         }
+        /*----------------------------------********---------------------------------*/
         $uid = $RBAC->VerifyLogin($usr , $pwd);
         $RBAC->cleanSessionFiles(72); //cleaning session files older than 72 hours
 
