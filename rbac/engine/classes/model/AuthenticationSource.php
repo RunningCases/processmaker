@@ -8,7 +8,7 @@
  * You should add additional methods to this class to meet the
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
- * 
+ *
  */
 
  /**
@@ -27,7 +27,7 @@ class AuthenticationSource extends BaseAuthenticationSource {
     $oCriteria->add(AuthenticationSourcePeer::AUTH_SOURCE_UID, '', Criteria::NOT_EQUAL);
     return $oCriteria;
   }
-  
+
   public function load($sUID) {
   	try {
   	  $oAuthenticationSource = AuthenticationSourcePeer::retrieveByPK($sUID);
@@ -69,13 +69,13 @@ class AuthenticationSource extends BaseAuthenticationSource {
         $oConnection->begin();
         $iResult = $oAuthenticationSource->save();
         $oConnection->commit();
-        
+
         $authSourceServerName = isset($aData['AUTH_SOURCE_SERVER_NAME']) ? ' - Server Name: '.$aData['AUTH_SOURCE_SERVER_NAME'] : '';
         $authSourcePort = isset($aData['AUTH_SOURCE_PORT']) ? ' - Port: '.$aData['AUTH_SOURCE_PORT'] : '';
         $authSourceEnabledTLS = isset($aData['AUTH_SOURCE_ENABLED_TLS']) ? ' - TLS: '.$aData['AUTH_SOURCE_ENABLED_TLS'] : '';
         $authSourceVersion = isset($aData['AUTH_SOURCE_VERSION']) ? ' - Version: '.$aData['AUTH_SOURCE_VERSION'] : '';
         $authSourceBaseDn = isset($aData['AUTH_SOURCE_BASE_DN']) ? ' - BaseDN: '.$aData['AUTH_SOURCE_BASE_DN'] : '';
-        $authAnonymous = $aData['AUTH_ANONYMOUS'] = 1? ' - Anonymous: YES' : ' - Anonymous: NO';
+        $authAnonymous = $aData['AUTH_ANONYMOUS'] == 1? ' - Anonymous: YES' : ' - Anonymous: NO';
         $authSourceSearchUser = isset($aData['AUTH_SOURCE_SEARCH_USER']) ? ' - Search User: '. $aData['AUTH_SOURCE_SEARCH_USER'] : '';
         $authSourceLdapType = isset($aData['AUTH_SOURCE_DATA']['LDAP_TYPE']) ? ' - LDAP type: '.$aData['AUTH_SOURCE_DATA']['LDAP_TYPE'] : '';
         $authSourceIdentifier = isset($aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER']) ? ' - Identifier: '.$aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : '';
@@ -106,7 +106,7 @@ class AuthenticationSource extends BaseAuthenticationSource {
     $authSourceEnabledTLS = isset($aData['AUTH_SOURCE_ENABLED_TLS']) ? ' - TLS: '.$aData['AUTH_SOURCE_ENABLED_TLS'] : '';
     $authSourceVersion = isset($aData['AUTH_SOURCE_VERSION']) ? ' - Version: '.$aData['AUTH_SOURCE_VERSION'] : '';
     $authSourceBaseDn = isset($aData['AUTH_SOURCE_BASE_DN']) ? ' - BaseDN: '.$aData['AUTH_SOURCE_BASE_DN'] : '';
-    $authAnonymous = $aData['AUTH_ANONYMOUS'] = 1? ' - Anonymous: YES' : ' - Anonymous: NO';
+    $authAnonymous = $aData['AUTH_ANONYMOUS'] == 1? ' - Anonymous: YES' : ' - Anonymous: NO';
     $authSourceSearchUser = isset($aData['AUTH_SOURCE_SEARCH_USER']) ? ' - Search User: '. $aData['AUTH_SOURCE_SEARCH_USER'] : '';
     $authSourceLdapType = isset($aData['AUTH_SOURCE_DATA']['LDAP_TYPE']) ? ' - LDAP type: '.$aData['AUTH_SOURCE_DATA']['LDAP_TYPE'] : '';
     $authSourceIdentifier = isset($aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER']) ? ' - Identifier: '.$aData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : '';
@@ -158,7 +158,7 @@ class AuthenticationSource extends BaseAuthenticationSource {
   	  	$oConnection->begin();
         $iResult = $oAuthenticationSource->delete();
         $oConnection->commit();
-        
+
         G::auditLog("DeleteAuthSource", "Authentication Source Name: ".$authenticationSource['AUTH_SOURCE_NAME']." Authentication Source ID: (".$sUID.") ");
         return $iResult;
       }
@@ -171,7 +171,7 @@ class AuthenticationSource extends BaseAuthenticationSource {
       throw($oError);
     }
   }
-  
+
   //Added By Enrique Ponce de Leon <enrique@colosa.com>
   //Gets Criteria to fill grid of authentication source
   function getAuthenticationSources($start,$limit,$filter=''){
@@ -181,7 +181,7 @@ class AuthenticationSource extends BaseAuthenticationSource {
   	if ($filter!=''){
   		$oCriteria->add(AuthenticationSourcePeer::AUTH_SOURCE_NAME,'%'.$filter.'%',Criteria::LIKE);
   	}
-  	
+
     $oCriteria2 = new Criteria('rbac');
   	$oCriteria2->addSelectColumn('*');
   	$oCriteria2->add(AuthenticationSourcePeer::AUTH_SOURCE_UID,'',Criteria::NOT_EQUAL);
@@ -190,13 +190,13 @@ class AuthenticationSource extends BaseAuthenticationSource {
   	}
   	$oCriteria2->setLimit($limit);
   	$oCriteria2->setOffset($start);
-  	
+
   	$result = array();
   	$result['COUNTER'] = $oCriteria;
   	$result['LIST'] = $oCriteria2;
   	return $result;
   }
-  
+
   function getAllAuthSourcesByUser(){
     $oCriteria = new Criteria('rbac');
     $oCriteria->addSelectColumn(RbacUsersPeer::USR_UID);
@@ -204,10 +204,10 @@ class AuthenticationSource extends BaseAuthenticationSource {
     $oCriteria->addSelectColumn(AuthenticationSourcePeer::AUTH_SOURCE_PROVIDER);
     $oCriteria->add(RbacUsersPeer::USR_STATUS,0,Criteria::NOT_EQUAL);
     $oCriteria->addJoin(RbacUsersPeer::UID_AUTH_SOURCE, AuthenticationSourcePeer::AUTH_SOURCE_UID, Criteria::INNER_JOIN);
-    
+
     $oDataset = RbacUsersPeer::doSelectRS($oCriteria);
     $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-    
+
     $aAuth = array();
     while($oDataset->next()){
       $row = $oDataset->getRow();
@@ -215,5 +215,5 @@ class AuthenticationSource extends BaseAuthenticationSource {
     }
     return $aAuth;
   }
-  
+
 } // AuthenticationSource

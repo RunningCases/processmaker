@@ -124,8 +124,12 @@ Ext.onReady(function(){
 
   _fields.push({name: _idProperty});
 
+  var countFieldsRequired = 0;
+
   for (i=0;i<tableDef.FIELDS.length; i++) {
-    if (tableDef.FIELDS[i].FLD_KEY==1) {
+    if (tableDef.FIELDS[i].FLD_KEY == 1 && tableDef.FIELDS[i].FLD_AUTO_INCREMENT != 1) {
+      countFieldsRequired = countFieldsRequired + 1;
+
       blank=false;
     } else{
       blank=true;
@@ -262,7 +266,7 @@ Ext.onReady(function(){
       showTooltip: function (msg)
       {
            if (flagShowMessageError == 1) {
-               Ext.msgBoxSlider.msgTopCenter("error", _("ID_ERROR"), msg, 3);
+               Ext.msgBoxSlider.msgTopCenter("error", _("ID_ERROR"), _("ID_FIELD_REQUIRED2", countFieldsRequired), 3);
                flagShowMessageError = 0;
            }
       },

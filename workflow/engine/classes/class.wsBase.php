@@ -921,7 +921,15 @@ class wsBase
                 G::LoadClass('system');
             }
             $licensedFeatures = & PMLicensedFeatures::getSingleton();
-            $aSetup = (!empty($config) && $licensedFeatures->verifyfeature('nKaNTNuT1MzK0RsMEtXTnYzR09ucHF2WGNuS0hRdDBBak42WXJhNVVOOG1INEVoaU1EaTllbjBBeEJNeG9wRVJ6NmxQelhyVTBvdThzPQ==') ) ? $config : System::getEmailConfiguration();
+            /*----------------------------------********---------------------------------*/
+            if (!empty($config) && $licensedFeatures->verifyfeature('nKaNTNuT1MzK0RsMEtXTnYzR09ucHF2WGNuS0hRdDBBak42WXJhNVVOOG1INEVoaU1EaTllbjBBeEJNeG9wRVJ6NmxQelhyVTBvdThzPQ==')) {
+                $aSetup = $config;
+            } else {
+            /*----------------------------------********---------------------------------*/
+                $aSetup = System::getEmailConfiguration();
+            /*----------------------------------********---------------------------------*/ 
+            }
+            /*----------------------------------********---------------------------------*/
 
             $oSpool = new spoolRun();
 
