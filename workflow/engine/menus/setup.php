@@ -26,9 +26,11 @@ global $G_TMP_MENU;
 global $RBAC;
 $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
 
+/*----------------------------------********---------------------------------*/
 $oServerConf = & serverConf::getSingleton();
 $sAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', SYS_SYS );
 $licensedFeatures = & PMLicensedFeatures::getSingleton();
+/*----------------------------------********---------------------------------*/
 
 if ($RBAC->userCanAccess('PM_SETUP') == 1 ) {
     //settings options
@@ -99,20 +101,24 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
     $G_TMP_MENU->AddIdRawOption('LOG_CASE_SCHEDULER', '../cases/cases_Scheduler_Log', G::LoadTranslation('ID_CASE_SCHEDULER'), "icon-logs-list.png",'', 'logs');
     $G_TMP_MENU->AddIdRawOption("CRON", "../setup/cron", G::LoadTranslation("ID_CRON_ACTIONS"), null, null, "logs");
     $G_TMP_MENU->AddIdRawOption('EMAILS', '../mails/emailList', ucfirst (strtolower ( G::LoadTranslation('ID_EMAILS'))), '', '', 'logs');
+    /*----------------------------------********---------------------------------*/
     if (isset($sAudit) && $sAudit != false && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
         $G_TMP_MENU->AddIdRawOption('AUDIT_LOG', '../setup/auditLog', ucfirst (G::LoadTranslation('ID_AUDITLOG_DISPLAY')), '', '', 'logs'); 
     }
+    /*----------------------------------********---------------------------------*/
 }
 
 if ($RBAC->userCanAccess("PM_SETUP") == 1) {
     $G_TMP_MENU->AddIdRawOption("PM_REQUIREMENTS", "../setup/systemInfo", G::LoadTranslation("ID_PROCESSMAKER_REQUIREMENTS_CHECK"), "", "", "settings");
     $G_TMP_MENU->AddIdRawOption("PHP_INFO", "../setup/systemInfo?option=php", G::LoadTranslation("ID_PHP_INFO"), "", "", "settings");
     //$G_TMP_MENU->AddIdRawOption("PHP_MAINTENANCE", "../admin/maintenance", 'Maintenance', "", "", "settings");
+    /*----------------------------------********---------------------------------*/
     if ($licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
         $G_TMP_MENU->AddIdRawOption("AUDIT_LOG", "auditLogConfig", G::LoadTranslation("ID_AUDITLOG_DISPLAY"), "", "", "settings");
     }
+    /*----------------------------------********---------------------------------*/
 }
-
+/*----------------------------------********---------------------------------*/
 require_once 'classes/class.pmLicenseManager.php';
 if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
     require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
@@ -137,9 +143,11 @@ if ((isset($pmLicenseManagerO->plan)) && ($pmLicenseManagerO->plan != "")) {
 if ($licenseStatusInfo["message"] != "") {
     $licStatusMsg = "&nbsp;<font color=\"red\">(" . $licenseStatusInfo["message"] . ")</font>";
 }
-
+/*----------------------------------********---------------------------------*/
 if ($RBAC->userCanAccess("PM_SETUP") == 1) {
+    /*----------------------------------********---------------------------------*/
     $G_TMP_MENU->AddIdRawOption("PMENTERPRISE", "../enterprise/addonsStore", G::LoadTranslation('ID_MENU_NAME') . $licStatusMsg, "", "", "plugins");
+    /*----------------------------------********---------------------------------*/
     $G_TMP_MENU->AddIdRawOption("CASES_LIST_SETUP", "../cases/casesListSetup", G::LoadTranslation('ID_CASES_LIST'), "", "", "settings");
 }
 
