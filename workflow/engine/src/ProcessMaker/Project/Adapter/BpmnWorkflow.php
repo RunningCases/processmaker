@@ -522,7 +522,7 @@ class BpmnWorkflow extends Project\Bpmn
                                             $this->wp->addRoute($activity["ACT_UID"], -1, $routeType, $condition);
                                         }
                                     } else {
-                                        $this->wp->addRoute($activity["ACT_UID"], $gatewayFlow['FLO_ELEMENT_DEST'], $routeType, $condition);
+                                        $this->wp->addRoute($activity["ACT_UID"], $gatewayFlow["FLO_ELEMENT_DEST"], $routeType, $condition, ($gatewayFlow["FLO_TYPE"] == "DEFAULT")? 1 : 0);
                                     }
                                     break;
                                 default:
