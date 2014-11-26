@@ -12,7 +12,7 @@ include_once 'classes/model/AppAssignSelfServiceValuePeer.php';
 /**
  * Base class that represents a row from the 'APP_ASSIGN_SELF_SERVICE_VALUE' table.
  *
- *
+ * 
  *
  * @package    workflow.classes.model.om
  */
@@ -73,7 +73,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
 
     /**
      * Get the [app_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getAppUid()
@@ -84,7 +84,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
 
     /**
      * Get the [del_index] column value.
-     *
+     * 
      * @return     int
      */
     public function getDelIndex()
@@ -95,7 +95,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
 
     /**
      * Get the [pro_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getProUid()
@@ -106,7 +106,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
 
     /**
      * Get the [tas_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getTasUid()
@@ -117,7 +117,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
 
     /**
      * Get the [grp_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getGrpUid()
@@ -128,7 +128,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
 
     /**
      * Set the value of [app_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -150,7 +150,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
 
     /**
      * Set the value of [del_index] column.
-     *
+     * 
      * @param      int $v new value
      * @return     void
      */
@@ -172,7 +172,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
 
     /**
      * Set the value of [pro_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -194,7 +194,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
 
     /**
      * Set the value of [tas_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -216,7 +216,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
 
     /**
      * Set the value of [grp_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -423,7 +423,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
      * an aggreagated array of ValidationFailed objects will be returned.
      *
      * @param      array $columns Array of column names to validate.
-     * @return     mixed <code>true</code> if all validations pass;
+     * @return     mixed <code>true</code> if all validations pass; 
                    array of <code>ValidationFailed</code> objects otherwise.
      */
     protected function doValidate($columns = null)
@@ -671,10 +671,10 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
      *
      * @deprecated
      */
-    public function setPrimaryKey($pk)
-    {
-        // do nothing, because this object doesn't have any primary keys
-    }
+     public function setPrimaryKey($pk)
+     {
+         // do nothing, because this object doesn't have any primary keys
+     }
 
     /**
      * Sets contents of passed object to values from current object.
