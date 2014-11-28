@@ -2666,13 +2666,6 @@ function run_check_plugin_disabled_code($task, $args)
 
         if (is_dir(PATH_PLUGINS)) {
             if ($dirh = opendir(PATH_PLUGINS)) {
-                G::LoadClass("system");
-
-                require_once("propel" . PATH_SEP . "Propel.php");
-                require_once(PATH_CORE . "methods" . PATH_SEP . "enterprise" . PATH_SEP . "enterprise.php");
-
-                Propel::init(PATH_CORE . "config" . PATH_SEP . "databases.php");
-
                 $arrayData = array();
 
                 while (($file = readdir($dirh)) !== false) {
@@ -2680,31 +2673,29 @@ function run_check_plugin_disabled_code($task, $args)
                         $pluginName = str_replace(".php", "", $file);
 
                         if (is_file(PATH_PLUGINS . $pluginName . ".php") && is_dir(PATH_PLUGINS . $pluginName)) {
-                            require_once(PATH_PLUGINS . $pluginName . ".php");
+                            if (preg_match("/^.*class\s+" . $pluginName . "Plugin\s+extends\s+(\w*)\s*\{.*$/i", str_replace(array("\n", "\r"), array(" ", " "), file_get_contents(PATH_PLUGINS . $pluginName . ".php")), $arrayMatch)) {
+                                $pluginParentClassName = $arrayMatch[1];
 
-                            $pluginClassName = $pluginName . "Plugin";
-
-                            $p = new $pluginClassName();
-
-                            switch ($option2) {
-                                case "ENTERPRISE-PLUGIN":
-                                    if (get_parent_class($p) == "enterprisePlugin") {
-                                        $arrayData[] = $pluginName;
-                                    }
-                                    break;
-                                case "CUSTOM-PLUGIN":
-                                case "ALL":
-                                case "":
-                                    if (get_parent_class($p) == "PMPlugin") {
-                                        $arrayData[] = $pluginName;
-                                    }
-                                    break;
-                                default:
-                                    //PLUGIN-NAME
-                                    if ($pluginName == $option) {
-                                        $arrayData[] = $pluginName;
-                                    }
-                                    break;
+                                switch ($option2) {
+                                    case "ENTERPRISE-PLUGIN":
+                                        if ($pluginParentClassName == "enterprisePlugin") {
+                                            $arrayData[] = $pluginName;
+                                        }
+                                        break;
+                                    case "CUSTOM-PLUGIN":
+                                    case "ALL":
+                                    case "":
+                                        if ($pluginParentClassName == "PMPlugin") {
+                                            $arrayData[] = $pluginName;
+                                        }
+                                        break;
+                                    default:
+                                        //PLUGIN-NAME
+                                        if ($pluginName == $option) {
+                                            $arrayData[] = $pluginName;
+                                        }
+                                        break;
+                                }
                             }
                         }
                     }

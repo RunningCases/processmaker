@@ -188,14 +188,16 @@ class CodeScanner
                                 if ($file != "" && $file != "." && $file != "..") {
                                     $f = $path . PATH_SEP . $file;
 
-                                    $arrayFoundCode = array_merge($arrayFoundCode, $this->checkDisabledCode((is_dir($f))? "PATH" : "FILE", $f));
+                                    if (is_dir($f) || (is_file($f) && preg_match("/\.php$/", $f))) {
+                                        $arrayFoundCode = array_merge($arrayFoundCode, $this->checkDisabledCode((is_dir($f))? "PATH" : "FILE", $f));
+                                    }
                                 }
                             }
 
                             closedir($dirh);
                         }
                     } else {
-                        if (preg_match("/\.php$/", $path)) {
+                        if (is_file($path) && preg_match("/\.php$/", $path)) {
                             $source = file_get_contents($path);
 
                             $arrayAux = $this->checkDisabledCodeInSource($source);

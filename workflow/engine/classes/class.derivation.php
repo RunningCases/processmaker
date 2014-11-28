@@ -50,6 +50,81 @@ class Derivation
     var $case;
 
     /**
+     * prepareInformationTaskDerivation
+     *
+     * @param array $arrayDerivation Derivation
+     *
+     * return array Return array
+     */
+    public function prepareInformationTaskDerivation(array $arrayDerivation)
+    {
+        try {
+            $task = new Task();
+
+            $taskFields = $task->load($arrayDerivation["TAS_UID"]);
+
+            $arrayDerivation = G::array_merges($arrayDerivation, $taskFields);
+
+            //2. if next case is an special case
+            if ((int)($arrayDerivation["ROU_NEXT_TASK"]) < 0) {
+                $arrayDerivation["NEXT_TASK"]["TAS_UID"] = (int)($arrayDerivation["ROU_NEXT_TASK"]);
+                $arrayDerivation["NEXT_TASK"]["TAS_ASSIGN_TYPE"] = "nobody";
+                $arrayDerivation["NEXT_TASK"]["TAS_PRIORITY_VARIABLE"] = "";
+                $arrayDerivation["NEXT_TASK"]["TAS_DEF_PROC_CODE"] = "";
+                $arrayDerivation["NEXT_TASK"]["TAS_PARENT"] = "";
+                $arrayDerivation["NEXT_TASK"]["TAS_TRANSFER_FLY"] = "";
+
+                switch ($arrayDerivation["ROU_NEXT_TASK"]) {
+                    case -1:
+                        $arrayDerivation["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_END_OF_PROCESS");
+                        break;
+                    case -2:
+                        $arrayDerivation["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_TAREA_COLGANTE");
+                        break;
+                }
+
+                $arrayDerivation["NEXT_TASK"]["USR_UID"] = "";
+                $arrayDerivation["NEXT_TASK"]["USER_ASSIGNED"] = array("USR_UID" => "");
+            } else {
+                //3. load the task information of normal NEXT_TASK
+                $arrayDerivation["NEXT_TASK"] = $task->load($arrayDerivation["ROU_NEXT_TASK"]); //print $arrayDerivation["ROU_NEXT_TASK"]." **** ".$arrayDerivation["NEXT_TASK"]["TAS_TYPE"]."<hr>";
+
+                if ($arrayDerivation["NEXT_TASK"]["TAS_TYPE"] == "SUBPROCESS") {
+                    $sTaskParent = $arrayDerivation["NEXT_TASK"]["TAS_UID"];
+
+                    $criteria = new Criteria("workflow");
+                    $criteria->add(SubProcessPeer::PRO_PARENT, $arrayDerivation["PRO_UID"]);
+                    $criteria->add(SubProcessPeer::TAS_PARENT, $arrayDerivation["NEXT_TASK"]["TAS_UID"]);
+                    $rsCriteria = SubProcessPeer::doSelectRS($criteria);
+                    $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rsCriteria->next();
+                    $row = $rsCriteria->getRow();
+
+                    $arrayDerivation["ROU_NEXT_TASK"] = $row["TAS_UID"]; //print "<hr>Life is just a lonely highway";
+                    $arrayDerivation["NEXT_TASK"] = $task->load($arrayDerivation["ROU_NEXT_TASK"]); //print "<hr>Life is just a lonely highway";print"<hr>";
+
+                    $process = new Process();
+                    $row = $process->load($row["PRO_UID"]);
+
+                    $arrayDerivation["NEXT_TASK"]["TAS_TITLE"] .= " (" . $row["PRO_TITLE"] . ")";
+                    $arrayDerivation["NEXT_TASK"]["TAS_PARENT"] = $sTaskParent;
+
+                    //unset($task, $process, $row, $sTaskParent);
+                } else {
+                    $arrayDerivation["NEXT_TASK"]["TAS_PARENT"] = "";
+                }
+
+                $arrayDerivation["NEXT_TASK"]["USER_ASSIGNED"] = $this->getNextAssignedUser($arrayDerivation);
+            }
+
+            //Return
+            return $arrayDerivation;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * prepareInformation
      *
      * @param array $aData
@@ -67,10 +142,11 @@ class Derivation
         //AND DEL_INDEX = '$aData['DEL_INDEX']'
         $c = new Criteria( 'workflow' );
         $c->clearSelectColumns();
-        $c->addSelectColumn( AppDelegationPeer::TAS_UID );
-        $c->addSelectColumn( RoutePeer::ROU_CONDITION );
-        $c->addSelectColumn( RoutePeer::ROU_NEXT_TASK );
-        $c->addSelectColumn( RoutePeer::ROU_TYPE );
+        $c->addSelectColumn(AppDelegationPeer::TAS_UID);
+        $c->addSelectColumn(RoutePeer::ROU_NEXT_TASK);
+        $c->addSelectColumn(RoutePeer::ROU_TYPE);
+        $c->addSelectColumn(RoutePeer::ROU_DEFAULT);
+        $c->addSelectColumn(RoutePeer::ROU_CONDITION);
         $c->addJoin( AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN );
         $c->addJoin( AppDelegationPeer::TAS_UID, RoutePeer::TAS_UID, Criteria::LEFT_JOIN );
         $c->add( AppDelegationPeer::APP_UID, $aData['APP_UID'] );
@@ -81,7 +157,8 @@ class Derivation
         $rs->next();
         $aDerivation = $rs->getRow();
         $i = 0;
-        $taskInfo = array ();
+        $taskInfo = array();
+        $arrayDerivationDefault = array();
 
         $oUser = new Users();
         if (!class_exists('Cases')) {
@@ -94,8 +171,12 @@ class Derivation
         }
 
         while (is_array( $aDerivation )) {
-            $oTask = new Task();
-            $aDerivation = G::array_merges( $aDerivation, $aData );
+            $aDerivation = G::array_merges($aDerivation, $aData);
+
+            if ((int)($aDerivation["ROU_DEFAULT"]) == 1) {
+                $arrayDerivationDefault = $aDerivation;
+            }
+
             $bContinue = true;
 
             //evaluate the condition if there are conditions defined.
@@ -115,62 +196,22 @@ class Derivation
             }
 
             if ($bContinue) {
-                $i ++;
-                $TaskFields = $oTask->load( $aDerivation['TAS_UID'] );
+                $i++;
 
-                $aDerivation = G::array_merges( $aDerivation, $TaskFields );
-
-                //2. if next case is an special case
-                if ((int) $aDerivation['ROU_NEXT_TASK'] < 0) {
-                    $aDerivation['NEXT_TASK']['TAS_UID'] = (int) $aDerivation['ROU_NEXT_TASK'];
-                    $aDerivation['NEXT_TASK']['TAS_ASSIGN_TYPE'] = 'nobody';
-                    $aDerivation['NEXT_TASK']['TAS_PRIORITY_VARIABLE'] = '';
-                    $aDerivation['NEXT_TASK']['TAS_DEF_PROC_CODE'] = '';
-                    $aDerivation['NEXT_TASK']['TAS_PARENT'] = '';
-                    $aDerivation['NEXT_TASK']['TAS_TRANSFER_FLY'] = '';
-
-                    switch ($aDerivation['ROU_NEXT_TASK']) {
-                        case - 1:
-                            $aDerivation['NEXT_TASK']['TAS_TITLE'] = G::LoadTranslation( 'ID_END_OF_PROCESS' );
-                            break;
-                        case - 2:
-                            $aDerivation['NEXT_TASK']['TAS_TITLE'] = G::LoadTranslation( 'ID_TAREA_COLGANTE' );
-                            break;
-                    }
-                    $aDerivation['NEXT_TASK']['USR_UID'] = '';
-                    $aDerivation['NEXT_TASK']['USER_ASSIGNED'] = array('USR_UID' => '');
-                } else {
-                    //3. load the task information of normal NEXT_TASK
-                    $aDerivation['NEXT_TASK'] = $oTask->load( $aDerivation['ROU_NEXT_TASK'] ); //print $aDerivation['ROU_NEXT_TASK']." **** ".$aDerivation['NEXT_TASK']['TAS_TYPE']."<hr>";
-
-
-                    if ($aDerivation['NEXT_TASK']['TAS_TYPE'] === 'SUBPROCESS') {
-                        $oCriteria = new Criteria( 'workflow' );
-                        $oCriteria->add( SubProcessPeer::PRO_PARENT, $aDerivation['PRO_UID'] );
-                        $oCriteria->add( SubProcessPeer::TAS_PARENT, $aDerivation['NEXT_TASK']['TAS_UID'] );
-                        $oDataset = SubProcessPeer::doSelectRS( $oCriteria );
-                        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-                        $oDataset->next();
-                        $aRow = $oDataset->getRow();
-                        $sTaskParent = $aDerivation['NEXT_TASK']['TAS_UID'];
-                        $aDerivation['ROU_NEXT_TASK'] = $aRow['TAS_UID']; //print "<hr>Life is just a lonely highway";
-                        $aDerivation['NEXT_TASK'] = $oTask->load( $aDerivation['ROU_NEXT_TASK'] ); //print "<hr>Life is just a lonely highway";print"<hr>";
-                        $oProcess = new Process();
-                        $aRow = $oProcess->load( $aRow['PRO_UID'] );
-                        $aDerivation['NEXT_TASK']['TAS_TITLE'] .= ' (' . $aRow['PRO_TITLE'] . ')';
-                        $aDerivation['NEXT_TASK']['TAS_PARENT'] = $sTaskParent;
-                        unset( $oTask, $oProcess, $aRow, $sTaskParent );
-                    } else {
-                        $aDerivation['NEXT_TASK']['TAS_PARENT'] = '';
-                    }
-                    $aDerivation['NEXT_TASK']['USER_ASSIGNED'] = $this->getNextAssignedUser( $aDerivation );
-                }
-
-                $taskInfo[$i] = $aDerivation;
+                $taskInfo[$i] = $this->prepareInformationTaskDerivation($aDerivation);
             }
+
             $rs->next();
             $aDerivation = $rs->getRow();
         }
+
+        if (count($taskInfo) == 0 && count($arrayDerivationDefault) > 0) {
+            $i++;
+
+            $taskInfo[$i] = $this->prepareInformationTaskDerivation($arrayDerivationDefault);
+        }
+
+        //Return
         return $taskInfo;
     }
 
