@@ -34,6 +34,14 @@ try {
         throw (new Exception( G::loadTranslation( 'ID_ERROR_UPLOADING_PLUGIN_FILENAME' ) ));
     }
 
+    //save the file
+    if ($_FILES['form']['error']['PLUGIN_FILENAME'] == 0) {
+        $filename = $_FILES['form']['name']['PLUGIN_FILENAME'];
+        $path = PATH_DOCUMENT . 'input' . PATH_SEP;
+        $tempName = $_FILES['form']['tmp_name']['PLUGIN_FILENAME'];
+        G::uploadFile( $tempName, $path, $filename );
+    }
+
     //save the files Enterprise
     if ($_FILES['form']['error']['PLUGIN_FILENAME'] == 0) {
         $filename = $_FILES['form']['name']['PLUGIN_FILENAME'];
@@ -105,13 +113,7 @@ try {
             die('<script type="text/javascript">parent.parent.location = "../login/login";</script>');
         }
     }
-    //save the file
-    if ($_FILES['form']['error']['PLUGIN_FILENAME'] == 0) {
-        $filename = $_FILES['form']['name']['PLUGIN_FILENAME'];
-        $path = PATH_DOCUMENT . 'input' . PATH_SEP;
-        $tempName = $_FILES['form']['tmp_name']['PLUGIN_FILENAME'];
-        G::uploadFile( $tempName, $path, $filename );
-    }
+
     if (! $_FILES['form']['type']['PLUGIN_FILENAME'] == 'application/octet-stream') {
         $pluginFilename = $_FILES['form']['type']['PLUGIN_FILENAME'];
         throw (new Exception( G::loadTranslation( 'ID_FILES_INVALID_PLUGIN_FILENAME', SYS_LANG, array ("pluginFilename" => $pluginFilename
