@@ -899,7 +899,9 @@ class processMap
         $oCriteria->addSelectColumn('TRI_UID');
         $oCriteria->addAsColumn('TRI_LOCATE_WEBBOT_PARAM', '(SELECT LOCATE(MD5(' . TriggersPeer::TRI_WEBBOT . '),' . TriggersPeer::TRI_PARAM . ') FROM ' . TriggersPeer::TABLE_NAME . ' WHERE ' . TriggersPeer::TRI_UID . '=' . StepTriggerPeer::TRI_UID . ' )');
         $oCriteria->addSelectColumn('ST_TYPE');
+        /*----------------------------------********---------------------------------*/
         $oCriteria->addSelectColumn('IF ('.StepTriggerPeer::ST_CONDITION.' = "", "'.$imgNoEx.'", "'.$imgEx.'") AS CONDITION_SET');
+        /*----------------------------------********---------------------------------*/
         $oCriteria->addSelectColumn(StepTriggerPeer::ST_POSITION);
         $oCriteria->addAsColumn('TRI_TITLE', 'C.CON_VALUE');
         $oCriteria->addAlias('C', 'CONTENT');
