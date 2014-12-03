@@ -160,12 +160,14 @@ Ext.onReady(function(){
           hidden: true,
           hideable:false
       },
+      /*----------------------------------********---------------------------------*/
       {
           id: 'field_index',
           dataIndex: 'field_index',
           hidden: true,
           hideable:false
       },
+      /*----------------------------------********---------------------------------*/
       {
           id: 'field_null',
           dataIndex: 'field_null',
