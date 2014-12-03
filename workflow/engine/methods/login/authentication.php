@@ -92,6 +92,9 @@ try {
             case -6:
                 $errLabel = 'ID_ROLE_INACTIVE';
                 break;
+            case -7:
+                $errLabel = 'ID_LECA';
+                break;
         }
 
         //to avoid empty string in user field.  This will avoid a weird message "this row doesn't exist"
