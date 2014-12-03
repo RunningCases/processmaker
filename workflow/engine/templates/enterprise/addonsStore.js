@@ -833,6 +833,10 @@ Ext.onReady(function() {
             sw = 0;
             msg = _('ID_SELECT_PLUGIN');
           }
+          if (Ext.getCmp("PLUGIN_FILENAME").value.indexOf('enterprise-') > -1) {
+            sw = 0;
+            msg = _('ID_ENTERPRISE_PACK_CANT_UPLOAD');
+          }
 
           if (sw == 1) {
             swReloadTask = 0;
@@ -913,7 +917,7 @@ Ext.onReady(function() {
             }
         ]
     });
-  
+
     var pnlSupport = new Ext.FormPanel({
         frame: true,
         height: 160,
@@ -1539,7 +1543,7 @@ Ext.onReady(function() {
             "cellclick": function (grid, rowIndex, columnIndex, e) {
                 var record = grid.getStore().getAt(rowIndex);
                 var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
-        
+
                 if (fieldName != "status") {
                   return;
                 }
@@ -1622,7 +1626,7 @@ Ext.onReady(function() {
   );
 
   addonsGrid.addListener("rowcontextmenu", onMessageMnuContext, this);
-  
+
     addonsFeatureGrid.on("rowcontextmenu",
         function (grid, rowIndex, evt) {
           var sm = grid.getSelectionModel();
@@ -1630,7 +1634,7 @@ Ext.onReady(function() {
         },
         this
     );
-    
+
     addonsFeatureGrid.addListener("rowcontextmenu", onMessageMnuContext, this);
 
   ///////

@@ -230,6 +230,9 @@ class Roles extends BaseRoles {
                 return $aRow;
             }
 
+            if (!isset($aData['ROL_NAME'])) {
+                 $aData['ROL_NAME'] = '';
+            }
             $rol_name = $aData['ROL_NAME'];
             unset($aData['ROL_NAME']);
 
@@ -534,7 +537,7 @@ class Roles extends BaseRoles {
         $rol = $this->load($ROL_UID);
         $oUsersRbac = new RbacUsers();
         $user = $oUsersRbac->load($USR_UID);
-        
+
         G::auditLog("DeleteUserToRole", "Delete user ".$user['USR_USERNAME']." (".$USR_UID.") to Role ".$rol['ROL_NAME']." (".$ROL_UID.") ");
     }
 
@@ -647,7 +650,7 @@ class Roles extends BaseRoles {
         $o->setPerUid($PER_UID);
         $permission = $o->getPermissionName($PER_UID);
         $role = $this->load($ROL_UID);
-        
+
         G::auditLog("DeletePermissionToRole", "Delete Permission ".$permission." (".$PER_UID.") from Role ".$role['ROL_NAME']." (".$ROL_UID.") ");
     }
 
