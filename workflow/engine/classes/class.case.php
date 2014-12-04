@@ -5167,8 +5167,10 @@ class Cases
             "INPUT" => Array(),
             "OUTPUT" => Array(),
             "CASES_NOTES" => 0,
-            "MSGS_HISTORY" => Array(),
-            "SUMMARY_FORM" => 0
+            "MSGS_HISTORY" => Array()
+        	/*----------------------------------********---------------------------------*/
+            ,"SUMMARY_FORM" => 0
+        	/*----------------------------------********---------------------------------*/
         );
 
         //permissions per user
@@ -5327,7 +5329,9 @@ class Cases
                         }
 
                         $RESULT['CASES_NOTES'] = 1;
+                        /*----------------------------------********---------------------------------*/
                         $RESULT['SUMMARY_FORM'] = 1;
+                        /*----------------------------------********---------------------------------*/
 
                         // Message History
                         $RESULT['MSGS_HISTORY'] = array('PERMISSION' => $ACTION);
@@ -5475,9 +5479,11 @@ class Cases
                     case 'CASES_NOTES':
                         $RESULT['CASES_NOTES'] = 1;
                         break;
+                    /*----------------------------------********---------------------------------*/
                     case 'SUMMARY_FORM':
                         $RESULT['SUMMARY_FORM'] = 1;
                         break;
+                    /*----------------------------------********---------------------------------*/
                     case 'MSGS_HISTORY':
                         // Permission
                         $RESULT['MSGS_HISTORY'] = array('PERMISSION' => $ACTION);
@@ -5529,8 +5535,10 @@ class Cases
             "INPUT_DOCUMENTS" => $RESULT['INPUT'],
             "OUTPUT_DOCUMENTS" => $RESULT['OUTPUT'],
             "CASES_NOTES" => $RESULT['CASES_NOTES'],
-            "MSGS_HISTORY" => $RESULT['MSGS_HISTORY'],
-            "SUMMARY_FORM" => $RESULT['SUMMARY_FORM']
+            "MSGS_HISTORY" => $RESULT['MSGS_HISTORY']
+        	/*----------------------------------********---------------------------------*/
+            ,"SUMMARY_FORM" => $RESULT['SUMMARY_FORM']
+        	/*----------------------------------********---------------------------------*/
         );
     }
 

@@ -46,7 +46,7 @@ try {
         throw new Exception( G::LoadTranslation( 'ID_NO_PERMISSION_NO_PARTICIPATED' ) );
     }
     $applicationFields = $case->loadCase( $_REQUEST['APP_UID'], $_REQUEST['DEL_INDEX'] );
-
+    /*----------------------------------********---------------------------------*/
     $respView = $case->getAllObjectsFrom( $applicationFields['PRO_UID'], $_REQUEST['APP_UID'], $applicationFields['TAS_UID'], $_SESSION['USER_LOGGED'], 'VIEW' );
 
     if ($respView['SUMMARY_FORM'] == 0) {
@@ -56,7 +56,7 @@ try {
         G::RenderPage( 'publish', 'blank' );
         die();
     }
-
+    /*----------------------------------********---------------------------------*/
     if (file_exists( PATH_DYNAFORM . $applicationFields['PRO_UID'] . PATH_SEP . $_REQUEST['DYN_UID'] . '.xml' )) {
         $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['PREVIOUS_STEP_LABEL'] = '';
         $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['PREVIOUS_STEP'] = '#';
