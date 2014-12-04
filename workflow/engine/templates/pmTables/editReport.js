@@ -408,7 +408,9 @@ Ext.onReady(function(){
             disabled: true,
             inputValue: 'always'
         }
-        }, {
+        }
+        /*----------------------------------********---------------------------------*/
+        , {
             xtype: 'booleancolumn',
             header: _('ID_INDEX'),
             dataIndex: 'field_index',
@@ -423,6 +425,7 @@ Ext.onReady(function(){
                 inputValue: 'always'
             }
         }
+        /*----------------------------------********---------------------------------*/
   ];
   
 function validateFieldSizeAutoincrement(valueType, defaultValue) {
@@ -1300,14 +1303,14 @@ function editorFieldsEnableDisable(fieldTypeValue, fieldIndex, fieldInc, sizeEdi
         swAI = 0;
         swI = 0;
     }
-
+/*----------------------------------********---------------------------------*/
     if (swI == 1) {
         fieldIndex.enable();
     } else {
         fieldIndex.disable();
         fieldIndex.setValue(false);
     }
-
+/*----------------------------------********---------------------------------*/
     if (swAI == 1) {
         fieldInc.enable();
     } else {
