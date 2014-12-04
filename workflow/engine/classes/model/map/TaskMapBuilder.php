@@ -156,9 +156,9 @@ class TaskMapBuilder
         $tMap->addColumn('TAS_SELFSERVICE_TIME_UNIT', 'TasSelfserviceTimeUnit', 'string', CreoleTypes::VARCHAR, false, 15);
 
         $tMap->addColumn('TAS_SELFSERVICE_TRIGGER_UID', 'TasSelfserviceTriggerUid', 'string', CreoleTypes::VARCHAR, false, 32);
-        /*----------------------------------********---------------------------------*/
+
         $tMap->addColumn('TAS_SELFSERVICE_EXECUTION', 'TasSelfserviceExecution', 'string', CreoleTypes::VARCHAR, false, 15);
-        /*----------------------------------********---------------------------------*/
+
         $tMap->addValidator('TAS_TYPE', 'validValues', 'propel.validator.ValidValuesValidator', 'NORMAL|ADHOC|SUBPROCESS|HIDDEN', 'Please select a valid value for TAS_TYPE.');
 
         $tMap->addValidator('TAS_TIMEUNIT', 'validValues', 'propel.validator.ValidValuesValidator', 'MINUTES|HOURS|DAYS|WEEKS|MONTHS', 'Please select a valid value for TAS_TIMEUNIT.');
