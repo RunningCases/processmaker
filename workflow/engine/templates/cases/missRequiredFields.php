@@ -78,8 +78,12 @@
 		$html .= '<input type="button" value="Back" class="module_app_button___gray" />';
 		$html .= '</a>';
 	} else{
+	/*----------------------------------********---------------------------------*/
+
 		$html .= '<input type="button" value="Back" class="module_app_button___gray" onclick="javascript:history.back()">';
 		$html .= '<input type="button" value="Continue" class="module_app_button___gray" onclick="javascript:location.href=\''.$netxpage.'\'">';
+
+	/*----------------------------------********---------------------------------*/
 	}
 	/*----------------------------------********---------------------------------*/
 
