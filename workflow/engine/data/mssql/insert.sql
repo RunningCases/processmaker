@@ -7300,11 +7300,33 @@ SELECT 'LABEL','ID_PLEASE_ENTER_DESCRIPTION','en','Please, enter a description.'
   UNION ALL
 SELECT 'LABEL','ID_PLEASE_CONFIGURE_ESTIMATED_DURATION_TASK','en','Please, configure the estimated duration of the task.','2014-10-23' 
   UNION ALL
+SELECT 'LABEL','ID_FIELD_REQUIRED2','en','There are {0} fields that are required.','2014-11-14' 
+  UNION ALL
+SELECT 'LABEL','ID_PMTABLE_NOT_FOUNDED_SAVED_DATA','en','The data from this case was saved in the database, but it was not saved in the PM Table, which it couldn''t be found.','2014-11-12' 
+  UNION ALL
 SELECT 'LABEL','ID_FORMAT_24_HOURS','en','Format 24 hrs. (HH:MM)','2014-10-30' 
+  UNION ALL
+SELECT 'LABEL','ID_PMTABLE_NOT_FOUND','en','The PM Table associated with this DynaForm could not be found.','2014-11-12' 
   UNION ALL
 SELECT 'LABEL','ID_HOUR_HOURS','en','Hour(s)','2014-10-30' 
   UNION ALL
 SELECT 'LABEL','ID_SEARCH_ALSO_APP_UID','en','Search also in the APP_UID field','2014-10-30' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLED_CODE_PLUGIN','en','The plugin has the following unwanted code (this code should be removed)','2014-11-17' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLED_CODE_TRIGGER','en','The trigger has the following unwanted code (this code should be removed): {0}','2014-11-13' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLED_CODE_TRIGGER_TO_EXECUTE','en','The following triggers has unwanted code (these triggers are not executed): {0}','2014-11-13' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLED_CODE_CODE_AND_LINE','en','{0} (Lines {1})','2014-11-17' 
+  UNION ALL
+SELECT 'LABEL','ID_DISABLED_CODE_PROCESS','en','The process "{0}" has the following unwanted code (this code should be removed): {1}','2014-11-18' 
+  UNION ALL
+SELECT 'LABEL','ID_LECA','en','Your license has expired, please contact your administrator.','2014-12-01' 
+  UNION ALL
+SELECT 'LABEL','ID_NLIC','en','License installed successfully','2014-12-02' 
+  UNION ALL
+SELECT 'LABEL','ID_ENTERPRISE_PACK_CANT_UPLOAD','en','The Enterprise plugin pack can''t be uploaded from this administrator, upload it from: ADMIN -> Plugins -> Plugins Manager','2014-12-03' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 
