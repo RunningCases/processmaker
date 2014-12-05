@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 2.8.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-11-04 14:21:16\n"
+"PO-Revision-Date: 2014-12-05 10:28:39\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -17528,10 +17528,28 @@ msgid "Please, configure the estimated duration of the task."
 msgstr "Please, configure the estimated duration of the task."
 
 # TRANSLATION
+# LABEL/ID_FIELD_REQUIRED2
+#: LABEL/ID_FIELD_REQUIRED2
+msgid "There are {0} fields that are required."
+msgstr "There are {0} fields that are required."
+
+# TRANSLATION
+# LABEL/ID_PMTABLE_NOT_FOUNDED_SAVED_DATA
+#: LABEL/ID_PMTABLE_NOT_FOUNDED_SAVED_DATA
+msgid "The data from this case was saved in the database, but it was not saved in the PM Table, which it couldn't be found."
+msgstr "The data from this case was saved in the database, but it was not saved in the PM Table, which it couldn't be found."
+
+# TRANSLATION
 # LABEL/ID_FORMAT_24_HOURS
 #: LABEL/ID_FORMAT_24_HOURS
 msgid "Format 24 hrs. (HH:MM)"
 msgstr "Format 24 hrs. (HH:MM)"
+
+# TRANSLATION
+# LABEL/ID_PMTABLE_NOT_FOUND
+#: LABEL/ID_PMTABLE_NOT_FOUND
+msgid "The PM Table associated with this DynaForm could not be found."
+msgstr "The PM Table associated with this DynaForm could not be found."
 
 # TRANSLATION
 # LABEL/ID_HOUR_HOURS
@@ -17544,6 +17562,54 @@ msgstr "Hour(s)"
 #: LABEL/ID_SEARCH_ALSO_APP_UID
 msgid "Search also in the APP_UID field"
 msgstr "Search also in the APP_UID field"
+
+# TRANSLATION
+# LABEL/ID_DISABLED_CODE_PLUGIN
+#: LABEL/ID_DISABLED_CODE_PLUGIN
+msgid "The plugin has the following unwanted code (this code should be removed)"
+msgstr "The plugin has the following unwanted code (this code should be removed)"
+
+# TRANSLATION
+# LABEL/ID_DISABLED_CODE_TRIGGER
+#: LABEL/ID_DISABLED_CODE_TRIGGER
+msgid "The trigger has the following unwanted code (this code should be removed): {0}"
+msgstr "The trigger has the following unwanted code (this code should be removed): {0}"
+
+# TRANSLATION
+# LABEL/ID_DISABLED_CODE_TRIGGER_TO_EXECUTE
+#: LABEL/ID_DISABLED_CODE_TRIGGER_TO_EXECUTE
+msgid "The following triggers has unwanted code (these triggers are not executed): {0}"
+msgstr "The following triggers has unwanted code (these triggers are not executed): {0}"
+
+# TRANSLATION
+# LABEL/ID_DISABLED_CODE_CODE_AND_LINE
+#: LABEL/ID_DISABLED_CODE_CODE_AND_LINE
+msgid "{0} (Lines {1})"
+msgstr "{0} (Lines {1})"
+
+# TRANSLATION
+# LABEL/ID_DISABLED_CODE_PROCESS
+#: LABEL/ID_DISABLED_CODE_PROCESS
+msgid "The process \"{0}\" has the following unwanted code (this code should be removed): {1}"
+msgstr "The process \"{0}\" has the following unwanted code (this code should be removed): {1}"
+
+# TRANSLATION
+# LABEL/ID_LECA
+#: LABEL/ID_LECA
+msgid "Your license has expired, please contact your administrator."
+msgstr "Your license has expired, please contact your administrator."
+
+# TRANSLATION
+# LABEL/ID_NLIC
+#: LABEL/ID_NLIC
+msgid "License installed successfully"
+msgstr "License installed successfully"
+
+# TRANSLATION
+# LABEL/ID_ENTERPRISE_PACK_CANT_UPLOAD
+#: LABEL/ID_ENTERPRISE_PACK_CANT_UPLOAD
+msgid "The Enterprise plugin pack can't be uploaded from this administrator, upload it from: ADMIN -> Plugins -> Plugins Manager"
+msgstr "The Enterprise plugin pack can't be uploaded from this administrator, upload it from: ADMIN -> Plugins -> Plugins Manager"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
