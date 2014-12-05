@@ -22,7 +22,7 @@ CodeMirror.commands.autocomplete = function(cm) {
 var triggerEditor = CodeMirror.fromTextArea(document.getElementById("form[TRI_WEBBOT]"), {
     lineNumbers: true,
     matchBrackets: true,
-    mode: "application/x-httpd-php",
+    mode: "application/x-httpd-php-open",
     PMEnabled: true,
     indentUnit: 2,
     indentWithTabs: false,
