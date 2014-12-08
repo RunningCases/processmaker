@@ -88,6 +88,52 @@ class RestContext extends BehatContext
     }
 
     /**
+     * @BeforeScenario @MysqlDbConnection
+     */
+    public function verifyAllRequiredDataToConnectMysqlDB()
+    {
+        $db_parameters = array(
+            'mys_db_type',
+            'mys_db_server',
+            'mys_db_name',
+            'mys_db_username',
+            'mys_db_password',
+            'mys_db_port',
+            'mys_db_encode',
+            'mys_db_description');
+
+        foreach ($db_parameters as $value) {
+            $param = $this->getParameter($value);
+            if (!isset($param)){
+                throw new PendingException("Parameter ".$value." is not defined or is empty, please review behat.yml file!");
+            }
+        }
+    }
+
+    /**
+     * @BeforeScenario @SqlServerDbConnection
+     */
+    public function verifyAllRequiredDataToConnectSqlServerDB()
+    {
+        $db_parameters = array(
+            'sqlsrv_db_type',
+            'sqlsrv_db_server',
+            'sqlsrv_db_name',
+            'sqlsrv_db_username',
+            'sqlsrv_db_password',
+            'sqlsrv_db_port',
+            'sqlsrv_db_encode',
+            'sqlsrv_db_description');
+
+        foreach ($db_parameters as $value) {
+            $param = $this->getParameter($value);
+            if (!isset($param)){
+                throw new PendingException("Parameter ".$value." is not defined or is empty, please review behat.yml file!");
+            }
+        }
+    }
+
+    /**
      * ============ json array ===================
      * @Given /^that I send (\[[^]]*\])$/
      *

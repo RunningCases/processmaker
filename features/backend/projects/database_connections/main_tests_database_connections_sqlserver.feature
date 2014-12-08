@@ -25,6 +25,7 @@ Feature: DataBase Connections Main Tests SQL Server
 
   # POST /api/1.0/{workspace}/project/<project-id>/database-connection/test
   #      Test DataBase Connection
+  @SqlServerDbConnection
   Scenario Outline: Test database connection to test
     Given POST this data:
     """
@@ -53,6 +54,7 @@ Feature: DataBase Connections Main Tests SQL Server
 
   # POST /api/1.0/{workspace}/project/<project-id>/database-connection
   #      Create new DataBase Connection
+  @SqlServerDbConnection
   Scenario Outline: Create a new database connection
     Given database-connection with id "<dbs_uid_number>" is active
     And POST this data:
@@ -98,6 +100,7 @@ Feature: DataBase Connections Main Tests SQL Server
 
   # PUT /api/1.0/{workspace}/project/<project-id>/database-connection
   #     Update a DataBase Connection
+  @SqlServerDbConnection
   Scenario Outline: Update a database connection
     Given database-connection with id "<dbs_uid_number>" is active
     And PUT this data:
@@ -127,6 +130,7 @@ Feature: DataBase Connections Main Tests SQL Server
 
   # GET /api/1.0/{workspace}/project/<project-id>/database-connection
   #     Get a single DataBase Connection and their properties
+  @SqlServerDbConnection
   Scenario Outline: Get a single database connection and check some properties
     Given database-connection with id "<dbs_uid_number>" is active
     And that I want to get a resource with the key "dbs_uid" stored in session array as variable "dbs_uid_<dbs_uid_number>"
