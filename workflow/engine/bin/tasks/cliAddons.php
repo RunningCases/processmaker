@@ -18,7 +18,7 @@ EOT
   pake_task("addon-install");
 }
 */
-
+/*----------------------------------********---------------------------------*/
 CLI::taskName('change-password-hash-method');
 CLI::taskDescription(<<<EOT
     Create .po file for the plugin
@@ -27,7 +27,7 @@ EOT
 CLI::taskArg('workspace', false);
 CLI::taskArg('hash', false);
 CLI::taskRun("change_hash");
-
+/*----------------------------------********---------------------------------*/
 //function run_addon_core_install($args, $opts) {
 function run_addon_core_install($args)
 {
@@ -100,7 +100,7 @@ function run_addon_core_install($args)
     }
     //echo "** Installation finished\n";
 }
-
+/*----------------------------------********---------------------------------*/
 function change_hash($command, $opts)
 {
     if (count($command) < 2) {
@@ -137,3 +137,4 @@ function change_hash($command, $opts)
         }
     }
 }
+/*----------------------------------********---------------------------------*/
