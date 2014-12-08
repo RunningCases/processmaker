@@ -61,7 +61,7 @@ Ext.onReady(function(){
         Ext.getCmp('memory').setValue    (getFieldOutput(response.memory.version,   response.memory.result));
 
         dbReq  = response.mysql.result || response.mssql.result;
-        phpReq = response.php.result && response.curl.result && response.dom.result && response.gd.result && response.multibyte.result && response.soap.result && response.memory.result;
+        phpReq = response.php.result && response.curl.result && response.dom.result && response.gd.result && response.multibyte.result && response.soap.result && response.memory.result && response.mcrypt.result;
         wizard.onClientValidation(0, dbReq && phpReq);
         wizard.showLoadMask(false);
       },
