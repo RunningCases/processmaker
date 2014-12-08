@@ -1847,11 +1847,11 @@ class RestContext extends BehatContext
      */
     public function databaseConnectionWithIdIsActive($dbConnectionId)
     {
-     /*   if (file_exists("session.data")) {
+      if (file_exists("session.data")) {
             $sessionData = json_decode(file_get_contents("session.data"));
         } else {
             $sessionData = new StdClass();
-        }*/
+        }
 
         $sessionData = new StdClass();
         if(!$sessionData->dbconnectionStatus->$dbConnectionId){
