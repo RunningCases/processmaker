@@ -31,13 +31,8 @@ G::LoadSystem("dbMaintenance");
 G::LoadClass("cli");
 
 CLI::taskName('upgrade');
-CLI::taskDescription(<<<EOT
-    Upgrade workspaces.
+CLI::taskDescription("Upgrade workspaces.\n\n This command should be run after ProcessMaker files are upgraded so that all workspaces are upgraded to the current version.");
 
-    This command should be run after ProcessMaker files are upgraded so that all
-    workspaces are upgraded to the current version.
-EOT
-);
 CLI::taskOpt("buildACV", "If the option is enabled, performs the Build Cache View.", "ACV", "buildACV");
 CLI::taskRun("run_upgrade");
 /*----------------------------------********---------------------------------*/
