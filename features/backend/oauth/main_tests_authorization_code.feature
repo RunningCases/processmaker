@@ -17,9 +17,9 @@ Scenario Outline: Create new CLIENT_ID and CLIENT_SECRET
     """
     Examples:
 
-    | Description         | application_number | application_name | application_description | application_website       | application_redirectUri     |
-    | Create token normal | 1                  | Demo3            | Demo3 desc              | http://www.demowendy3.com | www.demowendy3.com/auth     |
-    | Create token normal | 2                  | Demo4            | Demo4 desc              | http://www.demowendy4.com | http://www.processmaker.com |
+    | Description         | application_number | application_name | application_description | application_website         | application_redirectUri                                                      |
+    | Create token normal | 1                  | Demo3            | Demo3 desc              | http://www.processmaker.com | http://michelangelo-be.colosa.net/sysmichelangelo/en/neoclassic/oauth2/grant |
+    | Create token normal | 2                  | Demo4            | Demo4 desc              | http://www.processmaker.com | http://michelangelo-be.colosa.net/sysmichelangelo/en/neoclassic/oauth2/grant |
     
 
 #Endpoint para verificar el correcto funcionamiento del token generado en este script

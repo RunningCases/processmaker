@@ -8,7 +8,7 @@ Feature: DataBase Connections Main Tests SQL Server
   # Microsoft SQL Server is tagged like 2
   Background:
     Given that I have a valid access_token
-    And database tagged like 2
+
 
   # GET /api/1.0/{workspace}/project/<project-id>/database-connections
   #     Get list DataBase Connections
