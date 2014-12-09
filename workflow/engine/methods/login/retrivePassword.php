@@ -91,7 +91,7 @@ if ($userData['USR_EMAIL'] != '' && $userData['USR_EMAIL'] === $data['USR_EMAIL'
         G::SendTemporalMessage ($e->getMessage(), "warning", 'string');
     }
 } else {
-    if ($userData['USR_AUTH_TYPE'] === '') {
+    if ($userData['USR_AUTH_TYPE'] === '' || $userData['USR_AUTH_TYPE'] === 'MYSQL') {
         $msg = G::LoadTranslation('ID_USER') . ' ' . htmlentities($data['USR_USERNAME'], ENT_QUOTES, 'UTF-8') . ' '. G::LoadTranslation('ID_IS_NOT_REGISTERED');
     } else {
         $msg = G::LoadTranslation('ID_USER_NOT_FUNCTIONALITY');
