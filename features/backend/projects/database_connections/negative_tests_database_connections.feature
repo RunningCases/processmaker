@@ -51,5 +51,5 @@ Feature: DataBase Connections Negative Tests
 
   Examples:
     | dbs_type      | dbs_server      | dbs_database_name | dbs_username      | dbs_password      | dbs_port      | dbs_encode      | dbs_description      |
-    | <mys_db_type> | <mys_db_server> | <mys_db_name>     | <mys_db_username> | <mys_db_password> | <mys_db_port> | <mys_db_encode> | <mys_db_description> |
-    | <mys_db_type> | <mys_db_server> | <mys_db_name>     | <mys_db_username> | <mys_db_password> | <mys_db_port> | <mys_db_encode> | <mys_db_description> |
+    | <mys_db_type> | <mys_db_server> | <mys_db_name>     | <mys_db_username> | <mys_db_password> | 33O6          | <mys_db_encode> | <mys_db_description> |
+    | <mys_db_type> | <mys_db_server> | <mys_db_name>     | <mys_db_username> | <mys_db_password> | 33O6          | <mys_db_encode> | <mys_db_description> |
