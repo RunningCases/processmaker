@@ -88,42 +88,6 @@ class RestContext extends BehatContext
     }
 
     /**
-     * @BeforeScenario @DbConnection
-     */
-    public function verifyAllRequiredDataToConnectDB($db_type)
-    {
-        $db_parameters = null;
-        if ($db_type === 1){
-            $db_parameters = array(
-                'mys_db_type',
-                'mys_db_server',
-                'mys_db_name',
-                'mys_db_username',
-                'mys_db_password',
-                'mys_db_port',
-                'mys_db_encode',
-                'mys_db_description');
-        }elseif($db_type === 2){
-            $db_parameters = array(
-                'sqlsrv_db_type',
-                'sqlsrv_db_server',
-                'sqlsrv_db_name',
-                'sqlsrv_db_username',
-                'sqlsrv_db_password',
-                'sqlsrv_db_port',
-                'sqlsrv_db_encode',
-                'sqlsrv_db_description');
-        }
-
-        foreach ($db_parameters as $value) {
-            $param = $this->getParameter($value);
-            if (!isset($param)){
-                throw new PendingException("Parameter ".$value." is not defined or is empty, please review behat.yml file!");
-            }
-        }
-    }
-
-    /**
      * @BeforeScenario @MysqlDbConnection
      */
     public function verifyAllRequiredDataToConnectMysqlDB()
@@ -1929,7 +1893,7 @@ class RestContext extends BehatContext
      */
     public function databaseConnectionWithIdIsActive($dbConnectionId)
     {
-      if (file_exists("session.data")) {
+        if (file_exists("session.data")) {
             $sessionData = json_decode(file_get_contents("session.data"));
         } else {
             $sessionData = new StdClass();
