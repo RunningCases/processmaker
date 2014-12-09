@@ -8,9 +8,9 @@ default:
             client_secret: 179ad45c6ce2cb97cf1029e212046e81
             #uploadFilesFolder: /opt/uploadfiles
             #cd5cff9b2e3ebabf49e276e47e977fab5988c00e
-            login_url: http://processmaker-ip-or-domaint/sys[workspace]/en/neoclassic/login/login
+            login_url: http://processmaker-ip-or-domain/sys[workspace]/en/neoclassic/login/login
             authentication_url: http://processmaker-ip-or-domain/sys[workspace]/en/neoclassic/login/authentication.php
-            oauth_app_url: http://processmaker-ip-or-domaint/sys[workspace]/en/neoclassic/oauth2/clientSetupAjax
+            oauth_app_url: http://processmaker-ip-or-domain/sys[workspace]/en/neoclassic/oauth2/clientSetupAjax
             oauth_authorization_url: http://processmaker-ip-or-domain/[workspace]/oauth2/authorize
             user_name: <your-admin-username>
             user_password: <your-admin-password>

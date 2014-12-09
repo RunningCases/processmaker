@@ -5,9 +5,10 @@ Feature: DataBase Connections Main Tests SQL Server
   and workspace with the project 87648819953a85c0abc01d3080475981 ("testExecutionOfDerivationScreen") already loaded
   there are zero Database Connections in the processes.
 
+  # Microsoft SQL Server is tagged like 2
   Background:
     Given that I have a valid access_token
-
+    And database tagged like 2
 
   # GET /api/1.0/{workspace}/project/<project-id>/database-connections
   #     Get list DataBase Connections
@@ -19,8 +20,8 @@ Feature: DataBase Connections Main Tests SQL Server
 
   Examples:
     | project                          | record  |
-    | 106912358530c9b14ac15d3001790900 | 0       |
-    | 1265557095225ff5c688f46031700471 | 0       |
+    | 74737540052e1641ab88249082085472 | 0       |
+    | 87648819953a85c0abc01d3080475981 | 0       |
 
 
   # POST /api/1.0/{workspace}/project/<project-id>/database-connection/test
@@ -48,8 +49,8 @@ Feature: DataBase Connections Main Tests SQL Server
 
   Examples:
     | dbs_uid_number | project                          | dbs_type         | dbs_server         | dbs_database_name | dbs_username         | dbs_password         | dbs_port         | dbs_encode         | dbs_description         |
-    | 1              | 106912358530c9b14ac15d3001790900 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
-    | 2              | 1265557095225ff5c688f46031700471 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
+    | 1              | 74737540052e1641ab88249082085472 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
+    | 2              | 87648819953a85c0abc01d3080475981 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
 
 
   # POST /api/1.0/{workspace}/project/<project-id>/database-connection
@@ -79,8 +80,8 @@ Feature: DataBase Connections Main Tests SQL Server
 
   Examples:
     | dbs_uid_number | project                          | dbs_type         | dbs_server         | dbs_database_name | dbs_username         | dbs_password         | dbs_port         | dbs_encode         | dbs_description         |
-    | 1              | 106912358530c9b14ac15d3001790900 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
-    | 2              | 1265557095225ff5c688f46031700471 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
+    | 1              | 74737540052e1641ab88249082085472 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
+    | 2              | 87648819953a85c0abc01d3080475981 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
 
 
   # GET /api/1.0/{workspace}/project/<project-id>/database-connection
@@ -94,8 +95,8 @@ Feature: DataBase Connections Main Tests SQL Server
 
   Examples:
     | project                          | record | dbs_uid_number |
-    | 106912358530c9b14ac15d3001790900 | 1      | 1              |
-    | 1265557095225ff5c688f46031700471 | 1      | 2              |
+    | 74737540052e1641ab88249082085472 | 1      | 1              |
+    | 87648819953a85c0abc01d3080475981 | 1      | 2              |
 
 
   # PUT /api/1.0/{workspace}/project/<project-id>/database-connection
@@ -124,8 +125,8 @@ Feature: DataBase Connections Main Tests SQL Server
 
   Examples:
     | dbs_uid_number | project                          | dbs_type         | dbs_server         | dbs_database_name | dbs_username         | dbs_password         | dbs_port         | dbs_encode         | dbs_description         |
-    | 1              | 106912358530c9b14ac15d3001790900 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
-    | 2              | 1265557095225ff5c688f46031700471 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
+    | 1              | 74737540052e1641ab88249082085472 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
+    | 2              | 87648819953a85c0abc01d3080475981 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
 
 
   # GET /api/1.0/{workspace}/project/<project-id>/database-connection
@@ -149,8 +150,8 @@ Feature: DataBase Connections Main Tests SQL Server
 
   Examples:
     | dbs_uid_number | project                          | dbs_type         | dbs_server         | dbs_database_name | dbs_username         | dbs_password         | dbs_port         | dbs_encode         | dbs_description         |
-    | 1              | 106912358530c9b14ac15d3001790900 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
-    | 2              | 1265557095225ff5c688f46031700471 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
+    | 1              | 74737540052e1641ab88249082085472 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
+    | 2              | 87648819953a85c0abc01d3080475981 | <sqlsrv_db_type> | <sqlsrv_db_server> | <sqlsrv_db_name>  | <sqlsrv_db_username> | <sqlsrv_db_password> | <sqlsrv_db_port> | <sqlsrv_db_encode> | <sqlsrv_db_description> |
 
 
   # DELETE /api/1.0/{workspace}/project/<project-id>/database-connection
@@ -165,8 +166,8 @@ Feature: DataBase Connections Main Tests SQL Server
 
   Examples:
     | project                          | dbs_uid_number |
-    | 106912358530c9b14ac15d3001790900 | 1              |
-    | 1265557095225ff5c688f46031700471 | 2              |
+    | 74737540052e1641ab88249082085472 | 1              |
+    | 87648819953a85c0abc01d3080475981 | 2              |
 
 
   # GET /api/1.0/{workspace}/project/<project-id>/database-connection
@@ -180,5 +181,5 @@ Feature: DataBase Connections Main Tests SQL Server
 
   Examples:
     | project                          | record | dbs_uid_number |
-    | 106912358530c9b14ac15d3001790900 | 0      | 1              |
-    | 1265557095225ff5c688f46031700471 | 0      | 2              |
+    | 74737540052e1641ab88249082085472 | 0      | 1              |
+    | 87648819953a85c0abc01d3080475981 | 0      | 2              |

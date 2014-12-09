@@ -1161,5 +1161,33 @@ class Workflow extends Handler
             throw $e;
         }
     }
+
+    public function deleteTaskGatewayToGateway($processUid)
+    {
+        try {
+            $task = new \Tasks();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\TaskPeer::TAS_UID);
+            $criteria->add(\TaskPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->add(\TaskPeer::TAS_TYPE, "GATEWAYTOGATEWAY", \Criteria::EQUAL);
+
+            $rsCriteria = \TaskPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $taskUid = $row["TAS_UID"];
+
+                $task->deleteTask($taskUid);
+            }
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
+            throw $e;
+        }
+    }
 }
 
