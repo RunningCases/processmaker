@@ -152,7 +152,7 @@ Scenario: Delete a Project created previously in this script
 
 Scenario Outline: Import a process
  	Given POST upload a project file "<project_file>" to "project/import?option=<import_option>&option_group=merge"
- 	Then the response status code should be 201
+ 	Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "object"
@@ -426,7 +426,7 @@ Scenario: Get a list of projects
 
 Scenario Outline: Import a process
     Given POST upload a project file "<project_file>" to "project/import?option=<import_option>"
-    Then the response status code should be 201
+    Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "object"
@@ -455,7 +455,7 @@ Scenario: Delete a Project created previously in this script "Export process emp
     
 Scenario: Import a process "Export process empty"
     Given POST upload a project file "Export_process_empty.pmx" to "project/import?option=create"
-    Then the response status code should be 201
+    Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "object"
