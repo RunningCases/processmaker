@@ -48,7 +48,6 @@ class adminProxy extends HttpProxyController
         }
 
         $sysConf = System::getSystemConfiguration($envFile);
-
         $updatedConf = array();
 
         if ($sysConf['default_lang'] != $httpData->default_lang) {
@@ -123,10 +122,10 @@ class adminProxy extends HttpProxyController
         $this->message = 'Saved Successfully';
         $msg = "";
         if ($httpData->proxy_host != '' || $httpData->proxy_port != '' || $httpData->proxy_user != '') {
-            $msg = " Host -> ".$httpData->proxy_host." Port -> ".$httpData->proxy_port." User -> ".$httpData->proxy_user;
+            $msg = ", Host -> " . $httpData->proxy_host . ", Port -> " . $httpData->proxy_port . ", User -> " . $httpData->proxy_user;
         }
 
-        G::auditLog("UploadSystemSettings", "Time Zone -> ".$httpData->time_zone." Memory Limit -> ".$httpData->memory_limit."  Cookie lifetime -> ".$httpData->max_life_time." Default Skin -> ".$httpData->default_skin." Default Language -> ". $httpData->default_lang. $msg);
+        G::auditLog("UploadSystemSettings", "Time Zone -> " . $httpData->time_zone . ", Memory Limit -> " . $httpData->memory_limit . ", Cookie lifetime -> " . $httpData->max_life_time . ", Default Skin -> " . $httpData->default_skin . ", Default Language -> " . $httpData->default_lang . $msg);
     }
 
     public function uxUserUpdate($httpData)
@@ -722,6 +721,9 @@ class adminProxy extends HttpProxyController
             $UsrUid='';
             $AppUid='';
 
+            $messEnabled = (isset($aFields["MESS_ENABLED"]) && $aFields["MESS_ENABLED"] == "1")? G::LoadTranslation("ID_YES") : G::LoadTranslation("ID_NO");
+            $messRauth = (isset($aFields["MESS_RAUTH"]) && $aFields["MESS_RAUTH"] == "1")? G::LoadTranslation("ID_YES") : G::LoadTranslation("ID_NO");
+
             if ($oConfiguration->exists($CfgUid, $ObjUid, $ProUid, $UsrUid, $AppUid)) {
                 $oConfiguration->update(
                     array (
@@ -735,7 +737,7 @@ class adminProxy extends HttpProxyController
                 );
                 $this->success='true';
                 $this->msg='Saved';
-                G::auditLog("UpdateEmailSettings", "EnableEmailNotifications->".$aFields['MESS_ENABLED']."  EmailEngine->".$aFields['MESS_ENGINE']."  Server->".$aFields['MESS_SERVER']."  Port->".$aFields['MESS_PORT']."  RequireAuthentication->".$aFields['MESS_RAUTH']."   FromMail->".$aFields['MESS_ACCOUNT']."  FromName->".$aFields['MESS_FROM_NAME']."  Use Secure Connection->".$aFields['SMTPSecure']);
+                G::auditLog("UpdateEmailSettings", "EnableEmailNotifications-> " . $messEnabled . ", EmailEngine-> " . $aFields['MESS_ENGINE'] . ", Server-> " . $aFields['MESS_SERVER'] . ", Port-> " . $aFields['MESS_PORT'] . ", RequireAuthentication-> " . $messRauth . ", FromMail-> " . $aFields['MESS_ACCOUNT'] . ", FromName-> " . $aFields['MESS_FROM_NAME'] . ", Use Secure Connection-> " . $aFields['SMTPSecure']);
             } else {
                 $oConfiguration->create(
                     array(
@@ -749,7 +751,7 @@ class adminProxy extends HttpProxyController
                 );
                 $this->success='true';
                 $this->msg='Saved';
-                G::auditLog("CreateEmailSettings", "EnableEmailNotifications->".$aFields['MESS_ENABLED']."  EmailEngine->".$aFields['MESS_ENGINE']."  Server->".$aFields['MESS_SERVER']."  Port->".$aFields['MESS_PORT']."  RequireAuthentication->".$aFields['MESS_RAUTH']."   FromMail->".$aFields['MESS_ACCOUNT']."  FromName->".$aFields['MESS_FROM_NAME']."  Use Secure Connection->".$aFields['SMTPSecure']);
+                G::auditLog("CreateEmailSettings", "EnableEmailNotifications-> " . $messEnabled . ", EmailEngine-> " . $aFields['MESS_ENGINE'] . ", Server-> " . $aFields['MESS_SERVER'] . ", Port-> " . $aFields['MESS_PORT'] . ", RequireAuthentication-> " . $messRauth . ", FromMail-> " . $aFields['MESS_ACCOUNT'] . ", FromName-> " . $aFields['MESS_FROM_NAME'] . ", Use Secure Connection-> " . $aFields['SMTPSecure']);
             }
         } catch (Exception $e) {
             $this->success= false;
@@ -1375,7 +1377,7 @@ class adminProxy extends HttpProxyController
                 $licenseInfo[$index] = G::sanitizeInput($value);
             }
         }
-        $params['license'] = $licenseInfo;
+        $params['l'] = $licenseInfo;
 
         //Operative System version (Linux, Windows)
         try {
@@ -1389,27 +1391,27 @@ class adminProxy extends HttpProxyController
             $os .= " (" . PHP_OS . ")";
         } catch (Exception $e) {
         }
-        $params['system'] = $os;
+        $params['s'] = $os;
 
         //On premise or cloud
         $licInfo = $oServerConf->getProperty( 'LICENSE_INFO' );
-        $params['licenseType'] = isset($licInfo[SYS_SYS]) ? isset($licInfo[SYS_SYS]['TYPE'])? $licInfo[SYS_SYS]['TYPE'] : ''  : '';
+        $params['lt'] = isset($licInfo[SYS_SYS]) ? isset($licInfo[SYS_SYS]['TYPE'])? $licInfo[SYS_SYS]['TYPE'] : ''  : '';
 
         //ProcessMaker Version
-        $params['pmVersion'] = System::getVersion();
+        $params['v'] = System::getVersion();
         if (file_exists(PATH_DATA. 'log/upgrades.log')) {
-            $params['pmUpgrade'] = serialize(file_get_contents(PATH_DATA. 'log/upgrades.log', 'r'));
+            $params['pmu'] = serialize(file_get_contents(PATH_DATA. 'log/upgrades.log', 'r'));
         } else {
-            $params['pmUpgrade'] = serialize(G::LoadTranslation('ID_UPGRADE_NEVER_UPGRADE'));
+            $params['pmu'] = serialize(G::LoadTranslation('ID_UPGRADE_NEVER_UPGRADE'));
         }
 
         //Database server Version (MySQL version)
         $installer = new Installer();
         $systemInfo = $installer->getSystemInfo();
         try {
-            $params['dbVersion'] = mysql_get_server_info();
+            $params['mysql'] = mysql_get_server_info();
         } catch (Exception $e) {
-            $params['dbVersion'] = '';
+            $params['mysql'] = '';
         }
 
         //PHP Version
@@ -1443,7 +1445,7 @@ class adminProxy extends HttpProxyController
                 $plugins[] = $plugin;
             }
         }
-        $params['plugins'] = $plugins;
+        $params['pl'] = $plugins;
 
         //Number of Users registered in PM. Including LDAP users and PM users.
         require_once ("classes/model/RbacUsers.php");
@@ -1463,12 +1465,12 @@ class adminProxy extends HttpProxyController
                 $users['USR_AUTH_TYPE'] = $row['USERS_NUMBER'];
             }
         }
-        $params["users"] =$users;
+        $params['u'] = $users;
 
         //Number of cases.
         $oSequences = new Sequences();
         $maxNumber = $oSequences->getSequeceNumber("APP_NUMBER");
-        $params["cases"] = $maxNumber - 1;
+        $params['c'] = $maxNumber - 1;
 
         //Number of active processes.
         $criteria = new Criteria( "workflow" );
@@ -1482,10 +1484,11 @@ class adminProxy extends HttpProxyController
             $row = $rs->getRow();
             $process[$row['PRO_STATUS']] = $row['NUMBER_PROCESS'];
         }
-        $params["process"] = $process;
+        $params['p'] = $process;
 
         //Country/city (Timezone)
-        $params["Timezone"] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
+        $params['t'] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
+        $params['w'] = count(System::listWorkspaces());
 
         $support = PATH_DATA_SITE . G::sanitizeString($licenseManager->info['FIRST_NAME'] . '-' . $licenseManager->info['LAST_NAME'] . '-' . SYS_SYS . '-' . date('YmdHis'), false, false) . '.spm';
         file_put_contents($support, serialize($params));

@@ -93,6 +93,9 @@ switch ($_POST['action']) {
         $limit = isset( $_REQUEST['limit'] ) ? $_REQUEST['limit'] : $limit_size;
         $filter = isset( $_REQUEST['textFilter'] ) ? $_REQUEST['textFilter'] : '';
 
+        $sortField = isset($_REQUEST["sort"])? $_REQUEST["sort"] : "";
+        $sortDir = isset($_REQUEST["dir"])? $_REQUEST["dir"] : "";
+
         global $RBAC;
         if ($limit == $start) {
             $limit = $limit + $limit;
@@ -107,7 +110,8 @@ switch ($_POST['action']) {
         $uxList = adminProxy::getUxTypesList();
 
         $groups = new Groupwf();
-        $data = $groups->getAllGroup( $start, $limit, $filter );
+
+        $data = $groups->getAllGroup( $start, $limit, $filter, $sortField, $sortDir);
         $result = $data['rows'];
 
         $totalRows = 0;
@@ -149,7 +153,7 @@ switch ($_POST['action']) {
         unset( $newGroup['GRP_UID'] );
         $group = new Groupwf();
         $group->create( $newGroup );
-        G::auditLog("CreateGroup", "Group Name: ".$newGroup['GRP_TITLE']);
+        G::auditLog("CreateGroup", "Group Name: ".$newGroup['GRP_TITLE']." - Group Status: ".$newGroup['GRP_STATUS']);
 
         echo '{success: true}';
 
@@ -161,7 +165,7 @@ switch ($_POST['action']) {
         $editGroup['GRP_TITLE'] = trim( $_POST['name'] );
         $group = new Groupwf();
         $group->update( $editGroup );
-        G::auditLog("UpdateGroup", "Group Name: ".$editGroup['GRP_TITLE']." Group ID: (".$_POST['grp_uid'].") ");
+        G::auditLog("UpdateGroup", "Group Name: ".$editGroup['GRP_TITLE']." - Group ID: (".$_POST['grp_uid'].") - Group Status: ".$editGroup['GRP_STATUS']);
         echo '{success: true}';
         break;
     case 'deleteGroup':

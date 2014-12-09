@@ -304,7 +304,9 @@ Ext.onReady(function(){
             disabled: true,
             inputValue: 'always'
         }
-      }, {
+      }      
+      /*----------------------------------********---------------------------------*/
+      , {
         xtype: 'booleancolumn',
         header: _('ID_INDEX'),
         dataIndex: 'field_index',
@@ -318,7 +320,8 @@ Ext.onReady(function(){
             disabled: true,
             inputValue: 'always'
         }
-      }
+      }      
+      /*----------------------------------********---------------------------------*/
   ];
 
   //if permissions plugin is enabled
@@ -1072,12 +1075,14 @@ function editorFieldsEnableDisable(fieldTypeValue, fieldNull, fieldPrimaryKey, f
         fieldPrimaryKey.setValue(false);
     }
 
+    /*----------------------------------********---------------------------------*/
     if (swI == 1) {
         fieldIndex.enable();
     } else {
         fieldIndex.disable();
         fieldIndex.setValue(false);
     }
+    /*----------------------------------********---------------------------------*/
 
     if (swAI == 1) {
         fieldInc.enable();

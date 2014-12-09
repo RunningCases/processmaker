@@ -376,7 +376,7 @@ var G_Grid = function(oForm, sGridName){
     var aCells = oRow.getElementsByTagName('td');
     var oNewRow = this.oGrid.insertRow(this.oGrid.rows.length - 1);
     var currentRow = this.oGrid.rows.length - 2;
-    var newID, attributes, img2, gridType;
+    var newID, attributes, img2;
 
     oNewRow.onmouseover=function(){
       highlightRow(this, '#D9E8FF');
@@ -576,34 +576,16 @@ var G_Grid = function(oForm, sGridName){
             aObjects = null;
             break;
           case 'select': //DROPDOWN
-            var oNewSelect;
             aObjects = oNewRow.getElementsByTagName('td')[i].getElementsByTagName('select');
+
             if (aObjects){
               newID = aObjects[0].id.replace(/\[1\]/g, '\[' + currentRow + '\]');
               aObjects[0].id = newID;
               aObjects[0].name = newID;
 
-              oNewSelect = document.createElement(aObjects[0].tagName);
+              var oNewSelect = this.cloneElement(aObjects[0]);
               oNewSelect.id = newID;
               oNewSelect.name = newID;
-              oNewSelect.setAttribute('class','module_app_input___gray');
-
-              aAttributes = aObjects[0].attributes;
-              for (a=0; a < aAttributes.length; a++){
-                if (aAttributes[a].name.indexOf('pm:') != -1){
-                  oNewSelect.setAttribute(aAttributes[a].name,aAttributes[a].value);
-                }
-                if (aAttributes[a].name == 'disabled'){
-                  if (_BROWSER.name == 'msie'){
-                	if (aAttributes[a].value=='true'){
-                	  oNewSelect.setAttribute(aAttributes[a].name,aAttributes[a].value);
-                	}
-                  }
-                  else{
-                    oNewSelect.setAttribute(aAttributes[a].name,aAttributes[a].value);
-                  }
-                }
-              }
 
               attributes = elementAttributesNS(aObjects[0], 'pm');
               //var MyAtt = attributes;
@@ -614,11 +596,7 @@ var G_Grid = function(oForm, sGridName){
               }else{
                 defaultValue = '';
               }
-              if (attributes.gridtype != '' && typeof attributes.gridtype != 'undefined'){
-                gridType = attributes.gridtype;
-              }else{
-                gridType = '';
-              }
+
               var aDependents = this.allDependentFields.split(',');
               sObject = this.getObjectName(newID);
 

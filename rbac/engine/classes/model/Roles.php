@@ -218,6 +218,7 @@ class Roles extends BaseRoles {
             $con->begin();
             $sRolCode = $aData['ROL_CODE'];
             $sRolSystem = $aData['ROL_SYSTEM'];
+            $status = $fields['ROL_STATUS'] = 1 ? 'ACTIVE' : 'INACTIVE';
             $oCriteria = new Criteria('rbac');
             $oCriteria->add(RolesPeer::ROL_CODE, $sRolCode);
             $oCriteria->add(RolesPeer::ROL_SYSTEM, $sRolSystem);
@@ -229,6 +230,9 @@ class Roles extends BaseRoles {
                 return $aRow;
             }
 
+            if (!isset($aData['ROL_NAME'])) {
+                 $aData['ROL_NAME'] = '';
+            }
             $rol_name = $aData['ROL_NAME'];
             unset($aData['ROL_NAME']);
 
@@ -238,7 +242,7 @@ class Roles extends BaseRoles {
                 $result = $obj->save();
                 $con->commit();
                 $obj->setRolName($rol_name);
-                G::auditLog("CreateRole", "Role Name: ". $rol_name);
+                G::auditLog("CreateRole", "Role Name: ". $rol_name ." - Role Code: ".$aData['ROL_CODE']." - Role Status: ".$status);
             } else {
                 $e = new Exception("Failed Validation in class " . get_class($this) . ".");
                 $e->aValidationFailures = $this->getValidationFailures();
@@ -264,7 +268,8 @@ class Roles extends BaseRoles {
                 $result = $this->save();
                 $con->commit();
                 $this->setRolName($rol_name);
-                G::auditLog("UpdateRole", "Role Name: ".$rol_name." Role ID: (".$fields['ROL_UID'].") ");
+                $status = $fields['ROL_STATUS'] = 1 ? 'ACTIVE' : 'INACTIVE';
+                G::auditLog("UpdateRole", "Role Name: ".$rol_name." - Role ID: (".$fields['ROL_UID'].") - Role Code: ".$fields['ROL_CODE']." - Role Status: ".$status);
                 return $result;
             } else {
                 $con->rollback();
@@ -532,7 +537,7 @@ class Roles extends BaseRoles {
         $rol = $this->load($ROL_UID);
         $oUsersRbac = new RbacUsers();
         $user = $oUsersRbac->load($USR_UID);
-        
+
         G::auditLog("DeleteUserToRole", "Delete user ".$user['USR_USERNAME']." (".$USR_UID.") to Role ".$rol['ROL_NAME']." (".$ROL_UID.") ");
     }
 
@@ -645,7 +650,7 @@ class Roles extends BaseRoles {
         $o->setPerUid($PER_UID);
         $permission = $o->getPermissionName($PER_UID);
         $role = $this->load($ROL_UID);
-        
+
         G::auditLog("DeletePermissionToRole", "Delete Permission ".$permission." (".$PER_UID.") from Role ".$role['ROL_NAME']." (".$ROL_UID.") ");
     }
 

@@ -248,14 +248,15 @@ class CalendarDefinition extends BaseCalendarDefinition
         }
         $CalendarWorkDays = isset( $aData['CALENDAR_WORK_DAYS'] ) ? implode( "|", $aData['CALENDAR_WORK_DAYS'] ) : "";
 
+        $msgCalendarDescriptionStatus = ($aData["CALENDAR_DESCRIPTION"] != "")? ", Description: " . $aData["CALENDAR_DESCRIPTION"] . ", Status: " . ucwords(strtolower($aData["CALENDAR_STATUS"])) : ", Status: " . ucwords(strtolower($aData["CALENDAR_STATUS"]));
         //if exists the row in the database propel will update it, otherwise will insert.
         $tr = CalendarDefinitionPeer::retrieveByPK( $CalendarUid );
         if (! (is_object( $tr ) && get_class( $tr ) == 'CalendarDefinition')) {
             $tr = new CalendarDefinition();
             $tr->setCalendarCreateDate( 'now' );
-            G::auditLog("CreateCalendar", "Calendar Name: ".$aData['CALENDAR_NAME']);
+            G::auditLog("CreateCalendar", "Calendar Name: ".$aData['CALENDAR_NAME'] . $msgCalendarDescriptionStatus);
         } else {
-            G::auditLog("UpdateCalendar", "Calendar Name: ".$aData['CALENDAR_NAME']." Calendar ID: (".$CalendarUid.") ");
+            G::auditLog("UpdateCalendar", "Calendar Name: ".$aData['CALENDAR_NAME'] . $msgCalendarDescriptionStatus . ", Calendar ID: (".$CalendarUid.") ");
         }
 
         $tr->setCalendarUid( $CalendarUid );

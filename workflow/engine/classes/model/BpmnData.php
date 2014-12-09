@@ -40,13 +40,18 @@ class BpmnData extends BaseBpmnData
 
         if (is_object($process)) {
             $this->bound->setDiaUid($process->getDiaUid());
-            if (isset($this->getLnsUid)) {
-                $this->bound->setBouContainer('bpmnLane');
-                $this->bound->setBouElement($this->getLnsUid());
+            if ($this->bound->getBouElement()) {
+                $lane = BpmnLanePeer::retrieveByPK($this->bound->getBouElement());
+                $laneset = BpmnLanesetPeer::retrieveByPK($this->bound->getBouElement());
+                if (is_object($lane)) {
+                    $this->bound->setBouContainer('bpmnLane');
+                } elseif (is_object($laneset)) {
+                    $this->bound->setBouContainer('bpmnPool');
+                }
             } else {
                 $this->bound->setBouContainer('bpmnDiagram');
+                $this->bound->setBouElement($process->getDiaUid());
             }
-            $this->bound->setBouElement($process->getDiaUid());
         }
     }
 

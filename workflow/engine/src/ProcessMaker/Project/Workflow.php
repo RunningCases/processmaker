@@ -364,7 +364,7 @@ class Workflow extends Handler
      * @return string
      * @throws \Exception
      */
-    public function addRoute($fromTasUid, $toTasUid, $type, $condition = "")
+    public function addRoute($fromTasUid, $toTasUid, $type, $condition = "", $default = 0)
     {
         try {
             $validTypes = array("SEQUENTIAL", "SELECT", "EVALUATE", "PARALLEL", "PARALLEL-BY-EVALUATION", "SEC-JOIN", "DISCRIMINATOR");
@@ -390,12 +390,13 @@ class Workflow extends Handler
             ));
 
             if (is_null($route)) {
-                $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $condition);
+                $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $condition, $default);
             } else {
                 $result = $this->updateRoute($route->getRouUid(), array(
                     "TAS_UID" => $fromTasUid,
                     "ROU_NEXT_TASK" => $toTasUid,
                     "ROU_TYPE" => $type,
+                    "ROU_DEFAULT"   => $default,
                     "ROU_CONDITION" => $condition
                 ));
             }
@@ -503,7 +504,7 @@ class Workflow extends Handler
         }
     }
 
-    private function saveNewPattern($sProcessUID = '', $sTaskUID = '', $sNextTask = '', $sType = '', $condition = '')
+    private function saveNewPattern($sProcessUID = "", $sTaskUID = "", $sNextTask = "", $sType = "", $condition = "", $default = 0)
     {
         try {
             self::log("Add Route from task: $sTaskUID -> to task: $sNextTask ($sType)");
@@ -523,8 +524,9 @@ class Workflow extends Handler
             $aFields['PRO_UID'] = $sProcessUID;
             $aFields['TAS_UID'] = $sTaskUID;
             $aFields['ROU_NEXT_TASK'] = $sNextTask;
-            $aFields['ROU_TYPE'] = $sType;
-            $aFields['ROU_CASE'] = (int) $aRow['ROUTE_NUMBER'] + 1;
+            $aFields["ROU_CASE"] = (int)($aRow["ROUTE_NUMBER"]) + 1;
+            $aFields["ROU_TYPE"] = $sType;
+            $aFields["ROU_DEFAULT"] = $default;
 
             if(! empty($condition)) {
                 $aFields['ROU_CONDITION'] = $condition;

@@ -43,16 +43,38 @@ if ($handle = opendir( PATH_PLUGINS )) {
                 $oPluginRegistry->disablePlugin( $details->sNamespace );
                 $size = file_put_contents( PATH_DATA_SITE . 'plugin.singleton', $oPluginRegistry->serializeInstance() );
                 G::auditLog("DisablePlugin", "Plugin Name: ".$details->sNamespace);
-                print "size saved : $size  <br>";
+                //print "size saved : $size  <br>";
             } else {
-                //print "change to ENABLED";
-                require_once (PATH_PLUGINS . $pluginFile);
-                $details = $oPluginRegistry->getPluginDetails( $pluginFile );
-                $oPluginRegistry->enablePlugin( $details->sNamespace );
-                $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
-                $size = file_put_contents( PATH_DATA_SITE . 'plugin.singleton', $oPluginRegistry->serializeInstance() );
-                G::auditLog("EnablePlugin", "Plugin Name: ".$details->sNamespace);
-                print "size saved : $size  <br>";
+                $pluginName = str_replace(".php", "", $pluginFile);
+
+                if (is_file(PATH_PLUGINS . $pluginName . ".php") && is_dir(PATH_PLUGINS . $pluginName)) {
+                    //Check disabled code
+                    G::LoadClass("codeScanner");
+
+                    $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+
+                    $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+
+                    $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", PATH_PLUGINS . $pluginName . ".php"), $cs->checkDisabledCode("PATH", PATH_PLUGINS . $pluginName));
+
+                    if (count($arrayFoundDisabledCode) > 0) {
+                        $response = array();
+                        $response["status"]  = "DISABLED-CODE";
+                        $response["message"] = G::LoadTranslation("ID_DISABLED_CODE_PLUGIN");
+
+                        echo G::json_encode($response);
+                        exit(0);
+                    }
+
+                    //print "change to ENABLED";
+                    require_once(PATH_PLUGINS . $pluginFile);
+                    $details = $oPluginRegistry->getPluginDetails($pluginFile);
+                    $oPluginRegistry->enablePlugin($details->sNamespace);
+                    $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
+                    $size = file_put_contents(PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance());
+                    G::auditLog("EnablePlugin", "Plugin Name: " . $details->sNamespace);
+                    //print "size saved : $size  <br>";
+                }
             }
         }
     }

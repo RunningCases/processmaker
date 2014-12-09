@@ -899,7 +899,9 @@ class processMap
         $oCriteria->addSelectColumn('TRI_UID');
         $oCriteria->addAsColumn('TRI_LOCATE_WEBBOT_PARAM', '(SELECT LOCATE(MD5(' . TriggersPeer::TRI_WEBBOT . '),' . TriggersPeer::TRI_PARAM . ') FROM ' . TriggersPeer::TABLE_NAME . ' WHERE ' . TriggersPeer::TRI_UID . '=' . StepTriggerPeer::TRI_UID . ' )');
         $oCriteria->addSelectColumn('ST_TYPE');
+        /*----------------------------------********---------------------------------*/
         $oCriteria->addSelectColumn('IF ('.StepTriggerPeer::ST_CONDITION.' = "", "'.$imgNoEx.'", "'.$imgEx.'") AS CONDITION_SET');
+        /*----------------------------------********---------------------------------*/
         $oCriteria->addSelectColumn(StepTriggerPeer::ST_POSITION);
         $oCriteria->addAsColumn('TRI_TITLE', 'C.CON_VALUE');
         $oCriteria->addAlias('C', 'CONTENT');
@@ -1466,7 +1468,6 @@ class processMap
                     //if the $iForm is not one of the defaults then search under Plugins for an extended property. By JHL Jan 18, 2011
                     $oPluginRegistry = & PMPluginRegistry::getSingleton();
                     $activePluginsForTaskProperties = $oPluginRegistry->getTaskExtendedProperties();
-                    $oPM->taskOptions = array();
                     foreach ($activePluginsForTaskProperties as $key => $taskPropertiesInfo) {
                         $id = $taskPropertiesInfo->sNamespace . "--" . $taskPropertiesInfo->sName;
                         if ($id == $iForm) {
@@ -3650,10 +3651,12 @@ class processMap
                     $sObjectType = G::LoadTranslation('MSGS_HISTORY');
                     $sObject = G::LoadTranslation('ID_ALL');
                     break;
+                /*----------------------------------********---------------------------------*/
                 case 'SUMMARY_FORM':
                     $sObjectType = G::LoadTranslation('ID_SUMMARY_FORM');
                     $sObject = G::LoadTranslation('ID_ALL');
                     break;
+                /*----------------------------------********---------------------------------*/
                 default:
                     $sObjectType = G::LoadTranslation('ID_ALL');
                     $sObject = G::LoadTranslation('ID_ALL');

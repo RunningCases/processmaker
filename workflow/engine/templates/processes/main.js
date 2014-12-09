@@ -61,8 +61,10 @@ Ext.onReady(function(){
         {name : 'CASES_COUNT_TO_DO', type:'float'},
         {name : 'CASES_COUNT_COMPLETED', type:'float'},
         {name : 'CASES_COUNT_CANCELLED', type:'float'},
-        {name : 'PROJECT_TYPE', type:'string'},
-        {name : "PRO_TYPE_PROCESS", type: "string"}
+        {name : 'PROJECT_TYPE', type:'string'}
+        /*----------------------------------********---------------------------------*/
+        ,{name : "PRO_TYPE_PROCESS", type: "string"}
+        /*----------------------------------********---------------------------------*/
       ]
     }),
 
@@ -218,8 +220,10 @@ Ext.onReady(function(){
         {header: _('ID_COMPLETED'), dataIndex: 'CASES_COUNT_COMPLETED', width: 70, align:'right'},
         {header: _('ID_CANCELLED'), dataIndex: 'CASES_COUNT_CANCELLED', width: 70, align:'right'},
         {header: _('ID_TOTAL_CASES'), dataIndex: 'CASES_COUNT', width: 75,renderer:function(v){return "<b>"+v+"</b>";}, align:'right'},
-        {header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 50, align:'center'},
-        {header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 75, align:"left"}
+        {header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 50, align:'center'}
+        /*----------------------------------********---------------------------------*/
+        ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 75, align:"left"}
+        /*----------------------------------********---------------------------------*/
       ]
     }),
     store: store,
@@ -1166,6 +1170,19 @@ importProcess = function()
 
                       var resp_ = Ext.util.JSON.decode(resp.response.responseText);
 
+                      if (resp_.status) {
+                          if (resp_.status == "DISABLED-CODE") {
+                              Ext.MessageBox.show({
+                                  title: _("ID_ERROR"),
+                                  msg: "<div style=\"overflow: auto; width: 500px; height: 150px;\">" + stringReplace("\\x0A", "<br />", resp_.message) + "</div>", //\n 10
+                                  icon: Ext.MessageBox.ERROR,
+                                  buttons: Ext.MessageBox.OK
+                              });
+
+                              return;
+                          }
+                      }
+
                       if (resp_.catchMessage == "") {
                         if (resp_.ExistProcessInDatabase == "0") {
                           if (resp_.ExistGroupsInDatabase == "0") {
@@ -1207,7 +1224,7 @@ importProcess = function()
 
                       Ext.MessageBox.show({
                         title   : '',
-                        msg     : resp_.catchMessage,
+                        msg     : resp.catchMessage,
                         buttons : Ext.MessageBox.OK,
                         animEl  : 'mb9',
                         fn      : function(){},

@@ -19,7 +19,6 @@ global $config;
 
 class RestContext extends BehatContext
 {
-
     private $_startTime = null;
     private $_restObject = null;
     private $_headers = array();
@@ -56,16 +55,16 @@ class RestContext extends BehatContext
         $this->_client
             ->getEventDispatcher()
             ->addListener('request.error',
-            function (\Guzzle\Common\Event $event) {
-                switch ($event['response']->getStatusCode()) {
-                    case 400:
-                    case 401:
-                    case 404:
-                    case 405:
-                    case 406:
-                        $event->stopPropagation();
-                }
-            });
+                function (\Guzzle\Common\Event $event) {
+                    switch ($event['response']->getStatusCode()) {
+                        case 400:
+                        case 401:
+                        case 404:
+                        case 405:
+                        case 406:
+                            $event->stopPropagation();
+                    }
+                });
         $timezone = ini_get('date.timezone');
         if (empty($timezone)) {
             date_default_timezone_set('UTC');
@@ -85,6 +84,52 @@ class RestContext extends BehatContext
             }
             $this->printDebug("Parameter: $name = ".$parameters[$name]);
             return (isset($parameters[$name])) ? $parameters[$name] : null;
+        }
+    }
+
+    /**
+     * @BeforeScenario @MysqlDbConnection
+     */
+    public function verifyAllRequiredDataToConnectMysqlDB()
+    {
+        $db_parameters = array(
+            'mys_db_type',
+            'mys_db_server',
+            'mys_db_name',
+            'mys_db_username',
+            'mys_db_password',
+            'mys_db_port',
+            'mys_db_encode',
+            'mys_db_description');
+
+        foreach ($db_parameters as $value) {
+            $param = $this->getParameter($value);
+            if (!isset($param)){
+                throw new PendingException("Parameter ".$value." is not defined or is empty, please review behat.yml file!");
+            }
+        }
+    }
+
+    /**
+     * @BeforeScenario @SqlServerDbConnection
+     */
+    public function verifyAllRequiredDataToConnectSqlServerDB()
+    {
+        $db_parameters = array(
+            'sqlsrv_db_type',
+            'sqlsrv_db_server',
+            'sqlsrv_db_name',
+            'sqlsrv_db_username',
+            'sqlsrv_db_password',
+            'sqlsrv_db_port',
+            'sqlsrv_db_encode',
+            'sqlsrv_db_description');
+
+        foreach ($db_parameters as $value) {
+            $param = $this->getParameter($value);
+            if (!isset($param)){
+                throw new PendingException("Parameter ".$value." is not defined or is empty, please review behat.yml file!");
+            }
         }
     }
 
@@ -316,11 +361,12 @@ class RestContext extends BehatContext
         $this->_headers['Content-Type'] = 'application/json; charset=utf-8';
         $this->_requestBody = json_encode(
             is_object($this->_restObject)
-            ? (array)$this->_restObject
-            : $this->_restObject
+                ? (array)$this->_restObject
+                : $this->_restObject
         );
     }
 
+    // BACKGROUND STEPS
     /**
      * @Given /^that I have a valid access_token$/
      */
@@ -337,15 +383,19 @@ class RestContext extends BehatContext
     /**
      * @When /^I request "([^"]*)"$/
      */
-    public function iRequest($pageUrl, $urlType="")
+    public function iRequest($pageUrl, $urlType="",$customHeader=array())
     {
         $this->_startTime = microtime(true);
         $baseUrl = $this->getParameter('base_url');
         if ($this->access_token != null) {
             $this->_headers['Authorization'] = 'Bearer ' . $this->access_token;
+        }elseif(!empty($customHeader)){
+            foreach($customHeader as $headerKey => $headerValue){
+                $this->_headers[$headerKey] = $headerValue;
+            }
         }
 
-        
+
 
 
         if($urlType=="absolute"){
@@ -375,11 +425,11 @@ class RestContext extends BehatContext
             case 'POST':
                 $postFields = is_object($this->_restObject)
                     ? (array)$this->_restObject
-                    : $this->_restObject;               
+                    : $this->_restObject;
                 $this->_request = $this->_client
                     ->post($url, $this->_headers,
-                    (empty($this->_requestBody) ? $postFields :
-                        $this->_requestBody));
+                        (empty($this->_requestBody) ? $postFields :
+                            $this->_requestBody));
                 $this->_response = $this->_request->send();
                 break;
             case 'PUT' :
@@ -393,8 +443,8 @@ class RestContext extends BehatContext
                 $this->printDebug("URL F: $url\n");
                 $this->_request = $this->_client
                     ->put($url, $this->_headers,
-                    (empty($this->_requestBody) ? $putFields :
-                        $this->_requestBody));
+                        (empty($this->_requestBody) ? $putFields :
+                            $this->_requestBody));
                 $this->_response = $this->_request->send();
                 break;
             case 'PATCH' :
@@ -403,8 +453,8 @@ class RestContext extends BehatContext
                     : $this->_restObject;
                 $this->_request = $this->_client
                     ->patch($url, $this->_headers,
-                    (empty($this->_requestBody) ? $putFields :
-                        $this->_requestBody));
+                        (empty($this->_requestBody) ? $putFields :
+                            $this->_requestBody));
                 $this->_response = $this->_request->send();
                 break;
             case 'DELETE':
@@ -447,7 +497,7 @@ class RestContext extends BehatContext
                         $message = 'unexpected control character found';
                         break;
                     case JSON_ERROR_SYNTAX :
-                        $message = "malformed JSON \n\n ------\n".$this->_response->getBody(true)."\n ------";
+                        $message = "malformed JSON:: \n\n ------\n".$this->_response->getBody(true)."\n ------";
                         break;
                     case JSON_ERROR_UTF8 :
                         $message = 'malformed UTF-8 characters, possibly ' .
@@ -942,7 +992,7 @@ class RestContext extends BehatContext
     public function theResponseStatusCodeShouldBe($httpStatus)
     {
         if(!(isset($this->_response))){
-        throw new \Exception('HTTP code does not match ' . $httpStatus .
+            throw new \Exception('HTTP code does not match ' . $httpStatus .
                 ' (actual: No response defined)'
             );
         }
@@ -994,6 +1044,19 @@ class RestContext extends BehatContext
      */
     public function postThisData(PyStringNode $string)
     {
+        /*
+         * Overwrite the $this->_requestBody = $string; line in order to replace line by line with test data.
+         * */
+        $linesValues = array();
+        foreach ($string->getLines() as $line) {
+            foreach ($this->_parameters as $param => $value) {
+                $line = str_replace('<'.$param.'>', $value, $line);
+            }
+            $linesValues[] = $line;
+        }
+        $string->setLines($linesValues);
+
+
         $this->_restObjectMethod = 'post';
         $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
         $this->_requestBody = $string;
@@ -1004,6 +1067,19 @@ class RestContext extends BehatContext
      */
     public function putThisData(PyStringNode $string)
     {
+        /*
+         * Overwrite the $this->_requestBody = $string; line in order to replace line by line with test data.
+         * */
+        $linesValues = array();
+        foreach ($string->getLines() as $line) {
+            foreach ($this->_parameters as $param => $value) {
+                $line = str_replace('<'.$param.'>', $value, $line);
+            }
+            $linesValues[] = $line;
+        }
+        $string->setLines($linesValues);
+
+
         $this->_restObjectMethod = 'put';
         $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
         $this->_requestBody = $string;
@@ -1012,7 +1088,7 @@ class RestContext extends BehatContext
 
 
 
-   /**
+    /**
      * @Given /^I want to Insert a new "([^"]*)" with:$/
      */
     public function iWantToInsertANewWith($url, PyStringNode $string)
@@ -1052,9 +1128,11 @@ class RestContext extends BehatContext
      */
     public function storeInAsVariable($varName, $sessionVarName)
     {
+
         if (!isset($this->_data->$varName)) {
             throw new \Exception("JSON Response does not have '$varName' property\n\n" );
         }
+
 
         $varValue = $this->_data->$varName;
         if (file_exists("session.data")) {
@@ -1078,49 +1156,49 @@ class RestContext extends BehatContext
     //*********** WEN
 
     /**
-    * @Given /^POST data from file "([^"]*)"$/
-    */
+     * @Given /^POST data from file "([^"]*)"$/
+     */
     public function postDataFromFile($jsonFile)
     {
-      $filePath = __DIR__ . "/../json/" . $jsonFile;
+        $filePath = __DIR__ . "/../json/" . $jsonFile;
 
-      if(file_exists($filePath))
-      {
-        $fileData = file_get_contents($filePath);
-        $this->postThisData(new PyStringNode($fileData));
-      }
-      else
-      {
-        throw new \Exception("JSON File: $filePath not found\n\n" );
-      }
-     // throw new PendingException();
+        if(file_exists($filePath))
+        {
+            $fileData = file_get_contents($filePath);
+            $this->postThisData(new PyStringNode($fileData));
+        }
+        else
+        {
+            throw new \Exception("JSON File: $filePath not found\n\n" );
+        }
+        // throw new PendingException();
     }
 
     /**
-    * @Given /^PUT data from file "([^"]*)"$/
-    */
+     * @Given /^PUT data from file "([^"]*)"$/
+     */
     public function putDataFromFile($jsonFile)
     {
-      $filePath = __DIR__ . "/../json/" . $jsonFile;
+        $filePath = __DIR__ . "/../json/" . $jsonFile;
 
-      if(file_exists($filePath))
-      {
-        $fileData = file_get_contents($filePath);
-        $this->putThisData(new PyStringNode($fileData));
-      }
-      else
-      {
-        throw new \Exception("JSON File: $filePath not found\n\n" );
-      }
-     // throw new PendingException();
+        if(file_exists($filePath))
+        {
+            $fileData = file_get_contents($filePath);
+            $this->putThisData(new PyStringNode($fileData));
+        }
+        else
+        {
+            throw new \Exception("JSON File: $filePath not found\n\n" );
+        }
+        // throw new PendingException();
     }
     /**
-    * @Given /^This scenario is not implemented yet$/
-    * @Given /^this scenario is not implemented yet$/
-    */
+     * @Given /^This scenario is not implemented yet$/
+     * @Given /^this scenario is not implemented yet$/
+     */
     public function thisScenarioIsNotImplementedYet()
     {
-      throw new PendingException();
+        throw new PendingException();
     }
 
     /**
@@ -1139,7 +1217,7 @@ class RestContext extends BehatContext
         }else{
             $data = $this->_data;
         }
-        
+
         if (!is_array($data)) {
             if ($quantityOfRecords == 0) {
                 //if we expect 0 records and the response in fact is not an array, just return as a valid test
@@ -1172,7 +1250,7 @@ class RestContext extends BehatContext
                 if($key == $position){
                     $varValue = $value;
                 }
-            }            
+            }
         } else {
             $varValue = $sessionData->$sessionVarName;
         }
@@ -1181,13 +1259,13 @@ class RestContext extends BehatContext
         $this->_restObjectMethod = 'put';
     }
 
-     /**
+    /**
      * @Given /^that I want to get a resource with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
      * @Given /^that I want to get a resource with the key "([^"]*)" stored in session array as variable "([^"]*)" in position (\d+)$/
      */
     public function thatIWantToGetAResourceWithTheKeyStoredInSessionArrayAsVariable($varName, $sessionVarName, $position=null)
     {
-         if (file_exists("session.data")) {
+        if (file_exists("session.data")) {
             $sessionData = json_decode(file_get_contents("session.data"));
         } else {
             $sessionData = array();
@@ -1234,11 +1312,11 @@ class RestContext extends BehatContext
         $this->_restDeleteQueryStringSuffix = "/" . $varValue;
 
         $this->printDebug("$varName = $varValue\nsessionVarName = $sessionVarName\n");
-        
+
         $this->_restObjectMethod = 'delete';
     }
 
-     /**
+    /**
      * @Given /^the response status message should have the following text "([^"]*)"$/
      */
     public function theResponseStatusMessageShouldHaveTheFollowingText($arg1)
@@ -1256,13 +1334,13 @@ class RestContext extends BehatContext
                     $error_found=false;
                     $messages = array();
                     foreach($bodyResponse as $resp){
-                        if(isset($resp->error)){ 
+                        if(isset($resp->error)){
                             $messages[]=$resp->error;
                             if (strpos($resp->error,$arg1) !== false){
                                 $error_found=true;
                             }
                         }
-                        
+
                     }
                     if(!$error_found){
                         $message=implode("\n- ",$messages);
@@ -1282,7 +1360,7 @@ class RestContext extends BehatContext
 
     }
 
-     /**
+    /**
      * @Given /^I request "([^"]*)"  with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
      * @Given /^I request "([^"]*)"  with the key "([^"]*)" stored in session array as variable "([^"]*)" and url is "([^"]*)"$/
      * @Given /^I request "([^"]*)" with the key "([^"]*)" stored in session array as variable "([^"]*)"$/
@@ -1343,7 +1421,7 @@ class RestContext extends BehatContext
     }
 
 
-     /**
+    /**
      * @Given /^the property "([^"]*)" of "([^"]*)" is set to "([^"]*)"$/
      */
     public function thePropertyOfIsSetTo($propertyName, $objName, $propertyValue)
@@ -1394,8 +1472,8 @@ class RestContext extends BehatContext
 
     //UPLOAD FILE MANAGER
     /**
-    * @Given /^POST I want to upload the file "([^"]*)" to path "([^"]*)". Url "([^"]*)"$/
-    */
+     * @Given /^POST I want to upload the file "([^"]*)" to path "([^"]*)". Url "([^"]*)"$/
+     */
     public function postIWantToUploadTheFileToPathPublicUrl($prfFile, $prfPath, $url)
     {
         $prfFile = $this->getParameter('uploadFilesFolder') . $prfFile;
@@ -1404,9 +1482,9 @@ class RestContext extends BehatContext
         $headr[] = 'Authorization: Bearer '.$accesstoken;
         $path = rtrim($prfPath, '/') . '/';
         $sfile = end(explode("/",$prfFile));
-    
+
         $postFields = array('prf_filename'=>$sfile, "prf_path" => $path);
-        
+
         $this->_restObjectMethod = 'post';
         $this->_restObject = $postFields;
         $this->iRequest($url);
@@ -1427,20 +1505,20 @@ class RestContext extends BehatContext
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             $postResult = curl_exec($ch);
             curl_close($ch);
-      }
-        
+        }
+
     }
 
     //UPLOAD IMAGE
     /**
-    * @Given /^POST I want to upload the image "([^"]*)" to user "([^"]*)". Url "([^"]*)"$/
-    */
+     * @Given /^POST I want to upload the image "([^"]*)" to user "([^"]*)". Url "([^"]*)"$/
+     */
     public function postIWantToUploadTheImageToUser($imageFile, $usrUid, $url)
     {
         $imageFile = $this->getParameter('uploadFilesFolder') . $imageFile;
         $baseUrl = $this->getParameter('base_url');
         $url = $baseUrl.$url.$usrUid."/image-upload";
-        
+
         $accesstoken = $this->getParameter('access_token');
         $headr = array();
         $headr[] = 'Authorization: Bearer '.$accesstoken;
@@ -1451,18 +1529,18 @@ class RestContext extends BehatContext
         curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $postResult = curl_exec($ch);
-  
-          if(  $postResult === false) 
-            { 
-                //trigger_error(curl_error($ch)); 
-                throw new Exception("Image upload failed ($imageFile):\n\n"
-                        . curl_error($ch));
-            } 
+
+        if(  $postResult === false)
+        {
+            //trigger_error(curl_error($ch));
+            throw new Exception("Image upload failed ($imageFile):\n\n"
+                . curl_error($ch));
+        }
         curl_close($ch);
         echo $postResult;
     }
 
-     /**
+    /**
      * @Given /^POST I want to upload the image "([^"]*)" to user with the key "([^"]*)" stored in session array as variable "([^"]*)"\. Url "([^"]*)"$/
      */
     public function postIWantToUploadTheImageToUserWithTheKeyStoredInSessionArrayAsVariableUsrUidUrl($imageFile, $varName, $sessionVarName, $url)
@@ -1492,7 +1570,7 @@ class RestContext extends BehatContext
         $this->_restObjectMethod = 'delete';
     }
 
-     /**
+    /**
      * @Given /^store response count in session variable as "([^"]*)"$/
      */
     public function storeResponseCountInSessionVariableAs($varName)
@@ -1508,7 +1586,7 @@ class RestContext extends BehatContext
         file_put_contents("session.data", json_encode($sessionData));
     }
 
-   
+
     /**
      * @Given /^the response has (\d+) records more than "([^"]*)"$/
      */
@@ -1531,7 +1609,7 @@ class RestContext extends BehatContext
     }
 
 
-     /**
+    /**
      * @Given /^POST upload an input document "([^"]*)" to "([^"]*)"$/
      */
     public function postUploadAnInputDocumentTo($file, $url, PyStringNode $string)
@@ -1539,12 +1617,12 @@ class RestContext extends BehatContext
         $file = $this->getParameter('uploadFilesFolder') . $file;
         $postFields = json_decode($string);
         $postFields->form ='@'.$file;
-       
+
         $this->_restObjectMethod = 'post';
         $this->_restObject = $postFields;
         $this->iRequest($url);
 
-       
+
     }
 
     /**
@@ -1555,11 +1633,11 @@ class RestContext extends BehatContext
         $file = $this->getParameter('uploadFilesFolder') . $file;
         $postFields = new StdClass();
         $postFields->project_file ='@'.$file;
-       
+
         $this->_restObjectMethod = 'post';
         $this->_restObject = $postFields;
         $this->iRequest($url);
-       
+
     }
 
 
@@ -1611,7 +1689,7 @@ class RestContext extends BehatContext
         }
     }
 
-     /**
+    /**
      * @Given /^store "([^"]*)" in session array as variable "([^"]*)" where an object has "([^"]*)" equal to "([^"]*)"$/
      */
     public function storeInSessionArrayAsVariableWhereAnObjectHasEqualsTo($varName, $sessionVarName, $objectProperty, $objectValue)
@@ -1619,19 +1697,19 @@ class RestContext extends BehatContext
 
         $swFound=false;
         if (file_exists("session.data")) {
-                    $sessionData = json_decode(file_get_contents("session.data"));
-                } else {
-                    $sessionData = new StdClass();
-                }
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = new StdClass();
+        }
 
-                $sessionData->$sessionVarName = array();
+        $sessionData->$sessionVarName = array();
 
 
         foreach($this->_data as $obj){
             if((isset($obj->$objectProperty))&&($obj->$objectProperty == $objectValue)){
                 $swFound=true;
                 $varValue = $obj->$varName;
-                
+
                 //$sessionData->$sessionVarName = $varValue;
                 $sessionData->{$sessionVarName}[] = $varValue;
                 file_put_contents("session.data", json_encode($sessionData));
@@ -1644,7 +1722,7 @@ class RestContext extends BehatContext
         }
     }
 
-     /**
+    /**
      * @Given /^that "([^"]*)" property in object "([^"]*)" equals "([^"]*)"$/
      */
     public function thatPropertyInObjectEquals($propertyName, $propertyParent, $value)
@@ -1688,9 +1766,9 @@ class RestContext extends BehatContext
                 . $this->_response->getBody(true));
         }
 
-        
+
     }
-     /**
+    /**
      * @Given /^save exported process to "([^"]*)"$/
      * @Given /^save exported process to "([^"]*)" as "([^"]*)"$/
      */
@@ -1716,18 +1794,18 @@ class RestContext extends BehatContext
     }
 
 
-     /**
+    /**
      * @Given /^POST a dynaform:$/
      */
     public function postADynaform(PyStringNode $string)
     {
         $postFields = json_decode($string);
-        
+
         if ((isset($postFields->dyn_content))&&(file_exists($this->getParameter('uploadFilesFolder') . $postFields->dyn_content))) {
             $postFields->dyn_content = $this->getParameter('uploadFilesFolder') . $postFields->dyn_content;
             $this->printDebug("Extracting dyanform content from: ".$postFields->dyn_content."\n");
             $postFields->dyn_content = file_get_contents($postFields->dyn_content);
-            
+
             $string = json_encode($postFields);
         }
 
@@ -1749,7 +1827,7 @@ class RestContext extends BehatContext
             $postFields->dyn_content = $this->getParameter('uploadFilesFolder') . $postFields->dyn_content;
             $this->printDebug("Extracting dyanform content from: ".$postFields->dyn_content."\n");
             $postFields->dyn_content = file_get_contents($postFields->dyn_content);
-            
+
             $string = json_encode($postFields);
         }
 
@@ -1769,17 +1847,17 @@ class RestContext extends BehatContext
         $fp = fopen(sys_get_temp_dir() . "/behat.log", "a+");
         fwrite($fp, $string . PHP_EOL);
     }
-      /**
+    /**
      * @Then /^if database-connection with id "([^"]*)" is active$/
      */
     public function ifDatabaseConnectionWithIdIsActive($dbConnectionId)
     {
         if(!(isset($this->_response))){
-        throw new \Exception('Empty result ' );
+            throw new \Exception('Empty result ' );
         }
         $message="";
         $sw_error=false;
-            if($bodyResponse=json_decode($this->_response->getBody(true))){
+        if($bodyResponse=json_decode($this->_response->getBody(true))){
             //print_r($bodyResponse);
             foreach($bodyResponse as $testDetail){
                 $message.=$testDetail->test;
@@ -1792,22 +1870,21 @@ class RestContext extends BehatContext
                 $message.=" | ";
             }
 
-            }else{
-                throw new \Exception('Empty result ' );
-            }
+        }else{
+            throw new \Exception('Empty result ' );
+        }
 
-            if (file_exists("session.data")) {
-                    $sessionData = json_decode(file_get_contents("session.data"));
-                } else {
-                    $sessionData = new StdClass();
-                }
-                if(!isset($sessionData->dbconnectionStatus)){
-                    $sessionData->dbconnectionStatus = new StdClass();
-                }
-            $sessionData->dbconnectionStatus->$dbConnectionId = !$sw_error;
-            file_put_contents("session.data", json_encode($sessionData));
-            if($sw_error){
-
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = new StdClass();
+        }
+        if(!isset($sessionData->dbconnectionStatus)){
+            $sessionData->dbconnectionStatus = new StdClass();
+        }
+        $sessionData->dbconnectionStatus->$dbConnectionId = !$sw_error;
+        file_put_contents("session.data", json_encode($sessionData));
+        if($sw_error){
             throw new PendingException($message);
         }
     }
@@ -1816,17 +1893,366 @@ class RestContext extends BehatContext
      */
     public function databaseConnectionWithIdIsActive($dbConnectionId)
     {
-        if (file_exists("session.data")) {
-                    $sessionData = json_decode(file_get_contents("session.data"));
-                } else {
-                    $sessionData = new StdClass();
-                }
-                
-            if(!$sessionData->dbconnectionStatus->$dbConnectionId){
-            
+      if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = new StdClass();
+        }
 
+        $sessionData = new StdClass();
+        if(!$sessionData->dbconnectionStatus->$dbConnectionId){
             throw new PendingException("Skip inactive dbconnection: $dbConnectionId");
         }
     }
+    /**
+     * @Given /^OAUTH register an application$/
+     */
+    public function oauthRegisterAnApplication(PyStringNode $data)
+    {
+        $this->printDebug("Register Application...");
+        $baseUrl            = $this->getParameter('base_url');
+        $login_url          = $this->getParameter('login_url');
+        $authentication_url = $this->getParameter('authentication_url');
+        $oauth_app_url      = $this->getParameter('oauth_app_url');
+        $oauth_authorization_url      = $this->getParameter('oauth_authorization_url');
+
+        $user_name          = $this->getParameter('user_name');
+        $user_password      = $this->getParameter('user_password');
+        $cookie_file        = sys_get_temp_dir()."pmcookie";
+
+
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $authentication_url);
+        curl_setopt($ch, CURLOPT_REFERER, $login_url);
+        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/32.0.1700.107 Chrome/32.0.1700.107 Safari/537.36');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "form[USR_USERNAME]=$user_name&form[USR_PASSWORD]=$user_password&form[USER_LANG]=en&form[URL]");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_COOKIESESSION, true);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_file);
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $answer = curl_exec($ch);
+        $newurl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+
+
+        if (strpos($newurl, "/login/login") !== false) {
+            throw new Exception('Bad credentials');
+        }
+
+
+        //print "<textarea>$answer</textarea>";
+        if (curl_error($ch)) {
+            throw new Exception(curl_error($ch));
+        }
+
+
+        // Read the session saved in the cookie file
+
+        if(!file_exists($cookie_file)){
+            throw new Exception('Invalid Cookie/Session: '.$cookie_file);
+        }
+
+
+
+        //another request preserving the session
+
+        $data = json_decode((string) $data);
+
+        $name=$data->name;
+        $description=$data->description;
+        $webSite = $data->webSite;
+        $redirectUri=$data->redirectUri;
+        $applicationNumber=$data->applicationNumber;
+
+        //1. Register application
+        curl_setopt($ch, CURLOPT_URL, $oauth_app_url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "option=INS&name=$name&description=$description&webSite=$webSite&redirectUri=$redirectUri");
+        $answer = curl_exec($ch);
+        if (curl_error($ch)) {
+            throw new Exception(curl_error($ch));
+        }
+        $newurl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+
+        if (strpos($newurl, "/login/login") !== false) {
+            throw new Exception('Not authenticated');
+        }
+        // json_decode(json)
+        $response=json_decode($answer);
+        $this->printDebug("Register application:\n".$answer."\n");
+        $this->_restObjectMethod = 'post';
+        $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
+        $this->_response = json_decode($answer);
+
+
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = new StdClass();
+        }
+        foreach($response->data as $key => $varValue){
+            $sessionVarName=$key."_".$applicationNumber;
+            $sessionData->$sessionVarName = $varValue;
+            $this->printDebug("Save $sessionVarName = $varValue");
+        }
+        //print_r($sessionData);
+
+        $clientId = $response->data->CLIENT_ID;
+        $clientSecret = $response->data->CLIENT_SECRET;
+
+        //2. Request Authorization
+        curl_setopt($ch, CURLOPT_URL, $oauth_authorization_url."?"."response_type=code&client_id=$clientId&scope=*");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "allow=Accept&transaction_id=");
+        //print "response_type=code&client_id=$clientId&scope=*";
+        $answer = curl_exec($ch);
+        if (curl_error($ch)) {
+            throw new Exception(curl_error($ch));
+        }
+        $newurl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+        $codeA = explode("code=",$newurl);
+
+        $code = $codeA[1];
+        $this->printDebug("Authorization code:\n".$code."\n");
+
+        //3. Request Token
+        $headr = array();
+        $headr[] = 'Content-Type: application/json';
+        $headr[] = 'Authorization: Basic '.base64_encode("$clientId:$clientSecret");
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
+        //curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_URL, $baseUrl."oauth2/token");
+        //curl_setopt($ch, CURLOPT_USERPWD, "$clientId:$clientSecret");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array("grant_type"=>"authorization_code","code"=>$code)));
+
+        $answer = curl_exec($ch);
+        if (curl_error($ch)) {
+            throw new Exception(curl_error($ch));
+        }
+        $newurl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+        $this->printDebug("Request token:\n".$answer."\n");
+        //print_r("Request token:\n".$newurl."\n");
+        foreach(json_decode($answer) as $key => $varValue){
+            $sessionVarName=$key."_".$applicationNumber;
+            $sessionData->$sessionVarName = $varValue;
+            $this->printDebug("Save $sessionVarName = $varValue");
+        }
+        file_put_contents("session.data", json_encode($sessionData));
+
+    }
+
+    /**
+     * @Given /^I request a owner password credential grant$/
+     */
+    public function iRequestAOwnerPasswordCredentialGrant()
+    {
+        $baseUrl            = $this->getParameter('base_url');
+        $clientId            = $this->getParameter('client_id');
+        $clientSecret            = $this->getParameter('client_secret');
+
+        $this->printDebug("Password credentials");
+
+        $headr = array();
+        $headr['Authorization'] = 'Basic '.base64_encode("$clientId:$clientSecret");
+
+        $this->iRequest($baseUrl."oauth2/token", "absolute",$headr);
+        //print_r($this->_data);
+        if(isset($this->_data->error)){
+            throw new Exception($this->_data->error." : ".$this->_data->error_description);
+        }
+    }
+    /**
+     * @Given /^I request a client credential grant$/
+     */
+    public function iRequestAClientCredentialGrant()
+    {
+        $baseUrl            = $this->getParameter('base_url');
+        $clientId            = $this->getParameter('client_id');
+        $clientSecret            = $this->getParameter('client_secret');
+
+        $this->printDebug("Client credentials");
+
+        $headr = array();
+        $headr['Authorization'] = 'Basic '.base64_encode("$clientId:$clientSecret");
+
+        $this->iRequest($baseUrl."oauth2/token", "absolute",$headr);
+        //print_r($this->_data);
+        if(isset($this->_data->error)){
+            throw new Exception($this->_data->error." : ".$this->_data->error_description);
+        }
+    }
+    /**
+     * @Given /^I request a refresh token for "([^"]*)"$/
+     */
+    public function iRequestARefreshToken($refreshTokenSession)
+    {
+        $refArray=explode("_",$refreshTokenSession);
+        $varNumber = $refArray[2];
+        $baseUrl            = $this->getParameter('base_url');
+        $clientId            = $this->getParameter('client_id');
+        $clientSecret            = $this->getParameter('client_secret');
+        $this->printDebug("Refresh token");
+
+        $headr = array();
+
+        $request=array();
+        $request['grant_type']="refresh_token";
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$refreshTokenSession) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$refreshTokenSession;
+            $clientIdName="CLIENT_ID_$varNumber";
+            $clientSecretName="CLIENT_SECRET_$varNumber";
+            $clientId            = $sessionData->$clientIdName;
+            $clientSecret            = $sessionData->$clientSecretName;
+        }
+        $headr['Authorization'] = 'Basic '.base64_encode("$clientId:$clientSecret");
+        $request['refresh_token']=$varValue;
+        $this->_requestBody=json_encode($request);
+        print_r($this->_requestBody);
+        $this->iRequest($baseUrl."oauth2/token", "absolute", $headr);
+        print_r($this->_data);
+        if(isset($this->_data->error)){
+            throw new Exception($this->_data->error." : ".$this->_data->error_description);
+        }
+    }
+
+    /**
+     * @Given /^OAUTH request implicit grant$/
+     */
+    public function oauthRequestImplicitGrant(PyStringNode $data)
+    {
+        $this->printDebug("Implicit Grant");
+        $baseUrl            = $this->getParameter('base_url');
+        $login_url          = $this->getParameter('login_url');
+        $authentication_url = $this->getParameter('authentication_url');
+        $oauth_app_url      = $this->getParameter('oauth_app_url');
+        $oauth_authorization_url      = $this->getParameter('oauth_authorization_url');
+
+        $user_name          = $this->getParameter('user_name');
+        $user_password      = $this->getParameter('user_password');
+        $cookie_file        = sys_get_temp_dir()."pmcookie";
+
+
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $authentication_url);
+        curl_setopt($ch, CURLOPT_REFERER, $login_url);
+        curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/32.0.1700.107 Chrome/32.0.1700.107 Safari/537.36');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "form[USR_USERNAME]=$user_name&form[USR_PASSWORD]=$user_password&form[USER_LANG]=en&form[URL]");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_COOKIESESSION, true);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_file);
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $answer = curl_exec($ch);
+        $newurl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+
+        //print_r($newurl);
+        if (strpos($newurl, "/login/login") !== false) {
+            throw new Exception('Bad credentials');
+        }
+
+
+        //print "<textarea>$answer</textarea>";
+        if (curl_error($ch)) {
+            throw new Exception(curl_error($ch));
+        }
+
+
+        // Read the session saved in the cookie file
+
+        if(!file_exists($cookie_file)){
+            throw new Exception('Invalid Cookie/Session: '.$cookie_file);
+        }
+
+        //another request preserving the session
+
+        $data = json_decode((string) $data);
+
+        $response_type=$data->response_type;
+        $client_id=$data->client_id;
+        $scope = $data->scope;
+        $implicit_grant_number = $data->implicit_grant_number;
+
+
+        //1. Register application
+        curl_setopt($ch, CURLOPT_URL, $oauth_authorization_url."?response_type=$response_type&client_id=$client_id&scope=$scope");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "transaction_id=");
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $answer = curl_exec($ch);
+        if (curl_error($ch)) {
+            throw new Exception(curl_error($ch));
+        }
+        $newurl = urldecode(curl_getinfo($ch, CURLINFO_EFFECTIVE_URL));
+
+
+        if (strpos($newurl, "/login/login") !== false) {
+            throw new Exception('Not authenticated');
+        }
+        $parts = parse_url($newurl);
+
+        parse_str($parts['fragment'], $fragment);
+        //print_r($fragment);
+        // json_decode(json)
+        $response=json_decode($answer);
+
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = new StdClass();
+        }
+        foreach($fragment as $key => $varValue){
+            $sessionVarName=$key."_".$implicit_grant_number;
+            $sessionData->$sessionVarName = $varValue;
+        }
+        //print_r($sessionData);
+        file_put_contents("session.data", json_encode($sessionData));
+        //print_r("\nRegister application:\n".$answer."\n$oauth_authorization_url?response_type=$response_type&client_id=$client_id&scope=$scope\n");
+        //print_r($newurl);
+        $this->_restObjectMethod = 'post';
+        $this->_headers['Content-Type'] = 'application/json; charset=UTF-8';
+        $this->_response = json_decode($answer);
+
+
+    }
+
+    /**
+     * @Given /^that I assign an access token from session variable "([^"]*)"$/
+     */
+    public function thatIAssignAnAccessTokenFromSessionVariable($varName)
+    {
+        if (file_exists("session.data")) {
+            $sessionData = json_decode(file_get_contents("session.data"));
+        } else {
+            $sessionData = array();
+        }
+        if (!isset($sessionData->$varName) ) {
+            $varValue = '';
+        } else {
+            $varValue = $sessionData->$varName;
+        }
+        $access_token = $varValue;
+        if (strlen($access_token)<= 10) {
+
+            throw new Exception ("Access token is not valid\n\n" );
+        }
+        $this->printDebug("Access token set to: $access_token");
+        $this->access_token = $access_token;
+    }
+
+
+
 
 }
