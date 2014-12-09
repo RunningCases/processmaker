@@ -68,7 +68,8 @@ class PMLicensedFeatures
         if (!class_exists("pmLicenseManager")) {
             require_once ("classes" . PATH_SEP . "class.pmLicenseManager.php");
         }
-        $licenseManager = pmLicenseManager::getSingleton();
+
+        $licenseManager = pmLicenseManager::getSingleton(false);
 
         $_SESSION['__sw__'] = true;
         $padl = new padl();
