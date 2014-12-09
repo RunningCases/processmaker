@@ -1150,19 +1150,17 @@ class PMPluginRegistry
     public function setupPlugins ()
     {
         try {
+            require_once(PATH_CORE . "methods" . PATH_SEP . "enterprise" . PATH_SEP . "enterprise.php");
+            require_once("class.serverConfiguration.php");
+
             $iPlugins = 0;
-            require_once ( 'class.serverConfiguration.php' );
             $oServerConf = & serverConf::getSingleton();
             $oServerConf->addPlugin( SYS_SYS, $this->_aPluginDetails );
             foreach ($this->_aPluginDetails as $namespace => $detail) {
                 if (isset( $detail->enabled ) && $detail->enabled) {
                     if (! empty( $detail->sFilename ) && file_exists( $detail->sFilename )) {
-                        if (strpos( $detail->sFilename, PATH_SEP ) !== false) {
-                            $aux = explode( PATH_SEP, $detail->sFilename );
-                        } else {
-                            $aux = explode( chr( 92 ), $detail->sFilename );
-                        }
-                        $sFilename = (($detail->sNamespace == 'enterprise') ? PATH_CORE. 'methods' . PATH_SEP . 'enterprise' . PATH_SEP : PATH_PLUGINS) . $aux[count( $aux ) - 1];
+                        $arrayFileInfo = pathinfo($detail->sFilename);
+                        $sFilename = (($detail->sNamespace == "enterprise")? PATH_CORE. "methods" . PATH_SEP . "enterprise" . PATH_SEP : PATH_PLUGINS) . $arrayFileInfo["basename"];
                         if (! file_exists( $sFilename )) {
                             continue;
                         }
@@ -1186,7 +1184,6 @@ class PMPluginRegistry
             G::RenderPage( 'publish' );
             die();
         }
-
     }
 
     /**
