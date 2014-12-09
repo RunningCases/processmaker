@@ -76,5 +76,5 @@ class AppAssignSelfServiceValueMapBuilder
         $tMap->addColumn('GRP_UID', 'GrpUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
     } // doBuild()
-}// AppAssignSelfServiceValueMapBuilder
 
+} // AppAssignSelfServiceValueMapBuilder

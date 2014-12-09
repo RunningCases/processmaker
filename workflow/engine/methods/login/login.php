@@ -22,6 +22,7 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+/*----------------------------------********---------------------------------*/
 //Browser Compatibility
 $browserSupported = G::checkBrowserCompatibility();
 if ($browserSupported==false){
@@ -29,7 +30,7 @@ if ($browserSupported==false){
 		G::SendTemporalMessage ('ID_CURRENT_BROWSER_NOT_SUPPORTED', 'warning');
 	}
 }
-
+/*----------------------------------********---------------------------------*/
 $aFields = array();
 
 if (!isset($_GET['u'])) {
@@ -133,6 +134,19 @@ if (strlen($msgType) > 0) {
 $_SESSION['FAILED_LOGINS'] = $sFailedLogins;
 $_SESSION["USERNAME_PREVIOUS1"] = $usernamePrevious1;
 $_SESSION["USERNAME_PREVIOUS2"] = $usernamePrevious2;
+
+/*----------------------------------********---------------------------------*/
+if (!class_exists('pmLicenseManager')) {
+  G::LoadClass('pmLicenseManager');
+}
+$licenseManager =& pmLicenseManager::getSingleton();
+if (in_array(md5($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
+    $G_PUBLISH = new Publisher();
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpired', '', array(), 'licenseUpdate');
+    G::RenderPage('publish');
+    die();
+}
+/*----------------------------------********---------------------------------*/
 
 //translation
 //$Translations = G::getModel("Translation");

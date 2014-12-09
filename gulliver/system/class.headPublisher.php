@@ -225,11 +225,13 @@ class headPublisher
         }
         
         $head = $head . "
+        <!--//////////////////////////////////********//////////////////////////////////-->
         <noscript>
 		<div>
 		 ". G::LoadTranslation( 'ID_ERROR_JS_NOT_AVAILABLE' )."
 		</div>
 		</noscript>
+		<!--//////////////////////////////////********//////////////////////////////////-->
 
         <script type=\"text/javascript\">
         var BROWSER_CACHE_FILES_UID = \"" . G::browserCacheFilesGetUid() . "\";

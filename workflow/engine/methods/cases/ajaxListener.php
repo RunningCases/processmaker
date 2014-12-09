@@ -679,6 +679,8 @@ class Ajax
             $_REQUEST["TAS_UID"] = $idHistoryArray[2];
             $_REQUEST["DYN_UID"] = "";
 
+            $result = new stdclass();
+
             $G_PUBLISH = new Publisher();
             $G_PUBLISH->AddContent('view', 'cases/cases_DynaformHistory');
             ?>

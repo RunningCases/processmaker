@@ -31,16 +31,11 @@ G::LoadSystem("dbMaintenance");
 G::LoadClass("cli");
 
 CLI::taskName('upgrade');
-CLI::taskDescription(<<<EOT
-    Upgrade workspaces.
+CLI::taskDescription("Upgrade workspaces.\n\n This command should be run after ProcessMaker files are upgraded so that all workspaces are upgraded to the current version.");
 
-    This command should be run after ProcessMaker files are upgraded so that all
-    workspaces are upgraded to the current version.
-EOT
-);
 CLI::taskOpt("buildACV", "If the option is enabled, performs the Build Cache View.", "ACV", "buildACV");
 CLI::taskRun("run_upgrade");
-
+/*----------------------------------********---------------------------------*/
 CLI::taskName('unify-database');
 CLI::taskDescription(<<<EOT
     Unify Rbac, Reports and Workflow databases schemas to match the latest version
@@ -55,8 +50,11 @@ CLI::taskDescription(<<<EOT
     changed to match the new ProcessMaker code.
 EOT
 );
+/*----------------------------------********---------------------------------*/
 CLI::taskArg('workspace');
+/*----------------------------------********---------------------------------*/
 CLI::taskRun("run_unify_database");
+/*----------------------------------********---------------------------------*/
 
 /**
  * A version of rm_dir which does not exits on error.
@@ -194,7 +192,7 @@ function listFiles($dir) {
     }
     return $files;
 }
-
+/*----------------------------------********---------------------------------*/
 function run_unify_database($args)
 {
     $workspaces = array();
@@ -301,3 +299,4 @@ function run_unify_database($args)
     }
     $flag = G::isPMUnderUpdating(0);
 }
+/*----------------------------------********---------------------------------*/

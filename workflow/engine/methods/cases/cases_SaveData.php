@@ -123,22 +123,29 @@ try {
                     $aAux = explode( '|', $oForm->fields[$oForm->fields[$sField]->pmconnection]->keys );
                     $i = 0;
                     $aValues = array ();
-                    foreach ($aData['FIELDS'] as $aField) {
-                        if ($aField['FLD_KEY'] == '1') {
-                            $aKeys[$aField['FLD_NAME']] = (isset( $aAux[$i] ) ? G::replaceDataField( $aAux[$i], $Fields['APP_DATA'] ) : '');
-                            $i ++;
-                        }
-                        if ($aField['FLD_NAME'] == $oForm->fields[$sField]->pmfield) {
-                            $aValues[$aField['FLD_NAME']] = $Fields['APP_DATA'][$sField];
-                        } else {
-                            $aValues[$aField['FLD_NAME']] = '';
-                        }
+                    if($aData == "" || count($aData['FIELDS']) < 1){
+                    	$message = G::LoadTranslation( 'ID_PMTABLE_NOT_FOUNDED_SAVED_DATA' );
+                    	G::SendMessageText( $message, "WARNING" );
+                    	$aRow = false;
+                    } else {
+                    	foreach ($aData['FIELDS'] as $aField) {
+                    		if ($aField['FLD_KEY'] == '1') {
+                    			$aKeys[$aField['FLD_NAME']] = (isset( $aAux[$i] ) ? G::replaceDataField( $aAux[$i], $Fields['APP_DATA'] ) : '');
+                    			$i ++;
+                    		}
+                    		if ($aField['FLD_NAME'] == $oForm->fields[$sField]->pmfield) {
+                    			$aValues[$aField['FLD_NAME']] = $Fields['APP_DATA'][$sField];
+                    		} else {
+                    			$aValues[$aField['FLD_NAME']] = '';
+                    		}
+                    	}
+                    	try {
+                    		$aRow = $oAdditionalTables->getDataTable( $oForm->fields[$oForm->fields[$sField]->pmconnection]->pmtable, $aKeys );
+                    	} catch (Exception $oError) {
+                    		$aRow = false;
+                    	}
                     }
-                    try {
-                        $aRow = $oAdditionalTables->getDataTable( $oForm->fields[$oForm->fields[$sField]->pmconnection]->pmtable, $aKeys );
-                    } catch (Exception $oError) {
-                        $aRow = false;
-                    }
+                    
                     if ($aRow) {
                         foreach ($aValues as $sKey => $sValue) {
                             if ($sKey != $oForm->fields[$sField]->pmfield) {

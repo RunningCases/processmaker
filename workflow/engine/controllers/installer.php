@@ -927,7 +927,7 @@ class Installer extends Controller
                     return $info;
                 }
             }
-
+            
             $this->installLog( G::LoadTranslation('ID_INDEX_FILE_UPDATED', SYS_LANG, Array($indexFileUpdated, $sysConf['default_lang'],$sysConf['default_skin'])));
             $this->installLog( G::LoadTranslation('ID_INSTALL_SUCESS') );
 

@@ -62,7 +62,7 @@ class PMLicensedFeatures
         }
         return self::$instancefeature;
     }
-
+    /*----------------------------------********---------------------------------*/
     public function verifyfeature ($featureName)
     {
         if (!class_exists("pmLicenseManager")) {
@@ -82,5 +82,6 @@ class PMLicensedFeatures
         $this->featuresDetails[$value[0]]->enabled = $enable;
         return $enable;
     }
+    /*----------------------------------********---------------------------------*/
 }
 
