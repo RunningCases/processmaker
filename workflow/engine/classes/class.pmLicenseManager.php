@@ -10,7 +10,7 @@ class pmLicenseManager
 
     private static $instance = null;
 
-    public function __construct()
+    public function __construct($flagActivatePlugins = true)
     {
         G::LoadClass('serverConfiguration');
         $oServerConf = &serverConf::getSingleton();
@@ -109,13 +109,15 @@ class pmLicenseManager
             $oServerConf->setProperty ( 'LICENSE_INFO', $licInfoA );
         }
 
-        $this->activateFeatures ();
+        if ($flagActivatePlugins) {
+            $this->activateFeatures();
+        }
     }
 
-    public static function getSingleton()
+    public static function getSingleton($flagActivatePlugins = true)
     {
         if (self::$instance == null) {
-            self::$instance = new pmLicenseManager();
+            self::$instance = new pmLicenseManager($flagActivatePlugins);
         }
         return self::$instance;
     }

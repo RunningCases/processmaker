@@ -1248,7 +1248,7 @@
     <column name="TAS_SELFSERVICE_EXECUTION" type="VARCHAR" size="15" default="EVERY_TIME"/>
 
     <validator column="TAS_TYPE">
-      <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN" message="Please select a valid value for TAS_TYPE."/>
+        <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY" message="Please enter a valid value for TAS_TYPE"/>
     </validator>
     <validator column="TAS_TIMEUNIT">
       <rule name="validValues" value="MINUTES|HOURS|DAYS|WEEKS|MONTHS" message="Please select a valid value for TAS_TIMEUNIT."/>
