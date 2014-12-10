@@ -8,7 +8,6 @@ Feature: DataBase Connections Main Tests Mysql
   # MySQL is tagged like 1
   Background:
     Given that I have a valid access_token
-    And database tagged like 1
 
 
   # GET /api/1.0/{workspace}/project/<project-id>/database-connections
