@@ -1850,3 +1850,42 @@ CREATE TABLE APP_ASSIGN_SELF_SERVICE_VALUE
     GRP_UID   VARCHAR2(32) DEFAULT '' NOT NULL
 );
 
+
+/* -----------------------------------------------------------------------
+   MESSAGE
+   ----------------------------------------------------------------------- */
+
+DROP TABLE "MESSAGE" CASCADE CONSTRAINTS;
+
+
+CREATE TABLE "MESSAGE"
+(
+	"MES_UID" VARCHAR2(32)  NOT NULL,
+	"PRJ_UID" VARCHAR2(32)  NOT NULL,
+	"MES_NAME" VARCHAR2(255) default '',
+	"MES_CONDITION" VARCHAR2(255) default ''
+);
+
+	ALTER TABLE "MESSAGE"
+		ADD CONSTRAINT "MESSAGE_PK"
+	PRIMARY KEY ("MES_UID");
+
+
+/* -----------------------------------------------------------------------
+   MESSAGE_DETAIL
+   ----------------------------------------------------------------------- */
+
+DROP TABLE "MESSAGE_DETAIL" CASCADE CONSTRAINTS;
+
+
+CREATE TABLE "MESSAGE_DETAIL"
+(
+	"MD_UID" VARCHAR2(32)  NOT NULL,
+	"MES_UID" VARCHAR2(32)  NOT NULL,
+	"MD_TYPE" VARCHAR2(32) default '',
+	"MD_NAME" VARCHAR2(255) default ''
+);
+
+	ALTER TABLE "MESSAGE_DETAIL"
+		ADD CONSTRAINT "MESSAGE_DETAIL_PK"
+	PRIMARY KEY ("MD_UID");

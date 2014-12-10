@@ -4176,5 +4176,17 @@
         <column name="TYPE"    type="VARCHAR" size="255" required="true" primaryKey="true" default=""/>
         <column name="TYP_UID" type="VARCHAR" size="32" required="true" default=""/>
     </table>
+    <table name="MESSAGE">
+        <column name="MES_UID" type="VARCHAR" size="32" required="true" primaryKey="true" />
+        <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>
+        <column name="MES_NAME" type="VARCHAR" size="255" default=""/>
+        <column name="MES_CONDITION" type="VARCHAR" size="255" default=""/>
+    </table>
+    <table name="MESSAGE_DETAIL">
+        <column name="MD_UID" type="VARCHAR" size="32" required="true" primaryKey="true" />
+        <column name="MES_UID" type="VARCHAR" size="32" required="true"/>
+        <column name="MD_TYPE" type="VARCHAR" size="32" default=""/>
+        <column name="MD_NAME" type="VARCHAR" size="255" default=""/>
+    </table>
 </database>
 
