@@ -208,12 +208,10 @@ class pmTablesProxy extends HttpProxyController
         $result = new StdClass();
 
         try {
-            $result = new stdClass();
             ob_start();
             $data = (array) $httpData;
             $data['PRO_UID'] = trim( $data['PRO_UID'] );
             $data['columns'] = G::json_decode( stripslashes( $httpData->columns ) ); //decofing data columns
-
 
             $isReportTable = $data['PRO_UID'] != '' ? true : false;
             $oAdditionalTables = new AdditionalTables();
@@ -252,7 +250,6 @@ class pmTablesProxy extends HttpProxyController
                     ) ) ));
                 }
             }
-
             //backward compatility
             foreach ($columns as $i => $column) {
                 if (in_array( strtoupper( $columns[$i]->field_name ), $reservedWordsSql ) || in_array( strtolower( $columns[$i]->field_name ), $reservedWordsPhp )) {
@@ -318,7 +315,6 @@ class pmTablesProxy extends HttpProxyController
                 $oCriteria->add( FieldsPeer::ADD_TAB_UID, $data['REP_TAB_UID'] );
                 FieldsPeer::doDelete( $oCriteria );
             }
-
             // Updating pmtable fields
             foreach ($columns as $i => $column) {
                 $field = array (
@@ -747,7 +743,7 @@ class pmTablesProxy extends HttpProxyController
      */
     public function exportCSV ($httpData)
     {
-
+        $result = new StdClass();
         try {
 
             $link = '';
