@@ -986,11 +986,13 @@ class Cases
                 unset($Fields['APP_DESCRIPTION']);
             }
             if (isset($Fields["APP_STATUS"]) && $Fields["APP_STATUS"] == "COMPLETED") {
-                $Fields['USR_UID'] = $Fields['CURRENT_USER_UID'];
-                $listCompleted = new ListCompleted();
-                $listCompleted->create($Fields);
-                $listMyInbox = new ListMyInbox();
-                $listMyInbox->refresh($Fields);
+                if (isset($Fields['CURRENT_USER_UID'])) {
+                    $Fields['USR_UID'] = $Fields['CURRENT_USER_UID'];
+                    $listCompleted = new ListCompleted();
+                    $listCompleted->create($Fields);
+                    $listMyInbox = new ListMyInbox();
+                    $listMyInbox->refresh($Fields);
+                }
             }
             $oApp->update($Fields);
 
