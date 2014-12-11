@@ -116,10 +116,19 @@ class pmTablesProxy extends HttpProxyController
         $proUid = $_POST['PRO_UID'];
         $dbConn = new DbConnections();
         $dbConnections = $dbConn->getConnectionsProUid( $proUid );
-        $defaultConnections = array (array ('DBS_UID' => 'workflow','DBS_NAME' => 'Workflow'));
+        
+        $workSpace = new workspaceTools(SYS_SYS);
+        $workspaceDB = $workSpace->getDBInfo();
 
+        if ($workspaceDB['DB_NAME'] == $workspaceDB['DB_RBAC_NAME']) {
+            $defaultConnections = array (array ('DBS_UID' => 'workflow','DBS_NAME' => 'Workflow'));
+        } else {
+            $defaultConnections = array (array ('DBS_UID' => 'workflow','DBS_NAME' => 'Workflow'),
+                                         array ('DBS_UID' => 'rp','DBS_NAME' => 'REPORT'));    
+        }
+ 
         $dbConnections = array_merge( $defaultConnections, $dbConnections );
-
+        
         return $dbConnections;
     }
 
