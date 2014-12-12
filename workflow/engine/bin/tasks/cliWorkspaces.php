@@ -311,6 +311,41 @@ function database_upgrade($command, $args) {
       echo "> Error: ".CLI::error($e->getMessage()) . "\n";
     }
   }
+
+  //There records in table "EMAIL_SERVER"
+  $criteria = new Criteria("workflow");
+
+  $criteria->addSelectColumn(EmailServerPeer::MESS_UID);
+  $criteria->setOffset(0);
+  $criteria->setLimit(1);
+
+  $rsCriteria = EmailServerPeer::doSelectRS($criteria);
+
+  if (!$rsCriteria->next()) {
+      //Insert the first record
+      $emailConfiguration = System::getEmailConfiguration();
+
+      if (count($emailConfiguration) > 0) {
+          $arrayData = array();
+
+          $arrayData["MESS_ENGINE"]              = $emailConfiguration["MESS_ENGINE"];
+          $arrayData["MESS_SERVER"]              = $emailConfiguration["MESS_SERVER"];
+          $arrayData["MESS_PORT"]                = (int)($emailConfiguration["MESS_PORT"]);
+          $arrayData["MESS_RAUTH"]               = (int)($emailConfiguration["MESS_RAUTH"]);
+          $arrayData["MESS_ACCOUNT"]             = $emailConfiguration["MESS_ACCOUNT"];
+          $arrayData["MESS_PASSWORD"]            = $emailConfiguration["MESS_PASSWORD"];
+          $arrayData["MESS_FROM_MAIL"]           = $emailConfiguration["MESS_FROM_MAIL"];
+          $arrayData["MESS_FROM_NAME"]           = $emailConfiguration["MESS_FROM_NAME"];
+          $arrayData["SMTPSECURE"]               = $emailConfiguration["SMTPSecure"];
+          $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (int)($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]);
+          $arrayData["MAIL_TO"]                  = $emailConfiguration["MAIL_TO"];
+          $arrayData["MESS_DEFAULT"]             = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1")? 1 : 0;
+
+          $emailSever = new ProcessMaker\BusinessModel\EmailServer();
+
+          $emailSever->create($arrayData);
+      }
+  }
 }
 
 function delete_app_from_table($con, $tableName, $appUid, $col="APP_UID") {

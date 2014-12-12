@@ -2412,3 +2412,28 @@ CREATE TABLE `MESSAGE_DETAIL`
 )ENGINE=InnoDB ;
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
+
+#-----------------------------------------------------------------------------
+#-- TABLE: EMAIL_SERVER
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `EMAIL_SERVER`;
+
+CREATE TABLE `EMAIL_SERVER`
+(
+ `MESS_UID` VARCHAR(32) default '' NOT NULL,
+ `MESS_ENGINE` VARCHAR(256) default '' NOT NULL,
+ `MESS_SERVER` VARCHAR(256) default '' NOT NULL,
+ `MESS_PORT` INTEGER default 0 NOT NULL,
+ `MESS_RAUTH` INTEGER default 0 NOT NULL,
+ `MESS_ACCOUNT` VARCHAR(256) default '' NOT NULL,
+ `MESS_PASSWORD` VARCHAR(256) default '' NOT NULL,
+ `MESS_FROM_MAIL` VARCHAR(256) default '' NOT NULL,
+ `MESS_FROM_NAME` VARCHAR(256) default '' NOT NULL,
+ `SMTPSECURE` VARCHAR(3) default 'NO' NOT NULL,
+ `MESS_TRY_SEND_INMEDIATLY` INTEGER default 0 NOT NULL,
+ `MAIL_TO` VARCHAR(256) default '' NOT NULL,
+ `MESS_DEFAULT` INTEGER default 0 NOT NULL,
+ PRIMARY KEY (`MESS_UID`)
+)ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
