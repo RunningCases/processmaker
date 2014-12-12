@@ -973,8 +973,7 @@ class System
         $arrayEmailServerDefault = $emailServer->getEmailServerDefault();
 
         if (count($arrayEmailServerDefault) > 0) {
-            //Return
-            return $arrayDataEmailServerConfig = array(
+            $arrayDataEmailServerConfig = array(
                 "MESS_ENGINE"              => $arrayEmailServerDefault["MESS_ENGINE"],
                 "MESS_SERVER"              => $arrayEmailServerDefault["MESS_SERVER"],
                 "MESS_PORT"                => (int)($arrayEmailServerDefault["MESS_PORT"]),
@@ -993,6 +992,9 @@ class System
                 "MESS_EXECUTE_EVERY"       => "",
                 "MESS_SEND_MAX"            => ""
             );
+
+            //Return
+            return $arrayDataEmailServerConfig;
         } else {
             G::LoadClass("configuration");
 

@@ -486,10 +486,10 @@ CREATE TABLE `ROUTE`
 	`ROU_PARENT` VARCHAR(32) default '0' NOT NULL,
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`TAS_UID` VARCHAR(32) default '' NOT NULL,
-	`ROU_NEXT_TASK` VARCHAR(32) default '0' NOT NULL,
+`ROU_NEXT_TASK` VARCHAR(32) default '0' NOT NULL,
 	`ROU_CASE` INTEGER default 0 NOT NULL,
 	`ROU_TYPE` VARCHAR(25) default 'SEQUENTIAL' NOT NULL,
- `ROU_DEFAULT` INTEGER default 0 NOT NULL,
+	`ROU_DEFAULT` INTEGER default 0 NOT NULL,
 	`ROU_CONDITION` VARCHAR(512) default '' NOT NULL,
 	`ROU_TO_LAST_USER` VARCHAR(20) default 'FALSE' NOT NULL,
 	`ROU_OPTIONAL` VARCHAR(20) default 'FALSE' NOT NULL,
@@ -1207,7 +1207,7 @@ CREATE TABLE `APP_HISTORY`
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`TAS_UID` VARCHAR(32) default '' NOT NULL,
 	`DYN_UID` VARCHAR(32) default '' NOT NULL,
- `OBJ_TYPE` VARCHAR(20) default 'DYNAFORM' NOT NULL,
+  `OBJ_TYPE` VARCHAR(20) default 'DYNAFORM' NOT NULL,
 	`USR_UID` VARCHAR(32) default '' NOT NULL,
 	`APP_STATUS` VARCHAR(100) default '' NOT NULL,
 	`HISTORY_DATE` DATETIME,
@@ -2380,6 +2380,36 @@ CREATE TABLE `LIST_UNASSIGNED_GROUP`
 	`TYP_UID` VARCHAR(32) default '' NOT NULL,
 	PRIMARY KEY (`UNA_UID`,`USR_UID`,`TYPE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Unassiged list';
+#-----------------------------------------------------------------------------
+#-- MESSAGE
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `MESSAGE`;
+
+
+CREATE TABLE `MESSAGE`
+(
+	`MES_UID` VARCHAR(32)  NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`MES_NAME` VARCHAR(255) default '',
+	`MES_CONDITION` VARCHAR(255) default '',
+	PRIMARY KEY (`MES_UID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- MESSAGE_DETAIL
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `MESSAGE_DETAIL`;
+
+
+CREATE TABLE `MESSAGE_DETAIL`
+(
+	`MD_UID` VARCHAR(32)  NOT NULL,
+	`MES_UID` VARCHAR(32)  NOT NULL,
+	`MD_TYPE` VARCHAR(32) default '',
+	`MD_NAME` VARCHAR(255) default '',
+	PRIMARY KEY (`MD_UID`)
+)ENGINE=InnoDB ;
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -2388,6 +2418,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 #-----------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS `EMAIL_SERVER`;
+
 CREATE TABLE `EMAIL_SERVER`
 (
  `MESS_UID` VARCHAR(32) default '' NOT NULL,
