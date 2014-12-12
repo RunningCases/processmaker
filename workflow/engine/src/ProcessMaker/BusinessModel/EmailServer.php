@@ -940,11 +940,11 @@ class EmailServer
             //SQL
             $criteria = $this->getEmailServerCriteria();
 
-            $criteria->add(EmailServerPeer::MESS_DEFAULT, 1, Criteria::EQUAL);
+            $criteria->add(\EmailServerPeer::MESS_DEFAULT, 1, \Criteria::EQUAL);
 
             //QUERY
-            $rsCriteria = EmailServerPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria = \EmailServerPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
