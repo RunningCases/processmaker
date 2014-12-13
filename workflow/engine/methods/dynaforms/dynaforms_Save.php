@@ -163,7 +163,6 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameDynaform') {
 
                             $aDataAux = $aData;
                             $aDataAux["DYN_TYPE"] = "grid";
-
                             $aDataAux["DYN_TITLE"] = $copyDynGrdTitle . (($dynaFormAux->existsTitle($dynaform->getProUid(), $copyDynGrdTitle))? " (" . $dynaform->getDynTitle() . ")" : "");
                             $aDataAux["DYN_DESCRIPTION"] = $copyDynGrdDescription;
 
