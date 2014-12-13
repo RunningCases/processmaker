@@ -821,17 +821,17 @@ function getEmailConfiguration ()
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFSendMessage.28.29
  *
  * @param string(32) | $caseId | UID for case | The UID (unique identification) for a case, which is a string of 32 hexadecimal characters to identify the case.
- * @param string(32) | $sFrom | Email address | The email address of the person who sends out the email.
- * @param string(100) | $sTo | Email receptor | The email address(es) to whom the email is sent. If multiple recipients, separate each email address with a comma.
- * @param string(100) | $sCc = '' | Email address for copies | The email address(es) of people who will receive carbon copies of the email.
- * @param string(100) | $sBcc = ''| Email address for copies hidden | The email address(es) of people who will receive blind carbon copies of the email.
+ * @param string(32) | $sFrom | Sender | The email address of the person who sends out the email.
+ * @param string(100) | $sTo | Recipient | The email address(es) to whom the email is sent. If multiple recipients, separate each email address with a comma.
+ * @param string(100) | $sCc = '' | Carbon copy recipient | The email address(es) of people who will receive carbon copies of the email.
+ * @param string(100) | $sBcc = ''| Carbon copy recipient | The email address(es) of people who will receive blind carbon copies of the email.
  * @param string(50) | $sSubject | Subject of the email | The subject (title) of the email.
  * @param string(50) | $sTemplate | Name of the template | The name of the template file in plain text or HTML format which will produce the body of the email.
- * @param array | $aFields = array() | An optional associative array | Optional parameter. An associative array where the keys are the variable names and the values are the variables' values.
+ * @param array | $aFields = array() | Variables for email template | Optional parameter. An associative array where the keys are the variable names and the values are the variables' values.
  * @param array | $aAttachment = array() | Attachment | An Optional arrray. An array of files (full paths) to be attached to the email.
- * @param boolean | $showMessage = true | Show message | Optional parameter.
+ * @param boolean | $showMessage = true | Show message | Optional parameter. Set to TRUE to show the message in the case's message history.
  * @param int | $delIndex = 0 | Delegation index of the case | Optional parameter. The delegation index of the current task in the case.
- * @param array | $config = array() | Alternative Email Settings | An optional array: An array of parameters to be used in the Email sent (MESS_ENGINE, MESS_SERVER, MESS_PORT, MESS_FROM_MAIL, MESS_RAUTH, MESS_ACCOUNT, MESS_PASSWORD, and SMTPSecure).
+ * @param array | $config = array() | Email server configuration | An optional array: An array of parameters to be used in the Email sent (MESS_ENGINE, MESS_SERVER, MESS_PORT, MESS_FROM_MAIL, MESS_RAUTH, MESS_ACCOUNT, MESS_PASSWORD, and SMTPSecure).
  * @return int | | result | Result of sending email
  *
  */
