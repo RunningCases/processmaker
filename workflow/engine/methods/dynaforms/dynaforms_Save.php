@@ -158,13 +158,13 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameDynaform') {
                             $copyDynGrdDescription = $row["CON_VALUE"];
 
                             //Create grid
-                            $aDataAux = $aData;
+                            $dynaformGrid = new dynaform();
 
+                            $aDataAux = $aData;
                             $aDataAux["DYN_TYPE"] = "grid";
-                            $aDataAux["DYN_TITLE"] = $copyDynGrdTitle;
+                            $aDataAux["DYN_TITLE"] = $copyDynGrdTitle . ((!$dynaformGrid->verifyExistingName($copyDynGrdTitle, $dynaform->getProUid()))? " (" . $dynaform->getDynTitle() . ")" : "");
                             $aDataAux["DYN_DESCRIPTION"] = $copyDynGrdDescription;
 
-                            $dynaformGrid = new dynaform();
                             $aFields = $dynaformGrid->create($aDataAux);
 
                             $dynaformGridUid = $dynaformGrid->getDynUid();

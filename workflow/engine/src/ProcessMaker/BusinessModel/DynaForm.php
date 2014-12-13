@@ -602,14 +602,14 @@ class DynaForm
                         $dynGrdDescriptionCopyImport = $row["CON_VALUE"];
 
                         //Create Grid
+                        $dynaFormGrid = new \Dynaform();
+
                         $arrayDataAux = array(
                             "PRO_UID"   => $processUid,
-                            "DYN_TITLE" => $dynGrdTitleCopyImport,
+                            "DYN_TITLE" => $dynGrdTitleCopyImport . (($this->existsTitle($processUid, $dynGrdTitleCopyImport))? " (" . $arrayData["DYN_TITLE"] . ")" : ""),
                             "DYN_DESCRIPTION" => $dynGrdDescriptionCopyImport,
                             "DYN_TYPE" => "grid"
                         );
-
-                        $dynaFormGrid = new \Dynaform();
 
                         $dynaFormGridUid = $dynaFormGrid->create($arrayDataAux);
 
@@ -1124,6 +1124,5 @@ class DynaForm
             throw $e;
         }
     }
-
 }
 
