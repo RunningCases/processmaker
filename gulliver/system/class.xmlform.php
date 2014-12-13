@@ -784,7 +784,7 @@ class XmlForm_Field
                     		$sValue = $aData[$this->pmfield];
                     	}
                     }
-                    
+
                 }
             }
         }
@@ -4493,17 +4493,50 @@ class XmlForm_Field_Date extends XmlForm_Field_SimpleText
     {
         $part1 = $sign * substr( $date, 0, strlen( $date ) - 1 );
         $part2 = substr( $date, strlen( $date ) - 1 );
+
+        $year  = (int)(date("Y"));
+        $month = (int)(date("m"));
+        $day   = (int)(date("d"));
+
+        $osIsLinux = strtoupper(substr(PHP_OS, 0, 3)) != "WIN";
+        $checkYear = false;
+
         switch ($part2) {
-            case 'd':
-                $res = date( 'Y-m-d', mktime( 0, 0, 0, date( 'm' ), date( 'd' ) + $part1, date( 'Y' ) ) );
+            case "y":
+                $year = $year + $part1;
+
+                $res = date("Y-m-d", mktime(0, 0, 0, $month, $day, $year));
+
+                $checkYear = true;
                 break;
-            case 'm':
-                $res = date( 'Y-m-d', mktime( 0, 0, 0, date( 'm' ) + $part1, date( 'd' ), date( 'Y' ) ) );
+            case "m":
+                $month = $month + $part1;
+
+                $res = date("Y-m-d", mktime(0, 0, 0, $month, $day, $year));
+
+                if ($month > 12) {
+                    $year = $year + (int)($month / 12);
+
+                    $checkYear = true;
+                }
                 break;
-            case 'y':
-                $res = date( 'Y-m-d', mktime( 0, 0, 0, date( 'm' ), date( 'd' ), date( 'Y' ) + $part1 ) );
+            case "d":
+                $res = date("Y-m-d", mktime(0, 0, 0, $month, $day + $part1, $year));
+
+                $dayAux = ($month * 31) - (31 - $day) + $part1;
+
+                if ($dayAux > 365) {
+                    $year = $year + (int)($dayAux / 365);
+
+                    $checkYear = true;
+                }
                 break;
         }
+
+        if (!$osIsLinux && $checkYear && !preg_match("/^$year\-\d{2}\-\d{2}$/", $res)) {
+            $res = preg_replace("/^\d{4}(\-\d{2}\-\d{2})$/", "$year$1", $res);
+        }
+
         return $res;
     }
 
