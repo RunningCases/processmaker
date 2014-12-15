@@ -2,6 +2,9 @@
 /*
  * ProcessMaker Web Application Bootstrap
  */
+if (isset($_SERVER['UNENCODED_URL'])) {
+    $_SERVER['REQUEST_URI'] = $_SERVER['UNENCODED_URL'];
+}
 try {
     $rootDir = realpath(__DIR__ . "/../../") . DIRECTORY_SEPARATOR;
 
@@ -51,6 +54,10 @@ try {
 
         case Maveriks\WebApplication::RUNNING_API:
             $app->run(Maveriks\WebApplication::SERVICE_API);
+            break;
+
+        case Maveriks\WebApplication::RUNNING_OAUTH2:
+            $app->run(Maveriks\WebApplication::SERVICE_OAUTH2);
             break;
 
         case Maveriks\WebApplication::RUNNING_INDEX:

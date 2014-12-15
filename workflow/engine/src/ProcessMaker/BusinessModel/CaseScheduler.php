@@ -219,7 +219,7 @@ class CaseScheduler
                 $oCriteria->add( \UsersPeer::USR_USERNAME, $sWS_USER );
                 $userIsAssigned = \GroupUserPeer::doCount( $oCriteria );
                 if (! ($userIsAssigned >= 1)) {
-                    throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_HAVE_ACTIVITY", array($sWS_USER, $sTASKS)));
+                    throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_HAVE_ACTIVITY_ASSIGNED", array($sWS_USER, $sTASKS)));
                 }
             }
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
@@ -282,9 +282,6 @@ class CaseScheduler
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
                 if (!preg_match($patternDate, $caseSchedulerData['SCH_START_DATE'])) {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_DATE"));
-                }
-                if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
-                    throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_END_DATE"));
                 }
                 if ($caseSchedulerData['SCH_START_DATE'] == "") {
                     throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_date')));
@@ -467,13 +464,12 @@ class CaseScheduler
                         $sDateTmp = date('Y-m-d');
                         $caseSchedulerData['SCH_START_DATE'] = $sDateTmp;
                     }
-                    $caseSchedulerData['SCH_END_DATE'] = date('Y-m-d', strtotime( $sDateTmp )) . ' ' . date('H:i:s', strtotime( $sTimeTmp ));
                     $caseSchedulerData['SCH_START_TIME'] = time();
                     $caseSchedulerData['SCH_START_DATE'] = $caseSchedulerData['SCH_START_TIME'];
                     if ($caseSchedulerData['SCH_REPEAT_EVERY'] == "") {
                         throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_repeat_every')));
                     }
-                    $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
+                    $patternHour="/^([0-9]|0[0-9]|1[0-9]|2[0-3]).[0-5][0-9]$/";
                     if (!preg_match($patternHour, $caseSchedulerData['SCH_REPEAT_EVERY'])) {
                         throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_REPEAT"));
                     }
@@ -485,8 +481,10 @@ class CaseScheduler
                     $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $date;
                 }
             }
-            if (trim( $caseSchedulerData['SCH_END_DATE'] ) != '') {
-                $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_END_DATE'];
+            if (! empty( $caseSchedulerData['SCH_REPEAT_TASK_CHK'] )) {
+                if (trim( $caseSchedulerData['SCH_END_DATE'] ) != '') {
+                    $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_END_DATE'];
+                }
             }
             if (! empty( $caseSchedulerData['SCH_REPEAT_TASK_CHK'] )) {
                 $nOptEvery = $caseSchedulerData['SCH_REPEAT_EVERY_OPT'];
@@ -567,9 +565,6 @@ class CaseScheduler
             if ($sOption == '1' || $sOption == '2' || $sOption == '3') {
                 if (!preg_match($patternDate, $caseSchedulerData['SCH_START_DATE'])) {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_START_DATE"));
-                }
-                if (!preg_match($patternDate, $caseSchedulerData['SCH_END_DATE'])) {
-                    throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_END_DATE"));
                 }
                 if ($caseSchedulerData['SCH_START_DATE'] == "") {
                     throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_date')));
@@ -672,7 +667,7 @@ class CaseScheduler
                             throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_start_day_opt_2')));
                         }
                         $caseSchedulerData['SCH_START_DAY'] = $nStartDay . '|' . $caseSchedulerData['SCH_START_DAY_OPT_2'];
-                            $optionTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{0};
+                        $optionTwo = $caseSchedulerData['SCH_START_DAY_OPT_2']{0};
                         if ($optionTwo == "1" || $optionTwo == "2" || $optionTwo == "3" || $optionTwo == "4" || $optionTwo == "5") {
                             $caseSchedulerData['SCH_START_DAY_OPT_2'] = $caseSchedulerData['SCH_START_DAY_OPT_2'];
                         } else {
@@ -760,13 +755,12 @@ class CaseScheduler
                         $sDateTmp = date('Y-m-d');
                         $caseSchedulerData['SCH_START_DATE'] = $sDateTmp;
                     }
-                    $caseSchedulerData['SCH_END_DATE'] = date('Y-m-d', strtotime($sDateTmp)) . ' ' . date('H:i:s', strtotime($sTimeTmp));
                     $caseSchedulerData['SCH_START_TIME'] = time();
                     $caseSchedulerData['SCH_START_DATE'] = $caseSchedulerData['SCH_START_TIME'];
                     if ($caseSchedulerData['SCH_REPEAT_EVERY'] == "") {
                         throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('sch_repeat_every')));
                     }
-                    $patternHour="/^([0-1][0-9]|[2][0-3])[\.]([0-5][0-9])$/";
+                    $patternHour="/^([0-9]|0[0-9]|1[0-9]|2[0-3]).[0-5][0-9]$/";
                     if (!preg_match($patternHour, $caseSchedulerData['SCH_REPEAT_EVERY'])) {
                         throw new \Exception(\G::LoadTranslation("ID_INVALID_SCH_REPEAT"));
                     }
@@ -778,8 +772,10 @@ class CaseScheduler
                     $caseSchedulerData['SCH_TIME_NEXT_RUN'] = $date;
                 }
             }
-            if (trim( $caseSchedulerData['SCH_END_DATE'] ) != '') {
-                $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_END_DATE'];
+            if (! empty( $caseSchedulerData['SCH_REPEAT_TASK_CHK'] )) {
+                if (trim( $caseSchedulerData['SCH_END_DATE'] ) != '') {
+                    $caseSchedulerData['SCH_END_DATE'] = $caseSchedulerData['SCH_END_DATE'];
+                }
             }
             if (! empty( $caseSchedulerData['SCH_REPEAT_TASK_CHK'] )) {
                 $nOptEvery = $caseSchedulerData['SCH_REPEAT_EVERY_OPT'];
@@ -819,6 +815,10 @@ class CaseScheduler
             $oCaseScheduler = new \CaseScheduler();
             if (!isset($sSchUID)) {
                 return;
+            }
+            $event = \BpmnEventPeer::retrieveByPK($sSchUID);
+            if (is_object($event)) {
+                $event->delete();
             }
             $oCaseScheduler->remove($sSchUID);
         } catch (\Exception $e) {

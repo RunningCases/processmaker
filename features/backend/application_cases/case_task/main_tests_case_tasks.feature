@@ -14,8 +14,14 @@ Scenario: Get list case tasks of case 174
     And the content type is "application/json"
     And the type is "array"
     And that "tas_uid" is set to "63847491053347e25555c29086425576"
-    And that "tas_type" is set to "NORMAL"
     And that "tas_title" is set to "Task 1"
+    And that "tas_description" is set to ""
+    And that "tas_start" is set to "1"
+    And that "tas_type" is set to "NORMAL"
+    And that "tas_derivation" is set to "NORMAL"
+    And that "tas_assign_type" is set to "BALANCED"
+    
+
     And that "rou_type" is set to "0"
     And that "rou_next_task" is set to "93695356653347e2702ab38033892652"
     And that "rou_condition" is set to ""

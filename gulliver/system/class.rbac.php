@@ -224,7 +224,7 @@ class RBAC
                 $oCriteria = new Criteria( 'rbac' );
                 $oCriteria->add( AuthenticationSourcePeer::AUTH_SOURCE_PROVIDER, $sClassName );
                 $oCriteria->addAscendingOrderByColumn( AuthenticationSourcePeer::AUTH_SOURCE_NAME );
-                $oDataset = AuthenticationSourcePeer::doSelectRS( $oCriteria );
+                $oDataset = AuthenticationSourcePeer::doSelectRS( $oCriteria, Propel::getDbConnection('rbac_ro') );
                 $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
                 $oDataset->next();
                 $aRow = $oDataset->getRow();
@@ -266,14 +266,16 @@ class RBAC
      */
     public function VerifyWithOtherAuthenticationSource ($sAuthType, $aUserFields, $strPass)
     {
-        //check if the user is active
-        if ($aUserFields['USR_STATUS'] != 1) {
-            return - 3; //inactive user
-        }
+        if ($sAuthType == '' || $sAuthType == 'MYSQL') {
+            //check if the user is active
+            if ($aUserFields['USR_STATUS'] != 1) {
+                return - 3; //inactive user
+            }
 
-        //check if the user's due date is valid
-        if ($aUserFields['USR_DUE_DATE'] < date( 'Y-m-d' )) {
-            return - 4; //due date
+            //check if the user's due date is valid
+            if ($aUserFields['USR_DUE_DATE'] < date( 'Y-m-d' )) {
+                return - 4; //due date
+            }
         }
 
         foreach ($this->aRbacPlugins as $sClassName) {
@@ -313,6 +315,15 @@ class RBAC
      */
     public function VerifyLogin ($strUser, $strPass)
     {
+        /*----------------------------------********---------------------------------*/
+        if (!class_exists('pmLicenseManager')) {
+            G::LoadClass('pmLicenseManager');
+        }
+        $licenseManager =& pmLicenseManager::getSingleton();
+        if (in_array(md5($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
+            return -7;
+        }
+        /*----------------------------------********---------------------------------*/
 
         if (strlen( $strPass ) == 0) {
             return - 2;
@@ -415,13 +426,23 @@ class RBAC
      */
     public function createUser ($aData = array(), $sRolCode = '')
     {
+        if ($aData["USR_STATUS"] . "" == "1") {
+            $aData["USR_STATUS"] = "ACTIVE";
+        }
+
+        if ($aData["USR_STATUS"] . "" == "0") {
+            $aData["USR_STATUS"] = "INACTIVE";
+        }
+
         if ($aData['USR_STATUS'] == 'ACTIVE') {
             $aData['USR_STATUS'] = 1;
         }
         if ($aData['USR_STATUS'] == 'INACTIVE') {
             $aData['USR_STATUS'] = 0;
         }
+
         $sUserUID = $this->userObj->create( $aData );
+
         if ($sRolCode != '') {
             $this->assignRoleToUser( $sUserUID, $sRolCode );
         }

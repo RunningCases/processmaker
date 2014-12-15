@@ -4,7 +4,7 @@
     <en><![CDATA[Import PMTables]]></en>
   </TITLE1>
   <MAX_FILE_SIZE type="edit" mode="view">
-    <en><![CDATA[Max upload file size in bytes]]></en>
+    <en><![CDATA[Maximum upload file size in bytes]]></en>
   </MAX_FILE_SIZE>
   <FILENAME type="file">
     <en><![CDATA[File]]></en>

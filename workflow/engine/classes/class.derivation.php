@@ -50,128 +50,204 @@ class Derivation
     var $case;
 
     /**
+     * prepareInformationTask
+     *
+     * @param array $arrayTaskData Task data (derivation)
+     *
+     * return array Return array
+     */
+    public function prepareInformationTask(array $arrayTaskData)
+    {
+        try {
+            $task = new Task();
+
+            $arrayTaskData = G::array_merges($arrayTaskData, $task->load($arrayTaskData["TAS_UID"]));
+
+            //2. If next case is an special case
+            if ((int)($arrayTaskData["ROU_NEXT_TASK"]) < 0) {
+                $arrayTaskData["NEXT_TASK"]["TAS_UID"] = (int)($arrayTaskData["ROU_NEXT_TASK"]);
+                $arrayTaskData["NEXT_TASK"]["TAS_ASSIGN_TYPE"] = "nobody";
+                $arrayTaskData["NEXT_TASK"]["TAS_PRIORITY_VARIABLE"] = "";
+                $arrayTaskData["NEXT_TASK"]["TAS_DEF_PROC_CODE"] = "";
+                $arrayTaskData["NEXT_TASK"]["TAS_PARENT"] = "";
+                $arrayTaskData["NEXT_TASK"]["TAS_TRANSFER_FLY"] = "";
+
+                switch ($arrayTaskData["ROU_NEXT_TASK"]) {
+                    case -1:
+                        $arrayTaskData["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_END_OF_PROCESS");
+                        break;
+                    case -2:
+                        $arrayTaskData["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_TAREA_COLGANTE");
+                        break;
+                }
+
+                $arrayTaskData["NEXT_TASK"]["USR_UID"] = "";
+                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = array("USR_UID" => "");
+            } else {
+                //3. Load the task information of normal NEXT_TASK
+                $arrayTaskData["NEXT_TASK"] = $task->load($arrayTaskData["ROU_NEXT_TASK"]); //print $arrayTaskData["ROU_NEXT_TASK"]." **** ".$arrayTaskData["NEXT_TASK"]["TAS_TYPE"]."<hr>";
+
+                if ($arrayTaskData["NEXT_TASK"]["TAS_TYPE"] == "SUBPROCESS") {
+                    $taskParent = $arrayTaskData["NEXT_TASK"]["TAS_UID"];
+
+                    $criteria = new Criteria("workflow");
+                    $criteria->add(SubProcessPeer::PRO_PARENT, $arrayTaskData["PRO_UID"]);
+                    $criteria->add(SubProcessPeer::TAS_PARENT, $arrayTaskData["NEXT_TASK"]["TAS_UID"]);
+                    $rsCriteria = SubProcessPeer::doSelectRS($criteria);
+                    $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rsCriteria->next();
+                    $row = $rsCriteria->getRow();
+
+                    $arrayTaskData["ROU_NEXT_TASK"] = $row["TAS_UID"]; //print "<hr>Life is just a lonely highway";
+                    $arrayTaskData["NEXT_TASK"] = $task->load($arrayTaskData["ROU_NEXT_TASK"]); //print "<hr>Life is just a lonely highway";print"<hr>";
+
+                    $process = new Process();
+                    $row = $process->load($row["PRO_UID"]);
+
+                    $arrayTaskData["NEXT_TASK"]["TAS_TITLE"] .= " (" . $row["PRO_TITLE"] . ")";
+                    $arrayTaskData["NEXT_TASK"]["TAS_PARENT"] = $taskParent;
+
+                    //unset($task, $process, $row, $taskParent);
+                } else {
+                    $arrayTaskData["NEXT_TASK"]["TAS_PARENT"] = "";
+                }
+
+                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = ($arrayTaskData["NEXT_TASK"]["TAS_TYPE"] != "GATEWAYTOGATEWAY")? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "");
+            }
+
+            //Return
+            return $arrayTaskData;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * prepareInformation
      *
-     * @param array $aData
-     * @return $taskInfo
+     * @param array  $arrayData Data
+     * @param string $taskUid   Unique id of Task
+     *
+     * return array Return array
      */
-    function prepareInformation ($aData)
+    public function prepareInformation(array $arrayData, $taskUid = "")
     {
-        $oTask = new Task();
-        //SELECT *
-        //FROM APP_DELEGATION AS A
-        //LEFT JOIN TASK AS T ON(T.TAS_UID = A.TAS_UID)
-        //LEFT JOIN ROUTE AS R ON(R.TAS_UID = A.TAS_UID)
-        //WHERE
-        //APP_UID = '$aData['APP_UID']'
-        //AND DEL_INDEX = '$aData['DEL_INDEX']'
-        $c = new Criteria( 'workflow' );
-        $c->clearSelectColumns();
-        $c->addSelectColumn( AppDelegationPeer::TAS_UID );
-        $c->addSelectColumn( RoutePeer::ROU_CONDITION );
-        $c->addSelectColumn( RoutePeer::ROU_NEXT_TASK );
-        $c->addSelectColumn( RoutePeer::ROU_TYPE );
-        $c->addJoin( AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN );
-        $c->addJoin( AppDelegationPeer::TAS_UID, RoutePeer::TAS_UID, Criteria::LEFT_JOIN );
-        $c->add( AppDelegationPeer::APP_UID, $aData['APP_UID'] );
-        $c->add( AppDelegationPeer::DEL_INDEX, $aData['DEL_INDEX'] );
-        $c->addAscendingOrderByColumn( RoutePeer::ROU_CASE );
-        $rs = AppDelegationPeer::doSelectRs( $c );
-        $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $rs->next();
-        $aDerivation = $rs->getRow();
-        $i = 0;
-        $taskInfo = array ();
-
-        $oUser = new Users();
-        if (!class_exists('Cases')) {
-            G::LoadClass('case');
-        }
-        $this->case = new Cases();
-        // 1. there is no rule
-        if (is_null( $aDerivation['ROU_NEXT_TASK'] )) {
-            throw (new Exception( G::LoadTranslation( 'ID_NO_DERIVATION_RULE' ) ));
-        }
-
-        while (is_array( $aDerivation )) {
-            $oTask = new Task();
-            $aDerivation = G::array_merges( $aDerivation, $aData );
-            $bContinue = true;
-
-            //evaluate the condition if there are conditions defined.
-            if (isset( $aDerivation['ROU_CONDITION'] ) && trim( $aDerivation['ROU_CONDITION'] ) != '' && ($aDerivation['ROU_TYPE'] != 'SELECT' || $aDerivation['ROU_TYPE'] == 'PARALLEL-BY-EVALUATION')) {
-                $AppFields = $this->case->loadCase( $aData['APP_UID'] );
-                G::LoadClass( 'pmScript' );
-                $oPMScript = new PMScript();
-                $oPMScript->setFields( $AppFields['APP_DATA'] );
-                $oPMScript->setScript( $aDerivation['ROU_CONDITION'] );
-                $bContinue = $oPMScript->evaluate();
+        try {
+            if (!class_exists("Cases")) {
+                G::LoadClass("case");
             }
 
-            if ($aDerivation['ROU_TYPE'] == 'EVALUATE') {
-                if (count( $taskInfo ) >= 1) {
-                    $bContinue = false;
+            $this->case = new Cases();
+            $task = new Task();
+
+            $arrayNextTask = array();
+            $arrayNextTaskDefault = array();
+            $i = 0;
+
+            //SELECT *
+            //FROM APP_DELEGATION AS A
+            //LEFT JOIN TASK AS T ON(T.TAS_UID = A.TAS_UID)
+            //LEFT JOIN ROUTE AS R ON(R.TAS_UID = A.TAS_UID)
+            //WHERE
+            //APP_UID = '$arrayData["APP_UID"]'
+            //AND DEL_INDEX = '$arrayData["DEL_INDEX"]'
+
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(RoutePeer::TAS_UID);
+            $criteria->addSelectColumn(RoutePeer::ROU_NEXT_TASK);
+            $criteria->addSelectColumn(RoutePeer::ROU_TYPE);
+            $criteria->addSelectColumn(RoutePeer::ROU_DEFAULT);
+            $criteria->addSelectColumn(RoutePeer::ROU_CONDITION);
+
+            if ($taskUid != "") {
+                $criteria->add(RoutePeer::TAS_UID, $taskUid, Criteria::EQUAL);
+                $criteria->addAscendingOrderByColumn(RoutePeer::ROU_CASE);
+
+                $rsCriteria = RoutePeer::doSelectRS($criteria);
+            } else {
+                $criteria->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+                $criteria->addJoin(AppDelegationPeer::TAS_UID, RoutePeer::TAS_UID, Criteria::LEFT_JOIN);
+                $criteria->add(AppDelegationPeer::APP_UID, $arrayData["APP_UID"], Criteria::EQUAL);
+                $criteria->add(AppDelegationPeer::DEL_INDEX, $arrayData["DEL_INDEX"], Criteria::EQUAL);
+                $criteria->addAscendingOrderByColumn(RoutePeer::ROU_CASE);
+
+                $rsCriteria = AppDelegationPeer::doSelectRS($criteria);
+            }
+
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $arrayRouteData = G::array_merges($rsCriteria->getRow(), $arrayData);
+
+                if ((int)($arrayRouteData["ROU_DEFAULT"]) == 1) {
+                    $arrayNextTaskDefault = $arrayRouteData;
+                }
+
+                $flagContinue = true;
+
+                //Evaluate the condition if there are conditions defined
+                if (isset($arrayRouteData["ROU_CONDITION"]) && trim($arrayRouteData["ROU_CONDITION"]) != "" && ($arrayRouteData["ROU_TYPE"] != "SELECT" || $arrayRouteData["ROU_TYPE"] == "PARALLEL-BY-EVALUATION")) {
+                    G::LoadClass("pmScript");
+
+                    $arrayApplicationData = $this->case->loadCase($arrayData["APP_UID"]);
+
+                    $pmScript = new PMScript();
+                    $pmScript->setFields($arrayApplicationData["APP_DATA"]);
+                    $pmScript->setScript($arrayRouteData["ROU_CONDITION"]);
+                    $flagContinue = $pmScript->evaluate();
+                }
+
+                if (isset($arrayRouteData["ROU_CONDITION"]) && trim($arrayRouteData["ROU_CONDITION"]) == "" && $arrayRouteData["ROU_NEXT_TASK"] != "-1") {
+                    $arrayTaskData = $task->load($arrayRouteData["ROU_NEXT_TASK"]);
+
+                    if ($arrayTaskData["TAS_TYPE"] == "GATEWAYTOGATEWAY") {
+                        $flagContinue = false;
+                    }
+                }
+
+                if ($arrayRouteData["ROU_TYPE"] == "EVALUATE" && count($arrayNextTask) > 0) {
+                    $flagContinue = false;
+                }
+
+                if ($flagContinue) {
+                    $arrayNextTask[++$i] = $this->prepareInformationTask($arrayRouteData);
                 }
             }
 
-            if ($bContinue) {
-                $i ++;
-                $TaskFields = $oTask->load( $aDerivation['TAS_UID'] );
+            if (count($arrayNextTask) == 0 && count($arrayNextTaskDefault) > 0) {
+                $arrayNextTask[++$i] = $this->prepareInformationTask($arrayNextTaskDefault);
+            }
 
-                $aDerivation = G::array_merges( $aDerivation, $TaskFields );
+            //Check Task GATEWAYTOGATEWAY
+            $arrayNextTaskBk = $arrayNextTask;
+            $arrayNextTask = array();
+            $i = 0;
 
-                //2. if next case is an special case
-                if ((int) $aDerivation['ROU_NEXT_TASK'] < 0) {
-                    $aDerivation['NEXT_TASK']['TAS_UID'] = (int) $aDerivation['ROU_NEXT_TASK'];
-                    $aDerivation['NEXT_TASK']['TAS_ASSIGN_TYPE'] = 'nobody';
-                    $aDerivation['NEXT_TASK']['TAS_PRIORITY_VARIABLE'] = '';
-                    $aDerivation['NEXT_TASK']['TAS_DEF_PROC_CODE'] = '';
-                    $aDerivation['NEXT_TASK']['TAS_PARENT'] = '';
-                    $aDerivation['NEXT_TASK']['TAS_TRANSFER_FLY'] = '';
+            foreach ($arrayNextTaskBk as $value) {
+                $arrayNextTaskData = $value;
 
-                    switch ($aDerivation['ROU_NEXT_TASK']) {
-                        case - 1:
-                            $aDerivation['NEXT_TASK']['TAS_TITLE'] = G::LoadTranslation( 'ID_END_OF_PROCESS' );
-                            break;
-                        case - 2:
-                            $aDerivation['NEXT_TASK']['TAS_TITLE'] = G::LoadTranslation( 'ID_TAREA_COLGANTE' );
-                            break;
+                if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" && $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"] == "GATEWAYTOGATEWAY") {
+                    $arrayAux = $this->prepareInformation($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
+
+                    foreach ($arrayAux as $value2) {
+                        $arrayNextTask[++$i] = $value2;
                     }
-                    $aDerivation['NEXT_TASK']['USR_UID'] = '';
-                    $aDerivation['NEXT_TASK']['USER_ASSIGNED'] = array('USR_UID' => '');
                 } else {
-                    //3. load the task information of normal NEXT_TASK
-                    $aDerivation['NEXT_TASK'] = $oTask->load( $aDerivation['ROU_NEXT_TASK'] ); //print $aDerivation['ROU_NEXT_TASK']." **** ".$aDerivation['NEXT_TASK']['TAS_TYPE']."<hr>";
-
-
-                    if ($aDerivation['NEXT_TASK']['TAS_TYPE'] === 'SUBPROCESS') {
-                        $oCriteria = new Criteria( 'workflow' );
-                        $oCriteria->add( SubProcessPeer::PRO_PARENT, $aDerivation['PRO_UID'] );
-                        $oCriteria->add( SubProcessPeer::TAS_PARENT, $aDerivation['NEXT_TASK']['TAS_UID'] );
-                        $oDataset = SubProcessPeer::doSelectRS( $oCriteria );
-                        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-                        $oDataset->next();
-                        $aRow = $oDataset->getRow();
-                        $sTaskParent = $aDerivation['NEXT_TASK']['TAS_UID'];
-                        $aDerivation['ROU_NEXT_TASK'] = $aRow['TAS_UID']; //print "<hr>Life is just a lonely highway";
-                        $aDerivation['NEXT_TASK'] = $oTask->load( $aDerivation['ROU_NEXT_TASK'] ); //print "<hr>Life is just a lonely highway";print"<hr>";
-                        $oProcess = new Process();
-                        $aRow = $oProcess->load( $aRow['PRO_UID'] );
-                        $aDerivation['NEXT_TASK']['TAS_TITLE'] .= ' (' . $aRow['PRO_TITLE'] . ')';
-                        $aDerivation['NEXT_TASK']['TAS_PARENT'] = $sTaskParent;
-                        unset( $oTask, $oProcess, $aRow, $sTaskParent );
-                    } else {
-                        $aDerivation['NEXT_TASK']['TAS_PARENT'] = '';
-                    }
-                    $aDerivation['NEXT_TASK']['USER_ASSIGNED'] = $this->getNextAssignedUser( $aDerivation );
+                    $arrayNextTask[++$i] = $arrayNextTaskData;
                 }
-
-                $taskInfo[$i] = $aDerivation;
             }
-            $rs->next();
-            $aDerivation = $rs->getRow();
+
+            //1. There is no rule
+            if (count($arrayNextTask) == 0) {
+                throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_RULE"));
+            }
+
+            //Return
+            return $arrayNextTask;
+        } catch (Exception $e) {
+            throw $e;
         }
-        return $taskInfo;
     }
 
     /**
@@ -601,6 +677,20 @@ class Derivation
                     if ($canDerivate) {
                         $aSP = isset( $aSP ) ? $aSP : null;
                         $iNewDelIndex = $this->doDerivation( $currentDelegation, $nextDel, $appFields, $aSP );
+
+                        //Create record in table APP_ASSIGN_SELF_SERVICE_VALUE
+                        $task = new Task();
+                        $arrayNextTaskData = $task->load($nextDel["TAS_UID"]);
+
+                        if ($arrayNextTaskData["TAS_ASSIGN_TYPE"] == "SELF_SERVICE" && trim($arrayNextTaskData["TAS_GROUP_VARIABLE"]) != "") {
+                            $nextTaskGroupVariable = trim($arrayNextTaskData["TAS_GROUP_VARIABLE"], " @#");
+
+                            if (isset($appFields["APP_DATA"][$nextTaskGroupVariable]) && trim($appFields["APP_DATA"][$nextTaskGroupVariable]) != "") {
+                                $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+                                $appAssignSelfServiceValue->create($appFields["APP_UID"], $iNewDelIndex, array("PRO_UID" => $appFields["PRO_UID"], "TAS_UID" => $nextDel["TAS_UID"], "GRP_UID" => trim($appFields["APP_DATA"][$nextTaskGroupVariable])));
+                            }
+                        }
                     } else {
                         //when the task doesnt generate a new AppDelegation
                         $iAppThreadIndex = $appFields['DEL_THREAD'];
@@ -638,7 +728,7 @@ class Derivation
             //Close case
             $appFields["APP_STATUS"] = "COMPLETED";
             $appFields["APP_FINISH_DATE"] = "now";
-            $this->verifyIsCaseChild( $currentDelegation["APP_UID"] );
+            $this->verifyIsCaseChild($currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"]);
 
             $sw = 1;
         }
@@ -793,7 +883,7 @@ class Derivation
      * @param   string   $sApplicationUID
      * @return  void
      */
-    function verifyIsCaseChild ($sApplicationUID)
+    function verifyIsCaseChild ($sApplicationUID, $delIndex = 0)
     {
         //Obtain the related row in the table SUB_APPLICATION
         $oCriteria = new Criteria( 'workflow' );
@@ -814,7 +904,7 @@ class Derivation
             $oDataset->next();
             $aSP = $oDataset->getRow();
             if ($aSP['SP_SYNCHRONOUS'] == 1) {
-                $appFields = $oCase->loadCase( $sApplicationUID );
+                $appFields = $oCase->loadCase($sApplicationUID, $delIndex);
                 //Copy case variables to parent case
                 $aFields = unserialize( $aSP['SP_VARIABLES_IN'] );
                 $aNewFields = array ();
@@ -853,6 +943,27 @@ class Derivation
                         $currentDelegation2 = array ('APP_UID' => $aSA['APP_PARENT'],'DEL_INDEX' => $aSA['DEL_INDEX_PARENT'],'APP_STATUS' => 'TO_DO','TAS_UID' => $aParentCase['TAS_UID'],'ROU_TYPE' => $aDeriveTasks[1]['ROU_TYPE']
                         );
                         $this->derivate( $currentDelegation2, $nextDelegations2 );
+
+                        if($delIndex > 0 ) {
+                            // Send notifications - Start
+                            $oUser = new Users();
+                            $aUser = $oUser->load($appFields["CURRENT_USER_UID"]);
+
+                            $sFromName = $aUser["USR_FIRSTNAME"] . " " . $aUser["USR_LASTNAME"] . ($aUser["USR_EMAIL"] != "" ? " <" . $aUser["USR_EMAIL"] . ">" : "");
+
+                            try {
+                                $oCase->sendNotifications($appFields["TAS_UID"],
+                                                          $nextDelegations2,
+                                                          $appFields["APP_DATA"],
+                                                          $sApplicationUID,
+                                                          $delIndex,
+                                                          $sFromName);
+
+                            } catch (Exception $e) {
+                                G::SendTemporalMessage(G::loadTranslation("ID_NOTIFICATION_ERROR") . " - " . $e->getMessage(), "warning", "string", null, "100%");
+                            }
+                            // Send notifications - End
+                        }
                     }
                 }
             }

@@ -34,7 +34,6 @@ class ProjectUser
             $oCriteria->addJoin(\TaskUserPeer::TAS_UID, \TaskPeer::TAS_UID,  \Criteria::LEFT_JOIN);
             $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
-            $oCriteria->addGroupByColumn(\TaskUserPeer::USR_UID);
             $oDataset = \TaskUserPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -122,7 +121,7 @@ class ProjectUser
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\GroupUserPeer::USR_UID);
             $oCriteria->addJoin(\TaskPeer::TAS_UID, \TaskUserPeer::TAS_UID,  \Criteria::LEFT_JOIN);
-            $oCriteria->addJoin(\TaskUserPeer::TAS_UID, \GroupUserPeer::GRP_UID, \Criteria::LEFT_JOIN);
+            $oCriteria->addJoin(\TaskUserPeer::USR_UID, \GroupUserPeer::GRP_UID, \Criteria::LEFT_JOIN);
             $oCriteria->add(\TaskPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(\TaskUserPeer::TU_TYPE, 1);
             $oCriteria->add(\TaskUserPeer::TU_RELATION, 2);
@@ -148,7 +147,6 @@ class ProjectUser
                                           'act_uid' => $task['uid']);
                     }
                 }
-                $oDataset->next();
             }
             $new = array();
             $exclude = array("");
@@ -338,7 +336,7 @@ class ProjectUser
 
             $params = array(
                 "userid"   => $username,
-                "password" => "md5:" . md5($password)
+                "password" => Bootstrap::hashPassword($password, '', true)
             );
 
             $response = $client->login($params);

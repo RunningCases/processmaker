@@ -28,20 +28,39 @@ class Designer extends Controller
         $proReadOnly = isset($httpData->prj_readonly) ? $httpData->prj_readonly : 'false';
         $client = $this->getClientCredentials();
         $authCode = $this->getAuthorizationCode($client);
+        $debug = false; //System::isDebugMode();
+
+        $loader = Maveriks\Util\ClassLoader::getInstance();
+        $loader->add(PATH_TRUNK . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
+
+        $request = array(
+            'grant_type' => 'authorization_code',
+            'code' => $authCode
+        );
+        $server = array(
+            'REQUEST_METHOD' => 'POST'
+        );
+        $headers = array(
+            "PHP_AUTH_USER" => $client['CLIENT_ID'],
+            "PHP_AUTH_PW" => $client['CLIENT_SECRET'],
+            "Content-Type" => "multipart/form-data;",
+            "Authorization" => "Basic " . base64_encode($client['CLIENT_ID'] . ":" . $client['CLIENT_SECRET'])
+        );
+
+        $request = new \OAuth2\Request(array(), $request, array(), array(), array(), $server, null, $headers);
+        $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
+        $response = $oauthServer->postToken($request, true);
+        $clientToken = $response->getParameters();
+        $clientToken["client_id"] = $client['CLIENT_ID'];
+        $clientToken["client_secret"] = $client['CLIENT_SECRET'];
 
         $this->setVar('prj_uid', $proUid);
         $this->setVar('app_uid', $appUid);
         $this->setVar('prj_readonly', $proReadOnly);
+        $this->setVar('credentials', base64_encode(json_encode($clientToken)));
+        $this->setVar('isDebugMode', $debug);
 
-        $credentials = array();
-        $credentials['client_id'] = $client['CLIENT_ID'];
-        $credentials['secret'] = $client['CLIENT_SECRET'];
-        $credentials['authorization_code'] = $authCode;
-
-        $this->setVar('credentials', base64_encode(json_encode($credentials)));
-        $this->setVar('isDebugMode', System::isDebugMode());
-
-        if (System::isDebugMode()) {
+        if ($debug) {
             if (! file_exists(PATH_HTML . "lib-dev/pmUI/build.cache")) {
                 throw new RuntimeException("Development JS Files were are not generated!.\nPlease execute: \$>rake pmBuildDebug in pmUI project");
             }

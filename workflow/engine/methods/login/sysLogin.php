@@ -22,7 +22,15 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
-
+/*----------------------------------********---------------------------------*/
+//Browser Compatibility
+$browserSupported = G::checkBrowserCompatibility();
+if ($browserSupported==false){
+	if(!isset($_SESSION['G_MESSAGE']) || $_SESSION['G_MESSAGE'] == ""){
+		G::SendTemporalMessage ('ID_CURRENT_BROWSER_NOT_SUPPORTED', 'warning');
+	}
+}
+/*----------------------------------********---------------------------------*/
 if (isset ($_POST['form']['USER_ENV'])) {
     @session_destroy();
     session_start();
@@ -142,15 +150,31 @@ $_SESSION ['_DBArray'] = $_DBArray;
 $aField ['LOGIN_VERIFY_MSG'] = G::loadTranslation ('LOGIN_VERIFY_MSG');
 $aField['USER_LANG'] = SYS_LANG;
 
-//Get Server Configuration
-//G::LoadClass ('serverConfiguration'); //already called
-$oServerConf = & serverConf::getSingleton ();
-
 $G_PUBLISH = new Publisher ();
-if ($oServerConf->getProperty ('LOGIN_NO_WS')) {
-    $G_PUBLISH->AddContent ('xmlform', 'xmlform', 'login/sysLoginNoWS', '', $aField, 'sysLogin');
-} else {
-    $G_PUBLISH->AddContent ('xmlform', 'xmlform', 'login/sysLogin', '', $aField, 'sysLogin');
+if (!defined('WS_IN_LOGIN')) {
+    define('WS_IN_LOGIN', 'serverconf');
+}
+$fileLogin = 'login/sysLogin';
+switch (WS_IN_LOGIN) {
+    case 'serverconf':
+        //Get Server Configuration
+        $oServerConf = & serverConf::getSingleton ();
+        if ($oServerConf->getProperty ('LOGIN_NO_WS')) {
+            $fileLogin = 'login/sysLoginNoWS';
+        } else {
+            $fileLogin = 'login/sysLogin';
+        }
+        break;
+    case 'no':
+        $fileLogin = 'login/sysLoginNoWS';
+        break;
+    case 'yes':
+        $fileLogin = 'login/sysLogin';
+        break;
+    default:
+        $fileLogin = 'login/sysLogin';
+        break;
 }
 
+$G_PUBLISH->AddContent ('xmlform', 'xmlform', $fileLogin, '', $aField, 'sysLogin');
 G::RenderPage ("publish");

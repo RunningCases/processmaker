@@ -15,7 +15,7 @@ Scenario: List of calendar
     And the response has 2 records
 
 
-Scenario: Get a single calendar
+Scenario: Get a single calendar "Test Process"
     Given I request "calendar/14606161052f50839307899033145440"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -24,6 +24,16 @@ Scenario: Get a single calendar
     And the "cal_uid" property equals "14606161052f50839307899033145440"
     And the "cal_name" property equals "Test Process"
     And the "cal_description" property equals "Calendar para el feature Process"
+
+Scenario: Get a single calendar "Default Calendar"
+    Given I request "calendar/00000000000000000000000000000001"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And the "cal_uid" property equals "00000000000000000000000000000001"
+    And the "cal_name" property equals "Default Calendar"
+    And the "cal_description" property equals "Default Calendar"
 
 
 Scenario Outline: Create a new Calendars
@@ -52,12 +62,12 @@ Scenario Outline: Create a new Calendars
 
     Examples:
 
-    | test_description                       | cal_uid_number | cal_name           | cal_description                    | 
-    | Create calendar 1                      | 1              | Calendar 1         | Prueba de Creacion de Calendario 1 | 
-    | Create calendar 2                      | 2              | Calendar 2         | Prueba de Creacion de Calendario 2 |
-    | Create calendar with name long         | 3              | Calendar 3         | Prueba de Creacion de Calendario 3 |
-    | Create calendar with special character | 4              | Calendar 4 !@#$%^& | Prueba de Creacion de Calendario 4 |
-    
+    | test_description                       | cal_uid_number | cal_name                                                           | cal_description                    | 
+    | Create calendar 1                      | 1              | Calendar 1                                                         | Prueba de Creacion de Calendario 1 | 
+    | Create calendar with short name        | 2              | C                                                                  | Prueba de Creacion de Calendario 2 |
+    | Create calendar with name long         | 3              | Creacion de nuevo Calendar con nombre largo para las pruebas behat | Prueba de Creacion de Calendario 3 |
+    | Create calendar with special character | 4              | Calendar 4 !@#$%^&                                                 | Prueba de Creacion de Calendario 4 |
+          
 
 Scenario Outline: Create a new Calendar with parameter cal_work_days diferent
     Given POST this data:
@@ -202,6 +212,35 @@ Scenario Outline: Update the calendars and then check if the values had changed
     | test_description  | cal_uid_number | cal_name          | cal_description                           | cal_status | 
     | Update calendar 1 | 1              | Update Calendar 1 | Update Prueba de Creacion de Calendario 1 | ACTIVE     |
     | Update calendar 2 | 2              | Update Calendar 2 | Update Prueba de Creacion de Calendario 2 | INACTIVE   |        
+
+
+Scenario Outline: Update the calendars with same name
+    Given PUT this data:
+    """
+    {
+        "cal_name": "<cal_name>",
+        "cal_description": "<cal_description>",
+        "cal_work_days": [1,2,3,4,5],
+        "cal_status": "<cal_status>",
+        "cal_work_hour": [
+            {"day": 4, "hour_start": "02:00", "hour_end": "21:00"},
+            {"day": 0, "hour_start": "09:00", "hour_end": "17:00"}
+        ],
+        "cal_holiday": [
+            {"name": "Dia del trabajo", "date_start": "2014-05-01", "date_end": "2014-05-01"}
+        ]
+    }
+
+      """
+    And that I want to update a resource with the key "cal_uid" stored in session array as variable "cal_uid_<cal_uid_number>"
+    And I request "calendar"
+    Then the response status code should be 400
+    And the response status message should have the following text "already exists"
+
+    Examples:
+
+    | test_description  | cal_uid_number | cal_name          | cal_description                           | cal_status | 
+    | Update calendar 1 | 1              | Test Process      | Calendar para el feature Process          | ACTIVE     |
 
 
 Scenario Outline: Get a single calendar

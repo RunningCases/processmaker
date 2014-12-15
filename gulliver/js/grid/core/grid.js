@@ -98,6 +98,13 @@ var G_Grid = function(oForm, sGridName){
                             this.aElements[this.aElements.length - 1].mask = this.aFields[j].oProperties.sMask;
                         }
                         break;
+                    case "date":
+                        this.aElements.push(new G_Date(oForm, elem, elemName));
+
+                        if (this.aFields[j].oProperties) {
+                            this.aElements[this.aElements.length - 1].mask = dateSetMask(this.aFields[j].oProperties.mask);
+                        }
+                        break;
                     default:
                         this.aElements.push(new G_Field(oForm, elem, elemName));
 
@@ -369,7 +376,7 @@ var G_Grid = function(oForm, sGridName){
     var aCells = oRow.getElementsByTagName('td');
     var oNewRow = this.oGrid.insertRow(this.oGrid.rows.length - 1);
     var currentRow = this.oGrid.rows.length - 2;
-    var newID, attributes, img2, gridType;
+    var newID, attributes, img2;
 
     oNewRow.onmouseover=function(){
       highlightRow(this, '#D9E8FF');
@@ -414,41 +421,61 @@ var G_Grid = function(oForm, sGridName){
 
                     tags = oNewRow.getElementsByTagName('td')[i].getElementsByTagName('a');
                     if (tags.length == 2){ //DATEPICKER
-                      //Copy Images
-                      //img1 = tags[0].innerHTML;
-                      img2 = tags[1].innerHTML;
-                      //Create new trigger name
-                      var datePickerTriggerId = tags[1].id.replace(/\[1\]/g, '\[' + currentRow + '\]');
-                      //Remove 'a' tag for date picker trigger
-                      oNewRow.getElementsByTagName('td')[i].removeChild(tags[1]);
-                      //Capture Script and remove
-                      var scriptTags = oNewRow.getElementsByTagName('td')[i].getElementsByTagName('script');
-                      oNewRow.getElementsByTagName('td')[i].removeChild(scriptTags[0]);
-                      //Create 'a' to remove Date
-                      if (tags[0].onclick){
-                        var onclickevn = new String(tags[0].onclick);
-                        eval('tags[0].onclick = ' + onclickevn.replace(/\[1\]/g, '\[' + currentRow + '\]') + ';');
-                      }
-                      //Create new 'a' to trigger DatePicker
-                      var a2 = document.createElement('a');
-
+                        if (_BROWSER.name == 'msie' && aObjects.length==1) {
+                            //Clone new input element if browser is IE
+                            var oNewOBJ = this.cloneElement(aObjects[n]);
+                            oNewOBJ.value = defaultValue;
+                            var parentGG = aObjects[n].parentNode;
+                            parentGG.removeChild(aObjects[n]);
+                            parentGG.appendChild(oNewOBJ);
+                        }
+                        //Copy Images
+                        img1 = tags[0].innerHTML;
+                        img2 = tags[1].innerHTML;
+                        //Create new trigger name
+                        var datePickerTriggerId = tags[1].id.replace(/\[1\]/g, '\[' + currentRow + '\]');
+                        //Remove 'a' tag for date picker trigger
+                        oNewRow.getElementsByTagName('td')[i].removeChild(tags[1]);
+                        //Capture Script and remove
+                        var scriptTags = oNewRow.getElementsByTagName('td')[i].getElementsByTagName('script');
+                        oNewRow.getElementsByTagName('td')[i].removeChild(scriptTags[0]);
+                        //Create 'a' to remove Date
+                        var a1 = tags[0];
+                        if (tags[0].onclick){
+                            if (_BROWSER.name == 'msie' && aObjects.length==1) {
+                                //style 'a' to remove Date
+                                var styleText = "left: -28px; top: 2px; position: relative;";
+                                a1.style.setAttribute("cssText", styleText );
+                            }
+                            var onclickevn = new String(tags[0].onclick);
+                            eval('tags[0].onclick = ' + onclickevn.replace(/\[1\]/g, '\[' + currentRow + '\]') + ';');
+                        }
+                        //Create new 'a' to trigger DatePicker
+                        var a2 = document.createElement('a');
                         if( a2.style.setAttribute ) {
-                          var styleText = "position: relative; top: 2px; left: -13px;";
-                          a2.style.setAttribute("cssText", styleText );
+                            var styleText = "position: relative; top: 2px; left: -13px;";
+                            if (_BROWSER.name == 'msie' && aObjects.length==1) {
+                                var styleText = "position: relative; top: 2px; left: -4px;";
+                            }
+                            a2.style.setAttribute("cssText", styleText );
                         }
                         else {
                           var styleText = "position: relative; top: 2px; left: -16px;";
                           a2.setAttribute("style", styleText );
                         }
 
-                      a2.id = datePickerTriggerId;
-                      a2.innerHTML = img2;
-                      oNewRow.getElementsByTagName('td')[i].appendChild(a2);
+                        a2.id = datePickerTriggerId;
+                        a2.innerHTML = img2;
+                        oNewRow.getElementsByTagName('td')[i].appendChild(a2);
 
-                      //Load DatePicker Trigger
-                      datePicker4("", newID, attributes.mask, attributes.start, attributes.end, attributes.time);
+                        if (_BROWSER.name == 'msie' && aObjects.length==1) {
+                            a1.innerHTML = img1;
+                            oNewRow.getElementsByTagName('td')[i].appendChild(a1);
+                        }
+                        //Load DatePicker Trigger
+                        datePicker4("", newID, attributes.mask, attributes.start, attributes.end, attributes.time);
 
-                      aObjects[n].value = defaultValue;
+                        aObjects[n].value = defaultValue;
                     }else{
                       if (_BROWSER.name == 'msie' && aObjects.length==1){ //Clone new input element if browser is IE
                         var oNewOBJ = this.cloneElement(aObjects[n]);
@@ -549,34 +576,16 @@ var G_Grid = function(oForm, sGridName){
             aObjects = null;
             break;
           case 'select': //DROPDOWN
-            var oNewSelect;
             aObjects = oNewRow.getElementsByTagName('td')[i].getElementsByTagName('select');
+
             if (aObjects){
               newID = aObjects[0].id.replace(/\[1\]/g, '\[' + currentRow + '\]');
               aObjects[0].id = newID;
               aObjects[0].name = newID;
 
-              oNewSelect = document.createElement(aObjects[0].tagName);
+              var oNewSelect = this.cloneElement(aObjects[0]);
               oNewSelect.id = newID;
               oNewSelect.name = newID;
-              oNewSelect.setAttribute('class','module_app_input___gray');
-
-              aAttributes = aObjects[0].attributes;
-              for (a=0; a < aAttributes.length; a++){
-                if (aAttributes[a].name.indexOf('pm:') != -1){
-                  oNewSelect.setAttribute(aAttributes[a].name,aAttributes[a].value);
-                }
-                if (aAttributes[a].name == 'disabled'){
-                  if (_BROWSER.name == 'msie'){
-                	if (aAttributes[a].value=='true'){
-                	  oNewSelect.setAttribute(aAttributes[a].name,aAttributes[a].value);
-                	}
-                  }
-                  else{
-                    oNewSelect.setAttribute(aAttributes[a].name,aAttributes[a].value);
-                  }
-                }
-              }
 
               attributes = elementAttributesNS(aObjects[0], 'pm');
               //var MyAtt = attributes;
@@ -587,11 +596,7 @@ var G_Grid = function(oForm, sGridName){
               }else{
                 defaultValue = '';
               }
-              if (attributes.gridtype != '' && typeof attributes.gridtype != 'undefined'){
-                gridType = attributes.gridtype;
-              }else{
-                gridType = '';
-              }
+
               var aDependents = this.allDependentFields.split(',');
               sObject = this.getObjectName(newID);
 
@@ -1280,7 +1285,7 @@ var G_Grid = function(oForm, sGridName){
       document.getElementById(aAux[0]+']['+ aAux[1] + '][' + oField.sFieldName + ']').value = symbol+''+document.getElementById(aAux[0]+']['+ aAux[1] + '][' + oField.sFieldName + ']').value;
 
       // return focus the field typed
-      if (typeof document.getElementById(domId) != 'undefined') {
+      if ((typeof document.getElementById(domId) != 'object') && (typeof document.getElementById(domId) != 'undefined')) {
         document.getElementById(domId).focus();
       }
 

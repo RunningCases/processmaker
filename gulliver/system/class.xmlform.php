@@ -319,6 +319,15 @@ class XmlForm_Field
         if ($this->sql === '') {
             return 1;
         }
+
+        if(isset($this->mode) && $this->mode == "edit" && (isset($this->owner->values[$this->name]) && $this->owner->values[$this->name] !== "") && ($this->type == "text" || $this->type == "currency" || $this->type == "percentage" || $this->type == "textarea" || $this->type == "hidden" || $this->type == "suggest")){
+        	return 1;
+        }
+
+        if(isset($this->mode) && $this->mode == "view" && ($this->type == "text" || $this->type == "currency" || $this->type == "percentage" || $this->type == "textarea" || $this->type == "hidden" || $this->type == "suggest")){
+        	return 1;
+        }
+
         if (! $this->sqlConnection) {
             $this->sqlConnection = 'workflow';
         }
@@ -728,47 +737,54 @@ class XmlForm_Field
                     $aKeys = array ();
                     $aValues = explode( '|', $oOwner->fields[$this->pmconnection]->keys );
                     $i = 0;
-                    foreach ($aData['FIELDS'] as $aField) {
-                        if ($aField['FLD_KEY'] == '1') {
-                            // note added by gustavo cruz gustavo[at]colosa[dot]com
-                            // this additional [if] checks if a case variable has been set
-                            // in the keys attribute, so it can be parsed and replaced for
-                            // their respective value.
-                            if (preg_match( "/@#/", $aValues[$i] )) {
-                                // check if a case are running in order to prevent that preview is
-                                // erroneous rendered.
-                                if (isset( $_SESSION['APPLICATION'] )) {
-                                    G::LoadClass( 'case' );
-                                    $oApp = new Cases();
-                                    if ($oApp->loadCase( $_SESSION['APPLICATION'] ) != null) {
-                                        $aFields = $oApp->loadCase( $_SESSION['APPLICATION'] );
-                                        $formVariable = substr( $aValues[$i], 2 );
-                                        if (isset( $aFields['APP_DATA'][$formVariable] )) {
-                                            $formVariableValue = $aFields['APP_DATA'][$formVariable];
-                                            $aKeys[$aField['FLD_NAME']] = (isset( $formVariableValue ) ? G::replaceDataField( $formVariableValue, $oOwner->values ) : '');
-                                        } else {
-                                            $aKeys[$aField['FLD_NAME']] = '';
-                                        }
-                                    } else {
-                                        $aKeys[$aField['FLD_NAME']] = '';
-                                    }
-                                } else {
-                                    $aKeys[$aField['FLD_NAME']] = '';
-                                }
-                            } else {
-                                $aKeys[$aField['FLD_NAME']] = (isset( $aValues[$i] ) ? G::replaceDataField( $aValues[$i], $oOwner->values ) : '');
-                            }
-                            $i ++;
-                        }
+                    if($aData == "" || count($aData['FIELDS']) < 1){
+                    	$message = G::LoadTranslation( 'ID_PMTABLE_NOT_FOUND' );
+                        G::SendMessageText( $message, "WARNING" );
+                        $sValue = "";
+                    } else {
+                    	foreach ($aData['FIELDS'] as $aField) {
+                    		if ($aField['FLD_KEY'] == '1') {
+                    			// note added by gustavo cruz gustavo[at]colosa[dot]com
+                    			// this additional [if] checks if a case variable has been set
+                    			// in the keys attribute, so it can be parsed and replaced for
+                    			// their respective value.
+                    			if (preg_match( "/@#/", $aValues[$i] )) {
+                    				// check if a case are running in order to prevent that preview is
+                    				// erroneous rendered.
+                    				if (isset( $_SESSION['APPLICATION'] )) {
+                    					G::LoadClass( 'case' );
+                    					$oApp = new Cases();
+                    					if ($oApp->loadCase( $_SESSION['APPLICATION'] ) != null) {
+                    						$aFields = $oApp->loadCase( $_SESSION['APPLICATION'] );
+                    						$formVariable = substr( $aValues[$i], 2 );
+                    						if (isset( $aFields['APP_DATA'][$formVariable] )) {
+                    							$formVariableValue = $aFields['APP_DATA'][$formVariable];
+                    							$aKeys[$aField['FLD_NAME']] = (isset( $formVariableValue ) ? G::replaceDataField( $formVariableValue, $oOwner->values ) : '');
+                    						} else {
+                    							$aKeys[$aField['FLD_NAME']] = '';
+                    						}
+                    					} else {
+                    						$aKeys[$aField['FLD_NAME']] = '';
+                    					}
+                    				} else {
+                    					$aKeys[$aField['FLD_NAME']] = '';
+                    				}
+                    			} else {
+                    				$aKeys[$aField['FLD_NAME']] = (isset( $aValues[$i] ) ? G::replaceDataField( $aValues[$i], $oOwner->values ) : '');
+                    			}
+                    			$i ++;
+                    		}
+                    	}
+                    	try {
+                    		$aData = $oAdditionalTables->getDataTable( $oOwner->fields[$this->pmconnection]->pmtable, $aKeys );
+                    	} catch (Exception $oError) {
+                    		$aData = array ();
+                    	}
+                    	if (isset( $aData[$this->pmfield] )) {
+                    		$sValue = $aData[$this->pmfield];
+                    	}
                     }
-                    try {
-                        $aData = $oAdditionalTables->getDataTable( $oOwner->fields[$this->pmconnection]->pmtable, $aKeys );
-                    } catch (Exception $oError) {
-                        $aData = array ();
-                    }
-                    if (isset( $aData[$this->pmfield] )) {
-                        $sValue = $aData[$this->pmfield];
-                    }
+
                 }
             }
         }
@@ -1167,6 +1183,7 @@ class XmlForm_Field_Text extends XmlForm_Field_SimpleText
             $html .= 'id="form[' . $this->name . ']" ';
             $html .= 'name="form[' . $this->name . ']" ';
             $html .= $this->NSFieldType() . ' ';
+            $this->enableHtml = false;
             $html .= 'type="hidden" value="' . $this->htmlentities( $value, ENT_QUOTES, 'utf-8' ) . '" />';
         }
 
@@ -1955,7 +1972,7 @@ class XmlForm_Field_Textarea extends XmlForm_Field
         }
 
         $html = '';
-        $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;";
+        $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;resize:none;";
         if ($this->renderMode == 'edit') {
             //EDIT MODE
             $readOnlyText = ($this->readOnly == 1 || $this->readOnly == '1') ? 'readOnly="readOnly"' : '';
@@ -2021,7 +2038,7 @@ class XmlForm_Field_Textarea extends XmlForm_Field
 
             $arrayOptions[$r] = $v;
 
-            $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;";
+            $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;resize:none;";
             $html = '';
             if ($this->renderMode == 'edit') {
                 //EDIT MODE
@@ -2997,18 +3014,36 @@ class XmlForm_Field_File extends XmlForm_Field
             $styleDisplay = "display: none;";
         }
 
-        $html = $html1 . "<input type=\"file\" ".$pmtype." id=\"form" . $rowId . "[" . $this->name . "]\" name=\"form" . $rowId . "[" . $this->name . "]\" value=\"" . $value . "\" class=\"module_app_input___gray_file\" style=\"" . $styleDisplay . "\"" . $mode . " " . $this->NSRequiredValue() . " />" . $html2;
-        if (isset( $this->input ) && $this->input != null) {
-            require_once ("classes/model/InputDocument.php");
+        $arrayInputDocumentData = array();
+        $inpDocMaxFilesize = "";
+
+        if (isset($this->input) && $this->input != null) {
+            require_once ("classes" . PATH_SEP . "model" . PATH_SEP . "InputDocument.php");
 
             try {
-                $indoc = new InputDocument();
-                $aDoc = $indoc->load( $this->input );
-                $aDoc["INP_DOC_TITLE"] = (isset( $aDoc["INP_DOC_TITLE"] )) ? $aDoc["INP_DOC_TITLE"] : null;
-                $html = $html . "<label><img src=\"/images/inputdocument.gif\" width=\"22px\" width=\"22px\" alt=\"\" /><font size=\"1\">(" . trim( $aDoc["INP_DOC_TITLE"] ) . ")</font></label>";
+                $inputDocument = new InputDocument();
+                $arrayInputDocumentData = $inputDocument->load($this->input);
             } catch (Exception $e) {
                 //Then the input document doesn"t exits, id referencial broken
-                $html = $html . "&nbsp;<font color=\"red\"><img src=\"/images/alert_icon.gif\" width=\"16px\" width=\"16px\" alt=\"\" /><font size=\"1\">(" . G::loadTranslation( "ID_INPUT_DOC_DOESNT_EXIST" ) . ")</font></font>";
+            }
+        }
+
+        if (count($arrayInputDocumentData) > 0) {
+            $inpDocMaxFilesize = $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] * (($arrayInputDocumentData["INP_DOC_MAX_FILESIZE_UNIT"] == "MB")? 1024 *1024 : 1024); //Bytes
+        }
+
+        $pmInputDocument = "pmindocmaxfilesize=\"" . $inpDocMaxFilesize . "\""; //Bytes
+
+        $html = $html1 . "<input type=\"file\" " . $pmtype . " " . $pmInputDocument . " id=\"form" . $rowId . "[" . $this->name . "]\" name=\"form" . $rowId . "[" . $this->name . "]\" value=\"" . $value . "\" class=\"module_app_input___gray_file\" style=\"" . $styleDisplay . "\"" . $mode . " " . $this->NSRequiredValue() . " />" . $html2;
+
+        if (isset($this->input) && $this->input != null) {
+            if (count($arrayInputDocumentData) > 0) {
+                $maxUploadFilesizeLabel = ($arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] . "" != "0" && $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] != "")? G::LoadTranslation("ID_MAX_FILE_SIZE") . " [" . $arrayInputDocumentData["INP_DOC_MAX_FILESIZE"] . " " . $arrayInputDocumentData["INP_DOC_MAX_FILESIZE_UNIT"] . "]" : "";
+
+                $arrayInputDocumentData["INP_DOC_TITLE"] = (isset($arrayInputDocumentData["INP_DOC_TITLE"]))? $arrayInputDocumentData["INP_DOC_TITLE"] : null;
+                $html = $html . "<br /><label><img src=\"/images/inputdocument.gif\" width=\"22px\" width=\"22px\" alt=\"\" /><font size=\"1\">(" . trim($arrayInputDocumentData["INP_DOC_TITLE"]) . ") " . $maxUploadFilesizeLabel . "</font></label>";
+            } else {
+                $html = $html . "&nbsp;<font color=\"red\"><img src=\"/images/alert_icon.gif\" width=\"16px\" width=\"16px\" alt=\"\" /><font size=\"1\">(" . G::loadTranslation("ID_INPUT_DOC_DOESNT_EXIST") . ")</font></font>";
             }
         }
 
@@ -3718,7 +3753,11 @@ class XmlForm_Field_Listbox extends XmlForm_Field
         $arrayAux = array();
 
         foreach ($value as $index2 => $value2) {
-            $arrayAux[] = $value2 . "";
+            if (!is_array($value2)) {
+                $arrayAux[] = $value2 . "";
+            } else {
+                $arrayAux[] = "";
+            }
         }
 
         $value = $arrayAux;
@@ -3741,7 +3780,7 @@ class XmlForm_Field_Listbox extends XmlForm_Field
             return $html;
         } elseif ($this->mode === 'view') {
             $valuesFound = array('__NULL__');
-            $html = '<select multiple="multiple" size="' . $this->size . '" style="background: none;" disabled="disabled">';
+            $html = '<select id="form[' . $this->name . ']" ' . $this->NSFieldType() . ' multiple="multiple" size="' . $this->size . '" style="background: none;" disabled="disabled">';
             foreach ($this->option as $optionName => $option) {
                 if (in_array( $optionName . "", $value )) {
                     $valuesFound[] = $optionName . "";
@@ -4454,17 +4493,50 @@ class XmlForm_Field_Date extends XmlForm_Field_SimpleText
     {
         $part1 = $sign * substr( $date, 0, strlen( $date ) - 1 );
         $part2 = substr( $date, strlen( $date ) - 1 );
+
+        $year  = (int)(date("Y"));
+        $month = (int)(date("m"));
+        $day   = (int)(date("d"));
+
+        $osIsLinux = strtoupper(substr(PHP_OS, 0, 3)) != "WIN";
+        $checkYear = false;
+
         switch ($part2) {
-            case 'd':
-                $res = date( 'Y-m-d', mktime( 0, 0, 0, date( 'm' ), date( 'd' ) + $part1, date( 'Y' ) ) );
+            case "y":
+                $year = $year + $part1;
+
+                $res = date("Y-m-d", mktime(0, 0, 0, $month, $day, $year));
+
+                $checkYear = true;
                 break;
-            case 'm':
-                $res = date( 'Y-m-d', mktime( 0, 0, 0, date( 'm' ) + $part1, date( 'd' ), date( 'Y' ) ) );
+            case "m":
+                $month = $month + $part1;
+
+                $res = date("Y-m-d", mktime(0, 0, 0, $month, $day, $year));
+
+                if ($month > 12) {
+                    $year = $year + (int)($month / 12);
+
+                    $checkYear = true;
+                }
                 break;
-            case 'y':
-                $res = date( 'Y-m-d', mktime( 0, 0, 0, date( 'm' ), date( 'd' ), date( 'Y' ) + $part1 ) );
+            case "d":
+                $res = date("Y-m-d", mktime(0, 0, 0, $month, $day + $part1, $year));
+
+                $dayAux = ($month * 31) - (31 - $day) + $part1;
+
+                if ($dayAux > 365) {
+                    $year = $year + (int)($dayAux / 365);
+
+                    $checkYear = true;
+                }
                 break;
         }
+
+        if (!$osIsLinux && $checkYear && !preg_match("/^$year\-\d{2}\-\d{2}$/", $res)) {
+            $res = preg_replace("/^\d{4}(\-\d{2}\-\d{2})$/", "$year$1", $res);
+        }
+
         return $res;
     }
 

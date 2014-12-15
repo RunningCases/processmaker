@@ -1589,6 +1589,31 @@ class Processes
     }
 
     /**
+     * Create "Process Variables" records
+     *
+     * @param array $arrayData Data to create
+     *
+     * return void
+     */
+    public function createProcessVariables(array $arrayData)
+    {
+        try {
+            foreach ($arrayData as $value) {
+                $processVariables = new ProcessVariables();
+                $record = $value;
+
+                if ($processVariables->Exists($record["VAR_UID"])) {
+                    $result = $processVariables->remove($record["VAR_UID"]);
+                }
+                $result = $processVariables->create($record);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+
+    /**
      * Gets Input Documents Rows from aProcess.
      *
      * @param $sProUid string.
@@ -1646,11 +1671,12 @@ class Processes
         foreach ($oData->inputs as $key => $val) {
             $newGuid = $this->getUnusedInputGUID();
             $map[$val['INP_DOC_UID']] = $newGuid;
+            $oData->inputFiles[$oData->inputs[$key]['INP_DOC_UID']] = $newGuid;
             $oData->inputs[$key]['INP_DOC_UID'] = $newGuid;
         }
-
-        $oData->uid["INPUT_DOCUMENT"] = $map;
-
+        if (!isset($oData->inputFiles)) {
+        	$oData->inputFiles = array();
+        }
         foreach ($oData->steps as $key => $val) {
             if (isset( $val['STEP_TYPE_OBJ'] )) {
                 if ($val['STEP_TYPE_OBJ'] == 'INPUT_DOCUMENT') {
@@ -2597,6 +2623,32 @@ class Processes
     }
 
     /**
+     * Get "Process Variables" records of a Process Variables
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return an array with all "Process Variables"
+     */
+    public function getProcessVariables ($sProUid)
+    {
+        try {
+            $aVars = array ();
+            $oCriteria = new Criteria( 'workflow' );
+            $oCriteria->add( ProcessVariablesPeer::PRJ_UID, $sProUid );
+            $oDataset = ProcessVariablesPeer::doSelectRS( $oCriteria );
+            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $aVars[] = $aRow;
+                $oDataset->next();
+            }
+            return $aVars;
+        } catch (Exception $oError) {
+            throw $oError;
+        }
+    }
+
+    /**
      * Get "Process User" (Groups) records of a Process
      *
      * @param string $processUid Unique id of Process
@@ -2701,7 +2753,7 @@ class Processes
             if ($oContent->Exists( $ConCategory, $ConParent, $ConId, $ConLang )) {
                 $oContent->removeContent( $ConCategory, $ConParent, $ConId );
             }
-            $oContent->addContent( $ConCategory, $ConParent, $ConId, $ConLang, "" );
+            $oContent->addContent( $ConCategory, $ConParent, $ConId, $ConLang, $aRow['DBS_DESCRIPTION'] );
         }
     } #@!neyek
 
@@ -2964,8 +3016,10 @@ class Processes
         $oData->processCategory = $this->getProcessCategoryRow( $sProUid );
         $oData->taskExtraProperties = $this->getTaskExtraPropertiesRows( $sProUid );
         $oData->processUser = $this->getProcessUser($sProUid);
+        $oData->processVariables = $this->getProcessVariables($sProUid);
 
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
+        $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
         //krumo ($oData);die;
         //$oJSON = new Services_JSON();
@@ -3484,6 +3538,14 @@ class Processes
                         $XmlContent = str_replace( $oData->process['PRO_UID_OLD'], $oData->process['PRO_UID'], $XmlContent );
                         $XmlContent = str_replace( $XmlGuid, $newXmlGuid, $XmlContent );
 
+                        if (isset( $oData->inputFiles )) {
+                            foreach($oData->inputFiles as $input => $valInput){
+                                $oldInput = $input;
+                                $newInput = $oData->inputFiles[$oldInput];
+                                $XmlContent = str_replace( $oldInput, $newInput, $XmlContent );
+                            }
+                        }
+
                         //foreach
                         if (isset( $oData->gridFiles )) {
                             if (is_array( $oData->gridFiles )) {
@@ -3998,6 +4060,8 @@ class Processes
         $this->createTaskExtraPropertiesRows( isset( $oData->taskExtraProperties ) ? $oData->taskExtraProperties : array () );
 
         $this->createProcessUser((isset($oData->processUser))? $oData->processUser : array());
+        $this->createProcessVariables((isset($oData->processVariables))? $oData->processVariables : array());
+
     }
 
 
@@ -4354,6 +4418,103 @@ class Processes
 
         } catch (Exception $oError) {
             throw ($oError);
+        }
+    }
+
+    /**
+     * Get disabled code
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return array with disabled code found, array empty otherwise
+     */
+    public function getDisabledCode($processUid = "")
+    {
+        try {
+            G::LoadClass("codeScanner");
+
+            $arrayDisabledCode = array();
+
+            //Set variables
+            $cs = new CodeScanner("DISABLED_CODE");
+
+            $delimiter = DBAdapter::getStringDelimiter();
+
+            //Processes
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(ProcessPeer::PRO_UID);
+            $criteria->addAsColumn("PRO_TITLE", ContentPeer::CON_VALUE);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(ProcessPeer::PRO_UID, ContentPeer::CON_ID, Criteria::EQUAL);
+            $arrayCondition[] = array(ContentPeer::CON_CATEGORY, $delimiter . "PRO_TITLE" . $delimiter, Criteria::EQUAL);
+            $arrayCondition[] = array(ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+
+            if ($processUid != "") {
+                $criteria->add(ProcessPeer::PRO_UID, $processUid, Criteria::EQUAL);
+            }
+
+            $rsCriteria = ProcessPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $processUid   = $row["PRO_UID"];
+                $processTitle = $row["PRO_TITLE"];
+
+                //Triggers
+                $criteriaTrigger = new Criteria("workflow");
+
+                $criteriaTrigger->addSelectColumn(TriggersPeer::TRI_UID);
+                $criteriaTrigger->addAsColumn("TRI_TITLE", ContentPeer::CON_VALUE);
+                $criteriaTrigger->addSelectColumn(TriggersPeer::TRI_WEBBOT);
+
+                $arrayCondition = array();
+                $arrayCondition[] = array(TriggersPeer::TRI_UID, ContentPeer::CON_ID, Criteria::EQUAL);
+                $arrayCondition[] = array(ContentPeer::CON_CATEGORY, $delimiter . "TRI_TITLE" . $delimiter, Criteria::EQUAL);
+                $arrayCondition[] = array(ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL);
+                $criteriaTrigger->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+
+                $criteriaTrigger->add(TriggersPeer::PRO_UID, $processUid, Criteria::EQUAL);
+
+                $rsCriteriaTrigger = TriggersPeer::doSelectRS($criteriaTrigger);
+                $rsCriteriaTrigger->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+                while ($rsCriteriaTrigger->next()) {
+                    $row = $rsCriteriaTrigger->getRow();
+
+                    $triggerUid    = $row["TRI_UID"];
+                    $triggerTitle  = $row["TRI_TITLE"];
+                    $triggerWebbot = $row["TRI_WEBBOT"];
+
+                    //Check disabled code
+                    $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $triggerWebbot);
+
+                    if (count($arrayFoundDisabledCode) > 0) {
+                        if (!isset($arrayDisabledCode[$processUid])) {
+                            $arrayDisabledCode[$processUid] = array(
+                                "processUid"   => $processUid,
+                                "processTitle" => $processTitle,
+                                "triggers"     => array()
+                            );
+                        }
+
+                        $arrayDisabledCode[$processUid]["triggers"][] = array(
+                            "triggerUid"   => $triggerUid,
+                            "triggerTitle" => $triggerTitle,
+                            "disabledCode" => $arrayFoundDisabledCode["source"],
+                        );
+                    }
+                }
+            }
+
+            //Return
+            return $arrayDisabledCode;
+        } catch (Exception $e) {
+            throw $e;
         }
     }
 }

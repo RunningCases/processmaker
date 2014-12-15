@@ -8,7 +8,9 @@ class DynaForm
 
         "DYN_TITLE"       => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                  "fieldNameAux" => "dynaFormTitle"),
         "DYN_DESCRIPTION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormDescription"),
-        "DYN_TYPE"        => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("xmlform", "grid"), "fieldNameAux" => "dynaFormType")
+        "DYN_TYPE"        => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("xmlform", "grid"), "fieldNameAux" => "dynaFormType"),
+        "DYN_CONTENT"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                  "fieldNameAux" => "dynaFormContent"),
+        "DYN_VERSION"     => array("type" => "int",    "required" => false,  "empty" => true, "defaultValues" => array(1 ,2),              "fieldNameAux" => "dynaFormVersion")
     );
 
     private $formatFieldNameInUppercase = true;
@@ -600,14 +602,14 @@ class DynaForm
                         $dynGrdDescriptionCopyImport = $row["CON_VALUE"];
 
                         //Create Grid
+                        $dynaFormGrid = new \Dynaform();
+
                         $arrayDataAux = array(
                             "PRO_UID"   => $processUid,
-                            "DYN_TITLE" => $dynGrdTitleCopyImport,
+                            "DYN_TITLE" => $dynGrdTitleCopyImport . (($this->existsTitle($processUid, $dynGrdTitleCopyImport))? " (" . $arrayData["DYN_TITLE"] . ")" : ""),
                             "DYN_DESCRIPTION" => $dynGrdDescriptionCopyImport,
                             "DYN_TYPE" => "grid"
                         );
-
-                        $dynaFormGrid = new \Dynaform();
 
                         $dynaFormGridUid = $dynaFormGrid->create($arrayDataAux);
 
@@ -907,6 +909,8 @@ class DynaForm
             $criteria->addAsColumn("DYN_TITLE", "CT.CON_VALUE");
             $criteria->addAsColumn("DYN_DESCRIPTION", "CD.CON_VALUE");
             $criteria->addSelectColumn(\DynaformPeer::DYN_TYPE);
+            $criteria->addSelectColumn(\DynaformPeer::DYN_CONTENT);
+            $criteria->addSelectColumn(\DynaformPeer::DYN_VERSION);
 
             $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
             $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
@@ -949,11 +953,17 @@ class DynaForm
                 $record["DYN_DESCRIPTION"] = \Content::load("DYN_DESCRIPTION", "", $record["DYN_UID"], SYS_LANG);
             }
 
+            if ($record["DYN_VERSION"] == 0) {
+                $record["DYN_VERSION"] = 1;
+            }
+
             return array(
                 $this->getFieldNameByFormatFieldName("DYN_UID")         => $record["DYN_UID"],
                 $this->getFieldNameByFormatFieldName("DYN_TITLE")       => $record["DYN_TITLE"],
                 $this->getFieldNameByFormatFieldName("DYN_DESCRIPTION") => $record["DYN_DESCRIPTION"] . "",
-                $this->getFieldNameByFormatFieldName("DYN_TYPE")        => $record["DYN_TYPE"] . ""
+                $this->getFieldNameByFormatFieldName("DYN_TYPE")        => $record["DYN_TYPE"] . "",
+                $this->getFieldNameByFormatFieldName("DYN_CONTENT")     => $record["DYN_CONTENT"] . "",
+                $this->getFieldNameByFormatFieldName("DYN_VERSION")     => (int)($record["DYN_VERSION"])
             );
         } catch (\Exception $e) {
             throw $e;
@@ -987,6 +997,129 @@ class DynaForm
 
             //Return
             return $this->getDynaFormDataFromRecord($row);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get data of a DynaForm
+     *
+     * @param string $projectUid Unique id of Project
+     * @param string $dynaFormUid Unique id of DynaForm
+     *
+     * return array Return an array with data of a DynaForm
+     */
+    public function getDynaFormFields($projectUid, $dynaFormUid)
+    {
+        try {
+            $arrayVariables = array();
+            $arrayVariablesDef = array();
+            //Verify data
+            Validator::proUid($projectUid, '$prj_uid');
+            $this->throwExceptionIfNotExistsDynaForm($dynaFormUid, "", $this->arrayFieldNameForException["dynaFormUid"]);
+
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\DynaformPeer::DYN_CONTENT);
+            $criteria->add(\DynaformPeer::DYN_UID, $dynaFormUid, \Criteria::EQUAL);
+            $rsCriteria = \DynaformPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+
+            $aRow = $rsCriteria->getRow();
+            $contentDecode = json_decode($aRow['DYN_CONTENT'],true);
+
+            $content = $contentDecode['items'][0]['items'];
+
+            foreach ($content as $key => $value) {
+
+                $valueType = (isset($value[0]["valueType"])) ? $value[0]["valueType"]:null;
+                $maxLength = (isset($value[0]["maxLength"])) ? $value[0]["maxLength"]:null;
+                $label = (isset($value[0]["label"])) ? $value[0]["label"]:null;
+                $defaultValue = (isset($value[0]["defaultValue"])) ? $value[0]["defaultValue"]:null;
+                $required = (isset($value[0]["required"])) ? $value[0]["required"]:null;
+                $dbConnection = (isset($value[0]["dbConnection"])) ? $value[0]["dbConnection"]:null;
+                $sql = (isset($value[0]["sql"])) ? $value[0]["sql"]:null;
+                $options = (isset($value[0]["options"])) ? $value[0]["options"]:null;
+
+                if (isset($value[0]["variable"])) {
+                    $variable = $value[0]["variable"];
+
+                    $criteria = new \Criteria("workflow");
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_TYPE);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_SIZE);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_LABEL);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DBCONNECTION);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_SQL);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NULL);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DEFAULT);
+                    $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_ACCEPTED_VALUES);
+                    $criteria->add(\ProcessVariablesPeer::PRJ_UID, $projectUid, \Criteria::EQUAL);
+                    $criteria->add(\ProcessVariablesPeer::VAR_NAME, $variable, \Criteria::EQUAL);
+                    $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+                    $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                    $rsCriteria->next();
+
+                    while ($aRow = $rsCriteria->getRow()) {
+
+                        $valueTypeMerged = ($valueType == null && $valueType == '') ? $aRow['VAR_FIELD_TYPE'] : $valueType;
+                        $maxLengthMerged = ($maxLength == null && $maxLength == '') ? (int)$aRow['VAR_FIELD_SIZE'] : $maxLength;
+                        $labelMerged = ($label == null && $label == '') ? $aRow['VAR_LABEL'] : $label;
+                        $defaultValueMerged = ($defaultValue == null && $defaultValue == '') ? $aRow['VAR_DEFAULT'] : $defaultValue;
+                        $requiredMerged =  ($required == null && $required == '') ? ($aRow['VAR_NULL']==1) ? false: true : $required;
+                        $dbConnectionMerged = ($dbConnection == null && $dbConnection == '') ? $aRow['VAR_DBCONNECTION'] : $dbConnection;
+                        $sqlMerged = ($sql == null && $sql == '') ? $aRow['VAR_SQL'] : $sql;
+                        $optionsMerged = ($options == null && $options == '') ? $aRow['VAR_ACCEPTED_VALUES'] : $options;
+
+                        $aVariables = array('valueType' => $valueTypeMerged,
+                                            'maxLength' => $maxLengthMerged,
+                                            'label' => $labelMerged,
+                                            'defaultValue' => $defaultValueMerged,
+                                            'required' => $requiredMerged,
+                                            'dbConnection' => $dbConnectionMerged,
+                                            'sql' => $sqlMerged,
+                                            'options' => $optionsMerged);
+
+                        //fields properties
+                        if (isset($value[0]["pickType"])) {
+                            $aVariables = array_merge(array('pickType' => $value[0]["pickType"]), $aVariables);
+                        }
+                        if (isset($value[0]["placeHolder"])) {
+                            $aVariables = array_merge(array('placeHolder' => $value[0]["placeHolder"]), $aVariables);
+                        }
+                        if (isset($value[0]["dependentsField"])) {
+                            $aVariables = array_merge(array('dependentsField' => $value[0]["dependentsField"]), $aVariables);
+                        }
+                        if (isset($value[0]["hint"])) {
+                            $aVariables = array_merge(array('hint' => $value[0]["hint"]), $aVariables);
+                        }
+                        if (isset($value[0]["readonly"])) {
+                            $aVariables = array_merge(array('readonly' => $value[0]["readonly"]), $aVariables);
+                        }
+                        if (isset($value[0]["colSpan"])) {
+                            $aVariables = array_merge(array('colSpan' => $value[0]["colSpan"]), $aVariables);
+                        }
+                        if (isset($value[0]["type"])) {
+                            $aVariables = array_merge(array('type' => $value[0]["type"]), $aVariables);
+                        }
+                        if (isset($value[0]["name"])) {
+                            $aVariables = array_merge(array('name' => $value[0]["name"]), $aVariables);
+                        }
+                        $aVariables = array_merge(array('variable' => $variable), $aVariables);
+
+                        $arrayVariables[] = $aVariables;
+                        $rsCriteria->next();
+                    }
+
+                } else {
+                    $arrayVariablesDef[] = $value[0];
+                }
+            }
+            $arrayVariables = array_merge($arrayVariables, $arrayVariablesDef);
+            //Return
+            return $arrayVariables;
+
         } catch (\Exception $e) {
             throw $e;
         }

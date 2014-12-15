@@ -353,20 +353,6 @@ class User
                 );
             }
 
-            //Number records total
-            $criteriaCount = clone $criteria;
-
-            $criteriaCount->clearSelectColumns();
-            $criteriaCount->addAsColumn("NUM_REC", "COUNT(" . \RbacUsersPeer::USR_UID . ")");
-
-            $rsCriteriaCount = \RbacUsersPeer::doSelectRS($criteriaCount);
-            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            $rsCriteriaCount->next();
-            $row = $rsCriteriaCount->getRow();
-
-            $numRecTotal = $row["NUM_REC"];
-
             //SQL
             if (!is_null($sortField) && trim($sortField) != "") {
                 $sortField = strtoupper($sortField);

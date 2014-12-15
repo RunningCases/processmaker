@@ -62,6 +62,9 @@ Ext.onReady(function(){
         {name : 'CASES_COUNT_COMPLETED', type:'float'},
         {name : 'CASES_COUNT_CANCELLED', type:'float'},
         {name : 'PROJECT_TYPE', type:'string'}
+        /*----------------------------------********---------------------------------*/
+        ,{name : "PRO_TYPE_PROCESS", type: "string"}
+        /*----------------------------------********---------------------------------*/
       ]
     }),
 
@@ -216,8 +219,11 @@ Ext.onReady(function(){
         {header: _('ID_DRAFT'), dataIndex: 'CASES_COUNT_DRAFT', width: 50, align:'right'},
         {header: _('ID_COMPLETED'), dataIndex: 'CASES_COUNT_COMPLETED', width: 70, align:'right'},
         {header: _('ID_CANCELLED'), dataIndex: 'CASES_COUNT_CANCELLED', width: 70, align:'right'},
-        {header: _('ID_TOTAL_CASES'), dataIndex: 'CASES_COUNT', width: 80,renderer:function(v){return "<b>"+v+"</b>";}, align:'right'},
+        {header: _('ID_TOTAL_CASES'), dataIndex: 'CASES_COUNT', width: 75,renderer:function(v){return "<b>"+v+"</b>";}, align:'right'},
         {header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 50, align:'center'}
+        /*----------------------------------********---------------------------------*/
+        ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 75, align:"left"}
+        /*----------------------------------********---------------------------------*/
       ]
     }),
     store: store,
@@ -228,19 +234,19 @@ Ext.onReady(function(){
         iconCls: 'button_menu_ext ss_sprite ss_add',
         menu: [
             {
-                text: "New Project",
-                iconCls: 'silk-add',
-                icon: '',
-                handler: function () {
-                    newProcess({type:"classicProject"});
-                }
-            },
-            {
                 text: "New BPMN Project",
                 iconCls: 'silk-add',
                 icon: '',
                 handler: function () {
                     newProcess({type:"bpmnProject"});
+                }
+            },
+            {
+                text: "New Project",
+                iconCls: 'silk-add',
+                icon: '',
+                handler: function () {
+                    newProcess({type:"classicProject"});
                 }
             }
         ],
@@ -394,11 +400,10 @@ Ext.onReady(function(){
     }
 
     if (rowSelected.data.PROJECT_TYPE == "bpmn"){
-      Ext.getCmp('edit_with_classic_editor').setDisabled(false);
+        Ext.getCmp("mnuGenerateBpmn").setDisabled(true);
     } else {
-      Ext.getCmp('edit_with_classic_editor').setDisabled(true);
+        Ext.getCmp("mnuGenerateBpmn").setDisabled(false);
     }
-
   }, this);
   processesGrid.on('contextmenu', function (evt) {
       evt.preventDefault();
@@ -416,13 +421,6 @@ Ext.onReady(function(){
         text: _('ID_EDIT'),
         iconCls: 'button_menu_ext ss_sprite  ss_pencil',
         handler: editProcess
-      },{
-        id: 'edit_with_classic_editor',
-        text: 'Edit with classic editor',
-        iconCls: 'button_menu_ext ss_sprite  ss_pencil',
-        handler: function() {
-            editProcess("classic");
-        }
       }, {
         id: 'activator2',
         text: '',
@@ -442,6 +440,15 @@ Ext.onReady(function(){
         handler: function () {
           exportProcess();
         }
+      },
+      {
+          id: "mnuGenerateBpmn",
+          text: _("ID_GENERATE_BPMN_PROJECT"),
+          iconCls: "button_menu_ext ss_sprite ss_page_white_go",
+          handler: function ()
+          {
+              generateBpmn();
+          }
       }
     ]
   });
@@ -591,7 +598,7 @@ editProcess = function(typeParam)
   var rowSelected = processesGrid.getSelectionModel().getSelected();
   if (!rowSelected) {
       Ext.Msg.show({
-          title: '',
+          title: _("ID_INFORMATION"),
           msg: _('ID_NO_SELECTION_WARNING'),
           buttons: Ext.Msg.INFO,
           fn: function () {
@@ -624,7 +631,7 @@ editNewProcess = function(){
     location.href = '../designer?pro_uid='+rowSelected.data.PRO_UID
   } else {
      Ext.Msg.show({
-      title:'',
+      title: _("ID_INFORMATION"),
       msg: _('ID_NO_SELECTION_WARNING'),
       buttons: Ext.Msg.INFO,
       fn: function(){},
@@ -708,7 +715,7 @@ deleteProcess = function(){
     }
   } else {
     Ext.Msg.show({
-      title:'',
+      title: _("ID_INFORMATION"),
       msg: _('ID_NO_SELECTION_WARNING'),
       buttons: Ext.Msg.INFO,
       fn: function(){},
@@ -750,12 +757,66 @@ function exportProcess() {
   }
   else {
     Ext.Msg.show({
-      title: "",
+      title: _("ID_INFORMATION"),
       msg: _("ID_NO_SELECTION_WARNING"),
       icon: Ext.MessageBox.INFO,
       buttons: Ext.MessageBox.OK
     });
   }
+}
+
+function generateBpmn()
+{
+    var record = processesGrid.getSelectionModel().getSelections();
+
+    if (typeof(record) != "undefined") {
+        if (record.length == 1) {
+            var loadMaskGenerateBpmn = new Ext.LoadMask(Ext.getBody(), {msg: _("ID_PROCESSING")});
+            var processUid = record[0].get("PRO_UID");
+
+            loadMaskGenerateBpmn.show();
+
+            Ext.Ajax.request({
+                url: "../processProxy/generateBpmn",
+                method: "POST",
+                params: {
+                    processUid: processUid
+                },
+
+                success: function (response, opts)
+                {
+                    var dataResponse = Ext.util.JSON.decode(response.responseText);
+
+                    if (dataResponse.status) {
+                        if (dataResponse.status == "OK") {
+                            //processesGrid.store.reload();
+                            location.assign("../designer?prj_uid=" + dataResponse.projectUid);
+                        } else {
+                            Ext.MessageBox.show({
+                                title: _("ID_ERROR"),
+                                icon: Ext.MessageBox.ERROR,
+                                buttons: Ext.MessageBox.OK,
+                                msg: dataResponse.message
+                            });
+                        }
+                    }
+
+                    loadMaskGenerateBpmn.hide();
+                },
+                failure: function (response, opts)
+                {
+                    loadMaskGenerateBpmn.hide();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: _("ID_INFORMATION"),
+                icon: Ext.MessageBox.INFO,
+                buttons: Ext.MessageBox.OK,
+                msg: _("ID_NO_SELECTION_WARNING")
+            });
+        }
+    }
 }
 
 importProcessExistGroup = function()
@@ -1109,6 +1170,19 @@ importProcess = function()
 
                       var resp_ = Ext.util.JSON.decode(resp.response.responseText);
 
+                      if (resp_.status) {
+                          if (resp_.status == "DISABLED-CODE") {
+                              Ext.MessageBox.show({
+                                  title: _("ID_ERROR"),
+                                  msg: "<div style=\"overflow: auto; width: 500px; height: 150px;\">" + stringReplace("\\x0A", "<br />", resp_.message) + "</div>", //\n 10
+                                  icon: Ext.MessageBox.ERROR,
+                                  buttons: Ext.MessageBox.OK
+                              });
+
+                              return;
+                          }
+                      }
+
                       if (resp_.catchMessage == "") {
                         if (resp_.ExistProcessInDatabase == "0") {
                           if (resp_.ExistGroupsInDatabase == "0") {
@@ -1150,7 +1224,7 @@ importProcess = function()
 
                       Ext.MessageBox.show({
                         title   : '',
-                        msg     : resp_.catchMessage,
+                        msg     : resp.catchMessage,
                         buttons : Ext.MessageBox.OK,
                         animEl  : 'mb9',
                         fn      : function(){},
@@ -1198,7 +1272,7 @@ function activeDeactive(){
     });
   } else {
      Ext.Msg.show({
-      title:'',
+      title: _("ID_INFORMATION"),
       msg: _('ID_NO_SELECTION_WARNING'),
       buttons: Ext.Msg.INFO,
       fn: function(){},
@@ -1234,7 +1308,7 @@ function enableDisableDebug()
     });
   } else {
     Ext.Msg.show({
-      title:'',
+      title: _("ID_INFORMATION"),
       msg: _('ID_NO_SELECTION_WARNING'),
       buttons: Ext.Msg.INFO,
       fn: function(){},

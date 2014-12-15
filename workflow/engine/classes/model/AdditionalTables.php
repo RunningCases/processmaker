@@ -97,6 +97,7 @@ class AdditionalTables extends BaseAdditionalTables
         $oCriteria->addSelectColumn(FieldsPeer::FLD_NULL);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_AUTO_INCREMENT);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_KEY);
+        $oCriteria->addSelectColumn(FieldsPeer::FLD_TABLE_INDEX);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_FOREIGN_KEY);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_FOREIGN_KEY_TABLE);
         $oCriteria->addSelectColumn(FieldsPeer::FLD_DYN_NAME);
@@ -199,6 +200,9 @@ class AdditionalTables extends BaseAdditionalTables
                   'APP_UID'     => '',
                   'SHD_DATE'    => date('Y-m-d H:i:s')));
                  */
+
+                $addTabDescription = ($aData["ADD_TAB_DESCRIPTION"] != "")? ", Description: " . $aData["ADD_TAB_DESCRIPTION"] : ".";
+                G::auditLog("CreatePmtable", "PM Table Name: " . $aData['ADD_TAB_NAME'] . $addTabDescription);
                 return $aData['ADD_TAB_UID'];
             } else {
                 $sMessage = '';
@@ -225,6 +229,8 @@ class AdditionalTables extends BaseAdditionalTables
                     $oConnection->begin();
                     $iResult = $oAdditionalTables->save();
                     $oConnection->commit();
+                    $addTabDescription = ($aData["ADD_TAB_DESCRIPTION"] != "")? ", Description: " . $aData["ADD_TAB_DESCRIPTION"] : ".";
+                    G::auditLog("UpdatePmtable", "PM Table Name: ".$aData['ADD_TAB_NAME'] . $addTabDescription . ", PM Table ID: (".$aData['ADD_TAB_UID'].") ");
                 } else {
                     $sMessage = '';
                     $aValidationFailures = $oAdditionalTables->getValidationFailures();
@@ -368,7 +374,7 @@ class AdditionalTables extends BaseAdditionalTables
         }
     }
 
-    public function getAllData($sUID, $start = null, $limit = null, $keyOrderUppercase = true, $filter = '')
+    public function getAllData($sUID, $start = null, $limit = null, $keyOrderUppercase = true, $filter = '', $appUid = false)
     {
         $addTab = new AdditionalTables();
         $aData = $addTab->load($sUID, true);
@@ -400,11 +406,11 @@ class AdditionalTables extends BaseAdditionalTables
          */
         $types = array('DECIMAL', 'DOUBLE', 'FLOAT', 'REAL');
 
-        if ($keyOrderUppercase == true) {
+        if ($keyOrderUppercase) {
             foreach ($aData['FIELDS'] as $aField) {
                 $field = '$oCriteria->addSelectColumn(' . $sClassPeerName . '::' . $aField['FLD_NAME'] . ');';
                 if (in_array($aField['FLD_TYPE'], $types)) {
-                    $field = '$oCriteria->addAsColumn("' . $aField['FLD_NAME'] . '", "round(" . ' . $sClassPeerName . '::' . $aField['FLD_NAME'] . ' . ", 2)" );';
+                    $field = '$oCriteria->addAsColumn("' . $aField['FLD_NAME'] . '", "round(" . ' . $sClassPeerName . '::' . $aField['FLD_NAME'] . ' . ", ' . ($aField['FLD_TYPE'] == 'DOUBLE' ? '8' : '2') . ')");';
                 }
                 eval($field);
                 /*if ($aField['FLD_KEY'] == '1') {
@@ -421,17 +427,17 @@ class AdditionalTables extends BaseAdditionalTables
             $closure = '';
             $types = array('INTEGER', 'BIGINT', 'SMALLINT', 'TINYINT', 'DECIMAL', 'DOUBLE', 'FLOAT', 'REAL');
             foreach ($aData['FIELDS'] as $aField) {
-                if ($aField['FLD_NAME'] != 'APP_UID') {
-                    if (in_array($aField['FLD_TYPE'], $types)) {
-                        if (is_numeric($filter)) {
-                            $stringOr = $stringOr . '$a = $oCriteria->getNewCriterion(' . $sClassPeerName . '::' . $aField['FLD_NAME'] . ', "' . $filter . '", Criteria::EQUAL)' . $closure . ';';
-                            $closure = '->addOr($a)';
-                        }
-                    } else {
-                        $stringOr = $stringOr . '$a = $oCriteria->getNewCriterion(' . $sClassPeerName . '::' . $aField['FLD_NAME'] . ', "%' . $filter . '%", Criteria::LIKE)' . $closure . ';';
-                        $closure = '->addOr($a)';
-                    }
-                }
+	            if (($appUid == false && $aField['FLD_NAME'] != 'APP_UID') || ($appUid == true)) {
+	                if (in_array($aField['FLD_TYPE'], $types)) {
+	                    if (is_numeric($filter)) {
+	                        $stringOr = $stringOr . '$a = $oCriteria->getNewCriterion(' . $sClassPeerName . '::' . $aField['FLD_NAME'] . ', "' . $filter . '", Criteria::EQUAL)' . $closure . ';';
+	                        $closure = '->addOr($a)';
+	                    }
+	                } else {
+	                    $stringOr = $stringOr . '$a = $oCriteria->getNewCriterion(' . $sClassPeerName . '::' . $aField['FLD_NAME'] . ', "%' . $filter . '%", Criteria::LIKE)' . $closure . ';';
+	                    $closure = '->addOr($a)';
+	                }
+	            }
             }
             $stringOr = $stringOr . '$oCriteria->add($a);';
             eval($stringOr);
@@ -442,9 +448,17 @@ class AdditionalTables extends BaseAdditionalTables
 
         if (isset($_POST['sort'])) {
             if ($_POST['dir'] == 'ASC') {
-                eval('$oCriteria->addAscendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
+                if ($keyOrderUppercase) {
+                    eval('$oCriteria->addAscendingOrderByColumn("' . $_POST['sort'] . '");');
+                } else {
+                    eval('$oCriteria->addAscendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
+                }
             } else {
-                eval('$oCriteria->addDescendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
+                if ($keyOrderUppercase) {
+                    eval('$oCriteria->addDescendingOrderByColumn("' . $_POST['sort'] . '");');
+                } else {
+                    eval('$oCriteria->addDescendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
+                }
             }
         }
 

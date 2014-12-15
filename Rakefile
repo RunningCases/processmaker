@@ -13,10 +13,19 @@ task :required do
         puts "JSON gem not found.\nInstall it by running 'gem install json'"
         exit(1)
     end
+    begin
+        require 'ftools'
+    rescue LoadError
+        puts "JSON gem not found.\nInstall it by running 'gem install ftools'"
+        exit(1)
+    end
 end
 
+task :log do
+    puts getLog
+end
 
-desc "Copy Files to ProcessMaker"
+desc "Build Front-End for ProcessMaker"
 task :build => [:required] do
     mode = "production"
     #argv1 = ARGV.last
@@ -43,14 +52,19 @@ task :build => [:required] do
 
     pmUIDir = targetDir + "/pmUI"
     mafeDir = targetDir + "/mafe"
+    pmdynaformDir = targetDir + "/pmdynaform"
 
-    prepareDirs([pmUIDir, mafeDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
-
+    prepareDirs([targetDir, pmUIDir, mafeDir, pmdynaformDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
+    
     buildPmUi(Dir.pwd + "/vendor/colosa/pmUI", targetDir, mode)
+    buildPmdynaform(Dir.pwd + "/vendor/colosa/pmDynaform", targetDir, mode)
     buildMafe(Dir.pwd + "/vendor/colosa/MichelangeloFE", targetDir, mode)
+
+
 
     pmuiHash = getHash(Dir.pwd + "/vendor/colosa/pmUI")
     mafeHash = getHash(Dir.pwd + "/vendor/colosa/MichelangeloFE")
+    pmdynaformHash = getHash(Dir.pwd + "/vendor/colosa/pmDynaform")
 
     hashVendors = pmuiHash+"-"+mafeHash
     ## Building minified JS Files 
@@ -92,10 +106,28 @@ task :build => [:required] do
         :pmui_ver => getVersion(Dir.pwd + "/vendor/colosa/pmUI"),
         :pmui_hash => pmuiHash,
         :mafe_ver => getVersion(Dir.pwd + "/vendor/colosa/MichelangeloFE"),
-        :mafe_hash => mafeHash
+        :mafe_hash => mafeHash,
+        :pmdynaform_ver => getVersion(Dir.pwd + "/vendor/colosa/pmDynaform"),
+        :pmdynaform_hash => pmdynaformHash
     }
     File.open(targetDir+"/versions", 'w+') do |writeFile|
         writeFile.write versions.to_json
+    end
+
+    File.open(targetDir+"/lib-pmui.log", 'w+') do |writeFile|
+        writeFile.write getLogFrom(Dir.pwd + "/vendor/colosa/pmUI")
+    end
+
+    File.open(targetDir+"/lib-mafe.log", 'w+') do |writeFile|
+        writeFile.write getLogFrom(Dir.pwd + "/vendor/colosa/MichelangeloFE")
+    end
+
+    File.open(targetDir+"/lib-pmdynaform.log", 'w+') do |writeFile|
+        writeFile.write getLogFrom(Dir.pwd + "/vendor/colosa/pmDynaform")
+    end
+
+    File.open(targetDir+"/processmaker.log", 'w+') do |writeFile|
+        writeFile.write getLog()
     end
 
     puts "-- DONE --\n".bold
@@ -120,7 +152,7 @@ def buildPmUi(homeDir, targetDir, mode)
     copyFiles({
         "#{homeDir}/build/js/pmui-#{version}.js" => "#{pmUIDir}/pmui.min.js",
         "#{themeDir}/build/pmui-mafe.css" => "#{pmUIDir}/pmui.min.css",
-        "#{themeDir}/build/images/*.png" => "#{targetDir}/css/images/",
+        "#{themeDir}/build/images/*" => "#{targetDir}/css/images/",
         "#{homeDir}/img/*" => "#{imgTargetDir}"
     })
 
@@ -132,6 +164,50 @@ def buildPmUi(homeDir, targetDir, mode)
     copyFiles({"#{homeDir}/themes/#{theme}/fonts/*" => "#{pmUIFontsDir}"})
 
     puts "\nPMUI Build Finished".magenta
+end
+
+def buildPmdynaform(homeDir, targetDir, mode)
+  puts "\nBuilding PmDynaform library".green.bold
+  
+  # Defining target directories
+  pmdynaformDir = targetDir + "/pmdynaform"
+  
+  executeInto(homeDir, [ "default"])
+  
+  require 'fileutils'
+  Dir.mkdir("#{pmdynaformDir}/build")
+  FileUtils.cp_r(Dir["#{homeDir}/build/*"],"#{pmdynaformDir}/build")
+  Dir.mkdir("#{pmdynaformDir}/libs")
+  FileUtils.cp_r(Dir["#{homeDir}/libs/*"],"#{pmdynaformDir}/libs")
+  
+  template = ""
+  config = File.read "#{homeDir}/config/templates.json"
+  json = JSON.parse config
+  json.each do |key|
+    s = ""
+    key["files"].each do |source|
+      s += File.read "#{homeDir}/#{source}"
+      s += "\n"
+    end
+    template += s
+  end
+  
+  htmlTemplates=["cases_Step_Pmdynaform.html","cases_Step_Pmdynaform_Preview.html","cases_Step_Pmdynaform_View.html"]
+  htmlTemplates.each do |htmlTemplate|
+    
+    FileUtils.cp("#{Dir.pwd}/workflow/engine/templates/cases/#{htmlTemplate}", "#{pmdynaformDir}/build/#{htmlTemplate}")
+    
+    target = "#{pmdynaformDir}/build/#{htmlTemplate}"
+    html = File.read target 
+    while html['###TEMPLATES##'] do
+      html['###TEMPLATES###'] = template
+    end
+    File.open(target, 'w+') do |file|
+      file.write html
+    end
+  end
+  
+  puts "\nPmDynaform Build Finished!".magenta
 end
 
 def buildMafe(homeDir, targetDir, mode)
@@ -150,10 +226,12 @@ def buildMafe(homeDir, targetDir, mode)
 
     puts "\nCopying files into: #{mafeDir}".bold
     copyFiles({
+        "#{homeDir}/lib/jQueryUI/images/*.png" => "#{cssTargetDir}/images/",
         "#{homeDir}/build/js/designer.js" => "#{mafeDir}/designer.min.js",
         "#{homeDir}/build/js/mafe.js" => "#{mafeDir}/mafe.min.js",
         "#{homeDir}/build/css/mafe.css" => "#{mafeDir}/mafe.min.css",
-        "#{homeDir}/img/*.*" => "#{imgTargetDir}"
+        "#{homeDir}/img/*.*" => "#{imgTargetDir}",
+        "#{homeDir}/srcForm/img/*.*" => "#{imgTargetDir}"
     })
 
     puts "\nCopying lib files into: #{jsTargetDir}".bold
@@ -169,18 +247,25 @@ def buildMafe(homeDir, targetDir, mode)
     puts "\nMichelangelo FE Build Finished\n".magenta
 end
 
-def prepareDirs(dirs)
-    homeDir = Dir.pwd
-
+def prepareDirs(dirs)    
     puts "Preparing Directories..."
 
     dirs.each do |dir|
         if File.directory?(dir)
-            puts "Removing #{dir}"
-            system "rm -rf #{dir}"
+            if !File.writable?(dir)
+                raise "Error, directory " + dir + " is not writable."
+            end
+
+            FileUtils.rm_rf(dir)
         end
-        #Dir.mkdir(dir)
-        system("mkdir -p #{dir}")
+        
+        begin
+          puts 'create '.green + dir
+          FileUtils.mkdir_p(dir)
+        rescue Exception => e
+          puts ' (failed)'.red
+          raise RuntimeError, e.message
+        end
     end
 end
 
@@ -189,9 +274,14 @@ def getVersion(path)
     version = ""
     Dir.chdir(path) do
         version = `rake version`
+        version = version.strip
     end
 
-    return /([0-9\.]{5}+)/.match(version)
+    if version.lines.count > 1
+        version = version.split("\n").last
+    end
+
+    return version
 end
 
 
@@ -204,25 +294,35 @@ def getHash(path)
     return hash.strip
 end
 
-def executeInto(path, tasks)
+
+def getLogFrom(path)
+    log = ""
+
     Dir.chdir(path) do
-	    tasks.each do |task|
-            system "rake #{task}"
-        end
-	end
+        log = `git log -30 --pretty='[%cr] %h %d %s <%an>' --no-merges`
+    end
+
+    return log.strip
 end
 
+def executeInto(path, tasks, ret = nil)
+    output = ''
+    
+    Dir.chdir(path) do
+	    tasks.each do |task|
+            system "rake #{task}" or raise "An error was raised executing task '#{task}' into #{path}".red
+        end
+	end
+
+    return output
+end
 
 def copyFiles(files)
     files.each do |from, to|
-        print "   Copy ".green + from.gsub(Dir.pwd+'/vendor/colosa/', '')+' -> '.brown+to.gsub(Dir.pwd, '').gray
-        system('cp -Rf '+from+' '+to+' 2>&1')
-
-        if $? == 0
-            puts " (ok)".green
-        else
-            puts " (failed)".red
-        end
+        puts "   copy ".green + from.gsub(Dir.pwd+'/vendor/colosa/', '')
+        puts '   into '.green + to.gsub(Dir.pwd, '')
+        
+        system('cp -Rf '+from+' '+to+' 2>&1') or raise "Can't copy into directory #{to}".red
     end
 end
 
@@ -328,5 +428,10 @@ class String
     def bg_gray;        "\033[47m#{self}\033[0m" end
     def bold;           "\033[1m#{self}\033[22m" end
     def reverse_color;  "\033[7m#{self}\033[27m" end
+end
+
+def getLog
+    output = `git log -30 --pretty='[%cr] %h %d %s <%an>' --no-merges`
+    return output
 end
 

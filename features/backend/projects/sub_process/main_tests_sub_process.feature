@@ -144,3 +144,9 @@ Scenario: List all properties the Sub Processs of ("Sub Process 2")
     And that "spr_tas" is set to "44468053351af70d83c9a49040728765"
     And that "spr_name" is set to "Sub-Process"
     And that "spr_synchronous" is set to "0"
+
+
+# Bug 15109, No se visualiza el grupo de usuarios asignado a la actividad.
+
+
+

@@ -39,7 +39,15 @@ try {
             $usr = mb_strtolower(trim($frm['USR_USERNAME']), 'UTF-8');
             $pwd = trim($frm['USR_PASSWORD']);
         }
+        /*----------------------------------********---------------------------------*/
+        require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
 
+        if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
+            $enterprise = new enterprisePlugin('enterprise');
+            $enterprise->enable();
+            $enterprise->setup();
+        }
+        /*----------------------------------********---------------------------------*/
         $uid = $RBAC->VerifyLogin($usr , $pwd);
         $RBAC->cleanSessionFiles(72); //cleaning session files older than 72 hours
 
@@ -84,6 +92,9 @@ try {
             case -6:
                 $errLabel = 'ID_ROLE_INACTIVE';
                 break;
+            case -7:
+                $errLabel = 'ID_LECA';
+                break;
         }
 
         //to avoid empty string in user field.  This will avoid a weird message "this row doesn't exist"
@@ -92,8 +103,15 @@ try {
             $errLabel = 'WRONG_LOGIN_CREDENTIALS';
         }
 
+        $_SESSION["USERNAME_PREVIOUS1"] = (isset($_SESSION["USERNAME_PREVIOUS2"]))? $_SESSION["USERNAME_PREVIOUS2"] : "";
+        $_SESSION["USERNAME_PREVIOUS2"] = $usr;
+
         if (!isset($uid) || $uid < 0) {
-            if (isset($_SESSION['FAILED_LOGINS'])) {
+            if ($_SESSION["USERNAME_PREVIOUS1"] != "" && $_SESSION["USERNAME_PREVIOUS2"] != "" && $_SESSION["USERNAME_PREVIOUS1"] != $_SESSION["USERNAME_PREVIOUS2"]) {
+                $_SESSION["FAILED_LOGINS"] = 0;
+            }
+
+            if (isset($_SESSION['FAILED_LOGINS']) && ($uid == -1 || $uid == -2)) {
                 $_SESSION['FAILED_LOGINS']++;
             }
             if (!defined('PPP_FAILED_LOGINS')) {
@@ -102,19 +120,24 @@ try {
             if (PPP_FAILED_LOGINS > 0) {
                 if ($_SESSION['FAILED_LOGINS'] >= PPP_FAILED_LOGINS) {
                     $oConnection = Propel::getConnection('rbac');
-                    $oStatement  = $oConnection->prepareStatement("SELECT USR_UID FROM USERS WHERE USR_USERNAME = '" . $usr . "'");
+                    $oStatement  = $oConnection->prepareStatement("SELECT USR_UID FROM RBAC_USERS WHERE USR_USERNAME = '" . $usr . "'");
                     $oDataset    = $oStatement->executeQuery();
                     if ($oDataset->next()) {
                         $sUserUID = $oDataset->getString('USR_UID');
                         $oConnection = Propel::getConnection('rbac');
-                        $oStatement  = $oConnection->prepareStatement("UPDATE USERS SET USR_STATUS = 0 WHERE USR_UID = '" . $sUserUID . "'");
+                        $oStatement  = $oConnection->prepareStatement("UPDATE RBAC_USERS SET USR_STATUS = 0 WHERE USR_UID = '" . $sUserUID . "'");
                         $oStatement->executeQuery();
                         $oConnection = Propel::getConnection('workflow');
                         $oStatement  = $oConnection->prepareStatement("UPDATE USERS SET USR_STATUS = 'INACTIVE' WHERE USR_UID = '" . $sUserUID . "'");
                         $oStatement->executeQuery();
                         unset($_SESSION['FAILED_LOGINS']);
-                        G::SendMessageText(G::LoadTranslation('ID_ACCOUNT') . ' "' . $usr . '" ' . G::LoadTranslation('ID_ACCOUNT_DISABLED_CONTACT_ADMIN'), 'warning');
+                        $errLabel = G::LoadTranslation('ID_ACCOUNT') . ' "' . $usr . '" ' . G::LoadTranslation('ID_ACCOUNT_DISABLED_CONTACT_ADMIN');
                     }
+                    //Log failed authentications
+            	    $message  = "| Many failed authentication attempts for USER: " . $usr . " | IP: " . G::getIpAddress() . " |  WS: " . SYS_SYS;
+            	    $message .= " | BROWSER: " . $_SERVER['HTTP_USER_AGENT'];
+
+            	    G::log($message, PATH_DATA, 'loginFailed.log');
                 }
             }
 
@@ -141,11 +164,13 @@ try {
 
         //Execute the SSO Script from plugin
         $oPluginRegistry =& PMPluginRegistry::getSingleton();
+        $lSession="";
+        $loginInfo = new loginInfo ($usr, $pwd, $lSession  );
         if ($oPluginRegistry->existsTrigger ( PM_LOGIN )) {
-            $lSession="";
-            $loginInfo = new loginInfo ($usr, $pwd, $lSession  );
             $oPluginRegistry->executeTriggers ( PM_LOGIN , $loginInfo );
         }
+        G::LoadClass("enterprise");
+        enterpriseClass::enterpriseSystemUpdate($loginInfo);
         $_SESSION['USER_LOGGED']  = $uid;
         $_SESSION['USR_USERNAME'] = $usr;
     } else {
@@ -186,7 +211,7 @@ try {
             $lang = $frm['USER_LANG'];
         }
     } else {
-        if (defined('SYS_LANG')) {
+        if (defined("SYS_LANG") && SYS_LANG != "") {
             $lang = SYS_LANG;
         } else {
             $lang = 'en';
@@ -262,9 +287,9 @@ try {
     }
 
     $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($_SESSION['USER_LOGGED'], array('USR_PASSWORD_HISTORY' => serialize(array(md5($pwd)))));
-    $aErrors       = $oUserProperty->validatePassword($_POST['form']['USR_PASSWORD'], $aUserProperty['USR_LAST_UPDATE_DATE'], $aUserProperty['USR_LOGGED_NEXT_TIME']);
+    $aErrors       = $oUserProperty->validatePassword($_POST['form']['USR_PASSWORD'], $aUserProperty['USR_LAST_UPDATE_DATE'], $aUserProperty['USR_LOGGED_NEXT_TIME'], true);
 
-    if (!empty($aErrors)) {
+    if (!empty($aErrors) && in_array("ID_PPP_CHANGE_PASSWORD_AFTER_NEXT_LOGIN", $aErrors)) {
         if (!defined('NO_DISPLAY_USERNAME')) {
             define('NO_DISPLAY_USERNAME', 1);
         }
@@ -305,6 +330,12 @@ try {
 
     $oHeadPublisher->addExtJsScript('login/init', false);    //adding a javascript file .js
     $oHeadPublisher->assign('uriReq', $sLocation);
+
+    $oPluginRegistry =& PMPluginRegistry::getSingleton();
+    if ($oPluginRegistry->existsTrigger ( PM_AFTER_LOGIN )) {
+        $oPluginRegistry->executeTriggers ( PM_AFTER_LOGIN , $_SESSION['USER_LOGGED'] );
+    }
+
     G::RenderPage('publish', 'extJs');
     //G::header('Location: ' . $sLocation);
     die;

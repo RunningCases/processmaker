@@ -1213,8 +1213,17 @@ function G_Text(form, element, name)
     if (me.validate == 'Any' && me.mask == '') return true;
 
     var pressKey = (window.event)? window.event.keyCode : event.which;
-    if (pressKey == 107 || pressKey == 187) {
-    	pressKey = 43;
+
+    if (me.validate == "NodeName" && (pressKey == 189 || pressKey == 173)) {
+        return true;
+    }
+
+    if (me.validate == "NodeName" && (pressKey == 0 || pressKey == 192 ||  pressKey == 109)) {
+        return false;
+    }
+
+    if (pressKey == 107 || pressKey == 187 || pressKey == 191 || pressKey == 172 || pressKey == 171 || pressKey == 226 || pressKey == 220 || pressKey == 226 || pressKey == 221 || pressKey == 222 || pressKey == 186) {
+       pressKey = 43;
     }
 
     switch(pressKey){
@@ -1227,6 +1236,14 @@ function G_Text(form, element, name)
 
         if (pressKey == 46 && me.validate == "Email") {
             return true;
+        }
+
+        if (me.validate == "Email"  && pressKey != 8 &&(me.element.value.length > me.element.maxLength - 1)) {
+            return false;
+        }
+
+        if (pressKey == 43 && me.validate == "AlphaNum" ) {
+            return false;
         }
 
         me.applyMask(pressKey);
@@ -1244,6 +1261,9 @@ function G_Text(form, element, name)
         return true;
         break;
       default:
+        if (me.validate == 'NodeName' && (pressKey == 190 || pressKey == 189)) {
+            return false;
+        }
         if (me.mType == 'date' || me.mType == 'currency' || me.mType == 'percentage' || me.validate == 'Real' || me.validate == 'Int') {
           if ((48 <= pressKey && pressKey <= 57) || (pressKey == 109 || pressKey == 190 || pressKey == 188 || pressKey == 189) || (96 <= pressKey && pressKey <= 111)) {
             return true;
@@ -1375,9 +1395,9 @@ function G_Text(form, element, name)
           keyValid = patron.test(key);
           break;
         case 'AlphaNum':
-          patron =/[a-zA-Z0-9\sÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂºÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â«ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¶ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¹Ã…â€œÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¹ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ]/;
-          key = String.fromCharCode(pressKey);
-          keyValid = patron.test(key);
+            patron =/[A-Za-z0-9\sáéíóúäëïöüñçÇÑÁÉÍÓÚÄËÏÖÜ]/;
+            key = String.fromCharCode(pressKey);
+            keyValid = patron.test(key);
           break;
         case 'NodeName': case 'Login':
           updateOnChange = false;
@@ -1398,6 +1418,17 @@ function G_Text(form, element, name)
             keyValid = k.result();
           }
           break;
+        case 'Email':
+            var k = new leimnud.module.validator({
+                valid :[me.validate],
+                key   :(window.event) ? window.event : event,
+                lang  :(typeof(me.language)!=='undefined')? me.language:"en"
+            });
+            keyValid = k.result();
+            if (pressKey == 220 || pressKey == 189 || pressKey == 8364 || pressKey == 182 || pressKey == 172 || pressKey == 33 || pressKey == 35 || pressKey == 63 || pressKey == 123 || pressKey == 124 || pressKey == 125 || pressKey == 126 || pressKey == 162 || pressKey == 171 || pressKey == 8220) {
+                keyValid = false;
+            }
+            break;
         default:
           var k = new leimnud.module.validator({
             valid :[me.validate],
@@ -1440,6 +1471,14 @@ function G_Text(form, element, name)
 
       if (me.browser.name == 'Firefox') {
         if (keyCode == 0) return true;
+      }
+
+      if (me.browser.name == 'Microsoft Internet Explorer' || me.browser.name == 'Netscape'){
+    	    if (window.event.preventDefault) {
+    	    	window.event.preventDefault();
+    		} else {
+    			window.event.returnValue = false;
+    		}
       }
 
       if (me.browser.name == 'Chrome' || me.browser.name == 'Safari'){
@@ -2938,6 +2977,7 @@ var validateForm = function(sRequiredFields) {
          *  i.ei <form onsubmit="myaction(MyjsString)" ...   with var MyjsString = "some string that is into a variable, so this broke the html";
         */
 
+        sRequiredFields = sRequiredFields.replace(/\n/g, " ");
         if( typeof(sRequiredFields) != 'object' || sRequiredFields.indexOf("%27") > 0 ) {
             sRequiredFields = sRequiredFields.replace(/%27/gi, '"');
         }
@@ -3262,6 +3302,38 @@ var validateForm = function(sRequiredFields) {
                                 inputAux.value = link.innerHTML;
 
                                 frm.appendChild(inputAux);
+                            }
+                        }
+                    }
+                }
+            }
+
+            arrayForm = document.getElementsByTagName("form");
+            i1 = 0;
+            i2 = 0;
+
+            for (i1 = 0; i1 <= arrayForm.length - 1; i1++) {
+                var frm = arrayForm[i1];
+
+                var arrayInput = frm.getElementsByTagName("input");
+
+                for (i2 = 0; i2 <= arrayInput.length - 1; i2++) {
+                    var inputAux2 = arrayInput[i2];
+
+                    if (inputAux2.type == "file") {
+                        if (inputAux2.value != "") {
+                            var pmindocmaxfilesize = inputAux2.getAttribute("pmindocmaxfilesize");
+
+                            if (pmindocmaxfilesize != null && pmindocmaxfilesize != "" && pmindocmaxfilesize > 0) {
+                                var flagFilesize = inputDocumentVerifySize(parseInt(pmindocmaxfilesize), inputAux2);
+
+                                if (flagFilesize == 0) {
+                                    new leimnud.module.app.alert().make({label: _("ID_SIZE_VERY_LARGE_PERMITTED")});
+
+                                    swSubmitValidateForm = 1;
+
+                                    return false;
+                                }
                             }
                         }
                     }
@@ -3908,15 +3980,15 @@ function dropDownSetOption(elem, arrayOption)
 function dynaFormChanged(frm)
 {
     for (var i1 = 0; i1 <= frm.elements.length - 1; i1++) {
-        
+
         if((frm.elements[i1].type=="radio" || frm.elements[i1].type=="checkbox") && (frm.elements[i1].checked!=frm.elements[i1].defaultChecked)) {
           return true;
         }
-        
+
         if((frm.elements[i1].type=="textarea" || frm.elements[i1].type=="text" || frm.elements[i1].type=="file") && (frm.elements[i1].value!=frm.elements[i1].defaultValue)) {
           return true;
         }
-        
+
 
         if (frm.elements[i1].tagName.toLowerCase() == "select") {
             var selectDefaultValue = frm.elements[i1].value;

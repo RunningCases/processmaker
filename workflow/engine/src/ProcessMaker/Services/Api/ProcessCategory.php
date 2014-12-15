@@ -5,13 +5,29 @@ use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
 
 /**
- * Group Api Controller
+ * ProcessCategory Api Controller
  *
  * @protected
  */
 class ProcessCategory extends Api
 {
-    private $formatFieldNameInUppercase = false;
+    private $category;
+
+    /**
+     * Constructor of the class
+     *
+     * return void
+     */
+    public function __construct()
+    {
+        try {
+            $this->category = new \ProcessMaker\BusinessModel\ProcessCategory();
+
+            $this->category->setFormatFieldNameInUppercase(false);
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
 
     /**
      * @url GET /categories
@@ -19,87 +35,76 @@ class ProcessCategory extends Api
     public function doGetCategories($filter = null, $start = null, $limit = null)
     {
         try {
-            $processCategory = new \ProcessMaker\BusinessModel\ProcessCategory();
-            $processCategory->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
-
-            $response = $processCategory->getCategories(array("filter" => $filter), null, null, $start, $limit);
+            $response = $this->category->getCategories(array("filter" => $filter), null, null, $start, $limit);
 
             return $response;
         } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
     /**
      * @url GET /category/:cat_uid
      *
-     * @param string $cat_uid     {@min 32}{@max 32}
+     * @param string $cat_uid {@min 32}{@max 32}
      */
     public function doGetCategory($cat_uid)
     {
         try {
-            $processCategory = new \ProcessMaker\BusinessModel\ProcessCategory();
-            $processCategory->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
-
-            $response = $processCategory->getCategory($cat_uid);
+            $response = $this->category->getCategory($cat_uid);
 
             return $response;
         } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
     /**
      * @url POST /category
      *
-     * @param string $cat_name
+     * @param array $request_data
      *
+     * @status 201
      */
-    public function doPostCategory($cat_name)
+    public function doPostCategory(array $request_data)
     {
         try {
-            $processCategory = new \ProcessMaker\BusinessModel\ProcessCategory();
-            $response = $processCategory->addCategory($cat_name);
+            $arrayData = $this->category->create($request_data);
+
+            $response = $arrayData;
 
             return $response;
         } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
     /**
      * @url PUT /category/:cat_uid
      *
-     * @param string $cat_uid     {@min 32}{@max 32}
-     * @param string $cat_name
-     *
+     * @param string $cat_uid      {@min 32}{@max 32}
+     * @param array  $request_data
      */
-    public function doPutCategory($cat_uid, $cat_name)
+    public function doPutCategory($cat_uid, array $request_data)
     {
         try {
-            $processCategory = new \ProcessMaker\BusinessModel\ProcessCategory();
-            $response = $processCategory->updateCategory($cat_uid, $cat_name);
-
-            return $response;
+            $arrayData = $this->category->update($cat_uid, $request_data);
         } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
     /**
      * @url DELETE /category/:cat_uid
      *
-     * @param string $cat_uid     {@min 32}{@max 32}
-     *
+     * @param string $cat_uid {@min 32}{@max 32}
      */
     public function doDeleteCategory($cat_uid)
     {
         try {
-            $processCategory = new \ProcessMaker\BusinessModel\ProcessCategory();
-            $processCategory->deleteCategory($cat_uid);
-
+            $this->category->delete($cat_uid);
         } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 }

@@ -86,7 +86,7 @@
   </USR_RESUME>
 -->
   <MAX_FILES_SIZE type="edit" mode="view">
-    <en><![CDATA[Max upload file size]]></en>
+    <en><![CDATA[Maximum upload file size]]></en>
   </MAX_FILES_SIZE>
   <SUBMIT type="button" onclick="verifyUserInformation(this.form);" group="1">
     <en><![CDATA[Save]]></en>

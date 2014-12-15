@@ -27,6 +27,63 @@ use ProcessMaker\Importer\XmlImporter;
 ini_set("max_execution_time", 0);
 
 if (isset($_FILES["PROCESS_FILENAME"]) &&
+    pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "pm" &&
+    $_FILES["PROCESS_FILENAME"]["error"] == 0
+) {
+    //Check disabled code
+    $response = array();
+
+    try {
+        $fh = fopen($_FILES["PROCESS_FILENAME"]["tmp_name"], "rb");
+        $content = fread($fh, (int)(fread($fh, 9)));
+        $data = unserialize($content);
+        fclose($fh);
+
+        if (is_object($data) && isset($data->triggers) && is_array($data->triggers) && count($data->triggers) > 0) {
+            G::LoadClass("codeScanner");
+
+            $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+
+            $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+
+            $strFoundDisabledCode = "";
+
+            foreach ($data->triggers as $value) {
+                $arrayTriggerData = $value;
+
+                $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $arrayTriggerData["TRI_WEBBOT"]);
+
+                if (count($arrayFoundDisabledCode) > 0) {
+                    $strCodeAndLine = "";
+
+                    foreach ($arrayFoundDisabledCode["source"] as $key2 => $value2) {
+                        $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key2, implode(", ", $value2)));
+                    }
+
+                    $strFoundDisabledCode .= (($strFoundDisabledCode != "")? "\n" : "") . "- " . $arrayTriggerData["TRI_TITLE"] . ": " . $strCodeAndLine;
+                }
+            }
+
+            if ($strFoundDisabledCode != "") {
+                $response["status"]  = "DISABLED-CODE";
+                $response["success"] = true;
+                $response["message"] = G::LoadTranslation("ID_DISABLED_CODE_PROCESS", array($data->process["PRO_TITLE"], "\n" . $strFoundDisabledCode));
+
+                echo G::json_encode($response);
+                exit(0);
+            }
+        }
+    } catch (Exception $e) {
+        $response["status"]       = "ERROR";
+        $response["success"]      = true;
+        $response["catchMessage"] = $e->getMessage();
+
+        echo G::json_encode($response);
+        exit(0);
+    }
+}
+
+if (isset($_FILES["PROCESS_FILENAME"]) &&
     pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "pmx"
 ) {
     $importer = new XmlImporter();
@@ -285,6 +342,19 @@ if ($action == "uploadFileNewProcessExist") {
         }
 
         $importer->throwExceptionIfExistsReservedWordsSql($oData);
+
+        //**cheking if the PRO_CREATE_USER exist**//
+        $usrCrtr = $oData->process['PRO_CREATE_USER'];
+
+        $exist = new Users();
+        if($exist->userExists($usrCrtr)){
+        	$usrInfo = $exist->getAllInformation($usrCrtr);
+        	if ($usrInfo['status'] == 'CLOSED'){
+        		$oData->process['PRO_CREATE_USER'] = $_SESSION['USER_LOGGED'];
+        	}
+        } else {
+        	$oData->process['PRO_CREATE_USER'] = $_SESSION['USER_LOGGED'];
+        }
 
         $Fields['PRO_FILENAME'] = $filename;
         $sProUid = $oData->process['PRO_UID'];

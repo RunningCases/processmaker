@@ -14,6 +14,19 @@ require_once 'classes/model/om/BasePmoauthUserAccessTokens.php';
  *
  * @package    classes.model
  */
-class PmoauthUserAccessTokens extends BasePmoauthUserAccessTokens {
+class PmoauthUserAccessTokens extends BasePmoauthUserAccessTokens
+{
+    /**
+     * @param $token
+     * @return \PmoauthUserAccessTokens|bool
+     */
+    public function getSessionData($token)
+    {
+        $c = new Criteria('workflow');
+        //$c->addSelectColumn(PmoauthUserAccessTokensPeer::ACCESS_TOKEN);
+        $c->add(PmoauthUserAccessTokensPeer::ACCESS_TOKEN, $token, Criteria::EQUAL);
+        $result = PmoauthUserAccessTokensPeer::doSelect($c);
 
+        return (is_array($result) && empty($result)) ? false : $result[0];
+    }
 } // PmoauthUserAccessTokens

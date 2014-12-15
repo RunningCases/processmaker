@@ -15,6 +15,8 @@ class Admin extends Controller
 
     public function system ()
     {
+        global $RBAC;
+        $RBAC->requirePermissions( 'PM_SETUP' );
         require_once PATH_CONTROLLERS . 'main.php';
         G::loadClass( 'system' );
         $skinsList = System::getSkingList();
@@ -28,6 +30,7 @@ class Admin extends Controller
         $timeZonesList = array_keys( $timeZonesList );
         $mainController = new Main();
         $languagesList = $mainController->getLanguagesList();
+        $languagesList[] = array ("", G::LoadTranslation("ID_USE_LANGUAGE_URL"));
         $sysConf = System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
 
         foreach ($skinsList['skins'] as $skin) {
@@ -60,6 +63,8 @@ class Admin extends Controller
 
     public function uxList ()
     {
+        global $RBAC;
+        $RBAC->requirePermissions( 'PM_SETUP' );
         require_once PATH_CONTROLLERS . 'adminProxy.php';
         $this->includeExtJS( 'admin/uxUsersList' );
         G::LoadClass( 'configuration' );

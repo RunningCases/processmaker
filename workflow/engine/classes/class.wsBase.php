@@ -899,6 +899,7 @@ class wsBase
      * @param $aAttachment = null
      * @param boolean $showMessage = true
      * @param int $delIndex = 0
+     * @param $config = array
      * @return $result will return an object
      */
     public function sendMessage(
@@ -912,13 +913,23 @@ class wsBase
         $appFields = null,
         $aAttachment = null,
         $showMessage = true,
-        $delIndex = 0
+        $delIndex = 0,
+    	$config = array()
     ) {
         try {
             if (!class_exists('System')) {
                 G::LoadClass('system');
             }
-            $aSetup = System::getEmailConfiguration();
+            $licensedFeatures = & PMLicensedFeatures::getSingleton();
+            /*----------------------------------********---------------------------------*/
+            if (!empty($config) && $licensedFeatures->verifyfeature('nKaNTNuT1MzK0RsMEtXTnYzR09ucHF2WGNuS0hRdDBBak42WXJhNVVOOG1INEVoaU1EaTllbjBBeEJNeG9wRVJ6NmxQelhyVTBvdThzPQ==')) {
+                $aSetup = $config;
+            } else {
+            /*----------------------------------********---------------------------------*/
+                $aSetup = System::getEmailConfiguration();
+            /*----------------------------------********---------------------------------*/ 
+            }
+            /*----------------------------------********---------------------------------*/
 
             $oSpool = new spoolRun();
 
@@ -1187,7 +1198,7 @@ class wsBase
             $arrayData = array ();
 
             $arrayData["USR_USERNAME"] = $userName;
-            $arrayData["USR_PASSWORD"] = md5( $password );
+            $arrayData["USR_PASSWORD"] = Bootstrap::hashPassword( $password );
             $arrayData["USR_FIRSTNAME"] = $firstName;
             $arrayData["USR_LASTNAME"] = $lastName;
             $arrayData["USR_EMAIL"] = $email;
@@ -1378,7 +1389,7 @@ class wsBase
             }
 
             if (! empty( $password )) {
-                $arrayData["USR_PASSWORD"] = md5( $password );
+                $arrayData["USR_PASSWORD"] = Bootstrap::hashPassword( $password );
             }
 
             //Update user

@@ -38,7 +38,7 @@ Background:
         Then the response status code should be 200
         And the response charset is "UTF-8"
         And the type is "array"
-        And the response has 7 record
+        And the response has 6 record
 
   
     Scenario: Create a new department in the workspace

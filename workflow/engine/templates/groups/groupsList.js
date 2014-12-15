@@ -212,6 +212,7 @@ Ext.onReady(function(){
   });
 
   store = new Ext.data.GroupingStore( {
+    remoteSort: true,
     proxy : new Ext.data.HttpProxy({
       url: 'groups_Ajax?action=groupsList'
     }),
@@ -243,8 +244,8 @@ Ext.onReady(function(){
               {id:'GRP_UID', dataIndex: 'USR_UID', hidden:true, hideable:false},
               {header: _('ID_GROUP_NAME'), dataIndex: 'CON_VALUE', width: 400, align:'left'},
               {header: _('ID_STATUS'), dataIndex: 'GRP_STATUS', width: 130, align:'center', renderer: render_status},
-              {header: _('ID_USERS'), dataIndex: 'GRP_USERS', width: 100, align:'center'},
-              {header: _('ID_TASKS'), dataIndex: 'GRP_TASKS', width: 100, align:'center'}
+              {header: _("ID_USERS"), dataIndex: "GRP_USERS", sortable: false, width: 100, align:"center"},
+              {header: _("ID_TASKS"), dataIndex: "GRP_TASKS", sortable: false, width: 100, align:"center"}
               ]
   });
 
@@ -516,7 +517,8 @@ DeleteButtonAction = function() {
                                 url: "groups_Ajax",
                                     params: {
                                         action: "deleteGroup",
-                                        GRP_UID: rowSelected.data.GRP_UID
+                                        GRP_UID: rowSelected.data.GRP_UID,
+                                        GRP_NAME: rowSelected.data.CON_VALUE
                                     },
 
                                     success: function(r,o) {

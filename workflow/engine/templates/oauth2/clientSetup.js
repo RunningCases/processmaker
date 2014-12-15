@@ -137,7 +137,7 @@ clientSetup.application = {
                         winData.setTitle("Edit Application");
                         winData.show();
 
-                        Ext.getCmp("btnSubmit").btnEl.dom.innerHTML = "Edit Application";
+                        Ext.getCmp("btnSubmit").btnEl.dom.innerHTML = "Save Changes";
 
                         Ext.getCmp("txtName").allowBlank = false;
                     }
@@ -336,8 +336,8 @@ clientSetup.application = {
                             id: "txtRedirectUri",
                             name: "txtRedirectUri",
 
-                            fieldLabel: "Callback URL",
-                            vtype: "url"
+                            fieldLabel: "Callback URL"/*,
+                            vtype: "url"*/
                         },
                         {
                             xtype: "label",
@@ -353,7 +353,7 @@ clientSetup.application = {
             buttons: [
                 {
                     id: "btnSubmit",
-                    //text: "",
+                    text: "Save",
                     handler: function ()
                     {
                         if (Ext.getCmp("frmOauthClient").getForm().isValid()) {
@@ -634,22 +634,22 @@ clientSetup.application = {
             //style: "margin: 0 auto 0 auto;",
             //width: 550,
             //height: 450,
-            title: "<div><div style=\"float: left;\">" + "My Applications" + "</div><div id=\"divAccessTokenSetup\" style=\"float: right;\"></div><div style=\"clear: both; height: 0; line-height:0; font-size: 0;\"></div></div>",
+            title: "<div><div style=\"float: left;\">" + "ProcessMaker Dev Tools / User Applications" + "</div><div id=\"divAccessTokenSetup\" style=\"float: right;\"></div><div style=\"clear: both; height: 0; line-height:0; font-size: 0;\"></div></div>",
             border: false,
 
             listeners: {
                 afterrender: function (grid)
                 {
-                    var btn = new Ext.Button({
-                        text: "&nbsp;" + "Applications",
-                        iconCls: "button_menu_ext ss_sprite ss_arrow_left",
-                        renderTo: "divAccessTokenSetup",
-
-                        handler: function ()
-                        {
-                            location.href = "accessTokenSetup";
-                        }
-                    });
+//                    var btn = new Ext.Button({
+//                        text: "&nbsp;" + "Applications",
+//                        iconCls: "button_menu_ext ss_sprite ss_arrow_left",
+//                        renderTo: "divAccessTokenSetup",
+//
+//                        handler: function ()
+//                        {
+//                            location.href = "accessTokenSetup";
+//                        }
+//                    });
                 },
                 rowdblclick: function (grid, rowIndex, evt)
                 {

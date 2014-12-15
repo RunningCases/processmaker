@@ -20,6 +20,6 @@
     <en><![CDATA[Average (Hours)]]></en>
   </PROMEDIO>
   <RPT_VIEW type="link" colWidth="60" link="#" onclick="panDel('@#PRO_UID');return false;">
-    <en><![CDATA[Detaills]]></en>
+    <en><![CDATA[Details]]></en>
   </RPT_VIEW>
 </dynaForm>

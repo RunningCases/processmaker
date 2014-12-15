@@ -14,6 +14,8 @@ switch ($request) {
             );
         }
 
+        $result->rows[] = array ("LAN_ID" => "", "LAN_NAME" => G::LoadTranslation("ID_USE_LANGUAGE_URL"));
+
         print (G::json_encode( $result )) ;
         break;
     case 'saveSettings':
@@ -28,10 +30,16 @@ switch ($request) {
 
         $conf->saveConfig( 'ENVIRONMENT_SETTINGS', '' );
 
+        $lang = isset( $_REQUEST['lang'] ) ? $_REQUEST['lang'] : 'en';
         //remove from memcache when this value is updated/created
         $memcache->delete( 'flagForgotPassword' );
 
+        $response = new stdclass();
         $response->success = true;
+
+        $messEnableForgotPassword = (isset($conf->aConfig["login_enableForgotPassword"]) && $conf->aConfig["login_enableForgotPassword"] == "1")? G::LoadTranslation("ID_YES") : G::LoadTranslation("ID_NO");
+        G::auditLog("UpdateLoginSettings", "DefaultLanguage-> " . $lang . " EnableForgotPassword-> " . $messEnableForgotPassword);
+
         echo G::json_encode( $response );
 
         break;

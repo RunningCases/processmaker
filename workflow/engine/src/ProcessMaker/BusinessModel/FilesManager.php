@@ -173,11 +173,17 @@ class FilesManager
                 case 'templates':
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     $sCheckDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory;
+                    if ($extention != '.html') {
+                        throw new \Exception(\G::LoadTranslation('ID_FILE_UPLOAD_INCORRECT_EXTENSION'));
+                    }
                     break;
                 case 'public':
                     $sDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     $sCheckDirectory = PATH_DATA_PUBLIC . $sProcessUID . PATH_SEP . $sSubDirectory;
                     $sEditable = false;
+                    if ($extention == '.exe') {
+                        throw new \Exception(\G::LoadTranslation('ID_FILE_UPLOAD_INCORRECT_EXTENSION'));
+                    }
                     break;
                 default:
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $sProcessUID . PATH_SEP . $sSubDirectory . $aData['prf_filename'];
@@ -185,7 +191,7 @@ class FilesManager
             }
             $content = $aData['prf_content'];
             if (is_string($content)) {
-                if (file_exists(PATH_SEP.$sDirectory)) {
+                if (file_exists($sDirectory)) {
                     $directory = $sMainDirectory. PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                     throw new \Exception(\G::LoadTranslation("ID_EXISTS_FILE", array($directory)));
                 }
@@ -387,7 +393,7 @@ class FilesManager
      * @param string $prfUid {@min 32} {@max 32}
      *
      *
-     * @access public 
+     * @access public
      */
     public function deleteProcessFilesManager($sProcessUID, $prfUid)
     {
@@ -406,17 +412,11 @@ class FilesManager
             if ($path == '') {
                 throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('prf_uid')));
             }
-            $sFile = end(explode("/",$path));
-            $sPath = str_replace($sFile,'',$path);
-            $sSubDirectory = substr(str_replace($sProcessUID,'',substr($sPath,(strpos($sPath, $sProcessUID)))),0,-1);
-            $sMainDirectory = str_replace(substr($sPath, strpos($sPath, $sProcessUID)),'', $sPath);
-            if ($sMainDirectory == PATH_DATA_MAILTEMPLATES) {
-                $sMainDirectory = 'mailTemplates';
-            } else {
-                $sMainDirectory = 'public';
+
+            if (file_exists($path)) {
+                unlink($path);
             }
-            $oProcessMap = new \processMap(new \DBConnection());
-            $oProcessMap->deleteFile($sProcessUID, $sMainDirectory, $sSubDirectory, $sFile);
+
             $rs = \ProcessFilesPeer::doDelete($criteria);
         } catch (Exception $e) {
             throw $e;

@@ -2,213 +2,319 @@
 namespace Tests\BusinessModel;
 
 if (!class_exists("Propel")) {
-    include_once (__DIR__ . "/../bootstrap.php");
+    require_once(__DIR__ . "/../bootstrap.php");
 }
 
 /**
  * Class ProcessCategoryTest
  *
- * @package Tests/ProcessMaker/BusinessModel
+ * @package Tests\BusinessModel
  */
 class ProcessCategoryTest extends \PHPUnit_Framework_TestCase
 {
-    protected static $arrayUid = array();
-    protected $oCategory;
+    protected static $category;
+    protected static $numCategory = 2;
 
     /**
      * Set class for test
      *
      * @coversNothing
-     *
-     * @copyright Colosa - Bolivia
      */
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        $this->oCategory = new \ProcessMaker\BusinessModel\ProcessCategory();
-    }
-
-
-    public static function tearDownAfterClass()
-    {
-        foreach (self::$arrayUid as $processCategoryUid) {
-            if ($processCategoryUid != "") {
-                $processCategory = new \ProcessCategory();
-
-                $processCategory->setCategoryUid($processCategoryUid);
-                $processCategory->delete();
-            }
-        }
+        self::$category = new \ProcessMaker\BusinessModel\ProcessCategory();
     }
 
     /**
-     * Test error for incorrect value of category name in array
+     * Test create categories
      *
-     * @covers \BusinessModel\ProcessCategory::addCategory
-     * @expectedException        Exception
-     * @expectedExceptionMessage cat_name. Process Category name can't be null
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::create
      *
-     * @copyright Colosa - Bolivia
+     * @return array
      */
-    public function testAddCategoryErrorIncorrectValue()
-    {
-        $this->oCategory->addCategory('');
-    }
-
-    /**
-     * Test add Category
-     *
-     * @covers \BusinessModel\ProcessCategory::addCategory
-     *
-     * @copyright Colosa - Bolivia
-     */
-    public function testAddCategory()
-    {
-        $response = $this->oCategory->addCategory('New Category Test');
-        $this->assertTrue(is_object($response));
-        $aResponse = json_decode(json_encode($response), true);
-        return $aResponse;
-    }
-
-    /**
-     * Test error for incorrect value of category name in array
-     *
-     * @covers \BusinessModel\ProcessCategory::addCategory
-     * @expectedException        Exception
-     * @expectedExceptionMessage cat_name. Duplicate Process Category name
-     *
-     * @copyright Colosa - Bolivia
-     */
-    public function testAddCategoryErrorDuplicateValue()
-    {
-        $this->oCategory->addCategory('New Category Test');
-    }
-
-    /**
-     * Test error for incorrect value of category name in array
-     *
-     * @covers \BusinessModel\ProcessCategory::updateCategory
-     * @expectedException        Exception
-     * @expectedExceptionMessage cat_name. Duplicate Process Category name
-     *
-     * @copyright Colosa - Bolivia
-     */
-    public function testUpdateCategoryErrorDuplicateValue()
-    {
-        $this->oCategory->addCategory('New Category Test');
-    }
-
-    /**
-     * Test put Category
-     *
-     * @covers \BusinessModel\ProcessCategory::updateCategory
-     * @depends testAddCategory
-     * @param array $aResponse
-     *
-     * @copyright Colosa - Bolivia
-     */
-    public function testUpdateCategory(array $aResponse)
-    {
-        $response = $this->oCategory->updateCategory($aResponse["cat_uid"], 'Name Update Category Test');
-        $this->assertTrue(is_object($response));
-    }
-
-    /**
-     * Test error for incorrect value of category id
-     *
-     * @covers \BusinessModel\ProcessCategory::getCategory
-     * @expectedException        Exception
-     * @expectedExceptionMessage The Category with cat_uid: 12345678912345678912345678912345678 doesn't exist!
-     *
-     * @copyright Colosa - Bolivia
-     */
-    public function testGetErrorValue()
-    {
-        $this->oCategory->getCategory('12345678912345678912345678912345678');
-    }
-
-    /**
-     * Test get Category
-     *
-     * @covers \BusinessModel\ProcessCategory::getCategory
-     * @depends testAddCategory
-     * @param array $aResponse
-     *
-     * @copyright Colosa - Bolivia
-     */
-    public function testGetCategory(array $aResponse)
-    {
-        $response = $this->oCategory->getCategory($aResponse["cat_uid"]);
-        $this->assertTrue(is_object($response));
-    }
-
-    /**
-     * Test error for incorrect value of category id
-     *
-     * @covers \BusinessModel\ProcessCategory::deleteCategory
-     * @expectedException        Exception
-     * @expectedExceptionMessage The Category with cat_uid: 12345678912345678912345678912345678 doesn't exist!
-     *
-     * @copyright Colosa - Bolivia
-     */
-    public function testDeleteErrorValue()
-    {
-        $this->oCategory->deleteCategory('12345678912345678912345678912345678');
-    }
-
-    /**
-     * Test delete Category
-     *
-     * @covers \BusinessModel\ProcessCategory::deleteCategory
-     * @depends testAddCategory
-     * @param array $aResponse
-     *
-     * @copyright Colosa - Bolivia
-     */
-    public function testDeleteCategory(array $aResponse)
-    {
-        $response = $this->oCategory->deleteCategory($aResponse["cat_uid"]);
-        $this->assertTrue(empty($response));
-    }
-
     public function testCreate()
     {
-        try {
-            $processCategory = new \ProcessCategory();
+        $arrayRecord = array();
 
-            $processCategoryUid = \G::GenerateUniqueID();
+        //Create
+        for ($i = 0; $i <= self::$numCategory - 1; $i++) {
+            $arrayData = array(
+                "CAT_NAME" => "PHPUnit My Category " . $i
+            );
 
-            $processCategory->setNew(true);
-            $processCategory->setCategoryUid($processCategoryUid);
-            $processCategory->setCategoryName("PHPUnit Category");
-            $processCategory->save();
-        } catch (\Exception $e) {
-            $processCategoryUid = "";
+            $arrayCategory = self::$category->create($arrayData);
+
+            $this->assertTrue(is_array($arrayCategory));
+            $this->assertNotEmpty($arrayCategory);
+
+            $this->assertTrue(isset($arrayCategory["CAT_UID"]));
+
+            $arrayRecord[] = $arrayCategory;
         }
 
-        self::$arrayUid[] = $processCategoryUid;
+        //Create - Japanese characters
+        $arrayData = array(
+            "CAT_NAME" => "テスト（PHPUnitの）",
+        );
 
-        $this->assertNotEmpty($processCategoryUid);
+        $arrayCategory = self::$category->create($arrayData);
+
+        $this->assertTrue(is_array($arrayCategory));
+        $this->assertNotEmpty($arrayCategory);
+
+        $this->assertTrue(isset($arrayCategory["CAT_UID"]));
+
+        $arrayRecord[] = $arrayCategory;
+
+        //Return
+        return $arrayRecord;
     }
 
-
-    public function testGetCategories()
+    /**
+     * Test update categories
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::update
+     *
+     * @depends testCreate
+     * @param   array $arrayRecord Data of the categories
+     */
+    public function testUpdate(array $arrayRecord)
     {
-        $processCategory = new \ProcessMaker\BusinessModel\ProcessCategory();
+        $arrayData = array("CAT_NAME" => "PHPUnit My Category 1...");
 
-        $arrayProcessCategory = $processCategory->getCategories();
+        $arrayCategory = self::$category->update($arrayRecord[1]["CAT_UID"], $arrayData);
 
-        $this->assertNotEmpty($arrayProcessCategory);
+        $arrayCategory = self::$category->getCategory($arrayRecord[1]["CAT_UID"]);
 
-        $arrayProcessCategory = $processCategory->getCategories(null, null, null, 0, 0);
+        $this->assertTrue(is_array($arrayCategory));
+        $this->assertNotEmpty($arrayCategory);
 
-        $this->assertEmpty($arrayProcessCategory);
+        $this->assertEquals($arrayCategory["CAT_NAME"], $arrayData["CAT_NAME"]);
+    }
 
-        $arrayProcessCategory = $processCategory->getCategories(array("filter" => "PHP"));
+    /**
+     * Test get categories
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::getCategories
+     *
+     * @depends testCreate
+     * @param   array $arrayRecord Data of the categories
+     */
+    public function testGetCategories(array $arrayRecord)
+    {
+        $arrayCategory = self::$category->getCategories();
 
-        $this->assertNotEmpty($arrayProcessCategory);
+        $this->assertNotEmpty($arrayCategory);
 
-        $this->assertEquals($arrayProcessCategory[0]["CAT_NAME"], "PHPUnit Category");
-        $this->assertEquals($arrayProcessCategory[0]["CAT_TOTAL_PROCESSES"], 0);
+        $arrayCategory = self::$category->getCategories(null, null, null, 0, 0);
+
+        $this->assertEmpty($arrayCategory);
+
+        $arrayCategory = self::$category->getCategories(array("filter" => "PHPUnit"));
+
+        $this->assertTrue(is_array($arrayCategory));
+        $this->assertNotEmpty($arrayCategory);
+
+        $this->assertEquals($arrayCategory[0]["CAT_UID"],  $arrayRecord[0]["CAT_UID"]);
+        $this->assertEquals($arrayCategory[0]["CAT_NAME"], $arrayRecord[0]["CAT_NAME"]);
+    }
+
+    /**
+     * Test get category
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::getCategory
+     *
+     * @depends testCreate
+     * @param   array $arrayRecord Data of the categories
+     */
+    public function testGetCategory(array $arrayRecord)
+    {
+        //Get
+        $arrayCategory = self::$category->getCategory($arrayRecord[0]["CAT_UID"]);
+
+        $this->assertTrue(is_array($arrayCategory));
+        $this->assertNotEmpty($arrayCategory);
+
+        $this->assertEquals($arrayCategory["CAT_UID"],  $arrayRecord[0]["CAT_UID"]);
+        $this->assertEquals($arrayCategory["CAT_NAME"], $arrayRecord[0]["CAT_NAME"]);
+
+        //Get - Japanese characters
+        $arrayCategory = self::$category->getCategory($arrayRecord[self::$numCategory]["CAT_UID"]);
+
+        $this->assertTrue(is_array($arrayCategory));
+        $this->assertNotEmpty($arrayCategory);
+
+        $this->assertEquals($arrayCategory["CAT_UID"],  $arrayRecord[self::$numCategory]["CAT_UID"]);
+        $this->assertEquals($arrayCategory["CAT_NAME"], "テスト（PHPUnitの）");
+    }
+
+    /**
+     * Test exception for empty data
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::create
+     *
+     * @expectedException        Exception
+     * @expectedExceptionMessage Invalid value for "$arrayData", it can not be empty.
+     */
+    public function testCreateExceptionEmptyData()
+    {
+        $arrayData = array();
+
+        $arrayCategory = self::$category->create($arrayData);
+    }
+
+    /**
+     * Test exception for required data (CAT_NAME)
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::create
+     *
+     * @expectedException        Exception
+     * @expectedExceptionMessage Undefined value for "CAT_NAME", it is required.
+     */
+    public function testCreateExceptionRequiredDataCatName()
+    {
+        $arrayData = array(
+            "CAT_NAMEX" => "PHPUnit My Category N"
+        );
+
+        $arrayCategory = self::$category->create($arrayData);
+    }
+
+    /**
+     * Test exception for invalid data (CAT_NAME)
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::create
+     *
+     * @expectedException        Exception
+     * @expectedExceptionMessage Invalid value for "CAT_NAME", it can not be empty.
+     */
+    public function testCreateExceptionInvalidDataCatName()
+    {
+        $arrayData = array(
+            "CAT_NAME" => ""
+        );
+
+        $arrayCategory = self::$category->create($arrayData);
+    }
+
+    /**
+     * Test exception for category name existing
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::create
+     *
+     * @expectedException        Exception
+     * @expectedExceptionMessage The category name with CAT_NAME: "PHPUnit My Category 0" already exists.
+     */
+    public function testCreateExceptionExistsCatName()
+    {
+        $arrayData = array(
+            "CAT_NAME" => "PHPUnit My Category 0"
+        );
+
+        $arrayCategory = self::$category->create($arrayData);
+    }
+
+    /**
+     * Test exception for empty data
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::update
+     *
+     * @expectedException        Exception
+     * @expectedExceptionMessage Invalid value for "$arrayData", it can not be empty.
+     */
+    public function testUpdateExceptionEmptyData()
+    {
+        $arrayData = array();
+
+        $arrayCategory = self::$category->update("", $arrayData);
+    }
+
+    /**
+     * Test exception for invalid category UID
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::update
+     *
+     * @expectedException        Exception
+     * @expectedExceptionMessage The category with CAT_UID: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' does not exist.
+     */
+    public function testUpdateExceptionInvalidCatUid()
+    {
+        $arrayData = array(
+            "CAT_NAME" => "PHPUnit My Category N"
+        );
+
+        $arrayCategory = self::$category->update("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", $arrayData);
+    }
+
+    /**
+     * Test exception for invalid data (CAT_NAME)
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::update
+     *
+     * @depends testCreate
+     * @param   array $arrayRecord Data of the categories
+     *
+     * @expectedException        Exception
+     * @expectedExceptionMessage Invalid value for "CAT_NAME", it can not be empty.
+     */
+    public function testUpdateExceptionInvalidDataCatName(array $arrayRecord)
+    {
+        $arrayData = array(
+            "CAT_NAME" => ""
+        );
+
+        $arrayCategory = self::$category->update($arrayRecord[0]["CAT_UID"], $arrayData);
+    }
+
+    /**
+     * Test exception for category name existing
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::update
+     *
+     * @depends testCreate
+     * @param   array $arrayRecord Data of the categories
+     *
+     * @expectedException        Exception
+     * @expectedExceptionMessage The category name with CAT_NAME: "PHPUnit My Category 0" already exists.
+     */
+    public function testUpdateExceptionExistsCatName(array $arrayRecord)
+    {
+        $arrayData = $arrayRecord[0];
+
+        $arrayCategory = self::$category->update($arrayRecord[1]["CAT_UID"], $arrayData);
+    }
+
+    /**
+     * Test delete categories
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::delete
+     *
+     * @depends testCreate
+     * @param   array $arrayRecord Data of the categories
+     */
+    public function testDelete(array $arrayRecord)
+    {
+        foreach ($arrayRecord as $value) {
+            self::$category->delete($value["CAT_UID"]);
+        }
+
+        $arrayCategory = self::$category->getCategories(array("filter" => "PHPUnit"));
+
+        $this->assertTrue(is_array($arrayCategory));
+        $this->assertEmpty($arrayCategory);
+    }
+
+    /**
+     * Test exception for invalid category UID
+     *
+     * @covers \ProcessMaker\BusinessModel\ProcessCategory::delete
+     *
+     * @expectedException        Exception
+     * @expectedExceptionMessage The category with CAT_UID: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' does not exist.
+     */
+    public function testDeleteExceptionInvalidCatUid()
+    {
+        self::$category->delete("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
     }
 }
 

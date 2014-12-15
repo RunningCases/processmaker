@@ -124,7 +124,7 @@ Ext.onReady(function(){
     url: 'processCategory_Ajax?action=saveNewCategory',
     frame: true,
     items:[
-           {xtype: 'textfield', fieldLabel: _('ID_CATEGORY_NAME'), name: 'category', width: 250, allowBlank: false}
+           {xtype: 'textfield', fieldLabel: _('ID_CATEGORY_NAME'), name: 'category', width: 250, maxLength :100, allowBlank: false}
            ],
            buttons: [
                      {text: _('ID_SAVE'), handler: SaveNewCategory},
@@ -138,7 +138,7 @@ Ext.onReady(function(){
     frame: true,
     items:[
            {xtype: 'textfield', name: 'cat_uid', hidden: true },
-           {xtype: 'textfield', fieldLabel: _('ID_CATEGORY_NAME'), name: 'category', width: 250, allowBlank: false}
+           {xtype: 'textfield', fieldLabel: _('ID_CATEGORY_NAME'), name: 'category', width: 250, maxLength :100, allowBlank: false}
            ],
            buttons: [
                      {text: _('ID_SAVE'), handler: UpdateCategory},
@@ -160,13 +160,14 @@ Ext.onReady(function(){
     }
   });
 
-  store = new Ext.data.GroupingStore( {
+  store = new Ext.data.GroupingStore({
+    remoteSort: true,
     proxy : new Ext.data.HttpProxy({
       url: 'processCategory_Ajax?action=processCategoryList'
     }),
-    reader : new Ext.data.JsonReader( {
-      root: 'categories',
-      totalProperty: 'total_categories',
+    reader : new Ext.data.JsonReader({
+      totalProperty: 'totalCount',
+      root: 'data',
       fields : [
                 {name : 'CATEGORY_UID'},
                 {name : 'CATEGORY_PARENT'},
@@ -176,7 +177,6 @@ Ext.onReady(function(){
                 ]
     })
   });
-
   cmodel = new Ext.grid.ColumnModel({
     defaults: {
       width: 50,
@@ -274,7 +274,6 @@ Ext.onReady(function(){
   );
 
   infoGrid.addListener('rowcontextmenu',onMessageContextMenu,this);
-
   infoGrid.store.load();
 
   viewport = new Ext.Viewport({
@@ -306,7 +305,7 @@ NewCategoryWindow = function(){
     width: 420,
     items: [newForm],
     id: 'w',
-    model: true
+    modal: true
   });
   w.show();
 };

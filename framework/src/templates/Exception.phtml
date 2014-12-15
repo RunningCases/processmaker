@@ -59,6 +59,9 @@
             border-radius: 10px;
             border: 1px solid #ccc;
         }
+        pre {
+            font: 18px Georgia, "Times New Roman", Times, serif;
+        }
     </style>
 </head>
 <body>
@@ -67,7 +70,7 @@
     <div class="block_exception clear_fix">
         <h2>
             <abbr title="RuntimeException">RuntimeException</abbr>:
-            <?php echo $message?>
+            <pre><?php echo $message?></pre>
         </h2>
     </div>
     <div class="block">

@@ -194,6 +194,44 @@ class Project extends Api
     }
 
     /**
+     * @url POST /generate-bpmn
+     *
+     * @param array $request_data
+     *
+     * @status 201
+     */
+    public function doPostGenerateBpmn(array $request_data)
+    {
+        try {
+            //Set data
+            $request_data = array_change_key_case($request_data, CASE_UPPER);
+
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+
+            $process->throwExceptionIfDataNotMetFieldDefinition(
+                $request_data,
+                array("PRO_UID" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "processUid")),
+                array("processUid" => "pro_uid"),
+                true
+            );
+
+            //Generate BPMN
+            $workflowBpmn = new \ProcessMaker\Project\Adapter\WorkflowBpmn();
+
+            $projectUid = $workflowBpmn->generateBpmn($request_data["PRO_UID"], "pro_uid", $this->getUserId());
+
+            $arrayData = array_change_key_case(array_merge(array("PRJ_UID" => $projectUid), $request_data), CASE_LOWER);
+
+            $response = $arrayData;
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
      * @url GET /:prj_uid/dynaforms
      *
      * @param string $prj_uid {@min 32}{@max 32}

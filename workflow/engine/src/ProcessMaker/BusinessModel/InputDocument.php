@@ -10,7 +10,7 @@ class InputDocument
         "INP_DOC_DESCRIPTION"      => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                "fieldNameAux" => "inputDocumentDescription"),
         "INP_DOC_FORM_NEEDED"      => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("VIRTUAL", "REAL", "VREAL"),      "fieldNameAux" => "inputDocumentFormNeeded"),
         "INP_DOC_ORIGINAL"         => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("ORIGINAL", "COPY", "COPYLEGAL"), "fieldNameAux" => "inputDocumentOriginal"),
-        "INP_DOC_PUBLISHED"        => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("PRIVATE"),                       "fieldNameAux" => "inputDocumentPublished"),
+        "INP_DOC_PUBLISHED"        => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("PRIVATE", "PUBLIC"),             "fieldNameAux" => "inputDocumentPublished"),
         "INP_DOC_VERSIONING"       => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(0, 1),                            "fieldNameAux" => "inputDocumentVersioning"),
         "INP_DOC_DESTINATION_PATH" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                "fieldNameAux" => "inputDocumentDestinationPath"),
         "INP_DOC_TAGS"             => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                "fieldNameAux" => "inputDocumentTags")
@@ -137,6 +137,68 @@ class InputDocument
     }
 
     /**
+     * Verify if the InputDocument it's assigned in other objects
+     *
+     * @param string $inputDocumentUid Unique id of InputDocument
+     *
+     * return array Return array (true if it's assigned or false otherwise and data)
+     */
+    public function itsAssignedInOtherObjects($inputDocumentUid)
+    {
+        try {
+            $flagAssigned = false;
+            $arrayData = array();
+
+            //Step
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\StepPeer::STEP_UID);
+            $criteria->add(\StepPeer::STEP_TYPE_OBJ, "INPUT_DOCUMENT", \Criteria::EQUAL);
+            $criteria->add(\StepPeer::STEP_UID_OBJ, $inputDocumentUid, \Criteria::EQUAL);
+
+            $rsCriteria = \StepPeer::doSelectRS($criteria);
+
+            if ($rsCriteria->next()) {
+                $flagAssigned = true;
+                $arrayData[] = \G::LoadTranslation("ID_STEPS");
+            }
+
+            //StepSupervisor
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
+            $criteria->add(\StepSupervisorPeer::STEP_TYPE_OBJ, "INPUT_DOCUMENT", \Criteria::EQUAL);
+            $criteria->add(\StepSupervisorPeer::STEP_UID_OBJ, $inputDocumentUid, \Criteria::EQUAL);
+
+            $rsCriteria = \StepSupervisorPeer::doSelectRS($criteria);
+
+            if ($rsCriteria->next()) {
+                $flagAssigned = true;
+                $arrayData[] = \G::LoadTranslation("ID_CASES_MENU_ADMIN");
+            }
+
+            //ObjectPermission
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ObjectPermissionPeer::OP_UID);
+            $criteria->add(\ObjectPermissionPeer::OP_OBJ_TYPE, "INPUT", \Criteria::EQUAL);
+            $criteria->add(\ObjectPermissionPeer::OP_OBJ_UID, $inputDocumentUid, \Criteria::EQUAL);
+
+            $rsCriteria = \ObjectPermissionPeer::doSelectRS($criteria);
+
+            if ($rsCriteria->next()) {
+                $flagAssigned = true;
+                $arrayData[] = \G::LoadTranslation("ID_PROCESS_PERMISSIONS");
+            }
+
+            //Return
+            return array($flagAssigned, $arrayData);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Verify if doesn't exists the InputDocument in table INPUT_DOCUMENT
      *
      * @param string $inputDocumentUid      Unique id of InputDocument
@@ -183,6 +245,27 @@ class InputDocument
         try {
             if ($this->existsTitle($processUid, $inputDocumentTitle, $inputDocumentUidExclude)) {
                 throw new \Exception(\G::LoadTranslation("ID_INPUT_DOCUMENT_TITLE_ALREADY_EXISTS", array($fieldNameForException, $inputDocumentTitle)));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if the InputDocument it's assigned in other objects
+     *
+     * @param string $inputDocumentUid      Unique id of InputDocument
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * return void Throw exception if the InputDocument it's assigned in other objects
+     */
+    public function throwExceptionIfItsAssignedInOtherObjects($inputDocumentUid, $fieldNameForException)
+    {
+        try {
+            list($flagAssigned, $arrayData) = $this->itsAssignedInOtherObjects($inputDocumentUid);
+
+            if ($flagAssigned) {
+                throw new \Exception(\G::LoadTranslation("ID_INPUT_DOCUMENT_ITS_ASSIGNED", array($fieldNameForException, $inputDocumentUid, implode(", ", $arrayData))));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -312,6 +395,8 @@ class InputDocument
         try {
             //Verify data
             $this->throwExceptionIfNotExistsInputDocument($inputDocumentUid, "", $this->arrayFieldNameForException["inputDocumentUid"]);
+
+            $this->throwExceptionIfItsAssignedInOtherObjects($inputDocumentUid, $this->arrayFieldNameForException["inputDocumentUid"]);
 
             //Delete
             //StepSupervisor

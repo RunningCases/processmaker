@@ -204,6 +204,8 @@ CREATE TABLE `DYNAFORM`
 	`PRO_UID` VARCHAR(32) default '0' NOT NULL,
 	`DYN_TYPE` VARCHAR(20) default 'xmlform' NOT NULL,
 	`DYN_FILENAME` VARCHAR(100) default '' NOT NULL,
+	`DYN_CONTENT` MEDIUMTEXT,
+	`DYN_VERSION` INTEGER  NOT NULL,
 	PRIMARY KEY (`DYN_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Forms required';
 #-----------------------------------------------------------------------------
@@ -265,6 +267,9 @@ CREATE TABLE `INPUT_DOCUMENT`
 	`INP_DOC_VERSIONING` TINYINT default 0 NOT NULL,
 	`INP_DOC_DESTINATION_PATH` MEDIUMTEXT,
 	`INP_DOC_TAGS` MEDIUMTEXT,
+	`INP_DOC_TYPE_FILE` VARCHAR(200) default '*.*',
+	`INP_DOC_MAX_FILESIZE` INTEGER default 0 NOT NULL,
+	`INP_DOC_MAX_FILESIZE_UNIT` VARCHAR(2) default 'KB' NOT NULL,
 	PRIMARY KEY (`INP_DOC_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Documentation required';
 #-----------------------------------------------------------------------------
@@ -374,7 +379,7 @@ CREATE TABLE `OUTPUT_DOCUMENT`
 	`OUT_DOC_PDF_SECURITY_OPEN_PASSWORD` VARCHAR(32) default '',
 	`OUT_DOC_PDF_SECURITY_OWNER_PASSWORD` VARCHAR(32) default '',
 	`OUT_DOC_PDF_SECURITY_PERMISSIONS` VARCHAR(150) default '',
-	`OUT_DOC_OPEN_TYPE` INTEGER default 0,
+	`OUT_DOC_OPEN_TYPE` INTEGER default 1,
 	PRIMARY KEY (`OUT_DOC_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
@@ -401,6 +406,8 @@ CREATE TABLE `PROCESS`
 	`PRO_TRI_CANCELED` VARCHAR(32) default '' NOT NULL,
 	`PRO_TRI_PAUSED` VARCHAR(32) default '' NOT NULL,
 	`PRO_TRI_REASSIGNED` VARCHAR(32) default '' NOT NULL,
+	`PRO_TRI_UNPAUSED` VARCHAR(32) default '' NOT NULL,
+	`PRO_TYPE_PROCESS` VARCHAR(32) default 'PUBLIC' NOT NULL,
 	`PRO_SHOW_DELEGATE` TINYINT default 1 NOT NULL,
 	`PRO_SHOW_DYNAFORM` TINYINT default 0 NOT NULL,
 	`PRO_CATEGORY` VARCHAR(48) default '' NOT NULL,
@@ -479,9 +486,10 @@ CREATE TABLE `ROUTE`
 	`ROU_PARENT` VARCHAR(32) default '0' NOT NULL,
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`TAS_UID` VARCHAR(32) default '' NOT NULL,
-	`ROU_NEXT_TASK` VARCHAR(32) default '0' NOT NULL,
+`ROU_NEXT_TASK` VARCHAR(32) default '0' NOT NULL,
 	`ROU_CASE` INTEGER default 0 NOT NULL,
 	`ROU_TYPE` VARCHAR(25) default 'SEQUENTIAL' NOT NULL,
+	`ROU_DEFAULT` INTEGER default 0 NOT NULL,
 	`ROU_CONDITION` VARCHAR(512) default '' NOT NULL,
 	`ROU_TO_LAST_USER` VARCHAR(20) default 'FALSE' NOT NULL,
 	`ROU_OPTIONAL` VARCHAR(20) default 'FALSE' NOT NULL,
@@ -604,6 +612,7 @@ CREATE TABLE `TASK`
 	`TAS_SELFSERVICE_TIME` VARCHAR(15) default '',
 	`TAS_SELFSERVICE_TIME_UNIT` VARCHAR(15) default '',
 	`TAS_SELFSERVICE_TRIGGER_UID` VARCHAR(32) default '',
+	`TAS_SELFSERVICE_EXECUTION` VARCHAR(15) default 'EVERY_TIME',
 	PRIMARY KEY (`TAS_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Task of workflow';
 #-----------------------------------------------------------------------------
@@ -785,8 +794,8 @@ CREATE TABLE `DB_SOURCE`
 	`DBS_PASSWORD` VARCHAR(32) default '',
 	`DBS_PORT` INTEGER default 0,
 	`DBS_ENCODE` VARCHAR(32) default '',
- `DBS_CONNECTION_TYPE` VARCHAR(32) default 'NORMAL',
- `DBS_TNS` VARCHAR(256) default '',
+	`DBS_CONNECTION_TYPE` VARCHAR(32) default 'NORMAL',
+	`DBS_TNS` VARCHAR(256) default '',
 	PRIMARY KEY (`DBS_UID`,`PRO_UID`),
 	KEY `indexDBSource`(`PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='DB_SOURCE';
@@ -1004,7 +1013,8 @@ CREATE TABLE `FIELDS`
 	`FLD_NULL` TINYINT default 1 NOT NULL,
 	`FLD_AUTO_INCREMENT` TINYINT default 0 NOT NULL,
 	`FLD_KEY` TINYINT default 0 NOT NULL,
-	`FLD_FOREIGN_KEY` TINYINT default 0 NOT NULL,
+	`FLD_TABLE_INDEX` TINYINT default 0 NOT NULL,
+	`FLD_FOREIGN_KEY` TINYINT default 0,
 	`FLD_FOREIGN_KEY_TABLE` VARCHAR(32) default '' NOT NULL,
 	`FLD_DYN_NAME` VARCHAR(128) default '',
 	`FLD_DYN_UID` VARCHAR(128) default '',
@@ -1197,6 +1207,7 @@ CREATE TABLE `APP_HISTORY`
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`TAS_UID` VARCHAR(32) default '' NOT NULL,
 	`DYN_UID` VARCHAR(32) default '' NOT NULL,
+  `OBJ_TYPE` VARCHAR(20) default 'DYNAFORM' NOT NULL,
 	`USR_UID` VARCHAR(32) default '' NOT NULL,
 	`APP_STATUS` VARCHAR(100) default '' NOT NULL,
 	`HISTORY_DATE` DATETIME,
@@ -1476,7 +1487,7 @@ CREATE TABLE `SESSION_STORAGE`
 	`CLIENT_ADDRESS` VARCHAR(32) default '0.0.0.0',
 	PRIMARY KEY (`ID`),
 	KEY `indexSessionStorage`(`ID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- PROCESS_FILES
 #-----------------------------------------------------------------------------
@@ -1497,31 +1508,29 @@ CREATE TABLE `PROCESS_FILES`
 	`PRF_UPDATE_DATE` DATETIME,
 	PRIMARY KEY (`PRF_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Application files metadata';
-
 #-----------------------------------------------------------------------------
 #-- WEB_ENTRY
 #-----------------------------------------------------------------------------
 
-DROP TABLE IF EXISTS WEB_ENTRY;
+DROP TABLE IF EXISTS `WEB_ENTRY`;
 
-CREATE TABLE WEB_ENTRY
+
+CREATE TABLE `WEB_ENTRY`
 (
-    WE_UID    VARCHAR(32) NOT NULL,
-    PRO_UID   VARCHAR(32) NOT NULL,
-    TAS_UID   VARCHAR(32) NOT NULL,
-    DYN_UID   VARCHAR(32) NOT NULL,
-    USR_UID   VARCHAR(32) DEFAULT '',
-    WE_METHOD VARCHAR(4) DEFAULT 'HTML',
-    WE_INPUT_DOCUMENT_ACCESS INTEGER DEFAULT 0,
-    WE_DATA           MEDIUMTEXT,
-    WE_CREATE_USR_UID VARCHAR(32) DEFAULT '' NOT NULL,
-    WE_UPDATE_USR_UID VARCHAR(32) DEFAULT '',
-    WE_CREATE_DATE    DATETIME NOT NULL,
-    WE_UPDATE_DATE    DATETIME,
-
-    PRIMARY KEY (WE_UID)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+	`WE_UID` VARCHAR(32)  NOT NULL,
+	`PRO_UID` VARCHAR(32)  NOT NULL,
+	`TAS_UID` VARCHAR(32)  NOT NULL,
+	`DYN_UID` VARCHAR(32)  NOT NULL,
+	`USR_UID` VARCHAR(32) default '',
+	`WE_METHOD` VARCHAR(4) default 'HTML',
+	`WE_INPUT_DOCUMENT_ACCESS` INTEGER default 0,
+	`WE_DATA` MEDIUMTEXT,
+	`WE_CREATE_USR_UID` VARCHAR(32) default '' NOT NULL,
+	`WE_UPDATE_USR_UID` VARCHAR(32) default '',
+	`WE_CREATE_DATE` DATETIME  NOT NULL,
+	`WE_UPDATE_DATE` DATETIME,
+	PRIMARY KEY (`WE_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- OAUTH_ACCESS_TOKENS
 #-----------------------------------------------------------------------------
@@ -1537,7 +1546,7 @@ CREATE TABLE `OAUTH_ACCESS_TOKENS`
 	`EXPIRES` DATETIME  NOT NULL,
 	`SCOPE` VARCHAR(2000),
 	PRIMARY KEY (`ACCESS_TOKEN`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- OAUTH_AUTHORIZATION_CODES
 #-----------------------------------------------------------------------------
@@ -1554,7 +1563,7 @@ CREATE TABLE `OAUTH_AUTHORIZATION_CODES`
 	`EXPIRES` DATETIME  NOT NULL,
 	`SCOPE` VARCHAR(2000),
 	PRIMARY KEY (`AUTHORIZATION_CODE`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- OAUTH_CLIENTS
 #-----------------------------------------------------------------------------
@@ -1572,7 +1581,7 @@ CREATE TABLE `OAUTH_CLIENTS`
 	`REDIRECT_URI` VARCHAR(2000)  NOT NULL,
 	`USR_UID` VARCHAR(32)  NOT NULL,
 	PRIMARY KEY (`CLIENT_ID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- OAUTH_REFRESH_TOKENS
 #-----------------------------------------------------------------------------
@@ -1588,7 +1597,7 @@ CREATE TABLE `OAUTH_REFRESH_TOKENS`
 	`EXPIRES` DATETIME  NOT NULL,
 	`SCOPE` VARCHAR(2000),
 	PRIMARY KEY (`REFRESH_TOKEN`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- OAUTH_SCOPES
 #-----------------------------------------------------------------------------
@@ -1601,7 +1610,7 @@ CREATE TABLE `OAUTH_SCOPES`
 	`TYPE` VARCHAR(40)  NOT NULL,
 	`SCOPE` VARCHAR(2000),
 	`CLIENT_ID` VARCHAR(80)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- PMOAUTH_USER_ACCESS_TOKENS
 #-----------------------------------------------------------------------------
@@ -1614,9 +1623,10 @@ CREATE TABLE `PMOAUTH_USER_ACCESS_TOKENS`
 	`ACCESS_TOKEN` VARCHAR(40)  NOT NULL,
 	`REFRESH_TOKEN` VARCHAR(40)  NOT NULL,
 	`USER_ID` VARCHAR(32),
-	`SESSION_ID` VARCHAR(40)  NOT NULL,
+	`SESSION_ID` VARCHAR(64)  NOT NULL,
+	`SESSION_NAME` VARCHAR(64)  NOT NULL,
 	PRIMARY KEY (`ACCESS_TOKEN`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_PROJECT
 #-----------------------------------------------------------------------------
@@ -1641,7 +1651,7 @@ CREATE TABLE `BPMN_PROJECT`
 	`PRJ_ORIGINAL_SOURCE` MEDIUMTEXT,
 	PRIMARY KEY (`PRJ_UID`),
 	KEY `BPMN_PROJECT_I_1`(`PRJ_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_PROCESS
 #-----------------------------------------------------------------------------
@@ -1665,7 +1675,7 @@ CREATE TABLE `BPMN_PROCESS`
 	CONSTRAINT `fk_bpmn_process_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_ACTIVITY
 #-----------------------------------------------------------------------------
@@ -1715,7 +1725,7 @@ CREATE TABLE `BPMN_ACTIVITY`
 	CONSTRAINT `fk_bpmn_activity_process`
 		FOREIGN KEY (`PRO_UID`)
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_ARTIFACT
 #-----------------------------------------------------------------------------
@@ -1741,7 +1751,7 @@ CREATE TABLE `BPMN_ARTIFACT`
 	CONSTRAINT `fk_bpmn_artifact_process`
 		FOREIGN KEY (`PRO_UID`)
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_DIAGRAM
 #-----------------------------------------------------------------------------
@@ -1761,7 +1771,7 @@ CREATE TABLE `BPMN_DIAGRAM`
 	CONSTRAINT `fk_bpmn_diagram_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_BOUND
 #-----------------------------------------------------------------------------
@@ -1794,7 +1804,7 @@ CREATE TABLE `BPMN_BOUND`
 	CONSTRAINT `fk_bpmn_bound_diagram`
 		FOREIGN KEY (`DIA_UID`)
 		REFERENCES `BPMN_DIAGRAM` (`DIA_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_DATA
 #-----------------------------------------------------------------------------
@@ -1826,7 +1836,7 @@ CREATE TABLE `BPMN_DATA`
 	CONSTRAINT `fk_bpmn_data_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_EVENT
 #-----------------------------------------------------------------------------
@@ -1869,7 +1879,7 @@ CREATE TABLE `BPMN_EVENT`
 	CONSTRAINT `fk_bpmn_event_process`
 		FOREIGN KEY (`PRO_UID`)
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_FLOW
 #-----------------------------------------------------------------------------
@@ -1907,7 +1917,7 @@ CREATE TABLE `BPMN_FLOW`
 	CONSTRAINT `fk_bpmn_flow_diagram`
 		FOREIGN KEY (`DIA_UID`)
 		REFERENCES `BPMN_DIAGRAM` (`DIA_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_GATEWAY
 #-----------------------------------------------------------------------------
@@ -1938,7 +1948,7 @@ CREATE TABLE `BPMN_GATEWAY`
 	CONSTRAINT `fk_bpmn_gateway_process`
 		FOREIGN KEY (`PRO_UID`)
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_LANESET
 #-----------------------------------------------------------------------------
@@ -1965,7 +1975,7 @@ CREATE TABLE `BPMN_LANESET`
 	CONSTRAINT `fk_bpmn_laneset_process`
 		FOREIGN KEY (`PRO_UID`)
 		REFERENCES `BPMN_PROCESS` (`PRO_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_LANE
 #-----------------------------------------------------------------------------
@@ -1991,7 +2001,7 @@ CREATE TABLE `BPMN_LANE`
 	CONSTRAINT `fk_bpmn_lane_laneset`
 		FOREIGN KEY (`LNS_UID`)
 		REFERENCES `BPMN_LANESET` (`LNS_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_PARTICIPANT
 #-----------------------------------------------------------------------------
@@ -2016,7 +2026,7 @@ CREATE TABLE `BPMN_PARTICIPANT`
 	CONSTRAINT `fk_bpmn_participant_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_EXTENSION
 #-----------------------------------------------------------------------------
@@ -2037,7 +2047,7 @@ CREATE TABLE `BPMN_EXTENSION`
 	CONSTRAINT `fk_bpmn_extension_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8' ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_DOCUMENTATION
 #-----------------------------------------------------------------------------
@@ -2058,7 +2068,372 @@ CREATE TABLE `BPMN_DOCUMENTATION`
 	CONSTRAINT `fk_bpmn_documentation_project`
 		FOREIGN KEY (`PRJ_UID`)
 		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
-)ENGINE=InnoDB DEFAULT CHARSET='utf8';
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- PROCESS_VARIABLES
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `PROCESS_VARIABLES`;
+
+
+CREATE TABLE `PROCESS_VARIABLES`
+(
+	`VAR_UID` VARCHAR(32)  NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`VAR_NAME` VARCHAR(255) default '',
+	`VAR_FIELD_TYPE` VARCHAR(32) default '',
+	`VAR_FIELD_SIZE` INTEGER,
+	`VAR_LABEL` VARCHAR(255) default '',
+	`VAR_DBCONNECTION` VARCHAR(32),
+	`VAR_SQL` MEDIUMTEXT,
+	`VAR_NULL` TINYINT(32) default 0,
+	`VAR_DEFAULT` VARCHAR(32) default '',
+	`VAR_ACCEPTED_VALUES` MEDIUMTEXT,
+	PRIMARY KEY (`VAR_UID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- APP_TIMEOUT_ACTION_EXECUTED
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `APP_TIMEOUT_ACTION_EXECUTED`;
+
+
+CREATE TABLE `APP_TIMEOUT_ACTION_EXECUTED`
+(
+	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`EXECUTION_DATE` DATETIME,
+	PRIMARY KEY (`APP_UID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- ADDONS_STORE
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ADDONS_STORE`;
+
+
+CREATE TABLE `ADDONS_STORE`
+(
+	`STORE_ID` VARCHAR(32)  NOT NULL,
+	`STORE_VERSION` INTEGER,
+	`STORE_LOCATION` VARCHAR(2048)  NOT NULL,
+	`STORE_TYPE` VARCHAR(255)  NOT NULL,
+	`STORE_LAST_UPDATED` DATETIME,
+	PRIMARY KEY (`STORE_ID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- ADDONS_MANAGER
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ADDONS_MANAGER`;
+
+
+CREATE TABLE `ADDONS_MANAGER`
+(
+	`ADDON_ID` VARCHAR(255)  NOT NULL,
+	`STORE_ID` VARCHAR(32)  NOT NULL,
+	`ADDON_NAME` VARCHAR(255)  NOT NULL,
+	`ADDON_NICK` VARCHAR(255)  NOT NULL,
+	`ADDON_DOWNLOAD_FILENAME` VARCHAR(1024),
+	`ADDON_DESCRIPTION` VARCHAR(2048),
+	`ADDON_STATE` VARCHAR(255)  NOT NULL,
+	`ADDON_STATE_CHANGED` DATETIME,
+	`ADDON_STATUS` VARCHAR(255)  NOT NULL,
+	`ADDON_VERSION` VARCHAR(255)  NOT NULL,
+	`ADDON_TYPE` VARCHAR(255)  NOT NULL,
+	`ADDON_PUBLISHER` VARCHAR(255),
+	`ADDON_RELEASE_DATE` DATETIME,
+	`ADDON_RELEASE_TYPE` VARCHAR(255),
+	`ADDON_RELEASE_NOTES` VARCHAR(255),
+	`ADDON_DOWNLOAD_URL` VARCHAR(2048),
+	`ADDON_DOWNLOAD_PROGRESS` FLOAT,
+	`ADDON_DOWNLOAD_MD5` VARCHAR(32),
+	PRIMARY KEY (`ADDON_ID`,`STORE_ID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- LICENSE_MANAGER
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `LICENSE_MANAGER`;
+
+
+CREATE TABLE `LICENSE_MANAGER`
+(
+	`LICENSE_UID` VARCHAR(32)  NOT NULL,
+	`LICENSE_USER` VARCHAR(150) default '0' NOT NULL,
+	`LICENSE_START` INTEGER default 0 NOT NULL,
+	`LICENSE_END` INTEGER default 0 NOT NULL,
+	`LICENSE_SPAN` INTEGER default 0 NOT NULL,
+	`LICENSE_STATUS` VARCHAR(100) default '' NOT NULL,
+	`LICENSE_DATA` MEDIUMTEXT  NOT NULL,
+	`LICENSE_PATH` VARCHAR(255) default '0' NOT NULL,
+	`LICENSE_WORKSPACE` VARCHAR(32) default '0' NOT NULL,
+	`LICENSE_TYPE` VARCHAR(32) default '0' NOT NULL,
+	PRIMARY KEY (`LICENSE_UID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- APP_ASSIGN_SELF_SERVICE_VALUE
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `APP_ASSIGN_SELF_SERVICE_VALUE`;
+
+
+CREATE TABLE `APP_ASSIGN_SELF_SERVICE_VALUE`
+(
+	`APP_UID` VARCHAR(32)  NOT NULL,
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`PRO_UID` VARCHAR(32)  NOT NULL,
+	`TAS_UID` VARCHAR(32)  NOT NULL,
+	`GRP_UID` VARCHAR(32) default '' NOT NULL
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- LIST_INBOX
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `LIST_INBOX`;
+
+
+CREATE TABLE `LIST_INBOX`
+(
+	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`USR_UID` VARCHAR(32) default '' NOT NULL,
+	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`APP_NUMBER` INTEGER default 0 NOT NULL,
+	`APP_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_PRO_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_TAS_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_UPDATE_DATE` DATETIME  NOT NULL,
+	`DEL_PREVIOUS_USR_UID` VARCHAR(32) default '',
+	`DEL_PREVIOUS_USR_USERNAME` VARCHAR(100) default '',
+	`DEL_PREVIOUS_USR_FIRSTNAME` VARCHAR(50) default '',
+	`DEL_PREVIOUS_USR_LASTNAME` VARCHAR(50) default '',
+	`DEL_DELEGATE_DATE` DATETIME  NOT NULL,
+	`DEL_INIT_DATE` DATETIME,
+	`DEL_DUE_DATE` DATETIME,
+	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
+	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
+	KEY `indexInboxUser`(`USR_UID`, `DEL_DELEGATE_DATE`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Inbox list';
+#-----------------------------------------------------------------------------
+#-- LIST_PARTICIPATED_HISTORY
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `LIST_PARTICIPATED_HISTORY`;
+
+
+CREATE TABLE `LIST_PARTICIPATED_HISTORY`
+(
+	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`USR_UID` VARCHAR(32) default '' NOT NULL,
+	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`APP_NUMBER` INTEGER default 0 NOT NULL,
+	`APP_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_PRO_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_TAS_TITLE` VARCHAR(255) default '' NOT NULL,
+	`DEL_PREVIOUS_USR_UID` VARCHAR(32) default '',
+	`DEL_PREVIOUS_USR_USERNAME` VARCHAR(100) default '',
+	`DEL_PREVIOUS_USR_FIRSTNAME` VARCHAR(50) default '',
+	`DEL_PREVIOUS_USR_LASTNAME` VARCHAR(50) default '',
+	`DEL_CURRENT_USR_USERNAME` VARCHAR(100) default '',
+	`DEL_CURRENT_USR_FIRSTNAME` VARCHAR(50) default '',
+	`DEL_CURRENT_USR_LASTNAME` VARCHAR(50) default '',
+	`DEL_DELEGATE_DATE` DATETIME  NOT NULL,
+	`DEL_INIT_DATE` DATETIME,
+	`DEL_DUE_DATE` DATETIME,
+	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
+	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
+	KEY `indexInboxUser`(`USR_UID`, `DEL_DELEGATE_DATE`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Participated history list';
+#-----------------------------------------------------------------------------
+#-- LIST_PARTICIPATED_LAST
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `LIST_PARTICIPATED_LAST`;
+
+
+CREATE TABLE `LIST_PARTICIPATED_LAST`
+(
+	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`USR_UID` VARCHAR(32) default '' NOT NULL,
+	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`APP_NUMBER` INTEGER default 0 NOT NULL,
+	`APP_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_PRO_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_TAS_TITLE` VARCHAR(255) default '' NOT NULL,
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`DEL_PREVIOUS_USR_UID` VARCHAR(32) default '',
+	`DEL_PREVIOUS_USR_USERNAME` VARCHAR(100) default '',
+	`DEL_PREVIOUS_USR_FIRSTNAME` VARCHAR(50) default '',
+	`DEL_PREVIOUS_USR_LASTNAME` VARCHAR(50) default '',
+	`DEL_DELEGATE_DATE` DATETIME  NOT NULL,
+	`DEL_INIT_DATE` DATETIME,
+	`DEL_DUE_DATE` DATETIME,
+	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
+	PRIMARY KEY (`APP_UID`,`USR_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Participated last list';
+#-----------------------------------------------------------------------------
+#-- LIST_COMPLETED
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `LIST_COMPLETED`;
+
+
+CREATE TABLE `LIST_COMPLETED`
+(
+	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`USR_UID` VARCHAR(32) default '' NOT NULL,
+	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`APP_NUMBER` INTEGER default 0 NOT NULL,
+	`APP_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_PRO_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_TAS_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_CREATE_DATE` DATETIME  NOT NULL,
+	`APP_FINISH_DATE` DATETIME  NOT NULL,
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`DEL_PREVIOUS_USR_UID` VARCHAR(32) default '',
+	`DEL_CURRENT_USR_USERNAME` VARCHAR(100) default '',
+	`DEL_CURRENT_USR_FIRSTNAME` VARCHAR(50) default '',
+	`DEL_CURRENT_USR_LASTNAME` VARCHAR(50) default '',
+	PRIMARY KEY (`APP_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Completed list';
+#-----------------------------------------------------------------------------
+#-- LIST_MY_INBOX
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `LIST_MY_INBOX`;
+
+
+CREATE TABLE `LIST_MY_INBOX`
+(
+	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`USR_UID` VARCHAR(32) default '' NOT NULL,
+	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`APP_NUMBER` INTEGER default 0 NOT NULL,
+	`APP_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_PRO_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_TAS_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_CREATE_DATE` DATETIME  NOT NULL,
+	`APP_UPDATE_DATE` DATETIME  NOT NULL,
+	`APP_FINISH_DATE` DATETIME  NOT NULL,
+	`APP_STATUS` VARCHAR(100) default '' NOT NULL,
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`DEL_PREVIOUS_USR_UID` VARCHAR(32) default '',
+	`DEL_PREVIOUS_USR_USERNAME` VARCHAR(100) default '',
+	`DEL_PREVIOUS_USR_FIRSTNAME` VARCHAR(50) default '',
+	`DEL_PREVIOUS_USR_LASTNAME` VARCHAR(50) default '',
+	`DEL_CURRENT_USR_UID` VARCHAR(32) default '',
+	`DEL_CURRENT_USR_USERNAME` VARCHAR(100) default '',
+	`DEL_CURRENT_USR_FIRSTNAME` VARCHAR(50) default '',
+	`DEL_CURRENT_USR_LASTNAME` VARCHAR(50) default '',
+	`DEL_DELEGATE_DATE` DATETIME,
+	`DEL_INIT_DATE` DATETIME,
+	`DEL_DUE_DATE` DATETIME,
+	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
+	PRIMARY KEY (`APP_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='My Inbox list';
+#-----------------------------------------------------------------------------
+#-- LIST_UNASSIGNED
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `LIST_UNASSIGNED`;
+
+
+CREATE TABLE `LIST_UNASSIGNED`
+(
+	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`UNA_UID` VARCHAR(32) default '' NOT NULL,
+	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`APP_NUMBER` INTEGER default 0 NOT NULL,
+	`APP_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_PRO_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_TAS_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_PREVIOUS_USR_USERNAME` VARCHAR(100) default '',
+	`APP_PREVIOUS_USR_FIRSTNAME` VARCHAR(50) default '',
+	`APP_PREVIOUS_USR_LASTNAME` VARCHAR(50) default '',
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`DEL_PREVIOUS_USR_UID` VARCHAR(32) default '',
+	`DEL_DELEGATE_DATE` DATETIME  NOT NULL,
+	`DEL_DUE_DATE` DATETIME,
+	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
+	PRIMARY KEY (`APP_UID`,`UNA_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Unassiged list';
+#-----------------------------------------------------------------------------
+#-- LIST_UNASSIGNED_GROUP
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `LIST_UNASSIGNED_GROUP`;
+
+
+CREATE TABLE `LIST_UNASSIGNED_GROUP`
+(
+	`UNA_UID` VARCHAR(32) default '' NOT NULL,
+	`USR_UID` VARCHAR(32) default '' NOT NULL,
+	`TYPE` VARCHAR(255) default '' NOT NULL,
+	`TYP_UID` VARCHAR(32) default '' NOT NULL,
+	PRIMARY KEY (`UNA_UID`,`USR_UID`,`TYPE`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Unassiged list';
+#-----------------------------------------------------------------------------
+#-- MESSAGE
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `MESSAGE`;
+
+
+CREATE TABLE `MESSAGE`
+(
+	`MES_UID` VARCHAR(32)  NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`MES_NAME` VARCHAR(255) default '',
+	`MES_CONDITION` VARCHAR(255) default '',
+	PRIMARY KEY (`MES_UID`)
+)ENGINE=InnoDB ;
+#-----------------------------------------------------------------------------
+#-- MESSAGE_DETAIL
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `MESSAGE_DETAIL`;
+
+
+CREATE TABLE `MESSAGE_DETAIL`
+(
+	`MD_UID` VARCHAR(32)  NOT NULL,
+	`MES_UID` VARCHAR(32)  NOT NULL,
+	`MD_TYPE` VARCHAR(32) default '',
+	`MD_NAME` VARCHAR(255) default '',
+	PRIMARY KEY (`MD_UID`)
+)ENGINE=InnoDB ;
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
+
+#-----------------------------------------------------------------------------
+#-- TABLE: EMAIL_SERVER
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `EMAIL_SERVER`;
+
+CREATE TABLE `EMAIL_SERVER`
+(
+ `MESS_UID` VARCHAR(32) default '' NOT NULL,
+ `MESS_ENGINE` VARCHAR(256) default '' NOT NULL,
+ `MESS_SERVER` VARCHAR(256) default '' NOT NULL,
+ `MESS_PORT` INTEGER default 0 NOT NULL,
+ `MESS_RAUTH` INTEGER default 0 NOT NULL,
+ `MESS_ACCOUNT` VARCHAR(256) default '' NOT NULL,
+ `MESS_PASSWORD` VARCHAR(256) default '' NOT NULL,
+ `MESS_FROM_MAIL` VARCHAR(256) default '' NOT NULL,
+ `MESS_FROM_NAME` VARCHAR(256) default '' NOT NULL,
+ `SMTPSECURE` VARCHAR(3) default 'NO' NOT NULL,
+ `MESS_TRY_SEND_INMEDIATLY` INTEGER default 0 NOT NULL,
+ `MAIL_TO` VARCHAR(256) default '' NOT NULL,
+ `MESS_DEFAULT` INTEGER default 0 NOT NULL,
+ PRIMARY KEY (`MESS_UID`)
+)ENGINE=InnoDB DEFAULT CHARSET='utf8';
 

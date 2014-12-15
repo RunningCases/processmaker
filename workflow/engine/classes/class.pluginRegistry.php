@@ -32,6 +32,7 @@
 
 require_once 'class.plugin.php';
 
+
 class pluginDetail
 {
     public $sNamespace;
@@ -258,7 +259,11 @@ class PMPluginRegistry
                 $this->registerFolder( $sNamespace, $sNamespace, $detail->sPluginFolder );
                 //register the default directory, later we can have more
                 $this->_aPluginDetails[$sNamespace]->enabled = true;
-                $oPlugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
+                if (class_exists($detail->sClassName)) {
+                    $oPlugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
+                } else {
+                    $oPlugin = $detail;
+                }
                 $this->_aPlugins[$detail->sNamespace] = $oPlugin;
                 if (method_exists( $oPlugin, 'enable' )) {
                     $oPlugin->enable();
@@ -294,17 +299,19 @@ class PMPluginRegistry
      */
     public function disablePlugin ($sNamespace, $eventPlugin = 1)
     {
+        //require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
         $sw = false;
-
+        //G::pr($this->_aPluginDetails);die;
         foreach ($this->_aPluginDetails as $namespace => $detail) {
             if ($namespace == $sNamespace) {
+                //G::pr($detail);die;
                 unset( $this->_aPluginDetails[$sNamespace] );
 
                 if ($eventPlugin == 1) {
-                    $plugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
-                    $this->_aPlugins[$detail->sNamespace] = $plugin;
-                    if (method_exists( $plugin, "disable" )) {
-                        $plugin->disable();
+                    //$plugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
+                    $this->_aPlugins[$detail->sNamespace] = $detail;
+                    if (method_exists( $detail, "disable" )) {
+                        $detail->disable();
                     }
                 }
 
@@ -982,7 +989,7 @@ class PMPluginRegistry
                 $classFile = '';
 
                 foreach ($this->_aFolders as $row => $folder) {
-                    $fname = PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
+                    $fname = $folder->sNamespace == 'enterprise' ? PATH_CORE . 'classes' . PATH_SEP . 'class.' . $folder->sFolderName . '.php' : PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
                     if ($detail->sNamespace == $folder->sNamespace && file_exists( $fname )) {
                         $found = true;
                         $classFile = $fname;
@@ -1018,11 +1025,12 @@ class PMPluginRegistry
             if ($triggerId == $detail->sTriggerId) {
                 //review all folders registered for this namespace
                 foreach ($this->_aFolders as $row => $folder) {
-                    $fname = PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
+                    $fname = $folder->sNamespace == 'enterprise' ? PATH_CORE . 'classes' . PATH_SEP . 'class.' . $folder->sFolderName . '.php' : PATH_PLUGINS . $folder->sFolderName . PATH_SEP . 'class.' . $folder->sFolderName . '.php';
                     if ($detail->sNamespace == $folder->sNamespace && file_exists( $fname )) {
                         $found = true;
                     }
                 }
+
             }
         }
         return $found;
@@ -1142,19 +1150,17 @@ class PMPluginRegistry
     public function setupPlugins ()
     {
         try {
+            require_once(PATH_CORE . "methods" . PATH_SEP . "enterprise" . PATH_SEP . "enterprise.php");
+            require_once("class.serverConfiguration.php");
+
             $iPlugins = 0;
-            require_once ( 'class.serverConfiguration.php' );
             $oServerConf = & serverConf::getSingleton();
             $oServerConf->addPlugin( SYS_SYS, $this->_aPluginDetails );
             foreach ($this->_aPluginDetails as $namespace => $detail) {
                 if (isset( $detail->enabled ) && $detail->enabled) {
                     if (! empty( $detail->sFilename ) && file_exists( $detail->sFilename )) {
-                        if (strpos( $detail->sFilename, PATH_SEP ) !== false) {
-                            $aux = explode( PATH_SEP, $detail->sFilename );
-                        } else {
-                            $aux = explode( chr( 92 ), $detail->sFilename );
-                        }
-                        $sFilename = PATH_PLUGINS . $aux[count( $aux ) - 1];
+                        $arrayFileInfo = pathinfo($detail->sFilename);
+                        $sFilename = (($detail->sNamespace == "enterprise")? PATH_CORE. "methods" . PATH_SEP . "enterprise" . PATH_SEP : PATH_PLUGINS) . $arrayFileInfo["basename"];
                         if (! file_exists( $sFilename )) {
                             continue;
                         }
@@ -1178,7 +1184,6 @@ class PMPluginRegistry
             G::RenderPage( 'publish' );
             die();
         }
-
     }
 
     /**
@@ -1494,6 +1499,99 @@ class PMPluginRegistry
     function enableRestService($sNamespace, $enable)
     {
         $this->_restServiceEnabled[$sNamespace] = $enable;
+    }
+
+    /**
+     * Return all cron files registered
+     *
+     * @return array
+     */
+    public function getCronFiles()
+    {
+        return $this->_aCronFiles;
+    }
+
+    /**
+     * Update the plugin attributes in all workspaces
+     *
+     * @param string $pluginName Plugin name
+     *
+     * return void
+     */
+    public function updatePluginAttributesInAllWorkspaces($pluginName)
+    {
+        try {
+            G::LoadClass("system");
+            G::LoadClass("wsTools");
+
+            //Set variables
+            $pluginFileName = $pluginName . ".php";
+
+            //Verify data
+            if (!file_exists(PATH_PLUGINS . $pluginFileName)) {
+                throw new Exception("Error: The plugin not exists");
+            }
+
+            //Update plugin attributes
+            require_once(PATH_PLUGINS . $pluginFileName);
+
+            $pmPluginRegistry = &PMPluginRegistry::getSingleton();
+
+            $pluginDetails = $pmPluginRegistry->getPluginDetails($pluginFileName);
+
+            if (isset($pluginDetails->aWorkspaces) && is_array($pluginDetails->aWorkspaces) && count($pluginDetails->aWorkspaces) > 0) {
+                $arrayWorkspace = array();
+
+                foreach (System::listWorkspaces() as $value) {
+                    $workspaceTools = $value;
+
+                    $arrayWorkspace[] = $workspaceTools->name;
+                }
+
+                $arrayWorkspaceAux = array_diff($arrayWorkspace, $pluginDetails->aWorkspaces); //Workspaces to update
+                $strWorkspaceNoWritable = "";
+
+                $arrayWorkspace = array();
+
+                foreach ($arrayWorkspaceAux as $value) {
+                    $workspace = $value;
+
+                    $workspacePathDataSite = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP;
+
+                    if (file_exists($workspacePathDataSite . "plugin.singleton")) {
+                        $pmPluginRegistry = PMPluginRegistry::loadSingleton($workspacePathDataSite . "plugin.singleton");
+
+                        if (isset($pmPluginRegistry->_aPluginDetails[$pluginName])) {
+                            if (!is_writable($workspacePathDataSite . "plugin.singleton")) {
+                                $strWorkspaceNoWritable .= (($strWorkspaceNoWritable != "")? ", " : "") . $workspace;
+                            }
+
+                            $arrayWorkspace[] = $workspace;
+                        }
+                    }
+                }
+
+                //Verify data
+                if ($strWorkspaceNoWritable != "") {
+                    throw new Exception("Error: The workspaces \"$strWorkspaceNoWritable\" has problems of permissions of write in file \"plugin.singleton\", solve this problem");
+                }
+
+                //Update plugin attributes
+                foreach ($arrayWorkspace as $value) {
+                    $workspace = $value;
+
+                    $workspacePathDataSite = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP;
+
+                    $pmPluginRegistry = PMPluginRegistry::loadSingleton($workspacePathDataSite . "plugin.singleton");
+
+                    $pmPluginRegistry->disablePlugin($pluginName);
+
+                    file_put_contents($workspacePathDataSite . "plugin.singleton", $pmPluginRegistry->serializeInstance());
+                }
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }
 

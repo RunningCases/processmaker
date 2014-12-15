@@ -172,6 +172,33 @@ CLI::taskOpt("workspace", "Select which workspace to migrate the cases folders, 
              "w:", "workspace=");
 CLI::taskRun("runStructureDirectories");
 
+CLI::taskName("database-generate-self-service-by-value");
+CLI::taskDescription(<<<EOT
+  Generate or upgrade the table "self-service by value".
+
+  This command populate the table "self-service by value", this for the cases when
+  a task it's defined with "Self Service Value Based Assignment" in "Assignment Rules".
+
+  If no workspace is specified, the command will be run in all workspaces. More
+  than one workspace can be specified.
+EOT
+);
+CLI::taskArg("workspace-name", true, true);
+CLI::taskRun("run_database_generate_self_service_by_value");
+
+CLI::taskName("check-workspace-disabled-code");
+CLI::taskDescription(<<<EOT
+  Check disabled code for the specified workspace(s).
+
+  This command is for check disabled code for the specified workspace(s).
+
+  If no workspace is specified, the command will be run in all workspaces. More
+  than one workspace can be specified.
+EOT
+);
+CLI::taskArg("workspace-name", true, true);
+CLI::taskRun("run_check_workspace_disabled_code");
+
   /**
    * Function run_info
    * access public
@@ -284,6 +311,41 @@ function database_upgrade($command, $args) {
       echo "> Error: ".CLI::error($e->getMessage()) . "\n";
     }
   }
+
+  //There records in table "EMAIL_SERVER"
+  $criteria = new Criteria("workflow");
+
+  $criteria->addSelectColumn(EmailServerPeer::MESS_UID);
+  $criteria->setOffset(0);
+  $criteria->setLimit(1);
+
+  $rsCriteria = EmailServerPeer::doSelectRS($criteria);
+
+  if (!$rsCriteria->next()) {
+      //Insert the first record
+      $emailConfiguration = System::getEmailConfiguration();
+
+      if (count($emailConfiguration) > 0) {
+          $arrayData = array();
+
+          $arrayData["MESS_ENGINE"]              = $emailConfiguration["MESS_ENGINE"];
+          $arrayData["MESS_SERVER"]              = $emailConfiguration["MESS_SERVER"];
+          $arrayData["MESS_PORT"]                = (int)($emailConfiguration["MESS_PORT"]);
+          $arrayData["MESS_RAUTH"]               = (int)($emailConfiguration["MESS_RAUTH"]);
+          $arrayData["MESS_ACCOUNT"]             = $emailConfiguration["MESS_ACCOUNT"];
+          $arrayData["MESS_PASSWORD"]            = $emailConfiguration["MESS_PASSWORD"];
+          $arrayData["MESS_FROM_MAIL"]           = $emailConfiguration["MESS_FROM_MAIL"];
+          $arrayData["MESS_FROM_NAME"]           = $emailConfiguration["MESS_FROM_NAME"];
+          $arrayData["SMTPSECURE"]               = $emailConfiguration["SMTPSecure"];
+          $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (int)($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]);
+          $arrayData["MAIL_TO"]                  = $emailConfiguration["MAIL_TO"];
+          $arrayData["MESS_DEFAULT"]             = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1")? 1 : 0;
+
+          $emailSever = new ProcessMaker\BusinessModel\EmailServer();
+
+          $emailSever->create($arrayData);
+      }
+  }
 }
 
 function delete_app_from_table($con, $tableName, $appUid, $col="APP_UID") {
@@ -372,60 +434,64 @@ function run_drafts_clean($args, $opts) {
 }
 
 function run_workspace_backup($args, $opts) {
-  $workspaces = array();
-  if (sizeof($args) > 2) {
-    $filename = array_pop($args);
-    foreach ($args as $arg) {
-      $workspaces[] = new workspaceTools($arg);
+    $workspaces = array();
+    if (sizeof($args) > 2) {
+        $filename = array_pop($args);
+        foreach ($args as $arg) {
+            $workspaces[] = new workspaceTools($arg);
+        }
+    } else if (sizeof($args) > 0) {
+        $workspace = new workspaceTools($args[0]);
+        $workspaces[] = $workspace;
+        if (sizeof($args) == 2) {
+            $filename = $args[1];
+        } else {
+            $filename = "{$workspace->name}.tar";
+        }
+    } else {
+        throw new Exception("No workspace specified for backup");
     }
-  } else if (sizeof($args) > 0) {
-    $workspace = new workspaceTools($args[0]);
-    $workspaces[] = $workspace;
-    if (sizeof($args) == 2)
-      $filename = $args[1];
-    else
-      $filename = "{$workspace->name}.tar";
-  } else {
-    throw new Exception("No workspace specified for backup");
-  }
-  foreach ($workspaces as $workspace)
-    if (!$workspace->workspaceExists())
-      throw new Exception("Workspace '{$workspace->name}' not found");
-  //If this is a relative path, put the file in the backups directory
-  if (strpos($filename, "/") === false && strpos($filename, '\\') === false){
-    $filename = PATH_DATA . "backups/$filename";
-  }
-  CLI::logging("Backing up to $filename\n");
 
-  $filesize = array_key_exists("filesize", $opts) ? $opts['filesize'] : -1;
-  if($filesize >= 0)
-  {
-      if(!Bootstrap::isLinuxOs()){
+
+    foreach ($workspaces as $workspace) {
+        if (!$workspace->workspaceExists()) {
+            throw new Exception("Workspace '{$workspace->name}' not found");
+        }
+    }
+
+    //If this is a relative path, put the file in the backups directory
+    if (strpos($filename, "/") === false && strpos($filename, '\\') === false){
+        $filename = PATH_DATA . "backups/$filename";
+    }
+    CLI::logging("Backing up to $filename\n");
+
+    $filesize = array_key_exists("filesize", $opts) ? $opts['filesize'] : -1;
+
+    if ($filesize >= 0) {
+        if (!Bootstrap::isLinuxOs()) {
             CLI::error("This is not a Linux enviroment, cannot use this filesize [-s] feature.\n");
             return;
-      }
-      $multipleBackup = new multipleFilesBackup ($filename,$filesize);//if filesize is 0 the default size will be took
-      //using new method
-      foreach ($workspaces as $workspace){
-          $multipleBackup->addToBackup($workspace);
-      }
-      $multipleBackup->letsBackup();
-  }
-  else
-  {
-    //ansient method to backup into one large file
-    $backup = workspaceTools::createBackup($filename);
+        }
+        $multipleBackup = new multipleFilesBackup ($filename,$filesize);//if filesize is 0 the default size will be took
+        //using new method
+        foreach ($workspaces as $workspace) {
+            $multipleBackup->addToBackup($workspace);
+        }
+        $multipleBackup->letsBackup();
+    } else {
+        //ansient method to backup into one large file
+        $backup = workspaceTools::createBackup($filename);
 
-    foreach ($workspaces as $workspace)
-      $workspace->backup($backup);
-  }
-  CLI::logging("\n");
-  workspaceTools::printSysInfo();
-  foreach ($workspaces as $workspace) {
+        foreach ($workspaces as $workspace) {
+            $workspace->backup($backup);
+        }
+    }
     CLI::logging("\n");
-    $workspace->printMetadata(false);
-  }
-
+    workspaceTools::printSysInfo();
+    foreach ($workspaces as $workspace) {
+        CLI::logging("\n");
+        $workspace->printMetadata(false);
+    }
 }
 
 function run_workspace_restore($args, $opts) {
@@ -447,7 +513,7 @@ function run_workspace_restore($args, $opts) {
     $workspace = array_key_exists("workspace", $opts) ? $opts['workspace'] : NULL;
     $overwrite = array_key_exists("overwrite", $opts);
     $multiple = array_key_exists("multiple", $opts);
-    $dstWorkspace = $args[1];
+    $dstWorkspace = isset($args[1]) ? $args[1] : null;
     if(!empty($multiple)){
         if(!Bootstrap::isLinuxOs()){
             CLI::error("This is not a Linux enviroment, cannot use this multiple [-m] feature.\n");
@@ -490,4 +556,78 @@ function runStructureDirectories($command, $args) {
     }
 }
 
+function run_database_generate_self_service_by_value($args, $opts)
+{
+    try {
+        $arrayWorkspace = get_workspaces_from_args($args);
+
+        foreach ($arrayWorkspace as $value) {
+            $workspace = $value;
+
+            try {
+                echo "Generating the table \"self-service by value\" for " . pakeColor::colorize($workspace->name, "INFO") . "\n";
+                $workspace->appAssignSelfServiceValueTableGenerateData();
+            } catch (Exception $e) {
+                echo "Errors generating the table \"self-service by value\" of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n";
+            }
+
+            echo "\n";
+        }
+
+        echo "Done!\n";
+    } catch (Exception $e) {
+        echo CLI::error($e->getMessage()) . "\n";
+    }
+}
+
+function run_check_workspace_disabled_code($args, $opts)
+{
+    try {
+        $arrayWorkspace = get_workspaces_from_args($args);
+
+        foreach ($arrayWorkspace as $value) {
+            $workspace = $value;
+
+            echo "> Workspace: " . $workspace->name . "\n";
+
+            try {
+                $arrayFoundDisabledCode = $workspace->getDisabledCode();
+
+                if (count($arrayFoundDisabledCode) > 0) {
+                    $strFoundDisabledCode = "";
+
+                    foreach ($arrayFoundDisabledCode as $value2) {
+                        $arrayProcessData = $value2;
+
+                        $strFoundDisabledCode .= ($strFoundDisabledCode != "")? "\n" : "";
+                        $strFoundDisabledCode .= "  Process: " . $arrayProcessData["processTitle"] . "\n";
+                        $strFoundDisabledCode .= "  Triggers:\n";
+
+                        foreach ($arrayProcessData["triggers"] as $value3) {
+                            $arrayTriggerData = $value3;
+
+                            $strCodeAndLine = "";
+
+                            foreach ($arrayTriggerData["disabledCode"] as $key4 => $value4) {
+                                $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . $key4 . " (Lines " . implode(", ", $value4) . ")";
+                            }
+
+                            $strFoundDisabledCode .= "    - " . $arrayTriggerData["triggerTitle"] . ": " . $strCodeAndLine . "\n";
+                        }
+                    }
+
+                    echo $strFoundDisabledCode . "\n";
+                } else {
+                    echo "The workspace it's OK\n\n";
+                }
+            } catch (Exception $e) {
+                echo "Errors to check disabled code: " . CLI::error($e->getMessage()) . "\n\n";
+            }
+        }
+
+        echo "Done!\n";
+    } catch (Exception $e) {
+        echo CLI::error($e->getMessage()) . "\n";
+    }
+}
 

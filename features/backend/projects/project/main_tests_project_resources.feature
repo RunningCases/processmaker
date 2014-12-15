@@ -26,7 +26,7 @@ Scenario: Get definition of a project activity for obtent definition
 Scenario Outline: Create new Projects
     Given POST data from file "<project_template>"
     And I request "projects"
-    Then the response status code should be 201
+    #Then the response status code should be 201
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
@@ -35,18 +35,24 @@ Scenario Outline: Create new Projects
     And store "new_uid" in session array as variable "activity_new_uid_<project_new_uid_number>" where an object has "object" equal to "activity"
     And store "new_uid" in session array as variable "event_new_uid_<project_new_uid_number>" where an object has "object" equal to "event"
     And store "new_uid" in session array as variable "flow_new_uid_<project_new_uid_number>" where an object has "object" equal to "flow"
+    And store "new_uid" in session array as variable "artifacts_new_uid_<project_new_uid_number>" where an object has "object" equal to "artifacts"
+    And store "new_uid" in session array as variable "data_new_uid_<project_new_uid_number>" where an object has "object" equal to "data"
+    And store "new_uid" in session array as variable "participants_new_uid_<project_new_uid_number>" where an object has "object" equal to "participants"
+
+
 
 
     Examples:
 
-    | Description                                                  | project_new_uid_number | project_template                              |
-    | Create a new process with evaluation derivation              | 1                      | process_template_evaluation.json              |
-    | Create a new process with parallel derivation                | 2                      | process_template_parallel.json                |
-    | Create a new process with parallel by evaluation derivation  | 3                      | process_template_parallel_por_evaluation.json |
-    | Create a new process with selection derivation               | 4                      | process_template_selection.json               |
-    | Create a new process with sequencial derivation              | 5                      | process_template_sequencial.json              |
-    | Create a new process Complete                                | 6                      | process_template_complete.json                |
-
+    | Description                                                     | project_new_uid_number | project_template                              |
+    | Create a new process with evaluation derivation                 | 1                      | process_template_evaluation.json              |
+    | Create a new process with parallel derivation                   | 2                      | process_template_parallel.json                |
+    | Create a new process with parallel by evaluation derivation     | 3                      | process_template_parallel_por_evaluation.json |
+    | Create a new process with selection derivation                  | 4                      | process_template_selection.json               |
+    | Create a new process with sequencial derivation                 | 5                      | process_template_sequencial.json              |
+    | Create a new process Complete                                   | 6                      | process_template_complete.json                |
+    | Create a new process with DataStore, DataObject and Participant | 7                      | process_template_with_DATA_participant.json   |
+    
 
 Scenario Outline: Create new Projects with same name (negative test)
     Given POST data from file "<project_template>"
@@ -697,11 +703,87 @@ Scenario Outline: Get definition of a project
     And the type is "object"
     And that "prj_name" is set to "Update Evaluation"
     And that "prj_description" is set to "Update"
-    
+
     Examples:
 
     | project_new_uid_number |
     | 1                      |
+
+
+Scenario Outline: Get definition of a project
+    Given that I want to get a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
+    And I request "project"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And that "prj_name" is set to "Update Evaluation"
+    And that "prj_description" is set to "Update"
+        
+    Examples:
+
+    | project_new_uid_number |
+    | 7                      |
+
+
+#Test of successful export and import of objects "Data Object, Data Store, Black Box and Text" 
+
+Scenario Outline: Get for Export Project - Test process NEW
+    Given I request "project/new_uid/export" with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/xml"
+    And save exported process to "/" as "Test process NEW.pmx"
+
+    Examples:
+
+    | project_new_uid_number |
+    | 7                      |
+
+
+Scenario Outline: Delete a Project activity created previously in this script - Test process NEW
+    Given that I want to delete a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
+    And I request "projects"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+
+    Examples:
+
+    | project_new_uid_number |
+    | 7                      |
+
+
+Scenario Outline: Import a process - Test process NEW 
+    Given POST upload a project file "<project_file>" to "project/import?option=<import_option>&option_group=merge"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And store "prj_uid" in session array as variable "prj_uid_<prj_uid_number>"
+
+    Examples:
+    | project_file               | import_option | prj_uid_number |
+    | Process_NewCreate_BPMN.pmx | CREATE        | 7              |
+
+
+Scenario Outline: Delete a Project activity created previously in this script - Test process NEW
+    Given that I want to delete a resource with the key "prj_uid" stored in session array as variable "prj_uid_<prj_uid_number>"
+    And I request "projects"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+
+    Examples:
+
+    | prj_uid_number |
+    | 7              |
+
+
+#Culmination of test objects for Objects "Data, Data Store, Black Box and Text"
+
 
 Scenario Outline: Delete a Project activity created previously in this script
     Given that I want to delete a resource with the key "new_uid" stored in session array as variable "project_new_uid_<project_new_uid_number>" in position 0
@@ -720,7 +802,7 @@ Scenario Outline: Delete a Project activity created previously in this script
     | 4                      |
     | 5                      |
     | 6                      |
-
+ 
 
 Scenario: Get a list of projects
     Given I request "project"
@@ -728,3 +810,44 @@ Scenario: Get a list of projects
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
+
+
+#BUG 15088-Al editar el nombre de un proceso este permite ingresar el nombre de uno ya existente
+Scenario: Update the Projects by setting the name of an existing project
+    Given PUT this data:
+    """
+    {
+    "prj_uid": "5195971265375127fce82f4015927137",
+    "prj_name": "Process Complete BPMN",
+    "prj_description": "",
+    "prj_target_namespace": "",
+    "prj_expresion_language": "",
+    "prj_type_language": "",
+    "prj_exporter": "",
+    "prj_exporter_version": "",
+    "prj_create_date": "2014-05-15 15:16:15",
+    "prj_update_date": "2014-06-09 23:00:34",
+    "prj_author": "00000000000000000000000000000001",
+    "prj_author_version": "",
+    "prj_original_source": "",
+    "diagrams": [
+        {
+            "dia_uid": "3539627265375127fe1a1d2011478753",
+            "prj_uid": "5195971265375127fce82f4015927137",
+            "dia_name": "Export process empty",
+            "dia_is_closable": 0,
+            "pro_uid": "2365993365375127fe87052082426765",
+            "activities": [],
+            "events": [],
+            "gateways": [],
+            "flows": [],
+            "artifacts": [],
+            "laneset": [],
+            "lanes": []
+        }
+    ]
+    }
+    """
+    And I request "projects/5195971265375127fce82f4015927137"
+    Then the response status code should be 400
+    And the response status message should have the following text "exists"

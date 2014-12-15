@@ -363,6 +363,7 @@ class OutputDocument
             require_once(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "OutputDocument.php");
             require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "ObjectPermission.php");
             require_once(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Step.php");
+            $this->throwExceptionIfItsAssignedInOtherObjects($sOutputDocumentUID, "outputDocumentUid");
             \G::LoadClass( 'processMap' );
             $oOutputDocument = new \OutputDocument();
             $fields = $oOutputDocument->load( $sOutputDocumentUID );
@@ -391,18 +392,26 @@ class OutputDocument
     {
         try {
             $delimiter = \DBAdapter::getStringDelimiter();
+
             $criteria = new \Criteria("workflow");
+
             $criteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_UID);
-            $criteria->addAlias("CT", "CONTENT");
+
+            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
+
             $arrayCondition = array();
             $arrayCondition[] = array(\OutputDocumentPeer::OUT_DOC_UID, "CT.CON_ID", \Criteria::EQUAL);
             $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "OUT_DOC_TITLE" . $delimiter, \Criteria::EQUAL);
             $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
             $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
             $criteria->add(\OutputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
-            $criteria->add(\ContentPeer::CON_VALUE, $title, \Criteria::EQUAL);
+
+
+            $criteria->add("CT.CON_VALUE", $title, \Criteria::EQUAL);
+
             $rsCriteria = \OutputDocumentPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
             if ($rsCriteria->next()) {
                 return true;
             } else {
@@ -439,6 +448,88 @@ class OutputDocument
                 $rsCriteria->next();
             }
             return $aResp;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+    * Verify if the OutputDocument it's assigned in other objects
+    *
+    * @param string $outputDocumentUid Unique id of OutputDocument
+    *
+    * return array Return array (true if it's assigned or false otherwise and data)
+    */
+    public function itsAssignedInOtherObjects($outputDocumentUid)
+    {
+        try {
+            $flagAssigned = false;
+            $arrayData = array();
+            //Step
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\StepPeer::STEP_UID);
+            $criteria->add(\StepPeer::STEP_TYPE_OBJ, "OUTPUT_DOCUMENT", \Criteria::EQUAL);
+            $criteria->add(\StepPeer::STEP_UID_OBJ, $outputDocumentUid, \Criteria::EQUAL);
+
+            $rsCriteria = \StepPeer::doSelectRS($criteria);
+
+            if ($rsCriteria->next()) {
+                $flagAssigned = true;
+                $arrayData[] = \G::LoadTranslation("ID_STEPS");
+            }
+
+            //StepSupervisor
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
+            $criteria->add(\StepSupervisorPeer::STEP_TYPE_OBJ, "OUTPUT_DOCUMENT", \Criteria::EQUAL);
+            $criteria->add(\StepSupervisorPeer::STEP_UID_OBJ, $outputDocumentUid, \Criteria::EQUAL);
+
+            $rsCriteria = \StepSupervisorPeer::doSelectRS($criteria);
+
+            if ($rsCriteria->next()) {
+                $flagAssigned = true;
+                $arrayData[] = \G::LoadTranslation("ID_CASES_MENU_ADMIN");
+            }
+
+            //ObjectPermission
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ObjectPermissionPeer::OP_UID);
+            $criteria->add(\ObjectPermissionPeer::OP_OBJ_TYPE, "OUTPUT", \Criteria::EQUAL);
+            $criteria->add(\ObjectPermissionPeer::OP_OBJ_UID, $outputDocumentUid, \Criteria::EQUAL);
+
+            $rsCriteria = \ObjectPermissionPeer::doSelectRS($criteria);
+
+            if ($rsCriteria->next()) {
+                $flagAssigned = true;
+                $arrayData[] = \G::LoadTranslation("ID_PROCESS_PERMISSIONS");
+            }
+
+            //Return
+            return array($flagAssigned, $arrayData);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+    * Verify if the OutputDocument it's assigned in other objects
+    *
+    * @param string $outputDocumentUid      Unique id of OutputDocument
+    * @param string $fieldNameForException Field name for the exception
+    *
+    * return void Throw exception if the OutputDocument it's assigned in other objects
+    */
+    public function throwExceptionIfItsAssignedInOtherObjects($outputDocumentUid, $fieldNameForException)
+    {
+        try {
+            list($flagAssigned, $arrayData) = $this->itsAssignedInOtherObjects($outputDocumentUid);
+
+            if ($flagAssigned) {
+                throw new \Exception(\G::LoadTranslation("ID_OUTPUT_DOCUMENT_ITS_ASSIGNED", array($fieldNameForException, $outputDocumentUid, implode(", ", $arrayData))));
+            }
         } catch (\Exception $e) {
             throw $e;
         }

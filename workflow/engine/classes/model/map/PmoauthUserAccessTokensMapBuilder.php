@@ -71,7 +71,9 @@ class PmoauthUserAccessTokensMapBuilder
 
         $tMap->addColumn('USER_ID', 'UserId', 'string', CreoleTypes::VARCHAR, false, 32);
 
-        $tMap->addColumn('SESSION_ID', 'SessionId', 'string', CreoleTypes::VARCHAR, true, 40);
+        $tMap->addColumn('SESSION_ID', 'SessionId', 'string', CreoleTypes::VARCHAR, true, 64);
+
+        $tMap->addColumn('SESSION_NAME', 'SessionName', 'string', CreoleTypes::VARCHAR, true, 64);
 
     } // doBuild()
 

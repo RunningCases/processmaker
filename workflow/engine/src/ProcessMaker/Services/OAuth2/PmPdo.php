@@ -45,7 +45,7 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
             'access_token_table' => 'OAUTH_ACCESS_TOKENS',
             'refresh_token_table' => 'OAUTH_REFRESH_TOKENS',
             'code_table' => 'OAUTH_AUTHORIZATION_CODES',
-            'user_table' => 'OAUTH_USERS',
+            'user_table' => 'USERS',
             'jwt_table' => 'OAUTH_JWT',
         ), $config);
     }
@@ -145,6 +145,24 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
         return $stmt->execute(compact('code'));
     }
 
+    public function expireToken($token)
+    {
+        $access_token = new \OauthAccessTokens();
+        $access_token->load($token);
+        $stmt = $this->db->prepare(sprintf('UPDATE %s SET EXPIRES=%s WHERE ACCESS_TOKEN=:token', $this->config['access_token_table'], "'".Date('Y-m-d H:i:s',strtotime("-1 minute"))."'"));
+        return $stmt->execute(compact('token'));
+    }
+
+    public function deleteToken($token)
+    {
+        $access_token = new \OauthAccessTokens();
+        $access_token->load($token);
+        $stmt = $this->db->prepare(sprintf('DELETE FROM %s WHERE ACCESS_TOKEN = :token', $this->config['access_token_table']));
+        $stmt->execute(compact('token'));
+        $stmt = $this->db->prepare(sprintf('DELETE FROM %s WHERE EXPIRES>%s', $this->config['refresh_token_table'], "'".Date('Y-m-d H:i:s')."'"));
+        return $stmt->execute(compact('token'));
+    }
+
     /* OAuth2_Storage_UserCredentialsInterface */
     public function checkUserCredentials($username, $password)
     {
@@ -193,12 +211,12 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
     // plaintext passwords are bad!  Override this for your application
     protected function checkPassword($user, $password)
     {
-        return $user['password'] == sha1($password);
+        return $user['USR_PASSWORD'] == md5($password);
     }
 
     public function getUser($username)
     {
-        $stmt = $this->db->prepare($sql = sprintf('SELECT * FROM %s WHERE USERNAME=:username', $this->config['user_table']));
+        $stmt = $this->db->prepare($sql = sprintf('SELECT * FROM %s WHERE USR_USERNAME=:username', $this->config['user_table']));
         $stmt->execute(array('username' => $username));
 
         if (!$userInfo = $stmt->fetch()) {
@@ -209,7 +227,7 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
 
         // the default behavior is to use "username" as the user_id
         return array_merge(array(
-            'user_id' => $username
+            'user_id' => $userInfo['USR_UID'] //$username
         ), $userInfo);
     }
 

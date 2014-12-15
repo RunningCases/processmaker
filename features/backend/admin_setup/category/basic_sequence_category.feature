@@ -33,7 +33,7 @@ Scenario: Create a new Categories
     }
     """
     And I request "project/category"
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "object"

@@ -31,6 +31,10 @@ class Bootstrap
 
     public static function registerClass($className, $includePath)
     {
+        if (! class_exists('\Maveriks\Util\ClassLoader')) {
+            self::displayMaveriksNotLoadedError();
+        }
+
         $loader = Maveriks\Util\ClassLoader::getInstance();
         $loader->addClass($className, $includePath);
     }
@@ -221,6 +225,8 @@ class Bootstrap
         self::registerClass("cronFile", PATH_CLASSES . "class.plugin.php");
         self::registerClass("pluginDetail", PATH_CLASSES . "class.pluginRegistry.php");
         self::registerClass("PMPluginRegistry", PATH_CLASSES . "class.pluginRegistry.php");
+        self::registerClass("featuresDetail", PATH_CLASSES . "class.licensedFeatures.php");
+        self::registerClass("PMLicensedFeatures", PATH_CLASSES . "class.licensedFeatures.php");
         self::registerClass("PMDashlet", PATH_CLASSES . "class.pmDashlet.php");
         self::registerClass("pmGauge", PATH_CLASSES . "class.pmGauge.php");
         self::registerClass("pmPhing", PATH_CLASSES . "class.pmPhing.php");
@@ -1057,9 +1063,13 @@ class Bootstrap
         if ($skinName == "classic") {
             $configurationFile = Bootstrap::ExpandPath("skinEngine") . 'base' . PATH_SEP . 'config.xml';
         } else {
-            $configurationFile = PATH_CUSTOM_SKINS . $skinName . PATH_SEP . 'config.xml';
+            $configurationFile = "";
 
-            if (!is_file($configurationFile)) {
+            if (defined("PATH_CUSTOM_SKINS")) {
+                $configurationFile = PATH_CUSTOM_SKINS . $skinName . PATH_SEP . 'config.xml';
+            }
+
+            if (! is_file($configurationFile)) {
                 $configurationFile = Bootstrap::ExpandPath("skinEngine") . $skinName . PATH_SEP . 'config.xml';
             }
         }
@@ -2827,6 +2837,85 @@ class Bootstrap
         }
 
         return $result;
+    }
+
+    public static function displayMaveriksNotLoadedError()
+    {
+        if (! class_exists('\Maveriks\Util\ClassLoader')) {
+            require PATH_TRUNK . "framework/src/Maveriks/Pattern/Mvc/View.php";
+            require PATH_TRUNK . "framework/src/Maveriks/Pattern/Mvc/PhtmlView.php";
+
+            $message = "Please review your apache virtual host configuration file, and be sure you have the following rules:
+
+        <IfModule mod_rewrite.c>
+            RewriteEngine On
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule ^(.*)$ /app.php [QSA,L]
+        </IfModule>";
+
+            $view = new Maveriks\Pattern\Mvc\PhtmlView(PATH_TRUNK . "framework/src/templates/error.phtml");
+            $view->set("title", "Sistem Configuration Error");
+            $view->set("message", htmlentities($message));
+
+            echo $view->getOutput();
+            die();
+        }
+    }
+
+    public function getPasswordHashConfig()
+    {
+        G::LoadClass('configuration');
+        $config= new Configurations();
+        $passwordHashConfig = $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
+        if (!is_null($passwordHashConfig)) {
+            if (!is_array($passwordHashConfig)) {
+                $passwordHashConfig = array();
+            }
+            if (!isset($passwordHashConfig['current'])) {
+                $passwordHashConfig['current'] = 'md5';
+            }
+            if (!isset($passwordHashConfig['previous'])) {
+                $passwordHashConfig['previous'] = 'md5';
+            }
+        } else {
+            $passwordHashConfig = array('current' => 'md5', 'previous' => 'md5');
+        }
+        return $passwordHashConfig;
+    }
+
+    public function getPasswordHashType()
+    {
+        $passwordHashConfig = Bootstrap::getPasswordHashConfig();
+        return $passwordHashConfig['current'];
+    }
+
+    public function hashPassword($pass, $hashType = '', $includeHashType = false)
+    {
+        if ($hashType == '') {
+            $hashType = Bootstrap::getPasswordHashType();
+        }
+
+        eval("\$var = hash('" . $hashType . "', '" . $pass . "');");
+
+        if ($includeHashType) {
+            $var = $hashType . ':' . $var;
+        }
+
+        return $var;
+    }
+
+    public function verifyHashPassword ($pass, $userPass)
+    {
+        $passwordHashConfig = Bootstrap::getPasswordHashConfig();
+        $hashTypeCurrent = $passwordHashConfig['current'];
+        $hashTypePrevious = $passwordHashConfig['previous'];
+        if ((Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) || ($pass === $hashTypeCurrent . ':' . $userPass)) {
+            return true;
+        }
+        if ((Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) || ($pass === $hashTypePrevious . ':' . $userPass)) {
+            return true;
+        }
+        return false;
     }
 }
 

@@ -497,7 +497,8 @@ function popupWindow ( title , url, width, height, callbackFn , autoSizeWidth, a
 	var myPanel = new leimnud.module.panel();
 	currentPopupWindow = myPanel;
 	myPanel.options = {
-	    limit: true,
+        id: 'panelFieldProperties',
+        limit: true,
 		size:{w:width,h:height},
 		position:{center:true},
 		title: title,
@@ -2153,7 +2154,7 @@ function _()
       }
     }
     else {
-      trn = '**' + argv[0] + '**';
+      trn = argv[0];
     }
   }
   else {
@@ -2190,7 +2191,7 @@ function __()
         eval("trn = TRANSLATIONS_" + argv[0].toUpperCase() + "[argv[1]];");
       }
     } else {
-      trn = '**' + argv[1] + '**';
+      trn =  argv[1];
     }
   } else {
     PMExt.error('Processmaker JS Core Error', 'The TRANSLATIONS ' + argv[0].toUpperCase() + ' global object is not loaded!');
@@ -2232,3 +2233,12 @@ var stripNonNumeric = function (str) {
    }
    return out;
 };
+
+function inputDocumentVerifySize(inpDocMaxFileSize, file)
+{
+    try {
+        return (file.files[0].size <= inpDocMaxFileSize)? 1 : 0;
+    } catch (e) {
+        return 1;
+    }
+}

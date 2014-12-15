@@ -4,8 +4,6 @@ namespace ProcessMaker\Project;
 use \BpmnProject as Project;
 use \BpmnProcess as Process;
 use \BpmnDiagram as Diagram;
-use \BpmnLaneset as Laneset;
-use \BpmnLane as Lane;
 use \BpmnActivity as Activity;
 use \BpmnBound as Bound;
 use \BpmnEvent as Event;
@@ -16,16 +14,23 @@ use \BpmnArtifact as Artifact;
 use \BpmnProjectPeer as ProjectPeer;
 use \BpmnProcessPeer as ProcessPeer;
 use \BpmnDiagramPeer as DiagramPeer;
-use \BpmnLanesetPeer as LanesetPeer;
-use \BpmnLanePeer as LanePeer;
+
 use \BpmnActivityPeer as ActivityPeer;
 use \BpmnBoundPeer as BoundPeer;
 use \BpmnEventPeer as EventPeer;
 use \BpmnGatewayPeer as GatewayPeer;
 use \BpmnFlowPeer as FlowPeer;
 use \BpmnArtifactPeer as ArtifactPeer;
+use \BpmnParticipant as Participant;
+use \BpmnParticipantPeer as ParticipantPeer;
+use \BpmnLaneset as Laneset;
+use \BpmnLanesetPeer as LanesetPeer;
+use \BpmnLane as Lane;
+use \BpmnLanePeer as LanePeer;
 
 use \BasePeer;
+use \Criteria as Criteria;
+use \ResultSet as ResultSet;
 
 use ProcessMaker\Util\Common;
 use ProcessMaker\Exception;
@@ -71,7 +76,11 @@ class Bpmn extends Handler
             "PRJ_UID", "PRO_UID", "BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
             "BOU_SIZE_IDENTICAL", "DIA_UID", "BOU_UID", "ELEMENT_UID"
         ),
-        "flow" => array("PRJ_UID", "DIA_UID", "FLO_ELEMENT_DEST_PORT", "FLO_ELEMENT_ORIGIN_PORT")
+        "flow" => array("PRJ_UID", "DIA_UID", "FLO_ELEMENT_DEST_PORT", "FLO_ELEMENT_ORIGIN_PORT"),
+        "data" => array("PRJ_UID"),
+        "participant" => array("PRJ_UID"),
+        "laneset" => array(),
+        "lane" => array()
     );
 
 
@@ -117,6 +126,12 @@ class Bpmn extends Handler
 
     public function update($data)
     {
+        if (isset($data["PRJ_NAME"])) {
+            $process = new \ProcessMaker\BusinessModel\Process();
+
+            $process->throwExceptionIfExistsTitle($data["PRJ_NAME"], strtolower("PRJ_NAME"), $this->prjUid);
+        }
+
         if (array_key_exists("PRJ_CREATE_DATE", $data) && empty($data["PRJ_CREATE_DATE"])) {
             unset($data["PRJ_UPDATE_DATE"]);
         }
@@ -146,14 +161,14 @@ class Bpmn extends Handler
         }
 
         self::log("Remove Project With Uid: {$this->prjUid}");
+        foreach ($this->getEvents() as $event) {
+            $this->removeEvent($event["EVN_UID"]);
+        }
         foreach ($this->getActivities() as $activity) {
             $this->removeActivity($activity["ACT_UID"]);
         }
         foreach ($this->getGateways() as $gateway) {
             $this->removeGateway($gateway["GAT_UID"]);
-        }
-        foreach ($this->getEvents() as $event) {
-            $this->removeEvent($event["EVN_UID"]);
         }
         foreach ($this->getFlows() as $flow) {
             $this->removeFlow($flow["FLO_UID"]);
@@ -161,7 +176,18 @@ class Bpmn extends Handler
         foreach ($this->getArtifacts() as $artifacts) {
             $this->removeArtifact($artifacts["ART_UID"]);
         }
-
+        foreach ($this->getDataCollection() as $bpmnData) {
+            $this->removeData($bpmnData["DAT_UID"]);
+        }
+        foreach ($this->getParticipants() as $participant) {
+            $this->removeParticipant($participant["PAR_UID"]);
+        }
+        foreach ($this->getLanesets() as $laneset) {
+            $this->removeLaneset($laneset["LNS_UID"]);
+        }
+        foreach ($this->getLanes() as $lane) {
+            $this->removeLane($lane["LAN_UID"]);
+        }
         if ($process = $this->getProcess("object")) {
             $process->delete();
         }
@@ -477,8 +503,8 @@ class Bpmn extends Handler
     {
         try {
             self::log("Remove Event: $evnUid");
-
             $event = EventPeer::retrieveByPK($evnUid);
+
             $event->delete();
 
             self::log("Remove Event Success!");
@@ -541,6 +567,31 @@ class Bpmn extends Handler
         return $gateway;
     }
 
+    public function getGateway2($gatewayUid)
+    {
+        try {
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(GatewayPeer::TABLE_NAME . ".*");
+            $criteria->addSelectColumn(BoundPeer::TABLE_NAME . ".*");
+            $criteria->addJoin(GatewayPeer::GAT_UID, BoundPeer::ELEMENT_UID, Criteria::LEFT_JOIN);
+            $criteria->add(GatewayPeer::GAT_UID, $gatewayUid, Criteria::EQUAL);
+
+            $rsCriteria = GatewayPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                //Return
+                return $rsCriteria->getRow();
+            }
+
+            //Return
+            return false;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     public function getGateways($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
         if (is_array($start)) {
@@ -590,6 +641,10 @@ class Bpmn extends Handler
                 case "bpmnGateway": $class = "BpmnGateway"; break;
                 case "bpmnEvent": $class = "BpmnEvent"; break;
                 case "bpmnArtifact": $class = "BpmnArtifact"; break;
+                case "bpmnData": $class = "BpmnData"; break;
+                case "bpmnParticipant": $class = "BpmnParticipant"; break;
+                case "bpmnLaneset": $class = "BpmnLaneset"; break;
+                case "bpmnLane": $class = "BpmnLane"; break;
                 default:
                     throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
                         "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_ORIGIN_TYPE"]
@@ -608,6 +663,10 @@ class Bpmn extends Handler
                 case "bpmnGateway": $class = "BpmnGateway"; break;
                 case "bpmnEvent": $class = "BpmnEvent"; break;
                 case "bpmnArtifact": $class = "BpmnArtifact"; break;
+                case "bpmnData": $class = "BpmnData"; break;
+                case "bpmnParticipant": $class = "BpmnParticipant"; break;
+                case "bpmnLaneset": $class = "BpmnLaneset"; break;
+                case "bpmnLane": $class = "BpmnLane"; break;
                 default:
                     throw new \RuntimeException(sprintf("Invalid Object type, accepted types: [%s|%s|%s|%s], given %s.",
                         "BpmnActivity", "BpmnBpmnGateway", "BpmnEvent", "bpmnArtifact", $data["FLO_ELEMENT_DEST_TYPE"]
@@ -704,7 +763,11 @@ class Bpmn extends Handler
     public function addArtifact($data)
     {
         // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
         $data['ART_UID'] = array_key_exists('ART_UID', $data) ? $data['ART_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
         try {
             self::log("Add Artifact with data: ", $data);
             $artifact = new Artifact();
@@ -782,38 +845,341 @@ class Bpmn extends Handler
         }
     }
 
+    public function addData($data)
+    {
+        // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
+        $data['DATA_UID'] = array_key_exists('DAT_UID', $data) ? $data['DAT_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
+        try {
+            self::log("Add BpmnData with data: ", $data);
+            $bpmnData = new \BpmnData();
+            $bpmnData->fromArray($data, BasePeer::TYPE_FIELDNAME);
+            $bpmnData->setPrjUid($this->getUid());
+            $bpmnData->setProUid($this->getProcess("object")->getProUid());
+            $bpmnData->save();
+            self::log("Add BpmnData Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+
+        return $bpmnData->getDatUid();
+    }
+
+    public function updateData($datUid, $data)
+    {
+        try {
+            self::log("Update BpmnData: $datUid", "With data: ", $data);
+
+            $bpmnData = \BpmnDataPeer::retrieveByPk($datUid);
+
+            $bpmnData->fromArray($data);
+            $bpmnData->save();
+
+            self::log("Update BpmnData Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function getData($datUid, $retType = 'array')
+    {
+        $bpmnData = \BpmnDataPeer::retrieveByPK($datUid);
+
+        if ($retType != "object" && ! empty($bpmnData)) {
+            $bpmnData = $bpmnData->toArray();
+            $bpmnData = self::filterArrayKeys($bpmnData, self::$excludeFields["data"]);
+        }
+
+        return $bpmnData;
+    }
+
+    public function getDataCollection($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        $filter = $changeCaseTo != CASE_UPPER ? array_map("strtolower", self::$excludeFields["data"]) : self::$excludeFields["data"];
+
+        return self::filterCollectionArrayKeys(
+            \BpmnData::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo),
+            $filter
+        );
+    }
+
+    public function removeData($datUid)
+    {
+        try {
+            self::log("Remove BpmnData: $datUid");
+
+            $bpmnData = \BpmnDataPeer::retrieveByPK($datUid);
+            $bpmnData->delete();
+
+            // remove related object (flows)
+            Flow::removeAllRelated($datUid);
+
+            self::log("Remove BpmnData Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function addParticipant($data)
+    {
+        // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
+        $data['PAR_UID'] = array_key_exists('PAR_UID', $data) ? $data['PAR_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
+        try {
+            self::log("Add Participant with data: ", $data);
+            $participant = new Participant();
+            $participant->fromArray($data, BasePeer::TYPE_FIELDNAME);
+            $participant->setPrjUid($this->getUid());
+            $participant->setProUid($this->getProcess("object")->getProUid());
+            $participant->save();
+            self::log("Add Participant Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+
+        return $participant->getParUid();
+    }
+
+    public function updateParticipant($parUid, $data)
+    {
+        try {
+            self::log("Update Participant: $parUid", "With data: ", $data);
+
+            $participant = ParticipantPeer::retrieveByPk($parUid);
+
+            $participant->fromArray($data);
+            $participant->save();
+
+            self::log("Update Participant Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function getParticipant($parUid, $retType = 'array')
+    {
+        $participant = ParticipantPeer::retrieveByPK($parUid);
+
+        if ($retType != "object" && ! empty($participant)) {
+            $participant = $participant->toArray();
+            $participant = self::filterArrayKeys($participant, self::$excludeFields["participant"]);
+        }
+
+        return $participant;
+    }
+
+    public function getParticipants($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
+    {
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        $filter = $changeCaseTo != CASE_UPPER ? array_map("strtolower", self::$excludeFields["participant"]) : self::$excludeFields["participant"];
+
+        return self::filterCollectionArrayKeys(
+            Participant::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo),
+            $filter
+        );
+    }
+
+    public function removeParticipant($parUid)
+    {
+        try {
+            self::log("Remove Participant: $parUid");
+
+            $participant = ParticipantPeer::retrieveByPK($parUid);
+            $participant->delete();
+
+            // remove related object (flows)
+            Flow::removeAllRelated($parUid);
+
+            self::log("Remove Participant Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
     public function addLane($data)
     {
-        // TODO: Implement update() method.
+        // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+
+        $data['LAN_UID'] = array_key_exists('LAN_UID', $data) ? $data['LAN_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
+        try {
+            self::log("Add Lane with data: ", $data);
+            $lane = new Lane();
+            $lane->fromArray($data, BasePeer::TYPE_FIELDNAME);
+            $lane->setPrjUid($this->getUid());
+            //$lane->setProUid($this->getProcess("object")->getProUid());
+            $lane->save();
+            self::log("Add Lane Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+
+        return $lane->getLanUid();
     }
 
-    public function getLane($lanUid)
+    public function getLane($lanUid, $retType = 'array')
     {
-        // TODO: Implement update() method.
+        $lane = LanePeer::retrieveByPK($lanUid);
+
+        if ($retType != "object" && ! empty($lane)) {
+            $lane = $lane->toArray();
+            $lane = self::filterArrayKeys($lane, self::$excludeFields["lane"]);
+        }
+
+        return $lane;
     }
 
-    public function getLanes()
+    public function getLanes($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
-        // TODO: Implement update() method.
-        return array();
+        if (is_array($start)) {
+            extract($start);
+        }
+
+        $filter = $changeCaseTo != CASE_UPPER ? array_map("strtolower", self::$excludeFields["lane"]) : self::$excludeFields["lane"];
+
+        return self::filterCollectionArrayKeys(
+            Lane::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo),
+            $filter
+        );
+    }
+
+    public function removeLane($lanUid)
+    {
+        try {
+            self::log("Remove Lane: $lanUid");
+
+            $lane = LanePeer::retrieveByPK($lanUid);
+            $lane->delete();
+
+            // remove related object (flows)
+            Flow::removeAllRelated($lanUid);
+
+            self::log("Remove Lane Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function updateLane($lanUid, $data)
+    {
+        try {
+            self::log("Update Lane: $lanUid", "With data: ", $data);
+            $lane = LanePeer::retrieveByPk($lanUid);
+
+            $lane->fromArray($data);
+            $lane->save();
+
+            self::log("Update Lane Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function addLaneset($data)
     {
-        // TODO: Implement update() method.
+        // setting defaults
+        $processUid = $this->getProcess("object")->getProUid();
+        $data['LNS_UID'] = array_key_exists('LNS_UID', $data) ? $data['LNS_UID'] : Common::generateUID();
+        $data["PRO_UID"] = $processUid;
+
+        try {
+            self::log("Add Laneset with data: ", $data);
+            $laneset = new Laneset();
+            $laneset->fromArray($data, BasePeer::TYPE_FIELDNAME);
+            $laneset->setPrjUid($this->getUid());
+            $laneset->setProUid($this->getProcess("object")->getProUid());
+            $laneset->save();
+            self::log("Add Laneset Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+
+        return $laneset->getLnsUid();
     }
 
-    public function getLaneset($lnsUid)
+    public function getLaneset($lnsUid, $retType = 'array')
     {
-        // TODO: Implement update() method.
+        $laneset = LanesetPeer::retrieveByPK($lnsUid);
+
+        if ($retType != "object" && ! empty($laneset)) {
+            $laneset = $laneset->toArray();
+            $laneset = self::filterArrayKeys($laneset, self::$excludeFields["laneset"]);
+        }
+
+        return $laneset;
     }
 
-    public function getLanesets()
+    public function getLanesets($start = null, $limit = null, $filter = '', $changeCaseTo = CASE_UPPER)
     {
-        // TODO: Implement update() method.
-        return array();
+        if (is_array($start)) {
+            extract($start);
+        }
+        $filter = $changeCaseTo != CASE_UPPER ? array_map("strtolower", self::$excludeFields["laneset"]) : self::$excludeFields["laneset"];
+        return self::filterCollectionArrayKeys(
+            Laneset::getAll($this->getUid(), $start, $limit, $filter, $changeCaseTo),
+            $filter
+        );
     }
 
+    public function removeLaneset($lnsUid)
+    {
+        try {
+            self::log("Remove Laneset: $lnsUid");
+
+            $laneset = LanesetPeer::retrieveByPK($lnsUid);
+            $laneset->delete();
+
+            // remove related object (flows)
+            Flow::removeAllRelated($lnsUid);
+
+            self::log("Remove Laneset Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
+    public function updateLaneset($lnsUid, $data)
+    {
+        try {
+            self::log("Update Laneset: $lnsUid", "With data: ", $data);
+
+            $laneset = LanesetPeer::retrieveByPk($lnsUid);
+
+            $laneset->fromArray($data);
+            $laneset->save();
+
+            self::log("Update Laneset Success!");
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+            throw $e;
+        }
+    }
 
     public function isModified($element, $uid, $newData)
     {
@@ -834,6 +1200,47 @@ class Bpmn extends Handler
     {
         $status = $value ? "DISABLED" : "ACTIVE";
         $this->update(array("PRJ_STATUS" => $status));
+    }
+
+    public function getGatewayByDirectionActivityAndFlow($gatewayDirection, $activityUid)
+    {
+        try {
+            $criteria = new Criteria("workflow");
+
+            if ($gatewayDirection == "DIVERGING") {
+                $criteria->addSelectColumn(FlowPeer::FLO_ELEMENT_DEST . " AS GAT_UID");
+
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN, $activityUid, Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN_TYPE, "bpmnActivity", Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST_TYPE, "bpmnGateway", Criteria::EQUAL);
+            } else {
+                //CONVERGING
+                $criteria->addSelectColumn(FlowPeer::FLO_ELEMENT_ORIGIN . " AS GAT_UID");
+
+                $criteria->add(FlowPeer::FLO_ELEMENT_ORIGIN_TYPE, "bpmnGateway", Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST, $activityUid, Criteria::EQUAL);
+                $criteria->add(FlowPeer::FLO_ELEMENT_DEST_TYPE, "bpmnActivity", Criteria::EQUAL);
+            }
+
+            $criteria->add(FlowPeer::PRJ_UID, $this->prjUid, Criteria::EQUAL);
+            $criteria->add(FlowPeer::FLO_TYPE, "SEQUENCE", Criteria::EQUAL);
+
+            $rsCriteria = FlowPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            $gatewayUid = "";
+
+            if ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $gatewayUid = $row["GAT_UID"];
+            }
+
+            //Return
+            return $this->getGateway2($gatewayUid);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
 

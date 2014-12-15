@@ -22,7 +22,15 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
-
+/*----------------------------------********---------------------------------*/
+//Browser Compatibility
+$browserSupported = G::checkBrowserCompatibility();
+if ($browserSupported==false){
+	if(!isset($_SESSION['G_MESSAGE']) || $_SESSION['G_MESSAGE'] == ""){
+		G::SendTemporalMessage ('ID_CURRENT_BROWSER_NOT_SUPPORTED', 'warning');
+	}
+}
+/*----------------------------------********---------------------------------*/
 $aFields = array();
 
 if (!isset($_GET['u'])) {
@@ -44,9 +52,13 @@ $msgType = $_SESSION['G_MESSAGE_TYPE'];
 
 if (!isset($_SESSION['FAILED_LOGINS'])) {
     $_SESSION['FAILED_LOGINS'] = 0;
+    $_SESSION["USERNAME_PREVIOUS1"] = "";
+    $_SESSION["USERNAME_PREVIOUS2"] = "";
 }
 
 $sFailedLogins = $_SESSION['FAILED_LOGINS'];
+$usernamePrevious1 = $_SESSION["USERNAME_PREVIOUS1"];
+$usernamePrevious2 = $_SESSION["USERNAME_PREVIOUS2"];
 
 $aFields['LOGIN_VERIFY_MSG'] = G::loadTranslation('LOGIN_VERIFY_MSG');
 //$aFields['LOGIN_VERIFY_MSG'] = Bootstrap::loadTranslation('LOGIN_VERIFY_MSG');
@@ -120,6 +132,21 @@ if (strlen($msgType) > 0) {
 }
 
 $_SESSION['FAILED_LOGINS'] = $sFailedLogins;
+$_SESSION["USERNAME_PREVIOUS1"] = $usernamePrevious1;
+$_SESSION["USERNAME_PREVIOUS2"] = $usernamePrevious2;
+
+/*----------------------------------********---------------------------------*/
+if (!class_exists('pmLicenseManager')) {
+  G::LoadClass('pmLicenseManager');
+}
+$licenseManager =& pmLicenseManager::getSingleton();
+if (in_array(md5($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
+    $G_PUBLISH = new Publisher();
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpired', '', array(), 'licenseUpdate');
+    G::RenderPage('publish');
+    die();
+}
+/*----------------------------------********---------------------------------*/
 
 //translation
 //$Translations = G::getModel("Translation");
@@ -149,9 +176,14 @@ G::LoadClass('configuration');
 
 $oConf = new Configurations();
 $oConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
-$aFields['USER_LANG'] = isset($oConf->aConfig['login_defaultLanguage'])
-                        ? $oConf->aConfig['login_defaultLanguage']
-                        : 'en';
+
+$myUrl = explode("/", $_SERVER["REQUEST_URI"]);
+
+if (isset($myUrl) && $myUrl != "") {
+    $aFields["USER_LANG"] = $myUrl[2];
+} else {
+    $aFields["USER_LANG"] = isset($oConf->aConfig["login_defaultLanguage"])? $oConf->aConfig["login_defaultLanguage"] : SYS_LANG;
+}
 
 $G_PUBLISH = new Publisher();
 $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/login', '', $aFields, SYS_URI . 'login/authentication.php');

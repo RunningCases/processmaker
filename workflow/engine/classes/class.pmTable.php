@@ -40,6 +40,7 @@ class PmTable
     private $schemaFile = '';
     private $tableName;
     private $columns;
+    private $primaryKey= array();
     private $baseDir = '';
     private $targetDir = '';
     private $configDir = '';
@@ -273,6 +274,10 @@ class PmTable
                 break;
         }
 
+        $indexNode = $this->dom->createElement( 'index' );
+        $indexNode->setAttribute( 'name', 'indexTable' );
+        $flag = false;
+
         foreach ($this->columns as $column) {
 
             // create the column node
@@ -283,6 +288,14 @@ class PmTable
 
             if ($column->field_size != '' && $column->field_size != 0) {
                 $columnNode->setAttribute( 'size', $column->field_size );
+            }
+
+            if ($column->field_type == 'DECIMAL') {
+                if ($column->field_size > 2) {
+                    $columnNode->setAttribute( 'scale', 2 );
+                } else {
+                    $columnNode->setAttribute( 'scale', 1 );
+                }
             }
 
             $columnNode->setAttribute( 'required', ($column->field_null ? 'false' : 'true') );
@@ -296,9 +309,20 @@ class PmTable
             if ($column->field_autoincrement) {
                 $columnNode->setAttribute( 'autoIncrement', "true" );
             }
+
+            // define the Index attribute if it is defined
+            if (isset($column->field_index) && $column->field_index) {
+                $columnNode->setAttribute( 'index', "true" );
+                $indexColumnNode = $this->dom->createElement( 'index-column' );
+                $indexColumnNode->setAttribute( 'name', $column->field_name );
+                $indexNode->appendChild( $indexColumnNode );
+                $flag = true;
+            }
             $tableNode->appendChild( $columnNode );
         }
-
+        if ($flag) {
+            $tableNode->appendChild( $indexNode );
+        }
         $xpath = new DOMXPath( $this->dom );
         $xtable = $xpath->query( '/database/table[@name="' . $this->tableName . '"]' );
 
@@ -648,8 +672,29 @@ class PmTable
             $sql = "SELECT * FROM $tableBackup";
             $rs = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
 
+            // array the primary keys
+            foreach($this->columns as $value) {
+                if ($value->field_key == 1) {
+                    $this->primaryKey[] = $value->field_name;
+                }
+            }
+
+            $flagPrimaryKey = 1;
             while ($rs->next()) {
                 $row = $rs->getRow();
+                if ($flagPrimaryKey) {
+                    // verify row has all primary keys
+                    $keys = 0;
+                    foreach ($row as $colName => $value) {
+                        if (in_array($colName,$this->primaryKey)){
+                            $keys++;
+                        }
+                    }
+                    if ($keys != count($this->primaryKey)) {
+                        return $stmt->executeQuery(str_replace($table, $tableBackup, $queryStack["drop"]));
+                    }
+                    $flagPrimaryKey = 0;
+                }
 
                 $oTable = new $tableFileName();
                 $oTable->fromArray($row, BasePeer::TYPE_FIELDNAME);

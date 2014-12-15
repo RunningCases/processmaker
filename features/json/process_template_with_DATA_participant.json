@@ -1,0 +1,544 @@
+{
+    "prj_uid": "89867911453cfc0a88166b6079100310",
+    "prj_name": "Test process NEW",
+    "prj_description": "",
+    "prj_target_namespace": "",
+    "prj_expresion_language": "",
+    "prj_type_language": "",
+    "prj_exporter": "",
+    "prj_exporter_version": "",
+    "prj_create_date": "2014-07-23 10:03:20",
+    "prj_update_date": "2014-07-23 15:25:16",
+    "prj_author": "00000000000000000000000000000001",
+    "prj_author_version": "",
+    "prj_original_source": "",
+    "diagrams": [
+        {
+            "dia_uid": "44288077153cfc0a89424f9087061662",
+            "prj_uid": "89867911453cfc0a88166b6079100310",
+            "dia_name": "Test process NEW",
+            "dia_is_closable": 0,
+            "pro_uid": "93177932753cfc0a8986c44089014824",
+            "activities": [
+                {
+                    "act_uid": "42039389753cfc58a2db023038551328",
+                    "act_name": "Task # 3",
+                    "act_type": "TASK",
+                    "act_is_for_compensation": "0",
+                    "act_start_quantity": "1",
+                    "act_completion_quantity": "0",
+                    "act_task_type": "EMPTY",
+                    "act_implementation": "",
+                    "act_instantiate": "0",
+                    "act_script_type": "",
+                    "act_script": "",
+                    "act_loop_type": "NONE",
+                    "act_test_before": "0",
+                    "act_loop_maximum": "0",
+                    "act_loop_condition": "0",
+                    "act_loop_cardinality": "0",
+                    "act_loop_behavior": "0",
+                    "act_is_adhoc": "0",
+                    "act_is_collapsed": "0",
+                    "act_completion_condition": "0",
+                    "act_ordering": "0",
+                    "act_cancel_remaining_instances": "0",
+                    "act_protocol": "0",
+                    "act_method": "0",
+                    "act_is_global": "0",
+                    "act_referer": "0",
+                    "act_default_flow": "0",
+                    "act_master_diagram": "0",
+                    "bou_x": "618",
+                    "bou_y": "206",
+                    "bou_width": "150",
+                    "bou_height": "75",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "act_uid": "47452513353cfc4b015e855056634598",
+                    "act_name": "Task # 1",
+                    "act_type": "TASK",
+                    "act_is_for_compensation": "0",
+                    "act_start_quantity": "1",
+                    "act_completion_quantity": "0",
+                    "act_task_type": "EMPTY",
+                    "act_implementation": "",
+                    "act_instantiate": "0",
+                    "act_script_type": "",
+                    "act_script": "",
+                    "act_loop_type": "NONE",
+                    "act_test_before": "0",
+                    "act_loop_maximum": "0",
+                    "act_loop_condition": "0",
+                    "act_loop_cardinality": "0",
+                    "act_loop_behavior": "0",
+                    "act_is_adhoc": "0",
+                    "act_is_collapsed": "0",
+                    "act_completion_condition": "0",
+                    "act_ordering": "0",
+                    "act_cancel_remaining_instances": "0",
+                    "act_protocol": "0",
+                    "act_method": "0",
+                    "act_is_global": "0",
+                    "act_referer": "0",
+                    "act_default_flow": "0",
+                    "act_master_diagram": "0",
+                    "bou_x": "198",
+                    "bou_y": "146",
+                    "bou_width": "150",
+                    "bou_height": "75",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "act_uid": "63183340353cfc57778a499040015745",
+                    "act_name": "Task # 2",
+                    "act_type": "TASK",
+                    "act_is_for_compensation": "0",
+                    "act_start_quantity": "1",
+                    "act_completion_quantity": "0",
+                    "act_task_type": "EMPTY",
+                    "act_implementation": "",
+                    "act_instantiate": "0",
+                    "act_script_type": "",
+                    "act_script": "",
+                    "act_loop_type": "NONE",
+                    "act_test_before": "0",
+                    "act_loop_maximum": "0",
+                    "act_loop_condition": "0",
+                    "act_loop_cardinality": "0",
+                    "act_loop_behavior": "0",
+                    "act_is_adhoc": "0",
+                    "act_is_collapsed": "0",
+                    "act_completion_condition": "0",
+                    "act_ordering": "0",
+                    "act_cancel_remaining_instances": "0",
+                    "act_protocol": "0",
+                    "act_method": "0",
+                    "act_is_global": "0",
+                    "act_referer": "0",
+                    "act_default_flow": "0",
+                    "act_master_diagram": "0",
+                    "bou_x": "618",
+                    "bou_y": "74",
+                    "bou_width": "150",
+                    "bou_height": "75",
+                    "bou_container": "bpmnDiagram"
+                }
+            ],
+            "events": [
+                {
+                    "evn_uid": "90282129153cfc4b0565a82000775606",
+                    "evn_name": "Start Event # 1",
+                    "evn_type": "START",
+                    "evn_marker": "EMPTY",
+                    "evn_is_interrupting": "1",
+                    "evn_cancel_activity": "0",
+                    "evn_activity_ref": "",
+                    "evn_wait_for_completion": "0",
+                    "evn_error_name": "",
+                    "evn_error_code": "",
+                    "evn_escalation_name": "",
+                    "evn_escalation_code": "",
+                    "evn_message": "LEAD",
+                    "evn_operation_implementation_ref": "",
+                    "evn_time_date": "",
+                    "evn_time_cycle": "",
+                    "evn_time_duration": "",
+                    "evn_behavior": "CATCH",
+                    "evn_operation_name": "",
+                    "bou_x": "57",
+                    "bou_y": "166",
+                    "bou_width": "33",
+                    "bou_height": "33",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "evn_uid": "98330162753cfc58a6e3282003840838",
+                    "evn_name": "End Event # 1",
+                    "evn_type": "END",
+                    "evn_marker": "EMPTY",
+                    "evn_is_interrupting": "1",
+                    "evn_cancel_activity": "0",
+                    "evn_activity_ref": "",
+                    "evn_wait_for_completion": "0",
+                    "evn_error_name": "",
+                    "evn_error_code": "",
+                    "evn_escalation_name": "",
+                    "evn_escalation_code": "",
+                    "evn_message": "",
+                    "evn_operation_implementation_ref": "",
+                    "evn_time_date": "",
+                    "evn_time_cycle": "",
+                    "evn_time_duration": "",
+                    "evn_behavior": "THROW",
+                    "evn_operation_name": "",
+                    "bou_x": "907",
+                    "bou_y": "149",
+                    "bou_width": "33",
+                    "bou_height": "33",
+                    "bou_container": "bpmnDiagram"
+                }
+            ],
+            "gateways": [
+                {
+                    "gat_uid": "10270112553cfc5779f0ec1019712071",
+                    "gat_name": "Exlusive Gateway # 1",
+                    "gat_type": "EXCLUSIVE",
+                    "gat_direction": "DIVERGING",
+                    "gat_instantiate": "0",
+                    "gat_activation_count": "0",
+                    "gat_waiting_for_start": "1",
+                    "gat_default_flow": "0",
+                    "gat_event_gateway_type": "NONE",
+                    "bou_x": "416",
+                    "bou_y": "162",
+                    "bou_width": "41",
+                    "bou_height": "41",
+                    "bou_container": "bpmnDiagram"
+                }
+            ],
+            "flows": [
+                {
+                    "flo_uid": "14108751053d00c1e327739055650441",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": "",
+                    "flo_element_origin": "47452513353cfc4b015e855056634598",
+                    "flo_element_origin_type": "bpmnActivity",
+                    "flo_element_dest": "10270112553cfc5779f0ec1019712071",
+                    "flo_element_dest_type": "bpmnGateway",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": "",
+                    "flo_x1": "345",
+                    "flo_y1": "178",
+                    "flo_x2": "411",
+                    "flo_y2": "178",
+                    "flo_state": [
+                        {
+                            "x": 350,
+                            "y": 183
+                        },
+                        {
+                            "x": 416,
+                            "y": 183
+                        }
+                    ]
+                },
+                {
+                    "flo_uid": "26171853453d00c1e327538080865741",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": "",
+                    "flo_element_origin": "10270112553cfc5779f0ec1019712071",
+                    "flo_element_origin_type": "bpmnGateway",
+                    "flo_element_dest": "63183340353cfc57778a499040015745",
+                    "flo_element_dest_type": "bpmnActivity",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": "",
+                    "flo_x1": "452",
+                    "flo_y1": "178",
+                    "flo_x2": "612",
+                    "flo_y2": "106",
+                    "flo_state": [
+                        {
+                            "x": 457,
+                            "y": 183
+                        },
+                        {
+                            "x": 537,
+                            "y": 183
+                        },
+                        {
+                            "x": 537,
+                            "y": 111
+                        },
+                        {
+                            "x": 617,
+                            "y": 111
+                        }
+                    ]
+                },
+                {
+                    "flo_uid": "35962716053d00c1e327923027081892",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": "",
+                    "flo_element_origin": "42039389753cfc58a2db023038551328",
+                    "flo_element_origin_type": "bpmnActivity",
+                    "flo_element_dest": "98330162753cfc58a6e3282003840838",
+                    "flo_element_dest_type": "bpmnEvent",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": "",
+                    "flo_x1": "765",
+                    "flo_y1": "238",
+                    "flo_x2": "902",
+                    "flo_y2": "161",
+                    "flo_state": [
+                        {
+                            "x": 770,
+                            "y": 243
+                        },
+                        {
+                            "x": 838,
+                            "y": 243
+                        },
+                        {
+                            "x": 838,
+                            "y": 166
+                        },
+                        {
+                            "x": 907,
+                            "y": 166
+                        }
+                    ]
+                },
+                {
+                    "flo_uid": "45234438053d00c1e327279046619951",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": "",
+                    "flo_element_origin": "90282129153cfc4b0565a82000775606",
+                    "flo_element_origin_type": "bpmnEvent",
+                    "flo_element_dest": "47452513353cfc4b015e855056634598",
+                    "flo_element_dest_type": "bpmnActivity",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": "",
+                    "flo_x1": "85",
+                    "flo_y1": "178",
+                    "flo_x2": "192",
+                    "flo_y2": "178",
+                    "flo_state": [
+                        {
+                            "x": 90,
+                            "y": 183
+                        },
+                        {
+                            "x": 197,
+                            "y": 183
+                        }
+                    ]
+                },
+                {
+                    "flo_uid": "85219507353d00c1e327b28058412058",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": "",
+                    "flo_element_origin": "63183340353cfc57778a499040015745",
+                    "flo_element_origin_type": "bpmnActivity",
+                    "flo_element_dest": "98330162753cfc58a6e3282003840838",
+                    "flo_element_dest_type": "bpmnEvent",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": "",
+                    "flo_x1": "765",
+                    "flo_y1": "106",
+                    "flo_x2": "902",
+                    "flo_y2": "161",
+                    "flo_state": [
+                        {
+                            "x": 770,
+                            "y": 111
+                        },
+                        {
+                            "x": 838,
+                            "y": 111
+                        },
+                        {
+                            "x": 838,
+                            "y": 166
+                        },
+                        {
+                            "x": 907,
+                            "y": 166
+                        }
+                    ]
+                },
+                {
+                    "flo_uid": "86729603453d00c1e327e23091238933",
+                    "flo_type": "SEQUENCE",
+                    "flo_name": "",
+                    "flo_element_origin": "10270112553cfc5779f0ec1019712071",
+                    "flo_element_origin_type": "bpmnGateway",
+                    "flo_element_dest": "42039389753cfc58a2db023038551328",
+                    "flo_element_dest_type": "bpmnActivity",
+                    "flo_is_inmediate": "1",
+                    "flo_condition": "",
+                    "flo_x1": "452",
+                    "flo_y1": "178",
+                    "flo_x2": "612",
+                    "flo_y2": "238",
+                    "flo_state": [
+                        {
+                            "x": 457,
+                            "y": 183
+                        },
+                        {
+                            "x": 537,
+                            "y": 183
+                        },
+                        {
+                            "x": 537,
+                            "y": 243
+                        },
+                        {
+                            "x": 617,
+                            "y": 243
+                        }
+                    ]
+                }
+            ],
+            "artifacts": [
+                {
+                    "art_uid": "59954519253d0052028c894036716690",
+                    "art_type": "V_LABEL",
+                    "art_name": "Vertical Text # 1",
+                    "art_category_ref": "",
+                    "bou_x": "57",
+                    "bou_y": "439",
+                    "bou_width": "30",
+                    "bou_height": "150",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "art_uid": "71566215953d0052023d2a8070976645",
+                    "art_type": "H_LABEL",
+                    "art_name": "Horizontal Text # 1",
+                    "art_category_ref": "",
+                    "bou_x": "27",
+                    "bou_y": "399",
+                    "bou_width": "100",
+                    "bou_height": "30",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "art_uid": "76936366253d005200fecf1072255540",
+                    "art_type": "VERTICAL_LINE",
+                    "art_name": "",
+                    "art_category_ref": "",
+                    "bou_x": "143",
+                    "bou_y": "-6666",
+                    "bou_width": "0",
+                    "bou_height": "0",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "art_uid": "81251352753d005201445b3079328056",
+                    "art_type": "VERTICAL_LINE",
+                    "art_name": "",
+                    "art_category_ref": "",
+                    "bou_x": "492",
+                    "bou_y": "-6666",
+                    "bou_width": "0",
+                    "bou_height": "0",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "art_uid": "83307143353d00520187cb7053341695",
+                    "art_type": "TEXT_ANNOTATION",
+                    "art_name": "Annotation # 1",
+                    "art_category_ref": "",
+                    "bou_x": "23",
+                    "bou_y": "321",
+                    "bou_width": "100",
+                    "bou_height": "30",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "art_uid": "83607134753d005200b7218057925307",
+                    "art_type": "VERTICAL_LINE",
+                    "art_name": "",
+                    "art_category_ref": "",
+                    "bou_x": "866",
+                    "bou_y": "-6668",
+                    "bou_width": "0",
+                    "bou_height": "0",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "art_uid": "84367937053d0051fed9425007718074",
+                    "art_type": "HORIZONTAL_LINE",
+                    "art_name": "",
+                    "art_category_ref": "",
+                    "bou_x": "-6666",
+                    "bou_y": "297",
+                    "bou_width": "0",
+                    "bou_height": "0",
+                    "bou_container": "bpmnDiagram"
+                }
+            ],
+            "laneset": [],
+            "lanes": [],
+            "data": [
+                {
+                    "dat_uid": "26571650353d005204769f0016803456",
+                    "pro_uid": "93177932753cfc0a8986c44089014824",
+                    "dat_name": "Data Store # 1",
+                    "dat_type": "DATASTORE",
+                    "dat_is_collection": "0",
+                    "dat_item_kind": "INFORMATION",
+                    "dat_capacity": "0",
+                    "dat_is_unlimited": "0",
+                    "dat_state": "",
+                    "dat_is_global": "0",
+                    "dat_object_ref": "",
+                    "bou_uid": "18632057653d00520498147014458357",
+                    "dia_uid": "44288077153cfc0a89424f9087061662",
+                    "element_uid": "26571650353d005204769f0016803456",
+                    "bou_element": "pm_canvas",
+                    "bou_element_type": "bpmnData",
+                    "bou_x": "653",
+                    "bou_y": "359",
+                    "bou_width": "41",
+                    "bou_height": "41",
+                    "bou_rel_position": "0",
+                    "bou_size_identical": "0",
+                    "bou_container": "bpmnDiagram"
+                },
+                {
+                    "dat_uid": "78867843253d00520623a38020792926",
+                    "pro_uid": "93177932753cfc0a8986c44089014824",
+                    "dat_name": "Data Object # 1",
+                    "dat_type": "DATAOBJECT",
+                    "dat_is_collection": "0",
+                    "dat_item_kind": "INFORMATION",
+                    "dat_capacity": "0",
+                    "dat_is_unlimited": "0",
+                    "dat_state": "",
+                    "dat_is_global": "0",
+                    "dat_object_ref": "",
+                    "bou_uid": "69652140553d0052062ece8068466841",
+                    "dia_uid": "44288077153cfc0a89424f9087061662",
+                    "element_uid": "78867843253d00520623a38020792926",
+                    "bou_element": "pm_canvas",
+                    "bou_element_type": "bpmnData",
+                    "bou_x": "279",
+                    "bou_y": "359",
+                    "bou_width": "33",
+                    "bou_height": "41",
+                    "bou_rel_position": "0",
+                    "bou_size_identical": "0",
+                    "bou_container": "bpmnDiagram"
+                }
+            ],
+            "participants": [
+                {
+                    "par_uid": "23138442753d004f65bfca9078520587",
+                    "pro_uid": "93177932753cfc0a8986c44089014824",
+                    "lns_uid": "",
+                    "par_name": "Participant # 1",
+                    "par_minimum": "0",
+                    "par_maximum": "1",
+                    "par_num_participants": "1",
+                    "par_is_horizontal": "1",
+                    "bou_uid": "69206715353d004f65c9bc3086768663",
+                    "dia_uid": "44288077153cfc0a89424f9087061662",
+                    "element_uid": "23138442753d004f65bfca9078520587",
+                    "bou_element": "pm_canvas",
+                    "bou_element_type": "bpmnParticipant",
+                    "bou_x": "885",
+                    "bou_y": "359",
+                    "bou_width": "500",
+                    "bou_height": "100",
+                    "bou_rel_position": "0",
+                    "bou_size_identical": "0",
+                    "bou_container": "bpmnDiagram"
+                }
+            ]
+        }
+    ]
+}

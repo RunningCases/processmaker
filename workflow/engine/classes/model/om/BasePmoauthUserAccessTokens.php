@@ -52,6 +52,12 @@ abstract class BasePmoauthUserAccessTokens extends BaseObject implements Persist
     protected $session_id;
 
     /**
+     * The value for the session_name field.
+     * @var        string
+     */
+    protected $session_name;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -107,6 +113,17 @@ abstract class BasePmoauthUserAccessTokens extends BaseObject implements Persist
     {
 
         return $this->session_id;
+    }
+
+    /**
+     * Get the [session_name] column value.
+     * 
+     * @return     string
+     */
+    public function getSessionName()
+    {
+
+        return $this->session_name;
     }
 
     /**
@@ -198,6 +215,28 @@ abstract class BasePmoauthUserAccessTokens extends BaseObject implements Persist
     } // setSessionId()
 
     /**
+     * Set the value of [session_name] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setSessionName($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->session_name !== $v) {
+            $this->session_name = $v;
+            $this->modifiedColumns[] = PmoauthUserAccessTokensPeer::SESSION_NAME;
+        }
+
+    } // setSessionName()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -222,12 +261,14 @@ abstract class BasePmoauthUserAccessTokens extends BaseObject implements Persist
 
             $this->session_id = $rs->getString($startcol + 3);
 
+            $this->session_name = $rs->getString($startcol + 4);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 4; // 4 = PmoauthUserAccessTokensPeer::NUM_COLUMNS - PmoauthUserAccessTokensPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 5; // 5 = PmoauthUserAccessTokensPeer::NUM_COLUMNS - PmoauthUserAccessTokensPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating PmoauthUserAccessTokens object", $e);
@@ -443,6 +484,9 @@ abstract class BasePmoauthUserAccessTokens extends BaseObject implements Persist
             case 3:
                 return $this->getSessionId();
                 break;
+            case 4:
+                return $this->getSessionName();
+                break;
             default:
                 return null;
                 break;
@@ -467,6 +511,7 @@ abstract class BasePmoauthUserAccessTokens extends BaseObject implements Persist
             $keys[1] => $this->getRefreshToken(),
             $keys[2] => $this->getUserId(),
             $keys[3] => $this->getSessionId(),
+            $keys[4] => $this->getSessionName(),
         );
         return $result;
     }
@@ -510,6 +555,9 @@ abstract class BasePmoauthUserAccessTokens extends BaseObject implements Persist
             case 3:
                 $this->setSessionId($value);
                 break;
+            case 4:
+                $this->setSessionName($value);
+                break;
         } // switch()
     }
 
@@ -549,6 +597,10 @@ abstract class BasePmoauthUserAccessTokens extends BaseObject implements Persist
             $this->setSessionId($arr[$keys[3]]);
         }
 
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setSessionName($arr[$keys[4]]);
+        }
+
     }
 
     /**
@@ -574,6 +626,10 @@ abstract class BasePmoauthUserAccessTokens extends BaseObject implements Persist
 
         if ($this->isColumnModified(PmoauthUserAccessTokensPeer::SESSION_ID)) {
             $criteria->add(PmoauthUserAccessTokensPeer::SESSION_ID, $this->session_id);
+        }
+
+        if ($this->isColumnModified(PmoauthUserAccessTokensPeer::SESSION_NAME)) {
+            $criteria->add(PmoauthUserAccessTokensPeer::SESSION_NAME, $this->session_name);
         }
 
 
@@ -635,6 +691,8 @@ abstract class BasePmoauthUserAccessTokens extends BaseObject implements Persist
         $copyObj->setUserId($this->user_id);
 
         $copyObj->setSessionId($this->session_id);
+
+        $copyObj->setSessionName($this->session_name);
 
 
         $copyObj->setNew(true);

@@ -293,7 +293,7 @@ Ext.onReady(function(){
 	                            }
 	                        });
                           } else {
-                            loadMaskStep.show(); 
+                            loadMaskStep.show();
                             document.getElementById("openCaseFrame").src = node.attributes.url;
                           }
                       } else {
@@ -367,7 +367,7 @@ Ext.onReady(function(){
           frameConfig:{name:'openCaseFrame', id:'openCaseFrame'},
           defaultSrc : uri,
           loadMask:{msg: _('ID_LOADING_GRID') },
-          bodyStyle:{height: (PMExt.getBrowser().screen.height-60) + 'px', overflow:'auto'},
+          bodyStyle:{height: (PMExt.getBrowser().screen.height-60) + 'px', overflow:'hidden'},
           width:screenWidth
 
           }
@@ -462,12 +462,12 @@ Ext.onReady(function(){
                       icon: Ext.MessageBox.ERROR,
                       buttons: Ext.MessageBox.OK,
                       fn : function(btn) {
-                      try 
+                      try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -500,12 +500,12 @@ Ext.onReady(function(){
 	                  icon: Ext.MessageBox.ERROR,
 	                  buttons: Ext.MessageBox.OK,
 	                  fn : function(btn) {
-	                   try 
+	                   try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -577,12 +577,12 @@ Ext.onReady(function(){
 	                  icon: Ext.MessageBox.ERROR,
 	                  buttons: Ext.MessageBox.OK,
 	                  fn : function(btn) {
-	                   try 
+	                   try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -656,12 +656,12 @@ Ext.onReady(function(){
                       icon: Ext.MessageBox.ERROR,
                       buttons: Ext.MessageBox.OK,
                       fn : function(btn) {
-                      try 
+                      try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -694,12 +694,12 @@ Ext.onReady(function(){
                       icon: Ext.MessageBox.ERROR,
                       buttons: Ext.MessageBox.OK,
                       fn : function(btn) {
-                        try 
+                        try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -732,12 +732,12 @@ Ext.onReady(function(){
                     icon: Ext.MessageBox.ERROR,
                     buttons: Ext.MessageBox.OK,
                     fn : function(btn) {
-                    try 
+                    try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -770,12 +770,12 @@ Ext.onReady(function(){
                       icon: Ext.MessageBox.ERROR,
                       buttons: Ext.MessageBox.OK,
                       fn : function(btn) {
-                      try 
+                      try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -808,12 +808,12 @@ Ext.onReady(function(){
                       icon: Ext.MessageBox.ERROR,
                       buttons: Ext.MessageBox.OK,
                       fn : function(btn) {
-                        try 
+                        try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -954,7 +954,7 @@ Ext.onReady(function(){
           {header: _('ID_LASTNAME'),  dataIndex: 'USR_LASTNAME',  width: 300}
         ]
       }),
-
+      sm: new Ext.grid.RowSelectionModel({singleSelect: true}),
       store: store,
 
       tbar:[
@@ -997,12 +997,12 @@ Ext.onReady(function(){
                   icon: Ext.MessageBox.ERROR,
                   buttons: Ext.MessageBox.OK,
                   fn : function(btn) {
-                    try 
+                    try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -1153,12 +1153,12 @@ Ext.onReady(function(){
                   icon: Ext.MessageBox.ERROR,
                   buttons: Ext.MessageBox.OK,
                   fn : function(btn) {
-                    try 
+                    try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -1191,12 +1191,12 @@ Ext.onReady(function(){
                     icon: Ext.MessageBox.ERROR,
                     buttons: Ext.MessageBox.OK,
                     fn : function(btn) {
-                      try 
+                      try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -1300,12 +1300,12 @@ Ext.onReady(function(){
                       icon: Ext.MessageBox.ERROR,
                       buttons: Ext.MessageBox.OK,
                       fn : function(btn) {
-                        try 
+                        try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -1386,12 +1386,12 @@ Ext.onReady(function(){
 	                    icon: Ext.MessageBox.ERROR,
 	                    buttons: Ext.MessageBox.OK,
 	                    fn : function(btn) {
-	                      try 
+	                      try
                                   {
                                     prnt = parent.parent;
                                     top.location = top.location;
                                   }
-                                catch (err) 
+                                catch (err)
                                   {
                                     parent.location = parent.location;
                                   }
@@ -1516,7 +1516,7 @@ Ext.onReady(function(){
 	                if (name == "generatedDocuments") {
 	                  var uri = 'casesGenerateDocumentPage_Ajax.php?actionAjax=casesGenerateDocumentPage';
 	                }
-                        
+
 	                if (name == "processMap" && _PROJECT_TYPE === 'bpmn') {
 	                  var uri = '../designer?prj_uid=' + _PRO_UID + '&prj_readonly=true&app_uid=' + _APP_UID;
 	                }

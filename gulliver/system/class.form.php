@@ -376,7 +376,30 @@ class Form extends XmlForm
                         switch ($v->type) {
                             case 'radiogroup':
                                 $values[$k] = $newValues[$k];
-                                $values[$k . "_label"] = $newValues[$k . "_label"] = $v->options[$newValues[$k]];
+
+                                if (isset($v->options[$newValues[$k]])) {
+                                    $values[$k . "_label"] = $newValues[$k . "_label"] = $v->options[$newValues[$k]];
+                                } else {
+                                    $query = G::replaceDataField( $this->fields[$k]->sql, $newValues );
+
+                                    //Execute just if a query was set, it should be not empty
+                                    if (trim($query) == "") {
+                                        continue; //if it is empty string skip it
+                                    }
+
+                                    //We do the query to the external connection and we've got the label
+                                    $con = Propel::getConnection(($this->fields[$k]->sqlConnection != "") ? $this->fields[$k]->sqlConnection : "workflow");
+                                    $stmt = $con->prepareStatement($query);
+                                    $rs = $stmt->executeQuery(ResultSet::FETCHMODE_NUM);
+
+                                    while ($rs->next()) {
+                                        list ($rowId, $rowContent) = $rs->getRow();
+                                        if ($newValues[$k] == $rowId) {
+                                            $values[$k . "_label"] = $rowContent;
+                                            break;
+                                        }
+                                    }
+                                }
                                 break;
                             case 'suggest':
                                 $values[$k] = $newValues[$k];
@@ -548,6 +571,15 @@ class Form extends XmlForm
                                 //This value is added when the user does not mark any checkbox
                                 $values[$k] = "__NULL__";
                                 break;
+                            case "grid":
+                                $values[$k] = $_FILES["form"]["name"][$k];
+                                foreach ($values[$k] as $inp => $ii){
+                                 foreach ($ii as $oo => $ee){
+                                  $x = $v->fields;
+                                  $_POST["INPUTS"][$k][$oo] = $x[$oo]->input;
+                                 }
+                                }
+                                break;
                         }
                     }
                 } else {
@@ -680,6 +712,30 @@ class Form extends XmlForm
 
     public function validateFields ($data)
     {
+        if (isset($_FILES["form"])) {
+            if (isset($_FILES["form"]["name"])) {
+                if (is_array($_FILES["form"]["name"])) {
+                    if (!isset($_POST["INPUTS"]) || !is_array($_POST["INPUTS"])) {
+                        $_POST["INPUTS"] = array();
+                    }
+                    foreach ($_FILES["form"]["name"] as $gridName => $gridFiles) {
+                        if (!isset($_POST["INPUTS"][$gridName]) || !is_array($_POST["INPUTS"][$gridName])) {
+                            if (is_array($gridFiles)) {
+                                $_POST["INPUTS"][$gridName] = array();
+                                foreach ($gridFiles as $row => $file) {
+                                    $_POST["INPUTS"][$gridName][key($file)] = '';
+                                    if (!isset($data[$gridName][$row]) || !is_array($data[$gridName][$row])) {
+                                        $data[$gridName][$row] = array();
+                                    }
+                                    $data[$gridName][$row][key($file)] = '';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         $excludeTypes = array ("submit","file" );
 
         foreach ($this->fields as $k => $v) {
@@ -690,13 +746,16 @@ class Form extends XmlForm
                         break;
                     case "grid":
                         $i = 0;
+                        if (!isset($data[$v->name]) || !is_array($data[$v->name])) {
+                            $data[$v->name] = array();
+                        }
                         foreach ($data[$v->name] as $dataGrid) {
                             $i = $i + 1;
 
                             foreach ($v->fields as $gridField) {
                                 switch ($gridField->type) {
                                     case "file":
-                                        $data[$v->name][$i][$gridField->name] = (isset( $_FILES["form"]["name"][$v->name][$i][$gridField->name] )) ? $_FILES["form"]["name"][$v->name][$i][$gridField->name] : ((isset( $gridField->falseValue )) ? $gridField->falseValue : null);
+                                        $data[$v->name][$i][$gridField->name] = isset($gridField->input) ? $gridField->input : '';
                                         break;
                                     case "checkbox":
                                         $data[$v->name][$i][$gridField->name] = (isset( $data[$v->name][$i][$gridField->name] )) ? $data[$v->name][$i][$gridField->name] : ((isset( $gridField->falseValue )) ? $gridField->falseValue : null);

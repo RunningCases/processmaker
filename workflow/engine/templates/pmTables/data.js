@@ -76,10 +76,15 @@ Ext.onReady(function(){
     handler: DoSearch
   });
 
+  appUidSearch = new Ext.form.Checkbox ({
+	  id: 'appUidSearch',
+      boxLabel : _('ID_SEARCH_ALSO_APP_UID')
+  });
+
   contextMenu = new Ext.menu.Menu({
       items : [ editButton, deleteButton ]
   });
-  
+
   searchText = new Ext.form.TextField ({
     id: 'searchTxt',
     ctCls:'pm_search_text_field',
@@ -119,8 +124,12 @@ Ext.onReady(function(){
 
   _fields.push({name: _idProperty});
 
+  var countFieldsRequired = 0;
+
   for (i=0;i<tableDef.FIELDS.length; i++) {
-    if (tableDef.FIELDS[i].FLD_KEY==1) {
+    if (tableDef.FIELDS[i].FLD_KEY == 1 && tableDef.FIELDS[i].FLD_AUTO_INCREMENT != 1) {
+      countFieldsRequired = countFieldsRequired + 1;
+
       blank=false;
     } else{
       blank=true;
@@ -175,7 +184,9 @@ Ext.onReady(function(){
       dataIndex : tableDef.FIELDS[i].FLD_NAME,
       width     : 95,
       align     : 'center',
-      renderer  : columnRenderer
+      renderer  : function (columnRenderer) {
+          return Ext.util.Format.htmlEncode(columnRenderer);
+      }
     };
     if (tableDef.FIELDS[i].FLD_AUTO_INCREMENT != 1) {
       column.editor = columnEditor
@@ -255,7 +266,7 @@ Ext.onReady(function(){
       showTooltip: function (msg)
       {
            if (flagShowMessageError == 1) {
-               Ext.msgBoxSlider.msgTopCenter("error", _("ID_ERROR"), msg, 3);
+               Ext.msgBoxSlider.msgTopCenter("error", _("ID_ERROR"), _("ID_FIELD_REQUIRED2", countFieldsRequired), 3);
                flagShowMessageError = 0;
            }
       },
@@ -386,14 +397,16 @@ Ext.onReady(function(){
       importButton,
       exportButton,
       '->',
+      appUidSearch,
       searchText,
       clearTextButton,
       searchButton
     ];
   }
   else
-	tbar = [genDataReportButton, 
+	tbar = [genDataReportButton,
        '->',
+       appUidSearch,
        searchText,
        clearTextButton,
        searchButton];
@@ -466,15 +479,17 @@ onMessageContextMenu = function (grid, rowIndex, e) {
 //Do Search Function
 DoSearch = function(){
    infoGrid.store.setBaseParam('textFilter', searchText.getValue());
-   infoGrid.store.load({params: {start : 0 , limit : pageSize }});
+   infoGrid.store.setBaseParam('appUid', appUidSearch.getValue() );
+   infoGrid.store.load()
 };
 
 //Load Grid By Default
 GridByDefault = function(){
   searchText.reset();
+  appUidSearch.reset();
   infoGrid.store.setBaseParam('textFilter', searchText.getValue());
   infoGrid.store.load();
-}; 
+};
 
 //Capitalize String Function
 capitalize = function(s){

@@ -82,13 +82,16 @@ function cancel(){
 
 function reportTablesSave(form)
 {
-  var bContinue = true;
-  if (getField('REP_TAB_TITLE').value == '') {
-    bContinue = false;
+  if (getField("REP_TAB_TITLE").value.trim() == "") {
+      new leimnud.module.app.alert().make({label: _("ID_TITLE_REQUIRED")});
+      return false;
   }
-  if (getField('REP_TAB_NAME').value == '') {
-    bContinue = false;
+
+  if (getField("REP_TAB_NAME").value.trim() == ""){
+      new leimnud.module.app.alert().make({label: _("ID_NAME_REQUIRED")});
+      return false;
   }
+
   var j = 0;
   if (getField('REP_TAB_TYPE').value == 'NORMAL') {
     var i;
@@ -100,39 +103,18 @@ function reportTablesSave(form)
       }
     }
     if ((j < 1) || (j > 80)) {
-      bContinue = false;
+      new leimnud.module.app.alert().make({label: _("ID_SELECT_LEAST_FIELD")});
+      return false;
+    }
+  } else {
+    if (getField("REP_TAB_GRID").value == "") {
+        new leimnud.module.app.alert().make({label: _("ID_GRID_FIELDS_REQUIRED")});
+        return false;
     }
   }
-  else {
-    if (getField('REP_TAB_GRID').value == '') {
-      bContinue = false;
-    }
-  }
-  if (bContinue) {
-    ajax_post(form.action, form, 'POST');
-    //currentPopupWindow.remove();
-    //@#PAGED_TABLE_ID.refresh();
-    history.back();
-  }
-  else {
-    if (getField('REP_TAB_TYPE').value == 'NORMAL') {
-      if (j == 0) {
-        new leimnud.module.app.alert().make({
-          label:'@G::LoadTranslation(ID_PLEASE_ENTER_REQUIRED_FIELDS)'
-        });
-      }
-      else {
-        new leimnud.module.app.alert().make({
-          label:'@G::LoadTranslation(ID_PLEASE_SELECT_MAX_X_FIELDS)'
-        });
-      }
-    }
-    else {
-      new leimnud.module.app.alert().make({
-        label:'@G::LoadTranslation(ID_PLEASE_ENTER_REQUIRED_FIELDS)'
-      });
-    }
-  }
+
+  ajax_post(form.action, form, 'POST');
+  history.back();
 }
 
 function reportTablesDelete(sUID)

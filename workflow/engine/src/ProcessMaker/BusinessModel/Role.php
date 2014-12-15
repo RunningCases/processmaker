@@ -337,8 +337,6 @@ class Role
     public function update($roleUid, array $arrayData)
     {
         try {
-            $arrayDataBackup = $arrayData;
-
             //Verify data
             $process = new \ProcessMaker\BusinessModel\Process();
             $validator = new \ProcessMaker\BusinessModel\Validator();
@@ -347,6 +345,7 @@ class Role
 
             //Set data
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+            $arrayDataBackup = $arrayData;
 
             $arrayRoleData = $this->getRole($roleUid);
 
@@ -518,20 +517,6 @@ class Role
             if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]) && trim($arrayFilterData["filter"]) != "") {
                 $criteria->add(\RolesPeer::ROL_CODE, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE);
             }
-
-            //Number records total
-            $criteriaCount = clone $criteria;
-
-            $criteriaCount->clearSelectColumns();
-            $criteriaCount->addAsColumn("NUM_REC", "COUNT(" . \RolesPeer::ROL_UID . ")");
-
-            $rsCriteriaCount = \RolesPeer::doSelectRS($criteriaCount);
-            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            $rsCriteriaCount->next();
-            $row = $rsCriteriaCount->getRow();
-
-            $numRecTotal = $row["NUM_REC"];
 
             //SQL
             if (!is_null($sortField) && trim($sortField) != "") {

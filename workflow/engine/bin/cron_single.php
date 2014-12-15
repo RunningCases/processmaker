@@ -39,6 +39,7 @@ if (!defined('PATH_HOME')) {
     define('PATH_OUTTRUNK', $pathOutTrunk);
 
     require_once (PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths.php');
+    require_once PATH_TRUNK . "framework/src/Maveriks/Util/ClassLoader.php";
 
     G::LoadThirdParty('pear/json','class.json');
     G::LoadThirdParty('smarty/libs','Smarty.class');
@@ -125,6 +126,13 @@ Bootstrap::registerClass('BaseAppCacheView',   PATH_HOME . "engine/classes/model
 Bootstrap::registerClass('AppCacheView',       PATH_HOME . "engine/classes/model/AppCacheView.php");
 Bootstrap::registerClass('BaseAppCacheViewPeer',PATH_HOME . "engine/classes/model/om/BaseAppCacheViewPeer.php");
 Bootstrap::registerClass('AppCacheViewPeer',   PATH_HOME . "engine/classes/model/AppCacheViewPeer.php");
+
+/*----------------------------------********---------------------------------*/
+Bootstrap::registerClass('BaseAppTimeoutActionExecuted',  PATH_HOME . "engine/classes/model/om/BaseAppTimeoutActionExecuted.php");
+Bootstrap::registerClass('AppTimeoutActionExecuted',      PATH_HOME . "engine/classes/model/AppTimeoutActionExecuted.php");
+Bootstrap::registerClass('BaseAppTimeoutActionExecutedPeer',PATH_HOME . "engine/classes/model/om/BaseAppTimeoutActionExecutedPeer.php");
+Bootstrap::registerClass('AppTimeoutActionExecutedPeer',  PATH_HOME . "engine/classes/model/AppTimeoutActionExecutedPeer.php");
+/*----------------------------------********---------------------------------*/
 
 Bootstrap::registerClass('BaseInputDocument',  PATH_HOME . "engine/classes/model/om/BaseInputDocument.php");
 Bootstrap::registerClass('InputDocument',      PATH_HOME . "engine/classes/model/InputDocument.php");
@@ -326,9 +334,12 @@ Bootstrap::registerClass('UsersPeer',           PATH_HOME . "engine/classes/mode
 
 Bootstrap::registerClass('Xml_Node',            PATH_GULLIVER . "class.xmlDocument.php");
 
-G::LoadClass("case");
+Bootstrap::registerClass('wsResponse',          PATH_HOME . "engine/classes/class.wsResponse.php");
+
+Bootstrap::registerClass('PMLicensedFeatures',  PATH_HOME . "engine/classes/class.LicensedFeatures.php");
+Bootstrap::registerClass('AddonsManagerPeer',   PATH_HOME . "engine/classes/model/AddonsManagerPeer.php");
+
 G::LoadClass("dates");
-G::LoadClass("pmScript");
 
 if (!defined('SYS_SYS')) {
     $sObject = $argv[1];
@@ -451,6 +462,13 @@ if (!defined('SYS_SYS')) {
 function processWorkspace()
 {
     try {
+        Bootstrap::LoadClass("plugin");
+        $oPluginRegistry =& PMPluginRegistry::getSingleton();
+        if (file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
+            $oPluginRegistry->unSerializeInstance(file_get_contents(PATH_DATA_SITE . 'plugin.singleton'));
+        }
+        Bootstrap::LoadClass("case");
+
         global $sObject;
         global $sLastExecution;
 
@@ -578,11 +596,7 @@ function executePlugins()
     // Executing registered cron files
 
     // -> Get registered cron files
-    Bootstrap::LoadClass( 'plugin' );
     $oPluginRegistry =& PMPluginRegistry::getSingleton();
-    if (file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
-        $oPluginRegistry->unSerializeInstance(file_get_contents(PATH_DATA_SITE . 'plugin.singleton'));
-    }
     $cronFiles = $oPluginRegistry->getCronFiles();
 
     // -> Execute functions
@@ -786,6 +800,9 @@ function executeCaseSelfService()
         $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TIME);
         $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TIME_UNIT);
         $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TRIGGER_UID);
+        /*----------------------------------********---------------------------------*/
+        $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_EXECUTION);
+        /*----------------------------------********---------------------------------*/
 
         //FROM
         $condition = array();
@@ -807,7 +824,9 @@ function executeCaseSelfService()
         $calendar = new calendar();
 
         while ($rsCriteria->next()) {
+
             $row = $rsCriteria->getRow();
+			$flag = false;
 
             $appcacheAppUid   = $row["APP_UID"];
             $appcacheDelIndex = $row["DEL_INDEX"];
@@ -818,6 +837,24 @@ function executeCaseSelfService()
             $taskSelfServiceTime = intval($row["TAS_SELFSERVICE_TIME"]);
             $taskSelfServiceTimeUnit = $row["TAS_SELFSERVICE_TIME_UNIT"];
             $taskSelfServiceTriggerUid = $row["TAS_SELFSERVICE_TRIGGER_UID"];
+            /*----------------------------------********---------------------------------*/
+            $taskSelfServiceJustOneExecution = $row["TAS_SELFSERVICE_EXECUTION"];
+
+            if($taskSelfServiceJustOneExecution == 'ONCE'){
+            	$criteriaSelfService = new Criteria("workflow");
+
+            	$criteriaSelfService->add(AppTimeoutActionExecutedPeer::APP_UID, $appcacheAppUid);
+            	$criteriaSelfService->add(AppTimeoutActionExecutedPeer::DEL_INDEX, $appcacheDelIndex);
+
+            	$querySelfService = AppTimeoutActionExecutedPeer::doSelectRS($criteriaSelfService);
+                $querySelfService->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            	if ($querySelfService->next()) {
+            		$row = $querySelfService->getRow();
+					$flag = true; //already executed
+            	}
+            }
+            /*----------------------------------********---------------------------------*/
 
             if ($calendar->pmCalendarUid == '') {
             	$calendar->getCalendar(null, $appcacheProUid, $taskUid);
@@ -831,7 +868,7 @@ function executeCaseSelfService()
                 //1
             );
 
-            if (time() > $dueDate["DUE_DATE_SECONDS"]) {
+            if (time() > $dueDate["DUE_DATE_SECONDS"] && $flag == false) {
                 $sessProcess = null;
                 $sessProcessSw = 0;
 
@@ -859,6 +896,7 @@ function executeCaseSelfService()
                     $row = $rsCriteriaTgr->getRow();
 
                     if (is_array($row) && $row["TRI_TYPE"] == "SCRIPT") {
+
                         $arrayCron = unserialize(trim(@file_get_contents(PATH_DATA . "cron")));
                         $arrayCron["processcTimeProcess"] = 60; //Minutes
                         $arrayCron["processcTimeStart"]   = time();
@@ -872,6 +910,17 @@ function executeCaseSelfService()
                         $oPMScript->setScript($row["TRI_WEBBOT"]);
                         $oPMScript->execute();
 
+                        /*----------------------------------********---------------------------------*/
+                        //saving the case`s data if the 'Execution' is set in ONCE.
+                        if($taskSelfServiceJustOneExecution == "ONCE"){
+                        	$oAppTimeoutActionExecuted = new AppTimeoutActionExecuted();
+                        	$dataSelf = array();
+                        	$dataSelf["APP_UID"] = $appcacheAppUid;
+                        	$dataSelf["DEL_INDEX"] = $appcacheDelIndex;
+                        	$dataSelf["EXECUTION_DATE"] = time();
+                        	$oAppTimeoutActionExecuted->create($dataSelf);
+                        }
+                        /*----------------------------------********---------------------------------*/
                         $appFields["APP_DATA"] = array_merge($appFields["APP_DATA"], $oPMScript->aFields);
 
                         unset($appFields['APP_STATUS']);
@@ -911,7 +960,7 @@ function saveLog($sSource, $sType, $sDescription)
         }
 
         G::verifyPath(PATH_DATA . "log" . PATH_SEP, true);
-        G::log(date("Y-m-d H:i:s") . " | $sObject | " . $sSource . " | $sType | " . $sDescription . "\n", PATH_DATA);
+        G::log("| $sObject | " . $sSource . " | $sType | " . $sDescription, PATH_DATA);
     } catch (Exception $e) {
         //CONTINUE
     }

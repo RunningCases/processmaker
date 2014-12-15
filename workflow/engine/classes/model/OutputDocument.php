@@ -827,10 +827,12 @@ class OutputDocument extends BaseOutputDocument
         $pdf->setLanguageArray($lg);
 
         if (isset($aProperties['pdfSecurity'])) {
+            $tcpdfPermissions = array('print', 'modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-high');
             $pdfSecurity = $aProperties['pdfSecurity'];
             $userPass = G::decrypt($pdfSecurity['openPassword'], $sUID);
             $ownerPass = ($pdfSecurity['ownerPassword'] != '') ? G::decrypt($pdfSecurity['ownerPassword'], $sUID) : null;
             $permissions = explode("|", $pdfSecurity['permissions']);
+            $permissions = array_diff($tcpdfPermissions, $permissions);
             $pdf->SetProtection($permissions, $userPass, $ownerPass);
         }
         // ---------------------------------------------------------
@@ -844,7 +846,9 @@ class OutputDocument extends BaseOutputDocument
         //$pdf->SetFont('dejavusans', '', 14, '', true);
         // Detect chinese, japanese, thai
         if (preg_match('/[\x{30FF}\x{3040}-\x{309F}\x{4E00}-\x{9FFF}\x{0E00}-\x{0E7F}]/u', $sContent, $matches)) {
-            $pdf->SetFont('kozminproregular');
+            $fileArialunittf = PATH_THIRDPARTY . "tcpdf" . PATH_SEP . "fonts" . PATH_SEP . "arialuni.ttf";
+
+            $pdf->SetFont((!file_exists($fileArialunittf))? "kozminproregular" : $pdf->addTTFfont($fileArialunittf, "TrueTypeUnicode", "", 32));
         }
 
         // Add a page
@@ -859,7 +863,9 @@ class OutputDocument extends BaseOutputDocument
             $sContent = mb_convert_encoding($sContent, 'HTML-ENTITIES', 'UTF-8');
         }
         $doc = new DOMDocument('1.0', 'UTF-8');
-        $doc->loadHtml($sContent);
+        if ($sContent != '') {
+            $doc->loadHtml($sContent);
+        }
         $pdf->writeHTML($doc->saveXML(), false, false, false, false, '');
         // ---------------------------------------------------------
         // Close and output PDF document
@@ -906,7 +912,7 @@ class OutputDocument extends BaseOutputDocument
             'landscape' => $sLandscape,
             'method' => 'fpdf',
             'margins' => array('left' => 15, 'right' => 15, 'top' => 15, 'bottom' => 15,),
-            'encoding' => '',
+            'encoding' => (version_compare(PHP_VERSION, '5.4.0', '<') ? '' : 'utf-8'),
             'ps2pdf' => false,
             'compress' => true,
             'output' => 2,

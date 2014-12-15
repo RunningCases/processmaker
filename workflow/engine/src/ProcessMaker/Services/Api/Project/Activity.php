@@ -120,6 +120,13 @@ class Activity extends Api
             $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
 
             $response = $task->getSteps($act_uid);
+
+            $step = new \ProcessMaker\Services\Api\Project\Activity\Step();
+
+            for ($i = 0; $i < count($response); $i++) {
+                $response[$i]["triggers"] = $step->doGetActivityStepTriggers($response[$i]["step_uid"], $act_uid, $prj_uid);
+            }
+
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));

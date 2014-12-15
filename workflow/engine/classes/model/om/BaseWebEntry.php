@@ -73,7 +73,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      * The value for the we_data field.
      * @var        string
      */
-    protected $we_data = '';
+    protected $we_data;
 
     /**
      * The value for the we_create_usr_uid field.
@@ -456,7 +456,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->we_data !== $v || $v === '') {
+        if ($this->we_data !== $v) {
             $this->we_data = $v;
             $this->modifiedColumns[] = WebEntryPeer::WE_DATA;
         }
@@ -518,6 +518,10 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
 
         if ($v !== null && !is_int($v)) {
             $ts = strtotime($v);
+            //Date/time accepts null values
+            if ($v == '') {
+                $ts = null;
+            }
             if ($ts === -1 || $ts === false) {
                 throw new PropelException("Unable to parse date/time value for [we_create_date] from input: " .
                     var_export($v, true));
@@ -543,6 +547,10 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
 
         if ($v !== null && !is_int($v)) {
             $ts = strtotime($v);
+            //Date/time accepts null values
+            if ($v == '') {
+                $ts = null;
+            }
             if ($ts === -1 || $ts === false) {
                 throw new PropelException("Unable to parse date/time value for [we_update_date] from input: " .
                     var_export($v, true));

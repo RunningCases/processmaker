@@ -117,6 +117,7 @@ class OauthAccessTokens extends BaseOauthAccessTokens
         $criteria->addSelectColumn(OauthClientsPeer::CLIENT_DESCRIPTION);
 
         $criteria->addJoin(OauthAccessTokensPeer::CLIENT_ID, OauthClientsPeer::CLIENT_ID, Criteria::LEFT_JOIN);
+        $criteria->add(OauthAccessTokensPeer::EXPIRES, date('Y-m-d H:i:s'), Criteria::GREATER_THAN);
 
         if ($arrayFilterData && isset($arrayFilterData["USER_ID"]) && $arrayFilterData["USER_ID"] != "") {
             $criteria->add(OauthAccessTokensPeer::USER_ID, $arrayFilterData["USER_ID"], Criteria::EQUAL);

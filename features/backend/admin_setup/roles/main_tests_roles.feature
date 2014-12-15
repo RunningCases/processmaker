@@ -105,6 +105,27 @@ Scenario: Get list of Roles
     And the response has 11 records
 
 
+Scenario Outline:  Create new Role with same name
+    Given POST this data:
+    """
+        {
+            "rol_code": "<rol_code>",
+            "rol_name": "<rol_name>",
+            "rol_status": "<rol_status>"
+        }
+
+    """
+    And I request "role"
+    Then the response status code should be 400
+    And the response status message should have the following text "already exists"
+
+    Examples:
+
+    | rol_code              | rol_name  | rol_status  |
+    | PROCESSMAKER_OPERATOR | Operator  | ACTIVE      |
+    
+
+
 #Assign users to role
     
 Scenario Outline: List assigned Users to Role & List available Users to assign to Role
@@ -214,6 +235,23 @@ Scenario Outline:  Assign User to Role
     | Assign user "carter"  | 6              | 32444503652d5671778fd20059078570 |
     | Assign user "emily"   | 7              | 34289569752d5673d310e82094574281 |
     | Assign user "olivia"  | 8              | 73005191052d56727901138030694610 |
+
+
+Scenario Outline:  Assign same User to Role "1"
+    Given POST this data:
+    """
+        {
+            "usr_uid": "<usr_uid>"
+        }
+    """
+    And I request "role/rol_uid/user"  with the key "rol_uid" stored in session array as variable "rol_uid_<rol_uid_number>"
+    Then the response status code should be 400
+    And the response status message should have the following text "already assigned"
+ 
+    Examples:
+
+    | Description           | rol_uid_number | usr_uid                          |
+    | Assign user "aaron"   | 1              | 51049032352d56710347233042615067 |
 
 
 Scenario Outline: List assigned Users to Role & List available Users to assign to Role
@@ -423,6 +461,23 @@ Scenario Outline: Assign Permission "PM_DASHBOARD" to Role
     | Assign Permissions "PM_FOLDER_DEL" to rol 8         | 8              | 00000000000000000000000000000019 |
 
 
+Scenario Outline: Assign same Permission "PM_DASHBOARD" to Role 1
+    Given POST this data:
+    """
+        {
+            "per_uid": "<per_uid>"
+        }
+    """
+    And I request "role/rol_uid/permission"  with the key "rol_uid" stored in session array as variable "rol_uid_<rol_uid_number>"
+    Then the response status code should be 400
+    And the response status message should have the following text "already assigned to the role"
+
+    Examples:
+
+    | Description                             | rol_uid_number | per_uid                          |
+    | Assign Permissions "PM_LOGIN" to rol 1  | 1              | 00000000000000000000000000000001 |
+
+
 Scenario Outline: List assigned Permissions to Role & List available Permissions to assign to Role
     Given I request "role/rol_uid/permissions" with the key "rol_uid" stored in session array as variable "rol_uid_<rol_uid_number>"
     Then the response status code should be 200
@@ -581,6 +636,27 @@ Scenario Outline: Get a single Role created in this script
     | Update name of role created in this script | 1              | PROCESSMAKER_UNO   | update_sample   | INACTIVE    |
     | Update name of role created in this script | 5              | PROCESSMAKER_CINCO | update2         | ACTIVE      |
     | Update name of role created in this script | 8              | PROCESSMAKER_OCHO  | update*'123     | INACTIVE    |
+
+
+Scenario Outline: Update Role with the same data from an existing role
+    Given PUT this data:
+    """
+        {
+            "rol_code": "<rol_code>",
+            "rol_name": "<rol_name>",
+            "rol_status": "<rol_status>"
+        }
+
+    """
+    And that I want to update a resource with the key "rol_uid" stored in session array as variable "rol_uid_<rol_uid_number>"
+    And I request "role"
+    Then the response status code should be 400
+    And the response status message should have the following text "already exists"
+
+    Examples:
+
+    | rol_uid_number | rol_code           | rol_name                   | rol_status  |
+    | 2              | PROCESSMAKER_TRES  | Rol con code administrator | INACTIVE    |
 
 
 Scenario: Get list of Roles

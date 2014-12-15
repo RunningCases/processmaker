@@ -78,7 +78,7 @@ Scenario: Get a list templates folder of process files manager
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
+    And the response has 2 records
 
 Scenario: Verify that there are report tables
     Given I request "project/1455892245368ebeb11c1a5001393784/report-tables"
@@ -137,7 +137,7 @@ Scenario: Get for Export Project
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/xml"
-    And save exported process to "/home/wendy/uploadfiles/" as "Process_Complete_BPMN"
+    And save exported process to "/" as "Process_Complete_BPMN"
 
 
 Scenario: Delete a Project created previously in this script
@@ -160,13 +160,31 @@ Scenario Outline: Import a process
 
 
  	Examples:
- 	| project_file                                       | import_option | prj_uid_number |
- 	| /home/wendy/uploadfiles/Process_NewCreate_BPMN.pmx | create        | 1              |
-    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | create        | 2              |
-    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | overwrite     | 3              |
-    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | disable       | 4              |
-    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | keep          | 5              |
+ 	| project_file                | import_option | prj_uid_number |
+ 	| Process_NewCreate_BPMN.pmx  | create        | 1              |
+    | Process_Complete_BPMN.pmx   | create        | 2              |
+    | Process_Complete_BPMN.pmx   | overwrite     | 3              |
+    | Process_Complete_BPMN.pmx   | disable       | 4              |
+    | Process_Complete_BPMN.pmx   | keep          | 5              |
+    | Test_Event_without_name.pmx | create        | 6              |
     
+#Verificar que se hayan exportado los eventos de forma correcta
+
+Scenario: Get a single Process process "Test_Event_without_name.pmx"
+    Given that I want to get a resource with the key "prj_uid" stored in session array as variable "prj_uid_<prj_uid_number>" 
+    And I request "project/601816709536cfeae7d7cd9079578104/process"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+    And that "prj_name" is set to "Test Event without name"
+    And that "evn_uid" is set to "51368855353d127b52c8904071509317"
+    And that "evn_name" is set to ""
+    And that "evn_uid" is set to "89601044553d127b52634d4017150624"
+    And that "evn_name" is set to ""
+    And that "flo_element_origin" is set to "89601044553d127b52634d4017150624"
+    
+
 
 #Verificar cantidad de dynaform, output, inputs, triggers, asignacion de usuarios, etc.
 
@@ -300,8 +318,8 @@ Scenario Outline: Get a list templates folder of process files manager
     Examples:
     | import_option | prj_uid_number | prj_uid                          | records |
     | create        | 1              | 601816709536cfeae7d7cd9079578104 | 0       |
-    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 1       |
-    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 1       |
+    | create        | 2              | 1455892245368ebeb11c1a5001393784 | 2       |
+    | overwrite     | 3              | 1455892245368ebeb11c1a5001393784 | 2       |
     | disable       | 4              | 1455892245368ebeb11c1a5001393784 | 1       |
     | keep          | 5              | 1455892245368ebeb11c1a5001393784 | 1       |
 
@@ -395,6 +413,7 @@ Scenario Outline: Delete a Project created previously in this script
     | 2              |
     | 4              |
     | 5              |
+    | 6              |
     
 
 Scenario: Get a list of projects
@@ -413,8 +432,8 @@ Scenario Outline: Import a process
     And the type is "object"
     
     Examples:
-    | project_file                                       | import_option |
-    | /home/wendy/uploadfiles/Process_Complete_BPMN.pmx  | create        |
+    | project_file               | import_option |
+    | Process_Complete_BPMN.pmx  | create        |
 
 
 #For example, to export a empty process
@@ -424,7 +443,7 @@ Scenario: Get for Export Project "Export process empty"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the content type is "application/xml"
-    And save exported process to "/home/wendy/uploadfiles/" as "Export process empty"
+    And save exported process to "/" as "Export process empty"
 
 Scenario: Delete a Project created previously in this script "Export process empty"
     Given that I want to delete a resource with the key "prj_uid" stored in session array
@@ -435,7 +454,7 @@ Scenario: Delete a Project created previously in this script "Export process emp
     And the type is "object"
     
 Scenario: Import a process "Export process empty"
-    Given POST upload a project file "/home/wendy/uploadfiles/Export_process_empty.pmx" to "project/import?option=create"
+    Given POST upload a project file "Export_process_empty.pmx" to "project/import?option=create"
     Then the response status code should be 201
     And the response charset is "UTF-8"
     And the content type is "application/json"
@@ -478,3 +497,79 @@ Scenario: Get the Case Trackers Objects of a Project
         And the response charset is "UTF-8"
         And the type is "array"
         And the response has 0 record
+
+
+
+#Revision del BUG xxxx, donde no permite crear un nuevo Output Document
+
+Scenario Outline: Create 17 new Output Documents
+    Given POST this data:
+    """
+    {
+        "out_doc_title":            "Output Document",
+        "out_doc_description":      "",
+        "out_doc_filename":         "Output Document",
+        "out_doc_template":         "Example",
+        "out_doc_report_generator": "TCPDF",
+        "out_doc_landscape":        "1",
+        "out_doc_media":            "Letter",
+        "out_doc_left_margin":      "30",
+        "out_doc_right_margin":     "30",
+        "out_doc_top_margin":       "30",
+        "out_doc_bottom_margin":    "30",
+        "out_doc_generate":         "DOC",
+        "out_doc_type":             "HTML",
+        "out_doc_versioning":       "0",
+        "out_doc_destination_path": "",
+        "out_doc_tags":             "",
+        "out_doc_pdf_security_enabled":        "0",
+        "out_doc_pdf_security_open_password":  "",
+        "out_doc_pdf_security_owner_password": "",
+        "out_doc_pdf_security_permissions":    ""
+    }
+    """
+    And I request "project/5195971265375127fce82f4015927137/output-document"
+    Then the response status code should be 201
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "object"
+    And store "out_doc_uid" in session array as variable "out_doc_uid_<out_doc_number>"
+
+    Examples:
+
+    | test_description                                           | out_doc_number |
+    | Create new output document with same name in other proyect | 1              |
+        
+
+Scenario: Get the Output Documents List when there are exactly zero output documents
+    Given I request "project/5195971265375127fce82f4015927137/output-documents" with the key "prj_uid" stored in session array
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has 1 records
+    And that "out_doc_title" is set to "Output Document"
+    And that "out_doc_filename" is set to "Output Document"
+
+Scenario Outline: Delete Output documents created previously in this script
+    Given that I want to delete a resource with the key "out_doc_uid" stored in session array as variable "out_doc_uid_<out_doc_number>"
+    And I request "project/5195971265375127fce82f4015927137/output-document"
+    And the content type is "application/json"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "object"
+
+    Examples:
+
+    | out_doc_number |
+    | 1              |
+
+Scenario: Get the Output Documents List when there are exactly zero output documents
+    Given I request "project/5195971265375127fce82f4015927137/output-documents" with the key "prj_uid" stored in session array
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the content type is "application/json"
+    And the type is "array"
+    And the response has 0 records
+
+#Culminacion del BUG xxxx, donde no permite crear un nuevo Output Document en otro proyecto
