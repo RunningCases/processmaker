@@ -1725,7 +1725,7 @@ class RestContext extends BehatContext
     /**
      * @Given /^that "([^"]*)" property in object "([^"]*)" equals "([^"]*)"$/
      */
-    public function thatPropertyInObjectEquals($propertyName, $propertyParent, $value)
+    public function thatPropertyInObjectEquals($propertyName, $propertyParent, $propertyValue)
     {
         $data = $this->_data;
         if (empty($data)) {
@@ -1893,13 +1893,12 @@ class RestContext extends BehatContext
      */
     public function databaseConnectionWithIdIsActive($dbConnectionId)
     {
-      if (file_exists("session.data")) {
+        if (file_exists("session.data")) {
             $sessionData = json_decode(file_get_contents("session.data"));
         } else {
             $sessionData = new StdClass();
         }
 
-        $sessionData = new StdClass();
         if(!$sessionData->dbconnectionStatus->$dbConnectionId){
             throw new PendingException("Skip inactive dbconnection: $dbConnectionId");
         }
