@@ -91,6 +91,7 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameDynaform') {
     //if ($aData['DYN_UID']==='') unset($aData['DYN_UID']);
 
     $dynaform = new dynaform();
+    $dynaFormAux = new ProcessMaker\BusinessModel\DynaForm();
 
     if (isset($aData["DYN_UID"])) {
         $dynaform->Save($aData);
@@ -162,7 +163,7 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameDynaform') {
 
                             $aDataAux = $aData;
                             $aDataAux["DYN_TYPE"] = "grid";
-                            $aDataAux["DYN_TITLE"] = $copyDynGrdTitle . ((!$dynaformGrid->verifyExistingName($copyDynGrdTitle, $dynaform->getProUid()))? " (" . $dynaform->getDynTitle() . ")" : "");
+                            $aDataAux["DYN_TITLE"] = $copyDynGrdTitle . (($dynaFormAux->existsTitle($dynaform->getProUid(), $copyDynGrdTitle))? " (" . $dynaform->getDynTitle() . ")" : "");
                             $aDataAux["DYN_DESCRIPTION"] = $copyDynGrdDescription;
 
                             $aFields = $dynaformGrid->create($aDataAux);
