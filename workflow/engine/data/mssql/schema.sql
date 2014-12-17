@@ -3278,3 +3278,82 @@ CREATE TABLE APP_ASSIGN_SELF_SERVICE_VALUE
     GRP_UID   VARCHAR(32) DEFAULT '' NOT NULL
 );
 
+/* ---------------------------------------------------------------------- */
+/* MESSAGE											*/
+/* ---------------------------------------------------------------------- */
+
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'MESSAGE')
+BEGIN
+	 DECLARE @reftable_108 nvarchar(60), @constraintname_108 nvarchar(60)
+	 DECLARE refcursor CURSOR FOR
+	 select reftables.name tablename, cons.name constraintname
+	  from sysobjects tables,
+		   sysobjects reftables,
+		   sysobjects cons,
+		   sysreferences ref
+	   where tables.id = ref.rkeyid
+		 and cons.id = ref.constid
+		 and reftables.id = ref.fkeyid
+		 and tables.name = 'MESSAGE'
+	 OPEN refcursor
+	 FETCH NEXT from refcursor into @reftable_108, @constraintname_108
+	 while @@FETCH_STATUS = 0
+	 BEGIN
+	   exec ('alter table '+@reftable_108+' drop constraint '+@constraintname_108)
+	   FETCH NEXT from refcursor into @reftable_108, @constraintname_108
+	 END
+	 CLOSE refcursor
+	 DEALLOCATE refcursor
+	 DROP TABLE [MESSAGE]
+END
+
+
+CREATE TABLE [MESSAGE]
+(
+	[MES_UID] VARCHAR(32)  NOT NULL,
+	[PRJ_UID] VARCHAR(32)  NOT NULL,
+	[MES_NAME] VARCHAR(255) default '' NULL,
+	[MES_CONDITION] VARCHAR(255) default '' NULL,
+	CONSTRAINT MESSAGE_PK PRIMARY KEY ([MES_UID])
+);
+
+/* ---------------------------------------------------------------------- */
+/* MESSAGE_DETAIL											*/
+/* ---------------------------------------------------------------------- */
+
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'MESSAGE_DETAIL')
+BEGIN
+	 DECLARE @reftable_109 nvarchar(60), @constraintname_109 nvarchar(60)
+	 DECLARE refcursor CURSOR FOR
+	 select reftables.name tablename, cons.name constraintname
+	  from sysobjects tables,
+		   sysobjects reftables,
+		   sysobjects cons,
+		   sysreferences ref
+	   where tables.id = ref.rkeyid
+		 and cons.id = ref.constid
+		 and reftables.id = ref.fkeyid
+		 and tables.name = 'MESSAGE_DETAIL'
+	 OPEN refcursor
+	 FETCH NEXT from refcursor into @reftable_109, @constraintname_109
+	 while @@FETCH_STATUS = 0
+	 BEGIN
+	   exec ('alter table '+@reftable_109+' drop constraint '+@constraintname_109)
+	   FETCH NEXT from refcursor into @reftable_109, @constraintname_109
+	 END
+	 CLOSE refcursor
+	 DEALLOCATE refcursor
+	 DROP TABLE [MESSAGE_DETAIL]
+END
+
+
+CREATE TABLE [MESSAGE_DETAIL]
+(
+	[MD_UID] VARCHAR(32)  NOT NULL,
+	[MES_UID] VARCHAR(32)  NOT NULL,
+	[MD_TYPE] VARCHAR(32) default '' NULL,
+	[MD_NAME] VARCHAR(255) default '' NULL,
+	CONSTRAINT MESSAGE_DETAIL_PK PRIMARY KEY ([MD_UID])
+);

@@ -968,11 +968,41 @@ class System
 
     public function getEmailConfiguration ()
     {
-        G::LoadClass( 'configuration' );
-        $conf = new Configurations();
-        $config = $conf->load( 'Emails' );
+        $emailServer = new ProcessMaker\BusinessModel\EmailServer();
 
-        return $config;
+        $arrayEmailServerDefault = $emailServer->getEmailServerDefault();
+
+        if (count($arrayEmailServerDefault) > 0) {
+            $arrayDataEmailServerConfig = array(
+                "MESS_ENGINE"              => $arrayEmailServerDefault["MESS_ENGINE"],
+                "MESS_SERVER"              => $arrayEmailServerDefault["MESS_SERVER"],
+                "MESS_PORT"                => (int)($arrayEmailServerDefault["MESS_PORT"]),
+                "MESS_RAUTH"               => (int)($arrayEmailServerDefault["MESS_RAUTH"]),
+                "MESS_ACCOUNT"             => $arrayEmailServerDefault["MESS_ACCOUNT"],
+                "MESS_PASSWORD"            => $arrayEmailServerDefault["MESS_PASSWORD"],
+                "MESS_FROM_MAIL"           => $arrayEmailServerDefault["MESS_FROM_MAIL"],
+                "MESS_FROM_NAME"           => $arrayEmailServerDefault["MESS_FROM_NAME"],
+                "SMTPSecure"               => $arrayEmailServerDefault["SMTPSECURE"],
+                "MESS_TRY_SEND_INMEDIATLY" => (int)($arrayEmailServerDefault["MESS_TRY_SEND_INMEDIATLY"]),
+                "MAIL_TO"                  => $arrayEmailServerDefault["MAIL_TO"],
+                "MESS_DEFAULT"             => (int)($arrayEmailServerDefault["MESS_DEFAULT"]),
+                "MESS_ENABLED"             => 1,
+                "MESS_BACKGROUND"          => "",
+                "MESS_PASSWORD_HIDDEN"     => "",
+                "MESS_EXECUTE_EVERY"       => "",
+                "MESS_SEND_MAX"            => ""
+            );
+
+            //Return
+            return $arrayDataEmailServerConfig;
+        } else {
+            G::LoadClass("configuration");
+
+            $conf = new Configurations();
+            $config = $conf->load("Emails");
+
+            return $config;
+        }
     }
 
     public function getSkingList ()

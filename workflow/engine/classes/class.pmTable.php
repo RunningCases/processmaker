@@ -40,6 +40,7 @@ class PmTable
     private $schemaFile = '';
     private $tableName;
     private $columns;
+    private $primaryKey= array();
     private $baseDir = '';
     private $targetDir = '';
     private $configDir = '';
@@ -182,7 +183,7 @@ class PmTable
      * Build the pmTable with all dependencies
      */
     public function build ()
-    {   
+    {
         $this->prepare();
         $this->preparePropelIniFile();
         $this->buildSchema();
@@ -400,7 +401,7 @@ class PmTable
      * Save the xml schema for propel
      */
     public function saveSchema ()
-    {   
+    {
         $this->dom->save( $this->configDir . $this->schemaFilename );
     }
 
@@ -671,8 +672,29 @@ class PmTable
             $sql = "SELECT * FROM $tableBackup";
             $rs = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
 
+            // array the primary keys
+            foreach($this->columns as $value) {
+                if ($value->field_key == 1) {
+                    $this->primaryKey[] = $value->field_name;
+                }
+            }
+
+            $flagPrimaryKey = 1;
             while ($rs->next()) {
                 $row = $rs->getRow();
+                if ($flagPrimaryKey) {
+                    // verify row has all primary keys
+                    $keys = 0;
+                    foreach ($row as $colName => $value) {
+                        if (in_array($colName,$this->primaryKey)){
+                            $keys++;
+                        }
+                    }
+                    if ($keys != count($this->primaryKey)) {
+                        return $stmt->executeQuery(str_replace($table, $tableBackup, $queryStack["drop"]));
+                    }
+                    $flagPrimaryKey = 0;
+                }
 
                 $oTable = new $tableFileName();
                 $oTable->fromArray($row, BasePeer::TYPE_FIELDNAME);

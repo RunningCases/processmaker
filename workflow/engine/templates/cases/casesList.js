@@ -25,16 +25,32 @@ var textJump;
 var ids = '';
 var winReassignInCasesList;
 
-function formatAMPM(date, initVal) {
-  var hours = date.getHours();
-  var minutes = (initVal === true)? ((date.getMinutes()<15)? 0: ((date.getMinutes()<30)? 15: ((date.getMinutes()<45)? 30: 45))): date.getMinutes();
-  var ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  minutes = minutes < 10 ? '0' + minutes : minutes;
-  var strTime = hours + ':' + minutes + ' ' + ampm;
+function formatAMPM(date, initVal, calendarDate) {
+
+  var currentDate = new Date();
+  var currentDay = currentDate.getDate();
+  var currentMonth = currentDate.getMonth()+1;
+  if (currentDay < 10) {
+      currentDay = '0' + currentDay;
+  }
+  if (currentMonth < 10) {
+      currentMonth = '0' + currentMonth;
+  }
+  currentDate = currentMonth + '-' + currentDay;
+  if (currentDate == calendarDate) {
+      var hours = date.getHours();
+      var minutes = (initVal === true)? ((date.getMinutes()<15)? 15: ((date.getMinutes()<30)? 30: ((date.getMinutes()<45)? 45: 45))): date.getMinutes();
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+  } else {
+      var strTime = '12:00 AM';
+  }
   return strTime;
 }
+
 
 Ext.Ajax.timeout = 4 * 60 * 1000;
 
@@ -248,13 +264,14 @@ function pauseCase(date){
           items: [
               {
                 html: '<div align="center" style="font: 14px tahoma,arial,helvetica,sans-serif">' + _('ID_PAUSE_CASE_TO_DATE') +' '+date.format('M j, Y')+'? </div> <br/>'
+
               },
               new Ext.form.TimeField({
                   id: 'unpauseTime',
                   fieldLabel: _('ID_UNPAUSE_TIME'),
                   name: 'unpauseTime',
-                  value: formatAMPM(new Date(), false),
-                  minValue: formatAMPM(new Date(), true),
+                  value: formatAMPM(new Date(), false, date.format('m-d')),
+                  minValue: formatAMPM(new Date(), true, date.format('m-d')),
                   format: 'h:i A'
               }),
               {

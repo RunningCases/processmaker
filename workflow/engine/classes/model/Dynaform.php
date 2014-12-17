@@ -517,13 +517,14 @@ class Dynaform extends BaseDynaform
         return $G_FORM->fields;
     }
 
-    public function verifyExistingName ($sName, $sProUid)
+    public function verifyExistingName ($sName, $sProUid, $sDynUid)
     {
         $sNameDyanform = urldecode( $sName );
         $sProUid = urldecode( $sProUid );
         $oCriteria = new Criteria( 'workflow' );
         $oCriteria->addSelectColumn( DynaformPeer::DYN_UID );
         $oCriteria->add( DynaformPeer::PRO_UID, $sProUid );
+        $oCriteria->add( DynaformPeer::DYN_UID, $sDynUid );
         $oDataset = DynaformPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $flag = true;
@@ -532,14 +533,16 @@ class Dynaform extends BaseDynaform
             $oCriteria1 = new Criteria( 'workflow' );
             $oCriteria1->addSelectColumn( 'COUNT(*) AS DYNAFORMS' );
             $oCriteria1->add( ContentPeer::CON_CATEGORY, 'DYN_TITLE' );
-            $oCriteria1->add( ContentPeer::CON_ID, $aRow['DYN_UID'] );
+            $oCriteria1->add( ContentPeer::CON_ID, $sDynUid, Criteria::NOT_EQUAL);
             $oCriteria1->add( ContentPeer::CON_VALUE, $sNameDyanform );
             $oCriteria1->add( ContentPeer::CON_LANG, SYS_LANG );
+            $oCriteria1->add( DynaformPeer::PRO_UID, $sProUid);
+            $oCriteria1->addJoin( ContentPeer::CON_ID, DynaformPeer::DYN_UID, Criteria::INNER_JOIN );
             $oDataset1 = ContentPeer::doSelectRS( $oCriteria1 );
             $oDataset1->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset1->next();
             $aRow1 = $oDataset1->getRow();
-            if ($aRow1['DYNAFORMS']) {
+            if ($aRow1['DYNAFORMS'] == 1) {
                 $flag = false;
                 break;
             }
