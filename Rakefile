@@ -243,6 +243,7 @@ def buildMafe(homeDir, targetDir, mode)
         "#{homeDir}/lib/jQueryLayout/jquery.layout.min.js" => "#{jsTargetDir}/jquery.layout.min.js",
         "#{homeDir}/lib/modernizr/modernizr.js" => "#{jsTargetDir}/modernizr.js"
     })
+    system "cp -rf #{homeDir}/src/formDesigner/img/* #{mafeDir}/../img"
 
     puts "\nMichelangelo FE Build Finished\n".magenta
 end
