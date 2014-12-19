@@ -6569,8 +6569,8 @@ class Cases
         }
 
         global $RBAC;
-        //Adding the actual user if this has the PM_REASSIGNCASE permission assigned.
-        if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 && $aUser['USR_UID'] == $USR_UID) {
+        //Adding the actual user if this has the PM_SUPERVISOR permission assigned.
+        if ($RBAC->userCanAccess('PM_SUPERVISOR') == 1) {
             if(!in_array($RBAC->aUserInfo['USER_INFO']['USR_UID'], $row)) {
                 $row[] = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
             }
