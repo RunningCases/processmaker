@@ -6570,10 +6570,10 @@ class Cases
 
         global $RBAC;
         //Adding the actual user if this has the PM_REASSIGNCASE permission assigned.
-        if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1){
-        	if(!in_array($RBAC->aUserInfo['USER_INFO']['USR_UID'], $row)){
-        	    $row[] = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
-        	}
+        if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 && $aUser['USR_UID'] == $USR_UID) {
+            if(!in_array($RBAC->aUserInfo['USER_INFO']['USR_UID'], $row)) {
+                $row[] = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
+            }
         }
 
         require_once 'classes/model/Users.php';
