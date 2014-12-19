@@ -36,7 +36,7 @@ $aFields = array();
 if (!isset($_GET['u'])) {
     $aFields['URL'] = '';
 } else {
-    $aFields['URL'] = urldecode(htmlentities($_GET['u']));
+    $aFields['URL'] = htmlspecialchars(addslashes(stripslashes(strip_tags(trim(urldecode($_GET['u']))))));
 }
 
 if (!isset($_SESSION['G_MESSAGE'])) {
