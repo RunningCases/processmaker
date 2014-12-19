@@ -82,7 +82,7 @@ class Derivation
                 }
 
                 $arrayTaskData["NEXT_TASK"]["USR_UID"] = "";
-                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = array("USR_UID" => "");
+                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = array("USR_UID" => "", "USR_USERNAME" => "");
             } else {
                 //3. Load the task information of normal NEXT_TASK
                 $arrayTaskData["NEXT_TASK"] = $task->load($arrayTaskData["ROU_NEXT_TASK"]); //print $arrayTaskData["ROU_NEXT_TASK"]." **** ".$arrayTaskData["NEXT_TASK"]["TAS_TYPE"]."<hr>";
