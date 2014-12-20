@@ -1997,10 +1997,7 @@ CREATE TABLE `BPMN_LANE`
 	KEY `BPMN_LANE_I_3`(`LNS_UID`),
 	CONSTRAINT `fk_bpmn_lane_project`
 		FOREIGN KEY (`PRJ_UID`)
-		REFERENCES `BPMN_PROJECT` (`PRJ_UID`),
-	CONSTRAINT `fk_bpmn_lane_laneset`
-		FOREIGN KEY (`LNS_UID`)
-		REFERENCES `BPMN_LANESET` (`LNS_UID`)
+		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_PARTICIPANT
