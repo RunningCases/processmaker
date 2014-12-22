@@ -79,8 +79,8 @@ class Bpmn extends Handler
         "flow" => array("PRJ_UID", "DIA_UID", "FLO_ELEMENT_DEST_PORT", "FLO_ELEMENT_ORIGIN_PORT"),
         "data" => array("PRJ_UID"),
         "participant" => array("PRJ_UID"),
-        "laneset" => array("BOU_ELEMENT_TYPE", "BOU_REL_POSITION", "BOU_SIZE_IDENTICAL", "BOU_UID"),
-        "lane" => array("BOU_ELEMENT_TYPE", "BOU_REL_POSITION", "BOU_SIZE_IDENTICAL", "BOU_UID")
+        "laneset" => array("BOU_ELEMENT_TYPE", "BOU_SIZE_IDENTICAL", "BOU_UID"),
+        "lane" => array("BOU_ELEMENT_TYPE", "BOU_SIZE_IDENTICAL", "BOU_UID")
     );
 
 
@@ -182,11 +182,11 @@ class Bpmn extends Handler
         foreach ($this->getParticipants() as $participant) {
             $this->removeParticipant($participant["PAR_UID"]);
         }
-        foreach ($this->getLanesets() as $laneset) {
-            $this->removeLaneset($laneset["LNS_UID"]);
-        }
         foreach ($this->getLanes() as $lane) {
             $this->removeLane($lane["LAN_UID"]);
+        }
+        foreach ($this->getLanesets() as $laneset) {
+            $this->removeLaneset($laneset["LNS_UID"]);
         }
         if ($process = $this->getProcess("object")) {
             $process->delete();
