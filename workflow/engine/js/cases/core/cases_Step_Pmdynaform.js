@@ -1,4 +1,4 @@
-function dynaFormChanged (frm) {
+function dynaFormChanged(frm) {
     for (var i1 = 0; i1 <= frm.elements.length - 1; i1++) {
         if ((frm.elements[i1].type === "radio" || frm.elements[i1].type === "checkbox") && (frm.elements[i1].checked !== frm.elements[i1].defaultChecked)) {
             return true;
@@ -22,7 +22,7 @@ function dynaFormChanged (frm) {
     return false;
 }
 $(window).load(function () {
-    var data = JSON.parse(jsondata);
+    var data = jsondata;
     window.dynaform = new PMDynaform.core.Project({
         data: data,
         keys: {
@@ -47,15 +47,17 @@ $(window).load(function () {
     var form = document.getElementsByTagName("form")[0];
 
     var el = form.elements;
-    var k = 0;
     var dt = data.items[0].items;
     for (var i = 0; i < dt.length; i++) {
         var dr = dt[i];
         for (var j = 0; j < dr.length; j++) {
             if (dr[j].name) {
-                el[k].name = "form[" + dr[j].name + "]";
+                for (var k = 0; k < el.length; k++) {
+                    if (el[k].name === dr[j].name) {
+                        el[k].name = "form[" + dr[j].name + "]";
+                    }
+                }
             }
-            k = k + 1;
         }
     }
 
