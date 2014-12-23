@@ -8,6 +8,7 @@ G::LoadClass("system");
 
 $rbacUser = new RbacUsers();
 $user = new Users();
+die($data['USR_USERNAME']);
 $data['USR_USERNAME'] = strip_tags($data['USR_USERNAME']);
 $userData = $rbacUser->getByUsername($data['USR_USERNAME']);
 

@@ -4431,13 +4431,16 @@ class Processes
     public function getDisabledCode($processUid = "")
     {
         try {
+            /*----------------------------------********---------------------------------*/
             G::LoadClass("codeScanner");
+            /*----------------------------------********---------------------------------*/
 
             $arrayDisabledCode = array();
 
             //Set variables
+            /*----------------------------------********---------------------------------*/
             $cs = new CodeScanner("DISABLED_CODE");
-
+            /*----------------------------------********---------------------------------*/
             $delimiter = DBAdapter::getStringDelimiter();
 
             //Processes
