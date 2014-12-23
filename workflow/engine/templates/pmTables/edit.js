@@ -678,7 +678,7 @@ Ext.onReady(function(){
 
   items.push({
     id: 'REP_TAB_NAME',
-    fieldLabel: _("ID_TABLE_NAME") + ' <span style="font-size:9">('+_("ID_AUTO_PREFIX") + ' "PMT")</span>',
+    fieldLabel: _("ID_TABLE_NAME") + ' <span style="font-size:9">('+_("ID_AUTO_PREFIX") + ' "PMT_")</span>',
     xtype:'textfield',
     emptyText: _("ID_SET_A_TABLE_NAME"),
     width: 250,
