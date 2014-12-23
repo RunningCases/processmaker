@@ -40,14 +40,13 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
         fclose($fh);
 
         if (is_object($data) && isset($data->triggers) && is_array($data->triggers) && count($data->triggers) > 0) {
+            /*----------------------------------********---------------------------------*/
             G::LoadClass("codeScanner");
-
+            
             $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
-
             $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
-
             $strFoundDisabledCode = "";
-
+            
             foreach ($data->triggers as $value) {
                 $arrayTriggerData = $value;
 
@@ -63,7 +62,7 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
                     $strFoundDisabledCode .= (($strFoundDisabledCode != "")? "\n" : "") . "- " . $arrayTriggerData["TRI_TITLE"] . ": " . $strCodeAndLine;
                 }
             }
-
+            
             if ($strFoundDisabledCode != "") {
                 $response["status"]  = "DISABLED-CODE";
                 $response["success"] = true;
@@ -72,6 +71,7 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
                 echo G::json_encode($response);
                 exit(0);
             }
+            /*----------------------------------********---------------------------------*/
         }
     } catch (Exception $e) {
         $response["status"]       = "ERROR";
