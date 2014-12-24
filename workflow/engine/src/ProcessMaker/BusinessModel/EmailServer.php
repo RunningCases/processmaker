@@ -5,21 +5,16 @@ class EmailServer
 {
     private $arrayFieldDefinition = array(
         "MESS_UID"                 => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),                    "fieldNameAux" => "emailServerUid"),
-
         "MESS_ENGINE"              => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("PHPMAILER", "MAIL"), "fieldNameAux" => "emailServerEngine"),
         "MESS_SERVER"              => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerServer"),
         "MESS_PORT"                => array("type" => "int",    "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerPort"),
-
         "MESS_RAUTH"               => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(0, 1),                "fieldNameAux" => "emailServerRauth"),
-
         "MESS_ACCOUNT"             => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerUserName"),
         "MESS_PASSWORD"            => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerPassword"),
         "MESS_FROM_MAIL"           => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerFromMail"),
         "MESS_FROM_NAME"           => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerFromName"),
         "SMTPSECURE"               => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("No", "tls", "ssl"),  "fieldNameAux" => "emailServerSecureConnection"),
-
         "MESS_TRY_SEND_INMEDIATLY" => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(0, 1),                "fieldNameAux" => "emailServerSendTestMail"),
-
         "MAIL_TO"                  => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerMailTo"),
         "MESS_DEFAULT"             => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(0, 1),                "fieldNameAux" => "emailServerDefault")
     );
@@ -735,6 +730,26 @@ class EmailServer
             try {
                 $emailServer = new \EmailServer();
 
+                $passwd = $arrayData["MESS_PASSWORD"];
+                $passwdDec = \G::decrypt($passwd, "EMAILENCRYPT");
+                $auxPass = explode("hash:", $passwdDec);
+
+                if (count($auxPass) > 1) {
+                    if (count($auxPass) == 2) {
+                        $passwd = $auxPass[1];
+                    } else {
+                        array_shift($auxPass);
+                        $passwd = implode("", $auxPass);
+                    }
+                }
+
+                $arrayData["MESS_PASSWORD"] = $passwd;
+
+                if ($arrayData["MESS_PASSWORD"] != "") {
+                    $arrayData["MESS_PASSWORD"] = "hash:" . $arrayData["MESS_PASSWORD"];
+                    $arrayData["MESS_PASSWORD"] = \G::encrypt($arrayData["MESS_PASSWORD"], "EMAILENCRYPT");
+                }
+
                 $emailServer->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
                 $emailServerUid = \ProcessMaker\Util\Common::generateUID();
@@ -804,6 +819,27 @@ class EmailServer
 
             try {
                 $emailServer = \EmailServerPeer::retrieveByPK($emailServerUid);
+
+                $passwd = $arrayData["MESS_PASSWORD"];
+                $passwdDec = \G::decrypt($passwd, "EMAILENCRYPT");
+                $auxPass = explode("hash:", $passwdDec);
+
+                if (count($auxPass) > 1) {
+                    if (count($auxPass) == 2) {
+                        $passwd = $auxPass[1];
+                    } else {
+                        array_shift($auxPass);
+                        $passwd = implode("", $auxPass);
+                    }
+                }
+
+                $arrayData["MESS_PASSWORD"] = $passwd;
+
+                if ($arrayData["MESS_PASSWORD"] != "") {
+                    $arrayData["MESS_PASSWORD"] = "hash:" . $arrayData["MESS_PASSWORD"];
+                    $arrayData["MESS_PASSWORD"] = \G::encrypt($arrayData["MESS_PASSWORD"], "EMAILENCRYPT");
+                }
+
                 $emailServer->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
                 if ($emailServer->validate()) {
@@ -1055,6 +1091,21 @@ class EmailServer
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
+
+                $passwd = $row["MESS_PASSWORD"];
+                $passwdDec = \G::decrypt($passwd, "EMAILENCRYPT");
+                $auxPass = explode("hash:", $passwdDec);
+
+                if (count($auxPass) > 1) {
+                    if (count($auxPass) == 2) {
+                        $passwd = $auxPass[1];
+                    } else {
+                        array_shift($auxPass);
+                        $passwd = implode("", $auxPass);
+                    }
+                }
+
+                $row["MESS_PASSWORD"] = $passwd;
 
                 $arrayEmailServer[] = $this->getEmailServerDataFromRecord($row);
             }

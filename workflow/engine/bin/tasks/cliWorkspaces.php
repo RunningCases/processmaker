@@ -341,7 +341,7 @@ function database_upgrade($command, $args) {
           $arrayData["MAIL_TO"]                  = $emailConfiguration["MAIL_TO"];
           $arrayData["MESS_DEFAULT"]             = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1")? 1 : 0;
 
-          $emailSever = new ProcessMaker\BusinessModel\EmailServer();
+          $emailSever = new \ProcessMaker\BusinessModel\EmailServer();
 
           $emailSever->create($arrayData);
       }
