@@ -516,7 +516,6 @@ emailServer.application = {
             autoLoad: true
         });
 
-        //--- lsl - METODOS COPIADOS DEL ARCHIVO ORIGINAL ************
         var emailUrlValidationText = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4}))|((([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))$/i;
 
         Ext.apply(Ext.form.VTypes, {
@@ -525,7 +524,6 @@ emailServer.application = {
                 return emailUrlValidationText.test(val);
             }
         });
-        //--- lsl --------------------------------------------
 
         var storeDataEmailEngine = new Ext.data.ArrayStore({
             idIndex: 0,
