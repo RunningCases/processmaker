@@ -163,12 +163,11 @@ try {
             unset( $oClass );
         }
         $res = $tar->extract( $path );
-
+        /*----------------------------------********---------------------------------*/
         //Check disabled code
         G::LoadClass("codeScanner");
-
+        
         $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
-
         $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
 
         $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", $path . $pluginFile), $cs->checkDisabledCode("PATH", $path . $sClassName));
@@ -176,7 +175,8 @@ try {
         if (count($arrayFoundDisabledCode) > 0) {
             throw new Exception(G::LoadTranslation("ID_DISABLED_CODE_PLUGIN"));
         }
-
+        /*----------------------------------********---------------------------------*/
+        
         //Check if is enterprise plugin
         $sContent = file_get_contents( $path . $pluginFile );
         $chain = preg_quote( 'extends enterprisePlugin' );
