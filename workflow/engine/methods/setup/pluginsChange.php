@@ -48,13 +48,15 @@ if ($handle = opendir( PATH_PLUGINS )) {
                 $pluginName = str_replace(".php", "", $pluginFile);
 
                 if (is_file(PATH_PLUGINS . $pluginName . ".php") && is_dir(PATH_PLUGINS . $pluginName)) {
+                    /*----------------------------------********---------------------------------*/
                     //Check disabled code
                     G::LoadClass("codeScanner");
+                    /*----------------------------------********---------------------------------*/
 
                     $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
-
+                    /*----------------------------------********---------------------------------*/
                     $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
-
+                    
                     $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", PATH_PLUGINS . $pluginName . ".php"), $cs->checkDisabledCode("PATH", PATH_PLUGINS . $pluginName));
 
                     if (count($arrayFoundDisabledCode) > 0) {
@@ -65,7 +67,7 @@ if ($handle = opendir( PATH_PLUGINS )) {
                         echo G::json_encode($response);
                         exit(0);
                     }
-
+                    /*----------------------------------********---------------------------------*/
                     //print "change to ENABLED";
                     require_once(PATH_PLUGINS . $pluginFile);
                     $details = $oPluginRegistry->getPluginDetails($pluginFile);
