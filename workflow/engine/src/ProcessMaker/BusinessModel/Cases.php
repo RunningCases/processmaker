@@ -1905,5 +1905,129 @@ class Cases
             throw $e;
         }
     }
-}
 
+    protected static $excludeFields = array(
+        "dataFields" => array(
+                        "SYS_LANG", "SYS_SKIN", "SYS_SYS", "APPLICATION", "PROCESS",
+                        "TASK", "INDEX", "USER_LOGGED", "USR_USERNAME", "PIN"),
+        "dataFieldsPost" => array(
+                        "APP_PARENT", "APP_STATUS", "PRO_UID", "APP_PROC_STATUS", "APP_PROC_CODE",
+                        "APP_PARALLEL", "APP_INIT_USER", "APP_CUR_USER", "APP_CREATE_DATE", "APP_INIT_DATE",
+                        "APP_FINISH_DATE", "APP_UPDATE_DATE", "APP_DATA", "APP_PIN", "APP_DESCRIPTION",
+                        "STATUS", "TITLE", "DESCRIPTION", "CREATOR", "CREATE_DATE", "UPDATE_DATE")
+    );
+
+    public static function filterArrayKeys($data, $filter = array())
+    {
+        $result = array();
+
+        foreach ($data as $key => $value) {
+            if (! in_array($key, $filter)) {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get data
+     *
+     * @param string $applicationUid Unique id of Case
+     *
+     * return array Return an array with Data
+     */
+    public function getCaseData($applicationUid)
+    {
+        try {
+            $aFieldsAssoc = array();
+
+            //Verify data
+            Validator::isString($applicationUid, '$app_uid');
+            Validator::appUid($applicationUid, '$app_uid');
+
+            //Set variables
+            $oApp = new \Application();
+            $aFields = $oApp->Load($applicationUid);
+
+            $appData = unserialize($aFields['APP_DATA']);
+
+            $aFields['APP_DATA'] = \G::array_merges(\G::getSystemConstants(), $appData);
+            $aFields = $aFields['APP_DATA'];
+
+            $aFields = self::filterArrayKeys($aFields, self::$excludeFields["dataFields"]);
+
+            foreach($aFields as $key => $value) {
+                $aFieldsAssoc[] = array ('name' => $key, 'value' => $value);
+            }
+
+            //Return
+            return $aFieldsAssoc;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get data non assoc
+     *
+     * @param string $applicationUid Unique id of Case
+     *
+     * return array Return an array with all Data
+     */
+    public function getCaseDataNonAssoc($applicationUid)
+    {
+        try {
+            //Verify data
+            Validator::isString($applicationUid, '$app_uid');
+            Validator::appUid($applicationUid, '$app_uid');
+
+            //Set variables
+            $oApp = new \Application();
+            $aFields = $oApp->Load($applicationUid);
+
+            $appData = unserialize($aFields['APP_DATA']);
+
+            $aFields['APP_DATA'] = \G::array_merges(\G::getSystemConstants(), $appData);
+            $aFields = $aFields['APP_DATA'];
+
+            $aFields = self::filterArrayKeys($aFields, self::$excludeFields["dataFields"]);
+
+            //Return
+            return $aFields;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Post data
+     *
+     * @param string $applicationUid Unique id of Case
+     * @param array $data
+     *
+     * return array Return an array with all Data
+     */
+    public function addCaseData($applicationUid, $data)
+    {
+        try {
+            Validator::isString($applicationUid, '$app_uid');
+            Validator::appUid($applicationUid, '$app_uid');
+            Validator::isArray($data, '$app_data');
+
+            $case = new \Cases();
+            $aFields = $case->loadCase($applicationUid);
+
+            $data['APP_DATA'] = array_merge($aFields['APP_DATA'], $data);
+            $case->updateCase($applicationUid, $data);
+
+            $aFields = self::filterArrayKeys($aFields, self::$excludeFields["dataFieldsPost"]);
+            $aFields = array_change_key_case($aFields, CASE_LOWER);
+            //Return
+            return $aFields;
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+}
