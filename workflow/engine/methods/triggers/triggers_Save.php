@@ -67,8 +67,9 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
     echo $flag;
 } else {
     G::LoadClass("processMap");
+    /*----------------------------------********---------------------------------*/
     G::LoadClass("codeScanner");
-
+    /*----------------------------------********---------------------------------*/
     $response = array();
 
     try {
@@ -82,9 +83,9 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
         }
 
         if (isset($value["TRI_WEBBOT"])) {
+            /*----------------------------------********---------------------------------*/
             //Check disabled code
             $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
-
             $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
 
             $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $value["TRI_WEBBOT"]);
@@ -98,6 +99,7 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
 
                 throw new Exception(G::LoadTranslation("ID_DISABLED_CODE_TRIGGER", array($strCodeAndLine)));
             }
+            /*----------------------------------********---------------------------------*/
         }
 
         if ($value['TRI_UID'] != '') {

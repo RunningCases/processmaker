@@ -3700,17 +3700,11 @@
     <foreign-key name="fk_bpmn_lane_project" foreignTable="BPMN_PROJECT">
       <reference local="PRJ_UID" foreign="PRJ_UID"/>
     </foreign-key>
-    <foreign-key name="fk_bpmn_lane_laneset" foreignTable="BPMN_LANESET">
-      <reference local="LNS_UID" foreign="LNS_UID"/>
-    </foreign-key>
     <index name="BPMN_LANE_I_1">
       <index-column name="LAN_UID"/>
     </index>
     <index name="BPMN_LANE_I_2">
       <index-column name="PRJ_UID"/>
-    </index>
-    <index name="BPMN_LANE_I_3">
-      <index-column name="LNS_UID"/>
     </index>
   </table>
 

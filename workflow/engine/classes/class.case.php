@@ -3283,7 +3283,9 @@ class Cases
 
     public function executeTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType, $aFields = array())
     {
+        /*----------------------------------********---------------------------------*/
         G::LoadClass("codeScanner");
+        /*----------------------------------********---------------------------------*/
 
         $aTriggers = $this->loadTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType);
 
@@ -3295,12 +3297,14 @@ class Cases
 
             $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
 
+            /*----------------------------------********---------------------------------*/
             $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
-
             $strFoundDisabledCode = "";
+            /*----------------------------------********---------------------------------*/
 
             foreach ($aTriggers as $aTrigger) {
                 //Check disabled code
+                /*----------------------------------********---------------------------------*/
                 $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $aTrigger["TRI_WEBBOT"]);
 
                 if (count($arrayFoundDisabledCode) > 0) {
@@ -3313,7 +3317,7 @@ class Cases
                     $strFoundDisabledCode .= "<br />- " . $aTrigger["TRI_TITLE"] . ": " . $strCodeAndLine;
                     continue;
                 }
-
+                /*----------------------------------********---------------------------------*/
                 //Execute
                 $bExecute = true;
 
@@ -3327,10 +3331,11 @@ class Cases
                     $oPMScript->execute();
                 }
             }
-
+            /*----------------------------------********---------------------------------*/
             if ($strFoundDisabledCode != "") {
                 G::SendTemporalMessage(G::LoadTranslation("ID_DISABLED_CODE_TRIGGER_TO_EXECUTE", array($strFoundDisabledCode)), "", "string");
             }
+            /*----------------------------------********---------------------------------*/
 
             return $oPMScript->aFields;
         } else {
@@ -6569,11 +6574,11 @@ class Cases
         }
 
         global $RBAC;
-        //Adding the actual user if this has the PM_REASSIGNCASE permission assigned.
-        if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1){
-        	if(!in_array($RBAC->aUserInfo['USER_INFO']['USR_UID'], $row)){
-        	    $row[] = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
-        	}
+        //Adding the actual user if this has the PM_SUPERVISOR permission assigned.
+        if ($RBAC->userCanAccess('PM_SUPERVISOR') == 1) {
+            if(!in_array($RBAC->aUserInfo['USER_INFO']['USR_UID'], $row)) {
+                $row[] = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
+            }
         }
 
         require_once 'classes/model/Users.php';

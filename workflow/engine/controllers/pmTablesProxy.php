@@ -663,12 +663,104 @@ class pmTablesProxy extends HttpProxyController
         $this->message = $this->success ? G::loadTranslation( 'ID_DELETED_SUCCESSFULLY' ) : G::loadTranslation( 'ID_DELETE_FAILED' );
     }
 
+        public function importCSV ($httpData)
+    {
+        G::LoadClass('pmFunctions');
+        $countRow = 250;
+        if (preg_match( '/[\x00-\x08\x0b-\x0c\x0e\x1f]/', file_get_contents( $_FILES['form']['tmp_name']['CSV_FILE'] ) ) === 0) {
+            $filename = $_FILES['form']['name']['CSV_FILE'];
+            if ($oFile = fopen( $_FILES['form']['tmp_name']['CSV_FILE'], 'r' )) {
+                require_once 'classes/model/AdditionalTables.php';
+                $oAdditionalTables = new AdditionalTables();
+                $aAdditionalTables = $oAdditionalTables->load( $_POST['form']['ADD_TAB_UID'], true );
+                $sErrorMessages = '';
+                $i = 1;
+                $conData = 0;
+                $insert = 'INSERT INTO ' . $aAdditionalTables['ADD_TAB_NAME'] . ' (';
+                $query = '';
+                $swHead = false;
+                while (($aAux = fgetcsv( $oFile, 4096, $_POST['form']['CSV_DELIMITER'] )) !== false) {
+                    if (! is_null( $aAux[0] )) {
+                        if (count( $aAdditionalTables['FIELDS'] ) > count( $aAux )) {
+                            $this->success = false;
+                            $this->message = G::LoadTranslation( 'INVALID_FILE' );
+                            return 0;
+                        }
+                        if ($i == 1) {
+                            $j = 0;
+                            foreach ($aAdditionalTables['FIELDS'] as $aField) {
+                                $insert .= $aField['FLD_NAME'] . ', ';
+                                if ($aField['FLD_NAME'] === $aAux[$j]) {
+                                    $swHead = true;
+                                }
+                                $j ++;
+                            }
+                            $insert = substr($insert, 0, -2);
+                            $insert .= ') VALUES ';
+                        }
+
+                        if ($swHead == false) {
+                            $queryRow = '(';
+                            $j = 0;
+                            foreach ($aAdditionalTables['FIELDS'] as $aField) {
+                                $conData++;
+                                $temp = isset($aAux[$j]) ? '"'.addslashes($aAux[$j]).'"' : '""';
+                                if ($temp == '') {
+                                    switch ($aField['FLD_TYPE']) {
+                                        case 'DATE':
+                                        case 'TIMESTAMP':
+                                            $temp = 'NULL';
+                                            break;
+                                    }
+                                }
+                                $j ++;
+                                $queryRow .= $temp . ',';
+                            }
+                            $query .= substr($queryRow, 0, -1) . '),';
+                            try {
+                                if ($conData == $countRow) {
+                                    $query = substr($query, 0, -1);
+                                    executeQuery($insert . $query . ';', $aAdditionalTables['DBS_UID']);
+                                    $query = '';
+                                    $conData = 0;
+                                }
+                            } catch (Exception $oError) {
+                                $sErrorMessages .= G::LoadTranslation( 'ID_ERROR_INSERT_LINE' ) . ': ' . G::LoadTranslation( 'ID_LINE' ) . ' ' . $i . '. ';
+                            }
+                        } else {
+                            $swHead = false;
+                        }
+                        $i ++;
+                    }
+                }
+                fclose( $oFile );
+                if ($conData > 0) {
+                    $query = substr($query, 0, -1);
+                    executeQuery($insert . $query . ';', $aAdditionalTables['DBS_UID']);
+                }
+            }
+            if ($sErrorMessages != '') {
+                $this->success = false;
+                $this->message = $sErrorMessages;
+            } else {
+                $this->success = true;
+                $this->message = G::loadTranslation( 'ID_FILE_IMPORTED_SUCCESSFULLY', array ($filename
+                ) );
+                G::auditLog("ImportTable", $filename);
+            }
+        } else {
+            $sMessage = G::LoadTranslation( 'ID_UPLOAD_VALID_CSV_FILE' );
+            $this->success = false;
+            $this->message = $sMessage;
+        }
+    }
+
     /**
      * import a CSV to pm tables record
      *
      * @param string $httpData->id
      */
-    public function importCSV ($httpData)
+    public function importCSVDeprecated ($httpData)
     {
         if (preg_match( '/[\x00-\x08\x0b-\x0c\x0e\x1f]/', file_get_contents( $_FILES['form']['tmp_name']['CSV_FILE'] ) ) === 0) {
             $filename = $_FILES['form']['name']['CSV_FILE'];
