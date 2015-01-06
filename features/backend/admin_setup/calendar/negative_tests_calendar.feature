@@ -1,12 +1,13 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Calendar Negative Tests
 
-
-Background:
+  Background:
     Given that I have a valid access_token
 
 
-Scenario Outline: Create a new Calendars (Negative Tests)
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario Outline: Create new Calendars (Without cal_name)
     Given POST this data:
     """
     {
@@ -27,13 +28,14 @@ Scenario Outline: Create a new Calendars (Negative Tests)
     Then the response status code should be <error_code>
     And the response status message should have the following text "<error_message>"
 
-    Examples:
+  Examples:
+    | cal_name   | cal_description                    | error_code | error_message |
+    |            | Prueba de Creacion de Calendario 1 | 400        | cal_name      |
 
-    | test_description         | cal_name   | cal_description                    | error_code | error_message |
-    | Create whitout cal_name  |            | Prueba de Creacion de Calendario 1 | 400        | cal_name      |
- 
 
-Scenario: Create a new Calendars (Wrong cal_work_days)
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario: Create a new Calendars (Wrong cal_work_days)
     Given POST this data:
     """
     {
@@ -55,7 +57,9 @@ Scenario: Create a new Calendars (Wrong cal_work_days)
     And the response status message should have the following text "cal_work_days"
 
 
-Scenario: Create a new Calendars (cal_work_hour . day)
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario: Create new Calendars (cal_work_hour . day)
     Given POST this data:
     """
     {
@@ -77,7 +81,9 @@ Scenario: Create a new Calendars (cal_work_hour . day)
     And the response status message should have the following text "day"
 
 
-Scenario: Create a new Calendars (without cal_work_days)
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario: Create a new Calendars (Without cal_work_days)
     Given POST this data:
     """
     {
@@ -99,7 +105,9 @@ Scenario: Create a new Calendars (without cal_work_days)
     And the response status message should have the following text "cal_work_days"
 
 
-Scenario: Create a new Calendars (wrong date_start )
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario: Create a new Calendars (Wrong date_start )
     Given POST this data:
     """
     {
@@ -120,8 +128,9 @@ Scenario: Create a new Calendars (wrong date_start )
     Then the response status code should be 400
     And the response status message should have the following text "date_start"
 
-
-Scenario: Create a new Calendars (wrong date_end)
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario: Create new Calendars (wrong date_end)
     Given POST this data:
     """
     {
@@ -143,7 +152,9 @@ Scenario: Create a new Calendars (wrong date_end)
     And the response status message should have the following text "date_end"
 
 
-Scenario: Create a new Calendars (with work days less than 3)
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario: Create new Calendars (With work days less than 3)
     Given POST this data:
     """
     {
@@ -165,9 +176,10 @@ Scenario: Create a new Calendars (with work days less than 3)
     And the response status message should have the following text "least 3 Working Days"
 
 
-
-Scenario: Delete Calendar when it is assigned to a project "Test Process"
+  # DELETE /api/1.0/{workspace}/calendar
+  #        Delete an specific calendar
+  Scenario: Delete a Calendar that does not exists
     Given that I want to delete a "Calendar"
     And I request "calendar/14606161052f50839307899033145440"
     Then the response status code should be 400
-    And the response status message should have the following text "cannot be deleted" 
+    And the response status message should have the following text "does not exist"
