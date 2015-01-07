@@ -1947,12 +1947,9 @@ class Cases
             Validator::appUid($applicationUid, '$app_uid');
 
             //Set variables
-            $oApp = new \Application();
-            $aFields = $oApp->Load($applicationUid);
+            $case = new \Cases();
+            $aFields = $case->loadCase($applicationUid);
 
-            $appData = unserialize($aFields['APP_DATA']);
-
-            $aFields['APP_DATA'] = \G::array_merges(\G::getSystemConstants(), $appData);
             $aFields = $aFields['APP_DATA'];
 
             $aFields = self::filterArrayKeys($aFields, self::$excludeFields["dataFields"]);
@@ -1983,12 +1980,9 @@ class Cases
             Validator::appUid($applicationUid, '$app_uid');
 
             //Set variables
-            $oApp = new \Application();
-            $aFields = $oApp->Load($applicationUid);
+            $case = new \Cases();
+            $aFields = $case->loadCase($applicationUid);
 
-            $appData = unserialize($aFields['APP_DATA']);
-
-            $aFields['APP_DATA'] = \G::array_merges(\G::getSystemConstants(), $appData);
             $aFields = $aFields['APP_DATA'];
 
             $aFields = self::filterArrayKeys($aFields, self::$excludeFields["dataFields"]);
