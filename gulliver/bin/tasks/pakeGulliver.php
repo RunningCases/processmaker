@@ -69,8 +69,10 @@ pake_task('workspace-backup', 'project_exists');
 pake_desc("restore a previously backed-up workspace\n   args: [-o|--overwrite] <filename> <workspace>");
 pake_task('workspace-restore', 'project_exists');
 
+/*----------------------------------********---------------------------------*/
 pake_desc("check standard code\n   args: <directory>");
 pake_task('check-standard-code', 'project_exists' );
+/*----------------------------------********---------------------------------*/
 
 /**
    * Function run_version
