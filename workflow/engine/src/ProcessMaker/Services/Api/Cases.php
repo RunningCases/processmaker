@@ -838,17 +838,18 @@ class Cases extends Api
      *
      * @param string $app_uid {@min 1}{@max 32}
      * @param array $request_data
+     * @param string $dyn_uid {@from path}
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @url PUT /:app_uid/variable
      */
-    public function doPutCaseVariables($app_uid, $request_data)
+    public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '')
     {
         try {
             $cases = new \ProcessMaker\BusinessModel\Cases();
-            $cases->setCaseVariables($app_uid, $request_data);
+            $cases->setCaseVariables($app_uid, $request_data, $dyn_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -992,64 +993,6 @@ class Cases extends Api
             return $response;
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-    }
-
-    /**
-     * @url GET /:app_uid/data/non-assoc
-     *
-     * @param string $app_uid {@min 32}{@max 32}
-     */
-    public function doGetCaseDataNonAssoc($app_uid)
-    {
-        try {
-            $case = new \ProcessMaker\BusinessModel\Cases();
-            $case->setFormatFieldNameInUppercase(false);
-
-            $response = $case->getCaseDataNonAssoc($app_uid);
-
-            return $response;
-        } catch (\Exception $e) {
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-    }
-
-    /**
-     * @url GET /:app_uid/data
-     *
-     * @param string $app_uid {@min 32}{@max 32}
-     */
-    public function doGetCaseData($app_uid)
-    {
-        try {
-            $case = new \ProcessMaker\BusinessModel\Cases();
-            $case->setFormatFieldNameInUppercase(false);
-
-            $response = $case->getCaseData($app_uid);
-
-            return $response;
-        } catch (\Exception $e) {
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-    }
-
-    /**
-     * @url POST /:app_uid/data
-     *
-     * @param string $app_uid {@min 32}{@max 32}
-     * @param array $variables {@from body}
-     *
-     */
-    public function doPostCaseData($app_uid, $variables = null)
-    {
-        try {
-            $cases = new \ProcessMaker\BusinessModel\Cases();
-
-            $response = $cases->addCaseData($app_uid, $variables);
-
-            return $response;
-        } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
 }
