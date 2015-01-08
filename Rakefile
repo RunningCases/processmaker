@@ -230,8 +230,7 @@ def buildMafe(homeDir, targetDir, mode)
         "#{homeDir}/build/js/designer.js" => "#{mafeDir}/designer.min.js",
         "#{homeDir}/build/js/mafe.js" => "#{mafeDir}/mafe.min.js",
         "#{homeDir}/build/css/mafe.css" => "#{mafeDir}/mafe.min.css",
-        "#{homeDir}/img/*.*" => "#{imgTargetDir}",
-        "#{homeDir}/srcForm/img/*.*" => "#{imgTargetDir}"
+        "#{homeDir}/img/*.*" => "#{imgTargetDir}"
     })
 
     puts "\nCopying lib files into: #{jsTargetDir}".bold
