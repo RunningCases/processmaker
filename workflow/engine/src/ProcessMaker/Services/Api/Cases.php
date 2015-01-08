@@ -995,5 +995,25 @@ class Cases extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+
+    /**
+     * Execute triggers
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     * @param string $del_index {@from body}
+     *
+     * @copyright Colosa - Bolivia
+     *
+     * @url PUT /:app_uid/execute-triggers
+     */
+    public function doPutExecuteTriggers($app_uid, $del_index = false)
+    {
+        try {
+            $cases = new \ProcessMaker\BusinessModel\Cases();
+            $cases->putExecuteTriggers($app_uid, $del_index);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
 

@@ -1439,7 +1439,7 @@ class Cases
         $fields = $case->loadCase($app_uid);
         $_POST['form'] = $app_data;
 
-        if ($dyn_uid) {
+        if (!is_null($dyn_uid)) {
             $oDynaform = \DynaformPeer::retrieveByPK($dyn_uid);
 
             if ($oDynaform->getDynVersion() < 2) {
@@ -1915,6 +1915,38 @@ class Cases
             return $arrayTask;
         } catch (\Exception $e) {
             throw $e;
+        }
+    }
+
+    /**
+     * Put execute triggers
+     *
+     * @access public
+     * @param string $app_uid , Uid for case
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function putExecuteTriggers($app_uid, $del_index = false)
+    {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+
+        if ($del_index === false) {
+            $del_index = \AppDelegation::getCurrentIndex($app_uid);
+        }
+        Validator::isInteger($del_index, '$del_index');
+
+        $oCase = new \Cases();
+        $aField = $oCase->loadCase($app_uid, $del_index);
+        $tas_uid  = $aField["TAS_UID"];
+
+        $task = new \Tasks();
+        $arrayStep = $task->getStepsOfTask($tas_uid);
+
+        foreach ($arrayStep as $step) {
+            $arrayField = $oCase->loadCase($app_uid);
+            $arrayField["APP_DATA"] = $oCase->executeTriggers($tas_uid, $step["STEP_TYPE_OBJ"], $step["STEP_UID_OBJ"], "AFTER", $arrayField["APP_DATA"]);
+            $arrayField = $oCase->updateCase($app_uid, $arrayField);
         }
     }
 }
