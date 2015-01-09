@@ -1940,7 +1940,6 @@ class Cases
         $tas_uid  = $aField["TAS_UID"];
 
         $task = new \Tasks();
-        $arrayStep = $task->getStepsOfTask($tas_uid);
         $aField["APP_DATA"] = $oCase->executeTriggers($tas_uid, $obj_type, $obj_uid, "AFTER", $aField["APP_DATA"]);
         $aField = $oCase->updateCase($app_uid, $aField);
     }
