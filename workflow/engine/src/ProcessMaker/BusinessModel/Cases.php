@@ -1923,7 +1923,7 @@ class Cases
      *
      * @access public
      * @param string $app_uid , Uid for case
-     * @param bool|string $del_index , Index for case
+     * @param int $del_index , Index for case
      * @param string $obj_type , Index for case
      * @param string $obj_uid , Index for case
      *
@@ -1942,5 +1942,32 @@ class Cases
         $task = new \Tasks();
         $aField["APP_DATA"] = $oCase->executeTriggers($tas_uid, $obj_type, $obj_uid, "AFTER", $aField["APP_DATA"]);
         $aField = $oCase->updateCase($app_uid, $aField);
+    }
+
+    /**
+     * Get Steps evaluate
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @param int $del_index , Index for case
+     * @return array
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function getSteps($app_uid, $del_index)
+    {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+        Validator::isInteger($del_index, '$del_index');
+
+        $oCase = new \Cases();
+        $aCaseField = $oCase->loadCase($app_uid, $del_index);
+        $tas_uid  = $aCaseField["TAS_UID"];
+        $pro_uid  = $aCaseField["PRO_UID"];
+
+        $oApplication = new \Applications();
+        $aField = $oApplication->getSteps($app_uid, $del_index, $tas_uid, $pro_uid);
+
+        return $aField;
     }
 }

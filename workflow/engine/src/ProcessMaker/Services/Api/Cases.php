@@ -1000,7 +1000,7 @@ class Cases extends Api
      * Execute triggers
      *
      * @param string $app_uid {@min 1}{@max 32}
-     * @param string $del_index {@from body}
+     * @param int $del_index {@from body}
      * @param string $obj_type {@from body}
      * @param string $obj_uid {@from body}
      *
@@ -1015,6 +1015,27 @@ class Cases extends Api
             $cases->putExecuteTriggers($app_uid, $del_index, $obj_type, $obj_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:app_uid/:del_index/steps
+     *
+     * @param string $app_uid {@min 32}{@max 32}
+     * @param int $del_index
+     *
+     */
+    public function doGetSteps($app_uid, $del_index)
+    {
+        try {
+            $case = new \ProcessMaker\BusinessModel\Cases();
+            $case->setFormatFieldNameInUppercase(false);
+
+            $response = $case->getSteps($app_uid, $del_index);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 }
