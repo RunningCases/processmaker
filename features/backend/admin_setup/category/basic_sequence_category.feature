@@ -16,7 +16,7 @@ Feature: Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 0 records
+    And the response has 1 records
 
 
   # POST /api/1.0/{workspace}/project/category
@@ -44,7 +44,7 @@ Feature: Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 1 records
+    And the response has 2 records
 
 
   # PUT /api/1.0/{workspace}/project/categories
@@ -93,4 +93,4 @@ Feature: Process Category
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 0 records
+    And the response has 1 records

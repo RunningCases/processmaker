@@ -16,7 +16,7 @@ Feature: Process Category Main Test
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 0 records
+    And the response has 1 records
 
 
   # POST /api/1.0/{workspace}/project/category
@@ -54,7 +54,7 @@ Feature: Process Category Main Test
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 7 records
+    And the response has 8 records
 
 
   # POST /api/1.0/{workspace}/project/category
@@ -156,4 +156,4 @@ Feature: Process Category Main Test
     And the response charset is "UTF-8"
     And the content type is "application/json"
     And the type is "array"
-    And the response has 0 records
+    And the response has 1 records
