@@ -1008,7 +1008,7 @@ class Cases extends Api
      *
      * @url PUT /:app_uid/execute-triggers
      */
-    public function doPutExecuteTriggers($app_uid, $del_index = false, $obj_type, $obj_uid)
+    public function doPutExecuteTriggers($app_uid, $del_index, $obj_type, $obj_uid)
     {
         try {
             $cases = new \ProcessMaker\BusinessModel\Cases();
