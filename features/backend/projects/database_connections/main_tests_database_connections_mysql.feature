@@ -11,7 +11,7 @@ Feature: DataBase Connections Main Tests Mysql
 
 
   # GET /api/1.0/{workspace}/project/<project-id>/database-connections
-  #     Get list DataBase| dbs_type         | dbs_server         | dbs_database_name | dbs_username         | dbs_password         | dbs_port         | dbs_encode         | dbs_description         | Connections
+  #     Get list DataBase
   Scenario Outline: Get the DataBase Connections List when there are exactly zero DataBase Connections
     Given I request "project/<project>/database-connections"
     Then the response status code should be 200
