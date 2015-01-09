@@ -1929,14 +1929,10 @@ class Cases
      *
      * @copyright Colosa - Bolivia
      */
-    public function putExecuteTriggers($app_uid, $del_index = false, $obj_type, $obj_uid)
+    public function putExecuteTriggers($app_uid, $del_index, $obj_type, $obj_uid)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
-
-        if ($del_index === false) {
-            $del_index = \AppDelegation::getCurrentIndex($app_uid);
-        }
         Validator::isInteger($del_index, '$del_index');
 
         $oCase = new \Cases();
@@ -1945,7 +1941,6 @@ class Cases
 
         $task = new \Tasks();
         $arrayStep = $task->getStepsOfTask($tas_uid);
-        $arrayField = $oCase->loadCase($app_uid);
         $aField["APP_DATA"] = $oCase->executeTriggers($tas_uid, $obj_type, $obj_uid, "AFTER", $aField["APP_DATA"]);
         $aField = $oCase->updateCase($app_uid, $aField);
     }
