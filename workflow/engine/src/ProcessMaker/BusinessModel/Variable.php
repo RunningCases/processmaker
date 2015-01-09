@@ -610,6 +610,7 @@ class Variable
             $variableSql = "";
             $sqlLimit = "";
             $variableSqlLimit = "";
+            $sqlConditionLike = "";
 
             $criteria = new \Criteria("workflow");
 
