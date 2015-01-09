@@ -1923,10 +1923,13 @@ class Cases
      *
      * @access public
      * @param string $app_uid , Uid for case
+     * @param bool|string $del_index , Index for case
+     * @param string $obj_type , Index for case
+     * @param string $obj_uid , Index for case
      *
      * @copyright Colosa - Bolivia
      */
-    public function putExecuteTriggers($app_uid, $del_index = false)
+    public function putExecuteTriggers($app_uid, $del_index = false, $obj_type, $obj_uid)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
@@ -1942,11 +1945,8 @@ class Cases
 
         $task = new \Tasks();
         $arrayStep = $task->getStepsOfTask($tas_uid);
-
-        foreach ($arrayStep as $step) {
-            $arrayField = $oCase->loadCase($app_uid);
-            $arrayField["APP_DATA"] = $oCase->executeTriggers($tas_uid, $step["STEP_TYPE_OBJ"], $step["STEP_UID_OBJ"], "AFTER", $arrayField["APP_DATA"]);
-            $arrayField = $oCase->updateCase($app_uid, $arrayField);
-        }
+        $arrayField = $oCase->loadCase($app_uid);
+        $aField["APP_DATA"] = $oCase->executeTriggers($tas_uid, $obj_type, $obj_uid, "AFTER", $aField["APP_DATA"]);
+        $aField = $oCase->updateCase($app_uid, $aField);
     }
 }
