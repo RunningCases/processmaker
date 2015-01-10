@@ -1923,7 +1923,7 @@ class Cases
      *
      * @access public
      * @param string $app_uid , Uid for case
-     * @param string $del_index , Index for case
+     * @param int $del_index , Index for case
      * @param string $obj_type , Index for case
      * @param string $obj_uid , Index for case
      *
