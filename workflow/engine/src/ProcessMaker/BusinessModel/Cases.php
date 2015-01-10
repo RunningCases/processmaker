@@ -1968,15 +1968,6 @@ class Cases
         $oApplication = new \Applications();
         $aField = $oApplication->getSteps($app_uid, $del_index, $tas_uid, $pro_uid);
 
-        foreach ($aField as $fields) {
-            if ($fields['type'] == 'DYNAFORM') {
-                $oDynaform = \DynaformPeer::retrieveByPK($fields['id']);
-                $dynaform_version = $oDynaform->getDynVersion();
-                $aFieldConsolidate[] = array_merge($fields, array("version" => $dynaform_version));
-            } else {
-                $aFieldConsolidate[] = $fields;
-            }
-        }
-        return $aFieldConsolidate;
+        return $aField;
     }
 }
