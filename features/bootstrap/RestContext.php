@@ -2162,12 +2162,10 @@ class RestContext extends BehatContext
             throw new Exception('Bad credentials');
         }
 
-
         //print "<textarea>$answer</textarea>";
         if (curl_error($ch)) {
             throw new Exception(curl_error($ch));
         }
-
 
         // Read the session saved in the cookie file
 
@@ -2202,20 +2200,21 @@ class RestContext extends BehatContext
         }
         $parts = parse_url($newurl);
 
-        parse_str($parts['fragment'], $fragment);
-        //print_r($fragment);
-        // json_decode(json)
-        $response=json_decode($answer);
-
         if (file_exists("session.data")) {
             $sessionData = json_decode(file_get_contents("session.data"));
         } else {
             $sessionData = new StdClass();
         }
+
+        //print_r($fragment);
+        // json_decode(json)
+        //$response=json_decode($answer);
+        parse_str($parts['fragment'], $fragment);
         foreach($fragment as $key => $varValue){
             $sessionVarName=$key."_".$implicit_grant_number;
             $sessionData->$sessionVarName = $varValue;
         }
+
         //print_r($sessionData);
         file_put_contents("session.data", json_encode($sessionData));
         //print_r("\nRegister application:\n".$answer."\n$oauth_authorization_url?response_type=$response_type&client_id=$client_id&scope=$scope\n");

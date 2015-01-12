@@ -923,6 +923,7 @@ class Applications
 
                     $stepItem['title'] = $oDocument->getDynTitle();
                     $stepItem['url'] = "cases/cases_Step?UID=$stepUid&TYPE=$stepType&POSITION=$stepPosition&ACTION=EDIT";
+                    $stepItem['version'] = $oDocument->getDynVersion();
                     break;
                 case 'OUTPUT_DOCUMENT':
                     $oDocument = OutputDocumentPeer::retrieveByPK( $caseStep->getStepUidObj() );
