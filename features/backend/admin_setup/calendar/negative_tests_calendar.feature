@@ -182,4 +182,4 @@ Feature: Calendar Negative Tests
     Given that I want to delete a "Calendar"
     And I request "calendar/14606161052f50839307899033145440"
     Then the response status code should be 400
-    And the response status message should have the following text "does not exist"
+    And the response status message should have the following text "cannot be deleted"

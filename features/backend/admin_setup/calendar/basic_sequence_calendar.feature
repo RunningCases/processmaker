@@ -14,7 +14,7 @@ Feature: Calendar
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has 2 records
 
 
   # POST /api/1.0/{workspace}/calendar
@@ -121,4 +121,4 @@ Feature: Calendar
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has 2 records

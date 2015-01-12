@@ -14,7 +14,7 @@ Feature: Calendar Main Tests
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has 2 records
 
 
   # GET /api/1.0/{workspace}/calendar/<cal_uid>
@@ -239,7 +239,7 @@ Feature: Calendar Main Tests
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 8 records
+    And the response has 9 records
 
 
   # DELETE /api/1.0/{workspace}/calendar
@@ -268,4 +268,4 @@ Feature: Calendar Main Tests
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 1 records
+    And the response has 2 records

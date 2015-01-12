@@ -30,4 +30,4 @@ Feature: Process Category Negative Tests
     Given that I want to delete a "Category"
     And I request "project/category/4177095085330818c324501061677193"
     Then the response status code should be 400
-    And the response status message should have the following text "does not exist"
+    And the response status message should have the following text "cannot be deleted"
