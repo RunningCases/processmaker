@@ -42,31 +42,6 @@ class pmDynaform
         return $this->record;
     }
 
-    public function getMergeValues()
-    {
-        $dataJSON = G::json_decode($this->record["DYN_CONTENT"]);
-        $dt = $dataJSON->items[0]->items;
-        $n = count($dt);
-        for ($i = 0; $i < $n; $i++) {
-            $dr = $dt[$i];
-            $n2 = count($dr);
-            for ($j = 0; $j < $n2; $j++) {
-                if (isset($dr[$j]->name)) {
-                    $valueField = isset($this->app_data[$dr[$j]->name]) ? $this->app_data[$dr[$j]->name] : "";
-                    $dataJSON->items[0]->items[$i][$j]->defaultValue = $valueField;
-                }
-            }
-        }
-        $a = G::json_encode($dataJSON);
-        $a = str_replace("\/", "/", $a);
-        return $a;
-    }
-
-    public function mergeValues()
-    {
-        $this->record["DYN_CONTENT"] = $this->getMergeValues();
-    }
-
     public function isResponsive()
     {
         return $this->record != null && $this->record["DYN_VERSION"] == 2 ? true : false;

@@ -24,10 +24,31 @@
             var dyn_uid = '{DYN_UID}';
             var __DynaformName__ = '{DYNAFORMNAME}';
             var app_uid = '{APP_UID}';
+            var prj_uid = '{PRJ_UID}';
+            var workspace = '{WORKSPACE}';
+            var credentials = {credentials};
             $(window).load(function () {
                 var data = jsondata;
-                window.dynaform = new PMDynaform.core.Project({
-                    data: data
+                window.project = new PMDynaform.core.Project({
+                    data: data,
+                    keys: {
+                        server: location.host,
+                        projectId: prj_uid,
+                        workspace: workspace
+                    },
+                    token: credentials,
+                    submitRest: false
+                });
+                new PMDynaform.core.Proxy({
+                    url: "http://" + window.project.keys.server + "/" + window.project.keys.apiName + "/" + window.project.keys.apiVersion + "/" + window.project.keys.workspace + "/cases/" + app_uid + "/variables",
+                    method: 'GET',
+                    data: {},
+                    keys: window.project.token,
+                    successCallback: function (xhr, response) {
+                        if (response[jsondata.name] && window.project.setData2) {
+                            window.project.setData2(response[jsondata.name]);
+                        }
+                    }
                 });
                 $(document).find('form').submit(function (e) {
                     e.preventDefault();
