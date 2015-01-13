@@ -50,12 +50,27 @@ class pmDynaform
     public function printView($pm_run_outside_main_app, $application)
     {
         ob_clean();
+
+        $a = $this->clientToken();
+        $clientToken = array(
+            "accessToken" => $a["access_token"],
+            "expiresIn" => $a["expires_in"],
+            "tokenType" => $a["token_type"],
+            "scope" => $a["scope"],
+            "refreshToken" => $a["refresh_token"],
+            "clientId" => $a["client_id"],
+            "clientSecret" => $a["client_secret"]
+        );
+        
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform_View.html');
         $file = str_replace("{JSON_DATA}", $this->record["DYN_CONTENT"], $file);
         $file = str_replace("{PM_RUN_OUTSIDE_MAIN_APP}", $pm_run_outside_main_app, $file);
         $file = str_replace("{DYN_UID}", $this->dyn_uid, $file);
         $file = str_replace("{DYNAFORMNAME}", $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"], $file);
         $file = str_replace("{APP_UID}", $application, $file);
+        $file = str_replace("{PRJ_UID}", $this->app_data["PROCESS"], $file);
+        $file = str_replace("{WORKSPACE}", $this->app_data["SYS_SYS"], $file);
+        $file = str_replace("{credentials}", json_encode($clientToken), $file);
         echo $file;
         exit();
     }
