@@ -186,6 +186,7 @@ EOT
 CLI::taskArg("workspace-name", true, true);
 CLI::taskRun("run_database_generate_self_service_by_value");
 
+/*----------------------------------********---------------------------------*/
 CLI::taskName("check-workspace-disabled-code");
 CLI::taskDescription(<<<EOT
   Check disabled code for the specified workspace(s).
@@ -198,6 +199,7 @@ EOT
 );
 CLI::taskArg("workspace-name", true, true);
 CLI::taskRun("run_check_workspace_disabled_code");
+/*----------------------------------********---------------------------------*/
 
   /**
    * Function run_info
@@ -579,7 +581,7 @@ function run_database_generate_self_service_by_value($args, $opts)
         echo CLI::error($e->getMessage()) . "\n";
     }
 }
-
+/*----------------------------------********---------------------------------*/
 function run_check_workspace_disabled_code($args, $opts)
 {
     try {
@@ -630,4 +632,4 @@ function run_check_workspace_disabled_code($args, $opts)
         echo CLI::error($e->getMessage()) . "\n";
     }
 }
-
+/*----------------------------------********---------------------------------*/

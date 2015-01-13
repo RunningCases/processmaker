@@ -1,31 +1,25 @@
 @ProcessMakerMichelangelo @RestAPI
 Feature: Calendar Main Tests
-Requirements:
-    a workspace with two calendar in this workspace "Default Calendar and Test Process"
+  Requirements:
+  a workspace with one calendar in this workspace "Default Calendar"
 
-Background:
+  Background:
     Given that I have a valid access_token
 
 
-Scenario: List of calendar
+  # GET /api/1.0/{workspace}/calendars
+  #     Get Calendar list
+  Scenario: List of calendar
     Given I request "calendars"
     Then the response status code should be 200
     And the response charset is "UTF-8"
     And the type is "array"
-    And the response has 2 records
+    And the response has 1 records
 
 
-Scenario: Get a single calendar "Test Process"
-    Given I request "calendar/14606161052f50839307899033145440"
-    Then the response status code should be 200
-    And the response charset is "UTF-8"
-    And the content type is "application/json"
-    And the type is "object"
-    And the "cal_uid" property equals "14606161052f50839307899033145440"
-    And the "cal_name" property equals "Test Process"
-    And the "cal_description" property equals "Calendar para el feature Process"
-
-Scenario: Get a single calendar "Default Calendar"
+  # GET /api/1.0/{workspace}/calendar/<cal_uid>
+  #     Get an specific Calendar
+  Scenario: Get a single calendar "Default Calendar"
     Given I request "calendar/00000000000000000000000000000001"
     Then the response status code should be 200
     And the response charset is "UTF-8"
@@ -36,7 +30,9 @@ Scenario: Get a single calendar "Default Calendar"
     And the "cal_description" property equals "Default Calendar"
 
 
-Scenario Outline: Create a new Calendars
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario Outline: Create new Calendars (one by one)
     Given POST this data:
     """
     {
@@ -60,16 +56,17 @@ Scenario Outline: Create a new Calendars
     And the type is "object"
     And store "cal_uid" in session array as variable "cal_uid_<cal_uid_number>"
 
-    Examples:
-
-    | test_description                       | cal_uid_number | cal_name                                                           | cal_description                    | 
-    | Create calendar 1                      | 1              | Calendar 1                                                         | Prueba de Creacion de Calendario 1 | 
+  Examples:
+    | test_description                       | cal_uid_number | cal_name                                                           | cal_description                    |
+    | Create calendar 1                      | 1              | Calendar 1                                                         | Prueba de Creacion de Calendario 1 |
     | Create calendar with short name        | 2              | C                                                                  | Prueba de Creacion de Calendario 2 |
     | Create calendar with name long         | 3              | Creacion de nuevo Calendar con nombre largo para las pruebas behat | Prueba de Creacion de Calendario 3 |
     | Create calendar with special character | 4              | Calendar 4 !@#$%^&                                                 | Prueba de Creacion de Calendario 4 |
-          
 
-Scenario Outline: Create a new Calendar with parameter cal_work_days diferent
+
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario Outline: Create a new Calendar with parameter cal_work_days diferent
     Given POST this data:
     """
     {
@@ -93,13 +90,14 @@ Scenario Outline: Create a new Calendar with parameter cal_work_days diferent
     And the type is "object"
     And store "cal_uid" in session array as variable "cal_uid_<cal_uid_number>"
 
-    Examples:
-
-    | cal_uid_number | 
+  Examples:
+    | cal_uid_number |
     | 5              |
 
 
-Scenario Outline: Create a new Calendar with parameter cal_work_hour diferent
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario Outline: Create a new Calendar with parameter cal_work_hour diferent
     Given POST this data:
     """
     {
@@ -123,13 +121,14 @@ Scenario Outline: Create a new Calendar with parameter cal_work_hour diferent
     And the type is "object"
     And store "cal_uid" in session array as variable "cal_uid_<cal_uid_number>"
 
-    Examples:
-
-    | cal_uid_number | 
+  Examples:
+    | cal_uid_number |
     | 6              |
 
 
-Scenario Outline: Create a new Calendar with parameter cal_holiday diferent
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario Outline: Create a new Calendar with parameter cal_holiday diferent
     Given POST this data:
     """
     {
@@ -153,13 +152,14 @@ Scenario Outline: Create a new Calendar with parameter cal_holiday diferent
     And the type is "object"
     And store "cal_uid" in session array as variable "cal_uid_<cal_uid_number>"
 
-    Examples:
-
-    | cal_uid_number | 
+  Examples:
+    | cal_uid_number |
     | 7              |
 
 
-Scenario: Create a new Calendar with same name
+  # POST /api/1.0/{workspace}/calendar
+  #      Create a new Calendar
+  Scenario: Create a new Calendar with same name
     Given POST this data:
     """
     {
@@ -181,8 +181,9 @@ Scenario: Create a new Calendar with same name
     And the response status message should have the following text "already exists"
 
 
-
-Scenario Outline: Update the calendars and then check if the values had changed
+  # PUT /api/1.0/{workspace}/calendar
+  #     Update a Calendar
+  Scenario Outline: Update the calendars and then check if the values had changed
     Given PUT this data:
     """
     {
@@ -199,7 +200,6 @@ Scenario Outline: Update the calendars and then check if the values had changed
             {"name": "holiday2", "date_start": "2014-04-01", "date_end": "2014-04-04"}
         ]
     }
-
       """
     And that I want to update a resource with the key "cal_uid" stored in session array as variable "cal_uid_<cal_uid_number>"
     And I request "calendar"
@@ -207,43 +207,15 @@ Scenario Outline: Update the calendars and then check if the values had changed
     Then the response status code should be 200
     And the response charset is "UTF-8"
 
-    Examples:
-
-    | test_description  | cal_uid_number | cal_name          | cal_description                           | cal_status | 
+  Examples:
+    | test_description  | cal_uid_number | cal_name          | cal_description                           | cal_status |
     | Update calendar 1 | 1              | Update Calendar 1 | Update Prueba de Creacion de Calendario 1 | ACTIVE     |
-    | Update calendar 2 | 2              | Update Calendar 2 | Update Prueba de Creacion de Calendario 2 | INACTIVE   |        
+    | Update calendar 2 | 2              | Update Calendar 2 | Update Prueba de Creacion de Calendario 2 | INACTIVE   |
 
 
-Scenario Outline: Update the calendars with same name
-    Given PUT this data:
-    """
-    {
-        "cal_name": "<cal_name>",
-        "cal_description": "<cal_description>",
-        "cal_work_days": [1,2,3,4,5],
-        "cal_status": "<cal_status>",
-        "cal_work_hour": [
-            {"day": 4, "hour_start": "02:00", "hour_end": "21:00"},
-            {"day": 0, "hour_start": "09:00", "hour_end": "17:00"}
-        ],
-        "cal_holiday": [
-            {"name": "Dia del trabajo", "date_start": "2014-05-01", "date_end": "2014-05-01"}
-        ]
-    }
-
-      """
-    And that I want to update a resource with the key "cal_uid" stored in session array as variable "cal_uid_<cal_uid_number>"
-    And I request "calendar"
-    Then the response status code should be 400
-    And the response status message should have the following text "already exists"
-
-    Examples:
-
-    | test_description  | cal_uid_number | cal_name          | cal_description                           | cal_status | 
-    | Update calendar 1 | 1              | Test Process      | Calendar para el feature Process          | ACTIVE     |
-
-
-Scenario Outline: Get a single calendar
+  # GET /api/1.0/{workspace}/calendar
+  #     Get an specific Calendar
+  Scenario Outline: Get a single calendar
     Given that I want to get a resource with the key "cal_uid" stored in session array as variable "cal_uid_<cal_uid_number>"
     And I request "calendar"
     Then the response status code should be 200
@@ -251,25 +223,34 @@ Scenario Outline: Get a single calendar
     And the content type is "application/json"
     And the type is "object"
     And the "cal_name" property equals "<cal_name>"
-    And the "cal_description" property equals "<cal_description>" 
-    And the "cal_status" property equals "<cal_status>"  
+    And the "cal_description" property equals "<cal_description>"
+    And the "cal_status" property equals "<cal_status>"
 
-    Examples:
-
-    | cal_uid_number | cal_name          | cal_description                           | cal_status | 
+  Examples:
+    | cal_uid_number | cal_name          | cal_description                           | cal_status |
     | 1              | Update Calendar 1 | Update Prueba de Creacion de Calendario 1 | ACTIVE     |
-    | 2              | Update Calendar 2 | Update Prueba de Creacion de Calendario 2 | INACTIVE   | 
+    | 2              | Update Calendar 2 | Update Prueba de Creacion de Calendario 2 | INACTIVE   |
 
 
-Scenario Outline: Delete all Calendars created previously in this script
+  # GET /api/1.0/{workspace}/calendars
+  #     Get Calendar list
+  Scenario: List of calendar
+    Given I request "calendars"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And the response has 8 records
+
+
+  # DELETE /api/1.0/{workspace}/calendar
+  #        Delete an specific calendar
+  Scenario Outline: Delete all Calendars created previously in this script
     Given that I want to delete a resource with the key "cal_uid" stored in session array as variable "cal_uid_<cal_uid_number>"
     And I request "calendar"
     And the content type is "application/json"
     Then the response status code should be 200
-    
 
-    Examples:
-
+  Examples:
     | cal_uid_number |
     | 1              |
     | 2              |
@@ -278,3 +259,13 @@ Scenario Outline: Delete all Calendars created previously in this script
     | 5              |
     | 6              |
     | 7              |
+
+
+  # GET /api/1.0/{workspace}/calendars
+  #     Get Calendar list
+  Scenario: List of calendar
+    Given I request "calendars"
+    Then the response status code should be 200
+    And the response charset is "UTF-8"
+    And the type is "array"
+    And the response has 1 records
