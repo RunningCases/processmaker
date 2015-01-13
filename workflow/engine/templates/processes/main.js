@@ -572,7 +572,14 @@ function saveProcess()
             if (projectType == 'classicProject') {
               location.href = 'processes_Map?PRO_UID='+resp.result.PRO_UID;
             } else {
-              location.href = '../designer?prj_uid='+resp.result.PRO_UID;
+            	 if ( navigator.userAgent.indexOf('MSIE') !=-1 ) {
+                 	window.open(
+                 			  "../designer?prj_uid="+resp.result.PRO_UID,
+                 			  '_blank'
+                 			);
+                 } else {
+                	 location.href = '../designer?prj_uid='+resp.result.PRO_UID;
+                 }
             }
           },
           failure: function(obj, resp) {
@@ -622,7 +629,14 @@ editProcess = function(typeParam)
       url = 'processes_Map?PRO_UID=' + pro_uid;
   }
 
-  location.href = url;
+  if ( (navigator.userAgent.indexOf('MSIE') !=-1) && (type == "bpmn") ) {
+	  window.open(
+			  url,
+			  '_blank'
+			);
+  } else {
+	  location.href = url;
+  }
 }
 
 editNewProcess = function(){
@@ -927,7 +941,14 @@ importProcessExistGroup = function()
                     var sNewProUid       = resp_.sNewProUid;
 
                     if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                        window.location.href = "../designer?prj_uid=" + sNewProUid;
+                        if ( navigator.userAgent.indexOf('MSIE') !=-1 ) {
+                      	  window.open(
+                      			  "../designer?prj_uid=" + sNewProUid,
+                      			  '_blank'
+                      			);
+                        } else {
+                          window.location.href = "../designer?prj_uid=" + sNewProUid;
+                        }
                     } else {
                         window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                     }
@@ -1062,7 +1083,14 @@ importProcessExistProcess = function()
 
                     if (resp_.ExistGroupsInDatabase == 0) {
                         if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                            window.location.href = "../designer?prj_uid=" + sNewProUid;
+                            if ( navigator.userAgent.indexOf('MSIE') !=-1 ) {
+                            	  window.open(
+                            			  "../designer?prj_uid=" + sNewProUid,
+                            			  '_blank'
+                            			);
+                              } else {
+                                window.location.href = "../designer?prj_uid=" + sNewProUid;
+                              }
                         } else {
                             window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                         }
@@ -1189,7 +1217,14 @@ importProcess = function()
                             var sNewProUid = resp_.sNewProUid;
 
                             if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                                window.location.href = "../designer?prj_uid=" + sNewProUid;
+                            	 if ( navigator.userAgent.indexOf('MSIE') !=-1 ) {
+                                 	  window.open(
+                                 			  "../designer?prj_uid=" + sNewProUid,
+                                 			  '_blank'
+                                 			);
+                                   } else {
+                                     window.location.href = "../designer?prj_uid=" + sNewProUid;
+                                   }
                             } else {
                                 window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                             }
