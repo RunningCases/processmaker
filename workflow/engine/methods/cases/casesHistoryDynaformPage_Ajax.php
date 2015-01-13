@@ -385,7 +385,6 @@ if ($actionAjax == 'dynaformChangeLogViewHistory') {
     G::LoadClass('pmDynaform');
     $a = new pmDynaform($_GET['DYN_UID'], $Fields['APP_DATA']);
     if ($a->isResponsive()) {
-        $a->mergeValues();
         $a->printView((!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $_SESSION['APPLICATION']);
     } else {
         $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_POST['DYN_UID'], '', $Fields['APP_DATA'], '', '', 'view');
@@ -475,7 +474,6 @@ if ($actionAjax == 'historyDynaformGridPreview') {
     G::LoadClass('pmDynaform');
     $a = new pmDynaform($_GET['DYN_UID'], $Fields['APP_DATA']);
     if ($a->isResponsive()) {
-        $a->mergeValues();
         $a->printView((!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $_SESSION['APPLICATION']);
     } else {
         $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_POST['DYN_UID'], '', $Fields['APP_DATA'], '', '', 'view');

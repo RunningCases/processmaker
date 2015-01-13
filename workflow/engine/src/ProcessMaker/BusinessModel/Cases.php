@@ -1439,7 +1439,7 @@ class Cases
         $fields = $case->loadCase($app_uid);
         $_POST['form'] = $app_data;
 
-        if (!is_null($dyn_uid)) {
+        if (!is_null($dyn_uid) && $dyn_uid != '') {
             $oDynaform = \DynaformPeer::retrieveByPK($dyn_uid);
 
             if ($oDynaform->getDynVersion() < 2) {
