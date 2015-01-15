@@ -60,7 +60,7 @@ emailServer.application = {
                             smtpSecure: smtpSecure,
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0,
+                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
                         };
                     } else {
                         //MAIL
@@ -72,7 +72,7 @@ emailServer.application = {
                             fromName: Ext.getCmp("txtFromName").getValue(),
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0,
+                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
                         };
                     }
                     break;
@@ -98,7 +98,7 @@ emailServer.application = {
                             smtpSecure: smtpSecure,
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0,
+                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
                         };
                     } else {
                         //MAIL
@@ -111,7 +111,7 @@ emailServer.application = {
                             fromName: Ext.getCmp("txtFromName").getValue(),
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0,
+                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
                         };
                     }
                     break;
@@ -144,7 +144,7 @@ emailServer.application = {
                             smtpSecure: smtpSecure,
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0,
+                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
                         };
                     } else {
                         //MAIL
@@ -156,7 +156,7 @@ emailServer.application = {
                             fromName: Ext.getCmp("txtFromName").getValue(),
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0,
+                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
                         };
                     }
                     break;
@@ -287,7 +287,6 @@ emailServer.application = {
                         emailServerSetMailTo(Ext.getCmp("chkSendTestMail").checked);
 
                         Ext.getCmp("txtMailTo").setValue(record.get("MAIL_TO"));
-
                         Ext.getCmp("chkEmailServerDefault").setValue((parseInt(record.get("MESS_DEFAULT")) == 1)? true : false);
 
                         winData.setTitle(_("ID_EMAIL_SERVER_EDIT"));
@@ -883,7 +882,7 @@ emailServer.application = {
                 if (typeof(record) != "undefined") {
                     Ext.MessageBox.confirm(
                         _("ID_CONFIRM"),
-                        "Do you want to delete the Email Server?",
+                        _("ID_EMAIL_SERVER_DELETE_WARNING_MESSAGE"),
                         function (btn)
                         {
                             if (btn == "yes") {
@@ -996,7 +995,7 @@ emailServer.application = {
                 {id: "MESS_UID", dataIndex: "MESS_UID", hidden: true,  header: "uid_emailServer", width: 0, hideable: false, align: "left"},
                 {id: "MESS_ENGINE", dataIndex: "MESS_ENGINE", hidden: false, header: _("EMAIL_ENGINE"), width: 80, hideable: true, align: "left"},
                 {id: "MESS_SERVER", dataIndex: "MESS_SERVER", hidden: false, header: _("ID_SERVER"), width: 150, hideable: true, align: "center", renderer: rendererMessServer},
-                {id: "MESS_PORT", dataIndex: "MESS_PORT", hidden: false, header: _("ID_EMAIL_SERVER_PORT"), width: 50,  hideable: true, align: "center", renderer: rendererMessPort}, //lsl - viene de (X)
+                {id: "MESS_PORT", dataIndex: "MESS_PORT", hidden: false, header: _("ID_EMAIL_SERVER_PORT"), width: 50,  hideable: true, align: "center", renderer: rendererMessPort},
                 {id: "MESS_RAUTH", dataIndex: "MESS_RAUTH", hidden: true,  header: _("REQUIRE_AUTHENTICATION"), width: 50,  hideable: false, align: "left"},
                 {id: "MESS_ACCOUNT", dataIndex: "MESS_ACCOUNT", hidden: false, header: _("ID_EMAIL_SERVER_ACCOUNT_FROM"), width: 130, hideable: true,  align: "left"},
                 {id: "MESS_PASSWORD", dataIndex: "MESS_PASSWORD", hidden: true,  header: _("ID_PASSWORD"), width: 130, hideable: false, align: "left"},
@@ -1005,7 +1004,7 @@ emailServer.application = {
                 {id: "SMTPSECURE", dataIndex: "SMTPSECURE", hidden: false, header: _("USE_SECURE_CONNECTION"), width: 140, hideable: true, align: "center", renderer: rendererMessSmtpSecure},
                 {id: "MESS_TRY_SEND_INMEDIATLY", dataIndex: "MESS_TRY_SEND_INMEDIATLY", hidden: true, header: _("SEND_TEST_MAIL"), width: 50,  hideable: false, align: "left"},
                 {id: "MAIL_TO", dataIndex: "MAIL_TO", hidden: false, header: _("MAIL_TO"),  width: 150, hideable: true, align: "left"},
-                {id: "MESS_DEFAULT", dataIndex: "MESS_DEFAULT", hidden: false, header: _("ID_EMAIL_SERVER_DEFAULT"), width: 50, hideable: true, align: "center", renderer: rendererMessDefault} //lsl - viene de (Y)
+                {id: "MESS_DEFAULT", dataIndex: "MESS_DEFAULT", hidden: false, header: _("ID_EMAIL_SERVER_DEFAULT"), width: 50, hideable: true, align: "center", renderer: rendererMessDefault}
             ]
         });
 
@@ -1025,6 +1024,21 @@ emailServer.application = {
             }
         });
 
+        var arrayAux1 = [];
+
+        /*----------------------------------********---------------------------------*/
+        arrayAux1.push(btnNew);
+        arrayAux1.push("-");
+        /*----------------------------------********---------------------------------*/
+        arrayAux1.push(btnEdit);
+        /*----------------------------------********---------------------------------*/
+        arrayAux1.push(btnDelete);
+        arrayAux1.push("->");
+        arrayAux1.push(txtSearch);
+        arrayAux1.push(btnTextClear);
+        arrayAux1.push(btnSearch);
+        /*----------------------------------********---------------------------------*/
+
         var grdpnlMain = new Ext.grid.GridPanel({
             id: "grdpnlMain",
 
@@ -1037,9 +1051,11 @@ emailServer.application = {
             enableColumnResize: true,
             enableHdMenu: true,
 
-            tbar: [btnNew, "-", btnEdit, btnDelete, "->", txtSearch, btnTextClear, btnSearch],
+            tbar: arrayAux1,
 
+            /*----------------------------------********---------------------------------*/
             bbar: pagingData,
+            /*----------------------------------********---------------------------------*/
 
             title: _("ID_EMAIL_SERVER_TITLE"),
             border: false,
@@ -1061,10 +1077,17 @@ emailServer.application = {
             }
         });
 
+        var arrayAux2 = [];
+
+        arrayAux2.push(btnEdit);
+        /*----------------------------------********---------------------------------*/
+        arrayAux2.push(btnDelete);
+        /*----------------------------------********---------------------------------*/
+
         var mnuContext = new Ext.menu.Menu({
             id: "mnuContext",
 
-            items: [btnEdit, btnDelete]
+            items: arrayAux2
         });
 
         //Initialize events

@@ -789,6 +789,60 @@ class EmailServer
     }
 
     /**
+     * Create Email Server by data
+     *
+     * @param array $arrayData Data
+     *
+     * return array Return data of the new Email Server created
+     */
+    public function create2(array $arrayData)
+    {
+        try {
+            //Create
+            $cnn = \Propel::getConnection("workflow");
+
+            try {
+                $emailServer = new \EmailServer();
+
+                $emailServer->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
+
+                $emailServerUid = \ProcessMaker\Util\Common::generateUID();
+
+                $emailServer->setMessUid($emailServerUid);
+
+                if ($emailServer->validate()) {
+                    $cnn->begin();
+
+                    $result = $emailServer->save();
+
+                    $cnn->commit();
+
+                    if (isset($arrayData["MESS_DEFAULT"]) && (int)($arrayData["MESS_DEFAULT"]) == 1) {
+                        $this->setEmailServerDefaultByUid($emailServerUid);
+                    }
+
+                    //Return
+                    return $this->getEmailServer($emailServerUid);
+                } else {
+                    $msg = "";
+
+                    foreach ($emailServer->getValidationFailures() as $validationFailure) {
+                        $msg = $msg . (($msg != "")? "\n" : "") . $validationFailure->getMessage();
+                    }
+
+                    throw new \Exception(\G::LoadTranslation("ID_RECORD_CANNOT_BE_CREATED") . (($msg != "")? "\n" . $msg : ""));
+                }
+            } catch (\Exception $e) {
+                $cnn->rollback();
+
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Update Email Server
      *
      * @param string $emailServerUid Unique id of Group
