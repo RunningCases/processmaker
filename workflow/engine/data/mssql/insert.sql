@@ -2554,7 +2554,7 @@ SELECT 'LABEL','ID_INFO','en','Info','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_CONFIRM_DELETE_INPUT_AND_HISTORY','en','This action will delete the current document and all its versions','2014-01-15' 
   UNION ALL
-SELECT 'JAVASCRIPT','ID_CONFIRM_DELETE_INPUT_AND_HISTORY','en','This will delete the current document and its past versions.','2014-01-15' 
+SELECT 'JAVASCRIPT','ID_CONFIRM_DELETE_INPUT_AND_HISTORY','en','This action will delete the current document and its past versions.','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_SETUP_MAILCONF_TITLE','en','Test SMTP Connection','2014-01-15' 
   UNION ALL
@@ -3154,15 +3154,15 @@ SELECT 'LABEL','ID_NO_SELECTION_WARNING','en','One item should be selected in or
   UNION ALL
 SELECT 'JAVASCRIPT','ID_REQUIRED_NAME_TRIGGERS','en','You forgot the title of the trigger','2014-01-15' 
   UNION ALL
-SELECT 'JAVASCRIPT','ID_EXIST_PROCESS','en','This process will not be saved, because another process has the same name.','2014-01-15' 
+SELECT 'JAVASCRIPT','ID_EXIST_PROCESS','en','This process will not be saved because there is a process with the same name.','2014-01-15' 
   UNION ALL
-SELECT 'JAVASCRIPT','ID_EXIST_DYNAFORM','en','There is a Dynaform with the same name in this process. It is not saving','2014-01-15' 
+SELECT 'JAVASCRIPT','ID_EXIST_DYNAFORM','en','Not saved because there is a DynaForm with the same name','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_CLASS_TABLE_DOESNT_EXIST','en','This Class Table doesn''t exist!','2014-01-15' 
   UNION ALL
-SELECT 'JAVASCRIPT','ID_EXIST_INPUTDOCUMENT','en','Can not save, because there is an Input Document with the same name in this process.','2014-01-15' 
+SELECT 'JAVASCRIPT','ID_EXIST_INPUTDOCUMENT','en','Not saved because there is an Input Document with the same name in this process.','2014-01-15' 
   UNION ALL
-SELECT 'JAVASCRIPT','ID_EXIST_OUTPUTDOCUMENT','en','Can not save, because, there is an Output Document with the same name in this process.','2014-01-15' 
+SELECT 'JAVASCRIPT','ID_EXIST_OUTPUTDOCUMENT','en','Not saved because there is an Output Document with the same name in this process.','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_CASE_SCHEDULER_VALIDATE_ALERT','en','User or password is empty.','2014-10-21' 
   UNION ALL
