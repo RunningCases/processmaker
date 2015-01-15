@@ -49,9 +49,7 @@ $(window).load(function () {
         data: {},
         keys: window.project.token,
         successCallback: function (xhr, response) {
-            if (response[jsondata.name] && window.project.setData2) {
-                window.project.setData2(response[jsondata.name]);
-            }
+            window.project.setData2(response);
         }
     });
 
