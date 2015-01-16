@@ -968,7 +968,7 @@ class System
 
     public function getEmailConfiguration ()
     {
-        $emailServer = new ProcessMaker\BusinessModel\EmailServer();
+        $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
 
         $arrayEmailServerDefault = $emailServer->getEmailServerDefault();
 

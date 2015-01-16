@@ -4204,7 +4204,7 @@
         <column name="MESS_PASSWORD" type="VARCHAR" size="256" required="true" default="" />
         <column name="MESS_FROM_MAIL" type="VARCHAR" size="256" required="true" default="" />
         <column name="MESS_FROM_NAME" type="VARCHAR" size="256" required="true" default="" />
-        <column name="SMTPSECURE" type="VARCHAR" size="3" required="true" default="" />
+        <column name="SMTPSECURE" type="VARCHAR" size="3" required="true" default="No" />
         <column name="MESS_TRY_SEND_INMEDIATLY" type="INTEGER" required="true" default="0" />
         <column name="MAIL_TO" type="VARCHAR" size="256" required="true" default="" />
         <column name="MESS_DEFAULT" type="INTEGER" required="true" default="0" />
