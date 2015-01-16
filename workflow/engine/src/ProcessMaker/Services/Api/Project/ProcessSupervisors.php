@@ -286,7 +286,6 @@ class ProcessSupervisors extends Api
         try {
             $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
             $supervisor->removeDynaformSupervisor($prjUid, $pudUid);
-            ob_end_clean();
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -305,7 +304,6 @@ class ProcessSupervisors extends Api
         try {
             $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
             $supervisor->removeInputDocumentSupervisor($prjUid, $puiUid);
-            ob_end_clean();
         } catch (\Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
