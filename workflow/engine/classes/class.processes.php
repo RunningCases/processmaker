@@ -769,6 +769,12 @@ class Processes
             }
         }
 
+        if (isset($oData->processVariables)) {
+            foreach ($oData->processVariables as $key => $value) {
+                $oData->processVariables[$key]["PRJ_UID"] = $sNewProUid;
+            }
+        }
+
         return true;
     }
 
