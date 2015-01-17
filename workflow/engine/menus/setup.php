@@ -36,7 +36,7 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1 ) {
     //settings options
     // $G_TMP_MENU->AddIdRawOption('LOGO', 'uplogo', G::LoadTranslation('ID_LOGO'), 'icon-pmlogo.png', '', 'settings');
     $G_TMP_MENU->AddIdRawOption('LOGO', '../admin/pmLogo', G::LoadTranslation('ID_LOGO'), 'icon-pmlogo.png','', 'settings');
-    $G_TMP_MENU->AddIdRawOption('EMAILS','../admin/emails', G::LoadTranslation('ID_EMAIL'), 'icon-email-settings1.png', '', 'settings');
+    $G_TMP_MENU->AddIdRawOption("EMAIL_SERVER", "../emailServer/emailServer", G::LoadTranslation("ID_EMAIL_SERVER_TITLE"), "icon-email-settings1.png", "", "settings");
     $G_TMP_MENU->AddIdRawOption('CALENDAR', 'calendarList', G::LoadTranslation('ID_CALENDAR'), 'icon-calendar.png', '', 'settings' );
     //if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') == 1)
     //  $G_TMP_MENU->AddIdRawOption('CASES_LIST_SETUP', '../cases/casesListSetup', G::LoadTranslation('ID_CASES_LIST_SETUP'), "",'', 'settings');
@@ -103,7 +103,7 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
     $G_TMP_MENU->AddIdRawOption('EMAILS', '../mails/emailList', ucfirst (strtolower ( G::LoadTranslation('ID_EMAILS'))), '', '', 'logs');
     /*----------------------------------********---------------------------------*/
     if (isset($sAudit) && $sAudit != false && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
-        $G_TMP_MENU->AddIdRawOption('AUDIT_LOG', '../setup/auditLog', ucfirst (G::LoadTranslation('ID_AUDITLOG_DISPLAY')), '', '', 'logs'); 
+        $G_TMP_MENU->AddIdRawOption('AUDIT_LOG', '../setup/auditLog', ucfirst (G::LoadTranslation('ID_AUDITLOG_DISPLAY')), '', '', 'logs');
     }
     /*----------------------------------********---------------------------------*/
 }
