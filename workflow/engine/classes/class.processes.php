@@ -208,6 +208,18 @@ class Processes
      * @param string $sUid
      * @return boolean
      */
+    public function processVariableExists ($sUid = '')
+    {
+        $oProcessVariable = new ProcessVariables();
+        return $oProcessVariable->ProcessVariableExists( $sUid );
+    }
+
+    /**
+     * verify if the object exists
+     *
+     * @param string $sUid
+     * @return boolean
+     */
     public function triggerExists ($sUid = '')
     {
         $oTrigger = new Triggers();
@@ -639,6 +651,19 @@ class Processes
     }
 
     /**
+     * get an unused process variables GUID
+     *
+     * @return $sProUid
+     */
+    public function getUnusedProcessVariableGUID ()
+    {
+        do {
+            $sNewUid = G::generateUniqueID();
+        } while ($this->processVariableExists( $sNewUid ));
+        return $sNewUid;
+    }
+
+    /**
      * change the GUID for a serialized process
      *
      * @param string $sProUid
@@ -766,6 +791,12 @@ class Processes
         if (isset($oData->processUser)) {
             foreach ($oData->processUser as $key => $value) {
                 $oData->processUser[$key]["PRO_UID"] = $sNewProUid;
+            }
+        }
+
+        if (isset($oData->processVariables)) {
+            foreach ($oData->processVariables as $key => $value) {
+                $oData->processVariables[$key]["PRJ_UID"] = $sNewProUid;
             }
         }
 
@@ -2106,6 +2137,29 @@ class Processes
     }
 
     /**
+     * Renew all the unique id for "Process User"
+     *
+     * @param $data Object with the data
+     *
+     * return void
+     */
+    public function renewAllProcessVariableUid(&$data)
+    {
+        try {
+            $map = array ();
+            foreach ($data->processVariables as $key => $val) {
+                if (isset( $val['VAR_UID'] )) {
+                    $newGuid = $this->getUnusedProcessVariableGUID();
+                    $map[$val['VAR_UID']] = $newGuid;
+                    $data->processVariables[$key]['VAR_UID'] = $newGuid;
+                }
+            }
+
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+    /**
      * Renew the GUID's for all the Uids for all the elements
      *
      * @param $oData array.
@@ -2134,6 +2188,7 @@ class Processes
         $this->renewAllEvent( $oData );
         $this->renewAllCaseScheduler( $oData );
         $this->renewAllProcessUserUid($oData);
+        $this->renewAllProcessVariableUid($oData);
     }
 
     /**
