@@ -360,34 +360,6 @@ class Dynaform extends BaseDynaform
             $variables = array();
             $res = $sth->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
             while ($res->next()) {
-                //variables
-                $arrayData = array(
-                    "var_name" => $res->get('Field'),
-                    "var_label" => $res->get('Field'),
-                    "var_field_type" => "string",
-                    "var_field_size" => 10,
-                    "var_null" => 1,
-                    "var_dbconnection" => "none",
-                    "var_sql" => "",
-                    "var_options_control" => "",
-                    "var_default" => "",
-                    "var_accepted_values" => Array()
-                );
-                $objVariable = new \ProcessMaker\BusinessModel\Variable();
-                try {
-                    $objVariable->existsName($this->getProUid(), $res->get('Field'));
-                    $variable = $objVariable->create($this->getProUid(), $arrayData);
-                } catch (\Exception $e) {
-                    $data = $objVariable->getVariables($this->getProUid());
-                    foreach ($data as $datavariable) {
-                        if ($datavariable["var_name"] === $res->get('Field')) {
-                            $variable = $datavariable;
-                            break;
-                        }
-                    }
-                }
-                array_push($variables, $variable);
-
                 //data type
                 $type = "text";
                 $dataType = explode('(', $res->get('Type'));
@@ -450,6 +422,34 @@ class Dynaform extends BaseDynaform
                         $dataType = 'string';
                         break;
                 }
+                
+                //variables
+                $arrayData = array(
+                    "var_name" => $res->get('Field'),
+                    "var_label" => $res->get('Field'),
+                    "var_field_type" => $dataType,
+                    "var_field_size" => 10,
+                    "var_null" => 1,
+                    "var_dbconnection" => "none",
+                    "var_sql" => "",
+                    "var_options_control" => "",
+                    "var_default" => "",
+                    "var_accepted_values" => Array()
+                );
+                $objVariable = new \ProcessMaker\BusinessModel\Variable();
+                try {
+                    $objVariable->existsName($this->getProUid(), $res->get('Field'));
+                    $variable = $objVariable->create($this->getProUid(), $arrayData);
+                } catch (\Exception $e) {
+                    $data = $objVariable->getVariables($this->getProUid());
+                    foreach ($data as $datavariable) {
+                        if ($datavariable["var_name"] === $res->get('Field')) {
+                            $variable = $datavariable;
+                            break;
+                        }
+                    }
+                }
+                array_push($variables, $variable);
 
                 array_push($items, array(
                     array(
