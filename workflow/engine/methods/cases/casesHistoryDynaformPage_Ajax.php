@@ -385,6 +385,8 @@ if ($actionAjax == 'dynaformChangeLogViewHistory') {
     G::LoadClass('pmDynaform');
     $a = new pmDynaform($_GET['DYN_UID'], $Fields['APP_DATA']);
     if ($a->isResponsive()) {
+        $a->app_data["PROCESS"] = $_SESSION['PROCESS'];
+        $a->app_data["SYS_SYS"] = $_SESSION['WORKSPACE'];
         $a->printView((!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $_SESSION['APPLICATION']);
     } else {
         $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_POST['DYN_UID'], '', $Fields['APP_DATA'], '', '', 'view');
