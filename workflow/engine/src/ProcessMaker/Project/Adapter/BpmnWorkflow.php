@@ -930,7 +930,7 @@ class BpmnWorkflow extends Project\Bpmn
                     //Artifact
 
                     //Update UIDs
-                    if ($artifactData["BOU_CONTAINER"] == "bpmnPool" || $activityData["BOU_CONTAINER"] == "bpmnLane") {
+                    if ($artifactData["BOU_CONTAINER"] == "bpmnPool" || $artifactData["BOU_CONTAINER"] == "bpmnLane") {
                         foreach ($result as $value) {
                             if ($artifactData["BOU_ELEMENT"] == $value["old_uid"]) {
                                 $artifactData["BOU_ELEMENT"] = $value["new_uid"];
@@ -990,7 +990,7 @@ class BpmnWorkflow extends Project\Bpmn
                     //Gateway
 
                     //Update UIDs
-                    if ($gatewayData["BOU_CONTAINER"] == "bpmnPool" || $activityData["BOU_CONTAINER"] == "bpmnLane") {
+                    if ($gatewayData["BOU_CONTAINER"] == "bpmnPool" || $gatewayData["BOU_CONTAINER"] == "bpmnLane") {
                         foreach ($result as $value) {
                             if ($gatewayData["BOU_ELEMENT"] == $value["old_uid"]) {
                                 $gatewayData["BOU_ELEMENT"] = $value["new_uid"];
@@ -1064,7 +1064,7 @@ class BpmnWorkflow extends Project\Bpmn
                     //Event
 
                     //Update UIDs
-                    if ($eventData["BOU_CONTAINER"] == "bpmnPool" || $activityData["BOU_CONTAINER"] == "bpmnLane") {
+                    if ($eventData["BOU_CONTAINER"] == "bpmnPool" || $eventData["BOU_CONTAINER"] == "bpmnLane") {
                         foreach ($result as $value) {
                             if ($eventData["BOU_ELEMENT"] == $value["old_uid"]) {
                                 $eventData["BOU_ELEMENT"] = $value["new_uid"];
@@ -1120,7 +1120,7 @@ class BpmnWorkflow extends Project\Bpmn
                     //Data
 
                     //Update UIDs
-                    if ($dataObjectData["BOU_CONTAINER"] == "bpmnPool" || $activityData["BOU_CONTAINER"] == "bpmnLane") {
+                    if ($dataObjectData["BOU_CONTAINER"] == "bpmnPool" || $dataObjectData["BOU_CONTAINER"] == "bpmnLane") {
                         foreach ($result as $value) {
                             if ($dataObjectData["BOU_ELEMENT"] == $value["old_uid"]) {
                                 $dataObjectData["BOU_ELEMENT"] = $value["new_uid"];
@@ -1177,7 +1177,7 @@ class BpmnWorkflow extends Project\Bpmn
                     //Participant
 
                     //Update UIDs
-                    if ($participantData["BOU_CONTAINER"] == "bpmnPool" || $activityData["BOU_CONTAINER"] == "bpmnLane") {
+                    if ($participantData["BOU_CONTAINER"] == "bpmnPool" || $participantData["BOU_CONTAINER"] == "bpmnLane") {
                         foreach ($result as $value) {
                             if ($participantData["BOU_ELEMENT"] == $value["old_uid"]) {
                                 $participantData["BOU_ELEMENT"] = $value["new_uid"];
