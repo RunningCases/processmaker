@@ -353,6 +353,158 @@ class Dynaform extends BaseDynaform
         $attributes = array ('XMLNODE_NAME_OLD' => '','XMLNODE_NAME' => 'SUBMIT','TYPE' => 'submit'
         );
         $fieldXML->Save( $attributes, $labels, $options );
+        
+        //update content if version is 2
+        if ($this->getDynVersion() === 2) {
+            $items = array();
+            $variables = array();
+            $res = $sth->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+            while ($res->next()) {
+                //variables
+                $arrayData = array(
+                    "var_name" => $res->get('Field'),
+                    "var_label" => $res->get('Field'),
+                    "var_field_type" => "string",
+                    "var_field_size" => 10,
+                    "var_null" => 1,
+                    "var_dbconnection" => "none",
+                    "var_sql" => "",
+                    "var_options_control" => "",
+                    "var_default" => "",
+                    "var_accepted_values" => Array()
+                );
+                $objVariable = new \ProcessMaker\BusinessModel\Variable();
+                try {
+                    $objVariable->existsName($this->getProUid(), $res->get('Field'));
+                    $variable = $objVariable->create($this->getProUid(), $arrayData);
+                } catch (\Exception $e) {
+                    $data = $objVariable->getVariables($this->getProUid());
+                    foreach ($data as $datavariable) {
+                        if ($datavariable["var_name"] === $res->get('Field')) {
+                            $variable = $datavariable;
+                            break;
+                        }
+                    }
+                }
+                array_push($variables, $variable);
+
+                //data type
+                $type = "text";
+                $dataType = explode('(', $res->get('Type'));
+                error_log(print_r($dataType, true));
+                switch ($dataType[0]) {
+                    case 'bigint':
+                        $type = 'text';
+                        $dataType = 'integer';
+                        break;
+                    case 'int':
+                        $type = 'text';
+                        $dataType = 'integer';
+                        break;
+                    case 'smallint':
+                        $type = 'text';
+                        $dataType = 'integer';
+                        break;
+                    case 'tinyint':
+                        $type = 'text';
+                        $dataType = 'integer';
+                        break;
+                    case 'decimal':
+                        $type = 'text';
+                        $dataType = 'float';
+                        break;
+                    case 'double':
+                        $type = 'text';
+                        $dataType = 'float';
+                        break;
+                    case 'float':
+                        $type = 'text';
+                        $dataType = 'float';
+                        break;
+                    case 'datetime':
+                        $type = 'datetime';
+                        $dataType = 'datetime';
+                        break;
+                    case 'date':
+                        $type = 'datetime';
+                        $dataType = 'datetime';
+                        break;
+                    case 'time':
+                        $type = 'datetime';
+                        $dataType = 'datetime';
+                        break;
+                    case 'char':
+                        $type = 'text';
+                        $dataType = 'string';
+                        break;
+                    case 'varchar':
+                        $type = 'text';
+                        $dataType = 'string';
+                        break;
+                    case 'mediumtext':
+                        $type = 'textarea';
+                        $dataType = 'string';
+                        break;
+                    default:
+                        $type = "text";
+                        $dataType = 'string';
+                        break;
+                }
+
+                array_push($items, array(
+                    array(
+                        "type" => $type,
+                        "dataType" => $dataType, //$res->get('Type'),
+                        "id" => $res->get('Field'),
+                        "name" => $res->get('Field'),
+                        "label" => $res->get('Field'),
+                        "hint" => "",
+                        "required" => false,
+                        "defaultValue" => "",
+                        "dependentFields" => array(),
+                        "textTransform" => "none",
+                        "validate" => "any",
+                        "mask" => "",
+                        "maxLength" => 1000,
+                        "formula" => "",
+                        "mode" => "parent",
+                        "var_uid" => $variable["var_uid"],
+                        "var_name" => $variable["var_name"],
+                        "colSpan" => 12
+                    )
+                ));
+            }
+            //submit button
+            array_push($items, array(
+                array(
+                    "type" => "submit",
+                    "id" => "FormDesigner-" . \ProcessMaker\Util\Common::generateUID(),
+                    "name" => "submit",
+                    "label" => "submit",
+                    "colSpan" => 12
+                )
+            ));
+            $json = array(
+                "name" => $this->getDynTitle(),
+                "description" => $this->getDynDescription(),
+                "items" => array(
+                    array(
+                        "type" => "form",
+                        "id" => $this->getDynUid(),
+                        "name" => $this->getDynTitle(),
+                        "description" => $this->getDynDescription(),
+                        "mode" => "edit",
+                        "script" => "",
+                        "items" => $items,
+                        "variables" => $variables
+                    )
+                )
+            );
+
+            $aData = $this->Load($this->getDynUid());
+            $aData["DYN_CONTENT"] = G::json_encode($json);
+            $this->update($aData);
+        }
     }
 
     /**
