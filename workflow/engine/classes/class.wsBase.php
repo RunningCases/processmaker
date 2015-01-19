@@ -927,7 +927,7 @@ class wsBase
             } else {
             /*----------------------------------********---------------------------------*/
                 $aSetup = System::getEmailConfiguration();
-            /*----------------------------------********---------------------------------*/ 
+            /*----------------------------------********---------------------------------*/
             }
             /*----------------------------------********---------------------------------*/
 
@@ -2093,6 +2093,7 @@ class wsBase
      * @param string $userId
      * @param string $caseId
      * @param string $delIndex
+     * @param bool   $bExecuteTriggersBeforeAssignment
      * @return $result will return an object
      */
     public function derivateCase ($userId, $caseId, $delIndex, $bExecuteTriggersBeforeAssignment = false)
@@ -2187,6 +2188,8 @@ class wsBase
                 $aTriggers = $oCase->loadTriggers( $appdel['TAS_UID'], 'ASSIGN_TASK', - 1, 'BEFORE' );
 
                 if (count( $aTriggers ) > 0) {
+                    $varTriggers = $varTriggers . "<br /><b>-= Before Assignment =-</b><br />";
+
                     $oPMScript = new PMScript();
 
                     foreach ($aTriggers as $aTrigger) {
@@ -2218,7 +2221,8 @@ class wsBase
                             $oPMScript->setScript( $aTrigger['TRI_WEBBOT'] );
                             $oPMScript->execute();
 
-                            $varTriggers .= "<br/><b>-= Before Assignment =-</b><br/>" . nl2br( htmlentities( $aTrigger['TRI_WEBBOT'], ENT_QUOTES ) ) . "<br/>";
+                            $trigger = TriggersPeer::retrieveByPk($aTrigger["TRI_UID"]);
+                            $varTriggers = $varTriggers . "&nbsp;- " . nl2br(htmlentities($trigger->getTriTitle(), ENT_QUOTES)) . "<br />";
 
                             //$appFields = $oCase->loadCase( $caseId );
                             $appFields['APP_DATA'] = $oPMScript->aFields;
@@ -2278,51 +2282,6 @@ class wsBase
                         unset($appFields['APP_PROC_CODE']);
                         unset($appFields['APP_PIN']);
                         //$appFields['APP_DATA']['APPLICATION'] = $caseId;
-                        $oCase->updateCase( $caseId, $appFields );
-                    }
-                }
-            }
-
-            //Execute triggers before derivation BEFORE_ASSIGNMENT
-            $aTriggers = $oCase->loadTriggers( $appdel['TAS_UID'], 'ASSIGN_TASK', - 1, 'BEFORE' );
-
-            if (count( $aTriggers ) > 0) {
-                $varTriggers .= "<b>-= Before Derivation =-</b><br/>";
-
-                $oPMScript = new PMScript();
-
-                foreach ($aTriggers as $aTrigger) {
-                    //Set variables
-                    $params = new stdClass();
-                    $params->appData = $appFields["APP_DATA"];
-
-                    if ($this->stored_system_variables) {
-                        $params->option = "STORED SESSION";
-                        $params->SID = $this->wsSessionId;
-                    }
-
-                    $appFields["APP_DATA"] = array_merge( $appFields["APP_DATA"], G::getSystemConstants( $params ) );
-
-                    //PMScript
-                    $oPMScript->setFields( $appFields['APP_DATA'] );
-                    $bExecute = true;
-
-                    if ($aTrigger['ST_CONDITION'] !== '') {
-                        $oPMScript->setScript( $aTrigger['ST_CONDITION'] );
-                        $bExecute = $oPMScript->evaluate();
-                    }
-
-                    if ($bExecute) {
-                        $oPMScript->setScript( $aTrigger['TRI_WEBBOT'] );
-                        $oPMScript->execute();
-
-                        $oTrigger = TriggersPeer::retrieveByPk( $aTrigger['TRI_UID'] );
-                        $varTriggers .= "&nbsp;- " . nl2br( htmlentities( $oTrigger->getTriTitle(), ENT_QUOTES ) ) . "<br/>";
-                        $appFields['APP_DATA'] = $oPMScript->aFields;
-                        unset($appFields['APP_STATUS']);
-                        unset($appFields['APP_PROC_STATUS']);
-                        unset($appFields['APP_PROC_CODE']);
-                        unset($appFields['APP_PIN']);
                         $oCase->updateCase( $caseId, $appFields );
                     }
                 }
