@@ -317,8 +317,8 @@ abstract class Importer
         $diagram["gateways"] = $tables["gateway"];
         $diagram["data"] = (isset($tables["data"]))? $tables["data"] : array();
         $diagram["participants"] = (isset($tables["participant"]))? $tables["participant"] : array();
-        $diagram["lanes"] = array();
-        $diagram["laneset"] = array();
+        $diagram["laneset"] = (isset($tables["laneset"]))? $tables["laneset"] : array();
+        $diagram["lanes"] = (isset($tables["lane"]))? $tables["lane"] : array();
         $project["diagrams"] = array($diagram);
         $project["prj_author"] = isset($this->data["usr_uid"])? $this->data["usr_uid"]: "00000000000000000000000000000001";
         $project["process"] = $tables["process"][0];
