@@ -1452,7 +1452,7 @@ SELECT 'LABEL','ID_DOWN','en','Down','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_PAGE','en','Page','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_NEW_DYNAFORM','en','New dynaform','2014-01-15' 
+SELECT 'LABEL','ID_NEW_DYNAFORM','en','New DynaForm.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_EDIT_DYNAFORM','en','Edit DynaForm','2014-01-15' 
   UNION ALL
@@ -1482,7 +1482,7 @@ SELECT 'LABEL','ID_MSG_ERROR_USR_USERNAME','en','User name required!','2014-01-1
   UNION ALL
 SELECT 'LABEL','ID_MSG_ERROR_DUE_DATE','en','Due date required!','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_NEW_PASS_SAME_OLD_PASS','en','The confirm Password fields must be the same!','2014-01-15' 
+SELECT 'LABEL','ID_NEW_PASS_SAME_OLD_PASS','en','The confirm password must be the same!','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_NEW_INPUTDOCS','en','New Input Document','2014-01-15' 
   UNION ALL
@@ -1566,7 +1566,7 @@ SELECT 'LABEL','ID_MSG_CONFIRM_DELETE_CASES','en','Are you sure you want to dele
   UNION ALL
 SELECT 'LABEL','ID_ALL','en','All','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_CANCELLED','en','Cancelled','2014-01-15' 
+SELECT 'LABEL','ID_CANCELLED','en','Canceled','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_FINISHED','en','Finished','2014-01-15' 
   UNION ALL
@@ -1818,7 +1818,7 @@ SELECT 'LABEL','PAUSED','en','Pause','2014-01-15'
   UNION ALL
 SELECT 'LABEL','COMPLETED','en','Completed','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','CANCELLED','en','Cancelled','2014-01-15' 
+SELECT 'LABEL','CANCELLED','en','Canceled','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_NOT_FINISHED','en','Not finished','2014-01-15' 
   UNION ALL
@@ -2264,7 +2264,7 @@ SELECT 'LABEL','ID_SESSION','en','Session','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_NEXT_TASK','en','Next Task','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PERMISSIONS_FOR_THE_ROL','en','Permissions for the role','2014-01-15' 
+SELECT 'LABEL','ID_PERMISSIONS_FOR_THE_ROL','en','Permissions for the role','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_BACK_TO_USERS_LIST','en','Back to Users List','2014-01-15' 
   UNION ALL
@@ -2554,7 +2554,7 @@ SELECT 'LABEL','ID_INFO','en','Info','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_CONFIRM_DELETE_INPUT_AND_HISTORY','en','This action will delete the current document and all its versions','2014-01-15' 
   UNION ALL
-SELECT 'JAVASCRIPT','ID_CONFIRM_DELETE_INPUT_AND_HISTORY','en','This action will delete the current document and its past versions.','2014-01-15' 
+SELECT 'JAVASCRIPT','ID_CONFIRM_DELETE_INPUT_AND_HISTORY','en','This will delete the current document and its past versions.','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_SETUP_MAILCONF_TITLE','en','Test SMTP Connection','2014-01-15' 
   UNION ALL
@@ -3052,7 +3052,7 @@ SELECT 'LABEL','ID_TITLE_PAUSED','en','Paused','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_TITLE_COMPLETED','en','Completed','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_TITLE_CANCELLED','en','Cancelled','2014-01-15' 
+SELECT 'LABEL','ID_TITLE_CANCELLED','en','Canceled','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_PM_TABLE','en','PM Table','2014-01-15' 
   UNION ALL
@@ -3126,7 +3126,7 @@ SELECT 'LABEL','ID_VARIABLES','en','Variables','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_OPEN_CASE','en','Open Case','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_CASES_STATUS_CANCELLED','en','Cancelled','2014-01-15' 
+SELECT 'LABEL','ID_CASES_STATUS_CANCELLED','en','Canceled','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_CASES_STATUS_PAUSED','en','Paused','2014-01-15' 
   UNION ALL
@@ -3154,15 +3154,15 @@ SELECT 'LABEL','ID_NO_SELECTION_WARNING','en','One item should be selected in or
   UNION ALL
 SELECT 'JAVASCRIPT','ID_REQUIRED_NAME_TRIGGERS','en','You forgot the title of the trigger','2014-01-15' 
   UNION ALL
-SELECT 'JAVASCRIPT','ID_EXIST_PROCESS','en','This process will not be saved because there is a process with the same name.','2014-01-15' 
+SELECT 'JAVASCRIPT','ID_EXIST_PROCESS','en','This process will not be saved, because another process has the same name.','2014-01-15' 
   UNION ALL
-SELECT 'JAVASCRIPT','ID_EXIST_DYNAFORM','en','Not saved because there is a DynaForm with the same name','2014-01-15' 
+SELECT 'JAVASCRIPT','ID_EXIST_DYNAFORM','en','There is a Dynaform with the same name in this process. It is not saving','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_CLASS_TABLE_DOESNT_EXIST','en','This Class Table doesn''t exist!','2014-01-15' 
   UNION ALL
-SELECT 'JAVASCRIPT','ID_EXIST_INPUTDOCUMENT','en','Not saved because there is an Input Document with the same name in this process.','2014-01-15' 
+SELECT 'JAVASCRIPT','ID_EXIST_INPUTDOCUMENT','en','Can not save, because there is an Input Document with the same name in this process.','2014-01-15' 
   UNION ALL
-SELECT 'JAVASCRIPT','ID_EXIST_OUTPUTDOCUMENT','en','Not saved because there is an Output Document with the same name in this process.','2014-01-15' 
+SELECT 'JAVASCRIPT','ID_EXIST_OUTPUTDOCUMENT','en','Can not save, because, there is an Output Document with the same name in this process.','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_CASE_SCHEDULER_VALIDATE_ALERT','en','User or password is empty.','2014-10-21' 
   UNION ALL
@@ -3964,7 +3964,7 @@ SELECT 'LABEL','ID_TAGS','en','Tags','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_INPUT_CREATE','en','Input document has been created successfully','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_INPUT_NOT_SAVE','en','There is an Input Document with the same name in this process. It is not saving','2014-01-15' 
+SELECT 'LABEL','ID_INPUT_NOT_SAVE','en','Not saved because there is an Input Document with the same name in this process.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_INPUT_UPDATE','en','Input document has been updated successfully','2014-01-15' 
   UNION ALL
@@ -3990,7 +3990,7 @@ SELECT 'LABEL','ID_OUTPUT_GENERATE','en','Output Document to Generate','2014-01-
   UNION ALL
 SELECT 'LABEL','OUTPUT_CREATE','en','Output document has been created successfully','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_OUTPUT_NOT_SAVE','en','There is an Output Document with the same name in this process. It is not saving.','2014-01-15' 
+SELECT 'LABEL','ID_OUTPUT_NOT_SAVE','en','Not saved because there is an Output Document with the same name in this process.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_OUTPUT_UPDATE','en','Output document has been updated successfully.','2014-01-15' 
   UNION ALL
@@ -4054,9 +4054,9 @@ SELECT 'LABEL','ID_DYANFORM_REMOVE','en','Dynaform has been removed successfully
   UNION ALL
 SELECT 'LABEL','ID_DYNAFORM_ASSIGN','en','Dynaform has been successfully assigned to a Process','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_DYNAFORM_ASSIGN_FAILED','en','Failed saving Dynaform Assigned to process','2014-01-15' 
+SELECT 'LABEL','ID_DYNAFORM_ASSIGN_FAILED','en','Failed saving DynaForm assigned to the process.','2015-01-16' 
   UNION ALL
-SELECT 'LABEL','ID_INPUT_UNAVAILABLE','en','No Input Document are available. All Input Document have been already assigned.','2014-01-15' 
+SELECT 'LABEL','ID_INPUT_UNAVAILABLE','en','No Input Documents are available. All Input Documents have already been assigned.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_INPUT_ASSIGN','en','Input Document has been successfully assigned to a Process','2014-01-15' 
   UNION ALL
@@ -4138,9 +4138,9 @@ SELECT 'LABEL','ID_CANCEL_PARTIAL_JOIN_MULTIPLE_INSTANCE','en','Cancelling Parti
   UNION ALL
 SELECT 'LABEL','ID_VARIABLES_VALUE_ASSIGNMENT','en','Variable for Value Based Assignment','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_VARIABLES_NO_INSTANCES','en','Variable for No of Instances','2014-01-15' 
+SELECT 'LABEL','ID_VARIABLES_NO_INSTANCES','en','Variable for number of instances.','2015-01-16' 
   UNION ALL
-SELECT 'LABEL','ID_VARIABLES_INSTANCES_TO _COMPLETE','en','Variable for No of Instances to complete','2014-01-15' 
+SELECT 'LABEL','ID_VARIABLES_INSTANCES_TO _COMPLETE','en','Variable for number of instances to complete.','2015-01-16' 
  ;
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
@@ -4198,11 +4198,11 @@ SELECT 'LABEL','ID_VARIABLES_OUT','en','Variables Out','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_VARIABLES_IN','en','Variables In','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_SUBPROCESS_SAVE','en','Sub Process Properties has been saved successfully.','2014-01-15' 
+SELECT 'LABEL','ID_SUBPROCESS_SAVE','en','Sub-process properties have been saved successfully.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_AUTHENTICATION_FAILED','en','Authentication Failed','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_WEBENTRY_LINK','en','WebEntry Link','2014-01-15' 
+SELECT 'LABEL','ID_WEBENTRY_LINK','en','Web Entry Link','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_INITIAL_TASK','en','Initial Task','2014-01-15' 
   UNION ALL
@@ -4398,7 +4398,7 @@ SELECT 'LABEL','ID_SET_SUPERVISOR','en','Set Supervisor','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_SET_SUPERVISOR_SUCCESS','en','Supervisor assigned correctly','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_ROLE_EXISTS','en','Role Code already exists.','2014-01-15' 
+SELECT 'LABEL','ID_ROLE_EXISTS','en','Role code already exists.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_DEBUG_PANEL_TITLE','en','ProcessMaker Debugger','2014-01-15' 
   UNION ALL
@@ -4416,7 +4416,7 @@ SELECT 'LABEL','ID_PM_FILENAME','en','Download PM File:','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_XPDL_FILENAME','en','Download XPDL File:','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_NO_ITEMS_SELECTED','en','No items Selected','2014-01-15' 
+SELECT 'LABEL','ID_NO_ITEMS_SELECTED','en','No item selected.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_SERVER_COMMUNICATION_ERROR','en','Failed to connect to the server','2014-01-15' 
   UNION ALL
@@ -4540,7 +4540,7 @@ SELECT 'LABEL','ID_USERS_ACTORS','en','Users Actors','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_ADHOC_USERS_ACTORS','en','Ad hoc Users Actors','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_GROUPS_ACTORS','en','Groups Actors','2014-01-15' 
+SELECT 'LABEL','ID_GROUPS_ACTORS','en','Group Actors','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_ADHOC_GROUPS_ACTORS','en','Ad Hoc Groups Actors','2014-01-15' 
   UNION ALL
@@ -4598,7 +4598,7 @@ SELECT 'LABEL','ID_IMPORT_ALREADY_EXISTS','en','The process you are trying to im
   UNION ALL
 SELECT 'LABEL','ID_DEBUG_MESSAGE','en','Debug Messages','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_FIELD_HANDLER_ACTION_DELETE','en','Are you sure that you want to remove this','2014-01-15' 
+SELECT 'LABEL','ID_FIELD_HANDLER_ACTION_DELETE','en','Are you sure you want to remove this','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESS_EXIST_SOME_GROUP','en','Some of the groups that you are trying to import already exist. Please select one of the following options to continue.','2014-10-21' 
   UNION ALL
@@ -4666,7 +4666,7 @@ SELECT 'LABEL','ID_INCORRECT_USERNAME_PASSWORD','en','Incorrect username or pass
   UNION ALL
 SELECT 'LABEL','ID_USERNAME_OR_WORKSPACE','en','Username (or Live Workspace)','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESS_UID','en','Process Uid','2014-01-15' 
+SELECT 'LABEL','ID_PROCESS_UID','en','Process UID','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_INSTALL_MESSAGE','en','Please follow these instructions to complete installation','2014-01-15' 
   UNION ALL
@@ -5206,7 +5206,7 @@ SELECT 'LABEL','ID_TABLE_NOT_FOUND','en','Table Not found','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_FAILED_IMPORT_PLUGINS','en','Failed to import the file {filename} . It is an invalid file or is not a plugin.','2014-10-21' 
   UNION ALL
-SELECT 'LABEL','ID_ERROR_UPLOADING_PLUGIN_FILENAME','en','There was an error uploading the file, probably the file size if greater than upload_max_filesize parameter in php.ini, please check this parameter and try again.','2014-01-15' 
+SELECT 'LABEL','ID_ERROR_UPLOADING_PLUGIN_FILENAME','en','There was an error uploading the file. The file size is probably greater than the upload_max_filesize parameter in php.ini. Please check this parameter and try again.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_FILES_INVALID_PLUGIN_FILENAME','en','the uploaded files are invalid, expected ''application/octect-stream mime type file ({pluginFilename})','2014-01-15' 
   UNION ALL
@@ -5214,7 +5214,7 @@ SELECT 'LABEL','ID_PLUGIN_DEPENDENCE_PLUGIN','en','This plugin needs "{Dependenc
   UNION ALL
 SELECT 'LABEL','ID_FILE_CONTAIN_CLASS_PLUGIN','en','The file {filename} doesn''t contain class: {className}','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_RECENT_VERSION_PLUGIN','en','A recent version of this plugin was already installed.','2014-01-15' 
+SELECT 'LABEL','ID_RECENT_VERSION_PLUGIN','en','Task does not have a routing rule. Please, check the process definition.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_FILE_PLUGIN_NOT_EXISTS','en','File ''{pluginFile}'' does not exist','2014-01-15' 
   UNION ALL
@@ -5242,9 +5242,9 @@ SELECT 'LABEL','ID_SEARCH_XML_METADATA','en','Search XML metadata','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_FTP_MONITOR_SETTINGS','en','FTP Monitor Settings','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_ERROR_UPLOADING_FILENAME','en','There was an error uploading the file, probably the file size if greater than upload_max_filesize parameter in php.ini, please check this parameter and try again.','2014-01-15' 
+SELECT 'LABEL','ID_ERROR_UPLOADING_FILENAME','en','There was an error uploading the file. The file size is probably greater than the upload_max_filesize parameter in php.ini. Please check this parameter and try again.','2015-01-16' 
   UNION ALL
-SELECT 'LABEL','ID_POSTED_DATA_EMPTY','en','Posted data is empty!','2014-01-15' 
+SELECT 'LABEL','ID_POSTED_DATA_EMPTY','en','The posted data is empty!','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_MOST_AT_LEAST_3_DAY','en','You must define at least 3 Working Days!','2014-01-15' 
   UNION ALL
@@ -5282,7 +5282,7 @@ SELECT 'LABEL','ID_USERNAME_REQUIRED','en','Username is required','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_PASSWD_REQUIRED','en','Password is required','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PASSWORD_SURPRASES','en','Password is longer than maximum length allowed','2014-10-21' 
+SELECT 'LABEL','ID_PASSWORD_SURPRASES','en','Password is longer than the maximum allowed length','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_USERNAME_ALREADY_EXISTS','en','Username ''{USER_ID}'' already exists','2014-01-15' 
   UNION ALL
@@ -5314,9 +5314,9 @@ SELECT 'LABEL','ID_CASE_DELEGATION_ALREADY_CLOSED','en','This case delegation is
   UNION ALL
 SELECT 'LABEL','ID_VARIABLES_RECEIVED','en','variables received','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_VARIABLES_PARAM_ZERO','en','The variables param length is zero','2014-01-15' 
+SELECT 'LABEL','ID_VARIABLES_PARAM_ZERO','en','The variables param length is zero','2015-01-16' 
   UNION ALL
-SELECT 'LABEL','ID_VARIABLES_PARAM_NOT_ARRAY','en','The variables param is not an array','2014-01-15' 
+SELECT 'LABEL','ID_VARIABLES_PARAM_NOT_ARRAY','en','The variables param is not an array','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_VARIABLES_SENT','en','variables sent','2014-01-15' 
   UNION ALL
@@ -5342,7 +5342,7 @@ SELECT 'LABEL','ID_CASE_IN_STATUS','en','This case is in status','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_CAN_NOT_ROUTE_CASE_USING_WEBSERVICES','en','Can not route a case with Manual Assignment using webservices','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_TASK_DOES_NOT_HAVE_ROUTING_RULE','en','Task does not have a routing rule; check process definition','2014-01-15' 
+SELECT 'LABEL','ID_TASK_DOES_NOT_HAVE_ROUTING_RULE','en','Task does not have a routing rule. Please, check the process definition.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_TASK_DEFINED_MANUAL_ASSIGNMENT','en','The task is defined for Manual assignment','2014-01-15' 
   UNION ALL
@@ -5424,7 +5424,7 @@ SELECT 'LABEL','ID_SELECTED_IMAGE_IS_LOGO','en','The selected image has been est
   UNION ALL
 SELECT 'LABEL','ID_DELETE_SELECTED_LOGO','en','Do you want to delete the selected logo?','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','MISSING_OR_NOT_CONFIGURED_SMTP','en','Missing or it''s not configured SMTP mail. Check the configuration.','2014-01-15' 
+SELECT 'LABEL','MISSING_OR_NOT_CONFIGURED_SMTP','en','SMTP mail is missing or it''s not configured. Please, check the configuration.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_SELECT_ONE_OPTION','en','select one option','2014-01-15' 
   UNION ALL
@@ -5446,7 +5446,7 @@ SELECT 'LABEL','ID_MEMORY_LIMIT','en','Memory Limit (Mb)','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_SYSTEM_SETTINGS','en','System Settings','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_SYSTEM_REDIRECT_CONFIRM','en','You must login again to view the changes, do you want do it now?','2014-01-15' 
+SELECT 'LABEL','ID_SYSTEM_REDIRECT_CONFIRM','en','You must login again to view the changes. Do you want do it now?','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_TASK_CANT_DELETE','en','You can''t delete the task "{0}" because it has {1} cases.','2014-01-15' 
   UNION ALL
@@ -5512,7 +5512,7 @@ SELECT 'LABEL','ID_COLUMNS','en','columns','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_NOTICE','en','Notice','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_ACTION_DISABLED_TO_LOW_PERFORMANCE_1','en','This action was disabled to prevent slow browser performance, because  there are more than 100 records in the column definition grid.','2014-10-21' 
+SELECT 'LABEL','ID_ACTION_DISABLED_TO_LOW_PERFORMANCE_1','en','This action was disabled to prevent slow browser performance. There are more than 100 records in the column definition grid.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_ACTION_DISABLED_TO_LOW_PERFORMANCE_2','en','<br/><br/>Please perform this action with manual selection only.','2014-01-15' 
   UNION ALL
@@ -5658,15 +5658,15 @@ SELECT 'LABEL','ID_COPYRIGHT_FROM','en','Copyright &copy; 2003-','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_STARTING_LOG_FILE','en','Starting log file','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_WRITEABLE','en','Writeable','2014-01-15' 
+SELECT 'LABEL','ID_WRITEABLE','en','Writable','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_NOT_ENABLED','en','Not Enabled','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_FILE_NOT_WRITEABLE','en','File ''{0}'' is not writeable. Please check permission before continue','2014-01-15' 
+SELECT 'LABEL','ID_FILE_NOT_WRITEABLE','en','File ''{0}'' is not writable. Please, check the file permissions before continuing.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_SQL_FILE_INVALID','en','File {0} is not a valid sql file','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_INSTALL_BUT_ERROR','en','Installed but with error, couldn''t update {0}','2014-01-15' 
+SELECT 'LABEL','ID_INSTALL_BUT_ERROR','en','Errors during installation. Couldn''t update {0}','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_CREATING','en','Creating : {0}','2014-01-15' 
   UNION ALL
@@ -5682,7 +5682,7 @@ SELECT 'LABEL','ID_CREATING_WORKSPACE','en','Creating workspace {0}','2014-01-15
   UNION ALL
 SELECT 'LABEL','ID_FILE_PROCESSED','en','File: {0} processed in {1} seconds','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESING','en','Procesing :  {0}','2014-01-15' 
+SELECT 'LABEL','ID_PROCESING','en','Processing: {0}','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_REMOVED','en','Removed','2014-01-15' 
   UNION ALL
@@ -5694,7 +5694,7 @@ SELECT 'LABEL','ID_DOES_NOT_EXIST_AVAILABLE_CONNECTION','en','Does not exist an 
   UNION ALL
 SELECT 'LABEL','ID_INSUFFICIENT_PRIVILEGES_FUNCTION','en','Insufficient privileges to execute this function','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_UI_NOT_INSTALL','en','The new ProcessMaker UI couldn''t be applied on installation, you can enable it after from Admin->System settings.','2014-01-15' 
+SELECT 'LABEL','ID_PROCESSMAKER_UI_NOT_INSTALL','en','The new ProcessMaker UI couldn''t be applied on installation. You can enable it afterwards in ADMIN > Settings > System.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_WRITE_CONFIG_INDEX','en','ProcessMaker couldn''t write on configuration file: {0}<br/>','2014-01-15' 
   UNION ALL
@@ -5704,7 +5704,7 @@ SELECT 'LABEL','ID_SESSION_EXPIRED','en','The session has expired.','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_NOT_PRIVILEGES','en','You do not have privileges','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_INSTALL_SUCESS','en','Install completed Succesfully','2014-01-15' 
+SELECT 'LABEL','ID_INSTALL_SUCESS','en','Installation completed successfully.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_RESERVED_WORD','en','because it is a reserved word','2014-01-15' 
   UNION ALL
@@ -5726,7 +5726,7 @@ SELECT 'LABEL','ID_CONNECTION_ERROR_SECURITYADMIN','en','Connection Error: User 
   UNION ALL
 SELECT 'LABEL','ID_PHP_MSSQL_NOT_INSTALLED','en','php-mssql is Not Installed','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_CONNECTION_ERROR_PRIVILEGE','en','Connection Error: User "{0}" can''t create databases and Users <br>Please provide an user with SUPER privilege.','2014-01-15' 
+SELECT 'LABEL','ID_CONNECTION_ERROR_PRIVILEGE','en','Connection Error: User \"{0}\" can''t create databases and users. <br>Please, provide a user with SUPER privileges.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_DATABASE_EXISTS_OVERWRITE','en','Database already exists, check "Delete Databases if exists" to overwrite the exiting databases.','2014-01-15' 
   UNION ALL
@@ -5812,7 +5812,7 @@ SELECT 'LABEL','ID_MSG_CONFIRM_DELETE_CONDITION','en','Are you sure to delete th
   UNION ALL
 SELECT 'LABEL','ID_DIAGRAM_VALIDATED_CORRECTLY','en','Diagram has been validated correctly.','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROJECT_DOWNLOAD_CORRECTLY','en','Project Downloaded correctly.','2014-01-15' 
+SELECT 'LABEL','ID_PROJECT_DOWNLOAD_CORRECTLY','en','Project downloaded successfully.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_PROJECT_SHARED_CORRECTLY','en','Project has been shared correctly.','2014-01-15' 
   UNION ALL
@@ -5848,17 +5848,17 @@ SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_2','en','If you a
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_1','en','ProcessMaker stores all of its data in a database. This screen gives the installation program the information needed to create this database.','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP3_2','en','If you see <font color="red">"unwriteable"</font> you need to change the permissions on the file or directory to allow ProcessMaker to write to it.','2014-01-15' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP3_2','en','If you see <font color=\"red\">\"unwritable\"</font>, change the permissions on the file or directory to allow ProcessMaker to write to it.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP3_1','en','In order for ProcessMaker to function correctly it needs to be able to access or write to certain files or directories.','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP2_2','en','However, ProcessMaker still operate if your settings do not quite match the recommended.','2014-01-15' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP2_2','en','However, ProcessMaker still operates if your settings do not match the recommended.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP2_1','en','These settings are recommended for PHP in order to ensure full compatibility with ProcessMaker.','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_2','en','Failure to do so could lead to your ProcessMaker! installation not functioning correctly.','2014-01-15' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_2','en','Failure to do so could lead your ProcessMaker installation not functioning correctly.','2015-01-16' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1','en','If any of these items is not supported (marked as No) then please take actions to correct them.','2014-01-15' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1','en','If any of these items is not supported (marked as No), then please take actions to correct them.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_LDAP_OPTIONAL','en','LDAP is optional.','2014-01-15' 
   UNION ALL
@@ -5880,7 +5880,7 @@ SELECT 'LABEL','ID_CACHE_FILE','en','Cache file:','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_NEW_TRANSLATION','en','New Translation','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_SELECT_ONE_ITEM_FROM_LIST','en','Just select one item from the list to edit','2014-01-15' 
+SELECT 'LABEL','ID_SELECT_ONE_ITEM_FROM_LIST','en','Select just one item from the list to be edited','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_GRID_PAGE_DISPLAYING_ITEMS','en','Displaying items {0} - {1} of {2}','2014-01-15' 
   UNION ALL
@@ -5968,7 +5968,7 @@ SELECT 'LABEL','ID_DATA_CORRECT','en','The data is correct.','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_EXIST','en','Exist','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_NO_EXIST','en','No exists','2014-01-15' 
+SELECT 'LABEL','ID_NO_EXIST','en','Does not exist','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_REPORT_DATABASE_NAME','en','Please enter the Report Database Name.','2014-01-15' 
   UNION ALL
@@ -6090,9 +6090,9 @@ INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_U
 
 SELECT 'LABEL','ID_NAME_TAS_TITLE_REQUIRE','en','Task title required','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','APP_TITLE_CASE_LABEL_UPDATE','en','The System has detected that the changes to the case labels will affect more than 1000 records, so the changes will be performed by cron the next time it is scheduled to run.','2014-10-21' 
+SELECT 'LABEL','APP_TITLE_CASE_LABEL_UPDATE','en','The system has detected that changes to the case labels will affect more than 1000 records, so the changes will be performed by cron the next time it is scheduled to run.','2015-01-16' 
   UNION ALL
-SELECT 'LABEL','ID_MESSAGE_LOGIN','en','The default language that is configured in this place is for the "dropdown" of the languages that are displaying on the login screen, this configuration is set for each workspace.','2014-01-15' 
+SELECT 'LABEL','ID_MESSAGE_LOGIN','en','The default language set here is for the \"Language\" dropdown box displayed on the login screen. This configuration is set for each workspace.','2015-01-20' 
   UNION ALL
 SELECT 'LABEL','ID_MESSAGE_SYSTEM','en','The language that is set by default applies directly when the domain is entered (eg.- http://127.0.0.1:8081), the system reads the configuration and redirects the link to the selected language','2014-01-15' 
   UNION ALL
@@ -6132,7 +6132,7 @@ SELECT 'LABEL','ID_NOTIFY_USERS_CASE','en','Notify users of case','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_CASE_PAUSE_LABEL_NOTE','en','The case was paused due to:','2014-10-21' 
   UNION ALL
-SELECT 'LABEL','ID_CASE_CANCEL_REASON','en','Reason why case was canceled','2014-10-21' 
+SELECT 'LABEL','ID_CASE_CANCEL_REASON','en','Reason why the case was canceled','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_CASE_CANCEL_LABEL_NOTE','en','The case was canceled due to:','2014-10-21' 
   UNION ALL
@@ -6178,7 +6178,7 @@ SELECT 'LABEL','ID_PMTABLE_INVALID_FIELD_NAME','en','The following fields cannot
   UNION ALL
 SELECT 'LABEL','ID_USER_CASES_NOT_START','en','User can''t start a case because doesn''t have a starting task assigned','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_USERS_HAS_ASSIGNED_CASES','en','The user has assigned cases, Do you like to continue anyway?','2014-01-15' 
+SELECT 'LABEL','ID_USERS_HAS_ASSIGNED_CASES','en','The user has assigned cases. Do you want to continue anyway?','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_GRID_PAGE_DISPLAYING_REPORT_PERMISSIONS_MESSAGE','en','Displaying Permissions Simple Reports {0} - {1} of {2}','2014-01-15' 
   UNION ALL
@@ -6242,7 +6242,7 @@ SELECT 'LABEL','ID_ALL_CATEGORIES','en','All Categories','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_CASES_NOTES_NO_PERMISSIONS','en','You do not have permission to access the cases notes','2014-10-21' 
   UNION ALL
-SELECT 'LABEL','ID_DELETE_DOCUMENT','en','Do you want to delete selected document?','2014-01-15' 
+SELECT 'LABEL','ID_DELETE_DOCUMENT','en','Do you want to delete the selected document?','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_CRON_ACTIONS_LOG','en','Cron Actions Log','2014-01-15' 
   UNION ALL
@@ -6288,7 +6288,7 @@ SELECT 'LABEL','ID_CHECK_AGAIN','en','Check again','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION','en','If any of these items is not supported (marked as No) then please take actions to correct them.<br />','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION2','en','Failure to do so could lead to your ProcessMaker installation not functioning correctly!<br />','2014-01-15' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION2','en','Failure to do so could lead your ProcessMaker installation not functioning correctly!<br />','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_PHP','en','PHP Version >= 5.2.10','2014-01-15' 
   UNION ALL
@@ -6314,7 +6314,7 @@ SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_MEMORYLIMIT','en','Memory Limit >= 
   UNION ALL
 SELECT 'LABEL','ID_ADMINISTRATOR_ROLE_CANT_CHANGED','en','The role of the administrator can not be changed!','2014-10-21' 
   UNION ALL
-SELECT 'LABEL','ID_CONFIRM_IMPORT_DYNAFORM','en','When you import the selected form, lose the information of the current form. Are you sure you import the form?','2014-01-15' 
+SELECT 'LABEL','ID_CONFIRM_IMPORT_DYNAFORM','en','If the selected form is imported, you may lose the information in the current form. Are you sure you want to import the form?','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_CASESLIST_FIELD_RESET','en','Restart everything with the system fields','2014-01-15' 
   UNION ALL
@@ -6322,11 +6322,11 @@ SELECT 'LABEL','ID_CASESLIST_FIELD_RESET_ID','en','Restart everything with the s
   UNION ALL
 SELECT 'LABEL','ID_CASESLIST_FIELD_COMPLETE','en','Complete all system fields','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_CASESLIST_FIELD_COMPLETE_ID','en','Complete all system fields, with the label ID for its translation','2014-01-15' 
+SELECT 'LABEL','ID_CASESLIST_FIELD_COMPLETE_ID','en','Complete all system fields with the label ID for its translation','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_CASESLIST_FIELD_LABEL_RESET','en','Restart labels with system fields','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_CASESLIST_FIELD_LABEL_RESET_ID','en','Restart labels with system fields, with the ID for its translation','2014-01-15' 
+SELECT 'LABEL','ID_CASESLIST_FIELD_LABEL_RESET_ID','en','Restart labels with system fields with the labels ID for its translation','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_SKIN_TEAM','en','ProcessMaker Team','2014-01-15' 
   UNION ALL
@@ -6468,7 +6468,7 @@ SELECT 'LABEL','ID_DIRECTORY_NAME_EXISTS_ENTER_ANOTHER','en','The name "{0}" alr
   UNION ALL
 SELECT 'LABEL','ID_DELETE_SUPERVISOR','en','You cannot unassign the supervisor','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_CONFIRM_ASSIGNED_GRID','en','Do you want to delete the row data that you just created?','2014-10-21' 
+SELECT 'LABEL','ID_CONFIRM_ASSIGNED_GRID','en','Do you want to delete the data in the row you just created?','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_PLUGINS_MANAGER','en','Plugins Manager','2014-01-15' 
   UNION ALL
@@ -6854,7 +6854,7 @@ SELECT 'LABEL','ID_INVALID_VALUE_ARRAY','en','Invalid value for ''{0}''. It must
   UNION ALL
 SELECT 'LABEL','ID_INVALID_VALUE_STRING','en','Invalid value for ''{0}''. It must be a string.','2014-10-21' 
   UNION ALL
-SELECT 'LABEL','ID_INVALID_VALUE_INTEGER','en','Invalid value for ''{0}'' it must be an integer.','2014-10-21' 
+SELECT 'LABEL','ID_INVALID_VALUE_INTEGER','en','Invalid value for ''{0}''. It must be an integer.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_INVALID_VALUE_BOOLEAN','en','Invalid value for ''{0}''. It must be a boolean.','2014-10-21' 
   UNION ALL
@@ -6866,7 +6866,7 @@ SELECT 'LABEL','ID_CASE_ALREADY_CANCELED','en','The case ''{0}'' is already canc
   UNION ALL
 SELECT 'LABEL','ID_CASE_IS_CANCELED','en','The case ''{0}'' is canceled','2014-05-29' 
   UNION ALL
-SELECT 'LABEL','ID_INVALID_MAX_PERMITTED','en','Invalid value for ''{0}'', the permitted maximum length of {1} characters.','2014-05-29' 
+SELECT 'LABEL','ID_INVALID_MAX_PERMITTED','en','Invalid value for ''{0}''. The maximum allowed length is {1} characters.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_DBC_TYPE_INVALID','en','The database connection with dbs_type: ''{0}'' is invalid','2014-10-21' 
   UNION ALL
@@ -6940,7 +6940,7 @@ SELECT 'LABEL','ID_INDEX','en','Index','2014-09-10'
   UNION ALL
 SELECT 'LABEL','ID_ERROR_JS_NOT_AVAILABLE','en','Your browser doesn''t support JavaScript or it may be disabled. Please use a different browser or enable JavaScript. Dynaforms won''t entirely work because JavaScript is required.','2014-10-21' 
   UNION ALL
-SELECT 'LABEL','ID_MAXIMUM_SIZE_FILE_REQUIRED','en','The maximum size file is required!','2014-10-21' 
+SELECT 'LABEL','ID_MAXIMUM_SIZE_FILE_REQUIRED','en','The file maximum size is required!','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_BEFORE_UPDATE','en','Before Upgrade','2014-09-18' 
   UNION ALL
@@ -7327,6 +7327,68 @@ SELECT 'LABEL','ID_LECA','en','Your license has expired, please contact your adm
 SELECT 'LABEL','ID_NLIC','en','License installed successfully','2014-12-02' 
   UNION ALL
 SELECT 'LABEL','ID_ENTERPRISE_PACK_CANT_UPLOAD','en','The Enterprise plugin pack can''t be uploaded from this administrator, upload it from: ADMIN -> Plugins -> Plugins Manager','2014-12-03' 
+  UNION ALL
+SELECT 'LABEL','ID_WEB_ENTRY_EVENT_FLOW_EVENT_TO_ACTIVITY_DOES_NOT_EXIST','en','The flow of event to activity does not exist.','2015-01-16' 
+  UNION ALL
+SELECT 'LABEL','ID_WEB_ENTRY_EVENT_ALREADY_REGISTERED','en','The event with {0}: {1} already is registered.','2015-01-16' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_DELETE_WARNING_MESSAGE','en','Do you want to delete the Email Server?','2015-01-15' 
+  UNION ALL
+SELECT 'LABEL','ID_WEB_ENTRY_EVENT_DOES_NOT_EXIST','en','The WebEntry-Event with {0}: {1} does not exist.','2015-01-16' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_DOES_NOT_EXIST','en','The email server with {0}: {1} does not exist.','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_IS_DEFAULT','en','The email server with {0}: {1} is default.','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_INSERT_DATA','en','Insert data...','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_UPDATE_DATA','en','Update data...','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_DELETE_DATA','en','Delete data...','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_TEST_DATA','en','Test data...','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_NEW','en','New Email Server','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_EDIT','en','Edit Email Server','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_TITLE_TESTING','en','Testing Email Server','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_RESULT_TESTING','en','Result Testing Email Server','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_TITLE','en','Email Servers','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_THIS_CONFIGURATION_IS_DEFAULT','en','Set that this configuration is the default','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_TESTING','en','Testing Email Server','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_CONFIRM_DELETE','en','Do you want to delete the Email Server?','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_PORT','en','Port','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_DEFAULT','en','Default','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_ACCOUNT_FROM','en','Account From','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_VERIFYING_MAIL','en','Verifying Mail Transport Agent','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_RESOLVING_NAME','en','Resolving Host Name: {0}','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_CHECK_PORT','en','Checking port: {0}','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_ESTABLISHING_CON_HOST','en','Establishing connection to host: {0}','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_LOGIN','en','Login as: {0} On {1} SMTP Server','2014-12-24' 
+  UNION ALL
+SELECT 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_SENDING_EMAIL','en','Sending a test mail to: {0}','2014-12-24' 
+ ;
+INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
+
+SELECT 'LABEL','ID_EVENT_NOT_IS_START_EVENT','en','The event with {0}: {1} not is "Start Event".','2015-01-13' 
+  UNION ALL
+SELECT 'LABEL','ID_WEB_ENTRY_EVENT_DOES_NOT_IS_REGISTERED','en','The event with {0}: {1} does not is registered.','2015-01-16' 
+  UNION ALL
+SELECT 'LABEL','ID_WEB_ENTRY_EVENT_TITLE_ALREADY_EXISTS','en','The WebEntry-Event title with {0}: "{1}" already exists.','2015-01-16' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 
