@@ -1248,7 +1248,7 @@
     <column name="TAS_SELFSERVICE_EXECUTION" type="VARCHAR" size="15" default="EVERY_TIME"/>
 
     <validator column="TAS_TYPE">
-        <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY" message="Please enter a valid value for TAS_TYPE"/>
+        <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT" message="Please enter a valid value for TAS_TYPE"/>
     </validator>
     <validator column="TAS_TIMEUNIT">
       <rule name="validValues" value="MINUTES|HOURS|DAYS|WEEKS|MONTHS" message="Please select a valid value for TAS_TIMEUNIT."/>
@@ -4208,6 +4208,33 @@
         <column name="MESS_TRY_SEND_INMEDIATLY" type="INTEGER" required="true" default="0" />
         <column name="MAIL_TO" type="VARCHAR" size="256" required="true" default="" />
         <column name="MESS_DEFAULT" type="INTEGER" required="true" default="0" />
+    </table>
+
+    <table name="WEB_ENTRY_EVENT">
+        <vendor type="mysql">
+            <parameter name="Name" value="WEB_ENTRY_EVENT" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+        </vendor>
+        <column name="WEE_UID"    type="VARCHAR" size="32" required="true" primaryKey="true" />
+        <column name="PRJ_UID"    type="VARCHAR" size="32" required="true" />
+        <column name="EVN_UID"    type="VARCHAR" size="32" required="true" />
+        <column name="ACT_UID"    type="VARCHAR" size="32" required="true" />
+        <column name="DYN_UID"    type="VARCHAR" size="32" required="true" />
+        <column name="USR_UID"    type="VARCHAR" size="32" required="true" />
+        <column name="WEE_STATUS" type="VARCHAR" size="10" required="true" default="ENABLED" />
+        <column name="WEE_WE_UID"     type="VARCHAR" size="32" required="true" default="" />
+        <column name="WEE_WE_TAS_UID" type="VARCHAR" size="32" required="true" default="" />
+        <validator column="WEE_STATUS">
+            <rule name="validValues" value="ENABLED|DISABLED" message="Please enter a valid value for WEE_STATUS" />
+        </validator>
     </table>
 </database>
 

@@ -2434,3 +2434,24 @@ CREATE TABLE `EMAIL_SERVER`
  PRIMARY KEY (`MESS_UID`)
 )ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
+#-----------------------------------------------------------------------------
+#-- WEB_ENTRY_EVENT
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS WEB_ENTRY_EVENT;
+
+CREATE TABLE WEB_ENTRY_EVENT
+(
+    WEE_UID    VARCHAR(32) NOT NULL,
+    PRJ_UID    VARCHAR(32) NOT NULL,
+    EVN_UID    VARCHAR(32) NOT NULL,
+    ACT_UID    VARCHAR(32) NOT NULL,
+    DYN_UID    VARCHAR(32) NOT NULL,
+    USR_UID    VARCHAR(32) NOT NULL,
+    WEE_STATUS VARCHAR(10) NOT NULL DEFAULT 'ENABLED',
+    WEE_WE_UID     VARCHAR(32) NOT NULL DEFAULT '',
+    WEE_WE_TAS_UID VARCHAR(32) NOT NULL DEFAULT '',
+
+    PRIMARY KEY (WEE_UID)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
