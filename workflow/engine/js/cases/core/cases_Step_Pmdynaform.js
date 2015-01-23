@@ -37,6 +37,7 @@ $(window).load(function () {
     }
 
     var data = jsondata;
+    data.items[0].mode = step_mode.toLowerCase();
     window.project = new PMDynaform.core.Project({
         data: data,
         keys: {

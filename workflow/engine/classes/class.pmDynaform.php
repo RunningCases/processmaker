@@ -75,7 +75,7 @@ class pmDynaform
         exit();
     }
 
-    public function printEdit($pm_run_outside_main_app, $application, $headData)
+    public function printEdit($pm_run_outside_main_app, $application, $headData, $step_mode = 'EDIT')
     {
         ob_clean();
 
@@ -101,6 +101,7 @@ class pmDynaform
         $file = str_replace("{DYNAFORMNAME}", $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"], $file);
         $file = str_replace("{APP_UID}", $application, $file);
         $file = str_replace("{PRJ_UID}", $this->app_data["PROCESS"], $file);
+        $file = str_replace("{STEP_MODE}", $step_mode, $file);
         $file = str_replace("{WORKSPACE}", $this->app_data["SYS_SYS"], $file);
         $file = str_replace("{credentials}", json_encode($clientToken), $file);
         echo $file;
