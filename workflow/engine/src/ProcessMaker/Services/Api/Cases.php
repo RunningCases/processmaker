@@ -838,17 +838,18 @@ class Cases extends Api
      *
      * @param string $app_uid {@min 1}{@max 32}
      * @param array $request_data
+     * @param string $dyn_uid {@from path}
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @url PUT /:app_uid/variable
      */
-    public function doPutCaseVariables($app_uid, $request_data)
+    public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '')
     {
         try {
             $cases = new \ProcessMaker\BusinessModel\Cases();
-            $cases->setCaseVariables($app_uid, $request_data);
+            $cases->setCaseVariables($app_uid, $request_data, $dyn_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -988,6 +989,49 @@ class Cases extends Api
             $case->setFormatFieldNameInUppercase(false);
 
             $response = $case->getTasks($app_uid);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Execute triggers
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     * @param int $del_index {@from body}
+     * @param string $obj_type {@from body}
+     * @param string $obj_uid {@from body}
+     *
+     * @copyright Colosa - Bolivia
+     *
+     * @url PUT /:app_uid/execute-triggers
+     */
+    public function doPutExecuteTriggers($app_uid, $del_index, $obj_type, $obj_uid)
+    {
+        try {
+            $cases = new \ProcessMaker\BusinessModel\Cases();
+            $cases->putExecuteTriggers($app_uid, $del_index, $obj_type, $obj_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:app_uid/:del_index/steps
+     *
+     * @param string $app_uid {@min 32}{@max 32}
+     * @param int $del_index
+     *
+     */
+    public function doGetSteps($app_uid, $del_index)
+    {
+        try {
+            $case = new \ProcessMaker\BusinessModel\Cases();
+            $case->setFormatFieldNameInUppercase(false);
+
+            $response = $case->getSteps($app_uid, $del_index);
 
             return $response;
         } catch (\Exception $e) {

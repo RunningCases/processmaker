@@ -62,25 +62,25 @@ class Bpmn extends Handler
 
     protected static $excludeFields = array(
         "activity" => array(
-            "PRJ_UID", "PRO_UID", "BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
+            "PRJ_UID", "PRO_UID", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
             "BOU_SIZE_IDENTICAL", "DIA_UID", "BOU_UID", "ELEMENT_UID"
         ),
         "event" => array(
-            "PRJ_UID", "PRO_UID", "BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
+            "PRJ_UID", "PRO_UID", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
             "BOU_SIZE_IDENTICAL", "DIA_UID", "BOU_UID", "ELEMENT_UID", "EVN_ATTACHED_TO", "EVN_CONDITION"
         ),
-        "gateway" => array("BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION", "BOU_SIZE_IDENTICAL", "BOU_UID",
+        "gateway" => array("BOU_ELEMENT_TYPE", "BOU_REL_POSITION", "BOU_SIZE_IDENTICAL", "BOU_UID",
             "DIA_UID", "ELEMENT_UID", "PRJ_UID", "PRO_UID"
         ),
         "artifact" => array(
-            "PRJ_UID", "PRO_UID", "BOU_ELEMENT", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
+            "PRJ_UID", "PRO_UID", "BOU_ELEMENT_TYPE", "BOU_REL_POSITION",
             "BOU_SIZE_IDENTICAL", "DIA_UID", "BOU_UID", "ELEMENT_UID"
         ),
         "flow" => array("PRJ_UID", "DIA_UID", "FLO_ELEMENT_DEST_PORT", "FLO_ELEMENT_ORIGIN_PORT"),
         "data" => array("PRJ_UID"),
         "participant" => array("PRJ_UID"),
-        "laneset" => array(),
-        "lane" => array()
+        "laneset" => array("BOU_ELEMENT_TYPE", "BOU_SIZE_IDENTICAL", "BOU_UID"),
+        "lane" => array("BOU_ELEMENT_TYPE", "BOU_SIZE_IDENTICAL", "BOU_UID")
     );
 
 
@@ -182,11 +182,11 @@ class Bpmn extends Handler
         foreach ($this->getParticipants() as $participant) {
             $this->removeParticipant($participant["PAR_UID"]);
         }
-        foreach ($this->getLanesets() as $laneset) {
-            $this->removeLaneset($laneset["LNS_UID"]);
-        }
         foreach ($this->getLanes() as $lane) {
             $this->removeLane($lane["LAN_UID"]);
+        }
+        foreach ($this->getLanesets() as $laneset) {
+            $this->removeLaneset($laneset["LNS_UID"]);
         }
         if ($process = $this->getProcess("object")) {
             $process->delete();

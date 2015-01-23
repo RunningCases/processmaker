@@ -544,6 +544,16 @@ class DynaForm
             $this->throwExceptionIfNotExistsDynaForm($dynaFormUidCopyImport, $processUidCopyImport, $this->getFieldNameByFormatFieldName("COPY_IMPORT.DYN_UID"));
 
             //Copy/Import
+            
+            //Copy content if version is 2
+            if ($arrayData["DYN_VERSION"] === 2) {
+                $dynaFormOld = new \Dynaform();
+
+                $arrayDynaFormData = $dynaFormOld->Load($dynaFormUidCopyImport);
+
+                $arrayData["DYN_CONTENT"] = $arrayDynaFormData["DYN_CONTENT"];
+            }
+            
             //Create
             $arrayData = $this->create($processUid, $arrayData);
 

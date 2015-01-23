@@ -52,8 +52,10 @@ pake_task('new-plugin', 'project_exists');
 pake_desc("Update the plugin attributes in all workspaces\n   args: <plugin-name>");
 pake_task("update-plugin-attributes", "project_exists");
 
+/*----------------------------------********---------------------------------*/
 pake_desc("Check disabled code in plugins\n   args: [enterprise-plugin|custom-plugin|all|<plugin-name>]");
 pake_task("check-plugin-disabled-code", "project_exists");
+/*----------------------------------********---------------------------------*/
 
 pake_desc("pack plugin in .tar file \n   args: <plugin>");
 pake_task('pack-plugin', 'project_exists');
@@ -67,8 +69,10 @@ pake_task('workspace-backup', 'project_exists');
 pake_desc("restore a previously backed-up workspace\n   args: [-o|--overwrite] <filename> <workspace>");
 pake_task('workspace-restore', 'project_exists');
 
+/*----------------------------------********---------------------------------*/
 pake_desc("check standard code\n   args: <directory>");
 pake_task('check-standard-code', 'project_exists' );
+/*----------------------------------********---------------------------------*/
 
 /**
    * Function run_version
@@ -2573,8 +2577,8 @@ function checkFileStandardCode ( $file ) {
 
   }
 }
-
-function checkFolderStandardCode ( $folder, $bSubFolders ) {
+/*----------------------------------********---------------------------------*/
+/*function checkFolderStandardCode ( $folder, $bSubFolders ) {
   global $aFiles;
 	$rootFolder = str_replace ( PATH_TRUNK, '', $folder );
   //printf("%s \n", pakeColor::colorize($rootFolder, 'INFO'));
@@ -2591,8 +2595,10 @@ function checkFolderStandardCode ( $folder, $bSubFolders ) {
       }
     }
   }
-}
+}*/
+/*----------------------------------********---------------------------------*/
 
+/*----------------------------------********---------------------------------*/
 function run_check_standard_code ( $task, $options) {
   global $aFiles;
   $aFiles = array();
@@ -2619,7 +2625,7 @@ function run_check_standard_code ( $task, $options) {
            pakeColor::colorize($val['dos'] ? 'dos' : '   ', 'INFO'), $val['file'] );
   }
 }
-
+/*----------------------------------********---------------------------------*/
 function run_update_plugin_attributes($task, $args)
 {
     try {

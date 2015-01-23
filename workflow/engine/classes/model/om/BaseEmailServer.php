@@ -85,7 +85,7 @@ abstract class BaseEmailServer extends BaseObject implements Persistent
      * The value for the smtpsecure field.
      * @var        string
      */
-    protected $smtpsecure = '';
+    protected $smtpsecure = 'No';
 
     /**
      * The value for the mess_try_send_inmediatly field.
@@ -475,7 +475,7 @@ abstract class BaseEmailServer extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->smtpsecure !== $v || $v === '') {
+        if ($this->smtpsecure !== $v || $v === 'No') {
             $this->smtpsecure = $v;
             $this->modifiedColumns[] = EmailServerPeer::SMTPSECURE;
         }

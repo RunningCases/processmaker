@@ -5,6 +5,8 @@
 var processesGrid;
 var store;
 var comboCategory;
+var winDesigner;
+
 
 /**
  * Global variables and variable initialization for import process.
@@ -572,7 +574,18 @@ function saveProcess()
             if (projectType == 'classicProject') {
               location.href = 'processes_Map?PRO_UID='+resp.result.PRO_UID;
             } else {
-              location.href = '../designer?prj_uid='+resp.result.PRO_UID;
+            	 if ( (navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1) ){
+            		 if ( typeof(winDesigner) == "undefined" || winDesigner.closed ){
+            			 winDesigner = window.open(
+                    			  "../designer?prj_uid="+resp.result.PRO_UID,
+                    			  '_blank'
+                    			);
+                  	 } else {
+                  		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
+                  	 }
+                 } else {
+                	 location.href = '../designer?prj_uid='+resp.result.PRO_UID;
+                 }
             }
           },
           failure: function(obj, resp) {
@@ -622,7 +635,18 @@ editProcess = function(typeParam)
       url = 'processes_Map?PRO_UID=' + pro_uid;
   }
 
-  location.href = url;
+  if ( ((navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1)) && (type == "bpmn") ) {
+	  if (typeof(winDesigner) == "undefined" || winDesigner.closed){
+		  winDesigner = window.open(
+				  url,
+				  '_blank'
+				);
+   	 } else {
+   		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
+   	 }
+  } else {
+	  location.href = url;
+  }
 }
 
 editNewProcess = function(){
@@ -927,7 +951,18 @@ importProcessExistGroup = function()
                     var sNewProUid       = resp_.sNewProUid;
 
                     if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                        window.location.href = "../designer?prj_uid=" + sNewProUid;
+                        if ((navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1) ) {
+                        	if (typeof(winDesigner) == "undefined" || winDesigner.closed){
+                        		winDesigner = window.open(
+                            			  "../designer?prj_uid=" + sNewProUid,
+                            			  '_blank'
+                            			);
+                        	} else {
+                        		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
+                        	}
+                        } else {
+                          window.location.href = "../designer?prj_uid=" + sNewProUid;
+                        }
                     } else {
                         window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                     }
@@ -1062,7 +1097,18 @@ importProcessExistProcess = function()
 
                     if (resp_.ExistGroupsInDatabase == 0) {
                         if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                            window.location.href = "../designer?prj_uid=" + sNewProUid;
+                            if ( (navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1)) {
+                            	if (typeof(winDesigner) == "undefined" || winDesigner.closed){
+                            		winDesigner = window.open(
+                                			  "../designer?prj_uid=" + sNewProUid,
+                                			  '_blank'
+                                			);
+                            	} else {
+                            		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
+                            	}
+                              } else {
+                                window.location.href = "../designer?prj_uid=" + sNewProUid;
+                              }
                         } else {
                             window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                         }
@@ -1189,7 +1235,18 @@ importProcess = function()
                             var sNewProUid = resp_.sNewProUid;
 
                             if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                                window.location.href = "../designer?prj_uid=" + sNewProUid;
+                            	 if ((navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1)) {
+                            		 if (typeof(winDesigner) == "undefined" || winDesigner.closed){
+                            			 winDesigner = window.open(
+                                    			  "../designer?prj_uid=" + sNewProUid,
+                                    			  '_blank'
+                                    			);
+                                  	 } else {
+                                  		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
+                                  	 }
+                                 } else {
+                                     window.location.href = "../designer?prj_uid=" + sNewProUid;
+                                 }
                             } else {
                                 window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                             }

@@ -784,6 +784,16 @@ class Installer extends Controller
                              '" . mysql_real_escape_string( serialize( array ('LANG' => 'en','STATUS' => 'active'
                 ) ) ) . "'
                            )" );
+
+                /*----------------------------------********---------------------------------*/
+                if (true) {
+                    //
+                } else {
+                /*----------------------------------********---------------------------------*/
+                    $this->mysqlQuery("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
+                /*----------------------------------********---------------------------------*/
+                }
+                /*----------------------------------********---------------------------------*/
             }
 
             // Change admin user
@@ -927,7 +937,7 @@ class Installer extends Controller
                     return $info;
                 }
             }
-            
+
             $this->installLog( G::LoadTranslation('ID_INDEX_FILE_UPDATED', SYS_LANG, Array($indexFileUpdated, $sysConf['default_lang'],$sysConf['default_skin'])));
             $this->installLog( G::LoadTranslation('ID_INSTALL_SUCESS') );
 
@@ -1080,6 +1090,16 @@ class Installer extends Controller
                              '" . addslashes( serialize( array ('LANG' => 'en','STATUS' => 'active'
                 ) ) ) . "'
                            )" );
+
+                /*----------------------------------********---------------------------------*/
+                if (true) {
+                    //
+                } else {
+                /*----------------------------------********---------------------------------*/
+                    $this->mssqlQuery("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
+                /*----------------------------------********---------------------------------*/
+                }
+                /*----------------------------------********---------------------------------*/
             }
 
             //change admin user

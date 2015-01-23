@@ -42,31 +42,6 @@ class pmDynaform
         return $this->record;
     }
 
-    public function getMergeValues()
-    {
-        $dataJSON = G::json_decode($this->record["DYN_CONTENT"]);
-        $dt = $dataJSON->items[0]->items;
-        $n = count($dt);
-        for ($i = 0; $i < $n; $i++) {
-            $dr = $dt[$i];
-            $n2 = count($dr);
-            for ($j = 0; $j < $n2; $j++) {
-                if (isset($dr[$j]->name)) {
-                    $valueField = isset($this->app_data[$dr[$j]->name]) ? $this->app_data[$dr[$j]->name] : "";
-                    $dataJSON->items[0]->items[$i][$j]->defaultValue = $valueField;
-                }
-            }
-        }
-        $a = G::json_encode($dataJSON);
-        $a = str_replace("\/", "/", $a);
-        return $a;
-    }
-
-    public function mergeValues()
-    {
-        $this->record["DYN_CONTENT"] = $this->getMergeValues();
-    }
-
     public function isResponsive()
     {
         return $this->record != null && $this->record["DYN_VERSION"] == 2 ? true : false;
@@ -75,17 +50,32 @@ class pmDynaform
     public function printView($pm_run_outside_main_app, $application)
     {
         ob_clean();
+
+        $a = $this->clientToken();
+        $clientToken = array(
+            "accessToken" => $a["access_token"],
+            "expiresIn" => $a["expires_in"],
+            "tokenType" => $a["token_type"],
+            "scope" => $a["scope"],
+            "refreshToken" => $a["refresh_token"],
+            "clientId" => $a["client_id"],
+            "clientSecret" => $a["client_secret"]
+        );
+        
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform_View.html');
         $file = str_replace("{JSON_DATA}", $this->record["DYN_CONTENT"], $file);
         $file = str_replace("{PM_RUN_OUTSIDE_MAIN_APP}", $pm_run_outside_main_app, $file);
         $file = str_replace("{DYN_UID}", $this->dyn_uid, $file);
         $file = str_replace("{DYNAFORMNAME}", $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"], $file);
         $file = str_replace("{APP_UID}", $application, $file);
+        $file = str_replace("{PRJ_UID}", $this->app_data["PROCESS"], $file);
+        $file = str_replace("{WORKSPACE}", $this->app_data["SYS_SYS"], $file);
+        $file = str_replace("{credentials}", json_encode($clientToken), $file);
         echo $file;
         exit();
     }
 
-    public function printEdit($pm_run_outside_main_app, $application, $headData)
+    public function printEdit($pm_run_outside_main_app, $application, $headData, $step_mode = 'EDIT')
     {
         ob_clean();
 
@@ -111,6 +101,7 @@ class pmDynaform
         $file = str_replace("{DYNAFORMNAME}", $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"], $file);
         $file = str_replace("{APP_UID}", $application, $file);
         $file = str_replace("{PRJ_UID}", $this->app_data["PROCESS"], $file);
+        $file = str_replace("{STEP_MODE}", $step_mode, $file);
         $file = str_replace("{WORKSPACE}", $this->app_data["SYS_SYS"], $file);
         $file = str_replace("{credentials}", json_encode($clientToken), $file);
         echo $file;

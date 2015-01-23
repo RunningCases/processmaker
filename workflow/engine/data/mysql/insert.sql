@@ -1,4 +1,4 @@
-INSERT INTO USERS (USR_UID,USR_USERNAME,USR_PASSWORD,USR_FIRSTNAME,USR_LASTNAME,USR_EMAIL,USR_DUE_DATE,USR_CREATE_DATE,USR_UPDATE_DATE,USR_STATUS,USR_COUNTRY,USR_CITY,USR_LOCATION,USR_ADDRESS,USR_PHONE,USR_FAX,USR_CELLULAR,USR_ZIP_CODE,DEP_UID,USR_POSITION,USR_RESUME,USR_BIRTHDAY,USR_ROLE,USR_REPORTS_TO,USR_REPLACED_BY ) VALUES
+INSERT INTO USERS (USR_UID,USR_USERNAME,USR_PASSWORD,USR_FIRSTNAME,USR_LASTNAME,USR_EMAIL,USR_DUE_DATE,USR_CREATE_DATE,USR_UPDATE_DATE,USR_STATUS,USR_COUNTRY,USR_CITY,USR_LOCATION,USR_ADDRESS,USR_PHONE,USR_FAX,USR_CELLULAR,USR_ZIP_CODE,DEP_UID,USR_POSITION,USR_RESUME,USR_BIRTHDAY,USR_ROLE,USR_REPORTS_TO,USR_REPLACED_BY ) VALUES 
 ('00000000000000000000000000000001','admin','21232f297a57a5a743894a0e4a801fc3','Administrator',' ',  'admin@processmaker.com','2020-01-01','1999-11-30 00:00:00','2008-05-23 18:36:19','ACTIVE',  'US','FL','MMK','','',  '1-305-402-0282','1-305-675-1400','','','Administrator',  '','1999-02-25','PROCESSMAKER_ADMIN','','');
 
 INSERT INTO CONTENT (CON_CATEGORY,CON_PARENT,CON_ID,CON_LANG,CON_VALUE) VALUES
@@ -25,7 +25,7 @@ INSERT INTO CONTENT (CON_CATEGORY,CON_PARENT,CON_ID,CON_LANG,CON_VALUE) VALUES
 ('PER_NAME','','00000000000000000000000000000001','en','Login'),
 ('PER_NAME','','00000000000000000000000000000002','en','Setup');
 
-INSERT INTO LANGUAGE (LAN_ID,LAN_LOCATION,LAN_NAME,LAN_NATIVE_NAME,LAN_DIRECTION,LAN_WEIGHT,LAN_ENABLED,LAN_CALENDAR) VALUES
+INSERT INTO LANGUAGE (LAN_ID,LAN_LOCATION,LAN_NAME,LAN_NATIVE_NAME,LAN_DIRECTION,LAN_WEIGHT,LAN_ENABLED,LAN_CALENDAR) VALUES 
 ('aa','','Afar','','L','0','0','GREGORIAN'),
 ('ab','','Abkhazian','','L','1','0','GREGORIAN'),
 ('af','','Afrikaans','','L','2','0','GREGORIAN'),
@@ -163,7 +163,7 @@ INSERT INTO LANGUAGE (LAN_ID,LAN_LOCATION,LAN_NAME,LAN_NATIVE_NAME,LAN_DIRECTION
 ('zh','CN','Chinese','','L','134','0','GREGORIAN'),
 ('zu','','Zulu','','L','135','0','GREGORIAN');
 
-INSERT INTO ISO_COUNTRY (IC_UID,IC_NAME,IC_SORT_ORDER)  VALUES
+INSERT INTO ISO_COUNTRY (IC_UID,IC_NAME,IC_SORT_ORDER)  VALUES  
 ('AD', 'Andorra',' ') ,
 ('AE', 'United Arab Emirates',' ') ,
 ('AF', 'Afghanistan',' ') ,
@@ -408,7 +408,7 @@ INSERT INTO ISO_COUNTRY (IC_UID,IC_NAME,IC_SORT_ORDER)  VALUES
 ('ZM', 'Zambia',' ') ,
 ('ZW', 'Zimbabwe',' ') ;
 
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('AR', 'A', 'Salta' ) ,
 ('AR', 'B', 'Buenos Aires' ) ,
 ('AR', 'C', 'Distrito Federal' ) ,
@@ -489,7 +489,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('BR', 'SC', 'Santa Catarina' ) ,
 ('BR', 'SE', 'Sergipe' ) ,
 ('BR', 'SP', 'São Paulo' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('BR', 'TO', 'Tocantins' ) ,
 ('CA', 'AB', 'Alberta' ) ,
 ('CA', 'BC', 'British Columbia' ) ,
@@ -570,7 +570,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('CN', '53', 'Yunnan' ) ,
 ('CN', '54', 'Xizang' ) ,
 ('CN', '61', 'Shaanxi' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('CN', '62', 'Gansu' ) ,
 ('CN', '63', 'Qinghai' ) ,
 ('CN', '64', 'Ningxia' ) ,
@@ -651,7 +651,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('FR', '24', 'Dordogne' ) ,
 ('FR', '25', 'Doubs' ) ,
 ('FR', '26', 'Drôme' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('FR', '27', 'Eure' ) ,
 ('FR', '28', 'Eure-et-Loir' ) ,
 ('FR', '29', 'Finistère' ) ,
@@ -732,7 +732,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('GB', 'ARD', 'Ards' ) ,
 ('GB', 'ARM', 'Armagh' ) ,
 ('GB', 'BAS', 'Bath and North East Somerset' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('GB', 'BBD', 'Blackburn with Darwen' ) ,
 ('GB', 'BDF', 'Bedfordshire' ) ,
 ('GB', 'BDG', 'Barking and Dagenham' ) ,
@@ -813,7 +813,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('GB', 'FLN', 'Flintshire [Sir y Fflint GB-FFL]' ) ,
 ('GB', 'GAT', 'Gateshead' ) ,
 ('GB', 'GLG', 'Glasgow City' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('GB', 'GLS', 'Gloucestershire' ) ,
 ('GB', 'GMP', 'Grampian Region' ) ,
 ('GB', 'GNT', 'Gwent' ) ,
@@ -894,7 +894,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('GB', 'NYK', 'North Yorkshire' ) ,
 ('GB', 'NYM', 'Newry and Mourne' ) ,
 ('GB', 'OLD', 'Oldham' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('GB', 'OMH', 'Omagh' ) ,
 ('GB', 'ORK', 'Orkney Islands' ) ,
 ('GB', 'OXF', 'Oxfordshire' ) ,
@@ -975,7 +975,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('GB', 'WNM', 'Windsor and maidenhead' ) ,
 ('GB', 'WOK', 'Wokingham' ) ,
 ('GB', 'WOR', 'Worcestershire' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('GB', 'WRL', 'Wirral' ) ,
 ('GB', 'WRT', 'Warrington' ) ,
 ('GB', 'WRX', 'Wrexham [Wrecsam GB-WRC]' ) ,
@@ -1056,7 +1056,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('JP', '20', 'Nagano' ) ,
 ('JP', '21', 'Gihu [Gifu]' ) ,
 ('JP', '22', 'Sizuoka [Shizuoka]' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('JP', '23', 'Aiti [Aichi]' ) ,
 ('JP', '24', 'Mie' ) ,
 ('JP', '25', 'Siga [Shiga]' ) ,
@@ -1137,7 +1137,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('MX', 'CHP', 'Chiapas' ) ,
 ('MX', 'COA', 'Coahuila' ) ,
 ('MX', 'COL', 'Colima' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('MX', 'DF', 'Distrito Federal' ) ,
 ('MX', 'DUR', 'Durango' ) ,
 ('MX', 'GRO', 'Guerrero' ) ,
@@ -1218,7 +1218,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('PT', '20', 'Região Autónoma dos Açores' ) ,
 ('PT', '30', 'Região Autónoma da Madeira' ) ,
 ('SE', 'AB', 'Stockholms' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('SE', 'AC', 'Vesterbottens' ) ,
 ('SE', 'BD', 'Norrbottens län' ) ,
 ('SE', 'C', 'Uppsala län' ) ,
@@ -1299,7 +1299,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('TR', '58', 'Sivas' ) ,
 ('TR', '59', 'Tekirdag' ) ,
 ('TR', '60', 'Tokat' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('TR', '61', 'Trabzon' ) ,
 ('TR', '62', 'Tunceli' ) ,
 ('TR', '63', 'Sanliurfa' ) ,
@@ -1380,7 +1380,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('US', 'UM', 'U.S. Minor Outlying Islands (cf. separate entry UM)' ) ,
 ('US', 'UT', 'Utah' ) ,
 ('US', 'VA', 'Virginia' ) ;
-INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
+INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES  
 ('US', 'VI', 'Virgin Islands of the U.S. (see also separate entry VI)' ) ,
 ('US', 'VT', 'Vermont' ) ,
 ('US', 'WA', 'Washington' ) ,
@@ -1388,7 +1388,7 @@ INSERT INTO ISO_SUBDIVISION (IC_UID,IS_UID,IS_NAME)  VALUES
 ('US', 'WV', 'West Virginia' ) ,
 ('US', 'WY', 'Wyoming' ) ;
 
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','LOGIN','en','Login','2014-01-15') ,
 ( 'LABEL','CASES','en','Cases','2014-01-15') ,
@@ -1421,7 +1421,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UP','en','Up','2014-01-15') ,
 ( 'LABEL','ID_DOWN','en','Down','2014-01-15') ,
 ( 'LABEL','ID_PAGE','en','Page','2014-01-15') ,
-( 'LABEL','ID_NEW_DYNAFORM','en','New dynaform','2014-01-15') ,
+( 'LABEL','ID_NEW_DYNAFORM','en','New DynaForm.','2015-01-16') ,
 ( 'LABEL','ID_EDIT_DYNAFORM','en','Edit DynaForm','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_DELETE_DYNAFORM','en','Do you want to delete this DynaForm ?','2014-01-15') ,
 ( 'LABEL','ID_ADD_MESSAGE','en','Add message','2014-01-15') ,
@@ -1436,7 +1436,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_USER_REGISTERED','en','User name already exists','2014-01-15') ,
 ( 'LABEL','ID_MSG_ERROR_USR_USERNAME','en','User name required!','2014-01-15') ,
 ( 'LABEL','ID_MSG_ERROR_DUE_DATE','en','Due date required!','2014-01-15') ,
-( 'LABEL','ID_NEW_PASS_SAME_OLD_PASS','en','The confirm Password fields must be the same!','2014-01-15') ,
+( 'LABEL','ID_NEW_PASS_SAME_OLD_PASS','en','The confirm password must be the same!','2015-01-16') ,
 ( 'LABEL','ID_NEW_INPUTDOCS','en','New Input Document','2014-01-15') ,
 ( 'LABEL','ID_EDIT_INPUTDOCS','en','Edit Input Document','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_DELETE_DOCUMENT','en','Do you want to delete this document ?','2014-01-15') ,
@@ -1470,7 +1470,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UPLOAD','en','Upload','2014-01-15') ,
 ( 'LABEL','ID_GENERATE','en','Generate','2014-01-15') ,
 ( 'LABEL','ID_CONFIRM_DELETE_ELEMENT','en','Approval of consolidated tasks','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'JAVASCRIPT','ID_PROCESSMAP_TRIGGERS','en','Triggers','2014-01-15') ,
 ( 'JAVASCRIPT','ID_PROCESSMAP_OUTPUT_DOCUMENTS','en','Output Documents','2014-01-15') ,
@@ -1479,7 +1479,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_ATTACH','en','Attach','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_DELETE_CASES','en','Are you sure you want to delete all selected cases?','2014-01-15') ,
 ( 'LABEL','ID_ALL','en','All','2014-01-15') ,
-( 'LABEL','ID_CANCELLED','en','Cancelled','2014-01-15') ,
+( 'LABEL','ID_CANCELLED','en','Canceled','2015-01-16') ,
 ( 'LABEL','ID_FINISHED','en','Finished','2014-01-15') ,
 ( 'LABEL','ID_PAUSED','en','Paused','2014-01-15') ,
 ( 'LABEL','ID_DERIVED','en','Sent','2014-01-15') ,
@@ -1552,7 +1552,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'JAVASCRIPT','ID_PROCESSMAP_EDIT_TEXT','en','Edit text','2014-01-15') ,
 ( 'JAVASCRIPT','ID_PROCESSMAP_DELETE_TEXT','en','Delete text','2014-01-15') ,
 ( 'JAVASCRIPT','ID_PROCESSMAP_EDIT_TEXT_CHANGE_TO','en','Change to:','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'JAVASCRIPT','ID_PROCESSMAP_CONFIRM_WORKFLOW_PATTERN_CHANGE','en','Are you sure you want to change the routing rule?','2014-01-15') ,
 ( 'JAVASCRIPT','ID_PROCESSMAP_NEW_TASK','en','New task','2014-01-15') ,
@@ -1606,7 +1606,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','TO_DO','en','To Do','2014-01-15') ,
 ( 'LABEL','PAUSED','en','Pause','2014-01-15') ,
 ( 'LABEL','COMPLETED','en','Completed','2014-01-15') ,
-( 'LABEL','CANCELLED','en','Cancelled','2014-01-15') ,
+( 'LABEL','CANCELLED','en','Canceled','2015-01-16') ,
 ( 'LABEL','ID_NOT_FINISHED','en','Not finished','2014-01-15') ,
 ( 'LABEL','ID_HOUR','en','Hour','2014-01-15') ,
 ( 'LABEL','ID_HOURS','en','Hours','2014-01-15') ,
@@ -1634,7 +1634,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_NEW_REPORT_TABLE','en','New Report Table','2014-01-15') ,
 ( 'LABEL','ID_EDIT_REPORT_TABLE','en','Edit Report Table','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_DELETE_REPORT_TABLE','en','Do you want to delete this report table?','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_PLEASE_ENTER_REQUIRED_FIELDS','en','Please enter the required fields','2014-01-15') ,
 ( 'LABEL','ID_TABLE_ALREADY_EXISTS','en','Table already exists','2014-01-15') ,
@@ -1716,7 +1716,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASECANCEL','en','No actions available for this case.','2014-01-15') ,
 ( 'LABEL','ID_UNPAUSE','en','Unpause','2014-01-15') ,
 ( 'JAVASCRIPT','ID_CONFIRM_PAUSE_CASE','en','Are you sure you want to pause this case?','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'JAVASCRIPT','ID_MSG_CONFIRM_REMOVE_USERGROUP','en','Are you sure you want to remove this user group?','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_REMOVE_USERGROUP','en','Are you sure you want to remove this user group?','2014-01-15') ,
@@ -1798,7 +1798,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DISABLED','en','Disabled','2014-01-15') ,
 ( 'LABEL','ID_DYNAFORM','en','DynaForm','2014-01-15') ,
 ( 'LABEL','ID_INPUT_DOCUMENT','en','Input Document','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_OUTPUT_DOCUMENT','en','Output Document','2014-01-15') ,
 ( 'JAVASCRIPT','ID_PLEASE_SELECT_OTHER_OBJECT_TYPE','en','Please select other object type','2014-01-15') ,
@@ -1832,7 +1832,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_EMPLOYEE','en','Employee','2014-01-15') ,
 ( 'LABEL','ID_SESSION','en','Session','2014-01-15') ,
 ( 'LABEL','ID_NEXT_TASK','en','Next Task','2014-01-15') ,
-( 'LABEL','ID_PERMISSIONS_FOR_THE_ROL','en','Permissions for the role','2014-01-15') ,
+( 'LABEL','ID_PERMISSIONS_FOR_THE_ROL','en','Permissions for the role','2015-01-16') ,
 ( 'LABEL','ID_BACK_TO_USERS_LIST','en','Back to Users List','2014-01-15') ,
 ( 'LABEL','ID_ASSIGN_THE_ROLE','en','Assign the role','2014-01-15') ,
 ( 'LABEL','ID_USER_WITH_ROLE','en','Users with role','2014-01-15') ,
@@ -1880,7 +1880,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_REASSIGN_TO','en','Reassign','2014-01-15') ,
 ( 'LABEL','ID_NO_REASSIGN','en','Do not reassign','2014-01-15') ,
 ( 'LABEL','ID_PROCESS','en','Process','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_REASSIGN_CASES','en','Reassign Cases','2014-01-15') ,
 ( 'LABEL','ID_ALERT_MESSAGE','en','Alert Message','2014-01-15') ,
@@ -1962,7 +1962,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'JAVASCRIPT','ID_REASSIGN_BYUSER_CONFIRM','en','Are you sure that you want to reassign the cases?','2014-01-15') ,
 ( 'JAVASCRIPT','ID_REASSIGN_BYUSER','en','At least one item from the list must be selected.','2014-01-15') ,
 ( 'JAVASCRIPT','ID_MSG_RESSIGN_BYUSER_PANEL','en','Users selection interface','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'JAVASCRIPT','ID_MSG_RESSIGN_B','en','At least one item from the list must be selected.','2014-01-15') ,
 ( 'LABEL','ID_DETAILS_WEBSERVICES','en','Details','2014-01-15') ,
@@ -2044,7 +2044,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SCHEDULER_LOG','en','Cases Scheduler Logs','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_DELETE_IDOCUMENT','en','This object is being used in some steps. Are you sure you want to delete it?','2014-01-15') ,
 ( 'JAVASCRIPT','ID_FIELD_FOREIGN_TABLE','en','Field "table" is required','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'JAVASCRIPT','ID_ASSIGN_RULES','en','Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn''t be used with subprocesses','2014-01-15') ,
 ( 'LABEL','ID_FIELD_INVALID','en','Field Invalid','2014-01-15') ,
@@ -2126,7 +2126,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DESCRIPTION','en','Description','2014-01-15') ,
 ( 'LABEL','ID_PARAMETERS','en','Parameters','2014-01-15') ,
 ( 'LABEL','ID_TRIGGER_RETURN_TITLE','en','Return value','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_TRIGGER_RETURN_LABEL','en','Variable to hold return value','2014-01-15') ,
 ( 'LABEL','ID_SAVE','en','Save','2014-01-15') ,
@@ -2208,7 +2208,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_OPT_STARTED','en','Started by Me','2014-01-15') ,
 ( 'LABEL','ID_OPT_COMPLETED','en','Completed by Me','2014-01-15') ,
 ( 'LABEL','ID_EMPTY_PROCESSES','en','Select a Process...','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_EMPTY_SEARCH','en','Search ...','2014-01-15') ,
 ( 'LABEL','ID_EMPTY_CASE','en','Search Case...','2014-01-15') ,
@@ -2231,7 +2231,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TITLE_UNASSIGNED','en','Unassigned','2014-01-15') ,
 ( 'LABEL','ID_TITLE_PAUSED','en','Paused','2014-01-15') ,
 ( 'LABEL','ID_TITLE_COMPLETED','en','Completed','2014-01-15') ,
-( 'LABEL','ID_TITLE_CANCELLED','en','Cancelled','2014-01-15') ,
+( 'LABEL','ID_TITLE_CANCELLED','en','Canceled','2015-01-16') ,
 ( 'LABEL','ID_PM_TABLE','en','PM Table','2014-01-15') ,
 ( 'LABEL','ID_ROWS_PER_PAGE','en','Rows per Page','2014-01-15') ,
 ( 'LABEL','ID_DATE_FORMAT','en','Date Format','2014-01-15') ,
@@ -2268,7 +2268,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SYSTEM','en','System','2014-01-15') ,
 ( 'LABEL','ID_VARIABLES','en','Variables','2014-01-15') ,
 ( 'LABEL','ID_OPEN_CASE','en','Open Case','2014-01-15') ,
-( 'LABEL','ID_CASES_STATUS_CANCELLED','en','Cancelled','2014-01-15') ,
+( 'LABEL','ID_CASES_STATUS_CANCELLED','en','Canceled','2015-01-16') ,
 ( 'LABEL','ID_CASES_STATUS_PAUSED','en','Paused','2014-01-15') ,
 ( 'LABEL','ID_ALL_PROCESS','en','All Processes','2014-01-15') ,
 ( 'LABEL','ID_ALL_USERS','en','All Users','2014-01-15') ,
@@ -2290,7 +2290,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASE_SCHEDULER_VALIDATE_ALERT','en','User or password is empty.','2014-10-21') ,
 ( 'LABEL','ID_DELEGATE_DATE_FROM','en','Delegated date from','2014-01-15') ,
 ( 'JAVASCRIPT','ID_DUPLICATE_CATEGORY_NAME','en','Duplicate category name.','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_DELEGATE_DATE_TO','en','to','2014-01-15') ,
 ( 'LABEL','ID_FILTER_BY_DELEGATED_DATE','en','Filter','2014-01-15') ,
@@ -2372,7 +2372,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_USERNAME_FORMAT_7','en','@lastName, @firstName (@userName)','2014-01-15') ,
 ( 'JAVASCRIPT','USERS_DELETE_WITH_HISTORY','en','The user has some completed or canceled tasks (which may be useful for historical records). Do you want to delete this user anyway?','2014-01-15') ,
 ( 'LABEL','ID_DISCARD_CHANGES','en','Discard Changes','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_EMPTY_USERS','en','Select a User...','2014-01-15') ,
 ( 'LABEL','ID_DUPLICATE_CATEGORY_NAME','en','Duplicate category name.','2014-01-15') ,
@@ -2454,7 +2454,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_FIELD_DYNAFORM_CHECKBOX','en','checkbox','2014-01-15') ,
 ( 'LABEL','ID_FIELD_DYNAFORM_CHECKGROUP','en','checkgroup','2014-01-15') ,
 ( 'LABEL','ID_FIELD_DYNAFORM_RADIOGROUP','en','radiogroup','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_FIELD_DYNAFORM_HIDDEN','en','hidden','2014-01-15') ,
 ( 'LABEL','ID_FIELD_DYNAFORM_LINK','en','link','2014-01-15') ,
@@ -2536,7 +2536,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_EDIT_GROUP_TITLE','en','Edit Group','2014-01-15') ,
 ( 'LABEL','ID_ASSIGN_ALL_MEMBERS','en','Assign All Members','2014-01-15') ,
 ( 'LABEL','ID_REMOVE_ALL_MEMBERS','en','Remove All Members','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_ASSIGNED_MEMBERS','en','MEMBERS','2014-01-15') ,
 ( 'LABEL','ID_AVAILABLE_MEMBERS','en','AVAILABLE MEMBERS','2014-01-15') ,
@@ -2618,7 +2618,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_BPMN_EDITOR','en','BPMN Editor (Beta)','2014-01-15') ,
 ( 'LABEL','ID_CLASSIC_EDITOR','en','Classic Editor','2014-01-15') ,
 ( 'LABEL','ID_DISABLE_DEBUG','en','Disable Debug Mode','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_ENABLE_DEBUG','en','Enable Debug Mode','2014-01-15') ,
 ( 'JAVASCRIPT','ID_MSJ','en','Group name already exists!','2014-01-15') ,
@@ -2692,7 +2692,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DESTINATION_PATH','en','Destination Path','2014-01-15') ,
 ( 'LABEL','ID_TAGS','en','Tags','2014-01-15') ,
 ( 'LABEL','ID_INPUT_CREATE','en','Input document has been created successfully','2014-01-15') ,
-( 'LABEL','ID_INPUT_NOT_SAVE','en','There is an Input Document with the same name in this process. It is not saving','2014-01-15') ,
+( 'LABEL','ID_INPUT_NOT_SAVE','en','Not saved because there is an Input Document with the same name in this process.','2015-01-16') ,
 ( 'LABEL','ID_INPUT_UPDATE','en','Input document has been updated successfully','2014-01-15') ,
 ( 'LABEL','ID_VERSIONING','en','Versioning','2014-01-15') ,
 ( 'LABEL','ID_OUTPUT_INFO','en','Output Document Information','2014-01-15') ,
@@ -2700,13 +2700,13 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MEDIA','en','Media','2014-01-15') ,
 ( 'LABEL','ID_LEFT_MARGIN','en','Left Margin','2014-01-15') ,
 ( 'LABEL','ID_RIGHT_MARGIN','en','Right Margin','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_TOP_MARGIN','en','Top Margin','2014-01-15') ,
 ( 'LABEL','ID_BOTTOM_MARGIN','en','Bottom Margin','2014-01-15') ,
 ( 'LABEL','ID_OUTPUT_GENERATE','en','Output Document to Generate','2014-01-15') ,
 ( 'LABEL','OUTPUT_CREATE','en','Output document has been created successfully','2014-01-15') ,
-( 'LABEL','ID_OUTPUT_NOT_SAVE','en','There is an Output Document with the same name in this process. It is not saving.','2014-01-15') ,
+( 'LABEL','ID_OUTPUT_NOT_SAVE','en','Not saved because there is an Output Document with the same name in this process.','2015-01-16') ,
 ( 'LABEL','ID_OUTPUT_UPDATE','en','Output document has been updated successfully.','2014-01-15') ,
 ( 'LABEL','ID_TABLE_NAME','en','Table Name','2014-01-15') ,
 ( 'LABEL','ID_FIELDS','en','Fields','2014-01-15') ,
@@ -2738,8 +2738,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SUPERVISOR','en','Supervisor','2014-01-15') ,
 ( 'LABEL','ID_DYANFORM_REMOVE','en','Dynaform has been removed successfully from Process','2014-01-15') ,
 ( 'LABEL','ID_DYNAFORM_ASSIGN','en','Dynaform has been successfully assigned to a Process','2014-01-15') ,
-( 'LABEL','ID_DYNAFORM_ASSIGN_FAILED','en','Failed saving Dynaform Assigned to process','2014-01-15') ,
-( 'LABEL','ID_INPUT_UNAVAILABLE','en','No Input Document are available. All Input Document have been already assigned.','2014-01-15') ,
+( 'LABEL','ID_DYNAFORM_ASSIGN_FAILED','en','Failed saving DynaForm assigned to the process.','2015-01-16') ,
+( 'LABEL','ID_INPUT_UNAVAILABLE','en','No Input Documents are available. All Input Documents have already been assigned.','2015-01-16') ,
 ( 'LABEL','ID_INPUT_ASSIGN','en','Input Document has been successfully assigned to a Process','2014-01-15') ,
 ( 'LABEL','ID_INPUT_FAILED','en','Failed saving Input Document Assigned to process','2014-01-15') ,
 ( 'LABEL','ID_PROCESS_FILE_MANAGER','en','Process File Manager','2014-01-15') ,
@@ -2780,9 +2780,9 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_STATIC_PARTIAL_JOIN_MULTIPLE_INSTANCES','en','Static Partial Join for Multiple Instance','2014-01-15') ,
 ( 'LABEL','ID_CANCEL_PARTIAL_JOIN_MULTIPLE_INSTANCE','en','Cancelling Partial Join for Multiple Instance','2014-01-15') ,
 ( 'LABEL','ID_VARIABLES_VALUE_ASSIGNMENT','en','Variable for Value Based Assignment','2014-01-15') ,
-( 'LABEL','ID_VARIABLES_NO_INSTANCES','en','Variable for No of Instances','2014-01-15') ,
-( 'LABEL','ID_VARIABLES_INSTANCES_TO _COMPLETE','en','Variable for No of Instances to complete','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+( 'LABEL','ID_VARIABLES_NO_INSTANCES','en','Variable for number of instances.','2015-01-16') ,
+( 'LABEL','ID_VARIABLES_INSTANCES_TO _COMPLETE','en','Variable for number of instances to complete.','2015-01-16') ;
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_USER_DEFINED_TIMING_CONTROL','en','Allow user defined timing control','2014-01-15') ,
 ( 'LABEL','ID_TASK_DURATION','en','Task Duration','2014-01-15') ,
@@ -2811,9 +2811,9 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SUBPROCESS_NAME','en','SubProcess name','2014-01-15') ,
 ( 'LABEL','ID_VARIABLES_OUT','en','Variables Out','2014-01-15') ,
 ( 'LABEL','ID_VARIABLES_IN','en','Variables In','2014-01-15') ,
-( 'LABEL','ID_SUBPROCESS_SAVE','en','Sub Process Properties has been saved successfully.','2014-01-15') ,
+( 'LABEL','ID_SUBPROCESS_SAVE','en','Sub-process properties have been saved successfully.','2015-01-16') ,
 ( 'LABEL','ID_AUTHENTICATION_FAILED','en','Authentication Failed','2014-01-15') ,
-( 'LABEL','ID_WEBENTRY_LINK','en','WebEntry Link','2014-01-15') ,
+( 'LABEL','ID_WEBENTRY_LINK','en','Web Entry Link','2015-01-16') ,
 ( 'LABEL','ID_INITIAL_TASK','en','Initial Task','2014-01-15') ,
 ( 'LABEL','ID_INITIAL_DYNAFORM','en','Initial Dynaform','2014-01-15') ,
 ( 'LABEL','ID_METHODS','en','Methods','2014-01-15') ,
@@ -2864,7 +2864,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','MIME_DES_FILE','en','File','2014-01-15') ,
 ( 'LABEL','MIME_DES_SYMLINK','en','Symbolic Link','2014-01-15') ,
 ( 'LABEL','MIME_DES_TEXT','en','Text File','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','MIME_DES_TXT','en','Text File','2014-01-15') ,
 ( 'LABEL','MIME_DES_PHP','en','PHP Script','2014-01-15') ,
@@ -2912,7 +2912,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_ASSIGN_USERS','en','Assign Users','2014-01-15') ,
 ( 'LABEL','ID_SET_SUPERVISOR','en','Set Supervisor','2014-01-15') ,
 ( 'LABEL','ID_SET_SUPERVISOR_SUCCESS','en','Supervisor assigned correctly','2014-01-15') ,
-( 'LABEL','ID_ROLE_EXISTS','en','Role Code already exists.','2014-01-15') ,
+( 'LABEL','ID_ROLE_EXISTS','en','Role code already exists.','2015-01-16') ,
 ( 'LABEL','ID_DEBUG_PANEL_TITLE','en','ProcessMaker Debugger','2014-01-15') ,
 ( 'LABEL','ID_SWITCH_EDITOR','en','Switch Editor','2014-01-15') ,
 ( 'LABEL','ID_NORMAL','en','Normal','2014-01-15') ,
@@ -2921,7 +2921,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TAS_VIEW','en','Tasks (View mode)','2014-01-15') ,
 ( 'LABEL','ID_PM_FILENAME','en','Download PM File:','2014-01-15') ,
 ( 'LABEL','ID_XPDL_FILENAME','en','Download XPDL File:','2014-01-15') ,
-( 'LABEL','ID_NO_ITEMS_SELECTED','en','No items Selected','2014-01-15') ,
+( 'LABEL','ID_NO_ITEMS_SELECTED','en','No item selected.','2015-01-16') ,
 ( 'LABEL','ID_SERVER_COMMUNICATION_ERROR','en','Failed to connect to the server','2014-01-15') ,
 ( 'LABEL','ID_DELETE_SELECTED_ITEMS','en','Do you want to deleted selected({0}) items?','2014-01-15') ,
 ( 'LABEL','ID_ROOT_FOLDER','en','Root Folder','2014-01-15') ,
@@ -2946,7 +2946,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_ACTORS_ASSIGNED_SUCESSFULLY','en','{0} Actors assign to task <b>"{1}"</b> successfully!','2014-01-15') ,
 ( 'LABEL','ID_ACTOR_ASSIGNED_SUCESSFULLY','en','The actor was assigned to task <b>"{tas_title}"</b> successfully!','2014-01-15') ,
 ( 'LABEL','ID_RESPONSABILITIES_ASSIGNMENT','en','Assignment of responsibilities','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_ACTORS','en','Actors','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAP_TITLE','en','BPMN Designer','2014-01-15') ,
@@ -2984,7 +2984,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASE_SCHEDULER_SUMMARY','en','Case Scheduler Summary','2014-01-15') ,
 ( 'LABEL','ID_USERS_ACTORS','en','Users Actors','2014-01-15') ,
 ( 'LABEL','ID_ADHOC_USERS_ACTORS','en','Ad hoc Users Actors','2014-01-15') ,
-( 'LABEL','ID_GROUPS_ACTORS','en','Groups Actors','2014-01-15') ,
+( 'LABEL','ID_GROUPS_ACTORS','en','Group Actors','2015-01-16') ,
 ( 'LABEL','ID_ADHOC_GROUPS_ACTORS','en','Ad Hoc Groups Actors','2014-01-15') ,
 ( 'LABEL','ID_EXIST_DYNAFORM','en','Can not save, because there is a DynaForm with the same name in this process.','2014-10-21') ,
 ( 'LABEL','ID_INPUT_DOC_SUCCESS_NEW','en','Input Document has been created correctly.','2014-01-15') ,
@@ -3013,7 +3013,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UPLOADING_PROCESS_FILE','en','Uploading the process file...','2014-01-15') ,
 ( 'LABEL','ID_IMPORT_ALREADY_EXISTS','en','The process you are trying to import already exists. Please select one of the following options to continue:','2014-10-21') ,
 ( 'LABEL','ID_DEBUG_MESSAGE','en','Debug Messages','2014-01-15') ,
-( 'LABEL','ID_FIELD_HANDLER_ACTION_DELETE','en','Are you sure that you want to remove this','2014-01-15') ,
+( 'LABEL','ID_FIELD_HANDLER_ACTION_DELETE','en','Are you sure you want to remove this','2015-01-16') ,
 ( 'LABEL','ID_PROCESS_EXIST_SOME_GROUP','en','Some of the groups that you are trying to import already exist. Please select one of the following options to continue.','2014-10-21') ,
 ( 'LABEL','ID_PROCESS_GROUP_RENAME','en','Rename the imported groups','2014-01-15') ,
 ( 'LABEL','ID_PROCESS_GROUP_MERGE_PREEXISTENT','en','Merge the imported groups, with the preexistent local groups (no changes will be made to the local groups)','2014-01-15') ,
@@ -3028,7 +3028,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_REASSIGNED','en','Reassigned','2014-01-15') ,
 ( 'JAVASCRIPT','ID_CONFIRM_ADHOCUSER_CASE','en','Are you sure you want to do it?','2014-01-15') ,
 ( 'LABEL','ID_CONFIRM_ADHOCUSER_CASE','en','Are you sure you want to do it?','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_PM_ENV_HOME_SETTINGS_TITLE','en','Home Settings','2014-01-15') ,
 ( 'LABEL','ID_HOME_LISTS_DATE_FORMAT','en','Date format on Lists','2014-01-15') ,
@@ -3048,7 +3048,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CREATE_NEW_ACCOUNT','en','Create a New Account','2014-01-15') ,
 ( 'LABEL','ID_INCORRECT_USERNAME_PASSWORD','en','Incorrect username or password','2014-01-15') ,
 ( 'LABEL','ID_USERNAME_OR_WORKSPACE','en','Username (or Live Workspace)','2014-01-15') ,
-( 'LABEL','ID_PROCESS_UID','en','Process Uid','2014-01-15') ,
+( 'LABEL','ID_PROCESS_UID','en','Process UID','2015-01-16') ,
 ( 'LABEL','ID_INSTALL_MESSAGE','en','Please follow these instructions to complete installation','2014-01-15') ,
 ( 'LABEL','ID_PROCESS_SUCESSFULLY_IMPORTED','en','Process sucessfully imported','2014-01-15') ,
 ( 'LABEL','ID_ENABLE_HEART_BEAT','en','Contribute to the ProcessMaker project enabling heart beat anonymous usage data','2014-01-15') ,
@@ -3110,7 +3110,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CHANGE_PASSWORD','en','Change Password','2014-01-15') ,
 ( 'LABEL','ID_DEFAULT_MAIN_MENU_OPTION','en','Default Main Menu Option','2014-01-15') ,
 ( 'LABEL','ID_DEFAULT_CASES_MENU_OPTION','en','Default Cases Menu option','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_INFORMATION_WAS_STORED_SUCCESSFULLY','en','information was stored successfully','2014-01-15') ,
 ( 'LABEL','ID_PREFERENCES','en','Preferences','2014-01-15') ,
@@ -3192,7 +3192,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CONFIRM_REMOVE_FIELD','en','Do you want to remove this field?','2014-10-21') ,
 ( 'LABEL','ID_INVALID_EXTENSION','en','Invalid file extension!','2014-01-15') ,
 ( 'LABEL','ID_NEW_PMTABLE','en','New PM Table','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_APPLY_AS_MAIN_LOGO','en','Apply as main logo','2014-01-15') ,
 ( 'LABEL','ID_YOU_ARE_NOT_CAN_SELECT_PHOTO','en','You can not select more than one photo.','2014-10-21') ,
@@ -3274,7 +3274,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TABLE_NAME_IS_REQUIRED','en','Table Name is required.','2014-01-15') ,
 ( 'LABEL','ID_TABLE_NAME_TOO_SHORT','en','The table name is too short, it should have at least 4 characters.','2014-01-15') ,
 ( 'LABEL','ID_PMTABLE_CLASS_DOESNT_EXIST','en','ERROR: The class fie "{0}" doesn''t exist!','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_PMTABLE_ALREADY_EXISTS','en','The table "{0}" already exits!','2014-01-15') ,
 ( 'LABEL','ID_PMTABLE_INVALID_NAME','en','Could not create the table with the name "{0}" because it is a reserved word.','2014-01-15') ,
@@ -3321,11 +3321,11 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_ATTRIBUTES','en','Attributes','2014-01-15') ,
 ( 'LABEL','ID_TABLE_NOT_FOUND','en','Table Not found','2014-01-15') ,
 ( 'LABEL','ID_FAILED_IMPORT_PLUGINS','en','Failed to import the file {filename} . It is an invalid file or is not a plugin.','2014-10-21') ,
-( 'LABEL','ID_ERROR_UPLOADING_PLUGIN_FILENAME','en','There was an error uploading the file, probably the file size if greater than upload_max_filesize parameter in php.ini, please check this parameter and try again.','2014-01-15') ,
+( 'LABEL','ID_ERROR_UPLOADING_PLUGIN_FILENAME','en','There was an error uploading the file. The file size is probably greater than the upload_max_filesize parameter in php.ini. Please check this parameter and try again.','2015-01-16') ,
 ( 'LABEL','ID_FILES_INVALID_PLUGIN_FILENAME','en','the uploaded files are invalid, expected ''application/octect-stream mime type file ({pluginFilename})','2014-01-15') ,
 ( 'LABEL','ID_PLUGIN_DEPENDENCE_PLUGIN','en','This plugin needs "{Dependence}" plugin','2014-01-15') ,
 ( 'LABEL','ID_FILE_CONTAIN_CLASS_PLUGIN','en','The file {filename} doesn''t contain class: {className}','2014-01-15') ,
-( 'LABEL','ID_RECENT_VERSION_PLUGIN','en','A recent version of this plugin was already installed.','2014-01-15') ,
+( 'LABEL','ID_RECENT_VERSION_PLUGIN','en','Task does not have a routing rule. Please, check the process definition.','2015-01-16') ,
 ( 'LABEL','ID_FILE_PLUGIN_NOT_EXISTS','en','File ''{pluginFile}'' does not exist','2014-01-15') ,
 ( 'LABEL','ID_CREATING_TABLE','en','Creating table, please wait...','2014-01-15') ,
 ( 'LABEL','ID_UPDATING_TABLE','en','Updating table, please wait...','2014-01-15') ,
@@ -3339,8 +3339,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SEARCH_PATTERN','en','Search Pattern','2014-01-15') ,
 ( 'LABEL','ID_SEARCH_XML_METADATA','en','Search XML metadata','2014-01-15') ,
 ( 'LABEL','ID_FTP_MONITOR_SETTINGS','en','FTP Monitor Settings','2014-01-15') ,
-( 'LABEL','ID_ERROR_UPLOADING_FILENAME','en','There was an error uploading the file, probably the file size if greater than upload_max_filesize parameter in php.ini, please check this parameter and try again.','2014-01-15') ,
-( 'LABEL','ID_POSTED_DATA_EMPTY','en','Posted data is empty!','2014-01-15') ,
+( 'LABEL','ID_ERROR_UPLOADING_FILENAME','en','There was an error uploading the file. The file size is probably greater than the upload_max_filesize parameter in php.ini. Please check this parameter and try again.','2015-01-16') ,
+( 'LABEL','ID_POSTED_DATA_EMPTY','en','The posted data is empty!','2015-01-16') ,
 ( 'LABEL','ID_MOST_AT_LEAST_3_DAY','en','You must define at least 3 Working Days!','2014-01-15') ,
 ( 'LABEL','ID_SELECT_ALL','en','You must define at least one ''ALL'' for other days you have not defined','2014-01-15') ,
 ( 'LABEL','ID_ASSIGN_USERGROUPS','en','Assign users group or user','2014-01-15') ,
@@ -3356,11 +3356,11 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MESSAGE_SENT','en','message sent','2014-01-15') ,
 ( 'LABEL','ID_CASE_DOES_NOT_EXIST','en','Case {CASE_NUMBER} does not exist','2014-01-15') ,
 ( 'LABEL','ID_COMMAND_EXECUTED_SUCCESSFULLY','en','Command executed successfully','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_USERNAME_REQUIRED','en','Username is required','2014-01-15') ,
 ( 'LABEL','ID_PASSWD_REQUIRED','en','Password is required','2014-01-15') ,
-( 'LABEL','ID_PASSWORD_SURPRASES','en','Password is longer than maximum length allowed','2014-10-21') ,
+( 'LABEL','ID_PASSWORD_SURPRASES','en','Password is longer than the maximum allowed length','2015-01-16') ,
 ( 'LABEL','ID_USERNAME_ALREADY_EXISTS','en','Username ''{USER_ID}'' already exists','2014-01-15') ,
 ( 'LABEL','ID_INVALID_ROLE','en','Invalid role ''{ROLE}''','2014-01-15') ,
 ( 'LABEL','ID_USER_CREATED_SUCCESSFULLY','en','User {FIRSTNAME} {LASTNAME} [{USER_ID}] created successfully','2014-01-15') ,
@@ -3376,8 +3376,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DEPARTMENT_NOT_REGISTERED_SYSTEM','en','Department {DEP_ID} is not registered in the system','2014-01-15') ,
 ( 'LABEL','ID_CASE_DELEGATION_ALREADY_CLOSED','en','This case delegation is already closed or does not exist','2014-01-15') ,
 ( 'LABEL','ID_VARIABLES_RECEIVED','en','variables received','2014-01-15') ,
-( 'LABEL','ID_VARIABLES_PARAM_ZERO','en','The variables param length is zero','2014-01-15') ,
-( 'LABEL','ID_VARIABLES_PARAM_NOT_ARRAY','en','The variables param is not an array','2014-01-15') ,
+( 'LABEL','ID_VARIABLES_PARAM_ZERO','en','The variables param length is zero','2015-01-16') ,
+( 'LABEL','ID_VARIABLES_PARAM_NOT_ARRAY','en','The variables param is not an array','2015-01-16') ,
 ( 'LABEL','ID_VARIABLES_SENT','en','variables sent','2014-01-15') ,
 ( 'LABEL','ID_INVALID_PROCESS','en','Invalid process','2014-01-15') ,
 ( 'LABEL','ID_MULTIPLE_STARTING_TASKS','en','Multiple starting tasks in the process','2014-01-15') ,
@@ -3390,7 +3390,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASE_ASSIGNED_ANOTHER_USER','en','This case is assigned to another user','2014-01-15') ,
 ( 'LABEL','ID_CASE_IN_STATUS','en','This case is in status','2014-01-15') ,
 ( 'LABEL','ID_CAN_NOT_ROUTE_CASE_USING_WEBSERVICES','en','Can not route a case with Manual Assignment using webservices','2014-01-15') ,
-( 'LABEL','ID_TASK_DOES_NOT_HAVE_ROUTING_RULE','en','Task does not have a routing rule; check process definition','2014-01-15') ,
+( 'LABEL','ID_TASK_DOES_NOT_HAVE_ROUTING_RULE','en','Task does not have a routing rule. Please, check the process definition.','2015-01-16') ,
 ( 'LABEL','ID_TASK_DEFINED_MANUAL_ASSIGNMENT','en','The task is defined for Manual assignment','2014-01-15') ,
 ( 'LABEL','ID_INVALID_TRIGGER','en','Invalid trigger ''{TRIGGER_INDEX}''','2014-01-15') ,
 ( 'LABEL','ID_EXECUTED','en','executed','2014-01-15') ,
@@ -3431,19 +3431,19 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SELECTED_IMAGE_DELETED','en','The selected image has been deleted.','2014-01-15') ,
 ( 'LABEL','ID_SELECTED_IMAGE_IS_LOGO','en','The selected image has been established as the logo','2014-10-21') ,
 ( 'LABEL','ID_DELETE_SELECTED_LOGO','en','Do you want to delete the selected logo?','2014-01-15') ,
-( 'LABEL','MISSING_OR_NOT_CONFIGURED_SMTP','en','Missing or it''s not configured SMTP mail. Check the configuration.','2014-01-15') ,
+( 'LABEL','MISSING_OR_NOT_CONFIGURED_SMTP','en','SMTP mail is missing or it''s not configured. Please, check the configuration.','2015-01-16') ,
 ( 'LABEL','ID_SELECT_ONE_OPTION','en','select one option','2014-01-15') ,
 ( 'LABEL','ID_CLICK_LOCK','en','Click the lock to make changes.','2014-01-15') ,
 ( 'LABEL','ID_CLICK_UNLOCK','en','Click the lock to prevent further changes.','2014-01-15') ,
 ( 'LABEL','ID_MAX_FILE_SIZE','en','Maximum upload file size','2014-01-15') ,
 ( 'LABEL','ID_DEFAULT_SKIN','en','Default Skin','2014-01-15') ,
 ( 'LABEL','ID_INTERMEDIATE_TIMER_EVENT','en','Intermediate Timer Event (Multiple Event)','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_TIME_ZONE','en','Time Zone','2014-01-15') ,
 ( 'LABEL','ID_MEMORY_LIMIT','en','Memory Limit (Mb)','2014-01-15') ,
 ( 'LABEL','ID_SYSTEM_SETTINGS','en','System Settings','2014-01-15') ,
-( 'LABEL','ID_SYSTEM_REDIRECT_CONFIRM','en','You must login again to view the changes, do you want do it now?','2014-01-15') ,
+( 'LABEL','ID_SYSTEM_REDIRECT_CONFIRM','en','You must login again to view the changes. Do you want do it now?','2015-01-16') ,
 ( 'LABEL','ID_TASK_CANT_DELETE','en','You can''t delete the task "{0}" because it has {1} cases.','2014-01-15') ,
 ( 'LABEL','ID_INDEX_NOT_WRITEABLE','en','The index file is not writable. <br/>Please give write permission to file:','2014-01-15') ,
 ( 'LABEL','ID_TITLE_AUTHENTICATION_SOURCE_INF','en','Authentication Source Information','2014-01-15') ,
@@ -3476,7 +3476,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SHOULD_SELECT_LANGUAGE_FROM_LIST','en','Select a language from the list.','2014-10-21') ,
 ( 'LABEL','ID_COLUMNS','en','columns','2014-01-15') ,
 ( 'LABEL','ID_NOTICE','en','Notice','2014-01-15') ,
-( 'LABEL','ID_ACTION_DISABLED_TO_LOW_PERFORMANCE_1','en','This action was disabled to prevent slow browser performance, because  there are more than 100 records in the column definition grid.','2014-10-21') ,
+( 'LABEL','ID_ACTION_DISABLED_TO_LOW_PERFORMANCE_1','en','This action was disabled to prevent slow browser performance. There are more than 100 records in the column definition grid.','2015-01-16') ,
 ( 'LABEL','ID_ACTION_DISABLED_TO_LOW_PERFORMANCE_2','en','<br/><br/>Please perform this action with manual selection only.','2014-01-15') ,
 ( 'LABEL','ID_MAX_LIMIT_COLUMNS_FOR_DATABASE','en','The maximun limit of columns for a database table is 255, you already have them defined!','2014-01-15') ,
 ( 'LABEL','ID_OUTPUT_DOCUMENT_TEMPLATE','en','Output Document Template','2014-01-15') ,
@@ -3520,7 +3520,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PASSWORD_TESTING','en','Testing password','2014-01-15') ,
 ( 'LABEL','ID_TRUE','en','TRUE','2014-01-15') ,
 ( 'LABEL','ID_FALSE','en','FALSE','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_DATE_FORMAT_15','en','M d, Y','2014-01-15') ,
 ( 'LABEL','ID_DATE_FORMAT_16','en','m D, Y','2014-01-15') ,
@@ -3550,11 +3550,11 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_COPYRIGHT_COL','en','Colosa, Inc. All rights reserved','2014-01-15') ,
 ( 'LABEL','ID_COPYRIGHT_FROM','en','Copyright &copy; 2003-','2014-01-15') ,
 ( 'LABEL','ID_STARTING_LOG_FILE','en','Starting log file','2014-01-15') ,
-( 'LABEL','ID_WRITEABLE','en','Writeable','2014-01-15') ,
+( 'LABEL','ID_WRITEABLE','en','Writable','2015-01-16') ,
 ( 'LABEL','ID_NOT_ENABLED','en','Not Enabled','2014-01-15') ,
-( 'LABEL','ID_FILE_NOT_WRITEABLE','en','File ''{0}'' is not writeable. Please check permission before continue','2014-01-15') ,
+( 'LABEL','ID_FILE_NOT_WRITEABLE','en','File ''{0}'' is not writable. Please, check the file permissions before continuing.','2015-01-16') ,
 ( 'LABEL','ID_SQL_FILE_INVALID','en','File {0} is not a valid sql file','2014-01-15') ,
-( 'LABEL','ID_INSTALL_BUT_ERROR','en','Installed but with error, couldn''t update {0}','2014-01-15') ,
+( 'LABEL','ID_INSTALL_BUT_ERROR','en','Errors during installation. Couldn''t update {0}','2015-01-16') ,
 ( 'LABEL','ID_CREATING','en','Creating : {0}','2014-01-15') ,
 ( 'LABEL','ID_CONNECT_TO_SERVER','en','Connected to server {0} :{1}  using user: ''{2}''','2014-01-15') ,
 ( 'LABEL','ID_RECORD_DOES_NOT_EXIST','en','Record does not exist','2014-01-15') ,
@@ -3562,18 +3562,18 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_QUERY','en','Query','2014-01-15') ,
 ( 'LABEL','ID_CREATING_WORKSPACE','en','Creating workspace {0}','2014-01-15') ,
 ( 'LABEL','ID_FILE_PROCESSED','en','File: {0} processed in {1} seconds','2014-01-15') ,
-( 'LABEL','ID_PROCESING','en','Procesing :  {0}','2014-01-15') ,
+( 'LABEL','ID_PROCESING','en','Processing: {0}','2015-01-16') ,
 ( 'LABEL','ID_REMOVED','en','Removed','2014-01-15') ,
 ( 'LABEL','ID_CAN_NOT_REMOVED','en','Can not be removed','2014-01-15') ,
 ( 'LABEL','ID_MYSQL_ERROR','en','MySQL error: {0}','2014-01-15') ,
 ( 'LABEL','ID_DOES_NOT_EXIST_AVAILABLE_CONNECTION','en','Does not exist an available connection','2014-01-15') ,
 ( 'LABEL','ID_INSUFFICIENT_PRIVILEGES_FUNCTION','en','Insufficient privileges to execute this function','2014-01-15') ,
-( 'LABEL','ID_PROCESSMAKER_UI_NOT_INSTALL','en','The new ProcessMaker UI couldn''t be applied on installation, you can enable it after from Admin->System settings.','2014-01-15') ,
+( 'LABEL','ID_PROCESSMAKER_UI_NOT_INSTALL','en','The new ProcessMaker UI couldn''t be applied on installation. You can enable it afterwards in ADMIN > Settings > System.','2015-01-16') ,
 ( 'LABEL','ID_PROCESSMAKER_WRITE_CONFIG_INDEX','en','ProcessMaker couldn''t write on configuration file: {0}<br/>','2014-01-15') ,
 ( 'LABEL','ID_SESSION_ACTIVE','en','Session active','2014-01-15') ,
 ( 'LABEL','ID_SESSION_EXPIRED','en','The session has expired.','2014-01-15') ,
 ( 'LABEL','ID_NOT_PRIVILEGES','en','You do not have privileges','2014-01-15') ,
-( 'LABEL','ID_INSTALL_SUCESS','en','Install completed Succesfully','2014-01-15') ,
+( 'LABEL','ID_INSTALL_SUCESS','en','Installation completed successfully.','2015-01-16') ,
 ( 'LABEL','ID_RESERVED_WORD','en','because it is a reserved word','2014-01-15') ,
 ( 'LABEL','ID_NOT_CREATE_TABLE','en','Could not create the table with the name','2014-01-15') ,
 ( 'LABEL','ID_NOT_HAVE_USERS','en','doesn''t have users.','2014-01-15') ,
@@ -3584,7 +3584,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MSSQL_SUCCESS_CONNECT','en','Succesfully connected to MSSQL Server','2014-01-15') ,
 ( 'LABEL','ID_CONNECTION_ERROR_SECURITYADMIN','en','Connection Error: User "{0}"  can''t create databases and Users <br>Please provide an user with sysadmin role or dbcreator and securityadmin roles.','2014-01-15') ,
 ( 'LABEL','ID_PHP_MSSQL_NOT_INSTALLED','en','php-mssql is Not Installed','2014-01-15') ,
-( 'LABEL','ID_CONNECTION_ERROR_PRIVILEGE','en','Connection Error: User "{0}" can''t create databases and Users <br>Please provide an user with SUPER privilege.','2014-01-15') ,
+( 'LABEL','ID_CONNECTION_ERROR_PRIVILEGE','en','Connection Error: User \"{0}\" can''t create databases and users. <br>Please, provide a user with SUPER privileges.','2015-01-16') ,
 ( 'LABEL','ID_DATABASE_EXISTS_OVERWRITE','en','Database already exists, check "Delete Databases if exists" to overwrite the exiting databases.','2014-01-15') ,
 ( 'LABEL','ID_USER_PROCESS_NOT_START','en','User can not start process','2014-01-15') ,
 ( 'LABEL','ID_REQUEST_ACTION_NOT_EXIST','en','The requested action does not exist','2014-01-15') ,
@@ -3602,7 +3602,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UPLOAD_LEAST_FILE','en','You may upload at least one file','2014-01-15') ,
 ( 'LABEL','ID_SELECT_DIRECTORY','en','Select a directory','2014-01-15') ,
 ( 'LABEL','ID_DESTINATION','en','Destination','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_FAILED_STORE_DATA','en','Failed to store data','2014-01-15') ,
 ( 'LABEL','ID_DELETE_TRANSLATIONS','en','Delete the selected translations?','2014-01-15') ,
@@ -3628,7 +3628,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_REALLY_SHOULD','en','You really should do it','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_DELETE_CONDITION','en','Are you sure to delete this condition?','2014-01-15') ,
 ( 'LABEL','ID_DIAGRAM_VALIDATED_CORRECTLY','en','Diagram has been validated correctly.','2014-01-15') ,
-( 'LABEL','ID_PROJECT_DOWNLOAD_CORRECTLY','en','Project Downloaded correctly.','2014-01-15') ,
+( 'LABEL','ID_PROJECT_DOWNLOAD_CORRECTLY','en','Project downloaded successfully.','2015-01-16') ,
 ( 'LABEL','ID_PROJECT_SHARED_CORRECTLY','en','Project has been shared correctly.','2014-01-15') ,
 ( 'LABEL','ID_PROJECT_PUBLISHED_CORRECTLY','en','Project has been published correctly.','2014-01-15') ,
 ( 'LABEL','ID_RECORD_SAVED_SUCCESFULLY','en','Record saved successfully','2014-01-15') ,
@@ -3646,12 +3646,12 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5','en','ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login.','2014-09-02') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_2','en','If you are installing ProcessMaker on a remote web server, you will need to get this information from your Database Server.','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_1','en','ProcessMaker stores all of its data in a database. This screen gives the installation program the information needed to create this database.','2014-01-15') ,
-( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP3_2','en','If you see <font color="red">"unwriteable"</font> you need to change the permissions on the file or directory to allow ProcessMaker to write to it.','2014-01-15') ,
+( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP3_2','en','If you see <font color=\"red\">\"unwritable\"</font>, change the permissions on the file or directory to allow ProcessMaker to write to it.','2015-01-16') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP3_1','en','In order for ProcessMaker to function correctly it needs to be able to access or write to certain files or directories.','2014-01-15') ,
-( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP2_2','en','However, ProcessMaker still operate if your settings do not quite match the recommended.','2014-01-15') ,
+( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP2_2','en','However, ProcessMaker still operates if your settings do not match the recommended.','2015-01-16') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP2_1','en','These settings are recommended for PHP in order to ensure full compatibility with ProcessMaker.','2014-01-15') ,
-( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_2','en','Failure to do so could lead to your ProcessMaker! installation not functioning correctly.','2014-01-15') ,
-( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1','en','If any of these items is not supported (marked as No) then please take actions to correct them.','2014-01-15') ,
+( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_2','en','Failure to do so could lead your ProcessMaker installation not functioning correctly.','2015-01-16') ,
+( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1','en','If any of these items is not supported (marked as No), then please take actions to correct them.','2015-01-16') ,
 ( 'LABEL','ID_LDAP_OPTIONAL','en','LDAP is optional.','2014-01-15') ,
 ( 'LABEL','ID_MSSQL_SUPPORT_OPTIONAL','en','MSSQL Support is optional.','2014-01-15') ,
 ( 'LABEL','ID_OPENSSL_OPTIONAL','en','OpenSSL is optional.','2014-01-15') ,
@@ -3662,7 +3662,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_REBUILDING_TRANSLATIONS','en','Rebuilding translations','2014-01-15') ,
 ( 'LABEL','ID_CACHE_FILE','en','Cache file:','2014-01-15') ,
 ( 'LABEL','ID_NEW_TRANSLATION','en','New Translation','2014-01-15') ,
-( 'LABEL','ID_SELECT_ONE_ITEM_FROM_LIST','en','Just select one item from the list to edit','2014-01-15') ,
+( 'LABEL','ID_SELECT_ONE_ITEM_FROM_LIST','en','Select just one item from the list to be edited','2015-01-16') ,
 ( 'LABEL','ID_GRID_PAGE_DISPLAYING_ITEMS','en','Displaying items {0} - {1} of {2}','2014-01-15') ,
 ( 'LABEL','ID_DISPLAYING_DB_CONNECTION','en','Displaying DB Connection {0} - {1} of {2}','2014-01-15') ,
 ( 'LABEL','ID_TERMS_USE','en','Terms of use','2014-01-15') ,
@@ -3684,7 +3684,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_RP_DATABASE_NAME','en','Report Database Name','2014-01-15') ,
 ( 'LABEL','ID_RB_DATABASE_NAME','en','Rbac Database Name','2014-01-15') ,
 ( 'LABEL','ID_WF_DATABASE_NAME','en','Workflow Database Name','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_CHANGE_DATABASE_NAME','en','Change Database names','2014-01-15') ,
 ( 'LABEL','ID_ADMIN_USERNAME','en','Admin Username','2014-01-15') ,
@@ -3707,7 +3707,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DIRECTORY_FILE_PERMISSION','en','File Permissions','2014-10-21') ,
 ( 'LABEL','ID_DATA_CORRECT','en','The data is correct.','2014-01-15') ,
 ( 'LABEL','ID_EXIST','en','Exist','2014-01-15') ,
-( 'LABEL','ID_NO_EXIST','en','No exists','2014-01-15') ,
+( 'LABEL','ID_NO_EXIST','en','Does not exist','2015-01-16') ,
 ( 'LABEL','ID_REPORT_DATABASE_NAME','en','Please enter the Report Database Name.','2014-01-15') ,
 ( 'LABEL','ID_WORKFLOW_DATABASE_NAME','en','Please enter the Workflow Database Name','2014-01-15') ,
 ( 'LABEL','ID_RBAC_DATABASE_NAME','en','Please enter the Rbac Database Name.','2014-01-15') ,
@@ -3766,11 +3766,11 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','DYNAFIELD_NODENAME_NUMBER','en','The field name should not start with a number','2014-01-15') ,
 ( 'LABEL','ID_EMPTY_NODENAME','en','The name field is empty','2014-01-15') ,
 ( 'LABEL','ID_TAS_DURATION_REQUIRE','en','Duration task required','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_NAME_TAS_TITLE_REQUIRE','en','Task title required','2014-01-15') ,
-( 'LABEL','APP_TITLE_CASE_LABEL_UPDATE','en','The System has detected that the changes to the case labels will affect more than 1000 records, so the changes will be performed by cron the next time it is scheduled to run.','2014-10-21') ,
-( 'LABEL','ID_MESSAGE_LOGIN','en','The default language that is configured in this place is for the "dropdown" of the languages that are displaying on the login screen, this configuration is set for each workspace.','2014-01-15') ,
+( 'LABEL','APP_TITLE_CASE_LABEL_UPDATE','en','The system has detected that changes to the case labels will affect more than 1000 records, so the changes will be performed by cron the next time it is scheduled to run.','2015-01-16') ,
+( 'LABEL','ID_MESSAGE_LOGIN','en','The default language set here is for the \"Language\" dropdown box displayed on the login screen. This configuration is set for each workspace.','2015-01-20') ,
 ( 'LABEL','ID_MESSAGE_SYSTEM','en','The language that is set by default applies directly when the domain is entered (eg.- http://127.0.0.1:8081), the system reads the configuration and redirects the link to the selected language','2014-01-15') ,
 ( 'LABEL','ID_MESSAGE_SYSTEM2','en','(eg.- http://127.0.0.1:8081/sys/en/classic/login/login), it should be emphasized that this configuration is for all environments.','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAP_SEQUENTIAL','en','Sequential','2014-01-15') ,
@@ -3790,7 +3790,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASE_PAUSE_REASON','en','Reason to pause the case','2014-10-21') ,
 ( 'LABEL','ID_NOTIFY_USERS_CASE','en','Notify users of case','2014-01-15') ,
 ( 'LABEL','ID_CASE_PAUSE_LABEL_NOTE','en','The case was paused due to:','2014-10-21') ,
-( 'LABEL','ID_CASE_CANCEL_REASON','en','Reason why case was canceled','2014-10-21') ,
+( 'LABEL','ID_CASE_CANCEL_REASON','en','Reason why the case was canceled','2015-01-16') ,
 ( 'LABEL','ID_CASE_CANCEL_LABEL_NOTE','en','The case was canceled due to:','2014-10-21') ,
 ( 'LABEL','MIME_DES_DOCX','en','Word Document','2014-01-15') ,
 ( 'LABEL','MIME_DES_XLSX','en','Excel Document','2014-01-15') ,
@@ -3813,7 +3813,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_EVENT_CONDITIONAL','en','Event Conditional','2014-01-15') ,
 ( 'LABEL','ID_PMTABLE_INVALID_FIELD_NAME','en','The following fields cannot be created because they contain the reserved words "{0}"','2014-10-21') ,
 ( 'LABEL','ID_USER_CASES_NOT_START','en','User can''t start a case because doesn''t have a starting task assigned','2014-01-15') ,
-( 'LABEL','ID_USERS_HAS_ASSIGNED_CASES','en','The user has assigned cases, Do you like to continue anyway?','2014-01-15') ,
+( 'LABEL','ID_USERS_HAS_ASSIGNED_CASES','en','The user has assigned cases. Do you want to continue anyway?','2015-01-16') ,
 ( 'LABEL','ID_GRID_PAGE_DISPLAYING_REPORT_PERMISSIONS_MESSAGE','en','Displaying Permissions Simple Reports {0} - {1} of {2}','2014-01-15') ,
 ( 'LABEL','ID_GRID_PAGE_NO_PERMISSIONS_MESSAGE','en','No Permissions to display','2014-01-15') ,
 ( 'LABEL','ID_ASSIGNED_PERMISSIONS_FOR','en','ASSIGNED PERMISSIONS FOR','2014-01-15') ,
@@ -3845,10 +3845,10 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MSG_ENABLE_HTML_EDITING','en','<b>Warning:</b> Editing the HTML prevents fields from being added or moved. Edit the HTML only after creating all the fields. Do you want to continue?','2014-10-21') ,
 ( 'LABEL','ID_ALL_CATEGORIES','en','All Categories','2014-01-15') ,
 ( 'LABEL','ID_CASES_NOTES_NO_PERMISSIONS','en','You do not have permission to access the cases notes','2014-10-21') ,
-( 'LABEL','ID_DELETE_DOCUMENT','en','Do you want to delete selected document?','2014-01-15') ,
+( 'LABEL','ID_DELETE_DOCUMENT','en','Do you want to delete the selected document?','2015-01-16') ,
 ( 'LABEL','ID_CRON_ACTIONS_LOG','en','Cron Actions Log','2014-01-15') ,
 ( 'LABEL','ID_AUTH_SOURCE_MISSING','en','The plugin related to this authentication source was removed or disabled. Please consult your system administrator.','2014-10-21') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_TRIGGER_REQUIRED','en','Trigger is required','2014-01-15') ,
 ( 'LABEL','ID_TIME_REQUIRED','en','Time is required','2014-01-15') ,
@@ -3869,7 +3869,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CHECKING','en','Checking...','2014-01-15') ,
 ( 'LABEL','ID_CHECK_AGAIN','en','Check again','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION','en','If any of these items is not supported (marked as No) then please take actions to correct them.<br />','2014-01-15') ,
-( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION2','en','Failure to do so could lead to your ProcessMaker installation not functioning correctly!<br />','2014-01-15') ,
+( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION2','en','Failure to do so could lead your ProcessMaker installation not functioning correctly!<br />','2015-01-16') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_PHP','en','PHP Version >= 5.2.10','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_MYSQL','en','MySQL Support','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_MSSQL','en','MSSQL Support (*)','2014-01-15') ,
@@ -3882,13 +3882,13 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_LDAP','en','LDAP Support (*)','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_MEMORYLIMIT','en','Memory Limit >= 80M','2014-01-15') ,
 ( 'LABEL','ID_ADMINISTRATOR_ROLE_CANT_CHANGED','en','The role of the administrator can not be changed!','2014-10-21') ,
-( 'LABEL','ID_CONFIRM_IMPORT_DYNAFORM','en','When you import the selected form, lose the information of the current form. Are you sure you import the form?','2014-01-15') ,
+( 'LABEL','ID_CONFIRM_IMPORT_DYNAFORM','en','If the selected form is imported, you may lose the information in the current form. Are you sure you want to import the form?','2015-01-16') ,
 ( 'LABEL','ID_CASESLIST_FIELD_RESET','en','Restart everything with the system fields','2014-01-15') ,
 ( 'LABEL','ID_CASESLIST_FIELD_RESET_ID','en','Restart everything with the system fields, with the ID of the label for its translation','2014-01-15') ,
 ( 'LABEL','ID_CASESLIST_FIELD_COMPLETE','en','Complete all system fields','2014-01-15') ,
-( 'LABEL','ID_CASESLIST_FIELD_COMPLETE_ID','en','Complete all system fields, with the label ID for its translation','2014-01-15') ,
+( 'LABEL','ID_CASESLIST_FIELD_COMPLETE_ID','en','Complete all system fields with the label ID for its translation','2015-01-16') ,
 ( 'LABEL','ID_CASESLIST_FIELD_LABEL_RESET','en','Restart labels with system fields','2014-01-15') ,
-( 'LABEL','ID_CASESLIST_FIELD_LABEL_RESET_ID','en','Restart labels with system fields, with the ID for its translation','2014-01-15') ,
+( 'LABEL','ID_CASESLIST_FIELD_LABEL_RESET_ID','en','Restart labels with system fields with the labels ID for its translation','2015-01-16') ,
 ( 'LABEL','ID_SKIN_TEAM','en','ProcessMaker Team','2014-01-15') ,
 ( 'LABEL','ID_CREATED','en','Created','2014-01-15') ,
 ( 'LABEL','ID_PREVIOUS_YEAR','en','Previous Year','2014-01-15') ,
@@ -3930,7 +3930,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_FAILED_VALIDATIONS_IN_CLASS','en','Failed Validation in class {CLASS}.','2014-01-15') ,
 ( 'LABEL','ID_ERROR_CHANGE_SEQUENCE_NUMBER','en','Unable to generate a numerical sequence. Another user is performing the same request.','2014-10-21') ,
 ( 'LABEL','ID_CANT_RESOLVE_APPLICATION','en','Can''t resolve the Aplication ID for this request.','2014-01-15') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_FAILED_VALIDATION_IN_CLASS1','en','Failed Validation in class {CLASS}.','2014-01-15') ,
 ( 'LABEL','ID_REQUIRED_NAME_CASE_SCHEDULER','en','You forgot the name of the Case Scheduler','2014-01-15') ,
@@ -3960,7 +3960,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_USER_ROLE_CANT_CHANGED_TO_ADMINISTRATOR','en','The administrator role cannot be changed or created.','2014-10-21') ,
 ( 'LABEL','ID_DIRECTORY_NAME_EXISTS_ENTER_ANOTHER','en','The name "{0}" already exists, please enter another.','2014-01-15') ,
 ( 'LABEL','ID_DELETE_SUPERVISOR','en','You cannot unassign the supervisor','2014-01-15') ,
-( 'LABEL','ID_CONFIRM_ASSIGNED_GRID','en','Do you want to delete the row data that you just created?','2014-10-21') ,
+( 'LABEL','ID_CONFIRM_ASSIGNED_GRID','en','Do you want to delete the data in the row you just created?','2015-01-16') ,
 ( 'LABEL','ID_PLUGINS_MANAGER','en','Plugins Manager','2014-01-15') ,
 ( 'LABEL','ID_CASE_FIELD','en','Case Field','2014-01-15') ,
 ( 'LABEL','ID_DELAY_FIELD','en','Delay Field','2014-01-15') ,
@@ -4012,7 +4012,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_EVENT_ADD_CURRENT','en','Add current task user','2014-02-12') ,
 ( 'LABEL','ID_EVENT_ADD_USERS','en','Add users','2014-02-12') ,
 ( 'LABEL','ID_EVENT_REMOVE_SELECTED','en','Remove selected','2014-02-12') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_EVENT_ADD_DYNAVAR','en','Add dynavar','2014-02-12') ,
 ( 'LABEL','ID_EVENT_ADD_GROUP','en','Add groups','2014-02-12') ,
@@ -4094,7 +4094,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASES_INCORRECT_INFORMATION','en','Incorrect or unavailable information about this case: {0}','2014-05-21') ,
 ( 'LABEL','ID_INVALID_VALUE_FOR','en','Invalid value specified for: {0}','2014-05-21') ,
 ( 'LABEL','ID_CASE_SCHEDULER_DOES_NOT_EXIST','en','This case scheduler with sch_uid: {0} does not exist!','2014-05-21') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_INFORMATION_EMPTY','en','The information sent is empty!','2014-10-21') ,
 ( 'LABEL','ID_TASK_NOT_FOUND','en','Task not found for id: {0}','2014-05-21') ,
@@ -4155,13 +4155,13 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DATE_NOT_VALID','en','The value ''{0}'' is not a valid date for the format ''{1}''.','2014-05-29') ,
 ( 'LABEL','ID_INVALID_VALUE_ARRAY','en','Invalid value for ''{0}''. It must be an array.','2014-10-21') ,
 ( 'LABEL','ID_INVALID_VALUE_STRING','en','Invalid value for ''{0}''. It must be a string.','2014-10-21') ,
-( 'LABEL','ID_INVALID_VALUE_INTEGER','en','Invalid value for ''{0}'' it must be an integer.','2014-10-21') ,
+( 'LABEL','ID_INVALID_VALUE_INTEGER','en','Invalid value for ''{0}''. It must be an integer.','2015-01-16') ,
 ( 'LABEL','ID_INVALID_VALUE_BOOLEAN','en','Invalid value for ''{0}''. It must be a boolean.','2014-10-21') ,
 ( 'LABEL','ID_INVALID_VALUE_IS_EMPTY','en','The field ''{0}'' is empty.','2014-05-29') ,
 ( 'LABEL','ID_INCORRECT_VALUE_ACTION','en','The value for $action is incorrect.','2014-05-29') ,
 ( 'LABEL','ID_CASE_ALREADY_CANCELED','en','The case ''{0}'' is already canceled','2014-05-29') ,
 ( 'LABEL','ID_CASE_IS_CANCELED','en','The case ''{0}'' is canceled','2014-05-29') ,
-( 'LABEL','ID_INVALID_MAX_PERMITTED','en','Invalid value for ''{0}'', the permitted maximum length of {1} characters.','2014-05-29') ,
+( 'LABEL','ID_INVALID_MAX_PERMITTED','en','Invalid value for ''{0}''. The maximum allowed length is {1} characters.','2015-01-16') ,
 ( 'LABEL','ID_DBC_TYPE_INVALID','en','The database connection with dbs_type: ''{0}'' is invalid','2014-10-21') ,
 ( 'LABEL','ID_DBC_SERVER_INVALID','en','The database connection with dbs_server: ''{0}'', is invalid','2014-10-21') ,
 ( 'LABEL','ID_DBC_DBNAME_INVALID','en','The database connection with dbs_database_name: ''{0}'' is invalid','2014-10-21') ,
@@ -4176,7 +4176,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_NAME_STG_TITLE_REQUIRE','en','Stage title required','2014-06-25') ,
 ( 'LABEL','ID_INPUT_DOCUMENT_ITS_ASSIGNED','en','The Input Document with {0}: {1} it''s assigned in "{2}".','2014-06-26') ,
 ( 'LABEL','ID_PROCESS_VARIABLE_DOES_NOT_EXIST','en','The variable with {0}: {1} does not exist.','2014-06-30') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_PROCESS_VARIABLE_REQUIRED_VARIABLES_FOR_QUERY','en','The variable "{0}" requires the variables "{1}" for the query.','2014-10-21') ,
 ( 'LABEL','ID_OUTPUT_DOCUMENT_ITS_ASSIGNED','en','The Output Document with {0}: {1} it''s assigned in "{2}".','2014-07-01') ,
@@ -4199,7 +4199,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CHOOSE_PROVIDER','en','Please select provider','2014-08-27') ,
 ( 'LABEL','ID_INDEX','en','Index','2014-09-10') ,
 ( 'LABEL','ID_ERROR_JS_NOT_AVAILABLE','en','Your browser doesn''t support JavaScript or it may be disabled. Please use a different browser or enable JavaScript. Dynaforms won''t entirely work because JavaScript is required.','2014-10-21') ,
-( 'LABEL','ID_MAXIMUM_SIZE_FILE_REQUIRED','en','The maximum size file is required!','2014-10-21') ,
+( 'LABEL','ID_MAXIMUM_SIZE_FILE_REQUIRED','en','The file maximum size is required!','2015-01-16') ,
 ( 'LABEL','ID_BEFORE_UPDATE','en','Before Upgrade','2014-09-18') ,
 ( 'LABEL','ID_WAIT_INSTALLING_PLUGIN','en','Please wait while the plugin is being installed...','2014-10-21') ,
 ( 'LABEL','ID_UPGRADING_PLUGIN','en','Please wait while upgrading the plugin...','2014-09-18') ,
@@ -4258,7 +4258,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PUBLISHER','en','Publisher','2014-09-18') ,
 ( 'LABEL','ID_LATEST_VERSION','en','Latest version','2014-09-18') ,
 ( 'LABEL','ID_BUY_NOW','en','Buy now','2014-09-18') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_INSTALLED','en','Installed','2014-09-18') ,
 ( 'LABEL','ID_INSTALL_NOW','en','Install now','2014-09-18') ,
@@ -4340,7 +4340,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UPDATE_CALENDAR','en','Update Calendar','2014-10-10') ,
 ( 'LABEL','ID_DELETE_CALENDAR','en','Delete Calendar','2014-10-10') ,
 ( 'LABEL','ID_CREATE_DASHLET_INSTANCE','en','Create Dashlet Instance','2014-10-10') ;
-INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_UPDATE_DASHLET_INSTANCE','en','Update Dashlet Instance','2014-10-10') ,
 ( 'LABEL','ID_DELETE_DASHLET_INSTANCE','en','Delete Dashlet Instance','2014-10-10') ,
@@ -4394,9 +4394,41 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DISABLED_CODE_PROCESS','en','The process "{0}" has the following unwanted code (this code should be removed): {1}','2014-11-18') ,
 ( 'LABEL','ID_LECA','en','Your license has expired, please contact your administrator.','2014-12-01') ,
 ( 'LABEL','ID_NLIC','en','License installed successfully','2014-12-02') ,
-( 'LABEL','ID_ENTERPRISE_PACK_CANT_UPLOAD','en','The Enterprise plugin pack can''t be uploaded from this administrator, upload it from: ADMIN -> Plugins -> Plugins Manager','2014-12-03') ;
+( 'LABEL','ID_ENTERPRISE_PACK_CANT_UPLOAD','en','The Enterprise plugin pack can''t be uploaded from this administrator, upload it from: ADMIN -> Plugins -> Plugins Manager','2014-12-03') ,
+( 'LABEL','ID_WEB_ENTRY_EVENT_FLOW_EVENT_TO_ACTIVITY_DOES_NOT_EXIST','en','The flow of event to activity does not exist.','2015-01-16') ,
+( 'LABEL','ID_WEB_ENTRY_EVENT_ALREADY_REGISTERED','en','The event with {0}: {1} already is registered.','2015-01-16') ,
+( 'LABEL','ID_EMAIL_SERVER_DELETE_WARNING_MESSAGE','en','Do you want to delete the Email Server?','2015-01-15') ,
+( 'LABEL','ID_WEB_ENTRY_EVENT_DOES_NOT_EXIST','en','The WebEntry-Event with {0}: {1} does not exist.','2015-01-16') ,
+( 'LABEL','ID_EMAIL_SERVER_DOES_NOT_EXIST','en','The email server with {0}: {1} does not exist.','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_IS_DEFAULT','en','The email server with {0}: {1} is default.','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_INSERT_DATA','en','Insert data...','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_UPDATE_DATA','en','Update data...','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_DELETE_DATA','en','Delete data...','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_TEST_DATA','en','Test data...','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_NEW','en','New Email Server','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_EDIT','en','Edit Email Server','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_TITLE_TESTING','en','Testing Email Server','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_RESULT_TESTING','en','Result Testing Email Server','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_TITLE','en','Email Servers','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_THIS_CONFIGURATION_IS_DEFAULT','en','Set that this configuration is the default','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_TESTING','en','Testing Email Server','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_CONFIRM_DELETE','en','Do you want to delete the Email Server?','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_PORT','en','Port','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_DEFAULT','en','Default','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_ACCOUNT_FROM','en','Account From','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_VERIFYING_MAIL','en','Verifying Mail Transport Agent','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_RESOLVING_NAME','en','Resolving Host Name: {0}','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_CHECK_PORT','en','Checking port: {0}','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_ESTABLISHING_CON_HOST','en','Establishing connection to host: {0}','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_LOGIN','en','Login as: {0} On {1} SMTP Server','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_SENDING_EMAIL','en','Sending a test mail to: {0}','2014-12-24') ;
+INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+( 'LABEL','ID_EVENT_NOT_IS_START_EVENT','en','The event with {0}: {1} not is "Start Event".','2015-01-13') ,
+( 'LABEL','ID_WEB_ENTRY_EVENT_DOES_NOT_IS_REGISTERED','en','The event with {0}: {1} does not is registered.','2015-01-16') ,
+( 'LABEL','ID_WEB_ENTRY_EVENT_TITLE_ALREADY_EXISTS','en','The WebEntry-Event title with {0}: "{1}" already exists.','2015-01-16') ;
+
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,
 ('AD','ALV','Andorra la Vella',' ','') ,
 ('AD','CAN','Canillo',' ','') ,
@@ -4477,7 +4509,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AF','TGH','Torghundi',' ','') ,
 ('AF','TII','Tirinkot',' ','') ,
 ('AF','TQN','Taluqan',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AF','UND','Kunduz',' ','') ,
 ('AF','URN','Urgoon',' ','') ,
 ('AF','URZ','Uruzgan',' ','') ,
@@ -4558,7 +4590,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AO','LBZ','Lukapa',' ','') ,
 ('AO','LIE','Lieura',' ','') ,
 ('AO','LOB','Lobito',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AO','LUC','Lucira',' ','') ,
 ('AO','LUO','Luena',' ','') ,
 ('AO','LZM','Luzamba',' ','') ,
@@ -4639,7 +4671,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AQ','WSA','Wasa',' ','') ,
 ('AQ','ZGN','Zhongshan',' ','') ,
 ('AR','','',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AR','ACF','Arrecifes',' ','B') ,
 ('AR','AEP','Jorge Newbury Apt/Buenos Aires',' ','B') ,
 ('AR','AFA','San Rafael',' ','M') ,
@@ -4720,7 +4752,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AR','LPG','La Plata',' ','B') ,
 ('AR','LPS','Las Palmas',' ','B') ,
 ('AR','LQU','La Quiaca',' ','Y') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AR','LUJ','Lujan',' ','B') ,
 ('AR','LUQ','San Luis',' ','D') ,
 ('AR','MAR','Martinez',' ','B') ,
@@ -4801,7 +4833,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AR','SNS','San Nicolas de los Arroyos',' ','B') ,
 ('AR','SPD','San Pedro',' ','E') ,
 ('AR','SSA','San Salvador',' ','E') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AR','SSJ','San Salvador de Jujuy',' ','Y') ,
 ('AR','SSN','San Sebastian',' ','V') ,
 ('AR','SST','Santa Teresita',' ','B') ,
@@ -4882,7 +4914,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AT','BIS','Bisamberg/Wien',' ','') ,
 ('AT','BKL','Bruck an der Leitha',' ','') ,
 ('AT','BKZ','Bad Kreuzen',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AT','BLU','Bludenz',' ','') ,
 ('AT','BMF','Bad Mitterndorf',' ','') ,
 ('AT','BNF','Berndorf',' ','') ,
@@ -4963,7 +4995,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AT','GLA','Glanegg',' ','') ,
 ('AT','GLZ','Glanz',' ','') ,
 ('AT','GMU','Gmund',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AT','GNF','Ganserndorf',' ','') ,
 ('AT','GNR','Geinberg',' ','') ,
 ('AT','GNZ','Granz',' ','') ,
@@ -5044,7 +5076,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AT','KFH','Koflach',' ','') ,
 ('AT','KFS','Kufstein',' ','') ,
 ('AT','KGI','Kopfing im Innkreis',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AT','KHS','Kleinharras',' ','') ,
 ('AT','KIE','Kienberg',' ','') ,
 ('AT','KIN','Kindberg',' ','') ,
@@ -5125,7 +5157,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AT','MKC','Mitterkirchen',' ','') ,
 ('AT','MLS','Mittersill',' ','') ,
 ('AT','MNO','Mullendorf',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AT','MOE','Modling',' ','') ,
 ('AT','MON','Mondsee',' ','') ,
 ('AT','MRC','Marchtrenk',' ','') ,
@@ -5206,7 +5238,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AT','RDF','Rohrendorf bei Krems',' ','') ,
 ('AT','RDN','Radenthein',' ','') ,
 ('AT','RDW','Ratsch an der Weinstrasse',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AT','RFD','Radfeld',' ','') ,
 ('AT','RHN','Ranshofen',' ','') ,
 ('AT','RIE','Ried',' ','') ,
@@ -5287,7 +5319,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AT','TDW','Trausdorf an der Wulka',' ','') ,
 ('AT','TEC','Tenneck',' ','') ,
 ('AT','TEF','Teesdorf',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AT','TEL','Telfs',' ','') ,
 ('AT','TEU','Teufenbach',' ','') ,
 ('AT','TEX','Texing',' ','') ,
@@ -5368,7 +5400,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AT','ZIR','Zirl',' ','') ,
 ('AT','ZIS','Zistersdorf',' ','') ,
 ('AT','ZNH','Siezenheim',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AT','ZRS','Zurs',' ','') ,
 ('AT','ZTG','Zettling',' ','') ,
 ('AT','ZTW','Zeltweg',' ','') ,
@@ -5449,7 +5481,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','BER','Berri',' ','SA') ,
 ('AU','BEU','Bedourie',' ','QL') ,
 ('AU','BEV','Bonnie Vale',' ','WA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','BFC','Bloomfield',' ','QL') ,
 ('AU','BGA','Bungwahl',' ','NS') ,
 ('AU','BGB','Burringbar',' ','NS') ,
@@ -5530,7 +5562,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','BXT','Baxter',' ','VI') ,
 ('AU','BYA','Binya',' ','NS') ,
 ('AU','BYB','Boyup Brook',' ','WA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','BYP','Beauty Point',' ','TS') ,
 ('AU','BYS','Bayswater',' ','VI') ,
 ('AU','BYU','Boyanup',' ','WA') ,
@@ -5611,7 +5643,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','CRG','Caringbah',' ','NS') ,
 ('AU','CRH','Cherribah',' ','QL') ,
 ('AU','CRJ','Coorabie',' ','SA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','CRS','Coral Sea',' ','') ,
 ('AU','CRY','Carlton Hill',' ','WA') ,
 ('AU','CSD','Cresswell Downs',' ','NT') ,
@@ -5692,7 +5724,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','EJB','East Jindabyne',' ','NS') ,
 ('AU','EKD','Elkedra',' ','NT') ,
 ('AU','ELC','Elcho Island',' ','NT') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','ELE','Electrona',' ','TS') ,
 ('AU','ELF','Eagle Farm',' ','QL') ,
 ('AU','ELW','Elsternwick',' ','VI') ,
@@ -5773,7 +5805,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','GWG','Gnowangerup',' ','WA') ,
 ('AU','GYL','Argyle',' ','WA') ,
 ('AU','GYP','Gympie',' ','QL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','HAB','Haberfield',' ','NS') ,
 ('AU','HAP','Long Island',' ','QL') ,
 ('AU','HAS','Hastings',' ','VI') ,
@@ -5854,7 +5886,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','KCE','Collinsville',' ','QL') ,
 ('AU','KCS','Kings Creek Station',' ','NT') ,
 ('AU','KDA','Kendall',' ','NS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','KDB','Kambalda',' ','WA') ,
 ('AU','KDS','Kamaran Downs',' ','QL') ,
 ('AU','KFG','Kalkurung',' ','NT') ,
@@ -5935,7 +5967,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','LSY','Lismore',' ','NS') ,
 ('AU','LTB','Latrobe',' ','TS') ,
 ('AU','LTG','Lithgow',' ','NS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','LTP','Lyndhurst',' ','QL') ,
 ('AU','LTV','Lotusvale',' ','QL') ,
 ('AU','LUC','Lucinda',' ','QL') ,
@@ -6016,7 +6048,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','MRA','Moora',' ','WA') ,
 ('AU','MRB','Moorebank/Sydney',' ','NS') ,
 ('AU','MRD','Merredin',' ','WA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','MRG','Mareeba',' ','QL') ,
 ('AU','MRI','Murarrie',' ','QL') ,
 ('AU','MRL','Miners Lake',' ','QL') ,
@@ -6097,7 +6129,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','OAG','Orange',' ','NS') ,
 ('AU','OBA','Oban',' ','QL') ,
 ('AU','ODD','Oodnadatta',' ','SA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','ODL','Cordillo Downs',' ','SA') ,
 ('AU','ODR','Ord River',' ','WA') ,
 ('AU','OKB','Orchid Beach',' ','QL') ,
@@ -6178,7 +6210,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','PWL','Port Walcott',' ','WA') ,
 ('AU','PWR','Port Warrender',' ','WA') ,
 ('AU','QBY','Queanbeyan',' ','NS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','QDI','Quairading',' ','WA') ,
 ('AU','QDN','Eden',' ','NS') ,
 ('AU','QEL','Wellington',' ','NS') ,
@@ -6259,7 +6291,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','SRR','Stradbroke Island',' ','QL') ,
 ('AU','SSE','Sunshine/Melbourne',' ','VI') ,
 ('AU','SSK','Sturt Creek',' ','WA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','SSP','Silver Plains',' ','QL') ,
 ('AU','STA','Stanley',' ','TS') ,
 ('AU','STF','Stephen Island',' ','QL') ,
@@ -6340,7 +6372,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','UTD','Nutwood Downs',' ','NT') ,
 ('AU','VAR','Varanus Island',' ','WA') ,
 ('AU','VCD','Victoria River Downs',' ','NT') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','VIW','Villawood/Sydney',' ','NS') ,
 ('AU','VNR','Vanrook',' ','QL') ,
 ('AU','VRG','Virginia',' ','SA') ,
@@ -6421,7 +6453,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('AU','WYO','Wyong',' ','NS') ,
 ('AU','XCO','Colac',' ','VI') ,
 ('AU','XMC','Mallacoota',' ','VI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AU','XML','Minlaton',' ','SA') ,
 ('AU','XMY','Yam Island',' ','QL') ,
 ('AU','XTG','Thargomindah',' ','QL') ,
@@ -6502,7 +6534,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BA','TZL','Tuzla',' ','') ,
 ('BA','VIS','Visoko',' ','') ,
 ('BA','VIT','Vitez',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BA','ZAV','Zavidovici',' ','') ,
 ('BA','ZCA','Zenica',' ','') ,
 ('BA','ZEP','Zepce',' ','') ,
@@ -6583,7 +6615,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','APL','Appels',' ','VOV') ,
 ('BE','APS','Ampsin',' ','WLG') ,
 ('BE','APT','Appelterre-Eichem',' ','VOV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','AQE','Arquennes',' ','WHT') ,
 ('BE','ARE','Attre',' ','WHT') ,
 ('BE','ARL','Arlon',' ','WLX') ,
@@ -6664,7 +6696,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','BHO','Baarle-Hertog',' ','VAN') ,
 ('BE','BHR','Bleharies',' ','WHT') ,
 ('BE','BHU','Buggenhout',' ','VOV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','BIE','Bierges',' ','WBR') ,
 ('BE','BIM','Blaimont',' ','WNA') ,
 ('BE','BIR','Bredene',' ','VWV') ,
@@ -6745,7 +6777,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','BTS','Bassenge (Bitsingen)',' ','WLG') ,
 ('BE','BTX','Bertrix',' ','WLX') ,
 ('BE','BTY','Bothey',' ','WNA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','BUD','Burcht',' ','VAN') ,
 ('BE','BUG','Bouge',' ','WNA') ,
 ('BE','BUL','Bullange',' ','WLG') ,
@@ -6826,7 +6858,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','CRA','Cheratte',' ','WLG') ,
 ('BE','CRB','Corbais',' ','WBR') ,
 ('BE','CRE','Courriere',' ','WNA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','CRI','Cherain',' ','WLX') ,
 ('BE','CRL','Charleroi',' ','WHT') ,
 ('BE','CRO','Crombach',' ','WLG') ,
@@ -6907,7 +6939,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','EFS','Escanaffles',' ','WHT') ,
 ('BE','EGI','Enghien',' ','WHT') ,
 ('BE','EGM','Edegem',' ','VAN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','EHT','Eindhout',' ','VAN') ,
 ('BE','EIN','Eine',' ','VOV') ,
 ('BE','EKE','Ekeren',' ','VAN') ,
@@ -6988,7 +7020,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','FRC','Francorchamps',' ','WLG') ,
 ('BE','FRE','Ferrieres',' ','WLG') ,
 ('BE','FRI','Florenville',' ','WLX') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','FRM','Fortem',' ','VWV') ,
 ('BE','FRO','Fleron',' ','WLG') ,
 ('BE','FSV','Fosses-la-Ville',' ','WNA') ,
@@ -7069,7 +7101,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','GVY','Gouvy',' ','WLX') ,
 ('BE','GWE','''s-Gravenwezel',' ','VAN') ,
 ('BE','GZE','Gozee',' ','WHT') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','GZM','Gijzegem',' ','VOV') ,
 ('BE','HAC','Haacht',' ','VBR') ,
 ('BE','HAD','Haasrode',' ','VBR') ,
@@ -7150,7 +7182,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','HOF','Hofstade',' ','VBR') ,
 ('BE','HOI','Hoeilaart',' ','VBR') ,
 ('BE','HOK','Hollebeke',' ','VWV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','HOL','Hollain',' ','WHT') ,
 ('BE','HON','Honnelles',' ','WHT') ,
 ('BE','HOO','Hoogstraten',' ','VAN') ,
@@ -7231,7 +7263,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','IZG','Izegem',' ','VWV') ,
 ('BE','IZI','Izier',' ','WLX') ,
 ('BE','JAK','Jupille-sur-Meuse',' ','WLG') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','JAM','Jambes',' ','WNA') ,
 ('BE','JAV','Java',' ','WLG') ,
 ('BE','JBE','Jabbeke',' ','VWV') ,
@@ -7312,7 +7344,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','LAW','Lauwe',' ','VWV') ,
 ('BE','LBE','Lembeek',' ','VBR') ,
 ('BE','LBK','Lubbeek',' ','VBR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','LBN','Libin',' ','WLX') ,
 ('BE','LBO','La Bouverie',' ','WHT') ,
 ('BE','LBS','Lobbes',' ','WHT') ,
@@ -7393,7 +7425,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','LRE','Leernes',' ','WHT') ,
 ('BE','LRG','Ledeberg',' ','VOV') ,
 ('BE','LRI','Lo-Reninge',' ','VWV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','LRM','Larum',' ','VAN') ,
 ('BE','LRZ','Berloz',' ','WLG') ,
 ('BE','LSE','Leisele',' ','VWV') ,
@@ -7474,7 +7506,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','MHI','Mohiville',' ','WNA') ,
 ('BE','MHN','Massenhoven',' ','VAN') ,
 ('BE','MHO','Minderhout',' ','VAN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','MHY','Manhay',' ','WLX') ,
 ('BE','MID','Middelburg',' ','VOV') ,
 ('BE','MIK','Middelkerke',' ','VWV') ,
@@ -7555,7 +7587,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','NAS','Naast',' ','WHT') ,
 ('BE','NBA','Nimy',' ','WHT') ,
 ('BE','NBL','Nederboelare',' ','VOV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','NCA','Neufchateau',' ','WLG') ,
 ('BE','NCO','Neuville-en-Condroz',' ','WLG') ,
 ('BE','NCU','Neufchateau',' ','WLX') ,
@@ -7636,7 +7668,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','OQC','Oisquercq',' ','WBR') ,
 ('BE','ORQ','Orcq',' ','WHT') ,
 ('BE','ORR','Orroir',' ','WHT') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','OSG','Oeselgem',' ','VWV') ,
 ('BE','OSH','Oostham',' ','VLI') ,
 ('BE','OSI','Ophain-Bois-Seigneur-Isaac',' ','WBR') ,
@@ -7717,7 +7749,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','QVA','Quievrain',' ','WHT') ,
 ('BE','QVY','Quevy',' ','WHT') ,
 ('BE','RAE','Raeren',' ','WLG') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','RAG','Ragnies',' ','WHT') ,
 ('BE','RAR','La Roche-en-Ardenne',' ','WLX') ,
 ('BE','RAS','Ranst',' ','VAN') ,
@@ -7798,7 +7830,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','SBF','Sombreffe',' ','WNA') ,
 ('BE','SBG','Stambruges',' ','WHT') ,
 ('BE','SBK','Schaarbeek (Schaerbeek)/Brussel (Bruxelles)',' ','BRU') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','SBU','Sars-la-Buissiere',' ','WHT') ,
 ('BE','SCE','Schilde',' ','VAN') ,
 ('BE','SCH','Schaarbeek',' ','VOV') ,
@@ -7879,7 +7911,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','SOM','Sommiere',' ','WNA') ,
 ('BE','SON','Soiron',' ','WLG') ,
 ('BE','SOR','Schore',' ','VWV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','SOU','Soumagne',' ','WLG') ,
 ('BE','SOV','Strombeek-Bever',' ','VBR') ,
 ('BE','SPA','Spa',' ','WLG') ,
@@ -7960,7 +7992,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','THY','Thy-le-Chateau',' ','WNA') ,
 ('BE','TIE','Tienen',' ','VBR') ,
 ('BE','TIG','Tiegem',' ','VWV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','TIL','Tielrode',' ','VOV') ,
 ('BE','TIS','Tisselt',' ','VAN') ,
 ('BE','TLA','Thieulain',' ','WHT') ,
@@ -8041,7 +8073,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','VMO','Vliermaalroot',' ','VLI') ,
 ('BE','VMT','Vinalmont',' ','WLG') ,
 ('BE','VNO','Villers-Notre-Dame',' ','WHT') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','VOE','Voeren',' ','VLI') ,
 ('BE','VOL','Vorselaar',' ','VAN') ,
 ('BE','VOR','Vosselaar',' ','VAN') ,
@@ -8122,7 +8154,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','WKO','Wezembeek-Oppem',' ','VBR') ,
 ('BE','WLB','Willebroek',' ','VAN') ,
 ('BE','WLE','Wannegem-Lede',' ','VOV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','WLI','Wadelincourt',' ','WHT') ,
 ('BE','WLL','Welle',' ','VOV') ,
 ('BE','WLM','Walem',' ','VAN') ,
@@ -8203,7 +8235,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BE','ZUN','Zuen (Zuun)',' ','VBR') ,
 ('BE','ZVD','Zandvoorde',' ','VWV') ,
 ('BE','ZVT','Zandvliet',' ','VAN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BE','ZWA','Zwalm',' ','VOV') ,
 ('BE','ZWE','Zwevegem',' ','VWV') ,
 ('BE','ZWL','Zwijndrecht',' ','VAN') ,
@@ -8284,7 +8316,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BG','IOV','Iovkovo',' ','') ,
 ('BG','IPR','Isperikh',' ','') ,
 ('BG','IVL','Ivailovgrad',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BG','JAK','Rakitovo',' ','') ,
 ('BG','JAM','Jambol',' ','') ,
 ('BG','KAL','Kalotina',' ','') ,
@@ -8365,7 +8397,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BG','SUW','Shumen',' ','') ,
 ('BG','SUZ','Suhindol',' ','') ,
 ('BG','SVG','Svoge',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BG','SVI','Svistov',' ','') ,
 ('BG','SWG','Svilengrad',' ','') ,
 ('BG','SWQ','Slavyantsi',' ','') ,
@@ -8446,7 +8478,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BO','LPB','La Paz',' ','L') ,
 ('BO','MGD','Magdalena',' ','B') ,
 ('BO','ORU','Oruro',' ','O') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BO','PBU','Puerto Busch',' ','S') ,
 ('BO','POI','Potosi',' ','P') ,
 ('BO','PSZ','Puerto Suarez',' ','S') ,
@@ -8527,7 +8559,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','ALC','Alcobaca',' ','BA') ,
 ('BR','ALF','Alfenas',' ','MG') ,
 ('BR','ALG','Alegre',' ','ES') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','ALI','Acailandia',' ','MG') ,
 ('BR','ALM','Abreu e Lima',' ','PE') ,
 ('BR','ALO','Aloandia',' ','GO') ,
@@ -8608,7 +8640,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','ATO','Altonia',' ','PR') ,
 ('BR','ATQ','Alto Taquari',' ','MT') ,
 ('BR','ATS','Alterosa',' ','MG') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','ATU','Catu',' ','BA') ,
 ('BR','AUA','Apiuna',' ','SC') ,
 ('BR','AUB','Itauba',' ','MT') ,
@@ -8689,7 +8721,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','BRA','Barreiras',' ','BA') ,
 ('BR','BRB','Barreirinhas',' ','MA') ,
 ('BR','BRC','Barracao',' ','PR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','BRE','Boraceia',' ','SP') ,
 ('BR','BRH','Barrinha',' ','SP') ,
 ('BR','BRI','Barueri',' ','SP') ,
@@ -8770,7 +8802,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','CCM','Criciuma',' ','SC') ,
 ('BR','CCN','Capao da Canoa',' ','RS') ,
 ('BR','CCO','Caconde',' ','SP') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','CCQ','Cachoeira',' ','BA') ,
 ('BR','CCR','Conceicao dos Ouros',' ','MG') ,
 ('BR','CCS','Conchas',' ','SP') ,
@@ -8851,7 +8883,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','CLP','Campo Limpo Paulista',' ','SP') ,
 ('BR','CLT','Capela do Alto',' ','SP') ,
 ('BR','CLV','Caldas Novas',' ','GO') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','CMA','Cardeal Mota',' ','MG') ,
 ('BR','CMB','Cambuci',' ','RJ') ,
 ('BR','CMC','Camocim',' ','CE') ,
@@ -8932,7 +8964,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','CRV','Caraiva',' ','BA') ,
 ('BR','CRX','Crixas',' ','GO') ,
 ('BR','CRZ','Cruzilia',' ','MG') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','CSA','Cabo de Santo Agostinho',' ','PE') ,
 ('BR','CSC','Cansancao',' ','BA') ,
 ('BR','CSD','Casimiro de Abreu',' ','RJ') ,
@@ -9013,7 +9045,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','DVD','Divinolandia',' ','SP') ,
 ('BR','DVO','Divino',' ','ES') ,
 ('BR','DVS','Dois Vizinhos',' ','PR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','EBR','Engenheiro Beltrao',' ','PR') ,
 ('BR','ECH','Engenheiro Coelho',' ','SP') ,
 ('BR','ECO','Encantado',' ','RS') ,
@@ -9094,7 +9126,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','GCR','Governador Celso Ramos',' ','SC') ,
 ('BR','GCS','Goncalves',' ','MG') ,
 ('BR','GCU','Guacui',' ','ES') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','GCV','Gravatai',' ','RS') ,
 ('BR','GDO','Gloria de Dourados',' ','MS') ,
 ('BR','GDP','Guadalupe',' ','PI') ,
@@ -9175,7 +9207,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','IAE','Itambe',' ','PR') ,
 ('BR','IAG','Itaguara',' ','MG') ,
 ('BR','IAI','Itai',' ','SP') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','IAJ','Itajuba',' ','MG') ,
 ('BR','IAM','Iretama',' ','PR') ,
 ('BR','IAN','Itauna',' ','MG') ,
@@ -9256,7 +9288,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','ING','Ibitinga',' ','SP') ,
 ('BR','INU','Itaunas',' ','ES') ,
 ('BR','INX','Itabaiana',' ','SE') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','IOA','Itapoa',' ','SC') ,
 ('BR','IOC','Itaocara',' ','RJ') ,
 ('BR','IOG','Itaporanga',' ','SP') ,
@@ -9337,7 +9369,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','JCA','Jacaraipe',' ','ES') ,
 ('BR','JCB','Joacaba',' ','SC') ,
 ('BR','JCD','Jacunda',' ','PA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','JCE','Jacarei',' ','SP') ,
 ('BR','JCI','Jaciara',' ','MT') ,
 ('BR','JCM','Jacobina',' ','BA') ,
@@ -9418,7 +9450,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','LIM','Limoeiro',' ','PE') ,
 ('BR','LIN','Lindoia',' ','SP') ,
 ('BR','LIP','Lins',' ','SP') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','LJI','Laranjal do Jari',' ','AP') ,
 ('BR','LJO','Lajeado',' ','TO') ,
 ('BR','LJS','Laranjeiras',' ','SE') ,
@@ -9499,7 +9531,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','MHU','Manhuacu',' ','MG') ,
 ('BR','MHZ','Munhoz',' ','MG') ,
 ('BR','MIA','Mirai',' ','MG') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','MIG','S Miguel do Iguacu',' ','PR') ,
 ('BR','MII','Marilia',' ','SP') ,
 ('BR','MIR','Mirassol',' ','SP') ,
@@ -9580,7 +9612,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','NAI','Nova Almeida',' ','ES') ,
 ('BR','NAT','Natal',' ','RN') ,
 ('BR','NBA','Nova Bassano',' ','RS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','NBE','Nobres',' ','MT') ,
 ('BR','NBV','Cana Brava',' ','MG') ,
 ('BR','NCA','Nova Caiaponia',' ','GO') ,
@@ -9661,7 +9693,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','PBE','Padre Bernardo',' ','GO') ,
 ('BR','PBI','Praia da Baleia',' ','CE') ,
 ('BR','PBJ','Pirapora do Bom Jesus',' ','SP') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','PBO','Porto Belo',' ','SC') ,
 ('BR','PBQ','Pimenta Bueno',' ','RO') ,
 ('BR','PBR','Presidente Bernardes',' ','SP') ,
@@ -9742,7 +9774,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','PMC','Presidente Medici',' ','RO') ,
 ('BR','PME','Palmeira das Missoes',' ','RS') ,
 ('BR','PMG','Ponta Pora',' ','MS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','PMH','Porto Murtinho',' ','MS') ,
 ('BR','PMI','Palmeira',' ','PR') ,
 ('BR','PML','Palmital',' ','SP') ,
@@ -9823,7 +9855,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','PSS','Posse',' ','GO') ,
 ('BR','PST','Pouso Alto',' ','MG') ,
 ('BR','PSU','Paraiba do Sul',' ','RJ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','PSW','Passos',' ','MG') ,
 ('BR','PTA','Pirapetinga',' ','MG') ,
 ('BR','PTB','Pirituba',' ','SP') ,
@@ -9904,7 +9936,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','QJA','Jaragua do Sul',' ','SC') ,
 ('BR','QJO','Campos do Jordao',' ','SP') ,
 ('BR','QLB','Lajeado',' ','RS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','QLL','Sao Leopoldo',' ','RS') ,
 ('BR','QLU','Queluz',' ','SP') ,
 ('BR','QMA','Queimados',' ','RJ') ,
@@ -9985,7 +10017,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','RPO','Raposo',' ','RJ') ,
 ('BR','RPR','Rondon do Para',' ','PA') ,
 ('BR','RPS','Rinopolis',' ','SP') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','RQE','Rio Quente',' ','GO') ,
 ('BR','RRN','Serra Norte',' ','PA') ,
 ('BR','RRP','Ribas do Rio Pardo',' ','MS') ,
@@ -10066,7 +10098,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','SGO','Santiago',' ','RS') ,
 ('BR','SGP','Sao Gabriel da Palha',' ','ES') ,
 ('BR','SGR','Santa Gertrudes',' ','SP') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','SGS','Sao Gabriel do Oeste',' ','MS') ,
 ('BR','SGT','Sao Gotardo',' ','MG') ,
 ('BR','SGU','Salgueiro',' ','PE') ,
@@ -10147,7 +10179,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','SNY','Santa Cruz das Palmeiras',' ','SP') ,
 ('BR','SNZ','Santa Cruz',' ','RN') ,
 ('BR','SOA','Sonora',' ','MS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','SOB','Sobradinho',' ','AL') ,
 ('BR','SOC','Socorro',' ','SP') ,
 ('BR','SOD','Sorocaba',' ','SP') ,
@@ -10228,7 +10260,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','SVE','Severinia',' ','SP') ,
 ('BR','SVI','Santa Vitoria',' ','MG') ,
 ('BR','SVL','Silvianopolis',' ','MG') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','SVP','Santa Vitoria do Palmar',' ','ES') ,
 ('BR','SVT','Sao Vicente',' ','SP') ,
 ('BR','SWM','Suia-Missu',' ','MT') ,
@@ -10309,7 +10341,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','TRM','Tramandai',' ','RS') ,
 ('BR','TRP','Tres Pontas',' ','MG') ,
 ('BR','TRQ','Tarauaca',' ','AC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','TRR','Tres Ranchos',' ','GO') ,
 ('BR','TRU','Taruma',' ','SP') ,
 ('BR','TRX','Terra Roxa',' ','SP') ,
@@ -10390,7 +10422,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BR','VPM','Varzea da Palma',' ','MG') ,
 ('BR','VPO','Valparaiso',' ','SP') ,
 ('BR','VPS','Vianopolis',' ','GO') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BR','VPU','Varzea Paulista',' ','SP') ,
 ('BR','VRB','Visconde do Rio Branco',' ','MG') ,
 ('BR','VRC','Vera Cruz',' ','SP') ,
@@ -10471,7 +10503,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('BW','GBE','Gaborone',' ','') ,
 ('BW','GNZ','Ghanzi',' ','') ,
 ('BW','HUK','Hukuntsi',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('BW','JWA','Jwaneng',' ','') ,
 ('BW','KHW','Khwai River Lodge',' ','') ,
 ('BW','LET','Letlhakane',' ','') ,
@@ -10552,7 +10584,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','AEO','Ma-Ma-O Beach',' ','AB') ,
 ('CA','AGI','Agincourt',' ','ON') ,
 ('CA','AGU','Aguathuna',' ','NL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','AHN','Acheson',' ','AB') ,
 ('CA','AIR','Airdrie',' ','AB') ,
 ('CA','AJU','Anjou',' ','QC') ,
@@ -10633,7 +10665,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','BDT','Burdett',' ','AB') ,
 ('CA','BDU','Baie d''Urfe',' ','QC') ,
 ('CA','BDV','Bay de Verde',' ','NL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','BEA','Beaver Cove',' ','BC') ,
 ('CA','BEC','Becancour',' ','QC') ,
 ('CA','BED','Bedford',' ','QC') ,
@@ -10714,7 +10746,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','BSM','Berthier-sur-Mer',' ','QC') ,
 ('CA','BSN','Batiscan',' ','QC') ,
 ('CA','BSS','Boissevain',' ','MB') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','BST','Bayside, Charlotte',' ','NB') ,
 ('CA','BSU','Breslau',' ','ON') ,
 ('CA','BTA','Belfountain',' ','ON') ,
@@ -10795,7 +10827,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','CHR','Chandler',' ','QC') ,
 ('CA','CHS','Cohasset',' ','NS') ,
 ('CA','CHT','Cheticamp',' ','NS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','CHV','Churchill',' ','MB') ,
 ('CA','CHY','Chambly',' ','QC') ,
 ('CA','CIL','Change Islands',' ','NL') ,
@@ -10876,7 +10908,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','CWL','Cornwall',' ','ON') ,
 ('CA','CYP','Coley''s Point',' ','NL') ,
 ('CA','CYR','Saint-Cyrille',' ','QC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','DAC','Dacre',' ','ON') ,
 ('CA','DAR','Dartmouth',' ','NS') ,
 ('CA','DAS','Great Bear Lake',' ','NT') ,
@@ -10957,7 +10989,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','ETC','Etobicoke',' ','ON') ,
 ('CA','EVV','Elmvale',' ','ON') ,
 ('CA','EXS','Exshaw',' ','AB') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','EXX','Exeter',' ','ON') ,
 ('CA','EYL','Haileybury',' ','ON') ,
 ('CA','EYV','Emeryville',' ','ON') ,
@@ -11038,7 +11070,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','GMA','Grand Manan',' ','NB') ,
 ('CA','GMO','Glen Morris',' ','ON') ,
 ('CA','GMY','Gormley',' ','ON') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','GNF','Grenfell',' ','SK') ,
 ('CA','GOH','Goderich',' ','ON') ,
 ('CA','GOL','Gold River',' ','NS') ,
@@ -11119,7 +11151,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','IKP','Innerkip',' ','ON') ,
 ('CA','ILF','Ilford',' ','MB') ,
 ('CA','ING','Ingonish',' ','NS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','INN','Innisfail',' ','AB') ,
 ('CA','INT','Saint-Narcisse',' ','QC') ,
 ('CA','IOC','Ioco',' ','BC') ,
@@ -11200,7 +11232,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','LCH','Lachute',' ','QC') ,
 ('CA','LCI','Les Cedres',' ','QC') ,
 ('CA','LCM','Lacombe',' ','AB') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','LCO','Lacolle',' ','QC') ,
 ('CA','LCP','Lockeport',' ','NS') ,
 ('CA','LCR','La Crete',' ','AB') ,
@@ -11281,7 +11313,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','MAS','Masson',' ','QC') ,
 ('CA','MAY','Mayerthorpe',' ','AB') ,
 ('CA','MBE','Moonbeam',' ','ON') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','MBL','Mont Tremblant',' ','QC') ,
 ('CA','MBO','Montebello',' ','QC') ,
 ('CA','MBR','Main Brook',' ','NL') ,
@@ -11362,7 +11394,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','MTH','Mitchell',' ','MB') ,
 ('CA','MTN','Marystown',' ','NL') ,
 ('CA','MTR','Montreal',' ','QC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','MUH','Murray Harbour',' ','PE') ,
 ('CA','MUL','Mulgrave',' ','NS') ,
 ('CA','MUR','Murray River',' ','PE') ,
@@ -11443,7 +11475,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','OPH','Ompah',' ','ON') ,
 ('CA','OPL','Old Perlican',' ','NL') ,
 ('CA','ORA','Orangeville',' ','ON') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','ORI','Orillia',' ','ON') ,
 ('CA','ORM','Ormstown',' ','QC') ,
 ('CA','ORO','Oromocto',' ','NB') ,
@@ -11524,7 +11556,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','PNH','Penhold',' ','AB') ,
 ('CA','PNN','Port Nelson',' ','NL') ,
 ('CA','PNT','Pangnirtung',' ','NU') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','POA','Port Arthur',' ','ON') ,
 ('CA','POH','Poplar Hill',' ','ON') ,
 ('CA','POI','Pointe-Claire',' ','QC') ,
@@ -11605,7 +11637,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','RMI','Saint-Remi',' ','QC') ,
 ('CA','RNF','Renfrew',' ','ON') ,
 ('CA','RNO','Rosenort',' ','MB') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','ROB','Roblin',' ','MB') ,
 ('CA','ROD','Roddickton',' ','NL') ,
 ('CA','ROF','Rock Forest',' ','QC') ,
@@ -11686,7 +11718,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','SED','Sedgewick',' ','AB') ,
 ('CA','SEH','Sexsmith',' ','AB') ,
 ('CA','SEI','Sept-Iles',' ','QC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','SEL','Selkirk',' ','MB') ,
 ('CA','SEM','Seldom',' ','NL') ,
 ('CA','SEP','St Ephrem-de-Beauce',' ','QC') ,
@@ -11767,7 +11799,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','SMV','Smithville',' ','ON') ,
 ('CA','SMY','St Marys',' ','ON') ,
 ('CA','SNI','Sarnia',' ','ON') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','SNP','Stanstead Plain',' ','QC') ,
 ('CA','SNT','Saint-Charles-Borromee',' ','QC') ,
 ('CA','SOE','Strathmore',' ','AB') ,
@@ -11848,7 +11880,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','SVE','Ste Veronique',' ','QC') ,
 ('CA','SVI','Streetsville',' ','ON') ,
 ('CA','SVL','St Vallier',' ','ON') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','SVQ','Saint-Valerien',' ','QC') ,
 ('CA','SVS','Stevensville',' ','ON') ,
 ('CA','SWD','Sherwood',' ','PE') ,
@@ -11929,7 +11961,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','TUK','Tuktoyaktuk',' ','NT') ,
 ('CA','TUS','Tusket',' ','NS') ,
 ('CA','TUX','Tumbler Ridge',' ','BC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','TVT','Tiverton',' ','ON') ,
 ('CA','TWE','Tweed',' ','ON') ,
 ('CA','TWI','Twillingate',' ','NL') ,
@@ -12010,7 +12042,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','WIH','Winchester',' ','ON') ,
 ('CA','WIL','Willowdale',' ','ON') ,
 ('CA','WIN','Winona',' ','ON') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','WLO','West Lorne',' ','ON') ,
 ('CA','WLS','Wallenstein',' ','ON') ,
 ('CA','WLY','Wellesley',' ','ON') ,
@@ -12091,7 +12123,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','YCG','Castlegar',' ','BC') ,
 ('CA','YCI','Caribou Island',' ','ON') ,
 ('CA','YCJ','Cape St James',' ','BC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','YCK','Colville Lake',' ','NT') ,
 ('CA','YCL','Charlo',' ','NB') ,
 ('CA','YCN','Cochrane',' ','ON') ,
@@ -12172,7 +12204,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','YJN','St Jean',' ','QC') ,
 ('CA','YJO','Johnny Mountain',' ','BC') ,
 ('CA','YKC','Collins Bay',' ','SK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','YKE','Knee Lake',' ','MB') ,
 ('CA','YKG','Kangirsuk',' ','QC') ,
 ('CA','YKI','Kennosao Lake',' ','MB') ,
@@ -12253,7 +12285,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','YQN','Nakina',' ','ON') ,
 ('CA','YQR','Regina Apt',' ','SK') ,
 ('CA','YQU','Grande Prairie',' ','AB') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','YQV','Yorkton',' ','SK') ,
 ('CA','YQW','North Battleford',' ','SK') ,
 ('CA','YRD','Dean River',' ','BC') ,
@@ -12334,7 +12366,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CA','YXT','Terrace',' ','BC') ,
 ('CA','YXY','Whitehorse',' ','YT') ,
 ('CA','YXZ','Wawa',' ','ON') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CA','YYC','Calgary Apt',' ','AB') ,
 ('CA','YYD','Smithers',' ','BC') ,
 ('CA','YYF','Penticton',' ','BC') ,
@@ -12415,7 +12447,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CD','FIH','Kinshasa',' ','') ,
 ('CD','FKI','Kisangani',' ','') ,
 ('CD','FMI','Kalemie',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CD','GDJ','Gandajika',' ','') ,
 ('CD','GMA','Gemena',' ','') ,
 ('CD','GOM','Goma',' ','') ,
@@ -12496,7 +12528,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CF','KEM','Kembe',' ','') ,
 ('CF','KOL','Koumala',' ','') ,
 ('CF','KWD','Kawadjia',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CF','MKI','M''Baiki',' ','') ,
 ('CF','MOB','Mobaye',' ','') ,
 ('CF','MON','Mongoumba',' ','') ,
@@ -12577,7 +12609,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CH','BEG','Bissegg',' ','TG') ,
 ('CH','BEL','Bellach',' ','SO') ,
 ('CH','BER','Beringen',' ','SH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CH','BEX','Bex',' ','VD') ,
 ('CH','BFL','Birsfelden',' ','BL') ,
 ('CH','BGF','Burgdorf',' ','BE') ,
@@ -12658,7 +12690,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CH','DMT','Domat',' ','GR') ,
 ('CH','DNK','Daniken',' ','SO') ,
 ('CH','DON','Dallikon',' ','ZH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CH','DOR','Dornach',' ','SO') ,
 ('CH','DOT','Dottingen',' ','AG') ,
 ('CH','DOZ','Dozwil',' ','TG') ,
@@ -12739,7 +12771,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CH','GWF','Eglisau',' ','ZH') ,
 ('CH','GWT','Gwatt',' ','BE') ,
 ('CH','HAU','Hausen bei Brugg',' ','AG') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CH','HBG','Herrliberg',' ','ZH') ,
 ('CH','HEE','Heerbrugg',' ','SG') ,
 ('CH','HEI','Heiden',' ','AR') ,
@@ -12820,7 +12852,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CH','LON','Locarno',' ','TI') ,
 ('CH','LOT','Lotzwil',' ','BE') ,
 ('CH','LPN','Laupen',' ','ZH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CH','LQU','Landquart',' ','GR') ,
 ('CH','LSA','Lyssach',' ','BE') ,
 ('CH','LSG','Lichtensteig',' ','SG') ,
@@ -12901,7 +12933,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CH','OEH','Oulens-sous-Echallens',' ','VD') ,
 ('CH','OFE','Oberentfelden',' ','AG') ,
 ('CH','OFN','Opfikon',' ','ZH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CH','OFT','Oftringen',' ','AG') ,
 ('CH','OGI','Oberageri',' ','ZG') ,
 ('CH','OLT','Olten',' ','SO') ,
@@ -12982,7 +13014,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CH','SCZ','Schwyz',' ','SZ') ,
 ('CH','SFA','Stafa',' ','ZH') ,
 ('CH','SFE','Saas-Fee',' ','VS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CH','SFN','Schupfen',' ','BE') ,
 ('CH','SGE','Sulgen',' ','TG') ,
 ('CH','SGI','Schindellegi',' ','SZ') ,
@@ -13063,7 +13095,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CH','VEN','Vendlincourt',' ','JU') ,
 ('CH','VER','Verbier',' ','VS') ,
 ('CH','VFN','Vauffelin',' ','BE') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CH','VHS','Vucherens',' ','VD') ,
 ('CH','VIL','Villars-sur-Ollon',' ','VD') ,
 ('CH','VIS','Visp',' ','VS') ,
@@ -13144,7 +13176,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CI','SPY','San-Pedro',' ','') ,
 ('CI','TIA','Tiassale',' ','') ,
 ('CI','TXU','Tabou',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CI','ZSS','Sassandra',' ','') ,
 ('CK','','',' ','') ,
 ('CK','AIT','Aitutaki',' ','') ,
@@ -13225,7 +13257,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CL','COI','Coihueco',' ','BI') ,
 ('CL','COL','Caleta Coloso',' ','AN') ,
 ('CL','CON','Concon',' ','VS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CL','COO','Coinco',' ','LI') ,
 ('CL','CPI','Collipulli',' ','AR') ,
 ('CL','CPO','Copiapo',' ','AT') ,
@@ -13306,7 +13338,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CL','LES','La Estrella',' ','LI') ,
 ('CL','LFL','La Florida',' ','RM') ,
 ('CL','LGJ','La Granja',' ','RM') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CL','LIA','Llanquihue',' ','LL') ,
 ('CL','LIC','Licanten',' ','ML') ,
 ('CL','LIG','La Ligua',' ','VS') ,
@@ -13387,7 +13419,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CL','PEN','Pencahue',' ','ML') ,
 ('CL','PEO','Penco',' ','BI') ,
 ('CL','PER','Peralillo',' ','LI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CL','PET','Petorca',' ','VS') ,
 ('CL','PEU','Peumo',' ','LI') ,
 ('CL','PFL','Penaflor',' ','RM') ,
@@ -13468,7 +13500,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CL','RNO','Renaico',' ','AR') ,
 ('CL','ROM','Romeral',' ','ML') ,
 ('CL','RSD','Rocas de Santo Domingo',' ','VS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CL','RVE','Rio Verde',' ','MA') ,
 ('CL','SAA','Saavedra',' ','AR') ,
 ('CL','SAF','Sagrada Familia',' ','ML') ,
@@ -13549,7 +13581,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CL','ZAP','Zapallar',' ','VS') ,
 ('CL','ZCO','Temuco',' ','AR') ,
 ('CL','ZIC','Victoria',' ','AR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CL','ZOS','Osorno',' ','LL') ,
 ('CL','ZUD','Ancud',' ','LL') ,
 ('CM','','',' ','') ,
@@ -13630,7 +13662,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CN','CIX','Cixi',' ','33') ,
 ('CN','CJG','Caojing',' ','31') ,
 ('CN','CKA','Chikan',' ','44') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CN','CKG','Chongqing',' ','51') ,
 ('CN','CLJ','Chenglingji',' ','43') ,
 ('CN','CMG','Chongming',' ','') ,
@@ -13711,7 +13743,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CN','GBU','Gaobu',' ','44') ,
 ('CN','GCE','Guicheng',' ','45') ,
 ('CN','GCH','Guancheng',' ','33') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CN','GGY','Gongyi',' ','44') ,
 ('CN','GHI','Guanghai',' ','44') ,
 ('CN','GIR','Gyirong',' ','54') ,
@@ -13792,7 +13824,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CN','JEM','Jeminay',' ','65') ,
 ('CN','JGU','Jinguzhou',' ','44') ,
 ('CN','JGY','Jiangyin',' ','35') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CN','JGZ','Jingzhou',' ','42') ,
 ('CN','JHA','Jinhua',' ','33') ,
 ('CN','JHG','Jinghong',' ','53') ,
@@ -13873,7 +13905,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CN','LSN','Lanshan',' ','37') ,
 ('CN','LUB','Luobei',' ','23') ,
 ('CN','LUD','Liudu',' ','44') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CN','LUH','Lu-hua Shan',' ','33') ,
 ('CN','LUI','Lisui',' ','11') ,
 ('CN','LUN','Lu''an',' ','34') ,
@@ -13954,7 +13986,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CN','QSE','Qingshuihe, Shenzhen',' ','44') ,
 ('CN','QSN','Qianshan, Zhuhai',' ','44') ,
 ('CN','QTU','Qiaotou',' ','63') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CN','QUZ','Quzhou',' ','33') ,
 ('CN','QXI','Quxi',' ','44') ,
 ('CN','QYG','Quanyang',' ','22') ,
@@ -14035,7 +14067,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CN','SYA','Sheyang',' ','32') ,
 ('CN','SYM','Simao',' ','53') ,
 ('CN','SYN','Shiyan',' ','44') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CN','SYX','Sanya',' ','46') ,
 ('CN','SZH','Suzhou',' ','32') ,
 ('CN','SZU','Sanzhou',' ','44') ,
@@ -14116,7 +14148,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CN','XIU','Xiuyu',' ','35') ,
 ('CN','XIX','Xi xiang',' ','') ,
 ('CN','XLU','Xiluzhen',' ','44') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CN','XMN','Xiamen',' ','35') ,
 ('CN','XNA','Xinsha',' ','44') ,
 ('CN','XNG','Xinjiang',' ','44') ,
@@ -14197,7 +14229,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CN','ZJG','Zhangjiagang',' ','32') ,
 ('CN','ZJI','Zhangjian',' ','61') ,
 ('CN','ZLN','Zhongluotan',' ','44') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CN','ZLO','Zhuliao',' ','44') ,
 ('CN','ZMU','Zham',' ','54') ,
 ('CN','ZNG','Zengcheng',' ','44') ,
@@ -14278,7 +14310,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CO','RCH','Riohacha',' ','') ,
 ('CO','SAG','San Gil',' ','') ,
 ('CO','SAM','Samaca',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CO','SAR','Santa Rosa',' ','') ,
 ('CO','SAV','Savanilla',' ','') ,
 ('CO','SIN','Since',' ','') ,
@@ -14359,7 +14391,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CR','SAM','Samara',' ','G') ,
 ('CR','SAN','San Ignacio de Acosta',' ','SJ') ,
 ('CR','SCS','San Carlos',' ','SJ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CR','SIS','San Isidro',' ','SJ') ,
 ('CR','SJO','San Jose',' ','SJ') ,
 ('CR','SLN','Salinas',' ','P') ,
@@ -14440,7 +14472,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CS','PLC','Palic',' ','SR') ,
 ('CS','POZ','Pozega',' ','SR') ,
 ('CS','PRI','Prijepolje',' ','SR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CS','PRN','Pristina',' ','SR') ,
 ('CS','PRO','Prokuplje',' ','SR') ,
 ('CS','PRZ','Prizren',' ','SR') ,
@@ -14521,7 +14553,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CU','SCS','Santa Cruz del Sur',' ','') ,
 ('CU','SCU','Santiago de Cuba',' ','') ,
 ('CU','SDT','Sagua de Tanamo',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CU','SNU','Santa Clara',' ','') ,
 ('CU','TAN','Tanamo',' ','') ,
 ('CU','TDZ','Tunas de Zaza',' ','') ,
@@ -14602,7 +14634,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CZ','BRM','Broumov',' ','') ,
 ('CZ','BRQ','Brno',' ','') ,
 ('CZ','BTC','Boretice',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CZ','BUD','Budinek',' ','') ,
 ('CZ','BUO','Branka',' ','') ,
 ('CZ','BVA','Breclav',' ','') ,
@@ -14683,7 +14715,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CZ','HLB','Hlubocky',' ','') ,
 ('CZ','HLD','Horni Lidec',' ','') ,
 ('CZ','HLK','Hluk',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CZ','HLM','Halamky',' ','') ,
 ('CZ','HLN','Hlinsko',' ','') ,
 ('CZ','HLT','Hradistko',' ','') ,
@@ -14764,7 +14796,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CZ','KTV','Klatovy',' ','') ,
 ('CZ','KUH','Kutna Hora',' ','') ,
 ('CZ','KUN','Kunovice',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CZ','KUR','Kurim',' ','') ,
 ('CZ','KUV','Karolinka',' ','') ,
 ('CZ','KVC','Kunovice',' ','') ,
@@ -14845,7 +14877,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CZ','NVI','Netovice',' ','') ,
 ('CZ','NVS','Nosovice',' ','') ,
 ('CZ','NVV','Novy Vestec',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CZ','NVY','Nove Dvory',' ','') ,
 ('CZ','OBT','Obristvi',' ','') ,
 ('CZ','ODO','Odolena Voda',' ','') ,
@@ -14926,7 +14958,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CZ','SDC','Sudice',' ','') ,
 ('CZ','SDI','Sardice',' ','') ,
 ('CZ','SDO','Sviadnov',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CZ','SED','Sedlcany',' ','') ,
 ('CZ','SEZ','Sezimovo Usti',' ','') ,
 ('CZ','SHD','Stare Hradiste',' ','') ,
@@ -15007,7 +15039,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('CZ','VEL','Veletov',' ','') ,
 ('CZ','VFA','Varnsdorf',' ','') ,
 ('CZ','VIM','Vimperk',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('CZ','VJA','Vojtanov',' ','') ,
 ('CZ','VJO','Vojkovice',' ','') ,
 ('CZ','VKC','Velke Karlovice',' ','') ,
@@ -15088,7 +15120,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','AHD','Aichhalden',' ','BW') ,
 ('DE','AHE','Altheim',' ','BY') ,
 ('DE','AHF','Adelheidsdorf',' ','NI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','AHL','Ahlen',' ','NW') ,
 ('DE','AHM','Aschheim',' ','BY') ,
 ('DE','AHN','Ahorn',' ','BY') ,
@@ -15169,7 +15201,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','AST','Kastl',' ','BY') ,
 ('DE','ASU','Aschau',' ','TH') ,
 ('DE','ATB','Altenberge',' ','NW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','ATF','Altdorf',' ','BY') ,
 ('DE','ATG','Altleiningen',' ','RP') ,
 ('DE','ATH','Altenhain',' ','SN') ,
@@ -15250,7 +15282,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','BCZ','Bucknitz',' ','BR') ,
 ('DE','BDA','Brodenbach',' ','RP') ,
 ('DE','BDB','Bad Bentheim',' ','NI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','BDC','Bad Camberg',' ','HE') ,
 ('DE','BDD','Neu Buddenstedt',' ','NI') ,
 ('DE','BDE','Bad Elster',' ','SN') ,
@@ -15331,7 +15363,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','BHO','Bad Homburg',' ','HE') ,
 ('DE','BHP','Berghaupten',' ','BW') ,
 ('DE','BHQ','Bahrenfeld',' ','HH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','BHR','Bobenheim-Roxheim',' ','RP') ,
 ('DE','BHS','Bodelshausen',' ','BW') ,
 ('DE','BHT','Bocholt',' ','NW') ,
@@ -15412,7 +15444,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','BNK','Brink',' ','NI') ,
 ('DE','BNL','Bad Soden-Salmunster',' ','HE') ,
 ('DE','BNM','Bubenheim',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','BNN','Bonen',' ','NW') ,
 ('DE','BNO','Berg bei Neumarkt in der Oberpfalz',' ','RP') ,
 ('DE','BNR','Bad Neuenahr-Ahrweiler',' ','RP') ,
@@ -15493,7 +15525,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','BSZ','Bad Salzungen',' ','TH') ,
 ('DE','BTA','Bortfeld',' ','NI') ,
 ('DE','BTB','Burtenbach',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','BTC','Bodenteich',' ','NI') ,
 ('DE','BTD','Burgstadt',' ','BY') ,
 ('DE','BTE','Breitscheid',' ','HE') ,
@@ -15574,7 +15606,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','CGS','Camburg',' ','TH') ,
 ('DE','CHA','Cham',' ','BY') ,
 ('DE','CHE','Chemnitz',' ','SN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','CHI','Chiemsee',' ','BY') ,
 ('DE','CHO','Schondra',' ','BY') ,
 ('DE','CHZ','Clarholz',' ','NW') ,
@@ -15655,7 +15687,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','DKN','Dulken',' ','NW') ,
 ('DE','DLA','Durrlauingen',' ','BY') ,
 ('DE','DLB','Dahlenburg',' ','NI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','DLF','Altendorf',' ','BY') ,
 ('DE','DLG','Dillingen',' ','HE') ,
 ('DE','DLH','Delitzsch',' ','SN') ,
@@ -15736,7 +15768,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','EAS','Eging am See',' ','BY') ,
 ('DE','EBA','Eschbach',' ','BW') ,
 ('DE','EBB','Eberbach',' ','BW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','EBD','Engelsbrand',' ','BW') ,
 ('DE','EBE','Ebersbach an der Fils',' ','BW') ,
 ('DE','EBG','Eisenberg',' ','RP') ,
@@ -15817,7 +15849,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','ELI','Emmingen-Liptingen',' ','BW') ,
 ('DE','ELK','Ecklak',' ','SH') ,
 ('DE','ELL','Elztal',' ','BW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','ELM','Elmshorn',' ','SH') ,
 ('DE','ELN','Eislingen',' ','BW') ,
 ('DE','ELS','Elsfleth',' ','NI') ,
@@ -15898,7 +15930,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','EWA','Elsterwerda',' ','BR') ,
 ('DE','EWH','Eckwarderhorne',' ','NI') ,
 ('DE','EWL','Esseratsweiler',' ','BW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','EYP','Eystrup',' ','NI') ,
 ('DE','EZH','Elzach',' ','BW') ,
 ('DE','EZL','Elz',' ','HE') ,
@@ -15979,7 +16011,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','FSG','Fussgonheim',' ','RP') ,
 ('DE','FSN','Furstenstein',' ','BY') ,
 ('DE','FSS','Fussen',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','FST','Freudenstadt',' ','BW') ,
 ('DE','FTA','Freital',' ','SN') ,
 ('DE','FTB','Forchtenberg',' ','BW') ,
@@ -16060,7 +16092,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','GFN','Grafenau',' ','BY') ,
 ('DE','GFS','Greifenstein',' ','HE') ,
 ('DE','GFT','Grafschaft',' ','NW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','GGD','Georgensgmund',' ','BY') ,
 ('DE','GGE','Gross Glienicke',' ','BE') ,
 ('DE','GGF','Gingen an der Fils',' ','BW') ,
@@ -16141,7 +16173,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','GOR','Gorlitz',' ','SN') ,
 ('DE','GOS','Goslar',' ','NI') ,
 ('DE','GOT','Gottmadingen',' ','BW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','GOZ','Gotz',' ','BR') ,
 ('DE','GPN','Greppin',' ','ST') ,
 ('DE','GPR','Groppenbruch',' ','NW') ,
@@ -16222,7 +16254,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','HAG','Hagen',' ','NW') ,
 ('DE','HAH','Haiterbach',' ','BW') ,
 ('DE','HAI','Haibach/Aschaffenburg',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','HAJ','Hannover',' ','NI') ,
 ('DE','HAK','Halstenbek',' ','SH') ,
 ('DE','HAL','Halle',' ','ST') ,
@@ -16303,7 +16335,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','HGN','Hohr-Grenzhausen',' ','RP') ,
 ('DE','HGO','Harzgerode',' ','ST') ,
 ('DE','HGR','Harlingerode',' ','NI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','HGS','Heiligenstadt',' ','TH') ,
 ('DE','HGW','Hurtgenwald',' ','NW') ,
 ('DE','HGZ','Hergatz',' ','BY') ,
@@ -16384,7 +16416,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','HOG','Hohenburg',' ','BY') ,
 ('DE','HOH','Hohenlockstedt',' ','SH') ,
 ('DE','HOI','Hohenstein-Ernstthal',' ','SN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','HOL','Hollage',' ','NI') ,
 ('DE','HOM','Homburg',' ','SL') ,
 ('DE','HON','Hollern',' ','NI') ,
@@ -16465,7 +16497,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','HWA','Hawangen',' ','BY') ,
 ('DE','HWD','Hohwald',' ','SN') ,
 ('DE','HWE','Hoyerswerda',' ','SN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','HWG','Huckeswagen',' ','NW') ,
 ('DE','HWL','Harsewinkel',' ','NW') ,
 ('DE','HWR','Hagenwerder',' ','SN') ,
@@ -16546,7 +16578,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','JUE','Julich',' ','NW') ,
 ('DE','JUH','Junkerath',' ','RP') ,
 ('DE','JUI','Juist',' ','NI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','JWE','Janschwalde',' ','BR') ,
 ('DE','KAA','Kaarst',' ','NW') ,
 ('DE','KAD','Karlsfeld',' ','BY') ,
@@ -16627,7 +16659,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','KLE','Kleve',' ','NW') ,
 ('DE','KLF','Kamp-Lintfort',' ','NW') ,
 ('DE','KLG','Kirchlengern',' ','NW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','KLH','Kleinheubach',' ','BY') ,
 ('DE','KLI','Klingenberg',' ','BY') ,
 ('DE','KLL','Kell',' ','RP') ,
@@ -16708,7 +16740,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','KTN','Kosten',' ','BY') ,
 ('DE','KTS','Kesten',' ','RP') ,
 ('DE','KTT','Katterbach',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','KTU','Kleintettau',' ','BY') ,
 ('DE','KTZ','Kiebitzreihe',' ','SH') ,
 ('DE','KUA','Kussaberg',' ','BW') ,
@@ -16789,7 +16821,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','LEV','Leverkusen',' ','NW') ,
 ('DE','LEW','Lemwerder',' ','NI') ,
 ('DE','LEZ','Lenzen (Elbe)',' ','BR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','LFE','Lindenfels',' ','HE') ,
 ('DE','LFF','Loffingen',' ','BW') ,
 ('DE','LFG','Laufenburg',' ','BW') ,
@@ -16870,7 +16902,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','LOG','Lossburg',' ','BW') ,
 ('DE','LOH','Lohmar',' ','NW') ,
 ('DE','LOL','Lollar',' ','HE') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','LON','Longuich',' ','RP') ,
 ('DE','LOR','Lohr',' ','BY') ,
 ('DE','LOS','Lobenstein',' ','TH') ,
@@ -16951,7 +16983,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','MAX','Maxdorf/Pfalz',' ','RP') ,
 ('DE','MAY','Mayen',' ','RP') ,
 ('DE','MAZ','Marktredwitz',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','MBA','Murlenbach',' ','RP') ,
 ('DE','MBB','Merenberg',' ','HE') ,
 ('DE','MBG','Meersburg',' ','BW') ,
@@ -17032,7 +17064,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','MKH','Markneukirchen',' ','SN') ,
 ('DE','MKI','Mengerskirchen',' ','HE') ,
 ('DE','MKN','Mariakirchen',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','MKS','Markranstadt',' ','SN') ,
 ('DE','MLB','Maulburg',' ','BW') ,
 ('DE','MLD','Muhldorf',' ','HE') ,
@@ -17113,7 +17145,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','MTE','Merdingen',' ','BW') ,
 ('DE','MTG','Mertingen',' ','BY') ,
 ('DE','MTH','Mitterteich',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','MTI','Mottingen',' ','BY') ,
 ('DE','MTL','Maintal',' ','HE') ,
 ('DE','MTM','Mettenheim',' ','RP') ,
@@ -17194,7 +17226,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','NEL','Neuland/Elbe',' ','NI') ,
 ('DE','NEM','Neckarsulm',' ','BW') ,
 ('DE','NEN','Neunkirchen-Seelscheid',' ','NW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','NER','Neustrelitz',' ','MV') ,
 ('DE','NES','Nessmersiel',' ','NI') ,
 ('DE','NET','Neumarkt in der Oberpfalz',' ','BY') ,
@@ -17275,7 +17307,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','NRH','Niedernhausen',' ','HE') ,
 ('DE','NRN','Niederkruchten',' ','NW') ,
 ('DE','NRS','Niederorschel',' ','TH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','NRW','Neuweier',' ','BW') ,
 ('DE','NSA','Neustadt/Aisch',' ','BY') ,
 ('DE','NSB','Neustadt an der Waldnaab',' ','BY') ,
@@ -17356,7 +17388,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','OED','Oederan',' ','SN') ,
 ('DE','OEH','Ohringen',' ','BW') ,
 ('DE','OEL','Oelde',' ','NW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','OEN','Oerlinghausen',' ','NW') ,
 ('DE','OER','Oer-Erkenschwick',' ','NW') ,
 ('DE','OES','Ostringen',' ','BW') ,
@@ -17437,7 +17469,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','OWE','Ottweiler',' ','SL') ,
 ('DE','OWL','Ohlweiler',' ','RP') ,
 ('DE','OWN','Owen',' ','BW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','OWT','Oberwinter',' ','RP') ,
 ('DE','OYT','Oyten',' ','NI') ,
 ('DE','OZG','Otzberg',' ','HE') ,
@@ -17518,7 +17550,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','PRA','Pirna',' ','SN') ,
 ('DE','PRE','Preetz',' ','SH') ,
 ('DE','PRI','Prien/Chiemsee',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','PRK','Pritzwalk',' ','BR') ,
 ('DE','PRS','Prisdorf',' ','BE') ,
 ('DE','PRT','Prichsenstadt',' ','BY') ,
@@ -17599,7 +17631,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','RDL','Riedlhutte',' ','BY') ,
 ('DE','RDN','Rehden',' ','NI') ,
 ('DE','RDO','Rudersdorf',' ','BR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','RDR','Rohrsdorf',' ','SN') ,
 ('DE','RDT','Rot an der Rot',' ','BW') ,
 ('DE','RDU','Radeburg',' ','SN') ,
@@ -17680,7 +17712,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','RMO','Ramelsloh',' ','NI') ,
 ('DE','RNA','Bernau',' ','BW') ,
 ('DE','RNB','Rothenbach',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','RND','Rennerod',' ','RP') ,
 ('DE','RNG','Rottenegg (Geisenfeld)',' ','BY') ,
 ('DE','RNH','Rheinhausen',' ','BW') ,
@@ -17761,7 +17793,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','SAB','Sasbach',' ','BW') ,
 ('DE','SAC','Sachsen bei Ansbach',' ','BY') ,
 ('DE','SAD','Saalfeld',' ','TH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','SAE','St Aldegund',' ','RP') ,
 ('DE','SAF','Saffig',' ','RP') ,
 ('DE','SAG','Saarburg',' ','RP') ,
@@ -17842,7 +17874,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','SEQ','Scheer',' ','BW') ,
 ('DE','SER','Sundern',' ','NW') ,
 ('DE','SES','Schierstein',' ','HE') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','SET','Scheidt',' ','SL') ,
 ('DE','SEW','Schonewerda',' ','TH') ,
 ('DE','SEX','Sembach',' ','RP') ,
@@ -17923,7 +17955,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','SLD','Saterland',' ','NI') ,
 ('DE','SLE','Spelle',' ','NI') ,
 ('DE','SLF','Strullendorf',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','SLG','Schmallenberg',' ','NW') ,
 ('DE','SLH','Schopfloch/Freudenstadt',' ','BW') ,
 ('DE','SLI','Schliengen',' ','BW') ,
@@ -18004,7 +18036,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','SPS','Schulper Neuensiel',' ','SH') ,
 ('DE','SPT','Sinspelt',' ','RP') ,
 ('DE','SPU','Spiegelau',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','SPW','Spreewitz',' ','SN') ,
 ('DE','SPY','Spay',' ','RP') ,
 ('DE','SPZ','Schwepnitz',' ','SN') ,
@@ -18085,7 +18117,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','SWL','Schwalmtal',' ','NW') ,
 ('DE','SWN','Schweigen',' ','RP') ,
 ('DE','SWR','Schwerin',' ','MV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','SWU','Schwallungen',' ','TH') ,
 ('DE','SXF','Berlin-Schonefeld Apt',' ','BR') ,
 ('DE','SYK','Syke',' ','NI') ,
@@ -18166,7 +18198,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','TRA','Traunstein',' ','BY') ,
 ('DE','TRB','Trabitz',' ','BY') ,
 ('DE','TRE','Treuchtlingen',' ','BY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','TRG','Triberg',' ','BW') ,
 ('DE','TRH','Trechtingshausen',' ','RP') ,
 ('DE','TRI','Trier',' ','RP') ,
@@ -18247,7 +18279,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','URH','Bad Urach',' ','BW') ,
 ('DE','USA','Uslar',' ','NI') ,
 ('DE','USE','Bassenheim',' ','RP') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','USG','Usingen',' ','HE') ,
 ('DE','USH','Unterschneidheim',' ','BW') ,
 ('DE','USL','Unterschleissheim',' ','BY') ,
@@ -18328,7 +18360,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','WAJ','Wachau',' ','SN') ,
 ('DE','WAK','Waakirchen',' ','BY') ,
 ('DE','WAL','Walsrode',' ','NI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','WAM','Waldheim',' ','SN') ,
 ('DE','WAN','Warstein',' ','NW') ,
 ('DE','WAO','Waldmohr',' ','RP') ,
@@ -18409,7 +18441,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','WGF','Wagenfeld',' ','NI') ,
 ('DE','WGG','Wegberg',' ','NW') ,
 ('DE','WGL','Waghausel',' ','BW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','WGN','Wangen im Allgau',' ','BW') ,
 ('DE','WGS','Waging am See',' ','BY') ,
 ('DE','WGU','Weissandt-Golzau',' ','ST') ,
@@ -18490,7 +18522,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','WNH','Windheim',' ','NW') ,
 ('DE','WNI','Winnweiler',' ','RP') ,
 ('DE','WNK','Windeck',' ','NW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','WNL','Wandersleben',' ','TH') ,
 ('DE','WNM','Wackernheim',' ','RP') ,
 ('DE','WNN','Wendlingen am Neckar',' ','BW') ,
@@ -18571,7 +18603,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DE','WUM','Wurmsham',' ','BY') ,
 ('DE','WUN','Wunstorf',' ','NI') ,
 ('DE','WUP','Wuppertal',' ','NW') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DE','WUR','Worth am Main',' ','BY') ,
 ('DE','WUT','Wustenrot',' ','BW') ,
 ('DE','WUW','Waldburg',' ','BW') ,
@@ -18652,7 +18684,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DK','AAL','Aalborg',' ','') ,
 ('DK','AAP','Aarup',' ','') ,
 ('DK','AAR','Arhus',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DK','ABK','Alebak',' ','') ,
 ('DK','ABT','Albertslund',' ','') ,
 ('DK','ADN','Arden',' ','') ,
@@ -18733,7 +18765,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DK','DAN','Cementfabriken Dania',' ','') ,
 ('DK','DAS','Dansk Salts Havn',' ','') ,
 ('DK','DIA','Dianalund',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DK','DKD','Dokkedal',' ','') ,
 ('DK','DLB','Dalby',' ','') ,
 ('DK','DLD','Dronninglund',' ','') ,
@@ -18814,7 +18846,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DK','HBA','Humlebak',' ','') ,
 ('DK','HBG','Houborg',' ','') ,
 ('DK','HBK','Holbak',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DK','HBO','Hobro',' ','') ,
 ('DK','HBR','Harboor',' ','') ,
 ('DK','HBY','Haarby',' ','') ,
@@ -18895,7 +18927,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DK','KRS','Krusa',' ','') ,
 ('DK','KTD','Kerteminde',' ','') ,
 ('DK','KTP','Kastrup',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DK','KVB','Klovborg',' ','') ,
 ('DK','KVG','Kvistgaard',' ','') ,
 ('DK','KVR','Kvarndrup',' ','') ,
@@ -18976,7 +19008,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DK','PAO','Padborg',' ','') ,
 ('DK','RAN','Randers',' ','') ,
 ('DK','RDG','Rodding',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DK','RDK','Rodekro',' ','') ,
 ('DK','REY','Ry',' ','') ,
 ('DK','RIB','Ribe',' ','') ,
@@ -19057,7 +19089,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DK','STE','Stege',' ','') ,
 ('DK','STG','Stignasvarkets Havn',' ','') ,
 ('DK','STL','Stenlille',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DK','STN','Stigsnas',' ','') ,
 ('DK','STO','Stovring',' ','') ,
 ('DK','STR','Struer',' ','') ,
@@ -19138,7 +19170,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('DO','BCC','Boca Chica',' ','') ,
 ('DO','BRX','Barahona',' ','') ,
 ('DO','CAU','Caucedo',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('DO','CBJ','Cabo Rojo',' ','') ,
 ('DO','DAJ','Dajabon',' ','') ,
 ('DO','HAI','Rio Haina',' ','') ,
@@ -19219,7 +19251,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('EC','LLD','La Libertad',' ','') ,
 ('EC','LOH','Loja',' ','') ,
 ('EC','LPT','La Puntilla',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('EC','MAC','Machachi',' ','') ,
 ('EC','MCH','Machala',' ','') ,
 ('EC','MEC','Manta',' ','') ,
@@ -19300,7 +19332,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('EE','RAK','Rakvere',' ','59') ,
 ('EE','RGU','Rongu',' ','78') ,
 ('EE','RHK','Rohukula',' ','57') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('EE','RID','Ridala',' ','57') ,
 ('EE','RMS','Roomassaare',' ','74') ,
 ('EE','RON','Rohuneeme',' ','37') ,
@@ -19381,7 +19413,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('EG','TRC','10th of Ramadan City',' ','') ,
 ('EG','UVL','New Valley',' ','') ,
 ('EG','WAF','Wadi Feiran',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('EH','','',' ','') ,
 ('EH','EAI','Ejbei Uad el Aabd',' ','') ,
 ('EH','VIC','Ad Dakhla',' ','') ,
@@ -19462,7 +19494,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','AGS','Aguimes',' ','') ,
 ('ES','AGT','Agullent',' ','') ,
 ('ES','AGU','Aguilas',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','AGY','Alfondeguilla',' ','') ,
 ('ES','AGZ','Alguazas',' ','') ,
 ('ES','AHA','Alhama de Almeria',' ','') ,
@@ -19543,7 +19575,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','AQC','Albocacer',' ','') ,
 ('ES','AQE','Alcacer',' ','') ,
 ('ES','AQG','Algete, Spain',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','AQH','Alborache',' ','') ,
 ('ES','AQI','Alcala de Chivert',' ','') ,
 ('ES','AQR','Antequera',' ','') ,
@@ -19624,7 +19656,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','BEO','Benisano',' ','') ,
 ('ES','BER','Berriz',' ','') ,
 ('ES','BES','Beasain',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','BET','Betera',' ','') ,
 ('ES','BEV','Benavente',' ','') ,
 ('ES','BFA','Benifayo',' ','') ,
@@ -19705,7 +19737,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','CAG','Cangas',' ','') ,
 ('ES','CAH','Calamocha',' ','') ,
 ('ES','CAI','Castellvi de Rosanes',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','CAJ','Carballino',' ','') ,
 ('ES','CAL','Calera de Leon',' ','') ,
 ('ES','CAM','Camas',' ','') ,
@@ -19786,7 +19818,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','CLS','Camarles',' ','') ,
 ('ES','CLT','Canete de las Torres',' ','') ,
 ('ES','CLV','Churriana de la Vega',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','CLZ','Cornella',' ','') ,
 ('ES','CMA','Castellv De La Marca (Dupl.)',' ','') ,
 ('ES','CMB','Caldas de Montbuy',' ','') ,
@@ -19867,7 +19899,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','CVL','Canaveral',' ','') ,
 ('ES','CXQ','Coslada',' ','') ,
 ('ES','CYC','Calera y Chozas',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','CYG','Castellet y Gornal',' ','') ,
 ('ES','CYQ','Coin',' ','') ,
 ('ES','CZA','Cieza',' ','') ,
@@ -19948,7 +19980,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','ESU','Espeluy',' ','') ,
 ('ES','ESZ','Esplugas de Llobregat',' ','') ,
 ('ES','ETR','La Estrada',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','ETX','San Andres de Echevarria',' ','') ,
 ('ES','EUG','Santa Eugenia',' ','') ,
 ('ES','EUX','Esparraguera',' ','') ,
@@ -20029,7 +20061,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','GTS','Getares',' ','') ,
 ('ES','GUA','Guadalajara',' ','') ,
 ('ES','GUE','Guernica y Luno',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','GUI','Guipuzcoa',' ','') ,
 ('ES','GUN','Guarnizo',' ','') ,
 ('ES','GUR','Guadarrama',' ','') ,
@@ -20110,7 +20142,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','LAP','Lapuebla de Labarca',' ','') ,
 ('ES','LAQ','La Bisbal',' ','') ,
 ('ES','LAR','Larrondo',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','LAS','Lasarte',' ','') ,
 ('ES','LAV','Lavern',' ','') ,
 ('ES','LBS','Lobres',' ','') ,
@@ -20191,7 +20223,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','LPM','La Pobla de Mafumet',' ','') ,
 ('ES','LPR','La Pobla de Claramunt',' ','') ,
 ('ES','LPV','Los Palacios y Villafranca',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','LPZ','La Puebla de Cazalla',' ','') ,
 ('ES','LQA','Lorca',' ','') ,
 ('ES','LQB','Las Cabezas',' ','') ,
@@ -20272,7 +20304,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','MIS','Mislata',' ','') ,
 ('ES','MIX','Miranda de Ebro',' ','') ,
 ('ES','MJC','Mijas',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','MJD','Mojados',' ','') ,
 ('ES','MJJ','Miajadas',' ','') ,
 ('ES','MJP','Malpica',' ','') ,
@@ -20353,7 +20385,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','MXA','Minaya',' ','') ,
 ('ES','MXH','Maraleja',' ','') ,
 ('ES','MXJ','Mollina',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','MXX','Maraleda',' ','') ,
 ('ES','MYC','Massanet de la Selva',' ','') ,
 ('ES','MZF','Moron de la Frontera',' ','') ,
@@ -20434,7 +20466,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','PAD','Padron',' ','') ,
 ('ES','PAG','Pereiro de Aguiar',' ','') ,
 ('ES','PAI','Patino',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','PAL','Palamos',' ','') ,
 ('ES','PAR','Palol de Rebardit',' ','') ,
 ('ES','PAS','Pasajes',' ','') ,
@@ -20515,7 +20547,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','PUL','Pulianas',' ','') ,
 ('ES','PUO','Puertollano',' ','') ,
 ('ES','PUS','Puerto Real',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','PUW','Paracuellos',' ','') ,
 ('ES','PUZ','Puerto De Mazarron',' ','') ,
 ('ES','PVB','Puebla de Vallbona',' ','') ,
@@ -20596,7 +20628,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','SBA','Sanlucar De Barrameda',' ','') ,
 ('ES','SBG','San Bartolome D/Grau',' ','') ,
 ('ES','SBL','Sant Boi de Ilobregat',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','SBP','Sabadell',' ','') ,
 ('ES','SBS','Sorbas',' ','') ,
 ('ES','SBU','Saldana de Burgos',' ','') ,
@@ -20677,7 +20709,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','SON','Soneja',' ','') ,
 ('ES','SOR','Soria',' ','') ,
 ('ES','SPA','San Pedro De Alcantara',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','SPB','Santa Perpetua de Bogota',' ','') ,
 ('ES','SPC','Santa Cruz de La Palma',' ','') ,
 ('ES','SPD','San Pedro De Premia',' ','') ,
@@ -20758,7 +20790,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','TLV','Talavera la Real',' ','') ,
 ('ES','TMA','Tomares',' ','') ,
 ('ES','TMD','Tamarite de Litera',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','TME','Tomelloso',' ','') ,
 ('ES','TOA','Tolosa',' ','') ,
 ('ES','TOF','Torrente de Cinca',' ','') ,
@@ -20839,7 +20871,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','VDQ','Vara De Quart',' ','') ,
 ('ES','VDR','Villanueva Del Rio',' ','') ,
 ('ES','VDS','Villarejo de Salva',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','VDT','Valle de Trapaga',' ','') ,
 ('ES','VDU','Vall De Uxo',' ','') ,
 ('ES','VDY','Villar del Rey',' ','') ,
@@ -20920,7 +20952,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ES','ZAF','Zafra',' ','') ,
 ('ES','ZAH','Zahinos',' ','') ,
 ('ES','ZAM','Zamudio',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ES','ZAR','Zaratamo',' ','') ,
 ('ES','ZAU','Zarautz',' ','') ,
 ('ES','ZAZ','Zaragoza',' ','') ,
@@ -21001,7 +21033,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FI','GAM','Gammelby',' ','ES') ,
 ('FI','GDB','Godby',' ','AL') ,
 ('FI','GUL','Gullo/Tammisaari (Ekenas)',' ','ES') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FI','HAA','Haapajarvi',' ','OL') ,
 ('FI','HAK','Hakkola',' ','LS') ,
 ('FI','HAL','Halosenniemi (Halonen)',' ','LL') ,
@@ -21082,7 +21114,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FI','KLI','Kolari',' ','LL') ,
 ('FI','KLO','Kulloo (Kullo)',' ','ES') ,
 ('FI','KLT','Kalanti',' ','LS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FI','KMI','Kokemaki',' ','LS') ,
 ('FI','KMM','Keminmaa',' ','LL') ,
 ('FI','KNP','Kankaanpaa',' ','LS') ,
@@ -21163,7 +21195,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FI','NAJ','Naarajarvi (Pieksamaen Maalaiskunta)',' ','IS') ,
 ('FI','NAU','Nagu (Nauvo)',' ','LS') ,
 ('FI','NII','Niirala',' ','IS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FI','NJI','Nurmijarvi',' ','ES') ,
 ('FI','NKK','Nakkila',' ','LS') ,
 ('FI','NLI','Naantali (Nadendal)',' ','LS') ,
@@ -21244,7 +21276,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FI','SKI','Skinnarvik',' ','LS') ,
 ('FI','SKV','Kilpilahti (Skoldvik)',' ','ES') ,
 ('FI','SLI','Suolahti',' ','LS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FI','SLL','Salla',' ','LL') ,
 ('FI','SMO','Sotkamo',' ','IS') ,
 ('FI','SNA','Snappertuna',' ','ES') ,
@@ -21325,7 +21357,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FJ','BXL','Blue Lagoon',' ','') ,
 ('FJ','CST','Castaway',' ','') ,
 ('FJ','ELL','Ellington',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FJ','ICI','Cicia',' ','') ,
 ('FJ','KAY','Wakaya Island',' ','') ,
 ('FJ','KDV','Kandavu',' ','') ,
@@ -21406,7 +21438,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','ABB','Abbeville',' ','80') ,
 ('FR','ABC','Armbouts-Cappel',' ','59') ,
 ('FR','ABD','Abidos',' ','64') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','ABE','La Beaume',' ','05') ,
 ('FR','ABF','Albefeuille-Lagarde',' ','82') ,
 ('FR','ABG','Aubagne',' ','13') ,
@@ -21487,7 +21519,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','AGG','Saugues',' ','43') ,
 ('FR','AGH','Algolsheim',' ','68') ,
 ('FR','AGI','Sanguinet',' ','40') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','AGJ','Algajola',' ','2B') ,
 ('FR','AGL','Aiguillon',' ','47') ,
 ('FR','AGM','Labergement-Sante-Marie',' ','25') ,
@@ -21568,7 +21600,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','AMN','Amneville',' ','57') ,
 ('FR','AMO','Ambillou',' ','37') ,
 ('FR','AMP','Amplepuis',' ','69') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','AMR','Ambert',' ','63') ,
 ('FR','AMS','Ambes',' ','33') ,
 ('FR','AMU','Aumale',' ','76') ,
@@ -21649,7 +21681,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','ASC','Alby-sur-Cheran',' ','74') ,
 ('FR','ASE','Ancy-sur-Moselle',' ','57') ,
 ('FR','ASG','Bassing',' ','57') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','ASI','Massiac',' ','15') ,
 ('FR','ASL','Aurec-sur-Loire',' ','43') ,
 ('FR','ASN','Aussillon',' ','81') ,
@@ -21730,7 +21762,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','AYM','Ay-sur-Moselle',' ','57') ,
 ('FR','AYN','Aynac',' ','46') ,
 ('FR','AYT','Aytre',' ','17') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','AYU','Aubigny-sur-Nere',' ','18') ,
 ('FR','AYW','Ay',' ','51') ,
 ('FR','AYX','Aulnoye-Aymeries',' ','59') ,
@@ -21811,7 +21843,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','BDM','Bayard-sur-Marne',' ','52') ,
 ('FR','BDN','Bagnoles-de-l''Orne',' ','61') ,
 ('FR','BDO','Bedous',' ','64') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','BDP','Bourg-de-Peage',' ','26') ,
 ('FR','BDQ','Blendecques',' ','62') ,
 ('FR','BDR','Baudricourt',' ','88') ,
@@ -21892,7 +21924,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','BIL','Bailleul',' ','80') ,
 ('FR','BIM','Bischheim',' ','67') ,
 ('FR','BIN','Bourgtheroulde-Infreville',' ','27') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','BIO','Brioude',' ','43') ,
 ('FR','BIQ','Biarritz',' ','64') ,
 ('FR','BIR','Barbieres',' ','26') ,
@@ -21973,7 +22005,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','BOL','Boulogne-sur-Mer',' ','62') ,
 ('FR','BOM','Billom',' ','63') ,
 ('FR','BON','Bonifacio',' ','2A') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','BOO','Boos',' ','76') ,
 ('FR','BOP','Boue',' ','02') ,
 ('FR','BOQ','Bonson',' ','42') ,
@@ -22054,7 +22086,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','BST','Bailleul-sur-Therain',' ','60') ,
 ('FR','BSU','Bressey-sur-Tille',' ','21') ,
 ('FR','BSV','Biache-Saint-Vaast',' ','62') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','BSX','Bussy-Albieux',' ','42') ,
 ('FR','BSY','Breteuil',' ','60') ,
 ('FR','BSZ','Brie-sous-Archiac',' ','17') ,
@@ -22135,7 +22167,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','BYV','Buc',' ','78') ,
 ('FR','BYX','Bayeux',' ','14') ,
 ('FR','BYY','Boissy-sous-St-Yon',' ','91') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','BZA','Blanzac-les-Matha',' ','17') ,
 ('FR','BZC','Buzancais',' ','36') ,
 ('FR','BZE','Bazainville',' ','78') ,
@@ -22216,7 +22248,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','CCT','Cercy-la-Tour',' ','58') ,
 ('FR','CCU','Cenac',' ','33') ,
 ('FR','CCX','Corcieux',' ','88') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','CCY','Clamecy',' ','') ,
 ('FR','CDA','Cire d''Aunis',' ','17') ,
 ('FR','CDB','Chartres-de-Bretagne',' ','35') ,
@@ -22297,7 +22329,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','CGX','Cagny',' ','14') ,
 ('FR','CGY','Chagny',' ','71') ,
 ('FR','CHA','Chartres',' ','28') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','CHB','Chabris',' ','36') ,
 ('FR','CHC','Charvieu-Chavagneux',' ','38') ,
 ('FR','CHD','Chambord',' ','41') ,
@@ -22378,7 +22410,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','CMC','Chamblanc',' ','21') ,
 ('FR','CMD','Castelnau-de-Medoc',' ','33') ,
 ('FR','CME','Cagnes-sur-Mer',' ','06') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','CMF','Chambery',' ','73') ,
 ('FR','CMG','Chambolle-Musigny',' ','21') ,
 ('FR','CMH','Charmes-sur-Rhone',' ','07') ,
@@ -22459,7 +22491,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','CPI','Champier',' ','38') ,
 ('FR','CPL','Champillet',' ','36') ,
 ('FR','CPM','Champagne-Mouton',' ','16') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','CPN','Cases-de-Pene',' ','66') ,
 ('FR','CPO','Cormeilles-en-Parisis',' ','95') ,
 ('FR','CPQ','Chaponnay',' ','69') ,
@@ -22540,7 +22572,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','CTJ','Chatillon',' ','39') ,
 ('FR','CTK','Castellane',' ','04') ,
 ('FR','CTL','Chateaulin',' ','29') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','CTM','La Chapelle-Saint-Martin',' ','73') ,
 ('FR','CTN','Castelsarrasin',' ','82') ,
 ('FR','CTO','Ceton',' ','61') ,
@@ -22621,7 +22653,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','CYE','Crecy-sur-Serre',' ','02') ,
 ('FR','CYF','Cuy-St-Fiacre',' ','76') ,
 ('FR','CYL','Chassey-les-Scey',' ','70') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','CYM','Chilly-Mazarin',' ','91') ,
 ('FR','CYO','Champs-sur-Yonne',' ','89') ,
 ('FR','CYP','Couilly-Pont-aux-Dames',' ','77') ,
@@ -22702,7 +22734,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','DKK','Dunkerque',' ','59') ,
 ('FR','DLD','Douvres-la-Delivrande',' ','14') ,
 ('FR','DLE','Dole',' ','39') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','DLF','Doue-la-Fontaine',' ','49') ,
 ('FR','DLL','Dammarie-les-Lys',' ','77') ,
 ('FR','DLO','Dompierre-les-Ormes',' ','71') ,
@@ -22783,7 +22815,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','DVR','Douvrin',' ','62') ,
 ('FR','DVY','Dissay',' ','86') ,
 ('FR','DWV','Cairanne',' ','84') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','DXA','Les Deux Alpes',' ','38') ,
 ('FR','DXO','St Laurent-Medoc',' ','33') ,
 ('FR','DYA','Serdinya',' ','66') ,
@@ -22864,7 +22896,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','EIM','Herrlisheim-pres-Colmar',' ','68') ,
 ('FR','EIV','St Etienne-la-Varenne',' ','69') ,
 ('FR','ELA','Elancourt',' ','78') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','ELB','Enghien-les-Bains',' ','95') ,
 ('FR','ELD','Mesland',' ','41') ,
 ('FR','ELG','Essigny-le-Grand',' ','02') ,
@@ -22945,7 +22977,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','ESN','Conde-sur-Noireau',' ','14') ,
 ('FR','ESO','Eragny',' ','95') ,
 ('FR','ESQ','Esquieze-Sere',' ','65') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','ESR','Etoile-sur-Rhone',' ','26') ,
 ('FR','ESS','Epinay-sur-Seine',' ','93') ,
 ('FR','EST','Estissac',' ','10') ,
@@ -23026,7 +23058,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','FEG','Fegersheim',' ','67') ,
 ('FR','FEI','Feillens',' ','01') ,
 ('FR','FEN','Fenouillet',' ','31') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','FER','Fervaques',' ','14') ,
 ('FR','FES','Fresnes/Paris',' ','94') ,
 ('FR','FET','Fere-en-Tardenois',' ','02') ,
@@ -23107,7 +23139,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','FRN','Frontenaud',' ','71') ,
 ('FR','FRO','Frontignan',' ','34') ,
 ('FR','FRS','Foreste',' ','02') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','FRV','Fronville',' ','52') ,
 ('FR','FRX','La Fere',' ','02') ,
 ('FR','FRY','Fresnoy-le-Grand',' ','02') ,
@@ -23188,7 +23220,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','GDR','Grand-Rozoy',' ','02') ,
 ('FR','GDS','Grande-Synthe',' ','59') ,
 ('FR','GDV','Grandvillars',' ','90') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','GDY','Lugon-et-l''Ile-du-Carnay',' ','33') ,
 ('FR','GEA','Grenay',' ','62') ,
 ('FR','GEC','Gevrey-Chambertin',' ','21') ,
@@ -23269,7 +23301,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','GOA','Guerande',' ','44') ,
 ('FR','GOC','Lagorce',' ','07') ,
 ('FR','GOD','Les Gonds',' ','17') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','GOG','Gorges',' ','44') ,
 ('FR','GOH','Gonnehem',' ','62') ,
 ('FR','GOL','Golbey',' ','88') ,
@@ -23350,7 +23382,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','GYA','Magny',' ','28') ,
 ('FR','GYC','St Geyrac',' ','24') ,
 ('FR','GYE','Germigny-l''Eveque',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','GYG','Savigny-sur-Orge',' ','91') ,
 ('FR','GYM','Gevigney-et-Mercey',' ','70') ,
 ('FR','GYR','Montigny-le-Roi',' ','52') ,
@@ -23431,7 +23463,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','HLZ','St-Hilaire-de-Riez',' ','85') ,
 ('FR','HMA','Hattmatt',' ','67') ,
 ('FR','HMO','Chevremont',' ','90') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','HMS','Hermies',' ','62') ,
 ('FR','HMT','Hautmont',' ','59') ,
 ('FR','HMU','Homecourt',' ','54') ,
@@ -23512,7 +23544,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','ICA','St-Ciers-Champagne',' ','17') ,
 ('FR','ICB','St Vincent-en-Bresse',' ','71') ,
 ('FR','ICH','Chiche',' ','79') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','ICO','Bricon',' ','52') ,
 ('FR','ICP','Siorac-en-Perigord',' ','24') ,
 ('FR','ICT','Avricourt',' ','57') ,
@@ -23593,7 +23625,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','IVR','Bievres',' ','91') ,
 ('FR','IVS','Ivry-sur-Seine',' ','94') ,
 ('FR','IVX','St Privat-des-Vieux',' ','30') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','IYA','Boissy-l''Aillerie',' ','95') ,
 ('FR','IYB','St Mars-la-Briere',' ','72') ,
 ('FR','IYR','Singleyrac',' ','24') ,
@@ -23674,7 +23706,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','LAL','Lalinde',' ','24') ,
 ('FR','LAM','Lamanon',' ','13') ,
 ('FR','LAN','Langres',' ','52') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','LAO','Laon',' ','02') ,
 ('FR','LAP','La Chapelle-Saint-Ursin',' ','18') ,
 ('FR','LAQ','Lambesc',' ','13') ,
@@ -23755,7 +23787,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','LDX','Lavardac',' ','47') ,
 ('FR','LDY','La Bastide-Puylaurent',' ','48') ,
 ('FR','LDZ','La Douze',' ','24') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','LEA','Langeais',' ','37') ,
 ('FR','LEB','Le Boulou',' ','66') ,
 ('FR','LEC','Le Cannet',' ','06') ,
@@ -23836,7 +23868,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','LHU','La Roche-Clermault',' ','37') ,
 ('FR','LHY','Labouheyre',' ','40') ,
 ('FR','LIA','L''Isle-d''Abeau',' ','38') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','LIB','Libourne',' ','33') ,
 ('FR','LIC','Labastide D''Armagnac',' ','40') ,
 ('FR','LID','La Bridoire',' ','73') ,
@@ -23917,7 +23949,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','LNG','Longueville-sur-Scie',' ','76') ,
 ('FR','LNH','Lacanche',' ','21') ,
 ('FR','LNI','Lonrai',' ','61') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','LNJ','Longjumeau',' ','91') ,
 ('FR','LNL','Langlade',' ','30') ,
 ('FR','LNN','Languenan',' ','22') ,
@@ -23998,7 +24030,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','LRH','La Rochelle',' ','17') ,
 ('FR','LRI','La Riche',' ','37') ,
 ('FR','LRJ','Solre-le-Chateau',' ','59') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','LRL','Laboissiere-en-Thelle',' ','60') ,
 ('FR','LRM','La Romieu',' ','32') ,
 ('FR','LRN','Laure-Minervois',' ','11') ,
@@ -24079,7 +24111,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','LUU','Laudun',' ','30') ,
 ('FR','LUV','La Longueville',' ','59') ,
 ('FR','LUX','Langueux',' ','22') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','LUY','Lunay',' ','41') ,
 ('FR','LUZ','Luzenac',' ','09') ,
 ('FR','LVA','Laval',' ','53') ,
@@ -24160,7 +24192,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','MAG','Magny-en-Vexin',' ','95') ,
 ('FR','MAH','Machecoul',' ','44') ,
 ('FR','MAI','Maignelay Montigny',' ','60') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','MAJ','Le Mesnil-Amelot',' ','77') ,
 ('FR','MAK','Marck',' ','62') ,
 ('FR','MAL','Malesherbes',' ','45') ,
@@ -24241,7 +24273,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','MEN','Mende',' ','48') ,
 ('FR','MEO','Marquette-en-Ostrevant',' ','59') ,
 ('FR','MEP','Merpins',' ','16') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','MEQ','Melesse',' ','35') ,
 ('FR','MER','Mercurey',' ','71') ,
 ('FR','MES','Messia-sur-Sorne',' ','39') ,
@@ -24322,7 +24354,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','MKO','Malakoff',' ','92') ,
 ('FR','MLA','Mareuil-sur-Ay',' ','51') ,
 ('FR','MLB','Mers-les-Bains',' ','80') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','MLC','Le Cheylard',' ','07') ,
 ('FR','MLD','Monistrol-d''Allier',' ','43') ,
 ('FR','MLE','Melle',' ','79') ,
@@ -24403,7 +24435,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','MOO','Montesson',' ','78') ,
 ('FR','MOP','Monchy-le-Preux',' ','62') ,
 ('FR','MOQ','Morestel',' ','38') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','MOR','Morteau',' ','25') ,
 ('FR','MOS','Montargis',' ','45') ,
 ('FR','MOT','Montauban',' ','82') ,
@@ -24484,7 +24516,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','MTJ','Montaigu',' ','39') ,
 ('FR','MTK','Montans',' ','') ,
 ('FR','MTL','Montreuil',' ','93') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','MTM','Montelimar',' ','26') ,
 ('FR','MTN','Maintenon',' ','28') ,
 ('FR','MTO','Montieramey',' ','10') ,
@@ -24565,7 +24597,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','MYP','Moulis-en-Medoc',' ','33') ,
 ('FR','MYR','Meyreuil',' ','13') ,
 ('FR','MYT','Meythet',' ','74') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','MYU','Marigny-le-Chatel',' ','10') ,
 ('FR','MYV','Marly-la-Ville',' ','95') ,
 ('FR','MYY','Milly',' ','89') ,
@@ -24646,7 +24678,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','NGR','Le Longeron',' ','49') ,
 ('FR','NGS','Nogent-sur-Seine',' ','10') ,
 ('FR','NGT','Montaigut',' ','63') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','NGU','Launaguet',' ','31') ,
 ('FR','NGV','Nogent-sur-Vernisson',' ','45') ,
 ('FR','NHA','Noalhac',' ','48') ,
@@ -24727,7 +24759,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','NSR','Neuville-Saint-Remy',' ','59') ,
 ('FR','NSS','Neuilly-sur-Seine',' ','92') ,
 ('FR','NST','Monestrol',' ','31') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','NSU','Montsurs',' ','53') ,
 ('FR','NSV','Noyal-sur-Vilaine',' ','35') ,
 ('FR','NSX','Nod-sur-Seine',' ','21') ,
@@ -24808,7 +24840,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','OGA','Longages',' ','31') ,
 ('FR','OGE','Oradour-sur-Glane',' ','87') ,
 ('FR','OGL','Orgelet',' ','39') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','OGN','Orgon',' ','13') ,
 ('FR','OGO','Borgo',' ','2B') ,
 ('FR','OGR','Longuerue',' ','76') ,
@@ -24889,7 +24921,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','OSJ','Osseja',' ','66') ,
 ('FR','OSL','Monistrol-sur-Loire',' ','43') ,
 ('FR','OSM','Olonne-sur-Mer',' ','85') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','OSN','Osny',' ','95') ,
 ('FR','OSO','Oraison',' ','04') ,
 ('FR','OSS','Sigolsheim',' ','68') ,
@@ -24970,7 +25002,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','PBT','Port-Brillet',' ','53') ,
 ('FR','PBV','Le Pont-de-Beauvoisin',' ','38') ,
 ('FR','PCA','Pont-du-Casse',' ','47') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','PCB','Portel-des-Corbieres',' ','11') ,
 ('FR','PCE','Precigne',' ','72') ,
 ('FR','PCH','Puicheric',' ','11') ,
@@ -25051,7 +25083,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','PIT','St Pierre-Toirac',' ','46') ,
 ('FR','PIU','Pierrefeu-du-Var',' ','83') ,
 ('FR','PIV','Pithiviers',' ','45') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','PIY','Pirey',' ','25') ,
 ('FR','PJB','St Pierre-les-Elbeuf',' ','76') ,
 ('FR','PJE','Port-Jerome',' ','76') ,
@@ -25132,7 +25164,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','PPX','Pamproux',' ','79') ,
 ('FR','PPY','Pont-de-Pany',' ','21') ,
 ('FR','PQC','Pont-Rean',' ','35') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','PQE','Poses',' ','27') ,
 ('FR','PQS','Pernes',' ','62') ,
 ('FR','PRA','Prauthoy',' ','52') ,
@@ -25213,7 +25245,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','PVR','Capvern',' ','65') ,
 ('FR','PVT','Passavant-la-Rochere',' ','70') ,
 ('FR','PVV','Pernand-Vergelesses',' ','21') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','PVX','Pont-de-Vaux',' ','01') ,
 ('FR','PVY','Pontivy',' ','56') ,
 ('FR','PXL','Presles',' ','95') ,
@@ -25294,7 +25326,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','RAV','Cravant',' ','89') ,
 ('FR','RAX','Rai',' ','61') ,
 ('FR','RBA','Rebais',' ','77') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','RBC','Briec',' ','29') ,
 ('FR','RBE','Ribiers',' ','05') ,
 ('FR','RBM','Ribemont',' ','02') ,
@@ -25375,7 +25407,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','RIL','Rillieux-la-Pape',' ','69') ,
 ('FR','RIM','Rimaucourt',' ','52') ,
 ('FR','RIN','Rinxent',' ','62') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','RIO','Riom',' ','63') ,
 ('FR','RIQ','Riquewihr',' ','68') ,
 ('FR','RIR','Riberac',' ','24') ,
@@ -25456,7 +25488,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','RPT','Saint-Genest-Lerpt',' ','42') ,
 ('FR','RPY','Rieupeyroux',' ','') ,
 ('FR','RQB','Roquefort-la-Bedoule',' ','13') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','RQE','Rech',' ','57') ,
 ('FR','RQF','Roquefort',' ','') ,
 ('FR','RQN','Roquebrun',' ','34') ,
@@ -25537,7 +25569,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','RYD','Rochy-Conde',' ','60') ,
 ('FR','RYE','Roye',' ','80') ,
 ('FR','RYL','Rouilly-Saint-Loup',' ','10') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','RYM','Charnay-les-Macon',' ','71') ,
 ('FR','RYN','Royan',' ','17') ,
 ('FR','RYR','Carry-le-Rouet',' ','13') ,
@@ -25618,7 +25650,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','SCS','Sallanches',' ','74') ,
 ('FR','SCT','St Clair-de-la-Tour',' ','38') ,
 ('FR','SCU','St Antoine-Cumond',' ','24') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','SCV','St-Cosme-en-Vairais',' ','72') ,
 ('FR','SCW','Schweighausen-sur-Moder',' ','67') ,
 ('FR','SCX','St Cheron',' ','91') ,
@@ -25699,7 +25731,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','SGQ','St Agathon',' ','22') ,
 ('FR','SGR','Saint-Egreve',' ','38') ,
 ('FR','SGS','St-Georges-du-Bois',' ','17') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','SGT','Sainte-Gemmes-sur-Loire',' ','49') ,
 ('FR','SGU','Sille-le-Guillaume',' ','72') ,
 ('FR','SGV','St Jean-de-Gonville',' ','01') ,
@@ -25780,7 +25812,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','SLP','St Brevin-les-Pins',' ','44') ,
 ('FR','SLQ','Saint-Lin',' ','79') ,
 ('FR','SLR','St Laurent-sur-Saone',' ','01') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','SLS','Solesmes',' ','59') ,
 ('FR','SLT','Saultain',' ','59') ,
 ('FR','SLU','St Lupicin',' ','39') ,
@@ -25861,7 +25893,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','SPG','Saint-Pargoire',' ','34') ,
 ('FR','SPH','St Estephe',' ','33') ,
 ('FR','SPI','Spincourt',' ','55') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','SPJ','St-Paul-de-Jarrat',' ','09') ,
 ('FR','SPK','Spycker',' ','59') ,
 ('FR','SPL','St Parres-les-Vaudes',' ','10') ,
@@ -25942,7 +25974,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','SSX','St Savin-de-Blay',' ','33') ,
 ('FR','SSY','Cessy',' ','01') ,
 ('FR','SSZ','Sainte-Suzanne',' ','25') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','STA','St Avold',' ','57') ,
 ('FR','STB','St Bartelemy',' ','') ,
 ('FR','STC','St Claude',' ','39') ,
@@ -26023,7 +26055,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','SXM','Ste Marie-aux-Mines',' ','68') ,
 ('FR','SXN','St-Meme-les-Carrieres',' ','16') ,
 ('FR','SXO','St Maixent-l''Ecole',' ','79') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','SXS','Salbris',' ','41') ,
 ('FR','SXT','St Clet',' ','22') ,
 ('FR','SXX','St-Bonnet-les-Oules',' ','42') ,
@@ -26104,7 +26136,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','TER','Tergnier',' ','02') ,
 ('FR','TES','Tresse',' ','35') ,
 ('FR','TET','Saint-Etienne-les-Remiremont',' ','88') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','TEU','Sainte-Eulalie',' ','33') ,
 ('FR','TEV','Treves',' ','69') ,
 ('FR','TFA','Ternay',' ','41') ,
@@ -26185,7 +26217,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','TMO','St Mont',' ','32') ,
 ('FR','TMQ','Sainte-Maure-de-Touraine',' ','37') ,
 ('FR','TMR','Tremeur',' ','22') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','TMS','Tremons',' ','47') ,
 ('FR','TMT','Trementines',' ','49') ,
 ('FR','TMX','Terminiers',' ','28') ,
@@ -26266,7 +26298,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','TUC','Touffreville',' ','14') ,
 ('FR','TUF','Tours',' ','37') ,
 ('FR','TUI','Les Thuiles',' ','04') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','TUL','Tullins',' ','38') ,
 ('FR','TUM','Trelou-sur-Marne',' ','02') ,
 ('FR','TUN','Saint-Fortunat-sur-Eyrieux',' ','07') ,
@@ -26347,7 +26379,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','UNL','Cauneille',' ','40') ,
 ('FR','UNO','L''Union',' ','31') ,
 ('FR','UNR','St Lunaire',' ','35') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','UNS','Guines',' ','62') ,
 ('FR','UNY','Brunoy',' ','91') ,
 ('FR','UON','Cuon',' ','49') ,
@@ -26428,7 +26460,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','VCA','Velle-le-Chatel',' ','70') ,
 ('FR','VCB','Vic-en-Bigorre',' ','65') ,
 ('FR','VCC','Vic-le-Comte',' ','63') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','VCG','St Magne-de-Castillon',' ','89') ,
 ('FR','VCH','Villiers-Charlemagne',' ','') ,
 ('FR','VCL','Villers-Ecalles',' ','76') ,
@@ -26509,7 +26541,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','VIH','Vigneulles-les-Hattonchatel',' ','55') ,
 ('FR','VII','Villiers-le-Sec',' ','52') ,
 ('FR','VIL','Villepinte',' ','93') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','VIM','Villeneuve-la-Garenne',' ','92') ,
 ('FR','VIN','Viane',' ','81') ,
 ('FR','VIO','Viotte/Besancon',' ','25') ,
@@ -26590,7 +26622,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','VQR','Veron',' ','89') ,
 ('FR','VQU','Vacqueyras',' ','84') ,
 ('FR','VRA','Valreas',' ','84') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','VRC','Varces-Allieres-et-Risset',' ','38') ,
 ('FR','VRD','Verdun',' ','55') ,
 ('FR','VRE','Vire',' ','71') ,
@@ -26671,7 +26703,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','VVV','Villeneuve-Loubet',' ','06') ,
 ('FR','VVY','Vivy',' ','49') ,
 ('FR','VVZ','Viviez',' ','12') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','VXC','Vieux-Charmont',' ','25') ,
 ('FR','VXE','St Sever',' ','40') ,
 ('FR','VXL','Villersexel',' ','70') ,
@@ -26752,7 +26784,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','XSA','Marsac',' ','23') ,
 ('FR','XSC','St-Sylvestre-Cappel',' ','59') ,
 ('FR','XSM','St Medar de Mussidan',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','XSN','Sarrancolin',' ','65') ,
 ('FR','XTG','Xertigny',' ','88') ,
 ('FR','XUA','St Maur-des-Fosses',' ','94') ,
@@ -26833,7 +26865,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('FR','ZGF','St Georges-sur-Loire',' ','49') ,
 ('FR','ZGJ','St Germain-de-Joux',' ','01') ,
 ('FR','ZGM','St Galmier',' ','42') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('FR','ZGP','St Germain-du-Plain',' ','71') ,
 ('FR','ZGW','St Genis-Pouilly',' ','01') ,
 ('FR','ZIJ','St Georges-de-Reneins',' ','69') ,
@@ -26914,7 +26946,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','ABY','Aboyne',' ','GMP') ,
 ('GB','ACF','Abercraf',' ','POW') ,
 ('GB','ACG','Acocks Green/Birmingham',' ','WMD') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','ACH','Auchterarder',' ','TAY') ,
 ('GB','ACI','Alderney',' ','CHA') ,
 ('GB','ACK','Ackworth',' ','WYK') ,
@@ -26995,7 +27027,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','APH','Alphington',' ','DVV') ,
 ('GB','APL','Appleton',' ','OXF') ,
 ('GB','APN','Alperton',' ','BEN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','APP','Appledore',' ','') ,
 ('GB','APT','Appleton Thorn',' ','CHS') ,
 ('GB','AQO','Ash',' ','KEN') ,
@@ -27076,7 +27108,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','BAS','Basildon',' ','ESS') ,
 ('GB','BAT','Battlesbridge',' ','ESS') ,
 ('GB','BAU','Baulking',' ','OXF') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','BAV','Bidford',' ','WAR') ,
 ('GB','BAW','Baltic Wharf',' ','GTL') ,
 ('GB','BAY','Batley',' ','WYK') ,
@@ -27157,7 +27189,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','BGS','Bagshot',' ','SRY') ,
 ('GB','BGT','Billingshurst',' ','WSX') ,
 ('GB','BGV','Bromsgrove',' ','HWR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','BGW','Ballygowan',' ','DOW') ,
 ('GB','BGX','Biggar',' ','SLK') ,
 ('GB','BGY','Bingley',' ','WYK') ,
@@ -27238,7 +27270,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','BME','Bermondsey/London',' ','SWK') ,
 ('GB','BMH','Bramhope',' ','WYK') ,
 ('GB','BMI','Brackmills',' ','NTH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','BML','Bramley',' ','ROT') ,
 ('GB','BMM','Bromham',' ','WIL') ,
 ('GB','BMN','Beaminster',' ','DOR') ,
@@ -27319,7 +27351,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','BSL','Bosley',' ','CHS') ,
 ('GB','BSN','Baltasound',' ','ZET') ,
 ('GB','BSO','Bolsover',' ','DBY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','BSP','Bishopbriggs',' ','STD') ,
 ('GB','BSR','Bransgore',' ','HAM') ,
 ('GB','BST','Bishop''s Stortford',' ','HRT') ,
@@ -27400,7 +27432,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','BYQ','Bushey',' ','HRT') ,
 ('GB','BYR','Blantyre',' ','STD') ,
 ('GB','BYU','Little Chalfont',' ','BKM') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','BYW','Ballygawley',' ','DGN') ,
 ('GB','BYY','Broughty Ferry',' ','TAY') ,
 ('GB','BZE','Belford',' ','NBL') ,
@@ -27481,7 +27513,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','CGO','Cassington',' ','OXF') ,
 ('GB','CGR','Cononbridge',' ','HLD') ,
 ('GB','CGS','Chessington',' ','SRY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','CGV','Chalgrove',' ','OXF') ,
 ('GB','CGW','Cullingworth',' ','WYK') ,
 ('GB','CGY','Congresbury',' ','NSM') ,
@@ -27562,7 +27594,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','CNR','Charnock Richard',' ','LAN') ,
 ('GB','CNS','Carnoustie',' ','TAY') ,
 ('GB','CNT','Consett',' ','DUR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','CNU','Craignure',' ','STD') ,
 ('GB','CNV','Caernarfon',' ','GWN') ,
 ('GB','CNW','Cornwell',' ','OXF') ,
@@ -27643,7 +27675,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','CUP','Cupar',' ','FIF') ,
 ('GB','CUR','Curlew',' ','') ,
 ('GB','CUT','Cutnall Green',' ','HWR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','CVF','Caversfield',' ','OXF') ,
 ('GB','CVG','Chevington',' ','SFK') ,
 ('GB','CVT','Coventry',' ','WMD') ,
@@ -27724,7 +27756,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','DLL','Dullingham',' ','CAM') ,
 ('GB','DLS','Dalston',' ','GTL') ,
 ('GB','DLX','Dalry',' ','STD') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','DMC','Dymock',' ','GLS') ,
 ('GB','DMO','Dromore',' ','BNB') ,
 ('GB','DMR','Dalmuir',' ','STD') ,
@@ -27805,7 +27837,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','EAT','Eastleigh',' ','HAM') ,
 ('GB','EAW','Eastburn',' ','WYK') ,
 ('GB','EAY','Eastry',' ','KEN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','EBB','Ebbw Vale',' ','GNT') ,
 ('GB','EBF','East Bedfont/London',' ','GTL') ,
 ('GB','EBO','Eastbourne',' ','ESX') ,
@@ -27886,7 +27918,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','EVE','Evesham',' ','HWR') ,
 ('GB','EVY','Eversley',' ','BKM') ,
 ('GB','EWE','Ewell',' ','SRY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','EWH','Elworth',' ','CHS') ,
 ('GB','EWM','Ewelme',' ','OXF') ,
 ('GB','EWO','Eastwood',' ','ESS') ,
@@ -27967,7 +27999,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','FOR','Forth',' ','LTN') ,
 ('GB','FOW','Frisby on the Wreake',' ','LEC') ,
 ('GB','FOY','Fowey',' ','CON') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','FRA','Framlingham',' ','SFK') ,
 ('GB','FRB','Fraserburgh',' ','GMP') ,
 ('GB','FRC','Farnham Common',' ','BKM') ,
@@ -28048,7 +28080,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','GLL','Gillingham',' ','DOR') ,
 ('GB','GLN','Glanton',' ','NBL') ,
 ('GB','GLO','Gloucester',' ','GLS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','GLS','Glenrothes',' ','FIF') ,
 ('GB','GLW','Glasgow',' ','STD') ,
 ('GB','GML','Great Malvern',' ','HWR') ,
@@ -28129,7 +28161,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','HAP','Hapton',' ','LAN') ,
 ('GB','HAR','Hardley',' ','HAM') ,
 ('GB','HAS','Harleston',' ','NFK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','HAT','Hatfield',' ','HRT') ,
 ('GB','HAV','Havant',' ','HAM') ,
 ('GB','HAY','Hayle',' ','CON') ,
@@ -28210,7 +28242,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','HIH','Horwich',' ','GTM') ,
 ('GB','HIL','Hinckley',' ','LEC') ,
 ('GB','HIN','Honiton',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','HIS','Histon',' ','CAM') ,
 ('GB','HIY','Hindley',' ','GTM') ,
 ('GB','HKB','Hackbridge',' ','STN') ,
@@ -28291,7 +28323,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','HRW','Harwich',' ','ESS') ,
 ('GB','HRY','Horley',' ','SRY') ,
 ('GB','HSB','Helsby',' ','CHS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','HSE','Hessle',' ','HUM') ,
 ('GB','HSF','Horsforth',' ','WYK') ,
 ('GB','HSG','Haslington',' ','CHS') ,
@@ -28372,7 +28404,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','ICD','Inkberrow',' ','HWR') ,
 ('GB','IFD','Ilford',' ','GTL') ,
 ('GB','IGM','Ingoldmells',' ','LIN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','IHM','Ingham',' ','SFK') ,
 ('GB','IIB','Irthlingborough',' ','NTH') ,
 ('GB','IKS','Ilkeston',' ','DBY') ,
@@ -28453,7 +28485,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','KKB','Kirkby',' ','MSY') ,
 ('GB','KKD','Kirkcaldy',' ','FIF') ,
 ('GB','KKI','Kirkliston',' ','LTN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','KKL','Kirkby Lonsdale',' ','CMA') ,
 ('GB','KKS','Kirk Sandall',' ','SYK') ,
 ('GB','KKT','Kirkintilloch',' ','STD') ,
@@ -28534,7 +28566,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','LBK','Barking',' ','SFK') ,
 ('GB','LBN','Longbenton',' ','TWR') ,
 ('GB','LBO','Little Brampton',' ','SHR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','LBR','Lambourn',' ','WBK') ,
 ('GB','LBU','Long Buckby',' ','NTH') ,
 ('GB','LBZ','Leighton Buzzard',' ','BDF') ,
@@ -28615,7 +28647,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','LKB','Lockerbie',' ','DGY') ,
 ('GB','LKD','Liskeard',' ','CON') ,
 ('GB','LKH','Locks Heath',' ','HAM') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','LKK','Laurencekirk',' ','ABD') ,
 ('GB','LKT','Lower Kinnerton',' ','CHS') ,
 ('GB','LLA','Llandeilo',' ','DFD') ,
@@ -28696,7 +28728,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','LWA','Loudwater',' ','BKM') ,
 ('GB','LWE','Lewes',' ','ESX') ,
 ('GB','LWM','Low Moor',' ','BKM') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','LWN','Lowton',' ','GTM') ,
 ('GB','LWR','Lower Weare',' ','SOM') ,
 ('GB','LWS','Lewisham',' ','GTL') ,
@@ -28777,7 +28809,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','MIR','Mirfield',' ','WYK') ,
 ('GB','MIS','Mistley',' ','ESS') ,
 ('GB','MIT','Mitcheldean',' ','GLS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','MKB','Matlock Bath',' ','DBY') ,
 ('GB','MKD','Market Drayton',' ','SHR') ,
 ('GB','MKH','Market Harborough',' ','LEC') ,
@@ -28858,7 +28890,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','MTK','Methlick',' ','GMP') ,
 ('GB','MTL','Matlock',' ','DBY') ,
 ('GB','MTN','Maryton',' ','TAY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','MTO','Melton',' ','SFK') ,
 ('GB','MTT','Marston Trussell',' ','NTH') ,
 ('GB','MTZ','Mortlake',' ','GTL') ,
@@ -28939,7 +28971,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','NQY','Newquay',' ','CON') ,
 ('GB','NRC','North Cheam',' ','GTL') ,
 ('GB','NRF','North Ferriby',' ','HUM') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','NRH','Northchapel',' ','WSX') ,
 ('GB','NRL','North Lancing',' ','WSX') ,
 ('GB','NRM','North Walsham',' ','NFK') ,
@@ -29020,7 +29052,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','OVR','Over',' ','CAM') ,
 ('GB','OWR','Oswestry',' ','SHR') ,
 ('GB','OXD','Oxted',' ','SRY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','OXF','Oxford',' ','OXF') ,
 ('GB','OXI','Oxhill',' ','WAR') ,
 ('GB','OXT','Oxshott',' ','SRY') ,
@@ -29101,7 +29133,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','POF','Pontefract',' ','WYK') ,
 ('GB','POH','Porthoustock',' ','CON') ,
 ('GB','POL','Polebrook',' ','NTH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','PON','Potterne',' ','WIL') ,
 ('GB','POO','Poole',' ','DOR') ,
 ('GB','POR','Porth',' ','RCT') ,
@@ -29182,7 +29214,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','RCK','Bricket Wood',' ','HRT') ,
 ('GB','RCS','Rochester',' ','KEN') ,
 ('GB','RCU','Richmond upon Thames',' ','GTL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','RDB','Redbourn',' ','LIN') ,
 ('GB','RDC','Radcliffe',' ','GTM') ,
 ('GB','RDD','Redditch',' ','HWR') ,
@@ -29263,7 +29295,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','RUH','Rushock',' ','HEF') ,
 ('GB','RUI','Ruislip',' ','GTL') ,
 ('GB','RUK','Rushock',' ','WOR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','RUN','Runcorn',' ','CHS') ,
 ('GB','RUS','Rushden',' ','NTH') ,
 ('GB','RUT','Rutherglen',' ','STD') ,
@@ -29344,7 +29376,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','SFV','Stanford in the Vale',' ','OXF') ,
 ('GB','SFW','Scapa Flow',' ','ORK') ,
 ('GB','SFY','Salford',' ','GTM') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','SGD','Sunningdale',' ','WNM') ,
 ('GB','SGE','Sedgefield',' ','DUR') ,
 ('GB','SGF','Shillingford',' ','OXF') ,
@@ -29425,7 +29457,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','SNO','South Normanton',' ','DBY') ,
 ('GB','SNR','South Norwood',' ','GTL') ,
 ('GB','SNS','Stromness',' ','ORK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','SNT','St Neots',' ','CAM') ,
 ('GB','SNW','St Andrews',' ','FIF') ,
 ('GB','SNY','Stoke by Nayland',' ','SFK') ,
@@ -29506,7 +29538,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','STT','Stockton-on-Tees',' ','CLV') ,
 ('GB','STU','Studley',' ','WAR') ,
 ('GB','STV','Stevenage',' ','HRT') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','STW','Stowmarket',' ','SFK') ,
 ('GB','STX','Stone',' ','STS') ,
 ('GB','STY','Stalybridge',' ','GTM') ,
@@ -29587,7 +29619,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','TFK','Trafford Park',' ','MAN') ,
 ('GB','TFO','Tilford',' ','SRY') ,
 ('GB','TFR','Trefforest',' ','MGM') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','TFW','Taff''s Well',' ','MGM') ,
 ('GB','THA','Thatcham',' ','WBK') ,
 ('GB','THB','Thornbridge',' ','DBY') ,
@@ -29668,7 +29700,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','TTL','Tetney Terminal',' ','HUM') ,
 ('GB','TTO','Tillington',' ','HEF') ,
 ('GB','TTR','Totteridge',' ','GTL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','TTS','Totnes',' ','') ,
 ('GB','TTT','Tottenham',' ','GTL') ,
 ('GB','TTY','Trinity',' ','JSY') ,
@@ -29749,7 +29781,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','WBD','Wimbledon',' ','GTL') ,
 ('GB','WBE','Waterbeach',' ','CAM') ,
 ('GB','WBG','Woodbridge',' ','SFK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','WBH','Wimbish',' ','ESS') ,
 ('GB','WBL','Wimblington',' ','CAM') ,
 ('GB','WBN','Woburn',' ','BDF') ,
@@ -29830,7 +29862,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','WID','Wickford',' ','ESS') ,
 ('GB','WIE','Wiltshire',' ','WIL') ,
 ('GB','WIF','Winsford',' ','CHS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','WIG','Wigtown',' ','DGY') ,
 ('GB','WIH','Witham',' ','ESS') ,
 ('GB','WII','Willen',' ','BKM') ,
@@ -29911,7 +29943,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','WOT','Worthing',' ','WSX') ,
 ('GB','WOV','Wolverhampton',' ','WMD') ,
 ('GB','WOX','Wardington',' ','OXF') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','WOY','Woodbury',' ','') ,
 ('GB','WOZ','Wollaston',' ','NTH') ,
 ('GB','WPL','Whimple',' ','') ,
@@ -29992,7 +30024,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GB','XCY','Caldy',' ','MSY') ,
 ('GB','XDB','Chedburgh',' ','SFK') ,
 ('GB','XST','Steeton',' ','WYK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GB','YAL','Yalding',' ','KEN') ,
 ('GB','YAT','Yate',' ','GLS') ,
 ('GB','YDN','Yeadon',' ','WYK') ,
@@ -30073,7 +30105,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GH','SPD','Saltpond',' ','') ,
 ('GH','TEM','Tema',' ','') ,
 ('GH','TKD','Takoradi',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GH','TML','Tamale',' ','') ,
 ('GH','TWA','Tarkwa',' ','') ,
 ('GH','WEA','Winneba',' ','') ,
@@ -30154,7 +30186,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GP','PTL','Port-Louis',' ','') ,
 ('GP','PTP','Pointe-a-Pitre',' ','') ,
 ('GP','SBH','St Barthelemy',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GP','SFG','Saint Martin Apt',' ','') ,
 ('GQ','','',' ','') ,
 ('GQ','ABU','San Antonio de Pale',' ','') ,
@@ -30235,7 +30267,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GR','AVA','Avlida',' ','') ,
 ('GR','AVL','Avlon',' ','') ,
 ('GR','AXD','Alexandroupolis',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GR','CFU','Kerkira (Corfu)',' ','') ,
 ('GR','CHI','Chaidari, Athens',' ','') ,
 ('GR','CHQ','Canea',' ','') ,
@@ -30316,7 +30348,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GR','JTY','Astypalaia',' ','') ,
 ('GR','KAC','Kato Akhaia',' ','') ,
 ('GR','KAK','Katakolon',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GR','KAN','Leondarion',' ','') ,
 ('GR','KAP','Kapsalion',' ','') ,
 ('GR','KAR','Neon Karlovasion',' ','') ,
@@ -30397,7 +30429,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GR','MAN','Manolas',' ','') ,
 ('GR','MAR','Markopoulon',' ','') ,
 ('GR','MAV','Mavrothalassa',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GR','MAZ','Marina Zeas',' ','') ,
 ('GR','MDR','Moudhros',' ','') ,
 ('GR','MEG','Megalon Livadion',' ','') ,
@@ -30478,7 +30510,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GR','PIR','Piraeus',' ','') ,
 ('GR','PKE','Poros Kefallinias',' ','') ,
 ('GR','PKH','Portochelion',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GR','PLA','Pilea (Pylaia)',' ','') ,
 ('GR','PLI','Pyli',' ','') ,
 ('GR','PLT','Plati',' ','') ,
@@ -30559,7 +30591,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GR','TRI','Trikala',' ','') ,
 ('GR','TRP','Tripolis',' ','') ,
 ('GR','TRS','Thirasia',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GR','TSI','Tsingeli',' ','') ,
 ('GR','TSO','Thasos',' ','') ,
 ('GR','TVA','Thivai',' ','') ,
@@ -30640,7 +30672,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GT','PAL','Palin',' ','') ,
 ('GT','PAR','Parramos',' ','') ,
 ('GT','PAT','Patulul',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GT','PBR','Puerto Barrios',' ','') ,
 ('GT','PCG','Paso Caballos',' ','') ,
 ('GT','PLA','Palencia',' ','') ,
@@ -30721,7 +30753,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('GY','KTO','Kato',' ','') ,
 ('GY','LDN','Linden',' ','') ,
 ('GY','LTM','Lethem',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('GY','LUB','Lumid Pau',' ','') ,
 ('GY','MHA','Mahdia',' ','') ,
 ('GY','MKZ','Mackenzie',' ','') ,
@@ -30802,7 +30834,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('HN','RIO','Rio Nance',' ','') ,
 ('HN','RTB','Roatan',' ','') ,
 ('HN','RUY','Copan',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('HN','SAN','Santa Rita',' ','') ,
 ('HN','SAP','San Pedro Sula',' ','') ,
 ('HN','SBA','Santa Barbara',' ','') ,
@@ -30883,7 +30915,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('HR','JSA','Jelsa',' ','') ,
 ('HR','KAB','Karlobag',' ','') ,
 ('HR','KAR','Karlovac',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('HR','KLK','Klek',' ','') ,
 ('HR','KMN','Klimno',' ','') ,
 ('HR','KMZ','Komiza',' ','') ,
@@ -30964,7 +30996,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('HR','PRV','Prvic',' ','') ,
 ('HR','PRZ','Porozina',' ','') ,
 ('HR','PUY','Pula',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('HR','PZG','Pozega',' ','') ,
 ('HR','RAB','Rab',' ','') ,
 ('HR','RAS','Rasa',' ','') ,
@@ -31045,7 +31077,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('HR','VRG','Vrgada',' ','') ,
 ('HR','VRK','Vrbnik',' ','') ,
 ('HR','VRN','Vranjic',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('HR','VRR','Vrsar',' ','') ,
 ('HR','VRS','Vrboska',' ','') ,
 ('HR','VUK','Vukovar',' ','') ,
@@ -31126,7 +31158,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('HU','DPA','Dunapataj',' ','') ,
 ('HU','DRA','Dravaszabolcs',' ','') ,
 ('HU','DRE','Dunaremete',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('HU','DSZ','Dunaharaszti',' ','') ,
 ('HU','DUK','Dunavarsany',' ','') ,
 ('HU','DUU','Dunaujvaros',' ','') ,
@@ -31207,7 +31239,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('HU','LAB','Labatlan',' ','') ,
 ('HU','LAJ','Lajosmizse',' ','') ,
 ('HU','LET','Letenye',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('HU','LMY','Lagymanyos',' ','') ,
 ('HU','LOK','Lokoshaza',' ','') ,
 ('HU','MAD','Madocsa',' ','') ,
@@ -31288,7 +31320,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('HU','SVY','Savoly',' ','') ,
 ('HU','SYG','Szugy',' ','') ,
 ('HU','SZA','Szalanta',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('HU','SZB','Szazhalombatta',' ','') ,
 ('HU','SZC','Szerencs',' ','') ,
 ('HU','SZD','Szentendre',' ','') ,
@@ -31369,7 +31401,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ID','BJU','Banjuwangi, Java',' ','') ,
 ('ID','BJW','Bajawa',' ','') ,
 ('ID','BKA','Bekasi',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ID','BKI','Bengkalis, St',' ','') ,
 ('ID','BKS','Bengkulu, Sumatra',' ','') ,
 ('ID','BLI','Blinju, Banka',' ','') ,
@@ -31450,7 +31482,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ID','KEA','Keisah',' ','') ,
 ('ID','KEI','Kepi',' ','') ,
 ('ID','KEM','Kempo, Sb',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ID','KEQ','Kebar',' ','') ,
 ('ID','KID','Kidjang, Bintan',' ','') ,
 ('ID','KJN','Kajang',' ','') ,
@@ -31531,7 +31563,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ID','MUF','Muting',' ','') ,
 ('ID','MUO','Muntok, Banka',' ','') ,
 ('ID','MUP','Muara Pegah',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ID','MWK','Matak',' ','') ,
 ('ID','MXB','Masamba',' ','') ,
 ('ID','NAF','Banaina',' ','') ,
@@ -31612,7 +31644,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ID','RKO','Sipora',' ','') ,
 ('ID','RNI','Ranai',' ','') ,
 ('ID','RSK','Ransiki',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ID','RTG','Ruteng, Flores',' ','') ,
 ('ID','RTI','Roti',' ','') ,
 ('ID','RUF','Yuruf',' ','') ,
@@ -31693,7 +31725,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ID','TNB','Tanah Grogot',' ','') ,
 ('ID','TNJ','Tanjung Pinang, Riau',' ','') ,
 ('ID','TPK','Tapaktuan, Sumatra',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ID','TPN','Tanjung Pemancingan',' ','') ,
 ('ID','TPP','Tanjung Priok',' ','') ,
 ('ID','TRG','Tangerang',' ','') ,
@@ -31774,7 +31806,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IE','BLF','Ballyjamesduff',' ','') ,
 ('IE','BLG','Ballygar',' ','') ,
 ('IE','BLL','Ballina',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IE','BLM','Ballymahon',' ','') ,
 ('IE','BLN','Ballycotton',' ','') ,
 ('IE','BMT','Ballymount',' ','') ,
@@ -31855,7 +31887,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IE','DRU','Drumshanbo',' ','') ,
 ('IE','DUB','Dublin',' ','') ,
 ('IE','DUK','Duleek',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IE','DUW','Dunglow',' ','') ,
 ('IE','EDE','Edenderry',' ','') ,
 ('IE','ENI','Ennis',' ','') ,
@@ -31936,7 +31968,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IE','NET','Newport',' ','') ,
 ('IE','NEW','Newcastle West',' ','') ,
 ('IE','NMK','Newtown Mount Kennedy',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IE','NNR','Spiddal',' ','') ,
 ('IE','NOC','Knock',' ','') ,
 ('IE','NOV','Oldcastle',' ','') ,
@@ -32017,7 +32049,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IL','ARV','Arava',' ','') ,
 ('IL','ASH','Ashdod',' ','') ,
 ('IL','BAT','Bat Yam',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IL','BBK','Bene Beraq',' ','') ,
 ('IL','BET','Bet Shean',' ','') ,
 ('IL','BEV','Beer Sheba',' ','') ,
@@ -32098,7 +32130,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IN','AKV','Ankleshwar',' ','GJ') ,
 ('IN','ALA','Alang SBY',' ','') ,
 ('IN','ALF','Alleppey',' ','KL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IN','AMD','Ahmedabad',' ','GJ') ,
 ('IN','AMG','Amingaon (Gauhati)',' ','AS') ,
 ('IN','AMI','Andorth Is',' ','LD') ,
@@ -32179,7 +32211,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IN','CCJ','Kozhikode (ex Calicut)',' ','KL') ,
 ('IN','CCU','Kolkata (ex Calcutta)',' ','WB') ,
 ('IN','CDL','Cuddalore',' ','TN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IN','CDP','Cuddapah',' ','') ,
 ('IN','CHM','Chamurci',' ','SK') ,
 ('IN','CHN','Chhani/Vadodora',' ','GJ') ,
@@ -32260,7 +32292,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IN','GTR','Guntur',' ','AP') ,
 ('IN','GTZ','Getandah',' ','WB') ,
 ('IN','GUD','Gudur',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IN','GUX','Guna',' ','') ,
 ('IN','GWL','Gwalior',' ','MP') ,
 ('IN','GZD','Ghazipur',' ','UP') ,
@@ -32341,7 +32373,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IN','KIW','Kelwa',' ','MH') ,
 ('IN','KKR','Kilakari',' ','TN') ,
 ('IN','KKU','Jaipur-Kanakpura',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IN','KLH','Kolhapur',' ','MH') ,
 ('IN','KLY','Kalyan',' ','MH') ,
 ('IN','KMB','Kumbharu',' ','MH') ,
@@ -32422,7 +32454,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IN','MUL','Mulgund',' ','KA') ,
 ('IN','MUN','Mundra',' ','GJ') ,
 ('IN','MUR','Murad',' ','MH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IN','MYB','Mayabandar',' ','AN') ,
 ('IN','MYQ','Mysore',' ','') ,
 ('IN','MZA','Muzaffarnagar',' ','') ,
@@ -32503,7 +32535,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IN','RGU','Ryngku',' ','ML') ,
 ('IN','RJA','Rajahmundry',' ','') ,
 ('IN','RJI','Rajouri',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IN','RJP','Rajpara/Navabunder',' ','GJ') ,
 ('IN','RJR','Rajpuri',' ','MH') ,
 ('IN','RJU','Rajula',' ','GJ') ,
@@ -32584,7 +32616,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IN','TUT','Tuticorin',' ','TN') ,
 ('IN','TYR','Tirukkadayyur',' ','TN') ,
 ('IN','UDR','Udaipur',' ','RJ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IN','ULP','Ultapani',' ','AS') ,
 ('IN','ULW','Ulwa',' ','MH') ,
 ('IN','UMB','Umbergoan',' ','GJ') ,
@@ -32665,7 +32697,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IQ','ZUB','Al Zuwayr',' ','') ,
 ('IR','','',' ','') ,
 ('IR','ABD','Abadan',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IR','ACZ','Zabol',' ','') ,
 ('IR','ADU','Ardabil',' ','') ,
 ('IR','AMR','Amara',' ','') ,
@@ -32746,7 +32778,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IR','SRJ','Sirjan',' ','') ,
 ('IR','SRY','Sary',' ','') ,
 ('IR','SVH','Saveh',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IR','SXI','Sirri Island',' ','') ,
 ('IR','SYZ','Shiraz',' ','') ,
 ('IR','TAJ','Tajabad',' ','') ,
@@ -32827,7 +32859,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IS','PAT','Patreksfjordur - hofn',' ','') ,
 ('IS','RAU','Raufarhofn',' ','') ,
 ('IS','REY','Reykjavik',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IS','RFJ','Reydarfjordur',' ','') ,
 ('IS','RHA','Reykholar',' ','') ,
 ('IS','RIF','Rif-Hellisandur',' ','') ,
@@ -32908,7 +32940,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','AJA','Albinea',' ','') ,
 ('IT','AKA','Arluno',' ','') ,
 ('IT','AKD','Arzergrande',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','ALA','Ala',' ','') ,
 ('IT','ALB','Albizzate',' ','') ,
 ('IT','ALC','Alcamo',' ','') ,
@@ -32989,7 +33021,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','ATV','Cerano d''Intelvi',' ','') ,
 ('IT','ATX','Arbatax',' ','') ,
 ('IT','AUA','Aulla',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','AUG','Augusta',' ','') ,
 ('IT','AUS','Aurisina',' ','') ,
 ('IT','AUV','Arcugnano',' ','') ,
@@ -33070,7 +33102,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','BGT','Borgo Ticino',' ','') ,
 ('IT','BGU','Buguggiate',' ','') ,
 ('IT','BGV','Bagnacavallo',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','BGZ','Breganze',' ','') ,
 ('IT','BHA','Bagheria',' ','') ,
 ('IT','BHI','Bolgheri',' ','') ,
@@ -33151,7 +33183,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','BRZ','Borzago',' ','') ,
 ('IT','BSA','Borgo Sabotino',' ','') ,
 ('IT','BSC','Bosconero',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','BSD','Borgo San Dalmazzo',' ','') ,
 ('IT','BSE','Borsea',' ','') ,
 ('IT','BSG','Brisighella',' ','') ,
@@ -33232,7 +33264,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','CAX','Casella/Genova',' ','') ,
 ('IT','CAZ','Calzolaro',' ','') ,
 ('IT','CBB','Carobbio',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','CBC','Castelnuovo Bocca d''Adda',' ','') ,
 ('IT','CBD','Casalbordino',' ','') ,
 ('IT','CBE','Corbetta',' ','') ,
@@ -33313,7 +33345,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','CFD','Castelfidardo',' ','') ,
 ('IT','CFE','Castelfranco Emilia',' ','') ,
 ('IT','CFI','Corte de Frati',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','CFM','Ca de Fabbri',' ','') ,
 ('IT','CFO','Colleferro',' ','') ,
 ('IT','CFS','Cafasse',' ','') ,
@@ -33394,7 +33426,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','CME','Castel Mella',' ','') ,
 ('IT','CMG','Castel Maggiore',' ','') ,
 ('IT','CMI','Carmignano di Brenta',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','CML','Casamicciola Terme',' ','') ,
 ('IT','CMM','Camignone',' ','') ,
 ('IT','CMN','Cormano',' ','') ,
@@ -33475,7 +33507,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','CRE','Cremona',' ','') ,
 ('IT','CRF','Casarsa della Delizia',' ','') ,
 ('IT','CRG','Castello Roganzuolo',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','CRI','Cosseria',' ','') ,
 ('IT','CRL','Capriano del Colle',' ','') ,
 ('IT','CRM','Carmagnola',' ','') ,
@@ -33556,7 +33588,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','CVO','Calvenzano',' ','') ,
 ('IT','CVP','Castelvetro Piacentino',' ','') ,
 ('IT','CVQ','Castrovillari',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','CVR','Cervere',' ','') ,
 ('IT','CVS','Chiopris-Viscone',' ','') ,
 ('IT','CVT','Castelovati',' ','') ,
@@ -33637,7 +33669,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','EPI','Empoli',' ','') ,
 ('IT','ERA','Merate',' ','') ,
 ('IT','ERB','Erba',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','ERC','Ercolano',' ','') ,
 ('IT','ERO','Pero',' ','') ,
 ('IT','ERR','Ferrandina',' ','') ,
@@ -33718,7 +33750,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','FRR','Ferrara',' ','') ,
 ('IT','FRT','Fratta Todina',' ','') ,
 ('IT','FRZ','Ferrazza',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','FSA','Fusina',' ','') ,
 ('IT','FSD','Fossadello',' ','') ,
 ('IT','FSE','Fiesse',' ','') ,
@@ -33799,7 +33831,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','GLI','Galtelli',' ','') ,
 ('IT','GLJ','Camogli',' ','') ,
 ('IT','GLL','Galliera',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','GLM','Gorla Maggiore',' ','') ,
 ('IT','GLO','Gera Lario',' ','') ,
 ('IT','GLT','Gualtieri',' ','') ,
@@ -33880,7 +33912,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','IEV','Pieve',' ','') ,
 ('IT','IGL','Savigliano',' ','') ,
 ('IT','IGO','Cartigliano',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','IIO','San Gillio',' ','') ,
 ('IT','IML','Imola',' ','') ,
 ('IT','IMP','Imperia',' ','') ,
@@ -33961,7 +33993,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','LIB','Lizzano in Belvedere',' ','') ,
 ('IT','LIC','Licata',' ','') ,
 ('IT','LIM','Limito',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','LIN','Linate Apt/Milano',' ','') ,
 ('IT','LIP','Lipari',' ','') ,
 ('IT','LIS','Liscate',' ','') ,
@@ -34042,7 +34074,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','MAZ','Mazara del Vallo',' ','') ,
 ('IT','MBA','San Martino Buon Albergo',' ','') ,
 ('IT','MBC','Misterbianco, Catania',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','MBI','Mezzana Bigli',' ','') ,
 ('IT','MBO','Sant''Ambrogio di Torino',' ','') ,
 ('IT','MCA','Macerata',' ','') ,
@@ -34123,7 +34155,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','MLA','Molinella',' ','') ,
 ('IT','MLB','Marina della Lobra',' ','') ,
 ('IT','MLC','Montalcino',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','MLD','Molino del Piano',' ','') ,
 ('IT','MLE','Massalengo',' ','') ,
 ('IT','MLG','Melegnano',' ','') ,
@@ -34204,7 +34236,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','MRT','Marostica',' ','') ,
 ('IT','MRV','Marano Vicentino',' ','') ,
 ('IT','MRZ','Marzano',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','MSA','Massa',' ','') ,
 ('IT','MSB','Marina di Pisciotta',' ','') ,
 ('IT','MSC','Carbonate',' ','') ,
@@ -34285,7 +34317,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','NLO','Nichelino',' ','') ,
 ('IT','NML','Novate Milanese',' ','') ,
 ('IT','NNA','Partanna',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','NNE','Cala Gonone',' ','') ,
 ('IT','NNT','Nanto',' ','') ,
 ('IT','NOA','Noale',' ','') ,
@@ -34366,7 +34398,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','ORI','Orio Litta (Milano)',' ','') ,
 ('IT','ORL','Porticello',' ','') ,
 ('IT','ORM','Ormelle',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','ORN','Ortonovo',' ','') ,
 ('IT','ORO','Orero',' ','') ,
 ('IT','ORR','Cornaredo',' ','') ,
@@ -34447,7 +34479,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','PEG','Perugia',' ','') ,
 ('IT','PEL','Pellaro',' ','') ,
 ('IT','PEM','Porto Empedocle',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','PEN','Pegognaga',' ','') ,
 ('IT','PEO','Pontevico',' ','') ,
 ('IT','PER','Perosa Argentina',' ','') ,
@@ -34528,7 +34560,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','PNM','Pian Camuno',' ','') ,
 ('IT','PNN','Perignano',' ','') ,
 ('IT','PNO','Ponte Nova',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','PNR','Pianoro',' ','') ,
 ('IT','PNT','Pontecchio',' ','') ,
 ('IT','PNV','Palmanova',' ','') ,
@@ -34609,7 +34641,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','PTV','Piano Tavola',' ','') ,
 ('IT','PUG','Montecorvino Pugliano',' ','') ,
 ('IT','PUI','Pernumia',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','PUL','Paullo',' ','') ,
 ('IT','PUO','Pontirolo Nuovo',' ','') ,
 ('IT','PUT','Putignano',' ','') ,
@@ -34690,7 +34722,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','RFO','Rottofreno',' ','') ,
 ('IT','RGA','Ragusa',' ','') ,
 ('IT','RGB','Ragogna',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','RGG','Rodi Garganico',' ','') ,
 ('IT','RGL','Revigliasco',' ','') ,
 ('IT','RGN','Rogno',' ','') ,
@@ -34771,7 +34803,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','RUD','Rudiano',' ','') ,
 ('IT','RVB','Codogne',' ','') ,
 ('IT','RVC','Roe Volcanico',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','RVG','Rovagnate',' ','') ,
 ('IT','RVI','Ravina',' ','') ,
 ('IT','RVL','Rivoli',' ','') ,
@@ -34852,7 +34884,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','SED','Sedriano',' ','') ,
 ('IT','SEE','Sesto Calende',' ','') ,
 ('IT','SEF','Sant''Agata Feltria',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','SEG','Senigallia',' ','') ,
 ('IT','SEI','Serravalle Pistoiese',' ','') ,
 ('IT','SEN','Senago',' ','') ,
@@ -34933,7 +34965,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','SMN','Santa Maria Nuova',' ','') ,
 ('IT','SMO','San Mauro Torinese',' ','') ,
 ('IT','SMP','San Michele Prazzo',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','SMR','San Marco Argentano',' ','') ,
 ('IT','SMS','Santa Maria di Sala',' ','') ,
 ('IT','SMT','Spigno Monferrato',' ','') ,
@@ -35014,7 +35046,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','SRI','Sarnico',' ','') ,
 ('IT','SRL','Scarlino',' ','') ,
 ('IT','SRM','San Martino in Rio',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','SRN','Saronno',' ','') ,
 ('IT','SRO','Sarno',' ','') ,
 ('IT','SRP','San Rocco di Piegara',' ','') ,
@@ -35095,7 +35127,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','TCC','Trebisacce',' ','') ,
 ('IT','TCM','Tricesimo',' ','') ,
 ('IT','TCO','Corciano',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','TCS','Torre Cesarea',' ','') ,
 ('IT','TCT','Tarcento',' ','') ,
 ('IT','TCU','Torrecuso',' ','') ,
@@ -35176,7 +35208,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','TTA','Tortona',' ','') ,
 ('IT','TTB','Tortoli',' ','') ,
 ('IT','TTF','Tirrenia',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','TTL','Tortoreto',' ','') ,
 ('IT','TTN','Stintino',' ','') ,
 ('IT','TTP','Tor Tre Ponti',' ','') ,
@@ -35257,7 +35289,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','VER','Verolanuova',' ','') ,
 ('IT','VEV','Vittuone',' ','') ,
 ('IT','VEZ','Vezza D''Alba',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','VFA','Villafalletto',' ','') ,
 ('IT','VFO','Villafontana',' ','') ,
 ('IT','VGA','Valduggia',' ','') ,
@@ -35338,7 +35370,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('IT','VRZ','Varazze',' ','') ,
 ('IT','VSA','Villanova sull''Arda',' ','') ,
 ('IT','VSE','Visone',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('IT','VSG','Villa San Giovanni, Calabria',' ','') ,
 ('IT','VSI','Villastellone',' ','') ,
 ('IT','VSL','Villa Santa Lucia',' ','') ,
@@ -35419,7 +35451,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JM','SAW','St Anns Bay',' ','') ,
 ('JM','SLM','Savanna-la-Mar',' ','') ,
 ('JM','SPT','Spanish Town',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JM','SRI','Salt River',' ','') ,
 ('JM','STH','Saint Thomas',' ','') ,
 ('JO','','',' ','') ,
@@ -35500,7 +35532,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','ARA','Arari',' ','22') ,
 ('JP','ARG','Amurogama',' ','46') ,
 ('JP','ARK','Arikawa',' ','42') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','ARO','Arao',' ','43') ,
 ('JP','ARZ','Arouzu',' ','38') ,
 ('JP','ASA','Asa',' ','35') ,
@@ -35581,7 +35613,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','EZA','Ezaki',' ','47') ,
 ('JP','FAE','Fukae, Nagasaki',' ','42') ,
 ('JP','FCH','Fuchu-shi',' ','13') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','FCM','Fuchinomoto',' ','42') ,
 ('JP','FGS','Fugusaki',' ','23') ,
 ('JP','FGW','Futagawa',' ','46') ,
@@ -35662,7 +35694,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','HAE','Haenohama',' ','46') ,
 ('JP','HAG','Hagi',' ','35') ,
 ('JP','HAH','Hashima',' ','35') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','HAI','Haiki',' ','42') ,
 ('JP','HAM','Hamasarufutsu',' ','01') ,
 ('JP','HAN','Hannan',' ','27') ,
@@ -35743,7 +35775,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','HNE','Hane',' ','44') ,
 ('JP','HNG','Hinagu',' ','43') ,
 ('JP','HNJ','Honjo, Kyoto',' ','26') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','HNK','Hanasaki',' ','01') ,
 ('JP','HNN','Honmoku',' ','14') ,
 ('JP','HNO','Hadano',' ','14') ,
@@ -35824,7 +35856,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','IKD','Ikeda, Wakayama',' ','30') ,
 ('JP','IKE','Ikeshima',' ','42') ,
 ('JP','IKI','Iki',' ','42') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','IKJ','Isshiki',' ','23') ,
 ('JP','IKK','Ikitsuki',' ','42') ,
 ('JP','IKN','Ikina',' ','38') ,
@@ -35905,7 +35937,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','KAF','Kafuri',' ','40') ,
 ('JP','KAG','Kawarago',' ','08') ,
 ('JP','KAH','Kamihira',' ','43') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','KAI','Kainan',' ','30') ,
 ('JP','KAJ','Kama, Shimane',' ','32') ,
 ('JP','KAK','Kasukabe',' ','11') ,
@@ -35986,7 +36018,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','KJN','Kannonji',' ','37') ,
 ('JP','KJO','Kinjo',' ','23') ,
 ('JP','KJP','Kerama',' ','47') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','KJR','Kiriishi',' ','46') ,
 ('JP','KJT','Kitaura, Akita',' ','05') ,
 ('JP','KJU','Koura, Kagoshima',' ','46') ,
@@ -36067,7 +36099,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','KRD','Kuroda',' ','32') ,
 ('JP','KRE','Kure, Hiroshima',' ','34') ,
 ('JP','KRH','Kurihama',' ','14') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','KRI','Kurio',' ','46') ,
 ('JP','KRJ','Kuroshima, Okinawa',' ','47') ,
 ('JP','KRK','Karakizaki',' ','43') ,
@@ -36148,7 +36180,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','KYO','Koyoh/Kawajiri',' ','34') ,
 ('JP','KYR','Isso',' ','46') ,
 ('JP','KZA','Kaizuka',' ','27') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','KZE','Kozera',' ','42') ,
 ('JP','KZH','Kazuhara',' ','37') ,
 ('JP','KZI','Kijima',' ','33') ,
@@ -36229,7 +36261,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','MNJ','Minna/Motobu',' ','47') ,
 ('JP','MNM','Minami',' ','32') ,
 ('JP','MNN','Minna/Tarama',' ','47') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','MNO','Miyanoura/Kamiyaku',' ','46') ,
 ('JP','MNR','Miyanoura, Nagasaki',' ','42') ,
 ('JP','MNT','Minato, Hyogo',' ','28') ,
@@ -36310,7 +36342,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','NAH','Naha, Okinawa',' ','47') ,
 ('JP','NAI','Narashino',' ','12') ,
 ('JP','NAK','Nakagusuku',' ','47') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','NAM','Nama',' ','42') ,
 ('JP','NAN','Nakanoseki',' ','35') ,
 ('JP','NAO','Naoetsu',' ','15') ,
@@ -36391,7 +36423,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','NOD','Noda',' ','12') ,
 ('JP','NOH','Nohara',' ','26') ,
 ('JP','NOM','Nomizaki',' ','43') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','NON','Nonohama',' ','33') ,
 ('JP','NOU','Noh',' ','15') ,
 ('JP','NQH','Noho',' ','47') ,
@@ -36472,7 +36504,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','OKA','Okinawa',' ','47') ,
 ('JP','OKB','Okubo, Tokyo',' ','13') ,
 ('JP','OKC','Okitsu, Chiba',' ','12') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','OKD','Okadama Apt/Sapporo',' ','01') ,
 ('JP','OKE','Okinoerabu',' ','46') ,
 ('JP','OKG','Okogi',' ','38') ,
@@ -36553,7 +36585,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','OSX','Osaki, Kagoshima',' ','46') ,
 ('JP','OTA','Otao',' ','42') ,
 ('JP','OTG','Ota, Gunma',' ','10') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','OTJ','Otsuchi',' ','03') ,
 ('JP','OTK','Otake',' ','34') ,
 ('JP','OTM','Otomi',' ','18') ,
@@ -36634,7 +36666,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','SGT','Shiogatani',' ','44') ,
 ('JP','SGU','Saigo, Nagasaki',' ','42') ,
 ('JP','SGW','Segawa',' ','42') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','SGX','Sonogi',' ','42') ,
 ('JP','SHB','Nakashibetsu',' ','01') ,
 ('JP','SHG','Shinagawa-ku/Tokyo',' ','13') ,
@@ -36715,7 +36747,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','SRA','Shiraki',' ','35') ,
 ('JP','SRH','Shirahama, Kagawa',' ','37') ,
 ('JP','SRJ','Shiro',' ','32') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','SRK','Shirosaki',' ','03') ,
 ('JP','SRO','Shiraoi',' ','01') ,
 ('JP','SRS','Shirose',' ','46') ,
@@ -36796,7 +36828,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','TBS','Awajikoryunotsubasa',' ','28') ,
 ('JP','TBT','Tobata/Kitakyushu',' ','40') ,
 ('JP','TBU','Tabu',' ','35') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','TCC','Tokuchi',' ','47') ,
 ('JP','TCH','Tsuchiura',' ','08') ,
 ('JP','TDA','Tohda',' ','32') ,
@@ -36877,7 +36909,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','TOG','Togi',' ','17') ,
 ('JP','TOI','Toi',' ','22') ,
 ('JP','TOJ','Toga',' ','05') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','TOK','Tokachi',' ','01') ,
 ('JP','TOM','Tomioka, Tokushima',' ','36') ,
 ('JP','TON','Tonoura',' ','45') ,
@@ -36958,7 +36990,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','UKN','Uken',' ','46') ,
 ('JP','UKT','Ukitsu',' ','46') ,
 ('JP','UKY','Kyoto',' ','26') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','UMG','Umagoe',' ','37') ,
 ('JP','UNM','Uranomae',' ','46') ,
 ('JP','UNO','Uno',' ','33') ,
@@ -37039,7 +37071,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('JP','YKT','Yokota, Hiroshima',' ','34') ,
 ('JP','YKU','Yakuzu',' ','46') ,
 ('JP','YMA','Yasurahama',' ','46') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('JP','YMC','Yumachi',' ','32') ,
 ('JP','YMD','Yamada, Okayama',' ','33') ,
 ('JP','YMG','Yamaguchi',' ','35') ,
@@ -37120,7 +37152,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('KE','MUM','Mumias',' ','') ,
 ('KE','MYD','Malindi',' ','') ,
 ('KE','NAR','Narok',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('KE','NBO','Nairobi',' ','') ,
 ('KE','NDE','Mandera',' ','') ,
 ('KE','NUU','Nakuru',' ','') ,
@@ -37201,7 +37233,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('KP','CHO','Chongjin',' ','') ,
 ('KP','FNJ','Pyongyang',' ','') ,
 ('KP','GEN','Gensan',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('KP','HAE','Haeju',' ','') ,
 ('KP','HGM','Hungnam',' ','') ,
 ('KP','KSN','Kaesong',' ','') ,
@@ -37282,7 +37314,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('KR','GSN','Goesan-gun',' ','43') ,
 ('KR','GSO','Goseong-gun',' ','47') ,
 ('KR','GUN','Gunpo',' ','41') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('KR','GWI','Gunwi-gun',' ','47') ,
 ('KR','GYG','Goyang',' ','41') ,
 ('KR','GYS','Gyeongsan',' ','47') ,
@@ -37363,7 +37395,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('KR','RSU','Yeosu Apt',' ','46') ,
 ('KR','SAH','Sacheon',' ','48') ,
 ('KR','SAN','Sinan-gun',' ','46') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('KR','SCE','Seocheon-gun',' ','44') ,
 ('KR','SCG','Sunchang-gun',' ','45') ,
 ('KR','SCH','Sancheong-gun',' ','48') ,
@@ -37444,7 +37476,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('KW','SWK','Shuwaikh',' ','') ,
 ('KW','SYA','As Sabaiyah',' ','') ,
 ('KW','WAF','Al Wafrah',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('KY','','',' ','') ,
 ('KY','CYB','Cayman Brac',' ','') ,
 ('KY','GCM','Grand Cayman',' ','') ,
@@ -37525,7 +37557,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('LB','KHA','Khalde',' ','') ,
 ('LB','KYE','Tripoli',' ','') ,
 ('LB','NAQ','En Naqoura',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('LB','OUZ','Ouzai',' ','') ,
 ('LB','QJN','Jounieh',' ','') ,
 ('LB','RST','Ras Selata',' ','') ,
@@ -37606,7 +37638,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('LR','VOI','Voinjama',' ','') ,
 ('LR','WES','Weasua',' ','') ,
 ('LR','WOI','Wologissi',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('LS','','',' ','') ,
 ('LS','LEF','Lebakeng',' ','') ,
 ('LS','LES','Lesobeng',' ','') ,
@@ -37687,7 +37719,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('LU','','',' ','') ,
 ('LU','AZN','Alzingen',' ','') ,
 ('LU','BDB','Boudler',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('LU','BDL','Bridel',' ','') ,
 ('LU','BET','Bettembourg',' ','') ,
 ('LU','BKE','Beckerich',' ','') ,
@@ -37768,7 +37800,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('LV','MAL','Malta',' ','RE') ,
 ('LV','MGI','Mangali',' ','LE') ,
 ('LV','MRX','Mersrags',' ','TA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('LV','OLA','Olaine',' ','RI') ,
 ('LV','ORE','Ogre',' ','OG') ,
 ('LV','PAC','Pace',' ','BU') ,
@@ -37849,7 +37881,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MA','EUN','Laayoune (El Aaiun)',' ','') ,
 ('MA','FEZ','Fez',' ','') ,
 ('MA','GLN','Goulimime',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MA','JFL','Jorf Lasfar',' ','') ,
 ('MA','KAT','Kasba Tadla',' ','') ,
 ('MA','KHA','Khouribga',' ','') ,
@@ -37930,7 +37962,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MG','HVA','Analalava',' ','') ,
 ('MG','IHO','Ihosy',' ','') ,
 ('MG','ILK','Ilaka',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MG','IVA','Ambanja',' ','') ,
 ('MG','JVA','Ankavandra',' ','') ,
 ('MG','MJA','Manja',' ','') ,
@@ -38011,7 +38043,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MK','BRD','Bogorodica',' ','') ,
 ('MK','BRV','Berovo',' ','') ,
 ('MK','BTL','Bitola',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MK','DEB','Debar',' ','') ,
 ('MK','DLV','Delcevo',' ','') ,
 ('MK','DVB','Deve Bair',' ','') ,
@@ -38092,7 +38124,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MM','HEN','Heho',' ','') ,
 ('MM','HOX','Homalin',' ','') ,
 ('MM','INS','Insein',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MM','KAW','Kawthaung',' ','') ,
 ('MM','KET','Keng Tung',' ','') ,
 ('MM','KHM','Khamti',' ','') ,
@@ -38173,7 +38205,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MQ','SHL','Scholcher',' ','') ,
 ('MQ','SPI','St Pierre',' ','') ,
 ('MR','','',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MR','AEO','Aioun el Atrouss',' ','') ,
 ('MR','AJJ','Akjoujt',' ','') ,
 ('MR','ATR','Atar',' ','') ,
@@ -38254,7 +38286,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MX','ALO','Alamo',' ','VER') ,
 ('MX','AOB','Alvaro Obregon',' ','') ,
 ('MX','APA','Apaseo el Grande',' ','GUA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MX','APD','Apodaca',' ','') ,
 ('MX','API','Apizaco',' ','TLA') ,
 ('MX','APR','Agua Prieta',' ','SON') ,
@@ -38335,7 +38367,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MX','CUL','Culiacan',' ','SIN') ,
 ('MX','CUM','Cuautla Morelos',' ','MOR') ,
 ('MX','CUN','Cancun',' ','ROO') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MX','CUT','Cuautitlan Izcalli',' ','MEX') ,
 ('MX','CUU','Chihuahua',' ','CHH') ,
 ('MX','CVC','Cuernavaca',' ','MOR') ,
@@ -38416,7 +38448,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MX','LMM','Los Mochis',' ','') ,
 ('MX','LOB','Loma Bonita',' ','OAX') ,
 ('MX','LOM','Lagos de Moreno',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MX','LOP','Lopez Mateos',' ','JAL') ,
 ('MX','LOV','Monclova',' ','COA') ,
 ('MX','LPC','La Piedad de Cabadas',' ','MIC') ,
@@ -38497,7 +38529,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MX','PNG','Puerto Angel',' ','OAX') ,
 ('MX','PNO','Pinotepa Nacional',' ','') ,
 ('MX','POO','Polanco',' ','DF') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MX','PPE','Puerto Penasco',' ','SON') ,
 ('MX','PQA','Pesqueria',' ','') ,
 ('MX','PQM','Palenque',' ','') ,
@@ -38578,7 +38610,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MX','TEL','Teloloapan',' ','GRO') ,
 ('MX','TEN','Tenabo',' ','CAM') ,
 ('MX','TEP','Tepatitlan de Morelos',' ','JAL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MX','TEQ','Tequila',' ','JAL') ,
 ('MX','TGO','Teul de Gonzalez Ortega',' ','ZAC') ,
 ('MX','TGZ','Tuxtla Gutierrez',' ','CHP') ,
@@ -38659,7 +38691,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MY','BAG','Bagan Datok',' ','') ,
 ('MY','BAI','Bangi',' ','') ,
 ('MY','BAL','Balakong',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MY','BAN','Banting',' ','') ,
 ('MY','BAT','Batu Pahat',' ','') ,
 ('MY','BAU','Bau, Sarawak',' ','') ,
@@ -38740,7 +38772,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MY','KUN','Kunak, Sabah',' ','') ,
 ('MY','KUR','Kampong Ulu Redang',' ','') ,
 ('MY','LAH','Lahat',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MY','LAP','Langkap',' ','') ,
 ('MY','LBH','Labuan Haji',' ','') ,
 ('MY','LBU','Labuan, Sabah',' ','') ,
@@ -38821,7 +38853,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MY','SMM','Semporna, Sabah',' ','') ,
 ('MY','SPE','Sepulot',' ','') ,
 ('MY','SPG','Simpangan, Sabah',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MY','SPT','Sipitang, Sabah',' ','') ,
 ('MY','SRB','Seremban',' ','') ,
 ('MY','SRE','Sungai Rengit',' ','') ,
@@ -38902,7 +38934,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('MZ','NND','Nangade',' ','') ,
 ('MZ','NSO','Nova Sofala',' ','') ,
 ('MZ','NTC','Santa Carolina',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('MZ','PBE','Porto Belo',' ','') ,
 ('MZ','PEB','Pebane',' ','') ,
 ('MZ','POL','Pemba',' ','') ,
@@ -38983,7 +39015,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NF','','',' ','') ,
 ('NF','NLK','Norfolk Island',' ','') ,
 ('NG','','',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NG','ABO','Abonnema',' ','') ,
 ('NG','ABV','Abuja',' ','') ,
 ('NG','ADO','Ado',' ','') ,
@@ -39064,7 +39096,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NI','NUG','Nueva Guinea',' ','') ,
 ('NI','OCO','Ocotal',' ','') ,
 ('NI','PIB','Puerto Isabel',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NI','PRI','Prinzapolca',' ','') ,
 ('NI','PSN','Puerto Sandino',' ','') ,
 ('NI','PSZ','Puerto Somoza',' ','') ,
@@ -39145,7 +39177,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','BDD','Budel-Dorplain',' ','') ,
 ('NL','BDR','Bilderdam',' ','') ,
 ('NL','BEB','Bennebroek',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','BEC','Beusichem',' ','') ,
 ('NL','BED','Bedum',' ','') ,
 ('NL','BEE','Beek en Donk',' ','') ,
@@ -39226,7 +39258,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','BRZ','Breezand',' ','') ,
 ('NL','BSD','Beesd',' ','') ,
 ('NL','BSE','Bruinisse',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','BSH','Bosscherheide',' ','') ,
 ('NL','BSK','Boskoop',' ','') ,
 ('NL','BSS','Bussum',' ','') ,
@@ -39307,7 +39339,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','DOO','Doorn',' ','') ,
 ('NL','DOR','Dordrecht',' ','') ,
 ('NL','DPH','Diepenheim',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','DPO','De Pol',' ','') ,
 ('NL','DPS','De Poppe',' ','') ,
 ('NL','DRA','Drachten',' ','') ,
@@ -39388,7 +39420,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','EWO','Eernewoude',' ','') ,
 ('NL','EXZ','Exmorrazijl',' ','') ,
 ('NL','EYS','Eijsden',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','FAR','Farmsum',' ','') ,
 ('NL','FEE','Feerwerd',' ','') ,
 ('NL','FFJ','Fijnaart',' ','') ,
@@ -39469,7 +39501,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','HCH','Haastrecht',' ','') ,
 ('NL','HDL','Hedel',' ','') ,
 ('NL','HE','Hengevelde',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','HEC','Heesch',' ','') ,
 ('NL','HEE','Heel',' ','') ,
 ('NL','HEG','Heeg',' ','') ,
@@ -39550,7 +39582,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','HST','Haghorst',' ','') ,
 ('NL','HSW','Heeswijk',' ','') ,
 ('NL','HTB','''s-Hertogenbosch',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','HTH','Huis ter Heide',' ','') ,
 ('NL','HTK','Hattemerbroek',' ','') ,
 ('NL','HTM','Hattem',' ','') ,
@@ -39631,7 +39663,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','KWS','Kwintsheul',' ','') ,
 ('NL','KWT','Koewacht',' ','') ,
 ('NL','KWZ','Kornwerderzand',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','KZV','Keizersveer',' ','') ,
 ('NL','LAF','Landgraaf',' ','') ,
 ('NL','LAG','Langerak',' ','') ,
@@ -39712,7 +39744,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','MEP','Meppel',' ','') ,
 ('NL','MES','Meers',' ','') ,
 ('NL','MEW','Meerlo-Wansum',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','MGT','Molengat',' ','') ,
 ('NL','MHU','Maarhuizen',' ','') ,
 ('NL','MHZ','Maarheeze',' ','') ,
@@ -39793,7 +39825,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','NST','Nederasselt',' ','') ,
 ('NL','NSU','Nessersluis',' ','') ,
 ('NL','NSW','Noord-Scharwoude',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','NSZ','Nieuwe Statenzijl',' ','') ,
 ('NL','NTH','Nuth',' ','') ,
 ('NL','NTO','Ten Boer',' ','') ,
@@ -39874,7 +39906,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','OVM','Oud-Vossemeer',' ','') ,
 ('NL','OVN','Oostvoorne',' ','') ,
 ('NL','OVR','Oud-Vroenhoven',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','OVZ','Ovezande',' ','') ,
 ('NL','OZL','Ossenzijl',' ','') ,
 ('NL','OZU','Oud-Zuilen',' ','') ,
@@ -39955,7 +39987,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','SCB','Schoonebeek',' ','') ,
 ('NL','SCE','Scheveningen',' ','') ,
 ('NL','SCH','Schagen',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','SCI','Schiedam',' ','') ,
 ('NL','SCN','Schinnen',' ','') ,
 ('NL','SCP','Schipluiden',' ','') ,
@@ -40036,7 +40068,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','SWK','Sleeuwijk',' ','') ,
 ('NL','SWL','Schouwerzijl',' ','') ,
 ('NL','SWM','Swalmen',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','SZL','Schoterzijl',' ','') ,
 ('NL','TAK','Ter Apelkanaal',' ','') ,
 ('NL','TBB','Tubbergen',' ','') ,
@@ -40117,7 +40149,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','VNO','Veenoord',' ','') ,
 ('NL','VNR','Venray',' ','') ,
 ('NL','VOB','Voorburg',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','VOD','Volendam',' ','') ,
 ('NL','VOH','Voorhout',' ','') ,
 ('NL','VOS','Voorschoten',' ','') ,
@@ -40198,7 +40230,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NL','WOR','Woerden',' ','') ,
 ('NL','WOU','Wouw',' ','') ,
 ('NL','WPI','Waspik',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NL','WRA','Warga',' ','') ,
 ('NL','WRD','Warder',' ','') ,
 ('NL','WRG','Wieringen',' ','') ,
@@ -40279,7 +40311,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NO','ADN','Andenes',' ','18') ,
 ('NO','ADY','Andoy',' ','18') ,
 ('NO','AES','Alesund',' ','15') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NO','AFT','Agnefest',' ','10') ,
 ('NO','AGD','Agdenes',' ','16') ,
 ('NO','AGO','Agotnes',' ','12') ,
@@ -40360,7 +40392,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NO','BYG','Bygland',' ','09') ,
 ('NO','DAL','Dal',' ','02') ,
 ('NO','DGR','Digernes',' ','04') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NO','DIM','Dimmelsvik',' ','12') ,
 ('NO','DIR','Dirdal',' ','') ,
 ('NO','DIS','Disena',' ','04') ,
@@ -40441,7 +40473,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NO','GEN','Gardermoen',' ','02') ,
 ('NO','GFR','Gamle Fredrikstad',' ','') ,
 ('NO','GIL','Gildeskal',' ','18') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NO','GIS','Giske',' ','15') ,
 ('NO','GJM','Gjemnes',' ','15') ,
 ('NO','GJS','Gjesdal',' ','11') ,
@@ -40522,7 +40554,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NO','HRY','Heroya',' ','08') ,
 ('NO','HSD','Hemsedal',' ','06') ,
 ('NO','HSY','Hellesylt',' ','15') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NO','HUN','Hunndalen',' ','05') ,
 ('NO','HUR','Hurum',' ','06') ,
 ('NO','HUS','Husnes',' ','12') ,
@@ -40603,7 +40635,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NO','LEF','Leirfjord',' ','18') ,
 ('NO','LEI','Leira',' ','05') ,
 ('NO','LEK','Leikanger',' ','14') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NO','LEN','Lensvik',' ','16') ,
 ('NO','LEP','Leirpollen',' ','20') ,
 ('NO','LER','Lervik',' ','01') ,
@@ -40684,7 +40716,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NO','NKB','Nordkjosbotn',' ','19') ,
 ('NO','NLD','Nodeland',' ','') ,
 ('NO','NOD','Norddal',' ','15') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NO','NOK','Nordkapp',' ','20') ,
 ('NO','NOR','Nordreisa',' ','19') ,
 ('NO','NRS','Noresund',' ','06') ,
@@ -40765,7 +40797,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NO','RSN','Raudsandnes',' ','') ,
 ('NO','RSS','Rissa',' ','16') ,
 ('NO','RVK','Rorvik',' ','17') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NO','RVY','Rolvsoy',' ','01') ,
 ('NO','RYG','Rygge',' ','01') ,
 ('NO','SAA','Skaland',' ','19') ,
@@ -40846,7 +40878,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NO','SPG','Sarpsborg',' ','01') ,
 ('NO','SPM','Spillam',' ','17') ,
 ('NO','SPV','Spjelkavik',' ','15') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NO','SPY','Spydeberg',' ','01') ,
 ('NO','SRA','Sorreisa',' ','19') ,
 ('NO','SRM','Straumsnes',' ','18') ,
@@ -40927,7 +40959,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NO','TVE','Tvedestrand',' ','09') ,
 ('NO','TVT','Tveit',' ','10') ,
 ('NO','TYF','Tysfjord',' ','18') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NO','TYN','Tysnes',' ','12') ,
 ('NO','TYV','Tysvar',' ','11') ,
 ('NO','UGD','Uggdal',' ','12') ,
@@ -41008,7 +41040,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NP','KEP','Nepalganj',' ','') ,
 ('NP','KGJ','Kanchenjunga',' ','') ,
 ('NP','KTM','Kathmandu',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NP','LDN','Lamidanda',' ','') ,
 ('NP','LTG','Langtang',' ','') ,
 ('NP','LUA','Lukla',' ','') ,
@@ -41089,7 +41121,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NZ','KAT','Kaitaia',' ','NTL') ,
 ('NZ','KAW','Kawerau',' ','BOP') ,
 ('NZ','KBZ','Kaikoura',' ','CAN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NZ','KKE','Kerikeri',' ','AUK') ,
 ('NZ','KKO','Kaikohe',' ','NTL') ,
 ('NZ','KOK','Kokiri',' ','WTC') ,
@@ -41170,7 +41202,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('NZ','TIU','Timaru',' ','CAN') ,
 ('NZ','TKA','Temuka',' ','CAN') ,
 ('NZ','TKH','Tarakohe',' ','TAS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('NZ','TKI','Te Kuiti',' ','WKO') ,
 ('NZ','TKU','Takapau',' ','HKB') ,
 ('NZ','TKZ','Tokoroa',' ','WKO') ,
@@ -41251,7 +41283,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PA','ATA','Atalaya',' ','') ,
 ('PA','BAG','Bagala',' ','') ,
 ('PA','BAY','Bayano',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PA','BEL','Bella Vista',' ','') ,
 ('PA','BFQ','Bahia Pina',' ','') ,
 ('PA','BLB','Balboa',' ','') ,
@@ -41332,7 +41364,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PA','RIO','Rio Viejo de los Valdes',' ','') ,
 ('PA','RIT','Rio Tigre',' ','') ,
 ('PA','RIZ','Rio Azucar',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PA','RSI','Rio Sidra',' ','') ,
 ('PA','SAX','Sambu',' ','') ,
 ('PA','SCL','Santa Clara',' ','') ,
@@ -41413,7 +41445,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PE','PLO','Punta Lobitos',' ','') ,
 ('PE','PMT','Pimentel',' ','') ,
 ('PE','PUB','Bayovar',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PE','PUN','Puno',' ','') ,
 ('PE','QUI','Quinches',' ','') ,
 ('PE','RIJ','Rioja',' ','') ,
@@ -41494,7 +41526,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PG','AFR','Afore',' ','') ,
 ('PG','AGG','Angoram',' ','') ,
 ('PG','AGK','Kagua',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PG','AGL','Wanigela',' ','') ,
 ('PG','AHO','Ahioma',' ','') ,
 ('PG','AIE','Aiome',' ','') ,
@@ -41575,7 +41607,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PG','EMI','Emirau',' ','') ,
 ('PG','EMO','Emo',' ','') ,
 ('PG','EMS','Embessa',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PG','EPT','Eliptamin',' ','') ,
 ('PG','ERE','Erave',' ','') ,
 ('PG','ERU','Erume',' ','') ,
@@ -41656,7 +41688,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PG','KJU','Kamiraba',' ','') ,
 ('PG','KKD','Kokoda',' ','') ,
 ('PG','KLO','Kalo',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PG','KMA','Kerema',' ','') ,
 ('PG','KMB','Koinambe',' ','') ,
 ('PG','KMF','Kamina',' ','') ,
@@ -41737,7 +41769,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PG','MPF','Mapoda',' ','') ,
 ('PG','MPG','Makini',' ','') ,
 ('PG','MPU','Mapua',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PG','MPX','Miyanmin',' ','') ,
 ('PG','MRH','May River',' ','') ,
 ('PG','MRM','Manare',' ','') ,
@@ -41818,7 +41850,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PG','SMH','Sapmanga',' ','') ,
 ('PG','SMJ','Sim',' ','') ,
 ('PG','SMP','Stockholm',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PG','SMU','Salamaua',' ','') ,
 ('PG','SOI','Sokar Island',' ','') ,
 ('PG','SPH','Sopu',' ','') ,
@@ -41899,7 +41931,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PG','WTP','Woitape',' ','') ,
 ('PG','WTT','Wantoat',' ','') ,
 ('PG','WUG','Wau',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PG','WUM','Wasum',' ','') ,
 ('PG','WUV','Wuvulu Is',' ','') ,
 ('PG','WWK','Wewak',' ','') ,
@@ -41980,7 +42012,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PH','CBO','Cotabato, Mindanao',' ','') ,
 ('PH','CBY','Calbayog, Samar',' ','') ,
 ('PH','CCG','Calag-Calag/Dumaguete',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PH','CDB','Caldera Bay/Zamboanga',' ','') ,
 ('PH','CDY','Cagayan De Sulu',' ','') ,
 ('PH','CEB','Cebu',' ','') ,
@@ -42061,7 +42093,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PH','JNZ','Jimenez/Ozamis',' ','') ,
 ('PH','JOL','Jolo',' ','') ,
 ('PH','JPM','Jose Panganiban, Luzon',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PH','KAR','Karomatan/Iligan',' ','') ,
 ('PH','KAS','Kabasalan/Zamboanga',' ','') ,
 ('PH','KAT','Katipunan/Ozamis',' ','') ,
@@ -42142,7 +42174,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PH','MSC','Masinloc/Sual',' ','') ,
 ('PH','MSS','Mission/Aparri',' ','') ,
 ('PH','MSY','Manansalay/Batangas',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PH','MTA','Matina Aplaya/Davao',' ','') ,
 ('PH','MUL','Mulanay/Siain',' ','') ,
 ('PH','MVS','Mariveles, Luzon',' ','') ,
@@ -42223,7 +42255,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PH','SCR','Santa Cruz/Sual',' ','') ,
 ('PH','SCT','Santa Catalina/Dumaguete',' ','') ,
 ('PH','SDG','Sindangan/Ozamis',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PH','SFE','San Fernando, Luzon',' ','') ,
 ('PH','SFS','Subic Bay',' ','') ,
 ('PH','SGD','Sogod/Tacloban',' ','') ,
@@ -42304,7 +42336,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PK','BHC','Bhurban',' ','') ,
 ('PK','BHV','Bahawalpur',' ','') ,
 ('PK','BNP','Bannu',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PK','BQM','Karachi-Muhammad Bin Qasim',' ','') ,
 ('PK','CHB','Chilas',' ','') ,
 ('PK','CJL','Chitral',' ','') ,
@@ -42385,7 +42417,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PL','BED','Będzin',' ','') ,
 ('PL','BEL','Bełżyce',' ','') ,
 ('PL','BGA','Boguchwala',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PL','BGW','BoguchwaBa',' ','') ,
 ('PL','BGY','Bogatynia',' ','') ,
 ('PL','BIA','Bialystok',' ','') ,
@@ -42466,7 +42498,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PL','GJW','Grajewo',' ','') ,
 ('PL','GKI','Glinki',' ','') ,
 ('PL','GKW','Godzikowice',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PL','GLE','Garbatka-Letnisko',' ','') ,
 ('PL','GLO','Gluchowo',' ','') ,
 ('PL','GLW','Glogow',' ','') ,
@@ -42547,7 +42579,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PL','KLQ','Kolo',' ','') ,
 ('PL','KLS','Koluszki',' ','') ,
 ('PL','KLU','Kluczbork',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PL','KLW','Klimontow',' ','') ,
 ('PL','KMC','Kamieniec',' ','') ,
 ('PL','KNK','Koneck',' ','') ,
@@ -42628,7 +42660,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PL','LWK','Lubawka',' ','') ,
 ('PL','LZN','Leszno',' ','') ,
 ('PL','LZO','Luzino',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PL','LZW','Laskarzew',' ','') ,
 ('PL','LZY','Leczyca',' ','') ,
 ('PL','MAA','Malaszewicze',' ','') ,
@@ -42709,7 +42741,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PL','OPZ','Opoczno',' ','') ,
 ('PL','ORL','Orle',' ','') ,
 ('PL','ORN','Orneta',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PL','OSJ','Ostrow Mazowiecka',' ','') ,
 ('PL','OSR','Ostrowiec Swietokrzyski',' ','') ,
 ('PL','OSS','Ostroleka',' ','') ,
@@ -42790,7 +42822,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PL','RMA','Rawa Mazowiecka',' ','') ,
 ('PL','RNW','Rakoniewice',' ','') ,
 ('PL','ROG','Rogozno',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PL','ROP','Ropczyce',' ','') ,
 ('PL','RUI','Rumia',' ','') ,
 ('PL','RUS','Rusiec',' ','') ,
@@ -42871,7 +42903,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PL','SWE','Swiebodzice',' ','') ,
 ('PL','SWI','Swinoujscie',' ','') ,
 ('PL','SWL','Suwalki',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PL','SWN','Swidnica',' ','') ,
 ('PL','SWO','Sulaszewo',' ','') ,
 ('PL','SWT','Swietochlowice',' ','') ,
@@ -42952,7 +42984,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PL','WSC','Wschowa',' ','') ,
 ('PL','WWE','Wilkowice',' ','') ,
 ('PL','WYG','Wygledi',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PL','WYM','Wysokie Mazowieckie',' ','') ,
 ('PL','WYZ','Wyszkow',' ','') ,
 ('PL','WZA','Wrzesnia',' ','') ,
@@ -43033,7 +43065,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PR','GUX','Guanica',' ','') ,
 ('PR','GUY','Guayanilla',' ','') ,
 ('PR','HDE','Hato Tejas',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PR','HRE','Hato Rey',' ','') ,
 ('PR','HTL','Hatillo',' ','') ,
 ('PR','HUC','Humacao',' ','') ,
@@ -43114,7 +43146,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PT','ALJ','Alijo',' ','17') ,
 ('PT','ALM','Almada',' ','15') ,
 ('PT','ALN','Alenquer',' ','11') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PT','ALO','Alcobaca',' ','10') ,
 ('PT','ALR','Almeirim',' ','14') ,
 ('PT','ALS','Alcains',' ','05') ,
@@ -43195,7 +43227,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PT','CAS','Cascais',' ','11') ,
 ('PT','CAX','Caxias',' ','11') ,
 ('PT','CBL','Cabrela',' ','07') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PT','CBN','Casal dos Bernardos',' ','14') ,
 ('PT','CBP','Coimbra',' ','06') ,
 ('PT','CBR','Castelo Branco',' ','05') ,
@@ -43276,7 +43308,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PT','ESP','Espinho',' ','18') ,
 ('PT','EST','Estoril',' ','11') ,
 ('PT','ESZ','Estremoz',' ','07') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PT','ETR','Estarreja',' ','01') ,
 ('PT','EVR','Evora',' ','07') ,
 ('PT','EXP','Lisboa-EXPO',' ','11') ,
@@ -43357,7 +43389,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PT','MCD','Macedo de Cavaleiros',' ','04') ,
 ('PT','MCH','Machico',' ','30') ,
 ('PT','MCQ','Monchique',' ','08') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PT','MCV','Miranda do Corvo',' ','06') ,
 ('PT','MDA','Meda',' ','09') ,
 ('PT','MDB','Mondim de Basto',' ','17') ,
@@ -43438,7 +43470,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PT','PDM','Porto de Mos',' ','10') ,
 ('PT','PDR','Ponte do Rol',' ','11') ,
 ('PT','PDS','Ponte de Sor',' ','12') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PT','PDV','Povoa de Varzim',' ','13') ,
 ('PT','PEG','Pegoes',' ','15') ,
 ('PT','PEN','Peniche',' ','10') ,
@@ -43519,7 +43551,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PT','SDR','Sao Domingos de Rana',' ','11') ,
 ('PT','SEE','Seia',' ','09') ,
 ('PT','SEI','Seixal',' ','15') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PT','SER','Serzedo',' ','13') ,
 ('PT','SET','Setubal',' ','15') ,
 ('PT','SFR','Safara',' ','02') ,
@@ -43600,7 +43632,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('PT','VLD','Vila da Ponte',' ','18') ,
 ('PT','VLF','Vilar Formoso',' ','09') ,
 ('PT','VLN','Valenca',' ','16') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('PT','VLP','Valpacos',' ','17') ,
 ('PT','VLR','Vila de Rei',' ','05') ,
 ('PT','VMA','Vila Mea',' ','13') ,
@@ -43681,7 +43713,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('RO','AGI','Agigea',' ','') ,
 ('RO','ALB','Albesti',' ','') ,
 ('RO','ALD','Alesd',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('RO','ALI','Alba Iulia',' ','') ,
 ('RO','ALX','Alexandria',' ','') ,
 ('RO','AMI','Afumati',' ','') ,
@@ -43762,7 +43794,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('RO','CRA','Craiova',' ','') ,
 ('RO','CRB','Corbeanca',' ','') ,
 ('RO','CRI','Criseni',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('RO','CRU','Cerasu',' ','') ,
 ('RO','CSB','Caransebes',' ','') ,
 ('RO','CTA','Chitila',' ','') ,
@@ -43843,7 +43875,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('RO','MTI','Mateesti',' ','') ,
 ('RO','MUR','Murfatlar',' ','') ,
 ('RO','MVU','Mihai Viteazu',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('RO','NAD','Naidas',' ','') ,
 ('RO','NAZ','Nazna',' ','') ,
 ('RO','NDI','Navodari',' ','') ,
@@ -43924,7 +43956,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('RO','SLE','Saliste',' ','') ,
 ('RO','SLO','Slobozia, Arges',' ','') ,
 ('RO','SMU','Sintana de Mures',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('RO','SOC','Socetu',' ','') ,
 ('RO','SOI','Sabaoani',' ','') ,
 ('RO','SOL','Socola',' ','') ,
@@ -44005,7 +44037,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('RS','DZC','Drazevac',' ','') ,
 ('RS','GMI','Gornji Milanovac',' ','') ,
 ('RS','GRU','Gruza',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('RS','INI','Nis',' ','') ,
 ('RS','IVA','Ivanjica',' ','') ,
 ('RS','JAG','Jagodina',' ','') ,
@@ -44086,7 +44118,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('RU','ALV','Aleksandrov',' ','') ,
 ('RU','AMB','Ambetsu',' ','') ,
 ('RU','AMV','Amderma',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('RU','ARH','Arkhangelsk',' ','') ,
 ('RU','ARM','Arman (Magadan)',' ','') ,
 ('RU','ASB','Asbest',' ','') ,
@@ -44167,7 +44199,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('RU','GUB','Gubkin',' ','') ,
 ('RU','GUO','Znamenskoye Gubailovo',' ','') ,
 ('RU','GVS','Gusevskiy',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('RU','GVY','Gavrilov-Yam',' ','') ,
 ('RU','GZV','Glazov',' ','') ,
 ('RU','HOR','Horlovo',' ','') ,
@@ -44248,7 +44280,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('RU','KVK','Kirovsk',' ','') ,
 ('RU','KVX','Kirov',' ','') ,
 ('RU','KXK','Komsomolsk Na Amure',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('RU','KYB','Krasnyye Barrikady',' ','') ,
 ('RU','KYZ','Kyzyl',' ','') ,
 ('RU','KZN','Kazan',' ','') ,
@@ -44329,7 +44361,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('RU','ORL','Or''ol',' ','') ,
 ('RU','OSO','Odintsovo',' ','') ,
 ('RU','OSW','Orsk',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('RU','OTR','Otradnyy',' ','') ,
 ('RU','OVB','Novosibirsk',' ','') ,
 ('RU','OYA','Olya',' ','') ,
@@ -44410,7 +44442,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('RU','SNG','Solnechnogorsk',' ','') ,
 ('RU','SOB','Sosnovyy Bor',' ','') ,
 ('RU','SOC','Sochi',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('RU','SOG','Sovetskaya Gavan',' ','') ,
 ('RU','SOK','Solikamsk',' ','') ,
 ('RU','SPA','Spafaryeva, O',' ','') ,
@@ -44491,7 +44523,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('RU','VNP','Verkhnedneprovskiy',' ','') ,
 ('RU','VOG','Volgograd',' ','') ,
 ('RU','VOS','Voskresensk',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('RU','VOZ','Voronezh',' ','') ,
 ('RU','VPO','Vyatskiye Polyany',' ','') ,
 ('RU','VRH','Verkhove',' ','') ,
@@ -44572,7 +44604,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SA','MAN','Manailih',' ','') ,
 ('SA','MED','Madinah',' ','') ,
 ('SA','MJH','Majma',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SA','MUF','Manfouha',' ','') ,
 ('SA','QAL','Qalsn',' ','') ,
 ('SA','QTF','Qatif',' ','') ,
@@ -44653,7 +44685,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SC','BDI','Bird Island',' ','') ,
 ('SC','DEI','Denis Island',' ','') ,
 ('SC','DES','Ile Desroches',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SC','FRK','Fregate',' ','') ,
 ('SC','MAW','Mahe',' ','') ,
 ('SC','POV','Port Victoria',' ','') ,
@@ -44734,7 +44766,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SE','ARN','Arlanda Apt/Stockholm',' ','C') ,
 ('SE','ARS','Arsta/Stockholm',' ','AB') ,
 ('SE','ART','Arlandastad',' ','AB') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SE','ARV','Arvika',' ','S') ,
 ('SE','ASA','Asarum',' ','K') ,
 ('SE','ASD','Askersund',' ','T') ,
@@ -44815,7 +44847,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SE','BYX','Byxelkrok',' ','H') ,
 ('SE','CHA','Charlottenberg',' ','S') ,
 ('SE','DAL','Dals-Langed',' ','O') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SE','DAN','Dannemora',' ','C') ,
 ('SE','DEG','Degerhamn',' ','H') ,
 ('SE','DEJ','Deje',' ','S') ,
@@ -44896,7 +44928,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SE','GEV','Gallivare',' ','BD') ,
 ('SE','GGE','Grangarde',' ','W') ,
 ('SE','GGF','Gagnef',' ','W') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SE','GHR','Ganghester',' ','O') ,
 ('SE','GIS','Gislaved',' ','F') ,
 ('SE','GKS','Gustavsvik/Stockholm',' ','AB') ,
@@ -44977,7 +45009,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SE','HOD','Horred',' ','O') ,
 ('SE','HOE','Horby',' ','M') ,
 ('SE','HOF','Hofors',' ','X') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SE','HOG','Hoganas',' ','M') ,
 ('SE','HOL','Holmsjo',' ','K') ,
 ('SE','HON','Honsater',' ','O') ,
@@ -45058,7 +45090,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SE','KOS','Korsnas',' ','W') ,
 ('SE','KPA','Karpalund',' ','M') ,
 ('SE','KPH','Kappelshamn',' ','I') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SE','KPO','Kopparberg',' ','T') ,
 ('SE','KPS','Kapellskar',' ','AB') ,
 ('SE','KRD','Kagerod',' ','M') ,
@@ -45139,7 +45171,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SE','MEL','Mellerud',' ','O') ,
 ('SE','MEM','Mem',' ','E') ,
 ('SE','MHA','Moheda',' ','G') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SE','MHM','Moholm',' ','O') ,
 ('SE','MJB','Mjolby',' ','E') ,
 ('SE','MLJ','Munka-Ljungby',' ','M') ,
@@ -45220,7 +45252,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SE','ORS','Orsa',' ','W') ,
 ('SE','ORT','Ortviken',' ','Y') ,
 ('SE','ORV','Orviken',' ','AC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SE','OSB','Osby',' ','M') ,
 ('SE','OSD','Ostersund',' ','Z') ,
 ('SE','OSH','Osthammar',' ','C') ,
@@ -45301,7 +45333,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SE','SKV','Skovde',' ','O') ,
 ('SE','SKZ','Skene',' ','O') ,
 ('SE','SLF','Solleftea',' ','Y') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SE','SLG','Sloinge',' ','N') ,
 ('SE','SLI','Slite',' ','I') ,
 ('SE','SLN','Solna',' ','AB') ,
@@ -45382,7 +45414,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SE','TOB','Toreboda',' ','O') ,
 ('SE','TOE','Tore',' ','BD') ,
 ('SE','TOM','Tomelilla',' ','M') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SE','TOP','Torup',' ','N') ,
 ('SE','TOR','Torsas',' ','H') ,
 ('SE','TOV','Torekov',' ','M') ,
@@ -45463,7 +45495,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SE','VTL','Vetlanda',' ','F') ,
 ('SE','VVK','Vastervik',' ','H') ,
 ('SE','VXH','Vaxholm',' ','AB') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SE','VXO','Vaxjo',' ','G') ,
 ('SE','VXT','Vaxtorp',' ','N') ,
 ('SE','WAL','Wallhamn',' ','O') ,
@@ -45544,7 +45576,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SJ','SVE','Sveagruva',' ','') ,
 ('SK','','',' ','') ,
 ('SK','BAA','Devinska Nova Ves/Bratislava',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SK','BAB','Bratislava Port',' ','') ,
 ('SK','BBY','Banska Bystrica',' ','') ,
 ('SK','BCA','Bytca',' ','') ,
@@ -45625,7 +45657,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SK','LZO','Lozorno',' ','') ,
 ('SK','MAC','Malacky',' ','') ,
 ('SK','MAT','Martovce',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SK','MED','Medvedov',' ','') ,
 ('SK','MHB','Makov-Horni Becva',' ','') ,
 ('SK','MHC','Michalovce',' ','') ,
@@ -45706,7 +45738,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SK','SVK','Svidnik',' ','') ,
 ('SK','SVR','Srvcinovec',' ','') ,
 ('SK','SVT','Svit',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SK','SZY','Smizany',' ','') ,
 ('SK','TAT','Poprad/Tatry',' ','') ,
 ('SK','TCY','Topol''cany',' ','') ,
@@ -45787,7 +45819,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SO','BIB','Baidoa',' ','') ,
 ('SO','BSA','Bossaso',' ','') ,
 ('SO','BSY','Bardera',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SO','BUO','Burao',' ','') ,
 ('SO','BXX','Borama',' ','') ,
 ('SO','CMO','Obbia',' ','') ,
@@ -45868,7 +45900,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('SV','SVE','San Vicente',' ','') ,
 ('SV','USU','Usulutan',' ','') ,
 ('SY','','',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('SY','ALD','Al Ladhiqiyah',' ','') ,
 ('SY','ALP','Aleppo (Alep)',' ','') ,
 ('SY','ARW','Arwad',' ','') ,
@@ -45949,7 +45981,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('TH','BGP','Bangpakong',' ','') ,
 ('TH','BKK','Bangkok',' ','') ,
 ('TH','BMT','Bangkok Modern Terminals/Bangkok',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('TH','BND','Bandon',' ','') ,
 ('TH','BNG','Bangnara',' ','') ,
 ('TH','BNK','Ban Kantang',' ','') ,
@@ -46030,7 +46062,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('TH','QJX','Nong Khai',' ','') ,
 ('TH','RAT','Ratchaburi',' ','') ,
 ('TH','ROI','Roi Et',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('TH','RYG','Rayong',' ','') ,
 ('TH','SAM','Samphanthawong',' ','') ,
 ('TH','SAN','Sam Phran',' ','') ,
@@ -46111,7 +46143,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('TM','SHI','Shirvan-Kala',' ','') ,
 ('TM','SRK','Sarakhs',' ','') ,
 ('TM','TAG','Tagta',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('TM','TAZ','Tashauz',' ','') ,
 ('TM','TEJ','Tejen',' ','') ,
 ('TM','TMZ','Termez',' ','') ,
@@ -46192,7 +46224,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('TR','AKS','Aksaray',' ','34') ,
 ('TR','AKY','Akcay',' ','10') ,
 ('TR','AKZ','Akyazi',' ','54') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('TR','ALA','Alanya',' ','07') ,
 ('TR','ALE','Alemdag',' ','34') ,
 ('TR','ALI','Aliaga',' ','35') ,
@@ -46273,7 +46305,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('TR','BZB','Bozburun',' ','48') ,
 ('TR','BZC','Bozcaada',' ','17') ,
 ('TR','BZI','Balikesir',' ','10') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('TR','BZY','Bozuyuk',' ','11') ,
 ('TR','CAB','Caybasi',' ','16') ,
 ('TR','CAL','Cal',' ','20') ,
@@ -46354,7 +46386,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('TR','ESB','Esenboga Apt/Ankara',' ','06') ,
 ('TR','ESE','Esenler',' ','34') ,
 ('TR','ESK','Eskisehir',' ','26') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('TR','ESM','Esme',' ','64') ,
 ('TR','ESY','Esenyurt',' ','34') ,
 ('TR','ETI','Etiler',' ','34') ,
@@ -46435,7 +46467,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('TR','ITY','Istinye/Istambul',' ','34') ,
 ('TR','IZK','Iznik',' ','16') ,
 ('TR','IZM','Izmir',' ','35') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('TR','IZT','Izmit',' ','41') ,
 ('TR','KAD','Kadikoy',' ','34') ,
 ('TR','KAG','Kagithane',' ','34') ,
@@ -46516,7 +46548,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('TR','LEV','Levent',' ','34') ,
 ('TR','LMA','Limas',' ','35') ,
 ('TR','LUL','Luleburgaz',' ','39') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('TR','MAD','Mardas',' ','34') ,
 ('TR','MAH','Mahmutbey',' ','34') ,
 ('TR','MAL','Maltepe',' ','34') ,
@@ -46597,7 +46629,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('TR','SEL','Selimiye',' ','34') ,
 ('TR','SEN','Senirkent',' ','32') ,
 ('TR','SER','Serviburun',' ','34') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('TR','SEY','Seydisehir',' ','42') ,
 ('TR','SFH','Seferihisar',' ','35') ,
 ('TR','SFQ','Sanliurfa',' ','63') ,
@@ -46678,7 +46710,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('TR','YES','Yesilkoy',' ','34') ,
 ('TR','YEZ','Yenipazar',' ','11') ,
 ('TR','YKP','Yakuplu',' ','34') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('TR','YLV','Yalvac',' ','32') ,
 ('TR','YOZ','Yozgat',' ','66') ,
 ('TR','YPZ','Yenipazar',' ','09') ,
@@ -46759,7 +46791,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('TZ','IKW','Ikwiriri',' ','') ,
 ('TZ','IRI','Iringa',' ','') ,
 ('TZ','ISK','Isaka',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('TZ','JOM','Njombe',' ','') ,
 ('TZ','JRO','Kilimanjaro',' ','') ,
 ('TZ','KHM','Kahama',' ','') ,
@@ -46840,7 +46872,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('UA','KUL','Kulinichi',' ','') ,
 ('UA','KVL','Kovel''',' ','') ,
 ('UA','KWG','Krivoy Rog',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('UA','LVI','L''viv',' ','') ,
 ('UA','LWO','Lwow',' ','') ,
 ('UA','MDK','Mandrykino',' ','') ,
@@ -46921,7 +46953,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('UG','PAF','Pakuba',' ','') ,
 ('UG','PKE','Pakelle',' ','') ,
 ('UG','RUA','Arua',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('UG','SRT','Soroti',' ','') ,
 ('UG','TRY','Tororo',' ','') ,
 ('UG','ULU','Gulu',' ','') ,
@@ -47002,7 +47034,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','ACD','Capitol Heights',' ','MD') ,
 ('US','ACE','Carol Stream',' ','IL') ,
 ('US','ACF','Sumas',' ','WA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','ACG','Catskill',' ','NY') ,
 ('US','ACH','Central Falls',' ','RI') ,
 ('US','ACI','Machias',' ','ME') ,
@@ -47083,7 +47115,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','AEZ','Armstrong',' ','IA') ,
 ('US','AF2','Ashford',' ','AL') ,
 ('US','AFA','Alstead',' ','NH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','AFB','Avondale',' ','PA') ,
 ('US','AFC','Atascadero',' ','CA') ,
 ('US','AFD','Mansfield',' ','LA') ,
@@ -47164,7 +47196,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','AII','Sardinia',' ','NY') ,
 ('US','AIJ','Saint James',' ','MO') ,
 ('US','AIK','Aiken',' ','SC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','AIL','Annville',' ','PA') ,
 ('US','AIM','Mannington Mills',' ','NJ') ,
 ('US','AIN','Wainwright',' ','AK') ,
@@ -47245,7 +47277,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','AML','Amelia',' ','VA') ,
 ('US','AMM','Amasa',' ','MI') ,
 ('US','AMN','Alma',' ','MI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','AMO','Alamo',' ','TX') ,
 ('US','AMP','Assumption',' ','IL') ,
 ('US','AMQ','Alma',' ','GA') ,
@@ -47326,7 +47358,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','APT','Jasper',' ','TN') ,
 ('US','APU','Sapulpa',' ','OK') ,
 ('US','APV','Apple Valley',' ','CA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','APW','Wickenburg',' ','AZ') ,
 ('US','APX','Apex',' ','NC') ,
 ('US','AQB','Ava',' ','MO') ,
@@ -47407,7 +47439,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','ATG','Atwood',' ','CA') ,
 ('US','ATH','Bath',' ','NY') ,
 ('US','ATI','Mantachie',' ','MS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','ATJ','Almont',' ','MI') ,
 ('US','ATK','Atqasuk',' ','AK') ,
 ('US','ATL','Atlanta',' ','GA') ,
@@ -47488,7 +47520,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','AWP','Wall',' ','PA') ,
 ('US','AWQ','Harwood',' ','MO') ,
 ('US','AWR','Acworth',' ','GA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','AWS','Newcastle',' ','ME') ,
 ('US','AWW','Awendaw',' ','SC') ,
 ('US','AWX','Athens',' ','TX') ,
@@ -47569,7 +47601,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','BAT','Barberton',' ','OH') ,
 ('US','BAU','Burgaw',' ','NC') ,
 ('US','BAV','Barnesville',' ','GA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','BAW','Balfour',' ','NC') ,
 ('US','BAX','Baldwin',' ','FL') ,
 ('US','BAY','Bayonne',' ','NJ') ,
@@ -47650,7 +47682,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','BDS','Biscoe',' ','NC') ,
 ('US','BDT','Bridgewater',' ','ME') ,
 ('US','BDU','Buda',' ','TX') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','BDV','Baldwinsville',' ','NY') ,
 ('US','BDW','Broadway',' ','VA') ,
 ('US','BDX','Broadus',' ','MT') ,
@@ -47731,7 +47763,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','BGP','Bridgeport',' ','NE') ,
 ('US','BGQ','Big Lake',' ','AK') ,
 ('US','BGR','Bangor',' ','ME') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','BGS','Billings',' ','MO') ,
 ('US','BGT','Bagdad',' ','AZ') ,
 ('US','BGU','Belgium',' ','WI') ,
@@ -47812,7 +47844,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','BJT','Bridgetown',' ','MD') ,
 ('US','BJW','Bridgewater',' ','MA') ,
 ('US','BJX','Bellingham',' ','MA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','BJY','Buena',' ','NJ') ,
 ('US','BKA','Bucks',' ','AL') ,
 ('US','BKB','Bunker',' ','MO') ,
@@ -47893,7 +47925,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','BMW','Bowmanstown',' ','PA') ,
 ('US','BMX','Big Mountain',' ','AK') ,
 ('US','BMY','Brimfield',' ','IN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','BMZ','Bridgeton',' ','MO') ,
 ('US','BN2','Brighton',' ','MN') ,
 ('US','BN3','Benton',' ','LA') ,
@@ -47974,7 +48006,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','BPY','Big Pine Key',' ','FL') ,
 ('US','BPZ','Bayport',' ','NY') ,
 ('US','BQA','Bowie',' ','MD') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','BQB','Brentwood',' ','NY') ,
 ('US','BQC','Bell',' ','CA') ,
 ('US','BQD','Bradford',' ','RI') ,
@@ -48055,7 +48087,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','BT2','Bryant, Hamlin',' ','SD') ,
 ('US','BTA','Batavia',' ','IL') ,
 ('US','BTB','Boonton',' ','NJ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','BTC','Braintree',' ','MA') ,
 ('US','BTD','Bettendorf',' ','IA') ,
 ('US','BTE','Bethune',' ','SC') ,
@@ -48136,7 +48168,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','BVY','Beverly',' ','MA') ,
 ('US','BVZ','Batesville',' ','MS') ,
 ('US','BWA','Brookwood',' ','AL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','BWB','Brownsburg',' ','IN') ,
 ('US','BWC','Brawley',' ','CA') ,
 ('US','BWD','Brownwood',' ','TX') ,
@@ -48217,7 +48249,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','BZA','Brazil',' ','IN') ,
 ('US','BZB','Baltimore',' ','OH') ,
 ('US','BZC','Barnesville',' ','OH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','BZD','Boston',' ','GA') ,
 ('US','BZE','Belton',' ','MO') ,
 ('US','BZH','Bethesda',' ','MD') ,
@@ -48298,7 +48330,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','CCA','Fort Chaffee',' ','AR') ,
 ('US','CCB','Upland',' ','CA') ,
 ('US','CCC','Cicero',' ','NY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','CCD','Caledonia',' ','OH') ,
 ('US','CCE','Chicopee',' ','MO') ,
 ('US','CCF','Concord',' ','MA') ,
@@ -48379,7 +48411,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','CEW','Crestview',' ','FL') ,
 ('US','CEX','Chena Hot Springs',' ','AK') ,
 ('US','CEY','Murray',' ','KY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','CEZ','Cortez',' ','CO') ,
 ('US','CF2','Claflin',' ','KS') ,
 ('US','CF3','Clifton, Mesa',' ','CO') ,
@@ -48460,7 +48492,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','CHS','Charleston',' ','SC') ,
 ('US','CHT','Chester',' ','PA') ,
 ('US','CHU','Chuathbaluk',' ','AK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','CHV','Cherry Valley',' ','CA') ,
 ('US','CHW','Cheswold',' ','DE') ,
 ('US','CHX','Cherry Hill',' ','NJ') ,
@@ -48541,7 +48573,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','CKY','Clayton',' ','IL') ,
 ('US','CKZ','Clayton',' ','IN') ,
 ('US','CL2','Castorland',' ','NY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','CL3','Chualar',' ','CA') ,
 ('US','CL4','Clark',' ','MO') ,
 ('US','CL5','Cleveland',' ','IL') ,
@@ -48622,7 +48654,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','CNP','Canton',' ','MS') ,
 ('US','CNQ','Canton',' ','NC') ,
 ('US','CNR','Candor',' ','NC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','CNS','Canastota',' ','NY') ,
 ('US','CNT','Canton',' ','MI') ,
 ('US','CNU','Chanute',' ','KS') ,
@@ -48703,7 +48735,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','CQN','Crescent',' ','IA') ,
 ('US','CQO','Charter Oak',' ','CA') ,
 ('US','CQP','Connellsville',' ','PA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','CQQ','Crete',' ','IL') ,
 ('US','CQR','Carrollton',' ','OH') ,
 ('US','CQS','Chesnee',' ','SC') ,
@@ -48784,7 +48816,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','CTD','Crystal Lake',' ','IL') ,
 ('US','CTE','Chattahoochee',' ','FL') ,
 ('US','CTF','Crete',' ','NE') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','CTG','Cresco',' ','PA') ,
 ('US','CTH','Coatesville',' ','PA') ,
 ('US','CTI','Contoocook',' ','NH') ,
@@ -48865,7 +48897,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','CVW','Cleveland',' ','WI') ,
 ('US','CVX','Cavendish',' ','VT') ,
 ('US','CVY','Clarksville',' ','VA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','CVZ','Centerville',' ','LA') ,
 ('US','CW2','Cowen, Webster',' ','WV') ,
 ('US','CW3','Cropwell',' ','AL') ,
@@ -48946,7 +48978,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','CYT','Clayton',' ','OH') ,
 ('US','CYU','Cayuta',' ','NY') ,
 ('US','CYV','Cordova',' ','WV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','CYW','Clyattville',' ','GA') ,
 ('US','CYX','Cypress',' ','TX') ,
 ('US','CYY','Crystal City',' ','TX') ,
@@ -49027,7 +49059,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','DCQ','Dacono',' ','CO') ,
 ('US','DCR','Decatur',' ','IN') ,
 ('US','DCS','Dorchester',' ','WI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','DCT','Derby',' ','CT') ,
 ('US','DCU','Decatur',' ','AL') ,
 ('US','DD2','Ada',' ','MN') ,
@@ -49108,7 +49140,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','DHN','Dothan',' ','AL') ,
 ('US','DHQ','Durham',' ','CT') ,
 ('US','DHS','Desert Hot Springs',' ','CA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','DHT','Dalhart',' ','TX') ,
 ('US','DHX','Delhi',' ','LA') ,
 ('US','DIA','Adrian',' ','WI') ,
@@ -49189,7 +49221,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','DNR','Drain',' ','OR') ,
 ('US','DNS','Denison',' ','IA') ,
 ('US','DNT','Downingtown',' ','PA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','DNV','Dunnville',' ','KY') ,
 ('US','DNY','Danby',' ','VT') ,
 ('US','DNZ','Dunmore',' ','PA') ,
@@ -49270,7 +49302,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','DSR','Deshler',' ','NE') ,
 ('US','DST','Adamston',' ','WV') ,
 ('US','DSU','Decatur',' ','NE') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','DSV','Dansville',' ','NY') ,
 ('US','DSW','Dresser',' ','WI') ,
 ('US','DSX','Dickinson',' ','TX') ,
@@ -49351,7 +49383,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','DWT','De Witt',' ','MI') ,
 ('US','DWV','Dunbar',' ','WV') ,
 ('US','DWW','Dewitt',' ','IA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','DWX','De Witt',' ','NE') ,
 ('US','DWZ','Downey',' ','PA') ,
 ('US','DX2','Dexter City',' ','OH') ,
@@ -49432,7 +49464,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','ECB','Edgecomb',' ','ME') ,
 ('US','ECC','Ellicott City',' ','MD') ,
 ('US','ECD','Escondido',' ','CA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','ECE','Spencerville',' ','OH') ,
 ('US','ECG','Elizabeth City',' ','NC') ,
 ('US','ECH','East Chicago',' ','IN') ,
@@ -49513,7 +49545,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','EFN','East Freetown',' ','MA') ,
 ('US','EFO','East Fork',' ','AK') ,
 ('US','EFR','East Farmingdale',' ','NY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','EFT','Effort',' ','PA') ,
 ('US','EFW','Jefferson',' ','IA') ,
 ('US','EG2','Ewing',' ','NE') ,
@@ -49594,7 +49626,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','EL2','Elma, Erie',' ','NY') ,
 ('US','ELA','Eagle Lake',' ','TX') ,
 ('US','ELB','Elberton',' ','GA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','ELC','Euless',' ','TX') ,
 ('US','ELD','El Dorado',' ','AR') ,
 ('US','ELE','Tennille',' ','GA') ,
@@ -49675,7 +49707,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','EOE','Glencoe',' ','IL') ,
 ('US','EOG','East Orange',' ','NJ') ,
 ('US','EOH','Shorter',' ','AL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','EOI','Caledonia',' ','MN') ,
 ('US','EOK','Keokuk',' ','IA') ,
 ('US','EOL','East Alton',' ','IL') ,
@@ -49756,7 +49788,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','ESS','Essex Junction',' ','VT') ,
 ('US','EST','Estherville',' ','IA') ,
 ('US','ESV','Evansville',' ','WI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','ESW','Easton',' ','WA') ,
 ('US','ESX','Eddystone',' ','PA') ,
 ('US','ESY','East Syracuse',' ','NY') ,
@@ -49837,7 +49869,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','EWJ','Erwin',' ','NC') ,
 ('US','EWK','Newton',' ','KS') ,
 ('US','EWN','New Bern',' ','NC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','EWO','Bellwood',' ','PA') ,
 ('US','EWP','Elmwood Park',' ','NJ') ,
 ('US','EWQ','Elwood',' ','NJ') ,
@@ -49918,7 +49950,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','FCD','Candler',' ','FL') ,
 ('US','FCE','Florence',' ','WI') ,
 ('US','FCH','Fitchville',' ','CT') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','FCI','Foster City',' ','CA') ,
 ('US','FCK','Frisco',' ','PA') ,
 ('US','FCL','Florence',' ','CA') ,
@@ -49999,7 +50031,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','FHQ','Firth',' ','ID') ,
 ('US','FHS','Far Hills',' ','NJ') ,
 ('US','FHU','Fort Huachuca-Sierra Vista Apt',' ','AZ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','FHV','Fishersville',' ','VA') ,
 ('US','FIA','Fairdale',' ','KY') ,
 ('US','FIC','Fire Cove',' ','AK') ,
@@ -50080,7 +50112,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','FMN','Farmington',' ','NM') ,
 ('US','FMO','Fillmore',' ','NY') ,
 ('US','FMQ','Farmington',' ','ME') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','FMS','Fort Madison',' ','IA') ,
 ('US','FMT','Fremont',' ','IN') ,
 ('US','FMU','Fairmount',' ','GA') ,
@@ -50161,7 +50193,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','FRJ','Friant',' ','CA') ,
 ('US','FRK','Frankfort Springs',' ','PA') ,
 ('US','FRL','Franklin Lakes',' ','NJ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','FRM','Fairmont',' ','MN') ,
 ('US','FRN','Fort Richardson',' ','AK') ,
 ('US','FRO','Frontier',' ','WA') ,
@@ -50242,7 +50274,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','FW2','Floodwood',' ','MN') ,
 ('US','FW3','Fairwater',' ','WI') ,
 ('US','FWA','Fort Wayne',' ','IN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','FWB','Fort Walton Beach',' ','FL') ,
 ('US','FWD','Flowood',' ','MS') ,
 ('US','FWE','Fernwood',' ','ID') ,
@@ -50323,7 +50355,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','GBG','Galesburg',' ','IL') ,
 ('US','GBH','Galbraith Lake',' ','AK') ,
 ('US','GBI','Greenbrier, Robertson',' ','TN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','GBK','Green Brook',' ','NJ') ,
 ('US','GBL','Braselton',' ','GA') ,
 ('US','GBM','Glen Burnie',' ','MD') ,
@@ -50404,7 +50436,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','GET','Gravette',' ','AR') ,
 ('US','GEU','Glen Allen',' ','VA') ,
 ('US','GEV','Geneva',' ','NE') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','GEW','Georgetown',' ','WA') ,
 ('US','GEY','Greybull',' ','WY') ,
 ('US','GEZ','Gilbertville',' ','MA') ,
@@ -50485,7 +50517,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','GIV','Grain Valley',' ','MO') ,
 ('US','GIW','Grinnell',' ','IA') ,
 ('US','GIX','Gilmer',' ','TX') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','GIY','Gainesville',' ','MO') ,
 ('US','GIZ','Gibson',' ','PA') ,
 ('US','GJC','Genesee',' ','WI') ,
@@ -50566,7 +50598,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','GOA','Goddard',' ','KS') ,
 ('US','GOB','Gibson',' ','GA') ,
 ('US','GOC','Glen Rock',' ','PA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','GOD','Godwin',' ','NC') ,
 ('US','GOE','Golden',' ','CO') ,
 ('US','GOG','Goshen',' ','VA') ,
@@ -50647,7 +50679,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','GSW','Big Sur',' ','CA') ,
 ('US','GSY','Gassaway',' ','WV') ,
 ('US','GSZ','Garrison',' ','MO') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','GT2','Gates',' ','TN') ,
 ('US','GTA','Grant',' ','AL') ,
 ('US','GTB','Granite Bay',' ','CA') ,
@@ -50728,7 +50760,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','GWS','Glenwood Springs',' ','CO') ,
 ('US','GWT','Goodwater',' ','AL') ,
 ('US','GWU','Guin',' ','AL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','GWV','Glendale',' ','WV') ,
 ('US','GWW','Glenwillow',' ','OH') ,
 ('US','GWX','Glenwood',' ','IA') ,
@@ -50809,7 +50841,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','HBI','Hubbard',' ','OR') ,
 ('US','HBK','Hoboken',' ','NJ') ,
 ('US','HBL','Hannibal',' ','MO') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','HBM','Hillburn',' ','NY') ,
 ('US','HBN','Hebron',' ','KY') ,
 ('US','HBO','Hansboro',' ','ND') ,
@@ -50890,7 +50922,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','HEW','Hopewell',' ','NJ') ,
 ('US','HEY','Henry',' ','TN') ,
 ('US','HEZ','Natchez',' ','MS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','HF2','Highland Falls',' ','NY') ,
 ('US','HFA','Honeoye Falls',' ','NY') ,
 ('US','HFC','Hartford City',' ','IN') ,
@@ -50971,7 +51003,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','HJW','Hillsboro',' ','IN') ,
 ('US','HKB','Healy Lake',' ','AK') ,
 ('US','HKI','Haskins',' ','OH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','HKK','Hickok',' ','KS') ,
 ('US','HKL','Hinckley',' ','ME') ,
 ('US','HKM','Herkimer',' ','KS') ,
@@ -51052,7 +51084,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','HNJ','Henning',' ','TN') ,
 ('US','HNK','Hancock',' ','ME') ,
 ('US','HNL','Honolulu',' ','HI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','HNM','Hana',' ','HI') ,
 ('US','HNN','Hanoverton',' ','OH') ,
 ('US','HNO','China Grove',' ','NC') ,
@@ -51133,7 +51165,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','HRF','Harford',' ','PA') ,
 ('US','HRG','Harrington',' ','ME') ,
 ('US','HRH','Horseheads',' ','NY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','HRI','Harriman',' ','NY') ,
 ('US','HRJ','Harahan',' ','LA') ,
 ('US','HRK','Holbrook',' ','MA') ,
@@ -51214,7 +51246,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','HUA','Huber',' ','GA') ,
 ('US','HUB','Huron',' ','OH') ,
 ('US','HUC','Hurlock',' ','MD') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','HUD','Humboldt',' ','IA') ,
 ('US','HUE','Humboldt',' ','KS') ,
 ('US','HUF','Terre Haute',' ','IN') ,
@@ -51295,7 +51327,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','HYG','Hydaburg',' ','AK') ,
 ('US','HYH','Holcomb',' ','NY') ,
 ('US','HYI','Harlan',' ','IA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','HYK','Holyoke',' ','CO') ,
 ('US','HYL','Hollis',' ','AK') ,
 ('US','HYM','Chrome',' ','NJ') ,
@@ -51376,7 +51408,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','IER','Silverton',' ','CO') ,
 ('US','IES','Winters',' ','CA') ,
 ('US','IET','Marietta',' ','FL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','IEV','Circleville',' ','UT') ,
 ('US','IEY','Riley',' ','KS') ,
 ('US','IFA','Iowa Falls',' ','IA') ,
@@ -51457,7 +51489,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','INC','Lincoln',' ','AR') ,
 ('US','IND','Indianapolis',' ','IN') ,
 ('US','INE','Independence',' ','IA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','INF','Winfield',' ','TX') ,
 ('US','ING','Inglewood',' ','CA') ,
 ('US','INH','Shelby',' ','IN') ,
@@ -51538,7 +51570,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','ISQ','Manistique',' ','MI') ,
 ('US','ISR','Islamorada',' ','FL') ,
 ('US','ISS','Wiscasset',' ','ME') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','IST','Sistersville',' ','WV') ,
 ('US','ISU','Salisbury',' ','MO') ,
 ('US','ISV','Sissonville',' ','WV') ,
@@ -51619,7 +51651,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','JDA','John Day',' ','OR') ,
 ('US','JDN','Jordan',' ','MT') ,
 ('US','JDY','Downey',' ','CA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','JEA','Jeannette',' ','PA') ,
 ('US','JEC','Jersey City',' ','NJ') ,
 ('US','JED','Jefferson Island',' ','LA') ,
@@ -51700,7 +51732,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','JOL','Jonesville',' ','SC') ,
 ('US','JON','Jonesport',' ','ME') ,
 ('US','JOO','Jonesboro',' ','TN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','JOP','Joppa',' ','MD') ,
 ('US','JOQ','San Joaquin',' ','CA') ,
 ('US','JOR','Orange',' ','CA') ,
@@ -51781,7 +51813,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','KBY','Boykin',' ','GA') ,
 ('US','KCC','Coffman Cove',' ','AK') ,
 ('US','KCK','Kansas City',' ','KS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','KCL','Chignik',' ','AK') ,
 ('US','KCM','Chatom',' ','AL') ,
 ('US','KCN','Chernofski',' ','AK') ,
@@ -51862,7 +51894,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','KIU','Kiln',' ','MS') ,
 ('US','KIW','Kingwood',' ','TX') ,
 ('US','KIY','Kimberly',' ','ID') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','KK2','Kealakekua',' ','HI') ,
 ('US','KK3','Krakow',' ','WI') ,
 ('US','KKA','Koyuk',' ','AK') ,
@@ -51943,7 +51975,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','KPN','Kipnuk',' ','AK') ,
 ('US','KPP','Koppel',' ','PA') ,
 ('US','KPT','Jackpot',' ','NV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','KPV','Perryville',' ','AK') ,
 ('US','KPY','Pt Bailey',' ','AK') ,
 ('US','KQA','Akutan',' ','AK') ,
@@ -52024,7 +52056,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','KY3','Keyser',' ','WV') ,
 ('US','KYE','Kearney',' ','MO') ,
 ('US','KYK','Karluk',' ','AK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','KYL','Key Largo',' ','FL') ,
 ('US','KYN','Kenyon',' ','RI') ,
 ('US','KYO','Kenton',' ','OR') ,
@@ -52105,7 +52137,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','LCN','Lincoln',' ','RI') ,
 ('US','LCO','Lincolnshire',' ','IL') ,
 ('US','LCP','Lecompte',' ','LA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','LCQ','Lincoln',' ','MA') ,
 ('US','LCR','La Crescenta',' ','CA') ,
 ('US','LCS','Lancaster',' ','MA') ,
@@ -52186,7 +52218,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','LFP','Laflin',' ','PA') ,
 ('US','LFQ','Lewisburg',' ','PA') ,
 ('US','LFR','Lake Forest',' ','IL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','LFS','Little Falls',' ','MN') ,
 ('US','LFT','Lafayette',' ','LA') ,
 ('US','LFW','Lafayette',' ','NJ') ,
@@ -52267,7 +52299,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','LIZ','Limestone',' ','ME') ,
 ('US','LJA','Cordelia',' ','CA') ,
 ('US','LJB','Lisbon',' ','NH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','LJH','La Junta',' ','CO') ,
 ('US','LJK','Lakewood',' ','CO') ,
 ('US','LJL','La Jolla',' ','CA') ,
@@ -52348,7 +52380,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','LMO','Morgan City',' ','LA') ,
 ('US','LMP','Lampeter',' ','PA') ,
 ('US','LMQ','Lyme',' ','NH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','LMR','Leominster',' ','MA') ,
 ('US','LMS','Louisville',' ','MS') ,
 ('US','LMT','Klamath Falls',' ','OR') ,
@@ -52429,7 +52461,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','LPV','Lorton',' ','VA') ,
 ('US','LPW','Little Port Walter',' ','AK') ,
 ('US','LPX','Liverpool',' ','NY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','LPY','Plains',' ','PA') ,
 ('US','LQB','Lacombe',' ','LA') ,
 ('US','LQD','Holland',' ','MO') ,
@@ -52510,7 +52542,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','LTL','Littleton',' ','NH') ,
 ('US','LTM','Latham',' ','NY') ,
 ('US','LTN','Littleton',' ','MA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','LTO','Littleton',' ','CO') ,
 ('US','LTQ','Lecanto',' ','FL') ,
 ('US','LTR','Flat Rock',' ','NC') ,
@@ -52591,7 +52623,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','LWS','Lewiston',' ','ID') ,
 ('US','LWT','Lewistown',' ','MT') ,
 ('US','LWU','Lakeview',' ','FL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','LWV','Lawrenceville',' ','IL') ,
 ('US','LWW','Lewistown, Mifflin',' ','PA') ,
 ('US','LWX','Lena',' ','WI') ,
@@ -52672,7 +52704,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','MAQ','Manor',' ','TX') ,
 ('US','MAR','Marrero',' ','LA') ,
 ('US','MAS','Mansfield',' ','PA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','MAT','Mahrt',' ','AL') ,
 ('US','MAU','Mauldin',' ','SC') ,
 ('US','MAV','Manvel',' ','TX') ,
@@ -52753,7 +52785,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','MDD','Midland',' ','TX') ,
 ('US','MDE','Medford',' ','NY') ,
 ('US','MDF','Medford',' ','WI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','MDG','Mendota Heights',' ','MN') ,
 ('US','MDH','Carbondale',' ','IL') ,
 ('US','MDI','Madison',' ','NC') ,
@@ -52834,7 +52866,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','MFX','Milford',' ','CT') ,
 ('US','MFY','Martins Ferry',' ','OH') ,
 ('US','MFZ','Moundsville',' ','WV') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','MG2','McGregor',' ','IA') ,
 ('US','MG3','McGregor',' ','MN') ,
 ('US','MG4','McGregor',' ','TX') ,
@@ -52915,7 +52947,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','MIM','Maple Island',' ','MN') ,
 ('US','MIN','Marion',' ','NC') ,
 ('US','MIO','Miami',' ','OK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','MIP','Middleport',' ','OH') ,
 ('US','MIQ','Milan',' ','IL') ,
 ('US','MIR','Marietta',' ','OK') ,
@@ -52996,7 +53028,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','MLF','Milford',' ','UT') ,
 ('US','MLG','Moss Landing',' ','CA') ,
 ('US','MLH','Midlothian',' ','IL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','MLI','Moline',' ','IL') ,
 ('US','MLJ','Milledgeville',' ','GA') ,
 ('US','MLK','Malta',' ','MT') ,
@@ -53077,7 +53109,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','MNX','Manchester',' ','IA') ,
 ('US','MNY','Manchester',' ','MO') ,
 ('US','MNZ','Manassas',' ','VA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','MOA','Moundville',' ','AL') ,
 ('US','MOB','Mobile',' ','AL') ,
 ('US','MOC','Monticello',' ','KY') ,
@@ -53158,7 +53190,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','MQV','Mt Olive',' ','NJ') ,
 ('US','MQW','McRae',' ','GA') ,
 ('US','MQX','Mercer',' ','PA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','MQY','Smyrna',' ','TN') ,
 ('US','MQZ','Mercer Island',' ','WA') ,
 ('US','MR2','Marseilles',' ','IL') ,
@@ -53239,7 +53271,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','MTG','Mont Belvieu',' ','TX') ,
 ('US','MTH','Marathon',' ','FL') ,
 ('US','MTI','Morton',' ','IL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','MTJ','Montrose',' ','CO') ,
 ('US','MTK','Mount Carmel',' ','PA') ,
 ('US','MTL','Millington',' ','MD') ,
@@ -53320,7 +53352,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','MWB','Mabank',' ','TX') ,
 ('US','MWC','Midway City',' ','CA') ,
 ('US','MWD','Meadow Lands',' ','PA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','MWE','Marlow Heights',' ','MD') ,
 ('US','MWF','Mt Wolf',' ','PA') ,
 ('US','MWG','Morgantown',' ','TN') ,
@@ -53401,7 +53433,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','MZB','Meta',' ','MO') ,
 ('US','MZC','Midvale',' ','UT') ,
 ('US','MZD','Millington',' ','TN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','MZE','Milroy',' ','PA') ,
 ('US','MZF','Mazon',' ','IL') ,
 ('US','MZG','Milton',' ','NY') ,
@@ -53482,7 +53514,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','NCK','Nicholasville',' ','KY') ,
 ('US','NCL','Nichols',' ','SC') ,
 ('US','NCM','Norco',' ','LA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','NCN','New Chenega',' ','AK') ,
 ('US','NCO','Quonset Point',' ','RI') ,
 ('US','NCP','New Castle',' ','PA') ,
@@ -53563,7 +53595,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','NGU','Narragansett',' ','RI') ,
 ('US','NGV','Newton Grove',' ','NC') ,
 ('US','NGW','Niagara',' ','WI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','NGY','Montgomery',' ','OH') ,
 ('US','NGZ','Alameda',' ','CA') ,
 ('US','NH2','New Haven',' ','MO') ,
@@ -53644,7 +53676,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','NLO','New London',' ','CT') ,
 ('US','NLQ','North Loup',' ','NE') ,
 ('US','NLR','New Liberty',' ','IA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','NLS','Niles',' ','OH') ,
 ('US','NLV','Pine Level, Johnston',' ','NC') ,
 ('US','NLW','North Little Rock',' ','AR') ,
@@ -53725,7 +53757,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','NPK','Naples',' ','NY') ,
 ('US','NPL','Naples',' ','NC') ,
 ('US','NPM','Newport',' ','MN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','NPN','Newport',' ','AR') ,
 ('US','NPO','Newport',' ','OR') ,
 ('US','NPP','New Philadelphia',' ','PA') ,
@@ -53806,7 +53838,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','NTN','Newton',' ','MA') ,
 ('US','NTO','Nettleton',' ','MS') ,
 ('US','NTP','North Pole',' ','AK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','NTQ','Newtown Square',' ','PA') ,
 ('US','NTR','Norton Shores',' ','MI') ,
 ('US','NTS','North Charleston',' ','SC') ,
@@ -53887,7 +53919,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','NXO','Norwood',' ','NC') ,
 ('US','NXP','Noxapater',' ','MS') ,
 ('US','NXQ','Newcomerstown',' ','OH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','NXV','Nashville',' ','IL') ,
 ('US','NXX','Willow Grove',' ','PA') ,
 ('US','NXY','North City',' ','WA') ,
@@ -53968,7 +54000,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','OCO','Oconomowoc',' ','WI') ,
 ('US','OCQ','Oconto',' ','WI') ,
 ('US','OCR','Social Circle',' ','GA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','OCU','Cuba',' ','MO') ,
 ('US','OCV','Rockville',' ','CT') ,
 ('US','OCW','Washington',' ','NC') ,
@@ -54049,7 +54081,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','OHH','Ohatchee',' ','AL') ,
 ('US','OHI','Old Hickory',' ','AR') ,
 ('US','OHL','Oak Hill, Pittsylvania',' ','VA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','OHM','Amelia',' ','OH') ,
 ('US','OHN','Cochran',' ','GA') ,
 ('US','OHO','Oak Harbor',' ','OH') ,
@@ -54130,7 +54162,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','OMA','Omaha',' ','NE') ,
 ('US','OMB','Macomb',' ','MI') ,
 ('US','OMC','Commerce',' ','TX') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','OMD','Romoland',' ','CA') ,
 ('US','OME','Nome',' ','AK') ,
 ('US','OMF','Comfort',' ','TX') ,
@@ -54211,7 +54243,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','OPY','Orchard Park',' ','NY') ,
 ('US','OQH','Oak Hill',' ','FL') ,
 ('US','OQL','Coquille',' ','OR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','OQO','Conroy',' ','IA') ,
 ('US','OQR','Oakridge',' ','OR') ,
 ('US','OQY','Oakley',' ','CA') ,
@@ -54292,7 +54324,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','OUH','Southgate',' ','KY') ,
 ('US','OUI','Blountville',' ','TN') ,
 ('US','OUK','Mounds',' ','OK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','OUL','South Charleston',' ','OH') ,
 ('US','OUM','Mount Meigs',' ','AL') ,
 ('US','OUN','Norman',' ','OK') ,
@@ -54373,7 +54405,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','PAF','Plainfield',' ','IN') ,
 ('US','PAG','Pisgah',' ','AL') ,
 ('US','PAH','Paducah',' ','KY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','PAI','Paintsville',' ','KY') ,
 ('US','PAK','Hanapepe',' ','HI') ,
 ('US','PAL','Pt Allen',' ','HI') ,
@@ -54454,7 +54486,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','PDN','Pendleton',' ','IN') ,
 ('US','PDO','Pendleton',' ','SC') ,
 ('US','PDP','Philadelphia',' ','NY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','PDQ','Doral',' ','FL') ,
 ('US','PDS','Powder Springs',' ','GA') ,
 ('US','PDT','Pendleton',' ','OR') ,
@@ -54535,7 +54567,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','PH4','Panhandle, Cass',' ','TX') ,
 ('US','PHA','Phenix City',' ','AL') ,
 ('US','PHB','Peoria Heights',' ','IL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','PHC','Pointe a la Hache',' ','LA') ,
 ('US','PHD','New Philadelphia',' ','OH') ,
 ('US','PHE','Pelahatchie',' ','MS') ,
@@ -54616,7 +54648,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','PKV','Spokane Valley',' ','WA') ,
 ('US','PKW','Parker',' ','WA') ,
 ('US','PKX','Pekin',' ','IN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','PKY','Parksley',' ','VA') ,
 ('US','PKZ','Parkrose',' ','OR') ,
 ('US','PL2','Palmer',' ','PA') ,
@@ -54697,7 +54729,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','PNQ','Patterson',' ','NC') ,
 ('US','PNR','Penn Run',' ','PA') ,
 ('US','PNS','Pensacola',' ','FL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','PNT','Piedmont',' ','WV') ,
 ('US','PNU','Panguitch',' ','UT') ,
 ('US','PNV','Pineville',' ','NC') ,
@@ -54778,7 +54810,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','PR2','Penrose',' ','CO') ,
 ('US','PR3','Perkins',' ','OK') ,
 ('US','PR4','Piercy',' ','CA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','PR5','Proctor',' ','WV') ,
 ('US','PR6','Prairie',' ','MS') ,
 ('US','PR7','Puerto Rico',' ','TX') ,
@@ -54859,7 +54891,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','PTS','Pittsburg',' ','KS') ,
 ('US','PTT','Pratt',' ','KS') ,
 ('US','PTU','Platinum',' ','AK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','PTV','Porterville',' ','CA') ,
 ('US','PTW','Pottstown',' ','PA') ,
 ('US','PTX','Pearlington',' ','MS') ,
@@ -54940,7 +54972,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','PXR','Promontory',' ','UT') ,
 ('US','PXS','Paxinos',' ','PA') ,
 ('US','PXT','Phoenix Township',' ','AR') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','PXV','Phoenixville',' ','PA') ,
 ('US','PXW','Punxsutawney',' ','PA') ,
 ('US','PXX','Philadelphia',' ','MS') ,
@@ -55021,7 +55053,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','QCN','Coal Center',' ','PA') ,
 ('US','QCO','Clarion',' ','PA') ,
 ('US','QCP','Campbellsport',' ','WI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','QCQ','Chautauqua',' ','NY') ,
 ('US','QCS','Chelsea',' ','NY') ,
 ('US','QCT','Clanton',' ','AL') ,
@@ -55102,7 +55134,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','QLH','Laurelville',' ','OH') ,
 ('US','QLI','Loves Park',' ','IL') ,
 ('US','QLM','Salem',' ','SD') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','QLN','Carrollton',' ','VA') ,
 ('US','QLO','Leonia',' ','NJ') ,
 ('US','QLR','Laureldale',' ','PA') ,
@@ -55183,7 +55215,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','QSN','South Easton',' ','MA') ,
 ('US','QSO','Nelson',' ','CA') ,
 ('US','QSQ','Smock',' ','PA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','QSR','Seward',' ','IL') ,
 ('US','QST','Stoystown',' ','PA') ,
 ('US','QSV','Somerville',' ','TN') ,
@@ -55264,7 +55296,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','RBP','Red Boiling Springs',' ','TN') ,
 ('US','RBR','Ranburne',' ','AL') ,
 ('US','RBS','Robbins',' ','NC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','RBT','Roberts',' ','WI') ,
 ('US','RBU','Cedar Bluff',' ','AL') ,
 ('US','RBV','Robbinsville',' ','NJ') ,
@@ -55345,7 +55377,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','REX','Rex',' ','GA') ,
 ('US','REY','Reynolds',' ','GA') ,
 ('US','REZ','Revere',' ','MA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','RF2','Reform',' ','AL') ,
 ('US','RF3','Ridgefield',' ','CT') ,
 ('US','RF4','Rockfall',' ','CT') ,
@@ -55426,7 +55458,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','RIK','Rincon',' ','GA') ,
 ('US','RIL','Rifle',' ','CO') ,
 ('US','RIM','Rimer',' ','OH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','RIN','Richardson',' ','TX') ,
 ('US','RIO','Ringwood',' ','IL') ,
 ('US','RIP','Ripon',' ','CA') ,
@@ -55507,7 +55539,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','RMN','Richmond',' ','IL') ,
 ('US','RMO','Romeo',' ','MI') ,
 ('US','RMP','Rampart',' ','AK') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','RMQ','Redmond',' ','UT') ,
 ('US','RMT','Birmingport',' ','AL') ,
 ('US','RMV','Raymondville',' ','TX') ,
@@ -55588,7 +55620,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','RQO','Rockwood',' ','OR') ,
 ('US','RQP','Rockport',' ','IN') ,
 ('US','RQQ','River Edge',' ','NJ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','RQS','La Crosse',' ','KS') ,
 ('US','RQV','Riverdale',' ','GA') ,
 ('US','RQX','Roanoke',' ','IL') ,
@@ -55669,7 +55701,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','RUI','Ruidoso',' ','NM') ,
 ('US','RUK','Ruckersville',' ','VA') ,
 ('US','RUL','Rule',' ','TX') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','RUN','Rising Sun',' ','MD') ,
 ('US','RUO','Russells Point',' ','OH') ,
 ('US','RUP','Russell Springs',' ','KS') ,
@@ -55750,7 +55782,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','SAB','Sabine',' ','TX') ,
 ('US','SAC','Sacramento',' ','CA') ,
 ('US','SAD','Safford',' ','AZ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','SAE','Salem',' ','OH') ,
 ('US','SAF','Santa Fe',' ','NM') ,
 ('US','SAG','Sagwon',' ','AK') ,
@@ -55831,7 +55863,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','SCU','Scituate',' ','MA') ,
 ('US','SCV','Scottsville',' ','KY') ,
 ('US','SCW','Scobeyville',' ','NJ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','SCX','Schaller',' ','IA') ,
 ('US','SCY','Studio City',' ','CA') ,
 ('US','SCZ','Santa Clara',' ','CA') ,
@@ -55912,7 +55944,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','SFQ','Saraland',' ','AL') ,
 ('US','SFR','San Fernando',' ','CA') ,
 ('US','SFS','Seneca Falls',' ','NY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','SFT','Schaefferstown',' ','PA') ,
 ('US','SFU','Spanish Fork',' ','UT') ,
 ('US','SFV','St Francisville',' ','LA') ,
@@ -55993,7 +56025,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','SIJ','Simpsonville',' ','KY') ,
 ('US','SIK','Sikeston',' ','MO') ,
 ('US','SIL','Suitland',' ','MD') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','SIM','Sierra Madre',' ','CA') ,
 ('US','SIN','Singer Island',' ','FL') ,
 ('US','SIO','Simsboro',' ','LA') ,
@@ -56074,7 +56106,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','SLH','Seal Beach',' ','CA') ,
 ('US','SLI','San Luis',' ','AZ') ,
 ('US','SLJ','Sledge',' ','MS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','SLK','Saranac Lake',' ','NY') ,
 ('US','SLL','Saltillo',' ','MS') ,
 ('US','SLM','Salem',' ','MA') ,
@@ -56155,7 +56187,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','SOF','South Bay',' ','FL') ,
 ('US','SOG','South Boston',' ','VA') ,
 ('US','SOH','South Haven',' ','MI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','SOI','South Dayton',' ','NY') ,
 ('US','SOJ','Somerset',' ','NJ') ,
 ('US','SOK','Skokie',' ','IL') ,
@@ -56236,7 +56268,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','SR5','Shamrock, Wheeler',' ','TX') ,
 ('US','SR6','Sahuarita',' ','AZ') ,
 ('US','SRA','Sauk Rapids',' ','MN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','SRB','Saratoga',' ','MN') ,
 ('US','SRC','Searcy',' ','AR') ,
 ('US','SRD','Sheridan',' ','NY') ,
@@ -56317,7 +56349,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','STT','Stockertown',' ','PA') ,
 ('US','STU','Stoneham',' ','MA') ,
 ('US','STV','Stoneville',' ','MS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','STW','Strausstown',' ','PA') ,
 ('US','STX','Stanton',' ','TX') ,
 ('US','STY','Smithtown',' ','NY') ,
@@ -56398,7 +56430,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','SWK','Seekonk',' ','MA') ,
 ('US','SWL','Stonewall',' ','MS') ,
 ('US','SWM','Snowmass Village',' ','CO') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','SWN','Sewaren',' ','NJ') ,
 ('US','SWO','Stillwater',' ','OK') ,
 ('US','SWP','Summit Point',' ','WV') ,
@@ -56479,7 +56511,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','SZN','Shannon',' ','MS') ,
 ('US','SZO','Solomon',' ','KS') ,
 ('US','SZP','Santa Paula',' ','CA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','SZR','Somerset',' ','PA') ,
 ('US','SZS','Summit',' ','PA') ,
 ('US','SZT','Stanleytown',' ','VA') ,
@@ -56560,7 +56592,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','TES','Stevensville',' ','MT') ,
 ('US','TET','Teton Village',' ','WY') ,
 ('US','TEU','Tequesta',' ','FL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','TEV','Temperance',' ','MI') ,
 ('US','TEW','Tewksbury',' ','MA') ,
 ('US','TEX','Texarkana',' ','TX') ,
@@ -56641,7 +56673,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','TLA','Teller',' ','AK') ,
 ('US','TLC','Turtle Creek',' ','PA') ,
 ('US','TLD','Tolland',' ','CT') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','TLE','Timberlake',' ','NC') ,
 ('US','TLF','Telida',' ','AK') ,
 ('US','TLG','Telogia',' ','FL') ,
@@ -56722,7 +56754,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','TOW','Towanda',' ','PA') ,
 ('US','TOX','Tremont',' ','PA') ,
 ('US','TOY','Troy',' ','ME') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','TPA','Tampa',' ','FL') ,
 ('US','TPE','Tempe',' ','AZ') ,
 ('US','TPH','Tonopah',' ','NV') ,
@@ -56803,7 +56835,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','TTH','Smethport',' ','PA') ,
 ('US','TTI','Stateline',' ','NV') ,
 ('US','TTJ','Potterstown',' ','NJ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','TTK','Turtle Lake',' ','WI') ,
 ('US','TTL','Whitehall',' ','OH') ,
 ('US','TTM','Tarentum',' ','PA') ,
@@ -56884,7 +56916,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','TYG','Troy Grove',' ','IL') ,
 ('US','TYH','Troy',' ','OH') ,
 ('US','TYI','Troy',' ','MS') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','TYJ','Tyro',' ','VA') ,
 ('US','TYK','Trinity Park',' ','NC') ,
 ('US','TYL','Tyler',' ','AL') ,
@@ -56965,7 +56997,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','UCU','Columbus',' ','KS') ,
 ('US','UCY','Union City',' ','TN') ,
 ('US','UDA','Saluda',' ','SC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','UDC','Cumberland City',' ','TN') ,
 ('US','UDE','Burnside',' ','LA') ,
 ('US','UDL','Unadilla',' ','GA') ,
@@ -57046,7 +57078,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','ULO','Bunola',' ','PA') ,
 ('US','ULT','Sultana',' ','CA') ,
 ('US','ULU','Lindsay',' ','TX') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','ULV','Sullivan',' ','NH') ,
 ('US','ULW','Lake Worth',' ','TX') ,
 ('US','UMA','Umatilla',' ','OR') ,
@@ -57127,7 +57159,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','URT','Duart',' ','NC') ,
 ('US','URW','Washburn',' ','TN') ,
 ('US','URY','Middlebury Center',' ','PA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','USA','Bourbonnais',' ','IL') ,
 ('US','USB','Curtis Bay, Baltimore',' ','MD') ,
 ('US','USC','Union South Carolina',' ','SC') ,
@@ -57208,7 +57240,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','UYZ','Skyland',' ','NC') ,
 ('US','UZA','Stanley',' ','NC') ,
 ('US','UZB','Somerville',' ','MA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','UZC','Summerville',' ','SC') ,
 ('US','UZD','Tarboro',' ','NC') ,
 ('US','UZE','Tipp City',' ','OH') ,
@@ -57289,7 +57321,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','VEY','Harvey',' ','ND') ,
 ('US','VFG','Valley Forge',' ','PA') ,
 ('US','VGE','Savage',' ','MT') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','VGF','Vandergrift',' ','PA') ,
 ('US','VGI','Virginia',' ','MN') ,
 ('US','VGN','Western Grove',' ','AR') ,
@@ -57370,7 +57402,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','VPT','Ville Platte',' ','LA') ,
 ('US','VPZ','Valparaiso',' ','IN') ,
 ('US','VQN','Vonore',' ','TN') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','VRA','Verona',' ','WI') ,
 ('US','VRB','Vero Beach',' ','FL') ,
 ('US','VRI','Vernalis',' ','CA') ,
@@ -57451,7 +57483,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','WAV','Waverly',' ','OH') ,
 ('US','WAW','Walworth',' ','WI') ,
 ('US','WAX','Waxahachie',' ','TX') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','WAY','Waynesburg',' ','PA') ,
 ('US','WAZ','Waynesville',' ','MO') ,
 ('US','WB2','Wittenberg',' ','WI') ,
@@ -57532,7 +57564,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','WDV','Woodinville',' ','WA') ,
 ('US','WDW','Wendover',' ','WY') ,
 ('US','WDX','Wendell',' ','NC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','WDY','Woodbury',' ','MN') ,
 ('US','WDZ','Woodside',' ','CA') ,
 ('US','WEA','Weatherford',' ','TX') ,
@@ -57613,7 +57645,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','WHH','Warrensville Heights',' ','OH') ,
 ('US','WHI','Whippany',' ','NJ') ,
 ('US','WHJ','Walhalla',' ','SC') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','WHK','Whitner',' ','KY') ,
 ('US','WHL','Whitlash',' ','MT') ,
 ('US','WHM','Windham',' ','OH') ,
@@ -57694,7 +57726,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','WKW','Waunakee',' ','WI') ,
 ('US','WKX','Weskan',' ','KS') ,
 ('US','WKY','Wickliffe',' ','KY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','WKZ','West Covina',' ','CA') ,
 ('US','WL2','Wayland',' ','MA') ,
 ('US','WL3','West Liberty',' ','IA') ,
@@ -57775,7 +57807,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','WNV','Waynesville',' ','PA') ,
 ('US','WNW','Wrightwood',' ','CA') ,
 ('US','WNX','Wellman',' ','TX') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','WNY','West New York',' ','NJ') ,
 ('US','WNZ','West End',' ','NC') ,
 ('US','WOA','Woodland',' ','TX') ,
@@ -57856,7 +57888,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','WRI','Fort Dix',' ','NJ') ,
 ('US','WRJ','Wray',' ','GA') ,
 ('US','WRK','Warwick',' ','NY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','WRL','Worland',' ','WY') ,
 ('US','WRM','Warminster',' ','PA') ,
 ('US','WRN','Warren',' ','OH') ,
@@ -57937,7 +57969,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','WUI','West Union',' ','IA') ,
 ('US','WUL','Woodlake',' ','CA') ,
 ('US','WUN','Wauseon',' ','OH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','WUO','Warrenton',' ','OH') ,
 ('US','WUP','Waupaca',' ','WI') ,
 ('US','WUQ','West Union',' ','OR') ,
@@ -58018,7 +58050,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','WXW','Warsaw',' ','IL') ,
 ('US','WXX','Waterford',' ','PA') ,
 ('US','WXY','Westfield',' ','NY') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','WXZ','Winton',' ','CA') ,
 ('US','WY2','Wadley',' ','AL') ,
 ('US','WYA','Weatherford',' ','OK') ,
@@ -58099,7 +58131,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','XCA','Bedford',' ','OH') ,
 ('US','XCB','Bustleton',' ','PA') ,
 ('US','XCC','Belding',' ','MI') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','XCD','Big Island',' ','VA') ,
 ('US','XCE','Bridesburg',' ','PA') ,
 ('US','XCF','Bingen',' ','WA') ,
@@ -58180,7 +58212,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','XFI','Fairmont',' ','WV') ,
 ('US','XFJ','Feura Bush',' ','NY') ,
 ('US','XFK','Fremont',' ','OH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','XFL','Finderne',' ','NJ') ,
 ('US','XFM','Falls Mills',' ','VA') ,
 ('US','XFN','Falkner',' ','MS') ,
@@ -58261,7 +58293,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','XIO','Morrisville',' ','PA') ,
 ('US','XIQ','Mickleton',' ','NJ') ,
 ('US','XIR','Millburn',' ','NJ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','XIS','Mapleton',' ','IL') ,
 ('US','XIT','Malott',' ','WA') ,
 ('US','XIU','Magna',' ','UT') ,
@@ -58342,7 +58374,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','XMA','Sharonville',' ','OH') ,
 ('US','XMB','Sheldon',' ','TX') ,
 ('US','XMC','Shellman',' ','GA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','XMD','Madison',' ','SD') ,
 ('US','XME','Slaton',' ','TX') ,
 ('US','XMF','South Miami',' ','FL') ,
@@ -58423,7 +58455,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','XRL','Roseland',' ','LA') ,
 ('US','XRN','Rancocas',' ','NJ') ,
 ('US','XRO','North Randall',' ','OH') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','XRS','Rock Springs',' ','GA') ,
 ('US','XRT','Rock Tavern',' ','NY') ,
 ('US','XRY','Ridgeway',' ','CO') ,
@@ -58504,7 +58536,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','YAS','Aransas Pass',' ','TX') ,
 ('US','YAT','Yatesboro',' ','PA') ,
 ('US','YAV','Yucca Valley',' ','CA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','YAW','Apple Valley',' ','MN') ,
 ('US','YAX','Alexander',' ','AR') ,
 ('US','YAZ','Yazoo City',' ','MS') ,
@@ -58585,7 +58617,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','YHA','Haviland',' ','OH') ,
 ('US','YHB','Heyburn',' ','ID') ,
 ('US','YHD','Hopland',' ','CA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','YHE','Cowiche',' ','WA') ,
 ('US','YHI','Hickory Flat, Benton',' ','MS') ,
 ('US','YHJ','Yamhill',' ','OR') ,
@@ -58666,7 +58698,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','YOB','Oakboro',' ','NC') ,
 ('US','YOF','Olmsted Falls',' ','OH') ,
 ('US','YOG','Gilberts',' ','IL') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','YOK','Yoke Bay',' ','AK') ,
 ('US','YON','Yonkers',' ','NY') ,
 ('US','YOO','Yolo',' ','CA') ,
@@ -58747,7 +58779,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','YUG','Union Gap',' ','WA') ,
 ('US','YUL','Yulee',' ','FL') ,
 ('US','YUM','Yuma',' ','AZ') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','YUN','Union',' ','ME') ,
 ('US','YUP','Upper Brookville',' ','NY') ,
 ('US','YUR','Gettysburg',' ','OH') ,
@@ -58828,7 +58860,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','ZDC','Clarendon Heights',' ','PA') ,
 ('US','ZDE','Dolores',' ','CO') ,
 ('US','ZDG','West Reading',' ','PA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','ZDN','Denton',' ','MD') ,
 ('US','ZDQ','Duquesne',' ','PA') ,
 ('US','ZDS','Sands Point',' ','NY') ,
@@ -58909,7 +58941,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','ZLT','League City',' ','TX') ,
 ('US','ZLV','Longview',' ','TX') ,
 ('US','ZLW','Longmeadow',' ','MA') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','ZMC','Mendota',' ','CA') ,
 ('US','ZMD','Seminole',' ','OK') ,
 ('US','ZMG','Miami Gardens',' ','FL') ,
@@ -58990,7 +59022,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('US','ZSG','Spring Grove',' ','PA') ,
 ('US','ZSH','St Stephen',' ','SC') ,
 ('US','ZSI','San Acacio',' ','CO') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('US','ZSM','Smiths',' ','NC') ,
 ('US','ZSO','Sherborn',' ','MA') ,
 ('US','ZSP','Stephen',' ','MN') ,
@@ -59071,7 +59103,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('UY','PRB','Poblado Rincon de la Bolsa',' ','') ,
 ('UY','RCH','Rocha',' ','') ,
 ('UY','RVY','Rivera',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('UY','SJC','San Jose de Carrasco',' ','') ,
 ('UY','SJS','San Jose',' ','') ,
 ('UY','STY','Salto',' ','') ,
@@ -59152,7 +59184,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('VE','GCR','Guacara',' ','') ,
 ('VE','GDO','Guasdualito',' ','') ,
 ('VE','GGU','Guaraguao',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('VE','GUA','Guaranao',' ','') ,
 ('VE','GUB','Guaranao Bay',' ','') ,
 ('VE','GUI','Guiria',' ','') ,
@@ -59233,7 +59265,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('VE','URM','Uriman',' ','') ,
 ('VE','VCR','Carora',' ','') ,
 ('VE','VDP','Valle De Pascua',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('VE','VIG','El Vigia',' ','') ,
 ('VE','VLN','Valencia',' ','') ,
 ('VE','VLV','Valera',' ','') ,
@@ -59314,7 +59346,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('VN','SAD','Sa Dec',' ','') ,
 ('VN','SGN','Ho Chi Minh City',' ','') ,
 ('VN','SQH','Son La',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('VN','TBB','Tuy Hoa',' ','') ,
 ('VN','TBH','Thai Binh',' ','') ,
 ('VN','TBI','Thang Binh',' ','') ,
@@ -59395,7 +59427,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('XZ','HEI','Heidrun',' ','') ,
 ('XZ','KMT','Kakap Marine Terminal',' ','') ,
 ('XZ','LAM','Laminaria Terminal',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('XZ','LGT','Legendre Terminal',' ','') ,
 ('XZ','NJO','Njord',' ','') ,
 ('XZ','NNE','Norne',' ','') ,
@@ -59476,7 +59508,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ZA','BFV','Bedfordview',' ','') ,
 ('ZA','BHT','Bronkhorstspruit',' ','') ,
 ('ZA','BIY','Bisho',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ZA','BNI','Benoni',' ','') ,
 ('ZA','BOK','Boksburg',' ','') ,
 ('ZA','BOT','BotrivIer',' ','') ,
@@ -59557,7 +59589,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ZA','KLZ','Kleinzee',' ','') ,
 ('ZA','KMH','Kuruman',' ','') ,
 ('ZA','KMP','Kempton Park',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ZA','KNY','Knysna',' ','') ,
 ('ZA','KOF','Komatipoort',' ','') ,
 ('ZA','KPM','Kaapmuiden',' ','') ,
@@ -59638,7 +59670,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ZA','SAS','Sasolburg',' ','') ,
 ('ZA','SBU','Springbok',' ','') ,
 ('ZA','SCT','Scottburgh',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ZA','SDB','Saldanha Bay',' ','') ,
 ('ZA','SDT','Sandton',' ','') ,
 ('ZA','SFB','St Francis Bay',' ','') ,
@@ -59719,7 +59751,7 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ZM','MPU','Mpulungu',' ','') ,
 ('ZM','MRB','Maramba',' ','') ,
 ('ZM','MZE','Monze',' ','') ;
-INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
+INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('ZM','NLA','Ndola',' ','') ,
 ('ZM','QKE','Kabwe',' ','') ,
 ('ZM','SJQ','Sesheke',' ','') ,
@@ -59752,13 +59784,13 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ZW','VFA','Victoria Falls',' ','') ,
 ('ZW','WKI','Hwange',' ','') ;
 
-INSERT INTO DASHLET (DAS_UID,DAS_CLASS,DAS_TITLE,DAS_DESCRIPTION,DAS_VERSION,DAS_CREATE_DATE,DAS_UPDATE_DATE,DAS_STATUS) VALUES
+INSERT INTO DASHLET (DAS_UID,DAS_CLASS,DAS_TITLE,DAS_DESCRIPTION,DAS_VERSION,DAS_CREATE_DATE,DAS_UPDATE_DATE,DAS_STATUS) VALUES 
 ('00000000000000000000000000000002','dashletProcessMakerCommunity','ProcessMaker Community','ProcessMaker Community Links and Information','1.0','2011-12-01 00:00:00','2011-12-01 00:00:00','1'),
 ('00000000000000000000000000000001','dashletOpenVSCompleted','Open Cases VS Completed Cases','Open Cases VS Completed Cases','1.0','2011-10-28 00:00:00','2011-10-28 00:00:00','1'),
 ('00000000000000000000000000000003','dashletProcessMakerEnterprise','ProcessMaker Enterprise Plugins and Addons','The following list of Enterprise plug-ins includes features and functionality that extend and enhance ProcessMaker''s performance and functionality.','1.0','2011-12-05 00:00:00','2011-12-05 00:00:00','1'),
 ('00000000000000000000000000000004','dashletRssReader','Simple RSS reader','Simple RSS reader for ProcessMaker','1.0','2012-04-16 00:00:00','2012-04-16 00:00:00','1');
 
-INSERT INTO DASHLET_INSTANCE (DAS_INS_UID,DAS_UID,DAS_INS_OWNER_TYPE,DAS_INS_OWNER_UID,DAS_INS_ADDITIONAL_PROPERTIES,DAS_INS_CREATE_DATE,DAS_INS_UPDATE_DATE,DAS_INS_STATUS) VALUES
+INSERT INTO DASHLET_INSTANCE (DAS_INS_UID,DAS_UID,DAS_INS_OWNER_TYPE,DAS_INS_OWNER_UID,DAS_INS_ADDITIONAL_PROPERTIES,DAS_INS_CREATE_DATE,DAS_INS_UPDATE_DATE,DAS_INS_STATUS) VALUES 
 ('00000000000000000000000000000001','00000000000000000000000000000001','EVERYBODY','','a:7:{s:20:"DAS_INS_CONTEXT_TIME";s:5:"TODAY";s:12:"DAS_RED_FROM";s:1:"0";s:10:"DAS_RED_TO";s:2:"30";s:15:"DAS_YELLOW_FROM";s:2:"30";s:13:"DAS_YELLOW_TO";s:2:"50";s:14:"DAS_GREEN_FROM";s:2:"50";s:12:"DAS_GREEN_TO";s:3:"100";}','2011-12-02 00:00:00','2011-12-02 00:00:00',1),
 ('00000000000000000000000000000002','00000000000000000000000000000002','EVERYBODY','','','2011-12-02 00:00:00','2011-12-02 00:00:00',1),
 ('00000000000000000000000000000003','00000000000000000000000000000003','EVERYBODY','','','2011-12-05 00:00:00','2011-12-05 00:00:00',1),
@@ -59766,3 +59798,4 @@ INSERT INTO DASHLET_INSTANCE (DAS_INS_UID,DAS_UID,DAS_INS_OWNER_TYPE,DAS_INS_OWN
 
 INSERT INTO CONFIGURATION (CFG_UID,OBJ_UID,CFG_VALUE,PRO_UID,USR_UID,APP_UID) VALUES
 ('ENVIRONMENT_SETTINGS','','a:1:{s:18:"directoryStructure";i:2;}','','','');
+
