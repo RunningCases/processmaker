@@ -585,9 +585,6 @@ class BpmnWorkflow extends Project\Bpmn
         }
         $activities = $projectData['diagrams']['0']['activities'];
         foreach ($activities as $value) {
-            if (empty($value['act_name'])) {
-                throw new \Exception("For activity: {$value['act_uid']} `act_name` is required but missing.");
-            }
             if (empty($value['act_type'])) {
                 throw new \Exception("For activity: {$value['act_uid']} `act_type` is required but missing.");
             }
