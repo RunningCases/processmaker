@@ -74,7 +74,9 @@ class Trigger
             } else {
                 if ($aRow['TRI_PARAM'] != '' && $aRow['TRI_PARAM'] != 'PRIVATE') {
                     $aRow['TRI_PARAM'] = unserialize($aRow['TRI_PARAM']);
-                    $aRow['TRI_PARAM'] = \G::json_encode($aRow['TRI_PARAM']);
+
+                    unset($aRow["TRI_PARAM"]["hash"]);
+                    unset($aRow["TRI_PARAM"]["params"]["TRI_WEBBOT"]);
                 }
             }
             $triggersArray[] = array_change_key_case($aRow, CASE_LOWER);
