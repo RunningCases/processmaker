@@ -447,6 +447,7 @@ Ext.onReady(function(){
           id: "mnuGenerateBpmn",
           text: _("ID_GENERATE_BPMN_PROJECT"),
           iconCls: "button_menu_ext ss_sprite ss_page_white_go",
+          hidden: true,
           handler: function ()
           {
               generateBpmn();
