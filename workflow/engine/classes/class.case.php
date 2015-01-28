@@ -3875,8 +3875,12 @@ class Cases
         $oCriteria->add(AppThreadPeer::DEL_INDEX, $iDelegation);
         $oDataset = AppThreadPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $oDataset->next();
-        $aRow = $oDataset->getRow();
+
+        if ($oDataset->next()) {
+            $aRow = $oDataset->getRow();
+        } else {
+            throw new Exception(G::LoadTranslation("ID_CASE_STOPPED_TRIGGER"));
+        }
 
         //now create a row in APP_DELAY with type PAUSE
         $aData['PRO_UID'] = $aFields['PRO_UID'];
