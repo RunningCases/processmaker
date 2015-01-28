@@ -29,6 +29,7 @@
             var credentials = {credentials};
             $(window).load(function () {
                 var data = jsondata;
+                data.items[0].mode = "view";
                 window.project = new PMDynaform.core.Project({
                     data: data,
                     keys: {
