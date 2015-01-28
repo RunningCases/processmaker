@@ -764,10 +764,11 @@ class Workflow extends Handler
             $oCriteria->add(\CaseTrackerObjectPeer::PRO_UID, $sProcessUID);
             \ProcessUserPeer::doDelete($oCriteria);
 
-            //Delete Web Entries
+            //Delete WebEntries
             $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
 
             $criteria = new \Criteria("workflow");
+
             $criteria->addSelectColumn(\WebEntryPeer::WE_UID);
             $criteria->add(\WebEntryPeer::PRO_UID, $sProcessUID, \Criteria::EQUAL);
 
@@ -778,6 +779,23 @@ class Workflow extends Handler
                 $row = $rsCriteria->getRow();
 
                 $webEntry->delete($row["WE_UID"]);
+            }
+
+            //Delete WebEntry-Events
+            $webEntryEvent = new \ProcessMaker\BusinessModel\WebEntryEvent();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\WebEntryEventPeer::WEE_UID);
+            $criteria->add(\WebEntryEventPeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
+
+            $rsCriteria = \WebEntryEventPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $webEntryEvent->delete($row["WEE_UID"]);
             }
 
             //Delete the process
@@ -1055,7 +1073,27 @@ class Workflow extends Handler
                 }
             }
 
-            //Getting templates files
+            //Get public files to exclude
+            $arrayPublicFileToExclude = array("wsClient.php");
+
+            //WebEntry
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\WebEntryPeer::WE_DATA);
+            $criteria->add(\WebEntryPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+            $criteria->add(\WebEntryPeer::WE_METHOD, "WS", \Criteria::EQUAL);
+
+            $rsCriteria = \WebEntryPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayPublicFileToExclude[] = $row["WE_DATA"];
+                $arrayPublicFileToExclude[] = preg_replace("/^(.+)\.php$/", "$1Post.php", $row["WE_DATA"]);
+            }
+
+            //Get templates and public files
             $workspaceTargetDirs = array("TEMPLATES" => "mailTemplates", "PUBLIC" => "public");
             $workspaceDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP;
 
@@ -1069,6 +1107,10 @@ class Workflow extends Handler
                     }
 
                     $filename = basename($templatesFile);
+
+                    if ($target == "PUBLIC" && in_array($filename, $arrayPublicFileToExclude)) {
+                        continue;
+                    }
 
                     $workflowFile[$target][] = array(
                         "filename" => $filename,
@@ -1095,7 +1137,7 @@ class Workflow extends Handler
             $processUidOld = $arrayUid[0]["old_uid"];
             $processUid = $arrayUid[0]["new_uid"];
 
-            //Update TAS_UID
+            //Update TASK.TAS_UID
             foreach ($arrayWorkflowData["tasks"] as $key => $value) {
                 $taskUid = $arrayWorkflowData["tasks"][$key]["TAS_UID"];
 
@@ -1105,6 +1147,20 @@ class Workflow extends Handler
                     if ($arrayItem["old_uid"] == $taskUid) {
                         $arrayWorkflowData["tasks"][$key]["TAS_UID_OLD"] = $taskUid;
                         $arrayWorkflowData["tasks"][$key]["TAS_UID"] = $arrayItem["new_uid"];
+                        break;
+                    }
+                }
+            }
+
+            //Update WEB_ENTRY_EVENT.EVN_UID
+            foreach ($arrayWorkflowData["webEntryEvent"] as $key => $value) {
+                $webEntryEventEventUid = $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"];
+
+                foreach ($arrayUid as $value2) {
+                    $arrayItem = $value2;
+
+                    if ($arrayItem["old_uid"] == $webEntryEventEventUid) {
+                        $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"] = $arrayItem["new_uid"];
                         break;
                     }
                 }

@@ -243,6 +243,9 @@ class BpmnWorkflow extends Project\Bpmn
                         }
 
                         $this->updateEventStartObjects($data["FLO_ELEMENT_ORIGIN"], $data["FLO_ELEMENT_DEST"]);
+
+                        //WebEntry-Event - Update
+                        $this->updateWebEntryEventByEvent($data["FLO_ELEMENT_ORIGIN"], array("ACT_UID" => $data["FLO_ELEMENT_DEST"]));
                         break;
                 }
                 break;
@@ -289,6 +292,9 @@ class BpmnWorkflow extends Project\Bpmn
                 $this->wp->setStartTask($flowCurrent->getFloElementDest());
 
                 $this->updateEventStartObjects($flowCurrent->getFloElementOrigin(), $flowCurrent->getFloElementDest());
+
+                //WebEntry-Event - Update
+                $this->updateWebEntryEventByEvent($flowCurrent->getFloElementOrigin(), array("ACT_UID" => $flowCurrent->getFloElementDest()));
             }
         }
 
@@ -342,16 +348,31 @@ class BpmnWorkflow extends Project\Bpmn
         if ($flow->getFloElementOriginType() == "bpmnEvent" &&
             $flow->getFloElementDestType() == "bpmnActivity"
         ) {
-            $event = \BpmnEventPeer::retrieveByPK($flow->getFloElementOrigin());
+            $bpmnFlow = \BpmnFlow::findOneBy(array(
+                \BpmnFlowPeer::FLO_ELEMENT_ORIGIN      => $flow->getFloElementOrigin(),
+                \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnEvent",
+                \BpmnFlowPeer::FLO_ELEMENT_DEST        => $flow->getFloElementDest(),
+                \BpmnFlowPeer::FLO_ELEMENT_DEST_TYPE   => "bpmnActivity"
+            ));
 
-            if (! is_null($event) && $event->getEvnType() == "START") {
-                $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
-                if (! is_null($activity)) {
-                    $this->wp->setStartTask($activity->getActUid(), false);
+            if (is_null($bpmnFlow)) {
+                $event = \BpmnEventPeer::retrieveByPK($flow->getFloElementOrigin());
+
+                if (!is_null($event) && $event->getEvnType() == "START") {
+                    $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
+
+                    if (!is_null($activity)) {
+                        $this->wp->setStartTask($activity->getActUid(), false);
+                    }
                 }
             }
 
             $this->updateEventStartObjects($flow->getFloElementOrigin(), "");
+
+            //WebEntry-Event - Update
+            if (is_null($bpmnFlow)) {
+                $this->updateWebEntryEventByEvent($flow->getFloElementOrigin(), array("WEE_STATUS" => "DISABLED"));
+            }
         } elseif ($flow->getFloElementOriginType() == "bpmnActivity" &&
             $flow->getFloElementDestType() == "bpmnEvent") {
             // verify case: activity -> event(end)
@@ -403,22 +424,27 @@ class BpmnWorkflow extends Project\Bpmn
         return $eventUid;
     }
 
-    public function removeEvent($data)
+    public function removeEvent($eventUid)
     {
-
-        $event = \BpmnEventPeer::retrieveByPK($data);
+        $event = \BpmnEventPeer::retrieveByPK($eventUid);
 
         // delete case scheduler
         if ($event && $event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
-            $this->wp->removeCaseScheduler($data);
+            $this->wp->removeCaseScheduler($eventUid);
         }
 
         // delete web entry
-        if ($event && $event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
-            $this->wp->removeWebEntry($data);
+        if (!is_null($event) && $event->getEvnType() == "START") {
+            $webEntryEvent = new \ProcessMaker\BusinessModel\WebEntryEvent();
+
+            if ($webEntryEvent->existsEvent($event->getPrjUid(), $eventUid)) {
+                $arrayWebEntryEventData = $webEntryEvent->getWebEntryEventByEvent($event->getPrjUid(), $eventUid, true);
+
+                $webEntryEvent->delete($arrayWebEntryEventData["WEE_UID"]);
+            }
         }
 
-        parent::removeEvent($data);
+        parent::removeEvent($eventUid);
     }
 
     public function updateEventStartObjects($eventUid, $taskUid)
@@ -431,9 +457,9 @@ class BpmnWorkflow extends Project\Bpmn
         }
 
         //Update web entry
-        if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
-            $this->wp->updateWebEntry($eventUid, array("TAS_UID" => $taskUid));
-        }
+        //if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
+        //    $this->wp->updateWebEntry($eventUid, array("TAS_UID" => $taskUid));
+        //}
     }
 
     public function mapBpmnGatewayToWorkflowRoutes($activityUid, $gatewayUid)
@@ -1301,6 +1327,28 @@ class BpmnWorkflow extends Project\Bpmn
     {
         parent::setDisabled($value);
         $this->wp->setDisabled($value);
+    }
+
+    public function updateWebEntryEventByEvent($eventUid, array $arrayData)
+    {
+        try {
+            $bpmnEvent = \BpmnEventPeer::retrieveByPK($eventUid);
+
+            if (!is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START") {
+                $webEntryEvent = new \ProcessMaker\BusinessModel\WebEntryEvent();
+
+                if ($webEntryEvent->existsEvent($bpmnEvent->getPrjUid(), $bpmnEvent->getEvnUid())) {
+                    $arrayWebEntryEventData = $webEntryEvent->getWebEntryEventByEvent($bpmnEvent->getPrjUid(), $bpmnEvent->getEvnUid(), true);
+
+                    $bpmn = \ProcessMaker\Project\Bpmn::load($bpmnEvent->getPrjUid());
+                    $bpmnProject = $bpmn->getProject("object");
+
+                    $arrayResult = $webEntryEvent->update($arrayWebEntryEventData["WEE_UID"], $bpmnProject->getPrjAuthor(), $arrayData);
+                }
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
 
