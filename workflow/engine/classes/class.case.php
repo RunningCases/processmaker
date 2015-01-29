@@ -3879,7 +3879,7 @@ class Cases
         if ($oDataset->next()) {
             $aRow = $oDataset->getRow();
         } else {
-            return;
+            throw new Exception(G::LoadTranslation("ID_CASE_STOPPED_TRIGGER"));
         }
 
         //now create a row in APP_DELAY with type PAUSE
