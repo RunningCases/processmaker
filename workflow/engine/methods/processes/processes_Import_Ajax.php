@@ -200,8 +200,10 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
     try {
         if ($createMode === "overwrite") {
             $process = Process::getByProTitle($data["PRO_TITLE"]);
-            $oProcess = new Process();
-            $oProcess->remove($process["PRO_UID"]);
+            if ($process !== null) {
+                $oProcess = new Process();
+                $oProcess->remove($process["PRO_UID"]);
+            }
         }
         if ($createMode === "rename") {
             $data["PRO_TITLE"] = Process::getNextTitle($data["PRO_TITLE"]);

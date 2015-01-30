@@ -307,7 +307,7 @@ Ext.onReady(function(){
           importProcess();
         }
       },{
-        text: _('ID_IMPORT') + " BPMN",
+        text: _('ID_IMPORT_BPMN'),
         iconCls: 'silk-add',
         icon: '/images/import.gif',
         handler : function(){
