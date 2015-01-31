@@ -256,6 +256,7 @@ class Cases
         $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
+        $c->add(TaskPeer::TAS_TYPE, "WEBENTRYEVENT", Criteria::NOT_EQUAL);
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $sUIDUser);
 
@@ -281,6 +282,7 @@ class Cases
         $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
+        $c->add(TaskPeer::TAS_TYPE, "WEBENTRYEVENT", Criteria::NOT_EQUAL);
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $aGroups, Criteria::IN);
 
@@ -3875,8 +3877,12 @@ class Cases
         $oCriteria->add(AppThreadPeer::DEL_INDEX, $iDelegation);
         $oDataset = AppThreadPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $oDataset->next();
-        $aRow = $oDataset->getRow();
+
+        if ($oDataset->next()) {
+            $aRow = $oDataset->getRow();
+        } else {
+            throw new Exception(G::LoadTranslation("ID_CASE_STOPPED_TRIGGER"));
+        }
 
         //now create a row in APP_DELAY with type PAUSE
         $aData['PRO_UID'] = $aFields['PRO_UID'];

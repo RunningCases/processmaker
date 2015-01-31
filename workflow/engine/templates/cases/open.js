@@ -244,13 +244,19 @@ Ext.onReady(function(){
                     var dynaformChange ="";
                     var swDynaformChange = 0;
 
-                    if (window.frames["openCaseFrame"].document.getElementsByTagName("form")) {
-                    	dynaformChange = window.frames["openCaseFrame"].document.getElementsByTagName("form").item(0);
-                    	swDynaformChange = (window.frames["openCaseFrame"].dynaFormChanged(dynaformChange))? 1 : 0;
+                    var iframeDynaForm = (typeof(window.frames["openCaseFrame"].document) != "undefined")? window.frames["openCaseFrame"].document : ((typeof(window.frames["openCaseFrame"].contentDocument) != "undefined")? window.frames["openCaseFrame"].contentDocument : window.frames["openCaseFrame"].contentWindow.document);
+
+                    if (iframeDynaForm.getElementsByTagName("form")) {
+                        dynaformChange = iframeDynaForm.getElementsByTagName("form").item(0);
+
+                        if (typeof(window.frames["openCaseFrame"].dynaFormChanged) == "function") {
+                            swDynaformChange = (window.frames["openCaseFrame"].dynaFormChanged(dynaformChange))? 1 : 0;
+                        }
                     }
 
-                    if (window.frames["openCaseFrame"].document.getElementById("DynaformRequiredFields")) {
-                        requiredField = window.frames["openCaseFrame"].document.getElementById("DynaformRequiredFields").value;
+                    if (iframeDynaForm.getElementById("DynaformRequiredFields")) {
+                        requiredField = iframeDynaForm.getElementById("DynaformRequiredFields").value;
+
                         if (requiredField != "") {
                             swRequiredField = (window.frames["openCaseFrame"].validateForm(requiredField))? 1 : 0;
                         }
@@ -268,7 +274,7 @@ Ext.onReady(function(){
 	                                loadMaskStep.show();
 
 	                                if (btn == "ok") {
-	                                    var frm = window.frames["openCaseFrame"].document.getElementsByTagName("form");
+	                                    var frm = iframeDynaForm.getElementsByTagName("form");
 
 	                                    if (frm.length > 0) {
 	                                        var result = window.frames["openCaseFrame"].ajax_post(
