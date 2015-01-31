@@ -684,6 +684,7 @@ class Bpmn extends Handler
             $flow->fromArray($data, BasePeer::TYPE_FIELDNAME);
             $flow->setPrjUid($this->getUid());
             $flow->setDiaUid($this->getDiagram("object")->getDiaUid());
+            $flow->setFloPosition($this->getNextPosition($data["FLO_UID"], $data["FLO_TYPE"], $data["FLO_ELEMENT_ORIGIN"]));
             $flow->save();
             self::log("Add Flow Success!");
 
@@ -746,6 +747,8 @@ class Bpmn extends Handler
             self::log("Remove Flow: $floUid");
 
             $flow = FlowPeer::retrieveByPK($floUid);
+            $this->reOrder($flow->getFloElementOrigin(), $flow->getFloPosition());
+
             $flow->delete();
 
             self::log("Remove Flow Success!");
@@ -1240,6 +1243,48 @@ class Bpmn extends Handler
             return $this->getGateway2($gatewayUid);
         } catch (\Exception $e) {
             throw $e;
+        }
+    }
+
+    public function getNextPosition ($sFloUid, $sFloType, $sFloElementOrigin)
+    {
+        try {
+
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->addSelectColumn( '(COUNT(*) + 1) AS FLOW_POS' );
+            $oCriteria->add(\BpmnFlowPeer::PRJ_UID, $this->getUid());
+            $oCriteria->add(\BpmnFlowPeer::DIA_UID, $this->getDiagram("object")->getDiaUid());
+            $oCriteria->add(\BpmnFlowPeer::FLO_UID, $sFloUid, \Criteria::NOT_EQUAL);
+            $oCriteria->add(\BpmnFlowPeer::FLO_TYPE, $sFloType);
+            $oCriteria->add(\BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $sFloElementOrigin);
+            $oDataset = \BpmnFlowPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            $aRow = $oDataset->getRow();
+            return (int)($aRow["FLOW_POS"]);
+
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+    }
+
+    public function reOrder ($sFloOr, $iPosition)
+    {
+        try {
+            $oCriteria = new Criteria( 'workflow' );
+            $oCriteria->add( \BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $sFloOr );
+            $oCriteria->add( \BpmnFlowPeer::FLO_POSITION, $iPosition, '>' );
+            $oDataset = \BpmnFlowPeer::doSelectRS( $oCriteria );
+            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $oFlow = \BpmnFlowPeer::retrieveByPK( $aRow['FLO_UID'] );
+                $oFlow->setFloPosition( ($aRow['FLO_POSITION']) - 1 );
+                $oFlow->save();
+                $oDataset->next();
+            }
+        } catch (Exception $oException) {
+            throw $oException;
         }
     }
 }
