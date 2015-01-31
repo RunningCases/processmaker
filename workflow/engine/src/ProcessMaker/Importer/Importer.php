@@ -369,12 +369,14 @@ abstract class Importer
         $this->importWfFiles($arrayWorkflowFiles);
 
         //Update
-        $workflow = Project\Workflow::load($projectUid);
+        $workflow = \ProcessMaker\Project\Workflow::load($projectUid);
 
         foreach ($arrayWorkflowTables["tasks"] as $key => $value) {
             $arrayTaskData = $value;
 
-            $result = $workflow->updateTask($arrayTaskData["TAS_UID"], $arrayTaskData);
+            if (!in_array($arrayTaskData["TAS_TYPE"], array("GATEWAYTOGATEWAY", "WEBENTRYEVENT"))) {
+                $result = $workflow->updateTask($arrayTaskData["TAS_UID"], $arrayTaskData);
+            }
         }
 
         unset($arrayWorkflowTables["process"]["PRO_CREATE_USER"]);
