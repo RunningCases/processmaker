@@ -684,7 +684,7 @@ class Bpmn extends Handler
             $flow->fromArray($data, BasePeer::TYPE_FIELDNAME);
             $flow->setPrjUid($this->getUid());
             $flow->setDiaUid($this->getDiagram("object")->getDiaUid());
-            $flow->setFloPosition($this->getNextPosition($data["FLO_UID"], $data["FLO_TYPE"], $data["FLO_ELEMENT_ORIGIN"]));
+            $flow->setFloPosition($this->getFlowNextPosition($data["FLO_UID"], $data["FLO_TYPE"], $data["FLO_ELEMENT_ORIGIN"]));
             $flow->save();
             self::log("Add Flow Success!");
 
@@ -747,7 +747,7 @@ class Bpmn extends Handler
             self::log("Remove Flow: $floUid");
 
             $flow = FlowPeer::retrieveByPK($floUid);
-            $this->reOrder($flow->getFloElementOrigin(), $flow->getFloPosition());
+            $this->reOrderFlowPosition($flow->getFloElementOrigin(), $flow->getFloPosition());
 
             $flow->delete();
 
@@ -1246,7 +1246,7 @@ class Bpmn extends Handler
         }
     }
 
-    public function getNextPosition ($sFloUid, $sFloType, $sFloElementOrigin)
+    public function getFlowNextPosition ($sFloUid, $sFloType, $sFloElementOrigin)
     {
         try {
 
@@ -1268,19 +1268,21 @@ class Bpmn extends Handler
         }
     }
 
-    public function reOrder ($sFloOr, $iPosition)
+    public function reOrderFlowPosition ($sFloOrigin, $iPosition)
     {
         try {
+            $con = \Propel::getConnection('workflow');
             $oCriteria = new Criteria( 'workflow' );
-            $oCriteria->add( \BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $sFloOr );
+            $oCriteria->add( \BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $sFloOrigin );
             $oCriteria->add( \BpmnFlowPeer::FLO_POSITION, $iPosition, '>' );
             $oDataset = \BpmnFlowPeer::doSelectRS( $oCriteria );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $oFlow = \BpmnFlowPeer::retrieveByPK( $aRow['FLO_UID'] );
-                $oFlow->setFloPosition( ($aRow['FLO_POSITION']) - 1 );
-                $oFlow->save();
+                $newPosition = $aRow['FLO_POSITION'] - 1;
+                $oCriteria2 = new Criteria('workflow');
+                $oCriteria2->add(\BpmnFlowPeer::FLO_POSITION, $newPosition);
+                BasePeer::doUpdate($oCriteria, $oCriteria2, $con);
                 $oDataset->next();
             }
         } catch (Exception $oException) {
