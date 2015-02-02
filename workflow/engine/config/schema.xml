@@ -3706,6 +3706,9 @@
     <index name="BPMN_LANE_I_2">
       <index-column name="PRJ_UID"/>
     </index>
+    <index name="BPMN_LANE_I_3">
+      <index-column name="LNS_UID"/>
+    </index>
   </table>
 
   <table name="BPMN_PARTICIPANT">
