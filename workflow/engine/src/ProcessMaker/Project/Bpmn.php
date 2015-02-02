@@ -1278,13 +1278,12 @@ class Bpmn extends Handler
             $oDataset = \BpmnFlowPeer::doSelectRS( $oCriteria );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $newPosition = $aRow['FLO_POSITION'] - 1;
-                $oCriteria2 = new Criteria('workflow');
-                $oCriteria2->add(\BpmnFlowPeer::FLO_POSITION, $newPosition);
-                BasePeer::doUpdate($oCriteria, $oCriteria2, $con);
-                $oDataset->next();
-            }
+            $aRow = $oDataset->getRow();
+            $oCriteria2 = new Criteria('workflow');
+            $oCriteria2->add( \BpmnFlowPeer::FLO_POSITION, $aRow['FLO_POSITION'] - 1);
+            BasePeer::doUpdate($oCriteria, $oCriteria2, $con);
+            $oDataset->next();
+
         } catch (Exception $oException) {
             throw $oException;
         }
