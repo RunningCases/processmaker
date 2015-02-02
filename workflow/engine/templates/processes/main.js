@@ -307,6 +307,14 @@ Ext.onReady(function(){
           importProcess();
         }
       },{
+        text: _('ID_IMPORT_BPMN'),
+        iconCls: 'silk-add',
+        icon: '/images/import.gif',
+        handler : function(){
+          importProcessGlobal.processFileType = "bpmn";
+          importProcessBpmn();
+        }  
+      },{
         xtype: 'tbfill'
       },{
         xtype: 'tbseparator'
@@ -1303,6 +1311,172 @@ importProcess = function()
     });
   w.show();
 }
+                    
+importProcessBpmn = function ()
+{
+    var w = new Ext.Window({
+        id: 'import_process_bpmn',
+        title: _('ID_IMPORT_PROCESS'),
+        width: 420,
+        height: 130,
+        modal: true,
+        autoScroll: false,
+        maximizable: false,
+        resizable: false,
+        items: [
+            new Ext.FormPanel({
+                id: 'uploader',
+                fileUpload: true,
+                width: 400,
+                height: 90,
+                frame: true,
+                title: _('ID_IMPORT_PROCESS'),
+                header: false,
+                autoHeight: false,
+                bodyStyle: 'padding: 10px 10px 0 10px;',
+                labelWidth: 50,
+                defaults: {
+                    anchor: '90%',
+                    allowBlank: false,
+                    msgTarget: 'side'
+                },
+                items: [
+                    {
+                        name: 'ajaxAction',
+                        xtype: 'hidden',
+                        value: 'uploadFileNewProcess'
+                    }, {
+                        name: 'processFileType',
+                        xtype: 'hidden',
+                        value: importProcessGlobal.processFileType
+                    },{
+                        name: 'createMode',
+                        xtype: 'hidden',
+                        value: 'create'
+                    }, {
+                        xtype: 'fileuploadfield',
+                        id: 'form-file',
+                        emptyText: _('ID_SELECT_PROCESS_FILE'),
+                        fieldLabel: _('ID_LAN_FILE'),
+                        name: 'PROCESS_FILENAME',
+                        buttonText: '',
+                        buttonCfg: {
+                            iconCls: 'upload-icon'
+                        }
+                    }
+                ],
+                buttons: [
+                    {
+                        text: _('ID_UPLOAD'),
+                        handler: function () {
+                            importProcessBpmnSubmit();
+                        }
+                    }, {
+                        text: _('ID_CANCEL'),
+                        handler: function () {
+                            w.close();
+                        }
+                    }
+                ]
+            })
+        ]
+    });
+    w.show();
+}
+
+var windowbpmnoption = new Ext.Window({
+    title: _('ID_IMPORT_PROCESS'),
+    header: false,
+    width: 420,
+    height: 200,
+    modal: true,
+    autoScroll: false,
+    maximizable: false,
+    resizable: false,
+    closeAction: 'hide',
+    items: [
+        {
+            xtype: 'panel',
+            border: false,
+            bodyStyle: 'padding:15px;background-color:#e8e8e8;',
+            items: [
+                {
+                    xtype: 'box',
+                    autoEl: {
+                        tag: 'div',
+                        html: '<div style="margin-bottom:15px;background-color:#e8e8e8;"><img style="display:inline-block;vertical-align:top;" src="/images/ext/default/window/icon-warning.gif"/><div style="display:inline-block;width:338px;margin-left:5px;">' +
+                                _('ID_IMPORT_ALREADY_EXISTS_BPMN') + "<br><br>" + _('ID_IMPORT_ALREADY_EXISTS_BPMN_NOTE') +
+                                '</div></div>'
+                    }
+                }
+            ]
+        }
+    ],
+    buttons: [
+        {
+            text: _('ID_CREATE_NEW'),
+            handler: function () {
+                Ext.getCmp('uploader').getForm().setValues({"createMode": "rename"})
+                importProcessBpmnSubmit();
+            }
+        }, {
+            text: _('ID_OVERWRITE'),
+            handler: function () {
+                Ext.getCmp('uploader').getForm().setValues({"createMode": "overwrite"})
+                importProcessBpmnSubmit();
+            }
+        }, {
+            text: _('ID_CANCEL'),
+            handler: function () {
+                Ext.getCmp('import_process_bpmn').close();
+                windowbpmnoption.hide();
+            }
+        }
+    ]
+});
+
+importProcessBpmnSubmit = function () {
+    windowbpmnoption.hide();
+    var uploader = Ext.getCmp('uploader');
+    if (uploader.getForm().isValid()) {
+        uploader.getForm().submit({
+            url: 'processes_Import_Ajax',
+            waitMsg: _('ID_UPLOADING_PROCESS_FILE'),
+            waitTitle: "&nbsp;",
+            success: function (o, resp) {
+                var resp_ = Ext.util.JSON.decode(resp.response.responseText);
+                if (resp_.catchMessage !== "") {
+                    windowbpmnoption.show();
+                    return;
+                }
+                Ext.getCmp('import_process_bpmn').close();
+                var stringxml = document.createElement("input");
+                stringxml.type = "hidden";
+                stringxml.name = "stringBpmn";
+                stringxml.value = resp_.stringBpmn;
+                var form = document.createElement("form");
+                document.body.appendChild(form);
+                form.appendChild(stringxml);
+                form.style.display = "none";
+                form.action = "../designer?prj_uid=" + resp_.prj_uid;
+                form.method = "POST";
+                form.submit();
+            },
+            failure: function (o, resp) {
+                Ext.getCmp('import_process_bpmn').close();
+                Ext.MessageBox.show({
+                    title: '',
+                    msg: resp.catchMessage,
+                    buttons: Ext.MessageBox.OK,
+                    animEl: 'mb9',
+                    fn: function () {
+                    },
+                    icon: Ext.MessageBox.ERROR
+                });
+            }
+        });
+    }
+};
 
 function activeDeactive(){
   var rows = processesGrid.getSelectionModel().getSelections();
