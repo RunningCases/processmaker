@@ -568,7 +568,7 @@ class Process extends BaseProcess
         return (is_object( $oPro ) && get_class( $oPro ) == 'Process');
     }
 
-    public static function existsByProTitle ($PRO_TITLE)
+    public static function existsByProTitle ($proTitle)
     {
         $oCriteria = new Criteria("workflow");
 
@@ -576,7 +576,7 @@ class Process extends BaseProcess
 
         $oCriteria->add( ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
         $oCriteria->add( ContentPeer::CON_LANG, SYS_LANG );
-        $oCriteria->add( ContentPeer::CON_VALUE, $PRO_TITLE );
+        $oCriteria->add( ContentPeer::CON_VALUE, $proTitle );
         $oDataset = ContentPeer::doSelectRS( $oCriteria, Propel::getDbConnection('workflow_ro') );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
 
@@ -584,6 +584,51 @@ class Process extends BaseProcess
         $aRow = $oDataset->getRow();
 
         return ((int)($aRow["NUM_REC"]) > 0)? true : false;
+    }
+
+    public static function getByProTitle($proTitle) {
+        $oCriteria = new Criteria("workflow");
+
+        $oCriteria->addSelectColumn(ContentPeer::CON_ID);
+
+        $oCriteria->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE');
+        $oCriteria->add(ContentPeer::CON_LANG, SYS_LANG);
+        $oCriteria->add(ContentPeer::CON_VALUE, $proTitle);
+        $oDataset = ContentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
+        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        $oDataset->next();
+        $aRow = $oDataset->getRow();
+        $oProcess = new Process();
+        return isset($aRow["CON_ID"]) ? $oProcess->load($aRow["CON_ID"]) : null;
+    }
+
+    public static function getNextTitle($proTitle) {
+        $oCriteria = new Criteria('workflow');
+
+        $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
+
+        $oCriteria->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE');
+        $oCriteria->add(ContentPeer::CON_LANG, SYS_LANG);
+        $oCriteria->add(ContentPeer::CON_VALUE, $proTitle . '-%', Criteria::LIKE);
+        $oCriteria->addAscendingOrderByColumn(ContentPeer::CON_VALUE);
+
+        $oDataset = ContentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
+        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        $data = array();
+        $may = 0;
+        while ($oDataset->next()) {
+            $row = $oDataset->getRow();
+            $number = explode("-", $row["CON_VALUE"]);
+            $number = $number[count($number) - 1] + 0;
+            if ($number > $may) {
+                $may = $number;
+            }
+            $row["CON_VALUE"] = $number;
+            $data[] = $row;
+        }
+        return $proTitle . "-" . ($may + 1);
     }
 
     public function getAllProcessesCount ()

@@ -383,6 +383,8 @@ def getJsIncludeFiles
         "gulliver/js/tinymce/jscripts/tiny_mce/plugins/nonbreaking/editor_plugin.js",
 
         "gulliver/js/codemirror/lib/codemirror.js",
+        "gulliver/js/codemirror/addon/hint/show-hint.js",
+        "gulliver/js/codemirror/addon/hint/javascript-hint.js",
         "gulliver/js/codemirror/mode/javascript/javascript.js",
         "gulliver/js/codemirror/addon/edit/matchbrackets.js",
         "gulliver/js/codemirror/mode/htmlmixed/htmlmixed.js",
@@ -398,6 +400,7 @@ end
 def getCssIncludeFiles
     return [
         "gulliver/js/codemirror/lib/codemirror.css",
+        "gulliver/js/codemirror/addon/hint/show-hint.css",
 #        DEPRECATED
 #        "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/o2k7/ui.css",
 #        "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/o2k7/ui_silver.css",
