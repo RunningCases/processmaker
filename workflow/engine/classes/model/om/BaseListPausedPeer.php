@@ -25,7 +25,7 @@ abstract class BaseListPausedPeer
     const CLASS_DEFAULT = 'classes.model.ListPaused';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 18;
+    const NUM_COLUMNS = 19;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -64,6 +64,9 @@ abstract class BaseListPausedPeer
     /** the column name for the APP_RESTART_DATE field */
     const APP_RESTART_DATE = 'LIST_PAUSED.APP_RESTART_DATE';
 
+    /** the column name for the DEL_PREVIOUS_USR_UID field */
+    const DEL_PREVIOUS_USR_UID = 'LIST_PAUSED.DEL_PREVIOUS_USR_UID';
+
     /** the column name for the DEL_CURRENT_USR_USERNAME field */
     const DEL_CURRENT_USR_USERNAME = 'LIST_PAUSED.DEL_CURRENT_USR_USERNAME';
 
@@ -96,10 +99,10 @@ abstract class BaseListPausedPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('AppUid', 'DelIndex', 'UsrUid', 'TasUid', 'ProUid', 'AppNumber', 'AppTitle', 'AppProTitle', 'AppTasTitle', 'AppPausedDate', 'AppRestartDate', 'DelCurrentUsrUsername', 'DelCurrentUsrFirstname', 'DelCurrentUsrLastname', 'DelDelegateDate', 'DelInitDate', 'DelDueDate', 'DelPriority', ),
-        BasePeer::TYPE_COLNAME => array (ListPausedPeer::APP_UID, ListPausedPeer::DEL_INDEX, ListPausedPeer::USR_UID, ListPausedPeer::TAS_UID, ListPausedPeer::PRO_UID, ListPausedPeer::APP_NUMBER, ListPausedPeer::APP_TITLE, ListPausedPeer::APP_PRO_TITLE, ListPausedPeer::APP_TAS_TITLE, ListPausedPeer::APP_PAUSED_DATE, ListPausedPeer::APP_RESTART_DATE, ListPausedPeer::DEL_CURRENT_USR_USERNAME, ListPausedPeer::DEL_CURRENT_USR_FIRSTNAME, ListPausedPeer::DEL_CURRENT_USR_LASTNAME, ListPausedPeer::DEL_DELEGATE_DATE, ListPausedPeer::DEL_INIT_DATE, ListPausedPeer::DEL_DUE_DATE, ListPausedPeer::DEL_PRIORITY, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_UID', 'DEL_INDEX', 'USR_UID', 'TAS_UID', 'PRO_UID', 'APP_NUMBER', 'APP_TITLE', 'APP_PRO_TITLE', 'APP_TAS_TITLE', 'APP_PAUSED_DATE', 'APP_RESTART_DATE', 'DEL_CURRENT_USR_USERNAME', 'DEL_CURRENT_USR_FIRSTNAME', 'DEL_CURRENT_USR_LASTNAME', 'DEL_DELEGATE_DATE', 'DEL_INIT_DATE', 'DEL_DUE_DATE', 'DEL_PRIORITY', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
+        BasePeer::TYPE_PHPNAME => array ('AppUid', 'DelIndex', 'UsrUid', 'TasUid', 'ProUid', 'AppNumber', 'AppTitle', 'AppProTitle', 'AppTasTitle', 'AppPausedDate', 'AppRestartDate', 'DelPreviousUsrUid', 'DelCurrentUsrUsername', 'DelCurrentUsrFirstname', 'DelCurrentUsrLastname', 'DelDelegateDate', 'DelInitDate', 'DelDueDate', 'DelPriority', ),
+        BasePeer::TYPE_COLNAME => array (ListPausedPeer::APP_UID, ListPausedPeer::DEL_INDEX, ListPausedPeer::USR_UID, ListPausedPeer::TAS_UID, ListPausedPeer::PRO_UID, ListPausedPeer::APP_NUMBER, ListPausedPeer::APP_TITLE, ListPausedPeer::APP_PRO_TITLE, ListPausedPeer::APP_TAS_TITLE, ListPausedPeer::APP_PAUSED_DATE, ListPausedPeer::APP_RESTART_DATE, ListPausedPeer::DEL_PREVIOUS_USR_UID, ListPausedPeer::DEL_CURRENT_USR_USERNAME, ListPausedPeer::DEL_CURRENT_USR_FIRSTNAME, ListPausedPeer::DEL_CURRENT_USR_LASTNAME, ListPausedPeer::DEL_DELEGATE_DATE, ListPausedPeer::DEL_INIT_DATE, ListPausedPeer::DEL_DUE_DATE, ListPausedPeer::DEL_PRIORITY, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_UID', 'DEL_INDEX', 'USR_UID', 'TAS_UID', 'PRO_UID', 'APP_NUMBER', 'APP_TITLE', 'APP_PRO_TITLE', 'APP_TAS_TITLE', 'APP_PAUSED_DATE', 'APP_RESTART_DATE', 'DEL_PREVIOUS_USR_UID', 'DEL_CURRENT_USR_USERNAME', 'DEL_CURRENT_USR_FIRSTNAME', 'DEL_CURRENT_USR_LASTNAME', 'DEL_DELEGATE_DATE', 'DEL_INIT_DATE', 'DEL_DUE_DATE', 'DEL_PRIORITY', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
     );
 
     /**
@@ -109,10 +112,10 @@ abstract class BaseListPausedPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('AppUid' => 0, 'DelIndex' => 1, 'UsrUid' => 2, 'TasUid' => 3, 'ProUid' => 4, 'AppNumber' => 5, 'AppTitle' => 6, 'AppProTitle' => 7, 'AppTasTitle' => 8, 'AppPausedDate' => 9, 'AppRestartDate' => 10, 'DelCurrentUsrUsername' => 11, 'DelCurrentUsrFirstname' => 12, 'DelCurrentUsrLastname' => 13, 'DelDelegateDate' => 14, 'DelInitDate' => 15, 'DelDueDate' => 16, 'DelPriority' => 17, ),
-        BasePeer::TYPE_COLNAME => array (ListPausedPeer::APP_UID => 0, ListPausedPeer::DEL_INDEX => 1, ListPausedPeer::USR_UID => 2, ListPausedPeer::TAS_UID => 3, ListPausedPeer::PRO_UID => 4, ListPausedPeer::APP_NUMBER => 5, ListPausedPeer::APP_TITLE => 6, ListPausedPeer::APP_PRO_TITLE => 7, ListPausedPeer::APP_TAS_TITLE => 8, ListPausedPeer::APP_PAUSED_DATE => 9, ListPausedPeer::APP_RESTART_DATE => 10, ListPausedPeer::DEL_CURRENT_USR_USERNAME => 11, ListPausedPeer::DEL_CURRENT_USR_FIRSTNAME => 12, ListPausedPeer::DEL_CURRENT_USR_LASTNAME => 13, ListPausedPeer::DEL_DELEGATE_DATE => 14, ListPausedPeer::DEL_INIT_DATE => 15, ListPausedPeer::DEL_DUE_DATE => 16, ListPausedPeer::DEL_PRIORITY => 17, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0, 'DEL_INDEX' => 1, 'USR_UID' => 2, 'TAS_UID' => 3, 'PRO_UID' => 4, 'APP_NUMBER' => 5, 'APP_TITLE' => 6, 'APP_PRO_TITLE' => 7, 'APP_TAS_TITLE' => 8, 'APP_PAUSED_DATE' => 9, 'APP_RESTART_DATE' => 10, 'DEL_CURRENT_USR_USERNAME' => 11, 'DEL_CURRENT_USR_FIRSTNAME' => 12, 'DEL_CURRENT_USR_LASTNAME' => 13, 'DEL_DELEGATE_DATE' => 14, 'DEL_INIT_DATE' => 15, 'DEL_DUE_DATE' => 16, 'DEL_PRIORITY' => 17, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
+        BasePeer::TYPE_PHPNAME => array ('AppUid' => 0, 'DelIndex' => 1, 'UsrUid' => 2, 'TasUid' => 3, 'ProUid' => 4, 'AppNumber' => 5, 'AppTitle' => 6, 'AppProTitle' => 7, 'AppTasTitle' => 8, 'AppPausedDate' => 9, 'AppRestartDate' => 10, 'DelPreviousUsrUid' => 11, 'DelCurrentUsrUsername' => 12, 'DelCurrentUsrFirstname' => 13, 'DelCurrentUsrLastname' => 14, 'DelDelegateDate' => 15, 'DelInitDate' => 16, 'DelDueDate' => 17, 'DelPriority' => 18, ),
+        BasePeer::TYPE_COLNAME => array (ListPausedPeer::APP_UID => 0, ListPausedPeer::DEL_INDEX => 1, ListPausedPeer::USR_UID => 2, ListPausedPeer::TAS_UID => 3, ListPausedPeer::PRO_UID => 4, ListPausedPeer::APP_NUMBER => 5, ListPausedPeer::APP_TITLE => 6, ListPausedPeer::APP_PRO_TITLE => 7, ListPausedPeer::APP_TAS_TITLE => 8, ListPausedPeer::APP_PAUSED_DATE => 9, ListPausedPeer::APP_RESTART_DATE => 10, ListPausedPeer::DEL_PREVIOUS_USR_UID => 11, ListPausedPeer::DEL_CURRENT_USR_USERNAME => 12, ListPausedPeer::DEL_CURRENT_USR_FIRSTNAME => 13, ListPausedPeer::DEL_CURRENT_USR_LASTNAME => 14, ListPausedPeer::DEL_DELEGATE_DATE => 15, ListPausedPeer::DEL_INIT_DATE => 16, ListPausedPeer::DEL_DUE_DATE => 17, ListPausedPeer::DEL_PRIORITY => 18, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0, 'DEL_INDEX' => 1, 'USR_UID' => 2, 'TAS_UID' => 3, 'PRO_UID' => 4, 'APP_NUMBER' => 5, 'APP_TITLE' => 6, 'APP_PRO_TITLE' => 7, 'APP_TAS_TITLE' => 8, 'APP_PAUSED_DATE' => 9, 'APP_RESTART_DATE' => 10, 'DEL_PREVIOUS_USR_UID' => 11, 'DEL_CURRENT_USR_USERNAME' => 12, 'DEL_CURRENT_USR_FIRSTNAME' => 13, 'DEL_CURRENT_USR_LASTNAME' => 14, 'DEL_DELEGATE_DATE' => 15, 'DEL_INIT_DATE' => 16, 'DEL_DUE_DATE' => 17, 'DEL_PRIORITY' => 18, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
     );
 
     /**
@@ -234,6 +237,8 @@ abstract class BaseListPausedPeer
         $criteria->addSelectColumn(ListPausedPeer::APP_PAUSED_DATE);
 
         $criteria->addSelectColumn(ListPausedPeer::APP_RESTART_DATE);
+
+        $criteria->addSelectColumn(ListPausedPeer::DEL_PREVIOUS_USR_UID);
 
         $criteria->addSelectColumn(ListPausedPeer::DEL_CURRENT_USR_USERNAME);
 

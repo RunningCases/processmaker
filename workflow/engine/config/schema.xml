@@ -4093,6 +4093,7 @@
         <column name="APP_TAS_TITLE" type="VARCHAR" size="255" required="true" default=""/>
         <column name="APP_PAUSED_DATE" type="TIMESTAMP" required="true"/>
         <column name="APP_RESTART_DATE" type="TIMESTAMP" required="true"/>
+        <column name="DEL_PREVIOUS_USR_UID" type="VARCHAR" size="32" default=""/>
         <column name="DEL_CURRENT_USR_USERNAME" type="VARCHAR" size="100" default=""/>
         <column name="DEL_CURRENT_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
         <column name="DEL_CURRENT_USR_LASTNAME" type="VARCHAR" size="50" default=""/>

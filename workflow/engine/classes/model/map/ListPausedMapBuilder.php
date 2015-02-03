@@ -87,6 +87,8 @@ class ListPausedMapBuilder
 
         $tMap->addColumn('APP_RESTART_DATE', 'AppRestartDate', 'int', CreoleTypes::TIMESTAMP, true, null);
 
+        $tMap->addColumn('DEL_PREVIOUS_USR_UID', 'DelPreviousUsrUid', 'string', CreoleTypes::VARCHAR, false, 32);
+
         $tMap->addColumn('DEL_CURRENT_USR_USERNAME', 'DelCurrentUsrUsername', 'string', CreoleTypes::VARCHAR, false, 100);
 
         $tMap->addColumn('DEL_CURRENT_USR_FIRSTNAME', 'DelCurrentUsrFirstname', 'string', CreoleTypes::VARCHAR, false, 50);

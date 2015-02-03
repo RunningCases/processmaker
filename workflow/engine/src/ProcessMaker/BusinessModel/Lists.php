@@ -62,6 +62,14 @@ class Lists {
                 $list = new \ListCompleted();
                 $listpeer = 'ListCompletedPeer';
                 break;
+            case 'paused':
+                $list = new \ListPaused();
+                $listpeer = 'ListPausedPeer';
+                break;
+            case 'canceled':
+                $list = new \ListCanceled();
+                $listpeer = 'ListCanceledPeer';
+                break;
             case 'my_inbox':
                 $list = new \ListMyInbox();
                 $listpeer = 'ListMyInboxPeer';

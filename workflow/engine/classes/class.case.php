@@ -3906,6 +3906,17 @@ class Cases
         }
 
         $this->getExecuteTriggerProcess($sApplicationUID, 'PAUSED');
+
+
+        $data = array (
+            'APP_UID'   => $sApplicationUID,
+            'DEL_INDEX' => $iDelegation,
+            'USR_UID'   => $sUserUID,
+            'APP_RESTART_DATE'   => $sUnpauseDate
+        );
+        $data = array_merge($aFields, $data);
+        $oListPaused = new ListPaused();
+        $oListPaused->create($data);
     }
 
     /*
@@ -3996,6 +4007,9 @@ class Cases
         }
 
         $this->getExecuteTriggerProcess($sApplicationUID, "UNPAUSE");
+
+        $oListPaused = new ListPaused();
+        $oListPaused->remove($sApplicationUID, $iDelegation, true);
     }
 
     /*
@@ -4080,6 +4094,15 @@ class Cases
         if ($this->appSolr != null) {
             $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
         }
+
+        $data = array (
+            'APP_UID'   => $sApplicationUID,
+            'DEL_INDEX' => $iIndex,
+            'USR_UID'   => $user_logged
+        );
+        $data = array_merge($aFields, $data);
+        $oListCanceled = new ListCanceled();
+        $oListCanceled->create($data);
     }
 
     /*
