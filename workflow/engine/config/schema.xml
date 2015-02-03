@@ -3583,6 +3583,7 @@
     <column name="FLO_X2" type="INTEGER" required="true" default="0"/>
     <column name="FLO_Y2" type="INTEGER" required="true" default="0"/>
     <column name="FLO_STATE" type="LONGVARCHAR" required="false"/>
+    <column name="FLO_POSITION" type="INTEGER" required="true" default="0"/>
     <foreign-key name="fk_bpmn_flow_project" foreignTable="BPMN_PROJECT">
       <reference local="PRJ_UID" foreign="PRJ_UID"/>
     </foreign-key>
