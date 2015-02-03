@@ -1,6 +1,6 @@
 var storeCountry;
 var storeRegion;
-var storeLocation;
+var storeLocation; 
 var storeReplacedBy;
 var storeCalendar;
 var storeRole;

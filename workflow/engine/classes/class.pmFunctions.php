@@ -2816,7 +2816,7 @@ function PMFAddCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendM
  * @return array | $arrayData | Array with new data | The array will contain the new data
  *
  */
-
+ 
 function PMFAddAttachmentToArray($arrayData, $index, $value, $suffix = " Copy({i})")
 {
     if (isset($suffix) && $suffix == "") {

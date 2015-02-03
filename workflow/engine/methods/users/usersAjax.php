@@ -83,7 +83,7 @@ switch ($_POST['action']) {
             $aUserInfo[] = array('USR_UID' => $aRow1['USR_UID'], 'USER_FULLNAME' => $infoUser);
         }
         print (G::json_encode($aUserInfo));
-
+ 
         break;
     case 'availableCalendars':
         G::LoadClass('calendar');
