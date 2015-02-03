@@ -2197,12 +2197,14 @@ class Processes
     public function renewAllProcessVariableUid(&$data)
     {
         try {
-            $map = array ();
-            foreach ($data->processVariables as $key => $val) {
-                if (isset( $val['VAR_UID'] )) {
-                    $newGuid = $this->getUnusedProcessVariableGUID();
-                    $map[$val['VAR_UID']] = $newGuid;
-                    $data->processVariables[$key]['VAR_UID'] = $newGuid;
+            if (isset($data->processVariables)) {
+                $map = array();
+                foreach ($data->processVariables as $key => $val) {
+                    if (isset($val['VAR_UID'])) {
+                        $newGuid = $this->getUnusedProcessVariableGUID();
+                        $map[$val['VAR_UID']] = $newGuid;
+                        $data->processVariables[$key]['VAR_UID'] = $newGuid;
+                    }
                 }
             }
 
