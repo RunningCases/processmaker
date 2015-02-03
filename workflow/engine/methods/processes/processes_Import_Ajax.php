@@ -184,47 +184,6 @@ if (isset($_POST["PRO_FILENAME"]) &&
     exit(0);
 }
 
-if (isset($_FILES["PROCESS_FILENAME"]) &&
-    pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "bpmn"
-) {
-    $createMode = $_REQUEST["createMode"];
-    $name = pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_FILENAME);
-    $data = array(
-        "type" => "bpmnProject",
-        "PRO_TITLE" => $name,
-        "PRO_DESCRIPTION" => "",
-        "PRO_CATEGORY" => "",
-        "PRO_CREATE_USER" => $_SESSION['USER_LOGGED']
-    );
-    $stringBpmn = base64_encode(file_get_contents($_FILES["PROCESS_FILENAME"]["tmp_name"]));
-    try {
-        if ($createMode === "overwrite") {
-            $process = Process::getByProTitle($data["PRO_TITLE"]);
-            if ($process !== null) {
-                $oProcess = new Process();
-                $oProcess->remove($process["PRO_UID"]);
-            }
-        }
-        if ($createMode === "rename") {
-            $data["PRO_TITLE"] = Process::getNextTitle($data["PRO_TITLE"]);
-        }
-        $project = new \ProcessMaker\Project\Adapter\WorkflowBpmn($data);
-        $result = array(
-            "success" => true,
-            "catchMessage" => "",
-            "prj_uid" => $project->getUid(),
-            "stringBpmn" => $stringBpmn
-        );
-    } catch (Exception $e) {
-        $result = array(
-            "success" => true,
-            "catchMessage" => $e->getMessage()
-        );
-    }
-    echo G::json_encode($result);
-    exit(0);
-}
-
 $action = isset( $_REQUEST['ajaxAction'] ) ? $_REQUEST['ajaxAction'] : null;
 
 $importer = new XmlImporter();
