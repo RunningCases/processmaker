@@ -72,7 +72,7 @@ class BpmnFlow extends BaseBpmnFlow
         if (! is_null($prjUid)) {
             $c->add(BpmnFlowPeer::PRJ_UID, $prjUid, Criteria::EQUAL);
         }
-
+        $c->addAscendingOrderByColumn(BpmnFlowPeer::FLO_POSITION);
         $rs = BpmnFlowPeer::doSelectRS($c);
         $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
