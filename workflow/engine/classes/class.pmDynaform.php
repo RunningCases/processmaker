@@ -14,12 +14,70 @@ class pmDynaform
     public $dyn_uid = null;
     public $record = null;
     public $app_data = null;
+    public $items = array();
+    public $data = array();
+    public $variables = array();
 
     public function __construct($dyn_uid, $app_data)
     {
         $this->dyn_uid = $dyn_uid;
         $this->app_data = $app_data;
         $this->getDynaform();
+
+        //items
+        $dynContent = G::json_decode($this->record["DYN_CONTENT"]);
+        if (isset($dynContent->items)) {
+            $this->items = $dynContent->items[0]->items;
+        }
+
+        //data
+        $cases = new \ProcessMaker\BusinessModel\Cases();
+        $this->data = $cases->getCaseVariables($app_data["APPLICATION"]);
+        
+        //variables
+        $this->variables = array();
+        
+        $a = new Criteria("workflow");
+        $a->addSelectColumn(ProcessVariablesPeer::VAR_NAME);
+        $a->addSelectColumn(ProcessVariablesPeer::VAR_SQL);
+        $a->addSelectColumn(ProcessVariablesPeer::VAR_ACCEPTED_VALUES);
+        $a->addSelectColumn(ProcessVariablesPeer::VAR_DBCONNECTION);
+
+        $c3 = $a->getNewCriterion(ProcessVariablesPeer::VAR_ACCEPTED_VALUES, "", Criteria::ALT_NOT_EQUAL);
+        $c2 = $a->getNewCriterion(ProcessVariablesPeer::VAR_ACCEPTED_VALUES, "[]", Criteria::ALT_NOT_EQUAL);
+        $c2->addAnd($c3);
+
+        $c4 = $a->getNewCriterion(ProcessVariablesPeer::PRJ_UID, $this->app_data["PROCESS"], Criteria::EQUAL);
+
+        $c1 = $a->getNewCriterion(ProcessVariablesPeer::VAR_SQL, "", Criteria::ALT_NOT_EQUAL);
+        $c1->addOr($c2);
+        $c1->addAnd($c4);
+
+        $a->add($c1);
+
+        $ds = ProcessPeer::doSelectRS($a);
+        $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        while ($ds->next()) {
+            $row = $ds->getRow();
+            //options
+            $rows2 = json_decode($row["VAR_ACCEPTED_VALUES"]);
+            $n = count($rows2);
+            for ($i = 0; $i < $n; $i++) {
+                $rows2[$i] = array($rows2[$i]->keyValue, $rows2[$i]->value);
+            }
+            //query
+            $arrayVariable = array();
+            if ($row["VAR_DBCONNECTION"] !== "none") {
+                $cnn = Propel::getConnection($row["VAR_DBCONNECTION"]);
+                $stmt = $cnn->createStatement();
+                $rs = $stmt->executeQuery(\G::replaceDataField($row["VAR_SQL"], $arrayVariable), \ResultSet::FETCHMODE_NUM);
+                while ($rs->next()) {
+                    array_push($rows2, $rs->getRow());
+                }
+            }
+            $this->variables[$row["VAR_NAME"]] = $rows2;
+        }
     }
 
     public function getDynaform()
@@ -41,6 +99,78 @@ class pmDynaform
 
         return $this->record;
     }
+    
+    private function searchValues($varName, $value) 
+    {
+        if (!$varName || !isset($this->variables[$varName])) {
+            return "";
+        }
+        $options = $this->variables[$varName];
+        foreach ($options as $valueOptions) {
+            if ($valueOptions[0] === $value) {
+                return $valueOptions[1];
+            }
+        }
+    }
+
+    private function mergeAppData($app_uid, &$items)
+    {
+        foreach ($items as $key => $value) {
+            if (is_array($items[$key])) {
+                $this->mergeAppData($app_uid, $items[$key]);
+            } else {
+                if (isset($this->data[$items[$key]->name])) {
+                    if ($items[$key]->type === "grid") {
+                        $rows = $this->data[$items[$key]->name];
+                        foreach ($rows as $keyRow => $row) {
+                            $newRow = array();
+                            foreach ($row as $keyCelda => $celda) {
+                                array_push($newRow, array(
+                                    "value" => $celda,
+                                    "label" => $this->searchValues($keyCelda, $celda)
+                                ));
+                            }
+                            $rows[$keyRow] = $newRow;
+                        }
+                        $items[$key]->rows = count($rows);
+                        $items[$key]->data = $rows;
+                    }
+                    if ($items[$key]->type !== "grid") {
+                        $items[$key]->data = array(
+                            "value" => $this->data[$items[$key]->name],
+                            "label" => $this->searchValues($items[$key]->name, $this->data[$items[$key]->name])
+                        );
+                    }
+                }
+                if (isset($items[$key]->options) && isset($this->variables[$items[$key]->name])) {
+                    $options = $this->variables[$items[$key]->name];
+                    $n = count($options);
+                    for ($i = 0; $i < $n; $i++) {
+                        $options[$i] = array(
+                            "value" => $options[$i][0],
+                            "label" => $options[$i][1]
+                        );
+                    }
+                    $items[$key]->options = $options;
+                }
+            }
+        }
+    }
+    
+    public function mergeDynContentAppData($app_uid, &$items)
+    {
+        $dynContent = G::json_decode($this->record["DYN_CONTENT"]);
+        if (isset($dynContent->items)) {
+            $this->items = $dynContent->items[0]->items;
+        }
+
+        $this->mergeAppData($app_uid, &$items);
+        $dynContent->items[0]->items = $this->items;
+
+        $a = G::json_encode($dynContent);
+        $a = str_replace("\/", "/", $a);
+        $this->record["DYN_CONTENT"] = $a;
+    }
 
     public function isResponsive()
     {
@@ -50,7 +180,8 @@ class pmDynaform
     public function printView($pm_run_outside_main_app, $application)
     {
         ob_clean();
-
+        $this->mergeDynContentAppData($application, $this->items);
+        
         $a = $this->clientToken();
         $clientToken = array(
             "accessToken" => $a["access_token"],
@@ -78,7 +209,8 @@ class pmDynaform
     public function printEdit($pm_run_outside_main_app, $application, $headData, $step_mode = 'EDIT')
     {
         ob_clean();
-
+        $this->mergeDynContentAppData($application, $this->items);
+        
         $a = $this->clientToken();
         $clientToken = array(
             "accessToken" => $a["access_token"],

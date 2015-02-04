@@ -1440,12 +1440,24 @@ importProcessBpmnSubmit = function () {
     var uploader = Ext.getCmp('uploader');
     if (uploader.getForm().isValid()) {
         uploader.getForm().submit({
-            url: 'processes_Import_Ajax',
+            url: 'processes_Import_Bpmn',
             waitMsg: _('ID_UPLOADING_PROCESS_FILE'),
             waitTitle: "&nbsp;",
             success: function (o, resp) {
                 var resp_ = Ext.util.JSON.decode(resp.response.responseText);
-                if (resp_.catchMessage !== "") {
+                if (resp_.success === "error") {
+                    Ext.MessageBox.show({
+                        title: '',
+                        msg: resp_.catchMessage,
+                        buttons: Ext.MessageBox.OK,
+                        animEl: 'mb9',
+                        fn: function () {
+                        },
+                        icon: Ext.MessageBox.ERROR
+                    });
+                    return;
+                }
+                if (resp_.success === "confirm") {
                     windowbpmnoption.show();
                     return;
                 }
