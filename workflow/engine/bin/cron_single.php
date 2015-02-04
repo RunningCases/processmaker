@@ -1002,7 +1002,7 @@ function setExecutionResultMessage($m, $t='')
     }
     
     if ($t == 'warning') {
-        	$c = 'yellow';
+        $c = 'yellow';
     }
 
     eprintln("[$m]", $c);
