@@ -1153,19 +1153,20 @@ class Workflow extends Handler
             }
 
             //Update WEB_ENTRY_EVENT.EVN_UID
-            foreach ($arrayWorkflowData["webEntryEvent"] as $key => $value) {
-                $webEntryEventEventUid = $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"];
+            if (isset($arrayWorkflowData["webEntryEvent"])) {
+                foreach ($arrayWorkflowData["webEntryEvent"] as $key => $value) {
+                    $webEntryEventEventUid = $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"];
 
-                foreach ($arrayUid as $value2) {
-                    $arrayItem = $value2;
+                    foreach ($arrayUid as $value2) {
+                        $arrayItem = $value2;
 
-                    if ($arrayItem["old_uid"] == $webEntryEventEventUid) {
-                        $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"] = $arrayItem["new_uid"];
-                        break;
+                        if ($arrayItem["old_uid"] == $webEntryEventEventUid) {
+                            $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"] = $arrayItem["new_uid"];
+                            break;
+                        }
                     }
                 }
             }
-
             //Workflow tables
             $workflowData = (object)($arrayWorkflowData);
 
