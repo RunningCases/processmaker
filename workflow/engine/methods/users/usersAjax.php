@@ -83,7 +83,7 @@ switch ($_POST['action']) {
             $aUserInfo[] = array('USR_UID' => $aRow1['USR_UID'], 'USER_FULLNAME' => $infoUser);
         }
         print (G::json_encode($aUserInfo));
-
+ 
         break;
     case 'availableCalendars':
         G::LoadClass('calendar');
@@ -453,6 +453,7 @@ switch ($_POST['action']) {
         $calendarInfo = $calendar->getCalendarFor($_POST['USR_UID'], $_POST['USR_UID'], $_POST['USR_UID']);
         //If the function returns a DEFAULT calendar it means that this object doesn't have assigned any calendar
         $aFields['USR_CALENDAR'] = $calendarInfo['CALENDAR_APPLIED'] != 'DEFAULT' ? $calendarInfo['CALENDAR_UID'] : "";
+        $aFields['CALENDAR_NAME'] = $calendarInfo['CALENDAR_NAME'];
 
         #verifying if it has any preferences on the configurations table
         G::loadClass('configuration');

@@ -757,13 +757,13 @@ Ext.onReady( function() {
                           Ext.getCmp('idInvalidCalendarName').hide();
      		                  var validateMessage = '';
                           var canlendarName = Ext.getCmp('dynaformCalendarName').getValue();
-
                           Ext.Ajax.request( {
                             url: '../adminProxy/calendarValidate',
                             params: {
                               action : 'calendarName',
                               oldName : fields.OLD_NAME,
-                              name : canlendarName
+                              name : canlendarName,
+                              uid : fields.CALENDAR_UID
                             },
                             success: function(resp){
                               if (resp.responseText != '[]')
