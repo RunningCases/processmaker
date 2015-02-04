@@ -533,7 +533,17 @@ function resendEmails()
 
         setExecutionResultMessage("DONE");
     } catch (Exception $e) {
-        setExecutionResultMessage("WITH ERRORS", "error");
+    	$c = new Criteria("workflow");
+        $c->clearSelectColumns();
+        $c->addSelectColumn(ConfigurationPeer::CFG_UID);
+        $c->add(ConfigurationPeer::CFG_UID, "Emails");
+        $result = ConfigurationPeer::doSelectRS($c);
+        $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        
+		if($result->next() != 1) setExecutionResultMessage("WARNING", "warning");
+    	else setExecutionResultMessage("WITH ERRORS", "error");
+    	
+        /*setExecutionResultMessage("WITH ERRORS", "error");*/
         eprintln("  '-" . $e->getMessage(), "red");
         saveLog("resendEmails", "error", "Error Resending Emails: " . $e->getMessage());
     }
@@ -989,6 +999,10 @@ function setExecutionResultMessage($m, $t='')
 
     if ($t == 'info') {
         $c = 'yellow';
+    }
+    
+    if ($t == 'warning') {
+        	$c = 'yellow';
     }
 
     eprintln("[$m]", $c);
