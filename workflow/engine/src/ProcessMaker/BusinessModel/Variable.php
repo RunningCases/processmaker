@@ -1,6 +1,8 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
+use \G;
+
 class Variable
 {
     /**
@@ -487,7 +489,7 @@ class Variable
                 $variableDbConnectionUid = $row["VAR_DBCONNECTION"];
                 $variableSql = $row["VAR_SQL"];
             } else {
-                throw new \Exception(\G::LoadTranslation("ID_PROCESS_VARIABLE_DOES_NOT_EXIST", array(strtolower("VAR_NAME"), $variableName)));
+                throw new \Exception(G::LoadTranslation("ID_PROCESS_VARIABLE_DOES_NOT_EXIST", array(strtolower("VAR_NAME"), $variableName)));
             }
 
             //Verify data
@@ -499,7 +501,9 @@ class Variable
             $cnn = \Propel::getConnection(($variableDbConnectionUid . "" != "")? $variableDbConnectionUid : "workflow");
             $stmt = $cnn->createStatement();
 
-            $rs = $stmt->executeQuery(\G::replaceDataField($variableSql, $arrayVariable), \ResultSet::FETCHMODE_NUM);
+            $replaceFields = G::replaceDataField($variableSql, $arrayVariable);
+
+            $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
 
             while ($rs->next()) {
                 $row = $rs->getRow();
@@ -661,8 +665,9 @@ class Variable
 
             $cnn = \Propel::getConnection(($variableDbConnectionUid . "" != "")? $variableDbConnectionUid : "workflow");
             $stmt = $cnn->createStatement();
+            $replaceFields = G::replaceDataField($sqlQuery, $arrayVariable);
 
-            $rs = $stmt->executeQuery(\G::replaceDataField($sqlQuery, $arrayVariable), \ResultSet::FETCHMODE_NUM);
+            $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
 
             while ($rs->next()) {
                 $row = $rs->getRow();
