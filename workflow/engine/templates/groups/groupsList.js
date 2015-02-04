@@ -352,6 +352,8 @@ DoNothing = function(){};
 NewGroupWindow = function(){
   newForm.getForm().reset();
   newForm.getForm().items.items[0].focus('',500);
+  newForm.getForm().items.items[1].setEditable(false);
+
   w = new Ext.Window({
     autoHeight: true,
     width: 400,
