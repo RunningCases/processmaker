@@ -541,10 +541,13 @@ function resendEmails()
         $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 		if($result->next()) { 
 			setExecutionResultMessage("WARNING", "warning");
+			$message = "Emails won't send, but the cron will continue with its execution";
+			eprintln("  '-" . $message, "yellow");
 		} else { 
     	    setExecutionResultMessage("WITH ERRORS", "error");
+    	    eprintln("  '-" . $e->getMessage(), "red");
     	}
-        eprintln("  '-" . $e->getMessage(), "red");
+        
         saveLog("resendEmails", "error", "Error Resending Emails: " . $e->getMessage());
     }
 }
