@@ -2803,17 +2803,17 @@ function PMFAddCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendM
 /**
  *@method
  *
- * It adds an element to the asociative array of attached documents that will be sent by mail, if it exists a file with the same name, it wll return a generated name with an autoincrementable sequential number.
+ * Adds a filename and file path to an associative array of files which can be passed to the PMFSendMessage() to send emails with attachments. It renames files with the same filename so existing files will not be replaced in the array.
  *
  * @name PMFAddAttachmentToArray
- * @label Add Element in Array
- * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#arrayDocumentAddElement.28.29
+ * @label Add File to Array 
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFAddAttachmentToArray.28.29
  *
- * @param array | $arrayData | Array that will contain new data | Array value comes where will contain the new data.
- * @param string(32) | $index | Name of the index | New index name
- * @param string(32) | $value | Index value | New value will contain the index
- * @param string | $suffix = " Copy({i})" | Is suffix | A string that is concatenated to index different
- * @return array | $arrayData | Array with new data | The array will contain the new data
+ * @param array | $arrayData | Array of files | Associative array where the index of each element is its new filename and its value is the path to the file or its web address.
+ * @param string(32) | $index | Filename | New filename which will be added as the index in the array
+ * @param string(32) | $value | File location | The web address or path on the ProcessMaker server for the file
+ * @param string | $suffix = " Copy({i})" | Filename suffix | A suffix to add to the filename if the filename already exists in the array
+ * @return array | $arrayData | Array with new data | The array with the added file
  *
  */
 
