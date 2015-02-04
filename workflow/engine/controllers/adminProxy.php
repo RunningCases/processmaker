@@ -177,7 +177,7 @@ class adminProxy extends HttpProxyController
         $httpData=array_unique((array)$httpData);
         $message = '';
         $oldName = isset($_POST['oldName'])? $_POST['oldName']:'';
-
+        $uid = isset($_POST['uid'])? $_POST['uid']:'';
 
         switch ($_POST['action']){
             case 'calendarName':
@@ -185,7 +185,7 @@ class adminProxy extends HttpProxyController
                 $oCalendar  = new CalendarDefinition();
                 $aCalendars = $oCalendar->getCalendarList(false,true);
                 $aCalendarDefinitions = end($aCalendars);
-
+                
                 foreach ($aCalendarDefinitions as $aDefinitions) {
                     if (trim($_POST['name'])=='') {
                         $validated = false;
@@ -194,7 +194,8 @@ class adminProxy extends HttpProxyController
                     }
                     
                     if (isset($aDefinitions['CALENDAR_NAME'])) {
-                        if ($oldName != $_POST['name']) {
+                        
+                        if ($aDefinitions['CALENDAR_UID'] != $uid) {
                             if ($aDefinitions['CALENDAR_NAME'] == $_POST['name']) {
                                 $validated = false;
                                 $message  = G::loadTranslation('ID_CALENDAR_INVALID_NAME');
