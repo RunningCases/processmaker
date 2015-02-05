@@ -1251,8 +1251,7 @@ function loadData()
 
     comboRole.store.on("load", function (store) {
         comboRole.setValue(store.getAt(1).get("ROL_UID"));
-    });
-    
+    });    
     comboRole.store.load();
 
     comboDefaultMainMenuOption.store.on("load", function (store) {
@@ -1262,7 +1261,7 @@ function loadData()
 
 
     comboDefaultCasesMenuOption.store.on("load", function (store) {
-        comboDefaultCasesMenuOption.setValue(store.getAt().get("id"));
+        comboDefaultCasesMenuOption.setValue(store.getAt(0).get("id"));
     });
     storeDefaultCasesMenuOption.load();
 }
