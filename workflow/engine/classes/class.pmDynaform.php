@@ -157,14 +157,14 @@ class pmDynaform
         }
     }
     
-    public function mergeDynContentAppData($app_uid, &$items)
+    public function mergeDynContentAppData($app_uid, $items)
     {
         $dynContent = G::json_decode($this->record["DYN_CONTENT"]);
         if (isset($dynContent->items)) {
             $this->items = $dynContent->items[0]->items;
         }
 
-        $this->mergeAppData($app_uid, &$items);
+        $this->mergeAppData($app_uid, $items);
         $dynContent->items[0]->items = $this->items;
 
         $a = G::json_encode($dynContent);
