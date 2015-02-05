@@ -533,20 +533,20 @@ function resendEmails()
 
         setExecutionResultMessage("DONE");
     } catch (Exception $e) {
-    	$c = new Criteria("workflow");
+        $c = new Criteria("workflow");
         $c->clearSelectColumns();
         $c->addSelectColumn(ConfigurationPeer::CFG_UID);
         $c->add(ConfigurationPeer::CFG_UID, "Emails");
         $result = ConfigurationPeer::doSelectRS($c);
         $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-		if($result->next()) { 
-			setExecutionResultMessage("WARNING", "warning");
-			$message = "Emails won't send, but the cron will continue with its execution";
-			eprintln("  '-" . $message, "yellow");
-		} else { 
-    	    setExecutionResultMessage("WITH ERRORS", "error");
-    	    eprintln("  '-" . $e->getMessage(), "red");
-    	}
+        if($result->next()) {
+            setExecutionResultMessage("WARNING", "warning");
+            $message = "Emails won't be sent, but the cron will continue its execution";
+            eprintln("  '-" . $message, "yellow");
+        } else {
+            setExecutionResultMessage("WITH ERRORS", "error");
+            eprintln("  '-" . $e->getMessage(), "red");
+        }
         
         saveLog("resendEmails", "error", "Error Resending Emails: " . $e->getMessage());
     }
