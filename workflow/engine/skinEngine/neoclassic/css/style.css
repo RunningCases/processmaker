@@ -250,6 +250,7 @@ img {
   -o-transition:2s all;
   -ms-transition:2s all;
 }
+
 @media screen and (max-width: 768px) {
     .temporalMessageERROR {
           border-width: 0px;
