@@ -1938,6 +1938,7 @@ class XmlForm_Field_Textarea extends XmlForm_Field
     public $cols = 40;
     public $required = false;
     public $readOnly = false;
+    public $resizable = false;
     public $wrap = 'OFF';
     public $className;
     public $renderMode = '';
@@ -1970,9 +1971,9 @@ class XmlForm_Field_Textarea extends XmlForm_Field
         if ($this->renderMode == '') {
             $this->renderMode = $this->mode;
         }
-
+        $resizable = ($this->resizable == 1 || $this->resizable == '1') ? 'resize:both;' : 'resize:none;';
         $html = '';
-        $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;resize:none;";
+        $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;".$resizable;
         if ($this->renderMode == 'edit') {
             //EDIT MODE
             $readOnlyText = ($this->readOnly == 1 || $this->readOnly == '1') ? 'readOnly="readOnly"' : '';
@@ -2037,8 +2038,8 @@ class XmlForm_Field_Textarea extends XmlForm_Field
             }
 
             $arrayOptions[$r] = $v;
-
-            $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;resize:none;";
+            $resizable = ($this->resizable == 1 || $this->resizable == '1') ? 'resize:both;' : 'resize:none;';
+            $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;".$resizable;
             $html = '';
             if ($this->renderMode == 'edit') {
                 //EDIT MODE
