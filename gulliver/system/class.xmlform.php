@@ -3225,7 +3225,7 @@ class XmlForm_Field_Checkbox extends XmlForm_Field
             } else {
                 $html = "<input id='form[" . $this->name . "]' value='{$this->value}' type='checkbox' $checked $readOnly disabled />";
             }
-            $html .= "<input id='form[" . $this->name . "]' name='form[" . $this->name . "]' type='hidden' " . $this->NSFieldType() . " value='{$value}' />";
+            $html .= "<input name='form[" . $this->name . "]' type='hidden' " . $this->NSFieldType() . " value='{$value}' />";
             return $html;
         }
     }
