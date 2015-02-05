@@ -1252,6 +1252,7 @@ function loadData()
     comboRole.store.on("load", function (store) {
         comboRole.setValue(store.getAt(1).get("ROL_UID"));
     });
+    
     comboRole.store.load();
 
     comboDefaultMainMenuOption.store.on("load", function (store) {
