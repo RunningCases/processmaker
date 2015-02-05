@@ -7,49 +7,49 @@ require_once 'propel/om/Persistent.php';
 
 include_once 'propel/util/Criteria.php';
 
-include_once 'classes/model/MessageDetailPeer.php';
+include_once 'classes/model/MessageTypeVariablePeer.php';
 
 /**
- * Base class that represents a row from the 'MESSAGE_DETAIL' table.
+ * Base class that represents a row from the 'MESSAGE_TYPE_VARIABLE' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseMessageDetail extends BaseObject implements Persistent
+abstract class BaseMessageTypeVariable extends BaseObject implements Persistent
 {
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        MessageDetailPeer
+     * @var        MessageTypeVariablePeer
     */
     protected static $peer;
 
     /**
-     * The value for the md_uid field.
+     * The value for the msgtv_uid field.
      * @var        string
      */
-    protected $md_uid;
+    protected $msgtv_uid;
 
     /**
-     * The value for the mes_uid field.
+     * The value for the msgt_uid field.
      * @var        string
      */
-    protected $mes_uid;
+    protected $msgt_uid;
 
     /**
-     * The value for the md_type field.
+     * The value for the msgtv_name field.
      * @var        string
      */
-    protected $md_type = '';
+    protected $msgtv_name = '';
 
     /**
-     * The value for the md_name field.
+     * The value for the msgtv_default_value field.
      * @var        string
      */
-    protected $md_name = '';
+    protected $msgtv_default_value = '';
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -66,56 +66,56 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
     protected $alreadyInValidation = false;
 
     /**
-     * Get the [md_uid] column value.
+     * Get the [msgtv_uid] column value.
      * 
      * @return     string
      */
-    public function getMdUid()
+    public function getMsgtvUid()
     {
 
-        return $this->md_uid;
+        return $this->msgtv_uid;
     }
 
     /**
-     * Get the [mes_uid] column value.
+     * Get the [msgt_uid] column value.
      * 
      * @return     string
      */
-    public function getMesUid()
+    public function getMsgtUid()
     {
 
-        return $this->mes_uid;
+        return $this->msgt_uid;
     }
 
     /**
-     * Get the [md_type] column value.
+     * Get the [msgtv_name] column value.
      * 
      * @return     string
      */
-    public function getMdType()
+    public function getMsgtvName()
     {
 
-        return $this->md_type;
+        return $this->msgtv_name;
     }
 
     /**
-     * Get the [md_name] column value.
+     * Get the [msgtv_default_value] column value.
      * 
      * @return     string
      */
-    public function getMdName()
+    public function getMsgtvDefaultValue()
     {
 
-        return $this->md_name;
+        return $this->msgtv_default_value;
     }
 
     /**
-     * Set the value of [md_uid] column.
+     * Set the value of [msgtv_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setMdUid($v)
+    public function setMsgtvUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -124,20 +124,20 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->md_uid !== $v) {
-            $this->md_uid = $v;
-            $this->modifiedColumns[] = MessageDetailPeer::MD_UID;
+        if ($this->msgtv_uid !== $v) {
+            $this->msgtv_uid = $v;
+            $this->modifiedColumns[] = MessageTypeVariablePeer::MSGTV_UID;
         }
 
-    } // setMdUid()
+    } // setMsgtvUid()
 
     /**
-     * Set the value of [mes_uid] column.
+     * Set the value of [msgt_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setMesUid($v)
+    public function setMsgtUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -146,20 +146,20 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->mes_uid !== $v) {
-            $this->mes_uid = $v;
-            $this->modifiedColumns[] = MessageDetailPeer::MES_UID;
+        if ($this->msgt_uid !== $v) {
+            $this->msgt_uid = $v;
+            $this->modifiedColumns[] = MessageTypeVariablePeer::MSGT_UID;
         }
 
-    } // setMesUid()
+    } // setMsgtUid()
 
     /**
-     * Set the value of [md_type] column.
+     * Set the value of [msgtv_name] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setMdType($v)
+    public function setMsgtvName($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -168,20 +168,20 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->md_type !== $v || $v === '') {
-            $this->md_type = $v;
-            $this->modifiedColumns[] = MessageDetailPeer::MD_TYPE;
+        if ($this->msgtv_name !== $v || $v === '') {
+            $this->msgtv_name = $v;
+            $this->modifiedColumns[] = MessageTypeVariablePeer::MSGTV_NAME;
         }
 
-    } // setMdType()
+    } // setMsgtvName()
 
     /**
-     * Set the value of [md_name] column.
+     * Set the value of [msgtv_default_value] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setMdName($v)
+    public function setMsgtvDefaultValue($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -190,12 +190,12 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->md_name !== $v || $v === '') {
-            $this->md_name = $v;
-            $this->modifiedColumns[] = MessageDetailPeer::MD_NAME;
+        if ($this->msgtv_default_value !== $v || $v === '') {
+            $this->msgtv_default_value = $v;
+            $this->modifiedColumns[] = MessageTypeVariablePeer::MSGTV_DEFAULT_VALUE;
         }
 
-    } // setMdName()
+    } // setMsgtvDefaultValue()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -214,23 +214,23 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
     {
         try {
 
-            $this->md_uid = $rs->getString($startcol + 0);
+            $this->msgtv_uid = $rs->getString($startcol + 0);
 
-            $this->mes_uid = $rs->getString($startcol + 1);
+            $this->msgt_uid = $rs->getString($startcol + 1);
 
-            $this->md_type = $rs->getString($startcol + 2);
+            $this->msgtv_name = $rs->getString($startcol + 2);
 
-            $this->md_name = $rs->getString($startcol + 3);
+            $this->msgtv_default_value = $rs->getString($startcol + 3);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 4; // 4 = MessageDetailPeer::NUM_COLUMNS - MessageDetailPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 4; // 4 = MessageTypeVariablePeer::NUM_COLUMNS - MessageTypeVariablePeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating MessageDetail object", $e);
+            throw new PropelException("Error populating MessageTypeVariable object", $e);
         }
     }
 
@@ -250,12 +250,12 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(MessageDetailPeer::DATABASE_NAME);
+            $con = Propel::getConnection(MessageTypeVariablePeer::DATABASE_NAME);
         }
 
         try {
             $con->begin();
-            MessageDetailPeer::doDelete($this, $con);
+            MessageTypeVariablePeer::doDelete($this, $con);
             $this->setDeleted(true);
             $con->commit();
         } catch (PropelException $e) {
@@ -281,7 +281,7 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(MessageDetailPeer::DATABASE_NAME);
+            $con = Propel::getConnection(MessageTypeVariablePeer::DATABASE_NAME);
         }
 
         try {
@@ -316,14 +316,14 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
             // If this object has been modified, then save it to the database.
             if ($this->isModified()) {
                 if ($this->isNew()) {
-                    $pk = MessageDetailPeer::doInsert($this, $con);
+                    $pk = MessageTypeVariablePeer::doInsert($this, $con);
                     $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
                                          // should always be true here (even though technically
                                          // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
-                    $affectedRows += MessageDetailPeer::doUpdate($this, $con);
+                    $affectedRows += MessageTypeVariablePeer::doUpdate($this, $con);
                 }
                 $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
             }
@@ -394,7 +394,7 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = MessageDetailPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = MessageTypeVariablePeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -417,7 +417,7 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = MessageDetailPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = MessageTypeVariablePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->getByPosition($pos);
     }
 
@@ -432,16 +432,16 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                return $this->getMdUid();
+                return $this->getMsgtvUid();
                 break;
             case 1:
-                return $this->getMesUid();
+                return $this->getMsgtUid();
                 break;
             case 2:
-                return $this->getMdType();
+                return $this->getMsgtvName();
                 break;
             case 3:
-                return $this->getMdName();
+                return $this->getMsgtvDefaultValue();
                 break;
             default:
                 return null;
@@ -461,12 +461,12 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = MessageDetailPeer::getFieldNames($keyType);
+        $keys = MessageTypeVariablePeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getMdUid(),
-            $keys[1] => $this->getMesUid(),
-            $keys[2] => $this->getMdType(),
-            $keys[3] => $this->getMdName(),
+            $keys[0] => $this->getMsgtvUid(),
+            $keys[1] => $this->getMsgtUid(),
+            $keys[2] => $this->getMsgtvName(),
+            $keys[3] => $this->getMsgtvDefaultValue(),
         );
         return $result;
     }
@@ -483,7 +483,7 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = MessageDetailPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = MessageTypeVariablePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->setByPosition($pos, $value);
     }
 
@@ -499,16 +499,16 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                $this->setMdUid($value);
+                $this->setMsgtvUid($value);
                 break;
             case 1:
-                $this->setMesUid($value);
+                $this->setMsgtUid($value);
                 break;
             case 2:
-                $this->setMdType($value);
+                $this->setMsgtvName($value);
                 break;
             case 3:
-                $this->setMdName($value);
+                $this->setMsgtvDefaultValue($value);
                 break;
         } // switch()
     }
@@ -531,22 +531,22 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = MessageDetailPeer::getFieldNames($keyType);
+        $keys = MessageTypeVariablePeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setMdUid($arr[$keys[0]]);
+            $this->setMsgtvUid($arr[$keys[0]]);
         }
 
         if (array_key_exists($keys[1], $arr)) {
-            $this->setMesUid($arr[$keys[1]]);
+            $this->setMsgtUid($arr[$keys[1]]);
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setMdType($arr[$keys[2]]);
+            $this->setMsgtvName($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
-            $this->setMdName($arr[$keys[3]]);
+            $this->setMsgtvDefaultValue($arr[$keys[3]]);
         }
 
     }
@@ -558,22 +558,22 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(MessageDetailPeer::DATABASE_NAME);
+        $criteria = new Criteria(MessageTypeVariablePeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(MessageDetailPeer::MD_UID)) {
-            $criteria->add(MessageDetailPeer::MD_UID, $this->md_uid);
+        if ($this->isColumnModified(MessageTypeVariablePeer::MSGTV_UID)) {
+            $criteria->add(MessageTypeVariablePeer::MSGTV_UID, $this->msgtv_uid);
         }
 
-        if ($this->isColumnModified(MessageDetailPeer::MES_UID)) {
-            $criteria->add(MessageDetailPeer::MES_UID, $this->mes_uid);
+        if ($this->isColumnModified(MessageTypeVariablePeer::MSGT_UID)) {
+            $criteria->add(MessageTypeVariablePeer::MSGT_UID, $this->msgt_uid);
         }
 
-        if ($this->isColumnModified(MessageDetailPeer::MD_TYPE)) {
-            $criteria->add(MessageDetailPeer::MD_TYPE, $this->md_type);
+        if ($this->isColumnModified(MessageTypeVariablePeer::MSGTV_NAME)) {
+            $criteria->add(MessageTypeVariablePeer::MSGTV_NAME, $this->msgtv_name);
         }
 
-        if ($this->isColumnModified(MessageDetailPeer::MD_NAME)) {
-            $criteria->add(MessageDetailPeer::MD_NAME, $this->md_name);
+        if ($this->isColumnModified(MessageTypeVariablePeer::MSGTV_DEFAULT_VALUE)) {
+            $criteria->add(MessageTypeVariablePeer::MSGTV_DEFAULT_VALUE, $this->msgtv_default_value);
         }
 
 
@@ -590,9 +590,9 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(MessageDetailPeer::DATABASE_NAME);
+        $criteria = new Criteria(MessageTypeVariablePeer::DATABASE_NAME);
 
-        $criteria->add(MessageDetailPeer::MD_UID, $this->md_uid);
+        $criteria->add(MessageTypeVariablePeer::MSGTV_UID, $this->msgtv_uid);
 
         return $criteria;
     }
@@ -603,18 +603,18 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getMdUid();
+        return $this->getMsgtvUid();
     }
 
     /**
-     * Generic method to set the primary key (md_uid column).
+     * Generic method to set the primary key (msgtv_uid column).
      *
      * @param      string $key Primary key.
      * @return     void
      */
     public function setPrimaryKey($key)
     {
-        $this->setMdUid($key);
+        $this->setMsgtvUid($key);
     }
 
     /**
@@ -623,23 +623,23 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of MessageDetail (or compatible) type.
+     * @param      object $copyObj An object of MessageTypeVariable (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @throws     PropelException
      */
     public function copyInto($copyObj, $deepCopy = false)
     {
 
-        $copyObj->setMesUid($this->mes_uid);
+        $copyObj->setMsgtUid($this->msgt_uid);
 
-        $copyObj->setMdType($this->md_type);
+        $copyObj->setMsgtvName($this->msgtv_name);
 
-        $copyObj->setMdName($this->md_name);
+        $copyObj->setMsgtvDefaultValue($this->msgtv_default_value);
 
 
         $copyObj->setNew(true);
 
-        $copyObj->setMdUid(NULL); // this is a pkey column, so set to default value
+        $copyObj->setMsgtvUid(NULL); // this is a pkey column, so set to default value
 
     }
 
@@ -652,7 +652,7 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return     MessageDetail Clone of current object.
+     * @return     MessageTypeVariable Clone of current object.
      * @throws     PropelException
      */
     public function copy($deepCopy = false)
@@ -671,12 +671,12 @@ abstract class BaseMessageDetail extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return     MessageDetailPeer
+     * @return     MessageTypeVariablePeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new MessageDetailPeer();
+            self::$peer = new MessageTypeVariablePeer();
         }
         return self::$peer;
     }

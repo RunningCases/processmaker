@@ -2,27 +2,27 @@
 
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by MessageDetailPeer::getOMClass()
-include_once 'classes/model/MessageDetail.php';
+// actual class may be a subclass -- as returned by MessageTypeVariablePeer::getOMClass()
+include_once 'classes/model/MessageTypeVariable.php';
 
 /**
- * Base static class for performing query and update operations on the 'MESSAGE_DETAIL' table.
+ * Base static class for performing query and update operations on the 'MESSAGE_TYPE_VARIABLE' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseMessageDetailPeer
+abstract class BaseMessageTypeVariablePeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'workflow';
 
     /** the table name for this class */
-    const TABLE_NAME = 'MESSAGE_DETAIL';
+    const TABLE_NAME = 'MESSAGE_TYPE_VARIABLE';
 
     /** A class that can be returned by this peer. */
-    const CLASS_DEFAULT = 'classes.model.MessageDetail';
+    const CLASS_DEFAULT = 'classes.model.MessageTypeVariable';
 
     /** The total number of columns. */
     const NUM_COLUMNS = 4;
@@ -31,17 +31,17 @@ abstract class BaseMessageDetailPeer
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
-    /** the column name for the MD_UID field */
-    const MD_UID = 'MESSAGE_DETAIL.MD_UID';
+    /** the column name for the MSGTV_UID field */
+    const MSGTV_UID = 'MESSAGE_TYPE_VARIABLE.MSGTV_UID';
 
-    /** the column name for the MES_UID field */
-    const MES_UID = 'MESSAGE_DETAIL.MES_UID';
+    /** the column name for the MSGT_UID field */
+    const MSGT_UID = 'MESSAGE_TYPE_VARIABLE.MSGT_UID';
 
-    /** the column name for the MD_TYPE field */
-    const MD_TYPE = 'MESSAGE_DETAIL.MD_TYPE';
+    /** the column name for the MSGTV_NAME field */
+    const MSGTV_NAME = 'MESSAGE_TYPE_VARIABLE.MSGTV_NAME';
 
-    /** the column name for the MD_NAME field */
-    const MD_NAME = 'MESSAGE_DETAIL.MD_NAME';
+    /** the column name for the MSGTV_DEFAULT_VALUE field */
+    const MSGTV_DEFAULT_VALUE = 'MESSAGE_TYPE_VARIABLE.MSGTV_DEFAULT_VALUE';
 
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
@@ -54,9 +54,9 @@ abstract class BaseMessageDetailPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('MdUid', 'MesUid', 'MdType', 'MdName', ),
-        BasePeer::TYPE_COLNAME => array (MessageDetailPeer::MD_UID, MessageDetailPeer::MES_UID, MessageDetailPeer::MD_TYPE, MessageDetailPeer::MD_NAME, ),
-        BasePeer::TYPE_FIELDNAME => array ('MD_UID', 'MES_UID', 'MD_TYPE', 'MD_NAME', ),
+        BasePeer::TYPE_PHPNAME => array ('MsgtvUid', 'MsgtUid', 'MsgtvName', 'MsgtvDefaultValue', ),
+        BasePeer::TYPE_COLNAME => array (MessageTypeVariablePeer::MSGTV_UID, MessageTypeVariablePeer::MSGT_UID, MessageTypeVariablePeer::MSGTV_NAME, MessageTypeVariablePeer::MSGTV_DEFAULT_VALUE, ),
+        BasePeer::TYPE_FIELDNAME => array ('MSGTV_UID', 'MSGT_UID', 'MSGTV_NAME', 'MSGTV_DEFAULT_VALUE', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
@@ -67,9 +67,9 @@ abstract class BaseMessageDetailPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('MdUid' => 0, 'MesUid' => 1, 'MdType' => 2, 'MdName' => 3, ),
-        BasePeer::TYPE_COLNAME => array (MessageDetailPeer::MD_UID => 0, MessageDetailPeer::MES_UID => 1, MessageDetailPeer::MD_TYPE => 2, MessageDetailPeer::MD_NAME => 3, ),
-        BasePeer::TYPE_FIELDNAME => array ('MD_UID' => 0, 'MES_UID' => 1, 'MD_TYPE' => 2, 'MD_NAME' => 3, ),
+        BasePeer::TYPE_PHPNAME => array ('MsgtvUid' => 0, 'MsgtUid' => 1, 'MsgtvName' => 2, 'MsgtvDefaultValue' => 3, ),
+        BasePeer::TYPE_COLNAME => array (MessageTypeVariablePeer::MSGTV_UID => 0, MessageTypeVariablePeer::MSGT_UID => 1, MessageTypeVariablePeer::MSGTV_NAME => 2, MessageTypeVariablePeer::MSGTV_DEFAULT_VALUE => 3, ),
+        BasePeer::TYPE_FIELDNAME => array ('MSGTV_UID' => 0, 'MSGT_UID' => 1, 'MSGTV_NAME' => 2, 'MSGTV_DEFAULT_VALUE' => 3, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
@@ -80,8 +80,8 @@ abstract class BaseMessageDetailPeer
      */
     public static function getMapBuilder()
     {
-        include_once 'classes/model/map/MessageDetailMapBuilder.php';
-        return BasePeer::getMapBuilder('classes.model.map.MessageDetailMapBuilder');
+        include_once 'classes/model/map/MessageTypeVariableMapBuilder.php';
+        return BasePeer::getMapBuilder('classes.model.map.MessageTypeVariableMapBuilder');
     }
     /**
      * Gets a map (hash) of PHP names to DB column names.
@@ -94,7 +94,7 @@ abstract class BaseMessageDetailPeer
     public static function getPhpNameMap()
     {
         if (self::$phpNameMap === null) {
-            $map = MessageDetailPeer::getTableMap();
+            $map = MessageTypeVariablePeer::getTableMap();
             $columns = $map->getColumns();
             $nameMap = array();
             foreach ($columns as $column) {
@@ -149,12 +149,12 @@ abstract class BaseMessageDetailPeer
      *      $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. MessageDetailPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. MessageTypeVariablePeer::COLUMN_NAME).
      * @return     string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(MessageDetailPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(MessageTypeVariablePeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -171,18 +171,18 @@ abstract class BaseMessageDetailPeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
-        $criteria->addSelectColumn(MessageDetailPeer::MD_UID);
+        $criteria->addSelectColumn(MessageTypeVariablePeer::MSGTV_UID);
 
-        $criteria->addSelectColumn(MessageDetailPeer::MES_UID);
+        $criteria->addSelectColumn(MessageTypeVariablePeer::MSGT_UID);
 
-        $criteria->addSelectColumn(MessageDetailPeer::MD_TYPE);
+        $criteria->addSelectColumn(MessageTypeVariablePeer::MSGTV_NAME);
 
-        $criteria->addSelectColumn(MessageDetailPeer::MD_NAME);
+        $criteria->addSelectColumn(MessageTypeVariablePeer::MSGTV_DEFAULT_VALUE);
 
     }
 
-    const COUNT = 'COUNT(MESSAGE_DETAIL.MD_UID)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT MESSAGE_DETAIL.MD_UID)';
+    const COUNT = 'COUNT(MESSAGE_TYPE_VARIABLE.MSGTV_UID)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT MESSAGE_TYPE_VARIABLE.MSGTV_UID)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -200,9 +200,9 @@ abstract class BaseMessageDetailPeer
         // clear out anything that might confuse the ORDER BY clause
         $criteria->clearSelectColumns()->clearOrderByColumns();
         if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->addSelectColumn(MessageDetailPeer::COUNT_DISTINCT);
+            $criteria->addSelectColumn(MessageTypeVariablePeer::COUNT_DISTINCT);
         } else {
-            $criteria->addSelectColumn(MessageDetailPeer::COUNT);
+            $criteria->addSelectColumn(MessageTypeVariablePeer::COUNT);
         }
 
         // just in case we're grouping: add those columns to the select statement
@@ -210,7 +210,7 @@ abstract class BaseMessageDetailPeer
             $criteria->addSelectColumn($column);
         }
 
-        $rs = MessageDetailPeer::doSelectRS($criteria, $con);
+        $rs = MessageTypeVariablePeer::doSelectRS($criteria, $con);
         if ($rs->next()) {
             return $rs->getInt(1);
         } else {
@@ -223,7 +223,7 @@ abstract class BaseMessageDetailPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      Connection $con
-     * @return     MessageDetail
+     * @return     MessageTypeVariable
      * @throws     PropelException Any exceptions caught during processing will be
      *       rethrown wrapped into a PropelException.
      */
@@ -231,7 +231,7 @@ abstract class BaseMessageDetailPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = MessageDetailPeer::doSelect($critcopy, $con);
+        $objects = MessageTypeVariablePeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -248,7 +248,7 @@ abstract class BaseMessageDetailPeer
      */
     public static function doSelect(Criteria $criteria, $con = null)
     {
-        return MessageDetailPeer::populateObjects(MessageDetailPeer::doSelectRS($criteria, $con));
+        return MessageTypeVariablePeer::populateObjects(MessageTypeVariablePeer::doSelectRS($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect()
@@ -272,7 +272,7 @@ abstract class BaseMessageDetailPeer
 
         if (!$criteria->getSelectColumns()) {
             $criteria = clone $criteria;
-            MessageDetailPeer::addSelectColumns($criteria);
+            MessageTypeVariablePeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
@@ -294,7 +294,7 @@ abstract class BaseMessageDetailPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = MessageDetailPeer::getOMClass();
+        $cls = MessageTypeVariablePeer::getOMClass();
         $cls = Propel::import($cls);
         // populate the object(s)
         while ($rs->next()) {
@@ -329,13 +329,13 @@ abstract class BaseMessageDetailPeer
      */
     public static function getOMClass()
     {
-        return MessageDetailPeer::CLASS_DEFAULT;
+        return MessageTypeVariablePeer::CLASS_DEFAULT;
     }
 
     /**
-     * Method perform an INSERT on the database, given a MessageDetail or Criteria object.
+     * Method perform an INSERT on the database, given a MessageTypeVariable or Criteria object.
      *
-     * @param      mixed $values Criteria or MessageDetail object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or MessageTypeVariable object containing data that is used to create the INSERT statement.
      * @param      Connection $con the connection to use
      * @return     mixed The new primary key.
      * @throws     PropelException Any exceptions caught during processing will be
@@ -350,7 +350,7 @@ abstract class BaseMessageDetailPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from MessageDetail object
+            $criteria = $values->buildCriteria(); // build Criteria from MessageTypeVariable object
         }
 
 
@@ -372,9 +372,9 @@ abstract class BaseMessageDetailPeer
     }
 
     /**
-     * Method perform an UPDATE on the database, given a MessageDetail or Criteria object.
+     * Method perform an UPDATE on the database, given a MessageTypeVariable or Criteria object.
      *
-     * @param      mixed $values Criteria or MessageDetail object containing data create the UPDATE statement.
+     * @param      mixed $values Criteria or MessageTypeVariable object containing data create the UPDATE statement.
      * @param      Connection $con The connection to use (specify Connection exert more control over transactions).
      * @return     int The number of affected rows (if supported by underlying database driver).
      * @throws     PropelException Any exceptions caught during processing will be
@@ -391,8 +391,8 @@ abstract class BaseMessageDetailPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(MessageDetailPeer::MD_UID);
-            $selectCriteria->add(MessageDetailPeer::MD_UID, $criteria->remove(MessageDetailPeer::MD_UID), $comparison);
+            $comparison = $criteria->getComparison(MessageTypeVariablePeer::MSGTV_UID);
+            $selectCriteria->add(MessageTypeVariablePeer::MSGTV_UID, $criteria->remove(MessageTypeVariablePeer::MSGTV_UID), $comparison);
 
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
@@ -406,7 +406,7 @@ abstract class BaseMessageDetailPeer
     }
 
     /**
-     * Method to DELETE all rows from the MESSAGE_DETAIL table.
+     * Method to DELETE all rows from the MESSAGE_TYPE_VARIABLE table.
      *
      * @return     int The number of affected rows (if supported by underlying database driver).
      */
@@ -420,7 +420,7 @@ abstract class BaseMessageDetailPeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
-            $affectedRows += BasePeer::doDeleteAll(MessageDetailPeer::TABLE_NAME, $con);
+            $affectedRows += BasePeer::doDeleteAll(MessageTypeVariablePeer::TABLE_NAME, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -430,9 +430,9 @@ abstract class BaseMessageDetailPeer
     }
 
     /**
-     * Method perform a DELETE on the database, given a MessageDetail or Criteria object OR a primary key value.
+     * Method perform a DELETE on the database, given a MessageTypeVariable or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or MessageDetail object or primary key or array of primary keys
+     * @param      mixed $values Criteria or MessageTypeVariable object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      Connection $con the connection to use
      * @return     int  The number of affected rows (if supported by underlying database driver).
@@ -444,18 +444,18 @@ abstract class BaseMessageDetailPeer
     public static function doDelete($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(MessageDetailPeer::DATABASE_NAME);
+            $con = Propel::getConnection(MessageTypeVariablePeer::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
-        } elseif ($values instanceof MessageDetail) {
+        } elseif ($values instanceof MessageTypeVariable) {
 
             $criteria = $values->buildPkeyCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(MessageDetailPeer::MD_UID, (array) $values, Criteria::IN);
+            $criteria->add(MessageTypeVariablePeer::MSGTV_UID, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -478,24 +478,24 @@ abstract class BaseMessageDetailPeer
     }
 
     /**
-     * Validates all modified columns of given MessageDetail object.
+     * Validates all modified columns of given MessageTypeVariable object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      MessageDetail $obj The object to validate.
+     * @param      MessageTypeVariable $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
      */
-    public static function doValidate(MessageDetail $obj, $cols = null)
+    public static function doValidate(MessageTypeVariable $obj, $cols = null)
     {
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(MessageDetailPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(MessageDetailPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(MessageTypeVariablePeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(MessageTypeVariablePeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -511,7 +511,7 @@ abstract class BaseMessageDetailPeer
 
         }
 
-        return BasePeer::doValidate(MessageDetailPeer::DATABASE_NAME, MessageDetailPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(MessageTypeVariablePeer::DATABASE_NAME, MessageTypeVariablePeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -519,7 +519,7 @@ abstract class BaseMessageDetailPeer
      *
      * @param      mixed $pk the primary key.
      * @param      Connection $con the connection to use
-     * @return     MessageDetail
+     * @return     MessageTypeVariable
      */
     public static function retrieveByPK($pk, $con = null)
     {
@@ -527,12 +527,12 @@ abstract class BaseMessageDetailPeer
             $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
-        $criteria = new Criteria(MessageDetailPeer::DATABASE_NAME);
+        $criteria = new Criteria(MessageTypeVariablePeer::DATABASE_NAME);
 
-        $criteria->add(MessageDetailPeer::MD_UID, $pk);
+        $criteria->add(MessageTypeVariablePeer::MSGTV_UID, $pk);
 
 
-        $v = MessageDetailPeer::doSelect($criteria, $con);
+        $v = MessageTypeVariablePeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -556,8 +556,8 @@ abstract class BaseMessageDetailPeer
             $objs = array();
         } else {
             $criteria = new Criteria();
-            $criteria->add(MessageDetailPeer::MD_UID, $pks, Criteria::IN);
-            $objs = MessageDetailPeer::doSelect($criteria, $con);
+            $criteria->add(MessageTypeVariablePeer::MSGTV_UID, $pks, Criteria::IN);
+            $objs = MessageTypeVariablePeer::doSelect($criteria, $con);
         }
         return $objs;
     }
@@ -569,14 +569,14 @@ if (Propel::isInit()) {
     // the MapBuilder classes register themselves with Propel during initialization
     // so we need to load them here.
     try {
-        BaseMessageDetailPeer::getMapBuilder();
+        BaseMessageTypeVariablePeer::getMapBuilder();
     } catch (Exception $e) {
         Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
     }
 } else {
     // even if Propel is not yet initialized, the map builder class can be registered
     // now and then it will be loaded when Propel initializes.
-    require_once 'classes/model/map/MessageDetailMapBuilder.php';
-    Propel::registerMapBuilder('classes.model.map.MessageDetailMapBuilder');
+    require_once 'classes/model/map/MessageTypeVariableMapBuilder.php';
+    Propel::registerMapBuilder('classes.model.map.MessageTypeVariableMapBuilder');
 }
 

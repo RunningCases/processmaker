@@ -2,46 +2,43 @@
 
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by MessagePeer::getOMClass()
-include_once 'classes/model/Message.php';
+// actual class may be a subclass -- as returned by MessageTypePeer::getOMClass()
+include_once 'classes/model/MessageType.php';
 
 /**
- * Base static class for performing query and update operations on the 'MESSAGE' table.
+ * Base static class for performing query and update operations on the 'MESSAGE_TYPE' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseMessagePeer
+abstract class BaseMessageTypePeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'workflow';
 
     /** the table name for this class */
-    const TABLE_NAME = 'MESSAGE';
+    const TABLE_NAME = 'MESSAGE_TYPE';
 
     /** A class that can be returned by this peer. */
-    const CLASS_DEFAULT = 'classes.model.Message';
+    const CLASS_DEFAULT = 'classes.model.MessageType';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 3;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
-    /** the column name for the MES_UID field */
-    const MES_UID = 'MESSAGE.MES_UID';
+    /** the column name for the MSGT_UID field */
+    const MSGT_UID = 'MESSAGE_TYPE.MSGT_UID';
 
     /** the column name for the PRJ_UID field */
-    const PRJ_UID = 'MESSAGE.PRJ_UID';
+    const PRJ_UID = 'MESSAGE_TYPE.PRJ_UID';
 
-    /** the column name for the MES_NAME field */
-    const MES_NAME = 'MESSAGE.MES_NAME';
-
-    /** the column name for the MES_CONDITION field */
-    const MES_CONDITION = 'MESSAGE.MES_CONDITION';
+    /** the column name for the MSGT_NAME field */
+    const MSGT_NAME = 'MESSAGE_TYPE.MSGT_NAME';
 
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
@@ -54,10 +51,10 @@ abstract class BaseMessagePeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('MesUid', 'PrjUid', 'MesName', 'MesCondition', ),
-        BasePeer::TYPE_COLNAME => array (MessagePeer::MES_UID, MessagePeer::PRJ_UID, MessagePeer::MES_NAME, MessagePeer::MES_CONDITION, ),
-        BasePeer::TYPE_FIELDNAME => array ('MES_UID', 'PRJ_UID', 'MES_NAME', 'MES_CONDITION', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('MsgtUid', 'PrjUid', 'MsgtName', ),
+        BasePeer::TYPE_COLNAME => array (MessageTypePeer::MSGT_UID, MessageTypePeer::PRJ_UID, MessageTypePeer::MSGT_NAME, ),
+        BasePeer::TYPE_FIELDNAME => array ('MSGT_UID', 'PRJ_UID', 'MSGT_NAME', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
     /**
@@ -67,10 +64,10 @@ abstract class BaseMessagePeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('MesUid' => 0, 'PrjUid' => 1, 'MesName' => 2, 'MesCondition' => 3, ),
-        BasePeer::TYPE_COLNAME => array (MessagePeer::MES_UID => 0, MessagePeer::PRJ_UID => 1, MessagePeer::MES_NAME => 2, MessagePeer::MES_CONDITION => 3, ),
-        BasePeer::TYPE_FIELDNAME => array ('MES_UID' => 0, 'PRJ_UID' => 1, 'MES_NAME' => 2, 'MES_CONDITION' => 3, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('MsgtUid' => 0, 'PrjUid' => 1, 'MsgtName' => 2, ),
+        BasePeer::TYPE_COLNAME => array (MessageTypePeer::MSGT_UID => 0, MessageTypePeer::PRJ_UID => 1, MessageTypePeer::MSGT_NAME => 2, ),
+        BasePeer::TYPE_FIELDNAME => array ('MSGT_UID' => 0, 'PRJ_UID' => 1, 'MSGT_NAME' => 2, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
     /**
@@ -80,8 +77,8 @@ abstract class BaseMessagePeer
      */
     public static function getMapBuilder()
     {
-        include_once 'classes/model/map/MessageMapBuilder.php';
-        return BasePeer::getMapBuilder('classes.model.map.MessageMapBuilder');
+        include_once 'classes/model/map/MessageTypeMapBuilder.php';
+        return BasePeer::getMapBuilder('classes.model.map.MessageTypeMapBuilder');
     }
     /**
      * Gets a map (hash) of PHP names to DB column names.
@@ -94,7 +91,7 @@ abstract class BaseMessagePeer
     public static function getPhpNameMap()
     {
         if (self::$phpNameMap === null) {
-            $map = MessagePeer::getTableMap();
+            $map = MessageTypePeer::getTableMap();
             $columns = $map->getColumns();
             $nameMap = array();
             foreach ($columns as $column) {
@@ -149,12 +146,12 @@ abstract class BaseMessagePeer
      *      $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. MessagePeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. MessageTypePeer::COLUMN_NAME).
      * @return     string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(MessagePeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(MessageTypePeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -171,18 +168,16 @@ abstract class BaseMessagePeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
-        $criteria->addSelectColumn(MessagePeer::MES_UID);
+        $criteria->addSelectColumn(MessageTypePeer::MSGT_UID);
 
-        $criteria->addSelectColumn(MessagePeer::PRJ_UID);
+        $criteria->addSelectColumn(MessageTypePeer::PRJ_UID);
 
-        $criteria->addSelectColumn(MessagePeer::MES_NAME);
-
-        $criteria->addSelectColumn(MessagePeer::MES_CONDITION);
+        $criteria->addSelectColumn(MessageTypePeer::MSGT_NAME);
 
     }
 
-    const COUNT = 'COUNT(MESSAGE.MES_UID)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT MESSAGE.MES_UID)';
+    const COUNT = 'COUNT(MESSAGE_TYPE.MSGT_UID)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT MESSAGE_TYPE.MSGT_UID)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -200,9 +195,9 @@ abstract class BaseMessagePeer
         // clear out anything that might confuse the ORDER BY clause
         $criteria->clearSelectColumns()->clearOrderByColumns();
         if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->addSelectColumn(MessagePeer::COUNT_DISTINCT);
+            $criteria->addSelectColumn(MessageTypePeer::COUNT_DISTINCT);
         } else {
-            $criteria->addSelectColumn(MessagePeer::COUNT);
+            $criteria->addSelectColumn(MessageTypePeer::COUNT);
         }
 
         // just in case we're grouping: add those columns to the select statement
@@ -210,7 +205,7 @@ abstract class BaseMessagePeer
             $criteria->addSelectColumn($column);
         }
 
-        $rs = MessagePeer::doSelectRS($criteria, $con);
+        $rs = MessageTypePeer::doSelectRS($criteria, $con);
         if ($rs->next()) {
             return $rs->getInt(1);
         } else {
@@ -223,7 +218,7 @@ abstract class BaseMessagePeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      Connection $con
-     * @return     Message
+     * @return     MessageType
      * @throws     PropelException Any exceptions caught during processing will be
      *       rethrown wrapped into a PropelException.
      */
@@ -231,7 +226,7 @@ abstract class BaseMessagePeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = MessagePeer::doSelect($critcopy, $con);
+        $objects = MessageTypePeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -248,7 +243,7 @@ abstract class BaseMessagePeer
      */
     public static function doSelect(Criteria $criteria, $con = null)
     {
-        return MessagePeer::populateObjects(MessagePeer::doSelectRS($criteria, $con));
+        return MessageTypePeer::populateObjects(MessageTypePeer::doSelectRS($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect()
@@ -272,7 +267,7 @@ abstract class BaseMessagePeer
 
         if (!$criteria->getSelectColumns()) {
             $criteria = clone $criteria;
-            MessagePeer::addSelectColumns($criteria);
+            MessageTypePeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
@@ -294,7 +289,7 @@ abstract class BaseMessagePeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = MessagePeer::getOMClass();
+        $cls = MessageTypePeer::getOMClass();
         $cls = Propel::import($cls);
         // populate the object(s)
         while ($rs->next()) {
@@ -329,13 +324,13 @@ abstract class BaseMessagePeer
      */
     public static function getOMClass()
     {
-        return MessagePeer::CLASS_DEFAULT;
+        return MessageTypePeer::CLASS_DEFAULT;
     }
 
     /**
-     * Method perform an INSERT on the database, given a Message or Criteria object.
+     * Method perform an INSERT on the database, given a MessageType or Criteria object.
      *
-     * @param      mixed $values Criteria or Message object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or MessageType object containing data that is used to create the INSERT statement.
      * @param      Connection $con the connection to use
      * @return     mixed The new primary key.
      * @throws     PropelException Any exceptions caught during processing will be
@@ -350,7 +345,7 @@ abstract class BaseMessagePeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from Message object
+            $criteria = $values->buildCriteria(); // build Criteria from MessageType object
         }
 
 
@@ -372,9 +367,9 @@ abstract class BaseMessagePeer
     }
 
     /**
-     * Method perform an UPDATE on the database, given a Message or Criteria object.
+     * Method perform an UPDATE on the database, given a MessageType or Criteria object.
      *
-     * @param      mixed $values Criteria or Message object containing data create the UPDATE statement.
+     * @param      mixed $values Criteria or MessageType object containing data create the UPDATE statement.
      * @param      Connection $con The connection to use (specify Connection exert more control over transactions).
      * @return     int The number of affected rows (if supported by underlying database driver).
      * @throws     PropelException Any exceptions caught during processing will be
@@ -391,8 +386,8 @@ abstract class BaseMessagePeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(MessagePeer::MES_UID);
-            $selectCriteria->add(MessagePeer::MES_UID, $criteria->remove(MessagePeer::MES_UID), $comparison);
+            $comparison = $criteria->getComparison(MessageTypePeer::MSGT_UID);
+            $selectCriteria->add(MessageTypePeer::MSGT_UID, $criteria->remove(MessageTypePeer::MSGT_UID), $comparison);
 
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
@@ -406,7 +401,7 @@ abstract class BaseMessagePeer
     }
 
     /**
-     * Method to DELETE all rows from the MESSAGE table.
+     * Method to DELETE all rows from the MESSAGE_TYPE table.
      *
      * @return     int The number of affected rows (if supported by underlying database driver).
      */
@@ -420,7 +415,7 @@ abstract class BaseMessagePeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
-            $affectedRows += BasePeer::doDeleteAll(MessagePeer::TABLE_NAME, $con);
+            $affectedRows += BasePeer::doDeleteAll(MessageTypePeer::TABLE_NAME, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -430,9 +425,9 @@ abstract class BaseMessagePeer
     }
 
     /**
-     * Method perform a DELETE on the database, given a Message or Criteria object OR a primary key value.
+     * Method perform a DELETE on the database, given a MessageType or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or Message object or primary key or array of primary keys
+     * @param      mixed $values Criteria or MessageType object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      Connection $con the connection to use
      * @return     int  The number of affected rows (if supported by underlying database driver).
@@ -444,18 +439,18 @@ abstract class BaseMessagePeer
     public static function doDelete($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(MessagePeer::DATABASE_NAME);
+            $con = Propel::getConnection(MessageTypePeer::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
-        } elseif ($values instanceof Message) {
+        } elseif ($values instanceof MessageType) {
 
             $criteria = $values->buildPkeyCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(MessagePeer::MES_UID, (array) $values, Criteria::IN);
+            $criteria->add(MessageTypePeer::MSGT_UID, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -478,24 +473,24 @@ abstract class BaseMessagePeer
     }
 
     /**
-     * Validates all modified columns of given Message object.
+     * Validates all modified columns of given MessageType object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      Message $obj The object to validate.
+     * @param      MessageType $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
      */
-    public static function doValidate(Message $obj, $cols = null)
+    public static function doValidate(MessageType $obj, $cols = null)
     {
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(MessagePeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(MessagePeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(MessageTypePeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(MessageTypePeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -511,7 +506,7 @@ abstract class BaseMessagePeer
 
         }
 
-        return BasePeer::doValidate(MessagePeer::DATABASE_NAME, MessagePeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(MessageTypePeer::DATABASE_NAME, MessageTypePeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -519,7 +514,7 @@ abstract class BaseMessagePeer
      *
      * @param      mixed $pk the primary key.
      * @param      Connection $con the connection to use
-     * @return     Message
+     * @return     MessageType
      */
     public static function retrieveByPK($pk, $con = null)
     {
@@ -527,12 +522,12 @@ abstract class BaseMessagePeer
             $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
-        $criteria = new Criteria(MessagePeer::DATABASE_NAME);
+        $criteria = new Criteria(MessageTypePeer::DATABASE_NAME);
 
-        $criteria->add(MessagePeer::MES_UID, $pk);
+        $criteria->add(MessageTypePeer::MSGT_UID, $pk);
 
 
-        $v = MessagePeer::doSelect($criteria, $con);
+        $v = MessageTypePeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -556,8 +551,8 @@ abstract class BaseMessagePeer
             $objs = array();
         } else {
             $criteria = new Criteria();
-            $criteria->add(MessagePeer::MES_UID, $pks, Criteria::IN);
-            $objs = MessagePeer::doSelect($criteria, $con);
+            $criteria->add(MessageTypePeer::MSGT_UID, $pks, Criteria::IN);
+            $objs = MessageTypePeer::doSelect($criteria, $con);
         }
         return $objs;
     }
@@ -569,14 +564,14 @@ if (Propel::isInit()) {
     // the MapBuilder classes register themselves with Propel during initialization
     // so we need to load them here.
     try {
-        BaseMessagePeer::getMapBuilder();
+        BaseMessageTypePeer::getMapBuilder();
     } catch (Exception $e) {
         Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
     }
 } else {
     // even if Propel is not yet initialized, the map builder class can be registered
     // now and then it will be loaded when Propel initializes.
-    require_once 'classes/model/map/MessageMapBuilder.php';
-    Propel::registerMapBuilder('classes.model.map.MessageMapBuilder');
+    require_once 'classes/model/map/MessageTypeMapBuilder.php';
+    Propel::registerMapBuilder('classes.model.map.MessageTypeMapBuilder');
 }
 
