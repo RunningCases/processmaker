@@ -1192,7 +1192,8 @@ Ext.onReady( function() {
                         params: {
                           action : 'calendarName',
                           oldName : fields.OLD_NAME,
-                          name : canlendarName
+                          name : canlendarName,
+                          uid : fields.CALENDAR_UID
                         },
                         success: function(resp){
                           if (resp.responseText != '[]')
