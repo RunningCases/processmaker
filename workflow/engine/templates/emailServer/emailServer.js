@@ -361,11 +361,9 @@ emailServer.application = {
         {
             if (flagPassChecked) {
                 Ext.getCmp("txtPassword").setVisible(true);
-
                 Ext.getCmp("txtPassword").allowBlank = false;
             } else {
                 Ext.getCmp("txtPassword").setVisible(false);
-
                 Ext.getCmp("txtPassword").allowBlank = true;
             }
         }
@@ -374,11 +372,9 @@ emailServer.application = {
         {
             if (flagMailToChecked) {
                 Ext.getCmp("txtMailTo").setVisible(true);
-
                 Ext.getCmp("txtMailTo").allowBlank = false;
             } else {
                 Ext.getCmp("txtMailTo").setVisible(false);
-
                 Ext.getCmp("txtMailTo").allowBlank = true;
             }
         }
@@ -686,14 +682,14 @@ emailServer.application = {
 
             hidden: true
         });
-        /*----------------------------------********---------------------------------*/
+        
         var chkEmailServerDefault = new Ext.form.Checkbox({
             id: "chkEmailServerDefault",
             name: "chkEmailServerDefault",
 
             boxLabel: _("ID_EMAIL_SERVER_THIS_CONFIGURATION_IS_DEFAULT")
         });
-        /*----------------------------------********---------------------------------*/
+        
         var btnTest = new Ext.Action({
             id: "btnTest",
             text: _("ID_TEST"),
@@ -786,8 +782,7 @@ emailServer.application = {
                         chkSendTestMail,
                         txtMailTo
                         /*----------------------------------********---------------------------------*/
-                        ,
-                        chkEmailServerDefault
+                        , chkEmailServerDefault
                         /*----------------------------------********---------------------------------*/
                     ]
                 })
