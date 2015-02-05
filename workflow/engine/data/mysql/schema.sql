@@ -2379,37 +2379,33 @@ CREATE TABLE `LIST_UNASSIGNED_GROUP`
 	PRIMARY KEY (`UNA_UID`,`USR_UID`,`TYPE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Unassiged list';
 #-----------------------------------------------------------------------------
-#-- MESSAGE
+#-- MESSAGE_TYPE
 #-----------------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `MESSAGE`;
+DROP TABLE IF EXISTS MESSAGE_TYPE;
 
-
-CREATE TABLE `MESSAGE`
+CREATE TABLE MESSAGE_TYPE
 (
-	`MES_UID` VARCHAR(32)  NOT NULL,
-	`PRJ_UID` VARCHAR(32)  NOT NULL,
-	`MES_NAME` VARCHAR(255) default '',
-	`MES_CONDITION` VARCHAR(255) default '',
-	PRIMARY KEY (`MES_UID`)
-)ENGINE=InnoDB ;
+ MSGT_UID  VARCHAR(32) default '' NOT NULL,
+ PRJ_UID   VARCHAR(32) default '' NOT NULL,
+ MSGT_NAME VARCHAR(256) default '' NOT NULL,
+ PRIMARY KEY (MSGT_UID)
+)ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
 #-----------------------------------------------------------------------------
-#-- MESSAGE_DETAIL
+#-- MESSAGE_TYPE_VARIABLE
 #-----------------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `MESSAGE_DETAIL`;
+DROP TABLE IF EXISTS MESSAGE_TYPE_VARIABLE;
 
-
-CREATE TABLE `MESSAGE_DETAIL`
+CREATE TABLE MESSAGE_TYPE_VARIABLE
 (
-	`MD_UID` VARCHAR(32)  NOT NULL,
-	`MES_UID` VARCHAR(32)  NOT NULL,
-	`MD_TYPE` VARCHAR(32) default '',
-	`MD_NAME` VARCHAR(255) default '',
-	PRIMARY KEY (`MD_UID`)
-)ENGINE=InnoDB ;
-# This restores the fkey checks, after having unset them earlier
-SET FOREIGN_KEY_CHECKS = 1;
+ MSGTV_UID           VARCHAR(32)  default '' NOT NULL,
+ MSGT_UID            VARCHAR(32)  default '' NOT NULL,
+ MSGTV_NAME          VARCHAR(256) default '' NOT NULL,
+ MSGTV_DEFAULT_VALUE VARCHAR(256) default '' NOT NULL,
+ PRIMARY KEY (MSGTV_UID)
+)ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 #-----------------------------------------------------------------------------
 #-- TABLE: EMAIL_SERVER

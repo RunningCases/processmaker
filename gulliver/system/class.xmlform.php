@@ -3220,12 +3220,12 @@ class XmlForm_Field_Checkbox extends XmlForm_Field
         } elseif ($this->mode === 'view') {
             $checked = (isset( $value ) && ($value == $this->value)) ? 'checked' : '';
             if ($this->labelOnRight) {
-                $html = "<input value='{$this->value}' type='checkbox' $checked $readOnly disabled />
+                $html = "<input id='form[" . $this->name . "]' value='{$this->value}' type='checkbox' $checked $readOnly disabled />
                  <span class='FormCheck'>" . $this->label . '</span></input>';
             } else {
-                $html = "<input value='{$this->value}' type='checkbox' $checked $readOnly disabled />";
+                $html = "<input id='form[" . $this->name . "]' value='{$this->value}' type='checkbox' $checked $readOnly disabled />";
             }
-            $html .= "<input id='form[" . $this->name . "]' name='form[" . $this->name . "]' type='hidden' " . $this->NSFieldType() . " value='{$value}' />";
+            $html .= "<input name='form[" . $this->name . "]' type='hidden' " . $this->NSFieldType() . " value='{$value}' />";
             return $html;
         }
     }
