@@ -1261,7 +1261,7 @@ function loadData()
 
 
     comboDefaultCasesMenuOption.store.on("load", function (store) {
-        comboDefaultCasesMenuOption.setValue(store.getAt(0).get("id"));
+        comboDefaultCasesMenuOption.setValue(store.getAt().get("id"));
     });
     storeDefaultCasesMenuOption.load();
 }
