@@ -798,6 +798,23 @@ class Workflow extends Handler
                 $webEntryEvent->delete($row["WEE_UID"]);
             }
 
+            //Delete MessageTypes
+            $messageType = new \ProcessMaker\BusinessModel\MessageType();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\MessageTypePeer::MSGT_UID);
+            $criteria->add(\MessageTypePeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
+
+            $rsCriteria = \MessageTypePeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $messageType->delete($row["MSGT_UID"]);
+            }
+
             //Delete the process
             try {
                 $oProcess->remove($sProcessUID);
