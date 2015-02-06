@@ -16,7 +16,6 @@ switch ($option) {
         G::RenderPage("publish", "extJs");
         break;
     case "processInfo":
-    error_log("processInfo");
         $oHeadPublisher = &headPublisher::getSingleton();
         $oHeadPublisher->addContent("setup/dbInfo"); //Adding a html file .html
         $oHeadPublisher->addExtJsScript("setup/dbInfo", false); //Adding a javascript file .js
