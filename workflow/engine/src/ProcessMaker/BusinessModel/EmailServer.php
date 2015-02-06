@@ -225,7 +225,7 @@ class EmailServer
 
                 try {
                     $arrayTestMailResult = $this->sendTestMail($arrayDataMail);
-                } catch (Exception $error) {
+                } catch (Exception $e) {
                     $arrayTestMailResult["status"] = false;
                     $arrayTestMailResult["message"] = $e->getMessage();
 
