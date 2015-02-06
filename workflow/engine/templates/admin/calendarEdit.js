@@ -931,10 +931,9 @@ Ext.onReady( function() {
                   text: fields['NEWCALENDAR']=='YES'?_("ID_CREATE") : _("ID_UPDATE"),
                   handler: function() {
                     Ext.getCmp('idInvalidCalendarName').hide();
+                    Ext.getCmp('dynaformCalendarName').setValue(Ext.getCmp('dynaformCalendarName').getValue().trim());
                     var canlendarName = Ext.getCmp('dynaformCalendarName').getValue().trim();
-                    console.log(canlendarName);
                     if(canlendarName === ""){
-                        Ext.getCmp('dynaformCalendarName').setValue("");
                         return;
                     }
                     Ext.Ajax.request({
