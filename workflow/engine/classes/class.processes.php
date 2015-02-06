@@ -664,6 +664,48 @@ class Processes
     }
 
     /**
+     * Get an unused unique id for Message-Type
+     *
+     * @return string $uid
+     */
+    public function getUnusedMessageTypeUid()
+    {
+        try {
+            $messageType = new \ProcessMaker\BusinessModel\MessageType();
+
+            do {
+                $newUid = \ProcessMaker\Util\Common::generateUID();
+            } while ($messageType->exists($newUid));
+
+            return $newUid;
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+    }
+
+    /**
+     * Get an unused unique id for Message-Type-Variable
+     *
+     * @return string $uid
+     */
+    public function getUnusedMessageTypeVariableUid()
+    {
+        try {
+            $variable = new \ProcessMaker\BusinessModel\MessageType\Variable();
+
+            do {
+                $newUid = \ProcessMaker\Util\Common::generateUID();
+            } while ($variable->exists($newUid));
+
+            return $newUid;
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+    }
+
+    /**
      * change the GUID for a serialized process
      *
      * @param string $sProUid
@@ -797,6 +839,12 @@ class Processes
         if (isset($oData->processVariables)) {
             foreach ($oData->processVariables as $key => $value) {
                 $oData->processVariables[$key]["PRJ_UID"] = $sNewProUid;
+            }
+        }
+
+        if (isset($oData->messageType)) {
+            foreach ($oData->messageType as $key => $value) {
+                $oData->messageType[$key]["PRJ_UID"] = $sNewProUid;
             }
         }
 
@@ -2197,12 +2245,14 @@ class Processes
     public function renewAllProcessVariableUid(&$data)
     {
         try {
-            $map = array ();
-            foreach ($data->processVariables as $key => $val) {
-                if (isset( $val['VAR_UID'] )) {
-                    $newGuid = $this->getUnusedProcessVariableGUID();
-                    $map[$val['VAR_UID']] = $newGuid;
-                    $data->processVariables[$key]['VAR_UID'] = $newGuid;
+            if (isset($data->processVariables)) {
+                $map = array();
+                foreach ($data->processVariables as $key => $val) {
+                    if (isset($val['VAR_UID'])) {
+                        $newGuid = $this->getUnusedProcessVariableGUID();
+                        $map[$val['VAR_UID']] = $newGuid;
+                        $data->processVariables[$key]['VAR_UID'] = $newGuid;
+                    }
                 }
             }
 
@@ -2210,6 +2260,77 @@ class Processes
             throw $e;
         }
     }
+
+    /**
+     * Renew all the unique id for Message-Type
+     *
+     * @param object $data Object with the data
+     *
+     * return void
+     */
+    public function renewAllMessageTypeUid(&$data)
+    {
+        try {
+            $map = array();
+
+            foreach ($data->messageType as $key => $value) {
+                $record = $value;
+
+                if (isset($record["MSGT_UID"])) {
+                    $newUid = $this->getUnusedMessageTypeUid();
+
+                    $map[$record["MSGT_UID"]] = $newUid;
+                    $data->messageType[$key]["MSGT_UID"] = $newUid;
+                }
+            }
+
+            $data->uid["MESSAGE_TYPE"] = $map;
+
+            if (isset($data->messageTypeVariable)) {
+                foreach ($data->messageTypeVariable as $key => $value) {
+                    $record = $value;
+
+                    if (isset($map[$record["MSGT_UID"]])) {
+                        $newUid = $map[$record["MSGT_UID"]];
+
+                        $data->messageTypeVariable[$key]["MSGT_UID"] = $newUid;
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Renew all the unique id for Message-Type-Variable
+     *
+     * @param object $data Object with the data
+     *
+     * return void
+     */
+    public function renewAllMessageTypeVariableUid(&$data)
+    {
+        try {
+            $map = array();
+
+            foreach ($data->messageTypeVariable as $key => $value) {
+                $record = $value;
+
+                if (isset($record["MSGTV_UID"])) {
+                    $newUid = $this->getUnusedMessageTypeVariableUid();
+
+                    $map[$record["MSGTV_UID"]] = $newUid;
+                    $data->messageTypeVariable[$key]["MSGTV_UID"] = $newUid;
+                }
+            }
+
+            $data->uid["MESSAGE_TYPE_VARIABLE"] = $map;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     /**
      * Renew the GUID's for all the Uids for all the elements
      *
@@ -2240,6 +2361,8 @@ class Processes
         $this->renewAllCaseScheduler( $oData );
         $this->renewAllProcessUserUid($oData);
         $this->renewAllProcessVariableUid($oData);
+        $this->renewAllMessageTypeUid($oData);
+        $this->renewAllMessageTypeVariableUid($oData);
     }
 
     /**
@@ -2889,6 +3012,71 @@ class Processes
         }
     }
 
+    public function getMessageTypes($processUid)
+    {
+        try {
+            $arrayMessageType = array();
+
+            $messageType = new \ProcessMaker\BusinessModel\MessageType();
+
+            //Get data
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(MessageTypePeer::MSGT_UID);
+            $criteria->add(MessageTypePeer::PRJ_UID, $processUid, Criteria::EQUAL);
+
+            $rsCriteria = MessageTypePeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayAux = $messageType->getMessageType($row["MSGT_UID"], true);
+
+                unset($arrayAux["MSGT_VARIABLES"]);
+
+                $arrayMessageType[] = $arrayAux;
+            }
+
+            //Return
+            return $arrayMessageType;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function getMessageTypeVariables($processUid)
+    {
+        try {
+            $arrayVariable = array();
+
+            $variable = new \ProcessMaker\BusinessModel\MessageType\Variable();
+
+            //Get data
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(MessageTypeVariablePeer::MSGTV_UID);
+
+            $criteria->addJoin(MessageTypePeer::MSGT_UID, MessageTypeVariablePeer::MSGT_UID, Criteria::LEFT_JOIN);
+
+            $criteria->add(MessageTypePeer::PRJ_UID, $processUid, Criteria::EQUAL);
+
+            $rsCriteria = MessageTypeVariablePeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayVariable[] = $variable->getMessageTypeVariable($row["MSGTV_UID"], true);
+            }
+
+            //Return
+            return $arrayVariable;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     /**
      * Get Task User Rows from an array of data
      *
@@ -3078,6 +3266,59 @@ class Processes
     }
 
     /**
+     * Create Message-Type records
+     *
+     * @param array $arrayData Data
+     *
+     * return void
+     */
+    public function createMessageType(array $arrayData)
+    {
+        try {
+            $messageType = new \ProcessMaker\BusinessModel\MessageType();
+
+            foreach ($arrayData as $value) {
+                $record = $value;
+
+                if ($messageType->exists($record["MSGT_UID"])) {
+                    $messageType->delete($record["MSGT_UID"]);
+                }
+
+                $result = $messageType->singleCreate($record);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Create Message-Type-Variable records
+     *
+     * @param array $arrayData Data
+     *
+     * return void
+     */
+    public function createMessageTypeVariable(array $arrayData)
+    {
+        try {
+            $variable = new \ProcessMaker\BusinessModel\MessageType\Variable();
+
+
+            foreach ($arrayData as $value) {
+                $record = $value;
+
+                if ($variable->exists($record["MSGTV_UID"])) {
+                    $variable->delete($record["MSGTV_UID"]);
+                }
+
+                $result = $variable->singleCreate($record);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Cleanup Report Tables References from an array of data
      *
      * @param array $aReportTables
@@ -3263,7 +3504,8 @@ class Processes
         $oData->processVariables = $this->getProcessVariables($sProUid);
         $oData->webEntry      = $this->getWebEntries($sProUid);
         $oData->webEntryEvent = $this->getWebEntryEvents($sProUid);
-
+        $oData->messageType = $this->getMessageTypes($sProUid);
+        $oData->messageTypeVariable = $this->getMessageTypeVariables($sProUid);
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
         $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
@@ -4308,6 +4550,8 @@ class Processes
         $this->createProcessVariables((isset($oData->processVariables))? $oData->processVariables : array());
         $this->createWebEntry($arrayProcessData["PRO_UID"], $arrayProcessData["PRO_CREATE_USER"], (isset($oData->webEntry))? $oData->webEntry : array());
         $this->createWebEntryEvent($arrayProcessData["PRO_UID"], $arrayProcessData["PRO_CREATE_USER"], (isset($oData->webEntryEvent))? $oData->webEntryEvent : array());
+        $this->createMessageType((isset($oData->messageType))? $oData->messageType : array());
+        $this->createMessageTypeVariable((isset($oData->messageTypeVariable))? $oData->messageTypeVariable : array());
     }
 
 

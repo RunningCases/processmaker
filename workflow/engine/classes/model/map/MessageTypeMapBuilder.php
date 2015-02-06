@@ -5,7 +5,7 @@ include_once 'creole/CreoleTypes.php';
 
 
 /**
- * This class adds structure of 'MESSAGE_DETAIL' table to 'workflow' DatabaseMap object.
+ * This class adds structure of 'MESSAGE_TYPE' table to 'workflow' DatabaseMap object.
  *
  *
  *
@@ -16,13 +16,13 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
-class MessageDetailMapBuilder
+class MessageTypeMapBuilder
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'classes.model.map.MessageDetailMapBuilder';
+    const CLASS_NAME = 'classes.model.map.MessageTypeMapBuilder';
 
     /**
      * The database map.
@@ -60,19 +60,17 @@ class MessageDetailMapBuilder
     {
         $this->dbMap = Propel::getDatabaseMap('workflow');
 
-        $tMap = $this->dbMap->addTable('MESSAGE_DETAIL');
-        $tMap->setPhpName('MessageDetail');
+        $tMap = $this->dbMap->addTable('MESSAGE_TYPE');
+        $tMap->setPhpName('MessageType');
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addPrimaryKey('MD_UID', 'MdUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('MSGT_UID', 'MsgtUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('MES_UID', 'MesUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('MD_TYPE', 'MdType', 'string', CreoleTypes::VARCHAR, false, 32);
-
-        $tMap->addColumn('MD_NAME', 'MdName', 'string', CreoleTypes::VARCHAR, false, 255);
+        $tMap->addColumn('MSGT_NAME', 'MsgtName', 'string', CreoleTypes::VARCHAR, false, 512);
 
     } // doBuild()
 
-} // MessageDetailMapBuilder
+} // MessageTypeMapBuilder

@@ -38,9 +38,21 @@ emailServer.application = {
             //Data
             var p;
 
+            /*----------------------------------********---------------------------------*/
+            if (Ext.getCmp("chkEmailServerDefault").checked) {
+            /*----------------------------------********---------------------------------*/    
+                var emailDefault = 1;
+            /*----------------------------------********---------------------------------*/    
+            } else {
+                var emailDefault = 0;
+            }
+            /*----------------------------------********---------------------------------*/
+
             switch (option) {
+
                 case "INS":
                     var typeEmailEngine = Ext.getCmp("cboEmailEngine").getValue();
+                        
 
                     if (typeEmailEngine == "PHPMAILER") {
                         var rdoGrpOption = Ext.getCmp("rdoGrpSmtpSecure").getValue();
@@ -60,7 +72,7 @@ emailServer.application = {
                             smtpSecure: smtpSecure,
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
+                            emailServerDefault: emailDefault
                         };
                     } else {
                         //MAIL
@@ -72,7 +84,7 @@ emailServer.application = {
                             fromName: Ext.getCmp("txtFromName").getValue(),
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
+                            emailServerDefault: emailDefault
                         };
                     }
                     break;
@@ -98,7 +110,7 @@ emailServer.application = {
                             smtpSecure: smtpSecure,
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
+                            emailServerDefault: emailDefault
                         };
                     } else {
                         //MAIL
@@ -111,7 +123,7 @@ emailServer.application = {
                             fromName: Ext.getCmp("txtFromName").getValue(),
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
+                            emailServerDefault: emailDefault
                         };
                     }
                     break;
@@ -144,7 +156,7 @@ emailServer.application = {
                             smtpSecure: smtpSecure,
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
+                            emailServerDefault: emailDefault
                         };
                     } else {
                         //MAIL
@@ -156,7 +168,7 @@ emailServer.application = {
                             fromName: Ext.getCmp("txtFromName").getValue(),
                             sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
                             mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: (Ext.getCmp("chkEmailServerDefault").checked)? 1 : 0
+                            emailServerDefault: emailDefault
                         };
                     }
                     break;
@@ -251,7 +263,9 @@ emailServer.application = {
 
                     Ext.getCmp("txtMailTo").setValue("");
 
+                    /*----------------------------------********---------------------------------*/
                     Ext.getCmp("chkEmailServerDefault").setValue(false);
+                    /*----------------------------------********---------------------------------*/
 
                     winData.setTitle(_("ID_EMAIL_SERVER_NEW"));
                     winData.setDisabled(false);
@@ -287,8 +301,17 @@ emailServer.application = {
                         emailServerSetMailTo(Ext.getCmp("chkSendTestMail").checked);
 
                         Ext.getCmp("txtMailTo").setValue(record.get("MAIL_TO"));
-                        Ext.getCmp("chkEmailServerDefault").setValue((parseInt(record.get("MESS_DEFAULT")) == 1)? true : false);
-
+                        
+                        /*----------------------------------********---------------------------------*/
+                        if (parseInt(record.get("MESS_DEFAULT")) == 1) {
+                        /*----------------------------------********---------------------------------*/
+                            Ext.getCmp("chkEmailServerDefault").setValue(true);
+                        /*----------------------------------********---------------------------------*/
+                        } else {
+                            Ext.getCmp("chkEmailServerDefault").setValue(false);
+                        }
+                        /*----------------------------------********---------------------------------*/
+                        
                         winData.setTitle(_("ID_EMAIL_SERVER_EDIT"));
                         winData.setDisabled(false);
                         winData.show();
@@ -338,11 +361,9 @@ emailServer.application = {
         {
             if (flagPassChecked) {
                 Ext.getCmp("txtPassword").setVisible(true);
-
                 Ext.getCmp("txtPassword").allowBlank = false;
             } else {
                 Ext.getCmp("txtPassword").setVisible(false);
-
                 Ext.getCmp("txtPassword").allowBlank = true;
             }
         }
@@ -351,11 +372,9 @@ emailServer.application = {
         {
             if (flagMailToChecked) {
                 Ext.getCmp("txtMailTo").setVisible(true);
-
                 Ext.getCmp("txtMailTo").allowBlank = false;
             } else {
                 Ext.getCmp("txtMailTo").setVisible(false);
-
                 Ext.getCmp("txtMailTo").allowBlank = true;
             }
         }
@@ -591,6 +610,7 @@ emailServer.application = {
             }
         });
 
+        
         var txtAccountFrom = new Ext.form.TextField({
             id: "txtAccountFrom",
             name: "txtAccountFrom",
@@ -599,7 +619,7 @@ emailServer.application = {
 
             vtype: "emailUrlValidation"
         });
-
+        
         var txtPassword = new Ext.form.TextField({
             id: "txtPassword",
             name: "txtPassword",
@@ -662,14 +682,14 @@ emailServer.application = {
 
             hidden: true
         });
-
+        
         var chkEmailServerDefault = new Ext.form.Checkbox({
             id: "chkEmailServerDefault",
             name: "chkEmailServerDefault",
 
             boxLabel: _("ID_EMAIL_SERVER_THIS_CONFIGURATION_IS_DEFAULT")
         });
-
+        
         var btnTest = new Ext.Action({
             id: "btnTest",
             text: _("ID_TEST"),
@@ -760,8 +780,10 @@ emailServer.application = {
                         txtFromName,
                         rdoGrpSmtpSecure,
                         chkSendTestMail,
-                        txtMailTo,
-                        chkEmailServerDefault
+                        txtMailTo
+                        /*----------------------------------********---------------------------------*/
+                        , chkEmailServerDefault
+                        /*----------------------------------********---------------------------------*/
                     ]
                 })
             ],

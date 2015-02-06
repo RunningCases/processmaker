@@ -798,6 +798,23 @@ class Workflow extends Handler
                 $webEntryEvent->delete($row["WEE_UID"]);
             }
 
+            //Delete MessageTypes
+            $messageType = new \ProcessMaker\BusinessModel\MessageType();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\MessageTypePeer::MSGT_UID);
+            $criteria->add(\MessageTypePeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
+
+            $rsCriteria = \MessageTypePeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $messageType->delete($row["MSGT_UID"]);
+            }
+
             //Delete the process
             try {
                 $oProcess->remove($sProcessUID);
@@ -1153,19 +1170,20 @@ class Workflow extends Handler
             }
 
             //Update WEB_ENTRY_EVENT.EVN_UID
-            foreach ($arrayWorkflowData["webEntryEvent"] as $key => $value) {
-                $webEntryEventEventUid = $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"];
+            if (isset($arrayWorkflowData["webEntryEvent"])) {
+                foreach ($arrayWorkflowData["webEntryEvent"] as $key => $value) {
+                    $webEntryEventEventUid = $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"];
 
-                foreach ($arrayUid as $value2) {
-                    $arrayItem = $value2;
+                    foreach ($arrayUid as $value2) {
+                        $arrayItem = $value2;
 
-                    if ($arrayItem["old_uid"] == $webEntryEventEventUid) {
-                        $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"] = $arrayItem["new_uid"];
-                        break;
+                        if ($arrayItem["old_uid"] == $webEntryEventEventUid) {
+                            $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"] = $arrayItem["new_uid"];
+                            break;
+                        }
                     }
                 }
             }
-
             //Workflow tables
             $workflowData = (object)($arrayWorkflowData);
 
