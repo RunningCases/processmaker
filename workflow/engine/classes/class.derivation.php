@@ -194,7 +194,7 @@ class Derivation
 
                     $pmScript = new PMScript();
                     $pmScript->setFields($arrayApplicationData["APP_DATA"]);
-                    $pmScript->setScript($arrayRouteData["ROU_CONDITION"]);
+                    $pmScript->setScript("( ".$arrayRouteData["ROU_CONDITION"]." )");
                     $flagContinue = $pmScript->evaluate();
                 }
 
