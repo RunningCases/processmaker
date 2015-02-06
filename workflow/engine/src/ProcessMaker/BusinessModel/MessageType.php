@@ -7,7 +7,7 @@ class MessageType
         "MSGT_UID"       => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "messageTypeUid"),
         "PRJ_UID"        => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "projectUid"),
         "MSGT_NAME"      => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(), "fieldNameAux" => "messageTypeName"),
-        "MSGT_VARIABLES" => array("type" => "array",  "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "messageTypeVariables")
+        "MSGT_VARIABLES" => array("type" => "array",  "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "messageTypeVariables")
     );
 
     private $formatFieldNameInUppercase = true;
