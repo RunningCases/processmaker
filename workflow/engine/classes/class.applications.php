@@ -118,6 +118,8 @@ class Applications
                     case "COMPLETED":
                         $Criteria = $oAppCache->getCompletedListCriteria($userUid);
                         $CriteriaCount = $oAppCache->getCompletedCountCriteria($userUid);
+                        $Criteria->addAnd(AppCacheViewPeer::DEL_LAST_INDEX, "1");
+                        $CriteriaCount->add(AppCacheViewPeer::DEL_LAST_INDEX,"1");
                         break;
                     default:
                         //All status
