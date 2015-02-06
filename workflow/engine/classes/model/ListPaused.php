@@ -75,6 +75,19 @@ class ListPaused extends BaseListPaused {
         $data['DEL_PREVIOUS_USR_UID'] = $aRow['USR_UID'];
 
         $criteria = new Criteria();
+        $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+        $criteria->add( UsersPeer::USR_UID, $data['DEL_PREVIOUS_USR_UID'], Criteria::EQUAL );
+        $dataset = UsersPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        $data['DEL_PREVIOUS_USR_USERNAME']  = $aRow['USR_USERNAME'];
+        $data['DEL_PREVIOUS_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
+        $data['DEL_PREVIOUS_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
+
+        $criteria = new Criteria();
         $criteria->addSelectColumn(ContentPeer::CON_VALUE);
         $criteria->add( ContentPeer::CON_ID, $data['TAS_UID'], Criteria::EQUAL );
         $criteria->add( ContentPeer::CON_CATEGORY, 'TAS_TITLE', Criteria::EQUAL );
@@ -263,6 +276,9 @@ class ListPaused extends BaseListPaused {
         $criteria->addSelectColumn(ListPausedPeer::APP_RESTART_DATE);
         $criteria->addSelectColumn(ListPausedPeer::DEL_INDEX);
         $criteria->addSelectColumn(ListPausedPeer::DEL_PREVIOUS_USR_UID);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_PREVIOUS_USR_USERNAME);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_PREVIOUS_USR_FIRSTNAME);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_PREVIOUS_USR_LASTNAME);
         $criteria->addSelectColumn(ListPausedPeer::DEL_CURRENT_USR_FIRSTNAME);
         $criteria->addSelectColumn(ListPausedPeer::DEL_CURRENT_USR_LASTNAME);
         $criteria->addSelectColumn(ListPausedPeer::DEL_CURRENT_USR_USERNAME);

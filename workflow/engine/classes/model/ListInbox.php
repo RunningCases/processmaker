@@ -322,6 +322,9 @@ class ListInbox extends BaseListInbox
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
         $paged = isset($filters['paged']) ? $filters['paged'] : 1;
 
+        if ($filters['action'] == 'draft') {
+            $criteria->add( ListInboxPeer::DEL_INDEX, 1, Criteria::EQUAL );
+        }
         if ($dir == "DESC") {
             $criteria->addDescendingOrderByColumn($sort);
         } else {

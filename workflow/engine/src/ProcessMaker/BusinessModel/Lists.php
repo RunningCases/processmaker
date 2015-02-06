@@ -44,6 +44,8 @@ class Lists {
         $filters["sort"]     = isset( $dataList["sort"] ) ? $dataList["sort"] : "";
         $filters["dir"]      = isset( $dataList["dir"] ) ? $dataList["dir"] : "DESC";
 
+        $filters["action"]   = isset( $dataList["action"] ) ? $dataList["action"] : "";
+
         // Select list
         switch ($listName) {
             case 'inbox':
@@ -134,7 +136,30 @@ class Lists {
         $result = $list->loadList($userUid, $filters);
         if (!empty($result)) {
             foreach ($result as &$value) {
-                $value = array_change_key_case($value, CASE_LOWER);
+                if (isset($value['DEL_PREVIOUS_USR_UID'])) {
+                    $value['PREVIOUS_USR_UID']       = $value['DEL_PREVIOUS_USR_UID'];
+                    $value['PREVIOUS_USR_USERNAME']  = $value['DEL_PREVIOUS_USR_USERNAME'];
+                    $value['PREVIOUS_USR_FIRSTNAME'] = $value['DEL_PREVIOUS_USR_FIRSTNAME'];
+                    $value['PREVIOUS_USR_LASTNAME']  = $value['DEL_PREVIOUS_USR_LASTNAME'];
+                }
+                if (isset($value['DEL_DUE_DATE'])) {
+                    $value['DEL_TASK_DUE_DATE'] = $value['DEL_DUE_DATE'];
+                }
+                if (isset($value['APP_PAUSED_DATE'])) {
+                    $value['APP_UPDATE_DATE']   = $value['APP_PAUSED_DATE'];
+                }
+                if (isset($value['DEL_CURRENT_USR_USERNAME'])) {
+                    $value['USR_USERNAME']      = $value['DEL_CURRENT_USR_USERNAME'];
+                    $value['USR_FIRSTNAME']     = $value['DEL_CURRENT_USR_FIRSTNAME'];
+                    $value['USR_LASTNAME']      = $value['DEL_CURRENT_USR_LASTNAME'];
+                    $value['APP_UPDATE_DATE']   = $value['DEL_DELEGATE_DATE'];
+                }
+                if (isset($value['APP_STATUS'])) {
+                    $value['APP_STATUS_LABEL']  = G::LoadTranslation( "ID_{$value['APP_STATUS']}" );
+                }
+
+
+                //$value = array_change_key_case($value, CASE_LOWER);
             }
         }
 
@@ -152,6 +177,7 @@ class Lists {
             $filtersData['date_to']     = $filters["dateTo"];
             $response['filters']        = $filtersData;
             $response['data']           = $result;
+            $response['totalCount']     = $list->countTotal($userUid, $filters);
         } else {
             $response = $result;
         }

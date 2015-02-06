@@ -100,6 +100,24 @@ abstract class BaseListPaused extends BaseObject implements Persistent
     protected $del_previous_usr_uid = '';
 
     /**
+     * The value for the del_previous_usr_username field.
+     * @var        string
+     */
+    protected $del_previous_usr_username = '';
+
+    /**
+     * The value for the del_previous_usr_firstname field.
+     * @var        string
+     */
+    protected $del_previous_usr_firstname = '';
+
+    /**
+     * The value for the del_previous_usr_lastname field.
+     * @var        string
+     */
+    protected $del_previous_usr_lastname = '';
+
+    /**
      * The value for the del_current_usr_username field.
      * @var        string
      */
@@ -327,6 +345,39 @@ abstract class BaseListPaused extends BaseObject implements Persistent
     {
 
         return $this->del_previous_usr_uid;
+    }
+
+    /**
+     * Get the [del_previous_usr_username] column value.
+     * 
+     * @return     string
+     */
+    public function getDelPreviousUsrUsername()
+    {
+
+        return $this->del_previous_usr_username;
+    }
+
+    /**
+     * Get the [del_previous_usr_firstname] column value.
+     * 
+     * @return     string
+     */
+    public function getDelPreviousUsrFirstname()
+    {
+
+        return $this->del_previous_usr_firstname;
+    }
+
+    /**
+     * Get the [del_previous_usr_lastname] column value.
+     * 
+     * @return     string
+     */
+    public function getDelPreviousUsrLastname()
+    {
+
+        return $this->del_previous_usr_lastname;
     }
 
     /**
@@ -748,6 +799,72 @@ abstract class BaseListPaused extends BaseObject implements Persistent
     } // setDelPreviousUsrUid()
 
     /**
+     * Set the value of [del_previous_usr_username] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setDelPreviousUsrUsername($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->del_previous_usr_username !== $v || $v === '') {
+            $this->del_previous_usr_username = $v;
+            $this->modifiedColumns[] = ListPausedPeer::DEL_PREVIOUS_USR_USERNAME;
+        }
+
+    } // setDelPreviousUsrUsername()
+
+    /**
+     * Set the value of [del_previous_usr_firstname] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setDelPreviousUsrFirstname($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->del_previous_usr_firstname !== $v || $v === '') {
+            $this->del_previous_usr_firstname = $v;
+            $this->modifiedColumns[] = ListPausedPeer::DEL_PREVIOUS_USR_FIRSTNAME;
+        }
+
+    } // setDelPreviousUsrFirstname()
+
+    /**
+     * Set the value of [del_previous_usr_lastname] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setDelPreviousUsrLastname($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->del_previous_usr_lastname !== $v || $v === '') {
+            $this->del_previous_usr_lastname = $v;
+            $this->modifiedColumns[] = ListPausedPeer::DEL_PREVIOUS_USR_LASTNAME;
+        }
+
+    } // setDelPreviousUsrLastname()
+
+    /**
      * Set the value of [del_current_usr_username] column.
      * 
      * @param      string $v new value
@@ -963,26 +1080,32 @@ abstract class BaseListPaused extends BaseObject implements Persistent
 
             $this->del_previous_usr_uid = $rs->getString($startcol + 11);
 
-            $this->del_current_usr_username = $rs->getString($startcol + 12);
+            $this->del_previous_usr_username = $rs->getString($startcol + 12);
 
-            $this->del_current_usr_firstname = $rs->getString($startcol + 13);
+            $this->del_previous_usr_firstname = $rs->getString($startcol + 13);
 
-            $this->del_current_usr_lastname = $rs->getString($startcol + 14);
+            $this->del_previous_usr_lastname = $rs->getString($startcol + 14);
 
-            $this->del_delegate_date = $rs->getTimestamp($startcol + 15, null);
+            $this->del_current_usr_username = $rs->getString($startcol + 15);
 
-            $this->del_init_date = $rs->getTimestamp($startcol + 16, null);
+            $this->del_current_usr_firstname = $rs->getString($startcol + 16);
 
-            $this->del_due_date = $rs->getTimestamp($startcol + 17, null);
+            $this->del_current_usr_lastname = $rs->getString($startcol + 17);
 
-            $this->del_priority = $rs->getString($startcol + 18);
+            $this->del_delegate_date = $rs->getTimestamp($startcol + 18, null);
+
+            $this->del_init_date = $rs->getTimestamp($startcol + 19, null);
+
+            $this->del_due_date = $rs->getTimestamp($startcol + 20, null);
+
+            $this->del_priority = $rs->getString($startcol + 21);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 19; // 19 = ListPausedPeer::NUM_COLUMNS - ListPausedPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 22; // 22 = ListPausedPeer::NUM_COLUMNS - ListPausedPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ListPaused object", $e);
@@ -1223,24 +1346,33 @@ abstract class BaseListPaused extends BaseObject implements Persistent
                 return $this->getDelPreviousUsrUid();
                 break;
             case 12:
-                return $this->getDelCurrentUsrUsername();
+                return $this->getDelPreviousUsrUsername();
                 break;
             case 13:
-                return $this->getDelCurrentUsrFirstname();
+                return $this->getDelPreviousUsrFirstname();
                 break;
             case 14:
-                return $this->getDelCurrentUsrLastname();
+                return $this->getDelPreviousUsrLastname();
                 break;
             case 15:
-                return $this->getDelDelegateDate();
+                return $this->getDelCurrentUsrUsername();
                 break;
             case 16:
-                return $this->getDelInitDate();
+                return $this->getDelCurrentUsrFirstname();
                 break;
             case 17:
-                return $this->getDelDueDate();
+                return $this->getDelCurrentUsrLastname();
                 break;
             case 18:
+                return $this->getDelDelegateDate();
+                break;
+            case 19:
+                return $this->getDelInitDate();
+                break;
+            case 20:
+                return $this->getDelDueDate();
+                break;
+            case 21:
                 return $this->getDelPriority();
                 break;
             default:
@@ -1275,13 +1407,16 @@ abstract class BaseListPaused extends BaseObject implements Persistent
             $keys[9] => $this->getAppPausedDate(),
             $keys[10] => $this->getAppRestartDate(),
             $keys[11] => $this->getDelPreviousUsrUid(),
-            $keys[12] => $this->getDelCurrentUsrUsername(),
-            $keys[13] => $this->getDelCurrentUsrFirstname(),
-            $keys[14] => $this->getDelCurrentUsrLastname(),
-            $keys[15] => $this->getDelDelegateDate(),
-            $keys[16] => $this->getDelInitDate(),
-            $keys[17] => $this->getDelDueDate(),
-            $keys[18] => $this->getDelPriority(),
+            $keys[12] => $this->getDelPreviousUsrUsername(),
+            $keys[13] => $this->getDelPreviousUsrFirstname(),
+            $keys[14] => $this->getDelPreviousUsrLastname(),
+            $keys[15] => $this->getDelCurrentUsrUsername(),
+            $keys[16] => $this->getDelCurrentUsrFirstname(),
+            $keys[17] => $this->getDelCurrentUsrLastname(),
+            $keys[18] => $this->getDelDelegateDate(),
+            $keys[19] => $this->getDelInitDate(),
+            $keys[20] => $this->getDelDueDate(),
+            $keys[21] => $this->getDelPriority(),
         );
         return $result;
     }
@@ -1350,24 +1485,33 @@ abstract class BaseListPaused extends BaseObject implements Persistent
                 $this->setDelPreviousUsrUid($value);
                 break;
             case 12:
-                $this->setDelCurrentUsrUsername($value);
+                $this->setDelPreviousUsrUsername($value);
                 break;
             case 13:
-                $this->setDelCurrentUsrFirstname($value);
+                $this->setDelPreviousUsrFirstname($value);
                 break;
             case 14:
-                $this->setDelCurrentUsrLastname($value);
+                $this->setDelPreviousUsrLastname($value);
                 break;
             case 15:
-                $this->setDelDelegateDate($value);
+                $this->setDelCurrentUsrUsername($value);
                 break;
             case 16:
-                $this->setDelInitDate($value);
+                $this->setDelCurrentUsrFirstname($value);
                 break;
             case 17:
-                $this->setDelDueDate($value);
+                $this->setDelCurrentUsrLastname($value);
                 break;
             case 18:
+                $this->setDelDelegateDate($value);
+                break;
+            case 19:
+                $this->setDelInitDate($value);
+                break;
+            case 20:
+                $this->setDelDueDate($value);
+                break;
+            case 21:
                 $this->setDelPriority($value);
                 break;
         } // switch()
@@ -1442,31 +1586,43 @@ abstract class BaseListPaused extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[12], $arr)) {
-            $this->setDelCurrentUsrUsername($arr[$keys[12]]);
+            $this->setDelPreviousUsrUsername($arr[$keys[12]]);
         }
 
         if (array_key_exists($keys[13], $arr)) {
-            $this->setDelCurrentUsrFirstname($arr[$keys[13]]);
+            $this->setDelPreviousUsrFirstname($arr[$keys[13]]);
         }
 
         if (array_key_exists($keys[14], $arr)) {
-            $this->setDelCurrentUsrLastname($arr[$keys[14]]);
+            $this->setDelPreviousUsrLastname($arr[$keys[14]]);
         }
 
         if (array_key_exists($keys[15], $arr)) {
-            $this->setDelDelegateDate($arr[$keys[15]]);
+            $this->setDelCurrentUsrUsername($arr[$keys[15]]);
         }
 
         if (array_key_exists($keys[16], $arr)) {
-            $this->setDelInitDate($arr[$keys[16]]);
+            $this->setDelCurrentUsrFirstname($arr[$keys[16]]);
         }
 
         if (array_key_exists($keys[17], $arr)) {
-            $this->setDelDueDate($arr[$keys[17]]);
+            $this->setDelCurrentUsrLastname($arr[$keys[17]]);
         }
 
         if (array_key_exists($keys[18], $arr)) {
-            $this->setDelPriority($arr[$keys[18]]);
+            $this->setDelDelegateDate($arr[$keys[18]]);
+        }
+
+        if (array_key_exists($keys[19], $arr)) {
+            $this->setDelInitDate($arr[$keys[19]]);
+        }
+
+        if (array_key_exists($keys[20], $arr)) {
+            $this->setDelDueDate($arr[$keys[20]]);
+        }
+
+        if (array_key_exists($keys[21], $arr)) {
+            $this->setDelPriority($arr[$keys[21]]);
         }
 
     }
@@ -1526,6 +1682,18 @@ abstract class BaseListPaused extends BaseObject implements Persistent
 
         if ($this->isColumnModified(ListPausedPeer::DEL_PREVIOUS_USR_UID)) {
             $criteria->add(ListPausedPeer::DEL_PREVIOUS_USR_UID, $this->del_previous_usr_uid);
+        }
+
+        if ($this->isColumnModified(ListPausedPeer::DEL_PREVIOUS_USR_USERNAME)) {
+            $criteria->add(ListPausedPeer::DEL_PREVIOUS_USR_USERNAME, $this->del_previous_usr_username);
+        }
+
+        if ($this->isColumnModified(ListPausedPeer::DEL_PREVIOUS_USR_FIRSTNAME)) {
+            $criteria->add(ListPausedPeer::DEL_PREVIOUS_USR_FIRSTNAME, $this->del_previous_usr_firstname);
+        }
+
+        if ($this->isColumnModified(ListPausedPeer::DEL_PREVIOUS_USR_LASTNAME)) {
+            $criteria->add(ListPausedPeer::DEL_PREVIOUS_USR_LASTNAME, $this->del_previous_usr_lastname);
         }
 
         if ($this->isColumnModified(ListPausedPeer::DEL_CURRENT_USR_USERNAME)) {
@@ -1641,6 +1809,12 @@ abstract class BaseListPaused extends BaseObject implements Persistent
         $copyObj->setAppRestartDate($this->app_restart_date);
 
         $copyObj->setDelPreviousUsrUid($this->del_previous_usr_uid);
+
+        $copyObj->setDelPreviousUsrUsername($this->del_previous_usr_username);
+
+        $copyObj->setDelPreviousUsrFirstname($this->del_previous_usr_firstname);
+
+        $copyObj->setDelPreviousUsrLastname($this->del_previous_usr_lastname);
 
         $copyObj->setDelCurrentUsrUsername($this->del_current_usr_username);
 

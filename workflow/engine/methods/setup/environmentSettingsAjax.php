@@ -36,12 +36,16 @@ switch ($request) {
     case "save":
         $conf = new Configurations();
         $config = $conf->getConfiguration("ENVIRONMENT_SETTINGS", "" );
+        if (is_numeric($config)) {
+            $config = array();
+        }
         $config['format'] = $_POST["userFormat"];
         $config['dateFormat'] = $_POST["dateFormat"];
         $config['startCaseHideProcessInf'] = ((isset( $_POST["hideProcessInf"] )) ? true : false);
         $config['casesListDateFormat'] = $_POST["casesListDateFormat"];
         $config['casesListRowNumber'] = intval( $_POST["casesListRowNumber"] );
         $config['casesListRefreshTime'] = intval( $_POST["txtCasesRefreshTime"]);
+
 
         $conf->aConfig = $config;
         $conf->saveConfig( "ENVIRONMENT_SETTINGS", "" );

@@ -50,7 +50,8 @@ class Lists extends Api
         $search = '',
         $filter = '',
         $date_from = '',
-        $date_to = ''
+        $date_to = '',
+        $action = ''
     ) {
         try {
             $dataList['userId'] = $this->getUserId();
@@ -68,6 +69,8 @@ class Lists extends Api
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
             $dataList['dateTo']   = $date_to;
+
+            $dataList['action']   = $action;
 
             $lists = new \ProcessMaker\BusinessModel\Lists();
             $response = $lists->getList('inbox', $dataList);

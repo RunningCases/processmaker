@@ -89,6 +89,12 @@ class ListPausedMapBuilder
 
         $tMap->addColumn('DEL_PREVIOUS_USR_UID', 'DelPreviousUsrUid', 'string', CreoleTypes::VARCHAR, false, 32);
 
+        $tMap->addColumn('DEL_PREVIOUS_USR_USERNAME', 'DelPreviousUsrUsername', 'string', CreoleTypes::VARCHAR, false, 100);
+
+        $tMap->addColumn('DEL_PREVIOUS_USR_FIRSTNAME', 'DelPreviousUsrFirstname', 'string', CreoleTypes::VARCHAR, false, 50);
+
+        $tMap->addColumn('DEL_PREVIOUS_USR_LASTNAME', 'DelPreviousUsrLastname', 'string', CreoleTypes::VARCHAR, false, 50);
+
         $tMap->addColumn('DEL_CURRENT_USR_USERNAME', 'DelCurrentUsrUsername', 'string', CreoleTypes::VARCHAR, false, 100);
 
         $tMap->addColumn('DEL_CURRENT_USR_FIRSTNAME', 'DelCurrentUsrFirstname', 'string', CreoleTypes::VARCHAR, false, 50);
