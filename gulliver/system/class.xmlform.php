@@ -3443,11 +3443,12 @@ class XmlForm_Field_Hidden extends XmlForm_Field
                 }
             }
         }
+        //$html .= 'value="' . $this->htmlentities( $value, ENT_QUOTES, 'utf-8' ) . '" ';
         if ($this->mode === 'edit') {
-            return '<input id="form[' . $this->name . ']" ' . $this->NSFieldType() . ' name="form[' . $this->name . ']" type=\'hidden\' value=\'' . $value . '\'/>';
+            return '<input id="form[' . $this->name . ']" ' . $this->NSFieldType() . ' name="form[' . $this->name . ']" type=\'hidden\' value=\'' . $this->htmlentities( $value, ENT_QUOTES, 'utf-8' ) . '\'/>';
         } elseif ($this->mode === 'view') {
             //a button? who wants a hidden field be showed like a button?? very strange.
-            return '<input id="form[' . $this->name . ']" ' . $this->NSFieldType() . ' name="form[' . $this->name . ']" type=\'text\' value=\'' . $value . '\' style="display:none"/>';
+            return '<input id="form[' . $this->name . ']" ' . $this->NSFieldType() . ' name="form[' . $this->name . ']" type=\'text\' value=\'' . $this->htmlentities( $value, ENT_QUOTES, 'utf-8' ) . '\' style="display:none"/>';
         } else {
             return $this->htmlentities( $value, ENT_COMPAT, 'utf-8' );
         }
