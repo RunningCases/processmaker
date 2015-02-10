@@ -1,4 +1,10 @@
 <?php
+require_once 'classes/model/AppDelegation.php';
+$delegation = new AppDelegation();
+if( $delegation->alreadyRouted($_SESSION['APPLICATION'],$_SESSION['INDEX']) ) {  
+    G::header('location: ../cases/casesListExtJs');
+}  
+
 if (!isset($_SESSION['USER_LOGGED'])) {
       G::SendTemporalMessage( 'ID_LOGIN_AGAIN', 'warning', 'labels' );
       die( '<script type="text/javascript">
