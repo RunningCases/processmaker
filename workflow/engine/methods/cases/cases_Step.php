@@ -3,6 +3,7 @@ require_once 'classes/model/AppDelegation.php';
 $delegation = new AppDelegation();
 if( $delegation->alreadyRouted($_SESSION['APPLICATION'],$_SESSION['INDEX']) ) {  
     G::header('location: ../cases/casesListExtJs');
+    die();
 }  
 
 if (!isset($_SESSION['USER_LOGGED'])) {
