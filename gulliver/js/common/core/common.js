@@ -1915,6 +1915,7 @@ function msgBox(msg, type, callbackAccept, callbackCancel){
 
 	switch(type){
 		case 'alert':
+    
         if (leimnud.browser.isIE) {
             new leimnud.module.app.alert().make({
                 label: msg,

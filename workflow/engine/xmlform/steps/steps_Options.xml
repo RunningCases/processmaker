@@ -44,6 +44,7 @@
   }
   function stepDelete( uid, stepPos  ){
       PROCESSMAP_STEP_EDIT = true;
+      
       if (leimnud.browser.isIE) {
         new leimnud.module.app.confirm().make({label:'@#CONFIRM',width:450, height:110, action:function(){
         ajax_function('@G::encryptlink(@#URL_STEP_DELETE)','','STEP_UID='+uid+'&TASK=@#TASK&STEP_POSITION='+stepPos,'POST');
