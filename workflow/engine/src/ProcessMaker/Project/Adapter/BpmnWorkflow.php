@@ -238,7 +238,7 @@ class BpmnWorkflow extends Project\Bpmn
                         $event = \BpmnEventPeer::retrieveByPK($data["FLO_ELEMENT_ORIGIN"]);
 
                         // setting as start task
-                        if ($event && $event->getEvnType() == "START") {
+                        if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "EMPTY") {
                             $this->wp->setStartTask($data["FLO_ELEMENT_DEST"]);
                         }
 
@@ -284,7 +284,7 @@ class BpmnWorkflow extends Project\Bpmn
         ) {
             $event = \BpmnEventPeer::retrieveByPK($flowBefore->getFloElementOrigin());
 
-            if (!is_null($event) && $event->getEvnType() == "START") {
+            if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "EMPTY") {
                 //Remove as start task
                 $this->wp->setStartTask($flowBefore->getFloElementDest(), false);
 
@@ -358,7 +358,7 @@ class BpmnWorkflow extends Project\Bpmn
             if (is_null($bpmnFlow)) {
                 $event = \BpmnEventPeer::retrieveByPK($flow->getFloElementOrigin());
 
-                if (!is_null($event) && $event->getEvnType() == "START") {
+                if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "EMPTY") {
                     $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
 
                     if (!is_null($activity)) {
@@ -390,7 +390,7 @@ class BpmnWorkflow extends Project\Bpmn
             switch ($flow->getFloElementOriginType()) {
                 case "bpmnActivity":
                     switch ($flow->getFloElementDestType()) {
-                        // activity->activity
+                        //Activity1 -> Activity2
                         case "bpmnActivity":
                             $this->wp->removeRouteFromTo($flow->getFloElementOrigin(), $flow->getFloElementDest());
                             break;
@@ -411,12 +411,12 @@ class BpmnWorkflow extends Project\Bpmn
         $eventUid = parent::addEvent($data);
         $event = \BpmnEventPeer::retrieveByPK($eventUid);
 
-        // create case scheduler
+        //Delete case scheduler
         if ($event && $event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
             $this->wp->addCaseScheduler($eventUid);
         }
 
-        // create web entry
+        //Delete WebEntry-Event
         if ($event && $event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
             $this->wp->addWebEntry($eventUid);
         }
@@ -782,11 +782,13 @@ class BpmnWorkflow extends Project\Bpmn
         $result = array();
 
         $projectData['prj_uid'] = $prjUid;
+
         $bwp = BpmnWorkflow::load($prjUid);
+
         $projectRecord = array_change_key_case($projectData, CASE_UPPER);
+
         $bwp->update($projectRecord);
 
-        ////
         /*
          * Diagram's Laneset Handling
          */
@@ -831,7 +833,6 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
-        ////
         /*
          * Diagram's Lane Handling
          */
@@ -899,7 +900,7 @@ class BpmnWorkflow extends Project\Bpmn
                     //Activity
 
                     //Update UIDs
-                    if ($activityData["BOU_CONTAINER"] == "bpmnPool" || $activityData["BOU_CONTAINER"] == "bpmnLane") {
+                    if ($activityData["BOU_CONTAINER"] == "bpmnPool" || $activityData["BOU_CONTAINER"] == "bpmnLane" || $activityData["BOU_CONTAINER"] == "bpmnActivity") {
                         foreach ($result as $value) {
                             if ($activityData["BOU_ELEMENT"] == $value["old_uid"]) {
                                 $activityData["BOU_ELEMENT"] = $value["new_uid"];
@@ -953,7 +954,7 @@ class BpmnWorkflow extends Project\Bpmn
                     //Artifact
 
                     //Update UIDs
-                    if ($artifactData["BOU_CONTAINER"] == "bpmnPool" || $artifactData["BOU_CONTAINER"] == "bpmnLane") {
+                    if ($artifactData["BOU_CONTAINER"] == "bpmnPool" || $artifactData["BOU_CONTAINER"] == "bpmnLane" || $artifactData["BOU_CONTAINER"] == "bpmnActivity") {
                         foreach ($result as $value) {
                             if ($artifactData["BOU_ELEMENT"] == $value["old_uid"]) {
                                 $artifactData["BOU_ELEMENT"] = $value["new_uid"];
@@ -1013,7 +1014,7 @@ class BpmnWorkflow extends Project\Bpmn
                     //Gateway
 
                     //Update UIDs
-                    if ($gatewayData["BOU_CONTAINER"] == "bpmnPool" || $gatewayData["BOU_CONTAINER"] == "bpmnLane") {
+                    if ($gatewayData["BOU_CONTAINER"] == "bpmnPool" || $gatewayData["BOU_CONTAINER"] == "bpmnLane" || $gatewayData["BOU_CONTAINER"] == "bpmnActivity") {
                         foreach ($result as $value) {
                             if ($gatewayData["BOU_ELEMENT"] == $value["old_uid"]) {
                                 $gatewayData["BOU_ELEMENT"] = $value["new_uid"];
@@ -1087,7 +1088,7 @@ class BpmnWorkflow extends Project\Bpmn
                     //Event
 
                     //Update UIDs
-                    if ($eventData["BOU_CONTAINER"] == "bpmnPool" || $eventData["BOU_CONTAINER"] == "bpmnLane") {
+                    if ($eventData["BOU_CONTAINER"] == "bpmnPool" || $eventData["BOU_CONTAINER"] == "bpmnLane" || $eventData["BOU_CONTAINER"] == "bpmnActivity") {
                         foreach ($result as $value) {
                             if ($eventData["BOU_ELEMENT"] == $value["old_uid"]) {
                                 $eventData["BOU_ELEMENT"] = $value["new_uid"];
@@ -1143,7 +1144,7 @@ class BpmnWorkflow extends Project\Bpmn
                     //Data
 
                     //Update UIDs
-                    if ($dataObjectData["BOU_CONTAINER"] == "bpmnPool" || $dataObjectData["BOU_CONTAINER"] == "bpmnLane") {
+                    if ($dataObjectData["BOU_CONTAINER"] == "bpmnPool" || $dataObjectData["BOU_CONTAINER"] == "bpmnLane" || $dataObjectData["BOU_CONTAINER"] == "bpmnActivity") {
                         foreach ($result as $value) {
                             if ($dataObjectData["BOU_ELEMENT"] == $value["old_uid"]) {
                                 $dataObjectData["BOU_ELEMENT"] = $value["new_uid"];
@@ -1184,7 +1185,6 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
-        ////
         /*
          * Diagram's Participant Handling
          */
@@ -1200,7 +1200,7 @@ class BpmnWorkflow extends Project\Bpmn
                     //Participant
 
                     //Update UIDs
-                    if ($participantData["BOU_CONTAINER"] == "bpmnPool" || $participantData["BOU_CONTAINER"] == "bpmnLane") {
+                    if ($participantData["BOU_CONTAINER"] == "bpmnPool" || $participantData["BOU_CONTAINER"] == "bpmnLane" || $participantData["BOU_CONTAINER"] == "bpmnActivity") {
                         foreach ($result as $value) {
                             if ($participantData["BOU_ELEMENT"] == $value["old_uid"]) {
                                 $participantData["BOU_ELEMENT"] = $value["new_uid"];
@@ -1241,7 +1241,6 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
-
         /*
          * Diagram's Flows Handling
          */
@@ -1252,16 +1251,23 @@ class BpmnWorkflow extends Project\Bpmn
 
             // if it is a new flow record
             if ($forceInsert || ($generateUid && !\BpmnFlow::exists($flowData["FLO_UID"]))) {
-                $oldFloUid = $flowData["FLO_UID"];
+                $uidOld = $flowData["FLO_UID"];
+
                 $flowData["FLO_UID"] = Util\Common::generateUID();
-                $result[] = array("object" => "flow", "new_uid" => $flowData["FLO_UID"], "old_uid" => $oldFloUid);
+                $result[] = array(
+                    "object" => "flow",
+                    "old_uid" => $uidOld,
+                    "new_uid" => $flowData["FLO_UID"]
+                );
 
                 $mappedUid = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result);
+
                 if ($mappedUid !== false) {
                     $flowData["FLO_ELEMENT_ORIGIN"] = $mappedUid;
                 }
 
                 $mappedUid = self::mapUid($flowData["FLO_ELEMENT_DEST"], $result);
+
                 if ($mappedUid !== false) {
                     $flowData["FLO_ELEMENT_DEST"] = $mappedUid;
                 }
