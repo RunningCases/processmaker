@@ -208,6 +208,18 @@ class Processes
      * @param string $sUid
      * @return boolean
      */
+    public function processVariableExists ($sUid = '')
+    {
+        $oProcessVariable = new ProcessVariables();
+        return $oProcessVariable->ProcessVariableExists( $sUid );
+    }
+
+    /**
+     * verify if the object exists
+     *
+     * @param string $sUid
+     * @return boolean
+     */
     public function triggerExists ($sUid = '')
     {
         $oTrigger = new Triggers();
@@ -639,6 +651,61 @@ class Processes
     }
 
     /**
+     * get an unused process variables GUID
+     *
+     * @return $sProUid
+     */
+    public function getUnusedProcessVariableGUID ()
+    {
+        do {
+            $sNewUid = G::generateUniqueID();
+        } while ($this->processVariableExists( $sNewUid ));
+        return $sNewUid;
+    }
+
+    /**
+     * Get an unused unique id for Message-Type
+     *
+     * @return string $uid
+     */
+    public function getUnusedMessageTypeUid()
+    {
+        try {
+            $messageType = new \ProcessMaker\BusinessModel\MessageType();
+
+            do {
+                $newUid = \ProcessMaker\Util\Common::generateUID();
+            } while ($messageType->exists($newUid));
+
+            return $newUid;
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+    }
+
+    /**
+     * Get an unused unique id for Message-Type-Variable
+     *
+     * @return string $uid
+     */
+    public function getUnusedMessageTypeVariableUid()
+    {
+        try {
+            $variable = new \ProcessMaker\BusinessModel\MessageType\Variable();
+
+            do {
+                $newUid = \ProcessMaker\Util\Common::generateUID();
+            } while ($variable->exists($newUid));
+
+            return $newUid;
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+    }
+
+    /**
      * change the GUID for a serialized process
      *
      * @param string $sProUid
@@ -769,6 +836,18 @@ class Processes
             }
         }
 
+        if (isset($oData->processVariables)) {
+            foreach ($oData->processVariables as $key => $value) {
+                $oData->processVariables[$key]["PRJ_UID"] = $sNewProUid;
+            }
+        }
+
+        if (isset($oData->messageType)) {
+            foreach ($oData->messageType as $key => $value) {
+                $oData->messageType[$key]["PRJ_UID"] = $sNewProUid;
+            }
+        }
+
         return true;
     }
 
@@ -820,9 +899,14 @@ class Processes
         }
 
         if (isset( $oData->steps ) && is_array( $oData->steps )) {
-            foreach ($oData->steps as $key => $val) {
-                $newGuid = $map[$val['TAS_UID']];
-                $oData->steps[$key]['TAS_UID'] = $newGuid;
+            foreach ($oData->steps as $key => $value) {
+                $record = $value;
+
+                if (isset($map[$record["TAS_UID"]])) {
+                    $newUid = $map[$record["TAS_UID"]];
+
+                    $oData->steps[$key]["TAS_UID"] = $newUid;
+                }
             }
         }
 
@@ -879,6 +963,29 @@ class Processes
             }
         }
 
+        if (isset($oData->webEntry)) {
+            foreach ($oData->webEntry as $key => $value) {
+                $record = $value;
+
+                if (isset($map[$record["TAS_UID"]])) {
+                    $newUid = $map[$record["TAS_UID"]];
+
+                    $oData->webEntry[$key]["TAS_UID"] = $newUid;
+                }
+            }
+        }
+
+        if (isset($oData->webEntryEvent)) {
+            foreach ($oData->webEntryEvent as $key => $value) {
+                $record = $value;
+
+                if (isset($map[$record["ACT_UID"]])) {
+                    $newUid = $map[$record["ACT_UID"]];
+
+                    $oData->webEntryEvent[$key]["ACT_UID"] = $newUid;
+                }
+            }
+        }
     }
 
     /**
@@ -963,6 +1070,29 @@ class Processes
             }
         }
 
+        if (isset($oData->webEntry)) {
+            foreach ($oData->webEntry as $key => $value) {
+                $record = $value;
+
+                if (isset($map[$record["DYN_UID"]])) {
+                    $newUid = $map[$record["DYN_UID"]];
+
+                    $oData->webEntry[$key]["DYN_UID"] = $newUid;
+                }
+            }
+        }
+
+        if (isset($oData->webEntryEvent)) {
+            foreach ($oData->webEntryEvent as $key => $value) {
+                $record = $value;
+
+                if (isset($map[$record["DYN_UID"]])) {
+                    $newUid = $map[$record["DYN_UID"]];
+
+                    $oData->webEntryEvent[$key]["DYN_UID"] = $newUid;
+                }
+            }
+        }
     }
 
     /**
@@ -2106,6 +2236,102 @@ class Processes
     }
 
     /**
+     * Renew all the unique id for "Process User"
+     *
+     * @param $data Object with the data
+     *
+     * return void
+     */
+    public function renewAllProcessVariableUid(&$data)
+    {
+        try {
+            if (isset($data->processVariables)) {
+                $map = array();
+                foreach ($data->processVariables as $key => $val) {
+                    if (isset($val['VAR_UID'])) {
+                        $newGuid = $this->getUnusedProcessVariableGUID();
+                        $map[$val['VAR_UID']] = $newGuid;
+                        $data->processVariables[$key]['VAR_UID'] = $newGuid;
+                    }
+                }
+            }
+
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Renew all the unique id for Message-Type
+     *
+     * @param object $data Object with the data
+     *
+     * return void
+     */
+    public function renewAllMessageTypeUid(&$data)
+    {
+        try {
+            $map = array();
+
+            foreach ($data->messageType as $key => $value) {
+                $record = $value;
+
+                if (isset($record["MSGT_UID"])) {
+                    $newUid = $this->getUnusedMessageTypeUid();
+
+                    $map[$record["MSGT_UID"]] = $newUid;
+                    $data->messageType[$key]["MSGT_UID"] = $newUid;
+                }
+            }
+
+            $data->uid["MESSAGE_TYPE"] = $map;
+
+            if (isset($data->messageTypeVariable)) {
+                foreach ($data->messageTypeVariable as $key => $value) {
+                    $record = $value;
+
+                    if (isset($map[$record["MSGT_UID"]])) {
+                        $newUid = $map[$record["MSGT_UID"]];
+
+                        $data->messageTypeVariable[$key]["MSGT_UID"] = $newUid;
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Renew all the unique id for Message-Type-Variable
+     *
+     * @param object $data Object with the data
+     *
+     * return void
+     */
+    public function renewAllMessageTypeVariableUid(&$data)
+    {
+        try {
+            $map = array();
+
+            foreach ($data->messageTypeVariable as $key => $value) {
+                $record = $value;
+
+                if (isset($record["MSGTV_UID"])) {
+                    $newUid = $this->getUnusedMessageTypeVariableUid();
+
+                    $map[$record["MSGTV_UID"]] = $newUid;
+                    $data->messageTypeVariable[$key]["MSGTV_UID"] = $newUid;
+                }
+            }
+
+            $data->uid["MESSAGE_TYPE_VARIABLE"] = $map;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Renew the GUID's for all the Uids for all the elements
      *
      * @param $oData array.
@@ -2134,6 +2360,9 @@ class Processes
         $this->renewAllEvent( $oData );
         $this->renewAllCaseScheduler( $oData );
         $this->renewAllProcessUserUid($oData);
+        $this->renewAllProcessVariableUid($oData);
+        $this->renewAllMessageTypeUid($oData);
+        $this->renewAllMessageTypeVariableUid($oData);
     }
 
     /**
@@ -2693,6 +2922,162 @@ class Processes
     }
 
     /**
+     * Get all WebEntry records of a Process
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return an array with all WebEntry records of a Process
+     */
+    public function getWebEntries($processUid)
+    {
+        try {
+            $arrayWebEntry = array();
+
+            $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
+
+            //Get UIDs to exclude
+            $arrayWebEntryUidToExclude = array();
+
+            $criteria = new Criteria("workflow");
+
+            $criteria->setDistinct();
+            $criteria->addSelectColumn(WebEntryEventPeer::WEE_WE_UID);
+            $criteria->add(WebEntryEventPeer::PRJ_UID, $processUid, Criteria::EQUAL);
+
+            $rsCriteria = WebEntryEventPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayWebEntryUidToExclude[] = $row["WEE_WE_UID"];
+            }
+
+            //Get data
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(WebEntryPeer::WE_UID);
+            $criteria->add(WebEntryPeer::PRO_UID, $processUid, Criteria::EQUAL);
+            $criteria->add(WebEntryPeer::WE_UID, $arrayWebEntryUidToExclude, Criteria::NOT_IN);
+
+            $rsCriteria = WebEntryPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayWebEntry[] = $webEntry->getWebEntry($row["WE_UID"], true);
+            }
+
+            //Return
+            return $arrayWebEntry;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get all WebEntry-Event records of a Process
+     *
+     * @param string $processUid Unique id of Process
+     *
+     * return array Return an array with all WebEntry-Event records of a Process
+     */
+    public function getWebEntryEvents($processUid)
+    {
+        try {
+            $arrayWebEntryEvent = array();
+
+            $webEntryEvent = new \ProcessMaker\BusinessModel\WebEntryEvent();
+
+            //Get data
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(WebEntryEventPeer::WEE_UID);
+            $criteria->add(WebEntryEventPeer::PRJ_UID, $processUid, Criteria::EQUAL);
+
+            $rsCriteria = WebEntryEventPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayWebEntryEvent[] = $webEntryEvent->getWebEntryEvent($row["WEE_UID"], true);
+            }
+
+            //Return
+            return $arrayWebEntryEvent;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function getMessageTypes($processUid)
+    {
+        try {
+            $arrayMessageType = array();
+
+            $messageType = new \ProcessMaker\BusinessModel\MessageType();
+
+            //Get data
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(MessageTypePeer::MSGT_UID);
+            $criteria->add(MessageTypePeer::PRJ_UID, $processUid, Criteria::EQUAL);
+
+            $rsCriteria = MessageTypePeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayAux = $messageType->getMessageType($row["MSGT_UID"], true);
+
+                unset($arrayAux["MSGT_VARIABLES"]);
+
+                $arrayMessageType[] = $arrayAux;
+            }
+
+            //Return
+            return $arrayMessageType;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function getMessageTypeVariables($processUid)
+    {
+        try {
+            $arrayVariable = array();
+
+            $variable = new \ProcessMaker\BusinessModel\MessageType\Variable();
+
+            //Get data
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(MessageTypeVariablePeer::MSGTV_UID);
+
+            $criteria->addJoin(MessageTypePeer::MSGT_UID, MessageTypeVariablePeer::MSGT_UID, Criteria::LEFT_JOIN);
+
+            $criteria->add(MessageTypePeer::PRJ_UID, $processUid, Criteria::EQUAL);
+
+            $rsCriteria = MessageTypeVariablePeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayVariable[] = $variable->getMessageTypeVariable($row["MSGTV_UID"], true);
+            }
+
+            //Return
+            return $arrayVariable;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get Task User Rows from an array of data
      *
      * @param array $aTaskUser
@@ -2832,6 +3217,106 @@ class Processes
         }
     } #@!neyek
 
+    /**
+     * Create WebEntry records
+     *
+     * @param string $processUid     Unique id of Process
+     * @param string $userUidCreator Unique id of creator User
+     * @param array  $arrayData      Data
+     *
+     * return void
+     */
+    public function createWebEntry($processUid, $userUidCreator, array $arrayData)
+    {
+        try {
+            $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
+
+            foreach ($arrayData as $value) {
+                $record = $value;
+
+                $arrayWebEntryData = $webEntry->create($processUid, $userUidCreator, $record);
+            }
+        } catch (Exception $e) {
+            //throw $e;
+        }
+    }
+
+    /**
+     * Create WebEntry-Event records
+     *
+     * @param string $processUid     Unique id of Process
+     * @param string $userUidCreator Unique id of creator User
+     * @param array  $arrayData      Data
+     *
+     * return void
+     */
+    public function createWebEntryEvent($processUid, $userUidCreator, array $arrayData)
+    {
+        try {
+            $webEntryEvent = new \ProcessMaker\BusinessModel\WebEntryEvent();
+
+            foreach ($arrayData as $value) {
+                $record = $value;
+
+                $arrayWebEntryEventData = $webEntryEvent->create($processUid, $userUidCreator, $record);
+            }
+        } catch (Exception $e) {
+            //throw $e;
+        }
+    }
+
+    /**
+     * Create Message-Type records
+     *
+     * @param array $arrayData Data
+     *
+     * return void
+     */
+    public function createMessageType(array $arrayData)
+    {
+        try {
+            $messageType = new \ProcessMaker\BusinessModel\MessageType();
+
+            foreach ($arrayData as $value) {
+                $record = $value;
+
+                if ($messageType->exists($record["MSGT_UID"])) {
+                    $messageType->delete($record["MSGT_UID"]);
+                }
+
+                $result = $messageType->singleCreate($record);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Create Message-Type-Variable records
+     *
+     * @param array $arrayData Data
+     *
+     * return void
+     */
+    public function createMessageTypeVariable(array $arrayData)
+    {
+        try {
+            $variable = new \ProcessMaker\BusinessModel\MessageType\Variable();
+
+
+            foreach ($arrayData as $value) {
+                $record = $value;
+
+                if ($variable->exists($record["MSGTV_UID"])) {
+                    $variable->delete($record["MSGTV_UID"]);
+                }
+
+                $result = $variable->singleCreate($record);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 
     /**
      * Cleanup Report Tables References from an array of data
@@ -3017,14 +3502,14 @@ class Processes
         $oData->taskExtraProperties = $this->getTaskExtraPropertiesRows( $sProUid );
         $oData->processUser = $this->getProcessUser($sProUid);
         $oData->processVariables = $this->getProcessVariables($sProUid);
-
+        $oData->webEntry      = $this->getWebEntries($sProUid);
+        $oData->webEntryEvent = $this->getWebEntryEvents($sProUid);
+        $oData->messageType = $this->getMessageTypes($sProUid);
+        $oData->messageTypeVariable = $this->getMessageTypeVariables($sProUid);
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
         $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
-        //krumo ($oData);die;
-        //$oJSON = new Services_JSON();
-        //krumo ( $oJSON->encode($oData) );
-        //return $oJSON->encode($oData);
+        //Return
         return $oData;
     }
 
@@ -4022,6 +4507,8 @@ class Processes
 
     public function createProcessPropertiesFromData ($oData)
     {
+        $arrayProcessData = $oData->process;
+
         // (*) Creating process dependencies
         // creating the process category
         $this->createProcessCategoryRow( isset( $oData->processCategory ) ? $oData->processCategory : null );
@@ -4061,7 +4548,10 @@ class Processes
 
         $this->createProcessUser((isset($oData->processUser))? $oData->processUser : array());
         $this->createProcessVariables((isset($oData->processVariables))? $oData->processVariables : array());
-
+        $this->createWebEntry($arrayProcessData["PRO_UID"], $arrayProcessData["PRO_CREATE_USER"], (isset($oData->webEntry))? $oData->webEntry : array());
+        $this->createWebEntryEvent($arrayProcessData["PRO_UID"], $arrayProcessData["PRO_CREATE_USER"], (isset($oData->webEntryEvent))? $oData->webEntryEvent : array());
+        $this->createMessageType((isset($oData->messageType))? $oData->messageType : array());
+        $this->createMessageTypeVariable((isset($oData->messageTypeVariable))? $oData->messageTypeVariable : array());
     }
 
 
@@ -4431,13 +4921,16 @@ class Processes
     public function getDisabledCode($processUid = "")
     {
         try {
+            /*----------------------------------********---------------------------------*/
             G::LoadClass("codeScanner");
+            /*----------------------------------********---------------------------------*/
 
             $arrayDisabledCode = array();
 
             //Set variables
+            /*----------------------------------********---------------------------------*/
             $cs = new CodeScanner("DISABLED_CODE");
-
+            /*----------------------------------********---------------------------------*/
             $delimiter = DBAdapter::getStringDelimiter();
 
             //Processes

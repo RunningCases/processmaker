@@ -5,6 +5,8 @@
 var processesGrid;
 var store;
 var comboCategory;
+var winDesigner;
+
 
 /**
  * Global variables and variable initialization for import process.
@@ -61,8 +63,10 @@ Ext.onReady(function(){
         {name : 'CASES_COUNT_TO_DO', type:'float'},
         {name : 'CASES_COUNT_COMPLETED', type:'float'},
         {name : 'CASES_COUNT_CANCELLED', type:'float'},
-        {name : 'PROJECT_TYPE', type:'string'},
-        {name : "PRO_TYPE_PROCESS", type: "string"}
+        {name : 'PROJECT_TYPE', type:'string'}
+        /*----------------------------------********---------------------------------*/
+        ,{name : "PRO_TYPE_PROCESS", type: "string"}
+        /*----------------------------------********---------------------------------*/
       ]
     }),
 
@@ -218,8 +222,10 @@ Ext.onReady(function(){
         {header: _('ID_COMPLETED'), dataIndex: 'CASES_COUNT_COMPLETED', width: 70, align:'right'},
         {header: _('ID_CANCELLED'), dataIndex: 'CASES_COUNT_CANCELLED', width: 70, align:'right'},
         {header: _('ID_TOTAL_CASES'), dataIndex: 'CASES_COUNT', width: 75,renderer:function(v){return "<b>"+v+"</b>";}, align:'right'},
-        {header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 50, align:'center'},
-        {header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 75, align:"left"}
+        {header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 50, align:'center'}
+        /*----------------------------------********---------------------------------*/
+        ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 75, align:"left"}
+        /*----------------------------------********---------------------------------*/
       ]
     }),
     store: store,
@@ -300,6 +306,14 @@ Ext.onReady(function(){
           importProcessGlobal.processFileType = "pm";
           importProcess();
         }
+      },{
+        text: _('ID_IMPORT_BPMN'),
+        iconCls: 'silk-add',
+        icon: '/images/import.gif',
+        handler : function(){
+          importProcessGlobal.processFileType = "bpmn";
+          importProcessBpmn();
+        }  
       },{
         xtype: 'tbfill'
       },{
@@ -441,6 +455,7 @@ Ext.onReady(function(){
           id: "mnuGenerateBpmn",
           text: _("ID_GENERATE_BPMN_PROJECT"),
           iconCls: "button_menu_ext ss_sprite ss_page_white_go",
+          hidden: true,
           handler: function ()
           {
               generateBpmn();
@@ -568,7 +583,18 @@ function saveProcess()
             if (projectType == 'classicProject') {
               location.href = 'processes_Map?PRO_UID='+resp.result.PRO_UID;
             } else {
-              location.href = '../designer?prj_uid='+resp.result.PRO_UID;
+            	 if ( (navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1) ){
+            		 if ( typeof(winDesigner) == "undefined" || winDesigner.closed ){
+            			 winDesigner = window.open(
+                    			  "../designer?prj_uid="+resp.result.PRO_UID,
+                    			  '_blank'
+                    			);
+                  	 } else {
+                  		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
+                  	 }
+                 } else {
+                	 location.href = '../designer?prj_uid='+resp.result.PRO_UID;
+                 }
             }
           },
           failure: function(obj, resp) {
@@ -618,7 +644,18 @@ editProcess = function(typeParam)
       url = 'processes_Map?PRO_UID=' + pro_uid;
   }
 
-  location.href = url;
+  if ( ((navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1)) && (type == "bpmn") ) {
+	  if (typeof(winDesigner) == "undefined" || winDesigner.closed){
+		  winDesigner = window.open(
+				  url,
+				  '_blank'
+				);
+   	 } else {
+   		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
+   	 }
+  } else {
+	  location.href = url;
+  }
 }
 
 editNewProcess = function(){
@@ -923,7 +960,18 @@ importProcessExistGroup = function()
                     var sNewProUid       = resp_.sNewProUid;
 
                     if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                        window.location.href = "../designer?prj_uid=" + sNewProUid;
+                        if ((navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1) ) {
+                        	if (typeof(winDesigner) == "undefined" || winDesigner.closed){
+                        		winDesigner = window.open(
+                            			  "../designer?prj_uid=" + sNewProUid,
+                            			  '_blank'
+                            			);
+                        	} else {
+                        		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
+                        	}
+                        } else {
+                          window.location.href = "../designer?prj_uid=" + sNewProUid;
+                        }
                     } else {
                         window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                     }
@@ -1058,7 +1106,18 @@ importProcessExistProcess = function()
 
                     if (resp_.ExistGroupsInDatabase == 0) {
                         if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                            window.location.href = "../designer?prj_uid=" + sNewProUid;
+                            if ( (navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1)) {
+                            	if (typeof(winDesigner) == "undefined" || winDesigner.closed){
+                            		winDesigner = window.open(
+                                			  "../designer?prj_uid=" + sNewProUid,
+                                			  '_blank'
+                                			);
+                            	} else {
+                            		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
+                            	}
+                              } else {
+                                window.location.href = "../designer?prj_uid=" + sNewProUid;
+                              }
                         } else {
                             window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                         }
@@ -1185,7 +1244,18 @@ importProcess = function()
                             var sNewProUid = resp_.sNewProUid;
 
                             if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                                window.location.href = "../designer?prj_uid=" + sNewProUid;
+                            	 if ((navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1)) {
+                            		 if (typeof(winDesigner) == "undefined" || winDesigner.closed){
+                            			 winDesigner = window.open(
+                                    			  "../designer?prj_uid=" + sNewProUid,
+                                    			  '_blank'
+                                    			);
+                                  	 } else {
+                                  		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
+                                  	 }
+                                 } else {
+                                     window.location.href = "../designer?prj_uid=" + sNewProUid;
+                                 }
                             } else {
                                 window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                             }
@@ -1241,6 +1311,184 @@ importProcess = function()
     });
   w.show();
 }
+                    
+importProcessBpmn = function ()
+{
+    var w = new Ext.Window({
+        id: 'import_process_bpmn',
+        title: _('ID_IMPORT_PROCESS'),
+        width: 420,
+        height: 130,
+        modal: true,
+        autoScroll: false,
+        maximizable: false,
+        resizable: false,
+        items: [
+            new Ext.FormPanel({
+                id: 'uploader',
+                fileUpload: true,
+                width: 400,
+                height: 90,
+                frame: true,
+                title: _('ID_IMPORT_PROCESS'),
+                header: false,
+                autoHeight: false,
+                bodyStyle: 'padding: 10px 10px 0 10px;',
+                labelWidth: 50,
+                defaults: {
+                    anchor: '90%',
+                    allowBlank: false,
+                    msgTarget: 'side'
+                },
+                items: [
+                    {
+                        name: 'ajaxAction',
+                        xtype: 'hidden',
+                        value: 'uploadFileNewProcess'
+                    }, {
+                        name: 'processFileType',
+                        xtype: 'hidden',
+                        value: importProcessGlobal.processFileType
+                    },{
+                        name: 'createMode',
+                        xtype: 'hidden',
+                        value: 'create'
+                    }, {
+                        xtype: 'fileuploadfield',
+                        id: 'form-file',
+                        emptyText: _('ID_SELECT_PROCESS_FILE'),
+                        fieldLabel: _('ID_LAN_FILE'),
+                        name: 'PROCESS_FILENAME',
+                        buttonText: '',
+                        buttonCfg: {
+                            iconCls: 'upload-icon'
+                        }
+                    }
+                ],
+                buttons: [
+                    {
+                        text: _('ID_UPLOAD'),
+                        handler: function () {
+                            importProcessBpmnSubmit();
+                        }
+                    }, {
+                        text: _('ID_CANCEL'),
+                        handler: function () {
+                            w.close();
+                        }
+                    }
+                ]
+            })
+        ]
+    });
+    w.show();
+}
+
+var windowbpmnoption = new Ext.Window({
+    title: _('ID_IMPORT_PROCESS'),
+    header: false,
+    width: 420,
+    height: 200,
+    modal: true,
+    autoScroll: false,
+    maximizable: false,
+    resizable: false,
+    closeAction: 'hide',
+    items: [
+        {
+            xtype: 'panel',
+            border: false,
+            bodyStyle: 'padding:15px;background-color:#e8e8e8;',
+            items: [
+                {
+                    xtype: 'box',
+                    autoEl: {
+                        tag: 'div',
+                        html: '<div style="margin-bottom:15px;background-color:#e8e8e8;"><img style="display:inline-block;vertical-align:top;" src="/images/ext/default/window/icon-warning.gif"/><div style="display:inline-block;width:338px;margin-left:5px;">' +
+                                _('ID_IMPORT_ALREADY_EXISTS_BPMN') + "<br><br>" + _('ID_IMPORT_ALREADY_EXISTS_BPMN_NOTE') +
+                                '</div></div>'
+                    }
+                }
+            ]
+        }
+    ],
+    buttons: [
+        {
+            text: _('ID_CREATE_NEW'),
+            handler: function () {
+                Ext.getCmp('uploader').getForm().setValues({"createMode": "rename"})
+                importProcessBpmnSubmit();
+            }
+        }, {
+            text: _('ID_OVERWRITE'),
+            handler: function () {
+                Ext.getCmp('uploader').getForm().setValues({"createMode": "overwrite"})
+                importProcessBpmnSubmit();
+            }
+        }, {
+            text: _('ID_CANCEL'),
+            handler: function () {
+                Ext.getCmp('import_process_bpmn').close();
+                windowbpmnoption.hide();
+            }
+        }
+    ]
+});
+
+importProcessBpmnSubmit = function () {
+    windowbpmnoption.hide();
+    var uploader = Ext.getCmp('uploader');
+    if (uploader.getForm().isValid()) {
+        uploader.getForm().submit({
+            url: 'processes_Import_Bpmn',
+            waitMsg: _('ID_UPLOADING_PROCESS_FILE'),
+            waitTitle: "&nbsp;",
+            success: function (o, resp) {
+                var resp_ = Ext.util.JSON.decode(resp.response.responseText);
+                if (resp_.success === "error") {
+                    Ext.MessageBox.show({
+                        title: '',
+                        msg: resp_.catchMessage,
+                        buttons: Ext.MessageBox.OK,
+                        animEl: 'mb9',
+                        fn: function () {
+                        },
+                        icon: Ext.MessageBox.ERROR
+                    });
+                    return;
+                }
+                if (resp_.success === "confirm") {
+                    windowbpmnoption.show();
+                    return;
+                }
+                Ext.getCmp('import_process_bpmn').close();
+                var stringxml = document.createElement("input");
+                stringxml.type = "hidden";
+                stringxml.name = "stringBpmn";
+                stringxml.value = resp_.stringBpmn;
+                var form = document.createElement("form");
+                document.body.appendChild(form);
+                form.appendChild(stringxml);
+                form.style.display = "none";
+                form.action = "../designer?prj_uid=" + resp_.prj_uid;
+                form.method = "POST";
+                form.submit();
+            },
+            failure: function (o, resp) {
+                Ext.getCmp('import_process_bpmn').close();
+                Ext.MessageBox.show({
+                    title: '',
+                    msg: resp.catchMessage,
+                    buttons: Ext.MessageBox.OK,
+                    animEl: 'mb9',
+                    fn: function () {
+                    },
+                    icon: Ext.MessageBox.ERROR
+                });
+            }
+        });
+    }
+};
 
 function activeDeactive(){
   var rows = processesGrid.getSelectionModel().getSelections();

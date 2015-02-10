@@ -173,7 +173,7 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
   caseNotesWindow = new Ext.Window({
     title: _('ID_CASES_NOTES'), //Title of the Window
     id: 'caseNotesWindowPanel', //ID of the Window Panel
-    width: 350, //Width of the Window
+    width: 380, //Width of the Window
     resizable: true, //Resize of the Window, if false - it cannot be resized
     closable: true, //Hide close button of the Window
     modal: modalSw, //When modal:true it make the window modal and mask everything behind it when displayed
@@ -181,7 +181,7 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
     autoCreate: true,
     height:400,
     shadow:true,
-    minWidth:300,
+    minWidth:380,
     minHeight:200,
     proxyDrag: true,
     constrain: true,

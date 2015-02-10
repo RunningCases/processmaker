@@ -256,6 +256,7 @@ class Cases
         $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
+        $c->add(TaskPeer::TAS_TYPE, "WEBENTRYEVENT", Criteria::NOT_EQUAL);
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $sUIDUser);
 
@@ -281,6 +282,7 @@ class Cases
         $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
+        $c->add(TaskPeer::TAS_TYPE, "WEBENTRYEVENT", Criteria::NOT_EQUAL);
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $aGroups, Criteria::IN);
 
@@ -986,11 +988,14 @@ class Cases
                 unset($Fields['APP_DESCRIPTION']);
             }
             if (isset($Fields["APP_STATUS"]) && $Fields["APP_STATUS"] == "COMPLETED") {
-                $Fields['USR_UID'] = $Fields['CURRENT_USER_UID'];
-                $listCompleted = new ListCompleted();
-                $listCompleted->create($Fields);
-                $listMyInbox = new ListMyInbox();
-                $listMyInbox->refresh($Fields);
+                if (isset($Fields['CURRENT_USER_UID'])) {
+                    $Fields['USR_UID'] = $Fields['CURRENT_USER_UID'];
+                    /*This "list" code is discussed to operate with sub-processes. It should adjust the code for operation with sub-processes.
+                    $listCompleted = new ListCompleted();
+                    $listCompleted->create($Fields);
+                    $listMyInbox = new ListMyInbox();
+                    $listMyInbox->refresh($Fields);*/
+                }
             }
             $oApp->update($Fields);
 
@@ -3281,7 +3286,9 @@ class Cases
 
     public function executeTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType, $aFields = array())
     {
+        /*----------------------------------********---------------------------------*/
         G::LoadClass("codeScanner");
+        /*----------------------------------********---------------------------------*/
 
         $aTriggers = $this->loadTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType);
 
@@ -3293,12 +3300,14 @@ class Cases
 
             $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
 
+            /*----------------------------------********---------------------------------*/
             $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
-
             $strFoundDisabledCode = "";
+            /*----------------------------------********---------------------------------*/
 
             foreach ($aTriggers as $aTrigger) {
                 //Check disabled code
+                /*----------------------------------********---------------------------------*/
                 $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $aTrigger["TRI_WEBBOT"]);
 
                 if (count($arrayFoundDisabledCode) > 0) {
@@ -3311,7 +3320,7 @@ class Cases
                     $strFoundDisabledCode .= "<br />- " . $aTrigger["TRI_TITLE"] . ": " . $strCodeAndLine;
                     continue;
                 }
-
+                /*----------------------------------********---------------------------------*/
                 //Execute
                 $bExecute = true;
 
@@ -3325,10 +3334,11 @@ class Cases
                     $oPMScript->execute();
                 }
             }
-
+            /*----------------------------------********---------------------------------*/
             if ($strFoundDisabledCode != "") {
                 G::SendTemporalMessage(G::LoadTranslation("ID_DISABLED_CODE_TRIGGER_TO_EXECUTE", array($strFoundDisabledCode)), "", "string");
             }
+            /*----------------------------------********---------------------------------*/
 
             return $oPMScript->aFields;
         } else {
@@ -3867,8 +3877,12 @@ class Cases
         $oCriteria->add(AppThreadPeer::DEL_INDEX, $iDelegation);
         $oDataset = AppThreadPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $oDataset->next();
-        $aRow = $oDataset->getRow();
+
+        if ($oDataset->next()) {
+            $aRow = $oDataset->getRow();
+        } else {
+            throw new Exception(G::LoadTranslation("ID_CASE_STOPPED_TRIGGER"));
+        }
 
         //now create a row in APP_DELAY with type PAUSE
         $aData['PRO_UID'] = $aFields['PRO_UID'];
@@ -5167,8 +5181,10 @@ class Cases
             "INPUT" => Array(),
             "OUTPUT" => Array(),
             "CASES_NOTES" => 0,
-            "MSGS_HISTORY" => Array(),
-            "SUMMARY_FORM" => 0
+            "MSGS_HISTORY" => Array()
+        	/*----------------------------------********---------------------------------*/
+            ,"SUMMARY_FORM" => 0
+        	/*----------------------------------********---------------------------------*/
         );
 
         //permissions per user
@@ -5327,7 +5343,9 @@ class Cases
                         }
 
                         $RESULT['CASES_NOTES'] = 1;
+                        /*----------------------------------********---------------------------------*/
                         $RESULT['SUMMARY_FORM'] = 1;
+                        /*----------------------------------********---------------------------------*/
 
                         // Message History
                         $RESULT['MSGS_HISTORY'] = array('PERMISSION' => $ACTION);
@@ -5475,9 +5493,11 @@ class Cases
                     case 'CASES_NOTES':
                         $RESULT['CASES_NOTES'] = 1;
                         break;
+                    /*----------------------------------********---------------------------------*/
                     case 'SUMMARY_FORM':
                         $RESULT['SUMMARY_FORM'] = 1;
                         break;
+                    /*----------------------------------********---------------------------------*/
                     case 'MSGS_HISTORY':
                         // Permission
                         $RESULT['MSGS_HISTORY'] = array('PERMISSION' => $ACTION);
@@ -5529,8 +5549,10 @@ class Cases
             "INPUT_DOCUMENTS" => $RESULT['INPUT'],
             "OUTPUT_DOCUMENTS" => $RESULT['OUTPUT'],
             "CASES_NOTES" => $RESULT['CASES_NOTES'],
-            "MSGS_HISTORY" => $RESULT['MSGS_HISTORY'],
-            "SUMMARY_FORM" => $RESULT['SUMMARY_FORM']
+            "MSGS_HISTORY" => $RESULT['MSGS_HISTORY']
+        	/*----------------------------------********---------------------------------*/
+            ,"SUMMARY_FORM" => $RESULT['SUMMARY_FORM']
+        	/*----------------------------------********---------------------------------*/
         );
     }
 
@@ -6559,11 +6581,11 @@ class Cases
         }
 
         global $RBAC;
-        //Adding the actual user if this has the PM_REASSIGNCASE permission assigned.
-        if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1){
-        	if(!in_array($RBAC->aUserInfo['USER_INFO']['USR_UID'], $row)){
-        	    $row[] = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
-        	}
+        //Adding the actual user if this has the PM_SUPERVISOR permission assigned.
+        if ($RBAC->userCanAccess('PM_SUPERVISOR') == 1) {
+            if(!in_array($RBAC->aUserInfo['USER_INFO']['USR_UID'], $row)) {
+                $row[] = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
+            }
         }
 
         require_once 'classes/model/Users.php';

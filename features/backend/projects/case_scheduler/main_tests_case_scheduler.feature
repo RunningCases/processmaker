@@ -110,7 +110,7 @@ Scenario: Create a new case scheduler with same name
       And the response status message should have the following text "Duplicate"
       
   
-Scenario Outline: Get the case schedulers list when there are exactly 16 case schedulers in each process
+Scenario Outline: Get the case schedulers list when there are exactly 16 after 17 case schedulers in each process
       Given I request "project/<project>/case-schedulers"
       Then the response status code should be 200
       And the response charset is "UTF-8"

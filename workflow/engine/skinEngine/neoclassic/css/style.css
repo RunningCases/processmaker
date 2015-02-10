@@ -244,6 +244,27 @@ img {
   padding: 0 20px;
   vertical-align: middle;
   font-weight: bold;
+  transition:2s all;
+  -webkit-transition:2s all;
+  -moz-transition:2s all;
+  -o-transition:2s all;
+  -ms-transition:2s all;
+}
+@media screen and (max-width: 768px) {
+    .temporalMessageERROR {
+          border-width: 0px;
+          font: normal 6pt "Open Sans", Tahoma, sans-serif, MiscFixed;
+          text-decoration: none;
+          height: 31px;
+          padding: 0 2px;
+          vertical-align: middle;
+          font-weight: bold;
+          transition:2s all;
+          -webkit-transition:2s all;
+          -moz-transition:2s all;
+          -o-transition:2s all;
+          -ms-transition:2s all;
+        }
 }
 .temporalMessageWARNING {
   -moz-border-radius: 6px;

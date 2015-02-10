@@ -29,6 +29,9 @@
     oClientWinSize = getClientWindowSize();
     height = oClientWinSize.height-105;
     oCasesFrame.style.height = height;
+    if (oCasesFrame.height ) {
+    	oCasesFrame.height = height;
+    }
     //oCasesSubFrame = oCasesFrame.contentWindow.document.getElementById('casesSubFrame');
     //oCasesSubFrame.style.height = height-10;
   }

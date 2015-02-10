@@ -1020,6 +1020,7 @@
     <column name="ROU_NEXT_TASK" type="VARCHAR" size="32" required="true" default="0"/>
     <column name="ROU_CASE" type="INTEGER" required="true" default="0"/>
     <column name="ROU_TYPE" type="VARCHAR" size="25" required="true" default="SEQUENTIAL"/>
+    <column name="ROU_DEFAULT" type="INTEGER" default="0" required="true" />
     <column name="ROU_CONDITION" type="VARCHAR" size="512" required="true" default=""/>
     <column name="ROU_TO_LAST_USER" type="VARCHAR" size="20" required="true" default="FALSE"/>
     <column name="ROU_OPTIONAL" type="VARCHAR" size="20" required="true" default="FALSE"/>
@@ -1048,6 +1049,9 @@
     <validator column="ROU_TYPE">
       <rule name="validValues" value="SEQUENTIAL|EVALUATE|SELECT|PARALLEL|PARALLEL-BY-EVALUATION|SEC-JOIN|DISCRIMINATOR" message="Please select a valid Route Type."/>
       <rule name="required" message="Route type is required."/>
+    </validator>
+    <validator column="ROU_DEFAULT">
+        <rule name="validValues" value="0|1" message="Please enter a valid value for ROU_DEFAULT" />
     </validator>
     <validator column="ROU_TO_LAST_USER">
       <rule name="validValues" value="FALSE|TRUE" message="Please select a valid value for ROU_TO_LAST_USER ."/>
@@ -1244,7 +1248,7 @@
     <column name="TAS_SELFSERVICE_EXECUTION" type="VARCHAR" size="15" default="EVERY_TIME"/>
 
     <validator column="TAS_TYPE">
-      <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN" message="Please select a valid value for TAS_TYPE."/>
+        <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT" message="Please enter a valid value for TAS_TYPE"/>
     </validator>
     <validator column="TAS_TIMEUNIT">
       <rule name="validValues" value="MINUTES|HOURS|DAYS|WEEKS|MONTHS" message="Please select a valid value for TAS_TIMEUNIT."/>
@@ -2555,7 +2559,7 @@
     <column name="HISTORY_DATE" type="TIMESTAMP" required="false"/>
     <column name="HISTORY_DATA" type="LONGVARCHAR" required="true"/>
     <validator column="OBJ_TYPE">
-        <rule name="validValues" value="DYNAFORM|INPUT_DOCUMENT|OUTPUT_DOCUMENT|EXTERNAL|ASSIGN_TASK" message="Please select a valid value for OBJ_TYPE." />
+        <rule name="validValues" value="DYNAFORM|INPUT_DOCUMENT|OUTPUT_DOCUMENT|EXTERNAL|ASSIGN_TASK" message="Please enter a valid value for OBJ_TYPE" />
     </validator>
     <index name="indexAppHistory">
       <index-column name="APP_UID"/>
@@ -3239,7 +3243,7 @@
     <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
     <column name="PRJ_NAME" type="VARCHAR" size="255" required="true" default=""/>
     <column name="PRJ_DESCRIPTION" type="VARCHAR" size="512" required="false"/>
-    <column name="PRJ_TARGET_NAMESPACE" type="LONGVARCHAR" required="true"/>
+    <column name="PRJ_TARGET_NAMESPACE" type="LONGVARCHAR" required="false"/>
     <column name="PRJ_EXPRESION_LANGUAGE" type="LONGVARCHAR" required="false"/>
     <column name="PRJ_TYPE_LANGUAGE" type="LONGVARCHAR" required="false"/>
     <column name="PRJ_EXPORTER" type="LONGVARCHAR" required="false"/>
@@ -3579,6 +3583,7 @@
     <column name="FLO_X2" type="INTEGER" required="true" default="0"/>
     <column name="FLO_Y2" type="INTEGER" required="true" default="0"/>
     <column name="FLO_STATE" type="LONGVARCHAR" required="false"/>
+    <column name="FLO_POSITION" type="INTEGER" required="true" default="0"/>
     <foreign-key name="fk_bpmn_flow_project" foreignTable="BPMN_PROJECT">
       <reference local="PRJ_UID" foreign="PRJ_UID"/>
     </foreign-key>
@@ -3696,17 +3701,11 @@
     <foreign-key name="fk_bpmn_lane_project" foreignTable="BPMN_PROJECT">
       <reference local="PRJ_UID" foreign="PRJ_UID"/>
     </foreign-key>
-    <foreign-key name="fk_bpmn_lane_laneset" foreignTable="BPMN_LANESET">
-      <reference local="LNS_UID" foreign="LNS_UID"/>
-    </foreign-key>
     <index name="BPMN_LANE_I_1">
       <index-column name="LAN_UID"/>
     </index>
     <index name="BPMN_LANE_I_2">
       <index-column name="PRJ_UID"/>
-    </index>
-    <index name="BPMN_LANE_I_3">
-      <index-column name="LNS_UID"/>
     </index>
   </table>
 
@@ -4090,9 +4089,9 @@
         <column name="APP_TITLE" type="VARCHAR" size="255" required="true" default=""/>
         <column name="APP_PRO_TITLE" type="VARCHAR" size="255" required="true" default=""/>
         <column name="APP_TAS_TITLE" type="VARCHAR" size="255" required="true" default=""/>
-        <column name="APP_CREATE_DATE" type="TIMESTAMP" required="true"/>
-        <column name="APP_UPDATE_DATE" type="TIMESTAMP" required="true"/>
-        <column name="APP_FINISH_DATE" type="TIMESTAMP" required="true"/>
+        <column name="APP_CREATE_DATE" type="TIMESTAMP" required="false"/>
+        <column name="APP_UPDATE_DATE" type="TIMESTAMP" required="false"/>
+        <column name="APP_FINISH_DATE" type="TIMESTAMP" required="false"/>
         <column name="APP_STATUS" type="VARCHAR" size="100" required="true" default=""/>
         <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
         <column name="DEL_PREVIOUS_USR_UID" type="VARCHAR" size="32" default=""/>
@@ -4171,6 +4170,95 @@
         <column name="USR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="TYPE"    type="VARCHAR" size="255" required="true" primaryKey="true" default=""/>
         <column name="TYP_UID" type="VARCHAR" size="32" required="true" default=""/>
+    </table>
+    <table name="MESSAGE_TYPE">
+        <vendor type="mysql">
+            <parameter name="Name" value="MESSAGE_TYPE" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+        </vendor>
+        <column name="MSGT_UID" type="VARCHAR" size="32" required="true" primaryKey="true" />
+        <column name="PRJ_UID" type="VARCHAR" size="32" required="true" />
+        <column name="MSGT_NAME" type="VARCHAR" size="512" default="" />
+    </table>
+    <table name="MESSAGE_TYPE_VARIABLE">
+        <vendor type="mysql">
+            <parameter name="Name" value="MESSAGE_TYPE_VARIABLE" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+        </vendor>
+        <column name="MSGTV_UID" type="VARCHAR" size="32" required="true" primaryKey="true" />
+        <column name="MSGT_UID" type="VARCHAR" size="32" required="true" />
+        <column name="MSGTV_NAME" type="VARCHAR" size="512" default="" />
+        <column name="MSGTV_DEFAULT_VALUE" type="VARCHAR" size="512" default="" />
+    </table>
+    <table name="EMAIL_SERVER">
+        <vendor type="mysql">
+            <parameter name="Name" value="EMAIL_SERVER" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+        </vendor>
+        <column name="MESS_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default="" />
+        <column name="MESS_ENGINE" type="VARCHAR" size="256" required="true" default="" />
+        <column name="MESS_SERVER" type="VARCHAR" size="256" required="true" default="" />
+        <column name="MESS_PORT" type="INTEGER" required="true" default="0" />
+        <column name="MESS_RAUTH" type="INTEGER" required="true" default="0" />
+        <column name="MESS_ACCOUNT" type="VARCHAR" size="256" required="true" default="" />
+        <column name="MESS_PASSWORD" type="VARCHAR" size="256" required="true" default="" />
+        <column name="MESS_FROM_MAIL" type="VARCHAR" size="256" required="true" default="" />
+        <column name="MESS_FROM_NAME" type="VARCHAR" size="256" required="true" default="" />
+        <column name="SMTPSECURE" type="VARCHAR" size="3" required="true" default="No" />
+        <column name="MESS_TRY_SEND_INMEDIATLY" type="INTEGER" required="true" default="0" />
+        <column name="MAIL_TO" type="VARCHAR" size="256" required="true" default="" />
+        <column name="MESS_DEFAULT" type="INTEGER" required="true" default="0" />
+    </table>
+
+    <table name="WEB_ENTRY_EVENT">
+        <vendor type="mysql">
+            <parameter name="Name" value="WEB_ENTRY_EVENT" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+        </vendor>
+        <column name="WEE_UID"    type="VARCHAR" size="32" required="true" primaryKey="true" />
+        <column name="PRJ_UID"    type="VARCHAR" size="32" required="true" />
+        <column name="EVN_UID"    type="VARCHAR" size="32" required="true" />
+        <column name="ACT_UID"    type="VARCHAR" size="32" required="true" />
+        <column name="DYN_UID"    type="VARCHAR" size="32" required="true" />
+        <column name="USR_UID"    type="VARCHAR" size="32" required="true" />
+        <column name="WEE_STATUS" type="VARCHAR" size="10" required="true" default="ENABLED" />
+        <column name="WEE_WE_UID"     type="VARCHAR" size="32" required="true" default="" />
+        <column name="WEE_WE_TAS_UID" type="VARCHAR" size="32" required="true" default="" />
+        <validator column="WEE_STATUS">
+            <rule name="validValues" value="ENABLED|DISABLED" message="Please enter a valid value for WEE_STATUS" />
+        </validator>
     </table>
 </database>
 

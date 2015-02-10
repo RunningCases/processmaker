@@ -10,7 +10,7 @@ class pmLicenseManager
 
     private static $instance = null;
 
-    public function __construct()
+    public function __construct($flagActivatePlugins = true)
     {
         G::LoadClass('serverConfiguration');
         $oServerConf = &serverConf::getSingleton();
@@ -45,7 +45,6 @@ class pmLicenseManager
         $application->set_server_vars($server_array);
         $application->DATE_STRING = 'Y-m-d H:i:s';
         $results = $application->validate();
-        $application->make_secure();
         $validStatus = array(
           'OK',
           'EXPIRED',
@@ -110,13 +109,15 @@ class pmLicenseManager
             $oServerConf->setProperty ( 'LICENSE_INFO', $licInfoA );
         }
 
-        $this->activateFeatures ();
+        if ($flagActivatePlugins) {
+            $this->activateFeatures();
+        }
     }
 
-    public static function getSingleton()
+    public static function getSingleton($flagActivatePlugins = true)
     {
         if (self::$instance == null) {
-            self::$instance = new pmLicenseManager ();
+            self::$instance = new pmLicenseManager($flagActivatePlugins);
         }
         return self::$instance;
     }
@@ -354,7 +355,7 @@ class pmLicenseManager
         }
     }
 
-    public function installLicense($path, $redirect = true)
+    public function installLicense($path, $redirect = true, $includeExpired = true)
     {
         $application = new license_application ( $path, false, true, false, true, true );
 
@@ -362,6 +363,14 @@ class pmLicenseManager
 
         //if the result is ok then it is saved into DB
         $res = $results ['RESULT'];
+        if ($res == 'EMPTY') {
+            return false;
+        }
+        if (!$includeExpired) {
+            if ($res == 'EXPIRED') {
+                return false;
+            }
+        }
         if (( $res != 'OK') && ($res != 'EXPIRED' ) && ($res != 'TMINUS') ) {
             G::SendTemporalMessage ( 'ID_ISNT_LICENSE', 'tmp-info', 'labels' );
             return false;
@@ -382,21 +391,6 @@ class pmLicenseManager
     */
     public function getActiveLicense()
     {
-        //Autoinstall license if exists in data folder and move to license folder
-        $dirData        = PATH_DATA;
-        $dirDataSite    = PATH_DATA_SITE;
-        $dirDataSiteLic = PATH_DATA_SITE . "licenses";
-
-        G::verifyPath($dirDataSiteLic, true);
-
-        $licfile = glob($dirDataSite . "*.dat");
-        if (count($licfile) > 0 && is_file($licfile[0])) {
-            $file = $licfile[0];
-            @copy($file, $dirDataSiteLic . PATH_SEP . basename($file));
-            $this->installLicense($dirDataSiteLic . PATH_SEP . basename($file), false);
-            @unlink($file);
-        }
-
         //get license from database, table LICENSE_MANAGER
         try {
             $aRow = array();

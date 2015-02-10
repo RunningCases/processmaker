@@ -31,11 +31,13 @@ class Installer extends Controller
         $this->path_shared = PATH_TRUNK . 'shared/';
         $this->path_sep = PATH_SEP;
         $this->systemName = '';
+        //$this->path_documents = ;
+        $this->path_translations = PATH_CORE . 'js/labels/';
+        $this->path_translationsMafe = PATH_HOME . 'public_html/translations/';
     }
 
     public function index ($httpData)
     {
-
         if ((strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') && (file_exists($this->path_shared . 'partner.info'))){
             $this->includeExtJS( 'installer/stopInstall');
             $this->setView( 'installer/mainStopInstall' );
@@ -62,6 +64,8 @@ class Installer extends Controller
         $this->setJSVar( 'path_public', $this->path_public );
         $this->setJSVar( 'path_shared', $this->path_shared );
         $this->setJSVar( 'path_sep', $this->path_sep );
+        $this->setJSVar( 'path_translations', $this->path_translations );
+        $this->setJSVar( 'path_translationsMafe', $this->path_translationsMafe );
 
         $this->setView( 'installer/main' );
 
@@ -232,7 +236,6 @@ class Installer extends Controller
         $info = new StdClass();
         $info->success = true;
         $noWritableFiles = array ();
-
         // pathConfig
         $info->pathConfig = new stdclass();
         $info->pathConfig->message = G::LoadTranslation('ID_INDEX_NOT_WRITEABLE');
@@ -266,6 +269,24 @@ class Installer extends Controller
         $info->pathXmlforms->result = G::is_writable_r( $_REQUEST['pathXmlforms'], $noWritableFiles );
         if ($info->pathXmlforms->result) {
             $info->pathXmlforms->message = G::LoadTranslation('ID_WRITEABLE');
+        } else {
+            $info->success = false;
+        }
+
+        $info->pathTranslations = new stdclass();
+        $info->pathTranslations->message = G::LoadTranslation('ID_TRANSLATION_NOT_WRITEABLE');
+        $info->pathTranslations->result = G::is_writable_r( $_REQUEST['pathTranslations'], $noWritableFiles );
+        if ($info->pathTranslations->result) {
+            $info->pathTranslations->message = G::LoadTranslation('ID_WRITEABLE');
+        } else {
+            $info->success = false;
+        }
+
+        $info->pathTranslationsMafe = new stdclass();
+        $info->pathTranslationsMafe->message = G::LoadTranslation('ID_MAFE_TRANSLATION_NOT_WRITEABLE');
+        $info->pathTranslationsMafe->result = G::is_writable_r( $_REQUEST['pathTranslationsMafe'], $noWritableFiles );
+        if ($info->pathTranslationsMafe->result) {
+            $info->pathTranslationsMafe->message = G::LoadTranslation('ID_WRITEABLE');
         } else {
             $info->success = false;
         }
@@ -784,6 +805,16 @@ class Installer extends Controller
                              '" . mysql_real_escape_string( serialize( array ('LANG' => 'en','STATUS' => 'active'
                 ) ) ) . "'
                            )" );
+
+                /*----------------------------------********---------------------------------*/
+                if (true) {
+                    //
+                } else {
+                /*----------------------------------********---------------------------------*/
+                    $this->mysqlQuery("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
+                /*----------------------------------********---------------------------------*/
+                }
+                /*----------------------------------********---------------------------------*/
             }
 
             // Change admin user
@@ -927,25 +958,7 @@ class Installer extends Controller
                     return $info;
                 }
             }
-            
-            //2nd STRUCTURE
-            $this->initPropel(true);
-            G::LoadClass("configuration");
-            $conf = new Configurations();
-            if (!$conf->exists("ENVIRONMENT_SETTINGS")) {
-            	$conf->aConfig = array ("format" => '@userName (@firstName @lastName)',
-            			"dateFormat" => 'd/m/Y',
-            			"startCaseHideProcessInf" => false,
-            			"casesListDateFormat" => 'Y-m-d H:i:s',
-            			"casesListRowNumber" => 25,
-            			"casesListRefreshTime" => 120 );
-            	$conf->saveConfig( 'ENVIRONMENT_SETTINGS', '' );
-            }
-            $conf->setDirectoryStructureVer(2);
-            //$this->installLog( G::LoadTranslation('ID_INDEX_FILE_UPDATED', SYS_LANG, Array($indexFileUpdated, $sysConf['default_lang'],$sysConf['default_skin'])));
-            //CLI::logging(CLI::info("Version Directory Structure is 2 now.\n"));
 
-            
             $this->installLog( G::LoadTranslation('ID_INDEX_FILE_UPDATED', SYS_LANG, Array($indexFileUpdated, $sysConf['default_lang'],$sysConf['default_skin'])));
             $this->installLog( G::LoadTranslation('ID_INSTALL_SUCESS') );
 
@@ -1098,6 +1111,16 @@ class Installer extends Controller
                              '" . addslashes( serialize( array ('LANG' => 'en','STATUS' => 'active'
                 ) ) ) . "'
                            )" );
+
+                /*----------------------------------********---------------------------------*/
+                if (true) {
+                    //
+                } else {
+                /*----------------------------------********---------------------------------*/
+                    $this->mssqlQuery("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
+                /*----------------------------------********---------------------------------*/
+                }
+                /*----------------------------------********---------------------------------*/
             }
 
             //change admin user

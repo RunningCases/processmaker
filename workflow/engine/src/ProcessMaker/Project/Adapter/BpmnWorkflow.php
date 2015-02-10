@@ -238,11 +238,14 @@ class BpmnWorkflow extends Project\Bpmn
                         $event = \BpmnEventPeer::retrieveByPK($data["FLO_ELEMENT_ORIGIN"]);
 
                         // setting as start task
-                        if ($event && $event->getEvnType() == "START") {
+                        if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "EMPTY") {
                             $this->wp->setStartTask($data["FLO_ELEMENT_DEST"]);
                         }
 
                         $this->updateEventStartObjects($data["FLO_ELEMENT_ORIGIN"], $data["FLO_ELEMENT_DEST"]);
+
+                        //WebEntry-Event - Update
+                        $this->updateWebEntryEventByEvent($data["FLO_ELEMENT_ORIGIN"], array("ACT_UID" => $data["FLO_ELEMENT_DEST"]));
                         break;
                 }
                 break;
@@ -281,7 +284,7 @@ class BpmnWorkflow extends Project\Bpmn
         ) {
             $event = \BpmnEventPeer::retrieveByPK($flowBefore->getFloElementOrigin());
 
-            if (!is_null($event) && $event->getEvnType() == "START") {
+            if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "EMPTY") {
                 //Remove as start task
                 $this->wp->setStartTask($flowBefore->getFloElementDest(), false);
 
@@ -289,6 +292,9 @@ class BpmnWorkflow extends Project\Bpmn
                 $this->wp->setStartTask($flowCurrent->getFloElementDest());
 
                 $this->updateEventStartObjects($flowCurrent->getFloElementOrigin(), $flowCurrent->getFloElementDest());
+
+                //WebEntry-Event - Update
+                $this->updateWebEntryEventByEvent($flowCurrent->getFloElementOrigin(), array("ACT_UID" => $flowCurrent->getFloElementDest()));
             }
         }
 
@@ -342,16 +348,31 @@ class BpmnWorkflow extends Project\Bpmn
         if ($flow->getFloElementOriginType() == "bpmnEvent" &&
             $flow->getFloElementDestType() == "bpmnActivity"
         ) {
-            $event = \BpmnEventPeer::retrieveByPK($flow->getFloElementOrigin());
+            $bpmnFlow = \BpmnFlow::findOneBy(array(
+                \BpmnFlowPeer::FLO_ELEMENT_ORIGIN      => $flow->getFloElementOrigin(),
+                \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnEvent",
+                \BpmnFlowPeer::FLO_ELEMENT_DEST        => $flow->getFloElementDest(),
+                \BpmnFlowPeer::FLO_ELEMENT_DEST_TYPE   => "bpmnActivity"
+            ));
 
-            if (! is_null($event) && $event->getEvnType() == "START") {
-                $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
-                if (! is_null($activity)) {
-                    $this->wp->setStartTask($activity->getActUid(), false);
+            if (is_null($bpmnFlow)) {
+                $event = \BpmnEventPeer::retrieveByPK($flow->getFloElementOrigin());
+
+                if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "EMPTY") {
+                    $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
+
+                    if (!is_null($activity)) {
+                        $this->wp->setStartTask($activity->getActUid(), false);
+                    }
                 }
             }
 
             $this->updateEventStartObjects($flow->getFloElementOrigin(), "");
+
+            //WebEntry-Event - Update
+            if (is_null($bpmnFlow)) {
+                $this->updateWebEntryEventByEvent($flow->getFloElementOrigin(), array("WEE_STATUS" => "DISABLED"));
+            }
         } elseif ($flow->getFloElementOriginType() == "bpmnActivity" &&
             $flow->getFloElementDestType() == "bpmnEvent") {
             // verify case: activity -> event(end)
@@ -369,7 +390,7 @@ class BpmnWorkflow extends Project\Bpmn
             switch ($flow->getFloElementOriginType()) {
                 case "bpmnActivity":
                     switch ($flow->getFloElementDestType()) {
-                        // activity->activity
+                        //Activity1 -> Activity2
                         case "bpmnActivity":
                             $this->wp->removeRouteFromTo($flow->getFloElementOrigin(), $flow->getFloElementDest());
                             break;
@@ -390,12 +411,12 @@ class BpmnWorkflow extends Project\Bpmn
         $eventUid = parent::addEvent($data);
         $event = \BpmnEventPeer::retrieveByPK($eventUid);
 
-        // create case scheduler
+        //Delete case scheduler
         if ($event && $event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
             $this->wp->addCaseScheduler($eventUid);
         }
 
-        // create web entry
+        //Delete WebEntry-Event
         if ($event && $event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
             $this->wp->addWebEntry($eventUid);
         }
@@ -403,22 +424,27 @@ class BpmnWorkflow extends Project\Bpmn
         return $eventUid;
     }
 
-    public function removeEvent($data)
+    public function removeEvent($eventUid)
     {
-
-        $event = \BpmnEventPeer::retrieveByPK($data);
+        $event = \BpmnEventPeer::retrieveByPK($eventUid);
 
         // delete case scheduler
         if ($event && $event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
-            $this->wp->removeCaseScheduler($data);
+            $this->wp->removeCaseScheduler($eventUid);
         }
 
         // delete web entry
-        if ($event && $event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
-            $this->wp->removeWebEntry($data);
+        if (!is_null($event) && $event->getEvnType() == "START") {
+            $webEntryEvent = new \ProcessMaker\BusinessModel\WebEntryEvent();
+
+            if ($webEntryEvent->existsEvent($event->getPrjUid(), $eventUid)) {
+                $arrayWebEntryEventData = $webEntryEvent->getWebEntryEventByEvent($event->getPrjUid(), $eventUid, true);
+
+                $webEntryEvent->delete($arrayWebEntryEventData["WEE_UID"]);
+            }
         }
 
-        parent::removeEvent($data);
+        parent::removeEvent($eventUid);
     }
 
     public function updateEventStartObjects($eventUid, $taskUid)
@@ -431,109 +457,137 @@ class BpmnWorkflow extends Project\Bpmn
         }
 
         //Update web entry
-        if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
-            $this->wp->updateWebEntry($eventUid, array("TAS_UID" => $taskUid));
+        //if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
+        //    $this->wp->updateWebEntry($eventUid, array("TAS_UID" => $taskUid));
+        //}
+    }
+
+    public function mapBpmnGatewayToWorkflowRoutes($activityUid, $gatewayUid)
+    {
+        try {
+            $arrayGatewayData = \BpmnGateway::findOneBy(\BpmnGatewayPeer::GAT_UID, $gatewayUid)->toArray();
+
+            switch ($arrayGatewayData["GAT_TYPE"]) {
+                //case "SELECTION":
+                case self::BPMN_GATEWAY_COMPLEX:
+                    $routeType = "SELECT";
+                    break;
+                //case "EVALUATION":
+                case self::BPMN_GATEWAY_EXCLUSIVE:
+                    $routeType = "EVALUATE";
+                    break;
+                //case "PARALLEL":
+                case self::BPMN_GATEWAY_PARALLEL:
+                    if ($arrayGatewayData["GAT_DIRECTION"] == "DIVERGING") {
+                        $routeType = "PARALLEL";
+                    } else {
+                        if ($arrayGatewayData["GAT_DIRECTION"] == "CONVERGING") {
+                            $routeType = "SEC-JOIN";
+                        } else {
+                            throw new \LogicException(
+                                "Invalid Gateway direction, accepted values: [DIVERGING|CONVERGING], given: " . $arrayGatewayData["GAT_DIRECTION"]
+                            );
+                        }
+                    }
+                    break;
+                //case "PARALLEL_EVALUATION":
+                case self::BPMN_GATEWAY_INCLUSIVE:
+                    if ($arrayGatewayData["GAT_DIRECTION"] == "DIVERGING") {
+                        $routeType = "PARALLEL-BY-EVALUATION";
+                    } else {
+                        if ($arrayGatewayData["GAT_DIRECTION"] == "CONVERGING") {
+                            $routeType = "SEC-JOIN";
+                        } else {
+                            throw new \LogicException(
+                                "Invalid Gateway direction, accepted values: [DIVERGING|CONVERGING], given: " . $arrayGatewayData["GAT_DIRECTION"]
+                            );
+                        }
+                    }
+                    break;
+                default:
+                    throw new \LogicException("Unsupported Gateway type: " . $arrayGatewayData["GAT_TYPE"]);
+                    break;
+            }
+
+            $arrayGatewayFlowData = \BpmnFlow::findAllBy(array(
+                \BpmnFlowPeer::FLO_ELEMENT_ORIGIN => $gatewayUid,
+                \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnGateway"
+            ));
+
+            if ($arrayGatewayFlowData > 0) {
+                $this->wp->resetTaskRoutes($activityUid);
+            }
+
+            foreach ($arrayGatewayFlowData as $value) {
+                $arrayFlowData = $value->toArray();
+
+                $routeDefault   = (array_key_exists("FLO_TYPE", $arrayFlowData) && $arrayFlowData["FLO_TYPE"] == "DEFAULT")? 1 : 0;
+                $routeCondition = (array_key_exists("FLO_CONDITION", $arrayFlowData))? $arrayFlowData["FLO_CONDITION"] : "";
+
+                switch ($arrayFlowData["FLO_ELEMENT_DEST_TYPE"]) {
+                    case "bpmnActivity":
+                    case "bpmnEvent":
+                        //Gateway ----> Activity
+                        //Gateway ----> Event
+                        if ($arrayFlowData["FLO_ELEMENT_DEST_TYPE"] == "bpmnEvent") {
+                            $event = \BpmnEventPeer::retrieveByPK($arrayFlowData["FLO_ELEMENT_DEST"]);
+
+                            if ($event->getEvnType() == "END") {
+                                $result = $this->wp->addRoute($activityUid, -1, $routeType, $routeCondition, $routeDefault);
+                            }
+                        } else {
+                            $result = $this->wp->addRoute($activityUid, $arrayFlowData["FLO_ELEMENT_DEST"], $routeType, $routeCondition, $routeDefault);
+                        }
+                        break;
+                    case "bpmnGateway":
+                        //Gateway ----> Gateway
+                        $taskUid = $this->wp->addTask(array(
+                            "TAS_TYPE"  => "GATEWAYTOGATEWAY",
+                            "TAS_TITLE" => "GATEWAYTOGATEWAY",
+                            "TAS_POSX"  => (int)($arrayFlowData["FLO_X1"]),
+                            "TAS_POSY"  => (int)($arrayFlowData["FLO_Y1"])
+                        ));
+
+                        $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
+
+                        $this->mapBpmnGatewayToWorkflowRoutes($taskUid, $arrayFlowData["FLO_ELEMENT_DEST"]);
+                        break;
+                    default:
+                        //For processmaker is only allowed flows between: "gateway -> activity", "gateway -> gateway"
+                        //any another flow is considered invalid
+                        throw new \LogicException(
+                            "For ProcessMaker is only allowed flows between: \"gateway -> activity\", \"gateway -> gateway\" " . PHP_EOL .
+                            "Given: bpmnGateway -> " . $arrayFlowData["FLO_ELEMENT_DEST_TYPE"]
+                        );
+                }
+            }
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
     public function mapBpmnFlowsToWorkflowRoutes()
     {
+        $this->wp->deleteTaskGatewayToGateway($this->wp->getUid());
+
         $activities = $this->getActivities();
 
         foreach ($activities as $activity) {
-
             $flows = \BpmnFlow::findAllBy(array(
                 \BpmnFlowPeer::FLO_ELEMENT_ORIGIN => $activity["ACT_UID"],
                 \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnActivity"
             ));
 
-            //
             foreach ($flows as $flow) {
                 switch ($flow->getFloElementDestType()) {
                     case "bpmnActivity":
                         // (activity -> activity)
                         $this->wp->addRoute($activity["ACT_UID"], $flow->getFloElementDest(), "SEQUENTIAL");
                         break;
-
                     case "bpmnGateway":
                         // (activity -> gateway)
                         // we must find the related flows: gateway -> <object>
-                        $gatUid = $flow->getFloElementDest();
-                        $gatewayFlows = \BpmnFlow::findAllBy(array(
-                            \BpmnFlowPeer::FLO_ELEMENT_ORIGIN => $gatUid,
-                            \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnGateway"
-                        ));
-
-                        if ($gatewayFlows > 0) {
-                            $this->wp->resetTaskRoutes($activity["ACT_UID"]);
-                        }
-
-                        foreach ($gatewayFlows as $gatewayFlow) {
-                            $gatewayFlow = $gatewayFlow->toArray();
-
-                            switch ($gatewayFlow['FLO_ELEMENT_DEST_TYPE']) {
-                                case 'bpmnEvent':
-                                case 'bpmnActivity':
-                                    // (gateway -> activity)
-                                    $gateway = \BpmnGateway::findOneBy(\BpmnGatewayPeer::GAT_UID, $gatUid)->toArray();
-                                    switch ($gateway["GAT_TYPE"]) {
-                                        //case 'SELECTION':
-                                        case self::BPMN_GATEWAY_COMPLEX:
-                                            $routeType = "SELECT";
-                                            break;
-                                        //case 'EVALUATION':
-                                        case self::BPMN_GATEWAY_EXCLUSIVE:
-                                            $routeType = "EVALUATE";
-                                            break;
-                                        //case 'PARALLEL':
-                                        case self::BPMN_GATEWAY_PARALLEL:
-                                            if ($gateway["GAT_DIRECTION"] == "DIVERGING") {
-                                                $routeType = "PARALLEL";
-                                            } elseif ($gateway["GAT_DIRECTION"] == "CONVERGING") {
-                                                $routeType = "SEC-JOIN";
-                                            } else {
-                                                throw new \LogicException(sprintf(
-                                                    "Invalid Gateway direction, accepted values: [%s|%s], given: %s.",
-                                                    "DIVERGING", "CONVERGING", $gateway["GAT_DIRECTION"]
-                                                ));
-                                            }
-                                            break;
-                                        //case 'PARALLEL_EVALUATION':
-                                        case self::BPMN_GATEWAY_INCLUSIVE:
-                                            if ($gateway["GAT_DIRECTION"] == "DIVERGING") {
-                                                $routeType = "PARALLEL-BY-EVALUATION";
-                                            } elseif ($gateway["GAT_DIRECTION"] == "CONVERGING") {
-                                                $routeType = "SEC-JOIN";
-                                            } else {
-                                                throw new \LogicException(sprintf(
-                                                    "Invalid Gateway direction, accepted values: [%s|%s], given: %s.",
-                                                    "DIVERGING", "CONVERGING", $gateway["GAT_DIRECTION"]
-                                                ));
-                                            }
-                                            break;
-                                        default:
-                                            throw new \LogicException(sprintf("Unsupported Gateway type: %s", $gateway['GAT_TYPE']));
-                                    }
-                                    $condition = array_key_exists('FLO_CONDITION', $gatewayFlow) ? $gatewayFlow["FLO_CONDITION"] : '';
-
-                                    if ($gatewayFlow['FLO_ELEMENT_DEST_TYPE'] == 'bpmnEvent') {
-                                        $event = \BpmnEventPeer::retrieveByPK($gatewayFlow['FLO_ELEMENT_DEST']);
-                                        if ($event->getEvnType() == "END") {
-                                            $this->wp->addRoute($activity["ACT_UID"], -1, $routeType, $condition);
-                                        }
-                                    } else {
-                                        $this->wp->addRoute($activity["ACT_UID"], $gatewayFlow['FLO_ELEMENT_DEST'], $routeType, $condition);
-                                    }
-                                    break;
-                                default:
-                                    // for processmaker is only allowed flows between "gateway -> activity"
-                                    // any another flow is considered invalid
-                                    throw new \LogicException(sprintf(
-                                        "For ProcessMaker is only allowed flows between \"gateway -> activity\" " . PHP_EOL .
-                                        "Given: bpmnGateway -> " . $gatewayFlow['FLO_ELEMENT_DEST_TYPE']
-                                    ));
-                            }
-                        }
+                        $this->mapBpmnGatewayToWorkflowRoutes($activity["ACT_UID"], $flow->getFloElementDest());
                         break;
                 }
             }
@@ -557,9 +611,6 @@ class BpmnWorkflow extends Project\Bpmn
         }
         $activities = $projectData['diagrams']['0']['activities'];
         foreach ($activities as $value) {
-            if (empty($value['act_name'])) {
-                throw new \Exception("For activity: {$value['act_uid']} `act_name` is required but missing.");
-            }
             if (empty($value['act_type'])) {
                 throw new \Exception("For activity: {$value['act_uid']} `act_type` is required but missing.");
             }
@@ -731,9 +782,107 @@ class BpmnWorkflow extends Project\Bpmn
         $result = array();
 
         $projectData['prj_uid'] = $prjUid;
+
         $bwp = BpmnWorkflow::load($prjUid);
+
         $projectRecord = array_change_key_case($projectData, CASE_UPPER);
+
         $bwp->update($projectRecord);
+
+        /*
+         * Diagram's Laneset Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["laneset"] as $i => $lanesetData) {
+            $lanesetData = array_change_key_case($lanesetData, CASE_UPPER);
+
+            $dataObject = $bwp->getLaneset($lanesetData["LNS_UID"]);
+
+            if ($forceInsert || is_null($dataObject)) {
+                if ($generateUid) {
+                    //Laneset
+                    unset($lanesetData["BOU_UID"]);
+
+                    $uidOld = $lanesetData["LNS_UID"];
+                    $lanesetData["LNS_UID"] = Util\Common::generateUID();
+
+                    $result[] = array(
+                        "object"  => "laneset",
+                        "old_uid" => $uidOld,
+                        "new_uid" => $lanesetData["LNS_UID"]
+                    );
+                }
+                $bwp->addLaneset($lanesetData);
+            } elseif (! $bwp->isEquals($dataObject, $lanesetData)) {
+                $bwp->updateLaneset($lanesetData["LNS_UID"], $lanesetData);
+            } else {
+                Util\Logger::log("Update Laneset ({$lanesetData["LNS_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["laneset"][$i] = $lanesetData;
+            $whiteList[] = $lanesetData["LNS_UID"];
+        }
+
+        $dataCollection = $bwp->getLanesets();
+
+        // looking for removed elements
+        foreach ($dataCollection as $lanesetData) {
+            if (! in_array($lanesetData["LNS_UID"], $whiteList)) {
+                // If it is not in the white list, then remove them
+                $bwp->removeLaneset($lanesetData["LNS_UID"]);
+            }
+        }
+
+        /*
+         * Diagram's Lane Handling
+         */
+        $whiteList = array();
+        foreach ($diagram["lanes"] as $i => $laneData) {
+            $laneData = array_change_key_case($laneData, CASE_UPPER);
+
+            //Update UIDs
+            foreach ($result as $value) {
+                if ($laneData["LNS_UID"] == $value["old_uid"]) {
+                    $laneData["LNS_UID"] = $value["new_uid"];
+                }
+            }
+
+            $dataObject = $bwp->getLane($laneData["LAN_UID"]);
+
+            if ($forceInsert || is_null($dataObject)) {
+                if ($generateUid) {
+                    //Laneset
+                    unset($laneData["BOU_UID"]);
+
+                    $uidOld = $laneData["LAN_UID"];
+                    $laneData["LAN_UID"] = Util\Common::generateUID();
+
+                    $result[] = array(
+                        "object"  => "lane",
+                        "old_uid" => $uidOld,
+                        "new_uid" => $laneData["LAN_UID"]
+                    );
+                }
+                $bwp->addLane($laneData);
+            } elseif (! $bwp->isEquals($dataObject, $laneData)) {
+                $bwp->updateLane($laneData["LAN_UID"], $laneData);
+            } else {
+                Util\Logger::log("Update Lane ({$laneData["LAN_UID"]}) Skipped - No changes required");
+            }
+
+            $diagram["lanes"][$i] = $laneData;
+            $whiteList[] = $laneData["LAN_UID"];
+        }
+
+        $dataCollection = $bwp->getLanes();
+
+        // looking for removed elements
+        foreach ($dataCollection as $laneData) {
+            if (! in_array($laneData["LAN_UID"], $whiteList)) {
+                // If it is not in the white list, then remove them
+                $bwp->removeLane($laneData["LAN_UID"]);
+            }
+        }
 
         /*
          * Diagram's Activities Handling
@@ -749,8 +898,17 @@ class BpmnWorkflow extends Project\Bpmn
             if ($forceInsert || is_null($activity)) {
                 if ($generateUid) {
                     //Activity
-                    unset($activityData["BOU_UID"]);
 
+                    //Update UIDs
+                    if ($activityData["BOU_CONTAINER"] == "bpmnPool" || $activityData["BOU_CONTAINER"] == "bpmnLane" || $activityData["BOU_CONTAINER"] == "bpmnActivity") {
+                        foreach ($result as $value) {
+                            if ($activityData["BOU_ELEMENT"] == $value["old_uid"]) {
+                                $activityData["BOU_ELEMENT"] = $value["new_uid"];
+                            }
+                        }
+                    }
+
+                    unset($activityData["BOU_UID"]);
                     $uidOld = $activityData["ACT_UID"];
                     $activityData["ACT_UID"] = Util\Common::generateUID();
 
@@ -794,6 +952,16 @@ class BpmnWorkflow extends Project\Bpmn
             if ($forceInsert || is_null($artifact)) {
                 if ($generateUid) {
                     //Artifact
+
+                    //Update UIDs
+                    if ($artifactData["BOU_CONTAINER"] == "bpmnPool" || $artifactData["BOU_CONTAINER"] == "bpmnLane" || $artifactData["BOU_CONTAINER"] == "bpmnActivity") {
+                        foreach ($result as $value) {
+                            if ($artifactData["BOU_ELEMENT"] == $value["old_uid"]) {
+                                $artifactData["BOU_ELEMENT"] = $value["new_uid"];
+                            }
+                        }
+                    }
+
                     unset($artifactData["BOU_UID"]);
 
                     $uidOld = $artifactData["ART_UID"];
@@ -844,6 +1012,16 @@ class BpmnWorkflow extends Project\Bpmn
             if ($forceInsert || is_null($gateway)) {
                 if ($generateUid) {
                     //Gateway
+
+                    //Update UIDs
+                    if ($gatewayData["BOU_CONTAINER"] == "bpmnPool" || $gatewayData["BOU_CONTAINER"] == "bpmnLane" || $gatewayData["BOU_CONTAINER"] == "bpmnActivity") {
+                        foreach ($result as $value) {
+                            if ($gatewayData["BOU_ELEMENT"] == $value["old_uid"]) {
+                                $gatewayData["BOU_ELEMENT"] = $value["new_uid"];
+                            }
+                        }
+                    }
+
                     unset($gatewayData["BOU_UID"]);
 
                     $uidOld = $gatewayData["GAT_UID"];
@@ -908,6 +1086,16 @@ class BpmnWorkflow extends Project\Bpmn
             if ($forceInsert || is_null($event)) {
                 if ($generateUid) {
                     //Event
+
+                    //Update UIDs
+                    if ($eventData["BOU_CONTAINER"] == "bpmnPool" || $eventData["BOU_CONTAINER"] == "bpmnLane" || $eventData["BOU_CONTAINER"] == "bpmnActivity") {
+                        foreach ($result as $value) {
+                            if ($eventData["BOU_ELEMENT"] == $value["old_uid"]) {
+                                $eventData["BOU_ELEMENT"] = $value["new_uid"];
+                            }
+                        }
+                    }
+
                     unset($eventData["BOU_UID"]);
 
                     $uidOld = $eventData["EVN_UID"];
@@ -954,6 +1142,16 @@ class BpmnWorkflow extends Project\Bpmn
             if ($forceInsert || is_null($dataObject)) {
                 if ($generateUid) {
                     //Data
+
+                    //Update UIDs
+                    if ($dataObjectData["BOU_CONTAINER"] == "bpmnPool" || $dataObjectData["BOU_CONTAINER"] == "bpmnLane" || $dataObjectData["BOU_CONTAINER"] == "bpmnActivity") {
+                        foreach ($result as $value) {
+                            if ($dataObjectData["BOU_ELEMENT"] == $value["old_uid"]) {
+                                $dataObjectData["BOU_ELEMENT"] = $value["new_uid"];
+                            }
+                        }
+                    }
+
                     unset($dataObjectData["BOU_UID"]);
 
                     $uidOld = $dataObjectData["DAT_UID"];
@@ -987,7 +1185,6 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
-        ////
         /*
          * Diagram's Participant Handling
          */
@@ -1001,6 +1198,16 @@ class BpmnWorkflow extends Project\Bpmn
             if ($forceInsert || is_null($dataObject)) {
                 if ($generateUid) {
                     //Participant
+
+                    //Update UIDs
+                    if ($participantData["BOU_CONTAINER"] == "bpmnPool" || $participantData["BOU_CONTAINER"] == "bpmnLane" || $participantData["BOU_CONTAINER"] == "bpmnActivity") {
+                        foreach ($result as $value) {
+                            if ($participantData["BOU_ELEMENT"] == $value["old_uid"]) {
+                                $participantData["BOU_ELEMENT"] = $value["new_uid"];
+                            }
+                        }
+                    }
+
                     unset($participantData["BOU_UID"]);
 
                     $uidOld = $participantData["PAR_UID"];
@@ -1034,97 +1241,6 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
-        ////
-        /*
-         * Diagram's Laneset Handling
-         */
-        $whiteList = array();
-        foreach ($diagram["laneset"] as $i => $lanesetData) {
-            $lanesetData = array_change_key_case($lanesetData, CASE_UPPER);
-
-            $dataObject = $bwp->getLaneset($lanesetData["LNS_UID"]);
-
-            if ($forceInsert || is_null($dataObject)) {
-                if ($generateUid) {
-                    //Laneset
-                    unset($lanesetData["BOU_UID"]);
-
-                    $uidOld = $lanesetData["LNS_UID"];
-                    $lanesetData["LNS_UID"] = Util\Common::generateUID();
-
-                    $result[] = array(
-                        "object"  => "laneset",
-                        "old_uid" => $uidOld,
-                        "new_uid" => $lanesetData["LNS_UID"]
-                    );
-                }
-                $bwp->addLaneset($lanesetData);
-            } elseif (! $bwp->isEquals($dataObject, $lanesetData)) {
-                $bwp->updateLaneset($lanesetData["LNS_UID"], $lanesetData);
-            } else {
-                Util\Logger::log("Update Laneset ({$lanesetData["LNS_UID"]}) Skipped - No changes required");
-            }
-
-            $diagram["laneset"][$i] = $lanesetData;
-            $whiteList[] = $lanesetData["LNS_UID"];
-        }
-
-        $dataCollection = $bwp->getLanesets();
-
-        // looking for removed elements
-        foreach ($dataCollection as $lanesetData) {
-            if (! in_array($lanesetData["LNS_UID"], $whiteList)) {
-                // If it is not in the white list, then remove them
-                $bwp->removeLaneset($lanesetData["LNS_UID"]);
-            }
-        }
-
-        ////
-        /*
-         * Diagram's Lane Handling
-         */
-        $whiteList = array();
-        foreach ($diagram["lanes"] as $i => $laneData) {
-            $laneData = array_change_key_case($laneData, CASE_UPPER);
-
-            $dataObject = $bwp->getLane($laneData["LAN_UID"]);
-
-            if ($forceInsert || is_null($dataObject)) {
-                if ($generateUid) {
-                    //Laneset
-                    unset($laneData["BOU_UID"]);
-
-                    $uidOld = $laneData["LAN_UID"];
-                    $laneData["LAN_UID"] = Util\Common::generateUID();
-
-                    $result[] = array(
-                        "object"  => "lane",
-                        "old_uid" => $uidOld,
-                        "new_uid" => $laneData["LAN_UID"]
-                    );
-                }
-                $bwp->addLane($laneData);
-            } elseif (! $bwp->isEquals($dataObject, $laneData)) {
-                $bwp->updateLane($laneData["LAN_UID"], $laneData);
-            } else {
-                Util\Logger::log("Update Lane ({$laneData["LAN_UID"]}) Skipped - No changes required");
-            }
-
-            $diagram["lanes"][$i] = $laneData;
-            $whiteList[] = $laneData["LAN_UID"];
-        }
-
-        $dataCollection = $bwp->getLanes();
-
-        // looking for removed elements
-        foreach ($dataCollection as $laneData) {
-            if (! in_array($laneData["LAN_UID"], $whiteList)) {
-                // If it is not in the white list, then remove them
-                $bwp->removeLane($laneData["LAN_UID"]);
-            }
-        }
-
-
         /*
          * Diagram's Flows Handling
          */
@@ -1135,16 +1251,23 @@ class BpmnWorkflow extends Project\Bpmn
 
             // if it is a new flow record
             if ($forceInsert || ($generateUid && !\BpmnFlow::exists($flowData["FLO_UID"]))) {
-                $oldFloUid = $flowData["FLO_UID"];
+                $uidOld = $flowData["FLO_UID"];
+
                 $flowData["FLO_UID"] = Util\Common::generateUID();
-                $result[] = array("object" => "flow", "new_uid" => $flowData["FLO_UID"], "old_uid" => $oldFloUid);
+                $result[] = array(
+                    "object" => "flow",
+                    "old_uid" => $uidOld,
+                    "new_uid" => $flowData["FLO_UID"]
+                );
 
                 $mappedUid = self::mapUid($flowData["FLO_ELEMENT_ORIGIN"], $result);
+
                 if ($mappedUid !== false) {
                     $flowData["FLO_ELEMENT_ORIGIN"] = $mappedUid;
                 }
 
                 $mappedUid = self::mapUid($flowData["FLO_ELEMENT_DEST"], $result);
+
                 if ($mappedUid !== false) {
                     $flowData["FLO_ELEMENT_DEST"] = $mappedUid;
                 }
@@ -1210,6 +1333,28 @@ class BpmnWorkflow extends Project\Bpmn
     {
         parent::setDisabled($value);
         $this->wp->setDisabled($value);
+    }
+
+    public function updateWebEntryEventByEvent($eventUid, array $arrayData)
+    {
+        try {
+            $bpmnEvent = \BpmnEventPeer::retrieveByPK($eventUid);
+
+            if (!is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START") {
+                $webEntryEvent = new \ProcessMaker\BusinessModel\WebEntryEvent();
+
+                if ($webEntryEvent->existsEvent($bpmnEvent->getPrjUid(), $bpmnEvent->getEvnUid())) {
+                    $arrayWebEntryEventData = $webEntryEvent->getWebEntryEventByEvent($bpmnEvent->getPrjUid(), $bpmnEvent->getEvnUid(), true);
+
+                    $bpmn = \ProcessMaker\Project\Bpmn::load($bpmnEvent->getPrjUid());
+                    $bpmnProject = $bpmn->getProject("object");
+
+                    $arrayResult = $webEntryEvent->update($arrayWebEntryEventData["WEE_UID"], $bpmnProject->getPrjAuthor(), $arrayData);
+                }
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
 

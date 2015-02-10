@@ -61,7 +61,7 @@ Ext.onReady(function(){
         Ext.getCmp('memory').setValue    (getFieldOutput(response.memory.version,   response.memory.result));
 
         dbReq  = response.mysql.result || response.mssql.result;
-        phpReq = response.php.result && response.curl.result && response.dom.result && response.gd.result && response.multibyte.result && response.soap.result && response.memory.result;
+        phpReq = response.php.result && response.curl.result && response.dom.result && response.gd.result && response.multibyte.result && response.soap.result && response.memory.result && response.mcrypt.result;
         wizard.onClientValidation(0, dbReq && phpReq);
         wizard.showLoadMask(false);
       },
@@ -86,7 +86,9 @@ Ext.onReady(function(){
         Ext.get('pathXmlformsSpan').dom.innerHTML  = (response.pathXmlforms.result ? okImage : badImage);
         Ext.get('pathPublicSpan').dom.innerHTML    = (response.pathPublic.result ? okImage : badImage);
         Ext.get('pathSharedSpan').dom.innerHTML    = (response.pathShared.result ? okImage : badImage);
-        Ext.get('pathLogFileSpan').dom.innerHTML    = (response.pathLogFile.result ? okImage : badImage);
+        Ext.get('pathLogFileSpan').dom.innerHTML   = (response.pathLogFile.result ? okImage : badImage);
+        Ext.get('pathTranslationsSpan').dom.innerHTML    = (response.pathTranslations.result ? okImage : badImage);
+        Ext.get('pathTranslationsMafeSpan').dom.innerHTML   = (response.pathTranslationsMafe.result ? okImage : badImage);
 
         wizard.onClientValidation(1,
           response.pathConfig.result &&
@@ -95,7 +97,9 @@ Ext.onReady(function(){
           response.pathXmlforms.result &&
           response.pathPublic.result &&
           response.pathShared.result &&
-          response.pathLogFile.result
+          response.pathLogFile.result &&          
+          response.pathTranslations.result &&
+          response.pathTranslationsMafe.result
         );
 
         wizard.showLoadMask(false);
@@ -115,7 +119,9 @@ Ext.onReady(function(){
         'pathXmlforms': Ext.getCmp('pathXmlforms').getValue(),
         'pathShared': Ext.getCmp('pathShared').getValue(),
         'pathLogFile': Ext.getCmp('pathLogFile').getValue(),
-        'pathPublic': Ext.getCmp('pathPublic').getValue()
+        'pathPublic': Ext.getCmp('pathPublic').getValue(),
+        'pathTranslations': Ext.getCmp('pathTranslations').getValue(),
+        'pathTranslationsMafe': Ext.getCmp('pathTranslationsMafe').getValue()
       }
     });
   }
@@ -411,6 +417,22 @@ Ext.onReady(function(){
                 id: 'pathPublic',
                 width: 430,
                 value: path_public,
+                disabled: true
+              },
+              {
+                xtype: 'textfield',
+                fieldLabel: '<span id="pathTranslationsSpan"></span> ' + _('ID_TRANSLATIONS_DIRECTORY'),
+                id: 'pathTranslations',
+                width: 430,
+                value: path_translations,
+                disabled: true
+              },
+              {
+                xtype: 'textfield',
+                fieldLabel: '<span id="pathTranslationsMafeSpan"></span> ' + _('ID_MAFE_TRANSLATION_DIRECTORY'),
+                id: 'pathTranslationsMafe',
+                width: 430,
+                value: path_translationsMafe,
                 disabled: true
               },
               {

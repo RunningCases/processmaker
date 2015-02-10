@@ -1597,8 +1597,9 @@ function copymove(action) {
     // alert('Move ' + dropEvent.data.node.id.replace( /_RRR_/g, '/' )+' to
     // '+ dropEvent.target.id.replace( /_RRR_/g, '/' ));
     requestParams = getRequestParams();
-    requestParams.dir = datastore.directory.substring(0,
-      datastore.directory.lastIndexOf('/'));
+    requestParams.copyMove = 'all';
+    //requestParams.dir = datastore.directory.substring(0,
+    //  datastore.directory.lastIndexOf('/'));
     requestParams.new_dir = dropEvent.target.id.replace(/_RRR_/g, '/');
     requestParams.new_dir = requestParams.new_dir.replace(/ext_root/g, '');
     requestParams.selitems = Array(dropEvent.data.node.id.replace(/_RRR_/g,
@@ -1606,6 +1607,8 @@ function copymove(action) {
     requestParams.confirm = 'true';
     requestParams.action = action;
     handleCallback(requestParams);
+    requestParams.copyMove = '';
+    requestParams.dir = '';
   }
 }
 // context menus

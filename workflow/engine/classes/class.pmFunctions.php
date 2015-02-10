@@ -821,17 +821,17 @@ function getEmailConfiguration ()
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFSendMessage.28.29
  *
  * @param string(32) | $caseId | UID for case | The UID (unique identification) for a case, which is a string of 32 hexadecimal characters to identify the case.
- * @param string(32) | $sFrom | Email address | The email address of the person who sends out the email.
- * @param string(100) | $sTo | Email receptor | The email address(es) to whom the email is sent. If multiple recipients, separate each email address with a comma.
- * @param string(100) | $sCc = '' | Email address for copies | The email address(es) of people who will receive carbon copies of the email.
- * @param string(100) | $sBcc = ''| Email address for copies hidden | The email address(es) of people who will receive blind carbon copies of the email.
+ * @param string(32) | $sFrom | Sender | The email address of the person who sends out the email.
+ * @param string(100) | $sTo | Recipient | The email address(es) to whom the email is sent. If multiple recipients, separate each email address with a comma.
+ * @param string(100) | $sCc = '' | Carbon copy recipient | The email address(es) of people who will receive carbon copies of the email.
+ * @param string(100) | $sBcc = ''| Carbon copy recipient | The email address(es) of people who will receive blind carbon copies of the email.
  * @param string(50) | $sSubject | Subject of the email | The subject (title) of the email.
  * @param string(50) | $sTemplate | Name of the template | The name of the template file in plain text or HTML format which will produce the body of the email.
- * @param array | $aFields = array() | An optional associative array | Optional parameter. An associative array where the keys are the variable names and the values are the variables' values.
+ * @param array | $aFields = array() | Variables for email template | Optional parameter. An associative array where the keys are the variable names and the values are the variables' values.
  * @param array | $aAttachment = array() | Attachment | An Optional arrray. An array of files (full paths) to be attached to the email.
- * @param boolean | $showMessage = true | Show message | Optional parameter.
+ * @param boolean | $showMessage = true | Show message | Optional parameter. Set to TRUE to show the message in the case's message history.
  * @param int | $delIndex = 0 | Delegation index of the case | Optional parameter. The delegation index of the current task in the case.
- * @param array | $config = array() | Alternative Email Settings | An optional array: An array of parameters to be used in the Email sent (MESS_ENGINE, MESS_SERVER, MESS_PORT, MESS_FROM_MAIL, MESS_RAUTH, MESS_ACCOUNT, MESS_PASSWORD, and SMTPSecure).
+ * @param array | $config = array() | Email server configuration | An optional array: An array of parameters to be used in the Email sent (MESS_ENGINE, MESS_SERVER, MESS_PORT, MESS_FROM_MAIL, MESS_RAUTH, MESS_ACCOUNT, MESS_PASSWORD, and SMTPSecure).
  * @return int | | result | Result of sending email
  *
  */
@@ -2803,17 +2803,17 @@ function PMFAddCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendM
 /**
  *@method
  *
- * It adds an element to the asociative array of attached documents that will be sent by mail, if it exists a file with the same name, it wll return a generated name with an autoincrementable sequential number.
+ * Adds a filename and file path to an associative array of files which can be passed to the PMFSendMessage() to send emails with attachments. It renames files with the same filename so existing files will not be replaced in the array.
  *
  * @name PMFAddAttachmentToArray
- * @label Add Element in Array
- * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#arrayDocumentAddElement.28.29
+ * @label Add File to Array 
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFAddAttachmentToArray.28.29
  *
- * @param array | $arrayData | Array that will contain new data | Array value comes where will contain the new data.
- * @param string(32) | $index | Name of the index | New index name
- * @param string(32) | $value | Index value | New value will contain the index
- * @param string | $suffix = " Copy({i})" | Is suffix | A string that is concatenated to index different
- * @return array | $arrayData | Array with new data | The array will contain the new data
+ * @param array | $arrayData | Array of files | Associative array where the index of each element is its new filename and its value is the path to the file or its web address.
+ * @param string(32) | $index | Filename | New filename which will be added as the index in the array
+ * @param string(32) | $value | File location | The web address or path on the ProcessMaker server for the file
+ * @param string | $suffix = " Copy({i})" | Filename suffix | A suffix to add to the filename if the filename already exists in the array
+ * @return array | $arrayData | Array with new data | The array with the added file
  *
  */
 

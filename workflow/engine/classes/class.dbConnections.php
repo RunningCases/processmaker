@@ -154,8 +154,9 @@ class dbConnections
         $result = DbSourcePeer::doSelectRS( $c );
         $result->next();
         $row = $result->getRow();
+        
         while ($row = $result->getRow()) {
-            if (trim( $pProUid ) == trim( $row[1] )) {
+            if ((trim( $pProUid ) == trim( $row[1] )) && ($row[2] == 'mysql')) {
                 $connections[] = Array ('DBS_UID' => $row[0],'DBS_NAME' => '[' . $row[3] . '] ' . $row[2] . ': ' . $row[4]
                 );
             }

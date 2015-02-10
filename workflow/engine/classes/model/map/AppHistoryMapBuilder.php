@@ -85,7 +85,7 @@ class AppHistoryMapBuilder
 
         $tMap->addColumn('HISTORY_DATA', 'HistoryData', 'string', CreoleTypes::LONGVARCHAR, true, null);
 
-        $tMap->addValidator('OBJ_TYPE', 'validValues', 'propel.validator.ValidValuesValidator', 'DYNAFORM|INPUT_DOCUMENT|OUTPUT_DOCUMENT|EXTERNAL|ASSIGN_TASK', 'Please select a valid value for OBJ_TYPE.');
+        $tMap->addValidator('OBJ_TYPE', 'validValues', 'propel.validator.ValidValuesValidator', 'DYNAFORM|INPUT_DOCUMENT|OUTPUT_DOCUMENT|EXTERNAL|ASSIGN_TASK', 'Please enter a valid value for OBJ_TYPE');
 
     } // doBuild()
 

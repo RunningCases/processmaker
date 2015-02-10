@@ -784,7 +784,7 @@ class XmlForm_Field
                     		$sValue = $aData[$this->pmfield];
                     	}
                     }
-                    
+
                 }
             }
         }
@@ -1938,6 +1938,7 @@ class XmlForm_Field_Textarea extends XmlForm_Field
     public $cols = 40;
     public $required = false;
     public $readOnly = false;
+    public $resizable = false;
     public $wrap = 'OFF';
     public $className;
     public $renderMode = '';
@@ -1970,9 +1971,9 @@ class XmlForm_Field_Textarea extends XmlForm_Field
         if ($this->renderMode == '') {
             $this->renderMode = $this->mode;
         }
-
+        $resizable = ($this->resizable == 1 || $this->resizable == '1') ? 'resize:both;' : 'resize:none;';
         $html = '';
-        $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;resize:none;";
+        $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;".$resizable;
         if ($this->renderMode == 'edit') {
             //EDIT MODE
             $readOnlyText = ($this->readOnly == 1 || $this->readOnly == '1') ? 'readOnly="readOnly"' : '';
@@ -2037,8 +2038,8 @@ class XmlForm_Field_Textarea extends XmlForm_Field
             }
 
             $arrayOptions[$r] = $v;
-
-            $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;resize:none;";
+            $resizable = ($this->resizable == 1 || $this->resizable == '1') ? 'resize:both;' : 'resize:none;';
+            $scrollStyle = $this->style . "overflow:scroll;overflow-y:scroll;overflow-x:hidden;overflow:-moz-scrollbars-vertical;".$resizable;
             $html = '';
             if ($this->renderMode == 'edit') {
                 //EDIT MODE
@@ -3220,12 +3221,12 @@ class XmlForm_Field_Checkbox extends XmlForm_Field
         } elseif ($this->mode === 'view') {
             $checked = (isset( $value ) && ($value == $this->value)) ? 'checked' : '';
             if ($this->labelOnRight) {
-                $html = "<input value='{$this->value}' type='checkbox' $checked $readOnly disabled />
+                $html = "<input id='form[" . $this->name . "]' value='{$this->value}' type='checkbox' $checked $readOnly disabled />
                  <span class='FormCheck'>" . $this->label . '</span></input>';
             } else {
-                $html = "<input value='{$this->value}' type='checkbox' $checked $readOnly disabled />";
+                $html = "<input id='form[" . $this->name . "]' value='{$this->value}' type='checkbox' $checked $readOnly disabled />";
             }
-            $html .= "<input id='form[" . $this->name . "]' name='form[" . $this->name . "]' type='hidden' " . $this->NSFieldType() . " value='{$value}' />";
+            $html .= "<input name='form[" . $this->name . "]' type='hidden' " . $this->NSFieldType() . " value='{$value}' />";
             return $html;
         }
     }
@@ -3442,11 +3443,12 @@ class XmlForm_Field_Hidden extends XmlForm_Field
                 }
             }
         }
+        //$html .= 'value="' . $this->htmlentities( $value, ENT_QUOTES, 'utf-8' ) . '" ';
         if ($this->mode === 'edit') {
-            return '<input id="form[' . $this->name . ']" ' . $this->NSFieldType() . ' name="form[' . $this->name . ']" type=\'hidden\' value=\'' . $value . '\'/>';
+            return '<input id="form[' . $this->name . ']" ' . $this->NSFieldType() . ' name="form[' . $this->name . ']" type=\'hidden\' value=\'' . $this->htmlentities( $value, ENT_QUOTES, 'utf-8' ) . '\'/>';
         } elseif ($this->mode === 'view') {
             //a button? who wants a hidden field be showed like a button?? very strange.
-            return '<input id="form[' . $this->name . ']" ' . $this->NSFieldType() . ' name="form[' . $this->name . ']" type=\'text\' value=\'' . $value . '\' style="display:none"/>';
+            return '<input id="form[' . $this->name . ']" ' . $this->NSFieldType() . ' name="form[' . $this->name . ']" type=\'text\' value=\'' . $this->htmlentities( $value, ENT_QUOTES, 'utf-8' ) . '\' style="display:none"/>';
         } else {
             return $this->htmlentities( $value, ENT_COMPAT, 'utf-8' );
         }
@@ -4493,17 +4495,50 @@ class XmlForm_Field_Date extends XmlForm_Field_SimpleText
     {
         $part1 = $sign * substr( $date, 0, strlen( $date ) - 1 );
         $part2 = substr( $date, strlen( $date ) - 1 );
+
+        $year  = (int)(date("Y"));
+        $month = (int)(date("m"));
+        $day   = (int)(date("d"));
+
+        $osIsLinux = strtoupper(substr(PHP_OS, 0, 3)) != "WIN";
+        $checkYear = false;
+
         switch ($part2) {
-            case 'd':
-                $res = date( 'Y-m-d', mktime( 0, 0, 0, date( 'm' ), date( 'd' ) + $part1, date( 'Y' ) ) );
+            case "y":
+                $year = $year + $part1;
+
+                $res = date("Y-m-d", mktime(0, 0, 0, $month, $day, $year));
+
+                $checkYear = true;
                 break;
-            case 'm':
-                $res = date( 'Y-m-d', mktime( 0, 0, 0, date( 'm' ) + $part1, date( 'd' ), date( 'Y' ) ) );
+            case "m":
+                $month = $month + $part1;
+
+                $res = date("Y-m-d", mktime(0, 0, 0, $month, $day, $year));
+
+                if ($month > 12) {
+                    $year = $year + (int)($month / 12);
+
+                    $checkYear = true;
+                }
                 break;
-            case 'y':
-                $res = date( 'Y-m-d', mktime( 0, 0, 0, date( 'm' ), date( 'd' ), date( 'Y' ) + $part1 ) );
+            case "d":
+                $res = date("Y-m-d", mktime(0, 0, 0, $month, $day + $part1, $year));
+
+                $dayAux = ($month * 31) - (31 - $day) + $part1;
+
+                if ($dayAux > 365) {
+                    $year = $year + (int)($dayAux / 365);
+
+                    $checkYear = true;
+                }
                 break;
         }
+
+        if (!$osIsLinux && $checkYear && !preg_match("/^$year\-\d{2}\-\d{2}$/", $res)) {
+            $res = preg_replace("/^\d{4}(\-\d{2}\-\d{2})$/", "$year$1", $res);
+        }
+
         return $res;
     }
 
