@@ -742,7 +742,7 @@ var G_Grid = function(oForm, sGridName){
 
     this.deleteGridRow = function (sRow, bWithoutConfirm)
     {
-        if (navigator.appName == 'Microsoft Internet Explorer') {
+        if (leimnud.browser.isIE) {
             if (typeof(bWithoutConfirm) == "undefined") {
                 bWithoutConfirm = false;
             }
