@@ -119,7 +119,7 @@ class pmDynaform
             if (is_array($items[$key])) {
                 $this->mergeAppData($app_uid, $items[$key]);
             } else {
-                if (isset($this->data[$items[$key]->name])) {
+                if (isset($items[$key]->name) && isset($this->data[$items[$key]->name])) {
                     if ($items[$key]->type === "grid") {
                         $rows = $this->data[$items[$key]->name];
                         foreach ($rows as $keyRow => $row) {
@@ -153,6 +153,9 @@ class pmDynaform
                     }
                     $items[$key]->options = $options;
                 }
+                if (isset($items[$key]->columns)) {
+                    $this->mergeAppData($app_uid, $items[$key]->columns);
+                }
             }
         }
     }
@@ -164,7 +167,7 @@ class pmDynaform
             $this->items = $dynContent->items[0]->items;
         }
 
-        $this->mergeAppData($app_uid, &$items);
+        $this->mergeAppData($app_uid, $items);
         $dynContent->items[0]->items = $this->items;
 
         $a = G::json_encode($dynContent);

@@ -7,31 +7,31 @@ require_once 'propel/om/Persistent.php';
 
 include_once 'propel/util/Criteria.php';
 
-include_once 'classes/model/MessagePeer.php';
+include_once 'classes/model/MessageTypePeer.php';
 
 /**
- * Base class that represents a row from the 'MESSAGE' table.
+ * Base class that represents a row from the 'MESSAGE_TYPE' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseMessage extends BaseObject implements Persistent
+abstract class BaseMessageType extends BaseObject implements Persistent
 {
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        MessagePeer
+     * @var        MessageTypePeer
     */
     protected static $peer;
 
     /**
-     * The value for the mes_uid field.
+     * The value for the msgt_uid field.
      * @var        string
      */
-    protected $mes_uid;
+    protected $msgt_uid;
 
     /**
      * The value for the prj_uid field.
@@ -40,16 +40,10 @@ abstract class BaseMessage extends BaseObject implements Persistent
     protected $prj_uid;
 
     /**
-     * The value for the mes_name field.
+     * The value for the msgt_name field.
      * @var        string
      */
-    protected $mes_name = '';
-
-    /**
-     * The value for the mes_condition field.
-     * @var        string
-     */
-    protected $mes_condition = '';
+    protected $msgt_name = '';
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -66,14 +60,14 @@ abstract class BaseMessage extends BaseObject implements Persistent
     protected $alreadyInValidation = false;
 
     /**
-     * Get the [mes_uid] column value.
+     * Get the [msgt_uid] column value.
      * 
      * @return     string
      */
-    public function getMesUid()
+    public function getMsgtUid()
     {
 
-        return $this->mes_uid;
+        return $this->msgt_uid;
     }
 
     /**
@@ -88,34 +82,23 @@ abstract class BaseMessage extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [mes_name] column value.
+     * Get the [msgt_name] column value.
      * 
      * @return     string
      */
-    public function getMesName()
+    public function getMsgtName()
     {
 
-        return $this->mes_name;
+        return $this->msgt_name;
     }
 
     /**
-     * Get the [mes_condition] column value.
-     * 
-     * @return     string
-     */
-    public function getMesCondition()
-    {
-
-        return $this->mes_condition;
-    }
-
-    /**
-     * Set the value of [mes_uid] column.
+     * Set the value of [msgt_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setMesUid($v)
+    public function setMsgtUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -124,12 +107,12 @@ abstract class BaseMessage extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->mes_uid !== $v) {
-            $this->mes_uid = $v;
-            $this->modifiedColumns[] = MessagePeer::MES_UID;
+        if ($this->msgt_uid !== $v) {
+            $this->msgt_uid = $v;
+            $this->modifiedColumns[] = MessageTypePeer::MSGT_UID;
         }
 
-    } // setMesUid()
+    } // setMsgtUid()
 
     /**
      * Set the value of [prj_uid] column.
@@ -148,18 +131,18 @@ abstract class BaseMessage extends BaseObject implements Persistent
 
         if ($this->prj_uid !== $v) {
             $this->prj_uid = $v;
-            $this->modifiedColumns[] = MessagePeer::PRJ_UID;
+            $this->modifiedColumns[] = MessageTypePeer::PRJ_UID;
         }
 
     } // setPrjUid()
 
     /**
-     * Set the value of [mes_name] column.
+     * Set the value of [msgt_name] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setMesName($v)
+    public function setMsgtName($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -168,34 +151,12 @@ abstract class BaseMessage extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->mes_name !== $v || $v === '') {
-            $this->mes_name = $v;
-            $this->modifiedColumns[] = MessagePeer::MES_NAME;
+        if ($this->msgt_name !== $v || $v === '') {
+            $this->msgt_name = $v;
+            $this->modifiedColumns[] = MessageTypePeer::MSGT_NAME;
         }
 
-    } // setMesName()
-
-    /**
-     * Set the value of [mes_condition] column.
-     * 
-     * @param      string $v new value
-     * @return     void
-     */
-    public function setMesCondition($v)
-    {
-
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->mes_condition !== $v || $v === '') {
-            $this->mes_condition = $v;
-            $this->modifiedColumns[] = MessagePeer::MES_CONDITION;
-        }
-
-    } // setMesCondition()
+    } // setMsgtName()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -214,23 +175,21 @@ abstract class BaseMessage extends BaseObject implements Persistent
     {
         try {
 
-            $this->mes_uid = $rs->getString($startcol + 0);
+            $this->msgt_uid = $rs->getString($startcol + 0);
 
             $this->prj_uid = $rs->getString($startcol + 1);
 
-            $this->mes_name = $rs->getString($startcol + 2);
-
-            $this->mes_condition = $rs->getString($startcol + 3);
+            $this->msgt_name = $rs->getString($startcol + 2);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 4; // 4 = MessagePeer::NUM_COLUMNS - MessagePeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 3; // 3 = MessageTypePeer::NUM_COLUMNS - MessageTypePeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating Message object", $e);
+            throw new PropelException("Error populating MessageType object", $e);
         }
     }
 
@@ -250,12 +209,12 @@ abstract class BaseMessage extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(MessagePeer::DATABASE_NAME);
+            $con = Propel::getConnection(MessageTypePeer::DATABASE_NAME);
         }
 
         try {
             $con->begin();
-            MessagePeer::doDelete($this, $con);
+            MessageTypePeer::doDelete($this, $con);
             $this->setDeleted(true);
             $con->commit();
         } catch (PropelException $e) {
@@ -281,7 +240,7 @@ abstract class BaseMessage extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(MessagePeer::DATABASE_NAME);
+            $con = Propel::getConnection(MessageTypePeer::DATABASE_NAME);
         }
 
         try {
@@ -316,14 +275,14 @@ abstract class BaseMessage extends BaseObject implements Persistent
             // If this object has been modified, then save it to the database.
             if ($this->isModified()) {
                 if ($this->isNew()) {
-                    $pk = MessagePeer::doInsert($this, $con);
+                    $pk = MessageTypePeer::doInsert($this, $con);
                     $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
                                          // should always be true here (even though technically
                                          // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
-                    $affectedRows += MessagePeer::doUpdate($this, $con);
+                    $affectedRows += MessageTypePeer::doUpdate($this, $con);
                 }
                 $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
             }
@@ -394,7 +353,7 @@ abstract class BaseMessage extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = MessagePeer::doValidate($this, $columns)) !== true) {
+            if (($retval = MessageTypePeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -417,7 +376,7 @@ abstract class BaseMessage extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = MessagePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = MessageTypePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->getByPosition($pos);
     }
 
@@ -432,16 +391,13 @@ abstract class BaseMessage extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                return $this->getMesUid();
+                return $this->getMsgtUid();
                 break;
             case 1:
                 return $this->getPrjUid();
                 break;
             case 2:
-                return $this->getMesName();
-                break;
-            case 3:
-                return $this->getMesCondition();
+                return $this->getMsgtName();
                 break;
             default:
                 return null;
@@ -461,12 +417,11 @@ abstract class BaseMessage extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = MessagePeer::getFieldNames($keyType);
+        $keys = MessageTypePeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getMesUid(),
+            $keys[0] => $this->getMsgtUid(),
             $keys[1] => $this->getPrjUid(),
-            $keys[2] => $this->getMesName(),
-            $keys[3] => $this->getMesCondition(),
+            $keys[2] => $this->getMsgtName(),
         );
         return $result;
     }
@@ -483,7 +438,7 @@ abstract class BaseMessage extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = MessagePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = MessageTypePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->setByPosition($pos, $value);
     }
 
@@ -499,16 +454,13 @@ abstract class BaseMessage extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                $this->setMesUid($value);
+                $this->setMsgtUid($value);
                 break;
             case 1:
                 $this->setPrjUid($value);
                 break;
             case 2:
-                $this->setMesName($value);
-                break;
-            case 3:
-                $this->setMesCondition($value);
+                $this->setMsgtName($value);
                 break;
         } // switch()
     }
@@ -531,10 +483,10 @@ abstract class BaseMessage extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = MessagePeer::getFieldNames($keyType);
+        $keys = MessageTypePeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setMesUid($arr[$keys[0]]);
+            $this->setMsgtUid($arr[$keys[0]]);
         }
 
         if (array_key_exists($keys[1], $arr)) {
@@ -542,11 +494,7 @@ abstract class BaseMessage extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setMesName($arr[$keys[2]]);
-        }
-
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setMesCondition($arr[$keys[3]]);
+            $this->setMsgtName($arr[$keys[2]]);
         }
 
     }
@@ -558,22 +506,18 @@ abstract class BaseMessage extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(MessagePeer::DATABASE_NAME);
+        $criteria = new Criteria(MessageTypePeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(MessagePeer::MES_UID)) {
-            $criteria->add(MessagePeer::MES_UID, $this->mes_uid);
+        if ($this->isColumnModified(MessageTypePeer::MSGT_UID)) {
+            $criteria->add(MessageTypePeer::MSGT_UID, $this->msgt_uid);
         }
 
-        if ($this->isColumnModified(MessagePeer::PRJ_UID)) {
-            $criteria->add(MessagePeer::PRJ_UID, $this->prj_uid);
+        if ($this->isColumnModified(MessageTypePeer::PRJ_UID)) {
+            $criteria->add(MessageTypePeer::PRJ_UID, $this->prj_uid);
         }
 
-        if ($this->isColumnModified(MessagePeer::MES_NAME)) {
-            $criteria->add(MessagePeer::MES_NAME, $this->mes_name);
-        }
-
-        if ($this->isColumnModified(MessagePeer::MES_CONDITION)) {
-            $criteria->add(MessagePeer::MES_CONDITION, $this->mes_condition);
+        if ($this->isColumnModified(MessageTypePeer::MSGT_NAME)) {
+            $criteria->add(MessageTypePeer::MSGT_NAME, $this->msgt_name);
         }
 
 
@@ -590,9 +534,9 @@ abstract class BaseMessage extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(MessagePeer::DATABASE_NAME);
+        $criteria = new Criteria(MessageTypePeer::DATABASE_NAME);
 
-        $criteria->add(MessagePeer::MES_UID, $this->mes_uid);
+        $criteria->add(MessageTypePeer::MSGT_UID, $this->msgt_uid);
 
         return $criteria;
     }
@@ -603,18 +547,18 @@ abstract class BaseMessage extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getMesUid();
+        return $this->getMsgtUid();
     }
 
     /**
-     * Generic method to set the primary key (mes_uid column).
+     * Generic method to set the primary key (msgt_uid column).
      *
      * @param      string $key Primary key.
      * @return     void
      */
     public function setPrimaryKey($key)
     {
-        $this->setMesUid($key);
+        $this->setMsgtUid($key);
     }
 
     /**
@@ -623,7 +567,7 @@ abstract class BaseMessage extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of Message (or compatible) type.
+     * @param      object $copyObj An object of MessageType (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @throws     PropelException
      */
@@ -632,14 +576,12 @@ abstract class BaseMessage extends BaseObject implements Persistent
 
         $copyObj->setPrjUid($this->prj_uid);
 
-        $copyObj->setMesName($this->mes_name);
-
-        $copyObj->setMesCondition($this->mes_condition);
+        $copyObj->setMsgtName($this->msgt_name);
 
 
         $copyObj->setNew(true);
 
-        $copyObj->setMesUid(NULL); // this is a pkey column, so set to default value
+        $copyObj->setMsgtUid(NULL); // this is a pkey column, so set to default value
 
     }
 
@@ -652,7 +594,7 @@ abstract class BaseMessage extends BaseObject implements Persistent
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return     Message Clone of current object.
+     * @return     MessageType Clone of current object.
      * @throws     PropelException
      */
     public function copy($deepCopy = false)
@@ -671,12 +613,12 @@ abstract class BaseMessage extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return     MessagePeer
+     * @return     MessageTypePeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new MessagePeer();
+            self::$peer = new MessageTypePeer();
         }
         return self::$peer;
     }

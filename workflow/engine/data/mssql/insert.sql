@@ -7356,7 +7356,7 @@ SELECT 'LABEL','ID_EMAIL_SERVER_TITLE_TESTING','en','Testing Email Server','2014
   UNION ALL
 SELECT 'LABEL','ID_EMAIL_SERVER_RESULT_TESTING','en','Result Testing Email Server','2014-12-24' 
   UNION ALL
-SELECT 'LABEL','ID_EMAIL_SERVER_TITLE','en','Email Servers','2014-12-24' 
+SELECT 'LABEL','ID_EMAIL_SERVER_TITLE','en','Email Servers','2015-01-21' 
   UNION ALL
 SELECT 'LABEL','ID_EMAIL_SERVER_THIS_CONFIGURATION_IS_DEFAULT','en','Set that this configuration is the default','2014-12-24' 
   UNION ALL
@@ -7389,6 +7389,26 @@ SELECT 'LABEL','ID_EVENT_NOT_IS_START_EVENT','en','The event with {0}: {1} not i
 SELECT 'LABEL','ID_WEB_ENTRY_EVENT_DOES_NOT_IS_REGISTERED','en','The event with {0}: {1} does not is registered.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_WEB_ENTRY_EVENT_TITLE_ALREADY_EXISTS','en','The WebEntry-Event title with {0}: "{1}" already exists.','2015-01-16' 
+  UNION ALL
+SELECT 'LABEL','ID_CASE_STOPPED_TRIGGER','en','The case has not stopped due to its trigger.','2015-01-29' 
+  UNION ALL
+SELECT 'LABEL','ID_TRANSLATION_NOT_WRITEABLE','en','The translation file is not writable. <br/>Please give write permission to file:','2015-01-31' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_TRANSLATION_NOT_WRITEABLE','en','The mafe translation file is not writable. <br/>Please give write permission to file:','2015-01-31' 
+  UNION ALL
+SELECT 'LABEL','ID_TRANSLATIONS_DIRECTORY','en','Translations Directory','2015-01-31' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_TRANSLATION_DIRECTORY','en','Mafe Translation Directory','2015-01-31' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_TYPE_DOES_NOT_EXIST','en','The Message Type with {0}: {1} does not exist.','2015-02-05' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_TYPE_NAME_ALREADY_EXISTS','en','The Message Type Name with {0}: "{1}" already exists.','2015-02-05' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_TYPE_NAME_VARIABLE_EXISTS','en','The name of the variable exists.','2015-02-05' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_TYPE_VARIABLE_DOES_NOT_EXIST','en','The Variable with {0}: {1} does not exist.','2015-02-05' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_TYPE_VARIABLE_NAME_ALREADY_EXISTS','en','The Variable Name with {0}: "{1}" already exists.','2015-02-05' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 

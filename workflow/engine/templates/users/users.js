@@ -383,15 +383,15 @@ Ext.onReady(function () {
           ]
       })
   });
-
+	
   comboRole = new Ext.form.ComboBox({
     fieldLabel    : _('ID_ROLE'),
     hiddenName    : 'USR_ROLE',
     id            : 'USR_ROLE',
     readOnly      : readMode,
-    store         : storeRole,
+    store         : storeRole,    
     valueField    : 'ROL_UID',
-    displayField  : 'ROL_CODE',
+    displayField  : 'ROL_CODE',    
     emptyText     : TRANSLATIONS.ID_SELECT,
     width         : 260,
     selectOnFocus : true,
@@ -400,7 +400,7 @@ Ext.onReady(function () {
     triggerAction : 'all',
     mode          : 'local'
   });
-
+  
   var informationFields = new Ext.form.FieldSet({
     title : _('ID_PERSONAL_INFORMATION'),
     items : [
@@ -1250,10 +1250,9 @@ function loadData()
 
 
     comboRole.store.on("load", function (store) {
-        comboRole.setValue(store.getAt(0).get("ROL_UID"));
-    });
+        comboRole.setValue(store.getAt(1).get("ROL_UID"));
+    });    
     comboRole.store.load();
-
 
     comboDefaultMainMenuOption.store.on("load", function (store) {
         comboDefaultMainMenuOption.setValue(store.getAt(0).get("id"));
