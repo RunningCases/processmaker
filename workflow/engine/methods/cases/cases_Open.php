@@ -77,7 +77,7 @@ try {
     $aFields = $oCase->loadCase( $sAppUid, $iDelIndex );
     //  g::pr($aFields);
     //  die;
-    if( !isset($_SESSION['CURRENT_TASK']) || $_SESSION['CURRENT_TASK']==''){
+    if (!isset($_SESSION['CURRENT_TASK']) && $_SESSION['CURRENT_TASK'] != ''){
       $_SESSION['CURRENT_TASK'] = $aFields['TAS_UID'];
     }
     switch ($aFields['APP_STATUS']) {
