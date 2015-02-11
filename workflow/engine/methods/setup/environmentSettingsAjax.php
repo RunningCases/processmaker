@@ -35,24 +35,19 @@ switch ($request) {
     case "save":
         $conf = new Configurations();
         $config = $conf->getConfiguration("ENVIRONMENT_SETTINGS", "" );
-        //$config['format'] = $_POST["userFormat"];
         if (isset($_POST["userFormat"])) {
             $config['format'] = $_POST["userFormat"]; 
-        }        
-        //$config['dateFormat'] = $_POST["dateFormat"];
+        } 
         if (isset($_POST["dateFormat"])) {
             $config['dateFormat'] = $_POST["dateFormat"]; 
         }
         $config['startCaseHideProcessInf'] = ((isset( $_POST["hideProcessInf"] )) ? true : false);
-        //$config['casesListDateFormat'] = $_POST["casesListDateFormat"];
         if (isset($_POST["casesListDateFormat"])) {
             $config['casesListDateFormat'] = $_POST["casesListDateFormat"]; 
-        }        
-        //$config['casesListRowNumber'] = intval( $_POST["casesListRowNumber"] );
+        }
         if (isset($_POST["casesListDateFormat"])) {
             $config['casesListRowNumber'] = intval( $_POST["casesListRowNumber"] );
         }
-        //$config['casesListRefreshTime'] = intval( $_POST["txtCasesRefreshTime"]);
         if (isset($_POST["txtCasesRefreshTime"])) {
             $config['casesListRefreshTime'] = intval( $_POST["txtCasesRefreshTime"]);
         }
