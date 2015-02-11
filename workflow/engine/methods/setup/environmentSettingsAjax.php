@@ -46,7 +46,6 @@ switch ($request) {
         $config['casesListRowNumber'] = intval( $_POST["casesListRowNumber"] );
         $config['casesListRefreshTime'] = intval( $_POST["txtCasesRefreshTime"]);
 
-
         $conf->aConfig = $config;
         $conf->saveConfig( "ENVIRONMENT_SETTINGS", "" );
 

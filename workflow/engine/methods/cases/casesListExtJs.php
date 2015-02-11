@@ -3,11 +3,14 @@ unset($_SESSION['APPLICATION']);
 
 //get the action from GET or POST, default is todo
 $action = isset( $_GET['action'] ) ? $_GET['action'] : (isset( $_POST['action'] ) ? $_POST['action'] : 'todo');
-$clientId = 'x-pm-local-client';
 //fix a previous inconsistency
 
+$urlProxy = 'proxyCasesList';
+if ($action == 'selfservice') {
+    $action = 'unassigned';
+}
+/*----------------------------------********---------------------------------*/
 $urlProxy = '/api/1.0/' . SYS_SYS . '/lists/';
-$methodProxy = 'GET';
 switch ($action) {
     case 'todo':
     case 'draft':
@@ -40,6 +43,7 @@ switch ($action) {
         break;
 }
 
+$clientId = 'x-pm-local-client';
 $client = getClientCredentials($clientId);
 $authCode = getAuthorizationCode($client);
 $debug = false; //System::isDebugMode();
@@ -67,6 +71,7 @@ $response = $oauthServer->postToken($request, true);
 $clientToken = $response->getParameters();
 $clientToken["client_id"] = $client['CLIENT_ID'];
 $clientToken["client_secret"] = $client['CLIENT_SECRET'];
+/*----------------------------------********---------------------------------*/
 
 
 
@@ -182,8 +187,9 @@ $oHeadPublisher->assign( 'readerFields', $readerFields ); //sending the fields t
 $oHeadPublisher->assign( 'reassignColumns', $reassignColumns ); //sending the columns to display in grid
 $oHeadPublisher->assign( 'action', $action ); //sending the action to make
 $oHeadPublisher->assign( 'urlProxy', $urlProxy ); //sending the urlProxy to make
-$oHeadPublisher->assign( 'methodProxy', $methodProxy ); //sending the urlProxy to make
+/*----------------------------------********---------------------------------*/
 $oHeadPublisher->assign( 'credentials', $clientToken ); //sending the SYS_SYS to make
+/*----------------------------------********---------------------------------*/
 $oHeadPublisher->assign( 'PMDateFormat', $dateFormat ); //sending the fields to get from proxy
 $oHeadPublisher->assign( 'statusValues', $status ); //Sending the listing of status
 $oHeadPublisher->assign( 'processValues', $processes ); //Sending the listing of processes
@@ -494,6 +500,7 @@ function getAdditionalFields($action, $confCasesList = array())
 }
 
 
+/*----------------------------------********---------------------------------*/
 function getClientCredentials($clientId)
 {
     $oauthQuery = new ProcessMaker\Services\OAuth2\PmPdo(getDsn());
@@ -529,3 +536,4 @@ function getAuthorizationCode($client)
 
     return $code;
 }
+/*----------------------------------********---------------------------------*/

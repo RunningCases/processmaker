@@ -24,7 +24,6 @@ var grid;
 var textJump;
 var ids = '';
 var winReassignInCasesList;
-var totalRowsGrid = '';
 
 function formatAMPM(date, initVal, calendarDate) {
 
@@ -742,12 +741,13 @@ Ext.onReady ( function() {
   var proxyCasesList = new Ext.data.HttpProxy({
     api: {
       read : urlProxy
-    },
-    method: 'GET',
-    headers: {
+    }
+    /*----------------------------------********---------------------------------*/
+    ,headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + credentials.access_token
     }
+    /*----------------------------------********---------------------------------*/
   });
 
   // Typical JsonReader with additional meta-data params for defining the core attributes of your json-response
@@ -806,11 +806,11 @@ Ext.onReady ( function() {
     sortInfo:{field: 'APP_CACHE_VIEW.APP_NUMBER', direction: "DESC"},
     listeners: {
       load: function(response){
+        //console.log(response.reader.jsonData);
         if (response.reader.jsonData.result === false) {
     			PMExt.notify('ERROR', response.reader.jsonData.message);
     			//PMExt.error
     		}
-        //console.log(response.reader.jsonData);
     	},
     	exception: function(dp, type, action, options, response, arg)  {
     	    responseObject = Ext.util.JSON.decode(response.responseText);

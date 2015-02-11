@@ -36,7 +36,7 @@ class ListInbox extends BaseListInbox
                 throw ($e);
             }
             $con->commit();
-    
+
             // create participated history
             $listParticipatedHistory = new ListParticipatedHistory();
             $listParticipatedHistory->create($data);
