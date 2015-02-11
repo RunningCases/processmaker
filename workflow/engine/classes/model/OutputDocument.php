@@ -784,6 +784,8 @@ class OutputDocument extends BaseOutputDocument
         $sContent = str_ireplace("</font>", "</span>", $sContent);
 
         $sContent = str_replace($nrthtml, $nrt, $sContent);
+        
+        $sContent = str_replace("margin-left", "text-indent", $sContent);
 
         // define Save file
         $sOutput = 2;
