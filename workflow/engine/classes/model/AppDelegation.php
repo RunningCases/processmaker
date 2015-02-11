@@ -589,7 +589,7 @@ class AppDelegation extends BaseAppDelegation
         $c = new Criteria("workflow");
         $c->clearSelectColumns();
         $c->addSelectColumn(AppDelegationPeer::APP_UID);
-        $c->add(AppDelegationPeer::APP_UID, $AppUid);
+        $c->add(AppDelegationPeer::APP_UID, $appUid);
         $c->add(AppDelegationPeer::DEL_INDEX, $sDelIndex);
         $c->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNOTNULL);
         $result = AppDelegationPeer::doSelectRS($c);
