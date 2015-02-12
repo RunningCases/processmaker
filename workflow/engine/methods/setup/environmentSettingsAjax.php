@@ -55,7 +55,7 @@ switch ($request) {
         $conf->aConfig = $config;
         $conf->saveConfig( "ENVIRONMENT_SETTINGS", "" );
 
-        G::auditLog("UpdateEnvironmentSettings", "UserNameDisplayFormat -> ".isset($_POST["userFormat"]).", GlobalDateFormat -> ".isset($_POST["dateFormat"]).", HideProcessInformation -> ".(string)isset($_POST["hideProcessInf"]).", DateFormat -> ".isset($_POST["casesListDateFormat"]).", NumberOfRowsPerPage -> ".isset($_POST["casesListRowNumber"]).", RefreshTimeSeconds -> ".isset($_POST["txtCasesRefreshTime"]));
+        G::auditLog("UpdateEnvironmentSettings", "UserNameDisplayFormat -> ".(isset($_POST["userFormat"]) ? $_POST["userFormat"] : '').", GlobalDateFormat -> ".(isset($_POST["dateFormat"]) ? $_POST["dateFormat"] : '').", HideProcessInformation -> ".(string)isset($_POST["hideProcessInf"]).", DateFormat -> ".(isset($_POST["casesListDateFormat"]) ? $_POST["casesListDateFormat"] : '').", NumberOfRowsPerPage -> ".(isset($_POST["casesListRowNumber"]) ? $_POST["casesListRowNumber"] : '').", RefreshTimeSeconds -> ".(isset($_POST["txtCasesRefreshTime"]) ? $_POST["txtCasesRefreshTime"] : ''));
 
         $response = new stdclass();
         $response->success = true;
