@@ -1144,20 +1144,6 @@ Ext.onReady ( function() {
     })
   });
   
-  var userStore = new Ext.data.Store( {
-    proxy : new Ext.data.HttpProxy({
-      url : 'casesList_Ajax?actionAjax=userValues&action='+action,
-      method : 'POST'
-    }),
-    reader : new Ext.data.JsonReader({
-      fields : [{
-        name : 'USR_UID'
-      }, {
-        name : 'USR_FULLNAME'
-      }]
-    })
-  });
-
   var suggestUser = new Ext.form.ComboBox({
       store: userStore,
       valueField : 'USR_UID',
