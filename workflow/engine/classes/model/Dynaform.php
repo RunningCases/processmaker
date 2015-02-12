@@ -150,7 +150,7 @@ class Dynaform extends BaseDynaform
      * @return void
      */
 
-    public function create ($aData)
+    public function create ($aData, $pmTableUid='')
     {
         if (! isset( $aData['PRO_UID'] )) {
             throw (new PropelException( 'The dynaform cannot be created. The PRO_UID is empty.' ));
@@ -194,6 +194,17 @@ class Dynaform extends BaseDynaform
                 }
 
                 $con->commit();
+                
+                //Add Audit Log
+                $mode    = isset($aData['MODE'])? $aData['MODE'] : 'Determined by Fields';
+                $description = "";
+                if($pmTableUid!=''){
+                  $pmTable = AdditionalTablesPeer::retrieveByPK( $pmTableUid );
+                  $addTabName = $pmTable->getAddTabName();
+                  $description = "Create from a PM Table: ".$addTabName.", ";
+                }
+                G::auditLog("CreateDynaform", $description."Dynaform Title: ".$aData['DYN_TITLE'].", Type: ".$aData['DYN_TYPE'].", Description: ".$aData['DYN_DESCRIPTION'].", Mode: ".$mode);
+                
                 $sXml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
                 $sXml .= '<dynaForm type="' . $this->getDynType() . '" name="' . $this->getProUid() . '/' . $this->getDynUid() . '" width="500" enabletemplate="0" mode="" nextstepsave="prompt">' . "\n";
                 $sXml .= '</dynaForm>';
@@ -232,7 +243,7 @@ class Dynaform extends BaseDynaform
 
     public function createFromPMTable ($aData, $pmTableUid)
     {
-        $this->create( $aData );
+        $this->create( $aData , $pmTableUid);
         $aData['DYN_UID'] = $this->getDynUid();
         //krumo(BasePeer::getFieldnames('Content'));
         $fields = array ();
@@ -560,6 +571,9 @@ class Dynaform extends BaseDynaform
                     }
                     $res = $oPro->save();
                     $con->commit();
+                    //Add Audit Log
+                    //G::auditLog("UpdateDynaform", "Dynaform Title: ".$aData['DYN_TITLE'].", Type: ".$aData['DYN_TYPE'].", Modified Fields  ");
+                    
                     return $res;
                 } else {
                     foreach ($this->getValidationFailures() as $objValidationFailure) {
@@ -591,9 +605,18 @@ class Dynaform extends BaseDynaform
         try {
             $oPro = DynaformPeer::retrieveByPK( $ProUid );
             if (! is_null( $oPro )) {
+                $title = $oPro->getDynTitle();
+                $type  = $oPro->getDynType(); 
+                $description = $oPro->getDynDescription();
+
                 Content::removeContent( 'DYN_TITLE', '', $oPro->getDynUid() );
                 Content::removeContent( 'DYN_DESCRIPTION', '', $oPro->getDynUid() );
                 $iResult = $oPro->delete();
+                
+                //Add Audit Log
+                //$mode    = isset($ProUid['MODE'])? $ProUid['MODE'] : 'Determined by Fields';
+                G::auditLog("DeleteDynaform", "Dynaform Title: ".$title.", Type: ".$type.", Description: ".$description);
+
                 if (file_exists( PATH_DYNAFORM . $oPro->getProUid() . PATH_SEP . $oPro->getDynUid() . '.xml' )) {
                     unlink( PATH_DYNAFORM . $oPro->getProUid() . PATH_SEP . $oPro->getDynUid() . '.xml' );
                 }
