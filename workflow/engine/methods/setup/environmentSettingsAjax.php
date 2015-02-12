@@ -35,6 +35,9 @@ switch ($request) {
     case "save":
         $conf = new Configurations();
         $config = $conf->getConfiguration("ENVIRONMENT_SETTINGS", "" );
+        if (is_numeric($config)) {
+            $config = array();
+        }
         if (isset($_POST["userFormat"])) {
             $config['format'] = $_POST["userFormat"]; 
         } 
