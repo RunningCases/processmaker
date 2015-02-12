@@ -86,8 +86,8 @@ class spoolRun
         $this->ExceptionCode['WARNING'] = 2;
         $this->ExceptionCode['NOTICE'] = 3;
 
-        $this->longMailEreg = '/(.*)(<([\w\-\.]+@[\w\-_\.]+\.\w{2,5})+>)/';
-        $this->mailEreg = '/^([\w\-_\.]+@[\w\-_\.]+\.\w{2,5}+)$/';
+        $this->longMailEreg = "/(.*)(<([\w\-\.']+@[\w\-_\.]+\.\w{2,5})+>)/";
+        $this->mailEreg = "/^([\w\-_\.']+@[\w\-_\.]+\.\w{2,5}+)$/";
     }
 
     /**
@@ -289,7 +289,7 @@ class spoolRun
      */
     private function handleFrom ()
     {
-        $eregA = "/^.*@.*$/";
+        $eregA = "/^'.*@.*$/";
 
         if (strpos( $this->fileData['from'], '<' ) !== false) {
             //to validate complex email address i.e. Erik A. O <erik@colosa.com>

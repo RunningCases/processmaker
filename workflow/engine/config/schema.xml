@@ -2651,7 +2651,7 @@
       <parameter name="Create_options" value=""/>
       <parameter name="Comment" value="Cases Launched with Case Scheduler"/>
     </vendor>
-    <column name="LOG_CASE_UID" size="32" required="true" primaryKey="true" default=""/>
+    <column name="LOG_CASE_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="TAS_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="USR_NAME" type="VARCHAR" size="32" required="true" default=""/>
@@ -3707,6 +3707,9 @@
     <index name="BPMN_LANE_I_2">
       <index-column name="PRJ_UID"/>
     </index>
+    <index name="BPMN_LANE_I_3">
+      <index-column name="LNS_UID"/>
+    </index>
   </table>
 
   <table name="BPMN_PARTICIPANT">
@@ -4012,11 +4015,15 @@
         <column name="APP_TITLE" type="VARCHAR" size="255" required="true" default=""/>
         <column name="APP_PRO_TITLE" type="VARCHAR" size="255" required="true" default=""/>
         <column name="APP_TAS_TITLE" type="VARCHAR" size="255" required="true" default=""/>
+        <column name="APP_STATUS" type="VARCHAR" size="20" required="true" default="0"/>
         <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
         <column name="DEL_PREVIOUS_USR_UID" type="VARCHAR" size="32" default=""/>
         <column name="DEL_PREVIOUS_USR_USERNAME" type="VARCHAR" size="100" default=""/>
         <column name="DEL_PREVIOUS_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
         <column name="DEL_PREVIOUS_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="DEL_CURRENT_USR_USERNAME" type="VARCHAR" size="100" default=""/>
+        <column name="DEL_CURRENT_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="DEL_CURRENT_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
         <column name="DEL_DELEGATE_DATE" type="TIMESTAMP" required="true"/>
         <column name="DEL_INIT_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
@@ -4059,7 +4066,108 @@
         <column name="DEL_CURRENT_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
         <column name="DEL_CURRENT_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
     </table>
-
+    <table name="LIST_PAUSED">
+        <vendor type="mysql">
+            <parameter name="Name" value="LIST_PAUSED"/>
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Version" value="10"/>
+            <parameter name="Row_format" value="Dynamic"/>
+            <parameter name="Rows" value="88"/>
+            <parameter name="Avg_row_length" value="311"/>
+            <parameter name="Data_length" value="27984"/>
+            <parameter name="Max_data_length" value="281474976710655"/>
+            <parameter name="Index_length" value="7168"/>
+            <parameter name="Data_free" value="564"/>
+            <parameter name="Auto_increment" value=""/>
+            <parameter name="Create_time" value="2014-10-10 14:00:00"/>
+            <parameter name="Update_time" value="2014-10-10 14:00:00"/>
+            <parameter name="Check_time" value=""/>
+            <parameter name="Collation" value="utf8_general_ci"/>
+            <parameter name="Checksum" value=""/>
+            <parameter name="Create_options" value=""/>
+            <parameter name="Comment" value="Paused list"/>
+        </vendor>
+        <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="DEL_INDEX" type="INTEGER" required="true" primaryKey="true" default="0"/>
+        <column name="USR_UID" type="VARCHAR" size="32" required="true" default=""/>
+        <column name="TAS_UID" type="VARCHAR" size="32" required="true" default=""/>
+        <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
+        <column name="APP_NUMBER" type="INTEGER" required="true" default="0"/>
+        <column name="APP_TITLE" type="VARCHAR" size="255" required="true" default=""/>
+        <column name="APP_PRO_TITLE" type="VARCHAR" size="255" required="true" default=""/>
+        <column name="APP_TAS_TITLE" type="VARCHAR" size="255" required="true" default=""/>
+        <column name="APP_PAUSED_DATE" type="TIMESTAMP" required="true"/>
+        <column name="APP_RESTART_DATE" type="TIMESTAMP" required="true"/>
+        <column name="DEL_PREVIOUS_USR_UID" type="VARCHAR" size="32" default=""/>
+        <column name="DEL_PREVIOUS_USR_USERNAME" type="VARCHAR" size="100" default=""/>
+        <column name="DEL_PREVIOUS_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="DEL_PREVIOUS_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="DEL_CURRENT_USR_USERNAME" type="VARCHAR" size="100" default=""/>
+        <column name="DEL_CURRENT_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="DEL_CURRENT_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="DEL_DELEGATE_DATE" type="TIMESTAMP" required="true"/>
+        <column name="DEL_INIT_DATE" type="TIMESTAMP" required="false"/>
+        <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
+        <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
+        <index name="indexPausedUser">
+            <index-column name="USR_UID"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="LIST_PAUSED"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexPausedUser"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
+    </table>
+    <table name="LIST_CANCELED">
+        <vendor type="mysql">
+            <parameter name="Name" value="LIST_CANCELED"/>
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Version" value="10"/>
+            <parameter name="Row_format" value="Dynamic"/>
+            <parameter name="Rows" value="88"/>
+            <parameter name="Avg_row_length" value="311"/>
+            <parameter name="Data_length" value="27984"/>
+            <parameter name="Max_data_length" value="281474976710655"/>
+            <parameter name="Index_length" value="7168"/>
+            <parameter name="Data_free" value="564"/>
+            <parameter name="Auto_increment" value=""/>
+            <parameter name="Create_time" value="2014-10-10 14:00:00"/>
+            <parameter name="Update_time" value="2014-10-10 14:00:00"/>
+            <parameter name="Check_time" value=""/>
+            <parameter name="Collation" value="utf8_general_ci"/>
+            <parameter name="Checksum" value=""/>
+            <parameter name="Create_options" value=""/>
+            <parameter name="Comment" value="Canceled list"/>
+        </vendor>
+        <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="USR_UID" type="VARCHAR" size="32" required="true" default=""/>
+        <column name="TAS_UID" type="VARCHAR" size="32" required="true" default=""/>
+        <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
+        <column name="APP_NUMBER" type="INTEGER" required="true" default="0"/>
+        <column name="APP_TITLE" type="VARCHAR" size="255" required="true" default=""/>
+        <column name="APP_PRO_TITLE" type="VARCHAR" size="255" required="true" default=""/>
+        <column name="APP_TAS_TITLE" type="VARCHAR" size="255" required="true" default=""/>
+        <column name="APP_CANCELED_DATE" type="TIMESTAMP" required="true"/>
+        <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
+        <column name="DEL_PREVIOUS_USR_UID" type="VARCHAR" size="32" default=""/>
+        <column name="DEL_CURRENT_USR_USERNAME" type="VARCHAR" size="100" default=""/>
+        <column name="DEL_CURRENT_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="DEL_CURRENT_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="DEL_DELEGATE_DATE" type="TIMESTAMP" required="true"/>
+        <column name="DEL_INIT_DATE" type="TIMESTAMP" required="false"/>
+        <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
+        <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
+        <index name="indexCanceledUser">
+            <index-column name="USR_UID"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="LIST_CANCELED"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexCanceledUser"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
+    </table>
     <table name="LIST_MY_INBOX">
         <vendor type="mysql">
             <parameter name="Name" value="LIST_MY_INBOX"/>
