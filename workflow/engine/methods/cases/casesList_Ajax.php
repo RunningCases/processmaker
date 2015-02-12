@@ -42,14 +42,26 @@ G::LoadClass( 'case' );
 
 $actionAjax = isset( $_REQUEST['actionAjax'] ) ? $_REQUEST['actionAjax'] : null;
 
+function filterUserListArray($users = array(), $filter = '')
+{
+    $filteredUsers = array();
+    foreach ($users as $user) {
+        if(stripos($user['USR_FULLNAME'], $filter) || empty($filter)) {
+            $filteredUsers[] = $user;
+        }
+    }
+    return $filteredUsers;
+}
+
 if ($actionAjax == "userValues") {
     //global $oAppCache;
     $oAppCache = new AppCacheView();
     $action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null;
+    $query = isset( $_REQUEST['query'] ) ? $_REQUEST['query'] : null;
     $users = array();
     $users[] = array ("USR_UID" => "", "USR_FULLNAME" => G::LoadTranslation( "ID_ALL_USERS" ));
     $users[] = array ("USR_UID" => "CURRENT_USER", "USR_FULLNAME" => G::LoadTranslation( "ID_CURRENT_USER" ));
-
+    $users = filterUserListArray($users, $query);
     //now get users, just for the Search action
     switch ($action) {
         case 'search_simple':
@@ -67,6 +79,14 @@ if ($actionAjax == "userValues") {
             $cUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
             $cUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
             $cUsers->add( UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL );
+            
+            if (!is_null($query)) {
+                $filters = $cUsers->getNewCriterion( UsersPeer::USR_FIRSTNAME, '%'.$query.'%', Criteria::LIKE )->addOr(
+                    $cUsers->getNewCriterion( UsersPeer::USR_LASTNAME, '%'.$query.'%', Criteria::LIKE )->addOr(
+                    $cUsers->getNewCriterion( UsersPeer::USR_USERNAME, '%'.$query.'%', Criteria::LIKE )));
+                $cUsers->addOr( $filters );
+            }
+            $cUsers->setLimit(20);
             $cUsers->addAscendingOrderByColumn(UsersPeer::TABLE_NAME . "." . $conf->userNameFormatGetFirstFieldByUsersTable());
             $oDataset = UsersPeer::doSelectRS( $cUsers );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
@@ -453,7 +473,7 @@ if ($actionAjax == 'showDynaformListHistory') {
         var showDynaformHistoryGlobal = {};
         showDynaformHistoryGlobal.dynUID = '';
         showDynaformHistoryGlobal.tablename = '';
-        showDynaformHistoryGlobal.dynDate = '';casesList_Ajax.php
+        showDynaformHistoryGlobal.dynDate = '';
         showDynaformHistoryGlobal.dynTitle = '';
           function showDynaformHistory(dynUID,tablename,dynDate,dynTitle){
             showDynaformHistoryGlobal.dynUID = dynUID;
