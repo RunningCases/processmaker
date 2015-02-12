@@ -742,36 +742,75 @@ var G_Grid = function(oForm, sGridName){
 
     this.deleteGridRow = function (sRow, bWithoutConfirm)
     {
-        if (typeof(bWithoutConfirm) == "undefined") {
-            bWithoutConfirm = false;
-        }
-        if (this.oGrid.rows.length == 2) {
-            new leimnud.module.app.alert().make({
-                label: G_STRINGS.ID_MSG_NODELETE_GRID_ITEM
-            });
-            return false;
-        }
-        if (bWithoutConfirm) {
-            if (this.oGrid.rows.length == 3) {
-                this.clearRowWC(this, sRow);
-            } else {
-                this.deleteRowWC(this, sRow);
+      
+        if (leimnud.browser.isIE) {
+            if (typeof(bWithoutConfirm) == "undefined") {
+                bWithoutConfirm = false;
             }
-        } else {
-            if (this.oGrid.rows.length == 3) {
-                new leimnud.module.app.confirm().make({
-                    label: _('ID_MSG_CLEAR_GRID_FIRST_ITEM'),
-                    action: function () {
-                        this.clearRowWC(this, sRow);
-                    }.extend(this)
+            if (this.oGrid.rows.length == 2) {
+                new leimnud.module.app.alert().make({
+                    label: G_STRINGS.ID_MSG_NODELETE_GRID_ITEM,
+                    width:400, height:120
                 });
+                return false;
+            }
+            if (bWithoutConfirm) {
+                if (this.oGrid.rows.length == 3) {
+                    this.clearRowWC(this, sRow);
+                } else {
+                    this.deleteRowWC(this, sRow);
+                }
             } else {
-                new leimnud.module.app.confirm().make({
-                    label: G_STRINGS.ID_MSG_DELETE_GRID_ITEM,
-                    action: function () {
-                        this.deleteRowWC(this, sRow);
-                    }.extend(this)
+                if (this.oGrid.rows.length == 3) {
+                    new leimnud.module.app.confirm().make({
+                        label: _('ID_MSG_CLEAR_GRID_FIRST_ITEM'),
+                        width:400, height:120,
+                        action: function () {
+                            this.clearRowWC(this, sRow);
+                        }.extend(this)
+                    });
+                } else {
+                    new leimnud.module.app.confirm().make({
+                        label: G_STRINGS.ID_MSG_DELETE_GRID_ITEM,
+                        width:400, height:120,
+                        action: function () {
+                            this.deleteRowWC(this, sRow);
+                        }.extend(this)
+                    });
+                }
+            }
+        }else{
+            if (typeof(bWithoutConfirm) == "undefined") {
+                bWithoutConfirm = false;
+            }
+            if (this.oGrid.rows.length == 2) {
+                new leimnud.module.app.alert().make({
+                    label: G_STRINGS.ID_MSG_NODELETE_GRID_ITEM
                 });
+                return false;
+            }
+            if (bWithoutConfirm) {
+                if (this.oGrid.rows.length == 3) {
+                    this.clearRowWC(this, sRow);
+                } else {
+                    this.deleteRowWC(this, sRow);
+                }
+            } else {
+                if (this.oGrid.rows.length == 3) {
+                    new leimnud.module.app.confirm().make({
+                        label: _('ID_MSG_CLEAR_GRID_FIRST_ITEM'),
+                        action: function () {
+                            this.clearRowWC(this, sRow);
+                        }.extend(this)
+                    });
+                } else {
+                    new leimnud.module.app.confirm().make({
+                        label: G_STRINGS.ID_MSG_DELETE_GRID_ITEM,
+                        action: function () {
+                            this.deleteRowWC(this, sRow);
+                        }.extend(this)
+                    });
+                }
             }
         }
     };
