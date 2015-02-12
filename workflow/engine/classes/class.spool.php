@@ -229,15 +229,17 @@ class spoolRun
         $this->fileData['envelope_to'] = array ();
         $this->fileData["contentTypeIsHtml"] = $bContentTypeIsHtml;
 
-        if ($this->config['MESS_ENGINE'] == 'OPENMAIL') {
-            if ($this->config['MESS_SERVER'] != '') {
-                if (($sAux = @gethostbyaddr( $this->config['MESS_SERVER'] ))) {
-                    $this->fileData['domain'] = $sAux;
+        if (array_key_exists('MESS_ENGINE',$this->config)) {
+            if ($this->config['MESS_ENGINE'] == 'OPENMAIL') {
+                if ($this->config['MESS_SERVER'] != '') {
+                    if (($sAux = @gethostbyaddr( $this->config['MESS_SERVER'] ))) {
+                        $this->fileData['domain'] = $sAux;
+                    } else {
+                        $this->fileData['domain'] = $this->config['MESS_SERVER'];
+                    }
                 } else {
-                    $this->fileData['domain'] = $this->config['MESS_SERVER'];
+                    $this->fileData['domain'] = gethostbyaddr( '127.0.0.1' );
                 }
-            } else {
-                $this->fileData['domain'] = gethostbyaddr( '127.0.0.1' );
             }
         }
     }
@@ -416,164 +418,166 @@ class spoolRun
     private function handleMail ()
     {
         if (count( $this->fileData['envelope_to'] ) > 0) {
-            switch ($this->config['MESS_ENGINE']) {
-                case 'MAIL':
-                case 'PHPMAILER':
-                    G::LoadThirdParty( 'phpmailer', 'class.phpmailer' );
-
-                    switch ($this->config['MESS_ENGINE']) {
-                        case 'MAIL':
-                            $oPHPMailer = new PHPMailer();
-                            $oPHPMailer->Mailer = 'mail';
-                            break;
-                        case 'PHPMAILER':
-                            $oPHPMailer = new PHPMailer( true );
-                            $oPHPMailer->Mailer = 'smtp';
-                            break;
-                    }
-
-                    $oPHPMailer->SMTPAuth = (isset( $this->config['SMTPAuth'] ) ? $this->config['SMTPAuth'] : '');
-
-                    switch ($this->config['MESS_ENGINE']) {
-                        case 'MAIL':
-                            break;
-                        case 'PHPMAILER':
-                            //Posible Options for SMTPSecure are: "", "ssl" or "tls"
-                            if (isset( $this->config['SMTPSecure'] ) && preg_match( '/^(ssl|tls)$/', $this->config['SMTPSecure'] )) {
-                                $oPHPMailer->SMTPSecure = $this->config['SMTPSecure'];
-                            }
-                            break;
-                    }
-
-                    $oPHPMailer->CharSet = "UTF-8";
-                    $oPHPMailer->Encoding = "8bit";
-                    $oPHPMailer->Host = $this->config['MESS_SERVER'];
-                    $oPHPMailer->Port = $this->config['MESS_PORT'];
-                    $oPHPMailer->Username = $this->config['MESS_ACCOUNT'];
-                    $oPHPMailer->Password = $this->config['MESS_PASSWORD'];
-                    $oPHPMailer->From = $this->fileData['from_email'];
-                    $oPHPMailer->FromName = utf8_decode( $this->fileData['from_name'] );
-                    if (isset($this->fileData['reply_to'])) {
-                        if ($this->fileData['reply_to'] != '') {
-                            $oPHPMailer->AddReplyTo($this->fileData['reply_to'], $this->fileData['reply_to_name']);
+            if (array_key_exists('MESS_ENGINE',$this->config)) {
+                switch ($this->config['MESS_ENGINE']) {
+                    case 'MAIL':
+                    case 'PHPMAILER':
+                        G::LoadThirdParty( 'phpmailer', 'class.phpmailer' );
+    
+                        switch ($this->config['MESS_ENGINE']) {
+                            case 'MAIL':
+                                $oPHPMailer = new PHPMailer();
+                                $oPHPMailer->Mailer = 'mail';
+                                break;
+                            case 'PHPMAILER':
+                                $oPHPMailer = new PHPMailer( true );
+                                $oPHPMailer->Mailer = 'smtp';
+                                break;
                         }
-                    }
-
-                    $msSubject = $this->fileData['subject'];
-
-                    if (! (mb_detect_encoding( $msSubject, "UTF-8" ) == "UTF-8")) {
-                        $msSubject = utf8_encode( $msSubject );
-                    }
-
-                    $oPHPMailer->Subject = $msSubject;
-
-                    $msBody = $this->fileData['body'];
-
-                    if (! (mb_detect_encoding( $msBody, "UTF-8" ) == "UTF-8")) {
-                        $msBody = utf8_encode( $msBody );
-                    }
-
-                    $oPHPMailer->Body = $msBody;
-
-                    $attachment = @unserialize($this->fileData['attachments']);
-                    if ($attachment === false) {
-                        $attachment = $this->fileData['attachments'];
-                    }
-                    if (is_array($attachment)) {
-                        foreach ($attachment as $key => $fileAttach) {
-                            if (file_exists( $fileAttach )) {
-                                $oPHPMailer->AddAttachment( $fileAttach, is_int( $key ) ? '' : $key );
+    
+                        $oPHPMailer->SMTPAuth = (isset( $this->config['SMTPAuth'] ) ? $this->config['SMTPAuth'] : '');
+    
+                        switch ($this->config['MESS_ENGINE']) {
+                            case 'MAIL':
+                                break;
+                            case 'PHPMAILER':
+                                //Posible Options for SMTPSecure are: "", "ssl" or "tls"
+                                if (isset( $this->config['SMTPSecure'] ) && preg_match( '/^(ssl|tls)$/', $this->config['SMTPSecure'] )) {
+                                    $oPHPMailer->SMTPSecure = $this->config['SMTPSecure'];
+                                }
+                                break;
+                        }
+    
+                        $oPHPMailer->CharSet = "UTF-8";
+                        $oPHPMailer->Encoding = "8bit";
+                        $oPHPMailer->Host = $this->config['MESS_SERVER'];
+                        $oPHPMailer->Port = $this->config['MESS_PORT'];
+                        $oPHPMailer->Username = $this->config['MESS_ACCOUNT'];
+                        $oPHPMailer->Password = $this->config['MESS_PASSWORD'];
+                        $oPHPMailer->From = $this->fileData['from_email'];
+                        $oPHPMailer->FromName = utf8_decode( $this->fileData['from_name'] );
+                        if (isset($this->fileData['reply_to'])) {
+                            if ($this->fileData['reply_to'] != '') {
+                                $oPHPMailer->AddReplyTo($this->fileData['reply_to'], $this->fileData['reply_to_name']);
                             }
                         }
-                    }
-
-                    foreach ($this->fileData['envelope_to'] as $sEmail) {
-                        if (strpos( $sEmail, '<' ) !== false) {
-                            preg_match( $this->longMailEreg, $sEmail, $matches );
-                            $sTo = trim( $matches[3] );
-                            $sToName = trim( $matches[1] );
-                            $oPHPMailer->AddAddress( $sTo, $sToName );
-                        } else {
-                            $oPHPMailer->AddAddress( $sEmail );
+    
+                        $msSubject = $this->fileData['subject'];
+    
+                        if (! (mb_detect_encoding( $msSubject, "UTF-8" ) == "UTF-8")) {
+                            $msSubject = utf8_encode( $msSubject );
                         }
-                    }
-
-                    //CC
-                    foreach ($this->fileData['envelope_cc'] as $sEmail) {
-                        if (strpos( $sEmail, '<' ) !== false) {
-                            preg_match( $this->longMailEreg, $sEmail, $matches );
-                            $sTo = trim( $matches[3] );
-                            $sToName = trim( $matches[1] );
-                            $oPHPMailer->AddCC( $sTo, $sToName );
-                        } else {
-                            $oPHPMailer->AddCC( $sEmail );
+    
+                        $oPHPMailer->Subject = $msSubject;
+    
+                        $msBody = $this->fileData['body'];
+    
+                        if (! (mb_detect_encoding( $msBody, "UTF-8" ) == "UTF-8")) {
+                            $msBody = utf8_encode( $msBody );
                         }
-                    }
-
-                    //BCC
-                    foreach ($this->fileData['envelope_bcc'] as $sEmail) {
-                        if (strpos( $sEmail, '<' ) !== false) {
-                            preg_match( $this->longMailEreg, $sEmail, $matches );
-                            $sTo = trim( $matches[3] );
-                            $sToName = trim( $matches[1] );
-                            $oPHPMailer->AddBCC( $sTo, $sToName );
-                        } else {
-                            $oPHPMailer->AddBCC( $sEmail );
+    
+                        $oPHPMailer->Body = $msBody;
+    
+                        $attachment = @unserialize($this->fileData['attachments']);
+                        if ($attachment === false) {
+                            $attachment = $this->fileData['attachments'];
                         }
-                    }
-
-                    $oPHPMailer->IsHTML($this->fileData["contentTypeIsHtml"]);
-
-                    if ( $this->config['MESS_ENGINE'] == 'MAIL') {
-                        $oPHPMailer->WordWrap = 300;
-                    }
-
-                    if ($oPHPMailer->Send()) {
-                        $this->error = '';
-                        $this->status = 'sent';
-                    } else {
-                        $this->error = $oPHPMailer->ErrorInfo;
-                        $this->status = 'failed';
-                    }
-                    break;
-                case 'OPENMAIL':
-                    G::LoadClass( 'package' );
-                    G::LoadClass( 'smtp' );
-                    $pack = new package( $this->fileData );
-                    $header = $pack->returnHeader();
-                    $body = $pack->returnBody();
-                    $send = new smtp();
-                    $send->setServer( $this->config['MESS_SERVER'] );
-                    $send->setPort( $this->config['MESS_PORT'] );
-                    $send->setUsername( $this->config['MESS_ACCOUNT'] );
-
-                    $passwd = $this->config['MESS_PASSWORD'];
-                    $passwdDec = G::decrypt( $passwd, 'EMAILENCRYPT' );
-                    $auxPass = explode( 'hash:', $passwdDec );
-
-                    if (count( $auxPass ) > 1) {
-                        if (count( $auxPass ) == 2) {
-                            $passwd = $auxPass[1];
-                        } else {
-                            array_shift( $auxPass );
-                            $passwd = implode( '', $auxPass );
+                        if (is_array($attachment)) {
+                            foreach ($attachment as $key => $fileAttach) {
+                                if (file_exists( $fileAttach )) {
+                                    $oPHPMailer->AddAttachment( $fileAttach, is_int( $key ) ? '' : $key );
+                                }
+                            }
                         }
-                    }
-
-                    $this->config['MESS_PASSWORD'] = $passwd;
-                    $send->setPassword( $this->config['MESS_PASSWORD'] );
-                    $send->setReturnPath( $this->fileData['from_email'] );
-                    $send->setHeaders( $header );
-                    $send->setBody( $body );
-                    $send->setEnvelopeTo( $this->fileData['envelope_to'] );
-                    if ($send->sendMessage()) {
-                        $this->error = '';
-                        $this->status = 'sent';
-                    } else {
-                        $this->error = implode( ', ', $send->returnErrors() );
-                        $this->status = 'failed';
-                    }
-                    break;
+    
+                        foreach ($this->fileData['envelope_to'] as $sEmail) {
+                            if (strpos( $sEmail, '<' ) !== false) {
+                                preg_match( $this->longMailEreg, $sEmail, $matches );
+                                $sTo = trim( $matches[3] );
+                                $sToName = trim( $matches[1] );
+                                $oPHPMailer->AddAddress( $sTo, $sToName );
+                            } else {
+                                $oPHPMailer->AddAddress( $sEmail );
+                            }
+                        }
+    
+                        //CC
+                        foreach ($this->fileData['envelope_cc'] as $sEmail) {
+                            if (strpos( $sEmail, '<' ) !== false) {
+                                preg_match( $this->longMailEreg, $sEmail, $matches );
+                                $sTo = trim( $matches[3] );
+                                $sToName = trim( $matches[1] );
+                                $oPHPMailer->AddCC( $sTo, $sToName );
+                            } else {
+                                $oPHPMailer->AddCC( $sEmail );
+                            }
+                        }
+    
+                        //BCC
+                        foreach ($this->fileData['envelope_bcc'] as $sEmail) {
+                            if (strpos( $sEmail, '<' ) !== false) {
+                                preg_match( $this->longMailEreg, $sEmail, $matches );
+                                $sTo = trim( $matches[3] );
+                                $sToName = trim( $matches[1] );
+                                $oPHPMailer->AddBCC( $sTo, $sToName );
+                            } else {
+                                $oPHPMailer->AddBCC( $sEmail );
+                            }
+                        }
+    
+                        $oPHPMailer->IsHTML($this->fileData["contentTypeIsHtml"]);
+    
+                        if ( $this->config['MESS_ENGINE'] == 'MAIL') {
+                            $oPHPMailer->WordWrap = 300;
+                        }
+    
+                        if ($oPHPMailer->Send()) {
+                            $this->error = '';
+                            $this->status = 'sent';
+                        } else {
+                            $this->error = $oPHPMailer->ErrorInfo;
+                            $this->status = 'failed';
+                        }
+                        break;
+                    case 'OPENMAIL':
+                        G::LoadClass( 'package' );
+                        G::LoadClass( 'smtp' );
+                        $pack = new package( $this->fileData );
+                        $header = $pack->returnHeader();
+                        $body = $pack->returnBody();
+                        $send = new smtp();
+                        $send->setServer( $this->config['MESS_SERVER'] );
+                        $send->setPort( $this->config['MESS_PORT'] );
+                        $send->setUsername( $this->config['MESS_ACCOUNT'] );
+    
+                        $passwd = $this->config['MESS_PASSWORD'];
+                        $passwdDec = G::decrypt( $passwd, 'EMAILENCRYPT' );
+                        $auxPass = explode( 'hash:', $passwdDec );
+    
+                        if (count( $auxPass ) > 1) {
+                            if (count( $auxPass ) == 2) {
+                                $passwd = $auxPass[1];
+                            } else {
+                                array_shift( $auxPass );
+                                $passwd = implode( '', $auxPass );
+                            }
+                        }
+    
+                        $this->config['MESS_PASSWORD'] = $passwd;
+                        $send->setPassword( $this->config['MESS_PASSWORD'] );
+                        $send->setReturnPath( $this->fileData['from_email'] );
+                        $send->setHeaders( $header );
+                        $send->setBody( $body );
+                        $send->setEnvelopeTo( $this->fileData['envelope_to'] );
+                        if ($send->sendMessage()) {
+                            $this->error = '';
+                            $this->status = 'sent';
+                        } else {
+                            $this->error = implode( ', ', $send->returnErrors() );
+                            $this->status = 'failed';
+                        }
+                        break;
+                }
             }
         }
     }
