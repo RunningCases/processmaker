@@ -1011,7 +1011,12 @@ class Process extends BaseProcess
 			return 0;
 		}
     }
-    
+    /**
+     * Check is the Process is BPMN.
+     *
+     * @param string $ProUid the uid of the Prolication
+     * @return int 1 if is BPMN process or 0 if a Normal process
+    */
     public function isBpmnProcess($proUid){
       $c = new Criteria("workflow");
       $c->add(BpmnProcessPeer::PRJ_UID, $proUid);
