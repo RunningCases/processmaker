@@ -741,6 +741,7 @@ Ext.onReady ( function() {
       read : urlProxy
     }
     /*----------------------------------********---------------------------------*/
+    ,method: 'GET'
     ,headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + credentials.access_token
