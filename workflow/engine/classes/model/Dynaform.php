@@ -571,9 +571,6 @@ class Dynaform extends BaseDynaform
                     }
                     $res = $oPro->save();
                     $con->commit();
-                    //Add Audit Log
-                    //G::auditLog("UpdateDynaform", "Dynaform Title: ".$aData['DYN_TITLE'].", Type: ".$aData['DYN_TYPE'].", Modified Fields  ");
-                    
                     return $res;
                 } else {
                     foreach ($this->getValidationFailures() as $objValidationFailure) {
@@ -614,7 +611,6 @@ class Dynaform extends BaseDynaform
                 $iResult = $oPro->delete();
                 
                 //Add Audit Log
-                //$mode    = isset($ProUid['MODE'])? $ProUid['MODE'] : 'Determined by Fields';
                 G::auditLog("DeleteDynaform", "Dynaform Title: ".$title.", Type: ".$type.", Description: ".$description);
 
                 if (file_exists( PATH_DYNAFORM . $oPro->getProUid() . PATH_SEP . $oPro->getDynUid() . '.xml' )) {
