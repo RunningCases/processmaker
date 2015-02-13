@@ -738,8 +738,14 @@ Ext.onReady ( function() {
   // Create HttpProxy instance, all CRUD requests will be directed to single proxy url.
   var proxyCasesList = new Ext.data.HttpProxy({
     api: {
-      read :   'proxyCasesList'
+      read : urlProxy
     }
+    /*----------------------------------********---------------------------------*/
+    ,headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + credentials.access_token
+    }
+    /*----------------------------------********---------------------------------*/
   });
 
   // Typical JsonReader with additional meta-data params for defining the core attributes of your json-response
@@ -797,9 +803,9 @@ Ext.onReady ( function() {
     autoSave: true, // <-- false would delay executing create, update, destroy requests until specifically told to do so with some [save] buton.
     sortInfo:{field: 'APP_CACHE_VIEW.APP_NUMBER', direction: "DESC"},
     listeners: {
-    	load: function(response){
-    		//console.log(response.reader.jsonData);
-    		if (response.reader.jsonData.result === false) {
+      load: function(response){
+        //console.log(response.reader.jsonData);
+        if (response.reader.jsonData.result === false) {
     			PMExt.notify('ERROR', response.reader.jsonData.message);
     			//PMExt.error
     		}

@@ -24,7 +24,7 @@
     var sToken = token.string.trim();
 
     if ( sToken == "(") {
- 	token = tprop = getToken(editor, Pos(cur.line, tprop.start));
+  token = tprop = getToken(editor, Pos(cur.line, tprop.start));
         return {list: getCompletions(token.string, keywords, options),
                 from: Pos(cur.line, token.start),
                 to: Pos(cur.line, token.end + 1)};
@@ -244,22 +244,22 @@
     }
     
     arrayFunction = arrayFunctions[functionName];
-	
+  
     if (arrayFunction != undefined) {
       forEach( arrayFunction, yesAdd);
     } else {
       if (functionName.trim() == "") {
-  	  forEach (phpKeywords, yesAdd);
-	  forEach (keywords, yesAdd);
+      forEach (phpKeywords, yesAdd);
+    forEach (keywords, yesAdd);
       } else if (functionName == "=") {
-	  forEach (phpPMFunctions, yesAdd);
+    forEach (phpPMFunctions, yesAdd);
       } else {
-	  for (index = 0; index < phpKeywords.length; index++) {
-	      if ( phpKeywords[index].indexOf(functionName) == 0 ) {
-	          found.push(phpKeywords[index]);
-	      }
-	  } 
-	  forEach(keywords, maybeAdd);
+    for (index = 0; index < phpKeywords.length; index++) {
+        if ( phpKeywords[index].indexOf(functionName) == 0 ) {
+            found.push(phpKeywords[index]);
+        }
+    } 
+    forEach(keywords, maybeAdd);
       }
     }
     return found;

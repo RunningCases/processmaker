@@ -2,97 +2,100 @@
 
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by ListParticipatedLastPeer::getOMClass()
-include_once 'classes/model/ListParticipatedLast.php';
+// actual class may be a subclass -- as returned by ListPausedPeer::getOMClass()
+include_once 'classes/model/ListPaused.php';
 
 /**
- * Base static class for performing query and update operations on the 'LIST_PARTICIPATED_LAST' table.
+ * Base static class for performing query and update operations on the 'LIST_PAUSED' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseListParticipatedLastPeer
+abstract class BaseListPausedPeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'workflow';
 
     /** the table name for this class */
-    const TABLE_NAME = 'LIST_PARTICIPATED_LAST';
+    const TABLE_NAME = 'LIST_PAUSED';
 
     /** A class that can be returned by this peer. */
-    const CLASS_DEFAULT = 'classes.model.ListParticipatedLast';
+    const CLASS_DEFAULT = 'classes.model.ListPaused';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 21;
+    const NUM_COLUMNS = 22;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
     /** the column name for the APP_UID field */
-    const APP_UID = 'LIST_PARTICIPATED_LAST.APP_UID';
-
-    /** the column name for the USR_UID field */
-    const USR_UID = 'LIST_PARTICIPATED_LAST.USR_UID';
-
-    /** the column name for the TAS_UID field */
-    const TAS_UID = 'LIST_PARTICIPATED_LAST.TAS_UID';
-
-    /** the column name for the PRO_UID field */
-    const PRO_UID = 'LIST_PARTICIPATED_LAST.PRO_UID';
-
-    /** the column name for the APP_NUMBER field */
-    const APP_NUMBER = 'LIST_PARTICIPATED_LAST.APP_NUMBER';
-
-    /** the column name for the APP_TITLE field */
-    const APP_TITLE = 'LIST_PARTICIPATED_LAST.APP_TITLE';
-
-    /** the column name for the APP_PRO_TITLE field */
-    const APP_PRO_TITLE = 'LIST_PARTICIPATED_LAST.APP_PRO_TITLE';
-
-    /** the column name for the APP_TAS_TITLE field */
-    const APP_TAS_TITLE = 'LIST_PARTICIPATED_LAST.APP_TAS_TITLE';
-
-    /** the column name for the APP_STATUS field */
-    const APP_STATUS = 'LIST_PARTICIPATED_LAST.APP_STATUS';
+    const APP_UID = 'LIST_PAUSED.APP_UID';
 
     /** the column name for the DEL_INDEX field */
-    const DEL_INDEX = 'LIST_PARTICIPATED_LAST.DEL_INDEX';
+    const DEL_INDEX = 'LIST_PAUSED.DEL_INDEX';
+
+    /** the column name for the USR_UID field */
+    const USR_UID = 'LIST_PAUSED.USR_UID';
+
+    /** the column name for the TAS_UID field */
+    const TAS_UID = 'LIST_PAUSED.TAS_UID';
+
+    /** the column name for the PRO_UID field */
+    const PRO_UID = 'LIST_PAUSED.PRO_UID';
+
+    /** the column name for the APP_NUMBER field */
+    const APP_NUMBER = 'LIST_PAUSED.APP_NUMBER';
+
+    /** the column name for the APP_TITLE field */
+    const APP_TITLE = 'LIST_PAUSED.APP_TITLE';
+
+    /** the column name for the APP_PRO_TITLE field */
+    const APP_PRO_TITLE = 'LIST_PAUSED.APP_PRO_TITLE';
+
+    /** the column name for the APP_TAS_TITLE field */
+    const APP_TAS_TITLE = 'LIST_PAUSED.APP_TAS_TITLE';
+
+    /** the column name for the APP_PAUSED_DATE field */
+    const APP_PAUSED_DATE = 'LIST_PAUSED.APP_PAUSED_DATE';
+
+    /** the column name for the APP_RESTART_DATE field */
+    const APP_RESTART_DATE = 'LIST_PAUSED.APP_RESTART_DATE';
 
     /** the column name for the DEL_PREVIOUS_USR_UID field */
-    const DEL_PREVIOUS_USR_UID = 'LIST_PARTICIPATED_LAST.DEL_PREVIOUS_USR_UID';
+    const DEL_PREVIOUS_USR_UID = 'LIST_PAUSED.DEL_PREVIOUS_USR_UID';
 
     /** the column name for the DEL_PREVIOUS_USR_USERNAME field */
-    const DEL_PREVIOUS_USR_USERNAME = 'LIST_PARTICIPATED_LAST.DEL_PREVIOUS_USR_USERNAME';
+    const DEL_PREVIOUS_USR_USERNAME = 'LIST_PAUSED.DEL_PREVIOUS_USR_USERNAME';
 
     /** the column name for the DEL_PREVIOUS_USR_FIRSTNAME field */
-    const DEL_PREVIOUS_USR_FIRSTNAME = 'LIST_PARTICIPATED_LAST.DEL_PREVIOUS_USR_FIRSTNAME';
+    const DEL_PREVIOUS_USR_FIRSTNAME = 'LIST_PAUSED.DEL_PREVIOUS_USR_FIRSTNAME';
 
     /** the column name for the DEL_PREVIOUS_USR_LASTNAME field */
-    const DEL_PREVIOUS_USR_LASTNAME = 'LIST_PARTICIPATED_LAST.DEL_PREVIOUS_USR_LASTNAME';
+    const DEL_PREVIOUS_USR_LASTNAME = 'LIST_PAUSED.DEL_PREVIOUS_USR_LASTNAME';
 
     /** the column name for the DEL_CURRENT_USR_USERNAME field */
-    const DEL_CURRENT_USR_USERNAME = 'LIST_PARTICIPATED_LAST.DEL_CURRENT_USR_USERNAME';
+    const DEL_CURRENT_USR_USERNAME = 'LIST_PAUSED.DEL_CURRENT_USR_USERNAME';
 
     /** the column name for the DEL_CURRENT_USR_FIRSTNAME field */
-    const DEL_CURRENT_USR_FIRSTNAME = 'LIST_PARTICIPATED_LAST.DEL_CURRENT_USR_FIRSTNAME';
+    const DEL_CURRENT_USR_FIRSTNAME = 'LIST_PAUSED.DEL_CURRENT_USR_FIRSTNAME';
 
     /** the column name for the DEL_CURRENT_USR_LASTNAME field */
-    const DEL_CURRENT_USR_LASTNAME = 'LIST_PARTICIPATED_LAST.DEL_CURRENT_USR_LASTNAME';
+    const DEL_CURRENT_USR_LASTNAME = 'LIST_PAUSED.DEL_CURRENT_USR_LASTNAME';
 
     /** the column name for the DEL_DELEGATE_DATE field */
-    const DEL_DELEGATE_DATE = 'LIST_PARTICIPATED_LAST.DEL_DELEGATE_DATE';
+    const DEL_DELEGATE_DATE = 'LIST_PAUSED.DEL_DELEGATE_DATE';
 
     /** the column name for the DEL_INIT_DATE field */
-    const DEL_INIT_DATE = 'LIST_PARTICIPATED_LAST.DEL_INIT_DATE';
+    const DEL_INIT_DATE = 'LIST_PAUSED.DEL_INIT_DATE';
 
     /** the column name for the DEL_DUE_DATE field */
-    const DEL_DUE_DATE = 'LIST_PARTICIPATED_LAST.DEL_DUE_DATE';
+    const DEL_DUE_DATE = 'LIST_PAUSED.DEL_DUE_DATE';
 
     /** the column name for the DEL_PRIORITY field */
-    const DEL_PRIORITY = 'LIST_PARTICIPATED_LAST.DEL_PRIORITY';
+    const DEL_PRIORITY = 'LIST_PAUSED.DEL_PRIORITY';
 
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
@@ -105,10 +108,10 @@ abstract class BaseListParticipatedLastPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('AppUid', 'UsrUid', 'TasUid', 'ProUid', 'AppNumber', 'AppTitle', 'AppProTitle', 'AppTasTitle', 'AppStatus', 'DelIndex', 'DelPreviousUsrUid', 'DelPreviousUsrUsername', 'DelPreviousUsrFirstname', 'DelPreviousUsrLastname', 'DelCurrentUsrUsername', 'DelCurrentUsrFirstname', 'DelCurrentUsrLastname', 'DelDelegateDate', 'DelInitDate', 'DelDueDate', 'DelPriority', ),
-        BasePeer::TYPE_COLNAME => array (ListParticipatedLastPeer::APP_UID, ListParticipatedLastPeer::USR_UID, ListParticipatedLastPeer::TAS_UID, ListParticipatedLastPeer::PRO_UID, ListParticipatedLastPeer::APP_NUMBER, ListParticipatedLastPeer::APP_TITLE, ListParticipatedLastPeer::APP_PRO_TITLE, ListParticipatedLastPeer::APP_TAS_TITLE, ListParticipatedLastPeer::APP_STATUS, ListParticipatedLastPeer::DEL_INDEX, ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID, ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME, ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME, ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME, ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME, ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME, ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME, ListParticipatedLastPeer::DEL_DELEGATE_DATE, ListParticipatedLastPeer::DEL_INIT_DATE, ListParticipatedLastPeer::DEL_DUE_DATE, ListParticipatedLastPeer::DEL_PRIORITY, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_UID', 'USR_UID', 'TAS_UID', 'PRO_UID', 'APP_NUMBER', 'APP_TITLE', 'APP_PRO_TITLE', 'APP_TAS_TITLE', 'APP_STATUS', 'DEL_INDEX', 'DEL_PREVIOUS_USR_UID', 'DEL_PREVIOUS_USR_USERNAME', 'DEL_PREVIOUS_USR_FIRSTNAME', 'DEL_PREVIOUS_USR_LASTNAME', 'DEL_CURRENT_USR_USERNAME', 'DEL_CURRENT_USR_FIRSTNAME', 'DEL_CURRENT_USR_LASTNAME', 'DEL_DELEGATE_DATE', 'DEL_INIT_DATE', 'DEL_DUE_DATE', 'DEL_PRIORITY', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
+        BasePeer::TYPE_PHPNAME => array ('AppUid', 'DelIndex', 'UsrUid', 'TasUid', 'ProUid', 'AppNumber', 'AppTitle', 'AppProTitle', 'AppTasTitle', 'AppPausedDate', 'AppRestartDate', 'DelPreviousUsrUid', 'DelPreviousUsrUsername', 'DelPreviousUsrFirstname', 'DelPreviousUsrLastname', 'DelCurrentUsrUsername', 'DelCurrentUsrFirstname', 'DelCurrentUsrLastname', 'DelDelegateDate', 'DelInitDate', 'DelDueDate', 'DelPriority', ),
+        BasePeer::TYPE_COLNAME => array (ListPausedPeer::APP_UID, ListPausedPeer::DEL_INDEX, ListPausedPeer::USR_UID, ListPausedPeer::TAS_UID, ListPausedPeer::PRO_UID, ListPausedPeer::APP_NUMBER, ListPausedPeer::APP_TITLE, ListPausedPeer::APP_PRO_TITLE, ListPausedPeer::APP_TAS_TITLE, ListPausedPeer::APP_PAUSED_DATE, ListPausedPeer::APP_RESTART_DATE, ListPausedPeer::DEL_PREVIOUS_USR_UID, ListPausedPeer::DEL_PREVIOUS_USR_USERNAME, ListPausedPeer::DEL_PREVIOUS_USR_FIRSTNAME, ListPausedPeer::DEL_PREVIOUS_USR_LASTNAME, ListPausedPeer::DEL_CURRENT_USR_USERNAME, ListPausedPeer::DEL_CURRENT_USR_FIRSTNAME, ListPausedPeer::DEL_CURRENT_USR_LASTNAME, ListPausedPeer::DEL_DELEGATE_DATE, ListPausedPeer::DEL_INIT_DATE, ListPausedPeer::DEL_DUE_DATE, ListPausedPeer::DEL_PRIORITY, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_UID', 'DEL_INDEX', 'USR_UID', 'TAS_UID', 'PRO_UID', 'APP_NUMBER', 'APP_TITLE', 'APP_PRO_TITLE', 'APP_TAS_TITLE', 'APP_PAUSED_DATE', 'APP_RESTART_DATE', 'DEL_PREVIOUS_USR_UID', 'DEL_PREVIOUS_USR_USERNAME', 'DEL_PREVIOUS_USR_FIRSTNAME', 'DEL_PREVIOUS_USR_LASTNAME', 'DEL_CURRENT_USR_USERNAME', 'DEL_CURRENT_USR_FIRSTNAME', 'DEL_CURRENT_USR_LASTNAME', 'DEL_DELEGATE_DATE', 'DEL_INIT_DATE', 'DEL_DUE_DATE', 'DEL_PRIORITY', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, )
     );
 
     /**
@@ -118,10 +121,10 @@ abstract class BaseListParticipatedLastPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('AppUid' => 0, 'UsrUid' => 1, 'TasUid' => 2, 'ProUid' => 3, 'AppNumber' => 4, 'AppTitle' => 5, 'AppProTitle' => 6, 'AppTasTitle' => 7, 'AppStatus' => 8, 'DelIndex' => 9, 'DelPreviousUsrUid' => 10, 'DelPreviousUsrUsername' => 11, 'DelPreviousUsrFirstname' => 12, 'DelPreviousUsrLastname' => 13, 'DelCurrentUsrUsername' => 14, 'DelCurrentUsrFirstname' => 15, 'DelCurrentUsrLastname' => 16, 'DelDelegateDate' => 17, 'DelInitDate' => 18, 'DelDueDate' => 19, 'DelPriority' => 20, ),
-        BasePeer::TYPE_COLNAME => array (ListParticipatedLastPeer::APP_UID => 0, ListParticipatedLastPeer::USR_UID => 1, ListParticipatedLastPeer::TAS_UID => 2, ListParticipatedLastPeer::PRO_UID => 3, ListParticipatedLastPeer::APP_NUMBER => 4, ListParticipatedLastPeer::APP_TITLE => 5, ListParticipatedLastPeer::APP_PRO_TITLE => 6, ListParticipatedLastPeer::APP_TAS_TITLE => 7, ListParticipatedLastPeer::APP_STATUS => 8, ListParticipatedLastPeer::DEL_INDEX => 9, ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID => 10, ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME => 11, ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME => 12, ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME => 13, ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME => 14, ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME => 15, ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME => 16, ListParticipatedLastPeer::DEL_DELEGATE_DATE => 17, ListParticipatedLastPeer::DEL_INIT_DATE => 18, ListParticipatedLastPeer::DEL_DUE_DATE => 19, ListParticipatedLastPeer::DEL_PRIORITY => 20, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0, 'USR_UID' => 1, 'TAS_UID' => 2, 'PRO_UID' => 3, 'APP_NUMBER' => 4, 'APP_TITLE' => 5, 'APP_PRO_TITLE' => 6, 'APP_TAS_TITLE' => 7, 'APP_STATUS' => 8, 'DEL_INDEX' => 9, 'DEL_PREVIOUS_USR_UID' => 10, 'DEL_PREVIOUS_USR_USERNAME' => 11, 'DEL_PREVIOUS_USR_FIRSTNAME' => 12, 'DEL_PREVIOUS_USR_LASTNAME' => 13, 'DEL_CURRENT_USR_USERNAME' => 14, 'DEL_CURRENT_USR_FIRSTNAME' => 15, 'DEL_CURRENT_USR_LASTNAME' => 16, 'DEL_DELEGATE_DATE' => 17, 'DEL_INIT_DATE' => 18, 'DEL_DUE_DATE' => 19, 'DEL_PRIORITY' => 20, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
+        BasePeer::TYPE_PHPNAME => array ('AppUid' => 0, 'DelIndex' => 1, 'UsrUid' => 2, 'TasUid' => 3, 'ProUid' => 4, 'AppNumber' => 5, 'AppTitle' => 6, 'AppProTitle' => 7, 'AppTasTitle' => 8, 'AppPausedDate' => 9, 'AppRestartDate' => 10, 'DelPreviousUsrUid' => 11, 'DelPreviousUsrUsername' => 12, 'DelPreviousUsrFirstname' => 13, 'DelPreviousUsrLastname' => 14, 'DelCurrentUsrUsername' => 15, 'DelCurrentUsrFirstname' => 16, 'DelCurrentUsrLastname' => 17, 'DelDelegateDate' => 18, 'DelInitDate' => 19, 'DelDueDate' => 20, 'DelPriority' => 21, ),
+        BasePeer::TYPE_COLNAME => array (ListPausedPeer::APP_UID => 0, ListPausedPeer::DEL_INDEX => 1, ListPausedPeer::USR_UID => 2, ListPausedPeer::TAS_UID => 3, ListPausedPeer::PRO_UID => 4, ListPausedPeer::APP_NUMBER => 5, ListPausedPeer::APP_TITLE => 6, ListPausedPeer::APP_PRO_TITLE => 7, ListPausedPeer::APP_TAS_TITLE => 8, ListPausedPeer::APP_PAUSED_DATE => 9, ListPausedPeer::APP_RESTART_DATE => 10, ListPausedPeer::DEL_PREVIOUS_USR_UID => 11, ListPausedPeer::DEL_PREVIOUS_USR_USERNAME => 12, ListPausedPeer::DEL_PREVIOUS_USR_FIRSTNAME => 13, ListPausedPeer::DEL_PREVIOUS_USR_LASTNAME => 14, ListPausedPeer::DEL_CURRENT_USR_USERNAME => 15, ListPausedPeer::DEL_CURRENT_USR_FIRSTNAME => 16, ListPausedPeer::DEL_CURRENT_USR_LASTNAME => 17, ListPausedPeer::DEL_DELEGATE_DATE => 18, ListPausedPeer::DEL_INIT_DATE => 19, ListPausedPeer::DEL_DUE_DATE => 20, ListPausedPeer::DEL_PRIORITY => 21, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0, 'DEL_INDEX' => 1, 'USR_UID' => 2, 'TAS_UID' => 3, 'PRO_UID' => 4, 'APP_NUMBER' => 5, 'APP_TITLE' => 6, 'APP_PRO_TITLE' => 7, 'APP_TAS_TITLE' => 8, 'APP_PAUSED_DATE' => 9, 'APP_RESTART_DATE' => 10, 'DEL_PREVIOUS_USR_UID' => 11, 'DEL_PREVIOUS_USR_USERNAME' => 12, 'DEL_PREVIOUS_USR_FIRSTNAME' => 13, 'DEL_PREVIOUS_USR_LASTNAME' => 14, 'DEL_CURRENT_USR_USERNAME' => 15, 'DEL_CURRENT_USR_FIRSTNAME' => 16, 'DEL_CURRENT_USR_LASTNAME' => 17, 'DEL_DELEGATE_DATE' => 18, 'DEL_INIT_DATE' => 19, 'DEL_DUE_DATE' => 20, 'DEL_PRIORITY' => 21, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, )
     );
 
     /**
@@ -131,8 +134,8 @@ abstract class BaseListParticipatedLastPeer
      */
     public static function getMapBuilder()
     {
-        include_once 'classes/model/map/ListParticipatedLastMapBuilder.php';
-        return BasePeer::getMapBuilder('classes.model.map.ListParticipatedLastMapBuilder');
+        include_once 'classes/model/map/ListPausedMapBuilder.php';
+        return BasePeer::getMapBuilder('classes.model.map.ListPausedMapBuilder');
     }
     /**
      * Gets a map (hash) of PHP names to DB column names.
@@ -145,7 +148,7 @@ abstract class BaseListParticipatedLastPeer
     public static function getPhpNameMap()
     {
         if (self::$phpNameMap === null) {
-            $map = ListParticipatedLastPeer::getTableMap();
+            $map = ListPausedPeer::getTableMap();
             $columns = $map->getColumns();
             $nameMap = array();
             foreach ($columns as $column) {
@@ -200,12 +203,12 @@ abstract class BaseListParticipatedLastPeer
      *      $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. ListParticipatedLastPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. ListPausedPeer::COLUMN_NAME).
      * @return     string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(ListParticipatedLastPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(ListPausedPeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -222,52 +225,54 @@ abstract class BaseListParticipatedLastPeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_UID);
+        $criteria->addSelectColumn(ListPausedPeer::APP_UID);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::USR_UID);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_INDEX);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::TAS_UID);
+        $criteria->addSelectColumn(ListPausedPeer::USR_UID);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::PRO_UID);
+        $criteria->addSelectColumn(ListPausedPeer::TAS_UID);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_NUMBER);
+        $criteria->addSelectColumn(ListPausedPeer::PRO_UID);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TITLE);
+        $criteria->addSelectColumn(ListPausedPeer::APP_NUMBER);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_PRO_TITLE);
+        $criteria->addSelectColumn(ListPausedPeer::APP_TITLE);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TAS_TITLE);
+        $criteria->addSelectColumn(ListPausedPeer::APP_PRO_TITLE);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_STATUS);
+        $criteria->addSelectColumn(ListPausedPeer::APP_TAS_TITLE);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INDEX);
+        $criteria->addSelectColumn(ListPausedPeer::APP_PAUSED_DATE);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID);
+        $criteria->addSelectColumn(ListPausedPeer::APP_RESTART_DATE);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_PREVIOUS_USR_UID);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_PREVIOUS_USR_USERNAME);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_PREVIOUS_USR_FIRSTNAME);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_PREVIOUS_USR_LASTNAME);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_CURRENT_USR_USERNAME);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_CURRENT_USR_FIRSTNAME);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_DELEGATE_DATE);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_CURRENT_USR_LASTNAME);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INIT_DATE);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_DELEGATE_DATE);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_DUE_DATE);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_INIT_DATE);
 
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PRIORITY);
+        $criteria->addSelectColumn(ListPausedPeer::DEL_DUE_DATE);
+
+        $criteria->addSelectColumn(ListPausedPeer::DEL_PRIORITY);
 
     }
 
-    const COUNT = 'COUNT(LIST_PARTICIPATED_LAST.APP_UID)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT LIST_PARTICIPATED_LAST.APP_UID)';
+    const COUNT = 'COUNT(LIST_PAUSED.APP_UID)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT LIST_PAUSED.APP_UID)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -285,9 +290,9 @@ abstract class BaseListParticipatedLastPeer
         // clear out anything that might confuse the ORDER BY clause
         $criteria->clearSelectColumns()->clearOrderByColumns();
         if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->addSelectColumn(ListParticipatedLastPeer::COUNT_DISTINCT);
+            $criteria->addSelectColumn(ListPausedPeer::COUNT_DISTINCT);
         } else {
-            $criteria->addSelectColumn(ListParticipatedLastPeer::COUNT);
+            $criteria->addSelectColumn(ListPausedPeer::COUNT);
         }
 
         // just in case we're grouping: add those columns to the select statement
@@ -295,7 +300,7 @@ abstract class BaseListParticipatedLastPeer
             $criteria->addSelectColumn($column);
         }
 
-        $rs = ListParticipatedLastPeer::doSelectRS($criteria, $con);
+        $rs = ListPausedPeer::doSelectRS($criteria, $con);
         if ($rs->next()) {
             return $rs->getInt(1);
         } else {
@@ -308,7 +313,7 @@ abstract class BaseListParticipatedLastPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      Connection $con
-     * @return     ListParticipatedLast
+     * @return     ListPaused
      * @throws     PropelException Any exceptions caught during processing will be
      *       rethrown wrapped into a PropelException.
      */
@@ -316,7 +321,7 @@ abstract class BaseListParticipatedLastPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = ListParticipatedLastPeer::doSelect($critcopy, $con);
+        $objects = ListPausedPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -333,7 +338,7 @@ abstract class BaseListParticipatedLastPeer
      */
     public static function doSelect(Criteria $criteria, $con = null)
     {
-        return ListParticipatedLastPeer::populateObjects(ListParticipatedLastPeer::doSelectRS($criteria, $con));
+        return ListPausedPeer::populateObjects(ListPausedPeer::doSelectRS($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect()
@@ -357,7 +362,7 @@ abstract class BaseListParticipatedLastPeer
 
         if (!$criteria->getSelectColumns()) {
             $criteria = clone $criteria;
-            ListParticipatedLastPeer::addSelectColumns($criteria);
+            ListPausedPeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
@@ -379,7 +384,7 @@ abstract class BaseListParticipatedLastPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = ListParticipatedLastPeer::getOMClass();
+        $cls = ListPausedPeer::getOMClass();
         $cls = Propel::import($cls);
         // populate the object(s)
         while ($rs->next()) {
@@ -414,13 +419,13 @@ abstract class BaseListParticipatedLastPeer
      */
     public static function getOMClass()
     {
-        return ListParticipatedLastPeer::CLASS_DEFAULT;
+        return ListPausedPeer::CLASS_DEFAULT;
     }
 
     /**
-     * Method perform an INSERT on the database, given a ListParticipatedLast or Criteria object.
+     * Method perform an INSERT on the database, given a ListPaused or Criteria object.
      *
-     * @param      mixed $values Criteria or ListParticipatedLast object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or ListPaused object containing data that is used to create the INSERT statement.
      * @param      Connection $con the connection to use
      * @return     mixed The new primary key.
      * @throws     PropelException Any exceptions caught during processing will be
@@ -435,7 +440,7 @@ abstract class BaseListParticipatedLastPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from ListParticipatedLast object
+            $criteria = $values->buildCriteria(); // build Criteria from ListPaused object
         }
 
 
@@ -457,9 +462,9 @@ abstract class BaseListParticipatedLastPeer
     }
 
     /**
-     * Method perform an UPDATE on the database, given a ListParticipatedLast or Criteria object.
+     * Method perform an UPDATE on the database, given a ListPaused or Criteria object.
      *
-     * @param      mixed $values Criteria or ListParticipatedLast object containing data create the UPDATE statement.
+     * @param      mixed $values Criteria or ListPaused object containing data create the UPDATE statement.
      * @param      Connection $con The connection to use (specify Connection exert more control over transactions).
      * @return     int The number of affected rows (if supported by underlying database driver).
      * @throws     PropelException Any exceptions caught during processing will be
@@ -476,11 +481,11 @@ abstract class BaseListParticipatedLastPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(ListParticipatedLastPeer::APP_UID);
-            $selectCriteria->add(ListParticipatedLastPeer::APP_UID, $criteria->remove(ListParticipatedLastPeer::APP_UID), $comparison);
+            $comparison = $criteria->getComparison(ListPausedPeer::APP_UID);
+            $selectCriteria->add(ListPausedPeer::APP_UID, $criteria->remove(ListPausedPeer::APP_UID), $comparison);
 
-            $comparison = $criteria->getComparison(ListParticipatedLastPeer::USR_UID);
-            $selectCriteria->add(ListParticipatedLastPeer::USR_UID, $criteria->remove(ListParticipatedLastPeer::USR_UID), $comparison);
+            $comparison = $criteria->getComparison(ListPausedPeer::DEL_INDEX);
+            $selectCriteria->add(ListPausedPeer::DEL_INDEX, $criteria->remove(ListPausedPeer::DEL_INDEX), $comparison);
 
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
@@ -494,7 +499,7 @@ abstract class BaseListParticipatedLastPeer
     }
 
     /**
-     * Method to DELETE all rows from the LIST_PARTICIPATED_LAST table.
+     * Method to DELETE all rows from the LIST_PAUSED table.
      *
      * @return     int The number of affected rows (if supported by underlying database driver).
      */
@@ -508,7 +513,7 @@ abstract class BaseListParticipatedLastPeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
-            $affectedRows += BasePeer::doDeleteAll(ListParticipatedLastPeer::TABLE_NAME, $con);
+            $affectedRows += BasePeer::doDeleteAll(ListPausedPeer::TABLE_NAME, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -518,9 +523,9 @@ abstract class BaseListParticipatedLastPeer
     }
 
     /**
-     * Method perform a DELETE on the database, given a ListParticipatedLast or Criteria object OR a primary key value.
+     * Method perform a DELETE on the database, given a ListPaused or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or ListParticipatedLast object or primary key or array of primary keys
+     * @param      mixed $values Criteria or ListPaused object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      Connection $con the connection to use
      * @return     int  The number of affected rows (if supported by underlying database driver).
@@ -532,12 +537,12 @@ abstract class BaseListParticipatedLastPeer
     public static function doDelete($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ListParticipatedLastPeer::DATABASE_NAME);
+            $con = Propel::getConnection(ListPausedPeer::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
-        } elseif ($values instanceof ListParticipatedLast) {
+        } elseif ($values instanceof ListPaused) {
 
             $criteria = $values->buildPkeyCriteria();
         } else {
@@ -557,8 +562,8 @@ abstract class BaseListParticipatedLastPeer
                 $vals[1][] = $value[1];
             }
 
-            $criteria->add(ListParticipatedLastPeer::APP_UID, $vals[0], Criteria::IN);
-            $criteria->add(ListParticipatedLastPeer::USR_UID, $vals[1], Criteria::IN);
+            $criteria->add(ListPausedPeer::APP_UID, $vals[0], Criteria::IN);
+            $criteria->add(ListPausedPeer::DEL_INDEX, $vals[1], Criteria::IN);
         }
 
         // Set the correct dbName
@@ -581,24 +586,24 @@ abstract class BaseListParticipatedLastPeer
     }
 
     /**
-     * Validates all modified columns of given ListParticipatedLast object.
+     * Validates all modified columns of given ListPaused object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      ListParticipatedLast $obj The object to validate.
+     * @param      ListPaused $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
      */
-    public static function doValidate(ListParticipatedLast $obj, $cols = null)
+    public static function doValidate(ListPaused $obj, $cols = null)
     {
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(ListParticipatedLastPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(ListParticipatedLastPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(ListPausedPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(ListPausedPeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -614,25 +619,25 @@ abstract class BaseListParticipatedLastPeer
 
         }
 
-        return BasePeer::doValidate(ListParticipatedLastPeer::DATABASE_NAME, ListParticipatedLastPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(ListPausedPeer::DATABASE_NAME, ListPausedPeer::TABLE_NAME, $columns);
     }
 
     /**
      * Retrieve object using using composite pkey values.
      * @param string $app_uid
-       * @param string $usr_uid
+       * @param int $del_index
         * @param      Connection $con
-     * @return     ListParticipatedLast
+     * @return     ListPaused
      */
-    public static function retrieveByPK($app_uid, $usr_uid, $con = null)
+    public static function retrieveByPK($app_uid, $del_index, $con = null)
     {
         if ($con === null) {
             $con = Propel::getConnection(self::DATABASE_NAME);
         }
         $criteria = new Criteria();
-        $criteria->add(ListParticipatedLastPeer::APP_UID, $app_uid);
-        $criteria->add(ListParticipatedLastPeer::USR_UID, $usr_uid);
-        $v = ListParticipatedLastPeer::doSelect($criteria, $con);
+        $criteria->add(ListPausedPeer::APP_UID, $app_uid);
+        $criteria->add(ListPausedPeer::DEL_INDEX, $del_index);
+        $v = ListPausedPeer::doSelect($criteria, $con);
 
         return !empty($v) ? $v[0] : null;
     }
@@ -644,14 +649,14 @@ if (Propel::isInit()) {
     // the MapBuilder classes register themselves with Propel during initialization
     // so we need to load them here.
     try {
-        BaseListParticipatedLastPeer::getMapBuilder();
+        BaseListPausedPeer::getMapBuilder();
     } catch (Exception $e) {
         Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
     }
 } else {
     // even if Propel is not yet initialized, the map builder class can be registered
     // now and then it will be loaded when Propel initializes.
-    require_once 'classes/model/map/ListParticipatedLastMapBuilder.php';
-    Propel::registerMapBuilder('classes.model.map.ListParticipatedLastMapBuilder');
+    require_once 'classes/model/map/ListPausedMapBuilder.php';
+    Propel::registerMapBuilder('classes.model.map.ListPausedMapBuilder');
 }
 
