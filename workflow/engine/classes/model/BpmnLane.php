@@ -78,7 +78,7 @@ class BpmnLane extends BaseBpmnLane {
         if (! is_null($prjUid)) {
             $c->add(BpmnLanePeer::PRJ_UID, $prjUid, Criteria::EQUAL);
         }
-
+        $c->addAscendingOrderByColumn(BpmnBoundPeer::BOU_REL_POSITION);
         $rs = BpmnLanePeer::doSelectRS($c);
         $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
