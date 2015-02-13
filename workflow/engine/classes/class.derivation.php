@@ -240,7 +240,14 @@ class Derivation
 
             //1. There is no rule
             if (count($arrayNextTask) == 0) {
-                throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_RULE"));
+              $c = new Criteria("workflow");
+              $c->add(BpmnProcessPeer::PRJ_UID, $_SESSION['PROCESS']);
+              $res = BpmnProcessPeer::doSelect($c);
+              if( sizeof($res) == 0 ){
+                  throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_RULE"));
+              }else{
+                  throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_BPMN_RULE"));
+              }              
             }
 
             //Return

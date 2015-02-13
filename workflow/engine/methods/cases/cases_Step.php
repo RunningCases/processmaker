@@ -1019,7 +1019,16 @@ try {
     }
     //Add content content step - End
 } catch (Exception $e) {
-    G::SendTemporalMessage( G::LoadTranslation( 'ID_PROCESS_DEF_PROBLEM' ), 'error', 'string', 3, 100 );
+    //Check if the process is BPMN
+    $c = new Criteria("workflow");
+    $c->add(BpmnProcessPeer::PRJ_UID, $_SESSION['PROCESS']);
+    $res = BpmnProcessPeer::doSelect($c);        
+    if( sizeof($res) == 0 ){
+      G::SendTemporalMessage( G::LoadTranslation( 'ID_PROCESS_DEF_PROBLEM' ), 'error', 'string', 3, 100 );
+    }else{
+      G::SendTemporalMessage( G::LoadTranslation( 'ID_BPMN_PROCESS_DEF_PROBLEM' ), 'error', 'string', 3, 100 );
+    }    
+    
     $aMessage = array ();
     $aMessage['MESSAGE'] = $e->getMessage();
     $G_PUBLISH = new Publisher();
