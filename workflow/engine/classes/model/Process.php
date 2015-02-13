@@ -326,6 +326,8 @@ class Process extends BaseProcess
                 }
 
                 $aFields['PRO_DYNAFORMS'] = @unserialize( $aFields['PRO_DYNAFORMS'] );
+                //Check if is BPMN process
+                $aFields['PRO_BPMN'] = $this->isBpmnProcess($ProUid);
 
                 return $aFields;
             } else {
@@ -1008,6 +1010,17 @@ class Process extends BaseProcess
 		} else {
 			return 0;
 		}
+    }
+    
+    public function isBpmnProcess($proUid){
+      $c = new Criteria("workflow");
+      $c->add(BpmnProcessPeer::PRJ_UID, $proUid);
+      $res = BpmnProcessPeer::doSelect($c);        
+      if( sizeof($res) == 0 ){
+        return 0;
+      }else{
+        return 1;
+      }
     }
 }
 
