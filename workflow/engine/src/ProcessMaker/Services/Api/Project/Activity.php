@@ -59,6 +59,26 @@ class Activity extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+    
+    /**
+     * @param string $prj_uid {@min 32} {@max 32}
+     * @param string $act_uid {@min 32} {@max 32}
+     * @param string $filter {@choice definition,,properties}
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     * @return array
+     *
+     * @url GET /:prj_uid/activity/:act_uid/feature-configuration
+     */
+    public function doGetProjectActivityFeatureConfiguration($prj_uid, $act_uid, $filter = '')
+    {
+        try {
+            return array('status' => 200, 'message' => 'success');
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
 
     /**
      * @param string $prj_uid {@min 32} {@max 32}
