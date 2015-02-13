@@ -76,3 +76,7 @@ $oOP->save();
 G::LoadClass( 'processMap' );
 $oProcessMap = new ProcessMap();
 $oProcessMap->getObjectsPermissionsCriteria( $sValue['PRO_UID'] );
+
+$infoProcess = new Processes();
+$resultProcess = $infoProcess->getProcessRow($sValue['PRO_UID']);
+G::auditLog('ProcessPermissions','Add Permission "'.$sValue['OP_OBJ_TYPE'].'" in Process "'.$resultProcess['PRO_TITLE'].'"');

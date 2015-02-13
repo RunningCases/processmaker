@@ -28,8 +28,22 @@ if ($RBAC->userCanAccess( 'PM_SETUP' ) != 1) {
     die();
 }
 
+$k = new Criteria('workflow');
+$k->clearSelectColumns();
+$k->addSelectColumn(EventPeer::PRO_UID);
+$k->add(EventPeer::EVN_UID, $_POST['EVN_UID'] );
+$rs = EventPeer::doSelectRS($k);
+$rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+$rs->next();
+$row = $rs->getRow();
+$proUid = $row['PRO_UID'];
+
+$infoProcess = new Processes();
+$proFields = $infoProcess->serializeProcess($proUid);
+$resultProcess = $infoProcess->saveSerializedProcess($proFields);
+G::auditLog('Events','Delete event in process "'.$resultProcess['PRO_TITLE'].'"');
+
 $evnUid = $_POST['EVN_UID'];
 require_once 'classes/model/Event.php';
 $oEvent = new Event();
 $oEvent->remove( $evnUid );
-

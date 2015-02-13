@@ -92,3 +92,4 @@ switch ($function) {
         break;
 
 }
+G::auditLog('EditProcess','Edit Process "'.$_POST['form']['PRO_TITLE'].'"');

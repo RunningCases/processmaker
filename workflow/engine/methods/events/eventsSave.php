@@ -59,6 +59,10 @@ if ($_POST['form']['EVN_UID'] == '') {
     */
     $oEvent->update( $_POST['form'] );
 }
+$infoProcess = new Processes();
+$proFields = $infoProcess->serializeProcess($_POST['form']['PRO_UID']);
+$resultProcess = $infoProcess->saveSerializedProcess($proFields);
+G::auditLog('Events','Save intermediate message "'.$_POST['form']['EVN_DESCRIPTION'].'" in process "'.$resultProcess['PRO_TITLE'].'"');
 
 function replaceQuotes ($aData)
 {

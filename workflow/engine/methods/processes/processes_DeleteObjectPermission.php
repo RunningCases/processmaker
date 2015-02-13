@@ -58,3 +58,7 @@ try {
     $result->msg = $e->getMessage();
 }
 print G::json_encode( $result );
+
+$infoProcess = new Processes();
+$resultProcess = $infoProcess->getProcessRow($sProcessUID);
+G::auditLog('DeletePermissions','Delete Permissions in Process "'.$resultProcess['PRO_TITLE'].'"');

@@ -36,3 +36,18 @@ if ($_POST['form']['TRI_UID'] != '') {
 
 $oTrigger->update( $_POST['form'] );
 
+$k = new Criteria('workflow');
+$k->clearSelectColumns();
+$k->addSelectColumn(TriggersPeer::PRO_UID);
+$k->add(TriggersPeer::TRI_UID, $_POST['form']['TRI_UID']  );
+$rs = TriggersPeer::doSelectRS($k);
+$rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+$rs->next();
+$row = $rs->getRow();
+$proUid = $row['PRO_UID'];
+
+$infoProcess = new Processes();
+$proFields = $infoProcess->serializeProcess($proUid);
+$resultProcess = $infoProcess->saveSerializedProcess($proFields);
+G::auditLog('Events','Save event in process "'.$resultProcess['PRO_TITLE'].'"');
+

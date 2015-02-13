@@ -15,3 +15,8 @@ require_once 'classes/model/CaseTracker.php';
 $oCaseTracker = new CaseTracker();
 $oCaseTracker->update( $sValue );
 
+$infoProcess = new Processes();
+$proFields = $infoProcess->serializeProcess($sValue['PRO_UID']);
+$resultProcess = $infoProcess->saveSerializedProcess($proFields);
+G::auditLog('CaseTrackers','Save Case Tracker Properties ('.$sValue['CT_MAP_TYPE'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
+

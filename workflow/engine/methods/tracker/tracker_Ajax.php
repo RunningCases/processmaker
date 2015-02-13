@@ -25,6 +25,11 @@ try {
     if (isset( $_POST['form']['action'] )) {
         $_POST['action'] = $_POST['form']['action'];
     }
+    
+    $infoProcess = new Processes();
+    $proFields = $infoProcess->serializeProcess($_POST['PRO_UID']);
+    $resultProcess = $infoProcess->saveSerializedProcess($proFields);
+    
     switch ($_POST['action']) {
         case 'availableCaseTrackerObjects':
             G::LoadClass( 'processMap' );
@@ -37,24 +42,28 @@ try {
             $cto_UID = $oProcessMap->assignCaseTrackerObject( $_POST['PRO_UID'], $_POST['OBJECT_TYPE'], $_POST['OBJECT_UID'] );
             $oProcessMap->getCaseTrackerObjectsCriteria( $_POST['PRO_UID'] );
             echo $cto_UID;
+            G::auditLog('CaseTrackers','Assign Case Tracker Object ('.$_POST['OBJECT_TYPE'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'removeCaseTrackerObject':
             G::LoadClass( 'processMap' );
             $oProcessMap = new ProcessMap();
             $oProcessMap->removeCaseTrackerObject( $_POST['CTO_UID'], $_POST['PRO_UID'], $_POST['STEP_POSITION'] );
             $oProcessMap->getCaseTrackerObjectsCriteria( $_POST['PRO_UID'] );
+            G::auditLog('CaseTrackers','Remove Case Tracker Object in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'upCaseTrackerObject':
             G::LoadClass( 'processMap' );
             $oProcessMap = new ProcessMap();
             $oProcessMap->upCaseTrackerObject( $_POST['CTO_UID'], $_POST['PRO_UID'], $_POST['STEP_POSITION'] );
             $oProcessMap->getCaseTrackerObjectsCriteria( $_POST['PRO_UID'] );
+            G::auditLog('CaseTrackers','Move Up Case Tracker Object in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'downCaseTrackerObject':
             G::LoadClass( 'processMap' );
             $oProcessMap = new ProcessMap();
             $oProcessMap->downCaseTrackerObject( $_POST['CTO_UID'], $_POST['PRO_UID'], $_POST['STEP_POSITION'] );
             $oProcessMap->getCaseTrackerObjectsCriteria( $_POST['PRO_UID'] );
+            G::auditLog('CaseTrackers','Move Down Case Tracker Object in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'editStagesMap':
             $oTemplatePower = new TemplatePower( PATH_TPL . 'tracker/stages_Map.html' );
