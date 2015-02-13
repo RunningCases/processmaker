@@ -121,9 +121,34 @@ class ListInbox extends BaseListInbox
         }
     }
 
+    /**
+     * Remove All List Inbox
+     *
+     * @param type $seqName
+     * @return type
+     * @throws type
+     *
+     */
+    public function removeAll ($app_uid)
+    {
+        $con = Propel::getConnection( ListInboxPeer::DATABASE_NAME );
+        try {
+            $this->setAppUid($app_uid);
+
+            $con->begin();
+            $this->delete();
+            $con->commit();
+        } catch (Exception $e) {
+            $con->rollback();
+            throw ($e);
+        }
+    }
+
     public function newRow ($data, $delPreviusUsrUid) {
         $data['DEL_PREVIOUS_USR_UID'] = $delPreviusUsrUid;
-        $data['DEL_DUE_DATE'] = $data['DEL_TASK_DUE_DATE'];
+        if (isset($data['DEL_TASK_DUE_DATE'])) {
+            $data['DEL_DUE_DATE'] = $data['DEL_TASK_DUE_DATE'];
+        }
 
         $criteria = new Criteria();
         $criteria->addSelectColumn( ApplicationPeer::APP_NUMBER );
@@ -297,6 +322,9 @@ class ListInbox extends BaseListInbox
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
         $paged = isset($filters['paged']) ? $filters['paged'] : 1;
 
+        if ($filters['action'] == 'draft') {
+            $criteria->add( ListInboxPeer::DEL_INDEX, 1, Criteria::EQUAL );
+        }
         if ($dir == "DESC") {
             $criteria->addDescendingOrderByColumn($sort);
         } else {
