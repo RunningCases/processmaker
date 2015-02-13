@@ -130,7 +130,6 @@
   }
 
   function dynaformDelete ( uid,proUid ){
-
     isokDependent = ajax_function('@G::encryptlink(@#dynaformsDelete)','getDynaformAssign','DYN_UID='+uid+'&PRO_UID='+proUid,'POST');
 	  if(isokDependent){
  	  msgBox(G_STRINGS.ID_DYNAFORM_ASSIGN,"alert");

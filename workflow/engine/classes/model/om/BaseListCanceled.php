@@ -7,23 +7,23 @@ require_once 'propel/om/Persistent.php';
 
 include_once 'propel/util/Criteria.php';
 
-include_once 'classes/model/ListParticipatedLastPeer.php';
+include_once 'classes/model/ListCanceledPeer.php';
 
 /**
- * Base class that represents a row from the 'LIST_PARTICIPATED_LAST' table.
+ * Base class that represents a row from the 'LIST_CANCELED' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseListParticipatedLast extends BaseObject implements Persistent
+abstract class BaseListCanceled extends BaseObject implements Persistent
 {
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        ListParticipatedLastPeer
+     * @var        ListCanceledPeer
     */
     protected static $peer;
 
@@ -76,10 +76,10 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
     protected $app_tas_title = '';
 
     /**
-     * The value for the app_status field.
-     * @var        string
+     * The value for the app_canceled_date field.
+     * @var        int
      */
-    protected $app_status = '0';
+    protected $app_canceled_date;
 
     /**
      * The value for the del_index field.
@@ -92,24 +92,6 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
      * @var        string
      */
     protected $del_previous_usr_uid = '';
-
-    /**
-     * The value for the del_previous_usr_username field.
-     * @var        string
-     */
-    protected $del_previous_usr_username = '';
-
-    /**
-     * The value for the del_previous_usr_firstname field.
-     * @var        string
-     */
-    protected $del_previous_usr_firstname = '';
-
-    /**
-     * The value for the del_previous_usr_lastname field.
-     * @var        string
-     */
-    protected $del_previous_usr_lastname = '';
 
     /**
      * The value for the del_current_usr_username field.
@@ -256,14 +238,35 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [app_status] column value.
+     * Get the [optionally formatted] [app_canceled_date] column value.
      * 
-     * @return     string
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                          If format is NULL, then the integer unix timestamp will be returned.
+     * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+     * @throws     PropelException - if unable to convert the date/time to timestamp.
      */
-    public function getAppStatus()
+    public function getAppCanceledDate($format = 'Y-m-d H:i:s')
     {
 
-        return $this->app_status;
+        if ($this->app_canceled_date === null || $this->app_canceled_date === '') {
+            return null;
+        } elseif (!is_int($this->app_canceled_date)) {
+            // a non-timestamp value was set externally, so we convert it
+            $ts = strtotime($this->app_canceled_date);
+            if ($ts === -1 || $ts === false) {
+                throw new PropelException("Unable to parse value of [app_canceled_date] as date/time value: " .
+                    var_export($this->app_canceled_date, true));
+            }
+        } else {
+            $ts = $this->app_canceled_date;
+        }
+        if ($format === null) {
+            return $ts;
+        } elseif (strpos($format, '%') !== false) {
+            return strftime($format, $ts);
+        } else {
+            return date($format, $ts);
+        }
     }
 
     /**
@@ -286,39 +289,6 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
     {
 
         return $this->del_previous_usr_uid;
-    }
-
-    /**
-     * Get the [del_previous_usr_username] column value.
-     * 
-     * @return     string
-     */
-    public function getDelPreviousUsrUsername()
-    {
-
-        return $this->del_previous_usr_username;
-    }
-
-    /**
-     * Get the [del_previous_usr_firstname] column value.
-     * 
-     * @return     string
-     */
-    public function getDelPreviousUsrFirstname()
-    {
-
-        return $this->del_previous_usr_firstname;
-    }
-
-    /**
-     * Get the [del_previous_usr_lastname] column value.
-     * 
-     * @return     string
-     */
-    public function getDelPreviousUsrLastname()
-    {
-
-        return $this->del_previous_usr_lastname;
     }
 
     /**
@@ -478,7 +448,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->app_uid !== $v || $v === '') {
             $this->app_uid = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::APP_UID;
+            $this->modifiedColumns[] = ListCanceledPeer::APP_UID;
         }
 
     } // setAppUid()
@@ -500,7 +470,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->usr_uid !== $v || $v === '') {
             $this->usr_uid = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::USR_UID;
+            $this->modifiedColumns[] = ListCanceledPeer::USR_UID;
         }
 
     } // setUsrUid()
@@ -522,7 +492,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->tas_uid !== $v || $v === '') {
             $this->tas_uid = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::TAS_UID;
+            $this->modifiedColumns[] = ListCanceledPeer::TAS_UID;
         }
 
     } // setTasUid()
@@ -544,7 +514,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->pro_uid !== $v || $v === '') {
             $this->pro_uid = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::PRO_UID;
+            $this->modifiedColumns[] = ListCanceledPeer::PRO_UID;
         }
 
     } // setProUid()
@@ -566,7 +536,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->app_number !== $v || $v === 0) {
             $this->app_number = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::APP_NUMBER;
+            $this->modifiedColumns[] = ListCanceledPeer::APP_NUMBER;
         }
 
     } // setAppNumber()
@@ -588,7 +558,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->app_title !== $v || $v === '') {
             $this->app_title = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::APP_TITLE;
+            $this->modifiedColumns[] = ListCanceledPeer::APP_TITLE;
         }
 
     } // setAppTitle()
@@ -610,7 +580,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->app_pro_title !== $v || $v === '') {
             $this->app_pro_title = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::APP_PRO_TITLE;
+            $this->modifiedColumns[] = ListCanceledPeer::APP_PRO_TITLE;
         }
 
     } // setAppProTitle()
@@ -632,32 +602,39 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->app_tas_title !== $v || $v === '') {
             $this->app_tas_title = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::APP_TAS_TITLE;
+            $this->modifiedColumns[] = ListCanceledPeer::APP_TAS_TITLE;
         }
 
     } // setAppTasTitle()
 
     /**
-     * Set the value of [app_status] column.
+     * Set the value of [app_canceled_date] column.
      * 
-     * @param      string $v new value
+     * @param      int $v new value
      * @return     void
      */
-    public function setAppStatus($v)
+    public function setAppCanceledDate($v)
     {
 
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
+        if ($v !== null && !is_int($v)) {
+            $ts = strtotime($v);
+            //Date/time accepts null values
+            if ($v == '') {
+                $ts = null;
+            }
+            if ($ts === -1 || $ts === false) {
+                throw new PropelException("Unable to parse date/time value for [app_canceled_date] from input: " .
+                    var_export($v, true));
+            }
+        } else {
+            $ts = $v;
+        }
+        if ($this->app_canceled_date !== $ts) {
+            $this->app_canceled_date = $ts;
+            $this->modifiedColumns[] = ListCanceledPeer::APP_CANCELED_DATE;
         }
 
-        if ($this->app_status !== $v || $v === '0') {
-            $this->app_status = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::APP_STATUS;
-        }
-
-    } // setAppStatus()
+    } // setAppCanceledDate()
 
     /**
      * Set the value of [del_index] column.
@@ -676,7 +653,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->del_index !== $v || $v === 0) {
             $this->del_index = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_INDEX;
+            $this->modifiedColumns[] = ListCanceledPeer::DEL_INDEX;
         }
 
     } // setDelIndex()
@@ -698,76 +675,10 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->del_previous_usr_uid !== $v || $v === '') {
             $this->del_previous_usr_uid = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID;
+            $this->modifiedColumns[] = ListCanceledPeer::DEL_PREVIOUS_USR_UID;
         }
 
     } // setDelPreviousUsrUid()
-
-    /**
-     * Set the value of [del_previous_usr_username] column.
-     * 
-     * @param      string $v new value
-     * @return     void
-     */
-    public function setDelPreviousUsrUsername($v)
-    {
-
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->del_previous_usr_username !== $v || $v === '') {
-            $this->del_previous_usr_username = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME;
-        }
-
-    } // setDelPreviousUsrUsername()
-
-    /**
-     * Set the value of [del_previous_usr_firstname] column.
-     * 
-     * @param      string $v new value
-     * @return     void
-     */
-    public function setDelPreviousUsrFirstname($v)
-    {
-
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->del_previous_usr_firstname !== $v || $v === '') {
-            $this->del_previous_usr_firstname = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME;
-        }
-
-    } // setDelPreviousUsrFirstname()
-
-    /**
-     * Set the value of [del_previous_usr_lastname] column.
-     * 
-     * @param      string $v new value
-     * @return     void
-     */
-    public function setDelPreviousUsrLastname($v)
-    {
-
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->del_previous_usr_lastname !== $v || $v === '') {
-            $this->del_previous_usr_lastname = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME;
-        }
-
-    } // setDelPreviousUsrLastname()
 
     /**
      * Set the value of [del_current_usr_username] column.
@@ -786,7 +697,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->del_current_usr_username !== $v || $v === '') {
             $this->del_current_usr_username = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME;
+            $this->modifiedColumns[] = ListCanceledPeer::DEL_CURRENT_USR_USERNAME;
         }
 
     } // setDelCurrentUsrUsername()
@@ -808,7 +719,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->del_current_usr_firstname !== $v || $v === '') {
             $this->del_current_usr_firstname = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME;
+            $this->modifiedColumns[] = ListCanceledPeer::DEL_CURRENT_USR_FIRSTNAME;
         }
 
     } // setDelCurrentUsrFirstname()
@@ -830,7 +741,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->del_current_usr_lastname !== $v || $v === '') {
             $this->del_current_usr_lastname = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME;
+            $this->modifiedColumns[] = ListCanceledPeer::DEL_CURRENT_USR_LASTNAME;
         }
 
     } // setDelCurrentUsrLastname()
@@ -859,7 +770,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         }
         if ($this->del_delegate_date !== $ts) {
             $this->del_delegate_date = $ts;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_DELEGATE_DATE;
+            $this->modifiedColumns[] = ListCanceledPeer::DEL_DELEGATE_DATE;
         }
 
     } // setDelDelegateDate()
@@ -888,7 +799,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         }
         if ($this->del_init_date !== $ts) {
             $this->del_init_date = $ts;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_INIT_DATE;
+            $this->modifiedColumns[] = ListCanceledPeer::DEL_INIT_DATE;
         }
 
     } // setDelInitDate()
@@ -917,7 +828,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         }
         if ($this->del_due_date !== $ts) {
             $this->del_due_date = $ts;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_DUE_DATE;
+            $this->modifiedColumns[] = ListCanceledPeer::DEL_DUE_DATE;
         }
 
     } // setDelDueDate()
@@ -939,7 +850,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->del_priority !== $v || $v === '3') {
             $this->del_priority = $v;
-            $this->modifiedColumns[] = ListParticipatedLastPeer::DEL_PRIORITY;
+            $this->modifiedColumns[] = ListCanceledPeer::DEL_PRIORITY;
         }
 
     } // setDelPriority()
@@ -977,41 +888,35 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
             $this->app_tas_title = $rs->getString($startcol + 7);
 
-            $this->app_status = $rs->getString($startcol + 8);
+            $this->app_canceled_date = $rs->getTimestamp($startcol + 8, null);
 
             $this->del_index = $rs->getInt($startcol + 9);
 
             $this->del_previous_usr_uid = $rs->getString($startcol + 10);
 
-            $this->del_previous_usr_username = $rs->getString($startcol + 11);
+            $this->del_current_usr_username = $rs->getString($startcol + 11);
 
-            $this->del_previous_usr_firstname = $rs->getString($startcol + 12);
+            $this->del_current_usr_firstname = $rs->getString($startcol + 12);
 
-            $this->del_previous_usr_lastname = $rs->getString($startcol + 13);
+            $this->del_current_usr_lastname = $rs->getString($startcol + 13);
 
-            $this->del_current_usr_username = $rs->getString($startcol + 14);
+            $this->del_delegate_date = $rs->getTimestamp($startcol + 14, null);
 
-            $this->del_current_usr_firstname = $rs->getString($startcol + 15);
+            $this->del_init_date = $rs->getTimestamp($startcol + 15, null);
 
-            $this->del_current_usr_lastname = $rs->getString($startcol + 16);
+            $this->del_due_date = $rs->getTimestamp($startcol + 16, null);
 
-            $this->del_delegate_date = $rs->getTimestamp($startcol + 17, null);
-
-            $this->del_init_date = $rs->getTimestamp($startcol + 18, null);
-
-            $this->del_due_date = $rs->getTimestamp($startcol + 19, null);
-
-            $this->del_priority = $rs->getString($startcol + 20);
+            $this->del_priority = $rs->getString($startcol + 17);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 21; // 21 = ListParticipatedLastPeer::NUM_COLUMNS - ListParticipatedLastPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 18; // 18 = ListCanceledPeer::NUM_COLUMNS - ListCanceledPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating ListParticipatedLast object", $e);
+            throw new PropelException("Error populating ListCanceled object", $e);
         }
     }
 
@@ -1031,12 +936,12 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ListParticipatedLastPeer::DATABASE_NAME);
+            $con = Propel::getConnection(ListCanceledPeer::DATABASE_NAME);
         }
 
         try {
             $con->begin();
-            ListParticipatedLastPeer::doDelete($this, $con);
+            ListCanceledPeer::doDelete($this, $con);
             $this->setDeleted(true);
             $con->commit();
         } catch (PropelException $e) {
@@ -1062,7 +967,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ListParticipatedLastPeer::DATABASE_NAME);
+            $con = Propel::getConnection(ListCanceledPeer::DATABASE_NAME);
         }
 
         try {
@@ -1097,14 +1002,14 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
             // If this object has been modified, then save it to the database.
             if ($this->isModified()) {
                 if ($this->isNew()) {
-                    $pk = ListParticipatedLastPeer::doInsert($this, $con);
+                    $pk = ListCanceledPeer::doInsert($this, $con);
                     $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
                                          // should always be true here (even though technically
                                          // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
-                    $affectedRows += ListParticipatedLastPeer::doUpdate($this, $con);
+                    $affectedRows += ListCanceledPeer::doUpdate($this, $con);
                 }
                 $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
             }
@@ -1175,7 +1080,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = ListParticipatedLastPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = ListCanceledPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -1198,7 +1103,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = ListParticipatedLastPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = ListCanceledPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->getByPosition($pos);
     }
 
@@ -1237,7 +1142,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
                 return $this->getAppTasTitle();
                 break;
             case 8:
-                return $this->getAppStatus();
+                return $this->getAppCanceledDate();
                 break;
             case 9:
                 return $this->getDelIndex();
@@ -1246,33 +1151,24 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
                 return $this->getDelPreviousUsrUid();
                 break;
             case 11:
-                return $this->getDelPreviousUsrUsername();
-                break;
-            case 12:
-                return $this->getDelPreviousUsrFirstname();
-                break;
-            case 13:
-                return $this->getDelPreviousUsrLastname();
-                break;
-            case 14:
                 return $this->getDelCurrentUsrUsername();
                 break;
-            case 15:
+            case 12:
                 return $this->getDelCurrentUsrFirstname();
                 break;
-            case 16:
+            case 13:
                 return $this->getDelCurrentUsrLastname();
                 break;
-            case 17:
+            case 14:
                 return $this->getDelDelegateDate();
                 break;
-            case 18:
+            case 15:
                 return $this->getDelInitDate();
                 break;
-            case 19:
+            case 16:
                 return $this->getDelDueDate();
                 break;
-            case 20:
+            case 17:
                 return $this->getDelPriority();
                 break;
             default:
@@ -1293,7 +1189,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = ListParticipatedLastPeer::getFieldNames($keyType);
+        $keys = ListCanceledPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getAppUid(),
             $keys[1] => $this->getUsrUid(),
@@ -1303,19 +1199,16 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
             $keys[5] => $this->getAppTitle(),
             $keys[6] => $this->getAppProTitle(),
             $keys[7] => $this->getAppTasTitle(),
-            $keys[8] => $this->getAppStatus(),
+            $keys[8] => $this->getAppCanceledDate(),
             $keys[9] => $this->getDelIndex(),
             $keys[10] => $this->getDelPreviousUsrUid(),
-            $keys[11] => $this->getDelPreviousUsrUsername(),
-            $keys[12] => $this->getDelPreviousUsrFirstname(),
-            $keys[13] => $this->getDelPreviousUsrLastname(),
-            $keys[14] => $this->getDelCurrentUsrUsername(),
-            $keys[15] => $this->getDelCurrentUsrFirstname(),
-            $keys[16] => $this->getDelCurrentUsrLastname(),
-            $keys[17] => $this->getDelDelegateDate(),
-            $keys[18] => $this->getDelInitDate(),
-            $keys[19] => $this->getDelDueDate(),
-            $keys[20] => $this->getDelPriority(),
+            $keys[11] => $this->getDelCurrentUsrUsername(),
+            $keys[12] => $this->getDelCurrentUsrFirstname(),
+            $keys[13] => $this->getDelCurrentUsrLastname(),
+            $keys[14] => $this->getDelDelegateDate(),
+            $keys[15] => $this->getDelInitDate(),
+            $keys[16] => $this->getDelDueDate(),
+            $keys[17] => $this->getDelPriority(),
         );
         return $result;
     }
@@ -1332,7 +1225,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = ListParticipatedLastPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = ListCanceledPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->setByPosition($pos, $value);
     }
 
@@ -1372,7 +1265,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
                 $this->setAppTasTitle($value);
                 break;
             case 8:
-                $this->setAppStatus($value);
+                $this->setAppCanceledDate($value);
                 break;
             case 9:
                 $this->setDelIndex($value);
@@ -1381,33 +1274,24 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
                 $this->setDelPreviousUsrUid($value);
                 break;
             case 11:
-                $this->setDelPreviousUsrUsername($value);
-                break;
-            case 12:
-                $this->setDelPreviousUsrFirstname($value);
-                break;
-            case 13:
-                $this->setDelPreviousUsrLastname($value);
-                break;
-            case 14:
                 $this->setDelCurrentUsrUsername($value);
                 break;
-            case 15:
+            case 12:
                 $this->setDelCurrentUsrFirstname($value);
                 break;
-            case 16:
+            case 13:
                 $this->setDelCurrentUsrLastname($value);
                 break;
-            case 17:
+            case 14:
                 $this->setDelDelegateDate($value);
                 break;
-            case 18:
+            case 15:
                 $this->setDelInitDate($value);
                 break;
-            case 19:
+            case 16:
                 $this->setDelDueDate($value);
                 break;
-            case 20:
+            case 17:
                 $this->setDelPriority($value);
                 break;
         } // switch()
@@ -1431,7 +1315,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = ListParticipatedLastPeer::getFieldNames($keyType);
+        $keys = ListCanceledPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setAppUid($arr[$keys[0]]);
@@ -1466,7 +1350,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setAppStatus($arr[$keys[8]]);
+            $this->setAppCanceledDate($arr[$keys[8]]);
         }
 
         if (array_key_exists($keys[9], $arr)) {
@@ -1478,43 +1362,31 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[11], $arr)) {
-            $this->setDelPreviousUsrUsername($arr[$keys[11]]);
+            $this->setDelCurrentUsrUsername($arr[$keys[11]]);
         }
 
         if (array_key_exists($keys[12], $arr)) {
-            $this->setDelPreviousUsrFirstname($arr[$keys[12]]);
+            $this->setDelCurrentUsrFirstname($arr[$keys[12]]);
         }
 
         if (array_key_exists($keys[13], $arr)) {
-            $this->setDelPreviousUsrLastname($arr[$keys[13]]);
+            $this->setDelCurrentUsrLastname($arr[$keys[13]]);
         }
 
         if (array_key_exists($keys[14], $arr)) {
-            $this->setDelCurrentUsrUsername($arr[$keys[14]]);
+            $this->setDelDelegateDate($arr[$keys[14]]);
         }
 
         if (array_key_exists($keys[15], $arr)) {
-            $this->setDelCurrentUsrFirstname($arr[$keys[15]]);
+            $this->setDelInitDate($arr[$keys[15]]);
         }
 
         if (array_key_exists($keys[16], $arr)) {
-            $this->setDelCurrentUsrLastname($arr[$keys[16]]);
+            $this->setDelDueDate($arr[$keys[16]]);
         }
 
         if (array_key_exists($keys[17], $arr)) {
-            $this->setDelDelegateDate($arr[$keys[17]]);
-        }
-
-        if (array_key_exists($keys[18], $arr)) {
-            $this->setDelInitDate($arr[$keys[18]]);
-        }
-
-        if (array_key_exists($keys[19], $arr)) {
-            $this->setDelDueDate($arr[$keys[19]]);
-        }
-
-        if (array_key_exists($keys[20], $arr)) {
-            $this->setDelPriority($arr[$keys[20]]);
+            $this->setDelPriority($arr[$keys[17]]);
         }
 
     }
@@ -1526,90 +1398,78 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ListParticipatedLastPeer::DATABASE_NAME);
+        $criteria = new Criteria(ListCanceledPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::APP_UID)) {
-            $criteria->add(ListParticipatedLastPeer::APP_UID, $this->app_uid);
+        if ($this->isColumnModified(ListCanceledPeer::APP_UID)) {
+            $criteria->add(ListCanceledPeer::APP_UID, $this->app_uid);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::USR_UID)) {
-            $criteria->add(ListParticipatedLastPeer::USR_UID, $this->usr_uid);
+        if ($this->isColumnModified(ListCanceledPeer::USR_UID)) {
+            $criteria->add(ListCanceledPeer::USR_UID, $this->usr_uid);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::TAS_UID)) {
-            $criteria->add(ListParticipatedLastPeer::TAS_UID, $this->tas_uid);
+        if ($this->isColumnModified(ListCanceledPeer::TAS_UID)) {
+            $criteria->add(ListCanceledPeer::TAS_UID, $this->tas_uid);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::PRO_UID)) {
-            $criteria->add(ListParticipatedLastPeer::PRO_UID, $this->pro_uid);
+        if ($this->isColumnModified(ListCanceledPeer::PRO_UID)) {
+            $criteria->add(ListCanceledPeer::PRO_UID, $this->pro_uid);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::APP_NUMBER)) {
-            $criteria->add(ListParticipatedLastPeer::APP_NUMBER, $this->app_number);
+        if ($this->isColumnModified(ListCanceledPeer::APP_NUMBER)) {
+            $criteria->add(ListCanceledPeer::APP_NUMBER, $this->app_number);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::APP_TITLE)) {
-            $criteria->add(ListParticipatedLastPeer::APP_TITLE, $this->app_title);
+        if ($this->isColumnModified(ListCanceledPeer::APP_TITLE)) {
+            $criteria->add(ListCanceledPeer::APP_TITLE, $this->app_title);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::APP_PRO_TITLE)) {
-            $criteria->add(ListParticipatedLastPeer::APP_PRO_TITLE, $this->app_pro_title);
+        if ($this->isColumnModified(ListCanceledPeer::APP_PRO_TITLE)) {
+            $criteria->add(ListCanceledPeer::APP_PRO_TITLE, $this->app_pro_title);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::APP_TAS_TITLE)) {
-            $criteria->add(ListParticipatedLastPeer::APP_TAS_TITLE, $this->app_tas_title);
+        if ($this->isColumnModified(ListCanceledPeer::APP_TAS_TITLE)) {
+            $criteria->add(ListCanceledPeer::APP_TAS_TITLE, $this->app_tas_title);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::APP_STATUS)) {
-            $criteria->add(ListParticipatedLastPeer::APP_STATUS, $this->app_status);
+        if ($this->isColumnModified(ListCanceledPeer::APP_CANCELED_DATE)) {
+            $criteria->add(ListCanceledPeer::APP_CANCELED_DATE, $this->app_canceled_date);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_INDEX)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_INDEX, $this->del_index);
+        if ($this->isColumnModified(ListCanceledPeer::DEL_INDEX)) {
+            $criteria->add(ListCanceledPeer::DEL_INDEX, $this->del_index);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID, $this->del_previous_usr_uid);
+        if ($this->isColumnModified(ListCanceledPeer::DEL_PREVIOUS_USR_UID)) {
+            $criteria->add(ListCanceledPeer::DEL_PREVIOUS_USR_UID, $this->del_previous_usr_uid);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME, $this->del_previous_usr_username);
+        if ($this->isColumnModified(ListCanceledPeer::DEL_CURRENT_USR_USERNAME)) {
+            $criteria->add(ListCanceledPeer::DEL_CURRENT_USR_USERNAME, $this->del_current_usr_username);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME, $this->del_previous_usr_firstname);
+        if ($this->isColumnModified(ListCanceledPeer::DEL_CURRENT_USR_FIRSTNAME)) {
+            $criteria->add(ListCanceledPeer::DEL_CURRENT_USR_FIRSTNAME, $this->del_current_usr_firstname);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME, $this->del_previous_usr_lastname);
+        if ($this->isColumnModified(ListCanceledPeer::DEL_CURRENT_USR_LASTNAME)) {
+            $criteria->add(ListCanceledPeer::DEL_CURRENT_USR_LASTNAME, $this->del_current_usr_lastname);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME, $this->del_current_usr_username);
+        if ($this->isColumnModified(ListCanceledPeer::DEL_DELEGATE_DATE)) {
+            $criteria->add(ListCanceledPeer::DEL_DELEGATE_DATE, $this->del_delegate_date);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME, $this->del_current_usr_firstname);
+        if ($this->isColumnModified(ListCanceledPeer::DEL_INIT_DATE)) {
+            $criteria->add(ListCanceledPeer::DEL_INIT_DATE, $this->del_init_date);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME, $this->del_current_usr_lastname);
+        if ($this->isColumnModified(ListCanceledPeer::DEL_DUE_DATE)) {
+            $criteria->add(ListCanceledPeer::DEL_DUE_DATE, $this->del_due_date);
         }
 
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_DELEGATE_DATE)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_DELEGATE_DATE, $this->del_delegate_date);
-        }
-
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_INIT_DATE)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_INIT_DATE, $this->del_init_date);
-        }
-
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_DUE_DATE)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_DUE_DATE, $this->del_due_date);
-        }
-
-        if ($this->isColumnModified(ListParticipatedLastPeer::DEL_PRIORITY)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_PRIORITY, $this->del_priority);
+        if ($this->isColumnModified(ListCanceledPeer::DEL_PRIORITY)) {
+            $criteria->add(ListCanceledPeer::DEL_PRIORITY, $this->del_priority);
         }
 
 
@@ -1626,43 +1486,31 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(ListParticipatedLastPeer::DATABASE_NAME);
+        $criteria = new Criteria(ListCanceledPeer::DATABASE_NAME);
 
-        $criteria->add(ListParticipatedLastPeer::APP_UID, $this->app_uid);
-        $criteria->add(ListParticipatedLastPeer::USR_UID, $this->usr_uid);
+        $criteria->add(ListCanceledPeer::APP_UID, $this->app_uid);
 
         return $criteria;
     }
 
     /**
-     * Returns the composite primary key for this object.
-     * The array elements will be in same order as specified in XML.
-     * @return     array
+     * Returns the primary key for this object (row).
+     * @return     string
      */
     public function getPrimaryKey()
     {
-        $pks = array();
-
-        $pks[0] = $this->getAppUid();
-
-        $pks[1] = $this->getUsrUid();
-
-        return $pks;
+        return $this->getAppUid();
     }
 
     /**
-     * Set the [composite] primary key.
+     * Generic method to set the primary key (app_uid column).
      *
-     * @param      array $keys The elements of the composite key (order must match the order in XML file).
+     * @param      string $key Primary key.
      * @return     void
      */
-    public function setPrimaryKey($keys)
+    public function setPrimaryKey($key)
     {
-
-        $this->setAppUid($keys[0]);
-
-        $this->setUsrUid($keys[1]);
-
+        $this->setAppUid($key);
     }
 
     /**
@@ -1671,12 +1519,14 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of ListParticipatedLast (or compatible) type.
+     * @param      object $copyObj An object of ListCanceled (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @throws     PropelException
      */
     public function copyInto($copyObj, $deepCopy = false)
     {
+
+        $copyObj->setUsrUid($this->usr_uid);
 
         $copyObj->setTasUid($this->tas_uid);
 
@@ -1690,17 +1540,11 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         $copyObj->setAppTasTitle($this->app_tas_title);
 
-        $copyObj->setAppStatus($this->app_status);
+        $copyObj->setAppCanceledDate($this->app_canceled_date);
 
         $copyObj->setDelIndex($this->del_index);
 
         $copyObj->setDelPreviousUsrUid($this->del_previous_usr_uid);
-
-        $copyObj->setDelPreviousUsrUsername($this->del_previous_usr_username);
-
-        $copyObj->setDelPreviousUsrFirstname($this->del_previous_usr_firstname);
-
-        $copyObj->setDelPreviousUsrLastname($this->del_previous_usr_lastname);
 
         $copyObj->setDelCurrentUsrUsername($this->del_current_usr_username);
 
@@ -1721,8 +1565,6 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         $copyObj->setAppUid(''); // this is a pkey column, so set to default value
 
-        $copyObj->setUsrUid(''); // this is a pkey column, so set to default value
-
     }
 
     /**
@@ -1734,7 +1576,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return     ListParticipatedLast Clone of current object.
+     * @return     ListCanceled Clone of current object.
      * @throws     PropelException
      */
     public function copy($deepCopy = false)
@@ -1753,12 +1595,12 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return     ListParticipatedLastPeer
+     * @return     ListCanceledPeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new ListParticipatedLastPeer();
+            self::$peer = new ListCanceledPeer();
         }
         return self::$peer;
     }

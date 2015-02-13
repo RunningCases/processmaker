@@ -5,7 +5,7 @@ include_once 'creole/CreoleTypes.php';
 
 
 /**
- * This class adds structure of 'LIST_PARTICIPATED_LAST' table to 'workflow' DatabaseMap object.
+ * This class adds structure of 'LIST_PAUSED' table to 'workflow' DatabaseMap object.
  *
  *
  *
@@ -16,13 +16,13 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
-class ListParticipatedLastMapBuilder
+class ListPausedMapBuilder
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'classes.model.map.ListParticipatedLastMapBuilder';
+    const CLASS_NAME = 'classes.model.map.ListPausedMapBuilder';
 
     /**
      * The database map.
@@ -60,14 +60,16 @@ class ListParticipatedLastMapBuilder
     {
         $this->dbMap = Propel::getDatabaseMap('workflow');
 
-        $tMap = $this->dbMap->addTable('LIST_PARTICIPATED_LAST');
-        $tMap->setPhpName('ListParticipatedLast');
+        $tMap = $this->dbMap->addTable('LIST_PAUSED');
+        $tMap->setPhpName('ListPaused');
 
         $tMap->setUseIdGenerator(false);
 
         $tMap->addPrimaryKey('APP_UID', 'AppUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addPrimaryKey('USR_UID', 'UsrUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
+
+        $tMap->addColumn('USR_UID', 'UsrUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addColumn('TAS_UID', 'TasUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
@@ -81,9 +83,9 @@ class ListParticipatedLastMapBuilder
 
         $tMap->addColumn('APP_TAS_TITLE', 'AppTasTitle', 'string', CreoleTypes::VARCHAR, true, 255);
 
-        $tMap->addColumn('APP_STATUS', 'AppStatus', 'string', CreoleTypes::VARCHAR, true, 20);
+        $tMap->addColumn('APP_PAUSED_DATE', 'AppPausedDate', 'int', CreoleTypes::TIMESTAMP, true, null);
 
-        $tMap->addColumn('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
+        $tMap->addColumn('APP_RESTART_DATE', 'AppRestartDate', 'int', CreoleTypes::TIMESTAMP, true, null);
 
         $tMap->addColumn('DEL_PREVIOUS_USR_UID', 'DelPreviousUsrUid', 'string', CreoleTypes::VARCHAR, false, 32);
 
@@ -109,4 +111,4 @@ class ListParticipatedLastMapBuilder
 
     } // doBuild()
 
-} // ListParticipatedLastMapBuilder
+} // ListPausedMapBuilder

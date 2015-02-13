@@ -119,7 +119,7 @@ class pmDynaform
             if (is_array($items[$key])) {
                 $this->mergeAppData($app_uid, $items[$key]);
             } else {
-                if (isset($items[$key]->var_name) && isset($this->data[$items[$key]->var_name])) {
+                if (isset($items[$key]->name) && isset($this->data[$items[$key]->name])) {
                     if ($items[$key]->type === "grid") {
                         $rows = $this->data[$items[$key]->name];
                         foreach ($rows as $keyRow => $row) {
