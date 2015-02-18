@@ -48,7 +48,7 @@ try {
         //$oData = $oJSON->decode( stripslashes( $_REQUEST['data'] ) );
         $sOutput = '';
         $sTask = '';
-    }
+    }   
 
     //G::LoadClass( 'processMap' );
     $oProcessMap = new processMap(new DBConnection());
@@ -263,25 +263,265 @@ try {
         case 'saveNewPattern':
             switch ($oData->type) {
                 case 0:
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->pro_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleProcess = $row['CON_VALUE'];
+
                     $sType = 'SEQUENTIAL';
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->tas_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleTask = $row['CON_VALUE'];
+
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->next_task );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleNextTask = $row['CON_VALUE'];
+                    if ($titleNextTask=='') {
+                        G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' ACTION : END OF PROCESS Task Name -> '.$titleTask);
+                    }else{
+                        G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' ACTION : SEQUENTIAL from -> '.$titleTask. ' To ->'.$titleNextTask);
+                    }
                     break;
                 case 1:
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->pro_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleProcess = $row['CON_VALUE'];
+
                     $sType = 'SELECT';
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->tas_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleTask = $row['CON_VALUE'];
+
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->next_task );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleNextTask = $row['CON_VALUE'];
+                    G::auditLog("DerivationRule","PROCESS NAME : ".$titleProcess." ACTION : SELECT from -> ".$titleTask. " To ->".$titleNextTask);
                     break;
                 case 2:
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->pro_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleProcess = $row['CON_VALUE'];
+
                     $sType = 'EVALUATE';
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->tas_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleTask = $row['CON_VALUE'];
+
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->next_task );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleNextTask = $row['CON_VALUE'];
+
+                    G::auditLog("DerivationRule","PROCESS NAME : ".$titleProcess." ACTION : EVALUATE from -> ".$titleTask. " To ->".$titleNextTask);
                     break;
                 case 3:
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->pro_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleProcess = $row['CON_VALUE'];
+
                     $sType = 'PARALLEL';
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->tas_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleTask = $row['CON_VALUE'];
+
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->next_task );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleNextTask = $row['CON_VALUE'];
+
+                    G::auditLog("DerivationRule","PROCESS NAME : ".$titleProcess." ACTION : PARALLEL from -> ".$titleTask. " To ->".$titleNextTask);
                     break;
                 case 4:
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->pro_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleProcess = $row['CON_VALUE'];
+
                     $sType = 'PARALLEL-BY-EVALUATION';
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->tas_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleTask = $row['CON_VALUE'];
+
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->next_task );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleNextTask = $row['CON_VALUE'];
+
+                    G::auditLog("DerivationRule","PROCESS NAME : ".$titleProcess." ACTION : PARALLEL-BY-EVALUATION from -> ".$titleTask. " To ->".$titleNextTask);
                     break;
                 case 5:
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->pro_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleProcess = $row['CON_VALUE'];
+
                     $sType = 'SEC-JOIN';
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->tas_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleTask = $row['CON_VALUE'];
+
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->next_task );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleNextTask = $row['CON_VALUE'];
+
+                    G::auditLog("DerivationRule","PROCESS NAME : ".$titleProcess." ACTION : SEC-JOIN from -> ".$titleTask. " To ->".$titleNextTask);
                     break;
                 case 8:
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->pro_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleProcess = $row['CON_VALUE'];
+
                     $sType = 'DISCRIMINATOR';
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->tas_uid );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleTask = $row['CON_VALUE'];
+
+                    $k = new Criteria('william');
+                    $k->clearSelectColumns();
+                    $k->addSelectColumn(ContentPeer::CON_VALUE);
+                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
+                    $k->add(ContentPeer::CON_ID, $oData->next_task );
+                    $rs = ContentPeer::doSelectRS($k);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    $titleNextTask = $row['CON_VALUE'];
+
+                    G::auditLog("DerivationRule","PROCESS NAME : ".$titleProcess." ACTION : DISCRIMINATOR from -> ".$titleTask. " To ->".$titleNextTask);
                     break;
             }
             if (($oData->type != 0) && ($oData->type != 5) && ($oData->type != 8)) {
