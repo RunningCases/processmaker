@@ -1236,7 +1236,7 @@ class Workflow extends Handler
         }
     }
 
-    public function deleteTaskGatewayToGateway($processUid)
+    public function deleteTaskByArrayType($processUid, array $arrayTaskType)
     {
         try {
             $task = new \Tasks();
@@ -1245,7 +1245,7 @@ class Workflow extends Handler
 
             $criteria->addSelectColumn(\TaskPeer::TAS_UID);
             $criteria->add(\TaskPeer::PRO_UID, $processUid, \Criteria::EQUAL);
-            $criteria->add(\TaskPeer::TAS_TYPE, "GATEWAYTOGATEWAY", \Criteria::EQUAL);
+            $criteria->add(\TaskPeer::TAS_TYPE, $arrayTaskType, \Criteria::IN);
 
             $rsCriteria = \TaskPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);

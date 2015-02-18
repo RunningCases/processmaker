@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * class.dynaformEditor.php
@@ -802,7 +802,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
 
         return $value;
     }
-
+     
     /**
      * Save a dynaForm
      *
@@ -816,12 +816,60 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
             $answer = 0;
             $file = G::decrypt($A, URL_KEY);
             $tmp = self::_getTmpData();
+            if (isset($tmp['Properties'])){
+              $fileFirst =  $tmp['Properties']['PRO_UID'].'/'.$tmp['Properties']['DYN_UID'];
+            }
             if (isset($tmp['useTmpCopy'])) {
                 /* Save Register */
                 $dynaform = new dynaform();
                 $dynaform->update($tmp['Properties']);
                 /* Save file */
+                $copyFirst = implode('', file(PATH_DYNAFORM . $fileFirst . '.xml'));
                 $copy = implode('', file(PATH_DYNAFORM . $file . '.xml'));
+                /*Check differences between XML*/
+                $elementFirst = new SimpleXMLElement($copyFirst);
+                $elementCopy  = new SimpleXMLElement($copy);
+                $desAdd = '';
+                $desDel = '';
+                //Check the new fields
+                foreach ($elementCopy as $key1 => $row1){
+                  $swAll = true;
+                  foreach ($elementFirst as $key2 => $row2){
+                    if ($key1 == $key2){
+                      $swAll = false;
+                      break;
+                    }
+                  }
+                  if ($swAll){
+                    $desAdd .= $key1." ";
+                  }
+                }
+                //Check the delete fields
+                foreach ($elementFirst as $key1 => $row1){
+                  $swAll = true;
+                  foreach ($elementCopy as $key2 => $row2){
+                    if ($key1 == $key2){
+                      $swAll = false;
+                      break;
+                    }
+                  }
+                  if ($swAll){
+                    $desDel .= $key1." ";
+                  }
+                }
+                
+                $mode    = empty($tmp['Properties']['MODE'])? 'Determined by Fields' : $tmp['Properties']['MODE'];
+                $auditDescription = "Dynaform Title: ".$tmp['Properties']['DYN_TITLE'].", Type: ".$tmp['Properties']['DYN_TYPE'].", Description: ".$tmp['Properties']['DYN_DESCRIPTION'].", Mode: ".$mode;
+                if($desAdd != ''){
+                  $auditDescription .= ", Field(s) Add: ".$desAdd;
+                }
+                if($desDel != ''){
+                  $auditDescription .= ", Field(s) Delete: ".$desDel;
+                }
+                //Add Audit Log
+                G::auditLog("UpdateDynaform", $auditDescription);
+
+                
                 /*
                  * added by krlos carlos/a/colosa.com
                  * in here we are validation if a xmlform has a submit action
@@ -946,5 +994,19 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
         } catch (Exception $e) {
             return (array) $e;
         }
+    }
+    /*
+    Functionality: Funcion que convierte objecto en array
+    Parameters :   Object $object que queremos convertir
+    Return:        Array 
+    */
+    public function convertObjectToArray($object){ 
+      if( !is_object( $object ) && !is_array( $object ) ){
+        return $object;
+      }
+      if( is_object( $object ) ){
+        $object = get_object_vars( $object );
+      }
+      return array_map( 'objectToArray', $object );
     }
 }
