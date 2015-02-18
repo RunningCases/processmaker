@@ -395,9 +395,17 @@ class WebEntry
                     $fileContent .= "\$_SESSION[\"PROCESS\"] = \"" . $processUid . "\";\n";
                     $fileContent .= "\$_SESSION[\"CURRENT_DYN_UID\"] = \"" . $dynaFormUid . "\";\n";
                     $fileContent .= "\$G_PUBLISH = new Publisher();\n";
+                                        
+
+                    $fileContent .= "G::LoadClass('pmDynaform');\n"; 
+                    $fileContent .= "\$a = new pmDynaform('".$arrayWebEntryData["DYN_UID"]."', array());\n";                                                            
+                    $fileContent .= "if(\$a->isResponsive()){";                                        
+                    $fileContent .= "\$a->printWebEntry();";                                        
+                    $fileContent .= "}else {";                    
                     $fileContent .= "\$G_PUBLISH->AddContent(\"dynaform\", \"xmlform\", \"" . $processUid . "/" . $dynaFormUid . "\", \"\", array(), \"" . $fileName . "Post.php\");\n";
                     $fileContent .= "G::RenderPage(\"publish\", \"blank\");";
-
+                    $fileContent .= "}";                    
+                    
                     file_put_contents($pathDataPublicProcess . PATH_SEP . $fileName . ".php", $fileContent);
 
                     //Creating the second file, the  post file who receive the post form.
