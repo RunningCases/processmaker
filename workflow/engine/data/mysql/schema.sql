@@ -568,7 +568,7 @@ CREATE TABLE `TASK`
 (
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`TAS_UID` VARCHAR(32) default '' NOT NULL,
-	`TAS_TYPE` VARCHAR(20) default 'NORMAL' NOT NULL,
+	`TAS_TYPE` VARCHAR(50) default 'NORMAL' NOT NULL,
 	`TAS_DURATION` DOUBLE default 0 NOT NULL,
 	`TAS_DELAY_TYPE` VARCHAR(30) default '' NOT NULL,
 	`TAS_TEMPORIZER` DOUBLE default 0 NOT NULL,
@@ -2263,7 +2263,7 @@ CREATE TABLE `LIST_PARTICIPATED_LAST`
 	`APP_TITLE` VARCHAR(255) default '' NOT NULL,
 	`APP_PRO_TITLE` VARCHAR(255) default '' NOT NULL,
 	`APP_TAS_TITLE` VARCHAR(255) default '' NOT NULL,
-	`APP_STATUS` VARCHAR(20) default '0' NOT NULL,
+	`APP_STATUS` VARCHAR(20) default '0',
 	`DEL_INDEX` INTEGER default 0 NOT NULL,
 	`DEL_PREVIOUS_USR_UID` VARCHAR(32) default '',
 	`DEL_PREVIOUS_USR_USERNAME` VARCHAR(100) default '',
@@ -2521,3 +2521,77 @@ CREATE TABLE `WEB_ENTRY_EVENT`
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
+
+#-----------------------------------------------------------------------------
+#-- MESSAGE_EVENT_DEFINITION
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS MESSAGE_EVENT_DEFINITION;
+
+CREATE TABLE MESSAGE_EVENT_DEFINITION
+(
+    MSGED_UID VARCHAR(32) NOT NULL,
+    PRJ_UID   VARCHAR(32) NOT NULL,
+    EVN_UID   VARCHAR(32) NOT NULL,
+    MSGT_UID  VARCHAR(32) NOT NULL DEFAULT '',
+    MSGED_USR_UID     VARCHAR(32)  NOT NULL DEFAULT '',
+    MSGED_VARIABLES   MEDIUMTEXT   NOT NULL DEFAULT '',
+    MSGED_CORRELATION VARCHAR(512) NOT NULL DEFAULT '',
+
+    PRIMARY KEY (MSGED_UID)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+#-----------------------------------------------------------------------------
+#-- MESSAGE_EVENT_RELATION
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS MESSAGE_EVENT_RELATION;
+
+CREATE TABLE MESSAGE_EVENT_RELATION
+(
+    MSGER_UID     VARCHAR(32) NOT NULL,
+    PRJ_UID       VARCHAR(32) NOT NULL,
+    EVN_UID_THROW VARCHAR(32) NOT NULL,
+    EVN_UID_CATCH VARCHAR(32) NOT NULL,
+
+    PRIMARY KEY (MSGER_UID)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+#-----------------------------------------------------------------------------
+#-- MESSAGE_EVENT_TASK_RELATION
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS MESSAGE_EVENT_TASK_RELATION;
+
+CREATE TABLE MESSAGE_EVENT_TASK_RELATION
+(
+    MSGETR_UID VARCHAR(32) NOT NULL,
+    PRJ_UID    VARCHAR(32) NOT NULL,
+    EVN_UID    VARCHAR(32) NOT NULL,
+    TAS_UID    VARCHAR(32) NOT NULL,
+
+    PRIMARY KEY (MSGETR_UID)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+#-----------------------------------------------------------------------------
+#-- MESSAGE_APPLICATION
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS MESSAGE_APPLICATION;
+
+CREATE TABLE MESSAGE_APPLICATION
+(
+    MSGAPP_UID    VARCHAR(32) NOT NULL,
+    APP_UID       VARCHAR(32) NOT NULL,
+    PRJ_UID       VARCHAR(32) NOT NULL,
+    EVN_UID_THROW VARCHAR(32) NOT NULL,
+    EVN_UID_CATCH VARCHAR(32) NOT NULL,
+    MSGAPP_VARIABLES   MEDIUMTEXT   NOT NULL DEFAULT '',
+    MSGAPP_CORRELATION VARCHAR(512) NOT NULL DEFAULT '',
+    MSGAPP_THROW_DATE  DATETIME NOT NULL,
+    MSGAPP_CATCH_DATE  DATETIME,
+    MSGAPP_STATUS      VARCHAR(25)  NOT NULL DEFAULT 'UNREAD',
+
+    PRIMARY KEY (MSGAPP_UID)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+

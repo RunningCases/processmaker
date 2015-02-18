@@ -141,7 +141,7 @@ abstract class BaseBpmnFlow extends BaseObject implements Persistent
      */
     protected $flo_position = 0;
 
-     /**
+    /**
      * @var        BpmnProject
      */
     protected $aBpmnProject;
@@ -365,7 +365,7 @@ abstract class BaseBpmnFlow extends BaseObject implements Persistent
 
     /**
      * Get the [flo_position] column value.
-     *
+     * 
      * @return     int
      */
     public function getFloPosition()
@@ -374,7 +374,7 @@ abstract class BaseBpmnFlow extends BaseObject implements Persistent
         return $this->flo_position;
     }
 
-    /*
+    /**
      * Set the value of [flo_uid] column.
      * 
      * @param      string $v new value
@@ -780,7 +780,7 @@ abstract class BaseBpmnFlow extends BaseObject implements Persistent
 
     /**
      * Set the value of [flo_position] column.
-     *
+     * 
      * @param      int $v new value
      * @return     void
      */
@@ -794,9 +794,9 @@ abstract class BaseBpmnFlow extends BaseObject implements Persistent
         }
 
         if ($this->flo_position !== $v || $v === 0) {
-                $this->flo_position = $v;
-                $this->modifiedColumns[] = BpmnFlowPeer::FLO_POSITION;
-            }
+            $this->flo_position = $v;
+            $this->modifiedColumns[] = BpmnFlowPeer::FLO_POSITION;
+        }
 
     } // setFloPosition()
 
