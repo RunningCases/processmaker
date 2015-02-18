@@ -91,11 +91,13 @@ try {
                 $c = new Criteria('workflow');
                 $c->clearSelectColumns();
                 $c->addSelectColumn(ProcessUserPeer::PRO_UID);
+                $c->addSelectColumn(ProcessUserPeer::USR_UID);
                 $c->add(ProcessUserPeer::PU_UID, $oData->PU_UID);
                 $oDataset = AppDelegationPeer::doSelectRS($c);
                 $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $oDataset->next();
                 $row = $oDataset->getRow();
+                $userSupervisor = $row['USR_UID'];
                 
                 G::LoadClass('processes');
                 $infoProcess = new Processes();
@@ -123,6 +125,7 @@ try {
         $resultProcess = $infoProcess->updateProcessRow($valuesProcess);
         $resultProcess = $infoProcess->getProcessRow($proUid);  
     }
+    
     //G::LoadClass( 'processMap' );
     $oProcessMap = new processMap(new DBConnection());
     
@@ -192,7 +195,7 @@ try {
             G::LoadClass('processMap');
             $oProcessMap = new ProcessMap();
             $oProcessMap->listProcessesUser($oData->PRO_UID);
-            G::auditLog('AssignRole','Assign new supervisor in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('AssignRole','Assign new supervisor ('.$oData->USR_UID.') in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'removeProcessUser':
             $oProcessMap->removeProcessUser($oData->PU_UID);
@@ -203,7 +206,7 @@ try {
                 }
             }
             
-            G::auditLog('RemoveUser','Remove supervisor in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('RemoveUser','Remove supervisor ('.$userSupervisor.') in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'supervisorDynaforms':
             $oProcessMap->supervisorDynaforms($oData->pro_uid);
@@ -267,7 +270,9 @@ try {
             break;
         case 'addGuide':
             $sOutput = $oProcessMap->addGuide($oData->uid, $oData->position, $oData->direction);
-            G::auditLog('Add'.ucwords($oDataAux['direction']).'Line','Add '.$oDataAux['direction'].' line in process "'.$resultProcess['PRO_TITLE'].'"');
+            $sOutputAux = G::json_decode($sOutput);
+            $sOutputAux = (array)$sOutputAux;
+            G::auditLog('Add'.ucwords($oDataAux['direction']).'Line','Add '.$oDataAux['direction'].' line ('.$sOutputAux['uid'].') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'saveGuidePosition':
             $sOutput = $oProcessMap->saveGuidePosition($oData->uid, $oData->position, $oData->direction);
@@ -275,7 +280,7 @@ try {
             break;
         case 'deleteGuide':
             $sOutput = $oProcessMap->deleteGuide($oData->uid);
-            G::auditLog('DeleteLine','Delete line in process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('DeleteLine','Delete line ('.$oData->uid.') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'deleteGuides':
             $sOutput = $oProcessMap->deleteGuides($oData->pro_uid);
@@ -283,19 +288,21 @@ try {
             break;
         case 'addText':
             $sOutput = $oProcessMap->addText($oData->uid, $oData->label, $oData->position->x, $oData->position->y);
-            G::auditLog('AddText','Add new text ('.$oDataAux['label'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
+            $sOutputAux = G::json_decode($sOutput);
+            $sOutputAux = (array)$sOutputAux;
+            G::auditLog('AddText','Add new text ('.$sOutputAux['uid'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'updateText':
             $sOutput = $oProcessMap->updateText($oData->uid, $oData->label);
-            G::auditLog('UpdateText','Edit text ('.$oDataAux['label'].' ) in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('UpdateText','Edit text ('.$oData->uid.' ) in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'saveTextPosition':
             $sOutput = $oProcessMap->saveTextPosition($oData->uid, $oData->position->x, $oData->position->y);
-            G::auditLog('SaveTextPosition','Change text position in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('SaveTextPosition','Change text position ('.$oData->uid.' ) in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'deleteText':
             $sOutput = $oProcessMap->deleteText($oData->uid);
-            G::auditLog('DeleteText','Delete text in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('DeleteText','Delete text ('.$oData->uid.' ) in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'dynaforms':
             $oProcessMap->dynaformsList($oData->pro_uid);

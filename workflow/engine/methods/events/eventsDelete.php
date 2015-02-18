@@ -28,15 +28,9 @@ if ($RBAC->userCanAccess( 'PM_SETUP' ) != 1) {
     die();
 }
 
-$k = new Criteria('workflow');
-$k->clearSelectColumns();
-$k->addSelectColumn(EventPeer::PRO_UID);
-$k->add(EventPeer::EVN_UID, $_POST['EVN_UID'] );
-$rs = EventPeer::doSelectRS($k);
-$rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-$rs->next();
-$row = $rs->getRow();
-$proUid = $row['PRO_UID'];
+$eventInstance = new Event();
+$eventFields = $eventInstance->load($_POST['EVN_UID']);
+$proUid = $eventFields['PRO_UID'];
 
 $infoProcess = new Process();
 $resultProcess = $infoProcess->load($proUid);
