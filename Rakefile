@@ -192,7 +192,7 @@ def buildPmdynaform(homeDir, targetDir, mode)
     template += s
   end
   
-  htmlTemplates=["cases_Step_Pmdynaform.html","cases_Step_Pmdynaform_Preview.html","cases_Step_Pmdynaform_View.html"]
+  htmlTemplates=["cases_Step_Pmdynaform.html","cases_Step_Pmdynaform_Preview.html","cases_Step_Pmdynaform_View.html","WebEntry_Pmdynaform.html"]
   htmlTemplates.each do |htmlTemplate|
     
     FileUtils.cp("#{Dir.pwd}/workflow/engine/templates/cases/#{htmlTemplate}", "#{pmdynaformDir}/build/#{htmlTemplate}")
@@ -230,8 +230,7 @@ def buildMafe(homeDir, targetDir, mode)
         "#{homeDir}/build/js/designer.js" => "#{mafeDir}/designer.min.js",
         "#{homeDir}/build/js/mafe.js" => "#{mafeDir}/mafe.min.js",
         "#{homeDir}/build/css/mafe.css" => "#{mafeDir}/mafe.min.css",
-        "#{homeDir}/img/*.*" => "#{imgTargetDir}",
-        "#{homeDir}/srcForm/img/*.*" => "#{imgTargetDir}"
+        "#{homeDir}/img/*.*" => "#{imgTargetDir}"
     })
 
     puts "\nCopying lib files into: #{jsTargetDir}".bold
@@ -243,6 +242,7 @@ def buildMafe(homeDir, targetDir, mode)
         "#{homeDir}/lib/jQueryLayout/jquery.layout.min.js" => "#{jsTargetDir}/jquery.layout.min.js",
         "#{homeDir}/lib/modernizr/modernizr.js" => "#{jsTargetDir}/modernizr.js"
     })
+    system "cp -rf #{homeDir}/src/formDesigner/img/* #{mafeDir}/../img"
 
     puts "\nMichelangelo FE Build Finished\n".magenta
 end
@@ -383,6 +383,8 @@ def getJsIncludeFiles
         "gulliver/js/tinymce/jscripts/tiny_mce/plugins/nonbreaking/editor_plugin.js",
 
         "gulliver/js/codemirror/lib/codemirror.js",
+        "gulliver/js/codemirror/addon/hint/show-hint.js",
+        "gulliver/js/codemirror/addon/hint/javascript-hint.js",
         "gulliver/js/codemirror/mode/javascript/javascript.js",
         "gulliver/js/codemirror/addon/edit/matchbrackets.js",
         "gulliver/js/codemirror/mode/htmlmixed/htmlmixed.js",
@@ -398,6 +400,7 @@ end
 def getCssIncludeFiles
     return [
         "gulliver/js/codemirror/lib/codemirror.css",
+        "gulliver/js/codemirror/addon/hint/show-hint.css",
 #        DEPRECATED
 #        "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/o2k7/ui.css",
 #        "gulliver/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/o2k7/ui_silver.css",

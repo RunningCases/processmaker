@@ -1424,11 +1424,12 @@ class Cases
      * @access public
      * @param string $app_uid, Uid for case
      * @param array $app_data, Data for case variables
+     * @param string $dyn_uid, Uid for dynaform
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function setCaseVariables($app_uid, $app_data)
+    public function setCaseVariables($app_uid, $app_data, $dyn_uid = null)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
@@ -1436,7 +1437,18 @@ class Cases
 
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
-        $data['APP_DATA'] = array_merge($fields['APP_DATA'], $app_data);
+        $_POST['form'] = $app_data;
+
+        if (!is_null($dyn_uid) && $dyn_uid != '') {
+            $oDynaform = \DynaformPeer::retrieveByPK($dyn_uid);
+
+            if ($oDynaform->getDynVersion() < 2) {
+                $oForm = new \Form ( $fields['PRO_UID'] . "/" . $dyn_uid, PATH_DYNAFORM );
+                $oForm->validatePost();
+            }
+        }
+
+        $data['APP_DATA'] = array_merge($fields['APP_DATA'], $_POST['form']);
         $case->updateCase($app_uid, $data);
     }
 
@@ -1905,5 +1917,57 @@ class Cases
             throw $e;
         }
     }
-}
 
+    /**
+     * Put execute triggers
+     *
+     * @access public
+     * @param string $app_uid , Uid for case
+     * @param int $del_index , Index for case
+     * @param string $obj_type , Index for case
+     * @param string $obj_uid , Index for case
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function putExecuteTriggers($app_uid, $del_index, $obj_type, $obj_uid)
+    {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+        Validator::isInteger($del_index, '$del_index');
+
+        $oCase = new \Cases();
+        $aField = $oCase->loadCase($app_uid, $del_index);
+        $tas_uid  = $aField["TAS_UID"];
+
+        $task = new \Tasks();
+        $aField["APP_DATA"] = $oCase->executeTriggers($tas_uid, $obj_type, $obj_uid, "AFTER", $aField["APP_DATA"]);
+        $aField = $oCase->updateCase($app_uid, $aField);
+    }
+
+    /**
+     * Get Steps evaluate
+     *
+     * @access public
+     * @param string $app_uid, Uid for case
+     * @param int $del_index , Index for case
+     * @return array
+     *
+     * @copyright Colosa - Bolivia
+     */
+    public function getSteps($app_uid, $del_index)
+    {
+        Validator::isString($app_uid, '$app_uid');
+        Validator::appUid($app_uid, '$app_uid');
+        Validator::isInteger($del_index, '$del_index');
+
+        $oCase = new \Cases();
+        $aCaseField = $oCase->loadCase($app_uid, $del_index);
+        $tas_uid  = $aCaseField["TAS_UID"];
+        $pro_uid  = $aCaseField["PRO_UID"];
+
+        $oApplication = new \Applications();
+        $aField = $oApplication->getSteps($app_uid, $del_index, $tas_uid, $pro_uid);
+
+        return $aField;
+    }
+}

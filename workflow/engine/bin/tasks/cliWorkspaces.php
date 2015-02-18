@@ -174,7 +174,7 @@ CLI::taskRun("runStructureDirectories");
 
 CLI::taskName("database-generate-self-service-by-value");
 CLI::taskDescription(<<<EOT
-  Generate or upgrade the table "self-service by value"
+  Generate or upgrade the table "self-service by value".
 
   This command populate the table "self-service by value", this for the cases when
   a task it's defined with "Self Service Value Based Assignment" in "Assignment Rules".
@@ -185,6 +185,21 @@ EOT
 );
 CLI::taskArg("workspace-name", true, true);
 CLI::taskRun("run_database_generate_self_service_by_value");
+
+/*----------------------------------********---------------------------------*/
+CLI::taskName("check-workspace-disabled-code");
+CLI::taskDescription(<<<EOT
+  Check disabled code for the specified workspace(s).
+
+  This command is for check disabled code for the specified workspace(s).
+
+  If no workspace is specified, the command will be run in all workspaces. More
+  than one workspace can be specified.
+EOT
+);
+CLI::taskArg("workspace-name", true, true);
+CLI::taskRun("run_check_workspace_disabled_code");
+/*----------------------------------********---------------------------------*/
 
   /**
    * Function run_info
@@ -298,6 +313,51 @@ function database_upgrade($command, $args) {
       echo "> Error: ".CLI::error($e->getMessage()) . "\n";
     }
   }
+
+    //There records in table "EMAIL_SERVER"
+    $criteria = new Criteria("workflow");
+
+    $criteria->addSelectColumn(EmailServerPeer::MESS_UID);
+    $criteria->setOffset(0);
+    $criteria->setLimit(1);
+
+    $rsCriteria = EmailServerPeer::doSelectRS($criteria);
+
+    if (!$rsCriteria->next()) {
+        //Insert the first record
+        $emailSever = new \ProcessMaker\BusinessModel\EmailServer();
+
+        $emailConfiguration = System::getEmailConfiguration();
+
+        if (count($emailConfiguration) > 0) {
+            $arrayData = array();
+
+            $arrayData["MESS_ENGINE"]              = $emailConfiguration["MESS_ENGINE"];
+            $arrayData["MESS_SERVER"]              = $emailConfiguration["MESS_SERVER"];
+            $arrayData["MESS_PORT"]                = (int)($emailConfiguration["MESS_PORT"]);
+            $arrayData["MESS_RAUTH"]               = (int)($emailConfiguration["MESS_RAUTH"]);
+            $arrayData["MESS_ACCOUNT"]             = $emailConfiguration["MESS_ACCOUNT"];
+            $arrayData["MESS_PASSWORD"]            = $emailConfiguration["MESS_PASSWORD"];
+            $arrayData["MESS_FROM_MAIL"]           = $emailConfiguration["MESS_FROM_MAIL"];
+            $arrayData["MESS_FROM_NAME"]           = $emailConfiguration["MESS_FROM_NAME"];
+            $arrayData["SMTPSECURE"]               = $emailConfiguration["SMTPSecure"];
+            $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (int)($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]);
+            $arrayData["MAIL_TO"]                  = $emailConfiguration["MAIL_TO"];
+            $arrayData["MESS_DEFAULT"]             = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1")? 1 : 0;
+
+            $arrayData = $emailSever->create($arrayData);
+        } else {
+            /*----------------------------------********---------------------------------*/
+            if (true) {
+                //
+            } else {
+            /*----------------------------------********---------------------------------*/
+                $arrayData = $emailSever->create2(array("MESS_ENGINE" => "MAIL"));
+            /*----------------------------------********---------------------------------*/
+            }
+            /*----------------------------------********---------------------------------*/
+        }
+    }
 }
 
 function delete_app_from_table($con, $tableName, $appUid, $col="APP_UID") {
@@ -522,9 +582,64 @@ function run_database_generate_self_service_by_value($args, $opts)
             } catch (Exception $e) {
                 echo "Errors generating the table \"self-service by value\" of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n";
             }
+
+            echo "\n";
         }
+
+        echo "Done!\n";
     } catch (Exception $e) {
         echo CLI::error($e->getMessage()) . "\n";
     }
 }
+/*----------------------------------********---------------------------------*/
+function run_check_workspace_disabled_code($args, $opts)
+{
+    try {
+        $arrayWorkspace = get_workspaces_from_args($args);
 
+        foreach ($arrayWorkspace as $value) {
+            $workspace = $value;
+
+            echo "> Workspace: " . $workspace->name . "\n";
+
+            try {
+                $arrayFoundDisabledCode = $workspace->getDisabledCode();
+
+                if (count($arrayFoundDisabledCode) > 0) {
+                    $strFoundDisabledCode = "";
+
+                    foreach ($arrayFoundDisabledCode as $value2) {
+                        $arrayProcessData = $value2;
+
+                        $strFoundDisabledCode .= ($strFoundDisabledCode != "")? "\n" : "";
+                        $strFoundDisabledCode .= "  Process: " . $arrayProcessData["processTitle"] . "\n";
+                        $strFoundDisabledCode .= "  Triggers:\n";
+
+                        foreach ($arrayProcessData["triggers"] as $value3) {
+                            $arrayTriggerData = $value3;
+
+                            $strCodeAndLine = "";
+
+                            foreach ($arrayTriggerData["disabledCode"] as $key4 => $value4) {
+                                $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . $key4 . " (Lines " . implode(", ", $value4) . ")";
+                            }
+
+                            $strFoundDisabledCode .= "    - " . $arrayTriggerData["triggerTitle"] . ": " . $strCodeAndLine . "\n";
+                        }
+                    }
+
+                    echo $strFoundDisabledCode . "\n";
+                } else {
+                    echo "The workspace it's OK\n\n";
+                }
+            } catch (Exception $e) {
+                echo "Errors to check disabled code: " . CLI::error($e->getMessage()) . "\n\n";
+            }
+        }
+
+        echo "Done!\n";
+    } catch (Exception $e) {
+        echo CLI::error($e->getMessage()) . "\n";
+    }
+}
+/*----------------------------------********---------------------------------*/

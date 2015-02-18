@@ -1,4 +1,4 @@
-function dynaFormChanged (frm) {
+function dynaFormChanged(frm) {
     for (var i1 = 0; i1 <= frm.elements.length - 1; i1++) {
         if ((frm.elements[i1].type === "radio" || frm.elements[i1].type === "checkbox") && (frm.elements[i1].checked !== frm.elements[i1].defaultChecked)) {
             return true;
@@ -22,18 +22,10 @@ function dynaFormChanged (frm) {
     return false;
 }
 $(window).load(function () {
-    var data = JSON.parse(jsondata);
-    window.dynaform = new PMDynaform.core.Project({
-        data: data,
-        keys: {
-            server: location.host,
-            projectId: prj_uid,
-            workspace: workspace
-        },
-        token: credentials,
-        submitRest: false
-    });
-
+    if ((navigator.userAgent.indexOf("MSIE") !== -1) || (navigator.userAgent.indexOf("Trident") !== -1)) {
+        document.body.innerHTML = "<div style='margin:15px'>Responsive Dynaforms are not supported in this browser.</div>";
+        return;
+    }
     if (pm_run_outside_main_app === 'true') {
         if (parent.showCaseNavigatorPanel) {
             parent.showCaseNavigatorPanel('DRAFT');
@@ -44,51 +36,53 @@ $(window).load(function () {
         }
     }
 
-    var form = document.getElementsByTagName("form")[0];
-
-    var el = form.elements;
-    var k = 0;
-    var dt = data.items[0].items;
-    for (var i = 0; i < dt.length; i++) {
-        var dr = dt[i];
-        for (var j = 0; j < dr.length; j++) {
-            if (dr[j].name) {
-                el[k].name = "form[" + dr[j].name + "]";
-            }
-            k = k + 1;
+    var data = jsondata;
+    data.items[0].mode = step_mode.toLowerCase();
+    window.project = new PMDynaform.core.Project({
+        data: data,
+        keys: {
+            server: location.host,
+            projectId: prj_uid,
+            workspace: workspace
+        },
+        token: credentials,
+        submitRest: false
+    });
+    new PMDynaform.core.Proxy({
+        url: "http://" + window.project.keys.server + ":"+port +"/" + window.project.keys.apiName + "/" + window.project.keys.apiVersion + "/" + window.project.keys.workspace + "/cases/" + app_uid + "/variables",
+        method: 'GET',
+        data: {},
+        keys: window.project.token,
+        successCallback: function (xhr, response) {
+            window.project.setData2(response);
         }
-    }
+    });
 
     var type = document.createElement("input");
     type.type = "hidden";
     type.name = "TYPE";
     type.value = "ASSIGN_TASK";
-
     var uid = document.createElement("input");
     uid.type = "hidden";
     uid.name = "UID";
     uid.value = dyn_uid;
-
     var position = document.createElement("input");
     position.type = "hidden";
     position.name = "POSITION";
     position.value = "10000";
-
     var action = document.createElement("input");
     action.type = "hidden";
     action.name = "ACTION";
     action.value = "ASSIGN";
-
     var dynaformname = document.createElement("input");
     dynaformname.type = "hidden";
     dynaformname.name = "__DynaformName__";
     dynaformname.value = __DynaformName__;
-
     var appuid = document.createElement("input");
     appuid.type = "hidden";
     appuid.name = "APP_UID";
     appuid.value = app_uid;
-
+    var form = document.getElementsByTagName("form")[0];
     form.action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
     form.method = "post";
     form.appendChild(type);

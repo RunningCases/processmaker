@@ -137,7 +137,7 @@ try {
     * you can change it or redirect to another page
     * i.e. G::header("Location: http://www.processmaker.com");
     */
-
+	 /*----------------------------------********---------------------------------*/
      $_POST['__notValidateThisFields__'] = (isset( $_POST['__notValidateThisFields__'] ) && $_POST['__notValidateThisFields__'] != '') ? $_POST['__notValidateThisFields__'] : $_POST['DynaformRequiredFields'];
      if ($missing_req_values = $oForm->validateRequiredFields( $_POST['form'], Bootstrap::json_decode( stripslashes( $_POST['__notValidateThisFields__'] ) ) )) {
         $fieldsRequired = Bootstrap::json_decode(str_replace(array("%27", "%39"), array("\"", "'"), $_POST["DynaformRequiredFields"]));
@@ -160,7 +160,7 @@ try {
         G::RenderPage( 'publish', 'blank' );
         exit( 0 );
     }
-
+	/*----------------------------------********---------------------------------*/
     $G_PUBLISH = new Publisher();
     $G_PUBLISH->AddContent("xmlform", "xmlform", "login/showInfo", "", $aMessage);
     G::RenderPage("publish", "blank");

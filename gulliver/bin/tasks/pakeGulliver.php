@@ -52,6 +52,11 @@ pake_task('new-plugin', 'project_exists');
 pake_desc("Update the plugin attributes in all workspaces\n   args: <plugin-name>");
 pake_task("update-plugin-attributes", "project_exists");
 
+/*----------------------------------********---------------------------------*/
+pake_desc("Check disabled code in plugins\n   args: [enterprise-plugin|custom-plugin|all|<plugin-name>]");
+pake_task("check-plugin-disabled-code", "project_exists");
+/*----------------------------------********---------------------------------*/
+
 pake_desc("pack plugin in .tar file \n   args: <plugin>");
 pake_task('pack-plugin', 'project_exists');
 
@@ -64,8 +69,10 @@ pake_task('workspace-backup', 'project_exists');
 pake_desc("restore a previously backed-up workspace\n   args: [-o|--overwrite] <filename> <workspace>");
 pake_task('workspace-restore', 'project_exists');
 
+/*----------------------------------********---------------------------------*/
 pake_desc("check standard code\n   args: <directory>");
 pake_task('check-standard-code', 'project_exists' );
+/*----------------------------------********---------------------------------*/
 
 /**
    * Function run_version
@@ -2570,8 +2577,8 @@ function checkFileStandardCode ( $file ) {
 
   }
 }
-
-function checkFolderStandardCode ( $folder, $bSubFolders ) {
+/*----------------------------------********---------------------------------*/
+/*function checkFolderStandardCode ( $folder, $bSubFolders ) {
   global $aFiles;
 	$rootFolder = str_replace ( PATH_TRUNK, '', $folder );
   //printf("%s \n", pakeColor::colorize($rootFolder, 'INFO'));
@@ -2588,8 +2595,10 @@ function checkFolderStandardCode ( $folder, $bSubFolders ) {
       }
     }
   }
-}
+}*/
+/*----------------------------------********---------------------------------*/
 
+/*----------------------------------********---------------------------------*/
 function run_check_standard_code ( $task, $options) {
   global $aFiles;
   $aFiles = array();
@@ -2616,7 +2625,7 @@ function run_check_standard_code ( $task, $options) {
            pakeColor::colorize($val['dos'] ? 'dos' : '   ', 'INFO'), $val['file'] );
   }
 }
-
+/*----------------------------------********---------------------------------*/
 function run_update_plugin_attributes($task, $args)
 {
     try {
@@ -2634,6 +2643,113 @@ function run_update_plugin_attributes($task, $args)
         $pmPluginRegistry = &PMPluginRegistry::getSingleton();
 
         $pmPluginRegistry->updatePluginAttributesInAllWorkspaces($pluginName);
+
+        echo "Done!\n";
+    } catch (Exception $e) {
+        echo $e->getMessage() . "\n";
+    }
+}
+
+function run_check_plugin_disabled_code($task, $args)
+{
+    try {
+        //Set variables
+        $option = (isset($args[0]))? trim($args[0]) : "";
+        $option2 = strtoupper($option);
+
+        switch ($option2) {
+            case "ENTERPRISE-PLUGIN":
+                break;
+            case "CUSTOM-PLUGIN":
+            case "ALL":
+            case "":
+                break;
+            default:
+                //PLUGIN-NAME
+                $option2 = "PLUGIN-NAME";
+                break;
+        }
+
+        if (is_dir(PATH_PLUGINS)) {
+            if ($dirh = opendir(PATH_PLUGINS)) {
+                $arrayData = array();
+
+                while (($file = readdir($dirh)) !== false) {
+                    if (preg_match("/^.+\.php$/", $file)) {
+                        $pluginName = str_replace(".php", "", $file);
+
+                        if (is_file(PATH_PLUGINS . $pluginName . ".php") && is_dir(PATH_PLUGINS . $pluginName)) {
+                            if (preg_match("/^.*class\s+" . $pluginName . "Plugin\s+extends\s+(\w*)\s*\{.*$/i", str_replace(array("\n", "\r"), array(" ", " "), file_get_contents(PATH_PLUGINS . $pluginName . ".php")), $arrayMatch)) {
+                                $pluginParentClassName = $arrayMatch[1];
+
+                                switch ($option2) {
+                                    case "ENTERPRISE-PLUGIN":
+                                        if ($pluginParentClassName == "enterprisePlugin") {
+                                            $arrayData[] = $pluginName;
+                                        }
+                                        break;
+                                    case "CUSTOM-PLUGIN":
+                                    case "ALL":
+                                    case "":
+                                        if ($pluginParentClassName == "PMPlugin") {
+                                            $arrayData[] = $pluginName;
+                                        }
+                                        break;
+                                    default:
+                                        //PLUGIN-NAME
+                                        if ($pluginName == $option) {
+                                            $arrayData[] = $pluginName;
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                closedir($dirh);
+
+                //Verify data
+                if ($option2 == "PLUGIN-NAME" && count($arrayData) == 0) {
+                    throw new Exception("Error: The plugin does not exist");
+                }
+
+                //Check disabled code
+                if (count($arrayData) > 0) {
+                    G::LoadClass("codeScanner");
+
+                    $cs = new CodeScanner("DISABLED_CODE");
+
+                    $strFoundDisabledCode = "";
+
+                    foreach ($arrayData as $value) {
+                        $pluginName = $value;
+
+                        $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", PATH_PLUGINS . $pluginName . ".php"), $cs->checkDisabledCode("PATH", PATH_PLUGINS . $pluginName));
+
+                        if (count($arrayFoundDisabledCode) > 0) {
+                            $strFoundDisabledCode .= (($strFoundDisabledCode != "")? "\n\n" : "") . "> " . $pluginName;
+
+                            foreach ($arrayFoundDisabledCode as $key2 => $value2) {
+                                $strCodeAndLine = "";
+
+                                foreach ($value2 as $key3 => $value3) {
+                                    $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . $key3 . " (Lines " . implode(", ", $value3) . ")";
+                                }
+
+                                $strFoundDisabledCode .= "\n- " . str_replace(PATH_PLUGINS, "", $key2) . ": " . $strCodeAndLine;
+                            }
+                        }
+                    }
+
+                    if ($strFoundDisabledCode != "") {
+                        echo "The next plugins have the following unwanted code (this code should be removed):\n\n" . $strFoundDisabledCode . "\n\n";
+                    } else {
+                        echo "The plugin(s) it's OK\n\n";
+                    }
+                }
+            }
+        }
 
         echo "Done!\n";
     } catch (Exception $e) {

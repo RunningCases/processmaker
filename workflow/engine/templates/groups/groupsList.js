@@ -212,6 +212,7 @@ Ext.onReady(function(){
   });
 
   store = new Ext.data.GroupingStore( {
+    remoteSort: true,
     proxy : new Ext.data.HttpProxy({
       url: 'groups_Ajax?action=groupsList'
     }),
@@ -243,8 +244,8 @@ Ext.onReady(function(){
               {id:'GRP_UID', dataIndex: 'USR_UID', hidden:true, hideable:false},
               {header: _('ID_GROUP_NAME'), dataIndex: 'CON_VALUE', width: 400, align:'left'},
               {header: _('ID_STATUS'), dataIndex: 'GRP_STATUS', width: 130, align:'center', renderer: render_status},
-              {header: _('ID_USERS'), dataIndex: 'GRP_USERS', width: 100, align:'center'},
-              {header: _('ID_TASKS'), dataIndex: 'GRP_TASKS', width: 100, align:'center'}
+              {header: _("ID_USERS"), dataIndex: "GRP_USERS", sortable: false, width: 100, align:"center"},
+              {header: _("ID_TASKS"), dataIndex: "GRP_TASKS", sortable: false, width: 100, align:"center"}
               ]
   });
 
@@ -351,6 +352,8 @@ DoNothing = function(){};
 NewGroupWindow = function(){
   newForm.getForm().reset();
   newForm.getForm().items.items[0].focus('',500);
+  newForm.getForm().items.items[1].setEditable(false);
+
   w = new Ext.Window({
     autoHeight: true,
     width: 400,

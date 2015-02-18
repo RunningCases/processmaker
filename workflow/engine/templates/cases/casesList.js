@@ -25,14 +25,29 @@ var textJump;
 var ids = '';
 var winReassignInCasesList;
 
-function formatAMPM(date, initVal) {
-  var hours = date.getHours();
-  var minutes = (initVal === true)? ((date.getMinutes()<15)? 0: ((date.getMinutes()<30)? 15: ((date.getMinutes()<45)? 30: 45))): date.getMinutes();
-  var ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  minutes = minutes < 10 ? '0' + minutes : minutes;
-  var strTime = hours + ':' + minutes + ' ' + ampm;
+function formatAMPM(date, initVal, calendarDate) {
+
+  var currentDate = new Date();
+  var currentDay = currentDate.getDate();
+  var currentMonth = currentDate.getMonth()+1;
+  if (currentDay < 10) {
+      currentDay = '0' + currentDay;
+  }
+  if (currentMonth < 10) {
+      currentMonth = '0' + currentMonth;
+  }
+  currentDate = currentMonth + '-' + currentDay;
+  if (currentDate == calendarDate) {
+      var hours = date.getHours();
+      var minutes = (initVal === true)? ((date.getMinutes()<15)? 15: ((date.getMinutes()<30)? 30: ((date.getMinutes()<45)? 45: 45))): date.getMinutes();
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+  } else {
+      var strTime = '12:00 AM';
+  }
   return strTime;
 }
 
@@ -253,8 +268,8 @@ function pauseCase(date){
                   id: 'unpauseTime',
                   fieldLabel: _('ID_UNPAUSE_TIME'),
                   name: 'unpauseTime',
-                  value: formatAMPM(new Date(), false),
-                  minValue: formatAMPM(new Date(), true),
+                  value: formatAMPM(new Date(), false, date.format('m-d')),
+                  minValue: formatAMPM(new Date(), true, date.format('m-d')),
                   format: 'h:i A'
               }),
               {
@@ -723,8 +738,15 @@ Ext.onReady ( function() {
   // Create HttpProxy instance, all CRUD requests will be directed to single proxy url.
   var proxyCasesList = new Ext.data.HttpProxy({
     api: {
-      read :   'proxyCasesList'
+      read : urlProxy
     }
+    /*----------------------------------********---------------------------------*/
+    ,method: 'GET'
+    ,headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + credentials.access_token
+    }
+    /*----------------------------------********---------------------------------*/
   });
 
   // Typical JsonReader with additional meta-data params for defining the core attributes of your json-response
@@ -782,9 +804,9 @@ Ext.onReady ( function() {
     autoSave: true, // <-- false would delay executing create, update, destroy requests until specifically told to do so with some [save] buton.
     sortInfo:{field: 'APP_CACHE_VIEW.APP_NUMBER', direction: "DESC"},
     listeners: {
-    	load: function(response){
-    		//console.log(response.reader.jsonData);
-    		if (response.reader.jsonData.result === false) {
+      load: function(response){
+        //console.log(response.reader.jsonData);
+        if (response.reader.jsonData.result === false) {
     			PMExt.notify('ERROR', response.reader.jsonData.message);
     			//PMExt.error
     		}
@@ -1130,44 +1152,45 @@ Ext.onReady ( function() {
   });
 
   // ComboBox creation processValues
-  var comboUser = new Ext.form.ComboBox({
-      store : new Ext.data.Store( {
-        proxy : new Ext.data.HttpProxy( {
-          url : 'casesList_Ajax?actionAjax=userValues&action='+action,
-          method : 'POST'
-        }),
-        reader : new Ext.data.JsonReader( {
-          fields : [ {
-            name : 'USR_UID'
-          }, {
-            name : 'USR_FULLNAME'
-          } ]
-        })
-      }),
+  var userStore =  new Ext.data.Store( {
+    proxy : new Ext.data.HttpProxy( {
+      url : 'casesList_Ajax?actionAjax=userValues&action='+action,
+      method : 'POST'
+    }),
+    reader : new Ext.data.JsonReader( {
+      fields : [ {
+        name : 'USR_UID'
+      }, {
+        name : 'USR_FULLNAME'
+      } ]
+    })
+  });
+  
+  var suggestUser = new Ext.form.ComboBox({
+      store: userStore,
       valueField : 'USR_UID',
-      displayField : 'USR_FULLNAME',
-      triggerAction : 'all',
+      displayField:'USR_FULLNAME',
+      typeAhead: true,
+      triggerAction: 'all',
       emptyText : _('ID_ALL_USERS'),
       selectOnFocus : true,
-      editable : false,
+      editable : true,
       width: 180,
       allowBlank : true,
       autocomplete: true,
       typeAhead: true,
-      //allowBlankText : _('ID_SHOULD_SELECT_LANGUAGE_FROM_LIST'),
+      hideTrigger:true,
       listeners:{
         scope: this,
         'select': function() {
-          storeCases.setBaseParam("user", comboUser.store.getAt(0).get(comboUser.valueField));
-          filterUser = comboUser.value;
-          storeCases.setBaseParam( 'user', filterUser);
-          storeCases.setBaseParam( 'start', 0);
-          storeCases.setBaseParam( 'limit', pageSize);
-          //storeCases.load();
+            //storeCases.setBaseParam( 'user', comboUser.store.getAt(0).get(comboUser.valueField));
+            filterUser = suggestUser.value;
+            storeCases.setBaseParam( 'user', filterUser);
+            storeCases.setBaseParam( 'start', 0);
+            storeCases.setBaseParam( 'limit', pageSize);
         }
       }
-    });
-
+  });
 
   var textSearch = new Ext.form.TextField ({
     allowBlank: true,
@@ -1841,7 +1864,8 @@ Ext.onReady ( function() {
       comboStatus,
       "-",
       _("ID_USER"),
-      comboUser,
+      //comboUser,
+      suggestUser,
       '&nbsp;&nbsp;&nbsp;'
       //'-',
       //textSearch,

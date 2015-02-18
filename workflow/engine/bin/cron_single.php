@@ -127,10 +127,12 @@ Bootstrap::registerClass('AppCacheView',       PATH_HOME . "engine/classes/model
 Bootstrap::registerClass('BaseAppCacheViewPeer',PATH_HOME . "engine/classes/model/om/BaseAppCacheViewPeer.php");
 Bootstrap::registerClass('AppCacheViewPeer',   PATH_HOME . "engine/classes/model/AppCacheViewPeer.php");
 
+/*----------------------------------********---------------------------------*/
 Bootstrap::registerClass('BaseAppTimeoutActionExecuted',  PATH_HOME . "engine/classes/model/om/BaseAppTimeoutActionExecuted.php");
 Bootstrap::registerClass('AppTimeoutActionExecuted',      PATH_HOME . "engine/classes/model/AppTimeoutActionExecuted.php");
 Bootstrap::registerClass('BaseAppTimeoutActionExecutedPeer',PATH_HOME . "engine/classes/model/om/BaseAppTimeoutActionExecutedPeer.php");
 Bootstrap::registerClass('AppTimeoutActionExecutedPeer',  PATH_HOME . "engine/classes/model/AppTimeoutActionExecutedPeer.php");
+/*----------------------------------********---------------------------------*/
 
 Bootstrap::registerClass('BaseInputDocument',  PATH_HOME . "engine/classes/model/om/BaseInputDocument.php");
 Bootstrap::registerClass('InputDocument',      PATH_HOME . "engine/classes/model/InputDocument.php");
@@ -531,8 +533,21 @@ function resendEmails()
 
         setExecutionResultMessage("DONE");
     } catch (Exception $e) {
-        setExecutionResultMessage("WITH ERRORS", "error");
-        eprintln("  '-" . $e->getMessage(), "red");
+        $c = new Criteria("workflow");
+        $c->clearSelectColumns();
+        $c->addSelectColumn(ConfigurationPeer::CFG_UID);
+        $c->add(ConfigurationPeer::CFG_UID, "Emails");
+        $result = ConfigurationPeer::doSelectRS($c);
+        $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        if($result->next()) {
+            setExecutionResultMessage("WARNING", "warning");
+            $message = "Emails won't be sent, but the cron will continue its execution";
+            eprintln("  '-" . $message, "yellow");
+        } else {
+            setExecutionResultMessage("WITH ERRORS", "error");
+            eprintln("  '-" . $e->getMessage(), "red");
+        }
+        
         saveLog("resendEmails", "error", "Error Resending Emails: " . $e->getMessage());
     }
 }
@@ -798,7 +813,9 @@ function executeCaseSelfService()
         $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TIME);
         $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TIME_UNIT);
         $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TRIGGER_UID);
+        /*----------------------------------********---------------------------------*/
         $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_EXECUTION);
+        /*----------------------------------********---------------------------------*/
 
         //FROM
         $condition = array();
@@ -833,6 +850,7 @@ function executeCaseSelfService()
             $taskSelfServiceTime = intval($row["TAS_SELFSERVICE_TIME"]);
             $taskSelfServiceTimeUnit = $row["TAS_SELFSERVICE_TIME_UNIT"];
             $taskSelfServiceTriggerUid = $row["TAS_SELFSERVICE_TRIGGER_UID"];
+            /*----------------------------------********---------------------------------*/
             $taskSelfServiceJustOneExecution = $row["TAS_SELFSERVICE_EXECUTION"];
 
             if($taskSelfServiceJustOneExecution == 'ONCE'){
@@ -849,6 +867,7 @@ function executeCaseSelfService()
 					$flag = true; //already executed
             	}
             }
+            /*----------------------------------********---------------------------------*/
 
             if ($calendar->pmCalendarUid == '') {
             	$calendar->getCalendar(null, $appcacheProUid, $taskUid);
@@ -904,6 +923,7 @@ function executeCaseSelfService()
                         $oPMScript->setScript($row["TRI_WEBBOT"]);
                         $oPMScript->execute();
 
+                        /*----------------------------------********---------------------------------*/
                         //saving the case`s data if the 'Execution' is set in ONCE.
                         if($taskSelfServiceJustOneExecution == "ONCE"){
                         	$oAppTimeoutActionExecuted = new AppTimeoutActionExecuted();
@@ -913,7 +933,7 @@ function executeCaseSelfService()
                         	$dataSelf["EXECUTION_DATE"] = time();
                         	$oAppTimeoutActionExecuted->create($dataSelf);
                         }
-
+                        /*----------------------------------********---------------------------------*/
                         $appFields["APP_DATA"] = array_merge($appFields["APP_DATA"], $oPMScript->aFields);
 
                         unset($appFields['APP_STATUS']);
@@ -981,6 +1001,10 @@ function setExecutionResultMessage($m, $t='')
     }
 
     if ($t == 'info') {
+        $c = 'yellow';
+    }
+    
+    if ($t == 'warning') {
         $c = 'yellow';
     }
 

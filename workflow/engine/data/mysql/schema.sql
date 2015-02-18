@@ -489,6 +489,7 @@ CREATE TABLE `ROUTE`
 	`ROU_NEXT_TASK` VARCHAR(32) default '0' NOT NULL,
 	`ROU_CASE` INTEGER default 0 NOT NULL,
 	`ROU_TYPE` VARCHAR(25) default 'SEQUENTIAL' NOT NULL,
+	`ROU_DEFAULT` INTEGER default 0 NOT NULL,
 	`ROU_CONDITION` VARCHAR(512) default '' NOT NULL,
 	`ROU_TO_LAST_USER` VARCHAR(20) default 'FALSE' NOT NULL,
 	`ROU_OPTIONAL` VARCHAR(20) default 'FALSE' NOT NULL,
@@ -567,7 +568,7 @@ CREATE TABLE `TASK`
 (
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`TAS_UID` VARCHAR(32) default '' NOT NULL,
-	`TAS_TYPE` VARCHAR(20) default 'NORMAL' NOT NULL,
+	`TAS_TYPE` VARCHAR(50) default 'NORMAL' NOT NULL,
 	`TAS_DURATION` DOUBLE default 0 NOT NULL,
 	`TAS_DELAY_TYPE` VARCHAR(30) default '' NOT NULL,
 	`TAS_TEMPORIZER` DOUBLE default 0 NOT NULL,
@@ -1206,6 +1207,7 @@ CREATE TABLE `APP_HISTORY`
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`TAS_UID` VARCHAR(32) default '' NOT NULL,
 	`DYN_UID` VARCHAR(32) default '' NOT NULL,
+	`OBJ_TYPE` VARCHAR(20) default 'DYNAFORM' NOT NULL,
 	`USR_UID` VARCHAR(32) default '' NOT NULL,
 	`APP_STATUS` VARCHAR(100) default '' NOT NULL,
 	`HISTORY_DATE` DATETIME,
@@ -1637,7 +1639,7 @@ CREATE TABLE `BPMN_PROJECT`
 	`PRJ_UID` VARCHAR(32) default '' NOT NULL,
 	`PRJ_NAME` VARCHAR(255) default '' NOT NULL,
 	`PRJ_DESCRIPTION` VARCHAR(512),
-	`PRJ_TARGET_NAMESPACE` MEDIUMTEXT  NOT NULL,
+	`PRJ_TARGET_NAMESPACE` MEDIUMTEXT,
 	`PRJ_EXPRESION_LANGUAGE` MEDIUMTEXT,
 	`PRJ_TYPE_LANGUAGE` MEDIUMTEXT,
 	`PRJ_EXPORTER` MEDIUMTEXT,
@@ -1905,6 +1907,7 @@ CREATE TABLE `BPMN_FLOW`
 	`FLO_X2` INTEGER default 0 NOT NULL,
 	`FLO_Y2` INTEGER default 0 NOT NULL,
 	`FLO_STATE` MEDIUMTEXT,
+	`FLO_POSITION` INTEGER default 0 NOT NULL,
 	PRIMARY KEY (`FLO_UID`),
 	KEY `BPMN_FLOW_I_1`(`FLO_UID`),
 	KEY `BPMN_FLOW_I_2`(`PRJ_UID`),
@@ -1995,10 +1998,7 @@ CREATE TABLE `BPMN_LANE`
 	KEY `BPMN_LANE_I_3`(`LNS_UID`),
 	CONSTRAINT `fk_bpmn_lane_project`
 		FOREIGN KEY (`PRJ_UID`)
-		REFERENCES `BPMN_PROJECT` (`PRJ_UID`),
-	CONSTRAINT `fk_bpmn_lane_laneset`
-		FOREIGN KEY (`LNS_UID`)
-		REFERENCES `BPMN_LANESET` (`LNS_UID`)
+		REFERENCES `BPMN_PROJECT` (`PRJ_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- BPMN_PARTICIPANT
@@ -2263,11 +2263,15 @@ CREATE TABLE `LIST_PARTICIPATED_LAST`
 	`APP_TITLE` VARCHAR(255) default '' NOT NULL,
 	`APP_PRO_TITLE` VARCHAR(255) default '' NOT NULL,
 	`APP_TAS_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_STATUS` VARCHAR(20) default '0',
 	`DEL_INDEX` INTEGER default 0 NOT NULL,
 	`DEL_PREVIOUS_USR_UID` VARCHAR(32) default '',
 	`DEL_PREVIOUS_USR_USERNAME` VARCHAR(100) default '',
 	`DEL_PREVIOUS_USR_FIRSTNAME` VARCHAR(50) default '',
 	`DEL_PREVIOUS_USR_LASTNAME` VARCHAR(50) default '',
+	`DEL_CURRENT_USR_USERNAME` VARCHAR(100) default '',
+	`DEL_CURRENT_USR_FIRSTNAME` VARCHAR(50) default '',
+	`DEL_CURRENT_USR_LASTNAME` VARCHAR(50) default '',
 	`DEL_DELEGATE_DATE` DATETIME  NOT NULL,
 	`DEL_INIT_DATE` DATETIME,
 	`DEL_DUE_DATE` DATETIME,
@@ -2301,6 +2305,70 @@ CREATE TABLE `LIST_COMPLETED`
 	PRIMARY KEY (`APP_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Completed list';
 #-----------------------------------------------------------------------------
+#-- LIST_PAUSED
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `LIST_PAUSED`;
+
+
+CREATE TABLE `LIST_PAUSED`
+(
+	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`USR_UID` VARCHAR(32) default '' NOT NULL,
+	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`APP_NUMBER` INTEGER default 0 NOT NULL,
+	`APP_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_PRO_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_TAS_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_PAUSED_DATE` DATETIME  NOT NULL,
+	`APP_RESTART_DATE` DATETIME  NOT NULL,
+	`DEL_PREVIOUS_USR_UID` VARCHAR(32) default '',
+	`DEL_PREVIOUS_USR_USERNAME` VARCHAR(100) default '',
+	`DEL_PREVIOUS_USR_FIRSTNAME` VARCHAR(50) default '',
+	`DEL_PREVIOUS_USR_LASTNAME` VARCHAR(50) default '',
+	`DEL_CURRENT_USR_USERNAME` VARCHAR(100) default '',
+	`DEL_CURRENT_USR_FIRSTNAME` VARCHAR(50) default '',
+	`DEL_CURRENT_USR_LASTNAME` VARCHAR(50) default '',
+	`DEL_DELEGATE_DATE` DATETIME  NOT NULL,
+	`DEL_INIT_DATE` DATETIME,
+	`DEL_DUE_DATE` DATETIME,
+	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
+	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
+	KEY `indexPausedUser`(`USR_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Paused list';
+#-----------------------------------------------------------------------------
+#-- LIST_CANCELED
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `LIST_CANCELED`;
+
+
+CREATE TABLE `LIST_CANCELED`
+(
+	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`USR_UID` VARCHAR(32) default '' NOT NULL,
+	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`APP_NUMBER` INTEGER default 0 NOT NULL,
+	`APP_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_PRO_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_TAS_TITLE` VARCHAR(255) default '' NOT NULL,
+	`APP_CANCELED_DATE` DATETIME  NOT NULL,
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`DEL_PREVIOUS_USR_UID` VARCHAR(32) default '',
+	`DEL_CURRENT_USR_USERNAME` VARCHAR(100) default '',
+	`DEL_CURRENT_USR_FIRSTNAME` VARCHAR(50) default '',
+	`DEL_CURRENT_USR_LASTNAME` VARCHAR(50) default '',
+	`DEL_DELEGATE_DATE` DATETIME  NOT NULL,
+	`DEL_INIT_DATE` DATETIME,
+	`DEL_DUE_DATE` DATETIME,
+	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
+	PRIMARY KEY (`APP_UID`),
+	KEY `indexCanceledUser`(`USR_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Canceled list';
+#-----------------------------------------------------------------------------
 #-- LIST_MY_INBOX
 #-----------------------------------------------------------------------------
 
@@ -2317,9 +2385,9 @@ CREATE TABLE `LIST_MY_INBOX`
 	`APP_TITLE` VARCHAR(255) default '' NOT NULL,
 	`APP_PRO_TITLE` VARCHAR(255) default '' NOT NULL,
 	`APP_TAS_TITLE` VARCHAR(255) default '' NOT NULL,
-	`APP_CREATE_DATE` DATETIME  NOT NULL,
-	`APP_UPDATE_DATE` DATETIME  NOT NULL,
-	`APP_FINISH_DATE` DATETIME  NOT NULL,
+	`APP_CREATE_DATE` DATETIME,
+	`APP_UPDATE_DATE` DATETIME,
+	`APP_FINISH_DATE` DATETIME,
 	`APP_STATUS` VARCHAR(100) default '' NOT NULL,
 	`DEL_INDEX` INTEGER default 0 NOT NULL,
 	`DEL_PREVIOUS_USR_UID` VARCHAR(32) default '',
@@ -2378,5 +2446,152 @@ CREATE TABLE `LIST_UNASSIGNED_GROUP`
 	`TYP_UID` VARCHAR(32) default '' NOT NULL,
 	PRIMARY KEY (`UNA_UID`,`USR_UID`,`TYPE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Unassiged list';
+#-----------------------------------------------------------------------------
+#-- MESSAGE_TYPE
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `MESSAGE_TYPE`;
+
+
+CREATE TABLE `MESSAGE_TYPE`
+(
+	`MSGT_UID` VARCHAR(32)  NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`MSGT_NAME` VARCHAR(512) default '',
+	PRIMARY KEY (`MSGT_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- MESSAGE_TYPE_VARIABLE
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `MESSAGE_TYPE_VARIABLE`;
+
+
+CREATE TABLE `MESSAGE_TYPE_VARIABLE`
+(
+	`MSGTV_UID` VARCHAR(32)  NOT NULL,
+	`MSGT_UID` VARCHAR(32)  NOT NULL,
+	`MSGTV_NAME` VARCHAR(512) default '',
+	`MSGTV_DEFAULT_VALUE` VARCHAR(512) default '',
+	PRIMARY KEY (`MSGTV_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- EMAIL_SERVER
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `EMAIL_SERVER`;
+
+
+CREATE TABLE `EMAIL_SERVER`
+(
+	`MESS_UID` VARCHAR(32) default '' NOT NULL,
+	`MESS_ENGINE` VARCHAR(256) default '' NOT NULL,
+	`MESS_SERVER` VARCHAR(256) default '' NOT NULL,
+	`MESS_PORT` INTEGER default 0 NOT NULL,
+	`MESS_RAUTH` INTEGER default 0 NOT NULL,
+	`MESS_ACCOUNT` VARCHAR(256) default '' NOT NULL,
+	`MESS_PASSWORD` VARCHAR(256) default '' NOT NULL,
+	`MESS_FROM_MAIL` VARCHAR(256) default '' NOT NULL,
+	`MESS_FROM_NAME` VARCHAR(256) default '' NOT NULL,
+	`SMTPSECURE` VARCHAR(3) default 'No' NOT NULL,
+	`MESS_TRY_SEND_INMEDIATLY` INTEGER default 0 NOT NULL,
+	`MAIL_TO` VARCHAR(256) default '' NOT NULL,
+	`MESS_DEFAULT` INTEGER default 0 NOT NULL,
+	PRIMARY KEY (`MESS_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- WEB_ENTRY_EVENT
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `WEB_ENTRY_EVENT`;
+
+
+CREATE TABLE `WEB_ENTRY_EVENT`
+(
+	`WEE_UID` VARCHAR(32)  NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`EVN_UID` VARCHAR(32)  NOT NULL,
+	`ACT_UID` VARCHAR(32)  NOT NULL,
+	`DYN_UID` VARCHAR(32)  NOT NULL,
+	`USR_UID` VARCHAR(32)  NOT NULL,
+	`WEE_STATUS` VARCHAR(10) default 'ENABLED' NOT NULL,
+	`WEE_WE_UID` VARCHAR(32) default '' NOT NULL,
+	`WEE_WE_TAS_UID` VARCHAR(32) default '' NOT NULL,
+	PRIMARY KEY (`WEE_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
+
+#-----------------------------------------------------------------------------
+#-- MESSAGE_EVENT_DEFINITION
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS MESSAGE_EVENT_DEFINITION;
+
+CREATE TABLE MESSAGE_EVENT_DEFINITION
+(
+    MSGED_UID VARCHAR(32) NOT NULL,
+    PRJ_UID   VARCHAR(32) NOT NULL,
+    EVN_UID   VARCHAR(32) NOT NULL,
+    MSGT_UID  VARCHAR(32) NOT NULL DEFAULT '',
+    MSGED_USR_UID     VARCHAR(32)  NOT NULL DEFAULT '',
+    MSGED_VARIABLES   MEDIUMTEXT   NOT NULL DEFAULT '',
+    MSGED_CORRELATION VARCHAR(512) NOT NULL DEFAULT '',
+
+    PRIMARY KEY (MSGED_UID)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+#-----------------------------------------------------------------------------
+#-- MESSAGE_EVENT_RELATION
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS MESSAGE_EVENT_RELATION;
+
+CREATE TABLE MESSAGE_EVENT_RELATION
+(
+    MSGER_UID     VARCHAR(32) NOT NULL,
+    PRJ_UID       VARCHAR(32) NOT NULL,
+    EVN_UID_THROW VARCHAR(32) NOT NULL,
+    EVN_UID_CATCH VARCHAR(32) NOT NULL,
+
+    PRIMARY KEY (MSGER_UID)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+#-----------------------------------------------------------------------------
+#-- MESSAGE_EVENT_TASK_RELATION
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS MESSAGE_EVENT_TASK_RELATION;
+
+CREATE TABLE MESSAGE_EVENT_TASK_RELATION
+(
+    MSGETR_UID VARCHAR(32) NOT NULL,
+    PRJ_UID    VARCHAR(32) NOT NULL,
+    EVN_UID    VARCHAR(32) NOT NULL,
+    TAS_UID    VARCHAR(32) NOT NULL,
+
+    PRIMARY KEY (MSGETR_UID)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+#-----------------------------------------------------------------------------
+#-- MESSAGE_APPLICATION
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS MESSAGE_APPLICATION;
+
+CREATE TABLE MESSAGE_APPLICATION
+(
+    MSGAPP_UID    VARCHAR(32) NOT NULL,
+    APP_UID       VARCHAR(32) NOT NULL,
+    PRJ_UID       VARCHAR(32) NOT NULL,
+    EVN_UID_THROW VARCHAR(32) NOT NULL,
+    EVN_UID_CATCH VARCHAR(32) NOT NULL,
+    MSGAPP_VARIABLES   MEDIUMTEXT   NOT NULL DEFAULT '',
+    MSGAPP_CORRELATION VARCHAR(512) NOT NULL DEFAULT '',
+    MSGAPP_THROW_DATE  DATETIME NOT NULL,
+    MSGAPP_CATCH_DATE  DATETIME,
+    MSGAPP_STATUS      VARCHAR(25)  NOT NULL DEFAULT 'UNREAD',
+
+    PRIMARY KEY (MSGAPP_UID)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+

@@ -160,13 +160,14 @@ Ext.onReady(function(){
     }
   });
 
-  store = new Ext.data.GroupingStore( {
+  store = new Ext.data.GroupingStore({
+    remoteSort: true,
     proxy : new Ext.data.HttpProxy({
       url: 'processCategory_Ajax?action=processCategoryList'
     }),
-    reader : new Ext.data.JsonReader( {
-      root: 'categories',
-      totalProperty: 'total_categories',
+    reader : new Ext.data.JsonReader({
+      totalProperty: 'totalCount',
+      root: 'data',
       fields : [
                 {name : 'CATEGORY_UID'},
                 {name : 'CATEGORY_PARENT'},
@@ -176,7 +177,6 @@ Ext.onReady(function(){
                 ]
     })
   });
-
   cmodel = new Ext.grid.ColumnModel({
     defaults: {
       width: 50,
@@ -274,7 +274,6 @@ Ext.onReady(function(){
   );
 
   infoGrid.addListener('rowcontextmenu',onMessageContextMenu,this);
-
   infoGrid.store.load();
 
   viewport = new Ext.Viewport({

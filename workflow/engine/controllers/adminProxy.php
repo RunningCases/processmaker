@@ -177,6 +177,7 @@ class adminProxy extends HttpProxyController
         $httpData=array_unique((array)$httpData);
         $message = '';
         $oldName = isset($_POST['oldName'])? $_POST['oldName']:'';
+        $uid = isset($_POST['uid'])? $_POST['uid']:'';
 
         switch ($_POST['action']){
             case 'calendarName':
@@ -184,18 +185,22 @@ class adminProxy extends HttpProxyController
                 $oCalendar  = new CalendarDefinition();
                 $aCalendars = $oCalendar->getCalendarList(false,true);
                 $aCalendarDefinitions = end($aCalendars);
-
+                
                 foreach ($aCalendarDefinitions as $aDefinitions) {
                     if (trim($_POST['name'])=='') {
                         $validated = false;
                         $message  = G::loadTranslation('ID_CALENDAR_INVALID_NAME');
                         break;
                     }
+                    
                     if (isset($aDefinitions['CALENDAR_NAME'])) {
-                        if ($aDefinitions['CALENDAR_NAME'] == $_POST['name']) {
-                            $validated = false;
-                            $message  = G::loadTranslation('ID_CALENDAR_INVALID_NAME');
-                            break;
+                        
+                        if ($aDefinitions['CALENDAR_UID'] != $uid) {
+                            if ($aDefinitions['CALENDAR_NAME'] == $_POST['name']) {
+                                $validated = false;
+                                $message  = G::loadTranslation('ID_CALENDAR_INVALID_NAME');
+                                break;
+                            }
                         }
                     }
                 }
@@ -1377,7 +1382,7 @@ class adminProxy extends HttpProxyController
                 $licenseInfo[$index] = G::sanitizeInput($value);
             }
         }
-        $params['license'] = $licenseInfo;
+        $params['l'] = $licenseInfo;
 
         //Operative System version (Linux, Windows)
         try {
@@ -1391,27 +1396,27 @@ class adminProxy extends HttpProxyController
             $os .= " (" . PHP_OS . ")";
         } catch (Exception $e) {
         }
-        $params['system'] = $os;
+        $params['s'] = $os;
 
         //On premise or cloud
         $licInfo = $oServerConf->getProperty( 'LICENSE_INFO' );
-        $params['licenseType'] = isset($licInfo[SYS_SYS]) ? isset($licInfo[SYS_SYS]['TYPE'])? $licInfo[SYS_SYS]['TYPE'] : ''  : '';
+        $params['lt'] = isset($licInfo[SYS_SYS]) ? isset($licInfo[SYS_SYS]['TYPE'])? $licInfo[SYS_SYS]['TYPE'] : ''  : '';
 
         //ProcessMaker Version
-        $params['pmVersion'] = System::getVersion();
+        $params['v'] = System::getVersion();
         if (file_exists(PATH_DATA. 'log/upgrades.log')) {
-            $params['pmUpgrade'] = serialize(file_get_contents(PATH_DATA. 'log/upgrades.log', 'r'));
+            $params['pmu'] = serialize(file_get_contents(PATH_DATA. 'log/upgrades.log', 'r'));
         } else {
-            $params['pmUpgrade'] = serialize(G::LoadTranslation('ID_UPGRADE_NEVER_UPGRADE'));
+            $params['pmu'] = serialize(G::LoadTranslation('ID_UPGRADE_NEVER_UPGRADE'));
         }
 
         //Database server Version (MySQL version)
         $installer = new Installer();
         $systemInfo = $installer->getSystemInfo();
         try {
-            $params['dbVersion'] = mysql_get_server_info();
+            $params['mysql'] = mysql_get_server_info();
         } catch (Exception $e) {
-            $params['dbVersion'] = '';
+            $params['mysql'] = '';
         }
 
         //PHP Version
@@ -1445,7 +1450,7 @@ class adminProxy extends HttpProxyController
                 $plugins[] = $plugin;
             }
         }
-        $params['plugins'] = $plugins;
+        $params['pl'] = $plugins;
 
         //Number of Users registered in PM. Including LDAP users and PM users.
         require_once ("classes/model/RbacUsers.php");
@@ -1465,12 +1470,12 @@ class adminProxy extends HttpProxyController
                 $users['USR_AUTH_TYPE'] = $row['USERS_NUMBER'];
             }
         }
-        $params["users"] =$users;
+        $params['u'] = $users;
 
         //Number of cases.
         $oSequences = new Sequences();
         $maxNumber = $oSequences->getSequeceNumber("APP_NUMBER");
-        $params["cases"] = $maxNumber - 1;
+        $params['c'] = $maxNumber - 1;
 
         //Number of active processes.
         $criteria = new Criteria( "workflow" );
@@ -1484,10 +1489,11 @@ class adminProxy extends HttpProxyController
             $row = $rs->getRow();
             $process[$row['PRO_STATUS']] = $row['NUMBER_PROCESS'];
         }
-        $params["process"] = $process;
+        $params['p'] = $process;
 
         //Country/city (Timezone)
-        $params["Timezone"] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
+        $params['t'] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
+        $params['w'] = count(System::listWorkspaces());
 
         $support = PATH_DATA_SITE . G::sanitizeString($licenseManager->info['FIRST_NAME'] . '-' . $licenseManager->info['LAST_NAME'] . '-' . SYS_SYS . '-' . date('YmdHis'), false, false) . '.spm';
         file_put_contents($support, serialize($params));

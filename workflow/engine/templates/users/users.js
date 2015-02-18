@@ -1,6 +1,6 @@
 var storeCountry;
 var storeRegion;
-var storeLocation;
+var storeLocation; 
 var storeReplacedBy;
 var storeCalendar;
 var storeRole;
@@ -383,15 +383,15 @@ Ext.onReady(function () {
           ]
       })
   });
-
+	
   comboRole = new Ext.form.ComboBox({
     fieldLabel    : _('ID_ROLE'),
     hiddenName    : 'USR_ROLE',
     id            : 'USR_ROLE',
     readOnly      : readMode,
-    store         : storeRole,
+    store         : storeRole,    
     valueField    : 'ROL_UID',
-    displayField  : 'ROL_CODE',
+    displayField  : 'ROL_CODE',    
     emptyText     : TRANSLATIONS.ID_SELECT,
     width         : 260,
     selectOnFocus : true,
@@ -400,13 +400,13 @@ Ext.onReady(function () {
     triggerAction : 'all',
     mode          : 'local'
   });
-
+  
   var informationFields = new Ext.form.FieldSet({
     title : _('ID_PERSONAL_INFORMATION'),
     items : [
       {
         id         : 'USR_FIRSTNAME',
-        fieldLabel : _('ID_FIRSTNAME'),
+        fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_FIRSTNAME')) +'"> * </span>' + _('ID_FIRSTNAME'),
         xtype      : 'textfield',
         width      : 260,
         allowBlank : false
@@ -420,7 +420,7 @@ Ext.onReady(function () {
       },
       {
         id         : 'USR_USERNAME',
-        fieldLabel : _('ID_USER_ID'),
+        fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_USER_ID')) +'"> * </span>' + _('ID_USER_ID'),
         xtype      : 'textfield',
         width      : 260,
         allowBlank : false,
@@ -459,7 +459,7 @@ Ext.onReady(function () {
       },
       {
         id         : 'USR_EMAIL',
-        fieldLabel : _('ID_EMAIL'),
+        fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_EMAIL')) +'"> * </span>' + _('ID_EMAIL'),
         vtype      : 'email',
         xtype      : 'textfield',
         width      : 260,
@@ -1250,10 +1250,9 @@ function loadData()
 
 
     comboRole.store.on("load", function (store) {
-        comboRole.setValue(store.getAt(0).get("ROL_UID"));
-    });
+        comboRole.setValue(store.getAt(1).get("ROL_UID"));
+    });    
     comboRole.store.load();
-
 
     comboDefaultMainMenuOption.store.on("load", function (store) {
         comboDefaultMainMenuOption.setValue(store.getAt(0).get("id"));
@@ -1313,6 +1312,8 @@ function loadUserData()
                 Ext.getCmp("USR_DUE_DATE2").setText(data.user.USR_DUE_DATE);
                 Ext.getCmp("USR_STATUS2").setText(_('ID_' + data.user.USR_STATUS));
                 Ext.getCmp("USR_ROLE2").setText(data.user.USR_ROLE_NAME);
+                
+                Ext.getCmp("USR_CALENDAR2").setText(data.user.CALENDAR_NAME);
 
                 Ext.getCmp("PREF_DEFAULT_MAIN_MENU_OPTION2").setText(data.user.MENUSELECTED_NAME);
                 Ext.getCmp("PREF_DEFAULT_CASES_MENUSELECTED2").setText(data.user.CASES_MENUSELECTED_NAME);

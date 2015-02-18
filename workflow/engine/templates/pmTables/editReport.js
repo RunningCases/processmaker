@@ -408,7 +408,9 @@ Ext.onReady(function(){
             disabled: true,
             inputValue: 'always'
         }
-        }, {
+        }
+        /*----------------------------------********---------------------------------*/
+        , {
             xtype: 'booleancolumn',
             header: _('ID_INDEX'),
             dataIndex: 'field_index',
@@ -423,6 +425,7 @@ Ext.onReady(function(){
                 inputValue: 'always'
             }
         }
+        /*----------------------------------********---------------------------------*/
   ];
   
 function validateFieldSizeAutoincrement(valueType, defaultValue) {
@@ -964,7 +967,7 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
 
   items.push({
     id: 'REP_TAB_NAME',
-    fieldLabel: _("ID_TABLE_NAME") + ' <span style="font-size:9">('+_("ID_AUTO_PREFIX") + ' "PMT")</span>',
+    fieldLabel: _("ID_TABLE_NAME") + ' <span style="font-size:9">('+_("ID_AUTO_PREFIX") + ' "PMT_")</span>',
     xtype:'textfield',
     emptyText: _("ID_SET_A_TABLE_NAME"),
     width: 250,
@@ -1300,14 +1303,14 @@ function editorFieldsEnableDisable(fieldTypeValue, fieldIndex, fieldInc, sizeEdi
         swAI = 0;
         swI = 0;
     }
-
+/*----------------------------------********---------------------------------*/
     if (swI == 1) {
         fieldIndex.enable();
     } else {
         fieldIndex.disable();
         fieldIndex.setValue(false);
     }
-
+/*----------------------------------********---------------------------------*/
     if (swAI == 1) {
         fieldInc.enable();
     } else {

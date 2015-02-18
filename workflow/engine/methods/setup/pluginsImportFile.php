@@ -34,6 +34,14 @@ try {
         throw (new Exception( G::loadTranslation( 'ID_ERROR_UPLOADING_PLUGIN_FILENAME' ) ));
     }
 
+    //save the file
+    if ($_FILES['form']['error']['PLUGIN_FILENAME'] == 0) {
+        $filename = $_FILES['form']['name']['PLUGIN_FILENAME'];
+        $path = PATH_DOCUMENT . 'input' . PATH_SEP;
+        $tempName = $_FILES['form']['tmp_name']['PLUGIN_FILENAME'];
+        G::uploadFile( $tempName, $path, $filename );
+    }
+
     //save the files Enterprise
     if ($_FILES['form']['error']['PLUGIN_FILENAME'] == 0) {
         $filename = $_FILES['form']['name']['PLUGIN_FILENAME'];
@@ -105,13 +113,7 @@ try {
             die('<script type="text/javascript">parent.parent.location = "../login/login";</script>');
         }
     }
-    //save the file
-    if ($_FILES['form']['error']['PLUGIN_FILENAME'] == 0) {
-        $filename = $_FILES['form']['name']['PLUGIN_FILENAME'];
-        $path = PATH_DOCUMENT . 'input' . PATH_SEP;
-        $tempName = $_FILES['form']['tmp_name']['PLUGIN_FILENAME'];
-        G::uploadFile( $tempName, $path, $filename );
-    }
+
     if (! $_FILES['form']['type']['PLUGIN_FILENAME'] == 'application/octet-stream') {
         $pluginFilename = $_FILES['form']['type']['PLUGIN_FILENAME'];
         throw (new Exception( G::loadTranslation( 'ID_FILES_INVALID_PLUGIN_FILENAME', SYS_LANG, array ("pluginFilename" => $pluginFilename
@@ -161,7 +163,21 @@ try {
             unset( $oClass );
         }
         $res = $tar->extract( $path );
+        /*----------------------------------********---------------------------------*/
+        //Check disabled code
+        G::LoadClass("codeScanner");
+        
+        $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+        $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
 
+        $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", $path . $pluginFile), $cs->checkDisabledCode("PATH", $path . $sClassName));
+
+        if (count($arrayFoundDisabledCode) > 0) {
+            throw new Exception(G::LoadTranslation("ID_DISABLED_CODE_PLUGIN"));
+        }
+        /*----------------------------------********---------------------------------*/
+        
+        //Check if is enterprise plugin
         $sContent = file_get_contents( $path . $pluginFile );
         $chain = preg_quote( 'extends enterprisePlugin' );
         if (strpos( $sContent, $chain )) {
@@ -237,14 +253,14 @@ try {
 
     $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
     $size = file_put_contents( PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance() );
-    
+
     $response = $oPluginRegistry->verifyTranslation( $details->sNamespace);
     G::auditLog("InstallPlugin", "Plugin Name: ".$details->sNamespace );
 
     //if ($response->recordsCountSuccess <= 0) {
         //throw (new Exception( 'The plugin ' . $details->sNamespace . ' couldn\'t verify any translation item. Verified Records:' . $response->recordsCountSuccess));
     //}
-    
+
     G::header( "Location: pluginsMain" );
     die();
 } catch (Exception $e) {
