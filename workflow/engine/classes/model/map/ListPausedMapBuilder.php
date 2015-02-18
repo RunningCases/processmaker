@@ -5,7 +5,7 @@ include_once 'creole/CreoleTypes.php';
 
 
 /**
- * This class adds structure of 'LIST_MY_INBOX' table to 'workflow' DatabaseMap object.
+ * This class adds structure of 'LIST_PAUSED' table to 'workflow' DatabaseMap object.
  *
  *
  *
@@ -16,13 +16,13 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
-class ListMyInboxMapBuilder
+class ListPausedMapBuilder
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'classes.model.map.ListMyInboxMapBuilder';
+    const CLASS_NAME = 'classes.model.map.ListPausedMapBuilder';
 
     /**
      * The database map.
@@ -60,12 +60,14 @@ class ListMyInboxMapBuilder
     {
         $this->dbMap = Propel::getDatabaseMap('workflow');
 
-        $tMap = $this->dbMap->addTable('LIST_MY_INBOX');
-        $tMap->setPhpName('ListMyInbox');
+        $tMap = $this->dbMap->addTable('LIST_PAUSED');
+        $tMap->setPhpName('ListPaused');
 
         $tMap->setUseIdGenerator(false);
 
         $tMap->addPrimaryKey('APP_UID', 'AppUid', 'string', CreoleTypes::VARCHAR, true, 32);
+
+        $tMap->addPrimaryKey('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
 
         $tMap->addColumn('USR_UID', 'UsrUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
@@ -81,15 +83,9 @@ class ListMyInboxMapBuilder
 
         $tMap->addColumn('APP_TAS_TITLE', 'AppTasTitle', 'string', CreoleTypes::VARCHAR, true, 255);
 
-        $tMap->addColumn('APP_CREATE_DATE', 'AppCreateDate', 'int', CreoleTypes::TIMESTAMP, false, null);
+        $tMap->addColumn('APP_PAUSED_DATE', 'AppPausedDate', 'int', CreoleTypes::TIMESTAMP, true, null);
 
-        $tMap->addColumn('APP_UPDATE_DATE', 'AppUpdateDate', 'int', CreoleTypes::TIMESTAMP, false, null);
-
-        $tMap->addColumn('APP_FINISH_DATE', 'AppFinishDate', 'int', CreoleTypes::TIMESTAMP, false, null);
-
-        $tMap->addColumn('APP_STATUS', 'AppStatus', 'string', CreoleTypes::VARCHAR, true, 100);
-
-        $tMap->addColumn('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
+        $tMap->addColumn('APP_RESTART_DATE', 'AppRestartDate', 'int', CreoleTypes::TIMESTAMP, true, null);
 
         $tMap->addColumn('DEL_PREVIOUS_USR_UID', 'DelPreviousUsrUid', 'string', CreoleTypes::VARCHAR, false, 32);
 
@@ -99,15 +95,13 @@ class ListMyInboxMapBuilder
 
         $tMap->addColumn('DEL_PREVIOUS_USR_LASTNAME', 'DelPreviousUsrLastname', 'string', CreoleTypes::VARCHAR, false, 50);
 
-        $tMap->addColumn('DEL_CURRENT_USR_UID', 'DelCurrentUsrUid', 'string', CreoleTypes::VARCHAR, false, 32);
-
         $tMap->addColumn('DEL_CURRENT_USR_USERNAME', 'DelCurrentUsrUsername', 'string', CreoleTypes::VARCHAR, false, 100);
 
         $tMap->addColumn('DEL_CURRENT_USR_FIRSTNAME', 'DelCurrentUsrFirstname', 'string', CreoleTypes::VARCHAR, false, 50);
 
         $tMap->addColumn('DEL_CURRENT_USR_LASTNAME', 'DelCurrentUsrLastname', 'string', CreoleTypes::VARCHAR, false, 50);
 
-        $tMap->addColumn('DEL_DELEGATE_DATE', 'DelDelegateDate', 'int', CreoleTypes::TIMESTAMP, false, null);
+        $tMap->addColumn('DEL_DELEGATE_DATE', 'DelDelegateDate', 'int', CreoleTypes::TIMESTAMP, true, null);
 
         $tMap->addColumn('DEL_INIT_DATE', 'DelInitDate', 'int', CreoleTypes::TIMESTAMP, false, null);
 
@@ -117,4 +111,4 @@ class ListMyInboxMapBuilder
 
     } // doBuild()
 
-} // ListMyInboxMapBuilder
+} // ListPausedMapBuilder

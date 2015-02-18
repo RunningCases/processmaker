@@ -25,6 +25,28 @@ class ListParticipatedLast extends BaseListParticipatedLast
      */
     public function create($data)
     {
+        $criteria = new Criteria();
+        $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+        $criteria->add( UsersPeer::USR_UID, $data['USR_UID'], Criteria::EQUAL );
+        $dataset = UsersPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
+        $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
+        $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
+
+        $criteria = new Criteria();
+        $criteria->addSelectColumn(ApplicationPeer::APP_STATUS);
+        $criteria->add( ApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
+        $dataset = UsersPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        $data['APP_STATUS']  = $aRow['APP_STATUS'];
+
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
@@ -182,11 +204,15 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_PRO_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TAS_TITLE);
+        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_STATUS);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INDEX);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME);
+        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME);
+        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME);
+        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_DELEGATE_DATE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INIT_DATE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_DUE_DATE);
