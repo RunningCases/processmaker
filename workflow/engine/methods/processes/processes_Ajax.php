@@ -42,10 +42,12 @@ try {
     if (isset($_REQUEST['data'])) {
         if($_REQUEST['action']=="addText"||$_REQUEST['action']=="updateText") {
             $oData = Bootstrap::json_decode($_REQUEST['data']);
-            $oDataAux = json_decode($_REQUEST['data'],true);
+            $oDataAux = G::json_decode($_REQUEST['data']);
+            $oDataAux = (array)$oDataAux;
         } else {
             $oData = Bootstrap::json_decode(stripslashes($_REQUEST['data']));
-            $oDataAux = json_decode(stripslashes($_REQUEST['data']),true);
+            $oDataAux = G::json_decode(stripslashes($_REQUEST['data']));
+            $oDataAux = (array)$oDataAux;
         }
         //$oData = $oJSON->decode( stripslashes( $_REQUEST['data'] ) );
         $sOutput = '';
