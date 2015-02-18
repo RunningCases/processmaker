@@ -1,6 +1,6 @@
 <?php
 
-namespace Features\ActionsByEnmail;
+namespace Features\ActionsByEmail;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates

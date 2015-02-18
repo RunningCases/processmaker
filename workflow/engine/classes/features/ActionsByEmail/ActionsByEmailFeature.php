@@ -4,7 +4,6 @@
  * Description of ActionsByEmailFeature
  * 
  */
-namespace Features\ActionsByEnmail;
 
 class ActionsByEmailFeature implements EnterpriseFeature
 {

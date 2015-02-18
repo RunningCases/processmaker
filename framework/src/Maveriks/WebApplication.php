@@ -333,6 +333,26 @@ class WebApplication
                 }
             }
 
+            // adding features extension api classes
+            $featuresPath = $this->workflowDir .'engine' . DS . 'classes' . DS . 'features';
+            // $apiDir - contains directory to scan classes and add them to Restler
+            $featureDirList = glob($featuresPath . "/*", GLOB_ONLYDIR);
+            foreach ($featureDirList as $directory) {
+                if ($directory == 'ViewContainers') {
+                    continue;
+                }
+                $featureApiClassList = Util\Common::rglob($directory . DS . 'api' . "/*");
+                foreach ($featureApiClassList as $classFile) {
+                    if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
+                        $relClassPath = str_replace('.php', '', str_replace($servicesDir, '', $classFile));
+                        $namespace = 'Features\\'.basename($classFile, '.php');
+                        $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
+                        require_once $classFile;
+                        $this->rest->addAPIClass($namespace);
+                    }
+                }
+            }
+            
             // adding aliases for Restler
             if (array_key_exists('alias', $config)) {
                 foreach ($config['alias'] as $alias => $aliasData) {
