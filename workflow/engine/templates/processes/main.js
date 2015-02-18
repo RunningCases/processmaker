@@ -1167,6 +1167,11 @@ importProcessExistProcess = function()
 
 importProcess = function()
 {
+    if (winDesigner) {
+        winDesigner.close();
+        if (!winDesigner.closed)
+            return;
+    }
     var processFileType      = importProcessGlobal.processFileType;
     var processFileTypeTitle = (processFileType == "pm") ? "" : " " + processFileType;
 
