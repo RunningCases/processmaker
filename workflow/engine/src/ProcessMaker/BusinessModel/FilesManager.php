@@ -275,6 +275,10 @@ class FilesManager
                 $_FILES['prf_file']['name'] = $_FILES['prf_file']['name'].$extention;
             }
             $file = end(explode("/",$path));
+            if(strpos($file,"\\") > 0) {
+                $file = str_replace('\\', '/', $file);
+                $file = end(explode("/",$file));
+            }
             $path = str_replace($file,'',$path);
             if ($file == $_FILES['prf_file']['name']) {
                 if ($_FILES['prf_file']['error'] != 1) {
