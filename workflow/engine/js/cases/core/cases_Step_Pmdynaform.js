@@ -49,7 +49,7 @@ $(window).load(function () {
         submitRest: false
     });
     new PMDynaform.core.Proxy({
-        url: "http://" + window.project.keys.server + "/" + window.project.keys.apiName + "/" + window.project.keys.apiVersion + "/" + window.project.keys.workspace + "/cases/" + app_uid + "/variables",
+        url: "http://" + window.project.keys.server + ":"+port +"/" + window.project.keys.apiName + "/" + window.project.keys.apiVersion + "/" + window.project.keys.workspace + "/cases/" + app_uid + "/variables",
         method: 'GET',
         data: {},
         keys: window.project.token,

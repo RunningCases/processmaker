@@ -17,8 +17,9 @@ class pmDynaform
     public $items = array();
     public $data = array();
     public $variables = array();
+    public $arrayFieldRequired = array();        
 
-    public function __construct($dyn_uid, $app_data)
+    public function __construct($dyn_uid, $app_data = array())
     {        
         $this->dyn_uid = $dyn_uid;
         $this->app_data = $app_data;
@@ -27,9 +28,16 @@ class pmDynaform
         //items
         $dynContent = G::json_decode($this->record["DYN_CONTENT"]);
         if (isset($dynContent->items)) {
-            $this->items = $dynContent->items[0]->items;
+            $this->items = $dynContent->items[0]->items;            
+            for($i=0; $i<count($this->items); $i++){
+                for($j=0; $j<count($this->items[$i]); $j++){
+                    if($this->items[$i][$j]->required == 1){
+                        array_push($this->arrayFieldRequired, $this->items[$i][$j]->name);
+                    }  
+                }
+            }            
         }
-        if($app_data != array()){
+        if(!empty($app_data)){
             //data
             $cases = new \ProcessMaker\BusinessModel\Cases();
             $this->data = $cases->getCaseVariables($app_data["APPLICATION"]);
@@ -61,7 +69,7 @@ class pmDynaform
             while ($ds->next()) {
                 $row = $ds->getRow();
                 //options
-                $rows2 = json_decode($row["VAR_ACCEPTED_VALUES"]);
+                $rows2 = G::json_decode($row["VAR_ACCEPTED_VALUES"]);
                 $n = count($rows2);
                 for ($i = 0; $i < $n; $i++) {
                     $rows2[$i] = array($rows2[$i]->keyValue, $rows2[$i]->value);
@@ -240,12 +248,13 @@ class pmDynaform
         $file = str_replace("{PRJ_UID}", $this->app_data["PROCESS"], $file);
         $file = str_replace("{STEP_MODE}", $step_mode, $file);
         $file = str_replace("{WORKSPACE}", $this->app_data["SYS_SYS"], $file);
-        $file = str_replace("{credentials}", json_encode($clientToken), $file);
+        $file = str_replace("{PORT}", $_SERVER["SERVER_PORT"] , $file); 
+        $file = str_replace("{credentials}", G::json_encode($clientToken), $file);
         echo $file;
         exit();
     }
 
-    public function printWebEntry()
+    public function printWebEntry($filename)
     {
         ob_clean();
         $a = $this->clientToken();
@@ -263,11 +272,14 @@ class pmDynaform
         $file = str_replace("{DYN_UID}", $this->dyn_uid, $file);
         $file = str_replace("{PRJ_UID}",$this->record["PRO_UID"], $file);
         $file = str_replace("{WORKSPACE}", SYS_SYS, $file);
-        $file = str_replace("{credentials}", json_encode($clientToken), $file);
-        echo $file;        
+        $file = str_replace("{FILEPOST}", $filename, $file);
+        $file = str_replace("{PORT}", $_SERVER["SERVER_PORT"] , $file);                
+        $file = str_replace("{credentials}", G::json_encode($clientToken), $file);
+        $file = str_replace("{FIELDSREQUIRED}", G::json_encode($this->arrayFieldRequired), $file);        
+        echo $file;
         exit();
     }
-    
+
     private function clientToken()
     {
         $client = $this->getClientCredentials();

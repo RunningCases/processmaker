@@ -400,7 +400,7 @@ class WebEntry
                     $fileContent .= "G::LoadClass('pmDynaform');\n"; 
                     $fileContent .= "\$a = new pmDynaform('".$arrayWebEntryData["DYN_UID"]."', array());\n";                                                            
                     $fileContent .= "if(\$a->isResponsive()){";                                        
-                    $fileContent .= "\$a->printWebEntry();";                                        
+                    $fileContent .= "\$a->printWebEntry('".$fileName."Post.php');";                                        
                     $fileContent .= "}else {";                    
                     $fileContent .= "\$G_PUBLISH->AddContent(\"dynaform\", \"xmlform\", \"" . $processUid . "/" . $dynaFormUid . "\", \"\", array(), \"" . $fileName . "Post.php\");\n";
                     $fileContent .= "G::RenderPage(\"publish\", \"blank\");";
