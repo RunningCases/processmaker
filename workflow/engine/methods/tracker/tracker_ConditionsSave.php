@@ -49,10 +49,9 @@ try {
     $aFields['CTO_CONDITION'] = $value['CTO_CONDITION'];
     $oCaseTrackerObject->update( $aFields );
     
-    $infoProcess = new Processes();
-    $proFields = $infoProcess->serializeProcess($value['PRO_UID']);
-    $resultProcess = $infoProcess->saveSerializedProcess($proFields);
-    G::auditLog('CaseTrackers','Save Condition Case Tracker Object ('.$value['CTO_CONDITION'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
+    $infoProcess = new Process();
+    $resultProcess = $infoProcess->load($value['PRO_UID']);
+    G::auditLog('CaseTrackers','Save Condition Case Tracker Object ('.$value['CTO_UID'].', condition: '.$value['CTO_CONDITION'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
 } catch (Exception $oException) {
     die( $oException->getMessage() );
 }

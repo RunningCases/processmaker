@@ -46,8 +46,7 @@ $rs->next();
 $row = $rs->getRow();
 $proUid = $row['PRO_UID'];
 
-$infoProcess = new Processes();
-$proFields = $infoProcess->serializeProcess($proUid);
-$resultProcess = $infoProcess->saveSerializedProcess($proFields);
-G::auditLog('Events','Save event in process "'.$resultProcess['PRO_TITLE'].'"');
+$infoProcess = new Process();
+$resultProcess = $infoProcess->load($proUid);
+G::auditLog('Events','Save event ('.$_POST['form']['TRI_UID'].') in process "'.$resultProcess['PRO_TITLE'].'"');
 

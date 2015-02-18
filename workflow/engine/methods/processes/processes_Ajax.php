@@ -113,7 +113,14 @@ try {
         $resultProcess = $infoProcess->getProcessRow($proUid);     
     }
     
-    
+    if($proUid != "") {
+        $valuesProcess['PRO_UID'] = $proUid;
+        $valuesProcess['PRO_UPDATE_DATE'] = date("Y-m-d H:m:i");
+        G::LoadClass('processes');
+        $infoProcess = new Processes();
+        $resultProcess = $infoProcess->updateProcessRow($valuesProcess);
+        $resultProcess = $infoProcess->getProcessRow($proUid);  
+    }
     //G::LoadClass( 'processMap' );
     $oProcessMap = new processMap(new DBConnection());
     
@@ -173,11 +180,10 @@ try {
                 unlink(PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP . $form['PRO_UID'] . PATH_SEP . str_replace(".php", "Post", $form['FILENAME']) . ".php");
             }
             $oProcessMap->webEntry($_REQUEST['PRO_UID']);
-            G::auditLog('WebEntry','Delete web entry in process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('WebEntry','Delete web entry ('.$form['FILENAME'].') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'webEntry_new':
             $oProcessMap->webEntry_new($oData->PRO_UID);
-            G::auditLog('WebEntry','Save new web entry in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'assignProcessUser':
             $oProcessMap->assignProcessUser($oData->PRO_UID, $oData->USR_UID, $oData->TYPE_UID);

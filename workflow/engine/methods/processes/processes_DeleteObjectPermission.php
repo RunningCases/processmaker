@@ -61,4 +61,4 @@ print G::json_encode( $result );
 
 $infoProcess = new Processes();
 $resultProcess = $infoProcess->getProcessRow($sProcessUID);
-G::auditLog('DeletePermissions','Delete Permissions in Process "'.$resultProcess['PRO_TITLE'].'"');
+G::auditLog('DeletePermissions','Delete Permissions ('.$_GET['OP_UID'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
