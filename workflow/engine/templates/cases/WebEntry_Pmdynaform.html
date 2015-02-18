@@ -20,21 +20,24 @@
         <script type="text/javascript" src="/lib/pmdynaform/build/js/PMDynaform.js"></script>
         <script type="text/javascript">
             var jsondata = {JSON_DATA};
-            var pm_run_outside_main_app = '{PM_RUN_OUTSIDE_MAIN_APP}';
+            //var pm_run_outside_main_app = '{PM_RUN_OUTSIDE_MAIN_APP}';
             var dyn_uid = '{DYN_UID}';
-            var __DynaformName__ = '{DYNAFORMNAME}';
-            var app_uid = '{APP_UID}';
+            //var __DynaformName__ = '{DYNAFORMNAME}';
+            //var app_uid = '{APP_UID}';
             var prj_uid = '{PRJ_UID}';
-            var step_mode = '{STEP_MODE}';
+            //var step_mode = '{STEP_MODE}';
             var workspace = '{WORKSPACE}';
-            var port = '{PORT}';            
             var credentials = {credentials};
+            var filePost = '{FILEPOST}';
+            var port = '{PORT}';
+            var fieldsRequired = {FIELDSREQUIRED};
+                        
         </script>
         <script type="text/javascript" src="/jscore/cases/core/cases_Step.js"></script>
-        <script type="text/javascript" src="/jscore/cases/core/cases_Step_Pmdynaform.js"></script>
+        <script type="text/javascript" src="/jscore/cases/core/webentry_pmdynaform.js"></script>
         <table width="100%" align="center">
             <tr class="userGroupTitle">
-                <td width="100%" align="center">{CASE} #: {APP_NUMBER}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{TITLE}: {APP_TITLE}</td>
+                <!--td width="100%" align="center">{CASE} #: {APP_NUMBER}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{TITLE}: {APP_TITLE}</td-->
             </tr>
         </table>
         <div style="width:100%;padding: 0px 10px 0px 10px">
