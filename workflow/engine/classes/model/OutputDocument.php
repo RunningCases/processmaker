@@ -227,7 +227,7 @@ class OutputDocument extends BaseOutputDocument
                     }
 
                     $iResult = $oOutputDocument->save();
-                    $oConnectOC_UID'].")");
+                    $oConnection->commit();
 
                     return $iResult;
                 } else {
