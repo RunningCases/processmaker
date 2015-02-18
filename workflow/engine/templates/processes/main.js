@@ -476,6 +476,8 @@ Ext.onReady(function(){
 
 function newProcess(params)
 {
+    if (winDesigner)
+        winDesigner.close();
   params = typeof params == 'undefined' ? {type:'classicProject'} : params;
 
   // TODO this variable have hardcoded labels, it must be changed on the future
@@ -589,6 +591,8 @@ function saveProcess()
                     			  "../designer?prj_uid="+resp.result.PRO_UID,
                     			  'winDesigner'
                     			);
+                                Ext.getCmp('newProjectWin').close();
+                                processesGrid.store.reload();
                   	 } else {
                   		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
                   	 }
@@ -1163,6 +1167,11 @@ importProcessExistProcess = function()
 
 importProcess = function()
 {
+    if (winDesigner) {
+        winDesigner.close();
+        if (!winDesigner.closed)
+            return;
+    }
     var processFileType      = importProcessGlobal.processFileType;
     var processFileTypeTitle = (processFileType == "pm") ? "" : " " + processFileType;
 
