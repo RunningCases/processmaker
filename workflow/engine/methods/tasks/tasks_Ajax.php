@@ -34,19 +34,6 @@ try {
 
     switch ($sAction) {
         case "saveTaskData":
-                    $k = new Criteria('william');
-                    $k->clearSelectColumns();
-                    $k->addSelectColumn(ContentPeer::CON_VALUE);
-                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
-                    $k->add(ContentPeer::CON_ID, $aData['TAS_UID'] );
-                    $rs = ContentPeer::doSelectRS($k);
-                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                    $rs->next();
-                    $row = $rs->getRow();
-                    $titleTask = $row['CON_VALUE'];
-
-              G::auditLog("DerivationRule","STARTING PROCESS Task Name -> ".$titleTask);
-              
             require_once ("classes/model/Task.php");
 
             $response = array ();
@@ -128,7 +115,10 @@ try {
                     $aData['TAS_GROUP_VARIABLE'] = '';
                     break;
             }
-
+            $oTaskNewPattern = new Task();
+            $oTaskNewPattern->load($aData['TAS_UID']);
+            $titleTask=$oTaskNewPattern->getTasTitle();
+            G::auditLog("DerivationRule","ASSIGN STARTING TASK : Task Name -> ".$titleTask.' : '.$aData['TAS_UID']);
             $result = $oTask->update( $aData );
 
             $response["status"] = "OK";

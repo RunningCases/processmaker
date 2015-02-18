@@ -56,29 +56,10 @@ switch ($aData['action']) {
                 break;
             case 'SELECT':
                     $tasksAffected='';
-                    $sType = 'SELECT';
-                    $k = new Criteria('william');
-                    $k->clearSelectColumns();
-                    $k->addSelectColumn(ContentPeer::CON_VALUE);
-                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
-                    $k->add(ContentPeer::CON_ID, $aData['TASK'] );
-                    $rs = ContentPeer::doSelectRS($k);
-                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                    $rs->next();
-                    $row = $rs->getRow();
-                    $titleTask = $row['CON_VALUE'];
+                    $oTaskSavePattern = new Task();
+                    $oTaskSavePattern->load($aData['TASK']);
+                    $titleTask=$oTaskSavePattern->getTasTitle();
                 foreach ($aData['GRID_SELECT_TYPE'] as $iKey => $aRow) {
-                    $sType = 'SELECT';
-                    $k = new Criteria('william');
-                    $k->clearSelectColumns();
-                    $k->addSelectColumn(ContentPeer::CON_VALUE);
-                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
-                    $k->add(ContentPeer::CON_ID, $aRow['ROU_NEXT_TASK'] );
-                    $rs = ContentPeer::doSelectRS($k);
-                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                    $rs->next();
-                    $row = $rs->getRow();
-                    $titleNextTask = $row['CON_VALUE'];
                     /*if ($aRow['ROU_UID'] != '')
           {
 	  	      $aFields['ROU_UID'] = $aRow['ROU_UID'];
@@ -91,52 +72,35 @@ switch ($aData['action']) {
                     $aFields['ROU_CONDITION'] = $aRow['ROU_CONDITION'];
                     //$aFields['ROU_TO_LAST_USER'] = $aRow['ROU_TO_LAST_USER'];
                     $rou_id = $oRoute->create( $aFields );
-                    if ($aRow['ROU_NEXT_TASK']=='-1') {
-                            $tasksAffected.='From -> '.$titleTask.' To End Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
-                    }else{
-                        $tasksAffected.='From -> '.$titleTask.' To -> '.$titleNextTask.' Condition -> '.$aFields['ROU_CONDITION'].' ; ';
-                    }
+                        if ($aRow['ROU_NEXT_TASK']=='-1') {
+                            if ($aRow['ROU_CONDITION']=='') {
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces  Condition -> Empty; ';
+                            }else{
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
+                            }                        
+                        }else{
+                            $oTaskSaveNextPattern = new Task();
+                            $oTaskSaveNextPattern->load($aRow['ROU_NEXT_TASK']);
+                            $titleNextTask=$oTaskSaveNextPattern->getTasTitle();
+                            if ($aRow['ROU_CONDITION']=='') {
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To -> '.$titleNextTask.' : '.$aRow['ROU_NEXT_TASK'].' Condition -> Empty ; ';                    
+                            }else{
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To -> '.$titleNextTask.' : '.$aRow['ROU_NEXT_TASK'].' Condition -> '.$aFields['ROU_CONDITION'].' ; ';                     
+                            }
+                        }
                     unset( $aFields );
-                }
-                $k = new Criteria('william');
-                $k->clearSelectColumns();
-                $k->addSelectColumn(ContentPeer::CON_VALUE);
-                $k->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
-                $k->add(ContentPeer::CON_ID, $aData['PROCESS'] );
-                $rs = ContentPeer::doSelectRS($k);
-                $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                $rs->next();
-                $row = $rs->getRow();
-                $titleProcess = $row['CON_VALUE'];
-                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE_NEW ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                    }
+                    $oProcessNewPattern = new Process();
+                    $oProcessNewPattern->load($aData['PROCESS']);
+                    $titleProcess=$oProcessNewPattern->getProTitle();
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
-            case 'EVALUATE': 
+            case 'EVALUATE':
                     $tasksAffected='';
-                    $sType = 'SELECT';
-                    $k = new Criteria('william');
-                    $k->clearSelectColumns();
-                    $k->addSelectColumn(ContentPeer::CON_VALUE);
-                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
-                    $k->add(ContentPeer::CON_ID, $aData['TASK'] );
-                    $rs = ContentPeer::doSelectRS($k);
-                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                    $rs->next();
-                    $row = $rs->getRow();
-                    $titleTask = $row['CON_VALUE'];   
-
-                foreach ($aData['GRID_EVALUATE_TYPE'] as $iKey => $aRow) {                 
-                    $sType = 'SELECT';
-                    $k = new Criteria('william');
-                    $k->clearSelectColumns();
-                    $k->addSelectColumn(ContentPeer::CON_VALUE);
-                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
-                    $k->add(ContentPeer::CON_ID, $aRow['ROU_NEXT_TASK'] );
-                    $rs = ContentPeer::doSelectRS($k);
-                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                    $rs->next();
-                    $row = $rs->getRow();
-                    $titleNextTask = $row['CON_VALUE'];                    
-
+                    $oTaskSavePattern = new Task();
+                    $oTaskSavePattern->load($aData['TASK']);
+                    $titleTask=$oTaskSavePattern->getTasTitle();
+                foreach ($aData['GRID_EVALUATE_TYPE'] as $iKey => $aRow) {
                     /*if ($aRow['ROU_UID'] != '')
           {
 	  	      $aFields['ROU_UID'] = $aRow['ROU_UID'];
@@ -148,51 +112,36 @@ switch ($aData['action']) {
                     $aFields['ROU_TYPE'] = $aData['ROU_TYPE'];
                     $aFields['ROU_CONDITION'] = $aRow['ROU_CONDITION'];
                     //$aFields['ROU_TO_LAST_USER'] = $aRow['ROU_TO_LAST_USER'];
-                    $rou_id = $oRoute->create( $aFields );               
-                    if ($aRow['ROU_NEXT_TASK']=='-1') {
-                            $tasksAffected.='From -> '.$titleTask.' To End Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
-                    }else{
-                        $tasksAffected.='From -> '.$titleTask.' To -> '.$titleNextTask.' Condition -> '.$aFields['ROU_CONDITION'].' ; ';
-                    }    
-                    unset( $aFields );                
+                    $rou_id = $oRoute->create( $aFields );
+                        if ($aRow['ROU_NEXT_TASK']=='-1') {
+                            if ($aRow['ROU_CONDITION']=='') {
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces  Condition -> Empty; ';
+                            }else{
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
+                            }                        
+                        }else{
+                            $oTaskSaveNextPattern = new Task();
+                            $oTaskSaveNextPattern->load($aRow['ROU_NEXT_TASK']);
+                            $titleNextTask=$oTaskSaveNextPattern->getTasTitle();
+                            if ($aRow['ROU_CONDITION']=='') {
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To -> '.$titleNextTask.' : '.$aRow['ROU_NEXT_TASK'].' Condition -> Empty ; ';                    
+                            }else{
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To -> '.$titleNextTask.' : '.$aRow['ROU_NEXT_TASK'].' Condition -> '.$aFields['ROU_CONDITION'].' ; ';                     
+                            }
+                        }
+                    unset( $aFields );
                 }
-                $k = new Criteria('william');
-                $k->clearSelectColumns();
-                $k->addSelectColumn(ContentPeer::CON_VALUE);
-                $k->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
-                $k->add(ContentPeer::CON_ID, $aData['PROCESS'] );
-                $rs = ContentPeer::doSelectRS($k);
-                $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                $rs->next();
-                $row = $rs->getRow();
-                $titleProcess = $row['CON_VALUE'];
-                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE_NEW ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                $oProcessNewPattern = new Process();
+                $oProcessNewPattern->load($aData['PROCESS']);
+                $titleProcess=$oProcessNewPattern->getProTitle();
+                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
             case 'PARALLEL':
                     $tasksAffected='';
-                    $sType = 'SELECT';
-                    $k = new Criteria('william');
-                    $k->clearSelectColumns();
-                    $k->addSelectColumn(ContentPeer::CON_VALUE);
-                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
-                    $k->add(ContentPeer::CON_ID, $aData['TASK'] );
-                    $rs = ContentPeer::doSelectRS($k);
-                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                    $rs->next();
-                    $row = $rs->getRow();
-                    $titleTask = $row['CON_VALUE'];
+                    $oTaskSavePattern = new Task();
+                    $oTaskSavePattern->load($aData['TASK']);
+                    $titleTask=$oTaskSavePattern->getTasTitle();
                 foreach ($aData['GRID_PARALLEL_TYPE'] as $iKey => $aRow) {
-                    $sType = 'SELECT';
-                    $k = new Criteria('william');
-                    $k->clearSelectColumns();
-                    $k->addSelectColumn(ContentPeer::CON_VALUE);
-                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
-                    $k->add(ContentPeer::CON_ID, $aRow['ROU_NEXT_TASK'] );
-                    $rs = ContentPeer::doSelectRS($k);
-                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                    $rs->next();
-                    $row = $rs->getRow();
-                    $titleNextTask = $row['CON_VALUE'];
                     /*if ($aRow['ROU_UID'] != '')
           {
 	  	      $aFields['ROU_UID'] = $aRow['ROU_UID'];
@@ -202,47 +151,24 @@ switch ($aData['action']) {
                     $aFields['ROU_NEXT_TASK'] = $aRow['ROU_NEXT_TASK'];
                     $aFields['ROU_CASE'] = $iKey;
                     $aFields['ROU_TYPE'] = $aData['ROU_TYPE'];
-                    $rou_id = $oRoute->create( $aFields );                        
-                    $tasksAffected.='From -> '.$titleTask.' To -> '.$titleNextTask.' ; ';
+                    $rou_id = $oRoute->create( $aFields );
+                    $oTaskSaveNextPattern = new Task();
+                    $oTaskSaveNextPattern->load($aRow['ROU_NEXT_TASK']);
+                    $titleNextTask=$oTaskSaveNextPattern->getTasTitle();
+                    $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To -> '.$titleNextTask.' : '.$aRow['ROU_NEXT_TASK'].' ; ';
                     unset( $aFields );
                 }
-                $k = new Criteria('william');
-                $k->clearSelectColumns();
-                $k->addSelectColumn(ContentPeer::CON_VALUE);
-                $k->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
-                $k->add(ContentPeer::CON_ID, $aData['PROCESS'] );
-                $rs = ContentPeer::doSelectRS($k);
-                $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                $rs->next();
-                $row = $rs->getRow();
-                $titleProcess = $row['CON_VALUE'];
-                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE_NEW ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                $oProcessNewPattern = new Process();
+                $oProcessNewPattern->load($aData['PROCESS']);
+                $titleProcess=$oProcessNewPattern->getProTitle();
+                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
             case 'PARALLEL-BY-EVALUATION':
                     $tasksAffected='';
-                    $sType = 'SELECT';
-                    $k = new Criteria('william');
-                    $k->clearSelectColumns();
-                    $k->addSelectColumn(ContentPeer::CON_VALUE);
-                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
-                    $k->add(ContentPeer::CON_ID, $aData['TASK'] );
-                    $rs = ContentPeer::doSelectRS($k);
-                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                    $rs->next();
-                    $row = $rs->getRow();
-                    $titleTask = $row['CON_VALUE'];
+                    $oTaskSavePattern = new Task();
+                    $oTaskSavePattern->load($aData['TASK']);
+                    $titleTask=$oTaskSavePattern->getTasTitle();
                 foreach ($aData['GRID_PARALLEL_EVALUATION_TYPE'] as $iKey => $aRow) {
-                    $sType = 'SELECT';
-                    $k = new Criteria('william');
-                    $k->clearSelectColumns();
-                    $k->addSelectColumn(ContentPeer::CON_VALUE);
-                    $k->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
-                    $k->add(ContentPeer::CON_ID, $aRow['ROU_NEXT_TASK'] );
-                    $rs = ContentPeer::doSelectRS($k);
-                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                    $rs->next();
-                    $row = $rs->getRow();
-                    $titleNextTask = $row['CON_VALUE'];
                     /*if ($aRow['ROU_UID'] != '')
           {
 	  	      $aFields['ROU_UID'] = $aRow['ROU_UID'];
@@ -257,24 +183,28 @@ switch ($aData['action']) {
                     if (isset( $aRow['ROU_OPTIONAL'] ) && trim( $aRow['ROU_OPTIONAL'] ) != '' && ($aRow['ROU_OPTIONAL'] === 'TRUE' || $aRow['ROU_OPTIONAL'] === 'FALSE'))
                         $aFields['ROU_OPTIONAL'] = $aRow['ROU_OPTIONAL'];
                     $rou_id = $oRoute->create( $aFields );
-                    if ($aRow['ROU_NEXT_TASK']=='-1') {
-                            $tasksAffected.='From -> '.$titleTask.' To End Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
-                    }else{
-                        $tasksAffected.='From -> '.$titleTask.' To -> '.$titleNextTask.' Condition -> '.$aFields['ROU_CONDITION'].' ; ';
-                    }
+                        if ($aRow['ROU_NEXT_TASK']=='-1') {
+                            if ($aRow['ROU_CONDITION']=='') {
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces  Condition -> Empty; ';
+                            }else{
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
+                            }                        
+                        }else{
+                            $oTaskSaveNextPattern = new Task();
+                            $oTaskSaveNextPattern->load($aRow['ROU_NEXT_TASK']);
+                            $titleNextTask=$oTaskSaveNextPattern->getTasTitle();
+                            if ($aRow['ROU_CONDITION']=='') {
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To -> '.$titleNextTask.' : '.$aRow['ROU_NEXT_TASK'].' Condition -> Empty ; ';                    
+                            }else{
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To -> '.$titleNextTask.' : '.$aRow['ROU_NEXT_TASK'].' Condition -> '.$aFields['ROU_CONDITION'].' ; ';                     
+                            }
+                        }
                     unset( $aFields );
                 }
-                $k = new Criteria('william');
-                $k->clearSelectColumns();
-                $k->addSelectColumn(ContentPeer::CON_VALUE);
-                $k->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
-                $k->add(ContentPeer::CON_ID, $aData['PROCESS'] );
-                $rs = ContentPeer::doSelectRS($k);
-                $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                $rs->next();
-                $row = $rs->getRow();
-                $titleProcess = $row['CON_VALUE'];
-                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE_NEW ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                $oProcessNewPattern = new Process();
+                $oProcessNewPattern->load($aData['PROCESS']);
+                $titleProcess=$oProcessNewPattern->getProTitle();
+                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
             case 'DISCRIMINATOR': //Girish ->Added to save changes, while editing the route
                 foreach ($aData['GRID_DISCRIMINATOR_TYPE'] as $iKey => $aRow) {
