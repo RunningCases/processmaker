@@ -359,9 +359,11 @@ class WebEntryEvent
             //Task
             $task = new \Task();
 
+            $prefix = "wee-";
+
             $this->webEntryEventWebEntryTaskUid = $task->create(
                 array(
-                    "TAS_UID"   => \ProcessMaker\Util\Common::generateUID(),
+                    "TAS_UID"   => $prefix . substr(\ProcessMaker\Util\Common::generateUID(), (32 - strlen($prefix)) * -1),
                     "PRO_UID"   => $projectUid,
                     "TAS_TYPE"  => "WEBENTRYEVENT",
                     "TAS_TITLE" => "WEBENTRYEVENT",
@@ -765,6 +767,8 @@ class WebEntryEvent
                     throw new \Exception(\G::LoadTranslation("ID_REGISTRY_CANNOT_BE_UPDATED") . (($msg != "")? "\n" . $msg : ""));
                 }
             } catch (\Exception $e) {
+                $cnn->rollback();
+
                 $this->deleteWebEntry($this->webEntryEventWebEntryUid, $this->webEntryEventWebEntryTaskUid);
 
                 throw $e;
