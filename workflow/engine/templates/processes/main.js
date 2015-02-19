@@ -67,6 +67,7 @@ Ext.onReady(function(){
         /*----------------------------------********---------------------------------*/
         ,{name : "PRO_TYPE_PROCESS", type: "string"}
         /*----------------------------------********---------------------------------*/
+        ,{name : "PRO_UPDATE_DATE"}
       ]
     }),
 
@@ -226,6 +227,7 @@ Ext.onReady(function(){
         /*----------------------------------********---------------------------------*/
         ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 75, align:"left"}
         /*----------------------------------********---------------------------------*/
+        ,{header: _("ID_LAN_UPDATE_DATE"), dataIndex: "PRO_UPDATE_DATE", width: 75, align:"left"}
       ]
     }),
     store: store,

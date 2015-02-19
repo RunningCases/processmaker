@@ -134,7 +134,7 @@ if(array_key_exists('PRO_TRI_PAUSED', $newFields)) {
     $fields[] = "Execute a trigger when a case is paused";
 }
 if(array_key_exists('PRO_TRI_REASSIGNED', $newFields)) {
-    $fields[] = "Execute a trigger when a case is reassigned"; G
+    $fields[] = "Execute a trigger when a case is reassigned";
 }
 if(array_key_exists('PRO_TRI_UNPAUSED', $newFields)) {
     $fields[] = "Execute a trigger when a case is unpaused";
