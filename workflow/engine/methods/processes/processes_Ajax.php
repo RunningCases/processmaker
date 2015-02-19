@@ -379,9 +379,9 @@ try {
                     $oTaskNextNewPattern->load($oData->next_task);
                     $titleNextTask=$oTaskNextNewPattern->getTasTitle();
                     if ($titleNextTask=='') {
-                        G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' ACTION : END OF PROCESS Task Name -> '.$titleTask.' : '.$oData->tas_uid);
+                        G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : END OF PROCESS Task Name -> '.$titleTask.' : '.$oData->tas_uid);
                     }else{
-                        G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' ACTION : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
+                        G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     }
                     break;
                 case 1:
@@ -395,7 +395,7 @@ try {
                     $oTaskNextNewPattern = new Task();
                     $oTaskNextNewPattern->load($oData->next_task);
                     $titleNextTask=$oTaskNextNewPattern->getTasTitle();
-                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' ACTION : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
                 case 2:
                     $sType = 'EVALUATE';
@@ -408,7 +408,7 @@ try {
                     $oTaskNextNewPattern = new Task();
                     $oTaskNextNewPattern->load($oData->next_task);
                     $titleNextTask=$oTaskNextNewPattern->getTasTitle();
-                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' ACTION : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
                 case 3:
                     $sType = 'PARALLEL';
@@ -421,7 +421,7 @@ try {
                     $oTaskNextNewPattern = new Task();
                     $oTaskNextNewPattern->load($oData->next_task);
                     $titleNextTask=$oTaskNextNewPattern->getTasTitle();
-                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' ACTION : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
                 case 4:
                     $sType = 'PARALLEL-BY-EVALUATION';
@@ -434,7 +434,7 @@ try {
                     $oTaskNextNewPattern = new Task();
                     $oTaskNextNewPattern->load($oData->next_task);
                     $titleNextTask=$oTaskNextNewPattern->getTasTitle();
-                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' ACTION : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
                 case 5:
                     $sType = 'SEC-JOIN';
@@ -447,7 +447,7 @@ try {
                     $oTaskNextNewPattern = new Task();
                     $oTaskNextNewPattern->load($oData->next_task);
                     $titleNextTask=$oTaskNextNewPattern->getTasTitle();
-                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' ACTION : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
                 case 8:
                     $sType = 'DISCRIMINATOR';
@@ -460,7 +460,7 @@ try {
                     $oTaskNextNewPattern = new Task();
                     $oTaskNextNewPattern->load($oData->next_task);
                     $titleNextTask=$oTaskNextNewPattern->getTasTitle();
-                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' ACTION : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
             }
             if (($oData->type != 0) && ($oData->type != 5) && ($oData->type != 8)) {

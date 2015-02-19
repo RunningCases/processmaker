@@ -93,7 +93,7 @@ switch ($aData['action']) {
                 $oProcessNewPattern = new Process();
                 $oProcessNewPattern->load($aData['PROCESS']);
                 $titleProcess=$oProcessNewPattern->getProTitle();
-                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Routing rule : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Change Routing Rule From : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
             case 'EVALUATE':
                     $tasksAffected='';
@@ -134,7 +134,7 @@ switch ($aData['action']) {
                 $oProcessNewPattern = new Process();
                 $oProcessNewPattern->load($aData['PROCESS']);
                 $titleProcess=$oProcessNewPattern->getProTitle();
-                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Routing rule : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Change Routing Rule From : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
             case 'PARALLEL':
                     $tasksAffected='';
@@ -161,7 +161,7 @@ switch ($aData['action']) {
                 $oProcessNewPattern = new Process();
                 $oProcessNewPattern->load($aData['PROCESS']);
                 $titleProcess=$oProcessNewPattern->getProTitle();
-                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Routing rule : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Change Routing Rule From : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
             case 'PARALLEL-BY-EVALUATION':
                     $tasksAffected='';
@@ -204,7 +204,7 @@ switch ($aData['action']) {
                 $oProcessNewPattern = new Process();
                 $oProcessNewPattern->load($aData['PROCESS']);
                 $titleProcess=$oProcessNewPattern->getProTitle();
-                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Routing rule : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Change Routing Rule From : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
             case 'DISCRIMINATOR': //Girish ->Added to save changes, while editing the route
                 foreach ($aData['GRID_DISCRIMINATOR_TYPE'] as $iKey => $aRow) {
