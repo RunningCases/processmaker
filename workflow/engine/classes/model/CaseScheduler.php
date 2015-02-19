@@ -53,6 +53,28 @@ class CaseScheduler extends BaseCaseScheduler
                 throw ($e);
             }
             $con->commit();
+            
+            //Add Audit Log
+            switch ($aData['SCH_OPTION']) {
+                case '1':
+                    $perform = 'Daily';
+                    break;
+                case '2':
+                    $perform = 'Weekly';
+                    break;
+                case '3':
+                    $perform = 'Monthly';
+                    break;
+                case '4':
+                    $perform = 'One time only';
+                    break;
+                case '5':
+                    $perform = 'Every';
+                    break;
+                
+            }
+            G::auditLog("CreateCaseScheduler", "Scheduler Name: ".$aData['SCH_NAME'].", Task: ".$aData['TAS_UID'].", Perform this task: ".$perform.", Start Date: ".$aData['SCH_START_DATE'].", End Date: ".$aData['SCH_END_DATE'].",  Execution time  : ".$aData['SCH_START_TIME']);
+             
             return $result;
         } catch (Exception $e) {
             $con->rollback();
@@ -70,6 +92,27 @@ class CaseScheduler extends BaseCaseScheduler
             if ($this->validate()) {
                 $result = $this->save();
                 $con->commit();
+                
+                //Add Audit Log
+                switch ($fields['SCH_OPTION']){
+                  case '1':
+                    $perform = 'Daily';
+                    break;
+                  case '2':
+                    $perform = 'Weekly';
+                    break;
+                  case '3':
+                    $perform = 'Monthly';
+                    break;
+                  case '4':
+                    $perform = 'One time only';
+                    break;
+                  case '5':
+                    $perform = 'Every';
+                    break;
+                }
+                G::auditLog("UpdateCaseScheduler", "Scheduler Name: ".$fields['SCH_NAME'].", Task: ".$fields['TAS_UID'].", Perform this task: ".$perform.", Start Date: ".$fields['SCH_START_DATE'].", End Date: ".$fields['SCH_END_DATE'].",  Execution time  : ".$fields['SCH_START_TIME']);
+                 
                 return $result;
             } else {
                 $con->rollback();
@@ -87,8 +130,12 @@ class CaseScheduler extends BaseCaseScheduler
         try {
             $oCaseScheduler = CaseSchedulerPeer::retrieveByPK( $SchUid );
             if (! is_null( $oCaseScheduler )) {
+                $fields = $this->Load( $SchUid );
                 $iResult = $oCaseScheduler->delete();
                 $con->commit();
+                //Add Audit Log
+                G::auditLog("DeleteCaseScheduler", "Scheduler Name: ".$fields['SCH_NAME'].", Task: ".$fields['TAS_UID']);
+                
                 return $iResult;
             } else {
                 throw (new Exception( 'This row doesn\'t exist!' ));

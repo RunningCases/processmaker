@@ -38,6 +38,9 @@ try {
         $http = 'http://';
 
     $sContent = '';
+    
+    $infoProcess = new Process();
+    $resultProcess = $infoProcess->load($sPRO_UID);
 
     if ($withWS) {
         //creating sys.info;
@@ -73,6 +76,8 @@ try {
         $template->assign( 'wsUser', $sWS_USER );
         $template->assign( 'wsPass', Bootstrap::hashPassword($sWS_PASS, '', true) );
         $template->assign( 'wsRoundRobin', $sWS_ROUNDROBIN );
+        
+        G::auditLog('WebEntry','Generate web entry with web services ('.$dynTitle.'.php) in process "'.$resultProcess['PRO_TITLE'].'"');
 
         if ($sWE_USR == "2") {
             $template->assign( 'USR_VAR', "\$cInfo = ws_getCaseInfo(\$caseId);\n\t  \$USR_UID = \$cInfo->currentUsers->userId;" );
@@ -118,8 +123,7 @@ try {
         $link = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/' . $sPRO_UID . '/' . $dynTitle . '.php';
         print $link;
         //print "\n<a href='$link' target='_new' > $link </a>";
-
-
+        
     } else {
         $G_FORM = new Form( $sPRO_UID . '/' . $sDYNAFORM, PATH_DYNAFORM, SYS_LANG, false );
         $G_FORM->action = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/cases_StartExternal.php';
@@ -159,6 +163,7 @@ try {
         }
 
         print_r( '<textarea cols="70" rows="20">' . htmlentities( str_replace( '</body>', '</form></body>', str_replace( '</form>', '', $template->getOutputContent() ) ) ) . '</textarea>' );
+        G::auditLog('WebEntry','Generate web entry with single HTML (dynaform uid: '.$sDYNAFORM.') in process "'.$resultProcess['PRO_TITLE'].'"');
     }
 
 } catch (Exception $e) {
