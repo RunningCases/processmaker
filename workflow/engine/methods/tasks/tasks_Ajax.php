@@ -114,22 +114,18 @@ try {
                     $aData['TAS_GROUP_VARIABLE'] = '';
                     break;
             }
-            $oTaskNewPattern = new Task();
-            $oTaskNewPattern->load($aData['TAS_UID']);
-            $titleTask=$oTaskNewPattern->getTasTitle();
-            if (count($aData)==5) {
-                G::auditLog("DerivationRule",'ASSIGN STARTING TASK : Task Name -> '.$titleTask.' : '.$aData['TAS_UID']);
-            }else{
-                $values='';
-                foreach ($aData as $key => $value){
-                    if ($value!='') {
-                        $values.=$key.' -> '.$value.' ';
-                    }
-                }
-                G::auditLog("OptionsMenuTask","Update Task DETAILS : ".$values);
-            }            
+                       
             $result = $oTask->update( $aData );
-
+            $oTaskNewPattern = new Task();
+            $taskInfo=$oTaskNewPattern->load($aData['TAS_UID']);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            $values='';
+            foreach ($aData as $key => $value){
+                if ($value!='') {
+                    $values.=$key.' -> '.$value.' ';
+                }
+            }
+            G::auditLog("OptionsMenuTask","Update Task DETAILS : ".$values);
             $response["status"] = "OK";
 
             if ($result == 3) {
