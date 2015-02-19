@@ -51,7 +51,6 @@ function formatAMPM(date, initVal, calendarDate) {
   return strTime;
 }
 
-
 Ext.Ajax.timeout = 4 * 60 * 1000;
 
 var caseSummary = function() {
@@ -264,7 +263,6 @@ function pauseCase(date){
           items: [
               {
                 html: '<div align="center" style="font: 14px tahoma,arial,helvetica,sans-serif">' + _('ID_PAUSE_CASE_TO_DATE') +' '+date.format('M j, Y')+'? </div> <br/>'
-
               },
               new Ext.form.TimeField({
                   id: 'unpauseTime',
@@ -740,8 +738,15 @@ Ext.onReady ( function() {
   // Create HttpProxy instance, all CRUD requests will be directed to single proxy url.
   var proxyCasesList = new Ext.data.HttpProxy({
     api: {
-      read :   'proxyCasesList'
+      read : urlProxy
     }
+    /*----------------------------------********---------------------------------*/
+    ,method: 'GET'
+    ,headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + credentials.access_token
+    }
+    /*----------------------------------********---------------------------------*/
   });
 
   // Typical JsonReader with additional meta-data params for defining the core attributes of your json-response
@@ -799,9 +804,9 @@ Ext.onReady ( function() {
     autoSave: true, // <-- false would delay executing create, update, destroy requests until specifically told to do so with some [save] buton.
     sortInfo:{field: 'APP_CACHE_VIEW.APP_NUMBER', direction: "DESC"},
     listeners: {
-    	load: function(response){
-    		//console.log(response.reader.jsonData);
-    		if (response.reader.jsonData.result === false) {
+      load: function(response){
+        //console.log(response.reader.jsonData);
+        if (response.reader.jsonData.result === false) {
     			PMExt.notify('ERROR', response.reader.jsonData.message);
     			//PMExt.error
     		}
@@ -1147,44 +1152,45 @@ Ext.onReady ( function() {
   });
 
   // ComboBox creation processValues
-  var comboUser = new Ext.form.ComboBox({
-      store : new Ext.data.Store( {
-        proxy : new Ext.data.HttpProxy( {
-          url : 'casesList_Ajax?actionAjax=userValues&action='+action,
-          method : 'POST'
-        }),
-        reader : new Ext.data.JsonReader( {
-          fields : [ {
-            name : 'USR_UID'
-          }, {
-            name : 'USR_FULLNAME'
-          } ]
-        })
-      }),
+  var userStore =  new Ext.data.Store( {
+    proxy : new Ext.data.HttpProxy( {
+      url : 'casesList_Ajax?actionAjax=userValues&action='+action,
+      method : 'POST'
+    }),
+    reader : new Ext.data.JsonReader( {
+      fields : [ {
+        name : 'USR_UID'
+      }, {
+        name : 'USR_FULLNAME'
+      } ]
+    })
+  });
+  
+  var suggestUser = new Ext.form.ComboBox({
+      store: userStore,
       valueField : 'USR_UID',
-      displayField : 'USR_FULLNAME',
-      triggerAction : 'all',
+      displayField:'USR_FULLNAME',
+      typeAhead: true,
+      triggerAction: 'all',
       emptyText : _('ID_ALL_USERS'),
       selectOnFocus : true,
-      editable : false,
+      editable : true,
       width: 180,
       allowBlank : true,
       autocomplete: true,
       typeAhead: true,
-      //allowBlankText : _('ID_SHOULD_SELECT_LANGUAGE_FROM_LIST'),
+      hideTrigger:true,
       listeners:{
         scope: this,
         'select': function() {
-          storeCases.setBaseParam("user", comboUser.store.getAt(0).get(comboUser.valueField));
-          filterUser = comboUser.value;
-          storeCases.setBaseParam( 'user', filterUser);
-          storeCases.setBaseParam( 'start', 0);
-          storeCases.setBaseParam( 'limit', pageSize);
-          //storeCases.load();
+            //storeCases.setBaseParam( 'user', comboUser.store.getAt(0).get(comboUser.valueField));
+            filterUser = suggestUser.value;
+            storeCases.setBaseParam( 'user', filterUser);
+            storeCases.setBaseParam( 'start', 0);
+            storeCases.setBaseParam( 'limit', pageSize);
         }
       }
-    });
-
+  });
 
   var textSearch = new Ext.form.TextField ({
     allowBlank: true,
@@ -1858,7 +1864,8 @@ Ext.onReady ( function() {
       comboStatus,
       "-",
       _("ID_USER"),
-      comboUser,
+      //comboUser,
+      suggestUser,
       '&nbsp;&nbsp;&nbsp;'
       //'-',
       //textSearch,

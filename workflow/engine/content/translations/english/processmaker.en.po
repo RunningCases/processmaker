@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-01-20 18:07:02\n"
+"PO-Revision-Date: 2015-02-06 16:16:09\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -17791,6 +17791,66 @@ msgstr "The event with {0}: {1} does not is registered."
 msgid "The WebEntry-Event title with {0}: \"{1}\" already exists."
 msgstr "The WebEntry-Event title with {0}: \"{1}\" already exists."
 
+# TRANSLATION
+# LABEL/ID_CASE_STOPPED_TRIGGER
+#: LABEL/ID_CASE_STOPPED_TRIGGER
+msgid "The case has not stopped due to its trigger."
+msgstr "The case has not stopped due to its trigger."
+
+# TRANSLATION
+# LABEL/ID_TRANSLATION_NOT_WRITEABLE
+#: LABEL/ID_TRANSLATION_NOT_WRITEABLE
+msgid "The translation file is not writable. <br/>Please give write permission to file:"
+msgstr "The translation file is not writable. <br/>Please give write permission to file:"
+
+# TRANSLATION
+# LABEL/ID_MAFE_TRANSLATION_NOT_WRITEABLE
+#: LABEL/ID_MAFE_TRANSLATION_NOT_WRITEABLE
+msgid "The mafe translation file is not writable. <br/>Please give write permission to file:"
+msgstr "The mafe translation file is not writable. <br/>Please give write permission to file:"
+
+# TRANSLATION
+# LABEL/ID_TRANSLATIONS_DIRECTORY
+#: LABEL/ID_TRANSLATIONS_DIRECTORY
+msgid "Translations Directory"
+msgstr "Translations Directory"
+
+# TRANSLATION
+# LABEL/ID_MAFE_TRANSLATION_DIRECTORY
+#: LABEL/ID_MAFE_TRANSLATION_DIRECTORY
+msgid "Mafe Translation Directory"
+msgstr "Mafe Translation Directory"
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_TYPE_DOES_NOT_EXIST
+#: LABEL/ID_MESSAGE_TYPE_DOES_NOT_EXIST
+msgid "The Message Type with {0}: {1} does not exist."
+msgstr "The Message Type with {0}: {1} does not exist."
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_TYPE_NAME_ALREADY_EXISTS
+#: LABEL/ID_MESSAGE_TYPE_NAME_ALREADY_EXISTS
+msgid "The Message Type Name with {0}: \"{1}\" already exists."
+msgstr "The Message Type Name with {0}: \"{1}\" already exists."
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_TYPE_NAME_VARIABLE_EXISTS
+#: LABEL/ID_MESSAGE_TYPE_NAME_VARIABLE_EXISTS
+msgid "The name of the variable exists."
+msgstr "The name of the variable exists."
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_TYPE_VARIABLE_DOES_NOT_EXIST
+#: LABEL/ID_MESSAGE_TYPE_VARIABLE_DOES_NOT_EXIST
+msgid "The Variable with {0}: {1} does not exist."
+msgstr "The Variable with {0}: {1} does not exist."
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_TYPE_VARIABLE_NAME_ALREADY_EXISTS
+#: LABEL/ID_MESSAGE_TYPE_VARIABLE_NAME_ALREADY_EXISTS
+msgid "The Variable Name with {0}: \"{1}\" already exists."
+msgstr "The Variable Name with {0}: \"{1}\" already exists."
+
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
 #: text - ADD_TAB_NAME
@@ -21706,14 +21766,14 @@ msgstr "Task"
 # cases/cases_Scheduler_List.xml?SCH_TIME_NEXT_RUN
 # cases/cases_Scheduler_List.xml
 #: text - SCH_TIME_NEXT_RUN
-msgid "Next execution time"
-msgstr "Next execution time"
+msgid "Time next run"
+msgstr "Time next run"
 
 # cases/cases_Scheduler_List.xml?SCH_LAST_RUN_TIME
 # cases/cases_Scheduler_List.xml
 #: text - SCH_LAST_RUN_TIME
-msgid "Last execution time"
-msgstr "Last execution time"
+msgid "Last run time"
+msgstr "Last run time"
 
 # cases/cases_Scheduler_List.xml?SCH_STATUS_LNK
 # cases/cases_Scheduler_List.xml
@@ -22305,13 +22365,13 @@ msgstr "User"
 
 # cases/cases_TaskDetails.xml?INIT_DATE
 # cases/cases_TaskDetails.xml
-#: text - INIT_DATE
+#: date - INIT_DATE
 msgid "[cases/cases_TaskDetails.xml?INIT_DATE] Init Date"
 msgstr "Init Date"
 
 # cases/cases_TaskDetails.xml?DUE_DATE
 # cases/cases_TaskDetails.xml
-#: text - DUE_DATE
+#: date - DUE_DATE
 msgid "Due date"
 msgstr "Due date"
 
@@ -23683,30 +23743,6 @@ msgstr "Encode"
 msgid "[dbConnections/dbConnections_Edit.xml?DBS_ENCODE-]"
 msgstr "..."
 
-# dbConnections/dbConnections_Edit.xml?DBS_CONNECTION_TYPE
-# dbConnections/dbConnections_Edit.xml
-#: dropdown - DBS_CONNECTION_TYPE
-msgid "Select Connection Type"
-msgstr "Select Connection Type"
-
-# dbConnections/dbConnections_Edit.xml?DBS_CONNECTION_TYPE-NORMAL
-# dbConnections/dbConnections_Edit.xml
-#: dropdown - DBS_CONNECTION_TYPE - NORMAL
-msgid "[dbConnections/dbConnections_Edit.xml?DBS_CONNECTION_TYPE-NORMAL]"
-msgstr "Normal"
-
-# dbConnections/dbConnections_Edit.xml?DBS_CONNECTION_TYPE-TNS
-# dbConnections/dbConnections_Edit.xml
-#: dropdown - DBS_CONNECTION_TYPE - TNS
-msgid "[dbConnections/dbConnections_Edit.xml?DBS_CONNECTION_TYPE-TNS]"
-msgstr "TNS"
-
-# dbConnections/dbConnections_Edit.xml?DBS_TNS
-# dbConnections/dbConnections_Edit.xml
-#: text - DBS_TNS
-msgid "TNS"
-msgstr "TNS"
-
 # dbConnections/dbConnections_Edit.xml?DBS_SERVER
 # dbConnections/dbConnections_Edit.xml
 #: text - DBS_SERVER
@@ -23784,30 +23820,6 @@ msgstr "Encode"
 #: dropdown - DBS_ENCODE -
 msgid "[dbConnections/dbConnections_New.xml?DBS_ENCODE-]"
 msgstr "..."
-
-# dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE
-# dbConnections/dbConnections_New.xml
-#: dropdown - DBS_CONNECTION_TYPE
-msgid "[dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE] Select Connection Type"
-msgstr "Select Connection Type"
-
-# dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE-NORMAL
-# dbConnections/dbConnections_New.xml
-#: dropdown - DBS_CONNECTION_TYPE - NORMAL
-msgid "[dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE-NORMAL]"
-msgstr "Normal"
-
-# dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE-TNS
-# dbConnections/dbConnections_New.xml
-#: dropdown - DBS_CONNECTION_TYPE - TNS
-msgid "[dbConnections/dbConnections_New.xml?DBS_CONNECTION_TYPE-TNS]"
-msgstr "TNS"
-
-# dbConnections/dbConnections_New.xml?DBS_TNS
-# dbConnections/dbConnections_New.xml
-#: text - DBS_TNS
-msgid "[dbConnections/dbConnections_New.xml?DBS_TNS] TNS"
-msgstr "TNS"
 
 # dbConnections/dbConnections_New.xml?DBS_SERVER
 # dbConnections/dbConnections_New.xml
@@ -28037,24 +28049,6 @@ msgstr "Copy"
 msgid "[outputdocs/outputdocs_Properties.xml?OUT_DOC_PDF_SECURITY_PERMISSIONS-annot-forms]"
 msgstr "Forms"
 
-# outputdocs/outputdocs_Properties.xml?OUT_DOC_OPEN_TYPE
-# outputdocs/outputdocs_Properties.xml
-#: dropdown - OUT_DOC_OPEN_TYPE
-msgid "By clicking on the generated file link"
-msgstr "By clicking on the generated file link"
-
-# outputdocs/outputdocs_Properties.xml?OUT_DOC_OPEN_TYPE-0
-# outputdocs/outputdocs_Properties.xml
-#: dropdown - OUT_DOC_OPEN_TYPE - 0
-msgid "[outputdocs/outputdocs_Properties.xml?OUT_DOC_OPEN_TYPE-0]"
-msgstr "Download the file"
-
-# outputdocs/outputdocs_Properties.xml?OUT_DOC_OPEN_TYPE-1
-# outputdocs/outputdocs_Properties.xml
-#: dropdown - OUT_DOC_OPEN_TYPE - 1
-msgid "[outputdocs/outputdocs_Properties.xml?OUT_DOC_OPEN_TYPE-1]"
-msgstr "Open the file"
-
 # outputdocs/outputdocs_Properties.xml?BTN_CANCEL
 # outputdocs/outputdocs_Properties.xml
 #: button - BTN_CANCEL
@@ -28985,12 +28979,6 @@ msgstr "Cases Notes"
 msgid "[processes/processes_EditObjectPermission.xml?OP_OBJ_TYPE-MSGS_HISTORY]"
 msgstr "Messages History"
 
-# processes/processes_EditObjectPermission.xml?OP_OBJ_TYPE-SUMMARY_FORM
-# processes/processes_EditObjectPermission.xml
-#: dropdown - OP_OBJ_TYPE - SUMMARY_FORM
-msgid "[processes/processes_EditObjectPermission.xml?OP_OBJ_TYPE-SUMMARY_FORM]"
-msgstr "Summary Form"
-
 # processes/processes_EditObjectPermission.xml?ALL
 # processes/processes_EditObjectPermission.xml
 #: dropdown - ALL
@@ -29590,12 +29578,6 @@ msgstr "Cases Notes"
 #: dropdown - OP_OBJ_TYPE - MSGS_HISTORY
 msgid "[processes/processes_NewObjectPermission.xml?OP_OBJ_TYPE-MSGS_HISTORY]"
 msgstr "Messages History"
-
-# processes/processes_NewObjectPermission.xml?OP_OBJ_TYPE-SUMMARY_FORM
-# processes/processes_NewObjectPermission.xml
-#: dropdown - OP_OBJ_TYPE - SUMMARY_FORM
-msgid "[processes/processes_NewObjectPermission.xml?OP_OBJ_TYPE-SUMMARY_FORM]"
-msgstr "Summary Form"
 
 # processes/processes_NewObjectPermission.xml?ALL
 # processes/processes_NewObjectPermission.xml

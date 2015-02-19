@@ -576,5 +576,30 @@ class AppDelegation extends BaseAppDelegation
         $data = $oRuleSet->getRow();
         return $data['TAS_UID'];
     }
+    
+    /**
+    * Verify if the current case is already routed.
+    *
+    * @param string $AppUid the uid of the application
+    * @return array $Fields the fields
+    */
+
+    public function alreadyRouted ($appUid, $sDelIndex)
+    {
+        $c = new Criteria("workflow");
+        $c->clearSelectColumns();
+        $c->addSelectColumn(AppDelegationPeer::APP_UID);
+        $c->add(AppDelegationPeer::APP_UID, $appUid);
+        $c->add(AppDelegationPeer::DEL_INDEX, $sDelIndex);
+        $c->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNOTNULL);
+        $result = AppDelegationPeer::doSelectRS($c);
+        $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        if($result->next()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
 
