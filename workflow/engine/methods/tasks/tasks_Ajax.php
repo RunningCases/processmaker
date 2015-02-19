@@ -117,7 +117,10 @@ try {
             }
 
             $result = $oTask->update( $aData );
-
+            $oTaskNewPattern = new Task();
+            $oTaskNewPattern->load($aData['TAS_UID']);
+            $titleTask=$oTaskNewPattern->getTasTitle();
+            G::auditLog("DerivationRule","ASSIGN STARTING TASK : Task Name -> ".$titleTask.' : '.$aData['TAS_UID']);
             $response["status"] = "OK";
 
             if ($result == 3) {
