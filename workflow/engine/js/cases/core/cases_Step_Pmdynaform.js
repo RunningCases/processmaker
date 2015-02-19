@@ -22,10 +22,10 @@ function dynaFormChanged(frm) {
     return false;
 }
 $(window).load(function () {
-    if ((navigator.userAgent.indexOf("MSIE") !== -1) || (navigator.userAgent.indexOf("Trident") !== -1)) {
+    /*if ((navigator.userAgent.indexOf("MSIE") !== -1) || (navigator.userAgent.indexOf("Trident") !== -1)) {
         document.body.innerHTML = "<div style='margin:15px'>Responsive Dynaforms are not supported in this browser.</div>";
         return;
-    }
+    }*/
     if (pm_run_outside_main_app === 'true') {
         if (parent.showCaseNavigatorPanel) {
             parent.showCaseNavigatorPanel('DRAFT');
