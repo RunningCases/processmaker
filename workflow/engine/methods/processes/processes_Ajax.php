@@ -179,7 +179,7 @@ try {
             $oTaskNewPattern = new Task();
             $oTaskNewPattern->load($oData->tas_uid);
             $titleTask=$oTaskNewPattern->getTasTitle();
-            G::auditlog("OptionsMenuTask",'ACTION : Delete Stak -> '.$titleTask.' : '.$oData->tas_uid);
+            G::auditlog("OptionsMenuTask",'Delete Stak -> '.$titleTask.' : '.$oData->tas_uid);
             $sOutput = $oProcessMap->deleteTask($oData->tas_uid);
             break;
         case 'addGuide':
@@ -381,7 +381,7 @@ try {
             $oTaskNewPattern = new Task();
             $oTaskNewPattern->load($oData->tas_uid);
             $titleTask=$oTaskNewPattern->getTasTitle();
-            G::auditlog("OptionsMenuTask",'ACTION : Delete All Routes -> '.$titleTask.' : '.$oData->tas_uid);
+            G::auditlog("OptionsMenuTask",'Delete All Routes In -> '.$titleTask.' : '.$oData->tas_uid);
             $oTasks = new Tasks();
             $oTasks->deleteAllRoutesOfTask($oData->pro_uid, $oData->tas_uid);
             break;
@@ -422,7 +422,7 @@ try {
             $oTaskNewPattern = new Task();
             $oTaskNewPattern->load($oData->tas_uid);
             $titleTask=$oTaskNewPattern->getTasTitle();
-            G::auditlog("OptionsMenuTask",'ACTION : Delete Sub Process -> '.$titleTask.' : '.$oData->tas_uid);
+            G::auditlog("OptionsMenuTask",'Delete Sub Process -> '.$titleTask.' : '.$oData->tas_uid);
             $sOutput = $oProcessMap->deleteSubProcess($oData->pro_uid, $oData->tas_uid);
             break;
         case 'subProcess_Properties':

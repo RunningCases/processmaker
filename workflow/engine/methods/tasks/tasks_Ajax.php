@@ -35,7 +35,6 @@ try {
     switch ($sAction) {
         case "saveTaskData":
             require_once ("classes/model/Task.php");
-
             $response = array ();
 
             $oTask = new Task();
@@ -118,7 +117,17 @@ try {
             $oTaskNewPattern = new Task();
             $oTaskNewPattern->load($aData['TAS_UID']);
             $titleTask=$oTaskNewPattern->getTasTitle();
-            G::auditLog("DerivationRule","ASSIGN STARTING TASK : Task Name -> ".$titleTask.' : '.$aData['TAS_UID']);
+            if (count($aData)==5) {
+                G::auditLog("DerivationRule",'ASSIGN STARTING TASK : Task Name -> '.$titleTask.' : '.$aData['TAS_UID']);
+            }else{
+                $values='';
+                foreach ($aData as $key => $value){
+                    if ($value!='') {
+                        $values.=$key.' -> '.$value.' ';
+                    }
+                }
+                G::auditLog("OptionsMenuTask","Update Task DETAILS : ".$values);
+            }            
             $result = $oTask->update( $aData );
 
             $response["status"] = "OK";
