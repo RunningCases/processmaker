@@ -37,7 +37,8 @@ class pmDynaform
                 }
             }            
         }
-        if(!empty($app_data)){
+        
+        if(!empty($app_data) && isset($app_data["APPLICATION"])){
             //data
             $cases = new \ProcessMaker\BusinessModel\Cases();
             $this->data = $cases->getCaseVariables($app_data["APPLICATION"]);
