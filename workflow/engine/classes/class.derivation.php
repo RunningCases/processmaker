@@ -194,8 +194,7 @@ class Derivation
 
                     $pmScript = new PMScript();
                     $pmScript->setFields($arrayApplicationData["APP_DATA"]);
-                    $condition = strtoupper($arrayRouteData["ROU_CONDITION"]);
-                    if(strpos($condition,"AND") || strpos($condition,"OR") || strpos($condition,"XOR")) {
+                    if(preg_match('/\b(or|and|xor)\b/i' , $arrayRouteData["ROU_CONDITION"])) {
                         $pmScript->setScript("( ".$arrayRouteData["ROU_CONDITION"]." )");
                     } else {
                         $pmScript->setScript($arrayRouteData["ROU_CONDITION"]);
