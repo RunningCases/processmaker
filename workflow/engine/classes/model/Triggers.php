@@ -155,7 +155,7 @@ class Triggers extends BaseTriggers
             } else {
                 $this->setTriUid($aData['TRI_UID'] );
             }
-
+            $triggerUid = $this->getTriUid();
             $this->setProUid($aData['PRO_UID']);
             $this->setTriType("SCRIPT");
 
@@ -183,6 +183,13 @@ class Triggers extends BaseTriggers
                 }
                 $result=$this->save();
                 $con->commit();
+                //Add Audit Log
+                $description = "Trigger Name: ".$aData['TRI_TITLE'].", Trigger Uid: ".$triggerUid;
+                if (isset ( $aData['TRI_DESCRIPTION'] )) {
+                  $description .= ", Description: ".$aData['TRI_DESCRIPTION'];
+                }
+                G::auditLog("CreateTrigger", $description);
+                
                 return $result;
             } else {
                 $con->rollback();
@@ -233,10 +240,18 @@ class Triggers extends BaseTriggers
             $con->begin();
             $oTri = TriggersPeer::retrieveByPK( $TriUid );
             if (!is_null($oTri)) {
+                $triggerName = $this->getTriTitle();
+                $triggerDesc = $this->getTriDescription();
                 Content::removeContent( 'TRI_TITLE', '', $this->getTriUid());
                 Content::removeContent( 'TRI_DESCRIPTION', '', $this->getTriUid());
                 $result = $oTri->delete();
                 $con->commit();
+                //Add Audit Log
+                $description = "Trigger Name: ".$triggerName.", Trigger Uid: ".$TriUid;
+                if (isset ( $triggerDesc )) {
+                  $description .= ", Description: ".$triggerDesc;
+                }
+                G::auditLog("DeleteTrigger", $description);
             }
             return $result;
         } catch (Exception $e) {
