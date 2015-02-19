@@ -118,11 +118,15 @@ try {
 
             $result = $oTask->update( $aData );
             $oTaskNewPattern = new Task();
-            $oTaskNewPattern->load($aData['TAS_UID']);
-            $titleTask=$oTaskNewPattern->getTasTitle();
-            if (count($aData)==5) {
-                G::auditLog("DerivationRule",'ASSIGN STARTING TASK : Task Name -> '.$titleTask.' : '.$aData['TAS_UID']);
+            $taskInfo=$oTaskNewPattern->load($aData['TAS_UID']);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            $values='';
+            foreach ($aData as $key => $value){
+                if ($value!='') {
+                    $values.=$key.' -> '.$value.' ';
+                }
             }
+            G::auditLog("OptionsMenuTask","Update Task DETAILS : ".$values);
             $response["status"] = "OK";
 
             if ($result == 3) {
