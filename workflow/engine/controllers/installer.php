@@ -38,7 +38,7 @@ class Installer extends Controller
 
     public function index ($httpData)
     {
-        if ((strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') && (file_exists($this->path_shared . 'partner.info'))){
+        if ((strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') && (file_exists($this->path_shared . 'partner.info'))) {
             $this->includeExtJS( 'installer/stopInstall');
             $this->setView( 'installer/mainStopInstall' );
             G::RenderPage( 'publish', 'extJs' );
@@ -776,12 +776,14 @@ class Installer extends Controller
 
             $this->mysqlFileQuery( PATH_RBAC_HOME . 'engine/data/mysql/schema.sql' );
             $this->mysqlFileQuery( PATH_RBAC_HOME . 'engine/data/mysql/insert.sql' );
-
+            
             $query = sprintf( "USE %s;", $wf_workpace );
             $this->mysqlQuery( $query );
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/schema.sql' );
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/insert.sql' );
-
+            
+            $this->createMysqlFeatures();
+            
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $this->setPartner();
                 //$this->setConfiguration();
@@ -1623,6 +1625,32 @@ class Installer extends Controller
                 }
             }
         }
+    }
+    
+    public function createMysqlFeatures()
+    {
+        foreach ($this->getFeatureList() as $feature) {
+            $this->mysqlFileQuery( $feature->path . '/data/schema.sql' );
+            $this->mysqlFileQuery( $feature->path . '/data/insert.sql' );
+        }
+        
+    }
+    
+    public function getFeatureList()
+    {
+        $invalidFolders = array('ViewContainers');
+        $featuresFolders = glob(PATH_FEATURES.'/*', GLOB_ONLYDIR);
+        $features = array();
+        foreach ($featuresFolders as $directory) {
+            $feature = new stdClass();
+            if (in_array($directory, $invalidFolders)) {
+                continue;
+            }
+            $feature->path = PATH_FEATURES . PATH_SEP . $directory;
+            $feature->name = $directory;
+            $features[] = $feature;
+        }
+        return $features;
     }
 }
 

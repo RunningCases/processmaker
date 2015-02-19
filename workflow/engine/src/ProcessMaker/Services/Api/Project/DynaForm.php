@@ -30,6 +30,25 @@ class DynaForm extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+    
+    /**
+     * @url GET /:prj_uid/dynaform
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetDynaFormList($prj_uid)
+    {
+        try {
+            $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase(false);
+
+            $response = $dynaForm->getDynaForm();
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 
     /**
      * @url POST /:prj_uid/dynaform

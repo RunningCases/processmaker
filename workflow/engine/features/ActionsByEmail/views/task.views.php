@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-$features['ActionsByEmail']['views'] = array(
+$features['ActionsByEmail']['views'][] = array(
     'taskConfiguration' => array(
         'type' => 'form',
         'language' => 'en',
@@ -74,7 +74,7 @@ $features['ActionsByEmail']['views'] = array(
                 'data_source' => array(
                     'type' => 'REST',
                     'method' => 'GET',
-                    'end_point' => '/ABE/ABETemplates/',
+                    'end_point' => '/ActionsByEmail/Templates',
                     'parameters' => array()
                 ),
                 'options' => array(
@@ -95,7 +95,7 @@ $features['ActionsByEmail']['views'] = array(
                     'data_source' => array(
                         'type' => 'REST',
                         'method' => 'GET',
-                        'end_point' => '/ABE/ABETemplates/editTemplateABE',
+                        'end_point' => '/ActionsByEmail/Templates/editTemplate',
                         'parameters' => array('ABE_TEMPLATE')
                     )
                 )
@@ -107,7 +107,7 @@ $features['ActionsByEmail']['views'] = array(
                 'data_source' => array(
                     'type' => 'REST',
                     'method' => 'GET',
-                    'end_point' => '/Dynaform/',
+                    'end_point' => 'Dynaform',
                     'parameters' => array()
                 ),
                 'options' => array(
@@ -145,7 +145,7 @@ $features['ActionsByEmail']['views'] = array(
                             'data_source' => array (
                                 'type' => 'REST',
                                 'method' => 'GET',
-                                'end_point' => '/Dynaform/loadFields',
+                                'end_point' => '/ActionsByEmail/Dynaform/loadFields',
                                 'parameters' => array('DYN_UID')
                             )
                         )
@@ -172,7 +172,7 @@ $features['ActionsByEmail']['views'] = array(
                         'data_source' => array(
                             'type' => 'REST',
                             'method' => 'GET',
-                            'end_point' => '/Dynaform/loadFields',
+                            'end_point' => '/ActionsByEmail/Dynaform/loadFields',
                             'parameters' => array('DYN_UID')
                         )
                     )
@@ -195,7 +195,7 @@ $features['ActionsByEmail']['views'] = array(
                     'data_source' => array(
                         'type' => 'REST',
                         'method' => 'POST',
-                        'end_point' => '/ABE/saveConfiguration',
+                        'end_point' => '/ActionsByEmail/saveConfiguration',
                         'parameters' => array('_ALL')
                     )
                 )

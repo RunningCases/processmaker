@@ -1013,6 +1013,30 @@ class DynaForm
     }
 
     /**
+     * Get a list of DynaForms
+     *
+     * @param string $dynaFormUid Unique id of DynaForm
+     *
+     * return array Return an array with data of a DynaForm
+     */
+    public function getDynaFormList()
+    {
+        try {
+            //Get data
+            $criteria = $this->getDynaFormCriteria();
+            $rsCriteria = \DynaformPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            While ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+            }
+            //Return
+            return $this->getDynaFormDataFromRecord($row);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get data of a DynaForm
      *
      * @param string $projectUid Unique id of Project
