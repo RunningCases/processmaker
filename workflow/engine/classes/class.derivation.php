@@ -194,7 +194,12 @@ class Derivation
 
                     $pmScript = new PMScript();
                     $pmScript->setFields($arrayApplicationData["APP_DATA"]);
-                    $pmScript->setScript("( ".$arrayRouteData["ROU_CONDITION"]." )");
+                    $condition = strtoupper($arrayRouteData["ROU_CONDITION"]);
+                    if(strpos($condition,"AND") || strpos($condition,"OR") || strpos($condition,"XOR")) {
+                        $pmScript->setScript("( ".$arrayRouteData["ROU_CONDITION"]." )");
+                    } else {
+                        $pmScript->setScript($arrayRouteData["ROU_CONDITION"]);
+                    } 
                     $flagContinue = $pmScript->evaluate();
                 }
 
