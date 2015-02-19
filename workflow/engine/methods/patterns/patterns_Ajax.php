@@ -74,9 +74,9 @@ switch ($aData['action']) {
                     $rou_id = $oRoute->create( $aFields );
                         if ($aRow['ROU_NEXT_TASK']=='-1') {
                             if ($aRow['ROU_CONDITION']=='') {
-                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces  Condition -> Empty; ';
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Of Procces  Condition -> Empty; ';
                             }else{
-                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Of Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
                             }                        
                         }else{
                             $oTaskSaveNextPattern = new Task();
@@ -93,7 +93,7 @@ switch ($aData['action']) {
                     $oProcessNewPattern = new Process();
                     $oProcessNewPattern->load($aData['PROCESS']);
                     $titleProcess=$oProcessNewPattern->getProTitle();
-                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Routing rule : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
             case 'EVALUATE':
                     $tasksAffected='';
@@ -115,9 +115,9 @@ switch ($aData['action']) {
                     $rou_id = $oRoute->create( $aFields );
                         if ($aRow['ROU_NEXT_TASK']=='-1') {
                             if ($aRow['ROU_CONDITION']=='') {
-                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces  Condition -> Empty; ';
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End OfProcces  Condition -> Empty; ';
                             }else{
-                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Of Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
                             }                        
                         }else{
                             $oTaskSaveNextPattern = new Task();
@@ -134,7 +134,7 @@ switch ($aData['action']) {
                 $oProcessNewPattern = new Process();
                 $oProcessNewPattern->load($aData['PROCESS']);
                 $titleProcess=$oProcessNewPattern->getProTitle();
-                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Routing rule : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
             case 'PARALLEL':
                     $tasksAffected='';
@@ -161,7 +161,7 @@ switch ($aData['action']) {
                 $oProcessNewPattern = new Process();
                 $oProcessNewPattern->load($aData['PROCESS']);
                 $titleProcess=$oProcessNewPattern->getProTitle();
-                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Routing rule : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
             case 'PARALLEL-BY-EVALUATION':
                     $tasksAffected='';
@@ -185,9 +185,9 @@ switch ($aData['action']) {
                     $rou_id = $oRoute->create( $aFields );
                         if ($aRow['ROU_NEXT_TASK']=='-1') {
                             if ($aRow['ROU_CONDITION']=='') {
-                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces  Condition -> Empty; ';
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Of Procces  Condition -> Empty; ';
                             }else{
-                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
+                                $tasksAffected.='From -> '.$titleTask.' : '.$aData['TASK'].' To End Of Procces Condition -> '.$aFields['ROU_CONDITION'].' ; '; 
                             }                        
                         }else{
                             $oTaskSaveNextPattern = new Task();
@@ -204,7 +204,7 @@ switch ($aData['action']) {
                 $oProcessNewPattern = new Process();
                 $oProcessNewPattern->load($aData['PROCESS']);
                 $titleProcess=$oProcessNewPattern->getProTitle();
-                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' ACTION : '.$aData['ROU_TYPE'].' Save Pattern DETAILS: ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
+                G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$aData['PROCESS'].' Routing rule : '.$aData['ROU_TYPE'].' Change Routing Rule From : ROU_TYPE_OLD -> '.$aData['ROU_TYPE_OLD']. ' ROU_TYPE ->'.$aData['ROU_TYPE']. ' '.$tasksAffected);
                 break;
             case 'DISCRIMINATOR': //Girish ->Added to save changes, while editing the route
                 foreach ($aData['GRID_DISCRIMINATOR_TYPE'] as $iKey => $aRow) {
