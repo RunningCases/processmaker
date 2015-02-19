@@ -22,10 +22,10 @@ function dynaFormChanged(frm) {
     return false;
 }
 $(window).load(function () {
-    if ((navigator.userAgent.indexOf("MSIE") !== -1) || (navigator.userAgent.indexOf("Trident") !== -1)) {
+    /*if ((navigator.userAgent.indexOf("MSIE") !== -1) || (navigator.userAgent.indexOf("Trident") !== -1)) {
         document.body.innerHTML = "<div style='margin:15px'>Responsive Dynaforms are not supported in this browser.</div>";
         return;
-    }
+    }*/
     var data = jsondata;
     window.project = new PMDynaform.core.Project({
         data: data,
