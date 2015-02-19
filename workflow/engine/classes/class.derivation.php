@@ -142,6 +142,7 @@ class Derivation
 
             $arrayNextTask = array();
             $arrayNextTaskDefault = array();
+            $i = 0;
 
             //SELECT *
             //FROM APP_DELEGATION AS A
@@ -210,17 +211,18 @@ class Derivation
                 }
 
                 if ($flagContinue) {
-                    $arrayNextTask[] = $this->prepareInformationTask($arrayRouteData);
+                    $arrayNextTask[++$i] = $this->prepareInformationTask($arrayRouteData);
                 }
             }
 
             if (count($arrayNextTask) == 0 && count($arrayNextTaskDefault) > 0) {
-                $arrayNextTask[] = $this->prepareInformationTask($arrayNextTaskDefault);
+                $arrayNextTask[++$i] = $this->prepareInformationTask($arrayNextTaskDefault);
             }
 
             //Check Task GATEWAYTOGATEWAY
             $arrayNextTaskBk = $arrayNextTask;
             $arrayNextTask = array();
+            $i = 0;
 
             foreach ($arrayNextTaskBk as $value) {
                 $arrayNextTaskData = $value;
@@ -229,10 +231,10 @@ class Derivation
                     $arrayAux = $this->prepareInformation($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
 
                     foreach ($arrayAux as $value2) {
-                        $arrayNextTask[] = $value2;
+                        $arrayNextTask[++$i] = $value2;
                     }
                 } else {
-                    $arrayNextTask[] = $arrayNextTaskData;
+                    $arrayNextTask[++$i] = $arrayNextTaskData;
                 }
             }
 
