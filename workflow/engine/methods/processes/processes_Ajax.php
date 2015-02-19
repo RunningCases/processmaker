@@ -161,7 +161,7 @@ try {
             break;
         case 'process_Export':
             include (PATH_METHODS . 'processes/processes_Export.php');
-            G::auditLog('ExportProcess','Export Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('ExportProcess','Export process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'process_User':
             include (PATH_METHODS . 'processes/processes_User.php');
@@ -195,7 +195,7 @@ try {
             G::LoadClass('processMap');
             $oProcessMap = new ProcessMap();
             $oProcessMap->listProcessesUser($oData->PRO_UID);
-            G::auditLog('AssignRole','Assign new supervisor ('.$oData->USR_UID.') in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('AssignRole','Assign new supervisor ('.$oData->USR_UID.') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'removeProcessUser':
             $oProcessMap->removeProcessUser($oData->PU_UID);
@@ -205,8 +205,7 @@ try {
                     break;
                 }
             }
-            
-            G::auditLog('RemoveUser','Remove supervisor ('.$userSupervisor.') in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('RemoveUser','Remove supervisor ('.$userSupervisor.') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'supervisorDynaforms':
             $oProcessMap->supervisorDynaforms($oData->pro_uid);
@@ -244,11 +243,15 @@ try {
             break;
         case 'addTask':
             $sOutput = $oProcessMap->addTask($oData->uid, $oData->position->x, $oData->position->y);
-            G::auditLog('AddTask','Add new task in process "'.$resultProcess['PRO_TITLE'].'"');
+            $sOutputAux = G::json_decode($sOutput);
+            $sOutputAux = (array)$sOutputAux;
+            G::auditLog('AddTask','Add new task ('.$sOutputAux['uid'].') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'addSubProcess':
             $sOutput = $oProcessMap->addSubProcess($oData->uid, $oData->position->x, $oData->position->y);
-            G::auditLog('AddSubProcess','Add new sub process in Process "'.$resultProcess['PRO_TITLE'].'"');
+            $sOutputAux = G::json_decode($sOutput);
+            $sOutputAux = (array)$sOutputAux;
+            G::auditLog('AddSubProcess','Add new sub process ('.$sOutputAux['uid'].') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'taskColor':
             $oTask->taskColor($oData->pro_uid, $oData->tas_uid);
@@ -276,7 +279,7 @@ try {
             break;
         case 'saveGuidePosition':
             $sOutput = $oProcessMap->saveGuidePosition($oData->uid, $oData->position, $oData->direction);
-            G::auditLog('SaveGuidePosition','Change '.$oData->direction.' line position in process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('SaveGuidePosition','Change '.$oData->direction.' line position  ('.$oData->uid.') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'deleteGuide':
             $sOutput = $oProcessMap->deleteGuide($oData->uid);
@@ -290,19 +293,19 @@ try {
             $sOutput = $oProcessMap->addText($oData->uid, $oData->label, $oData->position->x, $oData->position->y);
             $sOutputAux = G::json_decode($sOutput);
             $sOutputAux = (array)$sOutputAux;
-            G::auditLog('AddText','Add new text ('.$sOutputAux['uid'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('AddText','Add new text ('.$sOutputAux['uid'].') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'updateText':
             $sOutput = $oProcessMap->updateText($oData->uid, $oData->label);
-            G::auditLog('UpdateText','Edit text ('.$oData->uid.' ) in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('UpdateText','Edit text ('.$oData->uid.' ) in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'saveTextPosition':
             $sOutput = $oProcessMap->saveTextPosition($oData->uid, $oData->position->x, $oData->position->y);
-            G::auditLog('SaveTextPosition','Change text position ('.$oData->uid.' ) in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('SaveTextPosition','Change text position ('.$oData->uid.' ) in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'deleteText':
             $sOutput = $oProcessMap->deleteText($oData->uid);
-            G::auditLog('DeleteText','Delete text ('.$oData->uid.' ) in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('DeleteText','Delete text ('.$oData->uid.' ) in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'dynaforms':
             $oProcessMap->dynaformsList($oData->pro_uid);
@@ -428,7 +431,7 @@ try {
         case 'exploreDirectory':
             $_SESSION["PFMDirectory"] = $oData->main_directory;
             $oProcessMap->exploreDirectory($oData->pro_uid, $oData->main_directory, $oData->directory);
-            G::auditLog('ProcessFileManager','Upload template ('.$oData->main_directory.') in Process "'.$resultProcess['PRO_TITLE'].'"');
+            G::auditLog('ProcessFileManager','Upload template ('.$oData->main_directory.') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'deleteFile':
             $oProcessMap->deleteFile($oData->pro_uid, $oData->main_directory, $oData->directory, $oData->file);
@@ -544,11 +547,11 @@ try {
             switch ($sDir) {
                 case 'mailTemplates':
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $_REQUEST['pro_uid'] . PATH_SEP . $_REQUEST['filename'];
-                    G::auditLog('ProcessFileManager','Edit template ('.$_REQUEST['filename'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
+                    G::auditLog('ProcessFileManager','Edit template ('.$_REQUEST['filename'].') in process "'.$resultProcess['PRO_TITLE'].'"');
                     break;
                 case 'public':
                     $sDirectory = PATH_DATA_PUBLIC . $_REQUEST['pro_uid'] . PATH_SEP . $_REQUEST['filename'];
-                    G::auditLog('ProcessFileManager','Edit public template ('.$_REQUEST['filename'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
+                    G::auditLog('ProcessFileManager','Edit public template ('.$_REQUEST['filename'].') in process "'.$resultProcess['PRO_TITLE'].'"');
                     break;
                 default:
                     $sDirectory = PATH_DATA_MAILTEMPLATES . $_REQUEST['pro_uid'] . PATH_SEP . $_REQUEST['filename'];
@@ -636,11 +639,11 @@ try {
                 switch ($sDir) {
                     case 'mailTemplates':
                         $sDirectory = PATH_DATA_MAILTEMPLATES . $_REQUEST['pro_uid'] . PATH_SEP . $_REQUEST['filename'];
-                        G::auditLog('ProcessFileManager','Save template ('.$_REQUEST['filename'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
+                        G::auditLog('ProcessFileManager','Save template ('.$_REQUEST['filename'].') in process "'.$resultProcess['PRO_TITLE'].'"');
                         break;
                     case 'public':
                         $sDirectory = PATH_DATA_PUBLIC . $_REQUEST['pro_uid'] . PATH_SEP . $_REQUEST['filename'];
-                        G::auditLog('ProcessFileManager','Save public template ('.$_REQUEST['filename'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
+                        G::auditLog('ProcessFileManager','Save public template ('.$_REQUEST['filename'].') in process "'.$resultProcess['PRO_TITLE'].'"');
                         break;
                     default:
                         $sDirectory = PATH_DATA_MAILTEMPLATES . $_REQUEST['pro_uid'] . PATH_SEP . $_REQUEST['filename'];
