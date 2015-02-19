@@ -26,18 +26,7 @@ $(window).load(function () {
         document.body.innerHTML = "<div style='margin:15px'>Responsive Dynaforms are not supported in this browser.</div>";
         return;
     }
-    if (pm_run_outside_main_app === 'true') {
-        if (parent.showCaseNavigatorPanel) {
-            parent.showCaseNavigatorPanel('DRAFT');
-        }
-
-        if (parent.setCurrent) {
-            parent.setCurrent(dyn_uid);
-        }
-    }
-
     var data = jsondata;
-    data.items[0].mode = step_mode.toLowerCase();
     window.project = new PMDynaform.core.Project({
         data: data,
         keys: {
@@ -47,16 +36,7 @@ $(window).load(function () {
         },
         token: credentials,
         submitRest: false
-    });
-    new PMDynaform.core.Proxy({
-        url: "http://" + window.project.keys.server + ":"+port +"/" + window.project.keys.apiName + "/" + window.project.keys.apiVersion + "/" + window.project.keys.workspace + "/cases/" + app_uid + "/variables",
-        method: 'GET',
-        data: {},
-        keys: window.project.token,
-        successCallback: function (xhr, response) {
-            window.project.setData2(response);
-        }
-    });
+    });   
 
     var type = document.createElement("input");
     type.type = "hidden";
@@ -77,13 +57,18 @@ $(window).load(function () {
     var dynaformname = document.createElement("input");
     dynaformname.type = "hidden";
     dynaformname.name = "__DynaformName__";
-    dynaformname.value = __DynaformName__;
+    //dynaformname.value = __DynaformName__;
     var appuid = document.createElement("input");
     appuid.type = "hidden";
     appuid.name = "APP_UID";
-    appuid.value = app_uid;
+
+    var arrayRequired = document.createElement("input");
+    arrayRequired.type = "hidden";
+    arrayRequired.name = "DynaformRequiredFields";
+    arrayRequired.value = fieldsRequired;
+    //appuid.value = app_uid;
     var form = document.getElementsByTagName("form")[0];
-    form.action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
+    form.action = filePost;
     form.method = "post";
     form.appendChild(type);
     form.appendChild(uid);
@@ -91,6 +76,7 @@ $(window).load(function () {
     form.appendChild(action);
     form.appendChild(dynaformname);
     form.appendChild(appuid);
+    form.appendChild(arrayRequired);        
 
     var dyn_forward = document.getElementById("dyn_forward");
     dyn_forward.onclick = function () {
