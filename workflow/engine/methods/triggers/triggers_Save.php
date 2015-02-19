@@ -101,15 +101,27 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
             }
             /*----------------------------------********---------------------------------*/
         }
-
+        $swCreate = true;
         if ($value['TRI_UID'] != '') {
             $oTrigger->load( $value['TRI_UID'] );
         } else {
             $oTrigger->create( $value );
             $value['TRI_UID'] = $oTrigger->getTriUid();
-        }
-        //print_r($_POST['form']);die;
+            $swCreate = false;
+        }       
         $oTrigger->update( $value );
+        if($swCreate){
+            //Add Audit Log
+            $fields = $oTrigger->load( $value['TRI_UID'] );
+            $description = "Trigger Name: ".$fields['TRI_TITLE'].", Trigger Uid: ".$value['TRI_UID'];
+            if (isset ( $fields['TRI_DESCRIPTION'] )) {
+               $description .= ", Description: ".$fields['TRI_DESCRIPTION'];
+            }
+            if (isset($value["TRI_WEBBOT"])) {
+              $description .= ", [EDIT CODE]";
+            }
+            G::auditLog("UpdateTrigger", $description);
+        }
 
         //if (! isset( $_POST['mode'] )) {
         //    $oProcessMap->triggersList( $value['PRO_UID'] );
