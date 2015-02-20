@@ -972,6 +972,8 @@ importProcessExistGroup = function()
                             			  "../designer?prj_uid=" + sNewProUid,
                             			  'winDesigner'
                             			);
+                                    w.close();
+                                    processesGrid.store.reload();
                         	} else {
                         		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
                         	}
@@ -1118,6 +1120,9 @@ importProcessExistProcess = function()
                                 			  "../designer?prj_uid=" + sNewProUid,
                                 			  'winDesigner'
                                 			);
+                                    Ext.getCmp('importProcessWindow').close();
+                                    w.close();
+                                    processesGrid.store.reload();
                             	} else {
                             		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
                             	}
@@ -1178,6 +1183,7 @@ importProcess = function()
     var processFileTypeTitle = (processFileType == "pm") ? "" : " " + processFileType;
 
     var w = new Ext.Window({
+      id          : 'importProcessWindow', 
       title       : _('ID_IMPORT_PROCESS')+processFileTypeTitle,
       width       : 420,
       height      : 130,
@@ -1261,6 +1267,8 @@ importProcess = function()
                                     			  "../designer?prj_uid=" + sNewProUid,
                                     			  'winDesigner'
                                     			);
+                                            w.close();
+                                            processesGrid.store.reload();
                                   	 } else {
                                   		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
                                   	 }
