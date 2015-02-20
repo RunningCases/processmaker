@@ -116,7 +116,10 @@ try {
         $infoProcess = new Processes();
         $resultProcess = $infoProcess->getProcessRow($proUid);     
     }
-    
+    if($proUid != "") {
+        $valuesProcess['PRO_UID'] = $proUid;
+        $valuesProcess['PRO_UPDATE_DATE'] = date("Y-m-d H:m:i");
+    }
     if(isset($proUid) && $proUid != "") {
         $valuesProcess['PRO_UID'] = $proUid;
         $valuesProcess['PRO_UPDATE_DATE'] = date("Y-m-d H:i:s");
@@ -269,6 +272,10 @@ try {
             G::auditLog('SaveTaskPosition','Change task position ('.$oTask->getTasTitle().') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'deleteTask':
+            $oTaskNewPattern = new Task();
+            $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            G::auditlog("DeleteTask",'Delete Task -> '.$titleTask.' : '.$oData->tas_uid);
             $sOutput = $oProcessMap->deleteTask($oData->tas_uid);
             break;
         case 'addGuide':
@@ -477,6 +484,10 @@ try {
             break;
         case 'deleteAllRoutes':
             G::LoadClass('tasks');
+            $oTaskNewPattern = new Task();
+            $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            G::auditlog("DeleteRoutes",'Delete All Routes From Task -> '.$titleTask.' : '.$oData->tas_uid);
             $oTasks = new Tasks();
             $oTasks->deleteAllRoutesOfTask($oData->pro_uid, $oData->tas_uid);
             break;
@@ -516,7 +527,11 @@ try {
             $oProcessMap->downloadFile($oData->pro_uid, $oData->main_directory, $oData->directory, $oData->file);
             break;
         case 'deleteSubProcess':
-            $sOutput = $oProcessMap->deleteSubProcess($oData->pro_uid, $oData->tas_uid);
+            $oTaskNewPattern = new Task();
+            $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            G::auditlog("DeleteSubProcess",'Delete Sub-Process -> '.$titleTask.' : '.$oData->tas_uid);
+            $sOutput = $oProcessMap->deleteSubPrcocess($oData->pro_uid, $oData->tas_uid);
             break;
         case 'subProcess_Properties':
             $oProcessMap->subProcess_Properties($oData->pro_uid, $oData->tas_uid, $oData->index);
