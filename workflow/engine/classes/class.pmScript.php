@@ -491,6 +491,9 @@ class PMScript
             }
         }
         $sScript .= substr( $this->sScript, $iAux );
+        if(preg_match('/\b(or|and|xor)\b/i' , $sScript)) {
+            $sScript = "( ".$sScript." )";
+        } 
         $sScript = '$bResult = ' . $sScript . ';';
         // checks if the syntax is valid or if the variables in that condition has been previously defined
         if ($this->validSyntax( $sScript ) && $variableIsDefined) {
