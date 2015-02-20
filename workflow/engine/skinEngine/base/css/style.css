@@ -74,21 +74,30 @@ img {
     -o-transition:2s all;
     -ms-transition:2s all;
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1680px) {
+    #temporalMessageTD {
+          border-width: 0px;
+          font-size: normal 6pt !important;
+          height: 25px !important;
+          padding: 0 3px !important;
+          background-size: 100% 100% !important;
+        }
+}
+@media screen\0 {
+    #temporalMessageTD {
+          border-width: 0px;
+          font: normal 8pt "Open Sans", Tahoma, sans-serif, MiscFixed;
+          background-size: 100% 100%;
+        }
+}
+@media screen and (max-width: 600px) {
     .temporalMessageERROR {
           border-width: 0px;
-          font: normal 6pt "Open Sans", Tahoma, sans-serif, MiscFixed;
-          text-decoration: none;
-          height: 31px;
-          padding: 0 2px;
-          vertical-align: middle;
-          font-weight: bold;
-          transition:2s all;
-          -webkit-transition:2s all;
-          -moz-transition:2s all;
-          -o-transition:2s all;
-          -ms-transition:2s all;
-    }
+          font-size: normal 6pt !important;
+          height: 25px !important;
+          padding: 0 2px !important;
+          background-size: 100% 100% !important;
+        }
 }
 .temporalMessageWARNING
 {
