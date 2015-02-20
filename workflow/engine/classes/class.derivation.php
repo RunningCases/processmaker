@@ -182,7 +182,8 @@ class Derivation
 
                 if ((int)($arrayRouteData["ROU_DEFAULT"]) == 1) {
                     $arrayNextTaskDefault = $arrayRouteData;
-                    continue;
+                    $arrayNextTask = array();
+                    break;
                 }
 
                 $flagContinue = true;
