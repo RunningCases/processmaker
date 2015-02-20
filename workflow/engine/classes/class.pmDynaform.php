@@ -147,7 +147,7 @@ class pmDynaform
                         $items[$key]->data = $rows;
                     }
                     if ($items[$key]->type !== "grid") {
-                        $value = "";
+                        $value = $this->data[$items[$key]->name];
                         $label = "";
                         if (isset($this->data[$items[$key]->name . "_label"])) {
                             $value = $this->data[$items[$key]->name];

@@ -117,7 +117,7 @@ try {
         $resultProcess = $infoProcess->getProcessRow($proUid);     
     }
     
-    if($proUid != "") {
+    if(isset($proUid) && $proUid != "") {
         $valuesProcess['PRO_UID'] = $proUid;
         $valuesProcess['PRO_UPDATE_DATE'] = date("Y-m-d H:i:s");
         G::LoadClass('processes');
