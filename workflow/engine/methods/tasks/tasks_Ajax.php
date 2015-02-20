@@ -117,7 +117,16 @@ try {
             }
 
             $result = $oTask->update( $aData );
-
+            $oTaskNewPattern = new Task();
+            $taskInfo=$oTaskNewPattern->load($aData['TAS_UID']);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            $values='';
+            foreach ($aData as $key => $value){
+                if ($value!='') {
+                    $values.=$key.' -> '.$value.' ';
+                }
+            }
+            G::auditLog("OptionsMenuTask","Update Task DETAILS : ".$values);
             $response["status"] = "OK";
 
             if ($result == 3) {
