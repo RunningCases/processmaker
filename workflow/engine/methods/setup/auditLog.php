@@ -131,8 +131,24 @@ $arrayAction = array (array ("ALL", G::LoadTranslation( "ID_ALL" )),
             array ("DeleteOutputDocument", G::LoadTranslation( "ID_DELETE_OUTPUT_DOCUMENT" )),
             array ("CreateTrigger", G::LoadTranslation( "ID_CREATE_TRIGGER" )),
             array ("UpdateTrigger", G::LoadTranslation( "ID_UPDATE_TRIGGER" )),
-            array ("DeleteTrigger", G::LoadTranslation( "ID_DELETE_TRIGGER" ))
-                
+            array ("DeleteTrigger", G::LoadTranslation( "ID_DELETE_TRIGGER" )),
+            array ("DerivationRule", G::LoadTranslation( "ID_DERIVATION_RULE" )),
+            array ("DeleteTask", G::LoadTranslation( "ID_DELETE_TASK" )),
+            array ("DeleteSubProcess", G::LoadTranslation( "ID_DELETE_SUB_PROCESS" )),
+            array ("OptionsMenuTask", G::LoadTranslation( "ID_OPTIONS_MENU_TASK" )),
+            array ("SaveTaskProperties", G::LoadTranslation( "ID_SAVE_TASK_PROPERTIES" )),
+            array ("DeleteRoutes", G::LoadTranslation( "ID_DELETE_ROUTES" )),
+            array ("NewConditionFromStep", G::LoadTranslation( "ID_NEW_CONDITION_FROM_STEP" )),
+            array ("AssignTrigger", G::LoadTranslation( "ID_ASSIGN_TRIGGER" )),
+            array ("UpTrigger", G::LoadTranslation( "ID_UP_TRIGGER" )),
+            array ("DownTrigger", G::LoadTranslation( "ID_DOWN_TRIGGER" )),
+            array ("StepDelete", G::LoadTranslation( "ID_STEP_DELETE" )), 
+            array ("StepDown", G::LoadTranslation( "ID_STEP_DOWN" )), 
+            array ("SaveNewStep", G::LoadTranslation( "ID_SAVE_NEW_STEP" )),
+            array ("AssignUserTask", G::LoadTranslation( "ID_ASSIGN_USER_TASK" )), 
+            array ("AssignGroupTask", G::LoadTranslation( "ID_ASSIGN_GROUP_TASK" )),
+            array ("DeleteUserTask", G::LoadTranslation( "ID_DELETE_USER_TASK" )),
+            array ("DeleteGroupTask", G::LoadTranslation( "ID_DELETE_GROUP_TASK" ))                
         );
 
 $oHeadPublisher = &headPublisher::getSingleton();
