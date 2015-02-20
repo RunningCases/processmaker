@@ -195,11 +195,7 @@ class Derivation
 
                     $pmScript = new PMScript();
                     $pmScript->setFields($arrayApplicationData["APP_DATA"]);
-                    if(preg_match('/\b(or|and|xor)\b/i' , $arrayRouteData["ROU_CONDITION"])) {
-                        $pmScript->setScript("( ".$arrayRouteData["ROU_CONDITION"]." )");
-                    } else {
-                        $pmScript->setScript($arrayRouteData["ROU_CONDITION"]);
-                    } 
+                    $pmScript->setScript($arrayRouteData["ROU_CONDITION"]);
                     $flagContinue = $pmScript->evaluate();
                 }
 
