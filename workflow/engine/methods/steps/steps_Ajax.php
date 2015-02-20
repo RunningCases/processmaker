@@ -118,7 +118,7 @@ try {
             }
             break;
         case 'assignTrigger':
-        G::auditlog("OptionsMenuTask","Assign Trigger to a Step -> ".$aData['STEP_UID'].' In Task -> '.$_SESSION['TASK'].' Trigger Type -> '.$aData['ST_TYPE'].' Condition -> '.$aData['ST_CONDITION'].' Trigger UID -> '.$aData['TRI_UID']);
+        G::auditlog("AssignTrigger","Assign Trigger to a Step -> ".$aData['STEP_UID'].' In Task -> '.$_SESSION['TASK'].' Trigger Type -> '.$aData['ST_TYPE'].' Condition -> '.$aData['ST_CONDITION'].' Trigger UID -> '.$aData['TRI_UID']);
             $aFields = array (
                 'STEP_UID' => $aData['STEP_UID'],
                 'TAS_UID' => $_SESSION['TASK'],
@@ -160,18 +160,18 @@ try {
             break;
         case 'upTrigger':        
             $aData['iPosition'] = (int) $aData['iPosition'];
-            G::auditlog("OptionsMenuTask","Up the Trigger One Level -> ".$aData['sStep'].' In Task -> '.$_SESSION['TASK'].' Trigger Type -> '.$aData['sType'].' Trigger Position -> '.$aData['iPosition'].' Trigger UID -> '.$aData['sTrigger']);
+            G::auditlog("UpTrigger","Up the Trigger One Level -> ".$aData['sStep'].' In Task -> '.$_SESSION['TASK'].' Trigger Type -> '.$aData['sType'].' Trigger Position -> '.$aData['iPosition'].' Trigger UID -> '.$aData['sTrigger']);
             $oStepTrigger = new StepTrigger();
             $oStepTrigger->up( $aData['sStep'], $_SESSION['TASK'], $aData['sTrigger'], $aData['sType'], $aData['iPosition'] );
             break;
         case 'downTrigger':
             $aData['iPosition'] = (int) $aData['iPosition'];
-            G::auditlog("OptionsMenuTask","Down the Trigger One Level -> ".$aData['sStep'].' In Task -> '.$_SESSION['TASK'].' Trigger Type -> '.$aData['sType'].' Trigger Position -> '.$aData['iPosition'].' Trigger UID -> '.$aData['sTrigger']);
+            G::auditlog("DownTrigger","Down the Trigger One Level -> ".$aData['sStep'].' In Task -> '.$_SESSION['TASK'].' Trigger Type -> '.$aData['sType'].' Trigger Position -> '.$aData['iPosition'].' Trigger UID -> '.$aData['sTrigger']);
             $oStepTrigger = new StepTrigger();
             $oStepTrigger->down( $aData['sStep'], $_SESSION['TASK'], $aData['sTrigger'], $aData['sType'], $aData['iPosition'] );
             break;
         case 'ofToAssignTrigger':
-        G::auditlog("OptionsMenuTask","Delete Trigger from a Step -> ".$aData['sStep'].' In Task -> '.$_SESSION['TASK'].' Trigger Type -> '.$aData['sType'].' Trigger Position -> '.$aData['iPosition'].' Trigger UID -> '.$aData['sTrigger']);
+        G::auditlog("DeleteTrigger","Delete Trigger from a Step -> ".$aData['sStep'].' In Task -> '.$_SESSION['TASK'].' Trigger Type -> '.$aData['sType'].' Trigger Position -> '.$aData['iPosition'].' Trigger UID -> '.$aData['sTrigger']);
             $oStepTrigger = new StepTrigger();
             $oStepTrigger->reOrder( $aData['sStep'], $_SESSION['TASK'], $aData['sType'], $aData['iPosition'] );
             $oStepTrigger->remove( $aData['sStep'], $_SESSION['TASK'], $aData['sTrigger'], $aData['sType'] );
