@@ -72,6 +72,7 @@ $(window).load(function () {
     var form = document.getElementsByTagName("form")[0];
     form.action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
     form.method = "post";
+    form.enctype = "multipart/form-data";
     form.appendChild(type);
     form.appendChild(uid);
     form.appendChild(position);
