@@ -151,5 +151,4 @@ if(isset($_POST['form']['PRO_UID']) && !empty($_POST['form']['PRO_UID'])) {
     G::LoadClass('processes');
     $infoProcess = new Processes();
     $resultProcess = $infoProcess->updateProcessRow($valuesProcess);
-    $resultProcess = $infoProcess->getProcessRow($_POST['form']['PRO_UID']);
 }

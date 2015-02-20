@@ -67,7 +67,7 @@ Ext.onReady(function(){
         /*----------------------------------********---------------------------------*/
         ,{name : "PRO_TYPE_PROCESS", type: "string"}
         /*----------------------------------********---------------------------------*/
-        ,{name : "PRO_UPDATE_DATE"}
+        ,{name : "PRO_UPDATE_DATE"} 
       ]
     }),
 
@@ -231,7 +231,7 @@ Ext.onReady(function(){
       ]
     }),
     store: store,
-    tbar:[ 
+    tbar:[
       {
         xtype: 'tbsplit',
         text: _('ID_NEW'),
