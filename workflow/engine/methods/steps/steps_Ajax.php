@@ -118,7 +118,7 @@ try {
             }
             break;
         case 'assignTrigger':
-        G::auditlog("OptionsMenuTask","Assign Trigger In Step-> ".$aData['STEP_UID'].' In Task -> '.$_SESSION['TASK'].' Trigger Type -> '.$aData['ST_TYPE'].' Condition -> '.$aData['ST_CONDITION'].' Trigger UID -> '.$aData['TRI_UID']);
+        G::auditlog("OptionsMenuTask","Assign Trigger From Step -> ".$aData['STEP_UID'].' In Task -> '.$_SESSION['TASK'].' Trigger Type -> '.$aData['ST_TYPE'].' Condition -> '.$aData['ST_CONDITION'].' Trigger UID -> '.$aData['TRI_UID']);
             $aFields = array (
                 'STEP_UID' => $aData['STEP_UID'],
                 'TAS_UID' => $_SESSION['TASK'],

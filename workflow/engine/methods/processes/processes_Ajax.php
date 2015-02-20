@@ -270,9 +270,9 @@ try {
             break;
         case 'deleteTask':
             $oTaskNewPattern = new Task();
-            $oTaskNewPattern->load($oData->tas_uid);
-            $titleTask=$oTaskNewPattern->getTasTitle();
-            G::auditlog("OptionsMenuTask",'Delete Stak -> '.$titleTask.' : '.$oData->tas_uid);
+            $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            G::auditlog("DeleteTask",'Delete Task -> '.$titleTask.' : '.$oData->tas_uid);
             $sOutput = $oProcessMap->deleteTask($oData->tas_uid);
             break;
         case 'addGuide':
@@ -482,9 +482,9 @@ try {
         case 'deleteAllRoutes':
             G::LoadClass('tasks');
             $oTaskNewPattern = new Task();
-            $oTaskNewPattern->load($oData->tas_uid);
-            $titleTask=$oTaskNewPattern->getTasTitle();
-            G::auditlog("OptionsMenuTask",'Delete All Routes In -> '.$titleTask.' : '.$oData->tas_uid);
+            $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            G::auditlog("DeleteRoutes",'Delete All Routes From Task -> '.$titleTask.' : '.$oData->tas_uid);
             $oTasks = new Tasks();
             $oTasks->deleteAllRoutesOfTask($oData->pro_uid, $oData->tas_uid);
             break;
@@ -525,10 +525,10 @@ try {
             break;
         case 'deleteSubProcess':
             $oTaskNewPattern = new Task();
-            $oTaskNewPattern->load($oData->tas_uid);
-            $titleTask=$oTaskNewPattern->getTasTitle();
-            G::auditlog("OptionsMenuTask",'Delete Sub Process -> '.$titleTask.' : '.$oData->tas_uid);
-            $sOutput = $oProcessMap->deleteSubProcess($oData->pro_uid, $oData->tas_uid);
+            $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            G::auditlog("DeleteSubProcess",'Delete Sub-Process -> '.$titleTask.' : '.$oData->tas_uid);
+            $sOutput = $oProcessMap->deleteSubPrcocess($oData->pro_uid, $oData->tas_uid);
             break;
         case 'subProcess_Properties':
             $oProcessMap->subProcess_Properties($oData->pro_uid, $oData->tas_uid, $oData->index);
