@@ -68,11 +68,6 @@ img {
 	padding:0 20px;
     vertical-align:middle;
     font-weight: bold;
-	transition:2s all;
-    -webkit-transition:2s all;
-    -moz-transition:2s all;
-    -o-transition:2s all;
-    -ms-transition:2s all;
 }
 @media screen and (max-width: 1680px) {
     #temporalMessageTD {
