@@ -147,9 +147,19 @@ class pmDynaform
                         $items[$key]->data = $rows;
                     }
                     if ($items[$key]->type !== "grid") {
+                        $value = "";
+                        $label = "";
+                        if (isset($this->data[$items[$key]->name . "_label"])) {
+                            $value = $this->data[$items[$key]->name];
+                            $label = $this->data[$items[$key]->name . "_label"];
+                        }
+                        if (isset($this->data[$items[$key]->name . "_value"])) {
+                            $value = $this->data[$items[$key]->name . "_value"];
+                            $label = $this->data[$items[$key]->name];
+                        }
                         $items[$key]->data = array(
-                            "value" => $this->data[$items[$key]->name],
-                            "label" => $this->searchValues($items[$key]->name, $this->data[$items[$key]->name])
+                            "value" => $value,
+                            "label" => $label
                         );
                     }
                 }
