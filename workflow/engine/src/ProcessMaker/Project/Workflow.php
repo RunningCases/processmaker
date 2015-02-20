@@ -815,6 +815,33 @@ class Workflow extends Handler
                 $messageType->delete($row["MSGT_UID"]);
             }
 
+            //Delete Message-Event-Relation
+            $messageEventRelation = new \ProcessMaker\BusinessModel\MessageEventRelation();
+
+            $messageEventRelation->deleteWhere(array(\MessageEventRelationPeer::PRJ_UID => $sProcessUID));
+
+            //Delete Message-Event-Task-Relation
+            $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
+
+            $messageEventTaskRelation->deleteWhere(array(\MessageEventTaskRelationPeer::PRJ_UID => $sProcessUID));
+
+            //Delete Message-Event-Definition
+            $messageEventDefinition = new \ProcessMaker\BusinessModel\MessageEventDefinition();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\MessageEventDefinitionPeer::MSGED_UID);
+            $criteria->add(\MessageEventDefinitionPeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
+
+            $rsCriteria = \MessageEventDefinitionPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $messageEventDefinition->delete($row["MSGED_UID"]);
+            }
+
             //Delete the process
             try {
                 $oProcess->remove($sProcessUID);
@@ -1184,6 +1211,23 @@ class Workflow extends Handler
                     }
                 }
             }
+
+            //Update MESSAGE_EVENT_DEFINITION.EVN_UID
+            if (isset($arrayWorkflowData["messageEventDefinition"])) {
+                foreach ($arrayWorkflowData["messageEventDefinition"] as $key => $value) {
+                    $messageEventDefinitionEventUid = $arrayWorkflowData["messageEventDefinition"][$key]["EVN_UID"];
+
+                    foreach ($arrayUid as $value2) {
+                        $arrayItem = $value2;
+
+                        if ($arrayItem["old_uid"] == $messageEventDefinitionEventUid) {
+                            $arrayWorkflowData["messageEventDefinition"][$key]["EVN_UID"] = $arrayItem["new_uid"];
+                            break;
+                        }
+                    }
+                }
+            }
+
             //Workflow tables
             $workflowData = (object)($arrayWorkflowData);
 
