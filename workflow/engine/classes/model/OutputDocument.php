@@ -200,7 +200,7 @@ class OutputDocument extends BaseOutputDocument
                   $genLink = 'Download the file';
                 }
                 $description .= ", By clicking on the generated file link: ".$genLink;
-                G::auditLog("CreateOuputDocument", $description);
+                G::auditLog("CreateOutputDocument", $description);
               
                 return $aData['OUT_DOC_UID'];
             } else {
@@ -286,7 +286,7 @@ class OutputDocument extends BaseOutputDocument
                     if (isset($aData['OUT_DOC_TEMPLATE'])) {
                         $description .= ", [EDIT TEMPLATE]";
                     }
-                    G::auditLog("UpdateOuputDocument", $description);
+                    G::auditLog("UpdateOutputDocument", $description);
 
                     return $iResult;
                 } else {
@@ -330,7 +330,7 @@ class OutputDocument extends BaseOutputDocument
                 $iResult = $oOutputDocument->delete();
                 $oConnection->commit();
                 //Add Audit Log                
-                G::auditLog("DeleteOuputDocument", "Output Document Name: ".$outputName.", Output Document Uid: ".$sOutDocUid.", Description: ".$outputDesc.", Filename generated: ".$outputFile);
+                G::auditLog("DeleteOutputDocument", "Output Document Name: ".$outputName.", Output Document Uid: ".$sOutDocUid.", Description: ".$outputDesc.", Filename generated: ".$outputFile);
 
                 return $iResult;
             } else {

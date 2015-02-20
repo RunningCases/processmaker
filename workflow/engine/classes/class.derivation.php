@@ -182,6 +182,7 @@ class Derivation
 
                 if ((int)($arrayRouteData["ROU_DEFAULT"]) == 1) {
                     $arrayNextTaskDefault = $arrayRouteData;
+                    continue;
                 }
 
                 $flagContinue = true;
@@ -830,8 +831,16 @@ class Derivation
             foreach ($aFields as $sOriginField => $sTargetField) {
                 $sOriginField = str_replace( '@', '', $sOriginField );
                 $sOriginField = str_replace( '#', '', $sOriginField );
+                $sOriginField = str_replace( '%', '', $sOriginField );
+                $sOriginField = str_replace( '?', '', $sOriginField );
+                $sOriginField = str_replace( '$', '', $sOriginField );
+                $sOriginField = str_replace( '=', '', $sOriginField );
                 $sTargetField = str_replace( '@', '', $sTargetField );
                 $sTargetField = str_replace( '#', '', $sTargetField );
+                $sTargetField = str_replace( '%', '', $sTargetField );
+                $sTargetField = str_replace( '?', '', $sTargetField );
+                $sTargetField = str_replace( '$', '', $sTargetField );
+                $sTargetField = str_replace( '=', '', $sTargetField );
                 $aNewFields[$sTargetField] = isset( $appFields['APP_DATA'][$sOriginField] ) ? $appFields['APP_DATA'][$sOriginField] : '';
             }
 
@@ -917,8 +926,16 @@ class Derivation
                 foreach ($aFields as $sOriginField => $sTargetField) {
                     $sOriginField = str_replace( '@', '', $sOriginField );
                     $sOriginField = str_replace( '#', '', $sOriginField );
+                    $sOriginField = str_replace( '%', '', $sOriginField );
+                    $sOriginField = str_replace( '?', '', $sOriginField );
+                    $sOriginField = str_replace( '$', '', $sOriginField );
+                    $sOriginField = str_replace( '=', '', $sOriginField );
                     $sTargetField = str_replace( '@', '', $sTargetField );
                     $sTargetField = str_replace( '#', '', $sTargetField );
+                    $sTargetField = str_replace( '%', '', $sTargetField );
+                    $sTargetField = str_replace( '?', '', $sTargetField );
+                    $sTargetField = str_replace( '$', '', $sTargetField );
+                    $sTargetField = str_replace( '=', '', $sTargetField );
                     $aNewFields[$sTargetField] = isset( $appFields['APP_DATA'][$sOriginField] ) ? $appFields['APP_DATA'][$sOriginField] : '';
                 }
                 $aParentCase['APP_DATA'] = array_merge( $aParentCase['APP_DATA'], $aNewFields );
