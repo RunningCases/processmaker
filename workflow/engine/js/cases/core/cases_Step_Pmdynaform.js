@@ -44,15 +44,6 @@ $(window).load(function () {
         token: credentials,
         submitRest: false
     });
-    new PMDynaform.core.Proxy({
-        url: "http://" + window.project.keys.server + "/" + window.project.keys.apiName + "/" + window.project.keys.apiVersion + "/" + window.project.keys.workspace + "/cases/" + app_uid + "/variables",
-        method: 'GET',
-        data: {},
-        keys: window.project.token,
-        successCallback: function (xhr, response) {
-            window.project.setData2(response);
-        }
-    });
 
     var type = document.createElement("input");
     type.type = "hidden";
