@@ -35,7 +35,6 @@ try {
     switch ($sAction) {
         case "saveTaskData":
             require_once ("classes/model/Task.php");
-
             $response = array ();
 
             $oTask = new Task();
@@ -115,7 +114,7 @@ try {
                     $aData['TAS_GROUP_VARIABLE'] = '';
                     break;
             }
-
+                       
             $result = $oTask->update( $aData );
             $oTaskNewPattern = new Task();
             $taskInfo=$oTaskNewPattern->load($aData['TAS_UID']);

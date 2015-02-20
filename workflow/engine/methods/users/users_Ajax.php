@@ -86,11 +86,13 @@ try {
             switch ((int) $_POST['TU_RELATION']) {
                 case 1:
                     echo $oTasks->assignUser($_POST['TAS_UID'], $_POST['USR_UID'], $_POST['TU_TYPE']);
+                    G::auditlog("AssignUserTask","Assign a User to a Task -> ".$_POST['TAS_UID'].' User UID -> '.$_POST['USR_UID']);
                     break;
                 case 2:
                     echo $oTasks->assignGroup($_POST['TAS_UID'], $_POST['USR_UID'], $_POST['TU_TYPE']);
+                    G::auditlog("AssignGroupTask","Assign a Group to a Task -> ".$_POST['TAS_UID'].' User UID -> '.$_POST['USR_UID']);
                     break;
-            }
+            }            
             break;
         case 'ofToAssign':
             G::LoadClass('tasks');
@@ -98,11 +100,13 @@ try {
             switch ((int) $_POST['TU_RELATION']) {
                 case 1:
                     echo $oTasks->ofToAssignUser($_POST['TAS_UID'], $_POST['USR_UID'], $_POST['TU_TYPE']);
+                    G::auditlog("DeleteUserTask"," Delete a User from a Task -> ".$_POST['TAS_UID'].' User UID -> '.$_POST['USR_UID']);
                     break;
                 case 2:
                     echo $oTasks->ofToAssignGroup($_POST['TAS_UID'], $_POST['USR_UID'], $_POST['TU_TYPE']);
+                    G::auditlog("DeleteGroupTask","Delete a Group from a Task -> ".$_POST['TAS_UID'].' User UID -> '.$_POST['USR_UID']);
                     break;
-            }
+            }            
             break;
         case 'changeView':
             $_SESSION['iType'] = $_POST['TU_TYPE'];
