@@ -231,7 +231,7 @@ Ext.onReady(function(){
       ]
     }),
     store: store,
-    tbar:[
+    tbar:[ 
       {
         xtype: 'tbsplit',
         text: _('ID_NEW'),
