@@ -22,10 +22,6 @@ function dynaFormChanged(frm) {
     return false;
 }
 $(window).load(function () {
-    /*if ((navigator.userAgent.indexOf("MSIE") !== -1) || (navigator.userAgent.indexOf("Trident") !== -1)) {
-        document.body.innerHTML = "<div style='margin:15px'>Responsive Dynaforms are not supported in this browser.</div>";
-        return;
-    }*/
     if (pm_run_outside_main_app === 'true') {
         if (parent.showCaseNavigatorPanel) {
             parent.showCaseNavigatorPanel('DRAFT');
@@ -47,15 +43,6 @@ $(window).load(function () {
         },
         token: credentials,
         submitRest: false
-    });
-    new PMDynaform.core.Proxy({
-        url: "http://" + window.project.keys.server + ":"+port +"/" + window.project.keys.apiName + "/" + window.project.keys.apiVersion + "/" + window.project.keys.workspace + "/cases/" + app_uid + "/variables",
-        method: 'GET',
-        data: {},
-        keys: window.project.token,
-        successCallback: function (xhr, response) {
-            window.project.setData2(response);
-        }
     });
 
     var type = document.createElement("input");

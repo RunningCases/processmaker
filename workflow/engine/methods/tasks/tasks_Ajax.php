@@ -117,7 +117,16 @@ try {
             }
 
             $result = $oTask->update( $aData );
-
+            $oTaskNewPattern = new Task();
+            $taskInfo=$oTaskNewPattern->load($aData['TAS_UID']);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            $taskProperties='';
+            foreach ($aData as $key => $value){
+                if ($value!='') {
+                    $taskProperties.=$key.' -> '.$value.' ';
+                }
+            }
+            G::auditLog("SaveTaskProperties","Task Properties DETAILS : ".$taskProperties);
             $response["status"] = "OK";
 
             if ($result == 3) {
