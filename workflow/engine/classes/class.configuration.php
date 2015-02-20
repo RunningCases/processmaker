@@ -373,9 +373,14 @@ class Configurations // extends Configuration
      */
     public function getFormats()
     {
-    	$this->UserConfig = array();
+        if (!isset($this->UserConfig)) {
+            $this->UserConfig = array();
+        }
         if (empty($this->UserConfig)) {
             $this->UserConfig = $this->getConfiguration("ENVIRONMENT_SETTINGS", "");
+        }
+        if (is_numeric($this->UserConfig)) {
+            $this->UserConfig = array();
         }
 
         //Setting defaults

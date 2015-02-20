@@ -119,13 +119,13 @@ try {
             $oTaskNewPattern = new Task();
             $taskInfo=$oTaskNewPattern->load($aData['TAS_UID']);
             $titleTask=$taskInfo['TAS_TITLE'];
-            $values='';
+            $taskProperties='';
             foreach ($aData as $key => $value){
                 if ($value!='') {
-                    $values.=$key.' -> '.$value.' ';
+                    $taskProperties.=$key.' -> '.$value.' ';
                 }
             }
-            G::auditLog("OptionsMenuTask","Update Task DETAILS : ".$values);
+            G::auditLog("SaveTaskProperties","Task Properties DETAILS : ".$taskProperties);
             $response["status"] = "OK";
 
             if ($result == 3) {

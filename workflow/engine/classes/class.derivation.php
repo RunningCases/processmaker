@@ -182,6 +182,7 @@ class Derivation
 
                 if ((int)($arrayRouteData["ROU_DEFAULT"]) == 1) {
                     $arrayNextTaskDefault = $arrayRouteData;
+                    continue;
                 }
 
                 $flagContinue = true;
@@ -240,7 +241,13 @@ class Derivation
 
             //1. There is no rule
             if (count($arrayNextTask) == 0) {
-                throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_RULE"));
+              $oProcess = new Process();
+              $oProcessFieds = $oProcess->Load( $_SESSION['PROCESS'] );
+              if(isset($oProcessFieds['PRO_BPMN']) && $oProcessFieds['PRO_BPMN'] == 1){
+                throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_BPMN_RULE"));
+              }else{
+                throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_RULE")); 
+              }              
             }
 
             //Return
@@ -824,8 +831,16 @@ class Derivation
             foreach ($aFields as $sOriginField => $sTargetField) {
                 $sOriginField = str_replace( '@', '', $sOriginField );
                 $sOriginField = str_replace( '#', '', $sOriginField );
+                $sOriginField = str_replace( '%', '', $sOriginField );
+                $sOriginField = str_replace( '?', '', $sOriginField );
+                $sOriginField = str_replace( '$', '', $sOriginField );
+                $sOriginField = str_replace( '=', '', $sOriginField );
                 $sTargetField = str_replace( '@', '', $sTargetField );
                 $sTargetField = str_replace( '#', '', $sTargetField );
+                $sTargetField = str_replace( '%', '', $sTargetField );
+                $sTargetField = str_replace( '?', '', $sTargetField );
+                $sTargetField = str_replace( '$', '', $sTargetField );
+                $sTargetField = str_replace( '=', '', $sTargetField );
                 $aNewFields[$sTargetField] = isset( $appFields['APP_DATA'][$sOriginField] ) ? $appFields['APP_DATA'][$sOriginField] : '';
             }
 
@@ -911,8 +926,16 @@ class Derivation
                 foreach ($aFields as $sOriginField => $sTargetField) {
                     $sOriginField = str_replace( '@', '', $sOriginField );
                     $sOriginField = str_replace( '#', '', $sOriginField );
+                    $sOriginField = str_replace( '%', '', $sOriginField );
+                    $sOriginField = str_replace( '?', '', $sOriginField );
+                    $sOriginField = str_replace( '$', '', $sOriginField );
+                    $sOriginField = str_replace( '=', '', $sOriginField );
                     $sTargetField = str_replace( '@', '', $sTargetField );
                     $sTargetField = str_replace( '#', '', $sTargetField );
+                    $sTargetField = str_replace( '%', '', $sTargetField );
+                    $sTargetField = str_replace( '?', '', $sTargetField );
+                    $sTargetField = str_replace( '$', '', $sTargetField );
+                    $sTargetField = str_replace( '=', '', $sTargetField );
                     $aNewFields[$sTargetField] = isset( $appFields['APP_DATA'][$sOriginField] ) ? $appFields['APP_DATA'][$sOriginField] : '';
                 }
                 $aParentCase['APP_DATA'] = array_merge( $aParentCase['APP_DATA'], $aNewFields );

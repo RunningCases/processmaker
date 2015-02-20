@@ -67,6 +67,7 @@ Ext.onReady(function(){
         /*----------------------------------********---------------------------------*/
         ,{name : "PRO_TYPE_PROCESS", type: "string"}
         /*----------------------------------********---------------------------------*/
+        ,{name : "PRO_UPDATE_DATE"} 
       ]
     }),
 
@@ -226,6 +227,7 @@ Ext.onReady(function(){
         /*----------------------------------********---------------------------------*/
         ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 75, align:"left"}
         /*----------------------------------********---------------------------------*/
+        ,{header: _("ID_LAN_UPDATE_DATE"), dataIndex: "PRO_UPDATE_DATE", width: 75, align:"left"}
       ]
     }),
     store: store,
@@ -476,6 +478,8 @@ Ext.onReady(function(){
 
 function newProcess(params)
 {
+    if (winDesigner)
+        winDesigner.close();
   params = typeof params == 'undefined' ? {type:'classicProject'} : params;
 
   // TODO this variable have hardcoded labels, it must be changed on the future
@@ -587,8 +591,10 @@ function saveProcess()
             		 if ( typeof(winDesigner) == "undefined" || winDesigner.closed ){
             			 winDesigner = window.open(
                     			  "../designer?prj_uid="+resp.result.PRO_UID,
-                    			  '_blank'
+                    			  'winDesigner'
                     			);
+                                Ext.getCmp('newProjectWin').close();
+                                processesGrid.store.reload();
                   	 } else {
                   		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
                   	 }
@@ -648,7 +654,7 @@ editProcess = function(typeParam)
 	  if (typeof(winDesigner) == "undefined" || winDesigner.closed){
 		  winDesigner = window.open(
 				  url,
-				  '_blank'
+				  'winDesigner'
 				);
    	 } else {
    		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
@@ -964,7 +970,7 @@ importProcessExistGroup = function()
                         	if (typeof(winDesigner) == "undefined" || winDesigner.closed){
                         		winDesigner = window.open(
                             			  "../designer?prj_uid=" + sNewProUid,
-                            			  '_blank'
+                            			  'winDesigner'
                             			);
                         	} else {
                         		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
@@ -1110,7 +1116,7 @@ importProcessExistProcess = function()
                             	if (typeof(winDesigner) == "undefined" || winDesigner.closed){
                             		winDesigner = window.open(
                                 			  "../designer?prj_uid=" + sNewProUid,
-                                			  '_blank'
+                                			  'winDesigner'
                                 			);
                             	} else {
                             		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
@@ -1163,6 +1169,11 @@ importProcessExistProcess = function()
 
 importProcess = function()
 {
+    if (winDesigner) {
+        winDesigner.close();
+        if (!winDesigner.closed)
+            return;
+    }
     var processFileType      = importProcessGlobal.processFileType;
     var processFileTypeTitle = (processFileType == "pm") ? "" : " " + processFileType;
 
@@ -1248,7 +1259,7 @@ importProcess = function()
                             		 if (typeof(winDesigner) == "undefined" || winDesigner.closed){
                             			 winDesigner = window.open(
                                     			  "../designer?prj_uid=" + sNewProUid,
-                                    			  '_blank'
+                                    			  'winDesigner'
                                     			);
                                   	 } else {
                                   		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
@@ -1564,3 +1575,7 @@ function enableDisableDebug()
 
 }
 
+Ext.EventManager.on(window, 'beforeunload', function () {
+    if (winDesigner)
+        winDesigner.close();
+});

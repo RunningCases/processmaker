@@ -1667,6 +1667,31 @@ function mapPMFieldType(id)
         sizeField='255';
         break;
 
+      case 'string':
+        typeField='VARCHAR';
+        sizeField='255';
+        break;
+      case 'integer':
+        typeField='INTEGER';
+        sizeField='11';
+        break;
+      case 'float':
+        typeField='FLOAT';
+        sizeField='11';
+        break;
+    case 'boolean':
+        typeField='INTEGER';
+        sizeField='1';
+        break;
+    case 'date':
+        typeField='VARCHAR';
+        sizeField='255';
+        break;
+    case 'datetime':
+        typeField='VARCHAR';
+        sizeField='255';
+        break;
+
       default:
         typeField='TEXT';
         sizeField='';

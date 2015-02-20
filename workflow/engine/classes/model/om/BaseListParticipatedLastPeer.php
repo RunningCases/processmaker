@@ -25,7 +25,7 @@ abstract class BaseListParticipatedLastPeer
     const CLASS_DEFAULT = 'classes.model.ListParticipatedLast';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 17;
+    const NUM_COLUMNS = 21;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -55,6 +55,9 @@ abstract class BaseListParticipatedLastPeer
     /** the column name for the APP_TAS_TITLE field */
     const APP_TAS_TITLE = 'LIST_PARTICIPATED_LAST.APP_TAS_TITLE';
 
+    /** the column name for the APP_STATUS field */
+    const APP_STATUS = 'LIST_PARTICIPATED_LAST.APP_STATUS';
+
     /** the column name for the DEL_INDEX field */
     const DEL_INDEX = 'LIST_PARTICIPATED_LAST.DEL_INDEX';
 
@@ -69,6 +72,15 @@ abstract class BaseListParticipatedLastPeer
 
     /** the column name for the DEL_PREVIOUS_USR_LASTNAME field */
     const DEL_PREVIOUS_USR_LASTNAME = 'LIST_PARTICIPATED_LAST.DEL_PREVIOUS_USR_LASTNAME';
+
+    /** the column name for the DEL_CURRENT_USR_USERNAME field */
+    const DEL_CURRENT_USR_USERNAME = 'LIST_PARTICIPATED_LAST.DEL_CURRENT_USR_USERNAME';
+
+    /** the column name for the DEL_CURRENT_USR_FIRSTNAME field */
+    const DEL_CURRENT_USR_FIRSTNAME = 'LIST_PARTICIPATED_LAST.DEL_CURRENT_USR_FIRSTNAME';
+
+    /** the column name for the DEL_CURRENT_USR_LASTNAME field */
+    const DEL_CURRENT_USR_LASTNAME = 'LIST_PARTICIPATED_LAST.DEL_CURRENT_USR_LASTNAME';
 
     /** the column name for the DEL_DELEGATE_DATE field */
     const DEL_DELEGATE_DATE = 'LIST_PARTICIPATED_LAST.DEL_DELEGATE_DATE';
@@ -93,10 +105,10 @@ abstract class BaseListParticipatedLastPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('AppUid', 'UsrUid', 'TasUid', 'ProUid', 'AppNumber', 'AppTitle', 'AppProTitle', 'AppTasTitle', 'DelIndex', 'DelPreviousUsrUid', 'DelPreviousUsrUsername', 'DelPreviousUsrFirstname', 'DelPreviousUsrLastname', 'DelDelegateDate', 'DelInitDate', 'DelDueDate', 'DelPriority', ),
-        BasePeer::TYPE_COLNAME => array (ListParticipatedLastPeer::APP_UID, ListParticipatedLastPeer::USR_UID, ListParticipatedLastPeer::TAS_UID, ListParticipatedLastPeer::PRO_UID, ListParticipatedLastPeer::APP_NUMBER, ListParticipatedLastPeer::APP_TITLE, ListParticipatedLastPeer::APP_PRO_TITLE, ListParticipatedLastPeer::APP_TAS_TITLE, ListParticipatedLastPeer::DEL_INDEX, ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID, ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME, ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME, ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME, ListParticipatedLastPeer::DEL_DELEGATE_DATE, ListParticipatedLastPeer::DEL_INIT_DATE, ListParticipatedLastPeer::DEL_DUE_DATE, ListParticipatedLastPeer::DEL_PRIORITY, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_UID', 'USR_UID', 'TAS_UID', 'PRO_UID', 'APP_NUMBER', 'APP_TITLE', 'APP_PRO_TITLE', 'APP_TAS_TITLE', 'DEL_INDEX', 'DEL_PREVIOUS_USR_UID', 'DEL_PREVIOUS_USR_USERNAME', 'DEL_PREVIOUS_USR_FIRSTNAME', 'DEL_PREVIOUS_USR_LASTNAME', 'DEL_DELEGATE_DATE', 'DEL_INIT_DATE', 'DEL_DUE_DATE', 'DEL_PRIORITY', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+        BasePeer::TYPE_PHPNAME => array ('AppUid', 'UsrUid', 'TasUid', 'ProUid', 'AppNumber', 'AppTitle', 'AppProTitle', 'AppTasTitle', 'AppStatus', 'DelIndex', 'DelPreviousUsrUid', 'DelPreviousUsrUsername', 'DelPreviousUsrFirstname', 'DelPreviousUsrLastname', 'DelCurrentUsrUsername', 'DelCurrentUsrFirstname', 'DelCurrentUsrLastname', 'DelDelegateDate', 'DelInitDate', 'DelDueDate', 'DelPriority', ),
+        BasePeer::TYPE_COLNAME => array (ListParticipatedLastPeer::APP_UID, ListParticipatedLastPeer::USR_UID, ListParticipatedLastPeer::TAS_UID, ListParticipatedLastPeer::PRO_UID, ListParticipatedLastPeer::APP_NUMBER, ListParticipatedLastPeer::APP_TITLE, ListParticipatedLastPeer::APP_PRO_TITLE, ListParticipatedLastPeer::APP_TAS_TITLE, ListParticipatedLastPeer::APP_STATUS, ListParticipatedLastPeer::DEL_INDEX, ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID, ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME, ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME, ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME, ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME, ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME, ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME, ListParticipatedLastPeer::DEL_DELEGATE_DATE, ListParticipatedLastPeer::DEL_INIT_DATE, ListParticipatedLastPeer::DEL_DUE_DATE, ListParticipatedLastPeer::DEL_PRIORITY, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_UID', 'USR_UID', 'TAS_UID', 'PRO_UID', 'APP_NUMBER', 'APP_TITLE', 'APP_PRO_TITLE', 'APP_TAS_TITLE', 'APP_STATUS', 'DEL_INDEX', 'DEL_PREVIOUS_USR_UID', 'DEL_PREVIOUS_USR_USERNAME', 'DEL_PREVIOUS_USR_FIRSTNAME', 'DEL_PREVIOUS_USR_LASTNAME', 'DEL_CURRENT_USR_USERNAME', 'DEL_CURRENT_USR_FIRSTNAME', 'DEL_CURRENT_USR_LASTNAME', 'DEL_DELEGATE_DATE', 'DEL_INIT_DATE', 'DEL_DUE_DATE', 'DEL_PRIORITY', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
     );
 
     /**
@@ -106,10 +118,10 @@ abstract class BaseListParticipatedLastPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('AppUid' => 0, 'UsrUid' => 1, 'TasUid' => 2, 'ProUid' => 3, 'AppNumber' => 4, 'AppTitle' => 5, 'AppProTitle' => 6, 'AppTasTitle' => 7, 'DelIndex' => 8, 'DelPreviousUsrUid' => 9, 'DelPreviousUsrUsername' => 10, 'DelPreviousUsrFirstname' => 11, 'DelPreviousUsrLastname' => 12, 'DelDelegateDate' => 13, 'DelInitDate' => 14, 'DelDueDate' => 15, 'DelPriority' => 16, ),
-        BasePeer::TYPE_COLNAME => array (ListParticipatedLastPeer::APP_UID => 0, ListParticipatedLastPeer::USR_UID => 1, ListParticipatedLastPeer::TAS_UID => 2, ListParticipatedLastPeer::PRO_UID => 3, ListParticipatedLastPeer::APP_NUMBER => 4, ListParticipatedLastPeer::APP_TITLE => 5, ListParticipatedLastPeer::APP_PRO_TITLE => 6, ListParticipatedLastPeer::APP_TAS_TITLE => 7, ListParticipatedLastPeer::DEL_INDEX => 8, ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID => 9, ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME => 10, ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME => 11, ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME => 12, ListParticipatedLastPeer::DEL_DELEGATE_DATE => 13, ListParticipatedLastPeer::DEL_INIT_DATE => 14, ListParticipatedLastPeer::DEL_DUE_DATE => 15, ListParticipatedLastPeer::DEL_PRIORITY => 16, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0, 'USR_UID' => 1, 'TAS_UID' => 2, 'PRO_UID' => 3, 'APP_NUMBER' => 4, 'APP_TITLE' => 5, 'APP_PRO_TITLE' => 6, 'APP_TAS_TITLE' => 7, 'DEL_INDEX' => 8, 'DEL_PREVIOUS_USR_UID' => 9, 'DEL_PREVIOUS_USR_USERNAME' => 10, 'DEL_PREVIOUS_USR_FIRSTNAME' => 11, 'DEL_PREVIOUS_USR_LASTNAME' => 12, 'DEL_DELEGATE_DATE' => 13, 'DEL_INIT_DATE' => 14, 'DEL_DUE_DATE' => 15, 'DEL_PRIORITY' => 16, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+        BasePeer::TYPE_PHPNAME => array ('AppUid' => 0, 'UsrUid' => 1, 'TasUid' => 2, 'ProUid' => 3, 'AppNumber' => 4, 'AppTitle' => 5, 'AppProTitle' => 6, 'AppTasTitle' => 7, 'AppStatus' => 8, 'DelIndex' => 9, 'DelPreviousUsrUid' => 10, 'DelPreviousUsrUsername' => 11, 'DelPreviousUsrFirstname' => 12, 'DelPreviousUsrLastname' => 13, 'DelCurrentUsrUsername' => 14, 'DelCurrentUsrFirstname' => 15, 'DelCurrentUsrLastname' => 16, 'DelDelegateDate' => 17, 'DelInitDate' => 18, 'DelDueDate' => 19, 'DelPriority' => 20, ),
+        BasePeer::TYPE_COLNAME => array (ListParticipatedLastPeer::APP_UID => 0, ListParticipatedLastPeer::USR_UID => 1, ListParticipatedLastPeer::TAS_UID => 2, ListParticipatedLastPeer::PRO_UID => 3, ListParticipatedLastPeer::APP_NUMBER => 4, ListParticipatedLastPeer::APP_TITLE => 5, ListParticipatedLastPeer::APP_PRO_TITLE => 6, ListParticipatedLastPeer::APP_TAS_TITLE => 7, ListParticipatedLastPeer::APP_STATUS => 8, ListParticipatedLastPeer::DEL_INDEX => 9, ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID => 10, ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME => 11, ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME => 12, ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME => 13, ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME => 14, ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME => 15, ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME => 16, ListParticipatedLastPeer::DEL_DELEGATE_DATE => 17, ListParticipatedLastPeer::DEL_INIT_DATE => 18, ListParticipatedLastPeer::DEL_DUE_DATE => 19, ListParticipatedLastPeer::DEL_PRIORITY => 20, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0, 'USR_UID' => 1, 'TAS_UID' => 2, 'PRO_UID' => 3, 'APP_NUMBER' => 4, 'APP_TITLE' => 5, 'APP_PRO_TITLE' => 6, 'APP_TAS_TITLE' => 7, 'APP_STATUS' => 8, 'DEL_INDEX' => 9, 'DEL_PREVIOUS_USR_UID' => 10, 'DEL_PREVIOUS_USR_USERNAME' => 11, 'DEL_PREVIOUS_USR_FIRSTNAME' => 12, 'DEL_PREVIOUS_USR_LASTNAME' => 13, 'DEL_CURRENT_USR_USERNAME' => 14, 'DEL_CURRENT_USR_FIRSTNAME' => 15, 'DEL_CURRENT_USR_LASTNAME' => 16, 'DEL_DELEGATE_DATE' => 17, 'DEL_INIT_DATE' => 18, 'DEL_DUE_DATE' => 19, 'DEL_PRIORITY' => 20, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
     );
 
     /**
@@ -226,6 +238,8 @@ abstract class BaseListParticipatedLastPeer
 
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TAS_TITLE);
 
+        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_STATUS);
+
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INDEX);
 
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID);
@@ -235,6 +249,12 @@ abstract class BaseListParticipatedLastPeer
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME);
 
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME);
+
+        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME);
+
+        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME);
+
+        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME);
 
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_DELEGATE_DATE);
 
