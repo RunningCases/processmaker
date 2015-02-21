@@ -1340,5 +1340,95 @@ class Bpmn extends Handler
             throw $oException;
         }
     }
+
+    public function getElementsBetweenElementOriginAndElementDest(
+        $elementOriginUid,
+        $elementOriginType,
+        $elementDestUid,
+        $elementDestType,
+        $index
+    ) {
+        try {
+            if ($elementOriginType == $elementDestType && $elementOriginUid == $elementDestUid) {
+                $arrayEvent = array();
+                $arrayEvent[$index] = array($elementDestUid, $elementDestType);
+
+                //Return
+                return $arrayEvent;
+            } else {
+                //Flows
+                $arrayFlow = \BpmnFlow::findAllBy(array(
+                    \BpmnFlowPeer::FLO_TYPE                => array("MESSAGE", \Criteria::NOT_EQUAL),
+                    \BpmnFlowPeer::FLO_ELEMENT_ORIGIN      => $elementOriginUid,
+                    \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => $elementOriginType
+                ));
+
+                foreach ($arrayFlow as $value) {
+                    $arrayFlowData = $value->toArray();
+
+                    $arrayEvent = $this->getElementsBetweenElementOriginAndElementDest(
+                        $arrayFlowData["FLO_ELEMENT_DEST"],
+                        $arrayFlowData["FLO_ELEMENT_DEST_TYPE"],
+                        $elementDestUid,
+                        $elementDestType,
+                        $index + 1
+                    );
+
+                    if (count($arrayEvent) > 0) {
+                        $arrayEvent[$index] = array($elementOriginUid, $elementOriginType);
+
+                        //Return
+                        return $arrayEvent;
+                    }
+                }
+
+                //Return
+                return array();
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function getMessageEventsOfThrowTypeBetweenElementOriginAndElementDest(
+        $elementOriginUid,
+        $elementOriginType,
+        $elementDestUid,
+        $elementDestType
+    ) {
+        try {
+            $arrayEventType   = array("END", "INTERMEDIATE");
+            $arrayEventMarker = array("MESSAGETHROW");
+
+            $arrayEventAux = $this->getElementsBetweenElementOriginAndElementDest(
+                $elementOriginUid,
+                $elementOriginType,
+                $elementDestUid,
+                $elementDestType,
+                0
+            );
+
+            ksort($arrayEventAux);
+
+            $arrayEvent = array();
+
+            foreach ($arrayEventAux as $value) {
+                if ($value[1] == "bpmnEvent") {
+                    $event = \BpmnEventPeer::retrieveByPK($value[0]);
+
+                    if (!is_null($event) &&
+                        in_array($event->getEvnType(), $arrayEventType) && in_array($event->getEvnMarker(), $arrayEventMarker)
+                    ) {
+                        $arrayEvent[] = $value;
+                    }
+                }
+            }
+
+            //Return
+            return $arrayEvent;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
 

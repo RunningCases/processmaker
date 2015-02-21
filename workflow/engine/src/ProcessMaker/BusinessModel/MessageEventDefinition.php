@@ -220,9 +220,7 @@ class MessageEventDefinition
             }
 
             if (isset($arrayData["MSGT_UID"]) && $arrayData["MSGT_UID"] . "" != "") {
-                if (!$messageType->exists($arrayData["MSGT_UID"])) {
-                    throw new \Exception(\G::LoadTranslation("ID_MESSAGE_TYPE_NOT_EXIST", array($this->arrayFieldNameForException["messageTypeUid"], $arrayData["MSGT_UID"])));
-                }
+                $messageType->throwExceptionIfNotExistsMessageType($arrayData["MSGT_UID"], $this->arrayFieldNameForException["messageTypeUid"]);
             }
 
             $flagCheckData = false;
@@ -335,7 +333,7 @@ class MessageEventDefinition
                         $bpmnEvent = \BpmnEventPeer::retrieveByPK($arrayData["EVN_UID"]);
 
                         //Event - START-MESSAGE-EVENT
-                        if (is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "MESSAGECATCH") {
+                        if (!is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "MESSAGECATCH") {
                             //Message-Event-Task-Relation - Get Task
                             $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
 
@@ -438,7 +436,7 @@ class MessageEventDefinition
                         $bpmnEvent = \BpmnEventPeer::retrieveByPK($arrayMessageEventDefinitionData["EVN_UID"]);
 
                         //Event - START-MESSAGE-EVENT
-                        if (is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "MESSAGECATCH") {
+                        if (!is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "MESSAGECATCH") {
                             //Message-Event-Task-Relation - Get Task
                             $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
 

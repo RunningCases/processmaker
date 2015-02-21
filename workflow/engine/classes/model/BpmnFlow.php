@@ -6,7 +6,7 @@ require_once 'classes/model/om/BaseBpmnFlow.php';
 /**
  * Skeleton subclass for representing a row from the 'BPMN_FLOW' table.
  *
- * 
+ *
  *
  * You should add additional methods to this class to meet the
  * application requirements.  This class will only be generated as
@@ -58,7 +58,11 @@ class BpmnFlow extends BaseBpmnFlow
         $c = new Criteria('workflow');
 
         foreach ($field as $key => $value) {
-            $c->add($key, $value, Criteria::EQUAL);
+            if (is_array($value)) {
+                $c->add($key, $value[0], $value[1]);
+            } else {
+                $c->add($key, $value, Criteria::EQUAL);
+            }
         }
 
         return BpmnFlowPeer::doSelect($c);
@@ -145,3 +149,4 @@ class BpmnFlow extends BaseBpmnFlow
     }*/
 
 } // BpmnFlow
+
