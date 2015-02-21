@@ -403,7 +403,7 @@ try {
                     if ($oData->next_task != "-1") {
                         $oTaskNextNewPattern = new Task();
                         $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
-                        $titleNextTask=$$taskNextInfo['TAS_TITLE'];
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
                     } else {
                         $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
                     }
@@ -420,7 +420,7 @@ try {
                     if ($oData->next_task != "-1") {
                         $oTaskNextNewPattern = new Task();
                         $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
-                        $titleNextTask=$$taskNextInfo['TAS_TITLE'];
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
                     } else {
                         $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
                     }
@@ -437,7 +437,7 @@ try {
                     if ($oData->next_task != "-1") {
                         $oTaskNextNewPattern = new Task();
                         $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
-                        $titleNextTask=$$taskNextInfo['TAS_TITLE'];
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
                     } else {
                         $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
                     }
@@ -454,7 +454,7 @@ try {
                     if ($oData->next_task != "-1") {
                         $oTaskNextNewPattern = new Task();
                         $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
-                        $titleNextTask=$$taskNextInfo['TAS_TITLE'];
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
                     } else {
                         $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
                     }
@@ -470,7 +470,7 @@ try {
                     if ($oData->next_task != "-1") {
                         $oTaskNextNewPattern = new Task();
                         $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
-                        $titleNextTask=$$taskNextInfo['TAS_TITLE'];
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
                     } else {
                         $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
                     }
@@ -486,7 +486,7 @@ try {
                     if ($oData->next_task != "-1") {
                         $oTaskNextNewPattern = new Task();
                         $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
-                        $titleNextTask=$$taskNextInfo['TAS_TITLE'];
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
                     } else {
                         $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
                     }
