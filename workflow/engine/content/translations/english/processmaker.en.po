@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-21 08:23:36\n"
+"PO-Revision-Date: 2015-02-21 11:15:01\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -18306,6 +18306,18 @@ msgstr "The variables do not meet with the definition of Message-Type-Variable"
 #: LABEL/ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_IS_REGISTERED
 msgid "The Message-Event-Definition with {0}: {1} does not is registered."
 msgstr "The Message-Event-Definition with {0}: {1} does not is registered."
+
+# TRANSLATION
+# LABEL/ID_EDIT_PROCESS
+#: LABEL/ID_EDIT_PROCESS
+msgid "Process Edited"
+msgstr "Process Edited"
+
+# TRANSLATION
+# LABEL/ID_EVENT_DELETED
+#: LABEL/ID_EVENT_DELETED
+msgid "Event deleted"
+msgstr "Event deleted"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
