@@ -42,5 +42,5 @@ $proUid = $triggerFields['PRO_UID'];
 $infoProcess = new Process();
 $resultProcess = $infoProcess->load($proUid);
 
-G::auditLog('Events','Save event ('.$_POST['form']['TRI_UID'].') in process "'.$resultProcess['PRO_TITLE'].'"');
+G::auditLog('EditEvent','Save trigger from event ('.$_POST['form']['TRI_UID'].') in process "'.$resultProcess['PRO_TITLE'].'"');
 

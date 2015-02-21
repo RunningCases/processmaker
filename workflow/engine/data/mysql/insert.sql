@@ -4514,7 +4514,9 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_EXIST','en','The Message-Event-Definition with {0}: {1} does not exist.','2015-02-20') ,
 ( 'LABEL','ID_MESSAGE_EVENT_DEFINITION_ALREADY_REGISTERED','en','The Message-Event-Definition with {0}: {1} already registered.','2015-02-20') ,
 ( 'LABEL','ID_MESSAGE_EVENT_DEFINITION_VARIABLES_DO_NOT_MEET_DEFINITION','en','The variables do not meet with the definition of Message-Type-Variable','2015-02-20') ,
-( 'LABEL','ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_IS_REGISTERED','en','The Message-Event-Definition with {0}: {1} does not is registered.','2015-02-20') ;
+( 'LABEL','ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_IS_REGISTERED','en','The Message-Event-Definition with {0}: {1} does not is registered.','2015-02-20') ,
+( 'LABEL','ID_EDIT_PROCESS','en','Process Edited','2015-02-21') ,
+( 'LABEL','ID_EVENT_DELETED','en','Event deleted','2015-02-21') ;
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,
