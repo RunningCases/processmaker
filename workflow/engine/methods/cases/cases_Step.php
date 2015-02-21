@@ -1,10 +1,10 @@
 <?php
 require_once 'classes/model/AppDelegation.php';
 $delegation = new AppDelegation();
-if( $delegation->alreadyRouted($_SESSION['APPLICATION'],$_SESSION['INDEX']) ) {  
+if( $delegation->alreadyRouted($_SESSION['APPLICATION'],$_SESSION['INDEX']) ) {
     G::header('location: ../cases/casesListExtJs');
     die();
-}  
+}
 
 if (!isset($_SESSION['USER_LOGGED'])) {
       G::SendTemporalMessage( 'ID_LOGIN_AGAIN', 'warning', 'labels' );
@@ -959,6 +959,12 @@ try {
             $title = htmlentities($aFields['TASK'][$sKey]['NEXT_TASK']['TAS_TITLE'], ENT_QUOTES, 'UTF-8');
             $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_TITLE'] = $title;
 
+            if (!preg_match("/\-1$/", $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_UID"]) &&
+                $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TYPE"] == "INTERMEDIATE-CATCH-MESSAGE-EVENT"
+            ) {
+                $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_MESSAGE_EVENT");
+            }
+
             $G_PUBLISH->AddContent( 'smarty', $tplFile, '', '', $aFields );
             /*
             if (isset( $aFields['TASK'][1]['NEXT_TASK']['USER_ASSIGNED'])){
@@ -1026,13 +1032,13 @@ try {
     }
     //Add content content step - End
 } catch (Exception $e) {
-    //Check if the process is BPMN       
+    //Check if the process is BPMN
     if(isset($oProcessFieds['PRO_BPMN']) && $oProcessFieds['PRO_BPMN'] == 1){
-      G::SendTemporalMessage( G::LoadTranslation( 'ID_BPMN_PROCESS_DEF_PROBLEM' ), 'error', 'string', 3, 100 );      
+      G::SendTemporalMessage( G::LoadTranslation( 'ID_BPMN_PROCESS_DEF_PROBLEM' ), 'error', 'string', 3, 100 );
     }else{
       G::SendTemporalMessage( G::LoadTranslation( 'ID_PROCESS_DEF_PROBLEM' ), 'error', 'string', 3, 100 );
-    }    
-    
+    }
+
     $aMessage = array ();
     $aMessage['MESSAGE'] = $e->getMessage();
     $G_PUBLISH = new Publisher();
