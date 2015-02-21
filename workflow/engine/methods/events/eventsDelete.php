@@ -34,7 +34,7 @@ $proUid = $eventFields['PRO_UID'];
 
 $infoProcess = new Process();
 $resultProcess = $infoProcess->load($proUid);
-G::auditLog('Events','Delete event ('.$_POST['EVN_UID'].') in process "'.$resultProcess['PRO_TITLE'].'"');
+G::auditLog('DeleteEvent','Delete event ('.$_POST['EVN_UID'].') in process "'.$resultProcess['PRO_TITLE'].'"');
 
 $evnUid = $_POST['EVN_UID'];
 require_once 'classes/model/Event.php';
