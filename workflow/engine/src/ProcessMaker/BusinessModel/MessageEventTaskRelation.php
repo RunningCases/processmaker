@@ -231,7 +231,11 @@ class MessageEventTaskRelation
             $criteria = new \Criteria("workflow");
 
             foreach ($arrayCondition as $key => $value) {
-                $criteria->add($key, $value, \Criteria::EQUAL);
+                if (is_array($value)) {
+                    $criteria->add($key, $value[0], $value[1]);
+                } else {
+                    $criteria->add($key, $value, \Criteria::EQUAL);
+                }
             }
 
             $result = \MessageEventTaskRelationPeer::doDelete($criteria);
@@ -320,7 +324,7 @@ class MessageEventTaskRelation
      * @param array $arrayCondition Conditions
      * @param bool  $flagGetRecord  Value that set the getting
      *
-     * return array Return an array with data of a Message-Event-Task-Relation
+     * return array Return an array with data of a Message-Event-Task-Relation, otherwise null
      */
     public function getMessageEventTaskRelationWhere(array $arrayCondition, $flagGetRecord = false)
     {
@@ -329,7 +333,11 @@ class MessageEventTaskRelation
             $criteria = $this->getMessageEventTaskRelationCriteria();
 
             foreach ($arrayCondition as $key => $value) {
-                $criteria->add($key, $value, \Criteria::EQUAL);
+                if (is_array($value)) {
+                    $criteria->add($key, $value[0], $value[1]);
+                } else {
+                    $criteria->add($key, $value, \Criteria::EQUAL);
+                }
             }
 
             $rsCriteria = \MessageEventTaskRelationPeer::doSelectRS($criteria);

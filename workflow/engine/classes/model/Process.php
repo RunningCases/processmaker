@@ -182,7 +182,7 @@ class Process extends BaseProcess
             $this->setProCategory( $aData['PRO_CATEGORY'] );
             $this->setProSubCategory( '' );
             $this->setProIndustry( '' );
-            $this->setProCreateDate( 'now' );
+            $this->setProCreateDate( date("Y-m-d H:i:s") );
             $this->setProCreateUser( $aData['USR_UID'] );
             $this->setProHeight( 5000 );
             $this->setProWidth( 10000 );

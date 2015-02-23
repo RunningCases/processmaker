@@ -67,6 +67,7 @@ Ext.onReady(function(){
         /*----------------------------------********---------------------------------*/
         ,{name : "PRO_TYPE_PROCESS", type: "string"}
         /*----------------------------------********---------------------------------*/
+        ,{name : "PRO_UPDATE_DATE"} 
       ]
     }),
 
@@ -226,6 +227,7 @@ Ext.onReady(function(){
         /*----------------------------------********---------------------------------*/
         ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 75, align:"left"}
         /*----------------------------------********---------------------------------*/
+        ,{header: _("ID_LAN_UPDATE_DATE"), dataIndex: "PRO_UPDATE_DATE", width: 75, align:"left"}
       ]
     }),
     store: store,
@@ -970,6 +972,8 @@ importProcessExistGroup = function()
                             			  "../designer?prj_uid=" + sNewProUid,
                             			  'winDesigner'
                             			);
+                                    w.close();
+                                    processesGrid.store.reload();
                         	} else {
                         		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
                         	}
@@ -1116,6 +1120,9 @@ importProcessExistProcess = function()
                                 			  "../designer?prj_uid=" + sNewProUid,
                                 			  'winDesigner'
                                 			);
+                                    Ext.getCmp('importProcessWindow').close();
+                                    w.close();
+                                    processesGrid.store.reload();
                             	} else {
                             		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
                             	}
@@ -1176,6 +1183,7 @@ importProcess = function()
     var processFileTypeTitle = (processFileType == "pm") ? "" : " " + processFileType;
 
     var w = new Ext.Window({
+      id          : 'importProcessWindow', 
       title       : _('ID_IMPORT_PROCESS')+processFileTypeTitle,
       width       : 420,
       height      : 130,
@@ -1259,6 +1267,8 @@ importProcess = function()
                                     			  "../designer?prj_uid=" + sNewProUid,
                                     			  'winDesigner'
                                     			);
+                                            w.close();
+                                            processesGrid.store.reload();
                                   	 } else {
                                   		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
                                   	 }

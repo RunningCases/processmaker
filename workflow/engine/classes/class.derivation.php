@@ -112,7 +112,7 @@ class Derivation
                     $arrayTaskData["NEXT_TASK"]["TAS_PARENT"] = "";
                 }
 
-                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = ($arrayTaskData["NEXT_TASK"]["TAS_TYPE"] != "GATEWAYTOGATEWAY")? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "");
+                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = (!in_array($arrayTaskData["NEXT_TASK"]["TAS_TYPE"], array("GATEWAYTOGATEWAY", "END-MESSAGE-EVENT")))? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "");
             }
 
             //Return
@@ -182,6 +182,8 @@ class Derivation
 
                 if ((int)($arrayRouteData["ROU_DEFAULT"]) == 1) {
                     $arrayNextTaskDefault = $arrayRouteData;
+                    $arrayNextTask = array();
+                    break;
                 }
 
                 $flagContinue = true;
@@ -219,21 +221,29 @@ class Derivation
                 $arrayNextTask[++$i] = $this->prepareInformationTask($arrayNextTaskDefault);
             }
 
-            //Check Task GATEWAYTOGATEWAY
-            $arrayNextTaskBk = $arrayNextTask;
+            //Check Task GATEWAYTOGATEWAY or END-MESSAGE-EVENT
+            $arrayNextTaskBackup = $arrayNextTask;
             $arrayNextTask = array();
             $i = 0;
 
-            foreach ($arrayNextTaskBk as $value) {
+            foreach ($arrayNextTaskBackup as $value) {
                 $arrayNextTaskData = $value;
 
-                if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" && $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"] == "GATEWAYTOGATEWAY") {
+                if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" &&
+                    in_array($arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"], array("GATEWAYTOGATEWAY", "END-MESSAGE-EVENT"))
+                ) {
                     $arrayAux = $this->prepareInformation($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
 
                     foreach ($arrayAux as $value2) {
                         $arrayNextTask[++$i] = $value2;
                     }
                 } else {
+                    if ($arrayNextTaskData["TAS_TYPE"] == "END-MESSAGE-EVENT" &&
+                        $arrayNextTaskData["NEXT_TASK"]["TAS_UID"] == "-1"
+                    ) {
+                        $arrayNextTaskData["NEXT_TASK"]["TAS_UID"] = $arrayNextTaskData["TAS_UID"] . "/" . $arrayNextTaskData["NEXT_TASK"]["TAS_UID"];
+                    }
+
                     $arrayNextTask[++$i] = $arrayNextTaskData;
                 }
             }
@@ -245,8 +255,8 @@ class Derivation
               if(isset($oProcessFieds['PRO_BPMN']) && $oProcessFieds['PRO_BPMN'] == 1){
                 throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_BPMN_RULE"));
               }else{
-                throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_RULE")); 
-              }              
+                throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_RULE"));
+              }
             }
 
             //Return
@@ -586,6 +596,12 @@ class Derivation
         //Count how many tasks should be derivated.
         //$countNextTask = count($nextDelegations);
         foreach ($nextDelegations as $nextDel) {
+            //BpmnEvent - END-MESSAGE-EVENT - Check and get unique id
+            if (preg_match("/^(.{32})\/(\-1)$/", $nextDel["TAS_UID"], $arrayMatch)) {
+                $nextDel["TAS_UID"] = $arrayMatch[2];
+                $nextDel["TAS_UID_DUMMY"] = $arrayMatch[1];
+            }
+
             //subprocesses??
             if ($nextDel['TAS_PARENT'] != '') {
                 $oCriteria = new Criteria( 'workflow' );
@@ -624,6 +640,17 @@ class Derivation
                     $this->case->closeAllDelegations( $currentDelegation['APP_UID'] );
                     $this->case->closeAllThreads( $currentDelegation['APP_UID'] );
                     //I think we need to change the APP_STATUS to completed,
+
+                    //Throw Message-Events - BpmnEvent - END-MESSAGE-EVENT
+                    if (isset($nextDel["TAS_UID_DUMMY"])) {
+                        $case = new \ProcessMaker\BusinessModel\Cases();
+
+                        $case->throwMessageEventBetweenElementOriginAndElementDest(
+                            $currentDelegation["TAS_UID"],
+                            $nextDel["TAS_UID_DUMMY"],
+                            $appFields
+                        );
+                    }
                     break;
                 case TASK_FINISH_TASK:
                     $iAppThreadIndex = $appFields['DEL_THREAD'];
@@ -679,10 +706,18 @@ class Derivation
                             }
                     } //end switch
 
-
                     if ($canDerivate) {
                         $aSP = isset( $aSP ) ? $aSP : null;
                         $iNewDelIndex = $this->doDerivation( $currentDelegation, $nextDel, $appFields, $aSP );
+
+                        //Throw Message-Events
+                        $case = new \ProcessMaker\BusinessModel\Cases();
+
+                        $case->throwMessageEventBetweenElementOriginAndElementDest(
+                            $currentDelegation["TAS_UID"],
+                            $nextDel["TAS_UID"],
+                            $appFields
+                        );
 
                         //Create record in table APP_ASSIGN_SELF_SERVICE_VALUE
                         $task = new Task();
@@ -830,8 +865,16 @@ class Derivation
             foreach ($aFields as $sOriginField => $sTargetField) {
                 $sOriginField = str_replace( '@', '', $sOriginField );
                 $sOriginField = str_replace( '#', '', $sOriginField );
+                $sOriginField = str_replace( '%', '', $sOriginField );
+                $sOriginField = str_replace( '?', '', $sOriginField );
+                $sOriginField = str_replace( '$', '', $sOriginField );
+                $sOriginField = str_replace( '=', '', $sOriginField );
                 $sTargetField = str_replace( '@', '', $sTargetField );
                 $sTargetField = str_replace( '#', '', $sTargetField );
+                $sTargetField = str_replace( '%', '', $sTargetField );
+                $sTargetField = str_replace( '?', '', $sTargetField );
+                $sTargetField = str_replace( '$', '', $sTargetField );
+                $sTargetField = str_replace( '=', '', $sTargetField );
                 $aNewFields[$sTargetField] = isset( $appFields['APP_DATA'][$sOriginField] ) ? $appFields['APP_DATA'][$sOriginField] : '';
             }
 
@@ -917,8 +960,16 @@ class Derivation
                 foreach ($aFields as $sOriginField => $sTargetField) {
                     $sOriginField = str_replace( '@', '', $sOriginField );
                     $sOriginField = str_replace( '#', '', $sOriginField );
+                    $sOriginField = str_replace( '%', '', $sOriginField );
+                    $sOriginField = str_replace( '?', '', $sOriginField );
+                    $sOriginField = str_replace( '$', '', $sOriginField );
+                    $sOriginField = str_replace( '=', '', $sOriginField );
                     $sTargetField = str_replace( '@', '', $sTargetField );
                     $sTargetField = str_replace( '#', '', $sTargetField );
+                    $sTargetField = str_replace( '%', '', $sTargetField );
+                    $sTargetField = str_replace( '?', '', $sTargetField );
+                    $sTargetField = str_replace( '$', '', $sTargetField );
+                    $sTargetField = str_replace( '=', '', $sTargetField );
                     $aNewFields[$sTargetField] = isset( $appFields['APP_DATA'][$sOriginField] ) ? $appFields['APP_DATA'][$sOriginField] : '';
                 }
                 $aParentCase['APP_DATA'] = array_merge( $aParentCase['APP_DATA'], $aNewFields );

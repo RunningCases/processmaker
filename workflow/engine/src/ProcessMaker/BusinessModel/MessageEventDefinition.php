@@ -8,7 +8,7 @@ class MessageEventDefinition
 
         "PRJ_UID"           => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "projectUid"),
         "EVN_UID"           => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(), "fieldNameAux" => "eventUid"),
-        "MSGT_UID"          => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "messageTypeUid"),
+        "MSGT_UID"          => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "messageTypeUid"),
         "MSGED_USR_UID"     => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "messageEventDefinitionUserUid"),
         "MSGED_VARIABLES"   => array("type" => "array",  "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "messageEventDefinitionVariables"),
         "MSGED_CORRELATION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "messageEventDefinitionCorrelation")
@@ -220,9 +220,7 @@ class MessageEventDefinition
             }
 
             if (isset($arrayData["MSGT_UID"]) && $arrayData["MSGT_UID"] . "" != "") {
-                if (!$messageType->exists($arrayData["MSGT_UID"])) {
-                    throw new \Exception(\G::LoadTranslation("ID_MESSAGE_TYPE_NOT_EXIST", array($this->arrayFieldNameForException["messageTypeUid"], $arrayData["MSGT_UID"])));
-                }
+                $messageType->throwExceptionIfNotExistsMessageType($arrayData["MSGT_UID"], $this->arrayFieldNameForException["messageTypeUid"]);
             }
 
             $flagCheckData = false;
@@ -259,7 +257,7 @@ class MessageEventDefinition
      *
      * return array Return data of the new Message-Event-Definition created
      */
-    public function create($projectUid, array $arrayData)
+    public function create($projectUid, array $arrayData, $flagValidateArrayData = true)
     {
         try {
             //Verify data
@@ -278,7 +276,9 @@ class MessageEventDefinition
             //Verify data
             $process->throwExceptionIfNotExistsProcess($projectUid, $this->arrayFieldNameForException["projectUid"]);
 
-            $this->throwExceptionIfDataIsInvalid("", $projectUid, $arrayData);
+            if ($flagValidateArrayData) {
+                $this->throwExceptionIfDataIsInvalid("", $projectUid, $arrayData);
+            }
 
             //Create
             $cnn = \Propel::getConnection("workflow");
@@ -293,6 +293,21 @@ class MessageEventDefinition
 
                 if (!isset($arrayData["MSGED_VARIABLES"])) {
                     $arrayData["MSGED_VARIABLES"] = array();
+                }
+
+                if (isset($arrayData["MSGED_USR_UID"]) && $arrayData["MSGED_USR_UID"] != "") {
+                    $criteria = new \Criteria("workflow");
+
+                    $criteria->addSelectColumn(\UsersPeer::USR_UID);
+                    $criteria->add(\UsersPeer::USR_UID, $arrayData["MSGED_USR_UID"], \Criteria::EQUAL);
+
+                    //QUERY
+                    $rsCriteria = \UsersPeer::doSelectRS($criteria);
+                    $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                    if (!$rsCriteria->next()) {
+                        $arrayData["MSGED_USR_UID"] = "";
+                    }
                 }
 
                 $messageEventDefinitionUid = \ProcessMaker\Util\Common::generateUID();
@@ -314,11 +329,11 @@ class MessageEventDefinition
                     $cnn->commit();
 
                     //Task - User
-                    if (isset($arrayData["MSGED_USR_UID"])) {
+                    if (isset($arrayData["MSGED_USR_UID"]) && $arrayData["MSGED_USR_UID"] != "") {
                         $bpmnEvent = \BpmnEventPeer::retrieveByPK($arrayData["EVN_UID"]);
 
                         //Event - START-MESSAGE-EVENT
-                        if (is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "MESSAGECATCH") {
+                        if (!is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "MESSAGECATCH") {
                             //Message-Event-Task-Relation - Get Task
                             $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
 
@@ -421,7 +436,7 @@ class MessageEventDefinition
                         $bpmnEvent = \BpmnEventPeer::retrieveByPK($arrayMessageEventDefinitionData["EVN_UID"]);
 
                         //Event - START-MESSAGE-EVENT
-                        if (is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "MESSAGECATCH") {
+                        if (!is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "MESSAGECATCH") {
                             //Message-Event-Task-Relation - Get Task
                             $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
 
