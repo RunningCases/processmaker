@@ -207,7 +207,6 @@ class Derivation
                         $flagContinue = false;
                     }
                 }
-
                 if ($arrayRouteData["ROU_TYPE"] == "EVALUATE" && count($arrayNextTask) > 0) {
                     $flagContinue = false;
                 }
@@ -216,9 +215,6 @@ class Derivation
                     $arrayNextTask[++$i] = $this->prepareInformationTask($arrayRouteData);
                 }
             }
-            if($flagDefault && !$flagContinue){
-              $arrayNextTask = array();
-            } 
             if (count($arrayNextTask) == 0 && count($arrayNextTaskDefault) > 0) {
                 $arrayNextTask[++$i] = $this->prepareInformationTask($arrayNextTaskDefault);
             }
