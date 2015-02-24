@@ -1,5 +1,5 @@
 <?php
-namespace ProcessMaker\Services\Api;
+namespace Features\ActionsByEmail\Services;
 
 use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
@@ -13,12 +13,12 @@ require_once 'classes/model/Application.php';
 require_once 'classes/model/Users.php';
 
 /**
- * Class ActionsByEmail
+ * Class ActionsByEmailApi
  *
  * @author gustavo cruz <gustavo.cruz@colosa.com>
  * @protected
  */
-class ActionsByEmail extends Api
+class ActionsByEmailApi extends Api
 {
 
     /**
@@ -203,6 +203,7 @@ class ActionsByEmail extends Api
                 throw $error;
             }
         }
+        return $response;
     }
 
     /**
@@ -318,6 +319,7 @@ class ActionsByEmail extends Api
         $response = array();
         $response['totalCount'] = $totalCount;
         $response['data'] = $data;
+        return $response;
     }
 
     /**
@@ -431,8 +433,7 @@ class ActionsByEmail extends Api
             $message = 'An unexpected error occurred please try again later.';
         }
 
-        print_r($message);
-        die;
+        return $message;
     }
 
     /**
@@ -512,9 +513,7 @@ class ActionsByEmail extends Api
                 }
             }
         }
-
-        print_r($message);
-        die;
+        return $message;
     }
 
 }

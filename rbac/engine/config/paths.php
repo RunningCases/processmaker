@@ -50,7 +50,7 @@
   define( 'PATH_METHODS',     PATH_CORE . 'methods'      . PATH_SEP );
   define( 'PATH_XMLFORM',     PATH_CORE . 'xmlform'      . PATH_SEP );
   define( 'PATH_PLUGINS',     PATH_CORE . 'plugins'      . PATH_SEP  );
-  define( 'PATH_FEATURES',    PATH_CORE . 'features'     . PATH_SEP  );
+  define( 'PATH_FEATURES',    PATH_CORE . 'Features'     . PATH_SEP  );
   define( 'PATH_HTMLMAIL',    PATH_CORE . 'html_templates' . PATH_SEP );
   define( 'PATH_TPL',         PATH_CORE . 'templates'    . PATH_SEP );
   define( 'PATH_TEST',        PATH_CORE . 'test'         . PATH_SEP );

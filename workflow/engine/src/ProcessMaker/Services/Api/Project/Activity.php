@@ -74,7 +74,14 @@ class Activity extends Api
     public function doGetProjectActivityFeatureConfiguration($prj_uid, $act_uid, $filter = '')
     {
         try {
-            return array('status' => 200, 'message' => 'success');
+            $featureServices = new \Features\FeatureServices();
+            $configuration = $featureServices->retrieveView(array(
+                'type' => 'activity',
+                'view' => 'configuration',
+                'prj_uid' => $prj_uid,
+                'act_uid' => $act_uid
+            ));
+            return $configuration;
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
