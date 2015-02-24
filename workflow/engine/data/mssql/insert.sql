@@ -2694,13 +2694,13 @@ SELECT 'LABEL','ID_WARNING','en','WARNING','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_SAVED','en','Saved','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_ASSIGN_RULES','en','Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn''t be used with subprocesses','2014-01-15' 
+SELECT 'LABEL','ID_ASSIGN_RULES','en','Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn''t be used with sub-processes','2015-02-24' 
   UNION ALL
 SELECT 'LABEL','ID_SELECT_OPTION_TABLE','en','Select an option to export the schema or data from the selected table(s).','2014-10-21' 
   UNION ALL
 SELECT 'LABEL','ID_SELECT_TABLE','en','Please select a table to export.','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_TASK_WAS_ASSIGNED_TO_USER','en','Manual assignment shouldn''t be used with subprocesses.<br>The task "{0}" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )','2014-01-15' 
+SELECT 'LABEL','ID_TASK_WAS_ASSIGNED_TO_USER','en','Manual assignment shouldn''t be used with sub-processes.<br>The task "{0}" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )','2015-02-24' 
   UNION ALL
 SELECT 'LABEL','ID_USER_ONVACATION','en','User on vacation! Contact to your System Administrator if you want to login. please','2014-01-15' 
   UNION ALL
@@ -4192,7 +4192,7 @@ SELECT 'LABEL','ID_TARGET','en','Target','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_SUBPROCESS','en','Sub-Process','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_SUBPROCESS_NAME','en','SubProcess name','2014-01-15' 
+SELECT 'LABEL','ID_SUBPROCESS_NAME','en','Sub-Process name','2015-02-24' 
   UNION ALL
 SELECT 'LABEL','ID_VARIABLES_OUT','en','Variables Out','2014-01-15' 
   UNION ALL
@@ -5842,7 +5842,7 @@ SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP6','en','xxx','2014
   UNION ALL
 SELECT 'LABEL','ID_SIZE_VERY_LARGE_PERMITTED','en','The file is too large . Please upload a smaller file.','2014-10-08' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5','en','ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login.','2014-09-02' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5','en','ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login.','2015-02-23' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_2','en','If you are installing ProcessMaker on a remote web server, you will need to get this information from your Database Server.','2014-01-15' 
   UNION ALL
@@ -5916,7 +5916,7 @@ SELECT 'LABEL','ID_NON_WRITABLE_FILES','en','Non-writable Files','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_CHECK_WORKSPACE_CONFIGURATION','en','Check Workspace Configuration','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_DELETE_DATABASES','en','Delete Databases if exists','2014-01-15' 
+SELECT 'LABEL','ID_DELETE_DATABASES','en','Delete database if it exists','2015-02-23' 
   UNION ALL
 SELECT 'LABEL','ID_RP_DATABASE_NAME','en','Report Database Name','2014-01-15' 
   UNION ALL
@@ -5926,7 +5926,7 @@ SELECT 'LABEL','ID_WF_DATABASE_NAME','en','Workflow Database Name','2014-01-15'
  ;
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
-SELECT 'LABEL','ID_CHANGE_DATABASE_NAME','en','Change Database names','2014-01-15' 
+SELECT 'LABEL','ID_CHANGE_DATABASE_NAME','en','Change database name','2015-02-23' 
   UNION ALL
 SELECT 'LABEL','ID_ADMIN_USERNAME','en','Admin Username','2014-01-15' 
   UNION ALL
@@ -5964,7 +5964,7 @@ SELECT 'LABEL','ID_PREINSTALLATION','en','Pre-installation check','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_DIRECTORY_FILE_PERMISSION','en','File Permissions','2014-10-21' 
   UNION ALL
-SELECT 'LABEL','ID_DATA_CORRECT','en','The data is correct.','2014-01-15' 
+SELECT 'LABEL','ID_DATA_CORRECT','en','The configuration is correct.','2015-02-23' 
   UNION ALL
 SELECT 'LABEL','ID_EXIST','en','Exist','2014-01-15' 
   UNION ALL
@@ -7446,7 +7446,7 @@ SELECT 'LABEL','ID_REMOVE_USER','en','Remove User','2015-02-20'
   UNION ALL
 SELECT 'LABEL','ID_ADD_TASK','en','Add Task','2015-02-20' 
   UNION ALL
-SELECT 'LABEL','ID_ADD_SUB_PROCESS','en','Add Sub Process','2015-02-20' 
+SELECT 'LABEL','ID_ADD_SUB_PROCESS','en','Add Sub-Process','2015-02-24' 
   UNION ALL
 SELECT 'LABEL','ID_SAVE_TASK_POSITION','en','Save Task Position','2015-02-20' 
   UNION ALL
@@ -7494,7 +7494,7 @@ SELECT 'LABEL','ID_DELETE_TASK','en','Delete Task','2015-02-20'
   UNION ALL
 SELECT 'LABEL','ID_DELETE_ROUTES','en','Delete Routes','2015-02-20' 
   UNION ALL
-SELECT 'LABEL','ID_DELETE_SUB_PROCESS','en','Delete Sub Process','2015-02-20' 
+SELECT 'LABEL','ID_DELETE_SUB_PROCESS','en','Delete Sub-Process','2015-02-24' 
   UNION ALL
 SELECT 'LABEL','ID_IMPORT_ALREADY_EXISTS_BPMN','en','A process with the same name already exists!. Do you want to overwrite the existing process or you want to create a new process?.','2015-02-20' 
   UNION ALL
