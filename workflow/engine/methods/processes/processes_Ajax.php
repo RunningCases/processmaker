@@ -116,10 +116,10 @@ try {
         $infoProcess = new Processes();
         $resultProcess = $infoProcess->getProcessRow($proUid);     
     }
-    
-    if($proUid != "") {
+
+    if(isset($proUid) && $proUid != "") {
         $valuesProcess['PRO_UID'] = $proUid;
-        $valuesProcess['PRO_UPDATE_DATE'] = date("Y-m-d H:m:i");
+        $valuesProcess['PRO_UPDATE_DATE'] = date("Y-m-d H:i:s");
         G::LoadClass('processes');
         $infoProcess = new Processes();
         $resultProcess = $infoProcess->updateProcessRow($valuesProcess);
@@ -269,6 +269,10 @@ try {
             G::auditLog('SaveTaskPosition','Change task position ('.$oTask->getTasTitle().') in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'deleteTask':
+            $oTaskNewPattern = new Task();
+            $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            G::auditlog("DeleteTask",'Delete Task -> '.$titleTask.' : '.$oData->tas_uid);
             $sOutput = $oProcessMap->deleteTask($oData->tas_uid);
             break;
         case 'addGuide':
@@ -341,7 +345,7 @@ try {
             } else {
                 switch ($oData->type) {
                     case 0:
-                        $oData->type = 'SEQUENTIAL';
+                        $oData->type = 'SEQUENTIAL';                        
                         break;
                     case 1:
                         $oData->type = 'SELECT';
@@ -359,7 +363,7 @@ try {
                         $oData->type = 'SEC-JOIN';
                         break;
                     case 8:
-                        $oData->type = 'DISCRIMINATOR';
+                        $oData->type = 'DISCRIMINATOR';                        
                         break;
                 }
                 $oProcessMap->newPattern($oData->pro_uid, $oData->tas_uid, $oData->next_task, $oData->type);
@@ -369,24 +373,124 @@ try {
             switch ($oData->type) {
                 case 0:
                     $sType = 'SEQUENTIAL';
+                    $oProcessNewPattern = new Process();
+                    $taskProcess=$oProcessNewPattern->load($oData->pro_uid);
+                    $titleProcess=$taskProcess['PRO_TITLE'];
+                    $oTaskNewPattern = new Task();
+                    $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+                    $titleTask=$taskInfo['TAS_TITLE'];
+                    if ($oData->next_task != "-1") {
+                        $oTaskNextNewPattern = new Task();
+                        $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
+                    } else {
+                        $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
+                    }
+                    if ($titleNextTask=='') {
+                        G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : END OF PROCESS Task Name -> '.$titleTask.' : '.$oData->tas_uid);
+                    }else{
+                        G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
+                    }
                     break;
                 case 1:
                     $sType = 'SELECT';
+                    $oProcessNewPattern = new Process();
+                    $taskProcess=$oProcessNewPattern->load($oData->pro_uid);
+                    $titleProcess=$taskProcess['PRO_TITLE'];
+                    $oTaskNewPattern = new Task();
+                    $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+                    $titleTask=$taskInfo['TAS_TITLE'];
+                    if ($oData->next_task != "-1") {
+                        $oTaskNextNewPattern = new Task();
+                        $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
+                    } else {
+                        $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
+                    }
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
                 case 2:
                     $sType = 'EVALUATE';
+                    $oProcessNewPattern = new Process();
+                    $taskProcess=$oProcessNewPattern->load($oData->pro_uid);
+                    $titleProcess=$taskProcess['PRO_TITLE'];
+                    $oTaskNewPattern = new Task();
+                    $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+                    $titleTask=$taskInfo['TAS_TITLE'];
+                    if ($oData->next_task != "-1") {
+                        $oTaskNextNewPattern = new Task();
+                        $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
+                    } else {
+                        $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
+                    }
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
                 case 3:
                     $sType = 'PARALLEL';
+                    $oProcessNewPattern = new Process();
+                    $taskProcess=$oProcessNewPattern->load($oData->pro_uid);
+                    $titleProcess=$taskProcess['PRO_TITLE'];
+                    $oTaskNewPattern = new Task();
+                    $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+                    $titleTask=$taskInfo['TAS_TITLE'];
+                    if ($oData->next_task != "-1") {
+                        $oTaskNextNewPattern = new Task();
+                        $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
+                    } else {
+                        $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
+                    }
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
                 case 4:
                     $sType = 'PARALLEL-BY-EVALUATION';
+                    $oProcessNewPattern = new Process();
+                    $taskProcess=$oProcessNewPattern->load($oData->pro_uid);
+                    $titleProcess=$taskProcess['PRO_TITLE'];
+                    $oTaskNewPattern = new Task();
+                    $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+                    $titleTask=$taskInfo['TAS_TITLE'];
+                    if ($oData->next_task != "-1") {
+                        $oTaskNextNewPattern = new Task();
+                        $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
+                    } else {
+                        $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
+                    }
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
                 case 5:
                     $sType = 'SEC-JOIN';
+                    $taskProcess=$oProcessNewPattern->load($oData->pro_uid);
+                    $titleProcess=$taskProcess['PRO_TITLE'];
+                    $oTaskNewPattern = new Task();
+                    $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+                    $titleTask=$taskInfo['TAS_TITLE'];
+                    if ($oData->next_task != "-1") {
+                        $oTaskNextNewPattern = new Task();
+                        $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
+                    } else {
+                        $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
+                    }
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
                 case 8:
                     $sType = 'DISCRIMINATOR';
+                    $taskProcess=$oProcessNewPattern->load($oData->pro_uid);
+                    $titleProcess=$taskProcess['PRO_TITLE'];
+                    $oTaskNewPattern = new Task();
+                    $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+                    $titleTask=$taskInfo['TAS_TITLE'];
+                    if ($oData->next_task != "-1") {
+                        $oTaskNextNewPattern = new Task();
+                        $taskNextInfo=$oTaskNextNewPattern->load($oData->next_task);
+                        $titleNextTask=$taskNextInfo['TAS_TITLE'];
+                    } else {
+                        $titleNextTask=G::LoadTranslation("ID_END_OF_PROCESS");
+                    }
+                    G::auditLog("DerivationRule",'PROCESS NAME : '.$titleProcess.' : '.$oData->pro_uid.' Routing rule : '.$sType.' from -> '.$titleTask.' : '.$oData->tas_uid.' To -> '.$titleNextTask.' : '.$oData->next_task);
                     break;
             }
             if (($oData->type != 0) && ($oData->type != 5) && ($oData->type != 8)) {
@@ -405,6 +509,10 @@ try {
             break;
         case 'deleteAllRoutes':
             G::LoadClass('tasks');
+            $oTaskNewPattern = new Task();
+            $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            G::auditlog("DeleteRoutes",'Delete All Routes From Task -> '.$titleTask.' : '.$oData->tas_uid);
             $oTasks = new Tasks();
             $oTasks->deleteAllRoutesOfTask($oData->pro_uid, $oData->tas_uid);
             break;
@@ -444,7 +552,11 @@ try {
             $oProcessMap->downloadFile($oData->pro_uid, $oData->main_directory, $oData->directory, $oData->file);
             break;
         case 'deleteSubProcess':
-            $sOutput = $oProcessMap->deleteSubProcess($oData->pro_uid, $oData->tas_uid);
+            $oTaskNewPattern = new Task();
+            $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
+            $titleTask=$taskInfo['TAS_TITLE'];
+            G::auditlog("DeleteSubProcess",'Delete Sub-Process -> '.$titleTask.' : '.$oData->tas_uid);
+            $sOutput = $oProcessMap->deleteSubPrcocess($oData->pro_uid, $oData->tas_uid);
             break;
         case 'subProcess_Properties':
             $oProcessMap->subProcess_Properties($oData->pro_uid, $oData->tas_uid, $oData->index);

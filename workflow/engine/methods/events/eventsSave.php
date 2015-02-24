@@ -62,7 +62,7 @@ if ($_POST['form']['EVN_UID'] == '') {
 
 $infoProcess = new Process();
 $resultProcess = $infoProcess->load($_POST['form']['PRO_UID']);
-G::auditLog('Events','Save intermediate message ('.$_POST['form']['EVN_UID'].') in process "'.$resultProcess['PRO_TITLE'].'"');
+G::auditLog('EditEvent','Save intermediate message ('.$_POST['form']['EVN_UID'].') in process "'.$resultProcess['PRO_TITLE'].'"');
 
 function replaceQuotes ($aData)
 {
