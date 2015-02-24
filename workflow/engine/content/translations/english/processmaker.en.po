@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-21 11:15:01\n"
+"PO-Revision-Date: 2015-02-24 12:12:47\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -3880,8 +3880,8 @@ msgstr "Saved"
 # TRANSLATION
 # LABEL/ID_ASSIGN_RULES
 #: LABEL/ID_ASSIGN_RULES
-msgid "[LABEL/ID_ASSIGN_RULES] Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn't be used with subprocesses"
-msgstr "Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn't be used with subprocesses"
+msgid "Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn't be used with sub-processes"
+msgstr "Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn't be used with sub-processes"
 
 # TRANSLATION
 # LABEL/ID_SELECT_OPTION_TABLE
@@ -3898,8 +3898,8 @@ msgstr "Please select a table to export."
 # TRANSLATION
 # LABEL/ID_TASK_WAS_ASSIGNED_TO_USER
 #: LABEL/ID_TASK_WAS_ASSIGNED_TO_USER
-msgid "Manual assignment shouldn't be used with subprocesses.<br>The task \"{0}\" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )"
-msgstr "Manual assignment shouldn't be used with subprocesses.<br>The task \"{0}\" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )"
+msgid "Manual assignment shouldn't be used with sub-processes.<br>The task \"{0}\" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )"
+msgstr "Manual assignment shouldn't be used with sub-processes.<br>The task \"{0}\" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )"
 
 # TRANSLATION
 # LABEL/ID_USER_ONVACATION
@@ -8320,8 +8320,8 @@ msgstr "Sub-Process"
 # TRANSLATION
 # LABEL/ID_SUBPROCESS_NAME
 #: LABEL/ID_SUBPROCESS_NAME
-msgid "SubProcess name"
-msgstr "SubProcess name"
+msgid "Sub-Process name"
+msgstr "Sub-Process name"
 
 # TRANSLATION
 # LABEL/ID_VARIABLES_OUT
@@ -13432,8 +13432,8 @@ msgstr "Check Workspace Configuration"
 # TRANSLATION
 # LABEL/ID_DELETE_DATABASES
 #: LABEL/ID_DELETE_DATABASES
-msgid "Delete Databases if exists"
-msgstr "Delete Databases if exists"
+msgid "Delete database if it exists"
+msgstr "Delete database if it exists"
 
 # TRANSLATION
 # LABEL/ID_RP_DATABASE_NAME
@@ -13456,8 +13456,8 @@ msgstr "Workflow Database Name"
 # TRANSLATION
 # LABEL/ID_CHANGE_DATABASE_NAME
 #: LABEL/ID_CHANGE_DATABASE_NAME
-msgid "Change Database names"
-msgstr "Change Database names"
+msgid "Change database name"
+msgstr "Change database name"
 
 # TRANSLATION
 # LABEL/ID_ADMIN_USERNAME
@@ -13570,8 +13570,8 @@ msgstr "File Permissions"
 # TRANSLATION
 # LABEL/ID_DATA_CORRECT
 #: LABEL/ID_DATA_CORRECT
-msgid "The data is correct."
-msgstr "The data is correct."
+msgid "The configuration is correct."
+msgstr "The configuration is correct."
 
 # TRANSLATION
 # LABEL/ID_EXIST
@@ -17962,8 +17962,8 @@ msgstr "Add Task"
 # TRANSLATION
 # LABEL/ID_ADD_SUB_PROCESS
 #: LABEL/ID_ADD_SUB_PROCESS
-msgid "Add Sub Process"
-msgstr "Add Sub Process"
+msgid "[LABEL/ID_ADD_SUB_PROCESS] Add Sub-Process"
+msgstr "Add Sub-Process"
 
 # TRANSLATION
 # LABEL/ID_SAVE_TASK_POSITION
@@ -18106,8 +18106,8 @@ msgstr "Delete Routes"
 # TRANSLATION
 # LABEL/ID_DELETE_SUB_PROCESS
 #: LABEL/ID_DELETE_SUB_PROCESS
-msgid "Delete Sub Process"
-msgstr "Delete Sub Process"
+msgid "[LABEL/ID_DELETE_SUB_PROCESS] Delete Sub-Process"
+msgstr "Delete Sub-Process"
 
 # TRANSLATION
 # LABEL/ID_IMPORT_ALREADY_EXISTS_BPMN
@@ -30440,7 +30440,7 @@ msgstr "Sub-Process"
 # processes/processes_subProcess.xml?SPROCESS_NAME
 # processes/processes_subProcess.xml
 #: text - SPROCESS_NAME
-msgid "[processes/processes_subProcess.xml?SPROCESS_NAME] SubProcess name"
+msgid "SubProcess name"
 msgstr "SubProcess name"
 
 # processes/processes_subProcess.xml?TASKS
