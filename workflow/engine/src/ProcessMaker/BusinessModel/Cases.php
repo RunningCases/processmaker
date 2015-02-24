@@ -1970,4 +1970,130 @@ class Cases
 
         return $aField;
     }
+
+    /**
+     * Throw Message-Events for the Case
+     *
+     * @param string $elementOriginUid     Unique id of Element Origin (unique id of Task)
+     * @param string $elementDestUid       Unique id of Element Dest   (unique id of Task)
+     * @param array  $arrayApplicationData Case data
+     *
+     * return void
+     */
+    public function throwMessageEventBetweenElementOriginAndElementDest($elementOriginUid, $elementDestUid, array $arrayApplicationData)
+    {
+        try {
+            //Element origin and dest
+            $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
+
+            $arrayElement = array(
+                "elementOrigin" => array("uid" => $elementOriginUid, "type" => "bpmnActivity"),
+                "elementDest"   => array("uid" => $elementDestUid,   "type" => "bpmnActivity")
+            );
+
+            foreach ($arrayElement as $key => $value) {
+                $arrayMessageEventTaskRelationData = $messageEventTaskRelation->getMessageEventTaskRelationWhere(
+                    array(
+                        \MessageEventTaskRelationPeer::PRJ_UID => $arrayApplicationData["PRO_UID"],
+                        \MessageEventTaskRelationPeer::TAS_UID => $arrayElement[$key]["uid"]
+                    ),
+                    true
+                );
+
+                if (!is_null($arrayMessageEventTaskRelationData)) {
+                    $arrayElement[$key]["uid"]  = $arrayMessageEventTaskRelationData["EVN_UID"];
+                    $arrayElement[$key]["type"] = "bpmnEvent";
+                }
+            }
+
+            $elementOriginUid  = $arrayElement["elementOrigin"]["uid"];
+            $elementOriginType = $arrayElement["elementOrigin"]["type"];
+            $elementDestUid    = $arrayElement["elementDest"]["uid"];
+            $elementDestType   = $arrayElement["elementDest"]["type"];
+
+            //Get Message-Events of throw type
+            $bpmn = new \ProcessMaker\Project\Bpmn();
+
+            $arrayEvent = $bpmn->getMessageEventsOfThrowTypeBetweenElementOriginAndElementDest(
+                $elementOriginUid,
+                $elementOriginType,
+                $elementDestUid,
+                $elementDestType
+            );
+
+            //Throw Message-Events
+            $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();
+
+            foreach ($arrayEvent as $value) {
+                //Message-Application throw
+                $result = $messageApplication->create($arrayApplicationData["APP_UID"], $arrayApplicationData["PRO_UID"], $value[0], $arrayApplicationData);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Catch Message-Events for the Cases
+     *
+     * @param bool $frontEnd Flag to represent progress bar
+     *
+     * return void
+     */
+    public function catchMessageEvent($frontEnd = false)
+    {
+        try {
+            \G::LoadClass("wsBase");
+
+            //Set variables
+            $ws = new \wsBase();
+
+            //Get data
+            $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();
+
+            $arrayMessageApplicationUnread = $messageApplication->getMessageApplications(array("messageApplicationStatus" => "UNREAD"));
+
+            foreach ($arrayMessageApplicationUnread["data"] as $value) {
+                $arrayMessageApplicationData = $value;
+
+                $processUid = $arrayMessageApplicationData["PRJ_UID"];
+                $taskUid = $arrayMessageApplicationData["TAS_UID"];
+
+                $messageApplicationUid         = $arrayMessageApplicationData["MSGAPP_UID"];
+                $messageApplicationCorrelation = $arrayMessageApplicationData["MSGAPP_CORRELATION"];
+
+                $messageEventDefinitionUserUid     = $arrayMessageApplicationData["MSGED_USR_UID"];
+                $messageEventDefinitionVariables   = $arrayMessageApplicationData["MSGED_VARIABLES"];
+                $messageEventDefinitionCorrelation = $arrayMessageApplicationData["MSGED_CORRELATION"];
+
+                switch ($arrayMessageApplicationData["EVN_TYPE"]) {
+                    case "START":
+                        if ($messageApplicationCorrelation == $messageEventDefinitionCorrelation &&
+                            $messageEventDefinitionUserUid != ""
+                        ) {
+                            //Start and derivate new Case
+                            //$result = $ws->newCase($processUid, $messageEventDefinitionUserUid, $taskUid, array("NAME1" => "value1"));
+                            $result = $ws->newCase($processUid, $messageEventDefinitionUserUid, $taskUid, array());
+
+                            $arrayResult = json_decode(json_encode($result), true);
+
+                            if ($arrayResult["status_code"] == 0) {
+                                $applicationUid = $arrayResult["caseId"];
+
+                                $result = $ws->derivateCase($messageEventDefinitionUserUid, $applicationUid, 1);
+
+                                //Message-Application catch
+                                $result = $messageApplication->update($messageApplicationUid, array("MSGAPP_STATUS" => "READ"));
+                            }
+                        }
+                        break;
+                    case "INTERMEDIATE":
+                        break;
+                }
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
+

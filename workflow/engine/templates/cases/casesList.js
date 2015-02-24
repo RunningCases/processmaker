@@ -1170,7 +1170,7 @@ Ext.onReady ( function() {
       store: userStore,
       valueField : 'USR_UID',
       displayField:'USR_FULLNAME',
-      typeAhead: true,
+      typeAhead: false,
       triggerAction: 'all',
       emptyText : _('ID_ALL_USERS'),
       selectOnFocus : true,
@@ -1178,7 +1178,7 @@ Ext.onReady ( function() {
       width: 180,
       allowBlank : true,
       autocomplete: true,
-      typeAhead: true,
+      minChars: 1,
       hideTrigger:true,
       listeners:{
         scope: this,
@@ -1230,6 +1230,15 @@ Ext.onReady ( function() {
 	   ctCls:"pm_search_x_button_des",
     handler: function(){
       textSearch.setValue('');
+      doSearch();
+    }
+  }
+  
+  var resetSuggestButton = {
+    text:'X',
+	   ctCls:"pm_search_x_button_des",
+    handler: function(){
+      suggestUser.setValue('');
       doSearch();
     }
   }
@@ -1866,6 +1875,7 @@ Ext.onReady ( function() {
       _("ID_USER"),
       //comboUser,
       suggestUser,
+      resetSuggestButton,
       '&nbsp;&nbsp;&nbsp;'
       //'-',
       //textSearch,

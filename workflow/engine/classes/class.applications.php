@@ -61,6 +61,7 @@ class Applications
             $confCasesList = $conf->getConfiguration("casesList", ($action == "search" || $action == "simple_search")? "search" : $action);
             $oAppCache->confCasesList = $confCasesList;
         }
+
         // get the action based list
         switch ($action) {
             case "draft":
@@ -118,7 +119,7 @@ class Applications
                     case "COMPLETED":
                         $Criteria = $oAppCache->getCompletedListCriteria($userUid);
                         $CriteriaCount = $oAppCache->getCompletedCountCriteria($userUid);
-                        
+
                         $Criteria->add (AppCacheViewPeer::DEL_LAST_INDEX,"1");
                         $CriteriaCount->add (AppCacheViewPeer::DEL_LAST_INDEX,"1");
                         break;
@@ -160,6 +161,14 @@ class Applications
                 $CriteriaCount = $oAppCache->getAllCasesCountCriteria2($userUid);
                 break;
         }
+
+        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
+
+        $Criteria->addJoin(AppCacheViewPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+        $Criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
+
+        $CriteriaCount->addJoin(AppCacheViewPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+        $CriteriaCount->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
 
         $Criteria->addAlias( 'CU', 'USERS' );
         $Criteria->addJoin( AppCacheViewPeer::USR_UID, 'CU.USR_UID', Criteria::LEFT_JOIN );

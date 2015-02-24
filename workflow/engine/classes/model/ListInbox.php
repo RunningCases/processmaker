@@ -324,7 +324,10 @@ class ListInbox extends BaseListInbox
 
         if ($filters['action'] == 'draft') {
             $criteria->add( ListInboxPeer::DEL_INDEX, 1, Criteria::EQUAL );
+        } else {
+            $criteria->add( ListInboxPeer::DEL_INDEX, 1, Criteria::NOT_EQUAL );
         }
+
         if ($dir == "DESC") {
             $criteria->addDescendingOrderByColumn($sort);
         } else {

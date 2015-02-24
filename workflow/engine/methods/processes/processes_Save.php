@@ -96,6 +96,7 @@ switch ($function) {
 $resultProcessNew = $infoProcess->load($_POST['form']['PRO_UID']);
 $oldFields = array_diff_assoc($resultProcessOld,$resultProcessNew);
 $newFields = array_diff_assoc($resultProcessNew,$resultProcessOld);
+$fields = array();
 
 if(array_key_exists('PRO_TITLE', $newFields)) {
     $fields[] = G::LoadTranslation('ID_TITLE');
@@ -134,7 +135,7 @@ if(array_key_exists('PRO_TRI_PAUSED', $newFields)) {
     $fields[] = "Execute a trigger when a case is paused";
 }
 if(array_key_exists('PRO_TRI_REASSIGNED', $newFields)) {
-    $fields[] = "Execute a trigger when a case is reassigned"; G
+    $fields[] = "Execute a trigger when a case is reassigned";
 }
 if(array_key_exists('PRO_TRI_UNPAUSED', $newFields)) {
     $fields[] = "Execute a trigger when a case is unpaused";
@@ -143,3 +144,11 @@ if(array_key_exists('PRO_TYPE_PROCESS', $newFields)) {
     $fields[] = "Type of process (only owners can edit private processes)";
 }
 G::auditLog('EditProcess','Edit fields ('.implode(', ',$fields).') in process "'.$_POST['form']['PRO_TITLE'].'"');
+
+if(isset($_POST['form']['PRO_UID']) && !empty($_POST['form']['PRO_UID'])) {
+    $valuesProcess['PRO_UID'] = $_POST['form']['PRO_UID'];
+    $valuesProcess['PRO_UPDATE_DATE'] = date("Y-m-d H:i:s"); 
+    G::LoadClass('processes');
+    $infoProcess = new Processes();
+    $resultProcess = $infoProcess->updateProcessRow($valuesProcess);
+}
