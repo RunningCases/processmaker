@@ -176,14 +176,14 @@ class Derivation
             }
 
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
+            $flagDefault = false;
             while ($rsCriteria->next()) {
                 $arrayRouteData = G::array_merges($rsCriteria->getRow(), $arrayData);
 
                 if ((int)($arrayRouteData["ROU_DEFAULT"]) == 1) {
                     $arrayNextTaskDefault = $arrayRouteData;
-                    $arrayNextTask = array();
-                    break;
+                    $flagDefault = true;
+                    continue;
                 }
 
                 $flagContinue = true;
@@ -207,7 +207,6 @@ class Derivation
                         $flagContinue = false;
                     }
                 }
-
                 if ($arrayRouteData["ROU_TYPE"] == "EVALUATE" && count($arrayNextTask) > 0) {
                     $flagContinue = false;
                 }
@@ -216,7 +215,6 @@ class Derivation
                     $arrayNextTask[++$i] = $this->prepareInformationTask($arrayRouteData);
                 }
             }
-
             if (count($arrayNextTask) == 0 && count($arrayNextTaskDefault) > 0) {
                 $arrayNextTask[++$i] = $this->prepareInformationTask($arrayNextTaskDefault);
             }
