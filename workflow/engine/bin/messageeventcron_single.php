@@ -108,6 +108,7 @@ try {
     Bootstrap::registerClass("wsResponse", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.wsResponse.php");
 
     G::LoadClass("processes");
+    G::LoadClass("derivation");
     G::LoadClass("dates"); //Load Criteria
 
     //Workflow
@@ -197,6 +198,10 @@ try {
 
         $rbac = &RBAC::getSingleton(PATH_DATA, session_id());
         $rbac->sSystem = "PROCESSMAKER";
+
+        if (!defined("DB_ADAPTER")) {
+            define("DB_ADAPTER", $DB_ADAPTER);
+        }
 
         eprintln("Processing workspace: " . $workflow, "green");
 
