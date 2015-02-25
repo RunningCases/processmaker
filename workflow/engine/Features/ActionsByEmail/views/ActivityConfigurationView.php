@@ -10,45 +10,45 @@ class ActivityConfigurationView
         $view = array(
             'type' => 'form',
             'language' => 'en',
-            'title' => 'Actions by email configuration',
+            'title' => 'Actions by Email',
             'layouts' => array(),
             'fields' => array(
-                array(
-                    'name' => 'IFORM',
-                    'type' => 'hidden'
-                ),
-                array(
-                    'name' => 'INDEX',
-                    'type' => 'hidden'
-                ),
-                array(
-                    'name' => 'ABE_UID',
-                    'type' => 'hidden'
-                ),
-                array(
-                    'name' => 'PRO_UID',
-                    'type' => 'hidden'
-                ),
-                array(
-                    'name' => 'PRJ_UID',
-                    'type' => 'hidden'
-                ),
-                array(
-                    'name' => 'TAS_UID',
-                    'type' => 'hidden'
-                ),
-                array(
-                    'name' => 'SYS_LANG',
-                    'type' => 'hidden'
-                ),
-                array(
-                    'name' => 'ABE_EMAIL_FIELD_VALUE',
-                    'type' => 'hidden'
-                ),
-                array(
-                    'name' => 'ABE_ACTION_FIELD_VALUE',
-                    'type' => 'hidden'
-                ),
+//                array(
+//                    'name' => 'IFORM',
+//                    'type' => 'hidden'
+//                ),
+//                array(
+//                    'name' => 'INDEX',
+//                    'type' => 'hidden'
+//                ),
+//                array(
+//                    'name' => 'ABE_UID',
+//                    'type' => 'hidden'
+//                ),
+//                array(
+//                    'name' => 'PRO_UID',
+//                    'type' => 'hidden'
+//                ),
+//                array(
+//                    'name' => 'PRJ_UID',
+//                    'type' => 'hidden'
+//                ),
+//                array(
+//                    'name' => 'TAS_UID',
+//                    'type' => 'hidden'
+//                ),
+//                array(
+//                    'name' => 'SYS_LANG',
+//                    'type' => 'hidden'
+//                ),
+//                array(
+//                    'name' => 'ABE_EMAIL_FIELD_VALUE',
+//                    'type' => 'hidden'
+//                ),
+//                array(
+//                    'name' => 'ABE_ACTION_FIELD_VALUE',
+//                    'type' => 'hidden'
+//                ),
                 array(
                     'name' => 'ABE_TYPE',
                     'label' => 'Type',
@@ -91,20 +91,20 @@ class ActivityConfigurationView
                         )
                     )
                 ),
-                array(
-                    'name' => 'EDIT',
-                    'type' => 'link',
-                    'value' => 'Edit',
-                    'action' => array(
-                        'type' => 'view-render',
-                        'data_source' => array(
-                            'type' => 'REST',
-                            'method' => 'GET',
-                            'end_point' => '/ActionsByEmail/Templates/editTemplate',
-                            'parameters' => array('ABE_TEMPLATE')
-                        )
-                    )
-                ),
+//                array(
+//                    'name' => 'EDIT',
+//                    'type' => 'link',
+//                    'value' => 'Edit',
+//                    'action' => array(
+//                        'type' => 'view-render',
+//                        'data_source' => array(
+//                            'type' => 'REST',
+//                            'method' => 'GET',
+//                            'end_point' => '/ActionsByEmail/Templates/editTemplate',
+//                            'parameters' => array('ABE_TEMPLATE')
+//                        )
+//                    )
+//                ),
                 array(
                     'name' => 'DYN_UID',
                     'label' => 'Dynaform',
@@ -191,27 +191,27 @@ class ActivityConfigurationView
                     'label' => 'Register a Case Note when the recipient submits the Response',
                     'type' => 'checkbox'
                 ),
-                array(
-                    'name' => 'APPLY_CHANGES',
-                    'type' => 'button',
-                    'label' => 'Apply Changes',
-                    'value' => 'APPLY_CHANGES',
-                    'action' => array(
-                        'type' => 'view-close',
-                        'data_source' => array(
-                            'type' => 'REST',
-                            'method' => 'POST',
-                            'end_point' => '/ActionsByEmail/saveConfiguration',
-                            'parameters' => array('_ALL')
-                        )
-                    )
-                ),
-                array(
-                    'name' => 'REQUIRED_LABEL',
-                    'type' => 'label',
-                    'label' => 'Required Field',
-                    'value' => 'REQUIRED_LABEL'
-                )
+//                array(
+//                    'name' => 'APPLY_CHANGES',
+//                    'type' => 'button',
+//                    'label' => 'Apply Changes',
+//                    'value' => 'APPLY_CHANGES',
+//                    'action' => array(
+//                        'type' => 'view-close',
+//                        'data_source' => array(
+//                            'type' => 'REST',
+//                            'method' => 'POST',
+//                            'end_point' => '/ActionsByEmail/saveConfiguration',
+//                            'parameters' => array('_ALL')
+//                        )
+//                    )
+//                ),
+//                array(
+//                    'name' => 'REQUIRED_LABEL',
+//                    'type' => 'label',
+//                    'label' => 'Required Field',
+//                    'value' => 'REQUIRED_LABEL'
+//                )
             )
         );
         return $view;
