@@ -17,10 +17,11 @@ class BpmnWorkflow extends Project\Bpmn
      */
     protected $wp;
 
-    const BPMN_GATEWAY_COMPLEX = "COMPLEX";
-    const BPMN_GATEWAY_PARALLEL = "PARALLEL";
-    const BPMN_GATEWAY_INCLUSIVE = "INCLUSIVE";
-    const BPMN_GATEWAY_EXCLUSIVE = "EXCLUSIVE";
+    const BPMN_GATEWAY_COMPLEX    = "COMPLEX";
+    const BPMN_GATEWAY_PARALLEL   = "PARALLEL";
+    const BPMN_GATEWAY_INCLUSIVE  = "INCLUSIVE";
+    const BPMN_GATEWAY_EXCLUSIVE  = "EXCLUSIVE";
+    const BPMN_GATEWAY_EVENTBASED = "EVENTBASED";
 
     private $arrayTaskAttribute = array(
         "gateway-to-gateway"               => array("type" => "GATEWAYTOGATEWAY",                 "prefix" => "gtg-"),
@@ -674,6 +675,11 @@ class BpmnWorkflow extends Project\Bpmn
                         }
                     }
                     break;
+                //case "TO_DO":
+                case self::BPMN_GATEWAY_EVENTBASED:
+                    $routeType = "EVALUATE";
+                    break;
+                //default
                 default:
                     throw new \LogicException("Unsupported Gateway type: " . $arrayGatewayData["GAT_TYPE"]);
                     break;
