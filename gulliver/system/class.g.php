@@ -713,7 +713,7 @@ class G
      * @param string $strClass
      * @return void
      */
-    public function LoadThirdParty ($sPath, $sFile)
+    public static function LoadThirdParty($sPath, $sFile)
     {
         $classfile = PATH_THIRDPARTY . $sPath . '/' . $sFile . ((substr( $sFile, 0, - 4 ) !== '.php') ? '.php' : '');
         return require_once ($classfile);
@@ -3330,7 +3330,7 @@ class G
      *
      * @return boolean true or false
      */
-    public function isHttpRequest()
+    public static function isHttpRequest()
     {
         if (isset($_SERVER['SERVER_SOFTWARE']) && strpos(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache') !== false) {
             return true;
@@ -5647,3 +5647,4 @@ function __ ($msgID, $lang = SYS_LANG, $data = null)
 {
     return G::LoadTranslation( $msgID, $lang, $data );
 }
+
