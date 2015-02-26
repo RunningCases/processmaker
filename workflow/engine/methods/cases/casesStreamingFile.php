@@ -1,34 +1,5 @@
 <?php
-/**
- * casesStreamingFile.php
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- */
 
-/**
- * File for get Streaming file type audio and video
- * return in header code 206
- *
- * Created by Dev: Ronald Quenta
- * E-mail: ronald.otn@gmail.com
- */
 
 $actionAjax = isset( $_REQUEST['actionAjax'] ) ? $_REQUEST['actionAjax'] : null;
 
@@ -39,7 +10,6 @@ if ($actionAjax == "streaming") {
     $oAppDocument = new \AppDocument();
 
     if (! isset( $fileData['version'] )) {
-        //Load last version of the document
         $docVersion = $oAppDocument->getLastAppDocVersion( $inp_doc_uid );
     } else {
         $docVersion = $fileData['version'];
@@ -52,7 +22,6 @@ if ($actionAjax == "streaming") {
     $info = pathinfo( $oAppDocument->getAppDocFilename() );
     $ext  = (isset($info['extension'])?$info['extension']:'');
 
-    //$app_uid = \G::getPathFromUID($oAppDocument->Fields['APP_UID']);
     $file = \G::getPathFromFileUID($oAppDocument->Fields['APP_UID'], $sAppDocUid);
 
     $realPath  = PATH_DOCUMENT .  $app_uid . '/' . $file[0] . $file[1] . '_' . $iDocVersion . '.' . $ext;
@@ -90,7 +59,6 @@ function rangeDownload($location,$mimeType)
         header ("HTTP/1.0 404 Not Found");
         return;
     }
-    //echo ($mimeType);die;
     $size  = filesize($location);
     $time  = date('r', filemtime($location));
 

@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Class for part mobile
- *
- * Created by Dev: Ronald Quenta
- * E-mail: ronald.otn@gmail.com
- */
-
 namespace ProcessMaker\BusinessModel;
 
 use G;
