@@ -6,7 +6,7 @@ require_once 'classes/model/om/BaseListUnassigned.php';
 /**
  * Skeleton subclass for representing a row from the 'LIST_UNASSIGNED' table.
  *
- * 
+ *
  *
  * You should add additional methods to this class to meet the
  * application requirements.  This class will only be generated as
@@ -263,6 +263,11 @@ class ListUnassigned extends BaseListUnassigned
         $criteria->addSelectColumn(ListUnassignedPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListUnassignedPeer::DEL_PRIORITY);
 
+        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
+
+        $criteria->addJoin(ListUnassignedPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+        $criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
+
         $aConditions   = array();
         $aConditions[] = array(ListUnassignedPeer::UNA_UID, ListUnassignedGroupPeer::UNA_UID);
         $aConditions[] = array(ListUnassignedGroupPeer::USR_UID, "'" . $usr_uid . "'");
@@ -311,5 +316,4 @@ class ListUnassigned extends BaseListUnassigned
         return $resp;
     }
 }
-
 

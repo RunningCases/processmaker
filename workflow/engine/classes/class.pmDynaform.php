@@ -28,16 +28,18 @@ class pmDynaform
         //items
         $dynContent = G::json_decode($this->record["DYN_CONTENT"]);
         if (isset($dynContent->items)) {
-            $this->items = $dynContent->items[0]->items;            
-            for($i=0; $i<count($this->items); $i++){
-                for($j=0; $j<count($this->items[$i]); $j++){
-                    if($this->items[$i][$j]->required == 1){
+            $this->items = $dynContent->items[0]->items;
+            $n = count($this->items);
+            for ($i = 0; $i < $n; $i++) {
+                $m = count($this->items[$i]);
+                for ($j = 0; $j < $m; $j++) {
+                    if (isset($this->items[$i][$j]->required) && $this->items[$i][$j]->required == 1) {
                         array_push($this->arrayFieldRequired, $this->items[$i][$j]->name);
-                    }  
+                    }
                 }
-            }            
+            }
         }
-        
+
         if(!empty($app_data) && isset($app_data["APPLICATION"])){
             //data
             $cases = new \ProcessMaker\BusinessModel\Cases();
@@ -77,7 +79,7 @@ class pmDynaform
                 }
                 //query
                 $arrayVariable = array();
-                if ($row["VAR_DBCONNECTION"] !== "none") {
+                if ($row["VAR_DBCONNECTION"] !== "none" && $row["VAR_SQL"] !== "") {
                     $cnn = Propel::getConnection($row["VAR_DBCONNECTION"]);
                     $stmt = $cnn->createStatement();
                     $rs = $stmt->executeQuery(\G::replaceDataField($row["VAR_SQL"], $arrayVariable), \ResultSet::FETCHMODE_NUM);

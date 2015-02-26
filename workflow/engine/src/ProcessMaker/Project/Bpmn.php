@@ -91,6 +91,19 @@ class Bpmn extends Handler
         }
     }
 
+    public function exists($projectUid)
+    {
+        try {
+            $obj = ProjectPeer::retrieveByPK($projectUid);
+
+            return (!is_null($obj))? true : false;
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
+            throw $e;
+        }
+    }
+
     public static function load($prjUid)
     {
         $me = new self();
@@ -588,6 +601,8 @@ class Bpmn extends Handler
             //Return
             return false;
         } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
             throw $e;
         }
     }
@@ -661,6 +676,8 @@ class Bpmn extends Handler
                 }
             }
         } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
             throw $e;
         }
     }
@@ -1294,6 +1311,8 @@ class Bpmn extends Handler
             //Return
             return $this->getGateway2($gatewayUid);
         } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
             throw $e;
         }
     }
@@ -1386,6 +1405,8 @@ class Bpmn extends Handler
                 return array();
             }
         } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
             throw $e;
         }
     }
@@ -1427,6 +1448,8 @@ class Bpmn extends Handler
             //Return
             return $arrayEvent;
         } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
             throw $e;
         }
     }
