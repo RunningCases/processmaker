@@ -45,7 +45,7 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
             'access_token_table' => 'OAUTH_ACCESS_TOKENS',
             'refresh_token_table' => 'OAUTH_REFRESH_TOKENS',
             'code_table' => 'OAUTH_AUTHORIZATION_CODES',
-            'user_table' => 'USERS',
+            'user_table' => 'RBAC_USERS',
             'jwt_table' => 'OAUTH_JWT',
         ), $config);
     }
@@ -211,7 +211,7 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
     // plaintext passwords are bad!  Override this for your application
     protected function checkPassword($user, $password)
     {
-        return $user['USR_PASSWORD'] == md5($password);
+        return $user['USR_PASSWORD'] == \Bootstrap::hashPassword($password);
     }
 
     public function getUser($username)
