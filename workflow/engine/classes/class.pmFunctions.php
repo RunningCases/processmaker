@@ -1235,7 +1235,7 @@ function WSInformationUser($userUid)
  *
  * @method
  *
- * Returns the unique ID for the current active session.
+ * Returns the unique ID for the current login session.
  *
  * @name WSGetSession
  * @label WS Get Session
@@ -1400,7 +1400,7 @@ function WSUnpauseCase ($caseUid, $delIndex, $userUid)
  *
  * @method
  *
- * Add case note.
+ * Add a case note.
  *
  * @name WSAddCaseNote
  * @label WS Add case note
@@ -1537,7 +1537,7 @@ function PMFUserList () //its test was successfull
 /**
  * @method
  *
- * Add a input document.
+ * Add an Input Document.
  *
  * @name PMFAddInputDocument
  * @label PMF Add a input document
@@ -1552,7 +1552,7 @@ function PMFUserList () //its test was successfull
  * @param string(32) | $caseUid | ID of the case | The unique ID of the case.
  * @param int | $delIndex | Delegation index of the case | The delegation index of the current task in the case.
  * @param string(32) | $taskUid | ID of the task | The unique ID of the task.
- * @param string(32) | $userUid | ID user | The unique ID of the user who will add a input document.
+ * @param string(32) | $userUid | ID user | The unique ID of the user who will add an input document.
  * @param string | $option = "file" | Option | Option, value: "file".
  * @param string | $file = "path_to_file/myfile.txt" | File, path to file | File, path to file.
  * @return string | $appDocUid | ID of the application document | Returns ID if it has added the input document successfully; otherwise, returns null or empty if an error occurred.
@@ -2061,7 +2061,7 @@ function PMFNewCase ($processId, $userId, $taskId, $variables)
  *
  * @method
  *
- * Assigns a user to a group.
+ * 
  *
  * Assigns a user to a group. Note that the logged-in user must have the PM_USERS permission in his/her role to be able to assign a user to a group.
  *
@@ -2466,7 +2466,7 @@ function PMFGetNextAssignedUser ($application, $task, $delIndex = null, $userUid
 /**
  * @method
  *
- * Returns a list or user.
+ * Returns the email address of the specified user.
  *
  * @name PMFGetUserEmailAddress
  * @label PMF Get User Email Address
@@ -2845,7 +2845,7 @@ function PMFAddAttachmentToArray($arrayData, $index, $value, $suffix = " Copy({i
 /**
  *@method
  *
- * It delete the mask a field.
+ * Removes the currency symbol and thousands separator inserted by a currency mask.
  *
  * @name PMFRemoveMask
  * @label PMF Remove Mask

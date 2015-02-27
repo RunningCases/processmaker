@@ -21,7 +21,7 @@ EOT
 /*----------------------------------********---------------------------------*/
 CLI::taskName('change-password-hash-method');
 CLI::taskDescription(<<<EOT
-    Create .po file for the plugin
+    Change password hash method to md5 or sha256 for the specified workspace
 EOT
 );
 CLI::taskArg('workspace', false);
