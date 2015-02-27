@@ -95,7 +95,6 @@ class Lists {
         // Validate filters
         $filters["start"] = (int)$filters["start"];
         $filters["start"] = abs($filters["start"]);
-        error_log($filters["start"]);
         if ($filters["start"] != 0) {
             $filters["start"]+1;
         }
