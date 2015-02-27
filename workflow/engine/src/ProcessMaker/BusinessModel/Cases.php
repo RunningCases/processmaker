@@ -1983,6 +1983,13 @@ class Cases
     public function throwMessageEventBetweenElementOriginAndElementDest($elementOriginUid, $elementDestUid, array $arrayApplicationData)
     {
         try {
+            //Verify if the Project is BPMN
+            $bpmn = new \ProcessMaker\Project\Bpmn();
+
+            if (!$bpmn->exists($arrayApplicationData["PRO_UID"])) {
+                return;
+            }
+
             //Element origin and dest
             $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
 
@@ -2012,8 +2019,6 @@ class Cases
             $elementDestType   = $arrayElement["elementDest"]["type"];
 
             //Get Message-Events of throw type
-            $bpmn = new \ProcessMaker\Project\Bpmn();
-
             $arrayEvent = $bpmn->getMessageEventsOfThrowTypeBetweenElementOriginAndElementDest(
                 $elementOriginUid,
                 $elementOriginType,
@@ -2047,50 +2052,137 @@ class Cases
 
             //Set variables
             $ws = new \wsBase();
+            $case = new \Cases();
+
+            $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();
+            $messageApplication->setFrontEnd($frontEnd);
 
             //Get data
-            $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();
+            $totalMessageEvent = 0;
 
-            $arrayMessageApplicationUnread = $messageApplication->getMessageApplications(array("messageApplicationStatus" => "UNREAD"));
+            $counterStartMessageEvent = 0;
+            $counterIntermediateCatchMessageEvent = 0;
+            $counter = 0;
 
-            foreach ($arrayMessageApplicationUnread["data"] as $value) {
-                $arrayMessageApplicationData = $value;
+            $flagFirstTime = false;
 
-                $processUid = $arrayMessageApplicationData["PRJ_UID"];
-                $taskUid = $arrayMessageApplicationData["TAS_UID"];
+            $messageApplication->frontEndShow("START");
 
-                $messageApplicationUid         = $arrayMessageApplicationData["MSGAPP_UID"];
-                $messageApplicationCorrelation = $arrayMessageApplicationData["MSGAPP_CORRELATION"];
+            do {
+                $flagNextRecords = false;
 
-                $messageEventDefinitionUserUid     = $arrayMessageApplicationData["MSGED_USR_UID"];
-                $messageEventDefinitionVariables   = $arrayMessageApplicationData["MSGED_VARIABLES"];
-                $messageEventDefinitionCorrelation = $arrayMessageApplicationData["MSGED_CORRELATION"];
+                $arrayMessageApplicationUnread = $messageApplication->getMessageApplications(array("messageApplicationStatus" => "UNREAD"), null, null, 0, 1000);
 
-                switch ($arrayMessageApplicationData["EVN_TYPE"]) {
-                    case "START":
-                        if ($messageApplicationCorrelation == $messageEventDefinitionCorrelation &&
-                            $messageEventDefinitionUserUid != ""
-                        ) {
-                            //Start and derivate new Case
-                            //$result = $ws->newCase($processUid, $messageEventDefinitionUserUid, $taskUid, array("NAME1" => "value1"));
-                            $result = $ws->newCase($processUid, $messageEventDefinitionUserUid, $taskUid, array());
+                if (!$flagFirstTime) {
+                    $totalMessageEvent = $arrayMessageApplicationUnread["total"];
 
-                            $arrayResult = json_decode(json_encode($result), true);
-
-                            if ($arrayResult["status_code"] == 0) {
-                                $applicationUid = $arrayResult["caseId"];
-
-                                $result = $ws->derivateCase($messageEventDefinitionUserUid, $applicationUid, 1);
-
-                                //Message-Application catch
-                                $result = $messageApplication->update($messageApplicationUid, array("MSGAPP_STATUS" => "READ"));
-                            }
-                        }
-                        break;
-                    case "INTERMEDIATE":
-                        break;
+                    $flagFirstTime = true;
                 }
-            }
+
+                foreach ($arrayMessageApplicationUnread["data"] as $value) {
+                    if ($counter + 1 > $totalMessageEvent) {
+                        $flagNextRecords = false;
+                        break;
+                    }
+
+                    $arrayMessageApplicationData = $value;
+
+                    $processUid = $arrayMessageApplicationData["PRJ_UID"];
+                    $taskUid = $arrayMessageApplicationData["TAS_UID"];
+
+                    $messageApplicationUid         = $arrayMessageApplicationData["MSGAPP_UID"];
+                    $messageApplicationCorrelation = $arrayMessageApplicationData["MSGAPP_CORRELATION"];
+
+                    $messageEventDefinitionUserUid     = $arrayMessageApplicationData["MSGED_USR_UID"];
+                    $messageEventDefinitionCorrelation = $arrayMessageApplicationData["MSGED_CORRELATION"];
+
+                    $arrayVariable = $messageApplication->mergeVariables($arrayMessageApplicationData["MSGED_VARIABLES"], $arrayMessageApplicationData["MSGAPP_VARIABLES"]);
+
+                    $flagCatched = false;
+
+                    switch ($arrayMessageApplicationData["EVN_TYPE"]) {
+                        case "START":
+                            if ($messageEventDefinitionCorrelation == $messageApplicationCorrelation && $messageEventDefinitionUserUid != "") {
+                                //Start and derivate new Case
+                                $result = $ws->newCase($processUid, $messageEventDefinitionUserUid, $taskUid, $arrayVariable);
+
+                                $arrayResult = json_decode(json_encode($result), true);
+
+                                if ($arrayResult["status_code"] == 0) {
+                                    $applicationUid = $arrayResult["caseId"];
+
+                                    $result = $ws->derivateCase($messageEventDefinitionUserUid, $applicationUid, 1);
+
+                                    $flagCatched = true;
+
+                                    //Counter
+                                    $counterStartMessageEvent++;
+                                }
+                            }
+                            break;
+                        case "INTERMEDIATE":
+                            $criteria = new \Criteria("workflow");
+
+                            $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
+                            $criteria->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
+                            $criteria->addSelectColumn(\AppDelegationPeer::USR_UID);
+
+                            $criteria->add(\AppDelegationPeer::PRO_UID, $processUid, \Criteria::EQUAL);
+                            $criteria->add(\AppDelegationPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+                            $criteria->add(\AppDelegationPeer::DEL_THREAD_STATUS, "OPEN", \Criteria::EQUAL);
+                            $criteria->add(\AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL);
+
+                            $rsCriteria = \AppDelegationPeer::doSelectRS($criteria);
+                            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                            while ($rsCriteria->next()) {
+                                $row = $rsCriteria->getRow();
+
+                                $applicationUid = $row["APP_UID"];
+                                $delIndex = $row["DEL_INDEX"];
+                                $userUid = $row["USR_UID"];
+
+                                $arrayApplicationData = $case->loadCase($applicationUid);
+
+                                if (\G::replaceDataField($messageEventDefinitionCorrelation, $arrayApplicationData["APP_DATA"]) == $messageApplicationCorrelation) {
+                                    //"Unpause" and derivate Case
+                                    $arrayApplicationData["APP_DATA"] = array_merge($arrayApplicationData["APP_DATA"], $arrayVariable);
+
+                                    $arrayResult = $case->updateCase($applicationUid, $arrayApplicationData);
+
+                                    $result = $ws->derivateCase($userUid, $applicationUid, $delIndex);
+
+                                    $flagCatched = true;
+                                }
+                            }
+
+                            //Counter
+                            if ($flagCatched) {
+                                $counterIntermediateCatchMessageEvent++;
+                            }
+                            break;
+                    }
+
+                    //Message-Application catch
+                    if ($flagCatched) {
+                        $result = $messageApplication->update($messageApplicationUid, array("MSGAPP_STATUS" => "READ"));
+                    }
+
+                    $counter++;
+
+                    //Progress bar
+                    $messageApplication->frontEndShow("BAR", "Message-Events (unread): " . $counter . "/" . $totalMessageEvent . " " . $messageApplication->progressBar($totalMessageEvent, $counter));
+
+                    $flagNextRecords = true;
+                }
+            } while ($flagNextRecords);
+
+            $messageApplication->frontEndShow("TEXT", "Total Message-Events unread: " . $totalMessageEvent);
+            $messageApplication->frontEndShow("TEXT", "Total cases started: " . $counterStartMessageEvent);
+            $messageApplication->frontEndShow("TEXT", "Total cases continued: " . $counterIntermediateCatchMessageEvent);
+            $messageApplication->frontEndShow("TEXT", "Total Message-Events pending: " . ($totalMessageEvent - ($counterStartMessageEvent + $counterIntermediateCatchMessageEvent)));
+
+            $messageApplication->frontEndShow("END");
         } catch (\Exception $e) {
             throw $e;
         }

@@ -17,10 +17,11 @@ class BpmnWorkflow extends Project\Bpmn
      */
     protected $wp;
 
-    const BPMN_GATEWAY_COMPLEX = "COMPLEX";
-    const BPMN_GATEWAY_PARALLEL = "PARALLEL";
-    const BPMN_GATEWAY_INCLUSIVE = "INCLUSIVE";
-    const BPMN_GATEWAY_EXCLUSIVE = "EXCLUSIVE";
+    const BPMN_GATEWAY_COMPLEX    = "COMPLEX";
+    const BPMN_GATEWAY_PARALLEL   = "PARALLEL";
+    const BPMN_GATEWAY_INCLUSIVE  = "INCLUSIVE";
+    const BPMN_GATEWAY_EXCLUSIVE  = "EXCLUSIVE";
+    const BPMN_GATEWAY_EVENTBASED = "EVENTBASED";
 
     private $arrayTaskAttribute = array(
         "gateway-to-gateway"               => array("type" => "GATEWAYTOGATEWAY",                 "prefix" => "gtg-"),
@@ -674,6 +675,11 @@ class BpmnWorkflow extends Project\Bpmn
                         }
                     }
                     break;
+                //case "TO_DO":
+                case self::BPMN_GATEWAY_EVENTBASED:
+                    $routeType = "EVALUATE";
+                    break;
+                //default
                 default:
                     throw new \LogicException("Unsupported Gateway type: " . $arrayGatewayData["GAT_TYPE"]);
                     break;
@@ -1277,7 +1283,12 @@ class BpmnWorkflow extends Project\Bpmn
 
             $activity = $bwp->getActivity($activityData["ACT_UID"]);
 
+            if ($activity["BOU_CONTAINER"] != $activityData["BOU_CONTAINER"]) {
+                $activity = null;
+            }
+
             if ($forceInsert || is_null($activity)) {
+
                 if ($generateUid) {
                     //Activity
 
@@ -1310,6 +1321,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             $diagram["activities"][$i] = $activityData;
             $whiteList[] = $activityData["ACT_UID"];
+
         }
 
         $activities = $bwp->getActivities();
@@ -1330,6 +1342,10 @@ class BpmnWorkflow extends Project\Bpmn
             unset($artifactData["_EXTENDED"]);
 
             $artifact = $bwp->getArtifact($artifactData["ART_UID"]);
+
+            if ($artifact["BOU_CONTAINER"] != $artifactData["BOU_CONTAINER"]) {
+                $artifact = null;
+            }
 
             if ($forceInsert || is_null($artifact)) {
                 if ($generateUid) {
@@ -1390,6 +1406,10 @@ class BpmnWorkflow extends Project\Bpmn
             $flagAddOrUpdate = false;
 
             $gateway = $bwp->getGateway($gatewayData["GAT_UID"]);
+
+            if ($gateway["BOU_CONTAINER"] != $gatewayData["BOU_CONTAINER"]) {
+                $gateway = null;
+            }
 
             if ($forceInsert || is_null($gateway)) {
                 if ($generateUid) {
@@ -1465,6 +1485,10 @@ class BpmnWorkflow extends Project\Bpmn
 
             $event = $bwp->getEvent($eventData["EVN_UID"]);
 
+            if ($event["BOU_CONTAINER"] != $eventData["BOU_CONTAINER"]) {
+                $event = null;
+            }
+
             if ($forceInsert || is_null($event)) {
                 if ($generateUid) {
                     //Event
@@ -1521,6 +1545,10 @@ class BpmnWorkflow extends Project\Bpmn
 
             $dataObject = $bwp->getData($dataObjectData["DAT_UID"]);
 
+            if ($dataObject["BOU_CONTAINER"] != $dataObjectData["BOU_CONTAINER"]) {
+                $dataObject = null;
+            }
+
             if ($forceInsert || is_null($dataObject)) {
                 if ($generateUid) {
                     //Data
@@ -1575,9 +1603,13 @@ class BpmnWorkflow extends Project\Bpmn
             $participantData = array_change_key_case($participantData, CASE_UPPER);
             unset($participantData["_EXTENDED"]);
 
-            $dataObject = $bwp->getParticipant($participantData["PAR_UID"]);
+            $participant = $bwp->getParticipant($participantData["PAR_UID"]);
 
-            if ($forceInsert || is_null($dataObject)) {
+            if ($participant["BOU_CONTAINER"] != $participantData["BOU_CONTAINER"]) {
+                $participant = null;
+            }
+
+            if ($forceInsert || is_null($participant)) {
                 if ($generateUid) {
                     //Participant
 
@@ -1603,7 +1635,7 @@ class BpmnWorkflow extends Project\Bpmn
                 }
 
                 $bwp->addParticipant($participantData);
-            } elseif (! $bwp->isEquals($dataObject, $participantData)) {
+            } elseif (! $bwp->isEquals($participant, $participantData)) {
                 $bwp->updateParticipant($participantData["PAR_UID"], $participantData);
             } else {
                 Util\Logger::log("Update Participant ({$participantData["PAR_UID"]}) Skipped - No changes required");
