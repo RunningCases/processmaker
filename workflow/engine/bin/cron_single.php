@@ -41,6 +41,20 @@ if (!defined('PATH_HOME')) {
     require_once (PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths.php');
     require_once PATH_TRUNK . "framework/src/Maveriks/Util/ClassLoader.php";
 
+    //Class Loader - /ProcessMaker/BusinessModel
+    $classLoader = \Maveriks\Util\ClassLoader::getInstance();
+    $classLoader->add(PATH_TRUNK . "framework" . PATH_SEP . "src" . PATH_SEP, "Maveriks");
+    $classLoader->add(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "src" . PATH_SEP, "ProcessMaker");
+    $classLoader->add(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "src" . PATH_SEP);
+
+    //Add vendors to autoloader
+    //$classLoader->add(PATH_TRUNK . "vendor" . PATH_SEP . "luracast" . PATH_SEP . "restler" . PATH_SEP . "vendor", "Luracast");
+    //$classLoader->add(PATH_TRUNK . "vendor" . PATH_SEP . "bshaffer" . PATH_SEP . "oauth2-server-php" . PATH_SEP . "src" . PATH_SEP, "OAuth2");
+    $classLoader->addClass("Bootstrap", PATH_TRUNK . "gulliver" . PATH_SEP . "system" . PATH_SEP . "class.bootstrap.php");
+
+    //$classLoader->addModelClassPath(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP);
+
+    //Load classes
     G::LoadThirdParty('pear/json','class.json');
     G::LoadThirdParty('smarty/libs','Smarty.class');
     G::LoadSystem('error');
@@ -87,7 +101,7 @@ if (!defined('PATH_HOME')) {
     define ('TIME_ZONE', $config['time_zone']);
 }
 
-require_once (PATH_GULLIVER . PATH_SEP . 'class.bootstrap.php');
+//require_once (PATH_GULLIVER . PATH_SEP . 'class.bootstrap.php');
 //define( 'PATH_GULLIVER_HOME', PATH_TRUNK . 'gulliver' . PATH_SEP );
 
 spl_autoload_register(array('Bootstrap', 'autoloadClass'));
@@ -339,7 +353,13 @@ Bootstrap::registerClass('wsResponse',          PATH_HOME . "engine/classes/clas
 Bootstrap::registerClass('PMLicensedFeatures',  PATH_HOME . "engine/classes/class.LicensedFeatures.php");
 Bootstrap::registerClass('AddonsManagerPeer',   PATH_HOME . "engine/classes/model/AddonsManagerPeer.php");
 
-G::LoadClass("dates");
+Bootstrap::registerClass("BaseEmailServer",     PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseEmailServer.php");
+Bootstrap::registerClass("EmailServer",         PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "EmailServer.php");
+Bootstrap::registerClass("BaseEmailServerPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseEmailServerPeer.php");
+Bootstrap::registerClass("EmailServerPeer",     PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "EmailServerPeer.php");
+
+G::LoadClass("serverConfiguration");
+G::LoadClass("dates"); //Load Criteria
 
 if (!defined('SYS_SYS')) {
     $sObject = $argv[1];
@@ -382,25 +402,28 @@ if (!defined('SYS_SYS')) {
                 eprintln("WARNING! No server info found!", 'red');
             }
 
-            $sContent = file_get_contents(PATH_DB . $sObject . PATH_SEP . 'db.php');
+            //DB
+            $phpCode = "";
 
-            $sContent = str_replace('<?php', '', $sContent);
-            $sContent = str_replace('<?', '', $sContent);
-            $sContent = str_replace('?>', '', $sContent);
-            $sContent = str_replace('define', '', $sContent);
-            $sContent = str_replace("('", "$", $sContent);
-            $sContent = str_replace("',", '=', $sContent);
-            $sContent = str_replace(");", ';', $sContent);
+            $fileDb = fopen(PATH_DB . $sObject . PATH_SEP . "db.php", "r");
 
-            eval($sContent);
+            if ($fileDb) {
+                while (!feof($fileDb)) {
+                    $buffer = fgets($fileDb, 4096); //Read a line
 
-            $dsn = $DB_ADAPTER . '://' . $DB_USER . ':' . $DB_PASS . '@' . $DB_HOST . '/' . $DB_NAME;
+                    $phpCode .= preg_replace("/define\s*\(\s*[\x22\x27](.*)[\x22\x27]\s*,\s*(\x22.*\x22|\x27.*\x27)\s*\)\s*;/i", "\$$1 = $2;", $buffer);
+                }
 
-            $dsnRbac = $DB_ADAPTER . '://' . $DB_RBAC_USER . ':' . $DB_RBAC_PASS . '@' . $DB_RBAC_HOST . '/';
-            $dsnRbac = $dsnRbac . $DB_RBAC_NAME;
+                fclose($fileDb);
+            }
 
-            $dsnRp = $DB_ADAPTER . '://' . $DB_REPORT_USER . ':' . $DB_REPORT_PASS . '@' . $DB_REPORT_HOST . '/';
-            $dsnRp = $dsnRp . $DB_REPORT_NAME;
+            $phpCode = str_replace(array("<?php", "<?", "?>"), array("", "", ""), $phpCode);
+
+            eval($phpCode);
+
+            $dsn     = $DB_ADAPTER . "://" . $DB_USER . ":" . $DB_PASS . "@" . $DB_HOST . "/" . $DB_NAME;
+            $dsnRbac = $DB_ADAPTER . "://" . $DB_RBAC_USER . ":" . $DB_RBAC_PASS . "@" . $DB_RBAC_HOST . "/" . $DB_RBAC_NAME;
+            $dsnRp   = $DB_ADAPTER . "://" . $DB_REPORT_USER . ":" . $DB_REPORT_PASS . "@" . $DB_REPORT_HOST . "/" . $DB_REPORT_NAME;
 
             switch ($DB_ADAPTER) {
                 case 'mysql':
@@ -547,7 +570,7 @@ function resendEmails()
             setExecutionResultMessage("WITH ERRORS", "error");
             eprintln("  '-" . $e->getMessage(), "red");
         }
-        
+
         saveLog("resendEmails", "error", "Error Resending Emails: " . $e->getMessage());
     }
 }
@@ -1003,7 +1026,7 @@ function setExecutionResultMessage($m, $t='')
     if ($t == 'info') {
         $c = 'yellow';
     }
-    
+
     if ($t == 'warning') {
         $c = 'yellow';
     }
