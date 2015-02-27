@@ -33,13 +33,13 @@ new Ext.KeyMap(document, {
 });
 
 Ext.apply(Ext.form.VTypes, {
-    processTitle: function (value, field)
+    textWithoutTags: function (value, field)
     {
         var strAux = "a|applet|b|body|br|button|code|div|em|embed|form|frame|frameset|head|header|html|iframe|img|input|noscript|object|script|select|style|table|textarea";
 
         return !(eval("/^.*\\x3C[\\s\\x2F]*(?:" + strAux + ")\\s*.*\\x3E.*$/").test(value));
     },
-    processTitleText: ""
+    textWithoutTagsText: ""
 });
 
 Ext.onReady(function(){
@@ -530,7 +530,7 @@ function newProcess(params)
         width: 260,
         maskRe: /^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\...*)(\..+)?$)[^\x00-\x1f\\?*\";|/]+$/i,
         allowBlank: false,
-        vtype: "processTitle"
+        vtype: "textWithoutTags"
       },  {
         id: 'PRO_DESCRIPTION',
         fieldLabel: _('ID_DESCRIPTION'),
