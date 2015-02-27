@@ -192,7 +192,7 @@ def buildPmdynaform(homeDir, targetDir, mode)
     template += s
   end
   
-  htmlTemplates=["cases_Step_Pmdynaform.html","cases_Step_Pmdynaform_Preview.html","cases_Step_Pmdynaform_View.html","WebEntry_Pmdynaform.html"]
+  htmlTemplates=["pmdynaform.html"]
   htmlTemplates.each do |htmlTemplate|
     
     FileUtils.cp("#{Dir.pwd}/workflow/engine/templates/cases/#{htmlTemplate}", "#{pmdynaformDir}/build/#{htmlTemplate}")
