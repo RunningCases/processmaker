@@ -106,6 +106,10 @@ class Activity extends Api
             }
             $task = new \ProcessMaker\BusinessModel\Task();
             $properties = $task->updateProperties($prj_uid, $act_uid, $request_data);
+            /** features */
+            $featureHandler = new \Features\FeaturesHandler();
+            $featureHandler->saveConfiguration('activity', $request_data['properties']['_features']);
+            /** features */
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

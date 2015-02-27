@@ -55,20 +55,17 @@ class ActivityConfigurationView
                     'type' => 'dropdown',
                     'options' => array(
                         array(
-                            'name' => '',
+                            'label' => '- None -',
                             'value' => '',
-                            'text' => '- None -',
                             'type' => 'default'
                         ),
                         array(
-                            'name' => 'LINK',
+                            'label' => 'Link to fill a form',
                             'value' => 'LINK',
-                            'text' => 'Link to fill a form',
                         ),
                         array(
-                            'name' => 'FIELD',
+                            'label' => 'Use a field to generate actions links',
                             'value' => 'FIELD',
-                            'text' => 'Use a field to generate actions links',
                         )
                     )
                 ),
@@ -84,9 +81,8 @@ class ActivityConfigurationView
                     ),
                     'options' => array(
                         array(
-                            'name' => '',
                             'value' => '',
-                            'text' => '- Select a Template -',
+                            'label' => '- Select a Template -',
                             'type' => 'default'
                         )
                     )
@@ -118,9 +114,8 @@ class ActivityConfigurationView
                     ),
                     'options' => array(
                         array(
-                            'name' => '',
                             'value' => '',
-                            'text' => '- Select a Dynaform -',
+                            'label' => '- Select a Dynaform -',
                             'type' => 'default'
                         )
                     ),
@@ -137,9 +132,8 @@ class ActivityConfigurationView
                     'type' => 'dropdown',
                     'options' => array(
                         array(
-                            'name' => '',
                             'value' => '',
-                            'text' => '- Send to the email of the assigned user to the task -',
+                            'label' => '- Send to the email of the assigned user to the task -',
                             'type' => 'default'
                         )
                     ),
@@ -165,9 +159,8 @@ class ActivityConfigurationView
                     'type' => 'dropdown',
                     'options' => array(
                         array(
-                            'name' => '',
                             'value' => '',
-                            'text' => '- Select a Field -',
+                            'label' => '- Select a Field -',
                             'type' => 'default'
                         )
                     ),
@@ -186,10 +179,15 @@ class ActivityConfigurationView
                 ),
                 array(
                     'name' => 'ABE_CASE_NOTE_IN_RESPONSE',
-                    'value' => true,
-                    'default' => false,
-                    'label' => 'Register a Case Note when the recipient submits the Response',
-                    'type' => 'checkbox'
+                    'type' => 'checkbox',
+                    'labelVisible' => false,
+                    'options' => array(
+                        array(
+                            'id' => 'formTimingControlOption',
+                            'label' => 'Register a Case Note when the recipient submits the Response',
+                            'value' => '1'
+                        )
+                    )
                 ),
 //                array(
 //                    'name' => 'APPLY_CHANGES',

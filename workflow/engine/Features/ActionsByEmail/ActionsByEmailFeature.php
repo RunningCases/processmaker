@@ -1,6 +1,6 @@
 <?php
 
-namespace Features;
+namespace \Features\ActionsByEmail;
 /**
  * Description of ActionsByEmailFeature
  * 
