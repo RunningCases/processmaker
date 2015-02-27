@@ -972,6 +972,10 @@ class Derivation
                 }
                 $aParentCase['APP_DATA'] = array_merge( $aParentCase['APP_DATA'], $aNewFields );
                 $oCase->updateCase( $aSA['APP_PARENT'], $aParentCase );
+                /*----------------------------------********---------------------------------*/
+                $inbox = new ListInbox();
+                $inbox->update($aParentCase);
+                /*----------------------------------********---------------------------------*/
                 //Update table SUB_APPLICATION
                 $oSubApplication = new SubApplication();
                 $oSubApplication->update( array ('APP_UID' => $sApplicationUID,'APP_PARENT' => $aSA['APP_PARENT'],'DEL_INDEX_PARENT' => $aSA['DEL_INDEX_PARENT'],'DEL_THREAD_PARENT' => $aSA['DEL_THREAD_PARENT'],'SA_STATUS' => 'FINISHED','SA_VALUES_IN' => serialize( $aNewFields ),'SA_FINISH_DATE' => date( 'Y-m-d H:i:s' )

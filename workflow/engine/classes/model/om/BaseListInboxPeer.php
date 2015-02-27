@@ -48,6 +48,9 @@ abstract class BaseListInboxPeer
 
     /** the column name for the APP_NUMBER field */
     const APP_NUMBER = 'LIST_INBOX.APP_NUMBER';
+    
+    /** the column name for the APP_STATUS field */
+    const APP_STATUS = 'LIST_INBOX.APP_STATUS';
 
     /** the column name for the APP_TITLE field */
     const APP_TITLE = 'LIST_INBOX.APP_TITLE';
@@ -96,10 +99,10 @@ abstract class BaseListInboxPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('AppUid', 'DelIndex', 'UsrUid', 'TasUid', 'ProUid', 'AppNumber', 'AppTitle', 'AppProTitle', 'AppTasTitle', 'AppUpdateDate', 'DelPreviousUsrUid', 'DelPreviousUsrUsername', 'DelPreviousUsrFirstname', 'DelPreviousUsrLastname', 'DelDelegateDate', 'DelInitDate', 'DelDueDate', 'DelPriority', ),
-        BasePeer::TYPE_COLNAME => array (ListInboxPeer::APP_UID, ListInboxPeer::DEL_INDEX, ListInboxPeer::USR_UID, ListInboxPeer::TAS_UID, ListInboxPeer::PRO_UID, ListInboxPeer::APP_NUMBER, ListInboxPeer::APP_TITLE, ListInboxPeer::APP_PRO_TITLE, ListInboxPeer::APP_TAS_TITLE, ListInboxPeer::APP_UPDATE_DATE, ListInboxPeer::DEL_PREVIOUS_USR_UID, ListInboxPeer::DEL_PREVIOUS_USR_USERNAME, ListInboxPeer::DEL_PREVIOUS_USR_FIRSTNAME, ListInboxPeer::DEL_PREVIOUS_USR_LASTNAME, ListInboxPeer::DEL_DELEGATE_DATE, ListInboxPeer::DEL_INIT_DATE, ListInboxPeer::DEL_DUE_DATE, ListInboxPeer::DEL_PRIORITY, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_UID', 'DEL_INDEX', 'USR_UID', 'TAS_UID', 'PRO_UID', 'APP_NUMBER', 'APP_TITLE', 'APP_PRO_TITLE', 'APP_TAS_TITLE', 'APP_UPDATE_DATE', 'DEL_PREVIOUS_USR_UID', 'DEL_PREVIOUS_USR_USERNAME', 'DEL_PREVIOUS_USR_FIRSTNAME', 'DEL_PREVIOUS_USR_LASTNAME', 'DEL_DELEGATE_DATE', 'DEL_INIT_DATE', 'DEL_DUE_DATE', 'DEL_PRIORITY', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
+        BasePeer::TYPE_PHPNAME => array ('AppUid', 'DelIndex', 'UsrUid', 'TasUid', 'ProUid', 'AppNumber', 'AppStatus','AppTitle', 'AppProTitle', 'AppTasTitle', 'AppUpdateDate', 'DelPreviousUsrUid', 'DelPreviousUsrUsername', 'DelPreviousUsrFirstname', 'DelPreviousUsrLastname', 'DelDelegateDate', 'DelInitDate', 'DelDueDate', 'DelPriority', ),
+        BasePeer::TYPE_COLNAME => array (ListInboxPeer::APP_UID, ListInboxPeer::DEL_INDEX, ListInboxPeer::USR_UID, ListInboxPeer::TAS_UID, ListInboxPeer::PRO_UID, ListInboxPeer::APP_NUMBER, ListInboxPeer::APP_STATUS, ListInboxPeer::APP_TITLE, ListInboxPeer::APP_PRO_TITLE, ListInboxPeer::APP_TAS_TITLE, ListInboxPeer::APP_UPDATE_DATE, ListInboxPeer::DEL_PREVIOUS_USR_UID, ListInboxPeer::DEL_PREVIOUS_USR_USERNAME, ListInboxPeer::DEL_PREVIOUS_USR_FIRSTNAME, ListInboxPeer::DEL_PREVIOUS_USR_LASTNAME, ListInboxPeer::DEL_DELEGATE_DATE, ListInboxPeer::DEL_INIT_DATE, ListInboxPeer::DEL_DUE_DATE, ListInboxPeer::DEL_PRIORITY, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_UID', 'DEL_INDEX', 'USR_UID', 'TAS_UID', 'PRO_UID', 'APP_NUMBER', 'APP_STATUS', 'APP_TITLE', 'APP_PRO_TITLE', 'APP_TAS_TITLE', 'APP_UPDATE_DATE', 'DEL_PREVIOUS_USR_UID', 'DEL_PREVIOUS_USR_USERNAME', 'DEL_PREVIOUS_USR_FIRSTNAME', 'DEL_PREVIOUS_USR_LASTNAME', 'DEL_DELEGATE_DATE', 'DEL_INIT_DATE', 'DEL_DUE_DATE', 'DEL_PRIORITY', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
     );
 
     /**
@@ -110,9 +113,9 @@ abstract class BaseListInboxPeer
      */
     private static $fieldKeys = array (
         BasePeer::TYPE_PHPNAME => array ('AppUid' => 0, 'DelIndex' => 1, 'UsrUid' => 2, 'TasUid' => 3, 'ProUid' => 4, 'AppNumber' => 5, 'AppTitle' => 6, 'AppProTitle' => 7, 'AppTasTitle' => 8, 'AppUpdateDate' => 9, 'DelPreviousUsrUid' => 10, 'DelPreviousUsrUsername' => 11, 'DelPreviousUsrFirstname' => 12, 'DelPreviousUsrLastname' => 13, 'DelDelegateDate' => 14, 'DelInitDate' => 15, 'DelDueDate' => 16, 'DelPriority' => 17, ),
-        BasePeer::TYPE_COLNAME => array (ListInboxPeer::APP_UID => 0, ListInboxPeer::DEL_INDEX => 1, ListInboxPeer::USR_UID => 2, ListInboxPeer::TAS_UID => 3, ListInboxPeer::PRO_UID => 4, ListInboxPeer::APP_NUMBER => 5, ListInboxPeer::APP_TITLE => 6, ListInboxPeer::APP_PRO_TITLE => 7, ListInboxPeer::APP_TAS_TITLE => 8, ListInboxPeer::APP_UPDATE_DATE => 9, ListInboxPeer::DEL_PREVIOUS_USR_UID => 10, ListInboxPeer::DEL_PREVIOUS_USR_USERNAME => 11, ListInboxPeer::DEL_PREVIOUS_USR_FIRSTNAME => 12, ListInboxPeer::DEL_PREVIOUS_USR_LASTNAME => 13, ListInboxPeer::DEL_DELEGATE_DATE => 14, ListInboxPeer::DEL_INIT_DATE => 15, ListInboxPeer::DEL_DUE_DATE => 16, ListInboxPeer::DEL_PRIORITY => 17, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0, 'DEL_INDEX' => 1, 'USR_UID' => 2, 'TAS_UID' => 3, 'PRO_UID' => 4, 'APP_NUMBER' => 5, 'APP_TITLE' => 6, 'APP_PRO_TITLE' => 7, 'APP_TAS_TITLE' => 8, 'APP_UPDATE_DATE' => 9, 'DEL_PREVIOUS_USR_UID' => 10, 'DEL_PREVIOUS_USR_USERNAME' => 11, 'DEL_PREVIOUS_USR_FIRSTNAME' => 12, 'DEL_PREVIOUS_USR_LASTNAME' => 13, 'DEL_DELEGATE_DATE' => 14, 'DEL_INIT_DATE' => 15, 'DEL_DUE_DATE' => 16, 'DEL_PRIORITY' => 17, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
+        BasePeer::TYPE_COLNAME => array (ListInboxPeer::APP_UID => 0, ListInboxPeer::DEL_INDEX => 1, ListInboxPeer::USR_UID => 2, ListInboxPeer::TAS_UID => 3, ListInboxPeer::PRO_UID => 4, ListInboxPeer::APP_NUMBER => 5, ListInboxPeer::APP_STATUS => 6, ListInboxPeer::APP_TITLE => 7, ListInboxPeer::APP_PRO_TITLE => 8, ListInboxPeer::APP_TAS_TITLE => 9, ListInboxPeer::APP_UPDATE_DATE => 10, ListInboxPeer::DEL_PREVIOUS_USR_UID => 11, ListInboxPeer::DEL_PREVIOUS_USR_USERNAME => 12, ListInboxPeer::DEL_PREVIOUS_USR_FIRSTNAME => 13, ListInboxPeer::DEL_PREVIOUS_USR_LASTNAME => 14, ListInboxPeer::DEL_DELEGATE_DATE => 15, ListInboxPeer::DEL_INIT_DATE => 16, ListInboxPeer::DEL_DUE_DATE => 17, ListInboxPeer::DEL_PRIORITY => 18, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0, 'DEL_INDEX' => 1, 'USR_UID' => 2, 'TAS_UID' => 3, 'PRO_UID' => 4, 'APP_NUMBER' => 5, 'APP_STATUS' => 6, 'APP_TITLE' => 7, 'APP_PRO_TITLE' => 8, 'APP_TAS_TITLE' => 9, 'APP_UPDATE_DATE' => 10, 'DEL_PREVIOUS_USR_UID' => 11, 'DEL_PREVIOUS_USR_USERNAME' => 12, 'DEL_PREVIOUS_USR_FIRSTNAME' => 13, 'DEL_PREVIOUS_USR_LASTNAME' => 14, 'DEL_DELEGATE_DATE' => 15, 'DEL_INIT_DATE' => 16, 'DEL_DUE_DATE' => 17, 'DEL_PRIORITY' => 18, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 )
     );
 
     /**
@@ -224,6 +227,8 @@ abstract class BaseListInboxPeer
         $criteria->addSelectColumn(ListInboxPeer::PRO_UID);
 
         $criteria->addSelectColumn(ListInboxPeer::APP_NUMBER);
+        
+        $criteria->addSelectColumn(ListInboxPeer::APP_STATUS);
 
         $criteria->addSelectColumn(ListInboxPeer::APP_TITLE);
 

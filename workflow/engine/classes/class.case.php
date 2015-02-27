@@ -1060,6 +1060,13 @@ class Cases
 
                 $appAssignSelfServiceValue->remove($sAppUid);
             }
+            /*----------------------------------********---------------------------------*/
+            if(!isset($Fields['DEL_INDEX'])){
+              $Fields['DEL_INDEX'] = 1;
+            }
+            $inbox = new ListInbox();
+            $inbox->update($Fields);
+            /*----------------------------------********---------------------------------*/
 
             //Return
             return $Fields;
@@ -1190,8 +1197,10 @@ class Cases
             $oAppDel = AppDelegationPeer::retrieveByPk($sAppUid, $iDelIndex);
             $oAppDel->setDelInitDate("now");
             $oAppDel->save();
+            /*----------------------------------********---------------------------------*/
             $inbox = new ListInbox();
             $inbox->update(array('APP_UID'=>$sAppUid, 'DEL_INDEX'=>$iDelIndex, 'DEL_INIT_DATE'=>Date("Y-m-d H:i:s")));
+            /*----------------------------------********---------------------------------*/
             //update searchindex
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
@@ -1911,8 +1920,16 @@ class Cases
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
                 }
             }
+            /*----------------------------------********---------------------------------*/
             $inbox = new ListInbox();
             $inbox->remove($sAppUid, $iDelIndex);
+            $data['DEL_THREAD_STATUS'] = 'CLOSED';
+            $data['APP_UID']   = $sAppUid;
+            $data['DEL_INDEX'] = $iDelIndex;
+            $data['USR_UID']   = $appDel->getUsrUid();
+            $listParticipatedLast = new ListParticipatedLast();
+            $listParticipatedLast->refresh($data);
+            /*----------------------------------********---------------------------------*/
         } catch (exception $e) {
             throw ($e);
         }
@@ -4099,7 +4116,7 @@ class Cases
         if ($this->appSolr != null) {
             $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
         }
-
+        /*----------------------------------********---------------------------------*/
         $data = array (
             'APP_UID'   => $sApplicationUID,
             'DEL_INDEX' => $iIndex,
@@ -4108,6 +4125,7 @@ class Cases
         $data = array_merge($aFields, $data);
         $oListCanceled = new ListCanceled();
         $oListCanceled->create($data);
+        /*----------------------------------********---------------------------------*/
     }
 
     /*

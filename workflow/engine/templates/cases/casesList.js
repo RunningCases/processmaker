@@ -805,7 +805,7 @@ Ext.onReady ( function() {
     sortInfo:{field: 'APP_CACHE_VIEW.APP_NUMBER', direction: "DESC"},
     listeners: {
       load: function(response){
-        //console.log(response.reader.jsonData);
+
         if (response.reader.jsonData.result === false) {
     			PMExt.notify('ERROR', response.reader.jsonData.message);
     			//PMExt.error
@@ -2267,7 +2267,10 @@ var gridForm = new Ext.FormPanel({
   comboCategory.setValue("");
   comboProcess.setValue("");
   comboStatus.setValue("");
-  comboUser.setValue("");
+  if(typeof(comboUser) != 'undefined'){
+    comboUser.setValue("");
+  }
+
   comboAllUsers.setValue("CURRENT_USER");
 
   // hidding the buttons for the reassign

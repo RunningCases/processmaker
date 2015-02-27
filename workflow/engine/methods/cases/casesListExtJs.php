@@ -37,7 +37,7 @@ switch ($action) {
     case 'my-inbox':
         $urlProxy .= 'my-inbox';
         break;
-    case 'selfservice':
+    case 'unassigned':
         $urlProxy = 'proxyCasesList';
         $action = 'unassigned';
         break;
