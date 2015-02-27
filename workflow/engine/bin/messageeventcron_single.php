@@ -36,7 +36,7 @@ try {
     require_once(PATH_HOME . "engine" . PATH_SEP . "config" . PATH_SEP . "paths.php");
     require_once(PATH_TRUNK . "framework" . PATH_SEP . "src" . PATH_SEP . "Maveriks" . PATH_SEP . "Util" . PATH_SEP . "ClassLoader.php");
 
-    //Class loader - /ProcessMaker/BusinessModel
+    //Class Loader - /ProcessMaker/BusinessModel
     $classLoader = \Maveriks\Util\ClassLoader::getInstance();
     $classLoader->add(PATH_TRUNK . "framework" . PATH_SEP . "src" . PATH_SEP, "Maveriks");
     $classLoader->add(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "src" . PATH_SEP, "ProcessMaker");
