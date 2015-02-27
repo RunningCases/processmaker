@@ -394,7 +394,7 @@ class XmlForm_Field
      * @param string value
      * @return string
      */
-    public function render ($value = null)
+    public function render($value = null, $paramDummy2 = null)
     {
         //this is an unknown field type.
         return $this->htmlentities( $value != '' ? $value : $this->name, ENT_COMPAT, 'utf-8' );
@@ -934,7 +934,7 @@ class XmlForm_Field_Title extends XmlForm_Field
      * @param string value
      * @return string
      */
-    public function render ($value = null, &$owner = null)
+    public function render($value = null, $owner = null)
     {
         $this->label = G::replaceDataField( $this->label, $owner->values );
         return '<span id=\'form[' . $this->name . ']\' name=\'form[' . $this->name . ']\' ' . $this->NSFieldType() . ' >' . $this->htmlentities( $this->label ) . '</span>';
@@ -970,7 +970,7 @@ class XmlForm_Field_Subtitle extends XmlForm_Field
      * @param string value
      * @return string
      */
-    public function render ($value = null)
+    public function render($value = null, $paramDummy2 = null)
     {
         return '<span id=\'form[' . $this->name . ']\' name=\'form[' . $this->name . ']\' ' . $this->NSFieldType() . ' >' . $this->htmlentities( $this->label ) . '</span>';
     }
@@ -1012,7 +1012,7 @@ class XmlForm_Field_SimpleText extends XmlForm_Field
      * @param string value
      * @return string
      */
-    public function render ($value = null, &$owner = null)
+    public function render($value = null, $owner = null)
     {
         if (($this->pmconnection != '') && ($this->pmfield != '') && $value == null) {
             $value = $this->getPMTableValue( $owner );
@@ -1040,7 +1040,7 @@ class XmlForm_Field_SimpleText extends XmlForm_Field
      * @param string owner
      * @return string
      */
-    public function renderGrid ($values = array(), $owner = null)
+    public function renderGrid($values = array(), $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         $result = array ();
         $r = 1;
@@ -1204,7 +1204,7 @@ class XmlForm_Field_Text extends XmlForm_Field_SimpleText
      * @param string owner
      * @return string
      */
-    public function renderGrid ($values = array(), $owner = null)
+    public function renderGrid($values = array(), $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         $result = $aux = array ();
         $r = 1;
@@ -1257,7 +1257,7 @@ class XmlForm_Field_Text extends XmlForm_Field_SimpleText
         return $result;
     }
 
-    public function renderTable ($values = '', $owner = null)
+    public function renderTable($values = "", $owner = null, $paramDummy3 = null)
     {
         $result = $this->htmlentities( $values, ENT_COMPAT, 'utf-8' );
         return $result;
@@ -1716,7 +1716,7 @@ class XmlForm_Field_Suggest extends XmlForm_Field_SimpleText //by neyek
      * @param string owner
      * @return string
      */
-    public function renderGrid ($values = array(), $owner = null)
+    public function renderGrid($values = array(), $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         $aResult = array();
         $r = 1;
@@ -1735,7 +1735,7 @@ class XmlForm_Field_Suggest extends XmlForm_Field_SimpleText //by neyek
      * @param <String> $owner
      * @return <String> $result
      */
-    public function renderTable ($values = '', $owner = null)
+    public function renderTable($values = "", $owner = null, $paramDummy3 = null)
     {
         $result = $this->htmlentities( $values, ENT_COMPAT, 'utf-8' );
         return $result;
@@ -1812,10 +1812,8 @@ class XmlForm_Field_Caption extends XmlForm_Field
      * @param $owner
      * @return true
      */
-    public function validateValue ($value, &$owner)
+    public function validateValue($value)
     {
-        /*$this->executeSQL( $owner );
-        return isset($value) && ( array_key_exists( $value , $this->options ) );*/
         return true;
     }
 
@@ -1897,7 +1895,7 @@ class XmlForm_Field_Password extends XmlForm_Field
      * @param string value
      * @return string
      */
-    public function render ($value = null)
+    public function render($value = null, $paramDummy2 = null)
     {
         if ($this->autocomplete === '1') {
             $this->autocomplete = "on";
@@ -2013,7 +2011,7 @@ class XmlForm_Field_Textarea extends XmlForm_Field
      * @param string owner
      * @return string
      */
-    public function renderGrid ($values = array(), $owner = null)
+    public function renderGrid($values = array(), $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         $this->gridFieldType = 'textarea';
 
@@ -2176,7 +2174,7 @@ class XmlForm_Field_Currency extends XmlForm_Field_SimpleText
      * @param string owner
      * @return string
      */
-    public function renderGrid ($values = array(), $owner = null)
+    public function renderGrid($values = array(), $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         $result = array ();
         $r = 1;
@@ -2242,7 +2240,7 @@ class XmlForm_Field_CaptionCurrency extends XmlForm_Field
      * @param string value
      * @return string
      */
-    public function render ($value = null)
+    public function render($value = null, $paramDummy2 = null)
     {
         return '$ ' . $this->htmlentities( $value, ENT_COMPAT, 'utf-8' );
     }
@@ -2323,7 +2321,7 @@ class XmlForm_Field_Percentage extends XmlForm_Field_SimpleText
         return $html;
     }
 
-    public function renderGrid ($values = array(), $owner = null)
+    public function renderGrid($values = array(), $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         $result = array ();
         $r = 1;
@@ -2381,7 +2379,7 @@ class XmlForm_Field_Percentage extends XmlForm_Field_SimpleText
 class XmlForm_Field_CaptionPercentage extends XmlForm_Field
 {
 
-    public function render ($value = null)
+    public function render($value = null, $paramDummy2 = null)
     {
         return $this->htmlentities( $value, ENT_COMPAT, 'utf-8' );
     }
@@ -2575,7 +2573,7 @@ class XmlForm_Field_Date2 extends XmlForm_Field_SimpleText
      * @param $onlyValue
      * @return <String>
      */
-    public function renderGrid ($values = null, $owner = null, $onlyValue = false)
+    public function renderGrid($values = null, $owner = null, $onlyValue = false, $paramDummy4 = null)
     {
         $result = array ();
         $r = 1;
@@ -2658,7 +2656,7 @@ class XmlForm_Field_Date2 extends XmlForm_Field_SimpleText
 class XmlForm_Field_DateView extends XmlForm_Field
 {
 
-    public function render ($value = null)
+    public function render($value = null, $paramDummy2 = null)
     {
         return $this->htmlentities( $value, ENT_COMPAT, 'utf-8' );
     }
@@ -2741,7 +2739,7 @@ class XmlForm_Field_YesNo extends XmlForm_Field
      * @param $owner
      * @return <array>
      */
-    public function renderGrid ($values = array(), $owner = null)
+    public function renderGrid($values = array(), $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         $this->gridFieldType = 'yesno';
         $result = array ();
@@ -2888,7 +2886,7 @@ class XmlForm_Field_Link extends XmlForm_Field
      * @param $owner
      * @return <array>
      */
-    public function renderGrid($value = array(), $label = array(), $owner = null)
+    public function renderGrid($value = array(), $label = array(), $owner = null, $paramDummy4 = null)
     {
         $arrayResult = array();
         $row = 1;
@@ -2914,7 +2912,7 @@ class XmlForm_Field_Link extends XmlForm_Field
      * @param $owner
      * @return <String>
      */
-    public function renderTable ($value = null, $owner = null)
+    public function renderTable($value = null, $owner = null, $paramDummy3 = null)
     {
         $onclick = $this->htmlentities( G::replaceDataField( $this->onclick, $owner->values ), ENT_QUOTES, 'utf-8' );
         $link = $this->htmlentities( G::replaceDataField( $this->link, $owner->values ), ENT_QUOTES, 'utf-8' );
@@ -3053,7 +3051,7 @@ class XmlForm_Field_File extends XmlForm_Field
         return $html;
     }
 
-    public function renderGrid ($value = array(), $owner = null, $therow = -1)
+    public function renderGrid($value = array(), $owner = null, $therow = -1, $paramDummy4 = null)
     {
         $arrayResult = array ();
         $r = 1;
@@ -3142,7 +3140,7 @@ class XmlForm_Field_Checkboxpt extends XmlForm_Field
      * @param $owner
      * @return <Array> result
      */
-    public function renderGrid ($values = array(), $owner = null)
+    public function renderGrid($values = array(), $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         $result = array ();
         $r = 1;
@@ -3238,7 +3236,7 @@ class XmlForm_Field_Checkbox extends XmlForm_Field
      * @param $owner
      * @return <Array> result
      */
-    public function renderGrid ($values = array(), $owner = null)
+    public function renderGrid($values = array(), $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         $this->gridFieldType = 'checkbox';
         $result = array ();
@@ -3286,7 +3284,7 @@ class XmlForm_Field_Checkbox2 extends XmlForm_Field
 {
     public $required = false;
 
-    public function render ($value = null)
+    public function render($value = null, $paramDummy2 = null)
     {
         return '<input class="FormCheck" name="' . $this->name . '" type ="checkbox" disabled>' . $this->label . '</input>';
     }
@@ -3461,7 +3459,7 @@ class XmlForm_Field_Hidden extends XmlForm_Field
      * @param $owner
      * @return <Array> result
      */
-    public function renderGrid ($values = null, $owner = null)
+    public function renderGrid($values = null, $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         $result = array ();
         $r = 1;
@@ -3480,7 +3478,7 @@ class XmlForm_Field_Hidden extends XmlForm_Field
      * @param $owner
      * @return <Array> result
      */
-    public function renderTable ($value = '', $owner = null)
+    public function renderTable($value = "", $owner = null, $paramDummy3 = null)
     {
         return '<input id="form[' . $this->name . ']"  name="form[' . $this->name . ']" type=\'hidden\' value=\'' . $value . '\'/>';
     }
@@ -3509,10 +3507,8 @@ class XmlForm_Field_Dropdown extends XmlForm_Field
     public $renderMode = '';
     public $selectedValue = '';
 
-    public function validateValue ($value, &$owner)
+    public function validateValue($value)
     {
-        /*$this->executeSQL( $owner );
-        return isset($value) && ( array_key_exists( $value , $this->options ) );*/
         return true;
     }
 
@@ -3827,7 +3823,7 @@ class XmlForm_Field_Listbox extends XmlForm_Field
      * @param $owner
      * @return <Array> result
      */
-    public function renderGrid ($value = null, $owner = null)
+    public function renderGrid($value = null, $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         return $this->render( $value, $owner );
     }
@@ -4046,7 +4042,7 @@ class XmlForm_Field_CheckGroupView extends XmlForm_Field
      * @param string value
      * @return string
      */
-    public function render ($value = null)
+    public function render($value = null, $paramDummy2 = null)
     {
         $html = '';
         foreach ($this->option as $optionName => $option) {
@@ -4125,7 +4121,7 @@ class XmlForm_Field_Grid extends XmlForm_Field
      * @return <Template Object>
      */
 
-    public function render ($values, $owner = null)
+    public function render($values = null, $owner = null)
     {
         $emptyRow = $this->setScrollStyle( $owner );
         return $this->renderGrid( $emptyRow, $owner );
@@ -4140,7 +4136,7 @@ class XmlForm_Field_Grid extends XmlForm_Field
      * @param string values
      * @return string
      */
-    public function renderGrid ($values, $owner = null, $therow = -1)
+    public function renderGrid($values = array(), $owner = null, $therow = -1, $paramDummy4 = null)
     {
         $this->id = $this->owner->id . $this->name;
         $using_template = 'grid';
@@ -4396,7 +4392,7 @@ class XmlForm_Field_JavaScript extends XmlForm_Field
      * @param string owner
      * @return string
      */
-    public function renderGrid ($value, $owner)
+    public function renderGrid($values = null, $owner = null, $paramDummy3 = null, $paramDummy4 = null)
     {
         return array ('');
     }
@@ -4571,7 +4567,7 @@ class XmlForm_Field_Date extends XmlForm_Field_SimpleText
      * @param $onlyValue
      * @return Array $result
      */
-    public function renderGrid ($values = null, $owner = null, $onlyValue = false)
+    public function renderGrid($values = null, $owner = null, $onlyValue = false, $paramDummy4 = null)
     {
         $this->gridFieldType = 'date';
         $result = array ();
@@ -4999,7 +4995,7 @@ class XmlForm_Field_Date5 extends XmlForm_Field_SimpleText
      * @param $onlyValue
      * @return Array $result
      */
-    public function renderGrid ($values = null, $owner = null, $onlyValue = false)
+    public function renderGrid($values = null, $owner = null, $onlyValue = false, $paramDummy4 = null)
     {
         $result = array ();
         $r = 1;
@@ -5331,7 +5327,7 @@ class XmlForm_Field_Xmlform extends XmlForm_Field
      * @param string values
      * @return string
      */
-    public function render ($values)
+    public function render($values = null, $paramDummy2 = null)
     {
         $html = '';
         foreach ($this->fields as $f => $v) {
@@ -5668,7 +5664,7 @@ class XmlForm_Field_Image extends XmlForm_Field
     * @param string values
     * @return string
     */
-    public function render ($value, $owner = null)
+    public function render($value = null, $owner = null)
     {
         $url = G::replaceDataField($this->file, $owner->values);
         if ($this->home === "methods") {
@@ -5805,3 +5801,4 @@ if (!function_exists('strptime')) {
         return $ret;
     }
 }
+
