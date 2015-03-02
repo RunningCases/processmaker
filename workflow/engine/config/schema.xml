@@ -4030,7 +4030,7 @@
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
         <column name="DEL_THREAD_STATUS" type="VARCHAR" size="32" required="true" default="OPEN"/>
-    </table>
+    </table> 
     <table name="LIST_COMPLETED">
         <vendor type="mysql">
             <parameter name="Name" value="LIST_COMPLETED"/>

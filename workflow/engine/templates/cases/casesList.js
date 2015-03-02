@@ -2272,14 +2272,6 @@ var gridForm = new Ext.FormPanel({
   }
   comboAllUsers.setValue("CURRENT_USER");
 
-// hidding the buttons for the reassign
-//  if (action=='to_reassign'){
-//    btnSelectAll.hide();
-//    btnUnSelectAll.hide();
-//    btnReassign.hide();
-//  }
-
-
 function reassign(){
   storeReassignCases.removeAll();
   var rows  = grid.getSelectionModel().getSelections();

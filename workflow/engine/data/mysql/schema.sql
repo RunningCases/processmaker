@@ -2213,7 +2213,7 @@ CREATE TABLE `LIST_INBOX`
 	`DEL_DUE_DATE` DATETIME,
 	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
 	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
-	KEY `indexInboxUser`(`USR_UID`, `DEL_DELEGATE_DATE`)
+  KEY `indexInboxUser`(`USR_UID`, `DEL_DELEGATE_DATE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Inbox list';
 #-----------------------------------------------------------------------------
 #-- LIST_PARTICIPATED_HISTORY

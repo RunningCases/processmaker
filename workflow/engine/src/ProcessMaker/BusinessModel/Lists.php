@@ -30,19 +30,9 @@ class Lists {
         $userUid = $dataList["userId"];
         $filters["paged"]    = isset( $dataList["paged"] ) ? $dataList["paged"] : true;
         $filters['count']    = isset( $dataList['count'] ) ? $dataList['count'] : true;
-
         $filters["category"] = isset( $dataList["category"] ) ? $dataList["category"] : "";
-        if(empty($filters["category"]) && isset($_GET['category'])){
-          $filters["category"] = $_GET['category'];
-        }
         $filters["process"]  = isset( $dataList["process"] ) ? $dataList["process"] : "";
-        if(empty($filters["process"]) && isset($_GET['process'])){
-          $filters["process"] = $_GET['process'];
-        }
         $filters["search"]   = isset( $dataList["search"] ) ? $dataList["search"] : "";
-        if(empty($filters["search"]) && isset($_GET['search'])){
-          $filters["category"] = $_GET['search'];
-        }
         $filters["filter"]   = isset( $dataList["filter"] ) ? $dataList["filter"] : "";
         $filters["dateFrom"] = (!empty( $dataList["dateFrom"] )) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
         $filters["dateTo"]   = (!empty( $dataList["dateTo"] )) ? substr( $dataList["dateTo"], 0, 10 ) : "";

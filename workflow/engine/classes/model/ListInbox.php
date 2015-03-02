@@ -80,19 +80,7 @@ class ListInbox extends BaseListInbox
 
                 // update participated history
                 $listParticipatedHistory = new ListParticipatedHistory();
-                $listParticipatedHistory->update($data);
-                //$listParticipatedLast = new ListParticipatedLast();
-                //$listParticipatedLast->update($data);
-                /*if(isset($data['APP_UID']) && isset($data['DEL_INDEX'])){ 
-                  $oRow = ListInboxPeer::retrieveByPK( $data['APP_UID'], $data['DEL_INDEX'] );
-                  if(is_object($oRow)){
-                    $newData = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
-
-                    // update participated last
-                    $listParticipatedLast = new ListParticipatedLast();
-                    $listParticipatedLast->update($newData);
-                  }
-                }*/
+                $listParticipatedHistory->update($data);                
                 return $result;
             } else {
                 $con->rollback();
