@@ -322,7 +322,11 @@ class MessageEventRelation
             $criteria = new \Criteria("workflow");
 
             foreach ($arrayCondition as $key => $value) {
-                $criteria->add($key, $value, \Criteria::EQUAL);
+                if (is_array($value)) {
+                    $criteria->add($key, $value[0], $value[1]);
+                } else {
+                    $criteria->add($key, $value, \Criteria::EQUAL);
+                }
             }
 
             $result = \MessageEventRelationPeer::doDelete($criteria);
@@ -400,6 +404,45 @@ class MessageEventRelation
 
             //Return
             return (!$flagGetRecord)? $this->getMessageEventRelationDataFromRecord($row) : $row;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get data of a Message-Event-Relation
+     *
+     * @param array $arrayCondition Conditions
+     * @param bool  $flagGetRecord  Value that set the getting
+     *
+     * return array Return an array with data of a Message-Event-Relation, otherwise null
+     */
+    public function getMessageEventRelationWhere(array $arrayCondition, $flagGetRecord = false)
+    {
+        try {
+            //Get data
+            $criteria = $this->getMessageEventRelationCriteria();
+
+            foreach ($arrayCondition as $key => $value) {
+                if (is_array($value)) {
+                    $criteria->add($key, $value[0], $value[1]);
+                } else {
+                    $criteria->add($key, $value, \Criteria::EQUAL);
+                }
+            }
+
+            $rsCriteria = \MessageEventRelationPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                //Return
+                return (!$flagGetRecord)? $this->getMessageEventRelationDataFromRecord($row) : $row;
+            } else {
+                //Return
+                return null;
+            }
         } catch (\Exception $e) {
             throw $e;
         }

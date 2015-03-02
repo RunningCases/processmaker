@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-06 16:16:09\n"
+"PO-Revision-Date: 2015-02-24 12:12:47\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -3880,8 +3880,8 @@ msgstr "Saved"
 # TRANSLATION
 # LABEL/ID_ASSIGN_RULES
 #: LABEL/ID_ASSIGN_RULES
-msgid "[LABEL/ID_ASSIGN_RULES] Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn't be used with subprocesses"
-msgstr "Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn't be used with subprocesses"
+msgid "Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn't be used with sub-processes"
+msgstr "Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn't be used with sub-processes"
 
 # TRANSLATION
 # LABEL/ID_SELECT_OPTION_TABLE
@@ -3898,8 +3898,8 @@ msgstr "Please select a table to export."
 # TRANSLATION
 # LABEL/ID_TASK_WAS_ASSIGNED_TO_USER
 #: LABEL/ID_TASK_WAS_ASSIGNED_TO_USER
-msgid "Manual assignment shouldn't be used with subprocesses.<br>The task \"{0}\" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )"
-msgstr "Manual assignment shouldn't be used with subprocesses.<br>The task \"{0}\" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )"
+msgid "Manual assignment shouldn't be used with sub-processes.<br>The task \"{0}\" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )"
+msgstr "Manual assignment shouldn't be used with sub-processes.<br>The task \"{0}\" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )"
 
 # TRANSLATION
 # LABEL/ID_USER_ONVACATION
@@ -8320,8 +8320,8 @@ msgstr "Sub-Process"
 # TRANSLATION
 # LABEL/ID_SUBPROCESS_NAME
 #: LABEL/ID_SUBPROCESS_NAME
-msgid "SubProcess name"
-msgstr "SubProcess name"
+msgid "Sub-Process name"
+msgstr "Sub-Process name"
 
 # TRANSLATION
 # LABEL/ID_VARIABLES_OUT
@@ -13432,8 +13432,8 @@ msgstr "Check Workspace Configuration"
 # TRANSLATION
 # LABEL/ID_DELETE_DATABASES
 #: LABEL/ID_DELETE_DATABASES
-msgid "Delete Databases if exists"
-msgstr "Delete Databases if exists"
+msgid "Delete database if it exists"
+msgstr "Delete database if it exists"
 
 # TRANSLATION
 # LABEL/ID_RP_DATABASE_NAME
@@ -13456,8 +13456,8 @@ msgstr "Workflow Database Name"
 # TRANSLATION
 # LABEL/ID_CHANGE_DATABASE_NAME
 #: LABEL/ID_CHANGE_DATABASE_NAME
-msgid "Change Database names"
-msgstr "Change Database names"
+msgid "Change database name"
+msgstr "Change database name"
 
 # TRANSLATION
 # LABEL/ID_ADMIN_USERNAME
@@ -13570,8 +13570,8 @@ msgstr "File Permissions"
 # TRANSLATION
 # LABEL/ID_DATA_CORRECT
 #: LABEL/ID_DATA_CORRECT
-msgid "The data is correct."
-msgstr "The data is correct."
+msgid "The configuration is correct."
+msgstr "The configuration is correct."
 
 # TRANSLATION
 # LABEL/ID_EXIST
@@ -17850,6 +17850,474 @@ msgstr "The Variable with {0}: {1} does not exist."
 #: LABEL/ID_MESSAGE_TYPE_VARIABLE_NAME_ALREADY_EXISTS
 msgid "The Variable Name with {0}: \"{1}\" already exists."
 msgstr "The Variable Name with {0}: \"{1}\" already exists."
+
+# TRANSLATION
+# LABEL/ID_BPMN_PROCESS_DEF_PROBLEM
+#: LABEL/ID_BPMN_PROCESS_DEF_PROBLEM
+msgid "There is a problem in the BPMN process definition and/or an exception error occurred."
+msgstr "There is a problem in the BPMN process definition and/or an exception error occurred."
+
+# TRANSLATION
+# LABEL/ID_CREATE_DYNAFORM
+#: LABEL/ID_CREATE_DYNAFORM
+msgid "Create Dynaform"
+msgstr "Create Dynaform"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_DYNAFORM
+#: LABEL/ID_UPDATE_DYNAFORM
+msgid "Update Dynaform add/deleted fields"
+msgstr "Update Dynaform add/deleted fields"
+
+# TRANSLATION
+# LABEL/ID_DELETE_DYNAFORM
+#: LABEL/ID_DELETE_DYNAFORM
+msgid "Delete Dynaform"
+msgstr "Delete Dynaform"
+
+# TRANSLATION
+# LABEL/ID_CONDITIONS_EDITOR_DYNAFORM
+#: LABEL/ID_CONDITIONS_EDITOR_DYNAFORM
+msgid "Updated conditions editor in dynaform"
+msgstr "Updated conditions editor in dynaform"
+
+# TRANSLATION
+# LABEL/ID_COSTS
+#: LABEL/ID_COSTS
+msgid "Costs"
+msgstr "Costs"
+
+# TRANSLATION
+# LABEL/ID_COST_BY_HOUR
+#: LABEL/ID_COST_BY_HOUR
+msgid "Cost by hour"
+msgstr "Cost by hour"
+
+# TRANSLATION
+# LABEL/ID_UNITS
+#: LABEL/ID_UNITS
+msgid "Units"
+msgstr "Units"
+
+# TRANSLATION
+# LABEL/ID_START_DATE_NOT_VALID
+#: LABEL/ID_START_DATE_NOT_VALID
+msgid "The start date provided is not valid, please enter a valid date."
+msgstr "The start date provided is not valid, please enter a valid date."
+
+# TRANSLATION
+# LABEL/ID_END_DATE_NOT_VALID
+#: LABEL/ID_END_DATE_NOT_VALID
+msgid "The end date provided is not valid, please enter a valid date."
+msgstr "The end date provided is not valid, please enter a valid date."
+
+# TRANSLATION
+# LABEL/ID_END_DATE_GREATER
+#: LABEL/ID_END_DATE_GREATER
+msgid "End date should be greater than Start date"
+msgstr "End date should be greater than Start date"
+
+# TRANSLATION
+# LABEL/ID_CREATE_CASE_SCHEDULER
+#: LABEL/ID_CREATE_CASE_SCHEDULER
+msgid "Create new Case Scheduler"
+msgstr "Create new Case Scheduler"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_CASE_SCHEDULER
+#: LABEL/ID_UPDATE_CASE_SCHEDULER
+msgid "Update Case Scheduler"
+msgstr "Update Case Scheduler"
+
+# TRANSLATION
+# LABEL/ID_ADD_HORIZONTAL_LINE
+#: LABEL/ID_ADD_HORIZONTAL_LINE
+msgid "Add horizontal line"
+msgstr "Add horizontal line"
+
+# TRANSLATION
+# LABEL/ID_ADD_VERTICAL_LINE
+#: LABEL/ID_ADD_VERTICAL_LINE
+msgid "Add Vertical Line"
+msgstr "Add Vertical Line"
+
+# TRANSLATION
+# LABEL/ID_DELETE_CASE_SCHEDULER
+#: LABEL/ID_DELETE_CASE_SCHEDULER
+msgid "Delete Case Scheduler"
+msgstr "Delete Case Scheduler"
+
+# TRANSLATION
+# LABEL/ID_REMOVE_USER
+#: LABEL/ID_REMOVE_USER
+msgid "Remove User"
+msgstr "Remove User"
+
+# TRANSLATION
+# LABEL/ID_ADD_TASK
+#: LABEL/ID_ADD_TASK
+msgid "Add Task"
+msgstr "Add Task"
+
+# TRANSLATION
+# LABEL/ID_ADD_SUB_PROCESS
+#: LABEL/ID_ADD_SUB_PROCESS
+msgid "[LABEL/ID_ADD_SUB_PROCESS] Add Sub-Process"
+msgstr "Add Sub-Process"
+
+# TRANSLATION
+# LABEL/ID_SAVE_TASK_POSITION
+#: LABEL/ID_SAVE_TASK_POSITION
+msgid "Save Task Position"
+msgstr "Save Task Position"
+
+# TRANSLATION
+# LABEL/ID_CREATE_DATABASE_CONNECTION
+#: LABEL/ID_CREATE_DATABASE_CONNECTION
+msgid "Create New Database connection"
+msgstr "Create New Database connection"
+
+# TRANSLATION
+# LABEL/ID_SAVE_GUIDE_POSITION
+#: LABEL/ID_SAVE_GUIDE_POSITION
+msgid "Save Line Position"
+msgstr "Save Line Position"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_DATABASE_CONNECTION
+#: LABEL/ID_UPDATE_DATABASE_CONNECTION
+msgid "Update Database Connection"
+msgstr "Update Database Connection"
+
+# TRANSLATION
+# LABEL/ID_DELETE_DATABASE_CONNECTION
+#: LABEL/ID_DELETE_DATABASE_CONNECTION
+msgid "Delete Database Connection"
+msgstr "Delete Database Connection"
+
+# TRANSLATION
+# LABEL/ID_CREATE_INPUT_DOCUMENT
+#: LABEL/ID_CREATE_INPUT_DOCUMENT
+msgid "Create New Input Document"
+msgstr "Create New Input Document"
+
+# TRANSLATION
+# LABEL/ID_DELETE_LINE
+#: LABEL/ID_DELETE_LINE
+msgid "Delete Line"
+msgstr "Delete Line"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_INPUT_DOCUMENT
+#: LABEL/ID_UPDATE_INPUT_DOCUMENT
+msgid "Update Input Document"
+msgstr "Update Input Document"
+
+# TRANSLATION
+# LABEL/ID_DELETE_INPUT_DOCUMENT
+#: LABEL/ID_DELETE_INPUT_DOCUMENT
+msgid "Delete Input Document"
+msgstr "Delete Input Document"
+
+# TRANSLATION
+# LABEL/ID_ADD_TEXT
+#: LABEL/ID_ADD_TEXT
+msgid "Add Text"
+msgstr "Add Text"
+
+# TRANSLATION
+# LABEL/ID_CREATE_OUTPUT_DOCUMENT
+#: LABEL/ID_CREATE_OUTPUT_DOCUMENT
+msgid "Create new Output Document"
+msgstr "Create new Output Document"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_TEXT
+#: LABEL/ID_UPDATE_TEXT
+msgid "Edit Text"
+msgstr "Edit Text"
+
+# TRANSLATION
+# LABEL/ID_SAVE_TEXT_POSITION
+#: LABEL/ID_SAVE_TEXT_POSITION
+msgid "Save Text Position"
+msgstr "Save Text Position"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_OUTPUT_DOCUMENT
+#: LABEL/ID_UPDATE_OUTPUT_DOCUMENT
+msgid "Update Output Document"
+msgstr "Update Output Document"
+
+# TRANSLATION
+# LABEL/ID_DELETE_TEXT
+#: LABEL/ID_DELETE_TEXT
+msgid "Delete Text"
+msgstr "Delete Text"
+
+# TRANSLATION
+# LABEL/ID_DELETE_OUTPUT_DOCUMENT
+#: LABEL/ID_DELETE_OUTPUT_DOCUMENT
+msgid "Delete Output Document"
+msgstr "Delete Output Document"
+
+# TRANSLATION
+# LABEL/ID_CREATE_TRIGGER
+#: LABEL/ID_CREATE_TRIGGER
+msgid "Create New trigger"
+msgstr "Create New trigger"
+
+# TRANSLATION
+# LABEL/ID_UPDATE_TRIGGER
+#: LABEL/ID_UPDATE_TRIGGER
+msgid "Update trigger"
+msgstr "Update trigger"
+
+# TRANSLATION
+# LABEL/ID_DELETE_TRIGGER
+#: LABEL/ID_DELETE_TRIGGER
+msgid "Delete Trigger"
+msgstr "Delete Trigger"
+
+# TRANSLATION
+# LABEL/ID_DERIVATION_RULE
+#: LABEL/ID_DERIVATION_RULE
+msgid "Derivation Rule"
+msgstr "Derivation Rule"
+
+# TRANSLATION
+# LABEL/ID_OPTIONS_MENU_TASK
+#: LABEL/ID_OPTIONS_MENU_TASK
+msgid "Options Menu Task"
+msgstr "Options Menu Task"
+
+# TRANSLATION
+# LABEL/ID_DELETE_TASK
+#: LABEL/ID_DELETE_TASK
+msgid "Delete Task"
+msgstr "Delete Task"
+
+# TRANSLATION
+# LABEL/ID_DELETE_ROUTES
+#: LABEL/ID_DELETE_ROUTES
+msgid "Delete Routes"
+msgstr "Delete Routes"
+
+# TRANSLATION
+# LABEL/ID_DELETE_SUB_PROCESS
+#: LABEL/ID_DELETE_SUB_PROCESS
+msgid "[LABEL/ID_DELETE_SUB_PROCESS] Delete Sub-Process"
+msgstr "Delete Sub-Process"
+
+# TRANSLATION
+# LABEL/ID_IMPORT_ALREADY_EXISTS_BPMN
+#: LABEL/ID_IMPORT_ALREADY_EXISTS_BPMN
+msgid "A process with the same name already exists!. Do you want to overwrite the existing process or you want to create a new process?."
+msgstr "A process with the same name already exists!. Do you want to overwrite the existing process or you want to create a new process?."
+
+# TRANSLATION
+# LABEL/ID_IMPORT_ALREADY_EXISTS_BPMN_NOTE
+#: LABEL/ID_IMPORT_ALREADY_EXISTS_BPMN_NOTE
+msgid "Note that your changes will be lost in your existing process if you overwrite it."
+msgstr "Note that your changes will be lost in your existing process if you overwrite it."
+
+# TRANSLATION
+# LABEL/ID_CREATE_NEW
+#: LABEL/ID_CREATE_NEW
+msgid "Create new"
+msgstr "Create new"
+
+# TRANSLATION
+# LABEL/ID_IMPORT_BPMN
+#: LABEL/ID_IMPORT_BPMN
+msgid "Import BPMN"
+msgstr "Import BPMN"
+
+# TRANSLATION
+# LABEL/ID_SAVE_TASK_PROPERTIES
+#: LABEL/ID_SAVE_TASK_PROPERTIES
+msgid "Save Task Properties"
+msgstr "Save Task Properties"
+
+# TRANSLATION
+# LABEL/ID_DELETE_PERMISSIONS
+#: LABEL/ID_DELETE_PERMISSIONS
+msgid "Delete Permissions"
+msgstr "Delete Permissions"
+
+# TRANSLATION
+# LABEL/ID_ASSIGN_SUPERVISOR_DYNAFORM
+#: LABEL/ID_ASSIGN_SUPERVISOR_DYNAFORM
+msgid "Assign Supervisor Dynaform"
+msgstr "Assign Supervisor Dynaform"
+
+# TRANSLATION
+# LABEL/ID_REMOVE_SUPERVISOR_DYNAFORM
+#: LABEL/ID_REMOVE_SUPERVISOR_DYNAFORM
+msgid "Remove Supervisor Dynaform"
+msgstr "Remove Supervisor Dynaform"
+
+# TRANSLATION
+# LABEL/ID_ASSIGN_SUPERVISOR_INPUT
+#: LABEL/ID_ASSIGN_SUPERVISOR_INPUT
+msgid "Assign Supervisor Input"
+msgstr "Assign Supervisor Input"
+
+# TRANSLATION
+# LABEL/ID_REMOVE_SUPERVISOR_INPUT
+#: LABEL/ID_REMOVE_SUPERVISOR_INPUT
+msgid "Remove Supervisor Input"
+msgstr "Remove Supervisor Input"
+
+# TRANSLATION
+# LABEL/ID_ASSIGN_TRIGGER
+#: LABEL/ID_ASSIGN_TRIGGER
+msgid "Assign Trigger"
+msgstr "Assign Trigger"
+
+# TRANSLATION
+# LABEL/ID_UP_TRIGGER
+#: LABEL/ID_UP_TRIGGER
+msgid "Up Trigger"
+msgstr "Up Trigger"
+
+# TRANSLATION
+# LABEL/ID_DOWN_TRIGGER
+#: LABEL/ID_DOWN_TRIGGER
+msgid "Down Trigger"
+msgstr "Down Trigger"
+
+# TRANSLATION
+# LABEL/ID_NEW_CONDITION_FROM_STEP
+#: LABEL/ID_NEW_CONDITION_FROM_STEP
+msgid "New Condition From Step"
+msgstr "New Condition From Step"
+
+# TRANSLATION
+# LABEL/ID_STEP_DELETE
+#: LABEL/ID_STEP_DELETE
+msgid "Step Delete"
+msgstr "Step Delete"
+
+# TRANSLATION
+# LABEL/ID_STEP_DOWN
+#: LABEL/ID_STEP_DOWN
+msgid "Step Down"
+msgstr "Step Down"
+
+# TRANSLATION
+# LABEL/ID_SAVE_NEW_STEP
+#: LABEL/ID_SAVE_NEW_STEP
+msgid "Save New Step"
+msgstr "Save New Step"
+
+# TRANSLATION
+# LABEL/ID_ASSIGN_USER_TASK
+#: LABEL/ID_ASSIGN_USER_TASK
+msgid "Assign User Task"
+msgstr "Assign User Task"
+
+# TRANSLATION
+# LABEL/ID_ASSIGN_GROUP_TASK
+#: LABEL/ID_ASSIGN_GROUP_TASK
+msgid "Assign Group Task"
+msgstr "Assign Group Task"
+
+# TRANSLATION
+# LABEL/ID_DELETE_USER_TASK
+#: LABEL/ID_DELETE_USER_TASK
+msgid "Delete User Task"
+msgstr "Delete User Task"
+
+# TRANSLATION
+# LABEL/ID_DELETE_GROUP_TASK
+#: LABEL/ID_DELETE_GROUP_TASK
+msgid "Delete Group Task"
+msgstr "Delete Group Task"
+
+# TRANSLATION
+# LABEL/ID_NO_DERIVATION_BPMN_RULE
+#: LABEL/ID_NO_DERIVATION_BPMN_RULE
+msgid "Process definition error: All conditions in evaluation routing rule evaluated to false, so workflow has stopped. Please change the definition of the evaluation routing rule."
+msgstr "Process definition error: All conditions in evaluation routing rule evaluated to false, so workflow has stopped. Please change the definition of the evaluation routing rule."
+
+# TRANSLATION
+# LABEL/ID_STEP_UP
+#: LABEL/ID_STEP_UP
+msgid "Step Up"
+msgstr "Step Up"
+
+# TRANSLATION
+# LABEL/ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_MESSAGE_EVENT
+#: LABEL/ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_MESSAGE_EVENT
+msgid "The case will be paused until you receive the corresponding message"
+msgstr "The case will be paused until you receive the corresponding message"
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_EVENT_TASK_RELATION_DOES_NOT_EXIST
+#: LABEL/ID_MESSAGE_EVENT_TASK_RELATION_DOES_NOT_EXIST
+msgid "The Message-Event-Task-Relation with {0}: {1} does not exist."
+msgstr "The Message-Event-Task-Relation with {0}: {1} does not exist."
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_EVENT_RELATION_DOES_NOT_EXIST
+#: LABEL/ID_MESSAGE_EVENT_RELATION_DOES_NOT_EXIST
+msgid "The Message-Event-Relation with {0}: {1} does not exist."
+msgstr "The Message-Event-Relation with {0}: {1} does not exist."
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_EVENT_RELATION_ALREADY_REGISTERED
+#: LABEL/ID_MESSAGE_EVENT_RELATION_ALREADY_REGISTERED
+msgid "The Message-Event-Relation already registered."
+msgstr "The Message-Event-Relation already registered."
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_EVENT_RELATION_DOES_NOT_EXIST_MESSAGE_FLOW
+#: LABEL/ID_MESSAGE_EVENT_RELATION_DOES_NOT_EXIST_MESSAGE_FLOW
+msgid "Does not exist a \"Message Flow\" between {0}: {1} and {2}: {3}"
+msgstr "Does not exist a \"Message Flow\" between {0}: {1} and {2}: {3}"
+
+# TRANSLATION
+# LABEL/ID_EVENT_NOT_IS_MESSAGE_EVENT
+#: LABEL/ID_EVENT_NOT_IS_MESSAGE_EVENT
+msgid "The event with {0}: {1} not is \"Message event\"."
+msgstr "The event with {0}: {1} not is \"Message event\"."
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_EXIST
+#: LABEL/ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_EXIST
+msgid "The Message-Event-Definition with {0}: {1} does not exist."
+msgstr "The Message-Event-Definition with {0}: {1} does not exist."
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_EVENT_DEFINITION_ALREADY_REGISTERED
+#: LABEL/ID_MESSAGE_EVENT_DEFINITION_ALREADY_REGISTERED
+msgid "The Message-Event-Definition with {0}: {1} already registered."
+msgstr "The Message-Event-Definition with {0}: {1} already registered."
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_EVENT_DEFINITION_VARIABLES_DO_NOT_MEET_DEFINITION
+#: LABEL/ID_MESSAGE_EVENT_DEFINITION_VARIABLES_DO_NOT_MEET_DEFINITION
+msgid "The variables do not meet with the definition of Message-Type-Variable"
+msgstr "The variables do not meet with the definition of Message-Type-Variable"
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_IS_REGISTERED
+#: LABEL/ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_IS_REGISTERED
+msgid "The Message-Event-Definition with {0}: {1} does not is registered."
+msgstr "The Message-Event-Definition with {0}: {1} does not is registered."
+
+# TRANSLATION
+# LABEL/ID_EDIT_PROCESS
+#: LABEL/ID_EDIT_PROCESS
+msgid "Process Edited"
+msgstr "Process Edited"
+
+# TRANSLATION
+# LABEL/ID_EVENT_DELETED
+#: LABEL/ID_EVENT_DELETED
+msgid "Event deleted"
+msgstr "Event deleted"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
@@ -29972,7 +30440,7 @@ msgstr "Sub-Process"
 # processes/processes_subProcess.xml?SPROCESS_NAME
 # processes/processes_subProcess.xml
 #: text - SPROCESS_NAME
-msgid "[processes/processes_subProcess.xml?SPROCESS_NAME] SubProcess name"
+msgid "SubProcess name"
 msgstr "SubProcess name"
 
 # processes/processes_subProcess.xml?TASKS

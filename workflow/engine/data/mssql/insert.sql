@@ -2694,13 +2694,13 @@ SELECT 'LABEL','ID_WARNING','en','WARNING','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_SAVED','en','Saved','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_ASSIGN_RULES','en','Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn''t be used with subprocesses','2014-01-15' 
+SELECT 'LABEL','ID_ASSIGN_RULES','en','Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn''t be used with sub-processes','2015-02-24' 
   UNION ALL
 SELECT 'LABEL','ID_SELECT_OPTION_TABLE','en','Select an option to export the schema or data from the selected table(s).','2014-10-21' 
   UNION ALL
 SELECT 'LABEL','ID_SELECT_TABLE','en','Please select a table to export.','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_TASK_WAS_ASSIGNED_TO_USER','en','Manual assignment shouldn''t be used with subprocesses.<br>The task "{0}" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )','2014-01-15' 
+SELECT 'LABEL','ID_TASK_WAS_ASSIGNED_TO_USER','en','Manual assignment shouldn''t be used with sub-processes.<br>The task "{0}" from case {1} was assigned to user <b>{2}</b> ( {3} {4} )','2015-02-24' 
   UNION ALL
 SELECT 'LABEL','ID_USER_ONVACATION','en','User on vacation! Contact to your System Administrator if you want to login. please','2014-01-15' 
   UNION ALL
@@ -4192,7 +4192,7 @@ SELECT 'LABEL','ID_TARGET','en','Target','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_SUBPROCESS','en','Sub-Process','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_SUBPROCESS_NAME','en','SubProcess name','2014-01-15' 
+SELECT 'LABEL','ID_SUBPROCESS_NAME','en','Sub-Process name','2015-02-24' 
   UNION ALL
 SELECT 'LABEL','ID_VARIABLES_OUT','en','Variables Out','2014-01-15' 
   UNION ALL
@@ -5842,7 +5842,7 @@ SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP6','en','xxx','2014
   UNION ALL
 SELECT 'LABEL','ID_SIZE_VERY_LARGE_PERMITTED','en','The file is too large . Please upload a smaller file.','2014-10-08' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5','en','ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login.','2014-09-02' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5','en','ProcessMaker uses workspaces to store data. Please enter a valid workspace name and credentials to login.','2015-02-23' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_2','en','If you are installing ProcessMaker on a remote web server, you will need to get this information from your Database Server.','2014-01-15' 
   UNION ALL
@@ -5916,7 +5916,7 @@ SELECT 'LABEL','ID_NON_WRITABLE_FILES','en','Non-writable Files','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_CHECK_WORKSPACE_CONFIGURATION','en','Check Workspace Configuration','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_DELETE_DATABASES','en','Delete Databases if exists','2014-01-15' 
+SELECT 'LABEL','ID_DELETE_DATABASES','en','Delete database if it exists','2015-02-23' 
   UNION ALL
 SELECT 'LABEL','ID_RP_DATABASE_NAME','en','Report Database Name','2014-01-15' 
   UNION ALL
@@ -5926,7 +5926,7 @@ SELECT 'LABEL','ID_WF_DATABASE_NAME','en','Workflow Database Name','2014-01-15'
  ;
 INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
 
-SELECT 'LABEL','ID_CHANGE_DATABASE_NAME','en','Change Database names','2014-01-15' 
+SELECT 'LABEL','ID_CHANGE_DATABASE_NAME','en','Change database name','2015-02-23' 
   UNION ALL
 SELECT 'LABEL','ID_ADMIN_USERNAME','en','Admin Username','2014-01-15' 
   UNION ALL
@@ -5964,7 +5964,7 @@ SELECT 'LABEL','ID_PREINSTALLATION','en','Pre-installation check','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_DIRECTORY_FILE_PERMISSION','en','File Permissions','2014-10-21' 
   UNION ALL
-SELECT 'LABEL','ID_DATA_CORRECT','en','The data is correct.','2014-01-15' 
+SELECT 'LABEL','ID_DATA_CORRECT','en','The configuration is correct.','2015-02-23' 
   UNION ALL
 SELECT 'LABEL','ID_EXIST','en','Exist','2014-01-15' 
   UNION ALL
@@ -7409,6 +7409,164 @@ SELECT 'LABEL','ID_MESSAGE_TYPE_NAME_VARIABLE_EXISTS','en','The name of the vari
 SELECT 'LABEL','ID_MESSAGE_TYPE_VARIABLE_DOES_NOT_EXIST','en','The Variable with {0}: {1} does not exist.','2015-02-05' 
   UNION ALL
 SELECT 'LABEL','ID_MESSAGE_TYPE_VARIABLE_NAME_ALREADY_EXISTS','en','The Variable Name with {0}: "{1}" already exists.','2015-02-05' 
+  UNION ALL
+SELECT 'LABEL','ID_BPMN_PROCESS_DEF_PROBLEM','en','There is a problem in the BPMN process definition and/or an exception error occurred.','2015-02-13' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_DYNAFORM','en','Create Dynaform','2015-02-13' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_DYNAFORM','en','Update Dynaform add/deleted fields','2015-02-13' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_DYNAFORM','en','Delete Dynaform','2015-02-13' 
+  UNION ALL
+SELECT 'LABEL','ID_CONDITIONS_EDITOR_DYNAFORM','en','Updated conditions editor in dynaform','2015-02-13' 
+  UNION ALL
+SELECT 'LABEL','ID_COSTS','en','Costs','2015-02-18' 
+  UNION ALL
+SELECT 'LABEL','ID_COST_BY_HOUR','en','Cost by hour','2015-02-18' 
+  UNION ALL
+SELECT 'LABEL','ID_UNITS','en','Units','2015-02-18' 
+  UNION ALL
+SELECT 'LABEL','ID_START_DATE_NOT_VALID','en','The start date provided is not valid, please enter a valid date.','2015-02-19' 
+  UNION ALL
+SELECT 'LABEL','ID_END_DATE_NOT_VALID','en','The end date provided is not valid, please enter a valid date.','2015-02-19' 
+  UNION ALL
+SELECT 'LABEL','ID_END_DATE_GREATER','en','End date should be greater than Start date','2015-02-19' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_CASE_SCHEDULER','en','Create new Case Scheduler','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_CASE_SCHEDULER','en','Update Case Scheduler','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_ADD_HORIZONTAL_LINE','en','Add horizontal line','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_ADD_VERTICAL_LINE','en','Add Vertical Line','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_CASE_SCHEDULER','en','Delete Case Scheduler','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_REMOVE_USER','en','Remove User','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_ADD_TASK','en','Add Task','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_ADD_SUB_PROCESS','en','Add Sub-Process','2015-02-24' 
+  UNION ALL
+SELECT 'LABEL','ID_SAVE_TASK_POSITION','en','Save Task Position','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_DATABASE_CONNECTION','en','Create New Database connection','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_SAVE_GUIDE_POSITION','en','Save Line Position','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_DATABASE_CONNECTION','en','Update Database Connection','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_DATABASE_CONNECTION','en','Delete Database Connection','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_INPUT_DOCUMENT','en','Create New Input Document','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_LINE','en','Delete Line','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_INPUT_DOCUMENT','en','Update Input Document','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_INPUT_DOCUMENT','en','Delete Input Document','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_ADD_TEXT','en','Add Text','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_OUTPUT_DOCUMENT','en','Create new Output Document','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_TEXT','en','Edit Text','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_SAVE_TEXT_POSITION','en','Save Text Position','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_OUTPUT_DOCUMENT','en','Update Output Document','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_TEXT','en','Delete Text','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_OUTPUT_DOCUMENT','en','Delete Output Document','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_TRIGGER','en','Create New trigger','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_UPDATE_TRIGGER','en','Update trigger','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_TRIGGER','en','Delete Trigger','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DERIVATION_RULE','en','Derivation Rule','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_OPTIONS_MENU_TASK','en','Options Menu Task','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_TASK','en','Delete Task','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_ROUTES','en','Delete Routes','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_SUB_PROCESS','en','Delete Sub-Process','2015-02-24' 
+  UNION ALL
+SELECT 'LABEL','ID_IMPORT_ALREADY_EXISTS_BPMN','en','A process with the same name already exists!. Do you want to overwrite the existing process or you want to create a new process?.','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_IMPORT_ALREADY_EXISTS_BPMN_NOTE','en','Note that your changes will be lost in your existing process if you overwrite it.','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_CREATE_NEW','en','Create new','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_IMPORT_BPMN','en','Import BPMN','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_SAVE_TASK_PROPERTIES','en','Save Task Properties','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_PERMISSIONS','en','Delete Permissions','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_SUPERVISOR_DYNAFORM','en','Assign Supervisor Dynaform','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_REMOVE_SUPERVISOR_DYNAFORM','en','Remove Supervisor Dynaform','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_SUPERVISOR_INPUT','en','Assign Supervisor Input','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_REMOVE_SUPERVISOR_INPUT','en','Remove Supervisor Input','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_TRIGGER','en','Assign Trigger','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_UP_TRIGGER','en','Up Trigger','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DOWN_TRIGGER','en','Down Trigger','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_NEW_CONDITION_FROM_STEP','en','New Condition From Step','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_STEP_DELETE','en','Step Delete','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_STEP_DOWN','en','Step Down','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_SAVE_NEW_STEP','en','Save New Step','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_USER_TASK','en','Assign User Task','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_ASSIGN_GROUP_TASK','en','Assign Group Task','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_USER_TASK','en','Delete User Task','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_GROUP_TASK','en','Delete Group Task','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_NO_DERIVATION_BPMN_RULE','en','Process definition error: All conditions in evaluation routing rule evaluated to false, so workflow has stopped. Please change the definition of the evaluation routing rule.','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_STEP_UP','en','Step Up','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_MESSAGE_EVENT','en','The case will be paused until you receive the corresponding message','2015-02-20' 
+ ;
+INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
+
+SELECT 'LABEL','ID_MESSAGE_EVENT_TASK_RELATION_DOES_NOT_EXIST','en','The Message-Event-Task-Relation with {0}: {1} does not exist.','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_EVENT_RELATION_DOES_NOT_EXIST','en','The Message-Event-Relation with {0}: {1} does not exist.','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_EVENT_RELATION_ALREADY_REGISTERED','en','The Message-Event-Relation already registered.','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_EVENT_RELATION_DOES_NOT_EXIST_MESSAGE_FLOW','en','Does not exist a "Message Flow" between {0}: {1} and {2}: {3}','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_EVENT_NOT_IS_MESSAGE_EVENT','en','The event with {0}: {1} not is "Message event".','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_EXIST','en','The Message-Event-Definition with {0}: {1} does not exist.','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_EVENT_DEFINITION_ALREADY_REGISTERED','en','The Message-Event-Definition with {0}: {1} already registered.','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_EVENT_DEFINITION_VARIABLES_DO_NOT_MEET_DEFINITION','en','The variables do not meet with the definition of Message-Type-Variable','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_IS_REGISTERED','en','The Message-Event-Definition with {0}: {1} does not is registered.','2015-02-20' 
+  UNION ALL
+SELECT 'LABEL','ID_EDIT_PROCESS','en','Process Edited','2015-02-21' 
+  UNION ALL
+SELECT 'LABEL','ID_EVENT_DELETED','en','Event deleted','2015-02-21' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 

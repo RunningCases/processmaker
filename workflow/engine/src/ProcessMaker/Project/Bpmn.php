@@ -91,6 +91,19 @@ class Bpmn extends Handler
         }
     }
 
+    public function exists($projectUid)
+    {
+        try {
+            $obj = ProjectPeer::retrieveByPK($projectUid);
+
+            return (!is_null($obj))? true : false;
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
+            throw $e;
+        }
+    }
+
     public static function load($prjUid)
     {
         $me = new self();
@@ -588,6 +601,8 @@ class Bpmn extends Handler
             //Return
             return false;
         } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
             throw $e;
         }
     }
@@ -661,6 +676,8 @@ class Bpmn extends Handler
                 }
             }
         } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
             throw $e;
         }
     }
@@ -1294,6 +1311,8 @@ class Bpmn extends Handler
             //Return
             return $this->getGateway2($gatewayUid);
         } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
             throw $e;
         }
     }
@@ -1338,6 +1357,100 @@ class Bpmn extends Handler
 
         } catch (Exception $oException) {
             throw $oException;
+        }
+    }
+
+    public function getElementsBetweenElementOriginAndElementDest(
+        $elementOriginUid,
+        $elementOriginType,
+        $elementDestUid,
+        $elementDestType,
+        $index
+    ) {
+        try {
+            if ($elementOriginType == $elementDestType && $elementOriginUid == $elementDestUid) {
+                $arrayEvent = array();
+                $arrayEvent[$index] = array($elementDestUid, $elementDestType);
+
+                //Return
+                return $arrayEvent;
+            } else {
+                //Flows
+                $arrayFlow = \BpmnFlow::findAllBy(array(
+                    \BpmnFlowPeer::FLO_TYPE                => array("MESSAGE", \Criteria::NOT_EQUAL),
+                    \BpmnFlowPeer::FLO_ELEMENT_ORIGIN      => $elementOriginUid,
+                    \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => $elementOriginType
+                ));
+
+                foreach ($arrayFlow as $value) {
+                    $arrayFlowData = $value->toArray();
+
+                    $arrayEvent = $this->getElementsBetweenElementOriginAndElementDest(
+                        $arrayFlowData["FLO_ELEMENT_DEST"],
+                        $arrayFlowData["FLO_ELEMENT_DEST_TYPE"],
+                        $elementDestUid,
+                        $elementDestType,
+                        $index + 1
+                    );
+
+                    if (count($arrayEvent) > 0) {
+                        $arrayEvent[$index] = array($elementOriginUid, $elementOriginType);
+
+                        //Return
+                        return $arrayEvent;
+                    }
+                }
+
+                //Return
+                return array();
+            }
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
+            throw $e;
+        }
+    }
+
+    public function getMessageEventsOfThrowTypeBetweenElementOriginAndElementDest(
+        $elementOriginUid,
+        $elementOriginType,
+        $elementDestUid,
+        $elementDestType
+    ) {
+        try {
+            $arrayEventType   = array("END", "INTERMEDIATE");
+            $arrayEventMarker = array("MESSAGETHROW");
+
+            $arrayEventAux = $this->getElementsBetweenElementOriginAndElementDest(
+                $elementOriginUid,
+                $elementOriginType,
+                $elementDestUid,
+                $elementDestType,
+                0
+            );
+
+            ksort($arrayEventAux);
+
+            $arrayEvent = array();
+
+            foreach ($arrayEventAux as $value) {
+                if ($value[1] == "bpmnEvent") {
+                    $event = \BpmnEventPeer::retrieveByPK($value[0]);
+
+                    if (!is_null($event) &&
+                        in_array($event->getEvnType(), $arrayEventType) && in_array($event->getEvnMarker(), $arrayEventMarker)
+                    ) {
+                        $arrayEvent[] = $value;
+                    }
+                }
+            }
+
+            //Return
+            return $arrayEvent;
+        } catch (\Exception $e) {
+            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
+
+            throw $e;
         }
     }
 }

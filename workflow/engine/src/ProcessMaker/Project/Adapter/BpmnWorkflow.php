@@ -17,17 +17,18 @@ class BpmnWorkflow extends Project\Bpmn
      */
     protected $wp;
 
-    const BPMN_GATEWAY_COMPLEX = "COMPLEX";
-    const BPMN_GATEWAY_PARALLEL = "PARALLEL";
-    const BPMN_GATEWAY_INCLUSIVE = "INCLUSIVE";
-    const BPMN_GATEWAY_EXCLUSIVE = "EXCLUSIVE";
+    const BPMN_GATEWAY_COMPLEX    = "COMPLEX";
+    const BPMN_GATEWAY_PARALLEL   = "PARALLEL";
+    const BPMN_GATEWAY_INCLUSIVE  = "INCLUSIVE";
+    const BPMN_GATEWAY_EXCLUSIVE  = "EXCLUSIVE";
+    const BPMN_GATEWAY_EVENTBASED = "EVENTBASED";
 
     private $arrayTaskAttribute = array(
         "gateway-to-gateway"               => array("type" => "GATEWAYTOGATEWAY",                 "prefix" => "gtg-"),
-        "start-message-event"              => array("type" => "START-MESSAGE-EVENT",              "prefix" => "sme-"),
         "end-message-event"                => array("type" => "END-MESSAGE-EVENT",                "prefix" => "eme-"),
-        "intermediate-start-message-event" => array("type" => "INTERMEDIATE-START-MESSAGE-EVENT", "prefix" => "isme-"),
-        "intermediate-end-message-event"   => array("type" => "INTERMEDIATE-END-MESSAGE-EVENT",   "prefix" => "ieme-")
+        "start-message-event"              => array("type" => "START-MESSAGE-EVENT",              "prefix" => "sme-"),
+        "intermediate-throw-message-event" => array("type" => "INTERMEDIATE-THROW-MESSAGE-EVENT", "prefix" => "itme-"),
+        "intermediate-catch-message-event" => array("type" => "INTERMEDIATE-CATCH-MESSAGE-EVENT", "prefix" => "icme-")
     );
 
     private $arrayMessageEventTaskRelation = array();
@@ -599,9 +600,9 @@ class BpmnWorkflow extends Project\Bpmn
                 ));
 
                 if ($elementType == "bpmnEvent" &&
-                    in_array($key, array("start-message-event", "end-message-event", "intermediate-start-message-event"))
+                    in_array($key, array("end-message-event", "start-message-event", "intermediate-catch-message-event"))
                 ) {
-                    if ($key == "intermediate-start-message-event") {
+                    if ($key == "intermediate-catch-message-event") {
                         //Task - User
                         //Assign to admin
                         $task = new \Tasks();
@@ -674,6 +675,11 @@ class BpmnWorkflow extends Project\Bpmn
                         }
                     }
                     break;
+                //case "TO_DO":
+                case self::BPMN_GATEWAY_EVENTBASED:
+                    $routeType = "EVALUATE";
+                    break;
+                //default
                 default:
                     throw new \LogicException("Unsupported Gateway type: " . $arrayGatewayData["GAT_TYPE"]);
                     break;
@@ -681,6 +687,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             //Flows
             $arrayFlow = \BpmnFlow::findAllBy(array(
+                \BpmnFlowPeer::FLO_TYPE                => array("MESSAGE", \Criteria::NOT_EQUAL),
                 \BpmnFlowPeer::FLO_ELEMENT_ORIGIN      => $gatewayUid,
                 \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnGateway"
             ));
@@ -770,21 +777,26 @@ class BpmnWorkflow extends Project\Bpmn
             if (!is_null($arrayEventData) &&
                 in_array($arrayEventData["EVN_TYPE"], $arrayEventType) && in_array($arrayEventData["EVN_MARKER"], $arrayEventMarker)
             ) {
-                //Event - INTERMEDIATE-START-MESSAGE-EVENT
+                //Event - INTERMEDIATE-CATCH-MESSAGE-EVENT
                 if ($arrayEventData["EVN_TYPE"] == "INTERMEDIATE" && $arrayEventData["EVN_MARKER"] == "MESSAGECATCH") {
                     $taskUid = $this->createTaskByElement(
                         $eventUid,
                         "bpmnEvent",
-                        "intermediate-start-message-event"
+                        "intermediate-catch-message-event"
                     );
 
                     $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
 
                     $activityUid = $taskUid;
+
+                    $routeType = "SEQUENTIAL";
+                    $routeCondition = "";
+                    $routeDefault = 0;
                 }
 
                 //Flows
                 $arrayFlow = \BpmnFlow::findAllBy(array(
+                    \BpmnFlowPeer::FLO_TYPE                => array("MESSAGE", \Criteria::NOT_EQUAL),
                     \BpmnFlowPeer::FLO_ELEMENT_ORIGIN      => $eventUid,
                     \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnEvent"
                 ));
@@ -795,7 +807,7 @@ class BpmnWorkflow extends Project\Bpmn
                     switch ($arrayFlowData["FLO_ELEMENT_DEST_TYPE"]) {
                         case "bpmnActivity":
                             //Event ----> Activity
-                            $result = $this->wp->addRoute($activityUid, $arrayFlowData["FLO_ELEMENT_DEST"], "SEQUENTIAL");
+                            $result = $this->wp->addRoute($activityUid, $arrayFlowData["FLO_ELEMENT_DEST"], $routeType, $routeCondition, $routeDefault);
                             break;
                         case "bpmnGateway":
                             //Event ----> Gateway
@@ -814,7 +826,7 @@ class BpmnWorkflow extends Project\Bpmn
                                         //$event->getEvnMarker(): EMPTY or MESSAGETHROW
                                         switch ($event->getEvnMarker()) {
                                             case "EMPTY":
-                                                $result = $this->wp->addRoute($activityUid, -1, "SEQUENTIAL");
+                                                $result = $this->wp->addRoute($activityUid, -1, $routeType, $routeCondition, $routeDefault);
                                                 break;
                                             case "MESSAGETHROW":
                                                 $taskUid = $this->createTaskByElement(
@@ -823,13 +835,13 @@ class BpmnWorkflow extends Project\Bpmn
                                                     "end-message-event"
                                                 );
 
-                                                $result = $this->wp->addRoute($activityUid, $taskUid, "SEQUENTIAL");
+                                                $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
                                                 $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
                                                 break;
                                         }
                                         break;
                                     case "INTERMEDIATE":
-                                        $this->mapBpmnEventToWorkflowRoutes($activityUid, $arrayFlowData["FLO_ELEMENT_DEST"]);
+                                        $this->mapBpmnEventToWorkflowRoutes($activityUid, $arrayFlowData["FLO_ELEMENT_DEST"], $routeType, $routeCondition, $routeDefault);
                                         break;
                                 }
                             }
@@ -865,6 +877,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             //Flows
             $arrayFlow = \BpmnFlow::findAllBy(array(
+                \BpmnFlowPeer::FLO_TYPE                => array("MESSAGE", \Criteria::NOT_EQUAL),
                 \BpmnFlowPeer::FLO_ELEMENT_ORIGIN      => $activity["ACT_UID"],
                 \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnActivity"
             ));
@@ -926,9 +939,7 @@ class BpmnWorkflow extends Project\Bpmn
         foreach ($this->getEvents() as $value) {
             $event = $value;
 
-            if (!isset($this->arrayMessageEventTaskRelation[$event["EVN_UID"]]) &&
-                in_array($event["EVN_TYPE"], $arrayEventType) && in_array($event["EVN_MARKER"], $arrayEventMarker)
-            ) {
+            if (in_array($event["EVN_TYPE"], $arrayEventType) && in_array($event["EVN_MARKER"], $arrayEventMarker)) {
                 switch ($event["EVN_TYPE"]) {
                     case "START":
                         $taskUid = $this->createTaskByElement(
@@ -1272,7 +1283,12 @@ class BpmnWorkflow extends Project\Bpmn
 
             $activity = $bwp->getActivity($activityData["ACT_UID"]);
 
+            if ($activity["BOU_CONTAINER"] != $activityData["BOU_CONTAINER"]) {
+                $activity = null;
+            }
+
             if ($forceInsert || is_null($activity)) {
+
                 if ($generateUid) {
                     //Activity
 
@@ -1305,6 +1321,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             $diagram["activities"][$i] = $activityData;
             $whiteList[] = $activityData["ACT_UID"];
+
         }
 
         $activities = $bwp->getActivities();
@@ -1325,6 +1342,10 @@ class BpmnWorkflow extends Project\Bpmn
             unset($artifactData["_EXTENDED"]);
 
             $artifact = $bwp->getArtifact($artifactData["ART_UID"]);
+
+            if ($artifact["BOU_CONTAINER"] != $artifactData["BOU_CONTAINER"]) {
+                $artifact = null;
+            }
 
             if ($forceInsert || is_null($artifact)) {
                 if ($generateUid) {
@@ -1385,6 +1406,10 @@ class BpmnWorkflow extends Project\Bpmn
             $flagAddOrUpdate = false;
 
             $gateway = $bwp->getGateway($gatewayData["GAT_UID"]);
+
+            if ($gateway["BOU_CONTAINER"] != $gatewayData["BOU_CONTAINER"]) {
+                $gateway = null;
+            }
 
             if ($forceInsert || is_null($gateway)) {
                 if ($generateUid) {
@@ -1460,6 +1485,10 @@ class BpmnWorkflow extends Project\Bpmn
 
             $event = $bwp->getEvent($eventData["EVN_UID"]);
 
+            if ($event["BOU_CONTAINER"] != $eventData["BOU_CONTAINER"]) {
+                $event = null;
+            }
+
             if ($forceInsert || is_null($event)) {
                 if ($generateUid) {
                     //Event
@@ -1516,6 +1545,10 @@ class BpmnWorkflow extends Project\Bpmn
 
             $dataObject = $bwp->getData($dataObjectData["DAT_UID"]);
 
+            if ($dataObject["BOU_CONTAINER"] != $dataObjectData["BOU_CONTAINER"]) {
+                $dataObject = null;
+            }
+
             if ($forceInsert || is_null($dataObject)) {
                 if ($generateUid) {
                     //Data
@@ -1570,9 +1603,13 @@ class BpmnWorkflow extends Project\Bpmn
             $participantData = array_change_key_case($participantData, CASE_UPPER);
             unset($participantData["_EXTENDED"]);
 
-            $dataObject = $bwp->getParticipant($participantData["PAR_UID"]);
+            $participant = $bwp->getParticipant($participantData["PAR_UID"]);
 
-            if ($forceInsert || is_null($dataObject)) {
+            if ($participant["BOU_CONTAINER"] != $participantData["BOU_CONTAINER"]) {
+                $participant = null;
+            }
+
+            if ($forceInsert || is_null($participant)) {
                 if ($generateUid) {
                     //Participant
 
@@ -1598,7 +1635,7 @@ class BpmnWorkflow extends Project\Bpmn
                 }
 
                 $bwp->addParticipant($participantData);
-            } elseif (! $bwp->isEquals($dataObject, $participantData)) {
+            } elseif (! $bwp->isEquals($participant, $participantData)) {
                 $bwp->updateParticipant($participantData["PAR_UID"], $participantData);
             } else {
                 Util\Logger::log("Update Participant ({$participantData["PAR_UID"]}) Skipped - No changes required");
@@ -1737,13 +1774,14 @@ class BpmnWorkflow extends Project\Bpmn
     public function createMessageEventRelationByBpmnFlow(\BpmnFlow $bpmnFlow)
     {
         try {
+            $messageEventRelation = new \ProcessMaker\BusinessModel\MessageEventRelation();
+
             $messageEventRelationUid = "";
 
             if ($bpmnFlow->getFloType() == "MESSAGE" &&
-                $bpmnFlow->getFloElementOriginType() == "bpmnEvent" && $bpmnFlow->getFloElementDestType() == "bpmnEvent"
+                $bpmnFlow->getFloElementOriginType() == "bpmnEvent" && $bpmnFlow->getFloElementDestType() == "bpmnEvent" &&
+                !$messageEventRelation->existsEventRelation($bpmnFlow->getPrjUid(), $bpmnFlow->getFloElementOrigin(), $bpmnFlow->getFloElementDest())
             ) {
-                $messageEventRelation = new \ProcessMaker\BusinessModel\MessageEventRelation();
-
                 $arrayResult = $messageEventRelation->create(
                     $bpmnFlow->getPrjUid(),
                     array(

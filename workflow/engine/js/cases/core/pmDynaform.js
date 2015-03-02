@@ -26,14 +26,13 @@ $(window).load(function () {
         if (parent.showCaseNavigatorPanel) {
             parent.showCaseNavigatorPanel('DRAFT');
         }
-
         if (parent.setCurrent) {
             parent.setCurrent(dyn_uid);
         }
     }
-
     var data = jsondata;
-    data.items[0].mode = step_mode.toLowerCase();
+    if (step_mode)
+        data.items[0].mode = step_mode.toLowerCase();
     window.project = new PMDynaform.core.Project({
         data: data,
         keys: {
@@ -69,16 +68,21 @@ $(window).load(function () {
     appuid.type = "hidden";
     appuid.name = "APP_UID";
     appuid.value = app_uid;
+    var arrayRequired = document.createElement("input");
+    arrayRequired.type = "hidden";
+    arrayRequired.name = "DynaformRequiredFields";
+    arrayRequired.value = fieldsRequired;
     var form = document.getElementsByTagName("form")[0];
-    form.action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
+    form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
     form.method = "post";
+    form.enctype = "multipart/form-data";
     form.appendChild(type);
     form.appendChild(uid);
     form.appendChild(position);
     form.appendChild(action);
     form.appendChild(dynaformname);
     form.appendChild(appuid);
-
+    form.appendChild(arrayRequired);
     var dyn_forward = document.getElementById("dyn_forward");
     dyn_forward.onclick = function () {
         form.submit();
