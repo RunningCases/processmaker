@@ -61,25 +61,25 @@ class Activity extends Api
     }
     
     /**
-     * @param string $prj_uid {@min 32} {@max 32}
-     * @param string $act_uid {@min 32} {@max 32}
+     * @param string $pro_uid {@min 32} {@max 32}
+     * @param string $tas_uid {@min 32} {@max 32}
      * @param string $filter {@choice definition,,properties}
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @author Gustavo Cruz <gustavo.cruz@colosa.com>
      * @copyright Colosa - Bolivia
      * @return array
      *
-     * @url GET /:prj_uid/activity/:act_uid/feature-configuration
+     * @url GET /:pro_uid/activity/:tas_uid/feature-configuration
      */
-    public function doGetProjectActivityFeatureConfiguration($prj_uid, $act_uid, $filter = '')
+    public function doGetProjectActivityFeatureConfiguration($pro_uid, $tas_uid, $filter = '')
     {
         try {
-            $featureServices = new \Features\FeatureServices();
-            $configuration = $featureServices->retrieveView(array(
+            $featureHandler = new \Features\FeaturesHandler();
+            $configuration = $featureHandler->loadConfiguration(array(
                 'type' => 'activity',
-                'view' => 'configuration',
-                'prj_uid' => $prj_uid,
-                'act_uid' => $act_uid
+                'form' => 'configuration',
+                'PRO_UID' => $pro_uid,
+                'TAS_UID' => $tas_uid
             ));
             return $configuration;
         } catch (\Exception $e) {
@@ -108,7 +108,7 @@ class Activity extends Api
             $properties = $task->updateProperties($prj_uid, $act_uid, $request_data);
             /** features */
             $featureHandler = new \Features\FeaturesHandler();
-            $featureHandler->saveConfiguration('activity', $request_data['properties']['_features']);
+            $featureHandler->saveConfiguration($request_data['properties']['_features']);
             /** features */
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());

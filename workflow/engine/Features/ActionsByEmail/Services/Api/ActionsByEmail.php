@@ -1,5 +1,5 @@
 <?php
-namespace Features\ActionsByEmail\Services;
+namespace ProcessMaker\Services\Api;
 
 use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
@@ -13,12 +13,12 @@ require_once 'classes/model/Application.php';
 require_once 'classes/model/Users.php';
 
 /**
- * Class ActionsByEmailApi
+ * Class ActionsByEmail
  *
  * @author gustavo cruz <gustavo.cruz@colosa.com>
  * @protected
  */
-class ActionsByEmailApi extends Api
+class ActionsByEmail extends Api
 {
 
     /**
@@ -515,5 +515,35 @@ class ActionsByEmailApi extends Api
         }
         return $message;
     }
+    
+    /**
+     * 
+     * @url GET /Templates/:proId
+     */
+    public function getTemplates($proId)
+    {
+        $templates   = array();
+        $path        = PATH_DATA_MAILTEMPLATES . $proId . PATH_SEP;
 
+        \G::verifyPath($path, true);
+
+        if (defined('PARTNER_FLAG')) {
+            if (!file_exists($path . 'actionsByEmailPartner.html')) {
+                @copy(PATH_FEATURES . 'ActionsByEmail' . PATH_SEP . 'data' . PATH_SEP . 'actionsByEmailPartner.html', $path . 'actionsByEmail.html');
+            }
+        } else {
+            if (!file_exists($path . 'actionsByEmail.html')) {
+                @copy(PATH_FEATURES . 'ActionsByEmail' . PATH_SEP . 'data' . PATH_SEP . 'actionsByEmail.html', $path . 'actionsByEmail.html');
+            }
+        }
+
+        $directory = dir($path);
+
+        while ($object = $directory->read()) {
+            if (($object !== '.') && ($object !== '..') && ($object !== 'alert_message.html')) {
+                $templates[] = array('FILE' => $object, 'NAME' => $object);
+            }
+        }
+        return  $templates;
+    }
 }

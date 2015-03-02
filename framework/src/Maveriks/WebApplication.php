@@ -345,7 +345,7 @@ class WebApplication
                 foreach ($featureApiClassList as $classFile) {
                     if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
                         $relClassPath = str_replace('.php', '', str_replace($servicesDir, '', $classFile));
-                        $namespace = '\\ProcessMaker\\Services\\Api\\'.basename($classFile, '.php');
+                        $namespace = '\\ProcessMaker\\Services\\Api\\' . basename($classFile, '.php');
                         $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
                         require_once $classFile;
                         $this->rest->addAPIClass($namespace);

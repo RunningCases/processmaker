@@ -13,14 +13,17 @@ class FeaturesHandler
         }
     }
 
-    public function retrieveConfiguration($params)
+    public function loadConfiguration($params)
     {
-        foreach ($this->getFeatureList() as $feature) {
-            
+        $features = $this->getFeatureList();
+        foreach ($features as $feature) {
+            $service = $this->getFeatureService(array('name' => $feature->name));
+            $configurations[] = $service->loadConfiguration($params);
         }
+        return array_filter($configurations);
     }
 
-    public function saveConfiguration($type, $configurationForms)
+    public function saveConfiguration($configurationForms)
     {
         foreach ($configurationForms as $feature => $form) {
             $service = $this->getFeatureService(array('name' => $feature));
