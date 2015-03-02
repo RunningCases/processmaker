@@ -9,6 +9,7 @@ $urlProxy = 'proxyCasesList';
 if ($action == 'selfservice') {
     $action = 'unassigned';
 }
+
 /*----------------------------------********---------------------------------*/
 $urlProxy = '/api/1.0/' . SYS_SYS . '/lists/';
 switch ($action) {

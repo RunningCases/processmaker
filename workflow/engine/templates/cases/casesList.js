@@ -2270,7 +2270,6 @@ var gridForm = new Ext.FormPanel({
   if(typeof(comboUser) != 'undefined'){
     comboUser.setValue("");
   }
-
   comboAllUsers.setValue("CURRENT_USER");
 
   // hidding the buttons for the reassign

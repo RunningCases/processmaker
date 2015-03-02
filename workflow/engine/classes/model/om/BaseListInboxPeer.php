@@ -1,9 +1,11 @@
 <?php
 
+
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
 // actual class may be a subclass -- as returned by ListInboxPeer::getOMClass()
 include_once 'classes/model/ListInbox.php';
+
 
 /**
  * Base static class for performing query and update operations on the 'LIST_INBOX' table.

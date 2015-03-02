@@ -3,7 +3,6 @@
 require_once 'propel/map/MapBuilder.php';
 include_once 'creole/CreoleTypes.php';
 
-
 /**
  * This class adds structure of 'LIST_INBOX' table to 'workflow' DatabaseMap object.
  *

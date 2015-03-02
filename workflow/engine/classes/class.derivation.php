@@ -975,6 +975,7 @@ class Derivation
                 /*----------------------------------********---------------------------------*/
                 $inbox = new ListInbox();
                 $inbox->update($aParentCase);
+                
                 /*----------------------------------********---------------------------------*/
                 //Update table SUB_APPLICATION
                 $oSubApplication = new SubApplication();

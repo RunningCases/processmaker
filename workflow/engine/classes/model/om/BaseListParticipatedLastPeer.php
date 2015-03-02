@@ -5,6 +5,7 @@ require_once 'propel/util/BasePeer.php';
 // actual class may be a subclass -- as returned by ListParticipatedLastPeer::getOMClass()
 include_once 'classes/model/ListParticipatedLast.php';
 
+
 /**
  * Base static class for performing query and update operations on the 'LIST_PARTICIPATED_LAST' table.
  *

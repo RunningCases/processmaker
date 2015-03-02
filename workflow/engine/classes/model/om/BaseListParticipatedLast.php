@@ -9,6 +9,7 @@ include_once 'propel/util/Criteria.php';
 
 include_once 'classes/model/ListParticipatedLastPeer.php';
 
+
 /**
  * Base class that represents a row from the 'LIST_PARTICIPATED_LAST' table.
  *

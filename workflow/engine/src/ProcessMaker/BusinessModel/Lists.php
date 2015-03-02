@@ -18,7 +18,7 @@ class Lists {
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
-     */
+    */
     public function getList($listName = 'inbox', $dataList = array(), $total = false)
     {
         Validator::isArray($dataList, '$dataList');

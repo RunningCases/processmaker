@@ -2,7 +2,6 @@
 
 require_once 'classes/model/om/BaseListInbox.php';
 
-
 /**
  * Skeleton subclass for representing a row from the 'LIST_INBOX' table.
  *

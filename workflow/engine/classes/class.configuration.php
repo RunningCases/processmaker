@@ -654,7 +654,7 @@ class Configurations // extends Configuration
      * @param string $translation Translation
      * @return array Return the fields and configuration
      *
-     */
+    */
     public function casesListDefaultFieldsAndConfig($action, $translation = 1)
     {
         $caseColumns = array();

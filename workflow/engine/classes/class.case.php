@@ -1066,6 +1066,7 @@ class Cases
             }
             $inbox = new ListInbox();
             $inbox->update($Fields);
+            
             /*----------------------------------********---------------------------------*/
 
             //Return
