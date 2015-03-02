@@ -17,9 +17,10 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
 {
 
     protected $db;
+    protected $dbRBAC;
     protected $config;
 
-    public function __construct($connection, $config = array())
+    public function __construct($connection, $config = array(), $connectionRBAC = null)
     {
         if (!$connection instanceof \PDO) {
             if (!is_array($connection)) {
@@ -37,6 +38,23 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
         }
         $this->db = $connection;
 
+        // it's for Pm < 3
+        if (!is_null($connectionRBAC) &&(!$connectionRBAC instanceof \PDO)) {
+            if (!is_array($connectionRBAC)) {
+                throw new \InvalidArgumentException('First argument to OAuth2\Storage\Pdo must be an instance of PDO or a configuration array');
+            }
+            if (!isset($connectionRBAC['dsn'])) {
+                throw new \InvalidArgumentException('configuration array must contain "dsn"');
+            }
+            // merge optional parameters
+            $connectionRBAC = array_merge(array(
+                'username' => null,
+                'password' => null,
+            ), $connectionRBAC);
+            $connectionRBAC = new \PDO($connectionRBAC['dsn'], $connectionRBAC['username'], $connectionRBAC['password']);
+        }
+        $this->dbRBAC = $connectionRBAC;
+
         // debugging
         $connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
@@ -45,7 +63,7 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
             'access_token_table' => 'OAUTH_ACCESS_TOKENS',
             'refresh_token_table' => 'OAUTH_REFRESH_TOKENS',
             'code_table' => 'OAUTH_AUTHORIZATION_CODES',
-            'user_table' => 'USERS',
+            'user_table' => 'RBAC_USERS',
             'jwt_table' => 'OAUTH_JWT',
         ), $config);
     }
@@ -211,12 +229,15 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
     // plaintext passwords are bad!  Override this for your application
     protected function checkPassword($user, $password)
     {
-        return $user['USR_PASSWORD'] == md5($password);
+        return $user['USR_PASSWORD'] == \Bootstrap::hashPassword($password);
     }
 
     public function getUser($username)
     {
         $stmt = $this->db->prepare($sql = sprintf('SELECT * FROM %s WHERE USR_USERNAME=:username', $this->config['user_table']));
+        if (!is_null($this->dbRBAC)) {
+            $stmt = $this->dbRBAC->prepare($sql = sprintf('SELECT * FROM %s WHERE USR_USERNAME=:username', $this->config['user_table']));
+        }
         $stmt->execute(array('username' => $username));
 
         if (!$userInfo = $stmt->fetch()) {

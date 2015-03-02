@@ -296,6 +296,9 @@ class WebApplication
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
         $port = empty($port) ? '' : ";port=$port";
         Services\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
+        if (DB_NAME != DB_RBAC_NAME) { //it's PM < 3
+            Services\OAuth2\Server::setDatabaseSourceRBAC(DB_RBAC_USER, DB_RBAC_PASS, DB_ADAPTER.":host=".DB_RBAC_HOST.";dbname=".DB_RBAC_NAME.$port);
+        }
 
         // Setting default OAuth Client id, for local PM Web Designer
         Services\OAuth2\Server::setPmClientId($pmOauthClientId);
