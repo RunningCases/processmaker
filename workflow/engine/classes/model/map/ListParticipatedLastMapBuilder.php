@@ -15,6 +15,7 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
+ 
 class ListParticipatedLastMapBuilder
 {
 

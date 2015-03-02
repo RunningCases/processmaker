@@ -1060,13 +1060,13 @@ class Cases
 
                 $appAssignSelfServiceValue->remove($sAppUid);
             }
+            
             /*----------------------------------********---------------------------------*/
             if(!isset($Fields['DEL_INDEX'])){
               $Fields['DEL_INDEX'] = 1;
             }
             $inbox = new ListInbox();
-            $inbox->update($Fields);
-            
+            $inbox->update($Fields);            
             /*----------------------------------********---------------------------------*/
 
             //Return

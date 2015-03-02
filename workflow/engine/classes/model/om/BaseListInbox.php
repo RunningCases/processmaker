@@ -16,7 +16,8 @@ include_once 'classes/model/ListInboxPeer.php';
  * 
  *
  * @package    workflow.classes.model.om
- */
+*/
+ 
 abstract class BaseListInbox extends BaseObject implements Persistent
 {
 

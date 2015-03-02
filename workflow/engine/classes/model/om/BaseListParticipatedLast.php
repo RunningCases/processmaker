@@ -16,7 +16,8 @@ include_once 'classes/model/ListParticipatedLastPeer.php';
  * 
  *
  * @package    workflow.classes.model.om
- */
+*/
+
 abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 {
 

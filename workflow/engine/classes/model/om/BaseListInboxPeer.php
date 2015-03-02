@@ -13,7 +13,8 @@ include_once 'classes/model/ListInbox.php';
  * 
  *
  * @package    workflow.classes.model.om
- */
+*/
+ 
 abstract class BaseListInboxPeer
 {
 

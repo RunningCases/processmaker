@@ -14,6 +14,7 @@ require_once 'classes/model/om/BaseListParticipatedLast.php';
  *
  * @package    classes.model
 */
+
 class ListParticipatedLast extends BaseListParticipatedLast
 {
     /**

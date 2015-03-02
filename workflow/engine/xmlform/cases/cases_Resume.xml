@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
+
 <dynaForm name="cases_Resume" type="xmlform" width="550px" labelWidth="150px">
   <TITLE1 type="title">
     <en><![CDATA[Case Properties]]></en>
@@ -29,6 +30,5 @@
   </UPDATE_DATE>
   <DESCRIPTION type="text" mode="view">
     <en><![CDATA[Case Description]]></en>
-  </DESCRIPTION>
-  
+  </DESCRIPTION>  
 </dynaForm>

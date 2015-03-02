@@ -1,6 +1,5 @@
 <?php
 namespace ProcessMaker\BusinessModel;
-
 use \G;
 
 /**

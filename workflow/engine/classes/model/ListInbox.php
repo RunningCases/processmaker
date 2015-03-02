@@ -13,6 +13,7 @@ require_once 'classes/model/om/BaseListInbox.php';
  *
  * @package    classes.model
  */
+ 
 class ListInbox extends BaseListInbox
 {
     /**

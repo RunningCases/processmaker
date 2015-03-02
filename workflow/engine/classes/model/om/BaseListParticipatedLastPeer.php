@@ -12,7 +12,8 @@ include_once 'classes/model/ListParticipatedLast.php';
  * 
  *
  * @package    workflow.classes.model.om
- */
+*/
+
 abstract class BaseListParticipatedLastPeer
 {
 

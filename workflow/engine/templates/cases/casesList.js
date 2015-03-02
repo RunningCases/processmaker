@@ -2272,7 +2272,7 @@ var gridForm = new Ext.FormPanel({
   }
   comboAllUsers.setValue("CURRENT_USER");
 
-  // hidding the buttons for the reassign
+// hidding the buttons for the reassign
 //  if (action=='to_reassign'){
 //    btnSelectAll.hide();
 //    btnUnSelectAll.hide();
