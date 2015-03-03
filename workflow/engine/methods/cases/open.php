@@ -91,10 +91,8 @@ while ($ds->next()) {
     $row = $ds->getRow();
     $bpmnProjects[] = $row['PRJ_UID'];
 }
-
 $oStep = new Step();
 $oStep = $oStep->loadByProcessTaskPosition( $case['PRO_UID'], $case['TAS_UID'], 1 );
-
 $oHeadPublisher->assign( 'uri', $script . $uri );
 $oHeadPublisher->assign( '_APP_NUM', '#: ' . $case['APP_NUMBER'] );
 $oHeadPublisher->assign( '_PROJECT_TYPE', in_array($case['PRO_UID'], $bpmnProjects) ? 'bpmn' : 'classic' );
