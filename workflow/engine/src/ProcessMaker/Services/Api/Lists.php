@@ -24,8 +24,8 @@ class Lists extends Api
      * @param string $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -45,8 +45,8 @@ class Lists extends Api
         $limit = 0,
         $sort  = 'APP_UPDATE_DATE',
         $dir   = 'DESC',
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -63,8 +63,8 @@ class Lists extends Api
             $dataList['sort']  = $sort;
             $dataList['dir']   = $dir;
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -83,8 +83,8 @@ class Lists extends Api
     /**
      * Get count list Inbox
      *
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -98,8 +98,8 @@ class Lists extends Api
      * @url GET /total
      */
     public function doGetCountInbox(
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -108,8 +108,8 @@ class Lists extends Api
         try {
             $dataList['userId'] = $this->getUserId();
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -132,8 +132,8 @@ class Lists extends Api
      * @param string $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -153,8 +153,8 @@ class Lists extends Api
         $limit = 0,
         $sort  = 'APP_UPDATE_DATE',
         $dir   = 'DESC',
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -170,8 +170,8 @@ class Lists extends Api
             $dataList['sort']  = $sort;
             $dataList['dir']   = $dir;
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -188,8 +188,8 @@ class Lists extends Api
     /**
      * Get count list Participated Last
      *
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -203,8 +203,8 @@ class Lists extends Api
      * @url GET /participated-last/total
      */
     public function doGetCountParticipatedLast(
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -213,8 +213,8 @@ class Lists extends Api
         try {
             $dataList['userId'] = $this->getUserId();
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -237,8 +237,8 @@ class Lists extends Api
      * @param string $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -257,8 +257,8 @@ class Lists extends Api
         $limit = 0,
         $sort  = 'APP_UPDATE_DATE',
         $dir   = 'DESC',
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -274,8 +274,8 @@ class Lists extends Api
             $dataList['sort']  = $sort;
             $dataList['dir']   = $dir;
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -292,8 +292,8 @@ class Lists extends Api
     /**
      * Get count list Participated History
      *
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -306,8 +306,8 @@ class Lists extends Api
      * @url GET /participated-history/total
      */
     public function doGetCountParticipatedHistory(
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -316,8 +316,8 @@ class Lists extends Api
         try {
             $dataList['userId'] = $this->getUserId();
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -343,8 +343,8 @@ class Lists extends Api
      * @param string $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -363,8 +363,8 @@ class Lists extends Api
         $limit = 0,
         $sort  = 'APP_PAUSED_DATE',
         $dir   = 'DESC',
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -380,8 +380,8 @@ class Lists extends Api
             $dataList['sort']  = $sort;
             $dataList['dir']   = $dir;
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -398,8 +398,8 @@ class Lists extends Api
     /**
      * Get count list Paused
      *
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -412,8 +412,8 @@ class Lists extends Api
      * @url GET /paused/total
      */
     public function doGetCountPaused(
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -422,8 +422,8 @@ class Lists extends Api
         try {
             $dataList['userId'] = $this->getUserId();
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -448,8 +448,8 @@ class Lists extends Api
      * @param string $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -468,8 +468,8 @@ class Lists extends Api
         $limit = 0,
         $sort  = 'APP_CANCELED_DATE',
         $dir   = 'DESC',
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -485,8 +485,8 @@ class Lists extends Api
             $dataList['sort']  = $sort;
             $dataList['dir']   = $dir;
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -503,8 +503,8 @@ class Lists extends Api
     /**
      * Get count list Canceled
      *
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -517,8 +517,8 @@ class Lists extends Api
      * @url GET /canceled/total
      */
     public function doGetCountCanceled(
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -527,8 +527,8 @@ class Lists extends Api
         try {
             $dataList['userId'] = $this->getUserId();
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -552,8 +552,8 @@ class Lists extends Api
      * @param string $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -572,8 +572,8 @@ class Lists extends Api
         $limit = 0,
         $sort  = 'APP_UPDATE_DATE',
         $dir   = 'DESC',
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -589,8 +589,8 @@ class Lists extends Api
             $dataList['sort']  = $sort;
             $dataList['dir']   = $dir;
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -607,8 +607,8 @@ class Lists extends Api
     /**
      * Get count list Participated History
      *
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -621,8 +621,8 @@ class Lists extends Api
      * @url GET /completed/total
      */
     public function doGetCountCompleted(
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -631,8 +631,8 @@ class Lists extends Api
         try {
             $dataList['userId'] = $this->getUserId();
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -656,8 +656,8 @@ class Lists extends Api
      * @param string $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -676,8 +676,8 @@ class Lists extends Api
         $limit = 0,
         $sort  = 'APP_UPDATE_DATE',
         $dir   = 'DESC',
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -693,8 +693,8 @@ class Lists extends Api
             $dataList['sort']  = $sort;
             $dataList['dir']   = $dir;
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -711,8 +711,8 @@ class Lists extends Api
     /**
      * Get count list Participated History
      *
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -725,8 +725,8 @@ class Lists extends Api
      * @url GET /my-inbox/total
      */
     public function doGetCountListMyInbox(
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -735,8 +735,8 @@ class Lists extends Api
         try {
             $dataList['userId'] = $this->getUserId();
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -759,8 +759,8 @@ class Lists extends Api
      * @param string $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -779,8 +779,8 @@ class Lists extends Api
         $limit = 0,
         $sort  = 'APP_UPDATE_DATE',
         $dir   = 'DESC',
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -797,8 +797,8 @@ class Lists extends Api
             $dataList['sort']  = $sort;
             $dataList['dir']   = $dir;
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
@@ -815,8 +815,8 @@ class Lists extends Api
     /**
      * Get count list Unassigned
      *
-     * @param string $cat_uid {@from path}
-     * @param string $pro_uid {@from path}
+     * @param string $category {@from path}
+     * @param string $process {@from path}
      * @param string $search {@from path}
      * @param string $filter {@from path}
      * @param string $date_from {@from path}
@@ -829,8 +829,8 @@ class Lists extends Api
      * @url GET /unassigned/total
      */
     public function doGetCountUnassigned(
-        $cat_uid = '',
-        $pro_uid = '',
+        $category = '',
+        $process = '',
         $search = '',
         $filter = '',
         $date_from = '',
@@ -839,8 +839,8 @@ class Lists extends Api
         try {
             $dataList['userId'] = $this->getUserId();
 
-            $dataList['category'] = $cat_uid;
-            $dataList['process']  = $pro_uid;
+            $dataList['category'] = $category;
+            $dataList['process']  = $process;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;

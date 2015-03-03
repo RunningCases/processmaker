@@ -11,86 +11,26 @@ class pmDynaform
 {
 
     public static $instance = null;
+    private $debugMode = false;
     public $dyn_uid = null;
     public $record = null;
     public $app_data = null;
+    public $credentials = null;
     public $items = array();
     public $data = array();
     public $variables = array();
-    public $arrayFieldRequired = array();        
+    public $arrayFieldRequired = array();
 
     public function __construct($dyn_uid, $app_data = array())
-    {        
+    {
         $this->dyn_uid = $dyn_uid;
         $this->app_data = $app_data;
         $this->getDynaform();
-        
-        //items
-        $dynContent = G::json_decode($this->record["DYN_CONTENT"]);
-        if (isset($dynContent->items)) {
-            $this->items = $dynContent->items[0]->items;
-            $n = count($this->items);
-            for ($i = 0; $i < $n; $i++) {
-                $m = count($this->items[$i]);
-                for ($j = 0; $j < $m; $j++) {
-                    if (isset($this->items[$i][$j]->required) && $this->items[$i][$j]->required == 1) {
-                        array_push($this->arrayFieldRequired, $this->items[$i][$j]->name);
-                    }
-                }
-            }
-        }
-
-        if(!empty($app_data) && isset($app_data["APPLICATION"])){
-            //data
+        $this->getCredentials();
+        if (isset($app_data["APPLICATION"])) {
             $cases = new \ProcessMaker\BusinessModel\Cases();
             $this->data = $cases->getCaseVariables($app_data["APPLICATION"]);
-            
-            //variables
-            $this->variables = array();
-            
-            $a = new Criteria("workflow");
-            $a->addSelectColumn(ProcessVariablesPeer::VAR_NAME);
-            $a->addSelectColumn(ProcessVariablesPeer::VAR_SQL);
-            $a->addSelectColumn(ProcessVariablesPeer::VAR_ACCEPTED_VALUES);
-            $a->addSelectColumn(ProcessVariablesPeer::VAR_DBCONNECTION);
-
-            $c3 = $a->getNewCriterion(ProcessVariablesPeer::VAR_ACCEPTED_VALUES, "", Criteria::ALT_NOT_EQUAL);
-            $c2 = $a->getNewCriterion(ProcessVariablesPeer::VAR_ACCEPTED_VALUES, "[]", Criteria::ALT_NOT_EQUAL);
-            $c2->addAnd($c3);
-
-            $c4 = $a->getNewCriterion(ProcessVariablesPeer::PRJ_UID, $this->app_data["PROCESS"], Criteria::EQUAL);
-
-            $c1 = $a->getNewCriterion(ProcessVariablesPeer::VAR_SQL, "", Criteria::ALT_NOT_EQUAL);
-            $c1->addOr($c2);
-            $c1->addAnd($c4);
-
-            $a->add($c1);
-
-            $ds = ProcessPeer::doSelectRS($a);
-            $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            while ($ds->next()) {
-                $row = $ds->getRow();
-                //options
-                $rows2 = G::json_decode($row["VAR_ACCEPTED_VALUES"]);
-                $n = count($rows2);
-                for ($i = 0; $i < $n; $i++) {
-                    $rows2[$i] = array($rows2[$i]->keyValue, $rows2[$i]->value);
-                }
-                //query
-                $arrayVariable = array();
-                if ($row["VAR_DBCONNECTION"] !== "none" && $row["VAR_SQL"] !== "") {
-                    $cnn = Propel::getConnection($row["VAR_DBCONNECTION"]);
-                    $stmt = $cnn->createStatement();
-                    $rs = $stmt->executeQuery(\G::replaceDataField($row["VAR_SQL"], $arrayVariable), \ResultSet::FETCHMODE_NUM);
-                    while ($rs->next()) {
-                        array_push($rows2, $rs->getRow());
-                    }
-                }
-                $this->variables[$row["VAR_NAME"]] = $rows2;
-            }
         }
-
     }
 
     public function getDynaform()
@@ -107,95 +47,113 @@ class pmDynaform
         $ds = ProcessPeer::doSelectRS($a);
         $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $ds->next();
-        $row = $ds->getRow();       
+        $row = $ds->getRow();
         $this->record = isset($row) ? $row : null;
-
         return $this->record;
     }
-    
-    private function searchValues($varName, $value) 
+
+    public function getCredentials()
     {
-        if (!$varName || !isset($this->variables[$varName])) {
-            return "";
+        if ($this->credentials != null) {
+            return $this->credentials;
         }
-        $options = $this->variables[$varName];
-        foreach ($options as $valueOptions) {
-            if ($valueOptions[0] === $value) {
-                return $valueOptions[1];
-            }
-        }
+        $a = $this->clientToken();
+        $this->credentials = array(
+            "accessToken" => $a["access_token"],
+            "expiresIn" => $a["expires_in"],
+            "tokenType" => $a["token_type"],
+            "scope" => $a["scope"],
+            "refreshToken" => $a["refresh_token"],
+            "clientId" => $a["client_id"],
+            "clientSecret" => $a["client_secret"]
+        );
+        return $this->credentials;
     }
 
-    private function mergeAppData($app_uid, &$items)
+    public function jsonr(&$json)
     {
-        foreach ($items as $key => $value) {
-            if (is_array($items[$key])) {
-                $this->mergeAppData($app_uid, $items[$key]);
-            } else {
-                if (isset($items[$key]->name) && isset($this->data[$items[$key]->name])) {
-                    if ($items[$key]->type === "grid") {
-                        $rows = $this->data[$items[$key]->name];
+        foreach ($json as $key => $value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                $this->jsonr($value);
+            }
+            if (!$sw1 && !$sw2) {
+                //property
+                $prefixs = array("@@", "@#", "@%", "@?", "@$", "@=");
+                if (is_string($value) && in_array(substr($value, 0, 2), $prefixs)) {
+                    $triggerValue = substr($value, 2);
+                    if (isset($this->app_data[$triggerValue])) {
+                        $json->$key = $this->app_data[$triggerValue];
+                    }
+                }
+                //data
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown")) {
+                    $json->data = array(
+                        "value" => isset($this->data[$json->name]) ? $this->data[$json->name] : "",
+                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : ""
+                    );
+                }
+                if ($key === "type" && ($value === "suggets")) {
+                    $json->data = array(
+                        "value" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "",
+                        "label" => isset($this->data[$json->name]) ? $this->data[$json->name] : ""
+                    );
+                }
+                //query & options
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggets")) {
+                    if (!isset($json->dbConnection))
+                        $json->dbConnection = "none";
+                    if (!isset($json->sql))
+                        $json->sql = "";
+                    if (!isset($json->options))
+                        $json->options = array();
+                    if ($json->dbConnection !== "none" && $json->sql !== "") {
+                        $cnn = Propel::getConnection($json->dbConnection);
+                        $stmt = $cnn->createStatement();
+                        $rs = $stmt->executeQuery(\G::replaceDataField($json->sql, array()), \ResultSet::FETCHMODE_NUM);
+                        while ($rs->next()) {
+                            $row = $rs->getRow();
+                            $option = array(
+                                "label" => $row[1],
+                                "value" => $row[0]
+                            );
+                            array_push($json->options, $option);
+                        }
+                        $json->data = isset($json->options[0]) ? $json->options[0] : $json->data;
+                    }
+                }
+                //grid
+                if ($key === "type" && ($value === "grid")) {
+                    if (isset($this->data[$json->name])) {
+                        //rows
+                        $rows = $this->data[$json->name];
                         foreach ($rows as $keyRow => $row) {
-                            $newRow = array();
-                            foreach ($row as $keyCelda => $celda) {
-                                array_push($newRow, array(
-                                    "value" => $celda,
-                                    "label" => $this->searchValues($keyCelda, $celda)
-                                ));
+                            //cells
+                            $cells = array();
+                            foreach ($json->columns as $column) {
+                                //data
+                                if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown") {
+                                    array_push($cells, array(
+                                        "value" => $row[$column->name],
+                                        "label" => $row[$column->name . "_label"]
+                                    ));
+                                }
+                                if ($column->type === "suggest") {
+                                    array_push($cells, array(
+                                        "value" => $row[$column->name . "_label"],
+                                        "label" => $row[$column->name]
+                                    ));
+                                }
                             }
-                            $rows[$keyRow] = $newRow;
+                            $rows[$keyRow] = $cells;
                         }
-                        $items[$key]->rows = count($rows);
-                        $items[$key]->data = $rows;
+                        $json->rows = count($rows);
+                        $json->data = $rows;
                     }
-                    if ($items[$key]->type !== "grid") {
-                        $value = $this->data[$items[$key]->name];
-                        $label = "";
-                        if (isset($this->data[$items[$key]->name . "_label"])) {
-                            $value = $this->data[$items[$key]->name];
-                            $label = $this->data[$items[$key]->name . "_label"];
-                        }
-                        if (isset($this->data[$items[$key]->name . "_value"])) {
-                            $value = $this->data[$items[$key]->name . "_value"];
-                            $label = $this->data[$items[$key]->name];
-                        }
-                        $items[$key]->data = array(
-                            "value" => $value,
-                            "label" => $label
-                        );
-                    }
-                }
-                if (isset($items[$key]->options) && isset($this->variables[$items[$key]->name])) {
-                    $options = $this->variables[$items[$key]->name];
-                    $n = count($options);
-                    for ($i = 0; $i < $n; $i++) {
-                        $options[$i] = array(
-                            "value" => $options[$i][0],
-                            "label" => $options[$i][1]
-                        );
-                    }
-                    $items[$key]->options = $options;
-                }
-                if (isset($items[$key]->columns)) {
-                    $this->mergeAppData($app_uid, $items[$key]->columns);
                 }
             }
         }
-    }
-    
-    public function mergeDynContentAppData($app_uid, &$items)
-    {
-        $dynContent = G::json_decode($this->record["DYN_CONTENT"]);
-        if (isset($dynContent->items)) {
-            $this->items = $dynContent->items[0]->items;
-        }
-
-        $this->mergeAppData($app_uid, $items);
-        $dynContent->items[0]->items = $this->items;
-
-        $a = G::json_encode($dynContent);
-        $a = str_replace("\/", "/", $a);
-        $this->record["DYN_CONTENT"] = $a;
     }
 
     public function isResponsive()
@@ -206,8 +164,9 @@ class pmDynaform
     public function printView($pm_run_outside_main_app, $application)
     {
         ob_clean();
-        $this->mergeDynContentAppData($application, $this->items);
-        
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        $this->jsonr($json);
+
         $a = $this->clientToken();
         $clientToken = array(
             "accessToken" => $a["access_token"],
@@ -218,16 +177,44 @@ class pmDynaform
             "clientId" => $a["client_id"],
             "clientSecret" => $a["client_secret"]
         );
-        
-        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform_View.html');
-        $file = str_replace("{JSON_DATA}", $this->record["DYN_CONTENT"], $file);
-        $file = str_replace("{PM_RUN_OUTSIDE_MAIN_APP}", $pm_run_outside_main_app, $file);
-        $file = str_replace("{DYN_UID}", $this->dyn_uid, $file);
-        $file = str_replace("{DYNAFORMNAME}", $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"], $file);
-        $file = str_replace("{APP_UID}", $application, $file);
-        $file = str_replace("{PRJ_UID}", $this->app_data["PROCESS"], $file);
-        $file = str_replace("{WORKSPACE}", $this->app_data["SYS_SYS"], $file);
-        $file = str_replace("{credentials}", json_encode($clientToken), $file);
+
+        $javascrip = "" .
+                "<script type='text/javascript'>\n" .
+                "var jsondata = " . G::json_encode($json) . ";\n" .
+                "var pm_run_outside_main_app = '" . $pm_run_outside_main_app . "';\n" .
+                "var dyn_uid = '" . $this->dyn_uid . "';\n" .
+                "var __DynaformName__ = '" . $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"] . "';\n" .
+                "var app_uid = '" . $application . "';\n" .
+                "var prj_uid = '" . $this->app_data["PROCESS"] . "';\n" .
+                "var step_mode = null;\n" .
+                "var workspace = '" . $this->app_data["SYS_SYS"] . "';\n" .
+                "var credentials = " . G::json_encode($clientToken) . ";\n" .
+                "var filePost = null;\n" .
+                "var fieldsRequired = null;\n" .
+                "$(window).load(function () {\n" .
+                "    var data = jsondata;\n" .
+                "    data.items[0].mode = 'view';\n" .
+                "    window.project = new PMDynaform.core.Project({\n" .
+                "        data: data,\n" .
+                "        keys: {\n" .
+                "            server: location.host,\n" .
+                "            projectId: prj_uid,\n" .
+                "            workspace: workspace\n" .
+                "        },\n" .
+                "        token: credentials,\n" .
+                "        submitRest: false\n" .
+                "    });\n" .
+                "    $(document).find('form').submit(function (e) {\n" .
+                "        e.preventDefault();\n" .
+                "        return false;\n" .
+                "    });\n" .
+                "});\n" .
+                "</script>\n";
+
+        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
+        $file = str_replace("{javascript}", $javascrip, $file);
+
+        $this->debug();
         echo $file;
         exit();
     }
@@ -235,34 +222,44 @@ class pmDynaform
     public function printEdit($pm_run_outside_main_app, $application, $headData, $step_mode = 'EDIT')
     {
         ob_clean();
-        $this->mergeDynContentAppData($application, $this->items);
-        
-        $a = $this->clientToken();
-        $clientToken = array(
-            "accessToken" => $a["access_token"],
-            "expiresIn" => $a["expires_in"],
-            "tokenType" => $a["token_type"],
-            "scope" => $a["scope"],
-            "refreshToken" => $a["refresh_token"],
-            "clientId" => $a["client_id"],
-            "clientSecret" => $a["client_secret"]
-        );
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        $this->jsonr($json);
+        $title = "<table width='100%' align='center'>\n" .
+                "    <tr class='userGroupTitle'>\n" .
+                "        <td width='100%' align='center'>" . $headData["CASE"] . " #: " . $headData["APP_NUMBER"] . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $headData["TITLE"] . ": " . $headData["APP_TITLE"] . "</td>\n" .
+                "    </tr>\n" .
+                "</table>\n";
+        $javascrip = "" .
+                "<script type='text/javascript'>\n" .
+                "var jsondata = " . G::json_encode($json) . ";\n" .
+                "var pm_run_outside_main_app = '" . $pm_run_outside_main_app . "';\n" .
+                "var dyn_uid = '" . $this->dyn_uid . "';\n" .
+                "var __DynaformName__ = '" . $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"] . "';\n" .
+                "var app_uid = '" . $application . "';\n" .
+                "var prj_uid = '" . $this->app_data["PROCESS"] . "';\n" .
+                "var step_mode = '" . $step_mode . "';\n" .
+                "var workspace = '" . $this->app_data["SYS_SYS"] . "';\n" .
+                "var credentials = " . G::json_encode($this->credentials) . ";\n" .
+                "var filePost = null;\n" .
+                "var fieldsRequired = null;\n" .
+                "</script>\n" .
+                "<script type='text/javascript' src='/jscore/cases/core/cases_Step.js'></script>\n" .
+                "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
+                ($this->app_data["PRO_SHOW_MESSAGE"] === 1 ? '' : $title ) .
+                "<div style='width:100%;padding:0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
+                "    <img src='/images/bulletButtonLeft.gif' style='float:left;'>&nbsp;\n" .
+                "    <a id='dyn_backward' href='' style='float:left;'>\n" .
+                "    </a>\n" .
+                "    <img src='/images/bulletButton.gif' style='float:right;'>&nbsp;\n" .
+                "    <a id='dyn_forward' href='' style='float:right;font-size:12px;line-height:1;margin:0px 5px 1px 0px;'>\n" .
+                "        Next Step\n" .
+                "    </a>\n" .
+                "</div>";
 
-        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/cases_Step_Pmdynaform.html');
-        $file = str_replace("{JSON_DATA}", $this->record["DYN_CONTENT"], $file);
-        $file = str_replace("{CASE}", $headData["CASE"], $file);
-        $file = str_replace("{APP_NUMBER}", $headData["APP_NUMBER"], $file);
-        $file = str_replace("{TITLE}", $headData["TITLE"], $file);
-        $file = str_replace("{APP_TITLE}", $headData["APP_TITLE"], $file);
-        $file = str_replace("{PM_RUN_OUTSIDE_MAIN_APP}", $pm_run_outside_main_app, $file);
-        $file = str_replace("{DYN_UID}", $this->dyn_uid, $file);
-        $file = str_replace("{DYNAFORMNAME}", $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"], $file);
-        $file = str_replace("{APP_UID}", $application, $file);
-        $file = str_replace("{PRJ_UID}", $this->app_data["PROCESS"], $file);
-        $file = str_replace("{STEP_MODE}", $step_mode, $file);
-        $file = str_replace("{WORKSPACE}", $this->app_data["SYS_SYS"], $file);
-        $file = str_replace("{PORT}", $_SERVER["SERVER_PORT"] , $file); 
-        $file = str_replace("{credentials}", G::json_encode($clientToken), $file);
+        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
+        $file = str_replace("{javascript}", $javascrip, $file);
+
+        $this->debug();
         echo $file;
         exit();
     }
@@ -270,25 +267,51 @@ class pmDynaform
     public function printWebEntry($filename)
     {
         ob_clean();
-        $a = $this->clientToken();
-        $clientToken = array(
-            "accessToken" => $a["access_token"],
-            "expiresIn" => $a["expires_in"],
-            "tokenType" => $a["token_type"],
-            "scope" => $a["scope"],
-            "refreshToken" => $a["refresh_token"],
-            "clientId" => $a["client_id"],
-            "clientSecret" => $a["client_secret"]
-        );    
-        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/WebEntry_Pmdynaform.html');
-        $file = str_replace("{JSON_DATA}", $this->record["DYN_CONTENT"], $file);        
-        $file = str_replace("{DYN_UID}", $this->dyn_uid, $file);
-        $file = str_replace("{PRJ_UID}",$this->record["PRO_UID"], $file);
-        $file = str_replace("{WORKSPACE}", SYS_SYS, $file);
-        $file = str_replace("{FILEPOST}", $filename, $file);
-        $file = str_replace("{PORT}", $_SERVER["SERVER_PORT"] , $file);                
-        $file = str_replace("{credentials}", G::json_encode($clientToken), $file);
-        $file = str_replace("{FIELDSREQUIRED}", G::json_encode($this->arrayFieldRequired), $file);        
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        $this->jsonr($json);
+        $javascrip = "" .
+                "<script type='text/javascript'>\n" .
+                "var jsondata = " . G::json_encode($json) . ";\n" .
+                "var pm_run_outside_main_app = null;\n" .
+                "var dyn_uid = '" . $this->dyn_uid . "';\n" .
+                "var __DynaformName__ = null;\n" .
+                "var app_uid = null;\n" .
+                "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
+                "var step_mode = null;\n" .
+                "var workspace = '" . SYS_SYS . "';\n" .
+                "var credentials = " . G::json_encode($this->credentials) . ";\n" .
+                "var filePost = '" . $filename . "';\n" .
+                "var fieldsRequired = " . G::json_encode($this->arrayFieldRequired) . ";\n" .
+                "</script>\n" .
+                "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
+                "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
+                "    <img src='/images/bulletButton.gif' style='float:right;'>&nbsp;\n" .
+                "    <a id='dyn_forward' href='' style='float:right;font-size:12px;line-height:1;margin:0px 5px 1px 0px;'>\n" .
+                "        Next Step\n" .
+                "    </a>\n" .
+                "</div>";
+
+        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
+        $file = str_replace("{javascript}", $javascrip, $file);
+
+        $this->debug();
+        echo $file;
+        exit();
+    }
+
+    public function printPmDynaform()
+    {
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        $this->jsonr($json);
+        $javascrip = "" .
+                "<script type='text/javascript'>" .
+                "var jsonData = " . G::json_encode($json) . ";" .
+                "</script>";
+
+        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
+        $file = str_replace("{javascript}", $javascrip, $file);
+
+        $this->debug();
         echo $file;
         exit();
     }
@@ -358,6 +381,15 @@ class pmDynaform
         $dsn = DB_ADAPTER . ':host=' . $host . ';dbname=' . DB_NAME . $port;
 
         return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
+    }
+
+    private function debug()
+    {
+        if ($this->debugMode) {
+            echo "<pre>";
+            echo G::json_encode($json);
+            echo "</pre>";
+        }
     }
 
 }

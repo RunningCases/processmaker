@@ -3,12 +3,13 @@ unset($_SESSION['APPLICATION']);
 
 //get the action from GET or POST, default is todo
 $action = isset( $_GET['action'] ) ? $_GET['action'] : (isset( $_POST['action'] ) ? $_POST['action'] : 'todo');
-//fix a previous inconsistency
 
+//fix a previous inconsistency
 $urlProxy = 'proxyCasesList';
 if ($action == 'selfservice') {
     $action = 'unassigned';
 }
+
 /*----------------------------------********---------------------------------*/
 $urlProxy = '/api/1.0/' . SYS_SYS . '/lists/';
 switch ($action) {
@@ -37,7 +38,7 @@ switch ($action) {
     case 'my-inbox':
         $urlProxy .= 'my-inbox';
         break;
-    case 'selfservice':
+    case 'unassigned':
         $urlProxy = 'proxyCasesList';
         $action = 'unassigned';
         break;
