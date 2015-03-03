@@ -4030,7 +4030,7 @@
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
         <column name="DEL_THREAD_STATUS" type="VARCHAR" size="32" required="true" default="OPEN"/>
-    </table> 
+    </table>
     <table name="LIST_COMPLETED">
         <vendor type="mysql">
             <parameter name="Name" value="LIST_COMPLETED"/>
@@ -4336,8 +4336,8 @@
         <column name="MESS_RAUTH" type="INTEGER" required="true" default="0" />
         <column name="MESS_ACCOUNT" type="VARCHAR" size="256" required="true" default="" />
         <column name="MESS_PASSWORD" type="VARCHAR" size="256" required="true" default="" />
-        <column name="MESS_FROM_MAIL" type="VARCHAR" size="256" required="true" default="" />
-        <column name="MESS_FROM_NAME" type="VARCHAR" size="256" required="true" default="" />
+        <column name="MESS_FROM_MAIL" type="VARCHAR" size="256" default="" />
+        <column name="MESS_FROM_NAME" type="VARCHAR" size="256" default="" />
         <column name="SMTPSECURE" type="VARCHAR" size="3" required="true" default="No" />
         <column name="MESS_TRY_SEND_INMEDIATLY" type="INTEGER" required="true" default="0" />
         <column name="MAIL_TO" type="VARCHAR" size="256" required="true" default="" />
