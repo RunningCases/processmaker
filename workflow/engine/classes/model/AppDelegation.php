@@ -176,7 +176,9 @@ class AppDelegation extends BaseAppDelegation
             $data->DEL_INDEX = $delIndex;
             $data->USR_UID = $sUsrUid;
             $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $featureRegistry = &PMFeatureRegistry::getSingleton();
             $oPluginRegistry->executeTriggers( PM_CREATE_NEW_DELEGATION, $data );
+            $featureRegistry->executeTriggers( PM_CREATE_NEW_DELEGATION, $data );
         }
 
         return $delIndex;
