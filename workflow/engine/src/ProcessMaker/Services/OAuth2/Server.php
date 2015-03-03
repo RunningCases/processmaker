@@ -29,6 +29,10 @@ class Server implements iAuthenticate
     protected static $dbUser;
     protected static $dbPassword;
     protected static $dsn;
+    protected static $dbUserRBAC;
+    protected static $dbPasswordRBAC;
+    protected static $dsnRBAC;
+    protected static $isRBAC = false;
     protected static $workspace;
 
     public function __construct()
@@ -42,9 +46,15 @@ class Server implements iAuthenticate
         );
 
         // $dsn is the Data Source Name for your database, for exmaple "mysql:dbname=my_oauth2_db;host=localhost"
-        $config = array('dsn' => self::$dsn, 'username' => self::$dbUser, 'password' => self::$dbPassword);
-        //var_dump($config); die;
-        $this->storage = new PmPdo($config);
+        $cnn = array('dsn' => self::$dsn, 'username' => self::$dbUser, 'password' => self::$dbPassword);
+
+        if (self::$isRBAC) {
+            $config = array('user_table' => 'USERS');
+            $cnnrbac = array('dsn' => self::$dsnRBAC, 'username' => self::$dbUserRBAC, 'password' => self::$dbPasswordRBAC);
+            $this->storage = new PmPdo($cnn, $config, $cnnrbac);
+        } else {
+            $this->storage = new PmPdo($cnn);
+        }
 
         // Pass a storage object or array of storage objects to the OAuth2 server class
         $this->server = new \OAuth2\Server($this->storage, array('allow_implicit' => true));
@@ -109,6 +119,21 @@ class Server implements iAuthenticate
             self::$dbUser = $user;
             self::$dbPassword = $password;
             self::$dsn = $dsn;
+        }
+    }
+
+    public static function setDatabaseSourceRBAC($user, $password = '', $dsn = '')
+    {
+        if (is_array($user)) {
+            self::$dbUserRBAC = $user['username'];
+            self::$dbPasswordRBAC = $user['password'];
+            self::$dsnRBAC = $user['dsn'];
+            self::$isRBAC = true;
+        } else {
+            self::$dbUserRBAC = $user;
+            self::$dbPasswordRBAC = $password;
+            self::$dsnRBAC = $dsn;
+            self::$isRBAC = true;
         }
     }
 

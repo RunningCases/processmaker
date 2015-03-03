@@ -9,13 +9,15 @@ include_once 'propel/util/Criteria.php';
 
 include_once 'classes/model/ListInboxPeer.php';
 
+
 /**
  * Base class that represents a row from the 'LIST_INBOX' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
- */
+*/
+ 
 abstract class BaseListInbox extends BaseObject implements Persistent
 {
 
@@ -62,6 +64,12 @@ abstract class BaseListInbox extends BaseObject implements Persistent
      * @var        int
      */
     protected $app_number = 0;
+    
+    /**
+     * The value for the app_status field.
+     * @var        string
+     */
+    protected $app_status = '';
 
     /**
      * The value for the app_title field.
@@ -213,6 +221,17 @@ abstract class BaseListInbox extends BaseObject implements Persistent
     {
 
         return $this->app_number;
+    }
+    
+    /**
+     * Get the [app_status] column value.
+     * 
+     * @return     string
+     */
+    public function getAppStatus()
+    {
+
+        return $this->app_status;
     }
 
     /**
@@ -562,7 +581,28 @@ abstract class BaseListInbox extends BaseObject implements Persistent
         }
 
     } // setAppNumber()
+    
+    /**
+     * Set the value of [app_status] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setAppStatus($v)
+    {
 
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->app_status !== $v || $v === '') {
+            $this->app_status = $v;
+            $this->modifiedColumns[] = ListInboxPeer::APP_STATUS;
+        }
+
+    } // setAppStatus()
     /**
      * Set the value of [app_title] column.
      * 
@@ -883,37 +923,39 @@ abstract class BaseListInbox extends BaseObject implements Persistent
             $this->pro_uid = $rs->getString($startcol + 4);
 
             $this->app_number = $rs->getInt($startcol + 5);
+            
+            $this->app_status = $rs->getString($startcol + 6);
 
-            $this->app_title = $rs->getString($startcol + 6);
+            $this->app_title = $rs->getString($startcol + 7);
 
-            $this->app_pro_title = $rs->getString($startcol + 7);
+            $this->app_pro_title = $rs->getString($startcol + 8);
 
-            $this->app_tas_title = $rs->getString($startcol + 8);
+            $this->app_tas_title = $rs->getString($startcol + 9);
 
-            $this->app_update_date = $rs->getTimestamp($startcol + 9, null);
+            $this->app_update_date = $rs->getTimestamp($startcol + 10, null);
 
-            $this->del_previous_usr_uid = $rs->getString($startcol + 10);
+            $this->del_previous_usr_uid = $rs->getString($startcol + 11);
 
-            $this->del_previous_usr_username = $rs->getString($startcol + 11);
+            $this->del_previous_usr_username = $rs->getString($startcol + 12);
 
-            $this->del_previous_usr_firstname = $rs->getString($startcol + 12);
+            $this->del_previous_usr_firstname = $rs->getString($startcol + 13);
 
-            $this->del_previous_usr_lastname = $rs->getString($startcol + 13);
+            $this->del_previous_usr_lastname = $rs->getString($startcol + 14);
 
-            $this->del_delegate_date = $rs->getTimestamp($startcol + 14, null);
+            $this->del_delegate_date = $rs->getTimestamp($startcol + 15, null);
 
-            $this->del_init_date = $rs->getTimestamp($startcol + 15, null);
+            $this->del_init_date = $rs->getTimestamp($startcol + 16, null);
 
-            $this->del_due_date = $rs->getTimestamp($startcol + 16, null);
+            $this->del_due_date = $rs->getTimestamp($startcol + 17, null);
 
-            $this->del_priority = $rs->getString($startcol + 17);
+            $this->del_priority = $rs->getString($startcol + 18);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 18; // 18 = ListInboxPeer::NUM_COLUMNS - ListInboxPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 19; // 18 = ListInboxPeer::NUM_COLUMNS - ListInboxPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ListInbox object", $e);
@@ -1136,41 +1178,45 @@ abstract class BaseListInbox extends BaseObject implements Persistent
                 return $this->getAppNumber();
                 break;
             case 6:
-                return $this->getAppTitle();
+                return $this->getAppStatus();
                 break;
             case 7:
-                return $this->getAppProTitle();
+                return $this->getAppTitle();
                 break;
             case 8:
-                return $this->getAppTasTitle();
+                return $this->getAppProTitle();
                 break;
             case 9:
-                return $this->getAppUpdateDate();
+                return $this->getAppTasTitle();
                 break;
             case 10:
-                return $this->getDelPreviousUsrUid();
+                return $this->getAppUpdateDate();
                 break;
             case 11:
-                return $this->getDelPreviousUsrUsername();
+                return $this->getDelPreviousUsrUid();
                 break;
             case 12:
-                return $this->getDelPreviousUsrFirstname();
+                return $this->getDelPreviousUsrUsername();
                 break;
             case 13:
-                return $this->getDelPreviousUsrLastname();
+                return $this->getDelPreviousUsrFirstname();
                 break;
             case 14:
-                return $this->getDelDelegateDate();
+                return $this->getDelPreviousUsrLastname();
                 break;
             case 15:
-                return $this->getDelInitDate();
+                return $this->getDelDelegateDate();
                 break;
             case 16:
-                return $this->getDelDueDate();
+                return $this->getDelInitDate();
                 break;
             case 17:
+                return $this->getDelDueDate();
+                break;
+            case 18:
                 return $this->getDelPriority();
                 break;
+
             default:
                 return null;
                 break;
@@ -1197,18 +1243,19 @@ abstract class BaseListInbox extends BaseObject implements Persistent
             $keys[3] => $this->getTasUid(),
             $keys[4] => $this->getProUid(),
             $keys[5] => $this->getAppNumber(),
-            $keys[6] => $this->getAppTitle(),
-            $keys[7] => $this->getAppProTitle(),
-            $keys[8] => $this->getAppTasTitle(),
-            $keys[9] => $this->getAppUpdateDate(),
-            $keys[10] => $this->getDelPreviousUsrUid(),
-            $keys[11] => $this->getDelPreviousUsrUsername(),
-            $keys[12] => $this->getDelPreviousUsrFirstname(),
-            $keys[13] => $this->getDelPreviousUsrLastname(),
-            $keys[14] => $this->getDelDelegateDate(),
-            $keys[15] => $this->getDelInitDate(),
-            $keys[16] => $this->getDelDueDate(),
-            $keys[17] => $this->getDelPriority(),
+            $keys[6] => $this->getAppStatus(),
+            $keys[7] => $this->getAppTitle(),
+            $keys[8] => $this->getAppProTitle(),
+            $keys[9] => $this->getAppTasTitle(),
+            $keys[10] => $this->getAppUpdateDate(),
+            $keys[11] => $this->getDelPreviousUsrUid(),
+            $keys[12] => $this->getDelPreviousUsrUsername(),
+            $keys[13] => $this->getDelPreviousUsrFirstname(),
+            $keys[14] => $this->getDelPreviousUsrLastname(),
+            $keys[15] => $this->getDelDelegateDate(),
+            $keys[16] => $this->getDelInitDate(),
+            $keys[17] => $this->getDelDueDate(),
+            $keys[18] => $this->getDelPriority(),
         );
         return $result;
     }
@@ -1259,39 +1306,42 @@ abstract class BaseListInbox extends BaseObject implements Persistent
                 $this->setAppNumber($value);
                 break;
             case 6:
-                $this->setAppTitle($value);
+                $this->setAppStatus($value);
                 break;
             case 7:
-                $this->setAppProTitle($value);
+                $this->setAppTitle($value);
                 break;
             case 8:
-                $this->setAppTasTitle($value);
+                $this->setAppProTitle($value);
                 break;
             case 9:
-                $this->setAppUpdateDate($value);
+                $this->setAppTasTitle($value);
                 break;
             case 10:
-                $this->setDelPreviousUsrUid($value);
+                $this->setAppUpdateDate($value);
                 break;
             case 11:
-                $this->setDelPreviousUsrUsername($value);
+                $this->setDelPreviousUsrUid($value);
                 break;
             case 12:
-                $this->setDelPreviousUsrFirstname($value);
+                $this->setDelPreviousUsrUsername($value);
                 break;
             case 13:
-                $this->setDelPreviousUsrLastname($value);
+                $this->setDelPreviousUsrFirstname($value);
                 break;
             case 14:
-                $this->setDelDelegateDate($value);
+                $this->setDelPreviousUsrLastname($value);
                 break;
             case 15:
-                $this->setDelInitDate($value);
+                $this->setDelDelegateDate($value);
                 break;
             case 16:
-                $this->setDelDueDate($value);
+                $this->setDelInitDate($value);
                 break;
             case 17:
+                $this->setDelDueDate($value);
+                break;
+            case 18:
                 $this->setDelPriority($value);
                 break;
         } // switch()
@@ -1340,53 +1390,57 @@ abstract class BaseListInbox extends BaseObject implements Persistent
         if (array_key_exists($keys[5], $arr)) {
             $this->setAppNumber($arr[$keys[5]]);
         }
-
+        
         if (array_key_exists($keys[6], $arr)) {
-            $this->setAppTitle($arr[$keys[6]]);
+            $this->setAppStatus($arr[$keys[6]]);
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setAppProTitle($arr[$keys[7]]);
+            $this->setAppTitle($arr[$keys[7]]);
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setAppTasTitle($arr[$keys[8]]);
+            $this->setAppProTitle($arr[$keys[8]]);
         }
 
         if (array_key_exists($keys[9], $arr)) {
-            $this->setAppUpdateDate($arr[$keys[9]]);
+            $this->setAppTasTitle($arr[$keys[9]]);
         }
 
         if (array_key_exists($keys[10], $arr)) {
-            $this->setDelPreviousUsrUid($arr[$keys[10]]);
+            $this->setAppUpdateDate($arr[$keys[10]]);
         }
 
         if (array_key_exists($keys[11], $arr)) {
-            $this->setDelPreviousUsrUsername($arr[$keys[11]]);
+            $this->setDelPreviousUsrUid($arr[$keys[11]]);
         }
 
         if (array_key_exists($keys[12], $arr)) {
-            $this->setDelPreviousUsrFirstname($arr[$keys[12]]);
+            $this->setDelPreviousUsrUsername($arr[$keys[12]]);
         }
 
         if (array_key_exists($keys[13], $arr)) {
-            $this->setDelPreviousUsrLastname($arr[$keys[13]]);
+            $this->setDelPreviousUsrFirstname($arr[$keys[13]]);
         }
 
         if (array_key_exists($keys[14], $arr)) {
-            $this->setDelDelegateDate($arr[$keys[14]]);
+            $this->setDelPreviousUsrLastname($arr[$keys[14]]);
         }
 
         if (array_key_exists($keys[15], $arr)) {
-            $this->setDelInitDate($arr[$keys[15]]);
+            $this->setDelDelegateDate($arr[$keys[15]]);
         }
 
         if (array_key_exists($keys[16], $arr)) {
-            $this->setDelDueDate($arr[$keys[16]]);
+            $this->setDelInitDate($arr[$keys[16]]);
         }
 
         if (array_key_exists($keys[17], $arr)) {
-            $this->setDelPriority($arr[$keys[17]]);
+            $this->setDelDueDate($arr[$keys[17]]);
+        }
+
+        if (array_key_exists($keys[18], $arr)) {
+            $this->setDelPriority($arr[$keys[18]]);
         }
 
     }
@@ -1422,6 +1476,10 @@ abstract class BaseListInbox extends BaseObject implements Persistent
 
         if ($this->isColumnModified(ListInboxPeer::APP_NUMBER)) {
             $criteria->add(ListInboxPeer::APP_NUMBER, $this->app_number);
+        }
+        
+        if ($this->isColumnModified(ListInboxPeer::APP_STATUS)) {
+            $criteria->add(ListInboxPeer::APP_STATUS, $this->app_status);
         }
 
         if ($this->isColumnModified(ListInboxPeer::APP_TITLE)) {
@@ -1545,6 +1603,8 @@ abstract class BaseListInbox extends BaseObject implements Persistent
         $copyObj->setProUid($this->pro_uid);
 
         $copyObj->setAppNumber($this->app_number);
+        
+        $copyObj->setAppStatus($this->app_status);
 
         $copyObj->setAppTitle($this->app_title);
 

@@ -32,6 +32,15 @@ new Ext.KeyMap(document, {
   }
 });
 
+Ext.apply(Ext.form.VTypes, {
+    textWithoutTags: function (value, field)
+    {
+        var strAux = "a|applet|b|body|br|button|code|div|em|embed|form|frame|frameset|head|header|html|iframe|img|input|noscript|object|script|select|style|table|textarea";
+
+        return !(eval("/^.*\\x3C[\\s\\x2F]*(?:" + strAux + ")\\s*.*\\x3E.*$/").test(value));
+    },
+    textWithoutTagsText: ""
+});
 
 Ext.onReady(function(){
   Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
@@ -520,7 +529,8 @@ function newProcess(params)
         xtype:'textfield',
         width: 260,
         maskRe: /^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\...*)(\..+)?$)[^\x00-\x1f\\?*\";|/]+$/i,
-        allowBlank: false
+        allowBlank: false,
+        vtype: "textWithoutTags"
       },  {
         id: 'PRO_DESCRIPTION',
         fieldLabel: _('ID_DESCRIPTION'),
