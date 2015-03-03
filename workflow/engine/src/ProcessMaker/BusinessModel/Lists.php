@@ -1,6 +1,5 @@
 <?php
 namespace ProcessMaker\BusinessModel;
-
 use \G;
 
 /**
@@ -18,7 +17,7 @@ class Lists {
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
-     */
+    */
     public function getList($listName = 'inbox', $dataList = array(), $total = false)
     {
         Validator::isArray($dataList, '$dataList');
@@ -31,7 +30,6 @@ class Lists {
         $userUid = $dataList["userId"];
         $filters["paged"]    = isset( $dataList["paged"] ) ? $dataList["paged"] : true;
         $filters['count']    = isset( $dataList['count'] ) ? $dataList['count'] : true;
-
         $filters["category"] = isset( $dataList["category"] ) ? $dataList["category"] : "";
         $filters["process"]  = isset( $dataList["process"] ) ? $dataList["process"] : "";
         $filters["search"]   = isset( $dataList["search"] ) ? $dataList["search"] : "";
@@ -87,7 +85,7 @@ class Lists {
         $filters["start"] = (int)$filters["start"];
         $filters["start"] = abs($filters["start"]);
         if ($filters["start"] != 0) {
-            $filters["start"]--;
+            $filters["start"]+1;
         }
 
         $filters["limit"] = (int)$filters["limit"];
@@ -162,11 +160,10 @@ class Lists {
                 //$value = array_change_key_case($value, CASE_LOWER);
             }
         }
-
         $response = array();
         if ($filters["paged"]) {
             $filtersData = array();
-            $filtersData['start']       = $filters["start"]+1;
+            $filtersData['start']       = $filters["start"];
             $filtersData['limit']       = $filters["limit"];
             $filtersData['sort']        = G::toLower($filters["sort"]);
             $filtersData['dir']         = G::toLower($filters["dir"]);
@@ -177,11 +174,10 @@ class Lists {
             $filtersData['date_to']     = $filters["dateTo"];
             $response['filters']        = $filtersData;
             $response['data']           = $result;
-            $response['totalCount']     = $list->countTotal($userUid, $filters);
+            $response['totalCount']     = $list->countTotal($userUid, $filtersData);
         } else {
             $response = $result;
         }
-
         return $response;
     }
 }

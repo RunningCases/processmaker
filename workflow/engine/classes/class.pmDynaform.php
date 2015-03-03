@@ -224,6 +224,11 @@ class pmDynaform
         ob_clean();
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
+        $title = "<table width='100%' align='center'>\n" .
+                "    <tr class='userGroupTitle'>\n" .
+                "        <td width='100%' align='center'>" . $headData["CASE"] . " #: " . $headData["APP_NUMBER"] . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $headData["TITLE"] . ": " . $headData["APP_TITLE"] . "</td>\n" .
+                "    </tr>\n" .
+                "</table>\n";
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
@@ -240,12 +245,8 @@ class pmDynaform
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/cases_Step.js'></script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
-                "<table width='100%' align='center'>\n" .
-                "    <tr class='userGroupTitle'>\n" .
-                "        <td width='100%' align='center'>" . $headData["CASE"] . " #: " . $headData["APP_NUMBER"] . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $headData["TITLE"] . ": " . $headData["APP_TITLE"] . "</td>\n" .
-                "    </tr>\n" .
-                "</table>\n" .
-                "<div style='width:100%;padding: 0px 10px 0px 10px'>\n" .
+                ($this->app_data["PRO_SHOW_MESSAGE"] === 1 ? '' : $title ) .
+                "<div style='width:100%;padding:0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
                 "    <img src='/images/bulletButtonLeft.gif' style='float:left;'>&nbsp;\n" .
                 "    <a id='dyn_backward' href='' style='float:left;'>\n" .
                 "    </a>\n" .
