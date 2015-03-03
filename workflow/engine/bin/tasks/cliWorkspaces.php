@@ -338,8 +338,8 @@ function database_upgrade($command, $args) {
             $arrayData["MESS_RAUTH"]               = (int)($emailConfiguration["MESS_RAUTH"]);
             $arrayData["MESS_ACCOUNT"]             = $emailConfiguration["MESS_ACCOUNT"];
             $arrayData["MESS_PASSWORD"]            = $emailConfiguration["MESS_PASSWORD"];
-            $arrayData["MESS_FROM_MAIL"]           = $emailConfiguration["MESS_FROM_MAIL"];
-            $arrayData["MESS_FROM_NAME"]           = $emailConfiguration["MESS_FROM_NAME"];
+            $arrayData["MESS_FROM_MAIL"]           = isset($emailConfiguration["MESS_FROM_MAIL"]) ? $emailConfiguration["MESS_FROM_MAIL"] : "";
+            $arrayData["MESS_FROM_NAME"]           = isset($emailConfiguration["MESS_FROM_NAME"]) ? $emailConfiguration["MESS_FROM_NAME"] : "";
             $arrayData["SMTPSECURE"]               = $emailConfiguration["SMTPSecure"];
             $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (int)($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]);
             $arrayData["MAIL_TO"]                  = $emailConfiguration["MAIL_TO"];
