@@ -73,6 +73,7 @@ class ListCompleted extends BaseListCompleted
         $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
         $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
         $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
+        $data['DEL_PREVIOUS'] = isset($data['DEL_PREVIOUS']) ? $data['DEL_PREVIOUS'] : "";
 
         if ($data['DEL_PREVIOUS'] != 0) {
             $criteria = new Criteria();

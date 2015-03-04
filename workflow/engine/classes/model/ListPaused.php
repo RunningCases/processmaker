@@ -47,6 +47,7 @@ class ListPaused extends BaseListPaused {
         $data['APP_PRO_TITLE'] = $aRow['CON_VALUE'];
 
         $criteria = new Criteria();
+        $criteria->addSelectColumn(AppDelegationPeer::USR_UID);
         $criteria->addSelectColumn(AppDelegationPeer::TAS_UID);
         $criteria->addSelectColumn(AppDelegationPeer::DEL_INIT_DATE);
         $criteria->addSelectColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
@@ -58,6 +59,7 @@ class ListPaused extends BaseListPaused {
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
         $aRow = $dataset->getRow();
+        $data['USR_UID'] = isset($data['USR_UID']) ? $data['USR_UID'] : $aRow['USR_UID'];
         $data['TAS_UID'] = $aRow['TAS_UID'];
         $data['DEL_INIT_DATE'] = $aRow['DEL_INIT_DATE'];
         $data['DEL_DUE_DATE'] = $aRow['DEL_TASK_DUE_DATE'];
