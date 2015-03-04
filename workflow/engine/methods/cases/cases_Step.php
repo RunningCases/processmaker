@@ -272,6 +272,7 @@ try {
             $a = new pmDynaform($_GET['UID'], $Fields['APP_DATA']);
             if ($a->isResponsive()) {
                 $a->app_data["PRO_SHOW_MESSAGE"] = $noShowTitle;
+                $a->app_data["TRIGGER_DEBUG"] = $_SESSION['TRIGGER_DEBUG']['ISSET'];
                 $a->printEdit((!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $_SESSION['APPLICATION'], $array, $oStep->getStepMode());
             } else {
                 $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', $Fields['APP_DATA'], 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'], '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
