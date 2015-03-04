@@ -147,31 +147,24 @@ class PMFeatureRegistry
     public function executeTriggers ($triggerId, $data)
     {
         foreach ($this->features as $feature) {
-            $feature->executeTrigger($triggerId, $data);
+            $feature->executeTriggers($triggerId, $data);
         }
     }
 
     public function setupFeatures ()
     {
-        return true;
-        $featureDirList = glob(PATH_FEATURES . "/*", GLOB_ONLYDIR);
+        $path = PATH_FEATURES;
+        $featureDirList = glob(PATH_FEATURES."/*", GLOB_ONLYDIR);
         foreach ($featureDirList as $directory) {
-            if ($directory == 'ViewContainers') {
+            if (basename($directory) === 'ViewContainers') {
                 continue;
             }
-            $featureApiClassList = Util\Common::rglob($directory . DS . 'Services' . DS . 'Api' . "/*");
-            foreach ($featureApiClassList as $classFile) {
-                if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
-                    $relClassPath = str_replace('.php', '', str_replace($servicesDir, '', $classFile));
-                    $namespace = '\\ProcessMaker\\Services\\Api\\' . basename($classFile, '.php');
-                    $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
-                    require_once $classFile;
-                    $this->rest->addAPIClass($namespace);
-                }
-            }
-        }
-        foreach ($this->features as $feature) {
+            $name = basename($directory);
+            $featureClass = $name.'Feature';
+            require_once $directory.DS.$featureClass.'.php';
+            $feature = new $featureClass($name);
             $feature->setup();
+            $this->features[$name] = $feature;
         }
     }
 

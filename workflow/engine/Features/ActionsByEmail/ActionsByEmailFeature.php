@@ -13,17 +13,22 @@ G::LoadClass('feature');
 
 class ActionsByEmailFeature extends PMFeature
 {
+    protected $triggers;
+    protected $classInstance;
+
     public function __construct($namespace, $filename = null)
     {
         $result               = parent::__construct($namespace, $filename);
         $this->sFriendlyName  = 'Actions By Email';
         $this->sDescription   = 'Actions by Email using variables as multiple choice actions delivered by email';
         $this->sFeatureFolder = 'ActionsByEmail';
+        $this->classInstance  = array('filename' => 'class.actionsByEmail.php', 'classname' => 'actionsByEmailClass');
         $this->sSetupPage     = '';
         $this->iVersion       = self::getFeatureVersion($namespace);
         $this->aWorkspaces    = null;
         $this->aDependences   = array(array('sClassName' => 'enterprise'), array('sClassName' => 'pmLicenseManager'));
-        $this->bPrivate       = parent::registerEE($this->sFeatureFolder, $this->iVersion);
+        $this->triggers       = array();
+//        $this->bPrivate       = parent::registerEE($this->sFeatureFolder, $this->iVersion);
 
         return $result;
     }
@@ -31,24 +36,28 @@ class ActionsByEmailFeature extends PMFeature
     public function setup()
     {
         try {
-            // Register the extended tab for the task properties
-            //$this->registerTaskExtendedProperty('actionsByEmail/configActionsByEmail', "Actions by Email");
-            //$this->registerTaskExtendedProperty('actionsByEmail/configActionsByEmail', 'Actions by Email');
-            //$this->registerMenu('setup', 'menusetup.php');
-
-            // Register the trigger for the hook PM_CREATE_NEW_DELEGATION
             if (!defined('PM_CREATE_NEW_DELEGATION')) {
                 throw new Exception('It might be using a version of ProcessMaker which is not totally compatible with this plugin, the minimun required version is 2.0.37');
             }
             $this->registerTrigger(PM_CREATE_NEW_DELEGATION, 'sendActionsByEmail');
-
-            // Register the external step for the tracking form
-            //$this->registerStep('4939290144f0745f5ddb1d1019823738', 'externalStep', 'Actions by Email - Tracking Form'); // ToDo: For the next release
         } catch (Exception $error) {
-            //G::SendMessageText($error->getMessage(), 'WARNING');
         }
     }
 
+    public function executeTriggers($triggerId, $data)
+    {
+        $method = $this->triggers[$triggerId];
+        require_once PATH_FEATURES. $this->sFeatureFolder . DS .$this->classInstance['filename'];
+        $actionsByEmail = new $this->classInstance['classname']();
+        $actionsByEmail->$method($data);
+    }
+    
+    public function registerTrigger($triggerId, $method)
+    {
+        $this->triggers[$triggerId] = $method;
+    }
+    
+    
     public function install()
     {
         $this->checkTables();

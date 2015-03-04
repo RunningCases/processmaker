@@ -1,13 +1,16 @@
 <?php
+
+
 class actionsByEmailClass extends PMPlugin
 {
     public function __construct()
     {
-        set_include_path(PATH_PLUGINS . 'actionsByEmail' . PATH_SEPARATOR . get_include_path());
+        set_include_path(PATH_FEATURES . 'ActionsByEmail' . PATH_SEPARATOR . get_include_path());
     }
 
     public function setup()
     {
+        
     }
 
     public function getFieldsForPageSetup()
@@ -67,8 +70,8 @@ class actionsByEmailClass extends PMPlugin
                 $result = AbeConfigurationPeer::doSelectRS($criteria);
                 $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $result->next();
-
                 if ($configuration = $result->getRow()) {
+                    $configuration['ABE_EMAIL_FIELD'] = str_replace('@@', '', $configuration['ABE_EMAIL_FIELD']);
                     if ($configuration['ABE_EMAIL_FIELD'] != '' && isset($caseFields['APP_DATA'][$configuration['ABE_EMAIL_FIELD']])) {
                         $email = trim($caseFields['APP_DATA'][$configuration['ABE_EMAIL_FIELD']]);
                     } else {
@@ -108,39 +111,47 @@ class actionsByEmailClass extends PMPlugin
                             $_SESSION['CURRENT_DYN_UID'] = $configuration['DYN_UID'];
 
                             $scriptCode = '';
-                            $dynaform = new Form($caseFields['PRO_UID'] . PATH_SEP . $configuration['DYN_UID'], PATH_DYNAFORM, SYS_LANG, false);
-                            $dynaform->mode = 'view';
-                            $dynaform->values = $caseFields['APP_DATA'];
-
-                            foreach ($dynaform->fields as $fieldName => $field) {
-                                if ($field->type == 'submit') {
-                                    unset($dynaform->fields[$fieldName]);
-                                }
-                            }
+//                            foreach ($dynaform->fields as $fieldName => $field) {
+//                                if ($field->type == 'submit') {
+//                                    unset($dynaform->fields[$fieldName]);
+//                                }
+//                            }
 
                             $__ABE__ = '';
-                            $link = (G::is_https() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/actionsByEmail/services/';
+                            $link = (G::is_https() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/ActionsByEmail';
 
                             switch ($configuration['ABE_TYPE']) {
                                 case 'LINK':
-                                    $__ABE__ .= $dynaform->render(PATH_PLUGINS . 'actionsByEmail/xmlform.html', $scriptCode) . '<br />';
+                                    // $__ABE__ .= $dynaform->render(PATH_FEATURES . 'actionsByEmail/xmlform.html', $scriptCode) . '<br />';
                                     $__ABE__ .= '<a href="' . $link . 'dataForm?APP_UID=' . G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY) . '&DYN_UID=' . G::encrypt($configuration['DYN_UID'], URL_KEY) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank">Please complete this form</a>';
                                     break;
                                 // coment
                                 case 'FIELD':
-                                    if (isset($dynaform->fields[$configuration['ABE_ACTION_FIELD']])) {
-                                        $field = $dynaform->fields[$configuration['ABE_ACTION_FIELD']];
-                                        unset($dynaform->fields[$configuration['ABE_ACTION_FIELD']]);
-                                        $__ABE__ .= $dynaform->render(PATH_PLUGINS . 'actionsByEmail/xmlform.html', $scriptCode) . '<br />';
-                                        $__ABE__ .= '<strong>' . $field->label . '</strong><br /><table align="left" border="0"><tr>';
+                                        $variableService = new \ProcessMaker\Services\Api\Project\Variable();
+                                        $variables = $variableService->doGetVariables($caseFields['PRO_UID']);
+                                        $field = new stdClass();
+                                        $field->label = 'Test';
+                                        $field->type = 'dropdown';
+                                        $field->options = array();
+                                        $actionField = str_replace('@@', '', $configuration['ABE_ACTION_FIELD']);
+                                        foreach ($variables as $variable) {
+                                            if ($variable['var_name'] == $actionField) {
+                                                $field->label = $variable['var_name'];
+                                                $field->type = 'dropdown';
+                                                $values = json_decode($variable['var_accepted_values']);
+                                                foreach ($values as $value) {
+                                                    $field->options[$value->keyValue] = $value->value;
+                                                }
+                                            }
+                                        }
 
+                                        $__ABE__ .= '<strong>' . $field->label . '</strong><br /><table align="left" border="0"><tr>';
+                                        
                                         switch ($field->type) {
                                             case 'dropdown':
                                             case 'radiogroup':
-                                                $field->executeSQL($field->owner);
                                                 $index = 1;
                                                 $__ABE__.='<br /><td><table align="left" cellpadding="2"><tr>';
-
                                                 foreach ($field->options as $optValue => $optName) {
                                                     $__ABE__ .= '<td align="center"><a style="text-decoration: none; color: #000; background-color: #E5E5E5; ';
                                                     $__ABE__ .= 'filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#EFEFEF, endColorstr=#BCBCBC); ';
@@ -150,7 +161,7 @@ class actionsByEmailClass extends PMPlugin
                                                     $__ABE__ .= 'background-image: -o-linear-gradient(top, #EFEFEF, #BCBCBC); border: 1px solid #AAAAAA; ';
                                                     $__ABE__ .= 'border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); ';
                                                     $__ABE__ .= 'font-family: Arial,serif; font-size: 9pt; font-weight: 400; line-height: 14px; margin: 2px 0; padding: 2px 7px; ';
-                                                    $__ABE__ .= 'text-decoration: none; text-transform: capitalize;" href="' .urldecode(urlencode($link)). 'dataField?APP_UID=';
+                                                    $__ABE__ .= 'text-decoration: none; text-transform: capitalize;" href="' .urldecode(urlencode($link)). '?action=processABE&APP_UID=';
                                                     $__ABE__ .= G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY);
                                                     $__ABE__ .= '&FIELD=' . G::encrypt($configuration['ABE_ACTION_FIELD'], URL_KEY) . '&VALUE=' . G::encrypt($optValue, URL_KEY);
                                                     $__ABE__ .= '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank" >' . $optName;
@@ -169,9 +180,7 @@ class actionsByEmailClass extends PMPlugin
                                                 $__ABE__ .= '<td align="center"><a href="' . $link . 'dataField?APP_UID=' . G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY) . '&FIELD=' . G::encrypt($configuration['ABE_ACTION_FIELD'], URL_KEY) . '&VALUE=' . G::encrypt($field->value, URL_KEY) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank">Uncheck</a></td>';
                                                 break;
                                         }
-
                                         $__ABE__ .= '</tr></table>';
-                                    }
                                     break;
                             }
 

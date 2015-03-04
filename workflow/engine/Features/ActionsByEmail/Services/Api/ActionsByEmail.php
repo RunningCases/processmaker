@@ -16,7 +16,6 @@ require_once 'classes/model/Users.php';
  * Class ActionsByEmail
  *
  * @author gustavo cruz <gustavo.cruz@colosa.com>
- * @protected
  */
 class ActionsByEmail extends Api
 {
@@ -515,15 +514,15 @@ class ActionsByEmail extends Api
         }
         return $message;
     }
-    
+
     /**
      * 
      * @url GET /Templates/:proId
      */
     public function getTemplates($proId)
     {
-        $templates   = array();
-        $path        = PATH_DATA_MAILTEMPLATES . $proId . PATH_SEP;
+        $templates = array();
+        $path = PATH_DATA_MAILTEMPLATES . $proId . PATH_SEP;
 
         \G::verifyPath($path, true);
 
@@ -544,6 +543,7 @@ class ActionsByEmail extends Api
                 $templates[] = array('FILE' => $object, 'NAME' => $object);
             }
         }
-        return  $templates;
+        return $templates;
     }
+    
 }
