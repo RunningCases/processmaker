@@ -713,4 +713,22 @@ class Light extends Api
         }
         return $files;
     }
+
+    /**
+     * @url GET /:type/case/:app_uid
+     *
+     * @param $access
+     * @param $refresh
+     * @return mixed
+     */
+    public function getInformation($type, $app_uid)
+    {
+        try {
+            $userUid       = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $oMobile->getInformation($userUid, $type, $app_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }
