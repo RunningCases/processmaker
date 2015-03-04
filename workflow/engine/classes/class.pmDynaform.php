@@ -101,7 +101,7 @@ class pmDynaform
                     );
                 }
                 //query & options
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggets")) {
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggest")) {
                     if (!isset($json->dbConnection))
                         $json->dbConnection = "none";
                     if (!isset($json->sql))
@@ -135,14 +135,14 @@ class pmDynaform
                                 //data
                                 if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown") {
                                     array_push($cells, array(
-                                        "value" => $row[$column->name],
-                                        "label" => $row[$column->name . "_label"]
+                                        "value" => isset($row[$column->name]) ? $row[$column->name] : "",
+                                        "label" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : ""
                                     ));
                                 }
                                 if ($column->type === "suggest") {
                                     array_push($cells, array(
-                                        "value" => $row[$column->name . "_label"],
-                                        "label" => $row[$column->name]
+                                        "value" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : "",
+                                        "label" => isset($row[$column->name]) ? $row[$column->name] : ""
                                     ));
                                 }
                             }

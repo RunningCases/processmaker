@@ -249,7 +249,7 @@ Ext.onReady(function(){
                     if (iframeDynaForm.getElementsByTagName("form")) {
                         dynaformChange = iframeDynaForm.getElementsByTagName("form").item(0);
 
-                        if (typeof(window.frames["openCaseFrame"].dynaFormChanged) == "function") {
+                        if (typeof(window.frames["openCaseFrame"].dynaFormChanged) == "function" && dynaformChange) {
                             swDynaformChange = (window.frames["openCaseFrame"].dynaFormChanged(dynaformChange))? 1 : 0;
                         }
                     }
