@@ -55,6 +55,7 @@ class Light
             $task->setFormatFieldNameInUppercase(false);
             $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
 
+            $response = array();
             foreach ($processList as $key => $processInfo) {
                 $tempTreeChildren = array ();
                 foreach ($processList[$key] as $keyChild => $processInfoChild) {
@@ -78,7 +79,7 @@ class Light
                         $tempTreeChildren[] = $tempTreeChild;
                     }
                 }
-                $response = $tempTreeChildren;
+                $response = array_merge($response, $tempTreeChildren);
             }
         } catch (\Exception $e) {
             throw $e;
