@@ -75,4 +75,7 @@ $(window).load(function () {
         form.submit();
         return false;
     };
+    if (triggerDebug === true) {
+        showdebug();
+    }
 });

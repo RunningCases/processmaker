@@ -87,21 +87,8 @@ class pmDynaform
                         $json->$key = $this->app_data[$triggerValue];
                     }
                 }
-                //data
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown")) {
-                    $json->data = array(
-                        "value" => isset($this->data[$json->name]) ? $this->data[$json->name] : "",
-                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : ""
-                    );
-                }
-                if ($key === "type" && ($value === "suggets")) {
-                    $json->data = array(
-                        "value" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "",
-                        "label" => isset($this->data[$json->name]) ? $this->data[$json->name] : ""
-                    );
-                }
                 //query & options
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggest")) {
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggest" || $value === "checkbox" || $value === "radio")) {
                     if (!isset($json->dbConnection))
                         $json->dbConnection = "none";
                     if (!isset($json->sql))
@@ -120,8 +107,23 @@ class pmDynaform
                             );
                             array_push($json->options, $option);
                         }
-                        $json->data = isset($json->options[0]) ? $json->options[0] : $json->data;
+                        if (isset($json->options[0])) {
+                            $json->data = $json->options[0];
+                        }
                     }
+                }
+                //data
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "checkbox" || $value === "radio")) {
+                    $json->data = array(
+                        "value" => isset($this->data[$json->name]) ? $this->data[$json->name] : "",
+                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : ""
+                    );
+                }
+                if ($key === "type" && ($value === "suggest")) {
+                    $json->data = array(
+                        "value" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "",
+                        "label" => isset($this->data[$json->name]) ? $this->data[$json->name] : ""
+                    );
                 }
                 //grid
                 if ($key === "type" && ($value === "grid")) {
@@ -191,6 +193,7 @@ class pmDynaform
                 "var credentials = " . G::json_encode($clientToken) . ";\n" .
                 "var filePost = null;\n" .
                 "var fieldsRequired = null;\n" .
+                "var triggerDebug = null;\n" .
                 "$(window).load(function () {\n" .
                 "    var data = jsondata;\n" .
                 "    data.items[0].mode = 'view';\n" .
@@ -221,6 +224,7 @@ class pmDynaform
 
     public function printEdit($pm_run_outside_main_app, $application, $headData, $step_mode = 'EDIT')
     {
+        error_log(print_r($this->app_data, true));
         ob_clean();
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
@@ -242,6 +246,7 @@ class pmDynaform
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = null;\n" .
                 "var fieldsRequired = null;\n" .
+                "var triggerDebug = " . ($this->app_data["TRIGGER_DEBUG"] === 1 ? "true" : "false") . ";\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/cases_Step.js'></script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
@@ -282,6 +287,7 @@ class pmDynaform
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = '" . $filename . "';\n" .
                 "var fieldsRequired = " . G::json_encode($this->arrayFieldRequired) . ";\n" .
+                "var triggerDebug = null;\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
@@ -387,7 +393,7 @@ class pmDynaform
     {
         if ($this->debugMode) {
             echo "<pre>";
-            echo G::json_encode($json);
+            echo G::json_encode(array($this->app_data, $this->data));
             echo "</pre>";
         }
     }
