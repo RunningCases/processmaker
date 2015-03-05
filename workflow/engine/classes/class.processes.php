@@ -2290,14 +2290,16 @@ class Processes
         try {
             $map = array();
 
-            foreach ($data->messageType as $key => $value) {
-                $record = $value;
+            if (isset($data->messageType)) {
+                foreach ($data->messageType as $key => $value) {
+                    $record = $value;
 
-                if (isset($record["MSGT_UID"])) {
-                    $newUid = $this->getUnusedMessageTypeUid();
+                    if (isset($record["MSGT_UID"])) {
+                        $newUid = $this->getUnusedMessageTypeUid();
 
-                    $map[$record["MSGT_UID"]] = $newUid;
-                    $data->messageType[$key]["MSGT_UID"] = $newUid;
+                        $map[$record["MSGT_UID"]] = $newUid;
+                        $data->messageType[$key]["MSGT_UID"] = $newUid;
+                    }
                 }
             }
 
@@ -2344,14 +2346,16 @@ class Processes
         try {
             $map = array();
 
-            foreach ($data->messageTypeVariable as $key => $value) {
-                $record = $value;
+            if (isset($data->messageTypeVariable)) {
+                foreach ($data->messageTypeVariable as $key => $value) {
+                    $record = $value;
 
-                if (isset($record["MSGTV_UID"])) {
-                    $newUid = $this->getUnusedMessageTypeVariableUid();
+                    if (isset($record["MSGTV_UID"])) {
+                        $newUid = $this->getUnusedMessageTypeVariableUid();
 
-                    $map[$record["MSGTV_UID"]] = $newUid;
-                    $data->messageTypeVariable[$key]["MSGTV_UID"] = $newUid;
+                        $map[$record["MSGTV_UID"]] = $newUid;
+                        $data->messageTypeVariable[$key]["MSGTV_UID"] = $newUid;
+                    }
                 }
             }
 
