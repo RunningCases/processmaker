@@ -11,7 +11,6 @@ class pmDynaform
 {
 
     public static $instance = null;
-    private $debugMode = false;
     public $dyn_uid = null;
     public $record = null;
     public $app_data = null;
@@ -88,13 +87,30 @@ class pmDynaform
                     }
                 }
                 //query & options
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggest" || $value === "checkbox" || $value === "radio")) {
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggest" || $value === "checkbox" || $value === "radio" || $value === "datetime")) {
+                    if (!isset($json->data)) {
+                        $json->data = array(
+                            "value" => "",
+                            "label" => ""
+                        );
+                    }
                     if (!isset($json->dbConnection))
                         $json->dbConnection = "none";
                     if (!isset($json->sql))
                         $json->sql = "";
                     if (!isset($json->options))
                         $json->options = array();
+                    else {
+                        //convert stdClass to array
+                        $option = array();
+                        foreach ($json->options as $valueOptions) {
+                            array_push($option, array(
+                                "value" => $valueOptions->value,
+                                "label" => $valueOptions->label
+                            ));
+                        }
+                        $json->options = $option;
+                    }
                     if ($json->dbConnection !== "none" && $json->sql !== "") {
                         $cnn = Propel::getConnection($json->dbConnection);
                         $stmt = $cnn->createStatement();
@@ -107,22 +123,40 @@ class pmDynaform
                             );
                             array_push($json->options, $option);
                         }
-                        if (isset($json->options[0])) {
-                            $json->data = $json->options[0];
-                        }
+                    }
+                    if (isset($json->options[0])) {
+                        $json->data = $json->options[0];
                     }
                 }
                 //data
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "checkbox" || $value === "radio")) {
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "suggest" || $value === "dropdown" || $value === "checkbox" || $value === "radio" || $value === "datetime")) {
                     $json->data = array(
-                        "value" => isset($this->data[$json->name]) ? $this->data[$json->name] : "",
-                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : ""
+                        "value" => isset($this->data[$json->name]) ? $this->data[$json->name] : $json->data["value"],
+                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : $json->data["label"]
                     );
                 }
-                if ($key === "type" && ($value === "suggest")) {
+                if ($key === "type" && ($value === "checkbox")) {
                     $json->data = array(
-                        "value" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "",
-                        "label" => isset($this->data[$json->name]) ? $this->data[$json->name] : ""
+                        "value" => isset($this->data[$json->name]) ? $this->data[$json->name] : array(),
+                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "[]"
+                    );
+                }
+                if ($key === "type" && ($value === "file")) {
+                    $oCriteria = new Criteria("workflow");
+                    $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
+                    $oCriteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
+                    $oCriteria->add(AppDocumentPeer::APP_UID, $this->app_data["APPLICATION"]);
+                    $oCriteria->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
+                    $rs = AppDocumentPeer::doSelectRS($oCriteria);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $links = array();
+                    while ($rs->next()) {
+                        $row = $rs->getRow();
+                        array_push($links, "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"]);
+                    }
+                    $json->data = array(
+                        "value" => $links,
+                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "[]"
                     );
                 }
                 //grid
@@ -135,7 +169,7 @@ class pmDynaform
                             $cells = array();
                             foreach ($json->columns as $column) {
                                 //data
-                                if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown") {
+                                if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "datetime") {
                                     array_push($cells, array(
                                         "value" => isset($row[$column->name]) ? $row[$column->name] : "",
                                         "label" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : ""
@@ -217,14 +251,12 @@ class pmDynaform
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
         $file = str_replace("{javascript}", $javascrip, $file);
 
-        $this->debug();
         echo $file;
         exit();
     }
 
     public function printEdit($pm_run_outside_main_app, $application, $headData, $step_mode = 'EDIT')
     {
-        error_log(print_r($this->app_data, true));
         ob_clean();
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
@@ -263,8 +295,6 @@ class pmDynaform
 
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
         $file = str_replace("{javascript}", $javascrip, $file);
-
-        $this->debug();
         echo $file;
         exit();
     }
@@ -300,7 +330,6 @@ class pmDynaform
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
         $file = str_replace("{javascript}", $javascrip, $file);
 
-        $this->debug();
         echo $file;
         exit();
     }
@@ -317,7 +346,6 @@ class pmDynaform
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
         $file = str_replace("{javascript}", $javascrip, $file);
 
-        $this->debug();
         echo $file;
         exit();
     }
@@ -387,15 +415,6 @@ class pmDynaform
         $dsn = DB_ADAPTER . ':host=' . $host . ';dbname=' . DB_NAME . $port;
 
         return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
-    }
-
-    private function debug()
-    {
-        if ($this->debugMode) {
-            echo "<pre>";
-            echo G::json_encode(array($this->app_data, $this->data));
-            echo "</pre>";
-        }
     }
 
 }
