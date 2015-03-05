@@ -1,6 +1,5 @@
 <?php
 namespace ProcessMaker\BusinessModel;
-
 use \G;
 
 /**
@@ -18,7 +17,7 @@ class Lists {
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
-     */
+    */
     public function getList($listName = 'inbox', $dataList = array(), $total = false)
     {
         Validator::isArray($dataList, '$dataList');
@@ -31,7 +30,6 @@ class Lists {
         $userUid = $dataList["userId"];
         $filters["paged"]    = isset( $dataList["paged"] ) ? $dataList["paged"] : true;
         $filters['count']    = isset( $dataList['count'] ) ? $dataList['count'] : true;
-
         $filters["category"] = isset( $dataList["category"] ) ? $dataList["category"] : "";
         $filters["process"]  = isset( $dataList["process"] ) ? $dataList["process"] : "";
         $filters["search"]   = isset( $dataList["search"] ) ? $dataList["search"] : "";
@@ -43,6 +41,8 @@ class Lists {
         $filters["limit"]    = isset( $dataList["limit"] ) ? $dataList["limit"] : "25";
         $filters["sort"]     = isset( $dataList["sort"] ) ? $dataList["sort"] : "";
         $filters["dir"]      = isset( $dataList["dir"] ) ? $dataList["dir"] : "DESC";
+
+        $filters["action"]   = isset( $dataList["action"] ) ? $dataList["action"] : "";
 
         // Select list
         switch ($listName) {
@@ -62,6 +62,14 @@ class Lists {
                 $list = new \ListCompleted();
                 $listpeer = 'ListCompletedPeer';
                 break;
+            case 'paused':
+                $list = new \ListPaused();
+                $listpeer = 'ListPausedPeer';
+                break;
+            case 'canceled':
+                $list = new \ListCanceled();
+                $listpeer = 'ListCanceledPeer';
+                break;
             case 'my_inbox':
                 $list = new \ListMyInbox();
                 $listpeer = 'ListMyInboxPeer';
@@ -77,7 +85,7 @@ class Lists {
         $filters["start"] = (int)$filters["start"];
         $filters["start"] = abs($filters["start"]);
         if ($filters["start"] != 0) {
-            $filters["start"]--;
+            $filters["start"]+1;
         }
 
         $filters["limit"] = (int)$filters["limit"];
@@ -126,14 +134,36 @@ class Lists {
         $result = $list->loadList($userUid, $filters);
         if (!empty($result)) {
             foreach ($result as &$value) {
-                $value = array_change_key_case($value, CASE_LOWER);
+                if (isset($value['DEL_PREVIOUS_USR_UID'])) {
+                    $value['PREVIOUS_USR_UID']       = $value['DEL_PREVIOUS_USR_UID'];
+                    $value['PREVIOUS_USR_USERNAME']  = $value['DEL_PREVIOUS_USR_USERNAME'];
+                    $value['PREVIOUS_USR_FIRSTNAME'] = $value['DEL_PREVIOUS_USR_FIRSTNAME'];
+                    $value['PREVIOUS_USR_LASTNAME']  = $value['DEL_PREVIOUS_USR_LASTNAME'];
+                }
+                if (isset($value['DEL_DUE_DATE'])) {
+                    $value['DEL_TASK_DUE_DATE'] = $value['DEL_DUE_DATE'];
+                }
+                if (isset($value['APP_PAUSED_DATE'])) {
+                    $value['APP_UPDATE_DATE']   = $value['APP_PAUSED_DATE'];
+                }
+                if (isset($value['DEL_CURRENT_USR_USERNAME'])) {
+                    $value['USR_USERNAME']      = $value['DEL_CURRENT_USR_USERNAME'];
+                    $value['USR_FIRSTNAME']     = $value['DEL_CURRENT_USR_FIRSTNAME'];
+                    $value['USR_LASTNAME']      = $value['DEL_CURRENT_USR_LASTNAME'];
+                    $value['APP_UPDATE_DATE']   = $value['DEL_DELEGATE_DATE'];
+                }
+                if (isset($value['APP_STATUS'])) {
+                    $value['APP_STATUS_LABEL']  = G::LoadTranslation( "ID_{$value['APP_STATUS']}" );
+                }
+
+
+                //$value = array_change_key_case($value, CASE_LOWER);
             }
         }
-
         $response = array();
         if ($filters["paged"]) {
             $filtersData = array();
-            $filtersData['start']       = $filters["start"]+1;
+            $filtersData['start']       = $filters["start"];
             $filtersData['limit']       = $filters["limit"];
             $filtersData['sort']        = G::toLower($filters["sort"]);
             $filtersData['dir']         = G::toLower($filters["dir"]);
@@ -144,10 +174,10 @@ class Lists {
             $filtersData['date_to']     = $filters["dateTo"];
             $response['filters']        = $filtersData;
             $response['data']           = $result;
+            $response['totalCount']     = $list->countTotal($userUid, $filtersData);
         } else {
             $response = $result;
         }
-
         return $response;
     }
 }

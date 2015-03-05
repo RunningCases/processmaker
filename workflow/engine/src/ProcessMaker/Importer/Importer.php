@@ -73,8 +73,7 @@ abstract class Importer
     {
         $this->prepare();
 
-        $name = $this->importData["tables"]["bpmn"]["project"][0]["prj_name"];
-
+        //Verify data
         switch ($option) {
             case self::IMPORT_OPTION_CREATE_NEW:
                 if ($this->targetExists()) {
@@ -94,23 +93,12 @@ abstract class Importer
                         self::IMPORT_STAT_TARGET_ALREADY_EXISTS
                     );
                 }
-                $generateUid = false;
                 break;
             case self::IMPORT_OPTION_OVERWRITE:
-                $this->removeProject();
-                // this option shouldn't generate new uid for all objects
-                $generateUid = false;
                 break;
             case self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW:
-                $this->disableProject();
-                // this option should generate new uid for all objects
-                $generateUid = true;
-                $name = "New - " . $name . " - " . date("M d, H:i");
                 break;
             case self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW:
-                // this option should generate new uid for all objects
-                $generateUid = true;
-                $name = \G::LoadTranslation("ID_COPY_OF") . " - " . $name . " - " . date("M d, H:i");
                 break;
         }
 
@@ -146,6 +134,36 @@ abstract class Importer
                 break;
             case self::GROUP_IMPORT_OPTION_MERGE_PREEXISTENT:
                 $this->importData["tables"]["workflow"] = (array)($processes->groupwfsUpdateUidByDatabase((object)($this->importData["tables"]["workflow"])));
+                break;
+        }
+
+        //Import
+        $name = $this->importData["tables"]["bpmn"]["project"][0]["prj_name"];
+
+        switch ($option) {
+            case self::IMPORT_OPTION_CREATE_NEW:
+                //Shouldn't generate new UID for all objects
+                $generateUid = false;
+                break;
+            case self::IMPORT_OPTION_OVERWRITE:
+                //Shouldn't generate new UID for all objects
+                $this->removeProject();
+
+                $generateUid = false;
+                break;
+            case self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW:
+                //Should generate new UID for all objects
+                $this->disableProject();
+
+                $name = "New - " . $name . " - " . date("M d, H:i");
+
+                $generateUid = true;
+                break;
+            case self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW:
+                //Should generate new UID for all objects
+                $name = \G::LoadTranslation("ID_COPY_OF") . " - " . $name . " - " . date("M d, H:i");
+
+                $generateUid = true;
                 break;
         }
 
@@ -374,7 +392,7 @@ abstract class Importer
         foreach ($arrayWorkflowTables["tasks"] as $key => $value) {
             $arrayTaskData = $value;
 
-            if (!in_array($arrayTaskData["TAS_TYPE"], array("GATEWAYTOGATEWAY", "WEBENTRYEVENT"))) {
+            if (!in_array($arrayTaskData["TAS_TYPE"], array("GATEWAYTOGATEWAY", "WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT"))) {
                 $result = $workflow->updateTask($arrayTaskData["TAS_UID"], $arrayTaskData);
             }
         }

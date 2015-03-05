@@ -79,9 +79,9 @@ class EmailServerMapBuilder
 
         $tMap->addColumn('MESS_PASSWORD', 'MessPassword', 'string', CreoleTypes::VARCHAR, true, 256);
 
-        $tMap->addColumn('MESS_FROM_MAIL', 'MessFromMail', 'string', CreoleTypes::VARCHAR, true, 256);
+        $tMap->addColumn('MESS_FROM_MAIL', 'MessFromMail', 'string', CreoleTypes::VARCHAR, false, 256);
 
-        $tMap->addColumn('MESS_FROM_NAME', 'MessFromName', 'string', CreoleTypes::VARCHAR, true, 256);
+        $tMap->addColumn('MESS_FROM_NAME', 'MessFromName', 'string', CreoleTypes::VARCHAR, false, 256);
 
         $tMap->addColumn('SMTPSECURE', 'Smtpsecure', 'string', CreoleTypes::VARCHAR, true, 3);
 

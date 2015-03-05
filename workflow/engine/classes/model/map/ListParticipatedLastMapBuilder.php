@@ -3,7 +3,6 @@
 require_once 'propel/map/MapBuilder.php';
 include_once 'creole/CreoleTypes.php';
 
-
 /**
  * This class adds structure of 'LIST_PARTICIPATED_LAST' table to 'workflow' DatabaseMap object.
  *
@@ -16,6 +15,7 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
+ 
 class ListParticipatedLastMapBuilder
 {
 
@@ -66,7 +66,9 @@ class ListParticipatedLastMapBuilder
         $tMap->setUseIdGenerator(false);
 
         $tMap->addPrimaryKey('APP_UID', 'AppUid', 'string', CreoleTypes::VARCHAR, true, 32);
-
+        
+        $tMap->addPrimaryKey('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
+        
         $tMap->addPrimaryKey('USR_UID', 'UsrUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addColumn('TAS_UID', 'TasUid', 'string', CreoleTypes::VARCHAR, true, 32);
@@ -81,7 +83,7 @@ class ListParticipatedLastMapBuilder
 
         $tMap->addColumn('APP_TAS_TITLE', 'AppTasTitle', 'string', CreoleTypes::VARCHAR, true, 255);
 
-        $tMap->addColumn('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
+        $tMap->addColumn('APP_STATUS', 'AppStatus', 'string', CreoleTypes::VARCHAR, false, 20);
 
         $tMap->addColumn('DEL_PREVIOUS_USR_UID', 'DelPreviousUsrUid', 'string', CreoleTypes::VARCHAR, false, 32);
 
@@ -91,6 +93,12 @@ class ListParticipatedLastMapBuilder
 
         $tMap->addColumn('DEL_PREVIOUS_USR_LASTNAME', 'DelPreviousUsrLastname', 'string', CreoleTypes::VARCHAR, false, 50);
 
+        $tMap->addColumn('DEL_CURRENT_USR_USERNAME', 'DelCurrentUsrUsername', 'string', CreoleTypes::VARCHAR, false, 100);
+
+        $tMap->addColumn('DEL_CURRENT_USR_FIRSTNAME', 'DelCurrentUsrFirstname', 'string', CreoleTypes::VARCHAR, false, 50);
+
+        $tMap->addColumn('DEL_CURRENT_USR_LASTNAME', 'DelCurrentUsrLastname', 'string', CreoleTypes::VARCHAR, false, 50);
+
         $tMap->addColumn('DEL_DELEGATE_DATE', 'DelDelegateDate', 'int', CreoleTypes::TIMESTAMP, true, null);
 
         $tMap->addColumn('DEL_INIT_DATE', 'DelInitDate', 'int', CreoleTypes::TIMESTAMP, false, null);
@@ -98,6 +106,8 @@ class ListParticipatedLastMapBuilder
         $tMap->addColumn('DEL_DUE_DATE', 'DelDueDate', 'int', CreoleTypes::TIMESTAMP, false, null);
 
         $tMap->addColumn('DEL_PRIORITY', 'DelPriority', 'string', CreoleTypes::VARCHAR, true, 32);
+        
+        $tMap->addColumn('DEL_THREAD_STATUS', 'DelThreadStatus', 'string', CreoleTypes::VARCHAR, false, 32);
 
     } // doBuild()
 

@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * class.configuration.php
  *
@@ -373,9 +374,14 @@ class Configurations // extends Configuration
      */
     public function getFormats()
     {
-    	$this->UserConfig = array();
         if (!isset($this->UserConfig)) {
+            $this->UserConfig = array();
+        }
+        if (empty($this->UserConfig)) {
             $this->UserConfig = $this->getConfiguration("ENVIRONMENT_SETTINGS", "");
+        }
+        if (is_numeric($this->UserConfig)) {
+            $this->UserConfig = array();
         }
 
         //Setting defaults
@@ -649,7 +655,7 @@ class Configurations // extends Configuration
      * @param string $translation Translation
      * @return array Return the fields and configuration
      *
-     */
+    */
     public function casesListDefaultFieldsAndConfig($action, $translation = 1)
     {
         $caseColumns = array();
@@ -772,7 +778,7 @@ class Configurations // extends Configuration
                 $caseColumns[] = array("header" => ($translation == 1) ? G::LoadTranslation("ID_TASK") : "ID_TASK", "dataIndex" => "APP_TAS_TITLE", "width" => 120);
                 $caseColumns[] = array("header" => ($translation == 1) ? G::LoadTranslation("ID_CURRENT_USER") : "ID_CURRENT_USER", "dataIndex" => "APP_CURRENT_USER", "width" => 120, "sortable" => true);
                 $caseColumns[] = array("header" => ($translation == 1) ? G::LoadTranslation("ID_LAST_MODIFY") : "ID_LAST_MODIFY", "dataIndex" => "APP_UPDATE_DATE", "width" => 80);
-                $caseColumns[] = array("header" => ($translation == 1) ? G::LoadTranslation("ID_STATUS") : "ID_STATUS", "dataIndex" => "APP_STATUS_LABEL", "width" => 50);
+                $caseColumns[] = array("header" => ($translation == 1) ? G::LoadTranslation("ID_DEL_THREAD_STATUS") : "ID_DEL_THREAD_STATUS", "dataIndex" => "DEL_THREAD_STATUS", "width" => 50);
 
                 $caseReaderFields[] = array("name" => "APP_UID");
                 $caseReaderFields[] = array("name" => "USR_UID");
@@ -791,7 +797,7 @@ class Configurations // extends Configuration
                 $caseReaderFields[] = array("name" => "DEL_TASK_DUE_DATE");
                 $caseReaderFields[] = array("name" => "APP_UPDATE_DATE");
                 $caseReaderFields[] = array("name" => "DEL_PRIORITY");
-                $caseReaderFields[] = array("name" => "APP_STATUS_LABEL");
+                $caseReaderFields[] = array("name" => "DEL_THREAD_STATUS");
                 $caseReaderFields[] = array("name" => "APP_FINISH_DATE");
                 $caseReaderFields[] = array("name" => "CASE_SUMMARY");
                 $caseReaderFields[] = array("name" => "CASE_NOTES_COUNT");

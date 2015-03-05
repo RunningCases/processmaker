@@ -182,7 +182,7 @@ class Process extends BaseProcess
             $this->setProCategory( $aData['PRO_CATEGORY'] );
             $this->setProSubCategory( '' );
             $this->setProIndustry( '' );
-            $this->setProCreateDate( 'now' );
+            $this->setProCreateDate( date("Y-m-d H:i:s") );
             $this->setProCreateUser( $aData['USR_UID'] );
             $this->setProHeight( 5000 );
             $this->setProWidth( 10000 );
@@ -326,6 +326,8 @@ class Process extends BaseProcess
                 }
 
                 $aFields['PRO_DYNAFORMS'] = @unserialize( $aFields['PRO_DYNAFORMS'] );
+                //Check if is BPMN process
+                $aFields['PRO_BPMN'] = $this->isBpmnProcess($ProUid);
 
                 return $aFields;
             } else {
@@ -1008,6 +1010,22 @@ class Process extends BaseProcess
 		} else {
 			return 0;
 		}
+    }
+    /**
+     * Check is the Process is BPMN.
+     *
+     * @param string $ProUid the uid of the Prolication
+     * @return int 1 if is BPMN process or 0 if a Normal process
+    */
+    public function isBpmnProcess($proUid){
+      $c = new Criteria("workflow");
+      $c->add(BpmnProcessPeer::PRJ_UID, $proUid);
+      $res = BpmnProcessPeer::doSelect($c);        
+      if( sizeof($res) == 0 ){
+        return 0;
+      }else{
+        return 1;
+      }
     }
 }
 

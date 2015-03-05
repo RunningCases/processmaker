@@ -738,8 +738,15 @@ Ext.onReady ( function() {
   // Create HttpProxy instance, all CRUD requests will be directed to single proxy url.
   var proxyCasesList = new Ext.data.HttpProxy({
     api: {
-      read :   'proxyCasesList'
+      read : urlProxy
     }
+    /*----------------------------------********---------------------------------*/
+    ,method: 'GET'
+    ,headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + credentials.access_token
+    }
+    /*----------------------------------********---------------------------------*/
   });
 
   // Typical JsonReader with additional meta-data params for defining the core attributes of your json-response
@@ -797,9 +804,9 @@ Ext.onReady ( function() {
     autoSave: true, // <-- false would delay executing create, update, destroy requests until specifically told to do so with some [save] buton.
     sortInfo:{field: 'APP_CACHE_VIEW.APP_NUMBER', direction: "DESC"},
     listeners: {
-    	load: function(response){
-    		//console.log(response.reader.jsonData);
-    		if (response.reader.jsonData.result === false) {
+      load: function(response){
+
+        if (response.reader.jsonData.result === false) {
     			PMExt.notify('ERROR', response.reader.jsonData.message);
     			//PMExt.error
     		}
@@ -1163,7 +1170,7 @@ Ext.onReady ( function() {
       store: userStore,
       valueField : 'USR_UID',
       displayField:'USR_FULLNAME',
-      typeAhead: true,
+      typeAhead: false,
       triggerAction: 'all',
       emptyText : _('ID_ALL_USERS'),
       selectOnFocus : true,
@@ -1171,7 +1178,7 @@ Ext.onReady ( function() {
       width: 180,
       allowBlank : true,
       autocomplete: true,
-      typeAhead: true,
+      minChars: 1,
       hideTrigger:true,
       listeners:{
         scope: this,
@@ -1223,6 +1230,15 @@ Ext.onReady ( function() {
 	   ctCls:"pm_search_x_button_des",
     handler: function(){
       textSearch.setValue('');
+      doSearch();
+    }
+  }
+  
+  var resetSuggestButton = {
+    text:'X',
+	   ctCls:"pm_search_x_button_des",
+    handler: function(){
+      suggestUser.setValue('');
       doSearch();
     }
   }
@@ -1859,6 +1875,7 @@ Ext.onReady ( function() {
       _("ID_USER"),
       //comboUser,
       suggestUser,
+      resetSuggestButton,
       '&nbsp;&nbsp;&nbsp;'
       //'-',
       //textSearch,
@@ -2250,16 +2267,10 @@ var gridForm = new Ext.FormPanel({
   comboCategory.setValue("");
   comboProcess.setValue("");
   comboStatus.setValue("");
-  comboUser.setValue("");
+  if(typeof(comboUser) != 'undefined'){
+    comboUser.setValue("");
+  }
   comboAllUsers.setValue("CURRENT_USER");
-
-  // hidding the buttons for the reassign
-//  if (action=='to_reassign'){
-//    btnSelectAll.hide();
-//    btnUnSelectAll.hide();
-//    btnReassign.hide();
-//  }
-
 
 function reassign(){
   storeReassignCases.removeAll();

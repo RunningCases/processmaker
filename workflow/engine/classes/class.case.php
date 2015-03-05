@@ -249,6 +249,8 @@ class Cases
         $rows[] = array('uid' => 'char', 'value' => 'char');
         $tasks = array();
 
+        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
+
         $c = new Criteria();
         $c->clearSelectColumns();
         $c->addSelectColumn(TaskPeer::TAS_UID);
@@ -256,7 +258,7 @@ class Cases
         $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
-        $c->add(TaskPeer::TAS_TYPE, "WEBENTRYEVENT", Criteria::NOT_EQUAL);
+        $c->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $sUIDUser);
 
@@ -282,7 +284,7 @@ class Cases
         $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
-        $c->add(TaskPeer::TAS_TYPE, "WEBENTRYEVENT", Criteria::NOT_EQUAL);
+        $c->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $aGroups, Criteria::IN);
 
@@ -1058,6 +1060,14 @@ class Cases
 
                 $appAssignSelfServiceValue->remove($sAppUid);
             }
+            
+            /*----------------------------------********---------------------------------*/
+            if(!isset($Fields['DEL_INDEX'])){
+              $Fields['DEL_INDEX'] = 1;
+            }
+            $inbox = new ListInbox();
+            $inbox->update($Fields);            
+            /*----------------------------------********---------------------------------*/
 
             //Return
             return $Fields;
@@ -1188,8 +1198,10 @@ class Cases
             $oAppDel = AppDelegationPeer::retrieveByPk($sAppUid, $iDelIndex);
             $oAppDel->setDelInitDate("now");
             $oAppDel->save();
+            /*----------------------------------********---------------------------------*/
             $inbox = new ListInbox();
             $inbox->update(array('APP_UID'=>$sAppUid, 'DEL_INDEX'=>$iDelIndex, 'DEL_INIT_DATE'=>Date("Y-m-d H:i:s")));
+            /*----------------------------------********---------------------------------*/
             //update searchindex
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
@@ -1909,8 +1921,16 @@ class Cases
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
                 }
             }
+            /*----------------------------------********---------------------------------*/
             $inbox = new ListInbox();
             $inbox->remove($sAppUid, $iDelIndex);
+            $data['DEL_THREAD_STATUS'] = 'CLOSED';
+            $data['APP_UID']   = $sAppUid;
+            $data['DEL_INDEX'] = $iDelIndex;
+            $data['USR_UID']   = $appDel->getUsrUid();
+            $listParticipatedLast = new ListParticipatedLast();
+            $listParticipatedLast->refresh($data);
+            /*----------------------------------********---------------------------------*/
         } catch (exception $e) {
             throw ($e);
         }
@@ -3906,6 +3926,18 @@ class Cases
         }
 
         $this->getExecuteTriggerProcess($sApplicationUID, 'PAUSED');
+
+        /*----------------------------------********---------------------------------*/
+        $data = array (
+            'APP_UID'   => $sApplicationUID,
+            'DEL_INDEX' => $iDelegation,
+            'USR_UID'   => $sUserUID,
+            'APP_RESTART_DATE'   => $sUnpauseDate
+        );
+        $data = array_merge($aFields, $data);
+        $oListPaused = new ListPaused();
+        $oListPaused->create($data);
+        /*----------------------------------********---------------------------------*/
     }
 
     /*
@@ -3996,6 +4028,11 @@ class Cases
         }
 
         $this->getExecuteTriggerProcess($sApplicationUID, "UNPAUSE");
+
+        /*----------------------------------********---------------------------------*/
+        $oListPaused = new ListPaused();
+        $oListPaused->remove($sApplicationUID, $iDelegation, true);
+        /*----------------------------------********---------------------------------*/
     }
 
     /*
@@ -4080,6 +4117,16 @@ class Cases
         if ($this->appSolr != null) {
             $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
         }
+        /*----------------------------------********---------------------------------*/
+        $data = array (
+            'APP_UID'   => $sApplicationUID,
+            'DEL_INDEX' => $iIndex,
+            'USR_UID'   => $user_logged
+        );
+        $data = array_merge($aFields, $data);
+        $oListCanceled = new ListCanceled();
+        $oListCanceled->create($data);
+        /*----------------------------------********---------------------------------*/
     }
 
     /*

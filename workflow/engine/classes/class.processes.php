@@ -888,12 +888,18 @@ class Processes
         $oData->uid["TASK"] = $map;
 
         if (isset( $oData->routes ) && is_array( $oData->routes )) {
-            foreach ($oData->routes as $key => $val) {
-                $newGuid = $map[$val['TAS_UID']];
-                $oData->routes[$key]['TAS_UID'] = $newGuid;
-                if (strlen( $val['ROU_NEXT_TASK'] ) > 0 && $val['ROU_NEXT_TASK'] > 0) {
-                    $newGuid = $map[$val['ROU_NEXT_TASK']];
-                    $oData->routes[$key]['ROU_NEXT_TASK'] = $newGuid;
+            foreach ($oData->routes as $key => $value) {
+                $record = $value;
+
+                if (isset($map[$record["TAS_UID"]])) {
+                    $newUid = $map[$record["TAS_UID"]];
+
+                    $oData->routes[$key]["TAS_UID"] = $newUid;
+
+                    if (strlen($record["ROU_NEXT_TASK"]) > 0 && $record["ROU_NEXT_TASK"] > 0) {
+                        $newUid = $map[$record["ROU_NEXT_TASK"]];
+                        $oData->routes[$key]["ROU_NEXT_TASK"] = $newUid;
+                    }
                 }
             }
         }
@@ -1510,9 +1516,20 @@ class Processes
     {
         foreach ($SubProcess as $key => $row) {
             $oSubProcess = new SubProcess();
-            if ($oSubProcess->subProcessExists( $row['SP_UID'] )) {
-                $oSubProcess->remove( $row['SP_UID'] );
-            }
+
+            //if ($oSubProcess->subProcessExists( $row['SP_UID'] )) {
+            //    $oSubProcess->remove( $row['SP_UID'] );
+            //}
+
+            //Delete
+            $criteria = new Criteria("workflow");
+
+            $criteria->add(SubProcessPeer::PRO_PARENT, $row["PRO_PARENT"], Criteria::EQUAL);
+            $criteria->add(SubProcessPeer::TAS_PARENT, $row["TAS_PARENT"], Criteria::EQUAL);
+
+            $result = SubProcessPeer::doDelete($criteria);
+
+            //Create
             $res = $oSubProcess->create( $row );
         }
         return;
@@ -2273,14 +2290,16 @@ class Processes
         try {
             $map = array();
 
-            foreach ($data->messageType as $key => $value) {
-                $record = $value;
+            if (isset($data->messageType)) {
+                foreach ($data->messageType as $key => $value) {
+                    $record = $value;
 
-                if (isset($record["MSGT_UID"])) {
-                    $newUid = $this->getUnusedMessageTypeUid();
+                    if (isset($record["MSGT_UID"])) {
+                        $newUid = $this->getUnusedMessageTypeUid();
 
-                    $map[$record["MSGT_UID"]] = $newUid;
-                    $data->messageType[$key]["MSGT_UID"] = $newUid;
+                        $map[$record["MSGT_UID"]] = $newUid;
+                        $data->messageType[$key]["MSGT_UID"] = $newUid;
+                    }
                 }
             }
 
@@ -2294,6 +2313,19 @@ class Processes
                         $newUid = $map[$record["MSGT_UID"]];
 
                         $data->messageTypeVariable[$key]["MSGT_UID"] = $newUid;
+                    }
+                }
+            }
+
+            //Message-Envent-Definition
+            if (isset($data->messageEventDefinition)) {
+                foreach ($data->messageEventDefinition as $key => $value) {
+                    $record = $value;
+
+                    if (isset($map[$record["MSGT_UID"]])) {
+                        $newUid = $map[$record["MSGT_UID"]];
+
+                        $data->messageEventDefinition[$key]["MSGT_UID"] = $newUid;
                     }
                 }
             }
@@ -2314,14 +2346,16 @@ class Processes
         try {
             $map = array();
 
-            foreach ($data->messageTypeVariable as $key => $value) {
-                $record = $value;
+            if (isset($data->messageTypeVariable)) {
+                foreach ($data->messageTypeVariable as $key => $value) {
+                    $record = $value;
 
-                if (isset($record["MSGTV_UID"])) {
-                    $newUid = $this->getUnusedMessageTypeVariableUid();
+                    if (isset($record["MSGTV_UID"])) {
+                        $newUid = $this->getUnusedMessageTypeVariableUid();
 
-                    $map[$record["MSGTV_UID"]] = $newUid;
-                    $data->messageTypeVariable[$key]["MSGTV_UID"] = $newUid;
+                        $map[$record["MSGTV_UID"]] = $newUid;
+                        $data->messageTypeVariable[$key]["MSGTV_UID"] = $newUid;
+                    }
                 }
             }
 
@@ -3077,6 +3111,39 @@ class Processes
         }
     }
 
+    public function getMessageEventDefinitions($processUid)
+    {
+        try {
+            $arrayMessageEventDefinition = array();
+
+            $messageEventDefinition = new \ProcessMaker\BusinessModel\MessageEventDefinition();
+
+            //Get data
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(MessageEventDefinitionPeer::MSGED_UID);
+            $criteria->add(MessageEventDefinitionPeer::PRJ_UID, $processUid, Criteria::EQUAL);
+
+            $rsCriteria = MessageEventDefinitionPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayData = $messageEventDefinition->getMessageEventDefinition($row["MSGED_UID"], true);
+
+                $arrayData["MSGED_VARIABLES"] = serialize($arrayData["MSGED_VARIABLES"]);
+
+                $arrayMessageEventDefinition[] = $arrayData;
+            }
+
+            //Return
+            return $arrayMessageEventDefinition;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     /**
      * Get Task User Rows from an array of data
      *
@@ -3319,6 +3386,31 @@ class Processes
     }
 
     /**
+     * Create Message-Event-Definition records
+     *
+     * @param string $processUid Unique id of Process
+     * @param array  $arrayData  Data
+     *
+     * return void
+     */
+    public function createMessageEventDefinition($processUid, array $arrayData)
+    {
+        try {
+            $messageEventDefinition = new \ProcessMaker\BusinessModel\MessageEventDefinition();
+
+            foreach ($arrayData as $value) {
+                $record = $value;
+
+                $record["MSGED_VARIABLES"] = unserialize($record["MSGED_VARIABLES"]);
+
+                $arrayMessageEventDefinitionData = $messageEventDefinition->create($processUid, $record, false);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Cleanup Report Tables References from an array of data
      *
      * @param array $aReportTables
@@ -3506,6 +3598,7 @@ class Processes
         $oData->webEntryEvent = $this->getWebEntryEvents($sProUid);
         $oData->messageType = $this->getMessageTypes($sProUid);
         $oData->messageTypeVariable = $this->getMessageTypeVariables($sProUid);
+        $oData->messageEventDefinition = $this->getMessageEventDefinitions($sProUid);
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
         $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
@@ -4552,6 +4645,7 @@ class Processes
         $this->createWebEntryEvent($arrayProcessData["PRO_UID"], $arrayProcessData["PRO_CREATE_USER"], (isset($oData->webEntryEvent))? $oData->webEntryEvent : array());
         $this->createMessageType((isset($oData->messageType))? $oData->messageType : array());
         $this->createMessageTypeVariable((isset($oData->messageTypeVariable))? $oData->messageTypeVariable : array());
+        $this->createMessageEventDefinition($arrayProcessData["PRO_UID"], (isset($oData->messageEventDefinition))? $oData->messageEventDefinition : array());
     }
 
 

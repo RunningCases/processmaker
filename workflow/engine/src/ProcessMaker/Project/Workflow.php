@@ -764,6 +764,13 @@ class Workflow extends Handler
             $oCriteria->add(\CaseTrackerObjectPeer::PRO_UID, $sProcessUID);
             \ProcessUserPeer::doDelete($oCriteria);
 
+            //Delete SubProcess
+            $criteria = new \Criteria("workflow");
+
+            $criteria->add(\SubProcessPeer::PRO_PARENT, $sProcessUID, \Criteria::EQUAL);
+
+            $result = \SubProcessPeer::doDelete($criteria);
+
             //Delete WebEntries
             $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
 
@@ -813,6 +820,33 @@ class Workflow extends Handler
                 $row = $rsCriteria->getRow();
 
                 $messageType->delete($row["MSGT_UID"]);
+            }
+
+            //Delete Message-Event-Relation
+            $messageEventRelation = new \ProcessMaker\BusinessModel\MessageEventRelation();
+
+            $messageEventRelation->deleteWhere(array(\MessageEventRelationPeer::PRJ_UID => $sProcessUID));
+
+            //Delete Message-Event-Task-Relation
+            $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
+
+            $messageEventTaskRelation->deleteWhere(array(\MessageEventTaskRelationPeer::PRJ_UID => $sProcessUID));
+
+            //Delete Message-Event-Definition
+            $messageEventDefinition = new \ProcessMaker\BusinessModel\MessageEventDefinition();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\MessageEventDefinitionPeer::MSGED_UID);
+            $criteria->add(\MessageEventDefinitionPeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
+
+            $rsCriteria = \MessageEventDefinitionPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $messageEventDefinition->delete($row["MSGED_UID"]);
             }
 
             //Delete the process
@@ -1184,6 +1218,23 @@ class Workflow extends Handler
                     }
                 }
             }
+
+            //Update MESSAGE_EVENT_DEFINITION.EVN_UID
+            if (isset($arrayWorkflowData["messageEventDefinition"])) {
+                foreach ($arrayWorkflowData["messageEventDefinition"] as $key => $value) {
+                    $messageEventDefinitionEventUid = $arrayWorkflowData["messageEventDefinition"][$key]["EVN_UID"];
+
+                    foreach ($arrayUid as $value2) {
+                        $arrayItem = $value2;
+
+                        if ($arrayItem["old_uid"] == $messageEventDefinitionEventUid) {
+                            $arrayWorkflowData["messageEventDefinition"][$key]["EVN_UID"] = $arrayItem["new_uid"];
+                            break;
+                        }
+                    }
+                }
+            }
+
             //Workflow tables
             $workflowData = (object)($arrayWorkflowData);
 
@@ -1236,7 +1287,7 @@ class Workflow extends Handler
         }
     }
 
-    public function deleteTaskGatewayToGateway($processUid)
+    public function deleteTaskByArrayType($processUid, array $arrayTaskType)
     {
         try {
             $task = new \Tasks();
@@ -1245,7 +1296,7 @@ class Workflow extends Handler
 
             $criteria->addSelectColumn(\TaskPeer::TAS_UID);
             $criteria->add(\TaskPeer::PRO_UID, $processUid, \Criteria::EQUAL);
-            $criteria->add(\TaskPeer::TAS_TYPE, "GATEWAYTOGATEWAY", \Criteria::EQUAL);
+            $criteria->add(\TaskPeer::TAS_TYPE, $arrayTaskType, \Criteria::IN);
 
             $rsCriteria = \TaskPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);

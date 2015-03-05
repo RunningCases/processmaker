@@ -3,11 +3,78 @@ unset($_SESSION['APPLICATION']);
 
 //get the action from GET or POST, default is todo
 $action = isset( $_GET['action'] ) ? $_GET['action'] : (isset( $_POST['action'] ) ? $_POST['action'] : 'todo');
+
 //fix a previous inconsistency
+$urlProxy = 'proxyCasesList';
 if ($action == 'selfservice') {
     $action = 'unassigned';
-    //if ( $action == 'sent' ) $action = 'participated';
 }
+
+/*----------------------------------********---------------------------------*/
+$urlProxy = '/api/1.0/' . SYS_SYS . '/lists/';
+switch ($action) {
+    case 'todo':
+    case 'draft':
+        $urlProxy .= 'inbox';
+        break;
+    case 'sent':
+        $urlProxy .= 'participated';
+        break;
+    case 'search':
+    case 'participated-history':
+        $urlProxy = 'proxyCasesList';
+        break;
+    case 'paused':
+        $urlProxy .= 'paused';
+        break;
+    case 'cancel':
+    case 'canceled':
+        $urlProxy .= 'canceled';
+        break;
+    case 'completed':
+        $urlProxy .= 'completed';
+        break;
+    case 'myinbox':
+    case 'my-inbox':
+        $urlProxy .= 'my-inbox';
+        break;
+    case 'unassigned':
+        $urlProxy = 'proxyCasesList';
+        $action = 'unassigned';
+        break;
+}
+
+$clientId = 'x-pm-local-client';
+$client = getClientCredentials($clientId);
+$authCode = getAuthorizationCode($client);
+$debug = false; //System::isDebugMode();
+
+$loader = Maveriks\Util\ClassLoader::getInstance();
+$loader->add(PATH_TRUNK . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
+
+$request = array(
+    'grant_type' => 'authorization_code',
+    'code' => $authCode
+);
+$server = array(
+    'REQUEST_METHOD' => 'POST'
+);
+$headers = array(
+    "PHP_AUTH_USER" => $client['CLIENT_ID'],
+    "PHP_AUTH_PW" => $client['CLIENT_SECRET'],
+    "Content-Type" => "multipart/form-data;",
+    "Authorization" => "Basic " . base64_encode($client['CLIENT_ID'] . ":" . $client['CLIENT_SECRET'])
+);
+
+$request = new \OAuth2\Request(array(), $request, array(), array(), array(), $server, null, $headers);
+$oauthServer = new \ProcessMaker\Services\OAuth2\Server();
+$response = $oauthServer->postToken($request, true);
+$clientToken = $response->getParameters();
+$clientToken["client_id"] = $client['CLIENT_ID'];
+$clientToken["client_secret"] = $client['CLIENT_SECRET'];
+/*----------------------------------********---------------------------------*/
+
+
 
 G::LoadClass("BasePeer");
 G::LoadClass("configuration");
@@ -120,6 +187,10 @@ $oHeadPublisher->assign( 'columns', $columns ); //sending the columns to display
 $oHeadPublisher->assign( 'readerFields', $readerFields ); //sending the fields to get from proxy
 $oHeadPublisher->assign( 'reassignColumns', $reassignColumns ); //sending the columns to display in grid
 $oHeadPublisher->assign( 'action', $action ); //sending the action to make
+$oHeadPublisher->assign( 'urlProxy', $urlProxy ); //sending the urlProxy to make
+/*----------------------------------********---------------------------------*/
+$oHeadPublisher->assign( 'credentials', $clientToken ); //sending the SYS_SYS to make
+/*----------------------------------********---------------------------------*/
 $oHeadPublisher->assign( 'PMDateFormat', $dateFormat ); //sending the fields to get from proxy
 $oHeadPublisher->assign( 'statusValues', $status ); //Sending the listing of status
 $oHeadPublisher->assign( 'processValues', $processes ); //Sending the listing of processes
@@ -429,3 +500,41 @@ function getAdditionalFields($action, $confCasesList = array())
     return $arrayConfig;
 }
 
+
+/*----------------------------------********---------------------------------*/
+function getClientCredentials($clientId)
+{
+    $oauthQuery = new ProcessMaker\Services\OAuth2\PmPdo(getDsn());
+    return $oauthQuery->getClientDetails($clientId);
+}
+
+function getDsn()
+{
+    list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
+    $port = empty($port) ? '' : ";port=$port";
+    $dsn = DB_ADAPTER.':host='.$host.';dbname='.DB_NAME.$port;
+
+    return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
+}
+
+
+function getAuthorizationCode($client)
+{
+    \ProcessMaker\Services\OAuth2\Server::setDatabaseSource(getDsn());
+    \ProcessMaker\Services\OAuth2\Server::setPmClientId($client['CLIENT_ID']);
+
+    $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
+    $userId = $_SESSION['USER_LOGGED'];
+    $authorize = true;
+    $_GET = array_merge($_GET, array(
+        'response_type' => 'code',
+        'client_id' => $client['CLIENT_ID'],
+        'scope' => implode(' ', $oauthServer->getScope())
+    ));
+
+    $response = $oauthServer->postAuthorize($authorize, $userId, true);
+    $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=')+5, 40);
+
+    return $code;
+}
+/*----------------------------------********---------------------------------*/

@@ -13,7 +13,7 @@ class EmailServer
         "MESS_PASSWORD"            => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerPassword"),
         "MESS_FROM_MAIL"           => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerFromMail"),
         "MESS_FROM_NAME"           => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerFromName"),
-        "SMTPSECURE"               => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("No", "tls", "ssl"),  "fieldNameAux" => "emailServerSecureConnection"),
+        "SMTPSECURE"               => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("No", "tls", "ssl", "none"),  "fieldNameAux" => "emailServerSecureConnection"),
         "MESS_TRY_SEND_INMEDIATLY" => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(0, 1),                "fieldNameAux" => "emailServerSendTestMail"),
         "MAIL_TO"                  => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerMailTo"),
         "MESS_DEFAULT"             => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(0, 1),                "fieldNameAux" => "emailServerDefault")

@@ -1,43 +1,25 @@
+function ajax_post(action, form, method, callback, asynchronous) {
+    document.getElementById("dyn_forward").onclick();
+    window.onload = function () {
+        method();
+    };
+}
 function dynaFormChanged(frm) {
-    for (var i1 = 0; i1 <= frm.elements.length - 1; i1++) {
-        if ((frm.elements[i1].type === "radio" || frm.elements[i1].type === "checkbox") && (frm.elements[i1].checked !== frm.elements[i1].defaultChecked)) {
-            return true;
-        }
-        if ((frm.elements[i1].type === "textarea" || frm.elements[i1].type === "text" || frm.elements[i1].type === "file") && (frm.elements[i1].value !== frm.elements[i1].defaultValue)) {
-            return true;
-        }
-        if (frm.elements[i1].tagName.toLowerCase() === "select") {
-            var selectDefaultValue = frm.elements[i1].value;
-            for (var i2 = 0; i2 <= frm.elements[i1].options.length - 1; i2++) {
-                if (frm.elements[i1].options[i2].defaultSelected) {
-                    selectDefaultValue = frm.elements[i1].options[i2].value;
-                    break;
-                }
-            }
-            if (frm.elements[i1].value !== selectDefaultValue) {
-                return true;
-            }
-        }
-    }
-    return false;
+    return true;
 }
 $(window).load(function () {
-    if ((navigator.userAgent.indexOf("MSIE") !== -1) || (navigator.userAgent.indexOf("Trident") !== -1)) {
-        document.body.innerHTML = "<div style='margin:15px'>Responsive Dynaforms are not supported in this browser.</div>";
-        return;
-    }
     if (pm_run_outside_main_app === 'true') {
         if (parent.showCaseNavigatorPanel) {
             parent.showCaseNavigatorPanel('DRAFT');
         }
-
         if (parent.setCurrent) {
             parent.setCurrent(dyn_uid);
+
         }
     }
-
     var data = jsondata;
-    data.items[0].mode = step_mode.toLowerCase();
+    if (step_mode)
+        data.items[0].mode = step_mode.toLowerCase();
     window.project = new PMDynaform.core.Project({
         data: data,
         keys: {
@@ -47,15 +29,6 @@ $(window).load(function () {
         },
         token: credentials,
         submitRest: false
-    });
-    new PMDynaform.core.Proxy({
-        url: "http://" + window.project.keys.server + "/" + window.project.keys.apiName + "/" + window.project.keys.apiVersion + "/" + window.project.keys.workspace + "/cases/" + app_uid + "/variables",
-        method: 'GET',
-        data: {},
-        keys: window.project.token,
-        successCallback: function (xhr, response) {
-            window.project.setData2(response);
-        }
     });
 
     var type = document.createElement("input");
@@ -82,19 +55,27 @@ $(window).load(function () {
     appuid.type = "hidden";
     appuid.name = "APP_UID";
     appuid.value = app_uid;
+    var arrayRequired = document.createElement("input");
+    arrayRequired.type = "hidden";
+    arrayRequired.name = "DynaformRequiredFields";
+    arrayRequired.value = fieldsRequired;
     var form = document.getElementsByTagName("form")[0];
-    form.action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
+    form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
     form.method = "post";
+    form.enctype = "multipart/form-data";
     form.appendChild(type);
     form.appendChild(uid);
     form.appendChild(position);
     form.appendChild(action);
     form.appendChild(dynaformname);
     form.appendChild(appuid);
-
+    form.appendChild(arrayRequired);
     var dyn_forward = document.getElementById("dyn_forward");
     dyn_forward.onclick = function () {
         form.submit();
         return false;
     };
+    if (triggerDebug === true) {
+        showdebug();
+    }
 });

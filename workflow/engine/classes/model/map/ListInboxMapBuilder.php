@@ -3,7 +3,6 @@
 require_once 'propel/map/MapBuilder.php';
 include_once 'creole/CreoleTypes.php';
 
-
 /**
  * This class adds structure of 'LIST_INBOX' table to 'workflow' DatabaseMap object.
  *
@@ -16,6 +15,7 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
+ 
 class ListInboxMapBuilder
 {
 
@@ -76,6 +76,8 @@ class ListInboxMapBuilder
         $tMap->addColumn('PRO_UID', 'ProUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addColumn('APP_NUMBER', 'AppNumber', 'int', CreoleTypes::INTEGER, true, null);
+        
+        $tMap->addColumn('APP_STATUS', 'AppStatus', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addColumn('APP_TITLE', 'AppTitle', 'string', CreoleTypes::VARCHAR, true, 255);
 

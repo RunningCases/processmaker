@@ -151,8 +151,16 @@ class AppDelegation extends BaseAppDelegation
         if ($this->validate()) {
             try {
                 $res = $this->save();
-                $inbox = new ListInbox();
-                $inbox->newRow($this->toArray(BasePeer::TYPE_FIELDNAME), $delPreviusUsrUid);
+                
+                /*----------------------------------********---------------------------------*/
+                $task = TaskPeer::retrieveByPK( $this->getTasUid() );
+                $taskType = $task->getTasType();
+                if($taskType == 'NORMAL'){
+                  $inbox = new ListInbox();
+                  $res = $this->toArray(BasePeer::TYPE_FIELDNAME);                
+                  $inbox->newRow($this->toArray(BasePeer::TYPE_FIELDNAME), $delPreviusUsrUid);
+                }                
+                /*----------------------------------********---------------------------------*/
             } catch (PropelException $e) {
                 throw ($e);
             }
@@ -224,6 +232,10 @@ class AppDelegation extends BaseAppDelegation
         $c->addSelectColumn( AppDelegationPeer::PRO_UID );
         $c->addSelectColumn( AppDelegationPeer::TAS_UID );
         $c->addSelectColumn( AppDelegationPeer::USR_UID );
+        $c->addSelectColumn( AppDelegationPeer::DEL_DELEGATE_DATE );
+        $c->addSelectColumn( AppDelegationPeer::DEL_INIT_DATE );
+        $c->addSelectColumn( AppDelegationPeer::DEL_TASK_DUE_DATE );
+        $c->addSelectColumn( AppDelegationPeer::DEL_FINISH_DATE );
 
         $c->add( AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN' );
         $c->add( AppDelegationPeer::APP_UID, $AppUid );
@@ -236,8 +248,14 @@ class AppDelegation extends BaseAppDelegation
 
         while (is_array($row)) {
             $case = array();
-            $case['TAS_UID'] = $row['TAS_UID'];
-            $case['USR_UID'] = $row['USR_UID'];
+            $case['TAS_UID']   = $row['TAS_UID'];
+            $case['USR_UID']   = $row['USR_UID'];
+            $case['DEL_INDEX'] = $row['DEL_INDEX'];
+            $case['TAS_UID']   = $row['TAS_UID'];
+            $case['DEL_DELEGATE_DATE'] = $row['DEL_DELEGATE_DATE'];
+            $case['DEL_INIT_DATE']     = $row['DEL_INIT_DATE'];
+            $case['DEL_TASK_DUE_DATE'] = $row['DEL_TASK_DUE_DATE'];
+            $case['DEL_FINISH_DATE']   = $row['DEL_FINISH_DATE'];
             $aCases[] = $case;
             $rs->next();
             $row = $rs->getRow();

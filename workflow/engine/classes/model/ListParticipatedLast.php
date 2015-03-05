@@ -6,14 +6,15 @@ require_once 'classes/model/om/BaseListParticipatedLast.php';
 /**
  * Skeleton subclass for representing a row from the 'LIST_PARTICIPATED_LAST' table.
  *
- * 
+ *
  *
  * You should add additional methods to this class to meet the
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  *
  * @package    classes.model
- */
+*/
+
 class ListParticipatedLast extends BaseListParticipatedLast
 {
     /**
@@ -24,7 +25,29 @@ class ListParticipatedLast extends BaseListParticipatedLast
      *
      */
     public function create($data)
-    {
+    { 
+        $criteria = new Criteria();
+        $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+        $criteria->add( UsersPeer::USR_UID, $data['USR_UID'], Criteria::EQUAL );
+        $dataset = UsersPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
+        $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
+        $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
+
+        $criteria = new Criteria();
+        $criteria->addSelectColumn(ApplicationPeer::APP_STATUS);
+        $criteria->add( ApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
+        $dataset = UsersPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        $data['APP_STATUS']  = $aRow['APP_STATUS'];
+
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
@@ -51,7 +74,8 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * @throws type
      */
     public function update($data)
-    {
+    { 
+        $data['DEL_THREAD_STATUS'] = (isset($data['DEL_THREAD_STATUS'])) ? $data['DEL_THREAD_STATUS'] : 'OPEN';
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $con->begin();
@@ -70,7 +94,34 @@ class ListParticipatedLast extends BaseListParticipatedLast
             throw ($e);
         }
     }
-
+    /**
+     * Refresh List Participated Last
+     *
+     * @param type $seqName
+     * @return type
+     * @throws type
+     *
+     */
+    public function refresh ($data)
+    {   
+        $data['APP_STATUS'] = (empty($data['APP_STATUS'])) ? 'TO_DO' : $data['APP_STATUS'];
+        $criteria = new Criteria();
+        $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+        $criteria->add( UsersPeer::USR_UID, $data['USR_UID'], Criteria::EQUAL );
+        $dataset = UsersPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        
+        $data['DEL_CURRENT_USR_UID'] = $data['USR_UID'];
+        $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
+        $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
+        $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME']; 
+        $this->update($data);        
+        
+    }
     /**
      * Remove List Participated History
      *
@@ -79,11 +130,12 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * @throws type
      *
      */
-    public function remove ($app_uid, $usr_uid)
+    public function remove ($app_uid, $usr_uid, $del_index)
     {
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $this->setAppUid($app_uid);
+            $this->setDelIndex($del_index);
             $this->setUsrUid($usr_uid);
 
             $con->begin();
@@ -118,8 +170,8 @@ class ListParticipatedLast extends BaseListParticipatedLast
 
         if ($search != '') {
             $criteria->add(
-                $criteria->getNewCriterion( 'CON_APP.CON_VALUE', '%' . $search . '%', Criteria::LIKE )->
-                    addOr( $criteria->getNewCriterion( 'CON_TAS.CON_VALUE', '%' . $search . '%', Criteria::LIKE )->
+                $criteria->getNewCriterion( ListParticipatedLastPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )->
+                    addOr( $criteria->getNewCriterion( ListParticipatedLastPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE )->
                         addOr( $criteria->getNewCriterion( ListParticipatedLastPeer::APP_NUMBER, $search, Criteria::LIKE ) ) ) );
         }
 
@@ -175,6 +227,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $criteria = new Criteria();
 
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_UID);
+        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INDEX);
         $criteria->addSelectColumn(ListParticipatedLastPeer::USR_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::TAS_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::PRO_UID);
@@ -182,15 +235,24 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_PRO_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TAS_TITLE);
-        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INDEX);
+        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_STATUS);        
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_LASTNAME);
+        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME);
+        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME);
+        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_DELEGATE_DATE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INIT_DATE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PRIORITY);
+        $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_THREAD_STATUS);
+
+        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
+
+        $criteria->addJoin(ListParticipatedLastPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+        $criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
 
         $criteria->add( ListParticipatedLastPeer::USR_UID, $usr_uid, Criteria::EQUAL );
         self::loadFilters($criteria, $filters);
@@ -225,3 +287,4 @@ class ListParticipatedLast extends BaseListParticipatedLast
         return $data;
     }
 }
+

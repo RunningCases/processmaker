@@ -1611,6 +1611,35 @@ class pmTablesProxy extends HttpProxyController
                 }
                 $oDataset->next();
             }
+            
+            // getting bpmn projects
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->addSelectColumn(BpmnProcessPeer::PRJ_UID);
+            $oCriteria->add(BpmnProcessPeer::PRJ_UID, $proUid);
+            $oDataset = BpmnProcessPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            $row = $oDataset->getRow();
+            if (isset($row["PRJ_UID"])) {
+                $oCriteria = new Criteria('workflow');
+                $oCriteria->addSelectColumn(ProcessVariablesPeer::VAR_UID);
+                $oCriteria->addSelectColumn(ProcessVariablesPeer::VAR_NAME);
+                $oCriteria->addSelectColumn(ProcessVariablesPeer::VAR_FIELD_TYPE);
+                $oCriteria->add(ProcessVariablesPeer::PRJ_UID, $row["PRJ_UID"]);
+                $oDataset = ProcessVariablesPeer::doSelectRS($oCriteria);
+                $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $index = 0;
+                while ($oDataset->next()) {
+                    $row = $oDataset->getRow();
+                    array_push($fields, array(
+                        "FIELD_UID" => $row["VAR_NAME"] . "-" . $row["VAR_FIELD_TYPE"],
+                        "FIELD_NAME" => $row["VAR_NAME"],
+                        "FIELD_VALIDATE" => "any",
+                        "_index" => $index ++,
+                        "_isset" => true
+                    ));
+                }
+            }
 
             sort( $fields );
 

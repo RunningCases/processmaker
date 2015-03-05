@@ -2,11 +2,10 @@
 
 require_once 'classes/model/om/BaseListInbox.php';
 
-
 /**
  * Skeleton subclass for representing a row from the 'LIST_INBOX' table.
  *
- * 
+ *
  *
  * You should add additional methods to this class to meet the
  * application requirements.  This class will only be generated as
@@ -14,6 +13,7 @@ require_once 'classes/model/om/BaseListInbox.php';
  *
  * @package    classes.model
  */
+ 
 class ListInbox extends BaseListInbox
 {
     /**
@@ -47,9 +47,11 @@ class ListInbox extends BaseListInbox
 
             // remove and create participated last
             $listParticipatedLast = new ListParticipatedLast();
-            $listParticipatedLast->remove($data['APP_UID'], $data['USR_UID']);
+            $listParticipatedLast->remove($data['APP_UID'], $data['USR_UID'],$data['DEL_INDEX']);
             $listParticipatedLast = new ListParticipatedLast();
-            $listParticipatedLast->create($data);
+            $listParticipatedLast->create($data);        
+            $listParticipatedLast = new ListParticipatedLast();
+            $listParticipatedLast->refresh($data);
 
             return $result;
         } catch(Exception $e) {
@@ -78,14 +80,7 @@ class ListInbox extends BaseListInbox
 
                 // update participated history
                 $listParticipatedHistory = new ListParticipatedHistory();
-                $listParticipatedHistory->update($data);
-
-                $oRow = ListInboxPeer::retrieveByPK( $data['APP_UID'], $data['DEL_INDEX'] );
-                $newData = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
-
-                // update participated last
-                $listParticipatedLast = new ListParticipatedLast();
-                $listParticipatedLast->update($newData);
+                $listParticipatedHistory->update($data);                
                 return $result;
             } else {
                 $con->rollback();
@@ -121,9 +116,35 @@ class ListInbox extends BaseListInbox
         }
     }
 
+    /**
+     * Remove All List Inbox
+     *
+     * @param type $seqName
+     * @return type
+     * @throws type
+     *
+     */
+    public function removeAll ($app_uid)
+    {
+        $con = Propel::getConnection( ListInboxPeer::DATABASE_NAME );
+        try {
+            $this->setAppUid($app_uid);
+
+            $con->begin();
+            $this->delete();
+            $con->commit();
+        } catch (Exception $e) {
+            $con->rollback();
+            throw ($e);
+        }
+    }
+
     public function newRow ($data, $delPreviusUsrUid) {
+
         $data['DEL_PREVIOUS_USR_UID'] = $delPreviusUsrUid;
-        $data['DEL_DUE_DATE'] = $data['DEL_TASK_DUE_DATE'];
+        if (isset($data['DEL_TASK_DUE_DATE'])) {
+            $data['DEL_DUE_DATE'] = $data['DEL_TASK_DUE_DATE'];
+        }
 
         $criteria = new Criteria();
         $criteria->addSelectColumn( ApplicationPeer::APP_NUMBER );
@@ -186,6 +207,10 @@ class ListInbox extends BaseListInbox
             $data['DEL_PREVIOUS_USR_USERNAME']  = $aRow['USR_USERNAME'];
             $data['DEL_PREVIOUS_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
             $data['DEL_PREVIOUS_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
+        }
+        
+        if(!isset($data['APP_STATUS']) && $data['DEL_INDEX']>1){
+          $data['APP_STATUS'] = 'TO_DO';
         }
 
         self::create($data);
@@ -275,6 +300,7 @@ class ListInbox extends BaseListInbox
         $criteria->addSelectColumn(ListInboxPeer::TAS_UID);
         $criteria->addSelectColumn(ListInboxPeer::PRO_UID);
         $criteria->addSelectColumn(ListInboxPeer::APP_NUMBER);
+        $criteria->addSelectColumn(ListInboxPeer::APP_STATUS);
         $criteria->addSelectColumn(ListInboxPeer::APP_TITLE);
         $criteria->addSelectColumn(ListInboxPeer::APP_PRO_TITLE);
         $criteria->addSelectColumn(ListInboxPeer::APP_TAS_TITLE);
@@ -288,6 +314,11 @@ class ListInbox extends BaseListInbox
         $criteria->addSelectColumn(ListInboxPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListInboxPeer::DEL_PRIORITY);
 
+        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
+
+        $criteria->addJoin(ListInboxPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+        $criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
+
         $criteria->add( ListInboxPeer::USR_UID, $usr_uid, Criteria::EQUAL );
         self::loadFilters($criteria, $filters);
 
@@ -296,6 +327,12 @@ class ListInbox extends BaseListInbox
         $start = isset($filters['start']) ? $filters['start'] : "0";
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
         $paged = isset($filters['paged']) ? $filters['paged'] : 1;
+
+        if ($filters['action'] == 'draft') {
+            $criteria->add( ListInboxPeer::APP_STATUS, 'DRAFT', Criteria::EQUAL );
+        } else {            
+            $criteria->add( ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL );
+        }
 
         if ($dir == "DESC") {
             $criteria->addDescendingOrderByColumn($sort);
@@ -317,7 +354,7 @@ class ListInbox extends BaseListInbox
             $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
             $data[] = $aRow;
         }
-
         return $data;
     }
 }
+

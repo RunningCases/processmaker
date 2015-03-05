@@ -213,7 +213,15 @@ class NET
         }
         $stat = new Stat();
 
-        $flagTns = (isset($arrayServerData["connectionType"]) && $arrayServerData["connectionType"] == "TNS")? 1 : 0;
+        if (array_key_exists("connectionType", $arrayServerData) || array_key_exists("DBS_TYPEORACLE", $arrayServerData)) {
+            if ($arrayServerData["connectionType"] == "TNS" || $arrayServerData["DBS_TYPEORACLE"] == "TNS") {
+                $flagTns=1;
+            }else{
+                $flagTns=0; 
+            }            
+        }else{
+            $flagTns=0;
+        }
 
         if (isset($this->db_user) && (isset($this->db_passwd) || $this->db_passwd == "") && (isset($this->db_sourcename) || $flagTns == 1)) {
             switch ($pDbDriver) {
@@ -323,7 +331,15 @@ class NET
         set_time_limit( 0 );
         $stat = new Stat();
 
-        $flagTns = (isset($arrayServerData["connectionType"]) && $arrayServerData["connectionType"] == "TNS")? 1 : 0;
+        if (array_key_exists("connectionType", $arrayServerData) || array_key_exists("DBS_TYPEORACLE", $arrayServerData)) {
+            if ($arrayServerData["connectionType"] == "TNS" || $arrayServerData["DBS_TYPEORACLE"] == "TNS") {
+                $flagTns=1;
+            }else{
+                $flagTns=0; 
+            }            
+        }else{
+            $flagTns=0;
+        }
 
         if (isset($this->db_user) && (isset($this->db_passwd) || $this->db_passwd == "") && (isset($this->db_sourcename) || $flagTns == 1)) {
             switch ($pDbDriver) {
