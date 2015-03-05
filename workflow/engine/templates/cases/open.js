@@ -33,10 +33,11 @@ function formatAMPM(date, initVal) {
 };
 
 function isBrowserIE(){
-  if(navigator.appName.indexOf("Internet Explorer")!=-1){     //yeah, he's using IE
-    return true;
-  }
-  return false;
+  if ( (navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1) ){
+   return true;
+   } else {
+     return false;
+   }
 };
 
 Ext.onReady(function(){
