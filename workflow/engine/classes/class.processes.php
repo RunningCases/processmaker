@@ -1516,9 +1516,20 @@ class Processes
     {
         foreach ($SubProcess as $key => $row) {
             $oSubProcess = new SubProcess();
-            if ($oSubProcess->subProcessExists( $row['SP_UID'] )) {
-                $oSubProcess->remove( $row['SP_UID'] );
-            }
+
+            //if ($oSubProcess->subProcessExists( $row['SP_UID'] )) {
+            //    $oSubProcess->remove( $row['SP_UID'] );
+            //}
+
+            //Delete
+            $criteria = new Criteria("workflow");
+
+            $criteria->add(SubProcessPeer::PRO_PARENT, $row["PRO_PARENT"], Criteria::EQUAL);
+            $criteria->add(SubProcessPeer::TAS_PARENT, $row["TAS_PARENT"], Criteria::EQUAL);
+
+            $result = SubProcessPeer::doDelete($criteria);
+
+            //Create
             $res = $oSubProcess->create( $row );
         }
         return;

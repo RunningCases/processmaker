@@ -764,6 +764,13 @@ class Workflow extends Handler
             $oCriteria->add(\CaseTrackerObjectPeer::PRO_UID, $sProcessUID);
             \ProcessUserPeer::doDelete($oCriteria);
 
+            //Delete SubProcess
+            $criteria = new \Criteria("workflow");
+
+            $criteria->add(\SubProcessPeer::PRO_PARENT, $sProcessUID, \Criteria::EQUAL);
+
+            $result = \SubProcessPeer::doDelete($criteria);
+
             //Delete WebEntries
             $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
 
