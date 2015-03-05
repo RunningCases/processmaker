@@ -57,7 +57,7 @@ WHERE
   </PRO_TRI_UNPAUSED>
   <PRO_TYPE_PROCESS type="dropdown" defaultvalue="PUBLIC" colWidth="80" titleAlign="left" align="left">
     <en>
-      Type of process (only owners can edit private processes)
+      Process Design Access: Public / Private (Owner)
       <option name="PUBLIC">Public</option>
       <option name="PRIVATE">Private</option>
     </en>
