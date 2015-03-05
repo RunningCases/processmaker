@@ -462,6 +462,7 @@ try {
                     break;
                 case 5:
                     $sType = 'SEC-JOIN';
+                    $oProcessNewPattern = new Process();
                     $taskProcess=$oProcessNewPattern->load($oData->pro_uid);
                     $titleProcess=$taskProcess['PRO_TITLE'];
                     $oTaskNewPattern = new Task();
@@ -478,6 +479,7 @@ try {
                     break;
                 case 8:
                     $sType = 'DISCRIMINATOR';
+                    $oProcessNewPattern = new Process();
                     $taskProcess=$oProcessNewPattern->load($oData->pro_uid);
                     $titleProcess=$taskProcess['PRO_TITLE'];
                     $oTaskNewPattern = new Task();
