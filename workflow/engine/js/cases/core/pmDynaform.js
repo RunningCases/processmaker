@@ -1,25 +1,11 @@
+function ajax_post(action, form, method, callback, asynchronous) {
+    document.getElementById("dyn_forward").onclick();
+    window.onload = function () {
+        method();
+    };
+}
 function dynaFormChanged(frm) {
-    for (var i1 = 0; i1 <= frm.elements.length - 1; i1++) {
-        if ((frm.elements[i1].type === "radio" || frm.elements[i1].type === "checkbox") && (frm.elements[i1].checked !== frm.elements[i1].defaultChecked)) {
-            return true;
-        }
-        if ((frm.elements[i1].type === "textarea" || frm.elements[i1].type === "text" || frm.elements[i1].type === "file") && (frm.elements[i1].value !== frm.elements[i1].defaultValue)) {
-            return true;
-        }
-        if (frm.elements[i1].tagName.toLowerCase() === "select") {
-            var selectDefaultValue = frm.elements[i1].value;
-            for (var i2 = 0; i2 <= frm.elements[i1].options.length - 1; i2++) {
-                if (frm.elements[i1].options[i2].defaultSelected) {
-                    selectDefaultValue = frm.elements[i1].options[i2].value;
-                    break;
-                }
-            }
-            if (frm.elements[i1].value !== selectDefaultValue) {
-                return true;
-            }
-        }
-    }
-    return false;
+    return true;
 }
 $(window).load(function () {
     if (pm_run_outside_main_app === 'true') {
@@ -28,6 +14,7 @@ $(window).load(function () {
         }
         if (parent.setCurrent) {
             parent.setCurrent(dyn_uid);
+
         }
     }
     var data = jsondata;
@@ -88,4 +75,7 @@ $(window).load(function () {
         form.submit();
         return false;
     };
+    if (triggerDebug === true) {
+        showdebug();
+    }
 });

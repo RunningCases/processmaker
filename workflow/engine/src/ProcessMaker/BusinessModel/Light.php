@@ -55,6 +55,7 @@ class Light
             $task->setFormatFieldNameInUppercase(false);
             $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
 
+            $response = array();
             foreach ($processList as $key => $processInfo) {
                 $tempTreeChildren = array ();
                 foreach ($processList[$key] as $keyChild => $processInfoChild) {
@@ -78,7 +79,7 @@ class Light
                         $tempTreeChildren[] = $tempTreeChild;
                     }
                 }
-                $response = $tempTreeChildren;
+                $response = array_merge($response, $tempTreeChildren);
             }
         } catch (\Exception $e) {
             throw $e;
@@ -591,5 +592,79 @@ class Light
         }
         return $response;
 
+    }
+
+    /**
+     * Get information for status paused and participated or other status
+     *
+     * @param $userUid
+     * @param $type
+     * @param $app_uid
+     * @throws \Exception
+     */
+    public function getInformation($userUid, $type, $app_uid)
+    {
+        switch ($type) {
+            case 'paused':
+            case 'participated':
+                $oCase = new \Cases();
+                $iDelIndex = $oCase->getCurrentDelegationCase( $app_uid );
+                $aFields = $oCase->loadCase( $app_uid, $iDelIndex );
+                $this->getInfoResume($userUid, $aFields, $type);
+                break;
+        }
+    }
+
+    /**
+     * view in html response for status
+     *
+     * @param $userUid
+     * @param $Fields
+     * @param $type
+     * @throws \Exception
+     */
+    public function getInfoResume($userUid, $Fields, $type)
+    {
+        //print_r($Fields);die;
+        /* Includes */
+        G::LoadClass( 'case' );
+        /* Prepare page before to show */
+        //$oCase = new \Cases();
+
+//        $participated = $oCase->userParticipatedInCase( $Fields['APP_UID'], $userUid );
+//        if ($RBAC->userCanAccess( 'PM_ALLCASES' ) < 0 && $participated == 0) {
+//            /*if (strtoupper($Fields['APP_STATUS']) != 'COMPLETED') {
+//              $oCase->thisIsTheCurrentUser($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], 'SHOW_MESSAGE');
+//            }*/
+//            $aMessage['MESSAGE'] = G::LoadTranslation( 'ID_NO_PERMISSION_NO_PARTICIPATED' );
+//            $G_PUBLISH = new Publisher();
+//            $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', $aMessage );
+//            G::RenderPage( 'publishBlank', 'blank' );
+//            die();
+//        }
+
+        $objProc = new \Process();
+        $aProc = $objProc->load( $Fields['PRO_UID'] );
+        $Fields['PRO_TITLE'] = $aProc['PRO_TITLE'];
+
+        $objTask = new \Task();
+
+        if (isset($_SESSION['ACTION']) && ($_SESSION['ACTION'] == 'jump')) {
+            $task = explode('-', $Fields['TAS_UID']);
+            $Fields['TAS_TITLE'] = '';
+            for( $i = 0; $i < sizeof($task)-1; $i ++ ) {
+                $aTask = $objTask->load( $task[$i] );
+                $Fields['TAS_TITLE'][] = $aTask['TAS_TITLE'];
+            }
+            $Fields['TAS_TITLE'] = implode(" - ", array_values($Fields['TAS_TITLE']));
+        } else {
+            $aTask = $objTask->load( $Fields['TAS_UID'] );
+            $Fields['TAS_TITLE'] = $aTask['TAS_TITLE'];
+        }
+
+        require_once(PATH_GULLIVER .'../thirdparty/smarty/libs/Smarty.class.php');
+        $G_PUBLISH = new \Publisher();
+        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume.xml', '', $Fields, '' );
+        $G_PUBLISH->RenderContent();
     }
 }

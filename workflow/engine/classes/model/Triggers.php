@@ -189,7 +189,7 @@ class Triggers extends BaseTriggers
                   $description .= ", Description: ".$aData['TRI_DESCRIPTION'];
                 }
                 G::auditLog("CreateTrigger", $description);
-                
+
                 return $result;
             } else {
                 $con->rollback();
@@ -240,18 +240,14 @@ class Triggers extends BaseTriggers
             $con->begin();
             $oTri = TriggersPeer::retrieveByPK( $TriUid );
             if (!is_null($oTri)) {
-                $triggerName = $this->getTriTitle();
-                $triggerDesc = $this->getTriDescription();
-                Content::removeContent( 'TRI_TITLE', '', $this->getTriUid());
-                Content::removeContent( 'TRI_DESCRIPTION', '', $this->getTriUid());
+                Content::removeContent("TRI_TITLE", "", $TriUid);
+                Content::removeContent("TRI_DESCRIPTION", "", $TriUid);
+
                 $result = $oTri->delete();
                 $con->commit();
+
                 //Add Audit Log
-                $description = "Trigger Name: ".$triggerName.", Trigger Uid: ".$TriUid;
-                if (isset ( $triggerDesc )) {
-                  $description .= ", Description: ".$triggerDesc;
-                }
-                G::auditLog("DeleteTrigger", $description);
+                G::auditLog("DeleteTrigger", "Trigger Name: " . $oTri->getTriTitle() . ", Trigger Uid: " . $TriUid . ", Description: " . $oTri->getTriDescription());
             }
             return $result;
         } catch (Exception $e) {

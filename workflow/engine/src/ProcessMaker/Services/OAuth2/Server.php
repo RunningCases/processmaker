@@ -49,7 +49,7 @@ class Server implements iAuthenticate
         $cnn = array('dsn' => self::$dsn, 'username' => self::$dbUser, 'password' => self::$dbPassword);
 
         if (self::$isRBAC) {
-            $config = array('user_table' => 'USERS');
+            $config = array();
             $cnnrbac = array('dsn' => self::$dsnRBAC, 'username' => self::$dbUserRBAC, 'password' => self::$dbPasswordRBAC);
             $this->storage = new PmPdo($cnn, $config, $cnnrbac);
         } else {
