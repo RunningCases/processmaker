@@ -13,6 +13,9 @@ class Installer extends Controller
     public $path_config;
     public $path_languages;
     public $path_plugins;
+    /****features-begins****/
+    public $path_features;
+    /****features-ends****/
     public $path_xmlforms;
     public $path_shared;
     public $path_sep;
@@ -26,6 +29,9 @@ class Installer extends Controller
         $this->path_config = PATH_CORE . 'config/';
         $this->path_languages = PATH_CORE . 'content/languages/';
         $this->path_plugins = PATH_CORE . 'plugins/';
+        /****features-begins****/
+        $this->path_features = PATH_CORE . 'Features/';
+        /****features-ends****/
         $this->path_xmlforms = PATH_CORE . 'xmlform/';
         $this->path_public = PATH_HOME . 'public_html/index.html';
         $this->path_shared = PATH_TRUNK . 'shared/';
@@ -782,8 +788,10 @@ class Installer extends Controller
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/schema.sql' );
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/insert.sql' );
             
+            /****features-begins****/
             $this->createMysqlFeatures();
-            
+            /****features-ends****/
+
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $this->setPartner();
                 //$this->setConfiguration();
@@ -1626,31 +1634,40 @@ class Installer extends Controller
             }
         }
     }
-    
+
+    /****features-begins****/
+    /**
+     * 
+     */
     public function createMysqlFeatures()
     {
         foreach ($this->getFeatureList() as $feature) {
             $this->mysqlFileQuery( $feature->path . '/data/schema.sql' );
             $this->mysqlFileQuery( $feature->path . '/data/insert.sql' );
         }
-        
     }
     
+    /**
+     * 
+     * @return \stdClass
+     */
     public function getFeatureList()
     {
         $invalidFolders = array('ViewContainers');
-        $featuresFolders = glob(PATH_FEATURES.'/*', GLOB_ONLYDIR);
+        $featuresFolders = glob($this->path_features.'/*', GLOB_ONLYDIR);
         $features = array();
         foreach ($featuresFolders as $directory) {
-            $feature = new stdClass();
-            if (in_array($directory, $invalidFolders)) {
+            $feature = new \stdClass();
+            $featureName = basename($directory);
+            if (in_array($featureName, $invalidFolders)) {
                 continue;
             }
-            $feature->path = PATH_FEATURES . PATH_SEP . $directory;
-            $feature->name = $directory;
+            $feature->path = $this->path_features . $featureName;
+            $feature->name = $featureName;
             $features[] = $feature;
         }
         return $features;
     }
+    /****features-ends****/
 }
 
