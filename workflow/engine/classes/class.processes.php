@@ -1516,9 +1516,20 @@ class Processes
     {
         foreach ($SubProcess as $key => $row) {
             $oSubProcess = new SubProcess();
-            if ($oSubProcess->subProcessExists( $row['SP_UID'] )) {
-                $oSubProcess->remove( $row['SP_UID'] );
-            }
+
+            //if ($oSubProcess->subProcessExists( $row['SP_UID'] )) {
+            //    $oSubProcess->remove( $row['SP_UID'] );
+            //}
+
+            //Delete
+            $criteria = new Criteria("workflow");
+
+            $criteria->add(SubProcessPeer::PRO_PARENT, $row["PRO_PARENT"], Criteria::EQUAL);
+            $criteria->add(SubProcessPeer::TAS_PARENT, $row["TAS_PARENT"], Criteria::EQUAL);
+
+            $result = SubProcessPeer::doDelete($criteria);
+
+            //Create
             $res = $oSubProcess->create( $row );
         }
         return;
@@ -2279,14 +2290,16 @@ class Processes
         try {
             $map = array();
 
-            foreach ($data->messageType as $key => $value) {
-                $record = $value;
+            if (isset($data->messageType)) {
+                foreach ($data->messageType as $key => $value) {
+                    $record = $value;
 
-                if (isset($record["MSGT_UID"])) {
-                    $newUid = $this->getUnusedMessageTypeUid();
+                    if (isset($record["MSGT_UID"])) {
+                        $newUid = $this->getUnusedMessageTypeUid();
 
-                    $map[$record["MSGT_UID"]] = $newUid;
-                    $data->messageType[$key]["MSGT_UID"] = $newUid;
+                        $map[$record["MSGT_UID"]] = $newUid;
+                        $data->messageType[$key]["MSGT_UID"] = $newUid;
+                    }
                 }
             }
 
@@ -2333,14 +2346,16 @@ class Processes
         try {
             $map = array();
 
-            foreach ($data->messageTypeVariable as $key => $value) {
-                $record = $value;
+            if (isset($data->messageTypeVariable)) {
+                foreach ($data->messageTypeVariable as $key => $value) {
+                    $record = $value;
 
-                if (isset($record["MSGTV_UID"])) {
-                    $newUid = $this->getUnusedMessageTypeVariableUid();
+                    if (isset($record["MSGTV_UID"])) {
+                        $newUid = $this->getUnusedMessageTypeVariableUid();
 
-                    $map[$record["MSGTV_UID"]] = $newUid;
-                    $data->messageTypeVariable[$key]["MSGTV_UID"] = $newUid;
+                        $map[$record["MSGTV_UID"]] = $newUid;
+                        $data->messageTypeVariable[$key]["MSGTV_UID"] = $newUid;
+                    }
                 }
             }
 
