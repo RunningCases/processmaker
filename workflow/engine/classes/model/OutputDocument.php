@@ -201,7 +201,7 @@ class OutputDocument extends BaseOutputDocument
                 }
                 $description .= ", By clicking on the generated file link: ".$genLink;
                 G::auditLog("CreateOutputDocument", $description);
-              
+
                 return $aData['OUT_DOC_UID'];
             } else {
                 $sMessage = '';
@@ -329,9 +329,11 @@ class OutputDocument extends BaseOutputDocument
                 Content::removeContent('OUT_DOC_TEMPLATE', '', $oOutputDocument->getOutDocUid());
                 $iResult = $oOutputDocument->delete();
                 $oConnection->commit();
-                //Add Audit Log                
-                G::auditLog("DeleteOutputDocument", "Output Document Name: ".$outputName.", Output Document Uid: ".$sOutDocUid.", Description: ".$outputDesc.", Filename generated: ".$outputFile);
 
+                //Add Audit Log
+                G::auditLog("DeleteOutputDocument", "Output Document Name: " . $oOutputDocument->getOutDocTitle() . ", Output Document Uid: " . $sOutDocUid . ", Description: " . $oOutputDocument->getOutDocDescription() . ", Filename generated: " . $oOutputDocument->getOutDocFilename());
+
+                //Return
                 return $iResult;
             } else {
                 throw (new Exception('This row doesn\'t exist!'));
@@ -845,7 +847,7 @@ class OutputDocument extends BaseOutputDocument
         $sContent = str_ireplace("</font>", "</span>", $sContent);
 
         $sContent = str_replace($nrthtml, $nrt, $sContent);
-        
+
         $sContent = str_replace("margin-left", "text-indent", $sContent);
 
         // define Save file

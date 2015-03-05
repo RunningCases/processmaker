@@ -30,7 +30,15 @@ function formatAMPM(date, initVal) {
   minutes = minutes < 10 ? '0'+minutes : minutes;
   var strTime = hours + ':' + minutes + ' ' + ampm;
   return strTime;
-}
+};
+
+function isBrowserIE(){
+  if ( (navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1) ){
+   return true;
+   } else {
+     return false;
+   }
+};
 
 Ext.onReady(function(){
   openToRevisePanel = function() {
@@ -1531,20 +1539,24 @@ Ext.onReady(function(){
 	                  TabPanel.setActiveTab(tabId);
 	                }
 	                else {
-                            TabPanel.add({
-                                id: tabId,
-                                title: menuSelectedTitle[name],
-                                frameConfig: {name: name + 'Frame', id: name + 'Frame'},
-                                defaultSrc: uri,
-                                loadMask: {msg: _('ID_LOADING_GRID') + '...'},
-                                autoWidth: true,
-                                closable: true,
-                                autoScroll: true,
-                                bodyStyle: {height: (PMExt.getBrowser().screen.height - 60) + 'px', overflow: 'auto'}
-                            }).show();
+                    if(!isBrowserIE()){
+                      TabPanel.add({
+                          id: tabId,
+                          title: menuSelectedTitle[name],
+                          frameConfig: {name: name + 'Frame', id: name + 'Frame'},
+                          defaultSrc: uri,
+                          loadMask: {msg: _('ID_LOADING_GRID') + '...'},
+                          autoWidth: true,
+                          closable: true,
+                          autoScroll: true,
+                          bodyStyle: {height: (PMExt.getBrowser().screen.height - 60) + 'px', overflow: 'auto'}
+                      }).show();
 
-                            TabPanel.doLayout();
-	                }
+                      TabPanel.doLayout();
+                    }else{
+                      var windContainer = window.open(uri,"winContainer");
+                    }
+	              }
 	            }
 	          },
 	          failure: function ( result, request) {
