@@ -141,7 +141,7 @@ class pmDynaform
                         "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "[]"
                     );
                 }
-                if ($key === "type" && ($value === "file")) {
+                if ($key === "type" && ($value === "file") && isset($this->app_data["APPLICATION"])) {
                     $oCriteria = new Criteria("workflow");
                     $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
                     $oCriteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
