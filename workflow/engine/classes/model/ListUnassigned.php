@@ -17,7 +17,7 @@ require_once 'classes/model/om/BaseListUnassigned.php';
 class ListUnassigned extends BaseListUnassigned
 {
     /**
-     * Create List Inbox Table
+     * Create List Unassigned Table
      *
      * @param type $data
      * @return type
@@ -44,7 +44,7 @@ class ListUnassigned extends BaseListUnassigned
     }
 
     /**
-     *  Update List Inbox Table
+     *  Update List Unassigned Table
      *
      * @param type $data
      * @return type
@@ -72,19 +72,18 @@ class ListUnassigned extends BaseListUnassigned
     }
 
     /**
-     * Remove List Inbox
+     * Remove List Unassigned
      *
      * @param type $seqName
      * @return type
      * @throws type
      *
      */
-    public function remove ($app_uid, $del_index)
+    public function remove ($app_uid)
     {
         $con = Propel::getConnection( ListUnassignedPeer::DATABASE_NAME );
         try {
             $this->setAppUid($app_uid);
-            $this->setDelIndex($del_index);
 
             $con->begin();
             $this->delete();
@@ -96,6 +95,7 @@ class ListUnassigned extends BaseListUnassigned
     }
 
     public function newRow ($data, $delPreviusUsrUid) {
+        $data['UNA_UID'] = (isset($data['UNA_UID'])) ? $data['UNA_UID']: G::GenerateUniqueId() ;
         $data['DEL_PREVIOUS_USR_UID'] = $delPreviusUsrUid;
         $data['DEL_DUE_DATE'] = $data['DEL_TASK_DUE_DATE'];
 
@@ -163,6 +163,7 @@ class ListUnassigned extends BaseListUnassigned
         }
 
         self::create($data);
+        return $data['UNA_UID'];
     }
 
     public function loadFilters (&$criteria, $filters)
@@ -314,6 +315,70 @@ class ListUnassigned extends BaseListUnassigned
             $resp = $data;
         }
         return $resp;
+    }
+    /**
+     * Generate Data
+     *
+     * @return object criteria 
+     */
+    public function generateData($appUid,$delPreviusUsrUid){
+        try {
+            G::LoadClass("case");
+
+            //Generate data
+            $case = new Cases();
+
+            $criteria = new Criteria("workflow");
+
+            $criteria->addSelectColumn(AppDelegationPeer::APP_UID);
+            $criteria->addSelectColumn(AppDelegationPeer::DEL_INDEX);
+            $criteria->addSelectColumn(ApplicationPeer::APP_DATA);
+            $criteria->addSelectColumn(AppDelegationPeer::PRO_UID);
+            $criteria->addSelectColumn(AppDelegationPeer::DEL_TASK_DUE_DATE);
+            $criteria->addSelectColumn(TaskPeer::TAS_UID);
+            $criteria->addSelectColumn(TaskPeer::TAS_GROUP_VARIABLE);
+            $criteria->addJoin(AppDelegationPeer::APP_UID, ApplicationPeer::APP_UID, Criteria::LEFT_JOIN);
+            $criteria->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+            $criteria->add(TaskPeer::TAS_ASSIGN_TYPE, "SELF_SERVICE", Criteria::EQUAL);
+            //$criteria->add(TaskPeer::TAS_GROUP_VARIABLE, "", Criteria::NOT_EQUAL);
+            $criteria->add(AppDelegationPeer::USR_UID, "", Criteria::EQUAL);
+            $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN", Criteria::EQUAL);
+            $criteria->add(AppDelegationPeer::APP_UID, $appUid, Criteria::EQUAL);
+
+            $rsCriteria = AppDelegationPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $applicationData = $case->unserializeData($row["APP_DATA"]);
+                $taskGroupVariable = trim($row["TAS_GROUP_VARIABLE"], " @#");
+                $delPreviusUsrUid = '';
+                $unaUid = $this->newRow($row,$delPreviusUsrUid);
+                //Selfservice by group                 
+                if ($taskGroupVariable != "" && isset($applicationData[$taskGroupVariable]) && trim($applicationData[$taskGroupVariable]) != "") {
+                   $gprUid = trim($applicationData[$taskGroupVariable]);
+                   //Define Users by Group
+                   $gpr = new GroupUser();
+                   $arrayUsers = $gpr->getAllGroupUser($gprUid);
+                   foreach($arrayUsers as $urow){
+                       $newRow["USR_UID"] = $urow["USR_UID"];
+                       $listUnassignedGpr = new ListUnassignedGroup();
+                       $listUnassignedGpr->newRow($unaUid,$urow["USR_UID"],"GROUP",$gprUid);
+                   }
+                } else {
+                    //Define all users assigned to Task
+                    $task = new TaskUser();
+                    $arrayUsers = $task->getAllUsersTask($row["TAS_UID"]);                  
+                    foreach($arrayUsers as $urow){
+                       $newRow["USR_UID"] = $urow["USR_UID"];
+                       $listUnassignedGpr = new ListUnassignedGroup();
+                       $listUnassignedGpr->newRow($unaUid,$urow["USR_UID"],"USER","");
+                   }
+                }  
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }
 
