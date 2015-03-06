@@ -39,6 +39,8 @@ class ListInbox extends BaseListInbox
 
             // create participated history
             $listParticipatedHistory = new ListParticipatedHistory();
+            $listParticipatedHistory->remove($data['APP_UID'],$data['DEL_INDEX']);
+            $listParticipatedHistory = new ListParticipatedHistory();
             $listParticipatedHistory->create($data);
 
             // create participated history

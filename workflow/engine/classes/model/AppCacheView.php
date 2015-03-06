@@ -1752,5 +1752,45 @@ class AppCacheView extends BaseAppCacheView
             }
         }
     }
+    /**
+     * Get all columns by APP_CACHE_VIEW
+     *
+     * @return object criteria 
+     */
+    public function getSelAllColumns(){
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_LAST_INDEX);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_NUMBER);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_STATUS);
+        $criteria->addSelectColumn(AppCacheViewPeer::USR_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::PREVIOUS_USR_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::TAS_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::PRO_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_DELEGATE_DATE);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INIT_DATE);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_TASK_DUE_DATE);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_FINISH_DATE);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_THREAD_STATUS);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_THREAD_STATUS);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_TITLE);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_PRO_TITLE);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_TAS_TITLE);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_CURRENT_USER);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_DEL_PREVIOUS_USER);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_PRIORITY);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_DURATION);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_QUEUE_DURATION);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_DELAY_DURATION);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_STARTED);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_FINISHED);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_DELAYED);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_CREATE_DATE);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_FINISH_DATE);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UPDATE_DATE);
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_OVERDUE_PERCENTAGE);
+        return $criteria;
+    }
 }
 
