@@ -602,7 +602,8 @@ class BpmnWorkflow extends Project\Bpmn
                 if ($elementType == "bpmnEvent" &&
                     in_array($key, array("end-message-event", "start-message-event", "intermediate-catch-message-event"))
                 ) {
-                    if ($key == "intermediate-catch-message-event") {
+
+                    if (in_array($key, array("start-message-event", "intermediate-catch-message-event"))) {
                         //Task - User
                         //Assign to admin
                         $task = new \Tasks();
