@@ -1257,12 +1257,12 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         switch($pos) {
             case 0:
                 return $this->getAppUid();
-                break;
+                break;            
             case 1:
-                return $this->getDelIndex();
+                return $this->getUsrUid();
                 break;
             case 2:
-                return $this->getUsrUid();
+                return $this->getDelIndex();
                 break;
             case 3:
                 return $this->getTasUid();
@@ -1342,8 +1342,8 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         $keys = ListParticipatedLastPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getAppUid(),
-            $keys[1] => $this->getDelIndex(),
-            $keys[2] => $this->getUsrUid(),
+            $keys[1] => $this->getUsrUid(),
+            $keys[2] => $this->getDelIndex(),
             $keys[3] => $this->getTasUid(),
             $keys[4] => $this->getProUid(),
             $keys[5] => $this->getAppNumber(),
@@ -1396,13 +1396,13 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         switch($pos) {
             case 0:
                 $this->setAppUid($value);
-                break;
+                break;                
             case 1:
-                $this->setDelIndex($value);
-                break;    
-            case 2:
                 $this->setUsrUid($value);
                 break;
+            case 2:
+                $this->setDelIndex($value);
+                break;    
             case 3:
                 $this->setTasUid($value);
                 break;
@@ -1485,14 +1485,14 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setAppUid($arr[$keys[0]]);
+        }       
+
+        if (array_key_exists($keys[1], $arr)) {
+            $this->setUsrUid($arr[$keys[1]]);
         }
         
-        if (array_key_exists($keys[1], $arr)) {
-            $this->setDelIndex($arr[$keys[1]]);
-        }
-
         if (array_key_exists($keys[2], $arr)) {
-            $this->setUsrUid($arr[$keys[2]]);
+            $this->setDelIndex($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
@@ -1687,7 +1687,6 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         $criteria = new Criteria(ListParticipatedLastPeer::DATABASE_NAME);
 
         $criteria->add(ListParticipatedLastPeer::APP_UID, $this->app_uid);
-        $criteria->add(ListParticipatedLastPeer::DEL_INDEX, $this->del_index);
         $criteria->add(ListParticipatedLastPeer::USR_UID, $this->usr_uid);
 
         return $criteria;
@@ -1703,10 +1702,8 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         $pks = array();
 
         $pks[0] = $this->getAppUid();
-        
-        $pks[1] = $this->getDelIndex();
 
-        $pks[2] = $this->getUsrUid();
+        $pks[1] = $this->getUsrUid();
 
         return $pks;
     }
@@ -1721,10 +1718,8 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
     {
 
         $this->setAppUid($keys[0]);
-        
-        $this->setDelIndex($keys[1]);
 
-        $this->setUsrUid($keys[2]);
+        $this->setUsrUid($keys[1]);
 
     }
 
@@ -1786,8 +1781,6 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         $copyObj->setAppUid(''); // this is a pkey column, so set to default value
         
-        $copyObj->setDelIndex(''); // this is a pkey column, so set to default value
-
         $copyObj->setUsrUid(''); // this is a pkey column, so set to default value
 
     }
