@@ -151,16 +151,6 @@ class AppDelegation extends BaseAppDelegation
         if ($this->validate()) {
             try {
                 $res = $this->save();
-                
-                /*----------------------------------********---------------------------------*/
-                $task = TaskPeer::retrieveByPK( $this->getTasUid() );
-                $taskType = $task->getTasType();
-                if($taskType == 'NORMAL'){
-                  $inbox = new ListInbox();
-                  $res = $this->toArray(BasePeer::TYPE_FIELDNAME);                
-                  $inbox->newRow($this->toArray(BasePeer::TYPE_FIELDNAME), $delPreviusUsrUid);
-                }                
-                /*----------------------------------********---------------------------------*/
             } catch (PropelException $e) {
                 throw ($e);
             }

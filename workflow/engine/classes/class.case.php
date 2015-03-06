@@ -992,12 +992,11 @@ class Cases
             if (isset($Fields["APP_STATUS"]) && $Fields["APP_STATUS"] == "COMPLETED") {
                 if (isset($Fields['CURRENT_USER_UID'])) {
                     $Fields['USR_UID'] = $Fields['CURRENT_USER_UID'];
-                    /*This "list" code is discussed to operate with sub-processes. It should adjust the code for operation with sub-processes.
-                    $listCompleted = new ListCompleted();
-                    $listCompleted->create($Fields);
-                    $listMyInbox = new ListMyInbox();
-                    $listMyInbox->refresh($Fields);*/
                 }
+                /*----------------------------------********---------------------------------*/
+                $completed = new ListCompleted();
+                $completed->create($Fields);
+                /*----------------------------------********---------------------------------*/
             }
             $oApp->update($Fields);
 
@@ -2040,6 +2039,18 @@ class Cases
                 if ($this->appSolr != null) {
                     $this->appSolr->updateApplicationSearchIndex($sAppUid);
                 }
+
+                /*----------------------------------********---------------------------------*/
+                $Fields['TAS_UID'] = $sTasUid;
+                $Fields['USR_UID'] = $sUsrUid;
+                $Fields['DEL_INDEX'] = $iDelIndex;
+                $Fields['APP_STATUS'] = 'TO_DO';
+                if(!$isSubprocess){
+                    $Fields['APP_STATUS'] = 'DRAFT';
+                }
+                $inbox = new ListInbox();
+                $inbox->newRow($Fields, $sUsrUid);
+                /*----------------------------------********---------------------------------*/
             } catch (exception $e) {
                 throw ($e);
             }
