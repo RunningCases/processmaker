@@ -1887,9 +1887,7 @@ class workspaceTools
         
         //Select data TO_DO OR DRAFT
         $inbCriteria = $appCache->getSelAllColumns();
-        //$inbCriteria->add(AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN", CRITERIA::EQUAL);
         $inbCriteria->add(AppCacheViewPeer::APP_STATUS, "CANCELLED", CRITERIA::NOT_EQUAL);
-        $inbCriteria->add(AppCacheViewPeer::APP_STATUS, "COMPLETED", CRITERIA::NOT_EQUAL);
         $rsCriteria = AppCacheViewPeer::doSelectRS($inbCriteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         //Insert new data LIST_INBOX
@@ -1907,7 +1905,7 @@ class workspaceTools
                  $listParticipatedHistory = new ListParticipatedHistory();
                  $listParticipatedHistory->create($row);
                  $listParticipatedLast = new ListParticipatedLast();
-                 $listParticipatedLast->remove($row['APP_UID'], $row['USR_UID'],$row['DEL_INDEX']);
+                 $listParticipatedLast->remove($row['APP_UID'], $row['USR_UID']);
                  $listParticipatedLast = new ListParticipatedLast();
                  $listParticipatedLast->create($row);        
                  $listParticipatedLast = new ListParticipatedLast();
