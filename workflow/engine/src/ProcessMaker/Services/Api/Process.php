@@ -163,51 +163,6 @@ class Process extends Api
 
         return $response;
     }
-    
-    /**
-     * @url GET /:processUid/activity/:activityUid/feature-configuration
-     */
-    public function getActivityFeatures($activityUid, $processUid)
-    {
-        $response = array();
-
-        try {
-            $task1 = new \Task();
-            $task2 = new \ProcessMaker\BusinessModel\Task();
-
-            $arrayData = $task1->load($activityUid);
-
-            $arrayData = array(
-                //"tas_uid"   => $activityUid,
-                "tas_title" => $arrayData["TAS_TITLE"],
-                "tas_description" => $arrayData["TAS_DESCRIPTION"],
-                "tas_posx"  => $arrayData["TAS_POSX"],
-                "tas_posy"  => $arrayData["TAS_POSY"],
-                "tas_start" => $arrayData["TAS_START"],
-                "_extended" => array(
-                    "properties" => $task2->getProperties($activityUid, true),
-                    "steps" => array(
-                        "steps"       => $task2->getSteps($activityUid, true),
-                        "conditions"  => "...", //lo mismo que steps //$task->getSteps()
-                        "triggers"    => $task2->getTriggers($activityUid, true),
-                        "users"       => $task2->getUsers($activityUid, 1, true),
-                        "users_adhoc" => $task2->getUsers($activityUid, 2, true)
-                    )
-                )
-            );
-
-            //Response
-            $response["success"] = true;
-            $response["message"] = "Properties loaded successfully";
-            $response["data"]    = array("activity" => $arrayData);
-        } catch (\Exception $e) {
-            //Response
-            $response["success"] = false;
-            $response["message"] = $e->getMessage();
-        }
-
-        return $response;
-    }
 
     /**
      * @url GET /:processUid/activity/:activityUid/properties

@@ -60,6 +60,7 @@ class Activity extends Api
         }
     }
     
+/*----------------------------------********---------------------------------*/
     /**
      * @param string $pro_uid {@min 32} {@max 32}
      * @param string $tas_uid {@min 32} {@max 32}
@@ -86,7 +87,8 @@ class Activity extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
-
+/*----------------------------------********---------------------------------*/
+    
     /**
      * @param string $prj_uid {@min 32} {@max 32}
      * @param string $act_uid {@min 32} {@max 32}
@@ -106,10 +108,11 @@ class Activity extends Api
             }
             $task = new \ProcessMaker\BusinessModel\Task();
             $properties = $task->updateProperties($prj_uid, $act_uid, $request_data);
-            /** features */
+            
+             /*----------------------------------********---------------------------------*/
             $featureHandler = new \Features\FeaturesHandler();
             $featureHandler->saveConfiguration($request_data['properties']['_features']);
-            /** features */
+             /*----------------------------------********---------------------------------*/
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

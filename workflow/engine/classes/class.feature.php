@@ -1,4 +1,5 @@
 <?php
+ /*----------------------------------********---------------------------------*/
 /**
  * class.feature.php
  * @package workflow.engine.classes
@@ -375,3 +376,4 @@ class PMFeature
         $oPluginRegistry->enableRestService($this->sNamespace, $enable);
     }
 }
+ /*----------------------------------********---------------------------------*/

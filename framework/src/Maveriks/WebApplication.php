@@ -333,7 +333,7 @@ class WebApplication
                     //if (! class_exists($namespace)) {
                     require_once $classFile;
                     //}
-                    //echo "****".$namespace."<br>";
+
                     $this->rest->addAPIClass($namespace);
                 }
             }
