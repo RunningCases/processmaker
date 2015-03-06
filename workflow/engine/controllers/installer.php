@@ -13,9 +13,9 @@ class Installer extends Controller
     public $path_config;
     public $path_languages;
     public $path_plugins;
-    /****features-begins****/
+/*----------------------------------********---------------------------------*/
     public $path_features;
-    /****features-ends****/
+/*----------------------------------********---------------------------------*/
     public $path_xmlforms;
     public $path_shared;
     public $path_sep;
@@ -29,9 +29,9 @@ class Installer extends Controller
         $this->path_config = PATH_CORE . 'config/';
         $this->path_languages = PATH_CORE . 'content/languages/';
         $this->path_plugins = PATH_CORE . 'plugins/';
-        /****features-begins****/
+/*----------------------------------********---------------------------------*/
         $this->path_features = PATH_CORE . 'Features/';
-        /****features-ends****/
+/*----------------------------------********---------------------------------*/
         $this->path_xmlforms = PATH_CORE . 'xmlform/';
         $this->path_public = PATH_HOME . 'public_html/index.html';
         $this->path_shared = PATH_TRUNK . 'shared/';
@@ -788,9 +788,9 @@ class Installer extends Controller
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/schema.sql' );
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/insert.sql' );
             
-            /****features-begins****/
+/*----------------------------------********---------------------------------*/
             $this->createMysqlFeatures();
-            /****features-ends****/
+/*----------------------------------********---------------------------------*/
 
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $this->setPartner();
@@ -1635,9 +1635,9 @@ class Installer extends Controller
         }
     }
 
-    /****features-begins****/
+/*----------------------------------********---------------------------------*/
     /**
-     * 
+     * create a mysql feature
      */
     public function createMysqlFeatures()
     {
@@ -1648,7 +1648,7 @@ class Installer extends Controller
     }
     
     /**
-     * 
+     * returns a list of all the features installed in the Features folder
      * @return \stdClass
      */
     public function getFeatureList()
@@ -1668,6 +1668,6 @@ class Installer extends Controller
         }
         return $features;
     }
-    /****features-ends****/
+/*----------------------------------********---------------------------------*/
 }
 

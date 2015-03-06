@@ -337,7 +337,7 @@ class WebApplication
                     $this->rest->addAPIClass($namespace);
                 }
             }
-
+/*----------------------------------********---------------------------------*/
             // adding features extension api classes
             $featuresPath = $this->workflowDir .'engine' . DS . 'Features';
             // $apiDir - contains directory to scan classes and add them to Restler
@@ -357,7 +357,7 @@ class WebApplication
                     }
                 }
             }
-            
+/*----------------------------------********---------------------------------*/            
             // adding aliases for Restler
             if (array_key_exists('alias', $config)) {
                 foreach ($config['alias'] as $alias => $aliasData) {
