@@ -350,13 +350,17 @@ Bootstrap::registerClass('Xml_Node',            PATH_GULLIVER . "class.xmlDocume
 
 Bootstrap::registerClass('wsResponse',          PATH_HOME . "engine/classes/class.wsResponse.php");
 
-Bootstrap::registerClass('PMLicensedFeatures',  PATH_HOME . "engine/classes/class.LicensedFeatures.php");
-Bootstrap::registerClass('AddonsManagerPeer',   PATH_HOME . "engine/classes/model/AddonsManagerPeer.php");
+Bootstrap::registerClass("PMLicensedFeatures",  PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.licensedFeatures.php");
+Bootstrap::registerClass("AddonsManagerPeer",   PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AddonsManagerPeer.php");
 
-Bootstrap::registerClass("BaseEmailServer",     PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseEmailServer.php");
-Bootstrap::registerClass("EmailServer",         PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "EmailServer.php");
-Bootstrap::registerClass("BaseEmailServerPeer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "BaseEmailServerPeer.php");
-Bootstrap::registerClass("EmailServerPeer",     PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "EmailServerPeer.php");
+$arrayClass = array("EmailServer", "ListInbox", "ListParticipatedHistory");
+
+foreach ($arrayClass as $value) {
+    Bootstrap::registerClass("Base" . $value,          PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "Base" . $value . ".php");
+    Bootstrap::registerClass($value,                   PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . $value . ".php");
+    Bootstrap::registerClass("Base" . $value . "Peer", PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "Base" . $value . "Peer.php");
+    Bootstrap::registerClass($value . "Peer",          PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . $value . "Peer.php");
+}
 
 G::LoadClass("serverConfiguration");
 G::LoadClass("dates"); //Load Criteria
