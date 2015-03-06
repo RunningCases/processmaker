@@ -112,6 +112,8 @@ class BpmnWorkflow extends Project\Bpmn
             $arrayData["PRO_STATUS"] = $data["PRJ_STATUS"];
         }
 
+        $arrayData["PRO_UPDATE_DATE"] = date("Y-m-d H:i:s");
+
         $this->wp->update($arrayData);
     }
 
