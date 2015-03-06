@@ -15,7 +15,6 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
             "PRO_CATEGORY" => "",
             "PRO_CREATE_USER" => $_SESSION['USER_LOGGED']
         );
-        $stringBpmn = base64_encode(file_get_contents($_FILES["PROCESS_FILENAME"]["tmp_name"]));
         if ($createMode === "overwrite") {
             $process = Process::getByProTitle($data["PRO_TITLE"]);
             if ($process !== null) {
@@ -27,11 +26,11 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
             $data["PRO_TITLE"] = Process::getNextTitle($data["PRO_TITLE"]);
         }
         $project = new \ProcessMaker\Project\Adapter\WorkflowBpmn($data);
+        copy($_FILES["PROCESS_FILENAME"]["tmp_name"], PATH_DOCUMENT . $project->getUid());
         $result = array(
             "success" => true,
             "catchMessage" => "",
             "prj_uid" => $project->getUid(),
-            "stringBpmn" => $stringBpmn,
             "createMode" => $createMode
         );
     } catch (Exception $e) {

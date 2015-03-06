@@ -1432,17 +1432,7 @@ importProcessBpmnSubmit = function () {
                     return;
                 }
                 Ext.getCmp('importProcessWindow').close();
-                var stringxml = document.createElement("input");
-                stringxml.type = "hidden";
-                stringxml.name = "stringBpmn";
-                stringxml.value = resp_.stringBpmn;
-                var form = document.createElement("form");
-                document.body.appendChild(form);
-                form.appendChild(stringxml);
-                form.style.display = "none";
-                form.action = "../designer?prj_uid=" + resp_.prj_uid;
-                form.method = "POST";
-                form.submit();
+                window.location.href = "../designer?prj_uid=" + resp_.prj_uid;
             },
             failure: function (o, resp) {
                 Ext.getCmp('importProcessWindow').close();
