@@ -684,7 +684,7 @@ function migrate_new_cases_lists($command, $args) {
       }      
       if ($changes) {
         if ($checkOnly) {
-          echo "-> Schema fixed\n";
+          echo "-> List tables are done\n";
         } 
       } else {
         echo "> List tables are done\n";
