@@ -130,12 +130,11 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * @throws type
      *
      */
-    public function remove ($app_uid, $usr_uid, $del_index)
+    public function remove ($app_uid, $usr_uid)
     {
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $this->setAppUid($app_uid);
-            $this->setDelIndex($del_index);
             $this->setUsrUid($usr_uid);
 
             $con->begin();

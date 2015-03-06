@@ -49,7 +49,7 @@ class ListInbox extends BaseListInbox
 
             // remove and create participated last
             $listParticipatedLast = new ListParticipatedLast();
-            $listParticipatedLast->remove($data['APP_UID'], $data['USR_UID'],$data['DEL_INDEX']);
+            $listParticipatedLast->remove($data['APP_UID'], $data['USR_UID']);
             $listParticipatedLast = new ListParticipatedLast();
             $listParticipatedLast->create($data);        
             $listParticipatedLast = new ListParticipatedLast();
