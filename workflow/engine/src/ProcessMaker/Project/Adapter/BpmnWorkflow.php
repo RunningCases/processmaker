@@ -112,6 +112,8 @@ class BpmnWorkflow extends Project\Bpmn
             $arrayData["PRO_STATUS"] = $data["PRJ_STATUS"];
         }
 
+        $arrayData["PRO_UPDATE_DATE"] = date("Y-m-d H:i:s");
+
         $this->wp->update($arrayData);
     }
 
@@ -602,7 +604,8 @@ class BpmnWorkflow extends Project\Bpmn
                 if ($elementType == "bpmnEvent" &&
                     in_array($key, array("end-message-event", "start-message-event", "intermediate-catch-message-event"))
                 ) {
-                    if ($key == "intermediate-catch-message-event") {
+
+                    if (in_array($key, array("start-message-event", "intermediate-catch-message-event"))) {
                         //Task - User
                         //Assign to admin
                         $task = new \Tasks();

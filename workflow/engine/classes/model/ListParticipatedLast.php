@@ -48,6 +48,8 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $aRow = $dataset->getRow();
         $data['APP_STATUS']  = $aRow['APP_STATUS'];
 
+        $users = new Users();
+        $users->refreshTotal($data['USR_UID'], 'add', 'participated');
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
@@ -74,7 +76,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * @throws type
      */
     public function update($data)
-    { 
+    {
         $data['DEL_THREAD_STATUS'] = (isset($data['DEL_THREAD_STATUS'])) ? $data['DEL_THREAD_STATUS'] : 'OPEN';
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
@@ -132,6 +134,11 @@ class ListParticipatedLast extends BaseListParticipatedLast
      */
     public function remove ($app_uid, $usr_uid)
     {
+        $existField = ListParticipatedLastPeer::retrieveByPK($app_uid, $usr_uid);
+        if (! is_null( $existField )) {
+            $users = new Users();
+            $users->refreshTotal($usr_uid, 'removed', 'participated');
+        }
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $this->setAppUid($app_uid);
