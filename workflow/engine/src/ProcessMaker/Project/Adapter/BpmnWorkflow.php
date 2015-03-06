@@ -1094,6 +1094,10 @@ class BpmnWorkflow extends Project\Bpmn
             $diagram["participants"] = $bwp->getParticipants($configList);
             $project["diagrams"][] = $diagram;
         }
+        if (file_exists(PATH_DOCUMENT . $project["prj_uid"])) {
+            $project["prj_bpmn_file_upload"] = file_get_contents(PATH_DOCUMENT . $project["prj_uid"]);
+            unlink(PATH_DOCUMENT . $project["prj_uid"]);
+        }
 
         return $project;
     }
