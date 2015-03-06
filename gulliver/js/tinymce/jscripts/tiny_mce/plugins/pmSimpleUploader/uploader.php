@@ -36,9 +36,9 @@ function uploadContentFile()
 	$FileObject = $_FILES["upload_file"]; // find data on the file
     $DestPath = sys_get_temp_dir();
     $aux='';
-    $cadena=str_replace ("\r\n","",file_get_contents(htmlentities($FileObject['tmp_name'])));
-    $cadena=str_replace ('"',"'",$cadena);
-    updateEditorContent(trim($cadena));
+    $chain=str_replace ("\r\n","",file_get_contents(htmlentities($FileObject['tmp_name'])));
+    $chain=str_replace ('"',"'",$chain);
+    updateEditorContent(trim($chain));
     closeWindow();
 }
 
