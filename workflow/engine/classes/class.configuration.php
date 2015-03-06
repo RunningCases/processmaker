@@ -778,7 +778,6 @@ class Configurations // extends Configuration
                 $caseColumns[] = array("header" => ($translation == 1) ? G::LoadTranslation("ID_TASK") : "ID_TASK", "dataIndex" => "APP_TAS_TITLE", "width" => 120);
                 $caseColumns[] = array("header" => ($translation == 1) ? G::LoadTranslation("ID_CURRENT_USER") : "ID_CURRENT_USER", "dataIndex" => "APP_CURRENT_USER", "width" => 120, "sortable" => true);
                 $caseColumns[] = array("header" => ($translation == 1) ? G::LoadTranslation("ID_LAST_MODIFY") : "ID_LAST_MODIFY", "dataIndex" => "APP_UPDATE_DATE", "width" => 80);
-                //$caseColumns[] = array("header" => ($translation == 1) ? G::LoadTranslation("ID_DEL_THREAD_STATUS") : "ID_DEL_THREAD_STATUS", "dataIndex" => "DEL_THREAD_STATUS", "width" => 50);
                 $caseColumns[] = array("header" => ($translation == 1) ? G::LoadTranslation("ID_STATUS") : "ID_STATUS", "dataIndex" => "APP_STATUS_LABEL", "width" => 50);
 
                 $caseReaderFields[] = array("name" => "APP_UID");
