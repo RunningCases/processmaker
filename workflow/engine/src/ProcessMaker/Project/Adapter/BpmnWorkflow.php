@@ -112,6 +112,8 @@ class BpmnWorkflow extends Project\Bpmn
             $arrayData["PRO_STATUS"] = $data["PRJ_STATUS"];
         }
 
+        $arrayData["PRO_UPDATE_DATE"] = date("Y-m-d H:i:s");
+
         $this->wp->update($arrayData);
     }
 
@@ -1091,6 +1093,10 @@ class BpmnWorkflow extends Project\Bpmn
             $diagram["data"] = $bwp->getDataCollection($configList);
             $diagram["participants"] = $bwp->getParticipants($configList);
             $project["diagrams"][] = $diagram;
+        }
+        if (file_exists(PATH_DOCUMENT . $project["prj_uid"])) {
+            $project["prj_bpmn_file_upload"] = file_get_contents(PATH_DOCUMENT . $project["prj_uid"]);
+            unlink(PATH_DOCUMENT . $project["prj_uid"]);
         }
 
         return $project;

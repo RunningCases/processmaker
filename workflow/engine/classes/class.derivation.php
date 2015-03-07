@@ -748,8 +748,17 @@ class Derivation
             //SETS THE APP_PROC_CODE
             //if (isset($nextDel['TAS_DEF_PROC_CODE']))
             //$appFields['APP_PROC_CODE'] = $nextDel['TAS_DEF_PROC_CODE'];
-            unset( $aSP );
 
+            /*----------------------------------********---------------------------------*/
+            if (!empty($iNewDelIndex) && empty($aSP)) {
+                $oAppDel = AppDelegationPeer::retrieveByPK( $appFields['APP_UID'], $iNewDelIndex );
+                $aFields = $oAppDel->toArray( BasePeer::TYPE_FIELDNAME );
+                $aFields['APP_STATUS'] = $currentDelegation['APP_STATUS'];
+                $inbox = new ListInbox();
+                $inbox->newRow($aFields, $nextDel['USR_UID']);
+            }
+            /*----------------------------------********---------------------------------*/
+            unset( $aSP );
         } //end foreach
 
 
