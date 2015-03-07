@@ -479,8 +479,6 @@ Ext.onReady(function(){
 
 function newProcess(params)
 {
-    if (winDesigner)
-        winDesigner.close();
   params = typeof params == 'undefined' ? {type:'classicProject'} : params;
 
   // TODO this variable have hardcoded labels, it must be changed on the future
@@ -589,20 +587,13 @@ function saveProcess()
             if (projectType == 'classicProject') {
               location.href = 'processes_Map?PRO_UID='+resp.result.PRO_UID;
             } else {
-            	 if ( (navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1) ){
-            		 if ( typeof(winDesigner) == "undefined" || winDesigner.closed ){
-            			 winDesigner = window.open(
-                    			  "../designer?prj_uid="+resp.result.PRO_UID,
-                    			  'winDesigner'
-                    			);
-                                Ext.getCmp('newProjectWin').close();
-                                processesGrid.store.reload();
-                  	 } else {
-                  		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
-                  	 }
-                 } else {
-                	 location.href = '../designer?prj_uid='+resp.result.PRO_UID;
-                 }
+                    if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
+                        winDesigner = window.open("../designer?prj_uid=" + resp.result.PRO_UID, 'winDesigner');
+                        Ext.getCmp('newProjectWin').close();
+                        processesGrid.store.reload();
+                    } else {
+                        location.href = '../designer?prj_uid=' + resp.result.PRO_UID;
+                    }
             }
           },
           failure: function(obj, resp) {
@@ -653,14 +644,7 @@ editProcess = function(typeParam)
   }
 
   if ( ((navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1)) && (type == "bpmn") ) {
-	  if (typeof(winDesigner) == "undefined" || winDesigner.closed){
-		  winDesigner = window.open(
-				  url,
-				  'winDesigner'
-				);
-   	 } else {
-   		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
-   	 }
+        winDesigner = window.open(url, 'winDesigner');
   } else {
 	  location.href = url;
   }
@@ -968,19 +952,12 @@ importProcessExistGroup = function()
                     var sNewProUid       = resp_.sNewProUid;
 
                     if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                        if ((navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1) ) {
-                        	if (typeof(winDesigner) == "undefined" || winDesigner.closed){
-                        		winDesigner = window.open(
-                            			  "../designer?prj_uid=" + sNewProUid,
-                            			  'winDesigner'
-                            			);
-                                    w.close();
-                                    processesGrid.store.reload();
-                        	} else {
-                        		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
-                        	}
+                        if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
+                            winDesigner = window.open("../designer?prj_uid=" + sNewProUid, 'winDesigner');
+                            w.close();
+                            processesGrid.store.reload();
                         } else {
-                          window.location.href = "../designer?prj_uid=" + sNewProUid;
+                            window.location.href = "../designer?prj_uid=" + sNewProUid;
                         }
                     } else {
                         window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
@@ -1116,21 +1093,14 @@ importProcessExistProcess = function()
 
                     if (resp_.ExistGroupsInDatabase == 0) {
                         if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                            if ( (navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1)) {
-                            	if (typeof(winDesigner) == "undefined" || winDesigner.closed){
-                            		winDesigner = window.open(
-                                			  "../designer?prj_uid=" + sNewProUid,
-                                			  'winDesigner'
-                                			);
-                                    Ext.getCmp('importProcessWindow').close();
-                                    w.close();
-                                    processesGrid.store.reload();
-                            	} else {
-                            		PMExt.error( _('ID_FAILED'), _('PROCESS_ALREADY_OPENED'));
-                            	}
-                              } else {
+                            if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
+                                winDesigner = window.open("../designer?prj_uid=" + sNewProUid,'winDesigner');
+                                Ext.getCmp('importProcessWindow').close();
+                                w.close();
+                                processesGrid.store.reload();
+                            } else {
                                 window.location.href = "../designer?prj_uid=" + sNewProUid;
-                              }
+                            }
                         } else {
                             window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                         }
@@ -1176,11 +1146,6 @@ importProcessExistProcess = function()
 
 importProcess = function()
 {
-    if (winDesigner) {
-        winDesigner.close();
-        if (!winDesigner.closed)
-            return;
-    }
     var processFileType      = importProcessGlobal.processFileType;
     var processFileTypeTitle = (processFileType == "pm") ? "" : " " + processFileType;
 
@@ -1276,21 +1241,13 @@ importProcess = function()
                                                       var sNewProUid = resp_.sNewProUid;
 
                                                       if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                                                          if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
-                                                              if (typeof(winDesigner) == "undefined" || winDesigner.closed){
-                                                                  winDesigner = window.open(
-                                                                     "../designer?prj_uid=" + sNewProUid,
-                                                                     "winDesigner"
-                                                                  );
-
-                                                                  w.close();
-                                                                  processesGrid.store.reload();
-                                                              } else {
-                                                                  PMExt.error( _("ID_FAILED"), _("PROCESS_ALREADY_OPENED"));
-                                                              }
-                                                          } else {
-                                                              window.location.href = "../designer?prj_uid=" + sNewProUid;
-                                                          }
+                                                        if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
+                                                            winDesigner = window.open("../designer?prj_uid=" + sNewProUid,"winDesigner");
+                                                            w.close();
+                                                            processesGrid.store.reload();
+                                                        } else {
+                                                            window.location.href = "../designer?prj_uid=" + sNewProUid;
+                                                        }
                                                       } else {
                                                           window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                                                       }
