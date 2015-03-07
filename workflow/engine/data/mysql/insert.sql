@@ -3707,7 +3707,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DIRECTORY_FILE_PERMISSION','en','File Permissions','2014-10-21') ,
 ( 'LABEL','ID_DATA_CORRECT','en','The configuration is correct.','2015-02-23') ,
 ( 'LABEL','ID_EXIST','en','Exist','2014-01-15') ,
-( 'LABEL','ID_NO_EXIST','en','Does not exist','2015-01-16') ,
+( 'LABEL','ID_NO_EXIST','en','Does not exist','2015-03-05') ,
 ( 'LABEL','ID_REPORT_DATABASE_NAME','en','Please enter the Report Database Name.','2014-01-15') ,
 ( 'LABEL','ID_WORKFLOW_DATABASE_NAME','en','Please enter the Workflow Database Name','2014-01-15') ,
 ( 'LABEL','ID_RBAC_DATABASE_NAME','en','Please enter the Rbac Database Name.','2014-01-15') ,
@@ -4020,7 +4020,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_GROUP_CANNOT_DELETE_WHILE_ASSIGNED_TO_TASK','en','Group cannot be deleted while it''s assigned to a task','2014-04-03') ,
 ( 'LABEL','ID_FROM_EMAIL','en','From Mail','2014-04-30') ,
 ( 'LABEL','ID_UNSAVED_TRIGGERS_WINDOW','en','You have unsaved changes in popup! If you leave the page all the windows will be closed.','2014-10-21') ,
-( 'LABEL','ID_INSTALL_USE_CURRENT_USER','en','Use the current user as a Database owner (It doesn''t create new users in the Database )','2014-05-07') ,
+( 'LABEL','ID_INSTALL_USE_CURRENT_USER','en','The MySQL user from the previous step will be the database owner. (Do not create a new user.)','2015-03-05') ,
 ( 'LABEL','ID_ACCOUNT_OPTIONS','en','Account Options','2014-05-16') ,
 ( 'LABEL','ID_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON','en','User must change password at next logon','2014-05-16') ,
 ( 'LABEL','ID_HIDE_DIRS','en','Hide Dirs','2014-05-26') ,
@@ -4516,7 +4516,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MESSAGE_EVENT_DEFINITION_VARIABLES_DO_NOT_MEET_DEFINITION','en','The variables do not meet with the definition of Message-Type-Variable','2015-02-20') ,
 ( 'LABEL','ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_IS_REGISTERED','en','The Message-Event-Definition with {0}: {1} does not is registered.','2015-02-20') ,
 ( 'LABEL','ID_EDIT_PROCESS','en','Process Edited','2015-02-21') ,
-( 'LABEL','ID_EVENT_DELETED','en','Event deleted','2015-02-21') ;
+( 'LABEL','ID_EVENT_DELETED','en','Event deleted','2015-02-21') ,
+( 'LABEL','ID_DEL_THREAD_STATUS','en','Thread Status','2015-02-27') ;
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,
