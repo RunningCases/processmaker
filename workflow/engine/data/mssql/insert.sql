@@ -5968,7 +5968,7 @@ SELECT 'LABEL','ID_DATA_CORRECT','en','The configuration is correct.','2015-02-2
   UNION ALL
 SELECT 'LABEL','ID_EXIST','en','Exist','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_NO_EXIST','en','Does not exist','2015-01-16' 
+SELECT 'LABEL','ID_NO_EXIST','en','Does not exist','2015-03-05' 
   UNION ALL
 SELECT 'LABEL','ID_REPORT_DATABASE_NAME','en','Please enter the Report Database Name.','2014-01-15' 
   UNION ALL
@@ -6586,7 +6586,7 @@ SELECT 'LABEL','ID_FROM_EMAIL','en','From Mail','2014-04-30'
   UNION ALL
 SELECT 'LABEL','ID_UNSAVED_TRIGGERS_WINDOW','en','You have unsaved changes in popup! If you leave the page all the windows will be closed.','2014-10-21' 
   UNION ALL
-SELECT 'LABEL','ID_INSTALL_USE_CURRENT_USER','en','Use the current user as a Database owner (It doesn''t create new users in the Database )','2014-05-07' 
+SELECT 'LABEL','ID_INSTALL_USE_CURRENT_USER','en','The MySQL user from the previous step will be the database owner. (Do not create a new user.)','2015-03-05' 
   UNION ALL
 SELECT 'LABEL','ID_ACCOUNT_OPTIONS','en','Account Options','2014-05-16' 
   UNION ALL
@@ -7567,6 +7567,8 @@ SELECT 'LABEL','ID_MESSAGE_EVENT_DEFINITION_DOES_NOT_IS_REGISTERED','en','The Me
 SELECT 'LABEL','ID_EDIT_PROCESS','en','Process Edited','2015-02-21' 
   UNION ALL
 SELECT 'LABEL','ID_EVENT_DELETED','en','Event deleted','2015-02-21' 
+  UNION ALL
+SELECT 'LABEL','ID_DEL_THREAD_STATUS','en','Thread Status','2015-02-27' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 
