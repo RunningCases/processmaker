@@ -95,25 +95,27 @@ class CaseScheduler extends BaseCaseScheduler
                 $result = $this->save();
                 $con->commit();
 
-                //Add Audit Log
-                switch ($fields['SCH_OPTION']){
-                  case '1':
-                    $perform = 'Daily';
-                    break;
-                  case '2':
-                    $perform = 'Weekly';
-                    break;
-                  case '3':
-                    $perform = 'Monthly';
-                    break;
-                  case '4':
-                    $perform = 'One time only';
-                    break;
-                  case '5':
-                    $perform = 'Every';
-                    break;
+                if (isset($fields['SCH_OPTION'])) {
+                    //Add Audit Log
+                    switch ($fields['SCH_OPTION']){
+                    case '1':
+                        $perform = 'Daily';
+                        break;
+                    case '2':
+                        $perform = 'Weekly';
+                        break;
+                    case '3':
+                        $perform = 'Monthly';
+                        break;
+                    case '4':
+                        $perform = 'One time only';
+                        break;
+                    case '5':
+                        $perform = 'Every';
+                        break;
+                    }
+                    G::auditLog("UpdateCaseScheduler", "Scheduler Name: ".$fields['SCH_NAME'].", Task: ".$fields['TAS_UID'].", Perform this task: ".$perform.", Start Date: ".$fields['SCH_START_DATE'].", End Date: ".$fields['SCH_END_DATE'].",  Execution time  : ".$fields['SCH_START_TIME']);
                 }
-                G::auditLog("UpdateCaseScheduler", "Scheduler Name: ".$fields['SCH_NAME'].", Task: ".$fields['TAS_UID'].", Perform this task: ".$perform.", Start Date: ".$fields['SCH_START_DATE'].", End Date: ".$fields['SCH_END_DATE'].",  Execution time  : ".$fields['SCH_START_TIME']);
 
                 return $result;
             } else {
@@ -369,11 +371,10 @@ class CaseScheduler extends BaseCaseScheduler
             }
 
             $sActualTime = $aRow['SCH_TIME_NEXT_RUN'];
-            $sActualDataHour = date( 'H', strtotime( $aRow['SCH_TIME_NEXT_RUN'] ) );
-            $sActualDataMinutes = date( 'i', strtotime( $aRow['SCH_TIME_NEXT_RUN'] ) );
-            $dActualSysHour = date( 'H', $nTime );
-            $dActualSysHour = ($dActualSysHour == '00') ? '24' : $dActualSysHour;
-            $dActualSysMinutes = date( 'i', $nTime );
+            $sActualDataHour    = (int)(date("H", strtotime($aRow["SCH_TIME_NEXT_RUN"])));
+            $sActualDataMinutes = (int)(date("i", strtotime($aRow["SCH_TIME_NEXT_RUN"])));
+            $dActualSysHour     = (int)(date("H", $nTime));
+            $dActualSysMinutes  = (int)(date("i", $nTime));
             $sActualDataTime = strtotime( $aRow['SCH_TIME_NEXT_RUN'] );
             $sActualSysTime = strtotime( $nTime );
 

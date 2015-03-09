@@ -73,6 +73,7 @@ class ListCompleted extends BaseListCompleted
         $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
         $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
         $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
+        $data['DEL_PREVIOUS'] = isset($data['DEL_PREVIOUS']) ? $data['DEL_PREVIOUS'] : "";
 
         if ($data['DEL_PREVIOUS'] != 0) {
             $criteria = new Criteria();
@@ -84,6 +85,14 @@ class ListCompleted extends BaseListCompleted
             $aRow = $dataset->getRow();
             $data['DEL_PREVIOUS_USR_UID']  = $aRow['USR_UID'];
         }
+
+        //Update - WHERE
+        $criteriaWhere = new Criteria("workflow");
+        $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $data["APP_UID"], Criteria::EQUAL);
+        //Update - SET
+        $criteriaSet = new Criteria("workflow");
+        $criteriaSet->add(ListParticipatedLastPeer::APP_STATUS, 'COMPLETED');
+        BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
 
         $con = Propel::getConnection( ListCompletedPeer::DATABASE_NAME );
         try {

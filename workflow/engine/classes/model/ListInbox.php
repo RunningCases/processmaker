@@ -39,6 +39,8 @@ class ListInbox extends BaseListInbox
 
             // create participated history
             $listParticipatedHistory = new ListParticipatedHistory();
+            $listParticipatedHistory->remove($data['APP_UID'],$data['DEL_INDEX']);
+            $listParticipatedHistory = new ListParticipatedHistory();
             $listParticipatedHistory->create($data);
 
             // create participated history
@@ -47,7 +49,7 @@ class ListInbox extends BaseListInbox
 
             // remove and create participated last
             $listParticipatedLast = new ListParticipatedLast();
-            $listParticipatedLast->remove($data['APP_UID'], $data['USR_UID'],$data['DEL_INDEX']);
+            $listParticipatedLast->remove($data['APP_UID'], $data['USR_UID']);
             $listParticipatedLast = new ListParticipatedLast();
             $listParticipatedLast->create($data);        
             $listParticipatedLast = new ListParticipatedLast();
@@ -139,8 +141,8 @@ class ListInbox extends BaseListInbox
         }
     }
 
-    public function newRow ($data, $delPreviusUsrUid) {
-
+    public function newRow ($data, $delPreviusUsrUid)
+    {
         $data['DEL_PREVIOUS_USR_UID'] = $delPreviusUsrUid;
         if (isset($data['DEL_TASK_DUE_DATE'])) {
             $data['DEL_DUE_DATE'] = $data['DEL_TASK_DUE_DATE'];
@@ -207,10 +209,6 @@ class ListInbox extends BaseListInbox
             $data['DEL_PREVIOUS_USR_USERNAME']  = $aRow['USR_USERNAME'];
             $data['DEL_PREVIOUS_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
             $data['DEL_PREVIOUS_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
-        }
-        
-        if(!isset($data['APP_STATUS']) && $data['DEL_INDEX']>1){
-          $data['APP_STATUS'] = 'TO_DO';
         }
 
         self::create($data);

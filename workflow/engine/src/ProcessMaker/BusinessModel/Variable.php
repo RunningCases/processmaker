@@ -487,9 +487,9 @@ class Variable
                 $row = $rsCriteria->getRow();
 
                 $variableDbConnectionUid = $row["VAR_DBCONNECTION"];
-                $variableSql = $row["VAR_SQL"];
+                $variableSql = strtoupper($row["VAR_SQL"]);
             } else {
-                throw new \Exception(G::LoadTranslation("ID_PROCESS_VARIABLE_DOES_NOT_EXIST", array(strtolower("VAR_NAME"), $variableName)));
+                throw new \Exception(G::LoadTranslation("ID_PROCESS_VARIABLE_DOES_NOT_EXIST", array("VAR_NAME", $variableName)));
             }
 
             //Verify data

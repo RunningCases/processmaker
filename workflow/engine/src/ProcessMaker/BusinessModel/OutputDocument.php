@@ -38,6 +38,7 @@ class OutputDocument
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_PDF_SECURITY_OPEN_PASSWORD);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_PDF_SECURITY_OWNER_PASSWORD);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_PDF_SECURITY_PERMISSIONS);
+            $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_OPEN_TYPE);
             $oCriteria->addAsColumn('OUT_DOC_TITLE', 'C1.CON_VALUE');
             $oCriteria->addAsColumn('OUT_DOC_DESCRIPTION', 'C2.CON_VALUE');
             $oCriteria->addAsColumn('OUT_DOC_FILENAME', 'C3.CON_VALUE');
@@ -101,7 +102,8 @@ class OutputDocument
                                               'out_doc_pdf_security_enabled' => $aRow['OUT_DOC_PDF_SECURITY_ENABLED'],
                                               'out_doc_pdf_security_open_password' => $aRow['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'],
                                               'out_doc_pdf_security_owner_password' => $aRow['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'],
-                                              'out_doc_pdf_security_permissions' => $aRow['OUT_DOC_PDF_SECURITY_PERMISSIONS']);
+                                              'out_doc_pdf_security_permissions' => $aRow['OUT_DOC_PDF_SECURITY_PERMISSIONS'],
+                                              "out_doc_open_type" => $aRow["OUT_DOC_OPEN_TYPE"]);
                 }
                 $oDataset->next();
             }
@@ -145,6 +147,7 @@ class OutputDocument
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_PDF_SECURITY_OPEN_PASSWORD);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_PDF_SECURITY_OWNER_PASSWORD);
             $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_PDF_SECURITY_PERMISSIONS);
+            $oCriteria->addSelectColumn(\OutputDocumentPeer::OUT_DOC_OPEN_TYPE);
             $oCriteria->add(\OutputDocumentPeer::OUT_DOC_UID, $sOutputDocumentUID);
             $oCriteria->addAsColumn('OUT_DOC_TITLE', 'C1.CON_VALUE');
             $oCriteria->addAsColumn('OUT_DOC_DESCRIPTION', 'C2.CON_VALUE');
@@ -209,7 +212,8 @@ class OutputDocument
                                               'out_doc_pdf_security_enabled' => $aRow['OUT_DOC_PDF_SECURITY_ENABLED'],
                                               'out_doc_pdf_security_open_password' => $aRow['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'],
                                               'out_doc_pdf_security_owner_password' => $aRow['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'],
-                                              'out_doc_pdf_security_permissions' => $aRow['OUT_DOC_PDF_SECURITY_PERMISSIONS']);
+                                              'out_doc_pdf_security_permissions' => $aRow['OUT_DOC_PDF_SECURITY_PERMISSIONS'],
+                                              "out_doc_open_type" => $aRow["OUT_DOC_OPEN_TYPE"]);
                 }
                 $oDataset->next();
             }

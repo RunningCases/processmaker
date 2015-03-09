@@ -1468,6 +1468,13 @@
     <column name="USR_REPORTS_TO" type="VARCHAR" size="32" default=""/>
     <column name="USR_REPLACED_BY" type="VARCHAR" size="32" default=""/>
     <column name="USR_UX" type="VARCHAR" size="128" default="NORMAL"/>
+    <column name="USR_TOTAL_INBOX" type="INTEGER" default="0"/>
+    <column name="USR_TOTAL_DRAFT" type="INTEGER" default="0"/>
+    <column name="USR_TOTAL_CANCELLED" type="INTEGER" default="0"/>
+    <column name="USR_TOTAL_PARTICIPATED" type="INTEGER" default="0"/>
+    <column name="USR_TOTAL_PAUSED" type="INTEGER" default="0"/>
+    <column name="USR_TOTAL_COMPLETED" type="INTEGER" default="0"/>
+    <column name="USR_TOTAL_UNASSIGNED" type="INTEGER" default="0"/>
     <validator column="USR_STATUS">
       <rule name="validValues" value="ACTIVE|INACTIVE|VACATION|CLOSED" message="Please select a valid type."/>
       <rule name="required" message="Type is required."/>
@@ -4009,8 +4016,8 @@
             <parameter name="Comment" value="Participated last list"/>
         </vendor>
         <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-        <column name="DEL_INDEX" type="INTEGER" required="true" primaryKey="true" default="0"/>
         <column name="USR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
         <column name="TAS_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="APP_NUMBER" type="INTEGER" required="true" default="0"/>
@@ -4389,7 +4396,7 @@
         <column name="EVN_UID"   type="VARCHAR" size="32" required="true" />
         <column name="MSGT_UID"  type="VARCHAR" size="32" required="true" default="" />
         <column name="MSGED_USR_UID"     type="VARCHAR" size="32" required="true" default="" />
-        <column name="MSGED_VARIABLES"   type="LONGVARCHAR" required="true" default="" />
+        <column name="MSGED_VARIABLES"   type="LONGVARCHAR" required="true" />
         <column name="MSGED_CORRELATION" type="VARCHAR" size="512" required="true" default="" />
     </table>
 
@@ -4449,7 +4456,7 @@
         <column name="PRJ_UID"       type="VARCHAR" size="32" required="true" />
         <column name="EVN_UID_THROW" type="VARCHAR" size="32" required="true" />
         <column name="EVN_UID_CATCH" type="VARCHAR" size="32" required="true" />
-        <column name="MSGAPP_VARIABLES"   type="LONGVARCHAR" required="true" default="" />
+        <column name="MSGAPP_VARIABLES"   type="LONGVARCHAR" required="true" />
         <column name="MSGAPP_CORRELATION" type="VARCHAR" size="512" required="true" default="" />
         <column name="MSGAPP_THROW_DATE"  type="TIMESTAMP" required="true" />
         <column name="MSGAPP_CATCH_DATE"  type="TIMESTAMP" required="false" />
