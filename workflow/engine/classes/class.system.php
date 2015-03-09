@@ -183,7 +183,10 @@ class System
         /* For distros with the lsb_release, this returns a one-line description of
         * the distro name, such as "CentOS release 5.3 (Final)" or "Ubuntu 10.10"
         */
-        $distro = exec( "lsb_release -d -s 2> /dev/null" );
+        $distro = '';
+        if (file_exists("/dev/")){ //Windows does not have this folder 
+          $distro = exec( "lsb_release -d -s 2> /dev/null" );          
+        }
 
         /* For distros without lsb_release, we look for *release (such as
         * redhat-release, gentoo-release, SuSE-release, etc) or *version (such as
