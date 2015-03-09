@@ -65,7 +65,7 @@ Ext.onReady(function(){
   });
   
   supervisorButton = new Ext.Action({
-    text: _('ID_SET_SUPERVISOR'),
+    text: _('ID_SET_MANAGER'),
     iconCls: 'button_menu_ext ss_sprite ss_user_edit',
     handler: UpdateSupervisor,
     disabled: true
@@ -344,7 +344,7 @@ DDLoadUsers = function(){
       if (records[r].data['USR_SUPERVISOR']==false) {
         arrAux[r] = records[r].data['USR_UID'];
       }else{
-        PMExt.notify(_('ID_DEPARTMENTS'),_('ID_DELETE_SUPERVISOR'));
+        PMExt.notify(_('ID_DEPARTMENTS'),_('ID_DELETE_MANAGER'));
       };
     }
     DeleteDepartmentUser(arrAux,RefreshUsers,FailureProcess);
@@ -433,7 +433,7 @@ RemoveGroupsAction = function(){
     if (rowsSelected[a].get('USR_SUPERVISOR')==false) {
       arrAux[a] = rowsSelected[a].get('USR_UID');
     }else{
-      PMExt.notify(_('ID_DEPARTMENTS'),_('ID_DELETE_SUPERVISOR'));
+      PMExt.notify(_('ID_DEPARTMENTS'),_('ID_DELETE_MANAGER'));
     };
   }
   DeleteDepartmentUser(arrAux,RefreshUsers,FailureProcess);
@@ -512,7 +512,7 @@ CancelEditMembersAction = function(){
 //Render Full User Name
 show_user = function(v,i,s){
 	var sName = _FNF(v,s.data.USR_FIRSTNAME, s.data.USR_LASTNAME);
-	if (s.data.USR_SUPERVISOR) sName = sName + '&nbsp;<font color="green">[' + _('ID_SUPERVISOR') + ']</font>';
+	if (s.data.USR_SUPERVISOR) sName = sName + '&nbsp;<font color="green">[' + _('ID_MANAGER') + ']</font>';
 	return sName;
 };
 
@@ -527,7 +527,7 @@ UpdateSupervisor = function(){
 			viewport.getEl().unmask();
 			supervisorButton.disable();
 			DoSearchP();
-			PMExt.notify(_('ID_DEPARTMENTS'),_('ID_SET_SUPERVISOR_SUCCESS'));
+			PMExt.notify(_('ID_DEPARTMENTS'),_('ID_SET_MANAGER_SUCCESS'));
 		},
 		failure: function (r,o){
 			viewport.getEl().unmask();
