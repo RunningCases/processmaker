@@ -48,6 +48,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $aRow = $dataset->getRow();
         $data['APP_STATUS']  = $aRow['APP_STATUS'];
 
+        $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
             if ($this->validate()) {
