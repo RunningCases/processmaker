@@ -9,15 +9,13 @@ include_once 'propel/util/Criteria.php';
 
 include_once 'classes/model/ListInboxPeer.php';
 
-
 /**
  * Base class that represents a row from the 'LIST_INBOX' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
-*/
- 
+ */
 abstract class BaseListInbox extends BaseObject implements Persistent
 {
 
@@ -64,12 +62,12 @@ abstract class BaseListInbox extends BaseObject implements Persistent
      * @var        int
      */
     protected $app_number = 0;
-    
+
     /**
      * The value for the app_status field.
      * @var        string
      */
-    protected $app_status = '';
+    protected $app_status = '0';
 
     /**
      * The value for the app_title field.
@@ -222,7 +220,7 @@ abstract class BaseListInbox extends BaseObject implements Persistent
 
         return $this->app_number;
     }
-    
+
     /**
      * Get the [app_status] column value.
      * 
@@ -581,7 +579,7 @@ abstract class BaseListInbox extends BaseObject implements Persistent
         }
 
     } // setAppNumber()
-    
+
     /**
      * Set the value of [app_status] column.
      * 
@@ -597,12 +595,13 @@ abstract class BaseListInbox extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->app_status !== $v || $v === '') {
+        if ($this->app_status !== $v || $v === '0') {
             $this->app_status = $v;
             $this->modifiedColumns[] = ListInboxPeer::APP_STATUS;
         }
 
     } // setAppStatus()
+
     /**
      * Set the value of [app_title] column.
      * 
@@ -923,7 +922,7 @@ abstract class BaseListInbox extends BaseObject implements Persistent
             $this->pro_uid = $rs->getString($startcol + 4);
 
             $this->app_number = $rs->getInt($startcol + 5);
-            
+
             $this->app_status = $rs->getString($startcol + 6);
 
             $this->app_title = $rs->getString($startcol + 7);
@@ -955,7 +954,7 @@ abstract class BaseListInbox extends BaseObject implements Persistent
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 19; // 18 = ListInboxPeer::NUM_COLUMNS - ListInboxPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 19; // 19 = ListInboxPeer::NUM_COLUMNS - ListInboxPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ListInbox object", $e);
@@ -1216,7 +1215,6 @@ abstract class BaseListInbox extends BaseObject implements Persistent
             case 18:
                 return $this->getDelPriority();
                 break;
-
             default:
                 return null;
                 break;
@@ -1390,7 +1388,7 @@ abstract class BaseListInbox extends BaseObject implements Persistent
         if (array_key_exists($keys[5], $arr)) {
             $this->setAppNumber($arr[$keys[5]]);
         }
-        
+
         if (array_key_exists($keys[6], $arr)) {
             $this->setAppStatus($arr[$keys[6]]);
         }
@@ -1477,7 +1475,7 @@ abstract class BaseListInbox extends BaseObject implements Persistent
         if ($this->isColumnModified(ListInboxPeer::APP_NUMBER)) {
             $criteria->add(ListInboxPeer::APP_NUMBER, $this->app_number);
         }
-        
+
         if ($this->isColumnModified(ListInboxPeer::APP_STATUS)) {
             $criteria->add(ListInboxPeer::APP_STATUS, $this->app_status);
         }
@@ -1603,7 +1601,7 @@ abstract class BaseListInbox extends BaseObject implements Persistent
         $copyObj->setProUid($this->pro_uid);
 
         $copyObj->setAppNumber($this->app_number);
-        
+
         $copyObj->setAppStatus($this->app_status);
 
         $copyObj->setAppTitle($this->app_title);

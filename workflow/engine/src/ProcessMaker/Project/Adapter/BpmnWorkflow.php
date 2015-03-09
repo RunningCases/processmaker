@@ -112,6 +112,8 @@ class BpmnWorkflow extends Project\Bpmn
             $arrayData["PRO_STATUS"] = $data["PRJ_STATUS"];
         }
 
+        $arrayData["PRO_UPDATE_DATE"] = date("Y-m-d H:i:s");
+
         $this->wp->update($arrayData);
     }
 
@@ -602,7 +604,8 @@ class BpmnWorkflow extends Project\Bpmn
                 if ($elementType == "bpmnEvent" &&
                     in_array($key, array("end-message-event", "start-message-event", "intermediate-catch-message-event"))
                 ) {
-                    if ($key == "intermediate-catch-message-event") {
+
+                    if (in_array($key, array("start-message-event", "intermediate-catch-message-event"))) {
                         //Task - User
                         //Assign to admin
                         $task = new \Tasks();
@@ -1090,6 +1093,10 @@ class BpmnWorkflow extends Project\Bpmn
             $diagram["data"] = $bwp->getDataCollection($configList);
             $diagram["participants"] = $bwp->getParticipants($configList);
             $project["diagrams"][] = $diagram;
+        }
+        if (file_exists(PATH_DOCUMENT . $project["prj_uid"])) {
+            $project["prj_bpmn_file_upload"] = file_get_contents(PATH_DOCUMENT . $project["prj_uid"]);
+            unlink(PATH_DOCUMENT . $project["prj_uid"]);
         }
 
         return $project;
@@ -1659,6 +1666,8 @@ class BpmnWorkflow extends Project\Bpmn
          * Diagram's Flows Handling
          */
         $whiteList = array();
+        $defaultFlow = array();
+        $pos = 0;
 
         foreach ($diagram["flows"] as $i => $flowData) {
             $flowData = array_change_key_case($flowData, CASE_UPPER);
@@ -1685,6 +1694,12 @@ class BpmnWorkflow extends Project\Bpmn
                 if ($mappedUid !== false) {
                     $flowData["FLO_ELEMENT_DEST"] = $mappedUid;
                 }
+            }
+            //Save the default flow Uid's
+            if($flowData["FLO_TYPE"] == 'DEFAULT'){
+                  $defaultFlow[$pos]['GAT_UID'] = $flowData["FLO_ELEMENT_ORIGIN"];
+                  $defaultFlow[$pos]['GAT_DEFAULT_FLOW'] = $flowData["FLO_UID"];
+                  $pos++;
             }
 
             //Update UIDs
@@ -1728,6 +1743,17 @@ class BpmnWorkflow extends Project\Bpmn
         }
 
         $bwp->mapBpmnFlowsToWorkflowRoutes();
+        
+        //Update the Default gateway
+        $gateways = $bwp->getGateways();
+        foreach ($gateways as $gatewayData) {
+          foreach ($defaultFlow as $def) {
+            if($gatewayData["GAT_UID"] == $def["GAT_UID"]){
+              $gatewayData["GAT_DEFAULT_FLOW"] = $def["GAT_DEFAULT_FLOW"];
+              $bwp->updateGateway($gatewayData["GAT_UID"], $gatewayData);
+            }
+          }
+        }
 
         return $result;
     }

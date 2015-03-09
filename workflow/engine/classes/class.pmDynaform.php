@@ -169,7 +169,7 @@ class pmDynaform
                             $cells = array();
                             foreach ($json->columns as $column) {
                                 //data
-                                if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "datetime") {
+                                if ($column->type === "checkbox" || $column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "datetime") {
                                     array_push($cells, array(
                                         "value" => isset($row[$column->name]) ? $row[$column->name] : "",
                                         "label" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : ""

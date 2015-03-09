@@ -72,7 +72,9 @@ $(window).load(function () {
     form.appendChild(arrayRequired);
     var dyn_forward = document.getElementById("dyn_forward");
     dyn_forward.onclick = function () {
-        form.submit();
+        if (window.project.getForms()[0].isValid()) {
+            form.submit();
+        }
         return false;
     };
     if (triggerDebug === true) {
