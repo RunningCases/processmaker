@@ -23,7 +23,7 @@ class ListInbox extends BaseListInbox
      * @return type
      *
      */
-    public function create($data)
+    public function create($data, $isSelfService = false)
     {
         $con = Propel::getConnection( ListInboxPeer::DATABASE_NAME );
         try {
@@ -48,12 +48,14 @@ class ListInbox extends BaseListInbox
             $listMyInbox->refresh($data);
 
             // remove and create participated last
-            $listParticipatedLast = new ListParticipatedLast();
-            $listParticipatedLast->remove($data['APP_UID'], $data['USR_UID']);
-            $listParticipatedLast = new ListParticipatedLast();
-            $listParticipatedLast->create($data);        
-            $listParticipatedLast = new ListParticipatedLast();
-            $listParticipatedLast->refresh($data);
+            if (!$isSelfService) {
+                $listParticipatedLast = new ListParticipatedLast();
+                $listParticipatedLast->remove($data['APP_UID'], $data['USR_UID']);
+                $listParticipatedLast = new ListParticipatedLast();
+                $listParticipatedLast->create($data);
+                $listParticipatedLast = new ListParticipatedLast();
+                $listParticipatedLast->refresh($data);
+            }
 
             return $result;
         } catch(Exception $e) {
@@ -69,8 +71,12 @@ class ListInbox extends BaseListInbox
      * @return type
      * @throws type
      */
-    public function update($data)
+    public function update($data, $addCountInbox = false)
     {
+        if ($addCountInbox) {
+            $users = new Users();
+            $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
+        }
         $con = Propel::getConnection( ListInboxPeer::DATABASE_NAME );
         try {
             $con->begin();
@@ -141,7 +147,7 @@ class ListInbox extends BaseListInbox
         }
     }
 
-    public function newRow ($data, $delPreviusUsrUid)
+    public function newRow ($data, $delPreviusUsrUid, $isInitSubprocess = false, $dataPreviusApplication = array(), $isSelfService = false)
     {
         $data['DEL_PREVIOUS_USR_UID'] = $delPreviusUsrUid;
         if (isset($data['DEL_TASK_DUE_DATE'])) {
@@ -211,7 +217,51 @@ class ListInbox extends BaseListInbox
             $data['DEL_PREVIOUS_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
         }
 
-        self::create($data);
+        $users = new Users();
+        $criteria = new Criteria();
+        $criteria->addSelectColumn(SubApplicationPeer::DEL_INDEX_PARENT);
+        $criteria->add( SubApplicationPeer::APP_PARENT, $data['APP_UID'], Criteria::EQUAL );
+        $dataset = SubApplicationPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        if ($dataset->next()) {
+            $aSub = $dataset->getRow();
+            if ($aSub['DEL_INDEX_PARENT'] == $data['DEL_PREVIOUS'] && !$isSelfService) {
+                $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
+                self::create($data, $isSelfService);
+                return 1;
+            }
+        }
+
+        if (!$isInitSubprocess) {
+            if ($data['APP_STATUS'] == 'DRAFT') {
+                $users->refreshTotal($data['USR_UID'], 'add', 'draft');
+            } else {
+                if ($data['DEL_INDEX'] == 2) {
+                    $criteria = new Criteria();
+                    $criteria->addSelectColumn(SubApplicationPeer::APP_UID);
+                    $criteria->add( SubApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
+                    $dataset = SubApplicationPeer::doSelectRS($criteria);
+                    if ($dataset->next()) {
+                        $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
+                    } else {
+                        $users->refreshTotal($delPreviusUsrUid, 'remove', 'draft');
+                    }
+                } else {
+                    $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
+                }
+                if (!$isSelfService) {
+                    $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
+                }
+            }
+        } else {
+            $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
+            if ($dataPreviusApplication['APP_STATUS'] == 'DRAFT') {
+                $users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'draft');
+            } else {
+                $users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'inbox');
+            }
+        }
+        self::create($data, $isSelfService);
     }
 
     public function loadFilters (&$criteria, $filters)

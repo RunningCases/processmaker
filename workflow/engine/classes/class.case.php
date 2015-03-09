@@ -1065,7 +1065,7 @@ class Cases
               $Fields['DEL_INDEX'] = 1;
             }
             $inbox = new ListInbox();
-            $inbox->update($Fields);            
+            $inbox->update($Fields);
             /*----------------------------------********---------------------------------*/
 
             //Return
@@ -1237,6 +1237,12 @@ class Cases
             $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
 
             $appAssignSelfServiceValue->remove($sAppUid, $iDelIndex);
+            /*----------------------------------********---------------------------------*/
+            $aFields = $oAppDel->toArray(BasePeer::TYPE_FIELDNAME);
+            $aFields['APP_STATUS'] = 'TO_DO';
+            $inbox = new ListInbox();
+            $inbox->update($aFields, true);
+            /*----------------------------------********---------------------------------*/
         } catch (exception $e) {
             throw ($e);
         }
@@ -1981,7 +1987,7 @@ class Cases
      * @return Fields
      */
 
-    public function startCase($sTasUid, $sUsrUid, $isSubprocess = false)
+    public function startCase($sTasUid, $sUsrUid, $isSubprocess = false, $dataPreviusApplication = array())
     {
         if ($sTasUid != '') {
             try {
@@ -2045,11 +2051,12 @@ class Cases
                 $Fields['USR_UID'] = $sUsrUid;
                 $Fields['DEL_INDEX'] = $iDelIndex;
                 $Fields['APP_STATUS'] = 'TO_DO';
+                $Fields['DEL_DELEGATE_DATE'] = $Fields['APP_INIT_DATE'];
                 if(!$isSubprocess){
                     $Fields['APP_STATUS'] = 'DRAFT';
                 }
                 $inbox = new ListInbox();
-                $inbox->newRow($Fields, $sUsrUid);
+                $inbox->newRow($Fields, $sUsrUid, $isSubprocess, $dataPreviusApplication);
                 /*----------------------------------********---------------------------------*/
             } catch (exception $e) {
                 throw ($e);

@@ -48,6 +48,19 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $aRow = $dataset->getRow();
         $data['APP_STATUS']  = $aRow['APP_STATUS'];
 
+        //Update - WHERE
+        $criteriaWhere = new Criteria("workflow");
+        $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $data["APP_UID"], Criteria::EQUAL);
+        //Update - SET
+        $criteriaSet = new Criteria("workflow");
+        $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME, $data['DEL_CURRENT_USR_USERNAME']);
+        $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME, $data['DEL_CURRENT_USR_FIRSTNAME']);
+        $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME, $data['DEL_CURRENT_USR_LASTNAME']);
+        BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
+
+        $users = new Users();
+        $users->refreshTotal($data['USR_UID'], 'add', 'participated');
+
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
@@ -132,6 +145,11 @@ class ListParticipatedLast extends BaseListParticipatedLast
      */
     public function remove ($app_uid, $usr_uid)
     {
+        $existField = ListParticipatedLastPeer::retrieveByPK($app_uid, $usr_uid);
+        if (! is_null( $existField )) {
+            $users = new Users();
+            $users->refreshTotal($usr_uid, 'removed', 'participated');
+        }
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $this->setAppUid($app_uid);
