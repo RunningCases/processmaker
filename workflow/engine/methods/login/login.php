@@ -60,6 +60,9 @@ $sFailedLogins = $_SESSION['FAILED_LOGINS'];
 $usernamePrevious1 = $_SESSION["USERNAME_PREVIOUS1"];
 $usernamePrevious2 = $_SESSION["USERNAME_PREVIOUS2"];
 
+$pass = (isset($_SESSION['NW_PASSWORD'])) ? $_SESSION['NW_PASSWORD'] : '';
+$pass1 = (isset($_SESSION['NW_PASSWORD2'])) ? $_SESSION['NW_PASSWORD2'] : '';
+
 $aFields['LOGIN_VERIFY_MSG'] = G::loadTranslation('LOGIN_VERIFY_MSG');
 //$aFields['LOGIN_VERIFY_MSG'] = Bootstrap::loadTranslation('LOGIN_VERIFY_MSG');
 
@@ -134,6 +137,9 @@ if (strlen($msgType) > 0) {
 $_SESSION['FAILED_LOGINS'] = $sFailedLogins;
 $_SESSION["USERNAME_PREVIOUS1"] = $usernamePrevious1;
 $_SESSION["USERNAME_PREVIOUS2"] = $usernamePrevious2;
+
+$_SESSION['NW_PASSWORD'] = $pass;
+$_SESSION['NW_PASSWORD2'] = $pass1;
 
 /*----------------------------------********---------------------------------*/
 if (!class_exists('pmLicenseManager')) {
