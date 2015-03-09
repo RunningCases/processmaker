@@ -1,31 +1,42 @@
 <?php
+
 namespace Features\ActionsByEmail;
+
 /**
  * Description of ActionsByEmailService
  * 
  */
 class ActionsByEmailService
 {
+
     public function saveConfiguration($params)
     {
-        switch ($params['type']) {
-            case 'configuration':
-                require_once 'classes/model/AbeConfiguration.php';
-                $abeConfigurationInstance = new \AbeConfiguration();
-                $noteValues = json_decode($params['fields']['ABE_CASE_NOTE_IN_RESPONSE']);
-                foreach ($noteValues as $value) {
-                    $params['fields']['ABE_CASE_NOTE_IN_RESPONSE'] = $value;
-                }
-                $abeConfigurationInstance->createOrUpdate($params['fields']);
-                break;
-            default:
-                break;
+        if (\PMLicensedFeatures
+                ::getSingleton()
+                ->verifyfeature('zCeazVrMjVTQVVLcTdwSHNaSzMwTGNCdXRqTm9aYlEzVnI=')) {
+            switch ($params['type']) {
+                case 'configuration':
+                    require_once 'classes/model/AbeConfiguration.php';
+                    $abeConfigurationInstance = new \AbeConfiguration();
+                    $noteValues = json_decode($params['fields']['ABE_CASE_NOTE_IN_RESPONSE']);
+                    foreach ($noteValues as $value) {
+                        $params['fields']['ABE_CASE_NOTE_IN_RESPONSE'] = $value;
+                    }
+                    $abeConfigurationInstance->createOrUpdate($params['fields']);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
     public function loadConfiguration($params)
     {
-        if ($params['type'] != 'activity') {
+        if ($params['type'] != 'activity' 
+            || (\PMLicensedFeatures
+                ::getSingleton()
+                ->verifyfeature('zCeazVrMjVTQVVLcTdwSHNaSzMwTGNCdXRqTm9aYlEzVnI='))) 
+        {
             return NULL;
         }
         set_include_path(PATH_FEATURES . 'ActionsByEmail' . PATH_SEPARATOR . get_include_path());
@@ -50,4 +61,5 @@ class ActionsByEmailService
         $configuration['SYS_LANG'] = SYS_LANG;
         return $configuration;
     }
+
 }

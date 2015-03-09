@@ -28,7 +28,7 @@
 class PMFeatureRegistry
 {
     private $features = array ();
-    private $triggers = array ();
+    private $keys = array ('ActionsByEmail' => 'zCeazVrMjVTQVVLcTdwSHNaSzMwTGNCdXRqTm9aYlEzVnI=');
     private static $instance = null;
 
     /**
@@ -65,6 +65,9 @@ class PMFeatureRegistry
      */
     public function registerFeature ($featureName, $filename = null)
     {
+        if (!$this->validateFeatureLicense($featureName)) {
+            return false;
+        }
         $className = $featureName . "Feature";
         $feature = new $className( $featureName, $filename );
         if (isset( $this->features[$featureName] )) {
@@ -98,7 +101,7 @@ class PMFeatureRegistry
     {
         $feature = $this->retrieveFeature($featureName);
         if ($feature) {
-            $feature->enable();
+            $feature->disable();
         }
         throw new Exception( "Unable to disable feature '$featureName' (feature not found)" );
     }
@@ -166,6 +169,19 @@ class PMFeatureRegistry
             $feature->setup();
             $this->features[$name] = $feature;
         }
+    }
+    
+    public function validateFeatureLicense($featureName)            
+    {
+        if (
+                isset($this->keys[$featureName]) 
+                && PMLicensedFeatures
+                    ::getSingleton()
+                    ->verifyfeature($this->keys[$featureName])
+            ) {
+            return true;
+        } 
+        return false;
     }
 
 }
