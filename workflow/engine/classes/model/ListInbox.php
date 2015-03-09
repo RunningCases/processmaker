@@ -143,7 +143,6 @@ class ListInbox extends BaseListInbox
 
     public function newRow ($data, $delPreviusUsrUid)
     {
-        $users = new Users();
         $data['DEL_PREVIOUS_USR_UID'] = $delPreviusUsrUid;
         if (isset($data['DEL_TASK_DUE_DATE'])) {
             $data['DEL_DUE_DATE'] = $data['DEL_TASK_DUE_DATE'];
@@ -210,36 +209,6 @@ class ListInbox extends BaseListInbox
             $data['DEL_PREVIOUS_USR_USERNAME']  = $aRow['USR_USERNAME'];
             $data['DEL_PREVIOUS_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
             $data['DEL_PREVIOUS_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
-        }
-
-
-        if ($data['APP_STATUS'] == 'DRAFT') {
-            $users->refreshTotal($data['USR_UID'], 'add', 'draft');
-        } else {
-            $criteria = new Criteria();
-            $criteria->addSelectColumn(SubApplicationPeer::APP_UID);
-            $criteria->add( SubApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
-            $dataset = SubApplicationPeer::doSelectRS($criteria);            
-            if ($dataset->next()) {
-                $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
-                $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
-            } else if ($data['DEL_INDEX'] == 2) {
-                $users->refreshTotal($delPreviusUsrUid, 'remove', 'draft');
-                $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
-            } else {
-                $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
-                $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
-            }
-            /*
-            if ($data['DEL_INDEX'] == 1) {
-                $users->refreshTotal($data['USR_UID'], 'add', 'draft');
-            } elseif ($data['DEL_INDEX'] == 2) {
-                $users->refreshTotal($delPreviusUsrUid, 'remove', 'draft');
-                $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
-            } else {
-                $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
-                $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
-            }*/
         }
 
         self::create($data);
