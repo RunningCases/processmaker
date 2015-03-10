@@ -2,7 +2,7 @@
 /*----------------------------------********---------------------------------*/
 if (PMLicensedFeatures
         ::getSingleton()
-        ->verifyfeature('zCeazVrMjVTQVVLcTdwSHNaSzMwTGNCdXRqTm9aYlEzVnI=')) {
+        ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
     switch ($_REQUEST['action']) {
         case 'processABE' :
             $G_PUBLISH = new Publisher();

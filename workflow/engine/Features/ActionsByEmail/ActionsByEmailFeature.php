@@ -46,10 +46,14 @@ class ActionsByEmailFeature extends PMFeature
 
     public function executeTriggers($triggerId, $data)
     {
-        $method = $this->triggers[$triggerId];
-        require_once PATH_FEATURES. $this->sFeatureFolder . DS .$this->classInstance['filename'];
-        $actionsByEmail = new $this->classInstance['classname']();
-        $actionsByEmail->$method($data);
+        if (PMLicensedFeatures
+            ::getSingleton()
+            ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
+                $method = $this->triggers[$triggerId];
+                require_once PATH_FEATURES. $this->sFeatureFolder . DS .$this->classInstance['filename'];
+                $actionsByEmail = new $this->classInstance['classname']();
+                $actionsByEmail->$method($data);
+            }
     }
     
     public function registerTrigger($triggerId, $method)

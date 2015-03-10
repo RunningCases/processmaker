@@ -13,7 +13,7 @@ class ActionsByEmailService
     {
         if (\PMLicensedFeatures
                 ::getSingleton()
-                ->verifyfeature('zCeazVrMjVTQVVLcTdwSHNaSzMwTGNCdXRqTm9aYlEzVnI=')) {
+                ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
             switch ($params['type']) {
                 case 'configuration':
                     require_once 'classes/model/AbeConfiguration.php';
@@ -33,11 +33,11 @@ class ActionsByEmailService
     public function loadConfiguration($params)
     {
         if ($params['type'] != 'activity' 
-            || (\PMLicensedFeatures
+            || !\PMLicensedFeatures
                 ::getSingleton()
-                ->verifyfeature('zCeazVrMjVTQVVLcTdwSHNaSzMwTGNCdXRqTm9aYlEzVnI='))) 
+                ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) 
         {
-            return NULL;
+            return false;
         }
         set_include_path(PATH_FEATURES . 'ActionsByEmail' . PATH_SEPARATOR . get_include_path());
         require_once 'classes/model/AbeConfiguration.php';

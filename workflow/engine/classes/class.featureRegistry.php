@@ -28,7 +28,7 @@
 class PMFeatureRegistry
 {
     private $features = array ();
-    private $keys = array ('ActionsByEmail' => 'zCeazVrMjVTQVVLcTdwSHNaSzMwTGNCdXRqTm9aYlEzVnI=');
+    private $keys = array ('ActionsByEmail' => 'zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=');
     private static $instance = null;
 
     /**
@@ -171,7 +171,7 @@ class PMFeatureRegistry
         }
     }
     
-    public function validateFeatureLicense($featureName)            
+    public function validateFeatureLicense($featureName)
     {
         if (
                 isset($this->keys[$featureName]) 

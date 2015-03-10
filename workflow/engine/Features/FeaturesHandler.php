@@ -6,16 +6,10 @@ namespace Features;
  */
 class FeaturesHandler
 {
-    public function retrieveConfigurations($params)
-    {
-        foreach ($this->getFeatureList() as $feature) {
-            
-        }
-    }
-
     public function loadConfiguration($params)
     {
         $features = $this->getFeatureList();
+        $configurations = array();
         foreach ($features as $feature) {
             $service = $this->getFeatureService(array('name' => $feature->name));
             $configurations[] = $service->loadConfiguration($params);
