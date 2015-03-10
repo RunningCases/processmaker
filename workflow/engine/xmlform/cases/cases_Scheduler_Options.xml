@@ -17,8 +17,8 @@ function $_GET(q,s) {
     var re = new RegExp('&'+q+'=([^&]*)','i');
     return (s=s.replace(/^\?/,'&').match(re)) ? s=s[1] : s='';
 }
-function 	newScheduler() {
-	window.location = 'cases_Scheduler_New?PRO_UID='+$_GET('PRO_UID'); return false;
+function  newScheduler() {
+  window.location = 'cases_Scheduler_New?PRO_UID='+$_GET('PRO_UID'); return false;
 }
 
 function casesSchedulerDelete(schUID,proUid) {
@@ -29,9 +29,9 @@ function casesSchedulerDelete(schUID,proUid) {
 }
 
 function editCaseScheduler(SCH_UID,PRO_UID)
-{  	
-	window.location = 'cases_Scheduler_Edit?SCH_UID='+SCH_UID+'&PRO_UID='+PRO_UID;
-	return false;	
+{   
+  window.location = 'cases_Scheduler_Edit?SCH_UID='+SCH_UID+'&PRO_UID='+PRO_UID;
+  return false; 
 }
 
 ]]></JS>
