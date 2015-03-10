@@ -366,7 +366,7 @@ class InputFilter
     }
     
     /** 
-      * Internal method removes tags/special characters from a string
+      * Internal method removes tags/special characters
       * @author Marcelo Cuiza
       * @access protected
       * @param Array or String $input
@@ -413,8 +413,13 @@ class InputFilter
                     if(is_array($val) && sizeof($val)) {
                         $input[$i] = $this->xssFilterHard($val);
                     } else {
-                        $inputFiltered = $purifier->purify($val);
-                        $input[$i] = addslashes(htmlspecialchars($inputFiltered, ENT_COMPAT, 'UTF-8'));
+                        if(!empty($val)) {
+                            $inputFiltered = $purifier->purify($val);
+                            $inputFiltered = addslashes(htmlspecialchars($inputFiltered, ENT_COMPAT, 'UTF-8'));
+                        } else {
+                            $inputFiltered = "";
+                        }
+                        $input[$i] = $inputFiltered;
                     }
                 }
             }
@@ -430,24 +435,77 @@ class InputFilter
     }
     
     /** 
+      * Internal method: protect against SQL injection 
+      * @author Marcelo Cuiza
+      * @access protected
+      * @param String $con
+      * @param String $query
+      * @param Array $values
+      * @return String $query
+      */
+    function preventSqlInjection($query, $values = Array(), &$con = NULL)
+    {
+        if(is_array($values) && sizeof($values)) {
+            foreach($values as $k1 => $val1) {
+                    $values[$k1] = mysql_real_escape_string($val1);
+            }
+            
+            if ( get_magic_quotes_gpc() ) {
+                foreach($values as $k => $val) {
+                    $values[$k] = stripslashes($val);
+                }
+            }
+            $newquery = vsprintf($query,$values);
+        } else {
+            //$newquery = mysql_real_escape_string($query);
+            $newquery = $this->quoteSmart($this->decode($query), $con);
+        }
+        return $newquery;
+    }
+    
+    /** 
       * Internal method: protect against SQL injenction 
       * @author Marcelo Cuiza
       * @access protected
-      * @param Array or String $value
-      * @return Array or String $value
+      * @param String $value
+      * @param String $type
+      * @return String $value
       */
-    function protectSql($value)
+    function validateInput($value, $type = "string")
     {
-        // Stripslashes
-        if ( get_magic_quotes_gpc() ) {
-            $value = stripslashes( $value );
+        if(!isset($value) || trim($value) === '' || $value === NULL ) {
+            return '';
+        } 
+        
+        if($pos = strpos($value,";")) {
+           $value = substr($value,0,$pos);
         }
-        // Quote if not a number or a numeric string
-        if ( !is_numeric( $value ) )
-        {
-             $value = "'" . mysql_real_escape_string($value) . "'";
+         
+        switch($type) {
+            case 'float':
+                $value = (float)filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
+            break;
+            case 'int':
+                $value = (int)filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+            break;
+            case 'boolean':
+                $value = (boolean)filter_var($value, FILTER_VALIDATE_BOOLEAN,FILTER_NULL_ON_FAILURE);
+            break;
+            case 'path':
+                if(!file_exists($value)) {
+                    $value = '';
+                }
+            break;
+            case 'noSql':
+                $value = (string)filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+                if(preg_match('/\b(or|and|xor|drop|insert|update|delete|select)\b/i' , $value)) {
+                   $value = '';
+                }
+            break;
+            default:
+                $value = (string)filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
         }
+    
         return $value;
     }
 }
-
