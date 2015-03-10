@@ -406,7 +406,7 @@ Ext.onReady(function () {
       items : [
         {
           id         : 'USR_FIRSTNAME',
-          fieldLabel :  MODE == 'edit' ? _('ID_FIRSTNAME') : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_FIRSTNAME')) +'"> * </span>' + _('ID_FIRSTNAME'),
+          fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_FIRSTNAME')) +'"> * </span>' + _('ID_FIRSTNAME'),
           xtype      : 'textfield',
           width      : 260,
           allowBlank : false
@@ -420,7 +420,7 @@ Ext.onReady(function () {
         },
         {
           id         : 'USR_USERNAME',
-          fieldLabel : MODE == 'edit' ? _('ID_USER_ID') : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_USER_ID')) +'"> * </span>' + _('ID_USER_ID'),
+          fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_USER_ID')) +'"> * </span>' + _('ID_USER_ID'),
           xtype      : 'textfield',
           width      : 260,
           allowBlank : false,
@@ -459,7 +459,7 @@ Ext.onReady(function () {
         },
         {
           id         : 'USR_EMAIL',
-          fieldLabel : MODE == 'edit' ? _('ID_EMAIL') : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_EMAIL')) +'"> * </span>' + _('ID_EMAIL'),
+          fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_EMAIL')) +'"> * </span>' + _('ID_EMAIL'),
           vtype      : 'email',
           xtype      : 'textfield',
           width      : 260,
