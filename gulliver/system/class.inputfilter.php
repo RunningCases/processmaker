@@ -364,5 +364,90 @@ class InputFilter
         }
         return $string;
     }
+    
+    /** 
+      * Internal method removes tags/special characters from a string
+      * @author Marcelo Cuiza
+      * @access protected
+      * @param Array or String $input
+      * @return Array or String $input
+      */
+    public function xssFilter($input)
+    {
+        if(is_array($input)) {
+            if(sizeof($input)) {
+                foreach($input as $i => $val) {
+                    if(is_array($val) && sizeof($val)) {
+                        $input[$i] = $this->xssFilter($val);
+                    } else {
+                        $input[$i] = addslashes(htmlspecialchars(filter_var($val, FILTER_SANITIZE_STRING), ENT_COMPAT, 'UTF-8'));
+                    }
+                }
+            }    
+            return $input;
+        } else {
+            if(!isset($input) || trim($input) === '' || $input === NULL ) {
+                return '';
+            } else {
+                return addslashes(htmlspecialchars(filter_var($input, FILTER_SANITIZE_STRING), ENT_COMPAT, 'UTF-8'));
+            }
+        }
+    }
+    
+    /** 
+      * Internal method: remove malicious code, fix missing end tags, fix illegal nesting, convert deprecated tags, validate CSS, preserve rich formatting 
+      * @author Marcelo Cuiza
+      * @access protected
+      * @param Array or String $input
+      * @return Array or String $input
+      */
+    function xssFilterHard($input)
+    { 
+        require_once (PATH_THIRDPARTY . 'HTMLPurifier/HTMLPurifier.auto.php');
+        //G::LoadThirdParty ('HTMLPurifier', 'HTMLPurifier.auto.php');
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
+        if(is_array($input)) {
+            if(sizeof($input)) {
+                foreach($input as $i => $val) {
+                    if(is_array($val) && sizeof($val)) {
+                        $input[$i] = $this->xssFilterHard($val);
+                    } else {
+                        $inputFiltered = $purifier->purify($val);
+                        $input[$i] = addslashes(htmlspecialchars($inputFiltered, ENT_COMPAT, 'UTF-8'));
+                    }
+                }
+            }
+            return $input;
+        } else {
+            if(!isset($input) || trim($input) === '' || $input === NULL ) {
+                return '';
+            } else {
+                $input = $purifier->purify($input);
+                return addslashes(htmlspecialchars($input, ENT_COMPAT, 'UTF-8'));
+            }
+        }
+    }
+    
+    /** 
+      * Internal method: protect against SQL injenction 
+      * @author Marcelo Cuiza
+      * @access protected
+      * @param Array or String $value
+      * @return Array or String $value
+      */
+    function protectSql($value)
+    {
+        // Stripslashes
+        if ( get_magic_quotes_gpc() ) {
+            $value = stripslashes( $value );
+        }
+        // Quote if not a number or a numeric string
+        if ( !is_numeric( $value ) )
+        {
+             $value = "'" . mysql_real_escape_string($value) . "'";
+        }
+        return $value;
+    }
 }
 
