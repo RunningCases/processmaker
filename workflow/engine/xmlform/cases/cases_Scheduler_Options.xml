@@ -10,8 +10,7 @@
     <en><![CDATA[New]]></en>
   </MNU_ADD>
   <PAGED_TABLE_ID type="private"/>
-  <PAGED_TABLE_FAST_SEARCH type="FastSearch" label=""/>
-  <MNU_FAST_SEARCH type="button" label="@G::LoadTranslation(ID_SEARCH)" colAlign="right" colWidth="50" onclick="@#PAGED_TABLE_ID.doFastSearch(getField('PAGED_TABLE_FAST_SEARCH',this.form).value);"/>
+  <PAGED_TABLE_FAST_SEARCH type="FastSearch" label="@G::LoadTranslation(ID_SEARCH)"/>
   <JS type="javascript"><![CDATA[
 function $_GET(q,s) {
     s = (s) ? s : self.location.search;
