@@ -400,7 +400,7 @@ Ext.onReady(function () {
     triggerAction : 'all',
     mode          : 'local'
   });
-  
+
     var informationFields = new Ext.form.FieldSet({
       title : _('ID_PERSONAL_INFORMATION'),
       items : [
@@ -413,7 +413,7 @@ Ext.onReady(function () {
         },
         {
           id         : 'USR_LASTNAME',
-          fieldLabel : MODE == 'edit' ? _('ID_LASTNAME') : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_LASTNAME')) +'"> * </span>' + _('ID_LASTNAME'),
+          fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_LASTNAME')) +'"> * </span>' + _('ID_LASTNAME'),
           xtype      : 'textfield',
           width      : 260,
           allowBlank : false
