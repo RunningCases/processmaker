@@ -1,10 +1,10 @@
 <?php
 G::LoadSystem('inputfilter');
 $filter = new InputFilter();
-$_GET = $filter->xssFilterHard($_GET);
-$_POST = $filter->xssFilterHard($_POST);
-$_REQUEST = $filter->xssFilterHard($_REQUEST);
-$_SESSION = $filter->xssFilterHard($_SESSION);
+$_GET = $filter->xssFilterHard($_GET,"url");
+$_POST = $filter->xssFilterHard($_POST,"url");
+$_REQUEST = $filter->xssFilterHard($_REQUEST,"url");
+$_SESSION = $filter->xssFilterHard($_SESSION,"url");
 
 $request = isset($_POST['request'])? $_POST['request']: null;
 if( !isset($request) ){

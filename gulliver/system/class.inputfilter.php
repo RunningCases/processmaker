@@ -372,7 +372,7 @@ class InputFilter
       * @param Array or String $input
       * @return Array or String $input
       */
-    public function xssFilter($input)
+    public function xssFilter($input, $type = "")
     {
         if(is_array($input)) {
             if(sizeof($input)) {
@@ -380,7 +380,16 @@ class InputFilter
                     if(is_array($val) && sizeof($val)) {
                         $input[$i] = $this->xssFilter($val);
                     } else {
-                        $input[$i] = addslashes(htmlspecialchars(filter_var($val, FILTER_SANITIZE_STRING), ENT_COMPAT, 'UTF-8'));
+                        if(!empty($val)) {
+                            if($type != "url") {
+                                $inputFiltered = addslashes(htmlspecialchars(filter_var($val, FILTER_SANITIZE_STRING), ENT_COMPAT, 'UTF-8'));
+                            } else {
+                                $inputFiltered = filter_var($val, FILTER_SANITIZE_STRING);
+                            }
+                        } else {
+                            $inputFiltered = "";
+                        }
+                        $input[$i] = $inputFiltered;
                     }
                 }
             }    
@@ -389,7 +398,11 @@ class InputFilter
             if(!isset($input) || trim($input) === '' || $input === NULL ) {
                 return '';
             } else {
-                return addslashes(htmlspecialchars(filter_var($input, FILTER_SANITIZE_STRING), ENT_COMPAT, 'UTF-8'));
+                if($type != "url") {
+                    return addslashes(htmlspecialchars(filter_var($input, FILTER_SANITIZE_STRING), ENT_COMPAT, 'UTF-8'));
+                } else {
+                    return filter_var($input, FILTER_SANITIZE_STRING);
+                }
             }
         }
     }
@@ -401,10 +414,9 @@ class InputFilter
       * @param Array or String $input
       * @return Array or String $input
       */
-    function xssFilterHard($input)
+    function xssFilterHard($input, $type = "")
     { 
         require_once (PATH_THIRDPARTY . 'HTMLPurifier/HTMLPurifier.auto.php');
-        //G::LoadThirdParty ('HTMLPurifier', 'HTMLPurifier.auto.php');
         $config = HTMLPurifier_Config::createDefault();
         $purifier = new HTMLPurifier($config);
         if(is_array($input)) {
@@ -415,7 +427,9 @@ class InputFilter
                     } else {
                         if(!empty($val)) {
                             $inputFiltered = $purifier->purify($val);
-                            $inputFiltered = addslashes(htmlspecialchars($inputFiltered, ENT_COMPAT, 'UTF-8'));
+                            if($type != "url") {
+                                $inputFiltered = addslashes(htmlspecialchars($inputFiltered, ENT_COMPAT, 'UTF-8'));   
+                            }
                         } else {
                             $inputFiltered = "";
                         }
@@ -429,7 +443,10 @@ class InputFilter
                 return '';
             } else {
                 $input = $purifier->purify($input);
-                return addslashes(htmlspecialchars($input, ENT_COMPAT, 'UTF-8'));
+                if($type != "url") {
+                    $input = addslashes(htmlspecialchars($input, ENT_COMPAT, 'UTF-8'));
+                }
+                return $input;
             }
         }
     }
