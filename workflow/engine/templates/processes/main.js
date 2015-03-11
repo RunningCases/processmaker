@@ -1033,34 +1033,42 @@ importProcessExistProcess = function()
           }, {
             xtype  : 'spacer',
             height : 10
-          }, {
-            items : [
-              {
-                xtype      : "radio",
-                boxLabel   : _('IMPORT_PROCESS_OVERWRITING'),
-                name       : "IMPORT_OPTION",
-                inputValue : '1',
-                tabIndex   : 1
-              }
+          },
+          {
+            items: [
+                {
+                    xtype: "radio",
+                    name:  "IMPORT_OPTION",
+                    inputValue: "3",
+                    boxLabel:   _("IMPORT_PROCESS_NEW"),
+                    tabIndex:   3,
+                    checked:    "checked"
+                }
             ]
-          }, {
-            items : [{
-              xtype      : "radio",
-              boxLabel   : _('IMPORT_PROCESS_DISABLE'),
-              tabIndex   : 2,
-              name       : "IMPORT_OPTION",
-              inputValue : '2',
-              checked    : "checked"
-            }]
-          }, {
-            items: [{
-              xtype      : "radio",
-              boxLabel   : _('IMPORT_PROCESS_NEW'),
-              name       : "IMPORT_OPTION",
-              inputValue : '3',
-              tabIndex   : 3
-            }]
-          }, {
+          },
+          //{
+          //  items: [
+          //      {
+          //          xtype: "radio",
+          //          name:  "IMPORT_OPTION",
+          //          inputValue: "2",
+          //          boxLabel:   _("IMPORT_PROCESS_DISABLE"),
+          //          tabIndex:   2
+          //      }
+          //  ]
+          //},
+          {
+            items: [
+                {
+                    xtype: "radio",
+                    name:  "IMPORT_OPTION",
+                    inputValue: "1",
+                    boxLabel:   _("IMPORT_PROCESS_OVERWRITING"),
+                    tabIndex:   1
+                }
+            ]
+          },
+          {
             xtype : 'hidden',
             name  : 'ajaxAction',
             value : 'uploadFileNewProcessExist'

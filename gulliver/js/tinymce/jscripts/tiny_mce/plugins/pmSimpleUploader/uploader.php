@@ -36,7 +36,9 @@ function uploadContentFile()
 	$FileObject = $_FILES["upload_file"]; // find data on the file
     $DestPath = sys_get_temp_dir();
     $aux='';
-    $chain=str_replace ("\r\n","",file_get_contents(htmlentities($FileObject['tmp_name'])));
+    $chain = preg_replace("/\r\n+|\r+|\n+|\t+/i", ' ', file_get_contents(htmlentities($FileObject['tmp_name'])));
+    $chain=preg_replace('#<head(.*?)>(.*?)</head>#is', ' ', $chain);
+    $chain=strip_tags($chain, '<address><label><canvas><option><ol><u><textarea><em><h1><h2><h3><h4><h5><h6><section><tbody><tr><th><td><hr><center><br><b><img><p><a><table><caption><thead><div><ul><li><form><input><strong><span><small><button><figure>');
     $chain=str_replace ('"',"'",$chain);
     updateEditorContent(trim($chain));
     closeWindow();

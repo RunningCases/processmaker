@@ -215,7 +215,7 @@ class User
                 if ($form['USR_REPLACED_BY'] != '') {
                     $oReplacedBy = \UsersPeer::retrieveByPK($form['USR_REPLACED_BY']);
                     if (is_null($oReplacedBy)) {
-                        throw new \Exception('usr_replaced_by:'.$form['USR_REPLACED_BY'].' '.\G::LoadTranslation('ID_AUTHENTICATION_SOURCE_INVALID'));
+                        throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_EXIST", array(strtolower("USR_REPLACED_BY"), $form["USR_REPLACED_BY"])));
                     }
                 }
             }

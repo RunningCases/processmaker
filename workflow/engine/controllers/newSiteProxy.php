@@ -37,6 +37,8 @@ class newSiteProxy extends HttpProxyController
             ), ($action === 'create') ? true : false );
             $result['result']['admin']['password'] = ($pass === $pass1) ? true : false;
             $result['result']['action'] = $action;
+            $_SESSION['NW_PASSWORD']  = $pass;
+            $_SESSION['NW_PASSWORD2'] = $pass1;
             //$json = new Services_JSON();
             //G::pr($result['result']['database']);G::pr($action);
             $dbWf = $result['result']['database']['ao']['ao_db_wf']['status'];
