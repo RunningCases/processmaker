@@ -351,26 +351,27 @@ class Light extends Api
                 foreach ($d as $field => $value) {
                     if (array_key_exists($field, $structure)) {
                         $newName           = $structure[$field];
-                        $newData[$newName] = $value;
+                        $newData[$newName] = is_null($value) ? "":$value;
                     } else {
                         foreach ($structure as $name => $str) {
                             if (is_array($str) && array_key_exists($field, $str)) {
                                 $newName                  = $str[$field];
-                                $newData[$name][$newName] = $value;
+                                $newData[$name][$newName] = is_null($value) ? "":$value;
                             }
                         }
                     }
                 }
-                $response[] = $newData;
+                if (count($newData) > 0)
+                    $response[] = $newData;
             } else {
                 if (array_key_exists($field, $structure)) {
                     $newName           = $structure[$field];
-                    $response[$newName] = $d;
+                    $response[$newName] = is_null($d) ? "":$d;
                 } else {
                     foreach ($structure as $name => $str) {
                         if (is_array($str) && array_key_exists($field, $str)) {
                             $newName                  = $str[$field];
-                            $response[$name][$newName] = $d;
+                            $response[$name][$newName] = is_null($d) ? "":$d;
                         }
                     }
                 }
@@ -726,9 +727,39 @@ class Light extends Api
         try {
             $userUid       = $this->getUserId();
             $oMobile = new \ProcessMaker\BusinessModel\Light();
-            $oMobile->getInformation($userUid, $type, $app_uid);
+            $response = $oMobile->getInformation($userUid, $type, $app_uid);
+            $response = $this->parserGetInformation($response);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
+        return $response;
+    }
+
+    public function parserGetInformation ($data)
+    {
+        $structure = array(
+            'case' => array(
+                'PRO_TITLE'   => 'processTitle',
+                'APP_TITLE'   => 'caseTitle',
+                'APP_NUMBER'  => 'caseNumber',
+                'APP_STATUS'  => 'caseStatus',
+                'APP_UID'     => 'caseId',
+                'CREATOR'     => 'caseCreator',
+                'CREATE_DATE' => 'caseCreateDate',
+                'UPDATE_DATE' => 'caseUpdateData',
+                'DESCRIPTION' => 'caseDescription'
+            ),
+            'task' => array(
+                'TAS_TITLE'         => 'taskTitle',
+                'CURRENT_USER'      => 'currentUser',
+                'DEL_DELEGATE_DATE' => 'delegateDate',
+                'DEL_INIT_DATE'     => 'initDate',
+                'DEL_TASK_DUE_DATE' => 'dueDate',
+                'DEL_FINISH_DATE'   => 'finishDate'
+            )
+        );
+
+        $response = $this->replaceFields($data, $structure);
+        return $response;
     }
 }

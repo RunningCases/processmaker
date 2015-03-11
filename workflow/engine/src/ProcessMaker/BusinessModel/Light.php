@@ -604,15 +604,17 @@ class Light
      */
     public function getInformation($userUid, $type, $app_uid)
     {
+        //$response = array();
         switch ($type) {
             case 'paused':
             case 'participated':
                 $oCase = new \Cases();
                 $iDelIndex = $oCase->getCurrentDelegationCase( $app_uid );
                 $aFields = $oCase->loadCase( $app_uid, $iDelIndex );
-                $this->getInfoResume($userUid, $aFields, $type);
+                $response = $this->getInfoResume($userUid, $aFields, $type);
                 break;
         }
+        return $response;
     }
 
     /**
@@ -662,9 +664,10 @@ class Light
             $Fields['TAS_TITLE'] = $aTask['TAS_TITLE'];
         }
 
-        require_once(PATH_GULLIVER .'../thirdparty/smarty/libs/Smarty.class.php');
-        $G_PUBLISH = new \Publisher();
-        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume.xml', '', $Fields, '' );
-        $G_PUBLISH->RenderContent();
+//        require_once(PATH_GULLIVER .'../thirdparty/smarty/libs/Smarty.class.php');
+//        $G_PUBLISH = new \Publisher();
+//        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume.xml', '', $Fields, '' );
+//        $G_PUBLISH->RenderContent();
+        return $Fields;
     }
 }
