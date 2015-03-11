@@ -4048,8 +4048,9 @@ class Cases
         $this->getExecuteTriggerProcess($sApplicationUID, "UNPAUSE");
 
         /*----------------------------------********---------------------------------*/
+        $aData = array_merge($aFieldsDel, $aData);
         $oListPaused = new ListPaused();
-        $oListPaused->remove($sApplicationUID, $iDelegation, true);
+        $oListPaused->remove($sApplicationUID, $iDelegation, $aData);
         /*----------------------------------********---------------------------------*/
     }
 

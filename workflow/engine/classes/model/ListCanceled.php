@@ -103,6 +103,10 @@ class ListCanceled extends BaseListCanceled {
         $oListInbox = new ListInbox();
         $oListInbox->removeAll($data['APP_UID']);
 
+        $users = new Users();
+        $users->refreshTotal($data['USR_UID'], 'removed', 'inbox');
+        $users->refreshTotal($data['USR_UID'], 'add', 'canceled');
+
         $con = Propel::getConnection( ListCanceledPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
