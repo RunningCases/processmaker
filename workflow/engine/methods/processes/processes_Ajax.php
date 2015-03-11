@@ -52,22 +52,22 @@ try {
         //$oData = $oJSON->decode( stripslashes( $_REQUEST['data'] ) );
         $sOutput = '';
         $sTask = '';
-        
+
         if(array_key_exists('pro_uid', $oDataAux) || array_key_exists('uid', $oDataAux) || array_key_exists('PRO_UID', $oDataAux) || array_key_exists('UID', $oDataAux)) {
             if(array_key_exists('pro_uid', $oDataAux) || array_key_exists('PRO_UID', $oDataAux)) {
                 if(array_key_exists('pro_uid', $oDataAux)) {
                     $proUid = $oDataAux['pro_uid'];
                 } else {
-                    $proUid = $oDataAux['PRO_UID'];    
+                    $proUid = $oDataAux['PRO_UID'];
                 }
             } else {
                 $proUid = $oDataAux['uid'];
                 $uidAux = $proUid;
             }
-            
+
             G::LoadClass('processes');
             $infoProcess = new Processes();
-            
+
             if(!$infoProcess->processExists($proUid)) {
                 $oSL = new SwimlanesElements();
                 if($oSL->swimlanesElementsExists($proUid)) {
@@ -83,11 +83,11 @@ try {
                     $rs->next();
                     $row = $rs->getRow();
                     $proUid = $row['PRO_UID'];
-                } 
+                }
             }
-            $resultProcess = $infoProcess->getProcessRow($proUid); 
+            $resultProcess = $infoProcess->getProcessRow($proUid);
         } else {
-            if(array_key_exists('PU_UID', $oDataAux)) {    
+            if(array_key_exists('PU_UID', $oDataAux)) {
                 $c = new Criteria('workflow');
                 $c->clearSelectColumns();
                 $c->addSelectColumn(ProcessUserPeer::PRO_UID);
@@ -98,14 +98,14 @@ try {
                 $oDataset->next();
                 $row = $oDataset->getRow();
                 $userSupervisor = $row['USR_UID'];
-                
+
                 G::LoadClass('processes');
                 $infoProcess = new Processes();
-                $resultProcess = $infoProcess->getProcessRow($row['PRO_UID']); 
+                $resultProcess = $infoProcess->getProcessRow($row['PRO_UID']);
             }
         }
     }
-    
+
     if(isset($_REQUEST['pro_uid']) && !empty($_REQUEST['pro_uid']) || isset($_REQUEST['PRO_UID']) && !empty($_REQUEST['PRO_UID'])) {
         if(isset($_REQUEST['pro_uid']) && !empty($_REQUEST['pro_uid'])) {
             $proUid = $_REQUEST['pro_uid'];
@@ -114,21 +114,27 @@ try {
         }
         G::LoadClass('processes');
         $infoProcess = new Processes();
-        $resultProcess = $infoProcess->getProcessRow($proUid);     
+        $resultProcess = $infoProcess->getProcessRow($proUid);
     }
 
     if(isset($proUid) && $proUid != "") {
-        $valuesProcess['PRO_UID'] = $proUid;
-        $valuesProcess['PRO_UPDATE_DATE'] = date("Y-m-d H:i:s");
-        G::LoadClass('processes');
+        G::LoadClass("processes");
+
         $infoProcess = new Processes();
-        $resultProcess = $infoProcess->updateProcessRow($valuesProcess);
-        $resultProcess = $infoProcess->getProcessRow($proUid);  
+
+        if (!in_array($_REQUEST["action"], array("load"))) {
+            $infoProcess->updateProcessRow(array(
+                "PRO_UID"         => $proUid,
+                "PRO_UPDATE_DATE" => date("Y-m-d H:i:s")
+            ));
+        }
+
+        $resultProcess = $infoProcess->getProcessRow($proUid);
     }
-    
+
     //G::LoadClass( 'processMap' );
     $oProcessMap = new processMap(new DBConnection());
-    
+
     switch ($_REQUEST['action']) {
         case 'load':
             $_SESSION['PROCESS'] = $oData->uid;
@@ -345,7 +351,7 @@ try {
             } else {
                 switch ($oData->type) {
                     case 0:
-                        $oData->type = 'SEQUENTIAL';                        
+                        $oData->type = 'SEQUENTIAL';
                         break;
                     case 1:
                         $oData->type = 'SELECT';
@@ -363,7 +369,7 @@ try {
                         $oData->type = 'SEC-JOIN';
                         break;
                     case 8:
-                        $oData->type = 'DISCRIMINATOR';                        
+                        $oData->type = 'DISCRIMINATOR';
                         break;
                 }
                 $oProcessMap->newPattern($oData->pro_uid, $oData->tas_uid, $oData->next_task, $oData->type);
