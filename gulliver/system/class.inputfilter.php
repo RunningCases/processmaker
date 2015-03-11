@@ -381,7 +381,7 @@ class InputFilter
                         $input[$i] = $this->xssFilter($val);
                     } else {
                         if(!empty($val)) {
-                            if($type != "url") {
+                            if($type != "url" && !strpos(basename($val), "=")) {
                                 $inputFiltered = addslashes(htmlspecialchars(filter_var($val, FILTER_SANITIZE_STRING), ENT_COMPAT, 'UTF-8'));
                             } else {
                                 $inputFiltered = filter_var($val, FILTER_SANITIZE_STRING);
@@ -423,12 +423,15 @@ class InputFilter
             if(sizeof($input)) {
                 foreach($input as $i => $val) {
                     if(is_array($val) && sizeof($val)) {
-                        $input[$i] = $this->xssFilterHard($val);
+                        $input[$i] = $this->xssFilterHard($val,$type);
                     } else {
                         if(!empty($val)) {
                             $inputFiltered = $purifier->purify($val);
-                            if($type != "url") {
-                                $inputFiltered = addslashes(htmlspecialchars($inputFiltered, ENT_COMPAT, 'UTF-8'));   
+                            $pos = strpos($inputFiltered, "=");
+                            if($type != "url" && $pos === false) {                                
+                                $inputFiltered = addslashes(htmlspecialchars($inputFiltered, ENT_COMPAT, 'UTF-8'));
+                            } else {
+                              $inputFiltered = str_replace('&amp;','&',$inputFiltered);
                             }
                         } else {
                             $inputFiltered = "";
@@ -438,13 +441,16 @@ class InputFilter
                 }
             }
             return $input;
-        } else {
+        } else { 
             if(!isset($input) || trim($input) === '' || $input === NULL ) {
                 return '';
             } else {
                 $input = $purifier->purify($input);
-                if($type != "url") {
+                $pos = strpos(basename($input), "=");
+                if($type != "url" && $pos === false) {                    
                     $input = addslashes(htmlspecialchars($input, ENT_COMPAT, 'UTF-8'));
+                } else {
+                   $input = str_replace('&amp;','&',$input);
                 }
                 return $input;
             }
@@ -521,8 +527,7 @@ class InputFilter
             break;
             default:
                 $value = (string)filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-        }
-    
+        }    
         return $value;
     }
 }
