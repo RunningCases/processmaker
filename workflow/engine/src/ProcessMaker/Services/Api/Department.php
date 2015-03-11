@@ -80,25 +80,21 @@ class Department extends Api
     }
 
     /**
-     * @param string $dep_uid {@min 1}{@max 32}
-     * @param string $usr_uid {@min 1}{@max 32}
+     * @url POST /:dep_uid/assign-user
      *
-     * @access public
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @param string $dep_uid      {@min 32}{@max 32}
+     * @param array  $request_data
      *
-     * @return array
-     *
-     * @url PUT /:dep_uid/assign-user/:usr_uid
+     * @status 201
      */
-    public function doPutAssignUser($dep_uid, $usr_uid)
+    public function doPostAssignUser($dep_uid, array $request_data)
     {
         try {
-            $oDepartment = new \ProcessMaker\BusinessModel\Department();
-            $response = $oDepartment->assignUser($dep_uid, $usr_uid);
-            return $response;
+            $department = new \ProcessMaker\BusinessModel\Department();
+
+            $arrayData = $department->assignUser($dep_uid, $request_data);
         } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
