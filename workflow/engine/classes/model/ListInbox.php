@@ -236,7 +236,9 @@ class ListInbox extends BaseListInbox
             if ($data['APP_STATUS'] == 'DRAFT') {
                 $users->refreshTotal($data['USR_UID'], 'add', 'draft');
             } else {
-                if ($data['DEL_INDEX'] == 2) {
+                $oRow = ApplicationPeer::retrieveByPK($data['APP_UID']);
+                $aFields = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
+                if ($data['DEL_INDEX'] == 2 || $aFields['APP_STATUS'] == 'DRAFT') {
                     $criteria = new Criteria();
                     $criteria->addSelectColumn(SubApplicationPeer::APP_UID);
                     $criteria->add( SubApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
