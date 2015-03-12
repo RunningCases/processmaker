@@ -1,7 +1,7 @@
 <?php
 /**
  * Description of ActionsByEmailFeature
- * 
+ *
  */
 
 if (!class_exists('enterprisePlugin')) {
@@ -41,6 +41,7 @@ class ActionsByEmailFeature extends PMFeature
             }
             $this->registerTrigger(PM_CREATE_NEW_DELEGATION, 'sendActionsByEmail');
         } catch (Exception $error) {
+            
         }
     }
 
@@ -53,7 +54,7 @@ class ActionsByEmailFeature extends PMFeature
                 require_once PATH_FEATURES. $this->sFeatureFolder . DS .$this->classInstance['filename'];
                 $actionsByEmail = new $this->classInstance['classname']();
                 $actionsByEmail->$method($data);
-            }
+        }
     }
     
     public function registerTrigger($triggerId, $method)
