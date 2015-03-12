@@ -364,5 +364,207 @@ class InputFilter
         }
         return $string;
     }
+    
+    /** 
+      * Internal method removes tags/special characters
+      * @author Marcelo Cuiza
+      * @access protected
+      * @param Array or String $input
+      * @param String $type
+      * @return Array or String $input
+      */
+    public function xssFilter($input, $type = "")
+    {
+        if(is_array($input)) {
+            if(sizeof($input)) {
+                foreach($input as $i => $val) {
+                    if(is_array($val) && sizeof($val)) {
+                        $input[$i] = $this->xssFilter($val);
+                    } else {
+                        if(!empty($val)) {
+                            if($type != "url") {
+                                $inputFiltered = addslashes(htmlspecialchars(filter_var($val, FILTER_SANITIZE_STRING), ENT_COMPAT, 'UTF-8'));
+                            } else {
+                                $inputFiltered = filter_var($val, FILTER_SANITIZE_STRING);
+                            }
+                        } else {
+                            $inputFiltered = "";
+                        }
+                        $input[$i] = $inputFiltered;
+                    }
+                }
+            }    
+            return $input;
+        } else {
+            if(!isset($input) || trim($input) === '' || $input === NULL ) {
+                return '';
+            } else {
+                if($type != "url") {
+                    return addslashes(htmlspecialchars(filter_var($input, FILTER_SANITIZE_STRING), ENT_COMPAT, 'UTF-8'));
+                } else {
+                    return filter_var($input, FILTER_SANITIZE_STRING);
+                }
+            }
+        }
+    }
+    
+    /** 
+      * Internal method: remove malicious code, fix missing end tags, fix illegal nesting, convert deprecated tags, validate CSS, preserve rich formatting 
+      * @author Marcelo Cuiza
+      * @access protected
+      * @param Array or String $input
+      * @param String $type
+      * @return Array or String $input
+      */
+    function xssFilterHard($input, $type = "")
+    { 
+        require_once (PATH_THIRDPARTY . 'HTMLPurifier/HTMLPurifier.auto.php'); 
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
+        if(is_array($input)) {
+            if(sizeof($input)) {
+                foreach($input as $i => $val) {
+                    if(is_array($val) && sizeof($val)) {
+                        $input[$i] = $this->xssFilterHard($val);
+                    } else {
+                        if(!empty($val)) {
+                            if(!sizeof(json_decode($val))) {
+                                $inputFiltered = $purifier->purify($val);
+                                if($type != "url" && !strpos(basename($val), "=")) {
+                                    $inputFiltered = addslashes(htmlspecialchars($inputFiltered, ENT_COMPAT, 'UTF-8'));   
+                                } else {
+                                    $inputFiltered = str_replace('&amp;','&',$inputFiltered);
+                                }
+                            } else {
+                                $jsArray = json_decode($val,true);  
+                                if(is_array($jsArray) && sizeof($jsArray)) {
+                                    foreach($jsArray as $j => $jsVal){
+                                        if(is_array($jsVal) && sizeof($jsVal)) {
+                                            $jsArray[$j] = $this->xssFilterHard($jsVal);
+                                        } else {
+                                            if(!empty($jsVal)) {
+                                                $jsArray[$j] = $purifier->purify($jsVal);
+                                            }
+                                        }
+                                    }
+                                    $inputFiltered = json_encode($jsArray);
+                                } else {
+                                    $inputFiltered = $val;
+                                }
+                            }    
+                        } else {
+                            $inputFiltered = "";
+                        }
+                        $input[$i] = $inputFiltered;
+                    }
+                }
+            }
+            return $input;
+        } else {
+            if(!isset($input) || empty($input)) {
+                return '';
+            } else {
+                if(!sizeof(json_decode($input))) {
+                    $input = $purifier->purify($input);
+                    if($type != "url" && !strpos(basename($input), "=")) {
+                        $input = addslashes(htmlspecialchars($input, ENT_COMPAT, 'UTF-8'));
+                    } else {
+                        $input = str_replace('&amp;','&',$input);
+                    }
+                } else {
+                    $jsArray = json_decode($input,true);
+                    if(is_array($jsArray) && sizeof($jsArray)) {
+                        foreach($jsArray as $j => $jsVal){
+                            if(is_array($jsVal) && sizeof($jsVal)) {
+                                $jsArray[$j] = $this->xssFilterHard($jsVal);
+                            } else {
+                                if(!empty($jsVal)) {
+                                    $jsArray[$j] = $purifier->purify($jsVal);
+                                }
+                            }
+                        }
+                        $input = json_encode($jsArray);
+                    }
+                }        
+                return $input;
+            }
+        }
+    }
+    
+    /** 
+      * Internal method: protect against SQL injection 
+      * @author Marcelo Cuiza
+      * @access protected
+      * @param String $con
+      * @param String $query
+      * @param Array $values
+      * @return String $query
+      */
+    function preventSqlInjection($query, $values = Array(), &$con = NULL)
+    {
+        if(is_array($values) && sizeof($values)) {
+            foreach($values as $k1 => $val1) {
+                    $values[$k1] = mysql_real_escape_string($val1);
+            }
+            
+            if ( get_magic_quotes_gpc() ) {
+                foreach($values as $k => $val) {
+                    $values[$k] = stripslashes($val);
+                }
+            }
+            $newquery = vsprintf($query,$values);
+        } else {
+            //$newquery = mysql_real_escape_string($query);
+            $newquery = $this->quoteSmart($this->decode($query), $con);
+        }
+        return $newquery;
+    }
+    
+    /** 
+      * Internal method: protect against SQL injenction 
+      * @author Marcelo Cuiza
+      * @access protected
+      * @param String $value
+      * @param String $type
+      * @return String $value
+      */
+    function validateInput($value, $type = 'string')
+    {
+        if(!isset($value) || trim($value) === '' || $value === NULL ) {
+            return '';
+        } 
+        
+        if($pos = strpos($value,";")) {
+           $value = substr($value,0,$pos);
+        }
+         
+        switch($type) {
+            case 'float':
+                $value = (float)filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
+            break;
+            case 'int':
+                $value = (int)filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+            break;
+            case 'boolean':
+                $value = (boolean)filter_var($value, FILTER_VALIDATE_BOOLEAN,FILTER_NULL_ON_FAILURE);
+            break;
+            case 'path':
+                if(!file_exists($value)) {
+                    $value = '';
+                }
+            break;
+            case 'noSql':
+                $value = (string)filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+                if(preg_match('/\b(or|and|xor|drop|insert|update|delete|select)\b/i' , $value)) {
+                   $value = '';
+                }
+            break;
+            case 'db':
+            break;
+            default:
+                $value = (string)filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+        }
+    
+        return $value;
+    }
 }
-
