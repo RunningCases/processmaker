@@ -752,14 +752,52 @@ class Light extends Api
             'task' => array(
                 'TAS_TITLE'         => 'taskTitle',
                 'CURRENT_USER'      => 'currentUser',
-                'DEL_DELEGATE_DATE' => 'delegateDate',
-                'DEL_INIT_DATE'     => 'initDate',
-                'DEL_TASK_DUE_DATE' => 'dueDate',
-                'DEL_FINISH_DATE'   => 'finishDate'
+                'DEL_DELEGATE_DATE' => 'delDelegateDate',
+                'DEL_INIT_DATE'     => 'delInitDate',
+                'DEL_TASK_DUE_DATE' => 'delDueDate',
+                'DEL_FINISH_DATE'   => 'delFinishDate'
             )
         );
 
         $response = $this->replaceFields($data, $structure);
         return $response;
+    }
+
+    /**
+     * @url POST /case/:app_uid/upload
+     *
+     * @param $access
+     * @param $refresh
+     * @return mixed
+     */
+    public function uidUploadFiles($app_uid, $request_data)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $filesUids = $oMobile->postUidUploadFiles($userUid, $app_uid, $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $filesUids;
+    }
+
+    /**
+     * @url POST /case/:app_uid/upload/:app_doc_uid
+     *
+     * @param $access
+     * @param $refresh
+     * @return mixed
+     */
+    public function documentUploadFiles($app_uid, $app_doc_uid, $request_data)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $filesUids = $oMobile->documentUploadFiles($userUid, $app_uid, $app_doc_uid, $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $filesUids;
     }
 }
