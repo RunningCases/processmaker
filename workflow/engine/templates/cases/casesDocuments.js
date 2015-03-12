@@ -1739,6 +1739,16 @@ function copymoveCtx(e) {
   copymove('moveExecute');
 }
 
+var loader = new Ext.tree.TreeLoader({
+      preloadChildren : true,
+      dataUrl : '../appFolder/appFolderAjax.php',
+      baseParams : {
+        action : 'expandNode',
+        sendWhat : 'dirs',
+        renderTree : 1
+      }
+  });
+
 var documentsTab = {
   id : 'documents',
   // title : 'Documents',
@@ -1772,15 +1782,7 @@ var documentsTab = {
     }
     ],
     // rootVisible: false,
-    loader : new Ext.tree.TreeLoader({
-      preloadChildren : true,
-      dataUrl : '../appFolder/appFolderAjax.php',
-      baseParams : {
-        action : 'expandNode',
-        sendWhat : 'dirs',
-        renderTree : 1
-      }
-    }),
+    loader : loader,
     containerScroll : true,
     enableDD : true,
     ddGroup : 'TreeDD',
@@ -1834,10 +1836,10 @@ var documentsTab = {
           return true;
         }
       },
-      'beforenodedrop' : {
-        fn : function(e) {
-          dropEvent = e;
-          copymoveCtx(e);
+      'nodedrop' : {
+        fn : function(e) {       
+          dropEvent = e;         
+          copymoveCtx(e);       
           datastore.reload();
         }
       },
