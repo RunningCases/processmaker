@@ -383,11 +383,12 @@ if ($actionAjax == 'dynaformChangeLogViewHistory') {
     $Fields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_STEP'] = '#';
     $Fields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_ACTION'] = 'return false;';
     G::LoadClass('pmDynaform');
-    $a = new pmDynaform($_GET['DYN_UID'], $Fields['APP_DATA']);
+    $FieldsPmDynaform = $Fields;
+    $FieldsPmDynaform["PRO_UID"] = $_SESSION['PROCESS'];
+    $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_GET['DYN_UID'];
+    $a = new pmDynaform($FieldsPmDynaform);
     if ($a->isResponsive()) {
-        $a->app_data["PROCESS"] = $_SESSION['PROCESS'];
-        $a->app_data["SYS_SYS"] = SYS_SYS;
-        $a->printView((!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $_SESSION['APPLICATION']);
+        $a->printView();
     } else {
         $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_POST['DYN_UID'], '', $Fields['APP_DATA'], '', '', 'view');
     }
@@ -474,9 +475,11 @@ if ($actionAjax == 'historyDynaformGridPreview') {
     $_SESSION['CURRENT_DYN_UID'] = $_POST['DYN_UID'];
     $_SESSION['DYN_UID_PRINT'] = $_POST['DYN_UID'];
     G::LoadClass('pmDynaform');
-    $a = new pmDynaform($_GET['DYN_UID'], $Fields['APP_DATA']);
+    $FieldsPmDynaform = $Fields;
+    $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_GET['DYN_UID'];
+    $a = new pmDynaform($FieldsPmDynaform);
     if ($a->isResponsive()) {
-        $a->printView((!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $_SESSION['APPLICATION']);
+        $a->printView();
     } else {
         $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_POST['DYN_UID'], '', $Fields['APP_DATA'], '', '', 'view');
     }
