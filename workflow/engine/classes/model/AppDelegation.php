@@ -174,9 +174,18 @@ class AppDelegation extends BaseAppDelegation
             $data->DEL_INDEX = $delIndex;
             $data->USR_UID = $sUsrUid;
             $oPluginRegistry = &PMPluginRegistry::getSingleton();
-            $featureRegistry = &PMFeatureRegistry::getSingleton();
-            $oPluginRegistry->executeTriggers( PM_CREATE_NEW_DELEGATION, $data );
-            $featureRegistry->executeTriggers( PM_CREATE_NEW_DELEGATION, $data );
+            $oPluginRegistry->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
+
+            /*----------------------------------********---------------------------------*/
+            // this section evaluates the actions by email trigger execution
+            if (PMLicensedFeatures
+                ::getSingleton()
+                ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
+                G::LoadClass('ActionsByEmailFeature');
+                $actionsByEmail = new ActionsByEmailFeature('actionsByEmail');
+                $actionsByEmail->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
+            }
+            /*----------------------------------********---------------------------------*/
         }
 
         return $delIndex;

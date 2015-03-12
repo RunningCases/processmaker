@@ -196,9 +196,6 @@ define( 'PATH_METHODS', PATH_CORE . 'methods' . PATH_SEP );
 define( 'PATH_XMLFORM', PATH_CORE . 'xmlform' . PATH_SEP );
 define( 'PATH_CONFIG', PATH_CORE . 'config' . PATH_SEP );
 define( 'PATH_PLUGINS', PATH_CORE . 'plugins' . PATH_SEP );
-/*----------------------------------********---------------------------------*/
-define( 'PATH_FEATURES', PATH_CORE . 'Features' . PATH_SEP );
-/*----------------------------------********---------------------------------*/
 define( 'PATH_HTMLMAIL', PATH_CORE . 'html_templates' . PATH_SEP );
 define( 'PATH_TPL', PATH_CORE . 'templates' . PATH_SEP );
 define( 'PATH_TEST', PATH_CORE . 'test' . PATH_SEP );
@@ -630,9 +627,6 @@ if (file_exists( $sSerializedFile )) {
 } else{
     $oPluginRegistry = PMPluginRegistry::getSingleton();
 }
-/*----------------------------------********---------------------------------*/
-$featureRegistry =& PMFeatureRegistry::getSingleton();
-/*----------------------------------********---------------------------------*/
 // setup propel definitions and logging
 //changed to autoloader
 //require_once ("propel/Propel.php");
@@ -697,9 +691,6 @@ if (SYS_LANG != 'en' && ! is_file( PATH_LANGUAGECONT . 'translation.' . SYS_LANG
 
 // Setup plugins
 $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
-/*----------------------------------********---------------------------------*/
-$featureRegistry->setupFeatures(); //get and setup enabled features
-/*----------------------------------********---------------------------------*/
 $avoidChangedWorkspaceValidation = false;
 
 // Load custom Classes and Model from Plugins.
