@@ -1175,7 +1175,25 @@ class Cases
             if ($this->appSolr != null) {
                 $this->appSolr->deleteApplicationSearchIndex($sAppUid);
             }
+            /*----------------------------------********---------------------------------*/
+            $criteria = new Criteria();
+            $criteria->addSelectColumn( ListInboxPeer::USR_UID );
+            $criteria->add( ListInboxPeer::APP_UID, $sAppUid, Criteria::EQUAL );
+            $dataset = ApplicationPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            while($dataset->next()) {
+                $aRow = $dataset->getRow();
+                $users = new Users();
+                $users->refreshTotal($aRow['USR_UID'], 'remove', 'draft');
+            }
 
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListInboxPeer::APP_UID, $sAppUid);
+            ListInboxPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListParticipatedLastPeer::APP_UID, $sAppUid);
+            ListParticipatedLastPeer::doDelete($oCriteria);
+            /*----------------------------------********---------------------------------*/
             return $result;
         } catch (exception $e) {
             throw ($e);
