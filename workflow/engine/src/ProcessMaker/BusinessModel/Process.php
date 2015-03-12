@@ -169,6 +169,10 @@ class Process
     public function throwExceptionIfDataNotMetFieldDefinition($arrayData, $arrayFieldDefinition, $arrayFieldNameForException, $flagValidateRequired = true)
     {
         try {
+            
+            \G::LoadSystem('inputfilter');
+            $filter = new \InputFilter();
+            
             if ($flagValidateRequired) {
                 foreach ($arrayFieldDefinition as $key => $value) {
                     $fieldName = $key;
@@ -187,6 +191,7 @@ class Process
             foreach ($arrayData as $key => $value) {
                 $fieldName = $key;
                 $fieldValue = $value;
+                
 
                 if (isset($arrayFieldDefinition[$fieldName])) {
                     $fieldNameAux = (isset($arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]]))? $arrayFieldNameForException[$arrayFieldDefinition[$fieldName]["fieldNameAux"]] : "";
@@ -281,6 +286,7 @@ class Process
                                         }
 
                                         if (is_string($fieldValue) && trim($fieldValue) . "" != "") {
+                                            $fieldValue = $filter->validateInput($fieldValue);
                                             eval("\$arrayAux = $fieldValue;");
                                         }
 

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * class.bootstrap.php
  *
@@ -8,7 +7,6 @@
  */
 class Bootstrap
 {
-
     public static $includeClassPaths = array();
     public static $includePaths = array();
     protected $relativeIncludePaths = array();
@@ -461,6 +459,11 @@ class Bootstrap
      */
     public function streamFile($file, $download = false, $downloadFileName = '', $forceLoad = false)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $file = $filter->xssFilterHard($file);
+        $downloadFileName = $filter->xssFilterHard($downloadFileName);
+        
         $fileNameIni = $file;
 
         $browserCacheFilesUid = G::browserCacheFilesGetUid();
@@ -477,11 +480,8 @@ class Bootstrap
         //trick to generate the translation.language.js file , merging two files
         if (strtolower($typefile) == 'js' && $typearray[0] == 'translation') {
             Bootstrap::sendHeaders($fileNameIni, "text/javascript", $download, $downloadFileName);
-
             $output = Bootstrap::streamJSTranslationFile($filename, $typearray[count($typearray) - 2]);
-
             echo $output;
-
             return;
         }
 
@@ -2894,6 +2894,11 @@ class Bootstrap
         if ($hashType == '') {
             $hashType = Bootstrap::getPasswordHashType();
         }
+        
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $hashType = $filter->validateInput($hashType);
+        $pass = $filter->validateInput($pass);
 
         eval("\$var = hash('" . $hashType . "', '" . $pass . "');");
 
