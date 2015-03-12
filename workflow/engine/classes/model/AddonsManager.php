@@ -132,7 +132,11 @@ class AddonsManager extends BaseAddonsManager
 
         $oPluginRegistry = &PMPluginRegistry::getSingleton();
 
-        require_once (PATH_PLUGINS . $this->getAddonName() . ".php");
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $requiredPath = PATH_PLUGINS . $this->getAddonName() . ".php";
+        $requiredPath = $filter->validateInput($requiredPath, 'path');
+        require_once ($requiredPath);
 
         if ($enable) {
             //$oDetails = $oPluginRegistry->getPluginDetails($this->getAddonName());
