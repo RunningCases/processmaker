@@ -55,6 +55,19 @@ class ListInbox extends BaseListInbox
                 $listParticipatedLast->create($data);
                 $listParticipatedLast = new ListParticipatedLast();
                 $listParticipatedLast->refresh($data);
+            } else {
+                $data['USR_UID'] = $data['DEL_PREVIOUS_USR_UID'];
+                $data['DEL_CURRENT_USR_LASTNAME'] = '';
+                $data['DEL_CURRENT_USR_USERNAME'] = '';
+                $data['DEL_CURRENT_USR_FIRSTNAME'] = '';
+
+                $listParticipatedLast = new ListParticipatedLast();
+                $listParticipatedLast->refresh($data, $isSelfService);
+                $data['USR_UID'] = 'SELF_SERVICES';
+                $listParticipatedLast = new ListParticipatedLast();
+                $listParticipatedLast->create($data);
+                $listParticipatedLast = new ListParticipatedLast();
+                $listParticipatedLast->refresh($data, $isSelfService);
             }
 
             return $result;
@@ -71,11 +84,27 @@ class ListInbox extends BaseListInbox
      * @return type
      * @throws type
      */
-    public function update($data, $addCountInbox = false)
+    public function update($data, $isSelfService = false)
     {
-        if ($addCountInbox) {
+        if ($isSelfService) {
             $users = new Users();
             $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
+
+            //Update - WHERE
+            $criteriaWhere = new Criteria("workflow");
+            $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $data["APP_UID"], Criteria::EQUAL);
+            $criteriaWhere->add(ListParticipatedLastPeer::USR_UID, 'SELF_SERVICES', Criteria::EQUAL);
+            $criteriaWhere->add(ListParticipatedLastPeer::DEL_INDEX, $data["DEL_INDEX"], Criteria::EQUAL);
+
+            //Update - SET
+            $criteriaSet = new Criteria("workflow");
+            $criteriaSet->add(ListParticipatedLastPeer::USR_UID, $data['USR_UID']);
+            BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
+
+            $listParticipatedLast = new ListParticipatedLast();
+            $listParticipatedLast->refresh($data);
+            $users = new Users();
+            $users->refreshTotal($data['USR_UID'], 'add', 'participated');
         }
         $con = Propel::getConnection( ListInboxPeer::DATABASE_NAME );
         try {

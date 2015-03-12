@@ -27,19 +27,6 @@ class ListParticipatedLast extends BaseListParticipatedLast
     public function create($data)
     { 
         $criteria = new Criteria();
-        $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
-        $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-        $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
-        $criteria->add( UsersPeer::USR_UID, $data['USR_UID'], Criteria::EQUAL );
-        $dataset = UsersPeer::doSelectRS($criteria);
-        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $dataset->next();
-        $aRow = $dataset->getRow();
-        $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
-        $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
-        $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
-
-        $criteria = new Criteria();
         $criteria->addSelectColumn(ApplicationPeer::APP_STATUS);
         $criteria->add( ApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
         $dataset = UsersPeer::doSelectRS($criteria);
@@ -48,18 +35,23 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $aRow = $dataset->getRow();
         $data['APP_STATUS']  = $aRow['APP_STATUS'];
 
-        //Update - WHERE
-        $criteriaWhere = new Criteria("workflow");
-        $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $data["APP_UID"], Criteria::EQUAL);
-        //Update - SET
-        $criteriaSet = new Criteria("workflow");
-        $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME, $data['DEL_CURRENT_USR_USERNAME']);
-        $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME, $data['DEL_CURRENT_USR_FIRSTNAME']);
-        $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME, $data['DEL_CURRENT_USR_LASTNAME']);
-        BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
+        if ($data['USR_UID'] != 'SELF_SERVICES') {
+            $criteria = new Criteria();
+            $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+            $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+            $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+            $criteria->add( UsersPeer::USR_UID, $data['USR_UID'], Criteria::EQUAL );
+            $dataset = UsersPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            $aRow = $dataset->getRow();
+            $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
+            $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
+            $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
 
-        $users = new Users();
-        $users->refreshTotal($data['USR_UID'], 'add', 'participated');
+            $users = new Users();
+            $users->refreshTotal($data['USR_UID'], 'add', 'participated');
+        }
 
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
@@ -115,24 +107,32 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * @throws type
      *
      */
-    public function refresh ($data)
+    public function refresh ($data, $isSelfService = false)
     {   
         $data['APP_STATUS'] = (empty($data['APP_STATUS'])) ? 'TO_DO' : $data['APP_STATUS'];
-        $criteria = new Criteria();
-        $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
-        $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-        $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
-        $criteria->add( UsersPeer::USR_UID, $data['USR_UID'], Criteria::EQUAL );
-        $dataset = UsersPeer::doSelectRS($criteria);
-        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $dataset->next();
-        $aRow = $dataset->getRow();
-        
-        $data['DEL_CURRENT_USR_UID'] = $data['USR_UID'];
-        $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
-        $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
-        $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME']; 
-        $this->update($data);        
+        if (!$isSelfService) {
+            $criteria = new Criteria();
+            $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+            $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+            $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+            $criteria->add( UsersPeer::USR_UID, $data['USR_UID'], Criteria::EQUAL );
+            $dataset = UsersPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            $aRow = $dataset->getRow();
+
+            //Update - WHERE
+            $criteriaWhere = new Criteria("workflow");
+            $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $data["APP_UID"], Criteria::EQUAL);
+            //Update - SET
+            $criteriaSet = new Criteria("workflow");
+            $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME, $aRow['USR_USERNAME']);
+            $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME, $aRow['USR_FIRSTNAME']);
+            $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME, $aRow['USR_LASTNAME']);
+            BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
+
+        }
+        $this->update($data);
         
     }
     /**
