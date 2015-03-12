@@ -370,7 +370,6 @@ class InputFilter
       * @author Marcelo Cuiza
       * @access protected
       * @param Array or String $input
-      * @param String $type
       * @return Array or String $input
       */
     public function xssFilter($input, $type = "")
@@ -382,7 +381,7 @@ class InputFilter
                         $input[$i] = $this->xssFilter($val);
                     } else {
                         if(!empty($val)) {
-                            if($type != "url") {
+                            if($type != "url" && !strpos(basename($val), "=")) {
                                 $inputFiltered = addslashes(htmlspecialchars(filter_var($val, FILTER_SANITIZE_STRING), ENT_COMPAT, 'UTF-8'));
                             } else {
                                 $inputFiltered = filter_var($val, FILTER_SANITIZE_STRING);
@@ -413,45 +412,27 @@ class InputFilter
       * @author Marcelo Cuiza
       * @access protected
       * @param Array or String $input
-      * @param String $type
       * @return Array or String $input
       */
     function xssFilterHard($input, $type = "")
     { 
-        require_once (PATH_THIRDPARTY . 'HTMLPurifier/HTMLPurifier.auto.php'); 
+        require_once (PATH_THIRDPARTY . 'HTMLPurifier/HTMLPurifier.auto.php');
         $config = HTMLPurifier_Config::createDefault();
         $purifier = new HTMLPurifier($config);
         if(is_array($input)) {
             if(sizeof($input)) {
                 foreach($input as $i => $val) {
                     if(is_array($val) && sizeof($val)) {
-                        $input[$i] = $this->xssFilterHard($val);
+                        $input[$i] = $this->xssFilterHard($val,$type);
                     } else {
                         if(!empty($val)) {
-                            if(!sizeof(json_decode($val))) {
-                                $inputFiltered = $purifier->purify($val);
-                                if($type != "url" && !strpos(basename($val), "=")) {
-                                    $inputFiltered = addslashes(htmlspecialchars($inputFiltered, ENT_COMPAT, 'UTF-8'));   
-                                } else {
-                                    $inputFiltered = str_replace('&amp;','&',$inputFiltered);
-                                }
+                            $inputFiltered = $purifier->purify($val);
+                            $pos = strpos($inputFiltered, "=");
+                            if($type != "url" && $pos === false) {                                
+                                $inputFiltered = addslashes(htmlspecialchars($inputFiltered, ENT_COMPAT, 'UTF-8'));
                             } else {
-                                $jsArray = json_decode($val,true);  
-                                if(is_array($jsArray) && sizeof($jsArray)) {
-                                    foreach($jsArray as $j => $jsVal){
-                                        if(is_array($jsVal) && sizeof($jsVal)) {
-                                            $jsArray[$j] = $this->xssFilterHard($jsVal);
-                                        } else {
-                                            if(!empty($jsVal)) {
-                                                $jsArray[$j] = $purifier->purify($jsVal);
-                                            }
-                                        }
-                                    }
-                                    $inputFiltered = json_encode($jsArray);
-                                } else {
-                                    $inputFiltered = $val;
-                                }
-                            }    
+                              $inputFiltered = str_replace('&amp;','&',$inputFiltered);
+                            }
                         } else {
                             $inputFiltered = "";
                         }
@@ -460,32 +441,17 @@ class InputFilter
                 }
             }
             return $input;
-        } else {
-            if(!isset($input) || empty($input)) {
+        } else { 
+            if(!isset($input) || trim($input) === '' || $input === NULL ) {
                 return '';
             } else {
-                if(!sizeof(json_decode($input))) {
-                    $input = $purifier->purify($input);
-                    if($type != "url" && !strpos(basename($input), "=")) {
-                        $input = addslashes(htmlspecialchars($input, ENT_COMPAT, 'UTF-8'));
-                    } else {
-                        $input = str_replace('&amp;','&',$input);
-                    }
+                $input = $purifier->purify($input);
+                $pos = strpos(basename($input), "=");
+                if($type != "url" && $pos === false) {                    
+                    $input = addslashes(htmlspecialchars($input, ENT_COMPAT, 'UTF-8'));
                 } else {
-                    $jsArray = json_decode($input,true);
-                    if(is_array($jsArray) && sizeof($jsArray)) {
-                        foreach($jsArray as $j => $jsVal){
-                            if(is_array($jsVal) && sizeof($jsVal)) {
-                                $jsArray[$j] = $this->xssFilterHard($jsVal);
-                            } else {
-                                if(!empty($jsVal)) {
-                                    $jsArray[$j] = $purifier->purify($jsVal);
-                                }
-                            }
-                        }
-                        $input = json_encode($jsArray);
-                    }
-                }        
+                   $input = str_replace('&amp;','&',$input);
+                }
                 return $input;
             }
         }
@@ -528,7 +494,7 @@ class InputFilter
       * @param String $type
       * @return String $value
       */
-    function validateInput($value, $type = 'string')
+    function validateInput($value, $type = "string")
     {
         if(!isset($value) || trim($value) === '' || $value === NULL ) {
             return '';
@@ -559,12 +525,9 @@ class InputFilter
                    $value = '';
                 }
             break;
-            case 'db':
-            break;
             default:
                 $value = (string)filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-        }
-    
+        }    
         return $value;
     }
 }
