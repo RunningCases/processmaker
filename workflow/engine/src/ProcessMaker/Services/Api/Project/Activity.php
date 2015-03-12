@@ -74,15 +74,22 @@ class Activity extends Api
      */
     public function doGetProjectActivityFeatureConfiguration($pro_uid, $tas_uid, $filter = '')
     {
+        
         try {
-            $featureHandler = new \Features\FeaturesHandler();
-            $configuration = $featureHandler->loadConfiguration(array(
-                'type' => 'activity',
-                'form' => 'configuration',
-                'PRO_UID' => $pro_uid,
-                'TAS_UID' => $tas_uid
-            ));
-            return $configuration;
+            $configurations = array();
+            if (PMLicensedFeatures
+                ::getSingleton()
+                ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
+                $params = array(
+                    'type' => 'activity',
+                    'form' => 'configuration',
+                    'PRO_UID' => $pro_uid,
+                    'TAS_UID' => $tas_uid
+                );
+                $actionsByEmailService = new \Features\ActionsByEmail\ActionsByEmailService();
+                $configurations[] = $actionsByEmailService->loadConfiguration($params);
+            }
+            return $configurations;
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -110,8 +117,12 @@ class Activity extends Api
             $properties = $task->updateProperties($prj_uid, $act_uid, $request_data);
             
              /*----------------------------------********---------------------------------*/
-            $featureHandler = new \Features\FeaturesHandler();
-            $featureHandler->saveConfiguration($request_data['properties']['_features']);
+            if (PMLicensedFeatures
+                ::getSingleton()
+                ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
+                $actionsByEmailService = new \Features\ActionsByEmail\ActionsByEmailService();
+                $actionsByEmailService->saveConfiguration($request_data['properties']['_features']);
+            }
              /*----------------------------------********---------------------------------*/
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());

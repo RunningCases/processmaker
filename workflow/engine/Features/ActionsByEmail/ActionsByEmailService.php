@@ -35,7 +35,7 @@ class ActionsByEmailService
         if ($params['type'] != 'activity' 
             || !\PMLicensedFeatures
                 ::getSingleton()
-                ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) 
+                ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0='))
         {
             return false;
         }
