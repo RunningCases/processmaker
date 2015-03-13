@@ -1930,11 +1930,11 @@ class Cases
             $c->add(AppDelegationPeer::APP_UID, $sAppUid);
             $c->add(AppDelegationPeer::DEL_INDEX, $iDelIndex);
             $rowObj = AppDelegationPeer::doSelect($c);
-            G::LoadClass('dates');
-            $oDates = new dates();
+            $user = '';
             foreach ($rowObj as $appDel) {
                 $appDel->setDelThreadStatus('CLOSED');
                 $appDel->setDelFinishDate('now');
+                $user = $appDel->getUsrUid();
                 if ($appDel->Validate()) {
                     $appDel->Save();
                 } else {
@@ -1951,7 +1951,7 @@ class Cases
             $data['DEL_THREAD_STATUS'] = 'CLOSED';
             $data['APP_UID']   = $sAppUid;
             $data['DEL_INDEX'] = $iDelIndex;
-            $data['USR_UID']   = $appDel->getUsrUid();
+            $data['USR_UID']   = $user;
             $listParticipatedLast = new ListParticipatedLast();
             $listParticipatedLast->refresh($data);
             /*----------------------------------********---------------------------------*/
@@ -4281,6 +4281,27 @@ class Cases
             $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
         }
 
+        /*----------------------------------********---------------------------------*/
+        $oCriteria = new Criteria('workflow');
+        $oCriteria->add(ListParticipatedLastPeer::APP_UID, $aData['APP_UID']);
+        $oCriteria->add(ListParticipatedLastPeer::USR_UID, $sUserUID);
+        $oCriteria->add(ListParticipatedLastPeer::DEL_INDEX, $iDelegation);
+        ListParticipatedLastPeer::doDelete($oCriteria);
+        $users = new Users();
+        $users->refreshTotal($sUserUID, 'remove', 'participated');
+
+        $aFieldsDel = array_merge($aData, $aFieldsDel);
+        $aFieldsDel['USR_UID'] = $newUserUID;
+        $inbox = new ListInbox();
+        $inbox->newRow($aFieldsDel, $sUserUID);
+        $users = new Users();
+        if ($aFields['APP_STATUS'] == 'DRAFT') {
+            $users->refreshTotal($sUserUID, 'remove', 'draft');
+        } else if ($iDelegation == 2) {
+            $users->refreshTotal($sUserUID, 'add', 'draft');
+            $users->refreshTotal($sUserUID, 'remove', 'inbox');
+        }
+        /*----------------------------------********---------------------------------*/
         $this->getExecuteTriggerProcess($sApplicationUID, 'REASSIGNED');
         return true;
     }
@@ -6673,7 +6694,6 @@ class Cases
             }
         }
 
-        require_once 'classes/model/Users.php';
         $c = new Criteria('workflow');
         $c->addSelectColumn(UsersPeer::USR_UID);
         $c->addSelectColumn(UsersPeer::USR_USERNAME);
