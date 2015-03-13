@@ -527,11 +527,11 @@ class ActionsByEmail extends Api
 
         if (defined('PARTNER_FLAG')) {
             if (!file_exists($path . 'actionsByEmailPartner.html')) {
-                @copy(PATH_TEMPLATE . 'actionsByEmail' . PATH_SEP . 'data' . PATH_SEP . 'actionsByEmailPartner.html', $path . 'actionsByEmail.html');
+                @copy(PATH_TPL . 'actionsByEmail' . PATH_SEP . 'actionsByEmailPartner.html', $path . 'actionsByEmail.html');
             }
         } else {
             if (!file_exists($path . 'actionsByEmail.html')) {
-                @copy(PATH_TEMPLATE . 'actionsByEmail' . PATH_SEP . 'data' . PATH_SEP . 'actionsByEmail.html', $path . 'actionsByEmail.html');
+                @copy(PATH_TPL . 'actionsByEmail' . PATH_SEP . 'actionsByEmail.html', $path . 'actionsByEmail.html');
             }
         }
 
