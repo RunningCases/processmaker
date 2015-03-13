@@ -447,7 +447,7 @@ class InputFilter
                                             }
                                         }
                                     }
-                                    $inputFiltered = json_encode($jsArray);
+                                    $inputFiltered = G::json_encode($jsArray);
                                 } else {
                                     $inputFiltered = $val;
                                 }
@@ -483,7 +483,7 @@ class InputFilter
                                 }
                             }
                         }
-                        $input = json_encode($jsArray);
+                        $input = G::json_encode($jsArray);
                     }
                 }        
                 return $input;
