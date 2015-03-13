@@ -1185,6 +1185,7 @@ class Cases
                 $aRow = $dataset->getRow();
                 $users = new Users();
                 $users->refreshTotal($aRow['USR_UID'], 'remove', 'draft');
+                $users->refreshTotal($aRow['USR_UID'], 'remove', 'participated');
             }
 
             $oCriteria = new Criteria('workflow');
