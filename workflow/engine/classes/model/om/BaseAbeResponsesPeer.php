@@ -1,4 +1,5 @@
 <?php
+
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
 // actual class may be a subclass -- as returned by AbeResponsesPeer::getOMClass()
@@ -7,12 +8,13 @@ include_once 'classes/model/AbeResponses.php';
 /**
  * Base static class for performing query and update operations on the 'ABE_RESPONSES' table.
  *
- *
+ * 
  *
  * @package    workflow.classes.model.om
  */
 abstract class BaseAbeResponsesPeer
 {
+
     /** the default database name for this class */
     const DATABASE_NAME = 'workflow';
 
@@ -83,7 +85,7 @@ abstract class BaseAbeResponsesPeer
     /**
      * @return     MapBuilder the map builder for this peer
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     *       rethrown wrapped into a PropelException.
      */
     public static function getMapBuilder()
     {
@@ -95,7 +97,7 @@ abstract class BaseAbeResponsesPeer
      *
      * @return     array The PHP to DB name map for this peer
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     *       rethrown wrapped into a PropelException.
      * @deprecated Use the getFieldNames() and translateFieldName() methods instead of this.
      */
     public static function getPhpNameMap()
@@ -104,14 +106,11 @@ abstract class BaseAbeResponsesPeer
             $map = AbeResponsesPeer::getTableMap();
             $columns = $map->getColumns();
             $nameMap = array();
-
             foreach ($columns as $column) {
                 $nameMap[$column->getPhpName()] = $column->getColumnName();
             }
-
             self::$phpNameMap = $nameMap;
         }
-
         return self::$phpNameMap;
     }
     /**
@@ -127,11 +126,9 @@ abstract class BaseAbeResponsesPeer
     {
         $toNames = self::getFieldNames($toType);
         $key = isset(self::$fieldKeys[$fromType][$name]) ? self::$fieldKeys[$fromType][$name] : null;
-
         if ($key === null) {
             throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(self::$fieldKeys[$fromType], true));
         }
-
         return $toNames[$key];
     }
 
@@ -149,7 +146,6 @@ abstract class BaseAbeResponsesPeer
         if (!array_key_exists($type, self::$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . $type . ' was given.');
         }
-
         return self::$fieldNames[$type];
     }
 
@@ -158,8 +154,8 @@ abstract class BaseAbeResponsesPeer
      *
      * Using this method you can maintain SQL abstraction while using column aliases.
      * <code>
-     *		$c->addAlias("alias1", TablePeer::TABLE_NAME);
-     *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
+     *      $c->addAlias("alias1", TablePeer::TABLE_NAME);
+     *      $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
      * @param      string $column The column name for current table. (i.e. AbeResponsesPeer::COLUMN_NAME).
@@ -179,7 +175,7 @@ abstract class BaseAbeResponsesPeer
      *
      * @param      criteria object containing the columns to add.
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     *       rethrown wrapped into a PropelException.
      */
     public static function addSelectColumns(Criteria $criteria)
     {
@@ -218,7 +214,6 @@ abstract class BaseAbeResponsesPeer
 
         // clear out anything that might confuse the ORDER BY clause
         $criteria->clearSelectColumns()->clearOrderByColumns();
-
         if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->addSelectColumn(AbeResponsesPeer::COUNT_DISTINCT);
         } else {
@@ -245,18 +240,16 @@ abstract class BaseAbeResponsesPeer
      * @param      Connection $con
      * @return     AbeResponses
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     *       rethrown wrapped into a PropelException.
      */
     public static function doSelectOne(Criteria $criteria, $con = null)
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
         $objects = AbeResponsesPeer::doSelect($critcopy, $con);
-
         if ($objects) {
             return $objects[0];
         }
-
         return null;
     }
     /**
@@ -266,7 +259,7 @@ abstract class BaseAbeResponsesPeer
      * @param      Connection $con
      * @return     array Array of selected Objects
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     *       rethrown wrapped into a PropelException.
      */
     public static function doSelect(Criteria $criteria, $con = null)
     {
@@ -282,7 +275,7 @@ abstract class BaseAbeResponsesPeer
      * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
      * @param      Connection $con the connection to use
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     *       rethrown wrapped into a PropelException.
      * @return     ResultSet The resultset object with numerically-indexed fields.
      * @see        BasePeer::doSelect()
      */
@@ -309,7 +302,7 @@ abstract class BaseAbeResponsesPeer
      * objects that inherit from the default.
      *
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     *       rethrown wrapped into a PropelException.
      */
     public static function populateObjects(ResultSet $rs)
     {
@@ -326,7 +319,6 @@ abstract class BaseAbeResponsesPeer
             $results[] = $obj;
 
         }
-
         return $results;
     }
     /**
@@ -334,7 +326,7 @@ abstract class BaseAbeResponsesPeer
      * This method is not needed for general use but a specific application could have a need.
      * @return     TableMap
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     *       rethrown wrapped into a PropelException.
      */
     public static function getTableMap()
     {
@@ -362,7 +354,7 @@ abstract class BaseAbeResponsesPeer
      * @param      Connection $con the connection to use
      * @return     mixed The new primary key.
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     *       rethrown wrapped into a PropelException.
      */
     public static function doInsert($values, $con = null)
     {
@@ -397,11 +389,11 @@ abstract class BaseAbeResponsesPeer
     /**
      * Method perform an UPDATE on the database, given a AbeResponses or Criteria object.
      *
-     * @param      mixed $values Criteria or AbeResponses object containing data that is used to create the UPDATE statement.
-     * @param      Connection $con The connection to use (specify Connection object to exert more control over transactions).
+     * @param      mixed $values Criteria or AbeResponses object containing data create the UPDATE statement.
+     * @param      Connection $con The connection to use (specify Connection exert more control over transactions).
      * @return     int The number of affected rows (if supported by underlying database driver).
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     *       rethrown wrapped into a PropelException.
      */
     public static function doUpdate($values, $con = null)
     {
@@ -418,7 +410,6 @@ abstract class BaseAbeResponsesPeer
             $selectCriteria->add(AbeResponsesPeer::ABE_RES_UID, $criteria->remove(AbeResponsesPeer::ABE_RES_UID), $comparison);
 
         } else {
-            // $values is AbeResponses object
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
         }
@@ -439,9 +430,7 @@ abstract class BaseAbeResponsesPeer
         if ($con === null) {
             $con = Propel::getConnection(self::DATABASE_NAME);
         }
-
         $affectedRows = 0; // initialize var to track total num of affected rows
-
         try {
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
@@ -461,11 +450,12 @@ abstract class BaseAbeResponsesPeer
      * @param      mixed $values Criteria or AbeResponses object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      Connection $con the connection to use
-     * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
-     *				if supported by native driver or if emulated using Propel.
+     * @return     int  The number of affected rows (if supported by underlying database driver).
+     *             This includes CASCADE-related rows
+     *              if supported by native driver or if emulated using Propel.
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
+     *       rethrown wrapped into a PropelException.
+    */
     public static function doDelete($values, $con = null)
     {
         if ($con === null) {
@@ -568,7 +558,7 @@ abstract class BaseAbeResponsesPeer
      * @param      array $pks List of primary keys
      * @param      Connection $con the connection to use
      * @throws     PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     *       rethrown wrapped into a PropelException.
      */
     public static function retrieveByPKs($pks, $con = null)
     {
@@ -577,7 +567,6 @@ abstract class BaseAbeResponsesPeer
         }
 
         $objs = null;
-
         if (empty($pks)) {
             $objs = array();
         } else {
@@ -585,12 +574,10 @@ abstract class BaseAbeResponsesPeer
             $criteria->add(AbeResponsesPeer::ABE_RES_UID, $pks, Criteria::IN);
             $objs = AbeResponsesPeer::doSelect($criteria, $con);
         }
-
         return $objs;
     }
 }
 
-// BaseAbeResponsesPeer
 
 // static code to register the map builder for this Peer with the main Propel class
 if (Propel::isInit()) {

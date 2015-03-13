@@ -1,4 +1,5 @@
 <?php
+
 require_once 'propel/om/BaseObject.php';
 
 require_once 'propel/om/Persistent.php';
@@ -11,20 +12,20 @@ include_once 'classes/model/AbeConfigurationPeer.php';
 /**
  * Base class that represents a row from the 'ABE_CONFIGURATION' table.
  *
- *
+ * 
  *
  * @package    workflow.classes.model.om
  */
 abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 {
+
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
      * @var        AbeConfigurationPeer
-     */
+    */
     protected static $peer;
-
 
     /**
      * The value for the abe_uid field.
@@ -32,13 +33,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
      */
     protected $abe_uid = '';
 
-
     /**
      * The value for the pro_uid field.
      * @var        string
      */
     protected $pro_uid = '';
-
 
     /**
      * The value for the tas_uid field.
@@ -46,13 +45,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
      */
     protected $tas_uid = '';
 
-
     /**
      * The value for the abe_type field.
      * @var        string
      */
     protected $abe_type = '';
-
 
     /**
      * The value for the abe_template field.
@@ -60,13 +57,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
      */
     protected $abe_template = '';
 
-
     /**
      * The value for the abe_dyn_type field.
      * @var        string
      */
     protected $abe_dyn_type = 'NORMAL';
-
 
     /**
      * The value for the dyn_uid field.
@@ -74,13 +69,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
      */
     protected $dyn_uid = '';
 
-
     /**
      * The value for the abe_email_field field.
      * @var        string
      */
     protected $abe_email_field = '';
-
 
     /**
      * The value for the abe_action_field field.
@@ -88,20 +81,17 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
      */
     protected $abe_action_field = '';
 
-
     /**
      * The value for the abe_case_note_in_response field.
      * @var        int
      */
     protected $abe_case_note_in_response = 0;
 
-
     /**
      * The value for the abe_create_date field.
      * @var        int
      */
     protected $abe_create_date;
-
 
     /**
      * The value for the abe_update_date field.
@@ -125,17 +115,18 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Get the [abe_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeUid()
     {
+
         return $this->abe_uid;
     }
 
     /**
      * Get the [pro_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getProUid()
@@ -146,7 +137,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Get the [tas_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getTasUid()
@@ -157,7 +148,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Get the [abe_type] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeType()
@@ -168,7 +159,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Get the [abe_template] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeTemplate()
@@ -179,7 +170,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Get the [abe_dyn_type] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeDynType()
@@ -190,7 +181,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Get the [dyn_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getDynUid()
@@ -201,7 +192,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Get the [abe_email_field] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeEmailField()
@@ -212,7 +203,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Get the [abe_action_field] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeActionField()
@@ -223,7 +214,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Get the [abe_case_note_in_response] column value.
-     *
+     * 
      * @return     int
      */
     public function getAbeCaseNoteInResponse()
@@ -234,9 +225,9 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Get the [optionally formatted] [abe_create_date] column value.
-     *
+     * 
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *							If format is NULL, then the integer unix timestamp will be returned.
+     *                          If format is NULL, then the integer unix timestamp will be returned.
      * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
      * @throws     PropelException - if unable to convert the date/time to timestamp.
      */
@@ -249,8 +240,8 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             // a non-timestamp value was set externally, so we convert it
             $ts = strtotime($this->abe_create_date);
             if ($ts === -1 || $ts === false) {
-                // in PHP 5.1 return value changes to FALSE
-                throw new PropelException("Unable to parse value of [abe_create_date] as date/time value: " . var_export($this->abe_create_date, true));
+                throw new PropelException("Unable to parse value of [abe_create_date] as date/time value: " .
+                    var_export($this->abe_create_date, true));
             }
         } else {
             $ts = $this->abe_create_date;
@@ -266,9 +257,9 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Get the [optionally formatted] [abe_update_date] column value.
-     *
+     * 
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *							If format is NULL, then the integer unix timestamp will be returned.
+     *                          If format is NULL, then the integer unix timestamp will be returned.
      * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
      * @throws     PropelException - if unable to convert the date/time to timestamp.
      */
@@ -281,8 +272,8 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             // a non-timestamp value was set externally, so we convert it
             $ts = strtotime($this->abe_update_date);
             if ($ts === -1 || $ts === false) {
-                // in PHP 5.1 return value changes to FALSE
-                throw new PropelException("Unable to parse value of [abe_update_date] as date/time value: " . var_export($this->abe_update_date, true));
+                throw new PropelException("Unable to parse value of [abe_update_date] as date/time value: " .
+                    var_export($this->abe_update_date, true));
             }
         } else {
             $ts = $this->abe_update_date;
@@ -298,7 +289,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
     /**
      * Set the value of [abe_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -316,12 +307,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::ABE_UID;
         }
 
-    }
-    // setAbeUid()
+    } // setAbeUid()
 
     /**
      * Set the value of [pro_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -339,12 +329,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::PRO_UID;
         }
 
-    }
-    // setProUid()
+    } // setProUid()
 
     /**
      * Set the value of [tas_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -362,12 +351,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::TAS_UID;
         }
 
-    }
-    // setTasUid()
+    } // setTasUid()
 
     /**
      * Set the value of [abe_type] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -385,12 +373,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::ABE_TYPE;
         }
 
-    }
-    // setAbeType()
+    } // setAbeType()
 
     /**
      * Set the value of [abe_template] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -408,12 +395,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::ABE_TEMPLATE;
         }
 
-    }
-    // setAbeTemplate()
+    } // setAbeTemplate()
 
     /**
      * Set the value of [abe_dyn_type] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -431,12 +417,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::ABE_DYN_TYPE;
         }
 
-    }
-    // setAbeDynType()
+    } // setAbeDynType()
 
     /**
      * Set the value of [dyn_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -454,12 +439,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::DYN_UID;
         }
 
-    }
-    // setDynUid()
+    } // setDynUid()
 
     /**
      * Set the value of [abe_email_field] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -477,12 +461,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::ABE_EMAIL_FIELD;
         }
 
-    }
-    // setAbeEmailField()
+    } // setAbeEmailField()
 
     /**
      * Set the value of [abe_action_field] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -500,12 +483,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::ABE_ACTION_FIELD;
         }
 
-    }
-    // setAbeActionField()
+    } // setAbeActionField()
 
     /**
      * Set the value of [abe_case_note_in_response] column.
-     *
+     * 
      * @param      int $v new value
      * @return     void
      */
@@ -523,12 +505,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::ABE_CASE_NOTE_IN_RESPONSE;
         }
 
-    }
-    // setAbeCaseNoteInResponse()
+    } // setAbeCaseNoteInResponse()
 
     /**
      * Set the value of [abe_create_date] column.
-     *
+     * 
      * @param      int $v new value
      * @return     void
      */
@@ -537,9 +518,13 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
         if ($v !== null && !is_int($v)) {
             $ts = strtotime($v);
+            //Date/time accepts null values
+            if ($v == '') {
+                $ts = null;
+            }
             if ($ts === -1 || $ts === false) {
-                // in PHP 5.1 return value changes to FALSE
-                throw new PropelException("Unable to parse date/time value for [abe_create_date] from input: " . var_export($v, true));
+                throw new PropelException("Unable to parse date/time value for [abe_create_date] from input: " .
+                    var_export($v, true));
             }
         } else {
             $ts = $v;
@@ -549,12 +534,11 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::ABE_CREATE_DATE;
         }
 
-    }
-    // setAbeCreateDate()
+    } // setAbeCreateDate()
 
     /**
      * Set the value of [abe_update_date] column.
-     *
+     * 
      * @param      int $v new value
      * @return     void
      */
@@ -563,9 +547,13 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
         if ($v !== null && !is_int($v)) {
             $ts = strtotime($v);
+            //Date/time accepts null values
+            if ($v == '') {
+                $ts = null;
+            }
             if ($ts === -1 || $ts === false) {
-                // in PHP 5.1 return value changes to FALSE
-                throw new PropelException("Unable to parse date/time value for [abe_update_date] from input: " . var_export($v, true));
+                throw new PropelException("Unable to parse date/time value for [abe_update_date] from input: " .
+                    var_export($v, true));
             }
         } else {
             $ts = $v;
@@ -575,8 +563,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeConfigurationPeer::ABE_UPDATE_DATE;
         }
 
-    }
-    // setAbeUpdateDate()
+    } // setAbeUpdateDate()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -667,7 +654,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
      * wraps the doSave() worker method in a transaction.
      *
      * @param      Connection $con
-     * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @return     int The number of rows affected by this insert/update
      * @throws     PropelException
      * @see        doSave()
      */
@@ -699,7 +686,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
      * All related objects are also updated in this method.
      *
      * @param      Connection $con
-     * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @return     int The number of rows affected by this insert/update and any referring
      * @throws     PropelException
      * @see        save()
      */
@@ -715,8 +702,8 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
                 if ($this->isNew()) {
                     $pk = AbeConfigurationPeer::doInsert($this, $con);
                     $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
-                          // should always be true here (even though technically
-                          // BasePeer::doInsert() can insert multiple rows).
+                                         // should always be true here (even though technically
+                                         // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
@@ -728,8 +715,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->alreadyInSave = false;
         }
         return $affectedRows;
-    }
-    // doSave()
+    } // doSave()
 
     /**
      * Array of ValidationFailed objects.
@@ -780,7 +766,8 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
      * an aggreagated array of ValidationFailed objects will be returned.
      *
      * @param      array $columns Array of column names to validate.
-     * @return     mixed <code>true</code> if all validations pass; array of <code>ValidationFailed</code> objets otherwise.
+     * @return     mixed <code>true</code> if all validations pass; 
+                   array of <code>ValidationFailed</code> objects otherwise.
      */
     protected function doValidate($columns = null)
     {
@@ -867,8 +854,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             default:
                 return null;
                 break;
-        }
-        // switch()
+        } // switch()
     }
 
     /**
@@ -964,8 +950,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             case 11:
                 $this->setAbeUpdateDate($value);
                 break;
-        }
-        // switch()
+        } // switch()
     }
 
     /**
@@ -991,39 +976,51 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
         if (array_key_exists($keys[0], $arr)) {
             $this->setAbeUid($arr[$keys[0]]);
         }
+
         if (array_key_exists($keys[1], $arr)) {
             $this->setProUid($arr[$keys[1]]);
         }
+
         if (array_key_exists($keys[2], $arr)) {
             $this->setTasUid($arr[$keys[2]]);
         }
+
         if (array_key_exists($keys[3], $arr)) {
             $this->setAbeType($arr[$keys[3]]);
         }
+
         if (array_key_exists($keys[4], $arr)) {
             $this->setAbeTemplate($arr[$keys[4]]);
         }
+
         if (array_key_exists($keys[5], $arr)) {
             $this->setAbeDynType($arr[$keys[5]]);
         }
+
         if (array_key_exists($keys[6], $arr)) {
             $this->setDynUid($arr[$keys[6]]);
         }
+
         if (array_key_exists($keys[7], $arr)) {
             $this->setAbeEmailField($arr[$keys[7]]);
         }
+
         if (array_key_exists($keys[8], $arr)) {
             $this->setAbeActionField($arr[$keys[8]]);
         }
+
         if (array_key_exists($keys[9], $arr)) {
             $this->setAbeCaseNoteInResponse($arr[$keys[9]]);
         }
+
         if (array_key_exists($keys[10], $arr)) {
             $this->setAbeCreateDate($arr[$keys[10]]);
         }
+
         if (array_key_exists($keys[11], $arr)) {
             $this->setAbeUpdateDate($arr[$keys[11]]);
         }
+
     }
 
     /**
@@ -1038,39 +1035,51 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
         if ($this->isColumnModified(AbeConfigurationPeer::ABE_UID)) {
             $criteria->add(AbeConfigurationPeer::ABE_UID, $this->abe_uid);
         }
+
         if ($this->isColumnModified(AbeConfigurationPeer::PRO_UID)) {
             $criteria->add(AbeConfigurationPeer::PRO_UID, $this->pro_uid);
         }
+
         if ($this->isColumnModified(AbeConfigurationPeer::TAS_UID)) {
             $criteria->add(AbeConfigurationPeer::TAS_UID, $this->tas_uid);
         }
+
         if ($this->isColumnModified(AbeConfigurationPeer::ABE_TYPE)) {
             $criteria->add(AbeConfigurationPeer::ABE_TYPE, $this->abe_type);
         }
+
         if ($this->isColumnModified(AbeConfigurationPeer::ABE_TEMPLATE)) {
             $criteria->add(AbeConfigurationPeer::ABE_TEMPLATE, $this->abe_template);
         }
+
         if ($this->isColumnModified(AbeConfigurationPeer::ABE_DYN_TYPE)) {
             $criteria->add(AbeConfigurationPeer::ABE_DYN_TYPE, $this->abe_dyn_type);
         }
+
         if ($this->isColumnModified(AbeConfigurationPeer::DYN_UID)) {
             $criteria->add(AbeConfigurationPeer::DYN_UID, $this->dyn_uid);
         }
+
         if ($this->isColumnModified(AbeConfigurationPeer::ABE_EMAIL_FIELD)) {
             $criteria->add(AbeConfigurationPeer::ABE_EMAIL_FIELD, $this->abe_email_field);
         }
+
         if ($this->isColumnModified(AbeConfigurationPeer::ABE_ACTION_FIELD)) {
             $criteria->add(AbeConfigurationPeer::ABE_ACTION_FIELD, $this->abe_action_field);
         }
+
         if ($this->isColumnModified(AbeConfigurationPeer::ABE_CASE_NOTE_IN_RESPONSE)) {
             $criteria->add(AbeConfigurationPeer::ABE_CASE_NOTE_IN_RESPONSE, $this->abe_case_note_in_response);
         }
+
         if ($this->isColumnModified(AbeConfigurationPeer::ABE_CREATE_DATE)) {
             $criteria->add(AbeConfigurationPeer::ABE_CREATE_DATE, $this->abe_create_date);
         }
+
         if ($this->isColumnModified(AbeConfigurationPeer::ABE_UPDATE_DATE)) {
             $criteria->add(AbeConfigurationPeer::ABE_UPDATE_DATE, $this->abe_update_date);
         }
+
 
         return $criteria;
     }
@@ -1192,5 +1201,4 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
         return self::$peer;
     }
 }
-// BaseAbeConfiguration
 

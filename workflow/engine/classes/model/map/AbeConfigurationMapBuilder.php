@@ -1,4 +1,5 @@
 <?php
+
 require_once 'propel/map/MapBuilder.php';
 include_once 'creole/CreoleTypes.php';
 
@@ -17,6 +18,7 @@ include_once 'creole/CreoleTypes.php';
  */
 class AbeConfigurationMapBuilder
 {
+
     /**
      * The (dot-path) name of this class
      */
@@ -86,8 +88,7 @@ class AbeConfigurationMapBuilder
         $tMap->addColumn('ABE_CREATE_DATE', 'AbeCreateDate', 'int', CreoleTypes::TIMESTAMP, true, null);
 
         $tMap->addColumn('ABE_UPDATE_DATE', 'AbeUpdateDate', 'int', CreoleTypes::TIMESTAMP, false, null);
+
     } // doBuild()
-}
 
-// AbeConfigurationMapBuilder
-
+} // AbeConfigurationMapBuilder

@@ -1,4 +1,5 @@
 <?php
+
 require_once 'propel/om/BaseObject.php';
 
 require_once 'propel/om/Persistent.php';
@@ -11,20 +12,20 @@ include_once 'classes/model/AbeResponsesPeer.php';
 /**
  * Base class that represents a row from the 'ABE_RESPONSES' table.
  *
- *
+ * 
  *
  * @package    workflow.classes.model.om
  */
 abstract class BaseAbeResponses extends BaseObject implements Persistent
 {
+
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
      * @var        AbeResponsesPeer
-     */
+    */
     protected static $peer;
-
 
     /**
      * The value for the abe_res_uid field.
@@ -32,13 +33,11 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
      */
     protected $abe_res_uid = '';
 
-
     /**
      * The value for the abe_req_uid field.
      * @var        string
      */
     protected $abe_req_uid = '';
-
 
     /**
      * The value for the abe_res_client_ip field.
@@ -46,13 +45,11 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
      */
     protected $abe_res_client_ip = '';
 
-
     /**
      * The value for the abe_res_data field.
      * @var        string
      */
-    protected $abe_res_data = '0';
-
+    protected $abe_res_data;
 
     /**
      * The value for the abe_res_date field.
@@ -60,13 +57,11 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
      */
     protected $abe_res_date;
 
-
     /**
      * The value for the abe_res_status field.
      * @var        string
      */
     protected $abe_res_status = '';
-
 
     /**
      * The value for the abe_res_message field.
@@ -90,7 +85,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
 
     /**
      * Get the [abe_res_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeResUid()
@@ -101,7 +96,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
 
     /**
      * Get the [abe_req_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeReqUid()
@@ -112,7 +107,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
 
     /**
      * Get the [abe_res_client_ip] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeResClientIp()
@@ -123,7 +118,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
 
     /**
      * Get the [abe_res_data] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeResData()
@@ -134,9 +129,9 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
 
     /**
      * Get the [optionally formatted] [abe_res_date] column value.
-     *
+     * 
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *							If format is NULL, then the integer unix timestamp will be returned.
+     *                          If format is NULL, then the integer unix timestamp will be returned.
      * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
      * @throws     PropelException - if unable to convert the date/time to timestamp.
      */
@@ -149,8 +144,8 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             // a non-timestamp value was set externally, so we convert it
             $ts = strtotime($this->abe_res_date);
             if ($ts === -1 || $ts === false) {
-                // in PHP 5.1 return value changes to FALSE
-                throw new PropelException("Unable to parse value of [abe_res_date] as date/time value: " . var_export($this->abe_res_date, true));
+                throw new PropelException("Unable to parse value of [abe_res_date] as date/time value: " .
+                    var_export($this->abe_res_date, true));
             }
         } else {
             $ts = $this->abe_res_date;
@@ -166,7 +161,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
 
     /**
      * Get the [abe_res_status] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeResStatus()
@@ -177,7 +172,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
 
     /**
      * Get the [abe_res_message] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeResMessage()
@@ -188,7 +183,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
 
     /**
      * Set the value of [abe_res_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -206,12 +201,11 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeResponsesPeer::ABE_RES_UID;
         }
 
-    }
-    // setAbeResUid()
+    } // setAbeResUid()
 
     /**
      * Set the value of [abe_req_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -229,12 +223,11 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeResponsesPeer::ABE_REQ_UID;
         }
 
-    }
-    // setAbeReqUid()
+    } // setAbeReqUid()
 
     /**
      * Set the value of [abe_res_client_ip] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -252,12 +245,11 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeResponsesPeer::ABE_RES_CLIENT_IP;
         }
 
-    }
-    // setAbeResClientIp()
+    } // setAbeResClientIp()
 
     /**
      * Set the value of [abe_res_data] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -270,17 +262,16 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->abe_res_data !== $v || $v === '0') {
+        if ($this->abe_res_data !== $v) {
             $this->abe_res_data = $v;
             $this->modifiedColumns[] = AbeResponsesPeer::ABE_RES_DATA;
         }
 
-    }
-    // setAbeResData()
+    } // setAbeResData()
 
     /**
      * Set the value of [abe_res_date] column.
-     *
+     * 
      * @param      int $v new value
      * @return     void
      */
@@ -289,9 +280,13 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
 
         if ($v !== null && !is_int($v)) {
             $ts = strtotime($v);
+            //Date/time accepts null values
+            if ($v == '') {
+                $ts = null;
+            }
             if ($ts === -1 || $ts === false) {
-                // in PHP 5.1 return value changes to FALSE
-                throw new PropelException("Unable to parse date/time value for [abe_res_date] from input: " . var_export($v, true));
+                throw new PropelException("Unable to parse date/time value for [abe_res_date] from input: " .
+                    var_export($v, true));
             }
         } else {
             $ts = $v;
@@ -301,12 +296,11 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeResponsesPeer::ABE_RES_DATE;
         }
 
-    }
-    // setAbeResDate()
+    } // setAbeResDate()
 
     /**
      * Set the value of [abe_res_status] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -324,12 +318,11 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeResponsesPeer::ABE_RES_STATUS;
         }
 
-    }
-    // setAbeResStatus()
+    } // setAbeResStatus()
 
     /**
      * Set the value of [abe_res_message] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -347,8 +340,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeResponsesPeer::ABE_RES_MESSAGE;
         }
 
-    }
-    // setAbeResMessage()
+    } // setAbeResMessage()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -429,7 +421,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
      * wraps the doSave() worker method in a transaction.
      *
      * @param      Connection $con
-     * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @return     int The number of rows affected by this insert/update
      * @throws     PropelException
      * @see        doSave()
      */
@@ -461,14 +453,13 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
      * All related objects are also updated in this method.
      *
      * @param      Connection $con
-     * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @return     int The number of rows affected by this insert/update and any referring
      * @throws     PropelException
      * @see        save()
      */
     protected function doSave($con)
     {
-        $affectedRows = 0;
-        // initialize var to track total num of affected rows
+        $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
@@ -477,10 +468,9 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             if ($this->isModified()) {
                 if ($this->isNew()) {
                     $pk = AbeResponsesPeer::doInsert($this, $con);
-                    $affectedRows += 1;
-                          // we are assuming that there is only 1 row per doInsert() which
-                          // should always be true here (even though technically
-                          // BasePeer::doInsert() can insert multiple rows).
+                    $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
+                                         // should always be true here (even though technically
+                                         // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
@@ -492,8 +482,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             $this->alreadyInSave = false;
         }
         return $affectedRows;
-    }
-    // doSave()
+    } // doSave()
 
     /**
      * Array of ValidationFailed objects.
@@ -544,7 +533,8 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
      * an aggreagated array of ValidationFailed objects will be returned.
      *
      * @param      array $columns Array of column names to validate.
-     * @return     mixed <code>true</code> if all validations pass; array of <code>ValidationFailed</code> objets otherwise.
+     * @return     mixed <code>true</code> if all validations pass; 
+                   array of <code>ValidationFailed</code> objects otherwise.
      */
     protected function doValidate($columns = null)
     {
@@ -616,8 +606,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             default:
                 return null;
                 break;
-        }
-        // switch()
+        } // switch()
     }
 
     /**
@@ -693,8 +682,7 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
             case 6:
                 $this->setAbeResMessage($value);
                 break;
-        }
-        // switch()
+        } // switch()
     }
 
     /**
@@ -720,24 +708,31 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
         if (array_key_exists($keys[0], $arr)) {
             $this->setAbeResUid($arr[$keys[0]]);
         }
+
         if (array_key_exists($keys[1], $arr)) {
             $this->setAbeReqUid($arr[$keys[1]]);
         }
+
         if (array_key_exists($keys[2], $arr)) {
             $this->setAbeResClientIp($arr[$keys[2]]);
         }
+
         if (array_key_exists($keys[3], $arr)) {
             $this->setAbeResData($arr[$keys[3]]);
         }
+
         if (array_key_exists($keys[4], $arr)) {
             $this->setAbeResDate($arr[$keys[4]]);
         }
+
         if (array_key_exists($keys[5], $arr)) {
             $this->setAbeResStatus($arr[$keys[5]]);
         }
+
         if (array_key_exists($keys[6], $arr)) {
             $this->setAbeResMessage($arr[$keys[6]]);
         }
+
     }
 
     /**
@@ -752,24 +747,31 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
         if ($this->isColumnModified(AbeResponsesPeer::ABE_RES_UID)) {
             $criteria->add(AbeResponsesPeer::ABE_RES_UID, $this->abe_res_uid);
         }
+
         if ($this->isColumnModified(AbeResponsesPeer::ABE_REQ_UID)) {
             $criteria->add(AbeResponsesPeer::ABE_REQ_UID, $this->abe_req_uid);
         }
+
         if ($this->isColumnModified(AbeResponsesPeer::ABE_RES_CLIENT_IP)) {
             $criteria->add(AbeResponsesPeer::ABE_RES_CLIENT_IP, $this->abe_res_client_ip);
         }
+
         if ($this->isColumnModified(AbeResponsesPeer::ABE_RES_DATA)) {
             $criteria->add(AbeResponsesPeer::ABE_RES_DATA, $this->abe_res_data);
         }
+
         if ($this->isColumnModified(AbeResponsesPeer::ABE_RES_DATE)) {
             $criteria->add(AbeResponsesPeer::ABE_RES_DATE, $this->abe_res_date);
         }
+
         if ($this->isColumnModified(AbeResponsesPeer::ABE_RES_STATUS)) {
             $criteria->add(AbeResponsesPeer::ABE_RES_STATUS, $this->abe_res_status);
         }
+
         if ($this->isColumnModified(AbeResponsesPeer::ABE_RES_MESSAGE)) {
             $criteria->add(AbeResponsesPeer::ABE_RES_MESSAGE, $this->abe_res_message);
         }
+
 
         return $criteria;
     }
@@ -881,6 +883,4 @@ abstract class BaseAbeResponses extends BaseObject implements Persistent
         return self::$peer;
     }
 }
-
-// BaseAbeResponses
 

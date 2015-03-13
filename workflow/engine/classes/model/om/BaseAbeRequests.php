@@ -1,4 +1,5 @@
 <?php
+
 require_once 'propel/om/BaseObject.php';
 
 require_once 'propel/om/Persistent.php';
@@ -11,20 +12,20 @@ include_once 'classes/model/AbeRequestsPeer.php';
 /**
  * Base class that represents a row from the 'ABE_REQUESTS' table.
  *
- *
+ * 
  *
  * @package    workflow.classes.model.om
  */
 abstract class BaseAbeRequests extends BaseObject implements Persistent
 {
+
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
      * @var        AbeRequestsPeer
-     */
+    */
     protected static $peer;
-
 
     /**
      * The value for the abe_req_uid field.
@@ -32,13 +33,11 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
      */
     protected $abe_req_uid = '';
 
-
     /**
      * The value for the abe_uid field.
      * @var        string
      */
     protected $abe_uid = '';
-
 
     /**
      * The value for the app_uid field.
@@ -46,13 +45,11 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
      */
     protected $app_uid = '';
 
-
     /**
      * The value for the del_index field.
      * @var        int
      */
     protected $del_index = 0;
-
 
     /**
      * The value for the abe_req_sent_to field.
@@ -60,20 +57,17 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
      */
     protected $abe_req_sent_to = '';
 
-
     /**
      * The value for the abe_req_subject field.
      * @var        string
      */
     protected $abe_req_subject = '';
 
-
     /**
      * The value for the abe_req_body field.
      * @var        string
      */
-    protected $abe_req_body = '';
-
+    protected $abe_req_body;
 
     /**
      * The value for the abe_req_date field.
@@ -81,13 +75,11 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
      */
     protected $abe_req_date;
 
-
     /**
      * The value for the abe_req_status field.
      * @var        string
      */
     protected $abe_req_status = '';
-
 
     /**
      * The value for the abe_req_answered field.
@@ -111,7 +103,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
     /**
      * Get the [abe_req_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeReqUid()
@@ -122,7 +114,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
     /**
      * Get the [abe_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeUid()
@@ -133,7 +125,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
     /**
      * Get the [app_uid] column value.
-     *
+     * 
      * @return     string
      */
     public function getAppUid()
@@ -144,7 +136,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
     /**
      * Get the [del_index] column value.
-     *
+     * 
      * @return     int
      */
     public function getDelIndex()
@@ -155,7 +147,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
     /**
      * Get the [abe_req_sent_to] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeReqSentTo()
@@ -166,7 +158,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
     /**
      * Get the [abe_req_subject] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeReqSubject()
@@ -177,7 +169,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
     /**
      * Get the [abe_req_body] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeReqBody()
@@ -188,9 +180,9 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
     /**
      * Get the [optionally formatted] [abe_req_date] column value.
-     *
+     * 
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *							If format is NULL, then the integer unix timestamp will be returned.
+     *                          If format is NULL, then the integer unix timestamp will be returned.
      * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
      * @throws     PropelException - if unable to convert the date/time to timestamp.
      */
@@ -203,8 +195,8 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             // a non-timestamp value was set externally, so we convert it
             $ts = strtotime($this->abe_req_date);
             if ($ts === -1 || $ts === false) {
-                // in PHP 5.1 return value changes to FALSE
-                throw new PropelException("Unable to parse value of [abe_req_date] as date/time value: " . var_export($this->abe_req_date, true));
+                throw new PropelException("Unable to parse value of [abe_req_date] as date/time value: " .
+                    var_export($this->abe_req_date, true));
             }
         } else {
             $ts = $this->abe_req_date;
@@ -220,7 +212,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
     /**
      * Get the [abe_req_status] column value.
-     *
+     * 
      * @return     string
      */
     public function getAbeReqStatus()
@@ -231,7 +223,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
     /**
      * Get the [abe_req_answered] column value.
-     *
+     * 
      * @return     int
      */
     public function getAbeReqAnswered()
@@ -242,7 +234,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
     /**
      * Set the value of [abe_req_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -260,12 +252,11 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeRequestsPeer::ABE_REQ_UID;
         }
 
-    }
-    // setAbeReqUid()
+    } // setAbeReqUid()
 
     /**
      * Set the value of [abe_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -283,12 +274,11 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeRequestsPeer::ABE_UID;
         }
 
-    }
-    // setAbeUid()
+    } // setAbeUid()
 
     /**
      * Set the value of [app_uid] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -306,12 +296,11 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeRequestsPeer::APP_UID;
         }
 
-    }
-    // setAppUid()
+    } // setAppUid()
 
     /**
      * Set the value of [del_index] column.
-     *
+     * 
      * @param      int $v new value
      * @return     void
      */
@@ -329,12 +318,11 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeRequestsPeer::DEL_INDEX;
         }
 
-    }
-    // setDelIndex()
+    } // setDelIndex()
 
     /**
      * Set the value of [abe_req_sent_to] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -352,12 +340,11 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeRequestsPeer::ABE_REQ_SENT_TO;
         }
 
-    }
-    // setAbeReqSentTo()
+    } // setAbeReqSentTo()
 
     /**
      * Set the value of [abe_req_subject] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -375,12 +362,11 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeRequestsPeer::ABE_REQ_SUBJECT;
         }
 
-    }
-    // setAbeReqSubject()
+    } // setAbeReqSubject()
 
     /**
      * Set the value of [abe_req_body] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -393,17 +379,16 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->abe_req_body !== $v || $v === '') {
+        if ($this->abe_req_body !== $v) {
             $this->abe_req_body = $v;
             $this->modifiedColumns[] = AbeRequestsPeer::ABE_REQ_BODY;
         }
 
-    }
-    // setAbeReqBody()
+    } // setAbeReqBody()
 
     /**
      * Set the value of [abe_req_date] column.
-     *
+     * 
      * @param      int $v new value
      * @return     void
      */
@@ -412,9 +397,13 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
 
         if ($v !== null && !is_int($v)) {
             $ts = strtotime($v);
+            //Date/time accepts null values
+            if ($v == '') {
+                $ts = null;
+            }
             if ($ts === -1 || $ts === false) {
-                // in PHP 5.1 return value changes to FALSE
-                throw new PropelException("Unable to parse date/time value for [abe_req_date] from input: " . var_export($v, true));
+                throw new PropelException("Unable to parse date/time value for [abe_req_date] from input: " .
+                    var_export($v, true));
             }
         } else {
             $ts = $v;
@@ -424,12 +413,11 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeRequestsPeer::ABE_REQ_DATE;
         }
 
-    }
-    // setAbeReqDate()
+    } // setAbeReqDate()
 
     /**
      * Set the value of [abe_req_status] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -447,12 +435,11 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeRequestsPeer::ABE_REQ_STATUS;
         }
 
-    }
-    // setAbeReqStatus()
+    } // setAbeReqStatus()
 
     /**
      * Set the value of [abe_req_answered] column.
-     *
+     * 
      * @param      int $v new value
      * @return     void
      */
@@ -470,8 +457,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             $this->modifiedColumns[] = AbeRequestsPeer::ABE_REQ_ANSWERED;
         }
 
-    }
-    // setAbeReqAnswered()
+    } // setAbeReqAnswered()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -558,7 +544,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
      * wraps the doSave() worker method in a transaction.
      *
      * @param      Connection $con
-     * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @return     int The number of rows affected by this insert/update
      * @throws     PropelException
      * @see        doSave()
      */
@@ -590,14 +576,13 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
      * All related objects are also updated in this method.
      *
      * @param      Connection $con
-     * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @return     int The number of rows affected by this insert/update and any referring
      * @throws     PropelException
      * @see        save()
      */
     protected function doSave($con)
     {
-        $affectedRows = 0;
-        // initialize var to track total num of affected rows
+        $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
@@ -607,22 +592,20 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
                 if ($this->isNew()) {
                     $pk = AbeRequestsPeer::doInsert($this, $con);
                     $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
-                          // should always be true here (even though technically
-                          // BasePeer::doInsert() can insert multiple rows).
+                                         // should always be true here (even though technically
+                                         // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
                     $affectedRows += AbeRequestsPeer::doUpdate($this, $con);
                 }
-                $this->resetModified();
-                // [HL] After being saved an object is no longer 'modified'
+                $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
             }
 
             $this->alreadyInSave = false;
         }
         return $affectedRows;
-    }
-    // doSave()
+    } // doSave()
 
     /**
      * Array of ValidationFailed objects.
@@ -673,7 +656,8 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
      * an aggreagated array of ValidationFailed objects will be returned.
      *
      * @param      array $columns Array of column names to validate.
-     * @return     mixed <code>true</code> if all validations pass; array of <code>ValidationFailed</code> objets otherwise.
+     * @return     mixed <code>true</code> if all validations pass; 
+                   array of <code>ValidationFailed</code> objects otherwise.
      */
     protected function doValidate($columns = null)
     {
@@ -754,8 +738,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             default:
                 return null;
                 break;
-        }
-        // switch()
+        } // switch()
     }
 
     /**
@@ -843,8 +826,7 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
             case 9:
                 $this->setAbeReqAnswered($value);
                 break;
-        }
-        // switch()
+        } // switch()
     }
 
     /**
@@ -870,33 +852,43 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
         if (array_key_exists($keys[0], $arr)) {
             $this->setAbeReqUid($arr[$keys[0]]);
         }
+
         if (array_key_exists($keys[1], $arr)) {
             $this->setAbeUid($arr[$keys[1]]);
         }
+
         if (array_key_exists($keys[2], $arr)) {
             $this->setAppUid($arr[$keys[2]]);
         }
+
         if (array_key_exists($keys[3], $arr)) {
             $this->setDelIndex($arr[$keys[3]]);
         }
+
         if (array_key_exists($keys[4], $arr)) {
             $this->setAbeReqSentTo($arr[$keys[4]]);
         }
+
         if (array_key_exists($keys[5], $arr)) {
             $this->setAbeReqSubject($arr[$keys[5]]);
         }
+
         if (array_key_exists($keys[6], $arr)) {
             $this->setAbeReqBody($arr[$keys[6]]);
         }
+
         if (array_key_exists($keys[7], $arr)) {
             $this->setAbeReqDate($arr[$keys[7]]);
         }
+
         if (array_key_exists($keys[8], $arr)) {
             $this->setAbeReqStatus($arr[$keys[8]]);
         }
+
         if (array_key_exists($keys[9], $arr)) {
             $this->setAbeReqAnswered($arr[$keys[9]]);
         }
+
     }
 
     /**
@@ -911,33 +903,43 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
         if ($this->isColumnModified(AbeRequestsPeer::ABE_REQ_UID)) {
             $criteria->add(AbeRequestsPeer::ABE_REQ_UID, $this->abe_req_uid);
         }
+
         if ($this->isColumnModified(AbeRequestsPeer::ABE_UID)) {
             $criteria->add(AbeRequestsPeer::ABE_UID, $this->abe_uid);
         }
+
         if ($this->isColumnModified(AbeRequestsPeer::APP_UID)) {
             $criteria->add(AbeRequestsPeer::APP_UID, $this->app_uid);
         }
+
         if ($this->isColumnModified(AbeRequestsPeer::DEL_INDEX)) {
             $criteria->add(AbeRequestsPeer::DEL_INDEX, $this->del_index);
         }
+
         if ($this->isColumnModified(AbeRequestsPeer::ABE_REQ_SENT_TO)) {
             $criteria->add(AbeRequestsPeer::ABE_REQ_SENT_TO, $this->abe_req_sent_to);
         }
+
         if ($this->isColumnModified(AbeRequestsPeer::ABE_REQ_SUBJECT)) {
             $criteria->add(AbeRequestsPeer::ABE_REQ_SUBJECT, $this->abe_req_subject);
         }
+
         if ($this->isColumnModified(AbeRequestsPeer::ABE_REQ_BODY)) {
             $criteria->add(AbeRequestsPeer::ABE_REQ_BODY, $this->abe_req_body);
         }
+
         if ($this->isColumnModified(AbeRequestsPeer::ABE_REQ_DATE)) {
             $criteria->add(AbeRequestsPeer::ABE_REQ_DATE, $this->abe_req_date);
         }
+
         if ($this->isColumnModified(AbeRequestsPeer::ABE_REQ_STATUS)) {
             $criteria->add(AbeRequestsPeer::ABE_REQ_STATUS, $this->abe_req_status);
         }
+
         if ($this->isColumnModified(AbeRequestsPeer::ABE_REQ_ANSWERED)) {
             $criteria->add(AbeRequestsPeer::ABE_REQ_ANSWERED, $this->abe_req_answered);
         }
+
 
         return $criteria;
     }
@@ -1055,6 +1057,4 @@ abstract class BaseAbeRequests extends BaseObject implements Persistent
         return self::$peer;
     }
 }
-
-// BaseAbeRequests
 

@@ -1,4 +1,5 @@
 <?php
+
 require_once 'propel/map/MapBuilder.php';
 include_once 'creole/CreoleTypes.php';
 
@@ -17,6 +18,7 @@ include_once 'creole/CreoleTypes.php';
  */
 class AbeResponsesMapBuilder
 {
+
     /**
      * The (dot-path) name of this class
      */
@@ -76,8 +78,7 @@ class AbeResponsesMapBuilder
         $tMap->addColumn('ABE_RES_STATUS', 'AbeResStatus', 'string', CreoleTypes::VARCHAR, true, 10);
 
         $tMap->addColumn('ABE_RES_MESSAGE', 'AbeResMessage', 'string', CreoleTypes::VARCHAR, false, 255);
+
     } // doBuild()
-}
 
-// AbeResponsesMapBuilder
-
+} // AbeResponsesMapBuilder
