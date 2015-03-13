@@ -13,9 +13,6 @@ class Installer extends Controller
     public $path_config;
     public $path_languages;
     public $path_plugins;
-/*----------------------------------********---------------------------------*/
-    public $path_features;
-/*----------------------------------********---------------------------------*/
     public $path_xmlforms;
     public $path_shared;
     public $path_sep;
@@ -29,9 +26,6 @@ class Installer extends Controller
         $this->path_config = PATH_CORE . 'config/';
         $this->path_languages = PATH_CORE . 'content/languages/';
         $this->path_plugins = PATH_CORE . 'plugins/';
-/*----------------------------------********---------------------------------*/
-        $this->path_features = PATH_CORE . 'Features/';
-/*----------------------------------********---------------------------------*/
         $this->path_xmlforms = PATH_CORE . 'xmlform/';
         $this->path_public = PATH_HOME . 'public_html/index.html';
         $this->path_shared = PATH_TRUNK . 'shared/';
@@ -788,9 +782,6 @@ class Installer extends Controller
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/schema.sql' );
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/insert.sql' );
             
-/*----------------------------------********---------------------------------*/
-            $this->createMysqlFeatures();
-/*----------------------------------********---------------------------------*/
 
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $this->setPartner();
@@ -1634,40 +1625,5 @@ class Installer extends Controller
             }
         }
     }
-
-/*----------------------------------********---------------------------------*/
-    /**
-     * create a mysql feature
-     */
-    public function createMysqlFeatures()
-    {
-        foreach ($this->getFeatureList() as $feature) {
-            $this->mysqlFileQuery( $feature->path . '/data/schema.sql' );
-            $this->mysqlFileQuery( $feature->path . '/data/insert.sql' );
-        }
-    }
-    
-    /**
-     * returns a list of all the features installed in the Features folder
-     * @return \stdClass
-     */
-    public function getFeatureList()
-    {
-        $invalidFolders = array('ViewContainers');
-        $featuresFolders = glob($this->path_features.'/*', GLOB_ONLYDIR);
-        $features = array();
-        foreach ($featuresFolders as $directory) {
-            $feature = new \stdClass();
-            $featureName = basename($directory);
-            if (in_array($featureName, $invalidFolders)) {
-                continue;
-            }
-            $feature->path = $this->path_features . $featureName;
-            $feature->name = $featureName;
-            $features[] = $feature;
-        }
-        return $features;
-    }
-/*----------------------------------********---------------------------------*/
 }
 

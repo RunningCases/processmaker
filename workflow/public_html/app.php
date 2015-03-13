@@ -28,9 +28,6 @@ try {
             );
         }
     }
-/*----------------------------------********---------------------------------*/
-    $loader->add($rootDir . 'workflow/engine/', 'Features');
-/*----------------------------------********---------------------------------*/
     $loader->add($rootDir . 'workflow/engine/src/', "ProcessMaker");
     $loader->add($rootDir . 'workflow/engine/src/');
     
