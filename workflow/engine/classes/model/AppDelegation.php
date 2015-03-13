@@ -177,13 +177,15 @@ class AppDelegation extends BaseAppDelegation
             $oPluginRegistry->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
 
             /*----------------------------------********---------------------------------*/
-            // this section evaluates the actions by email trigger execution
+            // this section evaluates the actions by email trigger execution please 
+            // modify this section carefully, the if evaluation checks if the license has been 
+            // activated in order to send the mail according to the configuration table
             if (PMLicensedFeatures
                 ::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
-                G::LoadClass('ActionsByEmailFeature');
-                $actionsByEmail = new ActionsByEmailFeature('actionsByEmail');
-                $actionsByEmail->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
+                G::LoadClass('actionsByEmail');
+                $actionsByEmail = new actionsByEmailClass();
+                $actionsByEmail->sendActionsByEmail($data);
             }
             /*----------------------------------********---------------------------------*/
         }
