@@ -525,7 +525,7 @@ class InputFilter
       * @author Marcelo Cuiza
       * @access protected
       * @param String $value
-      * @param String $type
+      * @param String or Array $types
       * @return String $value
       */
     function validateInput($value, $types = 'string')
