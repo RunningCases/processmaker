@@ -428,7 +428,7 @@ class InputFilter
                         $input[$i] = $this->xssFilterHard($val);
                     } else {
                         if(!empty($val)) {
-                            if(!sizeof(G::json_decode($val))) {
+                            if(!is_object(G::json_decode($val))) {
                                 $inputFiltered = $purifier->purify($val);
                                 if($type != "url" && !strpos(basename($val), "=")) {
                                     $inputFiltered = addslashes(htmlspecialchars($inputFiltered, ENT_COMPAT, 'UTF-8'));   
@@ -464,7 +464,7 @@ class InputFilter
             if(!isset($input) || empty($input)) {
                 return '';
             } else {
-                if(!sizeof(G::json_decode($input))) {
+                if(!is_object(G::json_decode($input))) {
                     $input = $purifier->purify($input);
                     if($type != "url" && !strpos(basename($input), "=")) {
                         $input = addslashes(htmlspecialchars($input, ENT_COMPAT, 'UTF-8'));
