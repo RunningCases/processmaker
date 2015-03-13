@@ -160,7 +160,7 @@ class actionsByEmailClass extends PMPlugin
                                                     $__ABE__ .= 'background-image: -o-linear-gradient(top, #EFEFEF, #BCBCBC); border: 1px solid #AAAAAA; ';
                                                     $__ABE__ .= 'border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); ';
                                                     $__ABE__ .= 'font-family: Arial,serif; font-size: 9pt; font-weight: 400; line-height: 14px; margin: 2px 0; padding: 2px 7px; ';
-                                                    $__ABE__ .= 'text-decoration: none; text-transform: capitalize;" href="' .urldecode(urlencode($link)). '?action=processABE&APP_UID=';
+                                                    $__ABE__ .= 'text-decoration: none; text-transform: capitalize;" href="' .urldecode(urlencode($link)). '?ACTION='.G::encrypt('processABE', URL_KEY).'&APP_UID=';
                                                     $__ABE__ .= G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY);
                                                     $__ABE__ .= '&FIELD=' . G::encrypt($actionField, URL_KEY) . '&VALUE=' . G::encrypt($optValue, URL_KEY);
                                                     $__ABE__ .= '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank" >' . $optName;
