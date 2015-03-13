@@ -26,6 +26,8 @@ function testConnection($type, $server, $user, $passwd, $port = 'none', $dbName 
 
     G::LoadClass('net');
     $Server = new NET($server);
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
 
     if ($Server->getErrno() == 0) {
         $Server->scannPort($port);
@@ -40,18 +42,24 @@ function testConnection($type, $server, $user, $passwd, $port = 'none', $dbName 
                         $response = $Server->tryConnectServer($type);
                         $connDatabase = @mysql_connect($server, $user, $passwd);
                         $dbNameTest = "PROCESSMAKERTESTDC";
-                        $db = @mysql_query("CREATE DATABASE " . $dbNameTest, $connDatabase);
+                        $dbNameTest = $filter->validateInput($dbNameTest, 'nosql');
+                        $query = "CREATE DATABASE %s";
+                        $query = $filter->preventSqlInjection($query, array($dbNameTest), $connDatabase);
+                        $db = @mysql_query($query, $connDatabase);
                         $success = false;
                         if (!$db) {
                             $message = mysql_error();;
                         } else {
                             $usrTest = "wfrbtest";
-                            $chkG = "GRANT ALL PRIVILEGES ON `" . $dbNameTest . "`.* TO " . $usrTest . "@'%' IDENTIFIED BY 'sample' WITH GRANT OPTION";
+                            $chkG = "GRANT ALL PRIVILEGES ON `%s`.* TO %s@'%%' IDENTIFIED BY 'sample' WITH GRANT OPTION";
+                            $chkG = $filter->preventSqlInjection($chkG, array($dbNameTest,$usrTest), $connDatabase);
                             $ch = @mysql_query($chkG, $connDatabase);
                             if (!$ch) {
                                 $message = mysql_error();
                             } else {
-                                $sqlCreateUser = "CREATE USER '" . $user . "_usertest'@'%' IDENTIFIED BY 'sample'";
+                                $sqlCreateUser = "CREATE USER '%s'@'%%' IDENTIFIED BY '%s'";
+                                $user = $filter->validateInput($user, 'nosql');
+                                $sqlCreateUser = $filter->preventSqlInjection($sqlCreateUser, array($user."_usertest","sample"), $connDatabase);
                                 $result = @mysql_query($sqlCreateUser, $connDatabase);
                                 if (!$result) {
                                     $message = mysql_error();
@@ -59,12 +67,20 @@ function testConnection($type, $server, $user, $passwd, $port = 'none', $dbName 
                                     $success = true;
                                     $message = G::LoadTranslation('ID_SUCCESSFUL_CONNECTION');
                                 }
-                                $sqlDropUser = "DROP USER '" . $user . "_usertest'@'%'";
+                                $sqlDropUser = "DROP USER '%s'@'%%'";
+                                $user = $filter->validateInput($user, 'nosql');
+                                $sqlDropUser = $filter->preventSqlInjection($sqlDropUser, array($user."_usertest"), $connDatabase);
                                 @mysql_query($sqlDropUser, $connDatabase);
-
-                                @mysql_query("DROP USER " . $usrTest . "@'%'", $connDatabase);
+                                
+                                $sqlDropUser = "DROP USER %s@'%%'";
+                                $usrTest = $filter->validateInput($usrTest, 'nosql');
+                                $sqlDropUser = $filter->preventSqlInjection($sqlDropUser, array($usrTest), $connDatabase);
+                                @mysql_query($sqlDropUser, $connDatabase);
                             }
-                            @mysql_query("DROP DATABASE " . $dbNameTest, $connDatabase);
+                            $sqlDropDb = "DROP DATABASE %s";
+                            $dbNameTest = $filter->validateInput($dbNameTest, 'nosql');
+                            $sqlDropDb = $filter->preventSqlInjection($sqlDropDb, array($dbNameTest), $connDatabase);
+                            @mysql_query($sqlDropDb, $connDatabase);
                         }
                         return array($success, ($message != "")? $message : $Server->error);
                     } else {
