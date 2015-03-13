@@ -74,10 +74,10 @@ class Activity extends Api
      */
     public function doGetProjectActivityFeatureConfiguration($pro_uid, $tas_uid, $filter = '')
     {
-        
         try {
             $configurations = array();
-            if (PMLicensedFeatures
+            /*** starts retrieval of action by emails configuration ***/
+            if (\PMLicensedFeatures
                 ::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
                 $params = array(
@@ -86,9 +86,10 @@ class Activity extends Api
                     'PRO_UID' => $pro_uid,
                     'TAS_UID' => $tas_uid
                 );
-                $actionsByEmailService = new \Features\ActionsByEmail\ActionsByEmailService();
+                $actionsByEmailService = new \ProcessMaker\BusinessModel\ActionsByEmail();
                 $configurations[] = $actionsByEmailService->loadConfiguration($params);
             }
+            /*** end retrieval of action by emails configuration ***/
             return $configurations;
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -117,10 +118,10 @@ class Activity extends Api
             $properties = $task->updateProperties($prj_uid, $act_uid, $request_data);
             
              /*----------------------------------********---------------------------------*/
-            if (PMLicensedFeatures
+            if (\PMLicensedFeatures
                 ::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
-                $actionsByEmailService = new \Features\ActionsByEmail\ActionsByEmailService();
+                $actionsByEmailService = new \ProcessMaker\BusinessModel\ActionsByEmail();
                 $actionsByEmailService->saveConfiguration($request_data['properties']['_features']);
             }
              /*----------------------------------********---------------------------------*/

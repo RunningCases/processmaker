@@ -1,12 +1,12 @@
 <?php
 
-namespace Features\ActionsByEmail;
+namespace ProcessMaker\BusinessModel;
 
 /**
  * Description of ActionsByEmailService
  * 
  */
-class ActionsByEmailService
+class ActionsByEmail
 {
 
     public function saveConfiguration($params)
@@ -14,15 +14,16 @@ class ActionsByEmailService
         if (\PMLicensedFeatures
                 ::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
-            switch ($params['type']) {
+            $feature = $params['ActionsByEmail'];
+            switch ($feature['type']) {
                 case 'configuration':
                     require_once 'classes/model/AbeConfiguration.php';
                     $abeConfigurationInstance = new \AbeConfiguration();
-                    $noteValues = json_decode($params['fields']['ABE_CASE_NOTE_IN_RESPONSE']);
+                    $noteValues = json_decode($feature['fields']['ABE_CASE_NOTE_IN_RESPONSE']);
                     foreach ($noteValues as $value) {
-                        $params['fields']['ABE_CASE_NOTE_IN_RESPONSE'] = $value;
+                        $feature['fields']['ABE_CASE_NOTE_IN_RESPONSE'] = $value;
                     }
-                    $abeConfigurationInstance->createOrUpdate($params['fields']);
+                    $abeConfigurationInstance->createOrUpdate($feature['fields']);
                     break;
                 default:
                     break;
@@ -39,7 +40,6 @@ class ActionsByEmailService
         {
             return false;
         }
-        set_include_path(PATH_FEATURES . 'ActionsByEmail' . PATH_SEPARATOR . get_include_path());
         require_once 'classes/model/AbeConfiguration.php';
 
         $criteria = new \Criteria();

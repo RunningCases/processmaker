@@ -337,27 +337,6 @@ class WebApplication
                     $this->rest->addAPIClass($namespace);
                 }
             }
-/*----------------------------------********---------------------------------*/
-            // adding features extension api classes
-            $featuresPath = $this->workflowDir .'engine' . DS . 'Features';
-            // $apiDir - contains directory to scan classes and add them to Restler
-            $featureDirList = glob($featuresPath . "/*", GLOB_ONLYDIR);
-            foreach ($featureDirList as $directory) {
-                if ($directory == 'ViewContainers') {
-                    continue;
-                }
-                $featureApiClassList = Util\Common::rglob($directory . DS . 'Services' . DS . 'Api' . "/*");
-                foreach ($featureApiClassList as $classFile) {
-                    if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
-                        $relClassPath = str_replace('.php', '', str_replace($servicesDir, '', $classFile));
-                        $namespace = '\\ProcessMaker\\Services\\Api\\' . basename($classFile, '.php');
-                        $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
-                        require_once $classFile;
-                        $this->rest->addAPIClass($namespace);
-                    }
-                }
-            }
-/*----------------------------------********---------------------------------*/            
             // adding aliases for Restler
             if (array_key_exists('alias', $config)) {
                 foreach ($config['alias'] as $alias => $aliasData) {
@@ -435,7 +414,6 @@ class WebApplication
         define("PATH_XMLFORM", PATH_CORE . "xmlform" . PATH_SEP);
         define("PATH_CONFIG", PATH_CORE . "config" . PATH_SEP);
         define("PATH_PLUGINS", PATH_CORE . "plugins" . PATH_SEP);
-        define("PATH_FEATURES", PATH_CORE . "Features" . PATH_SEP);
         define("PATH_HTMLMAIL", PATH_CORE . "html_templates" . PATH_SEP);
         define("PATH_TPL", PATH_CORE . "templates" . PATH_SEP);
         define("PATH_TEST", PATH_CORE . "test" . PATH_SEP);

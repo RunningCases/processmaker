@@ -85,7 +85,7 @@ if (PMLicensedFeatures
                     $message = '<strong>The answer has been submited. Thank you</strong>';
 
                     //Save Cases Notes
-                    include_once PATH_FEATURES . 'ActionsByEmail' . DS . 'Services' . DS . 'utils.php';
+                    G::LoadClass('actionsByEmailUtils');
 
                     $dataAbeRequests = loadAbeRequest($_REQUEST['ABER']);
                     $dataAbeConfiguration = loadAbeConfiguration($dataAbeRequests['ABE_UID']);

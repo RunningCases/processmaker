@@ -4,7 +4,6 @@ namespace ProcessMaker\Services\Api;
 use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
 
-set_include_path(PATH_FEATURES . 'ActionsByEmail' . PATH_SEPARATOR . get_include_path());
 require_once 'classes/model/AbeConfiguration.php';
 require_once 'classes/model/AbeRequests.php';
 require_once 'classes/model/AbeResponses.php';
@@ -528,11 +527,11 @@ class ActionsByEmail extends Api
 
         if (defined('PARTNER_FLAG')) {
             if (!file_exists($path . 'actionsByEmailPartner.html')) {
-                @copy(PATH_FEATURES . 'ActionsByEmail' . PATH_SEP . 'data' . PATH_SEP . 'actionsByEmailPartner.html', $path . 'actionsByEmail.html');
+                @copy(PATH_TEMPLATE . 'actionsByEmail' . PATH_SEP . 'data' . PATH_SEP . 'actionsByEmailPartner.html', $path . 'actionsByEmail.html');
             }
         } else {
             if (!file_exists($path . 'actionsByEmail.html')) {
-                @copy(PATH_FEATURES . 'ActionsByEmail' . PATH_SEP . 'data' . PATH_SEP . 'actionsByEmail.html', $path . 'actionsByEmail.html');
+                @copy(PATH_TEMPLATE . 'actionsByEmail' . PATH_SEP . 'data' . PATH_SEP . 'actionsByEmail.html', $path . 'actionsByEmail.html');
             }
         }
 

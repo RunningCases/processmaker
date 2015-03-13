@@ -5,7 +5,6 @@ class actionsByEmailClass extends PMPlugin
 {
     public function __construct()
     {
-        set_include_path(PATH_FEATURES . 'ActionsByEmail' . PATH_SEPARATOR . get_include_path());
     }
 
     public function setup()
