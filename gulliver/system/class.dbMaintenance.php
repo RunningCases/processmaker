@@ -254,6 +254,9 @@ class DataBaseMaintenance
      */
     function dumpData ($table)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $table = $filter->validateInput($table, 'nosql');
         $this->outfile = $this->tmpDir . $table . '.dump';
 
         //if the file exists delete it
@@ -261,7 +264,8 @@ class DataBaseMaintenance
             @unlink( $this->outfile );
         }
 
-        $sql = "SELECT * INTO OUTFILE '{$this->outfile}' FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n' FROM $table";
+        $sql = "SELECT * INTO OUTFILE '{%s}' FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n' FROM %s";
+        $sql = $filter->preventSqlInjection($sql, array($this->outfile,$table));
         // The mysql_escape_string function has been DEPRECATED as of PHP 5.3.0.
         // Commented that is not assigned to a variable.
         // mysql_escape_string("';");
@@ -281,8 +285,11 @@ class DataBaseMaintenance
      */
     function restoreData ($backupFile)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         $tableName = str_replace( '.dump', '', basename( $backupFile ) );
-        $sql = "LOAD DATA INFILE '$backupFile' INTO TABLE $tableName FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n'";
+        $sql = "LOAD DATA INFILE '%s' INTO TABLE %s FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n'";
+        $sql = $filter->preventSqlInjection($sql, array($backupFile,$tableName));
         if (! @mysql_query( $sql )) {
             print mysql_error() . "\n";
             return false;
@@ -421,11 +428,15 @@ class DataBaseMaintenance
 
     function lockTables ()
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         $aTables = $this->getTablesList();
         if (empty( $aTables ))
             return false;
         printf( "%-70s", "LOCK TABLES" );
-        if (@mysql_query( "LOCK TABLES " . implode( " READ, ", $aTables ) . " READ; " )) {
+        $sQuery = "LOCK TABLES " . implode( " READ, ", $aTables ) . " READ; ";
+        $sQuery = $filter->preventSqlInjection($sQuery);
+        if (@mysql_query( $sQuery )) {
             echo "    [OK]\n";
             return true;
         } else {
@@ -454,8 +465,13 @@ class DataBaseMaintenance
     function dumpSqlInserts ($table)
     {
 
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $table = $filter->validateInput($table, 'nosql');
         $bytesSaved = 0;
-        $result = @mysql_query( "SELECT * FROM `$table`" );
+        $query = "SELECT * FROM `%s`";
+        $query = $filter->preventSqlInjection($query, array($table));
+        $result = @mysql_query( $query );
 
         $num_rows = mysql_num_rows( $result );
         $num_fields = mysql_num_fields( $result );
@@ -624,11 +640,13 @@ class DataBaseMaintenance
      * @return string $tableSchema
      */
     function getSchemaFromTable ($tablename)
-    {   
-        //$tableSchema = "/* Structure for table `$tablename` */\n";
-        //$tableSchema .= "DROP TABLE IF EXISTS `$tablename`;\n\n";
+    {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $tablename = $filter->validateInput($tablename, 'nosql');
         $tableSchema = "";
-        $sql = "show create table `$tablename`; ";
+        $sql = "show create table `%s`; ";
+        $sql = $filter->preventSqlInjection($sql, array($tablename));
         $result = @mysql_query( $sql );
         if ($result) {
             if ($row = mysql_fetch_assoc( $result )) {
