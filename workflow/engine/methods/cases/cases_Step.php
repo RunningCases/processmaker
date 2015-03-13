@@ -269,11 +269,14 @@ try {
             $_SESSION['CURRENT_DYN_UID'] = $_GET['UID'];
 
             G::LoadClass('pmDynaform');
-            $a = new pmDynaform($_GET['UID'], $Fields['APP_DATA']);
+            $FieldsPmDynaform = $Fields;
+            $FieldsPmDynaform["PM_RUN_OUTSIDE_MAIN_APP"] = (!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false";
+            $FieldsPmDynaform["STEP_MODE"] = $oStep->getStepMode();
+            $FieldsPmDynaform["PRO_SHOW_MESSAGE"] = $noShowTitle;
+            $FieldsPmDynaform["TRIGGER_DEBUG"] = $_SESSION['TRIGGER_DEBUG']['ISSET'];
+            $a = new pmDynaform($FieldsPmDynaform);
             if ($a->isResponsive()) {
-                $a->app_data["PRO_SHOW_MESSAGE"] = $noShowTitle;
-                $a->app_data["TRIGGER_DEBUG"] = $_SESSION['TRIGGER_DEBUG']['ISSET'];
-                $a->printEdit((!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $_SESSION['APPLICATION'], $array, $oStep->getStepMode());
+                $a->printEdit();
             } else {
                 $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', $Fields['APP_DATA'], 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'], '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
             }

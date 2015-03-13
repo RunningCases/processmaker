@@ -489,8 +489,11 @@ class PMPluginRegistry
         if (! file_exists( PATH_PLUGINS . $pluginFile )) {
             throw (new Exception( "File \"$pluginFile\" doesn't exist" ));
         }
-
-        require_once (PATH_PLUGINS . $pluginFile);
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $path = PATH_PLUGINS . $pluginFile;
+        //$path = $filter->validateInput($path, 'path');
+        require_once ($path);
         $details = $this->getPluginDetails( $pluginFile );
 
         $this->installPlugin( $details->sNamespace );
@@ -509,7 +512,11 @@ class PMPluginRegistry
         }
 
         ///////
-        require_once (PATH_PLUGINS . $pluginFile);
+        $path = PATH_PLUGINS . $pluginFile;
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $path = $filter->validateInput($path, 'path');
+        require_once ($path);
 
         foreach ($this->_aPluginDetails as $namespace => $detail) {
             if ($namespace == $sNamespace) {

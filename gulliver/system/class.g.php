@@ -463,8 +463,11 @@ class G
      * @return void
      */
     public static function LoadSystem ($strClass)
-    {
-        require_once (PATH_GULLIVER . 'class.' . $strClass . '.php');
+    {   require_once (PATH_GULLIVER . 'class.inputfilter.php');
+        $filter = new InputFilter();
+        $path  = PATH_GULLIVER . 'class.' . $strClass . '.php';
+        $path  = $filter->validateInput($path, 'path');
+        require_once ($path);
     }
 
     public function LoadSystemExist ($strClass)

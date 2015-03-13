@@ -132,11 +132,13 @@ while ($oDataset->next()) {
             } else {
                 $label = $key;
             }
-            $tpl->newBlock("FIELDLOG");
-            $tpl->assign("fieldName", $label);
-            $tpl->assign("previous", (isset($historyData[$tableNameA][$key]))? $historyData[$tableNameA][$key] : "");
-            $tpl->assign("actual", $value);
-            $count++;
+            if (strpos($label, "DYN_CONTENT_HISTORY") === false) {
+                $tpl->newBlock("FIELDLOG");
+                $tpl->assign("fieldName", $label);
+                $tpl->assign("previous", (isset($historyData[$tableNameA][$key]))? $historyData[$tableNameA][$key] : "");
+                $tpl->assign("actual", $value);
+                $count++;
+            }
         }
 
         if (is_array($value)) {
