@@ -218,7 +218,10 @@ class database extends database_base
     public function getPrimaryKey ($sTable)
     {
         try {
-            $sSQL = " SELECT 	c.COLUMN_NAME " . " FROM 	INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk , " . "       INFORMATION_SCHEMA.KEY_COLUMN_USAGE c " . " WHERE 	pk.TABLE_NAME = '" . trim( $sTable ) . "' " . " AND	CONSTRAINT_TYPE = 'PRIMARY KEY' " . " AND	c.TABLE_NAME = pk.TABLE_NAME " . " AND	c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME ";
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $sSQL = " SELECT 	c.COLUMN_NAME " . " FROM 	INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk , " . "       INFORMATION_SCHEMA.KEY_COLUMN_USAGE c " . " WHERE 	pk.TABLE_NAME = '%s' " . " AND	CONSTRAINT_TYPE = 'PRIMARY KEY' " . " AND	c.TABLE_NAME = pk.TABLE_NAME " . " AND	c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME ";
+            $sSQL = $filter->preventSqlInjection($sSQL, array(trim( $sTable )));
             $oPrimaryKey = $this->executeQuery( $sSQL );
             $aPrimaryKey = mssql_fetch_array( $oPrimaryKey );
             mssql_free_result( $oPrimaryKey );
@@ -238,8 +241,10 @@ class database extends database_base
     public function getFieldConstraint ($sTable, $sField)
     {
         try {
-            $sSQL = " select a.name " . " from sysobjects a " . "   inner join syscolumns b on a.id = b.cdefault " . " where a.xtype = 'D' " . " and a.parent_obj = (select id from sysobjects where xtype = 'U' and name = '" . trim( $sTable ) . "') " . " and b.name = '" . trim( $sField ) . "' ";
-
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $sSQL = " select a.name " . " from sysobjects a " . "   inner join syscolumns b on a.id = b.cdefault " . " where a.xtype = 'D' " . " and a.parent_obj = (select id from sysobjects where xtype = 'U' and name = '%s') " . " and b.name = '%s' ";
+            $sSQL = $filter->preventSqlInjection($sSQL, array(trim( $sTable ),trim( $sField )));
             $oFieldConstraint = $this->executeQuery( $sSQL );
             $aFieldConstraint = mssql_fetch_array( $oFieldConstraint );
             mssql_free_result( $oFieldConstraint );
@@ -259,8 +264,11 @@ class database extends database_base
     public function dropFieldConstraint ($sTable, $sField)
     {
         try {
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
             $sConstraint = $this->getFieldConstraint( $sTable, $sField );
-            $sSQL = "ALTER TABLE " . $sTable . " DROP CONSTRAINT " . $sConstraint . $this->sEndLine;
+            $sSQL = "ALTER TABLE %s DROP CONSTRAINT %s";
+            $sSQL = $filter->preventSqlInjection($sSQL, array($sTable,$sConstraint . $this->sEndLine));
             $oFieldConstraint = $this->executeQuery( $sSQL );
             return $oFieldConstraint;
         } catch (Exception $oException) {
@@ -367,7 +375,10 @@ class database extends database_base
         if (! $this->oConnection) {
             return false;
         }
-        return $this->executeQuery( 'USE ' . $this->sDataBase );
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $query = $filter->preventSqlInjection("USE %s", array($this->sDataBase));
+        return $this->executeQuery( $query );
     }
 
     public function logQuery ($sQuery)
