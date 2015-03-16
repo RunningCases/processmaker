@@ -213,12 +213,15 @@ $menuPerms = $menuPerms . ($RBAC->userCanAccess( 'PM_REASSIGNCASE' ) == 1) ? 'R'
 $oHeadPublisher->assign( '___p34315105', $menuPerms ); // user menu permissions
 G::LoadClass( 'configuration' );
 $c = new Configurations();
-
+$dateFormat = $c->getFormats();
+if (SYS_LANG == 'en' || SYS_LANG == 'en-US') {
+    $dateFormat['casesListDateFormat']=str_replace(' \\d\\e ', ' \\o\\f ', $dateFormat['casesListDateFormat']);
+}
 //$oHeadPublisher->addExtJsScript('cases/caseUtils', true);
 $oHeadPublisher->addExtJsScript( 'app/main', true );
 $oHeadPublisher->addExtJsScript( 'cases/casesList', false ); //adding a javascript file .js
 $oHeadPublisher->addContent( 'cases/casesListExtJs' ); //adding a html file  .html.
-$oHeadPublisher->assign( 'FORMATS', $c->getFormats() );
+$oHeadPublisher->assign( 'FORMATS', $dateFormat );
 G::RenderPage( 'publish', 'extJs' );
 
 function getUserArray ($action, $userUid)
