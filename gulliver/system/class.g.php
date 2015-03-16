@@ -3317,10 +3317,10 @@ class G
       *
       * @author Erik A.O. <erik@colosa.com>
      */
-    public function json_decode($Json)
+    public function json_decode($Json, $assoc = false)
     {
         if (function_exists('json_decode')) {
-            return json_decode($Json);
+            return json_decode($Json, $assoc);
         } else {
             G::LoadThirdParty('pear/json', 'class.json');
             $oJSON = new Services_JSON();
