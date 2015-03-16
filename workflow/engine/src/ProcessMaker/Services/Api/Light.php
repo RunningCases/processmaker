@@ -794,10 +794,28 @@ class Light extends Api
         try {
             $userUid = $this->getUserId();
             $oMobile = new \ProcessMaker\BusinessModel\Light();
-            $filesUids = $oMobile->documentUploadFiles($userUid, $app_uid, $app_doc_uid, $request_data);
+            $response = $oMobile->documentUploadFiles($userUid, $app_uid, $app_doc_uid, $request_data);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
-        return $filesUids;
+        return $response;
+    }
+
+    /**
+     * @url POST /case/:app_uid/claim
+     *
+     * @param $app_uid
+     * @return mixed
+     */
+    public function claimCaseUser($app_uid)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $response = $oMobile->claimCaseUser($userUid, $app_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $response;
     }
 }

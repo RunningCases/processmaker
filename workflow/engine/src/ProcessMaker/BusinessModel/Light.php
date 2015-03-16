@@ -723,6 +723,7 @@ class Light
      */
     public function documentUploadFiles($userUid, $app_uid, $app_doc_uid, $request_data)
     {
+        $response = array("status" => "fail");
         if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
             $arrayField = array ();
             $arrayFileName = array ();
@@ -773,11 +774,39 @@ class Light
                         $sPathName = PATH_DOCUMENT . $pathUID . PATH_SEP;
                         $sFileName = $sAppDocUid . "_" . $iDocVersion . "." . $sExtension;
                         G::uploadFile( $arrayFileTmpName[$i], $sPathName, $sFileName );
+                        $response = array("status" => "ok");
                     }
                 }
             }
         }
 
+        return $response;
+    }
+
+    /**
+     * claim case
+     *
+     * @param $userUid
+     * @param $Fields
+     * @param $type
+     * @throws \Exception
+     */
+    public function claimCaseUser($userUid, $sAppUid)
+    {
+        $response = array("status" => "fail");
+        $oCase = new \Cases();
+        $iDelIndex = $oCase->getCurrentDelegation( $sAppUid, $userUid );
+
+        $oAppDelegation = new \AppDelegation();
+        $aDelegation = $oAppDelegation->load( $sAppUid, $iDelIndex );
+
+        //if there are no user in the delegation row, this case is still in selfservice
+        if ($aDelegation['USR_UID'] == "") {
+            $oCase->setCatchUser( $sAppUid,$iDelIndex, $userUid );
+            $response = array("status" => "ok");
+        } else {
+            //G::SendMessageText( G::LoadTranslation( 'ID_CASE_ALREADY_DERIVATED' ), 'error' );
+        }
         return $response;
     }
 }
