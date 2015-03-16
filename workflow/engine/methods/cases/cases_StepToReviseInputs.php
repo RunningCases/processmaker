@@ -23,6 +23,9 @@
  */
 //die("second");
 /* Permissions */
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_GET = $filter->xssFilterHard($_GET,"url");
 switch ($RBAC->userCanAccess( 'PM_SUPERVISOR' )) {
     case - 2:
         G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels' );
@@ -35,8 +38,9 @@ switch ($RBAC->userCanAccess( 'PM_SUPERVISOR' )) {
         die();
         break;
 }
-
+$_SESSION = $filter->xssFilterHard($_SESSION,"url");
 if ((int) $_SESSION['INDEX'] < 1) {
+    $_SERVER['HTTP_REFERER'] = $filter->xssFilterHard($_SERVER['HTTP_REFERER']);
     G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels' );
     G::header( 'location: ' . $_SERVER['HTTP_REFERER'] );
     die();

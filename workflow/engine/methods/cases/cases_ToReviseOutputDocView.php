@@ -23,6 +23,9 @@
  */
 
 /* Permissions */
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_GET = $filter->xssFilterHard($_GET,"url");
 switch ($RBAC->userCanAccess( 'PM_SUPERVISOR' )) {
     case - 2:
         G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels' );
@@ -35,7 +38,7 @@ switch ($RBAC->userCanAccess( 'PM_SUPERVISOR' )) {
         die();
         break;
 }
-
+$_SESSION = $filter->xssFilterHard($_SESSION,"url");
 /* Includes */
 G::LoadClass( 'case' );
 
