@@ -920,6 +920,8 @@ function run_create_poedit_file($task, $args) {
   G::LoadSystem('xmlform');
   G::LoadSystem('xmlformExtension');
   G::LoadSystem('form');
+  G::LoadSystem('inputfilter');
+  $filter = new InputFilter();
 
   $langIdOut = $langId; //the output language, later we'll include the country too.
   $exceptionFields = array (
@@ -993,18 +995,25 @@ function run_create_poedit_file($task, $args) {
       }
 
       else {
+        $xmlfile = $filter->xssFilterHard($xmlfile);
+        $exceptionFields = $filter->xssFilterHard($exceptionFields);
         if( is_object($node) && ! in_array($node->type, $exceptionFields) ) {
           if( isset($node->value) && strpos($node->value, 'G::LoadTranslation') !== false ) {
             $exceptIndex ++;
             //print ($node->value);
           } else {
+            $node->name = $filter->xssFilterHard($node->name);
+            $node->type = $filter->xssFilterHard($node->type);
             printf("Error: xmlform %s has no english definition for %s [%s]\n", pakeColor::colorize($xmlfile, 'ERROR'), pakeColor::colorize($node->name, 'INFO'), pakeColor::colorize($node->type, 'INFO'));
             $xmlError ++;
           }
         } else {
           $exceptIndex ++;
-          if( $verboseFlag )
+          if( $verboseFlag ){
+            $node->name = $filter->xssFilterHard($node->name);
+            $node->type = $filter->xssFilterHard($node->type);
             printf("%s %s in %s\n", $node->type, pakeColor::colorize($node->name, 'INFO'), pakeColor::colorize($xmlfile, 'INFO'));
+          }
         }
       }
     }

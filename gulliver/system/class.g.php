@@ -1073,7 +1073,13 @@ class G
      */
     public static function streamFile ($file, $download = false, $downloadFileName = '')
     {
-        require_once (PATH_THIRDPARTY . 'jsmin/jsmin.php');
+        G::LoadSystem('inputfilter');
+		$filter = new InputFilter();
+		$file = $filter->xssFilterHard($file);
+		if(isset($_SERVER['REQUEST_URI'])) {
+            $_SERVER['REQUEST_URI'] = $filter->xssFilterHard($_SERVER['REQUEST_URI'],"url");
+        }
+		require_once (PATH_THIRDPARTY . 'jsmin/jsmin.php');
         $folderarray = explode( '/', $file );
         $typearray = explode( '.', basename( $file ) );
         $typefile = $typearray[count( $typearray ) - 1];
@@ -1081,8 +1087,11 @@ class G
 
         //trick to generate the translation.language.js file , merging two files
         if (strtolower( $typefile ) == 'js' && $typearray[0] == 'translation') {
-            G::sendHeaders( $filename, 'text/javascript', $download, $downloadFileName );
+            $download = $filter->xssFilterHard($download);
+			$downloadFileName = $filter->xssFilterHard($downloadFileName);
+			G::sendHeaders( $filename, 'text/javascript', $download, $downloadFileName );
             $output = G::streamJSTranslationFile( $filename, $typearray[1] );
+			$output = $filter->xssFilterHard($output);
             print $output;
             return;
         }
@@ -1091,6 +1100,7 @@ class G
         if (strtolower( $typefile ) == 'css' && $folderarray[count( $folderarray ) - 2] == 'css') {
             G::sendHeaders( $filename, 'text/css', $download, $downloadFileName );
             $output = G::streamCSSBigFile( $typearray[0] );
+			$output = $filter->xssFilterHard($output);
             print $output;
             return;
         }
@@ -3140,7 +3150,10 @@ class G
      */
     public function pr ($var)
     {
-        print ("<pre>") ;
+        G::LoadSystem('inputfilter');
+		$filter = new InputFilter();
+		$var = $filter->xssFilterHard($var);
+		print ("<pre>") ;
         print_r( $var );
         print ("</pre>") ;
     }
